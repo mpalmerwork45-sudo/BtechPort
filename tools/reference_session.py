@@ -214,6 +214,15 @@ def snapshot_game(pid, label, output):
             "adapter_mode":u16(ui+0x4fba),"narrow_panel":u16(ui+0x4fbc),
             "party_x_raw":[u16(state+0x400c+2*i) for i in range(4)],
             "party_y_raw":[u16(state+0x403e+2*i) for i in range(4)]}
+        script_segment=u16(ds+0x54b4)
+        citadel=(WORK/"dos/CITADEL.BLD").read_bytes()[2:]
+        decoded=bytes(((value+41)&255)^233 for value in citadel)
+        script_offset=ram.find(decoded)
+        row["citadel_payload_guest_offset"]=hex(script_offset) if script_offset>=0 else None
+        row["citadel_payload_sha256"]=hashlib.sha256(decoded).hexdigest() if script_offset>=0 else None
+        row["script_buffer_segment"]=hex(script_segment)
+        row["building_index"]=u16(u16(ds+0x5480)*16+0x3ff8)
+        row["story_state_bytes"]=list(ram[state+0xd30c:state+0xd36a])
         payload=(WORK/"dos/MAP1.MTP").read_bytes()[541:]
         map_offset=ram.find(payload)
         row["map1_payload_present"]=map_offset>=0
