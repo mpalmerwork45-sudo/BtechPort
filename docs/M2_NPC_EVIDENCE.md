@@ -1,5 +1,10 @@
 # M2d — MAP1 NPC travel and arrival evidence
 
+Historical M2d review. [M2e](M2_SHOPS_EVIDENCE.md) extends the pending allowance
+schedule below to actual credits and repeated funding in the verified local,
+zero-investment context; its BTP6 encoding replaces BTP5. The original frame
+fixture and its 570 comparisons remain passing regressions.
+
 Bounded M2d review, 2026-10-11. Original frame comparisons and the independent
 normal-start exploration/conversation replay pass.
 Both supplied trees remain immutable. Original v1.03 binary/live execution is the

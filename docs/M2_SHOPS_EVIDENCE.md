@@ -80,13 +80,49 @@ not a cash clamp. The original run goes 35→50 before armor, then 0→15 before
 weapons. Investments at D374/D378/D37C are not inventory, contrary to provisional
 shop notes in the reference checkout.
 
-The port will extend M2d's single pending-allowance schedule to this zero-account,
+The port extends M2d's single pending-allowance schedule to this zero-account,
 50-cap context so purchases can fund subsequent allowances. Native frame pacing
 remains **APPROXIMATE**. General investments, cap progression, invasion/day
 countdowns and global RNG integration remain **UNKNOWN/deferred**. Replay waits
-will be explicit; different wall-clock durations are not behavioral evidence.
+are explicit; different wall-clock durations are not behavioral evidence.
 
-Implementation and final regression results will be recorded here after the
-core, differential checks, native window and sanitizer runs complete. Proprietary
-BLD/EXE/text/RAM/graphics are loaded locally and excluded from Git. Independent
-code will be written from these factual observations and executable instructions.
+## Completed implementation and checks
+
+Independent C VM/core changes load both authentic scripts, implement their
+variable-sized remembered menus, F6 confirmations, F0 positions and F5 09/0A/0B
+services for the two verified goods. Native text displays the captured decimal
+cash at its actual position in the concatenated output. Rendering keeps the cash
+line separate from the item menu. Unsupported goods, repair and nonlocal Talk
+stop with diagnostics. Recovery restores pre-choice cash/equipment and story.
+
+**VERIFIED:** 56 checkpoints from the purchase run above and 65 from unmodified
+boundary run `work/reference-runs/1791691394449093827` pass. The latter is driven
+by `tools/reference-shop-boundaries.json`; it declines both goods and attempts
+another flak vest at zero credits. Armor refusal clears D317, preserves the
+equipped vest/cash and ends the building after its response. Weapon No returns
+to the category menu. Both retain their independent item highlights. The second
+run's longer final wait receives another allowance: final credits are 28 rather
+than the first run's 13. Neither run changes guest memory/resources.
+
+Fixtures contain only numeric observations, action/wait sequences, resource
+offsets and hashes. The verifier checks original input provenance, full BLDs in
+guest RAM, cursor and party, zero investments/one-member preconditions and exact
+equipment-region differences (only C621/C622 for armor, only C61F for weapons).
+Native replay waits are derived from successive captured D323 decrements; the
+loop counter matches each checkpoint. They do not recover the precise placement
+of original NPC frames between individual road keys or wall-clock timing.
+
+Both complete native routes test BTP6 restoration and identical continuation at
+all **6137 ticks**. The shop suite has **30928 assertions**, including malformed
+VM/state, confirmation, 49/50 and 1/2-credit boundaries, no debit on No,
+unsupported-item rollback/recovery, native-service budgets, cap overshoot and
+BTP5 migration. Four CTest suites, prior 420 core/94 script/1741 NPC assertions,
+four Python checks and all earlier differential routes pass.
+
+Private-X11 SDL runs all 3064 purchase-route/tail ticks through native events,
+closes automatically, and matches the complete final headless replay state.
+Headless ASan/UBSan/LeakSanitizer pass both shop routes and previous milestones;
+SDL/backend remains outside sanitizer coverage. Menu/confirmation frames were
+inspected for readable original mixed-case text. Layout, glyphs, sprites and
+cadence remain **APPROXIMATE**; wider economy/party/shop/campaign parity is not
+claimed. Proprietary BLD/EXE/text/RAM/graphics remain locally loaded and ignored.
