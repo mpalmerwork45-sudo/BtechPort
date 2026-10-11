@@ -27,6 +27,9 @@ int btp_map_decode(const uint8_t *b, size_t n, BtpMap *m, BtpError *e)
     for (unsigned i = 0; i < 8; ++i) {
         result.entrance_x[i] = le16(b + 389 + 2 * i);
         result.entrance_y[i] = le16(b + 421 + 2 * i);
+        memcpy(result.npc_names[i], b + 5 + 16*i, 16);
+        memcpy(result.places[i], b + 133 + 16*i, 16);
+        result.room_map[i] = b[517+i];
     }
     *m = result;
     return 1;
@@ -110,6 +113,7 @@ int btp_read_file(const char *path, uint8_t **bytes, size_t *length, BtpError *e
 
 int btp_resources_load(const char *dir, BtpResources *r, BtpError *e)
 {
+    memset(&r->dialogue, 0, sizeof r->dialogue);
     char path[4096]; uint8_t *data; size_t n;
     const char *names[] = {"MAP1.MTP", "BTTLTECH.ICN", "CITADEL.BLD"};
     for (unsigned i = 0; i < 3; ++i) {
@@ -128,4 +132,42 @@ int btp_resources_load(const char *dir, BtpResources *r, BtpError *e)
     for (unsigned i = 0; i < 4096; ++i)
         if (r->map.tiles[i] >= 250) return fail(e, "MAP1 references a tile outside the 250-tile sheet");
     return 1;
+}
+
+int btp_dialogue_decode(const uint8_t *b, size_t n, BtpDialogue *d, BtpError *e)
+{
+    /* BTT1: magic, blob size/count, two SHA-256 provenance tags, 17 ranges.
+       Conversion validates the audited EXE. Tags identify that source, not a
+       cryptographic integrity check of the generated cache. */
+    static const uint8_t tags[64] = {
+        0x15,0xa1,0x71,0x26,0x82,0xcf,0x1f,0xe5,0x0c,0xa9,0xe6,0xa6,0x8a,0x4b,0x31,0xd3,
+        0xbe,0xf7,0x91,0x24,0x01,0x91,0x5e,0xdf,0x7b,0xb6,0x24,0x2b,0xe1,0x93,0x56,0x2a,
+        0x10,0x0f,0x0d,0xf2,0x44,0xe4,0xb0,0xc8,0x69,0x3d,0x1b,0x50,0x13,0xfb,0x07,0x3f,
+        0x48,0x6b,0x35,0xd6,0xf5,0xc5,0x38,0xec,0xd5,0x3d,0x03,0xf8,0x5e,0xd5,0x4b,0xfa
+    };
+    if (!b || !d || n < 140 || memcmp(b,"BTT1",4) || le16(b+6) != BTP_TALK_STRINGS ||
+        memcmp(b+8,tags,sizeof tags) || !le16(b+4) || le16(b+4) > BTP_TALK_MAX ||
+        n != 140u+le16(b+4)) return fail(e,"Native dialogue: invalid cache/provenance header");
+    BtpDialogue result = {0}; result.length = le16(b+4);
+    memcpy(result.bytes,b+140,result.length);
+    unsigned next = 0;
+    for (unsigned i = 0; i < BTP_TALK_STRINGS; ++i) {
+        unsigned at = le16(b+72+4*i), length = le16(b+74+4*i);
+        if (at != next || at >= result.length || length >= result.length-at ||
+            result.bytes[at+length]) return fail(e,"Native dialogue: invalid string range");
+        for (unsigned j = 0; j < length; ++j) {
+            unsigned c = result.bytes[at+j];
+            if (c != 13 && (c < 32 || c >= 127)) return fail(e,"Native dialogue: invalid character");
+        }
+        result.offset[i] = (uint16_t)at; result.size[i] = (uint16_t)length;
+        next = at+length+1;
+    }
+    if (next != result.length) return fail(e,"Native dialogue: trailing data");
+    *d = result; return 1;
+}
+int btp_dialogue_load(const char *path, BtpDialogue *d, BtpError *e)
+{
+    uint8_t *bytes; size_t length;
+    if (!btp_read_file(path,&bytes,&length,e)) return 0;
+    int ok = btp_dialogue_decode(bytes,length,d,e); free(bytes); return ok;
 }

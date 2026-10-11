@@ -3,10 +3,11 @@
 #include "data/resources.h"
 
 typedef enum { BTP_SCRIPT_RUNNING, BTP_SCRIPT_MENU, BTP_SCRIPT_WAIT,
-    BTP_SCRIPT_END, BTP_SCRIPT_ERROR } BtpScriptStatus;
+    BTP_SCRIPT_END, BTP_SCRIPT_ERROR, BTP_SCRIPT_NATIVE } BtpScriptStatus;
 typedef enum { BTP_SCRIPT_OK, BTP_SCRIPT_TRUNCATED, BTP_SCRIPT_OPCODE,
     BTP_SCRIPT_TARGET, BTP_SCRIPT_MENU_ID, BTP_SCRIPT_SCENE, BTP_SCRIPT_BUDGET,
-    BTP_SCRIPT_FONT, BTP_SCRIPT_STATE_INDEX, BTP_SCRIPT_TEXT_LIMIT } BtpScriptError;
+    BTP_SCRIPT_FONT, BTP_SCRIPT_STATE_INDEX, BTP_SCRIPT_TEXT_LIMIT,
+    BTP_SCRIPT_NATIVE_DATA, BTP_SCRIPT_NATIVE_CONTEXT } BtpScriptError;
 enum { BTP_STORY_BYTES = 23, BTP_TEXT_SPANS = 8 };
 typedef struct { uint16_t offset, length; } BtpTextSpan;
 typedef struct {
@@ -19,6 +20,7 @@ typedef struct {
 
 void btp_script_start(BtpScriptState *state, const BtpBld *script, uint8_t story[BTP_STORY_BYTES]);
 void btp_script_resume(BtpScriptState *state, const BtpBld *script, uint8_t story[BTP_STORY_BYTES]);
+void btp_script_native_return(BtpScriptState *state, const BtpBld *script, uint8_t story[BTP_STORY_BYTES]);
 int btp_script_choose(BtpScriptState *state, const BtpBld *script, unsigned choice, uint8_t story[BTP_STORY_BYTES]);
 int btp_script_text(const BtpScriptState *state, const BtpBld *script, uint8_t *output, size_t capacity);
 const char *btp_script_error_name(unsigned error);

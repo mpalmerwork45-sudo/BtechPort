@@ -8,6 +8,7 @@ typedef struct {
     uint8_t width, height;
     uint8_t tiles[BTP_MAP_MAX * BTP_MAP_MAX]; /* normalized row order */
     uint16_t entrance_x[8], entrance_y[8]; /* original packed words */
+    uint8_t npc_names[8][16], places[8][16], room_map[8];
 } BtpMap;
 typedef struct {
     uint8_t format;
@@ -18,10 +19,16 @@ typedef struct {
     uint8_t bytes[BTP_BLD_MAX]; /* decrypted payload; address zero excludes size word */
 } BtpBld;
 typedef struct { char text[256]; } BtpError;
+enum { BTP_TALK_STRINGS = 17, BTP_TALK_MAX = 2048 };
+typedef struct {
+    uint8_t bytes[BTP_TALK_MAX];
+    uint16_t length, offset[BTP_TALK_STRINGS], size[BTP_TALK_STRINGS];
+} BtpDialogue;
 typedef struct {
     BtpMap map;
     BtpGraphic tiles;
     BtpBld citadel;
+    BtpDialogue dialogue;
 } BtpResources;
 
 int btp_map_decode(const uint8_t *bytes, size_t length, BtpMap *map, BtpError *error);
@@ -30,4 +37,6 @@ int btp_bld_decode(const uint8_t *bytes, size_t length, BtpBld *script, BtpError
 uint8_t btp_map_tile(const BtpMap *map, int x, int y); /* 255 outside the map */
 int btp_read_file(const char *path, uint8_t **bytes, size_t *length, BtpError *error);
 int btp_resources_load(const char *directory, BtpResources *resources, BtpError *error);
+int btp_dialogue_decode(const uint8_t *bytes, size_t length, BtpDialogue *dialogue, BtpError *error);
+int btp_dialogue_load(const char *path, BtpDialogue *dialogue, BtpError *error);
 #endif

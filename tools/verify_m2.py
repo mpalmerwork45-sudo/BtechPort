@@ -76,7 +76,7 @@ def main():
           states[17]["menu_selected"] == 4, "Menu selection/return behavior differs")
     check([s["script_pc"] for s in states[8:14]] == fixture["hall_resume_pcs"], "Hall bytecode dispatch differs")
     check(states[18]["script_status"] == 3 and states[18]["script_opcode"] == 255, "Exit did not execute FF")
-    for choice, opcode in [(2,0xf5),(3,0xf5)]:
+    for choice, opcode in [(2,0xf5)]:
         prefix = ["up"] * 5 + ["accept"] + ["down"] * choice + ["accept"]
         if choice == 2: prefix += ["accept"] # Class stops after its introductory pause.
         rejected, failed = run(binary, prefix, work, f"unsupported-{choice}", success=False)
@@ -89,7 +89,7 @@ def main():
     _, declined = run(binary, ["up"] * 5 + ["right", "accept"], work, "decline")
     check(declined[-1]["mode"] == "local-exploration" and declined[-1]["y_half"] == 20 and
           declined[-1]["story_flags"][10] == 0, "Decline incorrectly executed building script")
-    print("PASS: 16 original Hall checkpoints / 20 native states, seven decoded texts, six pauses, retained selection, exit, deterministic replay, decline and visible class/talk faults with rollback/recovery.")
+    print("PASS: 16 original Hall checkpoints / 20 native states, seven texts, six pauses, retained selection, exit, replay, decline and visible class fault with rollback/recovery.")
     if args.native_log:
         replay_actions = args.native_log.read_text().splitlines()
         _, recorded = run(binary, replay_actions, work, "recorded")

@@ -87,8 +87,8 @@ static void state(void)
     btp_state_encode(&s, encoded); btp_state_encode(&restored, roundtrip);
     CHECK(!memcmp(encoded, roundtrip, sizeof encoded));
     CHECK(!btp_state_decode(encoded, sizeof encoded - 1, &m, NULL, &restored));
-    encoded[4] = 4; CHECK(!btp_state_decode(encoded, sizeof encoded, &m, NULL, &restored));
-    encoded[4] = 3; encoded[12] = 128; CHECK(!btp_state_decode(encoded, sizeof encoded, &m, NULL, &restored));
+    encoded[4] = 5; CHECK(!btp_state_decode(encoded, sizeof encoded, &m, NULL, &restored));
+    encoded[4] = 4; encoded[12] = 128; CHECK(!btp_state_decode(encoded, sizeof encoded, &m, NULL, &restored));
     encoded[12] = 69; encoded[23] = 1; CHECK(!btp_state_decode(encoded, sizeof encoded, &m, NULL, &restored));
     s.x_half = 0; s.y_half = 0; btp_tick(&s, &m, BTP_LEFT);
     CHECK(s.x_half == 0 && s.blocked == BTP_EDGE);
@@ -177,8 +177,8 @@ static void katrina_loop(const BtpResources *r)
     CHECK(s.mode == BTP_SCRIPT_FAULT && s.script.last_opcode == 0xf5 && s.story_flags[7] == 0 &&
           s.story_flags[21] == 42 && s.story_flags[6] == 1 && s.story_flags[22] == 255);
     restored_tick(&s, r, BTP_CANCEL); restored_tick(&s, r, BTP_DOWN); restored_tick(&s, r, BTP_ACCEPT);
-    CHECK(s.mode == BTP_SCRIPT_FAULT && s.story_flags[13] == 0 && s.story_flags[6] == 1);
-    restored_tick(&s, r, BTP_CANCEL);
+    CHECK(s.mode == BTP_BUILDING && s.talk.phase == BTP_TALK_EMPTY && s.story_flags[13] == 1 && s.story_flags[6] == 1);
+    restored_tick(&s, r, BTP_ACCEPT);
     CHECK(s.mode == BTP_BUILDING && s.script.selected == 3);
     /* Migrate a real M2a Hall pause from its 64-byte BTP2 representation. */
     btp_start(&s);
@@ -188,15 +188,105 @@ static void katrina_loop(const BtpResources *r)
     uint8_t old[64] = {0}; memcpy(old, saved, 59); memcpy(old, "BTP2", 4); old[4] = 2;
     CHECK(btp_state_decode(old, sizeof old, &r->map, &r->citadel, &invalid));
     CHECK(invalid.script.text_count == 1 && invalid.script.pc == 0x77e && invalid.checkpoint_valid);
+    /* Old formats had no NPC context. Empty occupancy remains explicit. */
+    memset(s.npc_pairs,0,sizeof s.npc_pairs);
     btp_game_tick(&s, r, BTP_ACCEPT); btp_game_tick(&invalid, r, BTP_ACCEPT);
     uint8_t migrated[BTP_STATE_BYTES]; btp_state_encode(&s, saved); btp_state_encode(&invalid, migrated);
     CHECK(!memcmp(saved, migrated, sizeof saved));
-    puts("Katrina core: pause restoration, persistent byte changes, repeat denial, re-entry highlight, rollback across pauses, BTP2 migration.");
+    puts("Katrina core: pause restoration, persistent bytes, repeat denial, re-entry, class rollback, Talk continuation, BTP2 migration.");
+}
+static void enter_talk(BtpState *s, const BtpResources *r)
+{
+    for (unsigned i = 0; i < 5; ++i) btp_game_tick(s,r,BTP_UP);
+    btp_game_tick(s,r,BTP_ACCEPT);
+    for (unsigned i = 0; i < 3; ++i) btp_game_tick(s,r,BTP_DOWN);
+    btp_game_tick(s,r,BTP_ACCEPT);
+}
+static void talk_loop(BtpResources *r)
+{
+    BtpState s, invalid; btp_start_conversation_checkpoint(&s); enter_talk(&s,r);
+    CHECK(s.mode == BTP_BUILDING && s.script.status == BTP_SCRIPT_NATIVE && s.script.pc == 0x10e2);
+    CHECK(s.talk.phase == BTP_TALK_MENU && s.talk.mask == 2 && s.talk.count == 1 &&
+          s.script.selected == 3 && s.story_flags[13] == 1 && s.talk_result == 91);
+    uint8_t body[BTP_BLD_MAX+1]; size_t length;
+    CHECK(btp_game_text(&s,r,body,sizeof body,&length) && length == 42);
+    CHECK(!btp_game_text(&s,r,body,42,&length));
+    restored_tick(&s,r,BTP_IDLE); restored_tick(&s,r,BTP_DOWN); restored_tick(&s,r,BTP_ACCEPT);
+    CHECK(s.script.status == BTP_SCRIPT_MENU && s.talk.selected == 1 && s.talk_result == 91 &&
+          s.story_flags[13] == 1 && !s.checkpoint_valid);
+    restored_tick(&s,r,BTP_ACCEPT); CHECK(s.talk.phase == BTP_TALK_MENU && s.talk.selected == 1);
+    restored_tick(&s,r,BTP_UP); restored_tick(&s,r,BTP_ACCEPT);
+    CHECK(s.talk.phase == BTP_TALK_REPLY && s.talk.actor == 1 && !s.talk_result && s.script.selected == 3);
+    CHECK(btp_game_text(&s,r,body,sizeof body,&length) && length == 162);
+    uint8_t saved[BTP_STATE_BYTES];
+    const unsigned bad_indexes[] = {123,125,126,127,131,145,146,150};
+    for (unsigned i = 0; i < sizeof bad_indexes/sizeof bad_indexes[0]; ++i) {
+        btp_state_encode(&s,saved); saved[bad_indexes[i]] ^= 1;
+        CHECK(!btp_state_decode(saved,sizeof saved,&r->map,&r->citadel,&invalid));
+    }
+    btp_state_encode(&s,saved); saved[40] = 0xe3; /* Wrong suspended native PC. */
+    CHECK(!btp_state_decode(saved,sizeof saved,&r->map,&r->citadel,&invalid));
+    restored_tick(&s,r,BTP_IDLE); restored_tick(&s,r,BTP_ACCEPT);
+    CHECK(s.script.status == BTP_SCRIPT_MENU && s.script.selected == 3 && !s.talk.phase && !s.talk_result);
+    /* Restore a BTP3 Katrina pause: this format predates NPC context. */
+    btp_start(&s);
+    for (unsigned i = 0; i < 5; ++i) btp_game_tick(&s,r,BTP_UP);
+    btp_game_tick(&s,r,BTP_ACCEPT); btp_game_tick(&s,r,BTP_ACCEPT); btp_game_tick(&s,r,BTP_ACCEPT);
+    btp_state_encode(&s,saved);
+    uint8_t old[128]; memcpy(old,saved,sizeof old); memcpy(old,"BTP3",4); old[4] = 3;
+    CHECK(btp_state_decode(old,sizeof old,&r->map,&r->citadel,&invalid));
+    CHECK(invalid.story_flags[6] == 1 && invalid.script.text_count == 3 && !invalid.npc_pairs[1][1]);
+    memset(s.npc_pairs,0,sizeof s.npc_pairs);
+    btp_game_tick(&s,r,BTP_ACCEPT); btp_game_tick(&invalid,r,BTP_ACCEPT);
+    uint8_t migrated[BTP_STATE_BYTES]; btp_state_encode(&s,saved); btp_state_encode(&invalid,migrated);
+    CHECK(!memcmp(saved,migrated,sizeof saved));
+    /* Unknown contexts and missing data fail visibly, rolling back the choice. */
+    uint16_t cache_length = r->dialogue.length; r->dialogue.length = 0;
+    btp_start_conversation_checkpoint(&s); enter_talk(&s,r);
+    CHECK(s.mode == BTP_SCRIPT_FAULT && s.script.error == BTP_SCRIPT_NATIVE_DATA &&
+          s.talk_result == 91 && !s.story_flags[13]);
+    restored_tick(&s,r,BTP_CANCEL); r->dialogue.length = cache_length;
+    s.story_flags[4] = 1; restored_tick(&s,r,BTP_ACCEPT);
+    CHECK(s.mode == BTP_SCRIPT_FAULT && s.script.error == BTP_SCRIPT_NATIVE_CONTEXT &&
+          s.story_flags[4] == 1 && !s.story_flags[13] && s.talk_result == 91);
+    /* A fault after the native reply also restores the pre-choice result. */
+    btp_start_conversation_checkpoint(&s); enter_talk(&s,r); btp_game_tick(&s,r,BTP_ACCEPT);
+    uint8_t opcode = r->citadel.bytes[0x10e2]; r->citadel.bytes[0x10e2] = 0xf6;
+    restored_tick(&s,r,BTP_ACCEPT);
+    CHECK(s.mode == BTP_SCRIPT_FAULT && s.talk_result == 91 && !s.story_flags[13]);
+    r->citadel.bytes[0x10e2] = opcode;
+    /* Multiple occupants: slot order, bit-7 masking, all nine choices and wrap.
+       These are structural tests, not a multi-occupant original-game trace. */
+    btp_start_conversation_checkpoint(&s);
+    for (unsigned i = 0; i < 8; ++i) { s.npc_pairs[i][0] = (uint8_t)(0x10u+i); s.npc_pairs[i][1] = 1; }
+    s.npc_pairs[2][0] |= 0x80;
+    enter_talk(&s,r); CHECK(s.talk.count == 8 && s.talk.mask == 255);
+    restored_tick(&s,r,BTP_UP); CHECK(s.talk.selected == 8);
+    restored_tick(&s,r,BTP_DOWN); CHECK(s.talk.selected == 0);
+    for (unsigned i = 0; i < 3; ++i) restored_tick(&s,r,BTP_DOWN);
+    restored_tick(&s,r,BTP_ACCEPT); CHECK(s.talk.actor == 3 && s.talk_result == 0);
+    /* Cache parser corruption must not mutate a previously valid result. */
+    uint8_t *cache; size_t n; BtpError error;
+    CHECK(btp_read_file("work/talk-data.bin",&cache,&n,&error));
+    BtpDialogue parsed;
+    CHECK(btp_dialogue_decode(cache,n,&parsed,&error));
+    CHECK(!memcmp(&parsed,&r->dialogue,sizeof parsed));
+    CHECK(!btp_dialogue_decode(NULL,n,&parsed,&error));
+    CHECK(!btp_dialogue_decode(cache,n-1,&parsed,&error));
+    const unsigned corrupt[] = {0,4,6,8,40,72,74,140};
+    for (unsigned i = 0; i < sizeof corrupt/sizeof corrupt[0]; ++i) {
+        unsigned at = corrupt[i]; uint8_t before = cache[at]; cache[at] = at == 140 ? 0 : (uint8_t)(before^1);
+        CHECK(!btp_dialogue_decode(cache,n,&parsed,&error));
+        CHECK(!memcmp(&parsed,&r->dialogue,sizeof parsed)); cache[at] = before;
+    }
+    free(cache);
+    puts("Talk core: Done/selection retention, exact text lengths, result write, pause restoration, invalid states/cache, BTP3 migration, recovery and multi-occupant bounds.");
 }
 static void citadel_loop(const char *dir)
 {
     BtpResources *r = malloc(sizeof *r); CHECK(r);
     BtpError error; CHECK(btp_resources_load(dir, r, &error));
+    CHECK(btp_dialogue_load("work/talk-data.bin",&r->dialogue,&error));
     BtpState s; btp_start(&s);
     for (unsigned i = 0; i < 5; ++i) btp_game_tick(&s, r, BTP_UP);
     CHECK(s.mode == BTP_ENTRY && s.x_half == 69 && s.y_half == 21);
@@ -228,8 +318,8 @@ static void citadel_loop(const char *dir)
     btp_game_tick(&s, r, BTP_ACCEPT);
     for (unsigned i = 0; i < 3; ++i) btp_game_tick(&s, r, BTP_DOWN);
     btp_game_tick(&s, r, BTP_ACCEPT);
-    CHECK(s.mode == BTP_SCRIPT_FAULT && s.script.last_opcode == 0xf5 && s.y_half == 21 && s.story_flags[13] == 0);
-    restored_tick(&s, r, BTP_CANCEL);
+    CHECK(s.mode == BTP_BUILDING && s.talk.phase == BTP_TALK_EMPTY && s.y_half == 21 && s.story_flags[13] == 1);
+    restored_tick(&s, r, BTP_ACCEPT);
     CHECK(s.mode == BTP_BUILDING && s.script.status == BTP_SCRIPT_MENU);
     uint8_t saved[BTP_STATE_BYTES]; btp_state_encode(&s, saved); BtpState invalid;
     saved[42] = saved[43] = 255;
@@ -242,6 +332,7 @@ static void citadel_loop(const char *dir)
     CHECK(btp_state_decode(legacy, sizeof legacy, &r->map, &r->citadel, &invalid));
     CHECK(invalid.mode == BTP_EXPLORE && invalid.x_half == 69 && invalid.script.pc == 0);
     katrina_loop(r);
+    talk_loop(r);
     /* Exact half coordinates, not the neighboring half in the same tile. */
     r->map = (BtpMap){.width=64,.height=64}; memset(r->map.tiles, 64, sizeof r->map.tiles);
     r->map.entrance_x[1] = 0x0c45; r->map.entrance_y[1] = 0xc014;
@@ -250,7 +341,7 @@ static void citadel_loop(const char *dir)
     btp_start(&s); s.y_half = 21;
     btp_game_tick(&s, r, BTP_UP); CHECK(s.mode == BTP_ENTRY && s.y_half == 21);
     free(r);
-    puts("Citadel core: entry/decline, six Hall screens, exit, error rollback/recovery, BTP3 restoration.");
+    puts("Citadel core: entry/decline, six Hall screens, exit, empty Talk, recovery, BTP4 restoration.");
 }
 
 static void corpus(const char *dir)

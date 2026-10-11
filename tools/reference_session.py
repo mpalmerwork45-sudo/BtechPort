@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """Run a bounded JSON input/capture script in DOSBox on a private display.
 
-X11 events are sent only to this session's DOSBox window. Guest-memory scanning
-is read-only, restricted to the child emulator, and writes dumps only under work/.
+X11 events are sent only to this session's DOSBox window. Scans and snapshots are
+read-only. The explicit controlled-talk-context command sets an audited NPC/result
+precondition in the child emulator; executable/resource/save files stay unchanged.
+All exports are under ignored work/.
 """
 import ctypes as c
 import json
@@ -251,6 +253,11 @@ def controlled_talk_context(pid, output):
     if ram[state + 0xd339] or any(ram[state + 0xd399 + 26*i] for i in range(8)):
         raise RuntimeError("Refusing to replace an active NPC context")
     context = json.loads((ROOT / "tests/fixtures/talk-context.json").read_text())
+    pairs = context.get("npc_pairs"); result = context.get("talk_result")
+    if not isinstance(pairs,list) or len(pairs) != 8 or not all(isinstance(pair,list) and len(pair) == 2 and
+        all(type(v) is int and 0 <= v <= 255 for v in pair) for pair in pairs) or \
+        type(result) is not int or not 0 <= result <= 255:
+        raise ValueError("Invalid bounded Talk precondition")
     anchor = b"BattleTech: The Crescent Hawk's Inception"
     guest_anchor = int(row["load_segment"], 16)*16 + 0x37a88
     os.kill(pid, signal.SIGSTOP)
@@ -273,6 +280,7 @@ def controlled_talk_context(pid, output):
         audit = []
         for addr, value in changes:
             before = os.pread(fd, len(value), base+addr)
+            if before != ram[addr:addr+len(value)]: raise RuntimeError("Context changed after precondition snapshot")
             if os.pwrite(fd, value, base+addr) != len(value): raise RuntimeError("Short precondition write")
             audit.append({"guest_offset":hex(addr),"before":list(before),"after":list(value)})
         (output/"controlled-context.json").write_text(json.dumps({"kind":"controlled-precondition",

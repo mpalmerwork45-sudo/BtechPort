@@ -91,6 +91,13 @@ static void run(BtpScriptState *s, const BtpBld *b, uint8_t story[BTP_STORY_BYTE
             if (story[index] && !jump(s, b, target, op_pc)) return;
             break;
         }
+        case 0xf5:
+            if (!available(s, b, 1, op_pc)) return;
+            if (b->bytes[s->pc++] != 0x0c) { fault(s, BTP_SCRIPT_OPCODE, op_pc); return; }
+            s->text_offset = s->text_length = s->text_count = 0;
+            memset(s->text, 0, sizeof s->text);
+            s->pause_units = 0;
+            s->status = BTP_SCRIPT_NATIVE; return;
         case 0xf2: /* Original software delay(50), then keyboard flush.
                        Model records the request; native pacing is approximate. */
             s->pause_units = 50; break;
@@ -130,6 +137,11 @@ void btp_script_resume(BtpScriptState *s, const BtpBld *b, uint8_t story[BTP_STO
     if (s->status != BTP_SCRIPT_WAIT) return;
     s->status = BTP_SCRIPT_RUNNING; s->pause_units = 0; run(s, b, story);
 }
+void btp_script_native_return(BtpScriptState *s, const BtpBld *b, uint8_t story[BTP_STORY_BYTES])
+{
+    if (s->status != BTP_SCRIPT_NATIVE) return;
+    s->status = BTP_SCRIPT_RUNNING; s->pause_units = 0; run(s, b, story);
+}
 int btp_script_choose(BtpScriptState *s, const BtpBld *b, unsigned choice, uint8_t story[BTP_STORY_BYTES])
 {
     if (s->status != BTP_SCRIPT_MENU || choice >= 5) return 0;
@@ -161,6 +173,7 @@ const char *btp_script_error_name(unsigned error)
 {
     static const char *names[] = {"none", "truncated bytecode", "unsupported opcode",
         "invalid jump target", "unsupported menu", "unsupported scene", "instruction budget", "unsupported font",
-        "unsupported state index", "text span limit"};
-    return error <= BTP_SCRIPT_TEXT_LIMIT ? names[error] : "invalid error";
+        "unsupported state index", "text span limit", "native dialogue data missing",
+        "unsupported native dialogue context"};
+    return error <= BTP_SCRIPT_NATIVE_CONTEXT ? names[error] : "invalid error";
 }

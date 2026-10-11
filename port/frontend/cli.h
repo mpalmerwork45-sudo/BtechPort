@@ -2,10 +2,11 @@
 #define BTP_CLI_H
 #include "frontend/pixels.h"
 typedef struct {
-    const char *data, *replay, *record, *frame, *tiles_output;
-    int headless, debug, trace, smoke;
+    const char *data, *dialogue_data, *replay, *record, *frame, *tiles_output;
+    int headless, debug, trace, smoke, conversation_checkpoint;
 } BtpOptions;
 int btp_options(int argc, char **argv, BtpOptions *options);
+void btp_initial_state(const BtpOptions *options, BtpState *state);
 void btp_print_state(const BtpState *state, const BtpResources *resources);
 int btp_replay(const char *path, BtpState *state, const BtpResources *resources, int trace);
 int btp_run_headless(const BtpOptions *options, BtpResources *resources);

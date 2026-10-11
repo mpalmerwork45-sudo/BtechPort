@@ -13,6 +13,8 @@ SDL_VIDEODRIVER=dummy build/btech-port --smoke-citadel --record work/native-cita
 python3 tools/verify_m2.py --native-log work/native-citadel.actions
 SDL_VIDEODRIVER=dummy build/btech-port --smoke-katrina --record work/native-katrina.actions --frame work/native-katrina.ppm
 python3 tools/verify_m2b.py --native-log work/native-katrina.actions
+SDL_VIDEODRIVER=dummy build/btech-port --smoke-talk --record work/native-talk.actions --frame work/native-talk.ppm
+python3 tools/verify_m2c.py --native-log work/native-talk.actions
 if [ "${1:-}" = "--x11" ]; then
     python3 tools/native_smoke.py
 fi

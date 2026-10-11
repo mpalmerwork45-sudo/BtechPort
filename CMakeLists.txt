@@ -14,7 +14,7 @@ if(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
   endif()
 endif()
 
-add_library(btp_core port/core/game.c port/core/script.c port/data/resources.c)
+add_library(btp_core port/core/game.c port/core/script.c port/core/talk.c port/data/resources.c)
 target_include_directories(btp_core PUBLIC port)
 add_library(btp_pixels port/frontend/pixels.c)
 target_link_libraries(btp_pixels PUBLIC btp_core)

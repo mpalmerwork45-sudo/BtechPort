@@ -93,27 +93,31 @@ static void story_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
     }
     const BtpScriptState *v = &s->script;
     uint8_t bytes[BTP_BLD_MAX + 1];
-    if (!btp_script_text(v, &r->citadel, bytes, sizeof bytes)) {
+    size_t length;
+    if (!btp_game_text(s, r, bytes, sizeof bytes, &length)) {
         text(f, 110, 12, "INVALID TEXT BOUNDS", 12); return;
     }
-    if (v->status == BTP_SCRIPT_MENU) {
-        size_t starts[5]; unsigned found = 0;
-        for (size_t i = v->text_length; i && found < 5; --i)
-            if (bytes[i - 1] == '\r') starts[4 - found++] = i;
-        if (found != 5) { text(f, 110, 12, "UNSUPPORTED MENU TEXT LAYOUT", 12); return; }
+    if (v->status == BTP_SCRIPT_MENU || s->talk.phase == BTP_TALK_MENU) {
+        unsigned count = s->talk.phase == BTP_TALK_MENU ? (unsigned)s->talk.count+1 : 5;
+        unsigned selected = s->talk.phase == BTP_TALK_MENU ? s->talk.selected : v->selected;
+        size_t starts[9]; unsigned found = 0;
+        if (count > 9) { text(f, 110, 12, "INVALID MENU COUNT", 12); return; }
+        for (size_t i = length; i && found < count; --i)
+            if (bytes[i - 1] == '\r') starts[count-1-found++] = i;
+        if (found != count) { text(f, 110, 12, "UNSUPPORTED MENU TEXT LAYOUT", 12); return; }
         int y = wrapped(f, 9, bytes, starts[0], 15);
-        for (unsigned i = 0; i < 5; ++i) {
-            size_t end = i == 4 ? v->text_length : starts[i + 1] - 1;
+        for (unsigned i = 0; i < count; ++i) {
+            size_t end = i+1 == count ? length : starts[i + 1] - 1;
             char option[35]; size_t n = end - starts[i];
             if (n >= sizeof option || y > 177) {
                 text(f, 110, 180, "UNSUPPORTED MENU TEXT LAYOUT", 12); return;
             }
             memcpy(option, bytes + starts[i], n); option[n] = 0;
-            if (i == v->selected) rectangle(f, 109, y - 1, 206, 9, 14);
-            text(f, 110, y, option, i == v->selected ? 0u : 15u); y += 9;
+            if (i == selected) rectangle(f, 109, y - 1, 206, 9, 14);
+            text(f, 110, y, option, i == selected ? 0u : 15u); y += 9;
         }
     } else {
-        (void)wrapped(f, 9, bytes, v->text_length, 15);
+        (void)wrapped(f, 9, bytes, length, 15);
         text(f, 110, 185, "ENTER / SPACE TO CONTINUE", 14);
     }
 }
@@ -143,9 +147,10 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
     /* Approximate marker until ANIMATE.ICN sprite selection/masking is verified. */
     for (int y = 97; y <= 102; ++y)
         for (int x = 211; x <= 213; ++x) pixel(f, x, y, btp_palette[y < 99 ? 15 : 1]);
-    text(f, 8, 9, "BTECHPORT M2B", 15);
+    text(f, 8, 9, "BTECHPORT M2C", 15);
     text(f, 8, 24, s->mode >= BTP_BUILDING ? "CITADEL" : "TRAINING", 14);
-    text(f, 8, 36, s->mode >= BTP_BUILDING ? "KATRINA / HALL" : "SCHOOL", 14);
+    text(f, 8, 36, s->conversation_checkpoint ? "TALK CHECKPOINT" :
+        s->mode >= BTP_BUILDING ? "DIALOGUE" : "SCHOOL", 14);
     text(f, 8, 57, s->mode == BTP_EXPLORE ? "ARROWS MOVE" : "ARROWS SELECT", 7);
     text(f, 8, 69, "F3 DEBUG", 7);
     text(f, 8, 81, "R RESTART", 7);

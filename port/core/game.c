@@ -1,9 +1,12 @@
 #include "core/game.h"
+#include "core/talk.h"
 #include <string.h>
 
 void btp_start(BtpState *s)
 {
     *s = (BtpState){.x_half = 69, .y_half = 25, .map_id = 1, .gate = 85};
+    static const uint8_t packed[8] = {99,81,53,99,18,4,4,70};
+    for (unsigned i = 0; i < 8; ++i) s->npc_pairs[i][0] = packed[i];
 }
 
 void btp_tick(BtpState *s, const BtpMap *m, BtpAction a)
@@ -45,7 +48,10 @@ static void finish_script(BtpState *s, const BtpMap *m)
     if (s->script.status == BTP_SCRIPT_ERROR) {
         /* Prototype recovery: roll back the entire failed menu choice,
            including writes before a dialogue pause, not an original rule. */
-        if (s->checkpoint_valid) memcpy(s->story_flags, s->story_checkpoint, BTP_STORY_BYTES);
+        if (s->checkpoint_valid) {
+            memcpy(s->story_flags, s->story_checkpoint, BTP_STORY_BYTES);
+            s->talk_result = s->checkpoint_talk_result;
+        }
         s->mode = BTP_SCRIPT_FAULT;
     } else if (s->script.status == BTP_SCRIPT_END) {
         /* The original commits the pending outdoor step after FF. */
@@ -56,6 +62,7 @@ static void finish_script(BtpState *s, const BtpMap *m)
     if (s->script.status == BTP_SCRIPT_ERROR || s->script.status == BTP_SCRIPT_MENU ||
         s->script.status == BTP_SCRIPT_END) {
         s->checkpoint_valid = 0; memset(s->story_checkpoint, 0, BTP_STORY_BYTES);
+        s->checkpoint_talk_result = 0;
     }
 }
 void btp_game_tick(BtpState *s, const BtpResources *r, BtpAction a)
@@ -104,10 +111,13 @@ void btp_game_tick(BtpState *s, const BtpResources *r, BtpAction a)
         if (a == BTP_DOWN) s->script.selected = (uint8_t)((s->script.selected + 1) % 5);
         if (a == BTP_ACCEPT) {
             memcpy(s->story_checkpoint, s->story_flags, BTP_STORY_BYTES); s->checkpoint_valid = 1;
+            s->checkpoint_talk_result = s->talk_result;
             (void)btp_script_choose(&s->script, &r->citadel, s->script.selected, s->story_flags);
         }
     } else if (s->script.status == BTP_SCRIPT_WAIT && a == BTP_ACCEPT)
         btp_script_resume(&s->script, &r->citadel, s->story_flags);
+    else if (s->script.status == BTP_SCRIPT_NATIVE) btp_talk_input(s,r,a);
+    if (s->script.status == BTP_SCRIPT_NATIVE && !s->talk.phase) btp_talk_begin(s,r);
     finish_script(s, &r->map);
 }
 
@@ -117,7 +127,7 @@ static uint16_t get16(const uint8_t *p) { return (uint16_t)(p[0] | (uint16_t)p[1
 void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
 {
     memset(b, 0, BTP_STATE_BYTES);
-    memcpy(b, "BTP3", 4); b[4] = 3;
+    memcpy(b, "BTP4", 4); b[4] = 4;
     for (unsigned i = 0; i < 4; ++i) b[8+i] = (uint8_t)(s->tick >> (8 * i));
     b[12] = (uint8_t)s->x_half; b[13] = (uint8_t)(s->x_half >> 8);
     b[14] = (uint8_t)s->y_half; b[15] = (uint8_t)(s->y_half >> 8);
@@ -136,6 +146,10 @@ void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
         put16(b + 70 + 4*i, s->script.text[i].length);
     }
     memcpy(b + 100, s->story_checkpoint, BTP_STORY_BYTES); b[123] = s->checkpoint_valid;
+    b[124] = s->talk.phase; b[125] = s->talk.selected; b[126] = s->talk.count; b[127] = s->talk.mask;
+    memcpy(b+128,s->npc_pairs,16);
+    b[144] = s->talk.room; b[145] = s->talk.actor; b[146] = s->talk_result; b[147] = s->recruitment;
+    b[148] = s->checkpoint_talk_result; b[149] = s->conversation_checkpoint;
 }
 
 int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *script, BtpState *s)
@@ -143,7 +157,8 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
     if (!b || !m || !s || n < 24) return 0;
     int version = n == 24 && !memcmp(b, "BTP1", 4) && b[4] == 1 ? 1 :
         n == 64 && !memcmp(b, "BTP2", 4) && b[4] == 2 ? 2 :
-        n == BTP_STATE_BYTES && !memcmp(b, "BTP3", 4) && b[4] == 3 ? 3 : 0;
+        n == 128 && !memcmp(b, "BTP3", 4) && b[4] == 3 ? 3 :
+        n == BTP_STATE_BYTES && !memcmp(b, "BTP4", 4) && b[4] == 4 ? 4 : 0;
     if (!version) return 0;
     for (unsigned i = 5; i < 8; ++i) if (b[i]) return 0;
     if (version == 1) { for (unsigned i = 20; i < 24; ++i) if (b[i]) return 0; }
@@ -152,7 +167,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         if (version == 2) { for (unsigned i = 59; i < 64; ++i) if (b[i]) return 0; }
         else {
             if (b[67]) return 0;
-            for (unsigned i = 124; i < BTP_STATE_BYTES; ++i) if (b[i]) return 0;
+            for (unsigned i = version == 3 ? 124u : 150u; i < n; ++i) if (b[i]) return 0;
         }
     }
     BtpState result = {0};
@@ -170,12 +185,19 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
             .text_length=get16(b+44),.menu_table=get16(b+46),.fault_pc=get16(b+48),.pause_units=get16(b+50),
             .status=b[52],.selected=b[53],.menu_id=b[54],.font=b[55],.scene=b[56],.last_opcode=b[57],.error=b[58]};
         BtpScriptState *v = &result.script;
-        if (version == 3) {
+        if (version >= 3) {
             memcpy(result.story_flags + 16, b + 59, BTP_STORY_BYTES - 16);
             v->text_count = b[66];
             for (unsigned i = 0; i < BTP_TEXT_SPANS; ++i)
                 v->text[i] = (BtpTextSpan){get16(b+68+4*i),get16(b+70+4*i)};
             memcpy(result.story_checkpoint, b + 100, BTP_STORY_BYTES); result.checkpoint_valid = b[123];
+            if (version == 4) {
+                result.talk = (BtpTalkState){.phase=b[124],.selected=b[125],.count=b[126],.mask=b[127],
+                    .room=b[144],.actor=b[145]};
+                memcpy(result.npc_pairs,b+128,16);
+                result.talk_result = b[146]; result.recruitment = b[147];
+                result.checkpoint_talk_result = b[148]; result.conversation_checkpoint = b[149];
+            }
         } else {
             if (v->text_offset || v->text_length) {
                 v->text_count = 1; v->text[0] = (BtpTextSpan){v->text_offset,v->text_length};
@@ -186,16 +208,20 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
             }
         }
         if (result.mode > BTP_SCRIPT_FAULT || result.entry_selected > 1 || result.entry_slot > 7 ||
-            v->status > BTP_SCRIPT_ERROR || v->selected > 4 || v->error > BTP_SCRIPT_TEXT_LIMIT ||
+            v->status > (version == 4 ? BTP_SCRIPT_NATIVE : BTP_SCRIPT_ERROR) || v->selected > 4 ||
+            v->error > (version == 4 ? BTP_SCRIPT_NATIVE_CONTEXT : BTP_SCRIPT_TEXT_LIMIT) ||
             v->text_count > BTP_TEXT_SPANS || result.checkpoint_valid > 1) return 0;
         for (unsigned i = v->text_count; i < BTP_TEXT_SPANS; ++i)
             if (v->text[i].offset || v->text[i].length) return 0;
         if (result.checkpoint_valid) {
-            if (result.mode != BTP_BUILDING || v->status != BTP_SCRIPT_WAIT) return 0;
-        } else for (unsigned i = 0; i < BTP_STORY_BYTES; ++i)
-            if (result.story_checkpoint[i]) return 0;
+            if (result.mode != BTP_BUILDING || (v->status != BTP_SCRIPT_WAIT && v->status != BTP_SCRIPT_NATIVE)) return 0;
+        } else {
+            if (result.checkpoint_talk_result) return 0;
+            for (unsigned i = 0; i < BTP_STORY_BYTES; ++i) if (result.story_checkpoint[i]) return 0;
+        }
         if (result.mode != BTP_EXPLORE && result.entry_slot != 1) return 0;
-        if (result.mode == BTP_BUILDING && v->status != BTP_SCRIPT_MENU && v->status != BTP_SCRIPT_WAIT) return 0;
+        if (result.mode == BTP_BUILDING && v->status != BTP_SCRIPT_MENU && v->status != BTP_SCRIPT_WAIT &&
+            v->status != BTP_SCRIPT_NATIVE) return 0;
         if ((result.mode == BTP_SCRIPT_FAULT) != (v->status == BTP_SCRIPT_ERROR) ||
             (v->status == BTP_SCRIPT_ERROR) != (v->error != 0)) return 0;
         if ((result.mode == BTP_EXPLORE || result.mode == BTP_ENTRY) &&
@@ -204,12 +230,15 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
             if (!script || script->length > BTP_BLD_MAX || v->pc > script->length || v->fault_pc > script->length) return 0;
             uint8_t text[BTP_BLD_MAX + 1];
             if (!btp_script_text(v, script, text, sizeof text)) return 0;
+            if (v->status == BTP_SCRIPT_NATIVE && (v->pc < 2 || script->bytes[v->pc-2] != 0xf5 ||
+                script->bytes[v->pc-1] != 0x0c || v->text_count || v->pause_units)) return 0;
             if (v->status == BTP_SCRIPT_MENU && (v->menu_id != 8 ||
                 v->menu_table > script->length || script->length - v->menu_table < 10)) return 0;
             if (v->status == BTP_SCRIPT_MENU)
                 for (unsigned i = 0; i < 5; ++i)
                     if (get16(script->bytes + v->menu_table + 2*i) >= script->length) return 0;
         }
+        if (!btp_talk_valid(&result,m)) return 0;
     }
     *s = result;
     return 1;

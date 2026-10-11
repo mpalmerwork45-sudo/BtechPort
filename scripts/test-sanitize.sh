@@ -13,3 +13,4 @@ build/sanitize/btp-script-tests "Original DOS"
 python3 tools/verify_m1.py --binary build/sanitize/btech-headless
 python3 tools/verify_m2.py --binary build/sanitize/btech-headless
 python3 tools/verify_m2b.py --binary build/sanitize/btech-headless
+python3 tools/verify_m2c.py --binary build/sanitize/btech-headless
