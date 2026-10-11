@@ -74,6 +74,7 @@ static void checkpoint(BtpState *s)
     s->checkpoint_armor = s->armor; s->checkpoint_armor_points = s->armor_points;
     memcpy(s->checkpoint_investments,s->investments,sizeof s->investments);
     memcpy(s->checkpoint_skills,s->skills,sizeof s->skills);
+    memcpy(s->checkpoint_mech_skills,s->mech_skills,sizeof s->mech_skills);
 }
 static void start_building(BtpState *s, const BtpResources *r)
 {
@@ -97,6 +98,7 @@ static void finish_script(BtpState *s, const BtpMap *m)
             s->recruitment = s->story_flags[45];
             memcpy(s->investments,s->checkpoint_investments,sizeof s->investments);
             memcpy(s->skills,s->checkpoint_skills,sizeof s->skills);
+            memcpy(s->mech_skills,s->checkpoint_mech_skills,sizeof s->mech_skills);
             s->armor = s->checkpoint_armor; s->armor_points = s->checkpoint_armor_points;
             if (s->npc.enabled) s->npc.allowance_pending = (uint8_t)btp_economy_below_cap(s);
         }
@@ -124,6 +126,7 @@ static void finish_script(BtpState *s, const BtpMap *m)
         s->checkpoint_allowance_cap = 0;
         memset(s->checkpoint_investments,0,sizeof s->checkpoint_investments);
         memset(s->checkpoint_skills,0,sizeof s->checkpoint_skills);
+        memset(s->checkpoint_mech_skills,0,sizeof s->checkpoint_mech_skills);
         s->checkpoint_weapon = s->checkpoint_armor = s->checkpoint_armor_points = 0;
     }
 }
@@ -243,7 +246,7 @@ static uint16_t get16(const uint8_t *p) { return (uint16_t)(p[0] | (uint16_t)p[1
 void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
 {
     memset(b, 0, BTP_STATE_BYTES);
-    memcpy(b, "BTPA", 4); b[4] = 10;
+    memcpy(b, "BTPB", 4); b[4] = 11;
     for (unsigned i = 0; i < 4; ++i) b[8+i] = (uint8_t)(s->tick >> (8 * i));
     b[12] = (uint8_t)s->x_half; b[13] = (uint8_t)(s->x_half >> 8);
     b[14] = (uint8_t)s->y_half; b[15] = (uint8_t)(s->y_half >> 8);
@@ -310,6 +313,8 @@ void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
     b[421] = s->quiz.point; b[422] = s->quiz.failed; put16(b+423,s->quiz.used);
     b[426] = s->mission.phase; b[427] = s->mission.corner; b[428] = s->mission.warned;
     b[429] = s->mission.idle; b[430] = s->mission.walk; b[431] = s->mission.direction; put16(b+432,s->mission.elapsed);
+    b[434] = s->mission.assignment; b[435] = s->mission.rubble; b[436] = s->mission.rubble_under;
+    memcpy(b+437,s->mech_skills,2); memcpy(b+439,s->checkpoint_mech_skills,2);
 }
 
 int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *script, BtpState *s)
@@ -324,7 +329,8 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         n == 384 && !memcmp(b, "BTP7", 4) && b[4] == 7 ? 7 :
         n == 416 && !memcmp(b, "BTP8", 4) && b[4] == 8 ? 8 :
         n == 416 && !memcmp(b, "BTP9", 4) && b[4] == 9 ? 9 :
-        n == BTP_STATE_BYTES && !memcmp(b,"BTPA",4) && b[4] == 10 ? 10 : 0;
+        n == 448 && !memcmp(b,"BTPA",4) && b[4] == 10 ? 10 :
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPB",4) && b[4] == 11 ? 11 : 0;
     if (!version) return 0;
     for (unsigned i = 5; i < 8; ++i) if (b[i]) return 0;
     if (version == 1) { for (unsigned i = 20; i < 24; ++i) if (b[i]) return 0; }
@@ -339,7 +345,10 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
             if (version >= 7) for (unsigned i = 365; i < 384; ++i) if (b[i]) return 0;
             if (version == 8) for (unsigned i = 394; i < n; ++i) if (b[i]) return 0;
             if (version == 9) for (unsigned i = 403; i < n; ++i) if (b[i]) return 0;
-            if (version == 10) { if (b[425]) return 0; for (unsigned i = 434; i < n; ++i) if (b[i]) return 0; }
+            if (version >= 10) {
+                if (b[425]) return 0;
+                for (unsigned i = version == 10 ? 434u : 441u; i < n; ++i) if (b[i]) return 0;
+            }
         }
     }
     BtpState result = {.credits=35,.allowance_cap=50};
@@ -348,7 +357,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
     result.y_half = (uint16_t)(b[14] | (uint16_t)b[15] << 8);
     result.map_id = b[16]; result.gate = b[17]; result.facing = b[18]; result.blocked = b[19];
     if (result.map_id != 1 || result.gate != 85 ||
-        (version == 10 ? result.facing != BTP_IDLE && !btp_action_moves((BtpAction)result.facing) : result.facing > BTP_RIGHT) ||
+        (version >= 10 ? result.facing != BTP_IDLE && !btp_action_moves((BtpAction)result.facing) : result.facing > BTP_RIGHT) ||
         result.blocked > BTP_EDGE || result.x_half >= 2 * m->width || result.y_half >= 2 * m->height)
         return 0;
     if (version > 1) {
@@ -420,7 +429,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
                 memcpy(result.skills,b+384,3); memcpy(result.checkpoint_skills,b+387,3);
                 result.school = (BtpSchoolState){b[390],b[391],b[392],b[393]};
             }
-            if (version == 10) {
+            if (version >= 10) {
                 const unsigned sparse[4] = {45,46,47,51};
                 for (unsigned i = 0; i < 4; ++i) {
                     result.story_flags[sparse[i]] = b[403+i]; result.story_checkpoint[sparse[i]] = b[407+i];
@@ -431,6 +440,10 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
                 result.quiz = (BtpQuizState){.phase=b[418],.selected=b[419],.round=b[420],.point=b[421],.failed=b[422],.used=get16(b+423)};
                 result.mission = (BtpMissionState){.phase=b[426],.corner=b[427],.warned=b[428],.idle=b[429],
                     .walk=b[430],.direction=b[431],.elapsed=get16(b+432)};
+                if (version >= 11) {
+                    result.mission.assignment=b[434]; result.mission.rubble=b[435]; result.mission.rubble_under=b[436];
+                    memcpy(result.mech_skills,b+437,2); memcpy(result.checkpoint_mech_skills,b+439,2);
+                }
                 if (result.story_flags[45] != result.recruitment || result.story_flags[46] != result.talk_result ||
                     result.story_flags[51] != (uint8_t)result.allowance_cap || result.story_flags[47] > 1 ||
                     result.recruitment > 1 || v->mech_result > 3 || v->mech_after > v->text_count ||
@@ -449,13 +462,13 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
                 }
             }
             static const uint8_t protection[6] = {0,25,40,30,50,50};
-            if ((result.allowance_cap != 50 && !(version == 10 && result.allowance_cap == 150)) || result.weapon > 11 || result.armor > 5 ||
+            if ((result.allowance_cap != 50 && !(version >= 10 && result.allowance_cap == 150) && !(version >= 11 && result.allowance_cap == 250)) || result.weapon > 11 || result.armor > 5 ||
                 result.armor_points != protection[result.armor] || result.checkpoint_weapon > 11 || result.checkpoint_armor > 5 ||
                 result.checkpoint_armor_points != protection[result.checkpoint_armor] ||
                 v->confirm_selected > 1 || v->has_cash > 1 || v->cash_after > v->text_count ||
                 (!v->has_cash && (v->cash_after || v->cash_value)) || (v->has_cash && !v->cash_after) ||
                 v->column || (v->row && v->row != 14 && v->row != 22 && !(version >= 7 && v->row == 15)) ||
-                (v->native_action && (v->native_action < (version == 10 ? 1 : version >= 8 ? 4 : version == 7 ? 6 : 9) || v->native_action > 12) &&
+                (v->native_action && (v->native_action < (version >= 10 ? 1 : version >= 8 ? 4 : version == 7 ? 6 : 9) || v->native_action > 12) &&
                     !(v->status == BTP_SCRIPT_ERROR && v->error == BTP_SCRIPT_OPCODE && v->last_opcode == 0xf5)) ||
                 (result.npc.enabled && result.npc.allowance_pending != btp_economy_below_cap(&result))) return 0;
             for (unsigned i = 0; i < BTP_TEXT_SPANS; ++i)
@@ -480,7 +493,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
                 result.story_checkpoint[51] = (uint8_t)result.allowance_cap;
             }
         }
-        if (result.mode > (version == 10 ? BTP_MISSION : BTP_SCRIPT_FAULT) || result.entry_selected > 1 || result.entry_slot > 7 ||
+        if (result.mode > (version >= 10 ? BTP_MISSION : BTP_SCRIPT_FAULT) || result.entry_selected > 1 || result.entry_slot > 7 ||
             v->status > (version >= 6 ? BTP_SCRIPT_CONFIRM : version >= 4 ? BTP_SCRIPT_NATIVE : BTP_SCRIPT_ERROR) || v->selected > (version >= 6 ? 6 : 4) ||
             v->error > (version >= 4 ? BTP_SCRIPT_NATIVE_CONTEXT : BTP_SCRIPT_TEXT_LIMIT) ||
             v->text_count > BTP_TEXT_SPANS || result.checkpoint_valid > 1) return 0;
@@ -489,17 +502,18 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         if (result.checkpoint_valid) {
             if ((result.mode != BTP_BUILDING && result.mode != BTP_MISSION) || (v->status != BTP_SCRIPT_WAIT && v->status != BTP_SCRIPT_NATIVE &&
                 v->status != BTP_SCRIPT_CONFIRM)) return 0;
-            if (version >= 6 && result.checkpoint_allowance_cap != 50 && result.checkpoint_allowance_cap != 150) return 0;
+            if (version >= 6 && result.checkpoint_allowance_cap != 50 && result.checkpoint_allowance_cap != 150 && !(version >= 11 && result.checkpoint_allowance_cap == 250)) return 0;
         } else {
             if (result.checkpoint_talk_result || result.checkpoint_credits || result.checkpoint_weapon ||
                 result.checkpoint_armor || result.checkpoint_armor_points || result.checkpoint_allowance_cap) return 0;
             for (unsigned i = 0; i < 3; ++i) if (result.checkpoint_investments[i] || result.checkpoint_skills[i]) return 0;
+            if (result.checkpoint_mech_skills[0] || result.checkpoint_mech_skills[1]) return 0;
             for (unsigned i = 0; i < BTP_STORY_BYTES; ++i) if (result.story_checkpoint[i]) return 0;
         }
         if (result.mode != BTP_EXPLORE && result.entry_slot != 1 &&
             !(version >= 6 && (result.entry_slot == 3 || result.entry_slot == 4)) &&
             !(version >= 7 && result.entry_slot == 2) &&
-            !(version == 10 && (result.entry_slot == 0 || result.entry_slot == 6 || result.entry_slot == 7))) return 0;
+            !(version >= 10 && (result.entry_slot == 0 || result.entry_slot == 6 || result.entry_slot == 7))) return 0;
         if (result.mode == BTP_BUILDING && v->status != BTP_SCRIPT_MENU && v->status != BTP_SCRIPT_WAIT &&
             v->status != BTP_SCRIPT_NATIVE && v->status != BTP_SCRIPT_CONFIRM) return 0;
         if ((result.mode == BTP_SCRIPT_FAULT) != (v->status == BTP_SCRIPT_ERROR) ||
@@ -514,7 +528,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
                 script->bytes[v->pc-1] != v->native_action || v->pause_units ||
                 (v->native_action == 12 ? v->text_count != 0 :
                     version < 7 || (v->native_action != 7 && v->native_action != 8 &&
-                        !(version == 10 && v->native_action == 1 && result.mode == BTP_MISSION))))) return 0;
+                        !(version >= 10 && v->native_action == 1 && result.mode == BTP_MISSION))))) return 0;
             if (v->status == BTP_SCRIPT_CONFIRM && (v->pc < 3 || script->bytes[v->pc-3] != 0xf6 ||
                 v->confirm_target != get16(script->bytes+v->pc-2) || v->confirm_target >= script->length)) return 0;
             unsigned count = btp_menu_count(v->menu_id);

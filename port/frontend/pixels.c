@@ -301,7 +301,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
             if (x >= 104) {
                 int wx = camera_x + x - 104, wy = camera_y + y;
                 if (wx >= 0 && wy >= 0 && wx < r->map.width * 16 && wy < r->map.height * 16) {
-                    unsigned tile = btp_map_tile(&r->map, wx / 16, wy / 16);
+                    unsigned tile = btp_mission_tile(s,&r->map, wx / 16, wy / 16);
                     if (s->mission.phase && wx/16 == 61 && wy/16 == 61) tile = 0;
                     if (tile < 250) {
                         unsigned index = tile * 256 + (unsigned)(wy % 16) * 16 + (unsigned)(wx % 16);

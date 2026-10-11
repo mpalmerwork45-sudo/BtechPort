@@ -32,8 +32,13 @@ typedef struct { uint8_t phase, course, before, outcome; } BtpSchoolState;
 typedef enum { BTP_QUIZ_NONE, BTP_QUIZ_INTRO, BTP_QUIZ_QUESTION, BTP_QUIZ_FAILED } BtpQuizPhase;
 typedef struct { uint8_t phase, selected, round, point, failed; uint16_t used; } BtpQuizState;
 typedef enum { BTP_MISSION_NONE, BTP_MISSION_DRIVE, BTP_MISSION_WARNING,
-    BTP_MISSION_CORNER, BTP_MISSION_RESULT } BtpMissionPhase;
-typedef struct { uint8_t phase, corner, warned, idle, walk, direction; uint16_t elapsed; } BtpMissionState;
+    BTP_MISSION_CORNER, BTP_MISSION_RESULT, BTP_MISSION_SNICKER,
+    BTP_MISSION_PICKUP } BtpMissionPhase;
+typedef struct {
+    uint8_t phase, corner, warned, idle, walk, direction;
+    uint16_t elapsed;
+    uint8_t assignment, rubble, rubble_under;
+} BtpMissionState;
 typedef struct {
     uint32_t tick;
     uint16_t x_half, y_half;
@@ -60,8 +65,9 @@ typedef struct {
     uint16_t checkpoint_allowance_cap;
     BtpQuizState quiz;
     BtpMissionState mission;
+    uint8_t mech_skills[2], checkpoint_mech_skills[2]; /* Original C61B/C61C. */
 } BtpState;
-enum { BTP_STATE_BYTES = 448 };
+enum { BTP_STATE_BYTES = 512 };
 
 void btp_start(BtpState *state);
 void btp_tick(BtpState *state, const BtpMap *map, BtpAction action);

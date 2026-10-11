@@ -203,8 +203,8 @@ static void mission(const BtpResources *r)
         restored_tick(&s,r,BTP_ACCEPT); CHECK(s.mode == BTP_EXPLORE && s.allowance_cap == 150);
         s.story_flags[20]=0; enter(&s,r,0); answers(&s,r,0);
         restored_tick(&s,r,BTP_ACCEPT); restored_tick(&s,r,BTP_ACCEPT); select(&s,r,0);
-        CHECK(s.mode == BTP_SCRIPT_FAULT && s.story_flags[0] == 1 && s.allowance_cap == 150 && !s.mission.phase);
-        CHECK(s.x_half == 45 && s.y_half == 114);
+        CHECK(s.mode == BTP_MISSION && s.story_flags[0] == 1 && s.allowance_cap == 150 && s.mission.assignment == 1);
+        CHECK(s.x_half == 64 && s.y_half == 79 && s.mission.phase == BTP_MISSION_SNICKER);
     }
 }
 static void lounge(const BtpResources *r)
@@ -226,6 +226,51 @@ static void lounge(const BtpResources *r)
     restored_tick(&s,r,BTP_ACCEPT); CHECK(s.talk.phase == BTP_TALK_REPLY);
     restored_tick(&s,r,BTP_ACCEPT); restored_tick(&s,r,BTP_DOWN); restored_tick(&s,r,BTP_ACCEPT);
     CHECK(s.script.menu_id == 24 && s.story_flags[47] == 1);
+}
+static void rubble(const BtpResources *r)
+{
+    for (unsigned mech=0;mech<3;++mech) for (unsigned rubble=0;rubble<8;++rubble) {
+        BtpState s; btp_start(&s); btp_npc_init(&s,&r->map);
+        s.story_flags[0]=1; s.story_flags[1]=1; s.allowance_cap=150; s.story_flags[51]=150;
+        enter(&s,r,0); answers(&s,r,0);
+        restored_tick(&s,r,BTP_ACCEPT); CHECK(s.script.text[0].offset == 0x40f);
+        restored_tick(&s,r,BTP_ACCEPT); select(&s,r,mech);
+        CHECK(s.mode == BTP_MISSION && s.mission.assignment == 1);
+        if (!mech) {
+            CHECK(s.mission.phase == BTP_MISSION_SNICKER);
+            restored_tick(&s,r,BTP_ACCEPT);
+        }
+        s.mission.rubble=(uint8_t)rubble;
+        s.mission.rubble_under=btp_map_tile(&r->map,btp_rubble_x[rubble],btp_rubble_y[rubble]);
+        s.x_half=(uint16_t)(2u*btp_rubble_x[rubble]-2u);
+        s.y_half=(uint16_t)(2u*btp_rubble_y[rubble]+2u); s.mission.idle=0;
+        CHECK(btp_mission_tile(&s,&r->map,btp_rubble_x[rubble],btp_rubble_y[rubble]) == 80);
+        restored_tick(&s,r,BTP_IDLE);
+        CHECK(s.mission.corner && s.mission.phase == BTP_MISSION_PICKUP && !s.mission.elapsed);
+        CHECK(btp_mission_tile(&s,&r->map,btp_rubble_x[rubble],btp_rubble_y[rubble]) ==
+            (mech ? s.mission.rubble_under : 80));
+        invalid(&s,r,434,2); invalid(&s,r,435,8); invalid(&s,r,432,1);
+        restored_tick(&s,r,BTP_ACCEPT);
+        /* Arbitrarily long waits cannot fail the original second assignment. */
+        for (unsigned n=0;n<32;++n) restored_tick(&s,r,BTP_IDLE);
+        CHECK(!s.mission.elapsed); s.x_half=60; s.y_half=79;
+        restored_tick(&s,r,BTP_IDLE);
+        CHECK(s.mode == BTP_BUILDING && s.mission.phase == BTP_MISSION_RESULT);
+        CHECK(s.mech_skills[1] == 1 && s.story_flags[1] == (mech != 0));
+        CHECK(s.story_flags[0] == (mech ? 2 : 1) && s.allowance_cap == (mech ? 250 : 150));
+        restored_tick(&s,r,BTP_ACCEPT); CHECK(s.mode == BTP_EXPLORE && !s.mission.phase);
+        if (mech && !rubble) {
+            s.story_flags[20]=0; enter(&s,r,0); answers(&s,r,0);
+            restored_tick(&s,r,BTP_ACCEPT);
+            CHECK(s.script.status == BTP_SCRIPT_WAIT && s.script.text[0].offset == 0x4f8);
+            restored_tick(&s,r,BTP_ACCEPT); CHECK(s.mode == BTP_EXPLORE);
+            s.story_flags[19]=1; s.story_flags[20]=0; enter(&s,r,0); answers(&s,r,0);
+            restored_tick(&s,r,BTP_ACCEPT);
+            CHECK(s.script.text[0].offset == 0x5b7); restored_tick(&s,r,BTP_ACCEPT);
+            select(&s,r,mech);
+            CHECK(s.mode == BTP_SCRIPT_FAULT && !s.mission.phase && s.story_flags[0] == 2 && s.allowance_cap == 250);
+        }
+    }
 }
 static void diagonal_return(const BtpResources *r)
 {
@@ -249,7 +294,7 @@ int main(int argc, char **argv)
     if (argc > 1) {
         BtpResources *r=malloc(sizeof *r); BtpError e; CHECK(r);
         CHECK(btp_resources_load(argv[1],r,&e)); CHECK(btp_dialogue_load("work/talk-data.bin",&r->dialogue,&e));
-        quiz(r); barracks(r); mission(r); lounge(r); diagonal_return(r); free(r);
+        quiz(r); barracks(r); mission(r); rubble(r); lounge(r); diagonal_return(r); free(r);
     }
     printf("PASS: %u training timer, quiz, mission, barracks, lounge and continuation assertions.\n",checks);
     return 0;
