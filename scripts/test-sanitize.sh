@@ -11,6 +11,7 @@ ctest --test-dir build/sanitize --output-on-failure
 build/sanitize/btp-tests "Original DOS"
 build/sanitize/btp-script-tests "Original DOS"
 build/sanitize/btp-shop-tests "Original DOS"
+build/sanitize/btp-save-tests "Original DOS"
 python3 tools/verify_m1.py --binary build/sanitize/btech-headless
 python3 tools/verify_m2.py --binary build/sanitize/btech-headless
 python3 tools/verify_m2b.py --binary build/sanitize/btech-headless
@@ -18,3 +19,4 @@ python3 tools/verify_m2c.py --binary build/sanitize/btech-headless
 python3 tools/verify_m2d.py --binary build/sanitize/btech-headless
 python3 tools/verify_m2e.py --binary build/sanitize/btech-headless
 python3 tools/verify_m2f.py --binary build/sanitize/btech-headless
+python3 tools/verify_m2g.py --binary build/sanitize/btech-headless

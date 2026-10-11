@@ -1,6 +1,7 @@
 #define SDL_MAIN_HANDLED
 #include <SDL.h>
 #include "frontend/cli.h"
+#include "data/save.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -37,13 +38,14 @@ int main(int argc, char **argv)
     if (o.headless) { result = btp_run_headless(&o, r); goto done; }
     if (o.tiles_output) { fputs("--export-tiles requires --headless\n", stderr); goto done; }
     BtpState state; btp_initial_state(&o,&state,r);
+    if (o.load && !btp_save_load(o.load,&state,r,&error)) { fprintf(stderr,"%s\n",error.text); goto done; }
     if (o.replay && o.smoke < 5 && !btp_replay(o.replay, &state, r, o.trace)) goto done;
     SDL_SetMainReady();
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_TIMER)) {
         fprintf(stderr, "SDL: %s\n", SDL_GetError()); goto done;
     }
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
-    SDL_Window *window = SDL_CreateWindow("BtechPort M2f - MAP1, ComStar and shops", SDL_WINDOWPOS_CENTERED,
+    SDL_Window *window = SDL_CreateWindow("BtechPort M2g - MAP1, ComStar and save/load", SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED, 960, 600, SDL_WINDOW_RESIZABLE);
     SDL_Renderer *renderer = window ? SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE) : NULL;
     SDL_Texture *texture = renderer ? SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
@@ -59,6 +61,8 @@ int main(int argc, char **argv)
     unsigned smoke_sent = 0, tail_sent = 0;
     int arrival_done = 0;
     int running = 1, io_failed = 0;
+    const char *notice = NULL;
+    uint64_t notice_until = 0;
     if (o.smoke && o.smoke < 5) {
         const SDL_Keycode smoke_keys[] = {SDLK_RIGHT, SDLK_UP, SDLK_DOWN};
         const SDL_Keycode citadel_keys[] = {SDLK_UP,SDLK_UP,SDLK_UP,SDLK_UP,SDLK_UP,
@@ -119,6 +123,22 @@ int main(int argc, char **argv)
                 SDL_Keycode key = event.key.keysym.sym;
                 if (key == SDLK_ESCAPE && state.bank.phase != BTP_BANK_AMOUNT) running = 0;
                 else if (key == SDLK_F3 && !event.key.repeat) o.debug = !o.debug;
+                else if ((key == SDLK_F5 || key == SDLK_F9) && !event.key.repeat) {
+                    int saving = key == SDLK_F5;
+                    int ok;
+                    if (!saving && record) {
+                        fputs("Loading while recording is unsupported; start a new log after loading.\n",stderr);
+                        ok = 0;
+                    } else {
+                        ok = saving ? btp_save_write(o.save_file,&state,r,&error) :
+                            btp_save_load(o.save_file,&state,r,&error);
+                        if (!ok) fprintf(stderr,"%s\n",error.text);
+                    }
+                    if (ok && !saving) { read = write = 0; accumulator = 0; last = SDL_GetTicks64(); }
+                    notice = ok ? (saving ? "Saved" : "Loaded") : (saving ? "Save failed" : "Load failed");
+                    notice_until = SDL_GetTicks64()+3000;
+                    SDL_SetWindowTitle(window,notice);
+                }
                 else if (key == SDLK_r && !event.key.repeat) {
                     if (record) { fputs("Restart while recording is unsupported; start a new log.\n", stderr); }
                     else { btp_initial_state(&o,&state,r); read = write = 0; }
@@ -151,9 +171,12 @@ int main(int argc, char **argv)
             io_failed = 1; running = 0;
         }
         SDL_RenderPresent(renderer);
-        if (o.debug) {
+        if (notice && SDL_GetTicks64() >= notice_until) {
+            notice = NULL; SDL_SetWindowTitle(window,"BtechPort M2g - MAP1, ComStar and save/load");
+        }
+        if (o.debug && !notice) {
             char title[200];
-            snprintf(title, sizeof title, "BtechPort M2f | %s | half=(%u,%u) | PC=%04x op=%02x | tick=%u",
+            snprintf(title, sizeof title, "BtechPort M2g | %s | half=(%u,%u) | PC=%04x op=%02x | tick=%u",
                 btp_mode_name(state.mode), state.x_half, state.y_half, state.script.pc,
                 state.script.last_opcode, state.tick);
             SDL_SetWindowTitle(window, title);
@@ -179,6 +202,9 @@ int main(int argc, char **argv)
         state.conversation_checkpoint || state.npc.enabled != 2 || state.npc.fault ||
         state.weapon != 1 || state.armor != 1 || state.armor_points != 25)) {
         fputs("Native shops smoke input/state mismatch\n",stderr); result = 1;
+    }
+    if (!result && o.save && !btp_save_write(o.save,&state,r,&error)) {
+        fprintf(stderr,"%s\n",error.text); result = 1;
     }
 sdl_done:
     if (arrival && fclose(arrival)) result = 1;

@@ -1,16 +1,18 @@
 #include "frontend/cli.h"
 #include "core/npc.h"
+#include "data/save.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 int btp_options(int argc, char **argv, BtpOptions *o)
 {
-    *o = (BtpOptions){.data = "Original DOS",.dialogue_data="work/talk-data.bin"};
+    *o = (BtpOptions){.data = "Original DOS",.dialogue_data="work/talk-data.bin",
+        .save_file="work/player-save.btp"};
     for (int i = 1; i < argc; ++i) {
         const char *arg = argv[i];
         if (!strcmp(arg, "--help")) {
-            puts("BtechPort M2f: MAP1, ComStar banking and shop conversations\n"
+            puts("BtechPort M2g: MAP1, banking, shop conversations and save/load\n"
                  "  --data DIRECTORY     original resource directory (default: Original DOS)\n"
                  "  --dialogue-data FILE local EXE text cache (default: work/talk-data.bin)\n"
                  "  --conversation-checkpoint  isolated controlled Talk handler test\n"
@@ -21,6 +23,9 @@ int btp_options(int argc, char **argv, BtpOptions *o)
                  "  --frame FILE         write final 320x200 RGB PPM\n"
                  "  --export-tiles FILE  write 64000 decoded tile pixel indices\n"
                  "  --record FILE        native logical input log for replay (includes idle ticks)\n"
+                 "  --save-file FILE     slot for F5 save/F9 load (default: work/player-save.btp)\n"
+                 "  --load FILE          restore an internal save before replay/play\n"
+                 "  --save FILE          write an internal save on successful exit\n"
                  "  --debug              collision overlay and diagnostics (F3 toggles)\n"
                  "  --smoke              bounded native SDL event/presentation check\n"
                  "  --smoke-citadel      bounded native Citadel entry/dialogue/exit check\n"
@@ -31,7 +36,7 @@ int btp_options(int argc, char **argv, BtpOptions *o)
                  "  --smoke-replay       feed any bounded --replay through SDL events\n"
                  "Native controls: arrows move/select, Enter/Space confirms/continues,\n"
                  "Bank amounts: digits type, Backspace erases, Esc clears; Enter submits.\n"
-                 "Backspace declines/recovers other choices, R restarts, F3 debug, Esc quits.");
+                 "F5 saves, F9 loads. Backspace declines/recovers, R restarts, F3 debug, Esc quits.");
             return -1;
         }
         if (!strcmp(arg, "--headless")) o->headless = 1;
@@ -59,12 +64,18 @@ int btp_options(int argc, char **argv, BtpOptions *o)
             if (!strcmp(arg, "--frame")) value = &o->frame;
             if (!strcmp(arg, "--record")) value = &o->record;
             if (!strcmp(arg, "--export-tiles")) value = &o->tiles_output;
+            if (!strcmp(arg, "--save-file")) value = &o->save_file;
+            if (!strcmp(arg, "--load")) value = &o->load;
+            if (!strcmp(arg, "--save")) value = &o->save;
             if (!value || i + 1 == argc) { fprintf(stderr, "Unknown/incomplete option: %s\n", arg); return 0; }
             *value = argv[++i];
         }
     }
     if (o->conversation_checkpoint && o->shop_talk_checkpoint) {
         fputs("Choose one explicit Talk checkpoint\n",stderr); return 0;
+    }
+    if (o->load && (o->conversation_checkpoint || o->shop_talk_checkpoint)) {
+        fputs("Loading a save cannot also inject a Talk checkpoint\n",stderr); return 0;
     }
     if (o->smoke >= 5 && (!o->replay || (o->smoke < 7 && (o->conversation_checkpoint || o->shop_talk_checkpoint)))) {
         fputs("Native route smoke requires --replay and the normal initial state\n",stderr); return 0;
@@ -161,6 +172,10 @@ int btp_replay(const char *path, BtpState *s, const BtpResources *r, int trace)
 int btp_run_headless(const BtpOptions *o, BtpResources *r)
 {
     BtpState state; btp_initial_state(o,&state,r);
+    BtpError error;
+    if (o->load && !btp_save_load(o->load,&state,r,&error)) {
+        fprintf(stderr,"%s\n",error.text); return 1;
+    }
     int result = 0;
     if (o->record || o->smoke) { fputs("--record/--smoke require the native frontend\n", stderr); return 1; }
     if (o->trace) btp_print_state(&state, r);
@@ -184,5 +199,8 @@ int btp_run_headless(const BtpOptions *o, BtpResources *r)
         if (!ok) { fputs("Frame write failed\n", stderr); return 1; }
     }
     if (!o->trace) btp_print_state(&state, r);
+    if (!result && o->save && !btp_save_write(o->save,&state,r,&error)) {
+        fprintf(stderr,"%s\n",error.text); return 1;
+    }
     return result;
 }

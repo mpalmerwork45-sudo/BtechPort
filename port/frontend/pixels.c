@@ -243,7 +243,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
     /* Approximate player marker until ANIMATE.ICN selection/masking is verified. */
     for (int y = 97; y <= 102; ++y)
         for (int x = 211; x <= 213; ++x) pixel(f, x, y, btp_palette[y < 99 ? 15 : 1]);
-    text(f, 8, 9, "BtechPort M2f", 15);
+    text(f, 8, 9, "BtechPort M2g", 15);
     text(f, 8, 24, s->mode >= BTP_ENTRY ? (s->entry_slot == 3 ? "Weapons Shop" :
         s->entry_slot == 4 ? "Armor Shop" : s->entry_slot == 2 ? "ComStar" : "Citadel") : "Training", 14);
     text(f, 8, 36, s->conversation_checkpoint ? "TALK CHECKPOINT" :
@@ -258,6 +258,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
     text(f, 8, 125, line, 15);
     snprintf(line, sizeof line, "Y %u.%u", s->y_half / 2, (s->y_half % 2) * 5);
     text(f, 8, 137, line, 15);
+    text(f,8,189,"F5 SAVE F9 LOAD",7);
     if (s->blocked) text(f, 8, 151, s->blocked == BTP_EDGE ? "MAP EDGE" : "BLOCKED", 12);
     if (s->npc.fault) { text(f,8,151,"NPC DATA ERROR",12); return; }
     if (s->mode >= BTP_BUILDING) {

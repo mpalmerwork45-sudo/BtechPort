@@ -1,6 +1,8 @@
-# Project status — M2f review, 2026-10-11
+# Project status — M2g complete, M2h in progress, 2026-10-11
 
-**M0, M1 and bounded M2a–M2f are complete. Stop here for milestone review.**
+**M0, M1 and bounded M2a–M2g are complete. The user authorized M2g and M2h
+together; continue through the bounded training audit/implementation.**
+M2g adds F5 save/F9 load and checked restart/continuation from internal saves.
 ComStar now supports its original three investment accounts, account inspection,
 buying/selling, numeric entry, boundary responses and return to MAP1. Outdoor
 allowances and investment changes follow the audited local rules. Talk works in
@@ -20,7 +22,8 @@ and remaining M2 systems are unfinished.
 | M2d | MAP1 NPC travel; conversation reachable through exploration |
 | M2e | Two shop purchases, confirmations, local allowance and persistence |
 | M2f | ComStar investments/returns, banking boundaries and Talk in both shops |
-| Proposed M2g | Player-facing save/load for the verified internal state |
+| M2g | One internal save slot, native controls, file integrity and restart continuation |
+| In progress M2h | First paid Class course, original cooldown/progression audit |
 | Remaining M2 | Wider inventory/shops, day/training, maps/world and campaign foundations |
 | M3–M5 | Verified tactical combat; original campaign; optional separate enhancements |
 

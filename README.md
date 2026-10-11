@@ -1,6 +1,6 @@
 # BtechPort
 
-Independent C11/SDL2 recreation research for **BattleTech: The Crescent Hawk's Inception**, supplied DOS version 1.03. **M0, M1 and bounded M2a–M2f are complete.** Explore MAP1 with moving NPCs, visit the Citadel, buy a flak vest and knife, trade investments at ComStar and talk to occupants in both shops. Text preserves upper/lower case. Development stops here for milestone review; the campaign remains unfinished.
+Independent C11/SDL2 recreation research for **BattleTech: The Crescent Hawk's Inception**, supplied DOS version 1.03. **M0, M1 and bounded M2a–M2g are complete; M2h is in progress.** Explore MAP1 with moving NPCs, visit the Citadel, buy a flak vest and knife, trade investments at ComStar and talk to occupants in both shops. Native save/load preserves progress. Text preserves upper/lower case; the campaign remains unfinished.
 
 From this directory on the current Kubuntu machine:
 
@@ -14,6 +14,14 @@ Arrows move/select; Enter or Space confirms and advances dialogue; Backspace dec
 
 Bank amounts use digits (including keypad), Backspace erasure, Escape to clear
 to 0, and Enter to submit; Space does not submit. Escape closes elsewhere.
+
+**F5 saves; F9 loads** the single slot `work/player-save.btp`. Failed loads keep
+the current session intact. `--save-file FILE` chooses a slot; `--load FILE`
+starts from a save, and `--save FILE` writes on successful exit. Paused dialogue
+and partial bank amounts restore too. These internal saves use the tested state
+format; original DOS GAME compatibility remains unimplemented. Loading during
+input recording is refused; start the next log after loading. See
+[save/load verification](docs/M2_SAVE_EVIDENCE.md).
 
 To open directly on Katrina's first conversation:
 
