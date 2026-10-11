@@ -89,7 +89,7 @@ static void boundaries(const BtpResources *r)
     uint8_t saved[BTP_STATE_BYTES], corrupt[BTP_STATE_BYTES]; BtpState untouched = s, copy = s;
     btp_state_encode(&s,saved);
     const unsigned offsets[] = {228,230,232,235,237,242,277,278,301};
-    const uint8_t invalid[] = {49,2,26,2,9,1,2,1,1};
+    const uint8_t invalid[] = {49,12,26,2,9,1,2,1,1};
     for (unsigned i = 0; i < sizeof offsets/sizeof offsets[0]; ++i) {
         memcpy(corrupt,saved,sizeof corrupt); corrupt[offsets[i]] = invalid[i];
         CHECK(!btp_state_decode(corrupt,sizeof corrupt,&r->map,&r->armor,&copy));
@@ -101,10 +101,10 @@ static void boundaries(const BtpResources *r)
     CHECK(s.story_flags[11] == 1 && s.credits == 0 && s.weapon == 1);
     enter(&s,r,3,2); restored_tick(&s,r,BTP_RIGHT); restored_tick(&s,r,BTP_ACCEPT);
     CHECK(s.credits == 2 && !s.weapon && s.script.menu_id == 15 && s.script.selected == 1);
-    /* A different item is explicitly unsupported, without debit or lost progress. */
-    enter(&s,r,4,50); restored_tick(&s,r,BTP_RIGHT); restored_tick(&s,r,BTP_ACCEPT);
-    restored_tick(&s,r,BTP_DOWN); restored_tick(&s,r,BTP_ACCEPT); restored_tick(&s,r,BTP_ACCEPT);
-    CHECK(s.mode == BTP_SCRIPT_FAULT && s.script.error == BTP_SCRIPT_NATIVE_CONTEXT && s.credits == 50 && !s.armor);
+    /* Repair remains outside purchases; failed service preserves equipment. */
+    enter(&s,r,4,50); restored_tick(&s,r,BTP_ACCEPT); restored_tick(&s,r,BTP_ACCEPT);
+    restored_tick(&s,r,BTP_DOWN); restored_tick(&s,r,BTP_ACCEPT);
+    CHECK(s.mode == BTP_SCRIPT_FAULT && s.script.error == BTP_SCRIPT_OPCODE && s.credits == 0 && s.armor == 1);
     restored_tick(&s,r,BTP_CANCEL); CHECK(s.mode == BTP_BUILDING && s.script.menu_id == 12);
     /* Primary threshold compares before adding: repeated funding can exceed cap. */
     btp_start(&s); btp_npc_init(&s,&r->map); s.credits = 43; s.npc.loop_timer = 0;
@@ -128,12 +128,48 @@ static void replay(const BtpResources *r, const char *path)
     CHECK(s.mode == BTP_EXPLORE && s.x_half == 32 && s.y_half == 44 && s.weapon == 1 && s.armor == 1 && s.armor_points == 25);
     printf("Shop persistence: %u ticks restored with identical continuation (%s).\n",ticks,path);
 }
+static void all_goods(const BtpResources *r)
+{
+    static const unsigned weapons[11]={2,10,100,10,20,35,40,80,250,1500,1500};
+    static const unsigned armor[5]={50,150,200,10000,1000}, protection[5]={25,40,30,50,50};
+    for (unsigned slot=3;slot<=4;++slot) for (unsigned id=1;id<=(slot == 3 ? 11u : 5u);++id)
+        for (unsigned scenario=0;scenario<4;++scenario) {
+            unsigned price = slot == 3 ? weapons[id-1] : armor[id-1];
+            uint32_t cash = scenario == 0 ? price-1 : scenario == 2 ? 100000u+price : price;
+            BtpState s; btp_start(&s); btp_npc_init(&s,&r->map);
+            s.credits=cash; s.npc.allowance_pending=(uint8_t)(cash < s.allowance_cap);
+            s.weapon=11; s.armor=5; s.armor_points=50;
+            s.x_half=r->map.entrance_x[slot]&127; s.y_half=(uint16_t)((r->map.entrance_y[slot]&127)+1);
+            restored_tick(&s,r,BTP_UP); restored_tick(&s,r,BTP_ACCEPT); restored_tick(&s,r,BTP_ACCEPT);
+            unsigned category = id <= 6 ? 1 : id <= 9 ? 2 : 3;
+            unsigned selection = id <= 6 ? id : id <= 9 ? id-6 : id-9;
+            if (slot == 3) {
+                for (unsigned n=0;n<category;++n) restored_tick(&s,r,BTP_DOWN);
+                restored_tick(&s,r,BTP_ACCEPT);
+            } else selection=id;
+            for (unsigned n=0;n<selection;++n) restored_tick(&s,r,BTP_DOWN);
+            restored_tick(&s,r,BTP_ACCEPT); CHECK(s.script.status == BTP_SCRIPT_CONFIRM);
+            if (scenario == 3) restored_tick(&s,r,BTP_RIGHT);
+            restored_tick(&s,r,BTP_ACCEPT);
+            if (scenario == 0 || scenario == 3) {
+                CHECK(s.credits == cash && s.weapon == 11 && s.armor == 5 && s.armor_points == 50);
+                if (scenario == 0) CHECK(!s.story_flags[11] && s.script.status == BTP_SCRIPT_WAIT);
+                else CHECK(s.script.status == BTP_SCRIPT_MENU);
+            } else {
+                CHECK(s.credits == cash-price && s.story_flags[11] && s.script.status == BTP_SCRIPT_WAIT);
+                CHECK(s.weapon == (slot == 3 ? id : 11));
+                CHECK(s.armor == (slot == 4 ? id : 5) && s.armor_points == (slot == 4 ? protection[id-1] : 50));
+            }
+            if (s.script.status == BTP_SCRIPT_WAIT) restored_tick(&s,r,BTP_ACCEPT);
+            CHECK(s.mode != BTP_SCRIPT_FAULT);
+        }
+}
 int main(int argc, char **argv)
 {
     vm_bounds();
     if (argc == 2) {
         BtpResources *r = malloc(sizeof *r); BtpError e; CHECK(r && btp_resources_load(argv[1],r,&e));
-        boundaries(r); replay(r,"tests/fixtures/reference-shops.actions"); replay(r,"tests/fixtures/reference-shop-boundaries.actions"); free(r);
+        boundaries(r); all_goods(r); replay(r,"tests/fixtures/reference-shops.actions"); replay(r,"tests/fixtures/reference-shop-boundaries.actions"); free(r);
     }
     printf("PASS: %u shop checks\n",checks); return 0;
 }

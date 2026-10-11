@@ -20,15 +20,15 @@ typedef struct {
 } BtpBld;
 typedef struct { char text[256]; } BtpError;
 /* 43 earlier bank/Talk strings plus 12 class transcript/rank/subject strings. */
-enum { BTP_TALK_STRINGS = 55, BTP_TALK_MAX = 2048 };
+enum { BTP_TALK_STRINGS = 84, BTP_TALK_MAX = 4096 };
 typedef struct {
     uint8_t bytes[BTP_TALK_MAX];
     uint16_t length, offset[BTP_TALK_STRINGS], size[BTP_TALK_STRINGS];
 } BtpDialogue;
 typedef struct {
     BtpMap map;
-    BtpGraphic tiles, sprites;
-    BtpBld citadel, armor, weapon, comstar;
+    BtpGraphic tiles, sprites, quiz_diagram;
+    BtpBld citadel, armor, weapon, comstar, training, barracks, lounge;
     BtpDialogue dialogue;
 } BtpResources;
 

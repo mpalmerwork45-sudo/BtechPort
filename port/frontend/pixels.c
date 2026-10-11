@@ -1,6 +1,7 @@
 #include "frontend/pixels.h"
 #include "core/bank.h"
 #include "core/school.h"
+#include "core/training.h"
 #include "data/sprites.h"
 #include <stdio.h>
 #include <string.h>
@@ -276,6 +277,23 @@ static void story_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
 
 void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[BTP_PIXELS])
 {
+    if (s->mode == BTP_QUIZ && s->quiz.phase == BTP_QUIZ_QUESTION) {
+        for (unsigned i = 0; i < BTP_PIXELS; ++i) f[i] = btp_palette[terrain_palette[r->quiz_diagram.pixels[i]&15u]];
+        rectangle(f,0,0,128,200,0);
+        text(f,3,2,"Identify this",15); text(f,3,10,"'Mech part:",15);
+        for (unsigned i = 0; i < BTP_QUIZ_PARTS; ++i) {
+            size_t n; const uint8_t *p = bank_literal(r,58u+i,&n);
+            if (!p || n > 20) continue;
+            char label[21]; memcpy(label,p,n); label[n] = 0;
+            int y = 28+(int)i*8;
+            if (s->quiz.selected == i) rectangle(f,0,y-1,127,8,14);
+            text(f,3,y,label,s->quiz.selected == i ? 0u : 15u);
+        }
+        int x = btp_quiz_x[s->quiz.point]-3, y = btp_quiz_y[s->quiz.point]-3;
+        rectangle(f,x,y,9,1,15); rectangle(f,x,y+8,9,1,15);
+        rectangle(f,x,y,1,9,15); rectangle(f,x+8,y,1,9,15);
+        return;
+    }
     int camera_x = (int)s->x_half * 8 - 96, camera_y = (int)s->y_half * 8 - 96;
     for (int y = 0; y < 200; ++y)
         for (int x = 0; x < 320; ++x) {
@@ -284,6 +302,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                 int wx = camera_x + x - 104, wy = camera_y + y;
                 if (wx >= 0 && wy >= 0 && wx < r->map.width * 16 && wy < r->map.height * 16) {
                     unsigned tile = btp_map_tile(&r->map, wx / 16, wy / 16);
+                    if (s->mission.phase && wx/16 == 61 && wy/16 == 61) tile = 0;
                     if (tile < 250) {
                         unsigned index = tile * 256 + (unsigned)(wy % 16) * 16 + (unsigned)(wx % 16);
                         unsigned value = r->tiles.pixels[index] & 15;
@@ -296,10 +315,12 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                 color = btp_palette[7];
             f[y * 320 + x] = color;
         }
-    (void)btp_draw_sprite(&r->sprites,166u+s->player_walk,208,96,
+    if (s->mission.phase) (void)btp_draw_sprite(&r->sprites,
+        (s->story_flags[2] ? 146u : 0u)+s->mission.walk,200,64,btp_mission_terrain(s,&r->map),104,f);
+    else (void)btp_draw_sprite(&r->sprites,166u+s->player_walk,208,96,
         hidden_rows(&r->map,s->x_half,s->y_half),104,f);
     /* Original 051B draws the party before the eight outdoor NPC slots. */
-    if (s->mode == BTP_EXPLORE && s->npc.enabled == 2) for (unsigned i = 0; i < 8; ++i) {
+    if ((s->mode == BTP_EXPLORE || s->mode == BTP_MISSION) && s->npc.enabled == 2) for (unsigned i = 0; i < 8; ++i) {
         const BtpNpc *n = &s->npc.actor[i];
         if (!n->x) continue;
         unsigned x = n->x & 127u, y = n->y & 127u;
@@ -307,12 +328,12 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         (void)btp_draw_sprite(&r->sprites,270u+s->npc_walk[i],nx,ny,
             hidden_rows(&r->map,x,y),104,f);
     }
-    text(f, 8, 9, "BtechPort M2i", 15);
-    text(f, 8, 24, s->mode >= BTP_ENTRY ? (s->entry_slot == 3 ? "Weapons Shop" :
-        s->entry_slot == 4 ? "Armor Shop" : s->entry_slot == 2 ? "ComStar" : "Citadel") : "Training", 14);
+    text(f, 8, 9, "BtechPort M2j", 15);
+    char place[17]; memcpy(place,r->map.places[s->entry_slot],16); place[16] = 0;
+    text(f, 8, 24, s->mode != BTP_EXPLORE ? place : "Training", 14);
     text(f, 8, 36, s->conversation_checkpoint ? "TALK CHECKPOINT" :
         s->mode >= BTP_BUILDING ? "DIALOGUE" : "SCHOOL", 14);
-    text(f, 8, 57, s->mode == BTP_EXPLORE ? "ARROWS MOVE" : "ARROWS SELECT", 7);
+    text(f, 8, 57, s->mode == BTP_EXPLORE || s->mode == BTP_MISSION ? "ARROWS MOVE" : "ARROWS SELECT", 7);
     text(f, 8, 69, "F3 DEBUG", 7);
     text(f, 8, 81, "R RESTART", 7);
     char cash[32]; snprintf(cash,sizeof cash,"C-bills %u",s->credits); text(f,8,92,cash,10);
@@ -325,22 +346,30 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
     text(f,8,189,"F5 SAVE F9 LOAD",7);
     if (s->blocked) text(f, 8, 151, s->blocked == BTP_EDGE ? "MAP EDGE" : "BLOCKED", 12);
     if (s->npc.fault) { text(f,8,151,"NPC DATA ERROR",12); return; }
-    if (s->mode >= BTP_BUILDING) {
+    if (s->mode == BTP_MISSION) {
+        text(f,8,151,s->story_flags[2] == 0 ? "Locust" : s->story_flags[2] == 1 ? "Wasp" : "Chameleon",14);
+        if (s->mission.phase == BTP_MISSION_WARNING || s->mission.phase == BTP_MISSION_CORNER) {
+            uint8_t message[256]; size_t n;
+            rectangle(f,104,72,216,58,7); rectangle(f,108,76,208,50,0);
+            if (btp_game_text(s,r,message,sizeof message,&n)) (void)wrapped(f,79,message,n,15);
+        }
+        if (debug) { snprintf(line,sizeof line,"TIME %u",s->mission.elapsed); text(f,8,166,line,14); }
+    } else if (s->mode == BTP_BUILDING || s->mode == BTP_SCRIPT_FAULT || s->mode == BTP_QUIZ) {
         text(f, 8, 151, "ENTER SPACE", 14);
         if (debug) {
             snprintf(line, sizeof line, "PC %04X", s->script.pc); text(f, 8, 166, line, 14);
             snprintf(line, sizeof line, "OP %02X", s->script.last_opcode); text(f, 8, 178, line, 14);
+            if (s->script.animation_kind) { snprintf(line,sizeof line,"ANM %u",s->script.animation_kind); text(f,8,36,line,14); }
         }
         story_panel(r, s, f);
     } else if (s->mode == BTP_ENTRY) {
         rectangle(f, 104, 73, 216, 55, 7); rectangle(f, 108, 77, 208, 46, 0);
-        text(f, 110, 81, s->entry_slot == 3 ? "Enter the Weapons Shop?" :
-            s->entry_slot == 4 ? "Enter the Armor Shop?" : s->entry_slot == 2 ? "Enter ComStar Station?" :
-            "WILL YOU ENTER THE CITADEL?", 15);
+        char question[40]; snprintf(question,sizeof question,"Enter %s?",place);
+        text(f, 110, 81, question, 15);
         text(f, 110, 99, "YES", s->entry_selected == 0 ? 14u : 7u);
         text(f, 140, 99, "NO", s->entry_selected == 1 ? 14u : 7u);
         text(f, 110, 113, "ENTER SELECTS - BACKSPACE DECLINES", 7);
-    } else if (btp_entrance(s, &r->map) >= 0 && (btp_entrance(s,&r->map) < 1 || btp_entrance(s,&r->map) > 4)) {
+    } else if (btp_entrance(s, &r->map) == 5) {
         text(f, 8, 166, "INTERIOR", 14); text(f, 8, 178, "UNAVAILABLE", 14);
     } else if (debug) {
         snprintf(line, sizeof line, "GATE %u", s->gate); text(f, 8, 166, line, 14);

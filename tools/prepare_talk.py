@@ -40,6 +40,11 @@ def extract(source):
         offset, segment = struct.unpack_from("<HH",image,DS+entry)
         addresses.append(segment*16+offset)
     addresses.append(DS+0x4f7e)
+    addresses.extend(DS+p for p in (0x27f2,0x286c,0x2886))
+    for entry in range(0x4de2,0x4e32,4):
+        offset, segment = struct.unpack_from("<HH",image,DS+entry)
+        addresses.append(segment*16+offset)
+    addresses.extend(DS+p for p in (0x146b,0x14a1,0x48b3,0x48df,0x48e4,0x48ee))
     blob = bytearray(); ranges = []; origins = []
     for address in addresses:
         end = image.index(0,address)
@@ -49,10 +54,10 @@ def extract(source):
         ranges.append((len(blob),len(text))); blob += text+b"\0"
         origins.append({"image_offset":address,"length":len(text),
                         "sha256":hashlib.sha256(text).hexdigest()})
-    header = b"BTT3"+struct.pack("<HH",len(blob),len(ranges))
+    header = b"BTT4"+struct.pack("<HH",len(blob),len(ranges))
     header += bytes.fromhex(EXE_SHA)+bytes.fromhex(IMAGE_SHA)
     header += b"".join(struct.pack("<HH",*r) for r in ranges)
-    return header+blob, {**metadata,"format":"BTT3","strings":origins}
+    return header+blob, {**metadata,"format":"BTT4","strings":origins}
 
 
 if __name__ == "__main__":

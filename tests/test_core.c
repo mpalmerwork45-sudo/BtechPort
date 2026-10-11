@@ -87,8 +87,8 @@ static void state(void)
     btp_state_encode(&s, encoded); btp_state_encode(&restored, roundtrip);
     CHECK(!memcmp(encoded, roundtrip, sizeof encoded));
     CHECK(!btp_state_decode(encoded, sizeof encoded - 1, &m, NULL, &restored));
-    encoded[4] = 10; CHECK(!btp_state_decode(encoded, sizeof encoded, &m, NULL, &restored));
-    encoded[4] = 9; encoded[12] = 128; CHECK(!btp_state_decode(encoded, sizeof encoded, &m, NULL, &restored));
+    encoded[4] = 11; CHECK(!btp_state_decode(encoded, sizeof encoded, &m, NULL, &restored));
+    encoded[4] = 10; encoded[12] = 128; CHECK(!btp_state_decode(encoded, sizeof encoded, &m, NULL, &restored));
     encoded[12] = 69; encoded[23] = 1; CHECK(!btp_state_decode(encoded, sizeof encoded, &m, NULL, &restored));
     s.x_half = 0; s.y_half = 0; btp_tick(&s, &m, BTP_LEFT);
     CHECK(s.x_half == 0 && s.blocked == BTP_EDGE);
@@ -119,7 +119,7 @@ static void pixels(void)
     CHECK(a[104] == btp_palette[0]);
     /* Resource case must survive rendering; lowercase has its own glyph. */
     r->citadel = (BtpBld){.length=5,.bytes={0xfc,'A','a',0,0xfb}};
-    s.mode = BTP_BUILDING; btp_script_start(&s.script, &r->citadel, s.story_flags);
+    s.mode = BTP_BUILDING; s.entry_slot = 1; btp_script_start(&s.script, &r->citadel, s.story_flags);
     btp_render(r, &s, 0, a);
     CHECK(a[9*320+111] == btp_palette[15]);
     CHECK(a[9*320+117] == btp_palette[0]);

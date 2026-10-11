@@ -6,7 +6,7 @@ typedef enum { BTP_IDLE, BTP_UP, BTP_DOWN, BTP_LEFT, BTP_RIGHT, BTP_ACCEPT, BTP_
     BTP_DIGIT_0, BTP_DIGIT_1, BTP_DIGIT_2, BTP_DIGIT_3, BTP_DIGIT_4,
     BTP_DIGIT_5, BTP_DIGIT_6, BTP_DIGIT_7, BTP_DIGIT_8, BTP_DIGIT_9, BTP_CLEAR_INPUT } BtpAction;
 typedef enum { BTP_CLEAR, BTP_WALL, BTP_EDGE } BtpBlock;
-typedef enum { BTP_EXPLORE, BTP_ENTRY, BTP_BUILDING, BTP_SCRIPT_FAULT } BtpMode;
+typedef enum { BTP_EXPLORE, BTP_ENTRY, BTP_BUILDING, BTP_SCRIPT_FAULT, BTP_QUIZ, BTP_MISSION } BtpMode;
 typedef enum { BTP_TALK_NONE, BTP_TALK_EMPTY, BTP_TALK_MENU, BTP_TALK_REPLY } BtpTalkPhase;
 typedef struct {
     uint8_t phase, selected, count, mask, room, actor;
@@ -28,6 +28,11 @@ typedef struct {
 typedef enum { BTP_SCHOOL_NONE, BTP_SCHOOL_PRICES, BTP_SCHOOL_TRANSCRIPT } BtpSchoolPhase;
 typedef enum { BTP_SCHOOL_TRAINED, BTP_SCHOOL_NO_FUNDS, BTP_SCHOOL_MASTERED } BtpSchoolOutcome;
 typedef struct { uint8_t phase, course, before, outcome; } BtpSchoolState;
+typedef enum { BTP_QUIZ_NONE, BTP_QUIZ_INTRO, BTP_QUIZ_QUESTION, BTP_QUIZ_FAILED } BtpQuizPhase;
+typedef struct { uint8_t phase, selected, round, point, failed; uint16_t used; } BtpQuizState;
+typedef enum { BTP_MISSION_NONE, BTP_MISSION_DRIVE, BTP_MISSION_WARNING,
+    BTP_MISSION_CORNER, BTP_MISSION_RESULT } BtpMissionPhase;
+typedef struct { uint8_t phase, corner, warned, idle, walk, direction; uint16_t elapsed; } BtpMissionState;
 typedef struct {
     uint32_t tick;
     uint16_t x_half, y_half;
@@ -50,8 +55,12 @@ typedef struct {
     uint8_t skills[3], checkpoint_skills[3]; /* Original C618[0..2], ranks 0..4. */
     BtpSchoolState school;
     uint8_t player_walk, npc_walk[8]; /* Human frames 16..31, stored minus 16. */
+    uint8_t entry_action;
+    uint16_t checkpoint_allowance_cap;
+    BtpQuizState quiz;
+    BtpMissionState mission;
 } BtpState;
-enum { BTP_STATE_BYTES = 416 };
+enum { BTP_STATE_BYTES = 448 };
 
 void btp_start(BtpState *state);
 void btp_tick(BtpState *state, const BtpMap *map, BtpAction action);

@@ -116,19 +116,22 @@ int btp_resources_load(const char *dir, BtpResources *r, BtpError *e)
 {
     memset(&r->dialogue, 0, sizeof r->dialogue);
     char path[4096]; uint8_t *data; size_t n;
-    const char *names[] = {"MAP1.MTP", "BTTLTECH.ICN", "CITADEL.BLD", "ARMOR.BLD", "WEAPON.BLD", "COMSTAR.BLD", "MECHSHAP.CMP"};
-    for (unsigned i = 0; i < 7; ++i) {
+    const char *names[] = {"MAP1.MTP", "BTTLTECH.ICN", "CITADEL.BLD", "ARMOR.BLD", "WEAPON.BLD", "COMSTAR.BLD", "MECHSHAP.CMP", "TRAINING.BLD", "BARRACKS.BLD", "LOUNGE.BLD", "BTSTATS.CMP"};
+    for (unsigned i = 0; i < 11; ++i) {
         int len = snprintf(path, sizeof path, "%s/%s", dir, names[i]);
         if (len < 0 || (size_t)len >= sizeof path) return fail(e, "Resource directory path too long");
         if (!btp_read_file(path, &data, &n, e)) return 0;
         int ok = i == 0 ? btp_map_decode(data, n, &r->map, e) :
             i == 1 ? btp_graphic_decode(data, n, &r->tiles, e) :
             i == 6 ? btp_graphic_decode(data, n, &r->sprites, e) :
-            btp_bld_decode(data, n, i == 2 ? &r->citadel : i == 3 ? &r->armor : i == 4 ? &r->weapon : &r->comstar, e);
+            i == 10 ? btp_graphic_decode(data,n,&r->quiz_diagram,e) :
+            btp_bld_decode(data, n, i == 2 ? &r->citadel : i == 3 ? &r->armor : i == 4 ? &r->weapon :
+                i == 5 ? &r->comstar : i == 7 ? &r->training : i == 8 ? &r->barracks : &r->lounge, e);
         free(data);
         if (!ok) return 0;
     }
     if (r->sprites.format != 2) return fail(e,"MECHSHAP requires format-2 320x200 graphics");
+    if (r->quiz_diagram.format != 2) return fail(e,"BTSTATS requires format-2 320x200 graphics");
     if (r->map.width != 64 || r->map.height != 64 || r->tiles.format != 1)
         return fail(e, "M2a requires the authentic 64x64 MAP1 and format-1 BTTLTECH tiles");
     if (r->map.entrance_x[1] != 0x0c45 || r->map.entrance_y[1] != 0xc014)
@@ -139,6 +142,11 @@ int btp_resources_load(const char *dir, BtpResources *r, BtpError *e)
         return fail(e, "M2e requires the verified MAP1 shop entrances and room mapping");
     if (r->map.entrance_x[2] != 0x0c66 || r->map.entrance_y[2] != 0xc014 || r->map.room_map[2] != 2)
         return fail(e,"M2f requires the verified MAP1 ComStar entrance and room mapping");
+    if (r->map.entrance_x[0] != 0x0c2e || r->map.entrance_y[0] != 0xc072 ||
+        r->map.entrance_x[6] != 0x0c11 || r->map.entrance_y[6] != 0xc00d ||
+        r->map.entrance_x[7] != 0x0c11 || r->map.entrance_y[7] != 0xc059 ||
+        r->map.room_map[0] != 0 || r->map.room_map[6] != 6 || r->map.room_map[7] != 7)
+        return fail(e,"M2j requires the verified MAP1 training, barracks and lounge entries");
     for (unsigned i = 0; i < 4096; ++i)
         if (r->map.tiles[i] >= 250) return fail(e, "MAP1 references a tile outside the 250-tile sheet");
     return 1;
@@ -146,7 +154,7 @@ int btp_resources_load(const char *dir, BtpResources *r, BtpError *e)
 
 int btp_dialogue_decode(const uint8_t *b, size_t n, BtpDialogue *d, BtpError *e)
 {
-    /* BTT3: magic, blob size/count, two SHA-256 provenance tags, 55 ranges.
+    /* BTT4: magic, blob size/count, two SHA-256 provenance tags, 84 ranges.
        Conversion validates the audited EXE. Tags identify that source, not a
        cryptographic integrity check of the generated cache. */
     static const uint8_t tags[64] = {
@@ -156,7 +164,7 @@ int btp_dialogue_decode(const uint8_t *b, size_t n, BtpDialogue *d, BtpError *e)
         0x48,0x6b,0x35,0xd6,0xf5,0xc5,0x38,0xec,0xd5,0x3d,0x03,0xf8,0x5e,0xd5,0x4b,0xfa
     };
     const unsigned header = 72+4*BTP_TALK_STRINGS;
-    if (!b || !d || n < header || memcmp(b,"BTT3",4) || le16(b+6) != BTP_TALK_STRINGS ||
+    if (!b || !d || n < header || memcmp(b,"BTT4",4) || le16(b+6) != BTP_TALK_STRINGS ||
         memcmp(b+8,tags,sizeof tags) || !le16(b+4) || le16(b+4) > BTP_TALK_MAX ||
         n != header+le16(b+4)) return fail(e,"Native dialogue: invalid cache/provenance header");
     BtpDialogue result = {0}; result.length = le16(b+4);

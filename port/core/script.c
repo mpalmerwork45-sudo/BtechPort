@@ -7,10 +7,11 @@ unsigned btp_menu_count(unsigned id)
 {
     switch (id) {
     case 8: case 14: return 5;
-    case 9: case 12: case 15: return 4;
+    case 9: case 12: case 15: case 17: return 4;
     case 13: return 6;
     case 16: return 7;
-    case 7: case 10: case 11: case 30: return 3;
+    case 7: case 10: case 11: case 18: case 19: case 30: return 3;
+    case 24: return 2;
     default: return 0;
     }
 }
@@ -37,7 +38,8 @@ static int state_index(BtpScriptState *s, uint8_t *story, unsigned index, uint16
 {
     /* Original indexes use CBW. Sparse modeled bytes must never alias another
        core field: D30C[0..22] and the shop refusal byte at index 39 only. */
-    if (!story || (index >= BTP_STORY_PREFIX && index != 39)) {
+    if (!story || (index >= BTP_STORY_PREFIX && index != 39 &&
+        index != 45 && index != 46 && index != 47 && index != 51)) {
         fault(s, BTP_SCRIPT_STATE_INDEX, op_pc); return 0;
     }
     return 1;
@@ -55,13 +57,14 @@ static void run(BtpScriptState *s, const BtpBld *b, uint8_t story[BTP_STORY_BYTE
         case 0xfe: /* Font/presentation configuration; glyphs remain approximate. */
             if (!available(s, b, 1, op_pc)) return;
             s->font = b->bytes[s->pc++];
-            if (s->font != 6) { fault(s, BTP_SCRIPT_FONT, op_pc); return; }
+            if (s->font != 6 && s->font != 3 && s->font != 4) { fault(s, BTP_SCRIPT_FONT, op_pc); return; }
             break;
         case 0xfd: /* Clear text panel. */
             s->text_offset = s->text_length = s->text_count = 0;
             memset(s->text, 0, sizeof s->text);
             memset(s->text_column,0,sizeof s->text_column); memset(s->text_row,0,sizeof s->text_row);
-            s->column = s->row = s->has_cash = s->cash_after = s->has_accounts = 0; s->cash_value = 0; break;
+            s->column = s->row = s->has_cash = s->cash_after = s->has_accounts = 0; s->cash_value = 0;
+            s->mech_result = s->mech_after = 0; break;
         case 0xfa: /* Explicit scene request, supported scene zero only. */
             if (!available(s, b, 1, op_pc)) return;
             s->scene = b->bytes[s->pc++];
@@ -121,7 +124,7 @@ static void run(BtpScriptState *s, const BtpBld *b, uint8_t story[BTP_STORY_BYTE
         case 0xf5:
             if (!available(s, b, 1, op_pc)) return;
             s->native_action = b->bytes[s->pc++];
-            if (s->native_action < 4 || s->native_action > 12) { fault(s, BTP_SCRIPT_OPCODE, op_pc); return; }
+            if (s->native_action < 1 || s->native_action > 12) { fault(s, BTP_SCRIPT_OPCODE, op_pc); return; }
             if (s->native_action == 12) {
                 s->text_offset = s->text_length = s->text_count = 0;
                 memset(s->text, 0, sizeof s->text);
@@ -133,6 +136,11 @@ static void run(BtpScriptState *s, const BtpBld *b, uint8_t story[BTP_STORY_BYTE
         case 0xf2: /* Original software delay(50), then keyboard flush.
                        Model records the request; native pacing is approximate. */
             s->pause_units = 50; break;
+        case 0xea: /* Explicit original animation request; presentation approximate. */
+            if (!available(s,b,2,op_pc)) return;
+            s->animation_kind = b->bytes[s->pc++]; s->animation_flags = b->bytes[s->pc++];
+            if (s->animation_kind != 8 || s->animation_flags != 1) { fault(s,BTP_SCRIPT_SCENE,op_pc); return; }
+            break;
         case 0xfb:
             s->status = BTP_SCRIPT_WAIT; return;
         case 0xf8:

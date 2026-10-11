@@ -1,5 +1,6 @@
 #include "frontend/cli.h"
 #include "core/npc.h"
+#include "core/training.h"
 #include "data/save.h"
 #include "data/sprites.h"
 #include <stdio.h>
@@ -13,7 +14,7 @@ int btp_options(int argc, char **argv, BtpOptions *o)
     for (int i = 1; i < argc; ++i) {
         const char *arg = argv[i];
         if (!strcmp(arg, "--help")) {
-            puts("BtechPort M2i: MAP1, banking, paid classes and save/load\n"
+            puts("BtechPort M2j: first training mission, full shops, lounge and save/load\n"
                  "  --data DIRECTORY     original resource directory (default: Original DOS)\n"
                  "  --dialogue-data FILE local EXE text cache (default: work/talk-data.bin)\n"
                  "  --conversation-checkpoint  isolated controlled Talk handler test\n"
@@ -146,9 +147,14 @@ void btp_print_state(const BtpState *s, const BtpResources *r)
     printf(",\"skills\":[%u,%u,%u],\"school_phase\":%u,\"school_course\":%u,"
         "\"school_before\":%u,\"school_outcome\":%u",s->skills[0],s->skills[1],s->skills[2],
         s->school.phase,s->school.course,s->school.before,s->school.outcome);
-    printf(",\"player_sprite\":%u,\"npc_sprites\":[",166u+s->player_walk);
+    printf(",\"player_sprite\":%u,\"npc_sprites\":[",s->mission.phase ? (s->story_flags[2] ? 146u : 0u)+s->mission.walk : 166u+s->player_walk);
     for (unsigned i = 0; i < 8; ++i) printf("%s%u",i ? "," : "",270u+s->npc_walk[i]);
-    puts("]}");
+    printf("],\"quiz\":{\"phase\":%u,\"selected\":%u,\"round\":%u,\"point\":%u,\"failed\":%u,\"used\":%u},"
+        "\"mission\":{\"phase\":%u,\"corner\":%u,\"warned\":%u,\"elapsed\":%u,\"idle\":%u,\"terrain\":%u},"
+        "\"device\":%u,\"animation_request\":[%u,%u]}\n",
+        s->quiz.phase,s->quiz.selected,s->quiz.round,s->quiz.point,s->quiz.failed,s->quiz.used,
+        s->mission.phase,s->mission.corner,s->mission.warned,s->mission.elapsed,s->mission.idle,
+        s->mission.phase ? btp_mission_terrain(s,&r->map) : 0u,s->story_flags[47],s->script.animation_kind,s->script.animation_flags);
 }
 
 int btp_replay(const char *path, BtpState *s, const BtpResources *r, int trace)

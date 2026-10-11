@@ -1,6 +1,7 @@
 #include "core/talk.h"
 #include "core/bank.h"
 #include "core/school.h"
+#include "core/training.h"
 #include <string.h>
 
 static void native_fault(BtpState *s, BtpScriptError error)
@@ -29,7 +30,7 @@ void btp_start_conversation_checkpoint(BtpState *s)
     static const uint8_t pairs[8][2] = {{99,0},{18,1},{53,0},{99,0},{18,0},{4,0},{4,0},{70,0}};
     btp_start(s); memcpy(s->npc_pairs,pairs,sizeof pairs);
     s->npc = (BtpNpcState){0};
-    s->talk_result = 91; s->conversation_checkpoint = 1;
+    s->talk_result = s->story_flags[46] = 91; s->conversation_checkpoint = 1;
 }
 void btp_start_shop_conversation_checkpoint(BtpState *s, const BtpResources *r, unsigned slot)
 {
@@ -38,7 +39,7 @@ void btp_start_shop_conversation_checkpoint(BtpState *s, const BtpResources *r, 
     /* Explicit two-occupant original-handler snapshots. Normal exploration
        never injects these pairs or disables travel. See the M2f fixtures. */
     s->npc = (BtpNpcState){0}; s->conversation_checkpoint = 1;
-    s->credits = 50; s->talk_result = 91;
+    s->credits = 50; s->talk_result = s->story_flags[46] = 91;
     s->mode = BTP_BUILDING; s->entry_slot = (uint8_t)slot;
     s->x_half = r->map.entrance_x[slot]&127;
     s->y_half = (uint16_t)((r->map.entrance_y[slot]&127)+1);
@@ -60,7 +61,7 @@ void btp_talk_begin(BtpState *s, const BtpResources *r)
         .selected=selected,.room=(uint8_t)room,.count=(uint8_t)count,.mask=(uint8_t)mask};
     if (count && selected > count) s->talk.selected = 0;
     if (!r->dialogue.length) { native_fault(s,BTP_SCRIPT_NATIVE_DATA); return; }
-    if (s->story_flags[4] || room < 1 || room > 4 || room != s->entry_slot) {
+    if (s->story_flags[4] || room >= 8 || room == 5 || room != s->entry_slot) {
         native_fault(s,BTP_SCRIPT_NATIVE_CONTEXT); return;
     }
     uint8_t body[BTP_BLD_MAX+1]; size_t length;
@@ -70,6 +71,7 @@ static void native_return(BtpState *s, const BtpResources *r)
 {
     uint8_t selected = s->talk.selected;
     s->talk = (BtpTalkState){.selected=selected};
+    s->story_flags[46] = s->talk_result;
     btp_script_native_return(&s->script,btp_building_bld(r,s->entry_slot),s->story_flags);
 }
 void btp_talk_input(BtpState *s, const BtpResources *r, BtpAction action)
@@ -86,9 +88,15 @@ void btp_talk_input(BtpState *s, const BtpResources *r, BtpAction action)
                 --choice;
             }
             if (actor == 8) { native_fault(s,BTP_SCRIPT_NATIVE_CONTEXT); return; }
+            /* Original room-7 Rick shortcut, before the ordinary reply. */
+            if (s->talk.room == 7 && s->recruitment && !s->talk.selected && actor == 0) {
+                s->talk_result = 1; s->npc_pairs[0][1] = 0;
+                native_return(s,r); return;
+            }
             s->talk.actor = (uint8_t)actor; s->talk.phase = BTP_TALK_REPLY;
-            /* The supported MAP1 buildings cannot take room-7 recruitment. */
+            /* Ordinary local replies reset the result without recruitment. */
             s->talk_result = 0;
+            s->story_flags[46] = 0;
             uint8_t body[BTP_BLD_MAX+1]; size_t length;
             if (!btp_game_text(s,r,body,sizeof body,&length)) native_fault(s,BTP_SCRIPT_NATIVE_DATA);
         }
@@ -103,7 +111,7 @@ int btp_talk_valid(const BtpState *s, const BtpMap *map)
         !(s->script.status == BTP_SCRIPT_NATIVE && s->script.native_action == 12);
     if (s->mode != BTP_BUILDING || s->script.status != BTP_SCRIPT_NATIVE ||
         s->script.last_opcode != 0xf5 || s->script.native_action != 12 || s->story_flags[4] ||
-        t->room < 1 || t->room > 4 || t->room != s->entry_slot ||
+        t->room >= 8 || t->room == 5 || t->room != s->entry_slot ||
         map->room_map[t->room] != s->story_flags[13] || !s->checkpoint_valid) return 0;
     unsigned mask = present(s,t->room);
     if (mask != t->mask || count_bits(mask) != t->count) return 0;
@@ -138,10 +146,12 @@ int btp_game_text(const BtpState *s, const BtpResources *r, uint8_t *out, size_t
 {
     if (!s || !r || !out || !length || !capacity) return 0;
     *length = 0; out[0] = 0;
+    if (s->mode == BTP_QUIZ || s->mode == BTP_MISSION || s->script.mech_result)
+        return btp_training_text(s,r,out,capacity,length);
     if (!s->talk.phase) {
         if (s->school.phase) return btp_school_text(s,r,out,capacity,length);
         if (s->bank.phase || s->script.has_accounts) return btp_bank_text(s,r,out,capacity,length);
-        int ok = btp_script_text(&s->script,btp_building_bld(r,s->entry_slot ? s->entry_slot : 1),out,capacity);
+        int ok = btp_script_text(&s->script,btp_building_bld(r,s->entry_slot),out,capacity);
         if (ok) *length = strlen((const char *)out);
         return ok;
     }

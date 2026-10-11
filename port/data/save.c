@@ -35,7 +35,7 @@ static uint32_t checksum(const uint8_t *b, size_t n)
 static int decode(const uint8_t *b, size_t n, BtpState *s, const BtpResources *r)
 {
     return n >= 24 && btp_state_decode(b,n,&r->map,
-        btp_building_bld(r,b[22] ? b[22] : 1u),s);
+        btp_building_bld(r,b[22]),s);
 }
 int btp_save_write(const char *path, const BtpState *s, const BtpResources *r, BtpError *e)
 {

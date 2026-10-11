@@ -70,8 +70,9 @@ def main():
         if run(binary,"--load",damaged) != baseline: raise RuntimeError("M2g save migration differs")
         # The final course-refusal snapshot has earned ranks and a live course
         # receipt. BTP8 must retain those, including its subsequent idle state.
-        old = bytearray(valid); old[16:20] = b"BTP8"; old[20] = 8
+        old = bytearray(valid[:16+416]); old[16:20] = b"BTP8"; old[20] = 8
         old[16+394:] = bytes(22)
+        struct.pack_into("<I",old,4,416)
         struct.pack_into("<I",old,8,binascii.crc32(old[16:]))
         damaged.write_bytes(old)
         migrated = run(binary,"--load",damaged)

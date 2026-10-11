@@ -60,12 +60,12 @@ int main(void)
     CHECK(btp_state_decode(saved,sizeof saved,&r->map,NULL,&copy)); CHECK(copy.player_walk==5);
     /* Old saves retain logical progress; the missing gait starts at a facing's first frame. */
     memcpy(saved,"BTP8",4); saved[4]=8; memset(saved+394,0,22);
-    CHECK(btp_state_decode(saved,sizeof saved,&r->map,NULL,&copy)); CHECK(copy.player_walk==4 && copy.x_half==s.x_half);
+    CHECK(btp_state_decode(saved,416,&r->map,NULL,&copy)); CHECK(copy.player_walk==4 && copy.x_half==s.x_half);
     btp_state_encode(&s,saved); saved[394]=16;
     CHECK(!btp_state_decode(saved,sizeof saved,&r->map,NULL,&copy));
     btp_state_encode(&s,saved); saved[402]=16;
     CHECK(!btp_state_decode(saved,sizeof saved,&r->map,NULL,&copy));
-    btp_state_encode(&s,saved); saved[403]=1;
+    btp_state_encode(&s,saved); saved[434]=1;
     CHECK(!btp_state_decode(saved,sizeof saved,&r->map,NULL,&copy));
     /* The terrain rule clips only matching water quadrants, not grass. */
     btp_start(&s); r->sprites.pixels[at+6*320]=14;
