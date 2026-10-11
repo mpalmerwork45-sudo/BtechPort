@@ -144,10 +144,18 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                 color = btp_palette[7];
             f[y * 320 + x] = color;
         }
-    /* Approximate marker until ANIMATE.ICN sprite selection/masking is verified. */
+    /* Approximate NPC markers; positions are logical, original sprites deferred. */
+    if (s->mode == BTP_EXPLORE && s->npc.enabled == 2) for (unsigned i = 0; i < 8; ++i) {
+        const BtpNpc *n = &s->npc.actor[i];
+        if (!n->x) continue;
+        int nx = (n->x & 127)*8-camera_x+104, ny = (n->y & 127)*8-camera_y;
+        if (nx < 106 || nx > 317 || ny < 2 || ny > 197) continue;
+        rectangle(f,nx-1,ny-2,3,5,10);
+    }
+    /* Approximate player marker until ANIMATE.ICN selection/masking is verified. */
     for (int y = 97; y <= 102; ++y)
         for (int x = 211; x <= 213; ++x) pixel(f, x, y, btp_palette[y < 99 ? 15 : 1]);
-    text(f, 8, 9, "BTECHPORT M2C", 15);
+    text(f, 8, 9, "BTECHPORT M2D", 15);
     text(f, 8, 24, s->mode >= BTP_BUILDING ? "CITADEL" : "TRAINING", 14);
     text(f, 8, 36, s->conversation_checkpoint ? "TALK CHECKPOINT" :
         s->mode >= BTP_BUILDING ? "DIALOGUE" : "SCHOOL", 14);
@@ -161,6 +169,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
     snprintf(line, sizeof line, "Y %u.%u", s->y_half / 2, (s->y_half % 2) * 5);
     text(f, 8, 137, line, 15);
     if (s->blocked) text(f, 8, 151, s->blocked == BTP_EDGE ? "MAP EDGE" : "BLOCKED", 12);
+    if (s->npc.fault) { text(f,8,151,"NPC DATA ERROR",12); return; }
     if (s->mode >= BTP_BUILDING) {
         text(f, 8, 151, "ENTER SPACE", 14);
         if (debug) {

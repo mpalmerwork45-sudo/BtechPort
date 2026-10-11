@@ -8,7 +8,7 @@ typedef struct {
     uint8_t width, height;
     uint8_t tiles[BTP_MAP_MAX * BTP_MAP_MAX]; /* normalized row order */
     uint16_t entrance_x[8], entrance_y[8]; /* original packed words */
-    uint8_t npc_names[8][16], places[8][16], room_map[8];
+    uint8_t npc_names[8][16], places[8][16], room_map[8], npc_routes[8];
 } BtpMap;
 typedef struct {
     uint8_t format;

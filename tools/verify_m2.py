@@ -95,8 +95,8 @@ def main():
         _, recorded = run(binary, replay_actions, work, "recorded")
         check(len(replay_actions) == 24 and replay_actions[:19] == actions and
               replay_actions[19:] == ["idle"] * 5, "Unexpected native recorded inputs")
-        for key, value in states[-1].items():
-            if key != "tick": check(recorded[-1][key] == value, f"Recorded native {key} drifted")
+        _, expected_native = run(binary, actions + ["idle"] * 5, work, "native-expected")
+        check(recorded[-1] == expected_native[-1], "Recorded native state drifted, including outdoor NPC ticks")
         print("PASS: native SDL Citadel inputs replay to the same complete canonical state.")
     if args.reference_run:
         for row in fixture["checkpoints"]:

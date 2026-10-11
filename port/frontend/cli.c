@@ -1,4 +1,5 @@
 #include "frontend/cli.h"
+#include "core/npc.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,10 +10,10 @@ int btp_options(int argc, char **argv, BtpOptions *o)
     for (int i = 1; i < argc; ++i) {
         const char *arg = argv[i];
         if (!strcmp(arg, "--help")) {
-            puts("BtechPort M2c: MAP1 exploration and bounded Citadel conversations\n"
+            puts("BtechPort M2d: MAP1 NPC travel and bounded Citadel conversations\n"
                  "  --data DIRECTORY     original resource directory (default: Original DOS)\n"
                  "  --dialogue-data FILE local EXE text cache (default: work/talk-data.bin)\n"
-                 "  --conversation-checkpoint  controlled NPC context; travel is unimplemented\n"
+                 "  --conversation-checkpoint  isolated controlled Talk handler test\n"
                  "  --headless           run without SDL/display/audio\n"
                  "  --replay FILE        logical actions: up/down/left/right/idle/accept/cancel\n"
                  "  --trace              print canonical JSON state after each replay action\n"
@@ -24,6 +25,7 @@ int btp_options(int argc, char **argv, BtpOptions *o)
                  "  --smoke-citadel      bounded native Citadel entry/dialogue/exit check\n"
                  "  --smoke-katrina      bounded native Katrina/repeat/exit/re-entry check\n"
                  "  --smoke-talk         bounded controlled NPC conversation check\n"
+                 "  --smoke-arrival      feed --replay through native SDL events, then return/exit\n"
                  "Native controls: arrows move/select, Enter/Space confirms/continues,\n"
                  "Backspace declines/recovers unsupported choices, R restarts, F3 debug, Esc quits.");
             return -1;
@@ -35,6 +37,7 @@ int btp_options(int argc, char **argv, BtpOptions *o)
         else if (!strcmp(arg, "--smoke-citadel")) o->smoke = 2;
         else if (!strcmp(arg, "--smoke-katrina")) o->smoke = 3;
         else if (!strcmp(arg, "--smoke-talk")) { o->smoke = 4; o->conversation_checkpoint = 1; }
+        else if (!strcmp(arg, "--smoke-arrival")) o->smoke = 5;
         else if (!strcmp(arg, "--conversation-checkpoint")) o->conversation_checkpoint = 1;
         else {
             const char **value = NULL;
@@ -48,13 +51,17 @@ int btp_options(int argc, char **argv, BtpOptions *o)
             *value = argv[++i];
         }
     }
+    if (o->smoke == 5 && (!o->replay || o->conversation_checkpoint)) {
+        fputs("--smoke-arrival requires --replay and the normal initial state\n",stderr); return 0;
+    }
     return 1;
 }
 
-void btp_initial_state(const BtpOptions *o, BtpState *s)
+void btp_initial_state(const BtpOptions *o, BtpState *s, const BtpResources *r)
 {
     if (o->conversation_checkpoint) btp_start_conversation_checkpoint(s);
     else btp_start(s);
+    btp_npc_init(s,&r->map);
 }
 
 void btp_print_state(const BtpState *s, const BtpResources *r)
@@ -85,6 +92,12 @@ void btp_print_state(const BtpState *s, const BtpResources *r)
            s->talk.phase,s->talk.selected,s->talk.count,s->talk.mask,s->talk.actor,s->talk_result,
            s->conversation_checkpoint);
     for (unsigned i = 0; i < 8; ++i) printf("%s[%u,%u]",i ? "," : "",s->npc_pairs[i][0],s->npc_pairs[i][1]);
+    printf("],\"npc_enabled\":%u,\"npc_phase\":%u,\"npc_clock\":%u,\"npc_fault\":%u,"
+           "\"npc_rng\":[%u,%u,%u],\"npc_search\":[%u,%u],\"npc_loop_timer\":%u,\"npc_allowance_pending\":%u,\"npcs\":[",
+           s->npc.enabled,s->npc.phase,s->npc.clock,s->npc.fault,s->npc.rng[0],s->npc.rng[1],
+           s->npc.rng[2],s->npc.search,s->npc.bias,s->npc.loop_timer,s->npc.allowance_pending);
+    for (unsigned i = 0; i < 8; ++i) printf("%s[%u,%u,%u]",i ? "," : "",
+        s->npc.actor[i].x,s->npc.actor[i].y,s->npc.actor[i].direction);
     puts("]}");
 }
 
@@ -115,12 +128,13 @@ int btp_replay(const char *path, BtpState *s, const BtpResources *r, int trace)
             btp_script_error_name(s->script.error), s->script.fault_pc, s->script.last_opcode);
         ok = 0;
     }
+    if (s->npc.fault) { fprintf(stderr,"NPC movement context/data fault %u\n",s->npc.fault); ok = 0; }
     return ok;
 }
 
 int btp_run_headless(const BtpOptions *o, BtpResources *r)
 {
-    BtpState state; btp_initial_state(o,&state);
+    BtpState state; btp_initial_state(o,&state,r);
     int result = 0;
     if (o->record || o->smoke) { fputs("--record/--smoke require the native frontend\n", stderr); return 1; }
     if (o->trace) btp_print_state(&state, r);

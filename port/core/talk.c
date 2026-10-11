@@ -26,6 +26,7 @@ void btp_start_conversation_checkpoint(BtpState *s)
     /* Explicit handler test precondition, not a simulated NPC arrival. */
     static const uint8_t pairs[8][2] = {{99,0},{18,1},{53,0},{99,0},{18,0},{4,0},{4,0},{70,0}};
     btp_start(s); memcpy(s->npc_pairs,pairs,sizeof pairs);
+    s->npc = (BtpNpcState){0};
     s->talk_result = 91; s->conversation_checkpoint = 1;
 }
 void btp_talk_begin(BtpState *s, const BtpResources *r)

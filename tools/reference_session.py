@@ -371,7 +371,7 @@ def main():
     for parts in commands:
         if not isinstance(parts,list) or not parts or not all(isinstance(p,str) for p in parts):
             raise ValueError("Each command must be a nonempty list of strings")
-        if parts[0] in ("shot","screen","snapshot","dump","npc-trace"):
+        if parts[0] in ("shot","screen","snapshot","dump","npc-trace","wait-npc"):
             if len(parts)<2 or not parts[1].replace("-","").replace("_","").isalnum():
                 raise ValueError("Capture labels must use letters, digits, hyphens or underscores")
     manifest=json.loads((ROOT/"docs/original-manifest.json").read_text())
@@ -454,10 +454,10 @@ btech.exe
                 command = parts[0]
                 if command == "quit":
                     break
-                if command == "key":
+                if command in ("key","keys-fast"):
                     for key in parts[1:]:
                         keys.key(window, key)
-                        time.sleep(0.18)
+                        if command == "key": time.sleep(0.18)
                 elif command == "screen":
                     from PIL import ImageGrab
                     path=capture/(parts[1]+".png")
@@ -494,6 +494,20 @@ btech.exe
                 elif command == "npc-trace-stop":
                     if npc_trace is None: raise ValueError("No NPC observer running")
                     npc_trace.close(); npc_trace = None
+                elif command == "wait-npc":
+                    if npc_trace is None: raise ValueError("wait-npc requires the read-only observer")
+                    slot, room, timeout = int(parts[2]), int(parts[3]), float(parts[4])
+                    if not 0 <= slot < 8 or not 0 <= room < 8 or not 0 < timeout <= 10:
+                        raise ValueError("wait-npc requires bounded slot/room/timeout")
+                    deadline = time.monotonic()+timeout
+                    while time.monotonic() < deadline:
+                        if npc_trace.error: raise npc_trace.error
+                        if npc_trace.frames:
+                            n = npc_trace.frames[-1]["npcs"][slot]
+                            if n["pair"][1] and (n["pair"][0] >> 4)&7 == room and n["position"] == [0,0]:
+                                snapshot_game(process.pid,parts[1],output); break
+                        time.sleep(0.015)
+                    else: raise RuntimeError("Natural NPC arrival was not observed within the bound")
                 elif command == "controlled-talk-context":
                     if npc_trace is not None: raise ValueError("Controlled context is separate from natural NPC traces")
                     controlled_talk_context(process.pid, output)
@@ -511,7 +525,7 @@ btech.exe
                     dest.write_bytes(data)
                     print(f"Read {len(data)} bytes to {dest}", flush=True)
                 else:
-                    raise ValueError("Commands: key, screen, shot, wait, scan, snapshot, dump, controlled-talk-context, quit")
+                    raise ValueError("Commands: key, keys-fast, screen, shot, wait, scan, snapshot, dump, npc-trace, npc-trace-stop, wait-npc, controlled-talk-context, quit")
                 print("OK", flush=True)
             except Exception as e:
                 print(f"ERROR: {e}", flush=True)
@@ -520,7 +534,8 @@ btech.exe
         pass
     finally:
         if npc_trace is not None:
-            npc_trace.close()
+            try: npc_trace.close()
+            except Exception as error: print(f"NPC observer cleanup: {error}",flush=True)
         process.terminate()
         try:
             process.wait(timeout=5)

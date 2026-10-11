@@ -3,6 +3,7 @@
 #include "frontend/cli.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 static BtpAction key_action(SDL_Keycode key)
 {
@@ -31,26 +32,30 @@ int main(int argc, char **argv)
     }
     if (o.headless) { result = btp_run_headless(&o, r); goto done; }
     if (o.tiles_output) { fputs("--export-tiles requires --headless\n", stderr); goto done; }
-    BtpState state; btp_initial_state(&o,&state);
-    if (o.replay && !btp_replay(o.replay, &state, r, o.trace)) goto done;
+    BtpState state; btp_initial_state(&o,&state,r);
+    if (o.replay && o.smoke != 5 && !btp_replay(o.replay, &state, r, o.trace)) goto done;
     SDL_SetMainReady();
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_TIMER)) {
         fprintf(stderr, "SDL: %s\n", SDL_GetError()); goto done;
     }
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
-    SDL_Window *window = SDL_CreateWindow("BtechPort M2c - Training school and Citadel", SDL_WINDOWPOS_CENTERED,
+    SDL_Window *window = SDL_CreateWindow("BtechPort M2d - MAP1 NPC travel and Citadel", SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED, 960, 600, SDL_WINDOW_RESIZABLE);
     SDL_Renderer *renderer = window ? SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE) : NULL;
     SDL_Texture *texture = renderer ? SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
         SDL_TEXTUREACCESS_STREAMING, 320, 200) : NULL;
     FILE *record = NULL;
+    FILE *arrival = NULL;
     if (!texture || SDL_RenderSetLogicalSize(renderer, 320, 200)) goto sdl_done;
     if (o.record) { record = fopen(o.record, "w"); if (!record) goto sdl_done; }
+    if (o.smoke == 5) { arrival = fopen(o.replay,"r"); if (!arrival) goto sdl_done; }
     BtpAction queue[256]; unsigned read = 0, write = 0;
     uint64_t last = SDL_GetTicks64(), accumulator = 0;
     unsigned smoke_ticks = 0;
+    unsigned smoke_sent = 0, tail_sent = 0;
+    int arrival_done = 0;
     int running = 1, io_failed = 0;
-    if (o.smoke) {
+    if (o.smoke && o.smoke != 5) {
         const SDL_Keycode smoke_keys[] = {SDLK_RIGHT, SDLK_UP, SDLK_DOWN};
         const SDL_Keycode citadel_keys[] = {SDLK_UP,SDLK_UP,SDLK_UP,SDLK_UP,SDLK_UP,
             SDLK_RETURN,SDLK_DOWN,SDLK_RETURN,SDLK_SPACE,SDLK_SPACE,SDLK_SPACE,
@@ -73,6 +78,34 @@ int main(int argc, char **argv)
         }
     }
     while (running) {
+        if (o.smoke == 5 && smoke_sent == smoke_ticks) {
+            BtpAction a = BTP_IDLE; char line[64];
+            if (!arrival_done) {
+                if (fgets(line,sizeof line,arrival)) {
+                    size_t length = strlen(line);
+                    if (length && line[length-1] != '\n' && !feof(arrival)) {
+                        fputs("Arrival smoke replay line too long\n",stderr); io_failed = 1; break;
+                    }
+                    line[strcspn(line,"\r\n")] = 0;
+                    if (!btp_action_parse(line,&a)) { io_failed = 1; break; }
+                } else {
+                    if (ferror(arrival)) { io_failed = 1; break; }
+                    arrival_done = 1;
+                }
+            }
+            if (arrival_done) {
+                static const BtpAction tail[] = {BTP_ACCEPT,BTP_DOWN,BTP_ACCEPT,BTP_DOWN,
+                    BTP_IDLE,BTP_IDLE,BTP_IDLE,BTP_IDLE,BTP_IDLE};
+                if (tail_sent == sizeof tail/sizeof tail[0]) { running = 0; break; }
+                a = tail[tail_sent++];
+            }
+            if (++smoke_sent > 8192) { fputs("Arrival smoke exceeded input bound\n",stderr); io_failed = 1; break; }
+            if (a != BTP_IDLE) {
+                static const SDL_Keycode codes[] = {0,SDLK_UP,SDLK_DOWN,SDLK_LEFT,SDLK_RIGHT,SDLK_RETURN,SDLK_BACKSPACE};
+                SDL_Event injected = {.type=SDL_KEYDOWN}; injected.key.keysym.sym = codes[a];
+                if (SDL_PushEvent(&injected) != 1) { io_failed = 1; break; }
+            }
+        }
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) running = 0;
@@ -82,7 +115,7 @@ int main(int argc, char **argv)
                 else if (key == SDLK_F3 && !event.key.repeat) o.debug = !o.debug;
                 else if (key == SDLK_r && !event.key.repeat) {
                     if (record) { fputs("Restart while recording is unsupported; start a new log.\n", stderr); }
-                    else { btp_initial_state(&o,&state); read = write = 0; }
+                    else { btp_initial_state(&o,&state,r); read = write = 0; }
                 } else {
                     BtpAction a = key_action(key);
                     if (a != BTP_IDLE) {
@@ -99,7 +132,11 @@ int main(int argc, char **argv)
             BtpAction a = read != write ? queue[read++ % 256] : BTP_IDLE;
             btp_game_tick(&state, r, a);
             if (record && fprintf(record, "%s\n", btp_action_name(a)) < 0) { io_failed = 1; running = 0; }
-            if (o.smoke && ++smoke_ticks >= (o.smoke == 1 ? 8u : 24u)) running = 0;
+            if (o.smoke) {
+                ++smoke_ticks;
+                if (o.smoke != 5 && smoke_ticks >= (o.smoke == 1 ? 8u : 24u)) running = 0;
+            }
+            if (o.smoke == 5) break; /* Inject exactly one input for each fixed step. */
         }
         btp_render(r, &state, o.debug, frame);
         if (SDL_UpdateTexture(texture, NULL, frame, 320 * (int)sizeof *frame) ||
@@ -109,7 +146,7 @@ int main(int argc, char **argv)
         SDL_RenderPresent(renderer);
         if (o.debug) {
             char title[200];
-            snprintf(title, sizeof title, "BtechPort M2c | %s | half=(%u,%u) | PC=%04x op=%02x | tick=%u",
+            snprintf(title, sizeof title, "BtechPort M2d | %s | half=(%u,%u) | PC=%04x op=%02x | tick=%u",
                 btp_mode_name(state.mode), state.x_half, state.y_half, state.script.pc,
                 state.script.last_opcode, state.tick);
             SDL_SetWindowTitle(window, title);
@@ -127,7 +164,12 @@ int main(int argc, char **argv)
         fputs("Native smoke input/state mismatch\n", stderr); io_failed = 1;
     }
     result = io_failed ? 1 : 0;
+    if (o.smoke == 5 && (state.mode != BTP_EXPLORE || state.x_half != 69 || state.y_half != 21 ||
+        state.conversation_checkpoint || state.npc.enabled != 2 || state.npc.fault || state.story_flags[13] != 1)) {
+        fputs("Native arrival smoke input/state mismatch\n",stderr); result = 1;
+    }
 sdl_done:
+    if (arrival && fclose(arrival)) result = 1;
     if (record && fclose(record)) result = 1;
     if (result) fprintf(stderr, "Native frontend failed: %s\n", SDL_GetError());
     if (texture) SDL_DestroyTexture(texture);

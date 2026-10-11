@@ -1,0 +1,2340 @@
+{
+  "source_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "decrypted_sha256": "7e64ec068d521347b52cf819344c9d5acf6ad0b10b84b9ebaca91cbf88673fd7",
+  "confidence": "VERIFIED original initialized MAP1 frame steps and natural arrival; cadence/economy outside scope",
+  "original_run": "1791689346416199589",
+  "frame_samples": 639,
+  "frame_csv_sha256": "be0769a91a4b03e265fb6d9475181df82621b264bcd187f4f48bd00ca18dd02f",
+  "baseline": {
+    "native": {
+      "npc_phase": 1,
+      "npc_clock": 0,
+      "npc_rng": [
+        31,
+        66,
+        171
+      ],
+      "npc_search": [
+        99,
+        0
+      ],
+      "npc_loop_timer": 249,
+      "npc_allowance_pending": 1,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "npcs": [
+        [
+          3089,
+          49165,
+          0
+        ],
+        [
+          3087,
+          49261,
+          0
+        ],
+        [
+          3104,
+          49196,
+          0
+        ],
+        [
+          3089,
+          49165,
+          0
+        ],
+        [
+          3142,
+          49172,
+          2
+        ],
+        [
+          3118,
+          49266,
+          0
+        ],
+        [
+          3118,
+          49266,
+          0
+        ],
+        [
+          3122,
+          49276,
+          0
+        ]
+      ]
+    },
+    "original_assets": [
+      35,
+      0,
+      0,
+      0
+    ],
+    "original_allowance_cap": 50
+  },
+  "waypoints": [
+    [
+      3118,
+      49266
+    ],
+    [
+      3141,
+      49172
+    ],
+    [
+      3174,
+      49172
+    ],
+    [
+      3104,
+      49196
+    ],
+    [
+      3122,
+      49276
+    ],
+    [
+      3087,
+      49261
+    ],
+    [
+      3089,
+      49165
+    ],
+    [
+      3089,
+      49241
+    ]
+  ],
+  "routes": [
+    4,
+    2,
+    7,
+    5,
+    6,
+    1,
+    3,
+    0
+  ],
+  "checkpoints": [
+    {
+      "label": "start",
+      "actions": 0,
+      "position": [
+        69,
+        25
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 35
+    },
+    {
+      "label": "route0-6",
+      "actions": 6,
+      "position": [
+        65,
+        27
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 35
+    },
+    {
+      "label": "route0-12",
+      "actions": 12,
+      "position": [
+        59,
+        27
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 35
+    },
+    {
+      "label": "route0-18",
+      "actions": 18,
+      "position": [
+        54,
+        28
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 35
+    },
+    {
+      "label": "route0-24",
+      "actions": 24,
+      "position": [
+        50,
+        30
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 35
+    },
+    {
+      "label": "route0-30",
+      "actions": 30,
+      "position": [
+        50,
+        36
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 35
+    },
+    {
+      "label": "route0-36",
+      "actions": 36,
+      "position": [
+        47,
+        39
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 35
+    },
+    {
+      "label": "route0-42",
+      "actions": 42,
+      "position": [
+        44,
+        42
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 35
+    },
+    {
+      "label": "route0-48",
+      "actions": 48,
+      "position": [
+        44,
+        48
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 35
+    },
+    {
+      "label": "route0-54",
+      "actions": 54,
+      "position": [
+        39,
+        49
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 35
+    },
+    {
+      "label": "route0-60",
+      "actions": 60,
+      "position": [
+        34,
+        50
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 35
+    },
+    {
+      "label": "route0-66",
+      "actions": 66,
+      "position": [
+        34,
+        56
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 35
+    },
+    {
+      "label": "route0-72",
+      "actions": 72,
+      "position": [
+        31,
+        59
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 35
+    },
+    {
+      "label": "route0-78",
+      "actions": 78,
+      "position": [
+        28,
+        62
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 35
+    },
+    {
+      "label": "route0-84",
+      "actions": 84,
+      "position": [
+        27,
+        67
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 35
+    },
+    {
+      "label": "route0-90",
+      "actions": 90,
+      "position": [
+        22,
+        68
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 35
+    },
+    {
+      "label": "route0-96",
+      "actions": 96,
+      "position": [
+        22,
+        74
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 35
+    },
+    {
+      "label": "route0-102",
+      "actions": 102,
+      "position": [
+        22,
+        80
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 35
+    },
+    {
+      "label": "route0-108",
+      "actions": 108,
+      "position": [
+        22,
+        86
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 35
+    },
+    {
+      "label": "route0-114",
+      "actions": 114,
+      "position": [
+        22,
+        92
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 50
+    },
+    {
+      "label": "off-road",
+      "actions": 117,
+      "position": [
+        19,
+        92
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 50
+    },
+    {
+      "label": "wait0",
+      "actions": 117,
+      "position": [
+        19,
+        92
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 50
+    },
+    {
+      "label": "wait1",
+      "actions": 117,
+      "position": [
+        19,
+        92
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 50
+    },
+    {
+      "label": "wait2",
+      "actions": 117,
+      "position": [
+        19,
+        92
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 50
+    },
+    {
+      "label": "wait3",
+      "actions": 117,
+      "position": [
+        19,
+        92
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 50
+    },
+    {
+      "label": "wait4",
+      "actions": 117,
+      "position": [
+        19,
+        92
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 50
+    },
+    {
+      "label": "follow0-6",
+      "actions": 123,
+      "position": [
+        19,
+        86
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 50
+    },
+    {
+      "label": "follow0-12",
+      "actions": 129,
+      "position": [
+        19,
+        80
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 50
+    },
+    {
+      "label": "follow0-18",
+      "actions": 135,
+      "position": [
+        19,
+        74
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 50
+    },
+    {
+      "label": "follow0-24",
+      "actions": 141,
+      "position": [
+        21,
+        70
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 50
+    },
+    {
+      "label": "follow0-30",
+      "actions": 147,
+      "position": [
+        21,
+        64
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 50
+    },
+    {
+      "label": "follow0-36",
+      "actions": 153,
+      "position": [
+        19,
+        60
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 50
+    },
+    {
+      "label": "follow-stop0",
+      "actions": 153,
+      "position": [
+        19,
+        60
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 50
+    },
+    {
+      "label": "follow1-6",
+      "actions": 159,
+      "position": [
+        19,
+        54
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 50
+    },
+    {
+      "label": "follow1-12",
+      "actions": 165,
+      "position": [
+        19,
+        48
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 50
+    },
+    {
+      "label": "follow1-18",
+      "actions": 171,
+      "position": [
+        22,
+        45
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 50
+    },
+    {
+      "label": "follow1-21",
+      "actions": 174,
+      "position": [
+        25,
+        45
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 50
+    },
+    {
+      "label": "follow-stop1",
+      "actions": 174,
+      "position": [
+        25,
+        45
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 50
+    },
+    {
+      "label": "follow2-6",
+      "actions": 180,
+      "position": [
+        25,
+        39
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 50
+    },
+    {
+      "label": "follow2-12",
+      "actions": 186,
+      "position": [
+        25,
+        33
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 50
+    },
+    {
+      "label": "follow2-18",
+      "actions": 192,
+      "position": [
+        30,
+        32
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 50
+    },
+    {
+      "label": "follow2-24",
+      "actions": 198,
+      "position": [
+        33,
+        29
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 50
+    },
+    {
+      "label": "follow2-30",
+      "actions": 204,
+      "position": [
+        39,
+        29
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 50
+    },
+    {
+      "label": "follow2-36",
+      "actions": 210,
+      "position": [
+        45,
+        29
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 50
+    },
+    {
+      "label": "follow2-38",
+      "actions": 212,
+      "position": [
+        47,
+        29
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 50
+    },
+    {
+      "label": "follow-stop2",
+      "actions": 212,
+      "position": [
+        47,
+        29
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 50
+    },
+    {
+      "label": "follow3-6",
+      "actions": 218,
+      "position": [
+        49,
+        25
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 50
+    },
+    {
+      "label": "follow3-12",
+      "actions": 224,
+      "position": [
+        55,
+        25
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 50
+    },
+    {
+      "label": "follow3-18",
+      "actions": 230,
+      "position": [
+        61,
+        25
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 50
+    },
+    {
+      "label": "follow3-24",
+      "actions": 236,
+      "position": [
+        67,
+        25
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 50
+    },
+    {
+      "label": "follow3-26",
+      "actions": 238,
+      "position": [
+        69,
+        25
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 50
+    },
+    {
+      "label": "follow-stop3",
+      "actions": 238,
+      "position": [
+        69,
+        25
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        81,
+        0
+      ],
+      "original_credits": 50
+    },
+    {
+      "label": "arrival",
+      "actions": 238,
+      "position": [
+        69,
+        25
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        18,
+        27
+      ],
+      "original_credits": 50
+    },
+    {
+      "label": "menu",
+      "actions": 244,
+      "position": [
+        69,
+        21
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        18,
+        26
+      ],
+      "original_credits": 50
+    },
+    {
+      "label": "talk",
+      "actions": 248,
+      "position": [
+        69,
+        21
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        18,
+        26
+      ],
+      "original_credits": 50
+    },
+    {
+      "label": "reply",
+      "actions": 249,
+      "position": [
+        69,
+        21
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "talk_result": 0,
+      "original_npc1": [
+        18,
+        26
+      ],
+      "original_credits": 50
+    }
+  ],
+  "excluded": "Elapsed-time NPC differences between route checkpoints, missed player-movement frames, general economy, startup, outer-world/party/edge rules and pixels"
+}

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Bounded SDL window/input/presentation check on a private Xvfb display."""
+import json
 import os
 import select
 import subprocess
@@ -55,6 +56,21 @@ def main():
             subprocess.run(["python3", str(ROOT / "tools/verify_m2c.py"), "--native-log",
                 str(work / "native-talk-x11.actions")], check=True, timeout=15)
             print("PASS: native X11 controlled Talk menu, Done, retained selection, NPC reply, return, exit and replay.")
+            print("Running native X11 MAP1 walk/arrival/conversation (about 84 seconds).", flush=True)
+            result = subprocess.run([str(ROOT / "build/btech-port"), "--smoke-arrival",
+                "--replay", str(ROOT / "tests/fixtures/citadel-arrival.actions"),
+                "--data", str(ROOT / "Original DOS"), "--record", str(work / "native-arrival-x11.actions"),
+                "--frame", str(work / "native-arrival-x11.ppm")], env=env, timeout=120, check=True,
+                capture_output=True, text=True)
+            replayed = subprocess.run([str(ROOT / "build/btech-headless"), "--replay",
+                str(work / "native-arrival-x11.actions")], check=True, timeout=15,
+                capture_output=True, text=True, cwd=ROOT)
+            if json.loads(result.stdout) != json.loads(replayed.stdout):
+                raise RuntimeError("Native arrival state differs from its headless input replay")
+            print(result.stdout.strip())
+            subprocess.run(["python3", str(ROOT / "tools/verify_m2d.py"), "--native-log",
+                str(work / "native-arrival-x11.actions")], check=True, timeout=15)
+            print("PASS: native X11 normal exploration, NPC arrival/reply, return/exit and full canonical replay equality.")
         finally:
             os.close(read_fd)
             xvfb.terminate()

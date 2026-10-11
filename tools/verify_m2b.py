@@ -71,8 +71,8 @@ def main():
         recorded_actions = args.native_log.read_text().splitlines()
         check(recorded_actions == actions + ["idle"] * 5, "Unexpected native Katrina input log")
         _, recorded = run(binary, recorded_actions, work, "recorded")
-        for key, value in states[-1].items():
-            if key != "tick": check(recorded[-1][key] == value, f"Recorded native {key} drifted")
+        _, expected_native = run(binary, actions + ["idle"] * 5, work, "native-expected")
+        check(recorded[-1] == expected_native[-1], "Recorded native state drifted")
         print("PASS: native SDL Katrina inputs replay to the same complete canonical state.")
     if args.reference_run:
         for row in fixture["checkpoints"]:

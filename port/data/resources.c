@@ -30,6 +30,7 @@ int btp_map_decode(const uint8_t *b, size_t n, BtpMap *m, BtpError *e)
         memcpy(result.npc_names[i], b + 5 + 16*i, 16);
         memcpy(result.places[i], b + 133 + 16*i, 16);
         result.room_map[i] = b[517+i];
+        result.npc_routes[i] = b[533+i];
     }
     *m = result;
     return 1;

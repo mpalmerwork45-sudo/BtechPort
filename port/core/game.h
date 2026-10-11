@@ -9,6 +9,12 @@ typedef enum { BTP_TALK_NONE, BTP_TALK_EMPTY, BTP_TALK_MENU, BTP_TALK_REPLY } Bt
 typedef struct {
     uint8_t phase, selected, count, mask, room, actor;
 } BtpTalkState;
+typedef struct { uint16_t x, y; uint8_t direction; } BtpNpc;
+typedef struct {
+    uint8_t enabled, phase, clock, rng[3], bias, fault, loop_timer, allowance_pending;
+    uint16_t search;
+    BtpNpc actor[8];
+} BtpNpcState;
 typedef struct {
     uint32_t tick;
     uint16_t x_half, y_half;
@@ -17,12 +23,13 @@ typedef struct {
     uint8_t story_flags[BTP_STORY_BYTES]; /* D30C[0..22]; byte 22 countdown pacing is deferred */
     uint8_t story_checkpoint[BTP_STORY_BYTES], checkpoint_valid;
     BtpScriptState script;
-    uint8_t npc_pairs[8][2]; /* D398/D399 at stride 26; no NPC travel simulation yet */
+    uint8_t npc_pairs[8][2]; /* D398/D399 at stride 26 */
+    BtpNpcState npc;
     uint8_t talk_result, recruitment; /* D33A and D339 */
     uint8_t checkpoint_talk_result, conversation_checkpoint;
     BtpTalkState talk;
 } BtpState;
-enum { BTP_STATE_BYTES = 160 };
+enum { BTP_STATE_BYTES = 224 };
 
 void btp_start(BtpState *state);
 void btp_tick(BtpState *state, const BtpMap *map, BtpAction action);

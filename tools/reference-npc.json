@@ -670,7 +670,14 @@
     "follow-stop3"
   ],
   [
-    "key",
+    "wait-npc",
+    "arrival",
+    "1",
+    "1",
+    "10"
+  ],
+  [
+    "keys-fast",
     "Up",
     "Up",
     "Up",
