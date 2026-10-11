@@ -1,4 +1,4 @@
-# Build, verification and original oracle — M2i, 2026-10-11
+# Build, verification and original oracle — M2j, 2026-10-11
 
 ## Native commands
 
@@ -21,9 +21,9 @@ Run from `/home/mpalmer/BtechPort`:
 ./scripts/test-sanitize.sh
 ```
 
-The build script uses our proven EXEPACK reader through `tools/prepare_talk.py` to generate ignored `work/talk-data.bin` and its provenance sidecar from the audited original executable. BTT3 has 55 strings in 1889 bytes (292-byte header, 1597-byte blob). It then selects installed host GCC 15.2/CMake and clears inherited Conda compiler/linker flags for its child commands. Direct builds with this shell's older Conda linker fail on host libc's `.relr.dyn`. No shell or Git configuration changes or network calls are needed. Outputs are `build/btech-port`, `build/btech-headless`, `build/btp-tests`, `build/btp-script-tests`, `build/btp-npc-tests`, `build/btp-shop-tests` `build/btp-bank-tests`, `build/btp-save-tests` and `build/btp-school-tests`. Python is required for conversion/testing, not by the running C game.
+The build script uses our proven EXEPACK reader through `tools/prepare_talk.py` to generate ignored `work/talk-data.bin` and its provenance sidecar from the audited original executable. BTT4 has 84 strings in 2712 bytes (408-byte header, 2304-byte blob). It then selects installed host GCC 15.2/CMake and clears inherited Conda compiler/linker flags for its child commands. Direct builds with this shell's older Conda linker fail on host libc's `.relr.dyn`. No shell or Git configuration changes or network calls are needed. Outputs are `build/btech-port`, `build/btech-headless`, `build/btp-tests`, `build/btp-script-tests`, `build/btp-npc-tests`, `build/btp-shop-tests` `build/btp-bank-tests`, `build/btp-save-tests` `build/btp-school-tests` and `build/btp-training-tests`. Python is required for conversion/testing, not by the running C game.
 
-The runtime reads MAP1, BTTLTECH, CITADEL, COMSTAR, ARMOR and WEAPON directly, plus the local EXE text cache. For another resource/cache location, run `python3 tools/prepare_talk.py --data DIRECTORY --output CACHE` and pass `--data DIRECTORY --dialogue-data CACHE` to the executable. Wrong source/image hashes, malformed caches and missing files fail visibly. See [Talk provenance](M2_TALK_EVIDENCE.md) and [banking evidence](M2_BANKING_EVIDENCE.md).
+The runtime reads MAP1, BTTLTECH, MECHSHAP, BTSTATS, CITADEL, COMSTAR, ARMOR, WEAPON, TRAINING, BARRACKS and LOUNGE directly, plus the local EXE text cache. For another resource/cache location, run `python3 tools/prepare_talk.py --data DIRECTORY --output CACHE` and pass `--data DIRECTORY --dialogue-data CACHE` to the executable. Wrong source/image hashes, malformed caches and missing files fail visibly. See [Talk provenance](M2_TALK_EVIDENCE.md) and [banking evidence](M2_BANKING_EVIDENCE.md).
 
 SDL2 2.32.4 runtime is installed; development headers are under ignored `local-deps/sdl2/`. Conventional SDL2 installations also work; `SDL_GetTicks64` requires 2.0.18 or later. With a normal compiler environment:
 
@@ -35,14 +35,14 @@ cmake --build build
 
 Core/data/pixel tests build without SDL using `-DBTP_FRONTEND=OFF`. Synthetic CTest suites can build without original assets/cache; corpus/native checks require them. Windows portability remains **UNKNOWN** until tested.
 
-Arrows move/select; Enter/Space confirms/continues; Backspace declines entry or recovers unsupported choices; F3 toggles diagnostics; F5 saves; F9 loads; R restarts; Esc quits. In bank amounts, digits type (maximum seven), Backspace erases, Escape clears to 0 without quitting/submitting, and Enter submits; Space is ignored. The 32ms step, key repetition, delays and flushing are **APPROXIMATE**. Replays accept lowercase `up`, `down`, `left`, `right`, `idle`, `accept`, `cancel`, `0`–`9` and `clear`, one per line:
+Arrows move/select; held perpendicular arrows form a diagonal while walking/driving. Keypad 1/3/7/9 and End/PgDn/Home/PgUp move diagonally; keypad 2/4/6/8 moves cardinally. Enter/Space confirms/continues; Backspace declines entry or recovers unsupported choices; F3 toggles diagnostics; F5 saves; F9 loads; R restarts; Esc quits. In bank amounts, digits type (maximum seven), Backspace erases, Escape clears to 0 without quitting/submitting, and Enter submits; Space is ignored. The 32ms step, key repetition, delays and flushing are **APPROXIMATE**. Replays accept lowercase `up`, `down`, `left`, `right`, `up-left`, `up-right`, `down-left`, `down-right`, `idle`, `accept`, `cancel`, `0`–`9` and `clear`, one per line:
 
 ```sh
 ./build/btech-port --record work/my-walk.actions
 ./build/btech-headless --replay work/my-walk.actions --trace --frame work/my-walk.ppm
 ```
 
-Records include idle ticks. Restart is visibly refused while recording because reset is not a replay action. Unknown actions fail. The VM supports the bounded Citadel, bank and two-shop menus, Hall, Katrina/repeat, `F5 0C` local Talk, F6 Yes/No, positioned cash/account text and exit/re-entry. Bank native actions `06/07/08` handle accounts/buy/sell with serializable company selection and amount entry. Combat class stops at `F5 04` after its introduction. Other native actions and nonlocal Talk contexts remain explicit faults. Failed choices roll back story/result/cash/investment/equipment writes across restored pauses; Backspace recovers to the menu. This recovery is a prototype control, not original behavior. Headless faults return failure and can still write diagnostic frames.
+Records include idle ticks. Restart is visibly refused while recording because reset is not a replay action. Unknown actions fail. The VM supports the bounded Citadel, bank and two-shop menus, Hall, Katrina/repeat, `F5 0C` local Talk, F6 Yes/No, positioned cash/account text and exit/re-entry. Bank native actions `06/07/08` handle accounts/buy/sell with serializable company selection and amount entry. Class services `04/05` implement the verified personal-skill courses. Training services `01/02/03` implement only the first MechWarrior launch/result/return; later assignments and nonlocal Talk contexts remain explicit faults. Failed choices roll back story/result/cash/investment/equipment writes across restored pauses; Backspace recovers to the menu. This recovery is a prototype control, not original behavior. Headless faults return failure and can still write diagnostic frames.
 
 ## ComStar and both shops' Talk oracle
 
@@ -137,7 +137,7 @@ exit. Failed loads leave the current session intact; loading while recording is
 refused. Native notices appear in the window title. Original GAME files are not
 supported. See [save evidence](M2_SAVE_EVIDENCE.md) for failure and durability scope.
 
-PASS: 11972 save-file assertions across 137 replay snapshots; 31 fresh-process
+PASS: 12520 save-file assertions across 137 replay snapshots; 31 fresh-process
 states with exact full-JSON restore and 1024-tick continuation. Native F5/F9
 restores a partially entered bank amount, including after a missing-file error.
 M2g BTP7/BTS1 migration and independently recomputed valid-CRC/invalid-state
@@ -156,16 +156,60 @@ The ordinary route funds a 75-credit course from 87 cash, raises the first skill
 to rank 1, enforces cooldown 255→0 outdoors, then offers tuition 200 and refuses
 with cash 27 unchanged. Higher ranks and the other subjects are supported by
 primary instructions and boundary tests, not additional live paid-course traces.
-Personal Class leaves mission counter 0 unchanged. MechWarrior missions and
-barracks sleep remain future work. See [training evidence](M2_TRAINING_EVIDENCE.md).
+Personal Class leaves mission counter 0 unchanged. M2j adds the first MechWarrior mission and barracks sleep separately. See [training evidence](M2_TRAINING_EVIDENCE.md).
+
+## First mission, all goods, lounge and diagonals
+
+```sh
+build/btp-training-tests "Original DOS"
+python3 tools/verify_m2j.py
+python3 tools/native_smoke.py --training-only
+python3 tools/native_smoke.py --diagonal-only
+./build/btech-port --replay tests/fixtures/reference-diagonal-mech.actions
+./build/btech-port --smoke-replay --replay tests/fixtures/reference-mission-pass.actions
+python3 tools/reference_session.py --script tools/reference-mission-pass-sleep.json
+python3 tools/reference_session.py --script tools/reference-full-shops-lounge.json
+python3 tools/reference_session.py --script tools/reference-lounge-rick.json
+python3 tools/reference_session.py --script tools/reference-diagonal-human.json
+python3 tools/reference_session.py --script tools/reference-diagonal-mech.json
+```
+
+All 325 original checkpoints pass: mission success/sleep 100, failure 69,
+full goods/ordinary lounge 77, controlled Rick lounge 8, diagonal human 19,
+diagonal mission/entry 52. Text hashes derive directly from original BLD/EXE;
+fixtures contain numeric projections and actions. Every observed new phase
+saves, restarts and continues through an identical bounded tail. Quiz RNG/answer
+selection, mech/human gait and terrain penalties are compared explicitly.
+The 2219 training assertions include quiz failure, all loan choices, timer
+boundaries, sleep/repeat gates, Rick/device state, invalid saves and continuation.
+Full shop tests exercise exact/short/high-word funding, No and replacement
+for all sixteen goods. Disk continuation now includes all 22 logical actions.
+
+`full-goods` uses an audited 20000-credit test budget. `lounge` uses the explicit
+Rick prerequisite from `lounge-rick-context.json`; default Talk supplies no
+story precondition. Mission/diagonal routes use ordinary gameplay inputs.
+The failed mission's corner wait is normalized to four native timer updates;
+exact DOS CPU-time parity is excluded. Original dream animation 8/parameter 1
+is recorded and saved, but animation playback and sound remain absent.
+The native quiz uses original diagram pixels with approximate font/pointer UI.
+Later assignments fail visibly before changing campaign progress or the loan.
+See [M2j evidence](M2_MISSION_EVIDENCE.md) for addresses, run identities and limits.
+
+Native mission success/failure/all-goods/lounge runs match complete inputs and
+final headless JSON. Real F5/F9 restores changed quiz, active mission and dream
+states. The diagonal check sends actual X11 key events for keypad, Home/PgUp/
+End/PgDn, simultaneous perpendicular arrow chords, releases and bank keypad
+amount editing; complete native records and final JSON match headless replay.
+The default full native smoke includes both new groups. Private displays close
+automatically and use no interactive terminal input.
 
 ## Internal state encoding
 
-`BTP9` is a tested **416-byte internal core encoding**, stored by the native F5/F9 interface inside a 16-byte BTS1 length/CRC envelope. Original GAME compatibility remains unimplemented. It adds nine walking indices to BTP8; older saves start the missing gait at the first frame for their stored facing. It retains personal-skill ranks, their rollback copies and the paused course context; BTP7 (384 bytes) migrates with zero ranks and no active course. It preserves prior state plus cash/accounts, cap, equipment, sparse shop refusal byte, remembered menu selectors, confirmation, text positions/dynamic balances, bank selection/amount/results and transaction rollback. BTP6 (320 bytes) migrates with empty investments/no bank service, preserving its cash/equipment. Legacy BTP1 (24), BTP2 (64), BTP3 (128) and BTP4 (160 bytes) disable travel because they never stored its clock. BTP4 retains Talk/occupancy; earlier versions carry none. BTP5 (224 bytes) retains travel and migrates the recorded unspent baseline to cash 35 if its pending allowance marker is set, otherwise 50 when travel is enabled. Legacy equipment defaults to zero because those formats never stored it. Migration is not reconstruction of arbitrary old economy state.
+`BTPA` (version 10) is a tested **448-byte internal core encoding**, stored by the native F5/F9 interface inside a 16-byte BTS1 length/CRC envelope. Original GAME compatibility remains unimplemented. It adds quiz/mission/entry direction, extra story/checkpoint bytes, cap rollback and animation request to BTP9. BTP9 added nine walking indices to BTP8; older saves start the missing gait at the first frame for their stored facing. It retains personal-skill ranks, their rollback copies and the paused course context; BTP7 (384 bytes) migrates with zero ranks and no active course. It preserves prior state plus cash/accounts, cap, equipment, sparse shop refusal byte, remembered menu selectors, confirmation, text positions/dynamic balances, bank selection/amount/results and transaction rollback. BTP6 (320 bytes) migrates with empty investments/no bank service, preserving its cash/equipment. Legacy BTP1 (24), BTP2 (64), BTP3 (128) and BTP4 (160 bytes) disable travel because they never stored its clock. BTP4 retains Talk/occupancy; earlier versions carry none. BTP5 (224 bytes) retains travel and migrates the recorded unspent baseline to cash 35 if its pending allowance marker is set, otherwise 50 when travel is enabled. Legacy equipment defaults to zero because those formats never stored it. Migration is not reconstruction of arbitrary old economy state.
 
-The first 394 bytes retain previous field positions, with magic/version BTP9/9. Words/ticks are little-endian; reserved bytes are zero. Fields added since BTP2:
+The first 394 bytes retain previous field positions, with magic/version BTPA/10; the existing first 403 byte positions remain unchanged. Words/ticks are little-endian; reserved bytes are zero. Fields added since BTP2:
 
-| Byte offsets | BTP9 field |
+| Byte offsets | BTPA field |
 |---|---|
 | 59–65 | Story bytes 16–22; bytes 0–15 remain at 24–39 |
 | 66 | BLD text span count, bounded to eight |
@@ -201,20 +245,28 @@ The first 394 bytes retain previous field positions, with magic/version BTP9/9. 
 | 390–393 | Course phase, selected subject, prior rank and outcome |
 | 394 | Player walking index, original frame minus 16 (0–15) |
 | 395–402 | Eight NPC walking indices (0–15) |
-| 403–415 | Reserved zero |
+| 403–406 | Story indices 45,46,47,51 |
+| 407–410 | Rollback values for indices 45,46,47,51 |
+| 411–412 | Allowance-cap rollback word |
+| 413–416 | Animation request/parameter, mech-result insertion selector/index |
+| 417 | Pending entrance action, including diagonals |
+| 418–424 | Quiz phase, selected label, round, point, failure and 16-bit used-point mask |
+| 425 | Reserved zero |
+| 426–433 | Mission phase, corner/warning/idle, gait/direction and 16-bit elapsed |
+| 434–447 | Reserved zero |
 
-BLD text spans concatenate exact bytes without added separators. Native Talk suspends after its operand, clears BLD spans and assembles text from checked EXE/MAP1 references. Bank text combines original literals, numeric input and positioned account values; the digest represents that documented concatenation, not pixel equality. Original case/spaces and bank color controls survive the cache. Decoding validates native PC, occupant mask/count, actor, result, bank phase/editor and checkpoint consistency. More than eight BLD spans, malformed operands/targets, unsupported indexes and exhausted instruction budgets stop explicitly. The sparse story model covers `D30C[0..22]` plus shop refusal index 39 and explicit native contexts. Index 23 is the separately modeled outdoor timer; indexes 23–38 remain unsupported in the VM. CLI `story_flags` keeps its prior 23-byte projection; `shop_refusal` exposes index 39 separately. Restore callers must supply the active slot's BLD via `btp_building_bld`. Immediate purchase/account-display services finish inside one tick; Talk and bank input serialize suspended services. Receipts wait on original bytecode FB, without an extra native pause.
+BLD text spans concatenate exact bytes without added separators. Native Talk suspends after its operand, clears BLD spans and assembles text from checked EXE/MAP1 references. Bank text combines original literals, numeric input and positioned account values; the digest represents that documented concatenation, not pixel equality. Original case/spaces and bank color controls survive the cache. Decoding validates native PC, occupant mask/count, actor, result, bank phase/editor and checkpoint consistency. More than eight BLD spans, malformed operands/targets, unsupported indexes and exhausted instruction budgets stop explicitly. The sparse story model covers `D30C[0..22]` plus indices 39,45,46,47,51 and explicit native contexts. Index 23 is the separately modeled outdoor timer; indexes 23–38 remain unsupported in the VM. CLI `story_flags` keeps its prior 23-byte projection; `shop_refusal`, `recruitment`, `talk_result`, `device` and `allowance_cap` expose the additional fields separately. Restore callers must supply the active slot's BLD via `btp_building_bld`. Immediate purchase/account-display services finish inside one tick; Talk and bank input serialize suspended services. Receipts wait on original bytecode FB, without an extra native pause.
 
 ## Passed checks and scope
 
 | Check | Actual result | What it establishes |
 |---|---|---|
 | CTest sprites | PASS, 848 assertions | Atlas bounds, black outline/transparency, palette, 8×8/24×24 clipping, extreme coordinates, eight gait programs, water rule and BTP8/BTP9 migration. |
-| CTest core | PASS, 68 synthetic assertions | RLE/map bounds, movement/collision, edges, state restoration/validation, palette and mixed-case glyph regression. |
+| CTest core | PASS, 269 synthetic assertions | RLE/map bounds, movement/collision, edges, state restoration/validation, palette and mixed-case glyph regression. |
 | CTest script | PASS, 58 synthetic assertions | BLD size/decrypt/bounds, unsupported operations/index/font/scene/menu, byte wrapping, signed tables, concatenation, span limits and native suspension/return. |
 | CTest NPC | PASS, 24 synthetic assertions | RNG vectors, first/later allowance wraps, proximity freeze, positive/zero arrival, expiry, timer guard, BTP9 validation/restoration and BTP4 migration. |
 | CTest shops | PASS, 40 synthetic assertions | Variable menus/targets, F6 branches, F0 bounds, sparse state, dynamic cash bounds, native-service budget. |
-| `build/btp-shop-tests "Original DOS"` | PASS, 30928 assertions | Restore/continue all 6137 ticks of two full shop replays; 49/50 and 1/2-credit boundaries, No, unsupported goods/recovery, malformed/atomic state, allowance overshoot, BTP5 migration. |
+| `build/btp-shop-tests "Original DOS"` | PASS, 33253 assertions | Restore/continue all 6137 ticks of two full shop replays; 49/50 and 1/2-credit boundaries, No, unsupported-context recovery and all sixteen goods, malformed/atomic state, allowance overshoot, BTP5 migration. |
 | Shop differential | PASS, 56 purchase + 65 boundary checkpoints | Original cursor/party, complete RAM BLDs, exact text hashes, menus/confirmation, credit/result/equipment changes and return; ordinary inputs only. |
 | Native X11 shops | PASS, 3064 ticks | SDL input/presentation through both purchases and outdoor return; full final JSON matches headless recorded replay. |
 | CTest bank | PASS, 16 synthetic assertions | Pre-update cap comparison, account RNG schedule, wrapping arithmetic and Baker growth threshold. |
@@ -222,7 +274,7 @@ BLD text spans concatenate exact bytes without added separators. Native Talk sus
 | Bank/shop Talk differential | PASS, 160 original checkpoints | 33 bank + 29 rates + 28 empty Armor + 48 empty Weapons + 11 occupied per shop; original cursor/party, BLD/native text, cash/accounts, flags/results/menu memory and return. Occupied handlers use controlled preconditions. |
 | Bank outdoor oracle | PASS, 459 complete frame steps / 460 samples | All 70 numeric fields, two wraps, account returns/allowance, complete NPC/RNG/loop/search equality; no capture gaps skipped. |
 | Native X11 bank/Talk/editor | PASS, five checks | Bank 419, rates 2247, occupied Armor/Weapons 19 each, synthetic editor 349 ticks; complete recorded input/final JSON equality with headless replay. |
-| `build/btp-tests "Original DOS"` | PASS, 421 assertions including synthetic checks | 14 MTPs/12 graphics; prior Citadel routes; Talk Done/result/retention, exact lengths, restored pauses, corrupt state/cache, rollback, BTP1/BTP2/BTP3 migration. Multiple occupants/wrap are structural tests, not live parity claims. |
+| `build/btp-tests "Original DOS"` | PASS, 654 assertions including synthetic checks | 14 MTPs/12 graphics; prior Citadel routes; Talk Done/result/retention, exact lengths, restored pauses, corrupt state/cache, rollback, BTP1/BTP2/BTP3 migration. Multiple occupants/wrap are structural tests, not live parity claims. |
 | `build/btp-script-tests "Original DOS"` | PASS, 95 assertions including synthetic checks | Authentic menu/Hall/Katrina texts/effects, repeat denial, retention, exit, native Class/menu suspension and F5 0C continuation. Unknown-action rollback remains covered using a test-owned corrupted BLD copy. |
 | Python unpacker/converter | PASS, 4 tests | Synthetic stream/header/run rejection, actual image hash/anchor, deterministic cache/address/string-hash provenance and wrong-version rejection. |
 | Movement projection | PASS, 31 original states / 30 actions | Positions/gate match original cursor and party[0], including repeated wall/hedge blocks; all 88 original hashes match. |
@@ -232,11 +284,13 @@ BLD text spans concatenate exact bytes without added separators. Native Talk sus
 | NPC oracle and natural route | PASS, 1741 NPC assertions; 570 complete frame steps, two arrivals, 56 player/story checkpoints | Exact observed positions/destinations/directions/timers/phase/loop/RNG/search; 68 player-movement gaps skipped. Persistence at every checked frame; ordinary-input arrival/reply/return with original text hashes and building suspension. |
 | Native SDL dummy/private X11 | PASS, four short regressions plus X11 natural arrival | Window, SDL input/presentation, bounded exit and records: movement 8 ticks; Hall/Katrina/Talk 24 each; full arrival/reply/exit 2621. Actual native final JSON equals headless replay including NPC/RNG. |
 | ASan/UBSan/LeakSanitizer | PASS, headless core/data/pixels/VM/NPC/economy/corpus and all earlier/new bank/shop-Talk replays | No detected address, undefined-behavior or leak errors in these paths. SDL/backend not sanitizer-instrumented. LeakSanitizer requires execution outside the ptrace sandbox. |
+| Training/diagonal C suite | PASS, 2219 assertions (133 synthetic) | Quiz failure and loan choices, timer thresholds, terrain and blocked diagonal gait, sleep gates, Rick/device branch, invalid saves and continuation. |
+| M2j differential | PASS, 325 checkpoints | First mission success/failure/sleep, all goods, lounge and human/mech diagonals; exact text/state/gait/terrain and fresh-process continuation. Controlled funding/Rick prerequisites and timing normalization remain explicit. |
 | Reference guard | PASS, 1287 entries | Both supplied trees match content/mode/mtime/entries/symlinks, including reference Git metadata. Access times excluded. |
 
 Repeated canonical outputs are identical and unknown input fails. Original credits stay 35 in the short Citadel traces. M2e added two purchases; M2f adds actual balances and returns in the local 50-cap economy. Wider economy/day progression remains deferred. Screens establish modes/highlights/order; PCs are bytecode-derived. None of these checks establishes full timing, global RNG, pixels, Windows or campaign parity.
 
-`test.sh --x11` adds the thirteen M2a–M2h private-display scenarios plus M2i movement and preview checks and closes automatically; arrival takes about 84 seconds, shops about 98 and the five M2f checks about 98. `python3 tools/native_smoke.py --shops-only` runs just the purchase route; `--m2f-only` runs the new bank/Talk/editor checks; `--bank-input-only` runs the 11-second editor check; `--save-only` checks native F5/F9; `--school-only` runs the 99-second course replay and the save regression. `--sprites-only` checks native sprite movement/pixels, animated mech preview and F5/F9. Whole-script GUI approval rules apply; no interactive terminal input is used. Plain `test.sh` needs no display/audio device and checks all routes headlessly. Sanitizers cover software rendering through C tests, without instrumenting SDL/backend code.
+`test.sh --x11` adds the historical private-display scenarios, M2i movement/preview, M2j mission/shop/lounge/F5-F9 and diagonal/keypad checks, then closes automatically; arrival takes about 84 seconds, shops about 98 and the five M2f checks about 98. `python3 tools/native_smoke.py --shops-only` runs just the purchase route; `--m2f-only` runs the new bank/Talk/editor checks; `--bank-input-only` runs the 11-second editor check; `--save-only` checks native F5/F9; `--school-only` runs the 99-second course replay and the save regression. `--sprites-only` checks native sprite movement/pixels, animated mech preview and F5/F9. `--training-only` runs the four M2j routes and three save/load checks; `--diagonal-only` checks real movement keys/chords and bank keypad digits. Whole-script GUI approval rules apply; no interactive terminal input is used. Plain `test.sh` needs no display/audio device and checks all routes headlessly. Sanitizers cover software rendering through C tests, without instrumenting SDL/backend code.
 
 ## NPC arrival original comparison
 
@@ -252,7 +306,7 @@ python3 tools/verify_m2d.py --reference-run work/reference-runs/1791689346416199
 
 Substitute the printed directory for a fresh reference run. The whole JSON script uses ordinary keys, a read-only NPC observer and an adaptive bounded wait for arrival. The observer polls only its child emulator and requires two identical numeric projections before retaining a sample. `wait-npc` observes genuine hidden coordinates/nonzero stay timer; `keys-fast` reaches the entry prompt before expiry. No guest context is injected. Raw screenshots/RAM stay ignored; the committed CSV/JSON contain only numerical facts, actions and hashes.
 
-The final original M2d run yielded 639 stable observations. The verifier matches 570 complete outdoor frame steps and two arrivals, explicitly skipping 68 gaps with missing player movement before resuming from the next captured state. Each verified frame checks identical continuation after current BTP9 encode/decode. It compares NPC position, destination, direction, packed/timer pairs, phase, loop timer, RNG and search/bias; it does not claim equality across skipped intervals. The first wrap consumes three account RNG draws, later wraps none, for that unspent 35-credit/50-cap baseline. M2f now extends the model to actual balances/returns and another 459 gap-free full frame comparisons. M2h adds the saturated outdoor countdowns for story bytes 20–22; wider day/cap progression remains deferred.
+The final original M2d run yielded 639 stable observations. The verifier matches 570 complete outdoor frame steps and two arrivals, explicitly skipping 68 gaps with missing player movement before resuming from the next captured state. Each verified frame checks identical continuation after current BTPA encode/decode. It compares NPC position, destination, direction, packed/timer pairs, phase, loop timer, RNG and search/bias; it does not claim equality across skipped intervals. The first wrap consumes three account RNG draws, later wraps none, for that unspent 35-credit/50-cap baseline. M2f now extends the model to actual balances/returns and another 459 gap-free full frame comparisons. M2h adds the saturated outdoor countdowns for story bytes 20–22; wider day/cap progression remains deferred.
 
 The default native route has 2612 logical ticks, including idles, and ends on the original 162-byte reply. Fifty-six player/story checkpoints compare by non-idle input ordinal; elapsed-time NPC fields at route checkpoints are excluded from this projection. The frame corpus establishes their step behavior separately. Native entry/building suspension and return/exit pass. `--smoke-arrival --replay tests/fixtures/citadel-arrival.actions` sends the entire route through SDL events, appends nine return/exit/idle actions, and closes at tick 2621. The X11 test compares actual native JSON with its headless replay, including every NPC/RNG field.
 
@@ -359,7 +413,7 @@ All 64,000 independently decoded C BTTLTECH pixels match the secondary reference
 
 **VERIFIED for that frame:** 42,625 / 43,200 right-panel pixels equal, **98.669%**. The remaining 575 pixels include omitted NPC/sprite overlays and the approximate player marker; their complete causes are not assigned without further tests. The independently drawn left diagnostic panel replaces original status/animation/menu graphics. Whole-screen equality is not claimed. Palette/camera parity for other graphics modes remains **UNKNOWN**.
 
-Remaining differences: no full NPC startup/world travel/followers, later campaign progression, later cap/day/sleep progression, remaining shop goods/repair/assignment, encounters, combat or original GAME compatibility, ANM playback or audio. M2f adds three local investment balances/returns and both shops' Talk to the earlier purchases/conversation. Unsupported actions still stop visibly. Glyph shapes/layout, pauses and remaining UI imagery remain approximate despite preserving original text bytes and case. The 98.669% figure above is the historical M1 comparison frame, not current pixel parity. No complete campaign or global map is claimed.
+Remaining differences: no full NPC startup/world travel/followers, later campaign/day progression, repair/party assignment, encounters, combat, original GAME compatibility, ANM playback or audio. M2j verifies the first mission/cap reward/sleep loop and all shop goods; wider progression remains deferred. M2f adds three local investment balances/returns and both shops' Talk to the earlier purchases/conversation. Unsupported actions still stop visibly. Glyph shapes/layout, pauses and remaining UI imagery remain approximate despite preserving original text bytes and case. The 98.669% figure above is the historical M1 comparison frame, not current pixel parity. No complete campaign or global map is claimed.
 
 ## Dependency provenance
 
@@ -374,7 +428,7 @@ Packages were downloaded through the configured Ubuntu archive with `apt-get dow
 | libsdl2-dev 2.32.4+dfsg-1 amd64 | `local-deps/sdl2/` | `90a21699bdb8f6f491b92dba345a85b1ab865c54cd59c527b91603a2d1a13b17` |
 | xvfb 2:21.1.18-1ubuntu1.1 amd64 | `local-deps/xvfb/` | `a980a874e0b5663ada7ff1f145ce91b87ba03a40bd5d4fde335bf6d0f1a4ed06` |
 
-The harness supplies a process-local library path for DOSBox's extracted libraries and dummy audio. X11/XTest libraries and fonts were already present. There is no audio device dependency in the slice. These packages are local ignored dependencies, not new implementation source. No new dependencies were needed for M2a–M2i.
+The harness supplies a process-local library path for DOSBox's extracted libraries and dummy audio. X11/XTest libraries and fonts were already present. There is no audio device dependency in the slice. These packages are local ignored dependencies, not new implementation source. No new dependencies were needed for M2a–M2j.
 
 
 ## M2i sprite verification
@@ -396,7 +450,7 @@ ptrace; the approved whole script runs outside that wrapper, with leak checking
 still enabled. No dependencies or reference-directory changes were required.
 
 M2i sources, export commands, exact evidence runs and remaining limits are in
-[M2_SPRITE_EVIDENCE.md](M2_SPRITE_EVIDENCE.md). The current payload remains 416
-bytes, now BTP9; existing game progress and old save migrations remain covered.
+[M2_SPRITE_EVIDENCE.md](M2_SPRITE_EVIDENCE.md). The historical M2i payload is 416
+bytes, BTP9; M2j extends it to 448 bytes, BTPA/version 10; existing game progress and old save migrations remain covered.
 Mech ownership/combat, portraits, original UI and terrain/scene animation remain
-unimplemented. Neither whole-screen nor full animation parity is claimed.
+unimplemented; first-assignment loaned-mech control is implemented in M2j. Neither whole-screen nor full animation parity is claimed.

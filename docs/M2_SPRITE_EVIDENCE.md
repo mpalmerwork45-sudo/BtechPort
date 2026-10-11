@@ -107,3 +107,11 @@ Remaining visual gaps: original status panel/font/menu geometry, terrain
 animation, portraits/ANMs, combat frames and actual mech gameplay. SDL key repeat
 and wall-clock pacing remain approximate. Both reference directories stay
 immutable.
+
+**M2j continuation:** the first training assignment now renders the original
+loaned mech at its original 24×24 anchor and implements all eight mech gait
+programs. Eight-direction player walking and mech movement pass live free/blocked
+diagonal traces; the new save format preserves them. Keypad/Home/PgUp/End/PgDn
+and simultaneous arrow chords map to the same logical actions; banking keeps
+keypad digits. The renderer still does not establish combat/party ownership,
+original UI, or terrain/scene animation. See [M2j evidence](M2_MISSION_EVIDENCE.md).

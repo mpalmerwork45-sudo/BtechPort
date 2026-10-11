@@ -130,3 +130,10 @@ SDL/backend remains outside sanitizer coverage. Menu/confirmation frames were
 inspected for readable original mixed-case text. Layout, glyphs, sprites and
 cadence remain **APPROXIMATE**; wider economy/party/shop/campaign parity is not
 claimed. Proprietary BLD/EXE/text/RAM/graphics remain locally loaded and ignored.
+
+**M2j continuation:** all eleven weapons and five armour types are now
+purchasable. Primary prices/protection and all sixteen live transactions pass
+with an explicitly audited test budget, plus exact/short/No/high-word funding,
+replacement and persistence boundary tests. Lounge Talk is also implemented.
+These additions do not establish repair or full party equipment. The historical
+two-item fixtures above remain intact; see [M2j evidence](M2_MISSION_EVIDENCE.md).

@@ -101,3 +101,14 @@ file), adding player/NPC walking frames. BTP8 remains readable; its missing gait
 history restarts at the first frame for the stored facing. Logical Class/bank
 progress retains the earlier migration rules. All preceding save/course checks
 also pass on BTP9; see [sprite evidence](M2_SPRITE_EVIDENCE.md).
+
+**M2j continuation:** current saves use BTPA/version 10, 448-byte payload and
+464-byte BTS1 file. New fields retain quiz/mission/gait/timer, pending diagonal
+entrance movement, story/checkpoint indices 45/46/47/51, cap rollback and the
+dream animation request. BTP1–BTP9 migration stays covered. The original mission,
+shop and lounge fixtures restart every observed new phase and continue to the
+same complete state; outdoor diagonal checkpoints also restart. Real F5/F9
+restores changed quiz, loaned-mech and dream states. The disk suite now includes
+all 22 actions and passes 12520 assertions across its existing 137 snapshots.
+See [M2j evidence](M2_MISSION_EVIDENCE.md); original GAME compatibility and prior
+durability/platform exclusions remain unchanged.
