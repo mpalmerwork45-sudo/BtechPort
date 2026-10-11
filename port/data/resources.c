@@ -111,17 +111,20 @@ int btp_read_file(const char *path, uint8_t **bytes, size_t *length, BtpError *e
 int btp_resources_load(const char *dir, BtpResources *r, BtpError *e)
 {
     char path[4096]; uint8_t *data; size_t n;
-    const char *names[] = {"MAP1.MTP", "BTTLTECH.ICN"};
-    for (unsigned i = 0; i < 2; ++i) {
+    const char *names[] = {"MAP1.MTP", "BTTLTECH.ICN", "CITADEL.BLD"};
+    for (unsigned i = 0; i < 3; ++i) {
         int len = snprintf(path, sizeof path, "%s/%s", dir, names[i]);
         if (len < 0 || (size_t)len >= sizeof path) return fail(e, "Resource directory path too long");
         if (!btp_read_file(path, &data, &n, e)) return 0;
-        int ok = i == 0 ? btp_map_decode(data, n, &r->map, e) : btp_graphic_decode(data, n, &r->tiles, e);
+        int ok = i == 0 ? btp_map_decode(data, n, &r->map, e) :
+            i == 1 ? btp_graphic_decode(data, n, &r->tiles, e) : btp_bld_decode(data, n, &r->citadel, e);
         free(data);
         if (!ok) return 0;
     }
     if (r->map.width != 64 || r->map.height != 64 || r->tiles.format != 1)
-        return fail(e, "M1 requires the authentic 64x64 MAP1 and format-1 BTTLTECH tiles");
+        return fail(e, "M2a requires the authentic 64x64 MAP1 and format-1 BTTLTECH tiles");
+    if (r->map.entrance_x[1] != 0x0c45 || r->map.entrance_y[1] != 0xc014)
+        return fail(e, "M2a requires the verified MAP1 Citadel entrance words");
     for (unsigned i = 0; i < 4096; ++i)
         if (r->map.tiles[i] >= 250) return fail(e, "MAP1 references a tile outside the 250-tile sheet");
     return 1;

@@ -31,6 +31,14 @@ def main():
                 capture_output=True, text=True)
             print(result.stdout.strip())
             print("PASS: native X11 window, SDL arrow events, texture presentation, bounded exit.")
+            result = subprocess.run([str(ROOT / "build/btech-port"), "--smoke-citadel",
+                "--data", str(ROOT / "Original DOS"), "--record", str(work / "native-citadel-x11.actions"),
+                "--frame", str(work / "native-citadel-x11.ppm")], env=env, timeout=15, check=True,
+                capture_output=True, text=True)
+            print(result.stdout.strip())
+            subprocess.run(["python3", str(ROOT / "tools/verify_m2.py"), "--native-log",
+                str(work / "native-citadel-x11.actions")], check=True, timeout=15)
+            print("PASS: native X11 Citadel entry, menu/confirm events, dialogue, exit and recorded replay.")
         finally:
             os.close(read_fd)
             xvfb.terminate()

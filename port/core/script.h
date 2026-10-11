@@ -5,7 +5,8 @@
 typedef enum { BTP_SCRIPT_RUNNING, BTP_SCRIPT_MENU, BTP_SCRIPT_WAIT,
     BTP_SCRIPT_END, BTP_SCRIPT_ERROR } BtpScriptStatus;
 typedef enum { BTP_SCRIPT_OK, BTP_SCRIPT_TRUNCATED, BTP_SCRIPT_OPCODE,
-    BTP_SCRIPT_TARGET, BTP_SCRIPT_MENU_ID, BTP_SCRIPT_SCENE, BTP_SCRIPT_BUDGET } BtpScriptError;
+    BTP_SCRIPT_TARGET, BTP_SCRIPT_MENU_ID, BTP_SCRIPT_SCENE, BTP_SCRIPT_BUDGET,
+    BTP_SCRIPT_FONT } BtpScriptError;
 typedef struct {
     uint16_t pc, text_offset, text_length, menu_table, fault_pc;
     uint16_t pause_units;

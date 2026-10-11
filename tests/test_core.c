@@ -77,7 +77,7 @@ static void state(void)
     uint8_t encoded[BTP_STATE_BYTES], roundtrip[BTP_STATE_BYTES];
     btp_state_encode(&s, encoded);
     BtpState restored;
-    CHECK(btp_state_decode(encoded, sizeof encoded, &m, &restored));
+    CHECK(btp_state_decode(encoded, sizeof encoded, &m, NULL, &restored));
     btp_state_encode(&restored, roundtrip);
     CHECK(!memcmp(encoded, roundtrip, sizeof encoded));
     for (unsigned i = 0; i < 100; ++i) {
@@ -86,10 +86,10 @@ static void state(void)
     }
     btp_state_encode(&s, encoded); btp_state_encode(&restored, roundtrip);
     CHECK(!memcmp(encoded, roundtrip, sizeof encoded));
-    CHECK(!btp_state_decode(encoded, sizeof encoded - 1, &m, &restored));
-    encoded[4] = 2; CHECK(!btp_state_decode(encoded, sizeof encoded, &m, &restored));
-    encoded[4] = 1; encoded[12] = 128; CHECK(!btp_state_decode(encoded, sizeof encoded, &m, &restored));
-    encoded[12] = 69; encoded[20] = 1; CHECK(!btp_state_decode(encoded, sizeof encoded, &m, &restored));
+    CHECK(!btp_state_decode(encoded, sizeof encoded - 1, &m, NULL, &restored));
+    encoded[4] = 3; CHECK(!btp_state_decode(encoded, sizeof encoded, &m, NULL, &restored));
+    encoded[4] = 2; encoded[12] = 128; CHECK(!btp_state_decode(encoded, sizeof encoded, &m, NULL, &restored));
+    encoded[12] = 69; encoded[23] = 1; CHECK(!btp_state_decode(encoded, sizeof encoded, &m, NULL, &restored));
     s.x_half = 0; s.y_half = 0; btp_tick(&s, &m, BTP_LEFT);
     CHECK(s.x_half == 0 && s.blocked == BTP_EDGE);
     btp_tick(&s, &m, BTP_UP); CHECK(s.y_half == 0 && s.blocked == BTP_EDGE);
@@ -120,6 +120,74 @@ static void pixels(void)
     free(a); free(b); free(r);
 }
 
+static void restored_tick(BtpState *s, const BtpResources *r, BtpAction action)
+{
+    uint8_t before[BTP_STATE_BYTES], after[BTP_STATE_BYTES], restored[BTP_STATE_BYTES];
+    btp_state_encode(s, before);
+    BtpState copy;
+    CHECK(btp_state_decode(before, sizeof before, &r->map, &r->citadel, &copy));
+    btp_state_encode(&copy, restored); CHECK(!memcmp(before, restored, sizeof before));
+    btp_game_tick(s, r, action); btp_game_tick(&copy, r, action);
+    btp_state_encode(s, after); btp_state_encode(&copy, restored);
+    CHECK(!memcmp(after, restored, sizeof after));
+}
+static void citadel_loop(const char *dir)
+{
+    BtpResources *r = malloc(sizeof *r); CHECK(r);
+    BtpError error; CHECK(btp_resources_load(dir, r, &error));
+    BtpState s; btp_start(&s);
+    for (unsigned i = 0; i < 5; ++i) btp_game_tick(&s, r, BTP_UP);
+    CHECK(s.mode == BTP_ENTRY && s.x_half == 69 && s.y_half == 21);
+    restored_tick(&s, r, BTP_IDLE);
+    CHECK(s.mode == BTP_ENTRY && s.story_flags[10] == 0);
+    restored_tick(&s, r, BTP_CANCEL);
+    CHECK(s.mode == BTP_EXPLORE && s.y_half == 20 && s.story_flags[10] == 0);
+    btp_start(&s);
+    for (unsigned i = 0; i < 5; ++i) btp_game_tick(&s, r, BTP_UP);
+    restored_tick(&s, r, BTP_ACCEPT);
+    CHECK(s.mode == BTP_BUILDING && s.y_half == 21 && s.story_flags[10] == 1);
+    restored_tick(&s, r, BTP_DOWN);
+    CHECK(s.script.selected == 1);
+    restored_tick(&s, r, BTP_ACCEPT);
+    for (unsigned i = 0; i < 6; ++i) {
+        CHECK(s.script.status == BTP_SCRIPT_WAIT && s.mode == BTP_BUILDING && s.y_half == 21);
+        restored_tick(&s, r, BTP_IDLE);
+        CHECK(s.script.status == BTP_SCRIPT_WAIT);
+        restored_tick(&s, r, BTP_ACCEPT);
+    }
+    CHECK(s.script.status == BTP_SCRIPT_MENU && s.script.selected == 1);
+    for (unsigned i = 0; i < 3; ++i) restored_tick(&s, r, BTP_DOWN);
+    restored_tick(&s, r, BTP_ACCEPT);
+    CHECK(s.mode == BTP_EXPLORE && s.y_half == 20 && s.script.status == BTP_SCRIPT_END);
+    restored_tick(&s, r, BTP_DOWN);
+    CHECK(s.y_half == 21 && s.story_flags[10] == 1);
+    btp_start(&s);
+    for (unsigned i = 0; i < 5; ++i) btp_game_tick(&s, r, BTP_UP);
+    btp_game_tick(&s, r, BTP_ACCEPT); btp_game_tick(&s, r, BTP_ACCEPT);
+    CHECK(s.mode == BTP_SCRIPT_FAULT && s.script.last_opcode == 0xf3 && s.y_half == 21);
+    restored_tick(&s, r, BTP_CANCEL);
+    CHECK(s.mode == BTP_BUILDING && s.script.status == BTP_SCRIPT_MENU);
+    uint8_t saved[BTP_STATE_BYTES]; btp_state_encode(&s, saved); BtpState invalid;
+    saved[42] = saved[43] = 255;
+    CHECK(!btp_state_decode(saved, sizeof saved, &r->map, &r->citadel, &invalid));
+    btp_state_encode(&s, saved); saved[46] = saved[47] = 255;
+    CHECK(!btp_state_decode(saved, sizeof saved, &r->map, &r->citadel, &invalid));
+    btp_state_encode(&s, saved); saved[52] = BTP_SCRIPT_END;
+    CHECK(!btp_state_decode(saved, sizeof saved, &r->map, &r->citadel, &invalid));
+    uint8_t legacy[24] = {'B','T','P','1',1,0,0,0,0,0,0,0,69,0,25,0,1,85,0,0,0,0,0,0};
+    CHECK(btp_state_decode(legacy, sizeof legacy, &r->map, &r->citadel, &invalid));
+    CHECK(invalid.mode == BTP_EXPLORE && invalid.x_half == 69 && invalid.script.pc == 0);
+    /* Exact half coordinates, not the neighboring half in the same tile. */
+    r->map = (BtpMap){.width=64,.height=64}; memset(r->map.tiles, 64, sizeof r->map.tiles);
+    r->map.entrance_x[1] = 0x0c45; r->map.entrance_y[1] = 0xc014;
+    btp_start(&s); s.x_half = 68; s.y_half = 21;
+    btp_game_tick(&s, r, BTP_UP); CHECK(s.mode == BTP_EXPLORE && s.y_half == 20);
+    btp_start(&s); s.y_half = 21;
+    btp_game_tick(&s, r, BTP_UP); CHECK(s.mode == BTP_ENTRY && s.y_half == 21);
+    free(r);
+    puts("Citadel core: entry/decline, six dialogue screens, exit, error recovery, mid-dialogue BTP2 restore.");
+}
+
 static void corpus(const char *dir)
 {
     char path[4096]; uint8_t *b; size_t n; BtpMap m; BtpGraphic g; BtpError e;
@@ -146,7 +214,7 @@ static void corpus(const char *dir)
 int main(int argc, char **argv)
 {
     maps(); graphics(); state(); pixels();
-    if (argc == 2) corpus(argv[1]);
+    if (argc == 2) { corpus(argv[1]); citadel_loop(argv[1]); }
     printf("PASS: %u checks\n", checks);
     return 0;
 }

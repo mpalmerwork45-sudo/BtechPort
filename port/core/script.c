@@ -7,7 +7,7 @@ static void fault(BtpScriptState *s, BtpScriptError error, uint16_t pc)
 static uint16_t word(const uint8_t *p) { return (uint16_t)(p[0] | (uint16_t)p[1] << 8); }
 static int available(BtpScriptState *s, const BtpBld *b, unsigned n, uint16_t op_pc)
 {
-    if (s->pc > b->length || n > (unsigned)(b->length - s->pc)) {
+    if (!b || b->length > BTP_BLD_MAX || s->pc > b->length || n > (unsigned)(b->length - s->pc)) {
         fault(s, BTP_SCRIPT_TRUNCATED, op_pc); return 0;
     }
     return 1;
@@ -30,7 +30,9 @@ static void run(BtpScriptState *s, const BtpBld *b)
         switch (op) {
         case 0xfe: /* Font/presentation configuration; glyphs remain approximate. */
             if (!available(s, b, 1, op_pc)) return;
-            s->font = b->bytes[s->pc++]; break;
+            s->font = b->bytes[s->pc++];
+            if (s->font != 6) { fault(s, BTP_SCRIPT_FONT, op_pc); return; }
+            break;
         case 0xfd: /* Clear text panel. */
             s->text_offset = s->text_length = 0; break;
         case 0xfa: /* Explicit scene request, supported scene zero only. */
@@ -88,7 +90,7 @@ int btp_script_choose(BtpScriptState *s, const BtpBld *b, unsigned choice)
 {
     if (s->status != BTP_SCRIPT_MENU || choice >= 5) return 0;
     s->selected = (uint8_t)choice;
-    if (s->menu_table > b->length || b->length - s->menu_table < 10) {
+    if (!b || b->length > BTP_BLD_MAX || s->menu_table > b->length || b->length - s->menu_table < 10) {
         fault(s, BTP_SCRIPT_TRUNCATED, s->menu_table); return 0;
     }
     if (!jump(s, b, word(b->bytes + s->menu_table + 2 * choice), s->menu_table)) return 0;
@@ -98,6 +100,6 @@ int btp_script_choose(BtpScriptState *s, const BtpBld *b, unsigned choice)
 const char *btp_script_error_name(unsigned error)
 {
     static const char *names[] = {"none", "truncated bytecode", "unsupported opcode",
-        "invalid jump target", "unsupported menu", "unsupported scene", "instruction budget"};
-    return error <= BTP_SCRIPT_BUDGET ? names[error] : "invalid error";
+        "invalid jump target", "unsupported menu", "unsupported scene", "instruction budget", "unsupported font"};
+    return error <= BTP_SCRIPT_FONT ? names[error] : "invalid error";
 }

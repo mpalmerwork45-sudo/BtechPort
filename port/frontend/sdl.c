@@ -11,6 +11,8 @@ static BtpAction key_action(SDL_Keycode key)
         case SDLK_DOWN: return BTP_DOWN;
         case SDLK_LEFT: return BTP_LEFT;
         case SDLK_RIGHT: return BTP_RIGHT;
+        case SDLK_RETURN: case SDLK_SPACE: return BTP_ACCEPT;
+        case SDLK_BACKSPACE: return BTP_CANCEL;
         default: return BTP_IDLE;
     }
 }
@@ -28,13 +30,13 @@ int main(int argc, char **argv)
     if (o.headless) { result = btp_run_headless(&o, r); goto done; }
     if (o.tiles_output) { fputs("--export-tiles requires --headless\n", stderr); goto done; }
     BtpState state; btp_start(&state);
-    if (o.replay && !btp_replay(o.replay, &state, &r->map, o.trace)) goto done;
+    if (o.replay && !btp_replay(o.replay, &state, r, o.trace)) goto done;
     SDL_SetMainReady();
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_TIMER)) {
         fprintf(stderr, "SDL: %s\n", SDL_GetError()); goto done;
     }
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
-    SDL_Window *window = SDL_CreateWindow("BtechPort M1 - Training school", SDL_WINDOWPOS_CENTERED,
+    SDL_Window *window = SDL_CreateWindow("BtechPort M2a - Training school and Citadel", SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED, 960, 600, SDL_WINDOW_RESIZABLE);
     SDL_Renderer *renderer = window ? SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE) : NULL;
     SDL_Texture *texture = renderer ? SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
@@ -48,8 +50,13 @@ int main(int argc, char **argv)
     int running = 1, io_failed = 0;
     if (o.smoke) {
         const SDL_Keycode smoke_keys[] = {SDLK_RIGHT, SDLK_UP, SDLK_DOWN};
-        for (unsigned i = 0; i < 3; ++i) {
-            SDL_Event event = {.type = SDL_KEYDOWN}; event.key.keysym.sym = smoke_keys[i];
+        const SDL_Keycode citadel_keys[] = {SDLK_UP,SDLK_UP,SDLK_UP,SDLK_UP,SDLK_UP,
+            SDLK_RETURN,SDLK_DOWN,SDLK_RETURN,SDLK_SPACE,SDLK_SPACE,SDLK_SPACE,
+            SDLK_SPACE,SDLK_SPACE,SDLK_SPACE,SDLK_DOWN,SDLK_DOWN,SDLK_DOWN,SDLK_RETURN,SDLK_DOWN};
+        unsigned count = o.smoke == 1 ? 3 : (unsigned)(sizeof citadel_keys / sizeof citadel_keys[0]);
+        for (unsigned i = 0; i < count; ++i) {
+            SDL_Event event = {.type = SDL_KEYDOWN};
+            event.key.keysym.sym = o.smoke == 1 ? smoke_keys[i] : citadel_keys[i];
             if (SDL_PushEvent(&event) != 1) goto sdl_done;
         }
     }
@@ -78,9 +85,9 @@ int main(int argc, char **argv)
         while (accumulator >= 32 && running) {
             accumulator -= 32;
             BtpAction a = read != write ? queue[read++ % 256] : BTP_IDLE;
-            btp_tick(&state, &r->map, a);
+            btp_game_tick(&state, r, a);
             if (record && fprintf(record, "%s\n", btp_action_name(a)) < 0) { io_failed = 1; running = 0; }
-            if (o.smoke && ++smoke_ticks >= 8) running = 0;
+            if (o.smoke && ++smoke_ticks >= (o.smoke == 1 ? 8u : 24u)) running = 0;
         }
         btp_render(r, &state, o.debug, frame);
         if (SDL_UpdateTexture(texture, NULL, frame, 320 * (int)sizeof *frame) ||
@@ -89,16 +96,19 @@ int main(int argc, char **argv)
         }
         SDL_RenderPresent(renderer);
         if (o.debug) {
-            char title[160];
-            snprintf(title, sizeof title, "BtechPort M1 | MAP1 | half=(%u,%u) | gate=%u | blocked=%u | tick=%u",
-                state.x_half, state.y_half, state.gate, state.blocked, state.tick);
+            char title[200];
+            snprintf(title, sizeof title, "BtechPort M2a | %s | half=(%u,%u) | PC=%04x op=%02x | tick=%u",
+                btp_mode_name(state.mode), state.x_half, state.y_half, state.script.pc,
+                state.script.last_opcode, state.tick);
             SDL_SetWindowTitle(window, title);
         }
         SDL_Delay(2);
     }
-    btp_print_state(&state);
+    btp_print_state(&state, r);
     if (o.frame && !btp_write_ppm(o.frame, frame)) io_failed = 1;
-    if (o.smoke && (state.x_half != 70 || state.y_half != 25 || state.tick != 8)) {
+    if ((o.smoke == 1 && (state.x_half != 70 || state.y_half != 25 || state.tick != 8)) ||
+        (o.smoke == 2 && (state.x_half != 69 || state.y_half != 21 || state.tick != 24 ||
+            state.mode != BTP_EXPLORE || state.script.status != BTP_SCRIPT_END || state.story_flags[10] != 1))) {
         fputs("Native smoke input/state mismatch\n", stderr); io_failed = 1;
     }
     result = io_failed ? 1 : 0;

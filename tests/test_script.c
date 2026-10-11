@@ -17,6 +17,9 @@ static void malformed(void)
     CHECK(!btp_bld_decode(encoded, 2, &b, &e));
     encoded[0] = 2; CHECK(!btp_bld_decode(encoded, sizeof encoded, &b, &e));
     CHECK(!btp_bld_decode(NULL, sizeof encoded, &b, &e));
+    CHECK(!btp_bld_decode(encoded, BTP_BLD_MAX + 3, &b, &e));
+    b.length = BTP_BLD_MAX + 1;
+    btp_script_start(&s, &b); CHECK(s.error == BTP_SCRIPT_TRUNCATED);
     b = (BtpBld){.length=1,.bytes={0xf5}};
     btp_script_start(&s, &b);
     CHECK(s.status == BTP_SCRIPT_ERROR && s.error == BTP_SCRIPT_OPCODE && s.last_opcode == 0xf5 && s.fault_pc == 0);
@@ -27,6 +30,7 @@ static void malformed(void)
     b.bytes[1] = 0; btp_script_start(&s, &b); CHECK(s.error == BTP_SCRIPT_BUDGET);
     b = (BtpBld){.length=2,.bytes={0xfa,1}};
     btp_script_start(&s, &b); CHECK(s.error == BTP_SCRIPT_SCENE);
+    b.bytes[0] = 0xfe; btp_script_start(&s, &b); CHECK(s.error == BTP_SCRIPT_FONT);
     b = (BtpBld){.length=2,.bytes={0xf9,7}};
     btp_script_start(&s, &b); CHECK(s.error == BTP_SCRIPT_MENU_ID);
     b.bytes[1] = 8; btp_script_start(&s, &b); CHECK(s.error == BTP_SCRIPT_TRUNCATED);
