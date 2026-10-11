@@ -1,7 +1,6 @@
 #include "frontend/pixels.h"
 #include <stdio.h>
 #include <string.h>
-#include <ctype.h>
 
 const uint32_t btp_palette[16] = {
     0xff000000,0xff0000aa,0xff00aa00,0xff00aaaa,0xffaa0000,0xffaa00aa,0xffaa5500,0xffaaaaaa,
@@ -12,7 +11,7 @@ const uint32_t btp_palette[16] = {
 static const uint8_t terrain_palette[16] = {0,1,2,3,4,9,6,7,8,1,10,11,12,13,14,15};
 
 /* Small independently drawn 5x7 diagnostic font; no BIOS/reference font copied. */
-static const char alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789:./- ,';!?()$\"";
+static const char alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789:./- ,';!?()$\"abcdefghijklmnopqrstuvwxyz";
 static const uint8_t glyphs[][7] = {
  {14,17,17,31,17,17,17},{30,17,17,30,17,17,30},{14,17,16,16,16,17,14},
  {30,17,17,17,17,17,30},{31,16,16,30,16,16,31},{31,16,16,30,16,16,16},
@@ -30,7 +29,16 @@ static const uint8_t glyphs[][7] = {
  {0,0,0,31,0,0,0},{0,0,0,0,0,0,0},
  {0,0,0,0,0,4,8},{4,4,8,0,0,0,0},{0,4,0,0,4,4,8},
  {4,4,4,4,4,0,4},{14,17,1,2,4,0,4},{2,4,8,8,8,4,2},
- {8,4,2,2,2,4,8},{4,15,20,14,5,30,4},{10,10,0,0,0,0,0}
+ {8,4,2,2,2,4,8},{4,15,20,14,5,30,4},{10,10,0,0,0,0,0},
+ {0,0,14,1,15,17,15},{16,16,30,17,17,17,30},{0,0,14,16,16,17,14},
+ {1,1,15,17,17,17,15},{0,0,14,17,31,16,14},{6,8,28,8,8,8,8},
+ {0,0,15,17,15,1,14},{16,16,30,17,17,17,17},{4,0,12,4,4,4,14},
+ {2,0,6,2,2,18,12},{16,16,18,20,24,20,18},{12,4,4,4,4,4,14},
+ {0,0,26,21,21,21,21},{0,0,30,17,17,17,17},{0,0,14,17,17,17,14},
+ {0,0,30,17,30,16,16},{0,0,15,17,15,1,1},{0,0,22,25,16,16,16},
+ {0,0,15,16,14,1,30},{8,8,28,8,8,9,6},{0,0,17,17,17,19,13},
+ {0,0,17,17,17,10,4},{0,0,17,17,21,21,10},{0,0,17,10,4,10,17},
+ {0,0,17,17,15,1,14},{0,0,31,2,4,8,31}
 };
 static void pixel(uint32_t *f, int x, int y, uint32_t color)
 {
@@ -39,7 +47,7 @@ static void pixel(uint32_t *f, int x, int y, uint32_t color)
 static void text(uint32_t *f, int x, int y, const char *str, unsigned color)
 {
     for (; *str; ++str, x += 6) {
-        const char *p = strchr(alphabet, toupper((unsigned char)*str));
+        const char *p = strchr(alphabet, *str);
         if (!p) continue;
         size_t i = (size_t)(p - alphabet);
         for (int row = 0; row < 7; ++row)

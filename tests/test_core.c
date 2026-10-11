@@ -117,6 +117,13 @@ static void pixels(void)
     CHECK(a[0] == btp_palette[7]);
     s.x_half = s.y_half = 0; btp_render(r, &s, 1, a);
     CHECK(a[104] == btp_palette[0]);
+    /* Resource case must survive rendering; lowercase has its own glyph. */
+    r->citadel = (BtpBld){.length=5,.bytes={0xfc,'A','a',0,0xfb}};
+    s.mode = BTP_BUILDING; btp_script_start(&s.script, &r->citadel);
+    btp_render(r, &s, 0, a);
+    CHECK(a[9*320+111] == btp_palette[15]);
+    CHECK(a[9*320+117] == btp_palette[0]);
+    CHECK(a[11*320+117] == btp_palette[15]);
     free(a); free(b); free(r);
 }
 
