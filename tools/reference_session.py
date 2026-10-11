@@ -231,8 +231,9 @@ def snapshot_game(pid, label, output):
         row["party_active_bytes"]=list(ram[state+0xc614:state+0xc614+17*8:17])
         row["equipment"]={"weapon":ram[state+0xc61f],"armor":ram[state+0xc621],
             "armor_points":ram[state+0xc622]}
+        row["skills"] = list(ram[state+0xc618:state+0xc61b])
         menu=u16(ds+0x56b6)*16
-        row["menu_choices"]={str(i):u16(menu+0x98+16*i) for i in (7,8,10,11,12,13,14,15,16,20,30)}
+        row["menu_choices"]={str(i):u16(menu+0x98+16*i) for i in (7,8,9,10,11,12,13,14,15,16,20,30)}
         number=u16(ds+0x5574)*16+0x12
         row["number_input"]=list(ram[number:number+8])
         row["building_payloads"]={}
