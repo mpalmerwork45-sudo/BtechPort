@@ -188,7 +188,8 @@ void btp_print_state(const BtpState *s, const BtpResources *r)
         printf("[%u,%u]",c->goal_x,c->goal_y);
         for (unsigned i=0;i<c->waypoint_count;++i) printf(",[%u,%u]",c->waypoint_x[i],c->waypoint_y[i]);
     }
-    printf("],\"shot\":[%d,%u,%u,%u,%u]}}\n",c->shot.needed,c->shot.hit,c->shot.location,c->shot.damage,c->shot.destroyed);
+    printf("],\"effects\":[%u,%u,%u],\"shot\":[%d,%u,%u,%u,%u]}}\n",
+        s->effects.count,s->effects.age,s->effects.pending,c->shot.needed,c->shot.hit,c->shot.location,c->shot.damage,c->shot.destroyed);
 }
 
 int btp_replay(const char *path, BtpState *s, const BtpResources *r, int trace)

@@ -56,7 +56,7 @@ int main(int argc,char **argv)
             if (sscanf(line+1,"%u %u %u %u %" SCNx64 " %u %u %u %u %" SCNx64 " %u",
                 &px,&py,&pd,&ph,&player,&tx,&ty,&td,&th,&target,&seed)!=11) return 2;
             btp_combat_tick_reference(&s,r,BTP_ACCEPT);
-            for (unsigned t=0;s.combat.phase==BTP_COMBAT_ROUND && t<64;++t) btp_combat_tick_reference(&s,r,BTP_IDLE);
+            for (unsigned t=0;s.combat.phase==BTP_COMBAT_ROUND && t<512;++t) btp_combat_tick_reference(&s,r,BTP_IDLE);
             unsigned rng=s.npc.rng[0]+256u*s.npc.rng[1]+65536u*s.npc.rng[2];
             BtpCombatUnit *p=&s.combat.unit[0],*e=&s.combat.unit[1];++turns;
             if (p->x!=px || p->y!=py || p->direction!=pd || p->heat!=ph || fingerprint(p->record,125)!=player ||

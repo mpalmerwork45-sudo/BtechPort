@@ -8,6 +8,7 @@
 #include "core/animation.h"
 #include "core/training.h"
 #include "core/combat.h"
+#include "core/effects.h"
 #include <string.h>
 
 void btp_start(BtpState *s)
@@ -350,6 +351,8 @@ void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
         const BtpTerrainMark *mark=&s->terrain_marks[i];unsigned p=2049+4*i;
         b[p]=mark->sprite;b[p+1]=mark->map;b[p+2]=mark->x;b[p+3]=mark->y;
     }
+    b[2305]=s->effects.count;b[2306]=s->effects.age;b[2307]=s->effects.pending;
+    memcpy(b+2308,s->effects.shots,sizeof s->effects.shots);
 }
 
 int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *script, BtpState *s)
@@ -387,7 +390,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
             if (version == 9) for (unsigned i = 403; i < n; ++i) if (b[i]) return 0;
             if (version >= 10) {
                 if (b[425]) return 0;
-                unsigned start=version==10 ? 434u : version==11 ? 441u : version==12 ? 450u : version<15 ? 896u : version>=16 ? 2305u : 1803u;
+                unsigned start=version==10 ? 434u : version==11 ? 441u : version==12 ? 450u : version<15 ? 896u : version>=16 ? 2399u : 1803u;
                 for (unsigned i=start;i<n;++i) if (b[i]) return 0;
                 if (version>=13) for (unsigned i=version>=15 ? 460u : 452u;i<512;++i) if (b[i]) return 0;
                 if (version==13 && b[878]) return 0; /* v14 firing-effect countdown. */
@@ -400,9 +403,11 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         for (unsigned i=0;i<64;++i) {
             unsigned p=2049+4*i;BtpTerrainMark *mark=&result.terrain_marks[i];
             *mark=(BtpTerrainMark){b[p],b[p+1],b[p+2],b[p+3]};
-            if (mark->sprite ? mark->sprite!=124 || mark->map!=1 || mark->x>127 || mark->y>127 :
+            if (mark->sprite ? (mark->sprite!=124 && mark->sprite!=125 && mark->sprite!=126 && mark->sprite!=128 && mark->sprite!=129) || mark->map!=1 || mark->x>127 || mark->y>127 :
                 mark->map || mark->x || mark->y) return 0;
         }
+        result.effects.count=b[2305];result.effects.age=b[2306];result.effects.pending=b[2307];
+        memcpy(result.effects.shots,b+2308,sizeof result.effects.shots);
     }
     for (unsigned i = 0; i < 4; ++i) result.tick |= (uint32_t)b[8+i] << (8 * i);
     result.x_half = (uint16_t)(b[12] | (uint16_t)b[13] << 8);
@@ -622,7 +627,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
                     if (get16(script->bytes + v->menu_table + 2*i) >= script->length) return 0;
         }
         if (!btp_talk_valid(&result,m) || !btp_npc_valid(&result,m) || !btp_bank_valid(&result) ||
-            !btp_school_valid(&result) || !btp_training_valid(&result) || !btp_cutscene_valid(&result) || !btp_combat_valid(&result)) return 0;
+            !btp_school_valid(&result) || !btp_training_valid(&result) || !btp_cutscene_valid(&result) || !btp_combat_valid(&result) || !btp_effects_valid(&result)) return 0;
         if (result.technician>4 || result.apprentice>1 || result.checkpoint_technician>4 ||
             result.checkpoint_apprentice>1 || (result.apprentice && !result.technician)) return 0;
     }

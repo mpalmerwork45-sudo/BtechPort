@@ -5,11 +5,13 @@
 
 int btp_combat_data_decode(const uint8_t *b, size_t n, BtpCombatData *d)
 {
-    if (n != BTP_COMBAT_DATA_BYTES || memcmp(b,"BTC1",4)) return 0;
-    BtpCombatData v; size_t p = 4;
+    int v2=n==BTP_COMBAT_DATA_BYTES && !memcmp(b,"BTC2",4);
+    if (!v2 && (n!=BTP_COMBAT_DATA_V1_BYTES || memcmp(b,"BTC1",4))) return 0;
+    BtpCombatData v={0}; size_t p = 4;
 #define COPY(field) do { memcpy(v.field,b+p,sizeof v.field); p += sizeof v.field; } while (0)
     COPY(loans); COPY(weapons); COPY(arcs); COPY(locations); COPY(clusters);
     COPY(critical_start); COPY(critical_count);
+    if (v2) { COPY(poses);COPY(reaction);COPY(impact); }
 #undef COPY
     for (unsigned i = 0; i < 15; ++i) if (v.arcs[i] > 3) return 0;
     for (unsigned i = 2; i < 46; ++i) if (v.locations[i] < 17 || v.locations[i] > 27) return 0;
@@ -17,6 +19,14 @@ int btp_combat_data_decode(const uint8_t *b, size_t n, BtpCombatData *d)
         if (!v.weapons[i][12] || v.weapons[i][12] > 8 || v.weapons[i][11] > 20) return 0;
     for (unsigned i = 0; i < 8; ++i)
         if (v.critical_start[i] < 51 || v.critical_start[i]+v.critical_count[i] > 86) return 0;
+    if (v2) {
+        for (unsigned g=0;g<18;++g) for (unsigned dir=0;dir<8;++dir) {
+            unsigned count=v.poses[g][dir][0];if (!count || count>8) return 0;
+            for (unsigned j=0;j<8;++j) if (j<count ? v.poses[g][dir][j+1]>127 : v.poses[g][dir][j+1]) return 0;
+        }
+        for (unsigned i=0;i<4;++i) if (v.reaction[i]>127) return 0;
+        for (unsigned i=0;i<3;++i) if (v.impact[i]>125) return 0;
+    }
     *d = v; return 1;
 }
 unsigned btp_combat_die(uint8_t rng[3])

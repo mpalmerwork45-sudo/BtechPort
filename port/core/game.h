@@ -45,6 +45,10 @@ typedef struct {
 } BtpCutsceneState;
 typedef struct { uint8_t sprite, map, x, y; } BtpTerrainMark;
 typedef struct {
+    uint8_t actor,target,group,direction,weapon,hit,dead,x,y,tx,ty,base,target_base;
+} BtpCombatEffect;
+typedef struct { uint8_t count,age,pending;BtpCombatEffect shots[7]; } BtpEffectsState;
+typedef struct {
     uint32_t tick;
     uint16_t x_half, y_half;
     uint8_t map_id, gate, facing, blocked;
@@ -77,6 +81,7 @@ typedef struct {
     /* Original D457/D497/D4D7/D517 ring: visual map marks, not terrain tiles. */
     BtpTerrainMark terrain_marks[64];
     uint8_t terrain_next;
+    BtpEffectsState effects;
 } BtpState;
 enum { BTP_STATE_BYTES = 4096 };
 

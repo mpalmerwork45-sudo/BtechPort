@@ -6,6 +6,9 @@
 typedef struct {
     uint8_t loans[3][125], weapons[33][17], arcs[15], locations[46], clusters[93];
     uint8_t critical_start[8], critical_count[8];
+    /* Four mech pose groups and fourteen personal-weapon groups; each row
+       is a count followed by up to eight frames from original programs. */
+    uint8_t poses[18][8][9], reaction[4], impact[3];
 } BtpCombatData;
 typedef struct {
     uint8_t record[125], x, y, direction, heat, pool, burning, cover;
@@ -33,7 +36,8 @@ typedef struct {
     uint8_t waypoint_count, waypoint_x[11], waypoint_y[11];
 } BtpCombatState;
 enum { BTP_COMBAT_SAVE_BYTES = 1536 };
-enum { BTP_COMBAT_DATA_BYTES = 4+375+561+15+46+93+16 };
+enum { BTP_COMBAT_DATA_V1_BYTES = 4+375+561+15+46+93+16,
+    BTP_COMBAT_DATA_BYTES = BTP_COMBAT_DATA_V1_BYTES+18*8*9+7 };
 int btp_combat_data_decode(const uint8_t *bytes, size_t length, BtpCombatData *data);
 unsigned btp_combat_die(uint8_t rng[3]);
 unsigned btp_combat_dice(uint8_t rng[3]);

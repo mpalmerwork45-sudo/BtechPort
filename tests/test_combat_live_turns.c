@@ -20,6 +20,27 @@ int main(int argc,char **argv)
     char line[2048];unsigned cases=0,failures=0;
     while (fgets(line,sizeof line,f)) {
         if (line[0]=='#') continue;
+        if (line[0]=='P') {
+            char *p=line+1;unsigned group=number(&p),direction=number(&p),count=number(&p);++cases;
+            if (group==18) {
+                if (count!=3) return 2;
+                for (unsigned i=0;i<3;++i) if (250u+r->combat.impact[i]!=number(&p)) ++failures;
+                continue;
+            }
+            if (group>=18 || direction>7 || count>8) return 2;
+            if (r->combat.poses[group][direction][0]!=count) ++failures;
+            for (unsigned i=0;i<count;++i) if (r->combat.poses[group][direction][i+1]!=number(&p)) ++failures;
+            continue;
+        }
+        if (line[0]=='G') {
+            char *p=line+1;unsigned infantry=number(&p),direction=number(&p),count=number(&p);++cases;
+            unsigned frame=0,previous=8;
+            for (unsigned i=0;i<count;++i) {
+                frame=btp_combat_walk_frame(frame,previous,direction,(int)infantry);previous=direction;
+                if (frame!=number(&p)) ++failures;
+            }
+            continue;
+        }
         if (line[0]=='F') {
             char *p=line+1;unsigned seed=number(&p),kind=number(&p),x=number(&p),y=number(&p),next=number(&p);
             unsigned after=number(&p),sprite=number(&p),mx=number(&p),my=number(&p),rng=number(&p),unchanged=number(&p);
@@ -92,7 +113,7 @@ int main(int argc,char **argv)
         if (order==2) c->kick_target=(uint8_t)btp_combat_id(c,1);
         s.npc.rng[0]=(uint8_t)seed;s.npc.rng[1]=(uint8_t)(seed>>8);s.npc.rng[2]=(uint8_t)(seed>>16);
         btp_combat_tick(&s,r,BTP_ACCEPT);
-        for (unsigned tick=0;tick<64 && c->phase==BTP_COMBAT_ROUND;++tick) btp_combat_tick(&s,r,BTP_IDLE);
+        for (unsigned tick=0;tick<512 && c->phase==BTP_COMBAT_ROUND;++tick) btp_combat_tick(&s,r,BTP_IDLE);
         p=strchr(p,'|');if (!p) return 2;++p;++cases;
         for (unsigned i=0;i<count;++i) {
             unsigned x=number(&p),y=number(&p),direction=number(&p),heat=number(&p);

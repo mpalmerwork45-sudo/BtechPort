@@ -3,6 +3,7 @@
 import argparse
 import hashlib
 import json
+import struct
 from pathlib import Path
 from exepack import unpack
 from prepare_talk import EXE_SHA, IMAGE_SHA, DS
@@ -18,7 +19,26 @@ def extract(source):
     parts = [image[a:a+n] for a,n in RANGES]
     origins = [{"image_offset":a,"length":n,"sha256":hashlib.sha256(b).hexdigest()}
                for (a,n),b in zip(RANGES,parts)]
-    return b"BTC1"+b"".join(parts), {**metadata,"format":"BTC1","ranges":origins}
+    programs=bytearray();program_origins=[]
+    for group in range(18):
+        table=DS+([0x2d58,0x2d78,0x2d98,0x2db8][group] if group<4 else 0x3ff8+(group-4)*32)
+        for direction in range(8):
+            off,segment=struct.unpack_from('<HH',image,table+direction*4)
+            start=segment*16+off;at=start;frames=[]
+            for _ in range(32):
+                token=image[at];at+=1
+                if token==255:break
+                if token==253:at+=1;continue
+                if token>=128:raise ValueError('Unexpected non-finite attack program')
+                frames.append(token)
+            else:raise ValueError('Unterminated attack program')
+            if not 1<=len(frames)<=8:raise ValueError('Unexpected attack frame count')
+            programs+=bytes([len(frames)]+frames+[0]*(8-len(frames)))
+            program_origins.append({'table':table+direction*4,'image_offset':start,'length':at-start,
+                'sha256':hashlib.sha256(image[start:at]).hexdigest()})
+    programs+=image[DS+0x2e3c:DS+0x2e40]+image[DS+0x41d8:DS+0x41db]
+    return b"BTC2"+b"".join(parts)+programs, {**metadata,"format":"BTC2","ranges":origins,
+        'pose_programs':program_origins,'reaction':DS+0x2e3c,'impact':DS+0x41d8}
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)

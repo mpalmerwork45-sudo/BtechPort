@@ -1,6 +1,7 @@
 #include "core/combat.h"
 #include "core/npc.h"
 #include "core/animation.h"
+#include "core/effects.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -236,6 +237,16 @@ static void begin_round(BtpState *s, const BtpResources *r, int enemy_ai)
     c->fired=0;c->step=0;c->delay=0;c->last_event=0;c->flash=0;c->phase=BTP_COMBAT_ROUND;
     ++c->round;
 }
+unsigned btp_combat_walk_frame(unsigned frame,unsigned previous,unsigned direction,int infantry)
+{
+    static const uint8_t frames[8][4]={{0,1,2,3},{4,5,6,7},{6,7,4,5},{5,6,7,4},
+        {8,9,10,11},{12,13,14,15},{15,12,13,14},{14,15,12,13}};
+    if (direction>7) return frame;
+    unsigned next=0;
+    if (direction==previous) for (unsigned i=0;i<4;++i)
+        if (frames[direction][i]==frame) next=(i+1u)%4u;
+    return infantry ? btp_walk_next((uint8_t)frame,(uint8_t)previous,(uint8_t)direction) : frames[direction][next];
+}
 static void advance(BtpCombatState *c, unsigned index)
 {
     BtpCombatUnit *u=&c->unit[index];unsigned p=c->path_index[index];
@@ -244,14 +255,15 @@ static void advance(BtpCombatState *c, unsigned index)
     if (mx==2 || my==2 || (!mx && !my)) return;
     int x=u->x+mx,y=u->y+my;
     for (unsigned i=0;i<c->count;++i) if (i!=index && occupied(u,&c->unit[i],x,y)) return;
-    static const uint8_t frames[8][4]={{0,1,2,3},{4,5,6,7},{6,7,4,5},{5,6,7,4},
-        {8,9,10,11},{12,13,14,15},{15,12,13,14},{14,15,12,13}};
-    unsigned direction=btp_combat_direction(u->x,u->y,x,y), next=0;
-    if (direction==u->direction) for (unsigned i=0;i<4;++i)
-        if (frames[direction][i]==c->walk[index]) next=(i+1u)%4u;
-    c->walk[index]=u->infantry ? btp_walk_next(c->walk[index],u->direction,direction) : frames[direction][next];
+    unsigned direction=btp_combat_direction(u->x,u->y,x,y);
+    c->walk[index]=(uint8_t)btp_combat_walk_frame(c->walk[index],u->direction,direction,u->infantry);
     u->direction=(uint8_t)direction;c->plan_direction[index]=(uint8_t)direction;
     u->x=(uint8_t)x;u->y=(uint8_t)y;++c->moved[index];++c->path_index[index];
+}
+static void mark(BtpState *s,unsigned sprite,unsigned x,unsigned y)
+{
+    s->terrain_marks[s->terrain_next]=(BtpTerrainMark){(uint8_t)sprite,s->map_id,(uint8_t)x,(uint8_t)y};
+    s->terrain_next=(uint8_t)((s->terrain_next+1u)&63u);
 }
 void btp_combat_ignite(BtpState *s, const BtpCombatUnit *target)
 {
@@ -260,11 +272,8 @@ void btp_combat_ignite(BtpState *s, const BtpCombatUnit *target)
        not replace the map's terrain/LOS grid or implement spreading fire. */
     unsigned roll=btp_combat_dice(s->npc.rng);
     if (roll>=5 && roll<=9) return;
-    BtpTerrainMark *mark=&s->terrain_marks[s->terrain_next];
-    *mark=(BtpTerrainMark){.sprite=124,.map=s->map_id,
-        .x=(uint8_t)((target->x-(target->infantry ? 1u : 0u))&127u),
-        .y=(uint8_t)((target->y-(target->infantry ? 0u : 1u))&127u)};
-    s->terrain_next=(uint8_t)((s->terrain_next+1u)&63u);
+    mark(s,124,(target->x-(target->infantry ? 1u : 0u))&127u,
+        (target->y-(target->infantry ? 0u : 1u))&127u);
 }
 static void round_tick(BtpState *s, const BtpResources *r, int enemy_ai)
 {
@@ -300,12 +309,17 @@ static void round_tick(BtpState *s, const BtpResources *r, int enemy_ai)
             c->last_attacker=(uint8_t)actor;c->last_target=(uint8_t)target;
             c->last_weapon=(uint8_t)i;c->last_event=(uint8_t)(c->shot.hit ? 1 : 2);
             *fired|=(uint16_t)(1u<<i);c->flash=c->graphics && c->last_event<=2 ? 3 : 0;
+            btp_effects_shot(s,actor,target,w);
             if (c->shot.destroyed) {
+                /* 12E8:1B7F / 1C6E preserve the original corpse/wreck artwork. */
+                mark(s,enemy->infantry ? 126u : 128u+(target==0 && s->story_flags[2]!=0),
+                    (enemy->x-(enemy->infantry ? 0u : 1u))&127u,
+                    (enemy->y-(enemy->infantry ? 0u : 1u))&127u);
                 enemy->record[0]=255;enemy->x=enemy->y=127;
-                if (!target) { c->lost=1;finish(s);return; }
+                if (!target) { s->effects.pending=2;return; }
                 unsigned remaining=0;
                 for (unsigned k=1;k<c->count;++k) remaining+=c->unit[k].record[0]!=255;
-                if (!remaining) { c->won=1;finish(s);return; }
+                if (!remaining) { s->effects.pending=1;return; }
             }
             break; /* One attack per unit per microstep, including Kick. */
         }
@@ -328,6 +342,13 @@ static void round_tick(BtpState *s, const BtpResources *r, int enemy_ai)
 static void combat_tick(BtpState *s, const BtpResources *r, BtpAction a, int enemy_ai)
 {
     BtpCombatState *c=&s->combat;
+    if (s->effects.count) {
+        btp_effects_tick(s,r);if (s->effects.count) return;
+    }
+    if (s->effects.pending) {
+        c->won=(uint8_t)(s->effects.pending==1);c->lost=(uint8_t)(s->effects.pending==2);
+        s->effects.pending=0;finish(s);return;
+    }
     unsigned count=btp_combat_weapon_count(&c->unit[0]);
     if (c->phase==BTP_COMBAT_ROUND) { round_tick(s,r,enemy_ai);return; }
     if (c->phase==BTP_COMBAT_NOTICE) {
@@ -576,5 +597,6 @@ int btp_combat_valid(const BtpState *s)
         }
         for (unsigned j=0;j<12;++j) for (unsigned k=0;k<2;++k) if (c->path[i][j][k]<-1 || c->path[i][j][k]>2) return 0;
     }
-    return (c->unit[0].record[0]==255)==(c->lost!=0) && (!alive)==(c->won!=0);
+    return (c->unit[0].record[0]==255)==(c->lost!=0 || s->effects.pending==2) &&
+        (!alive)==(c->won!=0 || s->effects.pending==1);
 }

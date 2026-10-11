@@ -3,6 +3,7 @@
 #include "core/school.h"
 #include "core/training.h"
 #include "core/combat.h"
+#include "core/effects.h"
 #include "data/sprites.h"
 #include "data/anm.h"
 #include <stdio.h>
@@ -290,18 +291,32 @@ static void combat_route(const BtpResources *r, const BtpState *s, int cx, int c
 static void combat_flash(const BtpResources *r, const BtpState *s, int cx, int cy, uint32_t *f)
 {
     const BtpCombatState *c=&s->combat;
-    if (!c->graphics || !c->flash || c->phase!=BTP_COMBAT_ROUND) return;
-    /* Approximate firing indicator; damage/RNG never depend on presentation. */
-    int x=212+((int)c->unit[c->last_attacker].x-cx)*8,y=76+((int)c->unit[c->last_attacker].y+2-cy)*8;
-    int tx=212+((int)c->unit[c->last_target].x-cx)*8,ty=76+((int)c->unit[c->last_target].y+2-cy)*8;
-    int dx=tx-x,dy=ty-y,steps=abs(dx)>abs(dy) ? abs(dx) : abs(dy);
-    unsigned weapon=c->last_weapon==11 ? 32 : btp_combat_weapon(&c->unit[c->last_attacker],c->last_weapon);
-    unsigned color=weapon>=16 && weapon<=18 ? 12u : 14u;
-    for (int i=0;i<=steps;++i) {
-        int px=x+(steps ? dx*i/steps : 0),py=y+(steps ? dy*i/steps : 0);
-        if (px>=104) pixel(f,px,py,btp_palette[color]);
+    if (!c->graphics || !s->effects.count || c->phase!=BTP_COMBAT_ROUND) return;
+    const BtpCombatEffect *e=&s->effects.shots[0];unsigned frame=s->effects.age/2u;
+    const uint8_t *pose=r->combat.poses[e->group][e->direction];unsigned count=pose[0];
+    int x=200+((int)e->x-cx)*8,y=64+((int)e->y+2-cy)*8;
+    int tx=200+((int)e->tx-cx)*8,ty=64+((int)e->ty+2-cy)*8;
+    if (frame<count) {
+        (void)btp_draw_sprite(&r->sprites,e->base+pose[1+frame],x,y,0,104,f);
+        if (e->hit) (void)btp_draw_sprite(&r->sprites,e->target_base+r->combat.reaction[frame&3u],tx,ty,0,104,f);
+        /* The original poses, projectile artwork and impact order are data
+           driven. Beam interpolation and native cadence remain approximate. */
+        if (e->weapon!=32 && frame+1==count) {
+            int ax=x+(e->base==254 ? 4 : 12),ay=y+12,bx=tx+12,by=ty+12;
+            int dx=bx-ax,dy=by-ay,steps=abs(dx)>abs(dy) ? abs(dx) : abs(dy);
+            if ((e->weapon>=15 && e->weapon<=18) || e->weapon==12 || e->weapon==13) {
+                for (int i=0;i<=steps;++i) {
+                    int px=ax+(steps ? dx*i/steps : 0),py=ay+(steps ? dy*i/steps : 0);
+                    if (px>=104) pixel(f,px,py,btp_palette[e->actor ? 5 : 12]);
+                }
+            } else {
+                (void)btp_draw_sprite(&r->sprites,130+2u*e->direction+(s->effects.age&1u),
+                    (ax+bx)/2,(ay+by)/2,0,104,f);
+            }
+        }
+    } else if (e->hit && e->weapon>=7 && frame<count+3) {
+        (void)btp_draw_sprite(&r->sprites,250u+r->combat.impact[frame-count],tx+4,ty+6,0,104,f);
     }
-    if (c->shot.hit) (void)btp_draw_sprite(&r->sprites,124,tx-8,ty-7,0,104,f);
 }
 static void combat_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
 {
@@ -503,12 +518,17 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
     for (unsigned i=0;i<64;++i) {
         const BtpTerrainMark *mark=&s->terrain_marks[i];
         if (mark->sprite && mark->map==s->map_id)
-            (void)btp_draw_sprite(&r->sprites,mark->sprite,
+            (void)btp_draw_sprite(&r->sprites,(mark->sprite&254u)==124 ? 124u+(s->tick&1u) : mark->sprite,
                 200+((int)mark->x-cx)*8,64+((int)mark->y+2-cy)*8,0,104,f);
     }
     if (s->combat.phase) {
         for (unsigned i=0;i<s->combat.count;++i) if (s->combat.unit[i].record[0]!=255) {
             const BtpCombatUnit *u=&s->combat.unit[i];unsigned terrain;
+            if (s->combat.graphics && s->effects.count) {
+                const BtpCombatEffect *e=&s->effects.shots[0];
+                unsigned pose=r->combat.poses[e->group][e->direction][0];
+                if (s->effects.age/2u<pose && (i==e->actor || (e->hit && i==e->target))) continue;
+            }
             (void)btp_draw_sprite(&r->sprites,(u->infantry ? 270u : i==0 && s->story_flags[2] ? 146u : 0u)+s->combat.walk[i],
                 200+((int)u->x-cx)*8,64+((int)u->y+2-cy)*8,btp_combat_cover(&r->map,u,&terrain),104,f);
         }

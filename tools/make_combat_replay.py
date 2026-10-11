@@ -36,7 +36,9 @@ def generate(binary):
                 if state['combat']['won']:return
                 choose(9);advance(['idle'])
                 if state['combat']['phase']==9:note('resolving')
-                advance(['idle']*36)
+                for _ in range(64):
+                    if state['combat']['phase']!=9:break
+                    advance(['idle']*8)
         advance(['down']*((3-state['menu_selected'])%3)+['accept']+['idle']*90)
         note('computer');advance(['accept']);note('messages');advance(['accept']);note('graphics');advance(['accept']);note('orders')
         waypoint(72,77);turns(4);waypoint(84,85);turns(5)
@@ -72,7 +74,7 @@ def verify(binary):
     origin=next(s['combat']['units'][1] for s in rows if s['combat']['phase'])
     for s in rows:
         c=s['combat']
-        if c['phase']:
+        if c['phase'] and c['units'][1]['record'][0]!=255:
             enemy=c['units'][1]
             check([enemy['x'],enemy['y'],enemy['direction']]==[origin['x'],origin['y'],origin['direction']],
                   'Training shell moved or turned')

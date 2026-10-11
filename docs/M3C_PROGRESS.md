@@ -8,7 +8,7 @@ training/story step; both supplied reference trees remain immutable.
 | Complete robot/live-Locust turn comparisons | Implemented and verified against original instructions |
 | Original multi-waypoint orders | Implemented; 108 original planning/turn cases pass |
 | Persistent fire/smoke behavior | Original flame-marker ring implemented; 128 dice/offset/wrap/terrain cases pass |
-| Original combat/jump/impact/destruction effects | Pending |
+| Original combat/jump/impact/destruction effects | Original poses/gaits, impact stars, flame cycle and corpse/wreck artwork integrated |
 | Natural Rick/device route and next original assignment/event | Pending |
 
 ## Turn research and corrections
@@ -52,8 +52,8 @@ invented from this visual marker. Further effect-frame verification is pending.
 Current internal saves use BTPG/v16, 4096-byte payload / 4112-byte BTS1 file.
 The existing combat prefix and legacy migrations are retained; v15 saves have
 no fire markers and migrate their old robot cover flags explicitly. Numeric
-combat remains independent of graphics. The marker artwork/placement is still
-APPROXIMATE until the effects task compares original rendering.
+combat remains independent of graphics. Original artwork is verified by the
+earlier 376 RAM crop comparisons; placement/cadence remain approximate.
 
 ## Queued movement
 
@@ -67,6 +67,26 @@ on Yes. No/Backspace retains it. Queue capacity, the Yes/No popup, cancellation
 and saved continuation are tested through the real game core. The route-arrow
 preview uses the same complete queue planner as resolution. Popup wording and
 destination-box presentation remain approximate; original font/borders are used.
+
+## Combat effects
+
+**161 original comparisons** execute `0000:1732`: 144 finite mech/personal
+firing/Kick programs, the three-frame impact program and sixteen directional
+gait programs (twelve steps each). BTC2 extracts these programs into the ignored
+owner-derived combat cache; no artwork or executable data enters Git. The
+original impact frames are **374,375,374**, distinct from flame sprites 124/125.
+`0000:2A93` alternates the two visible flame sprites. `12E8:1B7F/1C6E` records
+corpse 126 and wreck 128/129 in the persistent mark ring.
+
+The core holds a bounded effect queue and its age, then completes presentation
+before the next microstep or victory return. All effects survive F5/F9.
+Graphics Yes/No changes visibility while retaining identical numeric simulation;
+native timing is approximate and the no-graphics choice does not reproduce the
+original's shorter wall-clock animation delay. Pose and hit/star ordering use
+original data; beam interpolation/projectile placement and complete frame timing
+remain approximate. Jump uses the original directional gait programs: the
+verified turn path does not add a separate airborne sprite sequence. Wider
+portrait/audio/terrain-animation contexts remain deferred.
 
 ## Verification commands
 

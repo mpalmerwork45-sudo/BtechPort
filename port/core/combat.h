@@ -12,6 +12,7 @@ unsigned btp_combat_target(const BtpCombatState *combat, unsigned id);
 void btp_combat_ignite(BtpState *state, const BtpCombatUnit *target);
 int btp_combat_waypoint(BtpCombatState *combat, unsigned x, unsigned y, unsigned movement);
 void btp_combat_route(const BtpMap *map, unsigned gate, const BtpCombatState *combat, int8_t steps[12][2]);
+unsigned btp_combat_walk_frame(unsigned frame, unsigned previous_direction, unsigned direction, int infantry);
 void btp_combat_begin(BtpState *state, const BtpResources *resources);
 void btp_combat_tick(BtpState *state, const BtpResources *resources, BtpAction action);
 /* Controlled original-turn comparisons retain the original moving target.

@@ -74,7 +74,11 @@ def generate(binary,kick=False):
                 (['down']*max(0,y-u['y'])+['up']*max(0,u['y']-y)))
             note('movement-'+str(mode));advance(['accept'])
         def fight():
-            command(9);advance(['idle']);note('resolving');advance(['idle']*35)
+            command(9);advance(['idle']);note('resolving')
+            if state['combat']['effects'][0]:note('combat-effect')
+            for _ in range(64):
+                if state['combat']['phase']!=9:break
+                advance(['idle']*8)
             check(state['combat']['phase'] in [0,4],'Turn did not resolve')
         def arm():
             command(3)

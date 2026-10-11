@@ -101,11 +101,11 @@ int main(int argc,char **argv)
             btp_state_encode(&s,visible);btp_state_encode(&no_graphics,invisible);
             CHECK(!memcmp(visible,invisible,sizeof visible));
         }
-        if (s.combat.phase) {
+        if (s.combat.phase && !s.effects.pending) {
             if (!enemy_x) { enemy_x=s.combat.unit[1].x;enemy_y=s.combat.unit[1].y; }
             CHECK(s.combat.unit[1].x==enemy_x && s.combat.unit[1].y==enemy_y && s.combat.unit[1].direction==6);
         }
-        if (s.combat.flash) {
+        if (s.combat.flash && !s.effects.pending) {
             ++effects;
             uint8_t old[BTP_STATE_BYTES];BtpState migrated;
             btp_state_encode(&s,old);memcpy(old,"BTPD",4);old[4]=13;old[878]=0;
