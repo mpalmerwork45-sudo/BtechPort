@@ -194,8 +194,8 @@ int btp_combat_can_kick(const BtpCombatUnit *u)
 {
     return !u->infantry && u->record[0] != 255 && (u->record[36]&8u) && (u->record[37]&8u);
 }
-BtpShot btp_combat_attack(BtpCombatUnit *a, BtpCombatUnit *t, const BtpCombatData *d,
-    unsigned index, int movement, unsigned steps, unsigned skill, uint8_t rng[3])
+BtpShot btp_combat_attack_unit(BtpCombatUnit *a, BtpCombatUnit *t, const BtpCombatData *d,
+    unsigned index, int movement, unsigned steps, unsigned skill, unsigned unit_id, uint8_t rng[3])
 {
     int kick = !a->infantry && index == 11;
     BtpShot shot = {0}; unsigned w = kick ? 32 : btp_combat_weapon(a,index);
@@ -208,8 +208,14 @@ BtpShot btp_combat_attack(BtpCombatUnit *a, BtpCombatUnit *t, const BtpCombatDat
     static const uint8_t movement_penalty[13] = {0,0,0,1,1,2,2,3,3,3,4,4,4};
     if (a->infantry) skill=a->record[4+d->weapons[w][16]];
     int needed = (kick ? 3 : (int)(2*range+4)) + movement+1 + movement_penalty[steps > 12 ? 12 : steps] - (int)skill;
-    if (kick) for (unsigned leg=36;leg<=37;++leg)
-        for (unsigned mask=1;mask<=4;mask<<=1) needed += !(a->record[leg]&mask);
+    if (kick) {
+        /* 12E8:02C3 passes the raw enemy ID to 0E31:1B44, although its
+           hip check uses the normalized record. ID 12 reads inactive slot
+           12 in early training, adding all six missing-actuator penalties. */
+        if (unit_id==12) needed+=6;
+        else for (unsigned leg=36;leg<=37;++leg)
+            for (unsigned mask=1;mask<=4;mask<<=1) needed += !(a->record[leg]&mask);
+    }
     if (!a->infantry && a->record[119]) needed += 2;
     if (!a->infantry) needed += (a->heat >= 8)+(a->heat >= 13)+(a->heat >= 17)+(a->heat >= 24);
     needed += (int)(t->cover/(t->infantry ? 2u : 8u));
@@ -251,6 +257,11 @@ BtpShot btp_combat_attack(BtpCombatUnit *a, BtpCombatUnit *t, const BtpCombatDat
         else apply_damage(t,d,shot.location,damage,rng,&shot);
     }
     return shot;
+}
+BtpShot btp_combat_attack(BtpCombatUnit *a, BtpCombatUnit *t, const BtpCombatData *d,
+    unsigned index, int movement, unsigned steps, unsigned skill, uint8_t rng[3])
+{
+    return btp_combat_attack_unit(a,t,d,index,movement,steps,skill,0,rng);
 }
 BtpShot btp_combat_shoot(BtpCombatUnit *a, BtpCombatUnit *t, const BtpCombatData *d,
     unsigned index, int movement, unsigned steps, unsigned skill, uint8_t rng[3])

@@ -43,6 +43,7 @@ typedef struct {
     uint8_t active, kind, step, cycle, hold;
     uint16_t remaining, refresh_fraction;
 } BtpCutsceneState;
+typedef struct { uint8_t sprite, map, x, y; } BtpTerrainMark;
 typedef struct {
     uint32_t tick;
     uint16_t x_half, y_half;
@@ -73,8 +74,11 @@ typedef struct {
     BtpCutsceneState cutscene;
     BtpCombatState combat;
     uint8_t technician, apprentice, checkpoint_technician, checkpoint_apprentice;
+    /* Original D457/D497/D4D7/D517 ring: visual map marks, not terrain tiles. */
+    BtpTerrainMark terrain_marks[64];
+    uint8_t terrain_next;
 } BtpState;
-enum { BTP_STATE_BYTES = 2048 };
+enum { BTP_STATE_BYTES = 4096 };
 
 void btp_start(BtpState *state);
 void btp_tick(BtpState *state, const BtpMap *map, BtpAction action);

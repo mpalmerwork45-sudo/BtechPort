@@ -50,5 +50,8 @@ BtpShot btp_combat_shoot(BtpCombatUnit *attacker, BtpCombatUnit *target,
 BtpShot btp_combat_attack(BtpCombatUnit *attacker, BtpCombatUnit *target,
     const BtpCombatData *data, unsigned index, int movement, unsigned target_steps,
     unsigned skill, uint8_t rng[3]);
+BtpShot btp_combat_attack_unit(BtpCombatUnit *attacker, BtpCombatUnit *target,
+    const BtpCombatData *data, unsigned index, int movement, unsigned target_steps,
+    unsigned skill, unsigned unit_id, uint8_t rng[3]);
 int btp_combat_can_kick(const BtpCombatUnit *unit);
 #endif

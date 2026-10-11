@@ -69,7 +69,8 @@ static void movement(const BtpState *start,BtpResources *r)
         for (unsigned i=51;i<=85;++i) if (s.combat.unit[0].record[i]==34) s.combat.unit[0].record[i]=0;
         command(&s,r,mode);input(&s,r,BTP_RIGHT);input(&s,r,BTP_ACCEPT);command(&s,r,9);
         while (s.combat.phase==BTP_COMBAT_ROUND) input(&s,r,BTP_IDLE);
-        CHECK(s.combat.moved[0]==1 && s.combat.unit[0].heat==mode+1 && !s.combat.goal_active);
+        /* 12E8:0F03 pops an arrived waypoint before heat cleanup. */
+        CHECK(s.combat.moved[0]==1 && s.combat.unit[0].heat==0 && !s.combat.goal_active);
     }
     r->map=map;
 }

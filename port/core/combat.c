@@ -60,11 +60,12 @@ unsigned btp_combat_target(const BtpCombatState *c, unsigned id)
     for (unsigned i=0;i<c->count;++i) if (btp_combat_id(c,i)==id) return i;
     return BTP_COMBAT_UNITS;
 }
-void btp_combat_plan(const BtpMap *m, unsigned gate, const BtpCombatUnit *u,
-    const BtpCombatUnit *other, int tx, int ty, unsigned movement, int computer, int8_t steps[12][2])
+static void plan_points(const BtpMap *m, unsigned gate, const BtpCombatUnit *u,
+    const BtpCombatUnit *other, int tx, int ty, unsigned movement, int computer,
+    int points, int8_t steps[12][2])
 {
     memset(steps,2,24);
-    int x=u->x, y=u->y, points=btp_combat_points(u,movement), stopped=0;
+    int x=u->x, y=u->y, stopped=0;
     unsigned heading=computer ? u->direction : btp_combat_direction(x,y,tx,ty);
     for (unsigned i=0; i<12 && points>0 && !stopped && (x!=tx || y!=ty); ++i) {
         unsigned desired=btp_combat_direction(x,y,tx,ty);
@@ -87,12 +88,19 @@ void btp_combat_plan(const BtpMap *m, unsigned gate, const BtpCombatUnit *u,
         points-=cost;
     }
 }
+void btp_combat_plan(const BtpMap *m, unsigned gate, const BtpCombatUnit *u,
+    const BtpCombatUnit *other, int tx, int ty, unsigned movement, int computer, int8_t steps[12][2])
+{
+    plan_points(m,gate,u,other,tx,ty,movement,computer,btp_combat_points(u,movement),steps);
+}
 unsigned btp_combat_cover(const BtpMap *m, const BtpCombatUnit *u, unsigned *terrain)
 {
     unsigned tile=btp_map_tile(m,(u->x+1)/2,u->y/2), mask=(u->y&1u) ? 4u : 1u;
     *terrain=tile;
     if (tile>=48 || !(tile&mask)) return 0;
-    return (tile&15u)==15 && ((tile&48u)==0 || (tile&48u)==32) ? 16u : 8u;
+    unsigned cover=(tile&15u)==15 && ((tile&48u)==0 || (tile&48u)==32) ? 16u : 8u;
+    /* Original person/robot flags are 2/4; mech footprints use 8/16. */
+    return u->infantry ? cover/4u : cover;
 }
 static void menu(BtpCombatState *c)
 {
@@ -177,7 +185,10 @@ static void begin_round(BtpState *s, const BtpResources *r, int enemy_ai)
             else { tx=ex;ty=ey; }
         }
         *movement=(uint8_t)(enemy.heat || enemy.infantry ? 0 : 1);
-        btp_combat_plan(&r->map,s->gate,&enemy,&c->unit[0],tx,ty,*movement,1,c->path[index]);
+        /* 0E31:046F normalizes robot IDs before 103B:2474. IDs 20/21
+           cross its threshold and take six points; IDs 16..19 take three. */
+        int points=enemy.infantry && btp_combat_id(c,index)>=20 ? 6 : btp_combat_points(&enemy,*movement);
+        plan_points(&r->map,s->gate,&enemy,&c->unit[0],tx,ty,*movement,1,points,c->path[index]);
     }
     memset(c->enemy_orders[index-1],255,12);
     if (s->mission.assignment>=3) {
@@ -208,6 +219,19 @@ static void advance(BtpCombatState *c, unsigned index)
     u->direction=(uint8_t)direction;c->plan_direction[index]=(uint8_t)direction;
     u->x=(uint8_t)x;u->y=(uint8_t)y;++c->moved[index];++c->path_index[index];
 }
+void btp_combat_ignite(BtpState *s, const BtpCombatUnit *target)
+{
+    /* 12E8:1E46 rolls 2d6; values outside 5..9 add sprite 124 through
+       103B:27C9. The original 64-entry ring survives encounters. It does
+       not replace the map's terrain/LOS grid or implement spreading fire. */
+    unsigned roll=btp_combat_dice(s->npc.rng);
+    if (roll>=5 && roll<=9) return;
+    BtpTerrainMark *mark=&s->terrain_marks[s->terrain_next];
+    *mark=(BtpTerrainMark){.sprite=124,.map=s->map_id,
+        .x=(uint8_t)((target->x-(target->infantry ? 1u : 0u))&127u),
+        .y=(uint8_t)((target->y-(target->infantry ? 0u : 1u))&127u)};
+    s->terrain_next=(uint8_t)((s->terrain_next+1u)&63u);
+}
 static void round_tick(BtpState *s, const BtpResources *r, int enemy_ai)
 {
     BtpCombatState *c=&s->combat;
@@ -233,13 +257,14 @@ static void round_tick(BtpState *s, const BtpResources *r, int enemy_ai)
             int los=btp_combat_los(&r->map,s->gate,attacker->x,attacker->y,enemy->x,enemy->y);
             if (!los) { if (!c->flash) c->last_event=3;continue; }
             if (los<0) { if (!c->flash) c->last_event=4;continue; }
-            int ignition=enemy->cover && terrain[target]>=16 && terrain[target]<=63 && w>=16 && w<=18;
-            if (ignition && s->mission.assignment==2) { c->last_event=5;continue; }
+            int ignition=enemy->cover && terrain[target]>=16 && terrain[target]<=63 &&
+                ((w>=16 && w<=18) || w==11);
             int movement=actor ? (actor==1 ? c->enemy_movement : c->enemy_modes[actor-2]) : c->goal_active ? c->movement : 255;
-            c->shot=btp_combat_attack(attacker,enemy,&r->combat,i,movement==255 ? -1 : movement,c->moved[target],
-                actor ? 0u : s->mech_skills[i==11 ? 1 : 0],s->npc.rng);
+            c->shot=btp_combat_attack_unit(attacker,enemy,&r->combat,i,movement==255 ? -1 : movement,c->moved[target],
+                actor ? 0u : s->mech_skills[i==11 ? 1 : 0],btp_combat_id(c,actor),s->npc.rng);
+            if (ignition && !c->shot.hit) btp_combat_ignite(s,enemy);
             c->last_attacker=(uint8_t)actor;c->last_target=(uint8_t)target;
-            c->last_weapon=(uint8_t)i;c->last_event=(uint8_t)(ignition && !c->shot.hit ? 5 : c->shot.hit ? 1 : 2);
+            c->last_weapon=(uint8_t)i;c->last_event=(uint8_t)(c->shot.hit ? 1 : 2);
             *fired|=(uint16_t)(1u<<i);c->flash=c->graphics && c->last_event<=2 ? 3 : 0;
             if (c->shot.destroyed) {
                 enemy->record[0]=255;enemy->x=enemy->y=127;
@@ -252,7 +277,7 @@ static void round_tick(BtpState *s, const BtpResources *r, int enemy_ai)
         }
     }
     if (c->goal_active && c->unit[0].x==c->goal_x && c->unit[0].y==c->goal_y) {
-        c->goal_active=0;
+        c->goal_active=0;c->movement=255;
     }
     s->x_half=c->unit[0].x;s->y_half=(uint16_t)(c->unit[0].y+2u);
     s->mission.walk=c->walk[0];s->mission.direction=c->unit[0].direction;
@@ -481,7 +506,7 @@ int btp_combat_valid(const BtpState *s)
     for (unsigned i=0;i<c->count;++i) {
         const BtpCombatUnit *u=&c->unit[i];
         if ((u->record[0]!=255 && (u->x>125 || u->y>127)) || u->direction>7 || u->heat>30 || u->burning>3 ||
-            (u->cover!=0 && u->cover!=8 && u->cover!=16) || c->moved[i]>12 || c->path_index[i]>12 ||
+            (u->cover!=0 && u->cover!=(u->infantry ? 2 : 8) && u->cover!=(u->infantry ? 4 : 16)) || c->moved[i]>12 || c->path_index[i]>12 ||
             c->walk[i]>15 || c->plan_direction[i]>7 || c->fallback[i]>7 || u->infantry>1 ||
             (i && u->infantry!=(s->mission.assignment==3)) || btp_combat_weapon_count(u)>11 || u->record[117]>3 || u->record[118]>2 || u->record[119]>2) return 0;
         if (u->infantry && (u->record[1]<2 || u->record[1]>12 || u->record[11]>13 || u->record[15]>120)) return 0;

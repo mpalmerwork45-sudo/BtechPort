@@ -486,6 +486,12 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                 color = btp_palette[7];
             f[y * 320 + x] = color;
         }
+    for (unsigned i=0;i<64;++i) {
+        const BtpTerrainMark *mark=&s->terrain_marks[i];
+        if (mark->sprite && mark->map==s->map_id)
+            (void)btp_draw_sprite(&r->sprites,mark->sprite,
+                200+((int)mark->x-cx)*8,64+((int)mark->y+2-cy)*8,0,104,f);
+    }
     if (s->combat.phase) {
         for (unsigned i=0;i<s->combat.count;++i) if (s->combat.unit[i].record[0]!=255) {
             const BtpCombatUnit *u=&s->combat.unit[i];unsigned terrain;

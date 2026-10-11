@@ -268,7 +268,7 @@ static uint16_t get16(const uint8_t *p) { return (uint16_t)(p[0] | (uint16_t)p[1
 void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
 {
     memset(b, 0, BTP_STATE_BYTES);
-    memcpy(b, "BTPF", 4); b[4] = 15;
+    memcpy(b, "BTPG", 4); b[4] = 16;
     for (unsigned i = 0; i < 4; ++i) b[8+i] = (uint8_t)(s->tick >> (8 * i));
     b[12] = (uint8_t)s->x_half; b[13] = (uint8_t)(s->x_half >> 8);
     b[14] = (uint8_t)s->y_half; b[15] = (uint8_t)(s->y_half >> 8);
@@ -345,6 +345,11 @@ void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
     b[456]=s->story_flags[24];b[457]=s->story_checkpoint[24];
     b[458]=s->story_flags[32];b[459]=s->story_checkpoint[32];
     btp_combat_encode(&s->combat,b+512);
+    b[2048]=s->terrain_next;
+    for (unsigned i=0;i<64;++i) {
+        const BtpTerrainMark *mark=&s->terrain_marks[i];unsigned p=2049+4*i;
+        b[p]=mark->sprite;b[p+1]=mark->map;b[p+2]=mark->x;b[p+3]=mark->y;
+    }
 }
 
 int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *script, BtpState *s)
@@ -364,7 +369,8 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         n == 512 && !memcmp(b,"BTPC",4) && b[4] == 12 ? 12 :
         n == 1024 && !memcmp(b,"BTPD",4) && b[4] == 13 ? 13 :
         n == 1024 && !memcmp(b,"BTPE",4) && b[4] == 14 ? 14 :
-        n == BTP_STATE_BYTES && !memcmp(b,"BTPF",4) && b[4] == 15 ? 15 : 0;
+        n == 2048 && !memcmp(b,"BTPF",4) && b[4] == 15 ? 15 :
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPG",4) && b[4] == 16 ? 16 : 0;
     if (!version) return 0;
     for (unsigned i = 5; i < 8; ++i) if (b[i]) return 0;
     if (version == 1) { for (unsigned i = 20; i < 24; ++i) if (b[i]) return 0; }
@@ -381,7 +387,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
             if (version == 9) for (unsigned i = 403; i < n; ++i) if (b[i]) return 0;
             if (version >= 10) {
                 if (b[425]) return 0;
-                unsigned start=version==10 ? 434u : version==11 ? 441u : version==12 ? 450u : version<15 ? 896u : (unsigned)n;
+                unsigned start=version==10 ? 434u : version==11 ? 441u : version==12 ? 450u : version<15 ? 896u : version>=16 ? 2305u : (unsigned)n;
                 for (unsigned i=start;i<n;++i) if (b[i]) return 0;
                 if (version>=13) for (unsigned i=version>=15 ? 460u : 452u;i<512;++i) if (b[i]) return 0;
                 if (version==13 && b[878]) return 0; /* v14 firing-effect countdown. */
@@ -389,6 +395,15 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         }
     }
     BtpState result = {.credits=35,.allowance_cap=50};
+    if (version>=16) {
+        result.terrain_next=b[2048];if (result.terrain_next>63) return 0;
+        for (unsigned i=0;i<64;++i) {
+            unsigned p=2049+4*i;BtpTerrainMark *mark=&result.terrain_marks[i];
+            *mark=(BtpTerrainMark){b[p],b[p+1],b[p+2],b[p+3]};
+            if (mark->sprite ? mark->sprite!=124 || mark->map!=1 || mark->x>127 || mark->y>127 :
+                mark->map || mark->x || mark->y) return 0;
+        }
+    }
     for (unsigned i = 0; i < 4; ++i) result.tick |= (uint32_t)b[8+i] << (8 * i);
     result.x_half = (uint16_t)(b[12] | (uint16_t)b[13] << 8);
     result.y_half = (uint16_t)(b[14] | (uint16_t)b[15] << 8);
@@ -487,6 +502,10 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
                         uint8_t combat[BTP_COMBAT_SAVE_BYTES]={0};
                         memcpy(combat,b+512,version>=15 ? BTP_COMBAT_SAVE_BYTES : 384u);
                         if (!btp_combat_decode(combat,&result.combat)) return 0;
+                        if (version<=15) for (unsigned i=0;i<result.combat.count;++i) {
+                            BtpCombatUnit *u=&result.combat.unit[i];
+                            if (u->infantry && (u->cover==8 || u->cover==16)) u->cover/=4;
+                        }
                         if (version<15 && result.mission.assignment==2 && result.mission.phase) {
                             result.combat.count=2;result.combat.target_unit=1;result.combat.kick_target=255;
                             result.combat.last_target=1;

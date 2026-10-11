@@ -1,5 +1,8 @@
 # Project status — bounded M3b complete, 2026-10-12
 
+The user has authorized five follow-on tasks together. Current work and
+incremental original comparisons are recorded in [M3c progress](M3C_PROGRESS.md).
+
 **M0, M1, M2a–M2m and bounded M3a–M3b are complete.** Five MechWarrior assignments
 are playable through reporting and rewards, including armed labor robots and
 a live Locust duel. Manual walk/run/jump, weapon and Kick orders, multiple
