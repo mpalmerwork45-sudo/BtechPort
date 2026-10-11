@@ -40,6 +40,8 @@ Substantial corrections to secondary notes: encrypted disk `C0` bytes are not ex
 
 ## Implementation limits
 
-Only menu ID 8 and scene request 0 are supported. Unknown opcodes, other menus/scenes, truncated operands/text, invalid targets and execution loops must stop with an explicit error. Native glyphs, scene imagery, pacing and input flushing remain **APPROXIMATE**; whole-screen/pixel or timing parity is not claimed. Quest progression, combat class, conversations, shops, economy and other building interiors remain unavailable.
+Only menu ID 8, font request 6 and scene request 0 are supported. Unknown opcodes, other menus/fonts/scenes, truncated operands/text, invalid targets and execution loops stop with explicit errors. Native glyphs, scene imagery, pacing and input flushing remain **APPROXIMATE**; whole-screen/pixel or timing parity is not claimed. `F2`'s delay request is stored explicitly without reproducing its original timing/flush. Quest progression, combat class, conversations, shops, economy and other building interiors remain unavailable.
+
+**M2a validation passed:** 231 core/corpus/state checks, 47 script checks, both canonical replays, native dummy/private-X11 scenarios with recorded replay, and headless ASan/UBSan/LeakSanitizer. `tools/verify_m2.py --reference-run work/reference-runs/1791682077232453392` checks the factual fixture against the original snapshots and full decrypted RAM payload. See [TESTING.md](TESTING.md) for limits and commands.
 
 Code provenance: independent C written from original data, live observations and factual format/dispatch evidence. No substantial GPL implementation source is reused. This is not a legal clean-room claim.

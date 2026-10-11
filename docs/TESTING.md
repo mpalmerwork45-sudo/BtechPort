@@ -1,4 +1,4 @@
-# Build, verification and original oracle — M1, 2026-10-11
+# Build, verification and original oracle — M2a, 2026-10-11
 
 ## Native commands
 
@@ -7,11 +7,12 @@ Run from `/home/mpalmer/BtechPort`:
 ```sh
 ./scripts/build.sh
 ./build/btech-port --data "Original DOS"
+./build/btech-port --data "Original DOS" --replay tests/fixtures/citadel-hall.actions
 ./scripts/test.sh
 ./scripts/test-sanitize.sh
 ```
 
-The build script selects the installed host GCC 15.2/CMake and clears inherited Conda compiler/linker flags for its child commands. A direct build with the current shell's Conda `ld` fails on the host libc's `.relr.dyn`; no shell or git configuration is altered to fix this. It produces `build/btech-port`, `build/btech-headless`, and `build/btp-tests`. No network access is needed for the current build.
+The build script selects the installed host GCC 15.2/CMake and clears inherited Conda compiler/linker flags for its child commands. A direct build with the current shell's Conda `ld` fails on the host libc's `.relr.dyn`; no shell or Git configuration is altered to fix this. It produces `build/btech-port`, `build/btech-headless`, `build/btp-tests` and `build/btp-script-tests`. No network access is needed for the current build.
 
 SDL2 2.32.4 runtime is installed, and development headers are extracted under `local-deps/sdl2/`. CMake also supports a conventional SDL2 development installation; SDL2 must provide `SDL_GetTicks64` (2.0.18 or later). On a machine with normal compiler environment:
 
@@ -22,29 +23,54 @@ cmake --build build
 
 The same core/data/pixel tests build without SDL using `-DBTP_FRONTEND=OFF`. Windows portability is a design goal, **UNKNOWN** until an actual Windows build is tested. C11 code, explicit little-endian serializers and CMake avoid a Linux dependency in the core.
 
-Arrows move; F3 toggles tile collision outlines and diagnostics; R restarts; Esc quits. The native tick is a fixed 32ms; OS keyboard repeat and original cadence parity are **APPROXIMATE**. For deterministic input use one lowercase logical action (`up`, `down`, `left`, `right`, `idle`) per replay line:
+Arrows move/select; Enter or Space confirms/continues; Backspace declines entry or recovers unsupported choices; F3 toggles collision outlines and mode/script diagnostics; R restarts; Esc quits. The native tick is fixed at 32ms; key repeat, original delays and input flushing are **APPROXIMATE**. Deterministic replay accepts lowercase logical actions `up`, `down`, `left`, `right`, `idle`, `accept`, `cancel`, one per line:
 
 ```sh
 ./build/btech-port --data "Original DOS" --record work/my-walk.actions
 ./build/btech-headless --data "Original DOS" --replay work/my-walk.actions --trace --frame work/my-walk.ppm
 ```
 
-Recording includes idle ticks. Restart is visibly refused during recording because that reset is not a supported replay action. Unknown actions fail with a diagnostic. No BLD interpreter exists yet, and interiors explicitly show unavailable; no opcode is silently skipped. `BTP1` is a tested 24-byte **internal** versioned state encoding, not an original GAME save import/export feature.
+Recording includes idle ticks. Restart is visibly refused during recording because reset is not a supported replay action. Unknown actions fail with a diagnostic. The bounded BLD interpreter supports the Citadel menu, Hall of Legends and exit; other choices stop with the unsupported opcode and payload address. Headless replay returns a failing exit code on script errors and can still write their requested diagnostic frame. Backspace/`cancel` explicitly returns to the menu without invented quest effects.
+
+`BTP2` is a tested 64-byte **internal core encoding**, preserving mode, pending entrance, VM position, text range, pause request, menu choice and 16 state bytes. Legacy 24-byte BTP1 states still decode. Tests restore during entry, every Hall wait, menu, fault and exit and compare subsequent encoded state. This is not an original GAME save feature or a native save/load UI.
 
 ## Passed checks and scope
 
 | Check | Actual result | What it establishes |
 |---|---|---|
 | CTest `core-formats-state-pixels` | PASS, 65 assertions | Literal/signed/long RLE, malformed/truncated/overflow rejection, block boundaries, movement, collision offset, edges, deterministic state restoration, serialization validation, rendering/palette regression. |
-| `build/btp-tests "Original DOS"` | PASS, 131 assertions including synthetic checks | All 14 supported MTPs and all 12 ICN/CMP resources decode; headerless MAP15 is explicitly rejected. |
+| CTest `script-bounds-dispatch` | PASS, 24 synthetic assertions | BLD size/decrypt, truncated operands/text, unsupported operations/font/scene/menu, invalid targets, bounded loops and input wait/selection. |
+| `build/btp-tests "Original DOS"` | PASS, 231 assertions including synthetic checks | All 14 MTPs and 12 graphics decode; raw MAP15 rejected; integrated Citadel entry/decline/dialogue/exit and error recovery; exact entrance halves; validated BTP2 restoration and BTP1 migration. |
+| `build/btp-script-tests "Original DOS"` | PASS, 47 assertions including synthetic checks | Authentic Citadel menu, all six Hall text ranges/waits, jump-back selection retention, `FF` exit and three explicit unsupported branches. |
 | Python unpacker tests | PASS, 3 tests | Synthetic backward repeat/prefix, malformed EXEPACK header/run rejection, actual original unrelocated-image length/hash/anchor. |
 | Canonical original replay | PASS, 31 states / 30 actions, all four directions | Native positions/gate match original cursor **and party member 0**, including repeated wall/hedge blocks and west-wall offset. Not a claim about all parties/scenes. |
+| Citadel differential projection | PASS, 16 original checkpoints / 20 native states | Cursor/party[0], gate, 16 state bytes, pending step and exit; seven text digests, six waits and retained selection. Original credits stay 35; economy itself is absent from the native core. Modes and text order were checked visually; PC is bytecode-derived. |
 | Repeat and unknown input | PASS | Identical replay output is byte-identical; unsupported logical actions fail. |
-| Native SDL dummy + private X11 smoke | PASS | Window, arrow event queue, texture presentation, bounded exit; recorded input replays to the same position and eight ticks. |
-| ASan / UBSan / LeakSanitizer | PASS, core/data/pixels + authentic corpus + canonical replay | No detected address, undefined-behavior or leak errors in those paths. SDL frontend is not sanitizer-tested. LeakSanitizer required running outside the ptrace sandbox; the initial sandbox run reported that limitation. |
+| Native SDL dummy + private X11 smoke | PASS, movement and Citadel scenarios | Window, queued SDL arrow/confirm events, texture presentation and bounded exit. Recorded movement (8 ticks) and Citadel (24 ticks) inputs replay to the same canonical state. |
+| ASan / UBSan / LeakSanitizer | PASS, core/data/pixels/VM + corpus + both canonical replays | No detected address, undefined-behavior or leak errors in those paths. SDL frontend is not sanitizer-tested. LeakSanitizer requires execution outside the ptrace sandbox. |
 | Reference guard | PASS, 1287 entries | Both supplied trees match baseline hashes, modes, modification times, directory entries and symlinks; includes reference `.git/`. Access times are intentionally excluded. |
 
-`./scripts/test.sh --x11` adds the private-display native check and closes it automatically. Under Codex, starting GUI processes requires execution approval for the whole script; there is no interactive terminal or per-input approval. Plain `test.sh` uses SDL's dummy video driver and needs no display or audio device.
+`./scripts/test.sh --x11` adds both private-display native scenarios and closes automatically. Under Codex, GUI processes require approval for the whole script; there is no interactive terminal or per-input approval. Plain `test.sh` uses SDL's dummy driver and needs no display or audio device. Sanitizers cover headless paths, including software rendering through C tests; they do not claim SDL/backend instrumentation.
+
+## Citadel original comparison
+
+[Citadel evidence](M2_CITADEL_EVIDENCE.md) records exact trigger/decrypt/opcode findings and confidence. Run the original and compare the printed run directory:
+
+```sh
+python3 tools/reference_session.py --script tools/reference-citadel.json
+python3 tools/verify_m2.py --reference-run work/reference-runs/1791682077232453392
+```
+
+The input script waits through arrival/text rendering, selects Hall of Legends, advances six screens, selects Leave from the retained Hall highlight, and takes one south step. The verifier compares fresh original cursor **and party[0]**, 16 state bytes, unchanged credits and all 4328 decrypted bytes with the fixture/core. Seven native text digests are checked against the original resource. Snapshot mode labels come from captured screen observations; the verifier does not read an assumed DOS mode enum or claim that VM PC was captured from the live interpreter.
+
+Without DOSBox:
+
+```sh
+python3 tools/verify_m2.py
+./build/btech-headless --replay tests/fixtures/citadel-hall.actions --trace --frame work/citadel-hall.ppm
+```
+
+`--smoke-citadel` feeds a bounded set of logical controls through the native SDL event queue. Its records and screenshots remain in ignored `work/`. Error-branch checks require a failing process exit with `unsupported opcode`; they also verify explicit recovery. This does not establish the other Citadel choices, complete story flags, economy, pixel equality or original timing.
 
 ## Original-game reference sequence
 
@@ -87,7 +113,7 @@ All 64,000 independently decoded C BTTLTECH pixels match the secondary reference
 
 **VERIFIED for that frame:** 42,625 / 43,200 right-panel pixels equal, **98.669%**. The remaining 575 pixels include omitted NPC/sprite overlays and the approximate player marker; their complete causes are not assigned without further tests. The independently drawn left diagnostic panel replaces original status/animation/menu graphics. Whole-screen equality is not claimed. Palette/camera parity for other graphics modes remains **UNKNOWN**.
 
-Differences: no NPCs/followers, story flags, allowance, shops, encounters, combat, building transition, original saves, ANM playback or audio. Movement beyond the tested route is a small inferred single-player model. Tick/repeat cadence, edge blocking and the player marker are approximate. The frontend warns at data-derived entrance locations but does not execute BLD files.
+Remaining differences: no NPCs/followers, campaign quest progression, allowance, shops, encounters, combat, original GAME saves, ANM playback or audio. M2a executes only the verified Citadel subset and reproduces its recorded 16-byte state projection; this is not a complete story-state model. Font/layout, Citadel imagery, tick/repeat/flushing cadence, edge blocking and player marker remain approximate. There is no original Citadel whole-screen pixel-parity claim.
 
 ## Dependency provenance
 
@@ -102,4 +128,4 @@ Packages were downloaded through the configured Ubuntu archive with `apt-get dow
 | libsdl2-dev 2.32.4+dfsg-1 amd64 | `local-deps/sdl2/` | `90a21699bdb8f6f491b92dba345a85b1ab865c54cd59c527b91603a2d1a13b17` |
 | xvfb 2:21.1.18-1ubuntu1.1 amd64 | `local-deps/xvfb/` | `a980a874e0b5663ada7ff1f145ce91b87ba03a40bd5d4fde335bf6d0f1a4ed06` |
 
-The harness supplies a process-local library path for DOSBox's extracted libraries and dummy audio. X11/XTest libraries and fonts were already present. There is no audio device dependency in M1. These packages are local ignored dependencies, not new implementation source.
+The harness supplies a process-local library path for DOSBox's extracted libraries and dummy audio. X11/XTest libraries and fonts were already present. There is no audio device dependency in the slice. These packages are local ignored dependencies, not new implementation source. No new dependencies were needed for M2a.

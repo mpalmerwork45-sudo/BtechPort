@@ -72,7 +72,7 @@ Original launch: `python3 tools/reference_session.py --script tools/reference-mo
 
 | Group | Count | Evidence / limits |
 |---|---:|---|
-| BLD | 26 | All existing converter raw-byte round trips pass; decryption/control flow still **INFERRED**. |
+| BLD | 26 | All converter raw-byte round trips pass; Citadel decryption/menu/Hall/exit are **VERIFIED**, broader control flow remains **INFERRED/UNKNOWN**. |
 | MTP | 15 | MAP1–14 have a **VERIFIED** 541-byte header and 8×8 block order; MAP15 is a different 768-byte raw map. |
 | ICN | 5 | **VERIFIED** signed-RLE output is 32,000 packed bytes / 64,000 pixel indices per file. |
 | CMP | 7 | Same signed-RLE; format 2 uses column-major packed bytes. |
@@ -86,7 +86,7 @@ MTP dimensions: MAP1/2/11/14 are 64×64 (4637 bytes), MAP3–10 are 32×32 (1565
 
 ICN/CMP's initial little-endian size word counts bytes **after the size word**, including the format byte: `file_length - 2`, not `file_length - 3`. Positive runs copy that many literal bytes; negative signed runs repeat the next byte; zero introduces a 16-bit repeat count and value. All twelve files meet the size and decoded-length checks. Format-1 ICN tile pixels can be viewed as 16×4000. The standard EGA palette matches the secondary extraction PNG; the original MAP1 VGA display additionally maps resource index 5→EGA 9 and index 9→EGA 1, verified against captured frames.
 
-Linux paths must preserve case and spaces: use `--data "Original DOS"`, or an absolute quoted path. The native M1 loader expects the exact uppercase `MAP1.MTP` and `BTTLTECH.ICN`; the backup suffix is actually lowercase `.bak`. Missing resources produce diagnostics. Proprietary files, extracted pixels, screenshots, RAM dumps and local dependencies are excluded by `.gitignore`.
+Linux paths must preserve case and spaces: use `--data "Original DOS"`, or an absolute quoted path. The native M2a loader expects exact uppercase `MAP1.MTP`, `BTTLTECH.ICN` and `CITADEL.BLD`; the backup suffix is actually lowercase `.bak`. Missing resources produce diagnostics. Proprietary files, extracted pixels, screenshots, RAM dumps and local dependencies are excluded by `.gitignore`. See [Citadel evidence](M2_CITADEL_EVIDENCE.md) for the verified BLD subset.
 
 ## Complete manifest
 
