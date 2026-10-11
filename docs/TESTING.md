@@ -1,4 +1,4 @@
-# Build, verification and original oracle — M2c, 2026-10-11
+# Build, verification and original oracle — M2d, 2026-10-11
 
 ## Native commands
 
@@ -9,13 +9,14 @@ Run from `/home/mpalmer/BtechPort`:
 ./build/btech-port --data "Original DOS"
 ./build/btech-port --replay tests/fixtures/citadel-hall.actions
 ./build/btech-port --replay tests/fixtures/citadel-katrina.actions
+./build/btech-port --replay tests/fixtures/citadel-arrival.actions
 ./build/btech-port --conversation-checkpoint --replay tests/fixtures/citadel-talk.actions
 ./scripts/test.sh
 ./scripts/test.sh --x11
 ./scripts/test-sanitize.sh
 ```
 
-The build script uses our proven EXEPACK reader through `tools/prepare_talk.py` to generate ignored `work/talk-data.bin` and its provenance sidecar from the audited original executable. It then selects installed host GCC 15.2/CMake and clears inherited Conda compiler/linker flags for its child commands. Direct builds with this shell's older Conda linker fail on host libc's `.relr.dyn`. No shell or Git configuration changes or network calls are needed. Outputs are `build/btech-port`, `build/btech-headless`, `build/btp-tests` and `build/btp-script-tests`. Python is required for conversion/testing, not by the running C game.
+The build script uses our proven EXEPACK reader through `tools/prepare_talk.py` to generate ignored `work/talk-data.bin` and its provenance sidecar from the audited original executable. It then selects installed host GCC 15.2/CMake and clears inherited Conda compiler/linker flags for its child commands. Direct builds with this shell's older Conda linker fail on host libc's `.relr.dyn`. No shell or Git configuration changes or network calls are needed. Outputs are `build/btech-port`, `build/btech-headless`, `build/btp-tests`, `build/btp-script-tests` and `build/btp-npc-tests`. Python is required for conversion/testing, not by the running C game.
 
 The runtime reads MAP1, BTTLTECH and CITADEL directly, plus the local EXE text cache. For another resource/cache location, run `python3 tools/prepare_talk.py --data DIRECTORY --output CACHE` and pass `--data DIRECTORY --dialogue-data CACHE` to the executable. Wrong source/image hashes, malformed caches and missing files fail visibly. See [Talk provenance](M2_TALK_EVIDENCE.md).
 
@@ -40,11 +41,11 @@ Records include idle ticks. Restart is visibly refused while recording because r
 
 ## Internal state encoding
 
-`BTP4` is a tested **160-byte internal core encoding**, not original GAME compatibility or a save/load UI. It preserves mode/entrance, VM position, BLD text spans, waits, 23 story bytes, rollback, native Talk phase, separate menu selections, eight NPC occupancy pairs and native result/recruitment context. Legacy 24-byte BTP1, 64-byte BTP2 and 128-byte BTP3 decode. Hall/Katrina waits migrate and continue identically in their modeled fields; legacy formats contain no NPC context and migrate with empty occupancy.
+`BTP5` is a tested **224-byte internal core encoding**, not original GAME compatibility or a save/load UI. It preserves prior mode/entrance/VM/text/story/rollback/Talk context, plus NPC positions/directions, RNG/search/phase/tick remainder, loop timer and pending allowance RNG event. Legacy 24-byte BTP1, 64-byte BTP2, 128-byte BTP3 and 160-byte BTP4 decode with travel disabled because they never stored its clock. BTP4 retains its Talk/occupancy fields; earlier versions migrate with empty occupancy. Hall/Katrina waits continue identically in their modeled fields.
 
-The first 124 bytes retain BTP3 field positions, with magic/version BTP4/4. Words/ticks are little-endian; reserved bytes are zero. Fields added since BTP2:
+The first 150 bytes retain BTP4 field positions, with magic/version BTP5/5. Words/ticks are little-endian; reserved bytes are zero. Fields added since BTP2:
 
-| Byte offsets | BTP4 field |
+| Byte offsets | BTP5 field |
 |---|---|
 | 59–65 | Story bytes 16–22; bytes 0–15 remain at 24–39 |
 | 66 | BLD text span count, bounded to eight |
@@ -55,7 +56,11 @@ The first 124 bytes retain BTP3 field positions, with magic/version BTP4/4. Word
 | 128–143 | Eight packed-state/occupancy pairs |
 | 144–147 | Room, reply actor, D33A result, D339 recruitment context |
 | 148–149 | Result rollback checkpoint, visible scenario marker |
-| 67, 150–159 | Reserved zero |
+| 150–152 | NPC system disabled/lazy/ready, original phase, native tick remainder |
+| 153–159 | Three RNG bytes, 16-bit search counter, candidate bias, explicit fault |
+| 160–199 | Eight `(packed X word, packed Y word, direction byte)` records |
+| 200–201 | Outdoor loop timer, pending baseline allowance RNG event |
+| 67, 202–223 | Reserved zero |
 
 BLD text spans concatenate exact bytes without added separators. Native Talk suspends after its operand, clears BLD spans and assembles text from checked EXE/MAP1 references. Trace length/digest describe active text; original case/spaces survive. Decoding validates native PC, occupant mask/count, actor, result and checkpoint consistency. More than eight BLD spans, malformed operands/targets, unsupported indexes and exhausted instruction budgets stop explicitly. The story model remains `D30C[0..22]` plus two explicit native context bytes, not complete campaign state.
 
@@ -65,6 +70,7 @@ BLD text spans concatenate exact bytes without added separators. Native Talk sus
 |---|---|---|
 | CTest core | PASS, 68 synthetic assertions | RLE/map bounds, movement/collision, edges, state restoration/validation, palette and mixed-case glyph regression. |
 | CTest script | PASS, 58 synthetic assertions | BLD size/decrypt/bounds, unsupported operations/index/font/scene/menu, byte wrapping, signed tables, concatenation, span limits and native suspension/return. |
+| CTest NPC | PASS, 24 synthetic assertions | RNG vectors, first/later allowance wraps, proximity freeze, positive/zero arrival, expiry, timer guard, BTP5 validation/restoration and BTP4 migration. |
 | `build/btp-tests "Original DOS"` | PASS, 420 assertions including synthetic checks | 14 MTPs/12 graphics; prior Citadel routes; Talk Done/result/retention, exact lengths, restored pauses, corrupt state/cache, rollback, BTP1/BTP2/BTP3 migration. Multiple occupants/wrap are structural tests, not live parity claims. |
 | `build/btp-script-tests "Original DOS"` | PASS, 94 assertions including synthetic checks | Authentic menu/Hall/Katrina texts/effects, repeat denial, retention, exit, class fault and F5 0C continuation. |
 | Python unpacker/converter | PASS, 4 tests | Synthetic stream/header/run rejection, actual image hash/anchor, deterministic cache/address/string-hash provenance and wrong-version rejection. |
@@ -72,17 +78,38 @@ BLD text spans concatenate exact bytes without added separators. Native Talk sus
 | Hall projection | PASS, 16 original checkpoints / 20 native states | Positions, gate, 16 bytes, pending step/exit, seven text digests, six waits and retained selection. |
 | Katrina projection | PASS, 20 original checkpoints / 20 native states | Positions, gate, bytes 0–21, first-visit persistence, denial, re-entry highlight and four text hashes. Byte 22 only compared before outdoor countdown resumes. |
 | Talk projection | PASS, 10 controlled + 3 unmodified empty-room checkpoints | Positions, bytes 0–22, exact 42-byte menu/162-byte reply/47-byte empty response, Done preserving result, NPC clearing result, both selections and return/exit. NPC arrival and post-exit timers excluded. |
-| Native SDL dummy/private X11 | PASS, four scenarios | Window, queued events, texture presentation, bounded exit and records replaying to canonical states: movement 8 ticks; Hall/Katrina/Talk 24 each. |
-| ASan/UBSan/LeakSanitizer | PASS, headless core/data/pixels/VM/corpus and four canonical replays | No detected address, undefined-behavior or leak errors in these paths. SDL/backend not sanitizer-instrumented. LeakSanitizer requires execution outside the ptrace sandbox. |
+| NPC oracle and natural route | PASS, 1741 NPC assertions; 570 complete frame steps, two arrivals, 56 player/story checkpoints | Exact observed positions/destinations/directions/timers/phase/loop/RNG/search; 68 player-movement gaps skipped. Persistence at every checked frame; ordinary-input arrival/reply/return with original text hashes and building suspension. |
+| Native SDL dummy/private X11 | PASS, four short regressions plus X11 natural arrival | Window, SDL input/presentation, bounded exit and records: movement 8 ticks; Hall/Katrina/Talk 24 each; full arrival/reply/exit 2621. Actual native final JSON equals headless replay including NPC/RNG. |
+| ASan/UBSan/LeakSanitizer | PASS, headless core/data/pixels/VM/NPCs/corpus and five canonical replays | No detected address, undefined-behavior or leak errors in these paths. SDL/backend not sanitizer-instrumented. LeakSanitizer requires execution outside the ptrace sandbox. |
 | Reference guard | PASS, 1287 entries | Both supplied trees match content/mode/mtime/entries/symlinks, including reference Git metadata. Access times excluded. |
 
 Repeated canonical outputs are identical and unknown input fails. Original credits stay 35 in the Citadel traces; native economy is absent. Screens establish modes/highlights/order; PCs are bytecode-derived. None of these checks establishes full timing, RNG, pixels, Windows or campaign parity.
 
-`test.sh --x11` adds all four private-display scenarios and closes automatically. Whole-script GUI approval rules apply; no interactive terminal input is used. Plain `test.sh` needs no display/audio device. Sanitizers cover software rendering through C tests, without instrumenting SDL/backend code.
+`test.sh --x11` adds all five private-display scenarios and closes automatically; the full arrival route takes about 84 seconds. Whole-script GUI approval rules apply; no interactive terminal input is used. Plain `test.sh` needs no display/audio device and checks arrival headlessly. Sanitizers cover software rendering through C tests, without instrumenting SDL/backend code.
+
+## NPC arrival original comparison
+
+[NPC evidence](M2_NPC_EVIDENCE.md) records primary addresses, the initialized baseline and the limits of the RNG schedule:
+
+```sh
+./build/btech-port --replay tests/fixtures/citadel-arrival.actions
+python3 tools/verify_m2d.py
+build/btp-npc-tests "Original DOS" tests/fixtures/npc-frames.csv
+python3 tools/reference_session.py --script tools/reference-npc.json
+python3 tools/verify_m2d.py --reference-run work/reference-runs/1791689346416199589
+```
+
+Substitute the printed directory for a fresh reference run. The whole JSON script uses ordinary keys, a read-only NPC observer and an adaptive bounded wait for arrival. The observer polls only its child emulator and requires two identical numeric projections before retaining a sample. `wait-npc` observes genuine hidden coordinates/nonzero stay timer; `keys-fast` reaches the entry prompt before expiry. No guest context is injected. Raw screenshots/RAM stay ignored; the committed CSV/JSON contain only numerical facts, actions and hashes.
+
+The final original run yielded 639 stable observations. The verifier matches 570 complete outdoor frame steps and two arrivals, explicitly skipping 68 gaps with missing player movement before resuming from the next captured state. Each verified frame also checks identical continuation after BTP5 encode/decode. It compares NPC position, destination, direction, packed/timer pairs, phase, loop timer, RNG and search/bias; it does not claim equality across the skipped intervals. The first loop-timer wrap consumes three account RNG draws, later wraps none, for the recorded unspent 35-credit/50-cap baseline. General economy and other countdowns are unimplemented.
+
+The default native route has 2612 logical ticks, including idles, and ends on the original 162-byte reply. Fifty-six player/story checkpoints compare by non-idle input ordinal; elapsed-time NPC fields at route checkpoints are excluded from this projection. The frame corpus establishes their step behavior separately. Native entry/building suspension and return/exit pass. `--smoke-arrival --replay tests/fixtures/citadel-arrival.actions` sends the entire route through SDL events, appends nine return/exit/idle actions, and closes at tick 2621. The X11 test compares actual native JSON with its headless replay, including every NPC/RNG field.
+
+Original/native reply frames were visually inspected for mixed case and readable text. NPC sprites remain approximate green markers. Full startup, exact wall-clock cadence, world/edge/party rules, player movement against NPCs, global RNG/economy and pixels are outside parity. The separate M2c handler checkpoint keeps travel disabled and is never used to establish natural arrival.
 
 ## Talk original comparison
 
-The normal new-game Citadel is empty. Talk now shows its original response and returns. The verified NPC handler is playable in a visibly labeled controlled scenario:
+A quick Citadel visit from the normal initialized start is empty. Talk shows its original response and returns. The earlier isolated NPC handler is also playable in a visibly labeled controlled scenario:
 
 ```sh
 ./build/btech-port --conversation-checkpoint --replay tests/fixtures/citadel-talk.actions
@@ -181,7 +208,7 @@ All 64,000 independently decoded C BTTLTECH pixels match the secondary reference
 
 **VERIFIED for that frame:** 42,625 / 43,200 right-panel pixels equal, **98.669%**. The remaining 575 pixels include omitted NPC/sprite overlays and the approximate player marker; their complete causes are not assigned without further tests. The independently drawn left diagnostic panel replaces original status/animation/menu graphics. Whole-screen equality is not claimed. Palette/camera parity for other graphics modes remains **UNKNOWN**.
 
-Remaining differences: no NPC travel/followers, later campaign progression, allowance/day/countdowns, shops, encounters, combat, original GAME saves, ANM playback or audio. M2c executes a bounded Citadel subset, including Talk under explicit controlled NPC presence, and compares the stated route projections, including the first visit result; this is not a complete story-state model. Resource case is preserved with independently drawn lowercase glyphs. Glyph shapes/layout, Citadel imagery, tick/repeat/flushing cadence, edge blocking and player marker remain approximate. There is no original Citadel whole-screen pixel-parity claim.
+Remaining differences: no full NPC startup/world travel/followers, later campaign progression, general allowance/day/countdowns, shops, encounters, combat, original GAME saves, ANM playback or audio. M2d adds bounded local NPC movement and a naturally reached conversation to the Citadel subset. Unsupported actions still stop visibly. Glyph shapes/layout, pauses, markers and imagery remain approximate despite preserving original text bytes and case. The 98.669% figure above is the historical M1 comparison frame, not a new M2d pixel-parity claim. No complete campaign or global map is claimed.
 
 ## Dependency provenance
 
@@ -196,4 +223,4 @@ Packages were downloaded through the configured Ubuntu archive with `apt-get dow
 | libsdl2-dev 2.32.4+dfsg-1 amd64 | `local-deps/sdl2/` | `90a21699bdb8f6f491b92dba345a85b1ab865c54cd59c527b91603a2d1a13b17` |
 | xvfb 2:21.1.18-1ubuntu1.1 amd64 | `local-deps/xvfb/` | `a980a874e0b5663ada7ff1f145ce91b87ba03a40bd5d4fde335bf6d0f1a4ed06` |
 
-The harness supplies a process-local library path for DOSBox's extracted libraries and dummy audio. X11/XTest libraries and fonts were already present. There is no audio device dependency in the slice. These packages are local ignored dependencies, not new implementation source. No new dependencies were needed for M2a, M2b or M2c.
+The harness supplies a process-local library path for DOSBox's extracted libraries and dummy audio. X11/XTest libraries and fonts were already present. There is no audio device dependency in the slice. These packages are local ignored dependencies, not new implementation source. No new dependencies were needed for M2a–M2d.
