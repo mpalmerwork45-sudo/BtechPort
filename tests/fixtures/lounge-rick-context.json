@@ -1,0 +1,40 @@
+{
+  "kind": "controlled-original-handler-precondition",
+  "room": 7,
+  "npc_pairs": [
+    [
+      113,
+      5
+    ],
+    [
+      81,
+      0
+    ],
+    [
+      114,
+      7
+    ],
+    [
+      99,
+      0
+    ],
+    [
+      18,
+      0
+    ],
+    [
+      4,
+      0
+    ],
+    [
+      4,
+      0
+    ],
+    [
+      70,
+      0
+    ]
+  ],
+  "talk_result": 91,
+  "recruitment": 1
+}

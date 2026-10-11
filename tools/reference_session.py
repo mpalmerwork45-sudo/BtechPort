@@ -233,11 +233,11 @@ def snapshot_game(pid, label, output):
             "armor_points":ram[state+0xc622]}
         row["skills"] = list(ram[state+0xc618:state+0xc61b])
         menu=u16(ds+0x56b6)*16
-        row["menu_choices"]={str(i):u16(menu+0x98+16*i) for i in (7,8,9,10,11,12,13,14,15,16,20,30)}
+        row["menu_choices"]={str(i):u16(menu+0x98+16*i) for i in (7,8,9,10,11,12,13,14,15,16,19,20,24,30,37)}
         number=u16(ds+0x5574)*16+0x12
         row["number_input"]=list(ram[number:number+8])
         row["building_payloads"]={}
-        for name in ("ARMOR","WEAPON","COMSTAR"):
+        for name in ("ARMOR","WEAPON","COMSTAR","TRAINING","BARRACKS","LOUNGE"):
             encoded=(WORK/("dos/"+name+".BLD")).read_bytes()[2:]
             body=bytes(((value+41)&255)^233 for value in encoded)
             offset=ram.find(body)
@@ -246,6 +246,12 @@ def snapshot_game(pid, label, output):
                     "sha256":hashlib.sha256(body).hexdigest()}
         row["sprite_frames"] = list(ram[u16(ds+0x539a)*16+0x409a:u16(ds+0x539a)*16+0x409a+24])
         row["sprite_bases"] = list(ram[u16(ds+0x539c)*16+0xd55e:u16(ds+0x539c)*16+0xd55e+24])
+        row["mount"] = ram[state+0xc620]
+        row["mech_record"] = list(ram[state+0xc724:state+0xc724+125])
+        row["formation_x"] = list(struct.unpack_from("<12h",ram,ds+0x464))
+        row["formation_y"] = list(struct.unpack_from("<8h",ram,ds+0x47c))
+        row["footprint_active"] = list(struct.unpack_from("<8H",ram,u16(ds+0x5392)*16+0x4072))
+        row["heat"] = ram[u16(ds+0x5478)*16+0x32ae]
         row["npc_rng"] = list(ram[ds+0x4fc0:ds+0x4fc3])
         row["npc_phase"] = ram[ds+0x57fe]
         row["npc_search"] = [u16(ds+0x315a), u16(ds+0x315c)]
@@ -379,6 +385,10 @@ def controlled_talk_context(pid, output, fixture="tests/fixtures/talk-context.js
         if base is None: raise RuntimeError("Cannot resolve controlled-precondition RAM")
         changes = [(state+0xd398+26*i, bytes(pair)) for i,pair in enumerate(context["npc_pairs"])]
         changes.append((state+0xd33a, bytes([context["talk_result"]])))
+        if "recruitment" in context:
+            if type(context["recruitment"]) is not int or not 0 <= context["recruitment"] <= 1:
+                raise ValueError("Invalid recruitment precondition")
+            changes.append((state+0xd339,bytes([context["recruitment"]])))
         audit = []
         for addr, value in changes:
             before = os.pread(fd, len(value), base+addr)
@@ -518,6 +528,40 @@ btech.exe
                     print(json.dumps(memory_candidates(process.pid)), flush=True)
                 elif command == "snapshot":
                     snapshot_game(process.pid,parts[1],output)
+                elif command == "quiz-answer":
+                    # Read the highlighted diagram point, then send ordinary
+                    # keys. Coordinates/answers are audited EXE tables; this
+                    # helper never changes guest memory or bypasses the quiz.
+                    from PIL import Image
+                    label = parts[1]
+                    before = set(capture.glob("*.png"))
+                    keys.key(window,"Ctrl+F5")
+                    for _ in range(40):
+                        new = set(capture.glob("*.png"))-before
+                        if new: break
+                        time.sleep(0.05)
+                    if not new: raise RuntimeError("Quiz screenshot unavailable")
+                    shot = sorted(new)[-1]; shot.rename(capture/(label+".png"))
+                    im = Image.open(capture/(label+".png")).convert("RGB")
+                    points = ((151,186,2),(230,189,4),(240,168,5),(221,120,7),
+                        (239,88,8),(248,55,10),(213,69,18),(217,26,15),(193,38,0),(157,95,16))
+                    found = []
+                    for index,(x,y,answer) in enumerate(points):
+                        x-=3; y-=3
+                        edge=[(xx,y) for xx in range(x,x+9)]+[(xx,y+8) for xx in range(x,x+9)]
+                        edge += [(x,yy) for yy in range(y,y+9)]+[(x+8,yy) for yy in range(y,y+9)]
+                        if all(im.getpixel(p)==(255,255,255) for p in edge): found.append((index,answer))
+                    if len(found)!=1: raise RuntimeError(f"Expected one quiz box, got {found}")
+                    _,row = snapshot_game(process.pid,label,output)
+                    selected = row["menu_choices"]["37"]
+                    if selected>=20: raise RuntimeError("Quiz selector outside menu")
+                    index,answer = found[0]; delta=(answer-selected)%20
+                    generated=["Down"]*delta+["Return"]
+                    (output/(label+"-answer.json")).write_text(json.dumps({"point":index,
+                        "answer":answer,"before":selected,"keys":generated},indent=2)+"\n")
+                    for key in generated:
+                        keys.key(window,key); time.sleep(0.18)
+                    time.sleep(0.5)
                 elif command == "npc-trace":
                     if npc_trace is not None: raise ValueError("NPC observer already running")
                     npc_trace = NpcTrace(process.pid,parts[1],output)
@@ -542,6 +586,24 @@ btech.exe
                     if npc_trace is not None: raise ValueError("Controlled context is separate from natural NPC traces")
                     if len(parts) not in (1,2): raise ValueError("Talk context takes at most one fixture")
                     controlled_talk_context(process.pid, output,parts[1] if len(parts)==2 else "tests/fixtures/talk-context.json")
+                elif command == "controlled-shop-cash":
+                    # Isolated transaction test budget, never a campaign route.
+                    # Only this child game's D370 cash word pair is changed.
+                    if parts != ["controlled-shop-cash","20000"]:
+                        raise ValueError("Only the bounded 20000-C-bill shop budget is supported")
+                    base,row = snapshot_game(process.pid,"before-shop-budget",output)
+                    addr=int(row["state_segment"],16)*16+0xd370
+                    os.kill(process.pid,signal.SIGSTOP)
+                    fd=os.open(f"/proc/{process.pid}/mem",os.O_RDWR)
+                    try:
+                        old=os.pread(fd,4,base+addr)
+                        if int.from_bytes(old,"little") != row["credits"]: raise RuntimeError("Cash changed before precondition")
+                        value=struct.pack("<I",20000)
+                        if os.pwrite(fd,value,base+addr)!=4: raise RuntimeError("Short cash precondition write")
+                        (output/"shop-budget.json").write_text(json.dumps({"kind":"controlled-shop-budget",
+                            "guest_offset":hex(addr),"before":list(old),"after":list(value)},indent=2)+"\n")
+                    finally:
+                        os.close(fd); os.kill(process.pid,signal.SIGCONT)
                 elif command == "dump":
                     address = int(parts[2], 0)
                     length = int(parts[3], 0)
