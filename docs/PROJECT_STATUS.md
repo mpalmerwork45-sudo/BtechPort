@@ -1,4 +1,15 @@
-# Project status — M2k–M2m complete, 2026-10-11
+# Project status — M3a checkpoint, 2026-10-11
+
+**M3a is in progress, checkpointed for the user's overnight stop.** Third-assignment
+manual combat now reaches victory, instructor reporting and the 500 allowance
+cap. All 15 CTest suites pass; the ordinary 5526-input native-core route and
+19 fresh-process continuations pass. The user's stationary-shell and movement-arrow
+requests, native X11 combat checks and sanitizer verification remain pending.
+See [the resume checklist](M3_CHECKPOINT.md) before doing further work.
+
+The section below records the last **completed** milestone, M2k–M2m. Its combat
+and save-format limits are superseded by the M3a checkpoint; it is retained as
+the completed milestone's verification record.
 
 **M0, M1 and bounded M2a–M2m are complete.** Both noncombat MechWarrior
 assignments, rubble pickup/return, barracks sleep and the third assignment's

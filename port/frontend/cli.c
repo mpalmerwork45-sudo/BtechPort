@@ -9,7 +9,7 @@
 
 int btp_options(int argc, char **argv, BtpOptions *o)
 {
-    *o = (BtpOptions){.data = "Original DOS",.dialogue_data="work/talk-data.bin",
+    *o = (BtpOptions){.data = "Original DOS",.dialogue_data="work/talk-data.bin",.combat_data="work/combat-data.bin",
         .save_file="work/player-save.btp"};
     for (int i = 1; i < argc; ++i) {
         const char *arg = argv[i];
@@ -67,6 +67,7 @@ int btp_options(int argc, char **argv, BtpOptions *o)
             const char **value = NULL;
             if (!strcmp(arg, "--data")) value = &o->data;
             if (!strcmp(arg, "--dialogue-data")) value = &o->dialogue_data;
+            if (!strcmp(arg, "--combat-data")) value = &o->combat_data;
             if (!strcmp(arg, "--replay")) value = &o->replay;
             if (!strcmp(arg, "--frame")) value = &o->frame;
             if (!strcmp(arg, "--record")) value = &o->record;
@@ -158,7 +159,7 @@ void btp_print_state(const BtpState *s, const BtpResources *r)
         "\"mission\":{\"phase\":%u,\"corner\":%u,\"warned\":%u,\"elapsed\":%u,\"idle\":%u,\"terrain\":%u,"
         "\"assignment\":%u,\"rubble\":%u,\"carrying\":%u,\"rubble_target\":[%u,%u],\"rubble_tile\":%u},\"mech_skills\":[%u,%u],"
         "\"device\":%u,\"recruitment\":%u,\"animation_request\":[%u,%u],"
-        "\"animation\":{\"active\":%u,\"kind\":%u,\"step\":%u,\"cycle\":%u,\"hold\":%u,\"remaining\":%u,\"fraction\":%u}}\n",
+        "\"animation\":{\"active\":%u,\"kind\":%u,\"step\":%u,\"cycle\":%u,\"hold\":%u,\"remaining\":%u,\"fraction\":%u}",
         s->quiz.phase,s->quiz.selected,s->quiz.round,s->quiz.point,s->quiz.failed,s->quiz.used,
         s->mission.phase,s->mission.corner,s->mission.warned,s->mission.elapsed,s->mission.idle,
         s->mission.phase ? btp_mission_terrain(s,&r->map) : 0u,
@@ -168,6 +169,19 @@ void btp_print_state(const BtpState *s, const BtpResources *r)
         s->mission.assignment ? btp_mission_tile(s,&r->map,btp_rubble_x[s->mission.rubble],btp_rubble_y[s->mission.rubble]) : 0u,
         s->mech_skills[0],s->mech_skills[1],s->story_flags[47],s->recruitment,s->script.animation_kind,s->script.animation_flags,
         s->cutscene.active,s->cutscene.kind,s->cutscene.step,s->cutscene.cycle,s->cutscene.hold,s->cutscene.remaining,s->cutscene.refresh_fraction);
+    const BtpCombatState *c=&s->combat;
+    printf(",\"combat\":{\"phase\":%u,\"selected\":%u,\"round\":%u,\"step\":%u,\"won\":%u,\"fled\":%u,\"event\":%u,\"fired\":%u,"
+        "\"weapon\":%u,\"goal\":[%u,%u,%u,%u],\"orders\":[",c->phase,c->selected,c->round,c->step,c->won,c->fled,c->last_event,c->fired,
+        c->weapon_selected,c->goal_active,c->movement,c->goal_x,c->goal_y);
+    for (unsigned i=0;i<11;++i) printf("%s%u",i ? "," : "",c->orders[i]);
+    fputs("],\"units\":[",stdout);
+    for (unsigned i=0;i<2;++i) {
+        const BtpCombatUnit *u=&c->unit[i];
+        printf("%s{\"x\":%u,\"y\":%u,\"direction\":%u,\"heat\":%u,\"pool\":%u,\"cover\":%u,\"record\":[",i ? "," : "",u->x,u->y,u->direction,u->heat,u->pool,u->cover);
+        for (unsigned j=0;j<125;++j) printf("%s%u",j ? "," : "",u->record[j]);
+        fputs("]}",stdout);
+    }
+    printf("],\"shot\":[%d,%u,%u,%u,%u]}}\n",c->shot.needed,c->shot.hit,c->shot.location,c->shot.damage,c->shot.destroyed);
 }
 
 int btp_replay(const char *path, BtpState *s, const BtpResources *r, int trace)

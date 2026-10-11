@@ -80,7 +80,7 @@ static void begin(BtpState *s, const BtpResources *r, unsigned mech)
     uint8_t old[BTP_STATE_BYTES], current[BTP_STATE_BYTES]; BtpState loaded;
     for (unsigned version=10;version<=11;++version) {
         btp_state_encode(s,old); old[3]=(uint8_t)(version == 10 ? 'A' : 'B'); old[4]=(uint8_t)version;
-        CHECK(btp_state_decode(old,version == 10 ? 448u : sizeof old,&r->map,&r->training,&loaded));
+        CHECK(btp_state_decode(old,version == 10 ? 448u : 512u,&r->map,&r->training,&loaded));
         btp_state_encode(&loaded,current); btp_state_encode(s,old); CHECK(!memcmp(old,current,sizeof old));
     }
 }

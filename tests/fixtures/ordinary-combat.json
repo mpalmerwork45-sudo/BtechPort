@@ -1,0 +1,283 @@
+{
+  "kind": "ordinary-native-playability",
+  "state_edits": false,
+  "scope": "Native input-only success; separate from controlled original turn comparisons",
+  "checkpoints": [
+    {
+      "label": "computer",
+      "tick": 4033,
+      "mode": "training-mission",
+      "combat_phase": 1
+    },
+    {
+      "label": "messages",
+      "tick": 4034,
+      "mode": "training-mission",
+      "combat_phase": 2
+    },
+    {
+      "label": "graphics",
+      "tick": 4035,
+      "mode": "training-mission",
+      "combat_phase": 3
+    },
+    {
+      "label": "orders",
+      "tick": 4036,
+      "mode": "training-mission",
+      "combat_phase": 4
+    },
+    {
+      "label": "resolving",
+      "tick": 4049,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 4087,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 4125,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 4163,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 4224,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 4262,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 4300,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 4338,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 4376,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "weapons",
+      "tick": 4417,
+      "mode": "training-mission",
+      "combat_phase": 6
+    },
+    {
+      "label": "target",
+      "tick": 4420,
+      "mode": "training-mission",
+      "combat_phase": 7
+    },
+    {
+      "label": "assigned",
+      "tick": 4421,
+      "mode": "training-mission",
+      "combat_phase": 6
+    },
+    {
+      "label": "resolving",
+      "tick": 4424,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 4462,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 4523,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 4561,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 4599,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 4637,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 4675,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 4713,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 4751,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 4789,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 4827,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 4876,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 4914,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 4952,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 4990,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 5028,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 5066,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 5104,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 5142,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 5180,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 5218,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 5256,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 5294,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 5332,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 5370,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 5408,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 5446,
+      "mode": "training-mission",
+      "combat_phase": 0
+    },
+    {
+      "label": "victory",
+      "tick": 5482,
+      "mode": "training-mission",
+      "combat_phase": 0
+    },
+    {
+      "label": "report",
+      "tick": 5525,
+      "mode": "building",
+      "combat_phase": 0
+    },
+    {
+      "label": "exit",
+      "tick": 5526,
+      "mode": "local-exploration",
+      "combat_phase": 0
+    }
+  ]
+}

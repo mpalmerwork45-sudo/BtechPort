@@ -11,6 +11,20 @@ typedef struct {
     uint8_t record[125], x, y, direction, heat, pool, burning, cover;
 } BtpCombatUnit;
 typedef struct { uint8_t hit, location, damage, destroyed, toppled; int16_t needed; } BtpShot;
+typedef enum { BTP_COMBAT_NONE, BTP_COMBAT_CONTROL, BTP_COMBAT_MESSAGES, BTP_COMBAT_GRAPHICS,
+    BTP_COMBAT_MENU, BTP_COMBAT_MOVE, BTP_COMBAT_WEAPONS, BTP_COMBAT_TARGET,
+    BTP_COMBAT_SCAN, BTP_COMBAT_ROUND, BTP_COMBAT_NOTICE } BtpCombatPhase;
+typedef struct {
+    BtpCombatUnit unit[2];
+    uint8_t phase, selected, messages, graphics, movement, goal_x, goal_y, goal_active;
+    uint8_t cursor_x, cursor_y, weapon_selected, target_selected, scan_unit;
+    uint8_t orders[11], step, delay, moved[2], path_index[2], walk[2], notice, notice_return;
+    uint8_t fled, won, last_weapon, last_event, plan_direction[2], fallback[2], enemy_movement;
+    uint16_t round, fired;
+    int8_t path[2][12][2];
+    BtpShot shot;
+} BtpCombatState;
+enum { BTP_COMBAT_SAVE_BYTES = 384 };
 enum { BTP_COMBAT_DATA_BYTES = 4+375+561+15+46+93+16 };
 int btp_combat_data_decode(const uint8_t *bytes, size_t length, BtpCombatData *data);
 unsigned btp_combat_die(uint8_t rng[3]);

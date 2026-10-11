@@ -2,6 +2,7 @@
 #define BTP_RESOURCES_H
 #include <stddef.h>
 #include <stdint.h>
+#include "core/combat_rules.h"
 
 enum { BTP_MAP_MAX = 64, BTP_PACKED_BYTES = 32000, BTP_PIXELS = 64000, BTP_BLD_MAX = 9000 };
 typedef struct {
@@ -37,6 +38,7 @@ typedef struct {
     BtpBld citadel, armor, weapon, comstar, training, barracks, lounge;
     BtpDialogue dialogue;
     BtpAnm animations[BTP_ANM_COUNT];
+    BtpCombatData combat;
 } BtpResources;
 
 int btp_map_decode(const uint8_t *bytes, size_t length, BtpMap *map, BtpError *error);
@@ -47,4 +49,5 @@ int btp_read_file(const char *path, uint8_t **bytes, size_t *length, BtpError *e
 int btp_resources_load(const char *directory, BtpResources *resources, BtpError *error);
 int btp_dialogue_decode(const uint8_t *bytes, size_t length, BtpDialogue *dialogue, BtpError *error);
 int btp_dialogue_load(const char *path, BtpDialogue *dialogue, BtpError *error);
+int btp_combat_data_load(const char *path, BtpCombatData *data, BtpError *error);
 #endif

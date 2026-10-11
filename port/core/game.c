@@ -7,6 +7,7 @@
 #include "core/school.h"
 #include "core/animation.h"
 #include "core/training.h"
+#include "core/combat.h"
 #include <string.h>
 
 void btp_start(BtpState *s)
@@ -59,11 +60,12 @@ static void story_in(BtpState *s)
 {
     s->story_flags[45] = s->recruitment; s->story_flags[46] = s->talk_result;
     s->story_flags[51] = (uint8_t)s->allowance_cap;
+    s->story_flags[52] = (uint8_t)(s->allowance_cap>>8);
 }
 static void story_out(BtpState *s)
 {
     s->recruitment = s->story_flags[45]; s->talk_result = s->story_flags[46];
-    s->allowance_cap = (uint16_t)((s->allowance_cap & 0xff00u)|s->story_flags[51]);
+    s->allowance_cap = (uint16_t)(s->story_flags[51]|(unsigned)s->story_flags[52]<<8);
     if (s->npc.enabled) s->npc.allowance_pending = (uint8_t)btp_economy_below_cap(s);
 }
 static void checkpoint(BtpState *s)
@@ -106,6 +108,7 @@ static void finish_script(BtpState *s, const BtpMap *m)
         s->school = (BtpSchoolState){0};
         s->script.has_accounts = 0;
         s->mission = (BtpMissionState){0};
+        s->combat = (BtpCombatState){0};
         s->cutscene = (BtpCutsceneState){0};
         s->mode = BTP_SCRIPT_FAULT;
     } else if (s->script.status == BTP_SCRIPT_END) {
@@ -262,7 +265,7 @@ static uint16_t get16(const uint8_t *p) { return (uint16_t)(p[0] | (uint16_t)p[1
 void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
 {
     memset(b, 0, BTP_STATE_BYTES);
-    memcpy(b, "BTPC", 4); b[4] = 12;
+    memcpy(b, "BTPD", 4); b[4] = 13;
     for (unsigned i = 0; i < 4; ++i) b[8+i] = (uint8_t)(s->tick >> (8 * i));
     b[12] = (uint8_t)s->x_half; b[13] = (uint8_t)(s->x_half >> 8);
     b[14] = (uint8_t)s->y_half; b[15] = (uint8_t)(s->y_half >> 8);
@@ -334,6 +337,8 @@ void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
     b[441]=s->cutscene.active; b[442]=s->cutscene.kind; b[443]=s->cutscene.step;
     b[444]=s->cutscene.cycle; b[445]=s->cutscene.hold;
     put16(b+446,s->cutscene.remaining); put16(b+448,s->cutscene.refresh_fraction);
+    b[450]=s->story_flags[52];b[451]=s->story_checkpoint[52];
+    btp_combat_encode(&s->combat,b+512);
 }
 
 int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *script, BtpState *s)
@@ -350,7 +355,8 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         n == 416 && !memcmp(b, "BTP9", 4) && b[4] == 9 ? 9 :
         n == 448 && !memcmp(b,"BTPA",4) && b[4] == 10 ? 10 :
         n == 512 && !memcmp(b,"BTPB",4) && b[4] == 11 ? 11 :
-        n == BTP_STATE_BYTES && !memcmp(b,"BTPC",4) && b[4] == 12 ? 12 : 0;
+        n == 512 && !memcmp(b,"BTPC",4) && b[4] == 12 ? 12 :
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPD",4) && b[4] == 13 ? 13 : 0;
     if (!version) return 0;
     for (unsigned i = 5; i < 8; ++i) if (b[i]) return 0;
     if (version == 1) { for (unsigned i = 20; i < 24; ++i) if (b[i]) return 0; }
@@ -367,7 +373,9 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
             if (version == 9) for (unsigned i = 403; i < n; ++i) if (b[i]) return 0;
             if (version >= 10) {
                 if (b[425]) return 0;
-                for (unsigned i = version == 10 ? 434u : version == 11 ? 441u : 450u; i < n; ++i) if (b[i]) return 0;
+                unsigned start=version==10 ? 434u : version==11 ? 441u : version==12 ? 450u : 896u;
+                for (unsigned i=start;i<n;++i) if (b[i]) return 0;
+                if (version>=13) for (unsigned i=452;i<512;++i) if (b[i]) return 0;
             }
         }
     }
@@ -465,9 +473,13 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
                     memcpy(result.mech_skills,b+437,2); memcpy(result.checkpoint_mech_skills,b+439,2);
                     if (version >= 12) result.cutscene=(BtpCutsceneState){.active=b[441],.kind=b[442],.step=b[443],
                         .cycle=b[444],.hold=b[445],.remaining=get16(b+446),.refresh_fraction=get16(b+448)};
+                    if (version >= 13) {
+                        result.story_flags[52]=b[450];result.story_checkpoint[52]=b[451];
+                        if (!btp_combat_decode(b+512,&result.combat)) return 0;
+                    }
                 }
                 if (result.story_flags[45] != result.recruitment || result.story_flags[46] != result.talk_result ||
-                    result.story_flags[51] != (uint8_t)result.allowance_cap || result.story_flags[47] > 1 ||
+                    result.story_flags[51] != (uint8_t)result.allowance_cap || result.story_flags[52] != (uint8_t)(result.allowance_cap>>8) || result.story_flags[47] > 1 ||
                     result.recruitment > 1 || v->mech_result > 3 || v->mech_after > v->text_count ||
                     (!v->mech_result && v->mech_after) ||
                     (v->mech_result && (result.entry_slot || result.mission.phase != BTP_MISSION_RESULT ||
@@ -484,7 +496,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
                 }
             }
             static const uint8_t protection[6] = {0,25,40,30,50,50};
-            if ((result.allowance_cap != 50 && !(version >= 10 && result.allowance_cap == 150) && !(version >= 11 && result.allowance_cap == 250)) || result.weapon > 11 || result.armor > 5 ||
+            if ((result.allowance_cap != 50 && !(version >= 10 && result.allowance_cap == 150) && !(version >= 11 && result.allowance_cap == 250) && !(version >= 13 && result.allowance_cap == 500)) || result.weapon > 11 || result.armor > 5 ||
                 result.armor_points != protection[result.armor] || result.checkpoint_weapon > 11 || result.checkpoint_armor > 5 ||
                 result.checkpoint_armor_points != protection[result.checkpoint_armor] ||
                 v->confirm_selected > 1 || v->has_cash > 1 || v->cash_after > v->text_count ||
@@ -524,7 +536,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         if (result.checkpoint_valid) {
             if ((result.mode != BTP_BUILDING && result.mode != BTP_MISSION) || (v->status != BTP_SCRIPT_WAIT && v->status != BTP_SCRIPT_NATIVE &&
                 v->status != BTP_SCRIPT_CONFIRM && v->status != BTP_SCRIPT_ANIMATION)) return 0;
-            if (version >= 6 && result.checkpoint_allowance_cap != 50 && result.checkpoint_allowance_cap != 150 && !(version >= 11 && result.checkpoint_allowance_cap == 250)) return 0;
+            if (version >= 6 && result.checkpoint_allowance_cap != 50 && result.checkpoint_allowance_cap != 150 && !(version >= 11 && result.checkpoint_allowance_cap == 250) && !(version >= 13 && result.checkpoint_allowance_cap == 500)) return 0;
         } else {
             if (result.checkpoint_talk_result || result.checkpoint_credits || result.checkpoint_weapon ||
                 result.checkpoint_armor || result.checkpoint_armor_points || result.checkpoint_allowance_cap) return 0;
@@ -566,7 +578,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
                     if (get16(script->bytes + v->menu_table + 2*i) >= script->length) return 0;
         }
         if (!btp_talk_valid(&result,m) || !btp_npc_valid(&result,m) || !btp_bank_valid(&result) ||
-            !btp_school_valid(&result) || !btp_training_valid(&result) || !btp_cutscene_valid(&result)) return 0;
+            !btp_school_valid(&result) || !btp_training_valid(&result) || !btp_cutscene_valid(&result) || !btp_combat_valid(&result)) return 0;
     }
     if (version >= 9) {
         result.player_walk = b[394]; memcpy(result.npc_walk,b+395,8);

@@ -29,6 +29,12 @@ published by **Infocom**.
 
 ## Build and play
 
+**M3a checkpoint:** manual third-assignment combat now reaches victory and the
+instructor's 500-cap reward. This milestone is still in progress: the requested
+stationary training shell, movement arrows and final native/sanitizer checks
+remain pending. See the [resume checklist](docs/M3_CHECKPOINT.md). Earlier M2
+verification below remains its historical baseline.
+
 From this directory on the current Kubuntu machine:
 
 ```sh

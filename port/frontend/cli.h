@@ -2,7 +2,7 @@
 #define BTP_CLI_H
 #include "frontend/pixels.h"
 typedef struct {
-    const char *data, *dialogue_data, *replay, *record, *frame, *tiles_output, *sprites_output;
+    const char *data, *dialogue_data, *combat_data, *replay, *record, *frame, *tiles_output, *sprites_output;
     const char *save_file, *load, *save;
     int sprite_preview, headless, debug, trace, smoke, smoke_fast, conversation_checkpoint, shop_talk_checkpoint;
 } BtpOptions;

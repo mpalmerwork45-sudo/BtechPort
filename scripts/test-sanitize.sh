@@ -28,4 +28,5 @@ python3 tools/verify_sprites.py --binary build/sanitize/btech-headless
 python3 tools/verify_m2j.py --binary build/sanitize/btech-headless
 python3 tools/verify_m2kl.py --binary build/sanitize/btech-headless
 python3 tools/make_training_replay.py --binary build/sanitize/btech-headless
+python3 tools/make_combat_replay.py --binary build/sanitize/btech-headless
 python3 tools/verify_animations.py --binary build/sanitize/btp-anm-tests --frame work/rubble-result.ppm --dream-frame work/rest-wake.ppm

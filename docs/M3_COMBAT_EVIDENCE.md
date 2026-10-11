@@ -1,6 +1,9 @@
 # M3a — third-assignment combat investigation
 
-Status: in progress. The proposed "stationary target" description was too
+Status: in progress; playable checkpoint and remaining verification are in
+[M3_CHECKPOINT.md](M3_CHECKPOINT.md). The user subsequently requested a
+stationary training shell; that change is pending and should be distinguished
+from the original observations below. The proposed "stationary target" description was too
 strong: the original target moves. This document records primary observations,
 not a claim that native combat is finished.
 
@@ -83,7 +86,8 @@ Critical checks compare the complete 125-byte record fingerprint, fatal flag
 and final RNG; they include all eight internal locations, three loan mechs,
 destroyed locations and disabled actuators. The committed factual vectors
 contain inputs, results and fingerprints, not asset or executable bytes.
-All eleven CTest suites pass after adding these independent C rules.
+All eleven CTest suites passed at the initial rule-library checkpoint; the
+current implementation has 15 passing suites.
 
 Regenerate / check those cases:
 
@@ -97,6 +101,10 @@ The native game reads an ignored 1,110-byte BTC1 cache generated from the
 audited EXE for the rule tests. It contains three loan records and numeric
 weapon/location/cluster/critical tables, with an address/hash sidecar.
 
-**UNKNOWN / not yet verified in the port:** complete turn scheduling, path
-planning, line of sight, critical effects, firing visuals and native encounter
-aftermath. Recovery of tables or individual routines is not full combat.
+Further **VERIFIED, bounded** coverage now includes 896 shot cases, 779
+navigation comparisons and 35 controlled original turns through destruction.
+The ordinary native route reaches reporting and the 500-cap reward. See the
+checkpoint for exact prerequisites and limits. **UNKNOWN / incomplete:**
+broader turn/AI contexts, original firing visuals, terrain ignition and native
+window verification of this encounter. Recovery of tables or individual
+routines is not full combat.

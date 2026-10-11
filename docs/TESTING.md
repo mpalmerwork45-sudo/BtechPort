@@ -1,4 +1,18 @@
-# Build, verification and original oracle — M2k–M2m, 2026-10-11
+# Build, verification and original oracle — 2026-10-11
+
+## M3a checkpoint
+
+Current in-progress combat checks are described in [M3_CHECKPOINT.md](M3_CHECKPOINT.md).
+All 15 CTest suites and the 5526-input ordinary combat route pass, with 19
+fresh-process save continuations. Current saves are **BTPD/v13: 1024-byte payload,
+1040-byte BTS1 file**, including combat state. The BTPC/v12 descriptions below
+refer to the completed M2 baseline. Native X11 combat and sanitizer checks for
+M3a remain pending; M2 test results do not establish those claims.
+
+```sh
+ctest --test-dir build --output-on-failure
+python3 tools/make_combat_replay.py
+```
 
 ## Native commands
 

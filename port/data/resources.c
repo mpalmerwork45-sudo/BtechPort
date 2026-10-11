@@ -116,6 +116,7 @@ int btp_read_file(const char *path, uint8_t **bytes, size_t *length, BtpError *e
 int btp_resources_load(const char *dir, BtpResources *r, BtpError *e)
 {
     memset(&r->dialogue, 0, sizeof r->dialogue);
+    memset(&r->combat,0,sizeof r->combat);
     char path[4096]; uint8_t *data; size_t n;
     const char *names[] = {"MAP1.MTP", "BTTLTECH.ICN", "CITADEL.BLD", "ARMOR.BLD", "WEAPON.BLD", "COMSTAR.BLD", "MECHSHAP.CMP", "TRAINING.BLD", "BARRACKS.BLD", "LOUNGE.BLD", "BTSTATS.CMP", "BTBORDER.CMP"};
     for (unsigned i = 0; i < 12; ++i) {
@@ -201,4 +202,11 @@ int btp_dialogue_load(const char *path, BtpDialogue *d, BtpError *e)
     uint8_t *bytes; size_t length;
     if (!btp_read_file(path,&bytes,&length,e)) return 0;
     int ok = btp_dialogue_decode(bytes,length,d,e); free(bytes); return ok;
+}
+int btp_combat_data_load(const char *path, BtpCombatData *d, BtpError *e)
+{
+    uint8_t *b;size_t n;
+    if (!btp_read_file(path,&b,&n,e)) return 0;
+    int ok=btp_combat_data_decode(b,n,d);free(b);
+    return ok ? 1 : fail(e,"Combat: invalid original data cache");
 }

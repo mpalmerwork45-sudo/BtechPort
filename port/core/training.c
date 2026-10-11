@@ -1,6 +1,7 @@
 #include "core/training.h"
 #include "core/npc.h"
 #include "core/animation.h"
+#include "core/combat.h"
 #include <string.h>
 
 /* Numeric original DS:28C4/28D8/28EC tables, not a reference implementation. */
@@ -58,18 +59,19 @@ void btp_training_native(BtpState *s, const BtpResources *r)
     if (s->entry_slot || s->story_flags[4] || s->story_flags[2] > 2) { fault(s); return; }
     switch (s->script.native_action) {
     case 1:
-        /* Two original noncombat assignments. Later cases require M3 combat. */
-        if (s->story_flags[0] > 1 || s->mission.phase) { fault(s); return; }
+        if (s->story_flags[0] > 2 || s->mission.phase ||
+            (s->story_flags[0]==2 && !r->combat.loans[0][0])) { fault(s); return; }
         (void)btp_rng_next(s->npc.rng); /* Original O0 dispatcher, even forced. */
         s->mission = (BtpMissionState){.phase=BTP_MISSION_DRIVE,.walk=6,.direction=2,
             .assignment=s->story_flags[0]};
-        if (s->mission.assignment) {
+        if (s->mission.assignment==1) {
             s->mission.rubble = (uint8_t)(btp_rng_next(s->npc.rng)&7u);
             unsigned rubble = s->mission.rubble;
             s->mission.rubble_under = btp_map_tile(&r->map,btp_rubble_x[rubble],btp_rubble_y[rubble]);
             if (!s->story_flags[2]) s->mission.phase = BTP_MISSION_SNICKER;
         }
         s->x_half = 64; s->y_half = 79; s->blocked = 0; s->mode = BTP_MISSION;
+        if (s->mission.assignment==2) btp_combat_begin(s,r);
         if (!btp_cutscene_begin(s,r,0,2)) { s->mission = (BtpMissionState){0}; fault(s); }
         return;
     case 2:
@@ -83,6 +85,7 @@ void btp_training_native(BtpState *s, const BtpResources *r)
         if ((s->mission.phase != BTP_MISSION_RESULT && s->mission.phase != BTP_MISSION_NONE) ||
             s->script.pc != 0x1c6d) { fault(s); return; }
         s->mission = (BtpMissionState){0};
+        s->combat = (BtpCombatState){0};
         s->script.mech_result = s->script.mech_after = 0;
         s->x_half = (uint16_t)(46 + btp_action_dx((BtpAction)s->entry_action));
         s->y_half = (uint16_t)(118 + btp_action_dy((BtpAction)s->entry_action));
@@ -136,6 +139,7 @@ static void move(BtpState *s, const BtpMap *m, BtpAction a)
 }
 int btp_mission_tick(BtpState *s, const BtpResources *r, BtpAction a)
 {
+    if (s->combat.phase) { btp_combat_tick(s,r,a);return 0; }
     BtpMissionState *m = &s->mission;
     if (m->phase != BTP_MISSION_DRIVE) {
         if (a == BTP_ACCEPT) m->phase = BTP_MISSION_DRIVE;
@@ -143,7 +147,8 @@ int btp_mission_tick(BtpState *s, const BtpResources *r, BtpAction a)
     }
     if (s->x_half <= 60 && s->y_half >= 73 && s->y_half <= 79) {
         if (m->corner) {
-            if (m->assignment) {
+            if (m->assignment==2) s->story_flags[1]=(uint8_t)(s->combat.won && !s->combat.fled);
+            else if (m->assignment==1) {
                 s->story_flags[1] = (uint8_t)(s->story_flags[2] != 0);
                 if (s->mech_skills[1] < 3) ++s->mech_skills[1];
             } else {
@@ -159,7 +164,7 @@ int btp_mission_tick(BtpState *s, const BtpResources *r, BtpAction a)
     m->idle = 10;
     if (btp_action_moves(a)) move(s,&r->map,a);
     if (!m->assignment) m->elapsed = (uint16_t)(m->elapsed+1u+(unsigned)(btp_mission_terrain(s,&r->map)>>3));
-    if (m->assignment && !m->corner && s->x_half/2u+1u >= btp_rubble_x[m->rubble] &&
+    if (m->assignment==1 && !m->corner && s->x_half/2u+1u >= btp_rubble_x[m->rubble] &&
         s->x_half/2u <= btp_rubble_x[m->rubble] && s->y_half/2u == (unsigned)btp_rubble_y[m->rubble]+1u) {
         m->corner = 1; m->phase = BTP_MISSION_PICKUP;
     } else if (!m->assignment && !m->corner && s->x_half >= 120 && s->y_half >= 124) {
@@ -207,7 +212,7 @@ int btp_training_valid(const BtpState *s)
     if (q->phase > BTP_QUIZ_FAILED || q->selected >= 20 || q->round > 3 || q->point >= 10 ||
         q->failed > 1 || q->used >= 1024 || m->phase > BTP_MISSION_PICKUP || m->corner > 1 ||
         m->warned > 1 || m->idle > 10 || m->walk > 15 || m->direction > 7 ||
-        m->assignment > 1 || m->rubble > 7 || s->mech_skills[0] > 4 || s->mech_skills[1] > 4 ||
+        m->assignment > 2 || m->rubble > 7 || s->mech_skills[0] > 4 || s->mech_skills[1] > 4 ||
         s->checkpoint_mech_skills[0] > 4 || s->checkpoint_mech_skills[1] > 4 ||
         (s->entry_action != BTP_IDLE && !btp_action_moves((BtpAction)s->entry_action))) return 0;
     if ((s->mode == BTP_QUIZ) != (q->phase != 0)) return 0;
@@ -222,7 +227,7 @@ int btp_training_valid(const BtpState *s)
     }
     if (!m->phase) return s->mode != BTP_MISSION && !m->corner && !m->warned && !m->idle && !m->walk && !m->direction && !m->elapsed &&
         !m->assignment && !m->rubble && !m->rubble_under;
-    if ((!m->assignment && (m->rubble || m->rubble_under)) || (m->assignment && m->elapsed)) return 0;
+    if ((m->assignment!=1 && (m->rubble || m->rubble_under)) || (m->assignment && m->elapsed)) return 0;
     if (s->entry_slot || s->story_flags[4] || s->story_flags[2] > 2 || !s->checkpoint_valid) return 0;
     if (m->phase == BTP_MISSION_RESULT) return s->mode == BTP_BUILDING;
     if (s->mode != BTP_MISSION || s->script.status != BTP_SCRIPT_NATIVE || s->script.native_action != 1 || s->story_flags[0] != m->assignment) return 0;

@@ -5,11 +5,14 @@ findings remain in their evidence reports. The second assignment and sleep
 through the third briefing are now playable; see
 [M2k–M2m evidence](M2_RUBBLE_ANIMATION_EVIDENCE.md).
 
-1. **Next proposed gate, M3a:** recover and verify the third assignment's
-   stationary-target weapons combat. Start with original launch/target state,
-   attack input, RNG and damage/results before extending tactical combat.
-   Third combat and later missions currently fail visibly; Rick's natural
-   invitation requires fifth-assignment success. Do not invent an earlier unlock.
+1. **Active gate, M3a:** manual third-assignment combat is playable through
+   victory and the 500-cap reward, but the milestone is not complete. The user's
+   stationary-shell and movement-arrow requests, native X11 combat route and
+   sanitizer checks remain pending; see [resume checklist](M3_CHECKPOINT.md).
+   Original DOS observations show the disabled target moving one step per turn;
+   preserve that evidence when implementing the user's requested stationary shell.
+   Later missions remain unsupported. Rick's natural invitation requires
+   fifth-assignment success; do not invent an earlier unlock.
 2. **Long-route NPC/RNG gap:** first quiz/mission RNG matches, but original
    outdoor idle intervals packed before movement keys alter NPC arrival timing.
    Later native quiz draws diverge. The 181-checkpoint comparison uses three
@@ -27,8 +30,8 @@ through the third briefing are now playable; see
    final dream pixels now match observations. Wider animation contexts, live
    water occlusion and complete screen equality remain unverified.
 6. Original 3913-byte GAME saves versus the secondary 4096-byte claim. Prove
-   original save/load round trips before import/export. Native saves use BTPC/v12
-   (512-byte payload, 528-byte BTS1 file), preserving rubble/ranks and animation.
+   original save/load round trips before import/export. Native saves use BTPD/v13
+   (1024-byte payload, 1040-byte BTS1 file), also preserving combat state.
    Historical migrations initialize only state the old format could represent.
 7. Exact DOS keyboard repeat/flush/CPU timing and wider day progression. O0/O8
    timing uses observed VGA retrace units mapped to 32ms ticks; decode cost and
