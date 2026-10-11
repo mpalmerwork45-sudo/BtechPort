@@ -57,6 +57,7 @@ unsigned btp_combat_range(const BtpCombatData *d, unsigned w, int x, int y, int 
 }
 unsigned btp_combat_weapon_count(const BtpCombatUnit *u)
 {
+    if (u->infantry) return 1;
     unsigned count = 0;
     for (unsigned i = 51; i < 86; ++i) {
         unsigned type = u->record[i]&127u;
@@ -66,6 +67,7 @@ unsigned btp_combat_weapon_count(const BtpCombatUnit *u)
 }
 unsigned btp_combat_weapon(const BtpCombatUnit *u, unsigned index)
 {
+    if (u->infantry) return index == 0 && u->record[11] < 15 ? u->record[11] : 255;
     unsigned count = 0;
     if (index >= 11 || !u->record[39+index]) return 255;
     for (unsigned i = 51; i < 86; ++i) {
@@ -76,6 +78,7 @@ unsigned btp_combat_weapon(const BtpCombatUnit *u, unsigned index)
 }
 int btp_combat_points(const BtpCombatUnit *u, unsigned movement)
 {
+    if (u->infantry) return movement == 2 ? 0 : 6; /* 103B:2474, enemy branch. */
     int points = u->record[49]; unsigned left = u->record[36], right = u->record[37];
     if (movement == 2) points = u->record[50];
     else {
@@ -96,6 +99,7 @@ int btp_combat_points(const BtpCombatUnit *u, unsigned movement)
 }
 void btp_combat_cool(BtpCombatUnit *u, int movement, unsigned steps, unsigned terrain)
 {
+    if (u->infantry) return;
     int amount = movement+1;
     if (amount == 3 && steps > 3) amount = (int)steps;
     amount += 5*u->record[117] - u->record[38] + u->pool;
@@ -183,27 +187,70 @@ static void apply_damage(BtpCombatUnit *u, const BtpCombatData *d, unsigned loc,
         if (loc == 255) shot->destroyed = 1;
     }
 }
-BtpShot btp_combat_shoot(BtpCombatUnit *a, BtpCombatUnit *t, const BtpCombatData *d,
+int btp_combat_can_kick(const BtpCombatUnit *u)
+{
+    return !u->infantry && u->record[0] != 255 && (u->record[36]&8u) && (u->record[37]&8u);
+}
+BtpShot btp_combat_attack(BtpCombatUnit *a, BtpCombatUnit *t, const BtpCombatData *d,
     unsigned index, int movement, unsigned steps, unsigned skill, uint8_t rng[3])
 {
-    BtpShot shot = {0}; unsigned w = btp_combat_weapon(a,index);
+    int kick = !a->infantry && index == 11;
+    BtpShot shot = {0}; unsigned w = kick ? 32 : btp_combat_weapon(a,index);
+    if (kick && !btp_combat_can_kick(a)) return shot;
     if (w >= 33 || a->heat >= 30) return shot;
     unsigned range = btp_combat_range(d,w,a->x,a->y,t->x,t->y);
     if (range >= 3) return shot;
-    if (a->record[39+index] != 255) --a->record[39+index];
-    a->pool = (uint8_t)(a->pool+(d->weapons[w][13]&15u));
+    if (!a->infantry && !kick && a->record[39+index] != 255) --a->record[39+index];
+    if (!a->infantry) a->pool = (uint8_t)(a->pool+(d->weapons[w][13]&15u));
     static const uint8_t movement_penalty[13] = {0,0,0,1,1,2,2,3,3,3,4,4,4};
-    int needed = (int)(2*range+4) + movement+1 + movement_penalty[steps > 12 ? 12 : steps] - (int)skill;
-    if (a->record[119]) needed += 2;
-    needed += (a->heat >= 8)+(a->heat >= 13)+(a->heat >= 17)+(a->heat >= 24)+t->cover/8;
+    if (a->infantry) skill=a->record[4+d->weapons[w][16]];
+    int needed = (kick ? 3 : (int)(2*range+4)) + movement+1 + movement_penalty[steps > 12 ? 12 : steps] - (int)skill;
+    if (kick) for (unsigned leg=36;leg<=37;++leg)
+        for (unsigned mask=1;mask<=4;mask<<=1) needed += !(a->record[leg]&mask);
+    if (!a->infantry && a->record[119]) needed += 2;
+    if (!a->infantry) needed += (a->heat >= 8)+(a->heat >= 13)+(a->heat >= 17)+(a->heat >= 24);
+    needed += (int)(t->cover/(t->infantry ? 2u : 8u));
     shot.needed = (int16_t)needed;
+    if (t->infantry) {
+        unsigned damage=127, count=d->weapons[w][12];
+        if (count&128u) {
+            damage=d->weapons[w][11]&15u;
+            for (unsigned n=d->weapons[w][11]>>4;n;--n) damage+=btp_combat_die(rng);
+        }
+        if (!damage) damage=1;
+        count&=127u;
+        shot.hit=(uint8_t)((int)btp_combat_dice(rng)>=needed);
+        for (unsigned n=0;n<count;++n) {
+            if (!shot.hit) break;
+            shot.hit=1;unsigned hit=damage;
+            if (t->record[14]) {
+                if (t->record[14]>=hit/2) { hit/=2;t->record[14]=(uint8_t)(t->record[14]-hit); }
+                else { hit-=t->record[14];t->record[14]=0; }
+            }
+            unsigned taken=t->record[15]<hit ? t->record[15] : hit;
+            t->record[15]=(uint8_t)(t->record[15]-taken);shot.damage=(uint8_t)(shot.damage+taken);
+        }
+        shot.destroyed=(uint8_t)!t->record[15];return shot;
+    }
     unsigned incoming = btp_combat_direction(a->x,a->y,t->x,t->y);
     if (incoming == 255) incoming = 0;
     unsigned arc = d->arcs[7+(int)t->direction-(int)incoming];
     shot.location = d->locations[11*arc+btp_combat_dice(rng)];
     unsigned damage = d->weapons[w][11], cluster = d->weapons[w][12];
+    if (kick) { damage=a->record[16]/5u;shot.location=d->locations[3+(btp_rng_next(rng)&8u)]; }
+    /* Small personal arms consume the location dice but cannot damage a mech. */
+    if (cluster&128u) { shot.location=0;return shot; }
     if (cluster > 1) damage *= d->clusters[7*btp_combat_dice(rng)+cluster];
     shot.hit = (uint8_t)((int)btp_combat_dice(rng) >= needed);
-    if (shot.hit) { shot.damage = (uint8_t)damage; apply_damage(t,d,shot.location,damage,rng,&shot); }
+    if (shot.hit) {
+        shot.damage = (uint8_t)damage;
+        if (w==11) t->burning=3;
+        else apply_damage(t,d,shot.location,damage,rng,&shot);
+    }
     return shot;
+}
+BtpShot btp_combat_shoot(BtpCombatUnit *a, BtpCombatUnit *t, const BtpCombatData *d,
+    unsigned index, int movement, unsigned steps, unsigned skill, uint8_t rng[3])
+{
+    return btp_combat_attack(a,t,d,index,movement,steps,skill,rng);
 }

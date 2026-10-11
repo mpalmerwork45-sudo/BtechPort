@@ -9,6 +9,7 @@ typedef struct {
 } BtpCombatData;
 typedef struct {
     uint8_t record[125], x, y, direction, heat, pool, burning, cover;
+    uint8_t infantry; /* record[0..16] is original C614 for labor robots. */
 } BtpCombatUnit;
 typedef struct { uint8_t hit, location, damage, destroyed, toppled; int16_t needed; } BtpShot;
 typedef enum { BTP_COMBAT_NONE, BTP_COMBAT_CONTROL, BTP_COMBAT_MESSAGES, BTP_COMBAT_GRAPHICS,
@@ -41,4 +42,9 @@ int btp_combat_critical(BtpCombatUnit *unit, const BtpCombatData *data, unsigned
 BtpShot btp_combat_shoot(BtpCombatUnit *attacker, BtpCombatUnit *target,
     const BtpCombatData *data, unsigned index, int movement, unsigned target_steps,
     unsigned skill, uint8_t rng[3]);
+/* Mech index 11 is Kick; infantry index 0 uses its original personal weapon. */
+BtpShot btp_combat_attack(BtpCombatUnit *attacker, BtpCombatUnit *target,
+    const BtpCombatData *data, unsigned index, int movement, unsigned target_steps,
+    unsigned skill, uint8_t rng[3]);
+int btp_combat_can_kick(const BtpCombatUnit *unit);
 #endif

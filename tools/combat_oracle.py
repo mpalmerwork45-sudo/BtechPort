@@ -100,30 +100,38 @@ class OriginalCombat:
         address = (0x28170, 0x281ed, 0x28364)[choice]
         return self.image[address:address+125]
 
-    def shot(self, weapon, movement, steps, skill, heat, facing, cover, variant, seed):
+    def shot(self, weapon, movement, steps, skill, heat, facing, cover, variant, seed,
+             attacker_kind=0, target_kind=0, loan=0, legs=None, target_x=68):
         """Bounded 12E8:0239..0CD3 shot span, with explicit caller locals.
 
         Range/visibility have already succeeded at this entry. Stop before
         destruction cleanup or graphics. No executable instructions are edited.
         """
-        self.reset(); a=bytearray(self.template()); t=bytearray(self.template())
+        self.reset(); a=bytearray(self.template(loan)); t=bytearray(self.template())
         a[51:86]=bytes(35);a[51]=weapon+1;a[39]=200;a[121]=0
         if variant:
             t[17:36]=bytes([1])*19;t[36:38]=bytes(2)
-        self.write(self.state+0xc724,a);self.write(self.state+0xc918,t)
-        self.write(self.state+0x32c6,[movement & 255]);self.write(self.state+0x6e,[heat])
-        self.write(self.state+0xc618,bytes([skill])*5)
-        self.write(self.state+0x396c+12,[facing]);self.write(self.state+0x32ae+12,[cover])
-        self.write(self.state+0x3750+12,[0]);self.write(self.state+0x45ce+12,[0])
+        if legs is not None: a[36:38]=bytes(legs)
+        ai,ti=(16 if attacker_kind else 0),(16 if target_kind else (0 if attacker_kind else 12))
+        ar=self.state+(0xc69c if attacker_kind else 0xc724)
+        tr=self.state+(0xc69c if target_kind else (0xc724 if attacker_kind else 0xc918))
+        human=bytes([0,6,0,0,0,0,0,0,0,0,0,weapon,8,0,10 if variant else 0,60,0])
+        if attacker_kind: a=bytearray(human);a[4:9]=bytes([skill])*5
+        if target_kind: t=bytearray(human);t[11]=8
+        self.write(ar,a);self.write(tr,t)
+        self.write(self.state+0x32c6+ai*48,[movement & 255]);self.write(self.state+0x6e,[heat])
+        if not attacker_kind: self.write(self.state+0xc618,bytes([skill])*5)
+        self.write(self.state+0x396c+ti,[facing]);self.write(self.state+0x32ae+ti,[cover])
+        self.write(self.state+0x3750+ti,[0]);self.write(self.state+0x45ce+ti,[0])
         self.write(self.state+0x92,[0]);self.word(self.state+0xe484,0);self.write(self.state+0x3986,[0])
         self.write(self.ds+0x4fc0,seed.to_bytes(3,'little'))
         self.word(self.buffer+0xa44b,0xc40);self.word(self.buffer+0xa44d,0xc040)
-        self.word(self.state+0x401c,0xc44);self.word(self.state+0x404e,0xc040)
-        distance=self.call(0xe31,0xf24,12,weapon)
+        self.word(self.state+0x4004+ti*2,0xc00+target_x);self.word(self.state+0x4036+ti*2,0xc040)
+        distance=self.call(0xe31,0xf24,ti,weapon)
         bp=0x7f000; self.write(bp-0x100,bytes(0x120))
-        for offset,value in ((-2,0),(-0x42,0),(-0x28,12),(-0x48,weapon),(-0x5c,distance),(-0x60,2)):
+        for offset,value in ((-2,ai),(-0x42,11 if weapon==32 else 0),(-0x28,ti),(-0x48,weapon),(-0x5c,distance),(-0x60,2)):
             self.word(bp+offset,value)
-        self.write(bp-0x78+12,[steps])
+        self.write(bp-0x78+ti,[steps])
         for register,value in ((UC_X86_REG_CS,self.load+0x12e8),(UC_X86_REG_IP,0x239),
                 (UC_X86_REG_DS,self.ds//16),(UC_X86_REG_ES,self.state//16),
                 (UC_X86_REG_SS,0x7000),(UC_X86_REG_BP,0xf000),(UC_X86_REG_SP,0xee00)):
@@ -139,10 +147,11 @@ class OriginalCombat:
         if self.cpu.reg_read(UC_X86_REG_IP) not in (0xcd3,0xc12,0xcb2):
             raise RuntimeError('Shot exceeded instruction bound')
         return dict(needed=self.word(bp-0x30),hit=self.word(bp-0x56),
-            location=observed['location'],damage=observed['damage'],dead=observed.get('dead',0),
+            location=observed.get('location',0),damage=observed.get('damage',0) if not target_kind else 60-self.read(tr+15,1)[0],
+            dead=observed.get('dead',0) if not target_kind else self.word(bp-0x2c),
             toppled=self.read(self.state+0x3986,1)[0],rng=int.from_bytes(self.read(self.ds+0x4fc0,3),'little'),
-            target=self.read(self.state+0xc918,125),ammo=self.read(self.state+0xc724+39,1)[0],
-            pool=self.read(self.state+0x92,1)[0])
+            target=self.read(tr,17 if target_kind else 125),ammo=self.read(ar+39,1)[0],
+            pool=self.read(self.state+0x92,1)[0],burning=self.read(self.state+0xd576,1)[0])
 
 
 if __name__ == "__main__":

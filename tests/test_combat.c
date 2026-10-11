@@ -64,6 +64,34 @@ int main(int argc, char **argv)
             btp_combat_plan(&map,85,&u,&other,(int)c,(int)e,0,(int)f,steps);
             passed=fingerprint((uint8_t *)steps,24)==hash;
             if (!passed && failures<8) { for (unsigned i=0;i<12;++i) fprintf(stderr," %d,%d",steps[i][0],steps[i][1]); fputc('\n',stderr); }
+        } else if (line[0] == 'A') {
+            unsigned w,steps,skill,heat,face,cover,variant,seed,ak,tk,loan,left,right;
+            unsigned needed,hit,loc,damage,dead,toppled,after,ammo,pool,burning;int mode;
+            if (sscanf(line+1,"%u %d %u %u %u %u %u %u %u %u %u %u %u %u %u %u %u %u %u %u %u %u %u %u %" SCNx64,
+                &w,&mode,&steps,&skill,&heat,&face,&cover,&variant,&seed,&ak,&tk,&loan,&left,&right,
+                &needed,&hit,&loc,&damage,&dead,&toppled,&after,&ammo,&pool,&burning,&hash)!=25) return 2;
+            BtpCombatUnit u={.x=64,.y=64,.heat=(uint8_t)heat,.infantry=(uint8_t)ak},
+                t={.x=65,.y=64,.direction=(uint8_t)face,.cover=(uint8_t)cover,.infantry=(uint8_t)tk};
+            memcpy(u.record,d.loans[loan],125);memcpy(t.record,d.loans[0],125);
+            memset(u.record+51,0,35);u.record[51]=(uint8_t)(w+1);u.record[39]=200;u.record[121]=0;
+            u.record[36]=(uint8_t)left;u.record[37]=(uint8_t)right;
+            if (variant) { memset(t.record+17,1,19);t.record[36]=t.record[37]=0; }
+            if (ak) {
+                memset(u.record,0,125);u.record[1]=6;memset(u.record+4,(int)skill,5);
+                u.record[11]=(uint8_t)w;u.record[12]=8;u.record[14]=variant ? 10 : 0;u.record[15]=60;
+            }
+            if (tk) {
+                memset(t.record,0,125);t.record[1]=6;t.record[11]=8;t.record[12]=8;
+                t.record[14]=variant ? 10 : 0;t.record[15]=60;
+            }
+            rng[0]=(uint8_t)seed;rng[1]=(uint8_t)(seed>>8);rng[2]=(uint8_t)(seed>>16);
+            BtpShot shot=btp_combat_attack(&u,&t,&d,w==32 ? 11 : 0,mode,steps,skill,rng);
+            passed=shot.needed==(int16_t)needed && shot.hit==hit && shot.location==loc &&
+                shot.damage==((hit || tk) ? damage : 0) && shot.destroyed==dead && shot.toppled==toppled &&
+                seed_value(rng)==after && fingerprint(t.record,tk ? 17 : 125)==hash &&
+                u.record[39]==ammo && u.pool==pool && t.burning==burning;
+            if (!passed && failures<8) fprintf(stderr,"physical got TN %d hit %u loc %u damage %u dead %u top %u rng %u hash %016" PRIx64 " ammo %u pool %u burn %u\n",
+                shot.needed,shot.hit,shot.location,shot.damage,shot.destroyed,shot.toppled,seed_value(rng),fingerprint(t.record,tk ? 17 : 125),u.record[39],u.pool,t.burning);
         } else if (line[0] == 'S') {
             int mode; unsigned w,steps,skill,heat,face,cover,variant,seed,needed,hit,loc,damage,dead,toppled,after;
             if (sscanf(line+1,"%u %d %u %u %u %u %u %u %u %u %u %u %u %u %u %u %" SCNx64,
