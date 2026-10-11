@@ -115,3 +115,10 @@ instructions and boundary tests; only the first subject's first paid course
 is claimed as live original paid-course parity. This completes bounded M2h,
 without establishing MechWarrior mission outcomes, barracks sleep or the full
 campaign day cycle.
+
+
+**M2i continuation:** current saves use BTP9 (still 416-byte payload / 432-byte
+file), adding player/NPC walking frames. BTP8 remains readable; its missing gait
+history restarts at the first frame for the stored facing. Logical Class/bank
+progress retains the earlier migration rules. All preceding save/course checks
+also pass on BTP9; see [sprite evidence](M2_SPRITE_EVIDENCE.md).

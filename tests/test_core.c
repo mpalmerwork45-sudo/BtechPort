@@ -87,8 +87,8 @@ static void state(void)
     btp_state_encode(&s, encoded); btp_state_encode(&restored, roundtrip);
     CHECK(!memcmp(encoded, roundtrip, sizeof encoded));
     CHECK(!btp_state_decode(encoded, sizeof encoded - 1, &m, NULL, &restored));
-    encoded[4] = 9; CHECK(!btp_state_decode(encoded, sizeof encoded, &m, NULL, &restored));
-    encoded[4] = 8; encoded[12] = 128; CHECK(!btp_state_decode(encoded, sizeof encoded, &m, NULL, &restored));
+    encoded[4] = 10; CHECK(!btp_state_decode(encoded, sizeof encoded, &m, NULL, &restored));
+    encoded[4] = 9; encoded[12] = 128; CHECK(!btp_state_decode(encoded, sizeof encoded, &m, NULL, &restored));
     encoded[12] = 69; encoded[23] = 1; CHECK(!btp_state_decode(encoded, sizeof encoded, &m, NULL, &restored));
     s.x_half = 0; s.y_half = 0; btp_tick(&s, &m, BTP_LEFT);
     CHECK(s.x_half == 0 && s.blocked == BTP_EDGE);
@@ -113,7 +113,7 @@ static void pixels(void)
     CHECK(a[104] == btp_palette[8]); /* camera_x=456, tile pixel column=8 */
     CHECK(a[105] == btp_palette[1]); /* observed MAP1 index-9 remap */
     CHECK(a[117] == btp_palette[9]); /* observed MAP1 index-5 remap */
-    CHECK(a[100*320+212] == btp_palette[1]);
+    CHECK(a[100*320+212] == btp_palette[4]); /* Empty test atlas leaves terrain visible. */
     CHECK(a[0] == btp_palette[7]);
     s.x_half = s.y_half = 0; btp_render(r, &s, 1, a);
     CHECK(a[104] == btp_palette[0]);
@@ -192,6 +192,8 @@ static void katrina_loop(const BtpResources *r)
     CHECK(invalid.script.text_count == 1 && invalid.script.pc == 0x77e && invalid.checkpoint_valid);
     /* Old formats had no NPC context. Empty occupancy remains explicit. */
     memset(s.npc_pairs,0,sizeof s.npc_pairs);
+    memset(s.npc_walk,0,sizeof s.npc_walk); /* Legacy formats did not store animation. */
+    s.player_walk = 8; /* First north-facing frame. */
     s.npc = (BtpNpcState){0}; /* Legacy saves had no travel clock/positions. */
     btp_game_tick(&s, r, BTP_ACCEPT); btp_game_tick(&invalid, r, BTP_ACCEPT);
     uint8_t migrated[BTP_STATE_BYTES]; btp_state_encode(&s, saved); btp_state_encode(&invalid, migrated);
@@ -240,6 +242,8 @@ static void talk_loop(BtpResources *r)
     CHECK(btp_state_decode(old,sizeof old,&r->map,&r->citadel,&invalid));
     CHECK(invalid.story_flags[6] == 1 && invalid.script.text_count == 3 && !invalid.npc_pairs[1][1]);
     memset(s.npc_pairs,0,sizeof s.npc_pairs);
+    memset(s.npc_walk,0,sizeof s.npc_walk); /* Legacy formats did not store animation. */
+    s.player_walk = 8; /* First north-facing frame. */
     s.npc = (BtpNpcState){0};
     btp_game_tick(&s,r,BTP_ACCEPT); btp_game_tick(&invalid,r,BTP_ACCEPT);
     uint8_t migrated[BTP_STATE_BYTES]; btp_state_encode(&s,saved); btp_state_encode(&invalid,migrated);
@@ -345,7 +349,7 @@ static void citadel_loop(const char *dir)
     btp_start(&s); s.y_half = 21;
     btp_game_tick(&s, r, BTP_UP); CHECK(s.mode == BTP_ENTRY && s.y_half == 21);
     free(r);
-    puts("Citadel core: entry/decline, six Hall screens, exit, empty Talk, recovery, BTP8 restoration.");
+    puts("Citadel core: entry/decline, six Hall screens, exit, empty Talk, recovery, BTP9 restoration.");
 }
 
 static void corpus(const char *dir)

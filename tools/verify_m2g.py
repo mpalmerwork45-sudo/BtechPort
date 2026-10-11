@@ -62,7 +62,24 @@ def main():
         old = bytearray(slot.read_bytes()[:16+384]); old[16:20] = b"BTP7"; old[20] = 7
         struct.pack_into("<I",old,4,384); struct.pack_into("<I",old,8,binascii.crc32(old[16:]))
         damaged.write_bytes(old)
+        # BTP7 predates gait state. Existing logical fields survive; each NPC
+        # begins at its recorded direction's first frame, rather than guessing
+        # the missing animation history (initial idle NPCs originally face south).
+        first = [278,274,274,274,270,282,282,282]
+        baseline["npc_sprites"] = [first[n[2]] for n in baseline["npcs"]]
         if run(binary,"--load",damaged) != baseline: raise RuntimeError("M2g save migration differs")
+        # The final course-refusal snapshot has earned ranks and a live course
+        # receipt. BTP8 must retain those, including its subsequent idle state.
+        old = bytearray(valid); old[16:20] = b"BTP8"; old[20] = 8
+        old[16+394:] = bytes(22)
+        struct.pack_into("<I",old,8,binascii.crc32(old[16:]))
+        damaged.write_bytes(old)
+        migrated = run(binary,"--load",damaged)
+        expected = dict(before)
+        expected["npc_sprites"] = [first[n[2]] for n in before["npcs"]]
+        expected["player_sprite"] = [166,174,166,178,170][old[16+18]]
+        if migrated != expected or migrated["skills"] != [1,0,0]:
+            raise RuntimeError("M2h save migration lost course progress")
         slot.write_bytes(valid)
         run(binary,"--load",tmp/"missing.btp",ok=False)
         pending = Path(str(slot)+".tmp"); pending.write_bytes(b"KEEP")

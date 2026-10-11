@@ -95,7 +95,7 @@ static void boundaries(const BtpResources *r)
     /* Atomic validation rejects invalid ranks, phase/context and receipt/cash inconsistencies. */
     enter(&s,r,1,1,200); tick(&s,r,BTP_ACCEPT);
     uint8_t saved[BTP_STATE_BYTES], bad[BTP_STATE_BYTES]; btp_state_encode(&s,saved);
-    const unsigned offsets[] = {384,387,390,391,392,393,394,224,33};
+    const unsigned offsets[] = {384,387,390,391,392,393,403,224,33};
     const uint8_t values[] = {5,5,3,3,4,1,1,1,0};
     for (unsigned i = 0; i < sizeof offsets/sizeof offsets[0]; ++i) {
         memcpy(bad,saved,sizeof bad); bad[offsets[i]] = values[i]; BtpState copy = s;

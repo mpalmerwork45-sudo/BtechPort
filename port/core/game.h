@@ -49,6 +49,7 @@ typedef struct {
     BtpBankState bank;
     uint8_t skills[3], checkpoint_skills[3]; /* Original C618[0..2], ranks 0..4. */
     BtpSchoolState school;
+    uint8_t player_walk, npc_walk[8]; /* Human frames 16..31, stored minus 16. */
 } BtpState;
 enum { BTP_STATE_BYTES = 416 };
 

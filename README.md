@@ -1,6 +1,6 @@
 # BtechPort
 
-Independent C11/SDL2 recreation research for **BattleTech: The Crescent Hawk's Inception**, supplied DOS version 1.03. **M0, M1 and bounded M2a–M2h are complete.** Explore MAP1 with moving NPCs, visit the Citadel, buy a flak vest and knife, trade investments at ComStar and talk to occupants in both shops. Paid Citadel classes improve personal weapon skills and obey the original cooldown. Native save/load preserves progress. Text preserves upper/lower case; the campaign remains unfinished.
+Independent C11/SDL2 recreation research for **BattleTech: The Crescent Hawk's Inception**, supplied DOS version 1.03. **M0, M1 and bounded M2a–M2i are complete.** Explore MAP1 with moving NPCs, visit the Citadel, buy a flak vest and knife, trade investments at ComStar and talk to occupants in both shops. Paid Citadel classes improve personal weapon skills and obey the original cooldown. Native save/load preserves progress. Jason and the outdoor cadets now use original walking sprites. Text preserves upper/lower case; the campaign remains unfinished.
 
 From this directory on the current Kubuntu machine:
 
@@ -29,7 +29,7 @@ To open directly on Katrina's first conversation:
 ./build/btech-port --data "Original DOS" --replay tests/fixtures/citadel-katrina.actions
 ```
 
-The runtime reads `MAP1.MTP`, `BTTLTECH.ICN`, `CITADEL.BLD`, `COMSTAR.BLD`, `ARMOR.BLD`, `WEAPON.BLD` and ignored `work/talk-data.bin`, which the build prepares reproducibly from `BTECH.EXE`. No Godot/.NET/reference runtime is required. Other shop purchases and repair stop visibly; other building interiors remain unavailable. Failed choices roll back partial story/result/equipment/cash/investment/skill changes, and Backspace returns to the menu. Use `citadel-hall.actions` for the first Hall screen.
+The runtime reads `MAP1.MTP`, `BTTLTECH.ICN`, `MECHSHAP.CMP`, `CITADEL.BLD`, `COMSTAR.BLD`, `ARMOR.BLD`, `WEAPON.BLD` and ignored `work/talk-data.bin`, which the build prepares reproducibly from `BTECH.EXE`. No Godot/.NET/reference runtime is required. Other shop purchases and repair stop visibly; other building interiors remain unavailable. Failed choices roll back partial story/result/equipment/cash/investment/skill changes, and Backspace returns to the menu. Use `citadel-hall.actions` for the first Hall screen.
 
 To watch the complete two-shop route through native SDL inputs (about 98 seconds, closes automatically):
 
@@ -97,7 +97,7 @@ To open the NPC reply after a verified normal-start exploration replay:
 ./build/btech-port --replay tests/fixtures/citadel-arrival.actions
 ```
 
-The replay walks south, steps off the narrow road, follows an NPC north/east and returns to the Citadel before it departs. NPC movement and stay timers make the conversation reachable; the replay supplies ordinary actions and idle ticks. Enter/Space returns to the Citadel menu. Green NPC markers are approximate; original sprites remain deferred. This starts at the recorded initialized MAP1 baseline and omits the DOS startup menus.
+The replay walks south, steps off the narrow road, follows an NPC north/east and returns to the Citadel before it departs. NPC movement and stay timers make the conversation reachable; the replay supplies ordinary actions and idle ticks. Enter/Space returns to the Citadel menu. Player and cadet sprites come from the original atlas, with directional walking frames. This starts at the recorded initialized MAP1 baseline and omits the DOS startup menus.
 
 The earlier isolated handler checkpoint remains available:
 
@@ -107,9 +107,19 @@ The earlier isolated handler checkpoint remains available:
 
 Omit `--replay` to start outdoors with the visibly labeled checkpoint; five Up, Enter, three Down, Enter opens the NPC menu. Done returns immediately; selecting the NPC shows the authentic reply. Both menus remember selection independently. This checkpoint supplies controlled occupancy with travel disabled. A quick Citadel visit from the normal start still gets the original empty-room response. Custom resource/cache paths use `--data` and `--dialogue-data`; preparation is documented in [TESTING.md](docs/TESTING.md).
 
-**VERIFIED in scope:** authentic resource decoding and bounded BLD interpretation; earlier movement/Citadel, NPC, two-shop and ComStar routes. M2g adds file integrity and native save/load. M2h adds 64 original Class/funding/cooldown checkpoints and 460 complete outdoor frame comparisons. All 3271 new replay ticks restore and continue identically in BTP8; 137 disk snapshots and 31 fresh-process restart/continuation states pass. Occupied-shop checks retain their explicit controlled preconditions. **INFERRED:** unobserved movement and broader campaign contexts. **APPROXIMATE:** imagery/markers, independent mixed-case font/layout, input cadence and map edges. **UNKNOWN/unimplemented:** MechWarrior missions, barracks sleep, later day/cap progression, world/party rules, remaining purchases/repair, combat, original GAME compatibility, animation/audio and the full campaign. Unknown operations fail visibly. The older NPC capture's 68 missing movement intervals remain reported and skipped.
+**VERIFIED in scope:** authentic resource decoding and bounded BLD interpretation; earlier movement/Citadel, NPC, two-shop and ComStar routes. M2g adds file integrity and native save/load. M2h adds 64 original Class/funding/cooldown checkpoints and 460 complete outdoor frame comparisons. All 3271 new replay ticks restore and continue identically in BTP9; 137 disk snapshots and 31 fresh-process restart/continuation states pass. Occupied-shop checks retain their explicit controlled preconditions. **INFERRED:** unobserved movement and broader campaign contexts. **APPROXIMATE:** remaining UI imagery, independent mixed-case font/layout, input cadence and map edges. **UNKNOWN/unimplemented:** MechWarrior missions, barracks sleep, later day/cap progression, world/party rules, remaining purchases/repair, combat, original GAME compatibility, terrain/scene animation, audio and the full campaign. Unknown operations fail visibly. The older NPC capture's 68 missing movement intervals remain reported and skipped.
 
-The user-requested original player/NPC/mech sprite audit is now in progress; current marker limitations remain until those mappings and masks are verified.
+**M2i sprites:** all 376 original sprite crops match the EXE's RAM, and walking tests
+cover 30 player checkpoints, four exact player pixel crops and 63 NPC frame steps.
+Save/load retains walking frames; older saves start a new gait at their stored
+facing. Mechs are available in a separate animated preview; campaign mech control
+still awaits training/combat work. See [sprite evidence](docs/M2_SPRITE_EVIDENCE.md).
+
+```sh
+./build/btech-port --sprite-preview
+python3 tools/verify_sprites.py
+python3 tools/native_smoke.py --sprites-only
+```
 
 The bounded DOSBox harness runs whole JSON input sequences on a private virtual display, captures frames/state and closes automatically. It uses no interactive terminal input, so the former per-key approval loop is removed. Original binaries, screenshots and memory dumps remain in ignored directories.
 

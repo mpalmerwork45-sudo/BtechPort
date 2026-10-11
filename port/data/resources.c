@@ -116,17 +116,19 @@ int btp_resources_load(const char *dir, BtpResources *r, BtpError *e)
 {
     memset(&r->dialogue, 0, sizeof r->dialogue);
     char path[4096]; uint8_t *data; size_t n;
-    const char *names[] = {"MAP1.MTP", "BTTLTECH.ICN", "CITADEL.BLD", "ARMOR.BLD", "WEAPON.BLD", "COMSTAR.BLD"};
-    for (unsigned i = 0; i < 6; ++i) {
+    const char *names[] = {"MAP1.MTP", "BTTLTECH.ICN", "CITADEL.BLD", "ARMOR.BLD", "WEAPON.BLD", "COMSTAR.BLD", "MECHSHAP.CMP"};
+    for (unsigned i = 0; i < 7; ++i) {
         int len = snprintf(path, sizeof path, "%s/%s", dir, names[i]);
         if (len < 0 || (size_t)len >= sizeof path) return fail(e, "Resource directory path too long");
         if (!btp_read_file(path, &data, &n, e)) return 0;
         int ok = i == 0 ? btp_map_decode(data, n, &r->map, e) :
             i == 1 ? btp_graphic_decode(data, n, &r->tiles, e) :
+            i == 6 ? btp_graphic_decode(data, n, &r->sprites, e) :
             btp_bld_decode(data, n, i == 2 ? &r->citadel : i == 3 ? &r->armor : i == 4 ? &r->weapon : &r->comstar, e);
         free(data);
         if (!ok) return 0;
     }
+    if (r->sprites.format != 2) return fail(e,"MECHSHAP requires format-2 320x200 graphics");
     if (r->map.width != 64 || r->map.height != 64 || r->tiles.format != 1)
         return fail(e, "M2a requires the authentic 64x64 MAP1 and format-1 BTTLTECH tiles");
     if (r->map.entrance_x[1] != 0x0c45 || r->map.entrance_y[1] != 0xc014)

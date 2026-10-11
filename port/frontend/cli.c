@@ -1,6 +1,7 @@
 #include "frontend/cli.h"
 #include "core/npc.h"
 #include "data/save.h"
+#include "data/sprites.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -12,7 +13,7 @@ int btp_options(int argc, char **argv, BtpOptions *o)
     for (int i = 1; i < argc; ++i) {
         const char *arg = argv[i];
         if (!strcmp(arg, "--help")) {
-            puts("BtechPort M2h: MAP1, banking, paid classes and save/load\n"
+            puts("BtechPort M2i: MAP1, banking, paid classes and save/load\n"
                  "  --data DIRECTORY     original resource directory (default: Original DOS)\n"
                  "  --dialogue-data FILE local EXE text cache (default: work/talk-data.bin)\n"
                  "  --conversation-checkpoint  isolated controlled Talk handler test\n"
@@ -21,6 +22,8 @@ int btp_options(int argc, char **argv, BtpOptions *o)
                  "  --replay FILE        logical actions: arrows/idle/accept/cancel/0..9/clear\n"
                  "  --trace              print canonical JSON state after each replay action\n"
                  "  --frame FILE         write final 320x200 RGB PPM\n"
+                 "  --sprite-preview     show original mech/human walking frames (diagnostic only)\n"
+                 "  --export-sprites FILE write original sprite crops for verification\n"
                  "  --export-tiles FILE  write 64000 decoded tile pixel indices\n"
                  "  --record FILE        native logical input log for replay (includes idle ticks)\n"
                  "  --save-file FILE     slot for F5 save/F9 load (default: work/player-save.btp)\n"
@@ -40,6 +43,7 @@ int btp_options(int argc, char **argv, BtpOptions *o)
             return -1;
         }
         if (!strcmp(arg, "--headless")) o->headless = 1;
+        else if (!strcmp(arg, "--sprite-preview")) o->sprite_preview = 1;
         else if (!strcmp(arg, "--debug")) o->debug = 1;
         else if (!strcmp(arg, "--trace")) o->trace = 1;
         else if (!strcmp(arg, "--smoke")) o->smoke = 1;
@@ -63,6 +67,7 @@ int btp_options(int argc, char **argv, BtpOptions *o)
             if (!strcmp(arg, "--replay")) value = &o->replay;
             if (!strcmp(arg, "--frame")) value = &o->frame;
             if (!strcmp(arg, "--record")) value = &o->record;
+            if (!strcmp(arg, "--export-sprites")) value = &o->sprites_output;
             if (!strcmp(arg, "--export-tiles")) value = &o->tiles_output;
             if (!strcmp(arg, "--save-file")) value = &o->save_file;
             if (!strcmp(arg, "--load")) value = &o->load;
@@ -70,6 +75,9 @@ int btp_options(int argc, char **argv, BtpOptions *o)
             if (!value || i + 1 == argc) { fprintf(stderr, "Unknown/incomplete option: %s\n", arg); return 0; }
             *value = argv[++i];
         }
+    }
+    if (o->sprite_preview && (o->smoke || o->replay || o->load || o->save || o->record || o->conversation_checkpoint || o->shop_talk_checkpoint)) {
+        fputs("Sprite preview cannot combine with gameplay, recording or save options\n",stderr); return 0;
     }
     if (o->conversation_checkpoint && o->shop_talk_checkpoint) {
         fputs("Choose one explicit Talk checkpoint\n",stderr); return 0;
@@ -138,7 +146,9 @@ void btp_print_state(const BtpState *s, const BtpResources *r)
     printf(",\"skills\":[%u,%u,%u],\"school_phase\":%u,\"school_course\":%u,"
         "\"school_before\":%u,\"school_outcome\":%u",s->skills[0],s->skills[1],s->skills[2],
         s->school.phase,s->school.course,s->school.before,s->school.outcome);
-    puts("}");
+    printf(",\"player_sprite\":%u,\"npc_sprites\":[",166u+s->player_walk);
+    for (unsigned i = 0; i < 8; ++i) printf("%s%u",i ? "," : "",270u+s->npc_walk[i]);
+    puts("]}");
 }
 
 int btp_replay(const char *path, BtpState *s, const BtpResources *r, int trace)
@@ -193,10 +203,26 @@ int btp_run_headless(const BtpOptions *o, BtpResources *r)
         if (fclose(f)) ok = 0;
         if (!ok) return 1;
     }
+    if (o->sprites_output) {
+        FILE *out = fopen(o->sprites_output,"wb");
+        if (!out) return 1;
+        int ok = fwrite("BTSP",1,4,out) == 4;
+        for (unsigned id = 0; id < BTP_SPRITE_COUNT && ok; ++id) {
+            BtpSpriteRect rect;
+            ok = btp_sprite_rect(id,&rect);
+            if (!ok) break;
+            ok = fputc((int)rect.width,out) != EOF && fputc((int)rect.height,out) != EOF;
+            for (unsigned y = 0; y < rect.height && ok; ++y)
+                ok = fwrite(r->sprites.pixels+(rect.y+y)*320+rect.x,1,rect.width,out) == rect.width;
+        }
+        if (fclose(out)) ok = 0;
+        if (!ok) return 1;
+    }
     if (o->frame) {
         uint32_t *frame = malloc(sizeof(*frame) * BTP_PIXELS);
         if (!frame) return 1;
-        btp_render(r, &state, o->debug, frame);
+        if (o->sprite_preview) btp_sprite_preview(r,state.tick,frame);
+        else btp_render(r, &state, o->debug, frame);
         int ok = btp_write_ppm(o->frame, frame);
         free(frame);
         if (!ok) { fputs("Frame write failed\n", stderr); return 1; }

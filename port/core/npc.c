@@ -1,5 +1,6 @@
 #include "core/npc.h"
 #include "core/economy.h"
+#include "core/animation.h"
 
 /* Independently expressed from 193B0..193EA, including CMC/SBB carry. */
 uint8_t btp_rng_next(uint8_t r[3])
@@ -38,6 +39,7 @@ void btp_npc_init(BtpState *s, const BtpMap *m)
     /* Recorded MAP1 baseline: slot 4 has completed one eastward step. Startup
        menus/initialization remain outside this slice, as in M1. */
     ++s->npc.actor[4].x; s->npc.actor[4].direction = 2;
+    s->npc_walk[4] = 4;
     s->npc.enabled = 2;
 }
 int btp_npc_valid(const BtpState *s, const BtpMap *m)
@@ -149,7 +151,11 @@ void btp_npc_frame(BtpState *s, const BtpMap *m)
                 s->npc.actor[i].x = m->entrance_x[origin];
                 s->npc.actor[i].y = m->entrance_y[origin];
             }
-        } else if (near_player(s,&s->npc.actor[i])) walk(s,m,i);
+        } else if (near_player(s,&s->npc.actor[i])) {
+            unsigned before = s->npc.actor[i].direction;
+            walk(s,m,i);
+            s->npc_walk[i] = btp_walk_next(s->npc_walk[i],before,s->npc.actor[i].direction);
+        }
     }
 }
 void btp_npc_tick(BtpState *s, const BtpMap *m)

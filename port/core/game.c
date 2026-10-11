@@ -5,6 +5,7 @@
 #include "core/bank.h"
 #include "core/economy.h"
 #include "core/school.h"
+#include "core/animation.h"
 #include <string.h>
 
 void btp_start(BtpState *s)
@@ -21,6 +22,7 @@ void btp_tick(BtpState *s, const BtpMap *m, BtpAction a)
 {
     ++s->tick; /* Explicit unsigned wrapping; no clock or graphics dependency. */
     if (a < BTP_UP || a > BTP_RIGHT) return;
+    s->player_walk = btp_walk_next(s->player_walk,btp_player_direction(s->facing),btp_player_direction((unsigned)a));
     s->facing = (uint8_t)a;
     int x = s->x_half, y = s->y_half;
     if (a == BTP_UP) --y;
@@ -195,7 +197,7 @@ static uint16_t get16(const uint8_t *p) { return (uint16_t)(p[0] | (uint16_t)p[1
 void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
 {
     memset(b, 0, BTP_STATE_BYTES);
-    memcpy(b, "BTP8", 4); b[4] = 8;
+    memcpy(b, "BTP9", 4); b[4] = 9;
     for (unsigned i = 0; i < 4; ++i) b[8+i] = (uint8_t)(s->tick >> (8 * i));
     b[12] = (uint8_t)s->x_half; b[13] = (uint8_t)(s->x_half >> 8);
     b[14] = (uint8_t)s->y_half; b[15] = (uint8_t)(s->y_half >> 8);
@@ -252,6 +254,7 @@ void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
     memcpy(b+384,s->skills,3); memcpy(b+387,s->checkpoint_skills,3);
     b[390] = s->school.phase; b[391] = s->school.course;
     b[392] = s->school.before; b[393] = s->school.outcome;
+    b[394] = s->player_walk; memcpy(b+395,s->npc_walk,8);
 }
 
 int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *script, BtpState *s)
@@ -264,7 +267,8 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         n == 224 && !memcmp(b, "BTP5", 4) && b[4] == 5 ? 5 :
         n == 320 && !memcmp(b, "BTP6", 4) && b[4] == 6 ? 6 :
         n == 384 && !memcmp(b, "BTP7", 4) && b[4] == 7 ? 7 :
-        n == BTP_STATE_BYTES && !memcmp(b, "BTP8", 4) && b[4] == 8 ? 8 : 0;
+        n == BTP_STATE_BYTES && !memcmp(b, "BTP8", 4) && b[4] == 8 ? 8 :
+        n == BTP_STATE_BYTES && !memcmp(b, "BTP9", 4) && b[4] == 9 ? 9 : 0;
     if (!version) return 0;
     for (unsigned i = 5; i < 8; ++i) if (b[i]) return 0;
     if (version == 1) { for (unsigned i = 20; i < 24; ++i) if (b[i]) return 0; }
@@ -278,6 +282,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
             if (version >= 6) for (unsigned i = 301; i < 320; ++i) if (b[i]) return 0;
             if (version >= 7) for (unsigned i = 365; i < 384; ++i) if (b[i]) return 0;
             if (version == 8) for (unsigned i = 394; i < n; ++i) if (b[i]) return 0;
+            if (version == 9) for (unsigned i = 403; i < n; ++i) if (b[i]) return 0;
         }
     }
     BtpState result = {.credits=35,.allowance_cap=50};
@@ -353,7 +358,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
                 }
                 memcpy(result.bank.input,b+356,8); v->has_accounts = b[364];
             }
-            if (version == 8) {
+            if (version >= 8) {
                 memcpy(result.skills,b+384,3); memcpy(result.checkpoint_skills,b+387,3);
                 result.school = (BtpSchoolState){b[390],b[391],b[392],b[393]};
             }
@@ -363,7 +368,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
                 v->confirm_selected > 1 || v->has_cash > 1 || v->cash_after > v->text_count ||
                 (!v->has_cash && (v->cash_after || v->cash_value)) || (v->has_cash && !v->cash_after) ||
                 v->column || (v->row && v->row != 14 && v->row != 22 && !(version >= 7 && v->row == 15)) ||
-                (v->native_action && (v->native_action < (version == 8 ? 4 : version == 7 ? 6 : 9) || v->native_action > 12) &&
+                (v->native_action && (v->native_action < (version >= 8 ? 4 : version == 7 ? 6 : 9) || v->native_action > 12) &&
                     !(v->status == BTP_SCRIPT_ERROR && v->error == BTP_SCRIPT_OPCODE && v->last_opcode == 0xf5)) ||
                 (result.npc.enabled && result.npc.allowance_pending != btp_economy_below_cap(&result))) return 0;
             for (unsigned i = 0; i < BTP_TEXT_SPANS; ++i)
@@ -424,6 +429,15 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         }
         if (!btp_talk_valid(&result,m) || !btp_npc_valid(&result,m) || !btp_bank_valid(&result) ||
             !btp_school_valid(&result)) return 0;
+    }
+    if (version == 9) {
+        result.player_walk = b[394]; memcpy(result.npc_walk,b+395,8);
+        if (result.player_walk > 15) return 0;
+        for (unsigned i = 0; i < 8; ++i) if (result.npc_walk[i] > 15) return 0;
+    } else {
+        result.player_walk = btp_walk_first(btp_player_direction(result.facing));
+        if (result.npc.enabled == 2) for (unsigned i = 0; i < 8; ++i)
+            result.npc_walk[i] = btp_walk_first(result.npc.actor[i].direction);
     }
     *s = result;
     return 1;

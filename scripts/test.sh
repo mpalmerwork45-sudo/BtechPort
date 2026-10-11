@@ -23,6 +23,7 @@ python3 tools/verify_m2e.py
 python3 tools/verify_m2f.py
 python3 tools/verify_m2g.py
 python3 tools/verify_m2h.py
+python3 tools/verify_sprites.py
 if [ "${1:-}" = "--x11" ]; then
     python3 tools/native_smoke.py
 fi

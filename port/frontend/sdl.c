@@ -36,7 +36,7 @@ int main(int argc, char **argv)
         fprintf(stderr, "%s\nRun python3 tools/prepare_talk.py to prepare the dialogue cache.\n", error.text); goto done;
     }
     if (o.headless) { result = btp_run_headless(&o, r); goto done; }
-    if (o.tiles_output) { fputs("--export-tiles requires --headless\n", stderr); goto done; }
+    if (o.tiles_output || o.sprites_output) { fputs("Asset export requires --headless\n", stderr); goto done; }
     BtpState state; btp_initial_state(&o,&state,r);
     if (o.load && !btp_save_load(o.load,&state,r,&error)) { fprintf(stderr,"%s\n",error.text); goto done; }
     if (o.replay && o.smoke < 5 && !btp_replay(o.replay, &state, r, o.trace)) goto done;
@@ -45,7 +45,7 @@ int main(int argc, char **argv)
         fprintf(stderr, "SDL: %s\n", SDL_GetError()); goto done;
     }
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
-    SDL_Window *window = SDL_CreateWindow("BtechPort M2h - MAP1, paid classes and save/load", SDL_WINDOWPOS_CENTERED,
+    SDL_Window *window = SDL_CreateWindow("BtechPort M2i - MAP1, paid classes and save/load", SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED, 960, 600, SDL_WINDOW_RESIZABLE);
     SDL_Renderer *renderer = window ? SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE) : NULL;
     SDL_Texture *texture = renderer ? SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
@@ -122,6 +122,7 @@ int main(int argc, char **argv)
             if (event.type == SDL_KEYDOWN) {
                 SDL_Keycode key = event.key.keysym.sym;
                 if (key == SDLK_ESCAPE && state.bank.phase != BTP_BANK_AMOUNT) running = 0;
+                else if (o.sprite_preview) continue;
                 else if (key == SDLK_F3 && !event.key.repeat) o.debug = !o.debug;
                 else if ((key == SDLK_F5 || key == SDLK_F9) && !event.key.repeat) {
                     int saving = key == SDLK_F5;
@@ -157,7 +158,8 @@ int main(int argc, char **argv)
         while (accumulator >= 32 && running) {
             accumulator -= 32;
             BtpAction a = read != write ? queue[read++ % 256] : BTP_IDLE;
-            btp_game_tick(&state, r, a);
+            if (o.sprite_preview) ++state.tick;
+            else btp_game_tick(&state, r, a);
             if (record && fprintf(record, "%s\n", btp_action_name(a)) < 0) { io_failed = 1; running = 0; }
             if (o.smoke) {
                 ++smoke_ticks;
@@ -165,18 +167,19 @@ int main(int argc, char **argv)
             }
             if (o.smoke >= 5) break; /* Inject exactly one input for each fixed step. */
         }
-        btp_render(r, &state, o.debug, frame);
+        if (o.sprite_preview) btp_sprite_preview(r,state.tick,frame);
+        else btp_render(r, &state, o.debug, frame);
         if (SDL_UpdateTexture(texture, NULL, frame, 320 * (int)sizeof *frame) ||
             SDL_RenderClear(renderer) || SDL_RenderCopy(renderer, texture, NULL, NULL)) {
             io_failed = 1; running = 0;
         }
         SDL_RenderPresent(renderer);
         if (notice && SDL_GetTicks64() >= notice_until) {
-            notice = NULL; SDL_SetWindowTitle(window,"BtechPort M2h - MAP1, paid classes and save/load");
+            notice = NULL; SDL_SetWindowTitle(window,"BtechPort M2i - MAP1, paid classes and save/load");
         }
         if (o.debug && !notice) {
             char title[200];
-            snprintf(title, sizeof title, "BtechPort M2h | %s | half=(%u,%u) | PC=%04x op=%02x | tick=%u",
+            snprintf(title, sizeof title, "BtechPort M2i | %s | half=(%u,%u) | PC=%04x op=%02x | tick=%u",
                 btp_mode_name(state.mode), state.x_half, state.y_half, state.script.pc,
                 state.script.last_opcode, state.tick);
             SDL_SetWindowTitle(window, title);

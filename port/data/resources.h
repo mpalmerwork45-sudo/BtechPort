@@ -27,7 +27,7 @@ typedef struct {
 } BtpDialogue;
 typedef struct {
     BtpMap map;
-    BtpGraphic tiles;
+    BtpGraphic tiles, sprites;
     BtpBld citadel, armor, weapon, comstar;
     BtpDialogue dialogue;
 } BtpResources;

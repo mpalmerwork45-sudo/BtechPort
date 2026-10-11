@@ -1,6 +1,7 @@
 #include "frontend/pixels.h"
 #include "core/bank.h"
 #include "core/school.h"
+#include "data/sprites.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -11,6 +12,36 @@ const uint32_t btp_palette[16] = {
 /* VERIFIED for MAP1 terrain in the captured VGA reference frames. Resource
    indices stay unchanged; this is a display palette mapping, not decoding. */
 static const uint8_t terrain_palette[16] = {0,1,2,3,4,9,6,7,8,1,10,11,12,13,14,15};
+static const uint8_t sprite_palette[16] = {0,0,2,3,4,9,6,7,8,1,10,11,12,13,14,15};
+
+int btp_draw_sprite(const BtpGraphic *atlas, unsigned id, int x, int y,
+                    unsigned hidden_rows, int clip_left, uint32_t f[BTP_PIXELS])
+{
+    BtpSpriteRect r;
+    if (!atlas || !f || atlas->format != 2 || !btp_sprite_rect(id,&r) ||
+        hidden_rows > r.height || clip_left < 0 || clip_left > 320) return 0;
+    /* Clip before addition, including malicious diagnostic coordinates. */
+    if (x <= -(int)r.width || x >= 320 || y <= -(int)r.height || y >= 200) return 1;
+    for (unsigned row = 0; row < r.height-hidden_rows; ++row) {
+        int dy = y+(int)row;
+        if (dy < 0 || dy >= 200) continue;
+        for (unsigned col = 0; col < r.width; ++col) {
+            int dx = x+(int)col;
+            if (dx < clip_left || dx >= 320) continue;
+            unsigned color = atlas->pixels[(r.y+row)*320+r.x+col] & 15u;
+            if (color) f[dy*320+dx] = btp_palette[sprite_palette[color]];
+        }
+    }
+    return 1;
+}
+static unsigned hidden_rows(const BtpMap *m, unsigned x, unsigned y)
+{
+    /* Original 0665/091C: water quadrants hide two or four bottom rows.
+       The sprite anchor is eight pixels east of the cursor coordinate. */
+    static const unsigned masks[4] = {3,9,6,12};
+    unsigned tile = btp_map_tile(m,(int)((x+1)/2),(int)(y/2));
+    return tile < 48 && (tile & masks[(x&1u)+2*(y&1u)]) ? ((tile&0xf0u) == 32 ? 4u : 2u) : 0;
+}
 
 /* Small independently drawn 5x7 diagnostic font; no BIOS/reference font copied. */
 static const char alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789:./- ,';!?()$\"abcdefghijklmnopqrstuvwxyz";
@@ -265,18 +296,18 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                 color = btp_palette[7];
             f[y * 320 + x] = color;
         }
-    /* Approximate NPC markers; positions are logical, original sprites deferred. */
+    (void)btp_draw_sprite(&r->sprites,166u+s->player_walk,208,96,
+        hidden_rows(&r->map,s->x_half,s->y_half),104,f);
+    /* Original 051B draws the party before the eight outdoor NPC slots. */
     if (s->mode == BTP_EXPLORE && s->npc.enabled == 2) for (unsigned i = 0; i < 8; ++i) {
         const BtpNpc *n = &s->npc.actor[i];
         if (!n->x) continue;
-        int nx = (n->x & 127)*8-camera_x+104, ny = (n->y & 127)*8-camera_y;
-        if (nx < 106 || nx > 317 || ny < 2 || ny > 197) continue;
-        rectangle(f,nx-1,ny-2,3,5,10);
+        unsigned x = n->x & 127u, y = n->y & 127u;
+        int nx = 208+((int)x-s->x_half)*8, ny = 96+((int)y-s->y_half)*8;
+        (void)btp_draw_sprite(&r->sprites,270u+s->npc_walk[i],nx,ny,
+            hidden_rows(&r->map,x,y),104,f);
     }
-    /* Approximate player marker until ANIMATE.ICN selection/masking is verified. */
-    for (int y = 97; y <= 102; ++y)
-        for (int x = 211; x <= 213; ++x) pixel(f, x, y, btp_palette[y < 99 ? 15 : 1]);
-    text(f, 8, 9, "BtechPort M2h", 15);
+    text(f, 8, 9, "BtechPort M2i", 15);
     text(f, 8, 24, s->mode >= BTP_ENTRY ? (s->entry_slot == 3 ? "Weapons Shop" :
         s->entry_slot == 4 ? "Armor Shop" : s->entry_slot == 2 ? "ComStar" : "Citadel") : "Training", 14);
     text(f, 8, 36, s->conversation_checkpoint ? "TALK CHECKPOINT" :
@@ -315,6 +346,26 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         snprintf(line, sizeof line, "GATE %u", s->gate); text(f, 8, 166, line, 14);
         snprintf(line, sizeof line, "TICK %u", s->tick); text(f, 8, 178, line, 14);
     }
+}
+
+void btp_sprite_preview(const BtpResources *r, unsigned tick, uint32_t f[BTP_PIXELS])
+{
+    for (unsigned i = 0; i < BTP_PIXELS; ++i) f[i] = btp_palette[2];
+    text(f,8,5,"Original sprite preview",15);
+    text(f,8,17,"All walking frames - Esc exits",15);
+    const unsigned bases[] = {0,146,166,270};
+    const char *labels[] = {"Locust", "Commando", "Jason", "Cadets"};
+    for (unsigned row = 0; row < 4; ++row) {
+        int y = row < 2 ? 30+(int)row*56 : 144+(int)(row-2)*24;
+        text(f,8,y,labels[row],15);
+        for (unsigned n = 0; n < 16; ++n) {
+            int x = 72+(int)(n%8)*30;
+            (void)btp_draw_sprite(&r->sprites,bases[row]+n,x,y+(int)(n/8)*(row < 2 ? 26 : 10),0,0,f);
+        }
+    }
+    /* The separate large preview cycles four raw frames per facing. */
+    (void)btp_draw_sprite(&r->sprites,(tick/6)%16,12,58,0,0,f);
+    (void)btp_draw_sprite(&r->sprites,146+(tick/6)%16,12,98,0,0,f);
 }
 
 int btp_write_ppm(const char *path, const uint32_t f[BTP_PIXELS])

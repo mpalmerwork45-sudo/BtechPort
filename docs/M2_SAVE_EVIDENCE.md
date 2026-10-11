@@ -94,3 +94,10 @@ headless sanitizers pass; native F5/F9 was rechecked after the format extension.
 after a successful headless run/native exit. Native notices use the window title;
 errors also retain a diagnostic message. Save/load controls and layout are
 conveniences, with no claim of original pixel/key/menu fidelity.
+
+
+**M2i continuation:** current saves use BTP9 (still 416-byte payload / 432-byte
+file), adding player/NPC walking frames. BTP8 remains readable; its missing gait
+history restarts at the first frame for the stored facing. Logical Class/bank
+progress retains the earlier migration rules. All preceding save/course checks
+also pass on BTP9; see [sprite evidence](M2_SPRITE_EVIDENCE.md).

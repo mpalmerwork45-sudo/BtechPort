@@ -133,6 +133,49 @@ def school(env, work):
     print("PASS: native X11 ordinary funding, paid Class, cooldown refusal/expiry and repeat enrolment; complete canonical state equality.",flush=True)
 
 
+def sprites(env, work):
+    from reference_session import WindowKeys
+    record = work/'native-sprites.actions'
+    frame = work/'native-sprites.ppm'
+    actual = subprocess.run([str(ROOT/'build/btech-port'),'--smoke','--record',str(record),
+        '--frame',str(frame)],env=env,cwd=ROOT,capture_output=True,text=True,check=True,timeout=15)
+    expected = subprocess.run([str(ROOT/'build/btech-headless'),'--replay',str(record),
+        '--frame',str(work/'replayed-sprites.ppm')],cwd=ROOT,capture_output=True,text=True,check=True,timeout=15)
+    if json.loads(actual.stdout) != json.loads(expected.stdout) or frame.read_bytes() != (work/'replayed-sprites.ppm').read_bytes():
+        raise RuntimeError('Native sprite state/frame differs from headless replay')
+    process = subprocess.Popen([str(ROOT/'build/btech-port'),'--sprite-preview',
+        '--frame',str(work/'native-mechs.ppm')],env=env,cwd=ROOT,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+    keys = WindowKeys()
+    try:
+        window = None
+        for _ in range(100):
+            found = [(w,n) for w,n in keys.windows() if n.startswith('BtechPort')]
+            if len(found) == 1: window = found[0][0]; break
+            if process.poll() is not None: raise RuntimeError('Sprite preview failed to start')
+            time.sleep(0.05)
+        if window is None: raise RuntimeError('Sprite preview window did not appear')
+        time.sleep(0.5)
+        keys.key(window,'Escape')
+        out,err = process.communicate(timeout=10)
+        if process.returncode: raise RuntimeError(err)
+        tick = json.loads(out)['tick']
+        # Only two small animated examples vary with time; the static grid must match.
+        subprocess.run([str(ROOT/'build/btech-headless'),'--sprite-preview','--frame',str(work/'mechs-headless.ppm')],
+            cwd=ROOT,capture_output=True,check=True,timeout=15)
+        a=(work/'native-mechs.ppm').read_bytes(); b=(work/'mechs-headless.ppm').read_bytes()
+        header=len(b'P6\n320 200\n255\n')
+        if not tick or any(a[header+(y*320+72)*3:header+(y*320+320)*3] !=
+                           b[header+(y*320+72)*3:header+(y*320+320)*3] for y in range(200)):
+            raise RuntimeError('Native mech preview did not animate or its grid differs')
+        print('PASS: native sprite movement/frame replay; animated mech preview, static grid and Escape exit.',flush=True)
+    finally:
+        keys.x.XCloseDisplay(keys.display)
+        if process.poll() is None:
+            process.terminate()
+            try: process.wait(timeout=5)
+            except subprocess.TimeoutExpired: process.kill(); process.wait()
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--shops-only", action="store_true")
@@ -140,6 +183,7 @@ def main():
     parser.add_argument("--bank-input-only", action="store_true")
     parser.add_argument("--save-only", action="store_true")
     parser.add_argument("--school-only", action="store_true")
+    parser.add_argument("--sprites-only", action="store_true")
     args = parser.parse_args()
     work = ROOT / "work"
     work.mkdir(exist_ok=True)
@@ -159,6 +203,10 @@ def main():
             env.pop("SDL_VIDEODRIVER", None)
             os.environ["DISPLAY"] = env["DISPLAY"]
             os.environ["BTECH_REFERENCE_VIRTUAL"] = "1"
+            if args.sprites_only:
+                sprites(env,work)
+                saves(env,work)
+                return
             if args.shops_only:
                 shops(env, work)
                 return
@@ -220,6 +268,7 @@ def main():
             subprocess.run(["python3", str(ROOT / "tools/verify_m2d.py"), "--native-log",
                 str(work / "native-arrival-x11.actions")], check=True, timeout=15)
             print("PASS: native X11 normal exploration, NPC arrival/reply, return/exit and full canonical replay equality.")
+            sprites(env,work)
             shops(env, work)
             m2f(env, work)
             saves(env,work)

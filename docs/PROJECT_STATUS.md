@@ -1,9 +1,10 @@
-# Project status — M2g/M2h complete; sprite follow-up in progress, 2026-10-11
+# Project status — M2g/M2h/M2i complete, 2026-10-11
 
-**M0, M1 and bounded M2a–M2h are complete.** M2g adds native internal save/load.
+**M0, M1 and bounded M2a–M2i are complete.** M2g adds native internal save/load.
 M2h adds the first verified paid Class → skill increase → outdoor cooldown →
-re-enrolment loop. The user has now also requested authentic player, NPC and
-mech sprites; that rendering audit is the active follow-up.
+re-enrolment loop. M2i replaces player/NPC markers with original walking sprites
+and provides a separate original-mech preview. Campaign mech control remains
+deferred until its training/combat rules are implemented.
 
 ## Milestones
 
@@ -19,7 +20,7 @@ mech sprites; that rendering audit is the active follow-up.
 | M2f | ComStar investments/returns, banking boundaries and Talk in both shops |
 | M2g | One internal save slot, native controls, integrity and restart continuation |
 | M2h | Paid personal-skill classes, tuition/refusals, outdoor cooldown and re-enrolment |
-| Active follow-up | Original player/NPC/mech sprite data, selection and masking audit |
+| M2i | Original player/NPC walking sprites, persistent gait and original-mech preview |
 | Remaining M2 | MechWarrior training/day progression, wider inventory/shops, maps/world and campaign foundations |
 | M3–M5 | Verified tactical combat; original campaign; optional separate enhancements |
 
@@ -28,6 +29,7 @@ mech sprites; that rendering audit is the active follow-up.
 ```sh
 ./scripts/build.sh
 ./build/btech-port --data "Original DOS"
+./build/btech-port --sprite-preview
 ./build/btech-port --smoke-replay --replay tests/fixtures/reference-class-funded.actions
 ./build/btech-port --replay tests/fixtures/reference-class-funded.actions
 ./scripts/test.sh
@@ -87,7 +89,16 @@ states. Only the first subject's first paid course is claimed as live original
 paid-course parity. Personal Class leaves the MechWarrior mission counter at
 zero; it does not establish mission completion or barracks sleeping.
 
-PASS: seven CTest suites; 421 core, 95 script, 1741 NPC, 30928 shop, 78178
+**M2i VERIFIED in scope:** 376 original RAM sprite crops / 45472 indexed pixels;
+30 player movement checkpoints including blocked attempts; four exact 8×8
+player screenshot crops; 63 complete NPC animation frame steps. Eight original
+human direction programs establish reset/cycle selection. The renderer supports
+8×8 people and 24×24 mechs, transparency and viewport clipping. Native movement
+frames match headless replay byte for byte; the mech preview and F5/F9 pass.
+Water clipping is inferred from primary code and synthetically tested, without
+a live water trace. See [sprite evidence](M2_SPRITE_EVIDENCE.md).
+
+PASS: eight CTest suites; 848 sprite assertions; 421 core, 95 script, 1741 NPC, 30928 shop, 78178
 bank/Talk, 11972 save-file and 59197 school assertions; four Python tests;
 all prior/new differential routes. Headless ASan/UBSan/LeakSanitizer pass.
 The native 3093-tick course demonstration produces exactly the recorded inputs
@@ -103,9 +114,10 @@ preconditions, while the new funded Class route uses ordinary gameplay only.
 
 ## Persistence, provenance and limits
 
-The current **BTP8 payload is 416 bytes**, wrapped in a 16-byte BTS1 file header
-with length and CRC32. It adds ranks, their rollback copies and the paused course
-transcript context. Existing M2g BTP7 saves migrate to zero skill ranks, retaining
+The current **BTP9 payload is 416 bytes**, wrapped in a 16-byte BTS1 file header
+with length and CRC32. It retains ranks, rollback copies and course context,
+and adds nine walking indices. BTP8 and earlier saves retain logical progress;
+their missing gait history starts at the first frame for the stored facing. Existing M2g BTP7 saves migrate to zero skill ranks, retaining
 their stored gameplay state. Older migrations keep their documented limitations.
 This is internal persistence; original 3913-byte GAME compatibility, power-loss
 durability and Windows behavior remain unverified.
@@ -118,12 +130,12 @@ match. Proprietary assets, RAM, screenshots, caches and dependencies stay out of
 commits; no substantial GPL source was copied/translated into the runtime.
 
 Local commits: `d77e9c7` (M2g save/load), `175ec98` (M2h original audit),
-`1189da2` (M2h implementation/tests). No pushes or Git configuration changes.
+`1189da2` (M2h implementation/tests), `a546ffa` (M2i original sprite audit). No pushes or Git configuration changes.
 
 **INFERRED:** unobserved movement and broader campaign contexts.
-**APPROXIMATE:** current markers/imagery, independent mixed-case font/layout,
+**APPROXIMATE:** remaining UI imagery, independent mixed-case font/layout,
 native cadence and map edges. **UNKNOWN/deferred:** MechWarrior missions,
 barracks sleep, later day/cap progression, remaining goods/repair/party/world,
-combat, animation/audio, original saves and Windows. After the requested sprite
-work, the next campaign gate should audit the first MechWarrior assignment and
+combat, terrain/scene animation and audio, original saves and Windows.
+The next campaign gate should audit the first MechWarrior assignment and
 its return/sleep conditions before implementing a bounded mission loop.

@@ -22,3 +22,4 @@ python3 tools/verify_m2e.py --binary build/sanitize/btech-headless
 python3 tools/verify_m2f.py --binary build/sanitize/btech-headless
 python3 tools/verify_m2g.py --binary build/sanitize/btech-headless
 python3 tools/verify_m2h.py --binary build/sanitize/btech-headless
+python3 tools/verify_sprites.py --binary build/sanitize/btech-headless

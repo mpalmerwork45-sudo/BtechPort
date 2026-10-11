@@ -99,7 +99,9 @@ four player screenshot crops; 63 NPC frame steps; fresh-process animation
 continuation; synthetic bounds, masking, water clipping and legacy migration;
 native window rendering matches the recorded headless frame byte for byte;
 preview grid/presentation/animation/Escape; and native F5/F9 persistence.
-Full regression and sanitizer results are recorded in `TESTING.md` at review.
+Full regression, eight CTest suites and ASan/UBSan/LeakSanitizer pass. The added
+BTP8 migration check also retains earned ranks and the active refusal receipt.
+See `TESTING.md`; the native frame and preview were visually inspected.
 
 Remaining visual gaps: original status panel/font/menu geometry, terrain
 animation, portraits/ANMs, combat frames and actual mech gameplay. SDL key repeat
