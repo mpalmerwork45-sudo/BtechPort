@@ -2,7 +2,9 @@
 #define BTP_GAME_H
 #include "data/resources.h"
 #include "core/script.h"
-typedef enum { BTP_IDLE, BTP_UP, BTP_DOWN, BTP_LEFT, BTP_RIGHT, BTP_ACCEPT, BTP_CANCEL } BtpAction;
+typedef enum { BTP_IDLE, BTP_UP, BTP_DOWN, BTP_LEFT, BTP_RIGHT, BTP_ACCEPT, BTP_CANCEL,
+    BTP_DIGIT_0, BTP_DIGIT_1, BTP_DIGIT_2, BTP_DIGIT_3, BTP_DIGIT_4,
+    BTP_DIGIT_5, BTP_DIGIT_6, BTP_DIGIT_7, BTP_DIGIT_8, BTP_DIGIT_9, BTP_CLEAR_INPUT } BtpAction;
 typedef enum { BTP_CLEAR, BTP_WALL, BTP_EDGE } BtpBlock;
 typedef enum { BTP_EXPLORE, BTP_ENTRY, BTP_BUILDING, BTP_SCRIPT_FAULT } BtpMode;
 typedef enum { BTP_TALK_NONE, BTP_TALK_EMPTY, BTP_TALK_MENU, BTP_TALK_REPLY } BtpTalkPhase;
@@ -15,6 +17,14 @@ typedef struct {
     uint16_t search;
     BtpNpc actor[8];
 } BtpNpcState;
+typedef enum { BTP_BANK_NONE, BTP_BANK_MENU, BTP_BANK_AMOUNT, BTP_BANK_MESSAGE } BtpBankPhase;
+typedef enum { BTP_BANK_TRADED, BTP_BANK_NO_CASH, BTP_BANK_NO_STOCK,
+    BTP_BANK_NOT_OWNED, BTP_BANK_ZERO } BtpBankOutcome;
+typedef struct {
+    uint8_t phase, company, outcome, clamped;
+    uint32_t available, amount;
+    char input[8]; /* Original accepts at most seven decimal digits. */
+} BtpBankState;
 typedef struct {
     uint32_t tick;
     uint16_t x_half, y_half;
@@ -32,13 +42,16 @@ typedef struct {
     uint16_t allowance_cap;
     uint8_t weapon, armor, armor_points;
     uint8_t checkpoint_weapon, checkpoint_armor, checkpoint_armor_points;
+    uint32_t investments[3], checkpoint_investments[3];
+    BtpBankState bank;
 } BtpState;
-enum { BTP_STATE_BYTES = 320 };
+enum { BTP_STATE_BYTES = 384 };
 
 void btp_start(BtpState *state);
 void btp_tick(BtpState *state, const BtpMap *map, BtpAction action);
 void btp_game_tick(BtpState *state, const BtpResources *resources, BtpAction action);
 void btp_start_conversation_checkpoint(BtpState *state); /* Explicit controlled scenario */
+void btp_start_shop_conversation_checkpoint(BtpState *state, const BtpResources *resources, unsigned slot);
 int btp_game_text(const BtpState *state, const BtpResources *resources,
     uint8_t *output, size_t capacity, size_t *length);
 int btp_entrance(const BtpState *state, const BtpMap *map); /* index, or -1 */

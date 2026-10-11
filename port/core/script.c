@@ -10,7 +10,7 @@ unsigned btp_menu_count(unsigned id)
     case 12: case 15: return 4;
     case 13: return 6;
     case 16: return 7;
-    case 30: return 3;
+    case 7: case 10: case 11: case 30: return 3;
     default: return 0;
     }
 }
@@ -61,7 +61,7 @@ static void run(BtpScriptState *s, const BtpBld *b, uint8_t story[BTP_STORY_BYTE
             s->text_offset = s->text_length = s->text_count = 0;
             memset(s->text, 0, sizeof s->text);
             memset(s->text_column,0,sizeof s->text_column); memset(s->text_row,0,sizeof s->text_row);
-            s->column = s->row = s->has_cash = s->cash_after = 0; s->cash_value = 0; break;
+            s->column = s->row = s->has_cash = s->cash_after = s->has_accounts = 0; s->cash_value = 0; break;
         case 0xfa: /* Explicit scene request, supported scene zero only. */
             if (!available(s, b, 1, op_pc)) return;
             s->scene = b->bytes[s->pc++];
@@ -108,10 +108,10 @@ static void run(BtpScriptState *s, const BtpBld *b, uint8_t story[BTP_STORY_BYTE
             if (story[index] && !jump(s, b, target, op_pc)) return;
             break;
         }
-        case 0xf0: /* Verified shops request column 0, rows 22 (cash) or 14. */
+        case 0xf0: /* Verified column zero: shops 14/22, ComStar 15. */
             if (!available(s,b,2,op_pc)) return;
             s->column = b->bytes[s->pc++]; s->row = b->bytes[s->pc++];
-            if (s->column || (s->row != 22 && s->row != 14)) { fault(s,BTP_SCRIPT_SCENE,op_pc); return; }
+            if (s->column || (s->row != 22 && s->row != 14 && s->row != 15)) { fault(s,BTP_SCRIPT_SCENE,op_pc); return; }
             break;
         case 0xf6:
             if (!available(s,b,2,op_pc)) return;
@@ -121,12 +121,12 @@ static void run(BtpScriptState *s, const BtpBld *b, uint8_t story[BTP_STORY_BYTE
         case 0xf5:
             if (!available(s, b, 1, op_pc)) return;
             s->native_action = b->bytes[s->pc++];
-            if (s->native_action < 9 || s->native_action > 12) { fault(s, BTP_SCRIPT_OPCODE, op_pc); return; }
+            if (s->native_action < 6 || s->native_action > 12) { fault(s, BTP_SCRIPT_OPCODE, op_pc); return; }
             if (s->native_action == 12) {
                 s->text_offset = s->text_length = s->text_count = 0;
                 memset(s->text, 0, sizeof s->text);
                 memset(s->text_column,0,sizeof s->text_column); memset(s->text_row,0,sizeof s->text_row);
-                s->column = s->row = s->has_cash = s->cash_after = 0; s->cash_value = 0;
+                s->column = s->row = s->has_cash = s->cash_after = s->has_accounts = 0; s->cash_value = 0;
             }
             s->pause_units = 0;
             s->status = BTP_SCRIPT_NATIVE; return;

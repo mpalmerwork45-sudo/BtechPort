@@ -18,6 +18,7 @@ SDL_VIDEODRIVER=dummy build/btech-port --smoke-talk --record work/native-talk.ac
 python3 tools/verify_m2c.py --native-log work/native-talk.actions
 python3 tools/verify_m2d.py
 python3 tools/verify_m2e.py
+python3 tools/verify_m2f.py
 if [ "${1:-}" = "--x11" ]; then
     python3 tools/native_smoke.py
 fi

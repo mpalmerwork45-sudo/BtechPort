@@ -39,7 +39,7 @@ static void malformed(void)
     b = (BtpBld){.length=2,.bytes={0xfa,1}};
     btp_script_start(&s, &b, story); CHECK(s.error == BTP_SCRIPT_SCENE);
     b.bytes[0] = 0xfe; btp_script_start(&s, &b, story); CHECK(s.error == BTP_SCRIPT_FONT);
-    b = (BtpBld){.length=2,.bytes={0xf9,7}};
+    b = (BtpBld){.length=2,.bytes={0xf9,9}};
     btp_script_start(&s, &b, story); CHECK(s.error == BTP_SCRIPT_MENU_ID);
     b.bytes[1] = 8; btp_script_start(&s, &b, story); CHECK(s.error == BTP_SCRIPT_TRUNCATED);
     b = (BtpBld){.length=13,.bytes={0xf9,8,12,0,12,0,12,0,12,0,13,0,0xff}};

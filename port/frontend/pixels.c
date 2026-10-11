@@ -1,4 +1,5 @@
 #include "frontend/pixels.h"
+#include "core/bank.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -64,6 +65,13 @@ static void rectangle(uint32_t *f, int x, int y, int w, int h, unsigned color)
    Verified Hall/Katrina messages fit. Overflow is visible, never silently hidden. */
 static int wrapped(uint32_t *f, int y, const uint8_t *bytes, size_t n, unsigned color)
 {
+    uint8_t clean[BTP_BLD_MAX+1]; size_t used = 0;
+    if (n > BTP_BLD_MAX) { text(f,110,y,"INVALID TEXT BOUNDS",12); return y; }
+    for (size_t i = 0; i < n; ++i) {
+        if (bytes[i] == 6 && i+1 < n && bytes[i+1] == 15) { ++i; continue; }
+        clean[used++] = bytes[i];
+    }
+    bytes = clean; n = used;
     size_t at = 0;
     while (at < n && y <= 173) {
         char line[35]; size_t count = 0, start = at;
@@ -79,6 +87,78 @@ static int wrapped(uint32_t *f, int y, const uint8_t *bytes, size_t n, unsigned 
     }
     if (at < n) text(f, 110, 180, "TEXT OVERFLOW - UNSUPPORTED LAYOUT", 12);
     return y;
+}
+static const uint8_t *bank_literal(const BtpResources *r, unsigned id, size_t *n)
+{
+    const BtpDialogue *d = &r->dialogue;
+    if (id >= BTP_TALK_STRINGS || d->length > BTP_TALK_MAX || d->offset[id] >= d->length ||
+        d->size[id] >= d->length-d->offset[id] || d->bytes[d->offset[id]+d->size[id]]) return NULL;
+    *n = d->size[id]; return d->bytes+d->offset[id];
+}
+static void bank_panel(const BtpResources *r, const BtpState *s, const uint8_t *body, size_t length, uint32_t *f)
+{
+    const BtpScriptState *v = &s->script; const BtpBankState *b = &s->bank;
+    char value[16];
+    if (v->has_accounts) {
+        BtpTextSpan first = v->text[0], menu = v->text[1];
+        (void)wrapped(f,9,r->comstar.bytes+first.offset,first.length,15);
+        snprintf(value,sizeof value,"%u",s->credits); text(f,260,9,value,10);
+        int y = 54; unsigned count = 0;
+        for (unsigned i = 0; i < 3; ++i) if (s->investments[i]) {
+            size_t n; const uint8_t *p = bank_literal(r,BTP_BANK_STR_COMPANY+i,&n);
+            if (!p) return;
+            (void)wrapped(f,y,p,n ? n-1 : 0,15);
+            snprintf(value,sizeof value,"%u",s->investments[i]); text(f,260,y,value,10); y += 9; ++count;
+        }
+        if (!count) {
+            size_t n; const uint8_t *p = bank_literal(r,BTP_BANK_STR_NONE,&n);
+            if (!p) return;
+            (void)wrapped(f,45,p,n,15);
+        }
+        const uint8_t *p = r->comstar.bytes+menu.offset;
+        size_t at = 0; y = 123;
+        for (unsigned i = 0; i < 4 && at < menu.length; ++i) {
+            size_t end = at; while (end < menu.length && p[end] != '\r') ++end;
+            if (i && i-1 == v->selected) rectangle(f,109,y-1,206,9,14);
+            (void)wrapped(f,y,p+at,end-at,i && i-1 == v->selected ? 0u : 15u);
+            at = end+1; y += 9;
+        }
+        return;
+    }
+    if (b->phase == BTP_BANK_MESSAGE && (b->outcome == BTP_BANK_NO_CASH || b->outcome == BTP_BANK_NO_STOCK)) {
+        (void)wrapped(f,9,body,length,15);
+    } else {
+        int buy = v->native_action == 7; size_t header_length;
+        const uint8_t *header = bank_literal(r,buy ? BTP_BANK_STR_BUY_MENU : BTP_BANK_STR_SELL_MENU,&header_length);
+        if (!header) return;
+        int y = wrapped(f,9,header,header_length && header[header_length-1] == '\r' ? header_length-1 : header_length,15);
+        size_t prefix = header_length;
+        for (unsigned i = 0; i < 3; ++i) {
+            size_t n; const uint8_t *p = bank_literal(r,BTP_BANK_STR_COMPANY+i,&n);
+            if (!p) return;
+            int selected = b->phase == BTP_BANK_MENU && s->script.choices[7] == i;
+            if (selected) rectangle(f,109,y-1,206,9,14);
+            (void)wrapped(f,y,p,n ? n-1 : 0,selected ? 0u : 15u); y += 9; prefix += n;
+        }
+        if (b->phase != BTP_BANK_MENU && prefix <= length) {
+            uint8_t details[BTP_BLD_MAX+1]; size_t out = 0, label_size;
+            const uint8_t *label = bank_literal(r,buy ? BTP_BANK_STR_CASH_ACCOUNT : BTP_BANK_STR_STOCK_ACCOUNT,&label_size);
+            if (!label) return;
+            /* The original places the available-balance label at row 23. */
+            for (size_t at = prefix; at < length;) {
+                if (label_size <= length-at && !memcmp(body+at,label,label_size)) {
+                    at += label_size;
+                    snprintf(value,sizeof value,"%u",b->available);
+                    size_t digits = strlen(value);
+                    if (digits <= length-at && !memcmp(body+at,value,digits)) at += digits;
+                    text(f,110,169,(const char *)label,15); text(f,260,169,value,10);
+                } else details[out++] = body[at++];
+            }
+            (void)wrapped(f,y,details,out,15);
+        }
+    }
+    text(f,110,185,b->phase == BTP_BANK_AMOUNT ? "DIGITS / BACKSPACE / ENTER" :
+        b->phase == BTP_BANK_MENU ? "ARROWS / ENTER" : "ENTER / SPACE TO CONTINUE",14);
 }
 static void story_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
 {
@@ -97,6 +177,7 @@ static void story_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
     if (!btp_game_text(s, r, bytes, sizeof bytes, &length)) {
         text(f, 110, 12, "INVALID TEXT BOUNDS", 12); return;
     }
+    if (s->bank.phase || v->has_accounts) { bank_panel(r,s,bytes,length,f); return; }
     if (v->status == BTP_SCRIPT_MENU || s->talk.phase == BTP_TALK_MENU) {
         if (!s->talk.phase && !btp_script_menu_text(v,btp_building_bld(r,s->entry_slot),bytes,sizeof bytes,&length)) {
             text(f,110,12,"INVALID MENU TEXT",12); return;
@@ -162,9 +243,9 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
     /* Approximate player marker until ANIMATE.ICN selection/masking is verified. */
     for (int y = 97; y <= 102; ++y)
         for (int x = 211; x <= 213; ++x) pixel(f, x, y, btp_palette[y < 99 ? 15 : 1]);
-    text(f, 8, 9, "BtechPort M2e", 15);
+    text(f, 8, 9, "BtechPort M2f", 15);
     text(f, 8, 24, s->mode >= BTP_ENTRY ? (s->entry_slot == 3 ? "Weapons Shop" :
-        s->entry_slot == 4 ? "Armor Shop" : "Citadel") : "Training", 14);
+        s->entry_slot == 4 ? "Armor Shop" : s->entry_slot == 2 ? "ComStar" : "Citadel") : "Training", 14);
     text(f, 8, 36, s->conversation_checkpoint ? "TALK CHECKPOINT" :
         s->mode >= BTP_BUILDING ? "DIALOGUE" : "SCHOOL", 14);
     text(f, 8, 57, s->mode == BTP_EXPLORE ? "ARROWS MOVE" : "ARROWS SELECT", 7);
@@ -189,12 +270,12 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
     } else if (s->mode == BTP_ENTRY) {
         rectangle(f, 104, 73, 216, 55, 7); rectangle(f, 108, 77, 208, 46, 0);
         text(f, 110, 81, s->entry_slot == 3 ? "Enter the Weapons Shop?" :
-            s->entry_slot == 4 ? "Enter the Armor Shop?" : "WILL YOU ENTER THE CITADEL?", 15);
+            s->entry_slot == 4 ? "Enter the Armor Shop?" : s->entry_slot == 2 ? "Enter ComStar Station?" :
+            "WILL YOU ENTER THE CITADEL?", 15);
         text(f, 110, 99, "YES", s->entry_selected == 0 ? 14u : 7u);
         text(f, 140, 99, "NO", s->entry_selected == 1 ? 14u : 7u);
         text(f, 110, 113, "ENTER SELECTS - BACKSPACE DECLINES", 7);
-    } else if (btp_entrance(s, &r->map) >= 0 && btp_entrance(s, &r->map) != 1 &&
-        btp_entrance(s,&r->map) != 3 && btp_entrance(s,&r->map) != 4) {
+    } else if (btp_entrance(s, &r->map) >= 0 && (btp_entrance(s,&r->map) < 1 || btp_entrance(s,&r->map) > 4)) {
         text(f, 8, 166, "INTERIOR", 14); text(f, 8, 178, "UNAVAILABLE", 14);
     } else if (debug) {
         snprintf(line, sizeof line, "GATE %u", s->gate); text(f, 8, 166, line, 14);

@@ -23,6 +23,7 @@ typedef struct {
     uint8_t column, row, text_column[BTP_TEXT_SPANS], text_row[BTP_TEXT_SPANS];
     uint8_t has_cash, cash_after;
     uint32_t cash_value;
+    uint8_t has_accounts;
 } BtpScriptState;
 
 void btp_script_start(BtpScriptState *state, const BtpBld *script, uint8_t story[BTP_STORY_BYTES]);

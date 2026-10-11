@@ -87,8 +87,8 @@ static void state(void)
     btp_state_encode(&s, encoded); btp_state_encode(&restored, roundtrip);
     CHECK(!memcmp(encoded, roundtrip, sizeof encoded));
     CHECK(!btp_state_decode(encoded, sizeof encoded - 1, &m, NULL, &restored));
-    encoded[4] = 7; CHECK(!btp_state_decode(encoded, sizeof encoded, &m, NULL, &restored));
-    encoded[4] = 6; encoded[12] = 128; CHECK(!btp_state_decode(encoded, sizeof encoded, &m, NULL, &restored));
+    encoded[4] = 8; CHECK(!btp_state_decode(encoded, sizeof encoded, &m, NULL, &restored));
+    encoded[4] = 7; encoded[12] = 128; CHECK(!btp_state_decode(encoded, sizeof encoded, &m, NULL, &restored));
     encoded[12] = 69; encoded[23] = 1; CHECK(!btp_state_decode(encoded, sizeof encoded, &m, NULL, &restored));
     s.x_half = 0; s.y_half = 0; btp_tick(&s, &m, BTP_LEFT);
     CHECK(s.x_half == 0 && s.blocked == BTP_EDGE);
@@ -275,9 +275,9 @@ static void talk_loop(BtpResources *r)
     CHECK(!memcmp(&parsed,&r->dialogue,sizeof parsed));
     CHECK(!btp_dialogue_decode(NULL,n,&parsed,&error));
     CHECK(!btp_dialogue_decode(cache,n-1,&parsed,&error));
-    const unsigned corrupt[] = {0,4,6,8,40,72,74,140};
+    const unsigned corrupt[] = {0,4,6,8,40,72,74,72+4*BTP_TALK_STRINGS};
     for (unsigned i = 0; i < sizeof corrupt/sizeof corrupt[0]; ++i) {
-        unsigned at = corrupt[i]; uint8_t before = cache[at]; cache[at] = at == 140 ? 0 : (uint8_t)(before^1);
+        unsigned at = corrupt[i]; uint8_t before = cache[at]; cache[at] = at == 72+4*BTP_TALK_STRINGS ? 0 : (uint8_t)(before^1);
         CHECK(!btp_dialogue_decode(cache,n,&parsed,&error));
         CHECK(!memcmp(&parsed,&r->dialogue,sizeof parsed)); cache[at] = before;
     }
@@ -343,7 +343,7 @@ static void citadel_loop(const char *dir)
     btp_start(&s); s.y_half = 21;
     btp_game_tick(&s, r, BTP_UP); CHECK(s.mode == BTP_ENTRY && s.y_half == 21);
     free(r);
-    puts("Citadel core: entry/decline, six Hall screens, exit, empty Talk, recovery, BTP6 restoration.");
+    puts("Citadel core: entry/decline, six Hall screens, exit, empty Talk, recovery, BTP7 restoration.");
 }
 
 static void corpus(const char *dir)

@@ -2,6 +2,8 @@
 #include "core/talk.h"
 #include "core/npc.h"
 #include "core/shop.h"
+#include "core/bank.h"
+#include "core/economy.h"
 #include <string.h>
 
 void btp_start(BtpState *s)
@@ -49,7 +51,8 @@ int btp_entrance(const BtpState *s, const BtpMap *m)
 }
 const BtpBld *btp_building_bld(const BtpResources *r, unsigned slot)
 {
-    return !r ? NULL : slot == 1 ? &r->citadel : slot == 3 ? &r->weapon : slot == 4 ? &r->armor : NULL;
+    return !r ? NULL : slot == 1 ? &r->citadel : slot == 2 ? &r->comstar :
+        slot == 3 ? &r->weapon : slot == 4 ? &r->armor : NULL;
 }
 static void start_building(BtpState *s, const BtpResources *r)
 {
@@ -68,21 +71,27 @@ static void finish_script(BtpState *s, const BtpMap *m)
             memcpy(s->story_flags, s->story_checkpoint, BTP_STORY_BYTES);
             s->talk_result = s->checkpoint_talk_result;
             s->credits = s->checkpoint_credits; s->weapon = s->checkpoint_weapon;
+            memcpy(s->investments,s->checkpoint_investments,sizeof s->investments);
             s->armor = s->checkpoint_armor; s->armor_points = s->checkpoint_armor_points;
-            if (s->npc.enabled) s->npc.allowance_pending = (uint8_t)(s->credits < s->allowance_cap);
+            if (s->npc.enabled) s->npc.allowance_pending = (uint8_t)btp_economy_below_cap(s);
         }
+        s->bank = (BtpBankState){0};
+        s->script.has_accounts = 0;
         s->mode = BTP_SCRIPT_FAULT;
     } else if (s->script.status == BTP_SCRIPT_END) {
         /* The original commits the pending outdoor step after FF. */
         s->x_half = m->entrance_x[s->entry_slot] & 127;
         s->y_half = m->entrance_y[s->entry_slot] & 127;
         s->mode = BTP_EXPLORE;
+        s->bank = (BtpBankState){0};
+        s->script.has_accounts = 0;
     }
     if (s->script.status == BTP_SCRIPT_ERROR || s->script.status == BTP_SCRIPT_MENU ||
         s->script.status == BTP_SCRIPT_END) {
         s->checkpoint_valid = 0; memset(s->story_checkpoint, 0, BTP_STORY_BYTES);
         s->checkpoint_talk_result = 0;
         s->checkpoint_credits = 0;
+        memset(s->checkpoint_investments,0,sizeof s->checkpoint_investments);
         s->checkpoint_weapon = s->checkpoint_armor = s->checkpoint_armor_points = 0;
     }
 }
@@ -95,7 +104,7 @@ void btp_game_tick(BtpState *s, const BtpResources *r, BtpAction a)
         int entrance = btp_entrance(&moved,&r->map);
         if (a >= BTP_UP && a <= BTP_RIGHT && !moved.blocked &&
             (moved.x_half != s->x_half || moved.y_half != s->y_half) &&
-            (entrance == 1 || entrance == 3 || entrance == 4)) {
+            (entrance >= 1 && entrance <= 4)) {
             moved.x_half = s->x_half; moved.y_half = s->y_half;
             moved.mode = BTP_ENTRY; moved.entry_slot = (uint8_t)entrance; moved.entry_selected = 0;
             uint8_t choices[BTP_MENUS]; memcpy(choices,moved.script.choices,sizeof choices);
@@ -139,23 +148,32 @@ void btp_game_tick(BtpState *s, const BtpResources *r, BtpAction a)
             memcpy(s->story_checkpoint, s->story_flags, BTP_STORY_BYTES); s->checkpoint_valid = 1;
             s->checkpoint_talk_result = s->talk_result;
             s->checkpoint_credits = s->credits; s->checkpoint_weapon = s->weapon;
+            memcpy(s->checkpoint_investments,s->investments,sizeof s->investments);
             s->checkpoint_armor = s->armor; s->checkpoint_armor_points = s->armor_points;
             (void)btp_script_choose(&s->script, btp_building_bld(r,s->entry_slot), s->script.selected, s->story_flags);
         }
-    } else if (s->script.status == BTP_SCRIPT_WAIT && a == BTP_ACCEPT)
+    } else if (s->script.status == BTP_SCRIPT_WAIT && a == BTP_ACCEPT) {
+        s->bank = (BtpBankState){0};
         btp_script_resume(&s->script, btp_building_bld(r,s->entry_slot), s->story_flags);
+    }
     else if (s->script.status == BTP_SCRIPT_CONFIRM) {
         if (a == BTP_LEFT || a == BTP_UP) s->script.confirm_selected = 0;
         if (a == BTP_RIGHT || a == BTP_DOWN) s->script.confirm_selected = 1;
         if (a == BTP_ACCEPT) btp_script_confirm(&s->script,btp_building_bld(r,s->entry_slot),
             !s->script.confirm_selected,s->story_flags);
     }
-    else if (s->script.status == BTP_SCRIPT_NATIVE) btp_talk_input(s,r,a);
+    else if (s->script.status == BTP_SCRIPT_NATIVE) {
+        if (s->script.native_action == 12) btp_talk_input(s,r,a);
+        else if (s->bank.phase) btp_bank_input(s,r,a);
+    }
     for (unsigned service = 0; service < 16 && s->script.status == BTP_SCRIPT_NATIVE; ++service) {
         if (s->script.native_action == 12) { if (!s->talk.phase) btp_talk_begin(s,r); break; }
-        btp_shop_native(s,r);
+        if (s->script.native_action >= 6 && s->script.native_action <= 8) {
+            if (!s->bank.phase) btp_bank_native(s,r);
+            if (s->script.status == BTP_SCRIPT_NATIVE) break;
+        } else btp_shop_native(s,r);
     }
-    if (s->script.status == BTP_SCRIPT_NATIVE && s->script.native_action != 12) {
+    if (s->script.status == BTP_SCRIPT_NATIVE && s->script.native_action != 12 && !s->bank.phase) {
         s->script.status = BTP_SCRIPT_ERROR; s->script.error = BTP_SCRIPT_BUDGET;
         s->script.fault_pc = s->script.pc;
     }
@@ -168,7 +186,7 @@ static uint16_t get16(const uint8_t *p) { return (uint16_t)(p[0] | (uint16_t)p[1
 void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
 {
     memset(b, 0, BTP_STATE_BYTES);
-    memcpy(b, "BTP6", 4); b[4] = 6;
+    memcpy(b, "BTP7", 4); b[4] = 7;
     for (unsigned i = 0; i < 4; ++i) b[8+i] = (uint8_t)(s->tick >> (8 * i));
     b[12] = (uint8_t)s->x_half; b[13] = (uint8_t)(s->x_half >> 8);
     b[14] = (uint8_t)s->y_half; b[15] = (uint8_t)(s->y_half >> 8);
@@ -212,6 +230,16 @@ void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
     b[275] = s->script.column; b[276] = s->script.row; b[277] = s->script.has_cash;
     memcpy(b+278,s->script.text_column,BTP_TEXT_SPANS); memcpy(b+286,s->script.text_row,BTP_TEXT_SPANS);
     b[298] = s->checkpoint_weapon; b[299] = s->checkpoint_armor; b[300] = s->checkpoint_armor_points;
+    for (unsigned i = 0; i < 3; ++i) for (unsigned j = 0; j < 4; ++j) {
+        b[320+4*i+j] = (uint8_t)(s->investments[i] >> (8*j));
+        b[332+4*i+j] = (uint8_t)(s->checkpoint_investments[i] >> (8*j));
+    }
+    b[344] = s->bank.phase; b[345] = s->bank.company; b[346] = s->bank.outcome; b[347] = s->bank.clamped;
+    for (unsigned i = 0; i < 4; ++i) {
+        b[348+i] = (uint8_t)(s->bank.available >> (8*i));
+        b[352+i] = (uint8_t)(s->bank.amount >> (8*i));
+    }
+    memcpy(b+356,s->bank.input,8); b[364] = s->script.has_accounts;
 }
 
 int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *script, BtpState *s)
@@ -222,7 +250,8 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         n == 128 && !memcmp(b, "BTP3", 4) && b[4] == 3 ? 3 :
         n == 160 && !memcmp(b, "BTP4", 4) && b[4] == 4 ? 4 :
         n == 224 && !memcmp(b, "BTP5", 4) && b[4] == 5 ? 5 :
-        n == BTP_STATE_BYTES && !memcmp(b, "BTP6", 4) && b[4] == 6 ? 6 : 0;
+        n == 320 && !memcmp(b, "BTP6", 4) && b[4] == 6 ? 6 :
+        n == BTP_STATE_BYTES && !memcmp(b, "BTP7", 4) && b[4] == 7 ? 7 : 0;
     if (!version) return 0;
     for (unsigned i = 5; i < 8; ++i) if (b[i]) return 0;
     if (version == 1) { for (unsigned i = 20; i < 24; ++i) if (b[i]) return 0; }
@@ -231,9 +260,10 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         if (version == 2) { for (unsigned i = 59; i < 64; ++i) if (b[i]) return 0; }
         else {
             if (b[67]) return 0;
-            unsigned end = version == 6 ? 224u : (unsigned)n;
+            unsigned end = version >= 6 ? 224u : (unsigned)n;
             for (unsigned i = version == 3 ? 124u : version == 4 ? 150u : 202u; i < end; ++i) if (b[i]) return 0;
-            if (version == 6) for (unsigned i = 301; i < n; ++i) if (b[i]) return 0;
+            if (version >= 6) for (unsigned i = 301; i < 320; ++i) if (b[i]) return 0;
+            if (version == 7) for (unsigned i = 365; i < n; ++i) if (b[i]) return 0;
         }
     }
     BtpState result = {.credits=35,.allowance_cap=50};
@@ -283,7 +313,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
                 memcpy(result.story_checkpoint, result.story_flags, BTP_STORY_BYTES);
             }
         }
-        if (version == 6) {
+        if (version >= 6) {
             result.credits = result.checkpoint_credits = 0;
             for (unsigned i = 0; i < 4; ++i) {
                 result.credits |= (uint32_t)b[224+i] << (8*i);
@@ -297,17 +327,30 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
             v->column = b[275]; v->row = b[276]; v->has_cash = b[277];
             memcpy(v->text_column,b+278,BTP_TEXT_SPANS); memcpy(v->text_row,b+286,BTP_TEXT_SPANS);
             result.checkpoint_weapon = b[298]; result.checkpoint_armor = b[299]; result.checkpoint_armor_points = b[300];
+            if (version == 7) {
+                for (unsigned i = 0; i < 3; ++i) for (unsigned j = 0; j < 4; ++j) {
+                    result.investments[i] |= (uint32_t)b[320+4*i+j] << (8*j);
+                    result.checkpoint_investments[i] |= (uint32_t)b[332+4*i+j] << (8*j);
+                }
+                result.bank = (BtpBankState){.phase=b[344],.company=b[345],.outcome=b[346],.clamped=b[347]};
+                for (unsigned i = 0; i < 4; ++i) {
+                    result.bank.available |= (uint32_t)b[348+i] << (8*i);
+                    result.bank.amount |= (uint32_t)b[352+i] << (8*i);
+                }
+                memcpy(result.bank.input,b+356,8); v->has_accounts = b[364];
+            }
             if (result.allowance_cap != 50 || result.weapon > 1 || result.armor > 1 ||
                 result.armor_points != (result.armor ? 25 : 0) || result.checkpoint_weapon > 1 || result.checkpoint_armor > 1 ||
                 result.checkpoint_armor_points != (result.checkpoint_armor ? 25 : 0) ||
                 v->confirm_selected > 1 || v->has_cash > 1 || v->cash_after > v->text_count ||
                 (!v->has_cash && (v->cash_after || v->cash_value)) || (v->has_cash && !v->cash_after) ||
-                v->column || (v->row && v->row != 14 && v->row != 22) ||
-                (v->native_action && (v->native_action < 9 || v->native_action > 12) &&
+                v->column || (v->row && v->row != 14 && v->row != 22 && !(version == 7 && v->row == 15)) ||
+                (v->native_action && (v->native_action < (version == 7 ? 6 : 9) || v->native_action > 12) &&
                     !(v->status == BTP_SCRIPT_ERROR && v->error == BTP_SCRIPT_OPCODE && v->last_opcode == 0xf5)) ||
-                (result.npc.enabled && result.npc.allowance_pending != (result.credits < result.allowance_cap))) return 0;
+                (result.npc.enabled && result.npc.allowance_pending != btp_economy_below_cap(&result))) return 0;
             for (unsigned i = 0; i < BTP_TEXT_SPANS; ++i)
-                if (v->text_column[i] || (v->text_row[i] && v->text_row[i] != 14 && v->text_row[i] != 22) ||
+                if (v->text_column[i] || (v->text_row[i] && v->text_row[i] != 14 && v->text_row[i] != 22 &&
+                    !(version == 7 && v->text_row[i] == 15)) ||
                     (i >= v->text_count && v->text_row[i])) return 0;
             for (unsigned i = 0; i < BTP_MENUS; ++i) {
                 unsigned count = btp_menu_count(i);
@@ -319,7 +362,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
             if (result.checkpoint_valid) result.checkpoint_credits = result.credits;
         }
         if (result.mode > BTP_SCRIPT_FAULT || result.entry_selected > 1 || result.entry_slot > 7 ||
-            v->status > (version == 6 ? BTP_SCRIPT_CONFIRM : version >= 4 ? BTP_SCRIPT_NATIVE : BTP_SCRIPT_ERROR) || v->selected > (version == 6 ? 6 : 4) ||
+            v->status > (version >= 6 ? BTP_SCRIPT_CONFIRM : version >= 4 ? BTP_SCRIPT_NATIVE : BTP_SCRIPT_ERROR) || v->selected > (version >= 6 ? 6 : 4) ||
             v->error > (version >= 4 ? BTP_SCRIPT_NATIVE_CONTEXT : BTP_SCRIPT_TEXT_LIMIT) ||
             v->text_count > BTP_TEXT_SPANS || result.checkpoint_valid > 1) return 0;
         for (unsigned i = v->text_count; i < BTP_TEXT_SPANS; ++i)
@@ -330,10 +373,12 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         } else {
             if (result.checkpoint_talk_result || result.checkpoint_credits || result.checkpoint_weapon ||
                 result.checkpoint_armor || result.checkpoint_armor_points) return 0;
+            for (unsigned i = 0; i < 3; ++i) if (result.checkpoint_investments[i]) return 0;
             for (unsigned i = 0; i < BTP_STORY_BYTES; ++i) if (result.story_checkpoint[i]) return 0;
         }
         if (result.mode != BTP_EXPLORE && result.entry_slot != 1 &&
-            !(version == 6 && (result.entry_slot == 3 || result.entry_slot == 4))) return 0;
+            !(version >= 6 && (result.entry_slot == 3 || result.entry_slot == 4)) &&
+            !(version == 7 && result.entry_slot == 2)) return 0;
         if (result.mode == BTP_BUILDING && v->status != BTP_SCRIPT_MENU && v->status != BTP_SCRIPT_WAIT &&
             v->status != BTP_SCRIPT_NATIVE && v->status != BTP_SCRIPT_CONFIRM) return 0;
         if ((result.mode == BTP_SCRIPT_FAULT) != (v->status == BTP_SCRIPT_ERROR) ||
@@ -345,7 +390,9 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
             uint8_t text[BTP_BLD_MAX + 1];
             if (!btp_script_text(v, script, text, sizeof text)) return 0;
             if (v->status == BTP_SCRIPT_NATIVE && (v->pc < 2 || script->bytes[v->pc-2] != 0xf5 ||
-                script->bytes[v->pc-1] != 0x0c || v->native_action != 12 || v->text_count || v->pause_units)) return 0;
+                script->bytes[v->pc-1] != v->native_action || v->pause_units ||
+                (v->native_action == 12 ? v->text_count != 0 :
+                    version != 7 || (v->native_action != 7 && v->native_action != 8)))) return 0;
             if (v->status == BTP_SCRIPT_CONFIRM && (v->pc < 3 || script->bytes[v->pc-3] != 0xf6 ||
                 v->confirm_target != get16(script->bytes+v->pc-2) || v->confirm_target >= script->length)) return 0;
             unsigned count = btp_menu_count(v->menu_id);
@@ -357,7 +404,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
                 for (unsigned i = 0; i < count; ++i)
                     if (get16(script->bytes + v->menu_table + 2*i) >= script->length) return 0;
         }
-        if (!btp_talk_valid(&result,m) || !btp_npc_valid(&result,m)) return 0;
+        if (!btp_talk_valid(&result,m) || !btp_npc_valid(&result,m) || !btp_bank_valid(&result)) return 0;
     }
     *s = result;
     return 1;
@@ -365,12 +412,13 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
 
 const char *btp_action_name(BtpAction a)
 {
-    static const char *names[] = {"idle", "up", "down", "left", "right", "accept", "cancel"};
-    return a >= BTP_IDLE && a <= BTP_CANCEL ? names[a] : "invalid";
+    static const char *names[] = {"idle", "up", "down", "left", "right", "accept", "cancel",
+        "0","1","2","3","4","5","6","7","8","9","clear"};
+    return a >= BTP_IDLE && a <= BTP_CLEAR_INPUT ? names[a] : "invalid";
 }
 int btp_action_parse(const char *name, BtpAction *a)
 {
-    for (int i = BTP_IDLE; i <= BTP_CANCEL; ++i)
+    for (int i = BTP_IDLE; i <= BTP_CLEAR_INPUT; ++i)
         if (!strcmp(name, btp_action_name((BtpAction)i))) { *a = (BtpAction)i; return 1; }
     return 0;
 }

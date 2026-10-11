@@ -7,12 +7,16 @@
 
 static BtpAction key_action(SDL_Keycode key)
 {
+    if (key >= SDLK_0 && key <= SDLK_9) return (BtpAction)(BTP_DIGIT_0+key-SDLK_0);
+    if (key >= SDLK_KP_1 && key <= SDLK_KP_9) return (BtpAction)(BTP_DIGIT_1+key-SDLK_KP_1);
     switch (key) {
         case SDLK_UP: return BTP_UP;
         case SDLK_DOWN: return BTP_DOWN;
         case SDLK_LEFT: return BTP_LEFT;
         case SDLK_RIGHT: return BTP_RIGHT;
-        case SDLK_RETURN: case SDLK_SPACE: return BTP_ACCEPT;
+        case SDLK_RETURN: case SDLK_KP_ENTER: case SDLK_SPACE: return BTP_ACCEPT;
+        case SDLK_KP_0: return BTP_DIGIT_0;
+        case SDLK_ESCAPE: return BTP_CLEAR_INPUT;
         case SDLK_BACKSPACE: return BTP_CANCEL;
         default: return BTP_IDLE;
     }
@@ -39,7 +43,7 @@ int main(int argc, char **argv)
         fprintf(stderr, "SDL: %s\n", SDL_GetError()); goto done;
     }
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
-    SDL_Window *window = SDL_CreateWindow("BtechPort M2e - MAP1, Citadel and shops", SDL_WINDOWPOS_CENTERED,
+    SDL_Window *window = SDL_CreateWindow("BtechPort M2f - MAP1, ComStar and shops", SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED, 960, 600, SDL_WINDOW_RESIZABLE);
     SDL_Renderer *renderer = window ? SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE) : NULL;
     SDL_Texture *texture = renderer ? SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
@@ -102,7 +106,8 @@ int main(int argc, char **argv)
             }
             if (++smoke_sent > 8192) { fputs("Arrival smoke exceeded input bound\n",stderr); io_failed = 1; break; }
             if (a != BTP_IDLE) {
-                static const SDL_Keycode codes[] = {0,SDLK_UP,SDLK_DOWN,SDLK_LEFT,SDLK_RIGHT,SDLK_RETURN,SDLK_BACKSPACE};
+                static const SDL_Keycode codes[] = {0,SDLK_UP,SDLK_DOWN,SDLK_LEFT,SDLK_RIGHT,SDLK_RETURN,SDLK_BACKSPACE,
+                    SDLK_0,SDLK_1,SDLK_2,SDLK_3,SDLK_4,SDLK_5,SDLK_6,SDLK_7,SDLK_8,SDLK_9,SDLK_ESCAPE};
                 SDL_Event injected = {.type=SDL_KEYDOWN}; injected.key.keysym.sym = codes[a];
                 if (SDL_PushEvent(&injected) != 1) { io_failed = 1; break; }
             }
@@ -112,13 +117,14 @@ int main(int argc, char **argv)
             if (event.type == SDL_QUIT) running = 0;
             if (event.type == SDL_KEYDOWN) {
                 SDL_Keycode key = event.key.keysym.sym;
-                if (key == SDLK_ESCAPE) running = 0;
+                if (key == SDLK_ESCAPE && state.bank.phase != BTP_BANK_AMOUNT) running = 0;
                 else if (key == SDLK_F3 && !event.key.repeat) o.debug = !o.debug;
                 else if (key == SDLK_r && !event.key.repeat) {
                     if (record) { fputs("Restart while recording is unsupported; start a new log.\n", stderr); }
                     else { btp_initial_state(&o,&state,r); read = write = 0; }
                 } else {
-                    BtpAction a = key_action(key);
+                    BtpAction a = state.bank.phase == BTP_BANK_AMOUNT && key == SDLK_SPACE ?
+                        BTP_IDLE : key_action(key);
                     if (a != BTP_IDLE) {
                         if (write - read == 256) { fputs("Input queue full\n", stderr); io_failed = 1; running = 0; }
                         else queue[write++ % 256] = a;
@@ -147,7 +153,7 @@ int main(int argc, char **argv)
         SDL_RenderPresent(renderer);
         if (o.debug) {
             char title[200];
-            snprintf(title, sizeof title, "BtechPort M2e | %s | half=(%u,%u) | PC=%04x op=%02x | tick=%u",
+            snprintf(title, sizeof title, "BtechPort M2f | %s | half=(%u,%u) | PC=%04x op=%02x | tick=%u",
                 btp_mode_name(state.mode), state.x_half, state.y_half, state.script.pc,
                 state.script.last_opcode, state.tick);
             SDL_SetWindowTitle(window, title);

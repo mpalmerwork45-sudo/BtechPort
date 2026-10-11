@@ -1,4 +1,5 @@
 #include "core/shop.h"
+#include "core/economy.h"
 
 static void unsupported(BtpState *s)
 {
@@ -31,7 +32,7 @@ void btp_shop_native(BtpState *s, const BtpResources *r)
             s->credits -= price; s->story_flags[11] = 1;
             if (armor) { s->armor = 1; s->armor_points = 25; }
             else s->weapon = 1;
-            if (s->npc.enabled) s->npc.allowance_pending = (uint8_t)(s->credits < s->allowance_cap);
+            if (s->npc.enabled) s->npc.allowance_pending = (uint8_t)btp_economy_below_cap(s);
         }
         break;
     }

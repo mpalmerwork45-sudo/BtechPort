@@ -17,3 +17,4 @@ python3 tools/verify_m2b.py --binary build/sanitize/btech-headless
 python3 tools/verify_m2c.py --binary build/sanitize/btech-headless
 python3 tools/verify_m2d.py --binary build/sanitize/btech-headless
 python3 tools/verify_m2e.py --binary build/sanitize/btech-headless
+python3 tools/verify_m2f.py --binary build/sanitize/btech-headless

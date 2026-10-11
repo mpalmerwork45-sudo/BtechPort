@@ -1,4 +1,5 @@
 #include "core/npc.h"
+#include "core/economy.h"
 
 /* Independently expressed from 193B0..193EA, including CMC/SBB carry. */
 uint8_t btp_rng_next(uint8_t r[3])
@@ -86,7 +87,10 @@ static int passable(const BtpState *s, const BtpMap *m, unsigned slot, int x, in
     if (at < 0 || at >= 576) return 0;
     int tx = (px & 112)/2-8 + at%24, ty = (py & 112)/2-8 + at/24;
     if (btp_map_tile(m,tx,ty) >= s->gate) return 0;
-    if (y == py && x >= px-1 && x <= px+1) return 0;
+    /* Original F9FE..FA88 compares human/NPC positions exactly. Its wider
+       FB00..FB59 footprints belong to other unit slots, absent on this MAP1
+       baseline. A cadet does not block the two adjacent half coordinates. */
+    if (y == py && x == px) return 0;
     for (unsigned i = 0; i < 8; ++i) if (i != slot && s->npc.actor[i].x &&
         (s->npc.actor[i].x & 127) == x && (s->npc.actor[i].y & 127) == y) return 0;
     return 1;
@@ -129,13 +133,8 @@ void btp_npc_frame(BtpState *s, const BtpMap *m)
         s->npc.fault = BTP_NPC_BAD_CONTEXT; return;
     }
     (void)btp_rng_next(s->npc.rng); /* Main-loop encounter check also draws on MAP1. */
-    /* D323 wraps before NPCs. Zero investments/local map/50-cap context only:
-       compare pre-update cash; the original adds 15 without clamping to cap. */
-    if (s->npc.loop_timer-- == 0 && s->credits < s->allowance_cap) {
-        s->credits += 15;
-        for (unsigned i = 0; i < 3; ++i) (void)btp_rng_next(s->npc.rng);
-    }
-    s->npc.allowance_pending = (uint8_t)(s->credits < s->allowance_cap);
+    if (s->npc.loop_timer-- == 0) btp_economy_wrap(s);
+    s->npc.allowance_pending = (uint8_t)btp_economy_below_cap(s);
     if (++s->npc.phase < 3) return;
     s->npc.phase = 0;
     for (unsigned i = 0; i < 8; ++i) {

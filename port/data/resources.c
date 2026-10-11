@@ -116,14 +116,14 @@ int btp_resources_load(const char *dir, BtpResources *r, BtpError *e)
 {
     memset(&r->dialogue, 0, sizeof r->dialogue);
     char path[4096]; uint8_t *data; size_t n;
-    const char *names[] = {"MAP1.MTP", "BTTLTECH.ICN", "CITADEL.BLD", "ARMOR.BLD", "WEAPON.BLD"};
-    for (unsigned i = 0; i < 5; ++i) {
+    const char *names[] = {"MAP1.MTP", "BTTLTECH.ICN", "CITADEL.BLD", "ARMOR.BLD", "WEAPON.BLD", "COMSTAR.BLD"};
+    for (unsigned i = 0; i < 6; ++i) {
         int len = snprintf(path, sizeof path, "%s/%s", dir, names[i]);
         if (len < 0 || (size_t)len >= sizeof path) return fail(e, "Resource directory path too long");
         if (!btp_read_file(path, &data, &n, e)) return 0;
         int ok = i == 0 ? btp_map_decode(data, n, &r->map, e) :
             i == 1 ? btp_graphic_decode(data, n, &r->tiles, e) :
-            btp_bld_decode(data, n, i == 2 ? &r->citadel : i == 3 ? &r->armor : &r->weapon, e);
+            btp_bld_decode(data, n, i == 2 ? &r->citadel : i == 3 ? &r->armor : i == 4 ? &r->weapon : &r->comstar, e);
         free(data);
         if (!ok) return 0;
     }
@@ -135,6 +135,8 @@ int btp_resources_load(const char *dir, BtpResources *r, BtpError *e)
         r->map.entrance_x[4] != 0x0c32 || r->map.entrance_y[4] != 0xc07c ||
         r->map.room_map[3] != 3 || r->map.room_map[4] != 4)
         return fail(e, "M2e requires the verified MAP1 shop entrances and room mapping");
+    if (r->map.entrance_x[2] != 0x0c66 || r->map.entrance_y[2] != 0xc014 || r->map.room_map[2] != 2)
+        return fail(e,"M2f requires the verified MAP1 ComStar entrance and room mapping");
     for (unsigned i = 0; i < 4096; ++i)
         if (r->map.tiles[i] >= 250) return fail(e, "MAP1 references a tile outside the 250-tile sheet");
     return 1;
@@ -142,7 +144,7 @@ int btp_resources_load(const char *dir, BtpResources *r, BtpError *e)
 
 int btp_dialogue_decode(const uint8_t *b, size_t n, BtpDialogue *d, BtpError *e)
 {
-    /* BTT1: magic, blob size/count, two SHA-256 provenance tags, 17 ranges.
+    /* BTT2: magic, blob size/count, two SHA-256 provenance tags, 43 ranges.
        Conversion validates the audited EXE. Tags identify that source, not a
        cryptographic integrity check of the generated cache. */
     static const uint8_t tags[64] = {
@@ -151,11 +153,12 @@ int btp_dialogue_decode(const uint8_t *b, size_t n, BtpDialogue *d, BtpError *e)
         0x10,0x0f,0x0d,0xf2,0x44,0xe4,0xb0,0xc8,0x69,0x3d,0x1b,0x50,0x13,0xfb,0x07,0x3f,
         0x48,0x6b,0x35,0xd6,0xf5,0xc5,0x38,0xec,0xd5,0x3d,0x03,0xf8,0x5e,0xd5,0x4b,0xfa
     };
-    if (!b || !d || n < 140 || memcmp(b,"BTT1",4) || le16(b+6) != BTP_TALK_STRINGS ||
+    const unsigned header = 72+4*BTP_TALK_STRINGS;
+    if (!b || !d || n < header || memcmp(b,"BTT2",4) || le16(b+6) != BTP_TALK_STRINGS ||
         memcmp(b+8,tags,sizeof tags) || !le16(b+4) || le16(b+4) > BTP_TALK_MAX ||
-        n != 140u+le16(b+4)) return fail(e,"Native dialogue: invalid cache/provenance header");
+        n != header+le16(b+4)) return fail(e,"Native dialogue: invalid cache/provenance header");
     BtpDialogue result = {0}; result.length = le16(b+4);
-    memcpy(result.bytes,b+140,result.length);
+    memcpy(result.bytes,b+header,result.length);
     unsigned next = 0;
     for (unsigned i = 0; i < BTP_TALK_STRINGS; ++i) {
         unsigned at = le16(b+72+4*i), length = le16(b+74+4*i);
@@ -163,7 +166,8 @@ int btp_dialogue_decode(const uint8_t *b, size_t n, BtpDialogue *d, BtpError *e)
             result.bytes[at+length]) return fail(e,"Native dialogue: invalid string range");
         for (unsigned j = 0; j < length; ++j) {
             unsigned c = result.bytes[at+j];
-            if (c != 13 && (c < 32 || c >= 127)) return fail(e,"Native dialogue: invalid character");
+            if (c != 13 && !(i >= 17 && (c == 6 || c == 15)) && (c < 32 || c >= 127))
+                return fail(e,"Native dialogue: invalid character");
         }
         result.offset[i] = (uint16_t)at; result.size[i] = (uint16_t)length;
         next = at+length+1;

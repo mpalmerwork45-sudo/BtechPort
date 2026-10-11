@@ -17,6 +17,9 @@ else:
 EXE_SHA = "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a"
 IMAGE_SHA = "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa"
 DS = 0x36DB0
+BANK_OFFSETS = (0x49d3,0x49d9,0x49f6,0x4a09,0x4a1c,0x4a2b,0x4a6a,0x4a86,
+    0x4a8d,0x4abc,0x4ac0,0x4acb,0x4af5,0x4b3b,0x4b52,0x4b67,0x4b77,
+    0x4bb8,0x4bd8,0x4bdf,0x4c07,0x4c0b,0x1791)
 
 
 def extract(source):
@@ -27,19 +30,23 @@ def extract(source):
     for entry in range(0x4e32,0x4e5e,4):
         offset, segment = struct.unpack_from("<HH",image,DS+entry)
         addresses.append(segment*16+offset) # Unrelocated image uses relative segments.
+    addresses.extend(DS+p for p in BANK_OFFSETS)
+    for entry in range(0x4e7e,0x4e8a,4):
+        offset, segment = struct.unpack_from("<HH",image,DS+entry)
+        addresses.append(segment*16+offset)
     blob = bytearray(); ranges = []; origins = []
     for address in addresses:
         end = image.index(0,address)
         text = image[address:end]
-        if len(text) > 512 or any(c != 13 and not 32 <= c < 127 for c in text):
+        if len(text) > 512 or any(c not in (6,13,15) and not 32 <= c < 127 for c in text):
             raise ValueError("Invalid original dialogue string")
         ranges.append((len(blob),len(text))); blob += text+b"\0"
         origins.append({"image_offset":address,"length":len(text),
                         "sha256":hashlib.sha256(text).hexdigest()})
-    header = b"BTT1"+struct.pack("<HH",len(blob),len(ranges))
+    header = b"BTT2"+struct.pack("<HH",len(blob),len(ranges))
     header += bytes.fromhex(EXE_SHA)+bytes.fromhex(IMAGE_SHA)
     header += b"".join(struct.pack("<HH",*r) for r in ranges)
-    return header+blob, {**metadata,"format":"BTT1","strings":origins}
+    return header+blob, {**metadata,"format":"BTT2","strings":origins}
 
 
 if __name__ == "__main__":

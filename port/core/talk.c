@@ -1,4 +1,5 @@
 #include "core/talk.h"
+#include "core/bank.h"
 #include <string.h>
 
 static void native_fault(BtpState *s, BtpScriptError error)
@@ -29,6 +30,25 @@ void btp_start_conversation_checkpoint(BtpState *s)
     s->npc = (BtpNpcState){0};
     s->talk_result = 91; s->conversation_checkpoint = 1;
 }
+void btp_start_shop_conversation_checkpoint(BtpState *s, const BtpResources *r, unsigned slot)
+{
+    btp_start(s);
+    if (slot != 3 && slot != 4) return;
+    /* Explicit two-occupant original-handler snapshots. Normal exploration
+       never injects these pairs or disables travel. See the M2f fixtures. */
+    s->npc = (BtpNpcState){0}; s->conversation_checkpoint = 1;
+    s->credits = 50; s->talk_result = 91;
+    s->mode = BTP_BUILDING; s->entry_slot = (uint8_t)slot;
+    s->x_half = r->map.entrance_x[slot]&127;
+    s->y_half = (uint16_t)((r->map.entrance_y[slot]&127)+1);
+    s->story_flags[10] = 1; s->story_flags[13] = (uint8_t)slot;
+    s->npc_pairs[1][0] = (uint8_t)((slot<<4)|((slot+1)%8)); s->npc_pairs[1][1] = 5;
+    s->npc_pairs[4][0] = (uint8_t)((slot<<4)|((slot+2)%8)); s->npc_pairs[4][1] = 7;
+    btp_script_start(&s->script,btp_building_bld(r,slot),s->story_flags);
+    if (slot == 3) s->script.choices[12] = 3; /* Earlier Armor visit in this trace. */
+    s->script.selected = (uint8_t)(slot == 3 ? 1 : 2);
+    s->script.choices[s->script.menu_id] = s->script.selected;
+}
 void btp_talk_begin(BtpState *s, const BtpResources *r)
 {
     unsigned room = 0;
@@ -39,7 +59,9 @@ void btp_talk_begin(BtpState *s, const BtpResources *r)
         .selected=selected,.room=(uint8_t)room,.count=(uint8_t)count,.mask=(uint8_t)mask};
     if (count && selected > count) s->talk.selected = 0;
     if (!r->dialogue.length) { native_fault(s,BTP_SCRIPT_NATIVE_DATA); return; }
-    if (s->story_flags[4] || room != 1) { native_fault(s,BTP_SCRIPT_NATIVE_CONTEXT); return; }
+    if (s->story_flags[4] || room < 1 || room > 4 || room != s->entry_slot) {
+        native_fault(s,BTP_SCRIPT_NATIVE_CONTEXT); return;
+    }
     uint8_t body[BTP_BLD_MAX+1]; size_t length;
     if (!btp_game_text(s,r,body,sizeof body,&length)) native_fault(s,BTP_SCRIPT_NATIVE_DATA);
 }
@@ -64,7 +86,7 @@ void btp_talk_input(BtpState *s, const BtpResources *r, BtpAction action)
             }
             if (actor == 8) { native_fault(s,BTP_SCRIPT_NATIVE_CONTEXT); return; }
             s->talk.actor = (uint8_t)actor; s->talk.phase = BTP_TALK_REPLY;
-            /* Local Citadel cannot take the special room-7 recruitment branch. */
+            /* The supported MAP1 buildings cannot take room-7 recruitment. */
             s->talk_result = 0;
             uint8_t body[BTP_BLD_MAX+1]; size_t length;
             if (!btp_game_text(s,r,body,sizeof body,&length)) native_fault(s,BTP_SCRIPT_NATIVE_DATA);
@@ -76,9 +98,11 @@ int btp_talk_valid(const BtpState *s, const BtpMap *map)
 {
     const BtpTalkState *t = &s->talk;
     if (t->phase > BTP_TALK_REPLY || t->selected > 8 || s->conversation_checkpoint > 1) return 0;
-    if (!t->phase) return !t->count && !t->mask && !t->room && !t->actor && s->script.status != BTP_SCRIPT_NATIVE;
+    if (!t->phase) return !t->count && !t->mask && !t->room && !t->actor &&
+        !(s->script.status == BTP_SCRIPT_NATIVE && s->script.native_action == 12);
     if (s->mode != BTP_BUILDING || s->script.status != BTP_SCRIPT_NATIVE ||
-        s->script.last_opcode != 0xf5 || s->story_flags[4] || t->room != 1 ||
+        s->script.last_opcode != 0xf5 || s->script.native_action != 12 || s->story_flags[4] ||
+        t->room < 1 || t->room > 4 || t->room != s->entry_slot ||
         map->room_map[t->room] != s->story_flags[13] || !s->checkpoint_valid) return 0;
     unsigned mask = present(s,t->room);
     if (mask != t->mask || count_bits(mask) != t->count) return 0;
@@ -114,6 +138,7 @@ int btp_game_text(const BtpState *s, const BtpResources *r, uint8_t *out, size_t
     if (!s || !r || !out || !length || !capacity) return 0;
     *length = 0; out[0] = 0;
     if (!s->talk.phase) {
+        if (s->bank.phase || s->script.has_accounts) return btp_bank_text(s,r,out,capacity,length);
         int ok = btp_script_text(&s->script,btp_building_bld(r,s->entry_slot ? s->entry_slot : 1),out,capacity);
         if (ok) *length = strlen((const char *)out);
         return ok;

@@ -28,9 +28,43 @@ def shops(env, work):
     print("PASS: native X11 two shops, purchases, outdoor return and complete canonical replay equality.")
 
 
+def m2f(env, work, input_only=False):
+    scenarios = ("bank-editor",) if input_only else ("bank","bank-rates","armor-talk","weapon-talk","bank-editor")
+    for scenario in scenarios:
+        path = ROOT/"tests/fixtures"/("reference-"+scenario+".actions")
+        if scenario == "bank-editor":
+            # Synthetic editor inputs appended to the verified ordinary entry.
+            # Escape must clear the amount instead of closing the SDL window.
+            fixture = json.loads((ROOT/"tests/fixtures/reference-bank.json").read_text())
+            amount_tick = next(c["tick"] for c in fixture["checkpoints"] if c["label"] == "bank-invest-amount")
+            prefix = (ROOT/"tests/fixtures/reference-bank.actions").read_text().splitlines()[:amount_tick]
+            path = work/"native-bank-editor-input.actions"
+            path.write_text("\n".join(prefix+["0","1","2","cancel","clear","3","0","accept","accept"])+"\n")
+        record = work/("native-"+scenario+"-x11.actions")
+        frame = work/("native-"+scenario+"-x11.ppm")
+        initial = ["--shop-talk-checkpoint","armor" if scenario.startswith("armor") else "weapon"] if scenario.endswith("talk") else []
+        ticks = len(path.read_text().splitlines())+5
+        print(f"Running native X11 {scenario}, {ticks} ticks (about {ticks*0.032:.0f} seconds).",flush=True)
+        result = subprocess.run([str(ROOT/"build/btech-port"),"--smoke-replay","--replay",str(path),
+            "--record",str(record),"--frame",str(frame),*initial],env=env,timeout=ticks*0.032+35,
+            check=True,capture_output=True,text=True,cwd=ROOT)
+        replayed = subprocess.run([str(ROOT/"build/btech-headless"),"--replay",str(record),*initial],
+            check=True,timeout=20,capture_output=True,text=True,cwd=ROOT)
+        if record.read_text().splitlines() != path.read_text().splitlines()+["idle"]*5 or json.loads(result.stdout) != json.loads(replayed.stdout):
+            raise RuntimeError(f"Native {scenario} input/final state differs from complete headless replay")
+        if scenario == "bank-editor":
+            state = json.loads(result.stdout)
+            if state["credits"] != 5 or state["investments"] != [30,0,0]:
+                raise RuntimeError("Native editor failed leading-zero, erasure, Escape clear or Enter submission")
+        print(f"PASS: native X11 {scenario}, SDL input/presentation and complete canonical state equality.",flush=True)
+    subprocess.run(["python3",str(ROOT/"tools/verify_m2f.py")],check=True,timeout=30,cwd=ROOT)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--shops-only", action="store_true")
+    parser.add_argument("--m2f-only", action="store_true")
+    parser.add_argument("--bank-input-only", action="store_true")
     args = parser.parse_args()
     work = ROOT / "work"
     work.mkdir(exist_ok=True)
@@ -50,6 +84,12 @@ def main():
             env.pop("SDL_VIDEODRIVER", None)
             if args.shops_only:
                 shops(env, work)
+                return
+            if args.m2f_only:
+                m2f(env,work)
+                return
+            if args.bank_input_only:
+                m2f(env,work,input_only=True)
                 return
             result = subprocess.run([str(ROOT / "build/btech-port"), "--smoke",
                 "--data", str(ROOT / "Original DOS"), "--record", str(work / "native-x11.actions"),
@@ -97,6 +137,7 @@ def main():
                 str(work / "native-arrival-x11.actions")], check=True, timeout=15)
             print("PASS: native X11 normal exploration, NPC arrival/reply, return/exit and full canonical replay equality.")
             shops(env, work)
+            m2f(env, work)
         finally:
             os.close(read_fd)
             xvfb.terminate()
