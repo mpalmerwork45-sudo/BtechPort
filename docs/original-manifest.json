@@ -1,0 +1,761 @@
+{
+  "files": [
+    {
+      "path": "Original DOS/$VERIFY.EXE",
+      "size": 16281,
+      "sha256": "b410e7135dc48523452dfd14f2288a1374f9d26f6774337a554190811e1a856d",
+      "header_hex": "4d5a99012000cd0040009b00ffffd403",
+      "format": "DOS MZ executable",
+      "mz": {
+        "declared_size": 16281,
+        "header_bytes": 1024,
+        "relocations": 205,
+        "initial_cs": 35,
+        "initial_ip": 16,
+        "initial_ss": 980,
+        "initial_sp": 2048
+      }
+    },
+    {
+      "path": "Original DOS/ANIMATE.ICN",
+      "size": 3613,
+      "sha256": "499269ac20d6e091cfb886280af17c2edd0d0343e80ea293f5ed767c22f78a0b",
+      "header_hex": "1b0e01008000000409909589fe002258",
+      "format": "packed nibble graphics / signed RLE",
+      "declared_post_size_bytes": 3611,
+      "compression": 1,
+      "size_matches": true
+    },
+    {
+      "path": "Original DOS/ARENA.BLD",
+      "size": 3957,
+      "sha256": "157f2981bff60b1fc6a8b76a09fe74c85b01cd1bdfdde70ad1acd8c87ba266fa",
+      "header_hex": "730feec6ebeac0f5a59dbbec95635c61",
+      "format": "BLD script / cipher",
+      "interpreter_offset": 160
+    },
+    {
+      "path": "Original DOS/ARMOR.BLD",
+      "size": 3388,
+      "sha256": "a57c31a718aa7ac16ea83c02e7ae6e7abaf3c4c1ba7de4697bc5c11abb75423f",
+      "header_hex": "3a0deec6ebeac0f5a54cbaec945863a0",
+      "format": "BLD script / cipher",
+      "interpreter_offset": 160
+    },
+    {
+      "path": "Original DOS/BARRACK2.BLD",
+      "size": 362,
+      "sha256": "24929e3e4a7e47e29be5b1c13449f21282d32c12070256b26bfe4c6fb4284df7",
+      "header_hex": "6801eec6ebeac0ec875d73a071745f5e",
+      "format": "BLD script / cipher",
+      "interpreter_offset": 160
+    },
+    {
+      "path": "Original DOS/BARRACKS.BLD",
+      "size": 2990,
+      "sha256": "878c7b829710adaa9cb91fbf9795e8486478418eaa63cd5f8d277e2a25579eb8",
+      "header_hex": "ac0beec6ebeac0ec875d73a05f7263a0",
+      "format": "BLD script / cipher",
+      "interpreter_offset": 160
+    },
+    {
+      "path": "Original DOS/BTBORDER.CMP",
+      "size": 287,
+      "sha256": "a4095d7ef9fd31deb470a5932057324ef447476ce5a31ae1aa27f74eb65eeea7",
+      "header_hex": "1d0101f9ff02f7fffe770287fffe7701",
+      "format": "packed nibble graphics / signed RLE",
+      "declared_post_size_bytes": 285,
+      "compression": 1,
+      "size_matches": true
+    },
+    {
+      "path": "Original DOS/BTECH.EXE",
+      "size": 152429,
+      "sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+      "header_hex": "4d5a6d012a0100002000fc18ffff0b3e",
+      "format": "DOS MZ executable",
+      "mz": {
+        "declared_size": 152429,
+        "header_bytes": 512,
+        "relocations": 0,
+        "initial_cs": 9063,
+        "initial_ip": 16,
+        "initial_ss": 15883,
+        "initial_sp": 128
+      },
+      "version_string": "Version 1.03"
+    },
+    {
+      "path": "Original DOS/BTSTATS.CMP",
+      "size": 12637,
+      "sha256": "ab40500848638f687b423a2dc115bed631f178faa966073efb50fb08fe4a1ddd",
+      "header_hex": "5b310200182e0000c10009f9000199f9",
+      "format": "packed nibble graphics / signed RLE",
+      "declared_post_size_bytes": 12635,
+      "compression": 2,
+      "size_matches": true
+    },
+    {
+      "path": "Original DOS/BTTITLE.CMP",
+      "size": 27488,
+      "sha256": "6907a167d963509b3fc6067224c12d420f042e2ed64a06b426cb1572a810764d",
+      "header_hex": "5e6b02021101fc1102b011fe01041bc1",
+      "format": "packed nibble graphics / signed RLE",
+      "declared_post_size_bytes": 27486,
+      "compression": 2,
+      "size_matches": true
+    },
+    {
+      "path": "Original DOS/BTTLTECH.ICN",
+      "size": 28861,
+      "sha256": "857ad418de7c834c6bd0a301b6fc51c9424625d1ee332c0b0888bef59e417c0d",
+      "header_hex": "bb700106222662222046fd221c046662",
+      "format": "packed nibble graphics / signed RLE",
+      "declared_post_size_bytes": 28859,
+      "compression": 1,
+      "size_matches": true
+    },
+    {
+      "path": "Original DOS/CITADEL.BLD",
+      "size": 4330,
+      "sha256": "dc4e215ba2c2d6be535c837f96e4158189d9e4c033df6648c9c21c264bfb817b",
+      "header_hex": "e810eec6ebeac0ec875d73a05f7263a0",
+      "format": "BLD script / cipher",
+      "interpreter_offset": 160
+    },
+    {
+      "path": "Original DOS/CLOTHES.BLD",
+      "size": 915,
+      "sha256": "cd2b597fcf4a3397c069a3789a5b570b2ccc3e17be1b7f92b05b092d0be94bb6",
+      "header_hex": "9103eec6ebeac0f5a5a9c2f5cedabfec",
+      "format": "BLD script / cipher",
+      "interpreter_offset": 160
+    },
+    {
+      "path": "Original DOS/COMSTAR.BLD",
+      "size": 2267,
+      "sha256": "d329d8811dae70997ed928d9952aa602a3a9bb841222ee1c544509c0ac3d1223",
+      "header_hex": "d908eec6ebeac0ec875d73a05f7263a0",
+      "format": "BLD script / cipher",
+      "interpreter_offset": 160
+    },
+    {
+      "path": "Original DOS/DEMOFILE",
+      "size": 1023,
+      "sha256": "b84b7244daee52f6d118f946e474df047141ee4b4d7e0d1102f8991c19948ca3",
+      "header_hex": "4848b3b3b3b3b3b3b3b3b3b3b3b3b3b3",
+      "format": "UNKNOWN"
+    },
+    {
+      "path": "Original DOS/DESTRUCT.ICN",
+      "size": 29706,
+      "sha256": "0d7283b1b3a5791c088a067919d99d78d5236c84f2c5247a08ec00b8491c328e",
+      "header_hex": "08740106222662222046fd221c046662",
+      "format": "packed nibble graphics / signed RLE",
+      "declared_post_size_bytes": 29704,
+      "compression": 1,
+      "size_matches": true
+    },
+    {
+      "path": "Original DOS/ENDMECH.BLD",
+      "size": 1022,
+      "sha256": "f7e93776db8194c6ebe13a6198d6562480741c310d98fa845aeb4eef3866f316",
+      "header_hex": "fc03eec6ebeac0f4adbfec875d73a058",
+      "format": "BLD script / cipher",
+      "interpreter_offset": 160
+    },
+    {
+      "path": "Original DOS/ENDMECH.CMP",
+      "size": 16215,
+      "sha256": "f0b206ddb059d3ceb8b085da68f182413a02a801d9d73692e01ab67dc58303f4",
+      "header_hex": "553f02bb0005118f778877fe880111ee",
+      "format": "packed nibble graphics / signed RLE",
+      "declared_post_size_bytes": 16213,
+      "compression": 2,
+      "size_matches": true
+    },
+    {
+      "path": "Original DOS/ENTRANCE.BLD",
+      "size": 794,
+      "sha256": "59dc8efd8e22e97da9645f3997ce894fddecd1da08de68659d67312f9dff62cf",
+      "header_hex": "1803eec6ebeac0f5b240c0ec94585f74",
+      "format": "BLD script / cipher",
+      "interpreter_offset": 160
+    },
+    {
+      "path": "Original DOS/FINDIT.BLD",
+      "size": 722,
+      "sha256": "dff5a5fe6bb133b3eacc3f3e644a13a7c4965ab5eac942c28384fe44745a6480",
+      "header_hex": "d002eec6ebeac0ec875d73a0585f7663",
+      "format": "BLD script / cipher",
+      "interpreter_offset": 160
+    },
+    {
+      "path": "Original DOS/FROB.BLD",
+      "size": 3548,
+      "sha256": "ce2b333d22d270596cbe3321f4d8fdb8157d21be456535ecd8ef501406f5cd0c",
+      "header_hex": "da0deec6ebeac0ec95635c615d5b63a0",
+      "format": "BLD script / cipher",
+      "interpreter_offset": 160
+    },
+    {
+      "path": "Original DOS/GAME1",
+      "size": 3913,
+      "sha256": "fc36ce4bb1d32094b8808e067183df922959a621f43550623e74bdb5beeae209",
+      "header_hex": "0c00080907040404020201010d02031e",
+      "format": "original game save; semantics not round-trip verified"
+    },
+    {
+      "path": "Original DOS/GAME1.bak",
+      "size": 3913,
+      "sha256": "d09a3d166c9249f065de8990289e23346dd95b06fb5dbb0f34db8082fbb96856",
+      "header_hex": "0c000809070001010001000000080000",
+      "format": "original game save; semantics not round-trip verified"
+    },
+    {
+      "path": "Original DOS/GAME2",
+      "size": 3913,
+      "sha256": "92cb809d163a3fb77d81a5f195120aaba2c15ff67da9cf10b573d647a23fbd19",
+      "header_hex": "0c00080907040404020201010d08031e",
+      "format": "original game save; semantics not round-trip verified"
+    },
+    {
+      "path": "Original DOS/GAME3",
+      "size": 3913,
+      "sha256": "c4486966493384015c90abe7b1dcb74c68975cc7680efb2d7b4a573da59bce13",
+      "header_hex": "0c000809070404040203010109000432",
+      "format": "original game save; semantics not round-trip verified"
+    },
+    {
+      "path": "Original DOS/GAME4",
+      "size": 3913,
+      "sha256": "b4d8cb6b7b8dd6fc909cd0bf7e8d992c77580f9ee336b117caea8316d2c2bba7",
+      "header_hex": "0c000809070404040203010109000432",
+      "format": "original game save; semantics not round-trip verified"
+    },
+    {
+      "path": "Original DOS/GAME4.bak",
+      "size": 3913,
+      "sha256": "532d88798316fda6ef0c4eaaebdf1c1130f398e02c17d0dd1ba0a2caf7377e91",
+      "header_hex": "0c000809070404040203010109000432",
+      "format": "original game save; semantics not round-trip verified"
+    },
+    {
+      "path": "Original DOS/GAME5",
+      "size": 3913,
+      "sha256": "43be65602bfa9f3716a898b755ac06ab83a8de5cf7e5e626427c6659e1c2c6be",
+      "header_hex": "0c000809070404040203010109000432",
+      "format": "original game save; semantics not round-trip verified"
+    },
+    {
+      "path": "Original DOS/GAME5.bak",
+      "size": 3913,
+      "sha256": "11ac45256903e1ad12e8dafce4db7ea72604c7b99c6cf5a2fa3c67b55b5d511b",
+      "header_hex": "0c000809070404040203010109000432",
+      "format": "original game save; semantics not round-trip verified"
+    },
+    {
+      "path": "Original DOS/GAME6",
+      "size": 3913,
+      "sha256": "6536cf9b50e8449302b3d6646c6b736a6b43c515d7d9ebecd911cea2a982463a",
+      "header_hex": "0c000809070000000001000000080000",
+      "format": "original game save; semantics not round-trip verified"
+    },
+    {
+      "path": "Original DOS/GARAGE.BLD",
+      "size": 1686,
+      "sha256": "3aae8a8931f16e63414ab595a069f44a4b436fac1c605f13eb83269d6ce23d37",
+      "header_hex": "9406eec6ebeac0f5b562c3f5c8d0c0e8",
+      "format": "BLD script / cipher",
+      "interpreter_offset": 160
+    },
+    {
+      "path": "Original DOS/HOSPITAL.BLD",
+      "size": 4581,
+      "sha256": "1ef9e77d0c762a38e7d4e37bb2a666e7ba90f9bca77f37f64a309c3619c5b26a",
+      "header_hex": "e311eec6ebeac0f5c8e2c0ec875d73a0",
+      "format": "BLD script / cipher",
+      "interpreter_offset": 160
+    },
+    {
+      "path": "Original DOS/HUT.BLD",
+      "size": 8501,
+      "sha256": "1e44d727c00214f685498433b4c062d74969a43fba9aa30b79b40fe0b53b5a68",
+      "header_hex": "3321eec6ebeac0f5b309a0ec94585771",
+      "format": "BLD script / cipher",
+      "interpreter_offset": 160
+    },
+    {
+      "path": "Original DOS/INFOCOM.CMP",
+      "size": 6983,
+      "sha256": "9158ff357de4b3aa0f1004c8b75fed9393f94b0a367c75dc6b3325a63ea4d30b",
+      "header_hex": "451b0200170755dd5b00a20055025bbb",
+      "format": "packed nibble graphics / signed RLE",
+      "declared_post_size_bytes": 6981,
+      "compression": 2,
+      "size_matches": true
+    },
+    {
+      "path": "Original DOS/INSTRUCT.BLD",
+      "size": 565,
+      "sha256": "a6f11bd55102231f6931a0e74368d49ffff2d281749a02c63a798eb979d731d4",
+      "header_hex": "3302eec6ebeac0ec7f71a0675d73a063",
+      "format": "BLD script / cipher",
+      "interpreter_offset": 160
+    },
+    {
+      "path": "Original DOS/JAIL.BLD",
+      "size": 4297,
+      "sha256": "c73328fb9f9ca51f6e05a4bee53054afed518a1dda51810b3ee967034cbd93b0",
+      "header_hex": "c710eec6ebeac0f59a75c2ec875d73a0",
+      "format": "BLD script / cipher",
+      "interpreter_offset": 160
+    },
+    {
+      "path": "Original DOS/LOUNGE.BLD",
+      "size": 1827,
+      "sha256": "3efec6eb3a03b2844c8383462351ae2e4eedb4a9713b6f9c0d3c412097a76ecf",
+      "header_hex": "2107eec6ebeac0f5a5b4c6ec875d73a0",
+      "format": "BLD script / cipher",
+      "interpreter_offset": 160
+    },
+    {
+      "path": "Original DOS/MAP.ICN",
+      "size": 12135,
+      "sha256": "583c1ba616fc15c549e4420cb942111cd2e1f73497a1642c51992d82488c5e3b",
+      "header_hex": "652f01009e2c000190e700010fda0001",
+      "format": "packed nibble graphics / signed RLE",
+      "declared_post_size_bytes": 12133,
+      "compression": 1,
+      "size_matches": true
+    },
+    {
+      "path": "Original DOS/MAP1.MTP",
+      "size": 4637,
+      "sha256": "67af9479e4d54ca0c93d709b7682f80ddea04265f01aadca0c1f1db97f15542c",
+      "header_hex": "00000040405269636b2041746c617300",
+      "format": "MTP header + tiles",
+      "width": 64,
+      "height": 64,
+      "tile_data_offset": 541,
+      "size_matches": true
+    },
+    {
+      "path": "Original DOS/MAP10.MTP",
+      "size": 1565,
+      "sha256": "40a46df6a54051c1219beedf7e66a66f814449867ca8ad692f118f1a90e8bf80",
+      "header_hex": "00000020204e656420446947696c696f",
+      "format": "MTP header + tiles",
+      "width": 32,
+      "height": 32,
+      "tile_data_offset": 541,
+      "size_matches": true
+    },
+    {
+      "path": "Original DOS/MAP11.MTP",
+      "size": 4637,
+      "sha256": "52313ba5880d97a694e11712d93009b0d653ad23fe809569f7504c5dfdf90dd6",
+      "header_hex": "00000040405269636b2041746c617300",
+      "format": "MTP header + tiles",
+      "width": 64,
+      "height": 64,
+      "tile_data_offset": 541,
+      "size_matches": true
+    },
+    {
+      "path": "Original DOS/MAP12.MTP",
+      "size": 605,
+      "sha256": "c92e55765743919f5085271576f66fdceb8c23483c3c633d2d55bbf7258d3e46",
+      "header_hex": "00000008085269636b2041746c617300",
+      "format": "MTP header + tiles",
+      "width": 8,
+      "height": 8,
+      "tile_data_offset": 541,
+      "size_matches": true
+    },
+    {
+      "path": "Original DOS/MAP13.MTP",
+      "size": 605,
+      "sha256": "575290fe0d1f4324fa009ac42093aca25aeb1223430f792885cd158a91421099",
+      "header_hex": "00000008085269636b2041746c617300",
+      "format": "MTP header + tiles",
+      "width": 8,
+      "height": 8,
+      "tile_data_offset": 541,
+      "size_matches": true
+    },
+    {
+      "path": "Original DOS/MAP14.MTP",
+      "size": 4637,
+      "sha256": "7c9d76d1d49f1d812805a548e7d8c94c3cb481b08fb490e6a72908e4cd8384e3",
+      "header_hex": "00000040405269636b2041746c617300",
+      "format": "MTP header + tiles",
+      "width": 64,
+      "height": 64,
+      "tile_data_offset": 541,
+      "size_matches": true
+    },
+    {
+      "path": "Original DOS/MAP15.MTP",
+      "size": 768,
+      "sha256": "a03d1fa0cfe8f80d69da841473c1b714363e2f8ca8bdea6cc4149f475c093b78",
+      "header_hex": "f6f7f7f7f7f7f7f7f55c585858585c5c",
+      "format": "raw 32 x 24 star map (reference interpretation)"
+    },
+    {
+      "path": "Original DOS/MAP2.MTP",
+      "size": 4637,
+      "sha256": "a4ad5bd88b6b26c3fa65665973d358d669f97f54795c09049373ae7472a5f26d",
+      "header_hex": "00000040405269636b2041746c617300",
+      "format": "MTP header + tiles",
+      "width": 64,
+      "height": 64,
+      "tile_data_offset": 541,
+      "size_matches": true
+    },
+    {
+      "path": "Original DOS/MAP3.MTP",
+      "size": 1565,
+      "sha256": "300c1d3c3f2e526f6240b20a980d9cd9997f2353b91226fb8b992d4cff5aaa60",
+      "header_hex": "0000002020566963204174756172696f",
+      "format": "MTP header + tiles",
+      "width": 32,
+      "height": 32,
+      "tile_data_offset": 541,
+      "size_matches": true
+    },
+    {
+      "path": "Original DOS/MAP4.MTP",
+      "size": 1565,
+      "sha256": "66b814334f34805f5cde2adc523c58b2507b4318b2765f20ec257f12edbba11c",
+      "header_hex": "00000020204861727279205265646d61",
+      "format": "MTP header + tiles",
+      "width": 32,
+      "height": 32,
+      "tile_data_offset": 541,
+      "size_matches": true
+    },
+    {
+      "path": "Original DOS/MAP5.MTP",
+      "size": 1565,
+      "sha256": "833d47be7a7a1b2d60cb15fc46cd006748c7a612a121b26c321c985078abb071",
+      "header_hex": "0000002020546f6e79205368616e6b00",
+      "format": "MTP header + tiles",
+      "width": 32,
+      "height": 32,
+      "tile_data_offset": 541,
+      "size_matches": true
+    },
+    {
+      "path": "Original DOS/MAP6.MTP",
+      "size": 1565,
+      "sha256": "bfc5e5620ee2d28759927f782a02cbbf5b79bc4eef13f9a9c9e3c619c9eaab2e",
+      "header_hex": "000000202053616d204a656e73656e00",
+      "format": "MTP header + tiles",
+      "width": 32,
+      "height": 32,
+      "tile_data_offset": 541,
+      "size_matches": true
+    },
+    {
+      "path": "Original DOS/MAP7.MTP",
+      "size": 1565,
+      "sha256": "ceee2038a0ac23ba873713f83d6c7b62c5ee678ff3fdfccc8b25fac7ac348ce4",
+      "header_hex": "00000020204d696c65732042726f776e",
+      "format": "MTP header + tiles",
+      "width": 32,
+      "height": 32,
+      "tile_data_offset": 541,
+      "size_matches": true
+    },
+    {
+      "path": "Original DOS/MAP8.MTP",
+      "size": 1565,
+      "sha256": "3e2779d7802346adabb41a15f164e459ceeeac69d743cfe85a92c22c5b385962",
+      "header_hex": "0000002020546f6e792056656e696365",
+      "format": "MTP header + tiles",
+      "width": 32,
+      "height": 32,
+      "tile_data_offset": 541,
+      "size_matches": true
+    },
+    {
+      "path": "Original DOS/MAP9.MTP",
+      "size": 1565,
+      "sha256": "336051abfeff17db28953b241bf4764b48a5b986950cb9a291664f71cdf491eb",
+      "header_hex": "000000202054696d2042757368004564",
+      "format": "MTP header + tiles",
+      "width": 32,
+      "height": 32,
+      "tile_data_offset": 541,
+      "size_matches": true
+    },
+    {
+      "path": "Original DOS/MAYOR.BLD",
+      "size": 5896,
+      "sha256": "5cfa6d15cf042d5e1b74538732cfe7c8b2577e0f26985877289f101c17273f56",
+      "header_hex": "0617eec6ebeac0f59956c2f499bfec87",
+      "format": "BLD script / cipher",
+      "interpreter_offset": 160
+    },
+    {
+      "path": "Original DOS/MECHSHAP.CMP",
+      "size": 16918,
+      "sha256": "861545376ecff306fecf960cfb61f931dda61a640ec1c9f417a4a5108e5edc05",
+      "header_hex": "144202cb00fe01fd1c01019b00061401",
+      "format": "packed nibble graphics / signed RLE",
+      "declared_post_size_bytes": 16916,
+      "compression": 2,
+      "size_matches": true
+    },
+    {
+      "path": "Original DOS/O0.ANM",
+      "size": 5120,
+      "sha256": "aafe6dda17dac9f57628781a056b75a9ffbedcb647a7830e47864e435e128953",
+      "header_hex": "4142434445464748494a4b4c4d4e4f50",
+      "format": "ANM XOR-delta animation (reference interpretation)"
+    },
+    {
+      "path": "Original DOS/O1.ANM",
+      "size": 5888,
+      "sha256": "c53ba5d57f5d20ec19b71950eae7910ce1fb8ea91e115718f252375cc495d061",
+      "header_hex": "45464748494a4b4c4d4e4f5051520000",
+      "format": "ANM XOR-delta animation (reference interpretation)"
+    },
+    {
+      "path": "Original DOS/O10.ANM",
+      "size": 6144,
+      "sha256": "9c23ab69b372efdc64d0f94ac0d75fc4985a94f8fbb4f30ac631ee731e0895c3",
+      "header_hex": "41424142430000000000000000000000",
+      "format": "ANM XOR-delta animation (reference interpretation)"
+    },
+    {
+      "path": "Original DOS/O11.ANM",
+      "size": 3584,
+      "sha256": "bfdb2e262b5e4802206c83277c38860e2a02f1713fc12d67cce857067f1945cb",
+      "header_hex": "45454142434400000000000000000000",
+      "format": "ANM XOR-delta animation (reference interpretation)"
+    },
+    {
+      "path": "Original DOS/O12.ANM",
+      "size": 7296,
+      "sha256": "a69831177c7774da9649bde125b7dd8a2da5171a4e2ba2815e8be4b6bf2acc6e",
+      "header_hex": "41424344454643454244410000000000",
+      "format": "ANM XOR-delta animation (reference interpretation)"
+    },
+    {
+      "path": "Original DOS/O13.ANM",
+      "size": 5248,
+      "sha256": "6a7b2cd81ae716b264452e56ddc93a88757338854129d3fcada7958d9e932fdc",
+      "header_hex": "41424300000000000000000000000000",
+      "format": "ANM XOR-delta animation (reference interpretation)"
+    },
+    {
+      "path": "Original DOS/O14.ANM",
+      "size": 4992,
+      "sha256": "022eea23e2ecce7c1a8a784d2c3bb12f88befec2de64a306ce08046f5f2a6a6b",
+      "header_hex": "44434241454545454600000000000000",
+      "format": "ANM XOR-delta animation (reference interpretation)"
+    },
+    {
+      "path": "Original DOS/O15.ANM",
+      "size": 12800,
+      "sha256": "d85b711c6597ecbe9c63270330cb72f77d22204915e2fbd3a84f88c5f12b5d1e",
+      "header_hex": "41424344454600000000000000000000",
+      "format": "ANM XOR-delta animation (reference interpretation)"
+    },
+    {
+      "path": "Original DOS/O16.ANM",
+      "size": 8320,
+      "sha256": "1616ef4381527eda7ee0d6e7b6e1d1258ea12076f08885884a06cbd1427facb6",
+      "header_hex": "41424344454647000000000000000000",
+      "format": "ANM XOR-delta animation (reference interpretation)"
+    },
+    {
+      "path": "Original DOS/O17.ANM",
+      "size": 3200,
+      "sha256": "31a9a28bbf05e704bd6d37caa1d2112b83ab28de9bd7cd5f1d7cc2a222641a02",
+      "header_hex": "42000000000000000000000000000000",
+      "format": "ANM XOR-delta animation (reference interpretation)"
+    },
+    {
+      "path": "Original DOS/O18.ANM",
+      "size": 3456,
+      "sha256": "2b8c6293eafc7be7b7e3c84947d1ccbd5128a6188efef48945aec6241df34514",
+      "header_hex": "43000000000000000000000000000000",
+      "format": "ANM XOR-delta animation (reference interpretation)"
+    },
+    {
+      "path": "Original DOS/O19.ANM",
+      "size": 3840,
+      "sha256": "eb1b8aefbe4e9394eb3e5cb64a35d125a87c2b768b99c9ae5749fc5e089ddf03",
+      "header_hex": "44000000000000000000000000000000",
+      "format": "ANM XOR-delta animation (reference interpretation)"
+    },
+    {
+      "path": "Original DOS/O2.ANM",
+      "size": 6400,
+      "sha256": "db1b0959cdec9bd41bf212561f8a4af79d0ff02fb685e74a8339668a7fb31a86",
+      "header_hex": "41424344454748494a4d4e4f50515247",
+      "format": "ANM XOR-delta animation (reference interpretation)"
+    },
+    {
+      "path": "Original DOS/O20.ANM",
+      "size": 3200,
+      "sha256": "b43c4516af8a9570e751a4dc00a9343e099767c90a542b533e6b375dba07e9d7",
+      "header_hex": "41000000000000000000000000000000",
+      "format": "ANM XOR-delta animation (reference interpretation)"
+    },
+    {
+      "path": "Original DOS/O21.ANM",
+      "size": 3328,
+      "sha256": "3a2eb3655a77f2a040e471783a376713ac5d23f3651425ea33a9d017142cca5a",
+      "header_hex": "45000000000000000000000000000000",
+      "format": "ANM XOR-delta animation (reference interpretation)"
+    },
+    {
+      "path": "Original DOS/O3.ANM",
+      "size": 6912,
+      "sha256": "68fe2d57b9821bcb4e32eb9790a95117044df4314d92ad0995f8967a98218366",
+      "header_hex": "4142434445464748494a4b4c00000000",
+      "format": "ANM XOR-delta animation (reference interpretation)"
+    },
+    {
+      "path": "Original DOS/O4.ANM",
+      "size": 4480,
+      "sha256": "24b6b3a67b73a5381e80d45d8fd2038e0fe2ed5241f41374607af918ebd44173",
+      "header_hex": "4748494a4b4c4d4e4f50515248000000",
+      "format": "ANM XOR-delta animation (reference interpretation)"
+    },
+    {
+      "path": "Original DOS/O5.ANM",
+      "size": 6784,
+      "sha256": "39d9cfa6c920d686c1a37bea9597a9a70766f6182c359abf055c96ee07000bbf",
+      "header_hex": "41424344494a4b4c0000000000000000",
+      "format": "ANM XOR-delta animation (reference interpretation)"
+    },
+    {
+      "path": "Original DOS/O6.ANM",
+      "size": 3328,
+      "sha256": "269d6d645a0c5d358224e0f929613af0223535d62fecf76a0c624c5f547b0918",
+      "header_hex": "41414142434445464748494a4b4c4d4e",
+      "format": "ANM XOR-delta animation (reference interpretation)"
+    },
+    {
+      "path": "Original DOS/O7.ANM",
+      "size": 6912,
+      "sha256": "7a1b9168d646ff512817a521b0372e1fafc4f05f5c0c43d9e6e7ff66eb3daae0",
+      "header_hex": "41424344454300000000000000000000",
+      "format": "ANM XOR-delta animation (reference interpretation)"
+    },
+    {
+      "path": "Original DOS/O8.ANM",
+      "size": 2176,
+      "sha256": "4250e3d86fe547d49ba832a08d292acc51c5e257bfd03ea2ef825d88629c9d52",
+      "header_hex": "41424300000000000000000000000000",
+      "format": "ANM XOR-delta animation (reference interpretation)"
+    },
+    {
+      "path": "Original DOS/O9.ANM",
+      "size": 16128,
+      "sha256": "64a91ff1d4733d1dd22a8ea68887ffcf2478fb3d7c7b17a5cdb94b6568487242",
+      "header_hex": "4344464748494a4b4c4d4e4f00000000",
+      "format": "ANM XOR-delta animation (reference interpretation)"
+    },
+    {
+      "path": "Original DOS/PARTY.BLD",
+      "size": 6207,
+      "sha256": "bb11684bed0787b207fd29a0b76a616da3ee80b2270c0ba981de7665765fe9b4",
+      "header_hex": "3d18eec6ebeac0f3bef5be2ad5f5cc63",
+      "format": "BLD script / cipher",
+      "interpreter_offset": 160
+    },
+    {
+      "path": "Original DOS/REPAIR.BLD",
+      "size": 4983,
+      "sha256": "a22f4cab90119911693602fc290e39f4ab6d74cfd6fef765e76739d6ba8efb97",
+      "header_hex": "7513eec6ebeac0f5a5eed2ec875d73a0",
+      "format": "BLD script / cipher",
+      "interpreter_offset": 160
+    },
+    {
+      "path": "Original DOS/STARLEAG.ICN",
+      "size": 27227,
+      "sha256": "52030943ce60c927f01cf45f0dfe2b8af805b612ed54c4e499a496d35159349e",
+      "header_hex": "596a01f844014cef4401c4fe44024ccc",
+      "format": "packed nibble graphics / signed RLE",
+      "declared_post_size_bytes": 27225,
+      "compression": 1,
+      "size_matches": true
+    },
+    {
+      "path": "Original DOS/THEATER.BLD",
+      "size": 1132,
+      "sha256": "18aab58a4079eb684af299e12118d3e8256927c7407ea65933b9b1bea096c87b",
+      "header_hex": "6a04eec6ebeac0ec875d73a0585f7663",
+      "format": "BLD script / cipher",
+      "interpreter_offset": 160
+    },
+    {
+      "path": "Original DOS/TINYLAND.CMP",
+      "size": 2032,
+      "sha256": "59bc6d81218f625670898cb73079f0eb6bf19a2600d1f34f67c990c5c676acc0",
+      "header_hex": "ee0701012afe2201a2fc99012afe2201",
+      "format": "packed nibble graphics / signed RLE",
+      "declared_post_size_bytes": 2030,
+      "compression": 1,
+      "size_matches": true
+    },
+    {
+      "path": "Original DOS/TRAINING.BLD",
+      "size": 7282,
+      "sha256": "a3e8d56ba58319dcdc30be305f2e45dba97fc0d7e3f26f2e4e0a7ec8bb3c0aa9",
+      "header_hex": "701ceec6ebeac0ec8572636374575e65",
+      "format": "BLD script / cipher",
+      "interpreter_offset": 160
+    },
+    {
+      "path": "Original DOS/VIEWDISK.BLD",
+      "size": 3544,
+      "sha256": "01599372b84c3ebd4d0ca2a6b47e369bfde9b8bedb5dd8f1ffc5ee187093e119",
+      "header_hex": "d60deec6ebeac0ec7f71a0675d73a074",
+      "format": "BLD script / cipher",
+      "interpreter_offset": 160
+    },
+    {
+      "path": "Original DOS/WEAPON.BLD",
+      "size": 5850,
+      "sha256": "4e08d0fb29c18f0dc0e0f7d403eb0a94aa2f308c7ee9c65fbea3c0436ae4a71d",
+      "header_hex": "d816eec6ebeac0f5a5b7d6ec7fa05b5d",
+      "format": "BLD script / cipher",
+      "interpreter_offset": 160
+    },
+    {
+      "path": "Original DOS/WEAPON2.BLD",
+      "size": 1738,
+      "sha256": "4c93942b6fe6909b123701cde0a3b4eb90db3b90b87b0ba9769be3a0908638f0",
+      "header_hex": "c806eec6ebeac0f59cd7c0ec945863a0",
+      "format": "BLD script / cipher",
+      "interpreter_offset": 160
+    },
+    {
+      "path": "Original DOS/WINSCENE.BLD",
+      "size": 2995,
+      "sha256": "d4c54439a1db84867a04430061ae5a448f32c95ac6bcc9cc31eeac9654358a3e",
+      "header_hex": "b10beec6ebeac0dababfec875d73a073",
+      "format": "BLD script / cipher",
+      "interpreter_offset": 160
+    },
+    {
+      "path": "Original DOS/WWOODBT.SIF",
+      "size": 4352,
+      "sha256": "89f947792eb7c3a9f06e71eb71e19f2bbcb7cedf96a568a94f029b1b7e17fa51",
+      "header_hex": "8080804c808080808080804c80808080",
+      "format": "UNKNOWN"
+    }
+  ],
+  "count": 88,
+  "total_bytes": 641365,
+  "subdirectories": [],
+  "duplicate_content_groups": []
+}

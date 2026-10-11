@@ -1,0 +1,21 @@
+[
+  ["wait", "2"],
+  ["key", "3"], ["wait", "1"],
+  ["key", "3"], ["wait", "1"],
+  ["key", "space"], ["wait", "2"],
+  ["key", "space"], ["wait", "1"],
+  ["shot", "questions"],
+  ["key", "Right", "Return"], ["wait", "1"],
+  ["shot", "load-question"],
+  ["key", "Right", "Return"], ["wait", "1"],
+  ["shot", "start"], ["snapshot", "start"],
+  ["key", "Escape"], ["wait", "1"],
+  ["shot", "escape"], ["snapshot", "escape"],
+  ["key", "Right"], ["wait", "1"],
+  ["shot", "right"], ["snapshot", "right"],
+  ["key", "Left"], ["wait", "1"],
+  ["snapshot", "left"],
+  ["key", "Up"], ["wait", "1"],
+  ["shot", "up"], ["snapshot", "up"],
+  ["quit"]
+]

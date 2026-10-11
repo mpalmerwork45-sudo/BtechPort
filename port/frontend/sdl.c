@@ -1,0 +1,115 @@
+#define SDL_MAIN_HANDLED
+#include <SDL.h>
+#include "frontend/cli.h"
+#include <stdio.h>
+#include <stdlib.h>
+
+static BtpAction key_action(SDL_Keycode key)
+{
+    switch (key) {
+        case SDLK_UP: return BTP_UP;
+        case SDLK_DOWN: return BTP_DOWN;
+        case SDLK_LEFT: return BTP_LEFT;
+        case SDLK_RIGHT: return BTP_RIGHT;
+        default: return BTP_IDLE;
+    }
+}
+int main(int argc, char **argv)
+{
+    BtpOptions o;
+    int parsed = btp_options(argc, argv, &o);
+    if (parsed <= 0) return parsed == -1 ? 0 : 1;
+    BtpResources *r = malloc(sizeof *r);
+    uint32_t *frame = malloc(BTP_PIXELS * sizeof *frame);
+    BtpError error;
+    int result = 1;
+    if (!r || !frame) { free(r); free(frame); return 1; }
+    if (!btp_resources_load(o.data, r, &error)) { fprintf(stderr, "%s\n", error.text); goto done; }
+    if (o.headless) { result = btp_run_headless(&o, r); goto done; }
+    if (o.tiles_output) { fputs("--export-tiles requires --headless\n", stderr); goto done; }
+    BtpState state; btp_start(&state);
+    if (o.replay && !btp_replay(o.replay, &state, &r->map, o.trace)) goto done;
+    SDL_SetMainReady();
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_TIMER)) {
+        fprintf(stderr, "SDL: %s\n", SDL_GetError()); goto done;
+    }
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
+    SDL_Window *window = SDL_CreateWindow("BtechPort M1 - Training school", SDL_WINDOWPOS_CENTERED,
+        SDL_WINDOWPOS_CENTERED, 960, 600, SDL_WINDOW_RESIZABLE);
+    SDL_Renderer *renderer = window ? SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE) : NULL;
+    SDL_Texture *texture = renderer ? SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
+        SDL_TEXTUREACCESS_STREAMING, 320, 200) : NULL;
+    FILE *record = NULL;
+    if (!texture || SDL_RenderSetLogicalSize(renderer, 320, 200)) goto sdl_done;
+    if (o.record) { record = fopen(o.record, "w"); if (!record) goto sdl_done; }
+    BtpAction queue[256]; unsigned read = 0, write = 0;
+    uint64_t last = SDL_GetTicks64(), accumulator = 0;
+    unsigned smoke_ticks = 0;
+    int running = 1, io_failed = 0;
+    if (o.smoke) {
+        const SDL_Keycode smoke_keys[] = {SDLK_RIGHT, SDLK_UP, SDLK_DOWN};
+        for (unsigned i = 0; i < 3; ++i) {
+            SDL_Event event = {.type = SDL_KEYDOWN}; event.key.keysym.sym = smoke_keys[i];
+            if (SDL_PushEvent(&event) != 1) goto sdl_done;
+        }
+    }
+    while (running) {
+        SDL_Event event;
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_QUIT) running = 0;
+            if (event.type == SDL_KEYDOWN) {
+                SDL_Keycode key = event.key.keysym.sym;
+                if (key == SDLK_ESCAPE) running = 0;
+                else if (key == SDLK_F3 && !event.key.repeat) o.debug = !o.debug;
+                else if (key == SDLK_r && !event.key.repeat) {
+                    if (record) { fputs("Restart while recording is unsupported; start a new log.\n", stderr); }
+                    else { btp_start(&state); read = write = 0; }
+                } else {
+                    BtpAction a = key_action(key);
+                    if (a != BTP_IDLE) {
+                        if (write - read == 256) { fputs("Input queue full\n", stderr); io_failed = 1; running = 0; }
+                        else queue[write++ % 256] = a;
+                    }
+                }
+            }
+        }
+        uint64_t now = SDL_GetTicks64(); accumulator += now - last; last = now;
+        /* 32ms fixed simulation steps. Platform repeat/pacing remains approximate. */
+        while (accumulator >= 32 && running) {
+            accumulator -= 32;
+            BtpAction a = read != write ? queue[read++ % 256] : BTP_IDLE;
+            btp_tick(&state, &r->map, a);
+            if (record && fprintf(record, "%s\n", btp_action_name(a)) < 0) { io_failed = 1; running = 0; }
+            if (o.smoke && ++smoke_ticks >= 8) running = 0;
+        }
+        btp_render(r, &state, o.debug, frame);
+        if (SDL_UpdateTexture(texture, NULL, frame, 320 * (int)sizeof *frame) ||
+            SDL_RenderClear(renderer) || SDL_RenderCopy(renderer, texture, NULL, NULL)) {
+            io_failed = 1; running = 0;
+        }
+        SDL_RenderPresent(renderer);
+        if (o.debug) {
+            char title[160];
+            snprintf(title, sizeof title, "BtechPort M1 | MAP1 | half=(%u,%u) | gate=%u | blocked=%u | tick=%u",
+                state.x_half, state.y_half, state.gate, state.blocked, state.tick);
+            SDL_SetWindowTitle(window, title);
+        }
+        SDL_Delay(2);
+    }
+    btp_print_state(&state);
+    if (o.frame && !btp_write_ppm(o.frame, frame)) io_failed = 1;
+    if (o.smoke && (state.x_half != 70 || state.y_half != 25 || state.tick != 8)) {
+        fputs("Native smoke input/state mismatch\n", stderr); io_failed = 1;
+    }
+    result = io_failed ? 1 : 0;
+sdl_done:
+    if (record && fclose(record)) result = 1;
+    if (result) fprintf(stderr, "Native frontend failed: %s\n", SDL_GetError());
+    if (texture) SDL_DestroyTexture(texture);
+    if (renderer) SDL_DestroyRenderer(renderer);
+    if (window) SDL_DestroyWindow(window);
+    SDL_Quit();
+done:
+    free(frame); free(r);
+    return result;
+}

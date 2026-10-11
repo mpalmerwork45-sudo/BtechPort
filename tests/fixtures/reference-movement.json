@@ -1,0 +1,191 @@
+{
+  "evidence": "Original BTECH.EXE v1.03, DOSBox 0.74-3 normal core 10000 cycles, private Xvfb. Observed 2026-10-11 with tools/reference-movement.json; addresses are resolved at runtime, never used as native state.",
+  "projection": "Low 7 bits of cursor and party[0] packed X/Y; one unit is half a tile. MAP1 payload is present at guest 0x1f0fd and location is visually identified. Gate 85. Economy/timing/other party slots are excluded. The player collision point uses ceil(X/2), floor(Y/2), while the nominal cursor tile uses floor on both axes; the west-wall observation exposes this distinction.",
+  "initial": {
+    "x_half": 69,
+    "y_half": 25,
+    "gate": 85
+  },
+  "steps": [
+    {
+      "label": "start",
+      "action": "right",
+      "x_half": 70,
+      "y_half": 25
+    },
+    {
+      "label": "right1",
+      "action": "right",
+      "x_half": 71,
+      "y_half": 25
+    },
+    {
+      "label": "right2",
+      "action": "right",
+      "x_half": 72,
+      "y_half": 25
+    },
+    {
+      "label": "up1",
+      "action": "up",
+      "x_half": 72,
+      "y_half": 24
+    },
+    {
+      "label": "up2",
+      "action": "up",
+      "x_half": 72,
+      "y_half": 23
+    },
+    {
+      "label": "up3",
+      "action": "up",
+      "x_half": 72,
+      "y_half": 22
+    },
+    {
+      "label": "up4",
+      "action": "up",
+      "x_half": 72,
+      "y_half": 22
+    },
+    {
+      "label": "up5",
+      "action": "up",
+      "x_half": 72,
+      "y_half": 22
+    },
+    {
+      "label": "down1",
+      "action": "down",
+      "x_half": 72,
+      "y_half": 23
+    },
+    {
+      "label": "down2",
+      "action": "down",
+      "x_half": 72,
+      "y_half": 24
+    },
+    {
+      "label": "down3",
+      "action": "down",
+      "x_half": 72,
+      "y_half": 25
+    },
+    {
+      "label": "down4",
+      "action": "down",
+      "x_half": 72,
+      "y_half": 26
+    },
+    {
+      "label": "down5",
+      "action": "down",
+      "x_half": 72,
+      "y_half": 27
+    },
+    {
+      "label": "down6",
+      "action": "down",
+      "x_half": 72,
+      "y_half": 27
+    },
+    {
+      "label": "down7",
+      "action": "down",
+      "x_half": 72,
+      "y_half": 27
+    },
+    {
+      "label": "return-up1",
+      "action": "up",
+      "x_half": 72,
+      "y_half": 26
+    },
+    {
+      "label": "return-up2",
+      "action": "up",
+      "x_half": 72,
+      "y_half": 25
+    },
+    {
+      "label": "left1",
+      "action": "left",
+      "x_half": 71,
+      "y_half": 25
+    },
+    {
+      "label": "left2",
+      "action": "left",
+      "x_half": 70,
+      "y_half": 25
+    },
+    {
+      "label": "wall-up1",
+      "action": "up",
+      "x_half": 70,
+      "y_half": 24
+    },
+    {
+      "label": "wall-up2",
+      "action": "up",
+      "x_half": 70,
+      "y_half": 23
+    },
+    {
+      "label": "wall-up3",
+      "action": "up",
+      "x_half": 70,
+      "y_half": 22
+    },
+    {
+      "label": "wall-left1",
+      "action": "left",
+      "x_half": 69,
+      "y_half": 22
+    },
+    {
+      "label": "wall-left2",
+      "action": "left",
+      "x_half": 68,
+      "y_half": 22
+    },
+    {
+      "label": "wall-left3",
+      "action": "left",
+      "x_half": 67,
+      "y_half": 22
+    },
+    {
+      "label": "wall-left4",
+      "action": "left",
+      "x_half": 67,
+      "y_half": 22
+    },
+    {
+      "label": "wall-right",
+      "action": "right",
+      "x_half": 68,
+      "y_half": 22
+    },
+    {
+      "label": "return-down1",
+      "action": "down",
+      "x_half": 68,
+      "y_half": 23
+    },
+    {
+      "label": "return-down2",
+      "action": "down",
+      "x_half": 68,
+      "y_half": 24
+    },
+    {
+      "label": "return-down3",
+      "action": "down",
+      "x_half": 68,
+      "y_half": 25
+    }
+  ]
+}

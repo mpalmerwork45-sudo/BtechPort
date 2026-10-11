@@ -1,0 +1,9 @@
+# Supplied proprietary resources and third-party reference checkout.
+/Original DOS/
+/UnBattletech/
+# Local tools, generated assets, experiments, and screenshots.
+/build/
+/work/
+/local-deps/
+__pycache__/
+*.pyc
