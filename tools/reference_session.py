@@ -244,6 +244,8 @@ def snapshot_game(pid, label, output):
             if offset>=0:
                 row["building_payloads"][name]={"guest_offset":hex(offset),
                     "sha256":hashlib.sha256(body).hexdigest()}
+        row["sprite_frames"] = list(ram[u16(ds+0x539a)*16+0x409a:u16(ds+0x539a)*16+0x409a+24])
+        row["sprite_bases"] = list(ram[u16(ds+0x539c)*16+0xd55e:u16(ds+0x539c)*16+0xd55e+24])
         row["npc_rng"] = list(ram[ds+0x4fc0:ds+0x4fc3])
         row["npc_phase"] = ram[ds+0x57fe]
         row["npc_search"] = [u16(ds+0x315a), u16(ds+0x315c)]
@@ -291,6 +293,7 @@ class NpcTrace:
         def w(a): return struct.unpack_from("<H",ram,a)[0]
         ds, state = self.ds, self.state
         return {"cursor":[w(w(ds+0x538c)*16+0xa44b),w(w(ds+0x538e)*16+0xa44d)],
+            "sprite_frames":list(ram[w(ds+0x539a)*16+0x409a:w(ds+0x539a)*16+0x409a+24]),
             "credits":struct.unpack_from("<I",ram,state+0xd370)[0],
             "investments":list(struct.unpack_from("<3I",ram,state+0xd374)),
             "allowance_cap":w(state+0xd33f),
