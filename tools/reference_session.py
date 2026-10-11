@@ -20,6 +20,7 @@ import argparse
 import hashlib
 import threading
 from pathlib import Path
+from collections import deque
 
 ROOT = Path(__file__).resolve().parents[1]
 WORK = ROOT / "work"
@@ -344,6 +345,98 @@ class NpcTrace:
         print(f"NPC TRACE {len(self.frames)} stable samples: {self.output}",flush=True)
 
 
+class AnmTrace(NpcTrace):
+    """Read-only stable packed frames during ordinary original ANM playback."""
+    def __init__(self, pid, label, output, kind):
+        from anm_audit import decode
+        self.kind = kind
+        self.data = (ROOT/"Original DOS"/f"O{kind}.ANM").read_bytes()
+        self.expected = decode(self.data)
+        super().__init__(pid,label,output)
+
+    def project(self, ram):
+        def w(a): return struct.unpack_from("<H",ram,a)[0]
+        buffer = w(self.ds+0x5470)*16
+        if ram[buffer+0x42c3:buffer+0x42c3+51] != self.data[:51]:
+            return None
+        source = w(w(self.ds+0x53c2)*16+0x64)-0x42c3
+        index = next((i for i,f in enumerate(self.expected["frames"]) if f["end"] == source),None)
+        if index is None: return None
+        packed = ram[buffer+0x244b:buffer+0x244b+3872]
+        return {"index":index,"end":source,
+                "sequence_index":w(w(self.ds+0x53c4)*16+0xe48a),
+                "sha256":hashlib.sha256(packed).hexdigest()}
+
+    def observe(self):
+        fd = os.open(f"/proc/{self.pid}/mem",os.O_RDONLY)
+        pending = None
+        try:
+            while not self.done.wait(0.01):
+                row = self.project(os.pread(fd,0x100000,self.base))
+                if row is not None and row == pending and (not self.frames or row != self.frames[-1]):
+                    self.frames.append(row)
+                    if len(self.frames) > 1000: raise RuntimeError("ANM trace exceeded bound")
+                pending = row
+        except Exception as error:
+            self.error = error
+        finally:
+            os.close(fd)
+
+    def close(self):
+        self.done.set(); self.thread.join(timeout=5)
+        if self.thread.is_alive(): raise RuntimeError("ANM observer failed to stop")
+        self.output.write_text(json.dumps({"kind":"read-only-animation-frames",
+            "animation":self.kind,"frames":self.frames},indent=2)+"\n")
+        if self.error: raise self.error
+        print(f"ANM TRACE O{self.kind}: {len(self.frames)} stable samples",flush=True)
+
+
+def drive_route(pid, keys, window, output, label, kind, goal):
+    """Plan a bounded route from read-only RAM; send ordinary keys only."""
+    _, row = snapshot_game(pid,label+"-begin",output)
+    ram = (output/(label+"-begin-ram.bin")).read_bytes()
+    ds = int(row["data_segment"],16)*16
+    buffer = struct.unpack_from("<H",ram,ds+0x5470)[0]*16
+    raw = ram[buffer+0x101d:buffer+0x101d+4096]
+    def tile(x,y):
+        if not 0 <= x < 64 or not 0 <= y < 64: return 255
+        return raw[(y&0x78)*64+(y&7)*8+(x&0x78)*8+(x&7)]
+    rubble = [(x,y) for y in range(64) for x in range(64) if tile(x,y) == 80]
+    start = tuple(v&127 for v in row["cursor_raw"])
+    if goal == "rubble":
+        if len(rubble) != 1: raise RuntimeError(f"Expected one rubble tile, got {rubble}")
+        rx,ry = rubble[0]; targets = {(2*rx-2,2*ry+2),(2*rx,2*ry+2)}
+    else:
+        targets = {tuple(map(int,goal.split(",")))}
+    entrances = {(46,114),(69,21),(102,20),(32,44),(50,124),(17,13),(17,89)}
+    parent = {start:None}; queue = deque([start]); reached = None
+    while queue:
+        p = queue.popleft()
+        if p in targets: reached = p; break
+        for key,dx,dy in (("Up",0,-1),("Right",1,0),("Down",0,1),("Left",-1,0)):
+            q = (p[0]+dx,p[1]+dy); x,y = q
+            if q in parent or not 0 <= x < (126 if kind == "mech" else 128) or not (2 if kind == "mech" else 0) <= y < 128: continue
+            if kind == "mech":
+                if tile(x//2,(y-2)//2) >= 85 or tile(x//2+1,(y-2)//2) >= 85: continue
+                if goal == "rubble" and x <= 60 and 73 <= y <= 79: continue
+            elif tile((x+1)//2,y//2) >= 85 or (q in entrances and q not in targets): continue
+            parent[q] = (p,key); queue.append(q)
+    if reached is None: raise RuntimeError("No bounded ordinary route found")
+    generated = []; p = reached
+    while parent[p] is not None:
+        p,key = parent[p]; generated.append(key)
+    generated.reverse()
+    if len(generated) > 260: raise RuntimeError("Route exceeds 260-key bound")
+    (output/(label+"-route.json")).write_text(json.dumps({"start":start,"target":reached,
+        "rubble":rubble,"keys":generated},indent=2)+"\n")
+    for i,key in enumerate(generated):
+        keys.key(window,key)
+        if (i+1)%8 == 0 or i+1 == len(generated):
+            snapshot_game(pid,f"{label}-walk{i+1}",output)
+    time.sleep(0.3)
+    snapshot_game(pid,label,output)
+
+
 def controlled_talk_context(pid, output, fixture="tests/fixtures/talk-context.json"):
     """Explicit differential-test precondition; this is not an NPC arrival trace.
 
@@ -475,6 +568,7 @@ btech.exe
                                env=env, cwd=WORK, stdout=log, stderr=subprocess.STDOUT)
     session_log = (output / "inputs.jsonl").open("w")
     npc_trace = None
+    anm_trace = None
     try:
         keys = WindowKeys()
         for _ in range(100):
@@ -533,6 +627,27 @@ btech.exe
                     print(json.dumps(memory_candidates(process.pid)), flush=True)
                 elif command == "snapshot":
                     snapshot_game(process.pid,parts[1],output)
+                elif command == "route":
+                    drive_route(process.pid,keys,window,output,parts[1],parts[2],parts[3])
+                elif command == "anm-trace":
+                    if anm_trace is not None: raise ValueError("ANM observer already running")
+                    anm_trace = AnmTrace(process.pid,parts[1],output,int(parts[2]))
+                elif command == "anm-trace-stop":
+                    if anm_trace is None: raise ValueError("No ANM observer running")
+                    anm_trace.close(); anm_trace = None
+                elif command == "wait-cooldown":
+                    label = parts[1]
+                    base,row = snapshot_game(process.pid,label+"-begin",output)
+                    address = base+int(row["state_segment"],16)*16+0xd320
+                    fd = os.open(f"/proc/{process.pid}/mem",os.O_RDONLY)
+                    try:
+                        deadline = time.monotonic()+80
+                        while os.pread(fd,1,address) != b"\0":
+                            if time.monotonic() >= deadline: raise RuntimeError("Cooldown exceeded 80-second bound")
+                            time.sleep(0.05)
+                    finally:
+                        os.close(fd)
+                    snapshot_game(process.pid,label,output)
                 elif command == "quiz-answer":
                     # Read the highlighted diagram point, then send ordinary
                     # keys. Coordinates/answers are audited EXE tables; this
@@ -631,6 +746,9 @@ btech.exe
     except EOFError:
         pass
     finally:
+        if anm_trace is not None:
+            try: anm_trace.close()
+            except Exception as error: print(f"ANM observer cleanup: {error}",file=sys.stderr)
         if npc_trace is not None:
             try: npc_trace.close()
             except Exception as error: print(f"NPC observer cleanup: {error}",flush=True)
