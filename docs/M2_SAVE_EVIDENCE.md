@@ -13,11 +13,18 @@ original six saves/three backups remain untouched and their semantics UNKNOWN.
 No proprietary resource, cached text or native object/pointer is stored in the
 new save file.
 
-**Current M2k–M2m extension:** BTPC/version 12 stores a 512-byte payload in
+**Current M3b extension:** BTPF/version 15 stores a 2048-byte payload in the
+same BTS1 envelope (2064 bytes total). Seven-unit combat, enemy orders/paths,
+targets, Kick, defeat and technician/apprenticeship with rollback survive
+reload. The ordinary new-mission/service and Kick-only routes add 48 process
+restarts and nine real-time native F5/F9 checks. BTPD/v13 and BTPE/v14 preserve
+their historical 1024-byte migrations. See [M3b evidence](M3B_TRAINING_EVIDENCE.md).
+
+**Historical M2k–M2m extension:** BTPC/version 12 stores a 512-byte payload in
 the same BTS1 envelope (528 bytes total), adding rubble objective/underlying
 tile, mech ranks/rollback and resumable cutscene state. BTPA/v10 and BTPB/v11
 first-mission migration is checked explicitly; older migrations retain their
-documented limits. Current disk tests cover 175 replay snapshots and 17413
+documented limits. Those disk tests cover 175 replay snapshots and 17413
 assertions. Four real-time native F5/F9 checks restore launch, pickup, carrying
 and dream animation with exact subsequent continuation. See
 [rubble/animation evidence](M2_RUBBLE_ANIMATION_EVIDENCE.md).

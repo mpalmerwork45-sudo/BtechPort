@@ -1,10 +1,13 @@
 # BtechPort
 
 Independent C11/SDL2 recreation of **BattleTech: The Crescent Hawk's Inception**,
-supplied DOS version 1.03. **M0, M1, bounded M2a–M2m and M3a are complete.**
+supplied DOS version 1.03. **M0, M1, bounded M2a–M2m and M3a–M3b are complete.**
 Explore MAP1, visit the Citadel, buy all weapons/armour, use ComStar and talk
-in both shops and the lounge. Three MechWarrior assignments now reach their
-results, including weapons combat against a stationary training shell.
+in both shops, Mechit-Lube and the lounge. Five MechWarrior assignments now reach
+their results: movement, rubble, a stationary shell, armed labor robots and a
+live Locust duel. Weapons and Kick physical attacks are playable, with separate
+walk, run and jump orders. Mechit-Lube offers its 500-C-bill apprenticeship and
+the original early-game service responses.
 Original walking sprites, launch/dream animations, mixed-case font and border
 graphics are integrated. Native save/load preserves animation and combat in
 progress. The wider combat system and campaign remain unfinished.
@@ -37,9 +40,11 @@ published by **Infocom**.
 
 ## Build and play
 
-**M3a:** manual weapons training reaches victory and the instructor's 500-cap
-reward. Original arrow glyphs show plotted movement; the shell stays still
-as requested. See [combat evidence and limits](docs/M3_COMBAT_EVIDENCE.md).
+**M3b:** kicks, moving/retaliating opponents, fourth/fifth mission rewards and
+Mechit-Lube now work through ordinary play. Original arrow glyphs show plotted
+movement; the third assignment's shell stays still as requested. See
+[combat evidence](docs/M3_COMBAT_EVIDENCE.md) and
+[new mission/service evidence and limits](docs/M3B_TRAINING_EVIDENCE.md).
 
 From this directory on the current Kubuntu machine:
 
@@ -68,7 +73,7 @@ To open directly on Katrina's first conversation:
 ./build/btech-port --data "Original DOS" --replay tests/fixtures/citadel-katrina.actions
 ```
 
-The runtime reads `MAP1.MTP`, `BTTLTECH.ICN`, `MECHSHAP.CMP`, `CITADEL.BLD`, `COMSTAR.BLD`, `ARMOR.BLD`, `WEAPON.BLD`, `TRAINING.BLD`, `BARRACKS.BLD`, `LOUNGE.BLD`, `BTSTATS.CMP`, `BTBORDER.CMP`, the original ANMs and ignored `work/talk-data.bin` / `work/combat-data.bin`, which the build prepares reproducibly from `BTECH.EXE`. No Godot/.NET/reference runtime is required. Later assignments, armour repair and unsupported interiors stop visibly or remain unavailable. Failed choices roll back partial story/result/equipment/cash/investment/skill changes, and Backspace returns to the menu. Use `citadel-hall.actions` for the first Hall screen.
+The runtime reads `MAP1.MTP`, `BTTLTECH.ICN`, `MECHSHAP.CMP`, `CITADEL.BLD`, `COMSTAR.BLD`, `ARMOR.BLD`, `WEAPON.BLD`, `TRAINING.BLD`, `BARRACKS.BLD`, `LOUNGE.BLD`, `REPAIR.BLD`, `BTSTATS.CMP`, `BTBORDER.CMP`, the original ANMs and ignored `work/talk-data.bin` / `work/combat-data.bin`, which the build prepares reproducibly from `BTECH.EXE`. No Godot/.NET/reference runtime is required. Assignments after the fifth, owned-mech services, armour repair and unsupported interiors stop visibly or remain unavailable. Failed choices roll back partial story/result/equipment/cash/investment/skill changes, and Backspace returns to the menu. Use `citadel-hall.actions` for the first Hall screen.
 
 To watch the complete two-shop route through native SDL inputs (about 98 seconds, closes automatically):
 
@@ -145,12 +150,12 @@ The earlier isolated handler checkpoint remains available:
 
 Omit `--replay` to start outdoors with the visibly labeled checkpoint; five Up, Enter, three Down, Enter opens the NPC menu. Done returns immediately; selecting the NPC shows the authentic reply. Both menus remember selection independently. This checkpoint supplies controlled occupancy with travel disabled. A quick Citadel visit from the normal start still gets the original empty-room response. Custom resource/cache paths use `--data`, `--dialogue-data` and `--combat-data`; preparation is documented in [TESTING.md](docs/TESTING.md).
 
-**VERIFIED in scope:** authentic resource decoding, bounded BLD interpretation and earlier movement/Citadel/NPC/shop/ComStar routes. Current disk checks cover 175 earlier replay snapshots; 31 historical fresh-process continuations and 100 mission/animation restarts pass. Original font bytes, 183 border cells and the final dream image match the original. M2k/l compares 181 original state/text checkpoints with three explicit RNG prerequisites: long outdoor wait/arrival timing still differs. M3a adds 4422 bounded original combat rule/navigation/heat comparisons, 35 controlled original turns, a 5214-input ordinary native victory/report route and 20 fresh-process combat continuations. All 16 CTest suites, native X11 combat and headless sanitizers pass. **INFERRED:** wider movement/campaign/combat contexts. **APPROXIMATE:** remaining UI/status graphics, firing indicator, input/animation cadence and map edges. **UNKNOWN/unimplemented:** wider combat and later progression, world/party/repair, original GAME compatibility, terrain animation, audio and the full campaign. Unsupported operations fail visibly. The older NPC capture's 68 missing movement intervals remain reported and skipped.
+**VERIFIED in scope:** authentic resource decoding, bounded BLD interpretation and earlier movement/Citadel/NPC/shop/ComStar routes. Current disk checks cover 175 earlier replay snapshots; 31 historical fresh-process continuations and 100 mission/animation restarts pass. Original font bytes, 183 border cells and the final dream image match the original. M2k/l compares 181 original state/text checkpoints with three explicit RNG prerequisites: long outdoor wait/arrival timing still differs. M3a adds 4422 bounded original combat comparisons and 35 controlled original turns. M3b adds 600 physical/personal-weapon cases, 128 enemy decisions/paths and 105 encounter/apprenticeship cases. Its ordinary five-mission/Mechit-Lube route and separate Kick-only victory have 48 fresh-process continuations. All 19 CTest suites, native X11 checks and headless sanitizers pass. **INFERRED:** general initiative and wider movement/campaign/combat contexts. **APPROXIMATE:** remaining UI/status graphics, attack indicators, input/animation cadence and map edges. **UNKNOWN/unimplemented:** persistent terrain fire, owned-mech services, wider combat/progression, world/party, original GAME compatibility, terrain animation, audio and the full campaign. The older NPC capture's 68 missing movement intervals remain reported and skipped.
 
 **M2i sprites:** all 376 original sprite crops match the EXE's RAM, and walking tests
 cover 30 player checkpoints, four exact player pixel crops and 63 NPC frame steps.
 Save/load retains walking frames; older saves start a new gait at their stored
-facing. Mechs are available in a separate animated preview and in three training missions; ownership, later missions and wider combat remain incomplete. See [sprite evidence](docs/M2_SPRITE_EVIDENCE.md).
+facing. Mechs are available in a separate animated preview and in five training missions; ownership, subsequent missions and wider combat remain incomplete. See [sprite evidence](docs/M2_SPRITE_EVIDENCE.md).
 
 ```sh
 ./build/btech-port --sprite-preview
@@ -174,11 +179,31 @@ for computer control and select message/graphics options. Walk/Run/Jump plots
 a destination: arrows show the next turn's steps and a yellow box marks the
 goal. Use Weapons assigns attacks to the shell; Done returns to orders and
 Begin Fight resolves a turn. Destroy it and walk back to the instructor for
-the 500-cap reward. Kick and computer control remain visibly unsupported.
+the 500-cap reward. Kick selects an enemy for a physical attack; use Next target
+to cycle among opponents. Kick and weapon orders persist. General computer
+control remains unsupported.
 The graphics option enables a short approximate firing indicator; exact
 original weapon animations remain deferred. Launch and dream animations
-play with the original artwork; audio remains unimplemented. The lounge supports ordinary Talk and the verified Rick/device
-branch; that branch's later campaign prerequisite is not yet naturally unlocked.
+play with the original artwork; audio remains unimplemented. The fourth
+assignment contains 3–6 armed labor robots and raises the cap to 1000. The fifth
+is a live Locust duel, raises it to 2000 and sends Rick to the lounge. The existing
+Rick/device branch is now naturally unlocked; subsequent party/campaign work
+remains incomplete.
+
+Mechit-Lube is at half-coordinate (15,109). Its course costs 500 C-bills and raises
+Jason's technician skill once. Talk and the no-owned-mech repair, speed-shop and
+ammunition responses use the original REPAIR.BLD. Training loans are not owned
+mechs; repair/refitting and ammunition purchases for owned mechs remain deferred.
+
+Watch the five-assignment/Mechit-Lube route, or the separate Kick-only victory:
+
+```sh
+./build/btech-port --smoke-replay --smoke-fast --replay tests/fixtures/ordinary-training-combat.actions
+./build/btech-port --smoke-replay --smoke-fast --replay tests/fixtures/ordinary-kick.actions
+python3 tools/make_training_combat_replay.py
+python3 tools/make_training_combat_replay.py --kick
+python3 tools/native_smoke.py --training-combat-only
+```
 
 Open at the third loan-mech menu, or watch the complete three-assignment route
 with accelerated SDL playback:

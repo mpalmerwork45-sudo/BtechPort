@@ -1,17 +1,20 @@
-# Open questions after bounded M3a — 2026-10-12
+# Open questions after bounded M3b — 2026-10-12
 
 Earlier Citadel, NPC, shop, banking, Class, save, sprite and first-mission
-findings remain in their evidence reports. Three training assignments now reach
-their results; see [M3a evidence](M3_COMBAT_EVIDENCE.md).
+findings remain in their evidence reports. Five training assignments, Kick and
+early Mechit-Lube now reach their results; see [M3a evidence](M3_COMBAT_EVIDENCE.md)
+and [M3b evidence](M3B_TRAINING_EVIDENCE.md).
 
-1. **Proposed M3b:** recover and verify kicking/physical attacks in the existing
-   training encounter. **Proposed M3c:** audit and implement fourth-assignment
-   combat. General AI/retaliation, the waypoint queue, exact weapon animation,
-   terrain ignition and broader Run/Jump turn parity remain open. The user's
+1. **Proposed M3c:** verify full multi-actor turns and general initiative, then
+   the waypoint queue, exact attack/jump animations and persistent terrain fire.
+   Kick rules, bounded enemy decisions/paths, original robot setup and the live
+   Locust duel are implemented. The user's
    stationary shell and original movement arrows are implemented and verified
    in the native route; original DOS moving-target observations remain intact.
-   Later missions are unsupported. Rick's natural invitation requires
-   fifth-assignment success; do not invent an earlier unlock.
+   Missions after the fifth are unsupported. Fifth success now naturally sends
+   Rick to the lounge; subsequent party recruitment remains unfinished.
+   Mechit-Lube covers Jason's apprenticeship and no-owned-mech services, not
+   repairs/refitting/ammunition purchases for owned mechs or party-member courses.
 2. **Long-route NPC/RNG gap:** first quiz/mission RNG matches, but original
    outdoor idle intervals packed before movement keys alter NPC arrival timing.
    Later native quiz draws diverge. The 181-checkpoint comparison uses three
@@ -29,8 +32,10 @@ their results; see [M3a evidence](M3_COMBAT_EVIDENCE.md).
    final dream pixels now match observations. Wider animation contexts, live
    water occlusion and complete screen equality remain unverified.
 6. Original 3913-byte GAME saves versus the secondary 4096-byte claim. Prove
-   original save/load round trips before import/export. Native saves use BTPE/v14
-   (1024-byte payload, 1040-byte BTS1 file), preserving combat and firing indication.
+   original save/load round trips before import/export. Native saves use BTPF/v15
+   (2048-byte payload, 2064-byte BTS1 file), preserving seven-unit combat, Kick,
+   defeat, firing indication and technician/apprenticeship. v13/v14 migrate from
+   their original 1024-byte payloads.
    Historical migrations initialize only state the old format could represent.
 7. Exact DOS keyboard repeat/flush/CPU timing and wider day progression. O0/O8
    timing uses observed VGA retrace units mapped to 32ms ticks; decode cost and
@@ -38,8 +43,10 @@ their results; see [M3a evidence](M3_COMBAT_EVIDENCE.md).
    and general C61B/C61C skill semantics remain open.
 8. Tactical combat now has bounded instruction comparisons for dice, targeting,
    hit location, damage/criticals, ammunition, heat, walking/LOS and complete
-   controlled turns. Extend actual traces to general initiative/AI, retaliating
-   opponents, salvage and wider aftermath. EXE salvage strings contradict
+   controlled turns. M3b adds 600 physical/personal attacks, 128 enemy decisions
+   and paths, and 105 encounter/apprenticeship comparisons. Retaliating opponents
+   are playable; full multi-actor turn traces, general initiative, salvage and
+   wider aftermath remain open. EXE salvage strings contradict
    conclusions based only on missing BLD wording. The controlled original
    moving-target comparison is distinct from the requested stationary shell.
 9. All 22 ANMs decode, including valid binary O21; only launch/dream dispatch is
