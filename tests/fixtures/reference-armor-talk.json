@@ -1,0 +1,1194 @@
+{
+  "source_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "payload_sha256": {
+    "COMSTAR": "7ce238cd6493269cd13430b4648bee6d955aa2da84ceda670c5d02fd344d0e0a",
+    "ARMOR": "b02d6e830f444d383c51b49013c6749d12cf4d9742a561c34896745a39de86f3",
+    "WEAPON": "4bbc0075e95889a5452c057fd8b6190c363573afced3394a85f2d24cdf67961e"
+  },
+  "reference_run": "work/reference-runs/1791693440826188386",
+  "input_script": "tools/reference-armor-talk.json",
+  "controlled": true,
+  "checkpoints": [
+    {
+      "label": "armor-context",
+      "position": [
+        50,
+        125
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 50,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 2,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 91,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          69,
+          5
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          70,
+          7
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 103,
+      "number_input": "O21.ANM",
+      "mode": "building",
+      "tick": 0,
+      "text": {
+        "resource": "ARMOR",
+        "status": 1,
+        "pc": 239,
+        "menu": 12,
+        "talk_phase": 0,
+        "bank_phase": 0,
+        "length": 218,
+        "digest": 3463541619,
+        "sha256": "6d1a3596567d966be1678e3815225598489af7757f10e149279db3486c7fd67d"
+      }
+    },
+    {
+      "label": "armor-talk-menu",
+      "position": [
+        50,
+        125
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 50,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 2,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 91,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          69,
+          5
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          70,
+          7
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 103,
+      "number_input": "O21.ANM",
+      "mode": "building",
+      "tick": 1,
+      "text": {
+        "resource": "ARMOR",
+        "status": 5,
+        "pc": 2713,
+        "menu": null,
+        "talk_phase": 2,
+        "bank_phase": 0,
+        "length": 55,
+        "digest": 1662918204,
+        "sha256": "b86beb7a522df10837a23bb6784ec064e482a5d6f443436fdafc9fe9b6455ed2"
+      }
+    },
+    {
+      "label": "armor-done-selected",
+      "position": [
+        50,
+        125
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 50,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 2,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 91,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          69,
+          5
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          70,
+          7
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 103,
+      "number_input": "O21.ANM",
+      "mode": "building",
+      "tick": 3,
+      "text": {
+        "resource": "ARMOR",
+        "status": 5,
+        "pc": 2713,
+        "menu": null,
+        "talk_phase": 2,
+        "bank_phase": 0,
+        "length": 55,
+        "digest": 1662918204,
+        "sha256": "b86beb7a522df10837a23bb6784ec064e482a5d6f443436fdafc9fe9b6455ed2"
+      }
+    },
+    {
+      "label": "armor-done-return",
+      "position": [
+        50,
+        125
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 50,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 2,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 2,
+      "talk_result": 91,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          69,
+          5
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          70,
+          7
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 103,
+      "number_input": "O21.ANM",
+      "mode": "building",
+      "tick": 4,
+      "text": {
+        "resource": "ARMOR",
+        "status": 1,
+        "pc": 239,
+        "menu": 12,
+        "talk_phase": 0,
+        "bank_phase": 0,
+        "length": 218,
+        "digest": 3463541619,
+        "sha256": "6d1a3596567d966be1678e3815225598489af7757f10e149279db3486c7fd67d"
+      }
+    },
+    {
+      "label": "armor-talk-again",
+      "position": [
+        50,
+        125
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 50,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 2,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 2,
+      "talk_result": 91,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          69,
+          5
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          70,
+          7
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 103,
+      "number_input": "O21.ANM",
+      "mode": "building",
+      "tick": 5,
+      "text": {
+        "resource": "ARMOR",
+        "status": 5,
+        "pc": 2713,
+        "menu": null,
+        "talk_phase": 2,
+        "bank_phase": 0,
+        "length": 55,
+        "digest": 1662918204,
+        "sha256": "b86beb7a522df10837a23bb6784ec064e482a5d6f443436fdafc9fe9b6455ed2"
+      }
+    },
+    {
+      "label": "armor-second-selected",
+      "position": [
+        50,
+        125
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 50,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 2,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 2,
+      "talk_result": 91,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          69,
+          5
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          70,
+          7
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 103,
+      "number_input": "O21.ANM",
+      "mode": "building",
+      "tick": 6,
+      "text": {
+        "resource": "ARMOR",
+        "status": 5,
+        "pc": 2713,
+        "menu": null,
+        "talk_phase": 2,
+        "bank_phase": 0,
+        "length": 55,
+        "digest": 1662918204,
+        "sha256": "b86beb7a522df10837a23bb6784ec064e482a5d6f443436fdafc9fe9b6455ed2"
+      }
+    },
+    {
+      "label": "armor-second-reply",
+      "position": [
+        50,
+        125
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 50,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 2,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 1,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          69,
+          5
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          70,
+          7
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 103,
+      "number_input": "O21.ANM",
+      "mode": "building",
+      "tick": 7,
+      "text": {
+        "resource": "ARMOR",
+        "status": 5,
+        "pc": 2713,
+        "menu": null,
+        "talk_phase": 3,
+        "bank_phase": 0,
+        "talk_actor": 4,
+        "length": 136,
+        "digest": 1737569277,
+        "sha256": "150c5d3723cb301ae1696b1f7d14f3ef79129ed67de1a6e504b5519e26925af3"
+      }
+    },
+    {
+      "label": "armor-second-return",
+      "position": [
+        50,
+        125
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 50,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 2,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 1,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          69,
+          5
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          70,
+          7
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 103,
+      "number_input": "O21.ANM",
+      "mode": "building",
+      "tick": 8,
+      "text": {
+        "resource": "ARMOR",
+        "status": 1,
+        "pc": 239,
+        "menu": 12,
+        "talk_phase": 0,
+        "bank_phase": 0,
+        "length": 218,
+        "digest": 3463541619,
+        "sha256": "6d1a3596567d966be1678e3815225598489af7757f10e149279db3486c7fd67d"
+      }
+    },
+    {
+      "label": "armor-first-reply",
+      "position": [
+        50,
+        125
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 50,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 2,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          69,
+          5
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          70,
+          7
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 103,
+      "number_input": "O21.ANM",
+      "mode": "building",
+      "tick": 11,
+      "text": {
+        "resource": "ARMOR",
+        "status": 5,
+        "pc": 2713,
+        "menu": null,
+        "talk_phase": 3,
+        "bank_phase": 0,
+        "talk_actor": 1,
+        "length": 139,
+        "digest": 795448579,
+        "sha256": "a6a130d75358218106e6ec907856fec8777b78139a349c1bcd113844139c7f9b"
+      }
+    },
+    {
+      "label": "armor-first-return",
+      "position": [
+        50,
+        125
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 50,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 2,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          69,
+          5
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          70,
+          7
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 103,
+      "number_input": "O21.ANM",
+      "mode": "building",
+      "tick": 12,
+      "text": {
+        "resource": "ARMOR",
+        "status": 1,
+        "pc": 239,
+        "menu": 12,
+        "talk_phase": 0,
+        "bank_phase": 0,
+        "length": 218,
+        "digest": 3463541619,
+        "sha256": "6d1a3596567d966be1678e3815225598489af7757f10e149279db3486c7fd67d"
+      }
+    },
+    {
+      "label": "armor-talk-exit",
+      "position": [
+        50,
+        124
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 50,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 3,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          69,
+          3
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          70,
+          5
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 96,
+      "number_input": "50      ",
+      "mode": "local-exploration",
+      "tick": 14,
+      "text": null
+    }
+  ]
+}

@@ -1,0 +1,2788 @@
+{
+  "source_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "payload_sha256": {
+    "COMSTAR": "7ce238cd6493269cd13430b4648bee6d955aa2da84ceda670c5d02fd344d0e0a",
+    "ARMOR": "b02d6e830f444d383c51b49013c6749d12cf4d9742a561c34896745a39de86f3",
+    "WEAPON": "4bbc0075e95889a5452c057fd8b6190c363573afced3394a85f2d24cdf67961e"
+  },
+  "reference_run": "work/reference-runs/1791693440826188386",
+  "input_script": "tools/reference-armor-talk.json",
+  "controlled": false,
+  "checkpoints": [
+    {
+      "label": "start",
+      "position": [
+        69,
+        25
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 35,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 249,
+      "number_input": "35      ",
+      "mode": "local-exploration",
+      "tick": 0,
+      "text": null
+    },
+    {
+      "label": "armor-road8",
+      "position": [
+        63,
+        27
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 35,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 232,
+      "number_input": "35      ",
+      "mode": "local-exploration",
+      "tick": 68,
+      "text": null
+    },
+    {
+      "label": "armor-road16",
+      "position": [
+        55,
+        27
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 35,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 214,
+      "number_input": "35      ",
+      "mode": "local-exploration",
+      "tick": 140,
+      "text": null
+    },
+    {
+      "label": "armor-road24",
+      "position": [
+        50,
+        30
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 35,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 196,
+      "number_input": "35      ",
+      "mode": "local-exploration",
+      "tick": 212,
+      "text": null
+    },
+    {
+      "label": "armor-road32",
+      "position": [
+        50,
+        38
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 35,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 179,
+      "number_input": "35      ",
+      "mode": "local-exploration",
+      "tick": 280,
+      "text": null
+    },
+    {
+      "label": "armor-road40",
+      "position": [
+        44,
+        40
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 35,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 161,
+      "number_input": "35      ",
+      "mode": "local-exploration",
+      "tick": 352,
+      "text": null
+    },
+    {
+      "label": "armor-road48",
+      "position": [
+        44,
+        48
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 35,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 143,
+      "number_input": "35      ",
+      "mode": "local-exploration",
+      "tick": 424,
+      "text": null
+    },
+    {
+      "label": "armor-road56",
+      "position": [
+        37,
+        49
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 35,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 125,
+      "number_input": "35      ",
+      "mode": "local-exploration",
+      "tick": 496,
+      "text": null
+    },
+    {
+      "label": "armor-road64",
+      "position": [
+        34,
+        54
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 35,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 108,
+      "number_input": "35      ",
+      "mode": "local-exploration",
+      "tick": 564,
+      "text": null
+    },
+    {
+      "label": "armor-road72",
+      "position": [
+        31,
+        59
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 35,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 90,
+      "number_input": "35      ",
+      "mode": "local-exploration",
+      "tick": 636,
+      "text": null
+    },
+    {
+      "label": "armor-road80",
+      "position": [
+        28,
+        64
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 35,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 71,
+      "number_input": "35      ",
+      "mode": "local-exploration",
+      "tick": 712,
+      "text": null
+    },
+    {
+      "label": "armor-road88",
+      "position": [
+        23,
+        67
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 35,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 54,
+      "number_input": "35      ",
+      "mode": "local-exploration",
+      "tick": 780,
+      "text": null
+    },
+    {
+      "label": "armor-road96",
+      "position": [
+        22,
+        74
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 35,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 36,
+      "number_input": "35      ",
+      "mode": "local-exploration",
+      "tick": 852,
+      "text": null
+    },
+    {
+      "label": "armor-road104",
+      "position": [
+        22,
+        82
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 35,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 18,
+      "number_input": "35      ",
+      "mode": "local-exploration",
+      "tick": 924,
+      "text": null
+    },
+    {
+      "label": "armor-road112",
+      "position": [
+        22,
+        90
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 35,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 0,
+      "number_input": "35      ",
+      "mode": "local-exploration",
+      "tick": 996,
+      "text": null
+    },
+    {
+      "label": "armor-road120",
+      "position": [
+        22,
+        98
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 50,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 239,
+      "number_input": "50      ",
+      "mode": "local-exploration",
+      "tick": 1064,
+      "text": null
+    },
+    {
+      "label": "armor-road128",
+      "position": [
+        22,
+        106
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 50,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 221,
+      "number_input": "50      ",
+      "mode": "local-exploration",
+      "tick": 1136,
+      "text": null
+    },
+    {
+      "label": "armor-road136",
+      "position": [
+        22,
+        114
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 50,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 203,
+      "number_input": "50      ",
+      "mode": "local-exploration",
+      "tick": 1208,
+      "text": null
+    },
+    {
+      "label": "armor-road144",
+      "position": [
+        25,
+        119
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 50,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          81,
+          7
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 186,
+      "number_input": "50      ",
+      "mode": "local-exploration",
+      "tick": 1276,
+      "text": null
+    },
+    {
+      "label": "armor-road152",
+      "position": [
+        33,
+        119
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 50,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          81,
+          1
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 168,
+      "number_input": "50      ",
+      "mode": "local-exploration",
+      "tick": 1348,
+      "text": null
+    },
+    {
+      "label": "armor-road160",
+      "position": [
+        41,
+        119
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 50,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 150,
+      "number_input": "50      ",
+      "mode": "local-exploration",
+      "tick": 1420,
+      "text": null
+    },
+    {
+      "label": "armor-road168",
+      "position": [
+        49,
+        119
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 50,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 133,
+      "number_input": "50      ",
+      "mode": "local-exploration",
+      "tick": 1488,
+      "text": null
+    },
+    {
+      "label": "armor-road176",
+      "position": [
+        53,
+        123
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 50,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 115,
+      "number_input": "50      ",
+      "mode": "local-exploration",
+      "tick": 1560,
+      "text": null
+    },
+    {
+      "label": "armor-road181",
+      "position": [
+        50,
+        125
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 50,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 103,
+      "number_input": "50      ",
+      "mode": "local-exploration",
+      "tick": 1608,
+      "text": null
+    },
+    {
+      "label": "armor-entry",
+      "position": [
+        50,
+        125
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 50,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 103,
+      "number_input": "50      ",
+      "mode": "entry-confirm",
+      "tick": 1609,
+      "text": null
+    },
+    {
+      "label": "armor-menu",
+      "position": [
+        50,
+        125
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 50,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 103,
+      "number_input": "O21.ANM",
+      "mode": "building",
+      "tick": 1610,
+      "text": {
+        "resource": "ARMOR",
+        "status": 1,
+        "pc": 239,
+        "menu": 12,
+        "talk_phase": 0,
+        "bank_phase": 0,
+        "length": 218,
+        "digest": 3463541619,
+        "sha256": "6d1a3596567d966be1678e3815225598489af7757f10e149279db3486c7fd67d"
+      }
+    },
+    {
+      "label": "armor-talk-empty",
+      "position": [
+        50,
+        125
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 50,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 2,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 103,
+      "number_input": "O21.ANM",
+      "mode": "building",
+      "tick": 1613,
+      "text": {
+        "resource": "ARMOR",
+        "status": 5,
+        "pc": 2713,
+        "menu": null,
+        "talk_phase": 1,
+        "bank_phase": 0,
+        "length": 47,
+        "digest": 1259008475,
+        "sha256": "33f04c49f2e16a1a3ec9b8904ba381a98b09aeeed3fc6a17cc9934f9f1c3b7ca"
+      }
+    },
+    {
+      "label": "armor-empty-return",
+      "position": [
+        50,
+        125
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 50,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 2,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 103,
+      "number_input": "O21.ANM",
+      "mode": "building",
+      "tick": 1614,
+      "text": {
+        "resource": "ARMOR",
+        "status": 1,
+        "pc": 239,
+        "menu": 12,
+        "talk_phase": 0,
+        "bank_phase": 0,
+        "length": 218,
+        "digest": 3463541619,
+        "sha256": "6d1a3596567d966be1678e3815225598489af7757f10e149279db3486c7fd67d"
+      }
+    }
+  ]
+}

@@ -1,0 +1,2980 @@
+{
+  "source_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "payload_sha256": {
+    "COMSTAR": "7ce238cd6493269cd13430b4648bee6d955aa2da84ceda670c5d02fd344d0e0a",
+    "ARMOR": "b02d6e830f444d383c51b49013c6749d12cf4d9742a561c34896745a39de86f3",
+    "WEAPON": "4bbc0075e95889a5452c057fd8b6190c363573afced3394a85f2d24cdf67961e"
+  },
+  "reference_run": "work/reference-runs/1791693786677767965",
+  "input_script": "tools/reference-bank-rates.json",
+  "controlled": false,
+  "checkpoints": [
+    {
+      "label": "start",
+      "position": [
+        69,
+        25
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 35,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 249,
+      "number_input": "35      ",
+      "mode": "local-exploration",
+      "tick": 0,
+      "text": null
+    },
+    {
+      "label": "bank-road8",
+      "position": [
+        77,
+        25
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 35,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 230,
+      "number_input": "35      ",
+      "mode": "local-exploration",
+      "tick": 76,
+      "text": null
+    },
+    {
+      "label": "bank-road16",
+      "position": [
+        85,
+        25
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 35,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 213,
+      "number_input": "35      ",
+      "mode": "local-exploration",
+      "tick": 144,
+      "text": null
+    },
+    {
+      "label": "bank-road24",
+      "position": [
+        93,
+        25
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 35,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 195,
+      "number_input": "35      ",
+      "mode": "local-exploration",
+      "tick": 216,
+      "text": null
+    },
+    {
+      "label": "bank-road32",
+      "position": [
+        101,
+        25
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 35,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 177,
+      "number_input": "35      ",
+      "mode": "local-exploration",
+      "tick": 288,
+      "text": null
+    },
+    {
+      "label": "bank-road37",
+      "position": [
+        102,
+        21
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 35,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 166,
+      "number_input": "35      ",
+      "mode": "local-exploration",
+      "tick": 332,
+      "text": null
+    },
+    {
+      "label": "bank-entry",
+      "position": [
+        102,
+        21
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 35,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 165,
+      "number_input": "35      ",
+      "mode": "entry-confirm",
+      "tick": 337,
+      "text": null
+    },
+    {
+      "label": "bank-menu",
+      "position": [
+        102,
+        21
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 35,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 165,
+      "number_input": "35      ",
+      "mode": "building",
+      "tick": 338,
+      "text": {
+        "resource": "COMSTAR",
+        "status": 1,
+        "pc": 438,
+        "menu": 10,
+        "talk_phase": 0,
+        "bank_phase": 0,
+        "length": 423,
+        "digest": 1762213103,
+        "sha256": "ce8e77468df9c38c0584ef0baeb81fcf354d8b2d557045ea2a104384d7f58006"
+      }
+    },
+    {
+      "label": "bank-intro",
+      "position": [
+        102,
+        21
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 35,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 165,
+      "number_input": "35      ",
+      "mode": "building",
+      "tick": 339,
+      "text": {
+        "resource": "COMSTAR",
+        "status": 2,
+        "pc": 719,
+        "menu": null,
+        "talk_phase": 0,
+        "bank_phase": 0,
+        "length": 276,
+        "digest": 2478698889,
+        "sha256": "9e418f10f285f2efe8a7b3950478538353e2e6acb022ae29f03b1164364dabb2"
+      }
+    },
+    {
+      "label": "bank-accounts",
+      "position": [
+        102,
+        21
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 35,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 165,
+      "number_input": "35",
+      "mode": "building",
+      "tick": 340,
+      "text": {
+        "resource": "COMSTAR",
+        "status": 1,
+        "pc": 842,
+        "menu": 11,
+        "talk_phase": 0,
+        "bank_phase": 0,
+        "length": 112,
+        "digest": 2684299415,
+        "sha256": "01dd5b781a20cda9441aae84390b9774e2b5ba0e17205e7ba1e8f705a00fdc0a"
+      }
+    },
+    {
+      "label": "bank-change",
+      "position": [
+        102,
+        21
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 35,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 165,
+      "number_input": "35",
+      "mode": "building",
+      "tick": 341,
+      "text": {
+        "resource": "COMSTAR",
+        "status": 1,
+        "pc": 896,
+        "menu": 7,
+        "talk_phase": 0,
+        "bank_phase": 0,
+        "length": 43,
+        "digest": 4289595767,
+        "sha256": "79c341e82d3cb44b8bed634c824bf383b7b2d216a2e26c91156c11889a764bd6"
+      }
+    },
+    {
+      "label": "bank-invest-menu",
+      "position": [
+        102,
+        21
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 35,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 165,
+      "number_input": "35",
+      "mode": "building",
+      "tick": 342,
+      "text": {
+        "resource": "COMSTAR",
+        "status": 5,
+        "pc": 898,
+        "menu": null,
+        "talk_phase": 0,
+        "bank_phase": 1,
+        "length": 44,
+        "digest": 998579725,
+        "sha256": "16b6321d39ff54dacf6a7083f471aaafa67780d84254b304a245d354d620b77c"
+      }
+    },
+    {
+      "label": "bank-invest-amount",
+      "position": [
+        102,
+        21
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 35,
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 165,
+      "number_input": "0",
+      "mode": "building",
+      "tick": 343,
+      "text": {
+        "resource": "COMSTAR",
+        "status": 5,
+        "pc": 898,
+        "menu": null,
+        "talk_phase": 0,
+        "bank_phase": 2,
+        "typed": "0",
+        "length": 82,
+        "digest": 2026579194,
+        "sha256": "a629049c55784435e801f7593b2c2f5d565584e7ace8e57d7a0a6e440ca95974"
+      }
+    },
+    {
+      "label": "bank-invested",
+      "position": [
+        102,
+        21
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 5,
+      "investments": [
+        30,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 165,
+      "number_input": "5       ",
+      "mode": "building",
+      "tick": 346,
+      "text": {
+        "resource": "COMSTAR",
+        "status": 2,
+        "pc": 719,
+        "menu": null,
+        "talk_phase": 0,
+        "bank_phase": 3,
+        "typed": "30",
+        "length": 173,
+        "digest": 4250924567,
+        "sha256": "382e0a53756625de773e392a58cea91979958cb564e511f21b5821338c97580c"
+      }
+    },
+    {
+      "label": "bank-after-buy",
+      "position": [
+        102,
+        21
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 5,
+      "investments": [
+        30,
+        0,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 0,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 165,
+      "number_input": "30",
+      "mode": "building",
+      "tick": 347,
+      "text": {
+        "resource": "COMSTAR",
+        "status": 1,
+        "pc": 842,
+        "menu": 11,
+        "talk_phase": 0,
+        "bank_phase": 0,
+        "length": 115,
+        "digest": 752576264,
+        "sha256": "fc486b50139771ca67b9f110f695db42ea5d203e2bffd86324cb76395149a4d0"
+      }
+    },
+    {
+      "label": "bank-nasdiv-buy",
+      "position": [
+        102,
+        21
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 4,
+      "investments": [
+        30,
+        1,
+        0
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 1,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 165,
+      "number_input": "4       ",
+      "mode": "building",
+      "tick": 353,
+      "text": {
+        "resource": "COMSTAR",
+        "status": 2,
+        "pc": 719,
+        "menu": null,
+        "talk_phase": 0,
+        "bank_phase": 3,
+        "typed": "1",
+        "length": 169,
+        "digest": 3967985972,
+        "sha256": "f2703f308579eaf53df75d8527861ce2f9d991becf015e8f81d70fb5abd46240"
+      }
+    },
+    {
+      "label": "bank-bakphar-buy",
+      "position": [
+        102,
+        21
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 3,
+      "investments": [
+        30,
+        1,
+        1
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 2,
+        "8": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 165,
+      "number_input": "3       ",
+      "mode": "building",
+      "tick": 362,
+      "text": {
+        "resource": "COMSTAR",
+        "status": 2,
+        "pc": 719,
+        "menu": null,
+        "talk_phase": 0,
+        "bank_phase": 3,
+        "typed": "1",
+        "length": 170,
+        "digest": 2388973081,
+        "sha256": "12b4a4be15fdb7adc995fb2333a3c1b3b6b76c289e88620f96c0d8a15e690884"
+      }
+    },
+    {
+      "label": "bank-rate-exit",
+      "position": [
+        102,
+        20
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 3,
+      "investments": [
+        30,
+        1,
+        1
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 2,
+        "8": 0,
+        "10": 0,
+        "11": 2,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 160,
+      "number_input": "3       ",
+      "mode": "local-exploration",
+      "tick": 386,
+      "text": null
+    },
+    {
+      "label": "bank-rate-wait8",
+      "position": [
+        102,
+        20
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 3,
+      "investments": [
+        30,
+        1,
+        1
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 2,
+        "8": 0,
+        "10": 0,
+        "11": 2,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 108,
+      "number_input": "3       ",
+      "mode": "local-exploration",
+      "tick": 594,
+      "text": null
+    },
+    {
+      "label": "bank-rate-wait16",
+      "position": [
+        102,
+        20
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 3,
+      "investments": [
+        30,
+        1,
+        1
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 2,
+        "8": 0,
+        "10": 0,
+        "11": 2,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 57,
+      "number_input": "3       ",
+      "mode": "local-exploration",
+      "tick": 798,
+      "text": null
+    },
+    {
+      "label": "bank-rate-wait24",
+      "position": [
+        102,
+        20
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 3,
+      "investments": [
+        30,
+        1,
+        1
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 2,
+        "8": 0,
+        "10": 0,
+        "11": 2,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 6,
+      "number_input": "3       ",
+      "mode": "local-exploration",
+      "tick": 1002,
+      "text": null
+    },
+    {
+      "label": "bank-rate-wait32",
+      "position": [
+        102,
+        20
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 18,
+      "investments": [
+        31,
+        0,
+        2
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 2,
+        "8": 0,
+        "10": 0,
+        "11": 2,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 211,
+      "number_input": "18      ",
+      "mode": "local-exploration",
+      "tick": 1206,
+      "text": null
+    },
+    {
+      "label": "bank-rate-wait40",
+      "position": [
+        102,
+        20
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 18,
+      "investments": [
+        31,
+        0,
+        2
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 2,
+        "8": 0,
+        "10": 0,
+        "11": 2,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 160,
+      "number_input": "18      ",
+      "mode": "local-exploration",
+      "tick": 1410,
+      "text": null
+    },
+    {
+      "label": "bank-rate-wait48",
+      "position": [
+        102,
+        20
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 18,
+      "investments": [
+        31,
+        0,
+        2
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 2,
+        "8": 0,
+        "10": 0,
+        "11": 2,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 109,
+      "number_input": "18      ",
+      "mode": "local-exploration",
+      "tick": 1614,
+      "text": null
+    },
+    {
+      "label": "bank-rate-wait56",
+      "position": [
+        102,
+        20
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 18,
+      "investments": [
+        31,
+        0,
+        2
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 2,
+        "8": 0,
+        "10": 0,
+        "11": 2,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 58,
+      "number_input": "18      ",
+      "mode": "local-exploration",
+      "tick": 1818,
+      "text": null
+    },
+    {
+      "label": "bank-rate-wait64",
+      "position": [
+        102,
+        20
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 18,
+      "investments": [
+        31,
+        0,
+        2
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 2,
+        "8": 0,
+        "10": 0,
+        "11": 2,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 7,
+      "number_input": "18      ",
+      "mode": "local-exploration",
+      "tick": 2022,
+      "text": null
+    },
+    {
+      "label": "bank-rate-wait72",
+      "position": [
+        102,
+        20
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 18,
+      "investments": [
+        31,
+        0,
+        2
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 2,
+        "8": 0,
+        "10": 0,
+        "11": 2,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 212,
+      "number_input": "18      ",
+      "mode": "local-exploration",
+      "tick": 2226,
+      "text": null
+    },
+    {
+      "label": "bank-reentry-menu",
+      "position": [
+        102,
+        21
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 18,
+      "investments": [
+        31,
+        0,
+        2
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 2,
+        "8": 0,
+        "10": 0,
+        "11": 2,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 209,
+      "number_input": "18      ",
+      "mode": "building",
+      "tick": 2240,
+      "text": {
+        "resource": "COMSTAR",
+        "status": 1,
+        "pc": 438,
+        "menu": 10,
+        "talk_phase": 0,
+        "bank_phase": 0,
+        "length": 423,
+        "digest": 1762213103,
+        "sha256": "ce8e77468df9c38c0584ef0baeb81fcf354d8b2d557045ea2a104384d7f58006"
+      }
+    },
+    {
+      "label": "bank-reentry-accounts",
+      "position": [
+        102,
+        21
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 18,
+      "investments": [
+        31,
+        0,
+        2
+      ],
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "7": 2,
+        "8": 0,
+        "10": 0,
+        "11": 2,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "talk_selected": 0,
+      "talk_result": 0,
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          81,
+          0
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "loop_timer": 209,
+      "number_input": "18      ",
+      "mode": "building",
+      "tick": 2242,
+      "text": {
+        "resource": "COMSTAR",
+        "status": 1,
+        "pc": 842,
+        "menu": 11,
+        "talk_phase": 0,
+        "bank_phase": 0,
+        "length": 125,
+        "digest": 3625066733,
+        "sha256": "88c355024196484412ed9308958c29d8c618a7fd49463d175c7a97a282830536"
+      }
+    }
+  ]
+}

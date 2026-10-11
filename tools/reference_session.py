@@ -232,9 +232,11 @@ def snapshot_game(pid, label, output):
         row["equipment"]={"weapon":ram[state+0xc61f],"armor":ram[state+0xc621],
             "armor_points":ram[state+0xc622]}
         menu=u16(ds+0x56b6)*16
-        row["menu_choices"]={str(i):u16(menu+0x98+16*i) for i in (8,12,13,14,15,16,30)}
+        row["menu_choices"]={str(i):u16(menu+0x98+16*i) for i in (7,8,10,11,12,13,14,15,16,20,30)}
+        number=u16(ds+0x5574)*16+0x12
+        row["number_input"]=list(ram[number:number+8])
         row["building_payloads"]={}
-        for name in ("ARMOR","WEAPON"):
+        for name in ("ARMOR","WEAPON","COMSTAR"):
             encoded=(WORK/("dos/"+name+".BLD")).read_bytes()[2:]
             body=bytes(((value+41)&255)^233 for value in encoded)
             offset=ram.find(body)
@@ -288,6 +290,9 @@ class NpcTrace:
         def w(a): return struct.unpack_from("<H",ram,a)[0]
         ds, state = self.ds, self.state
         return {"cursor":[w(w(ds+0x538c)*16+0xa44b),w(w(ds+0x538e)*16+0xa44d)],
+            "credits":struct.unpack_from("<I",ram,state+0xd370)[0],
+            "investments":list(struct.unpack_from("<3I",ram,state+0xd374)),
+            "allowance_cap":w(state+0xd33f),
             "phase":ram[ds+0x57fe], "loop_timer":ram[state+0xd323],
             "rng":list(ram[ds+0x4fc0:ds+0x4fc3]),
             "search":[w(ds+0x315a),w(ds+0x315c)],
@@ -324,7 +329,7 @@ class NpcTrace:
         print(f"NPC TRACE {len(self.frames)} stable samples: {self.output}",flush=True)
 
 
-def controlled_talk_context(pid, output):
+def controlled_talk_context(pid, output, fixture="tests/fixtures/talk-context.json"):
     """Explicit differential-test precondition; this is not an NPC arrival trace.
 
     Only the eight NPC occupancy pairs and D33A result byte are changed in the
@@ -334,12 +339,18 @@ def controlled_talk_context(pid, output):
     snapshot_game(pid, "before-controlled-context", output)
     row = json.loads((output / "before-controlled-context-state.json").read_text())
     ram = (output / "before-controlled-context-ram.bin").read_bytes()
-    if row["building_index"] != 1 or row["citadel_payload_guest_offset"] is None or row["world_active"]:
-        raise RuntimeError("Talk precondition requires the initial local Citadel menu")
+    context_path = (ROOT/fixture).resolve()
+    if context_path.parent != ROOT/"tests/fixtures":
+        raise ValueError("Talk precondition must be a committed factual fixture")
+    context = json.loads(context_path.read_text())
+    room = context.get("room",1)
+    name = {1:"CITADEL",3:"WEAPON",4:"ARMOR"}.get(room)
+    if name is None or row["building_index"] != room or row["world_active"] or \
+            (row["citadel_payload_guest_offset"] is None if room == 1 else name not in row["building_payloads"]):
+        raise RuntimeError("Talk precondition requires the specified local building menu")
     state = int(row["state_segment"], 16) * 16
     if ram[state + 0xd339] or any(ram[state + 0xd399 + 26*i] for i in range(8)):
         raise RuntimeError("Refusing to replace an active NPC context")
-    context = json.loads((ROOT / "tests/fixtures/talk-context.json").read_text())
     pairs = context.get("npc_pairs"); result = context.get("talk_result")
     if not isinstance(pairs,list) or len(pairs) != 8 or not all(isinstance(pair,list) and len(pair) == 2 and
         all(type(v) is int and 0 <= v <= 255 for v in pair) for pair in pairs) or \
@@ -371,7 +382,7 @@ def controlled_talk_context(pid, output):
             if os.pwrite(fd, value, base+addr) != len(value): raise RuntimeError("Short precondition write")
             audit.append({"guest_offset":hex(addr),"before":list(before),"after":list(value)})
         (output/"controlled-context.json").write_text(json.dumps({"kind":"controlled-precondition",
-            "fixture":"tests/fixtures/talk-context.json", "changes":audit},indent=2)+"\n")
+            "fixture":fixture, "changes":audit},indent=2)+"\n")
     finally:
         os.close(fd); os.kill(pid, signal.SIGCONT)
 
@@ -525,7 +536,8 @@ btech.exe
                     else: raise RuntimeError("Natural NPC arrival was not observed within the bound")
                 elif command == "controlled-talk-context":
                     if npc_trace is not None: raise ValueError("Controlled context is separate from natural NPC traces")
-                    controlled_talk_context(process.pid, output)
+                    if len(parts) not in (1,2): raise ValueError("Talk context takes at most one fixture")
+                    controlled_talk_context(process.pid, output,parts[1] if len(parts)==2 else "tests/fixtures/talk-context.json")
                 elif command == "dump":
                     address = int(parts[2], 0)
                     length = int(parts[3], 0)
