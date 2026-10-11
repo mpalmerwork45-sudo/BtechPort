@@ -39,6 +39,14 @@ def main():
             subprocess.run(["python3", str(ROOT / "tools/verify_m2.py"), "--native-log",
                 str(work / "native-citadel-x11.actions")], check=True, timeout=15)
             print("PASS: native X11 Citadel entry, menu/confirm events, dialogue, exit and recorded replay.")
+            result = subprocess.run([str(ROOT / "build/btech-port"), "--smoke-katrina",
+                "--data", str(ROOT / "Original DOS"), "--record", str(work / "native-katrina-x11.actions"),
+                "--frame", str(work / "native-katrina-x11.ppm")], env=env, timeout=15, check=True,
+                capture_output=True, text=True)
+            print(result.stdout.strip())
+            subprocess.run(["python3", str(ROOT / "tools/verify_m2b.py"), "--native-log",
+                str(work / "native-katrina-x11.actions")], check=True, timeout=15)
+            print("PASS: native X11 Katrina dialogue, repeat denial, exit/re-entry and recorded replay.")
         finally:
             os.close(read_fd)
             xvfb.terminate()

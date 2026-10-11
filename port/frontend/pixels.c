@@ -61,7 +61,7 @@ static void rectangle(uint32_t *f, int x, int y, int w, int h, unsigned color)
         for (int col = x; col < x + w; ++col) pixel(f, col, row, btp_palette[color]);
 }
 /* Independent fixed-column text layout; original glyphs/layout are approximate.
-   Hall messages fit one page each. Overflow is visible, never silently hidden. */
+   Verified Hall/Katrina messages fit. Overflow is visible, never silently hidden. */
 static int wrapped(uint32_t *f, int y, const uint8_t *bytes, size_t n, unsigned color)
 {
     size_t at = 0;
@@ -92,10 +92,10 @@ static void story_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
         return;
     }
     const BtpScriptState *v = &s->script;
-    if ((size_t)v->text_offset + v->text_length > r->citadel.length) {
+    uint8_t bytes[BTP_BLD_MAX + 1];
+    if (!btp_script_text(v, &r->citadel, bytes, sizeof bytes)) {
         text(f, 110, 12, "INVALID TEXT BOUNDS", 12); return;
     }
-    const uint8_t *bytes = r->citadel.bytes + v->text_offset;
     if (v->status == BTP_SCRIPT_MENU) {
         size_t starts[5]; unsigned found = 0;
         for (size_t i = v->text_length; i && found < 5; --i)
@@ -143,9 +143,9 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
     /* Approximate marker until ANIMATE.ICN sprite selection/masking is verified. */
     for (int y = 97; y <= 102; ++y)
         for (int x = 211; x <= 213; ++x) pixel(f, x, y, btp_palette[y < 99 ? 15 : 1]);
-    text(f, 8, 9, "BTECHPORT M2A", 15);
+    text(f, 8, 9, "BTECHPORT M2B", 15);
     text(f, 8, 24, s->mode >= BTP_BUILDING ? "CITADEL" : "TRAINING", 14);
-    text(f, 8, 36, s->mode >= BTP_BUILDING ? "HALL / LEAVE" : "SCHOOL", 14);
+    text(f, 8, 36, s->mode >= BTP_BUILDING ? "KATRINA / HALL" : "SCHOOL", 14);
     text(f, 8, 57, s->mode == BTP_EXPLORE ? "ARROWS MOVE" : "ARROWS SELECT", 7);
     text(f, 8, 69, "F3 DEBUG", 7);
     text(f, 8, 81, "R RESTART", 7);

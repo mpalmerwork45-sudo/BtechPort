@@ -36,7 +36,7 @@ int main(int argc, char **argv)
         fprintf(stderr, "SDL: %s\n", SDL_GetError()); goto done;
     }
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
-    SDL_Window *window = SDL_CreateWindow("BtechPort M2a - Training school and Citadel", SDL_WINDOWPOS_CENTERED,
+    SDL_Window *window = SDL_CreateWindow("BtechPort M2b - Training school and Citadel", SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED, 960, 600, SDL_WINDOW_RESIZABLE);
     SDL_Renderer *renderer = window ? SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE) : NULL;
     SDL_Texture *texture = renderer ? SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
@@ -53,10 +53,15 @@ int main(int argc, char **argv)
         const SDL_Keycode citadel_keys[] = {SDLK_UP,SDLK_UP,SDLK_UP,SDLK_UP,SDLK_UP,
             SDLK_RETURN,SDLK_DOWN,SDLK_RETURN,SDLK_SPACE,SDLK_SPACE,SDLK_SPACE,
             SDLK_SPACE,SDLK_SPACE,SDLK_SPACE,SDLK_DOWN,SDLK_DOWN,SDLK_DOWN,SDLK_RETURN,SDLK_DOWN};
-        unsigned count = o.smoke == 1 ? 3 : (unsigned)(sizeof citadel_keys / sizeof citadel_keys[0]);
+        const SDL_Keycode katrina_keys[] = {SDLK_UP,SDLK_UP,SDLK_UP,SDLK_UP,SDLK_UP,
+            SDLK_RETURN,SDLK_RETURN,SDLK_SPACE,SDLK_SPACE,SDLK_RETURN,SDLK_SPACE,
+            SDLK_DOWN,SDLK_DOWN,SDLK_DOWN,SDLK_DOWN,SDLK_RETURN,SDLK_DOWN,SDLK_UP,SDLK_RETURN};
+        const SDL_Keycode *keys = o.smoke == 1 ? smoke_keys : o.smoke == 2 ? citadel_keys : katrina_keys;
+        unsigned count = o.smoke == 1 ? 3 : o.smoke == 2 ?
+            (unsigned)(sizeof citadel_keys / sizeof citadel_keys[0]) : (unsigned)(sizeof katrina_keys / sizeof katrina_keys[0]);
         for (unsigned i = 0; i < count; ++i) {
             SDL_Event event = {.type = SDL_KEYDOWN};
-            event.key.keysym.sym = o.smoke == 1 ? smoke_keys[i] : citadel_keys[i];
+            event.key.keysym.sym = keys[i];
             if (SDL_PushEvent(&event) != 1) goto sdl_done;
         }
     }
@@ -97,7 +102,7 @@ int main(int argc, char **argv)
         SDL_RenderPresent(renderer);
         if (o.debug) {
             char title[200];
-            snprintf(title, sizeof title, "BtechPort M2a | %s | half=(%u,%u) | PC=%04x op=%02x | tick=%u",
+            snprintf(title, sizeof title, "BtechPort M2b | %s | half=(%u,%u) | PC=%04x op=%02x | tick=%u",
                 btp_mode_name(state.mode), state.x_half, state.y_half, state.script.pc,
                 state.script.last_opcode, state.tick);
             SDL_SetWindowTitle(window, title);
@@ -108,7 +113,10 @@ int main(int argc, char **argv)
     if (o.frame && !btp_write_ppm(o.frame, frame)) io_failed = 1;
     if ((o.smoke == 1 && (state.x_half != 70 || state.y_half != 25 || state.tick != 8)) ||
         (o.smoke == 2 && (state.x_half != 69 || state.y_half != 21 || state.tick != 24 ||
-            state.mode != BTP_EXPLORE || state.script.status != BTP_SCRIPT_END || state.story_flags[10] != 1))) {
+            state.mode != BTP_EXPLORE || state.script.status != BTP_SCRIPT_END || state.story_flags[10] != 1)) ||
+        (o.smoke == 3 && (state.x_half != 69 || state.y_half != 21 || state.tick != 24 ||
+            state.mode != BTP_BUILDING || state.script.status != BTP_SCRIPT_MENU || state.script.selected != 4 ||
+            state.story_flags[6] != 1 || state.story_flags[10] != 1 || state.story_flags[22] != 255))) {
         fputs("Native smoke input/state mismatch\n", stderr); io_failed = 1;
     }
     result = io_failed ? 1 : 0;

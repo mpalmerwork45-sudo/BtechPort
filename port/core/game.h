@@ -10,10 +10,11 @@ typedef struct {
     uint16_t x_half, y_half;
     uint8_t map_id, gate, facing, blocked;
     uint8_t mode, entry_selected, entry_slot;
-    uint8_t story_flags[16]; /* original D30C[0..15] projection; meanings provisional */
+    uint8_t story_flags[BTP_STORY_BYTES]; /* D30C[0..22]; byte 22 countdown pacing is deferred */
+    uint8_t story_checkpoint[BTP_STORY_BYTES], checkpoint_valid;
     BtpScriptState script;
 } BtpState;
-enum { BTP_STATE_BYTES = 64 };
+enum { BTP_STATE_BYTES = 128 };
 
 void btp_start(BtpState *state);
 void btp_tick(BtpState *state, const BtpMap *map, BtpAction action);

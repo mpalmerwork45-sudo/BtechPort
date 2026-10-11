@@ -61,8 +61,10 @@ def main():
         [0,1,2,3,4,5,6,8,9,10,11,12,13,14,18,19]))
     for row in fixture["checkpoints"]:
         state = states[indexes[row["label"]]]
-        for key in ("x_half", "y_half", "mode", "story_flags"):
+        for key in ("x_half", "y_half", "mode"):
             check(state[key] == row[key], f"{row['label']} {key}: {state[key]} != {row[key]}")
+        check(state["story_flags"][:16] == row["story_flags"] and not any(state["story_flags"][16:]),
+              f"{row['label']} story bytes differ")
         check(state["map"] == 1 and state["gate"] == 85, "Wrong map/gate")
     check(len(states) == 20 and all(s["tick"] == i for i, s in enumerate(states)), "Tick/state count mismatch")
     for i, tick in enumerate([6,8,9,10,11,12,13,14]):
@@ -74,18 +76,20 @@ def main():
           states[17]["menu_selected"] == 4, "Menu selection/return behavior differs")
     check([s["script_pc"] for s in states[8:14]] == fixture["hall_resume_pcs"], "Hall bytecode dispatch differs")
     check(states[18]["script_status"] == 3 and states[18]["script_opcode"] == 255, "Exit did not execute FF")
-    for choice, opcode in [(0,0xf3),(2,0xf7),(3,0xf4)]:
+    for choice, opcode in [(2,0xf5),(3,0xf5)]:
         prefix = ["up"] * 5 + ["accept"] + ["down"] * choice + ["accept"]
+        if choice == 2: prefix += ["accept"] # Class stops after its introductory pause.
         rejected, failed = run(binary, prefix, work, f"unsupported-{choice}", success=False)
         check("unsupported opcode" in rejected.stderr and failed[-1]["script_opcode"] == opcode and
               failed[-1]["mode"] == "script-error", "Unsupported choice silently skipped")
+        check(failed[-1]["story_flags"] == states[6]["story_flags"], "Failed choice left partial story writes")
         _, recovered = run(binary, prefix + ["cancel"], work, f"recover-{choice}")
         check(recovered[-1]["mode"] == "building" and recovered[-1]["script_status"] == 1,
               "Explicit error recovery failed")
     _, declined = run(binary, ["up"] * 5 + ["right", "accept"], work, "decline")
     check(declined[-1]["mode"] == "local-exploration" and declined[-1]["y_half"] == 20 and
           declined[-1]["story_flags"][10] == 0, "Decline incorrectly executed building script")
-    print("PASS: 16 original Citadel checkpoints / 20 native states, seven decoded texts, six pauses, retained selection, exit, deterministic replay, decline and three visible unsupported choices/recovery.")
+    print("PASS: 16 original Hall checkpoints / 20 native states, seven decoded texts, six pauses, retained selection, exit, deterministic replay, decline and visible class/talk faults with rollback/recovery.")
     if args.native_log:
         replay_actions = args.native_log.read_text().splitlines()
         _, recorded = run(binary, replay_actions, work, "recorded")
