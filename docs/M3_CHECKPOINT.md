@@ -1,4 +1,11 @@
-# M3a checkpoint — 2026-10-11
+# Historical M3a checkpoint — 2026-10-11
+
+**Superseded on 2026-10-12:** the stationary shell, original movement arrows,
+firing indicator and remaining verification are complete in bounded M3a.
+Use [current project status](PROJECT_STATUS.md) and
+[the milestone evidence](M3_COMBAT_EVIDENCE.md) for the current behavior,
+tests and BTPE/v14 save format. The notes below preserve the overnight handoff
+and its earlier test counts; they are not a current task list.
 
 Work was checkpointed when the user needed to leave for bed. **M3a is not
 complete or accepted.** Resume here; do not repeat the original-game audit.

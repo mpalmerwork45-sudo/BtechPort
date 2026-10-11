@@ -17,6 +17,7 @@ int btp_options(int argc, char **argv, BtpOptions *o)
             puts("BtechPort M3a: three training missions, combat, shops and save/load\n"
                  "  --data DIRECTORY     original resource directory (default: Original DOS)\n"
                  "  --dialogue-data FILE local EXE text cache (default: work/talk-data.bin)\n"
+                 "  --combat-data FILE   local EXE combat cache (default: work/combat-data.bin)\n"
                  "  --conversation-checkpoint  isolated controlled Talk handler test\n"
                  "  --shop-talk-checkpoint armor|weapon  controlled two-NPC shop handler test\n"
                  "  --headless           run without SDL/display/audio\n"

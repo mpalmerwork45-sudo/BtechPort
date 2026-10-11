@@ -1,11 +1,12 @@
-# M3a — third-assignment combat investigation
+# M3a — bounded third-assignment weapons combat, 2026-10-12
 
-Status: in progress; playable checkpoint and remaining verification are in
-[M3_CHECKPOINT.md](M3_CHECKPOINT.md). The user subsequently requested a
-stationary training shell; that change is pending and should be distinguished
-from the original observations below. The proposed "stationary target" description was too
-strong: the original target moves. This document records primary observations,
-not a claim that native combat is finished.
+Status: **complete within the manual weapons-training scope**. The native
+encounter reaches destruction, instructor reporting and the 500 allowance
+cap. The shell is stationary by the user's explicit request. Original DOS
+observations below show a moving disabled target; the controlled comparison
+retains that behavior instead of changing the original expectations.
+The broader combat system remains unfinished. The [overnight checkpoint](M3_CHECKPOINT.md)
+is retained as history; [current status](PROJECT_STATUS.md) records the review.
 
 ## Sources and address conventions
 
@@ -24,8 +25,8 @@ or generated GPL source is copied into the port.
 ## Verified primary findings
 
 * `07DC:06F8`: assignment index 2 creates one enemy mech and no infantry through
-  `07DC:0D49`. It clears the enemy's actuator bytes 24/25, ammunition 27..30,
-  movement 31 and jump 32, then enters `103B:000A` with training argument 1.
+  `07DC:0D49`. It clears actuator bytes 0x24/0x25, ammunition 0x27..0x30,
+  movement 0x31 and jump 0x32, then enters `103B:000A` with training argument 1.
 * The enemy is the original Locust template at image 28170. Setup consumes two
   RNG draws; this assignment forces x=114 and retains y=89+(second draw & 7).
   The party's first mech starts two half-rows above the launch cursor: (64,77).
@@ -56,6 +57,10 @@ or generated GPL source is copied into the port.
   not apply. Live blocked shots consume no ammunition or RNG.
 * `07DC:0C80`: the surviving player mech and a clear flee flag produce the
   third assignment's success result. This case skips the later rank increase.
+* `103B:188E..191F`: each planned movement step draws an original font glyph,
+  indexed by `(dx+1)+4*(dy+1)` in DS:3B06. The eight direction IDs are N=1,
+  NE=2, E=3, SE=4, S=5, SW=6, W=7, NW=8. The port uses these glyphs in planning
+  and along the remaining saved path during execution.
 
 ## Repeatable observation and faster testing
 
@@ -86,8 +91,8 @@ Critical checks compare the complete 125-byte record fingerprint, fatal flag
 and final RNG; they include all eight internal locations, three loan mechs,
 destroyed locations and disabled actuators. The committed factual vectors
 contain inputs, results and fingerprints, not asset or executable bytes.
-All eleven CTest suites passed at the initial rule-library checkpoint; the
-current implementation has 15 passing suites.
+All sixteen CTest suites pass, including the additional cooling and native-core
+combat progression/graphics/save checks.
 
 Regenerate / check those cases:
 
@@ -101,10 +106,57 @@ The native game reads an ignored 1,110-byte BTC1 cache generated from the
 audited EXE for the rule tests. It contains three loan records and numeric
 weapon/location/cluster/critical tables, with an address/hash sidecar.
 
-Further **VERIFIED, bounded** coverage now includes 896 shot cases, 779
-navigation comparisons and 35 controlled original turns through destruction.
-The ordinary native route reaches reporting and the 500-cap reward. See the
-checkpoint for exact prerequisites and limits. **UNKNOWN / incomplete:**
-broader turn/AI contexts, original firing visuals, terrain ignition and native
-window verification of this encounter. Recovery of tables or individual
-routines is not full combat.
+## Differential coverage and implementation limits
+
+| Check | Result and scope |
+|---|---|
+| Primitives | 2099 original cases: dice, range, movement points and critical effects |
+| Gunfire | 896 original shot spans; hit threshold, location, damage/overflow, death, arm effect, target record hash, RNG, ammo and accumulated heat |
+| Navigation | 779 original LOS/path comparisons; one additional out-of-grid case checks a deliberate native diagnostic |
+| Heat cleanup | 648 original `0E31:0C63` cases; three loans, idle/walk/run/jump costs, nonzero heat/pools, cooling/sinks, engine damage, burning and water cover |
+| Full turns | 35 controlled original turns through destruction; both units' position/direction/heat, full record hashes and RNG |
+| Ordinary playability | 5214 native inputs from new game through three assignments/report/exit; no state/RNG edits |
+| Disk continuations | 20 fresh processes, including movement planning, targeting, firing indication, mid-turn, victory and reporting |
+| C integration | 20063 assertions; continuation at every input, stationary shell, original arrow glyphs in all eight directions, graphics-independent rules, loan/withdrawal paths and save migration/rejection |
+| Native X11 | 5219 SDL ticks in 4.95s, versus 167.01s normal pacing; complete inputs/final JSON/frame match headless |
+| Real-time save controls | Six F5/F9 contexts restore exact continuation and pixels: computer prompt, route preview, confirmed route, weapons, target and resolving turn |
+| Sanitizers | All headless suites/replays pass ASan/UBSan/LeakSanitizer; SDL/backend not instrumented |
+
+The controlled full-turn fixture uses Locusts at (64,77)/(114,89), seed
+70/54/210, rank zero, original target AI, messages None and graphics No.
+`btp_combat_tick_reference()` enables that original AI only in the comparison;
+ordinary gameplay keeps the shell's position and facing fixed. The original
+fixture has not been rewritten to pretend that this requested change matches
+DOS. The complete input-only victory route uses the Locust; Wasp/Chameleon
+launch, Scan, menus and withdrawal paths are covered separately.
+
+Navigation retains the original asymmetric parity and 24-column working-grid
+addressing. A ray beyond that verified 576-byte grid is diagnosed; original
+out-of-grid memory semantics are not established. Terrain ignition is also a
+visible boundary before attack ammunition/RNG changes.
+
+**VERIFIED in scope:** numeric weapon rules, heat cleanup, tested walking
+paths/LOS and controlled turn scheduling; ordinary victory/reporting and
+500-cap progression; original direction glyphs and save continuation.
+**INFERRED:** broader Run/Jump turn behavior and general unit/AI contexts.
+**APPROXIMATE:** combat layout, Scan/messages, cadence and a short firing
+indicator gated by the graphics choice. It uses an independently drawn beam
+and original atlas flame artwork, without claiming exact original weapon
+animation. Only one destination is stored; the original waypoint queue is
+deferred. **UNKNOWN / incomplete:** kicking, computer control, terrain
+ignition, general AI/retaliation, later assignments, audio and wider combat.
+
+Regeneration and verification use the existing optional local Unicorn wheel:
+
+```sh
+python3 tools/make_combat_shots.py
+python3 tools/make_combat_cooling.py
+python3 tools/make_combat_navigation.py work/reference-runs/1791709609448346900/combat-menu
+python3 tools/make_combat_turns.py work/reference-runs/1791709609448346900/combat-menu
+python3 tools/make_combat_replay.py
+python3 tools/native_smoke.py --combat-only
+```
+
+Navigation/turn regeneration needs the private matching RAM/metadata capture.
+Routine tests consume the committed numeric fixtures and do not need the
+oracle wheel or DOSBox. Whole-game RNG, screen and timing parity are not claimed.

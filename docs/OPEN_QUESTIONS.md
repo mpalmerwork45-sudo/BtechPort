@@ -1,17 +1,16 @@
-# Open questions after bounded M2k–M2m — 2026-10-11
+# Open questions after bounded M3a — 2026-10-12
 
 Earlier Citadel, NPC, shop, banking, Class, save, sprite and first-mission
-findings remain in their evidence reports. The second assignment and sleep
-through the third briefing are now playable; see
-[M2k–M2m evidence](M2_RUBBLE_ANIMATION_EVIDENCE.md).
+findings remain in their evidence reports. Three training assignments now reach
+their results; see [M3a evidence](M3_COMBAT_EVIDENCE.md).
 
-1. **Active gate, M3a:** manual third-assignment combat is playable through
-   victory and the 500-cap reward, but the milestone is not complete. The user's
-   stationary-shell and movement-arrow requests, native X11 combat route and
-   sanitizer checks remain pending; see [resume checklist](M3_CHECKPOINT.md).
-   Original DOS observations show the disabled target moving one step per turn;
-   preserve that evidence when implementing the user's requested stationary shell.
-   Later missions remain unsupported. Rick's natural invitation requires
+1. **Proposed M3b:** recover and verify kicking/physical attacks in the existing
+   training encounter. **Proposed M3c:** audit and implement fourth-assignment
+   combat. General AI/retaliation, the waypoint queue, exact weapon animation,
+   terrain ignition and broader Run/Jump turn parity remain open. The user's
+   stationary shell and original movement arrows are implemented and verified
+   in the native route; original DOS moving-target observations remain intact.
+   Later missions are unsupported. Rick's natural invitation requires
    fifth-assignment success; do not invent an earlier unlock.
 2. **Long-route NPC/RNG gap:** first quiz/mission RNG matches, but original
    outdoor idle intervals packed before movement keys alter NPC arrival timing.
@@ -30,16 +29,19 @@ through the third briefing are now playable; see
    final dream pixels now match observations. Wider animation contexts, live
    water occlusion and complete screen equality remain unverified.
 6. Original 3913-byte GAME saves versus the secondary 4096-byte claim. Prove
-   original save/load round trips before import/export. Native saves use BTPD/v13
-   (1024-byte payload, 1040-byte BTS1 file), also preserving combat state.
+   original save/load round trips before import/export. Native saves use BTPE/v14
+   (1024-byte payload, 1040-byte BTS1 file), preserving combat and firing indication.
    Historical migrations initialize only state the old format could represent.
 7. Exact DOS keyboard repeat/flush/CPU timing and wider day progression. O0/O8
    timing uses observed VGA retrace units mapped to 32ms ticks; decode cost and
    wall-clock pacing remain approximate. Later combat timers, campaign gates
    and general C61B/C61C skill semantics remain open.
-8. Tactical combat requires actual traces for initiative, targeting/hit-location,
-   damage, heat/ammunition, criticals, AI, salvage and aftermath. EXE salvage
-   strings contradict conclusions based only on missing BLD wording.
+8. Tactical combat now has bounded instruction comparisons for dice, targeting,
+   hit location, damage/criticals, ammunition, heat, walking/LOS and complete
+   controlled turns. Extend actual traces to general initiative/AI, retaliating
+   opponents, salvage and wider aftermath. EXE salvage strings contradict
+   conclusions based only on missing BLD wording. The controlled original
+   moving-target comparison is distinct from the requested stationary shell.
 9. All 22 ANMs decode, including valid binary O21; only launch/dream dispatch is
    supported. Recover remaining campaign playback contexts, WWOODBT.SIF and
    audio/music roles. Audio remains absent.
