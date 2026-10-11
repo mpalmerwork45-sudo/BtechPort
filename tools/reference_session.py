@@ -362,9 +362,13 @@ class AnmTrace(NpcTrace):
         source = w(w(self.ds+0x53c2)*16+0x64)-0x42c3
         index = next((i for i,f in enumerate(self.expected["frames"]) if f["end"] == source),None)
         if index is None: return None
+        sequence_index = w(w(self.ds+0x53c4)*16+0xe48a)
+        # During decoding of the next delta the source pointer still denotes
+        # the previous frame; its increment follows drawing, before the wait.
+        if sequence_index != index: return None
         packed = ram[buffer+0x244b:buffer+0x244b+3872]
         return {"index":index,"end":source,
-                "sequence_index":w(w(self.ds+0x53c4)*16+0xe48a),
+                "sequence_index":sequence_index,
                 "sha256":hashlib.sha256(packed).hexdigest()}
 
     def observe(self):

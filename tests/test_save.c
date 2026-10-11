@@ -70,7 +70,7 @@ static void roundtrip(const BtpState *s, const BtpResources *r)
 static void corpus(const BtpResources *r)
 {
     const char *names[] = {"reference-bank","reference-bank-rates","citadel-katrina","reference-shops",
-        "reference-class-audit","reference-class-funded"};
+        "reference-class-audit","reference-class-funded","ordinary-rubble-story"};
     unsigned snapshots = 0;
     for (unsigned i = 0; i < sizeof names/sizeof names[0]; ++i) {
         char path[256]; snprintf(path,sizeof path,"tests/fixtures/%s.actions",names[i]);

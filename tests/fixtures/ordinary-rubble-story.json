@@ -1,0 +1,99 @@
+{
+  "kind": "ordinary-native-playability",
+  "source_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "state_edits": false,
+  "scope": "Input-only route; native quest outcomes, not long-wait DOS NPC/RNG equivalence",
+  "native_rubble_target": [
+    29,
+    15
+  ],
+  "checkpoints": [
+    {
+      "label": "first-success",
+      "tick": 1262,
+      "expected": {
+        "mode": "local-exploration",
+        "allowance_cap": 150,
+        "mech_skills": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "label": "rubble-animation",
+      "tick": 2300,
+      "expected": {
+        "mode": "training-mission"
+      }
+    },
+    {
+      "label": "rubble-pickup",
+      "tick": 2442,
+      "expected": {
+        "mode": "training-mission"
+      }
+    },
+    {
+      "label": "rubble-carrying",
+      "tick": 2443,
+      "expected": {
+        "mode": "training-mission"
+      }
+    },
+    {
+      "label": "rubble-result",
+      "tick": 2500,
+      "expected": {
+        "mode": "building",
+        "allowance_cap": 250,
+        "mech_skills": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "label": "third-tired",
+      "tick": 3548,
+      "expected": {
+        "mode": "building",
+        "allowance_cap": 250
+      }
+    },
+    {
+      "label": "dream-animation",
+      "tick": 3708,
+      "expected": {
+        "mode": "building"
+      }
+    },
+    {
+      "label": "rest-wake",
+      "tick": 3764,
+      "expected": {
+        "mode": "building"
+      }
+    },
+    {
+      "label": "third-rested",
+      "tick": 3939,
+      "expected": {
+        "mode": "building",
+        "allowance_cap": 250,
+        "mech_skills": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "label": "third-mech-menu",
+      "tick": 3940,
+      "expected": {
+        "mode": "building"
+      }
+    }
+  ]
+}

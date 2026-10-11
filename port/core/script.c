@@ -188,10 +188,8 @@ void btp_script_native_return(BtpScriptState *s, const BtpBld *b, uint8_t story[
 void btp_script_animation_return(BtpScriptState *s, const BtpBld *b, uint8_t story[BTP_STORY_BYTES])
 {
     if (s->status != BTP_SCRIPT_ANIMATION) return;
-    s->text_offset = s->text_length = s->text_count = 0;
-    memset(s->text,0,sizeof s->text);
-    memset(s->text_column,0,sizeof s->text_column); memset(s->text_row,0,sizeof s->text_row);
-    s->column = s->row = s->has_cash = s->cash_after = s->has_accounts = 0; s->cash_value = 0;
+    /* Original Barracks wake-up screenshot retains the text preceding EA and
+       appends the announcement after it; animation completion is not F2. */
     s->status = BTP_SCRIPT_RUNNING; s->pause_units = 0; run(s,b,story);
 }
 int btp_script_choose(BtpScriptState *s, const BtpBld *b, unsigned choice, uint8_t story[BTP_STORY_BYTES])

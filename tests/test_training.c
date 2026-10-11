@@ -57,6 +57,10 @@ static void answers(BtpState *s, const BtpResources *r, int wrong)
 }
 static void animation(BtpState *s, const BtpResources *r)
 {
+    if (s->cutscene.active) {
+        invalid(s,r,441,3); invalid(s,r,442,s->cutscene.kind == 8 ? 0 : 8);
+        invalid(s,r,443,s->cutscene.kind == 8 ? 3 : 18); invalid(s,r,450,1);
+    }
     for (unsigned n=0;s->cutscene.active;++n) {
         CHECK(n < 128); restored_tick(s,r,n&1u ? BTP_IDLE : BTP_ACCEPT);
     }
@@ -71,6 +75,14 @@ static void begin(BtpState *s, const BtpResources *r, unsigned mech)
     select(s,r,mech); animation(s,r);
     CHECK(s->mode == BTP_MISSION && s->mission.phase == BTP_MISSION_DRIVE);
     CHECK(s->x_half == 64 && s->y_half == 79 && s->story_flags[2] == mech);
+    /* v10/v11 first-mission saves predate timed cutscenes. Their established
+       state migrates exactly once playback has completed. */
+    uint8_t old[BTP_STATE_BYTES], current[BTP_STATE_BYTES]; BtpState loaded;
+    for (unsigned version=10;version<=11;++version) {
+        btp_state_encode(s,old); old[3]=(uint8_t)(version == 10 ? 'A' : 'B'); old[4]=(uint8_t)version;
+        CHECK(btp_state_decode(old,version == 10 ? 448u : sizeof old,&r->map,&r->training,&loaded));
+        btp_state_encode(&loaded,current); btp_state_encode(s,old); CHECK(!memcmp(old,current,sizeof old));
+    }
 }
 static void synthetic(void)
 {

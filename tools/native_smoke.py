@@ -67,17 +67,17 @@ def saves(env, work):
 
 
 def shops(env, work):
-    print("Running native X11 two-shop walk/purchases/return (about 98 seconds).", flush=True)
-    result = subprocess.run([str(ROOT / "build/btech-port"), "--smoke-shops",
+    print("Running accelerated native X11 two-shop walk/purchases/return.", flush=True)
+    result = subprocess.run([str(ROOT / "build/btech-port"), "--smoke-shops", "--smoke-fast",
         "--replay", str(ROOT / "tests/fixtures/reference-shops.actions"),
         "--data", str(ROOT / "Original DOS"), "--record", str(work / "native-shops-x11.actions"),
         "--frame", str(work / "native-shops-x11.ppm")], env=env, timeout=140, check=True,
         capture_output=True, text=True, cwd=ROOT)
     replayed = subprocess.run([str(ROOT / "build/btech-headless"), "--replay",
-        str(work / "native-shops-x11.actions")], check=True, timeout=15,
+        str(work / "native-shops-x11.actions"), "--frame", str(work / "replayed-shops.ppm")], check=True, timeout=15,
         capture_output=True, text=True, cwd=ROOT)
-    if json.loads(result.stdout) != json.loads(replayed.stdout):
-        raise RuntimeError("Native shop state differs from complete headless input replay")
+    if (work / "native-shops-x11.actions").read_text().splitlines() != (ROOT / "tests/fixtures/reference-shops.actions").read_text().splitlines()+["idle"]*5 or json.loads(result.stdout) != json.loads(replayed.stdout) or (work / "native-shops-x11.ppm").read_bytes() != (work / "replayed-shops.ppm").read_bytes():
+        raise RuntimeError("Native shop inputs/state/frame differ from complete headless input replay")
     print(result.stdout.strip())
     subprocess.run(["python3", str(ROOT / "tools/verify_m2e.py"), "--native-log",
         str(work / "native-shops-x11.actions")], check=True, timeout=20)
@@ -100,14 +100,15 @@ def m2f(env, work, input_only=False):
         frame = work/("native-"+scenario+"-x11.ppm")
         initial = ["--shop-talk-checkpoint","armor" if scenario.startswith("armor") else "weapon"] if scenario.endswith("talk") else []
         ticks = len(path.read_text().splitlines())+5
-        print(f"Running native X11 {scenario}, {ticks} ticks (about {ticks*0.032:.0f} seconds).",flush=True)
-        result = subprocess.run([str(ROOT/"build/btech-port"),"--smoke-replay","--replay",str(path),
+        print(f"Running accelerated native X11 {scenario}, {ticks} logical ticks.",flush=True)
+        result = subprocess.run([str(ROOT/"build/btech-port"),"--smoke-replay","--smoke-fast","--replay",str(path),
             "--record",str(record),"--frame",str(frame),*initial],env=env,timeout=ticks*0.032+35,
             check=True,capture_output=True,text=True,cwd=ROOT)
-        replayed = subprocess.run([str(ROOT/"build/btech-headless"),"--replay",str(record),*initial],
+        replayed_frame=work/("replayed-"+scenario+".ppm")
+        replayed = subprocess.run([str(ROOT/"build/btech-headless"),"--replay",str(record),"--frame",str(replayed_frame),*initial],
             check=True,timeout=20,capture_output=True,text=True,cwd=ROOT)
-        if record.read_text().splitlines() != path.read_text().splitlines()+["idle"]*5 or json.loads(result.stdout) != json.loads(replayed.stdout):
-            raise RuntimeError(f"Native {scenario} input/final state differs from complete headless replay")
+        if record.read_text().splitlines() != path.read_text().splitlines()+["idle"]*5 or json.loads(result.stdout) != json.loads(replayed.stdout) or frame.read_bytes() != replayed_frame.read_bytes():
+            raise RuntimeError(f"Native {scenario} input/final state/frame differs from complete headless replay")
         if scenario == "bank-editor":
             state = json.loads(result.stdout)
             if state["credits"] != 5 or state["investments"] != [30,0,0]:
@@ -120,14 +121,15 @@ def school(env, work):
     path = ROOT/"tests/fixtures/reference-class-funded.actions"
     record = work/"native-class-x11.actions"; frame = work/"native-class-x11.ppm"
     ticks = len(path.read_text().splitlines())+5
-    print(f"Running native X11 funded course/cooldown/re-enrolment, {ticks} ticks (about {ticks*0.032:.0f} seconds).",flush=True)
-    result = subprocess.run([str(ROOT/"build/btech-port"),"--smoke-replay","--replay",str(path),
+    print(f"Running accelerated native X11 funded course/cooldown/re-enrolment, {ticks} logical ticks.",flush=True)
+    result = subprocess.run([str(ROOT/"build/btech-port"),"--smoke-replay","--smoke-fast","--replay",str(path),
         "--record",str(record),"--frame",str(frame)],env=env,timeout=ticks*0.032+35,
         check=True,capture_output=True,text=True,cwd=ROOT)
-    replayed = subprocess.run([str(ROOT/"build/btech-headless"),"--replay",str(record)],
+    replayed_frame=work/"replayed-class.ppm"
+    replayed = subprocess.run([str(ROOT/"build/btech-headless"),"--replay",str(record),"--frame",str(replayed_frame)],
         check=True,capture_output=True,text=True,cwd=ROOT,timeout=20)
-    if record.read_text().splitlines() != path.read_text().splitlines()+["idle"]*5 or json.loads(result.stdout) != json.loads(replayed.stdout):
-        raise RuntimeError("Native Class inputs/final state differ from complete headless replay")
+    if record.read_text().splitlines() != path.read_text().splitlines()+["idle"]*5 or json.loads(result.stdout) != json.loads(replayed.stdout) or frame.read_bytes() != replayed_frame.read_bytes():
+        raise RuntimeError("Native Class inputs/final state/frame differ from complete headless replay")
     subprocess.run(["python3",str(ROOT/"tools/verify_m2h.py"),"--native-log",str(record)],
         check=True,timeout=30,cwd=ROOT)
     print("PASS: native X11 ordinary funding, paid Class, cooldown refusal/expiry and repeat enrolment; complete canonical state equality.",flush=True)
@@ -257,14 +259,15 @@ def training(env, work):
             path=ROOT/"tests/fixtures"/("reference-"+kind+".actions")
             record=work/("native-"+kind+".actions"); frame=work/("native-"+kind+".ppm")
             initial=seed(binary,kind,tmp); ticks=len(path.read_text().splitlines())+5
-            print(f"Running native {kind}: {ticks} SDL input/presentation ticks.",flush=True)
-            result=subprocess.run([str(ROOT/"build/btech-port"),"--smoke-replay","--replay",str(path),
+            print(f"Running accelerated native {kind}: {ticks} SDL input/presentation ticks.",flush=True)
+            result=subprocess.run([str(ROOT/"build/btech-port"),"--smoke-replay","--smoke-fast","--replay",str(path),
                 "--record",str(record),"--frame",str(frame),*map(str,initial)],
                 cwd=ROOT,env=env,check=True,capture_output=True,text=True,timeout=ticks*.032+30)
-            expected=subprocess.run([str(binary),*map(str,initial),"--replay",str(record)],
+            replayed_frame=tmp/(kind+".ppm")
+            expected=subprocess.run([str(binary),*map(str,initial),"--replay",str(record),"--frame",str(replayed_frame)],
                 cwd=ROOT,check=True,capture_output=True,text=True,timeout=20)
-            if record.read_text().splitlines() != path.read_text().splitlines()+["idle"]*5 or json.loads(result.stdout) != json.loads(expected.stdout):
-                raise RuntimeError(kind+" native input/final state differs from complete headless replay")
+            if record.read_text().splitlines() != path.read_text().splitlines()+["idle"]*5 or json.loads(result.stdout) != json.loads(expected.stdout) or frame.read_bytes() != replayed_frame.read_bytes():
+                raise RuntimeError(kind+" native input/final state/frame differs from complete headless replay")
             print("PASS: native "+kind+" complete inputs/state equal the canonical replay.",flush=True)
         fixture=json.loads((ROOT/"tests/fixtures/reference-mission-pass.json").read_text())
         lines=(ROOT/"tests/fixtures/reference-mission-pass.actions").read_text().splitlines()
@@ -312,6 +315,60 @@ def training(env, work):
                     try: process.wait(timeout=5)
                     except subprocess.TimeoutExpired: process.kill(); process.wait()
 
+def rubble(env,work):
+    """Accelerated input-only full route, followed by real-time F5/F9 probes."""
+    from reference_session import WindowKeys
+    binary=ROOT/"build/btech-headless"
+    path=ROOT/"tests/fixtures/ordinary-rubble-story.actions"
+    facts=json.loads((ROOT/"tests/fixtures/ordinary-rubble-story.json").read_text())
+    lines=path.read_text().splitlines(); record=work/"native-rubble-story.actions"; frame=work/"native-rubble-story.ppm"
+    started=time.monotonic()
+    actual=subprocess.run([str(ROOT/"build/btech-port"),"--smoke-replay","--smoke-fast","--replay",str(path),
+        "--record",str(record),"--frame",str(frame)],cwd=ROOT,env=env,check=True,capture_output=True,text=True,timeout=90)
+    elapsed=time.monotonic()-started
+    wanted=subprocess.run([str(binary),"--replay",str(record),"--frame",str(work/"native-rubble-replayed.ppm")],
+        cwd=ROOT,check=True,capture_output=True,text=True,timeout=20)
+    if record.read_text().splitlines() != lines+["idle"]*5 or json.loads(actual.stdout) != json.loads(wanted.stdout) or frame.read_bytes() != (work/"native-rubble-replayed.ppm").read_bytes():
+        raise RuntimeError("Accelerated ordinary native route differs from complete headless input/state/frame replay")
+    print(f"PASS: ordinary native two-mission/rest/third-briefing SDL route, {len(lines)+5} ticks in {elapsed:.2f}s (normal pacing {32*(len(lines)+5)/1000:.2f}s). Exact input/state/frame equality.",flush=True)
+    with tempfile.TemporaryDirectory(prefix="native-rubble-",dir=work) as directory:
+        tmp=Path(directory); prefix=tmp/"prefix.actions"; start=tmp/"start.btp"; slot=tmp/"slot.btp"; tail=tmp/"tail.actions"
+        for label in ("rubble-animation","rubble-pickup","rubble-carrying","dream-animation"):
+            tick=next(r["tick"] for r in facts["checkpoints"] if r["label"] == label)
+            prefix.write_text("".join(a+"\n" for a in lines[:tick]))
+            subprocess.run([str(binary),"--replay",str(prefix),"--save",str(start)],cwd=ROOT,check=True,capture_output=True,timeout=20)
+            process=subprocess.Popen([str(ROOT/"build/btech-port"),"--load",str(start),"--save-file",str(slot),
+                "--frame",str(work/("native-"+label+".ppm"))],cwd=ROOT,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+            keys=WindowKeys()
+            try:
+                window=None
+                for _ in range(100):
+                    found=[(w,n) for w,n in keys.windows() if n.startswith("BtechPort")]
+                    if len(found) == 1: window=found[0][0]; break
+                    if process.poll() is not None: raise RuntimeError("Rubble save window failed to start")
+                    time.sleep(.05)
+                if window is None: raise RuntimeError("Rubble save window did not appear")
+                keys.key(window,"F5"); time.sleep(.1)
+                before=json.loads(subprocess.run([str(binary),"--load",str(slot)],cwd=ROOT,check=True,capture_output=True,text=True).stdout)
+                if label == "rubble-pickup": keys.key(window,"Return")
+                keys.key(window,"Right"); time.sleep(.15)
+                keys.key(window,"F9"); keys.key(window,"Escape")
+                out,err=process.communicate(timeout=10)
+                if process.returncode: raise RuntimeError(err)
+                restored=json.loads(out); delta=restored["tick"]-before["tick"]
+                if not 0 <= delta <= 20: raise RuntimeError("Unexpected post-load real-time interval")
+                tail.write_text("idle\n"*delta)
+                expected=json.loads(subprocess.run([str(binary),"--load",str(slot),"--replay",str(tail)],
+                    cwd=ROOT,check=True,capture_output=True,text=True).stdout)
+                if restored != expected: raise RuntimeError(label+" real-time F9 restoration/continuation differs")
+                print("PASS: real-time native F5/F9 restores "+label+" and its exact continuation.",flush=True)
+            finally:
+                keys.x.XCloseDisplay(keys.display)
+                if process.poll() is None:
+                    process.terminate()
+                    try: process.wait(timeout=5)
+                    except subprocess.TimeoutExpired: process.kill(); process.wait()
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--shops-only", action="store_true")
@@ -322,6 +379,7 @@ def main():
     parser.add_argument("--sprites-only", action="store_true")
     parser.add_argument("--training-only", action="store_true")
     parser.add_argument("--diagonal-only", action="store_true")
+    parser.add_argument("--rubble-only", action="store_true")
     args = parser.parse_args()
     work = ROOT / "work"
     work.mkdir(exist_ok=True)
@@ -341,6 +399,9 @@ def main():
             env.pop("SDL_VIDEODRIVER", None)
             os.environ["DISPLAY"] = env["DISPLAY"]
             os.environ["BTECH_REFERENCE_VIRTUAL"] = "1"
+            if args.rubble_only:
+                rubble(env,work)
+                return
             if args.diagonal_only:
                 diagonals(env,work)
                 return
@@ -397,17 +458,17 @@ def main():
             subprocess.run(["python3", str(ROOT / "tools/verify_m2c.py"), "--native-log",
                 str(work / "native-talk-x11.actions")], check=True, timeout=15)
             print("PASS: native X11 controlled Talk menu, Done, retained selection, NPC reply, return, exit and replay.")
-            print("Running native X11 MAP1 walk/arrival/conversation (about 84 seconds).", flush=True)
-            result = subprocess.run([str(ROOT / "build/btech-port"), "--smoke-arrival",
+            print("Running accelerated native X11 MAP1 walk/arrival/conversation.", flush=True)
+            result = subprocess.run([str(ROOT / "build/btech-port"), "--smoke-arrival", "--smoke-fast",
                 "--replay", str(ROOT / "tests/fixtures/citadel-arrival.actions"),
                 "--data", str(ROOT / "Original DOS"), "--record", str(work / "native-arrival-x11.actions"),
                 "--frame", str(work / "native-arrival-x11.ppm")], env=env, timeout=120, check=True,
                 capture_output=True, text=True)
             replayed = subprocess.run([str(ROOT / "build/btech-headless"), "--replay",
-                str(work / "native-arrival-x11.actions")], check=True, timeout=15,
+                str(work / "native-arrival-x11.actions"), "--frame", str(work / "replayed-arrival.ppm")], check=True, timeout=15,
                 capture_output=True, text=True, cwd=ROOT)
-            if json.loads(result.stdout) != json.loads(replayed.stdout):
-                raise RuntimeError("Native arrival state differs from its headless input replay")
+            if (work / "native-arrival-x11.actions").read_text().splitlines() != (ROOT / "tests/fixtures/citadel-arrival.actions").read_text().splitlines()+["accept","down","accept","down"]+["idle"]*5 or json.loads(result.stdout) != json.loads(replayed.stdout) or (work / "native-arrival-x11.ppm").read_bytes() != (work / "replayed-arrival.ppm").read_bytes():
+                raise RuntimeError("Native arrival inputs/state/frame differ from its headless input replay")
             print(result.stdout.strip())
             subprocess.run(["python3", str(ROOT / "tools/verify_m2d.py"), "--native-log",
                 str(work / "native-arrival-x11.actions")], check=True, timeout=15)
@@ -418,6 +479,7 @@ def main():
             saves(env,work)
             school(env,work)
             training(env,work)
+            rubble(env,work)
             diagonals(env,work)
         finally:
             os.close(read_fd)

@@ -60,10 +60,13 @@ def export():
                         yield x+8*col,8*row
     borders = [{"x":x,"y":y,"sha256":sha(image.crop((x,y,x+8,y+8)).tobytes())}
                for x,y in border_cells()]
+    dream=Image.open(RUN/"captures/rest-wake.png").convert("RGB")
+    dream_crop={"label":"rest-wake","animation":8,"step":2,"x":8,"y":8,
+                "width":88,"height":88,"sha256":sha(dream.crop((8,8,96,96)).tobytes())}
     FIXTURE.write_text(json.dumps({"source_sha256":EXE_SHA,"image_sha256":IMAGE_SHA,
         "reference_run":str(RUN.relative_to(ROOT)),"corpus":corpus,"observed":observed,
         "font":font,"border_source_sha256":sha((ROOT/"Original DOS/BTBORDER.CMP").read_bytes()),
-        "border_cells":borders},indent=2)+"\n")
+        "border_cells":borders,"dream_final_crop":dream_crop},indent=2)+"\n")
     print("Exported 22 ANM identities/frame hashes, 39 stable original frames, font and border observations.")
 
 
@@ -92,7 +95,7 @@ def normalize_waits(binary, actions, rows):
     raise RuntimeError("Too many cutscenes in bounded replay")
 
 
-def verify(binary, frame=None):
+def verify(binary, frame=None, dream_frame=None):
     fixture = json.loads(FIXTURE.read_text())
     check(fixture["source_sha256"] == EXE_SHA and fixture["image_sha256"] == IMAGE_SHA,"Wrong EXE identity")
     output = ROOT/"work/animation-frames.bin"
@@ -116,6 +119,13 @@ def verify(binary, frame=None):
             x,y=cell["x"],cell["y"]
             check(sha(im.crop((x,y,x+8,y+8)).tobytes()) == cell["sha256"],f"Original border pixels differ at {x},{y}")
         print(f"PASS: {len(fixture['border_cells'])} native border cells exactly match original screenshot pixels.")
+    if dream_frame:
+        from PIL import Image
+        crop=fixture["dream_final_crop"]; x,y=crop["x"],crop["y"]
+        im=Image.open(dream_frame).convert("RGB")
+        check(sha(im.crop((x,y,x+crop["width"],y+crop["height"])).tobytes()) == crop["sha256"],
+              "Original final dream RGB pixels differ")
+        print("PASS: all 7744 final dream RGB pixels exactly match the original screenshot.")
     print(f"PASS: {count} C frames across all 22 ANMs; 18 launch/21 dream original frames; original font provenance.")
 
 
@@ -124,6 +134,7 @@ if __name__ == "__main__":
     p.add_argument("--binary",type=Path,default=ROOT/"build/btp-anm-tests")
     p.add_argument("--export",action="store_true")
     p.add_argument("--frame",type=Path)
+    p.add_argument("--dream-frame",type=Path)
     a=p.parse_args()
     if a.export: export()
-    verify(a.binary.resolve(),a.frame)
+    verify(a.binary.resolve(),a.frame,a.dream_frame)

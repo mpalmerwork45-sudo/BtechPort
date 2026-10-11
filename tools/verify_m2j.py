@@ -82,7 +82,8 @@ def text_spec(row, bodies, texts):
     elif label in ("barracks-menu","sleep-menu","sleep-return","sleep-again"): result = z(b,6)
     elif label == "sleep-no-mission": result = z(b,0x9a)
     elif label.startswith("dream"):
-        n=int(label[5:]); result = z(b,(0x24c,0x34f,0x45d,0x615,0x7b3,0x88d,0xa85)[n-1])
+        n=int(label[5:]); result = z(b,(0x24c,0x34f,0x45d,0x615,0x7b3,0x88d,0xa11)[n-1])
+        if n == 7: result += z(b,0xa85)
     elif label == "sleep-again-return": result = z(b,0xb60)
     elif label in ("lounge-menu","rick-lounge-menu"): result = z(l,0xa)
     elif label in ("lounge-empty","lounge-talk"): result = texts[0]

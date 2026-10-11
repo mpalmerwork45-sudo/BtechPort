@@ -81,6 +81,8 @@ static void pixel(uint32_t *f, int x, int y, uint32_t color)
 }
 static void text(const BtpResources *r, uint32_t *f, int x, int y, const char *str, unsigned color)
 {
+    if (r->dialogue.length && x == 110) x = 112;
+    if (r->dialogue.length && x == 140) x = 144;
     for (; *str; ++str, x += r->dialogue.length ? 8 : 6) {
         if (r->dialogue.length) {
             const uint8_t *glyph = r->dialogue.font+8u*(uint8_t)*str;
@@ -391,10 +393,10 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
     } else if (s->mode == BTP_ENTRY) {
         rectangle(f, 104, 73, 216, 55, 7); rectangle(f, 108, 77, 208, 46, 0);
         char question[40]; snprintf(question,sizeof question,"Enter %s?",place);
-        text(r,f, 110, 81, question, 15);
-        text(r,f, 110, 99, "Yes", s->entry_selected == 0 ? 14u : 7u);
-        text(r,f, 140, 99, "No", s->entry_selected == 1 ? 14u : 7u);
-        text(r,f, 112, 113, "Enter / Backspace", 7);
+        text(r,f, 112, 80, question, 15);
+        text(r,f, 112, 96, "Yes", s->entry_selected == 0 ? 14u : 7u);
+        text(r,f, 144, 96, "No", s->entry_selected == 1 ? 14u : 7u);
+        text(r,f, 112, 112, "Enter / Backspace", 7);
     } else if (btp_entrance(s, &r->map) == 5) {
         text(r,f, 8, 166, "INTERIOR", 14); text(r,f, 8, 178, "UNAVAILABLE", 14);
     } else if (debug) {
@@ -406,10 +408,12 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         unsigned step = s->cutscene.active ? s->cutscene.step : 2u;
         uint8_t packed[BTP_ANM_PACKED];
         if (btp_anm_frame(&r->animations[kind],step,packed)) {
-            if (s->cutscene.active) rectangle(f,104,0,216,200,0);
+            if (s->cutscene.active == 2) rectangle(f,104,0,216,200,0);
             for (unsigned i = 0; i < 88u*88u; ++i) {
                 unsigned value = i&1u ? packed[i/2u]&15u : packed[i/2u]>>4;
-                f[(8u+i/88u)*320u+8u+i%88u] = btp_palette[terrain_palette[value]];
+                /* Original VGA dream crop: source index 1 is black, as in
+                   the sprite palette; it is not terrain's dark blue. */
+                f[(8u+i/88u)*320u+8u+i%88u] = btp_palette[sprite_palette[value]];
             }
         } else text(r,f,8,9,"ANM data error",12);
     }

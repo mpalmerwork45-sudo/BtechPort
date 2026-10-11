@@ -426,10 +426,28 @@ static void corpus(const char *dir)
     CHECK(btp_read_file(path, &b, &n, &e)); CHECK(!btp_map_decode(b, n, &m, &e)); free(b);
     puts("Authentic corpus: 14 MTP + 12 ICN/CMP decoded; raw MAP15 explicitly rejected.");
 }
+static void entry_text(const char *dir)
+{
+    BtpResources *r=malloc(sizeof *r); uint32_t *f=malloc(BTP_PIXELS*sizeof *f); BtpError e;
+    CHECK(r && f && btp_resources_load(dir,r,&e));
+    CHECK(btp_dialogue_load("work/talk-data.bin",&r->dialogue,&e));
+    for (unsigned slot=0;slot<8;++slot) for (unsigned selected=0;selected<2;++selected) {
+        BtpState s; btp_start(&s); s.mode=BTP_ENTRY; s.entry_slot=(uint8_t)slot; s.entry_selected=(uint8_t)selected;
+        btp_render(r,&s,0,f);
+        const char *labels[]={"Yes","No"};
+        for (unsigned label=0;label<2;++label) for (unsigned letter=0;letter<strlen(labels[label]);++letter)
+            for (unsigned y=0;y<8;++y) for (unsigned x=0;x<8;++x) {
+                unsigned bits=r->dialogue.font[8u*(uint8_t)labels[label][letter]+y];
+                unsigned color=bits & (128u>>x) ? (selected == label ? 14u : 7u) : 0u;
+                CHECK(f[(96u+y)*320u+(label ? 144u : 112u)+8u*letter+x] == btp_palette[color]);
+            }
+    }
+    free(f); free(r);
+}
 int main(int argc, char **argv)
 {
     maps(); graphics(); state(); diagonals(); pixels();
-    if (argc == 2) { corpus(argv[1]); citadel_loop(argv[1]); }
+    if (argc == 2) { corpus(argv[1]); citadel_loop(argv[1]); entry_text(argv[1]); }
     printf("PASS: %u checks\n", checks);
     return 0;
 }

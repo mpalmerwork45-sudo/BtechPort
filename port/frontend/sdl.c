@@ -197,6 +197,7 @@ int main(int argc, char **argv)
             }
         }
         uint64_t now = SDL_GetTicks64(); accumulator += now - last; last = now;
+        if (o.smoke_fast) accumulator = 32;
         /* 32ms fixed simulation steps. Platform repeat/pacing remains approximate. */
         while (accumulator >= 32 && running) {
             accumulator -= 32;
@@ -228,7 +229,7 @@ int main(int argc, char **argv)
                 state.script.last_opcode, state.tick);
             SDL_SetWindowTitle(window, title);
         }
-        SDL_Delay(2);
+        if (!o.smoke_fast) SDL_Delay(2);
     }
     btp_print_state(&state, r);
     if (o.frame && !btp_write_ppm(o.frame, frame)) io_failed = 1;

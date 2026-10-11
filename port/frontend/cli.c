@@ -14,7 +14,7 @@ int btp_options(int argc, char **argv, BtpOptions *o)
     for (int i = 1; i < argc; ++i) {
         const char *arg = argv[i];
         if (!strcmp(arg, "--help")) {
-            puts("BtechPort M2m: first training mission, full shops, lounge and save/load\n"
+            puts("BtechPort M2m: two training missions, original animations, shops and save/load\n"
                  "  --data DIRECTORY     original resource directory (default: Original DOS)\n"
                  "  --dialogue-data FILE local EXE text cache (default: work/talk-data.bin)\n"
                  "  --conversation-checkpoint  isolated controlled Talk handler test\n"
@@ -38,6 +38,7 @@ int btp_options(int argc, char **argv, BtpOptions *o)
                  "  --smoke-arrival      feed --replay through native SDL events, then return/exit\n"
                  "  --smoke-shops        feed the two-shop --replay through SDL events\n"
                  "  --smoke-replay       feed any bounded --replay through SDL events\n"
+                 "  --smoke-fast         accelerate native replay tests; logical ticks stay 32ms\n"
                  "Native controls: arrows move/select, Enter/Space confirms/continues,\n"
                  "Bank amounts: digits type, Backspace erases, Esc clears; Enter submits.\n"
                  "F5 saves, F9 loads. Backspace declines/recovers, R restarts, F3 debug, Esc quits.");
@@ -54,6 +55,7 @@ int btp_options(int argc, char **argv, BtpOptions *o)
         else if (!strcmp(arg, "--smoke-arrival")) o->smoke = 5;
         else if (!strcmp(arg, "--smoke-shops")) o->smoke = 6;
         else if (!strcmp(arg, "--smoke-replay")) o->smoke = 7;
+        else if (!strcmp(arg, "--smoke-fast")) o->smoke_fast = 1;
         else if (!strcmp(arg,"--shop-talk-checkpoint")) {
             if (++i == argc || (strcmp(argv[i],"armor") && strcmp(argv[i],"weapon"))) {
                 fputs("Shop Talk checkpoint requires armor or weapon\n",stderr); return 0;
@@ -88,6 +90,9 @@ int btp_options(int argc, char **argv, BtpOptions *o)
     }
     if (o->smoke >= 5 && (!o->replay || (o->smoke < 7 && (o->conversation_checkpoint || o->shop_talk_checkpoint)))) {
         fputs("Native route smoke requires --replay and the normal initial state\n",stderr); return 0;
+    }
+    if (o->smoke_fast && (o->smoke < 5 || !o->replay || o->headless)) {
+        fputs("Accelerated smoke requires a native replay smoke mode\n",stderr); return 0;
     }
     return 1;
 }
@@ -151,13 +156,16 @@ void btp_print_state(const BtpState *s, const BtpResources *r)
     for (unsigned i = 0; i < 8; ++i) printf("%s%u",i ? "," : "",270u+s->npc_walk[i]);
     printf("],\"quiz\":{\"phase\":%u,\"selected\":%u,\"round\":%u,\"point\":%u,\"failed\":%u,\"used\":%u},"
         "\"mission\":{\"phase\":%u,\"corner\":%u,\"warned\":%u,\"elapsed\":%u,\"idle\":%u,\"terrain\":%u,"
-        "\"assignment\":%u,\"rubble\":%u,\"carrying\":%u},\"mech_skills\":[%u,%u],"
+        "\"assignment\":%u,\"rubble\":%u,\"carrying\":%u,\"rubble_target\":[%u,%u],\"rubble_tile\":%u},\"mech_skills\":[%u,%u],"
         "\"device\":%u,\"recruitment\":%u,\"animation_request\":[%u,%u],"
         "\"animation\":{\"active\":%u,\"kind\":%u,\"step\":%u,\"cycle\":%u,\"hold\":%u,\"remaining\":%u,\"fraction\":%u}}\n",
         s->quiz.phase,s->quiz.selected,s->quiz.round,s->quiz.point,s->quiz.failed,s->quiz.used,
         s->mission.phase,s->mission.corner,s->mission.warned,s->mission.elapsed,s->mission.idle,
         s->mission.phase ? btp_mission_terrain(s,&r->map) : 0u,
         s->mission.assignment,s->mission.rubble,s->mission.assignment && s->mission.corner && s->story_flags[2] != 0,
+        s->mission.assignment ? btp_rubble_x[s->mission.rubble] : 0u,
+        s->mission.assignment ? btp_rubble_y[s->mission.rubble] : 0u,
+        s->mission.assignment ? btp_mission_tile(s,&r->map,btp_rubble_x[s->mission.rubble],btp_rubble_y[s->mission.rubble]) : 0u,
         s->mech_skills[0],s->mech_skills[1],s->story_flags[47],s->recruitment,s->script.animation_kind,s->script.animation_flags,
         s->cutscene.active,s->cutscene.kind,s->cutscene.step,s->cutscene.cycle,s->cutscene.hold,s->cutscene.remaining,s->cutscene.refresh_fraction);
 }

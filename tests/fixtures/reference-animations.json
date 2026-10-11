@@ -2758,5 +2758,15 @@
       "y": 192,
       "sha256": "ca21af45ffd8668f2c4c504702d4d0373b6fc5d5461c8f23348adae18814e349"
     }
-  ]
+  ],
+  "dream_final_crop": {
+    "label": "rest-wake",
+    "animation": 8,
+    "step": 2,
+    "x": 8,
+    "y": 8,
+    "width": 88,
+    "height": 88,
+    "sha256": "8e5971bf436ff97fe8e062954ad28c45fbe682cfaf5742b6f9b732bd1b8e17bc"
+  }
 }
