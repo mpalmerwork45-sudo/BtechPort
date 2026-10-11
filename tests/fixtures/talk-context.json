@@ -1,0 +1,39 @@
+{
+  "kind": "controlled-conversation-precondition",
+  "npc_pairs": [
+    [
+      99,
+      0
+    ],
+    [
+      18,
+      1
+    ],
+    [
+      53,
+      0
+    ],
+    [
+      99,
+      0
+    ],
+    [
+      18,
+      0
+    ],
+    [
+      4,
+      0
+    ],
+    [
+      4,
+      0
+    ],
+    [
+      70,
+      0
+    ]
+  ],
+  "talk_result": 91,
+  "confidence": "VERIFIED handler under controlled precondition; NPC arrival UNKNOWN"
+}

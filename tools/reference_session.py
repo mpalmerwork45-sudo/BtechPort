@@ -235,6 +235,52 @@ def snapshot_game(pid, label, output):
         os.kill(pid,signal.SIGCONT)
 
 
+def controlled_talk_context(pid, output):
+    """Explicit differential-test precondition; this is not an NPC arrival trace.
+
+    Only the eight NPC occupancy pairs and D33A result byte are changed in the
+    running working copy. Executable, resources and saved files stay untouched.
+    Snapshot resolution remains read-only; edits have a separate audit record.
+    """
+    snapshot_game(pid, "before-controlled-context", output)
+    row = json.loads((output / "before-controlled-context-state.json").read_text())
+    ram = (output / "before-controlled-context-ram.bin").read_bytes()
+    if row["building_index"] != 1 or row["citadel_payload_guest_offset"] is None or row["world_active"]:
+        raise RuntimeError("Talk precondition requires the initial local Citadel menu")
+    state = int(row["state_segment"], 16) * 16
+    if ram[state + 0xd339] or any(ram[state + 0xd399 + 26*i] for i in range(8)):
+        raise RuntimeError("Refusing to replace an active NPC context")
+    context = json.loads((ROOT / "tests/fixtures/talk-context.json").read_text())
+    anchor = b"BattleTech: The Crescent Hawk's Inception"
+    guest_anchor = int(row["load_segment"], 16)*16 + 0x37a88
+    os.kill(pid, signal.SIGSTOP)
+    fd = os.open(f"/proc/{pid}/mem", os.O_RDWR)
+    try:
+        base = None
+        for line in Path(f"/proc/{pid}/maps").read_text().splitlines():
+            fields = line.split(); lo, hi = (int(v,16) for v in fields[0].split("-"))
+            if "rw" not in fields[1] or hi-lo > 64*1024*1024: continue
+            try: data = os.pread(fd, hi-lo, lo)
+            except OSError: continue
+            at = data.find(anchor)
+            candidate = lo + at - guest_anchor
+            if at >= 0 and candidate >= lo and candidate+len(ram) <= hi and \
+                os.pread(fd, 16, candidate+0x400) == ram[0x400:0x410]:
+                base = candidate; break
+        if base is None: raise RuntimeError("Cannot resolve controlled-precondition RAM")
+        changes = [(state+0xd398+26*i, bytes(pair)) for i,pair in enumerate(context["npc_pairs"])]
+        changes.append((state+0xd33a, bytes([context["talk_result"]])))
+        audit = []
+        for addr, value in changes:
+            before = os.pread(fd, len(value), base+addr)
+            if os.pwrite(fd, value, base+addr) != len(value): raise RuntimeError("Short precondition write")
+            audit.append({"guest_offset":hex(addr),"before":list(before),"after":list(value)})
+        (output/"controlled-context.json").write_text(json.dumps({"kind":"controlled-precondition",
+            "fixture":"tests/fixtures/talk-context.json", "changes":audit},indent=2)+"\n")
+    finally:
+        os.close(fd); os.kill(pid, signal.SIGCONT)
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--script",type=Path,required=True)
@@ -361,6 +407,8 @@ btech.exe
                     print(json.dumps(memory_candidates(process.pid)), flush=True)
                 elif command == "snapshot":
                     snapshot_game(process.pid,parts[1],output)
+                elif command == "controlled-talk-context":
+                    controlled_talk_context(process.pid, output)
                 elif command == "dump":
                     address = int(parts[2], 0)
                     length = int(parts[3], 0)
@@ -375,7 +423,7 @@ btech.exe
                     dest.write_bytes(data)
                     print(f"Read {len(data)} bytes to {dest}", flush=True)
                 else:
-                    raise ValueError("Commands: key, screen, shot, wait, scan, snapshot, dump, quit")
+                    raise ValueError("Commands: key, screen, shot, wait, scan, snapshot, dump, controlled-talk-context, quit")
                 print("OK", flush=True)
             except Exception as e:
                 print(f"ERROR: {e}", flush=True)

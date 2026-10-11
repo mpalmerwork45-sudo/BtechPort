@@ -1,0 +1,764 @@
+{
+  "confidence": "VERIFIED native handler under explicitly controlled precondition; not an NPC travel trace",
+  "handler": "0FDC:17B9",
+  "source_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "decrypted_sha256": "7e64ec068d521347b52cf819344c9d5acf6ad0b10b84b9ebaca91cbf88673fd7",
+  "original_run": "1791685190039219738",
+  "native_resume_pc": 4322,
+  "texts": [
+    {
+      "key": "empty",
+      "length": 47,
+      "sha256": "33f04c49f2e16a1a3ec9b8904ba381a98b09aeeed3fc6a17cc9934f9f1c3b7ca"
+    },
+    {
+      "key": "talk-menu",
+      "length": 42,
+      "sha256": "bc713368a4f31557fcfe5bcd5252e64f838c487b61d536b8a9d073f6a1599220"
+    },
+    {
+      "key": "reply",
+      "length": 162,
+      "sha256": "0a15cd8f94965a2d939501d615ff6b2176a6558972c19b28a5f4f9d2257a919a"
+    },
+    {
+      "key": "citadel",
+      "length": 215,
+      "sha256": "79d1833cc1d38be4e0836c52581100fb8e798b052e3275e5e9954428df0b8f28"
+    }
+  ],
+  "checkpoints": [
+    {
+      "label": "menu",
+      "tick": 6,
+      "mode": "building",
+      "x_half": 69,
+      "y_half": 21,
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          1
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "talk_result": 91,
+      "recruitment": 0,
+      "original_credits": 35,
+      "menu_selected": 0,
+      "talk_phase": 0,
+      "talk_selected": 0,
+      "text": "citadel"
+    },
+    {
+      "label": "selected-talk",
+      "tick": 9,
+      "mode": "building",
+      "x_half": 69,
+      "y_half": 21,
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          1
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "talk_result": 91,
+      "recruitment": 0,
+      "original_credits": 35,
+      "menu_selected": 3,
+      "talk_phase": 0,
+      "talk_selected": 0,
+      "text": "citadel"
+    },
+    {
+      "label": "talk-menu",
+      "tick": 10,
+      "mode": "building",
+      "x_half": 69,
+      "y_half": 21,
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          1
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "talk_result": 91,
+      "recruitment": 0,
+      "original_credits": 35,
+      "menu_selected": 3,
+      "talk_phase": 2,
+      "talk_selected": 0,
+      "text": "talk-menu"
+    },
+    {
+      "label": "done-selected",
+      "tick": 11,
+      "mode": "building",
+      "x_half": 69,
+      "y_half": 21,
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          1
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "talk_result": 91,
+      "recruitment": 0,
+      "original_credits": 35,
+      "menu_selected": 3,
+      "talk_phase": 2,
+      "talk_selected": 1,
+      "text": "talk-menu"
+    },
+    {
+      "label": "done-return",
+      "tick": 12,
+      "mode": "building",
+      "x_half": 69,
+      "y_half": 21,
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          1
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "talk_result": 91,
+      "recruitment": 0,
+      "original_credits": 35,
+      "menu_selected": 3,
+      "talk_phase": 0,
+      "talk_selected": 1,
+      "text": "citadel"
+    },
+    {
+      "label": "talk-again",
+      "tick": 13,
+      "mode": "building",
+      "x_half": 69,
+      "y_half": 21,
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          1
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "talk_result": 91,
+      "recruitment": 0,
+      "original_credits": 35,
+      "menu_selected": 3,
+      "talk_phase": 2,
+      "talk_selected": 1,
+      "text": "talk-menu"
+    },
+    {
+      "label": "npc-selected",
+      "tick": 14,
+      "mode": "building",
+      "x_half": 69,
+      "y_half": 21,
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          1
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "talk_result": 91,
+      "recruitment": 0,
+      "original_credits": 35,
+      "menu_selected": 3,
+      "talk_phase": 2,
+      "talk_selected": 0,
+      "text": "talk-menu"
+    },
+    {
+      "label": "reply",
+      "tick": 15,
+      "mode": "building",
+      "x_half": 69,
+      "y_half": 21,
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          1
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "talk_result": 0,
+      "recruitment": 0,
+      "original_credits": 35,
+      "menu_selected": 3,
+      "talk_phase": 3,
+      "talk_selected": 0,
+      "text": "reply"
+    },
+    {
+      "label": "returned-menu",
+      "tick": 16,
+      "mode": "building",
+      "x_half": 69,
+      "y_half": 21,
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          1
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "talk_result": 0,
+      "recruitment": 0,
+      "original_credits": 35,
+      "menu_selected": 3,
+      "talk_phase": 0,
+      "talk_selected": 0,
+      "text": "citadel"
+    },
+    {
+      "label": "exit",
+      "tick": 18,
+      "mode": "local-exploration",
+      "x_half": 69,
+      "y_half": 20,
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "npc_pairs": [
+        [
+          99,
+          0
+        ],
+        [
+          39,
+          6
+        ],
+        [
+          53,
+          0
+        ],
+        [
+          99,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          70,
+          0
+        ]
+      ],
+      "talk_result": 0,
+      "recruitment": 0,
+      "original_credits": 35,
+      "menu_selected": 4,
+      "talk_phase": 0,
+      "talk_selected": 0,
+      "text": "citadel"
+    }
+  ],
+  "excluded": "NPC timers after exit, countdown/day pacing, pixel and RNG parity outside the local handler"
+}
