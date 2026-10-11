@@ -1,4 +1,4 @@
-# M2f — ComStar and shop Talk audit, 2026-10-11
+# M2f — ComStar and shop Talk evidence, 2026-10-11
 
 ## Authority and bounded scope
 
@@ -6,8 +6,8 @@ The supplied unpatched v1.03 executable and original resources are the authority
 This audit uses independently decoded BLD bytes, disassembled unpacked EXE bytes
 and whole-script DOSBox runs on the working copy. Both reference directories are
 immutable. No reference runtime or substantial GPL implementation is copied or
-translated into the independent C engine. Implementation verification is in
-progress; research observations alone do not establish a completed milestone.
+translated into the independent C engine. The bounded implementation and its
+verification are complete; wider economy and campaign claims remain separate.
 
 **VERIFIED:** MAP1 entrance slot 2 has raw words `0C66:C014`, local half position
 `(102,20)`, room ID 2, and loads COMSTAR.BLD. Its decrypted payload is 2265 bytes,
@@ -79,8 +79,16 @@ two wraps. Its 29 checkpoints and 460 stable outdoor samples show cash 3 and
 balances `[30,1,1]` changing to cash 18 and `[31,0,2]`. Total assets then equal 51;
 the next wrap leaves them unchanged. Re-entry displays those balances. The
 numeric frame corpus records actual RNG, loop counter and all NPC fields;
-native comparisons are still being completed. Full day progression, changing
+all 459 complete frame steps match without skipped gaps. Full day progression, changing
 caps, world economy and campaign timers remain outside this gate.
+
+That full comparison exposed a previously unseen doorway collision difference.
+Primary image `0F9FE..0FA88` checks the human/NPC coordinates for exact equality.
+The wider footprints at `0FB00..0FB59` belong to other unit slots, absent in this
+initial cadet context. The independent helper now blocks the human's actual
+half-coordinate rather than its two neighbors. This restores every bank-trace
+NPC/RNG field and leaves the earlier 570-frame M2d corpus passing. This is a
+bounded human-footprint correction, not full party or mech collision support.
 
 ## Talk in both shops
 
@@ -124,6 +132,40 @@ pixels or a supposed complete original terminal text buffer. Recorded original
 cursor/party, balances, flags, remembered menus and return establish the paths.
 Explicit replay idle ticks reproduce observed outdoor counter intervals, without
 claiming recovery of individual NPC movement timing between road inputs.
+
+## Completed verification and persistence
+
+**VERIFIED:** 160 original checkpoints across the six fixtures compare with
+native logical state, original text ranges/hashes and deterministic replay.
+`python3 tools/verify_m2f.py --live` also checks every stored original RAM export,
+complete BLD/native text bytes, cursor/party and explicit precondition audit.
+The bank CSV compares 459 complete frame steps, 460 samples, two wraps and all
+70 projected numeric fields: phase/timer/RNG/search/bias/player, eight full NPC
+records, cash, three balances and cap.
+
+`build/btp-bank-tests "Original DOS"` passes 78178 assertions, restoring and
+continuing all 7297 ticks of the bank, rates and four shop-Talk replays. It also
+checks seven-digit input/erasure/clear/empty submission, unsigned transfers for
+all companies, clipping/zero/unfunded/unowned outcomes, malformed atomic decode,
+rollback, BTP6 migration and primary-code overflow/return thresholds. Extreme
+arithmetic tests are synthetic specifications of audited instructions, not
+claims about observed natural campaign balances.
+
+BTP7 extends the internal state from 320 to 384 bytes, retaining earlier offsets
+and adding current/rollback investment balances, bank phase/company/outcome,
+amount/available balance, seven-digit editor buffer and account-display flag.
+Inactive/reserved fields and paused-service context are validated. Previous BTP6
+states migrate with empty accounts and no bank service. No save/load UI or
+original GAME compatibility is introduced.
+
+Private-X11 SDL checks pass for bank (419 ticks), rates (2247), Armor Talk (19),
+Weapons Talk (19) and synthetic bank editing (349). Each entire input record and
+final canonical state equals headless replay. The editor check appends normal
+digits, leading-zero removal, Backspace, Escape clear and Enter to the verified
+bank-entry prefix; it is explicitly synthetic rather than another DOS trace.
+Headless ASan/UBSan/LeakSanitizer and every prior milestone regression pass.
+Representative native layout frames were inspected for readable mixed case.
+Both reference trees still match all 1287 guarded content/mode/mtime entries.
 
 **INFERRED:** generalization to unobserved local transaction paths and campaign
 contexts. **APPROXIMATE:** native font/layout, imagery, sprites and pacing.

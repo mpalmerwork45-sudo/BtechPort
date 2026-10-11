@@ -1,5 +1,9 @@
 # M2e — two MAP1 shops, 2026-10-11
 
+Historical M2e review. [M2f](M2_BANKING_EVIDENCE.md) now implements Talk in both
+shops and ComStar investments/returns, with BTP7 persistence. Both shop purchase
+fixtures below remain passing regressions; their earlier scope is retained here.
+
 The user expanded the next gate to two shops. The bounded implementation target
 is the Armor Shop's flak vest and Weapons Shop's knife, ordinary map entry,
 confirmation, equipment/credit changes, and return to exploration. Other goods,

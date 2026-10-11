@@ -5,6 +5,15 @@ schedule below to actual credits and repeated funding in the verified local,
 zero-investment context; its BTP6 encoding replaces BTP5. The original frame
 fixture and its 570 comparisons remain passing regressions.
 
+[M2f](M2_BANKING_EVIDENCE.md) adds actual investment balances/returns and BTP7.
+Its gap-free bank corpus verifies another 459 complete outdoor frame steps,
+including all NPC/RNG/economy fields. That trace also corrects the human collision
+footprint: primary image `0F9FE..0FA88` compares positions exactly, while the wider
+branch at `0FB00..0FB59` applies to other unit slots absent here. The cadet blocks
+one half-coordinate rather than its two neighbors. Both corpora pass after the
+correction; full party/unit collision remains outside scope. Statements below
+describe the historical M2d scope and encoding.
+
 Bounded M2d review, 2026-10-11. Original frame comparisons and the independent
 normal-start exploration/conversation replay pass.
 Both supplied trees remain immutable. Original v1.03 binary/live execution is the
