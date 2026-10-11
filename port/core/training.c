@@ -59,7 +59,7 @@ void btp_training_native(BtpState *s, const BtpResources *r)
     if (s->entry_slot || s->story_flags[4] || s->story_flags[2] > 2) { fault(s); return; }
     switch (s->script.native_action) {
     case 1:
-        if (s->story_flags[0] > 4 || s->mission.phase ||
+        if (s->story_flags[0] > 5 || s->mission.phase ||
             (s->story_flags[0]>=2 && !r->combat.loans[0][0])) { fault(s); return; }
         (void)btp_rng_next(s->npc.rng); /* Original O0 dispatcher, even forced. */
         s->mission = (BtpMissionState){.phase=BTP_MISSION_DRIVE,.walk=6,.direction=2,
@@ -163,6 +163,10 @@ int btp_mission_tick(BtpState *s, const BtpResources *r, BtpAction a)
                 int elapsed = adjusted < 32768 ? adjusted : (int)adjusted-65536;
                 s->story_flags[1] = (uint8_t)(elapsed < 215);
             }
+            /* 07DC:0C9E grants independent 0/1 ranks after assignment 5,
+               even on withdrawal/failure; mastered ranks consume no draw. */
+            if (m->assignment==5) for (unsigned i=0;i<2;++i)
+                if (s->mech_skills[i]<4) s->mech_skills[i]+=(uint8_t)(btp_rng_next(s->npc.rng)&1u);
             m->phase = BTP_MISSION_RESULT; s->mode = BTP_BUILDING; return 1;
         }
         if (!m->warned) { m->warned = 1; m->phase = BTP_MISSION_WARNING; return 0; }
@@ -219,7 +223,7 @@ int btp_training_valid(const BtpState *s)
     if (q->phase > BTP_QUIZ_FAILED || q->selected >= 20 || q->round > 3 || q->point >= 10 ||
         q->failed > 1 || q->used >= 1024 || m->phase > BTP_MISSION_PICKUP || m->corner > 1 ||
         m->warned > 1 || m->idle > 10 || m->walk > 15 || m->direction > 7 ||
-        m->assignment > 4 || m->rubble > 7 || s->mech_skills[0] > 4 || s->mech_skills[1] > 4 ||
+        m->assignment > 5 || m->rubble > 7 || s->mech_skills[0] > 4 || s->mech_skills[1] > 4 ||
         s->checkpoint_mech_skills[0] > 4 || s->checkpoint_mech_skills[1] > 4 ||
         (s->entry_action != BTP_IDLE && !btp_action_moves((BtpAction)s->entry_action))) return 0;
     if ((s->mode == BTP_QUIZ) != (q->phase != 0)) return 0;

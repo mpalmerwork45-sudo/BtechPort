@@ -1,4 +1,5 @@
 #include "frontend/pixels.h"
+#include "core/animation.h"
 #include "core/bank.h"
 #include "core/school.h"
 #include "core/training.h"
@@ -504,8 +505,13 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                 if (wx >= 0 && wy >= 0 && wx < r->map.width * 16 && wy < r->map.height * 16) {
                     unsigned tile = btp_mission_tile(s,&r->map, wx / 16, wy / 16);
                     if (tile < 250) {
-                        unsigned index = tile * 256 + (unsigned)(wy % 16) * 16 + (unsigned)(wx % 16);
-                        unsigned value = r->tiles.pixels[index] & 15;
+                        /* 320B skips ANIMATE's first blank tile; 240B swaps
+                           three pages into these ten map tile slots. The
+                           saved fixed clock supplies a deterministic phase. */
+                        unsigned frame=btp_terrain_frame(tile,s->tick/4u);
+                        const BtpGraphic *sheet=frame && r->terrain_animation.format==1 ? &r->terrain_animation : &r->tiles;
+                        unsigned index = (sheet==&r->tiles ? tile : frame) * 256 + (unsigned)(wy % 16) * 16 + (unsigned)(wx % 16);
+                        unsigned value = sheet->pixels[index] & 15;
                         color = btp_palette[terrain_palette[value]];
                         if (debug && tile >= s->gate && (wx % 16 == 0 || wy % 16 == 0))
                             color = btp_palette[13];

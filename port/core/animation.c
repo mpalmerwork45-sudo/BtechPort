@@ -1,6 +1,12 @@
 #include "core/animation.h"
 #include "core/game.h"
 
+unsigned btp_terrain_frame(unsigned tile, unsigned phase)
+{
+    static const uint8_t animated[10]={87,88,89,90,91,105,106,107,111,113};
+    for (unsigned i=0;i<10;++i) if (tile==animated[i]) return 1u+3u*i+phase%3u;
+    return 0;
+}
 uint8_t btp_walk_first(unsigned direction)
 {
     static const uint8_t first[8] = {8,4,4,4,0,12,12,12};

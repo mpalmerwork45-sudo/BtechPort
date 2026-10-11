@@ -118,8 +118,8 @@ int btp_resources_load(const char *dir, BtpResources *r, BtpError *e)
     memset(&r->dialogue, 0, sizeof r->dialogue);
     memset(&r->combat,0,sizeof r->combat);
     char path[4096]; uint8_t *data; size_t n;
-    const char *names[] = {"MAP1.MTP", "BTTLTECH.ICN", "CITADEL.BLD", "ARMOR.BLD", "WEAPON.BLD", "COMSTAR.BLD", "MECHSHAP.CMP", "TRAINING.BLD", "BARRACKS.BLD", "LOUNGE.BLD", "BTSTATS.CMP", "BTBORDER.CMP", "REPAIR.BLD"};
-    for (unsigned i = 0; i < 13; ++i) {
+    const char *names[] = {"MAP1.MTP", "BTTLTECH.ICN", "CITADEL.BLD", "ARMOR.BLD", "WEAPON.BLD", "COMSTAR.BLD", "MECHSHAP.CMP", "TRAINING.BLD", "BARRACKS.BLD", "LOUNGE.BLD", "BTSTATS.CMP", "BTBORDER.CMP", "REPAIR.BLD", "ANIMATE.ICN"};
+    for (unsigned i = 0; i < 14; ++i) {
         int len = snprintf(path, sizeof path, "%s/%s", dir, names[i]);
         if (len < 0 || (size_t)len >= sizeof path) return fail(e, "Resource directory path too long");
         if (!btp_read_file(path, &data, &n, e)) return 0;
@@ -128,6 +128,7 @@ int btp_resources_load(const char *dir, BtpResources *r, BtpError *e)
             i == 6 ? btp_graphic_decode(data, n, &r->sprites, e) :
             i == 10 ? btp_graphic_decode(data,n,&r->quiz_diagram,e) :
             i == 11 ? btp_graphic_decode(data,n,&r->border,e) :
+            i == 13 ? btp_graphic_decode(data,n,&r->terrain_animation,e) :
             btp_bld_decode(data, n, i == 2 ? &r->citadel : i == 3 ? &r->armor : i == 4 ? &r->weapon :
                 i == 5 ? &r->comstar : i == 7 ? &r->training : i == 8 ? &r->barracks : i == 9 ? &r->lounge : &r->repair, e);
         free(data);
@@ -143,6 +144,7 @@ int btp_resources_load(const char *dir, BtpResources *r, BtpError *e)
     if (r->sprites.format != 2) return fail(e,"MECHSHAP requires format-2 320x200 graphics");
     if (r->quiz_diagram.format != 2) return fail(e,"BTSTATS requires format-2 320x200 graphics");
     if (r->border.format != 1) return fail(e,"BTBORDER requires format-1 320x200 graphics");
+    if (r->terrain_animation.format != 1) return fail(e,"ANIMATE requires format-1 tile graphics");
     if (r->map.width != 64 || r->map.height != 64 || r->tiles.format != 1)
         return fail(e, "M2a requires the authentic 64x64 MAP1 and format-1 BTTLTECH tiles");
     if (r->map.entrance_x[1] != 0x0c45 || r->map.entrance_y[1] != 0xc014)

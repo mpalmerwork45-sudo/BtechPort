@@ -34,7 +34,7 @@ typedef struct {
 } BtpDialogue;
 typedef struct {
     BtpMap map;
-    BtpGraphic tiles, sprites, quiz_diagram, border;
+    BtpGraphic tiles, terrain_animation, sprites, quiz_diagram, border;
     BtpBld citadel, armor, weapon, comstar, training, barracks, lounge, repair;
     BtpDialogue dialogue;
     BtpAnm animations[BTP_ANM_COUNT];

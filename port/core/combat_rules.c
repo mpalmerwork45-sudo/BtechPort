@@ -222,7 +222,7 @@ BtpShot btp_combat_attack_unit(BtpCombatUnit *a, BtpCombatUnit *t, const BtpComb
         /* 12E8:02C3 passes the raw enemy ID to 0E31:1B44, although its
            hip check uses the normalized record. ID 12 reads inactive slot
            12 in early training, adding all six missing-actuator penalties. */
-        if (unit_id==12) needed+=6;
+        if (unit_id==12 || unit_id==13) needed+=6;
         else for (unsigned leg=36;leg<=37;++leg)
             for (unsigned mask=1;mask<=4;mask<<=1) needed += !(a->record[leg]&mask);
     }

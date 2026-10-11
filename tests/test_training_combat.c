@@ -2,6 +2,7 @@
 #include "core/shop.h"
 #include "core/npc.h"
 #include "core/economy.h"
+#include "core/training.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -121,22 +122,43 @@ static void bad_save(const BtpState *s,const BtpResources *r,unsigned offset,uns
     CHECK(!btp_state_decode(bytes,sizeof bytes,&r->map,btp_building_bld(r,s->entry_slot),&untouched));
     CHECK(!memcmp(&untouched,s,sizeof *s));
 }
+static void last_step_effect(const BtpState *start,BtpResources *r)
+{
+    BtpState s=*start;BtpCombatState *c=&s.combat;
+    c->phase=BTP_COMBAT_ROUND;c->step=11;c->delay=0;c->movement=255;c->goal_active=0;
+    c->waypoint_count=0;memset(c->waypoint_x,0,11);memset(c->waypoint_y,0,11);
+    memset(c->path,0,sizeof c->path);memset(c->orders,255,11);
+    for (unsigned i=0;i<c->count;++i) memset(c->path[i],2,24);
+    for (unsigned i=1;i<c->count;++i) memset(c->enemy_orders[i-1],255,12);
+    c->orders[0]=12;c->kick_target=255;c->unit[0].x=64;c->unit[0].y=77;c->unit[1].x=68;c->unit[1].y=77;
+    c->unit[2].x=100;c->unit[2].y=95;
+    input(&s,r,BTP_IDLE);CHECK(c->step==12 && c->phase==BTP_COMBAT_ROUND && s.effects.count);
+    for (unsigned i=0;i<64 && c->phase==BTP_COMBAT_ROUND;++i) input(&s,r,BTP_IDLE);
+    CHECK(c->phase==BTP_COMBAT_MENU && !s.effects.count && !s.effects.pending);
+}
 static void ordinary(const char *path,BtpResources *r)
 {
-    FILE *f=fopen(path,"r");CHECK(f);char line[40];BtpState s,robots={0},duel={0};btp_start(&s);
-    unsigned ticks=0,robot_shots=0,enemy_shots=0;
+    FILE *f=fopen(path,"r");CHECK(f);char line[40];BtpState s,robots={0},duel={0},sixth={0};btp_start(&s);
+    unsigned ticks=0,robot_shots=0,enemy_shots=0,sixth_turns=0;
     while (fgets(line,sizeof line,f)) {
         line[strcspn(line,"\r\n")]=0;BtpAction a;CHECK(btp_action_parse(line,&a));
         if (s.combat.phase==BTP_COMBAT_MENU && s.mission.assignment==3 && !robots.combat.phase) robots=s;
         if (s.combat.phase==BTP_COMBAT_MENU && s.mission.assignment==4 && !duel.combat.phase) duel=s;
+        if (s.combat.phase==BTP_COMBAT_MENU && s.mission.assignment==5 && !sixth.combat.phase) sixth=s;
         input(&s,r,a);++ticks;
+        if (s.mission.assignment==5 && s.combat.count==3) ++sixth_turns;
         if (s.combat.flash && s.combat.last_attacker) {
             if (s.mission.assignment==3) ++robot_shots;else if (s.mission.assignment==4) ++enemy_shots;
         }
     }
     fclose(f);CHECK(ticks>1000 && robots.combat.count>=4 && duel.combat.count==2);
-    CHECK(s.mode==BTP_EXPLORE && s.story_flags[0]==5 && s.story_flags[1] && s.allowance_cap==2000);
-    CHECK(s.technician==1 && s.apprentice==1 && s.recruitment==1 && s.npc_pairs[0][0]==112);
+    CHECK(s.mode==BTP_EXPLORE && s.story_flags[0]==(sixth_turns ? 6 : 5) && s.story_flags[1] &&
+        s.allowance_cap==(sixth_turns ? 3000 : 2000));
+    CHECK(s.technician==1 && s.apprentice==1 && s.recruitment==!sixth_turns && s.npc_pairs[0][0]==112);
+    if (sixth_turns) {
+        CHECK(s.story_flags[47]==1 && !s.npc.fault && !s.npc.actor[0].x);
+        last_step_effect(&sixth,r);
+    }
     CHECK(robot_shots && enemy_shots);input(&s,r,BTP_IDLE);
     attacks(&duel,r);movement(&duel,r);route_controls(&duel,r);failures(&duel,r);
     command(&robots,r,4);input(&robots,r,BTP_DOWN);input(&robots,r,BTP_ACCEPT);
@@ -173,6 +195,17 @@ int main(int argc,char **argv)
                 CHECK(u->direction==6 && u->infantry==(mission==3));
                 CHECK(s.combat.walk[i]==frame);
             }
+        } else if (line[0]=='R') {
+            unsigned seed,g,k,outcome,result,ag,ak,rng;
+            CHECK(sscanf(line+1,"%u %u %u %u %u %u %u %u",&seed,&g,&k,&outcome,&result,&ag,&ak,&rng)==8);
+            BtpState s;btp_start(&s);s.mode=BTP_MISSION;s.x_half=60;s.y_half=79;
+            s.mission=(BtpMissionState){.phase=BTP_MISSION_DRIVE,.corner=1,.assignment=5};
+            s.combat.won=(uint8_t)(outcome==0);s.combat.fled=(uint8_t)(outcome==1);s.combat.lost=(uint8_t)(outcome==2);
+            s.mech_skills[0]=(uint8_t)g;s.mech_skills[1]=(uint8_t)k;
+            s.npc.rng[0]=(uint8_t)seed;s.npc.rng[1]=(uint8_t)(seed>>8);s.npc.rng[2]=(uint8_t)(seed>>16);
+            CHECK(btp_mission_tick(&s,r,BTP_IDLE));
+            CHECK(s.story_flags[1]==result && s.mech_skills[0]==ag && s.mech_skills[1]==ak);
+            CHECK(s.npc.rng[0]+256u*s.npc.rng[1]+65536u*s.npc.rng[2]==rng);
         } else if (line[0]=='E') {
             unsigned credits,after,rank,flag,result;
             CHECK(sscanf(line+1,"%u %u %u %u %u",&credits,&after,&rank,&flag,&result)==5);

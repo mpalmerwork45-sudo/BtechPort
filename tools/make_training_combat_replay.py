@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Input-only fourth/fifth missions and cadet Mechit-Lube visit, no state edits."""
+"""Input-only training, Mechit-Lube and natural Rick/sixth assignment routes."""
 import argparse
 import json
 import struct
@@ -16,20 +16,21 @@ BASE=ROOT/'tests/fixtures'
 PATH=BASE/'ordinary-training-combat.actions'
 FACTS=BASE/'ordinary-training-combat.json'
 
-def generate(binary,kick=False):
+def generate(binary,kick=False,campaign=False):
     image,_=unpack((ROOT/'Original DOS/BTECH.EXE').read_bytes())
     answers=struct.unpack_from('<10H',image,DS+0x28ec)
     raw=(ROOT/'Original DOS/MAP1.MTP').read_bytes();terrain=raw[541:]
     entrances=[(raw[389+2*i]&127,raw[421+2*i]&127) for i in range(8)]
     def tile(x,y):
         return 255 if not 0<=x<64 or not 0<=y<64 else terrain[(y&0x78)*64+(y&7)*8+(x&0x78)*8+(x&7)]
-    source=BASE/('ordinary-rubble-story.actions' if kick else 'ordinary-combat.actions')
+    source=BASE/('ordinary-training-combat.actions' if campaign else 'ordinary-rubble-story.actions' if kick else 'ordinary-combat.actions')
     actions=source.read_text().splitlines();notes=[]
     with tempfile.TemporaryDirectory(prefix='training-combat-',dir=ROOT/'work') as directory:
         tmp=Path(directory);slot=tmp/'state.btp';leg=tmp/'leg.actions'
         state=json.loads(run(binary,'--replay',source,'--save',slot))
         def advance(keys):
             nonlocal state
+            if not keys:return
             leg.write_text('\n'.join(keys)+'\n')
             try:state=json.loads(run(binary,'--load',slot,'--replay',leg,'--save',slot))
             except Exception:
@@ -74,6 +75,11 @@ def generate(binary,kick=False):
                 (['down']*max(0,y-u['y'])+['up']*max(0,u['y']-y)))
             note('movement-'+str(mode));advance(['accept'])
         def fight():
+            if campaign:
+                # Reassign guns as each opponent falls, and cool between
+                # large-laser volleys through the ordinary weapon menu.
+                arm()
+                command(4);advance(['accept'])
             command(9);advance(['idle']);note('resolving')
             if state['combat']['effects'][0]:note('combat-effect')
             for _ in range(64):
@@ -84,23 +90,50 @@ def generate(binary,kick=False):
             command(3)
             # The duel uses two medium lasers and the machine guns so the
             # Chameleon can sustain fire without overheating.
+            allowed=range(10) if campaign and state['combat']['units'][0]['heat']<12 else [0,4,7,8,9]
             while state['combat']['phase']==6:
-                if state['mission']['assignment']>=3 and state['combat']['weapon'] not in [0,4,7,8,9]:
+                if state['mission']['assignment']>=3 and state['combat']['weapon'] not in allowed:
+                    if campaign:advance(['accept','cancel'])
                     advance(['down']);continue
                 advance(['accept'])
-                if state['combat']['phase']==7:advance(['accept'])
-        for assignment in ([2] if kick else [3,4]):
+                if state['combat']['phase']==7:
+                    if state['combat']['units'][state['combat']['target']]['record'][0]==255:
+                        advance(['down','accept','up'])
+                    advance(['accept'])
+        if campaign:
+            check(state['story_flags'][0]==5 and state['recruitment']==1,'Missing natural Rick invitation')
+            building(7);note('rick-lounge-menu')
+            advance(['down']*((0-state['menu_selected'])%2)+['accept']);note('rick-talk-menu')
+            check(state['talk_mask']&1 and state['talk_phase']==2,'Rick is absent from the lounge')
+            advance(['up']*state['talk_selected']+['accept'])
+            original=json.loads((BASE/'reference-lounge.json').read_text())['checkpoints']
+            for scene in range(1,6):
+                note('rick-scene'+str(scene))
+                want=next(p for p in original if p['label']=='rick-scene'+str(scene))
+                check(state['script_status']==2 and state['text_digest']==want['text']['digest'],
+                    'Original Rick text differs: '+str(scene))
+                advance(['accept'])
+            check(state['device']==1 and state['recruitment']==0,'Rick did not deliver the device')
+            advance(['down']*((1-state['menu_selected'])%2)+['accept'])
+            while state['mode']=='building':advance(['accept'])
+            note('rick-device-exit');advance(['idle']*48)
+            check(state['mode']=='local-exploration' and not state['npc_fault'],'Rick departure broke outdoor NPC updates')
+        for attempt,assignment in enumerate([5]*5 if campaign else [2] if kick else [3,4]):
+            withdrawing=campaign and attempt<4
             if assignment>2:
                 advance(['idle']*(state['story_flags'][20]*4));building(0);quiz()
                 advance(['accept','accept'])
             check(state['menu_id']==7,'Missing loan menu')
             advance(['down']*((2-state['menu_selected'])%3)+['accept']+['idle']*90)
-            note('kick-start' if kick else 'robots-start' if assignment==3 else 'duel-start')
+            note('sixth-start' if campaign else 'kick-start' if kick else 'robots-start' if assignment==3 else 'duel-start')
             check(state['mission']['assignment']==assignment,'Wrong assignment')
             advance(['accept','accept','accept'])
+            if campaign:check(state['combat']['count']==3,'Sixth assignment needs two Locusts')
             if not kick:arm()
             command(4);note('kick-target');advance(['accept']);note('kick-queued')
-            if kick:
+            if withdrawing:
+                fight();command(8);note('sixth-withdraw-'+str(attempt))
+            elif kick:
                 for x,y,mode,turns in [(72,77,1,3),(84,85,0,5),(96,93,0,9),(111,89,0,8)]:
                     waypoint(x,y,mode)
                     for _ in range(turns):
@@ -114,6 +147,12 @@ def generate(binary,kick=False):
                     for _ in range(turns):
                         if state['combat']['won']:break
                         fight()
+            elif campaign:
+                for x,y,turns in [(72,77,2),(84,85,3)]:
+                    waypoint(x,y,1)
+                    for _ in range(turns):
+                        if state['combat']['won'] or state['combat']['lost']:break
+                        fight()
             else:
                 # Navigate around the training building before approaching the
                 # duel. The original steering routine is local, not a BFS.
@@ -122,7 +161,7 @@ def generate(binary,kick=False):
                     for _ in range(turns):
                         if state['combat']['won'] or state['combat']['lost']:break
                         fight()
-            for turn in range(200):
+            for turn in range(0 if withdrawing else 200):
                 if state['combat']['won'] or state['combat']['lost']:break
                 c=state['combat'];target=c['units'][c['target']]
                 if target['record'][0]==255:
@@ -133,26 +172,28 @@ def generate(binary,kick=False):
                     arm()
                 if turn%4==0:
                     c=state['combat'];target=c['units'][c['target']];u=c['units'][0]
-                    if abs(u['x']-target['x'])>8 or abs(u['y']-target['y'])>4:
-                        waypoint(max(1,min(124,target['x']-3)),max(2,min(124,target['y'])),1 if assignment==3 else 0)
+                    if abs(u['x']-target['x'])>(2 if campaign else 8) or abs(u['y']-target['y'])>(1 if campaign else 4):
+                        waypoint(max(1,min(124,target['x']-(1 if campaign else 3))),max(2,min(124,target['y'])),1 if campaign or assignment==3 else 0)
                 fight()
-            if state['combat']['won']!=1:
+            if not withdrawing and state['combat']['won']!=1:
                 (ROOT/'work/training-combat-failed.btp').write_bytes(slot.read_bytes())
                 (ROOT/'work/training-combat-failed.json').write_text(json.dumps(state,indent=2)+'\n')
                 (ROOT/'work/training-combat-failed.actions').write_text('\n'.join(actions)+'\n')
-            check(state['combat']['won']==1,'Ordinary assignment lost or timed out: '+str(assignment))
-            note('kick-victory' if kick else 'robots-victory' if assignment==3 else 'duel-victory')
+            check(state['combat']['fled']==1 if withdrawing else state['combat']['won']==1,
+                'Ordinary assignment lost or timed out: '+str(assignment))
+            if not withdrawing:note('sixth-victory' if campaign else 'kick-victory' if kick else 'robots-victory' if assignment==3 else 'duel-victory')
             route({(x,y) for x in range(61) for y in range(73,80)},True);advance(['idle'])
-            note('kick-report' if kick else 'robots-report' if assignment==3 else 'duel-report')
+            note('sixth-retry-report-'+str(attempt) if withdrawing else 'sixth-report' if campaign else 'kick-report' if kick else 'robots-report' if assignment==3 else 'duel-report')
             while state['mode']=='building':advance(['accept'])
-            check(state['story_flags'][:2]==[assignment+1,1] and state['allowance_cap']==[500,1000,2000][assignment-2],
+            check(state['story_flags'][:2]==([5,0] if withdrawing else [assignment+1,1]) and
+                state['allowance_cap']==(2000 if withdrawing else [500,1000,2000,3000][assignment-2]),
                 'Wrong training reward: '+str([assignment,state['story_flags'][:2],state['allowance_cap']]))
-            note('kick-exit' if kick else 'robots-exit' if assignment==3 else 'duel-exit')
-        if kick:
+            note('sixth-retry-exit-'+str(attempt) if withdrawing else 'sixth-exit' if campaign else 'kick-exit' if kick else 'robots-exit' if assignment==3 else 'duel-exit')
+        if kick or campaign:
             PATH.write_text('\n'.join(actions)+'\n')
             FACTS.write_text(json.dumps({'kind':'ordinary-native-playability','state_edits':False,
-                'scope':'Native input-only kick victory; separate from original instruction rules','checkpoints':notes},indent=2)+'\n')
-            print(f'Generated {len(actions)} ordinary inputs through kick victory');return
+                'scope':'Native input-only Rick/device and sixth victory' if campaign else 'Native input-only kick victory; separate from original instruction rules','checkpoints':notes},indent=2)+'\n')
+            print(f'Generated {len(actions)} ordinary inputs through '+('Rick/device and sixth victory' if campaign else 'kick victory'));return
         check(state['recruitment']==1 and state['npc_pairs'][0]==[112,255],'Rick was not invited')
         # The higher allowance funds the original 500-C-bill course naturally.
         for _ in range(200):
@@ -180,13 +221,17 @@ def generate(binary,kick=False):
         'scope':'Native input-only campaign route; original rules have separate instruction comparisons','checkpoints':notes},indent=2)+'\n')
     print(f'Generated {len(actions)} ordinary inputs through fourth/fifth victory and Mechit-Lube')
 
-def verify(binary,kick=False):
+def verify(binary,kick=False,campaign=False):
     facts=json.loads(FACTS.read_text());actions=PATH.read_text().splitlines()
     rows=[json.loads(line) for line in run(binary,'--replay',PATH,'--trace').splitlines()];end=rows[-1]
     for point in facts['checkpoints']:
         s=rows[point['tick']];check(s['mode']==point['mode'] and s['combat']['phase']==point['combat_phase'],point['label']+' differs')
-    check(end['story_flags'][:2]==([3,1] if kick else [5,1]) and end['allowance_cap']==(500 if kick else 2000) and
+    check(end['story_flags'][:2]==([6,1] if campaign else [3,1] if kick else [5,1]) and end['allowance_cap']==(3000 if campaign else 500 if kick else 2000) and
         end['combat']['technician']==(0 if kick else 1),'Completion differs')
+    if campaign:
+        check(end['device']==1 and not end['recruitment'] and not end['npc_fault'],'Rick/device continuation differs')
+        starts=[rows[p['tick']] for p in facts['checkpoints'] if p['label']=='sixth-start']
+        check(len(starts)==5 and all(s['combat']['count']==3 for s in starts),'Two-Locust encounter differs')
     if kick:
         check(any(s['combat']['fired']&2048 for s in rows),'Kick never fired')
         check(all(all(w==255 for w in s['combat']['orders']) for s in rows if s['combat']['phase']),'Kick replay used guns')
@@ -198,10 +243,12 @@ def verify(binary,kick=False):
             run(binary,'--replay',prefix,'--save',slot)
             resumed=json.loads(run(binary,'--load',slot,'--replay',tail)) if tick<len(actions) else json.loads(run(binary,'--load',slot))
             check(resumed==end,'Fresh-process continuation differs at '+p['label'])
-    print(f'PASS: {"ordinary kick victory" if kick else "fourth/fifth missions, walk/run/jump, Mechit-Lube"}; {len(actions)} inputs, {len(points)} save continuations')
+    print(f'PASS: {"Rick/device and sixth mission" if campaign else "ordinary kick victory" if kick else "fourth/fifth missions, walk/run/jump, Mechit-Lube"}; {len(actions)} inputs, {len(points)} save continuations')
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('--binary',type=Path,default=ROOT/'build/btech-headless');p.add_argument('--generate',action='store_true');p.add_argument('--kick',action='store_true');a=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('--binary',type=Path,default=ROOT/'build/btech-headless');p.add_argument('--generate',action='store_true');p.add_argument('--kick',action='store_true');p.add_argument('--campaign',action='store_true');a=p.parse_args()
+    if a.kick and a.campaign:p.error('Choose one route')
     if a.kick:PATH=BASE/'ordinary-kick.actions';FACTS=BASE/'ordinary-kick.json'
-    if a.generate:generate(a.binary.resolve(),a.kick)
-    verify(a.binary.resolve(),a.kick)
+    if a.campaign:PATH=BASE/'ordinary-sixth-story.actions';FACTS=BASE/'ordinary-sixth-story.json'
+    if a.generate:generate(a.binary.resolve(),a.kick,a.campaign)
+    verify(a.binary.resolve(),a.kick,a.campaign)

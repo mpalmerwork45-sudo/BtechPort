@@ -63,7 +63,8 @@ unsigned btp_combat_target(const BtpCombatState *c, unsigned id)
 }
 static void plan_points(const BtpMap *m, unsigned gate, const BtpCombatUnit *u,
     const BtpCombatUnit *other, int tx, int ty, unsigned movement, int computer,
-    int points, const uint8_t *wx, const uint8_t *wy, unsigned waypoints, int8_t steps[12][2])
+    int points, const uint8_t *wx, const uint8_t *wy, unsigned waypoints,
+    const BtpCombatUnit *units, unsigned count, unsigned self, int8_t steps[12][2])
 {
     memset(steps,2,24);
     int x=u->x, y=u->y, stopped=0;
@@ -86,7 +87,9 @@ static void plan_points(const BtpMap *m, unsigned gate, const BtpCombatUnit *u,
             if (nx<0 || ny<0 || nx>=2*m->width-2 || ny>=2*m->height) continue;
             int at=grid(u->x,u->y,nx,ny,0,&mask);
             if (tile_at(m,u->x,u->y,at)>=gate || (!u->infantry && tile_at(m,u->x,u->y,at+(nx&1 ? -1 : 1))>=gate)) continue;
-            if (occupied(u,other,nx,ny)) { if (nx==tx && ny==ty) stopped=1; continue; }
+            int blocked=occupied(u,other,nx,ny);
+            for (unsigned k=0;k<count;++k) if (k!=self && occupied(u,&units[k],nx,ny)) blocked=1;
+            if (blocked) { if (nx==tx && ny==ty) stopped=1; continue; }
             steps[i][0]=dx[d]; steps[i][1]=dy[d]; x=nx; y=ny; heading=d; break;
         }
         unsigned mask, tile=tile_at(m,u->x,u->y,grid(u->x,u->y,x,y,1,&mask));
@@ -97,12 +100,13 @@ static void plan_points(const BtpMap *m, unsigned gate, const BtpCombatUnit *u,
 void btp_combat_plan(const BtpMap *m, unsigned gate, const BtpCombatUnit *u,
     const BtpCombatUnit *other, int tx, int ty, unsigned movement, int computer, int8_t steps[12][2])
 {
-    plan_points(m,gate,u,other,tx,ty,movement,computer,btp_combat_points(u,movement),NULL,NULL,0,steps);
+    plan_points(m,gate,u,other,tx,ty,movement,computer,btp_combat_points(u,movement),NULL,NULL,0,NULL,0,0,steps);
 }
 void btp_combat_route(const BtpMap *m, unsigned gate, const BtpCombatState *c, int8_t steps[12][2])
 {
     plan_points(m,gate,&c->unit[0],&c->unit[1],c->goal_x,c->goal_y,c->movement,0,
-        btp_combat_points(&c->unit[0],c->movement),c->waypoint_x,c->waypoint_y,c->waypoint_count,steps);
+        btp_combat_points(&c->unit[0],c->movement),c->waypoint_x,c->waypoint_y,c->waypoint_count,
+        NULL,0,0,steps);
 }
 unsigned btp_combat_cover(const BtpMap *m, const BtpCombatUnit *u, unsigned *terrain)
 {
@@ -158,12 +162,13 @@ void btp_combat_begin(BtpState *s, const BtpResources *r)
     c->unit[0].x=64;c->unit[0].y=77;c->unit[0].direction=2;
     unsigned assignment=s->mission.assignment;
     if (assignment==3) c->count=(uint8_t)(4+(btp_rng_next(s->npc.rng)&3u));
+    if (assignment==5) c->count=3;
     unsigned x=101+(btp_rng_next(s->npc.rng)&7u),y=89+(btp_rng_next(s->npc.rng)&7u);
     static const uint8_t ox[6]={1,2,0,1,0,0},oy[6]={2,2,3,3,0,1};
     /* Original slot-8 onward offsets at DS:1642/164E. */
     for (unsigned i=1;i<c->count;++i) {
         BtpCombatUnit *u=&c->unit[i];u->direction=6;c->plan_direction[i]=6;c->walk[i]=12;
-        u->x=(uint8_t)(assignment==2 ? 114 : x);u->y=(uint8_t)y;
+        u->x=(uint8_t)(assignment==2 ? 114 : x+(assignment>=4 ? 4*(i-1) : 0));u->y=(uint8_t)y;
         if (assignment==3) {
             u->infantry=1;u->record[12]=8;u->x=(uint8_t)(x+ox[i-1]);u->y=(uint8_t)(y+oy[i-1]);
             for (unsigned k=4;k<=9;++k) u->record[k]=(uint8_t)(btp_rng_next(s->npc.rng)&1u);
@@ -223,7 +228,8 @@ static void begin_round(BtpState *s, const BtpResources *r, int enemy_ai)
         /* 0E31:046F normalizes robot IDs before 103B:2474. IDs 20/21
            cross its threshold and take six points; IDs 16..19 take three. */
         int points=enemy.infantry && btp_combat_id(c,index)>=20 ? 6 : btp_combat_points(&enemy,*movement);
-        plan_points(&r->map,s->gate,&enemy,&c->unit[0],tx,ty,*movement,1,points,NULL,NULL,0,c->path[index]);
+        plan_points(&r->map,s->gate,&enemy,&c->unit[0],tx,ty,*movement,1,points,NULL,NULL,0,
+            s->mission.assignment==5 ? c->unit : NULL,s->mission.assignment==5 ? c->count : 0,index,c->path[index]);
     }
     memset(c->enemy_orders[index-1],255,12);
     if (s->mission.assignment>=3) {
@@ -274,6 +280,17 @@ void btp_combat_ignite(BtpState *s, const BtpCombatUnit *target)
     if (roll>=5 && roll<=9) return;
     mark(s,124,(target->x-(target->infantry ? 1u : 0u))&127u,
         (target->y-(target->infantry ? 0u : 1u))&127u);
+}
+static void end_round(BtpState *s,const BtpResources *r)
+{
+    BtpCombatState *c=&s->combat;
+    for (unsigned i=0;i<c->count;++i) if (c->unit[i].record[0]!=255) {
+        unsigned terrain,mode=i==0 ? c->movement : i==1 ? c->enemy_movement : c->enemy_modes[i-2];
+        (void)btp_combat_cover(&r->map,&c->unit[i],&terrain);
+        btp_combat_cool(&c->unit[i],mode==255 ? -1 : (int)mode,c->moved[i],terrain);
+    }
+    if (!c->goal_active) c->movement=255;
+    c->delay=0;c->flash=0;menu(c);
 }
 static void round_tick(BtpState *s, const BtpResources *r, int enemy_ai)
 {
@@ -329,15 +346,7 @@ static void round_tick(BtpState *s, const BtpResources *r, int enemy_ai)
     }
     s->x_half=c->unit[0].x;s->y_half=(uint16_t)(c->unit[0].y+2u);
     s->mission.walk=c->walk[0];s->mission.direction=c->unit[0].direction;
-    if (++c->step==12) {
-        btp_combat_cool(&c->unit[0],c->movement==255 ? -1 : c->movement,c->moved[0],terrain[0]);
-        for (unsigned i=1;i<c->count;++i) if (c->unit[i].record[0]!=255) {
-            unsigned movement=i==1 ? c->enemy_movement : c->enemy_modes[i-2];
-            btp_combat_cool(&c->unit[i],movement==255 ? -1 : (int)movement,c->moved[i],terrain[i]);
-        }
-        if (!c->goal_active) c->movement=255;
-        c->delay=0;c->flash=0;menu(c);
-    }
+    if (++c->step==12 && !s->effects.count) end_round(s,r);
 }
 static void combat_tick(BtpState *s, const BtpResources *r, BtpAction a, int enemy_ai)
 {
@@ -349,6 +358,9 @@ static void combat_tick(BtpState *s, const BtpResources *r, BtpAction a, int ene
         c->won=(uint8_t)(s->effects.pending==1);c->lost=(uint8_t)(s->effects.pending==2);
         s->effects.pending=0;finish(s);return;
     }
+    /* A shot on the twelfth microstep must finish its presentation before
+       cleanup returns to the command menu. This state is also saveable. */
+    if (c->phase==BTP_COMBAT_ROUND && c->step==12) { end_round(s,r);return; }
     unsigned count=btp_combat_weapon_count(&c->unit[0]);
     if (c->phase==BTP_COMBAT_ROUND) { round_tick(s,r,enemy_ai);return; }
     if (c->phase==BTP_COMBAT_NOTICE) {
@@ -535,12 +547,12 @@ int btp_combat_decode(const uint8_t b[BTP_COMBAT_SAVE_BYTES], BtpCombatState *c)
 int btp_combat_valid(const BtpState *s)
 {
     const BtpCombatState *c=&s->combat;
-    if (s->mission.assignment<2 || s->mission.assignment>4 || !s->mission.phase) {
+    if (s->mission.assignment<2 || s->mission.assignment>5 || !s->mission.phase) {
         uint8_t b[BTP_COMBAT_SAVE_BYTES];btp_combat_encode(c,b);
         for (unsigned i=0;i<sizeof b;++i) if (b[i]) return 0;
         return 1;
     }
-    if ((s->mission.assignment==3 ? c->count<4 || c->count>7 : c->count!=2) ||
+    if ((s->mission.assignment==3 ? c->count<4 || c->count>7 : c->count!=(s->mission.assignment==5 ? 3 : 2)) ||
         c->target_unit<1 || c->target_unit>=c->count || c->lost>1 || c->unit[0].infantry ||
         c->last_attacker>=c->count || c->last_target>=c->count ||
         c->phase>BTP_COMBAT_REPLACE || c->selected>9 || c->messages>2 || c->graphics>1 ||
@@ -559,7 +571,7 @@ int btp_combat_valid(const BtpState *s)
     if (phase==BTP_COMBAT_MESSAGES && c->selected>2) return 0;
     if (c->phase==BTP_COMBAT_TARGET && c->weapon_selected>=btp_combat_weapon_count(&c->unit[0])) return 0;
     if (c->weapon_selected>btp_combat_weapon_count(&c->unit[0])) return 0;
-    if (c->phase==BTP_COMBAT_ROUND && c->step>=12) return 0;
+    if (c->phase==BTP_COMBAT_ROUND && (c->step>12 || (c->step==12 && !s->effects.count))) return 0;
     if (c->goal_active && c->movement>2) return 0;
     if (c->waypoint_count>11 || (c->waypoint_count && !c->goal_active) ||
         (c->phase==BTP_COMBAT_REPLACE && (c->selected>2 || c->target_selected>1))) return 0;

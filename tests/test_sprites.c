@@ -73,6 +73,22 @@ int main(void)
     btp_render(r,&s,0,f); CHECK(f[102*320+208]!=btp_palette[14]);
     r->map.tiles[12*64+35]=64;
     btp_render(r,&s,0,f); CHECK(f[102*320+208]==btp_palette[14]);
+    /* Animated map art shares the saved clock, without changing collision. */
+    r->map.tiles[12*64+35]=105;r->terrain_animation.format=1;
+    uint32_t *restored_frame=malloc(BTP_PIXELS*sizeof *restored_frame);CHECK(restored_frame);
+    for (unsigned phase=0;phase<3;++phase) {
+        unsigned frame=btp_terrain_frame(105,phase);CHECK(frame==16+phase);
+        memset(r->terrain_animation.pixels+frame*256,(int)(10+phase),256);
+    }
+    for (unsigned phase=0;phase<6;++phase) {
+        btp_start(&s);s.tick=4*phase;btp_render(r,&s,0,f);
+        CHECK(f[88*320+208]==btp_palette[10+phase%3]);
+        btp_state_encode(&s,saved);CHECK(btp_state_decode(saved,sizeof saved,&r->map,NULL,&copy));
+        btp_render(r,&copy,0,restored_frame);CHECK(!memcmp(f,restored_frame,BTP_PIXELS*sizeof *f));
+        btp_tick(&s,&r->map,BTP_RIGHT);CHECK(s.blocked==BTP_WALL && s.x_half==69 && s.y_half==25);
+    }
+    CHECK(!btp_terrain_frame(64,0) && !btp_terrain_frame(UINT_MAX,UINT_MAX));
+    free(restored_frame);
     free(f); free(r); printf("PASS: %u sprite bounds, compositing, gait and migration assertions.\n",checks);
     return 0;
 }

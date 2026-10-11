@@ -15,12 +15,12 @@ def generate():
     o = OriginalCombat(snapshot=SNAPSHOT)
     rows = ['# Controlled 103B:1774, 0E31:03AB and complete 12E8:000C(0) turns; MAP1.',
             '# Cases supply ranks, positions, heat, equipment and orders; no executable patches.']
-    for kind in (3, 4):
+    for kind in (3, 4, 5):
         for case in range(42):
             o.reset(); loan = case % 3; movement = case % 4
             if movement == 3: movement = 255
             if movement == 2 and not o.template(loan)[50]: movement = 0
-            count = 4 + case % 4 if kind == 3 else 2
+            count = 4 + case % 4 if kind == 3 else 3 if kind==5 else 2
             seed = 123456 + case * 78901; heat = case % 3 * 5
             px, py = ((96, 93), (84, 85), (99, 93))[case % 3]
             gx, gy = px + 4, py + (case % 2) * 4
@@ -31,8 +31,9 @@ def generate():
             o.write(o.state + 0x3800, bytes([255]) * 288)
             o.write(o.state + 0x32c6, bytes([255]) * 1152)
             o.write(o.state + 0xc724, o.template(loan)); o.write(o.state + 0xc918, o.template())
+            o.write(o.state + 0xc995, o.template())
             initial = []
-            ids = [0] + ([16 + i for i in range(count - 1)] if kind == 3 else [12])
+            ids = [0] + ([16 + i for i in range(count - 1)] if kind == 3 else list(range(12,12+count-1)))
             for i, unit in enumerate(ids):
                 x = px if not i else px + 6 + ((i - 1) % 3) * 4
                 y = py if not i else py + ((i - 1) // 3) * 4
@@ -55,18 +56,19 @@ def generate():
             for w in range(weapons): o.write(o.state + 0x3800 + w, [ids[1]])
             if order == 2: o.write(o.state + 0x380b, [ids[1]])
             o.write(o.ds + 0x4fc0, seed.to_bytes(3, 'little'))
-            if movement != 255: o.call(0x103b, 0x1774, 0, 1, limit=2000000)
-            else: o.write(o.state + 0x40b4, bytes([2]) * 24)
+            # Refresh camera, cover and terrain even for an idle order. The
+            # capture's old position otherwise leaves stale 32AE/3750 fields.
+            o.call(0x103b, 0x1774, 0, 1, limit=2000000)
             for unit in ids[1:]: o.call(0xe31, 0x3ab, unit, 0, limit=2000000)
             o.call(0x12e8, 0xc, 0, limit=20000000)
             row = 'C ' + ' '.join(map(str, [kind, loan, seed, count, movement, gx, gy, order] + initial))
             results = []
             for i, unit in enumerate(ids):
-                address = 0xc724 if not i else 0xc69c + 17 * (i - 1) if kind == 3 else 0xc918
+                address = 0xc724 if not i else 0xc69c + 17 * (i - 1) if kind == 3 else 0xc918+125*(i-1)
                 record = o.read(o.state + address, 17 if i and kind == 3 else 125)
                 face = o.read(o.state + 0x396c + unit, 1)[0]
                 if face == 255: face = o.read(o.state + 0x45b6 + unit, 1)[0]
-                h = o.read(o.state + (0x6e if not i else 0x72), 1)[0] if not (i and kind == 3) else 0
+                h = o.read(o.state + (0x6e if not i else 0x66+unit), 1)[0] if not (i and kind == 3) else 0
                 results += [str(o.word(o.state + 0x4004 + 2 * unit) & 127),
                             str(o.word(o.state + 0x4036 + 2 * unit) & 127), str(face), str(h),
                             f'{fingerprint(record):016x}']

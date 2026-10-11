@@ -9,7 +9,9 @@ training/story step; both supplied reference trees remain immutable.
 | Original multi-waypoint orders | Implemented; 108 original planning/turn cases pass |
 | Persistent fire/smoke behavior | Original flame-marker ring implemented; 128 dice/offset/wrap/terrain cases pass |
 | Original combat/jump/impact/destruction effects | Original poses/gaits, impact stars, flame cycle and corpse/wreck artwork integrated |
-| Natural Rick/device route and next original assignment/event | Pending |
+| Natural Rick/device route and sixth original assignment | Implemented; original five-page dialogue, two Locusts, skill practice and 3,000-cap result |
+| Force-field electricity (added by user) | Original ANIMATE.ICN three-frame map cycle integrated; 60 executed decoder/swap comparisons |
+| Citadel within the generated surrounding world (added by user) | Research in progress; current code still uses the local map |
 
 ## Turn research and corrections
 
@@ -17,8 +19,8 @@ The original `12E8:000C` performs up to twelve microsteps, moving active units
 in ascending original ID order, then attempting one eligible attack per active
 unit. It does not draw a separate randomized initiative roll in these cases.
 The existing 35-turn disabled-target comparison is retained; new controlled
-**84** complete turns cover all loan choices, movement/heat, 3–6 armed robots and
-the live Locust, with positions, facing, heat, complete record fingerprints
+**126** complete turns cover all loan choices, movement/heat, 3–6 armed robots,
+one live Locust and two live Locusts, with positions, facing, heat, complete record fingerprints
 and final RNG compared. Test prerequisites and the death-UI argument are explicit
 in `tools/make_combat_live_turns.py`; no executable instruction is patched.
 These comparisons exclude destruction of the player's mech: the original's
@@ -47,7 +49,7 @@ It rolls 2d6 and, outside 5..9, stores sprite 124 in the original 64-entry
 person/robot marks use `(x-1,y)`. The ring wraps and survives an encounter.
 Refreshing the original viewport after insertion leaves all 576 terrain bytes
 unchanged. No terrain-spread, smoke-blocking or extra terrain-damage rule is
-invented from this visual marker. Further effect-frame verification is pending.
+invented from this visual marker. Flame artwork and its two-frame cycle are now verified below.
 
 Current internal saves use BTPG/v16, 4096-byte payload / 4112-byte BTS1 file.
 The existing combat prefix and legacy migrations are retained; v15 saves have
@@ -86,7 +88,41 @@ original's shorter wall-clock animation delay. Pose and hit/star ordering use
 original data; beam interpolation/projectile placement and complete frame timing
 remain approximate. Jump uses the original directional gait programs: the
 verified turn path does not add a separate airborne sprite sequence. Wider
-portrait/audio/terrain-animation contexts remain deferred.
+portrait/audio contexts remain deferred. Final-step effects hold the combat
+phase until presentation completes; a saved twelfth-step shot has a regression
+test, preventing an effect queue from escaping into the command menu.
+
+## Rick and the sixth assignment
+
+`07DC:0D49` adds a second Locust at x+4 for assignment index 5. **144**
+construction cases plus nine apprenticeship cases match the original.
+**225** bounded executions of `07DC:0C80..0CEE` compare victory, withdrawal and
+failure results, both ranks 0..4 and final RNG. Gunnery and kicking receive
+independent 0/1 increases even on withdrawal; mastered ranks skip their draw.
+The original TRAINING.BLD success raises the cap to 3,000 and advances to index 6.
+Later assignments are explicit unsupported contexts.
+
+`ordinary-sixth-story.actions` follows the complete earlier five-mission route,
+walks to the lounge after the natural invitation, compares all five Rick text
+digests with the original observations, receives the device and continues into
+the sixth assignment. It includes four withdrawals with non-advancement,
+practice and fresh loans, then defeats both opponents. **43,996** ordinary inputs
+and **55** fresh-process continuations pass, without state edits. Every action
+also has a C save/restore continuation check. This establishes native playability;
+full original campaign timing/RNG and pilot evacuation remain outside the claim.
+
+## Map electricity
+
+The original `0000:320B` loads ANIMATE.ICN and skips its first blank tile.
+`0000:240B` cycles three consecutive frames into the ten slots identified by
+DS:04B0: 87–91, 105–107, 111 and 113. The renderer now applies those owner-loaded
+frames to map tiles, including the force fields. **60** comparisons execute the
+original decoder, initialization copy and page swaps in an explicitly supplied
+packed-pixel display context. They compare tile IDs and complete crop hashes.
+Native cadence uses the saved fixed clock at four ticks per frame; exact DOS
+hardware timing and its animation-guard contexts remain approximate. Collision
+uses the original tile ID throughout. Rendering, clock continuation and unchanged
+collision are covered by the pixel/state tests.
 
 ## Verification commands
 

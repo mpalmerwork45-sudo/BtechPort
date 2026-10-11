@@ -1,4 +1,5 @@
 #include "core/combat.h"
+#include "core/animation.h"
 #include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,6 +21,13 @@ int main(int argc,char **argv)
     char line[2048];unsigned cases=0,failures=0;
     while (fgets(line,sizeof line,f)) {
         if (line[0]=='#') continue;
+        if (line[0]=='T') {
+            char *p=line+1;unsigned tile=number(&p),phase=number(&p),frame=number(&p);
+            uint64_t hash=strtoull(p,&p,16);++cases;
+            if (btp_terrain_frame(tile,phase)!=frame || frame>30 ||
+                fingerprint(r->terrain_animation.pixels+frame*256,256)!=hash) ++failures;
+            continue;
+        }
         if (line[0]=='P') {
             char *p=line+1;unsigned group=number(&p),direction=number(&p),count=number(&p);++cases;
             if (group==18) {
