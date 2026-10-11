@@ -2,6 +2,33 @@
 
 Independent C11/SDL2 recreation research for **BattleTech: The Crescent Hawk's Inception**, supplied DOS version 1.03. **M0, M1 and bounded M2a–M2j are complete.** Explore MAP1 with moving NPCs, visit the Citadel, buy all eleven weapons and five armour types, trade investments at ComStar and talk to occupants in both shops and the lounge. The first MechWarrior quiz, loaned-mech mission, result and barracks sleep loop are playable. Paid Citadel classes improve personal weapon skills and obey the original cooldown. Native save/load preserves progress. Jason and the outdoor cadets now use original walking sprites. Text preserves upper/lower case; the campaign remains unfinished.
 
+## Acknowledgements
+
+BtechPort builds on substantial reverse-engineering work by others. Their
+research made this recreation possible and deserves explicit credit:
+
+- **[UnBattletech](https://github.com/velteyn/UnBattletech), by Edoardo Barolo
+  (`velteyn`) and its contributors, including Maximilien Noal.** Its file-format
+  specifications, memory maps, story and engine research, annotated disassembly
+  and decompiler output, and extraction tools supplied the main starting point
+  for this port's research. We used its BLD round-trip converter for the initial
+  audit and its documentation and assembly to locate original routines for
+  further verification. UnBattletech is licensed under GPL-3.0.
+- **The [Reko](https://github.com/uxmal/reko) and Spice86 contributors.** Their
+  decompilation and emulator tooling underpins much of UnBattletech's research
+  material consulted here. BtechPort's own live comparisons currently use DOSBox.
+- **[w4kfu's unEXEPACK research](https://github.com/w4kfu/unEXEPACK#exepack-header).**
+  Its published EXEPACK header description informed this project's independently
+  written unpacker and executable-format audit.
+
+This port's independent C implementation and original-game validation extend
+that research foundation. Detailed sources and verification limits are recorded
+in the [research audit](docs/RESEARCH_AUDIT.md) and milestone evidence reports.
+The original game, artwork and story are the work of **Westwood Associates**,
+published by **Infocom**.
+
+## Build and play
+
 From this directory on the current Kubuntu machine:
 
 ```sh
