@@ -34,7 +34,7 @@ static void decline(const BtpState *menu,const BtpResources *r,unsigned loan)
     step(&s,r,BTP_ACCEPT);step(&s,r,BTP_ACCEPT);CHECK(s.combat.phase==BTP_COMBAT_MENU);
     command(&s,r,6);step(&s,r,BTP_DOWN);CHECK(s.combat.scan_unit==1);step(&s,r,BTP_CANCEL);
     command(&s,r,0);step(&s,r,BTP_RIGHT);step(&s,r,BTP_CANCEL);CHECK(!s.combat.goal_active);
-    command(&s,r,4);CHECK(s.combat.notice==1);step(&s,r,BTP_CANCEL);
+    command(&s,r,4);CHECK(s.combat.phase==BTP_COMBAT_KICK);step(&s,r,BTP_CANCEL);CHECK(s.combat.kick_target==255);
     command(&s,r,3);step(&s,r,BTP_ACCEPT);step(&s,r,BTP_CANCEL);CHECK(s.combat.orders[0]==255);
     step(&s,r,BTP_CANCEL);command(&s,r,8);CHECK(s.combat.fled && !s.combat.phase);
     for (unsigned i=0;i<4;++i) step(&s,r,BTP_LEFT);
@@ -109,7 +109,10 @@ int main(int argc,char **argv)
             ++effects;
             uint8_t old[BTP_STATE_BYTES];BtpState migrated;
             btp_state_encode(&s,old);memcpy(old,"BTPD",4);old[4]=13;old[878]=0;
-            CHECK(btp_state_decode(old,sizeof old,&r->map,&r->training,&migrated));CHECK(!migrated.combat.flash);
+            memset(old+896,0,sizeof old-896);
+            CHECK(btp_state_decode(old,1024,&r->map,&r->training,&migrated));CHECK(!migrated.combat.flash);
+            memcpy(old,"BTPE",4);old[4]=14;old[878]=s.combat.flash;
+            CHECK(btp_state_decode(old,1024,&r->map,&r->training,&migrated));CHECK(migrated.combat.flash==s.combat.flash);
         }
         if (s.combat.phase==BTP_COMBAT_ROUND && s.combat.step==1) {
             uint8_t bad[BTP_STATE_BYTES];BtpState untouched=s;
@@ -124,7 +127,8 @@ int main(int argc,char **argv)
             BtpState old=s,loaded;old.combat.flash=0;old.combat.delay=0;old.combat.path_index[1]=0;
             old.combat.path[1][0][0]=-1;old.combat.path[1][0][1]=0;
             btp_state_encode(&old,bad);memcpy(bad,"BTPD",4);bad[4]=13;
-            CHECK(btp_state_decode(bad,sizeof bad,&r->map,&r->training,&loaded));
+            memset(bad+896,0,sizeof bad-896);
+            CHECK(btp_state_decode(bad,1024,&r->map,&r->training,&loaded));
             step(&loaded,r,BTP_IDLE);CHECK(loaded.combat.unit[1].x==enemy_x && loaded.combat.unit[1].y==enemy_y);
         }
     }

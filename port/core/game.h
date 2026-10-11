@@ -72,8 +72,9 @@ typedef struct {
     uint8_t mech_skills[2], checkpoint_mech_skills[2]; /* Original C61B/C61C. */
     BtpCutsceneState cutscene;
     BtpCombatState combat;
+    uint8_t technician, apprentice, checkpoint_technician, checkpoint_apprentice;
 } BtpState;
-enum { BTP_STATE_BYTES = 1024 };
+enum { BTP_STATE_BYTES = 2048 };
 
 void btp_start(BtpState *state);
 void btp_tick(BtpState *state, const BtpMap *map, BtpAction action);

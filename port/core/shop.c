@@ -9,10 +9,32 @@ static void unsupported(BtpState *s)
 void btp_shop_native(BtpState *s, const BtpResources *r)
 {
     const BtpBld *b = btp_building_bld(r,s->entry_slot);
-    if (!b || s->recruitment || s->story_flags[4] || (s->entry_slot != 3 && s->entry_slot != 4)) {
+    if (!b || (s->recruitment && s->entry_slot!=5) || s->story_flags[4] || (s->entry_slot != 3 && s->entry_slot != 4 && s->entry_slot != 5)) {
         unsupported(s); return;
     }
     switch (s->script.native_action) {
+    case 14: /* 14D3:0AF2: other party members; Jason is slot zero. */
+        if (s->entry_slot!=5) { unsupported(s);return; }
+        s->story_flags[14]=0;break;
+    case 16:
+        if (s->entry_slot!=5) { unsupported(s);return; }
+        s->story_flags[15]=s->apprentice;break;
+    case 15:
+        if (s->entry_slot!=5 || s->apprentice) { unsupported(s);return; }
+        s->story_flags[14]=0;
+        if (s->credits>=500) {
+            s->credits-=500;++s->technician;s->apprentice=1;s->story_flags[14]=1;
+            if (s->npc.enabled) s->npc.allowance_pending=(uint8_t)btp_economy_below_cap(s);
+        }
+        break;
+    case 17: case 29:
+        /* Training loans do not create owned or stored mechs. */
+        if (s->entry_slot!=5) { unsupported(s);return; }
+        s->story_flags[16]=0;break;
+    case 20: case 44:
+        /* Original 09B8:0925 / 1762 restore the building presentation. */
+        if (s->entry_slot!=5) { unsupported(s);return; }
+        break;
     case 10:
         if (s->script.has_cash || !s->script.text_count) { unsupported(s); return; }
         s->script.has_cash = 1; s->script.cash_after = s->script.text_count;

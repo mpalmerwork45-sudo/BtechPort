@@ -315,11 +315,11 @@ def training(env, work):
                     try: process.wait(timeout=5)
                     except subprocess.TimeoutExpired: process.kill(); process.wait()
 
-def rubble(env,work,combat=False):
+def rubble(env,work,combat=False,kind=None):
     """Accelerated input-only full route, followed by real-time F5/F9 probes."""
     from reference_session import WindowKeys
     binary=ROOT/"build/btech-headless"
-    kind="combat" if combat else "rubble-story"
+    kind=kind or ("combat" if combat else "rubble-story")
     path=ROOT/("tests/fixtures/ordinary-"+kind+".actions")
     facts=json.loads((ROOT/("tests/fixtures/ordinary-"+kind+".json")).read_text())
     lines=path.read_text().splitlines(); record=work/("native-"+kind+".actions"); frame=work/("native-"+kind+".ppm")
@@ -332,12 +332,15 @@ def rubble(env,work,combat=False):
         cwd=ROOT,check=True,capture_output=True,text=True,timeout=20)
     if record.read_text().splitlines() != lines+["idle"]*5 or json.loads(actual.stdout) != json.loads(wanted.stdout) or frame.read_bytes() != replayed.read_bytes():
         raise RuntimeError("Accelerated ordinary native route differs from complete headless input/state/frame replay")
-    scope="three-mission combat/victory/report" if combat else "two-mission/rest/third-briefing"
+    scope={"training-combat":"five-mission robot/duel/Mechit-Lube", "kick":"kick combat/victory/report",
+        "combat":"three-mission combat/victory/report","rubble-story":"two-mission/rest/third-briefing"}[kind]
     print(f"PASS: ordinary native {scope} SDL route, {len(lines)+5} ticks in {elapsed:.2f}s (normal pacing {32*(len(lines)+5)/1000:.2f}s). Exact input/state/frame equality.",flush=True)
     with tempfile.TemporaryDirectory(prefix="native-"+kind+"-",dir=work) as directory:
         tmp=Path(directory); prefix=tmp/"prefix.actions"; start=tmp/"start.btp"; slot=tmp/"slot.btp"; tail=tmp/"tail.actions"
-        labels=("computer","route-preview","route-confirmed","weapons","target","resolving") if combat else (
-            "rubble-animation","rubble-pickup","rubble-carrying","dream-animation")
+        labels=("kick-target","kick-queued","movement-1","movement-2","mechit-confirm","mechit-trained") if kind=="training-combat" else (
+            ("kick-target","kick-queued","resolving") if kind=="kick" else (
+                ("computer","route-preview","route-confirmed","weapons","target","resolving") if combat else (
+                    "rubble-animation","rubble-pickup","rubble-carrying","dream-animation")))
         for label in labels:
             tick=next(r["tick"] for r in facts["checkpoints"] if r["label"] == label)
             prefix.write_text("".join(a+"\n" for a in lines[:tick]))
@@ -367,7 +370,7 @@ def rubble(env,work,combat=False):
                     cwd=ROOT,check=True,capture_output=True,text=True).stdout)
                 if restored != expected: raise RuntimeError(label+" real-time F9 restoration/continuation differs")
                 print("PASS: real-time native F5/F9 restores "+label+" and its exact continuation.",flush=True)
-                if combat:
+                if combat or kind in ("training-combat","kick"):
                     expected_frame=tmp/"restored.ppm"
                     subprocess.run([str(binary),"--load",str(slot),"--replay",str(tail),"--frame",str(expected_frame)],
                         cwd=ROOT,check=True,capture_output=True,timeout=20)
@@ -392,6 +395,7 @@ def main():
     parser.add_argument("--diagonal-only", action="store_true")
     parser.add_argument("--rubble-only", action="store_true")
     parser.add_argument("--combat-only", action="store_true")
+    parser.add_argument("--training-combat-only", action="store_true")
     args = parser.parse_args()
     work = ROOT / "work"
     work.mkdir(exist_ok=True)
@@ -411,6 +415,10 @@ def main():
             env.pop("SDL_VIDEODRIVER", None)
             os.environ["DISPLAY"] = env["DISPLAY"]
             os.environ["BTECH_REFERENCE_VIRTUAL"] = "1"
+            if args.training_combat_only:
+                rubble(env,work,kind="training-combat")
+                rubble(env,work,kind="kick")
+                return
             if args.combat_only:
                 rubble(env,work,combat=True)
                 return
@@ -496,6 +504,8 @@ def main():
             training(env,work)
             rubble(env,work)
             rubble(env,work,combat=True)
+            rubble(env,work,kind="training-combat")
+            rubble(env,work,kind="kick")
             diagonals(env,work)
         finally:
             os.close(read_fd)

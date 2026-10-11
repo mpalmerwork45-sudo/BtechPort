@@ -287,10 +287,10 @@ static void combat_flash(const BtpResources *r, const BtpState *s, int cx, int c
     const BtpCombatState *c=&s->combat;
     if (!c->graphics || !c->flash || c->phase!=BTP_COMBAT_ROUND) return;
     /* Approximate firing indicator; damage/RNG never depend on presentation. */
-    int x=212+((int)c->unit[0].x-cx)*8,y=76+((int)c->unit[0].y+2-cy)*8;
-    int tx=212+((int)c->unit[1].x-cx)*8,ty=76+((int)c->unit[1].y+2-cy)*8;
+    int x=212+((int)c->unit[c->last_attacker].x-cx)*8,y=76+((int)c->unit[c->last_attacker].y+2-cy)*8;
+    int tx=212+((int)c->unit[c->last_target].x-cx)*8,ty=76+((int)c->unit[c->last_target].y+2-cy)*8;
     int dx=tx-x,dy=ty-y,steps=abs(dx)>abs(dy) ? abs(dx) : abs(dy);
-    unsigned weapon=btp_combat_weapon(&c->unit[0],c->last_weapon);
+    unsigned weapon=c->last_weapon==11 ? 32 : btp_combat_weapon(&c->unit[c->last_attacker],c->last_weapon);
     unsigned color=weapon>=16 && weapon<=18 ? 12u : 14u;
     for (int i=0;i<=steps;++i) {
         int px=x+(steps ? dx*i/steps : 0),py=y+(steps ? dy*i/steps : 0);
@@ -317,10 +317,12 @@ static void combat_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
         rectangle(f,200,64,1,24,14);rectangle(f,223,64,1,24,14);
         rectangle(f,104,168,216,32,0);border_panel(r,f,104,168,216,32,0);
         text(r,f,112,176,"Arrows: destination",15);text(r,f,112,184,"Enter: set route",14);
-    } else if (c->phase==BTP_COMBAT_WEAPONS || c->phase==BTP_COMBAT_TARGET) {
+    } else if (c->phase==BTP_COMBAT_WEAPONS || c->phase==BTP_COMBAT_TARGET || c->phase==BTP_COMBAT_KICK) {
         rectangle(f,104,72,216,128,0);border_panel(r,f,104,72,216,128,0);
-        if (c->phase==BTP_COMBAT_TARGET) {
-            text(r,f,112,80,"Enemy Locust",15);
+        if (c->phase==BTP_COMBAT_TARGET || c->phase==BTP_COMBAT_KICK) {
+            snprintf(line,sizeof line,c->unit[c->target_unit].infantry ? "Labor robot %u" : "Enemy Locust",c->target_unit);
+            text(r,f,112,80,c->phase==BTP_COMBAT_KICK ? "Choose the enemy to kick:" : "Choose a target:",15);
+            text(r,f,112,88,line,15);
             static const char *choices[3]={"Target here","Next target","Cancel"};
             for (unsigned i=0;i<3;++i) {
                 if (i==c->target_selected) rectangle(f,112,104+(int)i*8,200,8,14);
@@ -336,7 +338,9 @@ static void combat_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
                     if (w<33) memcpy(name,r->combat.weapons[w],10);else memcpy(name,"Unavailable",11);
                     if (c->unit[0].record[39+i]==255) snprintf(ammo,sizeof ammo," --");
                     else snprintf(ammo,sizeof ammo,"%3u",c->unit[0].record[39+i]);
-                    snprintf(line,sizeof line,"%-11.11s %s %s",name,ammo,c->orders[i]==12 ? "Locust" : "");
+                    unsigned target=btp_combat_target(c,c->orders[i]);char label[9]={0};
+                    if (target<c->count) snprintf(label,sizeof label,c->unit[target].infantry ? "Robot %u" : "Locust",target);
+                    snprintf(line,sizeof line,"%-11.11s %s %s",name,ammo,label);
                 }
                 if (i==c->weapon_selected) rectangle(f,112,88+(int)i*8,200,8,14);
                 text(r,f,112,88+(int)i*8,line,i==c->weapon_selected ? 0u : 15u);
@@ -345,7 +349,12 @@ static void combat_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
     } else if (c->phase==BTP_COMBAT_SCAN) {
         const BtpCombatUnit *u=&c->unit[c->scan_unit];
         rectangle(f,104,72,216,128,0);border_panel(r,f,104,72,216,128,0);
-        text(r,f,112,80,c->scan_unit ? "Enemy Locust" : "Jason's 'Mech",14);
+        text(r,f,112,80,u->infantry ? "Labor robot" : c->scan_unit ? "Enemy Locust" : "Jason's 'Mech",14);
+        if (u->infantry) {
+            char weapon[12]={0};memcpy(weapon,r->combat.weapons[u->record[11]],10);
+            snprintf(line,sizeof line,"Health %u  Armor %u",u->record[15],u->record[14]);text(r,f,112,104,line,15);
+            text(r,f,112,120,weapon,15);text(r,f,112,184,"Arrows: next Enter: close",14);return;
+        }
         text(r,f,112,96,"Part       Armor Internal",15);
         static const char *parts[8]={"Left arm","Left torso","Left leg","Head","Center","Right arm","Right torso","Right leg"};
         for (unsigned i=0;i<8;++i) {
@@ -357,6 +366,7 @@ static void combat_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
         rectangle(f,104,64,216,96,0);border_panel(r,f,104,64,216,96,0);
         if (c->phase==BTP_COMBAT_NOTICE) {
             const char *message=c->notice==2 ? "No movement points for this order.\rEnter to return." :
+                c->notice==3 ? "Damaged legs prevent kicking.\rEnter to return." :
                 "This command is outside the verified weapons-training slice.\rEnter to return.";
             (void)wrapped(r,f,72,(const uint8_t *)message,strlen(message),15);
         } else {
@@ -452,7 +462,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
     int cx=s->x_half,cy=s->y_half;
     if (s->combat.phase) {
         const BtpCombatState *c=&s->combat;
-        unsigned focus=c->phase==BTP_COMBAT_TARGET ? 1u : c->phase==BTP_COMBAT_SCAN ? c->scan_unit : 0u;
+        unsigned focus=c->phase==BTP_COMBAT_TARGET || c->phase==BTP_COMBAT_KICK ? c->target_unit : c->phase==BTP_COMBAT_SCAN ? c->scan_unit : 0u;
         cx=c->phase==BTP_COMBAT_MOVE ? c->cursor_x : c->unit[focus].x;
         cy=(c->phase==BTP_COMBAT_MOVE ? c->cursor_y : c->unit[focus].y)+2;
     }
@@ -477,9 +487,9 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
             f[y * 320 + x] = color;
         }
     if (s->combat.phase) {
-        for (unsigned i=0;i<2;++i) if (s->combat.unit[i].record[0]!=255) {
+        for (unsigned i=0;i<s->combat.count;++i) if (s->combat.unit[i].record[0]!=255) {
             const BtpCombatUnit *u=&s->combat.unit[i];unsigned terrain;
-            (void)btp_draw_sprite(&r->sprites,(i==0 && s->story_flags[2] ? 146u : 0u)+s->combat.walk[i],
+            (void)btp_draw_sprite(&r->sprites,(u->infantry ? 270u : i==0 && s->story_flags[2] ? 146u : 0u)+s->combat.walk[i],
                 200+((int)u->x-cx)*8,64+((int)u->y+2-cy)*8,btp_combat_cover(&r->map,u,&terrain),104,f);
         }
         combat_route(r,s,cx,cy,f);combat_flash(r,s,cx,cy,f);
@@ -522,7 +532,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
             rectangle(f,104,72,216,58,7); rectangle(f,108,76,208,50,0);
             if (btp_game_text(s,r,message,sizeof message,&n)) (void)wrapped(r,f,79,message,n,15);
         }
-        if (s->mission.assignment==2) text(r,f,8,166,s->combat.won ? "Completed" : "Withdrew",14);
+        if (s->mission.assignment>=2) text(r,f,8,166,s->combat.won ? "Completed" : s->combat.lost ? "Defeated" : "Withdrew",14);
         else if (s->mission.assignment) text(r,f,8,166,s->mission.corner && s->story_flags[2] ? "Carrying" : "Rubble",14);
         else if (debug) { snprintf(line,sizeof line,"TIME %u",s->mission.elapsed); text(r,f,8,166,line,14); }
     } else if (s->mode == BTP_BUILDING || s->mode == BTP_SCRIPT_FAULT || s->mode == BTP_QUIZ) {

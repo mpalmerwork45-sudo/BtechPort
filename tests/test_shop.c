@@ -104,7 +104,7 @@ static void boundaries(const BtpResources *r)
     /* Repair remains outside purchases; failed service preserves equipment. */
     enter(&s,r,4,50); restored_tick(&s,r,BTP_ACCEPT); restored_tick(&s,r,BTP_ACCEPT);
     restored_tick(&s,r,BTP_DOWN); restored_tick(&s,r,BTP_ACCEPT);
-    CHECK(s.mode == BTP_SCRIPT_FAULT && s.script.error == BTP_SCRIPT_OPCODE && s.credits == 0 && s.armor == 1);
+    CHECK(s.mode == BTP_SCRIPT_FAULT && s.script.error == BTP_SCRIPT_NATIVE_CONTEXT && s.credits == 0 && s.armor == 1);
     restored_tick(&s,r,BTP_CANCEL); CHECK(s.mode == BTP_BUILDING && s.script.menu_id == 12);
     /* Primary threshold compares before adding: repeated funding can exceed cap. */
     btp_start(&s); btp_npc_init(&s,&r->map); s.credits = 43; s.npc.loop_timer = 0;

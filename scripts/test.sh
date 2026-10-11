@@ -30,6 +30,8 @@ python3 tools/verify_m2j.py
 python3 tools/verify_m2kl.py
 python3 tools/make_training_replay.py
 python3 tools/make_combat_replay.py
+python3 tools/make_training_combat_replay.py
+python3 tools/make_training_combat_replay.py --kick
 python3 tools/verify_animations.py --frame work/rubble-result.ppm --dream-frame work/rest-wake.ppm
 if [ "${1:-}" = "--x11" ]; then
     python3 tools/native_smoke.py

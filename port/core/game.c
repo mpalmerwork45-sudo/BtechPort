@@ -54,7 +54,7 @@ int btp_entrance(const BtpState *s, const BtpMap *m)
 const BtpBld *btp_building_bld(const BtpResources *r, unsigned slot)
 {
     return !r ? NULL : slot == 0 ? &r->training : slot == 1 ? &r->citadel : slot == 2 ? &r->comstar :
-        slot == 3 ? &r->weapon : slot == 4 ? &r->armor : slot == 6 ? &r->barracks : slot == 7 ? &r->lounge : NULL;
+        slot == 3 ? &r->weapon : slot == 4 ? &r->armor : slot == 5 ? &r->repair : slot == 6 ? &r->barracks : slot == 7 ? &r->lounge : NULL;
 }
 static void story_in(BtpState *s)
 {
@@ -77,6 +77,7 @@ static void checkpoint(BtpState *s)
     memcpy(s->checkpoint_investments,s->investments,sizeof s->investments);
     memcpy(s->checkpoint_skills,s->skills,sizeof s->skills);
     memcpy(s->checkpoint_mech_skills,s->mech_skills,sizeof s->mech_skills);
+    s->checkpoint_technician=s->technician;s->checkpoint_apprentice=s->apprentice;
 }
 static void start_building(BtpState *s, const BtpResources *r)
 {
@@ -101,6 +102,7 @@ static void finish_script(BtpState *s, const BtpMap *m)
             memcpy(s->investments,s->checkpoint_investments,sizeof s->investments);
             memcpy(s->skills,s->checkpoint_skills,sizeof s->skills);
             memcpy(s->mech_skills,s->checkpoint_mech_skills,sizeof s->mech_skills);
+            s->technician=s->checkpoint_technician;s->apprentice=s->checkpoint_apprentice;
             s->armor = s->checkpoint_armor; s->armor_points = s->checkpoint_armor_points;
             if (s->npc.enabled) s->npc.allowance_pending = (uint8_t)btp_economy_below_cap(s);
         }
@@ -131,6 +133,7 @@ static void finish_script(BtpState *s, const BtpMap *m)
         memset(s->checkpoint_investments,0,sizeof s->checkpoint_investments);
         memset(s->checkpoint_skills,0,sizeof s->checkpoint_skills);
         memset(s->checkpoint_mech_skills,0,sizeof s->checkpoint_mech_skills);
+        s->checkpoint_technician=s->checkpoint_apprentice=0;
         s->checkpoint_weapon = s->checkpoint_armor = s->checkpoint_armor_points = 0;
     }
 }
@@ -236,7 +239,7 @@ void btp_game_tick(BtpState *s, const BtpResources *r, BtpAction a)
             if (!s->talk.phase) btp_talk_begin(s,r);
             break;
         }
-        if (s->script.native_action >= 1 && s->script.native_action <= 3) {
+        if ((s->script.native_action >= 1 && s->script.native_action <= 3) || s->script.native_action==43) {
             btp_training_native(s,r);
             if (s->mode == BTP_MISSION) break;
         } else if (s->script.native_action == 4 || s->script.native_action == 5) btp_school_native(s,r);
@@ -265,7 +268,7 @@ static uint16_t get16(const uint8_t *p) { return (uint16_t)(p[0] | (uint16_t)p[1
 void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
 {
     memset(b, 0, BTP_STATE_BYTES);
-    memcpy(b, "BTPE", 4); b[4] = 14;
+    memcpy(b, "BTPF", 4); b[4] = 15;
     for (unsigned i = 0; i < 4; ++i) b[8+i] = (uint8_t)(s->tick >> (8 * i));
     b[12] = (uint8_t)s->x_half; b[13] = (uint8_t)(s->x_half >> 8);
     b[14] = (uint8_t)s->y_half; b[15] = (uint8_t)(s->y_half >> 8);
@@ -338,6 +341,9 @@ void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
     b[444]=s->cutscene.cycle; b[445]=s->cutscene.hold;
     put16(b+446,s->cutscene.remaining); put16(b+448,s->cutscene.refresh_fraction);
     b[450]=s->story_flags[52];b[451]=s->story_checkpoint[52];
+    b[452]=s->technician;b[453]=s->apprentice;b[454]=s->checkpoint_technician;b[455]=s->checkpoint_apprentice;
+    b[456]=s->story_flags[24];b[457]=s->story_checkpoint[24];
+    b[458]=s->story_flags[32];b[459]=s->story_checkpoint[32];
     btp_combat_encode(&s->combat,b+512);
 }
 
@@ -356,8 +362,9 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         n == 448 && !memcmp(b,"BTPA",4) && b[4] == 10 ? 10 :
         n == 512 && !memcmp(b,"BTPB",4) && b[4] == 11 ? 11 :
         n == 512 && !memcmp(b,"BTPC",4) && b[4] == 12 ? 12 :
-        n == BTP_STATE_BYTES && !memcmp(b,"BTPD",4) && b[4] == 13 ? 13 :
-        n == BTP_STATE_BYTES && !memcmp(b,"BTPE",4) && b[4] == 14 ? 14 : 0;
+        n == 1024 && !memcmp(b,"BTPD",4) && b[4] == 13 ? 13 :
+        n == 1024 && !memcmp(b,"BTPE",4) && b[4] == 14 ? 14 :
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPF",4) && b[4] == 15 ? 15 : 0;
     if (!version) return 0;
     for (unsigned i = 5; i < 8; ++i) if (b[i]) return 0;
     if (version == 1) { for (unsigned i = 20; i < 24; ++i) if (b[i]) return 0; }
@@ -374,9 +381,9 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
             if (version == 9) for (unsigned i = 403; i < n; ++i) if (b[i]) return 0;
             if (version >= 10) {
                 if (b[425]) return 0;
-                unsigned start=version==10 ? 434u : version==11 ? 441u : version==12 ? 450u : 896u;
+                unsigned start=version==10 ? 434u : version==11 ? 441u : version==12 ? 450u : version<15 ? 896u : (unsigned)n;
                 for (unsigned i=start;i<n;++i) if (b[i]) return 0;
-                if (version>=13) for (unsigned i=452;i<512;++i) if (b[i]) return 0;
+                if (version>=13) for (unsigned i=version>=15 ? 460u : 452u;i<512;++i) if (b[i]) return 0;
                 if (version==13 && b[878]) return 0; /* v14 firing-effect countdown. */
             }
         }
@@ -477,7 +484,21 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
                         .cycle=b[444],.hold=b[445],.remaining=get16(b+446),.refresh_fraction=get16(b+448)};
                     if (version >= 13) {
                         result.story_flags[52]=b[450];result.story_checkpoint[52]=b[451];
-                        if (!btp_combat_decode(b+512,&result.combat)) return 0;
+                        uint8_t combat[BTP_COMBAT_SAVE_BYTES]={0};
+                        memcpy(combat,b+512,version>=15 ? BTP_COMBAT_SAVE_BYTES : 384u);
+                        if (!btp_combat_decode(combat,&result.combat)) return 0;
+                        if (version<15 && result.mission.assignment==2 && result.mission.phase) {
+                            result.combat.count=2;result.combat.target_unit=1;result.combat.kick_target=255;
+                            result.combat.last_target=1;
+                            memset(result.combat.enemy_orders,255,sizeof result.combat.enemy_orders);
+                            memset(result.combat.enemy_modes,255,sizeof result.combat.enemy_modes);
+                        }
+                        if (version>=15) {
+                            result.technician=b[452];result.apprentice=b[453];
+                            result.checkpoint_technician=b[454];result.checkpoint_apprentice=b[455];
+                            result.story_flags[24]=b[456];result.story_checkpoint[24]=b[457];
+                            result.story_flags[32]=b[458];result.story_checkpoint[32]=b[459];
+                        }
                     }
                 }
                 if (result.story_flags[45] != result.recruitment || result.story_flags[46] != result.talk_result ||
@@ -498,13 +519,13 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
                 }
             }
             static const uint8_t protection[6] = {0,25,40,30,50,50};
-            if ((result.allowance_cap != 50 && !(version >= 10 && result.allowance_cap == 150) && !(version >= 11 && result.allowance_cap == 250) && !(version >= 13 && result.allowance_cap == 500)) || result.weapon > 11 || result.armor > 5 ||
+            if ((result.allowance_cap != 50 && !(version >= 10 && result.allowance_cap == 150) && !(version >= 11 && result.allowance_cap == 250) && !(version >= 13 && result.allowance_cap == 500) && !(version>=15 && (result.allowance_cap==1000 || result.allowance_cap==2000))) || result.weapon > 11 || result.armor > 5 ||
                 result.armor_points != protection[result.armor] || result.checkpoint_weapon > 11 || result.checkpoint_armor > 5 ||
                 result.checkpoint_armor_points != protection[result.checkpoint_armor] ||
                 v->confirm_selected > 1 || v->has_cash > 1 || v->cash_after > v->text_count ||
                 (!v->has_cash && (v->cash_after || v->cash_value)) || (v->has_cash && !v->cash_after) ||
                 v->column || (v->row && v->row != 14 && v->row != 22 && !(version >= 7 && v->row == 15)) ||
-                (v->native_action && (v->native_action < (version >= 10 ? 1 : version >= 8 ? 4 : version == 7 ? 6 : 9) || v->native_action > 12) &&
+                (v->native_action && (v->native_action < (version >= 10 ? 1 : version >= 8 ? 4 : version == 7 ? 6 : 9) || !btp_native_supported(v->native_action) || (version<15 && v->native_action>12)) &&
                     !(v->status == BTP_SCRIPT_ERROR && v->error == BTP_SCRIPT_OPCODE && v->last_opcode == 0xf5)) ||
                 (result.npc.enabled && result.npc.allowance_pending != btp_economy_below_cap(&result))) return 0;
             for (unsigned i = 0; i < BTP_TEXT_SPANS; ++i)
@@ -538,17 +559,18 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         if (result.checkpoint_valid) {
             if ((result.mode != BTP_BUILDING && result.mode != BTP_MISSION) || (v->status != BTP_SCRIPT_WAIT && v->status != BTP_SCRIPT_NATIVE &&
                 v->status != BTP_SCRIPT_CONFIRM && v->status != BTP_SCRIPT_ANIMATION)) return 0;
-            if (version >= 6 && result.checkpoint_allowance_cap != 50 && result.checkpoint_allowance_cap != 150 && !(version >= 11 && result.checkpoint_allowance_cap == 250) && !(version >= 13 && result.checkpoint_allowance_cap == 500)) return 0;
+            if (version >= 6 && result.checkpoint_allowance_cap != 50 && result.checkpoint_allowance_cap != 150 && !(version >= 11 && result.checkpoint_allowance_cap == 250) && !(version >= 13 && result.checkpoint_allowance_cap == 500) && !(version>=15 && (result.checkpoint_allowance_cap==1000 || result.checkpoint_allowance_cap==2000))) return 0;
         } else {
             if (result.checkpoint_talk_result || result.checkpoint_credits || result.checkpoint_weapon ||
                 result.checkpoint_armor || result.checkpoint_armor_points || result.checkpoint_allowance_cap) return 0;
             for (unsigned i = 0; i < 3; ++i) if (result.checkpoint_investments[i] || result.checkpoint_skills[i]) return 0;
-            if (result.checkpoint_mech_skills[0] || result.checkpoint_mech_skills[1]) return 0;
+            if (result.checkpoint_mech_skills[0] || result.checkpoint_mech_skills[1] || result.checkpoint_technician || result.checkpoint_apprentice) return 0;
             for (unsigned i = 0; i < BTP_STORY_BYTES; ++i) if (result.story_checkpoint[i]) return 0;
         }
         if (result.mode != BTP_EXPLORE && result.entry_slot != 1 &&
             !(version >= 6 && (result.entry_slot == 3 || result.entry_slot == 4)) &&
             !(version >= 7 && result.entry_slot == 2) &&
+            !(version >= 15 && result.entry_slot == 5) &&
             !(version >= 10 && (result.entry_slot == 0 || result.entry_slot == 6 || result.entry_slot == 7))) return 0;
         if (result.mode == BTP_BUILDING && v->status != BTP_SCRIPT_MENU && v->status != BTP_SCRIPT_WAIT &&
             v->status != BTP_SCRIPT_NATIVE && v->status != BTP_SCRIPT_CONFIRM && v->status != BTP_SCRIPT_ANIMATION) return 0;
@@ -581,6 +603,8 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         }
         if (!btp_talk_valid(&result,m) || !btp_npc_valid(&result,m) || !btp_bank_valid(&result) ||
             !btp_school_valid(&result) || !btp_training_valid(&result) || !btp_cutscene_valid(&result) || !btp_combat_valid(&result)) return 0;
+        if (result.technician>4 || result.apprentice>1 || result.checkpoint_technician>4 ||
+            result.checkpoint_apprentice>1 || (result.apprentice && !result.technician)) return 0;
     }
     if (version >= 9) {
         result.player_walk = b[394]; memcpy(result.npc_walk,b+395,8);

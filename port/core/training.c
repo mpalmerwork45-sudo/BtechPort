@@ -59,8 +59,8 @@ void btp_training_native(BtpState *s, const BtpResources *r)
     if (s->entry_slot || s->story_flags[4] || s->story_flags[2] > 2) { fault(s); return; }
     switch (s->script.native_action) {
     case 1:
-        if (s->story_flags[0] > 2 || s->mission.phase ||
-            (s->story_flags[0]==2 && !r->combat.loans[0][0])) { fault(s); return; }
+        if (s->story_flags[0] > 4 || s->mission.phase ||
+            (s->story_flags[0]>=2 && !r->combat.loans[0][0])) { fault(s); return; }
         (void)btp_rng_next(s->npc.rng); /* Original O0 dispatcher, even forced. */
         s->mission = (BtpMissionState){.phase=BTP_MISSION_DRIVE,.walk=6,.direction=2,
             .assignment=s->story_flags[0]};
@@ -71,7 +71,7 @@ void btp_training_native(BtpState *s, const BtpResources *r)
             if (!s->story_flags[2]) s->mission.phase = BTP_MISSION_SNICKER;
         }
         s->x_half = 64; s->y_half = 79; s->blocked = 0; s->mode = BTP_MISSION;
-        if (s->mission.assignment==2) btp_combat_begin(s,r);
+        if (s->mission.assignment>=2) btp_combat_begin(s,r);
         if (!btp_cutscene_begin(s,r,0,2)) { s->mission = (BtpMissionState){0}; fault(s); }
         return;
     case 2:
@@ -90,6 +90,13 @@ void btp_training_native(BtpState *s, const BtpResources *r)
         s->x_half = (uint16_t)(46 + btp_action_dx((BtpAction)s->entry_action));
         s->y_half = (uint16_t)(118 + btp_action_dy((BtpAction)s->entry_action));
         s->facing = s->entry_action;
+        break;
+    case 43:
+        if (s->mission.assignment!=4 || s->mission.phase!=BTP_MISSION_RESULT ||
+            !s->combat.won || !s->story_flags[45] || s->script.pc!=0x1674) { fault(s);return; }
+        /* Indoor position is represented by room/counter; actor is outdoor only. */
+        s->npc.actor[0]=(BtpNpc){0};s->npc_walk[0]=0;
+        s->npc_pairs[0][0]=0x70;s->npc_pairs[0][1]=255;
         break;
     default: fault(s); return;
     }
@@ -147,7 +154,7 @@ int btp_mission_tick(BtpState *s, const BtpResources *r, BtpAction a)
     }
     if (s->x_half <= 60 && s->y_half >= 73 && s->y_half <= 79) {
         if (m->corner) {
-            if (m->assignment==2) s->story_flags[1]=(uint8_t)(s->combat.won && !s->combat.fled);
+            if (m->assignment>=2) s->story_flags[1]=(uint8_t)(s->combat.won && !s->combat.fled && !s->combat.lost);
             else if (m->assignment==1) {
                 s->story_flags[1] = (uint8_t)(s->story_flags[2] != 0);
                 if (s->mech_skills[1] < 3) ++s->mech_skills[1];
@@ -212,7 +219,7 @@ int btp_training_valid(const BtpState *s)
     if (q->phase > BTP_QUIZ_FAILED || q->selected >= 20 || q->round > 3 || q->point >= 10 ||
         q->failed > 1 || q->used >= 1024 || m->phase > BTP_MISSION_PICKUP || m->corner > 1 ||
         m->warned > 1 || m->idle > 10 || m->walk > 15 || m->direction > 7 ||
-        m->assignment > 2 || m->rubble > 7 || s->mech_skills[0] > 4 || s->mech_skills[1] > 4 ||
+        m->assignment > 4 || m->rubble > 7 || s->mech_skills[0] > 4 || s->mech_skills[1] > 4 ||
         s->checkpoint_mech_skills[0] > 4 || s->checkpoint_mech_skills[1] > 4 ||
         (s->entry_action != BTP_IDLE && !btp_action_moves((BtpAction)s->entry_action))) return 0;
     if ((s->mode == BTP_QUIZ) != (q->phase != 0)) return 0;

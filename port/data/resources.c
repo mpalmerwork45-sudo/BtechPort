@@ -118,8 +118,8 @@ int btp_resources_load(const char *dir, BtpResources *r, BtpError *e)
     memset(&r->dialogue, 0, sizeof r->dialogue);
     memset(&r->combat,0,sizeof r->combat);
     char path[4096]; uint8_t *data; size_t n;
-    const char *names[] = {"MAP1.MTP", "BTTLTECH.ICN", "CITADEL.BLD", "ARMOR.BLD", "WEAPON.BLD", "COMSTAR.BLD", "MECHSHAP.CMP", "TRAINING.BLD", "BARRACKS.BLD", "LOUNGE.BLD", "BTSTATS.CMP", "BTBORDER.CMP"};
-    for (unsigned i = 0; i < 12; ++i) {
+    const char *names[] = {"MAP1.MTP", "BTTLTECH.ICN", "CITADEL.BLD", "ARMOR.BLD", "WEAPON.BLD", "COMSTAR.BLD", "MECHSHAP.CMP", "TRAINING.BLD", "BARRACKS.BLD", "LOUNGE.BLD", "BTSTATS.CMP", "BTBORDER.CMP", "REPAIR.BLD"};
+    for (unsigned i = 0; i < 13; ++i) {
         int len = snprintf(path, sizeof path, "%s/%s", dir, names[i]);
         if (len < 0 || (size_t)len >= sizeof path) return fail(e, "Resource directory path too long");
         if (!btp_read_file(path, &data, &n, e)) return 0;
@@ -129,7 +129,7 @@ int btp_resources_load(const char *dir, BtpResources *r, BtpError *e)
             i == 10 ? btp_graphic_decode(data,n,&r->quiz_diagram,e) :
             i == 11 ? btp_graphic_decode(data,n,&r->border,e) :
             btp_bld_decode(data, n, i == 2 ? &r->citadel : i == 3 ? &r->armor : i == 4 ? &r->weapon :
-                i == 5 ? &r->comstar : i == 7 ? &r->training : i == 8 ? &r->barracks : &r->lounge, e);
+                i == 5 ? &r->comstar : i == 7 ? &r->training : i == 8 ? &r->barracks : i == 9 ? &r->lounge : &r->repair, e);
         free(data);
         if (!ok) return 0;
     }

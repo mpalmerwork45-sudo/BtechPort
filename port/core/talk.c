@@ -61,7 +61,7 @@ void btp_talk_begin(BtpState *s, const BtpResources *r)
         .selected=selected,.room=(uint8_t)room,.count=(uint8_t)count,.mask=(uint8_t)mask};
     if (count && selected > count) s->talk.selected = 0;
     if (!r->dialogue.length) { native_fault(s,BTP_SCRIPT_NATIVE_DATA); return; }
-    if (s->story_flags[4] || room >= 8 || room == 5 || room != s->entry_slot) {
+    if (s->story_flags[4] || room >= 8 || room != s->entry_slot) {
         native_fault(s,BTP_SCRIPT_NATIVE_CONTEXT); return;
     }
     uint8_t body[BTP_BLD_MAX+1]; size_t length;
@@ -111,7 +111,7 @@ int btp_talk_valid(const BtpState *s, const BtpMap *map)
         !(s->script.status == BTP_SCRIPT_NATIVE && s->script.native_action == 12);
     if (s->mode != BTP_BUILDING || s->script.status != BTP_SCRIPT_NATIVE ||
         s->script.last_opcode != 0xf5 || s->script.native_action != 12 || s->story_flags[4] ||
-        t->room >= 8 || t->room == 5 || t->room != s->entry_slot ||
+        t->room >= 8 || t->room != s->entry_slot ||
         map->room_map[t->room] != s->story_flags[13] || !s->checkpoint_valid) return 0;
     unsigned mask = present(s,t->room);
     if (mask != t->mask || count_bits(mask) != t->count) return 0;

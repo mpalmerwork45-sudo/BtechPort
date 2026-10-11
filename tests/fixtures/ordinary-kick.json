@@ -1,0 +1,229 @@
+{
+  "kind": "ordinary-native-playability",
+  "state_edits": false,
+  "scope": "Native input-only kick victory; separate from original instruction rules",
+  "checkpoints": [
+    {
+      "label": "kick-start",
+      "tick": 4032,
+      "mode": "training-mission",
+      "combat_phase": 1
+    },
+    {
+      "label": "kick-target",
+      "tick": 4041,
+      "mode": "training-mission",
+      "combat_phase": 11
+    },
+    {
+      "label": "kick-queued",
+      "tick": 4042,
+      "mode": "training-mission",
+      "combat_phase": 4
+    },
+    {
+      "label": "movement-1",
+      "tick": 4053,
+      "mode": "training-mission",
+      "combat_phase": 5
+    },
+    {
+      "label": "resolving",
+      "tick": 4056,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 4093,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 4130,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "movement-0",
+      "tick": 4187,
+      "mode": "training-mission",
+      "combat_phase": 5
+    },
+    {
+      "label": "resolving",
+      "tick": 4190,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 4227,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 4264,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 4301,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 4338,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "movement-0",
+      "tick": 4395,
+      "mode": "training-mission",
+      "combat_phase": 5
+    },
+    {
+      "label": "resolving",
+      "tick": 4398,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 4435,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 4472,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 4509,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 4546,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 4583,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 4620,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 4657,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 4694,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "movement-0",
+      "tick": 4766,
+      "mode": "training-mission",
+      "combat_phase": 5
+    },
+    {
+      "label": "resolving",
+      "tick": 4769,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 4806,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 4843,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 4880,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 4917,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 4954,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 4991,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 5028,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 5065,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 5102,
+      "mode": "training-mission",
+      "combat_phase": 0
+    },
+    {
+      "label": "kick-victory",
+      "tick": 5137,
+      "mode": "training-mission",
+      "combat_phase": 0
+    },
+    {
+      "label": "kick-report",
+      "tick": 5201,
+      "mode": "building",
+      "combat_phase": 0
+    },
+    {
+      "label": "kick-exit",
+      "tick": 5202,
+      "mode": "local-exploration",
+      "combat_phase": 0
+    }
+  ]
+}

@@ -35,6 +35,7 @@ void btp_script_animation_return(BtpScriptState *state, const BtpBld *script, ui
 int btp_script_choose(BtpScriptState *state, const BtpBld *script, unsigned choice, uint8_t story[BTP_STORY_BYTES]);
 void btp_script_confirm(BtpScriptState *state, const BtpBld *script, int yes, uint8_t story[BTP_STORY_BYTES]);
 unsigned btp_menu_count(unsigned id);
+int btp_native_supported(unsigned action);
 int btp_script_text(const BtpScriptState *state, const BtpBld *script, uint8_t *output, size_t capacity);
 int btp_script_menu_text(const BtpScriptState *state, const BtpBld *script, uint8_t *output, size_t capacity, size_t *length);
 const char *btp_script_error_name(unsigned error);

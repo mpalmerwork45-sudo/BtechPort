@@ -78,7 +78,10 @@ unsigned btp_combat_weapon(const BtpCombatUnit *u, unsigned index)
 }
 int btp_combat_points(const BtpCombatUnit *u, unsigned movement)
 {
-    if (u->infantry) return movement == 2 ? 0 : 6; /* 103B:2474, enemy branch. */
+    /* 0E31:046F passes the normalized robot ID + 4 to 103B:2474.
+       In this early encounter that reads an inactive party slot and selects
+       its minimum of three points, rather than the direct enemy default six. */
+    if (u->infantry) return movement == 2 ? 0 : 3;
     int points = u->record[49]; unsigned left = u->record[36], right = u->record[37];
     if (movement == 2) points = u->record[50];
     else {

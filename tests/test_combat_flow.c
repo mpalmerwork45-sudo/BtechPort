@@ -27,6 +27,30 @@ int main(int argc,char **argv)
         if (line[0]=='W' && sscanf(line+1,"%u %u",&x,&y)==2) {
             s.combat.goal_active=1;s.combat.movement=0;s.combat.goal_x=(uint8_t)x;s.combat.goal_y=(uint8_t)y;
         } else if (line[0]=='F' && sscanf(line+1,"%u",&x)==1 && x<11) s.combat.orders[x]=12;
+        else if (line[0]=='A') {
+            unsigned kind,px,py,ex,ey,direction,heat,weapon,movement,face,plan;uint64_t path,orders;
+            if (sscanf(line+1,"%u %u %u %u %u %u %u %u %u %u %u %" SCNx64 " %" SCNx64,
+                &kind,&px,&py,&ex,&ey,&direction,&heat,&weapon,&movement,&face,&plan,&path,&orders)!=13) return 2;
+            btp_start(&s);s.mode=BTP_MISSION;s.mission.assignment=(uint8_t)(kind ? 3 : 4);s.story_flags[2]=2;
+            btp_combat_begin(&s,r);s.combat.count=2;s.combat.phase=BTP_COMBAT_MENU;s.combat.selected=9;
+            s.combat.unit[0].x=(uint8_t)px;s.combat.unit[0].y=(uint8_t)py;
+            BtpCombatUnit *enemy=&s.combat.unit[1];
+            if (kind) { memset(enemy,0,sizeof *enemy);enemy->infantry=1;enemy->record[1]=6;
+                enemy->record[11]=(uint8_t)weapon;enemy->record[12]=8;enemy->record[15]=60; }
+            enemy->x=(uint8_t)ex;enemy->y=(uint8_t)ey;enemy->direction=(uint8_t)direction;enemy->heat=(uint8_t)heat;
+            s.combat.plan_direction[1]=(uint8_t)direction;
+            btp_combat_tick(&s,r,BTP_ACCEPT);++turns;
+            if (s.combat.enemy_movement!=movement || s.combat.plan_direction[1]!=plan ||
+                (face!=255 && enemy->direction!=face) || fingerprint((const uint8_t *)s.combat.path[1],24)!=path ||
+                fingerprint(s.combat.enemy_orders[0],12)!=orders) {
+                fprintf(stderr,"AI case %u got movement%u face%u plan%u path%016" PRIx64 " orders%016" PRIx64 "\nexpected %s",
+                    turns,s.combat.enemy_movement,enemy->direction,s.combat.plan_direction[1],
+                    fingerprint((const uint8_t *)s.combat.path[1],24),fingerprint(s.combat.enemy_orders[0],12),line);
+                for (unsigned k=0;k<12;++k) fprintf(stderr," %d,%d",s.combat.path[1][k][0],s.combat.path[1][k][1]);
+                fputc('\n',stderr);
+                if (++failures>=3) break;
+            }
+        }
         else if (line[0]=='T') {
             unsigned px,py,pd,ph,tx,ty,td,th,seed;uint64_t player,target;
             if (sscanf(line+1,"%u %u %u %u %" SCNx64 " %u %u %u %u %" SCNx64 " %u",

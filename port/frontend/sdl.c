@@ -72,7 +72,7 @@ int main(int argc, char **argv)
         fprintf(stderr, "SDL: %s\n", SDL_GetError()); goto done;
     }
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
-    SDL_Window *window = SDL_CreateWindow("BtechPort M3a - Training and combat", SDL_WINDOWPOS_CENTERED,
+    SDL_Window *window = SDL_CreateWindow("BtechPort M3b - Training and combat", SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED, 960, 600, SDL_WINDOW_RESIZABLE);
     SDL_Renderer *renderer = window ? SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE) : NULL;
     SDL_Texture *texture = renderer ? SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
@@ -136,7 +136,7 @@ int main(int argc, char **argv)
                 if (tail_sent == count) { running = 0; break; }
                 a = o.smoke == 5 ? tail[tail_sent] : BTP_IDLE; ++tail_sent;
             }
-            if (++smoke_sent > 8192) { fputs("Arrival smoke exceeded input bound\n",stderr); io_failed = 1; break; }
+            if (++smoke_sent > 131072) { fputs("Replay smoke exceeded input bound\n",stderr); io_failed = 1; break; }
             if (a != BTP_IDLE) {
                 static const SDL_Keycode codes[] = {0,SDLK_UP,SDLK_DOWN,SDLK_LEFT,SDLK_RIGHT,SDLK_RETURN,SDLK_BACKSPACE,
                     SDLK_0,SDLK_1,SDLK_2,SDLK_3,SDLK_4,SDLK_5,SDLK_6,SDLK_7,SDLK_8,SDLK_9,SDLK_ESCAPE,
