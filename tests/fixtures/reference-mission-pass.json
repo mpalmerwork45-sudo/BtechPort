@@ -3172,7 +3172,7 @@
       "terrain": 0,
       "mount": 0,
       "mode": "training-mission",
-      "tick": 923,
+      "tick": 1013,
       "text": null
     },
     {
@@ -3250,7 +3250,7 @@
       "terrain": 0,
       "mount": 0,
       "mode": "training-mission",
-      "tick": 931,
+      "tick": 1021,
       "text": null
     },
     {
@@ -3328,7 +3328,7 @@
       "terrain": 0,
       "mount": 0,
       "mode": "training-mission",
-      "tick": 939,
+      "tick": 1029,
       "text": null
     },
     {
@@ -3406,7 +3406,7 @@
       "terrain": 0,
       "mount": 0,
       "mode": "training-mission",
-      "tick": 947,
+      "tick": 1037,
       "text": null
     },
     {
@@ -3484,7 +3484,7 @@
       "terrain": 0,
       "mount": 0,
       "mode": "training-mission",
-      "tick": 955,
+      "tick": 1045,
       "text": null
     },
     {
@@ -3562,7 +3562,7 @@
       "terrain": 0,
       "mount": 0,
       "mode": "training-mission",
-      "tick": 963,
+      "tick": 1053,
       "text": null
     },
     {
@@ -3640,7 +3640,7 @@
       "terrain": 0,
       "mount": 0,
       "mode": "training-mission",
-      "tick": 971,
+      "tick": 1061,
       "text": null
     },
     {
@@ -3718,7 +3718,7 @@
       "terrain": 0,
       "mount": 0,
       "mode": "training-mission",
-      "tick": 979,
+      "tick": 1069,
       "text": null
     },
     {
@@ -3796,7 +3796,7 @@
       "terrain": 0,
       "mount": 0,
       "mode": "training-mission",
-      "tick": 987,
+      "tick": 1077,
       "text": null
     },
     {
@@ -3874,7 +3874,7 @@
       "terrain": 0,
       "mount": 0,
       "mode": "training-mission",
-      "tick": 995,
+      "tick": 1085,
       "text": null
     },
     {
@@ -3952,7 +3952,7 @@
       "terrain": 0,
       "mount": 0,
       "mode": "training-mission",
-      "tick": 1003,
+      "tick": 1093,
       "text": null
     },
     {
@@ -4030,7 +4030,7 @@
       "terrain": 0,
       "mount": 0,
       "mode": "training-mission",
-      "tick": 1011,
+      "tick": 1101,
       "text": null
     },
     {
@@ -4108,7 +4108,7 @@
       "terrain": 0,
       "mount": 0,
       "mode": "training-mission",
-      "tick": 1019,
+      "tick": 1109,
       "text": null
     },
     {
@@ -4186,7 +4186,7 @@
       "terrain": 0,
       "mount": 0,
       "mode": "training-mission",
-      "tick": 1026,
+      "tick": 1116,
       "text": null
     },
     {
@@ -4264,7 +4264,7 @@
       "terrain": 0,
       "mount": 0,
       "mode": "training-mission",
-      "tick": 1026,
+      "tick": 1116,
       "text": {
         "length": 77,
         "digest": 4268782606,
@@ -4346,7 +4346,7 @@
       "terrain": 0,
       "mount": 0,
       "mode": "training-mission",
-      "tick": 1035,
+      "tick": 1125,
       "text": null
     },
     {
@@ -4424,7 +4424,7 @@
       "terrain": 0,
       "mount": 0,
       "mode": "training-mission",
-      "tick": 1043,
+      "tick": 1133,
       "text": null
     },
     {
@@ -4502,7 +4502,7 @@
       "terrain": 0,
       "mount": 0,
       "mode": "training-mission",
-      "tick": 1051,
+      "tick": 1141,
       "text": null
     },
     {
@@ -4580,7 +4580,7 @@
       "terrain": 0,
       "mount": 0,
       "mode": "training-mission",
-      "tick": 1059,
+      "tick": 1149,
       "text": null
     },
     {
@@ -4658,7 +4658,7 @@
       "terrain": 0,
       "mount": 0,
       "mode": "training-mission",
-      "tick": 1067,
+      "tick": 1157,
       "text": null
     },
     {
@@ -4736,7 +4736,7 @@
       "terrain": 0,
       "mount": 0,
       "mode": "training-mission",
-      "tick": 1075,
+      "tick": 1165,
       "text": null
     },
     {
@@ -4814,7 +4814,7 @@
       "terrain": 0,
       "mount": 0,
       "mode": "training-mission",
-      "tick": 1083,
+      "tick": 1173,
       "text": null
     },
     {
@@ -4892,7 +4892,7 @@
       "terrain": 0,
       "mount": 0,
       "mode": "training-mission",
-      "tick": 1091,
+      "tick": 1181,
       "text": null
     },
     {
@@ -4970,7 +4970,7 @@
       "terrain": 0,
       "mount": 0,
       "mode": "training-mission",
-      "tick": 1099,
+      "tick": 1189,
       "text": null
     },
     {
@@ -5048,7 +5048,7 @@
       "terrain": 0,
       "mount": 0,
       "mode": "training-mission",
-      "tick": 1107,
+      "tick": 1197,
       "text": null
     },
     {
@@ -5126,7 +5126,7 @@
       "terrain": 0,
       "mount": 0,
       "mode": "training-mission",
-      "tick": 1115,
+      "tick": 1205,
       "text": null
     },
     {
@@ -5204,7 +5204,7 @@
       "terrain": 0,
       "mount": 0,
       "mode": "training-mission",
-      "tick": 1123,
+      "tick": 1213,
       "text": null
     },
     {
@@ -5282,7 +5282,7 @@
       "terrain": 0,
       "mount": 0,
       "mode": "training-mission",
-      "tick": 1131,
+      "tick": 1221,
       "text": null
     },
     {
@@ -5360,7 +5360,7 @@
       "terrain": 0,
       "mount": 0,
       "mode": "building",
-      "tick": 1135,
+      "tick": 1225,
       "text": {
         "length": 226,
         "digest": 998278635,
@@ -5442,7 +5442,7 @@
       "terrain": 0,
       "mount": 0,
       "mode": "building",
-      "tick": 1135,
+      "tick": 1225,
       "text": {
         "length": 226,
         "digest": 998278635,
@@ -5524,7 +5524,7 @@
       "terrain": 0,
       "mount": 8,
       "mode": "local-exploration",
-      "tick": 1196,
+      "tick": 1286,
       "text": null
     },
     {
@@ -5602,7 +5602,7 @@
       "terrain": 0,
       "mount": 8,
       "mode": "local-exploration",
-      "tick": 1228,
+      "tick": 1318,
       "text": null
     },
     {
@@ -5680,7 +5680,7 @@
       "terrain": 0,
       "mount": 8,
       "mode": "local-exploration",
-      "tick": 1260,
+      "tick": 1350,
       "text": null
     },
     {
@@ -5758,7 +5758,7 @@
       "terrain": 0,
       "mount": 8,
       "mode": "local-exploration",
-      "tick": 1292,
+      "tick": 1382,
       "text": null
     },
     {
@@ -5836,7 +5836,7 @@
       "terrain": 0,
       "mount": 8,
       "mode": "local-exploration",
-      "tick": 1324,
+      "tick": 1414,
       "text": null
     },
     {
@@ -5914,7 +5914,7 @@
       "terrain": 0,
       "mount": 8,
       "mode": "local-exploration",
-      "tick": 1356,
+      "tick": 1446,
       "text": null
     },
     {
@@ -5992,7 +5992,7 @@
       "terrain": 0,
       "mount": 8,
       "mode": "local-exploration",
-      "tick": 1388,
+      "tick": 1478,
       "text": null
     },
     {
@@ -6070,7 +6070,7 @@
       "terrain": 0,
       "mount": 8,
       "mode": "local-exploration",
-      "tick": 1420,
+      "tick": 1510,
       "text": null
     },
     {
@@ -6148,7 +6148,7 @@
       "terrain": 0,
       "mount": 8,
       "mode": "local-exploration",
-      "tick": 1452,
+      "tick": 1542,
       "text": null
     },
     {
@@ -6226,7 +6226,7 @@
       "terrain": 0,
       "mount": 8,
       "mode": "local-exploration",
-      "tick": 1484,
+      "tick": 1574,
       "text": null
     },
     {
@@ -6304,7 +6304,7 @@
       "terrain": 0,
       "mount": 8,
       "mode": "local-exploration",
-      "tick": 1516,
+      "tick": 1606,
       "text": null
     },
     {
@@ -6382,7 +6382,7 @@
       "terrain": 0,
       "mount": 8,
       "mode": "local-exploration",
-      "tick": 1548,
+      "tick": 1638,
       "text": null
     },
     {
@@ -6460,7 +6460,7 @@
       "terrain": 0,
       "mount": 8,
       "mode": "local-exploration",
-      "tick": 1580,
+      "tick": 1670,
       "text": null
     },
     {
@@ -6538,7 +6538,7 @@
       "terrain": 0,
       "mount": 8,
       "mode": "local-exploration",
-      "tick": 1612,
+      "tick": 1702,
       "text": null
     },
     {
@@ -6616,7 +6616,7 @@
       "terrain": 0,
       "mount": 8,
       "mode": "local-exploration",
-      "tick": 1644,
+      "tick": 1734,
       "text": null
     },
     {
@@ -6694,7 +6694,7 @@
       "terrain": 0,
       "mount": 8,
       "mode": "local-exploration",
-      "tick": 1676,
+      "tick": 1766,
       "text": null
     },
     {
@@ -6772,7 +6772,7 @@
       "terrain": 0,
       "mount": 8,
       "mode": "local-exploration",
-      "tick": 1708,
+      "tick": 1798,
       "text": null
     },
     {
@@ -6850,7 +6850,7 @@
       "terrain": 0,
       "mount": 8,
       "mode": "local-exploration",
-      "tick": 1740,
+      "tick": 1830,
       "text": null
     },
     {
@@ -6928,7 +6928,7 @@
       "terrain": 0,
       "mount": 8,
       "mode": "entry-confirm",
-      "tick": 1757,
+      "tick": 1847,
       "text": null
     },
     {
@@ -7006,7 +7006,7 @@
       "terrain": 0,
       "mount": 8,
       "mode": "entry-confirm",
-      "tick": 1757,
+      "tick": 1847,
       "text": null
     },
     {
@@ -7084,7 +7084,7 @@
       "terrain": 0,
       "mount": 8,
       "mode": "building",
-      "tick": 1758,
+      "tick": 1848,
       "text": {
         "length": 133,
         "digest": 2024003580,
@@ -7166,7 +7166,7 @@
       "terrain": 0,
       "mount": 8,
       "mode": "building",
-      "tick": 1759,
+      "tick": 1849,
       "text": {
         "length": 254,
         "digest": 3764231519,
@@ -7248,7 +7248,7 @@
       "terrain": 0,
       "mount": 8,
       "mode": "building",
-      "tick": 1760,
+      "tick": 1850,
       "text": {
         "length": 265,
         "digest": 1559022787,
@@ -7330,7 +7330,7 @@
       "terrain": 0,
       "mount": 8,
       "mode": "building",
-      "tick": 1761,
+      "tick": 1851,
       "text": {
         "length": 435,
         "digest": 2964463670,
@@ -7412,7 +7412,7 @@
       "terrain": 0,
       "mount": 8,
       "mode": "building",
-      "tick": 1762,
+      "tick": 1852,
       "text": {
         "length": 409,
         "digest": 565040724,
@@ -7494,7 +7494,7 @@
       "terrain": 0,
       "mount": 8,
       "mode": "building",
-      "tick": 1763,
+      "tick": 1853,
       "text": {
         "length": 213,
         "digest": 4196457851,
@@ -7576,7 +7576,7 @@
       "terrain": 0,
       "mount": 8,
       "mode": "building",
-      "tick": 1764,
+      "tick": 1854,
       "text": {
         "length": 383,
         "digest": 3725896380,
@@ -7658,11 +7658,11 @@
       "terrain": 0,
       "mount": 8,
       "mode": "building",
-      "tick": 1765,
+      "tick": 1921,
       "text": {
-        "length": 320,
-        "digest": 2989085093,
-        "sha256": "af6e38ef10908d0e016cf64d10fc5b25c4fc53cd74090f73714856335be472a7"
+        "length": 209,
+        "digest": 2782428709,
+        "sha256": "47e39d2841213d51d9589ed08c74caf579496978acf8a18f39886e2438402129"
       }
     },
     {
@@ -7740,7 +7740,7 @@
       "terrain": 0,
       "mount": 8,
       "mode": "building",
-      "tick": 1766,
+      "tick": 1922,
       "text": {
         "length": 133,
         "digest": 2024003580,
@@ -7822,7 +7822,7 @@
       "terrain": 0,
       "mount": 8,
       "mode": "building",
-      "tick": 1766,
+      "tick": 1922,
       "text": {
         "length": 133,
         "digest": 2024003580,
@@ -7904,12 +7904,26 @@
       "terrain": 0,
       "mount": 8,
       "mode": "building",
-      "tick": 1767,
+      "tick": 1923,
       "text": {
         "length": 61,
         "digest": 897545179,
         "sha256": "a3f345dc32335b6ed65271919e8f36ab4705679c68744d12f617ef6307b1525a"
       }
+    }
+  ],
+  "cutscene_waits": [
+    {
+      "trigger_tick": 923,
+      "animation": 0,
+      "retraces": 200,
+      "idle_ticks": 90
+    },
+    {
+      "trigger_tick": 1855,
+      "animation": 8,
+      "retraces": 147,
+      "idle_ticks": 66
     }
   ]
 }

@@ -46,10 +46,12 @@ class ExepackTests(unittest.TestCase):
         image, _ = unpack(source)
         cache, metadata = extract(source)
         self.assertEqual(cache, extract(source)[0])
-        self.assertEqual((cache[:4],len(cache),len(metadata["strings"])),(b"BTT5",2889,87))
+        self.assertEqual((cache[:4],len(cache),len(metadata["strings"])),(b"BTT6",4937,87))
         length,count = struct.unpack_from("<HH",cache,4)
         header = 72+4*count
-        self.assertEqual(length+header,len(cache))
+        self.assertEqual(length+header+2048,len(cache))
+        font = metadata["font"]
+        self.assertEqual(cache[-2048:],image[font["image_offset"]:font["image_offset"]+2048])
         for i in range(count):
             at,n = struct.unpack_from("<HH",cache,72+4*i)
             origin = metadata["strings"][i]

@@ -82,8 +82,7 @@ def text_spec(row, bodies, texts):
     elif label in ("barracks-menu","sleep-menu","sleep-return","sleep-again"): result = z(b,6)
     elif label == "sleep-no-mission": result = z(b,0x9a)
     elif label.startswith("dream"):
-        n=int(label[5:]); result = z(b,(0x24c,0x34f,0x45d,0x615,0x7b3,0x88d,0xa11)[n-1])
-        if n == 7: result += z(b,0xa85)
+        n=int(label[5:]); result = z(b,(0x24c,0x34f,0x45d,0x615,0x7b3,0x88d,0xa85)[n-1])
     elif label == "sleep-again-return": result = z(b,0xb60)
     elif label in ("lounge-menu","rick-lounge-menu"): result = z(l,0xa)
     elif label in ("lounge-empty","lounge-talk"): result = texts[0]
@@ -229,9 +228,23 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument("--binary",type=Path,default=ROOT/"build/btech-headless")
     p.add_argument("--export",action="store_true"); p.add_argument("--scenario",choices=RUNS)
+    p.add_argument("--normalize-animations",action="store_true")
     a=p.parse_args(); kinds=[a.scenario] if a.scenario else list(RUNS)
     if a.export:
         for kind in kinds: export(kind)
+    if a.normalize_animations:
+        from verify_animations import normalize_waits
+        bodies,texts=sources()
+        for kind in kinds:
+            path=BASE/("reference-"+kind+".json"); f=json.loads(path.read_text())
+            if "cutscene_waits" in f: continue
+            replay=BASE/("reference-"+kind+".actions")
+            actions,waits=normalize_waits(a.binary.resolve(),replay.read_text().splitlines(),f["checkpoints"])
+            f["cutscene_waits"]=waits
+            for row in f["checkpoints"]:
+                if row["label"] == "dream7": row["text"]=text_spec(row,bodies,texts)
+            path.write_text(json.dumps(f,indent=2)+"\n")
+            replay.write_text("".join(v+"\n" for v in actions))
     with tempfile.TemporaryDirectory(prefix="m2j-",dir=ROOT/"work") as directory:
         for kind in kinds: compare(a.binary.resolve(),kind,Path(directory))
 if __name__ == "__main__": main()

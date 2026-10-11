@@ -661,5 +661,6 @@
       "tick": 44,
       "text": null
     }
-  ]
+  ],
+  "cutscene_waits": []
 }

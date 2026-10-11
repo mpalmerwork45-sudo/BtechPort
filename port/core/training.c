@@ -70,6 +70,7 @@ void btp_training_native(BtpState *s, const BtpResources *r)
             if (!s->story_flags[2]) s->mission.phase = BTP_MISSION_SNICKER;
         }
         s->x_half = 64; s->y_half = 79; s->blocked = 0; s->mode = BTP_MISSION;
+        if (!btp_cutscene_begin(s,r,0,2)) { s->mission = (BtpMissionState){0}; fault(s); }
         return;
     case 2:
         if (s->mission.phase != BTP_MISSION_RESULT || !s->story_flags[1] ||

@@ -136,11 +136,11 @@ static void run(BtpScriptState *s, const BtpBld *b, uint8_t story[BTP_STORY_BYTE
         case 0xf2: /* Original software delay(50), then keyboard flush.
                        Model records the request; native pacing is approximate. */
             s->pause_units = 50; break;
-        case 0xea: /* Explicit original animation request; presentation approximate. */
+        case 0xea: /* Yield until original sequence playback finishes. */
             if (!available(s,b,2,op_pc)) return;
             s->animation_kind = b->bytes[s->pc++]; s->animation_flags = b->bytes[s->pc++];
             if (s->animation_kind != 8 || s->animation_flags != 1) { fault(s,BTP_SCRIPT_SCENE,op_pc); return; }
-            break;
+            s->pause_units = 0; s->status = BTP_SCRIPT_ANIMATION; return;
         case 0xfb:
             s->status = BTP_SCRIPT_WAIT; return;
         case 0xf8:
@@ -184,6 +184,15 @@ void btp_script_native_return(BtpScriptState *s, const BtpBld *b, uint8_t story[
 {
     if (s->status != BTP_SCRIPT_NATIVE) return;
     s->status = BTP_SCRIPT_RUNNING; s->pause_units = 0; run(s, b, story);
+}
+void btp_script_animation_return(BtpScriptState *s, const BtpBld *b, uint8_t story[BTP_STORY_BYTES])
+{
+    if (s->status != BTP_SCRIPT_ANIMATION) return;
+    s->text_offset = s->text_length = s->text_count = 0;
+    memset(s->text,0,sizeof s->text);
+    memset(s->text_column,0,sizeof s->text_column); memset(s->text_row,0,sizeof s->text_row);
+    s->column = s->row = s->has_cash = s->cash_after = s->has_accounts = 0; s->cash_value = 0;
+    s->status = BTP_SCRIPT_RUNNING; s->pause_units = 0; run(s,b,story);
 }
 int btp_script_choose(BtpScriptState *s, const BtpBld *b, unsigned choice, uint8_t story[BTP_STORY_BYTES])
 {

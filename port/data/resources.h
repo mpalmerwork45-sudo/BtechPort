@@ -19,17 +19,24 @@ typedef struct {
     uint8_t bytes[BTP_BLD_MAX]; /* decrypted payload; address zero excludes size word */
 } BtpBld;
 typedef struct { char text[256]; } BtpError;
+enum { BTP_ANM_COUNT = 22, BTP_ANM_BYTES = 16128, BTP_ANM_FRAMES = 31, BTP_ANM_PACKED = 3872 };
+typedef struct {
+    uint16_t length, end[BTP_ANM_FRAMES], units[BTP_ANM_FRAMES];
+    uint8_t count, bytes[BTP_ANM_BYTES];
+} BtpAnm;
 /* 43 earlier bank/Talk strings plus 12 class transcript/rank/subject strings. */
 enum { BTP_TALK_STRINGS = 87, BTP_TALK_MAX = 4096 };
 typedef struct {
     uint8_t bytes[BTP_TALK_MAX];
+    uint8_t font[2048];
     uint16_t length, offset[BTP_TALK_STRINGS], size[BTP_TALK_STRINGS];
 } BtpDialogue;
 typedef struct {
     BtpMap map;
-    BtpGraphic tiles, sprites, quiz_diagram;
+    BtpGraphic tiles, sprites, quiz_diagram, border;
     BtpBld citadel, armor, weapon, comstar, training, barracks, lounge;
     BtpDialogue dialogue;
+    BtpAnm animations[BTP_ANM_COUNT];
 } BtpResources;
 
 int btp_map_decode(const uint8_t *bytes, size_t length, BtpMap *map, BtpError *error);

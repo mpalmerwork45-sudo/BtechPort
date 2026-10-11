@@ -40,6 +40,10 @@ typedef struct {
     uint8_t assignment, rubble, rubble_under;
 } BtpMissionState;
 typedef struct {
+    uint8_t active, kind, step, cycle, hold;
+    uint16_t remaining, refresh_fraction;
+} BtpCutsceneState;
+typedef struct {
     uint32_t tick;
     uint16_t x_half, y_half;
     uint8_t map_id, gate, facing, blocked;
@@ -66,6 +70,7 @@ typedef struct {
     BtpQuizState quiz;
     BtpMissionState mission;
     uint8_t mech_skills[2], checkpoint_mech_skills[2]; /* Original C61B/C61C. */
+    BtpCutsceneState cutscene;
 } BtpState;
 enum { BTP_STATE_BYTES = 512 };
 

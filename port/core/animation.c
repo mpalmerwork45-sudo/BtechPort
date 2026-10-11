@@ -17,3 +17,46 @@ unsigned btp_player_direction(unsigned facing)
         facing == BTP_RIGHT ? 2u : facing == BTP_DOWN_RIGHT ? 3u :
         facing == BTP_DOWN_LEFT ? 5u : facing == BTP_LEFT ? 6u : facing == BTP_UP_LEFT ? 7u : 4u;
 }
+int btp_cutscene_begin(BtpState *s, const BtpResources *r, unsigned kind, unsigned active)
+{
+    if (!s || !r || s->cutscene.active || (kind != 0 && kind != 8) ||
+        active != (kind ? 1u : 2u) || r->animations[kind].count != (kind ? 3u : 18u)) return 0;
+    s->cutscene = (BtpCutsceneState){.active=(uint8_t)active,.kind=(uint8_t)kind,
+        .remaining=(uint16_t)(r->animations[kind].units[0]+(kind ? 0u : 50u))};
+    return 1;
+}
+int btp_cutscene_tick(BtpState *s, const BtpResources *r)
+{
+    BtpCutsceneState *c = &s->cutscene;
+    if (!c->active || c->kind >= BTP_ANM_COUNT) return 0;
+    const BtpAnm *a = &r->animations[c->kind];
+    /* 32ms logical ticks at VGA's 70Hz; preserve fractional retraces in saves.
+       Decode CPU cost and host presentation remain explicitly approximate. */
+    unsigned scaled = c->refresh_fraction+2240u;
+    unsigned units = scaled/1000u; c->refresh_fraction = (uint16_t)(scaled%1000u);
+    for (unsigned budget = 0; budget < 256; ++budget) {
+        if (units < c->remaining) { c->remaining = (uint16_t)(c->remaining-units); return 0; }
+        units -= c->remaining;
+        if (c->hold) { s->cutscene = (BtpCutsceneState){0}; return 1; }
+        if ((unsigned)c->step+1u < a->count) ++c->step;
+        else if (c->kind == 8 && c->cycle < 6) { ++c->cycle; c->step = 0; }
+        else if (!c->kind) { c->hold = 1; c->remaining = 60; continue; }
+        else { s->cutscene = (BtpCutsceneState){0}; return 1; }
+        c->remaining = a->units[c->step];
+    }
+    return 0;
+}
+int btp_cutscene_valid(const BtpState *s)
+{
+    const BtpCutsceneState *c = &s->cutscene;
+    if (!c->active) return !c->kind && !c->step && !c->cycle && !c->hold && !c->remaining && !c->refresh_fraction &&
+        s->script.status != BTP_SCRIPT_ANIMATION;
+    if (!c->remaining || c->refresh_fraction >= 1000 || !s->checkpoint_valid || c->hold > 1) return 0;
+    if (c->active == 1) return c->kind == 8 && c->step < 3 && c->cycle < 7 && !c->hold && c->remaining <= 7 &&
+        s->mode == BTP_BUILDING && s->entry_slot == 6 && s->script.status == BTP_SCRIPT_ANIMATION &&
+        s->script.animation_kind == 8 && s->script.animation_flags == 1;
+    if (c->active == 2) return !c->kind && c->step < 18 && !c->cycle &&
+        c->remaining <= (c->hold ? 60u : !c->step ? 55u : 5u) && (!c->hold || c->step == 17) &&
+        s->mode == BTP_MISSION && s->script.status == BTP_SCRIPT_NATIVE && s->script.native_action == 1;
+    return 0;
+}

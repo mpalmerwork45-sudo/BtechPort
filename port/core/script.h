@@ -3,7 +3,8 @@
 #include "data/resources.h"
 
 typedef enum { BTP_SCRIPT_RUNNING, BTP_SCRIPT_MENU, BTP_SCRIPT_WAIT,
-    BTP_SCRIPT_END, BTP_SCRIPT_ERROR, BTP_SCRIPT_NATIVE, BTP_SCRIPT_CONFIRM } BtpScriptStatus;
+    BTP_SCRIPT_END, BTP_SCRIPT_ERROR, BTP_SCRIPT_NATIVE, BTP_SCRIPT_CONFIRM,
+    BTP_SCRIPT_ANIMATION } BtpScriptStatus;
 typedef enum { BTP_SCRIPT_OK, BTP_SCRIPT_TRUNCATED, BTP_SCRIPT_OPCODE,
     BTP_SCRIPT_TARGET, BTP_SCRIPT_MENU_ID, BTP_SCRIPT_SCENE, BTP_SCRIPT_BUDGET,
     BTP_SCRIPT_FONT, BTP_SCRIPT_STATE_INDEX, BTP_SCRIPT_TEXT_LIMIT,
@@ -30,6 +31,7 @@ typedef struct {
 void btp_script_start(BtpScriptState *state, const BtpBld *script, uint8_t story[BTP_STORY_BYTES]);
 void btp_script_resume(BtpScriptState *state, const BtpBld *script, uint8_t story[BTP_STORY_BYTES]);
 void btp_script_native_return(BtpScriptState *state, const BtpBld *script, uint8_t story[BTP_STORY_BYTES]);
+void btp_script_animation_return(BtpScriptState *state, const BtpBld *script, uint8_t story[BTP_STORY_BYTES]);
 int btp_script_choose(BtpScriptState *state, const BtpBld *script, unsigned choice, uint8_t story[BTP_STORY_BYTES]);
 void btp_script_confirm(BtpScriptState *state, const BtpBld *script, int yes, uint8_t story[BTP_STORY_BYTES]);
 unsigned btp_menu_count(unsigned id);

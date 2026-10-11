@@ -14,7 +14,7 @@ int btp_options(int argc, char **argv, BtpOptions *o)
     for (int i = 1; i < argc; ++i) {
         const char *arg = argv[i];
         if (!strcmp(arg, "--help")) {
-            puts("BtechPort M2j: first training mission, full shops, lounge and save/load\n"
+            puts("BtechPort M2m: first training mission, full shops, lounge and save/load\n"
                  "  --data DIRECTORY     original resource directory (default: Original DOS)\n"
                  "  --dialogue-data FILE local EXE text cache (default: work/talk-data.bin)\n"
                  "  --conversation-checkpoint  isolated controlled Talk handler test\n"
@@ -152,12 +152,14 @@ void btp_print_state(const BtpState *s, const BtpResources *r)
     printf("],\"quiz\":{\"phase\":%u,\"selected\":%u,\"round\":%u,\"point\":%u,\"failed\":%u,\"used\":%u},"
         "\"mission\":{\"phase\":%u,\"corner\":%u,\"warned\":%u,\"elapsed\":%u,\"idle\":%u,\"terrain\":%u,"
         "\"assignment\":%u,\"rubble\":%u,\"carrying\":%u},\"mech_skills\":[%u,%u],"
-        "\"device\":%u,\"recruitment\":%u,\"animation_request\":[%u,%u]}\n",
+        "\"device\":%u,\"recruitment\":%u,\"animation_request\":[%u,%u],"
+        "\"animation\":{\"active\":%u,\"kind\":%u,\"step\":%u,\"cycle\":%u,\"hold\":%u,\"remaining\":%u,\"fraction\":%u}}\n",
         s->quiz.phase,s->quiz.selected,s->quiz.round,s->quiz.point,s->quiz.failed,s->quiz.used,
         s->mission.phase,s->mission.corner,s->mission.warned,s->mission.elapsed,s->mission.idle,
         s->mission.phase ? btp_mission_terrain(s,&r->map) : 0u,
         s->mission.assignment,s->mission.rubble,s->mission.assignment && s->mission.corner && s->story_flags[2] != 0,
-        s->mech_skills[0],s->mech_skills[1],s->story_flags[47],s->recruitment,s->script.animation_kind,s->script.animation_flags);
+        s->mech_skills[0],s->mech_skills[1],s->story_flags[47],s->recruitment,s->script.animation_kind,s->script.animation_flags,
+        s->cutscene.active,s->cutscene.kind,s->cutscene.step,s->cutscene.cycle,s->cutscene.hold,s->cutscene.remaining,s->cutscene.refresh_fraction);
 }
 
 int btp_replay(const char *path, BtpState *s, const BtpResources *r, int trace)

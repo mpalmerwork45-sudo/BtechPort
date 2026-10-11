@@ -17,6 +17,7 @@ else:
 EXE_SHA = "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a"
 IMAGE_SHA = "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa"
 DS = 0x36DB0
+FONT = 0x26D21  # Original 187F:2251 reads 1C6C:A661, eight bytes per glyph.
 BANK_OFFSETS = (0x49d3,0x49d9,0x49f6,0x4a09,0x4a1c,0x4a2b,0x4a6a,0x4a86,
     0x4a8d,0x4abc,0x4ac0,0x4acb,0x4af5,0x4b3b,0x4b52,0x4b67,0x4b77,
     0x4bb8,0x4bd8,0x4bdf,0x4c07,0x4c0b,0x1791)
@@ -55,10 +56,12 @@ def extract(source):
         ranges.append((len(blob),len(text))); blob += text+b"\0"
         origins.append({"image_offset":address,"length":len(text),
                         "sha256":hashlib.sha256(text).hexdigest()})
-    header = b"BTT5"+struct.pack("<HH",len(blob),len(ranges))
+    header = b"BTT6"+struct.pack("<HH",len(blob),len(ranges))
     header += bytes.fromhex(EXE_SHA)+bytes.fromhex(IMAGE_SHA)
     header += b"".join(struct.pack("<HH",*r) for r in ranges)
-    return header+blob, {**metadata,"format":"BTT5","strings":origins}
+    font = image[FONT:FONT+2048]
+    return header+blob+font, {**metadata,"format":"BTT6","strings":origins,
+        "font":{"image_offset":FONT,"length":len(font),"sha256":hashlib.sha256(font).hexdigest()}}
 
 
 if __name__ == "__main__":

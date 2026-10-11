@@ -55,6 +55,12 @@ static void answers(BtpState *s, const BtpResources *r, int wrong)
         restored_tick(s,r,BTP_ACCEPT);
     }
 }
+static void animation(BtpState *s, const BtpResources *r)
+{
+    for (unsigned n=0;s->cutscene.active;++n) {
+        CHECK(n < 128); restored_tick(s,r,n&1u ? BTP_IDLE : BTP_ACCEPT);
+    }
+}
 static void begin(BtpState *s, const BtpResources *r, unsigned mech)
 {
     btp_start(s); btp_npc_init(s,&r->map); enter(s,r,0);
@@ -62,7 +68,7 @@ static void begin(BtpState *s, const BtpResources *r, unsigned mech)
     CHECK(s->script.status == BTP_SCRIPT_CONFIRM && s->script.pc == 0x1c8);
     restored_tick(s,r,BTP_ACCEPT); CHECK(s->script.status == BTP_SCRIPT_WAIT);
     restored_tick(s,r,BTP_ACCEPT); CHECK(s->script.menu_id == 7);
-    select(s,r,mech);
+    select(s,r,mech); animation(s,r);
     CHECK(s->mode == BTP_MISSION && s->mission.phase == BTP_MISSION_DRIVE);
     CHECK(s->x_half == 64 && s->y_half == 79 && s->story_flags[2] == mech);
 }
@@ -114,7 +120,8 @@ static void synthetic(void)
     /* Sparse script flags and animation operands stay bounded. */
     BtpBld b={.length=6,.bytes={0xea,8,1,0xf4,47,1}}; BtpScriptState v;
     btp_script_start(&v,&b,s.story_flags);
-    CHECK(v.animation_kind == 8 && v.animation_flags == 1 && s.story_flags[47] == 1);
+    CHECK(v.animation_kind == 8 && v.animation_flags == 1 && v.status == BTP_SCRIPT_ANIMATION);
+    btp_script_animation_return(&v,&b,s.story_flags); CHECK(s.story_flags[47] == 1);
     b.bytes[1]=9; btp_script_start(&v,&b,s.story_flags); CHECK(v.error == BTP_SCRIPT_SCENE);
     b=(BtpBld){.length=4,.bytes={0xf4,48,1,0xff}};
     btp_script_start(&v,&b,s.story_flags); CHECK(v.error == BTP_SCRIPT_STATE_INDEX);
@@ -159,12 +166,14 @@ static void barracks(const BtpResources *r)
     s.story_flags[1]=1; s.story_flags[20]=255; enter(&s,r,6); select(&s,r,1);
     CHECK(s.story_flags[19] == 1);
     unsigned screens=0;
-    while (s.script.status == BTP_SCRIPT_WAIT && screens++ < 12) restored_tick(&s,r,BTP_ACCEPT);
+    while (s.script.status == BTP_SCRIPT_WAIT && screens++ < 12) {
+        restored_tick(&s,r,BTP_ACCEPT); animation(&s,r);
+    }
     CHECK(screens == 7 && s.mode == BTP_BUILDING && s.script.menu_id == 19 && !s.story_flags[20]);
     CHECK(s.script.animation_kind == 8 && s.script.animation_flags == 1);
     select(&s,r,1); CHECK(s.script.status == BTP_SCRIPT_WAIT && s.story_flags[19] == 1);
     restored_tick(&s,r,BTP_ACCEPT); CHECK(s.script.menu_id == 19);
-    select(&s,r,0); CHECK(s.mode == BTP_EXPLORE);
+    select(&s,r,0); animation(&s,r); CHECK(s.mode == BTP_EXPLORE);
 }
 static void mission(const BtpResources *r)
 {
@@ -202,7 +211,7 @@ static void mission(const BtpResources *r)
         uint8_t text[BTP_BLD_MAX+1]; size_t length; CHECK(btp_game_text(&s,r,text,sizeof text,&length) && length);
         restored_tick(&s,r,BTP_ACCEPT); CHECK(s.mode == BTP_EXPLORE && s.allowance_cap == 150);
         s.story_flags[20]=0; enter(&s,r,0); answers(&s,r,0);
-        restored_tick(&s,r,BTP_ACCEPT); restored_tick(&s,r,BTP_ACCEPT); select(&s,r,0);
+        restored_tick(&s,r,BTP_ACCEPT); restored_tick(&s,r,BTP_ACCEPT); select(&s,r,0); animation(&s,r);
         CHECK(s.mode == BTP_MISSION && s.story_flags[0] == 1 && s.allowance_cap == 150 && s.mission.assignment == 1);
         CHECK(s.x_half == 64 && s.y_half == 79 && s.mission.phase == BTP_MISSION_SNICKER);
     }
@@ -210,19 +219,19 @@ static void mission(const BtpResources *r)
 static void lounge(const BtpResources *r)
 {
     BtpState s; btp_start(&s); s.npc=(BtpNpcState){0}; enter(&s,r,7);
-    CHECK(s.script.menu_id == 24); select(&s,r,0); CHECK(s.talk.phase == BTP_TALK_EMPTY);
+    CHECK(s.script.menu_id == 24); select(&s,r,0); animation(&s,r); CHECK(s.talk.phase == BTP_TALK_EMPTY);
     restored_tick(&s,r,BTP_ACCEPT); CHECK(s.script.menu_id == 24);
     select(&s,r,1); CHECK(s.mode == BTP_EXPLORE && s.x_half == 17 && s.y_half == 89);
     enter(&s,r,7); s.npc_pairs[0][0]=113; s.npc_pairs[0][1]=5;
     s.npc_pairs[2][0]=114; s.npc_pairs[2][1]=7; s.recruitment=s.story_flags[45]=1;
     s.talk_result=s.story_flags[46]=91;
-    select(&s,r,0); CHECK(s.talk.count == 2);
+    select(&s,r,0); animation(&s,r); CHECK(s.talk.count == 2);
     restored_tick(&s,r,BTP_ACCEPT); CHECK(s.script.status == BTP_SCRIPT_WAIT && !s.recruitment && !s.talk_result);
     CHECK(!s.npc_pairs[0][1] && s.npc_pairs[2][1] == 7 && !s.story_flags[47]);
     for (unsigned n=0;n<4;++n) restored_tick(&s,r,BTP_ACCEPT);
     CHECK(s.story_flags[47] == 1 && s.script.status == BTP_SCRIPT_WAIT);
     restored_tick(&s,r,BTP_ACCEPT); CHECK(s.mode == BTP_EXPLORE && s.story_flags[47] == 1);
-    enter(&s,r,7); select(&s,r,0); CHECK(s.talk.count == 1);
+    enter(&s,r,7); select(&s,r,0); animation(&s,r); CHECK(s.talk.count == 1);
     restored_tick(&s,r,BTP_ACCEPT); CHECK(s.talk.phase == BTP_TALK_REPLY);
     restored_tick(&s,r,BTP_ACCEPT); restored_tick(&s,r,BTP_DOWN); restored_tick(&s,r,BTP_ACCEPT);
     CHECK(s.script.menu_id == 24 && s.story_flags[47] == 1);
@@ -234,7 +243,7 @@ static void rubble(const BtpResources *r)
         s.story_flags[0]=1; s.story_flags[1]=1; s.allowance_cap=150; s.story_flags[51]=150;
         enter(&s,r,0); answers(&s,r,0);
         restored_tick(&s,r,BTP_ACCEPT); CHECK(s.script.text[0].offset == 0x40f);
-        restored_tick(&s,r,BTP_ACCEPT); select(&s,r,mech);
+        restored_tick(&s,r,BTP_ACCEPT); select(&s,r,mech); animation(&s,r);
         CHECK(s.mode == BTP_MISSION && s.mission.assignment == 1);
         if (!mech) {
             CHECK(s.mission.phase == BTP_MISSION_SNICKER);
@@ -267,7 +276,7 @@ static void rubble(const BtpResources *r)
             s.story_flags[19]=1; s.story_flags[20]=0; enter(&s,r,0); answers(&s,r,0);
             restored_tick(&s,r,BTP_ACCEPT);
             CHECK(s.script.text[0].offset == 0x5b7); restored_tick(&s,r,BTP_ACCEPT);
-            select(&s,r,mech);
+            select(&s,r,mech); animation(&s,r);
             CHECK(s.mode == BTP_SCRIPT_FAULT && !s.mission.phase && s.story_flags[0] == 2 && s.allowance_cap == 250);
         }
     }

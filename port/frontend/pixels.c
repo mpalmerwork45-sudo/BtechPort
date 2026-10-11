@@ -3,6 +3,7 @@
 #include "core/school.h"
 #include "core/training.h"
 #include "data/sprites.h"
+#include "data/anm.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -78,9 +79,15 @@ static void pixel(uint32_t *f, int x, int y, uint32_t color)
 {
     if (x >= 0 && x < 320 && y >= 0 && y < 200) f[y * 320 + x] = color;
 }
-static void text(uint32_t *f, int x, int y, const char *str, unsigned color)
+static void text(const BtpResources *r, uint32_t *f, int x, int y, const char *str, unsigned color)
 {
-    for (; *str; ++str, x += 6) {
+    for (; *str; ++str, x += r->dialogue.length ? 8 : 6) {
+        if (r->dialogue.length) {
+            const uint8_t *glyph = r->dialogue.font+8u*(uint8_t)*str;
+            for (int row = 0; row < 8; ++row) for (int col = 0; col < 8; ++col)
+                if (glyph[row] & (128u>>col)) pixel(f,x+col,y+row,btp_palette[color]);
+            continue;
+        }
         const char *p = strchr(alphabet, *str);
         if (!p) continue;
         size_t i = (size_t)(p - alphabet);
@@ -94,31 +101,49 @@ static void rectangle(uint32_t *f, int x, int y, int w, int h, unsigned color)
     for (int row = y; row < y + h; ++row)
         for (int col = x; col < x + w; ++col) pixel(f, col, row, btp_palette[color]);
 }
-/* Independent fixed-column text layout; original glyphs/layout are approximate.
-   Verified Hall/Katrina messages fit. Overflow is visible, never silently hidden. */
-static int wrapped(uint32_t *f, int y, const uint8_t *bytes, size_t n, unsigned color)
+/* BTBORDER.CMP: nine 8x8 cells across its first eight scanlines.
+   Original VGA snapshots establish the 13-column left frame, row-12 divider,
+   and 27-column dialogue frame. The map viewport itself is unframed. */
+static void border_panel(const BtpResources *r, uint32_t *f, int x, int y, int w, int h, int split)
+{
+    if (r->border.format != 1) return;
+    int columns = w/8, rows = h/8;
+    for (int row = 0; row < rows; ++row) for (int col = 0; col < columns; ++col) {
+        unsigned tile;
+        if (!row) tile = !col ? 0u : col == columns-1 ? 1u : 4u;
+        else if (row == rows-1) tile = !col ? 6u : col == columns-1 ? 7u : 4u;
+        else if (split && row == 12) tile = !col ? 2u : col == columns-1 ? 3u : 4u;
+        else if (!col || col == columns-1) tile = 5;
+        else continue;
+        for (int dy = 0; dy < 8; ++dy) for (int dx = 0; dx < 8; ++dx)
+            pixel(f,x+8*col+dx,y+8*row+dy,btp_palette[r->border.pixels[320u*(unsigned)dy+tile*8u+(unsigned)dx]&15u]);
+    }
+}
+/* Original glyphs, with independent word wrapping. Layout remains approximate;
+   oversized messages produce a visible diagnostic. */
+static int wrapped(const BtpResources *r, uint32_t *f, int y, const uint8_t *bytes, size_t n, unsigned color)
 {
     uint8_t clean[BTP_BLD_MAX+1]; size_t used = 0;
-    if (n > BTP_BLD_MAX) { text(f,110,y,"INVALID TEXT BOUNDS",12); return y; }
+    if (n > BTP_BLD_MAX) { text(r,f,110,y,"INVALID TEXT BOUNDS",12); return y; }
     for (size_t i = 0; i < n; ++i) {
         if (bytes[i] == 6 && i+1 < n && (bytes[i+1] == 15 || bytes[i+1] == 14)) { ++i; continue; }
         clean[used++] = bytes[i];
     }
     bytes = clean; n = used;
-    size_t at = 0;
-    while (at < n && y <= 173) {
+    size_t at = 0; unsigned columns = r->dialogue.length ? 25u : 34u;
+    while (at < n && y <= 184) {
         char line[35]; size_t count = 0, start = at;
-        while (at < n && bytes[at] != '\r' && count < 34) line[count++] = (char)bytes[at++];
+        while (at < n && bytes[at] != '\r' && count < columns) line[count++] = (char)bytes[at++];
         if (at < n && bytes[at] == '\r') ++at;
-        else if (at < n && count == 34 && bytes[at] != ' ') {
+        else if (at < n && count == columns && bytes[at] != ' ') {
             size_t space = count;
             while (space && line[space - 1] != ' ') --space;
             if (space) { count = space - 1; at = start + space; }
         }
         while (at < n && bytes[at] == ' ') ++at;
-        line[count] = 0; text(f, 110, y, line, color); y += 9;
+        line[count] = 0; text(r,f, r->dialogue.length ? 112 : 110, y, line, color); y += r->dialogue.length ? 8 : 9;
     }
-    if (at < n) text(f, 110, 180, "TEXT OVERFLOW - UNSUPPORTED LAYOUT", 12);
+    if (at < n) text(r,f, 112, 180, "Text layout overflow", 12);
     return y;
 }
 static const uint8_t *bank_literal(const BtpResources *r, unsigned id, size_t *n)
@@ -134,44 +159,44 @@ static void bank_panel(const BtpResources *r, const BtpState *s, const uint8_t *
     char value[16];
     if (v->has_accounts) {
         BtpTextSpan first = v->text[0], menu = v->text[1];
-        (void)wrapped(f,9,r->comstar.bytes+first.offset,first.length,15);
-        snprintf(value,sizeof value,"%u",s->credits); text(f,260,9,value,10);
+        (void)wrapped(r,f,9,r->comstar.bytes+first.offset,first.length,15);
+        snprintf(value,sizeof value,"%u",s->credits); text(r,f,260,9,value,10);
         int y = 54; unsigned count = 0;
         for (unsigned i = 0; i < 3; ++i) if (s->investments[i]) {
             size_t n; const uint8_t *p = bank_literal(r,BTP_BANK_STR_COMPANY+i,&n);
             if (!p) return;
-            (void)wrapped(f,y,p,n ? n-1 : 0,15);
-            snprintf(value,sizeof value,"%u",s->investments[i]); text(f,260,y,value,10); y += 9; ++count;
+            (void)wrapped(r,f,y,p,n ? n-1 : 0,15);
+            snprintf(value,sizeof value,"%u",s->investments[i]); text(r,f,260,y,value,10); y += 9; ++count;
         }
         if (!count) {
             size_t n; const uint8_t *p = bank_literal(r,BTP_BANK_STR_NONE,&n);
             if (!p) return;
-            (void)wrapped(f,45,p,n,15);
+            (void)wrapped(r,f,45,p,n,15);
         }
         const uint8_t *p = r->comstar.bytes+menu.offset;
         size_t at = 0; y = 123;
         for (unsigned i = 0; i < 4 && at < menu.length; ++i) {
             size_t end = at; while (end < menu.length && p[end] != '\r') ++end;
             if (i && i-1 == v->selected) rectangle(f,109,y-1,206,9,14);
-            (void)wrapped(f,y,p+at,end-at,i && i-1 == v->selected ? 0u : 15u);
+            (void)wrapped(r,f,y,p+at,end-at,i && i-1 == v->selected ? 0u : 15u);
             at = end+1; y += 9;
         }
         return;
     }
     if (b->phase == BTP_BANK_MESSAGE && (b->outcome == BTP_BANK_NO_CASH || b->outcome == BTP_BANK_NO_STOCK)) {
-        (void)wrapped(f,9,body,length,15);
+        (void)wrapped(r,f,9,body,length,15);
     } else {
         int buy = v->native_action == 7; size_t header_length;
         const uint8_t *header = bank_literal(r,buy ? BTP_BANK_STR_BUY_MENU : BTP_BANK_STR_SELL_MENU,&header_length);
         if (!header) return;
-        int y = wrapped(f,9,header,header_length && header[header_length-1] == '\r' ? header_length-1 : header_length,15);
+        int y = wrapped(r,f,9,header,header_length && header[header_length-1] == '\r' ? header_length-1 : header_length,15);
         size_t prefix = header_length;
         for (unsigned i = 0; i < 3; ++i) {
             size_t n; const uint8_t *p = bank_literal(r,BTP_BANK_STR_COMPANY+i,&n);
             if (!p) return;
             int selected = b->phase == BTP_BANK_MENU && s->script.choices[7] == i;
             if (selected) rectangle(f,109,y-1,206,9,14);
-            (void)wrapped(f,y,p,n ? n-1 : 0,selected ? 0u : 15u); y += 9; prefix += n;
+            (void)wrapped(r,f,y,p,n ? n-1 : 0,selected ? 0u : 15u); y += 9; prefix += n;
         }
         if (b->phase != BTP_BANK_MENU && prefix <= length) {
             uint8_t details[BTP_BLD_MAX+1]; size_t out = 0, label_size;
@@ -184,42 +209,42 @@ static void bank_panel(const BtpResources *r, const BtpState *s, const uint8_t *
                     snprintf(value,sizeof value,"%u",b->available);
                     size_t digits = strlen(value);
                     if (digits <= length-at && !memcmp(body+at,value,digits)) at += digits;
-                    text(f,110,169,(const char *)label,15); text(f,260,169,value,10);
+                    text(r,f,110,169,(const char *)label,15); text(r,f,260,169,value,10);
                 } else details[out++] = body[at++];
             }
-            (void)wrapped(f,y,details,out,15);
+            (void)wrapped(r,f,y,details,out,15);
         }
     }
-    text(f,110,185,b->phase == BTP_BANK_AMOUNT ? "DIGITS / BACKSPACE / ENTER" :
-        b->phase == BTP_BANK_MENU ? "ARROWS / ENTER" : "ENTER / SPACE TO CONTINUE",14);
+    text(r,f,112,184,b->phase == BTP_BANK_AMOUNT ? "Digits / Enter" :
+        b->phase == BTP_BANK_MENU ? "Arrows / Enter" : "Enter / Space",14);
 }
 static void school_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
 {
     uint8_t body[BTP_BLD_MAX+1];
     if (!btp_script_text(&s->script,&r->citadel,body,sizeof body)) {
-        text(f,110,12,"INVALID CLASS TEXT",12); return;
+        text(r,f,110,12,"INVALID CLASS TEXT",12); return;
     }
     size_t n = strlen((char *)body), header = n, course = n;
     for (size_t i = 0; i+1 < n; ++i) if (body[i] == 6) {
         if (body[i+1] == 14) header = i;
         if (body[i+1] == 15) { course = i+2; break; }
     }
-    if (header >= course || course >= n) { text(f,110,12,"INVALID CLASS LAYOUT",12); return; }
-    int y = wrapped(f,9,body,header,15);
-    y = wrapped(f,y,body+header,course-header,14);
+    if (header >= course || course >= n) { text(r,f,110,12,"INVALID CLASS LAYOUT",12); return; }
+    int y = wrapped(r,f,9,body,header,15);
+    y = wrapped(r,f,y,body+header,course-header,14);
     size_t at = course;
     for (unsigned i = 0; i < 4; ++i) {
         size_t end = at; while (end < n && body[end] != '\r') ++end;
         if (end-at >= 35 || at >= n || (i < 3 && end == n) || (i == 3 && end != n)) {
-            text(f,110,180,"INVALID CLASS LAYOUT",12); return;
+            text(r,f,110,180,"INVALID CLASS LAYOUT",12); return;
         }
         char option[35]; memcpy(option,body+at,end-at); option[end-at] = 0;
         unsigned color = i == s->script.selected ? 0u : 15u;
         if (i == s->script.selected) rectangle(f,109,y-1,206,9,14);
-        text(f,110,y,option,color);
+        text(r,f,110,y,option,color);
         if (i < 3) {
             char price[8]; snprintf(price,sizeof price,"%u",btp_school_price(s->skills[i]));
-            text(f,280,y,price,color);
+            text(r,f,280,y,price,color);
         }
         at = end+1; y += 9;
     }
@@ -227,51 +252,52 @@ static void school_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
 static void story_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
 {
     rectangle(f, 104, 0, 216, 200, 7); rectangle(f, 108, 4, 208, 192, 0);
+    if (r->border.format == 1) rectangle(f,104,0,216,200,0);
     if (s->mode == BTP_SCRIPT_FAULT) {
-        text(f, 110, 12, "UNSUPPORTED STORY ACTION", 12);
-        text(f, 110, 30, btp_script_error_name(s->script.error), 15);
+        text(r,f, 110, 12, "UNSUPPORTED STORY ACTION", 12);
+        text(r,f, 110, 30, btp_script_error_name(s->script.error), 15);
         char line[40];
         snprintf(line, sizeof line, "PC %04X OPCODE %02X", s->script.fault_pc, s->script.last_opcode);
-        text(f, 110, 48, line, 14); text(f, 110, 84, "BACKSPACE RETURNS TO BUILDING MENU", 7);
+        text(r,f, 110, 48, line, 14); (void)wrapped(r,f,84,(const uint8_t *)"Backspace returns to the building menu",38,7);
         return;
     }
     const BtpScriptState *v = &s->script;
     uint8_t bytes[BTP_BLD_MAX + 1];
     size_t length;
     if (!btp_game_text(s, r, bytes, sizeof bytes, &length)) {
-        text(f, 110, 12, "INVALID TEXT BOUNDS", 12); return;
+        text(r,f, 110, 12, "INVALID TEXT BOUNDS", 12); return;
     }
     if (s->bank.phase || v->has_accounts) { bank_panel(r,s,bytes,length,f); return; }
     if (s->school.phase == BTP_SCHOOL_PRICES) { school_panel(r,s,f); return; }
     if (v->status == BTP_SCRIPT_MENU || s->talk.phase == BTP_TALK_MENU) {
         if (!s->talk.phase && !btp_script_menu_text(v,btp_building_bld(r,s->entry_slot),bytes,sizeof bytes,&length)) {
-            text(f,110,12,"INVALID MENU TEXT",12); return;
+            text(r,f,110,12,"INVALID MENU TEXT",12); return;
         }
         unsigned count = s->talk.phase == BTP_TALK_MENU ? (unsigned)s->talk.count+1 : btp_menu_count(v->menu_id);
         unsigned selected = s->talk.phase == BTP_TALK_MENU ? s->talk.selected : v->selected;
         size_t starts[9]; unsigned found = 0;
-        if (count > 9) { text(f, 110, 12, "INVALID MENU COUNT", 12); return; }
+        if (count > 9) { text(r,f, 110, 12, "INVALID MENU COUNT", 12); return; }
         for (size_t i = length; i && found < count; --i)
             if (bytes[i - 1] == '\r') starts[count-1-found++] = i;
-        if (found != count) { text(f, 110, 12, "UNSUPPORTED MENU TEXT LAYOUT", 12); return; }
-        int y = wrapped(f, 9, bytes, starts[0], 15);
+        if (found != count) { text(r,f, 110, 12, "UNSUPPORTED MENU TEXT LAYOUT", 12); return; }
+        int y = wrapped(r,f, r->dialogue.length ? 8 : 9, bytes, starts[0], 15);
         for (unsigned i = 0; i < count; ++i) {
             size_t end = i+1 == count ? length : starts[i + 1] - 1;
             char option[35]; size_t n = end - starts[i];
             if (n >= sizeof option || y > 177) {
-                text(f, 110, 180, "UNSUPPORTED MENU TEXT LAYOUT", 12); return;
+                text(r,f, 110, 180, "UNSUPPORTED MENU TEXT LAYOUT", 12); return;
             }
             memcpy(option, bytes + starts[i], n); option[n] = 0;
             if (i == selected) rectangle(f, 109, y - 1, 206, 9, 14);
-            text(f, 110, y, option, i == selected ? 0u : 15u); y += 9;
+            text(r,f, 110, y, option, i == selected ? 0u : 15u); y += 9;
         }
     } else {
-        int y = wrapped(f, 9, bytes, length, 15);
+        int y = wrapped(r,f, r->dialogue.length ? 8 : 9, bytes, length, 15);
         if (v->status == BTP_SCRIPT_CONFIRM) {
             if (y > 177) y = 177;
-            text(f,110,y,"Yes",v->confirm_selected == 0 ? 14u : 7u);
-            text(f,140,y,"No",v->confirm_selected == 1 ? 14u : 7u);
-        } else text(f, 110, 185, "ENTER / SPACE TO CONTINUE", 14);
+            text(r,f,110,y,"Yes",v->confirm_selected == 0 ? 14u : 7u);
+            text(r,f,140,y,"No",v->confirm_selected == 1 ? 14u : 7u);
+        }
     }
 }
 
@@ -280,14 +306,14 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
     if (s->mode == BTP_QUIZ && s->quiz.phase == BTP_QUIZ_QUESTION) {
         for (unsigned i = 0; i < BTP_PIXELS; ++i) f[i] = btp_palette[terrain_palette[r->quiz_diagram.pixels[i]&15u]];
         rectangle(f,0,0,128,200,0);
-        text(f,3,2,"Identify this",15); text(f,3,10,"'Mech part:",15);
+        text(r,f,3,2,"Identify this",15); text(r,f,3,10,"'Mech part:",15);
         for (unsigned i = 0; i < BTP_QUIZ_PARTS; ++i) {
             size_t n; const uint8_t *p = bank_literal(r,58u+i,&n);
             if (!p || n > 20) continue;
             char label[21]; memcpy(label,p,n); label[n] = 0;
             int y = 28+(int)i*8;
             if (s->quiz.selected == i) rectangle(f,0,y-1,127,8,14);
-            text(f,3,y,label,s->quiz.selected == i ? 0u : 15u);
+            text(r,f,3,y,label,s->quiz.selected == i ? 0u : 15u);
         }
         int x = btp_quiz_x[s->quiz.point]-3, y = btp_quiz_y[s->quiz.point]-3;
         rectangle(f,x,y,9,1,15); rectangle(f,x,y+8,9,1,15);
@@ -302,7 +328,6 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                 int wx = camera_x + x - 104, wy = camera_y + y;
                 if (wx >= 0 && wy >= 0 && wx < r->map.width * 16 && wy < r->map.height * 16) {
                     unsigned tile = btp_mission_tile(s,&r->map, wx / 16, wy / 16);
-                    if (s->mission.phase && wx/16 == 61 && wy/16 == 61) tile = 0;
                     if (tile < 250) {
                         unsigned index = tile * 256 + (unsigned)(wy % 16) * 16 + (unsigned)(wx % 16);
                         unsigned value = r->tiles.pixels[index] & 15;
@@ -328,65 +353,85 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         (void)btp_draw_sprite(&r->sprites,270u+s->npc_walk[i],nx,ny,
             hidden_rows(&r->map,x,y),104,f);
     }
-    text(f, 8, 9, "BtechPort M2j", 15);
     char place[17]; memcpy(place,r->map.places[s->entry_slot],16); place[16] = 0;
-    text(f, 8, 24, s->mode != BTP_EXPLORE ? place : "Training", 14);
-    text(f, 8, 36, s->conversation_checkpoint ? "TALK CHECKPOINT" :
-        s->mode >= BTP_BUILDING ? "DIALOGUE" : "SCHOOL", 14);
-    text(f, 8, 57, s->mode == BTP_EXPLORE || s->mode == BTP_MISSION ? "ARROWS MOVE" : "ARROWS SELECT", 7);
-    text(f, 8, 69, "F3 DEBUG", 7);
-    text(f, 8, 81, "R RESTART", 7);
-    char cash[32]; snprintf(cash,sizeof cash,"C-bills %u",s->credits); text(f,8,92,cash,10);
-    text(f, 8, 111, "MAP 1", 15);
     char line[64];
-    snprintf(line, sizeof line, "X %u.%u", s->x_half / 2, (s->x_half % 2) * 5);
-    text(f, 8, 125, line, 15);
-    snprintf(line, sizeof line, "Y %u.%u", s->y_half / 2, (s->y_half % 2) * 5);
-    text(f, 8, 137, line, 15);
-    text(f,8,189,"F5 SAVE F9 LOAD",7);
-    if (s->blocked) text(f, 8, 151, s->blocked == BTP_EDGE ? "MAP EDGE" : "BLOCKED", 12);
-    if (s->npc.fault) { text(f,8,151,"NPC DATA ERROR",12); return; }
+    if (r->border.format == 1) rectangle(f,0,0,104,200,0);
+    /* The original status fields use these positions. The movement log and
+       four graphical rank bars remain outside this bounded UI restoration. */
+    if (!(s->entry_slot == 0 && s->mode >= BTP_BUILDING)) {
+        text(r,f,8,112,"Jason",15);
+        text(r,f,8,176,"C-Bills:",15);
+        snprintf(line,sizeof line,"%u",s->credits); text(r,f,8,184,line,10);
+    }
+    if (debug) {
+        text(r,f,8,8,"BtechPort",15);
+        snprintf(line,sizeof line,"X %u Y %u",s->x_half,s->y_half); text(r,f,8,24,line,15);
+        snprintf(line,sizeof line,"Tick %u",s->tick); text(r,f,8,40,line,7);
+        text(r,f,8,56,"F5 Save",7); text(r,f,8,64,"F9 Load",7);
+        if (s->blocked) text(r,f,8,80,s->blocked == BTP_EDGE ? "Map edge" : "Blocked",12);
+    }
+    if (s->npc.fault) text(r,f,8,80,"NPC fault",12);
     if (s->mode == BTP_MISSION) {
-        text(f,8,151,s->story_flags[2] == 0 ? "Locust" : s->story_flags[2] == 1 ? "Wasp" : "Chameleon",14);
-        if (s->mission.phase == BTP_MISSION_WARNING || s->mission.phase == BTP_MISSION_CORNER) {
+        text(r,f,8,151,s->story_flags[2] == 0 ? "Locust" : s->story_flags[2] == 1 ? "Wasp" : "Chameleon",14);
+        if (s->mission.phase != BTP_MISSION_DRIVE && s->mission.phase != BTP_MISSION_RESULT) {
             uint8_t message[256]; size_t n;
             rectangle(f,104,72,216,58,7); rectangle(f,108,76,208,50,0);
-            if (btp_game_text(s,r,message,sizeof message,&n)) (void)wrapped(f,79,message,n,15);
+            if (btp_game_text(s,r,message,sizeof message,&n)) (void)wrapped(r,f,79,message,n,15);
         }
-        if (debug) { snprintf(line,sizeof line,"TIME %u",s->mission.elapsed); text(f,8,166,line,14); }
+        if (s->mission.assignment) text(r,f,8,166,s->mission.corner && s->story_flags[2] ? "Carrying" : "Rubble",14);
+        else if (debug) { snprintf(line,sizeof line,"TIME %u",s->mission.elapsed); text(r,f,8,166,line,14); }
     } else if (s->mode == BTP_BUILDING || s->mode == BTP_SCRIPT_FAULT || s->mode == BTP_QUIZ) {
-        text(f, 8, 151, "ENTER SPACE", 14);
         if (debug) {
-            snprintf(line, sizeof line, "PC %04X", s->script.pc); text(f, 8, 166, line, 14);
-            snprintf(line, sizeof line, "OP %02X", s->script.last_opcode); text(f, 8, 178, line, 14);
-            if (s->script.animation_kind) { snprintf(line,sizeof line,"ANM %u",s->script.animation_kind); text(f,8,36,line,14); }
+            text(r,f, 8, 151, "Enter/Space", 14);
+            snprintf(line, sizeof line, "PC %04X", s->script.pc); text(r,f, 8, 166, line, 14);
+            snprintf(line, sizeof line, "OP %02X", s->script.last_opcode); text(r,f, 8, 178, line, 14);
+            if (s->script.animation_kind) { snprintf(line,sizeof line,"ANM %u",s->script.animation_kind); text(r,f,8,36,line,14); }
         }
         story_panel(r, s, f);
     } else if (s->mode == BTP_ENTRY) {
         rectangle(f, 104, 73, 216, 55, 7); rectangle(f, 108, 77, 208, 46, 0);
         char question[40]; snprintf(question,sizeof question,"Enter %s?",place);
-        text(f, 110, 81, question, 15);
-        text(f, 110, 99, "YES", s->entry_selected == 0 ? 14u : 7u);
-        text(f, 140, 99, "NO", s->entry_selected == 1 ? 14u : 7u);
-        text(f, 110, 113, "ENTER SELECTS - BACKSPACE DECLINES", 7);
+        text(r,f, 110, 81, question, 15);
+        text(r,f, 110, 99, "Yes", s->entry_selected == 0 ? 14u : 7u);
+        text(r,f, 140, 99, "No", s->entry_selected == 1 ? 14u : 7u);
+        text(r,f, 112, 113, "Enter / Backspace", 7);
     } else if (btp_entrance(s, &r->map) == 5) {
-        text(f, 8, 166, "INTERIOR", 14); text(f, 8, 178, "UNAVAILABLE", 14);
+        text(r,f, 8, 166, "INTERIOR", 14); text(r,f, 8, 178, "UNAVAILABLE", 14);
     } else if (debug) {
-        snprintf(line, sizeof line, "GATE %u", s->gate); text(f, 8, 166, line, 14);
-        snprintf(line, sizeof line, "TICK %u", s->tick); text(f, 8, 178, line, 14);
+        snprintf(line, sizeof line, "GATE %u", s->gate); text(r,f, 8, 166, line, 14);
+        snprintf(line, sizeof line, "TICK %u", s->tick); text(r,f, 8, 178, line, 14);
     }
+    if (s->cutscene.active || (s->mode == BTP_BUILDING && s->entry_slot == 6 && s->script.animation_kind == 8)) {
+        unsigned kind = s->cutscene.active ? s->cutscene.kind : 8u;
+        unsigned step = s->cutscene.active ? s->cutscene.step : 2u;
+        uint8_t packed[BTP_ANM_PACKED];
+        if (btp_anm_frame(&r->animations[kind],step,packed)) {
+            if (s->cutscene.active) rectangle(f,104,0,216,200,0);
+            for (unsigned i = 0; i < 88u*88u; ++i) {
+                unsigned value = i&1u ? packed[i/2u]&15u : packed[i/2u]>>4;
+                f[(8u+i/88u)*320u+8u+i%88u] = btp_palette[terrain_palette[value]];
+            }
+        } else text(r,f,8,9,"ANM data error",12);
+    }
+    border_panel(r,f,0,0,104,200,1);
+    if (s->mode == BTP_BUILDING || s->mode == BTP_SCRIPT_FAULT ||
+        (s->mode == BTP_QUIZ && s->quiz.phase != BTP_QUIZ_QUESTION) || s->cutscene.active)
+        border_panel(r,f,104,0,216,200,0);
+    else if (s->mode == BTP_ENTRY) border_panel(r,f,104,72,216,56,0);
+    else if (s->mode == BTP_MISSION && s->mission.phase != BTP_MISSION_DRIVE && s->mission.phase != BTP_MISSION_RESULT)
+        border_panel(r,f,104,72,216,64,0);
 }
 
 void btp_sprite_preview(const BtpResources *r, unsigned tick, uint32_t f[BTP_PIXELS])
 {
     for (unsigned i = 0; i < BTP_PIXELS; ++i) f[i] = btp_palette[2];
-    text(f,8,5,"Original sprite preview",15);
-    text(f,8,17,"All walking frames - Esc exits",15);
+    text(r,f,8,5,"Original sprite preview",15);
+    text(r,f,8,17,"All walking frames - Esc exits",15);
     const unsigned bases[] = {0,146,166,270};
     const char *labels[] = {"Locust", "Commando", "Jason", "Cadets"};
     for (unsigned row = 0; row < 4; ++row) {
         int y = row < 2 ? 30+(int)row*56 : 144+(int)(row-2)*24;
-        text(f,8,y,labels[row],15);
+        text(r,f,8,y,labels[row],15);
         for (unsigned n = 0; n < 16; ++n) {
             int x = 72+(int)(n%8)*30;
             (void)btp_draw_sprite(&r->sprites,bases[row]+n,x,y+(int)(n/8)*(row < 2 ? 26 : 10),0,0,f);

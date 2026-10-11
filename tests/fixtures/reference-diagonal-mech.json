@@ -3212,7 +3212,7 @@
       "terrain": 0,
       "mount": 0,
       "mode": "training-mission",
-      "tick": 923,
+      "tick": 1013,
       "text": null
     },
     {
@@ -3291,7 +3291,7 @@
       "terrain": 0,
       "mount": 0,
       "mode": "training-mission",
-      "tick": 924,
+      "tick": 1014,
       "text": null
     },
     {
@@ -3370,7 +3370,7 @@
       "terrain": 0,
       "mount": 0,
       "mode": "training-mission",
-      "tick": 925,
+      "tick": 1015,
       "text": null
     },
     {
@@ -3449,7 +3449,7 @@
       "terrain": 0,
       "mount": 0,
       "mode": "training-mission",
-      "tick": 926,
+      "tick": 1016,
       "text": null
     },
     {
@@ -3528,7 +3528,7 @@
       "terrain": 0,
       "mount": 0,
       "mode": "training-mission",
-      "tick": 927,
+      "tick": 1017,
       "text": null
     },
     {
@@ -3607,7 +3607,7 @@
       "terrain": 0,
       "mount": 0,
       "mode": "training-mission",
-      "tick": 928,
+      "tick": 1018,
       "text": null
     },
     {
@@ -3686,7 +3686,7 @@
       "terrain": 0,
       "mount": 0,
       "mode": "training-mission",
-      "tick": 929,
+      "tick": 1019,
       "text": null
     },
     {
@@ -3765,7 +3765,7 @@
       "terrain": 0,
       "mount": 0,
       "mode": "training-mission",
-      "tick": 930,
+      "tick": 1020,
       "text": null
     },
     {
@@ -3844,7 +3844,7 @@
       "terrain": 0,
       "mount": 0,
       "mode": "training-mission",
-      "tick": 931,
+      "tick": 1021,
       "text": null
     },
     {
@@ -3923,7 +3923,7 @@
       "terrain": 0,
       "mount": 0,
       "mode": "training-mission",
-      "tick": 932,
+      "tick": 1022,
       "text": null
     },
     {
@@ -4002,7 +4002,7 @@
       "terrain": 0,
       "mount": 0,
       "mode": "training-mission",
-      "tick": 933,
+      "tick": 1023,
       "text": null
     },
     {
@@ -4081,7 +4081,7 @@
       "terrain": 0,
       "mount": 0,
       "mode": "training-mission",
-      "tick": 934,
+      "tick": 1024,
       "text": null
     },
     {
@@ -4160,8 +4160,16 @@
       "terrain": 0,
       "mount": 0,
       "mode": "training-mission",
-      "tick": 935,
+      "tick": 1025,
       "text": null
+    }
+  ],
+  "cutscene_waits": [
+    {
+      "trigger_tick": 923,
+      "animation": 0,
+      "retraces": 200,
+      "idle_ticks": 90
     }
   ]
 }
