@@ -76,6 +76,16 @@ uint8_t btp_map_tile(const BtpMap *m, int x, int y)
     return m->tiles[(size_t)y * m->width + (size_t)x];
 }
 
+int btp_bld_decode(const uint8_t *b, size_t n, BtpBld *script, BtpError *e)
+{
+    if (!b || !script || n < 3 || n > BTP_BLD_MAX + 2 || le16(b) != n - 2)
+        return fail(e, "BLD: invalid size word or payload length");
+    script->length = (uint16_t)(n - 2);
+    for (size_t i = 2; i < n; ++i)
+        script->bytes[i - 2] = (uint8_t)((uint8_t)(b[i] + 41u) ^ 233u);
+    return 1;
+}
+
 int btp_read_file(const char *path, uint8_t **bytes, size_t *length, BtpError *e)
 {
     FILE *f = fopen(path, "rb");
