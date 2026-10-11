@@ -8,6 +8,7 @@ build/btp-tests "Original DOS"
 build/btp-script-tests "Original DOS"
 build/btp-shop-tests "Original DOS"
 build/btp-save-tests "Original DOS"
+build/btp-school-tests "Original DOS"
 python3 -m unittest discover -s tests -p test_tools.py
 SDL_VIDEODRIVER=dummy build/btech-port --smoke --record work/native-smoke.actions --frame work/native-smoke.ppm
 python3 tools/verify_m1.py --native-log work/native-smoke.actions
@@ -21,6 +22,7 @@ python3 tools/verify_m2d.py
 python3 tools/verify_m2e.py
 python3 tools/verify_m2f.py
 python3 tools/verify_m2g.py
+python3 tools/verify_m2h.py
 if [ "${1:-}" = "--x11" ]; then
     python3 tools/native_smoke.py
 fi

@@ -76,20 +76,15 @@ def main():
           states[17]["menu_selected"] == 4, "Menu selection/return behavior differs")
     check([s["script_pc"] for s in states[8:14]] == fixture["hall_resume_pcs"], "Hall bytecode dispatch differs")
     check(states[18]["script_status"] == 3 and states[18]["script_opcode"] == 255, "Exit did not execute FF")
-    for choice, opcode in [(2,0xf5)]:
-        prefix = ["up"] * 5 + ["accept"] + ["down"] * choice + ["accept"]
-        if choice == 2: prefix += ["accept"] # Class stops after its introductory pause.
-        rejected, failed = run(binary, prefix, work, f"unsupported-{choice}", success=False)
-        check("unsupported opcode" in rejected.stderr and failed[-1]["script_opcode"] == opcode and
-              failed[-1]["mode"] == "script-error", "Unsupported choice silently skipped")
-        check(failed[-1]["story_flags"] == states[6]["story_flags"], "Failed choice left partial story writes")
-        _, recovered = run(binary, prefix + ["cancel"], work, f"recover-{choice}")
-        check(recovered[-1]["mode"] == "building" and recovered[-1]["script_status"] == 1,
-              "Explicit error recovery failed")
+    prefix = ["up"]*5+["accept","down","down","accept","accept"]
+    _, course = run(binary,prefix,work,"class-offer")
+    check(course[-1]["mode"] == "building" and course[-1]["menu_id"] == 9 and
+          course[-1]["school_phase"] == 1 and course[-1]["story_flags"][7] == 1,
+          "Class did not reach its verified course offer")
     _, declined = run(binary, ["up"] * 5 + ["right", "accept"], work, "decline")
     check(declined[-1]["mode"] == "local-exploration" and declined[-1]["y_half"] == 20 and
           declined[-1]["story_flags"][10] == 0, "Decline incorrectly executed building script")
-    print("PASS: 16 original Hall checkpoints / 20 native states, seven texts, six pauses, retained selection, exit, replay, decline and visible class fault with rollback/recovery.")
+    print("PASS: 16 original Hall checkpoints / 20 native states, seven texts, six pauses, retained selection, exit, replay, decline and Class offer.")
     if args.native_log:
         replay_actions = args.native_log.read_text().splitlines()
         _, recorded = run(binary, replay_actions, work, "recorded")

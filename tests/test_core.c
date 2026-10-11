@@ -87,8 +87,8 @@ static void state(void)
     btp_state_encode(&s, encoded); btp_state_encode(&restored, roundtrip);
     CHECK(!memcmp(encoded, roundtrip, sizeof encoded));
     CHECK(!btp_state_decode(encoded, sizeof encoded - 1, &m, NULL, &restored));
-    encoded[4] = 8; CHECK(!btp_state_decode(encoded, sizeof encoded, &m, NULL, &restored));
-    encoded[4] = 7; encoded[12] = 128; CHECK(!btp_state_decode(encoded, sizeof encoded, &m, NULL, &restored));
+    encoded[4] = 9; CHECK(!btp_state_decode(encoded, sizeof encoded, &m, NULL, &restored));
+    encoded[4] = 8; encoded[12] = 128; CHECK(!btp_state_decode(encoded, sizeof encoded, &m, NULL, &restored));
     encoded[12] = 69; encoded[23] = 1; CHECK(!btp_state_decode(encoded, sizeof encoded, &m, NULL, &restored));
     s.x_half = 0; s.y_half = 0; btp_tick(&s, &m, BTP_LEFT);
     CHECK(s.x_half == 0 && s.blocked == BTP_EDGE);
@@ -165,17 +165,19 @@ static void katrina_loop(const BtpResources *r)
     CHECK(s.mode == BTP_ENTRY && s.y_half == 21 && s.story_flags[6] == 1);
     restored_tick(&s, r, BTP_ACCEPT);
     CHECK(s.mode == BTP_BUILDING && s.script.selected == 4 && s.story_flags[6] == 1);
-    /* Class changes state before its pause, then encounters an unsupported native
-       action. Restore the saved checkpoint too, preserving a prior Katrina visit.
-       Byte 21 is deliberately seeded here to test rollback, not oracle parity. */
+    /* Corrupt only a test-owned BLD copy to retain the unknown-action rollback
+       regression now that real Class is supported. Byte 21 is a test seed. */
+    BtpResources *broken = malloc(sizeof *broken); CHECK(broken); *broken = *r;
+    broken->citadel.bytes[0xf04] = 3;
     s.story_flags[21] = 42;
     for (unsigned i = 0; i < 3; ++i) restored_tick(&s, r, BTP_UP);
     CHECK(s.script.selected == 1);
     restored_tick(&s, r, BTP_DOWN); restored_tick(&s, r, BTP_ACCEPT);
     CHECK(s.script.status == BTP_SCRIPT_WAIT && s.story_flags[7] == 1 && s.story_flags[21] == 0);
-    restored_tick(&s, r, BTP_ACCEPT);
+    restored_tick(&s, broken, BTP_ACCEPT);
     CHECK(s.mode == BTP_SCRIPT_FAULT && s.script.last_opcode == 0xf5 && s.story_flags[7] == 0 &&
           s.story_flags[21] == 42 && s.story_flags[6] == 1 && s.story_flags[22] == 255);
+    free(broken);
     restored_tick(&s, r, BTP_CANCEL); restored_tick(&s, r, BTP_DOWN); restored_tick(&s, r, BTP_ACCEPT);
     CHECK(s.mode == BTP_BUILDING && s.talk.phase == BTP_TALK_EMPTY && s.story_flags[13] == 1 && s.story_flags[6] == 1);
     restored_tick(&s, r, BTP_ACCEPT);
@@ -343,7 +345,7 @@ static void citadel_loop(const char *dir)
     btp_start(&s); s.y_half = 21;
     btp_game_tick(&s, r, BTP_UP); CHECK(s.mode == BTP_ENTRY && s.y_half == 21);
     free(r);
-    puts("Citadel core: entry/decline, six Hall screens, exit, empty Talk, recovery, BTP7 restoration.");
+    puts("Citadel core: entry/decline, six Hall screens, exit, empty Talk, recovery, BTP8 restoration.");
 }
 
 static void corpus(const char *dir)

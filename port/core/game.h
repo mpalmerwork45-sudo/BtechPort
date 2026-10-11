@@ -25,6 +25,9 @@ typedef struct {
     uint32_t available, amount;
     char input[8]; /* Original accepts at most seven decimal digits. */
 } BtpBankState;
+typedef enum { BTP_SCHOOL_NONE, BTP_SCHOOL_PRICES, BTP_SCHOOL_TRANSCRIPT } BtpSchoolPhase;
+typedef enum { BTP_SCHOOL_TRAINED, BTP_SCHOOL_NO_FUNDS, BTP_SCHOOL_MASTERED } BtpSchoolOutcome;
+typedef struct { uint8_t phase, course, before, outcome; } BtpSchoolState;
 typedef struct {
     uint32_t tick;
     uint16_t x_half, y_half;
@@ -44,8 +47,10 @@ typedef struct {
     uint8_t checkpoint_weapon, checkpoint_armor, checkpoint_armor_points;
     uint32_t investments[3], checkpoint_investments[3];
     BtpBankState bank;
+    uint8_t skills[3], checkpoint_skills[3]; /* Original C618[0..2], ranks 0..4. */
+    BtpSchoolState school;
 } BtpState;
-enum { BTP_STATE_BYTES = 384 };
+enum { BTP_STATE_BYTES = 416 };
 
 void btp_start(BtpState *state);
 void btp_tick(BtpState *state, const BtpMap *map, BtpAction action);

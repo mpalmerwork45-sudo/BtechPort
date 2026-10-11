@@ -27,7 +27,7 @@ static void malformed(void)
     btp_script_start(&s,&b,story); CHECK(s.status == BTP_SCRIPT_NATIVE && s.pc == 2);
     btp_script_resume(&s,&b,story); CHECK(s.status == BTP_SCRIPT_NATIVE);
     btp_script_native_return(&s,&b,story); CHECK(s.status == BTP_SCRIPT_END && s.pc == 3);
-    b.bytes[1] = 4; btp_script_start(&s,&b,story); CHECK(s.error == BTP_SCRIPT_OPCODE && s.fault_pc == 0);
+    b.bytes[1] = 3; btp_script_start(&s,&b,story); CHECK(s.error == BTP_SCRIPT_OPCODE && s.fault_pc == 0);
     b = (BtpBld){.length=4,.bytes={0xf2,0xf5,0x0c,0xff}};
     btp_script_start(&s,&b,story); CHECK(s.status == BTP_SCRIPT_NATIVE && s.pc == 3 && !s.pause_units);
     b = (BtpBld){.length=1,.bytes={0xfe}};
@@ -39,7 +39,7 @@ static void malformed(void)
     b = (BtpBld){.length=2,.bytes={0xfa,1}};
     btp_script_start(&s, &b, story); CHECK(s.error == BTP_SCRIPT_SCENE);
     b.bytes[0] = 0xfe; btp_script_start(&s, &b, story); CHECK(s.error == BTP_SCRIPT_FONT);
-    b = (BtpBld){.length=2,.bytes={0xf9,9}};
+    b = (BtpBld){.length=2,.bytes={0xf9,6}};
     btp_script_start(&s, &b, story); CHECK(s.error == BTP_SCRIPT_MENU_ID);
     b.bytes[1] = 8; btp_script_start(&s, &b, story); CHECK(s.error == BTP_SCRIPT_TRUNCATED);
     b = (BtpBld){.length=13,.bytes={0xf9,8,12,0,12,0,12,0,12,0,13,0,0xff}};
@@ -94,13 +94,15 @@ static void citadel(const char *dir)
     btp_script_start(&s, &b, story);
     CHECK(btp_script_choose(&s, &b, 2, story) && s.status == BTP_SCRIPT_WAIT);
     btp_script_resume(&s, &b, story);
-    CHECK(s.status == BTP_SCRIPT_ERROR && s.error == BTP_SCRIPT_OPCODE && s.last_opcode == 0xf5);
+    CHECK(s.status == BTP_SCRIPT_NATIVE && s.native_action == 4 && s.pc == 0xf05);
+    btp_script_native_return(&s,&b,story);
+    CHECK(s.status == BTP_SCRIPT_MENU && s.menu_id == 9 && s.pc == 0xf0f);
     btp_script_start(&s, &b, story);
     CHECK(btp_script_choose(&s, &b, 3, story) && s.status == BTP_SCRIPT_NATIVE && s.pc == 0x10e2 &&
           story[13] == 1 && !s.text_count);
     btp_script_native_return(&s,&b,story);
     CHECK(s.status == BTP_SCRIPT_MENU && s.selected == 3 && s.pc == 0xea && story[13] == 1);
-    puts("Citadel: Hall, Katrina, concatenated text, byte changes, repeat denial, class fault and native Talk suspension/return.");
+    puts("Citadel: Hall, Katrina, concatenated text, byte changes, repeat denial, Class and Talk suspension/return.");
 }
 
 static void state_and_text(void)

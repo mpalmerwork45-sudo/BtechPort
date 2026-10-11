@@ -20,6 +20,7 @@ DS = 0x36DB0
 BANK_OFFSETS = (0x49d3,0x49d9,0x49f6,0x4a09,0x4a1c,0x4a2b,0x4a6a,0x4a86,
     0x4a8d,0x4abc,0x4ac0,0x4acb,0x4af5,0x4b3b,0x4b52,0x4b67,0x4b77,
     0x4bb8,0x4bd8,0x4bdf,0x4c07,0x4c0b,0x1791)
+SCHOOL_OFFSETS = (0x491a,0x4948,0x4999)
 
 
 def extract(source):
@@ -34,6 +35,11 @@ def extract(source):
     for entry in range(0x4e7e,0x4e8a,4):
         offset, segment = struct.unpack_from("<HH",image,DS+entry)
         addresses.append(segment*16+offset)
+    addresses.extend(DS+p for p in SCHOOL_OFFSETS)
+    for entry in range(0x4ea2,0x4ec2,4):
+        offset, segment = struct.unpack_from("<HH",image,DS+entry)
+        addresses.append(segment*16+offset)
+    addresses.append(DS+0x4f7e)
     blob = bytearray(); ranges = []; origins = []
     for address in addresses:
         end = image.index(0,address)
@@ -43,10 +49,10 @@ def extract(source):
         ranges.append((len(blob),len(text))); blob += text+b"\0"
         origins.append({"image_offset":address,"length":len(text),
                         "sha256":hashlib.sha256(text).hexdigest()})
-    header = b"BTT2"+struct.pack("<HH",len(blob),len(ranges))
+    header = b"BTT3"+struct.pack("<HH",len(blob),len(ranges))
     header += bytes.fromhex(EXE_SHA)+bytes.fromhex(IMAGE_SHA)
     header += b"".join(struct.pack("<HH",*r) for r in ranges)
-    return header+blob, {**metadata,"format":"BTT2","strings":origins}
+    return header+blob, {**metadata,"format":"BTT3","strings":origins}
 
 
 if __name__ == "__main__":

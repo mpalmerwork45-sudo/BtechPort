@@ -7,7 +7,7 @@ unsigned btp_menu_count(unsigned id)
 {
     switch (id) {
     case 8: case 14: return 5;
-    case 12: case 15: return 4;
+    case 9: case 12: case 15: return 4;
     case 13: return 6;
     case 16: return 7;
     case 7: case 10: case 11: case 30: return 3;
@@ -121,7 +121,7 @@ static void run(BtpScriptState *s, const BtpBld *b, uint8_t story[BTP_STORY_BYTE
         case 0xf5:
             if (!available(s, b, 1, op_pc)) return;
             s->native_action = b->bytes[s->pc++];
-            if (s->native_action < 6 || s->native_action > 12) { fault(s, BTP_SCRIPT_OPCODE, op_pc); return; }
+            if (s->native_action < 4 || s->native_action > 12) { fault(s, BTP_SCRIPT_OPCODE, op_pc); return; }
             if (s->native_action == 12) {
                 s->text_offset = s->text_length = s->text_count = 0;
                 memset(s->text, 0, sizeof s->text);

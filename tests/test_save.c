@@ -69,7 +69,8 @@ static void roundtrip(const BtpState *s, const BtpResources *r)
 }
 static void corpus(const BtpResources *r)
 {
-    const char *names[] = {"reference-bank","reference-bank-rates","citadel-katrina","reference-shops"};
+    const char *names[] = {"reference-bank","reference-bank-rates","citadel-katrina","reference-shops",
+        "reference-class-audit","reference-class-funded"};
     unsigned snapshots = 0;
     for (unsigned i = 0; i < sizeof names/sizeof names[0]; ++i) {
         char path[256]; snprintf(path,sizeof path,"tests/fixtures/%s.actions",names[i]);
@@ -78,7 +79,7 @@ static void corpus(const BtpResources *r)
         while (fgets(line,sizeof line,f)) {
             line[strcspn(line,"\r\n")] = 0; BtpAction a; CHECK(btp_action_parse(line,&a));
             btp_game_tick(&s,r,a);
-            unsigned phase = s.mode+4u*s.script.status+32u*s.bank.phase;
+            unsigned phase = s.mode+4u*s.script.status+32u*s.bank.phase+128u*s.school.phase;
             if (phase != previous || s.bank.phase == BTP_BANK_AMOUNT) {
                 roundtrip(&s,r); ++snapshots; previous = phase;
             }

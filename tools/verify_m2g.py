@@ -26,6 +26,10 @@ def main():
         ("citadel-hall",9,[]),("citadel-arrival",2612,[]),("reference-shops",3059,[])]
     cases += [("reference-"+shop+"-talk",t,["--shop-talk-checkpoint",shop])
         for shop in ("armor","weapon") for t in (0,1,6,14)]
+    course = json.loads((ROOT/"tests/fixtures/reference-class-funded.json").read_text())
+    pauses = ("tuition-class-intro","tuition-class-menu","tuition-paid","tuition-completed",
+        "tuition-cooldown","tuition-exit","tuition-clock24","tuition-next-menu","tuition-next-refusal")
+    cases += [("reference-class-funded",r["tick"],[]) for r in course["checkpoints"] if r["label"] in pauses]
     with tempfile.TemporaryDirectory(prefix="m2g-",dir=work) as directory:
         tmp = Path(directory); slot = tmp/"slot.btp"; actions = tmp/"prefix.actions"
         tail = tmp/"tail.actions"; tail.write_text("idle\n"*1024)
@@ -47,8 +51,19 @@ def main():
         data = bytearray(valid); data[16+344] = 4
         struct.pack_into("<I",data,8,binascii.crc32(data[16:]))
         mutations.append(data)
+        data = bytearray(valid); data[16+384] = 5
+        struct.pack_into("<I",data,8,binascii.crc32(data[16:]))
+        mutations.append(data)
         for data in mutations:
             damaged.write_bytes(data); run(binary,"--load",damaged,ok=False)
+        # A real M2g envelope and BTP7 payload migrate without fictional skill
+        # progress. Recompute its CRC independently of the C writer.
+        baseline = run(binary,"--save",slot)
+        old = bytearray(slot.read_bytes()[:16+384]); old[16:20] = b"BTP7"; old[20] = 7
+        struct.pack_into("<I",old,4,384); struct.pack_into("<I",old,8,binascii.crc32(old[16:]))
+        damaged.write_bytes(old)
+        if run(binary,"--load",damaged) != baseline: raise RuntimeError("M2g save migration differs")
+        slot.write_bytes(valid)
         run(binary,"--load",tmp/"missing.btp",ok=False)
         pending = Path(str(slot)+".tmp"); pending.write_bytes(b"KEEP")
         run(binary,"--save",slot,ok=False)
@@ -58,6 +73,6 @@ def main():
         run(binary,"--save",destination,ok=False)
         if Path(str(destination)+".tmp").exists(): raise RuntimeError("Failed rename left a pending save")
         run(binary,"--load",slot,"--conversation-checkpoint",ok=False)
-    print(f"PASS: {len(cases)} process-restart states and 1024-tick continuations; damaged/missing files, semantic validation and failed-save preservation.")
+    print(f"PASS: {len(cases)} process-restart states and 1024-tick continuations; M2g migration, damaged/missing files, semantic validation and failed-save preservation.")
 
 if __name__ == "__main__": main()

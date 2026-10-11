@@ -19,8 +19,8 @@ typedef struct {
     uint8_t bytes[BTP_BLD_MAX]; /* decrypted payload; address zero excludes size word */
 } BtpBld;
 typedef struct { char text[256]; } BtpError;
-/* 17 NPC strings, 23 banking literals and three stock names. */
-enum { BTP_TALK_STRINGS = 43, BTP_TALK_MAX = 2048 };
+/* 43 earlier bank/Talk strings plus 12 class transcript/rank/subject strings. */
+enum { BTP_TALK_STRINGS = 55, BTP_TALK_MAX = 2048 };
 typedef struct {
     uint8_t bytes[BTP_TALK_MAX];
     uint16_t length, offset[BTP_TALK_STRINGS], size[BTP_TALK_STRINGS];

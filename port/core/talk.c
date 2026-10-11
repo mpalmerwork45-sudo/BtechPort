@@ -1,5 +1,6 @@
 #include "core/talk.h"
 #include "core/bank.h"
+#include "core/school.h"
 #include <string.h>
 
 static void native_fault(BtpState *s, BtpScriptError error)
@@ -138,6 +139,7 @@ int btp_game_text(const BtpState *s, const BtpResources *r, uint8_t *out, size_t
     if (!s || !r || !out || !length || !capacity) return 0;
     *length = 0; out[0] = 0;
     if (!s->talk.phase) {
+        if (s->school.phase) return btp_school_text(s,r,out,capacity,length);
         if (s->bank.phase || s->script.has_accounts) return btp_bank_text(s,r,out,capacity,length);
         int ok = btp_script_text(&s->script,btp_building_bld(r,s->entry_slot ? s->entry_slot : 1),out,capacity);
         if (ok) *length = strlen((const char *)out);

@@ -12,7 +12,7 @@ int btp_options(int argc, char **argv, BtpOptions *o)
     for (int i = 1; i < argc; ++i) {
         const char *arg = argv[i];
         if (!strcmp(arg, "--help")) {
-            puts("BtechPort M2g: MAP1, banking, shop conversations and save/load\n"
+            puts("BtechPort M2h: MAP1, banking, paid classes and save/load\n"
                  "  --data DIRECTORY     original resource directory (default: Original DOS)\n"
                  "  --dialogue-data FILE local EXE text cache (default: work/talk-data.bin)\n"
                  "  --conversation-checkpoint  isolated controlled Talk handler test\n"
@@ -135,6 +135,9 @@ void btp_print_state(const BtpState *s, const BtpResources *r)
         "\"bank_input\":\"%s\",\"has_accounts\":%u",
         s->investments[0],s->investments[1],s->investments[2],s->bank.phase,s->bank.company,
         s->bank.outcome,s->bank.clamped,s->bank.available,s->bank.amount,s->bank.input,s->script.has_accounts);
+    printf(",\"skills\":[%u,%u,%u],\"school_phase\":%u,\"school_course\":%u,"
+        "\"school_before\":%u,\"school_outcome\":%u",s->skills[0],s->skills[1],s->skills[2],
+        s->school.phase,s->school.course,s->school.before,s->school.outcome);
     puts("}");
 }
 

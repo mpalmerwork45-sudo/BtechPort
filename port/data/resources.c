@@ -144,7 +144,7 @@ int btp_resources_load(const char *dir, BtpResources *r, BtpError *e)
 
 int btp_dialogue_decode(const uint8_t *b, size_t n, BtpDialogue *d, BtpError *e)
 {
-    /* BTT2: magic, blob size/count, two SHA-256 provenance tags, 43 ranges.
+    /* BTT3: magic, blob size/count, two SHA-256 provenance tags, 55 ranges.
        Conversion validates the audited EXE. Tags identify that source, not a
        cryptographic integrity check of the generated cache. */
     static const uint8_t tags[64] = {
@@ -154,7 +154,7 @@ int btp_dialogue_decode(const uint8_t *b, size_t n, BtpDialogue *d, BtpError *e)
         0x48,0x6b,0x35,0xd6,0xf5,0xc5,0x38,0xec,0xd5,0x3d,0x03,0xf8,0x5e,0xd5,0x4b,0xfa
     };
     const unsigned header = 72+4*BTP_TALK_STRINGS;
-    if (!b || !d || n < header || memcmp(b,"BTT2",4) || le16(b+6) != BTP_TALK_STRINGS ||
+    if (!b || !d || n < header || memcmp(b,"BTT3",4) || le16(b+6) != BTP_TALK_STRINGS ||
         memcmp(b+8,tags,sizeof tags) || !le16(b+4) || le16(b+4) > BTP_TALK_MAX ||
         n != header+le16(b+4)) return fail(e,"Native dialogue: invalid cache/provenance header");
     BtpDialogue result = {0}; result.length = le16(b+4);

@@ -133,6 +133,9 @@ void btp_npc_frame(BtpState *s, const BtpMap *m)
         s->npc.fault = BTP_NPC_BAD_CONTEXT; return;
     }
     (void)btp_rng_next(s->npc.rng); /* Main-loop encounter check also draws on MAP1. */
+    /* Primary image 2C7..2EE: saturating outdoor countdowns. Schools use
+       byte 21; Katrina uses 22. Indoors this frame routine is suspended. */
+    for (unsigned i = 20; i <= 22; ++i) if (s->story_flags[i]) --s->story_flags[i];
     if (s->npc.loop_timer-- == 0) btp_economy_wrap(s);
     s->npc.allowance_pending = (uint8_t)btp_economy_below_cap(s);
     if (++s->npc.phase < 3) return;

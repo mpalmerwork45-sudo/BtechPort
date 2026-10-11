@@ -1,5 +1,6 @@
 #include "frontend/pixels.h"
 #include "core/bank.h"
+#include "core/school.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -68,7 +69,7 @@ static int wrapped(uint32_t *f, int y, const uint8_t *bytes, size_t n, unsigned 
     uint8_t clean[BTP_BLD_MAX+1]; size_t used = 0;
     if (n > BTP_BLD_MAX) { text(f,110,y,"INVALID TEXT BOUNDS",12); return y; }
     for (size_t i = 0; i < n; ++i) {
-        if (bytes[i] == 6 && i+1 < n && bytes[i+1] == 15) { ++i; continue; }
+        if (bytes[i] == 6 && i+1 < n && (bytes[i+1] == 15 || bytes[i+1] == 14)) { ++i; continue; }
         clean[used++] = bytes[i];
     }
     bytes = clean; n = used;
@@ -160,6 +161,37 @@ static void bank_panel(const BtpResources *r, const BtpState *s, const uint8_t *
     text(f,110,185,b->phase == BTP_BANK_AMOUNT ? "DIGITS / BACKSPACE / ENTER" :
         b->phase == BTP_BANK_MENU ? "ARROWS / ENTER" : "ENTER / SPACE TO CONTINUE",14);
 }
+static void school_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
+{
+    uint8_t body[BTP_BLD_MAX+1];
+    if (!btp_script_text(&s->script,&r->citadel,body,sizeof body)) {
+        text(f,110,12,"INVALID CLASS TEXT",12); return;
+    }
+    size_t n = strlen((char *)body), header = n, course = n;
+    for (size_t i = 0; i+1 < n; ++i) if (body[i] == 6) {
+        if (body[i+1] == 14) header = i;
+        if (body[i+1] == 15) { course = i+2; break; }
+    }
+    if (header >= course || course >= n) { text(f,110,12,"INVALID CLASS LAYOUT",12); return; }
+    int y = wrapped(f,9,body,header,15);
+    y = wrapped(f,y,body+header,course-header,14);
+    size_t at = course;
+    for (unsigned i = 0; i < 4; ++i) {
+        size_t end = at; while (end < n && body[end] != '\r') ++end;
+        if (end-at >= 35 || at >= n || (i < 3 && end == n) || (i == 3 && end != n)) {
+            text(f,110,180,"INVALID CLASS LAYOUT",12); return;
+        }
+        char option[35]; memcpy(option,body+at,end-at); option[end-at] = 0;
+        unsigned color = i == s->script.selected ? 0u : 15u;
+        if (i == s->script.selected) rectangle(f,109,y-1,206,9,14);
+        text(f,110,y,option,color);
+        if (i < 3) {
+            char price[8]; snprintf(price,sizeof price,"%u",btp_school_price(s->skills[i]));
+            text(f,280,y,price,color);
+        }
+        at = end+1; y += 9;
+    }
+}
 static void story_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
 {
     rectangle(f, 104, 0, 216, 200, 7); rectangle(f, 108, 4, 208, 192, 0);
@@ -178,6 +210,7 @@ static void story_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
         text(f, 110, 12, "INVALID TEXT BOUNDS", 12); return;
     }
     if (s->bank.phase || v->has_accounts) { bank_panel(r,s,bytes,length,f); return; }
+    if (s->school.phase == BTP_SCHOOL_PRICES) { school_panel(r,s,f); return; }
     if (v->status == BTP_SCRIPT_MENU || s->talk.phase == BTP_TALK_MENU) {
         if (!s->talk.phase && !btp_script_menu_text(v,btp_building_bld(r,s->entry_slot),bytes,sizeof bytes,&length)) {
             text(f,110,12,"INVALID MENU TEXT",12); return;
@@ -243,7 +276,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
     /* Approximate player marker until ANIMATE.ICN selection/masking is verified. */
     for (int y = 97; y <= 102; ++y)
         for (int x = 211; x <= 213; ++x) pixel(f, x, y, btp_palette[y < 99 ? 15 : 1]);
-    text(f, 8, 9, "BtechPort M2g", 15);
+    text(f, 8, 9, "BtechPort M2h", 15);
     text(f, 8, 24, s->mode >= BTP_ENTRY ? (s->entry_slot == 3 ? "Weapons Shop" :
         s->entry_slot == 4 ? "Armor Shop" : s->entry_slot == 2 ? "ComStar" : "Citadel") : "Training", 14);
     text(f, 8, 36, s->conversation_checkpoint ? "TALK CHECKPOINT" :

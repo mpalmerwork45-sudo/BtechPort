@@ -57,15 +57,13 @@ def main():
               state["script_status"] == (1 if tick == 6 else 2), f"Wrong {text['name']} branch/pause")
     check(states[9]["script_status"] == states[11]["script_status"] == 1 and
           states[16]["script_status"] == 3, "Conversation/menu/exit dispatch differs")
-    # Recovering a failed class choice after a verified visit must retain progress.
+    # A supported class visit after Katrina retains the completed conversation.
     prefix = actions + ["up", "up", "accept", "accept"]
-    rejected, failed = run(binary, prefix, work, "class-after-katrina", success=False)
-    check("unsupported opcode" in rejected.stderr and failed[-1]["script_opcode"] == 0xf5 and
-          failed[-1]["story_flags"] == states[-1]["story_flags"], "Class fault lost or invented story progress")
-    _, recovered = run(binary, prefix + ["cancel"], work, "recovered")
-    check(recovered[-1]["mode"] == "building" and recovered[-1]["menu_selected"] == 2 and
-          recovered[-1]["story_flags"] == states[-1]["story_flags"], "Recovery changed completed progress")
-    print("PASS: 20 original Katrina checkpoints / 20 native states, four text hashes, three-block conversation, byte updates, repeat denial, exit/re-entry highlight, deterministic replay and failed-choice rollback.")
+    _, course = run(binary,prefix,work,"class-after-katrina")
+    check(course[-1]["school_phase"] == 1 and course[-1]["menu_id"] == 9 and
+          course[-1]["story_flags"][6] == 1 and course[-1]["story_flags"][22] == states[-1]["story_flags"][22],
+          "Class lost or invented completed Katrina progress")
+    print("PASS: 20 original Katrina checkpoints / 20 native states, four text hashes, three-block conversation, byte updates, repeat denial, exit/re-entry highlight, deterministic replay and Class after Katrina.")
     print("Scope: byte 22 countdown timing after exit is excluded; original fonts/animation/timing remain approximate.")
     if args.native_log:
         recorded_actions = args.native_log.read_text().splitlines()

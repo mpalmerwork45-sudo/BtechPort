@@ -116,12 +116,30 @@ def m2f(env, work, input_only=False):
     subprocess.run(["python3",str(ROOT/"tools/verify_m2f.py")],check=True,timeout=30,cwd=ROOT)
 
 
+def school(env, work):
+    path = ROOT/"tests/fixtures/reference-class-funded.actions"
+    record = work/"native-class-x11.actions"; frame = work/"native-class-x11.ppm"
+    ticks = len(path.read_text().splitlines())+5
+    print(f"Running native X11 funded course/cooldown/re-enrolment, {ticks} ticks (about {ticks*0.032:.0f} seconds).",flush=True)
+    result = subprocess.run([str(ROOT/"build/btech-port"),"--smoke-replay","--replay",str(path),
+        "--record",str(record),"--frame",str(frame)],env=env,timeout=ticks*0.032+35,
+        check=True,capture_output=True,text=True,cwd=ROOT)
+    replayed = subprocess.run([str(ROOT/"build/btech-headless"),"--replay",str(record)],
+        check=True,capture_output=True,text=True,cwd=ROOT,timeout=20)
+    if record.read_text().splitlines() != path.read_text().splitlines()+["idle"]*5 or json.loads(result.stdout) != json.loads(replayed.stdout):
+        raise RuntimeError("Native Class inputs/final state differ from complete headless replay")
+    subprocess.run(["python3",str(ROOT/"tools/verify_m2h.py"),"--native-log",str(record)],
+        check=True,timeout=30,cwd=ROOT)
+    print("PASS: native X11 ordinary funding, paid Class, cooldown refusal/expiry and repeat enrolment; complete canonical state equality.",flush=True)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--shops-only", action="store_true")
     parser.add_argument("--m2f-only", action="store_true")
     parser.add_argument("--bank-input-only", action="store_true")
     parser.add_argument("--save-only", action="store_true")
+    parser.add_argument("--school-only", action="store_true")
     args = parser.parse_args()
     work = ROOT / "work"
     work.mkdir(exist_ok=True)
@@ -151,6 +169,10 @@ def main():
                 m2f(env,work,input_only=True)
                 return
             if args.save_only:
+                saves(env,work)
+                return
+            if args.school_only:
+                school(env,work)
                 saves(env,work)
                 return
             result = subprocess.run([str(ROOT / "build/btech-port"), "--smoke",
@@ -201,6 +223,7 @@ def main():
             shops(env, work)
             m2f(env, work)
             saves(env,work)
+            school(env,work)
         finally:
             os.close(read_fd)
             xvfb.terminate()

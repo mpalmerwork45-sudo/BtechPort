@@ -45,7 +45,7 @@ int main(int argc, char **argv)
         fprintf(stderr, "SDL: %s\n", SDL_GetError()); goto done;
     }
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
-    SDL_Window *window = SDL_CreateWindow("BtechPort M2g - MAP1, ComStar and save/load", SDL_WINDOWPOS_CENTERED,
+    SDL_Window *window = SDL_CreateWindow("BtechPort M2h - MAP1, paid classes and save/load", SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED, 960, 600, SDL_WINDOW_RESIZABLE);
     SDL_Renderer *renderer = window ? SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE) : NULL;
     SDL_Texture *texture = renderer ? SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
@@ -172,11 +172,11 @@ int main(int argc, char **argv)
         }
         SDL_RenderPresent(renderer);
         if (notice && SDL_GetTicks64() >= notice_until) {
-            notice = NULL; SDL_SetWindowTitle(window,"BtechPort M2g - MAP1, ComStar and save/load");
+            notice = NULL; SDL_SetWindowTitle(window,"BtechPort M2h - MAP1, paid classes and save/load");
         }
         if (o.debug && !notice) {
             char title[200];
-            snprintf(title, sizeof title, "BtechPort M2g | %s | half=(%u,%u) | PC=%04x op=%02x | tick=%u",
+            snprintf(title, sizeof title, "BtechPort M2h | %s | half=(%u,%u) | PC=%04x op=%02x | tick=%u",
                 btp_mode_name(state.mode), state.x_half, state.y_half, state.script.pc,
                 state.script.last_opcode, state.tick);
             SDL_SetWindowTitle(window, title);
