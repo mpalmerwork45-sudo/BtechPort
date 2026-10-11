@@ -233,7 +233,7 @@ int btp_training_valid(const BtpState *s)
     if (s->mode != BTP_MISSION || s->script.status != BTP_SCRIPT_NATIVE || s->script.native_action != 1 || s->story_flags[0] != m->assignment) return 0;
     if (m->phase == BTP_MISSION_WARNING && (!m->warned || m->corner)) return 0;
     if (m->phase == BTP_MISSION_CORNER && (!m->corner || m->assignment)) return 0;
-    if (m->phase == BTP_MISSION_SNICKER && (!m->assignment || m->corner || s->story_flags[2])) return 0;
-    if (m->phase == BTP_MISSION_PICKUP && (!m->assignment || !m->corner)) return 0;
+    if (m->phase == BTP_MISSION_SNICKER && (m->assignment!=1 || m->corner || s->story_flags[2])) return 0;
+    if (m->phase == BTP_MISSION_PICKUP && (m->assignment!=1 || !m->corner)) return 0;
     return 1;
 }

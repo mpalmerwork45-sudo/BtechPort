@@ -1,5 +1,6 @@
 #include "core/combat.h"
 #include "core/npc.h"
+#include "frontend/pixels.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -40,6 +41,44 @@ static void decline(const BtpState *menu,const BtpResources *r,unsigned loan)
     step(&s,r,BTP_IDLE);CHECK(s.mode==BTP_BUILDING && s.story_flags[0]==2 && !s.story_flags[1] && s.allowance_cap==250);
     step(&s,r,BTP_ACCEPT);CHECK(s.mode==BTP_EXPLORE && !s.mission.phase && !s.combat.fled);
 }
+static void glyph(const BtpResources *r,const uint32_t *frame,unsigned id,int x,int y)
+{
+    unsigned drawn=0;
+    for (unsigned row=0;row<8;++row) for (unsigned col=0;col<8;++col)
+        if (r->dialogue.font[id*8+row]&(128u>>col)) {
+            CHECK(frame[(y+(int)row)*320+x+(int)col]==btp_palette[15]);++drawn;
+        }
+    CHECK(drawn>0);
+}
+static void route_pixels(const BtpState *menu,BtpResources *r)
+{
+    BtpState start=*menu;
+    while (start.script.selected) step(&start,r,BTP_DOWN);
+    step(&start,r,BTP_ACCEPT);
+    while (start.cutscene.active) step(&start,r,BTP_IDLE);
+    step(&start,r,BTP_ACCEPT);step(&start,r,BTP_ACCEPT);step(&start,r,BTP_ACCEPT);
+    CHECK(start.combat.phase==BTP_COMBAT_MENU);
+    BtpMap map=r->map;memset(r->map.tiles,64,sizeof r->map.tiles);
+    uint8_t format=r->sprites.format;r->sprites.format=0;
+    uint32_t *frame=malloc(BTP_PIXELS*sizeof *frame);CHECK(frame);
+    /* Original 103B direction glyphs, compared against the owner's font pixels
+       and actual movement in all eight directions, before/after confirmation. */
+    static const int directions[8][3]={{0,-1,1},{1,-1,2},{1,0,3},{1,1,4},
+        {0,1,5},{-1,1,6},{-1,0,7},{-1,-1,8}};
+    for (unsigned i=0;i<8;++i) {
+        BtpState s=start;int dx=directions[i][0],dy=directions[i][1];unsigned id=(unsigned)directions[i][2];
+        s.combat.phase=BTP_COMBAT_MOVE;s.combat.selected=0;
+        s.combat.cursor_x=(uint8_t)(64+4*dx);s.combat.cursor_y=(uint8_t)(77+4*dy);
+        BtpState unchanged=s;btp_render(r,&s,0,frame);CHECK(!memcmp(&s,&unchanged,sizeof s));
+        glyph(r,frame,id,208-3*dx*8,72-3*dy*8);
+        step(&s,r,BTP_ACCEPT);CHECK(s.combat.goal_active);
+        btp_render(r,&s,0,frame);glyph(r,frame,id,208+dx*8,72+dy*8);
+        step(&s,r,BTP_ACCEPT);step(&s,r,BTP_IDLE);
+        CHECK(s.combat.unit[0].x==64+dx && s.combat.unit[0].y==77+dy);
+        btp_render(r,&s,0,frame);glyph(r,frame,id,208+dx*8,72+dy*8);
+    }
+    free(frame);r->map=map;r->sprites.format=format;
+}
 int main(int argc,char **argv)
 {
     if (argc!=5) return 2;
@@ -47,22 +86,52 @@ int main(int argc,char **argv)
     CHECK(btp_resources_load(argv[1],r,&error));CHECK(btp_dialogue_load(argv[2],&r->dialogue,&error));
     CHECK(btp_combat_data_load(argv[3],&r->combat,&error));
     BtpState s,menu={0};btp_start(&s);btp_npc_init(&s,&r->map);
-    FILE *file=fopen(argv[4],"r");CHECK(file);char line[40];unsigned ticks=0,combat_ticks=0;
+    FILE *file=fopen(argv[4],"r");CHECK(file);char line[40];unsigned ticks=0,combat_ticks=0,effects=0;
+    uint8_t enemy_x=0,enemy_y=0;
     while (fgets(line,sizeof line,file)) {
         line[strcspn(line,"\r\n")]=0;BtpAction action;CHECK(btp_action_parse(line,&action));
         if (s.story_flags[0]==2 && s.script.status==BTP_SCRIPT_MENU && s.script.menu_id==7) menu=s;
+        int round=s.combat.phase==BTP_COMBAT_ROUND;BtpState no_graphics=s;
+        no_graphics.combat.graphics=0;no_graphics.combat.flash=0;
+        if (round) btp_game_tick(&no_graphics,r,action);
         step(&s,r,action);++ticks;combat_ticks+=s.combat.phase!=0;
+        if (round) {
+            no_graphics.combat.graphics=s.combat.graphics;no_graphics.combat.flash=s.combat.flash;
+            uint8_t visible[BTP_STATE_BYTES],invisible[BTP_STATE_BYTES];
+            btp_state_encode(&s,visible);btp_state_encode(&no_graphics,invisible);
+            CHECK(!memcmp(visible,invisible,sizeof visible));
+        }
+        if (s.combat.phase) {
+            if (!enemy_x) { enemy_x=s.combat.unit[1].x;enemy_y=s.combat.unit[1].y; }
+            CHECK(s.combat.unit[1].x==enemy_x && s.combat.unit[1].y==enemy_y && s.combat.unit[1].direction==6);
+        }
+        if (s.combat.flash) {
+            ++effects;
+            uint8_t old[BTP_STATE_BYTES];BtpState migrated;
+            btp_state_encode(&s,old);memcpy(old,"BTPD",4);old[4]=13;old[878]=0;
+            CHECK(btp_state_decode(old,sizeof old,&r->map,&r->training,&migrated));CHECK(!migrated.combat.flash);
+        }
         if (s.combat.phase==BTP_COMBAT_ROUND && s.combat.step==1) {
             uint8_t bad[BTP_STATE_BYTES];BtpState untouched=s;
             btp_state_encode(&s,bad);bad[896]=1;
             CHECK(!btp_state_decode(bad,sizeof bad,&r->map,&r->training,&untouched));CHECK(!memcmp(&untouched,&s,sizeof s));
             btp_state_encode(&s,bad);bad[512+125+2]=8;
             CHECK(!btp_state_decode(bad,sizeof bad,&r->map,&r->training,&untouched));CHECK(!memcmp(&untouched,&s,sizeof s));
+            btp_state_encode(&s,bad);bad[878]=4;
+            CHECK(!btp_state_decode(bad,sizeof bad,&r->map,&r->training,&untouched));CHECK(!memcmp(&untouched,&s,sizeof s));
+            /* A v13 save may contain a target path from the previous build.
+               Loading it must still leave the shell stationary. */
+            BtpState old=s,loaded;old.combat.flash=0;old.combat.delay=0;old.combat.path_index[1]=0;
+            old.combat.path[1][0][0]=-1;old.combat.path[1][0][1]=0;
+            btp_state_encode(&old,bad);memcpy(bad,"BTPD",4);bad[4]=13;
+            CHECK(btp_state_decode(bad,sizeof bad,&r->map,&r->training,&loaded));
+            step(&loaded,r,BTP_IDLE);CHECK(loaded.combat.unit[1].x==enemy_x && loaded.combat.unit[1].y==enemy_y);
         }
     }
     fclose(file);CHECK(s.mode==BTP_EXPLORE && s.story_flags[0]==3 && s.story_flags[1]==1 && s.allowance_cap==500);
-    CHECK(menu.story_flags[0]==2 && combat_ticks>100);
+    CHECK(menu.story_flags[0]==2 && combat_ticks>100 && effects>0);
     for (unsigned loan=0;loan<3;++loan) decline(&menu,r,loan);
+    route_pixels(&menu,r);
     btp_start(&s);uint8_t old[BTP_STATE_BYTES];BtpState migrated;
     btp_state_encode(&s,old);memcpy(old,"BTPC",4);old[4]=12;
     CHECK(btp_state_decode(old,512,&r->map,&r->training,&migrated));CHECK(!memcmp(&s,&migrated,sizeof s));

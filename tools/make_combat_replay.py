@@ -27,17 +27,21 @@ def generate(binary):
         def waypoint(x,y):
             choose(0);u=state['combat']['units'][0]
             advance((['right']*(x-u['x']) if x>=u['x'] else ['left']*(u['x']-x))+
-                    (['down']*(y-u['y']) if y>=u['y'] else ['up']*(u['y']-y))+['accept'])
+                    (['down']*(y-u['y']) if y>=u['y'] else ['up']*(u['y']-y)))
+            if not any(r['label']=='route-preview' for r in notes):note('route-preview')
+            advance(['accept'])
+            if not any(r['label']=='route-confirmed' for r in notes):note('route-confirmed')
         def turns(count):
             for _ in range(count):
                 if state['combat']['won']:return
-                choose(9);advance(['idle']);note('resolving')
+                choose(9);advance(['idle'])
+                if state['combat']['phase']==9:note('resolving')
                 advance(['idle']*36)
         advance(['down']*((3-state['menu_selected'])%3)+['accept']+['idle']*90)
         note('computer');advance(['accept']);note('messages');advance(['accept']);note('graphics');advance(['accept']);note('orders')
         waypoint(72,77);turns(4);waypoint(84,85);turns(5)
         choose(3);note('weapons');advance(['down','down','accept']);note('target');advance(['accept']);note('assigned');advance(['accept'])
-        turns(2);waypoint(96,93);turns(9);waypoint(96,85);turns(60)
+        turns(2);waypoint(96,93);turns(9);waypoint(110,89);turns(80)
         check(state['combat']['won']==1,'Ordinary combat route did not win')
         note('victory')
         raw=(ROOT/'Original DOS/MAP1.MTP').read_bytes()[541:]
@@ -65,16 +69,27 @@ def verify(binary):
     facts=json.loads(FACTS.read_text())
     for point in facts['checkpoints']:
         s=rows[point['tick']];check(s['mode']==point['mode'] and s['combat']['phase']==point['combat_phase'],point['label']+' differs')
+    origin=next(s['combat']['units'][1] for s in rows if s['combat']['phase'])
+    for s in rows:
+        c=s['combat']
+        if c['phase']:
+            enemy=c['units'][1]
+            check([enemy['x'],enemy['y'],enemy['direction']]==[origin['x'],origin['y'],origin['direction']],
+                  'Training shell moved or turned')
+    effects=[s for s in rows if s['combat']['flash']]
+    check(effects,'Combat graphics produced no firing indicator')
     end=rows[-1];check(end['story_flags'][:2]==[3,1] and end['allowance_cap']==500 and end['mode']=='local-exploration','Third completion differs')
     checks=[r for r in facts['checkpoints'] if r['label']!='resolving']
     checks += [r for r in facts['checkpoints'] if r['label']=='resolving'][::4]
+    checks.append({'label':'firing-effect','tick':effects[0]['tick']})
     actions=PATH.read_text().splitlines()
     with tempfile.TemporaryDirectory(prefix='combat-restart-',dir=ROOT/'work') as directory:
         tmp=Path(directory)
         for index,point in enumerate(checks):
             tick=point['tick'];prefix=tmp/'prefix.actions';tail=tmp/'tail.actions';slot=tmp/'save.btp'
             prefix.write_text('\n'.join(actions[:tick])+'\n');tail.write_text('\n'.join(actions[tick:])+'\n')
-            args=['--frame',ROOT/'work/combat-weapons.ppm'] if point['label']=='weapons' else ['--frame',ROOT/'work/combat-field.ppm'] if point['label']=='orders' else []
+            args=['--frame',ROOT/('work/combat-'+point['label']+'.ppm')] if point['label'] in (
+                'weapons','orders','route-preview','route-confirmed','firing-effect') else []
             run(binary,'--replay',prefix,'--save',slot,*args)
             resumed=json.loads(run(binary,'--load',slot,'--replay',tail)) if tick<len(actions) else json.loads(run(binary,'--load',slot))
             check(resumed==end,'Fresh-process continuation differs at '+point['label'])

@@ -38,6 +38,16 @@ int main(int argc, char **argv)
             BtpCombatUnit u = {0}; memcpy(u.record,d.loans[a],125);
             u.heat=(uint8_t)c; u.record[36]=(uint8_t)e; u.record[37]=(uint8_t)f;
             passed = btp_combat_points(&u,b) == (int)g;
+        } else if (line[0]=='H') {
+            unsigned loan,heat,steps,pool,engine,cooling,sinks,burning,cover,terrain,after_heat,after_pool,after_burn;int mode;
+            if (sscanf(line+1,"%u %d %u %u %u %u %u %u %u %u %u %u %u %u",&loan,&mode,&heat,&steps,&pool,
+                &engine,&cooling,&sinks,&burning,&cover,&terrain,&after_heat,&after_pool,&after_burn)!=14 || loan>2 || sinks>35) return 2;
+            BtpCombatUnit u={.heat=(uint8_t)heat,.pool=(uint8_t)pool,.burning=(uint8_t)burning,.cover=(uint8_t)cover};
+            memcpy(u.record,d.loans[loan],125);u.record[38]=(uint8_t)cooling;u.record[117]=(uint8_t)engine;
+            for (unsigned i=51;i<86;++i) if (u.record[i]==34) u.record[i]=0;
+            memset(u.record+51,34,sinks);btp_combat_cool(&u,mode,steps,terrain);
+            passed=u.heat==after_heat && u.pool==after_pool && u.burning==after_burn;
+            if (!passed && failures<8) fprintf(stderr,"cooling got heat %u pool %u burning %u\n",u.heat,u.pool,u.burning);
         } else if (line[0] == 'K' && sscanf(line+1,"%u %u %u %u %u %u %" SCNx64,&a,&b,&c,&e,&f,&g,&hash) == 7 && a < 3 && b < 125) {
             BtpCombatUnit u = {0}; memcpy(u.record,d.loans[a],125);
             if (e == 1) u.record[b] = 0;

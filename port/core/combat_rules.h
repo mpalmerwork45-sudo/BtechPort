@@ -23,6 +23,7 @@ typedef struct {
     uint16_t round, fired;
     int8_t path[2][12][2];
     BtpShot shot;
+    uint8_t flash;
 } BtpCombatState;
 enum { BTP_COMBAT_SAVE_BYTES = 384 };
 enum { BTP_COMBAT_DATA_BYTES = 4+375+561+15+46+93+16 };

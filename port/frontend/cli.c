@@ -14,7 +14,7 @@ int btp_options(int argc, char **argv, BtpOptions *o)
     for (int i = 1; i < argc; ++i) {
         const char *arg = argv[i];
         if (!strcmp(arg, "--help")) {
-            puts("BtechPort M2m: two training missions, original animations, shops and save/load\n"
+            puts("BtechPort M3a: three training missions, combat, shops and save/load\n"
                  "  --data DIRECTORY     original resource directory (default: Original DOS)\n"
                  "  --dialogue-data FILE local EXE text cache (default: work/talk-data.bin)\n"
                  "  --conversation-checkpoint  isolated controlled Talk handler test\n"
@@ -171,8 +171,8 @@ void btp_print_state(const BtpState *s, const BtpResources *r)
         s->cutscene.active,s->cutscene.kind,s->cutscene.step,s->cutscene.cycle,s->cutscene.hold,s->cutscene.remaining,s->cutscene.refresh_fraction);
     const BtpCombatState *c=&s->combat;
     printf(",\"combat\":{\"phase\":%u,\"selected\":%u,\"round\":%u,\"step\":%u,\"won\":%u,\"fled\":%u,\"event\":%u,\"fired\":%u,"
-        "\"weapon\":%u,\"goal\":[%u,%u,%u,%u],\"orders\":[",c->phase,c->selected,c->round,c->step,c->won,c->fled,c->last_event,c->fired,
-        c->weapon_selected,c->goal_active,c->movement,c->goal_x,c->goal_y);
+        "\"weapon\":%u,\"flash\":%u,\"goal\":[%u,%u,%u,%u],\"orders\":[",c->phase,c->selected,c->round,c->step,c->won,c->fled,c->last_event,c->fired,
+        c->weapon_selected,c->flash,c->goal_active,c->movement,c->goal_x,c->goal_y);
     for (unsigned i=0;i<11;++i) printf("%s%u",i ? "," : "",c->orders[i]);
     fputs("],\"units\":[",stdout);
     for (unsigned i=0;i<2;++i) {

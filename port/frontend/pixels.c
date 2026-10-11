@@ -6,6 +6,7 @@
 #include "data/sprites.h"
 #include "data/anm.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 const uint32_t btp_palette[16] = {
@@ -252,6 +253,51 @@ static void school_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
         at = end+1; y += 9;
     }
 }
+static void combat_route(const BtpResources *r, const BtpState *s, int cx, int cy, uint32_t *f)
+{
+    const BtpCombatState *c=&s->combat;
+    int8_t steps[12][2];unsigned first=0;
+    int selecting=c->phase==BTP_COMBAT_MOVE;
+    if (!selecting && !c->goal_active) return;
+    int tx=selecting ? c->cursor_x : c->goal_x, ty=selecting ? c->cursor_y : c->goal_y;
+    if (c->phase==BTP_COMBAT_ROUND) { memcpy(steps,c->path[0],sizeof steps);first=c->path_index[0]; }
+    else btp_combat_plan(&r->map,s->gate,&c->unit[0],&c->unit[1],tx,ty,
+        selecting ? c->selected : c->movement,0,steps);
+    /* 103B:18D2..18FB draws these original font glyphs at each planned step.
+       Preview uses exactly the movement planner; resolving uses the saved path. */
+    static const uint8_t arrows[3][3]={{8,1,2},{7,0,3},{6,5,4}};
+    int x=c->unit[0].x, y=c->unit[0].y;
+    for (unsigned i=first;i<12;++i) {
+        int mx=steps[i][0],my=steps[i][1];
+        if (mx==2 || my==2 || (!mx && !my)) break;
+        x+=mx;y+=my;
+        int px=208+(x-cx)*8, py=72+(y+2-cy)*8;
+        if (px>=104 && px<=312 && py>=0 && py<=192) {
+            char arrow[2]={(char)arrows[my+1][mx+1],0};text(r,f,px,py,arrow,15);
+        }
+    }
+    if (!selecting) {
+        int px=200+(tx-cx)*8,py=64+(ty+2-cy)*8;
+        rectangle(f,px,py,24,1,14);rectangle(f,px,py+23,24,1,14);
+        rectangle(f,px,py,1,24,14);rectangle(f,px+23,py,1,24,14);
+    }
+}
+static void combat_flash(const BtpResources *r, const BtpState *s, int cx, int cy, uint32_t *f)
+{
+    const BtpCombatState *c=&s->combat;
+    if (!c->graphics || !c->flash || c->phase!=BTP_COMBAT_ROUND) return;
+    /* Approximate firing indicator; damage/RNG never depend on presentation. */
+    int x=212+((int)c->unit[0].x-cx)*8,y=76+((int)c->unit[0].y+2-cy)*8;
+    int tx=212+((int)c->unit[1].x-cx)*8,ty=76+((int)c->unit[1].y+2-cy)*8;
+    int dx=tx-x,dy=ty-y,steps=abs(dx)>abs(dy) ? abs(dx) : abs(dy);
+    unsigned weapon=btp_combat_weapon(&c->unit[0],c->last_weapon);
+    unsigned color=weapon>=16 && weapon<=18 ? 12u : 14u;
+    for (int i=0;i<=steps;++i) {
+        int px=x+(steps ? dx*i/steps : 0),py=y+(steps ? dy*i/steps : 0);
+        if (px>=104) pixel(f,px,py,btp_palette[color]);
+    }
+    if (c->shot.hit) (void)btp_draw_sprite(&r->sprites,124,tx-8,ty-7,0,104,f);
+}
 static void combat_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
 {
     const BtpCombatState *c=&s->combat;char line[40];
@@ -260,6 +306,7 @@ static void combat_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
     text(r,f,8,8,s->story_flags[2]==0 ? "Locust" : s->story_flags[2]==1 ? "Wasp" : "Chameleon",15);
     snprintf(line,sizeof line,"Heat %u",c->unit[0].heat);text(r,f,8,24,line,14);
     snprintf(line,sizeof line,"Turn %u",c->round);text(r,f,8,40,line,15);
+    if (c->goal_active) { snprintf(line,sizeof line,"To %u,%u",c->goal_x,c->goal_y);text(r,f,8,56,line,14); }
     for (unsigned i=0;i<10;++i) {
         int selected=c->phase==BTP_COMBAT_MENU && c->selected==i;
         if (selected) rectangle(f,8,104+(int)i*8,88,8,14);
@@ -435,6 +482,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
             (void)btp_draw_sprite(&r->sprites,(i==0 && s->story_flags[2] ? 146u : 0u)+s->combat.walk[i],
                 200+((int)u->x-cx)*8,64+((int)u->y+2-cy)*8,btp_combat_cover(&r->map,u,&terrain),104,f);
         }
+        combat_route(r,s,cx,cy,f);combat_flash(r,s,cx,cy,f);
     } else if (s->mission.phase) (void)btp_draw_sprite(&r->sprites,
         (s->story_flags[2] ? 146u : 0u)+s->mission.walk,200,64,btp_mission_terrain(s,&r->map),104,f);
     else (void)btp_draw_sprite(&r->sprites,166u+s->player_walk,208,96,

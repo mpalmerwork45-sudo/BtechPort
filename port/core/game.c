@@ -265,7 +265,7 @@ static uint16_t get16(const uint8_t *p) { return (uint16_t)(p[0] | (uint16_t)p[1
 void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
 {
     memset(b, 0, BTP_STATE_BYTES);
-    memcpy(b, "BTPD", 4); b[4] = 13;
+    memcpy(b, "BTPE", 4); b[4] = 14;
     for (unsigned i = 0; i < 4; ++i) b[8+i] = (uint8_t)(s->tick >> (8 * i));
     b[12] = (uint8_t)s->x_half; b[13] = (uint8_t)(s->x_half >> 8);
     b[14] = (uint8_t)s->y_half; b[15] = (uint8_t)(s->y_half >> 8);
@@ -356,7 +356,8 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         n == 448 && !memcmp(b,"BTPA",4) && b[4] == 10 ? 10 :
         n == 512 && !memcmp(b,"BTPB",4) && b[4] == 11 ? 11 :
         n == 512 && !memcmp(b,"BTPC",4) && b[4] == 12 ? 12 :
-        n == BTP_STATE_BYTES && !memcmp(b,"BTPD",4) && b[4] == 13 ? 13 : 0;
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPD",4) && b[4] == 13 ? 13 :
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPE",4) && b[4] == 14 ? 14 : 0;
     if (!version) return 0;
     for (unsigned i = 5; i < 8; ++i) if (b[i]) return 0;
     if (version == 1) { for (unsigned i = 20; i < 24; ++i) if (b[i]) return 0; }
@@ -376,6 +377,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
                 unsigned start=version==10 ? 434u : version==11 ? 441u : version==12 ? 450u : 896u;
                 for (unsigned i=start;i<n;++i) if (b[i]) return 0;
                 if (version>=13) for (unsigned i=452;i<512;++i) if (b[i]) return 0;
+                if (version==13 && b[878]) return 0; /* v14 firing-effect countdown. */
             }
         }
     }
