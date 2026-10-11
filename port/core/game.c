@@ -387,7 +387,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
             if (version == 9) for (unsigned i = 403; i < n; ++i) if (b[i]) return 0;
             if (version >= 10) {
                 if (b[425]) return 0;
-                unsigned start=version==10 ? 434u : version==11 ? 441u : version==12 ? 450u : version<15 ? 896u : version>=16 ? 2305u : (unsigned)n;
+                unsigned start=version==10 ? 434u : version==11 ? 441u : version==12 ? 450u : version<15 ? 896u : version>=16 ? 2305u : 1803u;
                 for (unsigned i=start;i<n;++i) if (b[i]) return 0;
                 if (version>=13) for (unsigned i=version>=15 ? 460u : 452u;i<512;++i) if (b[i]) return 0;
                 if (version==13 && b[878]) return 0; /* v14 firing-effect countdown. */
@@ -502,6 +502,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
                         uint8_t combat[BTP_COMBAT_SAVE_BYTES]={0};
                         memcpy(combat,b+512,version>=15 ? BTP_COMBAT_SAVE_BYTES : 384u);
                         if (!btp_combat_decode(combat,&result.combat)) return 0;
+                        if (version<=15 && result.combat.phase>BTP_COMBAT_KICK) return 0;
                         if (version<=15) for (unsigned i=0;i<result.combat.count;++i) {
                             BtpCombatUnit *u=&result.combat.unit[i];
                             if (u->infantry && (u->cover==8 || u->cover==16)) u->cover/=4;

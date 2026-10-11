@@ -259,8 +259,10 @@ static void combat_route(const BtpResources *r, const BtpState *s, int cx, int c
     int8_t steps[12][2];unsigned first=0;
     int selecting=c->phase==BTP_COMBAT_MOVE;
     if (!selecting && !c->goal_active) return;
-    int tx=selecting ? c->cursor_x : c->goal_x, ty=selecting ? c->cursor_y : c->goal_y;
+    int tx=selecting && !c->goal_active ? c->cursor_x : c->goal_x;
+    int ty=selecting && !c->goal_active ? c->cursor_y : c->goal_y;
     if (c->phase==BTP_COMBAT_ROUND) { memcpy(steps,c->path[0],sizeof steps);first=c->path_index[0]; }
+    else if (c->goal_active) btp_combat_route(&r->map,s->gate,c,steps);
     else btp_combat_plan(&r->map,s->gate,&c->unit[0],&c->unit[1],tx,ty,
         selecting ? c->selected : c->movement,0,steps);
     /* 103B:18D2..18FB draws these original font glyphs at each planned step.
@@ -276,10 +278,13 @@ static void combat_route(const BtpResources *r, const BtpState *s, int cx, int c
             char arrow[2]={(char)arrows[my+1][mx+1],0};text(r,f,px,py,arrow,15);
         }
     }
-    if (!selecting) {
-        int px=200+(tx-cx)*8,py=64+(ty+2-cy)*8;
-        rectangle(f,px,py,24,1,14);rectangle(f,px,py+23,24,1,14);
-        rectangle(f,px,py,1,24,14);rectangle(f,px+23,py,1,24,14);
+    if (c->goal_active) {
+        for (unsigned i=0;i<=c->waypoint_count;++i) {
+            int wx=i ? c->waypoint_x[i-1] : c->goal_x,wy=i ? c->waypoint_y[i-1] : c->goal_y;
+            int px=200+(wx-cx)*8,py=64+(wy+2-cy)*8;unsigned color=i ? 7 : 14;
+            rectangle(f,px,py,24,1,color);rectangle(f,px,py+23,24,1,color);
+            rectangle(f,px,py,1,24,color);rectangle(f,px+23,py,1,24,color);
+        }
     }
 }
 static void combat_flash(const BtpResources *r, const BtpState *s, int cx, int cy, uint32_t *f)
@@ -306,7 +311,7 @@ static void combat_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
     text(r,f,8,8,s->story_flags[2]==0 ? "Locust" : s->story_flags[2]==1 ? "Wasp" : "Chameleon",15);
     snprintf(line,sizeof line,"Heat %u",c->unit[0].heat);text(r,f,8,24,line,14);
     snprintf(line,sizeof line,"Turn %u",c->round);text(r,f,8,40,line,15);
-    if (c->goal_active) { snprintf(line,sizeof line,"To %u,%u",c->goal_x,c->goal_y);text(r,f,8,56,line,14); }
+    if (c->goal_active) { snprintf(line,sizeof line,"Route %u",1u+c->waypoint_count);text(r,f,8,56,line,14); }
     for (unsigned i=0;i<10;++i) {
         int selected=c->phase==BTP_COMBAT_MENU && c->selected==i;
         if (selected) rectangle(f,8,104+(int)i*8,88,8,14);
@@ -362,11 +367,20 @@ static void combat_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
             text(r,f,112,104+(int)i*8,line,15);
         }
         text(r,f,112,184,"Arrows: next Enter: close",14);
+    } else if (c->phase==BTP_COMBAT_REPLACE) {
+        rectangle(f,104,64,216,96,0);border_panel(r,f,104,64,216,96,0);
+        text(r,f,112,72,"Change movement mode?",15);
+        text(r,f,112,80,"Clear the previous route?",15);
+        for (unsigned i=0;i<2;++i) {
+            if (c->target_selected==i) rectangle(f,112,104+(int)i*8,200,8,14);
+            text(r,f,112,104+(int)i*8,i ? "No" : "Yes",c->target_selected==i ? 0u : 15u);
+        }
     } else if (c->phase<=BTP_COMBAT_GRAPHICS || c->phase==BTP_COMBAT_NOTICE) {
         rectangle(f,104,64,216,96,0);border_panel(r,f,104,64,216,96,0);
         if (c->phase==BTP_COMBAT_NOTICE) {
             const char *message=c->notice==2 ? "No movement points for this order.\rEnter to return." :
                 c->notice==3 ? "Damaged legs prevent kicking.\rEnter to return." :
+                c->notice==4 ? "All twelve waypoints are assigned.\rEnter to return." :
                 "This command is outside the verified weapons-training slice.\rEnter to return.";
             (void)wrapped(r,f,72,(const uint8_t *)message,strlen(message),15);
         } else {

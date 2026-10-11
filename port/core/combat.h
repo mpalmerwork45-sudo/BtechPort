@@ -10,6 +10,8 @@ unsigned btp_combat_cover(const BtpMap *map, const BtpCombatUnit *unit, unsigned
 unsigned btp_combat_id(const BtpCombatState *combat, unsigned unit);
 unsigned btp_combat_target(const BtpCombatState *combat, unsigned id);
 void btp_combat_ignite(BtpState *state, const BtpCombatUnit *target);
+int btp_combat_waypoint(BtpCombatState *combat, unsigned x, unsigned y, unsigned movement);
+void btp_combat_route(const BtpMap *map, unsigned gate, const BtpCombatState *combat, int8_t steps[12][2]);
 void btp_combat_begin(BtpState *state, const BtpResources *resources);
 void btp_combat_tick(BtpState *state, const BtpResources *resources, BtpAction action);
 /* Controlled original-turn comparisons retain the original moving target.

@@ -183,6 +183,11 @@ void btp_print_state(const BtpState *s, const BtpResources *r)
         for (unsigned j=0;j<125;++j) printf("%s%u",j ? "," : "",u->record[j]);
         fputs("]}",stdout);
     }
+    printf("],\"waypoints\":[");
+    if (c->goal_active) {
+        printf("[%u,%u]",c->goal_x,c->goal_y);
+        for (unsigned i=0;i<c->waypoint_count;++i) printf(",[%u,%u]",c->waypoint_x[i],c->waypoint_y[i]);
+    }
     printf("],\"shot\":[%d,%u,%u,%u,%u]}}\n",c->shot.needed,c->shot.hit,c->shot.location,c->shot.damage,c->shot.destroyed);
 }
 

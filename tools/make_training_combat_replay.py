@@ -60,9 +60,15 @@ def generate(binary,kick=False):
             for _ in range(3):
                 advance(['down']*((answers[state['quiz']['point']]-state['quiz']['selected'])%20)+['accept'])
         def command(n):
-            check(state['combat']['phase']==4,'Expected command menu')
+            check(state['combat']['phase']==4,'Expected command menu: '+str({k:state['combat'][k] for k in ['phase','goal','round','won','lost']}))
             advance(['down']*((n-state['combat']['selected'])%10)+['accept'])
-        def waypoint(x,y,mode):
+            if state['combat']['phase']==12:
+                note('movement-replace');advance(['accept'])
+        def waypoint(x,y,mode,append=False):
+            # Replacing a route uses the original movement-mode confirmation;
+            # selecting the same mode normally appends another waypoint.
+            if not append and state['combat']['goal'][0] and state['combat']['goal'][1]==mode:
+                command(0 if mode else 1);advance(['cancel'])
             command(mode);u=state['combat']['units'][0]
             advance((['right']*max(0,x-u['x'])+['left']*max(0,u['x']-x))+
                 (['down']*max(0,y-u['y'])+['up']*max(0,u['y']-y)))
@@ -75,7 +81,7 @@ def generate(binary,kick=False):
             # The duel uses two medium lasers and the machine guns so the
             # Chameleon can sustain fire without overheating.
             while state['combat']['phase']==6:
-                if state['mission']['assignment']==4 and state['combat']['weapon'] not in [0,4,7,8,9]:
+                if state['mission']['assignment']>=3 and state['combat']['weapon'] not in [0,4,7,8,9]:
                     advance(['down']);continue
                 advance(['accept'])
                 if state['combat']['phase']==7:advance(['accept'])
@@ -97,7 +103,13 @@ def generate(binary,kick=False):
                         if state['combat']['won']:break
                         fight()
             elif assignment==3:
-                waypoint(72,77,1);fight();waypoint(80,79,2);fight();waypoint(90,85,0)
+                for x,y,mode,turns in [(72,77,1,3),(84,85,2,4),(96,93,0,4)]:
+                    waypoint(x,y,mode)
+                    if x==72:
+                        waypoint(76,77,1,append=True);note('queued-route')
+                    for _ in range(turns):
+                        if state['combat']['won']:break
+                        fight()
             else:
                 # Navigate around the training building before approaching the
                 # duel. The original steering routine is local, not a BFS.
@@ -118,7 +130,7 @@ def generate(binary,kick=False):
                 if turn%4==0:
                     c=state['combat'];target=c['units'][c['target']];u=c['units'][0]
                     if abs(u['x']-target['x'])>8 or abs(u['y']-target['y'])>4:
-                        waypoint(max(1,min(124,target['x']-3)),max(2,min(124,target['y'])),0)
+                        waypoint(max(1,min(124,target['x']-3)),max(2,min(124,target['y'])),1 if assignment==3 else 0)
                 fight()
             if state['combat']['won']!=1:
                 (ROOT/'work/training-combat-failed.btp').write_bytes(slot.read_bytes())

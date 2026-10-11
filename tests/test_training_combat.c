@@ -74,6 +74,27 @@ static void movement(const BtpState *start,BtpResources *r)
     }
     r->map=map;
 }
+static void route_controls(const BtpState *start,BtpResources *r)
+{
+    BtpState s=*start;BtpCombatState *c=&s.combat;
+    command(&s,r,0);input(&s,r,BTP_RIGHT);input(&s,r,BTP_ACCEPT);
+    unsigned first_x=c->goal_x,first_y=c->goal_y;
+    for (unsigned i=0;i<11;++i) CHECK(btp_combat_waypoint(c,first_x+1+i,first_y,0));
+    input(&s,r,BTP_IDLE);CHECK(c->waypoint_count==11);
+    CHECK(btp_combat_waypoint(c,first_x,first_y,0) && c->waypoint_count==11);
+    command(&s,r,0);
+    for (unsigned i=0;i<13;++i) input(&s,r,BTP_RIGHT);
+    input(&s,r,BTP_ACCEPT);CHECK(c->phase==BTP_COMBAT_NOTICE && c->notice==4);
+    input(&s,r,BTP_ACCEPT);command(&s,r,1);CHECK(c->phase==BTP_COMBAT_REPLACE);
+    input(&s,r,BTP_RIGHT);input(&s,r,BTP_ACCEPT);
+    CHECK(c->phase==BTP_COMBAT_MENU && c->movement==0 && c->waypoint_count==11);
+    command(&s,r,1);input(&s,r,BTP_ACCEPT);
+    CHECK(c->phase==BTP_COMBAT_MOVE && !c->goal_active && !c->waypoint_count);
+    input(&s,r,BTP_RIGHT);input(&s,r,BTP_ACCEPT);
+    CHECK(c->goal_active && c->movement==1);
+    command(&s,r,2);CHECK(c->phase==BTP_COMBAT_REPLACE);input(&s,r,BTP_CANCEL);
+    CHECK(c->goal_active && c->movement==1 && !c->waypoint_count);
+}
 static void failures(const BtpState *start,BtpResources *r)
 {
     BtpState s=*start;command(&s,r,8);
@@ -117,7 +138,7 @@ static void ordinary(const char *path,BtpResources *r)
     CHECK(s.mode==BTP_EXPLORE && s.story_flags[0]==5 && s.story_flags[1] && s.allowance_cap==2000);
     CHECK(s.technician==1 && s.apprentice==1 && s.recruitment==1 && s.npc_pairs[0][0]==112);
     CHECK(robot_shots && enemy_shots);input(&s,r,BTP_IDLE);
-    attacks(&duel,r);movement(&duel,r);failures(&duel,r);
+    attacks(&duel,r);movement(&duel,r);route_controls(&duel,r);failures(&duel,r);
     command(&robots,r,4);input(&robots,r,BTP_DOWN);input(&robots,r,BTP_ACCEPT);
     CHECK(robots.combat.target_unit==2);input(&robots,r,BTP_UP);input(&robots,r,BTP_ACCEPT);
     CHECK(robots.combat.kick_target==17);command(&robots,r,4);input(&robots,r,BTP_CANCEL);

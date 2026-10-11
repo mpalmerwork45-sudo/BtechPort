@@ -14,7 +14,8 @@ typedef struct {
 typedef struct { uint8_t hit, location, damage, destroyed, toppled; int16_t needed; } BtpShot;
 typedef enum { BTP_COMBAT_NONE, BTP_COMBAT_CONTROL, BTP_COMBAT_MESSAGES, BTP_COMBAT_GRAPHICS,
     BTP_COMBAT_MENU, BTP_COMBAT_MOVE, BTP_COMBAT_WEAPONS, BTP_COMBAT_TARGET,
-    BTP_COMBAT_SCAN, BTP_COMBAT_ROUND, BTP_COMBAT_NOTICE, BTP_COMBAT_KICK } BtpCombatPhase;
+    BTP_COMBAT_SCAN, BTP_COMBAT_ROUND, BTP_COMBAT_NOTICE, BTP_COMBAT_KICK,
+    BTP_COMBAT_REPLACE } BtpCombatPhase;
 enum { BTP_COMBAT_UNITS = 7 };
 typedef struct {
     BtpCombatUnit unit[BTP_COMBAT_UNITS];
@@ -29,6 +30,7 @@ typedef struct {
     uint8_t count, target_unit, kick_target, lost, last_attacker, last_target;
     uint8_t enemy_modes[BTP_COMBAT_UNITS-2], enemy_orders[BTP_COMBAT_UNITS-1][12];
     uint16_t enemy_fired[BTP_COMBAT_UNITS-1];
+    uint8_t waypoint_count, waypoint_x[11], waypoint_y[11];
 } BtpCombatState;
 enum { BTP_COMBAT_SAVE_BYTES = 1536 };
 enum { BTP_COMBAT_DATA_BYTES = 4+375+561+15+46+93+16 };

@@ -6,8 +6,8 @@ training/story step; both supplied reference trees remain immutable.
 | Task | Status |
 |---|---|
 | Complete robot/live-Locust turn comparisons | Implemented and verified against original instructions |
-| Original multi-waypoint orders | In progress |
-| Persistent fire/smoke behavior | Original flame-marker path recovered; additional checks in progress |
+| Original multi-waypoint orders | Implemented; 108 original planning/turn cases pass |
+| Persistent fire/smoke behavior | Original flame-marker ring implemented; 128 dice/offset/wrap/terrain cases pass |
 | Original combat/jump/impact/destruction effects | Pending |
 | Natural Rick/device route and next original assignment/event | Pending |
 
@@ -54,6 +54,19 @@ The existing combat prefix and legacy migrations are retained; v15 saves have
 no fire markers and migrate their old robot cover flags explicitly. Numeric
 combat remains independent of graphics. The marker artwork/placement is still
 APPROXIMATE until the effects task compares original rendering.
+
+## Queued movement
+
+The original `32C6` buffer holds twelve `(mode,map,x,y)` waypoints. Planning
+spends one turn's point budget across consecutive destinations; `12E8:0F03`
+removes arrived entries during resolution. **108 original cases** compare the
+complete planned path, final position/heat, movement mode and remaining queue.
+Selecting the same mode appends a destination; duplicate destinations do not
+add entries. Changing mode offers confirmation and clears the previous route
+on Yes. No/Backspace retains it. Queue capacity, the Yes/No popup, cancellation
+and saved continuation are tested through the real game core. The route-arrow
+preview uses the same complete queue planner as resolution. Popup wording and
+destination-box presentation remain approximate; original font/borders are used.
 
 ## Verification commands
 
