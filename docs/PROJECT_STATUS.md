@@ -1,11 +1,11 @@
-# Project status — M2j complete, 2026-10-11
+# Project status — M2k–M2m complete, 2026-10-11
 
-**M0, M1 and bounded M2a–M2j are complete.** The first MechWarrior quiz,
-loaned-mech mission, result, reward and barracks sleep loop are playable.
-All eleven weapons and five armour types are purchasable. The lounge supports
-Talk and its verified Rick/device branch under the documented prerequisite.
-People and loaned mechs move in all eight directions using original sprites.
-The full campaign remains unfinished.
+**M0, M1 and bounded M2a–M2m are complete.** Both noncombat MechWarrior
+assignments, rubble pickup/return, barracks sleep and the third assignment's
+rest gate/briefing are playable. Original launch/dream animations, font and
+border graphics are integrated. Shops, lounge Talk, banking, personal classes,
+eight-direction movement and native saves remain available. The campaign and
+combat remain unfinished.
 
 ## Milestones
 
@@ -17,115 +17,114 @@ The full campaign remains unfinished.
 | M2b | First Katrina conversation and repeat denial |
 | M2c | Native Talk/Done/reply; explicit controlled checkpoint |
 | M2d | MAP1 NPC travel; conversation reachable through exploration |
-| M2e | Two shop purchases, confirmations, local allowance and persistence |
-| M2f | ComStar investments/returns, banking boundaries and Talk in both shops |
-| M2g | Internal save slot, integrity, native controls and restart continuation |
-| M2h | Paid personal-skill classes, tuition/refusals, cooldown and re-enrolment |
-| M2i | Original player/NPC walking sprites, persistent gait and mech preview |
-| M2j | First MechWarrior quiz/mission/return/sleep; all goods; lounge; diagonal movement |
-| Proposed M2k | Audit and implement the second assignment's rubble pickup/carrying/return loop |
-| Remaining M2 | Further training/day progression, party/repair, maps/world and campaign foundations |
-| M3–M5 | Verified tactical combat; original campaign; optional separate enhancements |
+| M2e | Two shop purchases, confirmations, allowance and persistence |
+| M2f | ComStar investments/returns, boundaries and both shops' Talk |
+| M2g | Internal save slot, integrity, native controls and continuation |
+| M2h | Paid classes, tuition/refusals, cooldown and re-enrolment |
+| M2i | Original walking sprites, persistent gait and mech preview |
+| M2j | First MechWarrior mission/sleep; all goods; lounge; diagonals |
+| M2k | Rubble pickup/carrying/return; all loan choices and objectives |
+| M2l | Ordinary two-mission/rest loop through the third briefing |
+| M2m | O0/O8 playback, original font/borders and animation persistence |
+| Proposed M3a | Recover and verify the third assignment's stationary-target weapons combat |
+| Remaining M2/M4 | Party/repair, world/maps and wider campaign progression |
+| M3–M5 | Verified tactical combat; original campaign; optional enhancements |
+
+M2l stops at the third mech menu: its combat launch fails visibly. Rick's
+natural invitation requires fifth-assignment success and remains deferred;
+the existing controlled lounge branch retains its explicit prerequisite.
 
 ## Play and verify
 
 ```sh
 ./scripts/build.sh
 ./build/btech-port --data "Original DOS"
-./build/btech-port --replay tests/fixtures/reference-diagonal-mech.actions
-./build/btech-port --smoke-replay --replay tests/fixtures/reference-mission-pass.actions
+./build/btech-port --smoke-replay --replay tests/fixtures/ordinary-rubble-story.actions
 ./scripts/test.sh
-python3 tools/native_smoke.py --training-only
-python3 tools/native_smoke.py --diagonal-only
+python3 tools/native_smoke.py
 ./scripts/test-sanitize.sh
 ```
 
-The first replay opens an interactive window in the loaned Locust after ordinary
-walking, quiz and launch inputs and twelve diagonal attempts. The second watches
-the complete successful mission/return/sleep route through native SDL and closes
-in about 57 seconds. It uses ordinary gameplay; no money or progress is injected.
-The Training Center is at (46,114), Barracks at (17,13), Lounge at (17,89), all
-in half-coordinate units. The written quiz asks for three parts on the original
-diagram. Accept the first assignment and choose Locust, Wasp or Chameleon.
-Visit x>=120,y>=124, acknowledge the corner, then return to x<=60,y=73..79.
-Terrain costs time; success raises the allowance cap to 150. A successful first
-mission permits the dream/sleep sequence and clears training cooldown. Later
-assignments stop visibly before launch pending their verification.
+The ordinary replay watches both missions, sleep and the third briefing, then
+closes in about 126 seconds. Omit `--smoke-replay` to continue at the third
+mech menu. Automated window checks accelerate replays while retaining every
+logical input, render and 32ms simulation step. The 3945-tick window route
+measured **3.63 seconds versus 126.24 seconds** at normal tick pacing, about
+35× faster for this replay. Normal play and short real-key/animation/save
+checks retain real-time pacing. See [testing commands](TESTING.md).
 
-Arrows move/select. Hold two perpendicular arrows for a diagonal. Keypad
-1/3/7/9 or End/PgDn/Home/PgUp select diagonals; keypad 2/4/6/8 selects cardinal
-movement. Enter/Space confirms/continues; Backspace declines entry or recovers
-an unsupported choice. F3 toggles diagnostics, R restarts, Esc exits. Bank
-amounts retain keypad/top-row digits, Backspace erasure, Escape-clear and Enter.
-**F5 saves and F9 loads** `work/player-save.btp`; `--save-file FILE` chooses a
-slot. Quiz answers, loaned mech, mission progress, sleep and lounge story flags
-persist. Failed loads preserve the session; loading during recording is refused.
+Training Center (46,114), Barracks (17,13) and Lounge (17,89) use half-coordinate
+units. Pass the written quiz and first mission, wait outdoors for cooldown or
+sleep, then accept assignment two. Choose Wasp or Chameleon, stand beneath
+rubble and acknowledge pickup, then return to x<=60,y=73..79. A Locust has no
+hands and fails this assignment. Success raises the allowance cap to 250.
+Sleep allows the third assignment's original briefing.
+
+Arrows/keypad move/select; perpendicular arrows form diagonals. Enter/Space
+confirms; Backspace declines/recovers; F3 toggles diagnostics, R restarts and
+Esc exits. Bank digits, Backspace, Escape-clear and Enter keep their editor
+meanings. **F5/F9** save/load `work/player-save.btp`; `--save-file FILE` selects
+another slot. Failed loads preserve the session.
 
 ## Evidence and verification
 
-**M2j VERIFIED in scope:** 325 original checkpoints: 100 mission-success/sleep,
-69 mission-failure, 77 full-goods/ordinary lounge, 8 controlled Rick lounge,
-19 diagonal human and 52 diagonal mission/entry checkpoints. Positions, story,
-cash/cap, equipment, selectors, skills/accounts, outdoor clock and original text
-hashes match. Quiz point/selection/RNG and human/mech gait/terrain also match.
-Every observed new phase restarts in a fresh process and continues identically.
-Diagonal free/blocked moves match the original's single destination check;
-saved diagonal facing, entrances and both mission-return deltas are tested.
-See [mission and diagonal evidence](M2_MISSION_EVIDENCE.md).
+**VERIFIED in scope:** primary instructions establish all eight rubble targets,
+automatic pickup geometry, Locust no-hands behavior, tile removal/restoration,
+absence of a second-mission time limit and C61C rank increment. Live Wasp
+success establishes the 250-cap reward, tired refusal, sleep and rested third
+briefing. Tests cover all eight objectives with each loan mech, restoring and
+continuing at every tick. See [milestone evidence](M2_RUBBLE_ANIMATION_EVIDENCE.md).
 
-The full-goods run uses one audited 20000-credit test budget to buy every item.
-The Rick event uses an explicit occupancy/recruitment prerequisite; its natural
-later-campaign unlock is not implemented by the first mission. It removes Rick
-from the room and sets the device flag, without party joining. Ordinary Talk
-and all first-mission/sleep/diagonal routes use normal inputs.
+**181 original state/text checkpoints** and **100 phase/animation restarts**
+pass under **three explicit original RNG prerequisites** at later quiz entries.
+Long outdoor waits and NPC arrival timing diverge in the compressed native
+input schedule: unseeded full-route NPC/RNG equality is not established.
+A separate **3940-tick ordinary native replay** uses no state/RNG edits and
+reaches both results, sleep and the third briefing. These are distinct claims.
 
-Mission timing uses deterministic input updates and bounded native idle delays.
-The live failed route's corner wait is normalized to four timer updates in its
-fixture; exact DOS CPU elapsed parity is excluded. Original instructions and
-boundary tests establish the raw Locust 264/265 pass/fail boundary and 214/215
-for Wasp/Chameleon. The terrain field is obscuration, not combat heat. All three
-loan choices have primary/test coverage; live completed mission parity is Locust.
+All **198 decoded frames across 22 ANMs** match the independent reader;
+**18 launch and 21 dream packed-frame hashes/offsets** match stable original
+RAM. All **2048 font bytes**, **183 border cells** and **7744 final dream RGB
+pixels** match original observations. Popup glyph checks cover all eight
+entrances and both selections. Earlier **325 M2j checkpoints** and all other
+movement, sprite, NPC, shop, banking, save and Class comparisons still pass.
 
-PASS: nine CTest suites; 654 core, 95 script, 848 sprite, 1741 NPC, 33253 shop,
-78178 bank/Talk, 12520 save-file, 59197 school and 2219 training assertions;
-four Python tests; all historical and new differential routes. Headless
-ASan/UBSan/LeakSanitizer pass. Native SDL covers success/failure/all goods/lounge
-and restores changed quiz, active mission and dream states through F5/F9.
-Real-key checks cover all diagonal mappings, simultaneous arrow chords/releases
-and preserved keypad banking, with complete recorded replay equality.
-SDL/backend itself is not sanitizer-instrumented. Native diagram, loaned-mech,
-menu and dream frames were inspected for readable mixed case and clipping.
-
-Earlier verified evidence remains: 376 sprite crops/45472 indexed pixels,
-30 player and 63 complete NPC gait steps; 64 Class/funding/cooldown checkpoints
-and 460 complete outdoor frame comparisons; 137 disk snapshots and 31 fresh
-process states with 1024-tick continuation; 570 NPC frames, 56 natural conversation
-checkpoints, 121 historical shop checkpoints, 160 bank/shop-Talk checkpoints
-and 459 bank economy frames. The old NPC trace's 68 gaps remain explicitly skipped.
+PASS: **10 CTest suites**, four Python tests and all historical/new headless
+comparisons. Corpus checks include 5776 core, 95 script, 33253 shop, 78178
+bank/Talk, 17413 save-file, 59197 school, 17269 training and 4570 ANM assertions
+(the frame export adds checks to its 4370-assertion corpus run).
+Disk saves cover **175 replay snapshots** and every action's continuation.
+Headless **ASan/UBSan/LeakSanitizer** pass; SDL/backend is not instrumented.
+Native window routes match complete inputs, final state and pixels. Real-key
+checks retain diagonals/chords/keypad banking; F5/F9 restores quiz, driving,
+rubble pickup/carrying and dream/launch animation states.
 
 ## Persistence, provenance and limits
 
-Current saves use **BTPA/version 10**, a 448-byte payload in the 16-byte BTS1
-length/CRC envelope (464-byte file). The extension retains quiz/mission/gait,
-entry direction, story/checkpoint indices 45/46/47/51, reward-cap rollback and
-dream animation request. BTP1–BTP9 migration remains covered; missing historic
-state is initialized according to its documented limits. Original 3913-byte
-GAME compatibility, power-loss durability and Windows remain unverified.
-The **BTT4** cache contains 84 strings in 2712 locally generated bytes with
-source hashes/address provenance; it stays ignored.
+Current saves use **BTPC/version 12**, a **512-byte payload** inside the 16-byte
+BTS1 length/CRC envelope (**528-byte file**). BTP1–BTPB migrations remain
+covered. New fields retain assignment/objective/underlying tile, two mech ranks
+and rollback, animation frame/cycle/hold and retrace fraction. Missing historical
+state follows documented migration limits. The ignored **BTT6** cache contains
+87 strings and the original 2048-byte font in 4937 bytes, generated from the
+audited EXE with address/hash provenance.
 
-Both reference directories match all **1287** guarded content/mode/mtime entries,
-including reference Git metadata. All 88 original file hashes match. Proprietary
-assets, RAM, screenshots, caches and dependencies remain outside commits.
-No substantial GPL source was copied/translated into the independent C runtime.
-Local incremental commits: `3029374` audit, `1f73aeb` implementation, `67da964`
-verification and diagonal controls. No pushes or Git configuration changes.
+Both supplied trees match **1287** guarded content/mode/mtime entries; all
+88 original hashes match. The guard detected an external editor adding
+`vscode-merge-base` to reference Git metadata; only that addition and its
+modified timestamps were restored to the baseline. Research files and assets
+were not changed. Proprietary captures, RAM, caches and dependencies stay
+ignored. No substantial GPL source was copied/translated into the independent
+C runtime; see README acknowledgements. Local audit/implementation commits
+include `599b782` (audit), `9bfb67b` (mission/gates), `4430a23` (animation/UI)
+and `a765830` (verification/fixes/accelerated tests). The review documentation
+is committed separately. No pushes.
 
-**INFERRED:** unobserved wider unit/world contexts. **APPROXIMATE:** independent
-mixed-case font/layout, remaining original UI, native timing and map edges.
-The diagram pointer/connector differs from the original despite authentic diagram
-pixels. **UNKNOWN/deferred:** later assignments/day progression, natural Rick
-unlock, party/repair/world, combat, original GAME saves, Windows, terrain/scene
-animation and audio. Sleep preserves the original animation request and text;
-its timed imagery and sound are absent. The next proposed gate is the second
-MechWarrior assignment, beginning with original rubble pickup/carrying evidence.
+**INFERRED:** broader mech-rank semantics and unobserved unit/world contexts.
+**APPROXIMATE:** remaining UI layout/status information, diagram pointer,
+native input/animation timing and map edges. Movement history and original
+rank bars remain absent. **UNKNOWN/deferred:** full-route long-wait NPC/RNG
+parity, combat/later assignments, natural Rick unlock, world/party/repair,
+original GAME compatibility, Windows, terrain animation and audio. O0/O8 are
+the supported playback contexts; decoding other files does not implement their
+campaign events. Whole-screen and complete timing parity are not claimed.

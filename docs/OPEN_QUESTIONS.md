@@ -1,15 +1,49 @@
-# Open questions after bounded M2j — 2026-10-11
+# Open questions after bounded M2k–M2m — 2026-10-11
 
-Resolved for the recorded MAP1 scenarios: initial movement/collision, working grid and palette; Citadel packed entrance `(69,20)`, deferred outdoor step, full payload decryption, five-choice menu, six Hall screens and exit. M2b verifies first Katrina dialogue, three-block text concatenation, byte-sized setters/addition, indexed/conditional branches in that route, state byte 6 becoming 1 and persisting, repeat denial and selection retention on re-entry. The resources and original screen use mixed case; the native font now preserves it. Byte 10 becomes 1 on Citadel and Armor Shop entry, and selects the longer armor menu; its complete campaign meaning remains unknown. See [Katrina evidence](M2_KATRINA_EVIDENCE.md) and [Citadel evidence](M2_CITADEL_EVIDENCE.md). These observations do not establish complete BLD behavior or a global property table.
+Earlier Citadel, NPC, shop, banking, Class, save, sprite and first-mission
+findings remain in their evidence reports. The second assignment and sleep
+through the third briefing are now playable; see
+[M2k–M2m evidence](M2_RUBBLE_ANIMATION_EVIDENCE.md).
 
-1. **Next proposed gate:** the second MechWarrior assignment, rubble pickup and carrying a load in a mech's hand, followed by its return/result. Audit the original launch, object/hand state and time rules before implementation. First assignment, 150-credit cap reward and barracks sleep are verified in M2j; later missions and natural Rick/lounge prerequisite progression remain open. All shop goods are purchasable; repair, party assignment and broader recruitment remain separate. See [mission evidence](M2_MISSION_EVIDENCE.md).
-2. Resolve full party/unit footprints, player movement against NPCs and local/world edge wrapping. Eight-direction walking and single loaned-mech movement now pass live original traces, including blocked diagonals. The original performs one destination collision check for both axes. M2f establishes human NPC collision at exact half coordinates. Wider unit branches remain unimplemented; map edge blocking remains approximate.
-3. Establish outer-world stored/procedural boundaries and generation/RNG. The static 64×64 template assertion is insufficient; the observed local working grid is not proof of a global map.
-4. M2i recovers MECHSHAP.CMP player/NPC dispatch and masks, with all 376 crops matching original RAM. Mechs render in a diagnostic preview and the first training mission; ownership/combat/party integration remains future work. Recover ANIMATE.ICN terrain animation, original status/border/menu graphics and other-mode palettes. Live water occlusion and wider NPC/combat animation remain unverified; the historical M1 panel difference is not a current pixel metric. See [sprite evidence](M2_SPRITE_EVIDENCE.md).
-5. Explain original 3913-byte saves versus the reference's 4096 claim; prove original load/save/reload before GAME import/export. Native F5/F9 now uses a checked BTS1 envelope and 448-byte BTPA/version-10 payload, including walking frames, quiz, mission, lounge story and sleep context. Disk round trips cover 137 snapshots; 31 fresh-process states continue identically. M2g BTP7 saves migrate with zero personal-skill ranks. BTP8 and earlier saves restart the missing gait at the stored facing. Older migrations retain their documented limitations; missing historical state is not reconstructed.
-6. Calibrate keyboard repeat/input flushing, animation and day/sleep gates. Native outdoor frames remain one per four 32ms ticks. Primary instructions and the paid-course trace establish saturated outdoor countdowns for bytes 20–22 and indoor suspension. Local allowance/investment rules and the first mission's cap change 50→150, result and sleep gates are verified. Exact DOS timer pacing, later missions and later day progression remain unmodeled; the dream animation request is retained but its playback is absent. F2 records a delay/flush request without reproducing DOS cadence.
-7. Combat requires actual differential traces for recovered formulas, RNG, AI, heat, ammunition and aftermath. EXE salvage strings contradict inferences based only on absence of BLD wording.
-8. Audit all 22 ANMs and reconcile header/dispatch contradictions; determine WWOODBT.SIF and audio/music roles.
-9. Test a Windows build. Decide project licensing/distribution only if that work is requested; do not copy substantial GPL implementation without the user's explicit review.
+1. **Next proposed gate, M3a:** recover and verify the third assignment's
+   stationary-target weapons combat. Start with original launch/target state,
+   attack input, RNG and damage/results before extending tactical combat.
+   Third combat and later missions currently fail visibly; Rick's natural
+   invitation requires fifth-assignment success. Do not invent an earlier unlock.
+2. **Long-route NPC/RNG gap:** first quiz/mission RNG matches, but original
+   outdoor idle intervals packed before movement keys alter NPC arrival timing.
+   Later native quiz draws diverge. The 181-checkpoint comparison uses three
+   explicit original RNG prerequisites; full ordinary original/native NPC/RNG
+   parity is open. The separate native two-mission/rest route uses ordinary
+   inputs with no edits and proves playability, not original RNG equivalence.
+3. Full party/unit footprints, collision with NPCs and local/world edge wrapping.
+   Recorded eight-direction person/mech moves use one destination check.
+   MAP1 human/NPC collisions have bounded coverage; wider unit branches and
+   map-edge blocking remain inferred/approximate.
+4. Outer-world stored/procedural boundaries and generation/RNG. The local
+   64×64 template and 24×24 working grid do not establish a static global world.
+5. Original movement history, status/rank bars, portraits, remaining menu layout
+   and ANIMATE.ICN terrain animation. Original font bytes, frame borders and
+   final dream pixels now match observations. Wider animation contexts, live
+   water occlusion and complete screen equality remain unverified.
+6. Original 3913-byte GAME saves versus the secondary 4096-byte claim. Prove
+   original save/load round trips before import/export. Native saves use BTPC/v12
+   (512-byte payload, 528-byte BTS1 file), preserving rubble/ranks and animation.
+   Historical migrations initialize only state the old format could represent.
+7. Exact DOS keyboard repeat/flush/CPU timing and wider day progression. O0/O8
+   timing uses observed VGA retrace units mapped to 32ms ticks; decode cost and
+   wall-clock pacing remain approximate. Later combat timers, campaign gates
+   and general C61B/C61C skill semantics remain open.
+8. Tactical combat requires actual traces for initiative, targeting/hit-location,
+   damage, heat/ammunition, criticals, AI, salvage and aftermath. EXE salvage
+   strings contradict conclusions based only on missing BLD wording.
+9. All 22 ANMs decode, including valid binary O21; only launch/dream dispatch is
+   supported. Recover remaining campaign playback contexts, WWOODBT.SIF and
+   audio/music roles. Audio remains absent.
+10. Test Windows. Review licensing/distribution if requested; independent C
+    implementation does not establish legal clean-room status or asset rights.
 
-Local Git is now initialized on `main`; incremental commits exclude both supplied directories and proprietary artifacts. No Git configuration changes or pushes occurred. The reference repository remains untouched.
+Local Git on `main` records incremental work without pushes. Both reference
+trees are checked against their original content/mode/mtime baseline, including
+Git metadata. The guard caught an external editor's `vscode-merge-base` addition;
+that isolated addition and timestamps were restored without changing research.

@@ -13,6 +13,15 @@ original six saves/three backups remain untouched and their semantics UNKNOWN.
 No proprietary resource, cached text or native object/pointer is stored in the
 new save file.
 
+**Current M2k–M2m extension:** BTPC/version 12 stores a 512-byte payload in
+the same BTS1 envelope (528 bytes total), adding rubble objective/underlying
+tile, mech ranks/rollback and resumable cutscene state. BTPA/v10 and BTPB/v11
+first-mission migration is checked explicitly; older migrations retain their
+documented limits. Current disk tests cover 175 replay snapshots and 17413
+assertions. Four real-time native F5/F9 checks restore launch, pickup, carrying
+and dream animation with exact subsequent continuation. See
+[rubble/animation evidence](M2_RUBBLE_ANIMATION_EVIDENCE.md).
+
 ## File and failure behavior
 
 M2g initially wrote a 400-byte file: a 16-byte BTS1 envelope and the 384-byte

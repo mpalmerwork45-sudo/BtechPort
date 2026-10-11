@@ -1,6 +1,6 @@
 # BtechPort
 
-Independent C11/SDL2 recreation research for **BattleTech: The Crescent Hawk's Inception**, supplied DOS version 1.03. **M0, M1 and bounded M2a–M2j are complete.** Explore MAP1 with moving NPCs, visit the Citadel, buy all eleven weapons and five armour types, trade investments at ComStar and talk to occupants in both shops and the lounge. The first MechWarrior quiz, loaned-mech mission, result and barracks sleep loop are playable. Paid Citadel classes improve personal weapon skills and obey the original cooldown. Native save/load preserves progress. Jason and the outdoor cadets now use original walking sprites. Text preserves upper/lower case; the campaign remains unfinished.
+Independent C11/SDL2 recreation research for **BattleTech: The Crescent Hawk's Inception**, supplied DOS version 1.03. **M0, M1 and bounded M2a–M2m are complete.** Explore MAP1 with moving NPCs, visit the Citadel, buy all eleven weapons and five armour types, trade investments at ComStar and talk to occupants in both shops and the lounge. The first two MechWarrior assignments, rubble pickup/return and barracks sleep lead to the third assignment’s briefing. Original launch/dream animations, mixed-case font and border graphics now play in the native frontend. Paid Citadel classes improve personal weapon skills and obey the original cooldown. Native save/load preserves progress and active animations. Jason and the outdoor cadets now use original walking sprites. Text preserves upper/lower case; the campaign remains unfinished.
 
 ## Acknowledgements
 
@@ -56,7 +56,7 @@ To open directly on Katrina's first conversation:
 ./build/btech-port --data "Original DOS" --replay tests/fixtures/citadel-katrina.actions
 ```
 
-The runtime reads `MAP1.MTP`, `BTTLTECH.ICN`, `MECHSHAP.CMP`, `CITADEL.BLD`, `COMSTAR.BLD`, `ARMOR.BLD`, `WEAPON.BLD`, `TRAINING.BLD`, `BARRACKS.BLD`, `LOUNGE.BLD`, `BTSTATS.CMP` and ignored `work/talk-data.bin`, which the build prepares reproducibly from `BTECH.EXE`. No Godot/.NET/reference runtime is required. Later missions, armour repair and unsupported interiors stop visibly or remain unavailable. Failed choices roll back partial story/result/equipment/cash/investment/skill changes, and Backspace returns to the menu. Use `citadel-hall.actions` for the first Hall screen.
+The runtime reads `MAP1.MTP`, `BTTLTECH.ICN`, `MECHSHAP.CMP`, `CITADEL.BLD`, `COMSTAR.BLD`, `ARMOR.BLD`, `WEAPON.BLD`, `TRAINING.BLD`, `BARRACKS.BLD`, `LOUNGE.BLD`, `BTSTATS.CMP`, `BTBORDER.CMP`, the original ANMs and ignored `work/talk-data.bin`, which the build prepares reproducibly from `BTECH.EXE`. No Godot/.NET/reference runtime is required. Third-assignment combat, armour repair and unsupported interiors stop visibly or remain unavailable. Failed choices roll back partial story/result/equipment/cash/investment/skill changes, and Backspace returns to the menu. Use `citadel-hall.actions` for the first Hall screen.
 
 To watch the complete two-shop route through native SDL inputs (about 98 seconds, closes automatically):
 
@@ -93,7 +93,7 @@ progression remains deferred.
 Citadel **Class** offers three personal weapon-skill courses. Tuition starts at
 75 and rises by 125 per rank; insufficient funds and mastery use the original
 responses. Successful completion starts the outdoor cooldown. Indoors the
-countdown stops; leaving and waiting allows re-enrolment. The first MechWarrior mission and barracks sleep are now implemented separately from these personal classes.
+countdown stops; leaving and waiting allows re-enrolment. The MechWarrior assignments and barracks sleep are implemented separately from these personal classes.
 
 To watch the ordinary funded course and cooldown route (about 99 seconds):
 
@@ -133,12 +133,12 @@ The earlier isolated handler checkpoint remains available:
 
 Omit `--replay` to start outdoors with the visibly labeled checkpoint; five Up, Enter, three Down, Enter opens the NPC menu. Done returns immediately; selecting the NPC shows the authentic reply. Both menus remember selection independently. This checkpoint supplies controlled occupancy with travel disabled. A quick Citadel visit from the normal start still gets the original empty-room response. Custom resource/cache paths use `--data` and `--dialogue-data`; preparation is documented in [TESTING.md](docs/TESTING.md).
 
-**VERIFIED in scope:** authentic resource decoding and bounded BLD interpretation; earlier movement/Citadel, NPC, two-shop and ComStar routes. M2g adds file integrity and native save/load. M2h adds 64 original Class/funding/cooldown checkpoints and 460 complete outdoor frame comparisons. All 3271 Class replay ticks restore and continue identically in the current state format; 137 disk snapshots and 31 fresh-process restart/continuation states pass. Occupied-shop checks retain their explicit controlled preconditions. **INFERRED:** unobserved movement and broader campaign contexts. **APPROXIMATE:** remaining UI imagery, independent mixed-case font/layout, input cadence and map edges. **UNKNOWN/unimplemented:** later MechWarrior missions and day progression, world/party rules, repair, combat, original GAME compatibility, terrain/scene animation, audio and the full campaign. Unknown operations fail visibly. The older NPC capture's 68 missing movement intervals remain reported and skipped.
+**VERIFIED in scope:** authentic resource decoding, bounded BLD interpretation and earlier movement/Citadel/NPC/shop/ComStar routes. Current disk checks cover 175 replay snapshots; 31 historical fresh-process continuations and 100 new mission/animation restarts pass. Original font bytes, 183 border cells and the final dream image match the original. M2k/l compares 181 original state/text checkpoints with three explicit RNG prerequisites: long outdoor wait/arrival timing still differs. A separate 3940-tick native route reaches both mission results, sleep and the third briefing using ordinary inputs with no state edits. **INFERRED:** wider movement/campaign contexts. **APPROXIMATE:** remaining UI layout/status graphics, input/animation cadence and map edges. **UNKNOWN/unimplemented:** third-assignment combat and later progression, world/party/repair, original GAME compatibility, terrain animation, audio and the full campaign. Unknown operations fail visibly. The older NPC capture's 68 missing movement intervals remain reported and skipped.
 
 **M2i sprites:** all 376 original sprite crops match the EXE's RAM, and walking tests
 cover 30 player checkpoints, four exact player pixel crops and 63 NPC frame steps.
 Save/load retains walking frames; older saves start a new gait at their stored
-facing. Mechs are available in a separate animated preview and in the first training mission; ownership, later missions and combat remain incomplete. See [sprite evidence](docs/M2_SPRITE_EVIDENCE.md).
+facing. Mechs are available in a separate animated preview and in the first two training missions; ownership, later missions and combat remain incomplete. See [sprite evidence](docs/M2_SPRITE_EVIDENCE.md).
 
 ```sh
 ./build/btech-port --sprite-preview
@@ -153,9 +153,13 @@ mech diagram. Select the correct names, accept the first assignment, then choose
 Locust, Wasp or Chameleon. Drive to the southeast corner (x>=120,y>=124),
 acknowledge its message and return to x<=60,y=73..79. Terrain adds to the timer;
 success raises the allowance cap to 150. A successful first assignment unlocks
-the barracks dream/sleep sequence, which clears the training cooldown. Later
-assignments display an explicit diagnostic. Dream animation and audio remain
-unimplemented. The lounge supports ordinary Talk and the verified Rick/device
+the barracks dream/sleep sequence, which clears the training cooldown. The second
+assignment chooses one of eight rubble locations: stand beneath it to pick it up
+automatically in a Wasp or Chameleon, then return to the same reporting area.
+The Locust cannot carry rubble. Second success raises the allowance cap to 250.
+The third assignment requires sleep, then offers the original weapons briefing;
+its combat launch displays an explicit diagnostic. Launch and dream animations
+play with the original artwork; audio remains unimplemented. The lounge supports ordinary Talk and the verified Rick/device
 branch; that branch's later campaign prerequisite is not yet naturally unlocked.
 
 To start inside the loaned Locust after ordinary entry and quiz inputs, or watch
@@ -176,8 +180,28 @@ an explicit occupancy/story prerequisite. The mission/sleep and diagonal routes
 use ordinary inputs. Native SDL, F5/F9, keypad bank entry and sanitizer checks
 pass. See [mission and diagonal evidence](docs/M2_MISSION_EVIDENCE.md).
 
+**M2k–M2m:** second-assignment pickup, carrying, return/reward and third-assignment
+rest gating are playable. All 22 ANMs decode independently; O0 launch and O8 dream
+play in their verified contexts. The original 8×8 font and BTBORDER graphics replace
+the provisional UI assets; Yes/No entrance text is aligned inside its frame.
+See [rubble, story and animation evidence](docs/M2_RUBBLE_ANIMATION_EVIDENCE.md).
+
+```sh
+./build/btech-port --smoke-replay --replay tests/fixtures/ordinary-rubble-story.actions
+python3 tools/verify_m2kl.py
+python3 tools/native_smoke.py --rubble-only
+```
+
+The first command watches both missions, sleep and the third briefing at normal
+speed (about 126 seconds), then closes. Omit `--smoke-replay` to continue from
+the third mech menu. Automated window tests use `--smoke-fast`: the same route
+measured 3.63 seconds instead of its normal 126.24-second tick duration, about
+35× faster for this replay. Inputs, state and final image remain identical;
+short keyboard, animation and F5/F9 tests retain real-time pacing. This is a
+measured test improvement, not a whole-project speed estimate.
+
 The bounded DOSBox harness runs whole JSON input sequences on a private virtual display, captures frames/state and closes automatically. It uses no interactive terminal input, so the former per-key approval loop is removed. Original binaries, screenshots and memory dumps remain in ignored directories.
 
 Read [the milestone review](docs/PROJECT_STATUS.md), [testing](docs/TESTING.md), [banking and shop Talk evidence](docs/M2_BANKING_EVIDENCE.md), [shop purchase evidence](docs/M2_SHOPS_EVIDENCE.md), [NPC travel evidence](docs/M2_NPC_EVIDENCE.md), [Talk evidence](docs/M2_TALK_EVIDENCE.md), [Katrina evidence](docs/M2_KATRINA_EVIDENCE.md), [Hall evidence](docs/M2_CITADEL_EVIDENCE.md), [inventory](docs/ORIGINAL_FILES.md), [audit](docs/RESEARCH_AUDIT.md), [language decision](docs/LANGUAGE_DECISION.md) and [open questions](docs/OPEN_QUESTIONS.md). New code is under `port/`, automation under `tools/`/`scripts/`, regressions under `tests/`.
 
-Both supplied reference directories remain unchanged. A local Git repository on `main` records incremental milestones; originals, reference checkout, generated assets and dependencies are ignored. No pushes or Git configuration changes were made. No substantial GPL source was copied or translated into the runtime; this does not establish legal clean-room status or permission to redistribute proprietary assets.
+Both supplied reference directories remain unchanged. A local Git repository on `main` records incremental milestones; originals, reference checkout, generated assets and dependencies are ignored. No pushes were made. The final reference guard also checks the reference repository’s Git metadata. No substantial GPL source was copied or translated into the runtime; this does not establish legal clean-room status or permission to redistribute proprietary assets.
