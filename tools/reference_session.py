@@ -226,6 +226,21 @@ def snapshot_game(pid, label, output):
         row["script_buffer_segment"]=hex(script_segment)
         row["building_index"]=u16(u16(ds+0x5480)*16+0x3ff8)
         row["story_state_bytes"]=list(ram[state+0xd30c:state+0xd36a])
+        row["allowance_cap"]=u16(state+0xd33f)
+        row["investments"]=list(struct.unpack_from("<3I",ram,state+0xd374))
+        row["party_active_bytes"]=list(ram[state+0xc614:state+0xc614+17*8:17])
+        row["equipment"]={"weapon":ram[state+0xc61f],"armor":ram[state+0xc621],
+            "armor_points":ram[state+0xc622]}
+        menu=u16(ds+0x56b6)*16
+        row["menu_choices"]={str(i):u16(menu+0x98+16*i) for i in (8,12,13,14,15,16,30)}
+        row["building_payloads"]={}
+        for name in ("ARMOR","WEAPON"):
+            encoded=(WORK/("dos/"+name+".BLD")).read_bytes()[2:]
+            body=bytes(((value+41)&255)^233 for value in encoded)
+            offset=ram.find(body)
+            if offset>=0:
+                row["building_payloads"][name]={"guest_offset":hex(offset),
+                    "sha256":hashlib.sha256(body).hexdigest()}
         row["npc_rng"] = list(ram[ds+0x4fc0:ds+0x4fc3])
         row["npc_phase"] = ram[ds+0x57fe]
         row["npc_search"] = [u16(ds+0x315a), u16(ds+0x315c)]
