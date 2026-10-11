@@ -1,4 +1,4 @@
-# Build, verification and original oracle — M2a, 2026-10-11
+# Build, verification and original oracle — M2b, 2026-10-11
 
 ## Native commands
 
@@ -8,6 +8,7 @@ Run from `/home/mpalmer/BtechPort`:
 ./scripts/build.sh
 ./build/btech-port --data "Original DOS"
 ./build/btech-port --data "Original DOS" --replay tests/fixtures/citadel-hall.actions
+./build/btech-port --data "Original DOS" --replay tests/fixtures/citadel-katrina.actions
 ./scripts/test.sh
 ./scripts/test-sanitize.sh
 ```
@@ -30,27 +31,63 @@ Arrows move/select; Enter or Space confirms/continues; Backspace declines entry 
 ./build/btech-headless --data "Original DOS" --replay work/my-walk.actions --trace --frame work/my-walk.ppm
 ```
 
-Recording includes idle ticks. Restart is visibly refused during recording because reset is not a supported replay action. Unknown actions fail with a diagnostic. The bounded BLD interpreter supports the Citadel menu, Hall of Legends and exit; other choices stop with the unsupported opcode and payload address. Headless replay returns a failing exit code on script errors and can still write their requested diagnostic frame. Backspace/`cancel` explicitly returns to the menu without invented quest effects.
+Recording includes idle ticks. Restart is visibly refused during recording because reset is not a supported replay action. Unknown actions fail with a diagnostic. The bounded BLD interpreter supports the Citadel menu, Hall, first Katrina visit, repeat denial and exit/re-entry. Combat class stops at `F5 04` after its introductory pause; talk stops at `F5 0C`. Headless errors return a failing exit code and can still write a diagnostic frame. Partial story writes from failed choices roll back, including across a restored pause; Backspace/`cancel` recovers to the menu. This is an explicit prototype recovery control, not original behavior.
 
-`BTP2` is a tested 64-byte **internal core encoding**, preserving mode, pending entrance, VM position, text range, pause request, menu choice and 16 state bytes. Legacy 24-byte BTP1 states still decode. Tests restore during entry, every Hall wait, menu, fault and exit and compare subsequent encoded state. This is not an original GAME save feature or a native save/load UI.
+`BTP3` is a tested 128-byte **internal core encoding**, preserving mode, pending entrance, VM position, text spans, pause request, menu choice, 23 state bytes and the recovery checkpoint. Legacy 24-byte BTP1 and 64-byte BTP2 decode; a real Hall pause migrates and continues identically. Tests restore entry, all Hall waits, both Katrina pauses, repeat denial, menu, fault, exit/re-entry and a class pause before failure. This is not an original GAME save feature or a native save/load UI.
+
+The first 59 bytes retain the BTP2 field positions, with magic/version changed to BTP3/3. All words and ticks are little-endian; reserved bytes are zero. Additional fields:
+
+| Byte offsets | BTP3 field |
+|---|---|
+| 59–65 | State bytes 16–22; bytes 0–15 remain at 24–39 |
+| 66 | Text span count, bounded to eight |
+| 68–99 | Eight `(offset,length)` pairs of 16-bit words; unused pairs are zero |
+| 100–122 | Story checkpoint for rollback of an unfinished menu choice |
+| 123 | Checkpoint-valid byte |
+| 67, 124–127 | Reserved zero bytes |
+
+`text_offset` references the first span; `text_length` is the combined length. Rendering and trace hashes concatenate exact bytes without separators, preserving case. Out-of-window state indexes, more than eight text spans, malformed operands/targets and instruction-budget exhaustion stop explicitly. The modeled state window is `D30C[0..22]`, not a complete campaign-state model.
 
 ## Passed checks and scope
 
 | Check | Actual result | What it establishes |
 |---|---|---|
-| CTest `core-formats-state-pixels` | PASS, 65 assertions | Literal/signed/long RLE, malformed/truncated/overflow rejection, block boundaries, movement, collision offset, edges, deterministic state restoration, serialization validation, rendering/palette regression. |
-| CTest `script-bounds-dispatch` | PASS, 24 synthetic assertions | BLD size/decrypt, truncated operands/text, unsupported operations/font/scene/menu, invalid targets, bounded loops and input wait/selection. |
-| `build/btp-tests "Original DOS"` | PASS, 231 assertions including synthetic checks | All 14 MTPs and 12 graphics decode; raw MAP15 rejected; integrated Citadel entry/decline/dialogue/exit and error recovery; exact entrance halves; validated BTP2 restoration and BTP1 migration. |
-| `build/btp-script-tests "Original DOS"` | PASS, 47 assertions including synthetic checks | Authentic Citadel menu, all six Hall text ranges/waits, jump-back selection retention, `FF` exit and three explicit unsupported branches. |
+| CTest `core-formats-state-pixels` | PASS, 68 assertions | Literal/signed/long RLE, malformed/truncated/overflow rejection, block boundaries, movement, collision offset, edges, deterministic state restoration, serialization validation, palette and case-preserving glyph regression. |
+| CTest `script-bounds-dispatch` | PASS, 53 synthetic assertions | BLD size/decrypt, truncated operands/text, unsupported operations/index/font/scene/menu, invalid targets, bounded loops, byte wrapping, signed table selection, conditional dispatch, concatenation/clear and span limit. |
+| `build/btp-tests "Original DOS"` | PASS, 319 assertions including synthetic checks | 14 MTPs and 12 graphics decode; raw MAP15 rejected; entry/decline/Hall/Katrina/repeat/exit/re-entry; exact entrance halves; BTP3 pause restoration, malformed spans and BTP1/BTP2 migration; failed-choice rollback across restored pauses. |
+| `build/btp-script-tests "Original DOS"` | PASS, 88 assertions including synthetic checks | Authentic Citadel menu, Hall text ranges/waits, first Katrina text assembly/byte changes, repeat denial, retained selection, `FF` exit and visible class/talk native-action faults. |
 | Python unpacker tests | PASS, 3 tests | Synthetic backward repeat/prefix, malformed EXEPACK header/run rejection, actual original unrelocated-image length/hash/anchor. |
 | Canonical original replay | PASS, 31 states / 30 actions, all four directions | Native positions/gate match original cursor **and party member 0**, including repeated wall/hedge blocks and west-wall offset. Not a claim about all parties/scenes. |
 | Citadel differential projection | PASS, 16 original checkpoints / 20 native states | Cursor/party[0], gate, 16 state bytes, pending step and exit; seven text digests, six waits and retained selection. Original credits stay 35; economy itself is absent from the native core. Modes and text order were checked visually; PC is bytecode-derived. |
+| Katrina differential projection | PASS, 20 original checkpoints / 20 native states | Cursor/party[0], gate, bytes 0–21 in this route, first-visit byte 6 persistence, repeat denial, exit/re-entry highlight and four text hashes including three-block assembly. Script-set byte 22 is compared only before outdoor countdown resumes. Original credits stay 35. Screens identify modes/highlights; PC is bytecode-derived. |
 | Repeat and unknown input | PASS | Identical replay output is byte-identical; unsupported logical actions fail. |
-| Native SDL dummy + private X11 smoke | PASS, movement and Citadel scenarios | Window, queued SDL arrow/confirm events, texture presentation and bounded exit. Recorded movement (8 ticks) and Citadel (24 ticks) inputs replay to the same canonical state. |
-| ASan / UBSan / LeakSanitizer | PASS, core/data/pixels/VM + corpus + both canonical replays | No detected address, undefined-behavior or leak errors in those paths. SDL frontend is not sanitizer-tested. LeakSanitizer requires execution outside the ptrace sandbox. |
+| Native SDL dummy + private X11 smoke | PASS, movement, Hall and Katrina scenarios | Window, queued SDL arrow/confirm events, texture presentation and bounded exit. Recorded movement (8 ticks), Hall (24 ticks) and Katrina/re-entry (24 ticks) inputs replay to the same canonical states. |
+| ASan / UBSan / LeakSanitizer | PASS, core/data/pixels/VM + corpus + all three canonical replays | No detected address, undefined-behavior or leak errors in those paths. SDL frontend is not sanitizer-tested. LeakSanitizer requires execution outside the ptrace sandbox. |
 | Reference guard | PASS, 1287 entries | Both supplied trees match baseline hashes, modes, modification times, directory entries and symlinks; includes reference `.git/`. Access times are intentionally excluded. |
 
-`./scripts/test.sh --x11` adds both private-display native scenarios and closes automatically. Under Codex, GUI processes require approval for the whole script; there is no interactive terminal or per-input approval. Plain `test.sh` uses SDL's dummy driver and needs no display or audio device. Sanitizers cover headless paths, including software rendering through C tests; they do not claim SDL/backend instrumentation.
+`./scripts/test.sh --x11` adds all three private-display native scenarios and closes automatically. Under Codex, GUI processes follow whole-script approval rules; there is no interactive terminal or per-input approval. Plain `test.sh` uses SDL's dummy driver and needs no display or audio device. Sanitizers cover headless paths, including software rendering through C tests; they do not claim SDL/backend instrumentation.
+
+## Katrina original comparison
+
+[Katrina evidence](M2_KATRINA_EVIDENCE.md) records primary bytecode/machine-code findings and the bounded first-visit/repeat/exit/re-entry trace:
+
+```sh
+python3 tools/reference_session.py --script tools/reference-katrina.json
+python3 tools/verify_m2b.py --reference-run work/reference-runs/1791683236787259649
+```
+
+Substitute the printed run directory for a fresh comparison. The successful original run has 20 checkpoints; the verifier matches cursor and party[0], bytes 0–21, recorded credits and full decrypted RAM payloads against the committed factual fixture and native replay. Four text hashes check original case and exact concatenation. Screens were inspected to establish dialogue order, modes and selection; the verifier does not infer them from an assumed DOS mode byte.
+
+**Explicit exclusion:** the original sets byte 22 to 255, freezes it in the building, then counts down outdoors. The recorded exit/re-entry values depend on elapsed original-loop timing. Native state retains 255; no equality is claimed for that field after exit. Byte 6 does persist across exit/re-entry and is compared. Broader timer/day/economy parity is unfinished.
+
+Without DOSBox:
+
+```sh
+python3 tools/verify_m2b.py
+./build/btech-headless --replay tests/fixtures/citadel-katrina.actions --trace --frame work/katrina.ppm
+```
+
+`--smoke-katrina` exercises the 19-action loop through queued SDL events, then five idle ticks, ending on the re-entered menu with Leave selected. Native records are replayed against the same canonical state. Case-sensitive text rendering was also inspected in the generated native frame; original glyph shapes, wrapping and scene imagery remain approximate. Later trained-player Katrina paths, class/talk native actions, countdown timing and original saves are not established by these tests.
 
 ## Citadel original comparison
 
@@ -113,7 +150,7 @@ All 64,000 independently decoded C BTTLTECH pixels match the secondary reference
 
 **VERIFIED for that frame:** 42,625 / 43,200 right-panel pixels equal, **98.669%**. The remaining 575 pixels include omitted NPC/sprite overlays and the approximate player marker; their complete causes are not assigned without further tests. The independently drawn left diagnostic panel replaces original status/animation/menu graphics. Whole-screen equality is not claimed. Palette/camera parity for other graphics modes remains **UNKNOWN**.
 
-Remaining differences: no NPCs/followers, campaign quest progression, allowance, shops, encounters, combat, original GAME saves, ANM playback or audio. M2a executes only the verified Citadel subset and reproduces its recorded 16-byte state projection; this is not a complete story-state model. Font/layout, Citadel imagery, tick/repeat/flushing cadence, edge blocking and player marker remain approximate. There is no original Citadel whole-screen pixel-parity claim.
+Remaining differences: no NPCs/followers, later campaign progression, allowance/day/countdowns, shops, encounters, combat, original GAME saves, ANM playback or audio. M2b executes a bounded Citadel subset and compares the stated route projections, including the first visit result; this is not a complete story-state model. Resource case is preserved with independently drawn lowercase glyphs. Glyph shapes/layout, Citadel imagery, tick/repeat/flushing cadence, edge blocking and player marker remain approximate. There is no original Citadel whole-screen pixel-parity claim.
 
 ## Dependency provenance
 
@@ -128,4 +165,4 @@ Packages were downloaded through the configured Ubuntu archive with `apt-get dow
 | libsdl2-dev 2.32.4+dfsg-1 amd64 | `local-deps/sdl2/` | `90a21699bdb8f6f491b92dba345a85b1ab865c54cd59c527b91603a2d1a13b17` |
 | xvfb 2:21.1.18-1ubuntu1.1 amd64 | `local-deps/xvfb/` | `a980a874e0b5663ada7ff1f145ce91b87ba03a40bd5d4fde335bf6d0f1a4ed06` |
 
-The harness supplies a process-local library path for DOSBox's extracted libraries and dummy audio. X11/XTest libraries and fonts were already present. There is no audio device dependency in the slice. These packages are local ignored dependencies, not new implementation source. No new dependencies were needed for M2a.
+The harness supplies a process-local library path for DOSBox's extracted libraries and dummy audio. X11/XTest libraries and fonts were already present. There is no audio device dependency in the slice. These packages are local ignored dependencies, not new implementation source. No new dependencies were needed for M2a or M2b.

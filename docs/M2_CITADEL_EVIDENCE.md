@@ -2,6 +2,8 @@
 
 Scope: MAP1 north entrance → Hall of Legends → six text screens → menu → leave → one south step. The original executable remains the authority. This is a bounded M2a step, not completed M2 campaign foundations.
 
+This records the historical M2a scope and results. [M2b Katrina evidence](M2_KATRINA_EVIDENCE.md) adds first-conversation support, mixed-case rendering, state branches and BTP3 restoration. [Current project status](PROJECT_STATUS.md) gives the supported slice today.
+
 ## Original observations
 
 **VERIFIED:** the supplied `CITADEL.BLD` is 4330 bytes; its little-endian size word is 4328. Decode the payload after that word with `((byte + 41) & 255) ^ 233`. Its SHA-256 is `7e64ec068d521347b52cf819344c9d5acf6ad0b10b84b9ebaca91cbf88673fd7`. All 4328 decoded bytes match guest RAM at `0x2A3E0` (runtime segment `0x2A34`, offset `0xA0`). `0FDC:1D30` supplies corroborating loader/decryption evidence. Disk offsets, script-relative addresses and runtime addresses must remain distinct.
