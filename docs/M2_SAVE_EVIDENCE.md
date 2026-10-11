@@ -15,7 +15,9 @@ new save file.
 
 ## File and failure behavior
 
-M2g writes a 400-byte file: a 16-byte BTS1 envelope and the 384-byte BTP7 payload.
+M2g initially wrote a 400-byte file: a 16-byte BTS1 envelope and the 384-byte
+BTP7 payload. M2h writes 432 bytes with the 416-byte BTP8 payload and accepts
+M2g saves, adding zero skill ranks and no active course when migrating.
 The envelope contains magic, little-endian payload length and CRC32, followed by
 four reserved zero bytes. The active building script is selected from the
 serialized entrance slot; the existing versioned decoder validates the complete
@@ -45,14 +47,14 @@ python3 tools/native_smoke.py --save-only
 ./scripts/test-sanitize.sh
 ```
 
-**VERIFIED:** 7687 file-suite assertions, including 89 authentic replay phase/
+**VERIFIED at M2g:** 7687 file-suite assertions, including 89 authentic replay phase/
 amount snapshots. Each disk-restored state re-encodes identically and continues
 identically under every logical action. The suite covers empty/partial files,
 bad magic/length/CRC/reserved bytes, missing parents, invalid states, pending-file
 collision, prior-slot preservation and repeated replacement. The source routes
 include bank receipts/input, Hall/Katrina, both purchases and occupied-shop Talk.
 
-The independent CLI verifier starts fresh processes for 22 states, compares full
+The M2g CLI verifier starts fresh processes for 22 states, compares full
 canonical JSON after loading, then compares 1024-tick continuation with the
 uninterrupted route. It independently recomputes CRC32 on a semantically invalid
 payload to establish that the game-state decoder still rejects it. Failed
@@ -70,6 +72,13 @@ and visible F5/F9 hints were inspected in the generated native frame.
 All six CTest suites, earlier differential routes and the new disk/restart
 checks pass. Headless ASan/UBSan/LeakSanitizer pass; SDL/backend remains outside
 sanitizer instrumentation. Both reference trees match all 1287 guarded entries.
+
+**M2h extension:** 11972 file assertions / 137 replay snapshots and 31 fresh-
+process states now include course menus/transcripts, skill increases, completion
+and cooldown. Every restored state continues identically; BTP7/BTS1 migration
+is checked with an independently computed CRC. Invalid rank and bank states
+with otherwise valid CRCs are rejected. All seven current CTest suites and
+headless sanitizers pass; native F5/F9 was rechecked after the format extension.
 
 ## Commands
 

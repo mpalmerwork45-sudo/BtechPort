@@ -1,7 +1,7 @@
 # M2h — paid Class and outdoor cooldown evidence
 
-Research audited on 2026-10-11. Implementation and milestone verification are
-in progress. This is the first paid personal-skill training loop; MechWarrior
+Research and bounded implementation verified on 2026-10-11. This is the first
+paid personal-skill training loop; MechWarrior
 training missions, mission results and barracks sleeping remain separate work.
 
 ## Authority and reproducible original runs
@@ -72,7 +72,46 @@ fields in this frame observer and are not claimed as per-frame measurements.
 
 ## Bounded implementation and verification
 
-To be completed with the final implementation results and native checks.
-Higher-rank tuition, all three subjects and mastery can be checked directly
-against the primary instructions; only the first subject's first paid course
-is claimed as live original paid-course parity in these ordinary traces.
+The independent `school.c` service handles F5 04/05 and menu 9 through the real
+Citadel bytecode. The three ranks, selected course, pre-course rank, result and
+rollback ranks are explicit serializable state. The frontend draws the original
+mixed-case menu and transcript from bounded BLD/cache references, with dynamic
+tuition. Its font, layout and pacing remain APPROXIMATE.
+
+The BTT3 cache contains 55 strings in 1889 bytes (292-byte header, 1597-byte
+blob). BTP8 contains 416 bytes: existing offsets through 383 remain stable;
+384–386 hold ranks, 387–389 rollback ranks, 390–393 course phase/index/before/
+outcome, and 394–415 are reserved zero. M2g BTP7 saves migrate with zero ranks
+and no active course. The BTS1 disk envelope makes current files 432 bytes.
+
+```sh
+build/btp-school-tests "Original DOS"
+python3 tools/verify_m2h.py
+python3 tools/verify_m2g.py
+python3 tools/native_smoke.py --school-only
+./scripts/test.sh
+./scripts/test-sanitize.sh
+```
+
+PASS: 59197 school assertions; all 3271 original-route ticks restore/re-encode/
+continue identically; all 64 original checkpoints match. The separate 70-field
+frame tests match 204 funding frames/205 samples and 256 cooldown frames/257
+samples, with no skipped gaps. Tests cover all three subjects and four paid
+rank increases, one-below/exact tuition, mastery, 32-bit cash borrow, Withdraw,
+indoor clock suspension, saturated countdowns, malformed/atomic state rejection,
+BTP7 migration and rollback after an unsupported post-debit continuation.
+
+Current disk tests cover 137 replay snapshots and 31 fresh-process restart
+states, including Class introduction, offer, paid transcript, completion,
+cooldown, outdoor wait and next-course refusal. Native X11 runs all 3093 SDL
+ticks of the funded route, matches the complete recorded headless state, then
+passes the F5/F9 amount-restoration regression. Menu, completion and refusal
+render captures were inspected. All seven CTest suites, previous differential
+routes and headless ASan/UBSan/LeakSanitizer pass. Both reference trees remain
+unchanged across all 1287 guarded entries.
+
+Higher-rank tuition, all subjects and mastery are VERIFIED against primary
+instructions and boundary tests; only the first subject's first paid course
+is claimed as live original paid-course parity. This completes bounded M2h,
+without establishing MechWarrior mission outcomes, barracks sleep or the full
+campaign day cycle.

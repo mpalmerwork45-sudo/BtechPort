@@ -1,14 +1,9 @@
-# Project status — M2g complete, M2h in progress, 2026-10-11
+# Project status — M2g/M2h complete; sprite follow-up in progress, 2026-10-11
 
-**M0, M1 and bounded M2a–M2g are complete. The user authorized M2g and M2h
-together; continue through the bounded training audit/implementation.**
-M2g adds F5 save/F9 load and checked restart/continuation from internal saves.
-ComStar now supports its original three investment accounts, account inspection,
-buying/selling, numeric entry, boundary responses and return to MAP1. Outdoor
-allowances and investment changes follow the audited local rules. Talk works in
-both shops, including empty rooms, multiple occupants, Done and original replies.
-Earlier Citadel, NPC and two-shop purchase routes continue to pass. The campaign
-and remaining M2 systems are unfinished.
+**M0, M1 and bounded M2a–M2h are complete.** M2g adds native internal save/load.
+M2h adds the first verified paid Class → skill increase → outdoor cooldown →
+re-enrolment loop. The user has now also requested authentic player, NPC and
+mech sprites; that rendering audit is the active follow-up.
 
 ## Milestones
 
@@ -18,124 +13,117 @@ and remaining M2 systems are unfinished.
 | M1 | Native MAP1 exploration and terrain collision |
 | M2a | Citadel entry, six Hall screens and exit |
 | M2b | First Katrina conversation and repeat denial |
-| M2c | Verified native Talk/Done/reply; explicit controlled checkpoint |
+| M2c | Native Talk/Done/reply; explicit controlled checkpoint |
 | M2d | MAP1 NPC travel; conversation reachable through exploration |
 | M2e | Two shop purchases, confirmations, local allowance and persistence |
 | M2f | ComStar investments/returns, banking boundaries and Talk in both shops |
-| M2g | One internal save slot, native controls, file integrity and restart continuation |
-| In progress M2h | First paid Class course, original cooldown/progression audit |
-| Remaining M2 | Wider inventory/shops, day/training, maps/world and campaign foundations |
+| M2g | One internal save slot, native controls, integrity and restart continuation |
+| M2h | Paid personal-skill classes, tuition/refusals, outdoor cooldown and re-enrolment |
+| Active follow-up | Original player/NPC/mech sprite data, selection and masking audit |
+| Remaining M2 | MechWarrior training/day progression, wider inventory/shops, maps/world and campaign foundations |
 | M3–M5 | Verified tactical combat; original campaign; optional separate enhancements |
 
-## Actual working result
+## Play and verify
 
 ```sh
 ./scripts/build.sh
 ./build/btech-port --data "Original DOS"
-./build/btech-port --smoke-replay --replay tests/fixtures/reference-bank.actions
-./build/btech-port --replay tests/fixtures/reference-bank-rates.actions
-./build/btech-port --shop-talk-checkpoint armor
-./build/btech-port --shop-talk-checkpoint weapon
+./build/btech-port --smoke-replay --replay tests/fixtures/reference-class-funded.actions
+./build/btech-port --replay tests/fixtures/reference-class-funded.actions
 ./scripts/test.sh
-python3 tools/native_smoke.py --m2f-only
+python3 tools/native_smoke.py --school-only
 ./scripts/test-sanitize.sh
 ```
 
-The first banking replay runs ordinary movement, buys 30 DefHes from the initial
-35 cash, sells 7, checks excessive/zero/unfunded requests, sells the remainder
-and returns outdoors with 35 cash and empty investments. `--smoke-replay` sends
-the entire input sequence through SDL and closes after about 13 seconds. Omit it
-to continue interactively. The rates replay opens on accounts showing cash 18
-and investments `[31,0,2]`, after the verified two-wrap outdoor wait.
+The course demonstration follows ordinary inputs: invest the initial 35 at
+ComStar, wait, sell 72, return to Citadel with 87, pay tuition 75, improve the
+first skill, observe the immediate enrolment refusal, wait outdoors and return
+to the next offer. The SDL replay takes about 99 seconds and closes. Omitting
+`--smoke-replay` opens an interactive window after this route, with rank 1 and
+27 cash. The next tuition is 200. No money or mission progress is injected.
 
-The two `--shop-talk-checkpoint` commands are explicitly labeled handler demos:
-each starts inside that shop with two controlled occupants and travel disabled.
-Choose **Talk to others**, select a name or Done, and continue the reply. In
-ordinary gameplay, occupancy comes from NPC travel; the demo is never injected.
-The existing `--smoke-shops --replay tests/fixtures/reference-shops.actions`
-route still buys the flak vest and knife and returns with 13 cash.
+Arrows move/select; Enter/Space confirms/continues; F3 toggles diagnostics,
+R restarts and Esc exits. Bank amounts use digits, Backspace erasure, Escape
+to clear to zero and Enter to submit. Elsewhere Backspace declines entry or
+recovers an unsupported choice.
 
-Arrows move/select; Enter/Space confirms/continues; F3 diagnostics, R restart,
-Esc exit. **Bank amounts use digits, Backspace to erase, Escape to reset to 0,
-and Enter to submit.** Space does not submit an amount. Elsewhere Backspace
-declines entry or recovers unsupported choices. Other goods, repair and Class
-still fault visibly; recovery rolls back the failed choice before restoring the
-building menu. No save/load UI or original GAME compatibility is claimed yet.
+**F5 saves and F9 loads** `work/player-save.btp`. `--save-file FILE` selects a
+slot; `--load FILE` restores before a replay; `--save FILE` writes on successful
+exit. Partial amounts, dialogue, skill progress and course pauses survive.
+Failed loads preserve the session. Loading while recording is visibly refused
+because the logical action log cannot represent a rewind.
 
-Runtime resources are authentic MAP1/BTTLTECH/CITADEL/COMSTAR/ARMOR/WEAPON and an
-ignored, reproducible EXE dialogue cache. Python supports conversion/tests; the
-C game has no Godot/.NET/reference runtime dependency. [README](../README.md)
-and [TESTING](TESTING.md) provide controls, paths and commands.
+The earlier bank, shop, Hall/Katrina and NPC routes remain playable. Other goods,
+repair, additional interiors and campaign progression remain incomplete.
+Unsupported operations fail visibly and recover the failed choice's state.
+Resources are loaded from the original files plus a reproducible local EXE text
+cache; the C runtime has no Godot/.NET/reference runtime dependency.
 
-## Evidence, verification and limits
+## Evidence and verification
 
-**VERIFIED in scope:** 160 new original checkpoints: 33 banking, 29 outdoor-return
-economy, 28 empty Armor and 48 empty Weapons route checkpoints, plus 11 occupied
-Talk checkpoints per shop. Ordinary bank/empty-shop paths use unpatched DOS
-gameplay. Occupied-shop checks explicitly control two NPC occupancy pairs and
-the result byte in a working emulator, with before/after audits. They establish
-the handler under those preconditions, not a naturally reached occupied-shop
-state. Text hashes, complete decrypted BLD bytes in RAM, original native string
-bytes, party/cursor, cash/accounts, result flags and menu memory all pass.
-See [banking and Talk evidence](M2_BANKING_EVIDENCE.md).
+**M2g VERIFIED implementation:** 137 disk round-trip snapshots from authentic
+replay phases and input states, with identical continuation under every logical
+action; 31 fresh-process save/restart states, each compared through another
+1024 ticks. These current totals include the M2h extension. Malformed, truncated,
+wrong-CRC, semantically invalid and missing files are rejected. Failed writes
+preserve the earlier slot. Native F5/F9 restores a partially typed amount and
+continues the same transaction. See [save evidence](M2_SAVE_EVIDENCE.md).
 
-The economy trace compares **459 complete outdoor frame steps / 460 samples**,
-including all eight NPCs, loop counter, RNG, search/bias, cash and three balances.
-It observes `[30,1,1]` with cash 3 becoming `[31,0,2]` with cash 18; total assets
-51 then suppress the next allowance/returns. Primary instructions establish
-unsigned transfers, clipped requests, seven-digit editing and arithmetic rules.
-The trace also exposed an NPC collision error: the human cadet occupies one
-half-coordinate, while the wider footprint branch applies to other unit slots.
-The corrected helper passes both this full trace and the earlier NPC corpus.
+**M2h VERIFIED in scope:** 64 original checkpoints (15 first-visit/refusal and
+49 ordinary funding/course/cooldown checkpoints), exact BLD/native text hashes,
+cash, skills, flags, selectors and outdoor timer. The original pays 75 from 87,
+raises skill `[0,0,0]` to `[1,0,0]`, sets cooldown 255 and refuses another class
+until it reaches zero. The next offer costs 200. All 3271 replay ticks restore,
+re-encode and continue identically. Two additional read-only captures compare
+460 complete outdoor frames / 462 samples across all 70 recorded NPC, RNG,
+search, cash and account fields. Countdown/rank parity is established by the
+separate RAM checkpoints, not added retroactively to that observer.
+See [training evidence](M2_TRAINING_EVIDENCE.md).
 
-PASS: five CTest suites; 420 core, 94 script, 1741 NPC, 30928 shop and 78178
-bank/Talk assertions; four Python tests; all prior differential routes and all
-new bank/shop-Talk routes. **All 7297 new replay ticks restore, re-encode and
-continue identically**, including transaction input and replies. Five new private
-X11 checks cover bank, rates, both occupied-shop Talk routes and amount editing
-through actual SDL events. Complete final JSON equals each headless recorded
-replay; Escape clears an amount without closing the window. Headless
-ASan/UBSan/LeakSanitizer pass. SDL/backend is not sanitizer-instrumented.
-Mixed-case account, amount, receipt, clipped/zero transaction and shop Talk
-frames were inspected. All 88 original hashes match; **1287 reference entries
-remain unchanged**, including reference Git metadata, modes and mtimes.
+Primary instructions establish all three subjects, tuition `75 + 125 * rank`,
+exact debit, insufficient-funds and mastery refusals. Boundary tests cover all
+subjects/ranks, high-word cash subtraction, Withdraw, rollback and invalid
+states. Only the first subject's first paid course is claimed as live original
+paid-course parity. Personal Class leaves the MechWarrior mission counter at
+zero; it does not establish mission completion or barracks sleeping.
 
-Earlier M2d still covers 570 complete NPC frame steps, two arrivals and 56 natural
-conversation checkpoints; its 68 gaps with missing player movement are reported
-and skipped. Earlier M2e still covers 121 original shop checkpoints and 6137
-restored purchase-route ticks. Road replay idles reproduce observed outdoor
-counter intervals, without recovering every intermediate original NPC position.
-**INFERRED:** unobserved local paths and broader campaign contexts.
-**APPROXIMATE:** font/layout, sprites/markers, native cadence and edges.
-**UNKNOWN/deferred:** cap progression, full day/countdowns/training, other goods,
-repair/party assignment, world, combat, animation/audio, original saves and
-Windows. The economy is verified in the MAP1 cadet context with local cap 50;
-it is not a claim about the full campaign economy.
+PASS: seven CTest suites; 421 core, 95 script, 1741 NPC, 30928 shop, 78178
+bank/Talk, 11972 save-file and 59197 school assertions; four Python tests;
+all prior/new differential routes. Headless ASan/UBSan/LeakSanitizer pass.
+The native 3093-tick course demonstration produces exactly the recorded inputs
+and complete final headless JSON; native F5/F9 also passes. SDL/backend is not
+sanitizer-instrumented. Course menus/completion/refusal frames were inspected
+for readable mixed case. Original font/layout/cadence remain approximate.
 
-## Work, provenance and next gate
+Earlier evidence remains: 570 complete NPC frames/two arrivals, 56 natural
+conversation checkpoints, 121 shop purchase checkpoints, 160 bank/shop-Talk
+checkpoints and 459 bank economy frames. The older NPC trace's 68 movement gaps
+remain explicitly skipped. Occupied-shop handler tests use controlled
+preconditions, while the new funded Class route uses ordinary gameplay only.
 
-Independent bank/economy services extend the bounded BLD interpreter rather than
-replace it with scripted screens. Native F5 06/07/08 implement account display,
-buy and sell; both shops use their authentic F5 0C Talk paths. The BTT2 cache
-contains 43 original strings in 1448 bytes with source/address provenance.
+## Persistence, provenance and limits
 
-**BTP7 is a 384-byte internal encoding**, preserving earlier field offsets and
-adding three balances, their rollback copies, suspended bank input/result and
-account-display state. BTP6 migrates with empty accounts and no pending bank
-service while preserving cash/equipment. Earlier migrations retain their
-documented limits. This format is tested internal persistence, not GAME import
-or an implemented player-facing save feature.
+The current **BTP8 payload is 416 bytes**, wrapped in a 16-byte BTS1 file header
+with length and CRC32. It adds ranks, their rollback copies and the paused course
+transcript context. Existing M2g BTP7 saves migrate to zero skill ranks, retaining
+their stored gameplay state. Older migrations keep their documented limitations.
+This is internal persistence; original 3913-byte GAME compatibility, power-loss
+durability and Windows behavior remain unverified.
 
-The supplied v1.03 BTECH.EXE collection remains 88 files/641365 bytes, including
-six 3913-byte saves and three backups. [Inventory](ORIGINAL_FILES.md) and the
-[manifest](original-manifest.json) remain authoritative. Proprietary resources,
-text, RAM, screenshots, caches and dependencies stay ignored. No substantial
-GPL implementation was copied/translated; distribution or clean-room status is
-not claimed. Local commits record M2f research (`562fed8`) and implementation/
-tests (`578efab`), followed by this review. No pushes or Git configuration changes.
+The **BTT3 dialogue cache** has 55 original strings in 1889 bytes, including
+source hashes and address provenance. It is generated locally and stays ignored.
+Both supplied reference trees match all **1287 guarded entries**, including
+content, modes, mtimes and reference Git metadata. All 88 original file hashes
+match. Proprietary assets, RAM, screenshots, caches and dependencies stay out of
+commits; no substantial GPL source was copied/translated into the runtime.
 
-Smallest proposed next gate: **M2g, player-facing internal save/load**. Preserve
-exploration, NPC/RNG/economy and paused dialogue or transaction input across a
-restart; check file failure handling and identical continuation. Original GAME
-compatibility needs a separate DOS load/save audit. Day/training remains the
-next larger campaign foundation after that convenience.
+Local commits: `d77e9c7` (M2g save/load), `175ec98` (M2h original audit),
+`1189da2` (M2h implementation/tests). No pushes or Git configuration changes.
+
+**INFERRED:** unobserved movement and broader campaign contexts.
+**APPROXIMATE:** current markers/imagery, independent mixed-case font/layout,
+native cadence and map edges. **UNKNOWN/deferred:** MechWarrior missions,
+barracks sleep, later day/cap progression, remaining goods/repair/party/world,
+combat, animation/audio, original saves and Windows. After the requested sprite
+work, the next campaign gate should audit the first MechWarrior assignment and
+its return/sleep conditions before implementing a bounded mission loop.
