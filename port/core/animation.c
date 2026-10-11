@@ -13,5 +13,7 @@ uint8_t btp_walk_next(uint8_t frame, unsigned before, unsigned direction)
 }
 unsigned btp_player_direction(unsigned facing)
 {
-    return facing == BTP_UP ? 0u : facing == BTP_RIGHT ? 2u : facing == BTP_LEFT ? 6u : 4u;
+    return facing == BTP_UP ? 0u : facing == BTP_UP_RIGHT ? 1u :
+        facing == BTP_RIGHT ? 2u : facing == BTP_DOWN_RIGHT ? 3u :
+        facing == BTP_DOWN_LEFT ? 5u : facing == BTP_LEFT ? 6u : facing == BTP_UP_LEFT ? 7u : 4u;
 }

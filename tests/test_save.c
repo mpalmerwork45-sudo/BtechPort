@@ -62,7 +62,7 @@ static void roundtrip(const BtpState *s, const BtpResources *r)
 {
     BtpError error; BtpState loaded;
     CHECK(btp_save_write(slot,s,r,&error)); CHECK(btp_save_load(slot,&loaded,r,&error)); same(s,&loaded);
-    for (unsigned a = BTP_IDLE; a <= BTP_CLEAR_INPUT; ++a) {
+    for (unsigned a = BTP_IDLE; a <= BTP_DOWN_RIGHT; ++a) {
         BtpState one = *s, two = loaded;
         btp_game_tick(&one,r,(BtpAction)a); btp_game_tick(&two,r,(BtpAction)a); same(&one,&two);
     }

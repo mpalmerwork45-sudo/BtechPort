@@ -1,0 +1,7915 @@
+{
+  "source_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "payload_sha256": {
+    "TRAINING": "2cc1d90e487f3e6be56d24820bf2da22e2212f85f2c090a5d5c107da0aff580e",
+    "BARRACKS": "5092326798e82ec22397a699cb3b5e27df5f0eb2bcd3d744efb1acef0e672517",
+    "LOUNGE": "0971f5df8d2605e0eec733778c55db1a5e8540c64cd995f80c1339a2f406331d",
+    "WEAPON": "4bbc0075e95889a5452c057fd8b6190c363573afced3394a85f2d24cdf67961e",
+    "ARMOR": "b02d6e830f444d383c51b49013c6749d12cf4d9742a561c34896745a39de86f3"
+  },
+  "reference_run": "work/reference-runs/1791702526057748887",
+  "controlled": false,
+  "initial": "ordinary",
+  "mission_time_scope": "input steps and bounded native waits; DOS CPU pacing/elapsed parity not claimed",
+  "checkpoints": [
+    {
+      "label": "start",
+      "position": [
+        69,
+        25
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 0,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 0,
+      "loop_timer": 249,
+      "rng": [
+        31,
+        66,
+        171
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 0,
+      "text": null
+    },
+    {
+      "label": "barracks-walk8",
+      "position": [
+        62,
+        24
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 0,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 0,
+      "loop_timer": 240,
+      "rng": [
+        114,
+        87,
+        226
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 36,
+      "text": null
+    },
+    {
+      "label": "barracks-walk16",
+      "position": [
+        56,
+        22
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 0,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 0,
+      "loop_timer": 232,
+      "rng": [
+        187,
+        226,
+        157
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 68,
+      "text": null
+    },
+    {
+      "label": "barracks-walk24",
+      "position": [
+        54,
+        16
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 0,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 0,
+      "loop_timer": 224,
+      "rng": [
+        109,
+        157,
+        187
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 100,
+      "text": null
+    },
+    {
+      "label": "barracks-walk32",
+      "position": [
+        48,
+        14
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 0,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 0,
+      "loop_timer": 216,
+      "rng": [
+        48,
+        187,
+        108
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 132,
+      "text": null
+    },
+    {
+      "label": "barracks-walk40",
+      "position": [
+        40,
+        14
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 0,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 0,
+      "loop_timer": 208,
+      "rng": [
+        158,
+        108,
+        24
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 164,
+      "text": null
+    },
+    {
+      "label": "barracks-walk48",
+      "position": [
+        32,
+        14
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 0,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 0,
+      "loop_timer": 200,
+      "rng": [
+        112,
+        24,
+        242
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 196,
+      "text": null
+    },
+    {
+      "label": "barracks-walk56",
+      "position": [
+        24,
+        14
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 0,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 0,
+      "loop_timer": 192,
+      "rng": [
+        75,
+        242,
+        29
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 228,
+      "text": null
+    },
+    {
+      "label": "barracks-walk64",
+      "position": [
+        18,
+        13
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 0,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 0,
+      "loop_timer": 185,
+      "rng": [
+        82,
+        14,
+        210
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "entry-confirm",
+      "tick": 257,
+      "text": null
+    },
+    {
+      "label": "barracks-entry",
+      "position": [
+        18,
+        13
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 0,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 0,
+      "loop_timer": 185,
+      "rng": [
+        82,
+        14,
+        210
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "entry-confirm",
+      "tick": 257,
+      "text": null
+    },
+    {
+      "label": "barracks-menu",
+      "position": [
+        18,
+        13
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 0,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 0,
+      "loop_timer": 185,
+      "rng": [
+        82,
+        14,
+        210
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "building",
+      "tick": 258,
+      "text": {
+        "length": 133,
+        "digest": 2024003580,
+        "sha256": "16e959b33d2911e2e3c312f572a8ae136a15187bc951efe627cf83a283227802"
+      }
+    },
+    {
+      "label": "sleep-no-mission",
+      "position": [
+        18,
+        13
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 0,
+      "loop_timer": 185,
+      "rng": [
+        82,
+        14,
+        210
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "building",
+      "tick": 260,
+      "text": {
+        "length": 150,
+        "digest": 1338583501,
+        "sha256": "675bc7ee75faa6df8aefc569d2bb4967271d6b7fc84a6fbc9ef9fabf0627a72d"
+      }
+    },
+    {
+      "label": "sleep-denial-exit",
+      "position": [
+        17,
+        13
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 0,
+      "loop_timer": 176,
+      "rng": [
+        196,
+        165,
+        42
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 297,
+      "text": null
+    },
+    {
+      "label": "training-walk8",
+      "position": [
+        17,
+        21
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 0,
+      "loop_timer": 168,
+      "rng": [
+        111,
+        42,
+        71
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 329,
+      "text": null
+    },
+    {
+      "label": "training-walk16",
+      "position": [
+        17,
+        29
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 0,
+      "loop_timer": 160,
+      "rng": [
+        31,
+        71,
+        237
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 361,
+      "text": null
+    },
+    {
+      "label": "training-walk24",
+      "position": [
+        14,
+        34
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 0,
+      "loop_timer": 152,
+      "rng": [
+        69,
+        237,
+        241
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 393,
+      "text": null
+    },
+    {
+      "label": "training-walk32",
+      "position": [
+        14,
+        42
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 0,
+      "loop_timer": 144,
+      "rng": [
+        28,
+        241,
+        68
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 425,
+      "text": null
+    },
+    {
+      "label": "training-walk40",
+      "position": [
+        14,
+        50
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 0,
+      "loop_timer": 136,
+      "rng": [
+        171,
+        68,
+        113
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 457,
+      "text": null
+    },
+    {
+      "label": "training-walk48",
+      "position": [
+        14,
+        58
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 0,
+      "loop_timer": 128,
+      "rng": [
+        92,
+        113,
+        170
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 489,
+      "text": null
+    },
+    {
+      "label": "training-walk56",
+      "position": [
+        19,
+        61
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 0,
+      "loop_timer": 120,
+      "rng": [
+        186,
+        170,
+        116
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 521,
+      "text": null
+    },
+    {
+      "label": "training-walk64",
+      "position": [
+        21,
+        67
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 0,
+      "loop_timer": 112,
+      "rng": [
+        190,
+        116,
+        186
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 553,
+      "text": null
+    },
+    {
+      "label": "training-walk72",
+      "position": [
+        21,
+        75
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 0,
+      "loop_timer": 104,
+      "rng": [
+        64,
+        186,
+        250
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 585,
+      "text": null
+    },
+    {
+      "label": "training-walk80",
+      "position": [
+        21,
+        83
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 0,
+      "loop_timer": 96,
+      "rng": [
+        114,
+        250,
+        4
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 617,
+      "text": null
+    },
+    {
+      "label": "training-walk88",
+      "position": [
+        21,
+        91
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 0,
+      "loop_timer": 88,
+      "rng": [
+        78,
+        4,
+        156
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 649,
+      "text": null
+    },
+    {
+      "label": "training-walk96",
+      "position": [
+        21,
+        99
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 0,
+      "loop_timer": 80,
+      "rng": [
+        2,
+        156,
+        228
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 681,
+      "text": null
+    },
+    {
+      "label": "training-walk104",
+      "position": [
+        21,
+        107
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 0,
+      "loop_timer": 72,
+      "rng": [
+        196,
+        228,
+        128
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 713,
+      "text": null
+    },
+    {
+      "label": "training-walk112",
+      "position": [
+        21,
+        115
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 0,
+      "loop_timer": 64,
+      "rng": [
+        109,
+        128,
+        71
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 745,
+      "text": null
+    },
+    {
+      "label": "training-walk120",
+      "position": [
+        26,
+        118
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 0,
+      "loop_timer": 56,
+      "rng": [
+        136,
+        71,
+        108
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 777,
+      "text": null
+    },
+    {
+      "label": "training-walk128",
+      "position": [
+        34,
+        118
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 0,
+      "loop_timer": 48,
+      "rng": [
+        119,
+        108,
+        35
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 809,
+      "text": null
+    },
+    {
+      "label": "training-walk136",
+      "position": [
+        42,
+        118
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 0,
+      "loop_timer": 40,
+      "rng": [
+        99,
+        35,
+        221
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 841,
+      "text": null
+    },
+    {
+      "label": "training-walk144",
+      "position": [
+        45,
+        114
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 0,
+      "loop_timer": 33,
+      "rng": [
+        128,
+        238,
+        198
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "entry-confirm",
+      "tick": 870,
+      "text": null
+    },
+    {
+      "label": "training-entry",
+      "position": [
+        45,
+        114
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 0,
+      "loop_timer": 33,
+      "rng": [
+        128,
+        238,
+        198
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "entry-confirm",
+      "tick": 870,
+      "text": null
+    },
+    {
+      "label": "training-menu",
+      "position": [
+        45,
+        114
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 0,
+      "loop_timer": 33,
+      "rng": [
+        128,
+        238,
+        198
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "training-quiz",
+      "tick": 871,
+      "text": {
+        "length": 121,
+        "digest": 3977305547,
+        "sha256": "1cb0dc65982ea117f891dce8f72c65843eb3c92369c6a497c4dd2067d6af90c3"
+      }
+    },
+    {
+      "label": "quiz-1",
+      "position": [
+        45,
+        114
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 0,
+      "loop_timer": 33,
+      "rng": [
+        64,
+        221,
+        140
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "training-quiz",
+      "tick": 872,
+      "text": {
+        "length": 25,
+        "digest": 3651879346,
+        "sha256": "3a033f3dbff3942bf7a02461e7388719ddfa54c6a21a11aeadbfb55dd1f860f2"
+      },
+      "point": 7,
+      "answer": 15
+    },
+    {
+      "label": "quiz-2",
+      "position": [
+        45,
+        114
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 15,
+      "loop_timer": 33,
+      "rng": [
+        32,
+        187,
+        24
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "training-quiz",
+      "tick": 888,
+      "text": {
+        "length": 25,
+        "digest": 3651879346,
+        "sha256": "3a033f3dbff3942bf7a02461e7388719ddfa54c6a21a11aeadbfb55dd1f860f2"
+      },
+      "point": 5,
+      "answer": 10
+    },
+    {
+      "label": "quiz-3",
+      "position": [
+        45,
+        114
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 10,
+      "loop_timer": 33,
+      "rng": [
+        16,
+        118,
+        48
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "training-quiz",
+      "tick": 904,
+      "text": {
+        "length": 25,
+        "digest": 3651879346,
+        "sha256": "3a033f3dbff3942bf7a02461e7388719ddfa54c6a21a11aeadbfb55dd1f860f2"
+      },
+      "point": 2,
+      "answer": 5
+    },
+    {
+      "label": "mission-offer",
+      "position": [
+        45,
+        114
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 33,
+      "rng": [
+        16,
+        118,
+        48
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "building",
+      "tick": 920,
+      "text": {
+        "length": 144,
+        "digest": 3426455734,
+        "sha256": "ba0945989e36397a2c39221f71147b8c98a39275948b49ad68ad60480f830764"
+      }
+    },
+    {
+      "label": "mission-briefing",
+      "position": [
+        45,
+        114
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 33,
+      "rng": [
+        16,
+        118,
+        48
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "building",
+      "tick": 921,
+      "text": {
+        "length": 480,
+        "digest": 1177802091,
+        "sha256": "1c2ab6b15be06fcc510969101d33872bf742ed409f7fb033a34bd09f232d6032"
+      }
+    },
+    {
+      "label": "mech-menu",
+      "position": [
+        45,
+        114
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 33,
+      "rng": [
+        16,
+        118,
+        48
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "building",
+      "tick": 922,
+      "text": {
+        "length": 44,
+        "digest": 3565535898,
+        "sha256": "7ab469268dbd7de3b16daa6d134618da8ca222b7bb3209ef58c30c3194d41395"
+      }
+    },
+    {
+      "label": "mission-start",
+      "position": [
+        64,
+        79
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 33,
+      "rng": [
+        136,
+        236,
+        96
+      ],
+      "mech_frame": 6,
+      "terrain": 0,
+      "mount": 0,
+      "mode": "training-mission",
+      "tick": 923,
+      "text": null
+    },
+    {
+      "label": "pass-out8",
+      "position": [
+        64,
+        87
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 33,
+      "rng": [
+        136,
+        236,
+        96
+      ],
+      "mech_frame": 11,
+      "terrain": 0,
+      "mount": 0,
+      "mode": "training-mission",
+      "tick": 931,
+      "text": null
+    },
+    {
+      "label": "pass-out16",
+      "position": [
+        64,
+        95
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 33,
+      "rng": [
+        136,
+        236,
+        96
+      ],
+      "mech_frame": 11,
+      "terrain": 0,
+      "mount": 0,
+      "mode": "training-mission",
+      "tick": 939,
+      "text": null
+    },
+    {
+      "label": "pass-out24",
+      "position": [
+        64,
+        103
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 33,
+      "rng": [
+        136,
+        236,
+        96
+      ],
+      "mech_frame": 11,
+      "terrain": 0,
+      "mount": 0,
+      "mode": "training-mission",
+      "tick": 947,
+      "text": null
+    },
+    {
+      "label": "pass-out32",
+      "position": [
+        64,
+        111
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 33,
+      "rng": [
+        136,
+        236,
+        96
+      ],
+      "mech_frame": 11,
+      "terrain": 0,
+      "mount": 0,
+      "mode": "training-mission",
+      "tick": 955,
+      "text": null
+    },
+    {
+      "label": "pass-out40",
+      "position": [
+        64,
+        119
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 33,
+      "rng": [
+        136,
+        236,
+        96
+      ],
+      "mech_frame": 11,
+      "terrain": 0,
+      "mount": 0,
+      "mode": "training-mission",
+      "tick": 963,
+      "text": null
+    },
+    {
+      "label": "pass-out48",
+      "position": [
+        66,
+        125
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 33,
+      "rng": [
+        136,
+        236,
+        96
+      ],
+      "mech_frame": 7,
+      "terrain": 0,
+      "mount": 0,
+      "mode": "training-mission",
+      "tick": 971,
+      "text": null
+    },
+    {
+      "label": "pass-out56",
+      "position": [
+        74,
+        125
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 33,
+      "rng": [
+        136,
+        236,
+        96
+      ],
+      "mech_frame": 7,
+      "terrain": 0,
+      "mount": 0,
+      "mode": "training-mission",
+      "tick": 979,
+      "text": null
+    },
+    {
+      "label": "pass-out64",
+      "position": [
+        82,
+        125
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 33,
+      "rng": [
+        136,
+        236,
+        96
+      ],
+      "mech_frame": 7,
+      "terrain": 0,
+      "mount": 0,
+      "mode": "training-mission",
+      "tick": 987,
+      "text": null
+    },
+    {
+      "label": "pass-out72",
+      "position": [
+        90,
+        125
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 33,
+      "rng": [
+        136,
+        236,
+        96
+      ],
+      "mech_frame": 7,
+      "terrain": 0,
+      "mount": 0,
+      "mode": "training-mission",
+      "tick": 995,
+      "text": null
+    },
+    {
+      "label": "pass-out80",
+      "position": [
+        98,
+        125
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 33,
+      "rng": [
+        136,
+        236,
+        96
+      ],
+      "mech_frame": 7,
+      "terrain": 0,
+      "mount": 0,
+      "mode": "training-mission",
+      "tick": 1003,
+      "text": null
+    },
+    {
+      "label": "pass-out88",
+      "position": [
+        106,
+        125
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 33,
+      "rng": [
+        136,
+        236,
+        96
+      ],
+      "mech_frame": 7,
+      "terrain": 0,
+      "mount": 0,
+      "mode": "training-mission",
+      "tick": 1011,
+      "text": null
+    },
+    {
+      "label": "pass-out96",
+      "position": [
+        114,
+        125
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 33,
+      "rng": [
+        136,
+        236,
+        96
+      ],
+      "mech_frame": 7,
+      "terrain": 0,
+      "mount": 0,
+      "mode": "training-mission",
+      "tick": 1019,
+      "text": null
+    },
+    {
+      "label": "pass-out103",
+      "position": [
+        120,
+        124
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 33,
+      "rng": [
+        136,
+        236,
+        96
+      ],
+      "mech_frame": 4,
+      "terrain": 0,
+      "mount": 0,
+      "mode": "training-mission",
+      "tick": 1026,
+      "text": null
+    },
+    {
+      "label": "pass-corner",
+      "position": [
+        120,
+        124
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 33,
+      "rng": [
+        136,
+        236,
+        96
+      ],
+      "mech_frame": 4,
+      "terrain": 0,
+      "mount": 0,
+      "mode": "training-mission",
+      "tick": 1026,
+      "text": {
+        "length": 77,
+        "digest": 4268782606,
+        "sha256": "b0981ed40ac70fc132a1e5c1a800825ade6e913edbafd249c9f9061c8efded14"
+      }
+    },
+    {
+      "label": "pass-return8",
+      "position": [
+        113,
+        125
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 33,
+      "rng": [
+        136,
+        236,
+        96
+      ],
+      "mech_frame": 14,
+      "terrain": 0,
+      "mount": 0,
+      "mode": "training-mission",
+      "tick": 1035,
+      "text": null
+    },
+    {
+      "label": "pass-return16",
+      "position": [
+        105,
+        125
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 33,
+      "rng": [
+        136,
+        236,
+        96
+      ],
+      "mech_frame": 14,
+      "terrain": 0,
+      "mount": 0,
+      "mode": "training-mission",
+      "tick": 1043,
+      "text": null
+    },
+    {
+      "label": "pass-return24",
+      "position": [
+        97,
+        125
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 33,
+      "rng": [
+        136,
+        236,
+        96
+      ],
+      "mech_frame": 14,
+      "terrain": 0,
+      "mount": 0,
+      "mode": "training-mission",
+      "tick": 1051,
+      "text": null
+    },
+    {
+      "label": "pass-return32",
+      "position": [
+        89,
+        125
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 33,
+      "rng": [
+        136,
+        236,
+        96
+      ],
+      "mech_frame": 14,
+      "terrain": 0,
+      "mount": 0,
+      "mode": "training-mission",
+      "tick": 1059,
+      "text": null
+    },
+    {
+      "label": "pass-return40",
+      "position": [
+        81,
+        125
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 33,
+      "rng": [
+        136,
+        236,
+        96
+      ],
+      "mech_frame": 14,
+      "terrain": 0,
+      "mount": 0,
+      "mode": "training-mission",
+      "tick": 1067,
+      "text": null
+    },
+    {
+      "label": "pass-return48",
+      "position": [
+        73,
+        125
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 33,
+      "rng": [
+        136,
+        236,
+        96
+      ],
+      "mech_frame": 14,
+      "terrain": 0,
+      "mount": 0,
+      "mode": "training-mission",
+      "tick": 1075,
+      "text": null
+    },
+    {
+      "label": "pass-return56",
+      "position": [
+        65,
+        125
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 33,
+      "rng": [
+        136,
+        236,
+        96
+      ],
+      "mech_frame": 14,
+      "terrain": 0,
+      "mount": 0,
+      "mode": "training-mission",
+      "tick": 1083,
+      "text": null
+    },
+    {
+      "label": "pass-return64",
+      "position": [
+        64,
+        118
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 33,
+      "rng": [
+        136,
+        236,
+        96
+      ],
+      "mech_frame": 2,
+      "terrain": 0,
+      "mount": 0,
+      "mode": "training-mission",
+      "tick": 1091,
+      "text": null
+    },
+    {
+      "label": "pass-return72",
+      "position": [
+        64,
+        110
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 33,
+      "rng": [
+        136,
+        236,
+        96
+      ],
+      "mech_frame": 2,
+      "terrain": 0,
+      "mount": 0,
+      "mode": "training-mission",
+      "tick": 1099,
+      "text": null
+    },
+    {
+      "label": "pass-return80",
+      "position": [
+        64,
+        102
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 33,
+      "rng": [
+        136,
+        236,
+        96
+      ],
+      "mech_frame": 2,
+      "terrain": 0,
+      "mount": 0,
+      "mode": "training-mission",
+      "tick": 1107,
+      "text": null
+    },
+    {
+      "label": "pass-return88",
+      "position": [
+        64,
+        94
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 33,
+      "rng": [
+        136,
+        236,
+        96
+      ],
+      "mech_frame": 2,
+      "terrain": 0,
+      "mount": 0,
+      "mode": "training-mission",
+      "tick": 1115,
+      "text": null
+    },
+    {
+      "label": "pass-return96",
+      "position": [
+        64,
+        86
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 33,
+      "rng": [
+        136,
+        236,
+        96
+      ],
+      "mech_frame": 2,
+      "terrain": 0,
+      "mount": 0,
+      "mode": "training-mission",
+      "tick": 1123,
+      "text": null
+    },
+    {
+      "label": "pass-return104",
+      "position": [
+        62,
+        80
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 33,
+      "rng": [
+        136,
+        236,
+        96
+      ],
+      "mech_frame": 12,
+      "terrain": 0,
+      "mount": 0,
+      "mode": "training-mission",
+      "tick": 1131,
+      "text": null
+    },
+    {
+      "label": "pass-return107",
+      "position": [
+        60,
+        79
+      ],
+      "story_flags": [
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        255,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 150,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 33,
+      "rng": [
+        136,
+        236,
+        96
+      ],
+      "mech_frame": 12,
+      "terrain": 0,
+      "mount": 0,
+      "mode": "building",
+      "tick": 1135,
+      "text": {
+        "length": 226,
+        "digest": 998278635,
+        "sha256": "946946ad802b0eb76b10c55fa72c07bd3dc7c4e195e98f6ff7869f813beecb16"
+      }
+    },
+    {
+      "label": "pass-result",
+      "position": [
+        60,
+        79
+      ],
+      "story_flags": [
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        255,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 150,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 33,
+      "rng": [
+        136,
+        236,
+        96
+      ],
+      "mech_frame": 12,
+      "terrain": 0,
+      "mount": 0,
+      "mode": "building",
+      "tick": 1135,
+      "text": {
+        "length": 226,
+        "digest": 998278635,
+        "sha256": "946946ad802b0eb76b10c55fa72c07bd3dc7c4e195e98f6ff7869f813beecb16"
+      }
+    },
+    {
+      "label": "pass-exit",
+      "position": [
+        47,
+        118
+      ],
+      "story_flags": [
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        240,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 150,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 18,
+      "rng": [
+        199,
+        17,
+        71
+      ],
+      "mech_frame": 12,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 1196,
+      "text": null
+    },
+    {
+      "label": "sleep-walk8",
+      "position": [
+        39,
+        118
+      ],
+      "story_flags": [
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        232,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 150,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 10,
+      "rng": [
+        193,
+        71,
+        199
+      ],
+      "mech_frame": 12,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 1228,
+      "text": null
+    },
+    {
+      "label": "sleep-walk16",
+      "position": [
+        31,
+        118
+      ],
+      "story_flags": [
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        224,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 150,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 2,
+      "rng": [
+        236,
+        199,
+        6
+      ],
+      "mech_frame": 12,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 1260,
+      "text": null
+    },
+    {
+      "label": "sleep-walk24",
+      "position": [
+        23,
+        118
+      ],
+      "story_flags": [
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        216,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 50,
+      "allowance_cap": 150,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 250,
+      "rng": [
+        193,
+        51,
+        125
+      ],
+      "mech_frame": 12,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 1292,
+      "text": null
+    },
+    {
+      "label": "sleep-walk32",
+      "position": [
+        22,
+        111
+      ],
+      "story_flags": [
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        208,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 50,
+      "allowance_cap": 150,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 242,
+      "rng": [
+        66,
+        125,
+        6
+      ],
+      "mech_frame": 12,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 1324,
+      "text": null
+    },
+    {
+      "label": "sleep-walk40",
+      "position": [
+        22,
+        103
+      ],
+      "story_flags": [
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        200,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 50,
+      "allowance_cap": 150,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 234,
+      "rng": [
+        211,
+        6,
+        133
+      ],
+      "mech_frame": 12,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 1356,
+      "text": null
+    },
+    {
+      "label": "sleep-walk48",
+      "position": [
+        22,
+        95
+      ],
+      "story_flags": [
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        192,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 50,
+      "allowance_cap": 150,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 226,
+      "rng": [
+        120,
+        133,
+        150
+      ],
+      "mech_frame": 12,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 1388,
+      "text": null
+    },
+    {
+      "label": "sleep-walk56",
+      "position": [
+        22,
+        87
+      ],
+      "story_flags": [
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        184,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 50,
+      "allowance_cap": 150,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 218,
+      "rng": [
+        56,
+        150,
+        60
+      ],
+      "mech_frame": 12,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 1420,
+      "text": null
+    },
+    {
+      "label": "sleep-walk64",
+      "position": [
+        22,
+        79
+      ],
+      "story_flags": [
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        176,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 50,
+      "allowance_cap": 150,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 210,
+      "rng": [
+        160,
+        60,
+        56
+      ],
+      "mech_frame": 12,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 1452,
+      "text": null
+    },
+    {
+      "label": "sleep-walk72",
+      "position": [
+        22,
+        71
+      ],
+      "story_flags": [
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        168,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 50,
+      "allowance_cap": 150,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 202,
+      "rng": [
+        139,
+        56,
+        11
+      ],
+      "mech_frame": 12,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 1484,
+      "text": null
+    },
+    {
+      "label": "sleep-walk80",
+      "position": [
+        22,
+        63
+      ],
+      "story_flags": [
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        160,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 50,
+      "allowance_cap": 150,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 194,
+      "rng": [
+        202,
+        11,
+        162
+      ],
+      "mech_frame": 12,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 1516,
+      "text": null
+    },
+    {
+      "label": "sleep-walk88",
+      "position": [
+        22,
+        55
+      ],
+      "story_flags": [
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        152,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 50,
+      "allowance_cap": 150,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 186,
+      "rng": [
+        23,
+        162,
+        167
+      ],
+      "mech_frame": 12,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 1548,
+      "text": null
+    },
+    {
+      "label": "sleep-walk96",
+      "position": [
+        22,
+        47
+      ],
+      "story_flags": [
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        144,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 50,
+      "allowance_cap": 150,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 178,
+      "rng": [
+        84,
+        79,
+        160
+      ],
+      "mech_frame": 12,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 1580,
+      "text": null
+    },
+    {
+      "label": "sleep-walk104",
+      "position": [
+        22,
+        39
+      ],
+      "story_flags": [
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        136,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 50,
+      "allowance_cap": 150,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 170,
+      "rng": [
+        166,
+        64,
+        168
+      ],
+      "mech_frame": 12,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 1612,
+      "text": null
+    },
+    {
+      "label": "sleep-walk112",
+      "position": [
+        19,
+        34
+      ],
+      "story_flags": [
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        128,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 50,
+      "allowance_cap": 150,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 162,
+      "rng": [
+        242,
+        168,
+        202
+      ],
+      "mech_frame": 12,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 1644,
+      "text": null
+    },
+    {
+      "label": "sleep-walk120",
+      "position": [
+        14,
+        31
+      ],
+      "story_flags": [
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        120,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 50,
+      "allowance_cap": 150,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 154,
+      "rng": [
+        36,
+        202,
+        158
+      ],
+      "mech_frame": 12,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 1676,
+      "text": null
+    },
+    {
+      "label": "sleep-walk128",
+      "position": [
+        14,
+        23
+      ],
+      "story_flags": [
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        112,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 50,
+      "allowance_cap": 150,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 146,
+      "rng": [
+        193,
+        158,
+        73
+      ],
+      "mech_frame": 12,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 1708,
+      "text": null
+    },
+    {
+      "label": "sleep-walk136",
+      "position": [
+        15,
+        16
+      ],
+      "story_flags": [
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        104,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 50,
+      "allowance_cap": 150,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 138,
+      "rng": [
+        183,
+        73,
+        7
+      ],
+      "mech_frame": 12,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 1740,
+      "text": null
+    },
+    {
+      "label": "sleep-walk141",
+      "position": [
+        17,
+        14
+      ],
+      "story_flags": [
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        100,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 50,
+      "allowance_cap": 150,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 134,
+      "rng": [
+        123,
+        144,
+        125
+      ],
+      "mech_frame": 12,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "entry-confirm",
+      "tick": 1757,
+      "text": null
+    },
+    {
+      "label": "sleep-entry",
+      "position": [
+        17,
+        14
+      ],
+      "story_flags": [
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        100,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 50,
+      "allowance_cap": 150,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 134,
+      "rng": [
+        123,
+        144,
+        125
+      ],
+      "mech_frame": 12,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "entry-confirm",
+      "tick": 1757,
+      "text": null
+    },
+    {
+      "label": "sleep-menu",
+      "position": [
+        17,
+        14
+      ],
+      "story_flags": [
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        100,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 50,
+      "allowance_cap": 150,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 134,
+      "rng": [
+        123,
+        144,
+        125
+      ],
+      "mech_frame": 12,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "building",
+      "tick": 1758,
+      "text": {
+        "length": 133,
+        "digest": 2024003580,
+        "sha256": "16e959b33d2911e2e3c312f572a8ae136a15187bc951efe627cf83a283227802"
+      }
+    },
+    {
+      "label": "dream1",
+      "position": [
+        17,
+        14
+      ],
+      "story_flags": [
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        100,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 50,
+      "allowance_cap": 150,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 134,
+      "rng": [
+        123,
+        144,
+        125
+      ],
+      "mech_frame": 12,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "building",
+      "tick": 1759,
+      "text": {
+        "length": 254,
+        "digest": 3764231519,
+        "sha256": "c284f7542a8daa594a31a66408a77d34ec1515c7eecb2138f70562221df2f176"
+      }
+    },
+    {
+      "label": "dream2",
+      "position": [
+        17,
+        14
+      ],
+      "story_flags": [
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        100,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 50,
+      "allowance_cap": 150,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 134,
+      "rng": [
+        123,
+        144,
+        125
+      ],
+      "mech_frame": 12,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "building",
+      "tick": 1760,
+      "text": {
+        "length": 265,
+        "digest": 1559022787,
+        "sha256": "54917eaa976e96f4326179fabfd1d01e0ff27bdde5ca99f13884dd9812ad5c31"
+      }
+    },
+    {
+      "label": "dream3",
+      "position": [
+        17,
+        14
+      ],
+      "story_flags": [
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        100,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 50,
+      "allowance_cap": 150,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 134,
+      "rng": [
+        123,
+        144,
+        125
+      ],
+      "mech_frame": 12,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "building",
+      "tick": 1761,
+      "text": {
+        "length": 435,
+        "digest": 2964463670,
+        "sha256": "213ac1689adb53b298f1d0660908e2c201817df51fb916d1c9f529e2eab7e955"
+      }
+    },
+    {
+      "label": "dream4",
+      "position": [
+        17,
+        14
+      ],
+      "story_flags": [
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        100,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 50,
+      "allowance_cap": 150,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 134,
+      "rng": [
+        123,
+        144,
+        125
+      ],
+      "mech_frame": 12,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "building",
+      "tick": 1762,
+      "text": {
+        "length": 409,
+        "digest": 565040724,
+        "sha256": "e2d254c235b80f41a16bc83aeb723d384b38bd0d041dc2221e3e0cad1b7d4a05"
+      }
+    },
+    {
+      "label": "dream5",
+      "position": [
+        17,
+        14
+      ],
+      "story_flags": [
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        100,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 50,
+      "allowance_cap": 150,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 134,
+      "rng": [
+        123,
+        144,
+        125
+      ],
+      "mech_frame": 12,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "building",
+      "tick": 1763,
+      "text": {
+        "length": 213,
+        "digest": 4196457851,
+        "sha256": "f8c29a579d58571b79483c510de4cacddba6899d88163a88fe3a5e1758b71d88"
+      }
+    },
+    {
+      "label": "dream6",
+      "position": [
+        17,
+        14
+      ],
+      "story_flags": [
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        100,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 50,
+      "allowance_cap": 150,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 134,
+      "rng": [
+        123,
+        144,
+        125
+      ],
+      "mech_frame": 12,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "building",
+      "tick": 1764,
+      "text": {
+        "length": 383,
+        "digest": 3725896380,
+        "sha256": "514df585aac3c67a9e746abf3e9309717413639617ad95a793b243ab30c5696b"
+      }
+    },
+    {
+      "label": "dream7",
+      "position": [
+        17,
+        14
+      ],
+      "story_flags": [
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 50,
+      "allowance_cap": 150,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 134,
+      "rng": [
+        189,
+        32,
+        251
+      ],
+      "mech_frame": 12,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "building",
+      "tick": 1765,
+      "text": {
+        "length": 320,
+        "digest": 2989085093,
+        "sha256": "af6e38ef10908d0e016cf64d10fc5b25c4fc53cd74090f73714856335be472a7"
+      }
+    },
+    {
+      "label": "sleep-return",
+      "position": [
+        17,
+        14
+      ],
+      "story_flags": [
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 50,
+      "allowance_cap": 150,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 134,
+      "rng": [
+        189,
+        32,
+        251
+      ],
+      "mech_frame": 12,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "building",
+      "tick": 1766,
+      "text": {
+        "length": 133,
+        "digest": 2024003580,
+        "sha256": "16e959b33d2911e2e3c312f572a8ae136a15187bc951efe627cf83a283227802"
+      }
+    },
+    {
+      "label": "sleep-again",
+      "position": [
+        17,
+        14
+      ],
+      "story_flags": [
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 50,
+      "allowance_cap": 150,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 134,
+      "rng": [
+        189,
+        32,
+        251
+      ],
+      "mech_frame": 12,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "building",
+      "tick": 1766,
+      "text": {
+        "length": 133,
+        "digest": 2024003580,
+        "sha256": "16e959b33d2911e2e3c312f572a8ae136a15187bc951efe627cf83a283227802"
+      }
+    },
+    {
+      "label": "sleep-again-return",
+      "position": [
+        17,
+        14
+      ],
+      "story_flags": [
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 50,
+      "allowance_cap": 150,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 1,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 5,
+      "loop_timer": 134,
+      "rng": [
+        189,
+        32,
+        251
+      ],
+      "mech_frame": 12,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "building",
+      "tick": 1767,
+      "text": {
+        "length": 61,
+        "digest": 897545179,
+        "sha256": "a3f345dc32335b6ed65271919e8f36ab4705679c68744d12f617ef6307b1525a"
+      }
+    }
+  ]
+}

@@ -4,7 +4,8 @@
 #include "core/script.h"
 typedef enum { BTP_IDLE, BTP_UP, BTP_DOWN, BTP_LEFT, BTP_RIGHT, BTP_ACCEPT, BTP_CANCEL,
     BTP_DIGIT_0, BTP_DIGIT_1, BTP_DIGIT_2, BTP_DIGIT_3, BTP_DIGIT_4,
-    BTP_DIGIT_5, BTP_DIGIT_6, BTP_DIGIT_7, BTP_DIGIT_8, BTP_DIGIT_9, BTP_CLEAR_INPUT } BtpAction;
+    BTP_DIGIT_5, BTP_DIGIT_6, BTP_DIGIT_7, BTP_DIGIT_8, BTP_DIGIT_9, BTP_CLEAR_INPUT,
+    BTP_UP_LEFT, BTP_UP_RIGHT, BTP_DOWN_LEFT, BTP_DOWN_RIGHT } BtpAction;
 typedef enum { BTP_CLEAR, BTP_WALL, BTP_EDGE } BtpBlock;
 typedef enum { BTP_EXPLORE, BTP_ENTRY, BTP_BUILDING, BTP_SCRIPT_FAULT, BTP_QUIZ, BTP_MISSION } BtpMode;
 typedef enum { BTP_TALK_NONE, BTP_TALK_EMPTY, BTP_TALK_MENU, BTP_TALK_REPLY } BtpTalkPhase;
@@ -77,4 +78,7 @@ int btp_state_decode(const uint8_t *bytes, size_t length, const BtpMap *map,
 const char *btp_mode_name(unsigned mode);
 const char *btp_action_name(BtpAction action);
 int btp_action_parse(const char *name, BtpAction *action);
+int btp_action_moves(BtpAction action);
+int btp_action_dx(BtpAction action);
+int btp_action_dy(BtpAction action);
 #endif

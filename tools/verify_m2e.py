@@ -215,7 +215,7 @@ def main():
         check(replayed[-1]["mode"] == "local-exploration" and replayed[-1]["equipment"] ==
               {"weapon": 1, "armor": 1, "armor_points": 25}, "Native return/equipment differs")
         print("PASS: native SDL shop inputs replay to the same logical transactions and return.")
-    print("Scope: native pacing/layout/fonts and intermediate NPC route positions remain approximate; only the flak vest and knife purchases are supported.")
+    print("Scope: these historical traces cover the flak vest and knife; M2j verifies the full roster separately. Native pacing/layout/fonts and intermediate NPC route positions remain approximate.")
 
 
 if __name__ == "__main__":

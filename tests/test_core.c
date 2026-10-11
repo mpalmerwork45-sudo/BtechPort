@@ -1,4 +1,5 @@
 #include "frontend/pixels.h"
+#include "core/animation.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -99,6 +100,46 @@ static void state(void)
     BtpAction a; CHECK(!btp_action_parse("unknown", &a)); CHECK(btp_action_parse("right", &a) && a == BTP_RIGHT);
     m.entrance_x[0] = 0x0c44; m.entrance_y[0] = 0xc014;
     s.x_half = 68; s.y_half = 20; CHECK(btp_entrance(&s, &m) == 0);
+}
+static void diagonals(void)
+{
+    BtpMap m = {.width=64,.height=64}; memset(m.tiles,64,sizeof m.tiles);
+    /* Original N,NE,E,SE,S,SW,W,NW direction and first-frame tables. */
+    static const BtpAction actions[8] = {BTP_UP,BTP_UP_RIGHT,BTP_RIGHT,BTP_DOWN_RIGHT,
+        BTP_DOWN,BTP_DOWN_LEFT,BTP_LEFT,BTP_UP_LEFT};
+    static const int dx[8] = {0,1,1,1,0,-1,-1,-1}, dy[8] = {-1,-1,0,1,1,1,0,-1};
+    static const unsigned first[8] = {8,4,4,4,0,12,12,12};
+    for (unsigned d=0;d<8;++d) {
+        BtpState s; btp_start(&s); s.x_half=s.y_half=64;
+        s.facing=(uint8_t)actions[(d+4u)&7u];
+        BtpAction parsed;
+        CHECK(btp_action_parse(btp_action_name(actions[d]),&parsed) && parsed == actions[d]);
+        CHECK(btp_player_direction((unsigned)actions[d]) == d);
+        for (unsigned step=0;step<5;++step) {
+            btp_tick(&s,&m,actions[d]);
+            CHECK(s.x_half == 64+(int)(step+1)*dx[d] && s.y_half == 64+(int)(step+1)*dy[d]);
+            CHECK(s.blocked == BTP_CLEAR && s.tick == step+1 && s.player_walk == first[d]+step%4);
+            uint8_t bytes[BTP_STATE_BYTES]; BtpState copy;
+            btp_state_encode(&s,bytes); CHECK(btp_state_decode(bytes,sizeof bytes,&m,NULL,&copy));
+            CHECK(copy.facing == actions[d] && copy.player_walk == s.player_walk);
+            if (d & 1u) {
+                memcpy(bytes,"BTP9",4); bytes[4]=9;
+                CHECK(!btp_state_decode(bytes,416,&m,NULL,&copy));
+            }
+        }
+    }
+    BtpState s; btp_start(&s); s.x_half=68; s.y_half=22;
+    m.tiles[10*64+35]=85; /* NE destination; both axes must remain in place. */
+    btp_tick(&s,&m,BTP_UP_RIGHT);
+    CHECK(s.x_half == 68 && s.y_half == 22 && s.blocked == BTP_WALL && s.player_walk == 4);
+    btp_tick(&s,&m,BTP_UP_RIGHT); CHECK(s.player_walk == 5 && s.tick == 2);
+    m.tiles[10*64+35]=64; m.tiles[11*64+35]=85; m.tiles[10*64+34]=85;
+    btp_tick(&s,&m,BTP_UP_RIGHT); /* Original checks the destination, even between walls. */
+    CHECK(s.x_half == 69 && s.y_half == 21 && s.blocked == BTP_CLEAR && s.player_walk == 6);
+    s.x_half=s.y_half=0; btp_tick(&s,&m,BTP_UP_LEFT);
+    CHECK(s.x_half == 0 && s.y_half == 0 && s.blocked == BTP_EDGE && s.player_walk == 12);
+    s.x_half=s.y_half=127; btp_tick(&s,&m,BTP_DOWN_RIGHT);
+    CHECK(s.x_half == 127 && s.y_half == 127 && s.blocked == BTP_EDGE && s.player_walk == 4);
 }
 static void pixels(void)
 {
@@ -348,6 +389,16 @@ static void citadel_loop(const char *dir)
     btp_game_tick(&s, r, BTP_UP); CHECK(s.mode == BTP_EXPLORE && s.y_half == 20);
     btp_start(&s); s.y_half = 21;
     btp_game_tick(&s, r, BTP_UP); CHECK(s.mode == BTP_ENTRY && s.y_half == 21);
+    static const BtpAction diagonal[4] = {BTP_UP_LEFT,BTP_UP_RIGHT,BTP_DOWN_LEFT,BTP_DOWN_RIGHT};
+    for (unsigned i=0;i<4;++i) {
+        btp_start(&s); s.x_half=(uint16_t)(69-btp_action_dx(diagonal[i]));
+        s.y_half=(uint16_t)(20-btp_action_dy(diagonal[i]));
+        unsigned x=s.x_half,y=s.y_half;
+        restored_tick(&s,r,diagonal[i]);
+        CHECK(s.mode == BTP_ENTRY && s.entry_action == diagonal[i] && s.x_half == x && s.y_half == y);
+        restored_tick(&s,r,BTP_CANCEL);
+        CHECK(s.mode == BTP_EXPLORE && s.x_half == 69 && s.y_half == 20);
+    }
     free(r);
     puts("Citadel core: entry/decline, six Hall screens, exit, empty Talk, recovery, BTP9 restoration.");
 }
@@ -377,7 +428,7 @@ static void corpus(const char *dir)
 }
 int main(int argc, char **argv)
 {
-    maps(); graphics(); state(); pixels();
+    maps(); graphics(); state(); diagonals(); pixels();
     if (argc == 2) { corpus(argv[1]); citadel_loop(argv[1]); }
     printf("PASS: %u checks\n", checks);
     return 0;

@@ -97,7 +97,7 @@ class WindowKeys:
             raise RuntimeError(f"Expected exactly this session's DOSBox window, got {matches}")
         return matches[0][0]
 
-    def key(self, window, names):
+    def key(self, window, names, press_gap=0.06):
         parts = names.split("+")
         codes = []
         for part in parts:
@@ -125,6 +125,11 @@ class WindowKeys:
         for code in codes:
             if not self.xt.XTestFakeKeyEvent(self.display, code, 1, 0):
                 raise RuntimeError("XTEST key press failed")
+            if press_gap:
+                self.x.XFlush(self.display)
+                time.sleep(press_gap)
+        if not press_gap:
+            # Native chord check: deliver both downs before either release.
             self.x.XFlush(self.display)
             time.sleep(0.06)
         for code in reversed(codes):
@@ -354,7 +359,7 @@ def controlled_talk_context(pid, output, fixture="tests/fixtures/talk-context.js
         raise ValueError("Talk precondition must be a committed factual fixture")
     context = json.loads(context_path.read_text())
     room = context.get("room",1)
-    name = {1:"CITADEL",3:"WEAPON",4:"ARMOR"}.get(room)
+    name = {1:"CITADEL",3:"WEAPON",4:"ARMOR",7:"LOUNGE"}.get(room)
     if name is None or row["building_index"] != room or row["world_active"] or \
             (row["citadel_payload_guest_offset"] is None if room == 1 else name not in row["building_payloads"]):
         raise RuntimeError("Talk precondition requires the specified local building menu")

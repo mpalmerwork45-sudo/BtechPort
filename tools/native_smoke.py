@@ -176,6 +176,142 @@ def sprites(env, work):
             except subprocess.TimeoutExpired: process.kill(); process.wait()
 
 
+def diagonals(env, work):
+    from reference_session import WindowKeys
+    from verify_m2j import rewrite_save
+    import struct
+    binary=ROOT/'build/btech-headless'
+    with tempfile.TemporaryDirectory(prefix='native-diagonal-',dir=work) as directory:
+        tmp=Path(directory)
+        for kind in ('human','mech','bank-keypad'):
+            start=tmp/(kind+'.btp'); prefix=tmp/'prefix.actions'
+            if kind == 'mech':
+                f=json.loads((ROOT/'tests/fixtures/reference-mission-pass.json').read_text())
+                tick=next(r['tick'] for r in f['checkpoints'] if r['label']=='mission-start')
+                lines=(ROOT/'tests/fixtures/reference-mission-pass.actions').read_text().splitlines()[:tick]
+            elif kind == 'bank-keypad':
+                f=json.loads((ROOT/'tests/fixtures/reference-bank.json').read_text())
+                tick=next(r['tick'] for r in f['checkpoints'] if r['label']=='bank-invest-amount')
+                lines=(ROOT/'tests/fixtures/reference-bank.actions').read_text().splitlines()[:tick]
+            else: lines=[]
+            prefix.write_text(''.join(a+'\n' for a in lines))
+            subprocess.run([str(binary),'--replay',str(prefix),'--save',str(start)],
+                cwd=ROOT,check=True,capture_output=True,timeout=20)
+            if kind == 'human':
+                rewrite_save(start,lambda b: struct.pack_into('<HH',b,12,64,79))
+            record=work/('native-diagonal-'+kind+'.actions')
+            process=subprocess.Popen([str(ROOT/'build/btech-port'),'--load',str(start),
+                '--record',str(record),'--frame',str(work/('native-diagonal-'+kind+'.ppm'))],
+                env=env,cwd=ROOT,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+            keys=WindowKeys()
+            try:
+                window=None
+                for _ in range(100):
+                    found=[(w,n) for w,n in keys.windows() if n.startswith('BtechPort')]
+                    if len(found)==1: window=found[0][0]; break
+                    if process.poll() is not None: raise RuntimeError('Diagonal window failed to start')
+                    time.sleep(.05)
+                if window is None: raise RuntimeError('Diagonal window did not appear')
+                if kind == 'bank-keypad':
+                    for k in ('Num_Lock','KP_1','KP_2','BackSpace','Escape','KP_3','KP_0','KP_Enter','Return'):
+                        keys.key(window,k)
+                    time.sleep(.1)
+                    keys.key(window,'Num_Lock')
+                else:
+                    for k in ('Home','Prior','End','Next','KP_7','KP_9','KP_1','KP_3'):
+                        keys.key(window,k)
+                    for k in ('Up+Left','Up+Right','Down+Left','Down+Right'):
+                        keys.key(window,k,press_gap=0)
+                    keys.key(window,'Right') # All released: cardinal again.
+                keys.key(window,'Escape')
+                out,err=process.communicate(timeout=10)
+                if process.returncode: raise RuntimeError(err)
+                expected=subprocess.run([str(binary),'--load',str(start),'--replay',str(record)],
+                    cwd=ROOT,check=True,capture_output=True,text=True,timeout=20)
+                actual=json.loads(out)
+                if actual != json.loads(expected.stdout): raise RuntimeError(kind+' native diagonal/keypad replay differs')
+                inputs=[a for a in record.read_text().splitlines() if a != 'idle']
+                if kind == 'bank-keypad':
+                    if inputs != ['1','2','cancel','clear','3','0','accept','accept'] or actual['credits'] != 5 or actual['investments'] != [30,0,0]:
+                        raise RuntimeError('Bank keypad stopped accepting digits/clear/Enter')
+                else:
+                    wanted=['up-left','up-right','down-left','down-right']*3+['right']
+                    if inputs != wanted: raise RuntimeError(kind+' diagonal key/chord/release mismatch: '+repr(inputs))
+                    if actual['x_half'] != 65 or actual['y_half'] != 79: raise RuntimeError(kind+' diagonal axes did not move together')
+                print('PASS: native '+kind+' keys, arrow chords/releases, complete replay and final state.',flush=True)
+            finally:
+                keys.x.XCloseDisplay(keys.display)
+                if process.poll() is None:
+                    process.terminate()
+                    try: process.wait(timeout=5)
+                    except subprocess.TimeoutExpired: process.kill(); process.wait()
+
+
+def training(env, work):
+    from reference_session import WindowKeys
+    from verify_m2j import seed
+    binary=ROOT/"build/btech-headless"
+    with tempfile.TemporaryDirectory(prefix="native-training-",dir=work) as directory:
+        tmp=Path(directory)
+        for kind in ("mission-pass","mission-fail","full-goods","lounge"):
+            path=ROOT/"tests/fixtures"/("reference-"+kind+".actions")
+            record=work/("native-"+kind+".actions"); frame=work/("native-"+kind+".ppm")
+            initial=seed(binary,kind,tmp); ticks=len(path.read_text().splitlines())+5
+            print(f"Running native {kind}: {ticks} SDL input/presentation ticks.",flush=True)
+            result=subprocess.run([str(ROOT/"build/btech-port"),"--smoke-replay","--replay",str(path),
+                "--record",str(record),"--frame",str(frame),*map(str,initial)],
+                cwd=ROOT,env=env,check=True,capture_output=True,text=True,timeout=ticks*.032+30)
+            expected=subprocess.run([str(binary),*map(str,initial),"--replay",str(record)],
+                cwd=ROOT,check=True,capture_output=True,text=True,timeout=20)
+            if record.read_text().splitlines() != path.read_text().splitlines()+["idle"]*5 or json.loads(result.stdout) != json.loads(expected.stdout):
+                raise RuntimeError(kind+" native input/final state differs from complete headless replay")
+            print("PASS: native "+kind+" complete inputs/state equal the canonical replay.",flush=True)
+        fixture=json.loads((ROOT/"tests/fixtures/reference-mission-pass.json").read_text())
+        lines=(ROOT/"tests/fixtures/reference-mission-pass.actions").read_text().splitlines()
+        for label in ("quiz-1","mission-start","dream3"):
+            tick=next(r["tick"] for r in fixture["checkpoints"] if r["label"] == label)
+            prefix=tmp/"prefix.actions"; prefix.write_text("".join(a+"\n" for a in lines[:tick]))
+            start=tmp/"start.btp"; slot=tmp/"slot.btp"
+            subprocess.run([str(binary),"--replay",str(prefix),"--save",str(start)],
+                cwd=ROOT,check=True,capture_output=True,timeout=20)
+            process=subprocess.Popen([str(ROOT/"build/btech-port"),"--load",str(start),
+                "--save-file",str(slot),"--frame",str(work/("native-"+label+".ppm"))],
+                cwd=ROOT,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+            keys=WindowKeys()
+            try:
+                window=None
+                for _ in range(100):
+                    found=[(w,n) for w,n in keys.windows() if n.startswith("BtechPort")]
+                    if len(found)==1: window=found[0][0]; break
+                    if process.poll() is not None: raise RuntimeError("Training save window failed to start")
+                    time.sleep(.05)
+                if window is None: raise RuntimeError("Training save window did not appear")
+                keys.key(window,"F5")
+                time.sleep(.15)
+                saved=subprocess.run([str(binary),"--load",str(slot)],cwd=ROOT,check=True,capture_output=True,text=True,timeout=20)
+                before=json.loads(saved.stdout)
+                keys.key(window,"Down" if label=="quiz-1" else "Right" if label=="mission-start" else "Return")
+                keys.key(window,"F9"); keys.key(window,"Escape")
+                out,err=process.communicate(timeout=10)
+                if process.returncode: raise RuntimeError(err)
+                actual=json.loads(out); wanted=dict(before)
+                actual.pop("tick"); wanted.pop("tick")
+                if label=="mission-start":
+                    # The restored driving clock legitimately resumes during
+                    # the F9/Escape event interval; position/gait/loan stay exact.
+                    elapsed=actual["mission"]["elapsed"]; old=wanted["mission"]["elapsed"]
+                    if not old <= elapsed <= old+10: raise RuntimeError("Driving clock did not resume the saved interval")
+                    actual["mission"]["elapsed"]=old
+                    actual["mission"]["idle"]=wanted["mission"]["idle"]
+                if actual != wanted: raise RuntimeError(label+" F9 did not restore the complete paused/driving state")
+                print("PASS: native F5/F9 restores "+label+" after changing it.",flush=True)
+            finally:
+                keys.x.XCloseDisplay(keys.display)
+                if process.poll() is None:
+                    process.terminate()
+                    try: process.wait(timeout=5)
+                    except subprocess.TimeoutExpired: process.kill(); process.wait()
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--shops-only", action="store_true")
@@ -184,6 +320,8 @@ def main():
     parser.add_argument("--save-only", action="store_true")
     parser.add_argument("--school-only", action="store_true")
     parser.add_argument("--sprites-only", action="store_true")
+    parser.add_argument("--training-only", action="store_true")
+    parser.add_argument("--diagonal-only", action="store_true")
     args = parser.parse_args()
     work = ROOT / "work"
     work.mkdir(exist_ok=True)
@@ -203,6 +341,12 @@ def main():
             env.pop("SDL_VIDEODRIVER", None)
             os.environ["DISPLAY"] = env["DISPLAY"]
             os.environ["BTECH_REFERENCE_VIRTUAL"] = "1"
+            if args.diagonal_only:
+                diagonals(env,work)
+                return
+            if args.training_only:
+                training(env,work)
+                return
             if args.sprites_only:
                 sprites(env,work)
                 saves(env,work)
@@ -273,6 +417,8 @@ def main():
             m2f(env, work)
             saves(env,work)
             school(env,work)
+            training(env,work)
+            diagonals(env,work)
         finally:
             os.close(read_fd)
             xvfb.terminate()

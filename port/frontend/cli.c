@@ -151,10 +151,10 @@ void btp_print_state(const BtpState *s, const BtpResources *r)
     for (unsigned i = 0; i < 8; ++i) printf("%s%u",i ? "," : "",270u+s->npc_walk[i]);
     printf("],\"quiz\":{\"phase\":%u,\"selected\":%u,\"round\":%u,\"point\":%u,\"failed\":%u,\"used\":%u},"
         "\"mission\":{\"phase\":%u,\"corner\":%u,\"warned\":%u,\"elapsed\":%u,\"idle\":%u,\"terrain\":%u},"
-        "\"device\":%u,\"animation_request\":[%u,%u]}\n",
+        "\"device\":%u,\"recruitment\":%u,\"animation_request\":[%u,%u]}\n",
         s->quiz.phase,s->quiz.selected,s->quiz.round,s->quiz.point,s->quiz.failed,s->quiz.used,
         s->mission.phase,s->mission.corner,s->mission.warned,s->mission.elapsed,s->mission.idle,
-        s->mission.phase ? btp_mission_terrain(s,&r->map) : 0u,s->story_flags[47],s->script.animation_kind,s->script.animation_flags);
+        s->mission.phase ? btp_mission_terrain(s,&r->map) : 0u,s->story_flags[47],s->recruitment,s->script.animation_kind,s->script.animation_flags);
 }
 
 int btp_replay(const char *path, BtpState *s, const BtpResources *r, int trace)

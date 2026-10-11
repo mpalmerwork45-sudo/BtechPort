@@ -72,8 +72,8 @@ void btp_training_native(BtpState *s, const BtpResources *r)
         if (s->mission.phase != BTP_MISSION_RESULT) { fault(s); return; }
         s->mission = (BtpMissionState){0};
         s->script.mech_result = s->script.mech_after = 0;
-        s->x_half = (uint16_t)(46 + (s->entry_action == BTP_RIGHT) - (s->entry_action == BTP_LEFT));
-        s->y_half = (uint16_t)(118 + (s->entry_action == BTP_DOWN) - (s->entry_action == BTP_UP));
+        s->x_half = (uint16_t)(46 + btp_action_dx((BtpAction)s->entry_action));
+        s->y_half = (uint16_t)(118 + btp_action_dy((BtpAction)s->entry_action));
         s->facing = s->entry_action;
         break;
     default: fault(s); return;
@@ -103,11 +103,7 @@ static void move(BtpState *s, const BtpMap *m, BtpAction a)
     if (before == direction) for (unsigned i = 0; i < 4; ++i)
         if (frames[direction][i] == s->mission.walk) next = (i+1u)%4u;
     s->mission.walk = frames[direction][next]; s->mission.direction = (uint8_t)direction;
-    int x = s->x_half, y = s->y_half;
-    if (a == BTP_UP) --y;
-    if (a == BTP_DOWN) ++y;
-    if (a == BTP_LEFT) --x;
-    if (a == BTP_RIGHT) ++x;
+    int x = s->x_half + btp_action_dx(a), y = s->y_half + btp_action_dy(a);
     if (x < 0 || y < 2 || x >= 2*m->width-2 || y >= 2*m->height) { s->blocked = BTP_EDGE; return; }
     int tx = x/2, ty = (y-2)/2;
     if (btp_map_tile(m,tx,ty) >= s->gate || btp_map_tile(m,tx+1,ty) >= s->gate) {
@@ -133,7 +129,7 @@ int btp_mission_tick(BtpState *s, const BtpResources *r, BtpAction a)
     }
     if (a == BTP_IDLE && m->idle) { --m->idle; return 0; }
     m->idle = 10;
-    if (a >= BTP_UP && a <= BTP_RIGHT) move(s,&r->map,a);
+    if (btp_action_moves(a)) move(s,&r->map,a);
     m->elapsed = (uint16_t)(m->elapsed+1u+(unsigned)(btp_mission_terrain(s,&r->map)>>3));
     if (!m->corner && s->x_half >= 120 && s->y_half >= 124) {
         m->corner = 1; m->phase = BTP_MISSION_CORNER;
@@ -176,7 +172,8 @@ int btp_training_valid(const BtpState *s)
     const BtpQuizState *q = &s->quiz; const BtpMissionState *m = &s->mission;
     if (q->phase > BTP_QUIZ_FAILED || q->selected >= 20 || q->round > 3 || q->point >= 10 ||
         q->failed > 1 || q->used >= 1024 || m->phase > BTP_MISSION_RESULT || m->corner > 1 ||
-        m->warned > 1 || m->idle > 10 || m->walk > 15 || m->direction > 7 || s->entry_action > BTP_RIGHT) return 0;
+        m->warned > 1 || m->idle > 10 || m->walk > 15 || m->direction > 7 ||
+        (s->entry_action != BTP_IDLE && !btp_action_moves((BtpAction)s->entry_action))) return 0;
     if ((s->mode == BTP_QUIZ) != (q->phase != 0)) return 0;
     if (!q->phase && (q->round || q->point || q->failed || q->used)) return 0;
     if (q->phase) {

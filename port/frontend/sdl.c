@@ -6,9 +6,35 @@
 #include <stdlib.h>
 #include <string.h>
 
-static BtpAction key_action(SDL_Keycode key)
+static int movement_mode(const BtpState *s)
+{
+    return s->mode == BTP_EXPLORE || (s->mode == BTP_MISSION && s->mission.phase == BTP_MISSION_DRIVE);
+}
+static unsigned arrow_bit(SDL_Keycode key)
+{
+    return key == SDLK_UP ? 1u : key == SDLK_DOWN ? 2u : key == SDLK_LEFT ? 4u : key == SDLK_RIGHT ? 8u : 0u;
+}
+static BtpAction held_action(unsigned held)
+{
+    int x = !!(held & 8u) - !!(held & 4u), y = !!(held & 2u) - !!(held & 1u);
+    if (x < 0) return y < 0 ? BTP_UP_LEFT : y > 0 ? BTP_DOWN_LEFT : BTP_LEFT;
+    if (x > 0) return y < 0 ? BTP_UP_RIGHT : y > 0 ? BTP_DOWN_RIGHT : BTP_RIGHT;
+    return y < 0 ? BTP_UP : y > 0 ? BTP_DOWN : BTP_IDLE;
+}
+static BtpAction key_action(SDL_Keycode key, int moving)
 {
     if (key >= SDLK_0 && key <= SDLK_9) return (BtpAction)(BTP_DIGIT_0+key-SDLK_0);
+    if (moving) switch (key) {
+        case SDLK_HOME: case SDLK_KP_7: return BTP_UP_LEFT;
+        case SDLK_PAGEUP: case SDLK_KP_9: return BTP_UP_RIGHT;
+        case SDLK_END: case SDLK_KP_1: return BTP_DOWN_LEFT;
+        case SDLK_PAGEDOWN: case SDLK_KP_3: return BTP_DOWN_RIGHT;
+        case SDLK_KP_8: return BTP_UP;
+        case SDLK_KP_2: return BTP_DOWN;
+        case SDLK_KP_4: return BTP_LEFT;
+        case SDLK_KP_6: return BTP_RIGHT;
+        default: break;
+    }
     if (key >= SDLK_KP_1 && key <= SDLK_KP_9) return (BtpAction)(BTP_DIGIT_1+key-SDLK_KP_1);
     switch (key) {
         case SDLK_UP: return BTP_UP;
@@ -56,6 +82,7 @@ int main(int argc, char **argv)
     if (o.record) { record = fopen(o.record, "w"); if (!record) goto sdl_done; }
     if (o.smoke >= 5) { arrival = fopen(o.replay,"r"); if (!arrival) goto sdl_done; }
     BtpAction queue[256]; unsigned read = 0, write = 0;
+    unsigned held = 0, last_arrow_write = 0;
     uint64_t last = SDL_GetTicks64(), accumulator = 0;
     unsigned smoke_ticks = 0;
     unsigned smoke_sent = 0, tail_sent = 0;
@@ -111,7 +138,8 @@ int main(int argc, char **argv)
             if (++smoke_sent > 8192) { fputs("Arrival smoke exceeded input bound\n",stderr); io_failed = 1; break; }
             if (a != BTP_IDLE) {
                 static const SDL_Keycode codes[] = {0,SDLK_UP,SDLK_DOWN,SDLK_LEFT,SDLK_RIGHT,SDLK_RETURN,SDLK_BACKSPACE,
-                    SDLK_0,SDLK_1,SDLK_2,SDLK_3,SDLK_4,SDLK_5,SDLK_6,SDLK_7,SDLK_8,SDLK_9,SDLK_ESCAPE};
+                    SDLK_0,SDLK_1,SDLK_2,SDLK_3,SDLK_4,SDLK_5,SDLK_6,SDLK_7,SDLK_8,SDLK_9,SDLK_ESCAPE,
+                    SDLK_HOME,SDLK_PAGEUP,SDLK_END,SDLK_PAGEDOWN};
                 SDL_Event injected = {.type=SDL_KEYDOWN}; injected.key.keysym.sym = codes[a];
                 if (SDL_PushEvent(&injected) != 1) { io_failed = 1; break; }
             }
@@ -119,6 +147,9 @@ int main(int argc, char **argv)
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) running = 0;
+            if (event.type == SDL_KEYUP) held &= ~arrow_bit(event.key.keysym.sym);
+            if ((event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_FOCUS_LOST) ||
+                !movement_mode(&state)) held = 0;
             if (event.type == SDL_KEYDOWN) {
                 SDL_Keycode key = event.key.keysym.sym;
                 if (key == SDLK_ESCAPE && state.bank.phase != BTP_BANK_AMOUNT) running = 0;
@@ -135,20 +166,32 @@ int main(int argc, char **argv)
                             btp_save_load(o.save_file,&state,r,&error);
                         if (!ok) fprintf(stderr,"%s\n",error.text);
                     }
-                    if (ok && !saving) { read = write = 0; accumulator = 0; last = SDL_GetTicks64(); }
+                    if (ok && !saving) { read = write = held = last_arrow_write = 0; accumulator = 0; last = SDL_GetTicks64(); }
                     notice = ok ? (saving ? "Saved" : "Loaded") : (saving ? "Save failed" : "Load failed");
                     notice_until = SDL_GetTicks64()+3000;
                     SDL_SetWindowTitle(window,notice);
                 }
                 else if (key == SDLK_r && !event.key.repeat) {
                     if (record) { fputs("Restart while recording is unsupported; start a new log.\n", stderr); }
-                    else { btp_initial_state(&o,&state,r); read = write = 0; }
+                    else { btp_initial_state(&o,&state,r); read = write = held = last_arrow_write = 0; }
                 } else {
                     BtpAction a = state.bank.phase == BTP_BANK_AMOUNT && key == SDLK_SPACE ?
-                        BTP_IDLE : key_action(key);
+                        BTP_IDLE : key_action(key,movement_mode(&state));
+                    /* Real arrow chords use held keys. Scripted smoke events
+                       have no physical scancode and remain individual actions. */
+                    unsigned bit = arrow_bit(key);
+                    int physical_arrow = bit && movement_mode(&state) && event.key.keysym.scancode != SDL_SCANCODE_UNKNOWN;
+                    BtpAction previous = held_action(held);
+                    if (physical_arrow) { held |= bit; a = held_action(held); }
                     if (a != BTP_IDLE) {
-                        if (write - read == 256) { fputs("Input queue full\n", stderr); io_failed = 1; running = 0; }
-                        else queue[write++ % 256] = a;
+                        /* Two perpendicular presses before a fixed step are
+                           one diagonal, rather than an extra cardinal step. */
+                        if (physical_arrow && !event.key.repeat && a >= BTP_UP_LEFT &&
+                            previous >= BTP_UP && previous <= BTP_RIGHT && read != write &&
+                            last_arrow_write == write && queue[(write-1u)%256] == previous)
+                            queue[(write-1u)%256] = a;
+                        else if (write - read == 256) { fputs("Input queue full\n", stderr); io_failed = 1; running = 0; }
+                        else { queue[write++ % 256] = a; last_arrow_write = physical_arrow ? write : 0; }
                     }
                 }
             }
@@ -160,6 +203,7 @@ int main(int argc, char **argv)
             BtpAction a = read != write ? queue[read++ % 256] : BTP_IDLE;
             if (o.sprite_preview) ++state.tick;
             else btp_game_tick(&state, r, a);
+            if (!movement_mode(&state)) held = 0;
             if (record && fprintf(record, "%s\n", btp_action_name(a)) < 0) { io_failed = 1; running = 0; }
             if (o.smoke) {
                 ++smoke_ticks;

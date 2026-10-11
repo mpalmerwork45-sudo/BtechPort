@@ -1,0 +1,665 @@
+{
+  "source_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "payload_sha256": {
+    "TRAINING": "2cc1d90e487f3e6be56d24820bf2da22e2212f85f2c090a5d5c107da0aff580e",
+    "BARRACKS": "5092326798e82ec22397a699cb3b5e27df5f0eb2bcd3d744efb1acef0e672517",
+    "LOUNGE": "0971f5df8d2605e0eec733778c55db1a5e8540c64cd995f80c1339a2f406331d",
+    "WEAPON": "4bbc0075e95889a5452c057fd8b6190c363573afced3394a85f2d24cdf67961e",
+    "ARMOR": "b02d6e830f444d383c51b49013c6749d12cf4d9742a561c34896745a39de86f3"
+  },
+  "reference_run": "work/reference-runs/1791702226982563634",
+  "controlled": true,
+  "initial": "rick-lounge",
+  "mission_time_scope": "input steps and bounded native waits; DOS CPU pacing/elapsed parity not claimed",
+  "checkpoints": [
+    {
+      "label": "rick-lounge-menu",
+      "position": [
+        17,
+        90
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        7,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 1,
+      "talk_result": 91,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 0,
+        "24": 1,
+        "30": 0
+      },
+      "quiz_selected": 0,
+      "loop_timer": 118,
+      "rng": [
+        174,
+        169,
+        210
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "building",
+      "tick": 0,
+      "text": {
+        "length": 165,
+        "digest": 825810764,
+        "sha256": "97402516b0d0eba45f673e4efbd1ead078d2e4bd57be0466caa78deb8d038e8b"
+      }
+    },
+    {
+      "label": "rick-talk-menu",
+      "position": [
+        17,
+        90
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        7,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 1,
+      "talk_result": 91,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 0,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 0,
+      "loop_timer": 118,
+      "rng": [
+        174,
+        169,
+        210
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "building",
+      "tick": 2,
+      "text": null
+    },
+    {
+      "label": "rick-scene1",
+      "position": [
+        17,
+        90
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        7,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 0,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 0,
+      "loop_timer": 118,
+      "rng": [
+        174,
+        169,
+        210
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "building",
+      "tick": 3,
+      "text": {
+        "length": 197,
+        "digest": 883341184,
+        "sha256": "45390b3c70058e4baafcfe32b1c77f37c7528c764df186e3ec6b4a98b2531e3b"
+      }
+    },
+    {
+      "label": "rick-scene2",
+      "position": [
+        17,
+        90
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        7,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 0,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 0,
+      "loop_timer": 118,
+      "rng": [
+        174,
+        169,
+        210
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "building",
+      "tick": 4,
+      "text": {
+        "length": 345,
+        "digest": 3991059446,
+        "sha256": "4d49bb8f76ae4f614d2cc0cbaf27dfbe0baa6231f036ce2a988534bf55766dc5"
+      }
+    },
+    {
+      "label": "rick-scene3",
+      "position": [
+        17,
+        90
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        7,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 0,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 0,
+      "loop_timer": 118,
+      "rng": [
+        174,
+        169,
+        210
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "building",
+      "tick": 5,
+      "text": {
+        "length": 274,
+        "digest": 2961702602,
+        "sha256": "3f86824d38e531de3afbd5986219643e1e1e0cee0aca858a870c52dbf45cd857"
+      }
+    },
+    {
+      "label": "rick-scene4",
+      "position": [
+        17,
+        90
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        7,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 0,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 0,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 0,
+      "loop_timer": 118,
+      "rng": [
+        174,
+        169,
+        210
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "building",
+      "tick": 6,
+      "text": {
+        "length": 254,
+        "digest": 4063992866,
+        "sha256": "36289017e64dc2eed37ce9a9cda53da0a13da176064f8d8e11b2d8ee14148fb4"
+      }
+    },
+    {
+      "label": "rick-scene5",
+      "position": [
+        17,
+        90
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        7,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 1,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 0,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 0,
+      "loop_timer": 118,
+      "rng": [
+        174,
+        169,
+        210
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "building",
+      "tick": 7,
+      "text": {
+        "length": 289,
+        "digest": 3202496392,
+        "sha256": "22f83ab88b6b112bd1ecf9e778c4af6b326fc5a1a8a005ed2647601bd2a55019"
+      }
+    },
+    {
+      "label": "rick-exit",
+      "position": [
+        17,
+        89
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        7,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "device": 1,
+      "recruitment": 0,
+      "talk_result": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "skills": [
+        0,
+        0,
+        0
+      ],
+      "investments": [
+        0,
+        0,
+        0
+      ],
+      "menu_choices": {
+        "7": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "17": 0,
+        "18": 0,
+        "19": 0,
+        "24": 0,
+        "30": 0
+      },
+      "quiz_selected": 0,
+      "loop_timer": 109,
+      "rng": [
+        23,
+        165,
+        215
+      ],
+      "mech_frame": 0,
+      "terrain": 0,
+      "mount": 8,
+      "mode": "local-exploration",
+      "tick": 44,
+      "text": null
+    }
+  ]
+}

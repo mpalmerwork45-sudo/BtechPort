@@ -23,14 +23,10 @@ void btp_start(BtpState *s)
 void btp_tick(BtpState *s, const BtpMap *m, BtpAction a)
 {
     ++s->tick; /* Explicit unsigned wrapping; no clock or graphics dependency. */
-    if (a < BTP_UP || a > BTP_RIGHT) return;
+    if (!btp_action_moves(a)) return;
     s->player_walk = btp_walk_next(s->player_walk,btp_player_direction(s->facing),btp_player_direction((unsigned)a));
     s->facing = (uint8_t)a;
-    int x = s->x_half, y = s->y_half;
-    if (a == BTP_UP) --y;
-    if (a == BTP_DOWN) ++y;
-    if (a == BTP_LEFT) --x;
-    if (a == BTP_RIGHT) ++x;
+    int x = s->x_half + btp_action_dx(a), y = s->y_half + btp_action_dy(a);
     if (x < 0 || y < 0 || x >= 2 * m->width || y >= 2 * m->height) {
         s->blocked = BTP_EDGE;
         return;
@@ -139,7 +135,7 @@ void btp_game_tick(BtpState *s, const BtpResources *r, BtpAction a)
         BtpState moved = *s;
         btp_tick(&moved, &r->map, a);
         int entrance = btp_entrance(&moved,&r->map);
-        if (a >= BTP_UP && a <= BTP_RIGHT && !moved.blocked &&
+        if (btp_action_moves(a) && !moved.blocked &&
             (moved.x_half != s->x_half || moved.y_half != s->y_half) &&
             (entrance >= 0 && btp_building_bld(r,(unsigned)entrance))) {
             moved.x_half = s->x_half; moved.y_half = s->y_half;
@@ -351,7 +347,8 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
     result.x_half = (uint16_t)(b[12] | (uint16_t)b[13] << 8);
     result.y_half = (uint16_t)(b[14] | (uint16_t)b[15] << 8);
     result.map_id = b[16]; result.gate = b[17]; result.facing = b[18]; result.blocked = b[19];
-    if (result.map_id != 1 || result.gate != 85 || result.facing > BTP_RIGHT ||
+    if (result.map_id != 1 || result.gate != 85 ||
+        (version == 10 ? result.facing != BTP_IDLE && !btp_action_moves((BtpAction)result.facing) : result.facing > BTP_RIGHT) ||
         result.blocked > BTP_EDGE || result.x_half >= 2 * m->width || result.y_half >= 2 * m->height)
         return 0;
     if (version > 1) {
@@ -549,14 +546,28 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
 const char *btp_action_name(BtpAction a)
 {
     static const char *names[] = {"idle", "up", "down", "left", "right", "accept", "cancel",
-        "0","1","2","3","4","5","6","7","8","9","clear"};
-    return a >= BTP_IDLE && a <= BTP_CLEAR_INPUT ? names[a] : "invalid";
+        "0","1","2","3","4","5","6","7","8","9","clear","up-left","up-right","down-left","down-right"};
+    return a >= BTP_IDLE && a <= BTP_DOWN_RIGHT ? names[a] : "invalid";
 }
 int btp_action_parse(const char *name, BtpAction *a)
 {
-    for (int i = BTP_IDLE; i <= BTP_CLEAR_INPUT; ++i)
+    for (int i = BTP_IDLE; i <= BTP_DOWN_RIGHT; ++i)
         if (!strcmp(name, btp_action_name((BtpAction)i))) { *a = (BtpAction)i; return 1; }
     return 0;
+}
+int btp_action_moves(BtpAction a)
+{
+    return (a >= BTP_UP && a <= BTP_RIGHT) || (a >= BTP_UP_LEFT && a <= BTP_DOWN_RIGHT);
+}
+int btp_action_dx(BtpAction a)
+{
+    return (a == BTP_RIGHT || a == BTP_UP_RIGHT || a == BTP_DOWN_RIGHT) -
+        (a == BTP_LEFT || a == BTP_UP_LEFT || a == BTP_DOWN_LEFT);
+}
+int btp_action_dy(BtpAction a)
+{
+    return (a == BTP_DOWN || a == BTP_DOWN_LEFT || a == BTP_DOWN_RIGHT) -
+        (a == BTP_UP || a == BTP_UP_LEFT || a == BTP_UP_RIGHT);
 }
 const char *btp_mode_name(unsigned mode)
 {

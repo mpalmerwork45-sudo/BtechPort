@@ -28,6 +28,13 @@ static void select(BtpState *s, const BtpResources *r, unsigned selected)
     }
     restored_tick(s,r,BTP_ACCEPT);
 }
+static void invalid(const BtpState *s, const BtpResources *r, unsigned at, uint8_t value)
+{
+    uint8_t bytes[BTP_STATE_BYTES]; BtpState untouched=*s;
+    btp_state_encode(s,bytes); bytes[at]=value;
+    CHECK(!btp_state_decode(bytes,sizeof bytes,&r->map,btp_building_bld(r,s->entry_slot),&untouched));
+    CHECK(!memcmp(s,&untouched,sizeof untouched));
+}
 static void enter(BtpState *s, const BtpResources *r, unsigned slot)
 {
     s->x_half = (uint16_t)((r->map.entrance_x[slot]&127)-1);
@@ -71,6 +78,16 @@ static void synthetic(void)
         CHECK(btp_mission_terrain(&s,&r->map) == flag);
     }
     memset(r->map.tiles,64,sizeof r->map.tiles);
+    s.x_half=64; s.y_half=80; s.mode=BTP_MISSION;
+    s.mission=(BtpMissionState){.phase=BTP_MISSION_DRIVE,.walk=6,.direction=2};
+    btp_mission_tick(&s,r,BTP_UP_RIGHT);
+    CHECK(s.x_half == 65 && s.y_half == 79 && s.mission.walk == 4 && s.mission.elapsed == 1);
+    btp_mission_tick(&s,r,BTP_UP_RIGHT);
+    CHECK(s.x_half == 66 && s.y_half == 78 && s.mission.walk == 5 && s.mission.elapsed == 2);
+    r->map.tiles[37*64+34]=85; /* Block second foot column at proposed (67,77). */
+    btp_mission_tick(&s,r,BTP_UP_RIGHT);
+    CHECK(s.x_half == 66 && s.y_half == 78 && s.blocked == BTP_WALL && s.mission.walk == 6 && s.mission.elapsed == 3);
+    memset(r->map.tiles,64,sizeof r->map.tiles);
     for (unsigned mech=0;mech<3;++mech) for (unsigned above=0;above<2;++above) {
         btp_start(&s); s.story_flags[2]=(uint8_t)mech; s.x_half=60; s.y_half=79;
         s.mode=BTP_MISSION; s.mission=(BtpMissionState){.phase=BTP_MISSION_DRIVE,.corner=1,
@@ -109,6 +126,9 @@ static void quiz(const BtpResources *r)
     memcpy(s.npc.rng,(uint8_t[]){128,238,198},3); enter(&s,r,0);
     restored_tick(&s,r,BTP_ACCEPT); CHECK(s.quiz.point == 7);
     CHECK(!memcmp(s.npc.rng,(uint8_t[]){64,221,140},3));
+    invalid(&s,r,418,4); invalid(&s,r,419,20); invalid(&s,r,420,3);
+    invalid(&s,r,421,10); invalid(&s,r,422,2); invalid(&s,r,423,0);
+    invalid(&s,r,20,BTP_BUILDING); invalid(&s,r,425,1); invalid(&s,r,434,1);
     const unsigned points[3]={7,5,2};
     for (unsigned n=0;n<3;++n) {
         CHECK(s.quiz.point == points[n]);
@@ -149,6 +169,9 @@ static void barracks(const BtpResources *r)
 static void mission(const BtpResources *r)
 {
     BtpState s; begin(&s,r,0);
+    invalid(&s,r,123,0); invalid(&s,r,426,BTP_MISSION_WARNING);
+    invalid(&s,r,427,2); invalid(&s,r,429,11); invalid(&s,r,430,16); invalid(&s,r,431,8);
+    invalid(&s,r,26,3); invalid(&s,r,411,49); invalid(&s,r,146,1);
     BtpNpcState npc=s.npc; uint8_t pairs[16]; memcpy(pairs,s.npc_pairs,16);
     /* First reach the corner, then return; this slow L-shaped route is an
        observed failure, rather than an invented alternate mission. */
@@ -175,6 +198,7 @@ static void mission(const BtpResources *r)
         restored_tick(&s,r,BTP_IDLE);
         CHECK(s.story_flags[0] == 1 && s.story_flags[1] == 1 && !s.story_flags[3]);
         CHECK(s.allowance_cap == 150 && s.script.mech_result == mech+1 && s.story_flags[20] == 255);
+        invalid(&s,r,406,50); invalid(&s,r,415,4); invalid(&s,r,416,0);
         uint8_t text[BTP_BLD_MAX+1]; size_t length; CHECK(btp_game_text(&s,r,text,sizeof text,&length) && length);
         restored_tick(&s,r,BTP_ACCEPT); CHECK(s.mode == BTP_EXPLORE && s.allowance_cap == 150);
         s.story_flags[20]=0; enter(&s,r,0); answers(&s,r,0);
@@ -203,13 +227,29 @@ static void lounge(const BtpResources *r)
     restored_tick(&s,r,BTP_ACCEPT); restored_tick(&s,r,BTP_DOWN); restored_tick(&s,r,BTP_ACCEPT);
     CHECK(s.script.menu_id == 24 && s.story_flags[47] == 1);
 }
+static void diagonal_return(const BtpResources *r)
+{
+    static const BtpAction diagonal[4] = {BTP_UP_LEFT,BTP_UP_RIGHT,BTP_DOWN_LEFT,BTP_DOWN_RIGHT};
+    for (unsigned i=0;i<4;++i) {
+        BtpState s; begin(&s,r,0);
+        s.entry_action=(uint8_t)diagonal[i];
+        restored_tick(&s,r,diagonal[i]);
+        CHECK(s.x_half == 64+btp_action_dx(diagonal[i]) && s.y_half == 79+btp_action_dy(diagonal[i]));
+        s.x_half=60; s.y_half=79; s.mission.corner=1; s.mission.elapsed=264;
+        restored_tick(&s,r,BTP_IDLE); CHECK(s.story_flags[1]);
+        restored_tick(&s,r,BTP_ACCEPT);
+        CHECK(s.mode == BTP_EXPLORE && s.x_half == 46+btp_action_dx(diagonal[i]) &&
+              s.y_half == 118+btp_action_dy(diagonal[i]) && s.facing == diagonal[i]);
+        restored_tick(&s,r,BTP_IDLE);
+    }
+}
 int main(int argc, char **argv)
 {
     synthetic();
     if (argc > 1) {
         BtpResources *r=malloc(sizeof *r); BtpError e; CHECK(r);
         CHECK(btp_resources_load(argv[1],r,&e)); CHECK(btp_dialogue_load("work/talk-data.bin",&r->dialogue,&e));
-        quiz(r); barracks(r); mission(r); lounge(r); free(r);
+        quiz(r); barracks(r); mission(r); lounge(r); diagonal_return(r); free(r);
     }
     printf("PASS: %u training timer, quiz, mission, barracks, lounge and continuation assertions.\n",checks);
     return 0;

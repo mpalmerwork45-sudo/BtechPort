@@ -170,6 +170,7 @@ static void frames(const BtpResources *r, const char *name)
     uint32_t old[FIELDS], next[FIELDS], actual[FIELDS]; CHECK(row(f,old));
     BtpState s = {.x_half=(uint16_t)(old[7]&127u),.y_half=(uint16_t)(old[8]&127u),.map_id=1,.gate=85,
         .credits=old[65],.allowance_cap=(uint16_t)old[69]};
+    s.story_flags[51] = (uint8_t)s.allowance_cap;
     s.npc = (BtpNpcState){.enabled=2,.phase=(uint8_t)old[0],.loop_timer=(uint8_t)old[1],
         .rng={(uint8_t)old[2],(uint8_t)old[3],(uint8_t)old[4]},.search=(uint16_t)old[5],.bias=(uint8_t)old[6]};
     for (unsigned i = 0; i < 3; ++i) s.investments[i] = old[66+i];
