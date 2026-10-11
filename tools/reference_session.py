@@ -18,6 +18,7 @@ import sys
 import time
 import argparse
 import hashlib
+import threading
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -225,16 +226,87 @@ def snapshot_game(pid, label, output):
         row["script_buffer_segment"]=hex(script_segment)
         row["building_index"]=u16(u16(ds+0x5480)*16+0x3ff8)
         row["story_state_bytes"]=list(ram[state+0xd30c:state+0xd36a])
+        row["npc_rng"] = list(ram[ds+0x4fc0:ds+0x4fc3])
+        row["npc_phase"] = ram[ds+0x57fe]
+        row["npc_search"] = [u16(ds+0x315a), u16(ds+0x315c)]
+        row["loop_timer"] = ram[state+0xd323]
+        nx, ny = u16(ds+0x53a4)*16, u16(ds+0x53a6)*16
+        direction = u16(ds+0x53d8)*16
+        row["npcs"] = [{"slot":i,
+            "origin":[u16(state+0xd390+26*i),u16(state+0xd392+26*i)],
+            "destination":[u16(state+0xd394+26*i),u16(state+0xd396+26*i)],
+            "packed":ram[state+0xd398+26*i], "timer":ram[state+0xd399+26*i],
+            "position":[u16(nx+0x4024+2*i),u16(ny+0x4056+2*i)],
+            "direction":ram[direction+0x3930+i]} for i in range(8)]
         payload=(WORK/"dos/MAP1.MTP").read_bytes()[541:]
         map_offset=ram.find(payload)
         row["map1_payload_present"]=map_offset>=0
         row["map1_payload_guest_offset"]=hex(map_offset) if map_offset>=0 else None
         (output/(label+"-ram.bin")).write_bytes(ram)
         (output/(label+"-state.json")).write_text(json.dumps(row,indent=2)+"\n")
-        print(json.dumps(row),flush=True)
+        print(f"SNAPSHOT {label} cursor={row['cursor_raw']} "
+              f"npc1={row['npcs'][1]['position']} "
+              f"packed/timer={row['npcs'][1]['packed']}/{row['npcs'][1]['timer']}", flush=True)
+        return base, row
     finally:
         os.close(fd)
         os.kill(pid,signal.SIGCONT)
+
+
+class NpcTrace:
+    """Read-only observation of stable outdoor frames; never injects context.
+
+    Requiring two identical polls avoids sampling a half-completed main-loop
+    update. Loop timer/phase expose skipped frames for the differential verifier.
+    No signals are sent by this observer; ordinary keys still drive the game.
+    """
+    def __init__(self, pid, label, output):
+        self.base, row = snapshot_game(pid, label+"-start", output)
+        self.ds = int(row["data_segment"],16)*16
+        self.state = int(row["state_segment"],16)*16
+        self.pid = pid; self.output = output/(label+"-frames.json")
+        self.done = threading.Event(); self.error = None; self.frames = []
+        self.thread = threading.Thread(target=self.observe, daemon=True)
+        self.thread.start()
+
+    def project(self, ram):
+        def w(a): return struct.unpack_from("<H",ram,a)[0]
+        ds, state = self.ds, self.state
+        return {"cursor":[w(w(ds+0x538c)*16+0xa44b),w(w(ds+0x538e)*16+0xa44d)],
+            "phase":ram[ds+0x57fe], "loop_timer":ram[state+0xd323],
+            "rng":list(ram[ds+0x4fc0:ds+0x4fc3]),
+            "search":[w(ds+0x315a),w(ds+0x315c)],
+            "npcs":[{"position":[w(w(ds+0x53a4)*16+0x4024+2*i),
+                                      w(w(ds+0x53a6)*16+0x4056+2*i)],
+                "destination":[w(state+0xd394+26*i),w(state+0xd396+26*i)],
+                "direction":ram[w(ds+0x53d8)*16+0x3930+i],
+                "pair":list(ram[state+0xd398+26*i:state+0xd39a+26*i])}
+                for i in range(8)]}
+
+    def observe(self):
+        fd = os.open(f"/proc/{self.pid}/mem",os.O_RDONLY)
+        pending = None
+        try:
+            while not self.done.wait(0.015):
+                ram = os.pread(fd,0x100000,self.base)
+                if len(ram) != 0x100000: raise RuntimeError("Short NPC trace RAM read")
+                row = self.project(ram)
+                if row == pending and (not self.frames or row != self.frames[-1]):
+                    self.frames.append(row)
+                    if len(self.frames) > 12000: raise RuntimeError("NPC trace exceeded frame bound")
+                pending = row
+        except Exception as error:
+            self.error = error
+        finally:
+            os.close(fd)
+
+    def close(self):
+        self.done.set(); self.thread.join(timeout=5)
+        if self.thread.is_alive(): raise RuntimeError("NPC observer failed to stop")
+        self.output.write_text(json.dumps({"kind":"read-only-outdoor-frames",
+            "frames":self.frames},indent=2)+"\n")
+        if self.error: raise self.error
+        print(f"NPC TRACE {len(self.frames)} stable samples: {self.output}",flush=True)
 
 
 def controlled_talk_context(pid, output):
@@ -299,7 +371,7 @@ def main():
     for parts in commands:
         if not isinstance(parts,list) or not parts or not all(isinstance(p,str) for p in parts):
             raise ValueError("Each command must be a nonempty list of strings")
-        if parts[0] in ("shot","screen","snapshot","dump"):
+        if parts[0] in ("shot","screen","snapshot","dump","npc-trace"):
             if len(parts)<2 or not parts[1].replace("-","").replace("_","").isalnum():
                 raise ValueError("Capture labels must use letters, digits, hyphens or underscores")
     manifest=json.loads((ROOT/"docs/original-manifest.json").read_text())
@@ -357,6 +429,7 @@ btech.exe
     process = subprocess.Popen([str(ROOT / "local-deps/dosbox/usr/bin/dosbox"), "-conf", str(config)],
                                env=env, cwd=WORK, stdout=log, stderr=subprocess.STDOUT)
     session_log = (output / "inputs.jsonl").open("w")
+    npc_trace = None
     try:
         keys = WindowKeys()
         for _ in range(100):
@@ -415,7 +488,14 @@ btech.exe
                     print(json.dumps(memory_candidates(process.pid)), flush=True)
                 elif command == "snapshot":
                     snapshot_game(process.pid,parts[1],output)
+                elif command == "npc-trace":
+                    if npc_trace is not None: raise ValueError("NPC observer already running")
+                    npc_trace = NpcTrace(process.pid,parts[1],output)
+                elif command == "npc-trace-stop":
+                    if npc_trace is None: raise ValueError("No NPC observer running")
+                    npc_trace.close(); npc_trace = None
                 elif command == "controlled-talk-context":
+                    if npc_trace is not None: raise ValueError("Controlled context is separate from natural NPC traces")
                     controlled_talk_context(process.pid, output)
                 elif command == "dump":
                     address = int(parts[2], 0)
@@ -439,6 +519,8 @@ btech.exe
     except EOFError:
         pass
     finally:
+        if npc_trace is not None:
+            npc_trace.close()
         process.terminate()
         try:
             process.wait(timeout=5)
