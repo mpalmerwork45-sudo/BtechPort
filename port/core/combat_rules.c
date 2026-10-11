@@ -1,0 +1,209 @@
+#include "core/combat_rules.h"
+#include "core/npc.h"
+#include <string.h>
+#include <stdlib.h>
+
+int btp_combat_data_decode(const uint8_t *b, size_t n, BtpCombatData *d)
+{
+    if (n != BTP_COMBAT_DATA_BYTES || memcmp(b,"BTC1",4)) return 0;
+    BtpCombatData v; size_t p = 4;
+#define COPY(field) do { memcpy(v.field,b+p,sizeof v.field); p += sizeof v.field; } while (0)
+    COPY(loans); COPY(weapons); COPY(arcs); COPY(locations); COPY(clusters);
+    COPY(critical_start); COPY(critical_count);
+#undef COPY
+    for (unsigned i = 0; i < 15; ++i) if (v.arcs[i] > 3) return 0;
+    for (unsigned i = 2; i < 46; ++i) if (v.locations[i] < 17 || v.locations[i] > 27) return 0;
+    for (unsigned i = 15; i < 33; ++i)
+        if (!v.weapons[i][12] || v.weapons[i][12] > 8 || v.weapons[i][11] > 20) return 0;
+    for (unsigned i = 0; i < 8; ++i)
+        if (v.critical_start[i] < 51 || v.critical_start[i]+v.critical_count[i] > 86) return 0;
+    *d = v; return 1;
+}
+unsigned btp_combat_die(uint8_t rng[3])
+{
+    unsigned value; do { value = btp_rng_next(rng)&7u; } while (value > 5);
+    return value+1;
+}
+unsigned btp_combat_dice(uint8_t rng[3])
+{
+    unsigned first = btp_combat_die(rng); return first+btp_combat_die(rng);
+}
+unsigned btp_combat_direction(int x, int y, int tx, int ty)
+{
+    /* 187F:0971: octants include the exact 2:1 boundary in both axes. */
+    int dx = tx-x, dy = y-ty;
+    static const uint8_t direction[16] = {255,6,2,255,4,5,3,255,0,7,1,255,255,255,255,255};
+    unsigned mask = (2*dy >= abs(dx) ? 8u : 0u) | (-2*dy >= abs(dx) ? 4u : 0u) |
+        (2*dx >= abs(dy) ? 2u : 0u) | (-2*dx >= abs(dy) ? 1u : 0u);
+    return direction[mask];
+}
+unsigned btp_combat_distance(int x, int y, int tx, int ty)
+{
+    unsigned dx = (unsigned)abs(tx-x), dy = (unsigned)abs(ty-y);
+    return dx > dy ? dx/2+dy : dy/2+dx;
+}
+unsigned btp_combat_range(const BtpCombatData *d, unsigned w, int x, int y, int tx, int ty)
+{
+    if (w >= 33) return 3;
+    if (btp_combat_distance(x,y,tx,ty) > 3) {
+        if (x < tx) --tx;
+        if (x > tx) ++tx;
+        if (y < ty) ty -= 2;
+    }
+    unsigned distance = btp_combat_distance(x,y,tx,ty);
+    unsigned medium = d->weapons[w][14]&31u, near = d->weapons[w][14]>>5;
+    if (d->weapons[w][12] < 128 && w != 32) { medium *= 3; near *= 3; }
+    return distance < near ? 0u : distance < medium ? 1u : distance < d->weapons[w][15] ? 2u : 3u;
+}
+unsigned btp_combat_weapon_count(const BtpCombatUnit *u)
+{
+    unsigned count = 0;
+    for (unsigned i = 51; i < 86; ++i) {
+        unsigned type = u->record[i]&127u;
+        if (type >= 16 && type <= 32) ++count;
+    }
+    return count;
+}
+unsigned btp_combat_weapon(const BtpCombatUnit *u, unsigned index)
+{
+    unsigned count = 0;
+    if (index >= 11 || !u->record[39+index]) return 255;
+    for (unsigned i = 51; i < 86; ++i) {
+        unsigned type = u->record[i]&127u;
+        if (type >= 16 && type <= 32 && count++ == index) return (unsigned)u->record[i]-1u;
+    }
+    return 255;
+}
+int btp_combat_points(const BtpCombatUnit *u, unsigned movement)
+{
+    int points = u->record[49]; unsigned left = u->record[36], right = u->record[37];
+    if (movement == 2) points = u->record[50];
+    else {
+        if (!((left|right)&8u)) points = 1;
+        else {
+            unsigned damaged = (left&8u) == 0 || (right&8u) == 0;
+            if (damaged) points = (points+1)/2;
+            for (unsigned mask = 4; mask; mask >>= 1) {
+                if (!(left&mask)) { --points; damaged = 1; }
+                if (!(right&mask)) { --points; damaged = 1; }
+                if (damaged && !points) points = 1;
+            }
+        }
+        points -= u->heat/5;
+        if (movement == 1) points += points/2+(int)(u->record[49]&1u);
+    }
+    return u->heat == 30 || points < 0 ? 0 : points;
+}
+void btp_combat_cool(BtpCombatUnit *u, int movement, unsigned steps, unsigned terrain)
+{
+    int amount = movement+1;
+    if (amount == 3 && steps > 3) amount = (int)steps;
+    amount += 5*u->record[117] - u->record[38] + u->pool;
+    for (unsigned i = 51; i <= 85; ++i) if (u->record[i] == 34) --amount;
+    if (u->burning) { amount += 6; --u->burning; }
+    if (u->cover && terrain < 16) amount -= 4;
+    int heat = (int)(uint8_t)(u->heat+amount);
+    if (heat >= 128) heat -= 256;
+    u->heat = (uint8_t)(heat < 0 ? 0 : heat > 30 ? 30 : heat); u->pool = 0;
+}
+static unsigned working(const BtpCombatUnit *u, unsigned start, unsigned count)
+{
+    unsigned active = 0;
+    for (unsigned i = 0; i < count; ++i) active += u->record[start+i] != 0 && u->record[start+i] < 128;
+    return active;
+}
+static unsigned break_component(BtpCombatUnit *u, unsigned start, unsigned count, uint8_t rng[3])
+{
+    if (!working(u,start,count)) return 0;
+    unsigned i = btp_rng_next(rng)&3u;
+    for (unsigned tries = 0; tries < count+4; ++tries) {
+        if (i >= count) i = 0;
+        if (u->record[start+i] && u->record[start+i] < 128) { u->record[start+i] |= 128; return 1; }
+        ++i;
+    }
+    return 0;
+}
+int btp_combat_critical(BtpCombatUnit *u, const BtpCombatData *d, unsigned loc, uint8_t rng[3])
+{
+    if (loc < 28 || loc > 35) return 0;
+    unsigned roll = btp_combat_dice(rng), hits = roll >= 8 ? (roll-8)/2+1 : 1;
+    if (!u->record[loc]) {
+        unsigned start = d->critical_start[loc-28], count = d->critical_count[loc-28];
+        for (unsigned i = 0; i < count; ++i) if (u->record[start+i]) u->record[start+i] |= 128;
+        if (loc == 28) u->record[36] &= 15;
+        if (loc == 33) u->record[37] &= 15;
+        if (loc == 30) u->record[36] &= 240;
+        if (loc == 35) u->record[37] &= 240;
+        return 0;
+    }
+    while (hits) {
+        if (loc == 29 || loc == 34) {
+            unsigned start = loc == 29 ? 58u : 72u;
+            if (!break_component(u,start,7,rng)) break;
+            --hits;
+        } else if (loc == 31) {
+            roll = btp_combat_die(rng);
+            if (roll == 1 || roll == 6) { if (!u->record[120]) continue; u->record[120] = 255; --hits; }
+            if (roll == 2 || roll == 5) { if (u->record[119] >= 2) continue; ++u->record[119]; --hits; }
+            if (roll == 3) { u->record[31] = 0; return 1; }
+            if (roll == 4) hits -= break_component(u,85,1,rng);
+        } else if (loc == 32) {
+            if (btp_combat_die(rng) <= 3) {
+                unsigned index = btp_combat_die(rng) <= 3 ? 118u : 117u;
+                ++u->record[index]; --hits;
+                if (u->record[index] >= (index == 118 ? 2u : 3u)) { u->record[32] = 0; return 1; }
+            } else hits -= break_component(u,83,2,rng);
+        } else {
+            unsigned right = loc >= 33, arm = loc == 28 || loc == 33;
+            unsigned actuator = right ? 37u : 36u, mask = arm ? 240u : 15u;
+            unsigned start = arm ? (right ? 65u : 51u) : (right ? 81u : 79u), count = arm ? 7u : 2u;
+            if (!(u->record[actuator]&mask) && !working(u,start,count)) break;
+            roll = btp_combat_die(rng);
+            if (roll >= 3 && (u->record[actuator]&mask)) {
+                unsigned bit = (8u>>(roll-3)) << (arm ? 4 : 0);
+                if (!(u->record[actuator]&bit)) continue;
+                u->record[actuator] &= (uint8_t)~bit; --hits;
+            } else hits -= break_component(u,start,count,rng);
+        }
+    }
+    return 0;
+}
+static void apply_damage(BtpCombatUnit *u, const BtpCombatData *d, unsigned loc, unsigned damage,
+    uint8_t rng[3], BtpShot *shot)
+{
+    static const uint8_t overflow[11] = {29,32,34,18,21,18,255,255,23,21,23};
+    while (damage && !shot->destroyed) {
+        unsigned available = u->record[loc], taken = available < damage ? available : damage;
+        u->record[loc] = (uint8_t)(available-taken); damage -= taken;
+        if (available && !u->record[loc] && (loc == 28 || loc == 33)) shot->toppled = 1;
+        if (loc >= 28 && btp_combat_critical(u,d,loc,rng)) shot->destroyed = 1;
+        if ((loc == 31 || loc == 32) && !u->record[loc]) shot->destroyed = 1;
+        if (!damage || shot->destroyed) break;
+        loc = loc <= 24 ? loc+11 : overflow[loc-25];
+        if (loc == 255) shot->destroyed = 1;
+    }
+}
+BtpShot btp_combat_shoot(BtpCombatUnit *a, BtpCombatUnit *t, const BtpCombatData *d,
+    unsigned index, int movement, unsigned steps, unsigned skill, uint8_t rng[3])
+{
+    BtpShot shot = {0}; unsigned w = btp_combat_weapon(a,index);
+    if (w >= 33 || a->heat >= 30) return shot;
+    unsigned range = btp_combat_range(d,w,a->x,a->y,t->x,t->y);
+    if (range >= 3) return shot;
+    if (a->record[39+index] != 255) --a->record[39+index];
+    a->pool = (uint8_t)(a->pool+(d->weapons[w][13]&15u));
+    static const uint8_t movement_penalty[13] = {0,0,0,1,1,2,2,3,3,3,4,4,4};
+    int needed = (int)(2*range+4) + movement+1 + movement_penalty[steps > 12 ? 12 : steps] - (int)skill;
+    if (a->record[119]) needed += 2;
+    needed += (a->heat >= 8)+(a->heat >= 13)+(a->heat >= 17)+(a->heat >= 24)+t->cover/8;
+    shot.needed = (int16_t)needed;
+    unsigned incoming = btp_combat_direction(a->x,a->y,t->x,t->y);
+    if (incoming == 255) incoming = 0;
+    unsigned arc = d->arcs[7+(int)t->direction-(int)incoming];
+    shot.location = d->locations[11*arc+btp_combat_dice(rng)];
+    unsigned damage = d->weapons[w][11], cluster = d->weapons[w][12];
+    if (cluster > 1) damage *= d->clusters[7*btp_combat_dice(rng)+cluster];
+    shot.hit = (uint8_t)((int)btp_combat_dice(rng) >= needed);
+    if (shot.hit) { shot.damage = (uint8_t)damage; apply_damage(t,d,shot.location,damage,rng,&shot); }
+    return shot;
+}

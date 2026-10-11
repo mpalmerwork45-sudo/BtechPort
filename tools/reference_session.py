@@ -588,7 +588,7 @@ btech.exe
         (WORK / "reference-session.json").write_text(json.dumps({"pid": process.pid, "window": window,
             "harness_pid":os.getpid(),"xvfb_pid":xvfb.pid,"display":os.environ["DISPLAY"]}))
         print(f"READY private_display={os.environ['DISPLAY']} pid={process.pid} window={window}", flush=True)
-        for parts in commands:
+        for command_index,parts in enumerate(commands):
             if not parts:
                 continue
             session_log.write(json.dumps({"time": time.time(), "command": parts}) + "\n")
@@ -601,6 +601,23 @@ btech.exe
                     for key in parts[1:]:
                         keys.key(window, key)
                         if command == "key": time.sleep(0.18)
+                elif command == "next-script":
+                    # Bounded batches keep an audited original session alive
+                    # during research, without an interactive terminal or a
+                    # repeated walk through earlier assignments.
+                    path=(ROOT/parts[1]).resolve(); delay=float(parts[2])
+                    if not path.is_relative_to(WORK.resolve()) or not 0 < delay <= 300 or command_index != len(commands)-1:
+                        raise ValueError("Next script must be a final, bounded work/ batch")
+                    deadline=time.monotonic()+delay
+                    print(f"WAITING for {path}",flush=True)
+                    while not path.exists():
+                        if process.poll() is not None or time.monotonic() >= deadline:
+                            raise RuntimeError("Next script did not arrive within its bound")
+                        time.sleep(.1)
+                    batch=json.loads(path.read_text())
+                    if not isinstance(batch,list) or not batch or len(commands)+len(batch)>500 or any(not isinstance(c,list) for c in batch):
+                        raise ValueError("Next script exceeds the 500-command session bound")
+                    commands.extend(batch)
                 elif command == "screen":
                     from PIL import ImageGrab
                     path=capture/(parts[1]+".png")

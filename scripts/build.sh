@@ -3,6 +3,7 @@ set -eu
 root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 cd "$root"
 python3 tools/prepare_talk.py
+python3 tools/prepare_combat.py
 # This Kubuntu shell has Conda compiler/linker flags and an older ld in PATH.
 # Select the host compiler/tools without changing the user's shell configuration.
 env -u CFLAGS -u CPPFLAGS -u CXXFLAGS -u LDFLAGS PATH="/usr/bin:/bin:$PATH" \
