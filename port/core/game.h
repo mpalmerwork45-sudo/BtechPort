@@ -20,7 +20,7 @@ typedef struct {
     uint16_t x_half, y_half;
     uint8_t map_id, gate, facing, blocked;
     uint8_t mode, entry_selected, entry_slot;
-    uint8_t story_flags[BTP_STORY_BYTES]; /* D30C[0..22]; byte 22 countdown pacing is deferred */
+    uint8_t story_flags[BTP_STORY_BYTES]; /* sparse window defined in script.h */
     uint8_t story_checkpoint[BTP_STORY_BYTES], checkpoint_valid;
     BtpScriptState script;
     uint8_t npc_pairs[8][2]; /* D398/D399 at stride 26 */
@@ -28,8 +28,12 @@ typedef struct {
     uint8_t talk_result, recruitment; /* D33A and D339 */
     uint8_t checkpoint_talk_result, conversation_checkpoint;
     BtpTalkState talk;
+    uint32_t credits, checkpoint_credits;
+    uint16_t allowance_cap;
+    uint8_t weapon, armor, armor_points;
+    uint8_t checkpoint_weapon, checkpoint_armor, checkpoint_armor_points;
 } BtpState;
-enum { BTP_STATE_BYTES = 224 };
+enum { BTP_STATE_BYTES = 320 };
 
 void btp_start(BtpState *state);
 void btp_tick(BtpState *state, const BtpMap *map, BtpAction action);
@@ -38,6 +42,7 @@ void btp_start_conversation_checkpoint(BtpState *state); /* Explicit controlled 
 int btp_game_text(const BtpState *state, const BtpResources *resources,
     uint8_t *output, size_t capacity, size_t *length);
 int btp_entrance(const BtpState *state, const BtpMap *map); /* index, or -1 */
+const BtpBld *btp_building_bld(const BtpResources *resources, unsigned slot);
 void btp_state_encode(const BtpState *state, uint8_t output[BTP_STATE_BYTES]);
 int btp_state_decode(const uint8_t *bytes, size_t length, const BtpMap *map,
     const BtpBld *script, BtpState *state);

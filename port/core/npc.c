@@ -129,13 +129,13 @@ void btp_npc_frame(BtpState *s, const BtpMap *m)
         s->npc.fault = BTP_NPC_BAD_CONTEXT; return;
     }
     (void)btp_rng_next(s->npc.rng); /* Main-loop encounter check also draws on MAP1. */
-    /* D323 wraps before the NPC update. The recorded, unspent MAP1 baseline
-       has credits 35, cap 50 and no investments: only its first wrap consumes
-       three account RNG draws. This schedule is not a general economy model. */
-    if (s->npc.loop_timer-- == 0 && s->npc.allowance_pending) {
+    /* D323 wraps before NPCs. Zero investments/local map/50-cap context only:
+       compare pre-update cash; the original adds 15 without clamping to cap. */
+    if (s->npc.loop_timer-- == 0 && s->credits < s->allowance_cap) {
+        s->credits += 15;
         for (unsigned i = 0; i < 3; ++i) (void)btp_rng_next(s->npc.rng);
-        s->npc.allowance_pending = 0;
     }
+    s->npc.allowance_pending = (uint8_t)(s->credits < s->allowance_cap);
     if (++s->npc.phase < 3) return;
     s->npc.phase = 0;
     for (unsigned i = 0; i < 8; ++i) {

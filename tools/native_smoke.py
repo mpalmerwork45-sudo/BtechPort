@@ -4,12 +4,34 @@ import json
 import os
 import select
 import subprocess
+import argparse
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def shops(env, work):
+    print("Running native X11 two-shop walk/purchases/return (about 98 seconds).", flush=True)
+    result = subprocess.run([str(ROOT / "build/btech-port"), "--smoke-shops",
+        "--replay", str(ROOT / "tests/fixtures/reference-shops.actions"),
+        "--data", str(ROOT / "Original DOS"), "--record", str(work / "native-shops-x11.actions"),
+        "--frame", str(work / "native-shops-x11.ppm")], env=env, timeout=140, check=True,
+        capture_output=True, text=True, cwd=ROOT)
+    replayed = subprocess.run([str(ROOT / "build/btech-headless"), "--replay",
+        str(work / "native-shops-x11.actions")], check=True, timeout=15,
+        capture_output=True, text=True, cwd=ROOT)
+    if json.loads(result.stdout) != json.loads(replayed.stdout):
+        raise RuntimeError("Native shop state differs from complete headless input replay")
+    print(result.stdout.strip())
+    subprocess.run(["python3", str(ROOT / "tools/verify_m2e.py"), "--native-log",
+        str(work / "native-shops-x11.actions")], check=True, timeout=20)
+    print("PASS: native X11 two shops, purchases, outdoor return and complete canonical replay equality.")
+
+
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--shops-only", action="store_true")
+    args = parser.parse_args()
     work = ROOT / "work"
     work.mkdir(exist_ok=True)
     read_fd, write_fd = os.pipe()
@@ -26,6 +48,9 @@ def main():
                 raise RuntimeError("Invalid private display number")
             env = dict(os.environ, DISPLAY=":" + number)
             env.pop("SDL_VIDEODRIVER", None)
+            if args.shops_only:
+                shops(env, work)
+                return
             result = subprocess.run([str(ROOT / "build/btech-port"), "--smoke",
                 "--data", str(ROOT / "Original DOS"), "--record", str(work / "native-x11.actions"),
                 "--frame", str(work / "native-x11.ppm")], env=env, timeout=15, check=True,
@@ -71,6 +96,7 @@ def main():
             subprocess.run(["python3", str(ROOT / "tools/verify_m2d.py"), "--native-log",
                 str(work / "native-arrival-x11.actions")], check=True, timeout=15)
             print("PASS: native X11 normal exploration, NPC arrival/reply, return/exit and full canonical replay equality.")
+            shops(env, work)
         finally:
             os.close(read_fd)
             xvfb.terminate()

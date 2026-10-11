@@ -116,13 +116,14 @@ int btp_resources_load(const char *dir, BtpResources *r, BtpError *e)
 {
     memset(&r->dialogue, 0, sizeof r->dialogue);
     char path[4096]; uint8_t *data; size_t n;
-    const char *names[] = {"MAP1.MTP", "BTTLTECH.ICN", "CITADEL.BLD"};
-    for (unsigned i = 0; i < 3; ++i) {
+    const char *names[] = {"MAP1.MTP", "BTTLTECH.ICN", "CITADEL.BLD", "ARMOR.BLD", "WEAPON.BLD"};
+    for (unsigned i = 0; i < 5; ++i) {
         int len = snprintf(path, sizeof path, "%s/%s", dir, names[i]);
         if (len < 0 || (size_t)len >= sizeof path) return fail(e, "Resource directory path too long");
         if (!btp_read_file(path, &data, &n, e)) return 0;
         int ok = i == 0 ? btp_map_decode(data, n, &r->map, e) :
-            i == 1 ? btp_graphic_decode(data, n, &r->tiles, e) : btp_bld_decode(data, n, &r->citadel, e);
+            i == 1 ? btp_graphic_decode(data, n, &r->tiles, e) :
+            btp_bld_decode(data, n, i == 2 ? &r->citadel : i == 3 ? &r->armor : &r->weapon, e);
         free(data);
         if (!ok) return 0;
     }
@@ -130,6 +131,10 @@ int btp_resources_load(const char *dir, BtpResources *r, BtpError *e)
         return fail(e, "M2a requires the authentic 64x64 MAP1 and format-1 BTTLTECH tiles");
     if (r->map.entrance_x[1] != 0x0c45 || r->map.entrance_y[1] != 0xc014)
         return fail(e, "M2a requires the verified MAP1 Citadel entrance words");
+    if (r->map.entrance_x[3] != 0x0c20 || r->map.entrance_y[3] != 0xc02c ||
+        r->map.entrance_x[4] != 0x0c32 || r->map.entrance_y[4] != 0xc07c ||
+        r->map.room_map[3] != 3 || r->map.room_map[4] != 4)
+        return fail(e, "M2e requires the verified MAP1 shop entrances and room mapping");
     for (unsigned i = 0; i < 4096; ++i)
         if (r->map.tiles[i] >= 250) return fail(e, "MAP1 references a tile outside the 250-tile sheet");
     return 1;

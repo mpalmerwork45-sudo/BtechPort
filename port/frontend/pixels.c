@@ -88,7 +88,7 @@ static void story_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
         text(f, 110, 30, btp_script_error_name(s->script.error), 15);
         char line[40];
         snprintf(line, sizeof line, "PC %04X OPCODE %02X", s->script.fault_pc, s->script.last_opcode);
-        text(f, 110, 48, line, 14); text(f, 110, 84, "BACKSPACE RETURNS TO CITADEL MENU", 7);
+        text(f, 110, 48, line, 14); text(f, 110, 84, "BACKSPACE RETURNS TO BUILDING MENU", 7);
         return;
     }
     const BtpScriptState *v = &s->script;
@@ -98,7 +98,10 @@ static void story_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
         text(f, 110, 12, "INVALID TEXT BOUNDS", 12); return;
     }
     if (v->status == BTP_SCRIPT_MENU || s->talk.phase == BTP_TALK_MENU) {
-        unsigned count = s->talk.phase == BTP_TALK_MENU ? (unsigned)s->talk.count+1 : 5;
+        if (!s->talk.phase && !btp_script_menu_text(v,btp_building_bld(r,s->entry_slot),bytes,sizeof bytes,&length)) {
+            text(f,110,12,"INVALID MENU TEXT",12); return;
+        }
+        unsigned count = s->talk.phase == BTP_TALK_MENU ? (unsigned)s->talk.count+1 : btp_menu_count(v->menu_id);
         unsigned selected = s->talk.phase == BTP_TALK_MENU ? s->talk.selected : v->selected;
         size_t starts[9]; unsigned found = 0;
         if (count > 9) { text(f, 110, 12, "INVALID MENU COUNT", 12); return; }
@@ -117,8 +120,12 @@ static void story_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
             text(f, 110, y, option, i == selected ? 0u : 15u); y += 9;
         }
     } else {
-        (void)wrapped(f, 9, bytes, length, 15);
-        text(f, 110, 185, "ENTER / SPACE TO CONTINUE", 14);
+        int y = wrapped(f, 9, bytes, length, 15);
+        if (v->status == BTP_SCRIPT_CONFIRM) {
+            if (y > 177) y = 177;
+            text(f,110,y,"Yes",v->confirm_selected == 0 ? 14u : 7u);
+            text(f,140,y,"No",v->confirm_selected == 1 ? 14u : 7u);
+        } else text(f, 110, 185, "ENTER / SPACE TO CONTINUE", 14);
     }
 }
 
@@ -155,13 +162,15 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
     /* Approximate player marker until ANIMATE.ICN selection/masking is verified. */
     for (int y = 97; y <= 102; ++y)
         for (int x = 211; x <= 213; ++x) pixel(f, x, y, btp_palette[y < 99 ? 15 : 1]);
-    text(f, 8, 9, "BTECHPORT M2D", 15);
-    text(f, 8, 24, s->mode >= BTP_BUILDING ? "CITADEL" : "TRAINING", 14);
+    text(f, 8, 9, "BtechPort M2e", 15);
+    text(f, 8, 24, s->mode >= BTP_ENTRY ? (s->entry_slot == 3 ? "Weapons Shop" :
+        s->entry_slot == 4 ? "Armor Shop" : "Citadel") : "Training", 14);
     text(f, 8, 36, s->conversation_checkpoint ? "TALK CHECKPOINT" :
         s->mode >= BTP_BUILDING ? "DIALOGUE" : "SCHOOL", 14);
     text(f, 8, 57, s->mode == BTP_EXPLORE ? "ARROWS MOVE" : "ARROWS SELECT", 7);
     text(f, 8, 69, "F3 DEBUG", 7);
     text(f, 8, 81, "R RESTART", 7);
+    char cash[32]; snprintf(cash,sizeof cash,"C-bills %u",s->credits); text(f,8,92,cash,10);
     text(f, 8, 111, "MAP 1", 15);
     char line[64];
     snprintf(line, sizeof line, "X %u.%u", s->x_half / 2, (s->x_half % 2) * 5);
@@ -179,11 +188,13 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         story_panel(r, s, f);
     } else if (s->mode == BTP_ENTRY) {
         rectangle(f, 104, 73, 216, 55, 7); rectangle(f, 108, 77, 208, 46, 0);
-        text(f, 110, 81, "WILL YOU ENTER THE CITADEL?", 15);
+        text(f, 110, 81, s->entry_slot == 3 ? "Enter the Weapons Shop?" :
+            s->entry_slot == 4 ? "Enter the Armor Shop?" : "WILL YOU ENTER THE CITADEL?", 15);
         text(f, 110, 99, "YES", s->entry_selected == 0 ? 14u : 7u);
         text(f, 140, 99, "NO", s->entry_selected == 1 ? 14u : 7u);
         text(f, 110, 113, "ENTER SELECTS - BACKSPACE DECLINES", 7);
-    } else if (btp_entrance(s, &r->map) >= 0 && btp_entrance(s, &r->map) != 1) {
+    } else if (btp_entrance(s, &r->map) >= 0 && btp_entrance(s, &r->map) != 1 &&
+        btp_entrance(s,&r->map) != 3 && btp_entrance(s,&r->map) != 4) {
         text(f, 8, 166, "INTERIOR", 14); text(f, 8, 178, "UNAVAILABLE", 14);
     } else if (debug) {
         snprintf(line, sizeof line, "GATE %u", s->gate); text(f, 8, 166, line, 14);

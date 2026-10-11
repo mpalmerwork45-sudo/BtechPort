@@ -10,7 +10,7 @@ int btp_options(int argc, char **argv, BtpOptions *o)
     for (int i = 1; i < argc; ++i) {
         const char *arg = argv[i];
         if (!strcmp(arg, "--help")) {
-            puts("BtechPort M2d: MAP1 NPC travel and bounded Citadel conversations\n"
+            puts("BtechPort M2e: MAP1, Citadel and two verified shop purchases\n"
                  "  --data DIRECTORY     original resource directory (default: Original DOS)\n"
                  "  --dialogue-data FILE local EXE text cache (default: work/talk-data.bin)\n"
                  "  --conversation-checkpoint  isolated controlled Talk handler test\n"
@@ -26,6 +26,7 @@ int btp_options(int argc, char **argv, BtpOptions *o)
                  "  --smoke-katrina      bounded native Katrina/repeat/exit/re-entry check\n"
                  "  --smoke-talk         bounded controlled NPC conversation check\n"
                  "  --smoke-arrival      feed --replay through native SDL events, then return/exit\n"
+                 "  --smoke-shops        feed the two-shop --replay through SDL events\n"
                  "Native controls: arrows move/select, Enter/Space confirms/continues,\n"
                  "Backspace declines/recovers unsupported choices, R restarts, F3 debug, Esc quits.");
             return -1;
@@ -38,6 +39,7 @@ int btp_options(int argc, char **argv, BtpOptions *o)
         else if (!strcmp(arg, "--smoke-katrina")) o->smoke = 3;
         else if (!strcmp(arg, "--smoke-talk")) { o->smoke = 4; o->conversation_checkpoint = 1; }
         else if (!strcmp(arg, "--smoke-arrival")) o->smoke = 5;
+        else if (!strcmp(arg, "--smoke-shops")) o->smoke = 6;
         else if (!strcmp(arg, "--conversation-checkpoint")) o->conversation_checkpoint = 1;
         else {
             const char **value = NULL;
@@ -51,8 +53,8 @@ int btp_options(int argc, char **argv, BtpOptions *o)
             *value = argv[++i];
         }
     }
-    if (o->smoke == 5 && (!o->replay || o->conversation_checkpoint)) {
-        fputs("--smoke-arrival requires --replay and the normal initial state\n",stderr); return 0;
+    if (o->smoke >= 5 && (!o->replay || o->conversation_checkpoint)) {
+        fputs("Native route smoke requires --replay and the normal initial state\n",stderr); return 0;
     }
     return 1;
 }
@@ -83,7 +85,7 @@ void btp_print_state(const BtpState *s, const BtpResources *r)
            s->gate, s->tick, s->blocked, s->script.pc, s->script.status, s->script.last_opcode,
            s->script.error, s->script.fault_pc, s->script.selected, s->script.text_offset,
            (unsigned)length, digest);
-    for (unsigned i = 0; i < BTP_STORY_BYTES; ++i) printf("%s%u", i ? "," : "", s->story_flags[i]);
+    for (unsigned i = 0; i < BTP_STORY_PREFIX; ++i) printf("%s%u", i ? "," : "", s->story_flags[i]);
     fputs("],\"text_spans\":[", stdout);
     for (unsigned i = 0; i < s->script.text_count && i < BTP_TEXT_SPANS; ++i)
         printf("%s[%u,%u]", i ? "," : "", s->script.text[i].offset, s->script.text[i].length);
@@ -98,6 +100,11 @@ void btp_print_state(const BtpState *s, const BtpResources *r)
            s->npc.rng[2],s->npc.search,s->npc.bias,s->npc.loop_timer,s->npc.allowance_pending);
     for (unsigned i = 0; i < 8; ++i) printf("%s[%u,%u,%u]",i ? "," : "",
         s->npc.actor[i].x,s->npc.actor[i].y,s->npc.actor[i].direction);
+    printf("],\"credits\":%u,\"allowance_cap\":%u,\"equipment\":{\"weapon\":%u,\"armor\":%u,\"armor_points\":%u},"
+        "\"shop_refusal\":%u,\"menu_id\":%u,\"confirm_selected\":%u,\"menu_choices\":[",
+        s->credits,s->allowance_cap,s->weapon,s->armor,s->armor_points,s->story_flags[39],
+        s->script.menu_id,s->script.confirm_selected);
+    for (unsigned i = 0; i < BTP_MENUS; ++i) printf("%s%u",i ? "," : "",s->script.choices[i]);
     puts("]}");
 }
 

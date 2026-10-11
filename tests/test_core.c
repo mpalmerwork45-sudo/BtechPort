@@ -87,8 +87,8 @@ static void state(void)
     btp_state_encode(&s, encoded); btp_state_encode(&restored, roundtrip);
     CHECK(!memcmp(encoded, roundtrip, sizeof encoded));
     CHECK(!btp_state_decode(encoded, sizeof encoded - 1, &m, NULL, &restored));
-    encoded[4] = 6; CHECK(!btp_state_decode(encoded, sizeof encoded, &m, NULL, &restored));
-    encoded[4] = 5; encoded[12] = 128; CHECK(!btp_state_decode(encoded, sizeof encoded, &m, NULL, &restored));
+    encoded[4] = 7; CHECK(!btp_state_decode(encoded, sizeof encoded, &m, NULL, &restored));
+    encoded[4] = 6; encoded[12] = 128; CHECK(!btp_state_decode(encoded, sizeof encoded, &m, NULL, &restored));
     encoded[12] = 69; encoded[23] = 1; CHECK(!btp_state_decode(encoded, sizeof encoded, &m, NULL, &restored));
     s.x_half = 0; s.y_half = 0; btp_tick(&s, &m, BTP_LEFT);
     CHECK(s.x_half == 0 && s.blocked == BTP_EDGE);
@@ -253,7 +253,7 @@ static void talk_loop(BtpResources *r)
           s.story_flags[4] == 1 && !s.story_flags[13] && s.talk_result == 91);
     /* A fault after the native reply also restores the pre-choice result. */
     btp_start_conversation_checkpoint(&s); enter_talk(&s,r); btp_game_tick(&s,r,BTP_ACCEPT);
-    uint8_t opcode = r->citadel.bytes[0x10e2]; r->citadel.bytes[0x10e2] = 0xf6;
+    uint8_t opcode = r->citadel.bytes[0x10e2]; r->citadel.bytes[0x10e2] = 0xe0;
     restored_tick(&s,r,BTP_ACCEPT);
     CHECK(s.mode == BTP_SCRIPT_FAULT && s.talk_result == 91 && !s.story_flags[13]);
     r->citadel.bytes[0x10e2] = opcode;
@@ -343,7 +343,7 @@ static void citadel_loop(const char *dir)
     btp_start(&s); s.y_half = 21;
     btp_game_tick(&s, r, BTP_UP); CHECK(s.mode == BTP_ENTRY && s.y_half == 21);
     free(r);
-    puts("Citadel core: entry/decline, six Hall screens, exit, empty Talk, recovery, BTP5 restoration.");
+    puts("Citadel core: entry/decline, six Hall screens, exit, empty Talk, recovery, BTP6 restoration.");
 }
 
 static void corpus(const char *dir)

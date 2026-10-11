@@ -47,7 +47,7 @@ static void native_return(BtpState *s, const BtpResources *r)
 {
     uint8_t selected = s->talk.selected;
     s->talk = (BtpTalkState){.selected=selected};
-    btp_script_native_return(&s->script,&r->citadel,s->story_flags);
+    btp_script_native_return(&s->script,btp_building_bld(r,s->entry_slot),s->story_flags);
 }
 void btp_talk_input(BtpState *s, const BtpResources *r, BtpAction action)
 {
@@ -114,8 +114,8 @@ int btp_game_text(const BtpState *s, const BtpResources *r, uint8_t *out, size_t
     if (!s || !r || !out || !length || !capacity) return 0;
     *length = 0; out[0] = 0;
     if (!s->talk.phase) {
-        int ok = btp_script_text(&s->script,&r->citadel,out,capacity);
-        if (ok) *length = s->script.text_length;
+        int ok = btp_script_text(&s->script,btp_building_bld(r,s->entry_slot ? s->entry_slot : 1),out,capacity);
+        if (ok) *length = strlen((const char *)out);
         return ok;
     }
     const BtpDialogue *d = &r->dialogue;

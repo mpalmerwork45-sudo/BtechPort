@@ -1,0 +1,3840 @@
+{
+  "scope": "ordinary zero-investment MAP1 baseline; two purchases; explicit native frame-counter waits",
+  "reference_run": "work/reference-runs/1791691394449093827",
+  "input_script": "tools/reference-shop-boundaries.json",
+  "payload_sha256": {
+    "ARMOR": "b02d6e830f444d383c51b49013c6749d12cf4d9742a561c34896745a39de86f3",
+    "WEAPON": "4bbc0075e95889a5452c057fd8b6190c363573afced3394a85f2d24cdf67961e"
+  },
+  "checkpoints": [
+    {
+      "label": "start",
+      "position": [
+        69,
+        25
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 249,
+      "mode": "local-exploration",
+      "tick": 0,
+      "text": null
+    },
+    {
+      "label": "armor-road8",
+      "position": [
+        63,
+        27
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 231,
+      "mode": "local-exploration",
+      "tick": 72,
+      "text": null
+    },
+    {
+      "label": "armor-road16",
+      "position": [
+        55,
+        27
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 214,
+      "mode": "local-exploration",
+      "tick": 140,
+      "text": null
+    },
+    {
+      "label": "armor-road24",
+      "position": [
+        50,
+        30
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 196,
+      "mode": "local-exploration",
+      "tick": 212,
+      "text": null
+    },
+    {
+      "label": "armor-road32",
+      "position": [
+        50,
+        38
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 177,
+      "mode": "local-exploration",
+      "tick": 288,
+      "text": null
+    },
+    {
+      "label": "armor-road40",
+      "position": [
+        44,
+        40
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 160,
+      "mode": "local-exploration",
+      "tick": 356,
+      "text": null
+    },
+    {
+      "label": "armor-road48",
+      "position": [
+        44,
+        48
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 142,
+      "mode": "local-exploration",
+      "tick": 428,
+      "text": null
+    },
+    {
+      "label": "armor-road56",
+      "position": [
+        37,
+        49
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 124,
+      "mode": "local-exploration",
+      "tick": 500,
+      "text": null
+    },
+    {
+      "label": "armor-road64",
+      "position": [
+        34,
+        54
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 106,
+      "mode": "local-exploration",
+      "tick": 572,
+      "text": null
+    },
+    {
+      "label": "armor-road72",
+      "position": [
+        31,
+        59
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 89,
+      "mode": "local-exploration",
+      "tick": 640,
+      "text": null
+    },
+    {
+      "label": "armor-road80",
+      "position": [
+        28,
+        64
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 71,
+      "mode": "local-exploration",
+      "tick": 712,
+      "text": null
+    },
+    {
+      "label": "armor-road88",
+      "position": [
+        23,
+        67
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 53,
+      "mode": "local-exploration",
+      "tick": 784,
+      "text": null
+    },
+    {
+      "label": "armor-road96",
+      "position": [
+        22,
+        74
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 36,
+      "mode": "local-exploration",
+      "tick": 852,
+      "text": null
+    },
+    {
+      "label": "armor-road104",
+      "position": [
+        22,
+        82
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 18,
+      "mode": "local-exploration",
+      "tick": 924,
+      "text": null
+    },
+    {
+      "label": "armor-road112",
+      "position": [
+        22,
+        90
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 35,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 0,
+      "mode": "local-exploration",
+      "tick": 996,
+      "text": null
+    },
+    {
+      "label": "armor-road120",
+      "position": [
+        22,
+        98
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 50,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 239,
+      "mode": "local-exploration",
+      "tick": 1064,
+      "text": null
+    },
+    {
+      "label": "armor-road128",
+      "position": [
+        22,
+        106
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 50,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 221,
+      "mode": "local-exploration",
+      "tick": 1136,
+      "text": null
+    },
+    {
+      "label": "armor-road136",
+      "position": [
+        22,
+        114
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 50,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 203,
+      "mode": "local-exploration",
+      "tick": 1208,
+      "text": null
+    },
+    {
+      "label": "armor-road144",
+      "position": [
+        25,
+        119
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 50,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 185,
+      "mode": "local-exploration",
+      "tick": 1280,
+      "text": null
+    },
+    {
+      "label": "armor-road152",
+      "position": [
+        33,
+        119
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 50,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 168,
+      "mode": "local-exploration",
+      "tick": 1348,
+      "text": null
+    },
+    {
+      "label": "armor-road160",
+      "position": [
+        41,
+        119
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 50,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 150,
+      "mode": "local-exploration",
+      "tick": 1420,
+      "text": null
+    },
+    {
+      "label": "armor-road168",
+      "position": [
+        49,
+        119
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 50,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 132,
+      "mode": "local-exploration",
+      "tick": 1492,
+      "text": null
+    },
+    {
+      "label": "armor-road176",
+      "position": [
+        53,
+        123
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 50,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 115,
+      "mode": "local-exploration",
+      "tick": 1560,
+      "text": null
+    },
+    {
+      "label": "armor-road181",
+      "position": [
+        50,
+        125
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 50,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 103,
+      "mode": "local-exploration",
+      "tick": 1608,
+      "text": null
+    },
+    {
+      "label": "armor-entry",
+      "position": [
+        50,
+        125
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 50,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 103,
+      "mode": "entry-confirm",
+      "tick": 1609,
+      "text": null
+    },
+    {
+      "label": "armor-menu",
+      "position": [
+        50,
+        125
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 50,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 103,
+      "mode": "building",
+      "tick": 1610,
+      "text": {
+        "resource": "ARMOR",
+        "spans": [
+          [
+            10,
+            218
+          ]
+        ],
+        "length": 218,
+        "sha256": "6d1a3596567d966be1678e3815225598489af7757f10e149279db3486c7fd67d",
+        "digest": 3463541619,
+        "status": 1,
+        "pc": 239,
+        "menu": 12,
+        "confirmation": null
+      }
+    },
+    {
+      "label": "armor-browse",
+      "position": [
+        50,
+        125
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 50,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 103,
+      "mode": "building",
+      "tick": 1611,
+      "text": {
+        "resource": "ARMOR",
+        "spans": [
+          [
+            241,
+            139
+          ],
+          [
+            553,
+            82
+          ],
+          [
+            640,
+            9
+          ],
+          [
+            663,
+            14
+          ]
+        ],
+        "length": 246,
+        "sha256": "2d1368321beef3446a0c262a01cafe3d901a4717303f18b3c48c49e6ee396794",
+        "digest": 282497066,
+        "status": 1,
+        "pc": 692,
+        "menu": 13,
+        "confirmation": null
+      }
+    },
+    {
+      "label": "armor-item",
+      "position": [
+        50,
+        125
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 50,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 0,
+        "armor_points": 0
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 1,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 103,
+      "mode": "building",
+      "tick": 1613,
+      "text": {
+        "resource": "ARMOR",
+        "spans": [
+          [
+            706,
+            298
+          ],
+          [
+            2367,
+            27
+          ]
+        ],
+        "length": 325,
+        "sha256": "fc550759b0353ba024533b5527eecabe7f90e7f23289b7498be979985da4a40d",
+        "digest": 15406696,
+        "status": 6,
+        "pc": 2398,
+        "menu": null,
+        "confirmation": 0
+      }
+    },
+    {
+      "label": "armor-buy",
+      "position": [
+        50,
+        125
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 0,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 1,
+        "armor_points": 25
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 1,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 103,
+      "mode": "building",
+      "tick": 1614,
+      "text": {
+        "resource": "ARMOR",
+        "spans": [
+          [
+            3163,
+            214
+          ]
+        ],
+        "length": 214,
+        "sha256": "1d50ecc3ba5cc62742eb5452b727de21e7379612bc70591a6ad5fd3916b66f13",
+        "digest": 746060863,
+        "status": 2,
+        "pc": 3380,
+        "menu": null,
+        "confirmation": null
+      }
+    },
+    {
+      "label": "armor-return",
+      "position": [
+        50,
+        125
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 0,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 1,
+        "armor_points": 25
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 1,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 103,
+      "mode": "building",
+      "tick": 1615,
+      "text": {
+        "resource": "ARMOR",
+        "spans": [
+          [
+            10,
+            218
+          ]
+        ],
+        "length": 218,
+        "sha256": "6d1a3596567d966be1678e3815225598489af7757f10e149279db3486c7fd67d",
+        "digest": 3463541619,
+        "status": 1,
+        "pc": 239,
+        "menu": 12,
+        "confirmation": null
+      }
+    },
+    {
+      "label": "armor-rebrowse",
+      "position": [
+        50,
+        125
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 0,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 1,
+        "armor_points": 25
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 1,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 103,
+      "mode": "building",
+      "tick": 1616,
+      "text": {
+        "resource": "ARMOR",
+        "spans": [
+          [
+            241,
+            139
+          ],
+          [
+            553,
+            82
+          ],
+          [
+            640,
+            9
+          ],
+          [
+            663,
+            14
+          ]
+        ],
+        "length": 245,
+        "sha256": "8395aab70d5ea6376753c0a9b6615d8790d251d2f2912c4c27439846acd80393",
+        "digest": 1124071407,
+        "status": 1,
+        "pc": 692,
+        "menu": 13,
+        "confirmation": null
+      }
+    },
+    {
+      "label": "armor-second-item",
+      "position": [
+        50,
+        125
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 0,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 1,
+        "armor_points": 25
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 1,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 103,
+      "mode": "building",
+      "tick": 1617,
+      "text": {
+        "resource": "ARMOR",
+        "spans": [
+          [
+            706,
+            298
+          ],
+          [
+            2367,
+            27
+          ]
+        ],
+        "length": 325,
+        "sha256": "fc550759b0353ba024533b5527eecabe7f90e7f23289b7498be979985da4a40d",
+        "digest": 15406696,
+        "status": 6,
+        "pc": 2398,
+        "menu": null,
+        "confirmation": 0
+      }
+    },
+    {
+      "label": "armor-no-selected",
+      "position": [
+        50,
+        125
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 0,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 1,
+        "armor_points": 25
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 1,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 103,
+      "mode": "building",
+      "tick": 1618,
+      "text": {
+        "resource": "ARMOR",
+        "spans": [
+          [
+            706,
+            298
+          ],
+          [
+            2367,
+            27
+          ]
+        ],
+        "length": 325,
+        "sha256": "fc550759b0353ba024533b5527eecabe7f90e7f23289b7498be979985da4a40d",
+        "digest": 15406696,
+        "status": 6,
+        "pc": 2398,
+        "menu": null,
+        "confirmation": 1
+      }
+    },
+    {
+      "label": "armor-declined",
+      "position": [
+        50,
+        125
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 0,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 1,
+        "armor_points": 25
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 1,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 103,
+      "mode": "building",
+      "tick": 1619,
+      "text": {
+        "resource": "ARMOR",
+        "spans": [
+          [
+            386,
+            165
+          ],
+          [
+            553,
+            82
+          ],
+          [
+            640,
+            9
+          ],
+          [
+            663,
+            14
+          ]
+        ],
+        "length": 271,
+        "sha256": "5dd1dd0711f9de7e4f38fa32e8040eeb3022c6aa0dcc3637d43341da7109eaa1",
+        "digest": 1432980071,
+        "status": 1,
+        "pc": 692,
+        "menu": 13,
+        "confirmation": null
+      }
+    },
+    {
+      "label": "armor-unfunded-item",
+      "position": [
+        50,
+        125
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 0,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 1,
+        "armor_points": 25
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 1,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 103,
+      "mode": "building",
+      "tick": 1620,
+      "text": {
+        "resource": "ARMOR",
+        "spans": [
+          [
+            706,
+            298
+          ],
+          [
+            2367,
+            27
+          ]
+        ],
+        "length": 325,
+        "sha256": "fc550759b0353ba024533b5527eecabe7f90e7f23289b7498be979985da4a40d",
+        "digest": 15406696,
+        "status": 6,
+        "pc": 2398,
+        "menu": null,
+        "confirmation": 0
+      }
+    },
+    {
+      "label": "armor-insufficient",
+      "position": [
+        50,
+        125
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 0,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 1,
+        "armor_points": 25
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 1,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 103,
+      "mode": "building",
+      "tick": 1621,
+      "text": {
+        "resource": "ARMOR",
+        "spans": [
+          [
+            2409,
+            162
+          ],
+          [
+            2575,
+            130
+          ]
+        ],
+        "length": 293,
+        "sha256": "a2c53913fad3eddd8cff22ca3275615d50228d8c4cc2f19e1cd550e6023faaee",
+        "digest": 3828369596,
+        "status": 2,
+        "pc": 2707,
+        "menu": null,
+        "confirmation": null
+      }
+    },
+    {
+      "label": "armor-exit",
+      "position": [
+        50,
+        124
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 0,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 1,
+        "armor_points": 25
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 1,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 86,
+      "mode": "local-exploration",
+      "tick": 1690,
+      "text": null
+    },
+    {
+      "label": "weapon-road8",
+      "position": [
+        53,
+        119
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 0,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 1,
+        "armor_points": 25
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 1,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 68,
+      "mode": "local-exploration",
+      "tick": 1762,
+      "text": null
+    },
+    {
+      "label": "weapon-road16",
+      "position": [
+        46,
+        118
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 0,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 1,
+        "armor_points": 25
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 1,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 51,
+      "mode": "local-exploration",
+      "tick": 1830,
+      "text": null
+    },
+    {
+      "label": "weapon-road24",
+      "position": [
+        38,
+        118
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 0,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 1,
+        "armor_points": 25
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 1,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 33,
+      "mode": "local-exploration",
+      "tick": 1902,
+      "text": null
+    },
+    {
+      "label": "weapon-road32",
+      "position": [
+        30,
+        118
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 0,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 1,
+        "armor_points": 25
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 1,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 15,
+      "mode": "local-exploration",
+      "tick": 1974,
+      "text": null
+    },
+    {
+      "label": "weapon-road40",
+      "position": [
+        22,
+        118
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 15,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 1,
+        "armor_points": 25
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 1,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 253,
+      "mode": "local-exploration",
+      "tick": 2046,
+      "text": null
+    },
+    {
+      "label": "weapon-road48",
+      "position": [
+        22,
+        110
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 15,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 1,
+        "armor_points": 25
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 1,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 236,
+      "mode": "local-exploration",
+      "tick": 2114,
+      "text": null
+    },
+    {
+      "label": "weapon-road56",
+      "position": [
+        22,
+        102
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 15,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 1,
+        "armor_points": 25
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 1,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 218,
+      "mode": "local-exploration",
+      "tick": 2186,
+      "text": null
+    },
+    {
+      "label": "weapon-road64",
+      "position": [
+        22,
+        94
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 15,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 1,
+        "armor_points": 25
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 1,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 199,
+      "mode": "local-exploration",
+      "tick": 2262,
+      "text": null
+    },
+    {
+      "label": "weapon-road72",
+      "position": [
+        22,
+        86
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 15,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 1,
+        "armor_points": 25
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 1,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 182,
+      "mode": "local-exploration",
+      "tick": 2330,
+      "text": null
+    },
+    {
+      "label": "weapon-road80",
+      "position": [
+        22,
+        78
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 15,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 1,
+        "armor_points": 25
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 1,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 164,
+      "mode": "local-exploration",
+      "tick": 2402,
+      "text": null
+    },
+    {
+      "label": "weapon-road88",
+      "position": [
+        22,
+        70
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 15,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 1,
+        "armor_points": 25
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 1,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 146,
+      "mode": "local-exploration",
+      "tick": 2474,
+      "text": null
+    },
+    {
+      "label": "weapon-road96",
+      "position": [
+        22,
+        62
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 15,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 1,
+        "armor_points": 25
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 1,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 129,
+      "mode": "local-exploration",
+      "tick": 2542,
+      "text": null
+    },
+    {
+      "label": "weapon-road104",
+      "position": [
+        22,
+        54
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 15,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 1,
+        "armor_points": 25
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 1,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 111,
+      "mode": "local-exploration",
+      "tick": 2614,
+      "text": null
+    },
+    {
+      "label": "weapon-road112",
+      "position": [
+        22,
+        46
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 15,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 1,
+        "armor_points": 25
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 1,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 93,
+      "mode": "local-exploration",
+      "tick": 2686,
+      "text": null
+    },
+    {
+      "label": "weapon-road120",
+      "position": [
+        29,
+        45
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 15,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 1,
+        "armor_points": 25
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 1,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 75,
+      "mode": "local-exploration",
+      "tick": 2758,
+      "text": null
+    },
+    {
+      "label": "weapon-road123",
+      "position": [
+        32,
+        45
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 15,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 1,
+        "armor_points": 25
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 1,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 68,
+      "mode": "local-exploration",
+      "tick": 2786,
+      "text": null
+    },
+    {
+      "label": "weapon-funded",
+      "position": [
+        32,
+        45
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 15,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 1,
+        "armor_points": 25
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 1,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 17,
+      "mode": "local-exploration",
+      "tick": 2990,
+      "text": null
+    },
+    {
+      "label": "weapon-entry",
+      "position": [
+        32,
+        45
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 15,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 1,
+        "armor_points": 25
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 1,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 16,
+      "mode": "entry-confirm",
+      "tick": 2995,
+      "text": null
+    },
+    {
+      "label": "weapon-menu",
+      "position": [
+        32,
+        45
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 15,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 1,
+        "armor_points": 25
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 1,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 16,
+      "mode": "building",
+      "tick": 2996,
+      "text": {
+        "resource": "WEAPON",
+        "spans": [
+          [
+            10,
+            213
+          ]
+        ],
+        "length": 213,
+        "sha256": "6442854e45acedeaf6f799eee246a4fcab3579d42ecf1843d43aa56dbadca41c",
+        "digest": 1592195860,
+        "status": 1,
+        "pc": 232,
+        "menu": 30,
+        "confirmation": null
+      }
+    },
+    {
+      "label": "weapon-browse",
+      "position": [
+        32,
+        45
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 15,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 1,
+        "armor_points": 25
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 1,
+        "14": 0,
+        "15": 0,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 16,
+      "mode": "building",
+      "tick": 2997,
+      "text": {
+        "resource": "WEAPON",
+        "spans": [
+          [
+            234,
+            114
+          ],
+          [
+            545,
+            57
+          ],
+          [
+            607,
+            9
+          ]
+        ],
+        "length": 182,
+        "sha256": "e9582bba63d641197670c746f9d247c4a0d2f2d3f4c3058f875ba5db4bcced64",
+        "digest": 154538415,
+        "status": 1,
+        "pc": 629,
+        "menu": 15,
+        "confirmation": null
+      }
+    },
+    {
+      "label": "weapon-blades",
+      "position": [
+        32,
+        45
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 15,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 1,
+        "armor_points": 25
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 1,
+        "14": 0,
+        "15": 1,
+        "16": 0,
+        "30": 0
+      },
+      "loop_timer": 16,
+      "mode": "building",
+      "tick": 2999,
+      "text": {
+        "resource": "WEAPON",
+        "spans": [
+          [
+            634,
+            290
+          ]
+        ],
+        "length": 290,
+        "sha256": "5c94b809e463402d64d38fef6613ca93df3f93d2890e98130c9e38b043f17800",
+        "digest": 1771438211,
+        "status": 1,
+        "pc": 941,
+        "menu": 16,
+        "confirmation": null
+      }
+    },
+    {
+      "label": "weapon-item",
+      "position": [
+        32,
+        45
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 15,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 0,
+        "armor": 1,
+        "armor_points": 25
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 1,
+        "14": 0,
+        "15": 1,
+        "16": 1,
+        "30": 0
+      },
+      "loop_timer": 16,
+      "mode": "building",
+      "tick": 3001,
+      "text": {
+        "resource": "WEAPON",
+        "spans": [
+          [
+            943,
+            339
+          ],
+          [
+            5009,
+            18
+          ]
+        ],
+        "length": 357,
+        "sha256": "0db7857662c9c2a4a6a256c9bb4cbbb806922ce4db8b832bb92dffc52526f822",
+        "digest": 3983455510,
+        "status": 6,
+        "pc": 5031,
+        "menu": null,
+        "confirmation": 0
+      }
+    },
+    {
+      "label": "weapon-buy",
+      "position": [
+        32,
+        45
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 13,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 1,
+        "armor": 1,
+        "armor_points": 25
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 1,
+        "14": 0,
+        "15": 1,
+        "16": 1,
+        "30": 0
+      },
+      "loop_timer": 16,
+      "mode": "building",
+      "tick": 3002,
+      "text": {
+        "resource": "WEAPON",
+        "spans": [
+          [
+            5321,
+            306
+          ]
+        ],
+        "length": 306,
+        "sha256": "48c1b882feb6e23aba7e5b15c2a9168d396fa18c81fa9e74846e226af6b2e185",
+        "digest": 152705668,
+        "status": 2,
+        "pc": 5630,
+        "menu": null,
+        "confirmation": null
+      }
+    },
+    {
+      "label": "weapon-return",
+      "position": [
+        32,
+        45
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 13,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 1,
+        "armor": 1,
+        "armor_points": 25
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 1,
+        "14": 0,
+        "15": 1,
+        "16": 1,
+        "30": 0
+      },
+      "loop_timer": 16,
+      "mode": "building",
+      "tick": 3003,
+      "text": {
+        "resource": "WEAPON",
+        "spans": [
+          [
+            10,
+            213
+          ]
+        ],
+        "length": 213,
+        "sha256": "6442854e45acedeaf6f799eee246a4fcab3579d42ecf1843d43aa56dbadca41c",
+        "digest": 1592195860,
+        "status": 1,
+        "pc": 232,
+        "menu": 30,
+        "confirmation": null
+      }
+    },
+    {
+      "label": "weapon-second-item",
+      "position": [
+        32,
+        45
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 13,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 1,
+        "armor": 1,
+        "armor_points": 25
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 1,
+        "14": 0,
+        "15": 1,
+        "16": 1,
+        "30": 0
+      },
+      "loop_timer": 16,
+      "mode": "building",
+      "tick": 3006,
+      "text": {
+        "resource": "WEAPON",
+        "spans": [
+          [
+            943,
+            339
+          ],
+          [
+            5009,
+            18
+          ]
+        ],
+        "length": 357,
+        "sha256": "0db7857662c9c2a4a6a256c9bb4cbbb806922ce4db8b832bb92dffc52526f822",
+        "digest": 3983455510,
+        "status": 6,
+        "pc": 5031,
+        "menu": null,
+        "confirmation": 0
+      }
+    },
+    {
+      "label": "weapon-no-selected",
+      "position": [
+        32,
+        45
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 13,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 1,
+        "armor": 1,
+        "armor_points": 25
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 1,
+        "14": 0,
+        "15": 1,
+        "16": 1,
+        "30": 0
+      },
+      "loop_timer": 16,
+      "mode": "building",
+      "tick": 3007,
+      "text": {
+        "resource": "WEAPON",
+        "spans": [
+          [
+            943,
+            339
+          ],
+          [
+            5009,
+            18
+          ]
+        ],
+        "length": 357,
+        "sha256": "0db7857662c9c2a4a6a256c9bb4cbbb806922ce4db8b832bb92dffc52526f822",
+        "digest": 3983455510,
+        "status": 6,
+        "pc": 5031,
+        "menu": null,
+        "confirmation": 1
+      }
+    },
+    {
+      "label": "weapon-declined",
+      "position": [
+        32,
+        45
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 13,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 1,
+        "armor": 1,
+        "armor_points": 25
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 1,
+        "14": 0,
+        "15": 1,
+        "16": 1,
+        "30": 0
+      },
+      "loop_timer": 16,
+      "mode": "building",
+      "tick": 3008,
+      "text": {
+        "resource": "WEAPON",
+        "spans": [
+          [
+            234,
+            114
+          ],
+          [
+            545,
+            57
+          ],
+          [
+            607,
+            9
+          ]
+        ],
+        "length": 182,
+        "sha256": "53c29910660779615253f4f4c951f1fc7c06114f803fcd1f849ae2ead61e8822",
+        "digest": 120983177,
+        "status": 1,
+        "pc": 629,
+        "menu": 15,
+        "confirmation": null
+      }
+    },
+    {
+      "label": "weapon-exit",
+      "position": [
+        32,
+        44
+      ],
+      "story_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "shop_refusal": 0,
+      "credits": 28,
+      "allowance_cap": 50,
+      "equipment": {
+        "weapon": 1,
+        "armor": 1,
+        "armor_points": 25
+      },
+      "menu_choices": {
+        "8": 0,
+        "12": 0,
+        "13": 1,
+        "14": 0,
+        "15": 0,
+        "16": 1,
+        "30": 0
+      },
+      "loop_timer": 255,
+      "mode": "local-exploration",
+      "tick": 3078,
+      "text": null
+    }
+  ]
+}
