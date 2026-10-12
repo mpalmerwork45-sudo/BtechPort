@@ -35,7 +35,8 @@ unsigned btp_player_direction(unsigned facing)
 int btp_cutscene_begin(BtpState *s, const BtpResources *r, unsigned kind, unsigned active)
 {
     if (!s || !r || s->cutscene.active || kind>=BTP_ANM_COUNT ||
-        (active!=3 && ((kind != 0 && kind != 6 && kind != 8 && kind != 9) || active != (kind ? 1u : 2u))) || !r->animations[kind].count ||
+        (active==1 && kind>=10 && kind<=14 && (!s->cache.active || s->mode!=BTP_BUILDING || s->campaign.building!=25)) ||
+        (active!=3 && ((kind != 0 && kind != 6 && kind != 8 && (kind<9 || kind>14)) || active != (kind ? 1u : 2u))) || !r->animations[kind].count ||
         ((kind==0 || kind==8) && r->animations[kind].count != (kind ? 3u : 18u))) return 0;
     s->cutscene = (BtpCutsceneState){.active=(uint8_t)active,.kind=(uint8_t)kind,
         .remaining=(uint16_t)(r->animations[kind].units[0]+(!kind || active==3 ? 50u : 0u))};
@@ -80,6 +81,9 @@ int btp_cutscene_valid(const BtpState *s)
     if (c->active==1 && c->kind==9) return c->step<12 && !c->cycle && !c->hold && c->remaining<=7 &&
         s->mode==BTP_BUILDING && !s->entry_slot && s->campaign.invasion &&
         s->script.status==BTP_SCRIPT_ANIMATION && s->script.animation_kind==9 && s->script.animation_flags==1;
+    if (c->active==1 && c->kind>=10 && c->kind<=14) return c->step<BTP_ANM_FRAMES && !c->cycle && !c->hold && c->remaining<=16384 &&
+        s->cache.active && s->campaign.building==25 && s->mode==BTP_BUILDING && s->script.status==BTP_SCRIPT_ANIMATION &&
+        s->script.animation_kind==c->kind && s->script.animation_flags==1;
     if (c->active == 1) return c->kind == 8 && c->step < 3 && c->cycle < 7 && !c->hold && c->remaining <= 7 &&
         s->mode == BTP_BUILDING && s->entry_slot == 6 && s->script.status == BTP_SCRIPT_ANIMATION &&
         s->script.animation_kind == 8 && s->script.animation_flags == 1;

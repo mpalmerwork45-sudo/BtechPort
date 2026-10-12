@@ -122,8 +122,10 @@ def main():
         actions = args.native_log.read_text().splitlines()
         check(actions == ACTIONS+["idle"]*5,"Unexpected native Talk input record")
         _, recorded = run(binary,actions,"recorded",True)
-        check({k:v for k,v in recorded[-1].items() if k != "tick"} ==
-              {k:v for k,v in states[-1].items() if k != "tick"},"Native input replay differs")
+        # Five extra indoor idle ticks change only the counter and the new
+        # complete-state fingerprint, which includes that counter.
+        check({k:v for k,v in recorded[-1].items() if k not in ("tick","state_digest")} ==
+              {k:v for k,v in states[-1].items() if k not in ("tick","state_digest")},"Native input replay differs")
         print("PASS: native SDL Talk selection, reply, return and exit inputs replay to the same canonical state.")
     if args.reference_run: compare_live(args.reference_run,fixture["checkpoints"],image,payload,True)
     if args.empty_reference_run: compare_live(args.empty_reference_run,fixture["empty_checkpoints"],image,payload,False)

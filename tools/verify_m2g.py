@@ -16,6 +16,12 @@ def run(binary, *args, ok=True):
         raise RuntimeError(result.stderr or "Unexpected save/load result")
     return json.loads(result.stdout) if result.returncode == 0 else result
 
+def legacy_projection(state):
+    # BTP7/8 lack gait and explored-map history. Visible first gait frames are
+    # checked below; a whole-state hash cannot compare absent historical fields.
+    result=dict(state);result.pop('state_digest');result.pop('explored_digest')
+    return result
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--binary",type=Path,default=ROOT/"build/btech-headless")
@@ -67,7 +73,7 @@ def main():
         # the missing animation history (initial idle NPCs originally face south).
         first = [278,274,274,274,270,282,282,282]
         baseline["npc_sprites"] = [first[n[2]] for n in baseline["npcs"]]
-        if run(binary,"--load",damaged) != baseline: raise RuntimeError("M2g save migration differs")
+        if legacy_projection(run(binary,"--load",damaged)) != legacy_projection(baseline): raise RuntimeError("M2g save migration differs")
         # The final course-refusal snapshot has earned ranks and a live course
         # receipt. BTP8 must retain those, including its subsequent idle state.
         old = bytearray(valid[:16+416]); old[16:20] = b"BTP8"; old[20] = 8
@@ -79,7 +85,7 @@ def main():
         expected = dict(before)
         expected["npc_sprites"] = [first[n[2]] for n in before["npcs"]]
         expected["player_sprite"] = [166,174,166,178,170][old[16+18]]
-        if migrated != expected or migrated["skills"] != [1,0,0]:
+        if legacy_projection(migrated) != legacy_projection(expected) or migrated["skills"] != [1,0,0]:
             raise RuntimeError("M2h save migration lost course progress")
         slot.write_bytes(valid)
         run(binary,"--load",tmp/"missing.btp",ok=False)

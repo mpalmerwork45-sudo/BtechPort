@@ -54,6 +54,12 @@ def extract(source):
             addresses.append(segment*16+offset)
     addresses.extend(DS+p for p in (0x127e,0x12d6,0x12e0,0x1265,0x1269,0x126d,0x1260,
         0xb0e,0xb4c,0xb90,0xbe2))
+    addresses.extend(DS+p for p in (0x2075,0x20ce,0x2113,0x215d,0x2240,0x2275,
+        0x228b,0x22c7,0x22e8,0x2328,0x2367,0x23b2,0x2409,0x242c,0x2441,0x2457,
+        0x2187,0x21b2,0x21b9))
+    for entry in range(0x2234,0x2240,4):
+        offset,segment=struct.unpack_from('<HH',image,DS+entry)
+        addresses.append(segment*16+offset)
     blob = bytearray(); ranges = []; origins = []
     for address in addresses:
         end = image.index(0,address)
@@ -63,11 +69,11 @@ def extract(source):
         ranges.append((len(blob),len(text))); blob += text+b"\0"
         origins.append({"image_offset":address,"length":len(text),
                         "sha256":hashlib.sha256(text).hexdigest()})
-    header = b"BTT9"+struct.pack("<HH",len(blob),len(ranges))
+    header = b"BTTA"+struct.pack("<HH",len(blob),len(ranges))
     header += bytes.fromhex(EXE_SHA)+bytes.fromhex(IMAGE_SHA)
     header += b"".join(struct.pack("<HH",*r) for r in ranges)
     font = image[FONT:FONT+2048]
-    return header+blob+font, {**metadata,"format":"BTT9","strings":origins,
+    return header+blob+font, {**metadata,"format":"BTTA/v10","strings":origins,
         "font":{"image_offset":FONT,"length":len(font),"sha256":hashlib.sha256(font).hexdigest()}}
 
 

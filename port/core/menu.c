@@ -72,7 +72,7 @@ void btp_menu_close(BtpState *s)
 {
     unsigned intro=s->menu.from_intro;s->menu.from_intro=0;
     s->campaign.ui=s->campaign.selected=s->campaign.member=0;s->menu.io=s->menu.notice=0;
-    s->mode=(uint8_t)(intro ? BTP_BEGIN : s->menu.from_story ? BTP_BUILDING : BTP_EXPLORE);
+    s->mode=(uint8_t)(intro ? BTP_BEGIN : s->menu.from_story ? BTP_BUILDING : s->cache.active ? BTP_CACHE : BTP_EXPLORE);
     if (s->menu.from_story) s->menu.from_story=2;
 }
 static void page(BtpState *s,unsigned phase,unsigned selected)

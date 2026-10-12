@@ -26,8 +26,8 @@ headless sanitizers, focused SDL checks and reference guard.
 | M4a: encounter aftermath/ejection | Implemented and committed; 114 executed-primary cases and saved continuations |
 | M4b: party/crew/field effects | Implemented and committed; formation, allocation, transfer, medical and technician vectors |
 | M4c: next story/town services | Hospital and jail-visitor companion routes implemented; primary effects and every-input saved continuations pass |
-| M4d: original cache sequence | Not complete |
-| M4e: original saves/sound/presentation | Combat presentation tested; six original save roundtrips and native continuations implemented |
+| M4d: original cache sequence | Implemented from original GAME1 prerequisite; 530 primary cases and complete input-only ending route pass |
+| M4e: original saves/sound/presentation | Original saves, menus, map, inspection and sequential combat presentation pass; further owner fidelity requests remain active |
 
 ## Space menu and step amount
 
@@ -406,3 +406,61 @@ Internal **BTPQ/v26** stores story allocation context at 18433, effect stage at
 migrate explicitly; legacy active attacks drain their old audio without
 replaying new firing clips. CLI continuation comparisons now include an FNV-64
 fingerprint of the entire encoded state, as well as character and mech records.
+
+## Original cache and ending increment
+
+**VERIFIED numeric rules:** 530 executions of unchanged original instructions
+at 0B5D:03AA, 0AB6, 01E9, 0913 and 0980 match all terminal code updates,
+door flags and final map tiles, consumed terminals, the secret passage,
+symbol toggles, every subset of the seven-symbol password and rejection reset.
+Only UI, sound and redraw call boundaries are intercepted. Fixtures retain
+numeric fingerprints and source identities; original text and artwork remain
+owner-loaded resources.
+
+**VERIFIED bounded integration:** the original GAME1 late-game prerequisite
+travels normally to the cache entrance, reads ENTRANCE/INSTRUCT, opens all
+eleven security doors, discovers the secret hallway, views ENDMECH.CMP,
+enters MAP15, submits a rejected then correct password, activates the HPG,
+finds the cache and plays the five WINSCENE animations. All 10,936 ordinary
+inputs restore and continue identically before every action. The cache test
+contains 47,676 assertions. The supplied prerequisite already has the earlier
+disk/password and trained-party flags; this is not a proof of a fresh native
+campaign through those prerequisites.
+
+MAP14 is the original 64x64 facility; headerless MAP15 is the separate 32x24
+chunk-map puzzle. STARLEAG.ICN and MAP.ICN supply their art. Original code IDs
+59..61, white code 62, Phoenix visit 63, power 64, discovery 65, room 66 and
+doors 67..78 are retained. The Phoenix encounter is a display/story event;
+it does not grant a fictional owned mech. Main-room movement respects the
+step setting; the puzzle remains single step. Cache overhead uses the original
+alternate mini-colour LUTs. Whole-cache pixel geometry/palette and door cadence
+remain **APPROXIMATE**, despite using original maps, graphics, texts and flags.
+
+**PASS:** native SDL saved continuations for terminal Yes/No, door opening,
+Phoenix, map room, white code and ending; real F5/F9 restores both map-room and
+Phoenix displays with exact native/headless state, clock and final RGB pixels.
+All 40 regular and sanitizer core suites, the full historical regression,
+headless ASan/UBSan/LeakSanitizer and focused native acceptance pass. The old
+migration checks now explicitly distinguish fields absent from legacy saves:
+prior explored-map history cannot be recovered from BTP7/8/10/11, while their
+existing gameplay fields and course progress remain checked. Normal current
+save/load compares the entire serialized-state fingerprint.
+
+**VERIFIED paid clinic integration:** an explicit injured GAME2 party reaches
+the Starport hospital through 77 ordinary inputs, including the authorized
+credit shortcut. Choosing doctor level four charges 25 credits at reception
+and 400 for the doctor, heals Rex from 108 to 120, and returns outdoors with
+9,666 credits. Every action restores identically; its native SDL tail passes.
+This complements the earlier original medical-effect/dice comparisons.
+
+Internal **BTPR/v27** preserves the 20,480-byte payload. Cache state occupies
+18483..19291: interaction phase, used terminals, hallway and mutable MAP15
+cells. Previous save versions migrate explicitly. BTTA/v10 supplies 141
+original strings; BTCA/v10 adds cache code/door/password and mini-colour tables.
+Build and playback require no emulator. The two reference directories pass
+all 1,287 content/mode/mtime checks. No assets or original code enter Git.
+
+Further owner requests after this acceptance add Starport assignment, invasion
+messages/map switch, withdrawal and encounter descriptions, direction display,
+prison/Starport theft, hut/cinema/laser-shop/house routes and a fresh sound audit.
+These are active follow-up work, not covered by the cache acceptance claim.

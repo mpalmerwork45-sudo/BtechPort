@@ -37,6 +37,7 @@ static int decode(const uint8_t *b, size_t n, BtpState *s, const BtpResources *r
 {
     BtpState context={.map_id=n>=24 ? b[16] : 1,.entry_slot=n>=24 ? b[22] : 0};
     if (n>=4096 && b[4]>=17) context.campaign.building=b[2658];
+    if (n>=19292 && b[4]>=27) { context.cache.active=b[18483];context.story_flags[66]=b[11426]; }
     return n >= 24 && btp_state_decode(b,n,btp_active_map(r,&context),
         btp_state_bld(r,&context),s);
 }

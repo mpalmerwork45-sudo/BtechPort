@@ -11,7 +11,7 @@
 
 static int movement_mode(const BtpState *s)
 {
-    return s->mode == BTP_EXPLORE || (s->mode == BTP_MISSION && s->mission.phase == BTP_MISSION_DRIVE) ||
+    return s->mode == BTP_EXPLORE || s->mode==BTP_CACHE || (s->mode == BTP_MISSION && s->mission.phase == BTP_MISSION_DRIVE) ||
         (s->mode==BTP_ENCOUNTER && s->combat.phase==BTP_COMBAT_MOVE);
 }
 static int amount_editor(const BtpState *s)
@@ -252,7 +252,7 @@ int main(int argc, char **argv)
             accumulator -= 32;
             BtpAction a = read != write ? queue[read++ % 256] : BTP_IDLE;
             if (a==BTP_OPEN_MENU && state.mode==BTP_ACTIONS) a=BTP_ACCEPT;
-            if (a==BTP_OPEN_MENU && state.mode!=BTP_EXPLORE && !state.combat.phase && state.mode!=BTP_ACTIONS) a=amount_editor(&state) ? BTP_IDLE : BTP_ACCEPT;
+            if (a==BTP_OPEN_MENU && state.mode!=BTP_EXPLORE && state.mode!=BTP_CACHE && !state.combat.phase && state.mode!=BTP_ACTIONS) a=amount_editor(&state) ? BTP_IDLE : BTP_ACCEPT;
             if (o.sprite_preview) ++state.tick;
             else {
                 int16_t pcm[BTP_AUDIO_TICK_SAMPLES];

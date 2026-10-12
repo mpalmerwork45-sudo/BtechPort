@@ -21,6 +21,11 @@ typedef struct {
     uint8_t medical[8][4];
     int8_t formation_x[8],formation_y[8],mech_formation_x[4],mech_formation_y[4];
     uint16_t medical_prices[8];
+    uint8_t cache_tx[33],cache_ty[33],cache_color[33];
+    uint8_t cache_dx[12],cache_dy[12],cache_red[12],cache_blue[12],cache_yellow[12];
+    uint16_t cache_password[7];
+    uint8_t cache_secret[18],cache_door_tiles[12];
+    uint8_t cache_mini_colors[2][250];
 } BtpCombatData;
 typedef struct {
     uint8_t record[125], x, y, direction, heat, pool, burning, cover;
@@ -63,7 +68,8 @@ enum { BTP_COMBAT_DATA_V1_BYTES = 4+375+561+15+46+93+16,
     BTP_COMBAT_DATA_V6_BYTES = BTP_COMBAT_DATA_V5_BYTES+26,
     BTP_COMBAT_DATA_V7_BYTES = BTP_COMBAT_DATA_V6_BYTES+630,
     BTP_COMBAT_DATA_V8_BYTES = BTP_COMBAT_DATA_V7_BYTES+24+24+16,
-    BTP_COMBAT_DATA_BYTES = BTP_COMBAT_DATA_V7_BYTES+32+24+16 };
+    BTP_COMBAT_DATA_V9_BYTES = BTP_COMBAT_DATA_V7_BYTES+32+24+16,
+    BTP_COMBAT_DATA_BYTES = BTP_COMBAT_DATA_V9_BYTES+99+60+14+18+12+500 };
 int btp_sound_programs(BtpCombatData *data);
 uint32_t btp_speaker_busy_clocks(unsigned duration,unsigned repeats);
 int btp_combat_data_decode(const uint8_t *bytes, size_t length, BtpCombatData *data);

@@ -48,13 +48,13 @@ def saves(env, work):
             keys.key(window,"Return"); keys.key(window,"Ctrl+Shift+Escape")
             stdout,stderr = process.communicate(timeout=10)
             if process.returncode or "Cannot open save" not in stderr: raise RuntimeError(stderr)
-            tail = tmp/"tail.actions"; tail.write_text("accept\n")
+            actual = json.loads(stdout)
+            delta=actual['tick']-state['tick']
+            if not 1<=delta<=50:raise RuntimeError('Native bank restore clock was unbounded')
+            tail = tmp/"tail.actions"; tail.write_text("accept\n"+"idle\n"*(delta-1))
             expected = subprocess.run([str(ROOT/"build/btech-headless"),"--load",str(slot),
                 "--replay",str(tail)],check=True,capture_output=True,text=True,cwd=ROOT,timeout=20)
-            actual = json.loads(stdout); wanted = json.loads(expected.stdout)
-            # Wall-clock idle ticks indoors affect only the counter; the full
-            # logical state and next transaction must match the saved restart.
-            actual.pop("tick"); wanted.pop("tick")
+            wanted = json.loads(expected.stdout)
             if actual != wanted or actual["credits"] != 34 or actual["investments"] != [1,0,0]:
                 raise RuntimeError("Native F9 restore/transaction differs from process-restarted save")
             print("PASS: native F5 save/F9 load, partial amount, failed-load preservation and identical transaction continuation.",flush=True)
@@ -761,6 +761,90 @@ def intro(env,work):
         if json.loads(native.stdout)['mode']!='actions':raise RuntimeError('Yes did not open saved games')
         print('PASS: played-before Yes opens the six saved-game slots; No starts fresh at training grounds.',flush=True)
 
+def cache(env,work):
+    """Bounded authentic late-save cache contexts, SDL continuation and pixels."""
+    from reference_session import WindowKeys
+    binary=ROOT/'build/btech-headless';native=ROOT/'build/btech-port'
+    lines=(ROOT/'tests/fixtures/ordinary-cache.actions').read_text().splitlines()
+    facts=json.loads((ROOT/'tests/fixtures/ordinary-cache.json').read_text())
+    points={c['label']:c['tick'] for c in facts['checkpoints']}
+    cases=[('code-terminal-1',['right','left','accept']),('door-2-opening',['idle']*128),
+        ('phoenix-screen',['accept']),('map-room',['menu','up','accept']),
+        ('white-code-accepted',['idle']*64+['accept']),
+        ('ending-start',lines[points['ending-start']:])]
+    with tempfile.TemporaryDirectory(prefix='native-cache-',dir=work) as directory:
+        tmp=Path(directory);prefix=tmp/'prefix.actions';start=tmp/'start.btp';tail=tmp/'tail.actions';record=tmp/'record.actions'
+        for label,actions in cases:
+            prefix.write_text('\n'.join(lines[:points[label]])+'\n')
+            subprocess.run([str(binary),'--load',str(ROOT/'Original DOS/GAME1'),'--replay',str(prefix),
+                '--save',str(start)],cwd=ROOT,check=True,capture_output=True,timeout=20)
+            tail.write_text('\n'.join(actions)+'\n');frame=work/f'native-cache-{label}.ppm';expected=tmp/'expected.ppm'
+            actual=subprocess.run([str(native),'--load',str(start),'--smoke-replay','--smoke-fast',
+                '--replay',str(tail),'--record',str(record),'--frame',str(frame)],cwd=ROOT,
+                env=dict(env,SDL_AUDIODRIVER='dummy'),check=True,capture_output=True,text=True,timeout=25)
+            wanted=subprocess.run([str(binary),'--load',str(start),'--replay',str(record),'--frame',str(expected)],
+                cwd=ROOT,check=True,capture_output=True,text=True,timeout=20)
+            if json.loads(actual.stdout)!=json.loads(wanted.stdout) or frame.read_bytes()!=expected.read_bytes():
+                raise RuntimeError(label+' cache SDL continuation differs')
+            print(f'PASS: native cache {label}, exact recorded input/state/pixels.',flush=True)
+        for label in ('map-room','phoenix-screen'):
+            prefix.write_text('\n'.join(lines[:points[label]])+'\n')
+            subprocess.run([str(binary),'--load',str(ROOT/'Original DOS/GAME1'),'--replay',str(prefix),
+                '--save',str(start)],cwd=ROOT,check=True,capture_output=True)
+            slot=tmp/'slot.btp';frame=work/f'native-cache-{label}-restore.ppm'
+            process=subprocess.Popen([str(native),'--load',str(start),'--save-file',str(slot),'--frame',str(frame)],
+                cwd=ROOT,env=dict(env,SDL_AUDIODRIVER='dummy'),stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+            keys=WindowKeys()
+            try:
+                window=None
+                for _ in range(100):
+                    found=[w for w,n in keys.windows() if n.startswith('BtechPort')]
+                    if len(found)==1:window=found[0];break
+                    if process.poll() is not None:raise RuntimeError('Cache restore window failed')
+                    time.sleep(.02)
+                if window is None:raise RuntimeError('Cache restore window did not appear')
+                keys.key(window,'F5')
+                for _ in range(100):
+                    if slot.exists():break
+                    time.sleep(.02)
+                before=json.loads(subprocess.check_output([str(binary),'--load',str(slot)],cwd=ROOT,text=True))
+                keys.key(window,'Right');keys.key(window,'Return');keys.key(window,'F9');keys.close_window(window)
+                out,err=process.communicate(timeout=10)
+                if process.returncode:raise RuntimeError(err)
+                state=json.loads(out);delta=state['tick']-before['tick']
+                if not 0<=delta<=50:raise RuntimeError('Cache restore clock was unbounded')
+                tail.write_text('idle\n'*delta)
+                wanted=subprocess.run([str(binary),'--load',str(slot),'--replay',str(tail),'--frame',str(expected)],
+                    cwd=ROOT,check=True,capture_output=True,text=True)
+                if state!=json.loads(wanted.stdout) or frame.read_bytes()!=expected.read_bytes():
+                    raise RuntimeError('Cache F5/F9 failed '+label)
+                print(f'PASS: native cache F5/F9 restores {label}, exact state, clock and pixels.',flush=True)
+            finally:
+                keys.x.XCloseDisplay(keys.display)
+                if process.poll() is None:process.terminate();process.wait(timeout=5)
+
+def story(env,work):
+    """New hospital and jail visitor tails retain their ordinary campaign prefix."""
+    binary=ROOT/'build/btech-headless';native=ROOT/'build/btech-port'
+    with tempfile.TemporaryDirectory(prefix='native-story-',dir=work) as directory:
+        tmp=Path(directory);prefix=tmp/'prefix.actions';start=tmp/'start.btp';tail=tmp/'tail.actions';record=tmp/'record.actions'
+        for kind,label in [('hospital','hospital-menu'),('jail-visitor','jail-visitor-menu'),('hospital-healing','hospital-menu')]:
+            lines=(ROOT/f'tests/fixtures/ordinary-{kind}.actions').read_text().splitlines()
+            facts=json.loads((ROOT/f'tests/fixtures/ordinary-{kind}.json').read_text())
+            tick=next(c['tick'] for c in facts['checkpoints'] if c['label']==label)
+            prefix.write_text('\n'.join(lines[:tick])+'\n');tail.write_text('\n'.join(lines[tick:])+'\n')
+            initial=['--load',str(ROOT/'Original DOS/GAME2')] if kind=='hospital-healing' else []
+            subprocess.run([str(binary),*initial,'--replay',str(prefix),'--save',str(start)],cwd=ROOT,check=True,capture_output=True,timeout=20)
+            frame=work/f'native-{kind}.ppm';expected=tmp/'expected.ppm'
+            actual=subprocess.run([str(native),'--load',str(start),'--smoke-replay','--smoke-fast',
+                '--replay',str(tail),'--record',str(record),'--frame',str(frame)],cwd=ROOT,env=dict(env,SDL_AUDIODRIVER='dummy'),
+                check=True,capture_output=True,text=True,timeout=25)
+            wanted=subprocess.run([str(binary),'--load',str(start),'--replay',str(record),'--frame',str(expected)],cwd=ROOT,
+                check=True,capture_output=True,text=True,timeout=20)
+            if json.loads(actual.stdout)!=json.loads(wanted.stdout) or frame.read_bytes()!=expected.read_bytes():
+                raise RuntimeError(kind+' companion SDL continuation differs')
+            print(f'PASS: native {kind}, {len(lines)-tick+5} recorded SDL inputs through recruitment, exact state/pixels.',flush=True)
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--shops-only", action="store_true")
@@ -783,6 +867,9 @@ def main():
     parser.add_argument('--field-only',action='store_true')
     parser.add_argument('--intro-only',action='store_true')
     parser.add_argument('--overhead-only',action='store_true')
+    parser.add_argument('--cache-only',action='store_true')
+    parser.add_argument('--story-only',action='store_true')
+    parser.add_argument('--m4-acceptance',action='store_true')
     args = parser.parse_args()
     work = ROOT / "work"
     work.mkdir(exist_ok=True)
@@ -802,10 +889,18 @@ def main():
             env.pop("SDL_VIDEODRIVER", None)
             os.environ["DISPLAY"] = env["DISPLAY"]
             os.environ["BTECH_REFERENCE_VIRTUAL"] = "1"
+            if args.m4_acceptance:
+                intro(env,work);menu(env,work);presentation(env,work)
+                original_saves(env,work);aftermath(env,work);field(env,work)
+                saves(env,work);campaign(env,work);story(env,work);cache(env,work);return
             if args.intro_only:
                 intro(env,work);return
             if args.overhead_only:
                 overhead(env,work);return
+            if args.cache_only:
+                cache(env,work);return
+            if args.story_only:
+                story(env,work);return
             if args.field_only:
                 field(env,work);return
             if args.aftermath_only:

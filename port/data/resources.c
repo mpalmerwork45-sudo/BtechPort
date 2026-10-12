@@ -119,8 +119,8 @@ int btp_resources_load(const char *dir, BtpResources *r, BtpError *e)
     memset(&r->combat,0,sizeof r->combat);
     memset(&r->world,0,sizeof r->world);
     char path[4096]; uint8_t *data; size_t n;
-    const char *names[] = {"MAP1.MTP", "BTTLTECH.ICN", "CITADEL.BLD", "ARMOR.BLD", "WEAPON.BLD", "COMSTAR.BLD", "MECHSHAP.CMP", "TRAINING.BLD", "BARRACKS.BLD", "LOUNGE.BLD", "BTSTATS.CMP", "BTBORDER.CMP", "REPAIR.BLD", "ANIMATE.ICN", "BTTITLE.CMP", "INFOCOM.CMP", "TINYLAND.CMP"};
-    for (unsigned i = 0; i < 17; ++i) {
+    const char *names[] = {"MAP1.MTP", "BTTLTECH.ICN", "CITADEL.BLD", "ARMOR.BLD", "WEAPON.BLD", "COMSTAR.BLD", "MECHSHAP.CMP", "TRAINING.BLD", "BARRACKS.BLD", "LOUNGE.BLD", "BTSTATS.CMP", "BTBORDER.CMP", "REPAIR.BLD", "ANIMATE.ICN", "BTTITLE.CMP", "INFOCOM.CMP", "TINYLAND.CMP", "STARLEAG.ICN", "MAP.ICN", "ENDMECH.CMP"};
+    for (unsigned i = 0; i < 20; ++i) {
         int len = snprintf(path, sizeof path, "%s/%s", dir, names[i]);
         if (len < 0 || (size_t)len >= sizeof path) return fail(e, "Resource directory path too long");
         if (!btp_read_file(path, &data, &n, e)) return 0;
@@ -133,6 +133,9 @@ int btp_resources_load(const char *dir, BtpResources *r, BtpError *e)
             i == 14 ? btp_graphic_decode(data,n,&r->title,e) :
             i == 15 ? btp_graphic_decode(data,n,&r->logo,e) :
             i == 16 ? btp_graphic_decode(data,n,&r->tinyland,e) :
+            i == 17 ? btp_graphic_decode(data,n,&r->cache_tiles,e) :
+            i == 18 ? btp_graphic_decode(data,n,&r->maproom_tiles,e) :
+            i == 19 ? btp_graphic_decode(data,n,&r->phoenix,e) :
             btp_bld_decode(data, n, i == 2 ? &r->citadel : i == 3 ? &r->armor : i == 4 ? &r->weapon :
                 i == 5 ? &r->comstar : i == 7 ? &r->training : i == 8 ? &r->barracks : i == 9 ? &r->lounge : &r->repair, e);
         free(data);
@@ -158,6 +161,13 @@ int btp_resources_load(const char *dir, BtpResources *r, BtpError *e)
         if (len<0 || (size_t)len>=sizeof path || !btp_read_file(path,&data,&n,e)) return 0;
         decoded=btp_map_decode(data,n,&r->local[id-1],e);free(data);if (!decoded) return 0;
     }
+    len=snprintf(path,sizeof path,"%s/MAP15.MTP",dir);
+    if (len<0 || (size_t)len>=sizeof path || !btp_read_file(path,&data,&n,e)) return 0;
+    if (n!=768) { free(data);return fail(e,"MAP15: expected original 32x24 raw chunk map"); }
+    r->maproom=(BtpMap){.width=32,.height=24};
+    for (unsigned y=0;y<24;++y) for (unsigned x=0;x<32;++x)
+        r->maproom.tiles[y*32+x]=data[((y/8)*4+x/8)*64+(y%8)*8+x%8];
+    free(data);
     /* Original filename order at DS:478A. MTP room_map contains these IDs. */
     static const char *const building_files[26]={"TRAINING","CITADEL","COMSTAR","WEAPON","ARMOR","REPAIR",
         "BARRACKS","LOUNGE","GARAGE","HOSPITAL","ARENA","PARTY","CLOTHES","JAIL","MAYOR","WEAPON2",
@@ -193,7 +203,7 @@ int btp_resources_load(const char *dir, BtpResources *r, BtpError *e)
 
 int btp_dialogue_decode(const uint8_t *b, size_t n, BtpDialogue *d, BtpError *e)
 {
-    /* BTT9: source tags, 119 text ranges and original 256x8 font bytes.
+    /* BTTA/v10: source tags, 141 text ranges and original 256x8 font bytes.
        Conversion validates the audited EXE. Tags identify that source, not a
        cryptographic integrity check of the generated cache. */
     static const uint8_t tags[64] = {
@@ -203,7 +213,7 @@ int btp_dialogue_decode(const uint8_t *b, size_t n, BtpDialogue *d, BtpError *e)
         0x48,0x6b,0x35,0xd6,0xf5,0xc5,0x38,0xec,0xd5,0x3d,0x03,0xf8,0x5e,0xd5,0x4b,0xfa
     };
     const unsigned header = 72+4*BTP_TALK_STRINGS;
-    if (!b || !d || n < header || memcmp(b,"BTT9",4) || le16(b+6) != BTP_TALK_STRINGS ||
+    if (!b || !d || n < header || memcmp(b,"BTTA",4) || le16(b+6) != BTP_TALK_STRINGS ||
         memcmp(b+8,tags,sizeof tags) || !le16(b+4) || le16(b+4) > BTP_TALK_MAX ||
         n != header+le16(b+4)+2048u) return fail(e,"Native dialogue: invalid cache/provenance header");
     BtpDialogue result = {0}; result.length = le16(b+4);

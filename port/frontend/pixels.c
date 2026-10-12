@@ -10,6 +10,7 @@
 #include "core/party.h"
 #include "core/service.h"
 #include "core/menu.h"
+#include "core/cache.h"
 #include "data/anm.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -624,6 +625,10 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
     if (s->mode==BTP_ACTIONS && s->campaign.ui==BTP_MENU_MAP) {
         btp_world_preview(r,s,f);return;
     }
+    if (s->cache.active && s->cache.phase==BTP_CACHE_PHOENIX) {
+        for (unsigned i=0;i<BTP_PIXELS;++i) f[i]=btp_palette[sprite_palette[r->phoenix.pixels[i]&15u]];
+        return;
+    }
     if (s->mode==BTP_GAME_OVER) {
         rectangle(f,0,0,320,200,0);text(r,f,112,80,"Jason has been killed.",15);text(r,f,112,104,"Load a saved game to continue.",15);return;
     }
@@ -691,7 +696,8 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                 if ((!s->campaign.encounter && r->world.loaded) || (wx >= 0 && wy >= 0 && ((!s->map_id && !s->campaign.encounter) || (wx < map->width * 16 && wy < map->height * 16)))) {
                     int tx=wx>=0 ? wx/16 : (wx-15)/16,ty=wy>=0 ? wy/16 : (wy-15)/16;
                     unsigned tile;
-                    if (s->campaign.encounter || (s->map_id && tx>=0 && ty>=0 && tx<map->width && ty<map->height)) tile=btp_mission_tile(s,map,tx,ty);
+                    if (s->cache.active) tile=btp_cache_tile(r,s,tx,ty);
+                    else if (s->campaign.encounter || (s->map_id && tx>=0 && ty>=0 && tx<map->width && ty<map->height)) tile=btp_mission_tile(s,map,tx,ty);
                     else {
                         int ox=s->map_id ? (int)(map->entrance_x[0]>>8)*64 : 0,oy=s->map_id ? (int)(map->entrance_y[0]>>12)*64 : 0;
                         tile=btp_world_tile(r,s,ox+tx,oy+ty);
@@ -700,9 +706,9 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                         /* 320B skips ANIMATE's first blank tile; 240B swaps
                            three pages into these ten map tile slots. The
                            saved fixed clock supplies a deterministic phase. */
-                        unsigned frame=btp_terrain_frame(tile,s->tick/4u);
-                        const BtpGraphic *sheet=frame && r->terrain_animation.format==1 ? &r->terrain_animation : &r->tiles;
-                        unsigned index = (sheet==&r->tiles ? tile : frame) * 256 + ((unsigned)wy&15u)*16 + ((unsigned)wx&15u);
+                        unsigned frame=s->cache.active ? 0u : btp_terrain_frame(tile,s->tick/4u);
+                        const BtpGraphic *sheet=s->cache.active ? s->story_flags[66] ? &r->maproom_tiles : &r->cache_tiles : frame && r->terrain_animation.format==1 ? &r->terrain_animation : &r->tiles;
+                        unsigned index = (frame ? frame : tile) * 256 + ((unsigned)wy&15u)*16 + ((unsigned)wx&15u);
                         unsigned value = sheet->pixels[index] & 15;
                         color = btp_palette[terrain_palette[value]];
                         if (debug && tile >= s->gate && (wx % 16 == 0 || wy % 16 == 0))
@@ -738,7 +744,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         ((s->party.people[0][12] ? s->party.mechs[s->party.people[0][12]-1][0] : s->campaign.mech[0])=='L' ? 0u : 146u)+s->campaign.mech_walk,200,64,0,104,f);
     else (void)btp_draw_sprite(&r->sprites,166u+s->player_walk,208,96,
         hidden_rows(map,s->x_half,s->y_half),104,f);
-    if (!s->combat.phase && s->story_flags[4]) {
+    if (!s->combat.phase && s->story_flags[4] && !s->cache.active) {
         for (unsigned i=1;i<8;++i) if (s->party.people[i][0]!=255 && (s->party.people[i][12]>=4 || btp_party_mech((BtpState *)s,s->party.people[i][12])[121]==i)) {
             unsigned mount=s->party.people[i][12];
             const uint8_t *m=mount<4 ? mount ? s->party.mechs[mount-1] : s->campaign.mech : NULL;
@@ -797,6 +803,8 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
             if (s->script.animation_kind) { snprintf(line,sizeof line,"ANM %u",s->script.animation_kind); text(r,f,8,36,line,14); }
         }
         story_panel(r, s, f);
+    } else if (s->mode==BTP_ENDING) {
+        rectangle(f,104,0,216,200,0);story_panel(r,s,f);
     } else if (s->mode == BTP_ENTRY) {
         rectangle(f, 104, 73, 216, 55, 7); rectangle(f, 108, 77, 208, 46, 0);
         char question[48]; snprintf(question,sizeof question,"%s?",place);
@@ -809,7 +817,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         snprintf(line, sizeof line, "TICK %u", s->tick); text(r,f, 8, 178, line, 14);
     }
     unsigned building=btp_building_kind(r,s),portrait=building<26 ? r->combat.building_portraits[building] : 0;
-    if (s->cutscene.active || (s->mode == BTP_BUILDING && (s->script.animation_kind || portrait))) {
+    if (s->cutscene.active || ((s->mode == BTP_BUILDING || s->mode==BTP_ENDING) && (s->script.animation_kind || portrait))) {
         unsigned kind = s->cutscene.active ? s->cutscene.kind : s->script.animation_kind ? s->script.animation_kind : portrait;
         unsigned step = s->cutscene.active ? s->cutscene.step : r->animations[kind].count-1u;
         uint8_t packed[BTP_ANM_PACKED];
@@ -885,7 +893,18 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         } else if (v->phase==4) for (unsigned i=0;i<=btp_party_count(&s->party);++i) text(r,f,112,y+(int)i*8,i==btp_party_count(&s->party) ? "Done" : btp_party_name(&s->party,btp_party_slot(&s->party,i)),i==v->selected ? 14u : 15u);
     }
     border_panel(r,f,0,0,104,200,1);
-    if (s->mode == BTP_BUILDING || s->mode == BTP_SCRIPT_FAULT ||
+    if (s->mode==BTP_CACHE && s->cache.phase!=BTP_CACHE_WALK && s->cache.phase!=BTP_CACHE_DOOR) {
+        uint8_t message[512];size_t n=0;
+        rectangle(f,104,0,216,200,0);border_panel(r,f,104,0,216,200,0);
+        if (btp_cache_text(s,r,message,sizeof message,&n)) {
+            int y=wrapped(r,f,8,message,n,15);
+            if (s->cache.phase==BTP_CACHE_TERMINAL) {
+                rectangle(f,s->cache.selected ? 144 : 112,y,s->cache.selected ? 16 : 24,8,14);
+                text(r,f,112,y,"Yes",s->cache.selected ? 15u : 0u);text(r,f,144,y,"No",s->cache.selected ? 0u : 15u);
+            }
+        }
+    }
+    if (s->mode == BTP_BUILDING || s->mode==BTP_ENDING || s->mode == BTP_SCRIPT_FAULT ||
         (s->mode == BTP_QUIZ && s->quiz.phase != BTP_QUIZ_QUESTION) || (s->cutscene.active && s->cutscene.active!=3))
         border_panel(r,f,104,0,216,200,0);
     else if (s->mode == BTP_ENTRY) border_panel(r,f,104,72,216,56,0);
@@ -896,6 +915,16 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
 void btp_world_preview(const BtpResources *r,const BtpState *s,uint32_t f[BTP_PIXELS])
 {
     rectangle(f,0,0,320,200,0);
+    if (s->cache.active) {
+        unsigned room=s->story_flags[66]!=0,width=room ? 32u : 64u,height=room ? 24u : 64u;
+        int ox=(320-(int)width)/2,oy=(192-(int)height)/2;
+        for (unsigned y=0;y<height;++y) for (unsigned x=0;x<width;++x) {
+            unsigned tile=btp_cache_tile(r,s,(int)x,(int)y);
+            if (tile<250) pixel(f,ox+(int)x,oy+(int)y,btp_palette[sprite_palette[r->combat.cache_mini_colors[room][tile]]]);
+        }
+        pixel(f,ox+(int)s->x_half/2,oy+(int)s->y_half/2,btp_palette[15]);
+        text(r,f,0,192,"Press any key to return to game.",15);return;
+    }
     unsigned wx=s->story_flags[4] ? s->campaign.world_x : 1536u+s->x_half;
     unsigned wy=s->story_flags[4] ? s->campaign.world_y : 1536u+s->y_half;
     unsigned center_x=s->mode==BTP_ACTIONS && s->campaign.ui==BTP_MENU_MAP ? s->menu.map_x : wx;

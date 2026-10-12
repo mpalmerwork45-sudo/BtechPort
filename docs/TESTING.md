@@ -2,15 +2,20 @@
 
 ## Current M4 presentation checks
 
-The active build has 39 CTest suites. Internal saves are BTPQ/v26, with a
+The active build has 40 CTest suites. Internal saves are BTPR/v27, with a
 20,480-byte payload; old versions retain explicit migrations. Current caches
-are BTT9/BTC9/BTW3. The older sections below describe earlier increments.
+are BTTA/v10, BTCA/v10 and BTW3. The older sections below describe earlier increments.
 Native focused checks: `--intro-only`, `--menu-only` and `--presentation-only`
 on `tools/native_smoke.py`. The menu probe includes saving/loading from the
 character, mech and overhead screens. These compare actual recorded SDL keys,
 complete canonical state and exact continued pixels.
 `--overhead-only` presses real Space keys through settings and the map entry,
 then reads the actual X11 window pixels and checks visible terrain and F5/F9.
+`--m4-acceptance` bundles the native intro, six-slot menu, inspection, overhead,
+audio, original-save, aftermath, crew, campaign, hospital/jail and cache checks.
+`--story-only` includes paid treatment of an injured original GAME2 party.
+`--cache-only` verifies terminals, doors, the Phoenix display, map-room puzzle,
+ending and real F5/F9 while the map room and Phoenix display are open.
 
 Primary numeric generators: `make_mech_view_vectors.py`,
 `make_world_view_vectors.py`, `make_story_vectors.py` and

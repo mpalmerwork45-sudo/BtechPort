@@ -7,7 +7,7 @@ typedef enum { BTP_IDLE, BTP_UP, BTP_DOWN, BTP_LEFT, BTP_RIGHT, BTP_ACCEPT, BTP_
     BTP_DIGIT_5, BTP_DIGIT_6, BTP_DIGIT_7, BTP_DIGIT_8, BTP_DIGIT_9, BTP_CLEAR_INPUT,
     BTP_UP_LEFT, BTP_UP_RIGHT, BTP_DOWN_LEFT, BTP_DOWN_RIGHT, BTP_OPEN_MENU, BTP_CREDIT_10000 } BtpAction;
 typedef enum { BTP_CLEAR, BTP_WALL, BTP_EDGE } BtpBlock;
-typedef enum { BTP_EXPLORE, BTP_ENTRY, BTP_BUILDING, BTP_SCRIPT_FAULT, BTP_QUIZ, BTP_MISSION, BTP_ACTIONS, BTP_ENCOUNTER, BTP_TITLE, BTP_GAME_OVER, BTP_LOGO, BTP_BEGIN } BtpMode;
+typedef enum { BTP_EXPLORE, BTP_ENTRY, BTP_BUILDING, BTP_SCRIPT_FAULT, BTP_QUIZ, BTP_MISSION, BTP_ACTIONS, BTP_ENCOUNTER, BTP_TITLE, BTP_GAME_OVER, BTP_LOGO, BTP_BEGIN, BTP_CACHE, BTP_ENDING } BtpMode;
 typedef enum { BTP_TALK_NONE, BTP_TALK_EMPTY, BTP_TALK_MENU, BTP_TALK_REPLY } BtpTalkPhase;
 typedef struct {
     uint8_t phase, selected, count, mask, room, actor;
@@ -92,6 +92,10 @@ typedef struct {
     uint8_t from_intro,from_story;
 } BtpMenuState;
 typedef struct {
+    uint8_t active,phase,selected,terminal,notice,door,door_step,hall;
+    uint8_t used[33],maproom[768];
+} BtpCacheState;
+typedef struct {
     uint32_t tick;
     uint16_t x_half, y_half;
     uint8_t map_id, gate, facing, blocked;
@@ -134,10 +138,12 @@ typedef struct {
     BtpOriginalState original;
     BtpAftermathState aftermath;
     uint8_t explored[2048]; /* Original CB0C: 128 rows, sixteen MSB-first bytes. */
+    BtpCacheState cache;
 } BtpState;
 enum { BTP_STATE_BYTES = 20480 };
 
 void btp_start(BtpState *state);
+void btp_game_building(BtpState *state,const BtpResources *resources,unsigned kind);
 void btp_tick(BtpState *state, const BtpMap *map, BtpAction action);
 void btp_game_tick(BtpState *state, const BtpResources *resources, BtpAction action);
 void btp_game_tick_audio(BtpState *state, const BtpResources *resources, BtpAction action, int16_t *samples);

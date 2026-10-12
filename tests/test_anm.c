@@ -38,6 +38,9 @@ int main(int argc, char **argv)
         unsigned ticks=0, cycles=0;
         while (s.cutscene.active) { cycles |= 1u<<s.cutscene.cycle; CHECK(++ticks <= 66); btp_cutscene_tick(&s,r); }
         CHECK(ticks == 66 && cycles == 127);
+        /* Isolate visual cadence here. The integrated launch waits for its
+           startup sound and is covered by the game/audio continuation tests. */
+        s.menu.sound=0;
         CHECK(btp_cutscene_begin(&s,r,0,2)); ticks=0;
         while (s.cutscene.active) { CHECK(++ticks <= 90); btp_cutscene_tick(&s,r); }
         CHECK(ticks == 90); free(r);

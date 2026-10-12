@@ -50,7 +50,7 @@ class ExepackTests(unittest.TestCase):
         image, _ = unpack(source)
         cache, metadata = extract(source)
         self.assertEqual(cache, extract(source)[0])
-        self.assertEqual((cache[:4],len(cache),len(metadata["strings"])),(b"BTT7",5084,91))
+        self.assertEqual((cache[:4],len(cache),len(metadata["strings"])),(b"BTTA",6846,141))
         length,count = struct.unpack_from("<HH",cache,4)
         header = 72+4*count
         self.assertEqual(length+header+2048,len(cache))
@@ -73,7 +73,7 @@ class ExepackTests(unittest.TestCase):
                  mock.patch.dict(sys.modules,{"combat_oracle":None,"unicorn":None}):
                 runpy.run_path(str(ROOT/"tools/prepare_world.py"),run_name="__main__")
             cache=output.read_bytes()
-            self.assertEqual((cache[:4],len(cache)),(b"BTW2",1608))
+            self.assertEqual((cache[:4],len(cache)),(b"BTW3",1864))
             self.assertEqual(cache,(ROOT/"work/world-data.bin").read_bytes())
 
 

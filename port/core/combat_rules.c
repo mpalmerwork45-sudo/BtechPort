@@ -6,7 +6,8 @@
 int btp_combat_data_decode(const uint8_t *b, size_t n, BtpCombatData *d)
 {
     if (!b || !d) return 0;
-    int v9=n==BTP_COMBAT_DATA_BYTES && !memcmp(b,"BTC9",4);
+    int v10=n==BTP_COMBAT_DATA_BYTES && !memcmp(b,"BTCA",4);
+    int v9=v10 || (n==BTP_COMBAT_DATA_V9_BYTES && !memcmp(b,"BTC9",4));
     int v8=v9 || (n==BTP_COMBAT_DATA_V8_BYTES && !memcmp(b,"BTC8",4));
     int v7=v8 || (n==BTP_COMBAT_DATA_V7_BYTES && !memcmp(b,"BTC7",4));
     int v6=v7 || (n==BTP_COMBAT_DATA_V6_BYTES && !memcmp(b,"BTC6",4));
@@ -33,6 +34,16 @@ int btp_combat_data_decode(const uint8_t *b, size_t n, BtpCombatData *d)
         memcpy(v.medical,b+p,v9 ? 32u : 24u);p+=v9 ? 32u : 24u;
         COPY(formation_x);COPY(formation_y);COPY(mech_formation_x);COPY(mech_formation_y);
         for (unsigned i=0;i<8;++i) { v.medical_prices[i]=(uint16_t)(b[p]|(unsigned)b[p+1]<<8);p+=2; }
+    }
+    if (v10) {
+        COPY(cache_tx);COPY(cache_ty);COPY(cache_color);COPY(cache_dx);COPY(cache_dy);
+        COPY(cache_red);COPY(cache_blue);COPY(cache_yellow);
+        for (unsigned i=0;i<7;++i) { v.cache_password[i]=(uint16_t)(b[p]|(unsigned)b[p+1]<<8);p+=2;if (v.cache_password[i]>=768) return 0; }
+        COPY(cache_secret);COPY(cache_door_tiles);
+        COPY(cache_mini_colors);
+        for (unsigned i=0;i<33;++i) if (v.cache_tx[i]>127 || v.cache_ty[i]>127 || v.cache_color[i]>2) return 0;
+        for (unsigned i=0;i<12;++i) if (v.cache_dx[i]>126 || v.cache_dy[i]>126 || v.cache_red[i]>33 || v.cache_blue[i]>33 || v.cache_yellow[i]>33) return 0;
+        for (unsigned i=0;i<2;++i) for (unsigned j=0;j<250;++j) if (v.cache_mini_colors[i][j]>15) return 0;
     }
 #undef COPY
     for (unsigned i = 0; i < 15; ++i) if (v.arcs[i] > 3) return 0;

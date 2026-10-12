@@ -50,5 +50,14 @@ int main(int argc,char **argv)
         CHECK(btp_party_count(&s.party)==4u+route);
         if (route) CHECK(s.story_flags[42] && s.party.people[4][8]==3 && s.party.people[4][15]==8u*s.party.people[4][1]);
     }
+    /* Explicit original injured-party prerequisite; ordinary clinic travel,
+       doctor selection and payment, with restoration before every input. */
+    BtpState healed;CHECK(btp_save_load("Original DOS/GAME2",&healed,r,&e));
+    CHECK(healed.party.people[1][15]==108);
+    f=fopen("tests/fixtures/ordinary-hospital-healing.actions","r");CHECK(f);unsigned ticks=0;
+    while (fgets(line,sizeof line,f)) {
+        line[strcspn(line,"\r\n")]=0;BtpAction action;CHECK(btp_action_parse(line,&action));input(&healed,r,action);++ticks;
+    }
+    fclose(f);CHECK(ticks==77 && healed.mode==BTP_EXPLORE && healed.party.people[1][15]==120 && healed.credits==9666);
     free(r);printf("PASS: %u later-story checks, original hospital effects and saved continuation\n",checks);return 0;
 }

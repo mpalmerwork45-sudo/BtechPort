@@ -23,7 +23,7 @@ unsigned btp_menu_count(unsigned id)
 }
 int btp_native_supported(unsigned action)
 {
-    return (action>=1 && action<=26) || action==28 || action==29 || action==30 || action==36 || action==37 || action==38 || action==39 || action==43 || action==44 || action==46;
+    return (action>=1 && action<=26) || action==28 || action==29 || action==30 || action==36 || action==37 || action==38 || action==39 || action==43 || action==44 || action==45 || action==46;
 }
 
 static void fault(BtpScriptState *s, BtpScriptError error, uint16_t pc)
@@ -178,7 +178,7 @@ static void run(BtpScriptState *s, const BtpBld *b, uint8_t story[BTP_STORY_BYTE
         case 0xea: /* Yield until original sequence playback finishes. */
             if (!available(s,b,2,op_pc)) return;
             s->animation_kind = b->bytes[s->pc++]; s->animation_flags = b->bytes[s->pc++];
-            if ((s->animation_kind != 6 && s->animation_kind != 8 && s->animation_kind != 9) || s->animation_flags != 1) { fault(s,BTP_SCRIPT_SCENE,op_pc); return; }
+            if ((s->animation_kind != 6 && s->animation_kind != 8 && (s->animation_kind<9 || s->animation_kind>14)) || s->animation_flags != 1) { fault(s,BTP_SCRIPT_SCENE,op_pc); return; }
             s->pause_units = 0; s->status = BTP_SCRIPT_ANIMATION; return;
         case 0xfb:
             s->status = BTP_SCRIPT_WAIT; return;

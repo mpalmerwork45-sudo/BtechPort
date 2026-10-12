@@ -75,13 +75,17 @@ static void begin(BtpState *s, const BtpResources *r, unsigned mech)
     select(s,r,mech); animation(s,r);
     CHECK(s->mode == BTP_MISSION && s->mission.phase == BTP_MISSION_DRIVE);
     CHECK(s->x_half == 64 && s->y_half == 79 && s->story_flags[2] == mech);
-    /* v10/v11 first-mission saves predate timed cutscenes. Their established
-       state migrates exactly once playback has completed. */
+    /* v10/v11 first-mission saves predate sound and explored-map storage.
+       Legacy gameplay fields migrate; prior travel visibility cannot be
+       recovered from those formats and gets the documented initial context. */
     uint8_t old[BTP_STATE_BYTES], current[BTP_STATE_BYTES]; BtpState loaded;
     for (unsigned version=10;version<=11;++version) {
         btp_state_encode(s,old); old[3]=(uint8_t)(version == 10 ? 'A' : 'B'); old[4]=(uint8_t)version;
         CHECK(btp_state_decode(old,version == 10 ? 448u : 512u,&r->map,&r->training,&loaded));
-        btp_state_encode(&loaded,current); btp_state_encode(s,old); CHECK(!memcmp(old,current,sizeof old));
+        btp_state_encode(&loaded,current); btp_state_encode(s,old);
+        /* Compare every field that existed, plus other migration defaults. */
+        memcpy(old+16384,current+16384,2048);
+        CHECK(!memcmp(old,current,sizeof old));
     }
 }
 static void synthetic(void)

@@ -44,7 +44,12 @@ def extract(source):
     extra=b''.join(image[a:a+n] for a,n in extra_ranges)
     sound=image[DS+0x5006:DS+0x5006+2+314*2]
     field=b''.join(image[DS+0x2602+4*i:DS+0x2606+4*i] for i in range(8))+image[DS+0x3a16:DS+0x3a2e]+image[DS+0x4f6e:DS+0x4f7e]
-    return b"BTC9"+b"".join(parts)+programs+jenner+extra+sound+field, {**metadata,"format":"BTC9","ranges":origins,
+    cache_ranges=[(DS+0x21ce,33),(DS+0x21f0,33),(DS+0x2212,33),
+        (DS+0x247a,60),(DS+0x241e,14),(DS+0x20bc,18),(DS+0x246e,12),
+        (0x1c6c0+0x2257,250),(0x1c6c0+0x2351,250)]
+    cache=b''.join(image[a:a+n] for a,n in cache_ranges)
+    return b"BTCA"+b"".join(parts)+programs+jenner+extra+sound+field+cache, {**metadata,"format":"BTCA/v10","ranges":origins,
+        'cache_tables':[{'image_offset':a,'length':n,'sha256':hashlib.sha256(image[a:a+n]).hexdigest()} for a,n in cache_ranges],
         'field_tables':{'image_offsets':[DS+0x2602,DS+0x3a16,DS+0x4f6e],'lengths':[32,24,16],'sha256':hashlib.sha256(field).hexdigest()},
         'speaker_programs':{'image_offset':DS+0x5006,'length':len(sound),'sha256':hashlib.sha256(sound).hexdigest()},
         'campaign_ranges':[{'image_offset':a,'length':n,'sha256':hashlib.sha256(image[a:a+n]).hexdigest()} for a,n in extra_ranges],

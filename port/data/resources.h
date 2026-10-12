@@ -26,7 +26,7 @@ typedef struct {
     uint8_t count, bytes[BTP_ANM_BYTES];
 } BtpAnm;
 /* 43 earlier bank/Talk strings plus 12 class transcript/rank/subject strings. */
-enum { BTP_TALK_STRINGS = 119, BTP_TALK_MAX = 4096 };
+enum { BTP_TALK_STRINGS = 141, BTP_TALK_MAX = 8192 };
 typedef struct {
     uint8_t bytes[BTP_TALK_MAX];
     uint8_t font[2048];
@@ -45,6 +45,8 @@ typedef struct {
     BtpMap destroyed;
     BtpMap local[14];
     BtpGraphic tiles, terrain_animation, sprites, quiz_diagram, border, title, logo, tinyland;
+    BtpGraphic cache_tiles, maproom_tiles, phoenix;
+    BtpMap maproom;
     uint8_t music[4356];uint16_t music_length;
     BtpBld citadel, armor, weapon, comstar, training, barracks, lounge, repair;
     BtpBld buildings[26];
