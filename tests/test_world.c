@@ -29,6 +29,18 @@ int main(int argc,char **argv)
         CHECK(fingerprint(sector,sizeof sector)==expected);++cases;
     }
     fclose(f);CHECK(cases==9);
+    f=fopen("tests/fixtures/world-native.txt","r");CHECK(f);cases=0;
+    while (fgets(line,sizeof line,f)) if (line[0]=='G') {
+        unsigned seed,x,y;uint64_t expected;uint8_t sector[4096];
+        CHECK(sscanf(line+1,"%u %u %u %" SCNx64,&seed,&x,&y,&expected)==4);
+        CHECK(x<16 && y<16 && btp_world_generate(&r->world,seed));
+        for (unsigned row=0;row<64;++row) for (unsigned col=0;col<64;++col)
+            sector[64*row+col]=(uint8_t)btp_generated_tile(&r->world,(int)(64*x+col),(int)(64*y+row));
+        if (fingerprint(sector,sizeof sector)!=expected)
+            fprintf(stderr,"seed %u sector %u,%u: %016" PRIx64 " vs %016" PRIx64 "\n",seed,x,y,fingerprint(sector,sizeof sector),expected);
+        CHECK(fingerprint(sector,sizeof sector)==expected);++cases;
+    }
+    fclose(f);CHECK(cases==30);CHECK(btp_world_generate(&r->world,123456));
     uint8_t *raw;size_t n;CHECK(btp_read_file(argv[2],&raw,&n,&e));
     BtpWorldData untouched=r->world;
     CHECK(!btp_world_data_decode(raw,n-1,&r->world,&e) && !memcmp(&untouched,&r->world,sizeof untouched));
@@ -43,7 +55,8 @@ int main(int argc,char **argv)
     BtpState s;btp_start(&s);
     for (unsigned y=0;y<64;++y) for (unsigned x=0;x<64;++x)
         CHECK(btp_world_tile(r,&s,(int)x+768,(int)y+768)==btp_map_tile(&r->map,(int)x,(int)y));
-    CHECK(btp_world_tile(r,&s,703,768)==255 && btp_world_tile(r,&s,896,768)==255);
+    CHECK(btp_world_tile(r,&s,-1,768)==255 && btp_world_tile(r,&s,1024,768)==255);
+    CHECK(r->world.native && btp_world_tile(r,&s,703,768)<250 && btp_world_tile(r,&s,896,768)<250);
     uint32_t *a=malloc(BTP_PIXELS*sizeof *a),*b=malloc(BTP_PIXELS*sizeof *b);CHECK(a && b);
     btp_render(r,&s,0,a);btp_render(r,&s,0,b);CHECK(!memcmp(a,b,BTP_PIXELS*sizeof *a));
     /* MAP1's border is deliberately closed during this early campaign. */
