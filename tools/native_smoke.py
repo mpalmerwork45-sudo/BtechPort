@@ -384,6 +384,42 @@ def rubble(env,work,combat=False,kind=None):
                     try: process.wait(timeout=5)
                     except subprocess.TimeoutExpired: process.kill(); process.wait()
 
+def world(env,work):
+    """Real F4 map toggle, movement, F5/F9 and exact saved-clock pixels."""
+    from reference_session import WindowKeys
+    binary=ROOT/'build/btech-headless';slot=work/'native-area.btp';frame=work/'native-area.ppm'
+    process=subprocess.Popen([str(ROOT/'build/btech-port'),'--save-file',str(slot),'--frame',str(frame)],
+        cwd=ROOT,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+    keys=WindowKeys()
+    try:
+        window=None
+        for _ in range(100):
+            found=[(w,n) for w,n in keys.windows() if n.startswith('BtechPort')]
+            if len(found)==1:window=found[0][0];break
+            if process.poll() is not None:raise RuntimeError('Area map window failed to start')
+            time.sleep(.05)
+        if window is None:raise RuntimeError('Area map window did not appear')
+        keys.key(window,'F4');keys.key(window,'F5');time.sleep(.1)
+        before=json.loads(subprocess.run([str(binary),'--load',str(slot)],cwd=ROOT,check=True,capture_output=True,text=True).stdout)
+        keys.key(window,'Right');keys.key(window,'F4');keys.key(window,'F9');keys.key(window,'F4');keys.key(window,'Escape')
+        out,err=process.communicate(timeout=10)
+        if process.returncode:raise RuntimeError(err)
+        after=json.loads(out);delta=after['tick']-before['tick']
+        if not 0<=delta<=20:raise RuntimeError('Unexpected area map restored interval')
+        tail=work/'native-area-tail.actions';tail.write_text('idle\n'*delta)
+        replay=work/'native-area-replayed.ppm'
+        args=[str(binary),'--load',str(slot),'--world-overview','--frame',str(replay)]
+        if delta:args+=['--replay',str(tail)]
+        expected=json.loads(subprocess.run(args,cwd=ROOT,check=True,capture_output=True,text=True).stdout)
+        if after!=expected or frame.read_bytes()!=replay.read_bytes():raise RuntimeError('F4/F9 area state or generated-map pixels differ')
+        print('PASS: native F4 generated Citadel area map, F5/F9 state and exact saved-clock pixel continuation.',flush=True)
+    finally:
+        keys.x.XCloseDisplay(keys.display)
+        if process.poll() is None:
+            process.terminate()
+            try:process.wait(timeout=5)
+            except subprocess.TimeoutExpired:process.kill();process.wait()
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--shops-only", action="store_true")
@@ -397,6 +433,7 @@ def main():
     parser.add_argument("--rubble-only", action="store_true")
     parser.add_argument("--combat-only", action="store_true")
     parser.add_argument("--training-combat-only", action="store_true")
+    parser.add_argument("--world-only", action="store_true")
     args = parser.parse_args()
     work = ROOT / "work"
     work.mkdir(exist_ok=True)
@@ -416,6 +453,8 @@ def main():
             env.pop("SDL_VIDEODRIVER", None)
             os.environ["DISPLAY"] = env["DISPLAY"]
             os.environ["BTECH_REFERENCE_VIRTUAL"] = "1"
+            if args.world_only:
+                world(env,work);return
             if args.training_combat_only:
                 rubble(env,work,kind="training-combat")
                 rubble(env,work,kind="kick")
@@ -509,6 +548,7 @@ def main():
             rubble(env,work,kind="training-combat")
             rubble(env,work,kind="kick")
             rubble(env,work,kind="sixth-story")
+            world(env,work)
             diagonals(env,work)
         finally:
             os.close(read_fd)

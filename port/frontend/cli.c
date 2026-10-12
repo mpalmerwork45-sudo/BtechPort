@@ -1,6 +1,7 @@
 #include "frontend/cli.h"
 #include "core/npc.h"
 #include "core/training.h"
+#include "core/world.h"
 #include "data/save.h"
 #include "data/sprites.h"
 #include <stdio.h>
@@ -9,15 +10,17 @@
 
 int btp_options(int argc, char **argv, BtpOptions *o)
 {
-    *o = (BtpOptions){.data = "Original DOS",.dialogue_data="work/talk-data.bin",.combat_data="work/combat-data.bin",
+    *o = (BtpOptions){.data = "Original DOS",.dialogue_data="work/talk-data.bin",.combat_data="work/combat-data.bin",.world_data="work/world-data.bin",
         .save_file="work/player-save.btp"};
     for (int i = 1; i < argc; ++i) {
         const char *arg = argv[i];
         if (!strcmp(arg, "--help")) {
-            puts("BtechPort M3b: five training missions, physical combat and Mechit-Lube\n"
+            puts("BtechPort M3c: six training missions, Rick/device, combat and map animation\n"
                  "  --data DIRECTORY     original resource directory (default: Original DOS)\n"
                  "  --dialogue-data FILE local EXE text cache (default: work/talk-data.bin)\n"
                  "  --combat-data FILE   local EXE combat cache (default: work/combat-data.bin)\n"
+                 "  --world-data FILE    generated Citadel surroundings cache\n"
+                 "  --world-overview     show Citadel and its adjoining generated sectors\n"
                  "  --conversation-checkpoint  isolated controlled Talk handler test\n"
                  "  --shop-talk-checkpoint armor|weapon  controlled two-NPC shop handler test\n"
                  "  --headless           run without SDL/display/audio\n"
@@ -42,11 +45,12 @@ int btp_options(int argc, char **argv, BtpOptions *o)
                  "  --smoke-fast         accelerate native replay tests; logical ticks stay 32ms\n"
                  "Native controls: arrows move/select, Enter/Space confirms/continues,\n"
                  "Bank amounts: digits type, Backspace erases, Esc clears; Enter submits.\n"
-                 "F5 saves, F9 loads. Backspace declines/recovers, R restarts, F3 debug, Esc quits.");
+                 "F4 toggles the area map, F5 saves, F9 loads. Backspace declines/recovers, R restarts, F3 debug, Esc quits.");
             return -1;
         }
         if (!strcmp(arg, "--headless")) o->headless = 1;
         else if (!strcmp(arg, "--sprite-preview")) o->sprite_preview = 1;
+        else if (!strcmp(arg, "--world-overview")) o->world_overview = 1;
         else if (!strcmp(arg, "--debug")) o->debug = 1;
         else if (!strcmp(arg, "--trace")) o->trace = 1;
         else if (!strcmp(arg, "--smoke")) o->smoke = 1;
@@ -69,6 +73,7 @@ int btp_options(int argc, char **argv, BtpOptions *o)
             if (!strcmp(arg, "--data")) value = &o->data;
             if (!strcmp(arg, "--dialogue-data")) value = &o->dialogue_data;
             if (!strcmp(arg, "--combat-data")) value = &o->combat_data;
+            if (!strcmp(arg, "--world-data")) value = &o->world_data;
             if (!strcmp(arg, "--replay")) value = &o->replay;
             if (!strcmp(arg, "--frame")) value = &o->frame;
             if (!strcmp(arg, "--record")) value = &o->record;
@@ -188,8 +193,9 @@ void btp_print_state(const BtpState *s, const BtpResources *r)
         printf("[%u,%u]",c->goal_x,c->goal_y);
         for (unsigned i=0;i<c->waypoint_count;++i) printf(",[%u,%u]",c->waypoint_x[i],c->waypoint_y[i]);
     }
-    printf("],\"effects\":[%u,%u,%u],\"shot\":[%d,%u,%u,%u,%u]}}\n",
+    printf("],\"effects\":[%u,%u,%u],\"shot\":[%d,%u,%u,%u,%u]}",
         s->effects.count,s->effects.age,s->effects.pending,c->shot.needed,c->shot.hit,c->shot.location,c->shot.damage,c->shot.destroyed);
+    puts("}");
 }
 
 int btp_replay(const char *path, BtpState *s, const BtpResources *r, int trace)
@@ -263,6 +269,7 @@ int btp_run_headless(const BtpOptions *o, BtpResources *r)
         uint32_t *frame = malloc(sizeof(*frame) * BTP_PIXELS);
         if (!frame) return 1;
         if (o->sprite_preview) btp_sprite_preview(r,state.tick,frame);
+        else if (o->world_overview) btp_world_preview(r,&state,frame);
         else btp_render(r, &state, o->debug, frame);
         int ok = btp_write_ppm(o->frame, frame);
         free(frame);

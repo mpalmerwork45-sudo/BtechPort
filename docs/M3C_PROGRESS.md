@@ -11,7 +11,7 @@ training/story step; both supplied reference trees remain immutable.
 | Original combat/jump/impact/destruction effects | Original poses/gaits, impact stars, flame cycle and corpse/wreck artwork integrated |
 | Natural Rick/device route and sixth original assignment | Implemented; original five-page dialogue, two Locusts, skill practice and 3,000-cap result |
 | Force-field electricity (added by user) | Original ANIMATE.ICN three-frame map cycle integrated; 60 executed decoder/swap comparisons |
-| Citadel within the generated surrounding world (added by user) | Research in progress; current code still uses the local map |
+| Citadel within the generated surrounding world (added by user) | Nine original generated sectors and exact MAP1 overlay available in the F4 area map; early campaign barriers retained |
 
 ## Turn research and corrections
 
@@ -131,8 +131,36 @@ python3 tools/make_combat_live_turns.py
 ./scripts/build.sh
 ctest --test-dir build --output-on-failure
 python3 tools/make_training_combat_replay.py
+python3 tools/make_training_combat_replay.py --campaign
+python3 tools/prepare_world.py --fixture tests/fixtures/world-sectors.txt
 ```
 
 Routine tests use committed numeric fixtures and owner-supplied resources;
 fixture regeneration uses the existing ignored RAM capture and optional pinned
 Unicorn wheel. Full campaign/timing/pixel parity remains outside these claims.
+
+## Citadel and adjoining generated sectors
+
+The original `187F:104E` expands a coarse 16×16 height grid through `0BFB`;
+`187F:1314/13D9` selects and mirrors 8×8 tile patterns. `0000:50D3..50F3`
+initializes a 256-byte noise table with the original RNG. This corrects the
+secondary claim that a reused 64×64 working buffer establishes a static world.
+`tools/prepare_world.py` executes those unmodified routines from the audited EXE,
+without a captured RAM dependency, for a stated seed (default 123456).
+
+The ignored BTW1 cache covers sectors 11..13 in both axes: **192×192 tiles**,
+origin `(704,704)`, 36,864 generated tiles. Packed MAP1 entrance words place its
+64×64 area in sector `(12,12)`; native lookup overlays all **4,096** authentic
+local tiles there. Nine complete sector fingerprints are committed, not tiles.
+The area map uses original artwork, the saved animation clock, a Citadel outline
+and Jason's position. **F4** toggles it; `--world-overview` selects it at launch.
+Native F4, movement, F5/F9 and exact continued map pixels pass.
+
+**VERIFIED in scope:** original bounded generation, cache decoding, placement,
+complete local overlay and immutable reference assets. **APPROXIMATE:** overview
+presentation and the fixed native seed choice. **UNKNOWN/deferred:** independent
+C generation of arbitrary sectors, full outer travel/encounters, other town
+overlays and later campaign gates. MAP1's entire outer border currently exceeds
+the verified early-game gate; tests retain that barrier. No fictional early
+escape route is introduced. The C runtime reads generated owner-derived data;
+it does not execute the DOS game or depend on the reference recreation.

@@ -1,5 +1,6 @@
 #include "frontend/pixels.h"
 #include "core/animation.h"
+#include "core/world.h"
 #include "core/bank.h"
 #include "core/school.h"
 #include "core/training.h"
@@ -503,14 +504,14 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
             if (x >= 104) {
                 int wx = camera_x + x - 104, wy = camera_y + y;
                 if (wx >= 0 && wy >= 0 && wx < r->map.width * 16 && wy < r->map.height * 16) {
-                    unsigned tile = btp_mission_tile(s,&r->map, wx / 16, wy / 16);
+                    unsigned tile = btp_mission_tile(s,&r->map,wx/16,wy/16);
                     if (tile < 250) {
                         /* 320B skips ANIMATE's first blank tile; 240B swaps
                            three pages into these ten map tile slots. The
                            saved fixed clock supplies a deterministic phase. */
                         unsigned frame=btp_terrain_frame(tile,s->tick/4u);
                         const BtpGraphic *sheet=frame && r->terrain_animation.format==1 ? &r->terrain_animation : &r->tiles;
-                        unsigned index = (sheet==&r->tiles ? tile : frame) * 256 + (unsigned)(wy % 16) * 16 + (unsigned)(wx % 16);
+                        unsigned index = (sheet==&r->tiles ? tile : frame) * 256 + (unsigned)(wy%16)*16 + (unsigned)(wx%16);
                         unsigned value = sheet->pixels[index] & 15;
                         color = btp_palette[terrain_palette[value]];
                         if (debug && tile >= s->gate && (wx % 16 == 0 || wy % 16 == 0))
@@ -625,6 +626,27 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         border_panel(r,f,104,72,216,64,0);
 }
 
+void btp_world_preview(const BtpResources *r,const BtpState *s,uint32_t f[BTP_PIXELS])
+{
+    rectangle(f,0,0,320,200,0);
+    for (unsigned y=0;y<BTP_WORLD_SIDE;++y) for (unsigned x=0;x<BTP_WORLD_SIDE;++x) {
+        unsigned tile=btp_world_tile(r,s,(int)x+BTP_WORLD_ORIGIN,(int)y+BTP_WORLD_ORIGIN);
+        if (tile>=250) continue;
+        unsigned frame=btp_terrain_frame(tile,s->tick/4u);
+        const BtpGraphic *sheet=frame ? &r->terrain_animation : &r->tiles;
+        unsigned index=(frame ? frame : tile)*256+8*16+8;
+        pixel(f,112+(int)x,4+(int)y,btp_palette[terrain_palette[sheet->pixels[index]&15u]]);
+    }
+    rectangle(f,175,67,66,1,14);rectangle(f,175,132,66,1,14);
+    rectangle(f,175,67,1,66,14);rectangle(f,240,67,1,66,14);
+    unsigned wx=2u*BTP_CITADEL_ORIGIN+s->x_half,wy=2u*BTP_CITADEL_ORIGIN+s->y_half;
+    int px=112+(int)(wx/2)-BTP_WORLD_ORIGIN,py=4+(int)(wy/2)-BTP_WORLD_ORIGIN;
+    rectangle(f,px-2,py,5,1,15);rectangle(f,px,py-2,1,5,15);
+    text(r,f,8,16,"Citadel",15);text(r,f,8,32,"Area map",15);
+    text(r,f,8,64,"Yellow:",14);text(r,f,8,80,"Citadel",14);
+    text(r,f,8,112,"White:",15);text(r,f,8,128,"Jason",15);
+    text(r,f,8,176,"F4 Return",7);border_panel(r,f,0,0,104,200,1);
+}
 void btp_sprite_preview(const BtpResources *r, unsigned tick, uint32_t f[BTP_PIXELS])
 {
     for (unsigned i = 0; i < BTP_PIXELS; ++i) f[i] = btp_palette[2];

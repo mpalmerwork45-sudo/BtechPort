@@ -32,6 +32,8 @@ typedef struct {
     uint8_t font[2048];
     uint16_t length, offset[BTP_TALK_STRINGS], size[BTP_TALK_STRINGS];
 } BtpDialogue;
+enum { BTP_WORLD_SIDE=192, BTP_WORLD_ORIGIN=704, BTP_CITADEL_ORIGIN=768 };
+typedef struct { uint32_t seed;uint8_t loaded,tiles[BTP_WORLD_SIDE*BTP_WORLD_SIDE]; } BtpWorldData;
 typedef struct {
     BtpMap map;
     BtpGraphic tiles, terrain_animation, sprites, quiz_diagram, border;
@@ -39,6 +41,7 @@ typedef struct {
     BtpDialogue dialogue;
     BtpAnm animations[BTP_ANM_COUNT];
     BtpCombatData combat;
+    BtpWorldData world;
 } BtpResources;
 
 int btp_map_decode(const uint8_t *bytes, size_t length, BtpMap *map, BtpError *error);
@@ -50,4 +53,6 @@ int btp_resources_load(const char *directory, BtpResources *resources, BtpError 
 int btp_dialogue_decode(const uint8_t *bytes, size_t length, BtpDialogue *dialogue, BtpError *error);
 int btp_dialogue_load(const char *path, BtpDialogue *dialogue, BtpError *error);
 int btp_combat_data_load(const char *path, BtpCombatData *data, BtpError *error);
+int btp_world_data_load(const char *path, BtpWorldData *data, BtpError *error);
+int btp_world_data_decode(const uint8_t *bytes,size_t length,BtpWorldData *data,BtpError *error);
 #endif

@@ -59,7 +59,7 @@ int main(int argc, char **argv)
     int result = 1;
     if (!r || !frame) { free(r); free(frame); return 1; }
     if (!btp_resources_load(o.data, r, &error) || !btp_dialogue_load(o.dialogue_data,&r->dialogue,&error) ||
-        !btp_combat_data_load(o.combat_data,&r->combat,&error)) {
+        !btp_combat_data_load(o.combat_data,&r->combat,&error) || !btp_world_data_load(o.world_data,&r->world,&error)) {
         fprintf(stderr, "%s\nRun python3 tools/prepare_talk.py to prepare the dialogue cache.\n", error.text); goto done;
     }
     if (o.headless) { result = btp_run_headless(&o, r); goto done; }
@@ -72,7 +72,7 @@ int main(int argc, char **argv)
         fprintf(stderr, "SDL: %s\n", SDL_GetError()); goto done;
     }
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
-    SDL_Window *window = SDL_CreateWindow("BtechPort M3b - Training and combat", SDL_WINDOWPOS_CENTERED,
+    SDL_Window *window = SDL_CreateWindow("BtechPort M3c - Citadel and training", SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED, 960, 600, SDL_WINDOW_RESIZABLE);
     SDL_Renderer *renderer = window ? SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE) : NULL;
     SDL_Texture *texture = renderer ? SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
@@ -156,6 +156,7 @@ int main(int argc, char **argv)
                 if (key == SDLK_ESCAPE && state.bank.phase != BTP_BANK_AMOUNT) running = 0;
                 else if (o.sprite_preview) continue;
                 else if (key == SDLK_F3 && !event.key.repeat) o.debug = !o.debug;
+                else if (key == SDLK_F4 && !event.key.repeat) o.world_overview = !o.world_overview;
                 else if ((key == SDLK_F5 || key == SDLK_F9) && !event.key.repeat) {
                     int saving = key == SDLK_F5;
                     int ok;
@@ -214,6 +215,7 @@ int main(int argc, char **argv)
             if (o.smoke >= 5) break; /* Inject exactly one input for each fixed step. */
         }
         if (o.sprite_preview) btp_sprite_preview(r,state.tick,frame);
+        else if (o.world_overview) btp_world_preview(r,&state,frame);
         else btp_render(r, &state, o.debug, frame);
         if (SDL_UpdateTexture(texture, NULL, frame, 320 * (int)sizeof *frame) ||
             SDL_RenderClear(renderer) || SDL_RenderCopy(renderer, texture, NULL, NULL)) {

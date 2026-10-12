@@ -117,6 +117,7 @@ int btp_resources_load(const char *dir, BtpResources *r, BtpError *e)
 {
     memset(&r->dialogue, 0, sizeof r->dialogue);
     memset(&r->combat,0,sizeof r->combat);
+    memset(&r->world,0,sizeof r->world);
     char path[4096]; uint8_t *data; size_t n;
     const char *names[] = {"MAP1.MTP", "BTTLTECH.ICN", "CITADEL.BLD", "ARMOR.BLD", "WEAPON.BLD", "COMSTAR.BLD", "MECHSHAP.CMP", "TRAINING.BLD", "BARRACKS.BLD", "LOUNGE.BLD", "BTSTATS.CMP", "BTBORDER.CMP", "REPAIR.BLD", "ANIMATE.ICN"};
     for (unsigned i = 0; i < 14; ++i) {

@@ -11,7 +11,8 @@ int main(int argc, char **argv)
     BtpError error;
     if (!btp_resources_load(options.data, resources, &error) ||
         !btp_dialogue_load(options.dialogue_data, &resources->dialogue, &error) ||
-        !btp_combat_data_load(options.combat_data,&resources->combat,&error)) {
+        !btp_combat_data_load(options.combat_data,&resources->combat,&error) ||
+        !btp_world_data_load(options.world_data,&resources->world,&error)) {
         fprintf(stderr, "%s\nUse --data with a quoted path; filenames are case-sensitive.\n"
             "Prepare the local dialogue cache with python3 tools/prepare_talk.py --data DIRECTORY.\n", error.text);
         free(resources); return 1;
