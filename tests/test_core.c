@@ -238,6 +238,8 @@ static void katrina_loop(const BtpResources *r)
     s.npc = (BtpNpcState){0}; /* Legacy saves had no travel clock/positions. */
     btp_game_tick(&s, r, BTP_ACCEPT); btp_game_tick(&invalid, r, BTP_ACCEPT);
     uint8_t migrated[BTP_STATE_BYTES]; btp_state_encode(&s, saved); btp_state_encode(&invalid, migrated);
+    if (memcmp(saved,migrated,sizeof saved)) for (unsigned i=0;i<BTP_STATE_BYTES;++i)
+        if (saved[i]!=migrated[i]) fprintf(stderr,"legacy continuation byte %u: %u != %u\n",i,saved[i],migrated[i]);
     CHECK(!memcmp(saved, migrated, sizeof saved));
     puts("Katrina core: pause restoration, persistent bytes, repeat denial, re-entry, class rollback, Talk continuation, BTP2 migration.");
 }

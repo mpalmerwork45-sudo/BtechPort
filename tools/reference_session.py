@@ -138,6 +138,14 @@ class WindowKeys:
             self.x.XFlush(self.display)
             time.sleep(0.06)
 
+    def close_window(self, window):
+        message=ClientMessage(33,0,1,self.display,window,
+            self.x.XInternAtom(self.display,b"WM_PROTOCOLS",0),32,
+            (c.c_long*5)(self.x.XInternAtom(self.display,b"WM_DELETE_WINDOW",0),0,0,0,0))
+        if not self.x.XSendEvent(self.display,window,0,0,c.cast(c.byref(message),c.POINTER(Event))):
+            raise RuntimeError("Window close event failed")
+        self.x.XFlush(self.display)
+
 
 def memory_candidates(pid):
     # Use the unrelocated load-image offset, not the EXEPACK disk offset.

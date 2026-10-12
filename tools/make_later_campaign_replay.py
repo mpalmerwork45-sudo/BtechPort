@@ -17,11 +17,12 @@ def main():
     if s.state['mode']!='local-exploration' or s.state['map']!=2:raise RuntimeError('Garage transition failed')
     s.note('parked-in-starport');s.save_fixture('starport')
     s.world_route(1370,1088);s.advance(['accept']*3);s.note('civilian-clothing')
-    s.world_route(1394,1116);s.advance(['accept']*4);s.wait_outdoors(s.state['story_flags'][29]*4)
+    s.world_route(1394,1116);s.advance(['accept']*4);s.wait_outdoors(s.state['campaign_flags'][29]*4)
     s.advance(['right','left','accept'])
     for _ in range(100):
         if s.state['mode']=='encounter':break
         if s.state['mode']=='script-error':raise RuntimeError('Inauguration fault')
+        if s.state['animation']['active'] and not any(n['label']=='rex-crest' for n in s.notes):s.note('rex-crest')
         s.pause()
     else:raise RuntimeError('Rex sequence stalled')
     s.advance(['accept']*3);s.command(8);s.note('rex-and-commando');s.save_fixture('rex')
@@ -35,13 +36,13 @@ def main():
     for delay in range(16):
         keys=['idle']*delay+['accept'];leg.write_text('\n'.join(keys)+'\n')
         result=json.loads(run(s.binary,'--load',s.slot,'--replay',leg))
-        if not result['story_flags'][39]:s.advance(keys);break
+        if not result['campaign_flags'][39]:s.advance(keys);break
     else:raise RuntimeError('No non-hostile agent timing in bounded key delays')
-    s.note('technician-joined');print('technician',s.state['mode'],s.state['menu_id'],s.state['service'],s.state['story_flags'][32:40])
+    s.note('technician-joined');print('technician',s.state['mode'],s.state['menu_id'],s.state['service'],s.state['campaign_flags'][32:40])
     def menu(n):
         s.advance(['down']*((n-s.state['menu_selected'])%6)+['accept'])
     menu(2);s.advance(['accept']*3);s.note('partial-armour-repair');s.advance(['accept']+['down']*5+['accept'])
-    menu(3);s.advance(['accept','accept','1','0','accept']);s.note('ammo-purchase-boundary');s.advance(['accept']+['down']*10+['accept'])
+    menu(3);s.advance(['accept','accept','1']);s.note('partial-ammo-amount');s.advance(['0','accept']);s.note('ammo-purchase-boundary');s.advance(['accept']+['down']*10+['accept'])
     menu(1);s.advance(['accept'])
     for _ in range(10):
         if s.state['service']['phase']==3:break

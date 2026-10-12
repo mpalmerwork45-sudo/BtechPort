@@ -525,6 +525,10 @@ static void story_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
 
 void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[BTP_PIXELS])
 {
+    if (s->mode==BTP_TITLE) {
+        for (unsigned i=0;i<BTP_PIXELS;++i) f[i]=btp_palette[terrain_palette[r->title.pixels[i]&15u]];
+        text(r,f,176,188,"Press Enter to start",15);return;
+    }
     if (s->mode == BTP_QUIZ && s->quiz.phase == BTP_QUIZ_QUESTION) {
         for (unsigned i = 0; i < BTP_PIXELS; ++i) f[i] = btp_palette[terrain_palette[r->quiz_diagram.pixels[i]&15u]];
         rectangle(f,0,0,128,200,0);
@@ -603,9 +607,13 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
     else (void)btp_draw_sprite(&r->sprites,166u+s->player_walk,208,96,
         hidden_rows(map,s->x_half,s->y_half),104,f);
     if (!s->combat.phase && s->story_flags[4]) {
-        for (unsigned i=1;i<8;++i) if (s->party.people[i][0]!=255 && s->party.people[i][12]>=8)
-            (void)btp_draw_sprite(&r->sprites,270u+s->party.walk[i],208+((int)s->party.x[i]-s->campaign.world_x)*8,
-                96+((int)s->party.y[i]-s->campaign.world_y)*8,0,104,f);
+        for (unsigned i=1;i<8;++i) if (s->party.people[i][0]!=255) {
+            unsigned mount=s->party.people[i][12];
+            const uint8_t *m=mount<4 ? mount ? s->party.mechs[mount-1] : s->campaign.mech : NULL;
+            unsigned base=m ? m[0]=='L' ? 0u : 146u : 270u;
+            (void)btp_draw_sprite(&r->sprites,base+s->party.walk[i],(m ? 200 : 208)+((int)s->party.x[i]-s->campaign.world_x)*8,
+                (m ? 64 : 96)+((int)s->party.y[i]-s->campaign.world_y)*8,0,104,f);
+        }
     }
     /* Original 051B draws the party before the eight outdoor NPC slots. */
     if (!s->combat.phase && (s->mode == BTP_EXPLORE || s->mode == BTP_MISSION) && s->npc.enabled == 2) for (unsigned i = 0; i < 8; ++i) {
@@ -666,8 +674,9 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         snprintf(line, sizeof line, "GATE %u", s->gate); text(r,f, 8, 166, line, 14);
         snprintf(line, sizeof line, "TICK %u", s->tick); text(r,f, 8, 178, line, 14);
     }
-    if (s->cutscene.active || (s->mode == BTP_BUILDING && s->script.animation_kind)) {
-        unsigned kind = s->cutscene.active ? s->cutscene.kind : s->script.animation_kind;
+    unsigned building=btp_building_kind(r,s),portrait=building<26 ? r->combat.building_portraits[building] : 0;
+    if (s->cutscene.active || (s->mode == BTP_BUILDING && (s->script.animation_kind || portrait))) {
+        unsigned kind = s->cutscene.active ? s->cutscene.kind : s->script.animation_kind ? s->script.animation_kind : portrait;
         unsigned step = s->cutscene.active ? s->cutscene.step : r->animations[kind].count-1u;
         uint8_t packed[BTP_ANM_PACKED];
         if (btp_anm_frame(&r->animations[kind],step,packed)) {
@@ -714,18 +723,28 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
 void btp_world_preview(const BtpResources *r,const BtpState *s,uint32_t f[BTP_PIXELS])
 {
     rectangle(f,0,0,320,200,0);
+    unsigned wx=s->story_flags[4] ? s->campaign.world_x : 2u*BTP_CITADEL_ORIGIN+s->x_half;
+    unsigned wy=s->story_flags[4] ? s->campaign.world_y : 2u*BTP_CITADEL_ORIGIN+s->y_half;
+    int ox=s->story_flags[4] ? (int)(wx/128u)*64-64 : BTP_WORLD_ORIGIN;
+    int oy=s->story_flags[4] ? (int)(wy/128u)*64-64 : BTP_WORLD_ORIGIN;
+    if (ox<0) ox=0;
+    if (oy<0) oy=0;
+    if (ox>832) ox=832;
+    if (oy>832) oy=832;
     for (unsigned y=0;y<BTP_WORLD_SIDE;++y) for (unsigned x=0;x<BTP_WORLD_SIDE;++x) {
-        unsigned tile=btp_world_tile(r,s,(int)x+BTP_WORLD_ORIGIN,(int)y+BTP_WORLD_ORIGIN);
+        unsigned tile=btp_world_tile(r,s,(int)x+ox,(int)y+oy);
         if (tile>=250) continue;
         unsigned frame=btp_terrain_frame(tile,s->tick/4u);
         const BtpGraphic *sheet=frame ? &r->terrain_animation : &r->tiles;
         unsigned index=(frame ? frame : tile)*256+8*16+8;
         pixel(f,112+(int)x,4+(int)y,btp_palette[terrain_palette[sheet->pixels[index]&15u]]);
     }
-    rectangle(f,175,67,66,1,14);rectangle(f,175,132,66,1,14);
-    rectangle(f,175,67,1,66,14);rectangle(f,240,67,1,66,14);
-    unsigned wx=2u*BTP_CITADEL_ORIGIN+s->x_half,wy=2u*BTP_CITADEL_ORIGIN+s->y_half;
-    int px=112+(int)(wx/2)-BTP_WORLD_ORIGIN,py=4+(int)(wy/2)-BTP_WORLD_ORIGIN;
+    int city_x=112+BTP_CITADEL_ORIGIN-ox-1,city_y=4+BTP_CITADEL_ORIGIN-oy-1;
+    if (city_x>=112 && city_x+65<320 && city_y>=0 && city_y+65<200) {
+        rectangle(f,city_x,city_y,66,1,14);rectangle(f,city_x,city_y+65,66,1,14);
+        rectangle(f,city_x,city_y,1,66,14);rectangle(f,city_x+65,city_y,1,66,14);
+    }
+    int px=112+(int)(wx/2)-ox,py=4+(int)(wy/2)-oy;
     rectangle(f,px-2,py,5,1,15);rectangle(f,px,py-2,1,5,15);
     text(r,f,8,16,"Citadel",15);text(r,f,8,32,"Area map",15);
     text(r,f,8,64,"Yellow:",14);text(r,f,8,80,"Citadel",14);

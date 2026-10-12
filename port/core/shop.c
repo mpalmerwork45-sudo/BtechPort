@@ -20,9 +20,14 @@ void btp_shop_native(BtpState *s, const BtpResources *r)
         if (s->party.enabled) for (unsigned i=0;i<4;++i) {
             uint8_t *mech=btp_party_mech(s,i);
             if (s->script.native_action==28) { if (mech[0]!=255 && (i || s->campaign.owned)) s->party.mech_types[i]=mech[0];mech[0]=255; }
-            else if (s->party.mech_types[i]!=255) mech[0]=s->party.mech_types[i];
+            else if (s->party.mech_types[i]!=255) {
+                mech[0]=s->party.mech_types[i];
+                for (unsigned crew=121;crew<=122;++crew) if (mech[crew]<8 && s->party.people[mech[crew]][0]!=255)
+                    s->party.people[mech[crew]][12]=(uint8_t)i;
+            }
         }
-        s->campaign.mounted=(uint8_t)(s->script.native_action==46 && s->campaign.owned);break;
+        if (s->script.native_action==28 && s->party.enabled) for (unsigned i=0;i<8;++i) s->party.people[i][12]=8;
+        s->campaign.mounted=(uint8_t)(s->script.native_action==46 && s->campaign.owned && s->campaign.mech[121]==0);break;
     case 14: /* 14D3:0AF2: other party members; Jason is slot zero. */
         if (kind!=5) { unsupported(s);return; }
         s->story_flags[14]=0;break;

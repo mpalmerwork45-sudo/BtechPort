@@ -2,13 +2,20 @@
 #include <SDL.h>
 #include "frontend/cli.h"
 #include "data/save.h"
+#include "core/audio.h"
+#include "core/combat.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 static int movement_mode(const BtpState *s)
 {
-    return s->mode == BTP_EXPLORE || (s->mode == BTP_MISSION && s->mission.phase == BTP_MISSION_DRIVE);
+    return s->mode == BTP_EXPLORE || (s->mode == BTP_MISSION && s->mission.phase == BTP_MISSION_DRIVE) ||
+        (s->mode==BTP_ENCOUNTER && s->combat.phase==BTP_COMBAT_MOVE);
+}
+static int amount_editor(const BtpState *s)
+{
+    return s->bank.phase==BTP_BANK_AMOUNT || s->service.phase==5;
 }
 static unsigned arrow_bit(SDL_Keycode key)
 {
@@ -67,18 +74,24 @@ int main(int argc, char **argv)
     BtpState state; btp_initial_state(&o,&state,r);
     if (o.load && !btp_save_load(o.load,&state,r,&error)) { fprintf(stderr,"%s\n",error.text); goto done; }
     if (o.replay && o.smoke < 5 && !btp_replay(o.replay, &state, r, o.trace)) goto done;
+    if (!o.replay && !o.load && !o.smoke && !o.sprite_preview && !o.world_overview && !o.conversation_checkpoint && !o.shop_talk_checkpoint) btp_audio_start(&state);
     SDL_SetMainReady();
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_TIMER)) {
         fprintf(stderr, "SDL: %s\n", SDL_GetError()); goto done;
     }
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
-    SDL_Window *window = SDL_CreateWindow("BtechPort M3c - Citadel and training", SDL_WINDOWPOS_CENTERED,
+    SDL_Window *window = SDL_CreateWindow("BtechPort M3h - Crescent Hawk's Inception", SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED, 960, 600, SDL_WINDOW_RESIZABLE);
     SDL_Renderer *renderer = window ? SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE) : NULL;
     SDL_Texture *texture = renderer ? SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
         SDL_TEXTUREACCESS_STREAMING, 320, 200) : NULL;
     FILE *record = NULL;
     FILE *arrival = NULL;
+    SDL_AudioDeviceID audio=0;
+    if (!o.mute && !SDL_InitSubSystem(SDL_INIT_AUDIO)) {
+        SDL_AudioSpec spec={.freq=BTP_AUDIO_RATE,.format=AUDIO_S16SYS,.channels=1,.samples=2048};
+        audio=SDL_OpenAudioDevice(NULL,0,&spec,NULL,0);if (audio) SDL_PauseAudioDevice(audio,0);
+    }
     if (!texture || SDL_RenderSetLogicalSize(renderer, 320, 200)) goto sdl_done;
     if (o.record) { record = fopen(o.record, "w"); if (!record) goto sdl_done; }
     if (o.smoke >= 5) { arrival = fopen(o.replay,"r"); if (!arrival) goto sdl_done; }
@@ -153,7 +166,7 @@ int main(int argc, char **argv)
                 !movement_mode(&state)) held = 0;
             if (event.type == SDL_KEYDOWN) {
                 SDL_Keycode key = event.key.keysym.sym;
-                if (key == SDLK_ESCAPE && state.bank.phase != BTP_BANK_AMOUNT) running = 0;
+                if (key == SDLK_ESCAPE && !amount_editor(&state)) running = 0;
                 else if (o.sprite_preview) continue;
                 else if (key == SDLK_F3 && !event.key.repeat) o.debug = !o.debug;
                 else if (key == SDLK_F4 && !event.key.repeat) o.world_overview = !o.world_overview;
@@ -168,7 +181,10 @@ int main(int argc, char **argv)
                             btp_save_load(o.save_file,&state,r,&error);
                         if (!ok) fprintf(stderr,"%s\n",error.text);
                     }
-                    if (ok && !saving) { read = write = held = last_arrow_write = 0; accumulator = 0; last = SDL_GetTicks64(); }
+                    if (ok && !saving) {
+                        read = write = held = last_arrow_write = 0; accumulator = 0; last = SDL_GetTicks64();
+                        if (audio) SDL_ClearQueuedAudio(audio);
+                    }
                     notice = ok ? (saving ? "Saved" : "Loaded") : (saving ? "Save failed" : "Load failed");
                     notice_until = SDL_GetTicks64()+3000;
                     SDL_SetWindowTitle(window,notice);
@@ -177,7 +193,7 @@ int main(int argc, char **argv)
                     if (record) { fputs("Restart while recording is unsupported; start a new log.\n", stderr); }
                     else { btp_initial_state(&o,&state,r); read = write = held = last_arrow_write = 0; }
                 } else {
-                    BtpAction a = state.bank.phase == BTP_BANK_AMOUNT && key == SDLK_SPACE ?
+                    BtpAction a = amount_editor(&state) && key == SDLK_SPACE ?
                         BTP_IDLE : key_action(key,movement_mode(&state));
                     /* Real arrow chords use held keys. Scripted smoke events
                        have no physical scancode and remain individual actions. */
@@ -205,7 +221,15 @@ int main(int argc, char **argv)
             accumulator -= 32;
             BtpAction a = read != write ? queue[read++ % 256] : BTP_IDLE;
             if (o.sprite_preview) ++state.tick;
-            else btp_game_tick(&state, r, a);
+            else {
+                if (audio && state.audio.active && a==BTP_IDLE && !o.smoke_fast) {
+                    BtpAudioState preview=state.audio;int16_t pcm[BTP_AUDIO_TICK_SAMPLES];
+                    btp_audio_samples(&preview,r,BTP_AUDIO_TICK_SAMPLES,pcm);
+                    if (SDL_QueueAudio(audio,pcm,sizeof pcm)) { io_failed=1;running=0; }
+                }
+                btp_game_tick(&state, r, a);
+                if (audio && !state.audio.active) SDL_ClearQueuedAudio(audio);
+            }
             if (!movement_mode(&state)) held = 0;
             if (record && fprintf(record, "%s\n", btp_action_name(a)) < 0) { io_failed = 1; running = 0; }
             if (o.smoke) {
@@ -223,11 +247,11 @@ int main(int argc, char **argv)
         }
         SDL_RenderPresent(renderer);
         if (notice && SDL_GetTicks64() >= notice_until) {
-            notice = NULL; SDL_SetWindowTitle(window,"BtechPort M3a - Training and combat");
+            notice = NULL; SDL_SetWindowTitle(window,"BtechPort M3h - Crescent Hawk's Inception");
         }
         if (o.debug && !notice) {
             char title[200];
-            snprintf(title, sizeof title, "BtechPort M3a | %s | half=(%u,%u) | PC=%04x op=%02x | tick=%u",
+            snprintf(title, sizeof title, "BtechPort M3h | %s | half=(%u,%u) | PC=%04x op=%02x | tick=%u",
                 btp_mode_name(state.mode), state.x_half, state.y_half, state.script.pc,
                 state.script.last_opcode, state.tick);
             SDL_SetWindowTitle(window, title);
@@ -258,6 +282,7 @@ int main(int argc, char **argv)
         fprintf(stderr,"%s\n",error.text); result = 1;
     }
 sdl_done:
+    if (audio) SDL_CloseAudioDevice(audio);
     if (arrival && fclose(arrival)) result = 1;
     if (record && fclose(record)) result = 1;
     if (result) fprintf(stderr, "Native frontend failed: %s\n", SDL_GetError());

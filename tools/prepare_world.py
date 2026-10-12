@@ -1,18 +1,24 @@
 #!/usr/bin/env python3
-"""Generate a bounded Citadel neighbourhood with the owner's original routines.
+"""Extract original numeric terrain inputs for the independent C generator.
 
-This is a reproducible owner-derived cache, not a discovered static world file.
-The independent C game reads its tiles without running an emulator. Full native
-terrain generation and wider world/campaign transitions remain future work.
+Ordinary cache preparation uses the standard library. Optional --fixture
+generation runs bounded original instructions through the research oracle.
+This cache is owner-derived input data, not an original static world map.
 """
 import argparse
 import hashlib
 import json
 import struct
 from pathlib import Path
-from combat_oracle import OriginalCombat, ROOT
+ROOT=Path(__file__).resolve().parents[1]
+
+def fingerprint(raw):
+    h=14695981039346656037
+    for value in raw:h=((h^value)*1099511628211)&((1<<64)-1)
+    return h
 
 def generate(seed,data=ROOT/'Original DOS'):
+    from combat_oracle import OriginalCombat
     o=OriginalCombat(source=data/'BTECH.EXE');noise=bytearray()
     o.write(o.ds+0x4fc0,seed.to_bytes(3,'little'))
     # Original 0000:50D3..50F3 supplies 256 low-byte RNG values to 09FB.
@@ -53,7 +59,6 @@ if __name__=='__main__':
     exe=hashlib.sha256((a.data/'BTECH.EXE').read_bytes()).digest()
     local=hashlib.sha256((a.data/'MAP1.MTP').read_bytes()).digest()
     header=b'BTW2'+struct.pack('<HHHHI',704,704,192,192,a.seed)+exe+local
-    from make_combat_vectors import fingerprint
     a.output.parent.mkdir(parents=True,exist_ok=True)
     a.output.write_bytes(header+struct.pack('<Q',fingerprint(tables))+tables)
     a.output.with_suffix('.json').write_text(json.dumps({'format':'BTW2','scope':'Static primary inputs; independent C midpoint and tile generation',
@@ -63,7 +68,6 @@ if __name__=='__main__':
         'no_instruction_patches':True,'native_generator':True},indent=2)+'\n')
     if a.fixture:
         area,noise=generate(a.seed,a.data)
-        from make_combat_vectors import fingerprint
         rows=[f'# Original 187F:104E/1314, seed {a.seed}, 256 original RNG noise bytes; nine complete 64x64 sectors.']
         for y in range(3):
             for x in range(3):

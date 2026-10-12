@@ -23,7 +23,7 @@ static void synthetic(void)
     CHECK(btp_menu_count(7) == 3 && btp_menu_count(10) == 3 && btp_menu_count(11) == 3);
     BtpBld b = {.length=2,.bytes={0xf5,6}}; BtpScriptState v; uint8_t story[BTP_STORY_BYTES] = {0};
     btp_script_start(&v,&b,story); CHECK(v.status == BTP_SCRIPT_NATIVE && v.native_action == 6);
-    b.bytes[1] = 13; btp_script_start(&v,&b,story); CHECK(v.error == BTP_SCRIPT_OPCODE);
+    b.bytes[1] = 31; btp_script_start(&v,&b,story); CHECK(v.error == BTP_SCRIPT_OPCODE);
     b = (BtpBld){.length=4,.bytes={0xf0,0,15,0xff}};
     btp_script_start(&v,&b,story); CHECK(v.status == BTP_SCRIPT_END && v.row == 15);
     BtpAction a; CHECK(btp_action_parse("9",&a) && a == BTP_DIGIT_9);

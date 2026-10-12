@@ -2,6 +2,7 @@
 #include "core/combat_rules.h"
 #include "core/animation.h"
 #include "core/npc.h"
+#include "core/combat.h"
 #include <string.h>
 unsigned btp_party_count(const BtpPartyState *p)
 {
@@ -59,10 +60,10 @@ int btp_party_recruit(BtpState *s,unsigned skill)
 void btp_party_follow(BtpState *s,uint16_t old_x,uint16_t old_y)
 {
     BtpPartyState *p=&s->party;if (!p->enabled || (old_x==s->campaign.world_x && old_y==s->campaign.world_y)) return;
-    for (unsigned i=1;i<8;++i) if (p->people[i][0]!=255 && p->people[i][12]>=8) {
+    for (unsigned i=1;i<8;++i) if (p->people[i][0]!=255) {
         uint16_t x=p->x[i],y=p->y[i];
         unsigned dir=btp_combat_direction(x,y,old_x,old_y);
-        if (dir<8) { p->walk[i]=btp_walk_next(p->walk[i],p->direction[i],dir);p->direction[i]=(uint8_t)dir; }
+        if (dir<8) { p->walk[i]=(uint8_t)(p->people[i][12]<8 ? btp_combat_walk_frame(p->walk[i],p->direction[i],dir,0) : btp_walk_next(p->walk[i],p->direction[i],dir));p->direction[i]=(uint8_t)dir; }
         p->x[i]=old_x;p->y[i]=old_y;old_x=x;old_y=y;
     }
     btp_party_sync(s);

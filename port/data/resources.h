@@ -43,7 +43,8 @@ typedef struct {
     BtpMap map;
     BtpMap destroyed;
     BtpMap local[14];
-    BtpGraphic tiles, terrain_animation, sprites, quiz_diagram, border;
+    BtpGraphic tiles, terrain_animation, sprites, quiz_diagram, border, title;
+    uint8_t music[4356];uint16_t music_length;
     BtpBld citadel, armor, weapon, comstar, training, barracks, lounge, repair;
     BtpBld buildings[26];
     BtpDialogue dialogue;

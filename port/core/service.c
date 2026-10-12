@@ -85,11 +85,15 @@ void btp_service_input(BtpState *s,const BtpResources *r,BtpAction a)
     unsigned count=v->phase==1 ? 5u : v->phase==2 ? v->action==18 ? 6u : 11u : v->phase==3 ? 2u : v->phase==6 ? 18u : v->phase==7 ? 8u : 1u;
     if (a==BTP_UP) v->selected=(uint8_t)((v->selected+count-1u)%count);
     if (a==BTP_DOWN) v->selected=(uint8_t)((v->selected+1u)%count);
-    if (a==BTP_CANCEL) { finish(s,r);return; }
+    if (a==BTP_CANCEL && v->phase!=5) { finish(s,r);return; }
     if (v->phase==5) {
         size_t n=strlen(v->input);
-        if (a>=BTP_DIGIT_0 && a<=BTP_DIGIT_9 && n<7) { v->input[n]=(char)('0'+a-BTP_DIGIT_0);v->input[n+1]=0; }
-        if (a==BTP_CLEAR_INPUT && n) v->input[n-1]=0;
+        if (a>=BTP_DIGIT_0 && a<=BTP_DIGIT_9 && n<7) {
+            if (v->input[0]=='0') { memset(v->input,0,sizeof v->input);n=0; }
+            v->input[n]=(char)('0'+a-BTP_DIGIT_0);v->input[n+1]=0;
+        }
+        if (a==BTP_CANCEL && n) v->input[n-1]=0;
+        if (a==BTP_CLEAR_INPUT) { memset(v->input,0,sizeof v->input);v->input[0]='0'; }
     }
     if (a!=BTP_ACCEPT) return;
     if (v->phase==7) {
@@ -111,7 +115,7 @@ void btp_service_input(BtpState *s,const BtpResources *r,BtpAction a)
         if (v->selected==(v->action==18 ? 5u : 10u)) { finish(s,r);return; }
         v->kind=v->selected;v->item=v->selected;v->selected=0;
         if (v->action==18 && v->kind==3) { v->phase=6;return; }
-        v->phase=(uint8_t)(v->action==44 ? 5 : 3);return;
+        v->phase=(uint8_t)(v->action==44 ? 5 : 3);if (v->phase==5) v->input[0]='0';return;
     }
     if (v->phase==6) {
         if (v->selected==17) { v->phase=2;v->selected=0;return; }

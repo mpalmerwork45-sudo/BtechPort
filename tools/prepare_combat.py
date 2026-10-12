@@ -40,9 +40,9 @@ def extract(source):
     jenner=image[0x283e1:0x283e1+125]
     extra_ranges=[(0x282e7,125),(DS+0x1e7a,7),(DS+0x1e82,8),(DS+0x1e8a,8),
                   (DS+0x2cf4,22),(0x28170,125),(0x281ed,125),(0x2826a,125),
-                  (DS+0x1d8c,16),(DS+0x2060,7),(DS+0x1e24,11)]
+                  (DS+0x1d8c,16),(DS+0x2060,7),(DS+0x1e24,11),(DS+0x141a,26)]
     extra=b''.join(image[a:a+n] for a,n in extra_ranges)
-    return b"BTC5"+b"".join(parts)+programs+jenner+extra, {**metadata,"format":"BTC5","ranges":origins,
+    return b"BTC6"+b"".join(parts)+programs+jenner+extra, {**metadata,"format":"BTC6","ranges":origins,
         'campaign_ranges':[{'image_offset':a,'length':n,'sha256':hashlib.sha256(image[a:a+n]).hexdigest()} for a,n in extra_ranges],
         'invasion_template':{'image_offset':0x283e1,'length':125,'sha256':hashlib.sha256(jenner).hexdigest()},
         'pose_programs':program_origins,'reaction':DS+0x2e3c,'impact':DS+0x41d8}

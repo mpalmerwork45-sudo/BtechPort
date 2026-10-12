@@ -420,6 +420,69 @@ def world(env,work):
             try:process.wait(timeout=5)
             except subprocess.TimeoutExpired:process.kill();process.wait()
 
+def campaign(env,work):
+    """Check only new milestone tails; prefixes are ordinary-input saves."""
+    from reference_session import WindowKeys
+    env=dict(env,SDL_AUDIODRIVER='dummy')
+    binary=ROOT/'build/btech-headless';native=ROOT/'build/btech-port'
+    with tempfile.TemporaryDirectory(prefix='native-campaign-',dir=work) as directory:
+        tmp=Path(directory);prefix=tmp/'prefix.actions';start=tmp/'start.btp';tail=tmp/'tail.actions'
+        for kind,label in [('invasion','invasion-start'),('invasion-loss','invasion-start'),('starport',None),('rex','civilian-clothing'),('services','rex-and-commando')]:
+            lines=(ROOT/f'tests/fixtures/ordinary-{kind}.actions').read_text().splitlines()
+            facts=json.loads((ROOT/f'tests/fixtures/ordinary-{kind}.json').read_text())
+            tick=next(c['tick'] for c in facts['checkpoints'] if c['label']==label) if label else len((ROOT/'tests/fixtures/ordinary-invasion.actions').read_text().splitlines())
+            prefix.write_text('\n'.join(lines[:tick])+'\n');tail.write_text('\n'.join(lines[tick:])+'\n')
+            subprocess.run([str(binary),'--replay',str(prefix),'--save',str(start)],cwd=ROOT,check=True,capture_output=True,timeout=20)
+            record=work/f'native-{kind}.actions';frame=work/f'native-{kind}.ppm';expected=tmp/'expected.ppm'
+            began=time.monotonic()
+            actual=subprocess.run([str(native),'--load',str(start),'--replay',str(tail),'--smoke-replay','--smoke-fast','--record',str(record),'--frame',str(frame)],cwd=ROOT,env=env,check=True,capture_output=True,text=True,timeout=45)
+            wanted=subprocess.run([str(binary),'--load',str(start),'--replay',str(record),'--frame',str(expected)],cwd=ROOT,check=True,capture_output=True,text=True,timeout=20)
+            if record.read_text().splitlines()!=lines[tick:]+['idle']*5 or json.loads(actual.stdout)!=json.loads(wanted.stdout) or frame.read_bytes()!=expected.read_bytes():raise RuntimeError(kind+' native input/state/frame differs')
+            print(f'PASS: native {kind} tail, {len(lines)-tick+5} SDL inputs in {time.monotonic()-began:.2f}s; exact state/frame replay.',flush=True)
+        probes=[('rex','rex-crest'),('services','partial-ammo-amount'),('title',None)]
+        for kind,label in probes:
+            if kind=='title':
+                prefix.write_text('idle\n'*30)
+                opts=['--title-preview','--replay',str(prefix)]
+            else:
+                facts=json.loads((ROOT/f'tests/fixtures/ordinary-{kind}.json').read_text())
+                lines=(ROOT/f'tests/fixtures/ordinary-{kind}.actions').read_text().splitlines()
+                tick=next(c['tick'] for c in facts['checkpoints'] if c['label']==label)
+                prefix.write_text('\n'.join(lines[:tick])+'\n');opts=['--replay',str(prefix)]
+            subprocess.run([str(binary),*opts,'--save',str(start)],cwd=ROOT,check=True,capture_output=True,timeout=20)
+            slot=tmp/'slot.btp';frame=work/f'native-{label or kind}-restore.ppm'
+            process=subprocess.Popen([str(native),'--load',str(start),'--save-file',str(slot),'--frame',str(frame)],cwd=ROOT,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+            keys=WindowKeys()
+            try:
+                window=None
+                for _ in range(100):
+                    found=[(w,n) for w,n in keys.windows() if n.startswith('BtechPort')]
+                    if len(found)==1:window=found[0][0];break
+                    if process.poll() is not None:raise RuntimeError('Native campaign window failed')
+                    time.sleep(.02)
+                if window is None:raise RuntimeError('Native campaign window did not appear')
+                keys.key(window,'F5');time.sleep(.1)
+                before=json.loads(subprocess.run([str(binary),'--load',str(slot)],cwd=ROOT,check=True,capture_output=True,text=True).stdout)
+                keys.key(window,'Right');time.sleep(.1);keys.key(window,'F9')
+                if label=='partial-ammo-amount':
+                    # Restore "1", append/erase 0, clear, type 1 again; Space
+                    # must leave the amount open. The final state still equals
+                    # the saved state plus indoor idle ticks.
+                    for key in ('0','BackSpace','Escape','1','space'):keys.key(window,key)
+                keys.close_window(window)
+                out,err=process.communicate(timeout=10)
+                if process.returncode:raise RuntimeError(err)
+                restored=json.loads(out);delta=restored['tick']-before['tick']
+                if not 0<=delta<=50:raise RuntimeError('Native restore interval was unbounded')
+                tail.write_text('idle\n'*delta);expected=tmp/'restored.ppm'
+                wanted=subprocess.run([str(binary),'--load',str(slot),'--replay',str(tail),'--frame',str(expected)],cwd=ROOT,check=True,capture_output=True,text=True)
+                if restored!=json.loads(wanted.stdout) or frame.read_bytes()!=expected.read_bytes():raise RuntimeError((label or kind)+' native F5/F9 differs')
+                print('PASS: native F5/F9 '+(label or 'title music')+' state, clock and pixels.',flush=True)
+                if label=='partial-ammo-amount':print('PASS: native ammo digits, Backspace erasure, Escape clear and Space ignored.',flush=True)
+            finally:
+                keys.x.XCloseDisplay(keys.display)
+                if process.poll() is None:process.terminate();process.wait(timeout=5)
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--shops-only", action="store_true")
@@ -434,6 +497,7 @@ def main():
     parser.add_argument("--combat-only", action="store_true")
     parser.add_argument("--training-combat-only", action="store_true")
     parser.add_argument("--world-only", action="store_true")
+    parser.add_argument("--campaign-only", action="store_true")
     args = parser.parse_args()
     work = ROOT / "work"
     work.mkdir(exist_ok=True)
@@ -453,6 +517,8 @@ def main():
             env.pop("SDL_VIDEODRIVER", None)
             os.environ["DISPLAY"] = env["DISPLAY"]
             os.environ["BTECH_REFERENCE_VIRTUAL"] = "1"
+            if args.campaign_only:
+                campaign(env,work);return
             if args.world_only:
                 world(env,work);return
             if args.training_combat_only:

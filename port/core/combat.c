@@ -376,9 +376,12 @@ static void round_tick(BtpState *s, const BtpResources *r, int enemy_ai)
             if (los<0) { if (!c->flash) c->last_event=4;continue; }
             int ignition=enemy->cover && terrain[target]>=16 && terrain[target]<=63 &&
                 ((w>=16 && w<=18) || w==11);
-            int movement=actor ? (actor==1 ? c->enemy_movement : c->enemy_modes[actor-2]) : c->goal_active ? c->movement : 255;
+            int movement=actor ? (actor==1 ? c->enemy_movement : c->enemy_modes[actor-2]) : c->friends ? c->plans[0].active ? c->plans[0].movement : 255 : c->goal_active ? c->movement : 255;
+            unsigned skill=actor ? 0u : s->mech_skills[i==11 ? 1 : 0];
+            if (c->friends && actor<c->friends && !attacker->infantry && attacker->record[121]<8)
+                skill=s->party.people[attacker->record[121]][i==11 ? 8 : 7];
             c->shot=btp_combat_attack_unit(attacker,enemy,&r->combat,i,movement==255 ? -1 : movement,c->moved[target],
-                actor ? 0u : s->mech_skills[i==11 ? 1 : 0],btp_combat_id(c,actor),s->npc.rng);
+                skill,btp_combat_id(c,actor),s->npc.rng);
             if (ignition && !c->shot.hit) btp_combat_ignite(s,enemy);
             c->last_attacker=(uint8_t)actor;c->last_target=(uint8_t)target;
             c->last_weapon=(uint8_t)i;c->last_event=(uint8_t)(c->shot.hit ? 1 : 2);

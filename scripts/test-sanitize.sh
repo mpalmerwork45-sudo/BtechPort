@@ -8,6 +8,9 @@ env -u CFLAGS -u CPPFLAGS -u CXXFLAGS -u LDFLAGS PATH="/usr/bin:/bin:$PATH" \
     -DBTP_SANITIZE=ON -DBTP_FRONTEND=OFF
 env PATH="/usr/bin:/bin:$PATH" cmake --build build/sanitize -j 4
 ctest --test-dir build/sanitize --output-on-failure
+if [ "${1:-}" = "--core-only" ]; then
+    exit 0
+fi
 build/sanitize/btp-tests "Original DOS"
 build/sanitize/btp-script-tests "Original DOS"
 build/sanitize/btp-shop-tests "Original DOS"

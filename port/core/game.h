@@ -7,7 +7,7 @@ typedef enum { BTP_IDLE, BTP_UP, BTP_DOWN, BTP_LEFT, BTP_RIGHT, BTP_ACCEPT, BTP_
     BTP_DIGIT_5, BTP_DIGIT_6, BTP_DIGIT_7, BTP_DIGIT_8, BTP_DIGIT_9, BTP_CLEAR_INPUT,
     BTP_UP_LEFT, BTP_UP_RIGHT, BTP_DOWN_LEFT, BTP_DOWN_RIGHT } BtpAction;
 typedef enum { BTP_CLEAR, BTP_WALL, BTP_EDGE } BtpBlock;
-typedef enum { BTP_EXPLORE, BTP_ENTRY, BTP_BUILDING, BTP_SCRIPT_FAULT, BTP_QUIZ, BTP_MISSION, BTP_ACTIONS, BTP_ENCOUNTER } BtpMode;
+typedef enum { BTP_EXPLORE, BTP_ENTRY, BTP_BUILDING, BTP_SCRIPT_FAULT, BTP_QUIZ, BTP_MISSION, BTP_ACTIONS, BTP_ENCOUNTER, BTP_TITLE } BtpMode;
 typedef enum { BTP_TALK_NONE, BTP_TALK_EMPTY, BTP_TALK_MENU, BTP_TALK_REPLY } BtpTalkPhase;
 typedef struct {
     uint8_t phase, selected, count, mask, room, actor;
@@ -70,6 +70,11 @@ typedef struct {
     char input[8];
 } BtpServiceState;
 typedef struct {
+    uint8_t active,countdown;
+    uint16_t position,divisor,phase,irq_phase;
+    uint32_t fraction;
+} BtpAudioState;
+typedef struct {
     uint32_t tick;
     uint16_t x_half, y_half;
     uint8_t map_id, gate, facing, blocked;
@@ -106,6 +111,7 @@ typedef struct {
     BtpCampaignState campaign;
     BtpPartyState party,party_checkpoint;
     BtpServiceState service;
+    BtpAudioState audio;
 } BtpState;
 enum { BTP_STATE_BYTES = 16384 };
 

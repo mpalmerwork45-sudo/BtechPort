@@ -2,6 +2,10 @@
 import hashlib
 import struct
 import unittest
+import runpy
+import sys
+import tempfile
+from unittest import mock
 from pathlib import Path
 from tools.exepack import unpack
 from tools.prepare_talk import extract
@@ -60,6 +64,17 @@ class ExepackTests(unittest.TestCase):
             self.assertEqual(hashlib.sha256(body).hexdigest(),origin["sha256"])
         with self.assertRaises(ValueError):
             extract(miniature())
+
+    def test_world_preparation_without_optional_emulator(self):
+        with tempfile.TemporaryDirectory() as directory:
+            output=Path(directory)/"world.bin"
+            with mock.patch.object(sys,"argv",["prepare_world.py","--output",str(output)]), \
+                 mock.patch.object(sys,"path",[str(ROOT/"tools"),*sys.path]), \
+                 mock.patch.dict(sys.modules,{"combat_oracle":None,"unicorn":None}):
+                runpy.run_path(str(ROOT/"tools/prepare_world.py"),run_name="__main__")
+            cache=output.read_bytes()
+            self.assertEqual((cache[:4],len(cache)),(b"BTW2",1608))
+            self.assertEqual(cache,(ROOT/"work/world-data.bin").read_bytes())
 
 
 if __name__ == "__main__":

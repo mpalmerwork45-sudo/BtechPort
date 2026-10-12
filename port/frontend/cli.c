@@ -2,6 +2,7 @@
 #include "core/npc.h"
 #include "core/training.h"
 #include "core/world.h"
+#include "core/audio.h"
 #include "data/save.h"
 #include "data/sprites.h"
 #include <stdio.h>
@@ -15,12 +16,12 @@ int btp_options(int argc, char **argv, BtpOptions *o)
     for (int i = 1; i < argc; ++i) {
         const char *arg = argv[i];
         if (!strcmp(arg, "--help")) {
-            puts("BtechPort M3c: six training missions, Rick/device, combat and map animation\n"
+            puts("BtechPort M3h: invasion, world travel, party and mech services\n"
                  "  --data DIRECTORY     original resource directory (default: Original DOS)\n"
                  "  --dialogue-data FILE local EXE text cache (default: work/talk-data.bin)\n"
                  "  --combat-data FILE   local EXE combat cache (default: work/combat-data.bin)\n"
-                 "  --world-data FILE    generated Citadel surroundings cache\n"
-                 "  --world-overview     show Citadel and its adjoining generated sectors\n"
+                 "  --world-data FILE    original numeric world-generation inputs\n"
+                 "  --world-overview     show generated terrain around the party\n"
                  "  --conversation-checkpoint  isolated controlled Talk handler test\n"
                  "  --shop-talk-checkpoint armor|weapon  controlled two-NPC shop handler test\n"
                  "  --headless           run without SDL/display/audio\n"
@@ -28,6 +29,8 @@ int btp_options(int argc, char **argv, BtpOptions *o)
                  "  --trace              print canonical JSON state after each replay action\n"
                  "  --frame FILE         write final 320x200 RGB PPM\n"
                  "  --sprite-preview     show original mech/human walking frames (diagnostic only)\n"
+                 "  --title-preview      original title screen and PC speaker music\n"
+                 "  --mute               disable the native audio device\n"
                  "  --export-sprites FILE write original sprite crops for verification\n"
                  "  --export-tiles FILE  write 64000 decoded tile pixel indices\n"
                  "  --record FILE        native logical input log for replay (includes idle ticks)\n"
@@ -44,13 +47,15 @@ int btp_options(int argc, char **argv, BtpOptions *o)
                  "  --smoke-replay       feed any bounded --replay through SDL events\n"
                  "  --smoke-fast         accelerate native replay tests; logical ticks stay 32ms\n"
                  "Native controls: arrows move/select, Enter/Space confirms/continues,\n"
-                 "Bank amounts: digits type, Backspace erases, Esc clears; Enter submits.\n"
+                 "Bank/ammo amounts: digits type, Backspace erases, Esc clears; Enter submits.\n"
                  "F4 toggles the area map, F5 saves, F9 loads. Backspace declines/recovers, R restarts, F3 debug, Esc quits.");
             return -1;
         }
         if (!strcmp(arg, "--headless")) o->headless = 1;
         else if (!strcmp(arg, "--sprite-preview")) o->sprite_preview = 1;
         else if (!strcmp(arg, "--world-overview")) o->world_overview = 1;
+        else if (!strcmp(arg,"--title-preview")) o->title_preview=1;
+        else if (!strcmp(arg,"--mute")) o->mute=1;
         else if (!strcmp(arg, "--debug")) o->debug = 1;
         else if (!strcmp(arg, "--trace")) o->trace = 1;
         else if (!strcmp(arg, "--smoke")) o->smoke = 1;
@@ -110,6 +115,7 @@ void btp_initial_state(const BtpOptions *o, BtpState *s, const BtpResources *r)
     else if (o->conversation_checkpoint) btp_start_conversation_checkpoint(s);
     else btp_start(s);
     btp_npc_init(s,&r->map);
+    if (o->title_preview) btp_audio_start(s);
 }
 
 void btp_print_state(const BtpState *s, const BtpResources *r)
@@ -131,7 +137,7 @@ void btp_print_state(const BtpState *s, const BtpResources *r)
            s->gate, s->tick, s->blocked, s->script.pc, s->script.status, s->script.last_opcode,
            s->script.error, s->script.fault_pc, s->bank.phase == BTP_BANK_MENU ? s->script.choices[7] : s->script.selected, s->script.text_offset,
            (unsigned)length, digest);
-    for (unsigned i = 0; i < BTP_STORY_BYTES; ++i) printf("%s%u", i ? "," : "", s->story_flags[i]);
+    for (unsigned i = 0; i < BTP_STORY_PREFIX; ++i) printf("%s%u", i ? "," : "", s->story_flags[i]);
     fputs("],\"text_spans\":[", stdout);
     for (unsigned i = 0; i < s->script.text_count && i < BTP_TEXT_SPANS; ++i)
         printf("%s[%u,%u]", i ? "," : "", s->script.text[i].offset, s->script.text[i].length);
@@ -160,6 +166,8 @@ void btp_print_state(const BtpState *s, const BtpResources *r)
         "\"school_before\":%u,\"school_outcome\":%u",s->skills[0],s->skills[1],s->skills[2],
         s->school.phase,s->school.course,s->school.before,s->school.outcome);
     printf(",\"service\":{\"phase\":%u,\"action\":%u,\"mech\":%u,\"selected\":%u,\"kind\":%u,\"item\":%u,\"amount\":%u}",s->service.phase,s->service.action,s->service.mech,s->service.selected,s->service.kind,s->service.item,s->service.amount);
+    printf(",\"campaign_flags\":[");for (unsigned i=0;i<64;++i) printf("%s%u",i ? "," : "",s->story_flags[i]);printf("]");
+    printf(",\"audio\":{\"active\":%u,\"position\":%u,\"divisor\":%u}",s->audio.active,s->audio.position,s->audio.divisor);
     printf(",\"campaign\":{\"invasion\":%u,\"owned\":%u,\"world\":[%u,%u],\"mounted\":%u,\"encounter\":%u,\"building\":%u},\"player_sprite\":%u,\"npc_sprites\":[",
         s->campaign.invasion,s->campaign.owned,s->campaign.world_x,s->campaign.world_y,s->campaign.mounted,s->campaign.encounter,s->campaign.building,
         s->mission.phase ? (s->story_flags[2] ? 146u : 0u)+s->mission.walk : 166u+s->player_walk);

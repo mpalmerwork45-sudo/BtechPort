@@ -28,5 +28,21 @@ int main(void)
         if (hash(m,125)!=record || s.credits!=expected) fprintf(stderr,"case %s actual cash %u hash %016" PRIx64 "\n",line,s.credits,hash(m,125));
         CHECK(s.credits==expected);CHECK(hash(m,125)==record);++cases;
     }
-    fclose(f);CHECK(cases==47);free(r);printf("PASS: %u checks, %u original service cases\n",checks,cases);return 0;
+    fclose(f);CHECK(cases==47);
+    /* The same original seven-digit editor serves the ammo prompt. Erasure
+       and Escape clear must keep the transaction open without charging cash. */
+    BtpState s;btp_start(&s);s.story_flags[4]=1;s.campaign.owned=1;s.credits=10;
+    memcpy(s.campaign.mech,r->combat.loans[0],125);btp_party_init(&s);
+    s.campaign.mech[39]=0;s.campaign.mech[107]=5;
+    s.service=(BtpServiceState){.phase=5,.action=44};
+    btp_service_input(&s,r,BTP_DIGIT_1);btp_service_input(&s,r,BTP_DIGIT_2);
+    btp_service_input(&s,r,BTP_CANCEL);CHECK(s.service.phase==5 && !strcmp(s.service.input,"1") && s.credits==10);
+    btp_service_input(&s,r,BTP_CLEAR_INPUT);CHECK(!strcmp(s.service.input,"0") && s.service.phase==5);
+    for (unsigned i=0;i<9;++i) btp_service_input(&s,r,BTP_DIGIT_2);
+    CHECK(!strcmp(s.service.input,"2222222") && s.credits==10);
+    for (unsigned i=0;i<7;++i) btp_service_input(&s,r,BTP_CANCEL);
+    CHECK(!s.service.input[0] && s.service.phase==5);
+    btp_service_input(&s,r,BTP_DIGIT_2);btp_service_input(&s,r,BTP_ACCEPT);
+    CHECK(s.service.phase==4 && s.service.amount==2 && s.campaign.mech[39]==2 && s.credits==6);
+    free(r);printf("PASS: %u checks, %u original service cases and ammo editor\n",checks,cases);return 0;
 }

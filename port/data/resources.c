@@ -119,8 +119,8 @@ int btp_resources_load(const char *dir, BtpResources *r, BtpError *e)
     memset(&r->combat,0,sizeof r->combat);
     memset(&r->world,0,sizeof r->world);
     char path[4096]; uint8_t *data; size_t n;
-    const char *names[] = {"MAP1.MTP", "BTTLTECH.ICN", "CITADEL.BLD", "ARMOR.BLD", "WEAPON.BLD", "COMSTAR.BLD", "MECHSHAP.CMP", "TRAINING.BLD", "BARRACKS.BLD", "LOUNGE.BLD", "BTSTATS.CMP", "BTBORDER.CMP", "REPAIR.BLD", "ANIMATE.ICN"};
-    for (unsigned i = 0; i < 14; ++i) {
+    const char *names[] = {"MAP1.MTP", "BTTLTECH.ICN", "CITADEL.BLD", "ARMOR.BLD", "WEAPON.BLD", "COMSTAR.BLD", "MECHSHAP.CMP", "TRAINING.BLD", "BARRACKS.BLD", "LOUNGE.BLD", "BTSTATS.CMP", "BTBORDER.CMP", "REPAIR.BLD", "ANIMATE.ICN", "BTTITLE.CMP"};
+    for (unsigned i = 0; i < 15; ++i) {
         int len = snprintf(path, sizeof path, "%s/%s", dir, names[i]);
         if (len < 0 || (size_t)len >= sizeof path) return fail(e, "Resource directory path too long");
         if (!btp_read_file(path, &data, &n, e)) return 0;
@@ -130,6 +130,7 @@ int btp_resources_load(const char *dir, BtpResources *r, BtpError *e)
             i == 10 ? btp_graphic_decode(data,n,&r->quiz_diagram,e) :
             i == 11 ? btp_graphic_decode(data,n,&r->border,e) :
             i == 13 ? btp_graphic_decode(data,n,&r->terrain_animation,e) :
+            i == 14 ? btp_graphic_decode(data,n,&r->title,e) :
             btp_bld_decode(data, n, i == 2 ? &r->citadel : i == 3 ? &r->armor : i == 4 ? &r->weapon :
                 i == 5 ? &r->comstar : i == 7 ? &r->training : i == 8 ? &r->barracks : i == 9 ? &r->lounge : &r->repair, e);
         free(data);
@@ -146,6 +147,10 @@ int btp_resources_load(const char *dir, BtpResources *r, BtpError *e)
     if (len<0 || (size_t)len>=sizeof path || !btp_read_file(path,&data,&n,e)) return 0;
     int decoded=btp_map_decode(data,n,&r->destroyed,e);free(data);
     if (!decoded) return 0;
+    len=snprintf(path,sizeof path,"%s/WWOODBT.SIF",dir);
+    if (len<0 || (size_t)len>=sizeof path || !btp_read_file(path,&data,&n,e)) return 0;
+    if (n!=4352) { free(data);return fail(e,"SIF: unsupported title music length"); }
+    memset(r->music,0,sizeof r->music);memcpy(r->music,data,n);r->music_length=(uint16_t)n;free(data);
     for (unsigned id=2;id<=14;++id) {
         len=snprintf(path,sizeof path,"%s/MAP%u.MTP",dir,id);
         if (len<0 || (size_t)len>=sizeof path || !btp_read_file(path,&data,&n,e)) return 0;

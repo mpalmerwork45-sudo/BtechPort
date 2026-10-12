@@ -13,6 +13,7 @@
 #include "core/party.h"
 #include "core/campaign.h"
 #include "core/service.h"
+#include "core/audio.h"
 #include <string.h>
 
 void btp_start(BtpState *s)
@@ -159,7 +160,7 @@ static void finish_script(BtpState *s, const BtpMap *m)
             s->y_half = (uint16_t)((m->entrance_y[s->entry_slot] & 127) + (s->campaign.mounted ? 2u : 0u));
         }
         s->mode = BTP_EXPLORE;
-        if (!invasion && s->story_flags[4]) s->campaign.mounted=(uint8_t)(s->campaign.owned && !s->story_flags[24]);
+        if (!invasion && s->story_flags[4]) s->campaign.mounted=(uint8_t)(s->campaign.owned && !s->story_flags[24] && s->campaign.mech[121]==0);
         s->bank = (BtpBankState){0};
         s->school = (BtpSchoolState){0};
         s->script.has_accounts = 0;
@@ -212,7 +213,7 @@ static void game_tick(BtpState *s, const BtpResources *r, BtpAction a)
             moved.x_half = s->x_half; moved.y_half = s->y_half;
             moved.mode = BTP_ENTRY; moved.entry_slot = (uint8_t)entrance; moved.entry_selected = 0;
             moved.entry_action = moved.facing;
-            moved.campaign.building=map->room_map[entrance];
+            moved.campaign.building=moved.story_flags[4] ? map->room_map[entrance] : 0;
             uint8_t choices[BTP_MENUS]; memcpy(choices,moved.script.choices,sizeof choices);
             moved.script = (BtpScriptState){.selected=s->script.selected};
             memcpy(moved.script.choices,choices,sizeof choices);
@@ -375,6 +376,13 @@ services:
 }
 void btp_game_tick(BtpState *s,const BtpResources *r,BtpAction a)
 {
+    if (s->mode==BTP_TITLE) {
+        ++s->tick;
+        if (a!=BTP_IDLE) { s->mode=BTP_EXPLORE;s->audio=(BtpAudioState){0};return; }
+        btp_audio_samples(&s->audio,r,BTP_AUDIO_TICK_SAMPLES,NULL);
+        if (!s->audio.active) s->mode=BTP_EXPLORE;
+        return;
+    }
     game_tick(s,r,a);
     if (s->story_flags[4]) { btp_party_init(s);btp_party_sync(s); }
 }
@@ -490,6 +498,9 @@ void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
     b[11280]=s->service.phase;b[11281]=s->service.action;b[11282]=s->service.mech;b[11283]=s->service.selected;
     b[11284]=s->service.kind;b[11285]=s->service.item;b[11286]=s->service.outcome;
     put16(b+11288,s->service.amount);memcpy(b+11290,s->service.input,8);
+    b[11300]=s->audio.active;b[11301]=s->audio.countdown;put16(b+11302,s->audio.position);
+    put16(b+11304,s->audio.divisor);put16(b+11306,s->audio.phase);put16(b+11308,s->audio.irq_phase);
+    for (unsigned i=0;i<4;++i) b[11310+i]=(uint8_t)(s->audio.fraction>>(i*8));
 }
 
 int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *script, BtpState *s)
@@ -529,7 +540,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
             if (version == 9) for (unsigned i = 403; i < n; ++i) if (b[i]) return 0;
             if (version >= 10) {
                 if (b[425]) return 0;
-                unsigned start=version==10 ? 434u : version==11 ? 441u : version==12 ? 450u : version<15 ? 896u : version>=18 ? 11298u : version>=17 ? 2684u : version>=16 ? 2399u : 1803u;
+                unsigned start=version==10 ? 434u : version==11 ? 441u : version==12 ? 450u : version<15 ? 896u : version>=18 ? 11314u : version>=17 ? 2684u : version>=16 ? 2399u : 1803u;
                 for (unsigned i=start;i<n;++i) if (b[i]) return 0;
                 if (version>=13) for (unsigned i=version>=15 ? 460u : 452u;i<512;++i) if (b[i]) return 0;
                 if (version==13 && b[878]) return 0; /* v14 firing-effect countdown. */
@@ -544,6 +555,9 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         result.campaign.return_x=get16(b+11268);result.campaign.return_y=get16(b+11270);result.campaign.return_map=b[11272];
         result.service=(BtpServiceState){.phase=b[11280],.action=b[11281],.mech=b[11282],.selected=b[11283],.kind=b[11284],.item=b[11285],.outcome=b[11286],.amount=get16(b+11288)};
         memcpy(result.service.input,b+11290,8);
+        result.audio=(BtpAudioState){.active=b[11300],.countdown=b[11301],.position=get16(b+11302),.divisor=get16(b+11304),.phase=get16(b+11306),.irq_phase=get16(b+11308)};
+        for (unsigned i=0;i<4;++i) result.audio.fraction|=(uint32_t)b[11310+i]<<(i*8);
+        if (b[11298] || b[11299]) return 0;
         if (b[11287]) return 0;
         for (unsigned i=11273;i<11280;++i) if (b[i]) return 0;
         for (unsigned i=3836;i<4096;++i) if (b[i]) return 0;
@@ -584,8 +598,8 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
     if ((result.map_id != 1 && !(version>=17 && result.map_id<=14 && b[28])) || result.gate != 85 ||
         (version >= 10 ? result.facing != BTP_IDLE && !btp_action_moves((BtpAction)result.facing) : result.facing > BTP_RIGHT) ||
         result.blocked > BTP_EDGE ||
-        (result.map_id ? result.x_half >= 2 * m->width : result.x_half>=2048) ||
-        (result.map_id ? result.y_half >= 2 * m->height && !(version>=17 && result.campaign.invasion && result.y_half<=129) : result.y_half>=2048))
+        (result.campaign.encounter ? result.x_half>=128 : result.map_id ? result.x_half >= 2 * m->width : result.x_half>=2048) ||
+        (result.campaign.encounter ? result.y_half>=128 : result.map_id ? result.y_half >= 2 * m->height && !(version>=17 && result.campaign.invasion && result.y_half<=129) : result.y_half>=2048))
         return 0;
     if (version > 1) {
         result.mode = b[20]; result.entry_selected = b[21]; result.entry_slot = b[22];
@@ -753,7 +767,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
                 result.story_checkpoint[51] = (uint8_t)result.allowance_cap;
             }
         }
-        if (result.mode > (version>=18 ? BTP_ENCOUNTER : version>=17 ? BTP_ACTIONS : version >= 10 ? BTP_MISSION : BTP_SCRIPT_FAULT) || result.entry_selected > 1 || result.entry_slot > (version>=17 ? 15 : 7) ||
+        if (result.mode > (version>=18 ? BTP_TITLE : version>=17 ? BTP_ACTIONS : version >= 10 ? BTP_MISSION : BTP_SCRIPT_FAULT) || result.entry_selected > 1 || result.entry_slot > (version>=17 ? 15 : 7) ||
             v->status > (version>=18 ? BTP_SCRIPT_RECRUIT : version >= 12 ? BTP_SCRIPT_ANIMATION : version >= 6 ? BTP_SCRIPT_CONFIRM : version >= 4 ? BTP_SCRIPT_NATIVE : BTP_SCRIPT_ERROR) || v->selected > (version >= 6 ? 6 : 4) ||
             v->error > (version >= 4 ? BTP_SCRIPT_NATIVE_CONTEXT : BTP_SCRIPT_TEXT_LIMIT) ||
             v->text_count > BTP_TEXT_SPANS || result.checkpoint_valid > 1) return 0;
@@ -823,7 +837,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
             result.npc_walk[i] = btp_walk_first(result.npc.actor[i].direction);
     }
     if (version == 1) result.story_flags[51] = (uint8_t)result.allowance_cap;
-    if ((result.mode==BTP_ACTIONS)!=(result.campaign.ui!=0)) return 0;
+    if ((result.mode==BTP_ACTIONS)!=(result.campaign.ui!=0) || !btp_audio_valid(&result)) return 0;
     *s = result;
     return 1;
 }
@@ -856,6 +870,6 @@ int btp_action_dy(BtpAction a)
 }
 const char *btp_mode_name(unsigned mode)
 {
-    static const char *names[] = {"local-exploration", "entry-confirm", "building", "script-error", "training-quiz", "training-mission","actions","encounter"};
-    return mode <= BTP_ENCOUNTER ? names[mode] : "invalid";
+    static const char *names[] = {"local-exploration", "entry-confirm", "building", "script-error", "training-quiz", "training-mission","actions","encounter","title"};
+    return mode <= BTP_TITLE ? names[mode] : "invalid";
 }

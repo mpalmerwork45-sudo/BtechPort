@@ -27,7 +27,7 @@ static void malformed(void)
     btp_script_start(&s,&b,story); CHECK(s.status == BTP_SCRIPT_NATIVE && s.pc == 2);
     btp_script_resume(&s,&b,story); CHECK(s.status == BTP_SCRIPT_NATIVE);
     btp_script_native_return(&s,&b,story); CHECK(s.status == BTP_SCRIPT_END && s.pc == 3);
-    b.bytes[1] = 13; btp_script_start(&s,&b,story); CHECK(s.error == BTP_SCRIPT_OPCODE && s.fault_pc == 0);
+    b.bytes[1] = 31; btp_script_start(&s,&b,story); CHECK(s.error == BTP_SCRIPT_OPCODE && s.fault_pc == 0);
     b = (BtpBld){.length=4,.bytes={0xf2,0xf5,0x0c,0xff}};
     btp_script_start(&s,&b,story); CHECK(s.status == BTP_SCRIPT_NATIVE && s.pc == 3 && !s.pause_units);
     b = (BtpBld){.length=1,.bytes={0xfe}};
