@@ -8,6 +8,7 @@
 #include "core/effects.h"
 #include "data/sprites.h"
 #include "core/party.h"
+#include "core/service.h"
 #include "data/anm.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -432,6 +433,48 @@ static void story_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
 {
     rectangle(f, 104, 0, 216, 200, 7); rectangle(f, 108, 4, 208, 192, 0);
     if (r->border.format == 1) rectangle(f,104,0,216,200,0);
+    if (s->service.phase) {
+        const BtpServiceState *v=&s->service;char info[40];
+        text(r,f,112,8,v->action==44 ? "Ammunition" : v->action==13 ? "Choose a character" : v->action==18 ? "Mechit-Lube repairs" : "Speed Shop",14);
+        snprintf(info,sizeof info,"C-bills: %u",s->credits);text(r,f,112,24,info,15);
+        if (v->phase==1) for (unsigned i=0;i<5;++i) {
+            char name[18]="Done";
+            if (i<4) {
+                const uint8_t *m=i ? s->party.mechs[i-1] : s->campaign.mech;
+                if (s->party.mech_types[i]==255) snprintf(name,sizeof name,"Empty bay %u",i+1);
+                else { memcpy(name,m+1,16);name[16]=0; }
+            }
+            text(r,f,112,48+(int)i*16,name,i==v->selected ? 14u : 15u);
+        } else if (v->phase==8) {
+            text(r,f,112,56,btp_party_name(&s->party,v->mech),15);text(r,f,112,72,"has joined the group.",15);
+        } else if (v->phase==2 && v->action==18) {
+            static const char *const rows[]={"Armour: 4 per point","Structure: 9 per point","Heat sink: 800","Weapon component: 300","Leg mechanisms: 200","Done"};
+            for (unsigned i=0;i<6;++i) text(r,f,112,48+(int)i*16,rows[i],i==v->selected ? 14u : 15u);
+        } else if (v->phase==7) {
+            for (unsigned i=0;i<8;++i) text(r,f,112,48+(int)i*12,btp_party_name(&s->party,i),i==v->selected ? 14u : 15u);
+        } else if (v->phase==6) {
+            for (unsigned i=0;i<18;++i) {
+                char name[12]="Done";if (i<17) { memcpy(name,r->combat.weapons[i+15],10);name[10]=0; }
+                text(r,f,112,40+(int)i*8,name,i==v->selected ? 14u : 15u);
+            }
+        } else if (v->phase==2) {
+            const uint8_t *m=v->mech ? s->party.mechs[v->mech-1] : s->campaign.mech;
+            for (unsigned i=0;i<11;++i) { if (i==10) snprintf(info,sizeof info,"Done");else snprintf(info,sizeof info,"Bin %u: %u / %u",i+1,m[39+i],m[107+i]);text(r,f,112,48+(int)i*10,info,i==v->selected ? 14u : 15u); }
+        } else if (v->phase==5) {
+            text(r,f,112,56,"Rounds to purchase:",15);text(r,f,112,80,v->input[0] ? v->input : "0",14);
+        } else if (v->phase==3) {
+            if (v->action==20) {
+                const uint8_t *m=v->mech ? s->party.mechs[v->mech-1] : s->campaign.mech;
+                unsigned choice=m[123]+(m[124]==1 ? 4u : 0u);
+                snprintf(info,sizeof info,"Upgrade: %u C-bills",choice<8 ? r->combat.refit_prices[choice] : 0);text(r,f,112,56,info,15);
+            } else text(r,f,112,56,"Proceed with repairs?",15);
+            text(r,f,112,88,"Yes",v->selected ? 7u : 14u);text(r,f,152,88,"No",v->selected ? 14u : 7u);
+        } else {
+            text(r,f,112,56,v->outcome ? "Service completed." : "No purchase made.",v->outcome ? 15u : 14u);
+            snprintf(info,sizeof info,"Units: %u",v->amount);text(r,f,112,80,info,15);
+        }
+        text(r,f,112,184,"Enter / Backspace",7);return;
+    }
     if (s->mode == BTP_SCRIPT_FAULT) {
         text(r,f, 110, 12, "UNSUPPORTED STORY ACTION", 12);
         text(r,f, 110, 30, btp_script_error_name(s->script.error), 15);

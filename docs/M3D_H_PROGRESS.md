@@ -98,3 +98,26 @@ generation is compared, while wider terrain placement, encounter cadence,
 engagement/flee UI and mixed-party AI/aftermath need further whole-encounter
 comparisons. Current encounter loot is not yet awarded. Inventory exposes
 equipped items; no speculative backpack system is introduced.
+
+## Owned-mech service increment
+
+**VERIFIED:** 47 numeric original `09B8` cases match record and cash results
+for all eight Speed Shop refits, partial armour/structure repairs, and reload
+affordability boundaries. Primary price tables (`DS:1D8C`, `DS:2060`) and the
+Commando armour table (`DS:1E24`) are extracted as numeric inputs in BTC5.
+Armour costs 4 per point, structure 9, a weapon component 300, a heat sink 800,
+and restoring leg mechanisms 200. Component repair retains the original
+limits; it does not erase unrelated engine/gyro/sensor critical damage.
+
+The Mechit-Lube script now selects owned/stored mechs and provides repair,
+ammo quantity, affordability and refit confirmation flows. Original E8/ED
+party/skill conditions and E9 agent initialization recruit the technician.
+The agent's post-dialogue coin occurs after a saveable key wait; exact DOS busy
+loop RNG timing remains **APPROXIMATE**. The ordinary route uses a key delay
+with the non-hostile result, then exercises partial repair, ammo limits and
+the unfunded Speed Shop offer. Every input on that route survives save/restore.
+
+After the invasion, the original stock-growth rules continue at the world
+loop wrap without the cadet allowance (`0000:358..3C9`). Service UI layout and
+batch presentation are **APPROXIMATE**; repair/refit/reload numeric comparisons
+do not constitute a complete original town UI or technician-field-repair audit.

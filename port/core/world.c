@@ -4,6 +4,7 @@
 #include "core/npc.h"
 #include "core/campaign.h"
 #include "core/party.h"
+#include "core/economy.h"
 #include <string.h>
 #include <stdlib.h>
 
@@ -85,6 +86,7 @@ void btp_world_move(BtpState *s,const BtpResources *r,BtpAction a)
         unsigned roll=btp_rng_next(s->npc.rng);
         for (unsigned i=20;i<=22;++i) if (s->story_flags[i]) --s->story_flags[i];
         if (s->story_flags[29]) --s->story_flags[29];
+        if (s->story_flags[23]--==0) btp_economy_market(s);
         if (!(roll&s->story_flags[36]) && s->story_flags[4] && !s->story_flags[58]) (void)btp_campaign_random(s,r);
     }
 }

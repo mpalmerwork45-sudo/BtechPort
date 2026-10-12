@@ -3,4 +3,5 @@
 #include "core/game.h"
 int btp_economy_below_cap(const BtpState *state);
 void btp_economy_wrap(BtpState *state);
+void btp_economy_market(BtpState *state);
 #endif

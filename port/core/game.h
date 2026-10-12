@@ -65,6 +65,11 @@ typedef struct {
     uint8_t walk[8],direction[8], selected,giver,item,phase;
 } BtpPartyState;
 typedef struct {
+    uint8_t phase,action,mech,selected,kind,item,outcome;
+    uint16_t amount;
+    char input[8];
+} BtpServiceState;
+typedef struct {
     uint32_t tick;
     uint16_t x_half, y_half;
     uint8_t map_id, gate, facing, blocked;
@@ -100,6 +105,7 @@ typedef struct {
     BtpEffectsState effects;
     BtpCampaignState campaign;
     BtpPartyState party,party_checkpoint;
+    BtpServiceState service;
 } BtpState;
 enum { BTP_STATE_BYTES = 16384 };
 

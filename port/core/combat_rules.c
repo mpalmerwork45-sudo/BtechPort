@@ -6,7 +6,8 @@
 int btp_combat_data_decode(const uint8_t *b, size_t n, BtpCombatData *d)
 {
     if (!b || !d) return 0;
-    int v4=n==BTP_COMBAT_DATA_BYTES && !memcmp(b,"BTC4",4);
+    int v5=n==BTP_COMBAT_DATA_BYTES && !memcmp(b,"BTC5",4);
+    int v4=v5 || (n==BTP_COMBAT_DATA_V4_BYTES && !memcmp(b,"BTC4",4));
     int v3=v4 || (n==BTP_COMBAT_DATA_V3_BYTES && !memcmp(b,"BTC3",4));
     int v2=v3 || (n==BTP_COMBAT_DATA_V2_BYTES && !memcmp(b,"BTC2",4));
     if (!v2 && (n!=BTP_COMBAT_DATA_V1_BYTES || memcmp(b,"BTC1",4))) return 0;
@@ -17,6 +18,7 @@ int btp_combat_data_decode(const uint8_t *b, size_t n, BtpCombatData *d)
     if (v2) { COPY(poses);COPY(reaction);COPY(impact); }
     if (v3) { COPY(jenner); }
     if (v4) { COPY(commando);COPY(rex_skills);COPY(rex_x);COPY(rex_y);COPY(encounter_weapons);COPY(encounter_mechs); }
+    if (v5) { for (unsigned i=0;i<8;++i) { v.refit_prices[i]=(uint16_t)(b[p]|(unsigned)b[p+1]<<8);p+=2; } COPY(ammo_prices);COPY(commando_armour); }
 #undef COPY
     for (unsigned i = 0; i < 15; ++i) if (v.arcs[i] > 3) return 0;
     for (unsigned i = 2; i < 46; ++i) if (v.locations[i] < 17 || v.locations[i] > 27) return 0;

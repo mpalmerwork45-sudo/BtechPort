@@ -12,6 +12,7 @@ typedef struct {
     uint8_t jenner[125];
     uint8_t commando[125], rex_skills[7], rex_x[8], rex_y[8];
     uint8_t encounter_weapons[22], encounter_mechs[3][125];
+    uint16_t refit_prices[8];uint8_t ammo_prices[7], commando_armour[11];
 } BtpCombatData;
 typedef struct {
     uint8_t record[125], x, y, direction, heat, pool, burning, cover;
@@ -47,7 +48,8 @@ enum { BTP_COMBAT_LEGACY_BYTES=1536, BTP_COMBAT_SAVE_BYTES = 6144 };
 enum { BTP_COMBAT_DATA_V1_BYTES = 4+375+561+15+46+93+16,
     BTP_COMBAT_DATA_V2_BYTES = BTP_COMBAT_DATA_V1_BYTES+18*8*9+7,
     BTP_COMBAT_DATA_V3_BYTES = BTP_COMBAT_DATA_V2_BYTES+125,
-    BTP_COMBAT_DATA_BYTES = BTP_COMBAT_DATA_V3_BYTES+125+7+16+22+375 };
+    BTP_COMBAT_DATA_V4_BYTES = BTP_COMBAT_DATA_V3_BYTES+125+7+16+22+375,
+    BTP_COMBAT_DATA_BYTES = BTP_COMBAT_DATA_V4_BYTES+16+7+11 };
 int btp_combat_data_decode(const uint8_t *bytes, size_t length, BtpCombatData *data);
 unsigned btp_combat_die(uint8_t rng[3]);
 unsigned btp_combat_dice(uint8_t rng[3]);

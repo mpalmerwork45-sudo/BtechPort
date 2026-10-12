@@ -17,7 +17,7 @@ unsigned btp_menu_count(unsigned id)
 }
 int btp_native_supported(unsigned action)
 {
-    return (action>=1 && action<=12) || (action>=14 && action<=17) || action==20 || action==28 || action==29 || action==30 || action==43 || action==44 || action==46;
+    return (action>=1 && action<=20) || action==28 || action==29 || action==30 || action==43 || action==44 || action==46;
 }
 
 static void fault(BtpScriptState *s, BtpScriptError error, uint16_t pc)
@@ -58,6 +58,16 @@ static void run(BtpScriptState *s, const BtpBld *b, uint8_t story[BTP_STORY_BYTE
         if (!available(s, b, 1, op_pc)) return;
         uint8_t op = b->bytes[s->pc++]; s->last_opcode = op;
         switch (op) {
+        case 0xe9:
+            if (!available(s,b,1,op_pc)) return;
+            s->money_amount=b->bytes[s->pc++];s->status=BTP_SCRIPT_RECRUIT;return;
+        case 0xe8: case 0xed:
+            if (!available(s,b,op==0xe8 ? 3u : 4u,op_pc)) return;
+            s->money_kind=op;s->money_amount=b->bytes[s->pc++];
+            if (op==0xed) s->money_amount=(uint16_t)(s->money_amount|((unsigned)b->bytes[s->pc++]<<8));
+            s->money_target=word(b->bytes+s->pc);s->pc=(uint16_t)(s->pc+2);
+            if (s->money_target>=b->length) { fault(s,BTP_SCRIPT_TARGET,op_pc);return; }
+            s->status=BTP_SCRIPT_CONDITION;return;
         case 0xe6:
             if (!available(s,b,4,op_pc)) return;
             s->position_x=word(b->bytes+s->pc);s->position_y=word(b->bytes+s->pc+2);
@@ -215,6 +225,12 @@ void btp_script_money_return(BtpScriptState *s,const BtpBld *b,uint8_t story[BTP
         if (*credits>=s->money_amount) s->pc=s->money_target;
     } else if (s->money_kind==0xee) *credits-=s->money_amount;
     else { fault(s,BTP_SCRIPT_OPCODE,s->pc);return; }
+    s->money_kind=0;s->money_amount=s->money_target=0;s->status=BTP_SCRIPT_RUNNING;run(s,b,story);
+}
+void btp_script_condition_return(BtpScriptState *s,const BtpBld *b,uint8_t story[BTP_STORY_BYTES],int yes)
+{
+    if (s->status!=BTP_SCRIPT_CONDITION && s->status!=BTP_SCRIPT_RECRUIT) return;
+    if (yes && s->status==BTP_SCRIPT_CONDITION) s->pc=s->money_target;
     s->money_kind=0;s->money_amount=s->money_target=0;s->status=BTP_SCRIPT_RUNNING;run(s,b,story);
 }
 int btp_script_choose(BtpScriptState *s, const BtpBld *b, unsigned choice, uint8_t story[BTP_STORY_BYTES])

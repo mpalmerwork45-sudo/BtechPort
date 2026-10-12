@@ -96,7 +96,7 @@ int btp_bank_valid(const BtpState *s)
         v->text_count != 2 || v->text[0].offset != 0x2d1 || v->has_cash)) return 0;
     if (!b->phase) return !b->company && !b->outcome && !b->clamped && !b->available &&
         !b->amount && !b->input[0] && !(v->status == BTP_SCRIPT_NATIVE && v->native_action != 12 &&
-            !(v->native_action == 1 && s->mode == BTP_MISSION) && !(v->native_action==30 && s->mode==BTP_ENCOUNTER));
+            !(v->native_action == 1 && s->mode == BTP_MISSION) && !(v->native_action==30 && s->mode==BTP_ENCOUNTER) && !s->service.phase);
     if (s->mode != BTP_BUILDING || (s->story_flags[4] ? s->campaign.building != 2 : s->entry_slot != 2) ||
         !s->checkpoint_valid || v->has_accounts || (v->native_action != 7 && v->native_action != 8)) return 0;
     int buy = v->native_action == 7;

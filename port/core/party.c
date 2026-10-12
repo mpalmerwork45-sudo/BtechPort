@@ -54,10 +54,6 @@ int btp_party_recruit(BtpState *s,unsigned skill)
         if (s->party.mech_types[i]!=255 && m[0]!=255 && m[122]==255) { m[122]=(uint8_t)slot;a[12]=(uint8_t)i;break; }
     }
     p->x[slot]=s->campaign.world_x;p->y[slot]=s->campaign.world_y;
-    /* The post-dialogue coin is separate from deterministic character creation. */
-    if (!s->story_flags[38] && (btp_rng_next(s->npc.rng)&1u)) {
-        s->story_flags[37]=(uint8_t)slot;s->story_flags[38]=s->story_flags[39]=1;s->story_flags[36]=31;
-    }
     return 1;
 }
 void btp_party_follow(BtpState *s,uint16_t old_x,uint16_t old_y)
