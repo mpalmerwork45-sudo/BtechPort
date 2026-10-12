@@ -2,6 +2,8 @@
 #include "core/training.h"
 #include "core/animation.h"
 #include "core/npc.h"
+#include "core/campaign.h"
+#include "core/party.h"
 #include <string.h>
 #include <stdlib.h>
 
@@ -39,6 +41,7 @@ unsigned btp_world_tile(const BtpResources *r,const BtpState *s,int x,int y)
 void btp_world_move(BtpState *s,const BtpResources *r,BtpAction a)
 {
     ++s->tick;
+    uint16_t old_x=s->campaign.world_x,old_y=s->campaign.world_y;
     int gx=s->x_half,gy=s->y_half;
     if (s->map_id) {
         const BtpMap *m=local(r,s->map_id==11 ? 1u : s->map_id);
@@ -73,19 +76,22 @@ void btp_world_move(BtpState *s,const BtpResources *r,BtpAction a)
         gx-=(m->entrance_x[0]>>8)*128;gy-=(m->entrance_y[0]>>12)*128;
     }
     s->x_half=(uint16_t)gx;s->y_half=(uint16_t)gy;
+    btp_party_follow(s,old_x,old_y);
     /* Main-loop cadence remains the existing fixed four-tick approximation.
        The original draws even on indoor city terrain, with D346 excluding
        the separate area-map mode. Encounter-mask decisions are explicit. */
     if (++s->campaign.world_clock==4) {
         s->campaign.world_clock=0;
-        (void)btp_rng_next(s->npc.rng);
+        unsigned roll=btp_rng_next(s->npc.rng);
         for (unsigned i=20;i<=22;++i) if (s->story_flags[i]) --s->story_flags[i];
+        if (s->story_flags[29]) --s->story_flags[29];
+        if (!(roll&s->story_flags[36]) && s->story_flags[4] && !s->story_flags[58]) (void)btp_campaign_random(s,r);
     }
 }
 void btp_world_actions(BtpState *s,const BtpResources *r,BtpAction a)
 {
     ++s->tick;BtpCampaignState *c=&s->campaign;
-    unsigned count=c->ui==1 ? 4u : c->ui==2 ? 2u : 1u;
+    unsigned count=c->ui==1 ? 4u : c->ui==2 ? 2u : c->ui==3 || c->ui==4 ? 8u : 1u;
     if (a==BTP_UP) c->selected=(uint8_t)((c->selected+count-1)%count);
     if (a==BTP_DOWN) c->selected=(uint8_t)((c->selected+1)%count);
     if (a==BTP_CANCEL || (a==BTP_ACCEPT && c->ui==1 && !c->selected)) {
@@ -93,6 +99,10 @@ void btp_world_actions(BtpState *s,const BtpResources *r,BtpAction a)
     }
     if (a!=BTP_ACCEPT) return;
     if (c->ui==1) { c->ui=(uint8_t)(c->selected+1);c->selected=0;return; }
+    if (c->ui==3 || c->ui==4) {
+        if (s->party.people[c->selected][0]==255) return;
+        s->party.selected=c->selected;c->member=c->selected;c->ui=6;c->selected=0;return;
+    }
     if (c->ui==2 && c->owned) {
         int near=0;
         for (int y=-1;y<=1;++y) for (int x=-1;x<=1;++x)

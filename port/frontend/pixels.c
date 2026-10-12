@@ -7,6 +7,7 @@
 #include "core/combat.h"
 #include "core/effects.h"
 #include "data/sprites.h"
+#include "core/party.h"
 #include "data/anm.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -259,19 +260,20 @@ static void school_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
 static void combat_route(const BtpResources *r, const BtpState *s, int cx, int cy, uint32_t *f)
 {
     const BtpCombatState *c=&s->combat;
+    BtpMap map;btp_combat_map(r,s,&map);
     int8_t steps[12][2];unsigned first=0;
     int selecting=c->phase==BTP_COMBAT_MOVE;
     if (!selecting && !c->goal_active) return;
     int tx=selecting && !c->goal_active ? c->cursor_x : c->goal_x;
     int ty=selecting && !c->goal_active ? c->cursor_y : c->goal_y;
-    if (c->phase==BTP_COMBAT_ROUND) { memcpy(steps,c->path[0],sizeof steps);first=c->path_index[0]; }
-    else if (c->goal_active) btp_combat_route(&r->map,s->gate,c,steps);
-    else btp_combat_plan(&r->map,s->gate,&c->unit[0],&c->unit[1],tx,ty,
+    if (c->phase==BTP_COMBAT_ROUND) { memcpy(steps,c->path[c->active_unit],sizeof steps);first=c->path_index[c->active_unit]; }
+    else if (c->goal_active) btp_combat_route(&map,s->gate,c,steps);
+    else btp_combat_plan(&map,s->gate,&c->unit[c->active_unit],&c->unit[1],tx,ty,
         selecting ? c->selected : c->movement,0,steps);
     /* 103B:18D2..18FB draws these original font glyphs at each planned step.
        Preview uses exactly the movement planner; resolving uses the saved path. */
     static const uint8_t arrows[3][3]={{8,1,2},{7,0,3},{6,5,4}};
-    int x=c->unit[0].x, y=c->unit[0].y;
+    int x=c->unit[c->active_unit].x, y=c->unit[c->active_unit].y;
     for (unsigned i=first;i<12;++i) {
         int mx=steps[i][0],my=steps[i][1];
         if (mx==2 || my==2 || (!mx && !my)) break;
@@ -325,8 +327,9 @@ static void combat_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
     const BtpCombatState *c=&s->combat;char line[40];
     static const char *commands[10]={"Walk","Run","Jump","Use Weapons","Kick","Computer","Scan","Next","Flee","Begin Fight"};
     rectangle(f,0,0,104,200,0);
-    text(r,f,8,8,s->story_flags[2]==0 ? "Locust" : s->story_flags[2]==1 ? "Wasp" : "Chameleon",15);
-    snprintf(line,sizeof line,"Heat %u",c->unit[0].heat);text(r,f,8,24,line,14);
+    const BtpCombatUnit *active=&c->unit[c->active_unit];
+    text(r,f,8,8,c->friends ? active->infantry ? btp_party_name(&s->party,c->ids[c->active_unit]-4u) : "Owned 'Mech" : s->story_flags[2]==0 ? "Locust" : s->story_flags[2]==1 ? "Wasp" : "Chameleon",15);
+    snprintf(line,sizeof line,"Heat %u",c->unit[c->active_unit].heat);text(r,f,8,24,line,14);
     snprintf(line,sizeof line,"Turn %u",c->round);text(r,f,8,40,line,15);
     if (c->goal_active) { snprintf(line,sizeof line,"Route %u",1u+c->waypoint_count);text(r,f,8,56,line,14); }
     for (unsigned i=0;i<10;++i) {
@@ -334,7 +337,12 @@ static void combat_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
         if (selected) rectangle(f,8,104+(int)i*8,88,8,14);
         text(r,f,8,104+(int)i*8,commands[i],selected ? 0u : 15u);
     }
-    if (c->phase==BTP_COMBAT_MOVE) {
+    if (c->phase==BTP_COMBAT_PICK) {
+        rectangle(f,104,64,216,96,0);border_panel(r,f,104,64,216,96,0);
+        text(r,f,112,72,"Choose a friendly unit:",15);
+        unsigned id=c->ids[c->scan_unit];text(r,f,112,96,id>=4 ? btp_party_name(&s->party,id-4) : "Owned 'Mech",14);
+        text(r,f,112,128,"Arrows / Enter / Backspace",7);
+    } else if (c->phase==BTP_COMBAT_MOVE) {
         rectangle(f,200,64,24,1,14);rectangle(f,200,87,24,1,14);
         rectangle(f,200,64,1,24,14);rectangle(f,223,64,1,24,14);
         rectangle(f,104,168,216,32,0);border_panel(r,f,104,168,216,32,0);
@@ -342,7 +350,7 @@ static void combat_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
     } else if (c->phase==BTP_COMBAT_WEAPONS || c->phase==BTP_COMBAT_TARGET || c->phase==BTP_COMBAT_KICK) {
         rectangle(f,104,72,216,128,0);border_panel(r,f,104,72,216,128,0);
         if (c->phase==BTP_COMBAT_TARGET || c->phase==BTP_COMBAT_KICK) {
-            snprintf(line,sizeof line,c->unit[c->target_unit].infantry ? "Labor robot %u" : "Enemy Locust",c->target_unit);
+            snprintf(line,sizeof line,c->unit[c->target_unit].infantry ? c->friends ? "Enemy soldier %u" : "Labor robot %u" : "Enemy 'Mech",c->target_unit);
             text(r,f,112,80,c->phase==BTP_COMBAT_KICK ? "Choose the enemy to kick:" : "Choose a target:",15);
             text(r,f,112,88,line,15);
             static const char *choices[3]={"Target here","Next target","Cancel"};
@@ -352,14 +360,14 @@ static void combat_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
             }
         } else {
             text(r,f,112,80,"Weapon        Ammo Target",15);
-            unsigned count=btp_combat_weapon_count(&c->unit[0]);
+            unsigned count=btp_combat_weapon_count(&c->unit[c->active_unit]);
             for (unsigned i=0;i<=count && i<12;++i) {
                 if (i==count) snprintf(line,sizeof line,"Done");
                 else {
-                    unsigned w=btp_combat_weapon(&c->unit[0],i);char name[12]={0},ammo[5];
+                    unsigned w=btp_combat_weapon(&c->unit[c->active_unit],i);char name[12]={0},ammo[5];
                     if (w<33) memcpy(name,r->combat.weapons[w],10);else memcpy(name,"Unavailable",11);
-                    if (c->unit[0].record[39+i]==255) snprintf(ammo,sizeof ammo," --");
-                    else snprintf(ammo,sizeof ammo,"%3u",c->unit[0].record[39+i]);
+                    if (c->unit[c->active_unit].record[39+i]==255) snprintf(ammo,sizeof ammo," --");
+                    else snprintf(ammo,sizeof ammo,"%3u",c->unit[c->active_unit].record[39+i]);
                     unsigned target=btp_combat_target(c,c->orders[i]);char label[9]={0};
                     if (target<c->count) snprintf(label,sizeof label,c->unit[target].infantry ? "Robot %u" : "Locust",target);
                     snprintf(line,sizeof line,"%-11.11s %s %s",name,ammo,label);
@@ -498,15 +506,17 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         cx=c->phase==BTP_COMBAT_MOVE ? c->cursor_x : c->unit[focus].x;
         cy=(c->phase==BTP_COMBAT_MOVE ? c->cursor_y : c->unit[focus].y)+2;
     }
+    BtpMap encounter_map;
     const BtpMap *map=btp_active_map(r,s);
+    if (s->campaign.encounter) { btp_combat_map(r,s,&encounter_map);map=&encounter_map; }
     int camera_x = cx * 8 - 96, camera_y = cy * 8 - 96;
     for (int y = 0; y < 200; ++y)
         for (int x = 0; x < 320; ++x) {
             uint32_t color = btp_palette[0];
             if (x >= 104) {
                 int wx = camera_x + x - 104, wy = camera_y + y;
-                if (wx >= 0 && wy >= 0 && (!s->map_id || (wx < map->width * 16 && wy < map->height * 16))) {
-                    unsigned tile = s->map_id ? btp_mission_tile(s,map,wx/16,wy/16) : btp_world_tile(r,s,wx/16,wy/16);
+                if (wx >= 0 && wy >= 0 && ((!s->map_id && !s->campaign.encounter) || (wx < map->width * 16 && wy < map->height * 16))) {
+                    unsigned tile = s->map_id || s->campaign.encounter ? btp_mission_tile(s,map,wx/16,wy/16) : btp_world_tile(r,s,wx/16,wy/16);
                     if (tile < 250) {
                         /* 320B skips ANIMATE's first blank tile; 240B swaps
                            three pages into these ten map tile slots. The
@@ -538,8 +548,9 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                 unsigned pose=r->combat.poses[e->group][e->direction][0];
                 if (s->effects.age/2u<pose && (i==e->actor || (e->hit && i==e->target))) continue;
             }
-            (void)btp_draw_sprite(&r->sprites,(u->infantry ? 270u : i==0 && s->story_flags[2] ? 146u : 0u)+s->combat.walk[i],
-                200+((int)u->x-cx)*8,64+((int)u->y+2-cy)*8,btp_combat_cover(&r->map,u,&terrain),104,f);
+            unsigned base=u->infantry ? s->combat.friends && i<s->combat.friends ? btp_combat_id(&s->combat,i)==4 ? 166u : 270u : 270u : s->combat.friends ? u->record[0]=='L' ? 0u : 146u : i==0 && s->story_flags[2] ? 146u : 0u;
+            (void)btp_draw_sprite(&r->sprites,base+s->combat.walk[i],
+                200+((int)u->x-cx)*8,64+((int)u->y+2-cy)*8,btp_combat_cover(map,u,&terrain),104,f);
         }
         combat_route(r,s,cx,cy,f);combat_flash(r,s,cx,cy,f);
     } else if (s->mission.phase) (void)btp_draw_sprite(&r->sprites,
@@ -548,6 +559,11 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         (s->campaign.mech[0]=='L' ? 0u : 146u)+s->campaign.mech_walk,200,64,0,104,f);
     else (void)btp_draw_sprite(&r->sprites,166u+s->player_walk,208,96,
         hidden_rows(map,s->x_half,s->y_half),104,f);
+    if (!s->combat.phase && s->story_flags[4]) {
+        for (unsigned i=1;i<8;++i) if (s->party.people[i][0]!=255 && s->party.people[i][12]>=8)
+            (void)btp_draw_sprite(&r->sprites,270u+s->party.walk[i],208+((int)s->party.x[i]-s->campaign.world_x)*8,
+                96+((int)s->party.y[i]-s->campaign.world_y)*8,0,104,f);
+    }
     /* Original 051B draws the party before the eight outdoor NPC slots. */
     if (!s->combat.phase && (s->mode == BTP_EXPLORE || s->mode == BTP_MISSION) && s->npc.enabled == 2) for (unsigned i = 0; i < 8; ++i) {
         const BtpNpc *n = &s->npc.actor[i];
@@ -607,9 +623,9 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         snprintf(line, sizeof line, "GATE %u", s->gate); text(r,f, 8, 166, line, 14);
         snprintf(line, sizeof line, "TICK %u", s->tick); text(r,f, 8, 178, line, 14);
     }
-    if (s->cutscene.active || (s->mode == BTP_BUILDING && s->entry_slot == 6 && s->script.animation_kind == 8)) {
-        unsigned kind = s->cutscene.active ? s->cutscene.kind : 8u;
-        unsigned step = s->cutscene.active ? s->cutscene.step : 2u;
+    if (s->cutscene.active || (s->mode == BTP_BUILDING && s->script.animation_kind)) {
+        unsigned kind = s->cutscene.active ? s->cutscene.kind : s->script.animation_kind;
+        unsigned step = s->cutscene.active ? s->cutscene.step : r->animations[kind].count-1u;
         uint8_t packed[BTP_ANM_PACKED];
         if (btp_anm_frame(&r->animations[kind],step,packed)) {
             if (s->cutscene.active == 2) rectangle(f,104,0,216,200,0);
@@ -629,12 +645,17 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
             unsigned count=c->ui==1 ? 4u : 2u;
             for (unsigned i=0;i<count;++i) text(r,f,112,48+(int)i*16,c->ui==1 ? choices[i] : i ? "Pilot owned 'Mech" : "Travel on foot",i==c->selected ? 14u : 15u);
         } else if (c->ui==5) {
-            (void)wrapped(r,f,48,(const uint8_t *)"It would be dangerous to dismount so close to a populated area. Remounting requires the parked 'Mech nearby.",105,15);
+            const char *message="It would be dangerous to dismount so close to a populated area. Remounting requires the parked 'Mech nearby.";
+            (void)wrapped(r,f,48,(const uint8_t *)message,strlen(message),15);
+        } else if (c->ui==3 || c->ui==4) {
+            text(r,f,112,40,"Choose a party member",15);
+            for (unsigned i=0;i<8;++i) text(r,f,112,56+(int)i*10,btp_party_name(&s->party,i),i==c->selected ? 14u : 15u);
         } else {
-            text(r,f,112,48,"Jason Youngblood",15);
-            char info[40];snprintf(info,sizeof info,"Weapon %u  Armour %u",s->weapon,s->armor);text(r,f,112,72,info,15);
-            snprintf(info,sizeof info,"Gunnery %u  Kick %u",s->mech_skills[0],s->mech_skills[1]);text(r,f,112,88,info,15);
-            snprintf(info,sizeof info,"Technician %u",s->technician);text(r,f,112,104,info,15);
+            const uint8_t *p=s->party.people[c->member];text(r,f,112,48,btp_party_name(&s->party,c->member),15);
+            char info[40];snprintf(info,sizeof info,"Weapon %u  Armour %u",p[11],p[13]);text(r,f,112,72,info,15);
+            snprintf(info,sizeof info,"Gunnery %u  Kick %u",p[7],p[8]);text(r,f,112,88,info,15);
+            snprintf(info,sizeof info,"Health %u  Technician %u",p[15],p[9]);text(r,f,112,104,info,15);
+            text(r,f,112,120,"Selected for shop purchases",7);
         }
         text(r,f,112,144,"Enter / Backspace",7);
     }

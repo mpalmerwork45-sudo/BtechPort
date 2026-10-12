@@ -7,7 +7,7 @@ typedef enum { BTP_IDLE, BTP_UP, BTP_DOWN, BTP_LEFT, BTP_RIGHT, BTP_ACCEPT, BTP_
     BTP_DIGIT_5, BTP_DIGIT_6, BTP_DIGIT_7, BTP_DIGIT_8, BTP_DIGIT_9, BTP_CLEAR_INPUT,
     BTP_UP_LEFT, BTP_UP_RIGHT, BTP_DOWN_LEFT, BTP_DOWN_RIGHT } BtpAction;
 typedef enum { BTP_CLEAR, BTP_WALL, BTP_EDGE } BtpBlock;
-typedef enum { BTP_EXPLORE, BTP_ENTRY, BTP_BUILDING, BTP_SCRIPT_FAULT, BTP_QUIZ, BTP_MISSION, BTP_ACTIONS } BtpMode;
+typedef enum { BTP_EXPLORE, BTP_ENTRY, BTP_BUILDING, BTP_SCRIPT_FAULT, BTP_QUIZ, BTP_MISSION, BTP_ACTIONS, BTP_ENCOUNTER } BtpMode;
 typedef enum { BTP_TALK_NONE, BTP_TALK_EMPTY, BTP_TALK_MENU, BTP_TALK_REPLY } BtpTalkPhase;
 typedef struct {
     uint8_t phase, selected, count, mask, room, actor;
@@ -56,7 +56,14 @@ typedef struct {
     uint8_t mounted, mech_walk, mech_direction;
     uint8_t ui, selected, member;
     uint16_t mech_x,mech_y;
+    uint16_t battle_x,battle_y,return_x,return_y;
+    uint8_t return_map;
 } BtpCampaignState;
+typedef struct {
+    uint8_t enabled,next_id, people[8][17], mech_types[4], mechs[3][125];
+    uint16_t x[8],y[8];
+    uint8_t walk[8],direction[8], selected,giver,item,phase;
+} BtpPartyState;
 typedef struct {
     uint32_t tick;
     uint16_t x_half, y_half;
@@ -92,8 +99,9 @@ typedef struct {
     uint8_t terrain_next;
     BtpEffectsState effects;
     BtpCampaignState campaign;
+    BtpPartyState party,party_checkpoint;
 } BtpState;
-enum { BTP_STATE_BYTES = 4096 };
+enum { BTP_STATE_BYTES = 16384 };
 
 void btp_start(BtpState *state);
 void btp_tick(BtpState *state, const BtpMap *map, BtpAction action);

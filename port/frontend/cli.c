@@ -131,7 +131,7 @@ void btp_print_state(const BtpState *s, const BtpResources *r)
            s->gate, s->tick, s->blocked, s->script.pc, s->script.status, s->script.last_opcode,
            s->script.error, s->script.fault_pc, s->bank.phase == BTP_BANK_MENU ? s->script.choices[7] : s->script.selected, s->script.text_offset,
            (unsigned)length, digest);
-    for (unsigned i = 0; i < BTP_STORY_PREFIX; ++i) printf("%s%u", i ? "," : "", s->story_flags[i]);
+    for (unsigned i = 0; i < BTP_STORY_BYTES; ++i) printf("%s%u", i ? "," : "", s->story_flags[i]);
     fputs("],\"text_spans\":[", stdout);
     for (unsigned i = 0; i < s->script.text_count && i < BTP_TEXT_SPANS; ++i)
         printf("%s[%u,%u]", i ? "," : "", s->script.text[i].offset, s->script.text[i].length);
@@ -159,8 +159,8 @@ void btp_print_state(const BtpState *s, const BtpResources *r)
     printf(",\"skills\":[%u,%u,%u],\"school_phase\":%u,\"school_course\":%u,"
         "\"school_before\":%u,\"school_outcome\":%u",s->skills[0],s->skills[1],s->skills[2],
         s->school.phase,s->school.course,s->school.before,s->school.outcome);
-    printf(",\"campaign\":{\"invasion\":%u,\"owned\":%u,\"world\":[%u,%u]},\"player_sprite\":%u,\"npc_sprites\":[",
-        s->campaign.invasion,s->campaign.owned,s->campaign.world_x,s->campaign.world_y,
+    printf(",\"campaign\":{\"invasion\":%u,\"owned\":%u,\"world\":[%u,%u],\"mounted\":%u,\"encounter\":%u,\"building\":%u},\"player_sprite\":%u,\"npc_sprites\":[",
+        s->campaign.invasion,s->campaign.owned,s->campaign.world_x,s->campaign.world_y,s->campaign.mounted,s->campaign.encounter,s->campaign.building,
         s->mission.phase ? (s->story_flags[2] ? 146u : 0u)+s->mission.walk : 166u+s->player_walk);
     for (unsigned i = 0; i < 8; ++i) printf("%s%u",i ? "," : "",270u+s->npc_walk[i]);
     printf("],\"quiz\":{\"phase\":%u,\"selected\":%u,\"round\":%u,\"point\":%u,\"failed\":%u,\"used\":%u},"

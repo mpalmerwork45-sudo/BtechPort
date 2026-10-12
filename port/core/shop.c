@@ -1,5 +1,6 @@
 #include "core/shop.h"
 #include "core/economy.h"
+#include "core/party.h"
 
 static void unsupported(BtpState *s)
 {
@@ -10,24 +11,31 @@ void btp_shop_native(BtpState *s, const BtpResources *r)
 {
     const BtpBld *b = btp_state_bld(r,s);
     unsigned kind=btp_building_kind(r,s);
-    if (!b || (s->recruitment && kind!=5) || (kind != 3 && kind != 4 && kind != 5 && kind!=8)) {
+    if (!b || (s->recruitment && kind!=5) || (kind != 3 && kind != 4 && kind != 5 && kind!=8 && kind!=12)) {
         unsupported(s); return;
     }
     switch (s->script.native_action) {
     case 28: case 46:
         if (kind!=8) { unsupported(s);return; }
+        if (s->party.enabled) for (unsigned i=0;i<4;++i) {
+            uint8_t *mech=btp_party_mech(s,i);
+            if (s->script.native_action==28) { if (mech[0]!=255 && (i || s->campaign.owned)) s->party.mech_types[i]=mech[0];mech[0]=255; }
+            else if (s->party.mech_types[i]!=255) mech[0]=s->party.mech_types[i];
+        }
         s->campaign.mounted=(uint8_t)(s->script.native_action==46 && s->campaign.owned);break;
     case 14: /* 14D3:0AF2: other party members; Jason is slot zero. */
         if (kind!=5) { unsupported(s);return; }
         s->story_flags[14]=0;break;
     case 16:
         if (kind!=5) { unsupported(s);return; }
-        s->story_flags[15]=s->apprentice;break;
+        s->story_flags[15]=s->party.enabled ? s->party.people[s->party.selected][16]&1u : s->apprentice;break;
     case 15:
-        if (kind!=5 || s->apprentice) { unsupported(s);return; }
+        if (kind!=5 || (s->party.enabled ? s->party.people[s->party.selected][16]&1u : s->apprentice)) { unsupported(s);return; }
         s->story_flags[14]=0;
         if (s->credits>=500) {
-            s->credits-=500;++s->technician;s->apprentice=1;s->story_flags[14]=1;
+            s->credits-=500;s->story_flags[14]=1;
+            if (s->party.enabled && s->party.selected) { ++s->party.people[s->party.selected][9];s->party.people[s->party.selected][16]|=1; }
+            else { ++s->technician;s->apprentice=1; }
             if (s->npc.enabled) s->npc.allowance_pending=(uint8_t)btp_economy_below_cap(s);
         }
         break;
@@ -63,7 +71,10 @@ void btp_shop_native(BtpState *s, const BtpResources *r)
         s->story_flags[11] = 0;
         if (s->credits >= price) {
             s->credits -= price; s->story_flags[11] = 1;
-            if (armor) { s->armor = (uint8_t)choice; s->armor_points = protection[choice]; }
+            if (s->party.enabled && s->party.selected) {
+                uint8_t *person=s->party.people[s->party.selected];
+                if (armor) { person[13]=(uint8_t)choice;person[14]=protection[choice]; } else person[11]=(uint8_t)choice;
+            } else if (armor) { s->armor = (uint8_t)choice; s->armor_points = protection[choice]; }
             else s->weapon = (uint8_t)choice;
             if (s->npc.enabled) s->npc.allowance_pending = (uint8_t)btp_economy_below_cap(s);
         }

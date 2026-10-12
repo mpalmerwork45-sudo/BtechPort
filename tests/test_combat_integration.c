@@ -108,7 +108,7 @@ int main(int argc,char **argv)
         if (s.combat.flash && !s.effects.pending) {
             ++effects;
             uint8_t old[BTP_STATE_BYTES];BtpState migrated;
-            btp_state_encode(&s,old);memcpy(old,"BTPD",4);old[4]=13;old[878]=0;
+            btp_state_encode(&s,old);memcpy(old+512,old+4096,384);memcpy(old,"BTPD",4);old[4]=13;old[878]=0;
             memset(old+896,0,sizeof old-896);
             CHECK(btp_state_decode(old,1024,&r->map,&r->training,&migrated));CHECK(!migrated.combat.flash);
             memcpy(old,"BTPE",4);old[4]=14;old[878]=s.combat.flash;
@@ -126,7 +126,7 @@ int main(int argc,char **argv)
                Loading it must still leave the shell stationary. */
             BtpState old=s,loaded;old.combat.flash=0;old.combat.delay=0;old.combat.path_index[1]=0;
             old.combat.path[1][0][0]=-1;old.combat.path[1][0][1]=0;
-            btp_state_encode(&old,bad);memcpy(bad,"BTPD",4);bad[4]=13;
+            btp_state_encode(&old,bad);memcpy(bad+512,bad+4096,384);memcpy(bad,"BTPD",4);bad[4]=13;
             memset(bad+896,0,sizeof bad-896);
             CHECK(btp_state_decode(bad,1024,&r->map,&r->training,&loaded));
             step(&loaded,r,BTP_IDLE);CHECK(loaded.combat.unit[1].x==enemy_x && loaded.combat.unit[1].y==enemy_y);

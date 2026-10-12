@@ -73,3 +73,28 @@ garage parking survive save/restore after every input. The additional ComStar
 branch has also been exercised on foot. Full random-encounter setup is still
 being connected; walking animation, host-time cadence and allocation UI remain
 **APPROXIMATE** until their wider primary comparisons are complete.
+
+## Party and encounter increment
+
+**VERIFIED:** 65 original `09B8:104E..136D` Rex/alley and
+`09B8:E4F..FB7` agent-generation cases match character records, the Commando
+grant, opponent coordinates/records and random-state results. Eighteen
+`05AB:D68..FBF` random-encounter candidate cases match every original infantry
+and mech record, the relative spawn origin and RNG. These are independent
+native implementations compared with unmodified instruction spans.
+
+The ordinary input route now buys civilian clothing, attends the inauguration
+after its D329 timer, plays O6, recruits Rex, receives his stored Commando and
+enters/exits the alley encounter. Saves restored after every input preserve the
+route. Combat supports mixed groups up to the original 24 unit IDs; friendly
+selection retains independent orders and resolves attacks by ascending ID.
+Party inspection and shop recipient selection expose each member's equipped
+weapon/armour and skills. Internal BTPI/v18 expands to 16,384 bytes with bounded
+party and extended-combat sections; old save layouts still migrate.
+
+**APPROXIMATE:** following uses a saved position trail; the full original
+formation/crew-allocation UI is not yet reconstructed. Random candidate
+generation is compared, while wider terrain placement, encounter cadence,
+engagement/flee UI and mixed-party AI/aftermath need further whole-encounter
+comparisons. Current encounter loot is not yet awarded. Inventory exposes
+equipped items; no speculative backpack system is introduced.

@@ -5,6 +5,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+static void step(BtpState *s,const BtpResources *r,BtpAction a)
+{
+    puts(btp_action_name(a));btp_game_tick(s,r,a);
+}
+static int encounter(BtpState *s,const BtpResources *r)
+{
+    for (unsigned n=0;n<40 && s->mode==BTP_ENCOUNTER;++n) {
+        if (s->combat.phase==BTP_COMBAT_MENU) {
+            if (s->combat.selected!=8) step(s,r,BTP_DOWN);else step(s,r,BTP_ACCEPT);
+        } else if (s->combat.phase>=BTP_COMBAT_CONTROL && s->combat.phase<=BTP_COMBAT_GRAPHICS) step(s,r,BTP_ACCEPT);
+        else return 0;
+    }
+    return s->mode!=BTP_ENCOUNTER;
+}
 int main(int argc,char **argv)
 {
     if (argc!=4) return 2;
@@ -13,6 +27,11 @@ int main(int argc,char **argv)
         !btp_combat_data_load("work/combat-data.bin",&r->combat,&e) ||
         !btp_world_data_load("work/world-data.bin",&r->world,&e) ||
         !btp_save_load(argv[1],&s,r,&e)) { fprintf(stderr,"%s\n",e.text);free(r);return 1; }
+    if (!strcmp(argv[2],"idle")) {
+        unsigned n=(unsigned)atoi(argv[3]);if (n>65535) { free(r);return 2; }
+        for (unsigned i=0;i<n;++i) { step(&s,r,BTP_IDLE);if (!encounter(&s,r)) { free(r);return 1; } }
+        free(r);return 0;
+    }
     int tx=atoi(argv[2]),ty=atoi(argv[3]),sx=s.x_half,sy=s.y_half;
     if (s.map_id) {
         const BtpMap *m=btp_active_map(r,&s);
@@ -49,10 +68,10 @@ int main(int argc,char **argv)
     int ok=parents[target]>=0;unsigned count=0;
     if (ok) {
         for (int q=target;q!=start;q=parents[q]) queue[count++]=q;
-        static const char *const names[4]={"up","right","down","left"};
         for (unsigned i=count;i>0;--i) {
             int q=queue[i-1],p=parents[q],delta=q-p;
-            puts(names[delta==-2048 ? 0 : delta==1 ? 1 : delta==2048 ? 2 : 3]);
+            step(&s,r,delta==-2048 ? BTP_UP : delta==1 ? BTP_RIGHT : delta==2048 ? BTP_DOWN : BTP_LEFT);
+            if (!encounter(&s,r)) { fprintf(stderr,"Encounter continuation requires battle orders\n");ok=0;break; }
         }
     } else fprintf(stderr,"No native walking route to %d,%d\n",tx,ty);
     free(parents);free(queue);free(r);return !ok;

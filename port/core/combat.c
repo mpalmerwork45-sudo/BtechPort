@@ -2,6 +2,8 @@
 #include "core/npc.h"
 #include "core/animation.h"
 #include "core/effects.h"
+#include "core/world.h"
+#include "core/party.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -54,6 +56,7 @@ static int occupied(const BtpCombatUnit *mover, const BtpCombatUnit *other, int 
 }
 unsigned btp_combat_id(const BtpCombatState *c, unsigned i)
 {
+    if (c->friends && i<c->count) return c->ids[i];
     return !i ? 0 : c->unit[i].infantry ? 15u+i : 11u+i;
 }
 unsigned btp_combat_target(const BtpCombatState *c, unsigned id)
@@ -104,9 +107,32 @@ void btp_combat_plan(const BtpMap *m, unsigned gate, const BtpCombatUnit *u,
 }
 void btp_combat_route(const BtpMap *m, unsigned gate, const BtpCombatState *c, int8_t steps[12][2])
 {
-    plan_points(m,gate,&c->unit[0],&c->unit[1],c->goal_x,c->goal_y,c->movement,0,
-        btp_combat_points(&c->unit[0],c->movement),c->waypoint_x,c->waypoint_y,c->waypoint_count,
-        NULL,0,0,steps);
+    unsigned actor=c->active_unit,enemy=c->friends ? c->friends : 1u;
+    plan_points(m,gate,&c->unit[actor],&c->unit[enemy],c->goal_x,c->goal_y,c->movement,0,
+        btp_combat_points(&c->unit[actor],c->movement),c->waypoint_x,c->waypoint_y,c->waypoint_count,
+        c->friends ? c->unit : NULL,c->friends ? c->count : 0,actor,steps);
+}
+void btp_combat_map(const BtpResources *r,const BtpState *s,BtpMap *m)
+{
+    if (!s->campaign.encounter) { *m=*btp_active_map(r,s);return; }
+    *m=(BtpMap){.width=64,.height=64};
+    for (int y=0;y<64;++y) for (int x=0;x<64;++x)
+        m->tiles[y*64+x]=(uint8_t)btp_world_tile(r,s,s->campaign.battle_x/2+x,s->campaign.battle_y/2+y);
+}
+static void store_plan(BtpCombatState *c)
+{
+    if (!c->friends) return;
+    BtpCombatPlan *p=&c->plans[c->active_unit];
+    p->movement=c->movement;p->x=c->goal_x;p->y=c->goal_y;p->active=c->goal_active;p->count=c->waypoint_count;
+    memcpy(p->wx,c->waypoint_x,11);memcpy(p->wy,c->waypoint_y,11);memcpy(p->orders,c->orders,11);p->kick=c->kick_target;
+}
+void btp_combat_select(BtpCombatState *c,unsigned unit)
+{
+    if (!c->friends || unit>=c->friends) return;
+    store_plan(c);c->active_unit=(uint8_t)unit;
+    const BtpCombatPlan *p=&c->plans[unit];
+    c->movement=p->movement;c->goal_x=p->x;c->goal_y=p->y;c->goal_active=p->active;c->waypoint_count=p->count;
+    memcpy(c->waypoint_x,p->wx,11);memcpy(c->waypoint_y,p->wy,11);memcpy(c->orders,p->orders,11);c->kick_target=p->kick;
 }
 unsigned btp_combat_cover(const BtpMap *m, const BtpCombatUnit *u, unsigned *terrain)
 {
@@ -185,7 +211,8 @@ void btp_combat_begin(BtpState *s, const BtpResources *r)
 static void finish(BtpState *s)
 {
     BtpCombatState *c=&s->combat;
-    s->x_half=c->unit[0].x;s->y_half=(uint16_t)(c->unit[0].y+2u);
+    s->x_half=c->unit[0].x;s->y_half=(uint16_t)(c->unit[0].y+(c->unit[0].infantry ? 0u : 2u));
+    if (s->campaign.encounter) { c->phase=BTP_COMBAT_NONE;c->flash=0;return; }
     s->mission.corner=1;s->mission.idle=0;s->mission.walk=c->walk[0];
     s->mission.direction=c->unit[0].direction;c->phase=BTP_COMBAT_NONE;c->flash=0;
     if (s->campaign.invasion && !c->lost) {
@@ -197,20 +224,35 @@ static void finish(BtpState *s)
 }
 static void begin_round(BtpState *s, const BtpResources *r, int enemy_ai)
 {
-    BtpMap terrain=r->map;
+    BtpMap terrain;btp_combat_map(r,s,&terrain);
     if (s->campaign.invasion) {
         memset(terrain.tiles+62*64+56,64,8);memset(terrain.tiles+63*64+56,64,8);
     }
     BtpCombatState *c=&s->combat;
     memset(c->path,0,sizeof c->path);
     for (unsigned i=0;i<c->count;++i) memset(c->path[i],2,sizeof c->path[i]);
-    if (c->goal_active) btp_combat_route(&terrain,s->gate,c,c->path[0]);
-    for (unsigned index=1;index<c->count;++index) {
+    store_plan(c);
+    unsigned friends=c->friends ? c->friends : 1u,active=c->active_unit;
+    if (c->friends) {
+        for (unsigned i=0;i<friends;++i) {
+            btp_combat_select(c,i);
+            if (c->goal_active) btp_combat_route(&terrain,s->gate,c,c->path[i]);
+            if (i) {
+                memcpy(c->enemy_orders[i-1],c->orders,11);c->enemy_orders[i-1][11]=c->kick_target;
+                if (i==1) c->enemy_movement=c->movement;else c->enemy_modes[i-2]=c->movement;
+            }
+        }
+        btp_combat_select(c,active);
+    } else if (c->goal_active) btp_combat_route(&terrain,s->gate,c,c->path[0]);
+    for (unsigned index=friends;index<c->count;++index) {
     if (c->unit[index].record[0]==255) continue;
     /* 0E31:03AB: the weapon-component range scan intentionally uses the
        component value as the table index, even when ammunition is empty. */
     BtpCombatUnit enemy=c->unit[index];enemy.direction=c->plan_direction[index];
-    int ex=enemy.x,ey=enemy.y,px=c->unit[0].x,py=c->unit[0].y;
+    unsigned prey=0;
+    if (c->friends) for (unsigned i=0;i<friends;++i) if (c->unit[i].record[0]!=255 &&
+        (c->unit[prey].record[0]==255 || btp_combat_distance(enemy.x,enemy.y,c->unit[i].x,c->unit[i].y)<btp_combat_distance(enemy.x,enemy.y,c->unit[prey].x,c->unit[prey].y))) prey=i;
+    int ex=enemy.x,ey=enemy.y,px=c->unit[prey].x,py=c->unit[prey].y;
     unsigned distance=btp_combat_distance(ex,ey,px,py),preferred=255;
     int visible=btp_combat_los(&terrain,s->gate,ex,ey,px,py)>0;
     for (unsigned i=51;i<86;++i) {
@@ -239,14 +281,14 @@ static void begin_round(BtpState *s, const BtpResources *r, int enemy_ai)
         /* 0E31:046F normalizes robot IDs before 103B:2474. IDs 20/21
            cross its threshold and take six points; IDs 16..19 take three. */
         int points=enemy.infantry && btp_combat_id(c,index)>=20 ? 6 : btp_combat_points(&enemy,*movement);
-        plan_points(&terrain,s->gate,&enemy,&c->unit[0],tx,ty,*movement,1,points,NULL,NULL,0,
-            s->mission.assignment==5 ? c->unit : NULL,s->mission.assignment==5 ? c->count : 0,index,c->path[index]);
+        plan_points(&terrain,s->gate,&enemy,&c->unit[prey],tx,ty,*movement,1,points,NULL,NULL,0,
+            s->mission.assignment==5 || c->friends ? c->unit : NULL,s->mission.assignment==5 || c->friends ? c->count : 0,index,c->path[index]);
     }
     memset(c->enemy_orders[index-1],255,12);
-    if (s->mission.assignment>=3) {
+    if (s->mission.assignment>=3 || c->friends) {
         for (unsigned w=0;w<btp_combat_weapon_count(&enemy) && w<10;++w)
-            if (btp_combat_weapon(&enemy,w)<33 && enemy.heat<30) c->enemy_orders[index-1][w]=0;
-        if (!enemy.infantry && enemy.heat<30) c->enemy_orders[index-1][11]=0;
+            if (btp_combat_weapon(&enemy,w)<33 && enemy.heat<30) c->enemy_orders[index-1][w]=(uint8_t)btp_combat_id(c,prey);
+        if (!enemy.infantry && enemy.heat<30) c->enemy_orders[index-1][11]=(uint8_t)btp_combat_id(c,prey);
     }
     }
     memset(c->moved,0,sizeof c->moved);memset(c->path_index,0,sizeof c->path_index);
@@ -295,9 +337,10 @@ void btp_combat_ignite(BtpState *s, const BtpCombatUnit *target)
 static void end_round(BtpState *s,const BtpResources *r)
 {
     BtpCombatState *c=&s->combat;
+    BtpMap map;btp_combat_map(r,s,&map);
     for (unsigned i=0;i<c->count;++i) if (c->unit[i].record[0]!=255) {
         unsigned terrain,mode=i==0 ? c->movement : i==1 ? c->enemy_movement : c->enemy_modes[i-2];
-        (void)btp_combat_cover(&r->map,&c->unit[i],&terrain);
+        (void)btp_combat_cover(&map,&c->unit[i],&terrain);
         btp_combat_cool(&c->unit[i],mode==255 ? -1 : (int)mode,c->moved[i],terrain);
     }
     if (!c->goal_active) c->movement=255;
@@ -311,12 +354,15 @@ static void round_tick(BtpState *s, const BtpResources *r, int enemy_ai)
     /* Ignore old in-progress target paths too: loading an earlier checkpoint
        must not reanimate the training shell. */
     if (enemy_ai) for (unsigned i=1;i<c->count;++i) advance(c,i);
+    BtpMap map;btp_combat_map(r,s,&map);
     unsigned terrain[BTP_COMBAT_UNITS]={0};
-    for (unsigned i=0;i<c->count;++i) c->unit[i].cover=(uint8_t)btp_combat_cover(&r->map,&c->unit[i],&terrain[i]);
-    for (unsigned actor=0;actor<c->count;++actor) {
+    for (unsigned i=0;i<c->count;++i) c->unit[i].cover=(uint8_t)btp_combat_cover(&map,&c->unit[i],&terrain[i]);
+    for (unsigned ordinal=0;ordinal<(c->friends ? 24u : c->count);++ordinal) {
+        unsigned actor=c->friends ? btp_combat_target(c,ordinal) : ordinal;
+        if (actor>=c->count) continue;
         if (c->unit[actor].record[0]==255 || (actor && (!enemy_ai || s->mission.assignment==2))) continue;
         for (unsigned i=0;i<12;++i) {
-            uint8_t *order=actor ? &c->enemy_orders[actor-1][i] : i==11 ? &c->kick_target : &c->orders[i];
+            uint8_t *order=actor ? &c->enemy_orders[actor-1][i] : c->friends ? i==11 ? &c->plans[0].kick : &c->plans[0].orders[i] : i==11 ? &c->kick_target : &c->orders[i];
             uint16_t *fired=actor ? &c->enemy_fired[actor-1] : &c->fired;
             if (*order==255 || (*fired&(1u<<i))) continue;
             unsigned target=btp_combat_target(c,*order);
@@ -325,7 +371,7 @@ static void round_tick(BtpState *s, const BtpResources *r, int enemy_ai)
             unsigned w=i==11 ? 32 : btp_combat_weapon(attacker,i);
             if (w>=33 || (i==11 && !btp_combat_can_kick(attacker))) { *order=255;continue; }
             if (attacker->heat>=30 || btp_combat_range(&r->combat,w,attacker->x,attacker->y,enemy->x,enemy->y)>=3) continue;
-            int los=btp_combat_los(&r->map,s->gate,attacker->x,attacker->y,enemy->x,enemy->y);
+            int los=btp_combat_los(&map,s->gate,attacker->x,attacker->y,enemy->x,enemy->y);
             if (!los) { if (!c->flash) c->last_event=3;continue; }
             if (los<0) { if (!c->flash) c->last_event=4;continue; }
             int ignition=enemy->cover && terrain[target]>=16 && terrain[target]<=63 &&
@@ -344,19 +390,21 @@ static void round_tick(BtpState *s, const BtpResources *r, int enemy_ai)
                     (enemy->x-(enemy->infantry ? 0u : 1u))&127u,
                     (enemy->y-(enemy->infantry ? 0u : 1u))&127u);
                 enemy->record[0]=255;
-                if (target || !s->campaign.invasion) enemy->x=enemy->y=127;
+                if (target || (!s->campaign.invasion && !s->campaign.encounter)) enemy->x=enemy->y=127;
                 if (!target) { s->effects.pending=2;return; }
                 unsigned remaining=0;
-                for (unsigned k=1;k<c->count;++k) remaining+=c->unit[k].record[0]!=255;
+                for (unsigned k=c->friends ? c->friends : 1u;k<c->count;++k) remaining+=c->unit[k].record[0]!=255;
                 if (!remaining) { s->effects.pending=1;return; }
             }
             break; /* One attack per unit per microstep, including Kick. */
         }
     }
-    if (c->goal_active && c->unit[0].x==c->goal_x && c->unit[0].y==c->goal_y) {
-        arrived(c);
-    }
-    s->x_half=c->unit[0].x;s->y_half=(uint16_t)(c->unit[0].y+2u);
+    if (c->friends) {
+        unsigned active=c->active_unit;
+        for (unsigned i=0;i<c->friends;++i) { btp_combat_select(c,i);if (c->goal_active && c->unit[i].x==c->goal_x && c->unit[i].y==c->goal_y) arrived(c); }
+        btp_combat_select(c,active);
+    } else if (c->goal_active && c->unit[0].x==c->goal_x && c->unit[0].y==c->goal_y) arrived(c);
+    s->x_half=c->unit[0].x;s->y_half=(uint16_t)(c->unit[0].y+(c->unit[0].infantry ? 0u : 2u));
     s->mission.walk=c->walk[0];s->mission.direction=c->unit[0].direction;
     if (s->campaign.invasion && c->unit[0].y==127) { c->fled=1;finish(s);return; }
     if (++c->step==12 && !s->effects.count) end_round(s,r);
@@ -374,7 +422,14 @@ static void combat_tick(BtpState *s, const BtpResources *r, BtpAction a, int ene
     /* A shot on the twelfth microstep must finish its presentation before
        cleanup returns to the command menu. This state is also saveable. */
     if (c->phase==BTP_COMBAT_ROUND && c->step==12) { end_round(s,r);return; }
-    unsigned count=btp_combat_weapon_count(&c->unit[0]);
+    if (c->phase==BTP_COMBAT_PICK) {
+        if (a==BTP_UP || a==BTP_LEFT) c->scan_unit=(uint8_t)((c->scan_unit+c->friends-1u)%c->friends);
+        if (a==BTP_DOWN || a==BTP_RIGHT) c->scan_unit=(uint8_t)((c->scan_unit+1u)%c->friends);
+        if (a==BTP_ACCEPT && c->unit[c->scan_unit].record[0]!=255) { btp_combat_select(c,c->scan_unit);menu(c); }
+        if (a==BTP_CANCEL) menu(c);
+        return;
+    }
+    unsigned count=btp_combat_weapon_count(&c->unit[c->active_unit]);
     if (c->phase==BTP_COMBAT_ROUND) { round_tick(s,r,enemy_ai);return; }
     if (c->phase==BTP_COMBAT_NOTICE) {
         if (a==BTP_ACCEPT || a==BTP_CANCEL) { c->phase=c->notice_return;c->notice=c->notice_return=0; }
@@ -386,7 +441,7 @@ static void combat_tick(BtpState *s, const BtpResources *r, BtpAction a, int ene
         else if (a==BTP_ACCEPT) {
             c->goal_active=0;c->movement=255;c->waypoint_count=0;
             memset(c->waypoint_x,0,11);memset(c->waypoint_y,0,11);
-            c->phase=BTP_COMBAT_MOVE;c->cursor_x=c->unit[0].x;c->cursor_y=c->unit[0].y;
+            c->phase=BTP_COMBAT_MOVE;c->cursor_x=c->unit[c->active_unit].x;c->cursor_y=c->unit[c->active_unit].y;
         }
         return;
     }
@@ -427,8 +482,9 @@ static void combat_tick(BtpState *s, const BtpResources *r, BtpAction a, int ene
             *order=(uint8_t)btp_combat_id(c,c->target_unit);
             if (kick) menu(c);else { ++c->weapon_selected;c->phase=BTP_COMBAT_WEAPONS; }
         } else if (a==BTP_ACCEPT && c->target_selected==1) {
-            for (unsigned n=0;n<c->count-1u;++n) {
-                c->target_unit=(uint8_t)(1u+c->target_unit%(c->count-1u));
+            for (unsigned n=0;n<c->count-(c->friends ? c->friends : 1u);++n) {
+                unsigned first=c->friends ? c->friends : 1u;
+                c->target_unit=(uint8_t)(first+(c->target_unit-first+1u)%(c->count-first));
                 if (c->unit[c->target_unit].record[0]!=255) break;
             }
         }
@@ -446,21 +502,21 @@ static void combat_tick(BtpState *s, const BtpResources *r, BtpAction a, int ene
     } else if (c->phase==BTP_COMBAT_GRAPHICS) { c->graphics=(uint8_t)!c->selected;menu(c); }
     else if (c->phase==BTP_COMBAT_MENU) {
         if (c->selected<3) {
-            if (!btp_combat_points(&c->unit[0],c->selected)) { notice(c,2,BTP_COMBAT_MENU);return; }
+            if (!btp_combat_points(&c->unit[c->active_unit],c->selected)) { notice(c,2,BTP_COMBAT_MENU);return; }
             if (c->goal_active && c->movement!=c->selected) {
                 c->phase=BTP_COMBAT_REPLACE;c->target_selected=0;return;
             }
-            c->cursor_x=c->unit[0].x;c->cursor_y=c->unit[0].y;c->phase=BTP_COMBAT_MOVE;
+            c->cursor_x=c->unit[c->active_unit].x;c->cursor_y=c->unit[c->active_unit].y;c->phase=BTP_COMBAT_MOVE;
         } else if (c->selected==3) { c->phase=BTP_COMBAT_WEAPONS;c->weapon_selected=0; }
         else if (c->selected==4) {
-            if (!btp_combat_can_kick(&c->unit[0])) notice(c,3,BTP_COMBAT_MENU);
+            if (!btp_combat_can_kick(&c->unit[c->active_unit])) notice(c,3,BTP_COMBAT_MENU);
             else { c->phase=BTP_COMBAT_KICK;c->target_selected=0; }
         }
-        else if (c->selected==5) notice(c,1,BTP_COMBAT_MENU);
+        else if (c->selected==5) { if (c->friends>1) { c->phase=BTP_COMBAT_PICK;c->scan_unit=c->active_unit; } else notice(c,1,BTP_COMBAT_MENU); }
         else if (c->selected==6) { c->scan_unit=0;c->phase=BTP_COMBAT_SCAN; }
         else if (c->selected==7) menu(c);
         else if (c->selected==8) {
-            if (s->campaign.invasion && c->unit[0].y<127) notice(c,5,BTP_COMBAT_MENU);
+            if (s->campaign.invasion && c->unit[c->active_unit].y<127) notice(c,5,BTP_COMBAT_MENU);
             else { c->fled=1;finish(s); }
         }
         else begin_round(s,r,enemy_ai);
@@ -468,7 +524,7 @@ static void combat_tick(BtpState *s, const BtpResources *r, BtpAction a, int ene
 }
 void btp_combat_tick(BtpState *s, const BtpResources *r, BtpAction a)
 {
-    combat_tick(s,r,a,s->mission.assignment>=3);
+    combat_tick(s,r,a,s->campaign.encounter || s->mission.assignment>=3);
 }
 void btp_combat_tick_reference(BtpState *s, const BtpResources *r, BtpAction a)
 {
@@ -501,8 +557,8 @@ void btp_combat_encode(const BtpCombatState *c, uint8_t b[BTP_COMBAT_SAVE_BYTES]
     p=384;
     b[p++]=c->count;b[p++]=c->target_unit;b[p++]=c->kick_target;b[p++]=c->lost;
     b[p++]=c->last_attacker;b[p++]=c->last_target;
-    for (unsigned i=0;i<BTP_COMBAT_UNITS;++i) b[p++]=c->unit[i].infantry;
-    for (unsigned i=2;i<BTP_COMBAT_UNITS;++i) {
+    for (unsigned i=0;i<7;++i) b[p++]=c->unit[i].infantry;
+    for (unsigned i=2;i<7;++i) {
         const BtpCombatUnit *u=&c->unit[i];memcpy(b+p,u->record,125);p+=125;
         b[p++]=u->x;b[p++]=u->y;b[p++]=u->direction;b[p++]=u->heat;
         b[p++]=u->pool;b[p++]=u->burning;b[p++]=u->cover;
@@ -510,10 +566,24 @@ void btp_combat_encode(const BtpCombatState *c, uint8_t b[BTP_COMBAT_SAVE_BYTES]
         b[p++]=c->plan_direction[i];b[p++]=c->fallback[i];
         for (unsigned j=0;j<12;++j) for (unsigned k=0;k<2;++k) b[p++]=(uint8_t)c->path[i][j][k];
     }
-    memcpy(b+p,c->enemy_modes,sizeof c->enemy_modes);p+=sizeof c->enemy_modes;
-    memcpy(b+p,c->enemy_orders,sizeof c->enemy_orders);p+=sizeof c->enemy_orders;
-    for (unsigned i=0;i<BTP_COMBAT_UNITS-1;++i) { b[p++]=(uint8_t)c->enemy_fired[i];b[p++]=(uint8_t)(c->enemy_fired[i]>>8); }
+    memcpy(b+p,c->enemy_modes,5);p+=5;
+    memcpy(b+p,c->enemy_orders,72);p+=72;
+    for (unsigned i=0;i<6;++i) { b[p++]=(uint8_t)c->enemy_fired[i];b[p++]=(uint8_t)(c->enemy_fired[i]>>8); }
     b[p++]=c->waypoint_count;memcpy(b+p,c->waypoint_x,11);p+=11;memcpy(b+p,c->waypoint_y,11);p+=11;
+    if (!c->friends && c->count<=7) return;
+    p=1536;b[p++]=1;b[p++]=c->friends;b[p++]=c->active_unit;
+    memcpy(b+p,c->ids,BTP_COMBAT_UNITS);p+=BTP_COMBAT_UNITS;
+    memcpy(b+p,c->plans,sizeof c->plans);p+=sizeof c->plans;
+    for (unsigned i=7;i<BTP_COMBAT_UNITS;++i) {
+        const BtpCombatUnit *u=&c->unit[i];memcpy(b+p,u->record,125);p+=125;
+        b[p++]=u->x;b[p++]=u->y;b[p++]=u->direction;b[p++]=u->heat;
+        b[p++]=u->pool;b[p++]=u->burning;b[p++]=u->cover;b[p++]=u->infantry;
+        b[p++]=c->moved[i];b[p++]=c->path_index[i];b[p++]=c->walk[i];
+        b[p++]=c->plan_direction[i];b[p++]=c->fallback[i];
+        for (unsigned j=0;j<12;++j) for (unsigned k=0;k<2;++k) b[p++]=(uint8_t)c->path[i][j][k];
+        b[p++]=c->enemy_modes[i-2];memcpy(b+p,c->enemy_orders[i-1],12);p+=12;
+        b[p++]=(uint8_t)c->enemy_fired[i-1];b[p++]=(uint8_t)(c->enemy_fired[i-1]>>8);
+    }
 }
 int btp_combat_decode(const uint8_t b[BTP_COMBAT_SAVE_BYTES], BtpCombatState *c)
 {
@@ -541,8 +611,8 @@ int btp_combat_decode(const uint8_t b[BTP_COMBAT_SAVE_BYTES], BtpCombatState *c)
     if (!b[384]) for (unsigned i=384;i<BTP_COMBAT_SAVE_BYTES;++i) if (b[i]) return 0;
     c->count=b[p++];c->target_unit=b[p++];c->kick_target=b[p++];c->lost=b[p++];
     c->last_attacker=b[p++];c->last_target=b[p++];
-    for (unsigned i=0;i<BTP_COMBAT_UNITS;++i) c->unit[i].infantry=b[p++];
-    for (unsigned i=2;i<BTP_COMBAT_UNITS;++i) {
+    for (unsigned i=0;i<7;++i) c->unit[i].infantry=b[p++];
+    for (unsigned i=2;i<7;++i) {
         BtpCombatUnit *u=&c->unit[i];memcpy(u->record,b+p,125);p+=125;
         u->x=b[p++];u->y=b[p++];u->direction=b[p++];u->heat=b[p++];
         u->pool=b[p++];u->burning=b[p++];u->cover=b[p++];
@@ -552,26 +622,44 @@ int btp_combat_decode(const uint8_t b[BTP_COMBAT_SAVE_BYTES], BtpCombatState *c)
             unsigned v=b[p++];if (v>2 && v!=255) return 0;c->path[i][j][k]=v==255 ? -1 : (int8_t)v;
         }
     }
-    memcpy(c->enemy_modes,b+p,sizeof c->enemy_modes);p+=sizeof c->enemy_modes;
-    memcpy(c->enemy_orders,b+p,sizeof c->enemy_orders);p+=sizeof c->enemy_orders;
-    for (unsigned i=0;i<BTP_COMBAT_UNITS-1;++i) { c->enemy_fired[i]=(uint16_t)(b[p]|(unsigned)b[p+1]<<8);p+=2; }
+    memcpy(c->enemy_modes,b+p,5);p+=5;
+    memcpy(c->enemy_orders,b+p,72);p+=72;
+    for (unsigned i=0;i<6;++i) { c->enemy_fired[i]=(uint16_t)(b[p]|(unsigned)b[p+1]<<8);p+=2; }
     c->waypoint_count=b[p++];memcpy(c->waypoint_x,b+p,11);p+=11;memcpy(c->waypoint_y,b+p,11);p+=11;
+    for (;p<1536;++p) if (b[p]) return 0;
+    memset(c->enemy_modes+5,255,sizeof c->enemy_modes-5);
+    memset(c->enemy_orders+6,255,sizeof c->enemy_orders-72);
+    if (!b[1536]) { for (unsigned i=1536;i<BTP_COMBAT_SAVE_BYTES;++i) if (b[i]) return 0;return c->count<=7; }
+    p=1536;if (b[p++]!=1) return 0;c->friends=b[p++];c->active_unit=b[p++];
+    memcpy(c->ids,b+p,BTP_COMBAT_UNITS);p+=BTP_COMBAT_UNITS;
+    memcpy(c->plans,b+p,sizeof c->plans);p+=sizeof c->plans;
+    for (unsigned i=7;i<BTP_COMBAT_UNITS;++i) {
+        BtpCombatUnit *u=&c->unit[i];memcpy(u->record,b+p,125);p+=125;
+        u->x=b[p++];u->y=b[p++];u->direction=b[p++];u->heat=b[p++];
+        u->pool=b[p++];u->burning=b[p++];u->cover=b[p++];u->infantry=b[p++];
+        c->moved[i]=b[p++];c->path_index[i]=b[p++];c->walk[i]=b[p++];
+        c->plan_direction[i]=b[p++];c->fallback[i]=b[p++];
+        for (unsigned j=0;j<12;++j) for (unsigned k=0;k<2;++k) { unsigned v=b[p++];if (v>2 && v!=255) return 0;c->path[i][j][k]=v==255 ? -1 : (int8_t)v; }
+        c->enemy_modes[i-2]=b[p++];memcpy(c->enemy_orders[i-1],b+p,12);p+=12;
+        c->enemy_fired[i-1]=(uint16_t)(b[p]|(unsigned)b[p+1]<<8);p+=2;
+    }
     for (;p<BTP_COMBAT_SAVE_BYTES;++p) if (b[p]) return 0;
-    return 1;
+    return c->count<=BTP_COMBAT_UNITS;
 }
 #undef COMBAT_FIELDS
 int btp_combat_valid(const BtpState *s)
 {
     const BtpCombatState *c=&s->combat;
-        if (s->mission.assignment<2 || s->mission.assignment>7 || !s->mission.phase) {
+        if (!s->campaign.encounter && (s->mission.assignment<2 || s->mission.assignment>7 || !s->mission.phase)) {
         uint8_t b[BTP_COMBAT_SAVE_BYTES];btp_combat_encode(c,b);
         for (unsigned i=0;i<sizeof b;++i) if (b[i]) return 0;
         return 1;
     }
-    if ((s->mission.assignment==3 ? c->count<4 || c->count>7 : c->count!=(s->mission.assignment>=6 ? s->campaign.invasion ? 5 : 4 : s->mission.assignment==5 ? 3 : 2)) ||
-        c->target_unit<1 || c->target_unit>=c->count || c->lost>1 || c->unit[0].infantry ||
+    if ((s->campaign.encounter ? c->count>24 || c->friends<1 || c->friends>12 || c->friends>=c->count || c->active_unit>=c->friends :
+        (s->mission.assignment==3 ? c->count<4 || c->count>7 : c->count!=(s->mission.assignment>=6 ? s->campaign.invasion ? 5 : 4 : s->mission.assignment==5 ? 3 : 2))) ||
+        c->target_unit<1 || c->target_unit>=c->count || c->lost>1 || (!s->campaign.encounter && c->unit[0].infantry) ||
         c->last_attacker>=c->count || c->last_target>=c->count ||
-        c->phase>BTP_COMBAT_REPLACE || c->selected>9 || c->messages>2 || c->graphics>1 ||
+        c->phase>BTP_COMBAT_PICK || c->selected>9 || c->messages>2 || c->graphics>1 ||
         (c->movement>2 && c->movement!=255) || c->goal_active>1 || c->goal_x>125 || c->goal_y>127 ||
         c->cursor_x>125 || c->cursor_y>127 || c->weapon_selected>11 || c->target_selected>2 ||
         c->scan_unit>=c->count || c->step>12 || c->delay>2 || c->notice>5 || c->notice_return>BTP_COMBAT_SCAN ||
@@ -579,7 +667,7 @@ int btp_combat_valid(const BtpState *s)
         c->shot.hit>1 || c->shot.location>35 || c->shot.destroyed>1 || c->shot.toppled>1 ||
         c->shot.needed < -4 || c->shot.needed>30 || (c->enemy_movement>1 && c->enemy_movement!=255) ||
         c->flash>3 || (c->flash && (c->phase!=BTP_COMBAT_ROUND || !c->graphics || c->last_event<1 || c->last_event>2))) return 0;
-    if ((!c->phase && !c->fled && !c->won && !c->lost) || (c->phase && (c->fled || c->won || c->lost || s->mode!=BTP_MISSION))) return 0;
+    if ((!c->phase && !c->fled && !c->won && !c->lost) || (c->phase && (c->fled || c->won || c->lost || s->mode!=(s->campaign.encounter ? BTP_ENCOUNTER : BTP_MISSION)))) return 0;
     if ((c->phase==BTP_COMBAT_NOTICE)!=(c->notice!=0) || (!c->notice && c->notice_return)) return 0;
     if (c->phase==BTP_COMBAT_NOTICE && c->notice_return!=BTP_COMBAT_MENU && c->notice_return!=BTP_COMBAT_CONTROL) return 0;
     unsigned phase=c->notice ? c->notice_return : c->phase;
@@ -615,13 +703,13 @@ int btp_combat_valid(const BtpState *s)
         if ((u->record[0]!=255 && (u->x>125 || u->y>127)) || u->direction>7 || u->heat>30 || u->burning>3 ||
             (u->cover!=0 && u->cover!=(u->infantry ? 2 : 8) && u->cover!=(u->infantry ? 4 : 16)) || c->moved[i]>12 || c->path_index[i]>12 ||
             c->walk[i]>15 || c->plan_direction[i]>7 || c->fallback[i]>7 || u->infantry>1 ||
-            (i && u->infantry!=(s->mission.assignment==3)) || btp_combat_weapon_count(u)>11 || u->record[117]>3 || u->record[118]>2 || u->record[119]>2) return 0;
+            (i && !s->campaign.encounter && u->infantry!=(s->mission.assignment==3)) || btp_combat_weapon_count(u)>11 || u->record[117]>3 || u->record[118]>2 || u->record[119]>2) return 0;
         if (u->infantry && (u->record[1]<2 || u->record[1]>12 || u->record[11]>13 || u->record[15]>120)) return 0;
         if (i) {
-            alive+=u->record[0]!=255;
+            if (i>=(c->friends ? c->friends : 1u)) alive+=u->record[0]!=255;
             unsigned movement=i==1 ? c->enemy_movement : c->enemy_modes[i-2];
-            if ((movement>1 && movement!=255) || c->enemy_fired[i-1]>=4096) return 0;
-            for (unsigned w=0;w<12;++w) if (c->enemy_orders[i-1][w]!=0 && c->enemy_orders[i-1][w]!=255) return 0;
+            if ((movement>(i<c->friends ? 2u : 1u) && movement!=255) || c->enemy_fired[i-1]>=4096) return 0;
+            for (unsigned w=0;w<12;++w) if (c->enemy_orders[i-1][w]!=255 && (c->friends ? btp_combat_target(c,c->enemy_orders[i-1][w])>=c->count : c->enemy_orders[i-1][w]!=0)) return 0;
         }
         for (unsigned j=0;j<12;++j) for (unsigned k=0;k<2;++k) if (c->path[i][j][k]<-1 || c->path[i][j][k]>2) return 0;
     }

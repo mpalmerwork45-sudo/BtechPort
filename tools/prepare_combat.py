@@ -38,7 +38,11 @@ def extract(source):
                 'sha256':hashlib.sha256(image[start:at]).hexdigest()})
     programs+=image[DS+0x2e3c:DS+0x2e40]+image[DS+0x41d8:DS+0x41db]
     jenner=image[0x283e1:0x283e1+125]
-    return b"BTC3"+b"".join(parts)+programs+jenner, {**metadata,"format":"BTC3","ranges":origins,
+    extra_ranges=[(0x282e7,125),(DS+0x1e7a,7),(DS+0x1e82,8),(DS+0x1e8a,8),
+                  (DS+0x2cf4,22),(0x28170,125),(0x281ed,125),(0x2826a,125)]
+    extra=b''.join(image[a:a+n] for a,n in extra_ranges)
+    return b"BTC4"+b"".join(parts)+programs+jenner+extra, {**metadata,"format":"BTC4","ranges":origins,
+        'campaign_ranges':[{'image_offset':a,'length':n,'sha256':hashlib.sha256(image[a:a+n]).hexdigest()} for a,n in extra_ranges],
         'invasion_template':{'image_offset':0x283e1,'length':125,'sha256':hashlib.sha256(jenner).hexdigest()},
         'pose_programs':program_origins,'reaction':DS+0x2e3c,'impact':DS+0x41d8}
 

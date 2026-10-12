@@ -11,13 +11,13 @@ unsigned btp_menu_count(unsigned id)
     case 13: case 21: return 6;
     case 16: return 7;
     case 7: case 10: case 11: case 18: case 19: case 30: return 3;
-    case 24: return 2;
+    case 24: case 29: return 2;
     default: return 0;
     }
 }
 int btp_native_supported(unsigned action)
 {
-    return (action>=1 && action<=12) || (action>=14 && action<=17) || action==20 || action==28 || action==29 || action==43 || action==44 || action==46;
+    return (action>=1 && action<=12) || (action>=14 && action<=17) || action==20 || action==28 || action==29 || action==30 || action==43 || action==44 || action==46;
 }
 
 static void fault(BtpScriptState *s, BtpScriptError error, uint16_t pc)
@@ -43,7 +43,7 @@ static int state_index(BtpScriptState *s, uint8_t *story, unsigned index, uint16
     /* Original indexes use CBW. Sparse modeled bytes must never alias another
        core field: D30C[0..22] and the shop refusal byte at index 39 only. */
     if (!story || (index >= BTP_STORY_PREFIX && index != 39 &&
-        index != 24 && index != 32 && index != 36 && index != 45 && index != 46 && index != 47 && index != 51 && index != 52 && index != 55)) {
+        index != 24 && index != 28 && index != 29 && index != 30 && index != 32 && index != 36 && index != 45 && index != 46 && index != 47 && index != 51 && index != 52 && index != 55)) {
         fault(s, BTP_SCRIPT_STATE_INDEX, op_pc); return 0;
     }
     return 1;
@@ -155,7 +155,7 @@ static void run(BtpScriptState *s, const BtpBld *b, uint8_t story[BTP_STORY_BYTE
         case 0xea: /* Yield until original sequence playback finishes. */
             if (!available(s,b,2,op_pc)) return;
             s->animation_kind = b->bytes[s->pc++]; s->animation_flags = b->bytes[s->pc++];
-            if ((s->animation_kind != 8 && s->animation_kind != 9) || s->animation_flags != 1) { fault(s,BTP_SCRIPT_SCENE,op_pc); return; }
+            if ((s->animation_kind != 6 && s->animation_kind != 8 && s->animation_kind != 9) || s->animation_flags != 1) { fault(s,BTP_SCRIPT_SCENE,op_pc); return; }
             s->pause_units = 0; s->status = BTP_SCRIPT_ANIMATION; return;
         case 0xfb:
             s->status = BTP_SCRIPT_WAIT; return;

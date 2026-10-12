@@ -10,6 +10,8 @@ typedef struct {
        is a count followed by up to eight frames from original programs. */
     uint8_t poses[18][8][9], reaction[4], impact[3];
     uint8_t jenner[125];
+    uint8_t commando[125], rex_skills[7], rex_x[8], rex_y[8];
+    uint8_t encounter_weapons[22], encounter_mechs[3][125];
 } BtpCombatData;
 typedef struct {
     uint8_t record[125], x, y, direction, heat, pool, burning, cover;
@@ -19,8 +21,11 @@ typedef struct { uint8_t hit, location, damage, destroyed, toppled; int16_t need
 typedef enum { BTP_COMBAT_NONE, BTP_COMBAT_CONTROL, BTP_COMBAT_MESSAGES, BTP_COMBAT_GRAPHICS,
     BTP_COMBAT_MENU, BTP_COMBAT_MOVE, BTP_COMBAT_WEAPONS, BTP_COMBAT_TARGET,
     BTP_COMBAT_SCAN, BTP_COMBAT_ROUND, BTP_COMBAT_NOTICE, BTP_COMBAT_KICK,
-    BTP_COMBAT_REPLACE } BtpCombatPhase;
-enum { BTP_COMBAT_UNITS = 7 };
+    BTP_COMBAT_REPLACE, BTP_COMBAT_PICK } BtpCombatPhase;
+enum { BTP_COMBAT_UNITS = 24 };
+typedef struct {
+    uint8_t movement, x, y, active, count, wx[11], wy[11], orders[11], kick;
+} BtpCombatPlan;
 typedef struct {
     BtpCombatUnit unit[BTP_COMBAT_UNITS];
     uint8_t phase, selected, messages, graphics, movement, goal_x, goal_y, goal_active;
@@ -35,11 +40,14 @@ typedef struct {
     uint8_t enemy_modes[BTP_COMBAT_UNITS-2], enemy_orders[BTP_COMBAT_UNITS-1][12];
     uint16_t enemy_fired[BTP_COMBAT_UNITS-1];
     uint8_t waypoint_count, waypoint_x[11], waypoint_y[11];
+    uint8_t friends, active_unit, ids[BTP_COMBAT_UNITS];
+    BtpCombatPlan plans[BTP_COMBAT_UNITS];
 } BtpCombatState;
-enum { BTP_COMBAT_SAVE_BYTES = 1536 };
+enum { BTP_COMBAT_LEGACY_BYTES=1536, BTP_COMBAT_SAVE_BYTES = 6144 };
 enum { BTP_COMBAT_DATA_V1_BYTES = 4+375+561+15+46+93+16,
     BTP_COMBAT_DATA_V2_BYTES = BTP_COMBAT_DATA_V1_BYTES+18*8*9+7,
-    BTP_COMBAT_DATA_BYTES = BTP_COMBAT_DATA_V2_BYTES+125 };
+    BTP_COMBAT_DATA_V3_BYTES = BTP_COMBAT_DATA_V2_BYTES+125,
+    BTP_COMBAT_DATA_BYTES = BTP_COMBAT_DATA_V3_BYTES+125+7+16+22+375 };
 int btp_combat_data_decode(const uint8_t *bytes, size_t length, BtpCombatData *data);
 unsigned btp_combat_die(uint8_t rng[3]);
 unsigned btp_combat_dice(uint8_t rng[3]);
