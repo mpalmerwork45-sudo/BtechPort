@@ -2,55 +2,59 @@
   "checkpoints": [
     {
       "label": "funded-by-owner-shortcut",
-      "tick": 50604
+      "tick": 50708
+    },
+    {
+      "label": "garage-crew-allocation",
+      "tick": 50747
     },
     {
       "label": "garage-checkout",
-      "tick": 50643
+      "tick": 50754
     },
     {
       "label": "walking-with-rex-piloting",
-      "tick": 50659
+      "tick": 50770
     },
     {
       "label": "hospital-menu",
-      "tick": 51131
+      "tick": 51242
     },
     {
       "label": "hospital-companion-pause",
-      "tick": 51192
+      "tick": 51303
     },
     {
       "label": "hospital-companion-joined",
-      "tick": 51194
+      "tick": 51305
     },
     {
       "label": "medical-kit",
-      "tick": 51201
+      "tick": 51312
     },
     {
       "label": "field-surgery-kit",
-      "tick": 51205
+      "tick": 51316
     },
     {
       "label": "hospital-exit",
-      "tick": 51207
+      "tick": 51318
     },
     {
       "label": "jail-visitor-menu",
-      "tick": 52249
+      "tick": 52360
     },
     {
       "label": "jail-companion-pause",
-      "tick": 52311
+      "tick": 52425
     },
     {
       "label": "jail-companion-joined",
-      "tick": 52316
+      "tick": 52456
     },
     {
       "label": "jail-exit",
-      "tick": 52319
+      "tick": 52459
     }
   ],
   "final": {
@@ -63,7 +67,7 @@
       14
     ],
     "gate": 85,
-    "tick": 52319,
+    "tick": 52459,
     "blocked": 0,
     "script_pc": 4293,
     "script_status": 3,
@@ -358,7 +362,7 @@
         0,
         0,
         0,
-        3,
+        2,
         4,
         1,
         0,
@@ -513,10 +517,10 @@
       "active": 0,
       "position": 0,
       "divisor": 0,
-      "effects": 1,
-      "effect": 17,
-      "event": 338,
-      "remaining": 393
+      "effects": 0,
+      "effect": 0,
+      "event": 0,
+      "remaining": 0
     },
     "aftermath": {
       "phase": 0,
@@ -583,7 +587,7 @@
       "rubble_tile": 0
     },
     "mech_skills": [
-      3,
+      2,
       4
     ],
     "device": 1,
@@ -607,7 +611,22 @@
       0
     ],
     "intro_load": 0,
-    "state_digest": "4b4cbbccc1c05f93",
+    "cache": {
+      "active": 0,
+      "phase": 0,
+      "terminal": 0,
+      "hall": 0,
+      "cards": [
+        0,
+        0,
+        0
+      ],
+      "white": 0,
+      "power": 0,
+      "found": 0,
+      "room": 0
+    },
+    "state_digest": "dd4bb32b1ef4aa7a",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

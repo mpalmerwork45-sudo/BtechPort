@@ -9,6 +9,12 @@ def main():
     s.advance(['credit-10000']);s.note('funded-by-owner-shortcut')
     s.world_route(1297,1077)
     for _ in range(64):
+        if s.state['mode']=='actions':
+            s.note('garage-crew-allocation')
+            # Select Rex's checked-out Commando, then Done. This exercises the
+            # scripted allocation screen before control returns outdoors.
+            s.advance(['down','accept','down','accept','down','down','accept'])
+            if s.state['mode']=='local-exploration' and not s.state['campaign_flags'][24]:break
         s.advance(['accept'])
         if s.state['mode']=='local-exploration' and not s.state['campaign_flags'][24]:break
     else:raise RuntimeError('Garage checkout failed')

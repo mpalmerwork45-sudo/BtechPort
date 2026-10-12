@@ -95,6 +95,12 @@ typedef struct {
     uint8_t active,phase,selected,terminal,notice,door,door_step,hall;
     uint8_t used[33],maproom[768];
 } BtpCacheState;
+/* Transient original event locals, made explicit so each popup/search can
+   survive a native save. These byte fields have no compiler padding. */
+typedef struct {
+    uint8_t travel[10];
+    uint8_t invasion_event,invasion_popup,invasion_end;
+} BtpLateState;
 typedef struct {
     uint32_t tick;
     uint16_t x_half, y_half;
@@ -139,6 +145,7 @@ typedef struct {
     BtpAftermathState aftermath;
     uint8_t explored[2048]; /* Original CB0C: 128 rows, sixteen MSB-first bytes. */
     BtpCacheState cache;
+    BtpLateState late;
 } BtpState;
 enum { BTP_STATE_BYTES = 20480 };
 

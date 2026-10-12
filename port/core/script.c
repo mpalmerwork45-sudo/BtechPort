@@ -11,7 +11,7 @@ unsigned btp_menu_count(unsigned id)
     case 9: case 12: case 15: case 17: return 4;
     case 13: case 21: return 6;
     case 16: return 7;
-    case 7: case 10: case 11: case 18: case 19: case 30: return 3;
+    case 7: case 10: case 11: case 18: case 19: case 30: case 32: return 3;
     case 24: case 29: return 2;
     case 25:return 5;
     case 26:return 8;
@@ -23,7 +23,7 @@ unsigned btp_menu_count(unsigned id)
 }
 int btp_native_supported(unsigned action)
 {
-    return (action>=1 && action<=26) || action==28 || action==29 || action==30 || action==36 || action==37 || action==38 || action==39 || action==43 || action==44 || action==45 || action==46;
+    return (action>=1 && action<=26) || action==28 || action==29 || action==30 || action==36 || action==37 || action==38 || action==39 || action==41 || action==42 || action==43 || action==44 || action==45 || action==46 || action==47;
 }
 
 static void fault(BtpScriptState *s, BtpScriptError error, uint16_t pc)
@@ -178,7 +178,10 @@ static void run(BtpScriptState *s, const BtpBld *b, uint8_t story[BTP_STORY_BYTE
         case 0xea: /* Yield until original sequence playback finishes. */
             if (!available(s,b,2,op_pc)) return;
             s->animation_kind = b->bytes[s->pc++]; s->animation_flags = b->bytes[s->pc++];
-            if ((s->animation_kind != 6 && s->animation_kind != 8 && (s->animation_kind<9 || s->animation_kind>14)) || s->animation_flags != 1) { fault(s,BTP_SCRIPT_SCENE,op_pc); return; }
+            /* THEATER.BLD also invokes the existing O0..O9 films, often
+               with the original forced-play flag 2. The game layer checks
+               the building context before starting the decoded animation. */
+            if (s->animation_kind>=22 || s->animation_flags>2) { fault(s,BTP_SCRIPT_SCENE,op_pc); return; }
             s->pause_units = 0; s->status = BTP_SCRIPT_ANIMATION; return;
         case 0xfb:
             s->status = BTP_SCRIPT_WAIT; return;

@@ -2,39 +2,39 @@
   "checkpoints": [
     {
       "label": "parked-in-starport",
-      "tick": 49097
+      "tick": 49188
     },
     {
       "label": "civilian-clothing",
-      "tick": 49207
+      "tick": 49298
     },
     {
       "label": "rex-crest",
-      "tick": 50305
+      "tick": 50409
     },
     {
       "label": "rex-and-commando",
-      "tick": 50382
+      "tick": 50486
     },
     {
       "label": "technician-joined",
-      "tick": 50556
+      "tick": 50660
     },
     {
       "label": "partial-armour-repair",
-      "tick": 50562
+      "tick": 50666
     },
     {
       "label": "partial-ammo-amount",
-      "tick": 50574
+      "tick": 50678
     },
     {
       "label": "ammo-purchase-boundary",
-      "tick": 50576
+      "tick": 50680
     },
     {
       "label": "speed-shop-no-funds",
-      "tick": 50598
+      "tick": 50702
     }
   ],
   "final": {
@@ -47,7 +47,7 @@
       34
     ],
     "gate": 85,
-    "tick": 50603,
+    "tick": 50707,
     "blocked": 0,
     "script_pc": 4979,
     "script_status": 3,
@@ -342,7 +342,7 @@
         0,
         0,
         0,
-        3,
+        2,
         4,
         1,
         0,
@@ -567,7 +567,7 @@
       "rubble_tile": 0
     },
     "mech_skills": [
-      3,
+      2,
       4
     ],
     "device": 1,
@@ -591,7 +591,22 @@
       0
     ],
     "intro_load": 0,
-    "state_digest": "04dd48b8bad441a1",
+    "cache": {
+      "active": 0,
+      "phase": 0,
+      "terminal": 0,
+      "hall": 0,
+      "cards": [
+        0,
+        0,
+        0
+      ],
+      "white": 0,
+      "power": 0,
+      "found": 0,
+      "room": 0
+    },
+    "state_digest": "83ceb89b609a94ae",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

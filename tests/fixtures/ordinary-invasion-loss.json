@@ -6,28 +6,28 @@
     },
     {
       "label": "jenner-escape-denied",
-      "tick": 47699
+      "tick": 47700
     },
     {
       "label": "invasion-result",
-      "tick": 48521
+      "tick": 49032
     },
     {
       "label": "destroyed-citadel",
-      "tick": 48565
+      "tick": 49076
     }
   ],
   "final": {
     "map": 11,
     "mode": "local-exploration",
     "x_half": 96,
-    "y_half": 99,
+    "y_half": 98,
     "tile": [
       48,
       49
     ],
     "gate": 85,
-    "tick": 48565,
+    "tick": 49076,
     "blocked": 0,
     "script_pc": 0,
     "script_status": 0,
@@ -110,9 +110,9 @@
     "npc_clock": 0,
     "npc_fault": 0,
     "npc_rng": [
-      36,
-      66,
-      220
+      34,
+      131,
+      68
     ],
     "npc_search": [
       0,
@@ -566,7 +566,22 @@
       0
     ],
     "intro_load": 0,
-    "state_digest": "9874789fb921c940",
+    "cache": {
+      "active": 0,
+      "phase": 0,
+      "terminal": 0,
+      "hall": 0,
+      "cards": [
+        0,
+        0,
+        0
+      ],
+      "white": 0,
+      "power": 0,
+      "found": 0,
+      "room": 0
+    },
+    "state_digest": "5213723ff9c48f62",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

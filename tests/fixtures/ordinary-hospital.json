@@ -2,39 +2,43 @@
   "checkpoints": [
     {
       "label": "funded-by-owner-shortcut",
-      "tick": 50604
+      "tick": 50708
+    },
+    {
+      "label": "garage-crew-allocation",
+      "tick": 50747
     },
     {
       "label": "garage-checkout",
-      "tick": 50643
+      "tick": 50754
     },
     {
       "label": "walking-with-rex-piloting",
-      "tick": 50659
+      "tick": 50770
     },
     {
       "label": "hospital-menu",
-      "tick": 51131
+      "tick": 51242
     },
     {
       "label": "hospital-companion-pause",
-      "tick": 51192
+      "tick": 51303
     },
     {
       "label": "hospital-companion-joined",
-      "tick": 51194
+      "tick": 51305
     },
     {
       "label": "medical-kit",
-      "tick": 51201
+      "tick": 51312
     },
     {
       "label": "field-surgery-kit",
-      "tick": 51205
+      "tick": 51316
     },
     {
       "label": "hospital-exit",
-      "tick": 51207
+      "tick": 51318
     }
   ],
   "final": {
@@ -47,7 +51,7 @@
       17
     ],
     "gate": 85,
-    "tick": 51207,
+    "tick": 51318,
     "blocked": 0,
     "script_pc": 4577,
     "script_status": 3,
@@ -362,7 +366,7 @@
         0,
         0,
         0,
-        3,
+        2,
         4,
         1,
         0,
@@ -587,7 +591,7 @@
       "rubble_tile": 0
     },
     "mech_skills": [
-      3,
+      2,
       4
     ],
     "device": 1,
@@ -611,7 +615,22 @@
       0
     ],
     "intro_load": 0,
-    "state_digest": "0fd8291920dc0197",
+    "cache": {
+      "active": 0,
+      "phase": 0,
+      "terminal": 0,
+      "hall": 0,
+      "cards": [
+        0,
+        0,
+        0
+      ],
+      "white": 0,
+      "power": 0,
+      "found": 0,
+      "room": 0
+    },
+    "state_digest": "e2641522fa9f4c90",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

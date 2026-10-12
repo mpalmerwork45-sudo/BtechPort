@@ -501,10 +501,14 @@ static void combat_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
     } else if (c->phase<=BTP_COMBAT_GRAPHICS || c->phase==BTP_COMBAT_NOTICE) {
         rectangle(f,104,64,216,96,0);border_panel(r,f,104,64,216,96,0);
         if (c->phase==BTP_COMBAT_NOTICE) {
+            if (c->notice==5) {
+                size_t n;const uint8_t *p=bank_literal(r,147,&n);
+                if (p) (void)wrapped(r,f,72,p,n,15);
+                return;
+            }
             const char *message=c->notice==2 ? "No movement points for this order.\rEnter to return." :
                 c->notice==3 ? "Damaged legs prevent kicking.\rEnter to return." :
                 c->notice==4 ? "All twelve waypoints are assigned.\rEnter to return." :
-                c->notice==5 ? "You cannot escape these Jenners!\rReach the southern exit." :
                 "This command is outside the verified weapons-training slice.\rEnter to return.";
             (void)wrapped(r,f,72,(const uint8_t *)message,strlen(message),15);
         } else {
@@ -532,6 +536,35 @@ static void story_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
     if (r->border.format == 1) rectangle(f,104,0,216,200,0);
     if (s->service.phase) {
         const BtpServiceState *v=&s->service;char info[40];
+        if (v->action==41) {
+            /* WEAPON2's native gift menu uses the original weapon names and
+               replacement question, rather than the Mechit-Lube dialog. */
+            if (v->phase==9) {
+                uint8_t question[256];size_t n=0,a;const uint8_t *p=bank_literal(r,149,&a);
+                if (p && a<sizeof question) { memcpy(question,p,a);n=a; }
+                const uint8_t *weapon=r->combat.weapons[s->party.people[0][11]];
+                for (unsigned i=0;i<17 && weapon[i] && n<sizeof question;++i) question[n++]=weapon[i];
+                p=bank_literal(r,150,&a);if (p && a<=sizeof question-n) { memcpy(question+n,p,a);n+=a; }
+                (void)wrapped(r,f,64,question,n,15);
+                rectangle(f,v->selected ? 144 : 112,120,v->selected ? 16 : 24,8,14);
+                text(r,f,112,120,"Yes",v->selected ? 15u : 0u);text(r,f,144,120,"No",v->selected ? 0u : 15u);
+            } else {
+                char gun[18];memcpy(gun,r->combat.weapons[v->item],17);gun[17]=0;
+                text(r,f,112,8,"Who gets the",15);text(r,f,112,16,gun,15);
+                unsigned n=btp_party_count(&s->party);
+                for (unsigned i=0;i<=n;++i) {
+                    int y=40+(int)i*16;
+                    if (i==v->selected) rectangle(f,112,y,200,8,14);
+                    text(r,f,112,y,i==n ? "Cancel" : btp_party_name(&s->party,btp_party_slot(&s->party,i)),i==v->selected ? 0u : 15u);
+                    if (i<n) {
+                        unsigned slot=btp_party_slot(&s->party,i);memcpy(gun,r->combat.weapons[s->party.people[slot][11]],17);gun[17]=0;
+                        text(r,f,120,y+8,gun,10);
+                    }
+                }
+                if (v->phase==11) text(r,f,112,184,"Already has that weapon.",14);
+            }
+            return;
+        }
         text(r,f,112,8,v->action==44 ? "Ammunition" : v->action==13 ? "Choose a character" : v->action==18 ? "Mechit-Lube repairs" : "Speed Shop",14);
         snprintf(info,sizeof info,"C-bills: %u",s->credits);text(r,f,112,24,info,15);
         if (v->phase==1) for (unsigned i=0;i<5;++i) {
@@ -707,7 +740,11 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                            three pages into these ten map tile slots. The
                            saved fixed clock supplies a deterministic phase. */
                         unsigned frame=s->cache.active ? 0u : btp_terrain_frame(tile,s->tick/4u);
-                        const BtpGraphic *sheet=s->cache.active ? s->story_flags[66] ? &r->maproom_tiles : &r->cache_tiles : frame && r->terrain_animation.format==1 ? &r->terrain_animation : &r->tiles;
+                        int destroyed=(s->map_id==11 || (s->campaign.invasion && s->late.invasion_event>=3)) &&
+                            tx>=0 && ty>=0 && tx<map->width && ty<map->height;
+                        const BtpGraphic *sheet=s->cache.active ? s->story_flags[66] ? &r->maproom_tiles : &r->cache_tiles :
+                            destroyed ? &r->destroyed_tiles : frame && r->terrain_animation.format==1 ? &r->terrain_animation : &r->tiles;
+                        if (destroyed) frame=0; /* DESTRUCT's indices refer directly to its own tile sheet. */
                         unsigned index = (frame ? frame : tile) * 256 + ((unsigned)wy&15u)*16 + ((unsigned)wx&15u);
                         unsigned value = sheet->pixels[index] & 15;
                         color = btp_palette[terrain_palette[value]];
@@ -733,7 +770,9 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                 unsigned pose=r->combat.poses[e->group][e->direction][0];
                 if (s->effects.age/2u<pose && (i==e->actor || (e->hit && i==e->target && u->infantry))) continue;
             }
-            unsigned base=u->infantry ? s->combat.friends && i<s->combat.friends ? btp_combat_id(&s->combat,i)==4 ? 166u : 270u : 270u : s->combat.friends ? u->record[0]=='L' ? 0u : 146u : i==0 && s->story_flags[2] ? 146u : 0u;
+            /* Mech silhouette follows its own record, including invading
+               Jenners; an enemy must not inherit the loan's Locust atlas. */
+            unsigned base=u->infantry ? s->combat.friends && i<s->combat.friends ? btp_combat_id(&s->combat,i)==4 ? 166u : 270u : 270u : u->record[0]=='L' ? 0u : 146u;
             (void)btp_draw_sprite(&r->sprites,base+s->combat.walk[i],
                 200+((int)u->x-cx)*8,64+((int)u->y+2-cy)*8,btp_combat_cover(map,u,&terrain),104,f);
         }
@@ -765,8 +804,10 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
     char place[17]; memcpy(place,map->places[s->entry_slot&15u],16); place[16] = 0;
     char line[64];
     if (r->border.format == 1) rectangle(f,0,0,104,200,0);
-    /* The original status fields use these positions. The movement log and
-       four graphical rank bars remain outside this bounded UI restoration. */
+    static const char *const directions[]={"North","Northeast","East","Southeast","South","Southwest","West","Northwest"};
+    if (!s->cutscene.active) for (unsigned i=0;i<10;++i) if (s->late.travel[i])
+        text(r,f,8,8+(int)i*8,directions[s->late.travel[i]-1u],15);
+    /* The original status fields use these positions. */
     if (!(s->entry_slot == 0 && s->mode >= BTP_BUILDING)) {
         text(r,f,8,112,"Jason",15);
         text(r,f,8,176,"C-Bills:",15);
@@ -780,7 +821,12 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         if (s->blocked) text(r,f,8,80,s->blocked == BTP_EDGE ? "Map edge" : "Blocked",12);
     }
     if (s->npc.fault) text(r,f,8,80,"NPC fault",12);
-    if (s->combat.phase && s->cutscene.active!=2) combat_panel(r,s,f);
+    if (s->combat.phase==BTP_COMBAT_STORY) {
+        unsigned id=s->late.invasion_popup==1 ? 141u : 140u+s->late.invasion_popup;
+        size_t n;const uint8_t *p=bank_literal(r,id,&n);
+        rectangle(f,104,56,216,88,0);border_panel(r,f,104,56,216,88,0);
+        if (p) (void)wrapped(r,f,64,p,n,15);
+    } else if (s->combat.phase && s->cutscene.active!=2) combat_panel(r,s,f);
     else if (s->mode==BTP_MISSION && s->mission.phase==BTP_MISSION_RETURN) {
         uint8_t message[256];size_t n;
         rectangle(f,104,72,216,56,0);border_panel(r,f,104,72,216,56,0);

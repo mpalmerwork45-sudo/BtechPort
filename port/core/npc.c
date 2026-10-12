@@ -56,7 +56,11 @@ int btp_npc_valid(const BtpState *s, const BtpMap *m)
         if (a->direction > 7 || (n->enabled && (s->npc_pairs[i][0] & 0x88u))) return 0;
         if (n->enabled != 2) {
             if (a->x || a->y || a->direction) return 0;
-        } else if ((a->x == 0) != (a->y == 0) || (a->x && !local_word(a->x,a->y,m))) return 0;
+        } else if ((a->x == 0) != (a->y == 0) || (a->x && !local_word(a->x,a->y,m) &&
+            /* MAP11 replaces the map header mid-fight. The suspended cadet
+               actors still have MAP1's packed coordinates until the BLD exits. */
+            !(s->campaign.invasion && s->late.invasion_event>=3 && (a->x&~127u)==0xc00u &&
+              (a->y&~127u)==0xc000u))) return 0;
         if (n->enabled == 2 && s->npc_pairs[i][1] && a->x) return 0;
     }
     return 1;

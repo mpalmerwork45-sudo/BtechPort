@@ -35,6 +35,9 @@ void btp_start(BtpState *s)
 const BtpMap *btp_active_map(const BtpResources *r,const BtpState *s)
 {
     if (s->cache.active && s->story_flags[66]) return &r->maproom;
+    /* Original 103B:0FC0 switches maps after the third invasion message,
+       while TRAINING.BLD is still suspended in its combat native call. */
+    if (s->campaign.invasion && s->late.invasion_event>=3) return &r->destroyed;
     return s->map_id==11 ? &r->destroyed : s->map_id>=2 && s->map_id<=14 ? &r->local[s->map_id-1] : &r->map;
 }
 unsigned btp_building_kind(const BtpResources *r,const BtpState *s)
@@ -153,6 +156,7 @@ static void finish_script(BtpState *s, const BtpResources *r, const BtpMap *m)
     } else if (s->script.status == BTP_SCRIPT_END) {
         if (s->campaign.invasion) {
             s->campaign.invasion=0;s->map_id=11;
+            s->late.invasion_event=s->late.invasion_popup=s->late.invasion_end=0;
             s->mission=(BtpMissionState){0};s->combat=(BtpCombatState){0};
             s->effects=(BtpEffectsState){0};
             s->npc=(BtpNpcState){.rng={s->npc.rng[0],s->npc.rng[1],s->npc.rng[2]}};
@@ -272,7 +276,10 @@ static void game_tick(BtpState *s, const BtpResources *r, BtpAction a)
         if (btp_cutscene_tick(s,r) && active == 1) {
             btp_script_animation_return(&s->script,btp_state_bld(r,s),s->story_flags);
             finish_script(s,r,map);
-            if (s->mode==BTP_BUILDING && (s->script.status==BTP_SCRIPT_NATIVE || s->script.status>=BTP_SCRIPT_MONEY)) goto services;
+            /* THEATER chains films directly. Begin the next EA in this same
+               tick so there is no unsaveable ANIMATION-without-frames gap. */
+            if (s->mode==BTP_BUILDING && (s->script.status==BTP_SCRIPT_NATIVE || s->script.status>=BTP_SCRIPT_MONEY ||
+                s->script.status==BTP_SCRIPT_ANIMATION)) goto services;
         }
         return;
     }
@@ -378,7 +385,11 @@ services:
             btp_script_condition_return(&s->script,btp_state_bld(r,s),s->story_flags,yes);continue;
         }
         if (s->script.status==BTP_SCRIPT_EFFECT) {
-            btp_audio_effect(s,s->script.money_amount);s->script.money_amount=0;
+            /* Original E4 calls the blocking 17C5 sound routine. Suspend the
+               BLD until that clip ends; adjacent effects must not accumulate
+               behind the next movie, dialogue, or building exit. */
+            if (s->script.money_amount) { btp_audio_effect(s,s->script.money_amount);s->script.money_amount=0; }
+            if (s->audio.sound_count) break;
             s->script.status=BTP_SCRIPT_NATIVE;btp_script_native_return(&s->script,btp_state_bld(r,s),s->story_flags);continue;
         }
         if (s->script.status==BTP_SCRIPT_MONEY) {
@@ -407,6 +418,7 @@ services:
             s->story_flags[14]=(uint8_t)(btp_party_count(&s->party)-1u);
             btp_script_native_return(&s->script,btp_state_bld(r,s),s->story_flags);
         } else if (!btp_later_native(s,r)) btp_shop_native(s,r);
+        if (s->mode==BTP_ACTIONS || s->service.phase) break; /* Scripted dialogs own input until Done. */
     }
     if (s->script.status == BTP_SCRIPT_NATIVE && s->script.native_action != 12 && !s->bank.phase && !s->service.phase && s->mode != BTP_MISSION && s->mode!=BTP_ENCOUNTER && !s->menu.from_story && !(s->cache.active && s->script.native_action==45)) {
         s->script.status = BTP_SCRIPT_ERROR; s->script.error = BTP_SCRIPT_BUDGET;
@@ -428,6 +440,12 @@ services:
 }
 void btp_game_tick_audio(BtpState *s,const BtpResources *r,BtpAction a,int16_t *samples)
 {
+    /* 0000:218F prints the direction for each exploration key. Keep the
+       ten visible lines independent of the renderer and movement step size. */
+    if (btp_action_moves(a) && !s->combat.phase &&
+        (s->mode==BTP_EXPLORE || s->mode==BTP_CACHE || (s->mode==BTP_MISSION && s->mission.phase==BTP_MISSION_DRIVE))) {
+        memmove(s->late.travel,s->late.travel+1,9);s->late.travel[9]=(uint8_t)(1u+btp_player_direction((unsigned)a));
+    }
     if (a==BTP_CREDIT_10000) {
         ++s->tick;s->credits+=10000;
         if (s->checkpoint_valid) s->checkpoint_credits+=10000;
@@ -472,7 +490,7 @@ static uint16_t get16(const uint8_t *p) { return (uint16_t)(p[0] | (uint16_t)p[1
 void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
 {
     memset(b, 0, BTP_STATE_BYTES);
-    memcpy(b, "BTPR", 4); b[4] = 27;
+    memcpy(b, "BTPS", 4); b[4] = 28;
     for (unsigned i = 0; i < 4; ++i) b[8+i] = (uint8_t)(s->tick >> (8 * i));
     b[12] = (uint8_t)s->x_half; b[13] = (uint8_t)(s->x_half >> 8);
     b[14] = (uint8_t)s->y_half; b[15] = (uint8_t)(s->y_half >> 8);
@@ -599,6 +617,7 @@ void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
     b[18433]=s->menu.from_story;
     b[18434]=s->effects.stage;memcpy(b+18435,s->effects.outtakes,sizeof s->effects.outtakes);
     memcpy(b+18483,&s->cache,sizeof s->cache);
+    memcpy(b+19292,&s->late,sizeof s->late);
 }
 
 int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *script, BtpState *s)
@@ -630,7 +649,8 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         n == 16384 && !memcmp(b,"BTPO",4) && b[4] == 24 ? 24 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPP",4) && b[4]==25 ? 25 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPQ",4) && b[4]==26 ? 26 :
-        n == BTP_STATE_BYTES && !memcmp(b,"BTPR",4) && b[4]==27 ? 27 : 0;
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPR",4) && b[4]==27 ? 27 :
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPS",4) && b[4]==28 ? 28 : 0;
     if (!version) return 0;
     for (unsigned i = 5; i < 8; ++i) if (b[i]) return 0;
     if (version == 1) { for (unsigned i = 20; i < 24; ++i) if (b[i]) return 0; }
@@ -647,7 +667,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
             if (version == 9) for (unsigned i = 403; i < n; ++i) if (b[i]) return 0;
             if (version >= 10) {
                 if (b[425]) return 0;
-                unsigned start=version==10 ? 434u : version==11 ? 441u : version==12 ? 450u : version<15 ? 896u : version>=27 ? 18483u+(unsigned)sizeof(BtpCacheState) : version>=26 ? 18483u : version>=25 ? 18433u : version>=24 ? 15702u : version>=22 ? 15693u : version>=21 ? 15414u : version>=20 ? 11388u : version>=19 ? 11326u : version>=18 ? 11314u : version>=17 ? 2684u : version>=16 ? 2399u : 1803u;
+                unsigned start=version==10 ? 434u : version==11 ? 441u : version==12 ? 450u : version<15 ? 896u : version>=28 ? 19292u+(unsigned)sizeof(BtpLateState) : version>=27 ? 18483u+(unsigned)sizeof(BtpCacheState) : version>=26 ? 18483u : version>=25 ? 18433u : version>=24 ? 15702u : version>=22 ? 15693u : version>=21 ? 15414u : version>=20 ? 11388u : version>=19 ? 11326u : version>=18 ? 11314u : version>=17 ? 2684u : version>=16 ? 2399u : 1803u;
                 for (unsigned i=start;i<n;++i) if (b[i]) return 0;
                 if (version>=13) for (unsigned i=version>=15 ? 460u : 452u;i<512;++i) if (b[i]) return 0;
                 if (version==13 && b[878]) return 0; /* v14 firing-effect countdown. */
@@ -656,6 +676,11 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
     }
     BtpState result = {.credits=35,.allowance_cap=50};
     if (version>=27) memcpy(&result.cache,b+18483,sizeof result.cache);
+    if (version>=28) {
+        memcpy(&result.late,b+19292,sizeof result.late);
+        for (unsigned i=0;i<10;++i) if (result.late.travel[i]>8) return 0;
+        if (result.late.invasion_event>5 || result.late.invasion_popup>6 || result.late.invasion_end>1) return 0;
+    }
     if (version>=25) {
         memcpy(result.explored,b+16384,sizeof result.explored);
         for (unsigned i=15702;i<16384;++i) if (b[i]) return 0;
@@ -759,7 +784,8 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
             result.story_flags[55]=b[2672];result.story_checkpoint[55]=b[2673];
             v->money_kind=b[2674];v->has_position=b[2675];v->money_amount=get16(b+2676);v->money_target=get16(b+2678);
             v->position_x=get16(b+2680);v->position_y=get16(b+2682);
-            if (v->money_kind || v->money_amount || v->money_target || v->has_position) return 0;
+            if (v->money_kind || v->money_target || v->has_position ||
+                (v->money_amount && !(version>=28 && b[20]==BTP_BUILDING && b[52]==BTP_SCRIPT_EFFECT && v->money_amount<=18))) return 0;
         }
         if (version >= 3) {
             memcpy(result.story_flags + 16, b + 59, BTP_STORY_PREFIX - 16);
@@ -869,8 +895,9 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
                     (!v->mech_result && v->mech_after) ||
                     (v->mech_result && (result.entry_slot || result.mission.phase != BTP_MISSION_RESULT ||
                         !result.story_flags[1] || !v->mech_after)) ||
+                    (!(version>=28 && result.campaign.building==16 && v->animation_kind<10 && (v->animation_flags==1 || v->animation_flags==2)) &&
                     (v->animation_kind ? (v->animation_kind != 8 && !(version>=17 && v->animation_kind==9) && !(version>=18 && v->animation_kind==6) && !(version>=27 && v->animation_kind>=10 && v->animation_kind<=14)) || v->animation_flags != 1 ||
-                        (v->animation_kind==8 ? result.entry_slot != 6 : v->animation_kind==9 ? result.entry_slot != 0 : v->animation_kind>=10 ? !result.cache.active || result.campaign.building!=25 : result.campaign.building!=5 && result.campaign.building!=9 && result.campaign.building!=11 && result.campaign.building!=13) : v->animation_flags != 0)) return 0;
+                        (v->animation_kind==8 ? result.entry_slot != 6 : v->animation_kind==9 ? result.entry_slot != 0 : v->animation_kind>=10 ? !result.cache.active || result.campaign.building!=25 : result.campaign.building!=5 && result.campaign.building!=9 && result.campaign.building!=11 && result.campaign.building!=13) : v->animation_flags != 0))) return 0;
             } else {
                 result.entry_action = result.facing;
                 result.story_flags[45] = result.recruitment; result.story_flags[46] = result.talk_result;
@@ -921,7 +948,8 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
             if (v->text[i].offset || v->text[i].length) return 0;
         if (result.checkpoint_valid) {
             if ((result.mode != BTP_BUILDING && result.mode != BTP_MISSION && result.mode!=BTP_ENCOUNTER && result.mode!=BTP_GAME_OVER && !(result.mode==BTP_ACTIONS && result.menu.from_story)) || (v->status != BTP_SCRIPT_WAIT && v->status != BTP_SCRIPT_NATIVE &&
-                v->status != BTP_SCRIPT_CONFIRM && v->status != BTP_SCRIPT_ANIMATION && v->status!=BTP_SCRIPT_RECRUIT)) return 0;
+                v->status != BTP_SCRIPT_CONFIRM && v->status != BTP_SCRIPT_ANIMATION && v->status!=BTP_SCRIPT_RECRUIT &&
+                !(version>=28 && v->status==BTP_SCRIPT_EFFECT))) return 0;
             if (version >= 6 && result.checkpoint_allowance_cap != 50 && result.checkpoint_allowance_cap != 150 && !(version >= 11 && result.checkpoint_allowance_cap == 250) && !(version >= 13 && result.checkpoint_allowance_cap == 500) && !(version>=15 && (result.checkpoint_allowance_cap==1000 || result.checkpoint_allowance_cap==2000)) && !(version>=16 && result.checkpoint_allowance_cap==3000)) return 0;
         } else {
             if (result.checkpoint_talk_result || result.checkpoint_credits || result.checkpoint_weapon ||
@@ -937,7 +965,8 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
             !(version >= 15 && result.entry_slot == 5) &&
             !(version >= 10 && (result.entry_slot == 0 || result.entry_slot == 6 || result.entry_slot == 7))) return 0;
         if (result.mode == BTP_BUILDING && v->status != BTP_SCRIPT_MENU && v->status != BTP_SCRIPT_WAIT &&
-            v->status != BTP_SCRIPT_NATIVE && v->status != BTP_SCRIPT_CONFIRM && v->status != BTP_SCRIPT_ANIMATION && v->status!=BTP_SCRIPT_RECRUIT) return 0;
+            v->status != BTP_SCRIPT_NATIVE && v->status != BTP_SCRIPT_CONFIRM && v->status != BTP_SCRIPT_ANIMATION && v->status!=BTP_SCRIPT_RECRUIT &&
+            !(version>=28 && v->status==BTP_SCRIPT_EFFECT)) return 0;
         if ((result.mode == BTP_SCRIPT_FAULT) != (v->status == BTP_SCRIPT_ERROR) ||
             (v->status == BTP_SCRIPT_ERROR) != (v->error != 0)) return 0;
         if ((result.mode == BTP_EXPLORE || result.mode == BTP_ENTRY) &&
@@ -952,12 +981,15 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
                     version < 7 || (v->native_action != 7 && v->native_action != 8 &&
                         !(version >= 10 && v->native_action == 1 && result.mode == BTP_MISSION) &&
                         !(version>=18 && v->native_action==30 && (result.mode==BTP_ENCOUNTER || result.mode==BTP_GAME_OVER)) &&
-                        !(version>=26 && v->native_action==39 && result.menu.from_story) &&
+                        !(version>=26 && (v->native_action==39 || v->native_action==46) && result.menu.from_story) &&
                         !(version>=27 && v->native_action==45 && result.cache.active && result.campaign.building==22 && result.cache.phase==BTP_CACHE_PHOENIX) &&
                         !(version>=18 && result.service.phase))))) return 0;
             if (v->status == BTP_SCRIPT_ANIMATION && (version < 12 || v->pc < 3 ||
                 script->bytes[v->pc-3] != 0xea || script->bytes[v->pc-2] != v->animation_kind ||
                 script->bytes[v->pc-1] != v->animation_flags || v->pause_units)) return 0;
+            if (v->status==BTP_SCRIPT_EFFECT && (version<28 || result.mode!=BTP_BUILDING || v->pc<2 ||
+                script->bytes[v->pc-2]!=0xe4 || !script->bytes[v->pc-1] || script->bytes[v->pc-1]>18 ||
+                (v->money_amount && v->money_amount!=script->bytes[v->pc-1]) || v->pause_units)) return 0;
             if (v->status==BTP_SCRIPT_RECRUIT && (version<18 || v->pc<2 || script->bytes[v->pc-2]!=0xe9 || script->bytes[v->pc-1]!=result.service.kind || result.service.phase!=8)) return 0;
             if (v->status == BTP_SCRIPT_CONFIRM && (v->pc < 3 || script->bytes[v->pc-3] != 0xf6 ||
                 v->confirm_target != get16(script->bytes+v->pc-2) || v->confirm_target >= script->length)) return 0;

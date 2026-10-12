@@ -2,7 +2,7 @@
   "checkpoints": [
     {
       "label": "parked-in-starport",
-      "tick": 49097
+      "tick": 49188
     }
   ],
   "final": {
@@ -15,7 +15,7 @@
       26
     ],
     "gate": 85,
-    "tick": 49097,
+    "tick": 49188,
     "blocked": 0,
     "script_pc": 1003,
     "script_status": 3,
@@ -103,9 +103,9 @@
     "npc_clock": 0,
     "npc_fault": 0,
     "npc_rng": [
-      50,
-      6,
-      72
+      153,
+      12,
+      145
     ],
     "npc_search": [
       0,
@@ -310,7 +310,7 @@
         0,
         0,
         0,
-        3,
+        2,
         4,
         1,
         0,
@@ -535,7 +535,7 @@
       "rubble_tile": 0
     },
     "mech_skills": [
-      3,
+      2,
       4
     ],
     "device": 1,
@@ -559,7 +559,22 @@
       0
     ],
     "intro_load": 0,
-    "state_digest": "20094004a0a78ac5",
+    "cache": {
+      "active": 0,
+      "phase": 0,
+      "terminal": 0,
+      "hall": 0,
+      "cards": [
+        0,
+        0,
+        0
+      ],
+      "white": 0,
+      "power": 0,
+      "found": 0,
+      "room": 0
+    },
+    "state_digest": "e79eb8beb88f3791",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

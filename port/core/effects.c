@@ -19,14 +19,14 @@ void btp_effects_shot(BtpState *s,unsigned actor,unsigned target,unsigned weapon
     BtpCombatState *c=&s->combat;BtpEffectsState *v=&s->effects;
     if (v->count>=24) return; /* At most one shot per unit in a microstep. */
     const BtpCombatUnit *a=&c->unit[actor],*t=&c->unit[target];
-    unsigned alt=!a->infantry && (c->friends ? a->record[0]!='L' : actor==0 && s->story_flags[2]!=0);
+    unsigned alt=!a->infantry && a->record[0]!='L';
     unsigned group=a->infantry ? 4u+weapon : (weapon==32 ? 2u : 0u)+alt;
     unsigned direction=btp_combat_direction(a->x,a->y,t->x,t->y);
     if (direction>7) direction=a->direction;
     v->shots[v->count++]=(BtpCombatEffect){(uint8_t)actor,(uint8_t)target,(uint8_t)group,
         (uint8_t)direction,(uint8_t)weapon,c->shot.hit,c->shot.destroyed,a->x,a->y,t->x,t->y,
         (uint8_t)(a->infantry ? 254 : alt ? 146 : 0),
-        (uint8_t)(t->infantry ? 254 : c->friends ? t->record[0]=='L' ? 0 : 146 : target==0 && s->story_flags[2] ? 146 : 0)};
+        (uint8_t)(t->infantry ? 254 : t->record[0]=='L' ? 0 : 146)};
 }
 void btp_effects_tick(BtpState *s,const BtpResources *r)
 {

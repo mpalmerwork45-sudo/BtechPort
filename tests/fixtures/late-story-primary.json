@@ -1,0 +1,17 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "routine": "14D3:0004 actions 41, 42, 47; original 07DC:15E6 weapon redistribution",
+  "cases": 46,
+  "prerequisites": "1/2/4/8 party records, four original RNG seeds, solo Yes/No and explicit recipient/Cancel input, meal health boundaries, packed exit coordinates",
+  "intercepted_boundaries": [
+    "0000:1A13",
+    "14D3:181E",
+    "1656:0388",
+    "1656:03F5",
+    "1656:0B5E",
+    "173D:0259",
+    "173D:086A"
+  ],
+  "comparison": "Weapons, health, exact RNG, exit coordinate and eight NPC room/counter bytes; original instructions unmodified"
+}

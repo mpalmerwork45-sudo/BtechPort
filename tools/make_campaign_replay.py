@@ -56,6 +56,14 @@ class Session:
             if self.state['combat']['phase']!=9:break
             self.advance(['idle']*4)
         else:raise RuntimeError('Turn stalled')
+        self.story_popups()
+    def story_popups(self):
+        # Original invasion messages interrupt the round and remain explicit
+        # ordinary Accept inputs; the intervening O2 movie runs to completion.
+        for _ in range(1024):
+            if self.state['combat']['phase']!=14:break
+            self.advance(['idle']*4 if self.state['animation']['active'] else ['accept'])
+        else:raise RuntimeError('Invasion story stalled')
 
 if __name__=='__main__':
     s=Session(ROOT/'tests/fixtures/ordinary-sixth-story.actions')
@@ -78,6 +86,7 @@ if __name__=='__main__':
     s.note('invasion-start');print('start',s.state['campaign'],s.state['mission'],s.state['npc_rng'])
     if not s.state['campaign']['invasion']:raise RuntimeError('Ordinary seventh branch; extend duel route')
     while s.state['combat']['phase'] in (1,2,3):s.advance(['accept'])
+    s.story_popups()
     s.command(8);s.note('jenner-escape-denied');s.advance(['accept'])
     loss=len(sys.argv)>3 and sys.argv[3]=='--loss'
     for x,y in ([(72,77),(84,85),(96,93)] if loss else [(64,105),(80,121),(116,127)]):

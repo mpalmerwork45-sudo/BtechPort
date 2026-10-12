@@ -34,12 +34,14 @@ unsigned btp_player_direction(unsigned facing)
 }
 int btp_cutscene_begin(BtpState *s, const BtpResources *r, unsigned kind, unsigned active)
 {
+    int cinema=s && active==1 && s->mode==BTP_BUILDING && s->campaign.building==16 && kind<10;
+    int invasion=s && active==4 && kind==2 && s->campaign.invasion && s->late.invasion_popup==3;
     if (!s || !r || s->cutscene.active || kind>=BTP_ANM_COUNT ||
         (active==1 && kind>=10 && kind<=14 && (!s->cache.active || s->mode!=BTP_BUILDING || s->campaign.building!=25)) ||
-        (active!=3 && ((kind != 0 && kind != 6 && kind != 8 && (kind<9 || kind>14)) || active != (kind ? 1u : 2u))) || !r->animations[kind].count ||
+        (!cinema && !invasion && active!=3 && ((kind != 0 && kind != 6 && kind != 8 && (kind<9 || kind>14)) || active != (kind ? 1u : 2u))) || !r->animations[kind].count ||
         ((kind==0 || kind==8) && r->animations[kind].count != (kind ? 3u : 18u))) return 0;
     s->cutscene = (BtpCutsceneState){.active=(uint8_t)active,.kind=(uint8_t)kind,
-        .remaining=(uint16_t)(r->animations[kind].units[0]+(!kind || active==3 ? 50u : 0u))};
+        .remaining=(uint16_t)(r->animations[kind].units[0]+(!kind || active==3 || invasion || (cinema && kind!=8) ? 50u : 0u))};
     if (!s->cutscene.remaining) s->cutscene.remaining=1;
     return 1;
 }
@@ -61,7 +63,9 @@ int btp_cutscene_tick(BtpState *s, const BtpResources *r)
         }
         if ((unsigned)c->step+1u < a->count) ++c->step;
         else if (c->kind == 8 && c->cycle < 6) { ++c->cycle; c->step = 0; }
-        else if (!c->kind || c->active==3) { c->hold = 1;c->remaining = 60;if (!c->kind) btp_audio_effect(s,12);continue; }
+        /* 0000:4A6E suppresses the startup sound and final pause when the
+           caller supplied a nonzero flag, as the cinema does. */
+        else if (c->active==2 || c->active==3) { c->hold = 1;c->remaining = 60;if (c->active==2) btp_audio_effect(s,12);continue; }
         else { s->cutscene = (BtpCutsceneState){0}; return 1; }
         c->remaining = a->units[c->step] ? a->units[c->step] : 1;
     }
@@ -73,8 +77,14 @@ int btp_cutscene_valid(const BtpState *s)
     if (!c->active) return !c->kind && !c->step && !c->cycle && !c->hold && !c->remaining && !c->refresh_fraction &&
         s->script.status != BTP_SCRIPT_ANIMATION;
     if (!c->remaining || c->refresh_fraction >= 1000 || (c->active!=3 && !s->checkpoint_valid) || c->hold > 1) return 0;
+    if (c->active==4) return c->kind==2 && c->step<31 && !c->cycle && !c->hold && c->remaining<=16384 &&
+        s->mode==BTP_MISSION && s->campaign.invasion && s->late.invasion_popup==3 && s->combat.phase==BTP_COMBAT_STORY;
     if (c->active==3) return c->kind>0 && c->kind<BTP_ANM_COUNT && c->step<BTP_ANM_FRAMES && !c->cycle &&
         c->remaining<=16384 && s->combat.phase==BTP_COMBAT_ROUND && (s->mode==BTP_MISSION || s->mode==BTP_ENCOUNTER);
+    if (c->active==1 && s->campaign.building==16) return c->kind<10 && c->step<BTP_ANM_FRAMES &&
+        (c->kind==8 ? c->cycle<7 : !c->cycle) && !c->hold && c->remaining<=16384 &&
+        s->mode==BTP_BUILDING && s->script.status==BTP_SCRIPT_ANIMATION &&
+        s->script.animation_kind==c->kind && (s->script.animation_flags==1 || s->script.animation_flags==2);
     if (c->active==1 && c->kind==6) return c->step<31 && !c->cycle && !c->hold && c->remaining<=4 &&
         s->mode==BTP_BUILDING && (s->campaign.building==5 || s->campaign.building==9 || s->campaign.building==11 || s->campaign.building==13) &&
         s->script.status==BTP_SCRIPT_ANIMATION && s->script.animation_kind==6 && s->script.animation_flags==1;

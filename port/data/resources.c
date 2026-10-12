@@ -152,6 +152,12 @@ int btp_resources_load(const char *dir, BtpResources *r, BtpError *e)
     if (len<0 || (size_t)len>=sizeof path || !btp_read_file(path,&data,&n,e)) return 0;
     int decoded=btp_map_decode(data,n,&r->destroyed,e);free(data);
     if (!decoded) return 0;
+    /* 103B:0FC0 loads graphic set 4 alongside MAP11 during the invasion.
+       Its tile numbers refer to DESTRUCT.ICN, rather than BTTLTECH.ICN. */
+    len=snprintf(path,sizeof path,"%s/DESTRUCT.ICN",dir);
+    if (len<0 || (size_t)len>=sizeof path || !btp_read_file(path,&data,&n,e)) return 0;
+    decoded=btp_graphic_decode(data,n,&r->destroyed_tiles,e);free(data);
+    if (!decoded) return 0;
     len=snprintf(path,sizeof path,"%s/WWOODBT.SIF",dir);
     if (len<0 || (size_t)len>=sizeof path || !btp_read_file(path,&data,&n,e)) return 0;
     if (n!=4352) { free(data);return fail(e,"SIF: unsupported title music length"); }
@@ -203,7 +209,7 @@ int btp_resources_load(const char *dir, BtpResources *r, BtpError *e)
 
 int btp_dialogue_decode(const uint8_t *b, size_t n, BtpDialogue *d, BtpError *e)
 {
-    /* BTTA/v10: source tags, 141 text ranges and original 256x8 font bytes.
+    /* BTTA/v11: source tags, 156 text ranges and original 256x8 font bytes.
        Conversion validates the audited EXE. Tags identify that source, not a
        cryptographic integrity check of the generated cache. */
     static const uint8_t tags[64] = {

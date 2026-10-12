@@ -2,6 +2,7 @@
 #include "core/party.h"
 #include "core/combat.h"
 #include "core/npc.h"
+#include "core/story.h"
 #include <string.h>
 #include <stdio.h>
 unsigned btp_mech_repair(BtpState *s,unsigned slot,unsigned kind,unsigned item)
@@ -75,6 +76,31 @@ void btp_service_begin(BtpState *s,const BtpResources *r)
 void btp_service_input(BtpState *s,const BtpResources *r,BtpAction a)
 {
     BtpServiceState *v=&s->service;
+    if (v->action==41) {
+        if (v->phase==9) {
+            if (a==BTP_LEFT || a==BTP_UP) v->selected=0;
+            if (a==BTP_RIGHT || a==BTP_DOWN) v->selected=1;
+            if (a==BTP_ACCEPT || a==BTP_CANCEL) {
+                if (a==BTP_ACCEPT && !v->selected) s->party.people[0][11]=13;
+                btp_laser_finish(s,r);
+            }
+        } else if (v->phase==11) {
+            if (a==BTP_ACCEPT || a==BTP_CANCEL) { v->phase=10;v->outcome=0; }
+        } else {
+            unsigned n=btp_party_count(&s->party);
+            if (a==BTP_UP) v->selected=(uint8_t)((v->selected+n)%(n+1u));
+            if (a==BTP_DOWN) v->selected=(uint8_t)((v->selected+1u)%(n+1u));
+            if (a==BTP_CANCEL || (a==BTP_ACCEPT && v->selected==n)) btp_laser_next(s,r);
+            else if (a==BTP_ACCEPT) {
+                unsigned member=btp_party_slot(&s->party,v->selected),old=s->party.people[member][11];
+                s->party.people[member][11]=v->item;s->weapon=s->party.people[0][11];
+                if (old==v->item) { v->phase=11;v->outcome=1; }
+                else if (!old) btp_laser_next(s,r);
+                else v->item=(uint8_t)old; /* The displaced weapon can be given to someone else. */
+            }
+        }
+        return;
+    }
     if (v->phase==8) {
         if (a!=BTP_ACCEPT && a!=BTP_CANCEL) { (void)btp_rng_next(s->npc.rng);return; }
         if (!s->story_flags[38] && (btp_rng_next(s->npc.rng)&1u)) {
@@ -148,6 +174,10 @@ int btp_service_valid(const BtpState *s)
 {
     const BtpServiceState *v=&s->service;
     if (!v->phase) return !v->action && !v->mech && !v->selected && !v->kind && !v->item && !v->outcome && !v->amount && !v->input[0];
+    if (v->action==41) return v->phase>=9 && v->phase<=11 && v->kind>=1 && v->kind<=8 && v->mech<v->kind &&
+        v->item>=1 && v->item<=13 && v->selected<=(v->phase==9 ? 1u : btp_party_count(&s->party)) && v->outcome<=1 &&
+        !v->amount && !v->input[0] && s->mode==BTP_BUILDING && s->campaign.building==15 &&
+        s->script.status==BTP_SCRIPT_NATIVE && s->script.native_action==41;
     if (v->phase==8) return v->action==0xe9 && v->mech<8 && !v->selected && v->kind<7 && !v->item && !v->outcome && !v->amount && !v->input[0] && s->mode==BTP_BUILDING && s->script.status==BTP_SCRIPT_RECRUIT && (s->campaign.building==5 || s->campaign.building==9 || s->campaign.building==13);
     if (v->phase>7 || (v->action!=13 && v->action!=18 && v->action!=19 && v->action!=20 && v->action!=44) || v->mech>3 || v->selected>17 || v->kind>9 || v->item>32 || v->outcome>1 || s->mode!=BTP_BUILDING || s->script.status!=BTP_SCRIPT_NATIVE || (s->campaign.building!=5 && !(s->campaign.building==9 && v->action==13)) || v->action!=s->script.native_action) return 0;
     unsigned n=0;while (n<8 && v->input[n]) { if (v->input[n]<'0' || v->input[n]>'9') return 0;++n; }return n<8;

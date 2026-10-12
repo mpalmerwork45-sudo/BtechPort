@@ -2,19 +2,19 @@
   "checkpoints": [
     {
       "label": "parked-in-starport",
-      "tick": 49097
+      "tick": 49188
     },
     {
       "label": "civilian-clothing",
-      "tick": 49207
+      "tick": 49298
     },
     {
       "label": "rex-crest",
-      "tick": 50305
+      "tick": 50409
     },
     {
       "label": "rex-and-commando",
-      "tick": 50382
+      "tick": 50486
     }
   ],
   "final": {
@@ -27,7 +27,7 @@
       47
     ],
     "gate": 85,
-    "tick": 50382,
+    "tick": 50486,
     "blocked": 0,
     "script_pc": 6030,
     "script_status": 3,
@@ -115,9 +115,9 @@
     "npc_clock": 0,
     "npc_fault": 0,
     "npc_rng": [
-      81,
-      179,
-      123
+      153,
+      110,
+      177
     ],
     "npc_search": [
       0,
@@ -322,7 +322,7 @@
         0,
         0,
         0,
-        3,
+        2,
         4,
         1,
         0,
@@ -547,7 +547,7 @@
       "rubble_tile": 0
     },
     "mech_skills": [
-      3,
+      2,
       4
     ],
     "device": 1,
@@ -571,7 +571,22 @@
       0
     ],
     "intro_load": 0,
-    "state_digest": "0c76cbabae1b7055",
+    "cache": {
+      "active": 0,
+      "phase": 0,
+      "terminal": 0,
+      "hall": 0,
+      "cards": [
+        0,
+        0,
+        0
+      ],
+      "white": 0,
+      "power": 0,
+      "found": 0,
+      "room": 0
+    },
+    "state_digest": "0f4b2b76bcc70093",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

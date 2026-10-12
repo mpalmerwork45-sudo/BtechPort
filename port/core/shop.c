@@ -1,6 +1,7 @@
 #include "core/shop.h"
 #include "core/economy.h"
 #include "core/party.h"
+#include "core/menu.h"
 
 static void unsupported(BtpState *s)
 {
@@ -17,6 +18,9 @@ void btp_shop_native(BtpState *s, const BtpResources *r)
     switch (s->script.native_action) {
     case 28: case 46:
         if (kind!=8) { unsupported(s);return; }
+        /* 14D3:0E2C restores the garage records, then falls through to
+           0C67:0002 for crew allocation. Resume this exact BLD after Done. */
+        if (s->script.native_action==46 && s->menu.from_story==2) { s->menu.from_story=0;break; }
         if (s->party.enabled) for (unsigned i=0;i<4;++i) {
             uint8_t *mech=btp_party_mech(s,i);
             if (s->script.native_action==28) { if (mech[0]!=255 && (i || s->campaign.owned)) s->party.mech_types[i]=mech[0];mech[0]=255; }
@@ -27,7 +31,9 @@ void btp_shop_native(BtpState *s, const BtpResources *r)
             }
         }
         if (s->script.native_action==28 && s->party.enabled) for (unsigned i=0;i<8;++i) s->party.people[i][12]=8;
-        s->campaign.mounted=(uint8_t)(s->script.native_action==46 && s->campaign.owned && s->campaign.mech[121]==0);break;
+        s->campaign.mounted=(uint8_t)(s->script.native_action==46 && s->campaign.owned && s->campaign.mech[121]==0);
+        if (s->script.native_action==46) { btp_menu_open(s);s->campaign.ui=BTP_MENU_ALLOCATE;s->menu.from_story=1;return; }
+        break;
     case 14: /* 14D3:0AF2: other party members; Jason is slot zero. */
         if (kind!=5) { unsupported(s);return; }
         s->story_flags[14]=0;break;

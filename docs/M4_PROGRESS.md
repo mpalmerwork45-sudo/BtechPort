@@ -464,3 +464,34 @@ Further owner requests after this acceptance add Starport assignment, invasion
 messages/map switch, withdrawal and encounter descriptions, direction display,
 prison/Starport theft, hut/cinema/laser-shop/house routes and a fresh sound audit.
 These are active follow-up work, not covered by the cache acceptance claim.
+# Campaign follow-ups — native v28
+
+The garage now opens the original scripted crew allocator during checkout
+(14D3:0E2C → 0C67:0002); the hospital route explicitly assigns Rex before
+leaving. The final training fight shows the uneasy-feeling popup, the five
+DS:3A2E invasion messages and O2, switching to MAP11/DESTRUCT.ICN after the
+third message while combat is still active. The original menu Flee refusal
+and walking escape remain distinct. Both escape and defeat input routes
+continue after a save at every input.
+
+The mayor's house has its three original newspaper/holodisk/chow choices.
+THEATER.BLD runs its original films and explicit sounds; WEAPON2.BLD runs
+the robbery, laser gifts and recipient/displaced-weapon menu. Original
+native 47's meal health loss and native 41's health cap are preserved.
+The inventor's hut uses the original party skill gates: recorded routes
+cover rejection and password success. The latter imports GAME5 and uses
+ordinary allocation to take the crew out of that save's malformed fourth
+vehicle before travelling; it does not edit prerequisite flags or ranks.
+
+`late-story-primary.txt` contains 46 executed original comparisons for
+weapon distribution, exact RNG/health, meal boundaries and the cinema exit.
+Seven additional original-save input routes cover the requested buildings.
+The travel direction log is saved independently of movement step size.
+BLD E4 sound calls now suspend the script until playback completes.
+Popup placement, portrait timing and physical speaker response remain
+**APPROXIMATE**. Prison/arena theft and the further sound playback audit are
+still in progress; these follow-ups are not a complete-campaign claim.
+
+Verification for this follow-up commit: all 41 regular and sanitizer core
+tests pass. The new building routes restore state before every input. Native
+window checks for these additional routes will run with the theft follow-up.

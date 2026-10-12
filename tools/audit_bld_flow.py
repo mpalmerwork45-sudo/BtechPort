@@ -5,7 +5,7 @@ from pathlib import Path
 def decrypt(raw):
     if len(raw)<2 or int.from_bytes(raw[:2],"little")!=len(raw)-2:raise ValueError("Invalid BLD length")
     return bytes(((v+41)&255)^233 for v in raw[2:])
-COUNTS={7:3,8:5,9:4,10:3,11:3,12:4,13:6,14:5,15:4,16:7,17:4,18:3,19:3,21:6,24:2,25:5,26:8,27:6,28:7,29:2,30:3,31:2,35:2,36:2}
+COUNTS={7:3,8:5,9:4,10:3,11:3,12:4,13:6,14:5,15:4,16:7,17:4,18:3,19:3,21:6,24:2,25:5,26:8,27:6,28:7,29:2,30:3,31:2,32:3,35:2,36:2}
 def graph(b):
     todo=[0];nodes={}
     def word(p):return int.from_bytes(b[p:p+2],'little')

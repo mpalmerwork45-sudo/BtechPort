@@ -43,10 +43,14 @@ int main(int argc,char **argv)
     }
     fclose(f);CHECK(cases==16);
     BtpState s;btp_start(&s);f=fopen(argv[2],"r");CHECK(f);
-    uint8_t saved[BTP_STATE_BYTES],again[BTP_STATE_BYTES];unsigned actions=0,animation=0;
+    uint8_t saved[BTP_STATE_BYTES],again[BTP_STATE_BYTES];unsigned actions=0,animation=0,invasion_popups=0,destroyed_during_fight=0;
     while (fgets(row,sizeof row,f)) {
         row[strcspn(row,"\r\n")]=0;BtpAction a;CHECK(btp_action_parse(row,&a));
         btp_game_tick(&s,r,a);animation|=s.cutscene.kind==9;
+        if (s.late.invasion_popup) invasion_popups|=1u<<s.late.invasion_popup;
+        if (s.campaign.invasion && s.late.invasion_event>=3) {
+            CHECK(btp_active_map(r,&s)==&r->destroyed);destroyed_during_fight=1;
+        }
         BtpState restored;btp_state_encode(&s,saved);
         if (!btp_state_decode(saved,sizeof saved,btp_active_map(r,&s),btp_state_bld(r,&s),&restored)) {
             fprintf(stderr,"save failed tick %u input %s mode %u pc %x mission %u combat %u pos %u,%u inv %u owned %u effect %u,%u step %u\n",
@@ -57,6 +61,7 @@ int main(int argc,char **argv)
         btp_state_encode(&restored,again);CHECK(!memcmp(saved,again,sizeof saved));s=restored;++actions;
     }
     fclose(f);CHECK(s.story_flags[4] && s.mode==BTP_EXPLORE && !s.campaign.invasion);
+    CHECK(invasion_popups==126 && destroyed_during_fight);
     CHECK(animation ? !s.campaign.owned : s.campaign.owned);
     char save_path[256];const char *leaf=strrchr(argv[2],'/');leaf=leaf ? leaf+1 : argv[2];
     CHECK(snprintf(save_path,sizeof save_path,"work/campaign-%s.btp",leaf)>0);

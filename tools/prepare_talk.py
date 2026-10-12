@@ -60,6 +60,13 @@ def extract(source):
     for entry in range(0x2234,0x2240,4):
         offset,segment=struct.unpack_from('<HH',image,DS+entry)
         addresses.append(segment*16+offset)
+    # Primary invasion popups (141..148), laser-shop replacement (149..150)
+    # and prison-yard search prompts (151..155); asset bytes stay local.
+    addresses.append(DS+0x3452)
+    for entry in range(0x3a2e,0x3a42,4):
+        offset,segment=struct.unpack_from('<HH',image,DS+entry)
+        addresses.append(segment*16+offset)
+    addresses.extend(DS+p for p in (0x3497,0x34b8,0x4d8a,0x4da4,0x155d,0x159a,0x15d4,0x1611,0x15f8))
     blob = bytearray(); ranges = []; origins = []
     for address in addresses:
         end = image.index(0,address)
@@ -73,7 +80,7 @@ def extract(source):
     header += bytes.fromhex(EXE_SHA)+bytes.fromhex(IMAGE_SHA)
     header += b"".join(struct.pack("<HH",*r) for r in ranges)
     font = image[FONT:FONT+2048]
-    return header+blob+font, {**metadata,"format":"BTTA/v10","strings":origins,
+    return header+blob+font, {**metadata,"format":"BTTA/v11","strings":origins,
         "font":{"image_offset":FONT,"length":len(font),"sha256":hashlib.sha256(font).hexdigest()}}
 
 

@@ -213,9 +213,24 @@ void btp_combat_begin(BtpState *s, const BtpResources *r)
         }
     }
 }
-static void finish(BtpState *s)
+static void invasion_event(BtpState *s,const BtpResources *r)
+{
+    /* 103B:0F7A emits one entry from DS:3A2E per round; if combat ends,
+       it drains the remaining entries before returning to TRAINING.BLD. */
+    s->late.invasion_popup=(uint8_t)(2u+s->late.invasion_event);
+    s->combat.phase=BTP_COMBAT_STORY;s->combat.flash=0;
+    if (s->late.invasion_event==1) {
+        (void)btp_rng_next(s->npc.rng); /* Forced O2 still consumes its original outtake draw. */
+        (void)btp_cutscene_begin(s,r,2,4);
+    }
+}
+static void finish(BtpState *s,const BtpResources *r)
 {
     BtpCombatState *c=&s->combat;
+    if (s->campaign.invasion && s->late.invasion_event<5) {
+        s->late.invasion_end=1;invasion_event(s,r);return;
+    }
+    s->late.invasion_popup=s->late.invasion_end=0;
     s->x_half=c->unit[0].x;s->y_half=(uint16_t)(c->unit[0].y+(c->unit[0].infantry ? 0u : 2u));
     if (s->campaign.encounter) { c->phase=BTP_COMBAT_NONE;c->flash=0;return; }
     s->mission.corner=1;s->mission.idle=0;s->mission.walk=c->walk[0];
@@ -365,6 +380,7 @@ static void end_round(BtpState *s,const BtpResources *r)
     }
     if (!c->goal_active) c->movement=255;
     c->delay=0;c->flash=0;menu(c);
+    if (s->campaign.invasion && s->late.invasion_event<5) invasion_event(s,r);
 }
 static void round_tick(BtpState *s, const BtpResources *r, int enemy_ai)
 {
@@ -450,7 +466,7 @@ static void round_tick(BtpState *s, const BtpResources *r, int enemy_ai)
     s->mission.walk=c->walk[0];s->mission.direction=c->unit[0].direction;
     if (s->campaign.invasion && c->unit[0].y==127) {
         if (s->effects.count || s->presentation.count || s->audio.sound_count) s->effects.pending=3;
-        else { c->fled=1;finish(s); }
+        else { c->fled=1;finish(s,r); }
         return;
     }
     if (++c->step==12 && !s->effects.count) end_round(s,r);
@@ -458,6 +474,14 @@ static void round_tick(BtpState *s, const BtpResources *r, int enemy_ai)
 static void combat_tick(BtpState *s, const BtpResources *r, BtpAction a, int enemy_ai)
 {
     BtpCombatState *c=&s->combat;
+    if (c->phase==BTP_COMBAT_STORY) {
+        if (a==BTP_ACCEPT || a==BTP_CANCEL || a==BTP_OPEN_MENU) {
+            if (s->late.invasion_popup>1) ++s->late.invasion_event;
+            s->late.invasion_popup=0;
+            if (s->late.invasion_end) finish(s,r);else menu(c);
+        }
+        return;
+    }
     if (a==BTP_OPEN_MENU && c->phase>=BTP_COMBAT_MENU) {
         c->paused=1;
         if (c->phase!=BTP_COMBAT_ROUND) menu(c);
@@ -476,7 +500,7 @@ static void combat_tick(BtpState *s, const BtpResources *r, BtpAction a, int ene
     if (s->effects.pending) {
         c->won=(uint8_t)(s->effects.pending==1);c->lost=(uint8_t)(s->effects.pending==2);
         c->fled=(uint8_t)(s->effects.pending==3);
-        s->effects.pending=0;finish(s);return;
+        s->effects.pending=0;finish(s,r);return;
     }
     /* A shot on the twelfth microstep must finish its presentation before
        cleanup returns to the command menu. This state is also saveable. */
@@ -562,7 +586,13 @@ static void combat_tick(BtpState *s, const BtpResources *r, BtpAction a, int ene
         c->phase=BTP_COMBAT_MESSAGES;c->selected=2;
     } else if (c->phase==BTP_COMBAT_MESSAGES) {
         c->messages=c->selected;c->phase=BTP_COMBAT_GRAPHICS;c->selected=0;
-    } else if (c->phase==BTP_COMBAT_GRAPHICS) { c->graphics=(uint8_t)!c->selected;menu(c); }
+    } else if (c->phase==BTP_COMBAT_GRAPHICS) {
+        c->graphics=(uint8_t)!c->selected;menu(c);
+        if (s->campaign.invasion && !c->round) {
+            /* 103B:04CF is the uneasy-feeling popup before the first round. */
+            s->late.invasion_popup=1;c->phase=BTP_COMBAT_STORY;
+        }
+    }
     else if (c->phase==BTP_COMBAT_MENU) {
         if (c->selected<3) {
             if (!btp_combat_points(&c->unit[c->active_unit],c->selected)) { notice(c,2,BTP_COMBAT_MENU);return; }
@@ -582,8 +612,10 @@ static void combat_tick(BtpState *s, const BtpResources *r, BtpAction a, int ene
             else menu(c);
         }
         else if (c->selected==8) {
-            if (s->campaign.invasion && c->unit[c->active_unit].y<127) notice(c,5,BTP_COMBAT_MENU);
-            else { c->fled=1;finish(s); }
+            /* 103B:069F rejects a menu flee during the invasion; 0610's
+               outside-Citadel result 2 bypasses it. Walking out still works. */
+            if (s->campaign.invasion) notice(c,5,BTP_COMBAT_MENU);
+            else { c->fled=1;finish(s,r); }
         }
         else { c->paused=0;begin_round(s,r,enemy_ai); }
     }
@@ -731,7 +763,7 @@ int btp_combat_valid(const BtpState *s)
         (s->mission.assignment==3 ? c->count<4 || c->count>7 : c->count!=(s->mission.assignment>=6 ? s->campaign.invasion ? 5 : 4 : s->mission.assignment==5 ? 3 : 2))) ||
         c->target_unit<1 || c->target_unit>=c->count || c->lost>1 || (!s->campaign.encounter && c->unit[0].infantry) ||
         c->last_attacker>=c->count || c->last_target>=c->count ||
-        c->phase>BTP_COMBAT_PICK || c->selected>9 || c->messages>2 || c->graphics>1 ||
+        c->phase>BTP_COMBAT_STORY || c->selected>9 || c->messages>2 || c->graphics>1 ||
         (c->movement>2 && c->movement!=255) || c->goal_active>1 || c->goal_x>125 || c->goal_y>127 ||
         c->cursor_x>125 || c->cursor_y>127 || c->weapon_selected>11 || c->target_selected>2 ||
         c->scan_unit>=c->count || c->step>12 || c->delay>4 || c->notice>5 || c->notice_return>BTP_COMBAT_SCAN ||
@@ -739,7 +771,12 @@ int btp_combat_valid(const BtpState *s)
         c->shot.hit>1 || c->shot.location>35 || c->shot.destroyed>1 || c->shot.toppled>1 ||
         c->shot.needed < -4 || c->shot.needed>30 || (c->enemy_movement>1 && c->enemy_movement!=255) ||
         c->flash>3 || (c->flash && (c->phase!=BTP_COMBAT_ROUND || !c->graphics || c->last_event<1 || c->last_event>2))) return 0;
-    if ((!c->phase && !c->fled && !c->won && !c->lost) || (c->phase && (c->fled || c->won || c->lost || s->mode!=(s->campaign.encounter ? BTP_ENCOUNTER : BTP_MISSION)))) return 0;
+    if ((!c->phase && !c->fled && !c->won && !c->lost) || (c->phase &&
+        (((c->fled || c->won || c->lost) && !(c->phase==BTP_COMBAT_STORY && s->late.invasion_end)) ||
+         s->mode!=(s->campaign.encounter ? BTP_ENCOUNTER : BTP_MISSION)))) return 0;
+    if ((c->phase==BTP_COMBAT_STORY)!=(s->late.invasion_popup!=0) ||
+        (c->phase==BTP_COMBAT_STORY && (!s->campaign.invasion || s->late.invasion_event>5 ||
+            (s->late.invasion_popup>1 && s->late.invasion_popup!=s->late.invasion_event+2u)))) return 0;
     if ((c->phase==BTP_COMBAT_NOTICE)!=(c->notice!=0) || (!c->notice && c->notice_return)) return 0;
     if (c->phase==BTP_COMBAT_NOTICE && c->notice_return!=BTP_COMBAT_MENU && c->notice_return!=BTP_COMBAT_CONTROL) return 0;
     unsigned phase=c->notice ? c->notice_return : c->phase;
