@@ -74,7 +74,11 @@ void btp_world_step(BtpState *s,const BtpResources *r,BtpAction a)
         s->campaign.mech_walk=frames[direction][next];s->campaign.mech_direction=(uint8_t)direction;
     }
     s->campaign.world_x=(uint16_t)gx;s->campaign.world_y=(uint16_t)gy;
-    if (s->campaign.mounted) { s->campaign.mech_x=(uint16_t)gx;s->campaign.mech_y=(uint16_t)gy; }
+    if (s->campaign.mounted) {
+        unsigned mount=s->party.people[0][12];
+        if (mount<4) { s->party.mech_x[mount]=(uint16_t)gx;s->party.mech_y[mount]=(uint16_t)gy; }
+        if (!mount) { s->campaign.mech_x=(uint16_t)gx;s->campaign.mech_y=(uint16_t)gy; }
+    }
     unsigned id=(unsigned)btp_world_location(r,s,gx/2,gy/2);
     if (id!=s->map_id) {
         s->script=(BtpScriptState){0};s->entry_slot=0;s->campaign.building=0;
@@ -99,6 +103,7 @@ void btp_world_clock(BtpState *s,const BtpResources *r)
         unsigned roll=btp_rng_next(s->npc.rng);
         for (unsigned i=20;i<=22;++i) if (s->story_flags[i]) --s->story_flags[i];
         if (s->story_flags[29]) --s->story_flags[29];
+        if (s->story_flags[41]) --s->story_flags[41];
         if (s->story_flags[23]--==0) btp_economy_market(s);
         if (!(roll&s->story_flags[36]) && s->story_flags[4] && !s->story_flags[58]) (void)btp_campaign_random(s,r);
     }

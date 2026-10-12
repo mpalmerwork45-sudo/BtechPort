@@ -586,7 +586,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
     int cx=s->x_half,cy=s->y_half;
     if (s->combat.phase) {
         const BtpCombatState *c=&s->combat;
-        unsigned focus=c->phase==BTP_COMBAT_TARGET || c->phase==BTP_COMBAT_KICK ? c->target_unit : c->phase==BTP_COMBAT_SCAN ? c->scan_unit : 0u;
+        unsigned focus=c->phase==BTP_COMBAT_TARGET || c->phase==BTP_COMBAT_KICK ? c->target_unit : c->phase==BTP_COMBAT_SCAN ? c->scan_unit : c->active_unit;
         cx=c->phase==BTP_COMBAT_MOVE ? c->cursor_x : c->unit[focus].x;
         cy=(c->phase==BTP_COMBAT_MOVE ? c->cursor_y : c->unit[focus].y)+2;
     }
@@ -640,11 +640,11 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
     } else if (s->mission.phase) (void)btp_draw_sprite(&r->sprites,
         (s->story_flags[2] ? 146u : 0u)+s->mission.walk,200,64,btp_mission_terrain(s,&r->map),104,f);
     else if (s->campaign.mounted) (void)btp_draw_sprite(&r->sprites,
-        (s->campaign.mech[0]=='L' ? 0u : 146u)+s->campaign.mech_walk,200,64,0,104,f);
+        ((s->party.people[0][12] ? s->party.mechs[s->party.people[0][12]-1][0] : s->campaign.mech[0])=='L' ? 0u : 146u)+s->campaign.mech_walk,200,64,0,104,f);
     else (void)btp_draw_sprite(&r->sprites,166u+s->player_walk,208,96,
         hidden_rows(map,s->x_half,s->y_half),104,f);
     if (!s->combat.phase && s->story_flags[4]) {
-        for (unsigned i=1;i<8;++i) if (s->party.people[i][0]!=255) {
+        for (unsigned i=1;i<8;++i) if (s->party.people[i][0]!=255 && (s->party.people[i][12]>=4 || btp_party_mech((BtpState *)s,s->party.people[i][12])[121]==i)) {
             unsigned mount=s->party.people[i][12];
             const uint8_t *m=mount<4 ? mount ? s->party.mechs[mount-1] : s->campaign.mech : NULL;
             unsigned base=m ? m[0]=='L' ? 0u : 146u : 270u;
@@ -732,8 +732,8 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         rectangle(f,104,8,216,184,0);border_panel(r,f,104,8,216,184,0);
         if (c->ui==BTP_MENU_MESSAGE) {
             const char *message=s->menu.notice==1 ? "Save failed. Your previous save is intact." : s->menu.notice==2 ?
-                "Load failed. This slot is empty or invalid." : s->menu.notice==3 ? "Field healing requires medical supplies." :
-                "It would be dangerous to dismount so close to a populated area. Remounting requires the parked 'Mech nearby.";
+                "Load failed. This slot is empty or invalid." : s->menu.notice==3 ? (s->story_flags[25] ? "Field treatment completed. Allow time before treating again." : "Everyone is healthy.") :
+                "Crew allocation requires open terrain and a qualified pilot for each active 'Mech.";
             (void)wrapped(r,f,40,(const uint8_t *)message,strlen(message),15);
         } else if (c->ui==BTP_MENU_INSPECT) {
             uint8_t p[17];btp_menu_person(s,c->member,p);
@@ -743,14 +743,16 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
             snprintf(info,sizeof info,"Health %u  Technician %u",p[15],p[9]);text(r,f,112,104,info,15);
             snprintf(info,sizeof info,"Body %u  Dexterity %u",p[1],p[2]);text(r,f,112,48,info,15);
             text(r,f,112,128,"Selected for shop purchases",7);
+            if (s->party.enabled && btp_party_count(&s->party)>1) text(r,f,112,144,"Up/Down: give equipment",7);
         } else {
             const char *title=c->ui==BTP_MENU_SETTINGS ? "Game settings" : c->ui==BTP_MENU_STEPS ? "Movement rate" :
                 c->ui==BTP_MENU_SPEED ? "Combat speed" : c->ui==BTP_MENU_OUTTAKES ? "Outtake frequency" :
                 c->ui==BTP_MENU_LOAD ? "Load Game" : c->ui==BTP_MENU_SAVE ? "Save Game" :
-                c->ui==BTP_MENU_QUIT ? "Quit game?" : c->ui==BTP_MENU_ROOT ? "Actions" : "Choose a party member";
+                c->ui==BTP_MENU_QUIT ? "Quit game?" : c->ui==BTP_MENU_ROOT ? "Actions" : c->ui==BTP_MENU_CREW ? "Choose a 'Mech or foot" :
+                c->ui==BTP_MENU_SEAT ? "Replace this 'Mech's pilot?" : c->ui==BTP_MENU_ABANDON ? "Abandon unpiloted 'Mechs?" : c->ui==BTP_MENU_TRANSFER ? "Give equipment" : "Choose a party member";
             text(r,f,112,16,title,15);
             unsigned count=btp_actions_count(s);
-            for (unsigned i=0;i<count;++i) text(r,f,112,36+(int)i*16,btp_actions_label(s,i),i==c->selected ? 14u : 15u);
+            for (unsigned i=0;i<count;++i) text(r,f,112,36+(int)i*(count>8 ? 14 : 16),btp_actions_label(s,i),i==c->selected ? 14u : 15u);
         }
         text(r,f,112,176,"Enter / Backspace",7);
     }

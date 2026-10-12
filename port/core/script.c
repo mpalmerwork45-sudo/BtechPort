@@ -42,8 +42,7 @@ static int state_index(BtpScriptState *s, uint8_t *story, unsigned index, uint16
 {
     /* Original indexes use CBW. Sparse modeled bytes must never alias another
        core field: D30C[0..22] and the shop refusal byte at index 39 only. */
-    if (!story || (index >= BTP_STORY_PREFIX && index != 39 &&
-        index != 24 && index != 28 && index != 29 && index != 30 && index != 32 && index != 36 && index != 45 && index != 46 && index != 47 && index != 51 && index != 52 && index != 55)) {
+    if (!story || index>=BTP_STORY_BYTES) {
         fault(s, BTP_SCRIPT_STATE_INDEX, op_pc); return 0;
     }
     return 1;

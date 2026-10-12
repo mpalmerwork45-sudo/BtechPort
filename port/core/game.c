@@ -406,7 +406,7 @@ static uint16_t get16(const uint8_t *p) { return (uint16_t)(p[0] | (uint16_t)p[1
 void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
 {
     memset(b, 0, BTP_STATE_BYTES);
-    memcpy(b, "BTPM", 4); b[4] = 22;
+    memcpy(b, "BTPN", 4); b[4] = 23;
     for (unsigned i = 0; i < 4; ++i) b[8+i] = (uint8_t)(s->tick >> (8 * i));
     b[12] = (uint8_t)s->x_half; b[13] = (uint8_t)(s->x_half >> 8);
     b[14] = (uint8_t)s->y_half; b[15] = (uint8_t)(s->y_half >> 8);
@@ -554,7 +554,8 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         n == BTP_STATE_BYTES && !memcmp(b,"BTPJ",4) && b[4] == 19 ? 19 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPK",4) && b[4] == 20 ? 20 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPL",4) && b[4] == 21 ? 21 :
-        n == BTP_STATE_BYTES && !memcmp(b,"BTPM",4) && b[4] == 22 ? 22 : 0;
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPM",4) && b[4] == 22 ? 22 :
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPN",4) && b[4] == 23 ? 23 : 0;
     if (!version) return 0;
     for (unsigned i = 5; i < 8; ++i) if (b[i]) return 0;
     if (version == 1) { for (unsigned i = 20; i < 24; ++i) if (b[i]) return 0; }
@@ -634,8 +635,8 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         if (result.campaign.invasion>1 || result.campaign.owned>1 || result.campaign.checkpoint_owned>1 ||
             result.campaign.world_x>2047 || result.campaign.world_y>2047 || result.campaign.building>=26 ||
             result.campaign.world_clock>=4 || result.campaign.encounter>2 || result.campaign.mounted>result.campaign.owned ||
-            result.campaign.mech_walk>15 || result.campaign.mech_direction>7 || result.campaign.ui>(version>=19 ? BTP_MENU_QUIT : 6) ||
-            result.campaign.selected>7 || result.campaign.member>7 || result.campaign.mech_x>2047 || result.campaign.mech_y>2047) return 0;
+            result.campaign.mech_walk>15 || result.campaign.mech_direction>7 || result.campaign.ui>(version>=23 ? BTP_MENU_RECIPIENT : version>=19 ? BTP_MENU_QUIT : 6) ||
+            result.campaign.selected>(version>=23 ? 8u : 7u) || result.campaign.member>7 || result.campaign.mech_x>2047 || result.campaign.mech_y>2047) return 0;
     }
     if (version>=16) {
         result.terrain_next=b[2048];if (result.terrain_next>63) return 0;

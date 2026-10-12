@@ -5,11 +5,11 @@ from combat_oracle import OriginalCombat,ROOT
 from make_party_vectors import fingerprint,SNAP
 from unicorn.x86_const import (UC_X86_REG_CS,UC_X86_REG_IP,UC_X86_REG_DS,UC_X86_REG_SS,UC_X86_REG_SP,UC_X86_REG_BP,UC_X86_REG_ES)
 
-def span(m,segment,start,end,locals):
-    bp=0x7f000;m.write(bp-0x100,bytes(0x120))
+def span(m,segment,start,end,locals,stack_data=False):
+    bp=m.ds+0xe000 if stack_data else 0x7f000;m.write(bp-0x100,bytes(0x120))
     for off,value in locals.items():m.word(bp+off,value)
     for reg,value in ((UC_X86_REG_CS,m.load+segment),(UC_X86_REG_IP,start),(UC_X86_REG_DS,m.ds//16),
-            (UC_X86_REG_ES,m.state//16),(UC_X86_REG_SS,0x7000),(UC_X86_REG_SP,0xee00),(UC_X86_REG_BP,0xf000)):m.cpu.reg_write(reg,value)
+            (UC_X86_REG_ES,m.state//16),(UC_X86_REG_SS,m.ds//16 if stack_data else 0x7000),(UC_X86_REG_SP,0xdd00 if stack_data else 0xee00),(UC_X86_REG_BP,0xe000 if stack_data else 0xf000)):m.cpu.reg_write(reg,value)
     m.cpu.emu_start((m.load+segment)*16+start,(m.load+segment)*16+end,count=1000000)
     if m.cpu.reg_read(UC_X86_REG_IP)!=end:raise RuntimeError('Aftermath instruction bound exceeded')
 

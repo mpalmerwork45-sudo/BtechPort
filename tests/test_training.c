@@ -135,7 +135,7 @@ static void synthetic(void)
     CHECK(v.animation_kind == 8 && v.animation_flags == 1 && v.status == BTP_SCRIPT_ANIMATION);
     btp_script_animation_return(&v,&b,s.story_flags); CHECK(s.story_flags[47] == 1);
     b.bytes[1]=22; btp_script_start(&v,&b,s.story_flags); CHECK(v.error == BTP_SCRIPT_SCENE);
-    b=(BtpBld){.length=4,.bytes={0xf4,48,1,0xff}};
+    b=(BtpBld){.length=4,.bytes={0xf4,100,1,0xff}};
     btp_script_start(&v,&b,s.story_flags); CHECK(v.error == BTP_SCRIPT_STATE_INDEX);
     free(r);
 }

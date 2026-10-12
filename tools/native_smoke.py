@@ -570,6 +570,18 @@ def aftermath(env,work):
         if json.loads(actual.stdout)!=json.loads(wanted.stdout) or frame.read_bytes()!=expected.read_bytes():raise RuntimeError('Native aftermath continuation differs')
         print('PASS: native saved salvage prerequisite, exact SDL input/state/pixels and resumed exploration.',flush=True)
 
+def field(env,work):
+    """Original GAME3 prerequisite and saved native crew/medical/equipment input."""
+    subprocess.run([str(ROOT/'build/btp-menu-tests'),str(ROOT/'Original DOS')],cwd=ROOT,check=True,capture_output=True,text=True)
+    with tempfile.TemporaryDirectory(prefix='native-field-',dir=work) as directory:
+        tmp=Path(directory);tail=tmp/'tail.actions';record=tmp/'record.actions';frame=work/'native-field.ppm';expected=tmp/'expected.ppm'
+        keys=['menu']+['down']*3+['accept','accept','down','accept','down','accept','menu']+['down']*4+['accept','accept']
+        tail.write_text('\n'.join(keys)+'\n')
+        actual=subprocess.run([str(ROOT/'build/btech-port'),'--load',str(work/'crew-menu.btp'),'--smoke-replay','--smoke-fast','--replay',str(tail),'--record',str(record),'--frame',str(frame)],cwd=ROOT,env=env,check=True,capture_output=True,text=True)
+        wanted=subprocess.run([str(ROOT/'build/btech-headless'),'--load',str(work/'crew-menu.btp'),'--replay',str(record),'--frame',str(expected)],cwd=ROOT,check=True,capture_output=True,text=True)
+        if json.loads(actual.stdout)!=json.loads(wanted.stdout) or frame.read_bytes()!=expected.read_bytes():raise RuntimeError('Native field continuation differs')
+        print('PASS: native original-save prerequisite, crew continuation, gear transfer and field healing; exact SDL state/pixels.',flush=True)
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--shops-only", action="store_true")
@@ -589,6 +601,7 @@ def main():
     parser.add_argument('--presentation-only',action='store_true')
     parser.add_argument('--original-save-only',action='store_true')
     parser.add_argument('--aftermath-only',action='store_true')
+    parser.add_argument('--field-only',action='store_true')
     args = parser.parse_args()
     work = ROOT / "work"
     work.mkdir(exist_ok=True)
@@ -608,6 +621,8 @@ def main():
             env.pop("SDL_VIDEODRIVER", None)
             os.environ["DISPLAY"] = env["DISPLAY"]
             os.environ["BTECH_REFERENCE_VIRTUAL"] = "1"
+            if args.field_only:
+                field(env,work);return
             if args.aftermath_only:
                 aftermath(env,work);return
             if args.original_save_only:

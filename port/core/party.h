@@ -4,6 +4,11 @@
 enum { BTP_PARTY_BYTES=1024 };
 void btp_party_init(BtpState *state);
 void btp_party_sync(BtpState *state);
+void btp_party_allocate(BtpState *state,unsigned member,unsigned mech,unsigned seat);
+void btp_party_transfer(BtpState *state,unsigned giver,unsigned recipient,unsigned item);
+unsigned btp_party_heal(BtpState *state,const BtpResources *resources,unsigned hospital_skill);
+void btp_heal_character(uint8_t person[17],unsigned program,uint8_t rng[3]);
+unsigned btp_party_field_salvage(BtpState *state,const uint8_t wrecks[4][125],const uint8_t marked[4]);
 unsigned btp_party_count(const BtpPartyState *party);
 uint8_t *btp_party_mech(BtpState *state,unsigned slot);
 const char *btp_party_name(const BtpPartyState *party,unsigned slot);

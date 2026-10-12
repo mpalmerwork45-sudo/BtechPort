@@ -63,6 +63,8 @@ typedef struct {
     uint8_t enabled,next_id, people[8][17], mech_types[4], mechs[3][125];
     uint16_t x[8],y[8];
     uint8_t walk[8],direction[8], selected,giver,item,phase;
+    uint8_t medical_kit,advanced_kit;
+    uint16_t mech_x[4],mech_y[4];
 } BtpPartyState;
 typedef struct {
     uint8_t phase,action,mech,selected,kind,item,outcome;

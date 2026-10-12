@@ -20,7 +20,11 @@ unsigned btp_actions_count(const BtpState *s)
 {
     switch (s->campaign.ui) {
     case BTP_MENU_ROOT:return active_mechs(s) ? 8u : 7u;
-    case BTP_MENU_ALLOCATE:return 2;
+    case BTP_MENU_ALLOCATE:return 9;
+    case BTP_MENU_CREW:return 6;
+    case BTP_MENU_SEAT:case BTP_MENU_ABANDON:return 2;
+    case BTP_MENU_TRANSFER:return 3;
+    case BTP_MENU_RECIPIENT:return 9;
     case BTP_MENU_PERSON:case BTP_MENU_EQUIPMENT:case BTP_MENU_HEAL:return s->party.enabled ? 8u : 1u;
     case BTP_MENU_SETTINGS:return 6;
     case BTP_MENU_STEPS:case BTP_MENU_OUTTAKES:return 3;
@@ -48,7 +52,14 @@ const char *btp_actions_label(const BtpState *s,unsigned item)
     case BTP_MENU_SPEED:return speed[item];
     case BTP_MENU_OUTTAKES:return frequency[item];
     case BTP_MENU_LOAD:case BTP_MENU_SAVE:return slots[item];
-    case BTP_MENU_ALLOCATE:return item ? "Pilot owned 'Mech" : "Travel on foot";
+    case BTP_MENU_ALLOCATE:case BTP_MENU_RECIPIENT:return item==8 ? "Done" : btp_party_name(&s->party,item);
+    case BTP_MENU_CREW: {
+        if (item>=4) return item==4 ? "Travel on foot" : "Cancel";
+        const uint8_t *m=item ? s->party.mechs[item-1] : s->campaign.mech;
+        return m[0]==255 ? "Empty" : m[0]=='L' ? "Locust" : m[0]=='C' ? "Commando" : m[0]=='W' ? "Wasp" : m[0]=='S' ? "Chameleon" : m[0]=='J' ? "Jenner" : "Owned 'Mech";
+    }
+    case BTP_MENU_SEAT:case BTP_MENU_ABANDON:return item ? "No" : "Yes";
+    case BTP_MENU_TRANSFER:return item==0 ? "Give weapon" : item==1 ? "Give armour" : "Return to game";
     case BTP_MENU_QUIT:return item ? "No" : "Yes";
     default:return s->party.enabled ? btp_party_name(&s->party,item) : "Jason";
     }
@@ -76,6 +87,7 @@ void btp_menu_person(const BtpState *s,unsigned member,uint8_t p[17])
 void btp_menu_input(BtpState *s,const BtpResources *r,BtpAction a)
 {
     ++s->tick;BtpCampaignState *c=&s->campaign;if (s->menu.io) return;
+    if (c->ui==BTP_MENU_INSPECT && s->party.enabled && btp_party_count(&s->party)>1 && (a==BTP_UP || a==BTP_DOWN)) { page(s,BTP_MENU_TRANSFER,0);return; }
     if (c->ui==BTP_MENU_MAP) {
         if (a==BTP_ACCEPT || a==BTP_CANCEL || a==BTP_OPEN_MENU) btp_menu_close(s);
         if (btp_action_moves(a)) {
@@ -96,9 +108,14 @@ void btp_menu_input(BtpState *s,const BtpResources *r,BtpAction a)
         switch (root_item(s,item)) {
         case 0:btp_menu_close(s);break;
         case 1:page(s,BTP_MENU_SETTINGS,0);break;
-        case 2:page(s,BTP_MENU_ALLOCATE,0);break;
+        case 2:
+            btp_party_init(s);
+            if (btp_world_populated(r,s)) { page(s,BTP_MENU_MESSAGE,0);s->menu.notice=4; }
+            else page(s,BTP_MENU_ALLOCATE,0);
+            break;
         case 3:page(s,BTP_MENU_PERSON,s->party.selected);break;
-        case 4:page(s,BTP_MENU_HEAL,0);break;
+        case 4:
+            (void)btp_party_heal(s,r,0);page(s,BTP_MENU_MESSAGE,0);s->menu.notice=3;break;
         case 5:page(s,BTP_MENU_LOAD,s->menu.slot);break;
         case 6:page(s,BTP_MENU_SAVE,s->menu.slot);break;
         case 7:
@@ -116,7 +133,7 @@ void btp_menu_input(BtpState *s,const BtpResources *r,BtpAction a)
         else btp_menu_close(s);
         break;
     case BTP_MENU_STEPS:
-        s->menu.steps=(uint8_t)(1u<<item);btp_menu_close(s);break;
+        s->menu.steps=(uint8_t)(s->story_flags[66] ? 1u : 1u<<item);btp_menu_close(s);break;
     case BTP_MENU_SPEED:s->menu.speed=(uint8_t)item;btp_menu_close(s);break;
     case BTP_MENU_OUTTAKES:s->menu.outtakes=(uint8_t)item;btp_menu_close(s);break;
     case BTP_MENU_LOAD:case BTP_MENU_SAVE:
@@ -130,14 +147,35 @@ void btp_menu_input(BtpState *s,const BtpResources *r,BtpAction a)
     case BTP_MENU_HEAL:s->menu.notice=3;page(s,BTP_MENU_MESSAGE,0);s->menu.notice=3;break;
     case BTP_MENU_QUIT:if (!item) s->menu.quit=1;btp_menu_close(s);break;
     case BTP_MENU_ALLOCATE: {
-        int near=0;
-        for (int y=-1;y<=1;++y) for (int x=-1;x<=1;++x)
-            if (btp_world_location(r,s,c->world_x/2+8*x,c->world_y/2+8*y)) near=1;
-        if (item && !c->mounted && !near && abs((int)c->world_x-c->mech_x)+abs((int)c->world_y-c->mech_y)<=2) c->mounted=1;
-        else if (!item && c->mounted && !near) c->mounted=0;
-        else { page(s,BTP_MENU_MESSAGE,0);s->menu.notice=4;break; }
-        btp_party_sync(s);btp_menu_close(s);break;
+        if (item<8) { if (s->party.people[item][0]!=255) { c->member=(uint8_t)item;page(s,BTP_MENU_CREW,0); }break; }
+        unsigned pilots=0,mechs=0,missing=0;
+        for (unsigned i=0;i<8;++i) pilots+=s->party.people[i][0]!=255 && s->party.people[i][8]!=0;
+        for (unsigned i=0;i<4;++i) if (btp_party_mech(s,i)[0]!=255) { ++mechs;missing|=btp_party_mech(s,i)[121]==255; }
+        if (!missing) btp_menu_close(s);
+        else if (pilots<mechs) page(s,BTP_MENU_ABANDON,1);
+        else { page(s,BTP_MENU_MESSAGE,0);s->menu.notice=4; }
+        break;
     }
+    case BTP_MENU_CREW:
+        if (item==5) { page(s,BTP_MENU_ALLOCATE,0);break; }
+        if (item<4 && btp_party_mech(s,item)[0]==255) break;
+        s->party.giver=(uint8_t)item;
+        if (item<4 && s->party.people[c->member][8] && btp_party_mech(s,item)[121]!=255 && btp_party_mech(s,item)[121]!=c->member) { page(s,BTP_MENU_SEAT,1);break; }
+        btp_party_allocate(s,c->member,item,item<4 && s->party.people[c->member][8] ? 121u : 122u);page(s,BTP_MENU_ALLOCATE,c->member);break;
+    case BTP_MENU_SEAT:btp_party_allocate(s,c->member,s->party.giver,item ? 122u : 121u);page(s,BTP_MENU_ALLOCATE,c->member);break;
+    case BTP_MENU_ABANDON:
+        if (!item) for (unsigned i=0;i<4;++i) if (btp_party_mech(s,i)[0]!=255 && btp_party_mech(s,i)[121]==255) {
+            btp_party_mech(s,i)[0]=255;s->party.mech_types[i]=255;for (unsigned j=0;j<8;++j) if (s->party.people[j][12]==i) s->party.people[j][12]=8;
+        }
+        btp_menu_close(s);break;
+    case BTP_MENU_TRANSFER:
+        if (item==2) btp_menu_close(s);
+        else { s->party.giver=c->member;s->party.item=(uint8_t)item;page(s,BTP_MENU_RECIPIENT,0); }
+        break;
+    case BTP_MENU_RECIPIENT:
+        if (item==8) btp_menu_close(s);
+        else if (s->party.people[item][0]!=255) { btp_party_transfer(s,s->party.giver,item,s->party.item);btp_menu_close(s); }
+        break;
     default:btp_menu_close(s);break;
     }
 }
@@ -147,6 +185,6 @@ int btp_actions_valid(const BtpState *s)
     if ((m->steps!=1 && m->steps!=2 && m->steps!=4) || m->sound>1 || m->speed>5 || m->outtakes>2 ||
         m->slot>5 || m->io>2 || m->notice>4 || m->quit>1 || m->map_x>2047 || m->map_y>2047) return 0;
     if ((s->mode==BTP_ACTIONS)!=(s->campaign.ui!=0)) return 0;
-    if (s->campaign.ui>BTP_MENU_QUIT || (s->campaign.ui && s->campaign.selected>=btp_actions_count(s))) return 0;
+    if (s->campaign.ui>BTP_MENU_RECIPIENT || (s->campaign.ui && s->campaign.selected>=btp_actions_count(s))) return 0;
     return !m->io || (s->mode==BTP_ACTIONS && s->campaign.ui==(m->io==BTP_MENU_IO_SAVE ? BTP_MENU_SAVE : BTP_MENU_LOAD));
 }

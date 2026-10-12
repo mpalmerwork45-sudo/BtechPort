@@ -39,10 +39,12 @@ int btp_original_decode(const uint8_t *b,size_t n,BtpState *out,const BtpResourc
     if (s.story_flags[4]) {
         s.npc=(BtpNpcState){.rng={70,54,210}};
         s.party.enabled=1;s.party.next_id=b[NEXT];memcpy(s.party.people,b+PEOPLE,136);
+        s.party.medical_kit=b[1+0xd450-0xc614];s.party.advanced_kit=b[1+0xd451-0xc614];
         for (unsigned i=0;i<4;++i) {
             uint8_t *m=btp_party_mech(&s,i);memcpy(m,b+MECHS+125*i,125);
             s.party.mech_types[i]=m[0]==255 ? b[TYPES+i] : m[0];
             if (s.party.mech_types[i]!=255) s.campaign.owned=1;
+            s.party.mech_x[i]=(uint16_t)x;s.party.mech_y[i]=(uint16_t)y;
         }
         s.campaign.mounted=(uint8_t)(s.party.people[0][12]<4);
         for (unsigned i=0;i<8;++i) { s.party.x[i]=(uint16_t)x;s.party.y[i]=(uint16_t)y; }
@@ -64,6 +66,7 @@ int btp_original_encode(const BtpState *s,uint8_t b[BTP_ORIGINAL_BYTES],BtpError
     setlong(b+CASH,s->credits);for (unsigned i=0;i<3;++i) setlong(b+CASH+4+4*i,s->investments[i]);
     if (s->party.enabled) {
         memcpy(b+PEOPLE,s->party.people,136);b[NEXT]=s->party.next_id;
+        b[1+0xd450-0xc614]=s->party.medical_kit;b[1+0xd451-0xc614]=s->party.advanced_kit;
         for (unsigned i=0;i<4;++i) {
             const uint8_t *m=i ? s->party.mechs[i-1] : s->campaign.mech;memcpy(b+MECHS+125*i,m,125);
             b[TYPES+i]=m[0]==255 ? s->party.mech_types[i] : 255;

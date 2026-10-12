@@ -4,7 +4,7 @@
 #include "core/combat.h"
 #include "core/npc.h"
 #include <string.h>
-static void begin(BtpState *s,unsigned event)
+static void begin(BtpState *s,const BtpResources *r,unsigned event)
 {
     BtpCampaignState *v=&s->campaign;
     v->return_map=s->map_id;v->return_x=s->x_half;v->return_y=s->y_half;
@@ -13,16 +13,18 @@ static void begin(BtpState *s,unsigned event)
     *c=(BtpCombatState){.phase=BTP_COMBAT_CONTROL,.selected=1,.messages=2,.graphics=1,.movement=255,.kick_target=255,.enemy_movement=255};
     memset(c->orders,255,11);memset(c->enemy_orders,255,sizeof c->enemy_orders);memset(c->enemy_modes,255,sizeof c->enemy_modes);
     btp_party_init(s);btp_party_sync(s);
+    unsigned formed=0;
     for (unsigned i=0;i<4;++i) if (s->party.mech_types[i]!=255 && btp_party_mech(s,i)[0]!=255) {
         unsigned pilot=btp_party_mech(s,i)[121];
         if (pilot>=8 || s->party.people[pilot][0]==255 || s->party.people[pilot][12]!=i) continue;
         BtpCombatUnit *u=&c->unit[c->count];memcpy(u->record,btp_party_mech(s,i),125);
-        u->x=(uint8_t)(v->world_x-v->battle_x);u->y=(uint8_t)(v->world_y-v->battle_y-2u);c->ids[c->count++]=(uint8_t)i;
+        u->x=(uint8_t)((v->world_x-v->battle_x+r->combat.mech_formation_x[formed])&127);u->y=(uint8_t)((v->world_y-v->battle_y+r->combat.mech_formation_y[formed])&127);c->ids[c->count++]=(uint8_t)i;++formed;
     }
+    formed=0;
     for (unsigned i=0;i<8;++i) if (s->party.people[i][0]!=255 && s->party.people[i][12]>=8) {
         BtpCombatUnit *u=&c->unit[c->count];u->infantry=1;memcpy(u->record,s->party.people[i],17);
         /* Original 103B:01DC formations assign fresh encounter positions. */
-        u->x=(uint8_t)((v->world_x-v->battle_x+2*(i%3))&127u);u->y=(uint8_t)((v->world_y-v->battle_y+2*(i/3))&127u);
+        u->x=(uint8_t)((v->world_x-v->battle_x+r->combat.formation_x[formed])&127);u->y=(uint8_t)((v->world_y-v->battle_y+r->combat.formation_y[formed])&127);++formed;
         c->ids[c->count++]=(uint8_t)(4+i);
     }
     c->friends=c->count;c->target_unit=c->friends;c->last_target=c->friends;
@@ -44,7 +46,7 @@ void btp_campaign_rex(BtpState *s,const BtpResources *r)
     s->campaign.world_x=1385;s->campaign.world_y=1118;s->x_half=105;s->y_half=94;
     s->script.position_x=0x0a69;s->script.position_y=0x805e;
     s->campaign.mounted=0;for (unsigned i=0;i<8;++i) p->people[i][12]=8;
-    begin(s,2);BtpCombatState *c=&s->combat;
+    begin(s,r,2);BtpCombatState *c=&s->combat;
     unsigned x=114+(btp_rng_next(s->npc.rng)&1u),y=93+(btp_rng_next(s->npc.rng)&1u);
     unsigned count=2+(btp_rng_next(s->npc.rng)&3u);
     for (unsigned i=0;i<count;++i) {
@@ -82,7 +84,7 @@ int btp_campaign_random(BtpState *s,const BtpResources *r)
     BtpCombatUnit candidates[12];uint8_t ids[12];int dx,dy;
     unsigned count=btp_campaign_candidates(s,r,candidates,ids,&dx,&dy);
     if (!count) return 0;
-    begin(s,1);BtpCombatState *c=&s->combat;
+    begin(s,r,1);BtpCombatState *c=&s->combat;
     int start_x=(int)c->unit[0].x+dx,start_y=(int)c->unit[0].y+dy,x=start_x,y=start_y,scanned=0;
     for (unsigned i=0;i<count;++i) {
         int placed=0;
@@ -111,6 +113,12 @@ void btp_campaign_result(BtpState *s,const BtpResources *r)
     }
         s->aftermath.applied=1;
         if (c->lost) { s->mode=BTP_GAME_OVER;return; }
+        uint8_t wrecks[4][125]={{0}},marked[4]={0};
+        for (unsigned i=0;i<4;++i) {
+            unsigned at=btp_combat_target(c,12+i);
+            if (at<c->count && s->aftermath.wrecks[12+i]) { marked[i]=1;memcpy(wrecks[i],c->unit[at].record,125); }
+        }
+        (void)btp_party_field_salvage(s,(const uint8_t (*)[125])wrecks,marked);
         /* 103B:0C4C calls salvage before pocket cash, including withdrawal. */
         unsigned wreck=0,empty=0;
         for (unsigned i=0;i<4;++i) { wreck|=s->aftermath.wrecks[i] || s->aftermath.wrecks[12+i];empty|=btp_party_mech(s,i)[0]==255; }
@@ -183,7 +191,7 @@ void btp_campaign_eject(BtpState *s)
                 memcpy(c->enemy_orders[k-1],c->enemy_orders[k-2],12);c->enemy_fired[k-1]=c->enemy_fired[k-2];
                 if (k==2) c->enemy_modes[0]=c->enemy_movement;else c->enemy_modes[k-2]=c->enemy_modes[k-3];
             }
-            c->unit[at]=(BtpCombatUnit){.infantry=1,.x=(uint8_t)((wreck.x+crew)&127u),.y=wreck.y,.direction=wreck.direction};memcpy(c->unit[at].record,s->party.people[p],17);
+            c->unit[at]=(BtpCombatUnit){.infantry=1,.x=(uint8_t)((wreck.x+crew)&127),.y=wreck.y,.direction=wreck.direction};memcpy(c->unit[at].record,s->party.people[p],17);
             c->ids[at]=(uint8_t)(4+p);c->plans[at]=(BtpCombatPlan){.movement=255,.kick=255};memset(c->plans[at].orders,255,11);
             memset(c->path[at],0,sizeof c->path[at]);c->moved[at]=c->path_index[at]=c->walk[at]=c->plan_direction[at]=c->fallback[at]=0;
             memset(c->enemy_orders[at-1],255,12);c->enemy_fired[at-1]=0;if (at==1) c->enemy_movement=255;else c->enemy_modes[at-2]=255;

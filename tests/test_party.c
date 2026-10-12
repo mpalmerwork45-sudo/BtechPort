@@ -76,5 +76,34 @@ int main(int argc,char **argv)
     for (unsigned i=0;i<300 && s.combat.phase==BTP_COMBAT_ROUND;++i) { btp_game_tick(&s,r,BTP_IDLE);CHECK(restore(&s,r)); }
     CHECK(s.combat.phase==BTP_COMBAT_MENU && s.combat.round==1);
     CHECK(s.combat.enemy_fired[0]&1u);CHECK(s.combat.plans[0].orders[0]==255);
+    f=fopen("tests/fixtures/field-primary.txt","r");CHECK(f);unsigned field=0;
+    while (fgets(line,sizeof line,f)) {
+        if (line[0]=='H') {
+            unsigned skill,equipment,seed,expected,hp[8];CHECK(sscanf(line+1,"%u %u %u %u %u %u %u %u %u %u %u %u",&skill,&equipment,&seed,&expected,&hp[0],&hp[1],&hp[2],&hp[3],&hp[4],&hp[5],&hp[6],&hp[7])==12);
+            btp_start(&s);for (unsigned k=0;k<3;++k) s.npc.rng[k]=(uint8_t)(seed>>(k*8));
+            for (unsigned p=0;p<8;++p) { uint8_t a[17]={(uint8_t)p,8,9,7,0,0,0,0,0,0,0,0,8,0,0,(uint8_t)(30+p),0};btp_heal_character(a,r->combat.medical[skill][equipment-1],s.npc.rng);CHECK(a[15]==hp[p]); }
+            CHECK(rng(&s)==expected);
+        } else if (line[0]=='C') {
+            unsigned p,seat,occupied,mount[8];char crews[5];CHECK(sscanf(line+1,"%u %u %u %4s %u %u %u %u %u %u %u %u",&p,&seat,&occupied,crews,&mount[0],&mount[1],&mount[2],&mount[3],&mount[4],&mount[5],&mount[6],&mount[7])==12);
+            btp_start(&s);btp_party_init(&s);
+            for (unsigned i=0;i<8;++i) { memset(s.party.people[i],0,17);s.party.people[i][0]=(uint8_t)i;s.party.people[i][12]=8;s.party.people[i][8]=1; }
+            for (unsigned i=0;i<4;++i) { uint8_t *m=btp_party_mech(&s,i);memcpy(m,r->combat.loans[0],125);m[121]=(uint8_t)(occupied ? 1 : 255);m[122]=(uint8_t)(occupied ? 2 : 255); }
+            btp_party_allocate(&s,p,2,seat);
+            for (unsigned i=0;i<2;++i) { unsigned value;CHECK(sscanf(crews+2*i,"%2x",&value)==1);CHECK(btp_party_mech(&s,2)[121+i]==value); }
+            for (unsigned i=0;i<8;++i) CHECK(s.party.people[i][12]==mount[i]);
+        } else if (line[0]=='T') {
+            unsigned skill,technician,count,reward,expected;uint64_t hashes[4];CHECK(sscanf(line+1,"%u %u %u %u %u %" SCNx64 " %" SCNx64 " %" SCNx64 " %" SCNx64,&skill,&technician,&count,&reward,&expected,&hashes[0],&hashes[1],&hashes[2],&hashes[3])==9);
+            btp_start(&s);btp_party_init(&s);s.party.people[technician][0]=(uint8_t)technician;s.party.people[technician][9]=(uint8_t)skill;s.npc.rng[0]=42;s.npc.rng[1]=s.npc.rng[2]=0;
+            uint8_t donors[4][125],marked[4]={0};
+            for (unsigned i=0;i<4;++i) { uint8_t *m=btp_party_mech(&s,i);memcpy(m,r->combat.loans[0],125);memset(m+17,0,19);m[51]=0x90;m[85]=0xa2;memcpy(donors[i],r->combat.loans[0],125);donors[i][51]=16;donors[i][85]=34;marked[i]=(uint8_t)(i<count); }
+            CHECK(btp_party_field_salvage(&s,(const uint8_t (*)[125])donors,marked)==reward);CHECK(rng(&s)==expected);
+            for (unsigned i=0;i<4;++i) CHECK(hash(btp_party_mech(&s,i),125)==hashes[i]);
+        } else if (line[0]=='P' || line[0]=='M') {
+            unsigned p,x,y;CHECK(sscanf(line+1,"%u %u %u",&p,&x,&y)==3);
+            CHECK((unsigned)(64+(line[0]=='P' ? r->combat.formation_x[p] : r->combat.mech_formation_x[p]))==x);
+            CHECK((unsigned)(64+(line[0]=='P' ? r->combat.formation_y[p] : r->combat.mech_formation_y[p]))==y);
+        } else continue;
+        ++field;
+    }fclose(f);CHECK(field==146);
     free(r);printf("PASS: %u checks, %u party / %u original encounter setup cases and independent ally orders\n",checks,cases,encounters);return 0;
 }

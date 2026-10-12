@@ -39,7 +39,7 @@ static void vm_bounds(void)
     uint8_t output[16]; CHECK(btp_script_text(&s,&b,output,sizeof output) && !strcmp((char *)output,"x4294967295"));
     CHECK(!btp_script_text(&s,&b,output,11));
     s.cash_after = 2; CHECK(!btp_script_text(&s,&b,output,sizeof output));
-    b = (BtpBld){.length=4,.bytes={0xf4,23,1,0xff}};
+    b = (BtpBld){.length=4,.bytes={0xf4,100,1,0xff}};
     btp_script_start(&s,&b,story); CHECK(s.error == BTP_SCRIPT_STATE_INDEX);
     b.bytes[1] = 39; btp_script_start(&s,&b,story); CHECK(s.status == BTP_SCRIPT_END && story[39] == 1);
     BtpResources *r = calloc(1,sizeof *r); CHECK(r != NULL);

@@ -218,3 +218,51 @@ separate scratch save filenames: concurrent CTest runs previously collided on
 and exact resumed continuation. All 37 CTest suites pass; headless sanitizer
 suites pass. The SDL saved-result test uses an explicit controlled prerequisite,
 not an asserted ordinary-input campaign route.
+
+## Crew, formation and field effects increment
+
+**VERIFIED:** another 146 primary numeric cases cover all 24 medical
+skill/equipment programs with three RNG prerequisites, 32 crew replacement
+cases, all 12 encounter formation positions and 30 technician recovery cases.
+`0C31:01BC..0207` adds the original die-program result to each injured living
+character and caps it at body × 10. `0C67:067F..0873` removes previous seating,
+evicts a passenger or moves the replaced pilot to the passenger seat, and
+writes the new mount/seat consistently. These spans require the original
+small-model DS=SS relationship for indexed stack-local arrays; the oracle
+sets that caller prerequisite without modifying instructions.
+
+Space allocation handles all four active owned records and eight people,
+qualified pilots, passengers, foot travel, pilot replacement and the original
+unpiloted-mech completion/abandonment conditions. Encounter positions use
+`DS:3A16..3A2D`, rather than guessed offsets. The camera follows the selected
+friendly unit and outdoor rendering uses Jason's actual mounted record and
+omits duplicate passenger mech sprites. Existing primary movement/collision
+fixtures remain covered. Outdoor party following remains the documented
+**APPROXIMATE** trail; complete outdoor formation/cadence is not asserted.
+
+Field healing uses the best living medic, original `DS:2602` programs, Field
+Medical Kit `D450`, and advanced kit `D451`. Earlier secondary notes call
+those bytes training flags; executed `14D3:0DC2/0DCF` and their medical
+callers contradict that label. `D335` stores the original 63-count cooldown.
+Native world-clock cadence remains approximate. Kit bytes and owned-mech
+positions occupy reserved bytes in each 1,024-byte party block; original
+imports/exports retain both medical flags. Internal **BTPN/v23** retains all
+older versions and payload size. Up/Down on a party inspection opens the
+bounded equipment-giving menu; weapon and partial-armour records move to the
+chosen member. This convenience's layout is **APPROXIMATE**, while the modeled
+record changes are explicit and saved.
+
+`05AB:00C7..042A` recovers armour, internal structure (technician rank 4),
+working heat sinks (rank 2) and weapon components (rank 3) from enemy wrecks.
+Original `103B:273D` checks the associated surviving structure. Recovery
+restores surviving owned records before mech salvage. Its cash formula uses
+the selected technician's **party slot**, not rank: the native implementation
+preserves this unusual executed rule. All 30 record fingerprints and RNG
+results match. No guessed repair chance is added.
+
+**PASS:** 4,329 party/field checks; 89 menu assertions, saved multi-mech
+allocation, equipment transfer, medical treatment/cooldown and all six exact
+original-save roundtrips. All 37 regular CTest suites pass. The focused SDL
+original-save prerequisite, equipment and field-treatment flow matches full
+headless state and pixels. Historical bounds tests now reject index 100;
+the verified 100-byte initialized story window supports later script flags.

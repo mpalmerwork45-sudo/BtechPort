@@ -82,5 +82,19 @@ int main(int argc,char **argv)
     btp_game_tick(&s,r,BTP_OPEN_MENU);select_item(&s,r,6);CHECK(s.campaign.ui==BTP_MENU_MAP && restore(&s,r));
     unsigned x=s.x_half,y=s.y_half;btp_game_tick(&s,r,BTP_RIGHT);CHECK(s.x_half==x && s.y_half==y && restore(&s,r));
     btp_game_tick(&s,r,BTP_CANCEL);CHECK(s.mode==BTP_EXPLORE);
+    CHECK(btp_save_load("Original DOS/GAME3",&s,r,&e));btp_menu_open(&s);select_item(&s,r,2);
+    CHECK(s.campaign.ui==BTP_MENU_ALLOCATE && restore(&s,r));select_item(&s,r,0);select_item(&s,r,4);
+    CHECK(!s.campaign.mounted && s.party.people[0][12]==8 && restore(&s,r));
+    select_item(&s,r,1);select_item(&s,r,0);CHECK(s.party.people[1][12]==0 && restore(&s,r));
+    select_item(&s,r,0);select_item(&s,r,1);CHECK(s.party.people[0][12]==1 && s.campaign.mounted && restore(&s,r));
+    select_item(&s,r,8);CHECK(s.mode==BTP_EXPLORE && restore(&s,r));
+    CHECK(btp_save_write("work/crew-menu.btp",&s,r,&e));
+    btp_menu_open(&s);select_item(&s,r,3);select_item(&s,r,0);btp_game_tick(&s,r,BTP_DOWN);
+    CHECK(s.campaign.ui==BTP_MENU_TRANSFER && restore(&s,r));select_item(&s,r,0);select_item(&s,r,1);
+    CHECK(s.party.people[0][11]==0 && s.weapon==0 && s.party.people[1][11]==9 && restore(&s,r));
+    s.story_flags[41]=0;s.party.people[1][15]=1;btp_menu_open(&s);select_item(&s,r,4);
+    CHECK(s.party.people[1][15]>1 && s.story_flags[41]==63 && restore(&s,r));
+    unsigned health=s.party.people[1][15];btp_menu_close(&s);btp_menu_open(&s);select_item(&s,r,4);
+    CHECK(s.party.people[1][15]==health && restore(&s,r));
     free(pixels);free(r);printf("PASS: %u checks; original title pixels, Space menu, movement rate and all six save/load slots\n",checks);return 0;
 }
