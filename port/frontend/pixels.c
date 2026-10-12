@@ -11,6 +11,7 @@
 #include "core/service.h"
 #include "core/menu.h"
 #include "core/cache.h"
+#include "core/yard.h"
 #include "data/anm.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -407,6 +408,24 @@ static void combat_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
     const BtpCombatState *c=&s->combat;char line[40];
     static const char *commands[10]={"Walk","Run","Jump","Use Weapons","Kick","Computer","Scan","Next","Flee","Begin Fight"};
     rectangle(f,0,0,104,200,0);
+    if (c->phase==BTP_COMBAT_OFFER || c->phase==BTP_COMBAT_AVOID) {
+        unsigned mechs=0,humans=0;
+        for (unsigned i=c->friends;i<c->count;++i) if (c->unit[i].record[0]!=255) {
+            if (c->unit[i].infantry) ++humans;else ++mechs;
+        }
+        char description[100];snprintf(description,sizeof description,"%s%u%s%s%s%u%s%s",
+            r->dialogue.bytes+r->dialogue.offset[166],mechs,r->dialogue.bytes+r->dialogue.offset[167],mechs==1 ? "" : "s",
+            r->dialogue.bytes+r->dialogue.offset[168],humans,r->dialogue.bytes+r->dialogue.offset[169],humans==1 ? "" : "s");
+        (void)left_message(r,f,(const uint8_t *)description,strlen(description));
+        rectangle(f,104,64,216,96,0);border_panel(r,f,104,64,216,96,0);
+        unsigned id=c->phase==BTP_COMBAT_OFFER ? 170u : 171u;
+        size_t n;const uint8_t *p=bank_literal(r,id,&n);if (p) (void)wrapped(r,f,72,p,n,15);
+        if (c->phase==BTP_COMBAT_OFFER) {
+            rectangle(f,c->selected ? 168 : 128,104,c->selected ? 16 : 24,8,14);
+            text(r,f,128,104,"Yes",c->selected ? 15u : 0u);text(r,f,168,104,"No",c->selected ? 0u : 15u);
+        }
+        return;
+    }
     if (c->phase>=BTP_COMBAT_CONTROL && c->phase<=BTP_COMBAT_GRAPHICS) {
         unsigned id=87u+c->phase-BTP_COMBAT_CONTROL;
         const uint8_t *message=r->dialogue.bytes+r->dialogue.offset[id];
@@ -501,8 +520,8 @@ static void combat_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
     } else if (c->phase<=BTP_COMBAT_GRAPHICS || c->phase==BTP_COMBAT_NOTICE) {
         rectangle(f,104,64,216,96,0);border_panel(r,f,104,64,216,96,0);
         if (c->phase==BTP_COMBAT_NOTICE) {
-            if (c->notice==5) {
-                size_t n;const uint8_t *p=bank_literal(r,147,&n);
+            if (c->notice>=5) {
+                size_t n;const uint8_t *p=bank_literal(r,c->notice==5 ? 147u : c->notice==6 ? 148u : c->notice==7 ? 156u : 157u,&n);
                 if (p) (void)wrapped(r,f,72,p,n,15);
                 return;
             }
@@ -770,10 +789,9 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                 unsigned pose=r->combat.poses[e->group][e->direction][0];
                 if (s->effects.age/2u<pose && (i==e->actor || (e->hit && i==e->target && u->infantry))) continue;
             }
-            /* Mech silhouette follows its own record, including invading
-               Jenners; an enemy must not inherit the loan's Locust atlas. */
-            unsigned base=u->infantry ? s->combat.friends && i<s->combat.friends ? btp_combat_id(&s->combat,i)==4 ? 166u : 270u : 270u : u->record[0]=='L' ? 0u : 146u;
-            (void)btp_draw_sprite(&r->sprites,base+s->combat.walk[i],
+            unsigned friends=s->combat.friends ? s->combat.friends : 1u;
+            unsigned base=u->infantry ? s->combat.friends && i<s->combat.friends ? btp_combat_id(&s->combat,i)==4 ? 166u : 270u : 270u : btp_mech_sprite_base(u->record[0],i>=friends);
+            (void)btp_draw_sprite(&r->sprites,u->record[0]=='s' ? 16u : base+s->combat.walk[i],
                 200+((int)u->x-cx)*8,64+((int)u->y+2-cy)*8,btp_combat_cover(map,u,&terrain),104,f);
         }
         combat_route(r,s,cx,cy,f);combat_flash(r,s,cx,cy,f);
@@ -821,7 +839,20 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         if (s->blocked) text(r,f,8,80,s->blocked == BTP_EDGE ? "Map edge" : "Blocked",12);
     }
     if (s->npc.fault) text(r,f,8,80,"NPC fault",12);
-    if (s->combat.phase==BTP_COMBAT_STORY) {
+    if (s->mode==BTP_YARD && s->yard.phase==BTP_YARD_OWN) {
+        rectangle(f,104,0,216,200,0);text(r,f,112,8,"Which 'Mech will you take",15);text(r,f,112,16,"into combat?",15);
+        for (unsigned i=0;i<4;++i) if (s->party.mech_types[i]!=255) {
+            char name[17];memcpy(name,btp_party_mech((BtpState *)s,i)+1,16);name[16]=0;
+            if (i==s->yard.selected) rectangle(f,112,40+(int)i*16,200,8,14);
+            text(r,f,112,40+(int)i*16,name,i==s->yard.selected ? 0u : 15u);
+        }
+    } else if (s->mode==BTP_YARD && s->yard.phase && s->yard.phase<=BTP_YARD_FOUND && !s->cutscene.active) {
+        unsigned id=s->yard.phase==BTP_YARD_CLIMB ? 151u : s->yard.phase==BTP_YARD_SWITCH ? 153u : s->yard.phase==BTP_YARD_FAIL ? 154u : 155u;
+        size_t n;const uint8_t *p=bank_literal(r,id,&n);
+        rectangle(f,104,56,216,96,0);border_panel(r,f,104,56,216,96,0);
+        int y=p ? wrapped(r,f,64,p,n,15) : 64;
+        if (s->yard.phase==BTP_YARD_CLIMB) { p=bank_literal(r,152,&n);if (p) (void)wrapped(r,f,y,p,n,15); }
+    } else if (s->combat.phase==BTP_COMBAT_STORY) {
         unsigned id=s->late.invasion_popup==1 ? 141u : 140u+s->late.invasion_popup;
         size_t n;const uint8_t *p=bank_literal(r,id,&n);
         rectangle(f,104,56,216,88,0);border_panel(r,f,104,56,216,88,0);

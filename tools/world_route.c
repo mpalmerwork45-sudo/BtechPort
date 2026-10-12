@@ -14,7 +14,8 @@ static int encounter(BtpState *s,const BtpResources *r)
     for (unsigned n=0;n<40 && s->mode==BTP_ENCOUNTER;++n) {
         if (s->combat.phase==BTP_COMBAT_MENU) {
             if (s->combat.selected!=8) step(s,r,BTP_DOWN);else step(s,r,BTP_ACCEPT);
-        } else if (s->combat.phase>=BTP_COMBAT_CONTROL && s->combat.phase<=BTP_COMBAT_GRAPHICS) step(s,r,BTP_ACCEPT);
+        } else if (s->combat.phase==BTP_COMBAT_OFFER ||
+            (s->combat.phase>=BTP_COMBAT_CONTROL && s->combat.phase<=BTP_COMBAT_GRAPHICS)) step(s,r,BTP_ACCEPT);
         else return 0;
     }
     return s->mode!=BTP_ENCOUNTER;

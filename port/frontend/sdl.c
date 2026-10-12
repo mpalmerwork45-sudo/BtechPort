@@ -11,7 +11,7 @@
 
 static int movement_mode(const BtpState *s)
 {
-    return s->mode == BTP_EXPLORE || s->mode==BTP_CACHE || (s->mode == BTP_MISSION && s->mission.phase == BTP_MISSION_DRIVE) ||
+    return s->mode == BTP_EXPLORE || s->mode==BTP_CACHE || (s->mode==BTP_YARD && !s->yard.phase) || (s->mode == BTP_MISSION && s->mission.phase == BTP_MISSION_DRIVE) ||
         (s->mode==BTP_ENCOUNTER && s->combat.phase==BTP_COMBAT_MOVE);
 }
 static int amount_editor(const BtpState *s)
@@ -81,7 +81,7 @@ int main(int argc, char **argv)
         fprintf(stderr, "SDL: %s\n", SDL_GetError()); goto done;
     }
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
-    SDL_Window *window = SDL_CreateWindow("BtechPort M3h - Crescent Hawk's Inception", SDL_WINDOWPOS_CENTERED,
+    SDL_Window *window = SDL_CreateWindow("BtechPort - Crescent Hawk's Inception", SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED, 960, 600, SDL_WINDOW_RESIZABLE);
     SDL_Renderer *renderer = window ? SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE) : NULL;
     SDL_Texture *texture = renderer ? SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
@@ -252,6 +252,9 @@ int main(int argc, char **argv)
             accumulator -= 32;
             BtpAction a = read != write ? queue[read++ % 256] : BTP_IDLE;
             if (a==BTP_OPEN_MENU && state.mode==BTP_ACTIONS) a=BTP_ACCEPT;
+            if (a==BTP_OPEN_MENU && (state.combat.phase==BTP_COMBAT_CONTROL || state.combat.phase==BTP_COMBAT_MESSAGES ||
+                state.combat.phase==BTP_COMBAT_GRAPHICS || state.combat.phase==BTP_COMBAT_NOTICE || state.combat.phase==BTP_COMBAT_STORY ||
+                state.combat.phase==BTP_COMBAT_OFFER || state.combat.phase==BTP_COMBAT_AVOID)) a=BTP_ACCEPT;
             if (a==BTP_OPEN_MENU && state.mode!=BTP_EXPLORE && state.mode!=BTP_CACHE && !state.combat.phase && state.mode!=BTP_ACTIONS) a=amount_editor(&state) ? BTP_IDLE : BTP_ACCEPT;
             if (o.sprite_preview) ++state.tick;
             else {
@@ -289,11 +292,11 @@ int main(int argc, char **argv)
         }
         SDL_RenderPresent(renderer);
         if (notice && SDL_GetTicks64() >= notice_until) {
-            notice = NULL; SDL_SetWindowTitle(window,"BtechPort M3h - Crescent Hawk's Inception");
+            notice = NULL; SDL_SetWindowTitle(window,"BtechPort - Crescent Hawk's Inception");
         }
         if (o.debug && !notice) {
             char title[200];
-            snprintf(title, sizeof title, "BtechPort M3h | %s | half=(%u,%u) | PC=%04x op=%02x | tick=%u",
+            snprintf(title, sizeof title, "BtechPort | %s | half=(%u,%u) | PC=%04x op=%02x | tick=%u",
                 btp_mode_name(state.mode), state.x_half, state.y_half, state.script.pc,
                 state.script.last_opcode, state.tick);
             SDL_SetWindowTitle(window, title);

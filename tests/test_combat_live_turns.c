@@ -1,4 +1,5 @@
 #include "core/combat.h"
+#include "core/audio.h"
 #include "core/animation.h"
 #include <inttypes.h>
 #include <stdio.h>
@@ -121,7 +122,12 @@ int main(int argc,char **argv)
         if (order==2) c->kick_target=(uint8_t)btp_combat_id(c,1);
         s.npc.rng[0]=(uint8_t)seed;s.npc.rng[1]=(uint8_t)(seed>>8);s.npc.rng[2]=(uint8_t)(seed>>16);
         btp_combat_tick(&s,r,BTP_ACCEPT);
-        for (unsigned tick=0;tick<512 && c->phase==BTP_COMBAT_ROUND;++tick) btp_combat_tick(&s,r,BTP_IDLE);
+        for (unsigned tick=0;tick<2048 && c->phase==BTP_COMBAT_ROUND;++tick) {
+            btp_combat_tick(&s,r,BTP_IDLE);
+            /* These controlled numeric turns call the combat subsystem
+               directly; advance the blocking wreck clip as the game does. */
+            btp_audio_samples(&s.audio,r,BTP_AUDIO_TICK_SAMPLES,NULL);
+        }
         p=strchr(p,'|');if (!p) return 2;++p;++cases;
         for (unsigned i=0;i<count;++i) {
             unsigned x=number(&p),y=number(&p),direction=number(&p),heat=number(&p);

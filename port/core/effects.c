@@ -1,5 +1,7 @@
 #include "core/effects.h"
 #include "core/audio.h"
+#include "core/animation.h"
+#include "core/combat.h"
 #include <string.h>
 _Static_assert(sizeof(BtpCombatEffect)==13,"Effect encoding contains byte fields only");
 unsigned btp_effects_sound(unsigned w)
@@ -7,6 +9,21 @@ unsigned btp_effects_sound(unsigned w)
     return w<3 ? 13u : w==3 ? 5u : w<=6 ? 11u : w<=8 ? 6u :
         w==9 || (w>=19 && w<=23) ? 3u : w==10 || w==11 || (w>=25 && w<=31) ? 1u :
         w==12 || w==13 ? 9u : w>=15 && w<=18 ? 2u : 0u;
+}
+unsigned btp_effects_fire_sound(unsigned w,int visible)
+{
+    /* 12E8:1680..169A skips beam playback when both units are off screen.
+       Physical, ballistic and missile sounds precede that visibility test. */
+    return !visible && (w==12 || w==13 || (w>=15 && w<=18)) ? 0u : btp_effects_sound(w);
+}
+static int visible(const BtpCombatEffect *e,const BtpCombatState *c)
+{
+    const BtpCombatUnit *focus=&c->unit[c->active_unit];
+    int ax=200+((int)e->x-focus->x)*8,ay=64+((int)e->y-focus->y)*8;
+    int tx=200+((int)e->tx-focus->x)*8,ty=64+((int)e->ty-focus->y)*8;
+    /* Use the renderer's clipped viewport. Exact DOS visibility margins
+       at the border remain approximate until their full pixel comparison. */
+    return (ax+24>104 && ax<320 && ay+24>0 && ay<200) || (tx+24>104 && tx<320 && ty+24>0 && ty<200);
 }
 
 unsigned btp_effects_length(const BtpCombatEffect *e, const BtpCombatData *d)
@@ -19,14 +36,15 @@ void btp_effects_shot(BtpState *s,unsigned actor,unsigned target,unsigned weapon
     BtpCombatState *c=&s->combat;BtpEffectsState *v=&s->effects;
     if (v->count>=24) return; /* At most one shot per unit in a microstep. */
     const BtpCombatUnit *a=&c->unit[actor],*t=&c->unit[target];
-    unsigned alt=!a->infantry && a->record[0]!='L';
+    unsigned friends=c->friends ? c->friends : 1u;
+    unsigned alt=!a->infantry && btp_mech_sprite_base(a->record[0],actor>=friends)!=0;
     unsigned group=a->infantry ? 4u+weapon : (weapon==32 ? 2u : 0u)+alt;
     unsigned direction=btp_combat_direction(a->x,a->y,t->x,t->y);
     if (direction>7) direction=a->direction;
     v->shots[v->count++]=(BtpCombatEffect){(uint8_t)actor,(uint8_t)target,(uint8_t)group,
         (uint8_t)direction,(uint8_t)weapon,c->shot.hit,c->shot.destroyed,a->x,a->y,t->x,t->y,
         (uint8_t)(a->infantry ? 254 : alt ? 146 : 0),
-        (uint8_t)(t->infantry ? 254 : t->record[0]=='L' ? 0 : 146)};
+        (uint8_t)(t->infantry ? 254 : btp_mech_sprite_base(t->record[0],target>=friends))};
 }
 void btp_effects_tick(BtpState *s,const BtpResources *r)
 {
@@ -35,7 +53,7 @@ void btp_effects_tick(BtpState *s,const BtpResources *r)
     const BtpCombatEffect *e=&v->shots[0];
     if (v->stage==BTP_EFFECT_START) {
         if (s->audio.sound_count) return;
-        if (s->combat.graphics) btp_audio_effect(s,btp_effects_sound(e->weapon));
+        if (s->combat.graphics) btp_audio_effect(s,btp_effects_fire_sound(e->weapon,visible(e,&s->combat)));
         v->stage=BTP_EFFECT_FIRE_SOUND;return;
     }
     if (s->audio.sound_count) return;
@@ -49,6 +67,13 @@ void btp_effects_tick(BtpState *s,const BtpResources *r)
         }
     } else if (v->stage==BTP_EFFECT_IMPACT || v->stage==BTP_EFFECT_LEGACY) ++v->age;
     if (v->age<btp_effects_length(e,&r->combat)) return;
+    if (e->dead && v->stage!=BTP_EFFECT_DEATH_SOUND && v->stage!=BTP_EFFECT_LEGACY) {
+        /* 12E8:1C76 plays sound 8 for a wreck. The rented arena target's
+           branch uses sound 7 before its two alarm messages instead. Wait
+           for this clip before any outtake or outcome can advance. */
+        btp_audio_effect(s,s->campaign.encounter==4 && btp_combat_id(&s->combat,e->target)==13 ? 7u : 8u);
+        v->stage=BTP_EFFECT_DEATH_SOUND;return;
+    }
     for (unsigned i=0;i<2;++i) if (v->outtakes[0][i] && s->presentation.count<24)
         s->presentation.kinds[s->presentation.count++]=v->outtakes[0][i];
     unsigned legacy=v->stage==BTP_EFFECT_LEGACY;
@@ -62,7 +87,7 @@ void btp_effects_tick(BtpState *s,const BtpResources *r)
 int btp_effects_valid(const BtpState *s)
 {
     const BtpEffectsState *v=&s->effects;
-    if (v->count>24 || v->age>21 || v->pending>3 || v->stage>6 || v->stage==5 || (!v->count && (v->age || v->stage))) return 0;
+    if (v->count>24 || v->age>22 || v->pending>3 || v->stage>6 || (!v->count && (v->age || v->stage))) return 0;
     if (v->count && s->combat.phase!=BTP_COMBAT_ROUND) return 0;
     /* The saved boundary after the final outtake has no remaining frames;
        the following logical tick performs the pending outcome transition. */

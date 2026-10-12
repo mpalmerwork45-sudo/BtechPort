@@ -26,6 +26,8 @@ typedef struct {
     uint16_t cache_password[7];
     uint8_t cache_secret[18],cache_door_tiles[12];
     uint8_t cache_mini_colors[2][250];
+    uint8_t arena_mechs[11][125],arena_spectator[125],urbanmech[125];
+    uint8_t arena_levels[11],arena_reduction[7],special_x[16],special_y[16];
 } BtpCombatData;
 typedef struct {
     uint8_t record[125], x, y, direction, heat, pool, burning, cover;
@@ -35,7 +37,8 @@ typedef struct { uint8_t hit, location, damage, destroyed, toppled; int16_t need
 typedef enum { BTP_COMBAT_NONE, BTP_COMBAT_CONTROL, BTP_COMBAT_MESSAGES, BTP_COMBAT_GRAPHICS,
     BTP_COMBAT_MENU, BTP_COMBAT_MOVE, BTP_COMBAT_WEAPONS, BTP_COMBAT_TARGET,
     BTP_COMBAT_SCAN, BTP_COMBAT_ROUND, BTP_COMBAT_NOTICE, BTP_COMBAT_KICK,
-    BTP_COMBAT_REPLACE, BTP_COMBAT_PICK, BTP_COMBAT_STORY } BtpCombatPhase;
+    BTP_COMBAT_REPLACE, BTP_COMBAT_PICK, BTP_COMBAT_STORY,
+    BTP_COMBAT_OFFER, BTP_COMBAT_AVOID } BtpCombatPhase;
 enum { BTP_COMBAT_UNITS = 24 };
 typedef struct {
     uint8_t movement, x, y, active, count, wx[11], wy[11], orders[11], kick;
@@ -69,7 +72,8 @@ enum { BTP_COMBAT_DATA_V1_BYTES = 4+375+561+15+46+93+16,
     BTP_COMBAT_DATA_V7_BYTES = BTP_COMBAT_DATA_V6_BYTES+630,
     BTP_COMBAT_DATA_V8_BYTES = BTP_COMBAT_DATA_V7_BYTES+24+24+16,
     BTP_COMBAT_DATA_V9_BYTES = BTP_COMBAT_DATA_V7_BYTES+32+24+16,
-    BTP_COMBAT_DATA_BYTES = BTP_COMBAT_DATA_V9_BYTES+99+60+14+18+12+500 };
+    BTP_COMBAT_DATA_V10_BYTES = BTP_COMBAT_DATA_V9_BYTES+99+60+14+18+12+500,
+    BTP_COMBAT_DATA_BYTES = BTP_COMBAT_DATA_V10_BYTES+11*125+250+11+7+32 };
 int btp_sound_programs(BtpCombatData *data);
 uint32_t btp_speaker_busy_clocks(unsigned duration,unsigned repeats);
 int btp_combat_data_decode(const uint8_t *bytes, size_t length, BtpCombatData *data);

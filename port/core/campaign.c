@@ -3,6 +3,7 @@
 #include "core/world.h"
 #include "core/combat.h"
 #include "core/npc.h"
+#include "core/yard.h"
 #include <string.h>
 static void begin(BtpState *s,const BtpResources *r,unsigned event)
 {
@@ -10,7 +11,10 @@ static void begin(BtpState *s,const BtpResources *r,unsigned event)
     v->return_map=s->map_id;v->return_x=s->x_half;v->return_y=s->y_half;
     v->battle_x=(uint16_t)(v->world_x&~127u);v->battle_y=(uint16_t)(v->world_y&~127u);v->encounter=(uint8_t)event;
     BtpCombatState *c=&s->combat;
-    *c=(BtpCombatState){.phase=BTP_COMBAT_CONTROL,.selected=1,.messages=2,.graphics=1,.movement=255,.kick_target=255,.enemy_movement=255};
+    /* 103B:000A(0) describes the attacking force and asks to engage before
+       computer/messages/graphics settings. Rex's argument -1 skips it. */
+    *c=(BtpCombatState){.phase=(uint8_t)(event==1 ? BTP_COMBAT_OFFER : BTP_COMBAT_CONTROL),
+        .selected=(uint8_t)(event==1 ? 0 : 1),.messages=2,.graphics=1,.movement=255,.kick_target=255,.enemy_movement=255};
     memset(c->orders,255,11);memset(c->enemy_orders,255,sizeof c->enemy_orders);memset(c->enemy_modes,255,sizeof c->enemy_modes);
     btp_party_init(s);btp_party_sync(s);
     unsigned formed=0;
@@ -104,7 +108,8 @@ int btp_campaign_random(BtpState *s,const BtpResources *r)
 void btp_campaign_result(BtpState *s,const BtpResources *r)
 {
     BtpCombatState *c=&s->combat;
-    if (c->phase || s->aftermath.phase) return;
+    if (!s->campaign.encounter || c->phase || s->aftermath.phase) return;
+    if (s->campaign.encounter>=3) { btp_yard_result(s,r);return; }
     if (!s->aftermath.applied) {
     for (unsigned i=0;i<c->friends;++i) {
         unsigned id=c->ids[i];
@@ -139,6 +144,13 @@ void btp_campaign_result(BtpState *s,const BtpResources *r)
     else s->mode=BTP_EXPLORE;
 }
 
+void btp_campaign_avoid(BtpState *s)
+{
+    /* 103B:0499 exits before salvage/cash when No's RNG & 3 is nonzero. */
+    s->x_half=s->campaign.return_x;s->y_half=s->campaign.return_y;s->map_id=s->campaign.return_map;
+    s->campaign.encounter=0;s->combat=(BtpCombatState){0};s->effects=(BtpEffectsState){0};
+    s->aftermath=(BtpAftermathState){0};s->mode=BTP_EXPLORE;
+}
 unsigned btp_aftermath_cash(uint8_t rng[3],unsigned count)
 {
     unsigned amount=0;for (unsigned i=0;i<count;++i) amount+=(btp_rng_next(rng)&15u)+3u;

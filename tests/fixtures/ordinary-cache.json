@@ -582,7 +582,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "c6479a73beceee6d",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "0fb99164ab5bb911",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1484,7 +1495,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "54fec60a1359b92a",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "b379c4eb4a7aa58e",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -2386,7 +2408,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "1e311dab80a22fec",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "ec84def6508047c4",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -3288,7 +3321,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "8c054940422a7329",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "2660f4d24fe6c54d",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -4190,7 +4234,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "88b9eb65f448cd02",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "98bfc2348c8c555e",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -5092,7 +5147,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "8e01bdf98a3dcd7e",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "82f6f52feac02f96",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -5994,7 +6060,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "c1a3c20b05027d89",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "c165ae067aa421f1",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -6896,7 +6973,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "653f17154b7abbe5",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "50a685b79911c3e7",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -7798,7 +7886,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "378ffba2e91bb4a4",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "e3bbd0e872e72344",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -8700,7 +8799,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "9022ece7b856c184",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "47aef6288c2fa442",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -9602,7 +9712,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "745ae2246a717a41",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "7040453477f022e9",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -10504,7 +10625,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "cf5e180f8fe54921",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "0fcf14eda5ba9d49",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -11406,7 +11538,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "eed2434342d5be2c",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "aa23818e834b61e8",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -12308,7 +12451,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "10de89b6274ae948",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "1c8ff86917b428ec",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -13210,7 +13364,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "e814b5fdfed40c52",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "4974a052232d75ea",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -14112,7 +14277,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "2ef3a476bde8e7ea",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "aad8cc24235a5d4a",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -15014,7 +15190,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "7edbb7802e187aa4",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "21ae85395c77c2c0",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -15916,7 +16103,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "4390c9f28dc14e0d",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "1a2fde3d792d8d31",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -16818,7 +17016,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "544d7a734790d354",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "35a751138023abaa",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -17720,7 +17929,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "767c45f2a637ba65",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "e647d6334b6973c9",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -18622,7 +18842,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "02750da169b272c2",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "1bf82645a60a5e80",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -19524,7 +19755,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "229164985c7048f6",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "f9c811b8e95b8134",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -20426,7 +20668,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "12d1a653f7a30656",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "774a513311b7b8f6",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -21328,7 +21581,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "31ffbb68c3a04fac",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "4159f696bacbf04c",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -22230,7 +22494,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "0c9701fdf2a22427",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "7e10a7d3decf3469",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -23132,7 +23407,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "3eb27d927e492a3c",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "24fd0a30225c5162",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -24034,7 +24320,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "70abc23dd15ee542",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "7174eed9b2b0be68",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -24936,7 +25233,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "dc1f67c80f6c1e3d",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "2bc303db62730d57",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -25838,7 +26146,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "d94abe676e488a19",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "974ce9425e1c6fa7",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -26740,7 +27059,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "15f4dece934f26f6",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "932eed9a4ecc980a",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -27642,7 +27972,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "42fa8591bf399ee2",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "b1aa724fcb7e168e",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -28544,7 +28885,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "69120a87715ca567",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "5982fd9222460f53",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -29446,7 +29798,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "2e313635b7a2105e",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "7f7e5fe1115501f2",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -30348,7 +30711,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "89b927f85db851f0",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "ef516c327feca710",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -31250,7 +31624,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "a8c3078df27d3ccc",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "8989fe3058620fc4",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -32152,7 +32537,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "b9be811a35ad0ba6",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "6d499141e124cdc2",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -33054,7 +33450,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "a48bd0a5e838721a",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "7f172dbfcfbc16b6",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -33956,7 +34363,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "4be5f11507582b05",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "14b0f1dd9585d5a5",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -34858,7 +35276,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "a9accb8460c5ee16",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "a7f6496874ad14f2",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -35760,7 +36189,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "4a48c6d9e179c18e",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "967d99fd8c87e76a",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -36662,7 +37102,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "1b81c43ed32e5290",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "3a14e0366800fde4",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -37564,7 +38015,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "d88a4e044c07a452",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "d53f8efa0bf7b8d2",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -38466,7 +38928,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "b7a8656916dfc613",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "cd2529edc5dfd237",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -39368,7 +39841,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "e81bac75dd9b1c6a",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "6906a1cf3f50e1b0",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -40270,7 +40754,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "c85438d5bc44dbd2",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "08b2c7ad1da1f032",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -41172,7 +41667,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "db29a300e261d4de",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "b3eeba7873761d9c",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -42074,7 +42580,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "4abf7be5bfe5460d",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "748e96f3e5583e8f",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -42976,7 +43493,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "a2ed4f15d84f81ea",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "f4e4837f08a2467e",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -43878,7 +44406,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "c7badcece86ffc0a",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "031a4a6e23f7ba62",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -44780,7 +45319,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "b3476514fa4c7b36",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "5abdacc76acc1792",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -45682,7 +46232,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "fbf38f41422cc48d",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "756ebe05aa8f0c6d",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -46584,7 +47145,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "5d35c916d9333a45",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "04117d47f72e9825",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -47486,7 +48058,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "b149e9d0b90771d1",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "4921b6ff85fb8253",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -48388,7 +48971,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "ad9c01f00661cb3a",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "a8cd546f3bdf1f56",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -49290,7 +49884,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "cd6dfc3c437746bc",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "5f17736daab42aae",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -50192,7 +50797,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "eb694dd9a4419623",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "7d39fa8f2d3f9465",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -51094,7 +51710,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "bcc106bdb7ab6e1e",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "d025c3d6b8274d9c",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -51996,7 +52623,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "a9633bc9a57d7309",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "c13d40dc73c5b263",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -52903,7 +53541,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "c77cd4df54cfd2b3",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "a2a2ed9b5fb885a5",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -53805,7 +54454,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "e43b6362989b81d3",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "8c87d30afd020645",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -54707,7 +55367,18 @@
           "found": 0,
           "room": 1
         },
-        "state_digest": "5a38a440baf4bc00",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "8fc38d300549edf6",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -55609,7 +56280,18 @@
           "found": 0,
           "room": 1
         },
-        "state_digest": "8c7e83e214d4de7d",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "6b961779575e9295",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -56511,7 +57193,18 @@
           "found": 0,
           "room": 1
         },
-        "state_digest": "11329a85328f77a2",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "5cee2e6672471e3e",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -57413,7 +58106,18 @@
           "found": 0,
           "room": 1
         },
-        "state_digest": "40f862710786894a",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "973fc1e345f51ae0",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -58315,7 +59019,18 @@
           "found": 0,
           "room": 1
         },
-        "state_digest": "6c42383c2ef4f033",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "5ae760a4f76a3225",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -59217,7 +59932,18 @@
           "found": 0,
           "room": 1
         },
-        "state_digest": "940c16cf52dd1729",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "d0918d622db43ce7",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -60119,7 +60845,18 @@
           "found": 0,
           "room": 1
         },
-        "state_digest": "3dba3238e706acaa",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "02949825b2cd1784",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -61021,7 +61758,18 @@
           "found": 0,
           "room": 1
         },
-        "state_digest": "7182497acac6c634",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "e966c3184aaf91aa",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -61923,7 +62671,18 @@
           "found": 0,
           "room": 1
         },
-        "state_digest": "515c61e9d39cf475",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "55094beb0c306eb7",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -62825,7 +63584,18 @@
           "found": 0,
           "room": 1
         },
-        "state_digest": "681bd2da96320592",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "b41f65788ba75e30",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -63727,7 +64497,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "56b680387057e238",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "022d1e38967d5c38",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -64629,7 +65410,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "dd9b46f048a13cb2",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "f72aca9fb8de1eb0",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -65531,7 +66323,18 @@
           "found": 1,
           "room": 0
         },
-        "state_digest": "50252812712b600d",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "4e76d5f97984c58f",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -66433,7 +67236,18 @@
           "found": 1,
           "room": 0
         },
-        "state_digest": "be65a14c5b267992",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "c5d2569d25ad1ab0",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -67344,7 +68158,18 @@
           "found": 1,
           "room": 0
         },
-        "state_digest": "52ebc999870a4bc8",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "9cb829bd5a919fd6",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -68253,7 +69078,18 @@
       "found": 1,
       "room": 0
     },
-    "state_digest": "52ebc999870a4bc8",
+    "yard": {
+      "active": 0,
+      "phase": 0,
+      "timer": 0,
+      "checked": 0,
+      "attempts": 0,
+      "selected": 0,
+      "slot": 0,
+      "rental": 0,
+      "variant": 0
+    },
+    "state_digest": "9cb829bd5a919fd6",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

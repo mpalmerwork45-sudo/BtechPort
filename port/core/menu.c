@@ -198,7 +198,8 @@ int btp_actions_valid(const BtpState *s)
     /* Both prison and garage explicitly invoke allocation inside their BLD;
        the normal outdoor population restriction does not apply to this call. */
     if (s->menu.from_story>2 || (s->menu.from_story &&
-        (!((s->campaign.building==13 && s->script.native_action==39) || (s->campaign.building==8 && s->script.native_action==46)) ||
+        (!((s->campaign.building==13 && s->script.native_action==39) || (s->campaign.building==8 && s->script.native_action==46) ||
+           (s->campaign.building==10 && s->script.native_action==27)) ||
          s->script.status!=BTP_SCRIPT_NATIVE || s->mode!=(s->menu.from_story==1 ? BTP_ACTIONS : BTP_BUILDING)))) return 0;
     const BtpMenuState *m=&s->menu;
     if ((m->steps!=1 && m->steps!=2 && m->steps!=4) || m->sound>1 || m->speed>5 || m->outtakes>2 ||

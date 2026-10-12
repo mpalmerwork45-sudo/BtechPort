@@ -6,6 +6,7 @@
 #include "core/party.h"
 #include "core/economy.h"
 #include "core/menu.h"
+#include "core/yard.h"
 #include <string.h>
 #include <stdlib.h>
 
@@ -82,7 +83,8 @@ unsigned btp_world_tile(const BtpResources *r,const BtpState *s,int x,int y)
         const BtpMap *m=local(r,(unsigned)id);
         if (id==11) m=&r->map; /* MAP11 retains MAP1's world origin. */
         int ox=(m->entrance_x[0]>>8)*64,oy=(m->entrance_y[0]>>12)*64;
-        return btp_mission_tile(s,local(r,(unsigned)id),x-ox,y-oy);
+        unsigned tile=btp_mission_tile(s,local(r,(unsigned)id),x-ox,y-oy);
+        return id==2 && s->yard.active==2 ? btp_yard_tile(s,tile,x-ox,y-oy) : tile;
     }
     if (r->world.native) return btp_generated_tile(&r->world,x,y);
     if (!r->world.loaded || x<BTP_WORLD_ORIGIN || y<BTP_WORLD_ORIGIN ||

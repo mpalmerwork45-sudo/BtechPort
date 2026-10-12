@@ -236,6 +236,7 @@ static void katrina_loop(const BtpResources *r)
     memset(s.npc_walk,0,sizeof s.npc_walk); /* Legacy formats did not store animation. */
     s.player_walk = 8; /* First north-facing frame. */
     s.npc = (BtpNpcState){0}; /* Legacy saves had no travel clock/positions. */
+    s.late=(BtpLateState){0}; /* BTP2 had no saved direction log. */
     btp_game_tick(&s, r, BTP_ACCEPT); btp_game_tick(&invalid, r, BTP_ACCEPT);
     uint8_t migrated[BTP_STATE_BYTES]; btp_state_encode(&s, saved); btp_state_encode(&invalid, migrated);
     if (memcmp(saved,migrated,sizeof saved)) for (unsigned i=0;i<BTP_STATE_BYTES;++i)
@@ -288,6 +289,7 @@ static void talk_loop(BtpResources *r)
     memset(s.npc_walk,0,sizeof s.npc_walk); /* Legacy formats did not store animation. */
     s.player_walk = 8; /* First north-facing frame. */
     s.npc = (BtpNpcState){0};
+    s.late=(BtpLateState){0}; /* BTP3 predates the direction log too. */
     btp_game_tick(&s,r,BTP_ACCEPT); btp_game_tick(&invalid,r,BTP_ACCEPT);
     uint8_t migrated[BTP_STATE_BYTES]; btp_state_encode(&s,saved); btp_state_encode(&invalid,migrated);
     CHECK(!memcmp(saved,migrated,sizeof saved));
@@ -297,9 +299,13 @@ static void talk_loop(BtpResources *r)
     CHECK(s.mode == BTP_SCRIPT_FAULT && s.script.error == BTP_SCRIPT_NATIVE_DATA &&
           s.talk_result == 91 && !s.story_flags[13]);
     restored_tick(&s,r,BTP_CANCEL); r->dialogue.length = cache_length;
+    /* Post-invasion Talk is now supported. A genuinely missing room
+       mapping still fails visibly; mutate only this test-owned map. */
+    uint8_t room=r->map.room_map[1];r->map.room_map[1]=26;
     s.story_flags[4] = 1; restored_tick(&s,r,BTP_ACCEPT);
     CHECK(s.mode == BTP_SCRIPT_FAULT && s.script.error == BTP_SCRIPT_NATIVE_CONTEXT &&
           s.story_flags[4] == 1 && !s.story_flags[13] && s.talk_result == 91);
+    r->map.room_map[1]=room;
     /* A fault after the native reply also restores the pre-choice result. */
     btp_start_conversation_checkpoint(&s); enter_talk(&s,r); btp_game_tick(&s,r,BTP_ACCEPT);
     uint8_t opcode = r->citadel.bytes[0x10e2]; r->citadel.bytes[0x10e2] = 0xe0;

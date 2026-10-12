@@ -6,6 +6,7 @@
 #include "core/world.h"
 #include "core/party.h"
 #include "core/audio.h"
+#include "core/yard.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -113,6 +114,12 @@ void btp_combat_route(const BtpMap *m, unsigned gate, const BtpCombatState *c, i
     plan_points(m,gate,&c->unit[actor],&c->unit[enemy],c->goal_x,c->goal_y,c->movement,0,
         btp_combat_points(&c->unit[actor],c->movement),c->waypoint_x,c->waypoint_y,c->waypoint_count,
         c->friends ? c->unit : NULL,c->friends ? c->count : 0,actor,steps);
+}
+static unsigned movement_gate(const BtpState *s)
+{
+    /* 09B8's mounted arena view sets the original terrain threshold to 139.
+       The personal exploration threshold would incorrectly block its exit. */
+    return s->campaign.encounter==4 ? 139u : s->gate;
 }
 void btp_combat_map(const BtpResources *r,const BtpState *s,BtpMap *m)
 {
@@ -259,14 +266,14 @@ static void begin_round(BtpState *s, const BtpResources *r, int enemy_ai)
     if (c->friends) {
         for (unsigned i=0;i<friends;++i) {
             btp_combat_select(c,i);
-            if (c->goal_active) btp_combat_route(&terrain,s->gate,c,c->path[i]);
+            if (c->goal_active) btp_combat_route(&terrain,movement_gate(s),c,c->path[i]);
             if (i) {
                 memcpy(c->enemy_orders[i-1],c->orders,11);c->enemy_orders[i-1][11]=c->kick_target;
                 if (i==1) c->enemy_movement=c->movement;else c->enemy_modes[i-2]=c->movement;
             }
         }
         btp_combat_select(c,active);
-    } else if (c->goal_active) btp_combat_route(&terrain,s->gate,c,c->path[0]);
+    } else if (c->goal_active) btp_combat_route(&terrain,movement_gate(s),c,c->path[0]);
     for (unsigned index=0;index<c->count;++index) {
     int friendly=index<friends;
     if (friendly && !(c->automatic&(UINT32_C(1)<<index))) continue;
@@ -307,7 +314,7 @@ static void begin_round(BtpState *s, const BtpResources *r, int enemy_ai)
         /* 0E31:046F normalizes robot IDs before 103B:2474. IDs 20/21
            cross its threshold and take six points; IDs 16..19 take three. */
         int points=enemy.infantry && btp_combat_id(c,index)>=20 ? 6 : btp_combat_points(&enemy,*movement);
-        plan_points(&terrain,s->gate,&enemy,&c->unit[prey],tx,ty,*movement,1,points,NULL,NULL,0,
+        plan_points(&terrain,movement_gate(s),&enemy,&c->unit[prey],tx,ty,*movement,1,points,NULL,NULL,0,
             s->mission.assignment==5 || c->friends ? c->unit : NULL,s->mission.assignment==5 || c->friends ? c->count : 0,index,c->path[index]);
     }
     uint8_t automatic_orders[12];uint8_t *orders=index ? c->enemy_orders[index-1] : automatic_orders;
@@ -410,7 +417,10 @@ static void round_tick(BtpState *s, const BtpResources *r, int enemy_ai)
             unsigned w=i==11 ? 32 : btp_combat_weapon(attacker,i);
             if (w>=33 || (i==11 && !btp_combat_can_kick(attacker))) { *order=255;continue; }
             if (attacker->heat>=30 || btp_combat_range(&r->combat,w,attacker->x,attacker->y,enemy->x,enemy->y)>=3) continue;
-            int los=btp_combat_los(&map,s->gate,attacker->x,attacker->y,enemy->x,enemy->y);
+            /* 0E31:1BFE returns visible immediately for E48E and unit 13.
+               The arena alarm clears E48E; ordinary shots use the ray. */
+            int los=s->campaign.encounter==4 && s->yard.rental && !s->story_flags[35] && btp_combat_id(c,target)==13 ? 1 :
+                btp_combat_los(&map,s->gate,attacker->x,attacker->y,enemy->x,enemy->y);
             if (!los) { if (!c->flash) c->last_event=3;continue; }
             if (los<0) { if (!c->flash) c->last_event=4;continue; }
             int ignition=enemy->cover && terrain[target]>=16 && terrain[target]<=63 &&
@@ -439,8 +449,10 @@ static void round_tick(BtpState *s, const BtpResources *r, int enemy_ai)
                 }
             }
             if (c->shot.destroyed) {
+                btp_yard_alarm(s,r,target);
                 /* 12E8:1B7F / 1C6E preserve the original corpse/wreck artwork. */
-                mark(s,enemy->infantry ? 126u : 128u+(target==0 && s->story_flags[2]!=0),
+                if (!(s->campaign.encounter==4 && btp_combat_id(c,target)==13))
+                    mark(s,enemy->infantry ? 126u : 128u+(target==0 && s->story_flags[2]!=0),
                     (enemy->x-(enemy->infantry ? 0u : 1u))&127u,
                     (enemy->y-(enemy->infantry ? 0u : 1u))&127u);
                 if (s->campaign.encounter) btp_campaign_destroy(s,target);
@@ -463,8 +475,18 @@ static void round_tick(BtpState *s, const BtpResources *r, int enemy_ai)
         btp_combat_select(c,active);
     } else if (c->goal_active && c->unit[0].x==c->goal_x && c->unit[0].y==c->goal_y) arrived(c);
     s->x_half=c->unit[0].x;s->y_half=(uint16_t)(c->unit[0].y+(c->unit[0].infantry ? 0u : 2u));
-    s->mission.walk=c->walk[0];s->mission.direction=c->unit[0].direction;
-    if (s->campaign.invasion && c->unit[0].y==127) {
+    /* A campaign encounter has no training mission. Keep its gait in the
+       campaign record so movement does not create an unsaveable mission. */
+    if (s->campaign.encounter) {
+        s->campaign.mech_walk=c->walk[0];s->campaign.mech_direction=c->unit[0].direction;
+    } else {
+        s->mission.walk=c->walk[0];s->mission.direction=c->unit[0].direction;
+    }
+    if ((s->campaign.invasion && c->unit[0].y==127) ||
+        /* 103B:0CCE accepts the original arena escape band only after the
+           special arena target has triggered D32F. */
+        (s->campaign.encounter==4 && s->story_flags[35] &&
+         s->campaign.battle_x+c->unit[0].x>1152 && s->campaign.battle_x+c->unit[0].x<1287)) {
         if (s->effects.count || s->presentation.count || s->audio.sound_count) s->effects.pending=3;
         else { c->fled=1;finish(s,r); }
         return;
@@ -474,6 +496,18 @@ static void round_tick(BtpState *s, const BtpResources *r, int enemy_ai)
 static void combat_tick(BtpState *s, const BtpResources *r, BtpAction a, int enemy_ai)
 {
     BtpCombatState *c=&s->combat;
+    if (c->phase==BTP_COMBAT_OFFER || c->phase==BTP_COMBAT_AVOID) {
+        if (c->phase==BTP_COMBAT_OFFER && (a==BTP_UP || a==BTP_DOWN || a==BTP_LEFT || a==BTP_RIGHT)) c->selected^=1u;
+        if (a==BTP_ACCEPT || a==BTP_OPEN_MENU) {
+            if (c->phase==BTP_COMBAT_OFFER && c->selected) {
+                if (btp_rng_next(s->npc.rng)&3u) { btp_campaign_avoid(s);return; }
+                c->phase=BTP_COMBAT_AVOID;return;
+            }
+            c->phase=BTP_COMBAT_CONTROL;c->selected=1;
+        }
+        return;
+    }
+    if (c->phase==BTP_COMBAT_NOTICE && a==BTP_OPEN_MENU) a=BTP_ACCEPT;
     if (c->phase==BTP_COMBAT_STORY) {
         if (a==BTP_ACCEPT || a==BTP_CANCEL || a==BTP_OPEN_MENU) {
             if (s->late.invasion_popup>1) ++s->late.invasion_event;
@@ -496,6 +530,9 @@ static void combat_tick(BtpState *s, const BtpResources *r, BtpAction a, int ene
     }
     if (s->effects.count) { btp_effects_tick(s,r);return; }
     if (s->audio.sound_count) return;
+    if (s->campaign.encounter==4 && s->yard.alarm==1 && c->phase==BTP_COMBAT_ROUND) {
+        s->yard.alarm=2;c->flash=0;notice(c,7,BTP_COMBAT_ROUND);return;
+    }
     if (s->aftermath.eject) btp_campaign_eject(s);
     if (s->effects.pending) {
         c->won=(uint8_t)(s->effects.pending==1);c->lost=(uint8_t)(s->effects.pending==2);
@@ -519,7 +556,10 @@ static void combat_tick(BtpState *s, const BtpResources *r, BtpAction a, int ene
         return;
     }
     if (c->phase==BTP_COMBAT_NOTICE) {
-        if (a==BTP_ACCEPT || a==BTP_CANCEL) { c->phase=c->notice_return;c->notice=c->notice_return=0; }
+        if (a==BTP_ACCEPT || a==BTP_CANCEL) {
+            if (c->notice==7) { s->yard.alarm=3;notice(c,8,BTP_COMBAT_ROUND); }
+            else { if (c->notice==8) s->yard.alarm=0;c->phase=c->notice_return;c->notice=c->notice_return=0; }
+        }
         return;
     }
     if (c->phase==BTP_COMBAT_REPLACE) {
@@ -615,6 +655,7 @@ static void combat_tick(BtpState *s, const BtpResources *r, BtpAction a, int ene
             /* 103B:069F rejects a menu flee during the invasion; 0610's
                outside-Citadel result 2 bypasses it. Walking out still works. */
             if (s->campaign.invasion) notice(c,5,BTP_COMBAT_MENU);
+            else if (s->campaign.encounter>=3) notice(c,6,BTP_COMBAT_MENU);
             else { c->fled=1;finish(s,r); }
         }
         else { c->paused=0;begin_round(s,r,enemy_ai); }
@@ -763,10 +804,10 @@ int btp_combat_valid(const BtpState *s)
         (s->mission.assignment==3 ? c->count<4 || c->count>7 : c->count!=(s->mission.assignment>=6 ? s->campaign.invasion ? 5 : 4 : s->mission.assignment==5 ? 3 : 2))) ||
         c->target_unit<1 || c->target_unit>=c->count || c->lost>1 || (!s->campaign.encounter && c->unit[0].infantry) ||
         c->last_attacker>=c->count || c->last_target>=c->count ||
-        c->phase>BTP_COMBAT_STORY || c->selected>9 || c->messages>2 || c->graphics>1 ||
+        c->phase>BTP_COMBAT_AVOID || c->selected>9 || c->messages>2 || c->graphics>1 ||
         (c->movement>2 && c->movement!=255) || c->goal_active>1 || c->goal_x>125 || c->goal_y>127 ||
         c->cursor_x>125 || c->cursor_y>127 || c->weapon_selected>11 || c->target_selected>2 ||
-        c->scan_unit>=c->count || c->step>12 || c->delay>4 || c->notice>5 || c->notice_return>BTP_COMBAT_SCAN ||
+        c->scan_unit>=c->count || c->step>12 || c->delay>4 || c->notice>8 || c->notice_return>BTP_COMBAT_ROUND ||
         c->fled>1 || c->won>1 || c->fled+c->won+c->lost>1 || c->last_weapon>11 || c->last_event>5 || c->fired>=4096 ||
         c->shot.hit>1 || c->shot.location>35 || c->shot.destroyed>1 || c->shot.toppled>1 ||
         c->shot.needed < -4 || c->shot.needed>30 || (c->enemy_movement>1 && c->enemy_movement!=255) ||
@@ -778,7 +819,9 @@ int btp_combat_valid(const BtpState *s)
         (c->phase==BTP_COMBAT_STORY && (!s->campaign.invasion || s->late.invasion_event>5 ||
             (s->late.invasion_popup>1 && s->late.invasion_popup!=s->late.invasion_event+2u)))) return 0;
     if ((c->phase==BTP_COMBAT_NOTICE)!=(c->notice!=0) || (!c->notice && c->notice_return)) return 0;
-    if (c->phase==BTP_COMBAT_NOTICE && c->notice_return!=BTP_COMBAT_MENU && c->notice_return!=BTP_COMBAT_CONTROL) return 0;
+    if (c->phase==BTP_COMBAT_NOTICE && c->notice_return!=BTP_COMBAT_MENU && c->notice_return!=BTP_COMBAT_CONTROL &&
+        !(c->notice_return==BTP_COMBAT_ROUND && s->campaign.encounter==4 && (c->notice==7 || c->notice==8))) return 0;
+    if ((c->phase==BTP_COMBAT_OFFER || c->phase==BTP_COMBAT_AVOID) && (s->campaign.encounter!=1 || c->round || c->selected>1)) return 0;
     unsigned phase=c->notice ? c->notice_return : c->phase;
     if ((phase==BTP_COMBAT_CONTROL || phase==BTP_COMBAT_GRAPHICS) && c->selected>1) return 0;
     if (phase==BTP_COMBAT_MESSAGES && c->selected>2) return 0;

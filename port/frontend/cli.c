@@ -209,6 +209,8 @@ void btp_print_state(const BtpState *s, const BtpResources *r)
     printf(",\"explored_digest\":%u,\"map_center\":[%u,%u],\"intro_load\":%u",fog,s->menu.map_x,s->menu.map_y,s->menu.from_intro);
     printf(",\"cache\":{\"active\":%u,\"phase\":%u,\"terminal\":%u,\"hall\":%u,\"cards\":[%u,%u,%u],\"white\":%u,\"power\":%u,\"found\":%u,\"room\":%u}",
         s->cache.active,s->cache.phase,s->cache.terminal,s->cache.hall,s->story_flags[59],s->story_flags[60],s->story_flags[61],s->story_flags[62],s->story_flags[64],s->story_flags[65],s->story_flags[66]);
+    printf(",\"yard\":{\"active\":%u,\"phase\":%u,\"timer\":%u,\"checked\":%u,\"attempts\":%u,\"selected\":%u,\"slot\":%u,\"rental\":%u,\"variant\":%u}",
+        s->yard.active,s->yard.phase,s->yard.timer,s->yard.checked,s->yard.attempts,s->yard.selected,s->yard.slot,s->yard.rental,s->yard.variant);
     uint8_t encoded[BTP_STATE_BYTES];btp_state_encode(s,encoded);uint64_t state_hash=UINT64_C(14695981039346656037);
     for (unsigned i=0;i<BTP_STATE_BYTES;++i) state_hash=(state_hash^encoded[i])*UINT64_C(1099511628211);
     printf(",\"state_digest\":\"%016llx\",\"effect_stage\":%u",(unsigned long long)state_hash,s->effects.stage);

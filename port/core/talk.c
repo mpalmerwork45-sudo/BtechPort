@@ -2,6 +2,7 @@
 #include "core/bank.h"
 #include "core/school.h"
 #include "core/training.h"
+#include "core/npc.h"
 #include <string.h>
 
 static void native_fault(BtpState *s, BtpScriptError error)
@@ -54,14 +55,15 @@ void btp_start_shop_conversation_checkpoint(BtpState *s, const BtpResources *r, 
 void btp_talk_begin(BtpState *s, const BtpResources *r)
 {
     unsigned room = 0;
-    while (room < 8 && r->map.room_map[room] != s->story_flags[13]) ++room;
+    const BtpMap *map=btp_active_map(r,s);
+    while (room < 8 && map->room_map[room] != s->story_flags[13]) ++room;
     unsigned mask = present(s,room), count = count_bits(mask);
     uint8_t selected = s->talk.selected;
     s->talk = (BtpTalkState){.phase=count ? BTP_TALK_MENU : BTP_TALK_EMPTY,
         .selected=selected,.room=(uint8_t)room,.count=(uint8_t)count,.mask=(uint8_t)mask};
     if (count && selected > count) s->talk.selected = 0;
     if (!r->dialogue.length) { native_fault(s,BTP_SCRIPT_NATIVE_DATA); return; }
-    if (s->story_flags[4] || room >= 8 || room != s->entry_slot) {
+    if (room >= 8 || room != s->entry_slot) {
         native_fault(s,BTP_SCRIPT_NATIVE_CONTEXT); return;
     }
     uint8_t body[BTP_BLD_MAX+1]; size_t length;
@@ -97,6 +99,9 @@ void btp_talk_input(BtpState *s, const BtpResources *r, BtpAction action)
             /* Ordinary local replies reset the result without recruitment. */
             s->talk_result = 0;
             s->story_flags[46] = 0;
+            /* 07DC:19B2 changes post-invasion conversations to one of eight
+               original DS:4E5E replies, consuming exactly one random draw. */
+            if (s->story_flags[4]) s->talk.reply=(uint8_t)(1u+(btp_rng_next(s->npc.rng)&7u));
             uint8_t body[BTP_BLD_MAX+1]; size_t length;
             if (!btp_game_text(s,r,body,sizeof body,&length)) native_fault(s,BTP_SCRIPT_NATIVE_DATA);
         }
@@ -107,16 +112,18 @@ int btp_talk_valid(const BtpState *s, const BtpMap *map)
 {
     const BtpTalkState *t = &s->talk;
     if (t->phase > BTP_TALK_REPLY || t->selected > 8 || s->conversation_checkpoint > 1) return 0;
-    if (!t->phase) return !t->count && !t->mask && !t->room && !t->actor &&
+    if (!t->phase) return !t->count && !t->mask && !t->room && !t->actor && !t->reply &&
         !(s->script.status == BTP_SCRIPT_NATIVE && s->script.native_action == 12);
     if (s->mode != BTP_BUILDING || s->script.status != BTP_SCRIPT_NATIVE ||
-        s->script.last_opcode != 0xf5 || s->script.native_action != 12 || s->story_flags[4] ||
+        s->script.last_opcode != 0xf5 || s->script.native_action != 12 ||
         t->room >= 8 || t->room != s->entry_slot ||
         map->room_map[t->room] != s->story_flags[13] || !s->checkpoint_valid) return 0;
     unsigned mask = present(s,t->room);
     if (mask != t->mask || count_bits(mask) != t->count) return 0;
     if (t->phase == BTP_TALK_EMPTY) return !mask && !t->actor;
     if (!mask || t->selected > t->count) return 0;
+    if (t->reply>8 || (t->reply && (t->phase!=BTP_TALK_REPLY || !s->story_flags[4])) ||
+        (t->phase==BTP_TALK_REPLY && s->story_flags[4] && !t->reply)) return 0;
     if (t->phase == BTP_TALK_MENU) return !t->actor;
     if (t->selected == t->count || t->actor >= 8 || !(mask & (1u << t->actor)) || s->talk_result) return 0;
     unsigned preceding = count_bits(mask & ((1u << t->actor)-1));
@@ -161,12 +168,13 @@ int btp_game_text(const BtpState *s, const BtpResources *r, uint8_t *out, size_t
         if (!literal(d,1,out,capacity,length)) return 0;
         for (unsigned i = 0; i < 8; ++i) if (s->talk.mask & (1u << i)) {
             static const uint8_t newline = '\r';
-            if (!name(r->map.npc_names[i],out,capacity,length) ||
+            if (!name(btp_active_map(r,s)->npc_names[i],out,capacity,length) ||
                 !append(out,capacity,length,&newline,1)) return 0;
         }
         return literal(d,2,out,capacity,length);
     }
     if (s->talk.phase != BTP_TALK_REPLY || s->talk.actor >= 8 || s->story_flags[13] >= 11) return 0;
+    if (s->talk.reply) return literal(d,157u+s->talk.reply,out,capacity,length);
     unsigned destination = s->npc_pairs[s->talk.actor][0] & 7u;
     return literal(d,3,out,capacity,length) && literal(d,6u+s->story_flags[13],out,capacity,length) &&
         literal(d,4,out,capacity,length) && name(r->map.places[destination],out,capacity,length) &&

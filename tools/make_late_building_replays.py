@@ -16,7 +16,8 @@ class Buildings(Route):
         self.note('entry');self.advance(['accept']);self.settle_building()
     def settle_building(self):
         for _ in range(2048):
-            if self.state['mode']=='local-exploration' or self.state['script_status']==1 or self.state['service']['phase'] in (9,10,11):return
+            if self.state['mode']=='encounter' or (self.state['mode']=='impound-yard' and self.state['yard']['phase']!=5):return
+            if self.state['mode'] in ('local-exploration','actions') or self.state['script_status']==1 or self.state['service']['phase'] in (9,10,11):return
             if self.state['animation']['active'] or self.state['audio']['effects']:self.advance(['idle']*8)
             else:self.advance(['accept'])
         raise RuntimeError('Building presentation did not finish')

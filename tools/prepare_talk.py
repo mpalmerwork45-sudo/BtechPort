@@ -67,6 +67,11 @@ def extract(source):
         offset,segment=struct.unpack_from('<HH',image,DS+entry)
         addresses.append(segment*16+offset)
     addresses.extend(DS+p for p in (0x3497,0x34b8,0x4d8a,0x4da4,0x155d,0x159a,0x15d4,0x1611,0x15f8))
+    addresses.extend(DS+p for p in (0x4209,0x4235))
+    for entry in range(0x4e5e,0x4e7e,4):
+        offset,segment=struct.unpack_from('<HH',image,DS+entry)
+        addresses.append(segment*16+offset)
+    addresses.extend(DS+p for p in (0x3402,0x3414,0x341b,0x3421,0x3428,0x343a))
     blob = bytearray(); ranges = []; origins = []
     for address in addresses:
         end = image.index(0,address)
@@ -80,7 +85,7 @@ def extract(source):
     header += bytes.fromhex(EXE_SHA)+bytes.fromhex(IMAGE_SHA)
     header += b"".join(struct.pack("<HH",*r) for r in ranges)
     font = image[FONT:FONT+2048]
-    return header+blob+font, {**metadata,"format":"BTTA/v11","strings":origins,
+    return header+blob+font, {**metadata,"format":"BTTA/v13","strings":origins,
         "font":{"image_offset":FONT,"length":len(font),"sha256":hashlib.sha256(font).hexdigest()}}
 
 

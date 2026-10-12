@@ -30,9 +30,18 @@ int btp_later_native(BtpState *s,const BtpResources *r)
         s->script.has_name=1;s->script.name_id=(uint8_t)id;s->script.name_after=s->script.text_count;
     } else if (kind==13 && action==37) {
         btp_party_init(s);s->party.people[0][0]=255;
-    } else if (kind==13 && action==39) {
+    } else if ((kind==13 && action==39) || (kind==10 && action==27)) {
         if (s->menu.from_story==2) s->menu.from_story=0;
-        else { btp_menu_open(s);s->campaign.ui=BTP_MENU_ALLOCATE;s->menu.from_story=1;return 1; }
+        else {
+            /* 0C67:0002(1) clears both crew seats and all memberships before
+               the post-theft allocator. Garage checkout passes 0 instead. */
+            if (action==39) {
+                for (unsigned i=0;i<4;++i) btp_party_mech(s,i)[121]=btp_party_mech(s,i)[122]=255;
+                for (unsigned i=0;i<8;++i) s->party.people[i][12]=8;
+                s->campaign.mounted=0;
+            }
+            btp_menu_open(s);s->campaign.ui=BTP_MENU_ALLOCATE;s->menu.from_story=1;return 1;
+        }
     } else if (kind==14 && action==47) {
         /* 14D3:174E is the mayor-house chow aftermath: the meal reduces
            Jason's health by four only while it exceeds five. Preserve this

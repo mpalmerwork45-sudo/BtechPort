@@ -845,6 +845,30 @@ def story(env,work):
                 raise RuntimeError(kind+' companion SDL continuation differs')
             print(f'PASS: native {kind}, {len(lines)-tick+5} recorded SDL inputs through recruitment, exact state/pixels.',flush=True)
 
+def followups(env,work):
+    """Saved ordinary entrances/thefts exercise actual SDL input and pixels."""
+    binary=ROOT/'build/btech-headless';native=ROOT/'build/btech-port'
+    cases=[('mayor-newspaper','house-menu','GAME3'),('mayor-chow','house-menu','GAME3'),
+        ('cinema','entry','GAME3'),('inventor','entry','GAME3'),('inventor-qualified','entry','GAME5'),
+        ('laser-guns','laser-shop-robbery','GAME3'),('prison-theft','impound-yard-start',None),
+        ('arena-theft','arena-rented-locust','GAME3')]
+    with tempfile.TemporaryDirectory(prefix='native-followup-',dir=work) as directory:
+        tmp=Path(directory);prefix=tmp/'prefix.actions';start=tmp/'start.btp';tail=tmp/'tail.actions';record=tmp/'record.actions'
+        for kind,label,source in cases:
+            lines=(ROOT/f'tests/fixtures/ordinary-{kind}.actions').read_text().splitlines()
+            facts=json.loads((ROOT/f'tests/fixtures/ordinary-{kind}.json').read_text());tick=next(c['tick'] for c in facts['checkpoints'] if c['label']==label)
+            prefix.write_text('\n'.join(lines[:tick])+'\n');tail.write_text('\n'.join(lines[tick:])+'\n')
+            initial=['--load',str(ROOT/'Original DOS'/source)] if source else []
+            subprocess.run([str(binary),*initial,'--replay',str(prefix),'--save',str(start)],cwd=ROOT,check=True,capture_output=True,timeout=20)
+            frame=work/f'native-{kind}.ppm';expected=tmp/'expected.ppm'
+            actual=subprocess.run([str(native),'--load',str(start),'--smoke-replay','--smoke-fast',
+                '--replay',str(tail),'--record',str(record),'--frame',str(frame)],cwd=ROOT,env=dict(env,SDL_AUDIODRIVER='dummy'),
+                check=True,capture_output=True,text=True,timeout=40)
+            wanted=subprocess.run([str(binary),'--load',str(start),'--replay',str(record),'--frame',str(expected)],cwd=ROOT,
+                check=True,capture_output=True,text=True,timeout=20)
+            if json.loads(actual.stdout)!=json.loads(wanted.stdout) or frame.read_bytes()!=expected.read_bytes():raise RuntimeError(kind+' SDL continuation differs')
+            print(f'PASS: native {kind}, saved ordinary entrance/route, exact input/state/pixels.',flush=True)
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--shops-only", action="store_true")
@@ -869,6 +893,7 @@ def main():
     parser.add_argument('--overhead-only',action='store_true')
     parser.add_argument('--cache-only',action='store_true')
     parser.add_argument('--story-only',action='store_true')
+    parser.add_argument('--followups-only',action='store_true')
     parser.add_argument('--m4-acceptance',action='store_true')
     args = parser.parse_args()
     work = ROOT / "work"
@@ -893,6 +918,8 @@ def main():
                 intro(env,work);menu(env,work);presentation(env,work)
                 original_saves(env,work);aftermath(env,work);field(env,work)
                 saves(env,work);campaign(env,work);story(env,work);cache(env,work);return
+            if args.followups_only:
+                followups(env,work);return
             if args.intro_only:
                 intro(env,work);return
             if args.overhead_only:

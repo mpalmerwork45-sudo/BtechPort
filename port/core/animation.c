@@ -32,16 +32,23 @@ unsigned btp_player_direction(unsigned facing)
         facing == BTP_RIGHT ? 2u : facing == BTP_DOWN_RIGHT ? 3u :
         facing == BTP_DOWN_LEFT ? 5u : facing == BTP_LEFT ? 6u : facing == BTP_UP_LEFT ? 7u : 4u;
 }
+unsigned btp_mech_sprite_base(unsigned tag,int enemy)
+{
+    /* DS:140E gives enemy Jenner/UrbanMech atlas base 0. The owned-vehicle
+       dispatcher at 14D3:0E54 instead uses 146 for every non-Locust tag. */
+    return tag=='L' || (enemy && (tag=='J' || tag=='U' || tag=='s')) ? 0u : 146u;
+}
 int btp_cutscene_begin(BtpState *s, const BtpResources *r, unsigned kind, unsigned active)
 {
     int cinema=s && active==1 && s->mode==BTP_BUILDING && s->campaign.building==16 && kind<10;
     int invasion=s && active==4 && kind==2 && s->campaign.invasion && s->late.invasion_popup==3;
+    int yard=s && kind==0 && s->yard.active && (active==5 || active==6 || active==7);
     if (!s || !r || s->cutscene.active || kind>=BTP_ANM_COUNT ||
         (active==1 && kind>=10 && kind<=14 && (!s->cache.active || s->mode!=BTP_BUILDING || s->campaign.building!=25)) ||
-        (!cinema && !invasion && active!=3 && ((kind != 0 && kind != 6 && kind != 8 && (kind<9 || kind>14)) || active != (kind ? 1u : 2u))) || !r->animations[kind].count ||
+        (!cinema && !invasion && !yard && active!=3 && ((kind != 0 && kind != 6 && kind != 8 && (kind<9 || kind>14)) || active != (kind ? 1u : 2u))) || !r->animations[kind].count ||
         ((kind==0 || kind==8) && r->animations[kind].count != (kind ? 3u : 18u))) return 0;
     s->cutscene = (BtpCutsceneState){.active=(uint8_t)active,.kind=(uint8_t)kind,
-        .remaining=(uint16_t)(r->animations[kind].units[0]+(!kind || active==3 || invasion || (cinema && kind!=8) ? 50u : 0u))};
+        .remaining=(uint16_t)(r->animations[kind].units[0]+((!kind && active!=7) || active==3 || invasion || (cinema && kind!=8) ? 50u : 0u))};
     if (!s->cutscene.remaining) s->cutscene.remaining=1;
     return 1;
 }
@@ -61,11 +68,17 @@ int btp_cutscene_tick(BtpState *s, const BtpResources *r)
             if (!c->kind && s->audio.sound_count) { c->remaining=1;return 0; }
             s->cutscene = (BtpCutsceneState){0}; return 1;
         }
-        if ((unsigned)c->step+1u < a->count) ++c->step;
+        /* 09B8:16B2's failed-start routine plays O0 only while the next
+           sequence letter is below 'I', then uses sound 14 and a final pause. */
+        if ((unsigned)c->step+1u < (c->active==7 ? 8u : a->count)) ++c->step;
         else if (c->kind == 8 && c->cycle < 6) { ++c->cycle; c->step = 0; }
         /* 0000:4A6E suppresses the startup sound and final pause when the
            caller supplied a nonzero flag, as the cinema does. */
-        else if (c->active==2 || c->active==3) { c->hold = 1;c->remaining = 60;if (c->active==2) btp_audio_effect(s,12);continue; }
+        else if (c->active==2 || c->active==3 || c->active>=5) {
+            c->hold = 1;c->remaining = 60;
+            if (!c->kind) btp_audio_effect(s,c->active==7 ? 14u : 12u);
+            continue;
+        }
         else { s->cutscene = (BtpCutsceneState){0}; return 1; }
         c->remaining = a->units[c->step] ? a->units[c->step] : 1;
     }
@@ -79,6 +92,9 @@ int btp_cutscene_valid(const BtpState *s)
     if (!c->remaining || c->refresh_fraction >= 1000 || (c->active!=3 && !s->checkpoint_valid) || c->hold > 1) return 0;
     if (c->active==4) return c->kind==2 && c->step<31 && !c->cycle && !c->hold && c->remaining<=16384 &&
         s->mode==BTP_MISSION && s->campaign.invasion && s->late.invasion_popup==3 && s->combat.phase==BTP_COMBAT_STORY;
+    if (c->active>=5 && c->active<=7) return !c->kind && c->step<(c->active==7 ? 8u : 18u) && !c->cycle && c->remaining<=16384 &&
+        s->mode==BTP_YARD && s->yard.active && s->script.status==BTP_SCRIPT_NATIVE &&
+        (s->script.native_action==40 || s->script.native_action==35);
     if (c->active==3) return c->kind>0 && c->kind<BTP_ANM_COUNT && c->step<BTP_ANM_FRAMES && !c->cycle &&
         c->remaining<=16384 && s->combat.phase==BTP_COMBAT_ROUND && (s->mode==BTP_MISSION || s->mode==BTP_ENCOUNTER);
     if (c->active==1 && s->campaign.building==16) return c->kind<10 && c->step<BTP_ANM_FRAMES &&

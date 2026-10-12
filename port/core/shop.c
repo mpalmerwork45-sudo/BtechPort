@@ -12,7 +12,7 @@ void btp_shop_native(BtpState *s, const BtpResources *r)
 {
     const BtpBld *b = btp_state_bld(r,s);
     unsigned kind=btp_building_kind(r,s);
-    if (!b || (s->recruitment && kind!=5 && kind!=9) || (kind != 3 && kind != 4 && kind != 5 && kind!=8 && kind!=12 && kind!=9)) {
+    if (!b || (s->recruitment && kind!=5 && kind!=9) || (kind != 3 && kind != 4 && kind != 5 && kind!=8 && kind!=12 && kind!=9 && kind!=10)) {
         unsupported(s); return;
     }
     switch (s->script.native_action) {
@@ -52,8 +52,12 @@ void btp_shop_native(BtpState *s, const BtpResources *r)
         break;
     case 17: case 29:
         /* Training loans do not create owned or stored mechs. */
-        if (kind!=5 && kind!=8) { unsupported(s);return; }
-        s->story_flags[16]=s->campaign.owned;break;
+        if (kind!=5 && kind!=8 && kind!=10) { unsupported(s);return; }
+        s->story_flags[16]=0;
+        if (!s->campaign.owned) break;
+        for (unsigned i=0;i<4;++i) if (s->script.native_action==17 ? btp_party_mech(s,i)[0]!=255 && s->campaign.owned : s->party.mech_types[i]!=255)
+            ++s->story_flags[16];
+        break;
     case 20: case 44:
         /* Original 09B8:0925 / 1762 restore the building presentation. */
         if (kind!=5) { unsupported(s);return; }

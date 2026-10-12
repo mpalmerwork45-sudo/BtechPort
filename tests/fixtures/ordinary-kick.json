@@ -251,25 +251,25 @@
     },
     {
       "label": "kick-victory",
-      "tick": 5293,
+      "tick": 5333,
       "mode": "training-mission",
       "combat_phase": 0
     },
     {
       "label": "return-to-base",
-      "tick": 5293,
+      "tick": 5333,
       "mode": "training-mission",
       "combat_phase": 0
     },
     {
       "label": "kick-report",
-      "tick": 5358,
+      "tick": 5398,
       "mode": "building",
       "combat_phase": 0
     },
     {
       "label": "kick-exit",
-      "tick": 5359,
+      "tick": 5399,
       "mode": "local-exploration",
       "combat_phase": 0
     }

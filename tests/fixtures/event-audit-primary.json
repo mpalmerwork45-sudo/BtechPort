@@ -1,0 +1,13 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "cases": 154,
+  "routine": "103B:048A..04BE encounter No/Yes; 12E8:1521..1680 fire and 19EA..1A1C hit sounds",
+  "spans": "Image 143A1..14500/14887, 1486A..14887 and 14887..1489C/1495D; beam playback prerequisite visible=0/1",
+  "intercepted_boundaries": [
+    "0000:19BF sound playback (argument observed)",
+    "1656:0388/03F5 display",
+    "0000:2A4F key wait"
+  ],
+  "comparison": "Sound IDs for all 33 weapons, hit/miss and visibility; ten seeds, encounter Yes/No, exact RNG and evasion outcome"
+}

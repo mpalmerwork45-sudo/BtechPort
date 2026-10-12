@@ -5,6 +5,7 @@ void btp_campaign_rex(BtpState *state,const BtpResources *resources);
 int btp_campaign_random(BtpState *state,const BtpResources *resources);
 unsigned btp_campaign_candidates(BtpState *state,const BtpResources *resources,BtpCombatUnit units[12],uint8_t ids[12],int *x,int *y);
 void btp_campaign_result(BtpState *state,const BtpResources *resources);
+void btp_campaign_avoid(BtpState *state);
 unsigned btp_aftermath_cash(uint8_t rng[3],unsigned count);
 int btp_salvage_eligible(const uint8_t record[125],unsigned skill);
 void btp_salvage_copy(BtpState *state,unsigned slot,unsigned pilot,const uint8_t record[125],unsigned kind);

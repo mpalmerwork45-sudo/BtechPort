@@ -203,25 +203,25 @@
     },
     {
       "label": "victory",
-      "tick": 5636,
+      "tick": 5676,
       "mode": "training-mission",
       "combat_phase": 0
     },
     {
       "label": "return-to-base",
-      "tick": 5636,
+      "tick": 5676,
       "mode": "training-mission",
       "combat_phase": 0
     },
     {
       "label": "report",
-      "tick": 5700,
+      "tick": 5740,
       "mode": "building",
       "combat_phase": 0
     },
     {
       "label": "exit",
-      "tick": 5701,
+      "tick": 5741,
       "mode": "local-exploration",
       "combat_phase": 0
     }

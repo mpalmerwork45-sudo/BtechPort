@@ -3,7 +3,7 @@
   "checkpoints": [
     {
       "label": "entry",
-      "tick": 586,
+      "tick": 587,
       "state": {
         "map": 6,
         "mode": "entry-confirm",
@@ -14,7 +14,7 @@
           6
         ],
         "gate": 85,
-        "tick": 586,
+        "tick": 587,
         "blocked": 0,
         "script_pc": 0,
         "script_status": 0,
@@ -568,7 +568,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "84d5ce63d876bea4",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "c75a0fc4c3050b11",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -905,7 +916,7 @@
     },
     {
       "label": "cinema-complete",
-      "tick": 1262,
+      "tick": 1263,
       "state": {
         "map": 6,
         "mode": "local-exploration",
@@ -916,7 +927,7 @@
           6
         ],
         "gate": 85,
-        "tick": 1262,
+        "tick": 1263,
         "blocked": 0,
         "script_pc": 1128,
         "script_status": 3,
@@ -1216,7 +1227,7 @@
             1,
             1,
             9,
-            0,
+            8,
             4,
             50,
             80,
@@ -1396,7 +1407,7 @@
             690,
             1677
           ],
-          "mounted": 1,
+          "mounted": 0,
           "encounter": 0,
           "building": 16
         },
@@ -1475,7 +1486,18 @@
           "found": 0,
           "room": 0
         },
-        "state_digest": "505e890c17041999",
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "63593ad2be42d009",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1821,7 +1843,7 @@
       6
     ],
     "gate": 85,
-    "tick": 1262,
+    "tick": 1263,
     "blocked": 0,
     "script_pc": 1128,
     "script_status": 3,
@@ -2121,7 +2143,7 @@
         1,
         1,
         9,
-        0,
+        8,
         4,
         50,
         80,
@@ -2301,7 +2323,7 @@
         690,
         1677
       ],
-      "mounted": 1,
+      "mounted": 0,
       "encounter": 0,
       "building": 16
     },
@@ -2380,7 +2402,18 @@
       "found": 0,
       "room": 0
     },
-    "state_digest": "505e890c17041999",
+    "yard": {
+      "active": 0,
+      "phase": 0,
+      "timer": 0,
+      "checked": 0,
+      "attempts": 0,
+      "selected": 0,
+      "slot": 0,
+      "rental": 0,
+      "variant": 0
+    },
+    "state_digest": "63593ad2be42d009",
     "effect_stage": 0,
     "combat": {
       "phase": 0,
