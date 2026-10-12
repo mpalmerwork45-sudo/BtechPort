@@ -1,21 +1,16 @@
-# Project status — bounded M3c complete, 2026-10-12
+# Project status — bounded M3d–M3h complete, 2026-10-12
 
-The five authorized follow-on tasks are complete in their stated MAP1 scope.
-The user's additions—force-field electricity and placing the Citadel within
-its generated surroundings—are included. See [M3c evidence](M3C_PROGRESS.md).
+All five authorized follow-on milestones have playable implementations and
+bounded original comparisons. The seventh-assignment invasion leads through
+the destroyed Citadel into the outer world. Starport's garage, civilian clothing,
+inauguration, Rex/Commando grant and technician recruitment follow ordinary
+inputs. Owned-mech repairs, ammunition and Speed Shop refits are integrated.
+The original title music, building portraits and recruitment crest now play.
+See [M3d–M3h evidence](M3D_H_PROGRESS.md) for confidence and remaining differences.
 
-Six training assignments reach reporting and rewards. Twelve-waypoint routes,
-walk/run/jump, weapon/Kick orders, moving armed opponents, original firing and
-impact poses, persistent flame/corpse/wreck markers and saved effects work.
-The third assignment's shell stays stationary as requested. The fifth success
-invites Rick to the lounge; his five-page device scene and the sixth assignment
-against two live Locusts now follow ordinary inputs. Sixth success raises the
-allowance cap to 3,000. The wider original campaign remains unfinished.
-
-F4 shows the authentic 64×64 Citadel map embedded within nine original generated
-sectors (192×192 tiles). The early campaign's impassable borders are retained.
-Opening the exits needs the later attack/event; this map view does not claim
-outer travel, arbitrary native C generation or other towns are implemented.
+Earlier training, Rick/device, diagonal movement, route arrows, physical
+attacks, force-field electricity and original borders remain covered. The third
+assignment's shell stays stationary as requested. The wider campaign is unfinished.
 
 ## Milestones
 
@@ -36,104 +31,118 @@ outer travel, arbitrary native C generation or other towns are implemented.
 | M2k | Rubble pickup/carrying/return; all loan choices and objectives |
 | M2l | Ordinary two-mission/rest loop through the third briefing |
 | M2m | O0/O8 playback, original font/borders and animation persistence |
-| M3a | Manual third-assignment weapons combat, stationary shell, route arrows, victory/report and 500-cap reward |
-| M3b | Kick physical attacks; fourth/fifth assignments, moving/retaliating opponents, Mechit-Lube apprenticeship and early services |
-| M3c | Original live turns, twelve waypoints, flames/effects, animated force fields, natural Rick/device, sixth assignment and generated Citadel area map |
-| Remaining M2/M4 | Party/repair, world/maps and wider campaign progression |
-| M3–M5 | Wider verified tactical combat; original campaign; optional enhancements |
+| M3a | Third-assignment manual weapons combat, stationary shell, route arrows and victory/report |
+| M3b | Kick; fourth/fifth assignments and Mechit-Lube apprenticeship |
+| M3c | Live turns, twelve waypoints, flames/effects, map electricity, Rick/device, sixth assignment and generated Citadel view |
+| M3d | Seventh/eighth invasion branches, Jenner setup, surviving-mech ownership, loss presentation and destroyed Citadel escape |
+| M3e | Independent C world generation, travel/town overlays, encounter gates and Starport garage |
+| M3f | Rex/Commando, party inspection/equipment recipient, saved following and mixed encounters with independent friendly orders |
+| M3g | Owned-mech repair/ammo/refits, technician recruitment and selected-member apprenticeship |
+| M3h | Original PC speaker title sequence, building portraits and recruitment/invasion-loss animation contexts |
+| Remaining M4 | Broader encounter aftermath, original formation/crew behavior, later story/towns, original saves and ending |
+| M5 | Optional enhancements after original-mode completion |
 
 ## Play and verify
 
 ```sh
 ./scripts/build.sh
 ./build/btech-port --data "Original DOS"
-./build/btech-port --world-overview
+./build/btech-port --replay tests/fixtures/ordinary-starport.actions
+./build/btech-port --replay tests/fixtures/ordinary-rex.actions
+./build/btech-port --replay tests/fixtures/ordinary-services.actions
 ./scripts/test.sh
-python3 tools/make_training_combat_replay.py --campaign
-python3 tools/native_smoke.py --training-combat-only
-python3 tools/native_smoke.py --world-only
+python3 tools/native_smoke.py --campaign-only
 ./scripts/test-sanitize.sh
 ```
 
+The later replays execute ordinary input histories quickly in the headless core,
+then open an interactive window. They preserve the real campaign prerequisites
+without editing saves or jumping story flags. New native games show the original
+title and music; Enter begins play. `--mute` disables the audio device.
+
 Arrows/keypad move and select; Enter/Space confirms; Backspace declines or
-recovers. F3 toggles diagnostics, F4 the area map, F5/F9 save/load, R restarts,
-and Esc exits. Bank digits/erasure/Escape-clear keep their editor meanings.
+recovers. Bank and ammo quantities use digits, Backspace erasure, Escape clear
+and Enter submission; Space does not submit. F3 toggles diagnostics, F4 the area
+map, F5/F9 save/load, R restarts, and Esc exits outside an amount editor.
 F5/F9 use `work/player-save.btp`; `--save-file FILE` chooses another slot.
 Failed loads preserve the session.
 
-In combat, selecting the same movement mode appends a destination, up to twelve.
-Changing mode asks whether to replace the route. Arrows preview the shared
-planner's next turn. Weapons and Kick orders persist; Next target cycles live
-opponents. General computer control remains an explicit unsupported command.
-Rick delivers the device without joining the party. Mechit-Lube covers Jason's
-apprenticeship and original early no-owned-mech responses; owned services remain
-future work.
+Space outdoors after the attack opens party actions. Inspect/Equipment selects
+a member for display and subsequent shop purchases. Garage parking preserves
+all owned mech records; checkout has the original 150-credit fee. Mechit-Lube
+selects a mech, repair category, ammo bin/quantity or its scripted refit offer.
+In combat, the friendly-unit selector retains independent movement/weapon/Kick
+orders. General computer control remains an explicit unsupported command.
 
 ## Evidence and verification
 
-**PASS:** 26 CTest suites, four Python tests, the complete historical headless
-regression and headless ASan/UBSan/LeakSanitizer. The SDL backend itself is not
-sanitizer-instrumented. Native X11 checks cover the full five-mission/Mechit-Lube,
-Kick-only and Rick/sixth routes, exact complete inputs/state/frames and twelve
-real-time save contexts. A separate real-key F4/F5/F9 check matches the area map
-and its saved-clock pixels exactly. The Yes/No route popup is visually aligned.
+**PASS:** all 34 CTest suites, five Python tool tests, the complete historical
+headless regression and headless ASan/UBSan/LeakSanitizer. The final amount-editor
+fix is covered by core, campaign continuation, native keys and the updated
+sanitizer CTests. The SDL backend is checked natively but is not instrumented.
 
-M3c primary comparisons include 126 complete live turns, 108 queued planning/
-turn cases, 128 flame/ring/unchanged-terrain cases, 161 pose/gait programs,
-60 terrain animation crops, 144 fourth-to-sixth encounter setups and 225 result/
-rank/RNG cases. Nine complete generated-sector hashes and every MAP1 overlay
-tile are checked. Earlier 4,422 numeric combat, 600 physical/personal attacks,
-128 enemy decisions and 35 controlled original turns remain covered.
+New primary comparisons cover 16 invasion setups; 30 complete 64×64 world
+sectors across three seeds, including opposite world corners; 65 Rex/agent
+recruitment cases; 18 mixed encounter candidate cases; 47 repair/reload/refit
+cases; 128 speaker pitches; and the complete 17,409-interrupt title trace.
+Portrait dispatch uses the original 26-byte building table. Original SIF note
+bytes, images, executable spans and RAM remain outside Git.
 
-Native input-only routes now use 5,378 actions / 20 fresh-process restarts for
-third combat, 36,755 / 54 for five assignments and Mechit-Lube, 5,358 / 20 for
-Kick-only victory, and 43,996 / 55 for Rick/device and sixth victory. The latter
-includes four withdrawals with non-advancement and original skill practice,
-then succeeds against both opponents. C integration restores before every
-input and includes a twelfth-microstep effect/save regression.
+Campaign integration restores before every ordinary input through invasion,
+loss, Starport, Rex and services. The longest route has 48,159 actions and
+96,694 assertions. Native SDL checks compare recorded inputs, final canonical
+state and every final RGB pixel with headless playback. Focused tails cover
+498 invasion, 560 loss, 991 Starport, 1,193 Rex and 226 service inputs, taking
+roughly 0.5–2.5 seconds each. Prefixes are real input histories saved before the
+tail. Real F5/F9 checks cover the recruitment crest, partial ammo entry and music.
 
-Accelerated native five-mission playback measured 39.16s for 36,760 ticks
-(normal duration 1,176.32s); Kick playback 5.85s for 5,363 ticks (171.62s);
-Rick/sixth playback 46.90s for 44,001 ticks (1,408.03s). These are about thirty
-times faster than normal play, preserving inputs, logical ticks and rendering.
-Focused probes use checkpoints and bounded original instructions. Normal play
-retains 32ms ticks.
+Earlier M3c comparisons retain 126 full live turns, 108 waypoint cases, 128 flame
+cases, 161 pose/gait programs, 60 terrain-animation crops, 144 training setups
+and 225 result cases. The full historical checks retain ordinary training,
+Kick-only and Rick/sixth routes. Focused verification avoids repeatedly spending
+real time traversing the campaign; normal play keeps 32ms logical ticks.
 
-**Limits:** original whole-route NPC/RNG timing still has the documented gaps
-and later-quiz prerequisites. Original player-mech destruction's pilot
-evacuation/character-loss branch is not claimed by the full-turn comparisons.
-Native training defeat/withdrawal are covered separately. Exact animation
-cadence, beam/projectile placement, full pixel parity, wider initiative,
-outer travel/encounters, other towns, owned-mech services, party recruitment,
-original GAME compatibility and audio remain unfinished. Original flame
-markers do not mutate terrain; no invented spreading fire/smoke damage is added.
+**APPROXIMATE:** the invasion handoff at the bounded combat window edge;
+encounter cadence, terrain placement, engagement/flee and mixed-party AI;
+party following and crew-allocation UI; service layout/batching; DOS busy-loop
+timing after recruitment; animation cadence and host audio filtering.
+Complete original pilot ejection/character loss, encounter loot, field
+technician repairs, other sound dispatch, GAME import/export and the later
+campaign remain unverified or unimplemented. Old long-route NPC/RNG gaps and
+later-quiz prerequisites remain documented. A 24-unit logical encounter does
+not establish complete original party-combat parity.
 
 ## Persistence and provenance
 
-Current saves are **BTPG/v16**, 4,096-byte payload in the 16-byte BTS1 length/CRC
-envelope (4,112 bytes total). Routes, mark ring and effects survive reload.
-BTPF/v15's 2,048-byte migration and older supported formats remain tested.
-The runtime is independent C11/SDL2. Owner-supplied graphics and ignored BTT6,
-BTC2 and BTW1 caches retain provenance; no original art, executable, RAM or
-reference implementation enters Git. The world converter executes original
-instructions only during cache preparation, using the existing pinned Unicorn
-wheel. The C game reads generated data without an emulator dependency.
+Current saves are **BTPI/v18**, a 16,384-byte payload in the 16-byte BTS1
+length/CRC envelope: 16,400 bytes total. Party, extended combat, service input,
+animation and speaker timing survive reload; older v1–v17 layouts migrate.
+These are internal saves, with no original GAME compatibility claim.
 
-Both supplied reference trees match all **1,287** baseline entries, including
+The runtime is independent C11/SDL2. Owner-derived BTT6, BTC6 and BTW2 caches
+retain provenance. BTW2 contains static numeric generation inputs; the native
+core generates arbitrary sectors independently. Build preparation and play no
+longer need an emulator. Optional research fixtures execute bounded unmodified
+original instruction spans. No original art, music stream, executable, RAM or
+GPL reference runtime code enters Git.
+
+The final immutable-tree guard checks all 1,287 reference entries, including
 content, modes, timestamps and Git metadata. Local commits remain on `main`;
-no push was made. Existing acknowledgements explicitly credit UnBattletech's
-Edoardo Barolo/velteyn, Maximilien Noal and other research/tool contributors.
+no push was made. README acknowledgements explicitly credit UnBattletech's
+Edoardo Barolo/velteyn, Maximilien Noal and the other research/tool contributors.
 
 ## Next five proposed tasks
 
-1. **M3d — Seventh assignment and Citadel attack:** recover the original event,
-   destroyed MAP11 transition and escape gate; verify its normal and failure paths.
-2. **M3e — Native outer-world generation and travel:** replace the bounded
-   cache with independent C generation; establish movement/encounter gates and
-   the first additional town transition.
-3. **M3f — Party recruitment:** original recruitment, following, party inventory
-   and multi-unit collision/ownership, beginning with the next reachable companion.
-4. **M3g — Owned-mech services:** repair, ammunition, refitting and technician
-   effects through the original Mechit-Lube script.
-5. **M3h — Original audio and remaining presentation:** recover sound/music
-   data and dispatch, then remaining portrait/campaign animation contexts.
+1. **M4a — Encounter results:** original engagement/flee decisions, rewards,
+   salvage and aftermath, including pilot ejection and character-loss paths.
+2. **M4b — Party and crews:** recover original formation, collision, crew
+   allocation and equipment-transfer behavior; verify technician field effects.
+3. **M4c — Next story and town services:** the next reachable companion/story
+   branch, spy outcomes, hospital healing and timed NPC events.
+4. **M4d — Original cache sequence:** recover the original Star League cache
+   path and puzzle with bounded input routes and saved intermediate states.
+5. **M4e — Original saves and remaining presentation:** GAME import/export
+   round trips, original sound-effect dispatch and remaining status/portrait UI.
+
+Each proposal needs a bounded original audit before its implementation; these
+five tasks are not a claim that all remaining campaign work fits those increments.

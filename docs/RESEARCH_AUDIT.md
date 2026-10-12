@@ -1,8 +1,12 @@
-# Research audit — M0/M1 with M2a–M2i findings, 2026-10-11
+# Research audit — M0 through bounded M3h, updated 2026-10-12
 
 Local reference revision: `86e1b637c39a713547cfa2aa2149d744b995acfc` (2026-09-29). Its README explicitly separates reverse engineering from an unvalidated Godot reconstruction. Both supplied directories are immutable for this assignment, including reference git metadata. Local agent instructions to update/push the reference wiki are superseded by the user's instruction to leave it unchanged and never push.
 
 Confidence is scoped: **VERIFIED** means the stated fact was checked against bytes, machine code, or a recorded original observation; **INFERRED** means a supported interpretation still awaiting a direct check; **APPROXIMATE** means knowingly simplified behavior; **UNKNOWN** means unestablished. Passing an extraction round trip does not verify script semantics.
+
+The following matrix records the initial M0–M2 audit. Dated extensions below
+supersede its historical gaps and save-format sizes; current acceptance and
+limits are in [PROJECT_STATUS.md](PROJECT_STATUS.md).
 
 | Subsystem | Source of evidence | Confidence | Reusable tools/data | Important gaps | Proposed verification |
 |---|---|---|---|---|---|
@@ -99,3 +103,27 @@ in the F4 view. This supersedes the secondary static-world conclusion for this
 bounded area; full native generation, outer travel and campaign gates remain
 open. The generated owner-derived cache is ignored by Git; neither reference
 tree nor proprietary assets are modified or committed.
+
+## M3d–M3h continuation, 2026-10-12
+
+See [primary spans and verification](M3D_H_PROGRESS.md). Independent C code is
+compared with original instructions; the reference recreation remains secondary
+evidence. No substantial GPL implementation is translated or made a runtime dependency.
+
+| Subsystem | Primary evidence / independent implementation | Confidence | Reusable data/tools | Remaining gaps |
+|---|---|---|---|---|
+| Invasion | Original `07DC:0765..07E9`, `0C80..0D1D`, TRAINING.BLD and MAP11; [training](../port/core/training.c) | **VERIFIED** 16 setups, ownership flags and ordinary survival/loss routes; **APPROXIMATE** native escape edge | Campaign setup vectors and every-input restoration | Full pilot ejection/body-damage/character-loss span |
+| World/towns | Original `187F:104E/1314/13D9`, packed map origins and `0000:201D..20CF`; [generator](../port/data/generate.c), [world](../port/core/world.c) | **VERIFIED** 30 whole sectors / three seeds, town mapping and Starport garage route | Static BTW2 inputs, `make_world_vectors.py`, `btp-world-route` | Global bootstrap/RNG, other town story integration, whole encounter timing |
+| Party/encounters | Original `09B8:104E..136D`, `E4F..FB7`, `05AB:D68..FBF`; [party](../port/core/party.c), [campaign](../port/core/campaign.c) | **VERIFIED** 65 recruitment and 18 candidate cases; **APPROXIMATE** following, placement, cadence, AI/flee | Numeric fixtures; Rex/technician ordinary routes; saved independent friendly orders | Full formation/crew collision and transfer UI, loot and aftermath |
+| Owned-mech services | Original `09B8` repair/reload/refit spans and REPAIR.BLD; [service](../port/core/service.c) | **VERIFIED** 47 numeric cases and actual BLD route; **APPROXIMATE** layout/batching | Numeric prices/templates in BTC6; service fixtures | Broader component/technician field effects and exact UI |
+| Audio | Original `0000:477D..48AE` load and `184B:0139/0298` driver; [audio](../port/core/audio.c) | **VERIFIED** 128 pitches / 17,409 title IRQs / saved PCM continuation; **APPROXIMATE** host waveform filtering | Owner WWOODBT.SIF; `make_audio_vectors.py`, `btp-audio-render` | Other sounds, PCjr and device latency |
+| Portraits/animations | Original `DS:141A`, `07DC:0098..00B1`, original O6/O9/O17–21; [renderer](../port/frontend/pixels.c) | **VERIFIED** dispatch table and decoded frames; **APPROXIMATE** complete entry/animation pacing | BTC6 portrait table and existing ANM decoder | Entry quality/RNG guard, remaining status UI and pixel parity |
+| Persistence | [BTPI/v18 encoder](../port/core/game.c), internal BTS1 envelope | **VERIFIED** 16,384-byte payload, old migration and every-input restoration, native F5/F9 | 34 CTests, native campaign probes, ASan/UBSan/LeakSanitizer | Original GAME import/export and Windows |
+
+Build preparation now extracts static generation inputs without an emulator;
+native C produces terrain at runtime. The optional original oracle uses bounded
+instruction spans and numeric fingerprints, not a dependency on the reference
+game engine. New native checks use input-created checkpoints and accelerated
+tails; logical play retains fixed 32ms ticks. The full historical comparisons
+remain passing. Original assets, executable images, RAM and the SIF stream stay
+in ignored owner-local files.

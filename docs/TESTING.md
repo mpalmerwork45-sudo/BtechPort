@@ -1,6 +1,96 @@
 # Build, verification and original oracle — 2026-10-12
 
-## Current M3c acceptance
+## Current M3d–M3h acceptance
+
+**34 CTest suites, the complete historical headless regression, five Python
+tool tests and headless ASan/UBSan/LeakSanitizer pass.** Native SDL checks cover
+the invasion/loss, Starport, Rex, technician/services, recruitment crest, ammo
+input and title-music save contexts. The SDL backend itself is not instrumented.
+Current BTPI/v18 saves have 16,384-byte payloads / 16,400-byte BTS1 files.
+Historical sections retain their old format names, counts and prerequisites.
+
+```sh
+./scripts/build.sh
+./scripts/test.sh
+python3 tools/native_smoke.py --campaign-only
+./scripts/test-sanitize.sh
+```
+
+For a focused follow-up after a core change, `ctest --test-dir build
+--output-on-failure` and `./scripts/test-sanitize.sh --core-only` run the 34
+current suites, including every-input campaign restoration. The full default
+scripts additionally run the historical corpus and Python differential checks.
+Run the full suite for milestone acceptance. Leak detection stays enabled;
+sanitizer execution uses the previously approved whole script outside the
+sandbox's ptrace wrapper.
+
+The five later routes are `ordinary-invasion`, `ordinary-invasion-loss`,
+`ordinary-starport`, `ordinary-rex` and `ordinary-services` under
+`tests/fixtures/`. Native focused checks build the prefix with ordinary
+headless inputs, save normally, then send the bounded tail through SDL.
+They compare all recorded inputs, canonical state and final RGB pixels. The
+498/560/991/1,193/226-input tails each take roughly 0.5–2.5 seconds on this host.
+F5/F9 probes use real X11 keys and bounded continued clocks at O6 recruitment,
+partial ammo input and title music. Ammo also checks Backspace erasure, Escape
+clear and Space ignored. Window-close events end these probes without changing
+the logical state. This avoids replaying 25 minutes of normal pacing for each
+later feature, while the full core route checks its actual prerequisites.
+
+To open a later playable state:
+
+```sh
+./build/btech-port --replay tests/fixtures/ordinary-starport.actions
+./build/btech-port --replay tests/fixtures/ordinary-rex.actions
+./build/btech-port --replay tests/fixtures/ordinary-services.actions
+```
+
+Regenerate input-only routes when their behavior changes:
+
+```sh
+python3 tools/make_campaign_replay.py 32 0
+python3 tools/make_campaign_replay.py 32 1 --loss
+python3 tools/make_later_campaign_replay.py
+```
+
+The last command tries bounded real key delays at the technician's pause to
+select the non-hostile recruitment coin. It does not edit RNG, story flags or
+save payloads. All earlier quiz, invasion and town requirements are reached by
+ordinary inputs. Its full service route has 48,159 actions and 96,694 C assertions.
+
+Original numeric fixture regeneration is optional research, using the pinned
+Unicorn tool environment and ignored original snapshots:
+
+```sh
+python3 tools/make_world_vectors.py
+python3 tools/make_party_vectors.py
+python3 tools/make_service_vectors.py
+python3 tools/make_audio_vectors.py
+```
+
+The comparisons cover 30 whole generated sectors / three seeds, 65 recruitment
+records, 18 mixed encounter candidates, 47 service cases, 128 speaker pitches,
+the full 17,409-IRQ title fingerprint and original building portraits. Native
+world generation reads static numeric inputs from BTW2; `prepare_world.py`
+extracts those without running an emulator. Build/runtime need no Unicorn.
+
+Audio can be inspected without a display or audio device:
+
+```sh
+./build/btech-headless --title-preview --frame work/title.ppm
+./build/btp-audio-render "Original DOS" work/title-music.wav
+./build/btech-port --title-preview
+./build/btech-port --mute
+```
+
+Ordinary new native games include the title; headless defaults and existing
+campaign fixtures start at the initialized MAP1 baseline. Use `--title-preview`
+when replaying a recording made from a new native title screen. Logs made from
+a loaded save need that same `--load` context. Original GAME files are not supported.
+Speaker divisor/timing and saved PCM continuation are verified; host filtering,
+latency, other sound dispatch and full screen parity are not claimed. See
+[M3d–M3h evidence and limits](M3D_H_PROGRESS.md).
+
+## Historical M3c acceptance
 
 **26 CTest suites, complete headless regression and headless
 ASan/UBSan/LeakSanitizer pass.** Current saves use BTPG/v16: 4,096-byte payload,
@@ -37,7 +127,7 @@ Twelve real-time F5/F9 contexts cover queued routes, Yes/No replacement, firing,
 course payment, Rick dialogue/device, sixth launch and victory. A separate
 real-key F4/F5/F9 check compares the generated area map and exact continued pixels.
 
-The build now prepares `work/world-data.bin` with the existing optional research
+At M3c the build prepared `work/world-data.bin` with the existing optional research
 wheel, Unicorn 2.1.4 under `local-deps/python`. It executes unmodified original
 terrain routines from the hash-checked EXE, with no RAM capture dependency.
 The C runtime needs no emulator. BTW1 is an 80-byte provenance/area/seed header
@@ -669,10 +759,10 @@ still enabled. No dependencies or reference-directory changes were required.
 M2i sources, export commands, exact evidence runs and remaining limits are in
 [M2_SPRITE_EVIDENCE.md](M2_SPRITE_EVIDENCE.md). The historical M2i payload is 416
 bytes, BTP9; M2j extended it to 448 bytes, BTPA/v10; BTPC/v12 uses 512 bytes;
-historical BTPE/v14 uses 1024 bytes; BTPF/v15 uses 2048 bytes. Current BTPG/v16
-uses 4096 bytes.
+historical BTPE/v14 uses 1024 bytes; BTPF/v15 uses 2048 bytes; BTPG/v16
+used 4096 bytes. Current BTPI/v18 uses 16384 bytes, as described above.
 Existing progress and old migrations remain covered.
-Mech ownership, wider combat, portraits and remaining status UI remain
-unimplemented. Three loan choices, six assignments, original combat/map frames
-and O0/O8 playback are supported. Whole-screen and complete timing parity are
-not claimed.
+Mech ownership, party combat and portraits were added in M3d–M3h. Remaining
+status UI, whole-screen and complete timing parity are not claimed. The three
+loan choices, earlier assignments, original combat/map frames and O0/O8
+playback remain covered.

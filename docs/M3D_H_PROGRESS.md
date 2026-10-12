@@ -1,4 +1,4 @@
-# M3d–M3h working evidence
+# Bounded M3d–M3h evidence — complete, 2026-10-12
 
 Authorized 2026-10-12: seventh assignment/invasion, native world travel,
 party recruitment/inventory, owned-mech services, original audio/presentation.
@@ -21,9 +21,9 @@ unchecked features are not fidelity claims.
   mirrored 8×8 tile templates (`187F:0BFB/104E/11BB/13D9`). No original static
   whole-world map is being invented.
 
-## Verification to complete
+## Acceptance scope
 
-Each working increment needs original comparison cases, save continuation,
+Each working increment has original comparison cases, save continuation,
 appropriate headless checks and a local commit. Final acceptance includes
 native accelerated checks, sanitizer coverage and the immutable-tree guard.
 The complete wider campaign, original GAME import/export and exact host-time
@@ -37,7 +37,7 @@ nine Citadel-area fingerprints. Static input extraction is 1,520 bytes in an
 ignored, provenance-tagged/checksummed BTW2 cache. Build preparation no longer
 runs an emulator to produce world tiles. Focused world tests pass, including
 malformed-cache atomicity, the complete MAP1 overlay and saved-clock rendering.
-Travel, town switching and random encounters are still being connected.
+Travel, town switching and random encounters are described in the later increments below.
 
 ## Invasion increment
 
@@ -51,9 +51,9 @@ and the post-attack encounter mask while retaining v1–v16 migration.
 
 **APPROXIMATE / limits:** the current bounded combat window hands off at its
 last half-row; the original crosses the packed sector boundary. Global travel
-is the next increment. The invasion loss presentation and flags are covered;
+is connected in the next increment below. The invasion loss presentation and flags are covered;
 the complete original pilot-evacuation/body damage RNG span remains outside
-the combat comparisons. General campaign encounters are not yet implemented.
+the combat comparisons. General campaign encounters are described below.
 
 ## World travel and town increment
 
@@ -70,8 +70,8 @@ checkout fee remains the original script's requirement.
 blocked terrain sample, using unit feet. The native mounted cursor therefore
 checks entrance Y+2. Ordinary inputs from new game through the invasion and
 garage parking survive save/restore after every input. The additional ComStar
-branch has also been exercised on foot. Full random-encounter setup is still
-being connected; walking animation, host-time cadence and allocation UI remain
+branch has also been exercised on foot. Random-encounter setup is compared in
+the next increment; walking animation, host-time cadence and allocation UI remain
 **APPROXIMATE** until their wider primary comparisons are complete.
 
 ## Party and encounter increment
@@ -121,3 +121,70 @@ After the invasion, the original stock-growth rules continue at the world
 loop wrap without the cadet allowance (`0000:358..3C9`). Service UI layout and
 batch presentation are **APPROXIMATE**; repair/refit/reload numeric comparisons
 do not constitute a complete original town UI or technician-field-repair audit.
+
+## Audio and presentation increment
+
+**VERIFIED:** original `0000:477D..48AE` loads BTTITLE.CMP and WWOODBT.SIF.
+The PC speaker driver is in `184B`; `0139..015F` derives PIT divisors from the
+original frequency table, and `0298` advances the note stream. IRQ reload 4095
+at 1,193,182 Hz with four-interrupt note pacing is independently reproduced.
+128 original pitch cases and the complete 17,409-interrupt title fingerprint
+match note position, divisor, active state and countdown at every interrupt.
+The SIF stream is loaded from the owner's original file, not committed.
+
+The native title plays the original artwork and music before ordinary play.
+Any logical start key or the end of the approximately 60-second sequence enters
+exploration. The headless core advances the same sound clock; SDL queues
+48 kHz mono PCM independently from a copied core state. Three hundred saved
+continuations preserve the next PCM block exactly. F9 discards old queued
+samples before resuming the loaded clock. `--mute` disables the audio device.
+Host volume, waveform integration/filtering and actual device latency remain
+**APPROXIMATE**. Combat sound dispatch and PCjr output remain unfinished.
+
+**VERIFIED:** original `DS:141A` maps 26 building kinds to their images;
+`07DC:0098..00B1` calls the image routine before running the BLD. The native
+left panel uses O17 for the Citadel, O21 for weapons/armour, O18 for repair/garage,
+O19 for the inauguration hall and O20 for the arena. O6 supplies the recruitment
+crest; O9 supplies the invasion-loss sequence. Primary table bytes and decoded
+frames are compared. Original entry quality/RNG guards, exact wall-clock
+cadence and complete screen parity remain **APPROXIMATE/UNKNOWN**.
+
+## Final verification
+
+**PASS:** all 34 CTest suites, the five Python tool tests, historical corpus and
+input-replay checks, and headless ASan/UBSan/LeakSanitizer. The updated amount
+editor is covered by CTest, every-input campaign restoration, focused native
+keys and a final sanitizer CTest rerun. No SDL instrumentation is claimed.
+The amount editor now shares the bank's seven-digit, Backspace, Escape-clear
+and Enter-submit behavior; native Space leaves the quantity open.
+
+Ordinary campaign fixtures restore before every input on invasion-survival,
+invasion-loss, Starport, Rex and service paths. The longest route has 48,159
+actions and 96,694 assertions. Native replay tails compare exact recorded
+SDL inputs, full canonical final state and all final RGB pixels against
+headless rendering: 498 invasion, 560 loss, 991 Starport, 1,193 Rex and 226
+service inputs, roughly 0.5–2.5 seconds per tail. Each prefix is reached by real
+logical inputs and written through the real save system; no save bytes or
+story state are patched. Real F5/F9 probes compare continued clocks and pixels
+at the recruitment crest, partial ammo amount and title music.
+
+Current internal **BTPI/v18** uses 16,384 payload bytes / 16,400 BTS1 file bytes,
+with v1–v17 migration. BTT6, BTC6 and BTW2 are ignored owner-derived caches.
+Research fixture regeneration remains optional; builds and play no longer
+depend on Unicorn. The final reference guard checks all 1,287 immutable entries,
+including modes, mtimes and reference Git metadata. Local working commits are
+on main, without pushes. Contributor acknowledgements remain in README.
+
+World-preparation regression explicitly blocks the optional emulator imports
+and still reproduces the exact BTW2 cache. This also catches research-only
+imports accidentally leaking into the normal build path.
+
+**Remaining limits:** mixed combat is not full original-party parity. A general
+encounter currently finishes on destruction of unit zero; original pilot
+ejection, surviving-party/wreck handling, character loss and loot are not
+complete. The effect queue can omit visuals beyond seven simultaneous events.
+Following and the crew-allocation UI remain bounded approximations. Other towns
+load their original maps/scripts but do not yet have full story integration
+coverage. Field technician effects, further audio contexts, original GAME
+compatibility and the later campaign remain future work. The
+[next five proposals](PROJECT_STATUS.md) address these remaining areas.

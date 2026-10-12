@@ -1,57 +1,59 @@
-# Open questions after bounded M3c — 2026-10-12
+# Open questions after bounded M3d–M3h — 2026-10-12
 
-Six training assignments, original waypoint queues, combat poses/impact programs,
-persistent marks, animated map electricity and the natural Rick/device route
-now work. The F4 area map embeds MAP1 within nine original generated sectors.
-See [current evidence](M3C_PROGRESS.md) and [next five tasks](PROJECT_STATUS.md).
+The invasion, destroyed Citadel, native world generation/travel, Starport,
+Rex/Commando and technician recruitment, owned-mech services, title music and
+building portraits are implemented. See [evidence](M3D_H_PROGRESS.md) and
+[next five tasks](PROJECT_STATUS.md). Confidence applies to each compared span,
+not to the complete campaign.
 
-1. **Next original assignment and attack:** index 6 (seventh assignment) remains
-   an explicit unsupported context. Recover its event, Citadel attack, destroyed
-   MAP11 switch and legitimate escape gate. Do not open the early compound's
-   blocked borders before establishing the original story transition.
-2. **Outer world:** bounded original generation is verified for sectors 11..13
-   and a stated noise seed. Native C arbitrary-sector generation, original outer
-   collision/terrain gates, encounters, other town overlays and map transitions
-   remain open. The area cache is generated, not an original static world file.
-   Complete global RNG/bootstrap equality is not established.
-3. **Party and ownership:** Rick delivers a device without joining the party.
-   Subsequent recruitment, following, party inventory, multi-unit collision and
-   owned-mech records need separate original observations. Mechit-Lube currently
-   covers Jason's course and early no-owned-mech responses, not repair/refitting,
-   ammunition purchases or party-member technician courses.
-4. **Long-route NPC/RNG timing:** the first quiz/mission RNG matches; long
-   original outdoor waits before keys still alter later NPC arrivals/quiz draws.
-   The earlier 181-checkpoint comparison retains three explicit RNG prerequisites.
-   Input-only native playability routes do not prove complete original timing.
-5. **Combat beyond the bounded comparisons:** 126 live complete turns now cover
-   3–6 robots, one Locust and two Locusts. General initiative, broader party
-   contexts, salvage and aftermath are unfinished. Original player-mech
-   destruction includes pilot evacuation/character loss; that branch is excluded
-   from the full-turn comparisons. Native training defeat/flee is covered by
-   separate integration tests. The stationary training shell is the user's
-   deliberate change; original moving-target fixtures remain intact.
-6. **Remaining graphics/timing:** original firing/Kick/gait/impact and ten
-   three-frame terrain slots are verified. Beam interpolation, projectile
-   placement, frame cadence, animation-guard contexts, other portraits/status
-   bars and whole-screen pixel parity remain approximate or open. Original fire
-   markers do not change the terrain grid; no spreading smoke/damage simulation
-   is inferred from them. Additional smoke contexts need evidence.
-7. **Original GAME compatibility:** the supplied saves are 3,913 bytes. Original
-   import/export needs executed round trips before support can be claimed.
-   Current internal BTPG/v16 saves use 4,096-byte payload / 4,112-byte BTS1 file,
-   with routes, mark ring and active effects. v15 and older migrations retain
-   only the contexts those formats could represent.
-8. **Exact DOS pacing/day progression:** keyboard repeat/flush, CPU costs,
-   retrace timing, later timers and broader skill/day events need further traces.
-   Graphics No currently keeps the same logical presentation delay so numeric
-   simulation remains identical; original shorter wall-clock delay is not matched.
-9. **Audio/campaign animation:** all 22 ANMs decode; remaining playback dispatch,
-   WWOODBT.SIF and speaker/music formats are unfinished. Audio is absent.
-10. **Portability/distribution:** test Windows. Asset/licence review remains
-    necessary if distribution is requested; independent C alone is no legal
-    clean-room or asset-rights guarantee.
+1. **Invasion and character loss:** the native combat-window escape approximates
+   the original packed-sector crossing. Mech retention and loss presentation
+   are tested, but full original pilot ejection, body damage and character-loss
+   RNG remain open. General encounters still finish on destruction of unit zero;
+   the original broader surviving-party/wreck paths need recovery.
+2. **World encounters:** generation matches 30 whole sectors across three seeds,
+   and 18 original candidate rosters match. Terrain placement, engagement/flee,
+   cadence, mixed-party AI, loot/salvage and aftermath need whole-encounter
+   comparisons. Global RNG/bootstrap and world-seed initialization remain
+   approximate. Town maps and BLD dispatch are loaded, but only the bounded
+   Starport route has later-town integration coverage.
+3. **Party and technicians:** Rex and generic agent records are compared; saved
+   following, inspection and selected-person shop equipment work. Original
+   formation, multi-unit collision, complete crew allocation, equipment transfer,
+   technician field repairs and understudy effects remain open. Recruitment's
+   post-dialogue RNG coin uses native logical ticks instead of the DOS busy loop.
+4. **Services:** 47 original numeric cases cover refits and partial repair/reload
+   boundaries. The native service layout and batched presentation remain
+   approximate. Weapon/sink/leg repair costs follow recovered instructions but
+   need broader differential cases; unrelated engine/gyro/sensor damage is kept.
+5. **Later campaign:** spy outcomes, more companions, timed NPC routes, healing,
+   later BLD actions, original cache puzzles and the ending remain unfinished.
+   Unsupported native/script contexts produce visible errors.
+6. **Long-route NPC/RNG timing:** the first quiz/mission RNG matches; long
+   original waits before keys alter later arrivals/quiz draws. The earlier
+   181-checkpoint comparison retains three explicit RNG prerequisites.
+   Native input-only playability does not prove complete original timing.
+7. **Combat and effects:** earlier live turns and independent friendly orders
+   pass their bounded checks. General initiative, broader mixed-party decisions
+   and defeat outcomes need original comparisons. The presentation effect queue
+   remains bounded to seven events, so larger encounters can omit extra visual
+   effects even though numeric attacks resolve. The stationary training shell
+   remains the user's deliberate change; original moving-target fixtures remain.
+8. **Graphics and audio:** PC speaker title divisors/timing and the building
+   portrait table match original instructions. Host PCM volume/filtering, frame
+   cadence, beam placement and whole-screen parity are approximate. The
+   portrait-entry quality/RNG guard, further animation dispatch, combat sounds,
+   PCjr audio and remaining status UI are not fully recovered.
+9. **Original GAME compatibility:** supplied saves are 3,913 bytes; original
+   import/export requires executed load/save/reload comparisons. Internal
+   BTPI/v18 has a 16,384-byte payload / 16,400-byte BTS1 file and preserves
+   party, service, music and combat state. v1–v17 migrate only their represented
+   contexts. World initialization is still owner-cache-derived.
+10. **Portability and distribution:** Windows remains untested. Any requested
+    distribution needs asset/licence review; independent C alone provides no
+    legal clean-room or asset-rights guarantee.
 
-Both supplied trees retain their baseline content, modes, mtimes and Git
-metadata. Known external editor metadata drift is restored exactly to the
-recorded baseline. Local commits remain on main without pushes. Existing
+The immutable-tree guard includes both supplied trees' content, modes, mtimes
+and Git metadata. Known external editor metadata drift is restored exactly to
+the recorded baseline. Local commits remain on main without pushes. README
 acknowledgements credit the reverse-engineering contributors explicitly.

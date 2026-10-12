@@ -18,11 +18,11 @@ Original launch: `python3 tools/reference_session.py --script tools/reference-mo
 | MTP | 15 | MAP1–14 have a **VERIFIED** 541-byte header and 8×8 block order; MAP15 is a different 768-byte raw map. |
 | ICN | 5 | **VERIFIED** signed-RLE output is 32,000 packed bytes / 64,000 pixel indices per file. |
 | CMP | 7 | Same signed-RLE; format 2 uses column-major packed bytes. |
-| ANM | 22 | O0–O21; XOR-delta animation interpretation is **INFERRED**, not implemented. |
+| ANM | 22 | O0–O21; independent XOR-delta decoding and bounded launch/dream/recruitment/loss/portrait dispatch are **VERIFIED**; other playback contexts remain open. |
 | GAME | 6 | GAME1–6, all **VERIFIED** 3913 bytes. Original save semantics **UNKNOWN**. |
 | Save backups | 3 | GAME1.bak, GAME4.bak, GAME5.bak, also 3913 bytes. |
 | EXE | 2 | BTECH and $VERIFY; both lengths match their MZ declared size. |
-| Other | 2 | DEMOFILE (1023 bytes), WWOODBT.SIF (4352 bytes); roles not verified. |
+| Other | 2 | DEMOFILE (1023 bytes), role **UNKNOWN**; WWOODBT.SIF (4352 bytes), title music **VERIFIED** from original file load and PC speaker interrupt trace. |
 
 MTP dimensions: MAP1/2/11/14 are 64×64 (4637 bytes), MAP3–10 are 32×32 (1565 bytes), MAP12/13 are 8×8 (605 bytes). MAP15 is 32×24 according to secondary format evidence, not accepted by the local-map parser. All MAP1 tile IDs fit the 250-tile BTTLTECH sheet.
 
@@ -123,4 +123,4 @@ Apparent formats below are scoped by the confidence statements above. Full heade
 | `WEAPON.BLD` | 5850 | `4e08d0fb29c18f0dc0e0f7d403eb0a94aa2f308c7ee9c65fbea3c0436ae4a71d` | BLD script / cipher |
 | `WEAPON2.BLD` | 1738 | `4c93942b6fe6909b123701cde0a3b4eb90db3b90b87b0ba9769be3a0908638f0` | BLD script / cipher |
 | `WINSCENE.BLD` | 2995 | `d4c54439a1db84867a04430061ae5a448f32c95ac6bcc9cc31eeac9654358a3e` | BLD script / cipher |
-| `WWOODBT.SIF` | 4352 | `89f947792eb7c3a9f06e71eb71e19f2bbcb7cedf96a568a94f029b1b7e17fa51` | UNKNOWN |
+| `WWOODBT.SIF` | 4352 | `89f947792eb7c3a9f06e71eb71e19f2bbcb7cedf96a568a94f029b1b7e17fa51` | VERIFIED title music; original `0000:477D..48AE` load / `184B` speaker trace, [M3h evidence](M3D_H_PROGRESS.md) |
