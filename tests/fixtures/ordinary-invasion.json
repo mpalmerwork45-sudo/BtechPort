@@ -2,19 +2,19 @@
   "checkpoints": [
     {
       "label": "invasion-start",
-      "tick": 45187
+      "tick": 44502
     },
     {
       "label": "jenner-escape-denied",
-      "tick": 45200
+      "tick": 44515
     },
     {
       "label": "invasion-result",
-      "tick": 45676
+      "tick": 44923
     },
     {
       "label": "destroyed-citadel",
-      "tick": 45680
+      "tick": 44927
     }
   ],
   "final": {
@@ -27,7 +27,7 @@
       832
     ],
     "gate": 85,
-    "tick": 45680,
+    "tick": 44927,
     "blocked": 0,
     "script_pc": 0,
     "script_status": 0,
@@ -110,9 +110,9 @@
     "npc_clock": 0,
     "npc_fault": 0,
     "npc_rng": [
-      4,
-      48,
-      236
+      13,
+      252,
+      23
     ],
     "npc_search": [
       0,
@@ -227,13 +227,111 @@
     "school_course": 0,
     "school_before": 0,
     "school_outcome": 0,
+    "service": {
+      "phase": 0,
+      "action": 0,
+      "mech": 0,
+      "selected": 0,
+      "kind": 0,
+      "item": 0,
+      "amount": 0
+    },
+    "campaign_flags": [
+      6,
+      1,
+      0,
+      0,
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      7,
+      0,
+      1,
+      0,
+      0,
+      0,
+      1,
+      255,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      63,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      184,
+      11,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "audio": {
+      "active": 0,
+      "position": 0,
+      "divisor": 0,
+      "effects": 0,
+      "effect": 0,
+      "event": 0,
+      "remaining": 0
+    },
+    "actions_menu": {
+      "phase": 0,
+      "selected": 0,
+      "steps": 1,
+      "sound": 1,
+      "speed": 2,
+      "outtakes": 0,
+      "slot": 0,
+      "io": 0,
+      "notice": 0
+    },
     "campaign": {
       "invasion": 0,
       "owned": 1,
       "world": [
         1651,
         1665
-      ]
+      ],
+      "mounted": 1,
+      "encounter": 0,
+      "building": 0
     },
     "player_sprite": 175,
     "npc_sprites": [
@@ -248,7 +346,7 @@
     ],
     "quiz": {
       "phase": 0,
-      "selected": 4,
+      "selected": 15,
       "round": 0,
       "point": 0,
       "failed": 0,
@@ -271,8 +369,8 @@
       "rubble_tile": 0
     },
     "mech_skills": [
-      2,
-      3
+      3,
+      4
     ],
     "device": 1,
     "recruitment": 0,

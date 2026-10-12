@@ -3,6 +3,9 @@
 #include "core/npc.h"
 #include "core/economy.h"
 #include "core/training.h"
+#include "core/animation.h"
+#include "core/effects.h"
+#include "core/audio.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -24,6 +27,10 @@ static void input(BtpState *s,const BtpResources *r,BtpAction a)
     if (!decoded) fprintf(stderr,"decode: credits=%u mode=%u slot=%u status=%u pc=%u rows=%u/%u native=%u pending=%u checkpoint=%u technician=%u apprentice=%u\n",
         s->credits,s->mode,s->entry_slot,s->script.status,s->script.pc,s->script.row,s->script.text_row[0],
         s->script.native_action,s->npc.allowance_pending,s->checkpoint_valid,s->technician,s->apprentice);
+    if (!decoded) fprintf(stderr,"combat=%d training=%d cutscene=%d effects=%d audio=%d phase=%u step=%u mission=%u cut=%u/%u/%u/%u effects=%u/%u/%u presentation=%u sound=%u/%u/%u\n",
+        btp_combat_valid(s),btp_training_valid(s),btp_cutscene_valid(s),btp_effects_valid(s),btp_audio_valid(s),s->combat.phase,s->combat.step,s->mission.phase,
+        s->cutscene.active,s->cutscene.kind,s->cutscene.step,s->cutscene.remaining,s->effects.count,s->effects.age,s->effects.pending,s->presentation.count,
+        s->audio.sound_count,s->audio.event,s->audio.remaining);
     CHECK(decoded);
     btp_game_tick(s,r,a);btp_game_tick(&copy,r,a);
     btp_state_encode(s,bytes);btp_state_encode(&copy,again);CHECK(!memcmp(bytes,again,sizeof bytes));
@@ -59,6 +66,20 @@ static void attacks(const BtpState *start,BtpResources *r)
     command(&s,r,2);CHECK(s.combat.phase==BTP_COMBAT_NOTICE && s.combat.notice==2);
     input(&s,r,BTP_ACCEPT);
     r->map=map;
+}
+static void robot_fire(const BtpState *start,BtpResources *r)
+{
+    /* Explicit integration prerequisites: flat arena, a nearby robot with
+       an original rifle, and a hot player. The ordinary route may spawn only
+       short-range robots that withdraw before they get a firing opportunity. */
+    BtpState s=*start;BtpMap old=r->map;memset(r->map.tiles,64,sizeof r->map.tiles);
+    s.combat.unit[0].x=64;s.combat.unit[0].y=77;s.x_half=64;s.y_half=79;s.combat.unit[0].heat=30;
+    s.combat.unit[1].x=67;s.combat.unit[1].y=77;s.combat.unit[1].record[11]=9;
+    for (unsigned i=2;i<s.combat.count;++i) { s.combat.unit[i].x=120;s.combat.unit[i].y=(uint8_t)(100+i); }
+    s.combat.goal_active=0;s.combat.movement=255;s.combat.kick_target=255;memset(s.combat.orders,255,11);
+    command(&s,r,9);input(&s,r,BTP_IDLE);
+    CHECK(s.combat.enemy_fired[0]&1u);CHECK(s.effects.count && s.audio.sound_count);
+    r->map=old;
 }
 static void movement(const BtpState *start,BtpResources *r)
 {
@@ -99,6 +120,7 @@ static void route_controls(const BtpState *start,BtpResources *r)
 static void failures(const BtpState *start,BtpResources *r)
 {
     BtpState s=*start;command(&s,r,8);
+    CHECK(s.mission.phase==BTP_MISSION_RETURN);input(&s,r,BTP_ACCEPT);
     for (unsigned i=0;i<4;++i) input(&s,r,BTP_LEFT);
     input(&s,r,BTP_IDLE);
     CHECK(s.mode==BTP_BUILDING && s.story_flags[0]==4 && !s.story_flags[1] && s.allowance_cap==1000);
@@ -111,6 +133,7 @@ static void failures(const BtpState *start,BtpResources *r)
         while (s.combat.phase==BTP_COMBAT_ROUND) input(&s,r,BTP_IDLE);
     }
     CHECK(s.combat.lost && !s.combat.won && s.x_half==60 && s.y_half==79);
+    CHECK(s.mission.phase==BTP_MISSION_RETURN);input(&s,r,BTP_ACCEPT);
     input(&s,r,BTP_IDLE);
     CHECK(s.mode==BTP_BUILDING && s.story_flags[0]==4 && !s.story_flags[1] && s.allowance_cap==1000 && !s.recruitment);
     r->map=map;
@@ -159,7 +182,7 @@ static void ordinary(const char *path,BtpResources *r)
         CHECK(s.story_flags[47]==1 && !s.npc.fault && !s.npc.actor[0].x);
         last_step_effect(&sixth,r);
     }
-    CHECK(robot_shots && enemy_shots);input(&s,r,BTP_IDLE);
+    CHECK(enemy_shots);if (!robot_shots) robot_fire(&robots,r);input(&s,r,BTP_IDLE);
     attacks(&duel,r);movement(&duel,r);route_controls(&duel,r);failures(&duel,r);
     command(&robots,r,4);input(&robots,r,BTP_DOWN);input(&robots,r,BTP_ACCEPT);
     CHECK(robots.combat.target_unit==2);input(&robots,r,BTP_UP);input(&robots,r,BTP_ACCEPT);

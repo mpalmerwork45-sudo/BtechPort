@@ -21,6 +21,13 @@ static void select_item(BtpState *s,const BtpResources *r,unsigned item)
     for (unsigned i=0;i<n;++i) btp_game_tick(s,r,BTP_DOWN);
     btp_game_tick(s,r,BTP_ACCEPT);
 }
+static uint64_t crop_hash(const uint32_t *pixels,unsigned x,unsigned y,unsigned width,unsigned height)
+{
+    uint64_t h=UINT64_C(14695981039346656037);
+    for (unsigned row=y;row<y+height;++row) for (unsigned col=x;col<x+width;++col) for (unsigned c=0;c<3;++c)
+        h=(h^((pixels[row*320+col]>>(16u-8u*c))&255u))*UINT64_C(1099511628211);
+    return h;
+}
 int main(int argc,char **argv)
 {
     if (argc!=2) return 2;
@@ -35,6 +42,14 @@ int main(int argc,char **argv)
         hash=(hash^((pixels[i]>>(16u-8u*channel))&255u))*UINT64_C(1099511628211);
     /* All 64,000 original VGA screenshot RGB pixels, title-palette.json. */
     CHECK(hash==UINT64_C(0x1640cf785a6ac07b));
+    s.mode=BTP_MISSION;s.combat.phase=BTP_COMBAT_CONTROL;s.combat.selected=1;
+    btp_render(r,&s,0,pixels);CHECK(crop_hash(pixels,8,104,88,88)==UINT64_C(0xea3269d891ca94ec));
+    s.mode=BTP_MISSION;s.combat.phase=BTP_COMBAT_MESSAGES;s.combat.selected=2;
+    btp_render(r,&s,0,pixels);CHECK(crop_hash(pixels,8,104,88,88)==UINT64_C(0xd286e3c49177864b));
+    s.combat.phase=BTP_COMBAT_GRAPHICS;s.combat.selected=0;
+    btp_render(r,&s,0,pixels);CHECK(crop_hash(pixels,8,104,88,88)==UINT64_C(0x3d1a9af7f445b1fa));
+    btp_start(&s);s.mode=BTP_ENTRY;s.entry_slot=0;btp_render(r,&s,0,pixels);
+    CHECK(crop_hash(pixels,104,72,216,56)==UINT64_C(0x0121052b10ef7ecc));
     btp_start(&s);btp_npc_init(&s,&r->map);BtpNpcState before=s.npc;
     btp_game_tick(&s,r,BTP_OPEN_MENU);CHECK(s.mode==BTP_ACTIONS && btp_actions_count(&s)==7 && restore(&s,r));
     CHECK(!strcmp(btp_actions_label(&s,1),"Change game settings"));

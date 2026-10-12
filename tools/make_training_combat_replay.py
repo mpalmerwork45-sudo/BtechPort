@@ -90,7 +90,7 @@ def generate(binary,kick=False,campaign=False):
             command(3)
             # The duel uses two medium lasers and the machine guns so the
             # Chameleon can sustain fire without overheating.
-            allowed=range(10) if campaign and state['combat']['units'][0]['heat']<12 else [0,4,7,8,9]
+            allowed=range(10) if state['mission']['assignment']>=4 and state['combat']['units'][0]['heat']<12 else [0,4,7,8,9]
             while state['combat']['phase']==6:
                 if state['mission']['assignment']>=3 and state['combat']['weapon'] not in allowed:
                     if campaign:advance(['accept','cancel'])
@@ -135,12 +135,14 @@ def generate(binary,kick=False,campaign=False):
                 fight();command(8);note('sixth-withdraw-'+str(attempt))
             elif kick:
                 for x,y,mode,turns in [(72,77,1,3),(84,85,0,5),(96,93,0,9),(111,89,0,8)]:
+                    if state['combat']['won'] or state['combat']['lost']:break
                     waypoint(x,y,mode)
                     for _ in range(turns):
                         if state['combat']['won']:break
                         fight()
             elif assignment==3:
                 for x,y,mode,turns in [(72,77,1,3),(84,85,2,4),(96,93,0,4)]:
+                    if state['combat']['won'] or state['combat']['lost']:break
                     waypoint(x,y,mode)
                     if x==72:
                         waypoint(76,77,1,append=True);note('queued-route')
@@ -157,6 +159,7 @@ def generate(binary,kick=False,campaign=False):
                 # Navigate around the training building before approaching the
                 # duel. The original steering routine is local, not a BFS.
                 for x,y,mode,turns in [(72,77,1,3),(84,85,2,4),(96,93,0,4)]:
+                    if state['combat']['won'] or state['combat']['lost']:break
                     waypoint(x,y,mode)
                     for _ in range(turns):
                         if state['combat']['won'] or state['combat']['lost']:break
@@ -182,6 +185,7 @@ def generate(binary,kick=False,campaign=False):
             check(state['combat']['fled']==1 if withdrawing else state['combat']['won']==1,
                 'Ordinary assignment lost or timed out: '+str(assignment))
             if not withdrawing:note('sixth-victory' if campaign else 'kick-victory' if kick else 'robots-victory' if assignment==3 else 'duel-victory')
+            check(state['mission']['phase']==7,'Missing original return-to-base message');note('return-to-base');advance(['accept'])
             route({(x,y) for x in range(61) for y in range(73,80)},True);advance(['idle'])
             note('sixth-retry-report-'+str(attempt) if withdrawing else 'sixth-report' if campaign else 'kick-report' if kick else 'robots-report' if assignment==3 else 'duel-report')
             while state['mode']=='building':advance(['accept'])

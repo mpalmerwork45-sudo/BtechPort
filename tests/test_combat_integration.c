@@ -37,6 +37,7 @@ static void decline(const BtpState *menu,const BtpResources *r,unsigned loan)
     command(&s,r,4);CHECK(s.combat.phase==BTP_COMBAT_KICK);step(&s,r,BTP_CANCEL);CHECK(s.combat.kick_target==255);
     command(&s,r,3);step(&s,r,BTP_ACCEPT);step(&s,r,BTP_CANCEL);CHECK(s.combat.orders[0]==255);
     step(&s,r,BTP_CANCEL);command(&s,r,8);CHECK(s.combat.fled && !s.combat.phase);
+    CHECK(s.mission.phase==BTP_MISSION_RETURN);step(&s,r,BTP_ACCEPT);
     for (unsigned i=0;i<4;++i) step(&s,r,BTP_LEFT);
     step(&s,r,BTP_IDLE);CHECK(s.mode==BTP_BUILDING && s.story_flags[0]==2 && !s.story_flags[1] && s.allowance_cap==250);
     step(&s,r,BTP_ACCEPT);CHECK(s.mode==BTP_EXPLORE && !s.mission.phase && !s.combat.fled);
@@ -97,9 +98,10 @@ int main(int argc,char **argv)
         step(&s,r,action);++ticks;combat_ticks+=s.combat.phase!=0;
         if (round) {
             no_graphics.combat.graphics=s.combat.graphics;no_graphics.combat.flash=s.combat.flash;
-            uint8_t visible[BTP_STATE_BYTES],invisible[BTP_STATE_BYTES];
-            btp_state_encode(&s,visible);btp_state_encode(&no_graphics,invisible);
-            CHECK(!memcmp(visible,invisible,sizeof visible));
+            /* A newly enabled original outtake consumes a game RNG draw.
+               Graphics-on/off therefore need not have identical full state.
+               This single-shell microstep still resolves the same attack. */
+            CHECK(!memcmp(s.combat.unit,no_graphics.combat.unit,sizeof s.combat.unit));
         }
         if (s.combat.phase && !s.effects.pending) {
             if (!enemy_x) { enemy_x=s.combat.unit[1].x;enemy_y=s.combat.unit[1].y; }

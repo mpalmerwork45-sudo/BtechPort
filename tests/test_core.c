@@ -440,7 +440,7 @@ static void entry_text(const char *dir)
         for (unsigned label=0;label<2;++label) for (unsigned letter=0;letter<strlen(labels[label]);++letter)
             for (unsigned y=0;y<8;++y) for (unsigned x=0;x<8;++x) {
                 unsigned bits=r->dialogue.font[8u*(uint8_t)labels[label][letter]+y];
-                unsigned color=bits & (128u>>x) ? (selected == label ? 14u : 7u) : 0u;
+                unsigned color=selected==label ? (bits&(128u>>x) ? 0u : 14u) : (bits&(128u>>x) ? 15u : 0u);
                 CHECK(f[(96u+y)*320u+(label ? 144u : 112u)+8u*letter+x] == btp_palette[color]);
             }
     }

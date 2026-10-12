@@ -1,0 +1,46 @@
+{
+  "reference_run": "work/reference-runs/1791709609448346900",
+  "crops": [
+    {
+      "label": "combat-control",
+      "reference_capture": "third-launch.png",
+      "box": [
+        8,
+        104,
+        96,
+        192
+      ],
+      "rgb_fnv64": "ea3269d891ca94ec"
+    },
+    {
+      "label": "combat-messages",
+      "box": [
+        8,
+        104,
+        96,
+        192
+      ],
+      "rgb_fnv64": "d286e3c49177864b"
+    },
+    {
+      "label": "combat-graphics",
+      "box": [
+        8,
+        104,
+        96,
+        192
+      ],
+      "rgb_fnv64": "3d1a9af7f445b1fa"
+    },
+    {
+      "label": "training-entry",
+      "box": [
+        104,
+        72,
+        320,
+        128
+      ],
+      "rgb_fnv64": "0121052b10ef7ecc"
+    }
+  ]
+}

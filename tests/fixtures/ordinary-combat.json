@@ -155,85 +155,73 @@
     },
     {
       "label": "resolving",
-      "tick": 4793,
+      "tick": 4865,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 4843,
+      "tick": 4915,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 4893,
+      "tick": 4965,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 4935,
+      "tick": 5015,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 5006,
+      "tick": 5086,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 5048,
+      "tick": 5136,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 5098,
+      "tick": 5186,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 5148,
-      "mode": "training-mission",
-      "combat_phase": 9
-    },
-    {
-      "label": "resolving",
-      "tick": 5198,
-      "mode": "training-mission",
-      "combat_phase": 9
-    },
-    {
-      "label": "resolving",
-      "tick": 5248,
-      "mode": "training-mission",
-      "combat_phase": 9
-    },
-    {
-      "label": "resolving",
-      "tick": 5298,
+      "tick": 5236,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "victory",
-      "tick": 5314,
+      "tick": 5252,
+      "mode": "training-mission",
+      "combat_phase": 0
+    },
+    {
+      "label": "return-to-base",
+      "tick": 5252,
       "mode": "training-mission",
       "combat_phase": 0
     },
     {
       "label": "report",
-      "tick": 5377,
+      "tick": 5316,
       "mode": "building",
       "combat_phase": 0
     },
     {
       "label": "exit",
-      "tick": 5378,
+      "tick": 5317,
       "mode": "local-exploration",
       "combat_phase": 0
     }

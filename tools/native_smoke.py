@@ -512,6 +512,34 @@ def menu(env,work):
             if state['actions_menu']['steps']!=1<<((number-1)%3):raise RuntimeError('Slot did not retain its separate movement setting')
         print(f'PASS: native Space/settings/inspection/overhead, all six saves and loads, {len(keys)+5} exact SDL inputs and pixels.',flush=True)
 
+def presentation(env,work):
+    """Focused, real-time SDL checks, seeded by ordinary logical input saves."""
+    binary=ROOT/'build/btech-headless';native=ROOT/'build/btech-port'
+    source=ROOT/'tests/fixtures/ordinary-combat.actions';lines=source.read_text().splitlines()
+    rows=[json.loads(row) for row in subprocess.check_output([str(binary),'--replay',str(source),'--trace'],cwd=ROOT,text=True).splitlines()]
+    fight=ROOT/'tests/fixtures/ordinary-training-combat.actions'
+    battle=[json.loads(row) for row in subprocess.check_output([str(binary),'--replay',str(fight),'--trace'],cwd=ROOT,text=True).splitlines()]
+    cases=[('entry',source,next(i for i,s in enumerate(rows) if s['mode']=='entry-confirm'),['idle']*2),
+        ('combat-control',source,next(i for i,s in enumerate(rows) if s['combat']['phase']==1 and not s['animation']['active']),['idle']*2),
+        ('combat-sound',source,next(i for i,s in enumerate(rows) if s['audio']['effects']),['idle']*30),
+        ('combat-outtake',fight,next(i for i,s in enumerate(battle) if s['animation']['active']==3),['idle']*30),
+        ('return-to-base',source,next(i for i,s in enumerate(rows) if s['mission']['phase']==7),['idle']*2+['accept'])]
+    with tempfile.TemporaryDirectory(prefix='native-presentation-',dir=work) as directory:
+        tmp=Path(directory)
+        for name,path,tick,keys in cases:
+            prefix=tmp/'prefix.actions';start=tmp/'start.btp';tail=tmp/'tail.actions';record=tmp/'record.actions';report=tmp/'audio.json'
+            prefix.write_text('\n'.join(path.read_text().splitlines()[:tick])+'\n')
+            subprocess.run([str(binary),'--replay',str(prefix),'--save',str(start)],cwd=ROOT,check=True,capture_output=True)
+            tail.write_text('\n'.join(keys)+'\n');frame=work/('native-'+name+'.ppm');want=tmp/'expected.ppm'
+            actual=subprocess.run([str(native),'--load',str(start),'--smoke-replay','--replay',str(tail),'--record',str(record),
+                '--frame',str(frame),'--audio-report',str(report)],cwd=ROOT,env=dict(env,SDL_AUDIODRIVER='dummy'),check=True,capture_output=True,text=True,timeout=20)
+            expected=subprocess.run([str(binary),'--load',str(start),'--replay',str(record),'--frame',str(want)],cwd=ROOT,check=True,capture_output=True,text=True)
+            device=json.loads(report.read_text())
+            if json.loads(actual.stdout)!=json.loads(expected.stdout) or frame.read_bytes()!=want.read_bytes() or not device['opened']:
+                raise RuntimeError(name+' native state/pixels/audio device differs')
+            if name=='combat-sound' and not device['nonzero']:raise RuntimeError(name+' queued silent PCM')
+            print(f'PASS: native {name}, exact input/state/pixels; SDL queued {device["nonzero"]} nonzero audio samples.',flush=True)
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--shops-only", action="store_true")
@@ -528,6 +556,7 @@ def main():
     parser.add_argument("--world-only", action="store_true")
     parser.add_argument("--campaign-only", action="store_true")
     parser.add_argument("--menu-only", action="store_true")
+    parser.add_argument('--presentation-only',action='store_true')
     args = parser.parse_args()
     work = ROOT / "work"
     work.mkdir(exist_ok=True)
@@ -547,6 +576,8 @@ def main():
             env.pop("SDL_VIDEODRIVER", None)
             os.environ["DISPLAY"] = env["DISPLAY"]
             os.environ["BTECH_REFERENCE_VIRTUAL"] = "1"
+            if args.presentation_only:
+                presentation(env,work);return
             if args.campaign_only:
                 campaign(env,work);return
             if args.menu_only:

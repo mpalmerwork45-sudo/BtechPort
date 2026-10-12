@@ -46,6 +46,7 @@ def generate(binary):
         turns(2);waypoint(96,93);turns(9);waypoint(110,89);turns(80)
         check(state['combat']['won']==1,'Ordinary combat route did not win')
         note('victory')
+        check(state['mission']['phase']==7,'Missing original return-to-base message');note('return-to-base');advance(['accept'])
         raw=(ROOT/'Original DOS/MAP1.MTP').read_bytes()[541:]
         def tile(x,y):return 255 if not 0<=x<64 or not 0<=y<64 else raw[(y&0x78)*64+(y&7)*8+(x&0x78)*8+(x&7)]
         start=(state['x_half'],state['y_half']);parents={start:None};queue=deque([start]);goal=None

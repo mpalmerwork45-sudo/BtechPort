@@ -99,7 +99,7 @@ static int row(FILE *f, unsigned v[FIELDS])
 static void from_row(BtpState *s, const unsigned v[FIELDS], uint8_t allowance_pending)
 {
     *s = (BtpState){.x_half=(uint16_t)(v[7]&127u),.y_half=(uint16_t)(v[8]&127u),.map_id=1,.gate=85,
-        .credits=allowance_pending ? 35u : 50u,.allowance_cap=50};
+        .credits=allowance_pending ? 35u : 50u,.allowance_cap=50,.menu={.steps=1,.sound=1,.speed=2}};
     s->story_flags[51] = 50;
     s->npc = (BtpNpcState){.enabled=2,.phase=(uint8_t)v[0],.loop_timer=(uint8_t)v[1],.allowance_pending=allowance_pending,
         .rng={(uint8_t)v[2],(uint8_t)v[3],(uint8_t)v[4]},.search=(uint16_t)v[5],.bias=(uint8_t)v[6]};

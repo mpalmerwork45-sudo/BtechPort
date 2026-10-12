@@ -6,7 +6,8 @@
 int btp_combat_data_decode(const uint8_t *b, size_t n, BtpCombatData *d)
 {
     if (!b || !d) return 0;
-    int v6=n==BTP_COMBAT_DATA_BYTES && !memcmp(b,"BTC6",4);
+    int v7=n==BTP_COMBAT_DATA_BYTES && !memcmp(b,"BTC7",4);
+    int v6=v7 || (n==BTP_COMBAT_DATA_V6_BYTES && !memcmp(b,"BTC6",4));
     int v5=v6 || (n==BTP_COMBAT_DATA_V5_BYTES && !memcmp(b,"BTC5",4));
     int v4=v5 || (n==BTP_COMBAT_DATA_V4_BYTES && !memcmp(b,"BTC4",4));
     int v3=v4 || (n==BTP_COMBAT_DATA_V3_BYTES && !memcmp(b,"BTC3",4));
@@ -21,6 +22,11 @@ int btp_combat_data_decode(const uint8_t *b, size_t n, BtpCombatData *d)
     if (v4) { COPY(commando);COPY(rex_skills);COPY(rex_x);COPY(rex_y);COPY(encounter_weapons);COPY(encounter_mechs); }
     if (v5) { for (unsigned i=0;i<8;++i) { v.refit_prices[i]=(uint16_t)(b[p]|(unsigned)b[p+1]<<8);p+=2; } COPY(ammo_prices);COPY(commando_armour); }
     if (v6) { COPY(building_portraits);for (unsigned i=0;i<26;++i) if (v.building_portraits[i]>=22) return 0; }
+    if (v7) {
+        v.sound_calibration=(uint16_t)(b[p]|(unsigned)b[p+1]<<8);p+=2;
+        for (unsigned i=0;i<314;++i) { v.sound_words[i]=(uint16_t)(b[p]|(unsigned)b[p+1]<<8);p+=2; }
+        if (!btp_sound_programs(&v)) return 0;
+    }
 #undef COPY
     for (unsigned i = 0; i < 15; ++i) if (v.arcs[i] > 3) return 0;
     for (unsigned i = 2; i < 46; ++i) if (v.locations[i] < 17 || v.locations[i] > 27) return 0;

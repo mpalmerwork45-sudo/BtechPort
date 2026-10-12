@@ -2,6 +2,8 @@
 #define BTP_COMBAT_RULES_H
 #include <stdint.h>
 #include <stddef.h>
+enum { BTP_SOUND_COUNT=18, BTP_SOUND_EVENTS=8192 };
+typedef struct { uint32_t clocks; uint16_t divisor; uint8_t type,level; } BtpSpeakerEvent;
 
 typedef struct {
     uint8_t loans[3][125], weapons[33][17], arcs[15], locations[46], clusters[93];
@@ -14,6 +16,8 @@ typedef struct {
     uint8_t encounter_weapons[22], encounter_mechs[3][125];
     uint16_t refit_prices[8];uint8_t ammo_prices[7], commando_armour[11];
     uint8_t building_portraits[26];
+    uint16_t sound_calibration,sound_words[314],sound_count[BTP_SOUND_COUNT];
+    BtpSpeakerEvent sound[BTP_SOUND_COUNT][BTP_SOUND_EVENTS];
 } BtpCombatData;
 typedef struct {
     uint8_t record[125], x, y, direction, heat, pool, burning, cover;
@@ -51,7 +55,9 @@ enum { BTP_COMBAT_DATA_V1_BYTES = 4+375+561+15+46+93+16,
     BTP_COMBAT_DATA_V3_BYTES = BTP_COMBAT_DATA_V2_BYTES+125,
     BTP_COMBAT_DATA_V4_BYTES = BTP_COMBAT_DATA_V3_BYTES+125+7+16+22+375,
     BTP_COMBAT_DATA_V5_BYTES = BTP_COMBAT_DATA_V4_BYTES+16+7+11,
-    BTP_COMBAT_DATA_BYTES = BTP_COMBAT_DATA_V5_BYTES+26 };
+    BTP_COMBAT_DATA_V6_BYTES = BTP_COMBAT_DATA_V5_BYTES+26,
+    BTP_COMBAT_DATA_BYTES = BTP_COMBAT_DATA_V6_BYTES+630 };
+int btp_sound_programs(BtpCombatData *data);
 int btp_combat_data_decode(const uint8_t *bytes, size_t length, BtpCombatData *data);
 unsigned btp_combat_die(uint8_t rng[3]);
 unsigned btp_combat_dice(uint8_t rng[3]);

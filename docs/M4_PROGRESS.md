@@ -27,7 +27,7 @@ headless sanitizers, focused SDL checks and reference guard.
 | M4b: party/crew/field effects | Primary audit in progress; allocation/field healing remain bounded or unavailable |
 | M4c: next story/town services | Not complete |
 | M4d: original cache sequence | Not complete |
-| M4e: original saves/sound/presentation | Save layout located; original compatibility and further audio not complete |
+| M4e: original saves/sound/presentation | Combat audio/presentation tested; original save compatibility pending |
 
 ## Space menu and step amount
 
@@ -85,3 +85,62 @@ Primary `0000:368B..3703` writes byte 12, `0F44` bytes starting at
 The six supplied originals have that header and length. Full executed
 load/save/reload comparisons, preservation of unmodeled bytes and runtime
 projection validation remain required before M4e compatibility is claimed.
+
+## Combat presentation increment
+
+**VERIFIED:** the original Control, Messages and Graphics lower-left panels,
+plus the training building entrance crop, match native RGB pixels exactly.
+`tests/fixtures/popup-pixels.json` records the four crops and fingerprints.
+The entry prompt contains only the original question, building name and Yes/No.
+The added help footer has been removed. Mixed-case font and original borders
+are retained. These crop comparisons do not claim whole-screen combat parity.
+
+**VERIFIED:** `103B:0D6D..0DA5` prints original `DS:398B` after training
+combat and waits for a key. The native mission enters a saved Return phase,
+shows “You should return to base now” in the lower-left text panel, then
+accepts Enter/Space before driving back for the instructor's report. Victory,
+withdrawal and defeat paths retain their distinct instructor results. The
+invasion follows its separate original branch.
+
+Primary `12E8:12C7..1B1C` and `0D39` call original combat impact/fire/topple
+outtakes. The reference note claiming no combat ANM calls is contradicted by
+these executable instructions. Original `0000:4900..494D` draws RNG even
+when an outtake is skipped. All **990 executed cases** match the native
+frequency masks 3/15/63 and forced-kind rules, including the *non-forced*
+kind-16 and kind-7 cases. Frame artwork comes from the existing independently
+verified 22-file/198-frame ANM decoder. Native combat freezes during the saved
+cutscene and restores the battle view afterwards. Injury/ejection outtakes
+remain part of M4a's further outcome work.
+
+**VERIFIED:** all 18 original PC-speaker programs at `DS:5008`, dispatched
+by `0000:19BF` / physical `17C5:0002`, match native pitch-write fingerprints
+and speaker noise-toggle counts. The original noise helper receives the same
+explicit seed each time; it must not be treated as an evolving game RNG.
+Every effect has tested PCM continuation across save/reload. **APPROXIMATE:**
+busy-loop duration, host filtering/volume and ordering of simultaneously
+queued presentations. The original animation files contain no sound stream;
+the relevant firing/impact sounds occur before their outtake calls. The native
+SDL audio report confirms an opened dummy device and 4,096 nonzero queued
+samples for a real ordinary-input combat checkpoint.
+
+New **BTPK/v20** stores the sound queue/playback and combat outtake queue at
+11326..11387, leaving the payload/file sizes unchanged. BTT7 contains 91
+original strings (5,084 bytes); BTC7 adds the original numeric speaker programs.
+Fresh games use the original observed outtake default 0. v19 retains its saved
+choice; older saves receive original defaults. Ordinary-input combat routes
+are regenerated because the newly restored original RNG draws legitimately
+change subsequent combat. The graphics-independent full-state assertion from
+M3 is superseded by these primary comparisons.
+
+Focused native presentation checks seed checkpoints with ordinary inputs and
+compare recorded SDL input, complete final state and final pixels against
+headless replay. Entry, combat Control, firing sound, combat outtake and
+Return all pass. `--audio-report` is a diagnostic file option, not popup text.
+**PASS:** all 35 CTest suites, the complete historical original-data/replay
+suite and full headless ASan/UBSan/LeakSanitizer suite. The regular CTest pass
+takes 4.83s; the sanitizer CTest pass takes 13.92s on this host. Historical
+NPC/bank/school oracle setups now explicitly include the restored default
+menu settings. Their original numeric projections are unchanged. The native
+Space event is resolved when consumed, so batched keys correctly confirm
+dialogue after entering a building. Both reference trees pass the 1,287-entry
+content/mode/mtime guard. No public asset files or pushes are involved.

@@ -1,0 +1,6 @@
+{
+  "authority": "original 0000:19BF -> 17C5:0002 (same physical code as 1631:1942)",
+  "snapshot": "work/reference-runs/1791709609448346900/combat-menu",
+  "delay_prerequisite": "DS5006=2 reduces CPU busy loops; divisor/noise programs remain unmodified",
+  "source_exe_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a"
+}

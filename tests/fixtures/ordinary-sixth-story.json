@@ -5,439 +5,397 @@
   "checkpoints": [
     {
       "label": "rick-lounge-menu",
-      "tick": 36778,
+      "tick": 36214,
       "mode": "building",
       "combat_phase": 0
     },
     {
       "label": "rick-talk-menu",
-      "tick": 36779,
+      "tick": 36215,
       "mode": "building",
       "combat_phase": 0
     },
     {
       "label": "rick-scene1",
-      "tick": 36780,
+      "tick": 36216,
       "mode": "building",
       "combat_phase": 0
     },
     {
       "label": "rick-scene2",
-      "tick": 36781,
+      "tick": 36217,
       "mode": "building",
       "combat_phase": 0
     },
     {
       "label": "rick-scene3",
-      "tick": 36782,
+      "tick": 36218,
       "mode": "building",
       "combat_phase": 0
     },
     {
       "label": "rick-scene4",
-      "tick": 36783,
+      "tick": 36219,
       "mode": "building",
       "combat_phase": 0
     },
     {
       "label": "rick-scene5",
-      "tick": 36784,
+      "tick": 36220,
       "mode": "building",
       "combat_phase": 0
     },
     {
       "label": "rick-device-exit",
-      "tick": 36787,
+      "tick": 36223,
       "mode": "local-exploration",
       "combat_phase": 0
     },
     {
       "label": "sixth-start",
-      "tick": 37031,
+      "tick": 36458,
       "mode": "training-mission",
       "combat_phase": 1
     },
     {
       "label": "kick-target",
-      "tick": 37064,
+      "tick": 36491,
       "mode": "training-mission",
       "combat_phase": 11
     },
     {
       "label": "kick-queued",
-      "tick": 37065,
+      "tick": 36492,
       "mode": "training-mission",
       "combat_phase": 4
     },
     {
       "label": "resolving",
-      "tick": 37098,
+      "tick": 36525,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "sixth-withdraw-0",
-      "tick": 37148,
+      "tick": 36575,
+      "mode": "training-mission",
+      "combat_phase": 0
+    },
+    {
+      "label": "return-to-base",
+      "tick": 36575,
       "mode": "training-mission",
       "combat_phase": 0
     },
     {
       "label": "sixth-retry-report-0",
-      "tick": 37153,
+      "tick": 36581,
       "mode": "building",
       "combat_phase": 0
     },
     {
       "label": "sixth-retry-exit-0",
-      "tick": 37154,
+      "tick": 36582,
       "mode": "local-exploration",
       "combat_phase": 0
     },
     {
       "label": "sixth-start",
-      "tick": 38298,
+      "tick": 37730,
       "mode": "training-mission",
       "combat_phase": 1
     },
     {
       "label": "kick-target",
-      "tick": 38331,
+      "tick": 37763,
       "mode": "training-mission",
       "combat_phase": 11
     },
     {
       "label": "kick-queued",
-      "tick": 38332,
+      "tick": 37764,
       "mode": "training-mission",
       "combat_phase": 4
     },
     {
       "label": "resolving",
-      "tick": 38365,
+      "tick": 37797,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "sixth-withdraw-1",
-      "tick": 38415,
+      "tick": 37847,
+      "mode": "training-mission",
+      "combat_phase": 0
+    },
+    {
+      "label": "return-to-base",
+      "tick": 37847,
       "mode": "training-mission",
       "combat_phase": 0
     },
     {
       "label": "sixth-retry-report-1",
-      "tick": 38420,
+      "tick": 37853,
       "mode": "building",
       "combat_phase": 0
     },
     {
       "label": "sixth-retry-exit-1",
-      "tick": 38421,
+      "tick": 37854,
       "mode": "local-exploration",
       "combat_phase": 0
     },
     {
       "label": "sixth-start",
-      "tick": 39562,
+      "tick": 38995,
       "mode": "training-mission",
       "combat_phase": 1
     },
     {
       "label": "kick-target",
-      "tick": 39595,
+      "tick": 39028,
       "mode": "training-mission",
       "combat_phase": 11
     },
     {
       "label": "kick-queued",
-      "tick": 39596,
+      "tick": 39029,
       "mode": "training-mission",
       "combat_phase": 4
     },
     {
       "label": "resolving",
-      "tick": 39629,
+      "tick": 39062,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "sixth-withdraw-2",
-      "tick": 39679,
+      "tick": 39112,
+      "mode": "training-mission",
+      "combat_phase": 0
+    },
+    {
+      "label": "return-to-base",
+      "tick": 39112,
       "mode": "training-mission",
       "combat_phase": 0
     },
     {
       "label": "sixth-retry-report-2",
-      "tick": 39684,
+      "tick": 39118,
       "mode": "building",
       "combat_phase": 0
     },
     {
       "label": "sixth-retry-exit-2",
-      "tick": 39685,
+      "tick": 39119,
       "mode": "local-exploration",
       "combat_phase": 0
     },
     {
       "label": "sixth-start",
-      "tick": 40845,
+      "tick": 40267,
       "mode": "training-mission",
       "combat_phase": 1
     },
     {
       "label": "kick-target",
-      "tick": 40878,
+      "tick": 40300,
       "mode": "training-mission",
       "combat_phase": 11
     },
     {
       "label": "kick-queued",
-      "tick": 40879,
+      "tick": 40301,
       "mode": "training-mission",
       "combat_phase": 4
     },
     {
       "label": "resolving",
-      "tick": 40912,
+      "tick": 40334,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "sixth-withdraw-3",
-      "tick": 40962,
+      "tick": 40384,
+      "mode": "training-mission",
+      "combat_phase": 0
+    },
+    {
+      "label": "return-to-base",
+      "tick": 40384,
       "mode": "training-mission",
       "combat_phase": 0
     },
     {
       "label": "sixth-retry-report-3",
-      "tick": 40967,
+      "tick": 40390,
       "mode": "building",
       "combat_phase": 0
     },
     {
       "label": "sixth-retry-exit-3",
-      "tick": 40968,
+      "tick": 40391,
       "mode": "local-exploration",
       "combat_phase": 0
     },
     {
       "label": "sixth-start",
-      "tick": 42129,
+      "tick": 41550,
       "mode": "training-mission",
       "combat_phase": 1
     },
     {
       "label": "kick-target",
-      "tick": 42162,
+      "tick": 41583,
       "mode": "training-mission",
       "combat_phase": 11
     },
     {
       "label": "kick-queued",
-      "tick": 42163,
+      "tick": 41584,
       "mode": "training-mission",
       "combat_phase": 4
     },
     {
       "label": "movement-1",
-      "tick": 42174,
+      "tick": 41595,
       "mode": "training-mission",
       "combat_phase": 5
     },
     {
       "label": "resolving",
-      "tick": 42208,
+      "tick": 41629,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 42281,
+      "tick": 41702,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "movement-1",
-      "tick": 42344,
+      "tick": 41773,
       "mode": "training-mission",
       "combat_phase": 5
     },
     {
       "label": "resolving",
-      "tick": 42378,
-      "mode": "training-mission",
-      "combat_phase": 9
-    },
-    {
-      "label": "resolving",
-      "tick": 42451,
-      "mode": "training-mission",
-      "combat_phase": 9
-    },
-    {
-      "label": "resolving",
-      "tick": 42532,
+      "tick": 41807,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "combat-effect",
-      "tick": 42532,
+      "tick": 41807,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 41896,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "combat-effect",
+      "tick": 41896,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "resolving",
+      "tick": 42217,
+      "mode": "training-mission",
+      "combat_phase": 9
+    },
+    {
+      "label": "combat-effect",
+      "tick": 42217,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "movement-1",
-      "tick": 42614,
+      "tick": 42476,
       "mode": "training-mission",
       "combat_phase": 5
     },
     {
       "label": "resolving",
-      "tick": 42648,
+      "tick": 42515,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "combat-effect",
-      "tick": 42648,
+      "tick": 42515,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 42729,
-      "mode": "training-mission",
-      "combat_phase": 9
-    },
-    {
-      "label": "resolving",
-      "tick": 42810,
+      "tick": 42785,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "combat-effect",
-      "tick": 42810,
+      "tick": 42785,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 42915,
+      "tick": 42975,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "combat-effect",
-      "tick": 42915,
+      "tick": 42975,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 43060,
+      "tick": 43245,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "combat-effect",
-      "tick": 43060,
-      "mode": "training-mission",
-      "combat_phase": 9
-    },
-    {
-      "label": "resolving",
-      "tick": 43274,
-      "mode": "training-mission",
-      "combat_phase": 9
-    },
-    {
-      "label": "combat-effect",
-      "tick": 43274,
-      "mode": "training-mission",
-      "combat_phase": 9
-    },
-    {
-      "label": "resolving",
-      "tick": 43392,
-      "mode": "training-mission",
-      "combat_phase": 9
-    },
-    {
-      "label": "combat-effect",
-      "tick": 43392,
-      "mode": "training-mission",
-      "combat_phase": 9
-    },
-    {
-      "label": "resolving",
-      "tick": 43510,
-      "mode": "training-mission",
-      "combat_phase": 9
-    },
-    {
-      "label": "combat-effect",
-      "tick": 43510,
-      "mode": "training-mission",
-      "combat_phase": 9
-    },
-    {
-      "label": "movement-1",
-      "tick": 43605,
-      "mode": "training-mission",
-      "combat_phase": 5
-    },
-    {
-      "label": "resolving",
-      "tick": 43644,
-      "mode": "training-mission",
-      "combat_phase": 9
-    },
-    {
-      "label": "combat-effect",
-      "tick": 43644,
-      "mode": "training-mission",
-      "combat_phase": 9
-    },
-    {
-      "label": "resolving",
-      "tick": 43786,
-      "mode": "training-mission",
-      "combat_phase": 9
-    },
-    {
-      "label": "combat-effect",
-      "tick": 43786,
-      "mode": "training-mission",
-      "combat_phase": 9
-    },
-    {
-      "label": "resolving",
-      "tick": 43912,
-      "mode": "training-mission",
-      "combat_phase": 9
-    },
-    {
-      "label": "combat-effect",
-      "tick": 43912,
+      "tick": 43245,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "sixth-victory",
-      "tick": 43928,
+      "tick": 43309,
+      "mode": "training-mission",
+      "combat_phase": 0
+    },
+    {
+      "label": "return-to-base",
+      "tick": 43309,
       "mode": "training-mission",
       "combat_phase": 0
     },
     {
       "label": "sixth-report",
-      "tick": 43995,
+      "tick": 43336,
       "mode": "building",
       "combat_phase": 0
     },
     {
       "label": "sixth-exit",
-      "tick": 43996,
+      "tick": 43337,
       "mode": "local-exploration",
       "combat_phase": 0
     }

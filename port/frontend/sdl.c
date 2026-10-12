@@ -100,6 +100,7 @@ int main(int argc, char **argv)
     unsigned held = 0, last_arrow_write = 0;
     uint64_t last = SDL_GetTicks64(), accumulator = 0;
     unsigned smoke_ticks = 0;
+    uint64_t audio_samples=0,audio_nonzero=0;
     unsigned smoke_sent = 0, tail_sent = 0;
     int arrival_done = 0;
     int running = 1, io_failed = 0;
@@ -196,8 +197,9 @@ int main(int argc, char **argv)
                     if (record) { fputs("Restart while recording is unsupported; start a new log.\n", stderr); }
                     else { btp_initial_state(&o,&state,r); read = write = held = last_arrow_write = 0; }
                 } else {
-                    BtpAction a = state.mode==BTP_EXPLORE && key==SDLK_SPACE ? BTP_OPEN_MENU : amount_editor(&state) && key == SDLK_SPACE ?
-                        BTP_IDLE : key_action(key,movement_mode(&state));
+                    /* Resolve Space when its queued input is consumed. Several
+                       key events can arrive before exploration enters a popup. */
+                    BtpAction a=key==SDLK_SPACE ? BTP_OPEN_MENU : key_action(key,movement_mode(&state));
                     /* Real arrow chords use held keys. Scripted smoke events
                        have no physical scancode and remain individual actions. */
                     unsigned bit = arrow_bit(key);
@@ -223,21 +225,23 @@ int main(int argc, char **argv)
         while (accumulator >= 32 && running) {
             accumulator -= 32;
             BtpAction a = read != write ? queue[read++ % 256] : BTP_IDLE;
+            if (a==BTP_OPEN_MENU && state.mode!=BTP_EXPLORE) a=amount_editor(&state) ? BTP_IDLE : BTP_ACCEPT;
             if (o.sprite_preview) ++state.tick;
             else {
-                if (audio && state.menu.sound && state.audio.active && a==BTP_IDLE && !o.smoke_fast) {
-                    BtpAudioState preview=state.audio;int16_t pcm[BTP_AUDIO_TICK_SAMPLES];
-                    btp_audio_samples(&preview,r,BTP_AUDIO_TICK_SAMPLES,pcm);
-                    if (SDL_QueueAudio(audio,pcm,sizeof pcm)) { io_failed=1;running=0; }
+                int16_t pcm[BTP_AUDIO_TICK_SAMPLES];
+                btp_game_tick_audio(&state,r,a,audio && !o.smoke_fast ? pcm : NULL);
+                if (audio && state.menu.sound && !o.smoke_fast && SDL_QueueAudio(audio,pcm,sizeof pcm)) { io_failed=1;running=0; }
+                if (audio && state.menu.sound && !o.smoke_fast) {
+                    audio_samples+=BTP_AUDIO_TICK_SAMPLES;
+                    for (unsigned n=0;n<BTP_AUDIO_TICK_SAMPLES;++n) audio_nonzero+=pcm[n]!=0;
                 }
-                btp_game_tick(&state, r, a);
                 if (state.menu.io) {
                     unsigned request=state.menu.io;
                     int ok=btp_save_menu(&state,r,o.save_file,1,&error);
                     if (!ok) fprintf(stderr,"%s\n",error.text);
                     if (ok && request==BTP_MENU_IO_LOAD) { read=write=held=last_arrow_write=0;accumulator=0;if (audio) SDL_ClearQueuedAudio(audio); }
                 }
-                if (audio && (!state.audio.active || !state.menu.sound)) SDL_ClearQueuedAudio(audio);
+                if (audio && !state.menu.sound) SDL_ClearQueuedAudio(audio);
                 if (state.menu.quit) running=0;
             }
             if (!movement_mode(&state)) held = 0;
@@ -279,6 +283,15 @@ int main(int argc, char **argv)
         fputs("Native smoke input/state mismatch\n", stderr); io_failed = 1;
     }
     result = io_failed ? 1 : 0;
+    if (o.audio_report) {
+        FILE *report=fopen(o.audio_report,"w");
+        if (!report) result=1;
+        else {
+            if (fprintf(report,"{\"opened\":%u,\"rate\":%u,\"samples\":%llu,\"nonzero\":%llu}\n",audio!=0,BTP_AUDIO_RATE,
+                (unsigned long long)audio_samples,(unsigned long long)audio_nonzero)<0) result=1;
+            if (fclose(report)) result=1;
+        }
+    }
     if (o.smoke == 5 && (state.mode != BTP_EXPLORE || state.x_half != 69 || state.y_half != 21 ||
         state.conversation_checkpoint || state.npc.enabled != 2 || state.npc.fault || state.story_flags[13] != 1)) {
         fputs("Native arrival smoke input/state mismatch\n",stderr); result = 1;

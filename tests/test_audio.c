@@ -1,4 +1,5 @@
 #include "core/audio.h"
+#include "core/animation.h"
 #include "data/save.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -40,5 +41,42 @@ int main(int argc,char **argv)
         CHECK(!memcmp(one,two,sizeof one));
     }
     CHECK(nonzero>1000);btp_game_tick(&s,r,BTP_ACCEPT);CHECK(s.mode==BTP_EXPLORE && !s.audio.active);
+    f=fopen("tests/fixtures/speaker-primary.txt","r");CHECK(f);
+    unsigned programs=0;
+    while (fgets(row,sizeof row,f)) {
+        unsigned p,tones,noise,actual_tones=0,actual_noise=0;uint64_t want,h=UINT64_C(14695981039346656037);
+        CHECK(sscanf(row,"S %u %u %" SCNx64 " %u",&p,&tones,&want,&noise)==4 && p>=1 && p<=18);
+        for (unsigned i=0;i<r->combat.sound_count[p-1];++i) {
+            const BtpSpeakerEvent *event=&r->combat.sound[p-1][i];
+            if (event->type==1) { byte(&h,event->divisor);byte(&h,event->divisor>>8);++actual_tones; }
+            if (event->type==2 && event->level) ++actual_noise;
+        }
+        if (h!=want || tones!=actual_tones || noise!=actual_noise) fprintf(stderr,"speaker %u: tone %u/%u noise %u/%u hash %016" PRIx64 "/%016" PRIx64 "\n",p,actual_tones,tones,actual_noise,noise,h,want);
+        CHECK(h==want && tones==actual_tones && noise==actual_noise);++programs;
+        btp_start(&s);btp_audio_effect(&s,p);nonzero=0;unsigned ticks=0;
+        do {
+            btp_game_tick_audio(&s,r,BTP_IDLE,one);
+            for (unsigned i=0;i<BTP_AUDIO_TICK_SAMPLES;++i) nonzero+=one[i]!=0;
+            uint8_t saved[BTP_STATE_BYTES];BtpState resumed;btp_state_encode(&s,saved);
+            CHECK(btp_state_decode(saved,sizeof saved,&r->map,&r->training,&resumed));
+            BtpAudioState first=s.audio,second=resumed.audio;
+            btp_audio_samples(&first,r,BTP_AUDIO_TICK_SAMPLES,one);btp_audio_samples(&second,r,BTP_AUDIO_TICK_SAMPLES,two);
+            CHECK(!memcmp(one,two,sizeof one) && !memcmp(&first,&second,sizeof first));
+            CHECK(++ticks<4096);
+        } while (s.audio.sound_count);
+        CHECK(nonzero>0);
+    }
+    fclose(f);CHECK(programs==18);
+    s.menu.sound=0;btp_audio_effect(&s,2);CHECK(!s.audio.sound_count);
+    f=fopen("tests/fixtures/outtake-primary.txt","r");CHECK(f);unsigned decisions=0;
+    while (fgets(row,sizeof row,f)) {
+        unsigned frequency,kind,flags,seed,show,next;
+        CHECK(sscanf(row,"O %u %u %u %u %u %u",&frequency,&kind,&flags,&seed,&show,&next)==6);
+        btp_start(&s);s.menu.outtakes=(uint8_t)frequency;
+        for (unsigned i=0;i<3;++i) s.npc.rng[i]=(uint8_t)(seed>>(8*i));
+        CHECK(btp_outtake_roll(&s,kind,flags)==(int)show);
+        CHECK(((unsigned)s.npc.rng[0]|(unsigned)s.npc.rng[1]<<8|(unsigned)s.npc.rng[2]<<16)==next);++decisions;
+    }
+    fclose(f);CHECK(decisions==990);
     free(r);printf("PASS: %u checks, original complete title IRQ trace and saved PCM continuation\n",checks);return 0;
 }

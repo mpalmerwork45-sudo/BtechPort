@@ -20,7 +20,7 @@
 void btp_start(BtpState *s)
 {
     *s = (BtpState){.x_half = 69, .y_half = 25, .map_id = 1, .gate = 85,
-        .credits=35,.allowance_cap=50,.menu={.steps=1,.sound=1,.speed=2,.outtakes=1}};
+        .credits=35,.allowance_cap=50,.menu={.steps=1,.sound=1,.speed=2,.outtakes=0}};
     static const uint8_t packed[8] = {99,81,53,99,18,4,4,70};
     for (unsigned i = 0; i < 8; ++i) s->npc_pairs[i][0] = packed[i];
     s->npc = (BtpNpcState){.enabled=1,.phase=1,.rng={31,66,171},.search=99,
@@ -382,18 +382,21 @@ services:
     }
     finish_script(s,map);
 }
-void btp_game_tick(BtpState *s,const BtpResources *r,BtpAction a)
+void btp_game_tick_audio(BtpState *s,const BtpResources *r,BtpAction a,int16_t *samples)
 {
     if (s->mode==BTP_TITLE) {
         ++s->tick;
-        if (a!=BTP_IDLE) { s->mode=BTP_EXPLORE;s->audio=(BtpAudioState){0};return; }
-        btp_audio_samples(&s->audio,r,BTP_AUDIO_TICK_SAMPLES,NULL);
+        if (a!=BTP_IDLE) { s->mode=BTP_EXPLORE;s->audio=(BtpAudioState){0};if (samples) memset(samples,0,BTP_AUDIO_TICK_SAMPLES*sizeof *samples);return; }
+        btp_audio_samples(&s->audio,r,BTP_AUDIO_TICK_SAMPLES,samples);
         if (!s->audio.active) s->mode=BTP_EXPLORE;
         return;
     }
-    game_tick(s,r,a);
+    if (s->cutscene.active==3) { ++s->tick;btp_cutscene_tick(s,r); }
+    else game_tick(s,r,a);
     if (s->story_flags[4]) { btp_party_init(s);btp_party_sync(s); }
+    btp_audio_samples(&s->audio,r,BTP_AUDIO_TICK_SAMPLES,samples);
 }
+void btp_game_tick(BtpState *s,const BtpResources *r,BtpAction a) { btp_game_tick_audio(s,r,a,NULL); }
 
 static void put16(uint8_t *p, uint16_t v) { p[0] = (uint8_t)v; p[1] = (uint8_t)(v >> 8); }
 static uint16_t get16(const uint8_t *p) { return (uint16_t)(p[0] | (uint16_t)p[1] << 8); }
@@ -401,7 +404,7 @@ static uint16_t get16(const uint8_t *p) { return (uint16_t)(p[0] | (uint16_t)p[1
 void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
 {
     memset(b, 0, BTP_STATE_BYTES);
-    memcpy(b, "BTPJ", 4); b[4] = 19;
+    memcpy(b, "BTPK", 4); b[4] = 20;
     for (unsigned i = 0; i < 4; ++i) b[8+i] = (uint8_t)(s->tick >> (8 * i));
     b[12] = (uint8_t)s->x_half; b[13] = (uint8_t)(s->x_half >> 8);
     b[14] = (uint8_t)s->y_half; b[15] = (uint8_t)(s->y_half >> 8);
@@ -512,6 +515,10 @@ void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
     b[11314]=s->menu.steps;b[11315]=s->menu.sound;b[11316]=s->menu.speed;b[11317]=s->menu.outtakes;
     b[11318]=s->menu.slot;b[11319]=s->menu.io;b[11320]=s->menu.notice;b[11321]=s->menu.quit;
     put16(b+11322,s->menu.map_x);put16(b+11324,s->menu.map_y);
+    b[11326]=s->audio.sound_count;memcpy(b+11327,s->audio.sounds,24);put16(b+11351,s->audio.event);
+    put16(b+11357,s->audio.sound_phase);
+    for (unsigned i=0;i<4;++i) { b[11353+i]=(uint8_t)(s->audio.remaining>>(8*i));b[11359+i]=(uint8_t)(s->audio.sound_fraction>>(8*i)); }
+    b[11363]=s->presentation.count;memcpy(b+11364,s->presentation.kinds,24);
 }
 
 int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *script, BtpState *s)
@@ -535,7 +542,8 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         n == 4096 && !memcmp(b,"BTPG",4) && b[4] == 16 ? 16 :
         n == 4096 && !memcmp(b,"BTPH",4) && b[4] == 17 ? 17 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPI",4) && b[4] == 18 ? 18 :
-        n == BTP_STATE_BYTES && !memcmp(b,"BTPJ",4) && b[4] == 19 ? 19 : 0;
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPJ",4) && b[4] == 19 ? 19 :
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPK",4) && b[4] == 20 ? 20 : 0;
     if (!version) return 0;
     for (unsigned i = 5; i < 8; ++i) if (b[i]) return 0;
     if (version == 1) { for (unsigned i = 20; i < 24; ++i) if (b[i]) return 0; }
@@ -552,7 +560,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
             if (version == 9) for (unsigned i = 403; i < n; ++i) if (b[i]) return 0;
             if (version >= 10) {
                 if (b[425]) return 0;
-                unsigned start=version==10 ? 434u : version==11 ? 441u : version==12 ? 450u : version<15 ? 896u : version>=19 ? 11326u : version>=18 ? 11314u : version>=17 ? 2684u : version>=16 ? 2399u : 1803u;
+                unsigned start=version==10 ? 434u : version==11 ? 441u : version==12 ? 450u : version<15 ? 896u : version>=20 ? 11388u : version>=19 ? 11326u : version>=18 ? 11314u : version>=17 ? 2684u : version>=16 ? 2399u : 1803u;
                 for (unsigned i=start;i<n;++i) if (b[i]) return 0;
                 if (version>=13) for (unsigned i=version>=15 ? 460u : 452u;i<512;++i) if (b[i]) return 0;
                 if (version==13 && b[878]) return 0; /* v14 firing-effect countdown. */
@@ -560,7 +568,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         }
     }
     BtpState result = {.credits=35,.allowance_cap=50};
-    result.menu=(BtpMenuState){.steps=1,.sound=1,.speed=2,.outtakes=1};
+    result.menu=(BtpMenuState){.steps=1,.sound=1,.speed=2,.outtakes=0};
     if (version>=19) {
         result.menu=(BtpMenuState){b[11314],b[11315],b[11316],b[11317],b[11318],b[11319],b[11320],b[11321],get16(b+11322),get16(b+11324)};
     }
@@ -573,6 +581,14 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         memcpy(result.service.input,b+11290,8);
         result.audio=(BtpAudioState){.active=b[11300],.countdown=b[11301],.position=get16(b+11302),.divisor=get16(b+11304),.phase=get16(b+11306),.irq_phase=get16(b+11308)};
         for (unsigned i=0;i<4;++i) result.audio.fraction|=(uint32_t)b[11310+i]<<(i*8);
+        if (version>=20) {
+            result.audio.sound_count=b[11326];memcpy(result.audio.sounds,b+11327,24);result.audio.event=get16(b+11351);
+            result.audio.sound_phase=get16(b+11357);
+            for (unsigned i=0;i<4;++i) { result.audio.remaining|=(uint32_t)b[11353+i]<<(8*i);result.audio.sound_fraction|=(uint32_t)b[11359+i]<<(8*i); }
+            result.presentation.count=b[11363];memcpy(result.presentation.kinds,b+11364,24);
+            if (result.presentation.count>24) return 0;
+            for (unsigned i=0;i<24;++i) if (i<result.presentation.count ? !result.presentation.kinds[i] || result.presentation.kinds[i]>=BTP_ANM_COUNT : result.presentation.kinds[i]!=0) return 0;
+        }
         if (b[11298] || b[11299]) return 0;
         if (b[11287]) return 0;
         for (unsigned i=11273;i<11280;++i) if (b[i]) return 0;
@@ -839,7 +855,8 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
                     if (get16(script->bytes + v->menu_table + 2*i) >= script->length) return 0;
         }
         if (!btp_talk_valid(&result,m) || !btp_npc_valid(&result,m) || !btp_bank_valid(&result) ||
-            !btp_school_valid(&result) || !btp_training_valid(&result) || !btp_cutscene_valid(&result) || !btp_combat_valid(&result) || !btp_effects_valid(&result) || !btp_service_valid(&result)) return 0;
+            !btp_school_valid(&result) || !btp_training_valid(&result) || !btp_cutscene_valid(&result) || !btp_combat_valid(&result) || !btp_effects_valid(&result) || !btp_service_valid(&result) ||
+            (result.presentation.count && result.combat.phase!=BTP_COMBAT_ROUND)) return 0;
         if (result.technician>4 || result.apprentice>1 || result.checkpoint_technician>4 ||
             result.checkpoint_apprentice>1 || (result.apprentice && !result.technician)) return 0;
     }

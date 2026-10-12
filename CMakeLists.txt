@@ -21,6 +21,7 @@ target_sources(btp_core PRIVATE port/core/world.c port/data/world.c port/data/ge
 target_sources(btp_core PRIVATE port/core/party.c port/core/campaign.c)
 target_sources(btp_core PRIVATE port/core/service.c)
 target_sources(btp_core PRIVATE port/core/audio.c)
+target_sources(btp_core PRIVATE port/data/sounds.c)
 target_sources(btp_core PRIVATE port/core/menu.c)
 add_library(btp_pixels port/frontend/pixels.c)
 target_link_libraries(btp_pixels PUBLIC btp_core)

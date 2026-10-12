@@ -33,7 +33,7 @@ typedef enum { BTP_QUIZ_NONE, BTP_QUIZ_INTRO, BTP_QUIZ_QUESTION, BTP_QUIZ_FAILED
 typedef struct { uint8_t phase, selected, round, point, failed; uint16_t used; } BtpQuizState;
 typedef enum { BTP_MISSION_NONE, BTP_MISSION_DRIVE, BTP_MISSION_WARNING,
     BTP_MISSION_CORNER, BTP_MISSION_RESULT, BTP_MISSION_SNICKER,
-    BTP_MISSION_PICKUP } BtpMissionPhase;
+    BTP_MISSION_PICKUP, BTP_MISSION_RETURN } BtpMissionPhase;
 typedef struct {
     uint8_t phase, corner, warned, idle, walk, direction;
     uint16_t elapsed;
@@ -73,7 +73,11 @@ typedef struct {
     uint8_t active,countdown;
     uint16_t position,divisor,phase,irq_phase;
     uint32_t fraction;
+    uint8_t sound_count,sounds[24];
+    uint16_t event,sound_phase;
+    uint32_t remaining,sound_fraction;
 } BtpAudioState;
+typedef struct { uint8_t count,kinds[24]; } BtpPresentationState;
 typedef struct {
     uint8_t steps,sound,speed,outtakes,slot,io,notice,quit;
     uint16_t map_x,map_y;
@@ -117,12 +121,14 @@ typedef struct {
     BtpServiceState service;
     BtpAudioState audio;
     BtpMenuState menu;
+    BtpPresentationState presentation;
 } BtpState;
 enum { BTP_STATE_BYTES = 16384 };
 
 void btp_start(BtpState *state);
 void btp_tick(BtpState *state, const BtpMap *map, BtpAction action);
 void btp_game_tick(BtpState *state, const BtpResources *resources, BtpAction action);
+void btp_game_tick_audio(BtpState *state, const BtpResources *resources, BtpAction action, int16_t *samples);
 void btp_start_conversation_checkpoint(BtpState *state); /* Explicit controlled scenario */
 void btp_start_shop_conversation_checkpoint(BtpState *state, const BtpResources *resources, unsigned slot);
 int btp_game_text(const BtpState *state, const BtpResources *resources,

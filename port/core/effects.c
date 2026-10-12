@@ -35,7 +35,9 @@ int btp_effects_valid(const BtpState *s)
     const BtpEffectsState *v=&s->effects;
     if (v->count>7 || v->age>21 || v->pending>2 || (!v->count && v->age)) return 0;
     if (v->count && s->combat.phase!=BTP_COMBAT_ROUND) return 0;
-    if (v->pending && (s->combat.phase!=BTP_COMBAT_ROUND || !v->count)) return 0;
+    /* The saved boundary after the final outtake has no remaining frames;
+       the following logical tick performs the pending outcome transition. */
+    if (v->pending && (s->combat.phase!=BTP_COMBAT_ROUND || !s->combat.shot.destroyed)) return 0;
     for (unsigned i=0;i<7;++i) {
         const BtpCombatEffect *e=&v->shots[i];
         if (i<v->count) {

@@ -324,11 +324,43 @@ static void combat_flash(const BtpResources *r, const BtpState *s, int cx, int c
         (void)btp_draw_sprite(&r->sprites,250u+r->combat.impact[frame-count],tx+4,ty+6,0,104,f);
     }
 }
+static int left_message(const BtpResources *r,uint32_t *f,const uint8_t *message,size_t n)
+{
+    size_t at=0;int y=104;
+    while (at<n && y<192) {
+        size_t end=at;while (end<n && end-at<11 && message[end]!=13) ++end;
+        if (end<n && message[end]!=13 && message[end]!=' ') {
+            size_t space=end;while (space>at && message[space]!=' ') --space;
+            if (space>at) end=space;
+        }
+        char row[12];memcpy(row,message+at,end-at);row[end-at]=0;text(r,f,8,y,row,15);y+=8;
+        at=end;while (at<n && (message[at]==' ' || message[at]==13)) ++at;
+    }
+    return y;
+}
 static void combat_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
 {
     const BtpCombatState *c=&s->combat;char line[40];
     static const char *commands[10]={"Walk","Run","Jump","Use Weapons","Kick","Computer","Scan","Next","Flee","Begin Fight"};
     rectangle(f,0,0,104,200,0);
+    if (c->phase>=BTP_COMBAT_CONTROL && c->phase<=BTP_COMBAT_GRAPHICS) {
+        unsigned id=87u+c->phase-BTP_COMBAT_CONTROL;
+        const uint8_t *message=r->dialogue.bytes+r->dialogue.offset[id];
+        size_t n=r->dialogue.size[id];
+        if (c->phase==BTP_COMBAT_MESSAGES) n=16; /* Original prompt, before option lines. */
+        int y=left_message(r,f,message,n);
+        if (c->phase==BTP_COMBAT_MESSAGES) {
+            static const char *const choices[]={"None","Brief","Verbose"};
+            for (unsigned i=0;i<3;++i) {
+                if (c->selected==i) rectangle(f,8,y+(int)i*8,88,8,14);
+                text(r,f,8,y+(int)i*8,choices[i],c->selected==i ? 0u : 15u);
+            }
+        } else {
+            if (c->selected==0) rectangle(f,8,y,24,8,14);else rectangle(f,40,y,16,8,14);
+            text(r,f,8,y,"Yes",c->selected==0 ? 0u : 15u);text(r,f,40,y,"No",c->selected==1 ? 0u : 15u);
+        }
+        return;
+    }
     const BtpCombatUnit *active=&c->unit[c->active_unit];
     text(r,f,8,8,c->friends ? active->infantry ? btp_party_name(&s->party,c->ids[c->active_unit]-4u) : "Owned 'Mech" : s->story_flags[2]==0 ? "Locust" : s->story_flags[2]==1 ? "Wasp" : "Chameleon",15);
     snprintf(line,sizeof line,"Heat %u",c->unit[c->active_unit].heat);text(r,f,8,24,line,14);
@@ -645,7 +677,10 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
     }
     if (s->npc.fault) text(r,f,8,80,"NPC fault",12);
     if (s->combat.phase) combat_panel(r,s,f);
-    else if (s->mode == BTP_MISSION) {
+    else if (s->mode==BTP_MISSION && s->mission.phase==BTP_MISSION_RETURN) {
+        rectangle(f,0,0,104,200,0);uint8_t message[256];size_t n;
+        if (btp_game_text(s,r,message,sizeof message,&n)) (void)left_message(r,f,message,n);
+    } else if (s->mode == BTP_MISSION) {
         text(r,f,8,151,s->story_flags[2] == 0 ? "Locust" : s->story_flags[2] == 1 ? "Wasp" : "Chameleon",14);
         if (s->mission.phase != BTP_MISSION_DRIVE && s->mission.phase != BTP_MISSION_RESULT) {
             uint8_t message[256]; size_t n;
@@ -665,13 +700,11 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         story_panel(r, s, f);
     } else if (s->mode == BTP_ENTRY) {
         rectangle(f, 104, 73, 216, 55, 7); rectangle(f, 108, 77, 208, 46, 0);
-        char question[40]; snprintf(question,sizeof question,"Enter %s?",place);
-        text(r,f, 112, 80, question, 15);
-        text(r,f, 112, 96, "Yes", s->entry_selected == 0 ? 14u : 7u);
-        text(r,f, 144, 96, "No", s->entry_selected == 1 ? 14u : 7u);
-        text(r,f, 112, 112, "Enter / Backspace", 7);
-    } else if (btp_entrance(s, &r->map) == 5) {
-        text(r,f, 8, 166, "INTERIOR", 14); text(r,f, 8, 178, "UNAVAILABLE", 14);
+        char question[48]; snprintf(question,sizeof question,"%s?",place);
+        text(r,f,112,80,"Will you enter the",15);text(r,f,112,88,question,15);
+        if (s->entry_selected==0) rectangle(f,112,96,24,8,14);else rectangle(f,144,96,16,8,14);
+        text(r,f,112,96,"Yes",s->entry_selected==0 ? 0u : 15u);
+        text(r,f,144,96,"No",s->entry_selected==1 ? 0u : 15u);
     } else if (debug) {
         snprintf(line, sizeof line, "GATE %u", s->gate); text(r,f, 8, 166, line, 14);
         snprintf(line, sizeof line, "TICK %u", s->tick); text(r,f, 8, 178, line, 14);
@@ -720,10 +753,10 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
     }
     border_panel(r,f,0,0,104,200,1);
     if (s->mode == BTP_BUILDING || s->mode == BTP_SCRIPT_FAULT ||
-        (s->mode == BTP_QUIZ && s->quiz.phase != BTP_QUIZ_QUESTION) || s->cutscene.active)
+        (s->mode == BTP_QUIZ && s->quiz.phase != BTP_QUIZ_QUESTION) || (s->cutscene.active && s->cutscene.active!=3))
         border_panel(r,f,104,0,216,200,0);
     else if (s->mode == BTP_ENTRY) border_panel(r,f,104,72,216,56,0);
-    else if (s->mode == BTP_MISSION && s->mission.phase != BTP_MISSION_DRIVE && s->mission.phase != BTP_MISSION_RESULT)
+    else if (s->mode == BTP_MISSION && s->mission.phase != BTP_MISSION_DRIVE && s->mission.phase != BTP_MISSION_RESULT && s->mission.phase!=BTP_MISSION_RETURN)
         border_panel(r,f,104,72,216,64,0);
 }
 

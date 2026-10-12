@@ -180,6 +180,7 @@ static void frames(const BtpResources *r, const char *name)
         s.npc.actor[i] = (BtpNpc){(uint16_t)old[a],(uint16_t)old[a+1],(uint8_t)old[a+4]};
         s.npc_pairs[i][0] = (uint8_t)old[a+5]; s.npc_pairs[i][1] = (uint8_t)old[a+6];
     }
+    s.menu=(BtpMenuState){.steps=1,.sound=1,.speed=2};
     CHECK(btp_npc_valid(&s,&r->map)); unsigned count = 0, samples = 1;
     while (row(f,next)) {
         CHECK(old[7] == next[7] && old[8] == next[8]);

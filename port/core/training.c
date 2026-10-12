@@ -220,6 +220,7 @@ int btp_training_text(const BtpState *s, const BtpResources *r, uint8_t *out, si
         if (s->mission.phase == BTP_MISSION_SNICKER) return literal(&r->dialogue,84,out,capacity,length);
         if (s->mission.phase == BTP_MISSION_PICKUP)
             return literal(&r->dialogue,s->story_flags[2] ? 86u : 85u,out,capacity,length);
+        if (s->mission.phase == BTP_MISSION_RETURN) return literal(&r->dialogue,90,out,capacity,length);
         return 1;
     }
     const BtpScriptState *v = &s->script;
@@ -240,7 +241,7 @@ int btp_training_valid(const BtpState *s)
 {
     const BtpQuizState *q = &s->quiz; const BtpMissionState *m = &s->mission;
     if (q->phase > BTP_QUIZ_FAILED || q->selected >= 20 || q->round > 3 || q->point >= 10 ||
-        q->failed > 1 || q->used >= 1024 || m->phase > BTP_MISSION_PICKUP || m->corner > 1 ||
+        q->failed > 1 || q->used >= 1024 || m->phase > BTP_MISSION_RETURN || m->corner > 1 ||
         m->warned > 1 || m->idle > 10 || m->walk > 15 || m->direction > 7 ||
         m->assignment > 7 || m->rubble > 7 || s->mech_skills[0] > 4 || s->mech_skills[1] > 4 ||
         s->checkpoint_mech_skills[0] > 4 || s->checkpoint_mech_skills[1] > 4 ||
@@ -265,5 +266,6 @@ int btp_training_valid(const BtpState *s)
     if (m->phase == BTP_MISSION_CORNER && (!m->corner || m->assignment)) return 0;
     if (m->phase == BTP_MISSION_SNICKER && (m->assignment!=1 || m->corner || s->story_flags[2])) return 0;
     if (m->phase == BTP_MISSION_PICKUP && (m->assignment!=1 || !m->corner)) return 0;
+    if (m->phase == BTP_MISSION_RETURN && (m->assignment<2 || !m->corner || s->combat.phase || s->campaign.invasion)) return 0;
     return 1;
 }

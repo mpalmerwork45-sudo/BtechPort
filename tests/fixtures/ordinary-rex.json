@@ -2,19 +2,19 @@
   "checkpoints": [
     {
       "label": "parked-in-starport",
-      "tick": 46666
+      "tick": 45913
     },
     {
       "label": "civilian-clothing",
-      "tick": 46750
+      "tick": 46023
     },
     {
       "label": "rex-crest",
-      "tick": 47861
+      "tick": 47121
     },
     {
       "label": "rex-and-commando",
-      "tick": 47938
+      "tick": 47198
     }
   ],
   "final": {
@@ -27,7 +27,7 @@
       47
     ],
     "gate": 85,
-    "tick": 47938,
+    "tick": 47198,
     "blocked": 0,
     "script_pc": 6030,
     "script_status": 3,
@@ -115,9 +115,9 @@
     "npc_clock": 0,
     "npc_fault": 0,
     "npc_rng": [
-      109,
-      189,
-      201
+      81,
+      179,
+      123
     ],
     "npc_search": [
       0,
@@ -310,7 +310,22 @@
     "audio": {
       "active": 0,
       "position": 0,
-      "divisor": 0
+      "divisor": 0,
+      "effects": 0,
+      "effect": 0,
+      "event": 0,
+      "remaining": 0
+    },
+    "actions_menu": {
+      "phase": 0,
+      "selected": 0,
+      "steps": 1,
+      "sound": 1,
+      "speed": 2,
+      "outtakes": 0,
+      "slot": 0,
+      "io": 0,
+      "notice": 0
     },
     "campaign": {
       "invasion": 0,
@@ -336,7 +351,7 @@
     ],
     "quiz": {
       "phase": 0,
-      "selected": 4,
+      "selected": 15,
       "round": 0,
       "point": 0,
       "failed": 0,
@@ -359,8 +374,8 @@
       "rubble_tile": 0
     },
     "mech_skills": [
-      2,
-      3
+      3,
+      4
     ],
     "device": 1,
     "recruitment": 0,

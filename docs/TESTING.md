@@ -1,5 +1,27 @@
 # Build, verification and original oracle — 2026-10-12
 
+## M4 menu and combat presentation increment
+
+Current increment: **35 CTest suites**, full historical regression and full
+headless ASan/UBSan/LeakSanitizer pass. Four original popup crops and all title
+RGB pixels match. All 18 speaker programs and 990 outtake decisions match
+executed original instructions. See [M4 working evidence](M4_PROGRESS.md) for
+precise scope, internal BTPK/v20 offsets and remaining M4 work.
+
+Focused SDL verification, including actual queued combat PCM:
+
+```sh
+python3 tools/native_smoke.py --presentation-only
+python3 tools/native_smoke.py --menu-only
+python3 tools/native_smoke.py --campaign-only
+```
+
+Each uses private ordinary-input checkpoints and compares full recorded input,
+state and pixels. Speaker timing/filtering remains approximate; outtakes have
+no embedded sound track. Optional primary regeneration:
+`python3 tools/make_sound_vectors.py`. The optional oracle is not a build or
+runtime dependency. Historic counts below describe their original increments.
+
 ## Current M3d–M3h acceptance
 
 **34 CTest suites, the complete historical headless regression, five Python

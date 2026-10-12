@@ -1,5 +1,14 @@
 #include "core/animation.h"
 #include "core/game.h"
+#include "core/audio.h"
+#include "core/npc.h"
+int btp_outtake_roll(BtpState *s,unsigned kind,unsigned flags)
+{
+    /* 0000:4900..494D, including the special non-forced kind-16 branch. */
+    static const unsigned masks[3]={3,15,63};
+    unsigned draw=btp_rng_next(s->npc.rng);
+    return !(draw&masks[s->menu.outtakes]) || flags==2 || kind==0 || kind==2 || kind==6 || (kind>7 && kind!=16);
+}
 
 unsigned btp_terrain_frame(unsigned tile, unsigned phase)
 {
@@ -25,11 +34,11 @@ unsigned btp_player_direction(unsigned facing)
 }
 int btp_cutscene_begin(BtpState *s, const BtpResources *r, unsigned kind, unsigned active)
 {
-    if (!s || !r || s->cutscene.active || (kind != 0 && kind != 6 && kind != 8 && kind != 9) ||
-        active != (kind ? 1u : 2u) || !r->animations[kind].count ||
+    if (!s || !r || s->cutscene.active || kind>=BTP_ANM_COUNT ||
+        (active!=3 && ((kind != 0 && kind != 6 && kind != 8 && kind != 9) || active != (kind ? 1u : 2u))) || !r->animations[kind].count ||
         ((kind==0 || kind==8) && r->animations[kind].count != (kind ? 3u : 18u))) return 0;
     s->cutscene = (BtpCutsceneState){.active=(uint8_t)active,.kind=(uint8_t)kind,
-        .remaining=(uint16_t)(r->animations[kind].units[0]+(kind ? 0u : 50u))};
+        .remaining=(uint16_t)(r->animations[kind].units[0]+(!kind || active==3 ? 50u : 0u))};
     if (!s->cutscene.remaining) s->cutscene.remaining=1;
     return 1;
 }
@@ -48,7 +57,7 @@ int btp_cutscene_tick(BtpState *s, const BtpResources *r)
         if (c->hold) { s->cutscene = (BtpCutsceneState){0}; return 1; }
         if ((unsigned)c->step+1u < a->count) ++c->step;
         else if (c->kind == 8 && c->cycle < 6) { ++c->cycle; c->step = 0; }
-        else if (!c->kind) { c->hold = 1; c->remaining = 60; continue; }
+        else if (!c->kind || c->active==3) { c->hold = 1; c->remaining = 60; continue; }
         else { s->cutscene = (BtpCutsceneState){0}; return 1; }
         c->remaining = a->units[c->step] ? a->units[c->step] : 1;
     }
@@ -59,7 +68,9 @@ int btp_cutscene_valid(const BtpState *s)
     const BtpCutsceneState *c = &s->cutscene;
     if (!c->active) return !c->kind && !c->step && !c->cycle && !c->hold && !c->remaining && !c->refresh_fraction &&
         s->script.status != BTP_SCRIPT_ANIMATION;
-    if (!c->remaining || c->refresh_fraction >= 1000 || !s->checkpoint_valid || c->hold > 1) return 0;
+    if (!c->remaining || c->refresh_fraction >= 1000 || (c->active!=3 && !s->checkpoint_valid) || c->hold > 1) return 0;
+    if (c->active==3) return c->kind>0 && c->kind<BTP_ANM_COUNT && c->step<BTP_ANM_FRAMES && !c->cycle &&
+        c->remaining<=16384 && s->combat.phase==BTP_COMBAT_ROUND && (s->mode==BTP_MISSION || s->mode==BTP_ENCOUNTER);
     if (c->active==1 && c->kind==6) return c->step<31 && !c->cycle && !c->hold && c->remaining<=4 &&
         s->mode==BTP_BUILDING && (s->campaign.building==5 || s->campaign.building==11) &&
         s->script.status==BTP_SCRIPT_ANIMATION && s->script.animation_kind==6 && s->script.animation_flags==1;

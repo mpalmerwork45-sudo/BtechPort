@@ -4,6 +4,7 @@
 #include "core/effects.h"
 #include "core/world.h"
 #include "core/party.h"
+#include "core/audio.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -215,6 +216,9 @@ static void finish(BtpState *s)
     if (s->campaign.encounter) { c->phase=BTP_COMBAT_NONE;c->flash=0;return; }
     s->mission.corner=1;s->mission.idle=0;s->mission.walk=c->walk[0];
     s->mission.direction=c->unit[0].direction;c->phase=BTP_COMBAT_NONE;c->flash=0;
+    /* 103B:0D6D..0DA5: training encounter argument 1 waits for a key
+       after the original return-to-base message. */
+    if (!s->campaign.invasion) s->mission.phase=BTP_MISSION_RETURN;
     if (s->campaign.invasion && !c->lost) {
         s->campaign.world_x=(uint16_t)(1536+s->x_half);
         s->campaign.world_y=(uint16_t)(1536+s->y_half);
@@ -387,6 +391,23 @@ static void round_tick(BtpState *s, const BtpResources *r, int enemy_ai)
             c->last_weapon=(uint8_t)i;c->last_event=(uint8_t)(c->shot.hit ? 1 : 2);
             *fired|=(uint16_t)(1u<<i);c->flash=c->graphics && c->last_event<=2 ? 3 : 0;
             btp_effects_shot(s,actor,target,w);
+            if (c->graphics) {
+                unsigned sound=w<3 ? 13u : w==3 ? 5u : w<=6 ? 11u : w<=8 ? 6u :
+                    w==9 || (w>=19 && w<=23) ? 3u : w==10 || w==11 || (w>=25 && w<=31) ? 1u :
+                    w==12 || w==13 ? 9u : w>=15 && w<=18 ? 2u : 0u;
+                btp_audio_effect(s,sound);if (c->shot.hit) btp_audio_effect(s,4);
+                unsigned kind=0;
+                if (c->shot.hit && !enemy->infantry && (w==10 || w==11)) kind=1;
+                if (c->shot.hit && w>=15 && w<=18 && !attacker->infantry)
+                    kind=actor==0 ? s->story_flags[2] ? 7u : 4u : target==0 && s->story_flags[2] ? 3u : 0u;
+                if (kind) {
+                    if (btp_outtake_roll(s,kind,0) && s->presentation.count<24)
+                        s->presentation.kinds[s->presentation.count++]=(uint8_t)kind;
+                }
+                if (c->shot.toppled) {
+                    if (btp_outtake_roll(s,16,0) && s->presentation.count<24) s->presentation.kinds[s->presentation.count++]=16;
+                }
+            }
             if (c->shot.destroyed) {
                 /* 12E8:1B7F / 1C6E preserve the original corpse/wreck artwork. */
                 mark(s,enemy->infantry ? 126u : 128u+(target==0 && s->story_flags[2]!=0),
@@ -417,6 +438,12 @@ static void combat_tick(BtpState *s, const BtpResources *r, BtpAction a, int ene
     BtpCombatState *c=&s->combat;
     if (s->effects.count) {
         btp_effects_tick(s,r);if (s->effects.count) return;
+    }
+    if (s->presentation.count) {
+        unsigned kind=s->presentation.kinds[0];--s->presentation.count;
+        memmove(s->presentation.kinds,s->presentation.kinds+1,s->presentation.count);
+        s->presentation.kinds[s->presentation.count]=0;
+        (void)btp_cutscene_begin(s,r,kind,3);return;
     }
     if (s->effects.pending) {
         c->won=(uint8_t)(s->effects.pending==1);c->lost=(uint8_t)(s->effects.pending==2);

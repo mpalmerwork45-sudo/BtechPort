@@ -87,6 +87,7 @@ int btp_options(int argc, char **argv, BtpOptions *o)
             if (!strcmp(arg, "--save-file")) value = &o->save_file;
             if (!strcmp(arg, "--load")) value = &o->load;
             if (!strcmp(arg, "--save")) value = &o->save;
+            if (!strcmp(arg,"--audio-report")) value=&o->audio_report;
             if (!value || i + 1 == argc) { fprintf(stderr, "Unknown/incomplete option: %s\n", arg); return 0; }
             *value = argv[++i];
         }
@@ -167,7 +168,8 @@ void btp_print_state(const BtpState *s, const BtpResources *r)
         s->school.phase,s->school.course,s->school.before,s->school.outcome);
     printf(",\"service\":{\"phase\":%u,\"action\":%u,\"mech\":%u,\"selected\":%u,\"kind\":%u,\"item\":%u,\"amount\":%u}",s->service.phase,s->service.action,s->service.mech,s->service.selected,s->service.kind,s->service.item,s->service.amount);
     printf(",\"campaign_flags\":[");for (unsigned i=0;i<64;++i) printf("%s%u",i ? "," : "",s->story_flags[i]);printf("]");
-    printf(",\"audio\":{\"active\":%u,\"position\":%u,\"divisor\":%u}",s->audio.active,s->audio.position,s->audio.divisor);
+    printf(",\"audio\":{\"active\":%u,\"position\":%u,\"divisor\":%u,\"effects\":%u,\"effect\":%u,\"event\":%u,\"remaining\":%u}",s->audio.active,s->audio.position,s->audio.divisor,
+        s->audio.sound_count,s->audio.sounds[0],s->audio.event,s->audio.remaining);
     printf(",\"actions_menu\":{\"phase\":%u,\"selected\":%u,\"steps\":%u,\"sound\":%u,\"speed\":%u,\"outtakes\":%u,\"slot\":%u,\"io\":%u,\"notice\":%u}",
         s->campaign.ui,s->campaign.selected,s->menu.steps,s->menu.sound,s->menu.speed,s->menu.outtakes,s->menu.slot,s->menu.io,s->menu.notice);
     printf(",\"campaign\":{\"invasion\":%u,\"owned\":%u,\"world\":[%u,%u],\"mounted\":%u,\"encounter\":%u,\"building\":%u},\"player_sprite\":%u,\"npc_sprites\":[",
