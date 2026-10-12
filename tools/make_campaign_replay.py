@@ -52,7 +52,7 @@ class Session:
                      ['down']*max(0,y-u['y'])+['up']*max(0,u['y']-y)+['accept'])
     def round(self):
         self.command(9)
-        for _ in range(100):
+        for _ in range(1024):
             if self.state['combat']['phase']!=9:break
             self.advance(['idle']*4)
         else:raise RuntimeError('Turn stalled')

@@ -119,109 +119,109 @@
     },
     {
       "label": "resolving",
-      "tick": 4502,
+      "tick": 4534,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 4575,
+      "tick": 4639,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 4617,
+      "tick": 4681,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 4659,
+      "tick": 4723,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 4701,
+      "tick": 4765,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 4743,
+      "tick": 4839,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 4865,
+      "tick": 4993,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 4915,
+      "tick": 5075,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 4965,
+      "tick": 5157,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 5015,
+      "tick": 5239,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 5086,
+      "tick": 5342,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 5136,
+      "tick": 5424,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 5186,
+      "tick": 5506,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 5236,
+      "tick": 5588,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "victory",
-      "tick": 5252,
+      "tick": 5636,
       "mode": "training-mission",
       "combat_phase": 0
     },
     {
       "label": "return-to-base",
-      "tick": 5252,
+      "tick": 5636,
       "mode": "training-mission",
       "combat_phase": 0
     },
     {
       "label": "report",
-      "tick": 5316,
+      "tick": 5700,
       "mode": "building",
       "combat_phase": 0
     },
     {
       "label": "exit",
-      "tick": 5317,
+      "tick": 5701,
       "mode": "local-exploration",
       "combat_phase": 0
     }

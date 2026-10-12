@@ -72,7 +72,8 @@ void btp_menu_close(BtpState *s)
 {
     unsigned intro=s->menu.from_intro;s->menu.from_intro=0;
     s->campaign.ui=s->campaign.selected=s->campaign.member=0;s->menu.io=s->menu.notice=0;
-    s->mode=(uint8_t)(intro ? BTP_BEGIN : BTP_EXPLORE);
+    s->mode=(uint8_t)(intro ? BTP_BEGIN : s->menu.from_story ? BTP_BUILDING : BTP_EXPLORE);
+    if (s->menu.from_story) s->menu.from_story=2;
 }
 static void page(BtpState *s,unsigned phase,unsigned selected)
 {
@@ -194,6 +195,7 @@ void btp_menu_input(BtpState *s,const BtpResources *r,BtpAction a)
 }
 int btp_actions_valid(const BtpState *s)
 {
+    if (s->menu.from_story>2 || (s->menu.from_story && (s->campaign.building!=13 || s->script.status!=BTP_SCRIPT_NATIVE || s->script.native_action!=39 || s->mode!=(s->menu.from_story==1 ? BTP_ACTIONS : BTP_BUILDING)))) return 0;
     const BtpMenuState *m=&s->menu;
     if ((m->steps!=1 && m->steps!=2 && m->steps!=4) || m->sound>1 || m->speed>5 || m->outtakes>2 ||
         m->slot>5 || m->io>2 || m->notice>4 || m->quit>1 || m->map_x>2047 || m->map_y>2047 || m->from_intro>1) return 0;

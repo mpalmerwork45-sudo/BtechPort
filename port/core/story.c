@@ -1,6 +1,7 @@
 #include "core/story.h"
 #include "core/party.h"
 #include "core/service.h"
+#include "core/menu.h"
 #include <string.h>
 int btp_later_native(BtpState *s,const BtpResources *r)
 {
@@ -9,6 +10,11 @@ int btp_later_native(BtpState *s,const BtpResources *r)
         unsigned id=action==36 ? s->story_flags[37]<8 ? s->party.people[s->story_flags[37]][0] : 255u : s->party.next_id;
         if (id>=10) return 0;
         s->script.has_name=1;s->script.name_id=(uint8_t)id;s->script.name_after=s->script.text_count;
+    } else if (kind==13 && action==37) {
+        btp_party_init(s);s->party.people[0][0]=255;
+    } else if (kind==13 && action==39) {
+        if (s->menu.from_story==2) s->menu.from_story=0;
+        else { btp_menu_open(s);s->campaign.ui=BTP_MENU_ALLOCATE;s->menu.from_story=1;return 1; }
     } else if (kind!=9) return 0;
     else if (action==13) { btp_service_begin(s,r);return 1; }
     else if (action==21 || action==22) {

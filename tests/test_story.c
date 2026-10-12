@@ -19,6 +19,7 @@ int main(int argc,char **argv)
     BtpResources *r=calloc(1,sizeof *r);BtpError e;CHECK(r && btp_resources_load(argv[1],r,&e));
     CHECK(btp_combat_data_load("work/combat-data.bin",&r->combat,&e));
     CHECK(btp_dialogue_load("work/talk-data.bin",&r->dialogue,&e));
+    CHECK(btp_world_data_load("work/world-data.bin",&r->world,&e));
     FILE *f=fopen("tests/fixtures/story-primary.txt","r");CHECK(f);char line[256];unsigned cases=0;
     BtpBld hospital=r->buildings[9];
     while (fgets(line,sizeof line,f)) if (line[0]=='H') {
@@ -36,5 +37,18 @@ int main(int argc,char **argv)
         input(&s,r,BTP_IDLE);++cases;
     }
     fclose(f);CHECK(cases==40);r->buildings[9]=hospital;
+    const char *routes[]={"ordinary-hospital","ordinary-jail-visitor"};
+    for (unsigned route=0;route<2;++route) {
+        char path[160];snprintf(path,sizeof path,"tests/fixtures/%s.actions",routes[route]);f=fopen(path,"r");CHECK(f);
+        BtpState s;btp_start(&s);unsigned ticks=0,crest=0;
+        while (fgets(line,sizeof line,f)) {
+            line[strcspn(line,"\r\n")]=0;BtpAction a;CHECK(btp_action_parse(line,&a));
+            input(&s,r,a);++ticks;crest+=s.cutscene.active && s.cutscene.kind==6 && (s.campaign.building==9 || s.campaign.building==13);
+        }
+        fclose(f);CHECK(ticks>40000 && crest && s.mode==BTP_EXPLORE);
+        CHECK(s.party.people[3][10]==3 && s.party.medical_kit && s.party.advanced_kit && s.story_flags[27]);
+        CHECK(btp_party_count(&s.party)==4u+route);
+        if (route) CHECK(s.story_flags[42] && s.party.people[4][8]==3 && s.party.people[4][15]==8u*s.party.people[4][1]);
+    }
     free(r);printf("PASS: %u later-story checks, original hospital effects and saved continuation\n",checks);return 0;
 }

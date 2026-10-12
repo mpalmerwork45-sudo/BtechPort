@@ -512,6 +512,72 @@ def menu(env,work):
             if state['actions_menu']['steps']!=1<<((number-1)%3):raise RuntimeError('Slot did not retain its separate movement setting')
         print(f'PASS: native Space/settings/inspection/overhead, all six saves and loads, {len(keys)+5} exact SDL inputs and pixels.',flush=True)
     inspection_saves(env,work)
+    overhead(env,work)
+
+def overhead(env,work):
+    """Open the map with real Space/Up/Space and inspect the X11 window pixels."""
+    import ctypes as c
+    from PIL import Image,ImageGrab
+    from reference_session import WindowKeys
+    env=dict(env,SDL_AUDIODRIVER='dummy')
+    binary=ROOT/'build/btech-headless'
+    with tempfile.TemporaryDirectory(prefix='native-overhead-',dir=work) as directory:
+        tmp=Path(directory)
+        for name,initial in [('citadel',[]),('world',['--load',str(ROOT/'Original DOS/GAME3')])]:
+            start=tmp/'start.btp';slot=tmp/'slot.btp';expected=tmp/'expected.ppm'
+            subprocess.run([str(binary),*initial,'--save',str(start)],cwd=ROOT,check=True,capture_output=True)
+            frame=work/f'native-overhead-{name}.ppm'
+            process=subprocess.Popen([str(ROOT/'build/btech-port'),'--load',str(start),
+                '--save-file',str(slot),'--frame',str(frame)],cwd=ROOT,env=env,
+                stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+            keys=WindowKeys()
+            try:
+                window=None
+                for _ in range(100):
+                    found=[w for w,n in keys.windows() if n.startswith('BtechPort')]
+                    if len(found)==1:window=found[0];break
+                    if process.poll() is not None:raise RuntimeError('Overhead window failed')
+                    time.sleep(.02)
+                if window is None:raise RuntimeError('Overhead window did not appear')
+                # Space confirms Settings, Movement rate and Two steps too.
+                for key in ('space','Down','space','space','Down','space',
+                            'space','Up','space','F5'):keys.key(window,key)
+                for _ in range(100):
+                    if slot.exists():break
+                    time.sleep(.02)
+                saved=json.loads(subprocess.run([str(binary),'--load',str(slot),
+                    '--frame',str(expected)],cwd=ROOT,check=True,capture_output=True,text=True).stdout)
+                if saved['mode']!='actions' or saved['actions_menu']['phase']!=13:
+                    raise RuntimeError('Real Space menu did not open Show Overhead Map')
+                if saved['actions_menu']['steps']!=2:
+                    raise RuntimeError('Space did not confirm a settings submenu item')
+                # Read the actual presented window, including SDL scaling.
+                keys.x.XGetGeometry.argtypes=[c.c_void_p,c.c_ulong,c.POINTER(c.c_ulong)]+[c.POINTER(c.c_int)]*2+[c.POINTER(c.c_uint)]*4
+                keys.x.XTranslateCoordinates.argtypes=[c.c_void_p,c.c_ulong,c.c_ulong,c.c_int,c.c_int,c.POINTER(c.c_int),c.POINTER(c.c_int),c.POINTER(c.c_ulong)]
+                root=c.c_ulong();x=c.c_int();y=c.c_int();width=c.c_uint();height=c.c_uint();border=c.c_uint();depth=c.c_uint()
+                if not keys.x.XGetGeometry(keys.display,window,c.byref(root),c.byref(x),c.byref(y),c.byref(width),c.byref(height),c.byref(border),c.byref(depth)):
+                    raise RuntimeError('Cannot read overhead window geometry')
+                child=c.c_ulong()
+                keys.x.XTranslateCoordinates(keys.display,window,keys.root,0,0,c.byref(x),c.byref(y),c.byref(child))
+                screen=ImageGrab.grab(xdisplay=env['DISPLAY']).crop((x.value,y.value,x.value+width.value,y.value+height.value))
+                screen.save(work/f'native-overhead-{name}-window.png')
+                visible=screen.resize((320,200),Image.Resampling.NEAREST).convert('RGB')
+                if visible.tobytes()!=Image.open(expected).convert('RGB').tobytes():
+                    raise RuntimeError('Presented overhead pixels differ from the saved map')
+                terrain=visible.crop((0,0,320,192))
+                count=sum(pixel!=(0,0,0) for pixel in terrain.getdata())
+                if count<(2000 if name=='citadel' else 40000):
+                    raise RuntimeError('Overhead window contains no visible explored terrain')
+                keys.key(window,'F9');keys.close_window(window)
+                out,err=process.communicate(timeout=10)
+                if process.returncode:raise RuntimeError(err)
+                actual=json.loads(out)
+                if actual['actions_menu']['phase']!=13 or frame.read_bytes()!=expected.read_bytes():
+                    raise RuntimeError('Overhead view was not restored visibly by F9')
+                print(f'PASS: real Space/Up/Space opens {name} overhead; {count} visible terrain pixels in actual X11 window; F5/F9 restores it.',flush=True)
+            finally:
+                keys.x.XCloseDisplay(keys.display)
+                if process.poll() is None:process.terminate();process.wait(timeout=5)
 
 def inspection_saves(env,work):
     """F5/F9 while character, mech and overhead views are actually open."""
@@ -560,15 +626,30 @@ def inspection_saves(env,work):
 def presentation(env,work):
     """Focused, real-time SDL checks, seeded by ordinary logical input saves."""
     binary=ROOT/'build/btech-headless';native=ROOT/'build/btech-port'
-    source=ROOT/'tests/fixtures/ordinary-combat.actions';lines=source.read_text().splitlines()
-    rows=[json.loads(row) for row in subprocess.check_output([str(binary),'--replay',str(source),'--trace'],cwd=ROOT,text=True).splitlines()]
+    source=ROOT/'tests/fixtures/ordinary-combat.actions'
+    def locate(path,predicates):
+        found={};process=subprocess.Popen([str(binary),'--replay',str(path),'--trace'],cwd=ROOT,text=True,stdout=subprocess.PIPE)
+        try:
+            for tick,row in enumerate(process.stdout):
+                state=json.loads(row)
+                for name,predicate in predicates.items():
+                    if name not in found and predicate(state):found[name]=tick
+                if len(found)==len(predicates):break
+            if len(found)!=len(predicates):raise RuntimeError('Missing presentation checkpoints: '+str(predicates.keys()-found.keys()))
+        finally:
+            process.terminate();process.stdout.close();process.wait(timeout=5)
+        return found
+    ticks=locate(source,{'entry':lambda s:s['mode']=='entry-confirm',
+        'combat-control':lambda s:s['combat']['phase']==1 and not s['animation']['active'],
+        'combat-sound':lambda s:s['audio']['effects'] and s['combat']['phase']==9,
+        'return-to-base':lambda s:s['mission']['phase']==7})
     fight=ROOT/'tests/fixtures/ordinary-training-combat.actions'
-    battle=[json.loads(row) for row in subprocess.check_output([str(binary),'--replay',str(fight),'--trace'],cwd=ROOT,text=True).splitlines()]
-    cases=[('entry',source,next(i for i,s in enumerate(rows) if s['mode']=='entry-confirm'),['idle']*2),
-        ('combat-control',source,next(i for i,s in enumerate(rows) if s['combat']['phase']==1 and not s['animation']['active']),['idle']*2),
-        ('combat-sound',source,next(i for i,s in enumerate(rows) if s['audio']['effects']),['idle']*30),
-        ('combat-outtake',fight,next(i for i,s in enumerate(battle) if s['animation']['active']==3),['idle']*30),
-        ('return-to-base',source,next(i for i,s in enumerate(rows) if s['mission']['phase']==7),['idle']*2+['accept'])]
+    outtake=locate(fight,{'combat-outtake':lambda s:s['animation']['active']==3})
+    cases=[('entry',source,ticks['entry'],['idle']*2),
+        ('combat-control',source,ticks['combat-control'],['idle']*2),
+        ('combat-sound',source,ticks['combat-sound'],['idle']*30),
+        ('combat-outtake',fight,outtake['combat-outtake'],['idle']*30),
+        ('return-to-base',source,ticks['return-to-base'],['idle']*2+['accept'])]
     with tempfile.TemporaryDirectory(prefix='native-presentation-',dir=work) as directory:
         tmp=Path(directory)
         for name,path,tick,keys in cases:
@@ -583,6 +664,8 @@ def presentation(env,work):
             if json.loads(actual.stdout)!=json.loads(expected.stdout) or frame.read_bytes()!=want.read_bytes() or not device['opened']:
                 raise RuntimeError(name+' native state/pixels/audio device differs')
             if name=='combat-sound' and not device['nonzero']:raise RuntimeError(name+' queued silent PCM')
+            if name=='return-to-base' and device['nonzero']:raise RuntimeError(name+' plays sound after combat completion')
+            if device.get('peak_queued_bytes',0)>3*1536*2:raise RuntimeError(name+' audio device backlog exceeds three ticks')
             print(f'PASS: native {name}, exact input/state/pixels; SDL queued {device["nonzero"]} nonzero audio samples.',flush=True)
 
 def original_saves(env,work):
@@ -699,6 +782,7 @@ def main():
     parser.add_argument('--aftermath-only',action='store_true')
     parser.add_argument('--field-only',action='store_true')
     parser.add_argument('--intro-only',action='store_true')
+    parser.add_argument('--overhead-only',action='store_true')
     args = parser.parse_args()
     work = ROOT / "work"
     work.mkdir(exist_ok=True)
@@ -720,6 +804,8 @@ def main():
             os.environ["BTECH_REFERENCE_VIRTUAL"] = "1"
             if args.intro_only:
                 intro(env,work);return
+            if args.overhead_only:
+                overhead(env,work);return
             if args.field_only:
                 field(env,work);return
             if args.aftermath_only:

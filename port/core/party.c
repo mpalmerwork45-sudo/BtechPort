@@ -39,6 +39,8 @@ void btp_party_init(BtpState *s)
     for (unsigned i=0;i<8;++i) { p->people[i][0]=255;p->x[i]=s->campaign.world_x;p->y[i]=s->campaign.world_y; }
     static const uint8_t jason[17]={0,8,9,7,0,0,0,0,1,0,0,0,8,0,0,80,0};
     memcpy(p->people[0],jason,17);memset(p->mech_types,255,4);
+    for (unsigned i=1;i<4;++i) { uint8_t *m=btp_party_mech(s,i);m[0]=m[121]=m[122]=255; }
+    if (!s->campaign.owned) s->campaign.mech[0]=s->campaign.mech[121]=s->campaign.mech[122]=255;
     if (s->campaign.owned) p->mech_types[0]=s->campaign.mech[0];
     for (unsigned i=0;i<4;++i) { p->mech_x[i]=s->campaign.world_x;p->mech_y[i]=s->campaign.world_y; }
     btp_party_sync(s);

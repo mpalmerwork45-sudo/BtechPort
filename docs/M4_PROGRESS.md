@@ -25,7 +25,7 @@ headless sanitizers, focused SDL checks and reference guard.
 | Space menu and splash correction | Implemented; numeric, pixel, six-slot and native input checks pass |
 | M4a: encounter aftermath/ejection | Implemented and committed; 114 executed-primary cases and saved continuations |
 | M4b: party/crew/field effects | Implemented and committed; formation, allocation, transfer, medical and technician vectors |
-| M4c: next story/town services | Hospital effects tested; further companion/jail routes remain in progress |
+| M4c: next story/town services | Hospital and jail-visitor companion routes implemented; primary effects and every-input saved continuations pass |
 | M4d: original cache sequence | Not complete |
 | M4e: original saves/sound/presentation | Combat presentation tested; six original save roundtrips and native continuations implemented |
 
@@ -361,3 +361,48 @@ intro/popup/audio checks. The 157-input native menu check includes real F5/F9
 while character, mech and overhead screens are open, with exact continued
 state and RGB equality. M4c/M4d remain active and final batch acceptance is
 still pending.
+
+## Sequential combat sound, Space selection and later services
+
+**VERIFIED saved sequencing:** each graphical attack waits for its firing
+sound, presents its attack, waits for the impact sound, then shows its impact
+and selected outtake. The next attack and battle result wait for this sequence.
+Original outtake RNG decisions remain at their numeric calculation points;
+changing presentation does not reorder those draws. A controlled three-attack
+regression compares every encoded save and subsequent PCM chunk, checks that
+only one combat clip is queued and verifies silent Return-to-base completion.
+Native firing queues 44,468 nonzero PCM samples; Return queues none. The SDL
+buffer is bounded to three logical audio ticks (96 ms), so a window stall cannot
+accumulate seconds of delayed sound. Device latency/filtering is approximate;
+BLD script effects outside combat still use their existing queue.
+
+**VERIFIED input and visible map:** Space previously closed the actions menu
+instead of selecting its item. It now confirms the highlighted item, like Enter.
+The shared renderer handles the overhead page directly. Real X11 Space keys
+select Settings, Movement rate, Two steps and Show Overhead Map. Screen capture
+checks the presented SDL pixels, including 2,302 visible terrain pixels at the
+Citadel start and 45,056 in the original GAME3 context. F5/F9 restores the visible
+map. A 40-by-48 Citadel terrain crop matches the original overhead capture;
+the blinking cursor and full-world pixel parity remain outside that claim.
+
+**VERIFIED bounded M4c integration:** ordinary-services inputs continue to the
+MAP4 hospital, locate its records, recruit the medical companion and buy both
+kits, then reach the MAP3 jail visitor and recruit its companion. The routes
+contain 51,207 and 52,319 actions respectively, including the authorized
+10,000-credit shortcut. Every input survives an encoded-save restart and has
+an identical next-input result. These are input histories, not edited saves or
+RNG payloads. The original generic companion naming order is retained. The
+existing 40 primary hospital numeric cases and 170 medical cases cover training,
+kit and healing calculations. Empty active mech records now use the original
+255 tag, preventing nonexistent mechs after garage checkout.
+
+The optional jail impound-yard action 40 remains an explicit unsupported
+handler; the verified visitor route chooses No to that branch. Timed NPC/spy
+checks retain their existing bounded cases; complete long-campaign timing is
+not claimed. M4d cache work and full batch acceptance remain in progress.
+
+Internal **BTPQ/v26** stores story allocation context at 18433, effect stage at
+18434, and per-attack outtake decisions at 18435..18482. v25 and older saves
+migrate explicitly; legacy active attacks drain their old audio without
+replaying new firing clips. CLI continuation comparisons now include an FNV-64
+fingerprint of the entire encoded state, as well as character and mech records.

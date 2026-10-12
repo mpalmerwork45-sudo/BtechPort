@@ -90,7 +90,7 @@ int main(int argc, char **argv)
     FILE *arrival = NULL;
     SDL_AudioDeviceID audio=0;
     if (!o.mute && !SDL_InitSubSystem(SDL_INIT_AUDIO)) {
-        SDL_AudioSpec spec={.freq=BTP_AUDIO_RATE,.format=AUDIO_S16SYS,.channels=1,.samples=2048};
+        SDL_AudioSpec spec={.freq=BTP_AUDIO_RATE,.format=AUDIO_S16SYS,.channels=1,.samples=512};
         audio=SDL_OpenAudioDevice(NULL,0,&spec,NULL,0);if (audio) SDL_PauseAudioDevice(audio,0);
     }
     if (!texture || SDL_RenderSetLogicalSize(renderer, 320, 200)) goto sdl_done;
@@ -100,7 +100,7 @@ int main(int argc, char **argv)
     unsigned held = 0, last_arrow_write = 0, cheat_step=0;
     uint64_t last = SDL_GetTicks64(), accumulator = 0;
     unsigned smoke_ticks = 0;
-    uint64_t audio_samples=0,audio_nonzero=0;
+    uint64_t audio_samples=0,audio_nonzero=0;unsigned audio_peak_bytes=0;
     unsigned smoke_sent = 0, tail_sent = 0;
     int arrival_done = 0;
     int running = 1, io_failed = 0;
@@ -244,8 +244,14 @@ int main(int argc, char **argv)
         if (o.smoke_fast) accumulator = 32;
         /* 32ms fixed simulation steps. Platform repeat/pacing remains approximate. */
         while (accumulator >= 32 && running) {
+            /* Hold the simulation when the device is behind. Replaying all
+               elapsed wall time would queue seconds of sound after a stall. */
+            if (audio && state.menu.sound && !o.smoke_fast && SDL_GetQueuedAudioSize(audio)>2u*BTP_AUDIO_TICK_SAMPLES*sizeof(int16_t)) {
+                accumulator=0;break;
+            }
             accumulator -= 32;
             BtpAction a = read != write ? queue[read++ % 256] : BTP_IDLE;
+            if (a==BTP_OPEN_MENU && state.mode==BTP_ACTIONS) a=BTP_ACCEPT;
             if (a==BTP_OPEN_MENU && state.mode!=BTP_EXPLORE && !state.combat.phase && state.mode!=BTP_ACTIONS) a=amount_editor(&state) ? BTP_IDLE : BTP_ACCEPT;
             if (o.sprite_preview) ++state.tick;
             else {
@@ -253,6 +259,7 @@ int main(int argc, char **argv)
                 btp_game_tick_audio(&state,r,a,audio && !o.smoke_fast ? pcm : NULL);
                 if (audio && state.menu.sound && !o.smoke_fast && SDL_QueueAudio(audio,pcm,sizeof pcm)) { io_failed=1;running=0; }
                 if (audio && state.menu.sound && !o.smoke_fast) {
+                    unsigned queued=SDL_GetQueuedAudioSize(audio);if (queued>audio_peak_bytes) audio_peak_bytes=queued;
                     audio_samples+=BTP_AUDIO_TICK_SAMPLES;
                     for (unsigned n=0;n<BTP_AUDIO_TICK_SAMPLES;++n) audio_nonzero+=pcm[n]!=0;
                 }
@@ -274,7 +281,7 @@ int main(int argc, char **argv)
             if (o.smoke >= 5) break; /* Inject exactly one input for each fixed step. */
         }
         if (o.sprite_preview) btp_sprite_preview(r,state.tick,frame);
-        else if (o.world_overview || (state.mode==BTP_ACTIONS && state.campaign.ui==BTP_MENU_MAP)) btp_world_preview(r,&state,frame);
+        else if (o.world_overview) btp_world_preview(r,&state,frame);
         else btp_render(r, &state, o.debug, frame);
         if (SDL_UpdateTexture(texture, NULL, frame, 320 * (int)sizeof *frame) ||
             SDL_RenderClear(renderer) || SDL_RenderCopy(renderer, texture, NULL, NULL)) {
@@ -308,8 +315,8 @@ int main(int argc, char **argv)
         FILE *report=fopen(o.audio_report,"w");
         if (!report) result=1;
         else {
-            if (fprintf(report,"{\"opened\":%u,\"rate\":%u,\"samples\":%llu,\"nonzero\":%llu}\n",audio!=0,BTP_AUDIO_RATE,
-                (unsigned long long)audio_samples,(unsigned long long)audio_nonzero)<0) result=1;
+            if (fprintf(report,"{\"opened\":%u,\"rate\":%u,\"samples\":%llu,\"nonzero\":%llu,\"peak_queued_bytes\":%u}\n",audio!=0,BTP_AUDIO_RATE,
+                (unsigned long long)audio_samples,(unsigned long long)audio_nonzero,audio_peak_bytes)<0) result=1;
             if (fclose(report)) result=1;
         }
     }

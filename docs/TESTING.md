@@ -2,13 +2,15 @@
 
 ## Current M4 presentation checks
 
-The active build has 39 CTest suites. Internal saves are BTPP/v25, with a
+The active build has 39 CTest suites. Internal saves are BTPQ/v26, with a
 20,480-byte payload; old versions retain explicit migrations. Current caches
 are BTT9/BTC9/BTW3. The older sections below describe earlier increments.
 Native focused checks: `--intro-only`, `--menu-only` and `--presentation-only`
 on `tools/native_smoke.py`. The menu probe includes saving/loading from the
 character, mech and overhead screens. These compare actual recorded SDL keys,
 complete canonical state and exact continued pixels.
+`--overhead-only` presses real Space keys through settings and the map entry,
+then reads the actual X11 window pixels and checks visible terrain and F5/F9.
 
 Primary numeric generators: `make_mech_view_vectors.py`,
 `make_world_view_vectors.py`, `make_story_vectors.py` and

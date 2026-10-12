@@ -1,5 +1,7 @@
 #include "core/combat.h"
 #include "core/npc.h"
+#include "core/audio.h"
+#include "core/effects.h"
 #include "frontend/pixels.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -97,6 +99,44 @@ static void route_pixels(const BtpState *menu,BtpResources *r)
     }
     free(frame);r->map=map;r->sprites.format=format;
 }
+static void sequential_audio(const BtpState *menu,BtpResources *r)
+{
+    BtpState s=*menu;while (s.script.selected) step(&s,r,BTP_DOWN);step(&s,r,BTP_ACCEPT);
+    while (s.cutscene.active) step(&s,r,BTP_IDLE);
+    step(&s,r,BTP_ACCEPT);step(&s,r,BTP_ACCEPT);step(&s,r,BTP_ACCEPT);
+    /* Controlled presentation prerequisite: three different attacks, with an
+       outtake attached to the first. No numeric hit-rule parity is inferred. */
+    s.combat.phase=BTP_COMBAT_ROUND;s.combat.step=11;s.combat.shot=(BtpShot){.hit=1};
+    s.effects=(BtpEffectsState){0};s.audio=(BtpAudioState){0};
+    btp_effects_shot(&s,0,1,17);btp_effects_shot(&s,0,1,9);btp_effects_shot(&s,0,1,6);
+    s.effects.outtakes[0][0]=4;
+    const unsigned expected[]={2,4,3,4,11,4};unsigned sound=0,ticks=0,outtake=0;
+    while ((s.effects.count || s.presentation.count || s.cutscene.active) && ticks++<4096) {
+        unsigned count=s.effects.count,stage=s.effects.stage,age=s.effects.age,busy=s.audio.sound_count;
+        uint8_t encoded[BTP_STATE_BYTES],again[BTP_STATE_BYTES];BtpState copy;int16_t a[BTP_AUDIO_TICK_SAMPLES],b[BTP_AUDIO_TICK_SAMPLES];
+        btp_state_encode(&s,encoded);CHECK(btp_state_decode(encoded,sizeof encoded,&r->map,&r->training,&copy));
+        btp_game_tick_audio(&s,r,BTP_IDLE,a);btp_game_tick_audio(&copy,r,BTP_IDLE,b);
+        btp_state_encode(&s,encoded);btp_state_encode(&copy,again);
+        CHECK(!memcmp(encoded,again,sizeof encoded) && !memcmp(a,b,sizeof a));
+        CHECK(s.audio.sound_count<=1 && s.combat.phase==BTP_COMBAT_ROUND && s.combat.step==11);
+        if (busy) CHECK(s.effects.count==count && s.effects.age==age);
+        if (count && stage==BTP_EFFECT_START && s.effects.stage==BTP_EFFECT_FIRE_SOUND) {
+            CHECK(sound<6 && btp_effects_sound(s.effects.shots[0].weapon)==expected[sound++]);
+            if (s.audio.sound_count) CHECK(s.audio.sounds[0]==expected[sound-1]);
+            if (count==2) CHECK(outtake);
+        }
+        if (stage==BTP_EFFECT_ATTACK && s.effects.stage==BTP_EFFECT_HIT_SOUND) {
+            CHECK(sound<6 && expected[sound++]==4);
+            if (s.audio.sound_count) CHECK(s.audio.sounds[0]==4);
+        }
+        if (s.cutscene.active) { CHECK(!s.audio.sound_count && s.effects.count==2);outtake=1; }
+    }
+    CHECK(ticks<4096 && sound==6 && outtake && !s.audio.sound_count);
+    s.effects.pending=1;s.combat.shot.destroyed=1;s.combat.unit[1].record[0]=255;
+    step(&s,r,BTP_IDLE);
+    CHECK(s.mission.phase==BTP_MISSION_RETURN && !s.audio.sound_count && !s.effects.count && !s.presentation.count);
+    step(&s,r,BTP_ACCEPT);CHECK(!s.audio.sound_count);
+}
 int main(int argc,char **argv)
 {
     if (argc!=5) return 2;
@@ -155,6 +195,7 @@ int main(int argc,char **argv)
     CHECK(menu.story_flags[0]==2 && combat_ticks>100 && effects>0);
     for (unsigned loan=0;loan<3;++loan) decline(&menu,r,loan);
     route_pixels(&menu,r);
+    sequential_audio(&menu,r);
     btp_start(&s);uint8_t old[BTP_STATE_BYTES];BtpState migrated;
     btp_state_encode(&s,old);memcpy(old,"BTPC",4);old[4]=12;
     CHECK(btp_state_decode(old,512,&r->map,&r->training,&migrated));CHECK(!memcmp(&s,&migrated,sizeof s));

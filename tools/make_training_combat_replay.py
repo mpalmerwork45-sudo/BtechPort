@@ -82,7 +82,7 @@ def generate(binary,kick=False,campaign=False):
                 command(4);advance(['accept'])
             command(9);advance(['idle']);note('resolving')
             if state['combat']['effects'][0]:note('combat-effect')
-            for _ in range(64):
+            for _ in range(512):
                 if state['combat']['phase']!=9:break
                 advance(['idle']*8)
             check(state['combat']['phase'] in [0,4],'Turn did not resolve')

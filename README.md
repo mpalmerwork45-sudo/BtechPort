@@ -67,7 +67,7 @@ From this directory on the current Kubuntu machine:
 ./scripts/test.sh
 ```
 
-Arrows move/select; hold two perpendicular arrows for diagonal movement. Keypad 1/3/7/9 or End/PgDn/Home/PgUp move diagonally, and keypad 2/4/6/8 moves in cardinal directions. Enter or Space advances dialogue. Space outdoors opens settings, party inspection, the overhead map and six save/load slots. Backspace or Escape declines; F3 toggles diagnostics, R restarts, and Ctrl+Shift+Escape closes. Hold Shift and press K, Y, R to add 10,000 credits, including during the intro. From the training start, move Up five times, confirm entry, then confirm **Request to see Katrina**. Advance the sentry and Katrina screens to return to the menu. A repeat request gets the original denial. Four Down presses select Leave; after exiting and re-entering, the menu retains that selection. Hall of Legends still has its six original screens.
+Arrows move/select; hold two perpendicular arrows for diagonal movement. Keypad 1/3/7/9 or End/PgDn/Home/PgUp move diagonally, and keypad 2/4/6/8 moves in cardinal directions. Enter or Space advances dialogue. Space outdoors opens settings, party inspection, the overhead map and six save/load slots. **Space or Enter selects the highlighted menu item**, including settings submenus. Backspace or Escape declines; F3 toggles diagnostics, R restarts, and Ctrl+Shift+Escape closes. Hold Shift and press K, Y, R to add 10,000 credits, including during the intro. From the training start, move Up five times, confirm entry, then confirm **Request to see Katrina**. Advance the sentry and Katrina screens to return to the menu. A repeat request gets the original denial. Four Down presses select Leave; after exiting and re-entering, the menu retains that selection. Hall of Legends still has its six original screens.
 
 Bank and ammo amounts use digits (including keypad), Backspace erasure, Escape to clear
 to 0, and Enter to submit; Space does not submit.
@@ -75,7 +75,10 @@ Space dismisses the Infocom/Westwood logos, then the BattleTech title and music.
 The played-before question opens saved games for Yes and starts training for No.
 Use `--mute` to disable the native audio device.
 
-**F4 toggles the area map.** It places the authentic 64×64 Citadel map within
+**Show Overhead Map** in the Space menu displays explored terrain. From the
+root menu, Up selects that last entry and Space opens it. At the training
+start, only the familiar Citadel area is revealed, as in the original. The map
+reveals more as you travel. **F4 also toggles the overhead view.** It places the authentic 64×64 Citadel map within
 192×192 tiles generated independently in C. Launch directly
 into that view with `./build/btech-port --world-overview`. This bounded area uses
 owner-derived numeric inputs and a stated seed; the view follows the party after

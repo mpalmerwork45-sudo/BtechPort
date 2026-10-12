@@ -357,7 +357,7 @@ static void combat_route(const BtpResources *r, const BtpState *s, int cx, int c
 static void combat_flash(const BtpResources *r, const BtpState *s, int cx, int cy, uint32_t *f)
 {
     const BtpCombatState *c=&s->combat;
-    if (!c->graphics || !s->effects.count || c->phase!=BTP_COMBAT_ROUND) return;
+    if (!c->graphics || !s->effects.count || s->effects.stage<BTP_EFFECT_ATTACK || c->phase!=BTP_COMBAT_ROUND) return;
     const BtpCombatEffect *e=&s->effects.shots[0];unsigned frame=s->effects.age/2u;
     const uint8_t *pose=r->combat.poses[e->group][e->direction];unsigned count=pose[0];
     int x=200+((int)e->x-cx)*8,y=64+((int)e->y+2-cy)*8;
@@ -621,6 +621,9 @@ static void story_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
 
 void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[BTP_PIXELS])
 {
+    if (s->mode==BTP_ACTIONS && s->campaign.ui==BTP_MENU_MAP) {
+        btp_world_preview(r,s,f);return;
+    }
     if (s->mode==BTP_GAME_OVER) {
         rectangle(f,0,0,320,200,0);text(r,f,112,80,"Jason has been killed.",15);text(r,f,112,104,"Load a saved game to continue.",15);return;
     }
@@ -719,7 +722,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
     if (s->combat.phase) {
         for (unsigned i=0;i<s->combat.count;++i) if (s->combat.unit[i].record[0]!=255) {
             const BtpCombatUnit *u=&s->combat.unit[i];unsigned terrain;
-            if (s->combat.graphics && s->effects.count) {
+            if (s->combat.graphics && s->effects.count && s->effects.stage>=BTP_EFFECT_ATTACK) {
                 const BtpCombatEffect *e=&s->effects.shots[0];
                 unsigned pose=r->combat.poses[e->group][e->direction][0];
                 if (s->effects.age/2u<pose && (i==e->actor || (e->hit && i==e->target && u->infantry))) continue;

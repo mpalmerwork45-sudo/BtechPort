@@ -47,7 +47,7 @@ typedef struct { uint8_t sprite, map, x, y; } BtpTerrainMark;
 typedef struct {
     uint8_t actor,target,group,direction,weapon,hit,dead,x,y,tx,ty,base,target_base;
 } BtpCombatEffect;
-typedef struct { uint8_t count,age,pending;BtpCombatEffect shots[24]; } BtpEffectsState;
+typedef struct { uint8_t count,age,pending,stage,outtakes[24][2];BtpCombatEffect shots[24]; } BtpEffectsState;
 typedef struct {
     uint8_t invasion, owned, mech[125];
     uint8_t checkpoint_owned, checkpoint_mech[125];
@@ -89,7 +89,7 @@ typedef struct { uint8_t valid,bytes[BTP_ORIGINAL_BYTES]; } BtpOriginalState;
 typedef struct {
     uint8_t steps,sound,speed,outtakes,slot,io,notice,quit;
     uint16_t map_x,map_y;
-    uint8_t from_intro;
+    uint8_t from_intro,from_story;
 } BtpMenuState;
 typedef struct {
     uint32_t tick;

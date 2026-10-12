@@ -148,7 +148,7 @@ int btp_service_valid(const BtpState *s)
 {
     const BtpServiceState *v=&s->service;
     if (!v->phase) return !v->action && !v->mech && !v->selected && !v->kind && !v->item && !v->outcome && !v->amount && !v->input[0];
-    if (v->phase==8) return v->action==0xe9 && v->mech<8 && !v->selected && v->kind<7 && !v->item && !v->outcome && !v->amount && !v->input[0] && s->mode==BTP_BUILDING && s->script.status==BTP_SCRIPT_RECRUIT && (s->campaign.building==5 || s->campaign.building==9);
+    if (v->phase==8) return v->action==0xe9 && v->mech<8 && !v->selected && v->kind<7 && !v->item && !v->outcome && !v->amount && !v->input[0] && s->mode==BTP_BUILDING && s->script.status==BTP_SCRIPT_RECRUIT && (s->campaign.building==5 || s->campaign.building==9 || s->campaign.building==13);
     if (v->phase>7 || (v->action!=13 && v->action!=18 && v->action!=19 && v->action!=20 && v->action!=44) || v->mech>3 || v->selected>17 || v->kind>9 || v->item>32 || v->outcome>1 || s->mode!=BTP_BUILDING || s->script.status!=BTP_SCRIPT_NATIVE || (s->campaign.building!=5 && !(s->campaign.building==9 && v->action==13)) || v->action!=s->script.native_action) return 0;
     unsigned n=0;while (n<8 && v->input[n]) { if (v->input[n]<'0' || v->input[n]>'9') return 0;++n; }return n<8;
 }

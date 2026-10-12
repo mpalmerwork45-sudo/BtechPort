@@ -75,7 +75,7 @@ int btp_cutscene_valid(const BtpState *s)
     if (c->active==3) return c->kind>0 && c->kind<BTP_ANM_COUNT && c->step<BTP_ANM_FRAMES && !c->cycle &&
         c->remaining<=16384 && s->combat.phase==BTP_COMBAT_ROUND && (s->mode==BTP_MISSION || s->mode==BTP_ENCOUNTER);
     if (c->active==1 && c->kind==6) return c->step<31 && !c->cycle && !c->hold && c->remaining<=4 &&
-        s->mode==BTP_BUILDING && (s->campaign.building==5 || s->campaign.building==11) &&
+        s->mode==BTP_BUILDING && (s->campaign.building==5 || s->campaign.building==9 || s->campaign.building==11 || s->campaign.building==13) &&
         s->script.status==BTP_SCRIPT_ANIMATION && s->script.animation_kind==6 && s->script.animation_flags==1;
     if (c->active==1 && c->kind==9) return c->step<12 && !c->cycle && !c->hold && c->remaining<=7 &&
         s->mode==BTP_BUILDING && !s->entry_slot && s->campaign.invasion &&

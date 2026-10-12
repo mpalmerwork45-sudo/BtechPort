@@ -411,20 +411,15 @@ static void round_tick(BtpState *s, const BtpResources *r, int enemy_ai)
             *fired|=(uint16_t)(1u<<i);c->flash=c->graphics && c->last_event<=2 ? 3 : 0;
             btp_effects_shot(s,actor,target,w);
             if (c->graphics) {
-                unsigned sound=w<3 ? 13u : w==3 ? 5u : w<=6 ? 11u : w<=8 ? 6u :
-                    w==9 || (w>=19 && w<=23) ? 3u : w==10 || w==11 || (w>=25 && w<=31) ? 1u :
-                    w==12 || w==13 ? 9u : w>=15 && w<=18 ? 2u : 0u;
-                btp_audio_effect(s,sound);if (c->shot.hit) btp_audio_effect(s,4);
                 unsigned kind=0;
                 if (c->shot.hit && !enemy->infantry && (w==10 || w==11)) kind=1;
                 if (c->shot.hit && w>=15 && w<=18 && !attacker->infantry)
                     kind=actor==0 ? s->story_flags[2] ? 7u : 4u : target==0 && s->story_flags[2] ? 3u : 0u;
                 if (kind) {
-                    if (btp_outtake_roll(s,kind,0) && s->presentation.count<24)
-                        s->presentation.kinds[s->presentation.count++]=(uint8_t)kind;
+                    if (btp_outtake_roll(s,kind,0)) s->effects.outtakes[s->effects.count-1u][0]=(uint8_t)kind;
                 }
                 if (c->shot.toppled) {
-                    if (btp_outtake_roll(s,16,0) && s->presentation.count<24) s->presentation.kinds[s->presentation.count++]=16;
+                    if (btp_outtake_roll(s,16,0)) s->effects.outtakes[s->effects.count-1u][1]=16;
                 }
             }
             if (c->shot.destroyed) {
@@ -453,7 +448,11 @@ static void round_tick(BtpState *s, const BtpResources *r, int enemy_ai)
     } else if (c->goal_active && c->unit[0].x==c->goal_x && c->unit[0].y==c->goal_y) arrived(c);
     s->x_half=c->unit[0].x;s->y_half=(uint16_t)(c->unit[0].y+(c->unit[0].infantry ? 0u : 2u));
     s->mission.walk=c->walk[0];s->mission.direction=c->unit[0].direction;
-    if (s->campaign.invasion && c->unit[0].y==127) { c->fled=1;finish(s);return; }
+    if (s->campaign.invasion && c->unit[0].y==127) {
+        if (s->effects.count || s->presentation.count || s->audio.sound_count) s->effects.pending=3;
+        else { c->fled=1;finish(s); }
+        return;
+    }
     if (++c->step==12 && !s->effects.count) end_round(s,r);
 }
 static void combat_tick(BtpState *s, const BtpResources *r, BtpAction a, int enemy_ai)
@@ -464,18 +463,19 @@ static void combat_tick(BtpState *s, const BtpResources *r, BtpAction a, int ene
         if (c->phase!=BTP_COMBAT_ROUND) menu(c);
         return;
     }
-    if (s->effects.count) {
-        btp_effects_tick(s,r);if (s->effects.count) return;
-    }
     if (s->presentation.count) {
+        if (s->audio.sound_count) return;
         unsigned kind=s->presentation.kinds[0];--s->presentation.count;
         memmove(s->presentation.kinds,s->presentation.kinds+1,s->presentation.count);
         s->presentation.kinds[s->presentation.count]=0;
         (void)btp_cutscene_begin(s,r,kind,3);return;
     }
+    if (s->effects.count) { btp_effects_tick(s,r);return; }
+    if (s->audio.sound_count) return;
     if (s->aftermath.eject) btp_campaign_eject(s);
     if (s->effects.pending) {
         c->won=(uint8_t)(s->effects.pending==1);c->lost=(uint8_t)(s->effects.pending==2);
+        c->fled=(uint8_t)(s->effects.pending==3);
         s->effects.pending=0;finish(s);return;
     }
     /* A shot on the twelfth microstep must finish its presentation before
@@ -747,7 +747,7 @@ int btp_combat_valid(const BtpState *s)
     if (phase==BTP_COMBAT_MESSAGES && c->selected>2) return 0;
     if (c->phase==BTP_COMBAT_TARGET && c->weapon_selected>=btp_combat_weapon_count(&c->unit[0])) return 0;
     if (c->weapon_selected>btp_combat_weapon_count(&c->unit[0])) return 0;
-    if (c->phase==BTP_COMBAT_ROUND && (c->step>12 || (c->step==12 && !s->effects.count))) return 0;
+    if (c->phase==BTP_COMBAT_ROUND && c->step>12) return 0;
     if (c->goal_active && c->movement>2) return 0;
     if (c->waypoint_count>11 || (c->waypoint_count && !c->goal_active) ||
         (c->phase==BTP_COMBAT_REPLACE && (c->selected>2 || c->target_selected>1))) return 0;

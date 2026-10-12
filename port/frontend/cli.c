@@ -176,6 +176,11 @@ void btp_print_state(const BtpState *s, const BtpResources *r)
         s->school.phase,s->school.course,s->school.before,s->school.outcome);
     printf(",\"service\":{\"phase\":%u,\"action\":%u,\"mech\":%u,\"selected\":%u,\"kind\":%u,\"item\":%u,\"amount\":%u}",s->service.phase,s->service.action,s->service.mech,s->service.selected,s->service.kind,s->service.item,s->service.amount);
     printf(",\"campaign_flags\":[");for (unsigned i=0;i<64;++i) printf("%s%u",i ? "," : "",s->story_flags[i]);printf("]");
+    printf(",\"people\":[");
+    for (unsigned i=0;i<8;++i) {
+        printf("%s[",i ? "," : "");for (unsigned j=0;j<17;++j) printf("%s%u",j ? "," : "",s->party.people[i][j]);printf("]");
+    }
+    printf("],\"mech_types\":[%u,%u,%u,%u]",s->party.mech_types[0],s->party.mech_types[1],s->party.mech_types[2],s->party.mech_types[3]);
     printf(",\"audio\":{\"active\":%u,\"position\":%u,\"divisor\":%u,\"effects\":%u,\"effect\":%u,\"event\":%u,\"remaining\":%u}",s->audio.active,s->audio.position,s->audio.divisor,
         s->audio.sound_count,s->audio.sounds[0],s->audio.event,s->audio.remaining);
     printf(",\"aftermath\":{\"phase\":%u,\"pilot\":%u,\"selected\":%u,\"cash\":%u,\"eject\":%u}",s->aftermath.phase,s->aftermath.pilot,s->aftermath.selected,s->aftermath.cash,s->aftermath.eject);
@@ -202,6 +207,9 @@ void btp_print_state(const BtpState *s, const BtpResources *r)
     const BtpCombatState *c=&s->combat;
     uint32_t fog=UINT32_C(2166136261);for (unsigned i=0;i<sizeof s->explored;++i) fog=(fog^s->explored[i])*UINT32_C(16777619);
     printf(",\"explored_digest\":%u,\"map_center\":[%u,%u],\"intro_load\":%u",fog,s->menu.map_x,s->menu.map_y,s->menu.from_intro);
+    uint8_t encoded[BTP_STATE_BYTES];btp_state_encode(s,encoded);uint64_t state_hash=UINT64_C(14695981039346656037);
+    for (unsigned i=0;i<BTP_STATE_BYTES;++i) state_hash=(state_hash^encoded[i])*UINT64_C(1099511628211);
+    printf(",\"state_digest\":\"%016llx\",\"effect_stage\":%u",(unsigned long long)state_hash,s->effects.stage);
     printf(",\"combat\":{\"phase\":%u,\"selected\":%u,\"round\":%u,\"step\":%u,\"won\":%u,\"fled\":%u,\"event\":%u,\"fired\":%u,"
         "\"weapon\":%u,\"flash\":%u,\"goal\":[%u,%u,%u,%u],\"orders\":[",c->phase,c->selected,c->round,c->step,c->won,c->fled,c->last_event,c->fired,
         c->weapon_selected,c->flash,c->goal_active,c->movement,c->goal_x,c->goal_y);
@@ -298,7 +306,7 @@ int btp_run_headless(const BtpOptions *o, BtpResources *r)
         uint32_t *frame = malloc(sizeof(*frame) * BTP_PIXELS);
         if (!frame) return 1;
         if (o->sprite_preview) btp_sprite_preview(r,state.tick,frame);
-        else if (o->world_overview || (state.mode==BTP_ACTIONS && state.campaign.ui==13)) btp_world_preview(r,&state,frame);
+        else if (o->world_overview) btp_world_preview(r,&state,frame);
         else btp_render(r, &state, o->debug, frame);
         int ok = btp_write_ppm(o->frame, frame);
         free(frame);

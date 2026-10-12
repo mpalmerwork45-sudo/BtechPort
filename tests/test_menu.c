@@ -84,6 +84,9 @@ int main(int argc,char **argv)
     btp_game_tick(&s,r,BTP_ACCEPT);CHECK(s.mode==BTP_EXPLORE);
     btp_game_tick(&s,r,BTP_OPEN_MENU);select_item(&s,r,1);select_item(&s,r,2);CHECK(!s.menu.sound && restore(&s,r));
     btp_game_tick(&s,r,BTP_OPEN_MENU);select_item(&s,r,6);CHECK(s.campaign.ui==BTP_MENU_MAP && restore(&s,r));
+    btp_render(r,&s,0,pixels);
+    /* Actual original revealed Citadel terrain, not just a map-page state. */
+    CHECK(crop_hash(pixels,152,80,40,48)==UINT64_C(0x4b2db9fe1af195cf));
     unsigned x=s.x_half,y=s.y_half;btp_game_tick(&s,r,BTP_RIGHT);CHECK(s.x_half==x && s.y_half==y && restore(&s,r));
     btp_game_tick(&s,r,BTP_CANCEL);CHECK(s.mode==BTP_EXPLORE);
     btp_menu_open(&s);select_item(&s,r,2);select_item(&s,r,0);btp_render(r,&s,0,pixels);

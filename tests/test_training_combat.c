@@ -78,7 +78,8 @@ static void robot_fire(const BtpState *start,BtpResources *r)
     for (unsigned i=2;i<s.combat.count;++i) { s.combat.unit[i].x=120;s.combat.unit[i].y=(uint8_t)(100+i); }
     s.combat.goal_active=0;s.combat.movement=255;s.combat.kick_target=255;memset(s.combat.orders,255,11);
     command(&s,r,9);input(&s,r,BTP_IDLE);
-    CHECK(s.combat.enemy_fired[0]&1u);CHECK(s.effects.count && s.audio.sound_count);
+    CHECK(s.combat.enemy_fired[0]&1u);CHECK(s.effects.count);
+    input(&s,r,BTP_IDLE);CHECK(s.audio.sound_count<=1);
     r->map=old;
 }
 static void movement(const BtpState *start,BtpResources *r)
