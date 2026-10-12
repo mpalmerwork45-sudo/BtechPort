@@ -14,7 +14,7 @@ int main(int argc, char **argv)
         !btp_combat_data_load(options.combat_data,&resources->combat,&error) ||
         !btp_world_data_load(options.world_data,&resources->world,&error)) {
         fprintf(stderr, "%s\nUse --data with a quoted path; filenames are case-sensitive.\n"
-            "Prepare the local dialogue cache with python3 tools/prepare_talk.py --data DIRECTORY.\n", error.text);
+            "Run ./scripts/build.sh to prepare the resource caches.\n", error.text);
         free(resources); return 1;
     }
     int result = btp_run_headless(&options, resources);

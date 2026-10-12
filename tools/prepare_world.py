@@ -12,8 +12,8 @@ import struct
 from pathlib import Path
 from combat_oracle import OriginalCombat, ROOT
 
-def generate(seed):
-    o=OriginalCombat();noise=bytearray()
+def generate(seed,data=ROOT/'Original DOS'):
+    o=OriginalCombat(source=data/'BTECH.EXE');noise=bytearray()
     o.write(o.ds+0x4fc0,seed.to_bytes(3,'little'))
     # Original 0000:50D3..50F3 supplies 256 low-byte RNG values to 09FB.
     for _ in range(256):noise.append(o.call(0x187f,0xbc0)&255)
@@ -36,12 +36,13 @@ def generate(seed):
 
 if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--seed',type=int,default=123456)
+    p.add_argument('--data',type=Path,default=ROOT/'Original DOS')
     p.add_argument('--output',type=Path,default=ROOT/'work/world-data.bin')
     p.add_argument('--fixture',type=Path,help='Publish only original sector fingerprints');a=p.parse_args()
     if not 0<a.seed<1<<24:p.error('Seed must be a nonzero 24-bit value')
-    area,noise=generate(a.seed)
-    exe=hashlib.sha256((ROOT/'Original DOS/BTECH.EXE').read_bytes()).digest()
-    local=hashlib.sha256((ROOT/'Original DOS/MAP1.MTP').read_bytes()).digest()
+    area,noise=generate(a.seed,a.data)
+    exe=hashlib.sha256((a.data/'BTECH.EXE').read_bytes()).digest()
+    local=hashlib.sha256((a.data/'MAP1.MTP').read_bytes()).digest()
     header=b'BTW1'+struct.pack('<HHHHI',704,704,192,192,a.seed)+exe+local
     a.output.parent.mkdir(parents=True,exist_ok=True);a.output.write_bytes(header+area)
     a.output.with_suffix('.json').write_text(json.dumps({'format':'BTW1','scope':'Nine generated sectors around Citadel; MAP1 overlay at sector 12,12',

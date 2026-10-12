@@ -1,5 +1,66 @@
 # Build, verification and original oracle — 2026-10-12
 
+## Current M3c acceptance
+
+**26 CTest suites, complete headless regression and headless
+ASan/UBSan/LeakSanitizer pass.** Current saves use BTPG/v16: 4,096-byte payload,
+4,112-byte BTS1 file. Historical sections below retain their milestone counts.
+The SDL backend is exercised natively but is not sanitizer-instrumented.
+
+Original comparisons add 126 live complete turns, 108 waypoint cases, 128 flame
+cases, 161 pose/gait programs, 60 map-animation crops, 144 encounter constructions
+and 225 result/rank/RNG cases. The controlled live harness refreshes terrain and
+cover even for idle orders, avoiding stale capture prerequisites. Player-mech
+destruction's pilot evacuation is outside that comparison. Native loss and
+withdrawal are covered separately. No separate smoke/spread rule is invented.
+
+```sh
+./scripts/build.sh
+./scripts/test.sh
+python3 tools/make_training_combat_replay.py --campaign
+python3 tools/native_smoke.py --training-combat-only
+python3 tools/native_smoke.py --world-only
+./scripts/test-sanitize.sh
+```
+
+Third combat has 5,378 ordinary inputs / 20 fresh-process save points; the
+five-mission/service route has 36,755 / 54; Kick-only has 5,358 / 20;
+Rick/device and sixth victory has 43,996 / 55. C integration also restores before
+every input. The sixth route uses four real withdrawals and their original
+skill-practice results before victory. The final-microstep effect regression
+checks that presentation completes before the command menu returns.
+
+Native X11 full input/state/frame equality passes for five-mission playback
+(36,760 ticks, 39.16s), Kick-only (5,363, 5.85s) and Rick/sixth (44,001, 46.90s).
+Normal durations are 1,176.32s, 171.62s and 1,408.03s: about 30× faster.
+Twelve real-time F5/F9 contexts cover queued routes, Yes/No replacement, firing,
+course payment, Rick dialogue/device, sixth launch and victory. A separate
+real-key F4/F5/F9 check compares the generated area map and exact continued pixels.
+
+The build now prepares `work/world-data.bin` with the existing optional research
+wheel, Unicorn 2.1.4 under `local-deps/python`. It executes unmodified original
+terrain routines from the hash-checked EXE, with no RAM capture dependency.
+The C runtime needs no emulator. BTW1 is an 80-byte provenance/area/seed header
+plus 36,864 tiles, default seed 123456. This is a bounded generated cache, not an
+original static world file. Nine sector hashes, all 4,096 MAP1 overlay tiles,
+malformed-cache rejection, saved-clock rendering and closed border values pass.
+F4 is a frontend view toggle; it does not change logical actions or campaign gates.
+
+Regenerate new numeric fixtures only during original research:
+
+```sh
+python3 tools/make_combat_live_turns.py
+python3 tools/make_combat_waypoints.py
+python3 tools/make_fire_vectors.py
+python3 tools/make_effect_vectors.py
+python3 tools/make_terrain_animation_vectors.py
+python3 tools/make_training_combat_vectors.py
+python3 tools/prepare_world.py --fixture tests/fixtures/world-sectors.txt
+```
+
+See [M3c evidence and limits](M3C_PROGRESS.md). All 1,287 reference content/mode/
+mtime entries match the baseline. No assets or RAM enter the committed fixtures.
+
 ## M3a manual weapons combat
 
 The historical M3a **16 CTest suites** and the **5214-input** ordinary combat/victory/report
@@ -23,11 +84,11 @@ and turn execution; each saved-state continuation and final frame matches the
 headless renderer. Core checks compare original arrow glyphs in all eight
 directions before/after route confirmation and after actual movement. Graphics
 options cannot change numeric combat state, and the firing indicator resumes
-from a save. M3a used BTPE/v14; current M3b saves use BTPF/v15 as described below.
+from a save. M3a used BTPE/v14; historical M3b used BTPF/v15 as described below.
 
 ## M3b physical attacks, Mechit-Lube and two encounters
 
-**19 CTest suites pass.** Primary comparisons add **600** physical/personal
+**Historical M3b: 19 CTest suites passed.** Primary comparisons add **600** physical/personal
 weapon cases, **128** enemy decisions/paths and **105** encounter/apprenticeship
 cases. The 35978-input ordinary five-assignment/Mechit-Lube route has 35
 fresh-process continuations; the 5202-input Kick-only victory has 13. A C suite
@@ -100,7 +161,7 @@ Arrows move/select; held perpendicular arrows form a diagonal while walking/driv
 ./build/btech-headless --replay work/my-walk.actions --trace --frame work/my-walk.ppm
 ```
 
-Records include idle ticks. Restart is visibly refused while recording because reset is not a replay action. Unknown actions fail. The VM supports the bounded Citadel, bank, two-shop and Mechit-Lube menus, Hall, Katrina/repeat, `F5 0C` local Talk, F6 Yes/No, positioned cash/account text and exit/re-entry. Bank native actions `06/07/08` handle accounts/buy/sell with serializable company selection and amount entry. Class services `04/05` implement the verified personal-skill courses. Training services `01/02/03` implement five MechWarrior launch/result/return loops; action `43` delivers Rick's lounge invitation. Mechit-Lube actions `14/15/16` handle Jason's apprenticeship and `17/20/29/44` support the early no-owned-mech service/menu contexts. Later assignments, owned-mech services and nonlocal Talk contexts remain explicit faults. Failed choices roll back story/result/cash/investment/equipment/technician writes across restored pauses; Backspace recovers to the menu. This recovery is a prototype control, not original behavior. Headless faults return failure and can still write diagnostic frames.
+Records include idle ticks. Restart is visibly refused while recording because reset is not a replay action. Unknown actions fail. The VM supports the bounded Citadel, bank, two-shop and Mechit-Lube menus, Hall, Katrina/repeat, `F5 0C` local Talk, F6 Yes/No, positioned cash/account text and exit/re-entry. Bank native actions `06/07/08` handle accounts/buy/sell with serializable company selection and amount entry. Class services `04/05` implement the verified personal-skill courses. Training services `01/02/03` implement six MechWarrior launch/result/return loops; action `43` delivers Rick's lounge invitation. Mechit-Lube actions `14/15/16` handle Jason's apprenticeship and `17/20/29/44` support the early no-owned-mech service/menu contexts. Later assignments, owned-mech services and nonlocal Talk contexts remain explicit faults. Failed choices roll back story/result/cash/investment/equipment/technician writes across restored pauses; Backspace recovers to the menu. This recovery is a prototype control, not original behavior. Headless faults return failure and can still write diagnostic frames.
 
 ## ComStar and both shops' Talk oracle
 
@@ -608,8 +669,10 @@ still enabled. No dependencies or reference-directory changes were required.
 M2i sources, export commands, exact evidence runs and remaining limits are in
 [M2_SPRITE_EVIDENCE.md](M2_SPRITE_EVIDENCE.md). The historical M2i payload is 416
 bytes, BTP9; M2j extended it to 448 bytes, BTPA/v10; BTPC/v12 uses 512 bytes;
-historical BTPE/v14 uses 1024 bytes. Current BTPF/v15 uses 2048 bytes.
+historical BTPE/v14 uses 1024 bytes; BTPF/v15 uses 2048 bytes. Current BTPG/v16
+uses 4096 bytes.
 Existing progress and old migrations remain covered.
-Mech ownership, wider combat, portraits, remaining status UI and terrain animation
-remain unimplemented. Three loan choices, five assignments and O0/O8 playback are
-supported. Whole-screen and complete timing parity are not claimed.
+Mech ownership, wider combat, portraits and remaining status UI remain
+unimplemented. Three loan choices, six assignments, original combat/map frames
+and O0/O8 playback are supported. Whole-screen and complete timing parity are
+not claimed.

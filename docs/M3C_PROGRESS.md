@@ -1,4 +1,4 @@
-# Five-task combat and campaign continuation
+# M3c — five-task combat and campaign continuation complete
 
 Authorized together on 2026-10-12. Work is bounded to MAP1 and its next original
 training/story step; both supplied reference trees remain immutable.
@@ -125,6 +125,13 @@ uses the original tile ID throughout. Rendering, clock continuation and unchange
 collision are covered by the pixel/state tests.
 
 ## Verification commands
+
+Final acceptance: **26 CTest suites**, the complete headless regression and
+headless **ASan/UBSan/LeakSanitizer** pass. Native combat, Rick/sixth and F4
+input/state/pixel/save checks pass. The SDL backend is not sanitizer-instrumented.
+Twelve real-time combat/story save contexts and the separate F4 map check are
+recorded in [TESTING.md](TESTING.md). Both supplied trees match all 1,287
+content/mode/mtime baseline entries, including Git metadata.
 
 ```sh
 python3 tools/make_combat_live_turns.py

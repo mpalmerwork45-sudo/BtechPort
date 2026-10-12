@@ -13,7 +13,15 @@ original six saves/three backups remain untouched and their semantics UNKNOWN.
 No proprietary resource, cached text or native object/pointer is stored in the
 new save file.
 
-**Current M3b extension:** BTPF/version 15 stores a 2048-byte payload in the
+**Current M3c extension:** BTPG/version 16 stores a 4096-byte payload in the
+same BTS1 envelope (4112 bytes total). Twelve-waypoint movement, persistent
+flame/corpse/wreck markers and combat effects in progress survive reload. The
+sixth mission and Rick/device route restore before every input and at 55
+fresh-process checkpoints. Final-microstep effects finish before returning to
+the menu. Original animation programs/artwork are loaded from owner-derived
+resources; saves contain numeric state. See [M3c evidence](M3C_PROGRESS.md).
+
+**Historical M3b extension:** BTPF/version 15 stores a 2048-byte payload in the
 same BTS1 envelope (2064 bytes total). Seven-unit combat, enemy orders/paths,
 targets, Kick, defeat and technician/apprenticeship with rollback survive
 reload. The ordinary new-mission/service and Kick-only routes add 48 process

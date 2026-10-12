@@ -88,3 +88,14 @@ all 376 atlas crops match original RAM. The preview displays the two original
 mech walking groups without granting campaign ownership. BTP9 retains gait state;
 BTP8 and earlier saves reset missing gait history by facing. See
 [sprite evidence](M2_SPRITE_EVIDENCE.md) for addresses, hashes, captures and limits.
+
+
+**M3c continuation, 2026-10-12:** bounded original live turns, waypoint queues,
+flame ring, combat programs, map electricity, natural Rick/device and sixth
+training are verified in [M3c evidence](M3C_PROGRESS.md). Original `187F:104E`
+expands coarse heights and `1314/13D9` assembles/mirrors terrain tiles. Nine
+sectors generated from unpatched instructions now surround the authentic MAP1
+in the F4 view. This supersedes the secondary static-world conclusion for this
+bounded area; full native generation, outer travel and campaign gates remain
+open. The generated owner-derived cache is ignored by Git; neither reference
+tree nor proprietary assets are modified or committed.

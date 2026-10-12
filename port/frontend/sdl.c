@@ -60,7 +60,7 @@ int main(int argc, char **argv)
     if (!r || !frame) { free(r); free(frame); return 1; }
     if (!btp_resources_load(o.data, r, &error) || !btp_dialogue_load(o.dialogue_data,&r->dialogue,&error) ||
         !btp_combat_data_load(o.combat_data,&r->combat,&error) || !btp_world_data_load(o.world_data,&r->world,&error)) {
-        fprintf(stderr, "%s\nRun python3 tools/prepare_talk.py to prepare the dialogue cache.\n", error.text); goto done;
+        fprintf(stderr, "%s\nRun ./scripts/build.sh to prepare the resource caches.\n", error.text); goto done;
     }
     if (o.headless) { result = btp_run_headless(&o, r); goto done; }
     if (o.tiles_output || o.sprites_output) { fputs("Asset export requires --headless\n", stderr); goto done; }
