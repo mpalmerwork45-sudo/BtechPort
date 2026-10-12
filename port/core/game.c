@@ -253,6 +253,7 @@ void btp_game_tick(BtpState *s, const BtpResources *r, BtpAction a)
             if (s->story_flags[4]) checkpoint(s);
             start_building(s,r);
             finish_script(s,map);
+            if (s->mode==BTP_BUILDING && s->script.status==BTP_SCRIPT_NATIVE) goto services;
         }
         return;
     }
@@ -291,6 +292,7 @@ void btp_game_tick(BtpState *s, const BtpResources *r, BtpAction a)
         if (s->script.native_action == 12) btp_talk_input(s,r,a);
         else if (s->bank.phase) btp_bank_input(s,r,a);
     }
+services:
     for (unsigned service = 0; service < 16 && (s->script.status == BTP_SCRIPT_NATIVE || s->script.status==BTP_SCRIPT_MONEY); ++service) {
         if (s->script.status==BTP_SCRIPT_MONEY) {
             btp_script_money_return(&s->script,btp_state_bld(r,s),s->story_flags,&s->credits);continue;
