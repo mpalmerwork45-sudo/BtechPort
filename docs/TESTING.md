@@ -2,6 +2,13 @@
 
 ## M4 menu and combat presentation increment
 
+The subsequent original-save increment adds a **36th CTest suite** and
+23,766 assertions. All six owner GAME files roundtrip byte-for-byte; the
+original reader/writer spans independently reproduce them. `BTPL/v21`
+retains the original opaque envelope and flags 64..99. Focused native checks:
+`python3 tools/native_smoke.py --original-save-only`. Optional executed codec
+audit: `python3 tools/original_save_oracle.py`. No reference files are written.
+
 Current increment: **35 CTest suites**, full historical regression and full
 headless ASan/UBSan/LeakSanitizer pass. Four original popup crops and all title
 RGB pixels match. All 18 speaker programs and 990 outtake decisions match

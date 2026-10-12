@@ -71,6 +71,7 @@ int btp_save_load(const char *path, BtpState *s, const BtpResources *r, BtpError
     size_t n = fread(bytes,1,sizeof bytes,f);
     int ok = !ferror(f); if (fclose(f)) ok = 0;
     if (!ok) return fail(e,"Cannot read save");
+    if (n==BTP_ORIGINAL_BYTES && bytes[0]==12) return btp_original_decode(bytes,n,s,r,e);
     if (n < HEADER_BYTES+24 || memcmp(bytes,"BTS1",4) || get32(bytes+12) ||
         get32(bytes+4) != n-HEADER_BYTES || n > HEADER_BYTES+BTP_STATE_BYTES ||
         checksum(bytes+HEADER_BYTES,n-HEADER_BYTES) != get32(bytes+8))

@@ -33,7 +33,7 @@ void btp_party_sync(BtpState *s)
     if (!s->party.enabled) return;
     uint8_t *p=s->party.people[0];
     memcpy(p+4,s->skills,3);memcpy(p+7,s->mech_skills,2);p[9]=s->technician;
-    p[11]=s->weapon;p[12]=(uint8_t)(s->campaign.mounted ? 0 : 8);p[13]=s->armor;p[14]=s->armor_points;
+    p[11]=s->weapon;p[12]=(uint8_t)(s->campaign.mounted ? p[12]<4 ? p[12] : 0 : 8);p[13]=s->armor;p[14]=s->armor_points;
     p[16]=(uint8_t)((p[16]&254u)|s->apprentice);
     s->party.x[0]=s->campaign.world_x;s->party.y[0]=s->campaign.world_y;
     s->party.walk[0]=s->player_walk;s->party.direction[0]=(uint8_t)btp_player_direction(s->facing);
@@ -92,7 +92,7 @@ int btp_party_decode(const uint8_t b[BTP_PARTY_BYTES],BtpPartyState *p)
         if (v.x[i]>2047 || v.y[i]>2047 || v.walk[i]>15 || v.direction[i]>7) return 0;
         if (a[0]==255) continue;
         if (a[0]>=10 || a[1]<2 || a[1]>12 || a[2]<2 || a[2]>12 || a[3]<2 || a[3]>12 || a[11]>13 || a[12]>8 || a[13]>5 || a[15]>120) return 0;
-        for (unsigned k=4;k<=10;++k) if (a[k]>4) return 0;
+        for (unsigned k=4;k<=10;++k) if (a[k]>5) return 0;
         for (unsigned j=0;j<i;++j) if (v.people[j][0]==a[0]) return 0;
     }
     *p=v;return 1;

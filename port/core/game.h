@@ -78,6 +78,8 @@ typedef struct {
     uint32_t remaining,sound_fraction;
 } BtpAudioState;
 typedef struct { uint8_t count,kinds[24]; } BtpPresentationState;
+enum { BTP_ORIGINAL_BYTES=3913 };
+typedef struct { uint8_t valid,bytes[BTP_ORIGINAL_BYTES]; } BtpOriginalState;
 typedef struct {
     uint8_t steps,sound,speed,outtakes,slot,io,notice,quit;
     uint16_t map_x,map_y;
@@ -122,6 +124,7 @@ typedef struct {
     BtpAudioState audio;
     BtpMenuState menu;
     BtpPresentationState presentation;
+    BtpOriginalState original;
 } BtpState;
 enum { BTP_STATE_BYTES = 16384 };
 

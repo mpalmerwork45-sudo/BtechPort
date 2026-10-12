@@ -27,7 +27,7 @@ headless sanitizers, focused SDL checks and reference guard.
 | M4b: party/crew/field effects | Primary audit in progress; allocation/field healing remain bounded or unavailable |
 | M4c: next story/town services | Not complete |
 | M4d: original cache sequence | Not complete |
-| M4e: original saves/sound/presentation | Combat audio/presentation tested; original save compatibility pending |
+| M4e: original saves/sound/presentation | Combat presentation tested; six original save roundtrips and native continuations implemented |
 
 ## Space menu and step amount
 
@@ -82,9 +82,45 @@ the screenshot and original title artwork remain ignored.
 
 Primary `0000:368B..3703` writes byte 12, `0F44` bytes starting at
 `STATE:C614`, then packed cursor words from `BUFFER:A44B/A44D`: **3,913 bytes**.
-The six supplied originals have that header and length. Full executed
-load/save/reload comparisons, preservation of unmodeled bytes and runtime
-projection validation remain required before M4e compatibility is claimed.
+The six supplied originals have that header and length. The subsequent
+compatibility increment below verifies their exact codec and bounded native
+projection while preserving unmodeled bytes.
+
+### Original save compatibility increment
+
+**VERIFIED:** independently implemented original format-12 reader/writer.
+`--load` accepts all six supplied GAME files; `--export-original` writes an
+imported original after returning outdoors. All **3,913 bytes** of each
+unchanged import/export match exactly. Executed original reader
+`0000:334F..33D8` and writer `368B..3710` accept and reproduce all six through
+private, memory-backed DOS file services. Instructions and reference files are
+unmodified. Only source hashes and numeric read/write sizes are committed.
+
+Native original imports preserve character records, active/stored mech
+records, story flags, cash/accounts, cursor and NPC building occupancy.
+Unmodeled bytes are preserved in an opaque original envelope. Stored mech
+types come from original `D452..D455`, distinct from active record tags.
+The supplied first two saves equip Jason with weapon 13; the old native
+validator's limit 11 incorrectly rejected them. Supplied late saves also
+contain skill 5. These values are now retained, including partial armour.
+Jason's existing mounted slot is preserved when syncing the party.
+
+**PASS:** 23,766 C assertions cover six byte-exact roundtrips, native save/reopen,
+saved next-input continuation, exact changes to the modeled cash field,
+atomic private exports and malformed-load destination preservation. All
+36 regular and sanitizer CTest suites pass. All six native SDL import,
+inspection, save/reopen and export checks pass with exact input/state/pixels.
+Original GAME contains no RNG or sound playback state;
+imports use a documented deterministic RNG prerequisite and reconstruct NPC
+positions. These aspects are **APPROXIMATE**, and full DOS gameplay/load UI
+parity is not claimed. Fresh native games continue to use native BTS1 saves;
+original export requires an imported envelope so unknown fields are preserved.
+
+Internal **BTPL/v21** keeps the 16,384-byte payload and v1–v20 migrations.
+The original initialized 100-byte story window is retained: extra flag/checkpoint
+bytes 64..99 at 11424..11495; original bytes at 11500..15412; presence at 15413.
+BLD support remains explicit; retaining later flags alone does not implement
+the cache or remaining story handlers.
 
 ## Combat presentation increment
 

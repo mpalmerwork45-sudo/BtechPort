@@ -540,6 +540,25 @@ def presentation(env,work):
             if name=='combat-sound' and not device['nonzero']:raise RuntimeError(name+' queued silent PCM')
             print(f'PASS: native {name}, exact input/state/pixels; SDL queued {device["nonzero"]} nonzero audio samples.',flush=True)
 
+def original_saves(env,work):
+    """Six owner GAME files enter SDL, inspect Jason, save and reopen privately."""
+    binary=ROOT/'build/btech-headless';native=ROOT/'build/btech-port'
+    with tempfile.TemporaryDirectory(prefix='native-original-',dir=work) as directory:
+        tmp=Path(directory)
+        for slot in range(1,7):
+            original=ROOT/f'Original DOS/GAME{slot}';raw=original.read_bytes()
+            active=any(raw[0x111+125*i]!=255 for i in range(4))
+            keys=['menu']+['down']*(3 if active else 2)+['accept','accept','idle','accept']
+            tail=tmp/'tail.actions';tail.write_text('\n'.join(keys)+'\n');record=tmp/'record.actions';save=tmp/'native.btp'
+            frame=work/f'native-original-{slot}.ppm';expected=tmp/'expected.ppm'
+            actual=subprocess.run([str(native),'--load',str(original),'--smoke-replay','--smoke-fast','--replay',str(tail),
+                '--record',str(record),'--save',str(save),'--frame',str(frame)],cwd=ROOT,env=dict(env,SDL_AUDIODRIVER='dummy'),check=True,capture_output=True,text=True)
+            wanted=subprocess.run([str(binary),'--load',str(original),'--replay',str(record),'--frame',str(expected)],cwd=ROOT,check=True,capture_output=True,text=True)
+            reopened=json.loads(subprocess.check_output([str(binary),'--load',str(save),'--export-original',str(tmp/f'GAME{slot}')],cwd=ROOT,text=True))
+            if json.loads(actual.stdout)!=json.loads(wanted.stdout) or json.loads(actual.stdout)!=reopened or frame.read_bytes()!=expected.read_bytes():
+                raise RuntimeError('Original GAME native/reopened state or pixels differs')
+            print(f'PASS: native original GAME{slot}, inspection, internal save/reopen/export, exact SDL state and pixels.',flush=True)
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--shops-only", action="store_true")
@@ -557,6 +576,7 @@ def main():
     parser.add_argument("--campaign-only", action="store_true")
     parser.add_argument("--menu-only", action="store_true")
     parser.add_argument('--presentation-only',action='store_true')
+    parser.add_argument('--original-save-only',action='store_true')
     args = parser.parse_args()
     work = ROOT / "work"
     work.mkdir(exist_ok=True)
@@ -576,6 +596,8 @@ def main():
             env.pop("SDL_VIDEODRIVER", None)
             os.environ["DISPLAY"] = env["DISPLAY"]
             os.environ["BTECH_REFERENCE_VIRTUAL"] = "1"
+            if args.original_save_only:
+                original_saves(env,work);return
             if args.presentation_only:
                 presentation(env,work);return
             if args.campaign_only:

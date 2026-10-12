@@ -11,7 +11,7 @@ typedef enum { BTP_SCRIPT_OK, BTP_SCRIPT_TRUNCATED, BTP_SCRIPT_OPCODE,
     BTP_SCRIPT_NATIVE_DATA, BTP_SCRIPT_NATIVE_CONTEXT } BtpScriptError;
 /* Sparse modeled window: D30C[0..22] plus shop refusal D333[39].
    Index 23's loop timer lives in BtpNpcState; 23..38 are unsupported here. */
-enum { BTP_STORY_PREFIX = 23, BTP_STORY_BYTES = 64, BTP_TEXT_SPANS = 8, BTP_MENUS = 31 };
+enum { BTP_STORY_PREFIX = 23, BTP_STORY_BYTES = 100, BTP_TEXT_SPANS = 8, BTP_MENUS = 31 };
 typedef struct { uint16_t offset, length; } BtpTextSpan;
 typedef struct {
     uint16_t pc, text_offset, text_length, menu_table, fault_pc;

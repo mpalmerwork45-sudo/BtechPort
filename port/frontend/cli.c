@@ -35,8 +35,10 @@ int btp_options(int argc, char **argv, BtpOptions *o)
                  "  --export-tiles FILE  write 64000 decoded tile pixel indices\n"
                  "  --record FILE        native logical input log for replay (includes idle ticks)\n"
                  "  --save-file FILE     slot for F5 save/F9 load (default: work/player-save.btp)\n"
-                 "  --load FILE          restore an internal save before replay/play\n"
+                 "  --load FILE          restore a native or original GAME save\n"
                  "  --save FILE          write an internal save on successful exit\n"
+                 "  --export-original FILE export an imported GAME save after returning outdoors\n"
+                 "  --audio-report FILE  native diagnostic: audio device and PCM counts\n"
                  "  --debug              collision overlay and diagnostics (F3 toggles)\n"
                  "  --smoke              bounded native SDL event/presentation check\n"
                  "  --smoke-citadel      bounded native Citadel entry/dialogue/exit check\n"
@@ -88,6 +90,7 @@ int btp_options(int argc, char **argv, BtpOptions *o)
             if (!strcmp(arg, "--load")) value = &o->load;
             if (!strcmp(arg, "--save")) value = &o->save;
             if (!strcmp(arg,"--audio-report")) value=&o->audio_report;
+            if (!strcmp(arg,"--export-original")) value=&o->export_original;
             if (!value || i + 1 == argc) { fprintf(stderr, "Unknown/incomplete option: %s\n", arg); return 0; }
             *value = argv[++i];
         }
@@ -296,6 +299,9 @@ int btp_run_headless(const BtpOptions *o, BtpResources *r)
     if (!o->trace) btp_print_state(&state, r);
     if (!result && o->save && !btp_save_write(o->save,&state,r,&error)) {
         fprintf(stderr,"%s\n",error.text); return 1;
+    }
+    if (!result && o->export_original && !btp_original_write(o->export_original,&state,&error)) {
+        fprintf(stderr,"%s\n",error.text);result=1;
     }
     return result;
 }

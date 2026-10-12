@@ -5,6 +5,10 @@ supplied DOS version 1.03. **M0, M1, bounded M2a–M2m and M3a–M3h are complet
 M4a–M4e are underway; [current evidence and limits](docs/M4_PROGRESS.md)
 cover the Space menu, six save slots, splash palette, combat opening prompts,
 PC-speaker effects, combat outtakes and training return-to-base message.
+All six supplied original GAME files now import and roundtrip exactly. To use
+one, run `./build/btech-port --load 'Original DOS/GAME3'`. Export an imported
+save outdoors with `--export-original work/GAME3`; unmodeled bytes are retained.
+The compatibility limits are recorded in the M4 evidence above.
 Explore MAP1, visit the Citadel, buy all weapons/armour, use ComStar and talk
 in both shops, Mechit-Lube and the lounge. Six MechWarrior assignments now reach
 their results: movement, rubble, a stationary shell, armed labor robots and a

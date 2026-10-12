@@ -304,6 +304,9 @@ int main(int argc, char **argv)
     if (!result && o.save && !btp_save_write(o.save,&state,r,&error)) {
         fprintf(stderr,"%s\n",error.text); result = 1;
     }
+    if (!result && o.export_original && !btp_original_write(o.export_original,&state,&error)) {
+        fprintf(stderr,"%s\n",error.text);result=1;
+    }
 sdl_done:
     if (audio) SDL_CloseAudioDevice(audio);
     if (arrival && fclose(arrival)) result = 1;

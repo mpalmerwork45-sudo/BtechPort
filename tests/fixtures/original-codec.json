@@ -1,0 +1,242 @@
+{
+  "read_span": "0000:334F..33D8",
+  "write_span": "0000:368B..3710",
+  "snapshot": "work/reference-runs/1791709609448346900/combat-menu",
+  "prerequisites": "Original CRT descriptor opened on a private memory-backed DOS file; caller stack supplied; instructions unmodified",
+  "files": [
+    {
+      "file": "GAME1",
+      "length": 3913,
+      "sha256": "fc36ce4bb1d32094b8808e067183df922959a621f43550623e74bdb5beeae209",
+      "dos_reads_writes": [
+        [
+          63,
+          1
+        ],
+        [
+          63,
+          3908
+        ],
+        [
+          63,
+          2
+        ],
+        [
+          63,
+          2
+        ],
+        [
+          64,
+          1
+        ],
+        [
+          64,
+          3908
+        ],
+        [
+          64,
+          2
+        ],
+        [
+          64,
+          2
+        ]
+      ]
+    },
+    {
+      "file": "GAME2",
+      "length": 3913,
+      "sha256": "92cb809d163a3fb77d81a5f195120aaba2c15ff67da9cf10b573d647a23fbd19",
+      "dos_reads_writes": [
+        [
+          63,
+          1
+        ],
+        [
+          63,
+          3908
+        ],
+        [
+          63,
+          2
+        ],
+        [
+          63,
+          2
+        ],
+        [
+          64,
+          1
+        ],
+        [
+          64,
+          3908
+        ],
+        [
+          64,
+          2
+        ],
+        [
+          64,
+          2
+        ]
+      ]
+    },
+    {
+      "file": "GAME3",
+      "length": 3913,
+      "sha256": "c4486966493384015c90abe7b1dcb74c68975cc7680efb2d7b4a573da59bce13",
+      "dos_reads_writes": [
+        [
+          63,
+          1
+        ],
+        [
+          63,
+          3908
+        ],
+        [
+          63,
+          2
+        ],
+        [
+          63,
+          2
+        ],
+        [
+          64,
+          1
+        ],
+        [
+          64,
+          3908
+        ],
+        [
+          64,
+          2
+        ],
+        [
+          64,
+          2
+        ]
+      ]
+    },
+    {
+      "file": "GAME4",
+      "length": 3913,
+      "sha256": "b4d8cb6b7b8dd6fc909cd0bf7e8d992c77580f9ee336b117caea8316d2c2bba7",
+      "dos_reads_writes": [
+        [
+          63,
+          1
+        ],
+        [
+          63,
+          3908
+        ],
+        [
+          63,
+          2
+        ],
+        [
+          63,
+          2
+        ],
+        [
+          64,
+          1
+        ],
+        [
+          64,
+          3908
+        ],
+        [
+          64,
+          2
+        ],
+        [
+          64,
+          2
+        ]
+      ]
+    },
+    {
+      "file": "GAME5",
+      "length": 3913,
+      "sha256": "43be65602bfa9f3716a898b755ac06ab83a8de5cf7e5e626427c6659e1c2c6be",
+      "dos_reads_writes": [
+        [
+          63,
+          1
+        ],
+        [
+          63,
+          3908
+        ],
+        [
+          63,
+          2
+        ],
+        [
+          63,
+          2
+        ],
+        [
+          64,
+          1
+        ],
+        [
+          64,
+          3908
+        ],
+        [
+          64,
+          2
+        ],
+        [
+          64,
+          2
+        ]
+      ]
+    },
+    {
+      "file": "GAME6",
+      "length": 3913,
+      "sha256": "6536cf9b50e8449302b3d6646c6b736a6b43c515d7d9ebecd911cea2a982463a",
+      "dos_reads_writes": [
+        [
+          63,
+          1
+        ],
+        [
+          63,
+          3908
+        ],
+        [
+          63,
+          2
+        ],
+        [
+          63,
+          2
+        ],
+        [
+          64,
+          1
+        ],
+        [
+          64,
+          3908
+        ],
+        [
+          64,
+          2
+        ],
+        [
+          64,
+          2
+        ]
+      ]
+    }
+  ]
+}
