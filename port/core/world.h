@@ -10,4 +10,8 @@ void btp_world_move(BtpState *state,const BtpResources *resources,BtpAction acti
 void btp_world_step(BtpState *state,const BtpResources *resources,BtpAction action);
 void btp_world_clock(BtpState *state,const BtpResources *resources);
 void btp_world_actions(BtpState *state,const BtpResources *resources,BtpAction action);
+void btp_world_reveal(BtpState *state);
+int btp_world_seen(const BtpState *state,unsigned x,unsigned y);
+unsigned btp_world_mini(const BtpResources *resources,const BtpState *state,unsigned x,unsigned y);
+unsigned btp_world_mini_index(unsigned level,unsigned neighbours);
 #endif

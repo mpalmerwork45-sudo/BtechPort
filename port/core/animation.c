@@ -54,10 +54,13 @@ int btp_cutscene_tick(BtpState *s, const BtpResources *r)
     for (unsigned budget = 0; budget < 256; ++budget) {
         if (units < c->remaining) { c->remaining = (uint16_t)(c->remaining-units); return 0; }
         units -= c->remaining;
-        if (c->hold) { s->cutscene = (BtpCutsceneState){0}; return 1; }
+        if (c->hold) {
+            if (!c->kind && s->audio.sound_count) { c->remaining=1;return 0; }
+            s->cutscene = (BtpCutsceneState){0}; return 1;
+        }
         if ((unsigned)c->step+1u < a->count) ++c->step;
         else if (c->kind == 8 && c->cycle < 6) { ++c->cycle; c->step = 0; }
-        else if (!c->kind || c->active==3) { c->hold = 1; c->remaining = 60; continue; }
+        else if (!c->kind || c->active==3) { c->hold = 1;c->remaining = 60;if (!c->kind) btp_audio_effect(s,12);continue; }
         else { s->cutscene = (BtpCutsceneState){0}; return 1; }
         c->remaining = a->units[c->step] ? a->units[c->step] : 1;
     }

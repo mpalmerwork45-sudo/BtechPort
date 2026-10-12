@@ -29,6 +29,12 @@ int main(int argc,char **argv)
         for (unsigned i=0;i<26;++i) { unsigned kind;CHECK(sscanf(hex+2*i,"%2x",&kind)==1);CHECK(r->combat.building_portraits[i]==kind); }
     }
     fclose(f);CHECK(notes==128);
+    f=fopen("tests/fixtures/speaker-timing.txt","r");CHECK(f);CHECK(fgets(row,sizeof row,f));
+    unsigned duration,repeats,clocks,instructions,timings=0;
+    while (fscanf(f," D %u %u %u %u",&duration,&repeats,&clocks,&instructions)==4) {
+        CHECK(instructions>0 && btp_speaker_busy_clocks(duration,repeats)==clocks);++timings;
+    }
+    CHECK(feof(f) && timings==20);fclose(f);
     /* A rest still advances the original PIT/IRQ state. Its divisor-14
        ultrasonic carrier must not become audible after host sampling. */
     BtpAudioState rest={.active=1,.countdown=4,.divisor=14};
@@ -50,7 +56,7 @@ int main(int argc,char **argv)
         BtpAudioState resumed=copy.audio;btp_audio_samples(&expected,r,BTP_AUDIO_TICK_SAMPLES,one);btp_audio_samples(&resumed,r,BTP_AUDIO_TICK_SAMPLES,two);
         CHECK(!memcmp(one,two,sizeof one));
     }
-    CHECK(nonzero>1000);btp_game_tick(&s,r,BTP_ACCEPT);CHECK(s.mode==BTP_EXPLORE && !s.audio.active);
+    CHECK(nonzero>1000);btp_game_tick(&s,r,BTP_ACCEPT);CHECK(s.mode==BTP_BEGIN && !s.audio.active);btp_game_tick(&s,r,BTP_ACCEPT);CHECK(s.mode==BTP_EXPLORE);
     f=fopen("tests/fixtures/speaker-primary.txt","r");CHECK(f);
     unsigned programs=0;
     while (fgets(row,sizeof row,f)) {

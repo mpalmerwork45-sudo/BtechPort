@@ -21,7 +21,7 @@ static void vm_bounds(void)
     btp_script_start(&s,&b,story); CHECK(s.error == BTP_SCRIPT_TRUNCATED);
     b = (BtpBld){.length=4,.bytes={0xf0,0,22,0xff}};
     btp_script_start(&s,&b,story); CHECK(s.status == BTP_SCRIPT_END && s.row == 22);
-    b.bytes[1] = 1; btp_script_start(&s,&b,story); CHECK(s.error == BTP_SCRIPT_SCENE);
+    b.bytes[1] = 27; btp_script_start(&s,&b,story); CHECK(s.error == BTP_SCRIPT_SCENE);
     const unsigned ids[] = {12,13,14,15,16,30}, counts[] = {4,6,5,4,7,3};
     for (unsigned i = 0; i < 6; ++i) {
         b = (BtpBld){.length=(uint16_t)(3+2*counts[i]),.bytes={0xf9}}; b.bytes[1] = (uint8_t)ids[i];
@@ -89,7 +89,7 @@ static void boundaries(const BtpResources *r)
     uint8_t saved[BTP_STATE_BYTES], corrupt[BTP_STATE_BYTES]; BtpState untouched = s, copy = s;
     btp_state_encode(&s,saved);
     const unsigned offsets[] = {228,230,232,235,237,242,277,278,301};
-    const uint8_t invalid[] = {49,12,26,2,9,1,2,1,1};
+    const uint8_t invalid[] = {49,14,26,2,9,1,2,27,1};
     for (unsigned i = 0; i < sizeof offsets/sizeof offsets[0]; ++i) {
         memcpy(corrupt,saved,sizeof corrupt); corrupt[offsets[i]] = invalid[i];
         CHECK(!btp_state_decode(corrupt,sizeof corrupt,&r->map,&r->armor,&copy));

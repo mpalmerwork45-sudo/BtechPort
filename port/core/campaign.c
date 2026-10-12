@@ -242,7 +242,7 @@ void btp_aftermath_input(BtpState *s,const BtpResources *r,BtpAction a)
 {
     (void)r;BtpAftermathState *v=&s->aftermath;
     if (!v->phase) { pockets(s);return; }
-    unsigned count=v->phase==1 || (v->phase==4 && btp_party_count(&s->party)==1) ? 2u : v->phase==4 ? 9u : 1u;
+    unsigned count=v->phase==1 || (v->phase==4 && btp_party_count(&s->party)==1) ? 2u : v->phase==4 ? btp_party_count(&s->party)+1u : 1u;
     if (a==BTP_UP || a==BTP_LEFT) v->selected=(uint8_t)((v->selected+count-1)%count);
     if (a==BTP_DOWN || a==BTP_RIGHT) v->selected=(uint8_t)((v->selected+1)%count);
     if (a!=BTP_ACCEPT && a!=BTP_CANCEL) return;
@@ -259,7 +259,7 @@ void btp_aftermath_input(BtpState *s,const BtpResources *r,BtpAction a)
     } else if (v->phase==2) next_pilot(s);
     else if (v->phase==3) { if (v->notice) next_weapon(s);else v->phase=0; }
     else if (v->phase==4) {
-        unsigned p=btp_party_count(&s->party)==1 ? 0u : v->selected;
+        unsigned p=btp_party_count(&s->party)==1 ? 0u : btp_party_slot(&s->party,v->selected);
         if (a==BTP_ACCEPT && (btp_party_count(&s->party)==1 ? !v->selected : p<8) && s->party.people[p][0]!=255) {
             unsigned at=btp_combat_target(&s->combat,v->unit);s->party.people[p][11]=s->combat.unit[at].record[11];if (!p) s->weapon=s->party.people[p][11];
         }

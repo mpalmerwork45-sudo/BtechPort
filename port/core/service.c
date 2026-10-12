@@ -82,7 +82,7 @@ void btp_service_input(BtpState *s,const BtpResources *r,BtpAction a)
         }
         finish(s,r);return;
     }
-    unsigned count=v->phase==1 ? 5u : v->phase==2 ? v->action==18 ? 6u : 11u : v->phase==3 ? 2u : v->phase==6 ? 18u : v->phase==7 ? 8u : 1u;
+    unsigned count=v->phase==1 ? 5u : v->phase==2 ? v->action==18 ? 6u : 11u : v->phase==3 ? 2u : v->phase==6 ? 18u : v->phase==7 ? btp_party_count(&s->party) : 1u;
     if (a==BTP_UP) v->selected=(uint8_t)((v->selected+count-1u)%count);
     if (a==BTP_DOWN) v->selected=(uint8_t)((v->selected+1u)%count);
     if (a==BTP_CANCEL && v->phase!=5) { finish(s,r);return; }
@@ -97,8 +97,9 @@ void btp_service_input(BtpState *s,const BtpResources *r,BtpAction a)
     }
     if (a!=BTP_ACCEPT) return;
     if (v->phase==7) {
-        if (s->party.people[v->selected][0]==255) return;
-        s->party.selected=v->selected;s->story_flags[14]=v->selected;finish(s,r);return;
+        unsigned slot=btp_party_slot(&s->party,v->selected);
+        if (slot>=8) return;
+        s->party.selected=(uint8_t)slot;s->story_flags[14]=(uint8_t)slot;finish(s,r);return;
     }
     if (v->phase==1) {
         if (v->selected==4) { finish(s,r);return; }
@@ -147,7 +148,7 @@ int btp_service_valid(const BtpState *s)
 {
     const BtpServiceState *v=&s->service;
     if (!v->phase) return !v->action && !v->mech && !v->selected && !v->kind && !v->item && !v->outcome && !v->amount && !v->input[0];
-    if (v->phase==8) return v->action==0xe9 && v->mech<8 && !v->selected && v->kind<7 && !v->item && !v->outcome && !v->amount && !v->input[0] && s->mode==BTP_BUILDING && s->script.status==BTP_SCRIPT_RECRUIT && s->campaign.building==5;
-    if (v->phase>7 || (v->action!=13 && v->action!=18 && v->action!=19 && v->action!=20 && v->action!=44) || v->mech>3 || v->selected>17 || v->kind>9 || v->item>32 || v->outcome>1 || s->mode!=BTP_BUILDING || s->script.status!=BTP_SCRIPT_NATIVE || s->campaign.building!=5 || v->action!=s->script.native_action) return 0;
+    if (v->phase==8) return v->action==0xe9 && v->mech<8 && !v->selected && v->kind<7 && !v->item && !v->outcome && !v->amount && !v->input[0] && s->mode==BTP_BUILDING && s->script.status==BTP_SCRIPT_RECRUIT && (s->campaign.building==5 || s->campaign.building==9);
+    if (v->phase>7 || (v->action!=13 && v->action!=18 && v->action!=19 && v->action!=20 && v->action!=44) || v->mech>3 || v->selected>17 || v->kind>9 || v->item>32 || v->outcome>1 || s->mode!=BTP_BUILDING || s->script.status!=BTP_SCRIPT_NATIVE || (s->campaign.building!=5 && !(s->campaign.building==9 && v->action==13)) || v->action!=s->script.native_action) return 0;
     unsigned n=0;while (n<8 && v->input[n]) { if (v->input[n]<'0' || v->input[n]>'9') return 0;++n; }return n<8;
 }

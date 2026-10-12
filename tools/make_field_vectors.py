@@ -6,7 +6,7 @@ from make_party_vectors import SNAP,fingerprint
 
 def main():
     m=OriginalCombat(snapshot=SNAP);rows=['# Explicit medical/crew/formation caller prerequisites; primary instructions unmodified.']
-    for skill in range(6):
+    for skill in range(8):
         for equipment in range(1,5):
             for seed in (1,42,0xffffff):
                 m.reset();m.write(m.ds+0x4fc0,seed.to_bytes(3,'little'))

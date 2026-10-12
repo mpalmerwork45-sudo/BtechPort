@@ -1,4 +1,5 @@
 #include "core/menu.h"
+#include "core/party.h"
 #include "core/npc.h"
 #include "data/save.h"
 #include "frontend/pixels.h"
@@ -42,6 +43,8 @@ int main(int argc,char **argv)
         hash=(hash^((pixels[i]>>(16u-8u*channel))&255u))*UINT64_C(1099511628211);
     /* All 64,000 original VGA screenshot RGB pixels, title-palette.json. */
     CHECK(hash==UINT64_C(0x1640cf785a6ac07b));
+    s.mode=BTP_LOGO;btp_render(r,&s,0,pixels);
+    CHECK(crop_hash(pixels,0,0,320,200)==UINT64_C(0x606c4e2b814b5ad4));
     s.mode=BTP_MISSION;s.combat.phase=BTP_COMBAT_CONTROL;s.combat.selected=1;
     btp_render(r,&s,0,pixels);CHECK(crop_hash(pixels,8,104,88,88)==UINT64_C(0xea3269d891ca94ec));
     s.mode=BTP_MISSION;s.combat.phase=BTP_COMBAT_MESSAGES;s.combat.selected=2;
@@ -52,12 +55,13 @@ int main(int argc,char **argv)
     CHECK(crop_hash(pixels,104,72,216,56)==UINT64_C(0x0121052b10ef7ecc));
     btp_start(&s);btp_npc_init(&s,&r->map);BtpNpcState before=s.npc;
     btp_game_tick(&s,r,BTP_OPEN_MENU);CHECK(s.mode==BTP_ACTIONS && btp_actions_count(&s)==7 && restore(&s,r));
+    btp_render(r,&s,0,pixels);CHECK(crop_hash(pixels,104,96,216,72)==UINT64_C(0x37428c0880329ee8));
     CHECK(!strcmp(btp_actions_label(&s,1),"Change game settings"));
     for (unsigned i=0;i<20;++i) btp_game_tick(&s,r,BTP_IDLE);
     CHECK(!memcmp(&before,&s.npc,sizeof before));select_item(&s,r,1);CHECK(s.campaign.ui==BTP_MENU_SETTINGS && restore(&s,r));
     select_item(&s,r,0);CHECK(s.campaign.ui==BTP_MENU_STEPS && restore(&s,r));
     select_item(&s,r,2);CHECK(s.menu.steps==4 && s.mode==BTP_EXPLORE && restore(&s,r));
-    unsigned tick=s.tick;btp_game_tick(&s,r,BTP_UP);CHECK(s.y_half==21 && s.tick==tick+1 && restore(&s,r));
+    unsigned tick=s.tick;btp_game_tick(&s,r,BTP_UP);CHECK(s.player_walk==8);CHECK(s.y_half==21 && s.tick==tick+1 && restore(&s,r));
     btp_game_tick(&s,r,BTP_UP);CHECK(s.mode==BTP_ENTRY && s.y_half==21 && restore(&s,r));
     btp_start(&s);btp_npc_init(&s,&r->map);
     const char *base="work/menu-slot-test.btp";
@@ -82,12 +86,15 @@ int main(int argc,char **argv)
     btp_game_tick(&s,r,BTP_OPEN_MENU);select_item(&s,r,6);CHECK(s.campaign.ui==BTP_MENU_MAP && restore(&s,r));
     unsigned x=s.x_half,y=s.y_half;btp_game_tick(&s,r,BTP_RIGHT);CHECK(s.x_half==x && s.y_half==y && restore(&s,r));
     btp_game_tick(&s,r,BTP_CANCEL);CHECK(s.mode==BTP_EXPLORE);
-    CHECK(btp_save_load("Original DOS/GAME3",&s,r,&e));btp_menu_open(&s);select_item(&s,r,2);
+    btp_menu_open(&s);select_item(&s,r,2);select_item(&s,r,0);btp_render(r,&s,0,pixels);
+    CHECK(crop_hash(pixels,104,0,216,200)==UINT64_C(0x1491c6f034c5af95));
+    CHECK(btp_save_load("Original DOS/GAME3",&s,r,&e));btp_menu_open(&s);btp_render(r,&s,0,pixels);
+    CHECK(crop_hash(pixels,104,88,216,80)==UINT64_C(0xe2fb8696d8944791));select_item(&s,r,2);
     CHECK(s.campaign.ui==BTP_MENU_ALLOCATE && restore(&s,r));select_item(&s,r,0);select_item(&s,r,4);
     CHECK(!s.campaign.mounted && s.party.people[0][12]==8 && restore(&s,r));
     select_item(&s,r,1);select_item(&s,r,0);CHECK(s.party.people[1][12]==0 && restore(&s,r));
     select_item(&s,r,0);select_item(&s,r,1);CHECK(s.party.people[0][12]==1 && s.campaign.mounted && restore(&s,r));
-    select_item(&s,r,8);CHECK(s.mode==BTP_EXPLORE && restore(&s,r));
+    select_item(&s,r,btp_party_count(&s.party));CHECK(s.mode==BTP_EXPLORE && restore(&s,r));
     CHECK(btp_save_write("work/crew-menu.btp",&s,r,&e));
     btp_menu_open(&s);select_item(&s,r,3);select_item(&s,r,0);btp_game_tick(&s,r,BTP_DOWN);
     CHECK(s.campaign.ui==BTP_MENU_TRANSFER && restore(&s,r));select_item(&s,r,0);select_item(&s,r,1);
@@ -96,5 +103,26 @@ int main(int argc,char **argv)
     CHECK(s.party.people[1][15]>1 && s.story_flags[41]==63 && restore(&s,r));
     unsigned health=s.party.people[1][15];btp_menu_close(&s);btp_menu_open(&s);select_item(&s,r,4);
     CHECK(s.party.people[1][15]==health && restore(&s,r));
+    /* Original eight physical slots become a compact, stable person list. */
+    s.party.people[1][0]=255;btp_menu_close(&s);btp_menu_open(&s);select_item(&s,r,3);
+    CHECK(btp_actions_count(&s)==3 && !strcmp(btp_actions_label(&s,1),btp_party_name(&s.party,2)));
+    s.campaign.selected=2;uint8_t legacy[BTP_STATE_BYTES];btp_state_encode(&s,legacy);
+    memcpy(legacy,"BTPN",4);legacy[4]=23;BtpState migrated;
+    CHECK(btp_state_decode(legacy,16384,btp_active_map(r,&s),btp_state_bld(r,&s),&migrated) && migrated.campaign.selected==1);
+    btp_start(&s);s.mode=BTP_LOGO;
+    btp_game_tick(&s,r,BTP_CREDIT_10000);CHECK(s.mode==BTP_LOGO && s.credits==10035 && restore(&s,r));
+    btp_game_tick(&s,r,BTP_CANCEL);CHECK(s.mode==BTP_LOGO);
+    btp_game_tick(&s,r,BTP_OPEN_MENU);CHECK(s.mode==BTP_TITLE && restore(&s,r));
+    btp_game_tick(&s,r,BTP_CREDIT_10000);CHECK(s.mode==BTP_TITLE && s.credits==20035 && restore(&s,r));
+    btp_game_tick(&s,r,BTP_OPEN_MENU);CHECK(s.mode==BTP_BEGIN && s.entry_selected==1 && restore(&s,r));
+    btp_game_tick(&s,r,BTP_CREDIT_10000);CHECK(s.mode==BTP_BEGIN && s.credits==30035);
+    btp_game_tick(&s,r,BTP_UP);btp_game_tick(&s,r,BTP_ACCEPT);
+    CHECK(s.campaign.ui==BTP_MENU_LOAD && s.menu.from_intro && btp_actions_count(&s)==7 && restore(&s,r));
+    btp_render(r,&s,0,pixels);CHECK(crop_hash(pixels,8,104,88,64)==UINT64_C(0xfe5314b60fa5ed83));
+    btp_game_tick(&s,r,BTP_ACCEPT);CHECK(s.menu.io==BTP_MENU_IO_LOAD);
+    CHECK(!btp_save_menu(&s,r,base,1,&e) && s.menu.from_intro && restore(&s,r));
+    btp_game_tick(&s,r,BTP_ACCEPT);CHECK(s.mode==BTP_BEGIN && restore(&s,r));
+    btp_game_tick(&s,r,BTP_DOWN);btp_game_tick(&s,r,BTP_ACCEPT);
+    CHECK(s.mode==BTP_EXPLORE && s.x_half==69 && s.y_half==25 && s.credits==30035 && restore(&s,r));
     free(pixels);free(r);printf("PASS: %u checks; original title pixels, Space menu, movement rate and all six save/load slots\n",checks);return 0;
 }

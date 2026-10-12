@@ -75,7 +75,7 @@ int main(int argc, char **argv)
     BtpState state; btp_initial_state(&o,&state,r);
     if (o.load && !btp_save_load(o.load,&state,r,&error)) { fprintf(stderr,"%s\n",error.text); goto done; }
     if (o.replay && o.smoke < 5 && !btp_replay(o.replay, &state, r, o.trace,o.save_file)) goto done;
-    if (!o.replay && !o.load && !o.smoke && !o.sprite_preview && !o.world_overview && !o.conversation_checkpoint && !o.shop_talk_checkpoint) btp_audio_start(&state);
+    if (!o.replay && !o.load && !o.smoke && !o.sprite_preview && !o.world_overview && !o.conversation_checkpoint && !o.shop_talk_checkpoint && !o.title_preview) state.mode=BTP_LOGO;
     SDL_SetMainReady();
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_TIMER)) {
         fprintf(stderr, "SDL: %s\n", SDL_GetError()); goto done;
@@ -97,7 +97,7 @@ int main(int argc, char **argv)
     if (o.record) { record = fopen(o.record, "w"); if (!record) goto sdl_done; }
     if (o.smoke >= 5) { arrival = fopen(o.replay,"r"); if (!arrival) goto sdl_done; }
     BtpAction queue[256]; unsigned read = 0, write = 0;
-    unsigned held = 0, last_arrow_write = 0;
+    unsigned held = 0, last_arrow_write = 0, cheat_step=0;
     uint64_t last = SDL_GetTicks64(), accumulator = 0;
     unsigned smoke_ticks = 0;
     uint64_t audio_samples=0,audio_nonzero=0;
@@ -156,19 +156,39 @@ int main(int argc, char **argv)
                 static const SDL_Keycode codes[] = {0,SDLK_UP,SDLK_DOWN,SDLK_LEFT,SDLK_RIGHT,SDLK_RETURN,SDLK_BACKSPACE,
                     SDLK_0,SDLK_1,SDLK_2,SDLK_3,SDLK_4,SDLK_5,SDLK_6,SDLK_7,SDLK_8,SDLK_9,SDLK_ESCAPE,
                     SDLK_HOME,SDLK_PAGEUP,SDLK_END,SDLK_PAGEDOWN,SDLK_SPACE};
-                SDL_Event injected = {.type=SDL_KEYDOWN}; injected.key.keysym.sym = codes[a];
-                if (SDL_PushEvent(&injected) != 1) { io_failed = 1; break; }
+                if (a==BTP_CREDIT_10000) {
+                    const SDL_Keycode sequence[]={SDLK_k,SDLK_y,SDLK_r};
+                    for (unsigned i=0;i<3;++i) {
+                        SDL_Event injected={.type=SDL_KEYDOWN};injected.key.keysym.sym=sequence[i];injected.key.keysym.mod=KMOD_SHIFT;
+                        if (SDL_PushEvent(&injected)!=1) { io_failed=1;break; }
+                    }
+                } else {
+                    SDL_Event injected = {.type=SDL_KEYDOWN}; injected.key.keysym.sym = codes[a];
+                    if (SDL_PushEvent(&injected) != 1) { io_failed = 1; break; }
+                }
             }
         }
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) running = 0;
-            if (event.type == SDL_KEYUP) held &= ~arrow_bit(event.key.keysym.sym);
+            if (event.type == SDL_KEYUP) {
+                held &= ~arrow_bit(event.key.keysym.sym);
+                if (event.key.keysym.sym==SDLK_LSHIFT || event.key.keysym.sym==SDLK_RSHIFT) cheat_step=0;
+            }
             if ((event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_FOCUS_LOST) ||
                 !movement_mode(&state)) held = 0;
             if (event.type == SDL_KEYDOWN) {
                 SDL_Keycode key = event.key.keysym.sym;
-                if (key == SDLK_ESCAPE && !amount_editor(&state)) running = 0;
+                if (key == SDLK_ESCAPE && (event.key.keysym.mod&KMOD_CTRL) && (event.key.keysym.mod&KMOD_SHIFT)) running = 0;
+                else if ((event.key.keysym.mod&KMOD_SHIFT) && (key==SDLK_k || key==SDLK_y || key==SDLK_r) && !event.key.repeat) {
+                    const SDL_Keycode sequence[]={SDLK_k,SDLK_y,SDLK_r};
+                    cheat_step=key==sequence[cheat_step] ? cheat_step+1u : key==SDLK_k ? 1u : 0u;
+                    if (cheat_step==3) {
+                        cheat_step=0;
+                        if (write-read==256) { io_failed=1;running=0; }
+                        else queue[write++%256]=BTP_CREDIT_10000;
+                    }
+                }
                 else if (o.sprite_preview) continue;
                 else if (key == SDLK_F3 && !event.key.repeat) o.debug = !o.debug;
                 else if (key == SDLK_F4 && !event.key.repeat) o.world_overview = !o.world_overview;
@@ -199,7 +219,8 @@ int main(int argc, char **argv)
                 } else {
                     /* Resolve Space when its queued input is consumed. Several
                        key events can arrive before exploration enters a popup. */
-                    BtpAction a=key==SDLK_SPACE ? BTP_OPEN_MENU : key_action(key,movement_mode(&state));
+                    if (key!=SDLK_LSHIFT && key!=SDLK_RSHIFT) cheat_step=0;
+                    BtpAction a=key==SDLK_SPACE ? BTP_OPEN_MENU : key==SDLK_ESCAPE && !amount_editor(&state) ? BTP_CANCEL : key_action(key,movement_mode(&state));
                     /* Real arrow chords use held keys. Scripted smoke events
                        have no physical scancode and remain individual actions. */
                     unsigned bit = arrow_bit(key);
@@ -225,7 +246,7 @@ int main(int argc, char **argv)
         while (accumulator >= 32 && running) {
             accumulator -= 32;
             BtpAction a = read != write ? queue[read++ % 256] : BTP_IDLE;
-            if (a==BTP_OPEN_MENU && state.mode!=BTP_EXPLORE) a=amount_editor(&state) ? BTP_IDLE : BTP_ACCEPT;
+            if (a==BTP_OPEN_MENU && state.mode!=BTP_EXPLORE && !state.combat.phase && state.mode!=BTP_ACTIONS) a=amount_editor(&state) ? BTP_IDLE : BTP_ACCEPT;
             if (o.sprite_preview) ++state.tick;
             else {
                 int16_t pcm[BTP_AUDIO_TICK_SAMPLES];

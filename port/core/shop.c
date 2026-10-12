@@ -11,7 +11,7 @@ void btp_shop_native(BtpState *s, const BtpResources *r)
 {
     const BtpBld *b = btp_state_bld(r,s);
     unsigned kind=btp_building_kind(r,s);
-    if (!b || (s->recruitment && kind!=5) || (kind != 3 && kind != 4 && kind != 5 && kind!=8 && kind!=12)) {
+    if (!b || (s->recruitment && kind!=5 && kind!=9) || (kind != 3 && kind != 4 && kind != 5 && kind!=8 && kind!=12 && kind!=9)) {
         unsupported(s); return;
     }
     switch (s->script.native_action) {

@@ -1,4 +1,5 @@
 #include "core/script.h"
+#include "core/party.h"
 #include <string.h>
 #include <stdio.h>
 #include <inttypes.h>
@@ -12,12 +13,17 @@ unsigned btp_menu_count(unsigned id)
     case 16: return 7;
     case 7: case 10: case 11: case 18: case 19: case 30: return 3;
     case 24: case 29: return 2;
+    case 25:return 5;
+    case 26:return 8;
+    case 27:return 6;
+    case 28:return 7;
+    case 31:case 35:case 36:return 2;
     default: return 0;
     }
 }
 int btp_native_supported(unsigned action)
 {
-    return (action>=1 && action<=20) || action==28 || action==29 || action==30 || action==43 || action==44 || action==46;
+    return (action>=1 && action<=26) || action==28 || action==29 || action==30 || action==36 || action==38 || action==43 || action==44 || action==46;
 }
 
 static void fault(BtpScriptState *s, BtpScriptError error, uint16_t pc)
@@ -57,6 +63,14 @@ static void run(BtpScriptState *s, const BtpBld *b, uint8_t story[BTP_STORY_BYTE
         if (!available(s, b, 1, op_pc)) return;
         uint8_t op = b->bytes[s->pc++]; s->last_opcode = op;
         switch (op) {
+        case 0xe4:
+            if (!available(s,b,1,op_pc)) return;
+            s->money_amount=b->bytes[s->pc++];s->status=BTP_SCRIPT_EFFECT;return;
+        case 0xeb:case 0xec:
+            if (!available(s,b,2,op_pc)) return;
+            s->money_kind=op;s->money_target=word(b->bytes+s->pc);s->pc=(uint16_t)(s->pc+2);
+            if (s->money_target>=b->length) { fault(s,BTP_SCRIPT_TARGET,op_pc);return; }
+            s->status=BTP_SCRIPT_CONDITION;return;
         case 0xe9:
             if (!available(s,b,1,op_pc)) return;
             s->money_amount=b->bytes[s->pc++];s->status=BTP_SCRIPT_RECRUIT;return;
@@ -71,7 +85,7 @@ static void run(BtpScriptState *s, const BtpBld *b, uint8_t story[BTP_STORY_BYTE
             if (!available(s,b,4,op_pc)) return;
             s->position_x=word(b->bytes+s->pc);s->position_y=word(b->bytes+s->pc+2);
             s->pc=(uint16_t)(s->pc+4);s->has_position=1;break;
-        case 0xee: case 0xef:
+        case 0xe5:case 0xee: case 0xef:
             if (!available(s,b,op==0xee ? 2u : 4u,op_pc)) return;
             s->money_kind=op;s->money_amount=word(b->bytes+s->pc);s->pc=(uint16_t)(s->pc+2);
             if (op==0xef) {
@@ -89,7 +103,7 @@ static void run(BtpScriptState *s, const BtpBld *b, uint8_t story[BTP_STORY_BYTE
             memset(s->text, 0, sizeof s->text);
             memset(s->text_column,0,sizeof s->text_column); memset(s->text_row,0,sizeof s->text_row);
             s->column = s->row = s->has_cash = s->cash_after = s->has_accounts = 0; s->cash_value = 0;
-            s->mech_result = s->mech_after = 0; break;
+            s->mech_result = s->mech_after = 0;s->has_name=s->name_after=s->name_id=0; break;
         case 0xfa: /* Explicit scene request, supported scene zero only. */
             if (!available(s, b, 1, op_pc)) return;
             s->scene = b->bytes[s->pc++];
@@ -139,7 +153,7 @@ static void run(BtpScriptState *s, const BtpBld *b, uint8_t story[BTP_STORY_BYTE
         case 0xf0: /* Verified column zero: shops 14/22, ComStar 15. */
             if (!available(s,b,2,op_pc)) return;
             s->column = b->bytes[s->pc++]; s->row = b->bytes[s->pc++];
-            if (s->column || (s->row != 22 && s->row != 14 && s->row != 15)) { fault(s,BTP_SCRIPT_SCENE,op_pc); return; }
+            if (s->column>26 || s->row>24) { fault(s,BTP_SCRIPT_SCENE,op_pc); return; }
             break;
         case 0xf6:
             if (!available(s,b,2,op_pc)) return;
@@ -222,7 +236,8 @@ void btp_script_money_return(BtpScriptState *s,const BtpBld *b,uint8_t story[BTP
     if (s->status!=BTP_SCRIPT_MONEY || !credits) return;
     if (s->money_kind==0xef) {
         if (*credits>=s->money_amount) s->pc=s->money_target;
-    } else if (s->money_kind==0xee) *credits-=s->money_amount;
+    } else if (s->money_kind==0xee) *credits=*credits>=s->money_amount ? *credits-s->money_amount : 0;
+    else if (s->money_kind==0xe5) { int32_t amount=s->money_amount<32768 ? s->money_amount : (int32_t)s->money_amount-65536;*credits+=(uint32_t)amount; }
     else { fault(s,BTP_SCRIPT_OPCODE,s->pc);return; }
     s->money_kind=0;s->money_amount=s->money_target=0;s->status=BTP_SCRIPT_RUNNING;run(s,b,story);
 }
@@ -259,6 +274,9 @@ int btp_script_text(const BtpScriptState *s, const BtpBld *b, uint8_t *out, size
         (s->text_count && s->text_offset != s->text[0].offset)) return 0;
     size_t length = 0, literal_length = 0;
     if (s->has_cash > 1 || s->cash_after > s->text_count) return 0;
+    if (s->has_name>1 || s->name_after>s->text_count || s->name_id>=10) return 0;
+    const char *name=btp_character_name(s->name_id);size_t name_size=strlen(name);
+    if (s->has_name && !s->name_after) { if (name_size>=capacity) return 0;memcpy(out,name,name_size);length=name_size; }
     for (unsigned i = 0; i < s->text_count; ++i) {
         BtpTextSpan span = s->text[i];
         if (span.offset >= b->length || span.length >= b->length - span.offset ||
@@ -266,6 +284,7 @@ int btp_script_text(const BtpScriptState *s, const BtpBld *b, uint8_t *out, size
             length + span.length >= capacity) return 0;
         memcpy(out + length, b->bytes + span.offset, span.length); length += span.length;
         literal_length += span.length;
+        if (s->has_name && s->name_after==i+1u) { if (name_size>=capacity-length) return 0;memcpy(out+length,name,name_size);length+=name_size; }
         if (s->has_cash && s->cash_after == i+1) {
             char number[11]; int n = snprintf(number,sizeof number,"%" PRIu32,s->cash_value);
             if (n < 1 || (size_t)n >= capacity-length) return 0;

@@ -53,6 +53,20 @@ int main(int argc,char **argv)
     }
     free(raw);
     BtpState s;btp_start(&s);
+    f=fopen("tests/fixtures/world-view-primary.txt","r");CHECK(f);cases=0;
+    while (fgets(line,sizeof line,f)) {
+        if (line[0]=='F') {
+            unsigned x,y,mapper;uint64_t expected;CHECK(sscanf(line+1,"%u %u %u %" SCNx64,&x,&y,&mapper,&expected)==4);
+            BtpState view=s;memset(view.explored,0,sizeof view.explored);view.story_flags[4]=1;view.story_flags[49]=(uint8_t)mapper;
+            view.campaign.world_x=(uint16_t)x;view.campaign.world_y=(uint16_t)y;btp_world_reveal(&view);
+            CHECK(fingerprint(view.explored,sizeof view.explored)==expected);++cases;
+        } else if (line[0]=='T') {
+            unsigned level,mask,expected;CHECK(sscanf(line+1,"%u %u %u",&level,&mask,&expected)==3);
+            CHECK(btp_world_mini_index(level,mask)==expected);++cases;
+        }
+    }
+    fclose(f);CHECK(cases==274);
+    for (unsigned row=98;row<=103;++row) CHECK(s.explored[row*16u+12u]==31);
     for (unsigned y=0;y<64;++y) for (unsigned x=0;x<64;++x)
         CHECK(btp_world_tile(r,&s,(int)x+768,(int)y+768)==btp_map_tile(&r->map,(int)x,(int)y));
     CHECK(btp_world_tile(r,&s,-1,768)==255 && btp_world_tile(r,&s,1024,768)==255);

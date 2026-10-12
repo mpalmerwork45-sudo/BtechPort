@@ -131,7 +131,7 @@ static void border_panel(const BtpResources *r, uint32_t *f, int x, int y, int w
 }
 /* Original glyphs, with independent word wrapping. Layout remains approximate;
    oversized messages produce a visible diagnostic. */
-static int wrapped(const BtpResources *r, uint32_t *f, int y, const uint8_t *bytes, size_t n, unsigned color)
+static int wrapped_at(const BtpResources *r, uint32_t *f, int x, int y,unsigned columns, const uint8_t *bytes, size_t n, unsigned color)
 {
     uint8_t clean[BTP_BLD_MAX+1]; size_t used = 0;
     if (n > BTP_BLD_MAX) { text(r,f,110,y,"INVALID TEXT BOUNDS",12); return y; }
@@ -140,7 +140,7 @@ static int wrapped(const BtpResources *r, uint32_t *f, int y, const uint8_t *byt
         clean[used++] = bytes[i];
     }
     bytes = clean; n = used;
-    size_t at = 0; unsigned columns = r->dialogue.length ? 25u : 34u;
+    size_t at = 0;
     while (at < n && y <= 184) {
         char line[35]; size_t count = 0, start = at;
         while (at < n && bytes[at] != '\r' && count < columns) line[count++] = (char)bytes[at++];
@@ -151,10 +151,14 @@ static int wrapped(const BtpResources *r, uint32_t *f, int y, const uint8_t *byt
             if (space) { count = space - 1; at = start + space; }
         }
         while (at < n && bytes[at] == ' ') ++at;
-        line[count] = 0; text(r,f, r->dialogue.length ? 112 : 110, y, line, color); y += r->dialogue.length ? 8 : 9;
+        line[count] = 0; text(r,f,x,y,line,color); y += r->dialogue.length ? 8 : 9;
     }
     if (at < n) text(r,f, 112, 180, "Text layout overflow", 12);
     return y;
+}
+static int wrapped(const BtpResources *r,uint32_t *f,int y,const uint8_t *bytes,size_t n,unsigned color)
+{
+    return wrapped_at(r,f,r->dialogue.length ? 112 : 110,y,r->dialogue.length ? 25u : 34u,bytes,n,color);
 }
 static const uint8_t *bank_literal(const BtpResources *r, unsigned id, size_t *n)
 {
@@ -162,6 +166,62 @@ static const uint8_t *bank_literal(const BtpResources *r, unsigned id, size_t *n
     if (id >= BTP_TALK_STRINGS || d->length > BTP_TALK_MAX || d->offset[id] >= d->length ||
         d->size[id] >= d->length-d->offset[id] || d->bytes[d->offset[id]+d->size[id]]) return NULL;
     *n = d->size[id]; return d->bytes+d->offset[id];
+}
+static void mech_blocks(uint32_t *f,int column,int row,unsigned count,int working)
+{
+    /* 05AB:1858: five indicators per row, green before the working count,
+       red afterwards. Each indicator is an inclusive three-pixel square. */
+    for (unsigned i=0;i<count;++i)
+        rectangle(f,8*(column+(int)(i%5u))+2,8*(row+(int)(i/5u))+3,3,3,
+            (int)i<working ? 2u : 4u);
+}
+static void mech_bar(uint32_t *f,int x,int bottom,unsigned working,unsigned structure,unsigned color)
+{
+    /* 05AB:164C: a six-pixel-wide structure segment beneath the armour.
+       The original displays the stored point counts directly, one pixel each. */
+    if (structure) { rectangle(f,x,bottom-(int)structure+1,6,(int)structure,color);bottom-=(int)structure; }
+    if (working) rectangle(f,x,bottom-(int)working+1,6,(int)working,2);
+}
+void btp_mech_screen(const BtpResources *r,const uint8_t m[125],const char *pilot,
+    const char *rider,unsigned heat,unsigned tick,uint32_t f[BTP_PIXELS])
+{
+    for (unsigned i=0;i<BTP_PIXELS;++i) f[i]=btp_palette[terrain_palette[r->quiz_diagram.pixels[i]&15u]];
+    rectangle(f,0,0,128,200,0);
+    size_t n;const uint8_t *label=bank_literal(r,108,&n);
+    if (label) (void)wrapped_at(r,f,0,0,16,label,n,15);
+    char name[9],weight[4];memcpy(name,m,8);name[8]=0;snprintf(weight,sizeof weight,"%u",m[16]);
+    text(r,f,48,0,name,14);text(r,f,48,8,weight,14);
+    if (pilot) {
+        text(r,f,48,16,pilot,14);
+        label=bank_literal(r,114,&n);text(r,f,48,24,rider ? rider : label ? (const char *)label : "None",14);
+    }
+    mech_blocks(f,37,0,3,3-(int)m[117]);mech_blocks(f,37,1,2,2-(int)m[118]);mech_blocks(f,37,2,2,2-(int)m[119]);
+    unsigned sinks=m[38];for (unsigned i=51;i<=85;++i) sinks+=m[i]==34;
+    mech_blocks(f,34,6,10,(int)sinks);
+    static const char *const locations[]={"LA","LT","RA","RT","LL","RL","CT","H"};
+    int row=6;
+    for (unsigned i=51;i<=85;++i) {
+        unsigned component=m[i]&127u;if (component<16 || component>32) continue;
+        unsigned part=i>=85 ? 7u : i>=83 ? 6u : i>=81 ? 5u : i>=79 ? 4u : i>=72 ? 3u : i>=65 ? 2u : i>=58 ? 1u : 0u;
+        char weapon[12];memcpy(weapon,r->combat.weapons[component-1],11);weapon[11]=0;
+        unsigned color=m[i]&128u ? 8u : 14u;
+        text(r,f,0,8*row,weapon,color);text(r,f,88,8*row,locations[part],color);++row;
+    }
+    label=bank_literal(r,109,&n);if (label) (void)wrapped_at(r,f,0,152,16,label,n,15);
+    label=bank_literal(r,110,&n);if (label) (void)wrapped_at(r,f,0,160,16,label,n,15);
+    for (unsigned i=0;i<4;++i) {
+        unsigned value=m[36+(i&1u)],maximum=m[105+(i&1u)];
+        value=i<2 ? value&15u : value&240u;maximum=i<2 ? 15u : maximum&240u;
+        unsigned status=value==maximum ? 111u : value ? 112u : 113u;
+        label=bank_literal(r,status,&n);if (label) text(r,f,80,160+8*(int)i,(const char *)label,status==113 ? 8u : 15u);
+    }
+    /* Original DS:1306/131C/1332, read by 05AB:210F..2179. */
+    static const uint8_t structure[]={28,29,30,31,32,33,34,35,0,0,0};
+    static const uint16_t x[]={248,208,224,192,192,136,176,160,272,288,304};
+    static const uint8_t y[]={87,55,151,31,71,87,55,151,135,143,135};
+    for (unsigned i=0;i<11;++i) mech_bar(f,x[i],y[i],m[17+i],structure[i] ? m[structure[i]] : 0u,4);
+    if (heat>30) heat=30;
+    mech_bar(f,256,183,30u-heat,heat,(tick/(11u-heat/6u))&1u ? 4u : 14u);
 }
 static void bank_panel(const BtpResources *r, const BtpState *s, const uint8_t *body, size_t length, uint32_t *f)
 {
@@ -304,7 +364,10 @@ static void combat_flash(const BtpResources *r, const BtpState *s, int cx, int c
     int tx=200+((int)e->tx-cx)*8,ty=64+((int)e->ty+2-cy)*8;
     if (frame<count) {
         (void)btp_draw_sprite(&r->sprites,e->base+pose[1+frame],x,y,0,104,f);
-        if (e->hit) (void)btp_draw_sprite(&r->sprites,e->target_base+r->combat.reaction[frame&3u],tx,ty,0,104,f);
+        /* DS:2E3C is the personal hit program. Adding it to the 146-frame
+           mech family selects Jason's human sprites (178..181). Mechs keep
+           their current pose under the separately drawn impact. */
+        if (e->hit && c->unit[e->target].infantry) (void)btp_draw_sprite(&r->sprites,e->target_base+r->combat.reaction[frame&3u],tx,ty,0,104,f);
         /* The original poses, projectile artwork and impact order are data
            driven. Beam interpolation and native cadence remain approximate. */
         if (e->weapon!=32 && frame+1==count) {
@@ -484,7 +547,7 @@ static void story_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
             static const char *const rows[]={"Armour: 4 per point","Structure: 9 per point","Heat sink: 800","Weapon component: 300","Leg mechanisms: 200","Done"};
             for (unsigned i=0;i<6;++i) text(r,f,112,48+(int)i*16,rows[i],i==v->selected ? 14u : 15u);
         } else if (v->phase==7) {
-            for (unsigned i=0;i<8;++i) text(r,f,112,48+(int)i*12,btp_party_name(&s->party,i),i==v->selected ? 14u : 15u);
+            for (unsigned i=0;i<btp_party_count(&s->party);++i) text(r,f,112,48+(int)i*8,btp_party_name(&s->party,btp_party_slot(&s->party,i)),i==v->selected ? 14u : 15u);
         } else if (v->phase==6) {
             for (unsigned i=0;i<18;++i) {
                 char name[12]="Done";if (i<17) { memcpy(name,r->combat.weapons[i+15],10);name[10]=0; }
@@ -561,10 +624,30 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
     if (s->mode==BTP_GAME_OVER) {
         rectangle(f,0,0,320,200,0);text(r,f,112,80,"Jason has been killed.",15);text(r,f,112,104,"Load a saved game to continue.",15);return;
     }
-    if (s->mode==BTP_TITLE) {
+    if (s->mode==BTP_LOGO || s->mode==BTP_TITLE) {
         /* Original VGA title capture: index 1 is black, as in sprite art. */
-        for (unsigned i=0;i<BTP_PIXELS;++i) f[i]=btp_palette[sprite_palette[r->title.pixels[i]&15u]];
+        const BtpGraphic *g=s->mode==BTP_LOGO ? &r->logo : &r->title;
+        for (unsigned i=0;i<BTP_PIXELS;++i) f[i]=btp_palette[sprite_palette[g->pixels[i]&15u]];
         return;
+    }
+    if (s->mode==BTP_BEGIN) {
+        rectangle(f,0,0,320,200,0);border_panel(r,f,0,0,104,200,1);border_panel(r,f,104,0,216,200,0);
+        uint8_t notice[512];size_t used=0;
+        for (unsigned i=115;i<119;++i) { size_t n;const uint8_t *p=bank_literal(r,i,&n);if (p && n<=sizeof notice-used) { memcpy(notice+used,p,n);used+=n; } }
+        (void)wrapped(r,f,8,notice,used,15);
+        (void)wrapped(r,f,136,(const uint8_t *)"Have you played BattleTech before?",33,15);
+        int y=152;
+        rectangle(f,s->entry_selected ? 144 : 112,y,s->entry_selected ? 16 : 24,8,14);
+        text(r,f,112,y,"Yes",s->entry_selected ? 15u : 0u);text(r,f,144,y,"No",s->entry_selected ? 0u : 15u);return;
+    }
+    if ((s->combat.phase==BTP_COMBAT_SCAN && !s->combat.unit[s->combat.scan_unit].infantry) ||
+        (s->mode==BTP_ACTIONS && s->campaign.ui==BTP_MENU_MECH)) {
+        const uint8_t *m;unsigned heat=0,id;
+        if (s->combat.phase) { const BtpCombatUnit *u=&s->combat.unit[s->combat.scan_unit];m=u->record;heat=u->heat;id=btp_combat_id(&s->combat,s->combat.scan_unit); }
+        else { id=s->campaign.member;m=id ? s->party.mechs[id-1] : s->campaign.mech; }
+        const char *pilot=id<4 && m[121]<8 ? btp_party_name(&s->party,m[121]) : NULL;
+        const char *rider=id<4 && m[122]<8 ? btp_party_name(&s->party,m[122]) : NULL;
+        btp_mech_screen(r,m,pilot,rider,heat,s->tick,f);return;
     }
     if (s->mode == BTP_QUIZ && s->quiz.phase == BTP_QUIZ_QUESTION) {
         for (unsigned i = 0; i < BTP_PIXELS; ++i) f[i] = btp_palette[terrain_palette[r->quiz_diagram.pixels[i]&15u]];
@@ -581,6 +664,9 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         int x = btp_quiz_x[s->quiz.point]-3, y = btp_quiz_y[s->quiz.point]-3;
         rectangle(f,x,y,9,1,15); rectangle(f,x,y+8,9,1,15);
         rectangle(f,x,y,1,9,15); rectangle(f,x+8,y,1,9,15);
+        /* physical D0A9..D0C6: a white bar extends from the left of the diagram
+           to the outlined part, covering five scanlines. */
+        rectangle(f,128,y+2,x-128+1,5,15);
         return;
     }
     int cx=s->x_half,cy=s->y_half;
@@ -599,15 +685,21 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
             uint32_t color = btp_palette[0];
             if (x >= 104) {
                 int wx = camera_x + x - 104, wy = camera_y + y;
-                if (wx >= 0 && wy >= 0 && ((!s->map_id && !s->campaign.encounter) || (wx < map->width * 16 && wy < map->height * 16))) {
-                    unsigned tile = s->map_id || s->campaign.encounter ? btp_mission_tile(s,map,wx/16,wy/16) : btp_world_tile(r,s,wx/16,wy/16);
+                if ((!s->campaign.encounter && r->world.loaded) || (wx >= 0 && wy >= 0 && ((!s->map_id && !s->campaign.encounter) || (wx < map->width * 16 && wy < map->height * 16)))) {
+                    int tx=wx>=0 ? wx/16 : (wx-15)/16,ty=wy>=0 ? wy/16 : (wy-15)/16;
+                    unsigned tile;
+                    if (s->campaign.encounter || (s->map_id && tx>=0 && ty>=0 && tx<map->width && ty<map->height)) tile=btp_mission_tile(s,map,tx,ty);
+                    else {
+                        int ox=s->map_id ? (int)(map->entrance_x[0]>>8)*64 : 0,oy=s->map_id ? (int)(map->entrance_y[0]>>12)*64 : 0;
+                        tile=btp_world_tile(r,s,ox+tx,oy+ty);
+                    }
                     if (tile < 250) {
                         /* 320B skips ANIMATE's first blank tile; 240B swaps
                            three pages into these ten map tile slots. The
                            saved fixed clock supplies a deterministic phase. */
                         unsigned frame=btp_terrain_frame(tile,s->tick/4u);
                         const BtpGraphic *sheet=frame && r->terrain_animation.format==1 ? &r->terrain_animation : &r->tiles;
-                        unsigned index = (sheet==&r->tiles ? tile : frame) * 256 + (unsigned)(wy%16)*16 + (unsigned)(wx%16);
+                        unsigned index = (sheet==&r->tiles ? tile : frame) * 256 + ((unsigned)wy&15u)*16 + ((unsigned)wx&15u);
                         unsigned value = sheet->pixels[index] & 15;
                         color = btp_palette[terrain_palette[value]];
                         if (debug && tile >= s->gate && (wx % 16 == 0 || wy % 16 == 0))
@@ -630,7 +722,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
             if (s->combat.graphics && s->effects.count) {
                 const BtpCombatEffect *e=&s->effects.shots[0];
                 unsigned pose=r->combat.poses[e->group][e->direction][0];
-                if (s->effects.age/2u<pose && (i==e->actor || (e->hit && i==e->target))) continue;
+                if (s->effects.age/2u<pose && (i==e->actor || (e->hit && i==e->target && u->infantry))) continue;
             }
             unsigned base=u->infantry ? s->combat.friends && i<s->combat.friends ? btp_combat_id(&s->combat,i)==4 ? 166u : 270u : 270u : s->combat.friends ? u->record[0]=='L' ? 0u : 146u : i==0 && s->story_flags[2] ? 146u : 0u;
             (void)btp_draw_sprite(&r->sprites,base+s->combat.walk[i],
@@ -679,10 +771,11 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         if (s->blocked) text(r,f,8,80,s->blocked == BTP_EDGE ? "Map edge" : "Blocked",12);
     }
     if (s->npc.fault) text(r,f,8,80,"NPC fault",12);
-    if (s->combat.phase) combat_panel(r,s,f);
+    if (s->combat.phase && s->cutscene.active!=2) combat_panel(r,s,f);
     else if (s->mode==BTP_MISSION && s->mission.phase==BTP_MISSION_RETURN) {
-        rectangle(f,0,0,104,200,0);uint8_t message[256];size_t n;
-        if (btp_game_text(s,r,message,sizeof message,&n)) (void)left_message(r,f,message,n);
+        uint8_t message[256];size_t n;
+        rectangle(f,104,72,216,56,0);border_panel(r,f,104,72,216,56,0);
+        if (btp_game_text(s,r,message,sizeof message,&n)) (void)wrapped(r,f,80,message,n,15);
     } else if (s->mode == BTP_MISSION) {
         text(r,f,8,151,s->story_flags[2] == 0 ? "Locust" : s->story_flags[2] == 1 ? "Wasp" : "Chameleon",14);
         if (s->mission.phase != BTP_MISSION_DRIVE && s->mission.phase != BTP_MISSION_RESULT) {
@@ -729,32 +822,53 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
     }
     if (s->mode==BTP_ACTIONS) {
         const BtpCampaignState *c=&s->campaign;
-        rectangle(f,104,8,216,184,0);border_panel(r,f,104,8,216,184,0);
-        if (c->ui==BTP_MENU_MESSAGE) {
+        if (c->ui==BTP_MENU_INSPECT) {
+            uint8_t p[17];btp_menu_person(s,c->member,p);
+            rectangle(f,104,0,216,200,0);border_panel(r,f,104,0,216,200,0);
+            text(r,f,112,8,"Name  :",10);text(r,f,176,8,btp_character_name(p[0]),15);
+            text(r,f,112,16,"Weapon:",10);char weapon[12];memcpy(weapon,r->combat.weapons[p[11]],11);weapon[11]=0;text(r,f,176,16,weapon,15);
+            text(r,f,112,24,"Armor :",10);
+            size_t n;const uint8_t *armor=bank_literal(r,102u+p[13],&n);
+            if (armor) text(r,f,176,24,(const char *)armor,15);
+            text(r,f,112,40,"Health:",10);
+            unsigned health=p[1] ? p[15]/p[1] : 0;if (health>10) health=10;
+            const uint8_t *condition=bank_literal(r,91u+health,&n);
+            if (condition) {
+                char message[128];snprintf(message,sizeof message,"%s%s",btp_character_name(p[0]),(const char *)condition);
+                (void)wrapped_at(r,f,176,40,17,(const uint8_t *)message,strlen(message),15);
+            }
+            text(r,f,112,96,"Skills:",10);
+            static const char *const subjects[]={"Bow & Blade","Pistol","Rifle","Gunnery","Piloting","Tech","Medical"};
+            static const char *const ranks[]={"Unskilled","Amateur","Adequate","Good","Excellent"};
+            for (unsigned i=0;i<7;++i) {
+                text(r,f,112,112+(int)i*8,subjects[i],10);text(r,f,208,112+(int)i*8,ranks[p[4+i]>4 ? 4 : p[4+i]],15);
+            }
+            text(r,f,112,176,"MedKit:",10);text(r,f,176,176,s->party.medical_kit ? "Yes" : "No",15);
+            text(r,f,208,176,"Mapper:",10);text(r,f,272,176,s->story_flags[49] ? "Yes" : "No",15);
+            text(r,f,112,184,"Field Surgery Kit:",10);text(r,f,264,184,s->party.advanced_kit ? "Yes" : "No",15);
+        } else if (c->ui==BTP_MENU_MESSAGE) {
+            rectangle(f,104,72,216,88,0);border_panel(r,f,104,72,216,88,0);
             const char *message=s->menu.notice==1 ? "Save failed. Your previous save is intact." : s->menu.notice==2 ?
                 "Load failed. This slot is empty or invalid." : s->menu.notice==3 ? (s->story_flags[25] ? "Field treatment completed. Allow time before treating again." : "Everyone is healthy.") :
                 "Crew allocation requires open terrain and a qualified pilot for each active 'Mech.";
-            (void)wrapped(r,f,40,(const uint8_t *)message,strlen(message),15);
-        } else if (c->ui==BTP_MENU_INSPECT) {
-            uint8_t p[17];btp_menu_person(s,c->member,p);
-            text(r,f,112,32,s->party.enabled ? btp_party_name(&s->party,c->member) : "Jason",15);
-            char info[40];snprintf(info,sizeof info,"Weapon %u  Armour %u",p[11],p[13]);text(r,f,112,72,info,15);
-            snprintf(info,sizeof info,"Gunnery %u  Kick %u",p[7],p[8]);text(r,f,112,88,info,15);
-            snprintf(info,sizeof info,"Health %u  Technician %u",p[15],p[9]);text(r,f,112,104,info,15);
-            snprintf(info,sizeof info,"Body %u  Dexterity %u",p[1],p[2]);text(r,f,112,48,info,15);
-            text(r,f,112,128,"Selected for shop purchases",7);
-            if (s->party.enabled && btp_party_count(&s->party)>1) text(r,f,112,144,"Up/Down: give equipment",7);
-        } else {
-            const char *title=c->ui==BTP_MENU_SETTINGS ? "Game settings" : c->ui==BTP_MENU_STEPS ? "Movement rate" :
-                c->ui==BTP_MENU_SPEED ? "Combat speed" : c->ui==BTP_MENU_OUTTAKES ? "Outtake frequency" :
-                c->ui==BTP_MENU_LOAD ? "Load Game" : c->ui==BTP_MENU_SAVE ? "Save Game" :
-                c->ui==BTP_MENU_QUIT ? "Quit game?" : c->ui==BTP_MENU_ROOT ? "Actions" : c->ui==BTP_MENU_CREW ? "Choose a 'Mech or foot" :
-                c->ui==BTP_MENU_SEAT ? "Replace this 'Mech's pilot?" : c->ui==BTP_MENU_ABANDON ? "Abandon unpiloted 'Mechs?" : c->ui==BTP_MENU_TRANSFER ? "Give equipment" : "Choose a party member";
-            text(r,f,112,16,title,15);
+            (void)wrapped(r,f,80,(const uint8_t *)message,strlen(message),15);
+        } else if (c->ui==BTP_MENU_LOAD || c->ui==BTP_MENU_SAVE) {
+            rectangle(f,0,104,104,88,0);text(r,f,8,104,c->ui==BTP_MENU_LOAD ? "Load Game:" : "Save Game:",15);
+            for (unsigned i=0;i<7;++i) {
+                int y=112+8*(int)i;
+                if (i==c->selected) rectangle(f,8,y,88,8,14);
+                text(r,f,8,y,btp_actions_label(s,i),i==c->selected ? 0u : 15u);
+            }
+        } else if (c->ui!=BTP_MENU_MAP) {
             unsigned count=btp_actions_count(s);
-            for (unsigned i=0;i<count;++i) text(r,f,112,36+(int)i*(count>8 ? 14 : 16),btp_actions_label(s,i),i==c->selected ? 14u : 15u);
+            int top=c->ui==BTP_MENU_ROOT ? 168-8*(int)(count+2u) : 72;
+            rectangle(f,104,top,216,8*(int)(count+2u),0);border_panel(r,f,104,top,216,8*(int)(count+2u),0);
+            for (unsigned i=0;i<count;++i) {
+                int y=top+8+8*(int)i;
+                if (i==c->selected) rectangle(f,112,y,200,8,14);
+                text(r,f,112,y,btp_actions_label(s,i),i==c->selected ? 0u : 15u);
+            }
         }
-        text(r,f,112,176,"Enter / Backspace",7);
     }
     if (s->aftermath.phase) {
         const BtpAftermathState *v=&s->aftermath;char message[320];
@@ -765,7 +879,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         rectangle(f,104,0,216,200,0);border_panel(r,f,104,0,216,200,0);int y=wrapped(r,f,16,(const uint8_t *)message,strlen(message),15)+16;
         if (v->phase==1 || (v->phase==4 && btp_party_count(&s->party)==1)) {
             text(r,f,112,y,"Yes",v->selected==0 ? 14u : 15u);text(r,f,152,y,"No",v->selected==1 ? 14u : 15u);
-        } else if (v->phase==4) for (unsigned i=0;i<9;++i) text(r,f,112,y+(int)i*8,i==8 ? "Done" : btp_party_name(&s->party,i),i==v->selected ? 14u : 15u);
+        } else if (v->phase==4) for (unsigned i=0;i<=btp_party_count(&s->party);++i) text(r,f,112,y+(int)i*8,i==btp_party_count(&s->party) ? "Done" : btp_party_name(&s->party,btp_party_slot(&s->party,i)),i==v->selected ? 14u : 15u);
     }
     border_panel(r,f,0,0,104,200,1);
     if (s->mode == BTP_BUILDING || s->mode == BTP_SCRIPT_FAULT ||
@@ -779,39 +893,49 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
 void btp_world_preview(const BtpResources *r,const BtpState *s,uint32_t f[BTP_PIXELS])
 {
     rectangle(f,0,0,320,200,0);
-    unsigned wx=s->story_flags[4] ? s->campaign.world_x : 2u*BTP_CITADEL_ORIGIN+s->x_half;
-    unsigned wy=s->story_flags[4] ? s->campaign.world_y : 2u*BTP_CITADEL_ORIGIN+s->y_half;
-    int ox=s->mode==BTP_ACTIONS && s->campaign.ui==BTP_MENU_MAP ? (int)(s->menu.map_x/128u)*64-64 : s->story_flags[4] ? (int)(wx/128u)*64-64 : BTP_WORLD_ORIGIN;
-    int oy=s->mode==BTP_ACTIONS && s->campaign.ui==BTP_MENU_MAP ? (int)(s->menu.map_y/128u)*64-64 : s->story_flags[4] ? (int)(wy/128u)*64-64 : BTP_WORLD_ORIGIN;
+    unsigned wx=s->story_flags[4] ? s->campaign.world_x : 1536u+s->x_half;
+    unsigned wy=s->story_flags[4] ? s->campaign.world_y : 1536u+s->y_half;
+    unsigned center_x=s->mode==BTP_ACTIONS && s->campaign.ui==BTP_MENU_MAP ? s->menu.map_x : wx;
+    unsigned center_y=s->mode==BTP_ACTIONS && s->campaign.ui==BTP_MENU_MAP ? s->menu.map_y : wy;
+    int ox=(int)(center_x/128u)-2,oy=(int)(center_y/128u)-1;
     if (ox<0) ox=0;
     if (oy<0) oy=0;
-    if (ox>832) ox=832;
-    if (oy>832) oy=832;
-    for (unsigned y=0;y<BTP_WORLD_SIDE;++y) for (unsigned x=0;x<BTP_WORLD_SIDE;++x) {
-        unsigned tile=btp_world_tile(r,s,(int)x+ox,(int)y+oy);
-        if (tile>=250) continue;
-        unsigned frame=btp_terrain_frame(tile,s->tick/4u);
-        const BtpGraphic *sheet=frame ? &r->terrain_animation : &r->tiles;
-        unsigned index=(frame ? frame : tile)*256+8*16+8;
-        pixel(f,112+(int)x,4+(int)y,btp_palette[terrain_palette[sheet->pixels[index]&15u]]);
+    if (ox>11) ox=11;
+    if (oy>13) oy=13;
+    ox*=8;oy*=8;
+    for (unsigned row=0;row<24;++row) for (unsigned col=0;col<40;++col) {
+        unsigned x=(unsigned)ox+col,y=(unsigned)oy+row;
+        if (!btp_world_seen(s,x,y)) continue;
+        unsigned id=btp_world_mini(r,s,x,y);
+        for (unsigned dy=0;dy<8;++dy) for (unsigned dx=0;dx<8;++dx) {
+            int tx=(int)(8*x+dx),ty=(int)(8*y+dy);
+            unsigned place=(unsigned)btp_world_location(r,s,tx,ty),value;
+            if (place) {
+                unsigned tile=btp_world_tile(r,s,tx,ty);
+                value=r->world.mini_colors[tile&255u];
+            } else value=id<66 ? r->tinyland.pixels[(id/40u*8u+dy)*320u+(id%40u*8u+dx)] : 0u;
+            pixel(f,(int)(8*col+dx),(int)(8*row+dy),btp_palette[sprite_palette[value&15u]]);
+        }
     }
-    int city_x=112+BTP_CITADEL_ORIGIN-ox-1,city_y=4+BTP_CITADEL_ORIGIN-oy-1;
-    if (city_x>=112 && city_x+65<320 && city_y>=0 && city_y+65<200) {
-        rectangle(f,city_x,city_y,66,1,14);rectangle(f,city_x,city_y+65,66,1,14);
-        rectangle(f,city_x,city_y,1,66,14);rectangle(f,city_x+65,city_y,1,66,14);
+    if (s->story_flags[47] && !s->story_flags[58] && !(wx/128u==10 && wy/128u==8)) {
+        /* 0000:43D6..4446: the device directs you to packed 0A38/8038,
+           and disappears on arrival in the Starport sector. */
+        unsigned direction=btp_combat_direction((int)wx,(int)wy,1336,1080);
+        static const uint8_t x[]={20,23,23,23,20,16,16,16},y[]={8,8,12,15,15,15,12,8};
+        if (direction<8) { char arrow[2]={(char)(direction+1u),0};text(r,f,8*x[direction],8*y[direction],arrow,15); }
     }
-    int px=112+(int)(wx/2)-ox,py=4+(int)(wy/2)-oy;
-    rectangle(f,px-2,py,5,1,15);rectangle(f,px,py-2,1,5,15);
-    text(r,f,8,16,"Citadel",15);text(r,f,8,32,"Area map",15);
-    text(r,f,8,64,"Yellow:",14);text(r,f,8,80,"Citadel",14);
-    text(r,f,8,112,"White:",15);text(r,f,8,128,"Jason",15);
-    text(r,f,8,176,"F4 Return",7);border_panel(r,f,0,0,104,200,1);
+    int px=((int)(wx/16u)-ox)*8,py=((int)(wy/16u)-oy)*8;
+    if (px>=0 && px<320 && py>=0 && py<192) {
+        rectangle(f,px+2,py+2,4,1,15);rectangle(f,px+2,py+5,4,1,15);
+        rectangle(f,px+2,py+2,1,4,15);rectangle(f,px+5,py+2,1,4,15);
+    }
+    text(r,f,0,192,"Press any key to return to game.",15);
 }
 void btp_sprite_preview(const BtpResources *r, unsigned tick, uint32_t f[BTP_PIXELS])
 {
     for (unsigned i = 0; i < BTP_PIXELS; ++i) f[i] = btp_palette[2];
     text(r,f,8,5,"Original sprite preview",15);
-    text(r,f,8,17,"All walking frames - Esc exits",15);
+    text(r,f,8,17,"Frames - Ctrl+Shift+Esc exits",15);
     const unsigned bases[] = {0,146,166,270};
     const char *labels[] = {"Locust", "Commando", "Jason", "Cadets"};
     for (unsigned row = 0; row < 4; ++row) {

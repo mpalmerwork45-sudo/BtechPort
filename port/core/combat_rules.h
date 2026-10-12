@@ -18,7 +18,7 @@ typedef struct {
     uint8_t building_portraits[26];
     uint16_t sound_calibration,sound_words[314],sound_count[BTP_SOUND_COUNT];
     BtpSpeakerEvent sound[BTP_SOUND_COUNT][BTP_SOUND_EVENTS];
-    uint8_t medical[6][4];
+    uint8_t medical[8][4];
     int8_t formation_x[8],formation_y[8],mech_formation_x[4],mech_formation_y[4];
     uint16_t medical_prices[8];
 } BtpCombatData;
@@ -51,6 +51,8 @@ typedef struct {
     uint8_t waypoint_count, waypoint_x[11], waypoint_y[11];
     uint8_t friends, active_unit, ids[BTP_COMBAT_UNITS];
     BtpCombatPlan plans[BTP_COMBAT_UNITS];
+    uint32_t automatic;
+    uint8_t auto_run,paused;
 } BtpCombatState;
 enum { BTP_COMBAT_LEGACY_BYTES=1536, BTP_COMBAT_SAVE_BYTES = 6144 };
 enum { BTP_COMBAT_DATA_V1_BYTES = 4+375+561+15+46+93+16,
@@ -60,8 +62,10 @@ enum { BTP_COMBAT_DATA_V1_BYTES = 4+375+561+15+46+93+16,
     BTP_COMBAT_DATA_V5_BYTES = BTP_COMBAT_DATA_V4_BYTES+16+7+11,
     BTP_COMBAT_DATA_V6_BYTES = BTP_COMBAT_DATA_V5_BYTES+26,
     BTP_COMBAT_DATA_V7_BYTES = BTP_COMBAT_DATA_V6_BYTES+630,
-    BTP_COMBAT_DATA_BYTES = BTP_COMBAT_DATA_V7_BYTES+24+24+16 };
+    BTP_COMBAT_DATA_V8_BYTES = BTP_COMBAT_DATA_V7_BYTES+24+24+16,
+    BTP_COMBAT_DATA_BYTES = BTP_COMBAT_DATA_V7_BYTES+32+24+16 };
 int btp_sound_programs(BtpCombatData *data);
+uint32_t btp_speaker_busy_clocks(unsigned duration,unsigned repeats);
 int btp_combat_data_decode(const uint8_t *bytes, size_t length, BtpCombatData *data);
 unsigned btp_combat_die(uint8_t rng[3]);
 unsigned btp_combat_dice(uint8_t rng[3]);

@@ -6,7 +6,8 @@
 int btp_combat_data_decode(const uint8_t *b, size_t n, BtpCombatData *d)
 {
     if (!b || !d) return 0;
-    int v8=n==BTP_COMBAT_DATA_BYTES && !memcmp(b,"BTC8",4);
+    int v9=n==BTP_COMBAT_DATA_BYTES && !memcmp(b,"BTC9",4);
+    int v8=v9 || (n==BTP_COMBAT_DATA_V8_BYTES && !memcmp(b,"BTC8",4));
     int v7=v8 || (n==BTP_COMBAT_DATA_V7_BYTES && !memcmp(b,"BTC7",4));
     int v6=v7 || (n==BTP_COMBAT_DATA_V6_BYTES && !memcmp(b,"BTC6",4));
     int v5=v6 || (n==BTP_COMBAT_DATA_V5_BYTES && !memcmp(b,"BTC5",4));
@@ -29,7 +30,8 @@ int btp_combat_data_decode(const uint8_t *b, size_t n, BtpCombatData *d)
         if (!btp_sound_programs(&v)) return 0;
     }
     if (v8) {
-        COPY(medical);COPY(formation_x);COPY(formation_y);COPY(mech_formation_x);COPY(mech_formation_y);
+        memcpy(v.medical,b+p,v9 ? 32u : 24u);p+=v9 ? 32u : 24u;
+        COPY(formation_x);COPY(formation_y);COPY(mech_formation_x);COPY(mech_formation_y);
         for (unsigned i=0;i<8;++i) { v.medical_prices[i]=(uint16_t)(b[p]|(unsigned)b[p+1]<<8);p+=2; }
     }
 #undef COPY

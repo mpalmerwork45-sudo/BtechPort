@@ -48,6 +48,12 @@ def extract(source):
     addresses.extend(DS+p for p in (0x146b,0x14a1,0x48b3,0x48df,0x48e4,0x48ee))
     addresses.extend(DS+p for p in (0x1434,0x14ef,0x152a))
     addresses.extend(DS+p for p in (0x1115,0x3d3a,0x3d5e,0x398b))
+    for base,count in ((0x2e0c,11),(0x4e8a,6)):
+        for i in range(count):
+            offset,segment=struct.unpack_from("<HH",image,DS+base+4*i)
+            addresses.append(segment*16+offset)
+    addresses.extend(DS+p for p in (0x127e,0x12d6,0x12e0,0x1265,0x1269,0x126d,0x1260,
+        0xb0e,0xb4c,0xb90,0xbe2))
     blob = bytearray(); ranges = []; origins = []
     for address in addresses:
         end = image.index(0,address)
@@ -57,11 +63,11 @@ def extract(source):
         ranges.append((len(blob),len(text))); blob += text+b"\0"
         origins.append({"image_offset":address,"length":len(text),
                         "sha256":hashlib.sha256(text).hexdigest()})
-    header = b"BTT7"+struct.pack("<HH",len(blob),len(ranges))
+    header = b"BTT9"+struct.pack("<HH",len(blob),len(ranges))
     header += bytes.fromhex(EXE_SHA)+bytes.fromhex(IMAGE_SHA)
     header += b"".join(struct.pack("<HH",*r) for r in ranges)
     font = image[FONT:FONT+2048]
-    return header+blob+font, {**metadata,"format":"BTT7","strings":origins,
+    return header+blob+font, {**metadata,"format":"BTT9","strings":origins,
         "font":{"image_offset":FONT,"length":len(font),"sha256":hashlib.sha256(font).hexdigest()}}
 
 

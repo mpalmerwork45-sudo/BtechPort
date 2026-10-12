@@ -1,0 +1,8 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "routine": "14D3:0004",
+  "cases": 40,
+  "prerequisites": "Jason selected, one injured party member, cash boundary cases and medical-training bit variants",
+  "comparison": "Character medicine/training bytes, cash, result flags and kit bytes"
+}

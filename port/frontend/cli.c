@@ -16,7 +16,7 @@ int btp_options(int argc, char **argv, BtpOptions *o)
     for (int i = 1; i < argc; ++i) {
         const char *arg = argv[i];
         if (!strcmp(arg, "--help")) {
-            puts("BtechPort M3h: invasion, world travel, party and mech services\n"
+            puts("BtechPort: training, world travel, party and mech services\n"
                  "  --data DIRECTORY     original resource directory (default: Original DOS)\n"
                  "  --dialogue-data FILE local EXE text cache (default: work/talk-data.bin)\n"
                  "  --combat-data FILE   local EXE combat cache (default: work/combat-data.bin)\n"
@@ -30,6 +30,7 @@ int btp_options(int argc, char **argv, BtpOptions *o)
                  "  --frame FILE         write final 320x200 RGB PPM\n"
                  "  --sprite-preview     show original mech/human walking frames (diagnostic only)\n"
                  "  --title-preview      original title screen and PC speaker music\n"
+                 "  --intro-preview      logos, title music and played-before question\n"
                  "  --mute               disable the native audio device\n"
                  "  --export-sprites FILE write original sprite crops for verification\n"
                  "  --export-tiles FILE  write 64000 decoded tile pixel indices\n"
@@ -50,13 +51,16 @@ int btp_options(int argc, char **argv, BtpOptions *o)
                  "  --smoke-fast         accelerate native replay tests; logical ticks stay 32ms\n"
                  "Native controls: arrows move/select, Enter/Space confirms/continues,\n"
                  "Bank/ammo amounts: digits type, Backspace erases, Esc clears; Enter submits.\n"
-                 "F4 toggles the area map, F5 saves, F9 loads. Backspace declines/recovers, R restarts, F3 debug, Esc quits.");
+                 "Space opens game settings, inspection and six save/load slots.\n"
+                 "F4 toggles the area map, F5 saves, F9 loads. Backspace/Esc declines, R restarts, F3 debug.\n"
+                 "Ctrl+Shift+Esc quits. Hold Shift and press K, Y, R for 10,000 credits.");
             return -1;
         }
         if (!strcmp(arg, "--headless")) o->headless = 1;
         else if (!strcmp(arg, "--sprite-preview")) o->sprite_preview = 1;
         else if (!strcmp(arg, "--world-overview")) o->world_overview = 1;
         else if (!strcmp(arg,"--title-preview")) o->title_preview=1;
+        else if (!strcmp(arg,"--intro-preview")) o->intro_preview=1;
         else if (!strcmp(arg,"--mute")) o->mute=1;
         else if (!strcmp(arg, "--debug")) o->debug = 1;
         else if (!strcmp(arg, "--trace")) o->trace = 1;
@@ -120,6 +124,7 @@ void btp_initial_state(const BtpOptions *o, BtpState *s, const BtpResources *r)
     else btp_start(s);
     btp_npc_init(s,&r->map);
     if (o->title_preview) btp_audio_start(s);
+    if (o->intro_preview) s->mode=BTP_LOGO;
 }
 
 void btp_print_state(const BtpState *s, const BtpResources *r)
@@ -195,12 +200,14 @@ void btp_print_state(const BtpState *s, const BtpResources *r)
         s->mech_skills[0],s->mech_skills[1],s->story_flags[47],s->recruitment,s->script.animation_kind,s->script.animation_flags,
         s->cutscene.active,s->cutscene.kind,s->cutscene.step,s->cutscene.cycle,s->cutscene.hold,s->cutscene.remaining,s->cutscene.refresh_fraction);
     const BtpCombatState *c=&s->combat;
+    uint32_t fog=UINT32_C(2166136261);for (unsigned i=0;i<sizeof s->explored;++i) fog=(fog^s->explored[i])*UINT32_C(16777619);
+    printf(",\"explored_digest\":%u,\"map_center\":[%u,%u],\"intro_load\":%u",fog,s->menu.map_x,s->menu.map_y,s->menu.from_intro);
     printf(",\"combat\":{\"phase\":%u,\"selected\":%u,\"round\":%u,\"step\":%u,\"won\":%u,\"fled\":%u,\"event\":%u,\"fired\":%u,"
         "\"weapon\":%u,\"flash\":%u,\"goal\":[%u,%u,%u,%u],\"orders\":[",c->phase,c->selected,c->round,c->step,c->won,c->fled,c->last_event,c->fired,
         c->weapon_selected,c->flash,c->goal_active,c->movement,c->goal_x,c->goal_y);
     for (unsigned i=0;i<11;++i) printf("%s%u",i ? "," : "",c->orders[i]);
-    printf("],\"count\":%u,\"target\":%u,\"kick\":%u,\"lost\":%u,\"attacker\":%u,\"shot_target\":%u,\"technician\":%u,\"apprentice\":%u,\"units\":[",
-        c->count,c->target_unit,c->kick_target,c->lost,c->last_attacker,c->last_target,s->technician,s->apprentice);
+    printf("],\"count\":%u,\"target\":%u,\"kick\":%u,\"lost\":%u,\"attacker\":%u,\"shot_target\":%u,\"technician\":%u,\"apprentice\":%u,\"automatic\":%u,\"auto_run\":%u,\"paused\":%u,\"units\":[",
+        c->count,c->target_unit,c->kick_target,c->lost,c->last_attacker,c->last_target,s->technician,s->apprentice,c->automatic,c->auto_run,c->paused);
     for (unsigned i=0;i<(c->count ? c->count : 2u);++i) {
         const BtpCombatUnit *u=&c->unit[i];
         printf("%s{\"x\":%u,\"y\":%u,\"direction\":%u,\"heat\":%u,\"pool\":%u,\"cover\":%u,\"infantry\":%u,\"burning\":%u,\"record\":[",i ? "," : "",u->x,u->y,u->direction,u->heat,u->pool,u->cover,u->infantry,u->burning);

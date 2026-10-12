@@ -67,7 +67,7 @@ int main(int argc,char **argv)
     BtpState s;btp_start(&s);s.story_flags[4]=1;s.map_id=2;s.campaign.world_x=1385;s.campaign.world_y=1118;
     s.npc.rng[0]=1;s.npc.rng[1]=s.npc.rng[2]=0;btp_campaign_rex(&s,r);
     for (unsigned i=0;i<3;++i) { btp_game_tick(&s,r,BTP_ACCEPT);CHECK(restore(&s,r)); }
-    for (unsigned i=0;i<6;++i) btp_game_tick(&s,r,BTP_DOWN);
+    for (unsigned i=0;i<8;++i) btp_game_tick(&s,r,BTP_DOWN);
     btp_game_tick(&s,r,BTP_ACCEPT);CHECK(s.combat.phase==BTP_COMBAT_PICK);
     btp_game_tick(&s,r,BTP_DOWN);btp_game_tick(&s,r,BTP_ACCEPT);CHECK(s.combat.active_unit==1);CHECK(restore(&s,r));
     for (unsigned i=0;i<4;++i) btp_game_tick(&s,r,BTP_DOWN);
@@ -104,6 +104,6 @@ int main(int argc,char **argv)
             CHECK((unsigned)(64+(line[0]=='P' ? r->combat.formation_y[p] : r->combat.mech_formation_y[p]))==y);
         } else continue;
         ++field;
-    }fclose(f);CHECK(field==146);
+    }fclose(f);CHECK(field==170);
     free(r);printf("PASS: %u checks, %u party / %u original encounter setup cases and independent ally orders\n",checks,cases,encounters);return 0;
 }

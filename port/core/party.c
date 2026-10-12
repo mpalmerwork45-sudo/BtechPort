@@ -8,15 +8,29 @@ unsigned btp_party_count(const BtpPartyState *p)
 {
     unsigned n=0;if (p->enabled) for (unsigned i=0;i<8;++i) n+=p->people[i][0]!=255;return n;
 }
+unsigned btp_party_slot(const BtpPartyState *p,unsigned ordinal)
+{
+    if (!p->enabled) return ordinal ? 8u : 0u;
+    for (unsigned i=0;i<8;++i) if (p->people[i][0]!=255) { if (!ordinal) return i;--ordinal; }
+    return 8;
+}
+unsigned btp_party_ordinal(const BtpPartyState *p,unsigned slot)
+{
+    unsigned n=0;for (unsigned i=0;i<slot && i<8;++i) n+=p->people[i][0]!=255;return n;
+}
 uint8_t *btp_party_mech(BtpState *s,unsigned slot)
 {
     return slot<4 ? slot ? s->party.mechs[slot-1] : s->campaign.mech : NULL;
 }
-const char *btp_party_name(const BtpPartyState *p,unsigned slot)
+const char *btp_character_name(unsigned id)
 {
     /* Original DS:01CA name pointers, captured from the unpacked image. */
     static const char *const names[10]={"Jason","Rex","Edward","Russ","Rick","Zeke","Possum","Marco","Rusty","Hunter"};
-    unsigned id=slot<8 ? p->people[slot][0] : 255;return id<10 ? names[id] : "Empty";
+    return id<10 ? names[id] : "Empty";
+}
+const char *btp_party_name(const BtpPartyState *p,unsigned slot)
+{
+    return btp_character_name(slot<8 ? p->people[slot][0] : 255);
 }
 void btp_party_init(BtpState *s)
 {
@@ -113,7 +127,7 @@ unsigned btp_party_heal(BtpState *s,const BtpResources *r,unsigned hospital)
     if (s->party.medical_kit) equipment=2;
     if (skill>=3 && s->party.advanced_kit) equipment=3;
     if (hospital) { skill=hospital;equipment=hospital>2 ? 4u : 2u; }
-    if (skill>5) return 0;
+    if (skill>7) return 0;
     unsigned code=r->combat.medical[skill][equipment-1];if (!code) return 0;
     for (unsigned i=0;i<8;++i) {
         uint8_t *p=s->party.people[i];unsigned before=p[15];btp_heal_character(p,code,s->npc.rng);

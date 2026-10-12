@@ -67,11 +67,12 @@ From this directory on the current Kubuntu machine:
 ./scripts/test.sh
 ```
 
-Arrows move/select; hold two perpendicular arrows for diagonal movement. Keypad 1/3/7/9 or End/PgDn/Home/PgUp move diagonally, and keypad 2/4/6/8 moves in cardinal directions. These movement keys work while walking and driving a mech; Enter or Space confirms and advances dialogue; Backspace declines entry or recovers from an unsupported choice. F3 toggles diagnostics, R restarts and Esc closes. From the start, move Up five times, confirm entry, then confirm **Request to see Katrina**. Advance the sentry and Katrina screens to return to the menu. A repeat request gets the original denial. Four Down presses select Leave; after exiting and re-entering, the menu retains that selection. Hall of Legends still has its six original screens.
+Arrows move/select; hold two perpendicular arrows for diagonal movement. Keypad 1/3/7/9 or End/PgDn/Home/PgUp move diagonally, and keypad 2/4/6/8 moves in cardinal directions. Enter or Space advances dialogue. Space outdoors opens settings, party inspection, the overhead map and six save/load slots. Backspace or Escape declines; F3 toggles diagnostics, R restarts, and Ctrl+Shift+Escape closes. Hold Shift and press K, Y, R to add 10,000 credits, including during the intro. From the training start, move Up five times, confirm entry, then confirm **Request to see Katrina**. Advance the sentry and Katrina screens to return to the menu. A repeat request gets the original denial. Four Down presses select Leave; after exiting and re-entering, the menu retains that selection. Hall of Legends still has its six original screens.
 
 Bank and ammo amounts use digits (including keypad), Backspace erasure, Escape to clear
-to 0, and Enter to submit; Space does not submit. Escape closes elsewhere.
-The title screen plays the original PC speaker music; Enter starts play.
+to 0, and Enter to submit; Space does not submit.
+Space dismisses the Infocom/Westwood logos, then the BattleTech title and music.
+The played-before question opens saved games for Yes and starts training for No.
 Use `--mute` to disable the native audio device.
 
 **F4 toggles the area map.** It places the authentic 64×64 Citadel map within
@@ -84,11 +85,13 @@ additional town with an input-only campaign route. The early campaign's closed
 borders remain until the attack. Builds and play need no emulator; see
 [setup and verification](docs/TESTING.md).
 
-**F5 saves; F9 loads** the single slot `work/player-save.btp`. Failed loads keep
-the current session intact. `--save-file FILE` chooses a slot; `--load FILE`
+**F5 saves; F9 loads** the selected slot. Space offers all six; Slot One is
+`work/player-save.btp`, with `-2` through `-6` suffixes for the others. Failed loads keep
+the current session intact. `--save-file FILE` chooses their base filename; `--load FILE`
 starts from a save, and `--save FILE` writes on successful exit. Paused dialogue
 and partial bank amounts restore too. These internal saves use the tested state
-format; original DOS GAME compatibility remains unimplemented. Loading during
+format. All six supplied original DOS GAME files import/export byte-for-byte;
+export requires an imported original envelope and an outdoor state. Loading during
 input recording is refused; start the next log after loading. See
 [save/load verification](docs/M2_SAVE_EVIDENCE.md).
 
@@ -102,7 +105,7 @@ through the headless core before opening an interactive native window:
 python3 tools/native_smoke.py --campaign-only
 ```
 
-Space outdoors after the invasion opens party actions. Inspect or Equipment
+Space outdoors opens party actions. Inspect or Equipment
 selects the person whose equipped weapon, armour and skills are displayed;
 subsequent shop purchases equip that selected member. The garage parks the
 party's mechs, and checkout retains its original 150-credit fee. Mechit-Lube

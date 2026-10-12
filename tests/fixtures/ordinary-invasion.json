@@ -2,19 +2,19 @@
   "checkpoints": [
     {
       "label": "invasion-start",
-      "tick": 44502
+      "tick": 44495
     },
     {
       "label": "jenner-escape-denied",
-      "tick": 44515
+      "tick": 44507
     },
     {
       "label": "invasion-result",
-      "tick": 44923
+      "tick": 44915
     },
     {
       "label": "destroyed-citadel",
-      "tick": 44927
+      "tick": 44919
     }
   ],
   "final": {
@@ -27,7 +27,7 @@
       832
     ],
     "gate": 85,
-    "tick": 44927,
+    "tick": 44919,
     "blocked": 0,
     "script_pc": 0,
     "script_status": 0,
@@ -203,6 +203,12 @@
       0,
       0,
       0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
       0
     ],
     "investments": [
@@ -311,6 +317,13 @@
       "event": 0,
       "remaining": 0
     },
+    "aftermath": {
+      "phase": 0,
+      "pilot": 0,
+      "selected": 0,
+      "cash": 0,
+      "eject": 0
+    },
     "actions_menu": {
       "phase": 0,
       "selected": 0,
@@ -387,6 +400,12 @@
       "remaining": 0,
       "fraction": 0
     },
+    "explored_digest": 3297508337,
+    "map_center": [
+      0,
+      0
+    ],
+    "intro_load": 0,
     "combat": {
       "phase": 0,
       "selected": 0,
@@ -425,6 +444,9 @@
       "shot_target": 0,
       "technician": 1,
       "apprentice": 1,
+      "automatic": 0,
+      "auto_run": 0,
+      "paused": 0,
       "units": [
         {
           "x": 0,

@@ -19,6 +19,7 @@ int btp_original_decode(const uint8_t *b,size_t n,BtpState *out,const BtpResourc
 {
     if (!b || !out || !r || n!=BTP_ORIGINAL_BYTES || b[0]!=12) return fail(e,"invalid header or length");
     BtpState s;btp_start(&s);s.original.valid=1;memcpy(s.original.bytes,b,n);
+    memcpy(s.explored,b+0x4f9,sizeof s.explored);
     memcpy(s.story_flags,b+FLAGS,BTP_STORY_BYTES);s.credits=longword(b+CASH);
     s.allowance_cap=(uint16_t)word(b+FLAGS+51);s.recruitment=s.story_flags[45];s.talk_result=s.story_flags[46];
     for (unsigned i=0;i<3;++i) s.investments[i]=longword(b+CASH+4+4*i);
@@ -62,6 +63,7 @@ int btp_original_encode(const BtpState *s,uint8_t b[BTP_ORIGINAL_BYTES],BtpError
     if (s->mode!=BTP_EXPLORE || s->checkpoint_valid || s->campaign.encounter || s->mission.phase)
         return fail(e,"finish the active encounter or building before exporting");
     memcpy(b,s->original.bytes,BTP_ORIGINAL_BYTES);memcpy(b+FLAGS,s->story_flags,BTP_STORY_BYTES);
+    memcpy(b+0x4f9,s->explored,sizeof s->explored);
     b[FLAGS+45]=s->recruitment;b[FLAGS+46]=s->talk_result;setword(b+FLAGS+51,s->allowance_cap);b[FLAGS+79]=s->menu.outtakes;
     setlong(b+CASH,s->credits);for (unsigned i=0;i<3;++i) setlong(b+CASH+4+4*i,s->investments[i]);
     if (s->party.enabled) {

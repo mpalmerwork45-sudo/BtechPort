@@ -124,10 +124,14 @@ def generate(binary,kick=False,campaign=False):
                 advance(['idle']*(state['story_flags'][20]*4));building(0);quiz()
                 advance(['accept','accept'])
             check(state['menu_id']==7,'Missing loan menu')
-            advance(['down']*((2-state['menu_selected'])%3)+['accept']+['idle']*90)
+            advance(['down']*((2-state['menu_selected'])%3)+['accept'])
+            for _ in range(128):
+                if not state['animation']['active']:break
+                advance(['idle'])
+            check(not state['animation']['active'],'Startup did not complete')
             note('sixth-start' if campaign else 'kick-start' if kick else 'robots-start' if assignment==3 else 'duel-start')
             check(state['mission']['assignment']==assignment,'Wrong assignment')
-            advance(['accept','accept','accept'])
+            while state['combat']['phase'] in (1,2,3):advance(['accept'])
             if campaign:check(state['combat']['count']==3,'Sixth assignment needs two Locusts')
             if not kick:arm()
             command(4);note('kick-target');advance(['accept']);note('kick-queued')

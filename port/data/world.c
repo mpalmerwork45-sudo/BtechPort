@@ -14,7 +14,8 @@ int btp_world_data_decode(const uint8_t *b,size_t n,BtpWorldData *w,BtpError *e)
     };
     uint32_t seed=0;
     if (b && n>=16) for (unsigned i=0;i<4;++i) seed|=(uint32_t)b[12+i]<<(8*i);
-    int native=b && n==88u+336+1024+64+96 && !memcmp(b,"BTW2",4);
+    int newer=b && n==88u+336+1024+64+96+256 && !memcmp(b,"BTW3",4);
+    int native=newer || (b && n==88u+336+1024+64+96 && !memcmp(b,"BTW2",4));
     if (!b || !w || (!native && (n!=80u+BTP_WORLD_SIDE*BTP_WORLD_SIDE || memcmp(b,"BTW1",4))) ||
         word(b+4)!=BTP_WORLD_ORIGIN || word(b+6)!=BTP_WORLD_ORIGIN ||
         word(b+8)!=BTP_WORLD_SIDE || word(b+10)!=BTP_WORLD_SIDE ||
@@ -33,7 +34,9 @@ int btp_world_data_decode(const uint8_t *b,size_t n,BtpWorldData *w,BtpError *e)
         memcpy(candidate->coarse,b+at,336);at+=336;
         memcpy(candidate->textures,b+at,1024);at+=1024;
         memcpy(candidate->special,b+at,64);at+=64;
-        memcpy(candidate->flips,b+at,96);candidate->native=1;
+        memcpy(candidate->flips,b+at,96);at+=96;
+        if (newer) memcpy(candidate->mini_colors,b+at,256);
+        candidate->native=1;
         int ok=btp_world_generate(candidate,seed);
         if (ok) *w=*candidate;
         free(candidate);return ok;

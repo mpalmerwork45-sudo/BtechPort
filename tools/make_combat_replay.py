@@ -39,7 +39,11 @@ def generate(binary):
                 for _ in range(64):
                     if state['combat']['phase']!=9:break
                     advance(['idle']*8)
-        advance(['down']*((3-state['menu_selected'])%3)+['accept']+['idle']*90)
+        advance(['down']*((3-state['menu_selected'])%3)+['accept'])
+        for _ in range(128):
+            if not state['animation']['active']:break
+            advance(['idle'])
+        check(not state['animation']['active'],'Startup did not complete')
         note('computer');advance(['accept']);note('messages');advance(['accept']);note('graphics');advance(['accept']);note('orders')
         waypoint(72,77);turns(4);waypoint(84,85);turns(5)
         choose(3);note('weapons');advance(['down','down','accept']);note('target');advance(['accept']);note('assigned');advance(['accept'])

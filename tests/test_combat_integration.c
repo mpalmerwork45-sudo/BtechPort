@@ -29,8 +29,25 @@ static void decline(const BtpState *menu,const BtpResources *r,unsigned loan)
     for (unsigned i=0;s.cutscene.active && i<128;++i) step(&s,r,BTP_IDLE);
     CHECK(s.combat.phase==BTP_COMBAT_CONTROL && !s.cutscene.active);
     CHECK(!memcmp(s.combat.unit[0].record,r->combat.loans[loan],125));
-    step(&s,r,BTP_UP);step(&s,r,BTP_ACCEPT);CHECK(s.combat.phase==BTP_COMBAT_NOTICE);
-    step(&s,r,BTP_ACCEPT);step(&s,r,BTP_DOWN);step(&s,r,BTP_ACCEPT);
+    if (!loan) {
+        BtpState computer=s;
+        step(&computer,r,BTP_UP);step(&computer,r,BTP_ACCEPT);
+        CHECK(computer.combat.automatic==1 && computer.combat.auto_run && computer.combat.phase==BTP_COMBAT_MESSAGES);
+        step(&computer,r,BTP_ACCEPT);step(&computer,r,BTP_ACCEPT);step(&computer,r,BTP_IDLE);
+        CHECK(computer.combat.phase==BTP_COMBAT_ROUND);
+        unsigned enemy_x=computer.combat.unit[1].x,enemy_y=computer.combat.unit[1].y;
+        unsigned steps=0;
+        while (!computer.effects.count && computer.combat.phase && steps++<4096) step(&computer,r,BTP_IDLE);
+        CHECK(computer.effects.count && computer.combat.unit[1].x==enemy_x && computer.combat.unit[1].y==enemy_y);
+        step(&computer,r,BTP_OPEN_MENU);CHECK(computer.combat.paused && computer.combat.phase==BTP_COMBAT_ROUND);
+        while (computer.combat.phase==BTP_COMBAT_ROUND && steps++<4096) step(&computer,r,BTP_IDLE);
+        CHECK(computer.combat.phase==BTP_COMBAT_MENU && computer.combat.paused);
+        unsigned round=computer.combat.round;step(&computer,r,BTP_IDLE);CHECK(computer.combat.round==round);
+        command(&computer,r,9);
+        while (computer.combat.phase && steps++<12000) step(&computer,r,BTP_IDLE);
+        CHECK(computer.combat.won && computer.mission.phase==BTP_MISSION_RETURN);
+    }
+    step(&s,r,BTP_ACCEPT);
     step(&s,r,BTP_ACCEPT);step(&s,r,BTP_ACCEPT);CHECK(s.combat.phase==BTP_COMBAT_MENU);
     command(&s,r,6);step(&s,r,BTP_DOWN);CHECK(s.combat.scan_unit==1);step(&s,r,BTP_CANCEL);
     command(&s,r,0);step(&s,r,BTP_RIGHT);step(&s,r,BTP_CANCEL);CHECK(!s.combat.goal_active);

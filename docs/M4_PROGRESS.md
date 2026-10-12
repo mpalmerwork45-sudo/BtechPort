@@ -23,9 +23,9 @@ headless sanitizers, focused SDL checks and reference guard.
 | Increment | Current status |
 |---|---|
 | Space menu and splash correction | Implemented; numeric, pixel, six-slot and native input checks pass |
-| M4a: encounter aftermath/ejection | Primary audit in progress |
-| M4b: party/crew/field effects | Primary audit in progress; allocation/field healing remain bounded or unavailable |
-| M4c: next story/town services | Not complete |
+| M4a: encounter aftermath/ejection | Implemented and committed; 114 executed-primary cases and saved continuations |
+| M4b: party/crew/field effects | Implemented and committed; formation, allocation, transfer, medical and technician vectors |
+| M4c: next story/town services | Hospital effects tested; further companion/jail routes remain in progress |
 | M4d: original cache sequence | Not complete |
 | M4e: original saves/sound/presentation | Combat presentation tested; six original save roundtrips and native continuations implemented |
 
@@ -133,7 +133,7 @@ are retained. These crop comparisons do not claim whole-screen combat parity.
 
 **VERIFIED:** `103B:0D6D..0DA5` prints original `DS:398B` after training
 combat and waits for a key. The native mission enters a saved Return phase,
-shows “You should return to base now” in the lower-left text panel, then
+ shows “You should return to base now” in original window 7, then
 accepts Enter/Space before driving back for the instructor's report. Victory,
 withdrawal and defeat paths retain their distinct instructor results. The
 invasion follows its separate original branch.
@@ -266,3 +266,98 @@ original-save roundtrips. All 37 regular CTest suites pass. The focused SDL
 original-save prerequisite, equipment and field-treatment flow matches full
 headless state and pixels. Historical bounds tests now reject index 100;
 the verified 100-byte initialized story window supports later script flags.
+
+## Additional owner acceptance requirements (active, not yet verified)
+
+- Space menu must match the original presentation.
+- Character inspection must match its formatting and UNSKILLED–EXCELLENT labels.
+- Party selectors list only present characters, with no empty-slot rows.
+- Infocom/Westwood intro precedes BattleTech title and dismisses with Space.
+- Two/four-step travel advances character animation by one frame per input.
+- Mech test highlights the selected part as the original did.
+- Mech-start animation plays its original startup sound.
+- Overhead map reveals explored terrain and uses original TINYLAND graphics.
+
+These supplement the five authorized increments; none is implied complete by
+existing core checks or the corrected BattleTech title palette.
+
+Further owner requirements during the active work:
+- Generated landscape must render beyond local city edges, with authentic city overlays.
+- Shift-held K, Y, R credits 10,000 even in intro; plain Escape never quits; Ctrl+Shift+Escape quits.
+- Combat speaker effects must match original playback at an 8 MHz XT, replacing approximate busy-loop durations.
+- Return-to-base message must match the original popup presentation.
+
+## Intro, inspection, overhead and computer-control increment
+
+**VERIFIED:** fresh DOS captures supply the full logo RGB fingerprint, both
+seven/eight-row Space-menu crops, the six-slot list and character-inspection
+crop. Original rank labels, health, armour and equipment labels use the owner's
+EXE text/font cache. Party selectors are compact and retain physical member
+identity. Two/four-step walking advances the gait once per input. The selected
+mech quiz component now has the original white horizontal connector.
+
+The intro displays INFOCOM.CMP, then BTTITLE.CMP and music. The owner-requested
+question asks whether the player has played before: Yes opens the six slots;
+No begins training. This wording reverses the original's first-time question.
+Shift-held K/Y/R credits 10,000 in every mode; Escape cancels and
+Ctrl+Shift+Escape exits. These are explicit owner variations.
+
+**VERIFIED numeric presentation:** eighteen executions of `05AB:1AFE` and its
+bar/component helpers establish the mech inspection's complete left RGB
+projection and every filled right-panel pixel. Original BTSTATS.CMP supplies
+the diagram, with original damage indicators, armament locations and heat
+bar. Combat Scan and mounted-character Left/Right open this display; the latter
+navigation and heat blinking cadence are **APPROXIMATE**. These comparisons
+intercept graphics boundaries and do not claim full DOS screenshot equality.
+
+**VERIFIED:** 130 executions of `0000:010B..020A` match all 2,048 fog bytes;
+144 executions of `187F:1F04` match mini tile selection. Fresh DOS first-time
+RAM reveals only the familiar Citadel rows 98..103, byte 12=31. TINYLAND.CMP
+supplies the original overhead terrain, and the original colour LUT builds
+stored-town overlays. Rick's device displays the original directional glyph
+toward Starport and hides it in Starport's sector. Local city edges continue
+into the independently generated landscape. Whole-map pixels, cursor flashing
+and pan cadence remain **APPROXIMATE**.
+
+Startup queues original effect 12 after its last frame and holds until it
+finishes, before asking about computer control. Original return window 7 is
+the centred `(104,72,216,56)` popup. Mech impacts retain mech walking frames;
+human hit-reaction offsets no longer index into the alternate mech atlas.
+
+Automatic control uses the verified combat planner for friendly units. The
+third mission permits its opening question; subsequent training skips it as
+original `07DC:0765..07ED` does. The combat menu can override that restriction,
+as the owner requested; the original menu itself gates the option. Space pauses
+automatic turns safely during effects, and orders/automatic bits survive saves.
+A saved-continuation integration test lets the Locust defeat the stationary
+shell without manual orders. Combat-speed settings now affect turn delays;
+host tick conversion remains **APPROXIMATE**.
+
+**INFERRED nominal 8 MHz 8088 sound profile:** original loop paths execute
+unchanged and use Intel's 1979 instruction timings, including taken/exited
+branches and word-memory penalties. Twenty boundary cases match the native
+busy-loop converter. Calibration 2 replaces the old arbitrary two-PIT-clock
+delay estimate. Noise call counts and all eighteen pitch programs retain their
+executed comparisons. Prefetch, interrupts, speaker filtering and actual XT
+hardware output remain **APPROXIMATE**; no hardware waveform parity is claimed.
+The manual source is Intel's *8086 Family User's Manual*, 9800722-03,
+tables 2-20/2-21, kept locally under ignored work/ with the primary citation
+in `tests/fixtures/speaker-timing.json`.
+
+Title rests use the original divisor 14, an ultrasonic carrier. Its PCM output
+is now silent while original PIT/IRQ timing continues, eliminating host-rate
+aliasing. Zero output, chunked rendering, no-output advancement and saved PCM
+continuation are tested. This fix is committed separately as `9099c31`.
+
+Internal **BTPP/v25** expands to 20,480 bytes; v18..v24 remain 16,384-byte
+decoders. Fog occupies 16384..18431, intro-load origin is byte 18432, and
+automatic-control fields use previously reserved combat bytes 10234..10239.
+Old compact-selection migration preserves member identity. Runtime caches are
+BTT9 (119 strings), BTC9 (eight medical ranks) and BTW3 (mini colour LUT).
+
+**PASS:** 39 core suites, 40 original hospital effects, eighteen mech-view
+cases, 274 world-view cases, all six original-save roundtrips and the native
+intro/popup/audio checks. The 157-input native menu check includes real F5/F9
+while character, mech and overhead screens are open, with exact continued
+state and RGB equality. M4c/M4d remain active and final batch acceptance is
+still pending.

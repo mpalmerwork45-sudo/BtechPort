@@ -45,7 +45,7 @@ def saves(env, work):
             if state["bank_input"] != "1" or state["bank_phase"] != 2 or state["credits"] != 35:
                 raise RuntimeError("Native F5 did not save the partial amount after a failed load")
             keys.key(window,"2"); keys.key(window,"F9") # Restore 1 after editing to 12.
-            keys.key(window,"Return"); keys.key(window,"Escape")
+            keys.key(window,"Return"); keys.key(window,"Ctrl+Shift+Escape")
             stdout,stderr = process.communicate(timeout=10)
             if process.returncode or "Cannot open save" not in stderr: raise RuntimeError(stderr)
             tail = tmp/"tail.actions"; tail.write_text("accept\n")
@@ -157,7 +157,7 @@ def sprites(env, work):
             time.sleep(0.05)
         if window is None: raise RuntimeError('Sprite preview window did not appear')
         time.sleep(0.5)
-        keys.key(window,'Escape')
+        keys.key(window,'Ctrl+Shift+Escape')
         out,err = process.communicate(timeout=10)
         if process.returncode: raise RuntimeError(err)
         tick = json.loads(out)['tick']
@@ -169,7 +169,7 @@ def sprites(env, work):
         if not tick or any(a[header+(y*320+72)*3:header+(y*320+320)*3] !=
                            b[header+(y*320+72)*3:header+(y*320+320)*3] for y in range(200)):
             raise RuntimeError('Native mech preview did not animate or its grid differs')
-        print('PASS: native sprite movement/frame replay; animated mech preview, static grid and Escape exit.',flush=True)
+        print('PASS: native sprite movement/frame replay; animated mech preview, static grid and Ctrl+Shift+Escape exit.',flush=True)
     finally:
         keys.x.XCloseDisplay(keys.display)
         if process.poll() is None:
@@ -225,7 +225,7 @@ def diagonals(env, work):
                     for k in ('Up+Left','Up+Right','Down+Left','Down+Right'):
                         keys.key(window,k,press_gap=0)
                     keys.key(window,'Right') # All released: cardinal again.
-                keys.key(window,'Escape')
+                keys.key(window,'Ctrl+Shift+Escape')
                 out,err=process.communicate(timeout=10)
                 if process.returncode: raise RuntimeError(err)
                 expected=subprocess.run([str(binary),'--load',str(start),'--replay',str(record)],
@@ -294,7 +294,7 @@ def training(env, work):
                 saved=subprocess.run([str(binary),"--load",str(slot)],cwd=ROOT,check=True,capture_output=True,text=True,timeout=20)
                 before=json.loads(saved.stdout)
                 keys.key(window,"Down" if label=="quiz-1" else "Right" if label=="mission-start" else "Return")
-                keys.key(window,"F9"); keys.key(window,"Escape")
+                keys.key(window,"F9"); keys.key(window,"Ctrl+Shift+Escape")
                 out,err=process.communicate(timeout=10)
                 if process.returncode: raise RuntimeError(err)
                 actual=json.loads(out); wanted=dict(before)
@@ -361,7 +361,7 @@ def rubble(env,work,combat=False,kind=None):
                 before=json.loads(subprocess.run([str(binary),"--load",str(slot)],cwd=ROOT,check=True,capture_output=True,text=True).stdout)
                 if label == "rubble-pickup": keys.key(window,"Return")
                 keys.key(window,"Right"); time.sleep(.15)
-                keys.key(window,"F9"); keys.key(window,"Escape")
+                keys.key(window,"F9"); keys.key(window,"Ctrl+Shift+Escape")
                 out,err=process.communicate(timeout=10)
                 if process.returncode: raise RuntimeError(err)
                 restored=json.loads(out); delta=restored["tick"]-before["tick"]
@@ -401,7 +401,7 @@ def world(env,work):
         if window is None:raise RuntimeError('Area map window did not appear')
         keys.key(window,'F4');keys.key(window,'F5');time.sleep(.1)
         before=json.loads(subprocess.run([str(binary),'--load',str(slot)],cwd=ROOT,check=True,capture_output=True,text=True).stdout)
-        keys.key(window,'Right');keys.key(window,'F4');keys.key(window,'F9');keys.key(window,'F4');keys.key(window,'Escape')
+        keys.key(window,'Right');keys.key(window,'F4');keys.key(window,'F9');keys.key(window,'F4');keys.key(window,'Ctrl+Shift+Escape')
         out,err=process.communicate(timeout=10)
         if process.returncode:raise RuntimeError(err)
         after=json.loads(out);delta=after['tick']-before['tick']
@@ -511,6 +511,51 @@ def menu(env,work):
             state=json.loads(subprocess.run([str(ROOT/'build/btech-headless'),'--load',str(path)],cwd=ROOT,check=True,capture_output=True,text=True).stdout)
             if state['actions_menu']['steps']!=1<<((number-1)%3):raise RuntimeError('Slot did not retain its separate movement setting')
         print(f'PASS: native Space/settings/inspection/overhead, all six saves and loads, {len(keys)+5} exact SDL inputs and pixels.',flush=True)
+    inspection_saves(env,work)
+
+def inspection_saves(env,work):
+    """F5/F9 while character, mech and overhead views are actually open."""
+    from reference_session import WindowKeys
+    env=dict(env,SDL_AUDIODRIVER='dummy')
+    with tempfile.TemporaryDirectory(prefix='native-inspection-',dir=work) as directory:
+        tmp=Path(directory);prefix=tmp/'prefix.actions';tail=tmp/'idle.actions'
+        for name,initial,row,extra in [('character',[],2,['accept']),
+                ('overhead',[],6,[]),('mech',['--load',str(ROOT/'Original DOS/GAME3')],3,['accept','right'])]:
+            prefix.write_text('\n'.join(['menu']+['down']*row+['accept']+extra)+'\n')
+            start=tmp/'start.btp';slot=tmp/'slot.btp';frame=work/f'native-{name}-restore.ppm';expected=tmp/'expected.ppm'
+            subprocess.run([str(ROOT/'build/btech-headless'),*initial,'--replay',str(prefix),'--save',str(start)],cwd=ROOT,check=True,capture_output=True,text=True)
+            process=subprocess.Popen([str(ROOT/'build/btech-port'),'--load',str(start),'--save-file',str(slot),
+                '--frame',str(frame)],cwd=ROOT,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+            keys=WindowKeys()
+            try:
+                window=None
+                for _ in range(100):
+                    found=[w for w,n in keys.windows() if n.startswith('BtechPort')]
+                    if len(found)==1:window=found[0];break
+                    if process.poll() is not None:raise RuntimeError(name+' view failed to start')
+                    time.sleep(.02)
+                if window is None:raise RuntimeError(name+' window did not appear')
+                keys.key(window,'F5')
+                for _ in range(100):
+                    if slot.exists():break
+                    time.sleep(.02)
+                before=json.loads(subprocess.run([str(ROOT/'build/btech-headless'),'--load',str(slot)],cwd=ROOT,check=True,capture_output=True,text=True).stdout)
+                keys.key(window,'Right');keys.key(window,'F9');keys.close_window(window)
+                out,err=process.communicate(timeout=10)
+                if process.returncode:raise RuntimeError(err)
+                actual=json.loads(out);delta=actual['tick']-before['tick']
+                if not 0<=delta<=50:raise RuntimeError(name+' restore interval was unbounded')
+                tail.write_text('idle\n'*delta)
+                wanted=subprocess.run([str(ROOT/'build/btech-headless'),'--load',str(slot),'--replay',str(tail),
+                    '--frame',str(expected)],cwd=ROOT,check=True,capture_output=True,text=True)
+                if actual!=json.loads(wanted.stdout) or frame.read_bytes()!=expected.read_bytes():
+                    raise RuntimeError(name+' F5/F9 changed the view or its saved state')
+                required={'character':6,'overhead':13,'mech':21}[name]
+                if actual['actions_menu']['phase']!=required:raise RuntimeError(name+' view was not open during save/load')
+                print(f'PASS: native F5/F9 while {name} view is open; exact saved state, resumed ticks and RGB pixels.',flush=True)
+            finally:
+                keys.x.XCloseDisplay(keys.display)
+                if process.poll() is None:process.terminate();process.wait(timeout=5)
 
 def presentation(env,work):
     """Focused, real-time SDL checks, seeded by ordinary logical input saves."""
@@ -582,6 +627,57 @@ def field(env,work):
         if json.loads(actual.stdout)!=json.loads(wanted.stdout) or frame.read_bytes()!=expected.read_bytes():raise RuntimeError('Native field continuation differs')
         print('PASS: native original-save prerequisite, crew continuation, gear transfer and field healing; exact SDL state/pixels.',flush=True)
 
+def intro(env,work):
+    """Real held-Shift keys, both intro screens, audio and new/load branches."""
+    from reference_session import WindowKeys
+    env=dict(env,SDL_AUDIODRIVER='dummy')
+    with tempfile.TemporaryDirectory(prefix='native-intro-',dir=work) as directory:
+        tmp=Path(directory);record=tmp/'keys.actions';frame=work/'native-intro.ppm'
+        report=tmp/'audio.json';expected=tmp/'expected.ppm';slot=tmp/'slot.btp'
+        process=subprocess.Popen([str(ROOT/'build/btech-port'),'--intro-preview',
+            '--record',str(record),'--frame',str(frame),'--audio-report',str(report),
+            '--save-file',str(slot)],cwd=ROOT,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+        keys=WindowKeys()
+        try:
+            window=None
+            for _ in range(100):
+                found=[w for w,n in keys.windows() if n.startswith('BtechPort')]
+                if len(found)==1:window=found[0];break
+                if process.poll() is not None:raise RuntimeError('Intro window failed')
+                time.sleep(.02)
+            if window is None:raise RuntimeError('Intro window did not appear')
+            for key in ('Escape','Shift+k+r','Shift+k+y+r','space',
+                        'Escape','Shift+k+y+r','space','Shift+k+y+r','Escape','Return'):
+                keys.key(window,key)
+                if process.poll() is not None:raise RuntimeError('Escape or intro input closed the game')
+            keys.key(window,'Ctrl+Shift+Escape')
+            out,err=process.communicate(timeout=10)
+            if process.returncode:raise RuntimeError(err)
+            replay=subprocess.run([str(ROOT/'build/btech-headless'),'--intro-preview',
+                '--replay',str(record),'--frame',str(expected)],cwd=ROOT,check=True,capture_output=True,text=True)
+            actual=json.loads(out)
+            if actual!=json.loads(replay.stdout) or frame.read_bytes()!=expected.read_bytes():
+                raise RuntimeError('Intro SDL input/state/pixels differ from complete replay')
+            if actual['mode']!='local-exploration' or actual['credits']!=30035 or record.read_text().splitlines().count('credit-10000')!=3:
+                raise RuntimeError(f"Held-Shift sequence or fresh-game branch failed: mode={actual['mode']}, credits={actual['credits']}, sequences={record.read_text().splitlines().count('credit-10000')}")
+            audio=json.loads(report.read_text())
+            if not audio['opened'] or not audio['nonzero']:
+                raise RuntimeError('Intro music did not reach the SDL audio device')
+            print('PASS: real Shift K/Y/R in logo, title and question; Escape remains in game, Ctrl+Shift+Escape exits; SDL music and exact replay.',flush=True)
+        finally:
+            keys.x.XCloseDisplay(keys.display)
+            if process.poll() is None:process.terminate();process.wait(timeout=5)
+        tail=tmp/'load.actions';tail.write_text('menu\nmenu\nup\naccept\n')
+        native=subprocess.run([str(ROOT/'build/btech-port'),'--intro-preview','--smoke-replay',
+            '--smoke-fast','--replay',str(tail),'--save-file',str(slot),'--record',str(record),
+            '--frame',str(frame)],cwd=ROOT,env=env,check=True,capture_output=True,text=True,timeout=20)
+        replay=subprocess.run([str(ROOT/'build/btech-headless'),'--intro-preview','--replay',
+            str(record),'--save-file',str(slot),'--frame',str(expected)],cwd=ROOT,check=True,capture_output=True,text=True)
+        if json.loads(native.stdout)!=json.loads(replay.stdout) or frame.read_bytes()!=expected.read_bytes():
+            raise RuntimeError('Intro saved-game branch differs')
+        if json.loads(native.stdout)['mode']!='actions':raise RuntimeError('Yes did not open saved games')
+        print('PASS: played-before Yes opens the six saved-game slots; No starts fresh at training grounds.',flush=True)
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--shops-only", action="store_true")
@@ -602,6 +698,7 @@ def main():
     parser.add_argument('--original-save-only',action='store_true')
     parser.add_argument('--aftermath-only',action='store_true')
     parser.add_argument('--field-only',action='store_true')
+    parser.add_argument('--intro-only',action='store_true')
     args = parser.parse_args()
     work = ROOT / "work"
     work.mkdir(exist_ok=True)
@@ -621,6 +718,8 @@ def main():
             env.pop("SDL_VIDEODRIVER", None)
             os.environ["DISPLAY"] = env["DISPLAY"]
             os.environ["BTECH_REFERENCE_VIRTUAL"] = "1"
+            if args.intro_only:
+                intro(env,work);return
             if args.field_only:
                 field(env,work);return
             if args.aftermath_only:

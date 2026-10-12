@@ -9,6 +9,45 @@
 #include <string.h>
 #include <stdlib.h>
 
+void btp_world_reveal(BtpState *s)
+{
+    unsigned x=s->story_flags[4] ? s->campaign.world_x : 1536u+s->x_half;
+    unsigned y=s->story_flags[4] ? s->campaign.world_y : 1536u+s->y_half;
+    if (x>=2048 || y>=2048 || s->story_flags[58]) return;
+    unsigned at=y/16u*16u+x/128u;
+    if (s->story_flags[49]) {
+        at=y/128u*128u+x/128u;
+        for (unsigned i=0;i<8;++i) s->explored[at+16u*i]=255;
+    } else {
+        static const uint8_t masks[]={224,224,112,56,28,14,7,7};
+        unsigned mask=masks[(x&127u)/16u];s->explored[at]|=(uint8_t)mask;
+        if (at>=16) s->explored[at-16]|=(uint8_t)mask;
+        if (at+16<2048) s->explored[at+16]|=(uint8_t)mask;
+    }
+}
+int btp_world_seen(const BtpState *s,unsigned x,unsigned y)
+{
+    return x<128 && y<128 && (s->explored[y*16u+x/8u]&(128u>>(x&7u)));
+}
+unsigned btp_world_mini_index(unsigned level,unsigned neighbours)
+{
+    /* Executed 187F:1F04: city selectors bypass terrain joining. */
+    if (level>=144) return level;
+    if (level==16) return 64;
+    return (level>=32 ? level-16u : level)|(neighbours&15u);
+}
+unsigned btp_world_mini(const BtpResources *r,const BtpState *s,unsigned x,unsigned y)
+{
+    (void)s;
+    if (x>=128 || y>=128 || !r->world.native) return 65;
+    unsigned at=(y+8u)*144u+x+8u,level=r->world.heights[at],mask=0;
+    if (r->world.heights[at-144]==level) mask|=1;
+    if (r->world.heights[at+1]==level) mask|=2;
+    if (r->world.heights[at+144]==level) mask|=4;
+    if (r->world.heights[at-1]==level) mask|=8;
+    return btp_world_mini_index(level,mask);
+}
+
 static const BtpMap *local(const BtpResources *r,unsigned id)
 {
     return id==1 ? &r->map : id==11 ? &r->destroyed : &r->local[id-1];

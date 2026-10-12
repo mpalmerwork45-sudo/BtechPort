@@ -54,14 +54,14 @@ if __name__=='__main__':
     if metadata['input_sha256']!=EXE_SHA or metadata['image_sha256']!=IMAGE_SHA:
         raise ValueError('World tables require the audited executable')
     ranges=[(0x1c6c0+0xb0b-17,336),(0x1c6c0+0xc1d,1024),
-            (0x1c6c0+0x209d,64),(0x1c6c0+0x211d,96)]
+            (0x1c6c0+0x209d,64),(0x1c6c0+0x211d,96),(0x1c6c0+0x215d,256)]
     tables=b''.join(source[at:at+n] for at,n in ranges)
     exe=hashlib.sha256((a.data/'BTECH.EXE').read_bytes()).digest()
     local=hashlib.sha256((a.data/'MAP1.MTP').read_bytes()).digest()
-    header=b'BTW2'+struct.pack('<HHHHI',704,704,192,192,a.seed)+exe+local
+    header=b'BTW3'+struct.pack('<HHHHI',704,704,192,192,a.seed)+exe+local
     a.output.parent.mkdir(parents=True,exist_ok=True)
     a.output.write_bytes(header+struct.pack('<Q',fingerprint(tables))+tables)
-    a.output.with_suffix('.json').write_text(json.dumps({'format':'BTW2','scope':'Static primary inputs; independent C midpoint and tile generation',
+    a.output.with_suffix('.json').write_text(json.dumps({'format':'BTW3','scope':'Static primary inputs; independent C midpoint and tile generation',
         'executable_sha256':exe.hex(),'map1_sha256':local.hex(),'seed':a.seed,'origin':[704,704],'size':[192,192],
         'routines':['0000:50D3..50F3','187F:0BC0','187F:104E','187F:1314'],
         'ranges':ranges,'tables_sha256':hashlib.sha256(tables).hexdigest(),

@@ -1,5 +1,27 @@
 # Build, verification and original oracle — 2026-10-12
 
+## Current M4 presentation checks
+
+The active build has 39 CTest suites. Internal saves are BTPP/v25, with a
+20,480-byte payload; old versions retain explicit migrations. Current caches
+are BTT9/BTC9/BTW3. The older sections below describe earlier increments.
+Native focused checks: `--intro-only`, `--menu-only` and `--presentation-only`
+on `tools/native_smoke.py`. The menu probe includes saving/loading from the
+character, mech and overhead screens. These compare actual recorded SDL keys,
+complete canonical state and exact continued pixels.
+
+Primary numeric generators: `make_mech_view_vectors.py`,
+`make_world_view_vectors.py`, `make_story_vectors.py` and
+`make_speaker_timing_vectors.py`, all under tools/. They use the owner EXE in
+private emulated RAM and commit only numeric projections/source identities.
+Speaker timing is a nominal 8 MHz 8088 model; physical hardware filtering and
+interrupt/prefetch costs remain approximate. See [M4 evidence](M4_PROGRESS.md).
+
+The native intro starts at the logos. Use `--intro-preview` for equivalent
+headless replay. Escape cancels; Ctrl+Shift+Escape quits. Shift-held K/Y/R adds
+10,000 credits in every screen. Space opens settings, inspection, the overhead
+map and all six slots while outdoors.
+
 ## M4 menu and combat presentation increment
 
 The subsequent original-save increment adds a **36th CTest suite** and

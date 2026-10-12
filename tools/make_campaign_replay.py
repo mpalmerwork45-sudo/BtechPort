@@ -59,7 +59,7 @@ class Session:
 
 if __name__=='__main__':
     s=Session(ROOT/'tests/fixtures/ordinary-sixth-story.actions')
-    pause=int(sys.argv[1]) if len(sys.argv)>1 else 32
+    pause=int(sys.argv[1]) if len(sys.argv)>1 else 28
     s.advance(['idle']*(s.state['story_flags'][20]*4+pause));s.route(0);s.advance(['accept','accept'])
     from exepack import unpack
     import struct
@@ -70,10 +70,15 @@ if __name__=='__main__':
     s.advance(['accept','accept'])
     if s.state['menu_id']!=7:raise RuntimeError('Missing loan choice')
     loan=int(sys.argv[2]) if len(sys.argv)>2 else 0
-    s.advance(['down']*((loan-s.state['menu_selected'])%3)+['accept']+['idle']*90)
+    s.advance(['down']*((loan-s.state['menu_selected'])%3)+['accept'])
+    for _ in range(128):
+        if not s.state['animation']['active']:break
+        s.advance(['idle'])
+    if s.state['animation']['active']:raise RuntimeError('Startup did not complete')
     s.note('invasion-start');print('start',s.state['campaign'],s.state['mission'],s.state['npc_rng'])
     if not s.state['campaign']['invasion']:raise RuntimeError('Ordinary seventh branch; extend duel route')
-    s.advance(['accept','accept','accept']);s.command(8);s.note('jenner-escape-denied');s.advance(['accept'])
+    while s.state['combat']['phase'] in (1,2,3):s.advance(['accept'])
+    s.command(8);s.note('jenner-escape-denied');s.advance(['accept'])
     loss=len(sys.argv)>3 and sys.argv[3]=='--loss'
     for x,y in ([(72,77),(84,85),(96,93)] if loss else [(64,105),(80,121),(116,127)]):
         s.waypoint(x,y,2 if loan==1 else 1)

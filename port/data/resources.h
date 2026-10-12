@@ -26,7 +26,7 @@ typedef struct {
     uint8_t count, bytes[BTP_ANM_BYTES];
 } BtpAnm;
 /* 43 earlier bank/Talk strings plus 12 class transcript/rank/subject strings. */
-enum { BTP_TALK_STRINGS = 91, BTP_TALK_MAX = 4096 };
+enum { BTP_TALK_STRINGS = 119, BTP_TALK_MAX = 4096 };
 typedef struct {
     uint8_t bytes[BTP_TALK_MAX];
     uint8_t font[2048];
@@ -38,12 +38,13 @@ typedef struct {
     uint8_t loaded, native, tiles[BTP_WORLD_SIDE*BTP_WORLD_SIDE];
     uint8_t coarse[336], textures[1024], special[64], flips[96];
     uint8_t noise[256], heights[144*144];
+    uint8_t mini_colors[256];
 } BtpWorldData;
 typedef struct {
     BtpMap map;
     BtpMap destroyed;
     BtpMap local[14];
-    BtpGraphic tiles, terrain_animation, sprites, quiz_diagram, border, title;
+    BtpGraphic tiles, terrain_animation, sprites, quiz_diagram, border, title, logo, tinyland;
     uint8_t music[4356];uint16_t music_length;
     BtpBld citadel, armor, weapon, comstar, training, barracks, lounge, repair;
     BtpBld buildings[26];

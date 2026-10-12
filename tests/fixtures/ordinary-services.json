@@ -2,39 +2,39 @@
   "checkpoints": [
     {
       "label": "parked-in-starport",
-      "tick": 45913
+      "tick": 45905
     },
     {
       "label": "civilian-clothing",
-      "tick": 46023
+      "tick": 46015
     },
     {
       "label": "rex-crest",
-      "tick": 47121
+      "tick": 47113
     },
     {
       "label": "rex-and-commando",
-      "tick": 47198
+      "tick": 47190
     },
     {
       "label": "technician-joined",
-      "tick": 47372
+      "tick": 47364
     },
     {
       "label": "partial-armour-repair",
-      "tick": 47378
+      "tick": 47370
     },
     {
       "label": "partial-ammo-amount",
-      "tick": 47390
+      "tick": 47382
     },
     {
       "label": "ammo-purchase-boundary",
-      "tick": 47392
+      "tick": 47384
     },
     {
       "label": "speed-shop-no-funds",
-      "tick": 47414
+      "tick": 47406
     }
   ],
   "final": {
@@ -47,7 +47,7 @@
       34
     ],
     "gate": 85,
-    "tick": 47419,
+    "tick": 47411,
     "blocked": 0,
     "script_pc": 4979,
     "script_status": 3,
@@ -228,6 +228,12 @@
       0,
       0,
       0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
       0
     ],
     "investments": [
@@ -336,6 +342,13 @@
       "event": 0,
       "remaining": 0
     },
+    "aftermath": {
+      "phase": 0,
+      "pilot": 0,
+      "selected": 0,
+      "cash": 0,
+      "eject": 0
+    },
     "actions_menu": {
       "phase": 0,
       "selected": 0,
@@ -412,6 +425,12 @@
       "remaining": 0,
       "fraction": 0
     },
+    "explored_digest": 1306493058,
+    "map_center": [
+      0,
+      0
+    ],
+    "intro_load": 0,
     "combat": {
       "phase": 0,
       "selected": 0,
@@ -450,6 +469,9 @@
       "shot_target": 0,
       "technician": 1,
       "apprentice": 1,
+      "automatic": 0,
+      "auto_run": 0,
+      "paused": 0,
       "units": [
         {
           "x": 0,

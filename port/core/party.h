@@ -10,8 +10,11 @@ unsigned btp_party_heal(BtpState *state,const BtpResources *resources,unsigned h
 void btp_heal_character(uint8_t person[17],unsigned program,uint8_t rng[3]);
 unsigned btp_party_field_salvage(BtpState *state,const uint8_t wrecks[4][125],const uint8_t marked[4]);
 unsigned btp_party_count(const BtpPartyState *party);
+unsigned btp_party_slot(const BtpPartyState *party,unsigned ordinal);
+unsigned btp_party_ordinal(const BtpPartyState *party,unsigned slot);
 uint8_t *btp_party_mech(BtpState *state,unsigned slot);
 const char *btp_party_name(const BtpPartyState *party,unsigned slot);
+const char *btp_character_name(unsigned id);
 int btp_party_recruit(BtpState *state,unsigned skill);
 void btp_party_follow(BtpState *state,uint16_t old_x,uint16_t old_y);
 void btp_party_encode(const BtpPartyState *party,uint8_t bytes[BTP_PARTY_BYTES]);

@@ -1,4 +1,10 @@
-# Project status — bounded M3d–M3h complete, 2026-10-12
+# Project status — M4 in progress, 2026-10-12
+
+M4a and M4b are implemented and committed. Original-save compatibility, intro,
+Space menus, inspection, fog/TINYLAND and combat presentation are tested in
+M4e. Hospital numeric effects pass primary comparisons; further M4c story
+routes and M4d's original cache puzzle/ending are still in progress.
+See [current M4 evidence](M4_PROGRESS.md) for precise limits and acceptance.
 
 All five authorized follow-on milestones have playable implementations and
 bounded original comparisons. The seventh-assignment invasion leads through
