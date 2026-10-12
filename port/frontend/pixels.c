@@ -398,6 +398,7 @@ static void combat_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
             const char *message=c->notice==2 ? "No movement points for this order.\rEnter to return." :
                 c->notice==3 ? "Damaged legs prevent kicking.\rEnter to return." :
                 c->notice==4 ? "All twelve waypoints are assigned.\rEnter to return." :
+                c->notice==5 ? "You cannot escape these Jenners!\rReach the southern exit." :
                 "This command is outside the verified weapons-training slice.\rEnter to return.";
             (void)wrapped(r,f,72,(const uint8_t *)message,strlen(message),15);
         } else {
@@ -497,14 +498,15 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         cx=c->phase==BTP_COMBAT_MOVE ? c->cursor_x : c->unit[focus].x;
         cy=(c->phase==BTP_COMBAT_MOVE ? c->cursor_y : c->unit[focus].y)+2;
     }
+    const BtpMap *map=btp_active_map(r,s);
     int camera_x = cx * 8 - 96, camera_y = cy * 8 - 96;
     for (int y = 0; y < 200; ++y)
         for (int x = 0; x < 320; ++x) {
             uint32_t color = btp_palette[0];
             if (x >= 104) {
                 int wx = camera_x + x - 104, wy = camera_y + y;
-                if (wx >= 0 && wy >= 0 && wx < r->map.width * 16 && wy < r->map.height * 16) {
-                    unsigned tile = btp_mission_tile(s,&r->map,wx/16,wy/16);
+                if (wx >= 0 && wy >= 0 && wx < map->width * 16 && wy < map->height * 16) {
+                    unsigned tile = btp_mission_tile(s,map,wx/16,wy/16);
                     if (tile < 250) {
                         /* 320B skips ANIMATE's first blank tile; 240B swaps
                            three pages into these ten map tile slots. The
@@ -543,7 +545,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
     } else if (s->mission.phase) (void)btp_draw_sprite(&r->sprites,
         (s->story_flags[2] ? 146u : 0u)+s->mission.walk,200,64,btp_mission_terrain(s,&r->map),104,f);
     else (void)btp_draw_sprite(&r->sprites,166u+s->player_walk,208,96,
-        hidden_rows(&r->map,s->x_half,s->y_half),104,f);
+        hidden_rows(map,s->x_half,s->y_half),104,f);
     /* Original 051B draws the party before the eight outdoor NPC slots. */
     if (!s->combat.phase && (s->mode == BTP_EXPLORE || s->mode == BTP_MISSION) && s->npc.enabled == 2) for (unsigned i = 0; i < 8; ++i) {
         const BtpNpc *n = &s->npc.actor[i];

@@ -25,8 +25,9 @@ unsigned btp_player_direction(unsigned facing)
 }
 int btp_cutscene_begin(BtpState *s, const BtpResources *r, unsigned kind, unsigned active)
 {
-    if (!s || !r || s->cutscene.active || (kind != 0 && kind != 8) ||
-        active != (kind ? 1u : 2u) || r->animations[kind].count != (kind ? 3u : 18u)) return 0;
+    if (!s || !r || s->cutscene.active || (kind != 0 && kind != 8 && kind != 9) ||
+        active != (kind ? 1u : 2u) || !r->animations[kind].count ||
+        ((kind==0 || kind==8) && r->animations[kind].count != (kind ? 3u : 18u))) return 0;
     s->cutscene = (BtpCutsceneState){.active=(uint8_t)active,.kind=(uint8_t)kind,
         .remaining=(uint16_t)(r->animations[kind].units[0]+(kind ? 0u : 50u))};
     return 1;
@@ -58,6 +59,9 @@ int btp_cutscene_valid(const BtpState *s)
     if (!c->active) return !c->kind && !c->step && !c->cycle && !c->hold && !c->remaining && !c->refresh_fraction &&
         s->script.status != BTP_SCRIPT_ANIMATION;
     if (!c->remaining || c->refresh_fraction >= 1000 || !s->checkpoint_valid || c->hold > 1) return 0;
+    if (c->active==1 && c->kind==9) return c->step<12 && !c->cycle && !c->hold && c->remaining<=7 &&
+        s->mode==BTP_BUILDING && !s->entry_slot && s->campaign.invasion &&
+        s->script.status==BTP_SCRIPT_ANIMATION && s->script.animation_kind==9 && s->script.animation_flags==1;
     if (c->active == 1) return c->kind == 8 && c->step < 3 && c->cycle < 7 && !c->hold && c->remaining <= 7 &&
         s->mode == BTP_BUILDING && s->entry_slot == 6 && s->script.status == BTP_SCRIPT_ANIMATION &&
         s->script.animation_kind == 8 && s->script.animation_flags == 1;

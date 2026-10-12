@@ -38,3 +38,19 @@ ignored, provenance-tagged/checksummed BTW2 cache. Build preparation no longer
 runs an emulator to produce world tiles. Focused world tests pass, including
 malformed-cache atomicity, the complete MAP1 overlay and saved-clock rendering.
 Travel, town switching and random encounters are still being connected.
+
+## Invasion increment
+
+**VERIFIED:** sixteen primary seventh/eighth branch/setup cases match the
+invasion bit, all opponent records/positions and RNG. The cleared payload
+bytes normalize to the southeast 8×2 tile opening, not a whole border row.
+Ordinary input routes reach both mech retention and loss; the latter plays
+authentic O9. Save/restore before every input passes on both routes.
+Internal BTPH/v17 adds invasion, owned-mech record, transition coordinates
+and the post-attack countdown while retaining v1–v16 migration.
+
+**APPROXIMATE / limits:** the current bounded combat window hands off at its
+last half-row; the original crosses the packed sector boundary. Global travel
+is the next increment. The invasion loss presentation and flags are covered;
+the complete original pilot-evacuation/body damage RNG span remains outside
+the combat comparisons. General campaign encounters are not yet implemented.

@@ -142,6 +142,10 @@ int btp_resources_load(const char *dir, BtpResources *r, BtpError *e)
         int ok = btp_anm_decode(data,n,&r->animations[i],e); free(data);
         if (!ok) return 0;
     }
+    int len=snprintf(path,sizeof path,"%s/MAP11.MTP",dir);
+    if (len<0 || (size_t)len>=sizeof path || !btp_read_file(path,&data,&n,e)) return 0;
+    int decoded=btp_map_decode(data,n,&r->destroyed,e);free(data);
+    if (!decoded) return 0;
     if (r->sprites.format != 2) return fail(e,"MECHSHAP requires format-2 320x200 graphics");
     if (r->quiz_diagram.format != 2) return fail(e,"BTSTATS requires format-2 320x200 graphics");
     if (r->border.format != 1) return fail(e,"BTBORDER requires format-1 320x200 graphics");

@@ -37,7 +37,9 @@ def extract(source):
             program_origins.append({'table':table+direction*4,'image_offset':start,'length':at-start,
                 'sha256':hashlib.sha256(image[start:at]).hexdigest()})
     programs+=image[DS+0x2e3c:DS+0x2e40]+image[DS+0x41d8:DS+0x41db]
-    return b"BTC2"+b"".join(parts)+programs, {**metadata,"format":"BTC2","ranges":origins,
+    jenner=image[0x283e1:0x283e1+125]
+    return b"BTC3"+b"".join(parts)+programs+jenner, {**metadata,"format":"BTC3","ranges":origins,
+        'invasion_template':{'image_offset':0x283e1,'length':125,'sha256':hashlib.sha256(jenner).hexdigest()},
         'pose_programs':program_origins,'reaction':DS+0x2e3c,'impact':DS+0x41d8}
 
 if __name__ == "__main__":

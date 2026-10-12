@@ -49,7 +49,7 @@ int btp_npc_valid(const BtpState *s, const BtpMap *m)
         (n->bias != 0 && n->bias != 8) || n->fault > BTP_NPC_BAD_CONTEXT || n->allowance_pending > 1) return 0;
     if (!n->enabled) {
         if (n->phase || n->clock || n->bias || n->search || n->fault || n->loop_timer || n->allowance_pending ||
-            n->rng[0] || n->rng[1] || n->rng[2]) return 0;
+            (!s->story_flags[4] && (n->rng[0] || n->rng[1] || n->rng[2]))) return 0;
     } else if (!n->search || n->search > 100 || s->conversation_checkpoint) return 0;
     for (unsigned i = 0; i < 8; ++i) {
         const BtpNpc *a = &n->actor[i];

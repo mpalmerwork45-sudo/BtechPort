@@ -43,7 +43,7 @@ static int state_index(BtpScriptState *s, uint8_t *story, unsigned index, uint16
     /* Original indexes use CBW. Sparse modeled bytes must never alias another
        core field: D30C[0..22] and the shop refusal byte at index 39 only. */
     if (!story || (index >= BTP_STORY_PREFIX && index != 39 &&
-        index != 24 && index != 32 && index != 45 && index != 46 && index != 47 && index != 51 && index != 52)) {
+        index != 24 && index != 32 && index != 36 && index != 45 && index != 46 && index != 47 && index != 51 && index != 52)) {
         fault(s, BTP_SCRIPT_STATE_INDEX, op_pc); return 0;
     }
     return 1;
@@ -143,7 +143,7 @@ static void run(BtpScriptState *s, const BtpBld *b, uint8_t story[BTP_STORY_BYTE
         case 0xea: /* Yield until original sequence playback finishes. */
             if (!available(s,b,2,op_pc)) return;
             s->animation_kind = b->bytes[s->pc++]; s->animation_flags = b->bytes[s->pc++];
-            if (s->animation_kind != 8 || s->animation_flags != 1) { fault(s,BTP_SCRIPT_SCENE,op_pc); return; }
+            if ((s->animation_kind != 8 && s->animation_kind != 9) || s->animation_flags != 1) { fault(s,BTP_SCRIPT_SCENE,op_pc); return; }
             s->pause_units = 0; s->status = BTP_SCRIPT_ANIMATION; return;
         case 0xfb:
             s->status = BTP_SCRIPT_WAIT; return;

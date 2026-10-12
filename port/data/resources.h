@@ -41,6 +41,7 @@ typedef struct {
 } BtpWorldData;
 typedef struct {
     BtpMap map;
+    BtpMap destroyed;
     BtpGraphic tiles, terrain_animation, sprites, quiz_diagram, border;
     BtpBld citadel, armor, weapon, comstar, training, barracks, lounge, repair;
     BtpDialogue dialogue;

@@ -59,11 +59,13 @@ void btp_training_native(BtpState *s, const BtpResources *r)
     if (s->entry_slot || s->story_flags[4] || s->story_flags[2] > 2) { fault(s); return; }
     switch (s->script.native_action) {
     case 1:
-        if (s->story_flags[0] > 5 || s->mission.phase ||
+        if (s->story_flags[0] > 7 || s->mission.phase ||
             (s->story_flags[0]>=2 && !r->combat.loans[0][0])) { fault(s); return; }
         (void)btp_rng_next(s->npc.rng); /* Original O0 dispatcher, even forced. */
         s->mission = (BtpMissionState){.phase=BTP_MISSION_DRIVE,.walk=6,.direction=2,
             .assignment=s->story_flags[0]};
+        s->campaign.invasion=(uint8_t)(s->mission.assignment==7 ||
+            (s->mission.assignment==6 && (btp_rng_next(s->npc.rng)&1u)));
         if (s->mission.assignment==1) {
             s->mission.rubble = (uint8_t)(btp_rng_next(s->npc.rng)&7u);
             unsigned rubble = s->mission.rubble;
@@ -105,6 +107,7 @@ void btp_training_native(BtpState *s, const BtpResources *r)
 uint8_t btp_mission_tile(const BtpState *s, const BtpMap *m, int x, int y)
 {
     const BtpMissionState *mission = &s->mission;
+    if (s->campaign.invasion && y>=62 && y<64 && x>=56 && x<64) return 64;
     if (mission->phase && mission->phase != BTP_MISSION_RESULT) {
         if (!mission->assignment && x == 61 && y == 61) return 0;
         if (mission->assignment == 1 && mission->rubble < 8 &&
@@ -148,6 +151,19 @@ int btp_mission_tick(BtpState *s, const BtpResources *r, BtpAction a)
 {
     if (s->combat.phase) { btp_combat_tick(s,r,a);return 0; }
     BtpMissionState *m = &s->mission;
+    if (s->campaign.invasion && m->corner) {
+        for (unsigned i=0;i<2;++i) if (s->mech_skills[i]<4)
+            s->mech_skills[i]+=(uint8_t)(btp_rng_next(s->npc.rng)&1u);
+        s->story_flags[4]=1;s->story_flags[5]=(uint8_t)!s->combat.lost;
+        s->campaign.owned=(uint8_t)!s->combat.lost;
+        if (s->campaign.owned) memcpy(s->campaign.mech,s->combat.unit[0].record,125);
+        if (s->x_half>=128 || s->y_half>=128) {
+            s->campaign.world_x=(uint16_t)(1536+s->x_half);
+            s->campaign.world_y=(uint16_t)(1536+s->y_half);
+            s->x_half&=127;s->y_half&=127;
+        }
+        m->phase=BTP_MISSION_RESULT;s->mode=BTP_BUILDING;return 1;
+    }
     if (m->phase != BTP_MISSION_DRIVE) {
         if (a == BTP_ACCEPT) m->phase = BTP_MISSION_DRIVE;
         return 0;
@@ -165,7 +181,7 @@ int btp_mission_tick(BtpState *s, const BtpResources *r, BtpAction a)
             }
             /* 07DC:0C9E grants independent 0/1 ranks after assignment 5,
                even on withdrawal/failure; mastered ranks consume no draw. */
-            if (m->assignment==5) for (unsigned i=0;i<2;++i)
+            if (m->assignment>=5) for (unsigned i=0;i<2;++i)
                 if (s->mech_skills[i]<4) s->mech_skills[i]+=(uint8_t)(btp_rng_next(s->npc.rng)&1u);
             m->phase = BTP_MISSION_RESULT; s->mode = BTP_BUILDING; return 1;
         }
@@ -223,7 +239,7 @@ int btp_training_valid(const BtpState *s)
     if (q->phase > BTP_QUIZ_FAILED || q->selected >= 20 || q->round > 3 || q->point >= 10 ||
         q->failed > 1 || q->used >= 1024 || m->phase > BTP_MISSION_PICKUP || m->corner > 1 ||
         m->warned > 1 || m->idle > 10 || m->walk > 15 || m->direction > 7 ||
-        m->assignment > 5 || m->rubble > 7 || s->mech_skills[0] > 4 || s->mech_skills[1] > 4 ||
+        m->assignment > 7 || m->rubble > 7 || s->mech_skills[0] > 4 || s->mech_skills[1] > 4 ||
         s->checkpoint_mech_skills[0] > 4 || s->checkpoint_mech_skills[1] > 4 ||
         (s->entry_action != BTP_IDLE && !btp_action_moves((BtpAction)s->entry_action))) return 0;
     if ((s->mode == BTP_QUIZ) != (q->phase != 0)) return 0;
@@ -239,7 +255,7 @@ int btp_training_valid(const BtpState *s)
     if (!m->phase) return s->mode != BTP_MISSION && !m->corner && !m->warned && !m->idle && !m->walk && !m->direction && !m->elapsed &&
         !m->assignment && !m->rubble && !m->rubble_under;
     if ((m->assignment!=1 && (m->rubble || m->rubble_under)) || (m->assignment && m->elapsed)) return 0;
-    if (s->entry_slot || s->story_flags[4] || s->story_flags[2] > 2 || !s->checkpoint_valid) return 0;
+    if (s->entry_slot || (s->story_flags[4] && !s->campaign.invasion) || s->story_flags[2] > 2 || !s->checkpoint_valid) return 0;
     if (m->phase == BTP_MISSION_RESULT) return s->mode == BTP_BUILDING;
     if (s->mode != BTP_MISSION || s->script.status != BTP_SCRIPT_NATIVE || s->script.native_action != 1 || s->story_flags[0] != m->assignment) return 0;
     if (m->phase == BTP_MISSION_WARNING && (!m->warned || m->corner)) return 0;

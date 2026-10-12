@@ -21,6 +21,10 @@ void btp_start(BtpState *s)
         .loop_timer=249,.allowance_pending=1};
     s->story_flags[51] = 50;
 }
+const BtpMap *btp_active_map(const BtpResources *r,const BtpState *s)
+{
+    return s->map_id==11 ? &r->destroyed : &r->map;
+}
 
 void btp_tick(BtpState *s, const BtpMap *m, BtpAction a)
 {
@@ -79,6 +83,8 @@ static void checkpoint(BtpState *s)
     memcpy(s->checkpoint_skills,s->skills,sizeof s->skills);
     memcpy(s->checkpoint_mech_skills,s->mech_skills,sizeof s->mech_skills);
     s->checkpoint_technician=s->technician;s->checkpoint_apprentice=s->apprentice;
+    s->campaign.checkpoint_owned=s->campaign.owned;
+    memcpy(s->campaign.checkpoint_mech,s->campaign.mech,125);
 }
 static void start_building(BtpState *s, const BtpResources *r)
 {
@@ -105,6 +111,8 @@ static void finish_script(BtpState *s, const BtpMap *m)
             memcpy(s->mech_skills,s->checkpoint_mech_skills,sizeof s->mech_skills);
             s->technician=s->checkpoint_technician;s->apprentice=s->checkpoint_apprentice;
             s->armor = s->checkpoint_armor; s->armor_points = s->checkpoint_armor_points;
+            s->campaign.owned=s->campaign.checkpoint_owned;
+            memcpy(s->campaign.mech,s->campaign.checkpoint_mech,125);
             if (s->npc.enabled) s->npc.allowance_pending = (uint8_t)btp_economy_below_cap(s);
         }
         s->bank = (BtpBankState){0};
@@ -115,8 +123,14 @@ static void finish_script(BtpState *s, const BtpMap *m)
         s->cutscene = (BtpCutsceneState){0};
         s->mode = BTP_SCRIPT_FAULT;
     } else if (s->script.status == BTP_SCRIPT_END) {
+        if (s->campaign.invasion) {
+            s->campaign.invasion=0;s->map_id=11;
+            s->mission=(BtpMissionState){0};s->combat=(BtpCombatState){0};
+            s->effects=(BtpEffectsState){0};
+            s->npc=(BtpNpcState){.rng={s->npc.rng[0],s->npc.rng[1],s->npc.rng[2]}};
+        }
         /* The original commits the pending outdoor step after FF. */
-        if (s->entry_slot || s->script.native_action != 3) {
+        if (s->map_id!=11 && (s->entry_slot || s->script.native_action != 3)) {
             s->x_half = m->entrance_x[s->entry_slot] & 127;
             s->y_half = m->entrance_y[s->entry_slot] & 127;
         }
@@ -135,20 +149,22 @@ static void finish_script(BtpState *s, const BtpMap *m)
         memset(s->checkpoint_skills,0,sizeof s->checkpoint_skills);
         memset(s->checkpoint_mech_skills,0,sizeof s->checkpoint_mech_skills);
         s->checkpoint_technician=s->checkpoint_apprentice=0;
+        s->campaign.checkpoint_owned=0;memset(s->campaign.checkpoint_mech,0,125);
         s->checkpoint_weapon = s->checkpoint_armor = s->checkpoint_armor_points = 0;
     }
 }
 void btp_game_tick(BtpState *s, const BtpResources *r, BtpAction a)
 {
+    const BtpMap *map=btp_active_map(r,s);
     story_in(s);
     if (s->mode == BTP_EXPLORE) {
         if (s->npc.fault) { ++s->tick; return; }
         BtpState moved = *s;
-        btp_tick(&moved, &r->map, a);
-        int entrance = btp_entrance(&moved,&r->map);
+        btp_tick(&moved,map,a);
+        int entrance = btp_entrance(&moved,map);
         if (btp_action_moves(a) && !moved.blocked &&
             (moved.x_half != s->x_half || moved.y_half != s->y_half) &&
-            (entrance >= 0 && btp_building_bld(r,(unsigned)entrance))) {
+            (s->map_id==1 && entrance >= 0 && btp_building_bld(r,(unsigned)entrance))) {
             moved.x_half = s->x_half; moved.y_half = s->y_half;
             moved.mode = BTP_ENTRY; moved.entry_slot = (uint8_t)entrance; moved.entry_selected = 0;
             moved.entry_action = moved.facing;
@@ -164,7 +180,7 @@ void btp_game_tick(BtpState *s, const BtpResources *r, BtpAction a)
     if (s->cutscene.active) {
         unsigned active = s->cutscene.active;
         if (btp_cutscene_tick(s,r) && active == 1) {
-            btp_script_animation_return(&s->script,&r->barracks,s->story_flags);
+            btp_script_animation_return(&s->script,btp_building_bld(r,s->entry_slot),s->story_flags);
             finish_script(s,&r->map);
         }
         return;
@@ -181,6 +197,12 @@ void btp_game_tick(BtpState *s, const BtpResources *r, BtpAction a)
         if (!btp_mission_tick(s,r,a)) return;
         btp_script_native_return(&s->script,&r->training,s->story_flags);
         if (s->script.status == BTP_SCRIPT_NATIVE && s->script.native_action == 2) btp_training_native(s,r);
+        if (s->script.status==BTP_SCRIPT_ANIMATION) {
+            (void)btp_rng_next(s->npc.rng);
+            if (!btp_cutscene_begin(s,r,s->script.animation_kind,1)) {
+                s->script.status=BTP_SCRIPT_ERROR;s->script.error=BTP_SCRIPT_NATIVE_CONTEXT;
+            }
+        }
         finish_script(s,&r->map); return;
     }
     if (s->mode == BTP_ENTRY) {
@@ -269,7 +291,7 @@ static uint16_t get16(const uint8_t *p) { return (uint16_t)(p[0] | (uint16_t)p[1
 void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
 {
     memset(b, 0, BTP_STATE_BYTES);
-    memcpy(b, "BTPG", 4); b[4] = 16;
+    memcpy(b, "BTPH", 4); b[4] = 17;
     for (unsigned i = 0; i < 4; ++i) b[8+i] = (uint8_t)(s->tick >> (8 * i));
     b[12] = (uint8_t)s->x_half; b[13] = (uint8_t)(s->x_half >> 8);
     b[14] = (uint8_t)s->y_half; b[15] = (uint8_t)(s->y_half >> 8);
@@ -353,6 +375,11 @@ void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
     }
     b[2305]=s->effects.count;b[2306]=s->effects.age;b[2307]=s->effects.pending;
     memcpy(b+2308,s->effects.shots,sizeof s->effects.shots);
+    b[2399]=s->campaign.invasion;b[2400]=s->campaign.owned;
+    memcpy(b+2401,s->campaign.mech,125);b[2526]=s->campaign.checkpoint_owned;
+    memcpy(b+2527,s->campaign.checkpoint_mech,125);
+    put16(b+2652,s->campaign.world_x);put16(b+2654,s->campaign.world_y);
+    b[2656]=s->story_flags[36];b[2657]=s->story_checkpoint[36];
 }
 
 int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *script, BtpState *s)
@@ -373,7 +400,8 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         n == 1024 && !memcmp(b,"BTPD",4) && b[4] == 13 ? 13 :
         n == 1024 && !memcmp(b,"BTPE",4) && b[4] == 14 ? 14 :
         n == 2048 && !memcmp(b,"BTPF",4) && b[4] == 15 ? 15 :
-        n == BTP_STATE_BYTES && !memcmp(b,"BTPG",4) && b[4] == 16 ? 16 : 0;
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPG",4) && b[4] == 16 ? 16 :
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPH",4) && b[4] == 17 ? 17 : 0;
     if (!version) return 0;
     for (unsigned i = 5; i < 8; ++i) if (b[i]) return 0;
     if (version == 1) { for (unsigned i = 20; i < 24; ++i) if (b[i]) return 0; }
@@ -390,7 +418,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
             if (version == 9) for (unsigned i = 403; i < n; ++i) if (b[i]) return 0;
             if (version >= 10) {
                 if (b[425]) return 0;
-                unsigned start=version==10 ? 434u : version==11 ? 441u : version==12 ? 450u : version<15 ? 896u : version>=16 ? 2399u : 1803u;
+                unsigned start=version==10 ? 434u : version==11 ? 441u : version==12 ? 450u : version<15 ? 896u : version>=17 ? 2658u : version>=16 ? 2399u : 1803u;
                 for (unsigned i=start;i<n;++i) if (b[i]) return 0;
                 if (version>=13) for (unsigned i=version>=15 ? 460u : 452u;i<512;++i) if (b[i]) return 0;
                 if (version==13 && b[878]) return 0; /* v14 firing-effect countdown. */
@@ -398,6 +426,15 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         }
     }
     BtpState result = {.credits=35,.allowance_cap=50};
+    if (version>=17) {
+        result.campaign.invasion=b[2399];result.campaign.owned=b[2400];
+        memcpy(result.campaign.mech,b+2401,125);result.campaign.checkpoint_owned=b[2526];
+        memcpy(result.campaign.checkpoint_mech,b+2527,125);
+        result.campaign.world_x=get16(b+2652);result.campaign.world_y=get16(b+2654);
+        result.story_flags[36]=b[2656];result.story_checkpoint[36]=b[2657];
+        if (result.campaign.invasion>1 || result.campaign.owned>1 || result.campaign.checkpoint_owned>1 ||
+            result.campaign.world_x>2047 || result.campaign.world_y>2047) return 0;
+    }
     if (version>=16) {
         result.terrain_next=b[2048];if (result.terrain_next>63) return 0;
         for (unsigned i=0;i<64;++i) {
@@ -413,9 +450,10 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
     result.x_half = (uint16_t)(b[12] | (uint16_t)b[13] << 8);
     result.y_half = (uint16_t)(b[14] | (uint16_t)b[15] << 8);
     result.map_id = b[16]; result.gate = b[17]; result.facing = b[18]; result.blocked = b[19];
-    if (result.map_id != 1 || result.gate != 85 ||
+    if ((result.map_id != 1 && !(version>=17 && result.map_id==11 && b[28])) || result.gate != 85 ||
         (version >= 10 ? result.facing != BTP_IDLE && !btp_action_moves((BtpAction)result.facing) : result.facing > BTP_RIGHT) ||
-        result.blocked > BTP_EDGE || result.x_half >= 2 * m->width || result.y_half >= 2 * m->height)
+        result.blocked > BTP_EDGE || result.x_half >= 2 * m->width ||
+        (result.y_half >= 2 * m->height && !(version>=17 && result.campaign.invasion && result.y_half<=129)))
         return 0;
     if (version > 1) {
         result.mode = b[20]; result.entry_selected = b[21]; result.entry_slot = b[22];
@@ -533,7 +571,8 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
                     (!v->mech_result && v->mech_after) ||
                     (v->mech_result && (result.entry_slot || result.mission.phase != BTP_MISSION_RESULT ||
                         !result.story_flags[1] || !v->mech_after)) ||
-                    (v->animation_kind ? v->animation_kind != 8 || v->animation_flags != 1 || result.entry_slot != 6 : v->animation_flags != 0)) return 0;
+                    (v->animation_kind ? (v->animation_kind != 8 && !(version>=17 && v->animation_kind==9)) || v->animation_flags != 1 ||
+                        (v->animation_kind==8 ? result.entry_slot != 6 : result.entry_slot != 0) : v->animation_flags != 0)) return 0;
             } else {
                 result.entry_action = result.facing;
                 result.story_flags[45] = result.recruitment; result.story_flags[46] = result.talk_result;

@@ -5,13 +5,16 @@
 
 int btp_combat_data_decode(const uint8_t *b, size_t n, BtpCombatData *d)
 {
-    int v2=n==BTP_COMBAT_DATA_BYTES && !memcmp(b,"BTC2",4);
+    if (!b || !d) return 0;
+    int v3=n==BTP_COMBAT_DATA_BYTES && !memcmp(b,"BTC3",4);
+    int v2=v3 || (n==BTP_COMBAT_DATA_V2_BYTES && !memcmp(b,"BTC2",4));
     if (!v2 && (n!=BTP_COMBAT_DATA_V1_BYTES || memcmp(b,"BTC1",4))) return 0;
     BtpCombatData v={0}; size_t p = 4;
 #define COPY(field) do { memcpy(v.field,b+p,sizeof v.field); p += sizeof v.field; } while (0)
     COPY(loans); COPY(weapons); COPY(arcs); COPY(locations); COPY(clusters);
     COPY(critical_start); COPY(critical_count);
     if (v2) { COPY(poses);COPY(reaction);COPY(impact); }
+    if (v3) { COPY(jenner); }
 #undef COPY
     for (unsigned i = 0; i < 15; ++i) if (v.arcs[i] > 3) return 0;
     for (unsigned i = 2; i < 46; ++i) if (v.locations[i] < 17 || v.locations[i] > 27) return 0;

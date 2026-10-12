@@ -49,6 +49,11 @@ typedef struct {
 } BtpCombatEffect;
 typedef struct { uint8_t count,age,pending;BtpCombatEffect shots[7]; } BtpEffectsState;
 typedef struct {
+    uint8_t invasion, owned, mech[125];
+    uint8_t checkpoint_owned, checkpoint_mech[125];
+    uint16_t world_x,world_y;
+} BtpCampaignState;
+typedef struct {
     uint32_t tick;
     uint16_t x_half, y_half;
     uint8_t map_id, gate, facing, blocked;
@@ -82,6 +87,7 @@ typedef struct {
     BtpTerrainMark terrain_marks[64];
     uint8_t terrain_next;
     BtpEffectsState effects;
+    BtpCampaignState campaign;
 } BtpState;
 enum { BTP_STATE_BYTES = 4096 };
 
@@ -94,6 +100,7 @@ int btp_game_text(const BtpState *state, const BtpResources *resources,
     uint8_t *output, size_t capacity, size_t *length);
 int btp_entrance(const BtpState *state, const BtpMap *map); /* index, or -1 */
 const BtpBld *btp_building_bld(const BtpResources *resources, unsigned slot);
+const BtpMap *btp_active_map(const BtpResources *resources,const BtpState *state);
 void btp_state_encode(const BtpState *state, uint8_t output[BTP_STATE_BYTES]);
 int btp_state_decode(const uint8_t *bytes, size_t length, const BtpMap *map,
     const BtpBld *script, BtpState *state);

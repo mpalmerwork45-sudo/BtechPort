@@ -159,7 +159,9 @@ void btp_print_state(const BtpState *s, const BtpResources *r)
     printf(",\"skills\":[%u,%u,%u],\"school_phase\":%u,\"school_course\":%u,"
         "\"school_before\":%u,\"school_outcome\":%u",s->skills[0],s->skills[1],s->skills[2],
         s->school.phase,s->school.course,s->school.before,s->school.outcome);
-    printf(",\"player_sprite\":%u,\"npc_sprites\":[",s->mission.phase ? (s->story_flags[2] ? 146u : 0u)+s->mission.walk : 166u+s->player_walk);
+    printf(",\"campaign\":{\"invasion\":%u,\"owned\":%u,\"world\":[%u,%u]},\"player_sprite\":%u,\"npc_sprites\":[",
+        s->campaign.invasion,s->campaign.owned,s->campaign.world_x,s->campaign.world_y,
+        s->mission.phase ? (s->story_flags[2] ? 146u : 0u)+s->mission.walk : 166u+s->player_walk);
     for (unsigned i = 0; i < 8; ++i) printf("%s%u",i ? "," : "",270u+s->npc_walk[i]);
     printf("],\"quiz\":{\"phase\":%u,\"selected\":%u,\"round\":%u,\"point\":%u,\"failed\":%u,\"used\":%u},"
         "\"mission\":{\"phase\":%u,\"corner\":%u,\"warned\":%u,\"elapsed\":%u,\"idle\":%u,\"terrain\":%u,"
