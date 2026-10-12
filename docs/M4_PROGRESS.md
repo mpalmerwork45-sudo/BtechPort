@@ -1,4 +1,4 @@
-# M4a–M4e working evidence — 2026-10-12
+# M4a–M4e working evidence — 2026-10-13
 
 Authorized: encounter results/ejection, original party/crew/field effects,
 further story and medical services, original cache sequence, original saves and
@@ -25,9 +25,9 @@ headless sanitizers, focused SDL checks and reference guard.
 | Space menu and splash correction | Implemented; numeric, pixel, six-slot and native input checks pass |
 | M4a: encounter aftermath/ejection | Implemented and committed; 114 executed-primary cases and saved continuations |
 | M4b: party/crew/field effects | Implemented and committed; formation, allocation, transfer, medical and technician vectors |
-| M4c: next story/town services | Hospital and jail-visitor companion routes implemented; primary effects and every-input saved continuations pass |
+| M4c: next story/town services | Hospital/jail, hut, cinema, laser shop, house and prison/arena theft routes; original effects and saved/native continuations |
 | M4d: original cache sequence | Implemented from original GAME1 prerequisite; 530 primary cases and complete input-only ending route pass |
-| M4e: original saves/sound/presentation | Original saves, menus, map, inspection and sequential combat presentation pass; further owner fidelity requests remain active |
+| M4e: original saves/sound/presentation | Original saves, menus, map, inspection, sequential effects/wreck sounds and the requested follow-ups have bounded coverage |
 
 ## Space menu and step amount
 
@@ -495,3 +495,80 @@ still in progress; these follow-ups are not a complete-campaign claim.
 Verification for this follow-up commit: all 41 regular and sanitizer core
 tests pass. The new building routes restore state before every input. Native
 window checks for these additional routes will run with the theft follow-up.
+## Theft, encounter and sound follow-ups — native v29
+
+**VERIFIED setup comparisons:** `theft-primary.txt` executes original
+`07DC:0D49` for eight prison guards and the owned/rented arena rosters, across
+four RNG seeds and arena difficulty 0/5/6. All 68 cases compare exact RNG,
+packed coordinates, generated guard records, arena record fingerprints and
+sprite/gait selection. Guard formation indices are the original person slots
+8..15. The arena's second rented enemy uses the original spectator template
+and fixed `0A06/8066` position. Enemy sprite bases follow DS:140E; owned mechs
+retain the garage's Locust/other rule.
+
+**VERIFIED native integration:** ordinary input routes search three distinct
+prison mechs, show two failed starts and the successful O0/startup sound, return
+with a Stinger and allocate Jason to bay two. The original timer dispatches
+guards on its 81st yard loop. Its guard refusal and first complete fight round
+restore/continue too. Arena rental starts with O0 and its sound before settings;
+firing at the spectator uses the original E48E line-of-sight bypass. Destroying
+it dispatches the two original UrbanMechs at `097D/8030` and `097D/8070` and the
+two DS:4209/4235 alarm messages. Walking into the original west-side escape band
+retains the rental and restores the party before allocation. The original
+allocator requires abandoning an unpiloted mech when this three-pilot GAME3
+prerequisite acquires a fourth vehicle. Both theft histories restore before
+every input. Full alternative theft/loss branches are not claimed verified.
+
+The arena's mounted terrain view uses threshold 139. `187F:1ECE` copies a
+working terrain grid; it does not create a fabricated hole in the stored map.
+Arena force-field strips use original `09B8:137F/1441` cells and RNG when opened.
+Prison movement uses the actual MAP3 town/impound context. Two integration bugs
+are fixed: campaign movement no longer writes training-only animation fields,
+and arena epilogues start pending allocation in the same tick, so every exposed
+state can be saved.
+
+**VERIFIED event decisions:** `event-audit-primary.txt` contains 154 original
+comparisons: all 33 weapons, visible/hidden beam playback, hit/miss sound IDs,
+normal wreck/arena-alarm sound IDs, and ten seeds for Yes/No encounter evasion.
+Original `103B:048A..04BE` asks whether to engage before computer/messages/graphics.
+A successful No leaves before cash/salvage; a failed No shows DS:343A. The native
+prompt includes the original attacking-force counts. Special training, prison,
+arena and Rex calls retain their different forced-combat arguments.
+
+Combat sound selection follows the original `12E8:1521..1680`, beam
+`19EA..1A07`, hit `1A07..1A1C`, wreck `1C76` and arena-alarm `1C9F` branches.
+The missing wreck sound 8 and arena sound 7 now finish before outtakes, popups
+or outcomes advance. Offscreen beams respect the original visibility gate;
+exact viewport-edge visibility margins remain **APPROXIMATE**. The eighteen
+program/divisor/noise fingerprints and twenty executed busy-loop timing cases
+remain covered. The nominal 8 MHz 8088 model is not a measured hardware recording;
+physical filtering, prefetch contention and calibration remain approximate.
+
+Eight SDL saved tails cover newspaper/chow, cinema, rejected/qualified hut,
+laser distribution, prison search and arena pursuit. They compare actual
+recorded input, full native/headless state and final RGB pixels. Native
+M4 acceptance additionally covers real Space selection, six slots, character
+and mech inspection, both overhead maps, startup/intro/escape controls, queued
+combat PCM, invasion/garage/party services, medical stories, cache and ending.
+These are native integration checks, not whole-screen DOS parity claims.
+
+Internal **BTPT/v29** retains the 20,480-byte payload. Yard state occupies
+19305..19883 and the post-invasion reply index occupies 19884. The earlier saved
+travel/invasion fields remain at 19292..19304. BTP2/3/10/11 migration checks now
+explicitly exclude the direction history absent from those old formats while
+preserving equality of represented gameplay fields. BTCB/v11 supplies arena
+records/formations; BTTA/v13 supplies 172 original text ranges. Original assets,
+RAM, executable and reference code remain outside Git. New C paths include
+incremental source/behavior comments. General later garage actions 31/32,
+whole theft alternatives, fresh-game campaign completeness and broader
+combat/pixel/physical-audio parity remain open.
+
+**PASS final v29 acceptance:** all 43 regular and ASan/UBSan/LeakSanitizer suites,
+the complete historical regression and full sanitizer scripts, native M4
+acceptance and eight additional building/theft SDL tails. The theft suite has
+167,485 assertions, including all eleven original enemy sprite selections;
+the event suite has 896 assertions. `work/m4-audit/followup-test.log` and
+`followup-sanitize.log` retain the local output. Code/fixtures are committed
+as `fbda805`. The immutable reference guard verifies all 1,287 content/mode/mtime
+entries; no original assets or executable files are committed and nothing is
+pushed. The next five bounded tasks are listed in PROJECT_STATUS.md.

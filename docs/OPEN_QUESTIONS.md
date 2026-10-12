@@ -1,59 +1,55 @@
-# Open questions after bounded M3d–M3h — 2026-10-12
+# Open questions after bounded M4 work — 2026-10-13
 
-The invasion, destroyed Citadel, native world generation/travel, Starport,
-Rex/Commando and technician recruitment, owned-mech services, title music and
-building portraits are implemented. See [evidence](M3D_H_PROGRESS.md) and
-[next five tasks](PROJECT_STATUS.md). Confidence applies to each compared span,
-not to the complete campaign.
+The authorized M4 increments have playable, tested paths. Confidence belongs
+to the individual original comparisons and recorded continuations in
+[M4 evidence](M4_PROGRESS.md), rather than to every branch of the original game.
+The next five proposed tasks are in [project status](PROJECT_STATUS.md).
 
-1. **Invasion and character loss:** the native combat-window escape approximates
-   the original packed-sector crossing. Mech retention and loss presentation
-   are tested, but full original pilot ejection, body damage and character-loss
-   RNG remain open. General encounters still finish on destruction of unit zero;
-   the original broader surviving-party/wreck paths need recovery.
-2. **World encounters:** generation matches 30 whole sectors across three seeds,
-   and 18 original candidate rosters match. Terrain placement, engagement/flee,
-   cadence, mixed-party AI, loot/salvage and aftermath need whole-encounter
-   comparisons. Global RNG/bootstrap and world-seed initialization remain
-   approximate. Town maps and BLD dispatch are loaded, but only the bounded
-   Starport route has later-town integration coverage.
-3. **Party and technicians:** Rex and generic agent records are compared; saved
-   following, inspection and selected-person shop equipment work. Original
-   formation, multi-unit collision, complete crew allocation, equipment transfer,
-   technician field repairs and understudy effects remain open. Recruitment's
-   post-dialogue RNG coin uses native logical ticks instead of the DOS busy loop.
-4. **Services:** 47 original numeric cases cover refits and partial repair/reload
-   boundaries. The native service layout and batched presentation remain
-   approximate. Weapon/sink/leg repair costs follow recovered instructions but
-   need broader differential cases; unrelated engine/gyro/sensor damage is kept.
-5. **Later campaign:** spy outcomes, more companions, timed NPC routes, healing,
-   later BLD actions, original cache puzzles and the ending remain unfinished.
-   Unsupported native/script contexts produce visible errors.
-6. **Long-route NPC/RNG timing:** the first quiz/mission RNG matches; long
-   original waits before keys alter later arrivals/quiz draws. The earlier
-   181-checkpoint comparison retains three explicit RNG prerequisites.
-   Native input-only playability does not prove complete original timing.
-7. **Combat and effects:** earlier live turns and independent friendly orders
-   pass their bounded checks. General initiative, broader mixed-party decisions
-   and defeat outcomes need original comparisons. The presentation effect queue
-   remains bounded to seven events, so larger encounters can omit extra visual
-   effects even though numeric attacks resolve. The stationary training shell
-   remains the user's deliberate change; original moving-target fixtures remain.
-8. **Graphics and audio:** PC speaker title divisors/timing and the building
-   portrait table match original instructions. Host PCM volume/filtering, frame
-   cadence, beam placement and whole-screen parity are approximate. The
-   portrait-entry quality/RNG guard, further animation dispatch, combat sounds,
-   PCjr audio and remaining status UI are not fully recovered.
-9. **Original GAME compatibility:** supplied saves are 3,913 bytes; original
-   import/export requires executed load/save/reload comparisons. Internal
-   BTPI/v18 has a 16,384-byte payload / 16,400-byte BTS1 file and preserves
-   party, service, music and combat state. v1–v17 migrate only their represented
-   contexts. World initialization is still owner-cache-derived.
-10. **Portability and distribution:** Windows remains untested. Any requested
-    distribution needs asset/licence review; independent C alone provides no
-    legal clean-room or asset-rights guarantee.
+1. **Fresh-game campaign completeness — UNKNOWN.** The ending route imports
+   original GAME1 with late quest/party prerequisites. Hut success uses GAME5;
+   several town routes use GAME3. These explicit prerequisites shorten testing
+   but do not prove a complete native campaign from a new cadet.
+2. **Theft branches — partial VERIFIED coverage.** Prison search success,
+   failed starts, third-mech startup, restoration/allocation, the guard timer,
+   eight-guard setup, flee refusal and one combat round are covered. Arena
+   rental, spectator damage/alarm, two UrbanMechs, walking escape and retention
+   are covered. Full original guard defeat, owned arena combat, normal returns,
+   all-bays-full cases and destroyed-mech recovery need further comparisons.
+3. **Later native actions — UNKNOWN contexts remain visible.** Garage repair
+   actions 31/32 remain unsupported. Additional BLD branches must be audited
+   before claiming all town services. Unknown actions produce diagnostics.
+4. **Whole encounters — APPROXIMATE beyond bounded comparisons.** Candidate
+   generation, formations, attacks, cooling, ejection and aftermath have primary
+   cases. Placement/cadence, broader initiative and mixed-party AI still need
+   complete DOS encounter traces. The arena movement threshold is recovered;
+   general mounted exploration thresholds need a separate broader audit.
+5. **Timing and NPC arrival — APPROXIMATE.** Native logical ticks replace DOS
+   busy loops. Long original waits and recruitment coins can consume a
+   different RNG history. Earlier explicit later-quiz prerequisites remain
+   documented. Recorded input-only playability does not establish timer parity.
+6. **Sound — programs VERIFIED, physical response APPROXIMATE.** All eighteen
+   speaker programs, attack effect selections, hit/wreck/arena-alarm dispatch
+   and sequential continuation are checked. Busy-loop conversion is a nominal
+   Intel 8 MHz 8088 model with midpoint IMUL timing. Prefetch contention,
+   interrupts, physical speaker filtering/volume and actual XT calibration
+   recordings remain unverified. PCjr audio is not implemented.
+7. **Visual parity — mixed coverage.** Title RGB, selected original popup crops,
+   font/sprites and menu/inspection facts have primary comparisons. Broader
+   combat/map/portrait geometry, viewport-edge visibility margins, animation
+   cadence and several service layouts remain approximate.
+8. **Persistence — tested represented fields.** All six supplied original saves
+   roundtrip unchanged; unmodeled original bytes are preserved. Internal
+   BTPT/v29 includes active theft/audio/menu states. Old formats cannot recover
+   history that they never stored. Original export remains limited to supported
+   outdoor contexts rather than every internal native mode.
+9. **Portability — UNKNOWN.** Windows builds and audio/input behavior have not
+   been tested. The independent runtime is C11/SDL2; research tools and cached
+   assets are separate from its runtime dependencies.
+10. **Distribution.** Original art/music/text/executable data stay outside Git.
+    Independent C does not itself establish clean-room or asset rights. Any
+    requested distribution needs a separate provenance/licence review.
 
-The immutable-tree guard includes both supplied trees' content, modes, mtimes
-and Git metadata. Known external editor metadata drift is restored exactly to
-the recorded baseline. Local commits remain on main without pushes. README
-acknowledgements credit the reverse-engineering contributors explicitly.
+Both reference trees are guarded by content, mode, timestamp and Git-metadata
+checks. Known external editor metadata drift is restored only when its exact
+baseline is established. No reference code is copied into the port and no
+remote push is authorized.

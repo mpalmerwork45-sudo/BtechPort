@@ -2,7 +2,7 @@
 
 Independent C11/SDL2 recreation of **BattleTech: The Crescent Hawk's Inception**,
 supplied DOS version 1.03. **M0, M1, bounded M2a–M2m and M3a–M3h are complete.**
-M4a–M4e are underway; [current evidence and limits](docs/M4_PROGRESS.md)
+M4a–M4e have bounded playable implementations; [current evidence and limits](docs/M4_PROGRESS.md)
 cover the Space menu, six save slots, splash palette, combat opening prompts,
 PC-speaker effects, combat outtakes and training return-to-base message.
 All six supplied original GAME files now import and roundtrip exactly. To use
@@ -24,8 +24,13 @@ inspect party equipment, and use mech repairs, ammunition and Speed Shop refits.
 The original title music, building portraits and recruitment crest now play.
 F4 follows travel across independently generated original terrain. Native
 save/load preserves party, service prompts, music, animation and combat.
-The wider campaign remains unfinished; encounter timing, following and parts of
-the service interface remain approximate.
+The house's newspaper/holodisk/chow, inventor's hut, cinema, laser shop and
+prison/arena theft routes are playable. Random encounters describe the attacking
+force and offer fight/avoid. Garage checkout opens crew allocation; the invasion
+shows its original messages and destroyed map during combat. Combat effects,
+hits, wrecks and arena alarms play sequentially.
+The wider campaign remains unfinished; encounter timing, following, physical
+speaker response and parts of the service interface remain approximate.
 
 ## Acknowledgements
 
@@ -211,14 +216,15 @@ Omit `--replay` to start outdoors with the visibly labeled checkpoint; five Up, 
 NPC, shop, banking, training and combat comparisons. M3d–M3h adds 16 invasion
 setups, 30 whole generated sectors, 65 recruitment cases, 18 mixed encounter
 setups, 47 service cases, 128 speaker pitches and the complete 17,409-step title
-interrupt trace. All 34 CTest suites, the historical headless regression,
-headless ASan/UBSan/LeakSanitizer and focused native campaign/save checks pass.
-**APPROXIMATE:** invasion escape boundary, encounter placement/timing/AI/flee,
-party following/allocation, service layout, animation cadence, beam placement,
-world bootstrap and host audio filtering. **INFERRED/UNKNOWN:** pilot ejection,
-character loss and encounter loot, field technician effects, original GAME
-saves, other sound contexts and the full campaign. Earlier long-route NPC/RNG
-gaps and explicit later-quiz prerequisites remain documented.
+interrupt trace. The current build has 43 CTest suites, with additional original
+save, aftermath, crew, medical, cache, theft and event comparisons described in
+[M4 evidence](docs/M4_PROGRESS.md).
+**APPROXIMATE:** encounter placement/timing and broader AI/initiative, following,
+several UI layouts, animation cadence, beam placement, world bootstrap and
+physical speaker filtering. The speaker clock model targets a nominal 8 MHz
+8088; exact physical XT playback is not claimed. **UNKNOWN:** complete fresh-game
+campaign coverage and remaining story/repair/theft branches. Earlier long-route
+NPC/RNG gaps and explicit later-quiz prerequisites remain documented.
 
 **M2i sprites:** all 376 original sprite crops match the EXE's RAM, and walking tests
 cover 30 player checkpoints, four exact player pixel crops and 63 NPC frame steps.

@@ -1,10 +1,13 @@
-# Build, verification and original oracle — 2026-10-12
+# Build, verification and original oracle — 2026-10-13
 
 ## Current M4 presentation checks
 
-The active build has 40 CTest suites. Internal saves are BTPR/v27, with a
+The active build has 43 CTest suites. Internal saves are BTPT/v29, with a
 20,480-byte payload; old versions retain explicit migrations. Current caches
-are BTTA/v10, BTCA/v10 and BTW3. The older sections below describe earlier increments.
+are BTTA/v13, BTCB/v11 and BTW3. The older sections below describe earlier increments.
+All 43 regular and ASan/UBSan/LeakSanitizer suites, the full historical and
+sanitizer scripts, native M4 acceptance and the eight follow-up tails pass.
+The final reference guard verifies all 1,287 entries unchanged.
 Native focused checks: `--intro-only`, `--menu-only` and `--presentation-only`
 on `tools/native_smoke.py`. The menu probe includes saving/loading from the
 character, mech and overhead screens. These compare actual recorded SDL keys,
@@ -14,6 +17,8 @@ then reads the actual X11 window pixels and checks visible terrain and F5/F9.
 `--m4-acceptance` bundles the native intro, six-slot menu, inspection, overhead,
 audio, original-save, aftermath, crew, campaign, hospital/jail and cache checks.
 `--story-only` includes paid treatment of an injured original GAME2 party.
+`--followups-only` checks native newspaper/chow, cinema, both hut outcomes,
+laser distribution, prison search and arena escape from saved ordinary prefixes.
 `--cache-only` verifies terminals, doors, the Phoenix display, map-room puzzle,
 ending and real F5/F9 while the map room and Phoenix display are open.
 
@@ -21,6 +26,12 @@ Primary numeric generators: `make_mech_view_vectors.py`,
 `make_world_view_vectors.py`, `make_story_vectors.py` and
 `make_speaker_timing_vectors.py`, all under tools/. They use the owner EXE in
 private emulated RAM and commit only numeric projections/source identities.
+`make_theft_vectors.py` adds 68 executed prison/arena setup cases;
+`make_event_audit_vectors.py` adds 154 weapon-sound and encounter-choice cases.
+`make_followup_replays.py --training` regenerates dependent ordinary routes in
+order when gameplay/presentation timing changes. Routine native checks replay
+short saved tails, so adding a later mission does not require repeatedly playing
+every earlier mission in real time.
 Speaker timing is a nominal 8 MHz 8088 model; physical hardware filtering and
 interrupt/prefetch costs remain approximate. See [M4 evidence](M4_PROGRESS.md).
 

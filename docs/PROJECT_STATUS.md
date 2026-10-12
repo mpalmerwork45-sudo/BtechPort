@@ -1,154 +1,106 @@
-# Project status — M4 in progress, 2026-10-12
+# Project status — bounded M4 acceptance, 2026-10-13
 
-M4a and M4b are implemented and committed. Original-save compatibility, intro,
-Space menus, inspection, fog/TINYLAND and combat presentation are tested in
-M4e. Hospital numeric effects pass primary comparisons; further M4c story
-routes and M4d's original cache puzzle/ending are still in progress.
-See [current M4 evidence](M4_PROGRESS.md) for precise limits and acceptance.
+The independent C11/SDL2 port has playable implementations of the authorized
+M4a–M4e increments and the subsequent building, theft, encounter and presentation
+requests. M4 as a complete original campaign remains unfinished. The original
+cache and ending route starts from the owner's late GAME1 prerequisite; it does
+not establish a fresh-game route through every earlier quest.
 
-All five authorized follow-on milestones have playable implementations and
-bounded original comparisons. The seventh-assignment invasion leads through
-the destroyed Citadel into the outer world. Starport's garage, civilian clothing,
-inauguration, Rex/Commando grant and technician recruitment follow ordinary
-inputs. Owned-mech repairs, ammunition and Speed Shop refits are integrated.
-The original title music, building portraits and recruitment crest now play.
-See [M3d–M3h evidence](M3D_H_PROGRESS.md) for confidence and remaining differences.
-
-Earlier training, Rick/device, diagonal movement, route arrows, physical
-attacks, force-field electricity and original borders remain covered. The third
-assignment's shell stays stationary as requested. The wider campaign is unfinished.
+See [M4 evidence](M4_PROGRESS.md) for original routines, explicit prerequisites
+and confidence limits. README credits the reverse-engineering contributors.
+Reference directories are immutable; original assets and emulator RAM stay in
+ignored work files. Local commits remain on `main`, with no push.
 
 ## Milestones
 
-| Gate | Result |
+| Gate | Bounded result |
 |---|---|
-| M0 | Research/inventory/runtime audit; C11/SDL2 decision |
-| M1 | Native MAP1 exploration and terrain collision |
-| M2a | Citadel entry, six Hall screens and exit |
-| M2b | First Katrina conversation and repeat denial |
-| M2c | Native Talk/Done/reply; explicit controlled checkpoint |
-| M2d | MAP1 NPC travel; conversation reachable through exploration |
-| M2e | Two shop purchases, confirmations, allowance and persistence |
-| M2f | ComStar investments/returns, boundaries and both shops' Talk |
-| M2g | Internal save slot, integrity, native controls and continuation |
-| M2h | Paid classes, tuition/refusals, cooldown and re-enrolment |
-| M2i | Original walking sprites, persistent gait and mech preview |
-| M2j | First MechWarrior mission/sleep; all goods; lounge; diagonals |
-| M2k | Rubble pickup/carrying/return; all loan choices and objectives |
-| M2l | Ordinary two-mission/rest loop through the third briefing |
-| M2m | O0/O8 playback, original font/borders and animation persistence |
-| M3a | Third-assignment manual weapons combat, stationary shell, route arrows and victory/report |
-| M3b | Kick; fourth/fifth assignments and Mechit-Lube apprenticeship |
-| M3c | Live turns, twelve waypoints, flames/effects, map electricity, Rick/device, sixth assignment and generated Citadel view |
-| M3d | Seventh/eighth invasion branches, Jenner setup, surviving-mech ownership, loss presentation and destroyed Citadel escape |
-| M3e | Independent C world generation, travel/town overlays, encounter gates and Starport garage |
-| M3f | Rex/Commando, party inspection/equipment recipient, saved following and mixed encounters with independent friendly orders |
-| M3g | Owned-mech repair/ammo/refits, technician recruitment and selected-member apprenticeship |
-| M3h | Original PC speaker title sequence, building portraits and recruitment/invasion-loss animation contexts |
-| Remaining M4 | Broader encounter aftermath, original formation/crew behavior, later story/towns, original saves and ending |
-| M5 | Optional enhancements after original-mode completion |
+| M0 | Original inventory/runtime/research audit and C11/SDL2 decision |
+| M1 | Independent native MAP1 exploration and collision |
+| M2a–M2d | Citadel/Hall/Katrina, NPC travel and original dialogue |
+| M2e–M2h | Weapons/armour, ComStar, saved continuations and paid classes |
+| M2i–M2m | Original sprites, lounge, diagonals, first two missions/rest and animations |
+| M3a–M3c | Weapons/Kick, walk/run/jump, six training assignments, Rick/device, paths/electricity and live combat |
+| M3d–M3h | Invasion, destroyed Citadel, generated world, Starport, Rex, party/technician services and original music |
+| M4a | Encounter aftermath, cash/salvage, ejection and character-loss comparisons |
+| M4b | Formations, allocation, transfers, field healing and technician effects |
+| M4c | Hospital/jail companions and treatment; hut, cinema, laser shop, house and two theft routes |
+| M4d | Original cache puzzle/ending from GAME1, including eleven doors and MAP15 |
+| M4e | Six original-save imports/exports, six internal slots, original intro/menu/inspection/map, sequential sound and outtakes |
+| Owner follow-ups | Garage checkout allocation, invasion messages/DESTRUCT switch, walking escape, direction log, encounter Yes/No and source-based sprite selection |
+| Remaining original campaign | Fresh-game integration through all prerequisites, additional branches and broader DOS combat/presentation parity |
+| M5 | Optional enhancements after relevant original behavior is established |
 
 ## Play and verify
 
 ```sh
 ./scripts/build.sh
 ./build/btech-port --data "Original DOS"
-./build/btech-port --replay tests/fixtures/ordinary-starport.actions
-./build/btech-port --replay tests/fixtures/ordinary-rex.actions
-./build/btech-port --replay tests/fixtures/ordinary-services.actions
+./build/btech-port --load "Original DOS/GAME3"
 ./scripts/test.sh
-python3 tools/native_smoke.py --campaign-only
 ./scripts/test-sanitize.sh
+python3 tools/native_smoke.py --m4-acceptance
+python3 tools/native_smoke.py --followups-only
 ```
 
-The later replays execute ordinary input histories quickly in the headless core,
-then open an interactive window. They preserve the real campaign prerequisites
-without editing saves or jumping story flags. New native games show the original
-title and music; Enter begins play. `--mute` disables the audio device.
+Arrows/keypad move and select; two perpendicular arrows move diagonally.
+Enter or Space confirms. Space outdoors opens party/settings/save/map actions;
+Space also selects highlighted menu entries. F4 opens the explored overhead
+map, F5/F9 save/load the selected slot, and F3 toggles diagnostics. Escape
+declines or clears an amount; Ctrl+Shift+Escape closes. Holding Shift while
+pressing K, Y, R adds 10,000 credits, including in the intro.
 
-Arrows/keypad move and select; Enter/Space confirms; Backspace declines or
-recovers. Bank and ammo quantities use digits, Backspace erasure, Escape clear
-and Enter submission; Space does not submit. F3 toggles diagnostics, F4 the area
-map, F5/F9 save/load, R restarts, and Esc exits outside an amount editor.
-F5/F9 use `work/player-save.btp`; `--save-file FILE` chooses another slot.
-Failed loads preserve the session.
+The Infocom/Westwood screen precedes the title/music and played-before question.
+Yes opens saves; No starts training. Original GAME saves can be imported, and
+an imported save can be exported outdoors with `--export-original work/GAME3`.
+Six internal slots preserve active menus, animation/audio, combat and theft
+state. `--save-file FILE` changes their base name. Failed loads preserve play.
 
-Space outdoors after the attack opens party actions. Inspect/Equipment selects
-a member for display and subsequent shop purchases. Garage parking preserves
-all owned mech records; checkout has the original 150-credit fee. Mechit-Lube
-selects a mech, repair category, ammo bin/quantity or its scripted refit offer.
-In combat, the friendly-unit selector retains independent movement/weapon/Kick
-orders. General computer control remains an explicit unsupported command.
+The garage opens the original crew allocator during checkout. Jason can occupy
+any assigned mech bay. Random encounters describe the attacking force and ask
+whether to engage. No consumes the original RNG draw: three of four low-bit
+outcomes evade; failure shows the original notice before combat settings.
+Successful pre-combat evasion produces no loot or cash.
 
-## Evidence and verification
+## Verification and limits
 
-**PASS:** all 34 CTest suites, five Python tool tests, the complete historical
-headless regression and headless ASan/UBSan/LeakSanitizer. The final amount-editor
-fix is covered by core, campaign continuation, native keys and the updated
-sanitizer CTests. The SDL backend is checked natively but is not instrumented.
+The current build has 43 CTest suites. Newly executed original comparisons
+cover 68 prison/arena setups and 154 attack-sound/encounter decisions, alongside
+46 house/laser/cinema cases and the earlier campaign, medical, save and cache
+evidence. Prison and arena routes restore and continue before every input;
+the prison guard timer, flee refusal and first fight round are exercised too.
+Eight new SDL tails cover the house, cinema, hut, laser shop and both thefts,
+comparing recorded keys, complete continued state and final RGB pixels.
 
-New primary comparisons cover 16 invasion setups; 30 complete 64×64 world
-sectors across three seeds, including opposite world corners; 65 Rex/agent
-recruitment cases; 18 mixed encounter candidate cases; 47 repair/reload/refit
-cases; 128 speaker pitches; and the complete 17,409-interrupt title trace.
-Portrait dispatch uses the original 26-byte building table. Original SIF note
-bytes, images, executable spans and RAM remain outside Git.
+**PASS:** all 43 regular and ASan/UBSan/LeakSanitizer suites, the complete
+historical regression and full sanitizer script, native M4 acceptance and all
+eight new native building/theft tails. Both reference trees pass all 1,287
+content/mode/mtime checks. Code and fixtures are committed as `fbda805`.
 
-Campaign integration restores before every ordinary input through invasion,
-loss, Starport, Rex and services. The longest route has 48,159 actions and
-96,694 assertions. Native SDL checks compare recorded inputs, final canonical
-state and every final RGB pixel with headless playback. Focused tails cover
-498 invasion, 560 loss, 991 Starport, 1,193 Rex and 226 service inputs, taking
-roughly 0.5–2.5 seconds each. Prefixes are real input histories saved before the
-tail. Real F5/F9 checks cover the recruitment crest, partial ammo entry and music.
+**VERIFIED in these bounds:** numeric rules, resource interpretation, original
+BLD branches and saved/native continuations. **APPROXIMATE:** DOS busy-loop
+cadence, encounter placement and broader AI/initiative, following, several UI
+layouts and physical speaker response. Audio uses original effect programs and
+a nominal 8 MHz 8088 timing model; no exact recording from physical XT hardware
+is claimed. Enemy Jenner/UrbanMech sprite bases follow the original enemy table,
+while owned mechs use the original garage selection rule.
 
-Earlier M3c comparisons retain 126 full live turns, 108 waypoint cases, 128 flame
-cases, 161 pose/gait programs, 60 terrain-animation crops, 144 training setups
-and 225 result cases. The full historical checks retain ordinary training,
-Kick-only and Rick/sixth routes. Focused verification avoids repeatedly spending
-real time traversing the campaign; normal play keeps 32ms logical ticks.
-
-**APPROXIMATE:** the invasion handoff at the bounded combat window edge;
-encounter cadence, terrain placement, engagement/flee and mixed-party AI;
-party following and crew-allocation UI; service layout/batching; DOS busy-loop
-timing after recruitment; animation cadence and host audio filtering.
-Complete original pilot ejection/character loss, encounter loot, field
-technician repairs, other sound dispatch, GAME import/export and the later
-campaign remain unverified or unimplemented. Old long-route NPC/RNG gaps and
-later-quiz prerequisites remain documented. A 24-unit logical encounter does
-not establish complete original party-combat parity.
-
-## Persistence and provenance
-
-Current saves are **BTPI/v18**, a 16,384-byte payload in the 16-byte BTS1
-length/CRC envelope: 16,400 bytes total. Party, extended combat, service input,
-animation and speaker timing survive reload; older v1–v17 layouts migrate.
-These are internal saves, with no original GAME compatibility claim.
-
-The runtime is independent C11/SDL2. Owner-derived BTT6, BTC6 and BTW2 caches
-retain provenance. BTW2 contains static numeric generation inputs; the native
-core generates arbitrary sectors independently. Build preparation and play no
-longer need an emulator. Optional research fixtures execute bounded unmodified
-original instruction spans. No original art, music stream, executable, RAM or
-GPL reference runtime code enters Git.
-
-The final immutable-tree guard checks all 1,287 reference entries, including
-content, modes, timestamps and Git metadata. Local commits remain on `main`;
-no push was made. README acknowledgements explicitly credit UnBattletech's
-Edoardo Barolo/velteyn, Maximilien Noal and the other research/tool contributors.
+Internal saves are **BTPT/v29**, with a 20,480-byte payload inside the BTS1
+length/CRC envelope. Current local caches are BTTA/v13, BTCB/v11 and BTW3.
+Older saves migrate their represented fields; absent direction/exploration
+history cannot be reconstructed. Build and play need no emulator. Optional
+oracle tools execute bounded original instructions and commit numeric results
+and source hashes only.
 
 ## Next five proposed tasks
 
-1. **M4a — Encounter results:** original engagement/flee decisions, rewards,
-   salvage and aftermath, including pilot ejection and character-loss paths.
-2. **M4b — Party and crews:** recover original formation, collision, crew
-   allocation and equipment-transfer behavior; verify technician field effects.
-3. **M4c — Next story and town services:** the next reachable companion/story
-   branch, spy outcomes, hospital healing and timed NPC events.
-4. **M4d — Original cache sequence:** recover the original Star League cache
-   path and puzzle with bounded input routes and saved intermediate states.
-5. **M4e — Original saves and remaining presentation:** GAME import/export
-   round trips, original sound-effect dispatch and remaining status/portrait UI.
-
-Each proposal needs a bounded original audit before its implementation; these
-five tasks are not a claim that all remaining campaign work fits those increments.
+1. Record a fresh-game campaign route through all disk/password/party
+   prerequisites into the cache, with matching original checkpoints.
+2. Extend prison/arena comparisons to guard defeat, owned-mech arena fights,
+   normal rental return, full garages and recovery after losing a mech.
+3. Recover the remaining later garage repair native actions 31/32 and verify
+   the corresponding original building branches.
+4. Compare complete larger encounters against DOS, including initiative,
+   multiple ejections, mixed-party AI and aftermath.
+5. Compare additional original combat/menu/map frames and recorded speaker
+   waveforms; refine remaining UI margins, cadence and XT playback.
