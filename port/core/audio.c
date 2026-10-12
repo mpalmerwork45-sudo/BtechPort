@@ -63,14 +63,14 @@ void btp_audio_samples(BtpAudioState *v,const BtpResources *r,unsigned count,int
 int btp_audio_valid(const BtpState *s)
 {
     const BtpAudioState *v=&s->audio;
-    if (v->sound_count>24 || v->event>BTP_SOUND_EVENTS || v->sound_fraction>=BTP_AUDIO_RATE || v->remaining>UINT32_C(131072000)) return 0;
-    for (unsigned i=0;i<24;++i) if (i<v->sound_count ? !v->sounds[i] || v->sounds[i]>18 : v->sounds[i]!=0) return 0;
+    if (v->sound_count>48 || v->event>BTP_SOUND_EVENTS || v->sound_fraction>=BTP_AUDIO_RATE || v->remaining>UINT32_C(131072000)) return 0;
+    for (unsigned i=0;i<48;++i) if (i<v->sound_count ? !v->sounds[i] || v->sounds[i]>18 : v->sounds[i]!=0) return 0;
     if (!v->sound_count && (v->event || v->remaining || v->sound_phase || v->sound_fraction)) return 0;
     return v->active<=1 && v->countdown<=4 && (!v->active || (v->countdown && s->mode==BTP_TITLE)) &&
         v->position<=4352 && v->irq_phase<4095 && v->fraction<BTP_AUDIO_RATE && (!v->divisor || v->phase<v->divisor);
 }
 void btp_audio_effect(BtpState *s,unsigned effect)
 {
-    if (s->menu.sound && effect && effect<=18 && s->audio.sound_count<24)
+    if (s->menu.sound && effect && effect<=18 && s->audio.sound_count<48)
         s->audio.sounds[s->audio.sound_count++]=(uint8_t)effect;
 }

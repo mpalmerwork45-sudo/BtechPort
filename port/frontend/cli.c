@@ -173,6 +173,7 @@ void btp_print_state(const BtpState *s, const BtpResources *r)
     printf(",\"campaign_flags\":[");for (unsigned i=0;i<64;++i) printf("%s%u",i ? "," : "",s->story_flags[i]);printf("]");
     printf(",\"audio\":{\"active\":%u,\"position\":%u,\"divisor\":%u,\"effects\":%u,\"effect\":%u,\"event\":%u,\"remaining\":%u}",s->audio.active,s->audio.position,s->audio.divisor,
         s->audio.sound_count,s->audio.sounds[0],s->audio.event,s->audio.remaining);
+    printf(",\"aftermath\":{\"phase\":%u,\"pilot\":%u,\"selected\":%u,\"cash\":%u,\"eject\":%u}",s->aftermath.phase,s->aftermath.pilot,s->aftermath.selected,s->aftermath.cash,s->aftermath.eject);
     printf(",\"actions_menu\":{\"phase\":%u,\"selected\":%u,\"steps\":%u,\"sound\":%u,\"speed\":%u,\"outtakes\":%u,\"slot\":%u,\"io\":%u,\"notice\":%u}",
         s->campaign.ui,s->campaign.selected,s->menu.steps,s->menu.sound,s->menu.speed,s->menu.outtakes,s->menu.slot,s->menu.io,s->menu.notice);
     printf(",\"campaign\":{\"invasion\":%u,\"owned\":%u,\"world\":[%u,%u],\"mounted\":%u,\"encounter\":%u,\"building\":%u},\"player_sprite\":%u,\"npc_sprites\":[",

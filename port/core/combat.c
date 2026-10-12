@@ -2,6 +2,7 @@
 #include "core/npc.h"
 #include "core/animation.h"
 #include "core/effects.h"
+#include "core/campaign.h"
 #include "core/world.h"
 #include "core/party.h"
 #include "core/audio.h"
@@ -413,9 +414,13 @@ static void round_tick(BtpState *s, const BtpResources *r, int enemy_ai)
                 mark(s,enemy->infantry ? 126u : 128u+(target==0 && s->story_flags[2]!=0),
                     (enemy->x-(enemy->infantry ? 0u : 1u))&127u,
                     (enemy->y-(enemy->infantry ? 0u : 1u))&127u);
-                enemy->record[0]=255;
-                if (target || (!s->campaign.invasion && !s->campaign.encounter)) enemy->x=enemy->y=127;
-                if (!target) { s->effects.pending=2;return; }
+                if (s->campaign.encounter) btp_campaign_destroy(s,target);
+                else {
+                    enemy->record[0]=255;
+                    if (target || !s->campaign.invasion) enemy->x=enemy->y=127;
+                    if (!target) { s->effects.pending=2;return; }
+                }
+                if (s->effects.pending==2) return;
                 unsigned remaining=0;
                 for (unsigned k=c->friends ? c->friends : 1u;k<c->count;++k) remaining+=c->unit[k].record[0]!=255;
                 if (!remaining) { s->effects.pending=1;return; }
@@ -445,6 +450,7 @@ static void combat_tick(BtpState *s, const BtpResources *r, BtpAction a, int ene
         s->presentation.kinds[s->presentation.count]=0;
         (void)btp_cutscene_begin(s,r,kind,3);return;
     }
+    if (s->aftermath.eject) btp_campaign_eject(s);
     if (s->effects.pending) {
         c->won=(uint8_t)(s->effects.pending==1);c->lost=(uint8_t)(s->effects.pending==2);
         s->effects.pending=0;finish(s);return;
@@ -730,7 +736,7 @@ int btp_combat_valid(const BtpState *s)
     }
     for (unsigned i=0;i<c->count;++i) {
         const BtpCombatUnit *u=&c->unit[i];
-        if ((u->record[0]!=255 && (u->x>125 || u->y>127)) || u->direction>7 || u->heat>30 || u->burning>3 ||
+        if ((u->record[0]!=255 && (u->x>(u->infantry ? 127u : 125u) || u->y>127)) || u->direction>7 || u->heat>30 || u->burning>3 ||
             (u->cover!=0 && u->cover!=(u->infantry ? 2 : 8) && u->cover!=(u->infantry ? 4 : 16)) || c->moved[i]>12 || c->path_index[i]>12 ||
             c->walk[i]>15 || c->plan_direction[i]>7 || c->fallback[i]>7 || u->infantry>1 ||
             (i && !s->campaign.encounter && u->infantry!=(s->mission.assignment==3)) || btp_combat_weapon_count(u)>11 || u->record[117]>3 || u->record[118]>2 || u->record[119]>2) return 0;
@@ -743,6 +749,8 @@ int btp_combat_valid(const BtpState *s)
         }
         for (unsigned j=0;j<12;++j) for (unsigned k=0;k<2;++k) if (c->path[i][j][k]<-1 || c->path[i][j][k]>2) return 0;
     }
-    return (c->unit[0].record[0]==255)==(c->lost!=0 || s->effects.pending==2) &&
+    unsigned jason=btp_combat_target(c,4);
+    int lost=s->campaign.encounter ? jason<c->count && c->unit[jason].record[0]==255 : c->unit[0].record[0]==255;
+    return lost==(c->lost!=0 || s->effects.pending==2) &&
         (!alive)==(c->won!=0 || s->effects.pending==1);
 }

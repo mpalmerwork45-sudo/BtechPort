@@ -559,6 +559,17 @@ def original_saves(env,work):
                 raise RuntimeError('Original GAME native/reopened state or pixels differs')
             print(f'PASS: native original GAME{slot}, inspection, internal save/reopen/export, exact SDL state and pixels.',flush=True)
 
+def aftermath(env,work):
+    """Explicit combat result prerequisite; SDL continuation, not a campaign proof."""
+    subprocess.run([str(ROOT/'build/btp-aftermath-tests'),str(ROOT/'Original DOS')],cwd=ROOT,check=True,capture_output=True,text=True)
+    with tempfile.TemporaryDirectory(prefix='native-aftermath-',dir=work) as directory:
+        tmp=Path(directory);tail=tmp/'tail.actions';record=tmp/'record.actions';frame=work/'native-aftermath.ppm';expected=tmp/'expected.ppm'
+        tail.write_text('accept\n'*30)
+        actual=subprocess.run([str(ROOT/'build/btech-port'),'--load',str(work/'aftermath-salvage.btp'),'--smoke-replay','--smoke-fast','--replay',str(tail),'--record',str(record),'--frame',str(frame)],cwd=ROOT,env=env,check=True,capture_output=True,text=True)
+        wanted=subprocess.run([str(ROOT/'build/btech-headless'),'--load',str(work/'aftermath-salvage.btp'),'--replay',str(record),'--frame',str(expected)],cwd=ROOT,check=True,capture_output=True,text=True)
+        if json.loads(actual.stdout)!=json.loads(wanted.stdout) or frame.read_bytes()!=expected.read_bytes():raise RuntimeError('Native aftermath continuation differs')
+        print('PASS: native saved salvage prerequisite, exact SDL input/state/pixels and resumed exploration.',flush=True)
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--shops-only", action="store_true")
@@ -577,6 +588,7 @@ def main():
     parser.add_argument("--menu-only", action="store_true")
     parser.add_argument('--presentation-only',action='store_true')
     parser.add_argument('--original-save-only',action='store_true')
+    parser.add_argument('--aftermath-only',action='store_true')
     args = parser.parse_args()
     work = ROOT / "work"
     work.mkdir(exist_ok=True)
@@ -596,6 +608,8 @@ def main():
             env.pop("SDL_VIDEODRIVER", None)
             os.environ["DISPLAY"] = env["DISPLAY"]
             os.environ["BTECH_REFERENCE_VIRTUAL"] = "1"
+            if args.aftermath_only:
+                aftermath(env,work);return
             if args.original_save_only:
                 original_saves(env,work);return
             if args.presentation_only:

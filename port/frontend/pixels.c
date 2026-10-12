@@ -558,6 +558,9 @@ static void story_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
 
 void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[BTP_PIXELS])
 {
+    if (s->mode==BTP_GAME_OVER) {
+        rectangle(f,0,0,320,200,0);text(r,f,112,80,"Jason has been killed.",15);text(r,f,112,104,"Load a saved game to continue.",15);return;
+    }
     if (s->mode==BTP_TITLE) {
         /* Original VGA title capture: index 1 is black, as in sprite art. */
         for (unsigned i=0;i<BTP_PIXELS;++i) f[i]=btp_palette[sprite_palette[r->title.pixels[i]&15u]];
@@ -750,6 +753,17 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
             for (unsigned i=0;i<count;++i) text(r,f,112,36+(int)i*16,btp_actions_label(s,i),i==c->selected ? 14u : 15u);
         }
         text(r,f,112,176,"Enter / Backspace",7);
+    }
+    if (s->aftermath.phase) {
+        const BtpAftermathState *v=&s->aftermath;char message[320];
+        if (v->phase==1) snprintf(message,sizeof message,"%s is a qualified pilot without a 'Mech. Do you want to salvage one of the wrecks?",btp_party_name(&s->party,v->pilot));
+        else if (v->phase==2) snprintf(message,sizeof message,"%s",v->notice==2 ? "There are no more salvageable 'Mechs on the battlefield." : v->notice ? "No chance to salvage this 'Mech." : "The 'Mech is salvaged.");
+        else if (v->phase==3) snprintf(message,sizeof message,"You dig through the soldiers' pockets and find %u C-bills in cash%s",v->cash,v->notice ? ", and confiscate their weapons." : ".");
+        else snprintf(message,sizeof message,"Recovered weapon. %s",btp_party_count(&s->party)==1 ? "Do you want to exchange your weapon?" : "Choose who receives it.");
+        rectangle(f,104,0,216,200,0);border_panel(r,f,104,0,216,200,0);int y=wrapped(r,f,16,(const uint8_t *)message,strlen(message),15)+16;
+        if (v->phase==1 || (v->phase==4 && btp_party_count(&s->party)==1)) {
+            text(r,f,112,y,"Yes",v->selected==0 ? 14u : 15u);text(r,f,152,y,"No",v->selected==1 ? 14u : 15u);
+        } else if (v->phase==4) for (unsigned i=0;i<9;++i) text(r,f,112,y+(int)i*8,i==8 ? "Done" : btp_party_name(&s->party,i),i==v->selected ? 14u : 15u);
     }
     border_panel(r,f,0,0,104,200,1);
     if (s->mode == BTP_BUILDING || s->mode == BTP_SCRIPT_FAULT ||

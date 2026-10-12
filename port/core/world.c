@@ -13,6 +13,16 @@ static const BtpMap *local(const BtpResources *r,unsigned id)
 {
     return id==1 ? &r->map : id==11 ? &r->destroyed : &r->local[id-1];
 }
+int btp_world_populated(const BtpResources *r,const BtpState *s)
+{
+    int bx=(int)s->campaign.world_x/16+8,by=(int)s->campaign.world_y/16+8;
+    if (r->world.native) {
+        for (int y=by-1;y<=by+1;++y) for (int x=bx-1;x<=bx+1;++x)
+            if (x>=0 && y>=0 && x<144 && y<144 && (r->world.heights[y*144+x]&128u)) return 1;
+    } else for (int y=-1;y<=1;++y) for (int x=-1;x<=1;++x)
+        if (btp_world_location(r,s,(int)s->campaign.world_x/2+x*8,(int)s->campaign.world_y/2+y*8)) return 1;
+    return 0;
+}
 int btp_world_location(const BtpResources *r,const BtpState *s,int x,int y)
 {
     for (unsigned id=1;id<=13;++id) {

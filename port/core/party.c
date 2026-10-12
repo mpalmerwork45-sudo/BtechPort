@@ -86,7 +86,7 @@ int btp_party_decode(const uint8_t b[BTP_PARTY_BYTES],BtpPartyState *p)
     v.selected=b[at++];v.giver=b[at++];v.item=b[at++];v.phase=b[at++];
     for (;at<BTP_PARTY_BYTES;++at) if (b[at]) return 0;
     if (!v.enabled) { for (unsigned i=0;i<BTP_PARTY_BYTES;++i) if (b[i]) return 0;*p=v;return 1; }
-    if (v.enabled!=1 || !v.next_id || v.next_id>=10 || v.selected>7 || v.giver>7 || v.item>1 || v.phase>3 || v.people[0][0]) return 0;
+    if (v.enabled!=1 || !v.next_id || v.next_id>=10 || v.selected>7 || v.giver>7 || v.item>1 || v.phase>3 || (v.people[0][0] && v.people[0][0]!=255)) return 0;
     for (unsigned i=0;i<8;++i) {
         const uint8_t *a=v.people[i];
         if (v.x[i]>2047 || v.y[i]>2047 || v.walk[i]>15 || v.direction[i]>7) return 0;

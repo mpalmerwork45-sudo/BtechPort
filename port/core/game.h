@@ -7,7 +7,7 @@ typedef enum { BTP_IDLE, BTP_UP, BTP_DOWN, BTP_LEFT, BTP_RIGHT, BTP_ACCEPT, BTP_
     BTP_DIGIT_5, BTP_DIGIT_6, BTP_DIGIT_7, BTP_DIGIT_8, BTP_DIGIT_9, BTP_CLEAR_INPUT,
     BTP_UP_LEFT, BTP_UP_RIGHT, BTP_DOWN_LEFT, BTP_DOWN_RIGHT, BTP_OPEN_MENU } BtpAction;
 typedef enum { BTP_CLEAR, BTP_WALL, BTP_EDGE } BtpBlock;
-typedef enum { BTP_EXPLORE, BTP_ENTRY, BTP_BUILDING, BTP_SCRIPT_FAULT, BTP_QUIZ, BTP_MISSION, BTP_ACTIONS, BTP_ENCOUNTER, BTP_TITLE } BtpMode;
+typedef enum { BTP_EXPLORE, BTP_ENTRY, BTP_BUILDING, BTP_SCRIPT_FAULT, BTP_QUIZ, BTP_MISSION, BTP_ACTIONS, BTP_ENCOUNTER, BTP_TITLE, BTP_GAME_OVER } BtpMode;
 typedef enum { BTP_TALK_NONE, BTP_TALK_EMPTY, BTP_TALK_MENU, BTP_TALK_REPLY } BtpTalkPhase;
 typedef struct {
     uint8_t phase, selected, count, mask, room, actor;
@@ -47,7 +47,7 @@ typedef struct { uint8_t sprite, map, x, y; } BtpTerrainMark;
 typedef struct {
     uint8_t actor,target,group,direction,weapon,hit,dead,x,y,tx,ty,base,target_base;
 } BtpCombatEffect;
-typedef struct { uint8_t count,age,pending;BtpCombatEffect shots[7]; } BtpEffectsState;
+typedef struct { uint8_t count,age,pending;BtpCombatEffect shots[24]; } BtpEffectsState;
 typedef struct {
     uint8_t invasion, owned, mech[125];
     uint8_t checkpoint_owned, checkpoint_mech[125];
@@ -73,11 +73,15 @@ typedef struct {
     uint8_t active,countdown;
     uint16_t position,divisor,phase,irq_phase;
     uint32_t fraction;
-    uint8_t sound_count,sounds[24];
+    uint8_t sound_count,sounds[48];
     uint16_t event,sound_phase;
     uint32_t remaining,sound_fraction;
 } BtpAudioState;
 typedef struct { uint8_t count,kinds[24]; } BtpPresentationState;
+typedef struct {
+    uint16_t eject,cash;
+    uint8_t phase,selected,pilot,unit,notice,applied,wrecks[24];
+} BtpAftermathState;
 enum { BTP_ORIGINAL_BYTES=3913 };
 typedef struct { uint8_t valid,bytes[BTP_ORIGINAL_BYTES]; } BtpOriginalState;
 typedef struct {
@@ -125,6 +129,7 @@ typedef struct {
     BtpMenuState menu;
     BtpPresentationState presentation;
     BtpOriginalState original;
+    BtpAftermathState aftermath;
 } BtpState;
 enum { BTP_STATE_BYTES = 16384 };
 

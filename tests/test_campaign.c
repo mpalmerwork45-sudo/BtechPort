@@ -58,8 +58,10 @@ int main(int argc,char **argv)
     }
     fclose(f);CHECK(s.story_flags[4] && s.mode==BTP_EXPLORE && !s.campaign.invasion);
     CHECK(animation ? !s.campaign.owned : s.campaign.owned);
-    CHECK(btp_save_write("work/campaign-test.btp",&s,r,&e));
-    BtpState loaded;CHECK(btp_save_load("work/campaign-test.btp",&loaded,r,&e));
-    CHECK(remove("work/campaign-test.btp")==0);
+    char save_path[256];const char *leaf=strrchr(argv[2],'/');leaf=leaf ? leaf+1 : argv[2];
+    CHECK(snprintf(save_path,sizeof save_path,"work/campaign-%s.btp",leaf)>0);
+    CHECK(btp_save_write(save_path,&s,r,&e));
+    BtpState loaded;CHECK(btp_save_load(save_path,&loaded,r,&e));
+    CHECK(remove(save_path)==0);
     free(r);printf("PASS: %u checks; %u ordinary invasion inputs, %s branch\n",checks,actions,animation ? "mech lost" : "mech retained");return 0;
 }

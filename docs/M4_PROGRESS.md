@@ -180,3 +180,41 @@ menu settings. Their original numeric projections are unchanged. The native
 Space event is resolved when consumed, so batched keys correctly confirm
 dialogue after entering a building. Both reference trees pass the 1,287-entry
 content/mode/mtime guard. No public asset files or pushes are involved.
+
+## Encounter aftermath increment
+
+**VERIFIED numeric rules:** 114 executions of original cash span
+`05AB:09EC..0A11`, salvage qualification `05AD..05E1`, recovery copy
+`06E2..07AD`, and complete ejection `0D43:0A35`. Pocket cash is the sum of
+one `(RNG & 15)+3` draw per marked enemy soldier, with a minimum of 2.
+Critical head, reactor or gyro damage requires technician rank 4 for recovery.
+Recovery copies bytes 1..124, restores the original type, assigns the selected
+pilot and repairs the original minimum critical/structure bytes. Ejection
+puts both surviving crew on foot at the wreck and the adjacent half-step,
+without a random draw. The original classifier's overlapping owned-mech
+byte read is retained, not silently corrected.
+
+General combat now preserves wreck identities and inserts surviving crew
+with stable original unit IDs after presentation finishes. Losing a friendly
+mech no longer ends a battle when crew survive. Jason's death enters a saved
+terminal loss state; other character losses remain in the party result.
+`103B:0BFC..0C51` gates salvage on a marked mech loss, a qualified pilot on
+foot, an empty owned record and no populated neighboring terrain. Salvage,
+recovered cash and weapon recipient choices are saved continuations. Loot is
+applied once, including after withdrawal. The original corpse-slot behavior
+when a salvage scan encounters a human marker is not established; the native
+flow rejects that candidate visibly. Loss/aftermath panel geometry, timing,
+and character injury inside a surviving mech remain **APPROXIMATE/UNKNOWN**.
+These are not claims of a complete original campaign.
+
+Internal **BTPM/v22** uses the existing reserved payload for aftermath,
+17 additional effect records and 24 additional queued speaker effects.
+All v1–v21 migrations remain supported. Full party combat can present up to
+24 shots per microstep and 48 firing/impact sounds. Campaign tests now use
+separate scratch save filenames: concurrent CTest runs previously collided on
+`work/campaign-test.btp`.
+
+**PASS:** 416 assertions, all 114 primary vectors, saved ejection/salvage/loss
+and exact resumed continuation. All 37 CTest suites pass; headless sanitizer
+suites pass. The SDL saved-result test uses an explicit controlled prerequisite,
+not an asserted ordinary-input campaign route.

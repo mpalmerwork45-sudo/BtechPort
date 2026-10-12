@@ -10,7 +10,7 @@ unsigned btp_effects_length(const BtpCombatEffect *e, const BtpCombatData *d)
 void btp_effects_shot(BtpState *s,unsigned actor,unsigned target,unsigned weapon)
 {
     BtpCombatState *c=&s->combat;BtpEffectsState *v=&s->effects;
-    if (v->count>=7) return; /* A microstep has at most seven active units. */
+    if (v->count>=24) return; /* At most one shot per unit in a microstep. */
     const BtpCombatUnit *a=&c->unit[actor],*t=&c->unit[target];
     unsigned alt=!a->infantry && actor==0 && s->story_flags[2]!=0;
     unsigned group=a->infantry ? 4u+weapon : (weapon==32 ? 2u : 0u)+alt;
@@ -33,16 +33,16 @@ void btp_effects_tick(BtpState *s,const BtpResources *r)
 int btp_effects_valid(const BtpState *s)
 {
     const BtpEffectsState *v=&s->effects;
-    if (v->count>7 || v->age>21 || v->pending>2 || (!v->count && v->age)) return 0;
+    if (v->count>24 || v->age>21 || v->pending>2 || (!v->count && v->age)) return 0;
     if (v->count && s->combat.phase!=BTP_COMBAT_ROUND) return 0;
     /* The saved boundary after the final outtake has no remaining frames;
        the following logical tick performs the pending outcome transition. */
     if (v->pending && (s->combat.phase!=BTP_COMBAT_ROUND || !s->combat.shot.destroyed)) return 0;
-    for (unsigned i=0;i<7;++i) {
+    for (unsigned i=0;i<24;++i) {
         const BtpCombatEffect *e=&v->shots[i];
         if (i<v->count) {
             if (e->actor>=s->combat.count || e->target>=s->combat.count || e->group>=18 || e->direction>7 || e->weapon>32 ||
-                e->hit>1 || e->dead>1 || e->x>125 || e->y>127 || e->tx>125 || e->ty>127 ||
+                e->hit>1 || e->dead>1 || e->x>127 || e->y>127 || e->tx>127 || e->ty>127 ||
                 (e->base!=0 && e->base!=146 && e->base!=254) ||
                 (e->target_base!=0 && e->target_base!=146 && e->target_base!=254)) return 0;
             if (e->base!=(e->group>=4 ? 254 : e->group&1u ? 146 : 0) || (e->dead && !e->hit)) return 0;
