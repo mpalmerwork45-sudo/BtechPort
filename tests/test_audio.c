@@ -29,6 +29,16 @@ int main(int argc,char **argv)
         for (unsigned i=0;i<26;++i) { unsigned kind;CHECK(sscanf(hex+2*i,"%2x",&kind)==1);CHECK(r->combat.building_portraits[i]==kind); }
     }
     fclose(f);CHECK(notes==128);
+    /* A rest still advances the original PIT/IRQ state. Its divisor-14
+       ultrasonic carrier must not become audible after host sampling. */
+    BtpAudioState rest={.active=1,.countdown=4,.divisor=14};
+    BtpAudioState silent=rest,split=rest;int16_t rest_pcm[256],split_pcm[256];
+    btp_audio_samples(&rest,r,256,rest_pcm);btp_audio_samples(&silent,r,256,NULL);
+    btp_audio_samples(&split,r,127,split_pcm);btp_audio_samples(&split,r,129,split_pcm+127);
+    CHECK(rest.active && rest.divisor==14 && rest.countdown==3);
+    CHECK(!memcmp(&rest,&silent,sizeof rest) && !memcmp(&rest,&split,sizeof rest));
+    CHECK(!memcmp(rest_pcm,split_pcm,sizeof rest_pcm));
+    for (unsigned i=0;i<256;++i) CHECK(rest_pcm[i]==0);
     BtpState s;btp_start(&s);btp_audio_start(&s);int16_t one[BTP_AUDIO_TICK_SAMPLES],two[BTP_AUDIO_TICK_SAMPLES];
     unsigned nonzero=0;
     for (unsigned i=0;i<300;++i) {

@@ -52,7 +52,10 @@ void btp_audio_samples(BtpAudioState *v,const BtpResources *r,unsigned count,int
         int sum=0;unsigned divisor=v->divisor ? v->divisor : 65536u;
         for (unsigned n=0;n<clocks;++n) {
             if (++v->irq_phase==4095) { v->irq_phase=0;btp_audio_irq(v,r);divisor=v->divisor ? v->divisor : 65536u; }
-            if (v->active && v->divisor) sum+=v->phase<(divisor+1u)/2u ? 1 : -1;
+            /* Original 184B:0121 maps rests to divisor 14 (85 kHz).
+               The XT speaker makes that carrier inaudible. Sampling it as
+               audible PCM aliases it into a sustained high-pitched whine. */
+            if (v->active && v->divisor && divisor!=14) sum+=v->phase<(divisor+1u)/2u ? 1 : -1;
             v->phase=(uint16_t)(((unsigned)v->phase+1u)%divisor);
         }
         /* Integrate PIT square output over a host sample, limiting aliasing.
