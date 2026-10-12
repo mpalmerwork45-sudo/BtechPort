@@ -10,6 +10,6 @@ typedef struct {
 int btp_options(int argc, char **argv, BtpOptions *options);
 void btp_initial_state(const BtpOptions *options, BtpState *state, const BtpResources *resources);
 void btp_print_state(const BtpState *state, const BtpResources *resources);
-int btp_replay(const char *path, BtpState *state, const BtpResources *resources, int trace);
+int btp_replay(const char *path, BtpState *state, const BtpResources *resources, int trace,const char *save_base);
 int btp_run_headless(const BtpOptions *options, BtpResources *resources);
 #endif

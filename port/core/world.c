@@ -5,6 +5,7 @@
 #include "core/campaign.h"
 #include "core/party.h"
 #include "core/economy.h"
+#include "core/menu.h"
 #include <string.h>
 #include <stdlib.h>
 
@@ -39,9 +40,8 @@ unsigned btp_world_tile(const BtpResources *r,const BtpState *s,int x,int y)
         x>=BTP_WORLD_ORIGIN+BTP_WORLD_SIDE || y>=BTP_WORLD_ORIGIN+BTP_WORLD_SIDE) return 255;
     return r->world.tiles[(unsigned)(y-BTP_WORLD_ORIGIN)*BTP_WORLD_SIDE+(unsigned)(x-BTP_WORLD_ORIGIN)];
 }
-void btp_world_move(BtpState *s,const BtpResources *r,BtpAction a)
+void btp_world_step(BtpState *s,const BtpResources *r,BtpAction a)
 {
-    ++s->tick;
     uint16_t old_x=s->campaign.world_x,old_y=s->campaign.world_y;
     int gx=s->x_half,gy=s->y_half;
     if (s->map_id) {
@@ -78,6 +78,9 @@ void btp_world_move(BtpState *s,const BtpResources *r,BtpAction a)
     }
     s->x_half=(uint16_t)gx;s->y_half=(uint16_t)gy;
     btp_party_follow(s,old_x,old_y);
+}
+void btp_world_clock(BtpState *s,const BtpResources *r)
+{
     /* Main-loop cadence remains the existing fixed four-tick approximation.
        The original draws even on indoor city terrain, with D346 excluding
        the separate area-map mode. Encounter-mask decisions are explicit. */
@@ -90,29 +93,11 @@ void btp_world_move(BtpState *s,const BtpResources *r,BtpAction a)
         if (!(roll&s->story_flags[36]) && s->story_flags[4] && !s->story_flags[58]) (void)btp_campaign_random(s,r);
     }
 }
+void btp_world_move(BtpState *s,const BtpResources *r,BtpAction a)
+{
+    ++s->tick;btp_world_step(s,r,a);btp_world_clock(s,r);
+}
 void btp_world_actions(BtpState *s,const BtpResources *r,BtpAction a)
 {
-    ++s->tick;BtpCampaignState *c=&s->campaign;
-    unsigned count=c->ui==1 ? 4u : c->ui==2 ? 2u : c->ui==3 || c->ui==4 ? 8u : 1u;
-    if (a==BTP_UP) c->selected=(uint8_t)((c->selected+count-1)%count);
-    if (a==BTP_DOWN) c->selected=(uint8_t)((c->selected+1)%count);
-    if (a==BTP_CANCEL || (a==BTP_ACCEPT && c->ui==1 && !c->selected)) {
-        c->ui=c->selected=c->member=0;s->mode=BTP_EXPLORE;return;
-    }
-    if (a!=BTP_ACCEPT) return;
-    if (c->ui==1) { c->ui=(uint8_t)(c->selected+1);c->selected=0;return; }
-    if (c->ui==3 || c->ui==4) {
-        if (s->party.people[c->selected][0]==255) return;
-        s->party.selected=c->selected;c->member=c->selected;c->ui=6;c->selected=0;return;
-    }
-    if (c->ui==2 && c->owned) {
-        int near=0;
-        for (int y=-1;y<=1;++y) for (int x=-1;x<=1;++x)
-            if (btp_world_location(r,s,c->world_x/2+8*x,c->world_y/2+8*y)) near=1;
-        if (c->selected && !c->mounted && !near &&
-            abs((int)c->world_x-c->mech_x)+abs((int)c->world_y-c->mech_y)<=2) c->mounted=1;
-        else if (!c->selected && c->mounted && !near) c->mounted=0;
-        else { c->ui=5;c->selected=0;return; }
-    }
-    c->ui=1;c->selected=0;
+    btp_menu_input(s,r,a);
 }

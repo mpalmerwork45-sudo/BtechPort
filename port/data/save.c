@@ -1,4 +1,5 @@
 #include "data/save.h"
+#include "core/menu.h"
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
@@ -80,4 +81,24 @@ int btp_save_load(const char *path, BtpState *s, const BtpResources *r, BtpError
     *s = loaded;
     if (e) e->text[0] = 0;
     return 1;
+}
+int btp_save_slot_path(const char *base,unsigned slot,char *path,size_t capacity,BtpError *e)
+{
+    if (!base || !path || slot>5 || !capacity) return fail(e,"Invalid save slot");
+    const char *leaf=base;
+    for (const char *p=base;*p;++p) if (*p=='/' || *p=='\\') leaf=p+1;
+    const char *dot=strrchr(leaf,'.');if (!dot) dot=base+strlen(base);
+    int n=slot ? snprintf(path,capacity,"%.*s-%u%s",(int)(dot-base),base,slot+1,dot) : snprintf(path,capacity,"%s",base);
+    return n>=0 && (size_t)n<capacity ? 1 : fail(e,"Save path is too long");
+}
+int btp_save_menu(BtpState *s,const BtpResources *r,const char *base,int allow_load,BtpError *e)
+{
+    unsigned request=s->menu.io;if (!request) return 1;
+    char path[4096];int ok=btp_save_slot_path(base,s->menu.slot,path,sizeof path,e);
+    BtpState candidate=*s;btp_menu_close(&candidate);
+    if (ok && request==BTP_MENU_IO_LOAD && !allow_load) ok=fail(e,"Loading while recording is unsupported; start a new log after loading");
+    if (ok) ok=request==BTP_MENU_IO_SAVE ? btp_save_write(path,&candidate,r,e) : btp_save_load(path,&candidate,r,e);
+    if (ok) { *s=candidate;return 1; }
+    s->menu.io=0;s->menu.notice=(uint8_t)request;s->campaign.ui=BTP_MENU_MESSAGE;s->campaign.selected=0;
+    return 0;
 }

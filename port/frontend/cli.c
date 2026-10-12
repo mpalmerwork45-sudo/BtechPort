@@ -168,6 +168,8 @@ void btp_print_state(const BtpState *s, const BtpResources *r)
     printf(",\"service\":{\"phase\":%u,\"action\":%u,\"mech\":%u,\"selected\":%u,\"kind\":%u,\"item\":%u,\"amount\":%u}",s->service.phase,s->service.action,s->service.mech,s->service.selected,s->service.kind,s->service.item,s->service.amount);
     printf(",\"campaign_flags\":[");for (unsigned i=0;i<64;++i) printf("%s%u",i ? "," : "",s->story_flags[i]);printf("]");
     printf(",\"audio\":{\"active\":%u,\"position\":%u,\"divisor\":%u}",s->audio.active,s->audio.position,s->audio.divisor);
+    printf(",\"actions_menu\":{\"phase\":%u,\"selected\":%u,\"steps\":%u,\"sound\":%u,\"speed\":%u,\"outtakes\":%u,\"slot\":%u,\"io\":%u,\"notice\":%u}",
+        s->campaign.ui,s->campaign.selected,s->menu.steps,s->menu.sound,s->menu.speed,s->menu.outtakes,s->menu.slot,s->menu.io,s->menu.notice);
     printf(",\"campaign\":{\"invasion\":%u,\"owned\":%u,\"world\":[%u,%u],\"mounted\":%u,\"encounter\":%u,\"building\":%u},\"player_sprite\":%u,\"npc_sprites\":[",
         s->campaign.invasion,s->campaign.owned,s->campaign.world_x,s->campaign.world_y,s->campaign.mounted,s->campaign.encounter,s->campaign.building,
         s->mission.phase ? (s->story_flags[2] ? 146u : 0u)+s->mission.walk : 166u+s->player_walk);
@@ -209,7 +211,7 @@ void btp_print_state(const BtpState *s, const BtpResources *r)
     puts("}");
 }
 
-int btp_replay(const char *path, BtpState *s, const BtpResources *r, int trace)
+int btp_replay(const char *path, BtpState *s, const BtpResources *r, int trace,const char *save_base)
 {
     FILE *f = fopen(path, "r");
     if (!f) { fprintf(stderr, "Cannot read replay: %s\n", path); return 0; }
@@ -227,6 +229,9 @@ int btp_replay(const char *path, BtpState *s, const BtpResources *r, int trace)
             fclose(f); return 0;
         }
         btp_game_tick(s, r, a);
+        if (s->menu.io) {
+            BtpError e;if (!btp_save_menu(s,r,save_base,1,&e)) fprintf(stderr,"%s\n",e.text);
+        }
         if (trace) btp_print_state(s, r);
     }
     int ok = !ferror(f);
@@ -250,7 +255,7 @@ int btp_run_headless(const BtpOptions *o, BtpResources *r)
     int result = 0;
     if (o->record || o->smoke) { fputs("--record/--smoke require the native frontend\n", stderr); return 1; }
     if (o->trace) btp_print_state(&state, r);
-    if (o->replay && !btp_replay(o->replay, &state, r, o->trace)) {
+    if (o->replay && !btp_replay(o->replay, &state, r, o->trace,o->save_file)) {
         if (state.mode != BTP_SCRIPT_FAULT) return 1;
         result = 1; /* A requested frame can still show the explicit script fault. */
     }
@@ -280,7 +285,7 @@ int btp_run_headless(const BtpOptions *o, BtpResources *r)
         uint32_t *frame = malloc(sizeof(*frame) * BTP_PIXELS);
         if (!frame) return 1;
         if (o->sprite_preview) btp_sprite_preview(r,state.tick,frame);
-        else if (o->world_overview) btp_world_preview(r,&state,frame);
+        else if (o->world_overview || (state.mode==BTP_ACTIONS && state.campaign.ui==13)) btp_world_preview(r,&state,frame);
         else btp_render(r, &state, o->debug, frame);
         int ok = btp_write_ppm(o->frame, frame);
         free(frame);

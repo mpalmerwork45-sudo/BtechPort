@@ -9,6 +9,7 @@
 #include "data/sprites.h"
 #include "core/party.h"
 #include "core/service.h"
+#include "core/menu.h"
 #include "data/anm.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -526,8 +527,9 @@ static void story_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
 void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[BTP_PIXELS])
 {
     if (s->mode==BTP_TITLE) {
-        for (unsigned i=0;i<BTP_PIXELS;++i) f[i]=btp_palette[terrain_palette[r->title.pixels[i]&15u]];
-        text(r,f,176,188,"Press Enter to start",15);return;
+        /* Original VGA title capture: index 1 is black, as in sprite art. */
+        for (unsigned i=0;i<BTP_PIXELS;++i) f[i]=btp_palette[sprite_palette[r->title.pixels[i]&15u]];
+        return;
     }
     if (s->mode == BTP_QUIZ && s->quiz.phase == BTP_QUIZ_QUESTION) {
         for (unsigned i = 0; i < BTP_PIXELS; ++i) f[i] = btp_palette[terrain_palette[r->quiz_diagram.pixels[i]&15u]];
@@ -691,25 +693,30 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
     }
     if (s->mode==BTP_ACTIONS) {
         const BtpCampaignState *c=&s->campaign;
-        rectangle(f,104,32,216,136,0);border_panel(r,f,104,32,216,136,0);
-        if (c->ui==1 || c->ui==2) {
-            static const char *const choices[4]={"Return to game","Allocate men in 'Mechs","Inspect Character","Equipment"};
-            unsigned count=c->ui==1 ? 4u : 2u;
-            for (unsigned i=0;i<count;++i) text(r,f,112,48+(int)i*16,c->ui==1 ? choices[i] : i ? "Pilot owned 'Mech" : "Travel on foot",i==c->selected ? 14u : 15u);
-        } else if (c->ui==5) {
-            const char *message="It would be dangerous to dismount so close to a populated area. Remounting requires the parked 'Mech nearby.";
-            (void)wrapped(r,f,48,(const uint8_t *)message,strlen(message),15);
-        } else if (c->ui==3 || c->ui==4) {
-            text(r,f,112,40,"Choose a party member",15);
-            for (unsigned i=0;i<8;++i) text(r,f,112,56+(int)i*10,btp_party_name(&s->party,i),i==c->selected ? 14u : 15u);
-        } else {
-            const uint8_t *p=s->party.people[c->member];text(r,f,112,48,btp_party_name(&s->party,c->member),15);
+        rectangle(f,104,8,216,184,0);border_panel(r,f,104,8,216,184,0);
+        if (c->ui==BTP_MENU_MESSAGE) {
+            const char *message=s->menu.notice==1 ? "Save failed. Your previous save is intact." : s->menu.notice==2 ?
+                "Load failed. This slot is empty or invalid." : s->menu.notice==3 ? "Field healing requires medical supplies." :
+                "It would be dangerous to dismount so close to a populated area. Remounting requires the parked 'Mech nearby.";
+            (void)wrapped(r,f,40,(const uint8_t *)message,strlen(message),15);
+        } else if (c->ui==BTP_MENU_INSPECT) {
+            uint8_t p[17];btp_menu_person(s,c->member,p);
+            text(r,f,112,32,s->party.enabled ? btp_party_name(&s->party,c->member) : "Jason",15);
             char info[40];snprintf(info,sizeof info,"Weapon %u  Armour %u",p[11],p[13]);text(r,f,112,72,info,15);
             snprintf(info,sizeof info,"Gunnery %u  Kick %u",p[7],p[8]);text(r,f,112,88,info,15);
             snprintf(info,sizeof info,"Health %u  Technician %u",p[15],p[9]);text(r,f,112,104,info,15);
-            text(r,f,112,120,"Selected for shop purchases",7);
+            snprintf(info,sizeof info,"Body %u  Dexterity %u",p[1],p[2]);text(r,f,112,48,info,15);
+            text(r,f,112,128,"Selected for shop purchases",7);
+        } else {
+            const char *title=c->ui==BTP_MENU_SETTINGS ? "Game settings" : c->ui==BTP_MENU_STEPS ? "Movement rate" :
+                c->ui==BTP_MENU_SPEED ? "Combat speed" : c->ui==BTP_MENU_OUTTAKES ? "Outtake frequency" :
+                c->ui==BTP_MENU_LOAD ? "Load Game" : c->ui==BTP_MENU_SAVE ? "Save Game" :
+                c->ui==BTP_MENU_QUIT ? "Quit game?" : c->ui==BTP_MENU_ROOT ? "Actions" : "Choose a party member";
+            text(r,f,112,16,title,15);
+            unsigned count=btp_actions_count(s);
+            for (unsigned i=0;i<count;++i) text(r,f,112,36+(int)i*16,btp_actions_label(s,i),i==c->selected ? 14u : 15u);
         }
-        text(r,f,112,144,"Enter / Backspace",7);
+        text(r,f,112,176,"Enter / Backspace",7);
     }
     border_panel(r,f,0,0,104,200,1);
     if (s->mode == BTP_BUILDING || s->mode == BTP_SCRIPT_FAULT ||
@@ -725,8 +732,8 @@ void btp_world_preview(const BtpResources *r,const BtpState *s,uint32_t f[BTP_PI
     rectangle(f,0,0,320,200,0);
     unsigned wx=s->story_flags[4] ? s->campaign.world_x : 2u*BTP_CITADEL_ORIGIN+s->x_half;
     unsigned wy=s->story_flags[4] ? s->campaign.world_y : 2u*BTP_CITADEL_ORIGIN+s->y_half;
-    int ox=s->story_flags[4] ? (int)(wx/128u)*64-64 : BTP_WORLD_ORIGIN;
-    int oy=s->story_flags[4] ? (int)(wy/128u)*64-64 : BTP_WORLD_ORIGIN;
+    int ox=s->mode==BTP_ACTIONS && s->campaign.ui==BTP_MENU_MAP ? (int)(s->menu.map_x/128u)*64-64 : s->story_flags[4] ? (int)(wx/128u)*64-64 : BTP_WORLD_ORIGIN;
+    int oy=s->mode==BTP_ACTIONS && s->campaign.ui==BTP_MENU_MAP ? (int)(s->menu.map_y/128u)*64-64 : s->story_flags[4] ? (int)(wy/128u)*64-64 : BTP_WORLD_ORIGIN;
     if (ox<0) ox=0;
     if (oy<0) oy=0;
     if (ox>832) ox=832;

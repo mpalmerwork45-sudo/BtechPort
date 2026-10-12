@@ -483,6 +483,35 @@ def campaign(env,work):
                 keys.x.XCloseDisplay(keys.display)
                 if process.poll() is None:process.terminate();process.wait(timeout=5)
 
+def menu(env,work):
+    """Ordinary SDL Space/settings and six persistent slots in a private directory."""
+    with tempfile.TemporaryDirectory(prefix='native-menu-',dir=work) as directory:
+        tmp=Path(directory);base=tmp/'slot.btp';actions=tmp/'route.actions';record=tmp/'record.actions'
+        keys=[]
+        def choose(row):keys.extend(['down']*row+['accept'])
+        def setting(row,selected):
+            keys.append('menu');choose(1);choose(0)
+            current=0 if row==1 else 1 if row==2 else 2
+            keys.extend(['down']*((selected-current)%3)+['accept'])
+        previous_steps=1;slot=0
+        for wanted in range(6):
+            selected=wanted%3;setting(previous_steps,selected);previous_steps=1<<selected
+            keys.append('menu');choose(5);keys.extend(['down']*((wanted-slot)%7)+['accept']);slot=wanted
+        for wanted in range(6):
+            keys.append('menu');choose(4);keys.extend(['down']*((wanted-slot)%7)+['accept']);slot=wanted
+        keys.append('menu');choose(2);choose(0);keys.extend(['accept','menu']);choose(6);keys.append('cancel')
+        actions.write_text('\n'.join(keys)+'\n')
+        frame=work/'native-space-menu.ppm';expected=tmp/'expected.ppm'
+        env=dict(env,SDL_AUDIODRIVER='dummy')
+        actual=subprocess.run([str(ROOT/'build/btech-port'),'--smoke-replay','--smoke-fast','--replay',str(actions),'--save-file',str(base),'--record',str(record),'--frame',str(frame)],cwd=ROOT,env=env,check=True,capture_output=True,text=True,timeout=20)
+        wanted=subprocess.run([str(ROOT/'build/btech-headless'),'--replay',str(record),'--save-file',str(base),'--frame',str(expected)],cwd=ROOT,check=True,capture_output=True,text=True,timeout=20)
+        if record.read_text().splitlines()!=keys+['idle']*5 or json.loads(actual.stdout)!=json.loads(wanted.stdout) or frame.read_bytes()!=expected.read_bytes():raise RuntimeError('Native menu inputs/state/pixels differ')
+        for number in range(1,7):
+            path=base if number==1 else tmp/f'slot-{number}.btp'
+            state=json.loads(subprocess.run([str(ROOT/'build/btech-headless'),'--load',str(path)],cwd=ROOT,check=True,capture_output=True,text=True).stdout)
+            if state['actions_menu']['steps']!=1<<((number-1)%3):raise RuntimeError('Slot did not retain its separate movement setting')
+        print(f'PASS: native Space/settings/inspection/overhead, all six saves and loads, {len(keys)+5} exact SDL inputs and pixels.',flush=True)
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--shops-only", action="store_true")
@@ -498,6 +527,7 @@ def main():
     parser.add_argument("--training-combat-only", action="store_true")
     parser.add_argument("--world-only", action="store_true")
     parser.add_argument("--campaign-only", action="store_true")
+    parser.add_argument("--menu-only", action="store_true")
     args = parser.parse_args()
     work = ROOT / "work"
     work.mkdir(exist_ok=True)
@@ -519,6 +549,8 @@ def main():
             os.environ["BTECH_REFERENCE_VIRTUAL"] = "1"
             if args.campaign_only:
                 campaign(env,work);return
+            if args.menu_only:
+                menu(env,work);return
             if args.world_only:
                 world(env,work);return
             if args.training_combat_only:

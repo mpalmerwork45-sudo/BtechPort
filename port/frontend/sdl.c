@@ -4,6 +4,7 @@
 #include "data/save.h"
 #include "core/audio.h"
 #include "core/combat.h"
+#include "core/menu.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -73,7 +74,7 @@ int main(int argc, char **argv)
     if (o.tiles_output || o.sprites_output) { fputs("Asset export requires --headless\n", stderr); goto done; }
     BtpState state; btp_initial_state(&o,&state,r);
     if (o.load && !btp_save_load(o.load,&state,r,&error)) { fprintf(stderr,"%s\n",error.text); goto done; }
-    if (o.replay && o.smoke < 5 && !btp_replay(o.replay, &state, r, o.trace)) goto done;
+    if (o.replay && o.smoke < 5 && !btp_replay(o.replay, &state, r, o.trace,o.save_file)) goto done;
     if (!o.replay && !o.load && !o.smoke && !o.sprite_preview && !o.world_overview && !o.conversation_checkpoint && !o.shop_talk_checkpoint) btp_audio_start(&state);
     SDL_SetMainReady();
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_TIMER)) {
@@ -153,7 +154,7 @@ int main(int argc, char **argv)
             if (a != BTP_IDLE) {
                 static const SDL_Keycode codes[] = {0,SDLK_UP,SDLK_DOWN,SDLK_LEFT,SDLK_RIGHT,SDLK_RETURN,SDLK_BACKSPACE,
                     SDLK_0,SDLK_1,SDLK_2,SDLK_3,SDLK_4,SDLK_5,SDLK_6,SDLK_7,SDLK_8,SDLK_9,SDLK_ESCAPE,
-                    SDLK_HOME,SDLK_PAGEUP,SDLK_END,SDLK_PAGEDOWN};
+                    SDLK_HOME,SDLK_PAGEUP,SDLK_END,SDLK_PAGEDOWN,SDLK_SPACE};
                 SDL_Event injected = {.type=SDL_KEYDOWN}; injected.key.keysym.sym = codes[a];
                 if (SDL_PushEvent(&injected) != 1) { io_failed = 1; break; }
             }
@@ -177,8 +178,10 @@ int main(int argc, char **argv)
                         fputs("Loading while recording is unsupported; start a new log after loading.\n",stderr);
                         ok = 0;
                     } else {
-                        ok = saving ? btp_save_write(o.save_file,&state,r,&error) :
-                            btp_save_load(o.save_file,&state,r,&error);
+                        char slot_path[4096];
+                        ok=btp_save_slot_path(o.save_file,state.menu.slot,slot_path,sizeof slot_path,&error);
+                        if (ok) ok = saving ? btp_save_write(slot_path,&state,r,&error) :
+                            btp_save_load(slot_path,&state,r,&error);
                         if (!ok) fprintf(stderr,"%s\n",error.text);
                     }
                     if (ok && !saving) {
@@ -193,7 +196,7 @@ int main(int argc, char **argv)
                     if (record) { fputs("Restart while recording is unsupported; start a new log.\n", stderr); }
                     else { btp_initial_state(&o,&state,r); read = write = held = last_arrow_write = 0; }
                 } else {
-                    BtpAction a = amount_editor(&state) && key == SDLK_SPACE ?
+                    BtpAction a = state.mode==BTP_EXPLORE && key==SDLK_SPACE ? BTP_OPEN_MENU : amount_editor(&state) && key == SDLK_SPACE ?
                         BTP_IDLE : key_action(key,movement_mode(&state));
                     /* Real arrow chords use held keys. Scripted smoke events
                        have no physical scancode and remain individual actions. */
@@ -222,13 +225,20 @@ int main(int argc, char **argv)
             BtpAction a = read != write ? queue[read++ % 256] : BTP_IDLE;
             if (o.sprite_preview) ++state.tick;
             else {
-                if (audio && state.audio.active && a==BTP_IDLE && !o.smoke_fast) {
+                if (audio && state.menu.sound && state.audio.active && a==BTP_IDLE && !o.smoke_fast) {
                     BtpAudioState preview=state.audio;int16_t pcm[BTP_AUDIO_TICK_SAMPLES];
                     btp_audio_samples(&preview,r,BTP_AUDIO_TICK_SAMPLES,pcm);
                     if (SDL_QueueAudio(audio,pcm,sizeof pcm)) { io_failed=1;running=0; }
                 }
                 btp_game_tick(&state, r, a);
-                if (audio && !state.audio.active) SDL_ClearQueuedAudio(audio);
+                if (state.menu.io) {
+                    unsigned request=state.menu.io;
+                    int ok=btp_save_menu(&state,r,o.save_file,1,&error);
+                    if (!ok) fprintf(stderr,"%s\n",error.text);
+                    if (ok && request==BTP_MENU_IO_LOAD) { read=write=held=last_arrow_write=0;accumulator=0;if (audio) SDL_ClearQueuedAudio(audio); }
+                }
+                if (audio && (!state.audio.active || !state.menu.sound)) SDL_ClearQueuedAudio(audio);
+                if (state.menu.quit) running=0;
             }
             if (!movement_mode(&state)) held = 0;
             if (record && fprintf(record, "%s\n", btp_action_name(a)) < 0) { io_failed = 1; running = 0; }
@@ -239,7 +249,7 @@ int main(int argc, char **argv)
             if (o.smoke >= 5) break; /* Inject exactly one input for each fixed step. */
         }
         if (o.sprite_preview) btp_sprite_preview(r,state.tick,frame);
-        else if (o.world_overview) btp_world_preview(r,&state,frame);
+        else if (o.world_overview || (state.mode==BTP_ACTIONS && state.campaign.ui==BTP_MENU_MAP)) btp_world_preview(r,&state,frame);
         else btp_render(r, &state, o.debug, frame);
         if (SDL_UpdateTexture(texture, NULL, frame, 320 * (int)sizeof *frame) ||
             SDL_RenderClear(renderer) || SDL_RenderCopy(renderer, texture, NULL, NULL)) {
