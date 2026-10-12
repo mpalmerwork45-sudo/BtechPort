@@ -72,7 +72,7 @@ static void native_return(BtpState *s, const BtpResources *r)
     uint8_t selected = s->talk.selected;
     s->talk = (BtpTalkState){.selected=selected};
     s->story_flags[46] = s->talk_result;
-    btp_script_native_return(&s->script,btp_building_bld(r,s->entry_slot),s->story_flags);
+    btp_script_native_return(&s->script,btp_state_bld(r,s),s->story_flags);
 }
 void btp_talk_input(BtpState *s, const BtpResources *r, BtpAction action)
 {
@@ -151,7 +151,7 @@ int btp_game_text(const BtpState *s, const BtpResources *r, uint8_t *out, size_t
     if (!s->talk.phase) {
         if (s->school.phase) return btp_school_text(s,r,out,capacity,length);
         if (s->bank.phase || s->script.has_accounts) return btp_bank_text(s,r,out,capacity,length);
-        int ok = btp_script_text(&s->script,btp_building_bld(r,s->entry_slot),out,capacity);
+        int ok = btp_script_text(&s->script,btp_state_bld(r,s),out,capacity);
         if (ok) *length = strlen((const char *)out);
         return ok;
     }

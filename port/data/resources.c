@@ -25,13 +25,13 @@ int btp_map_decode(const uint8_t *b, size_t n, BtpMap *m, BtpError *e)
             size_t offset = ((y / 8) * (w / 8) + x / 8) * 64 + (y % 8) * 8 + x % 8;
             result.tiles[y * w + x] = b[541 + offset];
         }
-    for (unsigned i = 0; i < 8; ++i) {
+    for (unsigned i = 0; i < 16; ++i) {
         result.entrance_x[i] = le16(b + 389 + 2 * i);
         result.entrance_y[i] = le16(b + 421 + 2 * i);
-        memcpy(result.npc_names[i], b + 5 + 16*i, 16);
+        if (i<8) memcpy(result.npc_names[i], b + 5 + 16*i, 16);
         memcpy(result.places[i], b + 133 + 16*i, 16);
         result.room_map[i] = b[517+i];
-        result.npc_routes[i] = b[533+i];
+        if (i<8) result.npc_routes[i] = b[533+i];
     }
     *m = result;
     return 1;
@@ -146,6 +146,20 @@ int btp_resources_load(const char *dir, BtpResources *r, BtpError *e)
     if (len<0 || (size_t)len>=sizeof path || !btp_read_file(path,&data,&n,e)) return 0;
     int decoded=btp_map_decode(data,n,&r->destroyed,e);free(data);
     if (!decoded) return 0;
+    for (unsigned id=2;id<=14;++id) {
+        len=snprintf(path,sizeof path,"%s/MAP%u.MTP",dir,id);
+        if (len<0 || (size_t)len>=sizeof path || !btp_read_file(path,&data,&n,e)) return 0;
+        decoded=btp_map_decode(data,n,&r->local[id-1],e);free(data);if (!decoded) return 0;
+    }
+    /* Original filename order at DS:478A. MTP room_map contains these IDs. */
+    static const char *const building_files[26]={"TRAINING","CITADEL","COMSTAR","WEAPON","ARMOR","REPAIR",
+        "BARRACKS","LOUNGE","GARAGE","HOSPITAL","ARENA","PARTY","CLOTHES","JAIL","MAYOR","WEAPON2",
+        "THEATER","FROB","VIEWDISK","BARRACK2","ENTRANCE","HUT","ENDMECH","INSTRUCT","FINDIT","WINSCENE"};
+    for (unsigned id=0;id<26;++id) {
+        len=snprintf(path,sizeof path,"%s/%s.BLD",dir,building_files[id]);
+        if (len<0 || (size_t)len>=sizeof path || !btp_read_file(path,&data,&n,e)) return 0;
+        decoded=btp_bld_decode(data,n,&r->buildings[id],e);free(data);if (!decoded) return 0;
+    }
     if (r->sprites.format != 2) return fail(e,"MECHSHAP requires format-2 320x200 graphics");
     if (r->quiz_diagram.format != 2) return fail(e,"BTSTATS requires format-2 320x200 graphics");
     if (r->border.format != 1) return fail(e,"BTBORDER requires format-1 320x200 graphics");

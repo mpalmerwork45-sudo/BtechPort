@@ -33,7 +33,7 @@ static void complete(BtpState *s, const BtpResources *r)
 }
 void btp_bank_native(BtpState *s, const BtpResources *r)
 {
-    if (s->entry_slot != 2 || s->story_flags[4] || !r->comstar.length) {
+    if (btp_building_kind(r,s) != 2 || !r->comstar.length) {
         fault(s,BTP_SCRIPT_NATIVE_CONTEXT); return;
     }
     if (!r->dialogue.length) { fault(s,BTP_SCRIPT_NATIVE_DATA); return; }
@@ -91,13 +91,13 @@ int btp_bank_valid(const BtpState *s)
     const BtpBankState *b = &s->bank; const BtpScriptState *v = &s->script;
     if (v->has_accounts > 1 || b->phase > BTP_BANK_MESSAGE || b->company >= 3 ||
         b->outcome > BTP_BANK_ZERO || b->clamped > 1 || !input_valid(b->input)) return 0;
-    if (v->has_accounts && (s->entry_slot != 2 || s->mode != BTP_BUILDING ||
+    if (v->has_accounts && ((s->story_flags[4] ? s->campaign.building != 2 : s->entry_slot != 2) || s->mode != BTP_BUILDING ||
         v->status != BTP_SCRIPT_MENU || v->menu_id != 11 || v->native_action != 6 ||
         v->text_count != 2 || v->text[0].offset != 0x2d1 || v->has_cash)) return 0;
     if (!b->phase) return !b->company && !b->outcome && !b->clamped && !b->available &&
         !b->amount && !b->input[0] && !(v->status == BTP_SCRIPT_NATIVE && v->native_action != 12 &&
             !(v->native_action == 1 && s->mode == BTP_MISSION));
-    if (s->mode != BTP_BUILDING || s->entry_slot != 2 || s->story_flags[4] ||
+    if (s->mode != BTP_BUILDING || (s->story_flags[4] ? s->campaign.building != 2 : s->entry_slot != 2) ||
         !s->checkpoint_valid || v->has_accounts || (v->native_action != 7 && v->native_action != 8)) return 0;
     int buy = v->native_action == 7;
     if (b->phase != BTP_BANK_MESSAGE && v->status != BTP_SCRIPT_NATIVE) return 0;

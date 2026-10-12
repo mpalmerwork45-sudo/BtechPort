@@ -17,7 +17,7 @@ unsigned btp_menu_count(unsigned id)
 }
 int btp_native_supported(unsigned action)
 {
-    return (action>=1 && action<=12) || (action>=14 && action<=17) || action==20 || action==29 || action==43 || action==44;
+    return (action>=1 && action<=12) || (action>=14 && action<=17) || action==20 || action==28 || action==29 || action==43 || action==44 || action==46;
 }
 
 static void fault(BtpScriptState *s, BtpScriptError error, uint16_t pc)
@@ -43,7 +43,7 @@ static int state_index(BtpScriptState *s, uint8_t *story, unsigned index, uint16
     /* Original indexes use CBW. Sparse modeled bytes must never alias another
        core field: D30C[0..22] and the shop refusal byte at index 39 only. */
     if (!story || (index >= BTP_STORY_PREFIX && index != 39 &&
-        index != 24 && index != 32 && index != 36 && index != 45 && index != 46 && index != 47 && index != 51 && index != 52)) {
+        index != 24 && index != 32 && index != 36 && index != 45 && index != 46 && index != 47 && index != 51 && index != 52 && index != 55)) {
         fault(s, BTP_SCRIPT_STATE_INDEX, op_pc); return 0;
     }
     return 1;
@@ -58,6 +58,18 @@ static void run(BtpScriptState *s, const BtpBld *b, uint8_t story[BTP_STORY_BYTE
         if (!available(s, b, 1, op_pc)) return;
         uint8_t op = b->bytes[s->pc++]; s->last_opcode = op;
         switch (op) {
+        case 0xe6:
+            if (!available(s,b,4,op_pc)) return;
+            s->position_x=word(b->bytes+s->pc);s->position_y=word(b->bytes+s->pc+2);
+            s->pc=(uint16_t)(s->pc+4);s->has_position=1;break;
+        case 0xee: case 0xef:
+            if (!available(s,b,op==0xee ? 2u : 4u,op_pc)) return;
+            s->money_kind=op;s->money_amount=word(b->bytes+s->pc);s->pc=(uint16_t)(s->pc+2);
+            if (op==0xef) {
+                s->money_target=word(b->bytes+s->pc);s->pc=(uint16_t)(s->pc+2);
+                if (s->money_target>=b->length) { fault(s,BTP_SCRIPT_TARGET,op_pc);return; }
+            }
+            s->status=BTP_SCRIPT_MONEY;return;
         case 0xfe: /* Font/presentation configuration; glyphs remain approximate. */
             if (!available(s, b, 1, op_pc)) return;
             s->font = b->bytes[s->pc++];
@@ -195,6 +207,15 @@ void btp_script_animation_return(BtpScriptState *s, const BtpBld *b, uint8_t sto
     /* Original Barracks wake-up screenshot retains the text preceding EA and
        appends the announcement after it; animation completion is not F2. */
     s->status = BTP_SCRIPT_RUNNING; s->pause_units = 0; run(s,b,story);
+}
+void btp_script_money_return(BtpScriptState *s,const BtpBld *b,uint8_t story[BTP_STORY_BYTES],uint32_t *credits)
+{
+    if (s->status!=BTP_SCRIPT_MONEY || !credits) return;
+    if (s->money_kind==0xef) {
+        if (*credits>=s->money_amount) s->pc=s->money_target;
+    } else if (s->money_kind==0xee) *credits-=s->money_amount;
+    else { fault(s,BTP_SCRIPT_OPCODE,s->pc);return; }
+    s->money_kind=0;s->money_amount=s->money_target=0;s->status=BTP_SCRIPT_RUNNING;run(s,b,story);
 }
 int btp_script_choose(BtpScriptState *s, const BtpBld *b, unsigned choice, uint8_t story[BTP_STORY_BYTES])
 {

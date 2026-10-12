@@ -47,10 +47,29 @@ bytes normalize to the southeast 8×2 tile opening, not a whole border row.
 Ordinary input routes reach both mech retention and loss; the latter plays
 authentic O9. Save/restore before every input passes on both routes.
 Internal BTPH/v17 adds invasion, owned-mech record, transition coordinates
-and the post-attack countdown while retaining v1–v16 migration.
+and the post-attack encounter mask while retaining v1–v16 migration.
 
 **APPROXIMATE / limits:** the current bounded combat window hands off at its
 last half-row; the original crosses the packed sector boundary. Global travel
 is the next increment. The invasion loss presentation and flags are covered;
 the complete original pilot-evacuation/body damage RNG span remains outside
 the combat comparisons. General campaign encounters are not yet implemented.
+
+## World travel and town increment
+
+All original local maps and the original 26-entry BLD dispatch table are loaded.
+Stored maps overlay their original packed-coordinate sectors; the destroyed
+Citadel replaces MAP1 after the invasion. World movement crosses sectors and
+stored-map boundaries, and retains an owned mech's wider collision footprint.
+The Starport (MAP2, sector 10,8) is reachable through its west garage entrance.
+The original GARAGE.BLD parks the mech and uses E6 to place Jason inside town;
+EE/EF implement its credit deduction and affordability branch. The 150-credit
+checkout fee remains the original script's requirement.
+
+**VERIFIED:** primary `0000:201D..20CF` checks building entrances after a
+blocked terrain sample, using unit feet. The native mounted cursor therefore
+checks entrance Y+2. Ordinary inputs from new game through the invasion and
+garage parking survive save/restore after every input. The additional ComStar
+branch has also been exercised on foot. Full random-encounter setup is still
+being connected; walking animation, host-time cadence and allocation UI remain
+**APPROXIMATE** until their wider primary comparisons are complete.

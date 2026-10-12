@@ -156,6 +156,9 @@ int btp_mission_tick(BtpState *s, const BtpResources *r, BtpAction a)
             s->mech_skills[i]+=(uint8_t)(btp_rng_next(s->npc.rng)&1u);
         s->story_flags[4]=1;s->story_flags[5]=(uint8_t)!s->combat.lost;
         s->campaign.owned=(uint8_t)!s->combat.lost;
+        s->campaign.mounted=s->campaign.owned;
+        s->campaign.mech_walk=s->mission.walk;s->campaign.mech_direction=s->mission.direction;
+        s->campaign.mech_x=(uint16_t)(1536+s->x_half);s->campaign.mech_y=(uint16_t)(1536+s->y_half);
         if (s->campaign.owned) memcpy(s->campaign.mech,s->combat.unit[0].record,125);
         if (s->x_half>=128 || s->y_half>=128) {
             s->campaign.world_x=(uint16_t)(1536+s->x_half);

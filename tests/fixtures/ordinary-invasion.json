@@ -18,26 +18,26 @@
     }
   ],
   "final": {
-    "map": 11,
+    "map": 0,
     "mode": "local-exploration",
-    "x_half": 115,
-    "y_half": 1,
+    "x_half": 1651,
+    "y_half": 1665,
     "tile": [
-      57,
-      0
+      825,
+      832
     ],
     "gate": 85,
     "tick": 45680,
     "blocked": 0,
-    "script_pc": 7140,
-    "script_status": 3,
-    "script_opcode": 255,
+    "script_pc": 0,
+    "script_status": 0,
+    "script_opcode": 0,
     "script_error": 0,
     "fault_pc": 0,
     "menu_selected": 0,
-    "text_offset": 6672,
-    "text_length": 461,
-    "text_digest": 494939941,
+    "text_offset": 0,
+    "text_length": 0,
+    "text_digest": 0,
     "story_flags": [
       6,
       1,
@@ -63,12 +63,7 @@
       0,
       0
     ],
-    "text_spans": [
-      [
-        6672,
-        461
-      ]
-    ],
+    "text_spans": [],
     "talk_phase": 0,
     "talk_selected": 0,
     "talk_count": 0,
@@ -175,7 +170,7 @@
       "armor_points": 0
     },
     "shop_refusal": 0,
-    "menu_id": 7,
+    "menu_id": 0,
     "confirm_selected": 0,
     "menu_choices": [
       0,
@@ -199,7 +194,7 @@
       0,
       0,
       0,
-      5,
+      0,
       0,
       0,
       0,

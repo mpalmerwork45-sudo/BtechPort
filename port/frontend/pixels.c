@@ -441,7 +441,7 @@ static void story_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
     if (s->bank.phase || v->has_accounts) { bank_panel(r,s,bytes,length,f); return; }
     if (s->school.phase == BTP_SCHOOL_PRICES) { school_panel(r,s,f); return; }
     if (v->status == BTP_SCRIPT_MENU || s->talk.phase == BTP_TALK_MENU) {
-        if (!s->talk.phase && !btp_script_menu_text(v,btp_building_bld(r,s->entry_slot),bytes,sizeof bytes,&length)) {
+        if (!s->talk.phase && !btp_script_menu_text(v,btp_state_bld(r,s),bytes,sizeof bytes,&length)) {
             text(r,f,110,12,"INVALID MENU TEXT",12); return;
         }
         unsigned count = s->talk.phase == BTP_TALK_MENU ? (unsigned)s->talk.count+1 : btp_menu_count(v->menu_id);
@@ -505,8 +505,8 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
             uint32_t color = btp_palette[0];
             if (x >= 104) {
                 int wx = camera_x + x - 104, wy = camera_y + y;
-                if (wx >= 0 && wy >= 0 && wx < map->width * 16 && wy < map->height * 16) {
-                    unsigned tile = btp_mission_tile(s,map,wx/16,wy/16);
+                if (wx >= 0 && wy >= 0 && (!s->map_id || (wx < map->width * 16 && wy < map->height * 16))) {
+                    unsigned tile = s->map_id ? btp_mission_tile(s,map,wx/16,wy/16) : btp_world_tile(r,s,wx/16,wy/16);
                     if (tile < 250) {
                         /* 320B skips ANIMATE's first blank tile; 240B swaps
                            three pages into these ten map tile slots. The
@@ -544,6 +544,8 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         combat_route(r,s,cx,cy,f);combat_flash(r,s,cx,cy,f);
     } else if (s->mission.phase) (void)btp_draw_sprite(&r->sprites,
         (s->story_flags[2] ? 146u : 0u)+s->mission.walk,200,64,btp_mission_terrain(s,&r->map),104,f);
+    else if (s->campaign.mounted) (void)btp_draw_sprite(&r->sprites,
+        (s->campaign.mech[0]=='L' ? 0u : 146u)+s->campaign.mech_walk,200,64,0,104,f);
     else (void)btp_draw_sprite(&r->sprites,166u+s->player_walk,208,96,
         hidden_rows(map,s->x_half,s->y_half),104,f);
     /* Original 051B draws the party before the eight outdoor NPC slots. */
@@ -555,7 +557,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         (void)btp_draw_sprite(&r->sprites,270u+s->npc_walk[i],nx,ny,
             hidden_rows(&r->map,x,y),104,f);
     }
-    char place[17]; memcpy(place,r->map.places[s->entry_slot],16); place[16] = 0;
+    char place[17]; memcpy(place,map->places[s->entry_slot&15u],16); place[16] = 0;
     char line[64];
     if (r->border.format == 1) rectangle(f,0,0,104,200,0);
     /* The original status fields use these positions. The movement log and
@@ -618,6 +620,23 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                 f[(8u+i/88u)*320u+8u+i%88u] = btp_palette[sprite_palette[value]];
             }
         } else text(r,f,8,9,"ANM data error",12);
+    }
+    if (s->mode==BTP_ACTIONS) {
+        const BtpCampaignState *c=&s->campaign;
+        rectangle(f,104,32,216,136,0);border_panel(r,f,104,32,216,136,0);
+        if (c->ui==1 || c->ui==2) {
+            static const char *const choices[4]={"Return to game","Allocate men in 'Mechs","Inspect Character","Equipment"};
+            unsigned count=c->ui==1 ? 4u : 2u;
+            for (unsigned i=0;i<count;++i) text(r,f,112,48+(int)i*16,c->ui==1 ? choices[i] : i ? "Pilot owned 'Mech" : "Travel on foot",i==c->selected ? 14u : 15u);
+        } else if (c->ui==5) {
+            (void)wrapped(r,f,48,(const uint8_t *)"It would be dangerous to dismount so close to a populated area. Remounting requires the parked 'Mech nearby.",105,15);
+        } else {
+            text(r,f,112,48,"Jason Youngblood",15);
+            char info[40];snprintf(info,sizeof info,"Weapon %u  Armour %u",s->weapon,s->armor);text(r,f,112,72,info,15);
+            snprintf(info,sizeof info,"Gunnery %u  Kick %u",s->mech_skills[0],s->mech_skills[1]);text(r,f,112,88,info,15);
+            snprintf(info,sizeof info,"Technician %u",s->technician);text(r,f,112,104,info,15);
+        }
+        text(r,f,112,144,"Enter / Backspace",7);
     }
     border_panel(r,f,0,0,104,200,1);
     if (s->mode == BTP_BUILDING || s->mode == BTP_SCRIPT_FAULT ||

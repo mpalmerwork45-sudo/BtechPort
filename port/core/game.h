@@ -7,7 +7,7 @@ typedef enum { BTP_IDLE, BTP_UP, BTP_DOWN, BTP_LEFT, BTP_RIGHT, BTP_ACCEPT, BTP_
     BTP_DIGIT_5, BTP_DIGIT_6, BTP_DIGIT_7, BTP_DIGIT_8, BTP_DIGIT_9, BTP_CLEAR_INPUT,
     BTP_UP_LEFT, BTP_UP_RIGHT, BTP_DOWN_LEFT, BTP_DOWN_RIGHT } BtpAction;
 typedef enum { BTP_CLEAR, BTP_WALL, BTP_EDGE } BtpBlock;
-typedef enum { BTP_EXPLORE, BTP_ENTRY, BTP_BUILDING, BTP_SCRIPT_FAULT, BTP_QUIZ, BTP_MISSION } BtpMode;
+typedef enum { BTP_EXPLORE, BTP_ENTRY, BTP_BUILDING, BTP_SCRIPT_FAULT, BTP_QUIZ, BTP_MISSION, BTP_ACTIONS } BtpMode;
 typedef enum { BTP_TALK_NONE, BTP_TALK_EMPTY, BTP_TALK_MENU, BTP_TALK_REPLY } BtpTalkPhase;
 typedef struct {
     uint8_t phase, selected, count, mask, room, actor;
@@ -52,6 +52,10 @@ typedef struct {
     uint8_t invasion, owned, mech[125];
     uint8_t checkpoint_owned, checkpoint_mech[125];
     uint16_t world_x,world_y;
+    uint8_t building, world_clock, encounter_mask, encounter;
+    uint8_t mounted, mech_walk, mech_direction;
+    uint8_t ui, selected, member;
+    uint16_t mech_x,mech_y;
 } BtpCampaignState;
 typedef struct {
     uint32_t tick;
@@ -101,6 +105,8 @@ int btp_game_text(const BtpState *state, const BtpResources *resources,
 int btp_entrance(const BtpState *state, const BtpMap *map); /* index, or -1 */
 const BtpBld *btp_building_bld(const BtpResources *resources, unsigned slot);
 const BtpMap *btp_active_map(const BtpResources *resources,const BtpState *state);
+unsigned btp_building_kind(const BtpResources *resources,const BtpState *state);
+const BtpBld *btp_state_bld(const BtpResources *resources,const BtpState *state);
 void btp_state_encode(const BtpState *state, uint8_t output[BTP_STATE_BYTES]);
 int btp_state_decode(const uint8_t *bytes, size_t length, const BtpMap *map,
     const BtpBld *script, BtpState *state);

@@ -48,7 +48,7 @@ int main(int argc,char **argv)
         row[strcspn(row,"\r\n")]=0;BtpAction a;CHECK(btp_action_parse(row,&a));
         btp_game_tick(&s,r,a);animation|=s.cutscene.kind==9;
         BtpState restored;btp_state_encode(&s,saved);
-        if (!btp_state_decode(saved,sizeof saved,btp_active_map(r,&s),btp_building_bld(r,s.entry_slot),&restored)) {
+        if (!btp_state_decode(saved,sizeof saved,btp_active_map(r,&s),btp_state_bld(r,&s),&restored)) {
             fprintf(stderr,"save failed tick %u input %s mode %u pc %x mission %u combat %u pos %u,%u inv %u owned %u effect %u,%u step %u\n",
                 actions+1,row,s.mode,s.script.pc,s.mission.phase,s.combat.phase,s.x_half,s.y_half,
                 s.campaign.invasion,s.campaign.owned,s.effects.count,s.effects.pending,s.combat.step);
