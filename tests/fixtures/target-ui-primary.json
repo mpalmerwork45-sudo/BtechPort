@@ -1,0 +1,102 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "cases": [
+    {
+      "case": 0,
+      "label": "weapons",
+      "bounds": [
+        72,
+        96,
+        248,
+        104
+      ],
+      "rgb_sha256": "09b8dcdb7f18afb9c8b8285290dea6667e9c5b5287a48b8a2277b8ad1ee0b80f"
+    },
+    {
+      "case": 1,
+      "label": "target",
+      "bounds": [
+        0,
+        0,
+        104,
+        200
+      ],
+      "rgb_sha256": "ee316065cfa23f7c24b499a136567453ecd9e5bc5178ced0e34b3cadc0bfbeb9"
+    },
+    {
+      "case": 2,
+      "label": "target-next",
+      "bounds": [
+        0,
+        0,
+        104,
+        200
+      ],
+      "rgb_sha256": "61caad482e3c078f6519bf7415452fa27d284f707fbaf18de6fd3953552a27b6"
+    },
+    {
+      "case": 3,
+      "label": "weapons-assigned",
+      "bounds": [
+        72,
+        96,
+        248,
+        104
+      ],
+      "rgb_sha256": "4b7de73d2e0f74c3c36349a658075f030ff822ee78238bd91b6c3aed6f537412"
+    },
+    {
+      "case": 4,
+      "label": "withdrawal",
+      "bounds": [
+        0,
+        0,
+        104,
+        200
+      ],
+      "rgb_sha256": "489f8dfbbc656c79932dfd2f18fc0264a3b3dc50954f1175b4b225d28740192c"
+    },
+    {
+      "case": 5,
+      "label": "withdrawal-return",
+      "bounds": [
+        104,
+        72,
+        216,
+        56
+      ],
+      "rgb_sha256": "ca013c25aa8072b487f0ebcfabc75c5592cf4312f0ffead7d283f4749edcef7e"
+    },
+    {
+      "case": 6,
+      "label": "withdrawal-return",
+      "bounds": [
+        0,
+        0,
+        104,
+        200
+      ],
+      "rgb_sha256": "3193905d9fa6b91a2be68f7ad1de3d727397547bcf47f053b18faa7f349ee067"
+    },
+    {
+      "case": 7,
+      "label": "weapons",
+      "bounds": [
+        0,
+        0,
+        104,
+        96
+      ],
+      "rgb_sha256": "d6fd36443d5edb5857872efa35c28b341560d8d94149b789c683571dae85a1e0"
+    }
+  ],
+  "capture_run": "1791924339149371505",
+  "prerequisites": "Record numeric regions from ordinary original target/withdrawal menu inputs.\n\nThe private GAME4 prerequisite activates GAME3's parked vehicles, puts character\nfour on foot, and enables its encounter gate. No executable or assets change.\nRaw screenshots/RAM remain in ignored work/; only hashes and crop bounds commit.",
+  "routines": [
+    "0D43:0004 weapon list",
+    "0D43:07CB target selection",
+    "103B:069F withdrawal and 103B result caller"
+  ],
+  "limits": "Complete unmasked UI regions; not battlefield equality. Assigned-row comparison sets the original selected row explicitly; native automatic advancement and override dialogs are outside this renderer comparison."
+}

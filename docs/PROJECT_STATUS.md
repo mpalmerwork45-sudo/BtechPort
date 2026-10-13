@@ -105,7 +105,7 @@ while owned mechs use the original garage selection rule.
 
 Internal saves are **BTPY/v34**, with a 20,480-byte payload inside the BTS1
 length/CRC envelope. The discovery marker and held spy confrontation are saved.
-Current local caches are BTTA/v19, BTCB/v11 and BTW3; the world seed is the
+Current local caches are BTTA/v20, BTCB/v11 and BTW3; the world seed is the
 original startup value `0x020304`, rather than the former research seed.
 Older saves migrate their represented fields; absent direction/exploration
 history cannot be reconstructed. Old ambiguous decorative wreck/fire marks
@@ -118,10 +118,13 @@ and source hashes only.
 The original five follow-ups are underway; this list records the actual
 unfinished portions, including subsequent owner observations.
 
-1. Finish original combat/result UI coverage: manual friendly targeting,
-   additional live caller contexts, arena outcomes, withdrawal and salvage
-   prompts. Five victory/scavenging/scrap/pocket/loot panels now match exactly;
-   rewards, healing and held-page restoration are tested.
+1. Finish combat UI details: weapon override/empty/destroyed notices, selection
+   persistence, infantry/Kick selectors and direct arena/salvage comparisons.
+   Eight additional weapon/target/withdrawal regions now match original
+   captures, including the restored party panel on return. Ordinary original
+   targeting starts at enemy ID12 and cycles enemies only; a normal friendly-
+   targeting gesture has not been found. Five victory/scavenging/scrap/pocket/
+   loot panels match exactly; rewards and held-page restoration are tested.
 2. Expand live original doorway, roof-corner and formation comparisons across
    towns. All-party collision, city joins, ruined-Citadel sheet continuity and
    five visible cache companions have focused regression coverage.

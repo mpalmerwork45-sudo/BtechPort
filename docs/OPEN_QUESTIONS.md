@@ -67,6 +67,11 @@ The remaining authorized tasks are in [project status](PROJECT_STATUS.md).
    writes and a title-checked RGB model. A direct DOS Phoenix capture,
    healthy-with-active-cooldown and remaining battle-result screens still
    need visual comparisons.
+   Eight more weapon/target/withdrawal regions now match complete original
+   captures, with seven native scan/target/withdrawal save/load pages. Native
+   automatic weapon advancement differs from the original retained selection;
+   override/empty/destroyed notices and infantry/Kick selectors need further
+   work. The normal original target selector cycles enemy IDs12..23 only.
 8. **Persistence — tested represented fields.** All six supplied original saves
    roundtrip unchanged; unmodeled original bytes are preserved. Internal
    BTPY/v34 includes active theft/audio/menu states, spy discovery and world

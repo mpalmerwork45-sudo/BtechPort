@@ -16,6 +16,13 @@ static uint64_t left_hash(const uint32_t *pixels)
         h=(h^(uint8_t)(pixels[y*320+x]>>shift))*UINT64_C(1099511628211);
     return h;
 }
+static uint64_t region_hash(const uint32_t *pixels,unsigned x,unsigned y,unsigned w,unsigned h)
+{
+    uint64_t value=UINT64_C(14695981039346656037);
+    for (unsigned row=y;row<y+h;++row) for (unsigned col=x;col<x+w;++col) for (int shift=16;shift>=0;shift-=8)
+        value=(value^(uint8_t)(pixels[row*320+col]>>shift))*UINT64_C(1099511628211);
+    return value;
+}
 static void setup(BtpState *s,const BtpResources *r)
 {
     BtpError e;CHECK(btp_save_load("Original DOS/GAME3",s,r,&e));
@@ -68,6 +75,40 @@ int main(int argc,char **argv)
         CHECK(actual==expected);++cases;
     }
     fclose(f);CHECK(cases==9);
+    f=fopen("tests/fixtures/target-ui-primary.txt","r");CHECK(f);unsigned x,y,w,h,target_cases=0;
+    while (fscanf(f," T %u %u %u %u %u %" SCNx64,&index,&x,&y,&w,&h,&expected)==6) {
+        BtpState v;setup(&v,r);BtpCombatState *c=&v.combat;
+        /* The captured actor is at (1263,1675); enemy ID13 at (1253,1660),
+           ID17 at (1246,1660). Preserve those relative ranges across sectors. */
+        c->unit[4].x=54;c->unit[4].y=49;c->unit[5].x=47;c->unit[5].y=49;
+        c->selected=3;c->phase=BTP_COMBAT_WEAPONS;
+        if (index==1 || index==2) { c->phase=BTP_COMBAT_TARGET;c->target_unit=(uint8_t)(index==1 ? 4 : 5);c->target_selected=(uint8_t)(index==2); }
+        if (index==3) c->orders[0]=17;
+        if (index>=4 && index<=6) {
+            c->phase=0;c->fled=1;v.aftermath=(BtpAftermathState){.phase=(uint8_t)(index==4 ? 6 : 7),.applied=3};
+            v.credits=15342507;
+        }
+        btp_render(r,&v,0,frame);uint64_t actual=region_hash(frame,x,y,w,h);
+        if (actual!=expected) { fprintf(stderr,"Original target UI case %u: %016" PRIx64 " / %016" PRIx64 "\n",index,actual,expected);CHECK(btp_write_ppm("work/target-ui-failed.ppm",frame)); }
+        CHECK(actual==expected);++target_cases;
+        if (!index) CHECK(btp_save_write("work/target-ui-start.btp",&v,r,&e));
+    }
+    fclose(f);CHECK(target_cases==8);
+    /* Exercise the displayed pages through ordinary input, restoring before
+       every step. Withdrawal must hold both notices and award no money. */
+    BtpState target;CHECK(btp_save_load("work/target-ui-start.btp",&target,r,&e));
+    step(&target,r,BTP_ACCEPT);CHECK(target.combat.phase==BTP_COMBAT_TARGET);
+    CHECK(btp_save_write("work/target-ui-target.btp",&target,r,&e));
+    step(&target,r,BTP_DOWN);step(&target,r,BTP_ACCEPT);CHECK(target.combat.ids[target.combat.target_unit]==17);
+    step(&target,r,BTP_UP);step(&target,r,BTP_ACCEPT);CHECK(target.combat.orders[0]==17);
+    step(&target,r,BTP_CANCEL);CHECK(target.combat.phase==BTP_COMBAT_MENU);
+    for (unsigned i=0;i<11 && target.combat.selected!=8;++i) step(&target,r,BTP_DOWN);
+    CHECK(target.combat.selected==8);
+    unsigned cash=target.credits;step(&target,r,BTP_ACCEPT);CHECK(target.aftermath.phase==6 && target.credits==cash);
+    CHECK(btp_save_write("work/target-ui-withdrawal.btp",&target,r,&e));
+    step(&target,r,BTP_ACCEPT);CHECK(target.aftermath.phase==7 && target.credits==cash);
+    CHECK(btp_save_write("work/target-ui-return.btp",&target,r,&e));
+    step(&target,r,BTP_ACCEPT);CHECK(target.mode==BTP_EXPLORE && target.credits==cash);
     BtpState s;setup(&s,r);BtpCombatState *c=&s.combat;btp_combat_select(c,3);
     CHECK(btp_combat_menu_count(c)==8);c->selected=9;step(&s,r,BTP_DOWN);CHECK(c->selected==0);
     step(&s,r,BTP_ACCEPT);CHECK(c->phase==BTP_COMBAT_MOVE);step(&s,r,BTP_RIGHT);step(&s,r,BTP_ACCEPT);CHECK(c->goal_active);
@@ -85,5 +126,5 @@ int main(int argc,char **argv)
     CHECK(c->phase==BTP_COMBAT_NOTICE && c->notice==16);step(&s,r,BTP_ACCEPT);CHECK(c->scan_unit==5);
     setup(&s,r);btp_combat_select(&s.combat,3);s.combat.selected=7;
     CHECK(btp_save_write("work/combat-ui-start.btp",&s,r,&e));
-    free(frame);free(r);printf("PASS: %u checks; nine original combat UI regions, foot moves and saved friend/enemy scans\n",checks);return 0;
+    free(frame);free(r);printf("PASS: %u checks; nine menu/scan and eight weapon/target/withdrawal regions, foot moves and saved scans\n",checks);return 0;
 }

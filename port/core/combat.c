@@ -840,9 +840,8 @@ static void combat_tick(BtpState *s, const BtpResources *r, BtpAction a, int ene
             *order=(uint8_t)btp_combat_id(c,c->target_unit);
             if (kick) menu(c);else { ++c->weapon_selected;c->phase=BTP_COMBAT_WEAPONS; }
         } else if (a==BTP_ACCEPT && c->target_selected==1) {
-            /* 0D43:0A16 advances original IDs and wraps 23 to 12. A
-               deliberately selected friendly can be targeted, but cycling
-               beyond the enemies must not wrap back to the player's mechs. */
+            /* 103B initializes target ID12; 0D43:0A16 wraps 23 to 12.
+               The original manual selector cycles enemy slots only. */
             unsigned id=btp_combat_id(c,c->target_unit);
             for (unsigned n=0;n<24;++n) {
                 id=id==23 ? 12u : id+1u;unsigned next=btp_combat_target(c,id);

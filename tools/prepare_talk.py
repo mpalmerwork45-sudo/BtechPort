@@ -103,6 +103,8 @@ def extract(source):
     for skill in (2,3,4):
         offset,segment=struct.unpack_from('<HH',image,DS+0xf9a+4*skill)
         addresses.append(segment*16+offset)
+    # Original 0D43 weapon/target headings; earlier IDs remain unchanged.
+    addresses.extend(DS+p for p in (0x29a3,0x2aa8))
     blob = bytearray(); ranges = []; origins = []
     for address in addresses:
         end = image.index(0,address)
@@ -116,7 +118,7 @@ def extract(source):
     header += bytes.fromhex(EXE_SHA)+bytes.fromhex(IMAGE_SHA)
     header += b"".join(struct.pack("<HH",*r) for r in ranges)
     font = image[FONT:FONT+2048]
-    return header+blob+font, {**metadata,"format":"BTTA/v19","strings":origins,
+    return header+blob+font, {**metadata,"format":"BTTA/v20","strings":origins,
         "font":{"image_offset":FONT,"length":len(font),"sha256":hashlib.sha256(font).hexdigest()}}
 
 

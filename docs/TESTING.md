@@ -88,6 +88,14 @@ audit is stored locally under `work/m4-audit/isolated-speaker/`. No physical XT
 recording or waveform equality is asserted. `make_phoenix_palette_vectors.py`
 executes the original ENDMECH decoder and palette writer; the cache suite
 checks all 64,000 Phoenix pixels and the native cache acceptance checks F5/F9.
+`make_target_ui_vectors.py` records eight unmasked original weapon/target/
+withdrawal regions. The combat UI suite checks those in addition to its nine
+earlier menu/scan regions and restores before every target/withdrawal input.
+`native_smoke.py --combat-ui-only` also checks actual F5/F9 on the weapon list,
+target selector and both withdrawal pages. All 51 regular suites and the five
+Python tool tests pass; focused sanitizer checks cover these changed paths.
+Assigned-row colour/layout has a direct comparison; native automatic weapon
+advancement, override notices and infantry/Kick selection remain outside it.
 
 The native intro starts at the logos. Use `--intro-preview` for equivalent
 headless replay. Escape cancels; Ctrl+Shift+Escape quits. Shift-held K/Y/R adds

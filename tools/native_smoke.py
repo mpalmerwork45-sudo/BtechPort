@@ -591,10 +591,18 @@ def combat_ui(env,work):
             (work/'native-combat-ui-record.actions').write_text(record.read_text())
             raise RuntimeError('Native original combat UI keys/state/pixels differ')
         print('PASS: native eight-entry foot menu, friend/enemy summaries, Detail Scan and Space dismissal; exact input/state/pixels.',flush=True)
-        for label,prefix in (('scan-choice',['up','accept']),('scan-summary',['up','accept','accept']),
-                             ('scan-detail',['up','accept','accept','down','accept'])):
-            tail.write_text('\n'.join(prefix)+'\n');page=tmp/'page.btp';slot=tmp/'slot.btp'
-            subprocess.run([str(binary),'--load',str(start),'--replay',str(tail),'--save',str(page)],cwd=ROOT,check=True,capture_output=True)
+        # The target/withdrawal files come from the ordinary-input portion of
+        # test_combat_ui; they include both held withdrawal messages.
+        pages=[('scan-choice',['up','accept']),('scan-summary',['up','accept','accept']),
+               ('scan-detail',['up','accept','accept','down','accept']),
+               ('target-ui-start',None),('target-ui-target',None),
+               ('target-ui-withdrawal',None),('target-ui-return',None)]
+        for label,prefix in pages:
+            page=tmp/'page.btp';slot=tmp/'slot.btp'
+            if prefix is None:page=work/f'{label}.btp'
+            else:
+                tail.write_text('\n'.join(prefix)+'\n')
+                subprocess.run([str(binary),'--load',str(start),'--replay',str(tail),'--save',str(page)],cwd=ROOT,check=True,capture_output=True)
             frame=work/f'native-{label}-restore.ppm'
             process=subprocess.Popen([str(ROOT/'build/btech-port'),'--load',str(page),'--save-file',str(slot),'--frame',str(frame)],
                 cwd=ROOT,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)

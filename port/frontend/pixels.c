@@ -478,6 +478,75 @@ static void combat_scan_menu(const BtpResources *r,const BtpCombatState *c,uint3
         text(r,f,8,112+(int)i*8,label,i==c->selected ? 0u : 15u);
     }
 }
+static unsigned combat_weapon_type(const BtpCombatUnit *u,unsigned index)
+{
+    /* The list retains a gun's name when it is empty or destroyed. The
+       firing helper deliberately rejects those guns, so it cannot supply
+       their display names (0D43:0027..00E0 scans the critical slots). */
+    if (u->infantry) return index ? 0u : u->record[11]+1u;
+    for (unsigned i=51,n=0;i<86;++i) {
+        unsigned type=u->record[i]&127u;
+        if (type>=16 && type<=32 && n++==index) return u->record[i];
+    }
+    return 0;
+}
+static const char *combat_range_name(const BtpResources *r,unsigned weapon,const BtpCombatUnit *actor,const BtpCombatUnit *target)
+{
+    static const char *const names[]={"Short","Med","Long","OUT"};
+    return names[btp_combat_range_to(&r->combat,weapon,actor,target)];
+}
+static void combat_target_panel(const BtpResources *r,const BtpCombatState *c,uint32_t *f)
+{
+    /* 0D43:07CB keeps the battlefield visible. Target facts occupy the
+       upper left box and the three choices replace the command list. */
+    size_t n;const uint8_t *heading=bank_literal(r,318,&n);
+    if (heading) (void)wrapped_at(r,f,8,8,11,heading,n,15);
+    const BtpCombatUnit *actor=&c->unit[c->active_unit],*target=&c->unit[c->target_unit];
+    unsigned type=combat_weapon_type(actor,c->weapon_selected)&127u;
+    char name[16];memcpy(name,target->record,15);name[11]=0;
+    text(r,f,8,40,"Target:",10);text(r,f,8,48,target->infantry ? "Human" : name,15);
+    text(r,f,8,56,"Range:",10);text(r,f,8,64,combat_range_name(r,type ? type-1u : 33u,actor,target),15);
+    if (target->infantry && target->record[11]<33) {
+        memcpy(name,r->combat.weapons[target->record[11]],11);name[11]=0;
+        text(r,f,8,72,"Weapon:",10);text(r,f,8,80,name,15);
+    }
+    static const char *const choices[]={"Target here","Next enemy","Cancel"};
+    for (unsigned i=0;i<3;++i) {
+        int y=104+8*(int)i;if (i==c->target_selected) rectangle(f,8,y,88,8,14);
+        text(r,f,8,y,choices[i],i==c->target_selected ? 0u : 15u);
+    }
+}
+static void combat_weapons_panel(const BtpResources *r,const BtpCombatState *c,uint32_t *f)
+{
+    /* 0D43:0004 sizes the bottom window to the installed weapon count.
+       Draw after the left frame: this panel overlaps its rightmost four
+       character columns, rather than fitting inside the map rectangle. */
+    const BtpCombatUnit *actor=&c->unit[c->active_unit];
+    unsigned count=btp_combat_weapon_count(actor);if (count>11) count=11;
+    int top=8*(21-(int)count);
+    rectangle(f,72,top,248,200-top,0);border_panel(r,f,72,top,248,200-top,0);
+    text(r,f,80,top+8,"Weapon",10);text(r,f,168,top+8,"Ammo",10);
+    text(r,f,208,top+8,"Target",10);text(r,f,272,top+8,"Range",10);
+    for (unsigned i=0;i<=count;++i) {
+        int y=top+16+8*(int)i;char name[16]="Done";
+        unsigned type=i<count ? combat_weapon_type(actor,i) : 0;
+        unsigned target=i<count ? btp_combat_target(c,c->orders[i]) : c->count;
+        int assigned=target<c->count && c->unit[target].record[0]!=255;
+        unsigned color=type&128u ? 8u : assigned ? 14u : 15u;
+        if (type) { memcpy(name,r->combat.weapons[(type&127u)-1u],11);name[11]=0; }
+        if (i==c->weapon_selected) rectangle(f,80,y,80,8,14);
+        text(r,f,80,y,name,i==c->weapon_selected ? 0u : color);
+        if (i==count) break;
+        if (type&128u) { text(r,f,168,y,"Destroyed",8);continue; }
+        unsigned ammo=actor->infantry ? 255u : actor->record[39+i];char number[4];
+        snprintf(number,sizeof number,"%3u",ammo);
+        text(r,f,168,y,ammo==255 ? "Full" : ammo ? number : "Out",color);
+        if (!assigned) { text(r,f,208,y,"None",color);continue; }
+        const BtpCombatUnit *unit=&c->unit[target];memcpy(name,unit->record,8);name[8]=0;
+        text(r,f,208,y,unit->infantry ? "Human" : name,color);
+        text(r,f,272,y,combat_range_name(r,(type&127u)-1u,actor,unit),color);
+    }
+}
 static void combat_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
 {
     const BtpCombatState *c=&s->combat;char line[40];
@@ -523,6 +592,7 @@ static void combat_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
         }
         return;
     }
+    if (c->phase==BTP_COMBAT_TARGET) { combat_target_panel(r,c,f);return; }
     combat_header(r,s,f,c->active_unit,0);
     if (c->phase==BTP_COMBAT_SCAN_CHOICE || (c->phase==BTP_COMBAT_NOTICE && c->notice>=15)) {
         combat_scan_menu(r,c,f,1);
@@ -542,7 +612,7 @@ static void combat_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
         while (commands && at<command_length && commands[at]!='\r' && used<11) label[used++]=(char)commands[at++];
         if (commands && at<command_length && commands[at]=='\r') ++at;
         label[used]=0;
-        int selected=c->phase==BTP_COMBAT_MENU && c->selected==btp_combat_menu_command(c,i);
+        int selected=(c->phase==BTP_COMBAT_MENU || c->phase==BTP_COMBAT_WEAPONS) && c->selected==btp_combat_menu_command(c,i);
         if (selected) rectangle(f,8,104+(int)i*8,88,8,14);
         text(r,f,8,104+(int)i*8,label,selected ? 0u : 15u);
     }
@@ -556,34 +626,18 @@ static void combat_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
         rectangle(f,200,64,1,24,14);rectangle(f,223,64,1,24,14);
         rectangle(f,104,168,216,32,0);border_panel(r,f,104,168,216,32,0);
         text(r,f,112,176,"Arrows: destination",15);text(r,f,112,184,"Enter: set route",14);
-    } else if (c->phase==BTP_COMBAT_WEAPONS || c->phase==BTP_COMBAT_TARGET || c->phase==BTP_COMBAT_KICK) {
+    } else if (c->phase==BTP_COMBAT_WEAPONS) {
+        rectangle(f,8,8,88,88,0);size_t n;const uint8_t *heading=bank_literal(r,317,&n);
+        if (heading) (void)wrapped_at(r,f,8,8,11,heading,n,15);
+    } else if (c->phase==BTP_COMBAT_KICK) {
         rectangle(f,104,72,216,128,0);border_panel(r,f,104,72,216,128,0);
-        if (c->phase==BTP_COMBAT_TARGET || c->phase==BTP_COMBAT_KICK) {
-            snprintf(line,sizeof line,c->unit[c->target_unit].infantry ? c->friends ? "Enemy soldier %u" : "Labor robot %u" : "Enemy 'Mech",c->target_unit);
-            text(r,f,112,80,c->phase==BTP_COMBAT_KICK ? "Choose the enemy to kick:" : "Choose a target:",15);
-            text(r,f,112,88,line,15);
-            static const char *choices[3]={"Target here","Next target","Cancel"};
-            for (unsigned i=0;i<3;++i) {
-                if (i==c->target_selected) rectangle(f,112,104+(int)i*8,200,8,14);
-                text(r,f,112,104+(int)i*8,choices[i],i==c->target_selected ? 0u : 15u);
-            }
-        } else {
-            text(r,f,112,80,"Weapon        Ammo Target",15);
-            unsigned count=btp_combat_weapon_count(&c->unit[c->active_unit]);
-            for (unsigned i=0;i<=count && i<12;++i) {
-                if (i==count) snprintf(line,sizeof line,"Done");
-                else {
-                    unsigned w=btp_combat_weapon(&c->unit[c->active_unit],i);char name[12]={0},ammo[5];
-                    if (w<33) memcpy(name,r->combat.weapons[w],10);else memcpy(name,"Unavailable",11);
-                    if (c->unit[c->active_unit].record[39+i]==255) snprintf(ammo,sizeof ammo," --");
-                    else snprintf(ammo,sizeof ammo,"%3u",c->unit[c->active_unit].record[39+i]);
-                    unsigned target=btp_combat_target(c,c->orders[i]);char label[9]={0};
-                    if (target<c->count) snprintf(label,sizeof label,c->unit[target].infantry ? "Robot %u" : "Locust",target);
-                    snprintf(line,sizeof line,"%-11.11s %s %s",name,ammo,label);
-                }
-                if (i==c->weapon_selected) rectangle(f,112,88+(int)i*8,200,8,14);
-                text(r,f,112,88+(int)i*8,line,i==c->weapon_selected ? 0u : 15u);
-            }
+        snprintf(line,sizeof line,c->unit[c->target_unit].infantry ? c->friends ? "Enemy soldier %u" : "Labor robot %u" : "Enemy 'Mech",c->target_unit);
+        text(r,f,112,80,"Choose the enemy to kick:",15);
+        text(r,f,112,88,line,15);
+        static const char *choices[3]={"Target here","Next target","Cancel"};
+        for (unsigned i=0;i<3;++i) {
+            if (i==c->target_selected) rectangle(f,112,104+(int)i*8,200,8,14);
+            text(r,f,112,104+(int)i*8,choices[i],i==c->target_selected ? 0u : 15u);
         }
     } else if (c->phase==BTP_COMBAT_SPY) {
         spy_panel(r,s,f);return;
@@ -753,6 +807,24 @@ static void aftermath_panel(const BtpResources *r,const BtpState *s,uint32_t *f)
 {
     const BtpAftermathState *v=&s->aftermath;uint8_t message[1024];size_t n=0;
     if (v->phase==10) { medical_panel(r,s,f);return; }
+    if (v->phase==6) {
+        /* The successful withdrawal notice is in the command box. */
+        size_t length;const uint8_t *notice=bank_literal(r,292,&length);
+        int y=notice ? wrapped_at(r,f,8,104,11,notice,length,15) : 104;
+        const uint8_t *footer=bank_literal(r,290,&length);
+        /* wrapped_at already advances past the notice's last row. */
+        if (footer && length && *footer=='\r') { ++footer;--length; }
+        if (footer) (void)wrapped_at(r,f,8,y,11,footer,length,15);
+        return;
+    }
+    if (v->phase==7) {
+        /* 103B:12xx returns to the ordinary party panel before this popup;
+           unlike victory/loot pages it has no appended Press a key footer. */
+        rectangle(f,104,72,216,56,0);border_panel(r,f,104,72,216,56,0);
+        size_t length;const uint8_t *notice=bank_literal(r,293,&length);
+        if (notice) (void)wrapped(r,f,80,notice,length,15);
+        return;
+    }
     if (v->phase==11) {
         /* Arena 103B:13AD uses the same 14D3:17C6 popup as training. */
         rectangle(f,104,72,216,56,0);border_panel(r,f,104,72,216,56,0);
@@ -784,8 +856,6 @@ static void aftermath_panel(const BtpResources *r,const BtpState *s,uint32_t *f)
         service_literal(r,message,&n,302);service_value(message,&n,v->cash,10);
         service_literal(r,message,&n,303);if (v->notice) service_literal(r,message,&n,304);
         service_literal(r,message,&n,313);
-    } else if (v->phase==6 || v->phase==7) {
-        service_literal(r,message,&n,v->phase==6 ? 292u : 293u);service_literal(r,message,&n,290);
     } else if (v->phase==1) {
         const char *name=btp_party_name(&s->party,v->pilot);n=strlen(name);memcpy(message,name,n);
         service_literal(r,message,&n,297);
@@ -1330,7 +1400,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
     if (!s->cutscene.active) for (unsigned i=0;i<10;++i) if (s->late.travel[i])
         text(r,f,8,8+(int)i*8,directions[s->late.travel[i]-1u],15);
     /* The original status fields use these positions. */
-    if (!(s->entry_slot == 0 && s->mode >= BTP_BUILDING)) {
+    if (!(s->entry_slot == 0 && s->mode >= BTP_BUILDING) || s->aftermath.phase==7) {
         text(r,f,8,112,"Jason",15);
         if (s->party.enabled && !s->combat.phase) {
             /* Original 0000:4CAC/4AA6: up to four living people, with the
@@ -1562,14 +1632,16 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         }
     }
     if (s->aftermath.phase) {
-        rectangle(f,0,0,104,200,0);combat_header(r,s,f,s->combat.active_unit,0);
-        if (s->combat.automatic&(1u<<s->combat.active_unit)) {
+        if (s->aftermath.phase==7) rectangle(f,0,0,104,104,0);
+        else { rectangle(f,0,0,104,200,0);combat_header(r,s,f,s->combat.active_unit,0); }
+        if (s->aftermath.phase!=7 && (s->combat.automatic&(1u<<s->combat.active_unit))) {
             const char *message="The computer is currently moving this unit.";
             (void)wrapped_at(r,f,8,32,11,(const uint8_t *)message,strlen(message),15);
         }
         aftermath_panel(r,s,f);
     }
     border_panel(r,f,0,0,104,200,1);
+    if (s->combat.phase==BTP_COMBAT_WEAPONS && s->cutscene.active!=2) combat_weapons_panel(r,&s->combat,f);
     if (s->mode==BTP_CACHE && s->cache.phase!=BTP_CACHE_WALK && s->cache.phase!=BTP_CACHE_DOOR) {
         uint8_t message[512];size_t n=0;
         rectangle(f,104,0,216,200,0);border_panel(r,f,104,0,216,200,0);

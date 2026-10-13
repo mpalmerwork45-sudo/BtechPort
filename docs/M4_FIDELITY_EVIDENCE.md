@@ -254,8 +254,9 @@ increment additionally ran the six arena/prison/theft native tails.
 
 ## Remaining authorized work
 
-1. Complete remaining manual targeting and battle-result UI comparisons,
-   including arena and withdrawal, and broaden full original fight contexts.
+1. Complete weapon override/empty/destroyed notices, selection persistence,
+   infantry/Kick selectors and direct arena/salvage comparisons. Original
+   withdrawal and weapon/target regions now have comparisons below.
 2. Expand live original doorway/corner/formation observations across towns.
 3. Physical speaker calibration still needs suitable hardware evidence. All
    eighteen ordered tone/noise traces now agree with executed original code;
@@ -266,6 +267,38 @@ increment additionally ran the six arena/prison/theft native tails.
    town-NPC/hospital-Talk request now have saved and SDL continuations.
 
 This batch does not mark the original five follow-ups or M4 complete.
+
+## Weapon/target panels and withdrawal — 2026-10-14
+
+**VERIFIED for eight complete, unmasked regions:** original run
+`1791924339149371505` selects a mech weapon, cycles from a LOCUST to a human,
+assigns the gun, closes the weapon list and withdraws. The private GAME4
+prerequisite activates GAME3's parked vehicles, puts character four on foot,
+and enables encounters; the EXE/assets and both reference directories are
+unchanged. The port now draws `0D43:0004`'s weapon window from x72 to x319,
+sized by installed weapon count, with its 80-pixel name selection, original
+ammunition labels, actual target model and range. `0D43:07CB`'s target facts
+and three choices occupy the left boxes, leaving the battlefield visible.
+
+Successful withdrawal displays its notice in the lower left box. Its next
+page restores the party status panel and shows the original 216x56 return
+popup, without the former extra footer. These pages now match the original
+captured regions. The input test restores before every transition and checks
+that withdrawal awards no money. The original manual selector initializes
+enemy ID12 and cycles through IDs12..23; no ordinary friendly-target gesture
+was found, so the earlier plan to add one was not justified.
+
+The assigned-row pixel comparison explicitly sets the original selected row.
+The port still advances to the next gun after assignment, whereas the captured
+original retains the selection and clears the left text. Selection persistence,
+override/empty/destroyed notices and the infantry/Kick selectors remain work
+for a subsequent behavior increment. Battlefield equality is not claimed.
+
+**PASS:** all 51 regular CTest suites, all five Python tool tests, focused
+ASan/UBSan/LeakSanitizer combat UI/aftermath/menu/cache-format continuation
+checks, the native combat input route, and actual F5/F9 on all seven tested
+scan/weapon/target/withdrawal pages. The dialogue cache is now BTTA/v20 with
+319 ranges; existing string IDs and internal-save format remain unchanged.
 
 ## Phoenix Hawk palette and isolated speaker audit — 2026-10-14
 
