@@ -1,4 +1,4 @@
-# Project status — bounded M4 acceptance, 2026-10-13
+# Project status — bounded M4 acceptance, 2026-10-14
 
 The independent C11/SDL2 port has playable implementations of the authorized
 M4a–M4e increments and the subsequent building, theft, encounter, recruitment and
@@ -125,12 +125,12 @@ unfinished portions, including subsequent owner observations.
 2. Expand live original doorway, roof-corner and formation comparisons across
    towns. All-party collision, city joins, ruined-Citadel sheet continuity and
    five visible cache companions have focused regression coverage.
-3. Compare isolated speaker recordings/port traces and establish defensible
-   timing/filtering calibration. An exact physical 8 MHz XT sound match is
-   still UNKNOWN; the existing instruction-clock model is APPROXIMATE.
-4. Check the Phoenix Hawk LAM palette and remaining healing layouts against
-   original presentation. Field/hospital treatment and injured-cooldown/healthy
-   notices now match complete original crops. Healthy with active cooldown
+3. All eighteen isolated tone/noise sequences agree with executed original
+   code. Physical 8 MHz XT calibration remains UNKNOWN; the existing clock
+   model and speaker response remain APPROXIMATE. Further tuning needs evidence.
+4. Phoenix Hawk LAM colours now match the original decoder and palette writes,
+   with native save/load checks. Field/hospital treatment and injured-cooldown/
+   healthy notices match complete original crops. Healthy with active cooldown
    still needs a measured comparison.
 5. Alternate owned-arena/win/loss and prison-loss journeys now pass, including
    arena completion, old stuck-menu recovery, reward and ownership checks.

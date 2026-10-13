@@ -82,6 +82,12 @@ World tests check three mechs and five people around a roof strip, each footprin
 at every intermediate step and each moving member's gait after save restoration.
 Speaker timing is a nominal 8 MHz 8088 model; physical hardware filtering and
 interrupt/prefetch costs remain approximate. See [M4 follow-up evidence](M4_FOLLOWUPS_EVIDENCE.md).
+`make_speaker_event_vectors.py` now compares the complete ordered tone/noise
+stream and nominal active PIT clocks for all eighteen effects; the native WAV
+audit is stored locally under `work/m4-audit/isolated-speaker/`. No physical XT
+recording or waveform equality is asserted. `make_phoenix_palette_vectors.py`
+executes the original ENDMECH decoder and palette writer; the cache suite
+checks all 64,000 Phoenix pixels and the native cache acceptance checks F5/F9.
 
 The native intro starts at the logos. Use `--intro-preview` for equivalent
 headless replay. Escape cancels; Ctrl+Shift+Escape quits. Shift-held K/Y/R adds

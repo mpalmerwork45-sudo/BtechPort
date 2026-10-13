@@ -257,15 +257,41 @@ increment additionally ran the six arena/prison/theft native tails.
 1. Complete remaining manual targeting and battle-result UI comparisons,
    including arena and withdrawal, and broaden full original fight contexts.
 2. Expand live original doorway/corner/formation observations across towns.
-3. Compare isolated speaker events and refine timing/filtering only with
-   suitable evidence. Exact physical 8 MHz XT sound remains UNKNOWN.
-4. Verify Phoenix LAM colours and the healthy-with-cooldown medical branch.
-   Primary action 45 loads ENDMECH.CMP and selects the palette at 2858:0000
-   (`14D3:15DD..16A6`); its measured VGA appearance is still pending.
+3. Physical speaker calibration still needs suitable hardware evidence. All
+   eighteen ordered tone/noise traces now agree with executed original code;
+   exact physical 8 MHz XT sound remains UNKNOWN.
+4. Phoenix LAM decoding/palette registers are verified below. The healthy-with-
+   cooldown medical branch still needs a measured visual comparison.
 5. Alternate owned-arena/win/loss and prison-loss routes and the subsequent
    town-NPC/hospital-Talk request now have saved and SDL continuations.
 
 This batch does not mark the original five follow-ups or M4 complete.
+
+## Phoenix Hawk palette and isolated speaker audit — 2026-10-14
+
+**VERIFIED:** action 45 (`14D3:15DD..16A6`) loads ENDMECH.CMP and selects
+`2858:0000`, which differs from the title/sprite palette. The port now retains
+dark magenta at source colour 5 and uses bright blue at colour 13. The new
+`make_phoenix_palette_vectors.py` executes the original CMP decoder and VGA
+palette writer, without instruction patches. Its complete 320x200 RGB result
+matches the native Phoenix page. The RGB model also matches the previously
+captured original title. This is original decoder/register evidence, not a
+claim of a live DOSBox Phoenix screenshot or physical monitor calibration.
+
+**VERIFIED within the nominal clock model:** `make_speaker_event_vectors.py`
+executes all eighteen original programs and records every tone divisor and
+noise-loop input in order. Native event type, divisor, speaker level and active
+PIT-clock totals agree. This includes the swept zero divisor, which represents
+65536 rather than a rest. Eighteen isolated native WAVs under ignored
+`work/m4-audit/isolated-speaker/` are non-silent and unclipped, with durations
+0.032–1.216 seconds. No runtime audio or speculative filter change was needed.
+These are native renders, not original physical recordings. Interrupt/prefetch
+costs, inter-call silence and XT speaker filtering/volume remain approximate.
+
+**PASS:** focused regular cache/menu/audio checks, ASan/UBSan/LeakSanitizer
+cache and audio suites, all six native cache tails and actual F5/F9 restores
+on both the map-room and Phoenix screens. The preceding complete 51-suite and
+historical sanitizer results remain recorded below.
 
 ## Town actors, hospital conversations and Starport encounters
 

@@ -1,0 +1,158 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "snapshot": "/home/mpalmer/BtechPort/work/reference-runs/1791709609448346900/combat-menu",
+  "programs": [
+    {
+      "program": 1,
+      "events": 100,
+      "active_pit_clocks": 782400,
+      "nominal_active_seconds": 0.655726,
+      "minimum_period": 7824,
+      "maximum_period": 7824
+    },
+    {
+      "program": 2,
+      "events": 1400,
+      "active_pit_clocks": 1143800,
+      "nominal_active_seconds": 0.958613,
+      "minimum_period": 817,
+      "maximum_period": 817
+    },
+    {
+      "program": 3,
+      "events": 480,
+      "active_pit_clocks": 765600,
+      "nominal_active_seconds": 0.641646,
+      "minimum_period": 1595,
+      "maximum_period": 1595
+    },
+    {
+      "program": 4,
+      "events": 30,
+      "active_pit_clocks": 81740,
+      "nominal_active_seconds": 0.068506,
+      "minimum_period": 503,
+      "maximum_period": 4950
+    },
+    {
+      "program": 5,
+      "events": 200,
+      "active_pit_clocks": 79770,
+      "nominal_active_seconds": 0.066855,
+      "minimum_period": 295,
+      "maximum_period": 503
+    },
+    {
+      "program": 6,
+      "events": 8,
+      "active_pit_clocks": 81112,
+      "nominal_active_seconds": 0.06798,
+      "minimum_period": 10139,
+      "maximum_period": 10139
+    },
+    {
+      "program": 7,
+      "events": 320,
+      "active_pit_clocks": 1400265,
+      "nominal_active_seconds": 1.173555,
+      "minimum_period": 275,
+      "maximum_period": 10153
+    },
+    {
+      "program": 8,
+      "events": 276,
+      "active_pit_clocks": 1435390,
+      "nominal_active_seconds": 1.202993,
+      "minimum_period": 2810,
+      "maximum_period": 10315
+    },
+    {
+      "program": 9,
+      "events": 400,
+      "active_pit_clocks": 542236,
+      "nominal_active_seconds": 0.454445,
+      "minimum_period": 934,
+      "maximum_period": 1558
+    },
+    {
+      "program": 10,
+      "events": 6000,
+      "active_pit_clocks": 696000,
+      "nominal_active_seconds": 0.583314,
+      "minimum_period": 116,
+      "maximum_period": 116
+    },
+    {
+      "program": 11,
+      "events": 600,
+      "active_pit_clocks": 490200,
+      "nominal_active_seconds": 0.410834,
+      "minimum_period": 817,
+      "maximum_period": 817
+    },
+    {
+      "program": 12,
+      "events": 190,
+      "active_pit_clocks": 937120,
+      "nominal_active_seconds": 0.785396,
+      "minimum_period": 2896,
+      "maximum_period": 8900
+    },
+    {
+      "program": 13,
+      "events": 40,
+      "active_pit_clocks": 31680,
+      "nominal_active_seconds": 0.026551,
+      "minimum_period": 772,
+      "maximum_period": 812
+    },
+    {
+      "program": 14,
+      "events": 112,
+      "active_pit_clocks": 567168,
+      "nominal_active_seconds": 0.475341,
+      "minimum_period": 4580,
+      "maximum_period": 6466
+    },
+    {
+      "program": 15,
+      "events": 120,
+      "active_pit_clocks": 749520,
+      "nominal_active_seconds": 0.628169,
+      "minimum_period": 6246,
+      "maximum_period": 6246
+    },
+    {
+      "program": 16,
+      "events": 180,
+      "active_pit_clocks": 1124280,
+      "nominal_active_seconds": 0.942254,
+      "minimum_period": 6246,
+      "maximum_period": 6246
+    },
+    {
+      "program": 17,
+      "events": 1040,
+      "active_pit_clocks": 785280,
+      "nominal_active_seconds": 0.658139,
+      "minimum_period": 376,
+      "maximum_period": 1532
+    },
+    {
+      "program": 18,
+      "events": 5,
+      "active_pit_clocks": 52030,
+      "nominal_active_seconds": 0.043606,
+      "minimum_period": 10406,
+      "maximum_period": 10406
+    }
+  ],
+  "boundaries": [
+    "18105/18378 tone delay entry",
+    "187F:00A9 actual noise LOOP inputs"
+  ],
+  "comparison": "Ordered tone divisors, speaker noise levels and nominal periods for all eighteen isolated programs.",
+  "timing": "Calibration 2; nominal 8 MHz 8088. Tone loops are executed by the original timing oracle; noise LOOP/caller clocks use the existing documented model.",
+  "limits": "Silence/call overhead outside these intervals, prefetch, interrupts and physical speaker filtering are not measured. These are not hardware recordings.",
+  "no_instruction_patches": true
+}

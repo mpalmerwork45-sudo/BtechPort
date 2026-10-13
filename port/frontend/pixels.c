@@ -1122,7 +1122,10 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         btp_world_preview(r,s,f);return;
     }
     if (s->cache.active && s->cache.phase==BTP_CACHE_PHOENIX) {
-        for (unsigned i=0;i<BTP_PIXELS;++i) f[i]=btp_palette[sprite_palette[r->phoenix.pixels[i]&15u]];
+        /* Native action 45 selects 2858:0000, not the title/sprite palette.
+           In particular source 5 stays magenta and source 13 becomes blue. */
+        static const uint8_t phoenix_palette[16]={0,0,2,3,4,5,6,7,8,1,10,11,12,9,14,15};
+        for (unsigned i=0;i<BTP_PIXELS;++i) f[i]=btp_palette[phoenix_palette[r->phoenix.pixels[i]&15u]];
         return;
     }
     if (s->mode==BTP_GAME_OVER) {

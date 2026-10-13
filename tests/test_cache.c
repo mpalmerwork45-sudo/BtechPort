@@ -96,12 +96,22 @@ int main(int argc,char **argv)
         ++cases;
     }
     fclose(f);CHECK(cases==530);
+    /* The authority here is the original decoder and actual VGA palette
+       writes, with its RGB model cross-checked against the captured title. */
+    f=fopen("tests/fixtures/phoenix-palette-primary.txt","r");CHECK(f);
+    uint64_t phoenix_rgb=0;CHECK(fscanf(f,"F %" SCNx64,&phoenix_rgb)==1 && !fclose(f));
     BtpState s;CHECK(btp_save_load("Original DOS/GAME1",&s,r,&e));f=fopen("tests/fixtures/ordinary-cache.actions","r");CHECK(f);
     unsigned ticks=0,animations=0,room=0,phoenix=0,terminal=0,door=0,final_key=0;
     while (fgets(line,sizeof line,f)) {
         line[strcspn(line,"\r\n")]=0;BtpAction action;CHECK(btp_action_parse(line,&action));input(&s,r,action);++ticks;
         if (s.cutscene.active && s.cutscene.kind>=10 && s.cutscene.kind<=14) animations|=1u<<(s.cutscene.kind-10u);
         room+=s.story_flags[66]!=0;phoenix+=s.cache.phase==BTP_CACHE_PHOENIX;terminal+=s.cache.phase==BTP_CACHE_TERMINAL;door+=s.cache.phase==BTP_CACHE_DOOR;
+        if (s.cache.phase==BTP_CACHE_PHOENIX && phoenix==1) {
+            btp_render(r,&s,0,complete);uint64_t rgb=UINT64_C(14695981039346656037);
+            for (unsigned pixel=0;pixel<BTP_PIXELS;++pixel) for (unsigned c=0;c<3;++c)
+                rgb=(rgb^((complete[pixel]>>(16u-8u*c))&255u))*UINT64_C(1099511628211);
+            CHECK(rgb==phoenix_rgb);CHECK(btp_write_ppm("work/m4-audit/phoenix-palette-native.ppm",complete));
+        }
         const BtpBld *script=btp_state_bld(r,&s);
         if (!final_key && s.campaign.building==25 && s.script.status==BTP_SCRIPT_WAIT &&
             !s.cutscene.active && !s.audio.sound_count && s.script.pc<script->length && script->bytes[s.script.pc]==255) {

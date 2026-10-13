@@ -47,7 +47,7 @@ The remaining authorized tasks are in [project status](PROJECT_STATUS.md).
    hospital conversation has a complete saved/SDL route. Recorded input-only
    playability does not establish timer parity.
 6. **Sound — programs VERIFIED, physical response APPROXIMATE.** All eighteen
-   speaker programs, attack effect selections, hit/wreck/arena-alarm dispatch
+   ordered tone/noise traces, attack effect selections, hit/wreck/arena-alarm dispatch
    and sequential continuation are checked. Busy-loop conversion is a nominal
    Intel 8 MHz 8088 model with midpoint IMUL timing. Prefetch contention,
    interrupts, physical speaker filtering/volume and actual XT calibration
@@ -63,8 +63,10 @@ The remaining authorized tasks are in [project status](PROJECT_STATUS.md).
    approximate. Nine foot/mech menu and scan regions, 23 Mechit-Lube panels,
    five victory/loot panels and one field-treatment panel match their captures.
    Field/hospital treatment and injured-cooldown/healthy notices now match four
-   complete crops. Phoenix LAM colours, healthy-with-active-cooldown and
-   remaining battle-result screens still need direct visual comparisons.
+   complete crops. Phoenix LAM colours match the original decoder/palette
+   writes and a title-checked RGB model. A direct DOS Phoenix capture,
+   healthy-with-active-cooldown and remaining battle-result screens still
+   need visual comparisons.
 8. **Persistence — tested represented fields.** All six supplied original saves
    roundtrip unchanged; unmodeled original bytes are preserved. Internal
    BTPY/v34 includes active theft/audio/menu states, spy discovery and world

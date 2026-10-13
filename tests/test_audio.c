@@ -83,6 +83,22 @@ int main(int argc,char **argv)
         CHECK(nonzero>0);
     }
     fclose(f);CHECK(programs==18);
+    /* Compare every isolated audible event with original tone-delay entries
+       and noise-loop inputs, rather than checking only aggregate toggles. */
+    f=fopen("tests/fixtures/speaker-events-primary.txt","r");CHECK(f);programs=0;
+    while (fgets(row,sizeof row,f)) {
+        unsigned p,count,total,actual=0,sum=0;uint64_t want,h=UINT64_C(14695981039346656037);
+        CHECK(sscanf(row,"E %u %u %" SCNx64 " %u",&p,&count,&want,&total)==4 && p>=1 && p<=18);
+        for (unsigned i=0;i<r->combat.sound_count[p-1];++i) {
+            const BtpSpeakerEvent *event=&r->combat.sound[p-1][i];if (!event->type) continue;
+            byte(&h,event->type);byte(&h,event->divisor);byte(&h,event->divisor>>8);byte(&h,event->level);
+            for (unsigned c=0;c<4;++c) byte(&h,event->clocks>>(8*c));
+            sum+=event->clocks;++actual;
+        }
+        if (h!=want || actual!=count || sum!=total) fprintf(stderr,"Speaker event mismatch: program %u, events %u/%u, clocks %u/%u\n",p,actual,count,sum,total);
+        CHECK(h==want && actual==count && sum==total);++programs;
+    }
+    CHECK(!ferror(f) && !fclose(f) && programs==18);
     s.menu.sound=0;btp_audio_effect(&s,2);CHECK(!s.audio.sound_count);
     f=fopen("tests/fixtures/outtake-primary.txt","r");CHECK(f);unsigned decisions=0;
     while (fgets(row,sizeof row,f)) {
