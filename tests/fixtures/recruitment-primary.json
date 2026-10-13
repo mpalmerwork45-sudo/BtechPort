@@ -1,0 +1,24 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "cases": 314,
+  "routines": [
+    "09B8:0D58, complete generic recruitment and post-wait spy coin",
+    "103B:08A0..0CDB, discovered spy after a wave",
+    "0000:399D..39FF/3AE9, inspecting a suspected character"
+  ],
+  "prerequisites": "2/4/8 people; name counter 2/8/9 including original wrap and duplicate names; doctor/technician; zero/one prior spy; 0..3 explicit polling RNG draws; optional free mech rider. Spy outcomes on foot, pilot alone, pilot with unarmed/armed rider, passenger; discovery flag 0/1 is explicit.",
+  "intercepted_boundaries": [
+    "0000:2A2B",
+    "0000:4CAC",
+    "103B:27C9",
+    "1656:0004",
+    "1656:0281",
+    "1656:0388",
+    "1656:03F5",
+    "173D:002F",
+    "173D:0259",
+    "173D:086A"
+  ],
+  "comparison": "136 character bytes, four complete vehicle record hashes, RNG/name counter and all four spy/encounter flags. Graphics/key polling are explicit boundaries; original instructions unmodified."
+}

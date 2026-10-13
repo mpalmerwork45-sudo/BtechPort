@@ -181,7 +181,9 @@ void btp_menu_input(BtpState *s,const BtpResources *r,BtpAction a)
     case BTP_MENU_PERSON:case BTP_MENU_EQUIPMENT:
         item=btp_party_slot(&s->party,item);
         if (s->party.enabled && s->party.people[item][0]==255) break;
-        s->party.selected=(uint8_t)item;c->member=(uint8_t)item;page(s,BTP_MENU_INSPECT,0);break;
+        s->party.selected=(uint8_t)item;c->member=(uint8_t)item;page(s,BTP_MENU_INSPECT,0);
+        if (s->story_flags[39] && item==s->story_flags[37]) s->spy_discovered=1;
+        break;
     case BTP_MENU_INSPECT_KIND:
         if (!item) page(s,BTP_MENU_MECH_PICK,0);
         else if (btp_party_count(&s->party)>1) page(s,BTP_MENU_PERSON,btp_party_ordinal(&s->party,s->party.selected));

@@ -2,11 +2,15 @@
 
 ## Current M4 presentation checks
 
-The active build has 43 CTest suites. Internal saves are BTPT/v29, with a
+The active build has 45 CTest suites. Internal saves are BTPV/v31, with a
 20,480-byte payload; old versions retain explicit migrations. Current caches
-are BTTA/v13, BTCB/v11 and BTW3. The older sections below describe earlier increments.
-All 43 regular and ASan/UBSan/LeakSanitizer suites, the full historical and
-sanitizer scripts, native M4 acceptance and the eight follow-up tails pass.
+are BTTA/v16, BTCB/v11 and BTW3. The world seed is the original `0x020304`.
+The older sections below describe earlier increments.
+All 45 regular and ASan/UBSan/LeakSanitizer suites, the historical regression
+checks, full sanitizer script, native M4 acceptance and nine follow-up tails pass.
+The historical script's final guard detected only the editor's known reference
+Git-config metadata change; its separate final verification passes after exact
+baseline restoration.
 The final reference guard verifies all 1,287 entries unchanged.
 Native focused checks: `--intro-only`, `--menu-only` and `--presentation-only`
 on `tools/native_smoke.py`. The menu probe includes saving/loading from the
@@ -18,7 +22,8 @@ then reads the actual X11 window pixels and checks visible terrain and F5/F9.
 audio, original-save, aftermath, crew, campaign, hospital/jail and cache checks.
 `--story-only` includes paid treatment of an injured original GAME2 party.
 `--followups-only` checks native newspaper/chow, cinema, both hut outcomes,
-laser distribution, prison search and arena escape from saved ordinary prefixes.
+laser distribution, prison search, arena escape and spy removal/replacement
+from saved ordinary prefixes.
 `--cache-only` verifies terminals, doors, the Phoenix display, map-room puzzle,
 ending and real F5/F9 while the map room and Phoenix display are open.
 
@@ -28,12 +33,24 @@ Primary numeric generators: `make_mech_view_vectors.py`,
 private emulated RAM and commit only numeric projections/source identities.
 `make_theft_vectors.py` adds 68 executed prison/arena setup cases;
 `make_event_audit_vectors.py` adds 154 weapon-sound and encounter-choice cases.
+The follow-up generators `make_armour_repair_vectors.py`,
+`make_purchase_recipient_vectors.py`, `make_world_water_vectors.py`,
+`make_world_view_vectors.py`, `make_mixed_encounter_vectors.py` and
+`make_recruitment_vectors.py` document their original routine/caller boundaries.
+The last adds 314 recruitment, inspection and post-wave spy cases.
 `make_followup_replays.py --training` regenerates dependent ordinary routes in
 order when gameplay/presentation timing changes. Routine native checks replay
 short saved tails, so adding a later mission does not require repeatedly playing
 every earlier mission in real time.
+`make_fresh_campaign_replay.py` records 66,119 fresh-cadet inputs through the
+cache ending; `make_spy_replay.py` records 50,575 through inspection, spy removal
+and replacement recruitment. C integration restores and continues before
+every input. Only the ending route uses the authorized credit shortcut; neither
+imports an original save or edits quest flags, coordinates, skills or RNG.
+World tests check three mechs and five people around a roof strip, each footprint
+at every intermediate step and each moving member's gait after save restoration.
 Speaker timing is a nominal 8 MHz 8088 model; physical hardware filtering and
-interrupt/prefetch costs remain approximate. See [M4 evidence](M4_PROGRESS.md).
+interrupt/prefetch costs remain approximate. See [M4 follow-up evidence](M4_FOLLOWUPS_EVIDENCE.md).
 
 The native intro starts at the logos. Use `--intro-preview` for equivalent
 headless replay. Escape cancels; Ctrl+Shift+Escape quits. Shift-held K/Y/R adds
@@ -69,7 +86,7 @@ no embedded sound track. Optional primary regeneration:
 `python3 tools/make_sound_vectors.py`. The optional oracle is not a build or
 runtime dependency. Historic counts below describe their original increments.
 
-## Current M3d–M3h acceptance
+## Historical M3d–M3h acceptance
 
 **34 CTest suites, the complete historical headless regression, five Python
 tool tests and headless ASan/UBSan/LeakSanitizer pass.** Native SDL checks cover
@@ -116,8 +133,8 @@ To open a later playable state:
 Regenerate input-only routes when their behavior changes:
 
 ```sh
-python3 tools/make_campaign_replay.py 32 0
-python3 tools/make_campaign_replay.py 32 1 --loss
+python3 tools/make_campaign_replay.py 4 0
+python3 tools/make_campaign_replay.py 4 1 --loss
 python3 tools/make_later_campaign_replay.py
 ```
 

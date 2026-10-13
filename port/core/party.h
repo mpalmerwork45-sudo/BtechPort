@@ -15,6 +15,8 @@ unsigned btp_party_ordinal(const BtpPartyState *party,unsigned slot);
 uint8_t *btp_party_mech(BtpState *state,unsigned slot);
 const char *btp_party_name(const BtpPartyState *party,unsigned slot);
 const char *btp_character_name(unsigned id);
+/* Return the recruited slot plus one, or zero when the party is full.
+   Original name IDs wrap and may duplicate; callers must retain the slot. */
 int btp_party_recruit(BtpState *state,unsigned skill);
 int btp_party_walkable(const BtpState *state,const BtpResources *resources,int x,int y,int mech);
 void btp_party_follow(BtpState *state,const BtpResources *resources,uint16_t old_x,uint16_t old_y);

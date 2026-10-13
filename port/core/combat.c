@@ -7,6 +7,7 @@
 #include "core/party.h"
 #include "core/audio.h"
 #include "core/yard.h"
+#include "core/spy.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -334,9 +335,11 @@ static void begin_round(BtpState *s, const BtpResources *r, int enemy_ai)
            ties retain the lower original unit ID, including after ejections. */
         unsigned same=0;prey=BTP_COMBAT_UNITS;
         for (unsigned i=first;i<last;++i) if (c->unit[i].record[0]!=255 && c->unit[i].infantry==enemy.infantry &&
+            !(!friendly && c->unit[i].infantry && btp_spy_unit(s,i)) &&
             !(s->campaign.encounter==4 && s->yard.rental && !s->story_flags[35] && btp_combat_id(c,i)==13)) same=1;
         for (unsigned i=first;i<last;++i) {
             if (c->unit[i].record[0]==255 || (same && c->unit[i].infantry!=enemy.infantry) ||
+                (!friendly && c->unit[i].infantry && btp_spy_unit(s,i)) ||
                 (s->campaign.encounter==4 && s->yard.rental && !s->story_flags[35] && btp_combat_id(c,i)==13)) continue;
             unsigned distance=btp_combat_distance(enemy.x,enemy.y,c->unit[i].x,c->unit[i].y);
             if (prey==BTP_COMBAT_UNITS || distance<btp_combat_distance(enemy.x,enemy.y,c->unit[prey].x,c->unit[prey].y) ||
@@ -458,6 +461,7 @@ void btp_combat_ignite(BtpState *s, const BtpCombatUnit *target)
 static void end_round(BtpState *s,const BtpResources *r)
 {
     BtpCombatState *c=&s->combat;
+    if (btp_spy_begin(s)) return;
     unsigned remaining=0;
     for (unsigned i=c->friends ? c->friends : 1u;i<c->count;++i) remaining+=c->unit[i].record[0]!=255;
     if (!remaining) { c->won=1;finish(s,r);return; }
@@ -615,6 +619,14 @@ static void combat_tick(BtpState *s, const BtpResources *r, BtpAction a, int ene
     }
     if (s->effects.count) { btp_effects_tick(s,r);return; }
     if (s->audio.sound_count) return;
+    if (c->phase==BTP_COMBAT_SPY) {
+        if (a==BTP_ACCEPT || a==BTP_CANCEL || a==BTP_OPEN_MENU) {
+            btp_spy_combat_finish(s);
+            if (s->aftermath.eject) btp_campaign_eject(s);
+            end_round(s,r);
+        }
+        return;
+    }
     if (s->campaign.encounter==4 && s->yard.alarm==1 && c->phase==BTP_COMBAT_ROUND) {
         s->yard.alarm=2;c->flash=0;notice(c,7,BTP_COMBAT_ROUND);return;
     }
@@ -631,7 +643,9 @@ static void combat_tick(BtpState *s, const BtpResources *r, BtpAction a, int ene
     if (c->phase==BTP_COMBAT_PICK) {
         if (a==BTP_UP || a==BTP_LEFT) c->scan_unit=(uint8_t)((c->scan_unit+c->friends-1u)%c->friends);
         if (a==BTP_DOWN || a==BTP_RIGHT) c->scan_unit=(uint8_t)((c->scan_unit+1u)%c->friends);
-        if (a==BTP_ACCEPT && c->unit[c->scan_unit].record[0]!=255) { btp_combat_select(c,c->scan_unit);menu(c); }
+        if (a==BTP_ACCEPT && c->unit[c->scan_unit].record[0]!=255) {
+            btp_combat_select(c,c->scan_unit);menu(c);
+        }
         if (a==BTP_CANCEL) menu(c);
         return;
     }
@@ -673,6 +687,7 @@ static void combat_tick(BtpState *s, const BtpResources *r, BtpAction a, int ene
     if (c->phase==BTP_COMBAT_SCAN) {
         if (a==BTP_LEFT || a==BTP_UP) c->scan_unit=(uint8_t)((c->scan_unit+c->count-1u)%c->count);
         if (a==BTP_RIGHT || a==BTP_DOWN) c->scan_unit=(uint8_t)((c->scan_unit+1u)%c->count);
+        if (btp_spy_unit(s,c->scan_unit)) s->spy_discovered=1;
         if (a==BTP_ACCEPT || a==BTP_CANCEL) menu(c);
         return;
     }
@@ -695,10 +710,9 @@ static void combat_tick(BtpState *s, const BtpResources *r, BtpAction a, int ene
             *order=(uint8_t)btp_combat_id(c,c->target_unit);
             if (kick) menu(c);else { ++c->weapon_selected;c->phase=BTP_COMBAT_WEAPONS; }
         } else if (a==BTP_ACCEPT && c->target_selected==1) {
-            for (unsigned n=0;n<c->count-(c->friends ? c->friends : 1u);++n) {
-                unsigned first=c->friends ? c->friends : 1u;
-                c->target_unit=(uint8_t)(first+(c->target_unit-first+1u)%(c->count-first));
-                if (c->unit[c->target_unit].record[0]!=255) break;
+            for (unsigned n=0;n<c->count;++n) {
+                c->target_unit=(uint8_t)((c->target_unit+1u)%c->count);
+                if (c->target_unit!=c->active_unit && c->unit[c->target_unit].record[0]!=255) break;
             }
         }
         return;
@@ -734,8 +748,15 @@ static void combat_tick(BtpState *s, const BtpResources *r, BtpAction a, int ene
         else if (c->selected==5) { c->automatic^=UINT32_C(1)<<c->active_unit;c->auto_run=(uint8_t)(c->automatic!=0);c->paused=0;begin_round(s,r,enemy_ai); }
         else if (c->selected==6) { c->scan_unit=0;c->phase=BTP_COMBAT_SCAN; }
         else if (c->selected==7) {
-            if (c->friends>1) { c->phase=BTP_COMBAT_PICK;c->scan_unit=c->active_unit; }
-            else menu(c);
+            /* Live original menu 3 rotates the active friendly unit directly;
+               it does not open a character picker or inspect the new unit.
+               In particular, selecting the spy is not his discovery event. */
+            unsigned friends=c->friends ? c->friends : 1u;
+            for (unsigned n=1;n<=friends;++n) {
+                unsigned next=(c->active_unit+n)%friends;
+                if (c->unit[next].record[0]!=255) { btp_combat_select(c,next);break; }
+            }
+            menu(c);c->selected=7;
         }
         else if (c->selected==8) {
             /* 103B:069F rejects a menu flee during the invasion; 0610's
@@ -888,12 +909,12 @@ int btp_combat_valid(const BtpState *s)
     }
     if ((s->campaign.encounter ? c->count>24 || c->friends<1 || c->friends>12 || c->friends>=c->count || c->active_unit>=c->friends :
         (s->mission.assignment==3 ? c->count<4 || c->count>7 : c->count!=(s->mission.assignment>=6 ? s->campaign.invasion ? 5 : 4 : s->mission.assignment==5 ? 3 : 2))) ||
-        c->target_unit<1 || c->target_unit>=c->count || c->lost>1 || (!s->campaign.encounter && c->unit[0].infantry) ||
+        c->target_unit>=c->count || c->lost>1 || (!s->campaign.encounter && c->unit[0].infantry) ||
         c->last_attacker>=c->count || c->last_target>=c->count ||
-        c->phase>BTP_COMBAT_AVOID || c->selected>9 || c->messages>2 || c->graphics>1 ||
+        c->phase>BTP_COMBAT_SPY || c->selected>9 || c->messages>2 || c->graphics>1 ||
         (c->movement>2 && c->movement!=255) || c->goal_active>1 || c->goal_x>(s->campaign.invasion ? 253u : 125u) || c->goal_y>(s->campaign.invasion ? 255u : 127u) ||
         c->cursor_x>(s->campaign.invasion ? 253u : 125u) || c->cursor_y>(s->campaign.invasion ? 255u : 127u) || c->weapon_selected>11 || c->target_selected>2 ||
-        c->scan_unit>=c->count || c->step>12 || c->delay>4 || c->notice>8 || c->notice_return>BTP_COMBAT_ROUND ||
+        c->scan_unit>=c->count || c->step>12 || c->delay>4 || c->notice>14 || c->notice_return>BTP_COMBAT_ROUND ||
         c->fled>1 || c->won>1 || c->fled+c->won+c->lost>1 || c->last_weapon>11 || c->last_event>5 || c->fired>=4096 ||
         c->shot.hit>1 || c->shot.location>35 || c->shot.destroyed>1 || c->shot.toppled>1 ||
         c->shot.needed < -4 || c->shot.needed>30 || (c->enemy_movement>1 && c->enemy_movement!=255) ||
@@ -904,7 +925,9 @@ int btp_combat_valid(const BtpState *s)
     if ((c->phase==BTP_COMBAT_STORY)!=(s->late.invasion_popup!=0) ||
         (c->phase==BTP_COMBAT_STORY && (!s->campaign.invasion || s->late.invasion_event>5 ||
             (s->late.invasion_popup>1 && s->late.invasion_popup!=s->late.invasion_event+2u)))) return 0;
-    if ((c->phase==BTP_COMBAT_NOTICE)!=(c->notice!=0) || (!c->notice && c->notice_return)) return 0;
+    if ((c->phase==BTP_COMBAT_NOTICE || c->phase==BTP_COMBAT_SPY)!=(c->notice!=0) || (!c->notice && c->notice_return)) return 0;
+    if (c->phase==BTP_COMBAT_SPY && (!s->campaign.encounter || !s->spy_discovered || !s->story_flags[39] ||
+        c->notice<10 || c->notice>14 || c->notice_return)) return 0;
     if (c->phase==BTP_COMBAT_NOTICE && c->notice_return!=BTP_COMBAT_MENU && c->notice_return!=BTP_COMBAT_CONTROL &&
         !(c->notice_return==BTP_COMBAT_ROUND && s->campaign.encounter==4 && (c->notice==7 || c->notice==8))) return 0;
     if ((c->phase==BTP_COMBAT_OFFER || c->phase==BTP_COMBAT_AVOID) && (s->campaign.encounter!=1 || c->round || c->selected>1)) return 0;
@@ -923,7 +946,7 @@ int btp_combat_valid(const BtpState *s)
     }
     for (unsigned i=0;i<12;++i) {
         unsigned id=i==11 ? c->kick_target : c->orders[i];
-        if (id!=255 && (btp_combat_target(c,id)<1 || btp_combat_target(c,id)>=c->count)) return 0;
+        if (id!=255 && btp_combat_target(c,id)>=c->count) return 0;
     }
     unsigned alive=0;
     for (unsigned i=c->count;i<BTP_COMBAT_UNITS;++i) {
@@ -956,5 +979,5 @@ int btp_combat_valid(const BtpState *s)
     int lost=s->campaign.encounter ? (jason<c->count && c->unit[jason].record[0]==255) ||
         (rex<c->count && c->unit[rex].record[0]==255) : c->unit[0].record[0]==255;
     return lost==(c->lost!=0 || s->effects.pending==2) &&
-        (alive ? !c->won && s->effects.pending!=1 : c->won || s->effects.pending==1 || c->phase==BTP_COMBAT_ROUND);
+        (alive ? !c->won && s->effects.pending!=1 : c->won || s->effects.pending==1 || c->phase==BTP_COMBAT_ROUND || c->phase==BTP_COMBAT_SPY);
 }

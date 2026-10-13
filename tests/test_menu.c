@@ -51,6 +51,11 @@ int main(int argc,char **argv)
     btp_render(r,&s,0,pixels);CHECK(crop_hash(pixels,8,104,88,88)==UINT64_C(0xd286e3c49177864b));
     s.combat.phase=BTP_COMBAT_GRAPHICS;s.combat.selected=0;
     btp_render(r,&s,0,pixels);CHECK(crop_hash(pixels,8,104,88,88)==UINT64_C(0x3d1a9af7f445b1fa));
+    btp_start(&s);s.mode=BTP_ENCOUNTER;s.combat.phase=BTP_COMBAT_OFFER;s.combat.friends=1;s.combat.count=2;
+    s.combat.unit[1].infantry=1;s.combat.unit[1].record[0]=1;
+    btp_render(r,&s,0,pixels);
+    if (crop_hash(pixels,0,0,104,200)!=UINT64_C(0x199a78634f9be602)) (void)btp_write_ppm("work/m4-audit/engage-native.ppm",pixels);
+    CHECK(crop_hash(pixels,0,0,104,200)==UINT64_C(0x199a78634f9be602));
     btp_start(&s);s.mode=BTP_ENTRY;s.entry_slot=0;btp_render(r,&s,0,pixels);
     CHECK(crop_hash(pixels,104,72,216,56)==UINT64_C(0x0121052b10ef7ecc));
     btp_start(&s);btp_npc_init(&s,&r->map);BtpNpcState before=s.npc;
@@ -99,6 +104,9 @@ int main(int argc,char **argv)
     btp_game_tick(&s,r,BTP_OPEN_MENU);CHECK(s.mode==BTP_EXPLORE && restore(&s,r));
     btp_menu_open(&s);select_item(&s,r,2);btp_render(r,&s,0,pixels);
     CHECK(crop_hash(pixels,104,0,216,200)==UINT64_C(0x3b56096617a5b93e));
+    BtpState speed=s;speed.mode=BTP_BUILDING;speed.campaign.building=5;
+    speed.service=(BtpServiceState){.phase=1,.action=19};
+    btp_render(r,&speed,0,pixels);CHECK(crop_hash(pixels,104,0,216,200)==UINT64_C(0x12dc86ee88e190c4));
     btp_menu_close(&s);btp_menu_open(&s);btp_render(r,&s,0,pixels);
     CHECK(crop_hash(pixels,104,88,216,80)==UINT64_C(0xe2fb8696d8944791));select_item(&s,r,2);
     CHECK(s.campaign.ui==BTP_MENU_ALLOCATE && restore(&s,r));select_item(&s,r,0);select_item(&s,r,btp_menu_mech_count(&s));

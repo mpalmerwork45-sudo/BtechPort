@@ -851,7 +851,8 @@ def followups(env,work):
     cases=[('mayor-newspaper','house-menu','GAME3'),('mayor-chow','house-menu','GAME3'),
         ('cinema','entry','GAME3'),('inventor','entry','GAME3'),('inventor-qualified','entry','GAME5'),
         ('laser-guns','laser-shop-robbery','GAME3'),('prison-theft','impound-yard-start',None),
-        ('arena-theft','arena-rented-locust','GAME3')]
+        ('arena-theft','arena-rented-locust','GAME3'),
+        ('spy-replacement','technician-recruitment-wait',None)]
     with tempfile.TemporaryDirectory(prefix='native-followup-',dir=work) as directory:
         tmp=Path(directory);prefix=tmp/'prefix.actions';start=tmp/'start.btp';tail=tmp/'tail.actions';record=tmp/'record.actions'
         for kind,label,source in cases:

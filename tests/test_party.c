@@ -68,9 +68,8 @@ int main(int argc,char **argv)
     s.npc.rng[0]=1;s.npc.rng[1]=s.npc.rng[2]=0;btp_campaign_rex(&s,r);
     for (unsigned i=0;i<3;++i) { btp_game_tick(&s,r,BTP_ACCEPT);CHECK(restore(&s,r)); }
     for (unsigned i=0;i<8;++i) btp_game_tick(&s,r,BTP_DOWN);
-    btp_game_tick(&s,r,BTP_ACCEPT);CHECK(s.combat.phase==BTP_COMBAT_PICK);
-    btp_game_tick(&s,r,BTP_DOWN);btp_game_tick(&s,r,BTP_ACCEPT);CHECK(s.combat.active_unit==1);CHECK(restore(&s,r));
-    for (unsigned i=0;i<4;++i) btp_game_tick(&s,r,BTP_DOWN);
+    btp_game_tick(&s,r,BTP_ACCEPT);CHECK(s.combat.phase==BTP_COMBAT_MENU && s.combat.active_unit==1);CHECK(restore(&s,r));
+    while (s.combat.selected!=3) btp_game_tick(&s,r,BTP_DOWN);
     for (unsigned i=0;i<4;++i) { btp_game_tick(&s,r,BTP_ACCEPT);CHECK(restore(&s,r)); }
     CHECK(s.combat.phase==BTP_COMBAT_MENU);btp_game_tick(&s,r,BTP_ACCEPT);
     for (unsigned i=0;i<300 && s.combat.phase==BTP_COMBAT_ROUND;++i) { btp_game_tick(&s,r,BTP_IDLE);CHECK(restore(&s,r)); }

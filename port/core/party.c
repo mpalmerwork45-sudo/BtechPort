@@ -166,7 +166,7 @@ int btp_party_recruit(BtpState *s,unsigned skill)
         if (s->party.mech_types[i]!=255 && m[0]!=255 && m[122]==255) { m[122]=(uint8_t)slot;a[12]=(uint8_t)i;break; }
     }
     p->x[slot]=s->campaign.world_x;p->y[slot]=s->campaign.world_y;
-    return 1;
+    return (int)slot+1;
 }
 int btp_party_walkable(const BtpState *s,const BtpResources *r,int x,int y,int mech)
 {
@@ -300,7 +300,8 @@ int btp_party_decode(const uint8_t b[BTP_PARTY_BYTES],BtpPartyState *p)
         if (a[0]==255) continue;
         if (a[0]>=10 || a[1]<2 || a[1]>12 || a[2]<2 || a[2]>12 || a[3]<2 || a[3]>12 || a[11]>13 || a[12]>8 || a[13]>5 || a[15]>120) return 0;
         for (unsigned k=4;k<=10;++k) if (a[k]>5) return 0;
-        for (unsigned j=0;j<i;++j) if (v.people[j][0]==a[0]) return 0;
+        /* 09B8:0D58 wraps the name counter after Hunter. Replacement agents
+           may share a name with a living agent; slots remain their identity. */
     }
     *p=v;return 1;
 }

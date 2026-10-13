@@ -1,13 +1,15 @@
 # Project status — bounded M4 acceptance, 2026-10-13
 
 The independent C11/SDL2 port has playable implementations of the authorized
-M4a–M4e increments and the subsequent building, theft, encounter and presentation
-requests. M4 as a complete original campaign remains unfinished. The original
-cache and ending route starts from the owner's late GAME1 prerequisite; it does
-not establish a fresh-game route through every earlier quest.
+M4a–M4e increments and the subsequent building, theft, encounter, recruitment and
+presentation requests. A recorded 66,119-input route now starts with a new cadet
+and reaches the cache ending through the actual training, companion, disk and
+password prerequisites. It uses the authorized money shortcut. M4 as a complete
+reproduction of every original campaign branch remains unfinished.
 
-See [M4 evidence](M4_PROGRESS.md) for original routines, explicit prerequisites
-and confidence limits. README credits the reverse-engineering contributors.
+See [M4 evidence](M4_PROGRESS.md) and [follow-up evidence](M4_FOLLOWUPS_EVIDENCE.md)
+for original routines, explicit prerequisites and confidence limits. README
+credits the reverse-engineering contributors.
 Reference directories are immutable; original assets and emulator RAM stay in
 ignored work files. Local commits remain on `main`, with no push.
 
@@ -27,8 +29,9 @@ ignored work files. Local commits remain on `main`, with no push.
 | M4c | Hospital/jail companions and treatment; hut, cinema, laser shop, house and two theft routes |
 | M4d | Original cache puzzle/ending from GAME1, including eleven doors and MAP15 |
 | M4e | Six original-save imports/exports, six internal slots, original intro/menu/inspection/map, sequential sound and outtakes |
-| Owner follow-ups | Garage checkout allocation, invasion messages/DESTRUCT switch, walking escape, direction log, encounter Yes/No and source-based sprite selection |
-| Remaining original campaign | Fresh-game integration through all prerequisites, additional branches and broader DOS combat/presentation parity |
+| Owner follow-ups | Four Jenners/ruins escape, purchase recipients, armour repair, original crew/inspection/engagement/Speed Shop selectors, world seed/city alignment, all-party collision and gait, replacement recruits and spy confrontation |
+| Fresh campaign | New-cadet input route through training, companions, paid apprenticeships, holodisk, password and cache ending; original checks at selected prerequisites |
+| Remaining original campaign | Additional branches and broader DOS combat/presentation parity |
 | M5 | Optional enhancements after relevant original behavior is established |
 
 ## Play and verify
@@ -64,29 +67,35 @@ Successful pre-combat evasion produces no loot or cash.
 
 ## Verification and limits
 
-The current build has 43 CTest suites. Newly executed original comparisons
-cover 68 prison/arena setups and 154 attack-sound/encounter decisions, alongside
-46 house/laser/cinema cases and the earlier campaign, medical, save and cache
-evidence. Prison and arena routes restore and continue before every input;
-the prison guard timer, flee refusal and first fight round are exercised too.
-Eight new SDL tails cover the house, cinema, hut, laser shop and both thefts,
-comparing recorded keys, complete continued state and final RGB pixels.
+The current build has 45 CTest suites. New comparisons include 360 armour-repair,
+160 purchase-recipient, 32 prison/arena return, 432 water-boundary, 512 device
+direction and 314 recruitment/spy cases. Two controlled larger encounters cover
+11 original waves and 171 complete record/position/facing/heat/RNG comparisons.
+These extend the earlier campaign, medical, save and cache evidence.
 
-**PASS:** all 43 regular and ASan/UBSan/LeakSanitizer suites, the complete
+The fresh ending and 50,575-input spy/replacement routes restore and continue
+before every input. Nine SDL tails cover the house, cinema, hut, laser shop,
+both thefts and spy replacement, comparing recorded keys, complete continued
+state and final RGB pixels. Collision tests exercise three mechs and five people,
+each footprint at every intermediate step, all moving gaits and saved positions.
+
+**PASS:** all 45 regular and ASan/UBSan/LeakSanitizer suites, the complete
 historical regression and full sanitizer script, native M4 acceptance and all
-eight new native building/theft tails. Both reference trees pass all 1,287
-content/mode/mtime checks. Code and fixtures are committed as `fbda805`.
+nine native follow-up tails. Both reference trees pass all 1,287
+content/mode/mtime checks. Work is committed locally in successive increments.
 
 **VERIFIED in these bounds:** numeric rules, resource interpretation, original
 BLD branches and saved/native continuations. **APPROXIMATE:** DOS busy-loop
-cadence, encounter placement and broader AI/initiative, following, several UI
+cadence, encounter placement and broader AI/initiative, follower detours, several UI
 layouts and physical speaker response. Audio uses original effect programs and
 a nominal 8 MHz 8088 timing model; no exact recording from physical XT hardware
 is claimed. Enemy Jenner/UrbanMech sprite bases follow the original enemy table,
 while owned mechs use the original garage selection rule.
 
-Internal saves are **BTPT/v29**, with a 20,480-byte payload inside the BTS1
-length/CRC envelope. Current local caches are BTTA/v13, BTCB/v11 and BTW3.
+Internal saves are **BTPV/v31**, with a 20,480-byte payload inside the BTS1
+length/CRC envelope. The discovery marker and held spy confrontation are saved.
+Current local caches are BTTA/v16, BTCB/v11 and BTW3; the world seed is the
+original startup value `0x020304`, rather than the former research seed.
 Older saves migrate their represented fields; absent direction/exploration
 history cannot be reconstructed. Build and play need no emulator. Optional
 oracle tools execute bounded original instructions and commit numeric results
@@ -94,13 +103,13 @@ and source hashes only.
 
 ## Next five proposed tasks
 
-1. Record a fresh-game campaign route through all disk/password/party
-   prerequisites into the cache, with matching original checkpoints.
-2. Extend prison/arena comparisons to guard defeat, owned-mech arena fights,
-   normal rental return, full garages and recovery after losing a mech.
-3. Recover the remaining later garage repair native actions 31/32 and verify
-   the corresponding original building branches.
-4. Compare complete larger encounters against DOS, including initiative,
-   multiple ejections, mixed-party AI and aftermath.
-5. Compare additional original combat/menu/map frames and recorded speaker
-   waveforms; refine remaining UI margins, cadence and XT playback.
+1. Reproduce the original eight-entry on-foot combat menu, active-unit header
+   and remaining infantry/crew inspection layouts.
+2. Trace larger DOS fights through their full live caller contexts, including
+   spy crews, multiple ejections, manual friendly targeting and aftermath.
+3. Audit all city doorways, roof corners and walking formations; compare the
+   collision correction with additional original movement frames.
+4. Compare isolated recorded combat effects and calibrate speaker filtering
+   and cadence against suitable XT recordings.
+5. Add fresh-game alternate theft/arena/loss routes and legacy-save migration
+   cases, especially active invasion saves from v29.

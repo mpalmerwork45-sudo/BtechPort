@@ -153,6 +153,7 @@ typedef struct {
     BtpLateState late;
     BtpYardState yard;
     uint8_t disk_origin; /* Parent building while VIEWDISK runs as a child story. */
+    uint8_t spy_discovered; /* Original transient word 374A, saved explicitly. */
 } BtpState;
 enum { BTP_STATE_BYTES = 20480 };
 

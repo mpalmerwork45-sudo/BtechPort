@@ -414,11 +414,17 @@ services:
     for (unsigned service = 0; service < 16 && (s->script.status == BTP_SCRIPT_NATIVE || s->script.status>=BTP_SCRIPT_MONEY); ++service) {
         if (s->script.status==BTP_SCRIPT_RECRUIT) {
             if (s->service.phase==8) break;
-            unsigned id=s->party.next_id,skill=s->script.money_amount;
-            if ((btp_building_kind(r,s)!=5 && btp_building_kind(r,s)!=9 && btp_building_kind(r,s)!=13) || !btp_party_recruit(s,s->script.money_amount)) {
+            unsigned skill=s->script.money_amount;
+            if ((btp_building_kind(r,s)!=5 && btp_building_kind(r,s)!=9 && btp_building_kind(r,s)!=13) || skill>6) {
                 s->script.status=BTP_SCRIPT_ERROR;s->script.error=BTP_SCRIPT_NATIVE_CONTEXT;break;
             }
-            unsigned member=0;while (member<8 && s->party.people[member][0]!=id) ++member;
+            unsigned recruited=(unsigned)btp_party_recruit(s,skill);
+            if (!recruited) {
+                /* The original full-party scan exits without a new agent or
+                   a spy coin. It does not fault the building interpreter. */
+                btp_script_condition_return(&s->script,btp_state_bld(r,s),s->story_flags,0);continue;
+            }
+            unsigned member=recruited-1u;
             s->service=(BtpServiceState){.phase=8,.action=0xe9,.mech=(uint8_t)member,.kind=(uint8_t)skill};
             s->script.money_amount=0;break;
         }
@@ -542,7 +548,7 @@ static uint16_t get16(const uint8_t *p) { return (uint16_t)(p[0] | (uint16_t)p[1
 void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
 {
     memset(b, 0, BTP_STATE_BYTES);
-    memcpy(b, "BTPU", 4); b[4] = 30;
+    memcpy(b, "BTPV", 4); b[4] = 31;
     for (unsigned i = 0; i < 4; ++i) b[8+i] = (uint8_t)(s->tick >> (8 * i));
     b[12] = (uint8_t)s->x_half; b[13] = (uint8_t)(s->x_half >> 8);
     b[14] = (uint8_t)s->y_half; b[15] = (uint8_t)(s->y_half >> 8);
@@ -673,6 +679,7 @@ void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
     memcpy(b+19305,&s->yard,sizeof s->yard);
     b[19305+sizeof s->yard]=s->talk.reply;
     b[19306+sizeof s->yard]=s->disk_origin;
+    b[19307+sizeof s->yard]=s->spy_discovered;
 }
 
 int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *script, BtpState *s)
@@ -707,7 +714,8 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         n == BTP_STATE_BYTES && !memcmp(b,"BTPR",4) && b[4]==27 ? 27 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPS",4) && b[4]==28 ? 28 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPT",4) && b[4]==29 ? 29 :
-        n == BTP_STATE_BYTES && !memcmp(b,"BTPU",4) && b[4]==30 ? 30 : 0;
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPU",4) && b[4]==30 ? 30 :
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPV",4) && b[4]==31 ? 31 : 0;
     if (!version) return 0;
     for (unsigned i = 5; i < 8; ++i) if (b[i]) return 0;
     if (version == 1) { for (unsigned i = 20; i < 24; ++i) if (b[i]) return 0; }
@@ -724,7 +732,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
             if (version == 9) for (unsigned i = 403; i < n; ++i) if (b[i]) return 0;
             if (version >= 10) {
                 if (b[425]) return 0;
-                unsigned start=version==10 ? 434u : version==11 ? 441u : version==12 ? 450u : version<15 ? 896u : version>=30 ? 19307u+(unsigned)sizeof(BtpYardState) : version>=29 ? 19306u+(unsigned)sizeof(BtpYardState) : version>=28 ? 19292u+(unsigned)sizeof(BtpLateState) : version>=27 ? 18483u+(unsigned)sizeof(BtpCacheState) : version>=26 ? 18483u : version>=25 ? 18433u : version>=24 ? 15702u : version>=22 ? 15693u : version>=21 ? 15414u : version>=20 ? 11388u : version>=19 ? 11326u : version>=18 ? 11314u : version>=17 ? 2684u : version>=16 ? 2399u : 1803u;
+                unsigned start=version==10 ? 434u : version==11 ? 441u : version==12 ? 450u : version<15 ? 896u : version>=31 ? 19308u+(unsigned)sizeof(BtpYardState) : version>=30 ? 19307u+(unsigned)sizeof(BtpYardState) : version>=29 ? 19306u+(unsigned)sizeof(BtpYardState) : version>=28 ? 19292u+(unsigned)sizeof(BtpLateState) : version>=27 ? 18483u+(unsigned)sizeof(BtpCacheState) : version>=26 ? 18483u : version>=25 ? 18433u : version>=24 ? 15702u : version>=22 ? 15693u : version>=21 ? 15414u : version>=20 ? 11388u : version>=19 ? 11326u : version>=18 ? 11314u : version>=17 ? 2684u : version>=16 ? 2399u : 1803u;
                 for (unsigned i=start;i<n;++i) if (b[i]) return 0;
                 if (version>=13) for (unsigned i=version>=15 ? 460u : 452u;i<512;++i) if (b[i]) return 0;
                 if (version==13 && b[878]) return 0; /* v14 firing-effect countdown. */
@@ -740,6 +748,8 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
     }
     if (version>=29) memcpy(&result.yard,b+19305,sizeof result.yard);
     if (version>=30) result.disk_origin=b[19306+sizeof result.yard];
+    if (version>=31) result.spy_discovered=b[19307+sizeof result.yard];
+    if (result.spy_discovered>1) return 0;
     if (version>=25) {
         memcpy(result.explored,b+16384,sizeof result.explored);
         for (unsigned i=15702;i<16384;++i) if (b[i]) return 0;

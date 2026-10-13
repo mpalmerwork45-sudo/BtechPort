@@ -5,6 +5,9 @@ supplied DOS version 1.03. **M0, M1, bounded M2a–M2m and M3a–M3h are complet
 M4a–M4e have bounded playable implementations; [current evidence and limits](docs/M4_PROGRESS.md)
 cover the Space menu, six save slots, splash palette, combat opening prompts,
 PC-speaker effects, combat outtakes and training return-to-base message.
+The [follow-up evidence](docs/M4_FOLLOWUPS_EVIDENCE.md) records the fresh-game
+cache-ending route, additional original combat rules, replacement specialists,
+spy outcomes and all-party walking collision/animation checks.
 All six supplied original GAME files now import and roundtrip exactly. To use
 one, run `./build/btech-port --load 'Original DOS/GAME3'`. Export an imported
 save outdoors with `--export-original work/GAME3`; unmodeled bytes are retained.
@@ -29,7 +32,15 @@ prison/arena theft routes are playable. Random encounters describe the attacking
 force and offer fight/avoid. Garage checkout opens crew allocation; the invasion
 shows its original messages and destroyed map during combat. Combat effects,
 hits, wrecks and arena alarms play sequentially.
-The wider campaign remains unfinished; encounter timing, following, physical
+Hospital and Mechit-Lube recruiting follows the original BLD specialist gates,
+including replacements when the previous specialist is lost. Inspection can
+expose the recruited spy; his original combat confrontation handles pilot,
+passenger and on-foot outcomes. A fresh-cadet replay reaches the cache ending
+through companions, apprenticeships, the holodisk and password prerequisites.
+Each person's foot point and each mech's two ground tiles are checked as the
+party walks, including every intermediate step in two/four-step mode. All
+moving members advance one gait frame per key, using their own saved positions.
+The wider campaign remains unfinished; encounter timing, follower detours, physical
 speaker response and parts of the service interface remain approximate.
 
 ## Acknowledgements
@@ -86,7 +97,7 @@ start, only the familiar Citadel area is revealed, as in the original. The map
 reveals more as you travel. **F4 also toggles the overhead view.** It places the authentic 64×64 Citadel map within
 192×192 tiles generated independently in C. Launch directly
 into that view with `./build/btech-port --world-overview`. This bounded area uses
-owner-derived numeric inputs and a stated seed; the view follows the party after
+owner-derived numeric inputs and the original startup seed `0x020304`; the view follows the party after
 the invasion. Thirty complete sectors across three seeds match the original
 generator. Stored town maps overlay the generated world; Starport is the first
 additional town with an input-only campaign route. The early campaign's closed
@@ -114,8 +125,10 @@ python3 tools/native_smoke.py --campaign-only
 ```
 
 Space outdoors opens party actions. Inspect or Equipment
-selects the person whose equipped weapon, armour and skills are displayed;
-subsequent shop purchases equip that selected member. The garage parks the
+selects the person whose equipped weapon, armour and skills are displayed.
+With owned mechs, Inspect first asks whether to examine a mech. Multi-person
+shop purchases ask who receives the item after payment, with the original
+drop/redistribute choices for displaced equipment. The garage parks the
 party's mechs, and checkout retains its original 150-credit fee. Mechit-Lube
 selects an owned mech for repairs, an ammo bin and quantity, or its original
 Speed Shop offer. Unaffordable work follows the original numeric limits.
@@ -149,9 +162,10 @@ local 50-credit cap, so wait
 outside if a vest is unaffordable. Declining a purchase costs nothing; insufficient
 funds produce the original response and exit. The cap is a pre-update test rather
 than a clamp. All eleven weapons and five armour types are purchasable through
-the original menus, prices and confirmations. Purchases replace the selected
-party member's equipped item. Cash is shared; a backpack/transfer interface is
-not implemented.
+the original menus, prices and confirmations. Solo purchases equip Jason;
+multi-person parties choose the recipient. Cash is shared, and the party
+equipment menu supports transfers. The armour shop also offers the original
+personal armour repair, including partial repair when cash is limited.
 
 To open ComStar on the verified account screen, or watch its whole transaction
 replay through SDL (about 13 seconds, closes automatically):

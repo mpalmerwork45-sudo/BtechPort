@@ -12,6 +12,7 @@
 #include "core/menu.h"
 #include "core/cache.h"
 #include "core/yard.h"
+#include "core/spy.h"
 #include "data/anm.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -403,6 +404,32 @@ static int left_message(const BtpResources *r,uint32_t *f,const uint8_t *message
     }
     return y;
 }
+static void spy_panel(const BtpResources *r,const BtpState *s,uint32_t *f)
+{
+    unsigned ids[10],count=0,spy=s->story_flags[37],bay=s->party.people[spy][12],witness=8;
+    if (bay<4) {
+        const uint8_t *mech=btp_party_mech((BtpState *)s,bay);
+        witness=mech[mech[121]==spy ? 122 : 121];
+    }
+    static const unsigned messages[5][8]={
+        {190,255,191,255,192,193,194,0},
+        {255,195,196,197,0},
+        {255,195,254,198,199,0},
+        {255,195,254,200,201,202,0},
+        {255,203,204,254,205,206,0}};
+    unsigned outcome=btp_spy_outcome(s);if (!outcome || outcome>5) return;
+    while (messages[outcome-1][count]) { ids[count]=messages[outcome-1][count];++count; }
+    uint8_t message[1024];size_t n=0;
+    for (unsigned i=0;i<count;++i) {
+        const uint8_t *p;size_t length;
+        if (ids[i]>=254) {
+            p=(const uint8_t *)btp_party_name(&s->party,ids[i]==255 ? spy : witness);length=strlen((const char *)p);
+        } else p=bank_literal(r,ids[i],&length);
+        if (p && length<=sizeof message-n) { memcpy(message+n,p,length);n+=length; }
+    }
+    rectangle(f,104,0,216,200,0);border_panel(r,f,104,0,216,200,0);
+    (void)wrapped(r,f,8,message,n,15);
+}
 static void combat_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
 {
     const BtpCombatState *c=&s->combat;char line[40];
@@ -413,16 +440,21 @@ static void combat_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
         for (unsigned i=c->friends;i<c->count;++i) if (c->unit[i].record[0]!=255) {
             if (c->unit[i].infantry) ++humans;else ++mechs;
         }
-        char description[100];snprintf(description,sizeof description,"%s%u%s%s%s%u%s%s",
-            r->dialogue.bytes+r->dialogue.offset[166],mechs,r->dialogue.bytes+r->dialogue.offset[167],mechs==1 ? "" : "s",
-            r->dialogue.bytes+r->dialogue.offset[168],humans,r->dialogue.bytes+r->dialogue.offset[169],humans==1 ? "" : "s");
-        (void)left_message(r,f,(const uint8_t *)description,strlen(description));
-        rectangle(f,104,64,216,96,0);border_panel(r,f,104,64,216,96,0);
+        char description[100];size_t used=(size_t)snprintf(description,sizeof description,"%s",r->dialogue.bytes+r->dialogue.offset[166]);
+        if (mechs) used+=(size_t)snprintf(description+used,sizeof description-used,"%u%s%s",mechs,r->dialogue.bytes+r->dialogue.offset[167],mechs==1 ? "" : "s");
+        if (mechs && humans) used+=(size_t)snprintf(description+used,sizeof description-used,"%s",r->dialogue.bytes+r->dialogue.offset[168]);
+        if (humans) used+=(size_t)snprintf(description+used,sizeof description-used,"%u%s%s",humans,r->dialogue.bytes+r->dialogue.offset[169],humans==1 ? "" : "s");
+        if (used+1<sizeof description) { description[used++]='.';description[used]=0; }
+        (void)wrapped_at(r,f,8,8,11,(const uint8_t *)description,strlen(description),15);
+        /* Original 103B:0499 uses the lower left box for the engagement
+           choice, retaining the map and the force description above it. */
+        rectangle(f,8,104,88,88,0);
         unsigned id=c->phase==BTP_COMBAT_OFFER ? 170u : 171u;
-        size_t n;const uint8_t *p=bank_literal(r,id,&n);if (p) (void)wrapped(r,f,72,p,n,15);
+        size_t n;const uint8_t *p=bank_literal(r,id,&n);
+        int y=p ? wrapped_at(r,f,8,104,11,p,n,15) : 120;
         if (c->phase==BTP_COMBAT_OFFER) {
-            rectangle(f,c->selected ? 168 : 128,104,c->selected ? 16 : 24,8,14);
-            text(r,f,128,104,"Yes",c->selected ? 15u : 0u);text(r,f,168,104,"No",c->selected ? 0u : 15u);
+            rectangle(f,c->selected ? 40 : 8,y,c->selected ? 16 : 24,8,14);
+            text(r,f,8,y,"Yes",c->selected ? 15u : 0u);text(r,f,40,y,"No",c->selected ? 0u : 15u);
         }
         return;
     }
@@ -493,14 +525,19 @@ static void combat_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
                 text(r,f,112,88+(int)i*8,line,i==c->weapon_selected ? 0u : 15u);
             }
         }
+    } else if (c->phase==BTP_COMBAT_SPY) {
+        spy_panel(r,s,f);return;
     } else if (c->phase==BTP_COMBAT_SCAN) {
         const BtpCombatUnit *u=&c->unit[c->scan_unit];
         rectangle(f,104,72,216,128,0);border_panel(r,f,104,72,216,128,0);
-        text(r,f,112,80,u->infantry ? "Labor robot" : c->scan_unit ? "Enemy Locust" : "Jason's 'Mech",14);
+        unsigned id=btp_combat_id(c,c->scan_unit);
+        text(r,f,112,80,u->infantry ? id>=4 && id<12 ? btp_party_name(&s->party,id-4) : "Kurita soldier" : c->scan_unit ? "Enemy Locust" : "Jason's 'Mech",14);
         if (u->infantry) {
             char weapon[12]={0};memcpy(weapon,r->combat.weapons[u->record[11]],10);
             snprintf(line,sizeof line,"Health %u  Armor %u",u->record[15],u->record[14]);text(r,f,112,104,line,15);
-            text(r,f,112,120,weapon,15);text(r,f,112,184,"Arrows: next Enter: close",14);return;
+            text(r,f,112,120,weapon,15);
+            if (btp_spy_unit(s,c->scan_unit)) { size_t n;const uint8_t *p=bank_literal(r,188,&n);if (p) (void)wrapped(r,f,136,p,n,15); }
+            text(r,f,112,184,"Arrows: next Enter: close",14);return;
         }
         text(r,f,112,96,"Part       Armor Internal",15);
         static const char *parts[8]={"Left arm","Left torso","Left leg","Head","Center","Right arm","Right torso","Right leg"};
@@ -521,7 +558,7 @@ static void combat_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
         rectangle(f,104,64,216,96,0);border_panel(r,f,104,64,216,96,0);
         if (c->phase==BTP_COMBAT_NOTICE) {
             if (c->notice>=5) {
-                size_t n;const uint8_t *p=bank_literal(r,c->notice==5 ? 147u : c->notice==6 ? 148u : c->notice==7 ? 156u : 157u,&n);
+                size_t n;const uint8_t *p=bank_literal(r,c->notice==9 ? 188u : c->notice==5 ? 147u : c->notice==6 ? 148u : c->notice==7 ? 156u : 157u,&n);
                 if (p) (void)wrapped(r,f,72,p,n,15);
                 return;
             }
@@ -1068,6 +1105,9 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         } else if (c->ui==BTP_MENU_INSPECT) {
             uint8_t p[17];btp_menu_person(s,c->member,p);
             rectangle(f,104,0,216,200,0);border_panel(r,f,104,0,216,200,0);
+            if (s->story_flags[39] && c->member==s->story_flags[37]) {
+                size_t n;const uint8_t *warning=bank_literal(r,188,&n);if (warning) (void)wrapped(r,f,8,warning,n,15);
+            } else {
             text(r,f,112,8,"Name  :",10);text(r,f,176,8,btp_character_name(p[0]),15);
             text(r,f,112,16,"Weapon:",10);char weapon[12];memcpy(weapon,r->combat.weapons[p[11]],11);weapon[11]=0;text(r,f,176,16,weapon,15);
             text(r,f,112,24,"Armor :",10);
@@ -1089,6 +1129,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
             text(r,f,112,176,"MedKit:",10);text(r,f,176,176,s->party.medical_kit ? "Yes" : "No",15);
             text(r,f,208,176,"Mapper:",10);text(r,f,272,176,s->story_flags[49] ? "Yes" : "No",15);
             text(r,f,112,184,"Field Surgery Kit:",10);text(r,f,264,184,s->party.advanced_kit ? "Yes" : "No",15);
+            }
         } else if (c->ui==BTP_MENU_MESSAGE) {
             rectangle(f,104,72,216,88,0);border_panel(r,f,104,72,216,88,0);
             const char *message=s->menu.notice==1 ? "Save failed. Your previous save is intact." : s->menu.notice==2 ?
