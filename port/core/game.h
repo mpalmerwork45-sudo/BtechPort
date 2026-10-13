@@ -43,7 +43,8 @@ typedef struct {
     uint8_t active, kind, step, cycle, hold;
     uint16_t remaining, refresh_fraction;
 } BtpCutsceneState;
-typedef struct { uint8_t sprite, map, x, y; } BtpTerrainMark;
+/* Original D497 packs Y-sector/X-sector nibbles; x/y are half-tile offsets. */
+typedef struct { uint8_t sprite, sector, x, y; } BtpTerrainMark;
 typedef struct {
     uint8_t actor,target,group,direction,weapon,hit,dead,x,y,tx,ty,base,target_base;
 } BtpCombatEffect;

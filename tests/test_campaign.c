@@ -70,6 +70,9 @@ int main(int argc,char **argv)
             /* Re-encode this real held invasion in the v29 cropped frame.
                Both current and parked per-actor orders must migrate. */
             BtpState modern=s;BtpCombatState *c=&modern.combat;
+            /* This fixture isolates coordinate migration. Pre-v34 decorative
+               marks have no recoverable world origin and migrate to empty. */
+            memset(modern.terrain_marks,0,sizeof modern.terrain_marks);modern.terrain_next=0;
             c->phase=BTP_COMBAT_MOVE;c->movement=1;c->goal_active=1;c->goal_x=130;c->goal_y=140;
             c->cursor_x=132;c->cursor_y=142;c->waypoint_count=1;c->waypoint_x[0]=136;c->waypoint_y[0]=146;
             c->plans[0].active=1;c->plans[0].movement=1;c->plans[0].x=130;c->plans[0].y=140;

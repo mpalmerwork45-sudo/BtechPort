@@ -242,7 +242,7 @@ static void game_tick(BtpState *s, const BtpResources *r, BtpAction a)
     if (s->mode==BTP_CACHE) { btp_cache_input(s,r,a);return; }
     if (s->mode==BTP_YARD) {
         ++s->tick;btp_yard_input(s,r,a);
-        if (s->mode==BTP_BUILDING) { finish_script(s,r,map);if (s->script.status==BTP_SCRIPT_NATIVE) goto services; }
+        if (s->mode==BTP_BUILDING) { finish_script(s,r,map);if (s->script.status==BTP_SCRIPT_NATIVE || s->script.status>=BTP_SCRIPT_MONEY) goto services; }
         return;
     }
     if (s->mode==BTP_ENCOUNTER) {
@@ -250,9 +250,10 @@ static void game_tick(BtpState *s, const BtpResources *r, BtpAction a)
         btp_campaign_result(s,r);
         if (s->mode==BTP_BUILDING) {
             finish_script(s,r,map);
-            /* A theft epilogue can immediately enter the original crew
-               allocator. Do not expose a native call with no pending menu. */
-            if (s->script.status==BTP_SCRIPT_NATIVE) goto services;
+            /* Arena wins immediately award BLD money; theft epilogues can
+               enter crew allocation. Finish either pending operation before
+               exposing the returned page or allowing a save. */
+            if (s->script.status==BTP_SCRIPT_NATIVE || s->script.status>=BTP_SCRIPT_MONEY) goto services;
         }
         return;
     }
@@ -555,7 +556,7 @@ static uint16_t get16(const uint8_t *p) { return (uint16_t)(p[0] | (uint16_t)p[1
 void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
 {
     memset(b, 0, BTP_STATE_BYTES);
-    memcpy(b, "BTPX", 4); b[4] = 33;
+    memcpy(b, "BTPY", 4); b[4] = 34;
     for (unsigned i = 0; i < 4; ++i) b[8+i] = (uint8_t)(s->tick >> (8 * i));
     b[12] = (uint8_t)s->x_half; b[13] = (uint8_t)(s->x_half >> 8);
     b[14] = (uint8_t)s->y_half; b[15] = (uint8_t)(s->y_half >> 8);
@@ -635,7 +636,7 @@ void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
     b[2048]=s->terrain_next;
     for (unsigned i=0;i<64;++i) {
         const BtpTerrainMark *mark=&s->terrain_marks[i];unsigned p=2049+4*i;
-        b[p]=mark->sprite;b[p+1]=mark->map;b[p+2]=mark->x;b[p+3]=mark->y;
+        b[p]=mark->sprite;b[p+1]=mark->sector;b[p+2]=mark->x;b[p+3]=mark->y;
     }
     b[2305]=s->effects.count;b[2306]=s->effects.age;b[2307]=s->effects.pending;
     memcpy(b+2308,s->effects.shots,7*sizeof s->effects.shots[0]);
@@ -726,7 +727,8 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         n == BTP_STATE_BYTES && !memcmp(b,"BTPU",4) && b[4]==30 ? 30 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPV",4) && b[4]==31 ? 31 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPW",4) && b[4]==32 ? 32 :
-        n == BTP_STATE_BYTES && !memcmp(b,"BTPX",4) && b[4]==33 ? 33 : 0;
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPX",4) && b[4]==33 ? 33 :
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPY",4) && b[4]==34 ? 34 : 0;
     if (!version) return 0;
     for (unsigned i = 5; i < 8; ++i) if (b[i]) return 0;
     if (version == 1) { for (unsigned i = 20; i < 24; ++i) if (b[i]) return 0; }
@@ -836,10 +838,20 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         for (unsigned i=0;i<64;++i) {
             unsigned p=2049+4*i;BtpTerrainMark *mark=&result.terrain_marks[i];
             *mark=(BtpTerrainMark){b[p],b[p+1],b[p+2],b[p+3]};
-            if (mark->sprite ? (mark->sprite!=124 && mark->sprite!=125 && mark->sprite!=126 && mark->sprite!=128 && mark->sprite!=129) ||
-                (version>=29 ? mark->map>14 : mark->map!=1) || (!result.campaign.invasion && (mark->x>127 || mark->y>127)) :
-                mark->map || mark->x || mark->y) return 0;
+            if (version>=34) {
+                /* Original cleared entries can retain a harmless old Y byte. */
+                if ((mark->sprite && (mark->sprite<124 || mark->sprite>129)) || mark->x>127 || mark->y>127) return 0;
+            } else {
+                if (mark->sprite ? (mark->sprite!=124 && mark->sprite!=125 && mark->sprite!=126 && mark->sprite!=128 && mark->sprite!=129) ||
+                    (version>=29 ? mark->sector>14 : mark->sector!=1) || (!result.campaign.invasion && (mark->x>127 || mark->y>127)) :
+                    mark->sector || mark->x || mark->y) return 0;
+                /* Old saves stored a town ID and discarded the battlefield
+                   origin. Clear that ambiguous decoration on migration;
+                   retaining it would invent wrecks at the next encounter. */
+                *mark=(BtpTerrainMark){0};
+            }
         }
+        if (version<34) result.terrain_next=0;
         result.effects.count=b[2305];result.effects.age=b[2306];result.effects.pending=b[2307];
         if (version<26 && result.effects.pending>2) return 0;
         if (version<26 && result.effects.count) result.effects.stage=BTP_EFFECT_LEGACY;

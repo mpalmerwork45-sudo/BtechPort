@@ -68,7 +68,7 @@ Successful pre-combat evasion produces no loot or cash.
 
 ## Verification and limits
 
-The current build has 48 CTest suites. New comparisons include 360 armour-repair,
+The current build has 50 CTest suites. New comparisons include 360 armour-repair,
 160 purchase-recipient, 32 prison/arena return, 432 water-boundary, 512 device
 direction and 314 recruitment/spy cases. Two controlled larger encounters cover
 11 original waves and 171 complete record/position/facing/heat/RNG comparisons.
@@ -82,8 +82,9 @@ both thefts and spy replacement, comparing recorded keys, complete continued
 state and final RGB pixels. Collision tests exercise three mechs and five people,
 each footprint at every intermediate step, all moving gaits and saved positions.
 
-**Current batch PASS:** all 48 regular and ASan/UBSan/LeakSanitizer suites,
-the full sanitizer script including historical checks, every native M4
+**Current batch PASS:** all 50 regular and ASan/UBSan/LeakSanitizer core suites
+and six new native arena/prison/theft tails. The preceding 48-suite increment
+also passed the full sanitizer script including historical checks, every native M4
 acceptance section and all nine native follow-up tails. Actual SDL checks pass
 for Num-Lock-off keypad menus, Num-Lock-on amount entry, and one-key exits from
 the final WINSCENE wait and older ending saves. Native checks include hospital
@@ -101,12 +102,13 @@ a nominal 8 MHz 8088 timing model; no exact recording from physical XT hardware
 is claimed. Enemy Jenner/UrbanMech sprite bases follow the original enemy table,
 while owned mechs use the original garage selection rule.
 
-Internal saves are **BTPX/v33**, with a 20,480-byte payload inside the BTS1
+Internal saves are **BTPY/v34**, with a 20,480-byte payload inside the BTS1
 length/CRC envelope. The discovery marker and held spy confrontation are saved.
 Current local caches are BTTA/v19, BTCB/v11 and BTW3; the world seed is the
 original startup value `0x020304`, rather than the former research seed.
 Older saves migrate their represented fields; absent direction/exploration
-history cannot be reconstructed. Build and play need no emulator. Optional
+history cannot be reconstructed. Old ambiguous decorative wreck/fire marks
+are cleared on migration; v34 stores their actual world sectors. Build and play need no emulator. Optional
 oracle tools execute bounded original instructions and commit numeric results
 and source hashes only.
 
@@ -128,8 +130,10 @@ unfinished portions, including subsequent owner observations.
 4. Check the Phoenix Hawk LAM palette and remaining healing layouts against
    original presentation. Field treatment is pixel-matched; hospital and
    cooldown/healthy layouts still need measured screen comparisons.
-5. Add fresh alternate owned-arena/win/loss and prison-loss journeys. Existing
-   prison theft, rental escape, invasion loss and fresh ending routes pass.
+5. Alternate owned-arena/win/loss and prison-loss journeys now pass, including
+   arena completion, old stuck-menu recovery, reward and ownership checks.
+   Restore the subsequently requested town/Starport NPCs and room arrivals.
+   Existing prison theft, rental escape, invasion loss and fresh ending routes pass.
    Active v29 invasion positions, current/per-actor goals and waypoints now
    have migration and continued-input checks; stale cache formations recover
    before the first loaded frame.

@@ -2,12 +2,13 @@
 
 ## Current M4 presentation checks
 
-The active build has 48 CTest suites. Internal saves are BTPX/v33, with a
+The active build has 50 CTest suites. Internal saves are BTPY/v34, with a
 20,480-byte payload; old versions retain explicit migrations. Current caches
 are BTTA/v19, BTCB/v11 and BTW3. The world seed is the original `0x020304`.
 The older sections below describe earlier increments.
-The current increment passes all 48 regular and ASan/UBSan/LeakSanitizer
-suites, the full sanitizer script's historical checks, every native M4
+The current increment passes all 50 regular and ASan/UBSan/LeakSanitizer core
+suites and six arena/prison/theft SDL tails. The preceding 48-suite increment
+also passed the full sanitizer script's historical checks, every native M4
 acceptance section and all nine follow-up tails. Campaign/story/cache sections
 passed in focused reruns after an outdated ammo-editor checkpoint label was
 corrected; see the current evidence for that test-harness correction.
@@ -44,6 +45,13 @@ Primary numeric generators: `make_mech_view_vectors.py`,
 `make_world_view_vectors.py`, `make_story_vectors.py` and
 `make_speaker_timing_vectors.py`, all under tools/. They use the owner EXE in
 private emulated RAM and commit only numeric projections/source identities.
+`make_world_mark_vectors.py` adds 126 original world-debris ring writes and
+`make_arena_finish_vectors.py` adds 28 arena completion cases.
+`make_arena_outcome_replays.py` records owned/rented wins/losses and prison
+loss. `native_smoke.py --arena-only` runs all five tails plus arena theft;
+the headless arena suite restores before every input and tests old stuck-menu
+recovery. Pre-v34 decorative marks migrate to an empty ring, because their
+world origin was not stored; original GAME saves retain their exact ring.
 `make_theft_vectors.py` adds 68 executed prison/arena setup cases;
 `make_event_audit_vectors.py` adds 154 weapon-sound and encounter-choice cases.
 The follow-up generators `make_armour_repair_vectors.py`,

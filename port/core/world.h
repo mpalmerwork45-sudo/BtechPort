@@ -13,6 +13,7 @@ void btp_world_step(BtpState *state,const BtpResources *resources,BtpAction acti
 void btp_world_clock(BtpState *state,const BtpResources *resources);
 void btp_world_actions(BtpState *state,const BtpResources *resources,BtpAction action);
 void btp_world_reveal(BtpState *state);
+void btp_world_mark(BtpState *state,unsigned sprite,int x,int y);
 int btp_world_seen(const BtpState *state,unsigned x,unsigned y);
 unsigned btp_world_mini(const BtpResources *resources,const BtpState *state,unsigned x,unsigned y);
 unsigned btp_world_device_direction(unsigned x,unsigned y);

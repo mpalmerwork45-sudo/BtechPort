@@ -674,7 +674,8 @@ btech.exe
                     # This avoids stale hard-coded Down counts after a menu
                     # remembers a previous choice; guest memory is unchanged.
                     menu_id,item=int(parts[1]),int(parts[2])
-                    if not 1 <= menu_id < 40: raise ValueError("Invalid original menu ID")
+                    # 0000:32DD uses selector 40 for the original load slots.
+                    if not 1 <= menu_id <= 40: raise ValueError("Invalid original menu ID")
                     _,row=snapshot_game(process.pid,f"menu-{menu_id}-{command_index}",output)
                     ram=(output/f"menu-{menu_id}-{command_index}-ram.bin").read_bytes()
                     ds=int(row["data_segment"],16)*16

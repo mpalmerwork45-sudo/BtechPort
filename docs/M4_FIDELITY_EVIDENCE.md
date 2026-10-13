@@ -210,6 +210,48 @@ Campaign, hospital/jail and cache sections then passed in focused reruns;
 already passing unrelated sections were not repeated. The separate Mechit-Lube
 checks retain their ammunition-purchase and save/restore coverage.
 
+## Arena completion and world debris
+
+**VERIFIED:** original `0D43:0A35..0B1A` silently retires the rental-arena
+spectator when opponent 12 dies. `103B:0F13..0F31` ends a normal arena match
+when the player's mech is destroyed, even when Jason survives the ejection.
+The port now applies both rules, waits for pending destruction presentation,
+and also recovers an older save held at the resulting stuck combat menu.
+`103B:13AD..13DA` sets the win flag and shows the original result text;
+`14D3:10EA` clears arena fire marks before returning to the cashier. The
+cashier's BLD applies the 500-credit win award once. Owned-mech liability
+waivers and every held result/cashier page now restore correctly.
+
+`arena-finish-primary.*` contains 28 executed original retirement/terminal
+cases. Five new ordinary-input routes cover owned and rented arena wins and
+losses, plus a prison-loss route. The arena routes return to town with the
+expected cash, vehicle ownership and surviving Jason; the prison loss reaches
+game over. Every input is checked against restored continuation. All six SDL
+tails (these five and rental theft) pass recorded-input, full-state and final
+pixel comparisons via `native_smoke.py --arena-only`. Arena popup geometry is
+still **INFERRED** from its shared original caller, pending a direct DOS crop.
+
+**VERIFIED:** `103B:27C9..2834` records debris with a packed world sector,
+not a local map identifier. The previous representation placed unrelated
+world wrecks and human remains in each new encounter window. All marks now
+retain world coordinates and render only at their actual location. The 126
+executed original cases cover all six mark sprites, ring wrap and world seams;
+the integration check fills all 64 slots in other sectors and compares the
+encounter-offer image with an empty ring. A local wreck remains visible.
+Original GAME1–GAME6 imports and exports retain the original ring byte for byte.
+
+Internal saves are **BTPY/v34**, retaining the 20,480-byte payload. Saves older
+than v34 discard their ambiguous decorative debris ring because its missing
+world origin cannot be recovered. Character, vehicle and mission state is
+preserved. Original empty ring slots retain their otherwise-unused coordinates
+for exact round trips.
+
+**PASS:** all 50 regular and ASan/UBSan/LeakSanitizer core suites, with focused
+reruns of two synthetic legacy-save fixtures after removing modern debris from
+their old-format prerequisites. The preceding 48-suite increment's historical
+sanitizer checks and broader native acceptance remain recorded above; this
+increment additionally ran the six arena/prison/theft native tails.
+
 ## Remaining authorized work
 
 1. Complete remaining manual targeting and battle-result UI comparisons,
@@ -220,8 +262,8 @@ checks retain their ammunition-purchase and save/restore coverage.
 4. Verify Phoenix LAM colours and hospital/cooldown/healthy medical layouts.
    Primary action 45 loads ENDMECH.CMP and selects the palette at 2858:0000
    (`14D3:15DD..16A6`); its measured VGA appearance is still pending.
-5. Add fresh alternate owned-arena/win/loss and prison-loss routes. The active
-   v29 migration and existing prison/rental/invasion/ending routes are now
-   covered, but they do not establish all alternate original campaign branches.
+5. Alternate owned-arena/win/loss and prison-loss routes now pass. Continue
+   the subsequent town-NPC request: post-Citadel world transitions currently
+   disable the original eight roaming actors and their room-arrival timers.
 
 This batch does not mark the original five follow-ups or M4 complete.

@@ -492,7 +492,7 @@ unsigned btp_combat_walk_frame(unsigned frame,unsigned previous,unsigned directi
         if (frames[direction][i]==frame) next=(i+1u)%4u;
     return infantry ? btp_walk_next((uint8_t)frame,(uint8_t)previous,(uint8_t)direction) : frames[direction][next];
 }
-static void mark(BtpState *s,unsigned sprite,unsigned x,unsigned y);
+static void mark(BtpState *s,unsigned sprite,int x,int y);
 static void advance(BtpState *s, unsigned index)
 {
     BtpCombatState *c=&s->combat;
@@ -533,13 +533,11 @@ static void advance(BtpState *s, unsigned index)
     u->direction=(uint8_t)direction;c->plan_direction[index]=(uint8_t)direction;
     u->x=(uint8_t)x;u->y=(uint8_t)y;++c->moved[index];++c->path_index[index];
 }
-static void mark(BtpState *s,unsigned sprite,unsigned x,unsigned y)
+static void mark(BtpState *s,unsigned sprite,int x,int y)
 {
-    /* Persistent marks use town coordinates, independent of the transient
-       invasion margin. The renderer adds that margin while combat is live. */
-    if (s->campaign.invasion) { x=(x-64u)&127u;y=(y-64u)&127u; }
-    s->terrain_marks[s->terrain_next]=(BtpTerrainMark){(uint8_t)sprite,s->map_id,(uint8_t)x,(uint8_t)y};
-    s->terrain_next=(uint8_t)((s->terrain_next+1u)&63u);
+    int ox=s->campaign.invasion || s->campaign.encounter ? s->campaign.battle_x : 1536;
+    int oy=s->campaign.invasion || s->campaign.encounter ? s->campaign.battle_y : 1536;
+    btp_world_mark(s,sprite,ox+x,oy+y);
 }
 void btp_combat_ignite(BtpState *s, const BtpCombatUnit *target)
 {
@@ -548,13 +546,18 @@ void btp_combat_ignite(BtpState *s, const BtpCombatUnit *target)
        not replace the map's terrain/LOS grid or implement spreading fire. */
     unsigned roll=btp_combat_dice(s->npc.rng);
     if (roll>=5 && roll<=9) return;
-    mark(s,124,(target->x-(target->infantry ? 1u : 0u))&127u,
-        (target->y-(target->infantry ? 0u : 1u))&127u);
+    mark(s,124,(int)target->x-(target->infantry ? 1 : 0),
+        (int)target->y-(target->infantry ? 0 : 1));
 }
 static void end_round(BtpState *s,const BtpResources *r)
 {
     BtpCombatState *c=&s->combat;
     if (btp_spy_begin(s)) return;
+    if (s->campaign.encounter==4 && !s->story_flags[35] && c->unit[0].record[0]==255) {
+        /* 103B:0F13..0F31 ends an ordinary arena match once Jason's mech
+           is gone. Surviving ejected pilots return to the cashier. */
+        c->lost=1;finish(s,r);return;
+    }
     unsigned remaining=0;
     for (unsigned i=c->friends ? c->friends : 1u;i<c->count;++i) remaining+=c->unit[i].record[0]!=255;
     if (!remaining) { c->won=1;finish(s,r);return; }
@@ -634,8 +637,8 @@ static void round_tick(BtpState *s, const BtpResources *r, int enemy_ai)
                 /* 12E8:1B7F / 1C6E preserve the original corpse/wreck artwork. */
                 if (!(s->campaign.encounter==4 && btp_combat_id(c,target)==13))
                     mark(s,enemy->infantry ? 126u : 128u+(target==0 && s->story_flags[2]!=0),
-                    (enemy->x-(enemy->infantry ? 0u : 1u))&127u,
-                    (enemy->y-(enemy->infantry ? 0u : 1u))&127u);
+                    (int)enemy->x-(enemy->infantry ? 0 : 1),
+                    (int)enemy->y-(enemy->infantry ? 0 : 1));
                 if (s->campaign.encounter) btp_campaign_destroy(s,target);
                 else {
                     enemy->record[0]=255;
@@ -733,6 +736,16 @@ static void combat_tick(BtpState *s, const BtpResources *r, BtpAction a, int ene
         c->won=(uint8_t)(s->effects.pending==1);c->lost=(uint8_t)(s->effects.pending==2);
         c->fled=(uint8_t)(s->effects.pending==3);
         s->effects.pending=0;finish(s,r);return;
+    }
+    if (s->campaign.encounter==4 && c->phase==BTP_COMBAT_MENU && !s->story_flags[35]) {
+        /* Resume older saves held at the former arena dead end. No attack
+           or new round is needed to complete an already-decided match. */
+        unsigned opponent=btp_combat_target(c,12),spectator=btp_combat_target(c,13);
+        if (opponent<c->count && c->unit[opponent].record[0]==255) {
+            if (s->yard.rental && spectator<c->count) c->unit[spectator].record[0]=255;
+            end_round(s,r);return;
+        }
+        if (c->unit[0].record[0]==255) { end_round(s,r);return; }
     }
     /* A shot on the twelfth microstep must finish its presentation before
        cleanup returns to the command menu. This state is also saveable. */
@@ -1116,6 +1129,9 @@ int btp_combat_valid(const BtpState *s)
     unsigned rex=btp_combat_target(c,5);
     int lost=s->campaign.encounter ? (jason<c->count && c->unit[jason].record[0]==255) ||
         (rex<c->count && c->unit[rex].record[0]==255) : c->unit[0].record[0]==255;
+    /* A surviving arena pilot is a lost match, not a campaign death. Before
+       the end-of-round check, its destruction presentation may still drain. */
+    if (s->campaign.encounter==4 && !s->story_flags[35] && c->unit[0].record[0]==255 && c->lost) lost=1;
     return lost==(c->lost!=0 || s->effects.pending==2) &&
         (alive ? !c->won && s->effects.pending!=1 : c->won || s->effects.pending==1 || c->phase==BTP_COMBAT_ROUND || c->phase==BTP_COMBAT_SPY);
 }

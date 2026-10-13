@@ -134,6 +134,9 @@ int main(int argc,char **argv)
     BtpState s;setup(&s,r,"repair");step(&s,r,BTP_UP);step(&s,r,BTP_ACCEPT);CHECK(btp_save_write("work/mechit-ui-start.btp",&s,r,&e));
     step(&s,r,BTP_DOWN);step(&s,r,BTP_DOWN);step(&s,r,BTP_ACCEPT);step(&s,r,BTP_ACCEPT);
     uint8_t legacy[BTP_STATE_BYTES];btp_state_encode(&s,legacy);memcpy(legacy,"BTPW",4);legacy[4]=32;
+    /* This fixture predates world-sector debris; keep its unrelated old-format
+       mark ring empty while exercising the service-state migration. */
+    memset(legacy+2048,0,257);
     memset(legacy+19308+sizeof s.yard,0,21);BtpState restored;
     CHECK(btp_state_decode(legacy,sizeof legacy,btp_active_map(r,&s),btp_state_bld(r,&s),&restored));
     CHECK(restored.service.phase==1 && restored.service.action==18 && restored.credits==s.credits &&

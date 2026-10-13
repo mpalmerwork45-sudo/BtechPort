@@ -87,6 +87,9 @@ int main(int argc,char **argv)
             s.yard.rental=(uint8_t)rental;s.yard.slot=(uint8_t)slot;s.story_flags[35]=(uint8_t)stolen;
             memcpy(s.combat.unit[0].record,rental ? templates[0] : templates[slot],125);
             s.combat.unit[0].record[17]=2;if (destroyed) s.combat.unit[0].record[0]=255;
+            /* The primary fixture explicitly clears the campaign continue
+               flag; this is pilot death, not merely losing the arena mech. */
+            if (destroyed) s.party.people[0][0]=255;
             s.combat.unit[0].y=102;s.combat.phase=0;s.combat.lost=(uint8_t)destroyed;btp_yard_result(&s,r);
         } else btp_yard_finish_prison(&s,r,!destroyed);
         CHECK(s.story_flags[40]==failed);

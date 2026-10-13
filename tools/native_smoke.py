@@ -1053,10 +1053,10 @@ def story(env,work):
                 raise RuntimeError(kind+' companion SDL continuation differs')
             print(f'PASS: native {kind}, {len(lines)-tick+5} recorded SDL inputs through recruitment, exact state/pixels.',flush=True)
 
-def followups(env,work):
+def followups(env,work,cases=None):
     """Saved ordinary entrances/thefts exercise actual SDL input and pixels."""
     binary=ROOT/'build/btech-headless';native=ROOT/'build/btech-port'
-    cases=[('mayor-newspaper','house-menu','GAME3'),('mayor-chow','house-menu','GAME3'),
+    cases=cases or [('mayor-newspaper','house-menu','GAME3'),('mayor-chow','house-menu','GAME3'),
         ('cinema','entry','GAME3'),('inventor','entry','GAME3'),('inventor-qualified','entry','GAME5'),
         ('laser-guns','laser-shop-robbery','GAME3'),('prison-theft','impound-yard-start',None),
         ('arena-theft','arena-rented-locust','GAME3'),
@@ -1103,6 +1103,7 @@ def main():
     parser.add_argument('--cache-only',action='store_true')
     parser.add_argument('--story-only',action='store_true')
     parser.add_argument('--followups-only',action='store_true')
+    parser.add_argument('--arena-only',action='store_true')
     parser.add_argument('--m4-acceptance',action='store_true')
     parser.add_argument('--combat-ui-only',action='store_true')
     parser.add_argument('--mechit-only',action='store_true')
@@ -1137,6 +1138,11 @@ def main():
                 saves(env,work);campaign(env,work);story(env,work);cache(env,work);return
             if args.followups_only:
                 followups(env,work);return
+            if args.arena_only:
+                followups(env,work,[(f'arena-{ownership}-{result}','arena-start','GAME3')
+                    for ownership in ('owned','rental') for result in ('loss','win')]+[
+                    ('arena-theft','arena-rented-locust','GAME3'),('prison-loss','prison-guards',None)])
+                return
             if args.controls_only:
                 controls(env,work);diagonals(env,work);return
             if args.combat_ui_only:

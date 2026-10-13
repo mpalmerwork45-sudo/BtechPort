@@ -217,7 +217,16 @@ void btp_yard_result(BtpState *s,const BtpResources *r)
         uint8_t player[125];memcpy(player,s->combat.unit[0].record,125);
         unsigned slot=s->yard.slot,rental=s->yard.rental,stolen=s->story_flags[35];
         unsigned y=s->campaign.battle_y+s->combat.unit[0].y;
-        int lost=s->combat.lost;
+        unsigned pilot=btp_combat_target(&s->combat,4);
+        int dead=s->party.people[0][0]==255 ||
+            (pilot<s->combat.count && s->combat.unit[pilot].record[0]==255);
+        if (pilot<s->combat.count) memcpy(s->party.people[0],s->combat.unit[pilot].record,17);
+        /* 14D3:10EA clears arena fire in sector 8A; wrecks elsewhere retain
+           their own world position. Empty entries keep the original Y byte. */
+        for (unsigned i=0;i<64;++i) {
+            BtpTerrainMark *mark=&s->terrain_marks[i];
+            if ((mark->sprite&126u)==124 && mark->sector==0x8a) mark->sprite=mark->sector=mark->x=0;
+        }
         restore_party(s);
         if (!rental) { memcpy(btp_party_mech(s,slot),player,125);s->party.mech_types[slot]=player[0]; }
         else if (stolen) {
@@ -229,7 +238,7 @@ void btp_yard_result(BtpState *s,const BtpResources *r)
                 memcpy(s->campaign.mech,player,125);s->party.mech_types[0]=player[0];
             }
         }
-        if (lost) { s->party.people[0][0]=255;s->story_flags[40]=1; }
+        if (dead) { s->party.people[0][0]=255;s->story_flags[40]=1; }
         s->campaign.owned=0;
         for (unsigned i=0;i<4;++i) {
             uint8_t *m=btp_party_mech(s,i);if (s->party.mech_types[i]!=255) { m[0]=s->party.mech_types[i];s->campaign.owned=1; }
@@ -289,6 +298,10 @@ int btp_yard_valid(const BtpState *s)
     }
     if (v->active==1) return (s->mode==BTP_YARD || (s->mode==BTP_ENCOUNTER && s->campaign.encounter==3)) && s->campaign.building==13 &&
         s->script.status==BTP_SCRIPT_NATIVE && s->script.native_action==40 && v->phase<=BTP_YARD_FOUND;
+    /* The owned-mech selector returns to ARENA.BLD's liability waiver
+       before native 35 starts combat. That held page is saveable too. */
+    if (s->campaign.building==10 && s->mode==BTP_BUILDING && v->phase==BTP_YARD_LOAN)
+        return s->script.status==BTP_SCRIPT_WAIT;
     return s->campaign.building==10 && s->script.status==BTP_SCRIPT_NATIVE &&
         ((s->mode==BTP_YARD && (s->script.native_action==34 || s->script.native_action==35)) ||
          (s->mode==BTP_ENCOUNTER && s->campaign.encounter==4 && s->script.native_action==35));

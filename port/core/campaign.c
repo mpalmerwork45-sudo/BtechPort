@@ -118,6 +118,16 @@ void btp_campaign_result(BtpState *s,const BtpResources *r)
 {
     BtpCombatState *c=&s->combat;
     if (!s->campaign.encounter || c->phase || s->aftermath.phase) return;
+    if (s->campaign.encounter==4 && !s->story_flags[35] && !s->aftermath.applied &&
+        s->party.people[0][0]!=255) {
+        unsigned pilot=btp_combat_target(c,4);
+        if (pilot>=c->count || c->unit[pilot].record[0]!=255) {
+            /* 103B:13AD..13DA holds the arena result before the cashier.
+               D32D distinguishes a standing mech from a surviving pilot. */
+            s->story_flags[33]=(uint8_t)(c->unit[0].record[0]!=255);
+            s->aftermath.applied=1;s->aftermath.phase=11;return;
+        }
+    }
     if (s->campaign.encounter>=3) { btp_yard_result(s,r);return; }
     if (!s->aftermath.applied) {
     for (unsigned i=0;i<c->friends;++i) {
@@ -206,6 +216,12 @@ void btp_campaign_destroy(BtpState *s,unsigned unit)
 {
     BtpCombatState *c=&s->combat;BtpCombatUnit *u=&c->unit[unit];unsigned id=c->ids[unit];
     s->aftermath.wrecks[id]=(uint8_t)(u->infantry ? 128 : u->record[0]);u->record[0]=255;
+    if (s->campaign.encounter==4 && s->yard.rental && !s->story_flags[35] && id==12) {
+        /* 0D43:0AE1..0B08 retires the spectator when the actual opponent
+           falls. It is removed silently, with no casualty, sound or alarm. */
+        unsigned spectator=btp_combat_target(c,13);
+        if (spectator<c->count) c->unit[spectator].record[0]=255;
+    }
     if (id<4) s->aftermath.eject|=(uint16_t)(1u<<id);
     /* 12E8:1BD1 treats either of the first two character slots as an
        essential party member, including Rex after he joins Jason. */
@@ -297,7 +313,7 @@ void btp_aftermath_input(BtpState *s,const BtpResources *r,BtpAction a)
     if (a==BTP_DOWN || a==BTP_RIGHT) v->selected=(uint8_t)((v->selected+1)%count);
     if (a==BTP_OPEN_MENU) a=BTP_ACCEPT;
     if (a!=BTP_ACCEPT && a!=BTP_CANCEL) return;
-    if (v->phase==5 || v->phase==7) { v->phase=0;return; }
+    if (v->phase==5 || v->phase==7 || v->phase==11) { v->phase=0;return; }
     if (v->phase==6) { v->phase=7;return; }
     if (v->phase==10) { s->service=(BtpServiceState){0};v->phase=7;return; }
     if (v->phase==8) {
@@ -339,8 +355,9 @@ void btp_aftermath_input(BtpState *s,const BtpResources *r,BtpAction a)
 int btp_aftermath_valid(const BtpState *s)
 {
     const BtpAftermathState *v=&s->aftermath;
-    if (v->eject>15 || v->phase>10 || v->selected>8 || v->pilot>8 || v->unit>24 || v->notice>2 || v->applied>4 ||
+    if (v->eject>15 || v->phase>11 || v->selected>8 || v->pilot>8 || v->unit>24 || v->notice>2 || v->applied>4 ||
         (v->phase!=9 && v->cash>144)) return 0;
+    if (v->phase==11 && (s->campaign.encounter!=4 || s->story_flags[35] || v->applied!=1)) return 0;
     if ((v->eject || v->phase || v->applied) && !s->campaign.encounter) return 0;
     if (v->phase && (s->mode!=BTP_ENCOUNTER || s->combat.phase || !v->applied)) return 0;
     for (unsigned i=0;i<24;++i) if (v->wrecks[i] && (!s->campaign.encounter || (i>=4 && i<12 ? v->wrecks[i]!=128 : i>=16 ? v->wrecks[i]!=128 : v->wrecks[i]>=128))) return 0;

@@ -19,8 +19,10 @@ The remaining authorized tasks are in [project status](PROJECT_STATUS.md).
    rental, spectator damage/alarm, two UrbanMechs, walking escape and retention
    are covered. Another 32 executed return cases cover full garages, owned and
    rental vehicles, normal return and destruction. A bounded native guard fight
-   reaches its result. Complete DOS fights and additional ordinary-input
-   ownership/loss paths remain to be compared.
+   reaches its result. Owned/rented arena wins and losses and prison loss now
+   have full ordinary-input and SDL continuations; 28 original arena terminal
+   cases explain and correct the stuck fight. Complete DOS fights remain to
+   be compared.
 3. **Later native actions — partial VERIFIED coverage.** Actions 31/32 are
    personal armour selection/repair, now supported with 360 original cases;
    they are not mech garage repair. Hospital/Mechit-Lube replacement recruiting
@@ -61,7 +63,8 @@ The remaining authorized tasks are in [project status](PROJECT_STATUS.md).
    screens still need direct visual comparisons.
 8. **Persistence — tested represented fields.** All six supplied original saves
    roundtrip unchanged; unmodeled original bytes are preserved. Internal
-   BTPX/v33 includes active theft/audio/menu states and spy discovery. Old
+   BTPY/v34 includes active theft/audio/menu states, spy discovery and world
+   sectors for debris. Ambiguous pre-v34 decorative marks are cleared. Old
    formats cannot recover history that they never stored. Active-invasion v29
    migration now compares positions, current and per-actor goals/waypoints and
    the next four inputs; stale cache follower coordinates recover on load. Original export remains limited to supported

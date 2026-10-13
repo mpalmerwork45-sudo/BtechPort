@@ -10,6 +10,16 @@
 #include <string.h>
 #include <stdlib.h>
 
+void btp_world_mark(BtpState *s,unsigned sprite,int x,int y)
+{
+    /* 103B:27C9 retains the world sector as well as the local position.
+       A later encounter must not reuse debris from a different battlefield. */
+    unsigned wx=(unsigned)x&2047u,wy=(unsigned)y&2047u;
+    s->terrain_marks[s->terrain_next]=(BtpTerrainMark){(uint8_t)sprite,
+        (uint8_t)((wy/128u)*16u+wx/128u),(uint8_t)(wx&127u),(uint8_t)(wy&127u)};
+    s->terrain_next=(uint8_t)((s->terrain_next+1u)&63u);
+}
+
 void btp_world_reveal(BtpState *s)
 {
     unsigned x=s->story_flags[4] ? s->campaign.world_x : 1536u+s->x_half;

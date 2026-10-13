@@ -752,6 +752,12 @@ static void aftermath_panel(const BtpResources *r,const BtpState *s,uint32_t *f)
 {
     const BtpAftermathState *v=&s->aftermath;uint8_t message[1024];size_t n=0;
     if (v->phase==10) { medical_panel(r,s,f);return; }
+    if (v->phase==11) {
+        /* Arena 103B:13AD uses the same 14D3:17C6 popup as training. */
+        rectangle(f,104,72,216,56,0);border_panel(r,f,104,72,216,56,0);
+        service_literal(r,message,&n,s->story_flags[33] ? 294u : 295u);
+        (void)service_wrap_bounds(r,f,80,message,n,NULL,80,112);return;
+    }
     /* 103B:10A3 and 05AB's salvage/pockets calls share this scrolling
        lower-right box. Rebuild the preceding lines from saved phases so
        loading a held reward page retains the original visible text. */
@@ -1229,20 +1235,24 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                 color = btp_palette[7];
             f[y * 320 + x] = color;
         }
-    for (unsigned i=0;i<64;++i) {
+    int origin_x=s->campaign.encounter || s->campaign.invasion ? s->campaign.battle_x :
+        s->map_id ? (int)(map->entrance_x[0]>>8)*128 : 0;
+    int origin_y=s->campaign.encounter || s->campaign.invasion ? s->campaign.battle_y :
+        s->map_id ? (int)(map->entrance_y[0]>>12)*128 : 0;
+    for (unsigned i=0;i<64 && !s->cache.active;++i) {
         const BtpTerrainMark *mark=&s->terrain_marks[i];
+        int mx=(mark->sector&15)*128+mark->x-origin_x;
+        int my=(mark->sector>>4)*128+mark->y-origin_y;
         int pending=0;
         if (mark->sprite>=126 && s->combat.phase) for (unsigned j=0;j<s->combat.count;++j) {
             const BtpCombatEffect *death=btp_effects_pending_death(s,j);
             if (!death) continue;
             unsigned offset=death->target_base==254 ? 0u : 1u;
-            unsigned margin=s->campaign.invasion ? 64u : 0u;
-            if (mark->x==((death->tx-offset-margin)&127u) && mark->y==((death->ty-offset-margin)&127u)) pending=1;
+            if (mx==(int)death->tx-(int)offset && my==(int)death->ty-(int)offset) pending=1;
         }
-        if (!pending && mark->sprite && mark->map==s->map_id)
+        if (!pending && mark->sprite)
             (void)btp_draw_sprite(&r->sprites,(mark->sprite&254u)==124 ? 124u+(s->tick&1u) : mark->sprite,
-                200+((int)mark->x+(s->campaign.invasion ? 64 : 0)-cx)*8,
-                64+((int)mark->y+(s->campaign.invasion ? 64 : 0)+2-cy)*8,0,104,f);
+                200+(mx-cx)*8,64+(my+2-cy)*8,0,104,f);
     }
     if (battle_display) {
         for (unsigned i=0;i<s->combat.count;++i) {

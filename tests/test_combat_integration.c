@@ -167,7 +167,7 @@ static void death_pixels(const BtpState *menu,BtpResources *r)
         s.combat.shot=(BtpShot){.hit=1};btp_effects_shot(&s,0,1,17);
         s.combat.shot.destroyed=1;btp_effects_shot(&s,0,1,17);
         s.effects.stage=BTP_EFFECT_FIRE_SOUND;
-        s.terrain_marks[0]=(BtpTerrainMark){(uint8_t)(human ? 126 : 128),1,(uint8_t)(tx-!human),(uint8_t)(ty-!human)};
+        s.terrain_marks[0]=(BtpTerrainMark){(uint8_t)(human ? 126 : 128),0xcc,(uint8_t)(tx-!human),(uint8_t)(ty-!human)};
         s.combat.unit[1].record[0]=255;s.combat.unit[1].x=s.combat.unit[1].y=127;
         CHECK(btp_effects_pending_death(&s,1)==&s.effects.shots[1]);
         btp_render(r,&s,0,queued);

@@ -156,6 +156,9 @@ int main(int argc,char **argv)
     s.party.people[1][0]=255;btp_menu_close(&s);btp_menu_open(&s);select_item(&s,r,3);select_item(&s,r,1);
     CHECK(btp_actions_count(&s)==3 && !strcmp(btp_actions_label(&s,1),btp_party_name(&s.party,2)));
     s.campaign.selected=2;uint8_t legacy[BTP_STATE_BYTES];btp_state_encode(&s,legacy);
+    /* v23 used local map identifiers for debris, so modern sector marks do
+       not belong in this synthetic legacy character-selector fixture. */
+    memset(legacy+2048,0,257);
     memcpy(legacy,"BTPN",4);legacy[4]=23;BtpState migrated;
     CHECK(btp_state_decode(legacy,16384,btp_active_map(r,&s),btp_state_bld(r,&s),&migrated) && migrated.campaign.selected==1);
     btp_start(&s);s.mode=BTP_LOGO;
