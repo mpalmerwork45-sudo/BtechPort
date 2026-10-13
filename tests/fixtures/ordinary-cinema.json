@@ -3,18 +3,18 @@
   "checkpoints": [
     {
       "label": "entry",
-      "tick": 587,
+      "tick": 586,
       "state": {
         "map": 6,
         "mode": "entry-confirm",
         "x_half": 51,
-        "y_half": 12,
+        "y_half": 13,
         "tile": [
           25,
           6
         ],
         "gate": 85,
-        "tick": 587,
+        "tick": 586,
         "blocked": 0,
         "script_pc": 0,
         "script_status": 0,
@@ -579,7 +579,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "c75a0fc4c3050b11",
+        "state_digest": "f6e98e79b6a8b5c7",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -916,18 +916,18 @@
     },
     {
       "label": "cinema-complete",
-      "tick": 1263,
+      "tick": 1262,
       "state": {
         "map": 6,
         "mode": "local-exploration",
         "x_half": 51,
-        "y_half": 13,
+        "y_half": 14,
         "tile": [
           25,
-          6
+          7
         ],
         "gate": 85,
-        "tick": 1263,
+        "tick": 1262,
         "blocked": 0,
         "script_pc": 1128,
         "script_status": 3,
@@ -1497,7 +1497,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "63593ad2be42d009",
+        "state_digest": "6bdcc5ec7533a889",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1837,13 +1837,13 @@
     "map": 6,
     "mode": "local-exploration",
     "x_half": 51,
-    "y_half": 13,
+    "y_half": 14,
     "tile": [
       25,
-      6
+      7
     ],
     "gate": 85,
-    "tick": 1263,
+    "tick": 1262,
     "blocked": 0,
     "script_pc": 1128,
     "script_status": 3,
@@ -2413,7 +2413,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "63593ad2be42d009",
+    "state_digest": "6bdcc5ec7533a889",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

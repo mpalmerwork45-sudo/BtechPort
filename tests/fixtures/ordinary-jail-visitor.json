@@ -2,59 +2,59 @@
   "checkpoints": [
     {
       "label": "funded-by-owner-shortcut",
-      "tick": 51025
+      "tick": 50477
     },
     {
       "label": "garage-crew-allocation",
-      "tick": 51064
+      "tick": 50504
     },
     {
       "label": "garage-checkout",
-      "tick": 51071
+      "tick": 50511
     },
     {
       "label": "walking-with-rex-piloting",
-      "tick": 51087
+      "tick": 50557
     },
     {
       "label": "hospital-menu",
-      "tick": 51560
+      "tick": 50938
     },
     {
       "label": "hospital-companion-pause",
-      "tick": 51621
+      "tick": 50999
     },
     {
       "label": "hospital-companion-joined",
-      "tick": 51623
+      "tick": 51001
     },
     {
       "label": "medical-kit",
-      "tick": 51630
+      "tick": 51008
     },
     {
       "label": "field-surgery-kit",
-      "tick": 51634
+      "tick": 51012
     },
     {
       "label": "hospital-exit",
-      "tick": 51636
+      "tick": 51014
     },
     {
       "label": "jail-visitor-menu",
-      "tick": 52681
+      "tick": 51566
     },
     {
       "label": "jail-companion-pause",
-      "tick": 52746
+      "tick": 51631
     },
     {
       "label": "jail-companion-joined",
-      "tick": 52777
+      "tick": 51662
     },
     {
       "label": "jail-exit",
-      "tick": 52780
+      "tick": 51665
     }
   ],
   "final": {
@@ -67,7 +67,7 @@
       14
     ],
     "gate": 85,
-    "tick": 52780,
+    "tick": 51665,
     "blocked": 0,
     "script_pc": 4293,
     "script_status": 3,
@@ -311,7 +311,7 @@
       0,
       0,
       0,
-      91,
+      109,
       0,
       0,
       0,
@@ -424,7 +424,7 @@
         0,
         3,
         0,
-        1,
+        0,
         0,
         0,
         90,
@@ -443,7 +443,7 @@
         0,
         0,
         0,
-        8,
+        1,
         0,
         0,
         56,
@@ -564,7 +564,7 @@
     ],
     "quiz": {
       "phase": 0,
-      "selected": 15,
+      "selected": 18,
       "round": 0,
       "point": 0,
       "failed": 0,
@@ -605,7 +605,7 @@
       "remaining": 0,
       "fraction": 0
     },
-    "explored_digest": 1568298452,
+    "explored_digest": 32578224,
     "map_center": [
       0,
       0
@@ -637,7 +637,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "41148708230cb5d5",
+    "state_digest": "66aa7177f1aad4ee",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

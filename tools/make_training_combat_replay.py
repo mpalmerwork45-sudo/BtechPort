@@ -154,11 +154,14 @@ def generate(binary,kick=False,campaign=False):
                         if state['combat']['won']:break
                         fight()
             elif campaign:
-                for x,y,turns in [(72,77,2),(84,85,3)]:
-                    waypoint(x,y,1)
-                    for _ in range(turns):
-                        if state['combat']['won'] or state['combat']['lost']:break
-                        fight()
+                # Use the original in-combat computer option for this harder
+                # two-opponent test. Four earlier withdrawals still exercise
+                # the manual menu, physical orders and retry rewards.
+                command(5);note('sixth-computer-control')
+                for _ in range(4096):
+                    if not state['combat']['phase']:break
+                    advance(['idle']*32)
+                check(not state['combat']['phase'],'Computer combat did not finish')
             else:
                 # Navigate around the training building before approaching the
                 # duel. The original steering routine is local, not a BFS.

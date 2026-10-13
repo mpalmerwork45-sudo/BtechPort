@@ -579,7 +579,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "c1fea93b0b59804f",
+        "state_digest": "f86952cd5d13a21b",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1492,7 +1492,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "9da4923a51668d27",
+        "state_digest": "184fa69990f552b3",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1829,18 +1829,18 @@
     },
     {
       "label": "hospital-menu",
-      "tick": 63,
+      "tick": 58,
       "state": {
         "map": 2,
         "mode": "building",
         "x_half": 115,
-        "y_half": 114,
+        "y_half": 115,
         "tile": [
           57,
           57
         ],
         "gate": 85,
-        "tick": 63,
+        "tick": 58,
         "blocked": 0,
         "script_pc": 754,
         "script_status": 1,
@@ -1948,9 +1948,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          64,
-          17,
-          28
+          128,
+          136,
+          142
         ],
         "npc_search": [
           0,
@@ -2104,7 +2104,7 @@
           0,
           0,
           0,
-          243,
+          244,
           1,
           1,
           0,
@@ -2122,7 +2122,7 @@
           1,
           0,
           0,
-          8,
+          9,
           1,
           0,
           1,
@@ -2344,7 +2344,7 @@
           "encounter": 0,
           "building": 9
         },
-        "player_sprite": 172,
+        "player_sprite": 173,
         "npc_sprites": [
           270,
           270,
@@ -2430,7 +2430,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "6aefdcb367bcfa79",
+        "state_digest": "858b70789c80a629",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -2767,18 +2767,18 @@
     },
     {
       "label": "doctor-choice",
-      "tick": 65,
+      "tick": 60,
       "state": {
         "map": 2,
         "mode": "building",
         "x_half": 115,
-        "y_half": 114,
+        "y_half": 115,
         "tile": [
           57,
           57
         ],
         "gate": 85,
-        "tick": 65,
+        "tick": 60,
         "blocked": 0,
         "script_pc": 1524,
         "script_status": 1,
@@ -2878,9 +2878,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          64,
-          17,
-          28
+          128,
+          136,
+          142
         ],
         "npc_search": [
           0,
@@ -3034,7 +3034,7 @@
           0,
           0,
           0,
-          243,
+          244,
           1,
           1,
           0,
@@ -3274,7 +3274,7 @@
           "encounter": 0,
           "building": 9
         },
-        "player_sprite": 172,
+        "player_sprite": 173,
         "npc_sprites": [
           270,
           270,
@@ -3360,7 +3360,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "3dc040f1fd6525ac",
+        "state_digest": "9680e22def5ce017",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -3697,18 +3697,18 @@
     },
     {
       "label": "paid-healing-complete",
-      "tick": 70,
+      "tick": 65,
       "state": {
         "map": 2,
         "mode": "building",
         "x_half": 115,
-        "y_half": 114,
+        "y_half": 115,
         "tile": [
           57,
           57
         ],
         "gate": 85,
-        "tick": 70,
+        "tick": 65,
         "blocked": 0,
         "script_pc": 754,
         "script_status": 1,
@@ -3816,9 +3816,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          208,
-          68,
-          112
+          160,
+          34,
+          56
         ],
         "npc_search": [
           0,
@@ -3972,7 +3972,7 @@
           0,
           0,
           0,
-          243,
+          244,
           1,
           1,
           5,
@@ -4212,7 +4212,7 @@
           "encounter": 0,
           "building": 9
         },
-        "player_sprite": 172,
+        "player_sprite": 173,
         "npc_sprites": [
           270,
           270,
@@ -4298,7 +4298,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "72410cfd7f667b3c",
+        "state_digest": "2f354ce7921710a4",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -4635,7 +4635,7 @@
     },
     {
       "label": "hospital-exit",
-      "tick": 77,
+      "tick": 72,
       "state": {
         "map": 2,
         "mode": "local-exploration",
@@ -4646,7 +4646,7 @@
           57
         ],
         "gate": 85,
-        "tick": 77,
+        "tick": 72,
         "blocked": 0,
         "script_pc": 4577,
         "script_status": 3,
@@ -4754,9 +4754,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          208,
-          68,
-          112
+          160,
+          34,
+          56
         ],
         "npc_search": [
           0,
@@ -4910,7 +4910,7 @@
           0,
           0,
           0,
-          243,
+          244,
           1,
           1,
           5,
@@ -5150,7 +5150,7 @@
           "encounter": 0,
           "building": 9
         },
-        "player_sprite": 172,
+        "player_sprite": 173,
         "npc_sprites": [
           270,
           270,
@@ -5236,7 +5236,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "e395cb11a0e6bc50",
+        "state_digest": "08b70e07b8413f87",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -5582,7 +5582,7 @@
       57
     ],
     "gate": 85,
-    "tick": 77,
+    "tick": 72,
     "blocked": 0,
     "script_pc": 4577,
     "script_status": 3,
@@ -5690,9 +5690,9 @@
     "npc_clock": 0,
     "npc_fault": 0,
     "npc_rng": [
-      208,
-      68,
-      112
+      160,
+      34,
+      56
     ],
     "npc_search": [
       0,
@@ -5846,7 +5846,7 @@
       0,
       0,
       0,
-      243,
+      244,
       1,
       1,
       5,
@@ -6086,7 +6086,7 @@
       "encounter": 0,
       "building": 9
     },
-    "player_sprite": 172,
+    "player_sprite": 173,
     "npc_sprites": [
       270,
       270,
@@ -6172,7 +6172,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "e395cb11a0e6bc50",
+    "state_digest": "08b70e07b8413f87",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

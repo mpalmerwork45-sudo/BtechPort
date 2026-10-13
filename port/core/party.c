@@ -3,6 +3,8 @@
 #include "core/animation.h"
 #include "core/npc.h"
 #include "core/combat.h"
+#include "core/world.h"
+#include <stdlib.h>
 #include <string.h>
 unsigned btp_party_count(const BtpPartyState *p)
 {
@@ -166,26 +168,104 @@ int btp_party_recruit(BtpState *s,unsigned skill)
     p->x[slot]=s->campaign.world_x;p->y[slot]=s->campaign.world_y;
     return 1;
 }
+int btp_party_walkable(const BtpState *s,const BtpResources *r,int x,int y,int mech)
+{
+    if (x<0 || y<0 || x>=2048 || y>=2048) return 0;
+    /* People sample their foot point; a vehicle occupies both ground tiles.
+       Stored vehicle Y is its ground anchor, already two steps above the
+       party cursor. The arena's temporary gate does not apply outdoors. */
+    if (mech) return x<2046 && btp_world_tile(r,s,x/2,y/2)<85 && btp_world_tile(r,s,x/2+1,y/2)<85;
+    return btp_world_tile(r,s,(x+1)/2,y/2)<85;
+}
+static int follow_step(const BtpState *s,const BtpResources *r,int x,int y,int nx,int ny,int mech)
+{
+    return btp_party_walkable(s,r,nx,ny,mech) &&
+        (btp_world_location(r,s,nx/2,ny/2) ||
+         !btp_world_deep_crossing(&r->world,(unsigned)x,(unsigned)y,nx-x,ny-y));
+}
+static void follow_position(const BtpState *s,const BtpResources *r,uint16_t *px,uint16_t *py,int gx,int gy,int mech,int initialize)
+{
+    int x=*px,y=*py;
+    if (initialize || !btp_party_walkable(s,r,x,y,mech)) {
+        /* Imported saves do not contain outdoor formation positions. Recover
+           a legal position near the original formation before the first draw. */
+        int best=INT32_MAX,bx=x,by=y;
+        for (int dy=-8;dy<=8;++dy) for (int dx=-8;dx<=8;++dx)
+            if (btp_party_walkable(s,r,gx+dx,gy+dy,mech) && dx*dx+dy*dy<best)
+                { best=dx*dx+dy*dy;bx=gx+dx;by=gy+dy; }
+        if (best<INT32_MAX) { *px=(uint16_t)bx;*py=(uint16_t)by; }
+        return;
+    }
+    if (x==gx && y==gy) return;
+    /* Preserve the original compact formation on clear ground, checking
+       every half-step rather than teleporting a follower through a roof. */
+    int tx=x,ty=y,clear=abs(gx-x)<=8 && abs(gy-y)<=8;
+    while (clear && (tx!=gx || ty!=gy)) {
+        int nx=tx+(gx>tx)-(gx<tx),ny=ty+(gy>ty)-(gy<ty);
+        if (!follow_step(s,r,tx,ty,nx,ny,mech)) clear=0;
+        else { tx=nx;ty=ny; }
+    }
+    if (clear) { *px=(uint16_t)tx;*py=(uint16_t)ty;return; }
+    /* A small local search lets each blocked follower go around obstacles.
+       Its first step is applied now; buildings never become legal positions.
+       The normal unobstructed path above requires no search or allocation. */
+    enum { SIDE=9,CELLS=SIDE*SIDE,CENTER=4*SIDE+4 };
+    int16_t parent[CELLS],queue[CELLS];unsigned head=0,tail=0;int best=CENTER;
+    for (unsigned i=0;i<CELLS;++i) parent[i]=-1;
+    parent[CENTER]=CENTER;queue[tail++]=CENTER;
+    int distance=abs(gx-x)+abs(gy-y);
+    static const BtpAction directions[8]={BTP_UP,BTP_UP_RIGHT,BTP_RIGHT,BTP_DOWN_RIGHT,
+        BTP_DOWN,BTP_DOWN_LEFT,BTP_LEFT,BTP_UP_LEFT};
+    while (head<tail) {
+        int at=queue[head++],cx=at%SIDE,cy=at/SIDE;
+        for (unsigned direction=0;direction<8;++direction) {
+            int nx=cx+btp_action_dx(directions[direction]),ny=cy+btp_action_dy(directions[direction]);
+            if (nx<0 || ny<0 || nx>=SIDE || ny>=SIDE) continue;
+            int next=ny*SIDE+nx;if (parent[next]>=0) continue;
+            if (!follow_step(s,r,x+cx-4,y+cy-4,x+nx-4,y+ny-4,mech)) continue;
+            parent[next]=(int16_t)at;queue[tail++]=(int16_t)next;
+            int score=abs(gx-(x+nx-4))+abs(gy-(y+ny-4));
+            if (score<distance) { best=next;distance=score; }
+        }
+    }
+    if (best!=CENTER) {
+        while (parent[best]!=CENTER) best=parent[best];
+        *px=(uint16_t)(x+best%SIDE-4);*py=(uint16_t)(y+best/SIDE-4);
+    }
+}
 void btp_party_follow(BtpState *s,const BtpResources *r,uint16_t old_x,uint16_t old_y)
 {
     BtpPartyState *p=&s->party;if (!p->enabled) return;
-    /* 0000:0BC9..0D30 rebuilds two compact formations around the outdoor
-       cursor on every drawing pass. Passengers do not take a person position
-       and vehicles do not trail individual character breadcrumb positions. */
-    unsigned person=0,mech=0,dir=btp_player_direction(s->facing);
-    int moved=old_x!=s->campaign.world_x || old_y!=s->campaign.world_y;
+    /* 0000:0BC9..0D30 supplies the two compact formations. Each follower
+       checks its own footprint before joining that formation. Passengers do
+       not take a person position. Saved positions drive the visible sprites. */
+    unsigned person=0,mech=0;
+    int initialize=1;
+    for (unsigned i=0;i<8;++i) if (p->people[i][0]!=255 && p->people[i][12]>=8 &&
+        (p->x[i]!=old_x || p->y[i]!=old_y)) initialize=0;
+    for (unsigned i=0;i<4;++i) if (btp_party_mech(s,i)[0]!=255 &&
+        (p->mech_x[i]!=old_x || p->mech_y[i]!=old_y)) initialize=0;
     for (unsigned i=0;i<8;++i) if (p->people[i][0]!=255 && p->people[i][12]>=8) {
-        p->x[i]=(uint16_t)((int)s->campaign.world_x+r->combat.formation_x[person]);
-        p->y[i]=(uint16_t)((int)s->campaign.world_y+r->combat.formation_y[person++]);
-        if (i && moved) p->walk[i]=btp_walk_next(p->walk[i],p->direction[i],dir);
-        p->direction[i]=(uint8_t)dir;
+        unsigned ox=p->x[i],oy=p->y[i],place=person++;
+        follow_position(s,r,&p->x[i],&p->y[i],(int)s->campaign.world_x+r->combat.formation_x[place],
+            (int)s->campaign.world_y+r->combat.formation_y[place],0,initialize);
+        if (initialize && (old_x!=s->campaign.world_x || old_y!=s->campaign.world_y))
+            p->direction[i]=(uint8_t)btp_player_direction(s->facing);
+        if (!initialize && i && (p->x[i]!=ox || p->y[i]!=oy)) {
+            unsigned dir=btp_combat_direction((int)ox,(int)oy,p->x[i],p->y[i]);
+            p->walk[i]=btp_walk_next(p->walk[i],p->direction[i],dir);p->direction[i]=(uint8_t)dir;
+        }
     }
     for (unsigned i=0;i<4;++i) if (btp_party_mech(s,i)[0]!=255) {
-        p->mech_x[i]=(uint16_t)((int)s->campaign.world_x+r->combat.mech_formation_x[mech]);
-        p->mech_y[i]=(uint16_t)((int)s->campaign.world_y+r->combat.mech_formation_y[mech++]);
+        unsigned ox=p->mech_x[i],oy=p->mech_y[i],place=mech++;
+        follow_position(s,r,&p->mech_x[i],&p->mech_y[i],(int)s->campaign.world_x+r->combat.mech_formation_x[place],
+            (int)s->campaign.world_y+r->combat.mech_formation_y[place],1,initialize);
         unsigned pilot=btp_party_mech(s,i)[121];
-        if (pilot<8) {
-            if (pilot && moved) p->walk[pilot]=(uint8_t)btp_combat_walk_frame(p->walk[pilot],p->direction[pilot],dir,0);
+        if (initialize && pilot<8 && (old_x!=s->campaign.world_x || old_y!=s->campaign.world_y))
+            p->direction[pilot]=(uint8_t)btp_player_direction(s->facing);
+        if (!initialize && pilot<8 && (p->mech_x[i]!=ox || p->mech_y[i]!=oy)) {
+            unsigned dir=btp_combat_direction((int)ox,(int)oy,p->mech_x[i],p->mech_y[i]);
+            if (pilot) p->walk[pilot]=(uint8_t)btp_combat_walk_frame(p->walk[pilot],p->direction[pilot],dir,0);
             p->direction[pilot]=(uint8_t)dir;
         }
     }

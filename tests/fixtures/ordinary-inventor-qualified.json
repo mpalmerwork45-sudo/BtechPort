@@ -579,7 +579,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "a4a597a3a3a98349",
+        "state_digest": "3e521c0a0e6e16dd",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -916,18 +916,18 @@
     },
     {
       "label": "entry",
-      "tick": 868,
+      "tick": 786,
       "state": {
         "map": 12,
         "mode": "entry-confirm",
         "x_half": 11,
-        "y_half": 8,
+        "y_half": 9,
         "tile": [
           5,
           4
         ],
         "gate": 85,
-        "tick": 868,
+        "tick": 786,
         "blocked": 0,
         "script_pc": 0,
         "script_status": 0,
@@ -1010,9 +1010,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          178,
-          46,
-          160
+          163,
+          32,
+          169
         ],
         "npc_search": [
           0,
@@ -1166,7 +1166,7 @@
           0,
           0,
           0,
-          6,
+          23,
           0,
           1,
           0,
@@ -1406,7 +1406,7 @@
           "encounter": 0,
           "building": 21
         },
-        "player_sprite": 180,
+        "player_sprite": 181,
         "npc_sprites": [
           270,
           270,
@@ -1492,7 +1492,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "5ca972278237e7d2",
+        "state_digest": "d9618cba7a33b2a6",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1829,7 +1829,7 @@
     },
     {
       "label": "inventor-qualified-complete",
-      "tick": 893,
+      "tick": 811,
       "state": {
         "map": 12,
         "mode": "local-exploration",
@@ -1840,7 +1840,7 @@
           3
         ],
         "gate": 85,
-        "tick": 893,
+        "tick": 811,
         "blocked": 0,
         "script_pc": 7784,
         "script_status": 3,
@@ -1928,9 +1928,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          178,
-          46,
-          160
+          163,
+          32,
+          169
         ],
         "npc_search": [
           0,
@@ -2084,7 +2084,7 @@
           0,
           0,
           0,
-          6,
+          23,
           0,
           1,
           0,
@@ -2324,7 +2324,7 @@
           "encounter": 0,
           "building": 21
         },
-        "player_sprite": 180,
+        "player_sprite": 181,
         "npc_sprites": [
           270,
           270,
@@ -2410,7 +2410,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "6edc095df08713fd",
+        "state_digest": "93e4dc86f14fe234",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -2756,7 +2756,7 @@
       3
     ],
     "gate": 85,
-    "tick": 893,
+    "tick": 811,
     "blocked": 0,
     "script_pc": 7784,
     "script_status": 3,
@@ -2844,9 +2844,9 @@
     "npc_clock": 0,
     "npc_fault": 0,
     "npc_rng": [
-      178,
-      46,
-      160
+      163,
+      32,
+      169
     ],
     "npc_search": [
       0,
@@ -3000,7 +3000,7 @@
       0,
       0,
       0,
-      6,
+      23,
       0,
       1,
       0,
@@ -3240,7 +3240,7 @@
       "encounter": 0,
       "building": 21
     },
-    "player_sprite": 180,
+    "player_sprite": 181,
     "npc_sprites": [
       270,
       270,
@@ -3326,7 +3326,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "6edc095df08713fd",
+    "state_digest": "93e4dc86f14fe234",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

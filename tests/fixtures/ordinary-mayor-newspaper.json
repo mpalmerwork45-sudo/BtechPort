@@ -3,18 +3,18 @@
   "checkpoints": [
     {
       "label": "entry",
-      "tick": 279,
+      "tick": 217,
       "state": {
         "map": 4,
         "mode": "entry-confirm",
         "x_half": 49,
-        "y_half": 52,
+        "y_half": 53,
         "tile": [
           24,
           26
         ],
         "gate": 85,
-        "tick": 279,
+        "tick": 217,
         "blocked": 0,
         "script_pc": 0,
         "script_status": 0,
@@ -97,9 +97,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          176,
-          88,
-          204
+          26,
+          8,
+          24
         ],
         "npc_search": [
           0,
@@ -253,7 +253,7 @@
           0,
           0,
           0,
-          214,
+          229,
           0,
           0,
           0,
@@ -493,7 +493,7 @@
           "encounter": 0,
           "building": 14
         },
-        "player_sprite": 178,
+        "player_sprite": 179,
         "npc_sprites": [
           270,
           270,
@@ -579,7 +579,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "9636171371a83d2e",
+        "state_digest": "5a99c51b29131c3c",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -916,18 +916,18 @@
     },
     {
       "label": "house-menu",
-      "tick": 281,
+      "tick": 219,
       "state": {
         "map": 4,
         "mode": "building",
         "x_half": 49,
-        "y_half": 52,
+        "y_half": 53,
         "tile": [
           24,
           26
         ],
         "gate": 85,
-        "tick": 281,
+        "tick": 219,
         "blocked": 0,
         "script_pc": 662,
         "script_status": 1,
@@ -1015,9 +1015,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          176,
-          88,
-          204
+          26,
+          8,
+          24
         ],
         "npc_search": [
           0,
@@ -1171,7 +1171,7 @@
           0,
           0,
           0,
-          214,
+          229,
           0,
           0,
           0,
@@ -1411,7 +1411,7 @@
           "encounter": 0,
           "building": 14
         },
-        "player_sprite": 178,
+        "player_sprite": 179,
         "npc_sprites": [
           270,
           270,
@@ -1497,7 +1497,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "56ed294c627f4998",
+        "state_digest": "e6719be16f6bbc46",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1834,18 +1834,18 @@
     },
     {
       "label": "selected-house-activity",
-      "tick": 283,
+      "tick": 221,
       "state": {
         "map": 4,
         "mode": "building",
         "x_half": 49,
-        "y_half": 52,
+        "y_half": 53,
         "tile": [
           24,
           26
         ],
         "gate": 85,
-        "tick": 283,
+        "tick": 221,
         "blocked": 0,
         "script_pc": 662,
         "script_status": 1,
@@ -1933,9 +1933,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          176,
-          88,
-          204
+          26,
+          8,
+          24
         ],
         "npc_search": [
           0,
@@ -2089,7 +2089,7 @@
           0,
           0,
           0,
-          214,
+          229,
           0,
           0,
           0,
@@ -2329,7 +2329,7 @@
           "encounter": 0,
           "building": 14
         },
-        "player_sprite": 178,
+        "player_sprite": 179,
         "npc_sprites": [
           270,
           270,
@@ -2415,7 +2415,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "224d9e0b3eccc52e",
+        "state_digest": "53bee5ee61724d54",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -2752,7 +2752,7 @@
     },
     {
       "label": "house-exit",
-      "tick": 294,
+      "tick": 232,
       "state": {
         "map": 4,
         "mode": "local-exploration",
@@ -2763,7 +2763,7 @@
           25
         ],
         "gate": 85,
-        "tick": 294,
+        "tick": 232,
         "blocked": 0,
         "script_pc": 5892,
         "script_status": 3,
@@ -2851,9 +2851,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          176,
-          88,
-          204
+          26,
+          8,
+          24
         ],
         "npc_search": [
           0,
@@ -3007,7 +3007,7 @@
           0,
           0,
           0,
-          214,
+          229,
           0,
           0,
           0,
@@ -3247,7 +3247,7 @@
           "encounter": 0,
           "building": 14
         },
-        "player_sprite": 178,
+        "player_sprite": 179,
         "npc_sprites": [
           270,
           270,
@@ -3333,7 +3333,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "2ec0f28bca4ba560",
+        "state_digest": "cbf6d5435c7c5caf",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -3679,7 +3679,7 @@
       25
     ],
     "gate": 85,
-    "tick": 294,
+    "tick": 232,
     "blocked": 0,
     "script_pc": 5892,
     "script_status": 3,
@@ -3767,9 +3767,9 @@
     "npc_clock": 0,
     "npc_fault": 0,
     "npc_rng": [
-      176,
-      88,
-      204
+      26,
+      8,
+      24
     ],
     "npc_search": [
       0,
@@ -3923,7 +3923,7 @@
       0,
       0,
       0,
-      214,
+      229,
       0,
       0,
       0,
@@ -4163,7 +4163,7 @@
       "encounter": 0,
       "building": 14
     },
-    "player_sprite": 178,
+    "player_sprite": 179,
     "npc_sprites": [
       270,
       270,
@@ -4249,7 +4249,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "2ec0f28bca4ba560",
+    "state_digest": "cbf6d5435c7c5caf",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

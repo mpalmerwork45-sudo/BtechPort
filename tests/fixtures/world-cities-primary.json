@@ -1,0 +1,68 @@
+{
+  "source": "Original DOS/GAME3 loaded by DOSBox",
+  "snapshot": "1791849746524537035/owned-overhead-map",
+  "table": "[DS:53D0]:0030, 256 sector selectors",
+  "locations": [
+    [
+      8,
+      2,
+      9
+    ],
+    [
+      4,
+      3,
+      12
+    ],
+    [
+      11,
+      4,
+      8
+    ],
+    [
+      2,
+      6,
+      10
+    ],
+    [
+      6,
+      6,
+      13
+    ],
+    [
+      13,
+      7,
+      3
+    ],
+    [
+      10,
+      8,
+      2
+    ],
+    [
+      6,
+      10,
+      7
+    ],
+    [
+      9,
+      11,
+      4
+    ],
+    [
+      2,
+      12,
+      5
+    ],
+    [
+      12,
+      12,
+      11
+    ],
+    [
+      5,
+      13,
+      6
+    ]
+  ],
+  "comparison": "All twelve town sector selectors match the MTP entrance high bits. No city-origin shift is warranted. Terrain texture variation uses the chosen generation seed, rather than DOS startup wall-clock entropy."
+}

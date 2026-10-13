@@ -167,6 +167,13 @@ static void finish_script(BtpState *s, const BtpResources *r, const BtpMap *m)
         }
         unsigned disk_finished=s->disk_origin;
         if (s->campaign.invasion) {
+            /* Armour/services may have initialized the party during cadet
+               training. Register the invasion's retained loan in that
+               existing garage too, before any encounter or checkout. */
+            if (s->party.enabled && s->campaign.owned) {
+                s->party.mech_types[0]=s->campaign.mech[0];
+                s->party.people[0][12]=0;s->campaign.mounted=1;
+            }
             s->campaign.invasion=0;s->map_id=11;
             s->late.invasion_event=s->late.invasion_popup=s->late.invasion_end=0;
             s->mission=(BtpMissionState){0};s->combat=(BtpCombatState){0};
@@ -292,13 +299,13 @@ static void game_tick(BtpState *s, const BtpResources *r, BtpAction a)
                four-step mode four simulated moves would otherwise wrap the
                other pilots' gait back to its starting frame. */
             if (moved.campaign.world_x!=s->campaign.world_x || moved.campaign.world_y!=s->campaign.world_y) {
-                unsigned direction=btp_player_direction((unsigned)a);
                 for (unsigned i=1;i<8;++i) if (moved.party.people[i][0]!=255) {
-                    unsigned mount=moved.party.people[i][12];
-                    if (mount>=8) moved.party.walk[i]=btp_walk_next(s->party.walk[i],s->party.direction[i],direction);
-                    else if (mount<4 && btp_party_mech(&moved,mount)[121]==i)
+                    unsigned mount=moved.party.people[i][12],direction=moved.party.direction[i];
+                    if (mount>=8 && (moved.party.x[i]!=s->party.x[i] || moved.party.y[i]!=s->party.y[i]))
+                        moved.party.walk[i]=btp_walk_next(s->party.walk[i],s->party.direction[i],direction);
+                    else if (mount<4 && btp_party_mech(&moved,mount)[121]==i &&
+                        (moved.party.mech_x[mount]!=s->party.mech_x[mount] || moved.party.mech_y[mount]!=s->party.mech_y[mount]))
                         moved.party.walk[i]=(uint8_t)btp_combat_walk_frame(s->party.walk[i],s->party.direction[i],direction,0);
-                    moved.party.direction[i]=(uint8_t)direction;
                 }
             }
         }

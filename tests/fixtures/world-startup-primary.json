@@ -1,0 +1,9 @@
+{
+  "seed": 131844,
+  "image_seed_offset": "DS:4FC0",
+  "routine": "187F:0BC0, 256 draws",
+  "noise_sha256": "418f3b67e05fd2b94dcf6ecefaf8fc5d43e181609b8c368de3ac7093b12451fd",
+  "live_snapshot": "1791849746524537035/owned-overhead-map",
+  "live_noise_offset": "BUFFER:09FB",
+  "complete_noise_equal": true
+}

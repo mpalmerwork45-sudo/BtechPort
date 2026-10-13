@@ -49,6 +49,21 @@ unsigned btp_world_mini(const BtpResources *r,const BtpState *s,unsigned x,unsig
     return btp_world_mini_index(level,mask);
 }
 
+unsigned btp_world_device_direction(unsigned x,unsigned y)
+{
+    /* 0000:4405 passes packed world coordinates to 187F:0971. That
+       routine narrows cross-sector deltas instead of taking the bearing
+       across the whole island. Preserve its original arrow, including the
+       asymmetric X word/Y byte arithmetic. */
+    unsigned px=(x/128u)*256u+(x&127u),py=(y/128u)*4096u+(y&127u);
+    int dx=(int16_t)(0x0a38u-px),up=(int8_t)((py&255u)-0x38u);
+    if ((px>>8)<10) dx&=127;
+    else if ((px>>8)>10) dx=(int16_t)((unsigned)dx|128u);
+    if ((py&0xf000u)<0x8000u) up=(int16_t)((unsigned)up|0xff80u);
+    else if ((py&0xf000u)>0x8000u) up&=127;
+    return dx || up ? btp_combat_direction(0,0,dx,-up) : 0u;
+}
+
 static const BtpMap *local(const BtpResources *r,unsigned id)
 {
     return id==1 ? &r->map : id==11 ? &r->destroyed : &r->local[id-1];
@@ -56,6 +71,11 @@ static const BtpMap *local(const BtpResources *r,unsigned id)
 int btp_world_populated(const BtpResources *r,const BtpState *s)
 {
     int bx=(int)s->campaign.world_x/16+8,by=(int)s->campaign.world_y/16+8;
+    /* The original paints town chunk descriptors into its generated sector
+       before checking this neighbourhood. MTP overlays must participate,
+       even when the underlying generated height is ordinary ground. */
+    if (!s->story_flags[58]) for (int y=-1;y<=1;++y) for (int x=-1;x<=1;++x)
+        if (btp_world_location(r,s,(int)s->campaign.world_x/2+x*8,(int)s->campaign.world_y/2+y*8)) return 1;
     if (r->world.native) {
         for (int y=by-1;y<=by+1;++y) for (int x=bx-1;x<=bx+1;++x)
             if (x>=0 && y>=0 && x<144 && y<144 && (r->world.heights[y*144+x]&128u)) return 1;
@@ -139,7 +159,8 @@ void btp_world_step(BtpState *s,const BtpResources *r,BtpAction a)
         s->facing=(uint8_t)a;
         int x=gx+btp_action_dx(a),y=gy+btp_action_dy(a);
         if (x<0 || y<0 || x>=2048 || y>=2048) s->blocked=BTP_EDGE;
-        else if (btp_world_deep_crossing(&r->world,(unsigned)gx,(unsigned)gy,btp_action_dx(a),btp_action_dy(a))) {
+        else if (!btp_world_location(r,s,x/2,y/2) &&
+            btp_world_deep_crossing(&r->world,(unsigned)gx,(unsigned)gy,btp_action_dx(a),btp_action_dy(a))) {
             s->blocked=BTP_WATER;btp_menu_open(s);s->campaign.ui=BTP_MENU_MESSAGE;s->menu.notice=5;
         }
         /* The arena's temporary gate 139 must not leak into town travel:
@@ -157,7 +178,6 @@ void btp_world_step(BtpState *s,const BtpResources *r,BtpAction a)
     s->campaign.world_x=(uint16_t)gx;s->campaign.world_y=(uint16_t)gy;
     if (s->campaign.mounted) {
         unsigned mount=s->party.people[0][12];
-        if (mount<4) { s->party.mech_x[mount]=(uint16_t)gx;s->party.mech_y[mount]=(uint16_t)gy; }
         if (!mount) { s->campaign.mech_x=(uint16_t)gx;s->campaign.mech_y=(uint16_t)gy; }
     }
     unsigned id=(unsigned)btp_world_location(r,s,gx/2,gy/2);

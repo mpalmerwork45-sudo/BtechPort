@@ -2,43 +2,43 @@
   "checkpoints": [
     {
       "label": "funded-by-owner-shortcut",
-      "tick": 51025
+      "tick": 50477
     },
     {
       "label": "garage-crew-allocation",
-      "tick": 51064
+      "tick": 50504
     },
     {
       "label": "garage-checkout",
-      "tick": 51071
+      "tick": 50511
     },
     {
       "label": "walking-with-rex-piloting",
-      "tick": 51087
+      "tick": 50557
     },
     {
       "label": "hospital-menu",
-      "tick": 51560
+      "tick": 50938
     },
     {
       "label": "hospital-companion-pause",
-      "tick": 51621
+      "tick": 50999
     },
     {
       "label": "hospital-companion-joined",
-      "tick": 51623
+      "tick": 51001
     },
     {
       "label": "medical-kit",
-      "tick": 51630
+      "tick": 51008
     },
     {
       "label": "field-surgery-kit",
-      "tick": 51634
+      "tick": 51012
     },
     {
       "label": "hospital-exit",
-      "tick": 51636
+      "tick": 51014
     }
   ],
   "final": {
@@ -51,7 +51,7 @@
       17
     ],
     "gate": 85,
-    "tick": 51636,
+    "tick": 51014,
     "blocked": 0,
     "script_pc": 4577,
     "script_status": 3,
@@ -315,7 +315,7 @@
       0,
       0,
       0,
-      86,
+      239,
       0,
       0,
       0,
@@ -428,7 +428,7 @@
         0,
         3,
         0,
-        1,
+        0,
         0,
         0,
         90,
@@ -555,7 +555,7 @@
       "encounter": 0,
       "building": 9
     },
-    "player_sprite": 167,
+    "player_sprite": 173,
     "npc_sprites": [
       270,
       270,
@@ -568,7 +568,7 @@
     ],
     "quiz": {
       "phase": 0,
-      "selected": 15,
+      "selected": 18,
       "round": 0,
       "point": 0,
       "failed": 0,
@@ -609,7 +609,7 @@
       "remaining": 0,
       "fraction": 0
     },
-    "explored_digest": 1720240552,
+    "explored_digest": 1165987551,
     "map_center": [
       0,
       0
@@ -641,7 +641,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "27024b9f0c72afcb",
+    "state_digest": "5987f192c33715e3",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

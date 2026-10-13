@@ -45,14 +45,14 @@ int main(int argc,char **argv)
     for (unsigned i=0;i<SIZE;++i) parents[i]=-1;
     int start=sy*2048+sx,target=ty*2048+tx;parents[start]=start;queue[0]=start;
     unsigned begin=0,end=1;
-    static const int dx[4]={0,1,0,-1},dy[4]={-1,0,1,0};
+    static const int dx[8]={0,1,0,-1,1,1,-1,-1},dy[8]={-1,0,1,0,-1,1,1,-1};
     while (begin<end && parents[target]<0) {
         int p=queue[begin++],x=p%2048,y=p/2048;
-        for (unsigned dir=0;dir<4;++dir) {
+        for (unsigned dir=0;dir<8;++dir) {
             int nx=x+dx[dir],ny=y+dy[dir];
             if (nx<0 || ny<2 || nx>=2046 || ny>=2048) continue;
             int q=ny*2048+nx;if (parents[q]>=0) continue;
-            unsigned blocked=btp_world_deep_crossing(&r->world,(unsigned)(p%2048),(unsigned)(p/2048),dx[dir],dy[dir]) || (s.campaign.mounted ? btp_world_tile(r,&s,nx/2,(ny-2)/2)>=s.gate ||
+            unsigned blocked=(!btp_world_location(r,&s,nx/2,ny/2) && btp_world_deep_crossing(&r->world,(unsigned)x,(unsigned)y,dx[dir],dy[dir])) || (s.campaign.mounted ? btp_world_tile(r,&s,nx/2,(ny-2)/2)>=s.gate ||
                 btp_world_tile(r,&s,nx/2+1,(ny-2)/2)>=s.gate : btp_world_tile(r,&s,(nx+1)/2,ny/2)>=s.gate);
             if (q==target) blocked=0; /* Pending building entry precedes parking. */
             unsigned id=(unsigned)btp_world_location(r,&s,nx/2,ny/2);
@@ -70,7 +70,9 @@ int main(int argc,char **argv)
         for (int q=target;q!=start;q=parents[q]) queue[count++]=q;
         for (unsigned i=count;i>0;--i) {
             int q=queue[i-1],p=parents[q],delta=q-p;
-            step(&s,r,delta==-2048 ? BTP_UP : delta==1 ? BTP_RIGHT : delta==2048 ? BTP_DOWN : BTP_LEFT);
+            step(&s,r,delta==-2048 ? BTP_UP : delta==1 ? BTP_RIGHT : delta==2048 ? BTP_DOWN :
+                delta==-1 ? BTP_LEFT : delta==-2047 ? BTP_UP_RIGHT : delta==2049 ? BTP_DOWN_RIGHT :
+                delta==2047 ? BTP_DOWN_LEFT : BTP_UP_LEFT);
             /* Declining a non-target doorway commits its pending outdoor
                step. Excluding every doorway can strand the route at a shop. */
             if (s.mode==BTP_ENTRY && q!=target) step(&s,r,BTP_CANCEL);

@@ -15,5 +15,6 @@ void btp_world_actions(BtpState *state,const BtpResources *resources,BtpAction a
 void btp_world_reveal(BtpState *state);
 int btp_world_seen(const BtpState *state,unsigned x,unsigned y);
 unsigned btp_world_mini(const BtpResources *resources,const BtpState *state,unsigned x,unsigned y);
+unsigned btp_world_device_direction(unsigned x,unsigned y);
 unsigned btp_world_mini_index(unsigned level,unsigned neighbours);
 #endif

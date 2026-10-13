@@ -108,5 +108,14 @@ int main(int argc,char **argv)
     input(&prison_start,r,BTP_DOWN);input(&prison_start,r,BTP_ACCEPT);
     for (unsigned i=0;i<8192 && prison_start.mode==BTP_ENCOUNTER && prison_start.combat.phase==BTP_COMBAT_ROUND;++i) input(&prison_start,r,BTP_IDLE);
     CHECK(prison_start.combat.phase!=BTP_COMBAT_ROUND);
+    if (prison_start.mode==BTP_ENCOUNTER && prison_start.combat.phase==BTP_COMBAT_MENU) {
+        for (unsigned n=0;n<10 && prison_start.combat.selected!=5;++n) input(&prison_start,r,BTP_DOWN);
+        CHECK(prison_start.combat.selected==5);
+        input(&prison_start,r,BTP_ACCEPT); /* Original computer option in combat. */
+    }
+    unsigned guard_ticks=0;
+    while (prison_start.mode==BTP_ENCOUNTER && guard_ticks++<100000) input(&prison_start,r,BTP_IDLE);
+    CHECK(guard_ticks<100000 && prison_start.mode!=BTP_ENCOUNTER);
+    CHECK(prison_start.mode==BTP_GAME_OVER || !prison_start.yard.active);
     free(r);printf("PASS: %u theft checks, 68 primary setup cases and two saved input routes\n",checks);return 0;
 }

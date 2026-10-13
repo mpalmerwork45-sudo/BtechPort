@@ -5,6 +5,8 @@
   "mini_routine": "187F:1F04",
   "fog_cases": 130,
   "terrain_cases": 144,
+  "device_routine": "187F:0971, called by 0000:4405",
+  "device_cases": 512,
   "initial_fog": {
     "snapshot": "1791789043720104596/first-time-question",
     "rows": [
@@ -18,5 +20,24 @@
     "byte": 12,
     "value": 31
   },
-  "comparison": "2048-byte visibility fingerprints and numeric mini indices; no whole-screen map equivalence claimed"
+  "whole_screen": {
+    "snapshot": "1791849746524537035/owned-overhead-map",
+    "prerequisite": "Ordinary GAME3 import and main-menu item 7; explored data plus original main-loop visibility update",
+    "rgb_sha256": "58a4bf686b1bdf2fa906551deb8a4c5d77078f1226eb6e395129efea95012097",
+    "rgb_fnv": "3d7368f6f1413800",
+    "pixels": 64000,
+    "matched_pixels": 63998,
+    "masked_pixels": [
+      [
+        183,
+        70
+      ],
+      [
+        183,
+        71
+      ]
+    ],
+    "remaining": "Two unexplained source black pixels immediately left of the opaque device glyph; repeated original captures agree"
+  },
+  "comparison": "2048-byte visibility fingerprints, numeric mini indices/device directions, and 63,998 of 64,000 original overhead RGB pixels; two explicit masks"
 }

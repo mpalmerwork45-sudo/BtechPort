@@ -20,9 +20,11 @@ def main():
     else:raise RuntimeError('Garage checkout failed')
     s.note('garage-checkout')
     # Put Rex at the controls; Jason can enter town on foot while his party
-    # retains the checked-out records. This is ordinary allocation input.
+    # retains the checked-out records. The original rejects allocation in a
+    # populated neighbourhood, so leave Starport before opening that menu.
+    s.world_route(1248,1077)
     s.advance(['menu','down','down','accept','down','accept','accept','accept'])
-    s.advance(['up','accept','down','down','down','down','accept','cancel'])
+    s.advance(['up','accept']+['down']*sum(t!=255 for t in s.state['mech_types'])+['accept','cancel'])
     if s.state['campaign']['mounted']:raise RuntimeError('Jason did not dismount')
     s.note('walking-with-rex-piloting');s.world_route(1184,1443)
     for _ in range(16):

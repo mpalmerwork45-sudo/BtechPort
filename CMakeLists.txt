@@ -69,6 +69,7 @@ if(BTP_FRONTEND)
   target_link_libraries(btech-port PRIVATE btp_pixels ${BTP_SDL_TARGET})
 endif()
 
+set(DART_TESTING_TIMEOUT 120 CACHE STRING "Bound each headless comparison" FORCE)
 include(CTest)
 if(BUILD_TESTING)
   add_executable(btp-late-building-tests tests/test_late_buildings.c)

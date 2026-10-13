@@ -39,11 +39,27 @@ def main():
             m.reset();m.write(m.buffer+0x664,bytes([level])*64);m.write(m.buffer+0x424,bytes([mask])*64)
             m.call(0x187f,0x1f04,0,limit=2000)
             rows.append(f'T {level} {mask} {m.read(m.buffer+0x244b,1)[0]}')
+    for sx in range(16):
+        for sy in range(16):
+            for part in (13,110):
+                x,y=sx*128+part,sy*128+part;m.reset()
+                direction=m.call(0x187f,0x971,(sx<<8)|part,(sy<<12)|part,0x0a38,0x8038)
+                rows.append(f'A {x} {y} {direction}')
+    # Captured GAME3 -> main menu -> Show overhead map, rather than a
+    # fabricated fully revealed scene. Store only its complete RGB hash.
+    rows.append('P GAME3 3d7368f6f1413800')
     (ROOT/'tests/fixtures/world-view-primary.txt').write_text('\n'.join(rows)+'\n')
     (ROOT/'tests/fixtures/world-view-primary.json').write_text(json.dumps(dict(
         executable_sha256=EXE_SHA,image_sha256=IMAGE_SHA,fog_span='0000:010B..020A',
         mini_routine='187F:1F04',fog_cases=130,terrain_cases=144,
+        device_routine='187F:0971, called by 0000:4405',device_cases=512,
         initial_fog=dict(snapshot='1791789043720104596/first-time-question',rows=[98,99,100,101,102,103],byte=12,value=31),
-        comparison='2048-byte visibility fingerprints and numeric mini indices; no whole-screen map equivalence claimed'),indent=2)+'\n')
+        whole_screen=dict(snapshot='1791849746524537035/owned-overhead-map',
+            prerequisite='Ordinary GAME3 import and main-menu item 7; explored data plus original main-loop visibility update',
+            rgb_sha256='58a4bf686b1bdf2fa906551deb8a4c5d77078f1226eb6e395129efea95012097',
+            rgb_fnv='3d7368f6f1413800',pixels=64000,matched_pixels=63998,
+            masked_pixels=[[183,70],[183,71]],
+            remaining='Two unexplained source black pixels immediately left of the opaque device glyph; repeated original captures agree'),
+        comparison='2048-byte visibility fingerprints, numeric mini indices/device directions, and 63,998 of 64,000 original overhead RGB pixels; two explicit masks'),indent=2)+'\n')
     print('Primary world-view cases:',len(rows)-1)
 if __name__=='__main__':main()

@@ -41,7 +41,9 @@ def generate(seed,data=ROOT/'Original DOS'):
     return area,noise
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--seed',type=int,default=123456)
+    # DS:4FC0 starts 04 03 02 in the audited executable. Its first 256
+    # draws match BUFFER:09FB in the live DOSBox world capture exactly.
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--seed',type=int,default=0x020304)
     p.add_argument('--data',type=Path,default=ROOT/'Original DOS')
     p.add_argument('--output',type=Path,default=ROOT/'work/world-data.bin')
     p.add_argument('--fixture',type=Path,help='Publish only original sector fingerprints');a=p.parse_args()

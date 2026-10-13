@@ -2,19 +2,19 @@
   "checkpoints": [
     {
       "label": "parked-in-starport",
-      "tick": 49501
+      "tick": 49050
     },
     {
       "label": "civilian-clothing",
-      "tick": 49613
+      "tick": 49137
     },
     {
       "label": "rex-crest",
-      "tick": 50726
+      "tick": 50203
     },
     {
       "label": "rex-and-commando",
-      "tick": 50803
+      "tick": 50280
     }
   ],
   "final": {
@@ -27,7 +27,7 @@
       47
     ],
     "gate": 85,
-    "tick": 50803,
+    "tick": 50280,
     "blocked": 0,
     "script_pc": 6030,
     "script_status": 3,
@@ -115,9 +115,9 @@
     "npc_clock": 0,
     "npc_fault": 0,
     "npc_rng": [
-      153,
-      110,
-      177
+      36,
+      139,
+      158
     ],
     "npc_search": [
       0,
@@ -271,7 +271,7 @@
       0,
       0,
       0,
-      237,
+      110,
       1,
       0,
       0,
@@ -524,7 +524,7 @@
     ],
     "quiz": {
       "phase": 0,
-      "selected": 15,
+      "selected": 18,
       "round": 0,
       "point": 0,
       "failed": 0,
@@ -565,7 +565,7 @@
       "remaining": 0,
       "fraction": 0
     },
-    "explored_digest": 1867068149,
+    "explored_digest": 3640128588,
     "map_center": [
       0,
       0
@@ -597,7 +597,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "5a6086c1b76d5aff",
+    "state_digest": "3854be1ab423edb9",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

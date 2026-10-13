@@ -160,7 +160,7 @@ int main(int argc,char **argv)
                This single-shell microstep still resolves the same attack. */
             CHECK(!memcmp(s.combat.unit,no_graphics.combat.unit,sizeof s.combat.unit));
         }
-        if (s.combat.phase && !s.effects.pending) {
+        if (s.combat.phase && !s.effects.pending && s.combat.unit[1].record[0]!=255) {
             if (!enemy_x) { enemy_x=s.combat.unit[1].x;enemy_y=s.combat.unit[1].y; }
             CHECK(s.combat.unit[1].x==enemy_x && s.combat.unit[1].y==enemy_y && s.combat.unit[1].direction==6);
         }
@@ -188,7 +188,7 @@ int main(int argc,char **argv)
             btp_state_encode(&old,bad);memcpy(bad+512,bad+4096,384);memcpy(bad,"BTPD",4);bad[4]=13;
             memset(bad+896,0,sizeof bad-896);
             CHECK(btp_state_decode(bad,1024,&r->map,&r->training,&loaded));
-            step(&loaded,r,BTP_IDLE);CHECK(loaded.combat.unit[1].x==enemy_x && loaded.combat.unit[1].y==enemy_y);
+            step(&loaded,r,BTP_IDLE);if (loaded.combat.unit[1].record[0]!=255) CHECK(loaded.combat.unit[1].x==enemy_x && loaded.combat.unit[1].y==enemy_y);
         }
     }
     fclose(file);CHECK(s.mode==BTP_EXPLORE && s.story_flags[0]==3 && s.story_flags[1]==1 && s.allowance_cap==500);

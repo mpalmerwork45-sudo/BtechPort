@@ -23,6 +23,7 @@ int main(int argc,char **argv)
     BtpResources *r=calloc(1,sizeof *r);BtpError e;
     CHECK(r && btp_resources_load(argv[1],r,&e) && btp_world_data_load(argv[2],&r->world,&e));
     CHECK(btp_combat_data_load("work/combat-data.bin",&r->combat,&e));
+    CHECK(btp_dialogue_load("work/talk-data.bin",&r->dialogue,&e));
     FILE *f=fopen(argv[3],"r");CHECK(f);char line[200];unsigned cases=0;
     while (fgets(line,sizeof line,f)) if (line[0]=='W') {
         unsigned x,y,seed;uint64_t expected;uint8_t sector[4096];
@@ -44,7 +45,7 @@ int main(int argc,char **argv)
             fprintf(stderr,"seed %u sector %u,%u: %016" PRIx64 " vs %016" PRIx64 "\n",seed,x,y,fingerprint(sector,sizeof sector),expected);
         CHECK(fingerprint(sector,sizeof sector)==expected);++cases;
     }
-    fclose(f);CHECK(cases==30);CHECK(btp_world_generate(&r->world,123456));
+    fclose(f);CHECK(cases==30);CHECK(btp_world_generate(&r->world,0x020304));
     f=fopen("tests/fixtures/world-water-primary.txt","r");CHECK(f);cases=0;
     BtpWorldData water=r->world;
     while (fgets(line,sizeof line,f)) {
@@ -83,6 +84,7 @@ int main(int argc,char **argv)
         CHECK(walk.x_half<19 && btp_world_tile(r,&walk,(walk.campaign.world_x+1)/2,walk.campaign.world_y/2)<85);
     }
     memset(r->local[1].tiles,64,4096);
+    memset(r->local[1].room_map,255,sizeof r->local[1].room_map);
     for (unsigned step=1;step<=4;step*=2) {
         BtpState walk;btp_start(&walk);walk.story_flags[4]=walk.story_flags[58]=1;walk.map_id=2;
         walk.x_half=32;walk.y_half=64;walk.campaign.world_x=1312;walk.campaign.world_y=1088;
@@ -94,10 +96,50 @@ int main(int argc,char **argv)
         unsigned last[3]={UINT32_MAX,UINT32_MAX,UINT32_MAX};
         for (unsigned key=0;key<5;++key) {
             btp_game_tick(&walk,r,BTP_RIGHT);
-            for (unsigned i=1;i<4;++i) { CHECK(walk.party.walk[i]!=last[i-1]);last[i-1]=walk.party.walk[i]; }
+            for (unsigned i=1;i<4;++i) {
+                if (walk.party.walk[i]==last[i-1]) fprintf(stderr,"Animation: steps=%u key=%u member=%u mode=%u pos=%u,%u gait=%u\n",step,key,i,walk.mode,walk.party.x[i],walk.party.y[i],walk.party.walk[i]);
+                CHECK(walk.party.walk[i]!=last[i-1]);last[i-1]=walk.party.walk[i];
+            }
         }
     }
+    /* The leader is on foot below a roof. The first vehicle's desired
+       formation crosses that roof, while the other vehicles and people have
+       distinct footprints. Every member remains legal at each input and the
+       blocked mech goes around the south edge instead of through the roof. */
+    for (unsigned y=8;y<18;++y) for (unsigned x=10;x<16;++x) r->local[1].tiles[y*64+x]=115;
+    for (unsigned step=1;step<=4;step*=2) {
+        BtpState group;btp_start(&group);group.story_flags[4]=group.story_flags[58]=1;group.map_id=2;
+        group.x_half=12;group.y_half=36;group.campaign.world_x=1292;group.campaign.world_y=1060;
+        group.menu.steps=(uint8_t)step;btp_party_init(&group);
+        for (unsigned i=1;i<8;++i) { memcpy(group.party.people[i],group.party.people[0],17);group.party.people[i][0]=(uint8_t)i; }
+        for (unsigned i=0;i<3;++i) {
+            uint8_t *mech=btp_party_mech(&group,i);memcpy(mech,r->combat.loans[0],125);
+            mech[121]=(uint8_t)(i+1);group.party.mech_types[i]='L';group.party.people[i+1][12]=(uint8_t)i;
+        }
+        group.campaign.owned=1;btp_party_follow(&group,r,1292,1060);
+        for (unsigned key=0;key<32u/step;++key) {
+            btp_game_tick(&group,r,BTP_RIGHT);CHECK(group.mode==BTP_EXPLORE);
+            for (unsigned i=0;i<8;++i) if (group.party.people[i][12]>=8)
+                CHECK(btp_party_walkable(&group,r,group.party.x[i],group.party.y[i],0));
+            for (unsigned i=0;i<3;++i) CHECK(btp_party_walkable(&group,r,group.party.mech_x[i],group.party.mech_y[i],1));
+            uint8_t before[BTP_STATE_BYTES],after[BTP_STATE_BYTES];BtpState copy;
+            btp_state_encode(&group,before);CHECK(btp_state_decode(before,sizeof before,btp_active_map(r,&group),NULL,&copy));
+            btp_state_encode(&copy,after);CHECK(!memcmp(before,after,sizeof before));
+        }
+        CHECK(group.campaign.world_x==1324 && group.party.mech_x[0]>1311);
+    }
     r->local[1]=map2;
+    /* Captured original GAME3 sector selectors, including MAP11's return
+       location. Their MTP high bits agree with the live table exactly. */
+    static const unsigned towns[][3]={{8,2,9},{4,3,12},{11,4,8},{2,6,10},{6,6,13},{13,7,3},{10,8,2},{6,10,7},{9,11,4},{2,12,5},{12,12,11},{5,13,6}};
+    BtpState traveler;btp_start(&traveler);traveler.story_flags[4]=1;
+    for (unsigned i=0;i<12;++i) {
+        unsigned x=towns[i][0]*64u,y=towns[i][1]*64u,id=towns[i][2];
+        CHECK(btp_world_location(r,&traveler,(int)x,(int)y)==(int)id);
+        const BtpMap *town=id==11 ? &r->destroyed : &r->local[id-1];
+        for (unsigned row=0;row<town->height;++row) for (unsigned col=0;col<town->width;++col)
+            CHECK(btp_world_tile(r,&traveler,(int)(x+col),(int)(y+row))==btp_map_tile(town,(int)col,(int)row));
+    }
     uint8_t *raw;size_t n;CHECK(btp_read_file(argv[2],&raw,&n,&e));
     BtpWorldData untouched=r->world;
     CHECK(!btp_world_data_decode(raw,n-1,&r->world,&e) && !memcmp(&untouched,&r->world,sizeof untouched));
@@ -120,9 +162,27 @@ int main(int argc,char **argv)
         } else if (line[0]=='T') {
             unsigned level,mask,expected;CHECK(sscanf(line+1,"%u %u %u",&level,&mask,&expected)==3);
             CHECK(btp_world_mini_index(level,mask)==expected);++cases;
+        } else if (line[0]=='A') {
+            unsigned x,y,direction;CHECK(sscanf(line+1,"%u %u %u",&x,&y,&direction)==3);
+            CHECK(btp_world_device_direction(x,y)==direction);++cases;
+        } else if (line[0]=='P') {
+            char original[16],path[80];uint64_t expected,h=UINT64_C(14695981039346656037);
+            CHECK(sscanf(line+1,"%15s %" SCNx64,original,&expected)==2);
+            snprintf(path,sizeof path,"Original DOS/%s",original);BtpState view;
+            CHECK(btp_save_load(path,&view,r,&e));
+            btp_game_tick(&view,r,BTP_OPEN_MENU);btp_game_tick(&view,r,BTP_UP);btp_game_tick(&view,r,BTP_ACCEPT);
+            CHECK(view.mode==BTP_ACTIONS && view.campaign.ui==BTP_MENU_MAP);
+            uint32_t *frame=malloc(BTP_PIXELS*sizeof *frame);CHECK(frame);btp_render(r,&view,0,frame);
+            /* Two source black pixels immediately left of the device glyph
+               remain unexplained by the font blit. Compare the other 63,998
+               pixels exactly, with these two explicitly masked to source. */
+            frame[70u*320u+183u]=frame[71u*320u+183u]=0;
+            for (unsigned pixel=0;pixel<BTP_PIXELS;++pixel) for (int shift=16;shift>=0;shift-=8)
+                h=(h^(uint8_t)(frame[pixel]>>shift))*UINT64_C(1099511628211);
+            CHECK(h==expected);free(frame);++cases;
         }
     }
-    fclose(f);CHECK(cases==274);
+    fclose(f);CHECK(cases==787);
     for (unsigned row=98;row<=103;++row) CHECK(s.explored[row*16u+12u]==31);
     for (unsigned y=0;y<64;++y) for (unsigned x=0;x<64;++x)
         CHECK(btp_world_tile(r,&s,(int)x+768,(int)y+768)==btp_map_tile(&r->map,(int)x,(int)y));

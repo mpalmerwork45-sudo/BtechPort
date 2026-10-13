@@ -91,7 +91,15 @@ int main(int argc,char **argv)
     btp_game_tick(&s,r,BTP_CANCEL);CHECK(s.mode==BTP_EXPLORE);
     btp_menu_open(&s);select_item(&s,r,2);btp_render(r,&s,0,pixels);
     CHECK(crop_hash(pixels,104,0,216,200)==UINT64_C(0x1491c6f034c5af95));
-    CHECK(btp_save_load("Original DOS/GAME3",&s,r,&e));btp_menu_open(&s);btp_render(r,&s,0,pixels);
+    CHECK(btp_save_load("Original DOS/GAME3",&s,r,&e));btp_menu_open(&s);select_item(&s,r,3);
+    btp_render(r,&s,0,pixels);CHECK(crop_hash(pixels,104,0,216,200)==UINT64_C(0x93675188807180be));
+    select_item(&s,r,0);btp_render(r,&s,0,pixels);
+    CHECK(crop_hash(pixels,104,0,216,200)==UINT64_C(0x35639aea2c8b0038));
+    select_item(&s,r,0);CHECK(s.campaign.ui==BTP_MENU_MECH && restore(&s,r));
+    btp_game_tick(&s,r,BTP_OPEN_MENU);CHECK(s.mode==BTP_EXPLORE && restore(&s,r));
+    btp_menu_open(&s);select_item(&s,r,2);btp_render(r,&s,0,pixels);
+    CHECK(crop_hash(pixels,104,0,216,200)==UINT64_C(0x3b56096617a5b93e));
+    btp_menu_close(&s);btp_menu_open(&s);btp_render(r,&s,0,pixels);
     CHECK(crop_hash(pixels,104,88,216,80)==UINT64_C(0xe2fb8696d8944791));select_item(&s,r,2);
     CHECK(s.campaign.ui==BTP_MENU_ALLOCATE && restore(&s,r));select_item(&s,r,0);select_item(&s,r,btp_menu_mech_count(&s));
     CHECK(!s.campaign.mounted && s.party.people[0][12]==8 && restore(&s,r));

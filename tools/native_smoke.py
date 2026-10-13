@@ -585,8 +585,8 @@ def inspection_saves(env,work):
     env=dict(env,SDL_AUDIODRIVER='dummy')
     with tempfile.TemporaryDirectory(prefix='native-inspection-',dir=work) as directory:
         tmp=Path(directory);prefix=tmp/'prefix.actions';tail=tmp/'idle.actions'
-        for name,initial,row,extra in [('character',[],2,['accept']),
-                ('overhead',[],6,[]),('mech',['--load',str(ROOT/'Original DOS/GAME3')],3,['accept','right'])]:
+        for name,initial,row,extra in [('character',[],2,[]),
+                ('overhead',[],6,[]),('mech',['--load',str(ROOT/'Original DOS/GAME3')],3,['accept','accept'])]:
             prefix.write_text('\n'.join(['menu']+['down']*row+['accept']+extra)+'\n')
             start=tmp/'start.btp';slot=tmp/'slot.btp';frame=work/f'native-{name}-restore.ppm';expected=tmp/'expected.ppm'
             subprocess.run([str(ROOT/'build/btech-headless'),*initial,'--replay',str(prefix),'--save',str(start)],cwd=ROOT,check=True,capture_output=True,text=True)
@@ -676,7 +676,7 @@ def original_saves(env,work):
         for slot in range(1,7):
             original=ROOT/f'Original DOS/GAME{slot}';raw=original.read_bytes()
             active=any(raw[0x111+125*i]!=255 for i in range(4))
-            keys=['menu']+['down']*(3 if active else 2)+['accept','accept','idle','accept']
+            keys=['menu']+['down']*(3 if active else 2)+['accept']+(['down','accept'] if active else [])+(['accept'] if sum(raw[1+17*i]!=255 for i in range(8))>1 else [])+['idle','cancel']
             tail=tmp/'tail.actions';tail.write_text('\n'.join(keys)+'\n');record=tmp/'record.actions';save=tmp/'native.btp'
             frame=work/f'native-original-{slot}.ppm';expected=tmp/'expected.ppm'
             actual=subprocess.run([str(native),'--load',str(original),'--smoke-replay','--smoke-fast','--replay',str(tail),
@@ -703,7 +703,7 @@ def field(env,work):
     subprocess.run([str(ROOT/'build/btp-menu-tests'),str(ROOT/'Original DOS')],cwd=ROOT,check=True,capture_output=True,text=True)
     with tempfile.TemporaryDirectory(prefix='native-field-',dir=work) as directory:
         tmp=Path(directory);tail=tmp/'tail.actions';record=tmp/'record.actions';frame=work/'native-field.ppm';expected=tmp/'expected.ppm'
-        keys=['menu']+['down']*3+['accept','accept','down','accept','down','accept','menu']+['down']*4+['accept','accept']
+        keys=['menu']+['down']*3+['accept','down','accept','accept','down','accept','down','accept','menu']+['down']*4+['accept','accept']
         tail.write_text('\n'.join(keys)+'\n')
         actual=subprocess.run([str(ROOT/'build/btech-port'),'--load',str(work/'crew-menu.btp'),'--smoke-replay','--smoke-fast','--replay',str(tail),'--record',str(record),'--frame',str(frame)],cwd=ROOT,env=env,check=True,capture_output=True,text=True)
         wanted=subprocess.run([str(ROOT/'build/btech-headless'),'--load',str(work/'crew-menu.btp'),'--replay',str(record),'--frame',str(expected)],cwd=ROOT,check=True,capture_output=True,text=True)

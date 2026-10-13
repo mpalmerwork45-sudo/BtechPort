@@ -30,17 +30,46 @@ class Fresh(Buildings):
                     self.advance(['idle']*8 if self.state['animation']['active'] or self.state['audio']['effects'] else ['accept'])
                 if self.state['mode']=='actions':break
             else:raise RuntimeError('Original garage checkout did not open')
-        else:self.advance(['menu','down','down','accept'])
+        else:
+            if self.state['map']:
+                raw=(ROOT/f'Original DOS/MAP{self.state["map"]}.MTP').read_bytes()
+                ox=self.state['campaign']['world'][0]//128*128
+                self.world_route(ox+2*raw[3]+16,self.state['campaign']['world'][1])
+            self.advance(['menu','down','down','accept'])
         for member,bay in ((0,0),(1,1)):
             n=sum(p[0]!=255 for p in self.state['people'])
             self.advance(['down']*((member-self.state['actions_menu']['selected'])%(n+1))+['accept']+['down']*bay+['accept'])
+            if self.state['actions_menu']['phase']==17:self.advance(['accept'])
         if self.state['campaign']['building']==8 and self.state['mode']=='actions':
             n=sum(p[0]!=255 for p in self.state['people'])
             self.advance(['down']*((n-self.state['actions_menu']['selected'])%(n+1))+['accept']);self.settle_building()
         else:self.advance(['cancel'])
         if not self.state['campaign']['mounted']:raise RuntimeError('Jason did not board his owned mech')
     def enter(self,x,y):
-        self.travel_crew();super().enter(x,y)
+        # Starport's ordinary garage parks the vehicles before town services.
+        # The normal collision gate no longer allows a mech across roofs to
+        # reach these small shop doorways.
+        starport=x//128==10 and y//128==8
+        if not starport and self.state['campaign_flags'][24]:self.travel_crew()
+        if starport and self.state['campaign']['mounted']:
+            self.world_route(1286,1080);self.advance(['accept'])
+            for _ in range(256):
+                if self.state['mode']=='local-exploration':break
+                self.advance(['idle']*8 if self.state['animation']['active'] or self.state['audio']['effects'] else ['accept'])
+            else:raise RuntimeError('Starport garage did not finish parking')
+        elif self.state['campaign']['mounted']:
+            if self.state['map']:
+                raw=(ROOT/f'Original DOS/MAP{self.state["map"]}.MTP').read_bytes()
+                ox=self.state['campaign']['world'][0]//128*128
+                self.world_route(ox-32,self.state['campaign']['world'][1])
+            self.advance(['menu','down','down','accept'])
+            for member,bay in ((1,0),(4,1),(0,sum(t!=255 for t in self.state['mech_types']))):
+                n=sum(p[0]!=255 for p in self.state['people'])
+                self.advance(['down']*((member-self.state['actions_menu']['selected'])%(n+1))+['accept']+['down']*bay+['accept'])
+                if self.state['actions_menu']['phase']==17:self.advance(['accept'])
+            n=sum(p[0]!=255 for p in self.state['people'])
+            self.advance(['down']*((n-self.state['actions_menu']['selected'])%(n+1))+['accept'])
+        super().enter(x,y)
     def settle_building(self):
         for _ in range(2048):
             if self.state['mode']=='local-exploration' or self.state['script_status'] in (1,6):return

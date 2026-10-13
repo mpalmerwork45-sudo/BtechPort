@@ -938,7 +938,7 @@ int btp_combat_valid(const BtpState *s)
     }
     for (unsigned i=0;i<c->count;++i) {
         const BtpCombatUnit *u=&c->unit[i];
-        if ((u->record[0]!=255 && (u->x>(s->campaign.invasion ? 253u : u->infantry ? 127u : 125u) || u->y>(s->campaign.invasion ? 255u : 127u))) || u->direction>7 || u->heat>30 || u->burning>3 ||
+        if ((u->record[0]!=255 && (u->x>(s->campaign.invasion ? 253u : s->campaign.encounter || u->infantry ? 127u : 125u) || u->y>(s->campaign.invasion ? 255u : 127u))) || u->direction>7 || u->heat>30 || u->burning>3 ||
             (u->cover!=0 && u->cover!=(u->infantry ? 2 : 8) && u->cover!=(u->infantry ? 4 : 16)) || c->moved[i]>12 || c->path_index[i]>12 ||
             c->walk[i]>15 || c->plan_direction[i]>7 || c->fallback[i]>7 || u->infantry>1 ||
             (i && !s->campaign.encounter && u->infantry!=(s->mission.assignment==3)) || btp_combat_weapon_count(u)>11 || u->record[117]>3 || u->record[118]>2 || u->record[119]>2) return 0;

@@ -3,7 +3,7 @@
   "checkpoints": [
     {
       "label": "entry",
-      "tick": 1135,
+      "tick": 1027,
       "state": {
         "map": 5,
         "mode": "entry-confirm",
@@ -14,7 +14,7 @@
           16
         ],
         "gate": 85,
-        "tick": 1135,
+        "tick": 1027,
         "blocked": 0,
         "script_pc": 0,
         "script_status": 0,
@@ -97,9 +97,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          94,
-          239,
-          132
+          42,
+          22,
+          82
         ],
         "npc_search": [
           0,
@@ -253,7 +253,7 @@
           0,
           0,
           0,
-          7,
+          34,
           0,
           0,
           0,
@@ -547,7 +547,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 463697557,
+        "explored_digest": 3800701413,
         "map_center": [
           0,
           0
@@ -579,7 +579,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "c47073bfdab544eb",
+        "state_digest": "2a8a9500fe211051",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -916,7 +916,7 @@
     },
     {
       "label": "laser-menu",
-      "tick": 1136,
+      "tick": 1028,
       "state": {
         "map": 5,
         "mode": "building",
@@ -927,7 +927,7 @@
           16
         ],
         "gate": 85,
-        "tick": 1136,
+        "tick": 1028,
         "blocked": 0,
         "script_pc": 233,
         "script_status": 1,
@@ -1015,9 +1015,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          94,
-          239,
-          132
+          42,
+          22,
+          82
         ],
         "npc_search": [
           0,
@@ -1171,7 +1171,7 @@
           0,
           0,
           0,
-          7,
+          34,
           0,
           0,
           0,
@@ -1465,7 +1465,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 463697557,
+        "explored_digest": 3800701413,
         "map_center": [
           0,
           0
@@ -1497,7 +1497,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "359f8cece3f34b77",
+        "state_digest": "9bc258f7dbbe0355",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1834,7 +1834,7 @@
     },
     {
       "label": "laser-shop-robbery",
-      "tick": 1155,
+      "tick": 1047,
       "state": {
         "map": 5,
         "mode": "building",
@@ -1845,7 +1845,7 @@
           16
         ],
         "gate": 85,
-        "tick": 1155,
+        "tick": 1047,
         "blocked": 0,
         "script_pc": 713,
         "script_status": 6,
@@ -1937,9 +1937,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          94,
-          239,
-          132
+          42,
+          22,
+          82
         ],
         "npc_search": [
           0,
@@ -2093,7 +2093,7 @@
           0,
           0,
           0,
-          7,
+          34,
           0,
           0,
           0,
@@ -2387,7 +2387,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 463697557,
+        "explored_digest": 3800701413,
         "map_center": [
           0,
           0
@@ -2419,7 +2419,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "8ae346d65b17a31d",
+        "state_digest": "e749121b0046678c",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -2756,7 +2756,7 @@
     },
     {
       "label": "laser-purchase-complete",
-      "tick": 1274,
+      "tick": 1172,
       "state": {
         "map": 5,
         "mode": "local-exploration",
@@ -2767,7 +2767,7 @@
           15
         ],
         "gate": 85,
-        "tick": 1274,
+        "tick": 1172,
         "blocked": 0,
         "script_pc": 1734,
         "script_status": 3,
@@ -2855,9 +2855,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          2,
-          194,
-          122
+          238,
+          41,
+          84
         ],
         "npc_search": [
           0,
@@ -3011,7 +3011,7 @@
           0,
           0,
           0,
-          7,
+          34,
           0,
           0,
           0,
@@ -3085,11 +3085,11 @@
             4,
             2,
             0,
-            13,
+            12,
             1,
             4,
             50,
-            72,
+            84,
             1
           ],
           [
@@ -3127,7 +3127,7 @@
             0,
             0,
             0,
-            42,
+            49,
             3
           ],
           [
@@ -3305,7 +3305,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 463697557,
+        "explored_digest": 3800701413,
         "map_center": [
           0,
           0
@@ -3337,7 +3337,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "40aefb62c6c5df92",
+        "state_digest": "63d7dc2e9d38bdc6",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -3683,7 +3683,7 @@
       15
     ],
     "gate": 85,
-    "tick": 1274,
+    "tick": 1172,
     "blocked": 0,
     "script_pc": 1734,
     "script_status": 3,
@@ -3771,9 +3771,9 @@
     "npc_clock": 0,
     "npc_fault": 0,
     "npc_rng": [
-      2,
-      194,
-      122
+      238,
+      41,
+      84
     ],
     "npc_search": [
       0,
@@ -3927,7 +3927,7 @@
       0,
       0,
       0,
-      7,
+      34,
       0,
       0,
       0,
@@ -4001,11 +4001,11 @@
         4,
         2,
         0,
-        13,
+        12,
         1,
         4,
         50,
-        72,
+        84,
         1
       ],
       [
@@ -4043,7 +4043,7 @@
         0,
         0,
         0,
-        42,
+        49,
         3
       ],
       [
@@ -4221,7 +4221,7 @@
       "remaining": 0,
       "fraction": 0
     },
-    "explored_digest": 463697557,
+    "explored_digest": 3800701413,
     "map_center": [
       0,
       0
@@ -4253,7 +4253,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "40aefb62c6c5df92",
+    "state_digest": "63d7dc2e9d38bdc6",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

@@ -2,39 +2,39 @@
   "checkpoints": [
     {
       "label": "parked-in-starport",
-      "tick": 49501
+      "tick": 49050
     },
     {
       "label": "civilian-clothing",
-      "tick": 49613
+      "tick": 49137
     },
     {
       "label": "rex-crest",
-      "tick": 50726
+      "tick": 50203
     },
     {
       "label": "rex-and-commando",
-      "tick": 50803
+      "tick": 50280
     },
     {
       "label": "technician-joined",
-      "tick": 50977
+      "tick": 50429
     },
     {
       "label": "partial-armour-repair",
-      "tick": 50983
+      "tick": 50435
     },
     {
       "label": "partial-ammo-amount",
-      "tick": 50995
+      "tick": 50447
     },
     {
       "label": "ammo-purchase-boundary",
-      "tick": 50997
+      "tick": 50449
     },
     {
       "label": "speed-shop-no-funds",
-      "tick": 51019
+      "tick": 50471
     }
   ],
   "final": {
@@ -47,7 +47,7 @@
       34
     ],
     "gate": 85,
-    "tick": 51024,
+    "tick": 50476,
     "blocked": 0,
     "script_pc": 4979,
     "script_status": 3,
@@ -291,7 +291,7 @@
       0,
       0,
       0,
-      209,
+      89,
       1,
       0,
       0,
@@ -531,7 +531,7 @@
       "encounter": 0,
       "building": 5
     },
-    "player_sprite": 175,
+    "player_sprite": 174,
     "npc_sprites": [
       270,
       270,
@@ -544,7 +544,7 @@
     ],
     "quiz": {
       "phase": 0,
-      "selected": 15,
+      "selected": 18,
       "round": 0,
       "point": 0,
       "failed": 0,
@@ -585,7 +585,7 @@
       "remaining": 0,
       "fraction": 0
     },
-    "explored_digest": 1440871917,
+    "explored_digest": 1679833220,
     "map_center": [
       0,
       0
@@ -617,7 +617,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "63af32e33818fa10",
+    "state_digest": "a077d52954ac8f9c",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

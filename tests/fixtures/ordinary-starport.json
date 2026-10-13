@@ -2,7 +2,7 @@
   "checkpoints": [
     {
       "label": "parked-in-starport",
-      "tick": 49501
+      "tick": 49050
     }
   ],
   "final": {
@@ -15,7 +15,7 @@
       26
     ],
     "gate": 85,
-    "tick": 49501,
+    "tick": 49050,
     "blocked": 0,
     "script_pc": 1003,
     "script_status": 3,
@@ -47,7 +47,7 @@
       0,
       0,
       1,
-      13,
+      135,
       0,
       0
     ],
@@ -103,9 +103,9 @@
     "npc_clock": 0,
     "npc_fault": 0,
     "npc_rng": [
-      153,
-      12,
-      145
+      54,
+      67,
+      160
     ],
     "npc_search": [
       0,
@@ -256,10 +256,10 @@
       0,
       0,
       1,
-      13,
+      135,
       0,
       0,
-      14,
+      136,
       1,
       0,
       0,
@@ -512,7 +512,7 @@
     ],
     "quiz": {
       "phase": 0,
-      "selected": 15,
+      "selected": 18,
       "round": 0,
       "point": 0,
       "failed": 0,
@@ -553,7 +553,7 @@
       "remaining": 0,
       "fraction": 0
     },
-    "explored_digest": 1551063531,
+    "explored_digest": 2363285406,
     "map_center": [
       0,
       0
@@ -585,7 +585,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "d6a1dd41bd5b38db",
+    "state_digest": "c56fc8e0e66e61c2",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

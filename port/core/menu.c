@@ -85,6 +85,7 @@ const char *btp_actions_label(const BtpState *s,unsigned item)
 }
 void btp_menu_open(BtpState *s)
 {
+    if (s->mode==BTP_EXPLORE) btp_world_reveal(s);
     s->mode=BTP_ACTIONS;s->campaign.ui=BTP_MENU_ROOT;s->campaign.selected=0;s->menu.notice=0;
 }
 void btp_menu_close(BtpState *s)
@@ -203,7 +204,7 @@ void btp_menu_input(BtpState *s,const BtpResources *r,BtpAction a)
     case BTP_MENU_CREW:
         item=item==btp_menu_mech_count(s) ? 4u : btp_menu_mech_slot(s,item);
         s->party.giver=(uint8_t)item;
-        if (item<4 && s->party.people[c->member][8] && btp_party_mech(s,item)[121]!=255 && btp_party_mech(s,item)[121]!=c->member) { page(s,BTP_MENU_SEAT,1);break; }
+        if (item<4 && s->party.people[c->member][8] && btp_party_mech(s,item)[121]!=255 && btp_party_mech(s,item)[121]!=c->member) { page(s,BTP_MENU_SEAT,0);break; }
         btp_party_allocate(s,c->member,item,item<4 && s->party.people[c->member][8] ? 121u : 122u);page(s,BTP_MENU_ALLOCATE,btp_party_ordinal(&s->party,c->member));break;
     case BTP_MENU_SEAT:btp_party_allocate(s,c->member,s->party.giver,item ? 122u : 121u);page(s,BTP_MENU_ALLOCATE,btp_party_ordinal(&s->party,c->member));break;
     case BTP_MENU_ABANDON:

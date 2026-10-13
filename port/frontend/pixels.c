@@ -575,10 +575,11 @@ static void story_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
                 if (v->outcome!=1 && v->outcome!=3) ids[count++]=v->outcome==2 ? 180 : 181;
                 for (unsigned i=0;i<count;++i) { size_t length;const uint8_t *p=bank_literal(r,ids[i],&length);if (p && length<=sizeof message-n) { memcpy(message+n,p,length);n+=length; } }
             }
-            (void)wrapped(r,f,8,message,n,15);
+            int y=wrapped(r,f,8,message,n,15);
             if (v->phase==3) {
-                rectangle(f,v->selected ? 144 : 112,184,v->selected ? 16 : 24,8,14);
-                text(r,f,112,184,"Yes",v->selected ? 15u : 0u);text(r,f,144,184,"No",v->selected ? 0u : 15u);
+                if (y>184) y=184;
+                rectangle(f,v->selected ? 144 : 112,y,v->selected ? 16 : 24,8,14);
+                text(r,f,112,y,"Yes",v->selected ? 15u : 0u);text(r,f,144,y,"No",v->selected ? 0u : 15u);
             }
             return;
         }
@@ -882,20 +883,17 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
     else if (outdoors && !s->campaign.mounted) (void)btp_draw_sprite(&r->sprites,166u+s->player_walk,208,96,
         hidden_rows(map,s->x_half,s->y_half),104,f);
     if (outdoors && !s->combat.phase && s->story_flags[4] && !s->cache.active) {
-        unsigned formed=0;
         for (unsigned i=0;i<8;++i) if (s->party.people[i][0]!=255 && s->party.people[i][12]>=8) {
-            if (i) (void)btp_draw_sprite(&r->sprites,270u+s->party.walk[i],208+8*r->combat.formation_x[formed],
-                96+8*r->combat.formation_y[formed],0,104,f);
-            ++formed;
+            if (i && btp_party_walkable(s,r,s->party.x[i],s->party.y[i],0))
+                (void)btp_draw_sprite(&r->sprites,270u+s->party.walk[i],208+8*((int)s->party.x[i]-s->campaign.world_x),
+                    96+8*((int)s->party.y[i]-s->campaign.world_y),0,104,f);
         }
-        formed=0;
         for (unsigned i=0;i<4;++i) {
             const uint8_t *m=i ? s->party.mechs[i-1] : s->campaign.mech;
-            if (m[0]==255) continue;
+            if (m[0]==255 || !btp_party_walkable(s,r,s->party.mech_x[i],s->party.mech_y[i],1)) continue;
             unsigned pilot=m[121],walk=pilot==0 ? s->campaign.mech_walk : pilot<8 ? s->party.walk[pilot] : s->campaign.mech_walk;
             (void)btp_draw_sprite(&r->sprites,btp_mech_sprite_base(m[0],0)+walk,
-                200+8*r->combat.mech_formation_x[formed],80+8*r->combat.mech_formation_y[formed],0,104,f);
-            ++formed;
+                200+8*((int)s->party.mech_x[i]-s->campaign.world_x),80+8*((int)s->party.mech_y[i]-s->campaign.world_y),0,104,f);
         }
     }
     if (s->yard.active==1) {
@@ -908,7 +906,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
     /* Original 051B draws the party before the eight outdoor NPC slots. */
     if (!s->combat.phase && (s->mode == BTP_EXPLORE || s->mode == BTP_MISSION) && s->npc.enabled == 2) for (unsigned i = 0; i < 8; ++i) {
         const BtpNpc *n = &s->npc.actor[i];
-        if (!n->x) continue;
+        if (!n->x || btp_map_tile(map,(int)((n->x&127u)+1u)/2,(int)(n->y&127u)/2)>=85) continue;
         unsigned x = n->x & 127u, y = n->y & 127u;
         int nx = 208+((int)x-s->x_half)*8, ny = 96+((int)y-s->y_half)*8;
         (void)btp_draw_sprite(&r->sprites,270u+s->npc_walk[i],nx,ny,
@@ -1018,6 +1016,9 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                     char model[16]="";const char *role="on foot";
                     if (mount<4) {
                         const uint8_t *m=btp_party_mech((BtpState *)s,mount);memcpy(model,m,15);model[15]=0;
+                        /* The fixed-width record pads names with spaces;
+                           the allocation sentence uses the model's words. */
+                        for (unsigned end=15;end && model[end-1]==' ';--end) model[end-1]=0;
                         role=m[121]==member ? "pilot" : "rider";
                     }
                     snprintf(assignment,sizeof assignment,"%s %s%s%s",btp_party_name(&s->party,member),model,mount<4 ? " " : "",role);
@@ -1184,16 +1185,17 @@ void btp_world_preview(const BtpResources *r,const BtpState *s,uint32_t f[BTP_PI
     if (s->story_flags[47] && !s->story_flags[58] && !(wx/128u==10 && wy/128u==8)) {
         /* 0000:43D6..4446: the device directs you to packed 0A38/8038,
            and disappears on arrival in the Starport sector. */
-        unsigned direction=btp_combat_direction((int)wx,(int)wy,1336,1080);
+        unsigned direction=btp_world_device_direction(wx,wy);
         static const uint8_t x[]={20,23,23,23,20,16,16,16},y[]={8,8,12,15,15,15,12,8};
-        if (direction<8) { char arrow[2]={(char)(direction+1u),0};text(r,f,8*x[direction],8*y[direction],arrow,15); }
+        if (direction<8) {
+            char arrow[2]={(char)(direction+1u),0};
+            /* 187F:2251 draws foreground and background for all eight
+               glyph pixels; the device arrow is opaque over terrain. */
+            rectangle(f,8*x[direction],8*y[direction],8,8,0);
+            text(r,f,8*x[direction],8*y[direction],arrow,15);
+        }
     }
-    int px=((int)(wx/16u)-ox)*8,py=((int)(wy/16u)-oy)*8;
-    if (px>=0 && px<320 && py>=0 && py<192) {
-        rectangle(f,px+2,py+2,4,1,15);rectangle(f,px+2,py+5,4,1,15);
-        rectangle(f,px+2,py+2,1,4,15);rectangle(f,px+5,py+2,1,4,15);
-    }
-    text(r,f,0,192,"Press any key to return to game.",15);
+    text(r,f,0,192,"Arrows to move, space to exit.",15);
 }
 void btp_sprite_preview(const BtpResources *r, unsigned tick, uint32_t f[BTP_PIXELS])
 {

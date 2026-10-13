@@ -49,6 +49,7 @@ int btp_original_decode(const uint8_t *b,size_t n,BtpState *out,const BtpResourc
         }
         s.campaign.mounted=(uint8_t)(s.party.people[0][12]<4);
         for (unsigned i=0;i<8;++i) { s.party.x[i]=(uint16_t)x;s.party.y[i]=(uint16_t)y; }
+        btp_party_follow(&s,r,(uint16_t)x,(uint16_t)y);
     } else {
         s.npc.loop_timer=s.story_flags[23];s.npc.allowance_pending=(uint8_t)btp_economy_below_cap(&s);
         btp_npc_init(&s,&r->map);
