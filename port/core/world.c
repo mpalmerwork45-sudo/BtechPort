@@ -30,6 +30,14 @@ int btp_world_seen(const BtpState *s,unsigned x,unsigned y)
 {
     return x<128 && y<128 && (s->explored[y*16u+x/8u]&(128u>>(x&7u)));
 }
+static unsigned world_level(const BtpResources *r,const BtpState *s,int bx,int by);
+static unsigned world_neighbours(const BtpResources *r,const BtpState *s,int bx,int by,unsigned level)
+{
+    return (world_level(r,s,bx,by-1)==level ? 1u : 0u)|
+        (world_level(r,s,bx+1,by)==level ? 2u : 0u)|
+        (world_level(r,s,bx,by+1)==level ? 4u : 0u)|
+        (world_level(r,s,bx-1,by)==level ? 8u : 0u);
+}
 unsigned btp_world_mini_index(unsigned level,unsigned neighbours)
 {
     /* Executed 187F:1F04: city selectors bypass terrain joining. */
@@ -39,13 +47,9 @@ unsigned btp_world_mini_index(unsigned level,unsigned neighbours)
 }
 unsigned btp_world_mini(const BtpResources *r,const BtpState *s,unsigned x,unsigned y)
 {
-    (void)s;
     if (x>=128 || y>=128 || !r->world.native) return 65;
-    unsigned at=(y+8u)*144u+x+8u,level=r->world.heights[at],mask=0;
-    if (r->world.heights[at-144]==level) mask|=1;
-    if (r->world.heights[at+1]==level) mask|=2;
-    if (r->world.heights[at+144]==level) mask|=4;
-    if (r->world.heights[at-1]==level) mask|=8;
+    unsigned level=world_level(r,s,(int)x,(int)y);
+    unsigned mask=world_neighbours(r,s,(int)x,(int)y,level);
     return btp_world_mini_index(level,mask);
 }
 
@@ -95,6 +99,20 @@ int btp_world_location(const BtpResources *r,const BtpState *s,int x,int y)
     }
     return 0;
 }
+static unsigned world_level(const BtpResources *r,const BtpState *s,int bx,int by)
+{
+    if (bx<-8 || by<-8 || bx>=136 || by>=136) return 255;
+    unsigned id=(unsigned)btp_world_location(r,s,8*bx,8*by);
+    if (id) {
+        const BtpMap *m=local(r,id==11 ? 1u : id);
+        int ox=(m->entrance_x[0]>>8)*8,oy=(m->entrance_y[0]>>12)*8;
+        /* 0000:3050..30BB paints 90.. chunk numbers into the generated
+           height blocks. 187F:1886 then excludes these town neighbours from
+           terrain joins. Overlaying tiles alone leaves cut-off forests. */
+        return 144u+(unsigned)(by-oy)*(m->width/8u)+(unsigned)(bx-ox);
+    }
+    return r->world.heights[(unsigned)(by+8)*144u+(unsigned)(bx+8)];
+}
 
 unsigned btp_world_tile(const BtpResources *r,const BtpState *s,int x,int y)
 {
@@ -106,7 +124,11 @@ unsigned btp_world_tile(const BtpResources *r,const BtpState *s,int x,int y)
         unsigned tile=btp_mission_tile(s,local(r,(unsigned)id),x-ox,y-oy);
         return id==2 && s->yard.active==2 ? btp_yard_tile(s,tile,x-ox,y-oy) : tile;
     }
-    if (r->world.native) return btp_generated_tile(&r->world,x,y);
+    if (r->world.native) {
+        if (x<0 || y<0 || x>=1024 || y>=1024) return 255;
+        unsigned level=world_level(r,s,x/8,y/8);
+        return btp_generated_joined_tile(&r->world,x,y,world_neighbours(r,s,x/8,y/8,level));
+    }
     if (!r->world.loaded || x<BTP_WORLD_ORIGIN || y<BTP_WORLD_ORIGIN ||
         x>=BTP_WORLD_ORIGIN+BTP_WORLD_SIDE || y>=BTP_WORLD_ORIGIN+BTP_WORLD_SIDE) return 255;
     return r->world.tiles[(unsigned)(y-BTP_WORLD_ORIGIN)*BTP_WORLD_SIDE+(unsigned)(x-BTP_WORLD_ORIGIN)];
@@ -122,13 +144,10 @@ unsigned btp_world_descriptor(const BtpResources *r,const BtpState *s,int x,int 
         return 144u+(unsigned)(y-oy)/8u*(m->width/8u)+(unsigned)(x-ox)/8u;
     }
     if (!r->world.native) return 255;
-    unsigned at=((unsigned)y/8u+8u)*144u+(unsigned)x/8u+8u;
-    unsigned level=r->world.heights[at],mask=0;
-    if (r->world.heights[at-144u]==level) mask|=1;
-    if (r->world.heights[at+1u]==level) mask|=2;
-    if (r->world.heights[at+144u]==level) mask|=4;
-    if (r->world.heights[at-1u]==level) mask|=8;
-    return level==16 ? 112u : (level>=32 ? level-16u : level)|mask;
+    unsigned level=world_level(r,s,x/8,y/8),mask=world_neighbours(r,s,x/8,y/8,level);
+    /* 187F:1584 returns the raw height OR the joining mask. Texture and
+       TINYLAND base indices are different projections of this descriptor. */
+    return level|mask;
 }
 int btp_world_deep_crossing(const BtpWorldData *w,unsigned x,unsigned y,int dx,int dy)
 {

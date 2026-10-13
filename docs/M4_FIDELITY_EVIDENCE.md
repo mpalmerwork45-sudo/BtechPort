@@ -40,6 +40,52 @@ different key counts: the fresh ending is now 66,115 inputs and the spy/
 replacement route 50,569. Their prerequisites remain ordinary inputs, with
 only the owner's money shortcut used for the ending route.
 
+## Owner observations: town joins, combat presentation and spy sheet
+
+**VERIFIED:** `0000:3050..30BB` paints consecutive town descriptors into the
+height grid before `187F:1886` chooses landscape joining masks. The port's old
+MTP overlay left the neighbours unchanged, joining forest pieces through town
+edges and then clipping them. Town descriptors now participate in terrain and
+TINYLAND joins. `187F:1584` also returns raw height/mask descriptors, distinct
+from texture or TINYLAND indices; the port now keeps that distinction.
+
+`city-edges-primary.*` contains 39 complete grids: three seeds, all thirteen
+MTPs, their entire tile rectangles and an eight-tile landscape margin on every
+side, including destroyed MAP11. Every tile and block descriptor matches the
+unmodified original routines. Original file reads supply declared dimensions
+and chunks before the bounded city-writing span; no instructions are patched.
+The original noise/texture tables and MTP bytes remain in ignored local data.
+
+**VERIFIED:** combat camera edges render surrounding generated pieces using the
+saved battle origin. Eight corner/side views match every exploration terrain
+pixel at the same world coordinates. This fixes the black rectangles caused
+by clipping rendering to the finite local combat rules grid; it does not yet
+establish full sector-crossing combat placement/AI parity.
+
+**VERIFIED:** numerical microsteps still resolve before presentation, but their
+captured effect records retain a dying unit's sprite and position. Corpses and
+wrecks stay hidden until their own queued death event; later deaths cannot leak
+into earlier attacks. The focused unit's camera remains at its captured position
+through the death sound. Living/queued viewport equality and save/reload checks
+cover both a mech and infantry. Sprite-16 vehicles retain their static sprite.
+
+`12E8:1B0C..1E28` traverses the human corpse branch without selecting a sound;
+`1C76` selects sound 8 for a wreck and the arena target uses sound 7. The port
+now skips sound 8 for people. The event corpus grows from 154 to 155 executed
+cases. Fire/hit/death clips and outtakes remain sequential.
+
+**VERIFIED:** the spy warning uses yellow text at row eight on the existing
+character sheet, as `0000:39B3..39FC` does. Name, weapon, armour, health and the
+preprinted skill/equipment labels remain visible. The original pauses before
+writing the skill ranks/equipment values on this warning; those remain blank
+in the held page. All 43,200 right-panel pixels match a live DOS capture,
+recorded in `spy-inspect-primary.json`; ordinary sheets retain their ranks.
+
+**PASS:** all 47 CTest suites after these corrections (6.69 seconds in this
+run), including the expanded world, event, combat presentation and menu checks.
+Broader live fights, additional doorway/formation observations, isolated audio
+and alternate fresh/legacy routes remain the authorized follow-ups below.
+
 ## Remaining authorized work
 
 The owner additionally requested a thorough Mechit-Lube comparison. That

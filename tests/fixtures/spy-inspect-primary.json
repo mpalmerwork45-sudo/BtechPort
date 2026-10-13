@@ -1,0 +1,14 @@
+{
+  "source_run": "1791868612722967110/spy-character-sheet",
+  "prerequisite": "Private GAME3 copy, all people on foot, new slot-four Zeke record, active spy flags 37=4/38=1/39=1. Ordinary load and Space/Inspect person input. No instruction or reference-file changes.",
+  "routine": "0000:399D..39FC, warning at text row eight, yellow 14, held before 3AE9 writes ranks/equipment values.",
+  "region": [
+    104,
+    0,
+    216,
+    200
+  ],
+  "rgb_fnv": "e49bd260b7c4f9d4",
+  "screenshot_sha256": "6918fee511686520055c9d09ef2bb5fcbf7391b921837e5ebfb276bce46fdd15",
+  "comparison": "All 43,200 right-panel RGB pixels. Name, weapon, armour, health and preprinted skill/equipment labels remain on the sheet; first acknowledgement closes the captured original visit."
+}

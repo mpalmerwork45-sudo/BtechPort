@@ -14,19 +14,19 @@ def main():
         if relative in stops:result.append(relative);cpu.emu_stop();return
         # Only display/input and the blocking sound player are replaced.
         # The selected sound argument is observed before its far return.
-        if relative not in (0x19bf,0x168e8,0x16955,0x2a4f):return
+        if relative not in (0x19bf,0x168e8,0x16955,0x2a4f,0x100bb,0x12b79):return
         sp=cpu.reg_read(UC_X86_REG_SP);ss=16*cpu.reg_read(UC_X86_REG_SS)
         if relative==0x19bf:sounds.append(m.word(ss+sp+4))
         off,seg=struct.unpack('<HH',m.read(ss+sp,4))
         cpu.reg_write(UC_X86_REG_SP,sp+4);cpu.reg_write(UC_X86_REG_CS,seg);cpu.reg_write(UC_X86_REG_IP,off)
     handle=m.cpu.hook_add(UC_HOOK_CODE,hook)
-    def span(start,end):
+    def span(start,end,limit=1000):
         result.clear();stops.clear();stops.update(end)
         segment=0x103b if start<0x12e80 else 0x12e8
         for reg,v in ((UC_X86_REG_CS,m.load+segment),(UC_X86_REG_IP,start-16*segment),
             (UC_X86_REG_DS,m.ds//16),(UC_X86_REG_SS,0x7000),(UC_X86_REG_SP,0xee00),(UC_X86_REG_BP,0xf000)):
             m.cpu.reg_write(reg,v)
-        m.cpu.emu_start(m.load*16+start,0x110000,count=1000)
+        m.cpu.emu_start(m.load*16+start,0x110000,count=limit)
         if not result:raise RuntimeError(f'Unbounded selection at {start:05X}')
         return result[0]
     rows=[];bp=0x7f000
@@ -44,6 +44,13 @@ def main():
         m.reset();sounds.clear();span(start,(end,))
         if sounds!=[expected]:raise RuntimeError('Original destruction sound changed')
         rows.append(f'D {expected}')
+    # Human death traverses the real corpse/cleared-order branch, then skips
+    # the wreck branch because its caller's mech-dead argument is zero.
+    m.reset();sounds.clear();m.write(bp-0x80,bytes(0xa0))
+    m.word(bp+8,16);m.word(bp+0x10,1);m.word(bp+0x12,0);m.word(bp+0x14,0)
+    span(0x1498c,(0x14ca8,),limit=10000)  # 12E8:1B0C..1E28
+    if sounds:raise RuntimeError('Original human death unexpectedly selected a speaker effect')
+    rows.append('H 0')
     # The original No branch has exactly one draw, succeeds for nonzero low
     # two bits, and otherwise presents DS:343A before combat settings.
     for seed in (0,1,2,3,4,17,42,1234,5678,0xd23646):
@@ -57,7 +64,8 @@ def main():
         executable_sha256=EXE_SHA,image_sha256=IMAGE_SHA,cases=len(rows),
         routine='103B:048A..04BE encounter No/Yes; 12E8:1521..1680 fire and 19EA..1A1C hit sounds',
         spans='Image 143A1..14500/14887, 1486A..14887 and 14887..1489C/1495D; beam playback prerequisite visible=0/1',
-        intercepted_boundaries=['0000:19BF sound playback (argument observed)','1656:0388/03F5 display','0000:2A4F key wait'],
+        intercepted_boundaries=['0000:19BF sound playback (argument observed)','1656:0388/03F5 display','0000:2A4F key wait',
+            '0E31:1DAB death text','103B:27C9 corpse mark display'],
         comparison='Sound IDs for all 33 weapons, hit/miss and visibility; ten seeds, encounter Yes/No, exact RNG and evasion outcome'),indent=2)+'\n')
     print('Primary combat event selections:',len(rows))
 

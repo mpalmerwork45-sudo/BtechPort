@@ -71,4 +71,5 @@ int btp_world_data_load(const char *path, BtpWorldData *data, BtpError *error);
 int btp_world_data_decode(const uint8_t *bytes,size_t length,BtpWorldData *data,BtpError *error);
 int btp_world_generate(BtpWorldData *data,uint32_t seed);
 unsigned btp_generated_tile(const BtpWorldData *data,int x,int y);
+unsigned btp_generated_joined_tile(const BtpWorldData *data,int x,int y,unsigned neighbours);
 #endif

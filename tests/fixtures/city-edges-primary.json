@@ -1,0 +1,15 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "cases": 39,
+  "routines": [
+    "187F:104E generated sector/neighbours",
+    "0000:3050..30BB town descriptors",
+    "187F:1886..18D7 joining masks",
+    "187F:1314 complete viewport pieces"
+  ],
+  "prerequisites": "Three generation seeds; all thirteen MAP1..MAP13 MTP sizes and unmodified chunks. City-loader file-read boundary supplied before its descriptor-writing span.",
+  "comparison": "All town tiles plus an eight-tile landscape margin on all four sides; complete block descriptor hashes, including destroyed MAP11.",
+  "intercepted_boundaries": [],
+  "no_instruction_patches": true
+}

@@ -140,6 +140,56 @@ static void sequential_audio(const BtpState *menu,BtpResources *r)
     CHECK(s.mission.phase==BTP_MISSION_RETURN && !s.audio.sound_count && !s.effects.count && !s.presentation.count);
     step(&s,r,BTP_ACCEPT);CHECK(!s.audio.sound_count);
 }
+static void death_pixels(const BtpState *menu,BtpResources *r)
+{
+    BtpState start=*menu;while (start.script.selected) step(&start,r,BTP_DOWN);step(&start,r,BTP_ACCEPT);
+    while (start.cutscene.active) step(&start,r,BTP_IDLE);
+    step(&start,r,BTP_ACCEPT);step(&start,r,BTP_ACCEPT);step(&start,r,BTP_ACCEPT);
+    BtpMap original=r->map;memset(r->map.tiles,64,sizeof r->map.tiles);
+    uint32_t *living=malloc(BTP_PIXELS*sizeof *living),*queued=malloc(BTP_PIXELS*sizeof *queued);CHECK(living && queued);
+    for (unsigned human=0;human<2;++human) {
+        BtpState s=start;s.combat.phase=BTP_COMBAT_ROUND;s.combat.flash=0;
+        unsigned tx=s.combat.unit[0].x+4u,ty=s.combat.unit[0].y;
+        CHECK(tx<127 && ty>1);
+        s.combat.unit[1].x=(uint8_t)tx;s.combat.unit[1].y=(uint8_t)ty;s.combat.unit[1].infantry=(uint8_t)human;s.combat.unit[1].cover=0;
+        if (human) {
+            s.story_flags[0]=s.mission.assignment=3;s.combat.count=4;
+            memset(s.combat.unit[1].record,0,125);
+            const uint8_t person[17]={1,6,0,0,0,0,0,0,0,0,0,9,8,0,0,60,0};
+            memcpy(s.combat.unit[1].record,person,17);s.combat.ids[1]=16;
+            for (unsigned i=2;i<4;++i) {
+                memcpy(s.combat.unit[i].record,person,17);s.combat.unit[i].record[0]=255;
+                s.combat.unit[i].infantry=1;s.combat.unit[i].x=s.combat.unit[i].y=127;
+            }
+        }
+        s.effects=(BtpEffectsState){0};s.audio=(BtpAudioState){0};
+        btp_render(r,&s,0,living);
+        s.combat.shot=(BtpShot){.hit=1};btp_effects_shot(&s,0,1,17);
+        s.combat.shot.destroyed=1;btp_effects_shot(&s,0,1,17);
+        s.effects.stage=BTP_EFFECT_FIRE_SOUND;
+        s.terrain_marks[0]=(BtpTerrainMark){(uint8_t)(human ? 126 : 128),1,(uint8_t)(tx-!human),(uint8_t)(ty-!human)};
+        s.combat.unit[1].record[0]=255;s.combat.unit[1].x=s.combat.unit[1].y=127;
+        CHECK(btp_effects_pending_death(&s,1)==&s.effects.shots[1]);
+        btp_render(r,&s,0,queued);
+        /* The later shot's wreck cannot appear while an earlier shot plays.
+           Compare the whole map viewport to the live pre-destruction scene. */
+        for (unsigned y=0;y<200;++y) CHECK(!memcmp(living+y*320+104,queued+y*320+104,216*sizeof *living));
+        uint8_t encoded[BTP_STATE_BYTES];BtpState copy;btp_state_encode(&s,encoded);
+        CHECK(btp_combat_valid(&s) && btp_effects_valid(&s));
+        CHECK(btp_state_decode(encoded,sizeof encoded,&r->map,&r->training,&copy));
+        btp_render(r,&copy,0,queued);
+        for (unsigned y=0;y<200;++y) CHECK(!memcmp(living+y*320+104,queued+y*320+104,216*sizeof *living));
+        s.effects.shots[0]=s.effects.shots[1];memset(&s.effects.shots[1],0,sizeof s.effects.shots[1]);s.effects.count=1;
+        s.effects.stage=BTP_EFFECT_IMPACT;s.effects.age=(uint8_t)btp_effects_length(&s.effects.shots[0],&r->combat);
+        btp_effects_tick(&s,r);
+        CHECK(!btp_effects_pending_death(&s,1));
+        CHECK(human ? !s.effects.count && !s.audio.sound_count : s.effects.stage==BTP_EFFECT_DEATH_SOUND && s.audio.sounds[0]==8);
+        btp_render(r,&s,0,queued);unsigned changed=0;
+        for (unsigned y=0;y<200;++y) changed+=(unsigned)(memcmp(living+y*320+104,queued+y*320+104,216*sizeof *living)!=0);
+        CHECK(changed>0);
+    }
+    free(living);free(queued);r->map=original;
+}
 int main(int argc,char **argv)
 {
     if (argc!=5) return 2;
@@ -198,7 +248,7 @@ int main(int argc,char **argv)
     CHECK(menu.story_flags[0]==2 && combat_ticks>100 && effects>0);
     for (unsigned loan=0;loan<3;++loan) decline(&menu,r,loan);
     route_pixels(&menu,r);
-    sequential_audio(&menu,r);
+    sequential_audio(&menu,r);death_pixels(&menu,r);
     btp_start(&s);uint8_t old[BTP_STATE_BYTES];BtpState migrated;
     btp_state_encode(&s,old);memcpy(old,"BTPC",4);old[4]=12;
     CHECK(btp_state_decode(old,512,&r->map,&r->training,&migrated));CHECK(!memcmp(&s,&migrated,sizeof s));

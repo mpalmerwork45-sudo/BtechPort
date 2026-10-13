@@ -34,6 +34,13 @@ int main(int argc,char **argv)
             s.effects.age=(uint8_t)btp_effects_length(&s.effects.shots[0],&r->combat);btp_effects_tick(&s,r);
             CHECK(s.effects.stage==BTP_EFFECT_DEATH_SOUND && s.audio.sound_count==1 && s.audio.sounds[0]==effect);
             btp_effects_tick(&s,r);CHECK(s.audio.sound_count==1 && s.effects.count==1); /* A pending clip is never appended twice. */
+        } else if (line[0]=='H') {
+            unsigned effect;CHECK(sscanf(line+1,"%u",&effect)==1 && !effect);
+            BtpState s;btp_start(&s);s.combat.count=2;
+            s.effects.count=1;s.effects.stage=BTP_EFFECT_IMPACT;
+            s.effects.shots[0]=(BtpCombatEffect){.target=1,.target_base=254,.hit=1,.dead=1};
+            s.effects.age=(uint8_t)btp_effects_length(&s.effects.shots[0],&r->combat);
+            btp_effects_tick(&s,r);CHECK(!s.effects.count && !s.audio.sound_count);
         } else if (line[0]=='E') {
             unsigned seed,yes,evaded,next;CHECK(sscanf(line+1,"%u %u %u %u",&seed,&yes,&evaded,&next)==4);
             BtpState s;CHECK(btp_save_load("Original DOS/GAME3",&s,r,&e));
@@ -52,5 +59,5 @@ int main(int argc,char **argv)
         } else CHECK(0);
         ++cases;
     }
-    fclose(f);CHECK(cases==154);free(r);printf("PASS: %u event checks, 154 executed-primary sound/encounter cases\n",checks);return 0;
+    fclose(f);CHECK(cases==155);free(r);printf("PASS: %u event checks, 155 executed-primary sound/encounter cases\n",checks);return 0;
 }

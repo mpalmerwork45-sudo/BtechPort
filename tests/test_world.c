@@ -46,6 +46,26 @@ int main(int argc,char **argv)
         CHECK(fingerprint(sector,sizeof sector)==expected);++cases;
     }
     fclose(f);CHECK(cases==30);CHECK(btp_world_generate(&r->world,0x020304));
+    f=fopen("tests/fixtures/city-edges-primary.txt","r");CHECK(f);cases=0;
+    while (fgets(line,sizeof line,f)) {
+        unsigned seed,id;uint64_t tiles_expected,descriptors_expected;
+        CHECK(sscanf(line,"T %u %u %" SCNx64 " %" SCNx64,&seed,&id,&tiles_expected,&descriptors_expected)==4);
+        CHECK(id>=1 && id<=13 && btp_world_generate(&r->world,seed));
+        const BtpMap *town=id==1 ? &r->map : id==11 ? &r->destroyed : &r->local[id-1];
+        const BtpMap *origin=id==11 ? &r->map : town;
+        int ox=(origin->entrance_x[0]>>8)*64,oy=(origin->entrance_y[0]>>12)*64;
+        BtpState city;btp_start(&city);city.story_flags[4]=(uint8_t)(id==11);
+        uint8_t tiles[80*80],descriptors[100];unsigned n=0,d=0;
+        for (int y=-8;y<town->height+8;++y) for (int x=-8;x<town->width+8;++x)
+            tiles[n++]=(uint8_t)btp_world_tile(r,&city,ox+x,oy+y);
+        for (int y=-1;y<town->height/8+1;++y) for (int x=-1;x<town->width/8+1;++x)
+            descriptors[d++]=(uint8_t)btp_world_descriptor(r,&city,ox+8*x+4,oy+8*y+4);
+        if (fingerprint(tiles,n)!=tiles_expected || fingerprint(descriptors,d)!=descriptors_expected)
+            fprintf(stderr,"City seed=%u map=%u tiles=%016" PRIx64 "/%016" PRIx64 " descriptors=%016" PRIx64 "/%016" PRIx64 "\n",
+                seed,id,fingerprint(tiles,n),tiles_expected,fingerprint(descriptors,d),descriptors_expected);
+        CHECK(fingerprint(tiles,n)==tiles_expected && fingerprint(descriptors,d)==descriptors_expected);++cases;
+    }
+    fclose(f);CHECK(cases==39 && btp_world_generate(&r->world,0x020304));
     f=fopen("tests/fixtures/world-water-primary.txt","r");CHECK(f);cases=0;
     BtpWorldData water=r->world;
     while (fgets(line,sizeof line,f)) {
@@ -189,6 +209,22 @@ int main(int argc,char **argv)
     CHECK(btp_world_tile(r,&s,-1,768)==255 && btp_world_tile(r,&s,1024,768)==255);
     CHECK(r->world.native && btp_world_tile(r,&s,703,768)<250 && btp_world_tile(r,&s,896,768)<250);
     uint32_t *a=malloc(BTP_PIXELS*sizeof *a),*b=malloc(BTP_PIXELS*sizeof *b);CHECK(a && b);
+    /* A combat sector is a rules grid, not a black viewport boundary. Compare
+       every right-panel terrain pixel with the same exploration world view
+       at four corners and four sides, using real generated terrain. */
+    const unsigned edge[8][2]={{0,0},{127,0},{0,127},{127,127},{0,64},{127,64},{64,0},{64,127}};
+    uint8_t sprite_format=r->sprites.format;r->sprites.format=0;
+    for (unsigned i=0;i<8;++i) {
+        BtpState battle;btp_start(&battle);battle.story_flags[4]=1;battle.map_id=0;battle.mode=BTP_ENCOUNTER;
+        battle.campaign.encounter=1;battle.campaign.battle_x=1152;battle.campaign.battle_y=1664;
+        battle.combat.phase=BTP_COMBAT_ROUND;battle.combat.count=2;battle.combat.unit[0].record[0]=battle.combat.unit[1].record[0]=255;
+        battle.combat.unit[0].x=(uint8_t)edge[i][0];battle.combat.unit[0].y=(uint8_t)edge[i][1];
+        BtpState exploration=battle;exploration.mode=BTP_EXPLORE;exploration.campaign.encounter=0;exploration.combat=(BtpCombatState){0};
+        exploration.x_half=(uint16_t)(1152+edge[i][0]);exploration.y_half=(uint16_t)(1664+edge[i][1]+2);
+        btp_render(r,&battle,0,a);btp_render(r,&exploration,0,b);
+        for (unsigned row=0;row<200;++row) CHECK(!memcmp(a+row*320+104,b+row*320+104,216*sizeof *a));
+    }
+    r->sprites.format=sprite_format;
     btp_render(r,&s,0,a);btp_render(r,&s,0,b);CHECK(!memcmp(a,b,BTP_PIXELS*sizeof *a));
     /* MAP1's border is deliberately closed during this early campaign. */
     for (unsigned pos=0;pos<64;++pos) {

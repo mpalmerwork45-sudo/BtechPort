@@ -101,6 +101,14 @@ int main(int argc,char **argv)
     select_item(&s,r,0);btp_render(r,&s,0,pixels);
     CHECK(crop_hash(pixels,104,0,216,200)==UINT64_C(0x35639aea2c8b0038));
     select_item(&s,r,0);CHECK(s.campaign.ui==BTP_MENU_MECH && restore(&s,r));
+    BtpState spy_sheet=s;
+    const uint8_t spy_record[17]={5,10,9,5,0,1,1,0,0,3,0,0,8,0,0,100,0};
+    memcpy(spy_sheet.party.people[4],spy_record,17);
+    spy_sheet.story_flags[37]=4;spy_sheet.story_flags[38]=spy_sheet.story_flags[39]=1;
+    spy_sheet.campaign.ui=BTP_MENU_INSPECT;spy_sheet.campaign.member=4;
+    btp_render(r,&spy_sheet,0,pixels);(void)btp_write_ppm("work/m4-audit/spy-sheet-native.ppm",pixels);
+    CHECK(crop_hash(pixels,104,0,216,200)==UINT64_C(0xe49bd260b7c4f9d4));
+    CHECK(restore(&spy_sheet,r));
     btp_game_tick(&s,r,BTP_OPEN_MENU);CHECK(s.mode==BTP_EXPLORE && restore(&s,r));
     btp_menu_open(&s);select_item(&s,r,2);btp_render(r,&s,0,pixels);
     CHECK(crop_hash(pixels,104,0,216,200)==UINT64_C(0x3b56096617a5b93e));

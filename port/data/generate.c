@@ -70,6 +70,16 @@ unsigned btp_generated_tile(const BtpWorldData *w,int x,int y)
     if (w->heights[at+1]==level) mask|=2;
     if (w->heights[at+144]==level) mask|=4;
     if (w->heights[at-1]==level) mask|=8;
+    return btp_generated_joined_tile(w,x,y,mask);
+}
+unsigned btp_generated_joined_tile(const BtpWorldData *w,int x,int y,unsigned mask)
+{
+    if (!w || !w->native || !w->loaded || x<0 || y<0 || x>=1024 || y>=1024 || mask>15) return 255;
+    unsigned bx=(unsigned)x/8,by=(unsigned)y/8,at=(by+8)*144+bx+8;
+    unsigned level=w->heights[at];
+    if (level>=128) return 255;
+    /* The caller supplies the original joining mask after town descriptors
+       have replaced generated heights; texture/flip selection is unchanged. */
     if (level==16) return w->special[((unsigned)y&7)*8+((unsigned)x&7)];
     unsigned flip=(bx+by)&3u,base=level ? level-16 : 0;
     if (base>48) base=48;

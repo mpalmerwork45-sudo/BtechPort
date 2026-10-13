@@ -8,5 +8,7 @@ unsigned btp_effects_fire_sound(unsigned weapon,int visible);
 void btp_effects_tick(BtpState *state, const BtpResources *resources);
 void btp_effects_shot(BtpState *state, unsigned actor, unsigned target, unsigned weapon);
 unsigned btp_effects_length(const BtpCombatEffect *effect, const BtpCombatData *data);
+const BtpCombatEffect *btp_effects_pending_death(const BtpState *state, unsigned target);
+const BtpCombatEffect *btp_effects_death(const BtpState *state, unsigned target);
 int btp_effects_valid(const BtpState *state);
 #endif

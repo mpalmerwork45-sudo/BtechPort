@@ -16,20 +16,41 @@ unsigned btp_effects_fire_sound(unsigned w,int visible)
        Physical, ballistic and missile sounds precede that visibility test. */
     return !visible && (w==12 || w==13 || (w>=15 && w<=18)) ? 0u : btp_effects_sound(w);
 }
-static int visible(const BtpCombatEffect *e,const BtpCombatState *c)
+static int visible(const BtpCombatEffect *e,const BtpState *s)
 {
+    const BtpCombatState *c=&s->combat;
     const BtpCombatUnit *focus=&c->unit[c->active_unit];
-    int ax=200+((int)e->x-focus->x)*8,ay=64+((int)e->y-focus->y)*8;
-    int tx=200+((int)e->tx-focus->x)*8,ty=64+((int)e->ty-focus->y)*8;
+    const BtpCombatEffect *death=btp_effects_death(s,c->active_unit);
+    unsigned x=death ? death->tx : focus->x,y=death ? death->ty : focus->y;
+    int ax=200+((int)e->x-(int)x)*8,ay=64+((int)e->y-(int)y)*8;
+    int tx=200+((int)e->tx-(int)x)*8,ty=64+((int)e->ty-(int)y)*8;
     /* Use the renderer's clipped viewport. Exact DOS visibility margins
        at the border remain approximate until their full pixel comparison. */
     return (ax+24>104 && ax<320 && ay+24>0 && ay<200) || (tx+24>104 && tx<320 && ty+24>0 && ty<200);
+}
+const BtpCombatEffect *btp_effects_death(const BtpState *s,unsigned target)
+{
+    for (unsigned i=0;i<s->effects.count;++i)
+        if (s->effects.shots[i].dead && s->effects.shots[i].target==target) return &s->effects.shots[i];
+    return NULL;
 }
 
 unsigned btp_effects_length(const BtpCombatEffect *e, const BtpCombatData *d)
 {
     unsigned pose=d->poses[e->group][e->direction][0];
     return 2u*(pose+(e->hit && e->weapon>=7 ? 3u : 0u));
+}
+const BtpCombatEffect *btp_effects_pending_death(const BtpState *s,unsigned target)
+{
+    /* Numeric attacks finish the entire microstep before presentation. Keep
+       a destroyed unit's captured sprite/position until its own death event,
+       rather than exposing a later attack's wreck during an earlier shot. The
+       existing saved effect record holds everything needed for restoration. */
+    for (unsigned i=0;i<s->effects.count;++i) {
+        const BtpCombatEffect *e=&s->effects.shots[i];
+        if (e->dead && e->target==target && (i || s->effects.stage<BTP_EFFECT_DEATH_SOUND)) return e;
+    }
+    return NULL;
 }
 void btp_effects_shot(BtpState *s,unsigned actor,unsigned target,unsigned weapon)
 {
@@ -44,7 +65,7 @@ void btp_effects_shot(BtpState *s,unsigned actor,unsigned target,unsigned weapon
     v->shots[v->count++]=(BtpCombatEffect){(uint8_t)actor,(uint8_t)target,(uint8_t)group,
         (uint8_t)direction,(uint8_t)weapon,c->shot.hit,c->shot.destroyed,a->x,a->y,t->x,t->y,
         (uint8_t)(a->infantry ? 254 : alt ? 146 : 0),
-        (uint8_t)(t->infantry ? 254 : btp_mech_sprite_base(t->record[0],target>=friends))};
+        (uint8_t)(t->infantry ? 254 : t->record[0]=='s' ? 16 : btp_mech_sprite_base(t->record[0],target>=friends))};
 }
 void btp_effects_tick(BtpState *s,const BtpResources *r)
 {
@@ -53,7 +74,7 @@ void btp_effects_tick(BtpState *s,const BtpResources *r)
     const BtpCombatEffect *e=&v->shots[0];
     if (v->stage==BTP_EFFECT_START) {
         if (s->audio.sound_count) return;
-        if (s->combat.graphics) btp_audio_effect(s,btp_effects_fire_sound(e->weapon,visible(e,&s->combat)));
+        if (s->combat.graphics) btp_audio_effect(s,btp_effects_fire_sound(e->weapon,visible(e,s)));
         v->stage=BTP_EFFECT_FIRE_SOUND;return;
     }
     if (s->audio.sound_count) return;
@@ -67,10 +88,11 @@ void btp_effects_tick(BtpState *s,const BtpResources *r)
         }
     } else if (v->stage==BTP_EFFECT_IMPACT || v->stage==BTP_EFFECT_LEGACY) ++v->age;
     if (v->age<btp_effects_length(e,&r->combat)) return;
-    if (e->dead && v->stage!=BTP_EFFECT_DEATH_SOUND && v->stage!=BTP_EFFECT_LEGACY) {
+    if (e->dead && e->target_base!=254 && v->stage!=BTP_EFFECT_DEATH_SOUND && v->stage!=BTP_EFFECT_LEGACY) {
         /* 12E8:1C76 plays sound 8 for a wreck. The rented arena target's
            branch uses sound 7 before its two alarm messages instead. Wait
-           for this clip before any outtake or outcome can advance. */
+           for this clip before any outtake or outcome can advance. Humans
+           take 1B7F's corpse branch and skip the wreck/sound-8 branch. */
         btp_audio_effect(s,s->campaign.encounter==4 && btp_combat_id(&s->combat,e->target)==13 ? 7u : 8u);
         v->stage=BTP_EFFECT_DEATH_SOUND;return;
     }
@@ -99,7 +121,7 @@ int btp_effects_valid(const BtpState *s)
             if (e->actor>=s->combat.count || e->target>=s->combat.count || e->group>=18 || e->direction>7 || e->weapon>32 ||
                 e->hit>1 || e->dead>1 || (!s->campaign.invasion && (e->x>127 || e->y>127 || e->tx>127 || e->ty>127)) ||
                 (e->base!=0 && e->base!=146 && e->base!=254) ||
-                (e->target_base!=0 && e->target_base!=146 && e->target_base!=254)) return 0;
+                (e->target_base!=0 && e->target_base!=16 && e->target_base!=146 && e->target_base!=254)) return 0;
             if (e->base!=(e->group>=4 ? 254 : e->group&1u ? 146 : 0) || (e->dead && !e->hit)) return 0;
         } else {
             const uint8_t *p=(const uint8_t *)e;

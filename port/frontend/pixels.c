@@ -1060,6 +1060,11 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         unsigned focus=c->phase==BTP_COMBAT_TARGET || c->phase==BTP_COMBAT_KICK ? c->target_unit : c->phase==BTP_COMBAT_SCAN ? c->scan_unit : c->active_unit;
         cx=c->phase==BTP_COMBAT_MOVE ? c->cursor_x : c->unit[focus].x;
         cy=(c->phase==BTP_COMBAT_MOVE ? c->cursor_y : c->unit[focus].y)+2;
+        /* Clearing a numeric position must not recenter the viewport midway
+           through that unit's death sound. Keep its captured position through
+           the complete queued event, while sprite visibility changes below. */
+        const BtpCombatEffect *death=btp_effects_death(s,focus);
+        if (death) { cx=death->tx;cy=death->ty+2; }
     }
     BtpMap encounter_map;
     const BtpMap *map=btp_active_map(r,s);
@@ -1072,13 +1077,18 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
             uint32_t color = btp_palette[0];
             if (x >= 104) {
                 int wx = camera_x + x - 104, wy = camera_y + y;
-                if ((!s->campaign.encounter && r->world.loaded) || (wx >= 0 && wy >= 0 && ((!s->map_id && !s->campaign.encounter) || (wx < map->width * 16 && wy < map->height * 16)))) {
+                if (r->world.loaded || (wx >= 0 && wy >= 0 && ((!s->map_id && !s->campaign.encounter) || (wx < map->width * 16 && wy < map->height * 16)))) {
                     int tx=wx>=0 ? wx/16 : (wx-15)/16,ty=wy>=0 ? wy/16 : (wy-15)/16;
                     unsigned tile;
                     if (s->cache.active) tile=btp_cache_tile(r,s,tx,ty);
-                    else if (s->campaign.encounter || s->campaign.invasion || (s->map_id && tx>=0 && ty>=0 && tx<map->width && ty<map->height)) tile=btp_mission_tile(s,map,tx,ty);
+                    else if ((s->campaign.encounter || s->campaign.invasion || s->map_id) && tx>=0 && ty>=0 && tx<map->width && ty<map->height) tile=btp_mission_tile(s,map,tx,ty);
                     else {
-                        int ox=s->map_id ? (int)(map->entrance_x[0]>>8)*64 : 0,oy=s->map_id ? (int)(map->entrance_y[0]>>12)*64 : 0;
+                        /* Combat uses a finite local rules grid, but the DOS
+                           viewport rebuilds surrounding world pieces even at
+                           a sector edge. Its coordinate origin is the saved
+                           battle origin, not the current town's entrance. */
+                        int ox=s->campaign.encounter || s->campaign.invasion ? s->campaign.battle_x/2 : s->map_id ? (int)(map->entrance_x[0]>>8)*64 : 0;
+                        int oy=s->campaign.encounter || s->campaign.invasion ? s->campaign.battle_y/2 : s->map_id ? (int)(map->entrance_y[0]>>12)*64 : 0;
                         tile=btp_world_tile(r,s,ox+tx,oy+ty);
                     }
                     if (tile < 250) {
@@ -1104,23 +1114,46 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         }
     for (unsigned i=0;i<64;++i) {
         const BtpTerrainMark *mark=&s->terrain_marks[i];
-        if (mark->sprite && mark->map==s->map_id)
+        int pending=0;
+        if (mark->sprite>=126 && s->combat.phase) for (unsigned j=0;j<s->combat.count;++j) {
+            const BtpCombatEffect *death=btp_effects_pending_death(s,j);
+            if (!death) continue;
+            unsigned offset=death->target_base==254 ? 0u : 1u;
+            unsigned margin=s->campaign.invasion ? 64u : 0u;
+            if (mark->x==((death->tx-offset-margin)&127u) && mark->y==((death->ty-offset-margin)&127u)) pending=1;
+        }
+        if (!pending && mark->sprite && mark->map==s->map_id)
             (void)btp_draw_sprite(&r->sprites,(mark->sprite&254u)==124 ? 124u+(s->tick&1u) : mark->sprite,
                 200+((int)mark->x+(s->campaign.invasion ? 64 : 0)-cx)*8,
                 64+((int)mark->y+(s->campaign.invasion ? 64 : 0)+2-cy)*8,0,104,f);
     }
     if (s->combat.phase) {
-        for (unsigned i=0;i<s->combat.count;++i) if (s->combat.unit[i].record[0]!=255) {
+        for (unsigned i=0;i<s->combat.count;++i) {
             const BtpCombatUnit *u=&s->combat.unit[i];unsigned terrain;
+            const BtpCombatEffect *death=btp_effects_pending_death(s,i);
+            if (u->record[0]==255 && !death) continue;
+            /* Original ejection follows the mech destruction presentation.
+               Suppress its newly activated crew while that mech is pending. */
+            int crew_pending=0;
+            if (u->infantry) for (unsigned j=0;j<s->combat.count;++j) {
+                const BtpCombatEffect *wreck=btp_effects_pending_death(s,j);
+                const uint8_t *record=s->combat.unit[j].record;
+                unsigned id=btp_combat_id(&s->combat,i);
+                if (wreck && wreck->target_base!=254 && id>=4 && id<12 &&
+                    (id==4u+record[121] || id==4u+record[122])) crew_pending=1;
+            }
+            if (crew_pending) continue;
             if (s->combat.graphics && s->effects.count && s->effects.stage>=BTP_EFFECT_ATTACK) {
                 const BtpCombatEffect *e=&s->effects.shots[0];
                 unsigned pose=r->combat.poses[e->group][e->direction][0];
                 if (s->effects.age/2u<pose && (i==e->actor || (e->hit && i==e->target && u->infantry))) continue;
             }
             unsigned friends=s->combat.friends ? s->combat.friends : 1u;
-            unsigned base=u->infantry ? s->combat.friends && i<s->combat.friends ? btp_combat_id(&s->combat,i)==4 ? 166u : 270u : 270u : btp_mech_sprite_base(u->record[0],i>=friends);
-            (void)btp_draw_sprite(&r->sprites,u->record[0]=='s' ? 16u : base+s->combat.walk[i],
-                200+((int)u->x-cx)*8,64+((int)u->y+2-cy)*8,btp_combat_cover(map,u,&terrain),104,f);
+            unsigned base=death ? death->target_base==254 ? btp_combat_id(&s->combat,i)==4 ? 166u : 270u : death->target_base :
+                u->infantry ? s->combat.friends && i<s->combat.friends ? btp_combat_id(&s->combat,i)==4 ? 166u : 270u : 270u : btp_mech_sprite_base(u->record[0],i>=friends);
+            (void)btp_draw_sprite(&r->sprites,u->record[0]=='s' || (death && death->target_base==16) ? 16u : base+s->combat.walk[i],
+                200+((int)(death ? death->tx : u->x)-cx)*8,64+((int)(death ? death->ty : u->y)+2-cy)*8,
+                death ? 0u : btp_combat_cover(map,u,&terrain),104,f);
         }
         combat_route(r,s,cx,cy,f);combat_flash(r,s,cx,cy,f);
     } else if (s->mission.phase) (void)btp_draw_sprite(&r->sprites,
@@ -1336,9 +1369,6 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         } else if (c->ui==BTP_MENU_INSPECT) {
             uint8_t p[17];btp_menu_person(s,c->member,p);
             rectangle(f,104,0,216,200,0);border_panel(r,f,104,0,216,200,0);
-            if (s->story_flags[39] && c->member==s->story_flags[37]) {
-                size_t n;const uint8_t *warning=bank_literal(r,188,&n);if (warning) (void)wrapped(r,f,8,warning,n,15);
-            } else {
             text(r,f,112,8,"Name  :",10);text(r,f,176,8,btp_character_name(p[0]),15);
             text(r,f,112,16,"Weapon:",10);char weapon[12];memcpy(weapon,r->combat.weapons[p[11]],11);weapon[11]=0;text(r,f,176,16,weapon,15);
             text(r,f,112,24,"Armor :",10);
@@ -1351,15 +1381,28 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                 char message[128];snprintf(message,sizeof message,"%s%s",btp_character_name(p[0]),(const char *)condition);
                 (void)wrapped_at(r,f,176,40,17,(const uint8_t *)message,strlen(message),15);
             }
+            /* 0000:39B3..39FC places the spy warning at text row eight in
+               yellow, then continues the ordinary skills/equipment sheet. */
+            if (s->story_flags[39] && c->member==s->story_flags[37]) {
+                const uint8_t *warning=bank_literal(r,188,&n);
+                if (warning) (void)wrapped(r,f,72,warning,n,14);
+            }
             text(r,f,112,96,"Skills:",10);
             static const char *const subjects[]={"Bow & Blade","Pistol","Rifle","Gunnery","Piloting","Tech","Medical"};
             static const char *const ranks[]={"Unskilled","Amateur","Adequate","Good","Excellent"};
             for (unsigned i=0;i<7;++i) {
-                text(r,f,112,112+(int)i*8,subjects[i],10);text(r,f,208,112+(int)i*8,ranks[p[4+i]>4 ? 4 : p[4+i]],15);
+                text(r,f,112,112+(int)i*8,subjects[i],10);
+                /* The original warning pauses at 39EC before 3AE9 writes
+                   ranks. Its existing sheet labels/equipment remain visible. */
+                if (!(s->story_flags[39] && c->member==s->story_flags[37]))
+                    text(r,f,208,112+(int)i*8,ranks[p[4+i]>4 ? 4 : p[4+i]],15);
             }
-            text(r,f,112,176,"MedKit:",10);text(r,f,176,176,s->party.medical_kit ? "Yes" : "No",15);
-            text(r,f,208,176,"Mapper:",10);text(r,f,272,176,s->story_flags[49] ? "Yes" : "No",15);
-            text(r,f,112,184,"Field Surgery Kit:",10);text(r,f,264,184,s->party.advanced_kit ? "Yes" : "No",15);
+            text(r,f,112,176,"MedKit:",10);text(r,f,208,176,"Mapper:",10);
+            text(r,f,112,184,"Field Surgery Kit:",10);
+            if (!(s->story_flags[39] && c->member==s->story_flags[37])) {
+                text(r,f,176,176,s->party.medical_kit ? "Yes" : "No",15);
+                text(r,f,272,176,s->story_flags[49] ? "Yes" : "No",15);
+                text(r,f,264,184,s->party.advanced_kit ? "Yes" : "No",15);
             }
         } else if (c->ui==BTP_MENU_MESSAGE) {
             rectangle(f,104,72,216,88,0);border_panel(r,f,104,72,216,88,0);
