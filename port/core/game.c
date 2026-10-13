@@ -548,7 +548,7 @@ static uint16_t get16(const uint8_t *p) { return (uint16_t)(p[0] | (uint16_t)p[1
 void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
 {
     memset(b, 0, BTP_STATE_BYTES);
-    memcpy(b, "BTPV", 4); b[4] = 31;
+    memcpy(b, "BTPW", 4); b[4] = 32;
     for (unsigned i = 0; i < 4; ++i) b[8+i] = (uint8_t)(s->tick >> (8 * i));
     b[12] = (uint8_t)s->x_half; b[13] = (uint8_t)(s->x_half >> 8);
     b[14] = (uint8_t)s->y_half; b[15] = (uint8_t)(s->y_half >> 8);
@@ -715,7 +715,8 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         n == BTP_STATE_BYTES && !memcmp(b,"BTPS",4) && b[4]==28 ? 28 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPT",4) && b[4]==29 ? 29 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPU",4) && b[4]==30 ? 30 :
-        n == BTP_STATE_BYTES && !memcmp(b,"BTPV",4) && b[4]==31 ? 31 : 0;
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPV",4) && b[4]==31 ? 31 :
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPW",4) && b[4]==32 ? 32 : 0;
     if (!version) return 0;
     for (unsigned i = 5; i < 8; ++i) if (b[i]) return 0;
     if (version == 1) { for (unsigned i = 20; i < 24; ++i) if (b[i]) return 0; }
@@ -1085,6 +1086,19 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
             if (c->cursor_x || c->cursor_y || c->phase==BTP_COMBAT_MOVE) { c->cursor_x+=64;c->cursor_y+=64; }
             for (unsigned i=0;i<c->waypoint_count;++i) { c->waypoint_x[i]+=64;c->waypoint_y[i]+=64; }
             for (unsigned i=0;i<result.effects.count;++i) { BtpCombatEffect *e=&result.effects.shots[i];e->x+=64;e->y+=64;e->tx+=64;e->ty+=64; }
+        }
+        if (version<32 && result.combat.phase) {
+            BtpCombatState *c=&result.combat;
+            if (c->phase>BTP_COMBAT_SPY || c->selected>9 || !c->count ||
+                c->active_unit>=c->count || c->scan_unit>=c->count) return 0;
+            /* Older Scan opened the mech diagram immediately. Preserve that
+               paused view; on-foot scans become the original summary menu. */
+            if (c->phase==BTP_COMBAT_SCAN) {
+                c->phase=(uint8_t)(c->unit[c->scan_unit].infantry ? BTP_COMBAT_SCAN : BTP_COMBAT_SCAN_DETAIL);
+                c->target_selected=(uint8_t)(c->scan_unit>=(c->friends ? c->friends : 1u));c->selected=0;
+            }
+            if (c->phase==BTP_COMBAT_MENU)
+                c->selected=(uint8_t)btp_combat_menu_command(c,btp_combat_menu_row(c));
         }
         if (result.disk_origin && ((result.disk_origin!=8 && result.disk_origin!=19) || result.mode!=BTP_BUILDING || !result.checkpoint_valid || result.campaign.building!=result.disk_origin)) return 0;
         if (!btp_talk_valid(&result,m) || !btp_npc_valid(&result,m) || !btp_bank_valid(&result) ||

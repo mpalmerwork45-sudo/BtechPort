@@ -12,8 +12,8 @@ if args.training:
         ('make_training_combat_replay.py',['--generate']),
         ('make_training_combat_replay.py',['--kick','--generate']),
         ('make_training_combat_replay.py',['--campaign','--generate']),
-        ('make_campaign_replay.py',['28','0']),
-        ('make_campaign_replay.py',['28','0','--loss'])):
+        ('make_campaign_replay.py',['4','0']),
+        ('make_campaign_replay.py',['4','0','--loss'])):
         print('Generating',tool,*arguments,flush=True)
         subprocess.run([sys.executable,str(ROOT/'tools'/tool),*arguments],cwd=ROOT,check=True)
 for tool in ('make_later_campaign_replay.py','make_story_replay.py',

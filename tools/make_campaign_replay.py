@@ -43,7 +43,8 @@ class Session:
     def command(self,n):
         c=self.state['combat']
         if c['phase']!=4:raise RuntimeError('Expected combat menu: '+str(c['phase']))
-        self.advance(['down']*((n-c['selected'])%10)+['accept'])
+        commands=c['menu_commands'];row=commands.index(c['selected']);target=commands.index(n)
+        self.advance(['down']*((target-row)%len(commands))+['accept'])
         if self.state['combat']['phase']==12:self.advance(['accept'])
     def waypoint(self,x,y,mode=1):
         if self.state['campaign']['invasion']:x+=64;y+=64

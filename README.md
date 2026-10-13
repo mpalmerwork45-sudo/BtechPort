@@ -8,6 +8,9 @@ PC-speaker effects, combat outtakes and training return-to-base message.
 The [follow-up evidence](docs/M4_FOLLOWUPS_EVIDENCE.md) records the fresh-game
 cache-ending route, additional original combat rules, replacement specialists,
 spy outcomes and all-party walking collision/animation checks.
+The [current fidelity increment](docs/M4_FIDELITY_EVIDENCE.md) adds the original
+eight-entry on-foot combat menu, pilot/model headers and Friends/Enemies scans,
+including the original infantry descriptions and optional mech Detail Scan.
 All six supplied original GAME files now import and roundtrip exactly. To use
 one, run `./build/btech-port --load 'Original DOS/GAME3'`. Export an imported
 save outdoors with `--export-original work/GAME3`; unmodeled bytes are retained.

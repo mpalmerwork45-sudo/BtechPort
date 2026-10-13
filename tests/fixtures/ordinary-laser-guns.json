@@ -579,7 +579,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "2a8a9500fe211051",
+        "state_digest": "d34dc71c02be45a1",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -622,6 +622,10 @@
           "automatic": 0,
           "auto_run": 0,
           "paused": 0,
+          "friends": 0,
+          "active": 0,
+          "scan": 0,
+          "menu_commands": [],
           "units": [
             {
               "x": 0,
@@ -1497,7 +1501,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "9bc258f7dbbe0355",
+        "state_digest": "2769e847181f8d25",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1540,6 +1544,10 @@
           "automatic": 0,
           "auto_run": 0,
           "paused": 0,
+          "friends": 0,
+          "active": 0,
+          "scan": 0,
+          "menu_commands": [],
           "units": [
             {
               "x": 0,
@@ -2419,7 +2427,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "e749121b0046678c",
+        "state_digest": "efb64457bdfbd21c",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -2462,6 +2470,10 @@
           "automatic": 0,
           "auto_run": 0,
           "paused": 0,
+          "friends": 0,
+          "active": 0,
+          "scan": 0,
+          "menu_commands": [],
           "units": [
             {
               "x": 0,
@@ -3337,7 +3349,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "63d7dc2e9d38bdc6",
+        "state_digest": "5fe4cdb051c06376",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -3380,6 +3392,10 @@
           "automatic": 0,
           "auto_run": 0,
           "paused": 0,
+          "friends": 0,
+          "active": 0,
+          "scan": 0,
+          "menu_commands": [],
           "units": [
             {
               "x": 0,
@@ -4253,7 +4269,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "63d7dc2e9d38bdc6",
+    "state_digest": "5fe4cdb051c06376",
     "effect_stage": 0,
     "combat": {
       "phase": 0,
@@ -4296,6 +4312,10 @@
       "automatic": 0,
       "auto_run": 0,
       "paused": 0,
+      "friends": 0,
+      "active": 0,
+      "scan": 0,
+      "menu_commands": [],
       "units": [
         {
           "x": 0,

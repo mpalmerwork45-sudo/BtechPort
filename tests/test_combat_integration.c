@@ -51,7 +51,10 @@ static void decline(const BtpState *menu,const BtpResources *r,unsigned loan)
     }
     step(&s,r,BTP_ACCEPT);
     step(&s,r,BTP_ACCEPT);step(&s,r,BTP_ACCEPT);CHECK(s.combat.phase==BTP_COMBAT_MENU);
-    command(&s,r,6);step(&s,r,BTP_DOWN);CHECK(s.combat.scan_unit==1);step(&s,r,BTP_CANCEL);
+    command(&s,r,6);CHECK(s.combat.phase==BTP_COMBAT_SCAN_CHOICE);
+    step(&s,r,BTP_DOWN);step(&s,r,BTP_ACCEPT);CHECK(s.combat.phase==BTP_COMBAT_SCAN && s.combat.scan_unit==1);
+    step(&s,r,BTP_DOWN);step(&s,r,BTP_ACCEPT);CHECK(s.combat.phase==BTP_COMBAT_SCAN_DETAIL);
+    step(&s,r,BTP_CANCEL);step(&s,r,BTP_CANCEL);
     command(&s,r,0);step(&s,r,BTP_RIGHT);step(&s,r,BTP_CANCEL);CHECK(!s.combat.goal_active);
     command(&s,r,4);CHECK(s.combat.phase==BTP_COMBAT_KICK);step(&s,r,BTP_CANCEL);CHECK(s.combat.kick_target==255);
     command(&s,r,3);step(&s,r,BTP_ACCEPT);step(&s,r,BTP_CANCEL);CHECK(s.combat.orders[0]==255);

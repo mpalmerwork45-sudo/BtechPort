@@ -579,7 +579,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "f86952cd5d13a21b",
+        "state_digest": "096a8d257b90b4ab",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -622,6 +622,10 @@
           "automatic": 0,
           "auto_run": 0,
           "paused": 0,
+          "friends": 0,
+          "active": 0,
+          "scan": 0,
+          "menu_commands": [],
           "units": [
             {
               "x": 0,
@@ -1492,7 +1496,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "184fa69990f552b3",
+        "state_digest": "8be62d87b2b526e3",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1535,6 +1539,10 @@
           "automatic": 0,
           "auto_run": 0,
           "paused": 0,
+          "friends": 0,
+          "active": 0,
+          "scan": 0,
+          "menu_commands": [],
           "units": [
             {
               "x": 0,
@@ -2430,7 +2438,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "858b70789c80a629",
+        "state_digest": "643f46b64fcf0b59",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -2473,6 +2481,10 @@
           "automatic": 0,
           "auto_run": 0,
           "paused": 0,
+          "friends": 0,
+          "active": 0,
+          "scan": 0,
+          "menu_commands": [],
           "units": [
             {
               "x": 0,
@@ -3360,7 +3372,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "9680e22def5ce017",
+        "state_digest": "dcf73c9b0180c1c7",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -3403,6 +3415,10 @@
           "automatic": 0,
           "auto_run": 0,
           "paused": 0,
+          "friends": 0,
+          "active": 0,
+          "scan": 0,
+          "menu_commands": [],
           "units": [
             {
               "x": 0,
@@ -4298,7 +4314,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "2f354ce7921710a4",
+        "state_digest": "a65d0a1961e853f4",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -4341,6 +4357,10 @@
           "automatic": 0,
           "auto_run": 0,
           "paused": 0,
+          "friends": 0,
+          "active": 0,
+          "scan": 0,
+          "menu_commands": [],
           "units": [
             {
               "x": 0,
@@ -5236,7 +5256,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "08b70e07b8413f87",
+        "state_digest": "69543dc66b17f4d7",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -5279,6 +5299,10 @@
           "automatic": 0,
           "auto_run": 0,
           "paused": 0,
+          "friends": 0,
+          "active": 0,
+          "scan": 0,
+          "menu_commands": [],
           "units": [
             {
               "x": 0,
@@ -6172,7 +6196,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "08b70e07b8413f87",
+    "state_digest": "69543dc66b17f4d7",
     "effect_stage": 0,
     "combat": {
       "phase": 0,
@@ -6215,6 +6239,10 @@
       "automatic": 0,
       "auto_run": 0,
       "paused": 0,
+      "friends": 0,
+      "active": 0,
+      "scan": 0,
+      "menu_commands": [],
       "units": [
         {
           "x": 0,

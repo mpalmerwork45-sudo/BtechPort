@@ -80,6 +80,9 @@ def extract(source):
     addresses.extend(DS+p for p in (0x07ff,0x1222,0x34e9,0x34f6,0x3510,0x3555,0x358e,
         0x35d1,0x3610,0x3653,0x3666,0x36a9,0x36f6,0x3731,0x3774,
         0x37b8,0x37fd,0x3830,0x387a))
+    # Original mech/on-foot command lists, header and friend/enemy scan text.
+    addresses.extend(DS+p for p in (0x121e,0x3a6f,0x3abc,0x3d73,0x1174,0x1189,
+        0x1195,0x1245,0x1257,0x1148,0x114f,0x115b,0x1166,0x3d94,0x3dcd,0x3e19))
     blob = bytearray(); ranges = []; origins = []
     for address in addresses:
         end = image.index(0,address)
@@ -93,7 +96,7 @@ def extract(source):
     header += bytes.fromhex(EXE_SHA)+bytes.fromhex(IMAGE_SHA)
     header += b"".join(struct.pack("<HH",*r) for r in ranges)
     font = image[FONT:FONT+2048]
-    return header+blob+font, {**metadata,"format":"BTTA/v16","strings":origins,
+    return header+blob+font, {**metadata,"format":"BTTA/v17","strings":origins,
         "font":{"image_offset":FONT,"length":len(font),"sha256":hashlib.sha256(font).hexdigest()}}
 
 

@@ -430,10 +430,57 @@ static void spy_panel(const BtpResources *r,const BtpState *s,uint32_t *f)
     rectangle(f,104,0,216,200,0);border_panel(r,f,104,0,216,200,0);
     (void)wrapped(r,f,8,message,n,15);
 }
+static void combat_header(const BtpResources *r,const BtpState *s,uint32_t *f,unsigned unit,int scan)
+{
+    const BtpCombatState *c=&s->combat;const BtpCombatUnit *u=&c->unit[unit];
+    unsigned id=btp_combat_id(c,unit);char message[384];size_t n;
+    if (!u->infantry) {
+        char model[16];memcpy(model,u->record,15);model[15]=0;
+        const char *pilot=u->record[121]<8 ? btp_party_name(&s->party,u->record[121]) : "None";
+        snprintf(message,sizeof message,id<4 ? "%s's\r%s" : "Enemy\r%s",id<4 ? pilot : model,model);
+        (void)wrapped_at(r,f,8,8,11,(const uint8_t *)message,strlen(message),15);return;
+    }
+    const char *name=id<12 ? btp_character_name(u->record[0]) : "Enemy human";
+    if (!scan) { text(r,f,8,8,name,15);return; }
+    if (btp_spy_unit(s,unit)) {
+        const uint8_t *warning=bank_literal(r,189,&n);
+        snprintf(message,sizeof message,"%s%.*s",name,warning ? (int)n : 0,warning ? (const char *)warning : "");
+        (void)wrapped_at(r,f,8,8,11,(const uint8_t *)message,strlen(message),15);return;
+    }
+    unsigned health=u->record[1] ? u->record[15]/u->record[1] : 0;if (health>10) health=10;
+    const uint8_t *condition=bank_literal(r,91u+health,&n);
+    snprintf(message,sizeof message,"%s%.*s",name,condition ? (int)n : 0,condition ? (const char *)condition : "");
+    (void)wrapped_at(r,f,8,8,11,(const uint8_t *)message,strlen(message),15);
+    /* Original 05AB:18E8 / 1467 puts the personal weapon at rows 7/8.
+       Friendly armour occupies rows 10/11; enemies show their direction. */
+    text(r,f,8,64,"Weapon:",10);
+    char weapon[12];memcpy(weapon,r->combat.weapons[u->record[11]],11);weapon[11]=0;text(r,f,8,72,weapon,15);
+    if (id<12) {
+        static const uint8_t capacity[6]={0,25,40,30,50,50};unsigned armour=u->record[13];
+        text(r,f,8,80,"Armor:",10);
+        unsigned literal=!armour ? 114u : !u->record[14] ? 215u : 102u+armour;
+        const uint8_t *label=bank_literal(r,literal,&n);
+        if (label) (void)wrapped_at(r,f,8,88,11,label,n,!armour ? 15u : !u->record[14] ? 8u : u->record[14]<capacity[armour] ? 14u : 15u);
+    } else {
+        static const char *const bearings[9]={"North","Northeast","East","Southeast","South","Southwest","West","Northwest","Jason"};
+        unsigned bearing=btp_combat_direction(c->unit[c->active_unit].x,c->unit[c->active_unit].y,u->x,u->y);
+        text(r,f,8,80,"Direction:",10);text(r,f,8,88,bearings[bearing<9 ? bearing : 8],15);
+    }
+}
+static void combat_scan_menu(const BtpResources *r,const BtpCombatState *c,uint32_t *f,int choice)
+{
+    text(r,f,8,104,"Scan...",15);
+    unsigned count=choice ? 3u : btp_combat_scan_detail(c) ? 3u : 2u;
+    for (unsigned i=0;i<count;++i) {
+        const char *label=choice ? i==0 ? "Friends" : i==1 ? "Enemies" : "Cancel" :
+            !i ? "Next Unit" : i==count-1 ? "Done" : "Detail Scan";
+        if (i==c->selected) rectangle(f,8,112+(int)i*8,88,8,14);
+        text(r,f,8,112+(int)i*8,label,i==c->selected ? 0u : 15u);
+    }
+}
 static void combat_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
 {
     const BtpCombatState *c=&s->combat;char line[40];
-    static const char *commands[10]={"Walk","Run","Jump","Use Weapons","Kick","Computer","Scan","Next","Flee","Begin Fight"};
     rectangle(f,0,0,104,200,0);
     if (c->phase==BTP_COMBAT_OFFER || c->phase==BTP_COMBAT_AVOID) {
         unsigned mechs=0,humans=0;
@@ -476,15 +523,28 @@ static void combat_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
         }
         return;
     }
-    const BtpCombatUnit *active=&c->unit[c->active_unit];
-    text(r,f,8,8,c->friends ? active->infantry ? btp_party_name(&s->party,c->ids[c->active_unit]-4u) : "Owned 'Mech" : s->story_flags[2]==0 ? "Locust" : s->story_flags[2]==1 ? "Wasp" : "Chameleon",15);
-    snprintf(line,sizeof line,"Heat %u",c->unit[c->active_unit].heat);text(r,f,8,24,line,14);
-    snprintf(line,sizeof line,"Turn %u",c->round);text(r,f,8,40,line,15);
-    if (c->goal_active) { snprintf(line,sizeof line,"Route %u",1u+c->waypoint_count);text(r,f,8,56,line,14); }
-    for (unsigned i=0;i<10;++i) {
-        int selected=c->phase==BTP_COMBAT_MENU && c->selected==i;
+    combat_header(r,s,f,c->active_unit,0);
+    if (c->phase==BTP_COMBAT_SCAN_CHOICE || (c->phase==BTP_COMBAT_NOTICE && c->notice>=15)) {
+        combat_scan_menu(r,c,f,1);
+        if (c->phase==BTP_COMBAT_NOTICE) {
+            rectangle(f,8,8,88,88,0);size_t n;const uint8_t *message=bank_literal(r,220u+c->notice-15u,&n);
+            if (message) (void)wrapped_at(r,f,8,8,11,message,n,15);
+        }
+        return;
+    }
+    if (c->phase==BTP_COMBAT_SCAN) {
+        rectangle(f,8,8,88,88,0);combat_header(r,s,f,c->scan_unit,1);combat_scan_menu(r,c,f,0);return;
+    }
+    size_t command_length;const uint8_t *commands=bank_literal(r,208u+c->unit[c->active_unit].infantry,&command_length);
+    size_t at=0;
+    for (unsigned i=0;i<btp_combat_menu_count(c);++i) {
+        char label[12];size_t used=0;
+        while (commands && at<command_length && commands[at]!='\r' && used<11) label[used++]=(char)commands[at++];
+        if (commands && at<command_length && commands[at]=='\r') ++at;
+        label[used]=0;
+        int selected=c->phase==BTP_COMBAT_MENU && c->selected==btp_combat_menu_command(c,i);
         if (selected) rectangle(f,8,104+(int)i*8,88,8,14);
-        text(r,f,8,104+(int)i*8,commands[i],selected ? 0u : 15u);
+        text(r,f,8,104+(int)i*8,label,selected ? 0u : 15u);
     }
     if (c->phase==BTP_COMBAT_PICK) {
         rectangle(f,104,64,216,96,0);border_panel(r,f,104,64,216,96,0);
@@ -527,25 +587,6 @@ static void combat_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
         }
     } else if (c->phase==BTP_COMBAT_SPY) {
         spy_panel(r,s,f);return;
-    } else if (c->phase==BTP_COMBAT_SCAN) {
-        const BtpCombatUnit *u=&c->unit[c->scan_unit];
-        rectangle(f,104,72,216,128,0);border_panel(r,f,104,72,216,128,0);
-        unsigned id=btp_combat_id(c,c->scan_unit);
-        text(r,f,112,80,u->infantry ? id>=4 && id<12 ? btp_party_name(&s->party,id-4) : "Kurita soldier" : c->scan_unit ? "Enemy Locust" : "Jason's 'Mech",14);
-        if (u->infantry) {
-            char weapon[12]={0};memcpy(weapon,r->combat.weapons[u->record[11]],10);
-            snprintf(line,sizeof line,"Health %u  Armor %u",u->record[15],u->record[14]);text(r,f,112,104,line,15);
-            text(r,f,112,120,weapon,15);
-            if (btp_spy_unit(s,c->scan_unit)) { size_t n;const uint8_t *p=bank_literal(r,188,&n);if (p) (void)wrapped(r,f,136,p,n,15); }
-            text(r,f,112,184,"Arrows: next Enter: close",14);return;
-        }
-        text(r,f,112,96,"Part       Armor Internal",15);
-        static const char *parts[8]={"Left arm","Left torso","Left leg","Head","Center","Right arm","Right torso","Right leg"};
-        for (unsigned i=0;i<8;++i) {
-            snprintf(line,sizeof line,"%-11s %3u   %3u",parts[i],u->record[17+i],u->record[28+i]);
-            text(r,f,112,104+(int)i*8,line,15);
-        }
-        text(r,f,112,184,"Arrows: next Enter: close",14);
     } else if (c->phase==BTP_COMBAT_REPLACE) {
         rectangle(f,104,64,216,96,0);border_panel(r,f,104,64,216,96,0);
         text(r,f,112,72,"Change movement mode?",15);
@@ -815,7 +856,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         rectangle(f,s->entry_selected ? 144 : 112,y,s->entry_selected ? 16 : 24,8,14);
         text(r,f,112,y,"Yes",s->entry_selected ? 15u : 0u);text(r,f,144,y,"No",s->entry_selected ? 0u : 15u);return;
     }
-    if ((s->combat.phase==BTP_COMBAT_SCAN && !s->combat.unit[s->combat.scan_unit].infantry) ||
+    if ((s->combat.phase==BTP_COMBAT_SCAN_DETAIL && !s->combat.unit[s->combat.scan_unit].infantry) ||
         (s->mode==BTP_ACTIONS && s->campaign.ui==BTP_MENU_MECH)) {
         const uint8_t *m;unsigned heat=0,id;
         if (s->combat.phase) { const BtpCombatUnit *u=&s->combat.unit[s->combat.scan_unit];m=u->record;heat=u->heat;id=btp_combat_id(&s->combat,s->combat.scan_unit); }

@@ -514,6 +514,56 @@ def menu(env,work):
     inspection_saves(env,work)
     overhead(env,work)
 
+def combat_ui(env,work):
+    """Controlled original mixed-party UI prerequisite, real SDL keys/F5/F9."""
+    from reference_session import WindowKeys
+    binary=ROOT/'build/btech-headless';start=work/'combat-ui-start.btp'
+    env=dict(env,SDL_AUDIODRIVER='dummy')
+    with tempfile.TemporaryDirectory(prefix='native-combat-ui-',dir=work) as directory:
+        tmp=Path(directory);tail=tmp/'keys.actions';record=tmp/'record.actions';expected=tmp/'expected.ppm'
+        keys=['up','accept','accept','down','accept','menu']+['accept']*3+['down','accept',
+            'accept','down','accept','menu','down','accept','down','accept']
+        tail.write_text('\n'.join(keys)+'\n');frame=work/'native-combat-ui.ppm'
+        actual=subprocess.run([str(ROOT/'build/btech-port'),'--load',str(start),'--smoke-replay','--smoke-fast',
+            '--replay',str(tail),'--record',str(record),'--frame',str(frame)],cwd=ROOT,env=env,check=True,capture_output=True,text=True,timeout=20)
+        wanted=subprocess.run([str(binary),'--load',str(start),'--replay',str(record),'--frame',str(expected)],cwd=ROOT,check=True,capture_output=True,text=True)
+        recorded=keys.copy();recorded[14]='accept' # SDL normalizes Space on the press-a-key notice.
+        if record.read_text().splitlines()!=recorded+['idle']*5 or json.loads(actual.stdout)!=json.loads(wanted.stdout) or frame.read_bytes()!=expected.read_bytes():
+            (work/'native-combat-ui-actual.json').write_text(actual.stdout)
+            (work/'native-combat-ui-wanted.json').write_text(wanted.stdout)
+            (work/'native-combat-ui-record.actions').write_text(record.read_text())
+            raise RuntimeError('Native original combat UI keys/state/pixels differ')
+        print('PASS: native eight-entry foot menu, friend/enemy summaries, Detail Scan and Space dismissal; exact input/state/pixels.',flush=True)
+        for label,prefix in (('scan-choice',['up','accept']),('scan-summary',['up','accept','accept']),
+                             ('scan-detail',['up','accept','accept','down','accept'])):
+            tail.write_text('\n'.join(prefix)+'\n');page=tmp/'page.btp';slot=tmp/'slot.btp'
+            subprocess.run([str(binary),'--load',str(start),'--replay',str(tail),'--save',str(page)],cwd=ROOT,check=True,capture_output=True)
+            frame=work/f'native-{label}-restore.ppm'
+            process=subprocess.Popen([str(ROOT/'build/btech-port'),'--load',str(page),'--save-file',str(slot),'--frame',str(frame)],
+                cwd=ROOT,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+            keyboard=WindowKeys()
+            try:
+                for _ in range(100):
+                    found=[(w,n) for w,n in keyboard.windows() if n.startswith('BtechPort')]
+                    if len(found)==1:window=found[0][0];break
+                    if process.poll() is not None:raise RuntimeError('Combat scan window failed to start')
+                    time.sleep(.05)
+                else:raise RuntimeError('Combat scan window did not appear')
+                keyboard.key(window,'F5');time.sleep(.1)
+                before=json.loads(subprocess.check_output([str(binary),'--load',str(slot)],cwd=ROOT,text=True))
+                keyboard.key(window,'Right');time.sleep(.1);keyboard.key(window,'F9');keyboard.key(window,'Ctrl+Shift+Escape')
+                out,err=process.communicate(timeout=10)
+                if process.returncode:raise RuntimeError(err)
+                restored=json.loads(out);delta=restored['tick']-before['tick']
+                if not 0<=delta<=20:raise RuntimeError('Unexpected scan load continuation interval')
+                tail.write_text('idle\n'*delta)
+                wanted=json.loads(subprocess.check_output([str(binary),'--load',str(slot),'--replay',str(tail),'--frame',str(expected)],cwd=ROOT,text=True))
+                if restored!=wanted or frame.read_bytes()!=expected.read_bytes():raise RuntimeError('Native scan save continuation differs')
+                print(f'PASS: native F5/F9 restores {label}, complete state and pixels.',flush=True)
+            finally:
+                keyboard.x.XCloseDisplay(keyboard.display)
+                if process.poll() is None:process.terminate();process.wait(timeout=5)
+
 def overhead(env,work):
     """Open the map with real Space/Up/Space and inspect the X11 window pixels."""
     import ctypes as c
@@ -896,6 +946,7 @@ def main():
     parser.add_argument('--story-only',action='store_true')
     parser.add_argument('--followups-only',action='store_true')
     parser.add_argument('--m4-acceptance',action='store_true')
+    parser.add_argument('--combat-ui-only',action='store_true')
     args = parser.parse_args()
     work = ROOT / "work"
     work.mkdir(exist_ok=True)
@@ -917,10 +968,13 @@ def main():
             os.environ["BTECH_REFERENCE_VIRTUAL"] = "1"
             if args.m4_acceptance:
                 intro(env,work);menu(env,work);presentation(env,work)
+                combat_ui(env,work)
                 original_saves(env,work);aftermath(env,work);field(env,work)
                 saves(env,work);campaign(env,work);story(env,work);cache(env,work);return
             if args.followups_only:
                 followups(env,work);return
+            if args.combat_ui_only:
+                combat_ui(env,work);return
             if args.intro_only:
                 intro(env,work);return
             if args.overhead_only:

@@ -2,12 +2,13 @@
 
 The independent C11/SDL2 port has playable implementations of the authorized
 M4a–M4e increments and the subsequent building, theft, encounter, recruitment and
-presentation requests. A recorded 66,119-input route now starts with a new cadet
+presentation requests. A recorded 66,115-input route now starts with a new cadet
 and reaches the cache ending through the actual training, companion, disk and
 password prerequisites. It uses the authorized money shortcut. M4 as a complete
 reproduction of every original campaign branch remains unfinished.
 
-See [M4 evidence](M4_PROGRESS.md) and [follow-up evidence](M4_FOLLOWUPS_EVIDENCE.md)
+See [M4 evidence](M4_PROGRESS.md), [follow-up evidence](M4_FOLLOWUPS_EVIDENCE.md)
+and [current fidelity work](M4_FIDELITY_EVIDENCE.md)
 for original routines, explicit prerequisites and confidence limits. README
 credits the reverse-engineering contributors.
 Reference directories are immutable; original assets and emulator RAM stay in
@@ -67,22 +68,24 @@ Successful pre-combat evasion produces no loot or cash.
 
 ## Verification and limits
 
-The current build has 45 CTest suites. New comparisons include 360 armour-repair,
+The current build has 46 CTest suites. New comparisons include 360 armour-repair,
 160 purchase-recipient, 32 prison/arena return, 432 water-boundary, 512 device
 direction and 314 recruitment/spy cases. Two controlled larger encounters cover
 11 original waves and 171 complete record/position/facing/heat/RNG comparisons.
 These extend the earlier campaign, medical, save and cache evidence.
 
-The fresh ending and 50,575-input spy/replacement routes restore and continue
+The fresh ending and 50,569-input spy/replacement routes restore and continue
 before every input. Nine SDL tails cover the house, cinema, hut, laser shop,
 both thefts and spy replacement, comparing recorded keys, complete continued
 state and final RGB pixels. Collision tests exercise three mechs and five people,
 each footprint at every intermediate step, all moving gaits and saved positions.
 
-**PASS:** all 45 regular and ASan/UBSan/LeakSanitizer suites, the complete
+**Previous batch PASS:** all 45 regular and ASan/UBSan/LeakSanitizer suites, the complete
 historical regression and full sanitizer script, native M4 acceptance and all
 nine native follow-up tails. Both reference trees pass all 1,287
-content/mode/mtime checks. Work is committed locally in successive increments.
+content/mode/mtime checks. The current increment passes all 46 core suites and
+the new native combat scan/save checks; its final combined acceptance is pending
+the remaining four authorized follow-ups. Work is committed locally in successive increments.
 
 **VERIFIED in these bounds:** numeric rules, resource interpretation, original
 BLD branches and saved/native continuations. **APPROXIMATE:** DOS busy-loop
@@ -92,9 +95,9 @@ a nominal 8 MHz 8088 timing model; no exact recording from physical XT hardware
 is claimed. Enemy Jenner/UrbanMech sprite bases follow the original enemy table,
 while owned mechs use the original garage selection rule.
 
-Internal saves are **BTPV/v31**, with a 20,480-byte payload inside the BTS1
+Internal saves are **BTPW/v32**, with a 20,480-byte payload inside the BTS1
 length/CRC envelope. The discovery marker and held spy confrontation are saved.
-Current local caches are BTTA/v16, BTCB/v11 and BTW3; the world seed is the
+Current local caches are BTTA/v17, BTCB/v11 and BTW3; the world seed is the
 original startup value `0x020304`, rather than the former research seed.
 Older saves migrate their represented fields; absent direction/exploration
 history cannot be reconstructed. Build and play need no emulator. Optional
@@ -103,8 +106,8 @@ and source hashes only.
 
 ## Next five proposed tasks
 
-1. Reproduce the original eight-entry on-foot combat menu, active-unit header
-   and remaining infantry/crew inspection layouts.
+1. **Completed:** original eight-entry on-foot combat menu, active-unit header
+   and friend/enemy summary/detail scanning; nine complete source region hashes.
 2. Trace larger DOS fights through their full live caller contexts, including
    spy crews, multiple ejections, manual friendly targeting and aftermath.
 3. Audit all city doorways, roof corners and walking formations; compare the

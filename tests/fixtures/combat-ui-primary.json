@@ -1,0 +1,59 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "cases": [
+    {
+      "case": 0,
+      "label": "mech-command",
+      "left_rgb_sha256": "8844928c18b5d86930dea86330bf6e0fa0d73ea40458869c13eaef35d2a45532"
+    },
+    {
+      "case": 1,
+      "label": "rex-command",
+      "left_rgb_sha256": "284bcafa5db1cb2cfa4e934c30dbc3afc644364e38836a4b0e1964cc793cde23"
+    },
+    {
+      "case": 2,
+      "label": "possum-command",
+      "left_rgb_sha256": "bd9973a45e6dff6cc044b09b86ecff3360fa4927552b85ff0a89706073df0f27"
+    },
+    {
+      "case": 3,
+      "label": "foot-command",
+      "left_rgb_sha256": "8f1878a85b390f4f8d99d050bfff86773a21be8bf04a14b2d6be20cb44cf2c90"
+    },
+    {
+      "case": 4,
+      "label": "scan-choice",
+      "left_rgb_sha256": "f7d7f3c5b125714e03d58a3abff19e9001ab9b0dd75eff281d92f1a5993c49b1"
+    },
+    {
+      "case": 5,
+      "label": "scan-friend",
+      "left_rgb_sha256": "0d85bd75db94b1a29947eeff14473addb65e94f74fe76deed2e412b897c24594"
+    },
+    {
+      "case": 6,
+      "label": "scan-friend-3",
+      "left_rgb_sha256": "3a111b19f3c84b3d4afd61fa88d46b17b94d54657789d47d88dc46b666eb9e74"
+    },
+    {
+      "case": 7,
+      "label": "scan-foot-warning",
+      "left_rgb_sha256": "4676f8dcedb7af149583799ae197482deb191030ddb430a1b5a782eb8b4189d9"
+    },
+    {
+      "case": 8,
+      "label": "scan-enemy-human",
+      "left_rgb_sha256": "e7202e89141d20fe94d9235f70f61b4b3749c363af224a32e3828ddf6d9178fc"
+    }
+  ],
+  "prerequisites": "Controlled private GAME3 copy: original three parked vehicles active, fourth character on foot, encounter gate enabled; actual DOS menu keys. Enemy-human health/weapon and Northwest bearing retained in the native UI prerequisite.",
+  "routines": [
+    "103B:14C3 commands",
+    "05AB:18E8 headers",
+    "103B:2591 scan scope",
+    "05AB:1467 summary/detail"
+  ],
+  "comparison": "All 104x200 left RGB pixels, including borders and selection. Does not compare battlefield placement or a full DOS fight."
+}

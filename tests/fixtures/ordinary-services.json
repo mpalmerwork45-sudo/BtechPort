@@ -6,35 +6,35 @@
     },
     {
       "label": "civilian-clothing",
-      "tick": 49137
+      "tick": 49135
     },
     {
       "label": "rex-crest",
-      "tick": 50203
+      "tick": 50201
     },
     {
       "label": "rex-and-commando",
-      "tick": 50280
+      "tick": 50276
     },
     {
       "label": "technician-joined",
-      "tick": 50429
+      "tick": 50425
     },
     {
       "label": "partial-armour-repair",
-      "tick": 50435
+      "tick": 50431
     },
     {
       "label": "partial-ammo-amount",
-      "tick": 50447
+      "tick": 50443
     },
     {
       "label": "ammo-purchase-boundary",
-      "tick": 50449
+      "tick": 50445
     },
     {
       "label": "speed-shop-no-funds",
-      "tick": 50471
+      "tick": 50467
     }
   ],
   "final": {
@@ -47,7 +47,7 @@
       34
     ],
     "gate": 85,
-    "tick": 50476,
+    "tick": 50472,
     "blocked": 0,
     "script_pc": 4979,
     "script_status": 3,
@@ -617,7 +617,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "a077d52954ac8f9c",
+    "state_digest": "babb2fcc06faa3e0",
     "effect_stage": 0,
     "combat": {
       "phase": 0,
@@ -660,6 +660,10 @@
       "automatic": 0,
       "auto_run": 0,
       "paused": 0,
+      "friends": 0,
+      "active": 0,
+      "scan": 0,
+      "menu_commands": [],
       "units": [
         {
           "x": 0,
