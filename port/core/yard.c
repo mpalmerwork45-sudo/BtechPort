@@ -249,6 +249,9 @@ void btp_yard_result(BtpState *s,const BtpResources *r)
         if (!stolen) force_fields(s,1);
         s->campaign.world_x=(uint16_t)(stolen ? 1264u : 1337u);s->campaign.world_y=(uint16_t)(stolen ? y : 1117u);
         s->map_id=(uint8_t)(stolen ? 0 : 2);s->x_half=(uint16_t)(stolen ? 1264u : 57u);s->y_half=(uint16_t)(stolen ? y : 93u);
+        /* Escaping the arena crosses out of Starport; its suspended walkers
+           must not remain attached to the surrounding wilderness map. */
+        if (stolen) btp_npc_enter(s,&r->map);
         s->script.position_x=(uint16_t)((s->campaign.world_x/128u)*256u+(s->campaign.world_x&127u));
         s->script.position_y=(uint16_t)((s->campaign.world_y/128u)*4096u+(s->campaign.world_y&127u));
         s->yard=(BtpYardState){0};s->campaign.encounter=0;s->combat=(BtpCombatState){0};

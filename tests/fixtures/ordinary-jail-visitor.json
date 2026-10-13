@@ -18,43 +18,43 @@
     },
     {
       "label": "hospital-menu",
-      "tick": 50766
+      "tick": 50750
     },
     {
       "label": "hospital-companion-pause",
-      "tick": 50827
+      "tick": 50811
     },
     {
       "label": "hospital-companion-joined",
-      "tick": 50829
+      "tick": 50813
     },
     {
       "label": "medical-kit",
-      "tick": 50836
+      "tick": 50820
     },
     {
       "label": "field-surgery-kit",
-      "tick": 50840
+      "tick": 50824
     },
     {
       "label": "hospital-exit",
-      "tick": 50842
+      "tick": 50826
     },
     {
       "label": "jail-visitor-menu",
-      "tick": 51414
+      "tick": 51398
     },
     {
       "label": "jail-companion-pause",
-      "tick": 51479
+      "tick": 51463
     },
     {
       "label": "jail-companion-joined",
-      "tick": 51510
+      "tick": 51494
     },
     {
       "label": "jail-exit",
-      "tick": 51513
+      "tick": 51497
     }
   ],
   "final": {
@@ -67,7 +67,7 @@
       14
     ],
     "gate": 85,
-    "tick": 51513,
+    "tick": 51497,
     "blocked": 0,
     "script_pc": 4293,
     "script_status": 3,
@@ -119,39 +119,39 @@
     "npc_pairs": [
       [
         112,
-        0
+        1
+      ],
+      [
+        53,
+        1
       ],
       [
         81,
-        0
+        1
       ],
       [
         53,
-        0
+        1
       ],
       [
-        53,
-        0
+        39,
+        1
+      ],
+      [
+        99,
+        1
       ],
       [
         18,
-        0
+        1
       ],
       [
-        70,
-        0
-      ],
-      [
-        70,
-        0
-      ],
-      [
-        70,
-        0
+        81,
+        1
       ]
     ],
-    "npc_enabled": 0,
-    "npc_phase": 0,
+    "npc_enabled": 2,
+    "npc_phase": 1,
     "npc_clock": 0,
     "npc_fault": 0,
     "npc_rng": [
@@ -160,7 +160,7 @@
       66
     ],
     "npc_search": [
-      0,
+      100,
       0
     ],
     "npc_loop_timer": 0,
@@ -637,7 +637,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "fddb05459c854634",
+    "state_digest": "47d8a12946848932",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

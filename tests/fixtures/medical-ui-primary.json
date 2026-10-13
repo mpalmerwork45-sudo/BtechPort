@@ -1,0 +1,54 @@
+{
+  "authority": "Live DOSBox original menu inputs and held medical notices; complete unmasked RGB crops.",
+  "cases": [
+    {
+      "panel": "field",
+      "capture": "work/reference-runs/1791876954390161281/captures/healing.png",
+      "crop": [
+        104,
+        88,
+        216,
+        80
+      ],
+      "rgb_sha256": "76759692842d91d3813790a2eea571e25befa264995fe5e30f488e0cd3c34d8f",
+      "rgb_fnv64": "546612db066913d1"
+    },
+    {
+      "panel": "cooldown",
+      "capture": "work/reference-runs/1791880968091882197/captures/cooldown.png",
+      "crop": [
+        104,
+        72,
+        216,
+        56
+      ],
+      "rgb_sha256": "381f4fbe66f0fc69abf3184a5ff3895ce3200b462306cde7346002aec12ceccd",
+      "rgb_fnv64": "777eadbe7e85cabf"
+    },
+    {
+      "panel": "healthy",
+      "capture": "work/reference-runs/1791883385078868374/captures/healthy.png",
+      "crop": [
+        104,
+        72,
+        216,
+        56
+      ],
+      "rgb_sha256": "53570377094bde15cde3e300363aa62d1076ac112e19b91d89455df3a4bac0dd",
+      "rgb_fnv64": "2d569d958cd1a475"
+    },
+    {
+      "panel": "hospital",
+      "capture": "work/reference-runs/1791883547646305580/captures/after-doctor.png",
+      "crop": [
+        104,
+        88,
+        216,
+        80
+      ],
+      "rgb_sha256": "a6bea9fcb3502785b939b36050e41a6d126b09a1d3bd473e99977cd20765d544",
+      "rgb_fnv64": "9cf65a8f41a01993"
+    }
+  ],
+  "limits": "Hospital capture uses trainee/Medkit treating Rex; healthy with active cooldown is not captured."
+}

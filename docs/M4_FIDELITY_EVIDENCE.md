@@ -154,9 +154,9 @@ result layouts still need full measured original comparisons.
 `1791876954390161281/healing`. It retains the medic, original skill/equipment
 wording, green injured names and key prompt after the numerical healing has
 already happened. Save/load never heals a second time. Hospital native action
-24 now holds its medical page before returning to its BLD. Hospital and
-cooldown/healthy layouts are implemented but remain **INFERRED** until their
-own measured screen comparisons. BTTA/v19 extracts 317 original fragments.
+24 now holds its medical page before returning to its BLD. Subsequent hospital,
+cooldown and healthy comparisons are recorded below. BTTA/v19 extracts 317
+original fragments.
 
 The Mechit-Lube audit now includes 23 screen pairs. The last-mech gyro warning
 starts below the final menu row; see [the detailed audit](MECHIT_LUBE_AUDIT.md).
@@ -259,11 +259,62 @@ increment additionally ran the six arena/prison/theft native tails.
 2. Expand live original doorway/corner/formation observations across towns.
 3. Compare isolated speaker events and refine timing/filtering only with
    suitable evidence. Exact physical 8 MHz XT sound remains UNKNOWN.
-4. Verify Phoenix LAM colours and hospital/cooldown/healthy medical layouts.
+4. Verify Phoenix LAM colours and the healthy-with-cooldown medical branch.
    Primary action 45 loads ENDMECH.CMP and selects the palette at 2858:0000
    (`14D3:15DD..16A6`); its measured VGA appearance is still pending.
-5. Alternate owned-arena/win/loss and prison-loss routes now pass. Continue
-   the subsequent town-NPC request: post-Citadel world transitions currently
-   disable the original eight roaming actors and their room-arrival timers.
+5. Alternate owned-arena/win/loss and prison-loss routes and the subsequent
+   town-NPC/hospital-Talk request now have saved and SDL continuations.
 
 This batch does not mark the original five follow-ups or M4 complete.
+
+## Town actors, hospital conversations and Starport encounters
+
+**VERIFIED:** fifty executions of original `0000:30E2..3205` and `0000:24C2`
+cover all ten populated MTP maps and five initial RNG seeds. All eight route
+pairs, first expired room timers, packed positions and resulting RNG match.
+Town transitions now initialize those walkers; older saves with disabled
+actors initialize them on their first outdoor update. Cinema exit updates the
+live actors as well as their saved room pairs. Arena theft clears Starport
+actors when the escape crosses into the wilderness. NPC collision checks all
+party members and the original horizontal mech footprint. Timing against DOS
+poll loops and broader paths remain **APPROXIMATE**.
+
+**VERIFIED:** forty-five executions of `07DC:17C6..17EC` confirm that Talk
+uses the first waypoint matching BLD flag 13. The previous port incorrectly
+required that waypoint to equal the current building entrance. The original
+HOSPITAL.BLD explicitly writes category 5 before native action 12, so the
+extra restriction rejected every hospital conversation. That original category
+is preserved, including its use of the category-5 occupants. An absent matching
+waypoint produces the original empty-room response. The new 744-input GAME2
+visit waits for a real walker to arrive, walks to the clinic, selects Talk,
+receives an original post-invasion reply and returns to the hospital menu.
+Every input restores successfully; `native_smoke.py --town-only` passes exact
+SDL continuation and pixels. No actor, timer, quest flag or RNG is injected
+in this route. `town-npcs-primary.*`, `town-talk-primary.txt` and
+`ordinary-hospital-talk.*` retain numeric evidence only.
+
+**Owner-requested encounter constraint:** ordinary MAP2 candidates now exclude
+enemy mechs even when an imported save retains active owned mech records.
+The four per-bay eligibility draws are retained. Sixty-four RNG contexts with
+four active vehicles produce infantry-only Starport forces while permitting
+enemy mechs elsewhere. Arena and prison/theft setup are separate; all four
+owned/rental arena outcomes and both arena-theft/prison-loss SDL tails pass.
+This explicit map guard is not claimed as a newly located original instruction.
+
+**VERIFIED:** `medical-ui-primary.json` records complete original RGB crops for
+field treatment, injured cooldown, healthy party and trainee hospital treatment.
+The short notices end at row 127: their native height is corrected to 56 pixels.
+All four crop hashes pass. These are live original screen observations with
+controlled injury/equipment prerequisites, not a complete doctor-grade matrix.
+The healthy-with-active-cooldown branch still needs its own measured capture.
+
+Restoring town RNG draws changes later ordinary replay outcomes. Dependent
+routes have been regenerated through actual inputs. Arena losses leave weapons
+unassigned; wins use computer control. No battle state is forced. The current
+fresh ending takes 65,975 inputs and the spy replacement route 50,423.
+
+**PASS:** all 51 regular and ASan/UBSan/LeakSanitizer core suites, the full
+historical sanitizer corpus, six arena/prison/theft SDL tails and the new town
+arrival/hospital-Talk SDL tail. An older synthetic missing-room test expected
+the removed context error; its expectation now follows the primary empty-room
+branch. The focused historical rerun passed without repeating the core suites.

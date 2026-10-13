@@ -69,6 +69,9 @@ int btp_later_native(BtpState *s,const BtpResources *r)
         unsigned px=(x/128u)*256u+(x&127u),py=(y/128u)*4096u+(y&127u);
         for (unsigned i=0;i<8;++i) {
             s->npc_pairs[i][0]=0x77;s->npc_pairs[i][1]=(uint8_t)i;
+            /* The same native action moves the live outdoor slots. Actors
+               still waiting inside remain hidden until their timer expires. */
+            if (s->npc.enabled==2) s->npc.actor[i]=(BtpNpc){i ? 0 : (uint16_t)px,i ? 0 : (uint16_t)py,0};
             if (s->original.valid) {
                 unsigned at=1u+0xd390u-0xc614u+26u*i;
                 s->original.bytes[at]=(uint8_t)px;s->original.bytes[at+1]=(uint8_t)(px>>8);

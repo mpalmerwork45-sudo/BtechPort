@@ -31,12 +31,14 @@ def arena(name, rental, win):
         # Two ordinary unarmed turns alter the approach and subsequent rolls.
         # All damage, ammunition and victory still come from live combat.
         s.round();s.round()
-    if win or rental:
+    # Leaving weapons unassigned exercises a real defeat for either loan
+    # choice, independent of which opponent wins a computer-vs-computer roll.
+    if win:
         s.command(5)
     for _ in range(256):
         if s.state['aftermath']['phase'] or s.state['mode'] != 'encounter':
             break
-        if not win and not rental and s.state['combat']['phase'] == 4:
+        if not win and s.state['combat']['phase'] == 4:
             s.round()
         else:
             s.advance(['idle'] * 128)

@@ -1,6 +1,7 @@
 #include "core/menu.h"
 #include "core/party.h"
 #include "core/npc.h"
+#include "core/service.h"
 #include "data/save.h"
 #include "frontend/pixels.h"
 #include <stdio.h>
@@ -151,6 +152,21 @@ int main(int argc,char **argv)
         CHECK(btp_save_write("work/m4-audit/healing-held.btp",&medical,r,&e));
         unsigned hp=medical.party.people[1][15];btp_game_tick(&medical,r,BTP_ACCEPT);
         CHECK(!medical.service.phase && medical.mode==BTP_EXPLORE && medical.party.people[1][15]==hp);
+        /* Separate live captures establish the short notice's full border,
+           and the hospital's doctor/Medkit wording on the held treatment. */
+        btp_menu_open(&medical);select_item(&medical,r,4);
+        btp_render(r,&medical,0,pixels);CHECK(crop_hash(pixels,104,72,216,56)==UINT64_C(0x777eadbe7e85cabf));
+        btp_game_tick(&medical,r,BTP_ACCEPT);medical.story_flags[41]=0;
+        for (unsigned i=0;i<8;++i) if (medical.party.people[i][0]!=255)
+            medical.party.people[i][15]=(uint8_t)(10u*medical.party.people[i][1]);
+        btp_menu_open(&medical);select_item(&medical,r,4);
+        btp_render(r,&medical,0,pixels);CHECK(crop_hash(pixels,104,72,216,56)==UINT64_C(0x2d569d958cd1a475));
+        btp_game_tick(&medical,r,BTP_ACCEPT);medical.party.people[1][15]=1;medical.story_flags[41]=0;
+        btp_service_heal(&medical,r,1,1);
+        /* Present this controlled hospital result through the same held
+           medical panel; ordinary paid clinic/save flow has its own route. */
+        medical.mode=BTP_ACTIONS;medical.campaign.ui=BTP_MENU_MESSAGE;medical.menu.notice=3;
+        btp_render(r,&medical,0,pixels);CHECK(crop_hash(pixels,104,88,216,80)==UINT64_C(0x9cf65a8f41a01993));
     }
     /* Original eight physical slots become a compact, stable person list. */
     s.party.people[1][0]=255;btp_menu_close(&s);btp_menu_open(&s);select_item(&s,r,3);select_item(&s,r,1);

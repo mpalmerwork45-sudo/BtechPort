@@ -2,13 +2,13 @@
 
 ## Current M4 presentation checks
 
-The active build has 50 CTest suites. Internal saves are BTPY/v34, with a
+The active build has 51 CTest suites. Internal saves are BTPY/v34, with a
 20,480-byte payload; old versions retain explicit migrations. Current caches
 are BTTA/v19, BTCB/v11 and BTW3. The world seed is the original `0x020304`.
 The older sections below describe earlier increments.
-The current increment passes all 50 regular and ASan/UBSan/LeakSanitizer core
-suites and six arena/prison/theft SDL tails. The preceding 48-suite increment
-also passed the full sanitizer script's historical checks, every native M4
+The current increment passes all 51 regular and ASan/UBSan/LeakSanitizer core
+suites, historical sanitizer checks, six arena/prison/theft SDL tails and the
+ordinary hospital conversation. The preceding 48-suite increment also passed every native M4
 acceptance section and all nine follow-up tails. Campaign/story/cache sections
 passed in focused reruns after an outdated ammo-editor checkpoint label was
 corrected; see the current evidence for that test-harness correction.
@@ -47,6 +47,16 @@ Primary numeric generators: `make_mech_view_vectors.py`,
 private emulated RAM and commit only numeric projections/source identities.
 `make_world_mark_vectors.py` adds 126 original world-debris ring writes and
 `make_arena_finish_vectors.py` adds 28 arena completion cases.
+`make_town_npc_vectors.py` adds 50 original town initialization/expiry and
+45 Talk-waypoint cases. `make_town_talk_replay.py` records a 744-input ordinary
+arrival/hospital conversation; `native_smoke.py --town-only` runs its SDL tail.
+The town suite also compares 64 Starport/outside encounter contexts and restores
+roaming, menu suspension, the hospital selector, reply and returned BLD menu.
+`medical-ui-primary.json` records four complete original treatment/notice crops.
+`test-sanitize.sh --historical-only` rebuilds and reruns the older oracle/replay
+corpus without repeating the already-passing CTest suites. This batch used it
+after updating a legacy assertion which expected an absent Talk category to
+fault; original execution establishes the empty-room response instead.
 `make_arena_outcome_replays.py` records owned/rented wins/losses and prison
 loss. `native_smoke.py --arena-only` runs all five tails plus arena theft;
 the headless arena suite restores before every input and tests old stuck-menu
@@ -63,7 +73,7 @@ The last adds 314 recruitment, inspection and post-wave spy cases.
 order when gameplay/presentation timing changes. Routine native checks replay
 short saved tails, so adding a later mission does not require repeatedly playing
 every earlier mission in real time.
-`make_fresh_campaign_replay.py` records 65,991 fresh-cadet inputs through the
+`make_fresh_campaign_replay.py` records 65,975 fresh-cadet inputs through the
 cache ending; `make_spy_replay.py` records 50,423 through inspection, spy removal
 and replacement recruitment. C integration restores and continues before
 every input. Only the ending route uses the authorized credit shortcut; neither

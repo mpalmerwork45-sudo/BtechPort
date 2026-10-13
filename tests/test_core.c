@@ -299,12 +299,13 @@ static void talk_loop(BtpResources *r)
     CHECK(s.mode == BTP_SCRIPT_FAULT && s.script.error == BTP_SCRIPT_NATIVE_DATA &&
           s.talk_result == 91 && !s.story_flags[13]);
     restored_tick(&s,r,BTP_CANCEL); r->dialogue.length = cache_length;
-    /* Post-invasion Talk is now supported. A genuinely missing room
-       mapping still fails visibly; mutate only this test-owned map. */
+    /* 07DC:17C6..17EC returns room 8 when no category matches. The original
+       then shows its normal empty-room response, including after invasion. */
     uint8_t room=r->map.room_map[1];r->map.room_map[1]=26;
     s.story_flags[4] = 1; restored_tick(&s,r,BTP_ACCEPT);
-    CHECK(s.mode == BTP_SCRIPT_FAULT && s.script.error == BTP_SCRIPT_NATIVE_CONTEXT &&
-          s.story_flags[4] == 1 && !s.story_flags[13] && s.talk_result == 91);
+    CHECK(s.mode == BTP_BUILDING && s.talk.phase == BTP_TALK_EMPTY && s.talk.room == 8 &&
+          s.story_flags[4] == 1 && s.story_flags[13] == 1 && s.talk_result == 91);
+    restored_tick(&s,r,BTP_ACCEPT);CHECK(s.script.status==BTP_SCRIPT_MENU && !s.talk.phase);
     r->map.room_map[1]=room;
     /* A fault after the native reply also restores the pre-choice result. */
     btp_start_conversation_checkpoint(&s); enter_talk(&s,r); btp_game_tick(&s,r,BTP_ACCEPT);

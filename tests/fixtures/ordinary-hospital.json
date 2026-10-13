@@ -18,27 +18,27 @@
     },
     {
       "label": "hospital-menu",
-      "tick": 50766
+      "tick": 50750
     },
     {
       "label": "hospital-companion-pause",
-      "tick": 50827
+      "tick": 50811
     },
     {
       "label": "hospital-companion-joined",
-      "tick": 50829
+      "tick": 50813
     },
     {
       "label": "medical-kit",
-      "tick": 50836
+      "tick": 50820
     },
     {
       "label": "field-surgery-kit",
-      "tick": 50840
+      "tick": 50824
     },
     {
       "label": "hospital-exit",
-      "tick": 50842
+      "tick": 50826
     }
   ],
   "final": {
@@ -51,7 +51,7 @@
       17
     ],
     "gate": 85,
-    "tick": 50842,
+    "tick": 50826,
     "blocked": 0,
     "script_pc": 4577,
     "script_status": 3,
@@ -122,7 +122,7 @@
     "conversation_checkpoint": 0,
     "npc_pairs": [
       [
-        112,
+        81,
         0
       ],
       [
@@ -130,31 +130,31 @@
         0
       ],
       [
-        53,
+        81,
         0
       ],
       [
-        53,
+        4,
         0
       ],
       [
-        18,
+        81,
         0
       ],
       [
-        70,
+        81,
         0
       ],
       [
-        70,
+        64,
         0
       ],
       [
-        70,
+        112,
         0
       ]
     ],
-    "npc_enabled": 0,
+    "npc_enabled": 2,
     "npc_phase": 0,
     "npc_clock": 0,
     "npc_fault": 0,
@@ -164,51 +164,51 @@
       93
     ],
     "npc_search": [
-      0,
+      92,
       0
     ],
     "npc_loop_timer": 0,
     "npc_allowance_pending": 0,
     "npcs": [
       [
-        0,
-        0,
-        0
+        2307,
+        45092,
+        2
       ],
       [
-        0,
-        0,
-        0
+        2307,
+        45093,
+        3
       ],
       [
-        0,
-        0,
-        0
+        2306,
+        45093,
+        4
       ],
       [
-        0,
-        0,
-        0
+        2317,
+        45066,
+        2
       ],
       [
-        0,
-        0,
-        0
+        2305,
+        45092,
+        6
       ],
       [
-        0,
-        0,
-        0
+        2305,
+        45093,
+        5
       ],
       [
-        0,
-        0,
-        0
+        2333,
+        45072,
+        6
       ],
       [
-        0,
-        0,
-        0
+        2364,
+        45084,
+        6
       ]
     ],
     "credits": 9440,
@@ -557,14 +557,14 @@
     },
     "player_sprite": 173,
     "npc_sprites": [
+      274,
+      274,
       270,
-      270,
-      270,
-      270,
-      270,
-      270,
-      270,
-      270
+      274,
+      282,
+      282,
+      282,
+      282
     ],
     "quiz": {
       "phase": 0,
@@ -641,7 +641,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "cedb87e62255fcd9",
+    "state_digest": "39cd764859dc6a6d",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

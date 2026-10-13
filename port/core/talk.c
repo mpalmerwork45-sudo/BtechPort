@@ -63,9 +63,10 @@ void btp_talk_begin(BtpState *s, const BtpResources *r)
         .selected=selected,.room=(uint8_t)room,.count=(uint8_t)count,.mask=(uint8_t)mask};
     if (count && selected > count) s->talk.selected = 0;
     if (!r->dialogue.length) { native_fault(s,BTP_SCRIPT_NATIVE_DATA); return; }
-    if (room >= 8 || room != s->entry_slot) {
-        native_fault(s,BTP_SCRIPT_NATIVE_CONTEXT); return;
-    }
+    /* 07DC:17B9 finds the first waypoint matching BLD flag 13. It does
+       not require that waypoint to be the current entrance: HOSPITAL.BLD
+       explicitly passes 5, and towns can contain repeated building types.
+       No matching waypoint produces the ordinary empty-room response. */
     uint8_t body[BTP_BLD_MAX+1]; size_t length;
     if (!btp_game_text(s,r,body,sizeof body,&length)) native_fault(s,BTP_SCRIPT_NATIVE_DATA);
 }
@@ -116,8 +117,9 @@ int btp_talk_valid(const BtpState *s, const BtpMap *map)
         !(s->script.status == BTP_SCRIPT_NATIVE && s->script.native_action == 12);
     if (s->mode != BTP_BUILDING || s->script.status != BTP_SCRIPT_NATIVE ||
         s->script.last_opcode != 0xf5 || s->script.native_action != 12 ||
-        t->room >= 8 || t->room != s->entry_slot ||
-        map->room_map[t->room] != s->story_flags[13] || !s->checkpoint_valid) return 0;
+        t->room > 8 || !s->checkpoint_valid) return 0;
+    unsigned room=0;while (room<8 && map->room_map[room]!=s->story_flags[13]) ++room;
+    if (t->room!=room) return 0;
     unsigned mask = present(s,t->room);
     if (mask != t->mask || count_bits(mask) != t->count) return 0;
     if (t->phase == BTP_TALK_EMPTY) return !mask && !t->actor;

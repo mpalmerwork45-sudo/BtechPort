@@ -66,53 +66,53 @@
     "conversation_checkpoint": 0,
     "npc_pairs": [
       [
-        112,
-        0
-      ],
-      [
         81,
-        0
+        1
+      ],
+      [
+        70,
+        1
       ],
       [
         53,
-        0
+        1
       ],
       [
         53,
-        0
+        1
       ],
       [
         18,
-        0
+        1
+      ],
+      [
+        81,
+        1
+      ],
+      [
+        4,
+        1
       ],
       [
         70,
-        0
-      ],
-      [
-        70,
-        0
-      ],
-      [
-        70,
-        0
+        1
       ]
     ],
-    "npc_enabled": 0,
-    "npc_phase": 0,
+    "npc_enabled": 2,
+    "npc_phase": 1,
     "npc_clock": 0,
     "npc_fault": 0,
     "npc_rng": [
-      54,
-      67,
-      160
+      134,
+      160,
+      216
     ],
     "npc_search": [
-      0,
+      100,
       0
     ],
     "npc_loop_timer": 0,
-    "npc_allowance_pending": 0,
+    "npc_allowance_pending": 1,
     "npcs": [
       [
         0,
@@ -585,7 +585,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "94e86de4ee0fcb95",
+    "state_digest": "bcf06b69219b72cf",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

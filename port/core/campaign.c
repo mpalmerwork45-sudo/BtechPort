@@ -86,7 +86,11 @@ unsigned btp_campaign_candidates(BtpState *s,const BtpResources *r,BtpCombatUnit
         u->record[13]=(uint8_t)(btp_rng_next(s->npc.rng)&3u);
         u->record[14]=(uint8_t)(btp_combat_dice(s->npc.rng)+btp_combat_dice(s->npc.rng));
     }
-    for (unsigned i=0;i<4;++i) if ((btp_rng_next(s->npc.rng)&1u) && btp_party_mech(s,i)[0]!=255 && s->party.mech_types[i]!=255) {
+    for (unsigned i=0;i<4;++i) if ((btp_rng_next(s->npc.rng)&1u) && s->map_id!=2 &&
+        btp_party_mech(s,i)[0]!=255 && s->party.mech_types[i]!=255) {
+        /* Starport's ordinary encounters are on foot. Its separate arena
+           setup supplies mechs explicitly; parked ownership cannot qualify
+           a random town encounter for enemy vehicles. */
         unsigned kind=btp_rng_next(s->npc.rng)%3u;
         memcpy(candidates[count].record,r->combat.encounter_mechs[kind],125);ids[count++]=(uint8_t)(12+i);
     }

@@ -7,7 +7,7 @@ rather than to every branch of the original game.
 The remaining authorized tasks are in [project status](PROJECT_STATUS.md).
 
 1. **Fresh-game campaign — playable route VERIFIED; broader parity UNKNOWN.**
-   A 65,991-input new-cadet route now earns companions, apprenticeships, the
+   A 65,975-input new-cadet route now earns companions, apprenticeships, the
    holodisk and password before reaching the ending, using only the authorized
    credit shortcut. It restores before every input and has selected original
    prerequisite comparisons. It is not a complete DOS recording of all those
@@ -42,7 +42,10 @@ The remaining authorized tasks are in [project status](PROJECT_STATUS.md).
 5. **Timing and NPC arrival — APPROXIMATE.** Native logical ticks replace DOS
    busy loops. Long original waits and recruitment coins can consume a
    different RNG history. Earlier explicit later-quiz prerequisites remain
-   documented. Recorded input-only playability does not establish timer parity.
+   documented. All ten populated towns now restore roaming actors; 50 original
+   initialization/expiry and 45 Talk lookup cases pass. An ordinary arrival and
+   hospital conversation has a complete saved/SDL route. Recorded input-only
+   playability does not establish timer parity.
 6. **Sound — programs VERIFIED, physical response APPROXIMATE.** All eighteen
    speaker programs, attack effect selections, hit/wreck/arena-alarm dispatch
    and sequential continuation are checked. Busy-loop conversion is a nominal
@@ -59,8 +62,9 @@ The remaining authorized tasks are in [project status](PROJECT_STATUS.md).
    pixels are the original 2x2 flashing player marker; its DOS poll cadence is
    approximate. Nine foot/mech menu and scan regions, 23 Mechit-Lube panels,
    five victory/loot panels and one field-treatment panel match their captures.
-   Phoenix LAM colours, hospital/cooldown layouts and remaining battle-result
-   screens still need direct visual comparisons.
+   Field/hospital treatment and injured-cooldown/healthy notices now match four
+   complete crops. Phoenix LAM colours, healthy-with-active-cooldown and
+   remaining battle-result screens still need direct visual comparisons.
 8. **Persistence — tested represented fields.** All six supplied original saves
    roundtrip unchanged; unmodeled original bytes are preserved. Internal
    BTPY/v34 includes active theft/audio/menu states, spy discovery and world

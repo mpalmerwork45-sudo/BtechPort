@@ -1,6 +1,8 @@
 #include "core/npc.h"
 #include "core/economy.h"
 #include "core/animation.h"
+#include <stdlib.h>
+#include <string.h>
 
 /* Independently expressed from 193B0..193EA, including CMC/SBB carry. */
 uint8_t btp_rng_next(uint8_t r[3])
@@ -24,6 +26,21 @@ static int map_valid(const BtpMap *m)
     for (unsigned i = 0; i < 8; ++i)
         if (m->npc_routes[i] > 7 || !local_word(m->entrance_x[i],m->entrance_y[i],m)) return 0;
     return 1;
+}
+void btp_npc_enter(BtpState *s,const BtpMap *m)
+{
+    /* 0000:30E2..3205 gives each town actor a random starting doorway,
+       its MTP route and a one-update stay. Ruins/islands have no walkers. */
+    s->npc=(BtpNpcState){.rng={s->npc.rng[0],s->npc.rng[1],s->npc.rng[2]}};
+    memset(s->npc_walk,0,sizeof s->npc_walk);
+    if (!s->map_id || s->map_id>10 || !map_valid(m)) return;
+    s->npc.enabled=2;s->npc.search=100;
+    s->npc.allowance_pending=(uint8_t)btp_economy_below_cap(s);
+    for (unsigned i=0;i<8;++i) {
+        unsigned origin=btp_rng_next(s->npc.rng)&7u;
+        s->npc_pairs[i][0]=(uint8_t)((origin<<4)|m->npc_routes[origin]);
+        s->npc_pairs[i][1]=1;
+    }
 }
 void btp_npc_init(BtpState *s, const BtpMap *m)
 {
@@ -93,10 +110,17 @@ static int passable(const BtpState *s, const BtpMap *m, unsigned slot, int x, in
     if (at < 0 || at >= 576) return 0;
     int tx = (px & 112)/2-8 + at%24, ty = (py & 112)/2-8 + at/24;
     if (btp_map_tile(m,tx,ty) >= s->gate) return 0;
-    /* Original F9FE..FA88 compares human/NPC positions exactly. Its wider
-       FB00..FB59 footprints belong to other unit slots, absent on this MAP1
-       baseline. A cadet does not block the two adjacent half coordinates. */
-    if (y == py && x == px) return 0;
+    /* Original F9FE..FA88 compares people exactly; FAAC..FB59 checks a
+       mech's centre and neighbouring horizontal half-coordinates. */
+    if (!s->party.enabled) { if (y==py && x==px) return 0; }
+    else {
+        unsigned wx=(m->entrance_x[0]>>8)*128u+(unsigned)x;
+        unsigned wy=(m->entrance_y[0]>>12)*128u+(unsigned)y;
+        for (unsigned i=0;i<8;++i) if (s->party.people[i][0]!=255 &&
+            s->party.people[i][12]>=8 && s->party.x[i]==wx && s->party.y[i]==wy) return 0;
+        for (unsigned i=0;i<4;++i) if ((i ? s->party.mechs[i-1][0] : s->campaign.mech[0])!=255 && s->party.mech_y[i]==wy &&
+            abs((int)s->party.mech_x[i]-(int)wx)<=1) return 0;
+    }
     for (unsigned i = 0; i < 8; ++i) if (i != slot && s->npc.actor[i].x &&
         (s->npc.actor[i].x & 127) == x && (s->npc.actor[i].y & 127) == y) return 0;
     return 1;
@@ -131,19 +155,12 @@ static void walk(BtpState *s, const BtpMap *m, unsigned i)
         return;
     }
 }
-void btp_npc_frame(BtpState *s, const BtpMap *m)
+void btp_npc_advance(BtpState *s,const BtpMap *m)
 {
-    btp_npc_init(s,m);
     if (!s->npc.enabled || s->npc.fault) return;
     if (!map_valid(m) || !btp_npc_valid(s,m)) {
         s->npc.fault = BTP_NPC_BAD_CONTEXT; return;
     }
-    (void)btp_rng_next(s->npc.rng); /* Main-loop encounter check also draws on MAP1. */
-    /* Primary image 2C7..2EE: saturating outdoor countdowns. Schools use
-       byte 21; Katrina uses 22. Indoors this frame routine is suspended. */
-    for (unsigned i = 20; i <= 22; ++i) if (s->story_flags[i]) --s->story_flags[i];
-    if (s->npc.loop_timer-- == 0) btp_economy_wrap(s);
-    s->npc.allowance_pending = (uint8_t)btp_economy_below_cap(s);
     if (++s->npc.phase < 3) return;
     s->npc.phase = 0;
     for (unsigned i = 0; i < 8; ++i) {
@@ -161,6 +178,16 @@ void btp_npc_frame(BtpState *s, const BtpMap *m)
             s->npc_walk[i] = btp_walk_next(s->npc_walk[i],before,s->npc.actor[i].direction);
         }
     }
+}
+void btp_npc_frame(BtpState *s,const BtpMap *m)
+{
+    btp_npc_init(s,m);
+    if (!s->npc.enabled || s->npc.fault) return;
+    (void)btp_rng_next(s->npc.rng); /* Main-loop encounter check also draws on MAP1. */
+    for (unsigned i=20;i<=22;++i) if (s->story_flags[i]) --s->story_flags[i];
+    if (s->npc.loop_timer--==0) btp_economy_wrap(s);
+    s->npc.allowance_pending=(uint8_t)btp_economy_below_cap(s);
+    btp_npc_advance(s,m);
 }
 void btp_npc_tick(BtpState *s, const BtpMap *m)
 {

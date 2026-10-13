@@ -723,7 +723,8 @@ static void medical_panel(const BtpResources *r,const BtpState *s,uint32_t *f)
     const BtpServiceState *v=&s->service;uint8_t message[1024];size_t n=0;
     if (v->phase!=12 || v->outcome) {
         unsigned id=v->phase!=12 ? s->story_flags[41] ? 280u : 279u : 278u+v->outcome;
-        rectangle(f,104,72,216,64,0);border_panel(r,f,104,72,216,64,0);
+        /* The original short healthy/cooldown notice ends at row 127. */
+        rectangle(f,104,72,216,56,0);border_panel(r,f,104,72,216,56,0);
         service_literal(r,message,&n,id);(void)service_wrap(r,f,80,message,n);return;
     }
     rectangle(f,104,88,216,80,0);border_panel(r,f,104,88,216,80,0);
@@ -1317,7 +1318,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         unsigned x = n->x & 127u, y = n->y & 127u;
         int nx = 208+((int)x-s->x_half)*8, ny = 96+((int)y-s->y_half)*8;
         (void)btp_draw_sprite(&r->sprites,270u+s->npc_walk[i],nx,ny,
-            hidden_rows(&r->map,x,y),104,f);
+            hidden_rows(map,x,y),104,f);
     }
     char place[17]; memcpy(place,map->places[s->entry_slot&15u],16); place[16] = 0;
     char line[64];

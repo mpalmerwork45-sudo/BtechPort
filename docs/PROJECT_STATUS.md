@@ -2,7 +2,7 @@
 
 The independent C11/SDL2 port has playable implementations of the authorized
 M4a–M4e increments and the subsequent building, theft, encounter, recruitment and
-presentation requests. A recorded 65,991-input route now starts with a new cadet
+presentation requests. A recorded 65,975-input route now starts with a new cadet
 and reaches the cache ending through the actual training, companion, disk and
 password prerequisites. It uses the authorized money shortcut. M4 as a complete
 reproduction of every original campaign branch remains unfinished.
@@ -68,7 +68,7 @@ Successful pre-combat evasion produces no loot or cash.
 
 ## Verification and limits
 
-The current build has 50 CTest suites. New comparisons include 360 armour-repair,
+The current build has 51 CTest suites. New comparisons include 360 armour-repair,
 160 purchase-recipient, 32 prison/arena return, 432 water-boundary, 512 device
 direction and 314 recruitment/spy cases. Two controlled larger encounters cover
 11 original waves and 171 complete record/position/facing/heat/RNG comparisons.
@@ -82,9 +82,10 @@ both thefts and spy replacement, comparing recorded keys, complete continued
 state and final RGB pixels. Collision tests exercise three mechs and five people,
 each footprint at every intermediate step, all moving gaits and saved positions.
 
-**Current batch PASS:** all 50 regular and ASan/UBSan/LeakSanitizer core suites
-and six new native arena/prison/theft tails. The preceding 48-suite increment
-also passed the full sanitizer script including historical checks, every native M4
+**Current batch PASS:** all 51 regular and ASan/UBSan/LeakSanitizer core suites,
+the historical sanitizer checks, six native arena/prison/theft tails and the
+ordinary hospital-Talk SDL continuation. The preceding 48-suite increment
+also passed every native M4
 acceptance section and all nine native follow-up tails. Actual SDL checks pass
 for Num-Lock-off keypad menus, Num-Lock-on amount entry, and one-key exits from
 the final WINSCENE wait and older ending saves. Native checks include hospital
@@ -128,11 +129,14 @@ unfinished portions, including subsequent owner observations.
    timing/filtering calibration. An exact physical 8 MHz XT sound match is
    still UNKNOWN; the existing instruction-clock model is APPROXIMATE.
 4. Check the Phoenix Hawk LAM palette and remaining healing layouts against
-   original presentation. Field treatment is pixel-matched; hospital and
-   cooldown/healthy layouts still need measured screen comparisons.
+   original presentation. Field/hospital treatment and injured-cooldown/healthy
+   notices now match complete original crops. Healthy with active cooldown
+   still needs a measured comparison.
 5. Alternate owned-arena/win/loss and prison-loss journeys now pass, including
    arena completion, old stuck-menu recovery, reward and ownership checks.
-   Restore the subsequently requested town/Starport NPCs and room arrivals.
+   Town/Starport NPCs and room arrivals are restored, with 95 executed original
+   cases and a normal hospital-Talk route. Regular Starport encounters are
+   infantry-only; arena setup remains separate.
    Existing prison theft, rental escape, invasion loss and fresh ending routes pass.
    Active v29 invasion positions, current/per-actor goals and waypoints now
    have migration and continued-input checks; stale cache formations recover

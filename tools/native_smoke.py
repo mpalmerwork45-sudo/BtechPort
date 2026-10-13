@@ -1104,6 +1104,7 @@ def main():
     parser.add_argument('--story-only',action='store_true')
     parser.add_argument('--followups-only',action='store_true')
     parser.add_argument('--arena-only',action='store_true')
+    parser.add_argument('--town-only',action='store_true')
     parser.add_argument('--m4-acceptance',action='store_true')
     parser.add_argument('--combat-ui-only',action='store_true')
     parser.add_argument('--mechit-only',action='store_true')
@@ -1143,6 +1144,8 @@ def main():
                     for ownership in ('owned','rental') for result in ('loss','win')]+[
                     ('arena-theft','arena-rented-locust','GAME3'),('prison-loss','prison-guards',None)])
                 return
+            if args.town_only:
+                followups(env,work,[('hospital-talk','town-arrival-wait','GAME2')]);return
             if args.controls_only:
                 controls(env,work);diagonals(env,work);return
             if args.combat_ui_only:

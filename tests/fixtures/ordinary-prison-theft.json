@@ -2,43 +2,43 @@
   "checkpoints": [
     {
       "label": "jail-theft-choice",
-      "tick": 51510
+      "tick": 51494
     },
     {
       "label": "impound-yard-start",
-      "tick": 51564
+      "tick": 51548
     },
     {
       "label": "boarding-mech-1",
-      "tick": 51577
+      "tick": 51561
     },
     {
       "label": "mech-1-activation-result",
-      "tick": 51627
+      "tick": 51611
     },
     {
       "label": "boarding-mech-2",
-      "tick": 51632
+      "tick": 51616
     },
     {
       "label": "mech-2-activation-result",
-      "tick": 51682
+      "tick": 51666
     },
     {
       "label": "boarding-mech-3",
-      "tick": 51687
+      "tick": 51671
     },
     {
       "label": "mech-3-activation-result",
-      "tick": 51781
+      "tick": 51765
     },
     {
       "label": "prison-crew-allocation",
-      "tick": 51783
+      "tick": 51767
     },
     {
       "label": "stinger-stolen",
-      "tick": 51804
+      "tick": 51788
     }
   ],
   "final": {
@@ -51,7 +51,7 @@
       10
     ],
     "gate": 85,
-    "tick": 51804,
+    "tick": 51788,
     "blocked": 0,
     "script_pc": 2012,
     "script_status": 3,
@@ -103,39 +103,39 @@
     "npc_pairs": [
       [
         112,
-        0
+        1
+      ],
+      [
+        53,
+        1
       ],
       [
         81,
-        0
+        1
       ],
       [
         53,
-        0
+        1
       ],
       [
-        53,
-        0
+        39,
+        1
+      ],
+      [
+        99,
+        1
       ],
       [
         18,
-        0
+        1
       ],
       [
-        70,
-        0
-      ],
-      [
-        70,
-        0
-      ],
-      [
-        70,
-        0
+        81,
+        1
       ]
     ],
-    "npc_enabled": 0,
-    "npc_phase": 0,
+    "npc_enabled": 2,
+    "npc_phase": 1,
     "npc_clock": 0,
     "npc_fault": 0,
     "npc_rng": [
@@ -144,7 +144,7 @@
       133
     ],
     "npc_search": [
-      0,
+      100,
       0
     ],
     "npc_loop_timer": 0,
@@ -621,7 +621,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "82a49127b9d56e07",
+    "state_digest": "f44701e01cc9faad",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

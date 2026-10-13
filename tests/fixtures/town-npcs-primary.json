@@ -1,0 +1,20 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "cases": 50,
+  "routines": [
+    "0000:30E2..3205",
+    "0000:24C2"
+  ],
+  "prerequisites": "All ten populated MTPs; five RNG seeds; original waypoint and route tables loaded, recruitment guard clear.",
+  "comparison": "Eight route pairs, expiry timers, packed visible coordinates and RNG after initialization and first expiry.",
+  "limits": "Original direction/sprite pointer initialization and DOS frame cadence are outside this numeric span.",
+  "no_instruction_patches": true,
+  "talk": {
+    "cases": 45,
+    "routine": "07DC:17C6..17EC",
+    "prerequisites": "Nine post-Citadel MTP room tables; conversation categories 3, 4, 5, 7, 9 supplied through original flag 13.",
+    "comparison": "First matching waypoint, or 8 for no match; independent of the entrance used to enter the building.",
+    "hospital": "HOSPITAL.BLD at 3582 writes category 5 before invoking native action 12; preserve this original category."
+  }
+}

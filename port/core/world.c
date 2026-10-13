@@ -80,7 +80,7 @@ unsigned btp_world_device_direction(unsigned x,unsigned y)
 
 static const BtpMap *local(const BtpResources *r,unsigned id)
 {
-    return id==1 ? &r->map : id==11 ? &r->destroyed : &r->local[id-1];
+    return id<=1 ? &r->map : id==11 ? &r->destroyed : &r->local[id-1];
 }
 int btp_world_populated(const BtpResources *r,const BtpState *s)
 {
@@ -214,9 +214,8 @@ void btp_world_step(BtpState *s,const BtpResources *r,BtpAction a)
     unsigned id=(unsigned)btp_world_location(r,s,gx/2,gy/2);
     if (id!=s->map_id) {
         s->script=(BtpScriptState){0};s->entry_slot=0;s->campaign.building=0;
-        s->npc=(BtpNpcState){.rng={s->npc.rng[0],s->npc.rng[1],s->npc.rng[2]}};
-        memset(s->npc_walk,0,8);
         s->map_id=(uint8_t)id;
+        btp_npc_enter(s,local(r,id));
     }
     if (id) {
         const BtpMap *m=local(r,id==11 ? 1 : id);
@@ -232,12 +231,16 @@ void btp_world_clock(BtpState *s,const BtpResources *r)
        the separate area-map mode. Encounter-mask decisions are explicit. */
     if (++s->campaign.world_clock==4) {
         s->campaign.world_clock=0;
+        /* Restore roaming actors in older town saves on their first outdoor
+           update. Use this clock's existing RNG/economy work exactly once. */
+        if (!s->npc.enabled && s->map_id && s->map_id<=10) btp_npc_enter(s,local(r,s->map_id));
         unsigned roll=btp_rng_next(s->npc.rng);
         for (unsigned i=20;i<=22;++i) if (s->story_flags[i]) --s->story_flags[i];
         if (s->story_flags[29]) --s->story_flags[29];
         if (s->story_flags[41]) --s->story_flags[41];
         if (s->story_flags[23]--==0) btp_economy_market(s);
         if (!(roll&s->story_flags[36]) && s->story_flags[4] && !s->story_flags[58]) (void)btp_campaign_random(s,r);
+        if (s->mode==BTP_EXPLORE) btp_npc_advance(s,local(r,s->map_id));
     }
 }
 void btp_world_move(BtpState *s,const BtpResources *r,BtpAction a)

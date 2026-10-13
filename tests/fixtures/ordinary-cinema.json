@@ -60,92 +60,92 @@
         "conversation_checkpoint": 0,
         "npc_pairs": [
           [
-            81,
+            54,
             0
           ],
           [
-            64,
+            70,
             0
           ],
           [
-            53,
+            4,
             0
           ],
           [
-            39,
+            21,
             0
           ],
           [
-            112,
+            54,
             0
           ],
           [
-            112,
+            96,
             0
           ],
           [
-            99,
+            21,
             0
           ],
           [
-            64,
+            4,
             0
           ]
         ],
-        "npc_enabled": 0,
-        "npc_phase": 0,
+        "npc_enabled": 2,
+        "npc_phase": 1,
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          160,
-          81,
-          168
+          189,
+          168,
+          11
         ],
         "npc_search": [
-          0,
+          100,
           0
         ],
         "npc_loop_timer": 0,
         "npc_allowance_pending": 0,
         "npcs": [
           [
-            0,
-            0,
+            1311,
+            53288,
             0
           ],
           [
-            0,
-            0,
+            1291,
+            53266,
             0
           ],
           [
-            0,
-            0,
+            1286,
+            53300,
             0
           ],
           [
-            0,
-            0,
+            1307,
+            53268,
             0
           ],
           [
-            0,
-            0,
+            1311,
+            53288,
             0
           ],
           [
-            0,
-            0,
+            1319,
+            53264,
             0
           ],
           [
-            0,
-            0,
+            1307,
+            53268,
             0
           ],
           [
-            0,
-            0,
+            1286,
+            53300,
             0
           ]
         ],
@@ -579,7 +579,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "920d7422b353c256",
+        "state_digest": "41bd88f1d6504a5e",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1014,25 +1014,25 @@
             7
           ]
         ],
-        "npc_enabled": 0,
-        "npc_phase": 0,
+        "npc_enabled": 2,
+        "npc_phase": 1,
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          94,
-          80,
-          22
+          188,
+          22,
+          244
         ],
         "npc_search": [
-          0,
+          100,
           0
         ],
         "npc_loop_timer": 0,
         "npc_allowance_pending": 0,
         "npcs": [
           [
-            0,
-            0,
+            1330,
+            53260,
             0
           ],
           [
@@ -1501,7 +1501,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "f143307c9352a0fa",
+        "state_digest": "cedb3130745df76c",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1934,25 +1934,25 @@
         7
       ]
     ],
-    "npc_enabled": 0,
-    "npc_phase": 0,
+    "npc_enabled": 2,
+    "npc_phase": 1,
     "npc_clock": 0,
     "npc_fault": 0,
     "npc_rng": [
-      94,
-      80,
-      22
+      188,
+      22,
+      244
     ],
     "npc_search": [
-      0,
+      100,
       0
     ],
     "npc_loop_timer": 0,
     "npc_allowance_pending": 0,
     "npcs": [
       [
-        0,
-        0,
+        1330,
+        53260,
         0
       ],
       [
@@ -2421,7 +2421,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "f143307c9352a0fa",
+    "state_digest": "cedb3130745df76c",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

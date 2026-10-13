@@ -7,7 +7,11 @@ env -u CFLAGS -u CPPFLAGS -u CXXFLAGS -u LDFLAGS PATH="/usr/bin:/bin:$PATH" \
     -DCMAKE_C_FLAGS= -DCMAKE_EXE_LINKER_FLAGS= -DCMAKE_BUILD_TYPE=Debug \
     -DBTP_SANITIZE=ON -DBTP_FRONTEND=OFF
 env PATH="/usr/bin:/bin:$PATH" cmake --build build/sanitize -j 4
-ctest --test-dir build/sanitize --output-on-failure
+# A focused historical rerun need not repeat the already passing core suites.
+# Configuration/build still run, so this option never uses a stale binary.
+if [ "${1:-}" != "--historical-only" ]; then
+    ctest --test-dir build/sanitize --output-on-failure
+fi
 if [ "${1:-}" = "--core-only" ]; then
     exit 0
 fi

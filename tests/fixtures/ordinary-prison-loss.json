@@ -2,15 +2,15 @@
   "checkpoints": [
     {
       "label": "prison-yard",
-      "tick": 51564
+      "tick": 51548
     },
     {
       "label": "prison-guards",
-      "tick": 52452
+      "tick": 52436
     },
     {
       "label": "prison-loss",
-      "tick": 52712
+      "tick": 52696
     }
   ],
   "final": {
@@ -23,7 +23,7 @@
       10
     ],
     "gate": 85,
-    "tick": 52712,
+    "tick": 52696,
     "blocked": 0,
     "script_pc": 4293,
     "script_status": 3,
@@ -79,39 +79,39 @@
     "npc_pairs": [
       [
         112,
-        0
+        1
+      ],
+      [
+        53,
+        1
       ],
       [
         81,
-        0
+        1
       ],
       [
         53,
-        0
+        1
       ],
       [
-        53,
-        0
+        39,
+        1
+      ],
+      [
+        99,
+        1
       ],
       [
         18,
-        0
+        1
       ],
       [
-        70,
-        0
-      ],
-      [
-        70,
-        0
-      ],
-      [
-        70,
-        0
+        81,
+        1
       ]
     ],
-    "npc_enabled": 0,
-    "npc_phase": 0,
+    "npc_enabled": 2,
+    "npc_phase": 1,
     "npc_clock": 0,
     "npc_fault": 0,
     "npc_rng": [
@@ -120,7 +120,7 @@
       196
     ],
     "npc_search": [
-      0,
+      100,
       0
     ],
     "npc_loop_timer": 0,
@@ -597,7 +597,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "e2db0e65fd8f7e36",
+    "state_digest": "7ac7aac080177884",
     "effect_stage": 0,
     "combat": {
       "phase": 0,
