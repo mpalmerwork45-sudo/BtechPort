@@ -181,7 +181,7 @@ static int follow_step(const BtpState *s,const BtpResources *r,int x,int y,int n
 {
     return btp_party_walkable(s,r,nx,ny,mech) &&
         (btp_world_location(r,s,nx/2,ny/2) ||
-         !btp_world_deep_crossing(&r->world,(unsigned)x,(unsigned)y,nx-x,ny-y));
+         !btp_world_deep_crossing(r,s,(unsigned)x,(unsigned)y,nx-x,ny-y));
 }
 static void follow_position(const BtpState *s,const BtpResources *r,uint16_t *px,uint16_t *py,int gx,int gy,int mech,int initialize)
 {

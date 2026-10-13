@@ -52,7 +52,7 @@ int main(int argc,char **argv)
             int nx=x+dx[dir],ny=y+dy[dir];
             if (nx<0 || ny<2 || nx>=2046 || ny>=2048) continue;
             int q=ny*2048+nx;if (parents[q]>=0) continue;
-            unsigned blocked=(!btp_world_location(r,&s,nx/2,ny/2) && btp_world_deep_crossing(&r->world,(unsigned)x,(unsigned)y,dx[dir],dy[dir])) || (s.campaign.mounted ? btp_world_tile(r,&s,nx/2,(ny-2)/2)>=s.gate ||
+            unsigned blocked=(!btp_world_location(r,&s,nx/2,ny/2) && btp_world_deep_crossing(r,&s,(unsigned)x,(unsigned)y,dx[dir],dy[dir])) || (s.campaign.mounted ? btp_world_tile(r,&s,nx/2,(ny-2)/2)>=s.gate ||
                 btp_world_tile(r,&s,nx/2+1,(ny-2)/2)>=s.gate : btp_world_tile(r,&s,(nx+1)/2,ny/2)>=s.gate);
             if (q==target) blocked=0; /* Pending building entry precedes parking. */
             unsigned id=(unsigned)btp_world_location(r,&s,nx/2,ny/2);

@@ -14,6 +14,7 @@ from unicorn.x86_const import (UC_X86_REG_CS, UC_X86_REG_DS, UC_X86_REG_SS,
 
 
 def span(m, segment, start, end, ds, locals=None):
+    segment += m.load
     bp = 0x7f000
     m.write(bp-256, bytes(320))
     for off, value in (locals or {}).items():

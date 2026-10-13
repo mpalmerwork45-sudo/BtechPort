@@ -619,6 +619,51 @@ def combat_ui(env,work):
                 keyboard.x.XCloseDisplay(keyboard.display)
                 if process.poll() is None:process.terminate();process.wait(timeout=5)
 
+def cache_island(env,work):
+    """Walk the visible cave-island edge through actual SDL and save/load."""
+    from reference_session import WindowKeys
+    binary=ROOT/'build/btech-headless';native=ROOT/'build/btech-port'
+    env=dict(env,SDL_AUDIODRIVER='dummy');start=work/'cache-island-start.btp'
+    with tempfile.TemporaryDirectory(prefix='native-island-',dir=work) as directory:
+        tmp=Path(directory);tail=tmp/'keys.actions';record=tmp/'record.actions';expected=tmp/'expected.ppm'
+        frame=work/'native-cache-island.ppm';page=tmp/'page.btp';slot=tmp/'slot.btp'
+        keys=['left','right','up-left','down-right','menu'];tail.write_text('\n'.join(keys)+'\n')
+        actual=subprocess.run([str(native),'--load',str(start),'--smoke-replay','--smoke-fast',
+            '--replay',str(tail),'--record',str(record),'--save',str(page),'--frame',str(frame)],
+            cwd=ROOT,env=env,check=True,capture_output=True,text=True,timeout=20)
+        wanted=subprocess.run([str(binary),'--load',str(start),'--replay',str(record),'--frame',str(expected)],
+            cwd=ROOT,check=True,capture_output=True,text=True)
+        state=json.loads(actual.stdout)
+        if record.read_text().splitlines()!=keys+['idle']*5 or state!=json.loads(wanted.stdout) or frame.read_bytes()!=expected.read_bytes():
+            raise RuntimeError('Native cache-island edge input/state/pixels differ')
+        if state['mode']!='actions' or state['map']!=13 or state['campaign']['world']!=[768,778]:
+            raise RuntimeError('Visible island edge movement was blocked')
+        process=subprocess.Popen([str(native),'--load',str(page),'--save-file',str(slot),'--frame',str(frame)],
+            cwd=ROOT,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+        keyboard=WindowKeys()
+        try:
+            for _ in range(100):
+                found=[w for w,n in keyboard.windows() if n.startswith('BtechPort')]
+                if len(found)==1:window=found[0];break
+                if process.poll() is not None:raise RuntimeError('Island window failed to start')
+                time.sleep(.05)
+            else:raise RuntimeError('Island window did not appear')
+            keyboard.key(window,'F5');time.sleep(.1)
+            before=json.loads(subprocess.check_output([str(binary),'--load',str(slot)],cwd=ROOT,text=True))
+            keyboard.key(window,'Right');keyboard.key(window,'F9');keyboard.key(window,'Ctrl+Shift+Escape')
+            out,err=process.communicate(timeout=10)
+            if process.returncode:raise RuntimeError(err)
+            restored=json.loads(out);delta=restored['tick']-before['tick']
+            if not 0<=delta<=20:raise RuntimeError('Unexpected island restoration interval')
+            tail.write_text('idle\n'*delta)
+            wanted=json.loads(subprocess.check_output([str(binary),'--load',str(slot),'--replay',str(tail),
+                '--frame',str(expected)],cwd=ROOT,text=True))
+            if restored!=wanted or frame.read_bytes()!=expected.read_bytes():raise RuntimeError('Native island F5/F9 continuation differs')
+            print('PASS: native cave-island edge and diagonal movement, real F5/F9; identical input/state/pixels.',flush=True)
+        finally:
+            keyboard.x.XCloseDisplay(keyboard.display)
+            if process.poll() is None:process.terminate();process.wait(timeout=5)
+
 def overhead(env,work):
     """Open the map with real Space/Up/Space and inspect the X11 window pixels."""
     import ctypes as c
@@ -1003,6 +1048,7 @@ def main():
     parser.add_argument('--m4-acceptance',action='store_true')
     parser.add_argument('--combat-ui-only',action='store_true')
     parser.add_argument('--mechit-only',action='store_true')
+    parser.add_argument('--island-only',action='store_true')
     args = parser.parse_args()
     work = ROOT / "work"
     work.mkdir(exist_ok=True)
@@ -1026,6 +1072,7 @@ def main():
                 intro(env,work);menu(env,work);presentation(env,work)
                 combat_ui(env,work)
                 mechit_ui(env,work)
+                cache_island(env,work)
                 original_saves(env,work);aftermath(env,work);field(env,work)
                 saves(env,work);campaign(env,work);story(env,work);cache(env,work);return
             if args.followups_only:
@@ -1034,6 +1081,8 @@ def main():
                 combat_ui(env,work);return
             if args.mechit_only:
                 mechit_ui(env,work);return
+            if args.island_only:
+                cache_island(env,work);return
             if args.intro_only:
                 intro(env,work);return
             if args.overhead_only:

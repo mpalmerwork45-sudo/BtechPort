@@ -67,19 +67,41 @@ int main(int argc,char **argv)
     }
     fclose(f);CHECK(cases==39 && btp_world_generate(&r->world,0x020304));
     f=fopen("tests/fixtures/world-water-primary.txt","r");CHECK(f);cases=0;
-    BtpWorldData water=r->world;
+    BtpWorldData terrain=r->world;BtpState depth;btp_start(&depth);
     while (fgets(line,sizeof line,f)) {
         unsigned x,y,descriptor,rejected;int dx,dy;
         CHECK(sscanf(line,"W %u %u %d %d %u %u",&x,&y,&dx,&dy,&descriptor,&rejected)==6);
-        memset(water.heights,descriptor==15 ? 0 : descriptor==0 ? 32 : 16,sizeof water.heights);
-        CHECK(btp_world_deep_crossing(&water,1024+x,1024+y,dx,dy)==(int)rejected);++cases;
+        memset(r->world.heights,descriptor==15 ? 0 : descriptor==0 ? 32 : 16,sizeof r->world.heights);
+        CHECK(btp_world_deep_crossing(r,&depth,1024+x,1024+y,dx,dy)==(int)rejected);++cases;
     }
-    fclose(f);CHECK(cases==432);
+    fclose(f);CHECK(cases==432);r->world=terrain;
+    f=fopen("tests/fixtures/world-island-water-primary.txt","r");CHECK(f);cases=0;
+    while (fgets(line,sizeof line,f)) {
+        unsigned x,y,rejected;int dx,dy;
+        CHECK(sscanf(line,"C %u %u %d %d %u",&x,&y,&dx,&dy,&rejected)==5);
+        CHECK(btp_world_deep_crossing(r,&depth,x,y,dx,dy)==(int)rejected);++cases;
+    }
+    fclose(f);CHECK(cases==392);
+    /* The leader's feet are visibly on MAP13 land while its cursor leaves
+       the west edge. Underlying generated water must not block this step. */
+    BtpState island;btp_start(&island);island.story_flags[4]=1;island.map_id=13;
+    island.story_flags[36]=127;
+    island.x_half=0;island.y_half=10;island.campaign.world_x=768;island.campaign.world_y=778;
+    CHECK(btp_save_write("work/cache-island-start.btp",&island,r,&e));
+    CHECK(btp_world_tile(r,&island,384,389)<85 && !btp_world_deep_crossing(r,&island,768,778,-1,0));
+    btp_game_tick(&island,r,BTP_LEFT);
+    CHECK(island.blocked==BTP_CLEAR && island.mode==BTP_EXPLORE && island.campaign.world_x==767);
+    CHECK(btp_save_write("work/cache-island-edge.btp",&island,r,&e));BtpState island_copy;
+    CHECK(btp_save_load("work/cache-island-edge.btp",&island_copy,r,&e));
+    btp_game_tick(&island,r,BTP_RIGHT);btp_game_tick(&island_copy,r,BTP_RIGHT);
+    CHECK(island.campaign.world_x==768 && island.map_id==13 && !island.blocked);
+    uint8_t first[BTP_STATE_BYTES],second[BTP_STATE_BYTES];btp_state_encode(&island,first);btp_state_encode(&island_copy,second);
+    CHECK(!memcmp(first,second,sizeof first) && remove("work/cache-island-edge.btp")==0);
     /* A real generated-water edge and its modal survive saving. */
     BtpState swimmer;btp_start(&swimmer);swimmer.story_flags[4]=1;swimmer.map_id=0;
     unsigned wet_x=0,wet_y=0;
     for (unsigned y=32;y<1800 && !wet_x;y+=16) for (unsigned x=32;x<1800;x+=16)
-        if (!btp_world_location(r,&swimmer,(int)x/2,(int)y/2) && btp_world_deep_crossing(&r->world,x,y,-1,0)) { wet_x=x;wet_y=y;break; }
+        if (!btp_world_location(r,&swimmer,(int)x/2,(int)y/2) && btp_world_deep_crossing(r,&swimmer,x,y,-1,0)) { wet_x=x;wet_y=y;break; }
     CHECK(wet_x);swimmer.x_half=swimmer.campaign.world_x=(uint16_t)wet_x;
     swimmer.y_half=swimmer.campaign.world_y=(uint16_t)wet_y;swimmer.story_flags[58]=1;
     btp_game_tick(&swimmer,r,BTP_LEFT);

@@ -86,6 +86,39 @@ run), including the expanded world, event, combat presentation and menu checks.
 Broader live fights, additional doorway/formation observations, isolated audio
 and alternate fresh/legacy routes remain the authorized follow-ups below.
 
+### Cache-island depth correction
+
+**VERIFIED:** the owner observed a deep-water warning on visible land near the
+cache cave. The warning used the raw generated heights even after MAP13's
+island block had replaced them in the displayed terrain. The depth check now
+uses the same town-aware height and neighbour descriptors as `187F:1314`.
+This applies consistently to the leader, followers and ordinary route finder;
+genuine all-water descriptor `0F` still blocks deeper crossings.
+
+`world-island-water-primary.txt` adds 392 original decisions around the real
+MAP13 island at startup seed `0x020304`, in eight directions on interior,
+block and sector boundaries. The original paints the cave block into the
+current/neighbouring sector, recomputes joining masks, builds the viewport
+descriptors and then executes `0000:1C24..1CC1`. Every decision matches.
+The existing 432 water-depth cases remain passing. An actual move from the
+island's west edge onto visibly stored land succeeds, saves and returns to the
+island with an identical restored next-input state. All 47 suites pass,
+including the 66,093-input fresh ending route; no new save fields are needed.
+Native SDL also passes walking/diagonal movement across this island edge and
+real F5/F9 restoration, with identical recorded input, full state and pixels.
+
+### Replacements in other towns
+
+**VERIFIED:** thirty visits through actual other-town hospital and Mechit-Lube
+entrances/BLDs cover the owner's replacement request. After the discovered spy
+is removed, another technician/medic joins in their vacant slot. The original
+lifetime spy marker prevents another spy. An equally skilled surviving party
+member still suppresses another specialist. Every input is restored and
+compared. These visits supply their stated post-betrayal travel prerequisites;
+they do not claim complete original DOS journeys between the towns. The
+existing 314 original recruitment/betrayal cases and ordinary spy-combat route
+remain passing. No recruitment-rule change was needed.
+
 ## Remaining authorized work
 
 The owner additionally requested a thorough Mechit-Lube comparison. That

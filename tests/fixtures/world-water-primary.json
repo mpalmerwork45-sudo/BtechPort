@@ -2,8 +2,10 @@
   "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
   "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
   "cases": 432,
+  "island_cases": 392,
   "routine": "0000:1C24..1CC1; caller supplies signed direction and the nine descriptors from 187F:1314",
   "intercepted_boundary": "At 1CA1 stop before display-only popup calls; no instructions or decisions patched.",
   "warning": "DS:0410",
-  "comparison": "Water rejection for eight directions, boundary/interior positions and six depth descriptors"
+  "comparison": "Water rejection for eight directions, boundary/interior positions and six depth descriptors",
+  "island": "Original MAP13 descriptor painting 0000:3050..30BB and 187F:1886, real generated seed 0x020304, 1314 descriptors and the original depth decision. The displayed land overrides the generated-water underlay."
 }

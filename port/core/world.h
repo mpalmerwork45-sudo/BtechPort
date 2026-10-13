@@ -4,7 +4,7 @@
 /* Original generated sectors with the authentic local MAP1 overlay.
    Current early-campaign barriers still prevent outer travel. */
 unsigned btp_world_tile(const BtpResources *resources,const BtpState *state,int x,int y);
-int btp_world_deep_crossing(const BtpWorldData *world,unsigned x,unsigned y,int dx,int dy);
+int btp_world_deep_crossing(const BtpResources *resources,const BtpState *state,unsigned x,unsigned y,int dx,int dy);
 unsigned btp_world_descriptor(const BtpResources *resources,const BtpState *state,int x,int y);
 int btp_world_location(const BtpResources *resources,const BtpState *state,int x,int y);
 int btp_world_populated(const BtpResources *resources,const BtpState *state);

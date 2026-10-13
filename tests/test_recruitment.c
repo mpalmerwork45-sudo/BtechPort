@@ -124,6 +124,40 @@ int main(int argc,char **argv)
         CHECK(specialist ? s.service.phase!=8 && btp_party_count(&s.party)==3 : s.service.phase==8 && btp_party_count(&s.party)==4);
         if (!specialist) CHECK(s.party.people[3][skill]==3);
     }
+    /* Kill a previously recruited spy, then enter the same service in a
+       different town. The lifetime spy flag excludes a second spy, while a
+       surviving equally skilled specialist still suppresses recruitment. */
+    unsigned other_city_visits=0;
+    for (unsigned hospital=0;hospital<2;++hospital) for (unsigned town=2;town<=10;++town) {
+        if (town==(hospital ? 4u : 2u)) continue;
+        const BtpMap *map=&r->local[town-1];unsigned kind=hospital ? 9u : 5u,entry=0;
+        while (entry<16 && (map->room_map[entry]!=kind || !map->entrance_x[entry] || !map->entrance_y[entry])) ++entry;
+        if (entry==16) continue;
+        for (unsigned survivor=0;survivor<2;++survivor) {
+            BtpState s;setup(&s,4);unsigned skill=hospital ? 10u : 9u;
+            s.party.next_id=4;s.party.people[2][skill]=3;s.party.people[3][skill]=(uint8_t)(survivor ? 3 : 0);
+            s.story_flags[37]=2;s.story_flags[38]=s.story_flags[39]=s.spy_discovered=1;
+            btp_spy_resolve(&s);CHECK(s.party.people[2][0]==255 && !s.story_flags[39] && s.story_flags[38] && btp_party_count(&s.party)==3);
+            s.story_flags[24]=(uint8_t)!hospital;s.story_flags[27]=s.story_flags[32]=1;s.map_id=(uint8_t)town;
+            s.x_half=map->entrance_x[entry]&127u;s.y_half=(uint16_t)((map->entrance_y[entry]&127u)+1u);
+            s.campaign.world_x=(uint16_t)((map->entrance_x[entry]>>8)*128u+s.x_half);
+            s.campaign.world_y=(uint16_t)((map->entrance_y[entry]>>12)*128u+s.y_half);
+            restored(&s,r,BTP_UP);CHECK(s.mode==BTP_ENTRY);restored(&s,r,BTP_ACCEPT);
+            unsigned inputs=0;
+            while (inputs++<2048 && s.script.status!=BTP_SCRIPT_MENU)
+                restored(&s,r,s.cutscene.active || s.audio.sound_count ? BTP_IDLE : BTP_ACCEPT);
+            CHECK(inputs<2048);unsigned item=hospital ? 2u : 0u;
+            while (s.script.selected!=item) restored(&s,r,BTP_DOWN);
+            restored(&s,r,BTP_ACCEPT);inputs=0;
+            while (inputs++<4096 && s.service.phase!=8 && s.script.status!=BTP_SCRIPT_MENU)
+                restored(&s,r,s.cutscene.active || s.audio.sound_count ? BTP_IDLE : BTP_ACCEPT);
+            CHECK(inputs<4096 && !s.story_flags[39] && s.story_flags[38]);
+            if (survivor) CHECK(s.service.phase!=8 && btp_party_count(&s.party)==3 && s.party.people[2][0]==255);
+            else CHECK(s.service.phase==8 && btp_party_count(&s.party)==4 && s.party.people[2][0]==4 && s.party.people[2][skill]==3);
+            ++other_city_visits;
+        }
+    }
+    CHECK(other_city_visits>=12);
     /* Full ordinary-input route: a random technician becomes the spy, the
        Space inspector exposes him, the first wave resolves it, and a new
        technician joins through the reopened Mechit-Lube BLD. Restore before
@@ -138,6 +172,6 @@ int main(int argc,char **argv)
     }
     fclose(f);CHECK(inputs>50000 && joined && inspected && confrontation && replaced);
     CHECK(route.mode==BTP_EXPLORE && !route.story_flags[39] && route.story_flags[38] && btp_party_count(&route.party)==3);
-    free(r);printf("PASS: %u checks; 314 original recruitment/spy cases, replacement BLD visits and ordinary spy combat\n",checks);
+    free(r);printf("PASS: %u checks; 314 original recruitment/spy cases, %u other-city replacement visits and ordinary spy combat\n",checks,other_city_visits);
     return 0;
 }

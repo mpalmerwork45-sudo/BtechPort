@@ -149,21 +149,23 @@ unsigned btp_world_descriptor(const BtpResources *r,const BtpState *s,int x,int 
        TINYLAND base indices are different projections of this descriptor. */
     return level|mask;
 }
-int btp_world_deep_crossing(const BtpWorldData *w,unsigned x,unsigned y,int dx,int dy)
+int btp_world_deep_crossing(const BtpResources *r,const BtpState *s,unsigned x,unsigned y,int dx,int dy)
 {
-    if (!w->native || x>=2048 || y>=2048) return 0;
+    if (!r->world.native || x>=2048 || y>=2048) return 0;
     /* 0000:1C12..1CC1 checks only crossings of a 16-half-step terrain
        block. 187F:13D9 returns descriptor 0F for level-zero water joined
        to water on all four sides. People and vehicles share this check. */
-    int bx=(int)(x/16u)+8,by=(int)(y/16u)+8,crossed=0;
+    int bx=(int)(x/16u),by=(int)(y/16u),crossed=0;
     if (dx<0 && !(x&15u)) { --bx;crossed=1; }
     if (dx>0 && (x&15u)==15u) { ++bx;crossed=1; }
     if (dy<0 && !(y&15u)) { --by;crossed=1; }
     if (dy>0 && (y&15u)==15u) { ++by;crossed=1; }
     if (!crossed) return 0;
-    unsigned at=(unsigned)by*144u+(unsigned)bx;
-    return !w->heights[at] && !w->heights[at-144u] && !w->heights[at+144u] &&
-        !w->heights[at-1u] && !w->heights[at+1u];
+    /* Test the same painted descriptors as the original 1314 viewport.
+       The generated underlay is deep water at the cache island (MAP13), but
+       its stored land block interrupts the all-water mask. The leader,
+       followers and route finder must all see that island before testing depth. */
+    return !world_level(r,s,bx,by) && world_neighbours(r,s,bx,by,0)==15u;
 }
 void btp_world_step(BtpState *s,const BtpResources *r,BtpAction a)
 {
@@ -179,7 +181,7 @@ void btp_world_step(BtpState *s,const BtpResources *r,BtpAction a)
         int x=gx+btp_action_dx(a),y=gy+btp_action_dy(a);
         if (x<0 || y<0 || x>=2048 || y>=2048) s->blocked=BTP_EDGE;
         else if (!btp_world_location(r,s,x/2,y/2) &&
-            btp_world_deep_crossing(&r->world,(unsigned)gx,(unsigned)gy,btp_action_dx(a),btp_action_dy(a))) {
+            btp_world_deep_crossing(r,s,(unsigned)gx,(unsigned)gy,btp_action_dx(a),btp_action_dy(a))) {
             s->blocked=BTP_WATER;btp_menu_open(s);s->campaign.ui=BTP_MENU_MESSAGE;s->menu.notice=5;
         }
         /* The arena's temporary gate 139 must not leak into town travel:
