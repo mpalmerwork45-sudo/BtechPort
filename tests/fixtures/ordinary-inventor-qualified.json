@@ -920,7 +920,7 @@
     },
     {
       "label": "entry",
-      "tick": 786,
+      "tick": 788,
       "state": {
         "map": 12,
         "mode": "entry-confirm",
@@ -931,7 +931,7 @@
           4
         ],
         "gate": 85,
-        "tick": 786,
+        "tick": 788,
         "blocked": 0,
         "script_pc": 0,
         "script_status": 0,
@@ -1496,7 +1496,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "3d74937f11c6639e",
+        "state_digest": "6344b03f13eb25f7",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1837,18 +1837,18 @@
     },
     {
       "label": "inventor-qualified-complete",
-      "tick": 811,
+      "tick": 813,
       "state": {
         "map": 12,
         "mode": "local-exploration",
         "x_half": 10,
-        "y_half": 6,
+        "y_half": 8,
         "tile": [
           5,
-          3
+          4
         ],
         "gate": 85,
-        "tick": 811,
+        "tick": 813,
         "blocked": 0,
         "script_pc": 7784,
         "script_status": 3,
@@ -2148,7 +2148,7 @@
             1,
             1,
             9,
-            8,
+            0,
             4,
             50,
             80,
@@ -2328,7 +2328,7 @@
             522,
             392
           ],
-          "mounted": 0,
+          "mounted": 1,
           "encounter": 0,
           "building": 21
         },
@@ -2418,7 +2418,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "0337ff41a116898c",
+        "state_digest": "4f2054eefb94d43a",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -2762,13 +2762,13 @@
     "map": 12,
     "mode": "local-exploration",
     "x_half": 10,
-    "y_half": 6,
+    "y_half": 8,
     "tile": [
       5,
-      3
+      4
     ],
     "gate": 85,
-    "tick": 811,
+    "tick": 813,
     "blocked": 0,
     "script_pc": 7784,
     "script_status": 3,
@@ -3068,7 +3068,7 @@
         1,
         1,
         9,
-        8,
+        0,
         4,
         50,
         80,
@@ -3248,7 +3248,7 @@
         522,
         392
       ],
-      "mounted": 0,
+      "mounted": 1,
       "encounter": 0,
       "building": 21
     },
@@ -3338,7 +3338,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "0337ff41a116898c",
+    "state_digest": "4f2054eefb94d43a",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

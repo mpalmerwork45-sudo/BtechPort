@@ -3,7 +3,7 @@
   "checkpoints": [
     {
       "label": "entry",
-      "tick": 1027,
+      "tick": 1031,
       "state": {
         "map": 5,
         "mode": "entry-confirm",
@@ -14,7 +14,7 @@
           16
         ],
         "gate": 85,
-        "tick": 1027,
+        "tick": 1031,
         "blocked": 0,
         "script_pc": 0,
         "script_status": 0,
@@ -579,7 +579,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "7b74a0857ba2fdd9",
+        "state_digest": "9518f135139859f8",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -920,7 +920,7 @@
     },
     {
       "label": "laser-menu",
-      "tick": 1028,
+      "tick": 1032,
       "state": {
         "map": 5,
         "mode": "building",
@@ -931,7 +931,7 @@
           16
         ],
         "gate": 85,
-        "tick": 1028,
+        "tick": 1032,
         "blocked": 0,
         "script_pc": 233,
         "script_status": 1,
@@ -1231,7 +1231,7 @@
             1,
             1,
             9,
-            8,
+            0,
             4,
             50,
             80,
@@ -1411,7 +1411,7 @@
             264,
             1568
           ],
-          "mounted": 0,
+          "mounted": 1,
           "encounter": 0,
           "building": 15
         },
@@ -1501,7 +1501,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "cc81830074e33e9d",
+        "state_digest": "fb9cb1356e293515",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1842,7 +1842,7 @@
     },
     {
       "label": "laser-shop-robbery",
-      "tick": 1047,
+      "tick": 1051,
       "state": {
         "map": 5,
         "mode": "building",
@@ -1853,7 +1853,7 @@
           16
         ],
         "gate": 85,
-        "tick": 1047,
+        "tick": 1051,
         "blocked": 0,
         "script_pc": 713,
         "script_status": 6,
@@ -2157,7 +2157,7 @@
             1,
             1,
             9,
-            8,
+            0,
             4,
             50,
             80,
@@ -2337,7 +2337,7 @@
             264,
             1568
           ],
-          "mounted": 0,
+          "mounted": 1,
           "encounter": 0,
           "building": 15
         },
@@ -2427,7 +2427,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "69b2714c7b7b0694",
+        "state_digest": "040b89746818a308",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -2768,18 +2768,18 @@
     },
     {
       "label": "laser-purchase-complete",
-      "tick": 1172,
+      "tick": 1176,
       "state": {
         "map": 5,
         "mode": "local-exploration",
         "x_half": 8,
-        "y_half": 30,
+        "y_half": 32,
         "tile": [
           4,
-          15
+          16
         ],
         "gate": 85,
-        "tick": 1172,
+        "tick": 1176,
         "blocked": 0,
         "script_pc": 1734,
         "script_status": 3,
@@ -3079,7 +3079,7 @@
             1,
             1,
             13,
-            8,
+            0,
             4,
             50,
             56,
@@ -3259,7 +3259,7 @@
             264,
             1568
           ],
-          "mounted": 0,
+          "mounted": 1,
           "encounter": 0,
           "building": 15
         },
@@ -3349,7 +3349,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "fa8db8dc17f30510",
+        "state_digest": "06dbfe0d94ff4a16",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -3693,13 +3693,13 @@
     "map": 5,
     "mode": "local-exploration",
     "x_half": 8,
-    "y_half": 30,
+    "y_half": 32,
     "tile": [
       4,
-      15
+      16
     ],
     "gate": 85,
-    "tick": 1172,
+    "tick": 1176,
     "blocked": 0,
     "script_pc": 1734,
     "script_status": 3,
@@ -3999,7 +3999,7 @@
         1,
         1,
         13,
-        8,
+        0,
         4,
         50,
         56,
@@ -4179,7 +4179,7 @@
         264,
         1568
       ],
-      "mounted": 0,
+      "mounted": 1,
       "encounter": 0,
       "building": 15
     },
@@ -4269,7 +4269,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "fa8db8dc17f30510",
+    "state_digest": "06dbfe0d94ff4a16",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

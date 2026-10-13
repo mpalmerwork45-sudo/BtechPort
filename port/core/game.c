@@ -233,7 +233,12 @@ static void game_tick(BtpState *s, const BtpResources *r, BtpAction a)
 {
     const BtpMap *map=btp_active_map(r,s);
     story_in(s);
-    if (s->mode==BTP_GAME_OVER || s->mode==BTP_ENDING) { ++s->tick;return; }
+    if (s->mode==BTP_GAME_OVER || s->mode==BTP_ENDING) {
+        ++s->tick;
+        /* Older saves can contain the formerly inert completed screen. */
+        if (s->mode==BTP_ENDING && a!=BTP_IDLE) s->menu.quit=1;
+        return;
+    }
     if (s->mode==BTP_CACHE) { btp_cache_input(s,r,a);return; }
     if (s->mode==BTP_YARD) {
         ++s->tick;btp_yard_input(s,r,a);
@@ -360,7 +365,9 @@ static void game_tick(BtpState *s, const BtpResources *r, BtpAction a)
         s->mode = (uint8_t)(s->party.enabled && s->party.people[0][0]==255 ? BTP_GAME_OVER : BTP_EXPLORE);
         } else if (a == BTP_ACCEPT) {
             s->story_flags[10] = 1;
-            if (s->story_flags[4]) s->campaign.mounted=0;
+            /* Entering a shop changes the scene, not the stored crew seats.
+               Clearing mounted here made the end-of-tick party sync eject
+               Jason. Parking and theft scripts handle actual disembarking. */
             if (!btp_building_kind(r,s) && !s->story_flags[20]) { btp_quiz_begin(s); return; }
             s->mode = BTP_BUILDING;
             if (s->story_flags[4]) checkpoint(s);
@@ -1090,9 +1097,16 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
             BtpCombatState *c=&result.combat;result.x_half+=64;result.y_half+=64;
             result.campaign.battle_x=result.campaign.battle_y=1472;
             for (unsigned i=0;i<c->count;++i) { c->unit[i].x+=64;c->unit[i].y+=64; }
-            if (c->goal_active) { c->goal_x+=64;c->goal_y+=64; }
+            if (c->goal_active || c->goal_x || c->goal_y) { c->goal_x+=64;c->goal_y+=64; }
             if (c->cursor_x || c->cursor_y || c->phase==BTP_COMBAT_MOVE) { c->cursor_x+=64;c->cursor_y+=64; }
             for (unsigned i=0;i<c->waypoint_count;++i) { c->waypoint_x[i]+=64;c->waypoint_y[i]+=64; }
+            /* Saved per-actor orders use that same old coordinate frame,
+               including a computer pilot's remembered destination. */
+            for (unsigned i=0;i<c->count;++i) {
+                BtpCombatPlan *p=&c->plans[i];
+                if (p->active || p->x || p->y) { p->x+=64;p->y+=64; }
+                for (unsigned j=0;j<p->count && j<11;++j) { p->wx[j]+=64;p->wy[j]+=64; }
+            }
             for (unsigned i=0;i<result.effects.count;++i) { BtpCombatEffect *e=&result.effects.shots[i];e->x+=64;e->y+=64;e->tx+=64;e->ty+=64; }
         }
         if (version<32 && result.combat.phase) {

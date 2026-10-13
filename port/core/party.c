@@ -1,4 +1,5 @@
 #include "core/party.h"
+#include "core/cache.h"
 #include "core/combat_rules.h"
 #include "core/animation.h"
 #include "core/npc.h"
@@ -171,6 +172,12 @@ int btp_party_recruit(BtpState *s,unsigned skill)
 int btp_party_walkable(const BtpState *s,const BtpResources *r,int x,int y,int mech)
 {
     if (x<0 || y<0 || x>=2048 || y>=2048) return 0;
+    /* Cache corridors use their own tile gate and origin. Testing the
+       generated terrain underneath would hide perfectly legal followers. */
+    if (s->cache.active) {
+        x-=1536;y-=1536;
+        return !mech && x>=0 && y>=0 && btp_cache_tile(r,s,(x+1)/2,y/2)<s->gate;
+    }
     /* People sample their foot point; a vehicle occupies both ground tiles.
        Stored vehicle Y is its ground anchor, already two steps above the
        party cursor. The arena's temporary gate does not apply outdoors. */
@@ -180,7 +187,7 @@ int btp_party_walkable(const BtpState *s,const BtpResources *r,int x,int y,int m
 static int follow_step(const BtpState *s,const BtpResources *r,int x,int y,int nx,int ny,int mech)
 {
     return btp_party_walkable(s,r,nx,ny,mech) &&
-        (btp_world_location(r,s,nx/2,ny/2) ||
+        (s->cache.active || btp_world_location(r,s,nx/2,ny/2) ||
          !btp_world_deep_crossing(r,s,(unsigned)x,(unsigned)y,nx-x,ny-y));
 }
 static void follow_position(const BtpState *s,const BtpResources *r,uint16_t *px,uint16_t *py,int gx,int gy,int mech,int initialize)

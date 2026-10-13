@@ -57,9 +57,9 @@ def main():
         whole_screen=dict(snapshot='1791849746524537035/owned-overhead-map',
             prerequisite='Ordinary GAME3 import and main-menu item 7; explored data plus original main-loop visibility update',
             rgb_sha256='58a4bf686b1bdf2fa906551deb8a4c5d77078f1226eb6e395129efea95012097',
-            rgb_fnv='3d7368f6f1413800',pixels=64000,matched_pixels=63998,
-            masked_pixels=[[183,70],[183,71]],
-            remaining='Two unexplained source black pixels immediately left of the opaque device glyph; repeated original captures agree'),
-        comparison='2048-byte visibility fingerprints, numeric mini indices/device directions, and 63,998 of 64,000 original overhead RGB pixels; two explicit masks'),indent=2)+'\n')
+            rgb_fnv='3d7368f6f1413800',pixels=64000,matched_pixels=64000,
+            masked_pixels=[],
+            marker='0000:44AA..4574 draws a 2x2 RNG-coloured player marker over the device arrow; the captured colour is black. Poll cadence remains approximate.'),
+        comparison='2048-byte visibility fingerprints, numeric mini indices/device directions, and all 64,000 original overhead RGB pixels without masks'),indent=2)+'\n')
     print('Primary world-view cases:',len(rows)-1)
 if __name__=='__main__':main()

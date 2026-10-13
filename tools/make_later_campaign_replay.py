@@ -11,7 +11,11 @@ class Later(Session):
     def save_fixture(self,name):
         (ROOT/f'tests/fixtures/ordinary-{name}.actions').write_text('\n'.join(self.actions)+'\n')
         (ROOT/f'tests/fixtures/ordinary-{name}.json').write_text(json.dumps({'checkpoints':self.notes,'final':self.state},indent=2)+'\n')
-    def pause(self):self.advance(['idle']*8 if self.state['animation']['active'] else ['accept'])
+    def pause(self):
+        # Drop unwanted loot explicitly. Taking it redistributes the old
+        # weapon, as in DOS, so repeated Accept would never finish that page.
+        self.advance(['idle']*8 if self.state['animation']['active'] else
+                     ['cancel'] if self.state['aftermath']['phase']==4 else ['accept'])
 def main():
     s=Later(ROOT/'tests/fixtures/ordinary-invasion.actions');s.world_route(1286,1080);s.advance(['accept']*3)
     if s.state['mode']!='local-exploration' or s.state['map']!=2:raise RuntimeError('Garage transition failed')
@@ -25,7 +29,12 @@ def main():
         if s.state['animation']['active'] and not any(n['label']=='rex-crest' for n in s.notes):s.note('rex-crest')
         s.pause()
     else:raise RuntimeError('Rex sequence stalled')
-    s.advance(['accept']*3);s.command(8);s.note('rex-and-commando');s.save_fixture('rex')
+    s.advance(['accept']*3);s.command(8)
+    for _ in range(64):
+        if not s.state['aftermath']['phase']:break
+        s.pause()
+    else:raise RuntimeError('Rex encounter results did not finish')
+    s.note('rex-and-commando');s.save_fixture('rex')
     s.world_route(1300,1092);s.advance(['accept']*2)
     for _ in range(100):
         if s.state['service']['phase']==8:break
@@ -50,7 +59,7 @@ def main():
     else:raise RuntimeError('Original repair sequence did not finish')
     menu(3);s.advance(['accept'])
     if s.state['service']['phase']==5:s.advance(['1'])
-    s.note('partial-ammo-amount')
+    s.note('partial-ammo-amount' if s.state['service']['phase']==5 else 'ammo-status')
     if s.state['service']['phase']==5:s.advance(['0','accept'])
     s.note('ammo-purchase-boundary')
     for _ in range(100):

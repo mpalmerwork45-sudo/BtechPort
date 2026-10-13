@@ -19,3 +19,5 @@ U 17 apprentice 12dc86ee88e190c4 87403fb209b0eb71 up,accept,accept,accept,right,
 U 18 apprentice e18fe82abbb4b099 87403fb209b0eb71 up,accept,accept,accept,right,accept,accept,accept,accept,accept,accept,down,accept,accept,accept,down,accept
 U 19 apprentice 233421059ec74069 cb914c289a48a704 up,accept,accept,accept,right,accept,accept,accept,accept,accept,accept,down,accept,accept,accept,down,accept,accept
 U 20 recruit 792428b2a13a408d 6c469353f84e1078 up,accept,accept,accept,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle,idle
+U 21 gyro d3731e59b95c00c2 6c469353f84e1078 up,accept,down,down,accept
+U 22 gyro 00a8975c52692ddf 6c469353f84e1078 up,accept,down,down,accept,down,down,accept

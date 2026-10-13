@@ -18,6 +18,20 @@ static int amount_editor(const BtpState *s)
 {
     return s->bank.phase==BTP_BANK_AMOUNT || s->service.phase==5;
 }
+static SDL_Keycode navigation_key(SDL_Keycode key,SDL_Keymod modifiers)
+{
+    /* SDL reports keypad keycodes separately even with Num Lock off. Menus
+       need the same arrow actions as the main cluster; Num Lock preserves
+       numeric entry in the bank and ammunition editors. */
+    if (!(modifiers&KMOD_NUM)) switch (key) {
+    case SDLK_KP_8:return SDLK_UP;
+    case SDLK_KP_2:return SDLK_DOWN;
+    case SDLK_KP_4:return SDLK_LEFT;
+    case SDLK_KP_6:return SDLK_RIGHT;
+    default:break;
+    }
+    return key;
+}
 static unsigned arrow_bit(SDL_Keycode key)
 {
     return key == SDLK_UP ? 1u : key == SDLK_DOWN ? 2u : key == SDLK_LEFT ? 4u : key == SDLK_RIGHT ? 8u : 0u;
@@ -172,14 +186,22 @@ int main(int argc, char **argv)
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) running = 0;
             if (event.type == SDL_KEYUP) {
-                held &= ~arrow_bit(event.key.keysym.sym);
+                held &= ~arrow_bit(navigation_key(event.key.keysym.sym,event.key.keysym.mod));
                 if (event.key.keysym.sym==SDLK_LSHIFT || event.key.keysym.sym==SDLK_RSHIFT) cheat_step=0;
             }
             if ((event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_FOCUS_LOST) ||
                 !movement_mode(&state)) held = 0;
             if (event.type == SDL_KEYDOWN) {
-                SDL_Keycode key = event.key.keysym.sym;
+                SDL_Keycode key = navigation_key(event.key.keysym.sym,event.key.keysym.mod);
                 if (key == SDLK_ESCAPE && (event.key.keysym.mod&KMOD_CTRL) && (event.key.keysym.mod&KMOD_SHIFT)) running = 0;
+                else if ((state.mode==BTP_ENDING || (state.mode==BTP_BUILDING && state.campaign.building==25 &&
+                    state.script.status==BTP_SCRIPT_WAIT)) && key!=SDLK_LSHIFT && key!=SDLK_RSHIFT &&
+                    key!=SDLK_LCTRL && key!=SDLK_RCTRL && key!=SDLK_LALT && key!=SDLK_RALT) {
+                    /* WINSCENE says any key. Letters and function keys must
+                       reach its wait instead of the normal map shortcuts. */
+                    if (write-read<256) queue[write++%256]=BTP_ACCEPT;
+                    else { io_failed=1;running=0; }
+                }
                 else if ((event.key.keysym.mod&KMOD_SHIFT) && (key==SDLK_k || key==SDLK_y || key==SDLK_r) && !event.key.repeat) {
                     const SDL_Keycode sequence[]={SDLK_k,SDLK_y,SDLK_r};
                     cheat_step=key==sequence[cheat_step] ? cheat_step+1u : key==SDLK_k ? 1u : 0u;

@@ -96,10 +96,12 @@ int btp_later_native(BtpState *s,const BtpResources *r)
         s->story_flags[25]=0;
         for (unsigned i=0;i<8;++i) if (s->party.people[i][0]!=255 && s->party.people[i][15]!=10u*s->party.people[i][1]) s->story_flags[25]=1;
     } else if (action==24) {
+        if (s->service.phase==12) return 1;
         unsigned skill=s->story_flags[26];if (skill>7) return 0;
-        if (!skill) (void)btp_party_heal(s,r,0);
-        else if (s->credits>=r->combat.medical_prices[skill]) { s->credits-=r->combat.medical_prices[skill];(void)btp_party_heal(s,r,skill); }
+        if (!skill) btp_service_heal(s,r,0,0);
+        else if (s->credits>=r->combat.medical_prices[skill]) { s->credits-=r->combat.medical_prices[skill];btp_service_heal(s,r,skill,0); }
         else s->credits+=25;
+        if (s->service.phase) return 1;
     } else if (action==25) s->party.medical_kit=1;
     else if (action==26) s->party.advanced_kit=1;
     else return 0;

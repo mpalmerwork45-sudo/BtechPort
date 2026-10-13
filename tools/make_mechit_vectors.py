@@ -19,6 +19,7 @@ REPAIR_RUN = ROOT/'work/reference-runs/1791863873862567602'
 SERVICE_RUN = ROOT/'work/reference-runs/1791864147791493161'
 APPRENTICE_RUN = ROOT/'work/reference-runs/1791865266664660305'
 RECRUIT_RUN = ROOT/'work/reference-runs/1791865285111355132'
+GYRO_RUN = ROOT/'work/reference-runs/1791876402969678147'
 
 
 def record(loan, shape):
@@ -132,6 +133,8 @@ def ui():
     # The live joining record is fixed by the original name-derived seed;
     # its held page is unaffected by the number of presentation ticks.
     cases.append(('recruit',RECRUIT_RUN,'recruit-agent',['up','accept','accept','accept']+['idle']*96))
+    cases.extend([('gyro',GYRO_RUN,'gyro-selection',base),
+                  ('gyro',GYRO_RUN,'gyro-result',base+['down','down','accept'])])
     for i,(kind,run,name,actions) in enumerate(cases):
         image=Image.open(run/'captures'/f'{name}.png').convert('RGB')
         right=fingerprint(image.crop((104,0,320,200)).tobytes())
@@ -142,7 +145,7 @@ def ui():
     (ROOT/'tests/fixtures/mechit-ui-primary.txt').write_text('\n'.join(rows)+'\n')
     (ROOT/'tests/fixtures/mechit-ui-primary.json').write_text(json.dumps(dict(
         executable_sha256=EXE_SHA,image_sha256=IMAGE_SHA,regions=metadata,
-        prerequisites='Private GAME3 copies at the Mechit-Lube door. People on foot, active vehicle tags; defined damage. Apprenticeship clears Jason\'s learned bit and Commando refit bit; recruitment uses parked flag 24 and the actual Rex/no-skilled-technician gate.',
+        prerequisites='Private GAME3 copies at the Mechit-Lube door. People on foot, active vehicle tags; defined damage. Apprenticeship clears Jason\'s learned bit and Commando refit bit; recruitment uses parked flag 24 and the actual Rex/no-skilled-technician gate. Gyro case restores all repairable systems and sets byte 118 of the last listed mech to one.',
         comparison='Complete 216x200 right dialog and 104x100 party footer. Original animated portraits are outside these regions; the held recruitment frame also matches all 320x200 pixels.'),indent=2)+'\n')
     print('Original Mechit-Lube screen pairs:',len(rows))
 

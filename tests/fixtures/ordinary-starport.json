@@ -2,7 +2,7 @@
   "checkpoints": [
     {
       "label": "parked-in-starport",
-      "tick": 49050
+      "tick": 48898
     }
   ],
   "final": {
@@ -15,7 +15,7 @@
       26
     ],
     "gate": 85,
-    "tick": 49050,
+    "tick": 48898,
     "blocked": 0,
     "script_pc": 1003,
     "script_status": 3,
@@ -585,7 +585,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "3973192cc79afffd",
+    "state_digest": "94e86de4ee0fcb95",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

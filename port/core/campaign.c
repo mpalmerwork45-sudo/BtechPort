@@ -4,12 +4,19 @@
 #include "core/combat.h"
 #include "core/npc.h"
 #include "core/yard.h"
+#include "core/service.h"
 #include <string.h>
 static void begin(BtpState *s,const BtpResources *r,unsigned event)
 {
     BtpCampaignState *v=&s->campaign;
     v->return_map=s->map_id;v->return_x=s->x_half;v->return_y=s->y_half;
     v->battle_x=(uint16_t)(v->world_x&~127u);v->battle_y=(uint16_t)(v->world_y&~127u);v->encounter=(uint8_t)event;
+    if (event==1) {
+        /* Original positions remain world coordinates across sector seams.
+           Centre the native window so nearby units do not wrap by 128. */
+        unsigned x=v->world_x>64 ? v->world_x-64u : 0u,y=v->world_y>64 ? v->world_y-64u : 0u;
+        v->battle_x=(uint16_t)(x>1920 ? 1920 : x&~15u);v->battle_y=(uint16_t)(y>1920 ? 1920 : y&~15u);
+    }
     BtpCombatState *c=&s->combat;
     /* 103B:000A(0) describes the attacking force and asks to engage before
        computer/messages/graphics settings. Rex's argument -1 skips it. */
@@ -32,6 +39,8 @@ static void begin(BtpState *s,const BtpResources *r,unsigned event)
         c->ids[c->count++]=(uint8_t)(4+i);
     }
     c->friends=c->count;c->target_unit=c->friends;c->last_target=c->friends;
+    /* 3920 uses FF for an unset computer heading; zero is north. */
+    memset(c->plan_direction,255,c->count);c->plan_direction[0]=0;
     for (unsigned i=0;i<c->friends;++i) {
         c->plans[i].movement=255;c->plans[i].kick=255;memset(c->plans[i].orders,255,11);
     }
@@ -100,7 +109,7 @@ int btp_campaign_random(BtpState *s,const BtpResources *r)
                 (candidates[i].infantry || (second>15 && second<85))) { placed=1;break; }
         }
         if (!placed) continue;
-        unsigned at=c->count++;c->unit[at]=candidates[i];c->unit[at].x=(uint8_t)x;c->unit[at].y=(uint8_t)y;c->unit[at].direction=6;c->ids[at]=ids[i];++x;++scanned;
+        unsigned at=c->count++;c->unit[at]=candidates[i];c->unit[at].x=(uint8_t)x;c->unit[at].y=(uint8_t)y;c->unit[at].direction=6;c->plan_direction[at]=255;c->ids[at]=ids[i];++x;++scanned;
     }
     if (c->count==c->friends) { s->mode=BTP_EXPLORE;s->x_half=s->campaign.return_x;s->y_half=s->campaign.return_y;s->campaign.encounter=0;s->combat=(BtpCombatState){0};return 0; }
     return 1;
@@ -116,14 +125,25 @@ void btp_campaign_result(BtpState *s,const BtpResources *r)
         if (id<4) memcpy(btp_party_mech(s,id),c->unit[i].record,125);
         else if (id<12) { memcpy(s->party.people[id-4],c->unit[i].record,17);s->party.x[id-4]=(uint16_t)(s->campaign.battle_x+c->unit[i].x);s->party.y[id-4]=(uint16_t)(s->campaign.battle_y+c->unit[i].y); }
     }
-        s->aftermath.applied=1;
+        s->aftermath.applied=2;
         if (c->lost) { s->mode=BTP_GAME_OVER;return; }
-        uint8_t wrecks[4][125]={{0}},marked[4]={0};
-        for (unsigned i=0;i<4;++i) {
-            unsigned at=btp_combat_target(c,12+i);
-            if (at<c->count && s->aftermath.wrecks[12+i]) { marked[i]=1;memcpy(wrecks[i],c->unit[at].record,125); }
+        /* 103B:10A3..10DA announces defeated enemies before scavenging.
+           Keep this pause explicit so saving cannot apply the rewards twice. */
+        for (unsigned i=12;i<24;++i) if (s->aftermath.wrecks[i]) {
+            s->aftermath.phase=5;return;
         }
-        (void)btp_party_field_salvage(s,(const uint8_t (*)[125])wrecks,marked);
+    }
+    if (s->aftermath.applied==2) {
+        unsigned donors=0,owned=0,skill=0,technician=0;
+        for (unsigned i=0;i<4;++i) { donors|=s->aftermath.wrecks[12+i];owned|=btp_party_mech(s,i)[0]!=255; }
+        for (unsigned i=0;i<8;++i) if (s->party.people[i][0]!=255 && s->party.people[i][9]>skill) {
+            skill=s->party.people[i][9];technician=i;
+        }
+        if (donors && owned && skill) { s->aftermath.pilot=(uint8_t)technician;s->aftermath.phase=8;return; }
+        s->aftermath.applied=4;
+    }
+    if (s->aftermath.applied==4) {
+        s->aftermath.applied=1;
         /* 103B:0C4C calls salvage before pocket cash, including withdrawal. */
         unsigned wreck=0,empty=0;
         for (unsigned i=0;i<4;++i) { wreck|=s->aftermath.wrecks[i] || s->aftermath.wrecks[12+i];empty|=btp_party_mech(s,i)[0]==255; }
@@ -132,10 +152,24 @@ void btp_campaign_result(BtpState *s,const BtpResources *r)
         }
         s->aftermath.pilot=8;btp_aftermath_input(s,r,BTP_IDLE);if (s->aftermath.phase) return;
     }
+    if (s->aftermath.applied==1) {
+        s->aftermath.applied=3;s->aftermath.phase=(uint8_t)(c->fled ? 6 : 7);
+        if (!c->fled) {
+            /* The original treats remaining wounds after looting, clearing
+               the previous treatment cooldown first (103B:1256..12BD). */
+            unsigned wounded=0;
+            for (unsigned i=0;i<8;++i) if (s->party.people[i][0]!=255)
+                wounded|=s->party.people[i][15]!=10u*s->party.people[i][1];
+            s->story_flags[41]=0;
+            if (wounded) { btp_service_heal(s,r,0,2);s->aftermath.phase=10; }
+        }
+        return;
+    }
     unsigned event=s->campaign.encounter;s->campaign.encounter=0;
     s->x_half=s->campaign.return_x;s->y_half=s->campaign.return_y;s->map_id=s->campaign.return_map;
     s->combat=(BtpCombatState){0};s->effects=(BtpEffectsState){0};
     s->aftermath=(BtpAftermathState){0};
+    s->service=(BtpServiceState){0};
     s->campaign.mounted=(uint8_t)(s->party.people[0][12]<4);
     s->campaign.owned=0;for (unsigned i=0;i<4;++i) s->campaign.owned|=(uint8_t)(s->party.mech_types[i]!=255);
     memcpy(s->skills,s->party.people[0]+4,3);memcpy(s->mech_skills,s->party.people[0]+7,2);
@@ -261,13 +295,28 @@ void btp_aftermath_input(BtpState *s,const BtpResources *r,BtpAction a)
     unsigned count=v->phase==1 || (v->phase==4 && btp_party_count(&s->party)==1) ? 2u : v->phase==4 ? btp_party_count(&s->party)+1u : 1u;
     if (a==BTP_UP || a==BTP_LEFT) v->selected=(uint8_t)((v->selected+count-1)%count);
     if (a==BTP_DOWN || a==BTP_RIGHT) v->selected=(uint8_t)((v->selected+1)%count);
+    if (a==BTP_OPEN_MENU) a=BTP_ACCEPT;
     if (a!=BTP_ACCEPT && a!=BTP_CANCEL) return;
+    if (v->phase==5 || v->phase==7) { v->phase=0;return; }
+    if (v->phase==6) { v->phase=7;return; }
+    if (v->phase==10) { s->service=(BtpServiceState){0};v->phase=7;return; }
+    if (v->phase==8) {
+        uint8_t wrecks[4][125]={{0}},marked[4]={0};
+        for (unsigned i=0;i<4;++i) {
+            unsigned at=btp_combat_target(&s->combat,12+i);
+            if (at<s->combat.count && v->wrecks[12+i]) { marked[i]=1;memcpy(wrecks[i],s->combat.unit[at].record,125); }
+        }
+        v->cash=(uint16_t)btp_party_field_salvage(s,(const uint8_t (*)[125])wrecks,marked);
+        s->credits-=v->cash;v->applied=4;v->phase=(uint8_t)(v->cash ? 9 : 0);return;
+    }
+    if (v->phase==9) { s->credits+=v->cash;v->cash=0;v->phase=0;return; }
     if (v->phase==1) {
         if (v->selected || a==BTP_CANCEL) { next_pilot(s);return; }
         unsigned id=btp_rng_next(s->npc.rng)&3u;id+=12u*(btp_rng_next(s->npc.rng)&1u);unsigned found=24;
         for (unsigned i=0;i<16;++i) if (v->wrecks[(id+i)&15u] && ((id+i)&15u)<16) { found=(id+i)&15u;break; }
         if (found==24) { v->phase=2;v->notice=2;return; }
-        unsigned kind=v->wrecks[found];v->wrecks[found]=0;unsigned at=btp_combat_target(&s->combat,found),skill=0,slot=0;
+        unsigned kind=v->wrecks[found];v->wrecks[found]=0;v->unit=(uint8_t)found;v->cash=(uint16_t)kind;
+        unsigned at=btp_combat_target(&s->combat,found),skill=0,slot=0;
         for (unsigned i=0;i<8;++i) if (s->party.people[i][0]!=255 && s->party.people[i][9]>skill) skill=s->party.people[i][9];
         while (slot<4 && btp_party_mech(s,slot)[0]!=255) ++slot;
         if (at>=s->combat.count || kind==128 || slot==4 || !btp_salvage_eligible(s->combat.unit[at].record,skill)) { v->phase=2;v->notice=1;return; }
@@ -277,7 +326,12 @@ void btp_aftermath_input(BtpState *s,const BtpResources *r,BtpAction a)
     else if (v->phase==4) {
         unsigned p=btp_party_count(&s->party)==1 ? 0u : btp_party_slot(&s->party,v->selected);
         if (a==BTP_ACCEPT && (btp_party_count(&s->party)==1 ? !v->selected : p<8) && s->party.people[p][0]!=255) {
-            unsigned at=btp_combat_target(&s->combat,v->unit);s->party.people[p][11]=s->combat.unit[at].record[11];if (!p) s->weapon=s->party.people[p][11];
+            /* 05AB:0A54 redistributes the recipient's old weapon next.
+               Keep the same recovered slot until that weapon is dropped. */
+            unsigned at=btp_combat_target(&s->combat,v->unit),old=s->party.people[p][11];
+            s->party.people[p][11]=s->combat.unit[at].record[11];s->combat.unit[at].record[11]=(uint8_t)old;
+            if (!p) s->weapon=s->party.people[p][11];
+            if (old) return;
         }
         ++v->unit;next_weapon(s);
     }
@@ -285,7 +339,8 @@ void btp_aftermath_input(BtpState *s,const BtpResources *r,BtpAction a)
 int btp_aftermath_valid(const BtpState *s)
 {
     const BtpAftermathState *v=&s->aftermath;
-    if (v->eject>15 || v->phase>4 || v->selected>8 || v->pilot>8 || v->unit>24 || v->notice>2 || v->applied>1 || v->cash>144) return 0;
+    if (v->eject>15 || v->phase>10 || v->selected>8 || v->pilot>8 || v->unit>24 || v->notice>2 || v->applied>4 ||
+        (v->phase!=9 && v->cash>144)) return 0;
     if ((v->eject || v->phase || v->applied) && !s->campaign.encounter) return 0;
     if (v->phase && (s->mode!=BTP_ENCOUNTER || s->combat.phase || !v->applied)) return 0;
     for (unsigned i=0;i<24;++i) if (v->wrecks[i] && (!s->campaign.encounter || (i>=4 && i<12 ? v->wrecks[i]!=128 : i>=16 ? v->wrecks[i]!=128 : v->wrecks[i]>=128))) return 0;

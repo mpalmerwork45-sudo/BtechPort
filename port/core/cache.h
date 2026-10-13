@@ -4,6 +4,7 @@
 enum { BTP_CACHE_WALK,BTP_CACHE_NOTICE,BTP_CACHE_TERMINAL,BTP_CACHE_DOOR,
     BTP_CACHE_PEER,BTP_CACHE_CLIMB,BTP_CACHE_EXIT,BTP_CACHE_PHOENIX };
 void btp_cache_begin(BtpState *state,const BtpResources *resources);
+void btp_cache_restore_party(BtpState *state,const BtpResources *resources);
 void btp_cache_script_end(BtpState *state,const BtpResources *resources);
 void btp_cache_input(BtpState *state,const BtpResources *resources,BtpAction action);
 unsigned btp_cache_tile(const BtpResources *resources,const BtpState *state,int x,int y);

@@ -3,7 +3,7 @@
   "checkpoints": [
     {
       "label": "entry",
-      "tick": 586,
+      "tick": 588,
       "state": {
         "map": 6,
         "mode": "entry-confirm",
@@ -14,7 +14,7 @@
           6
         ],
         "gate": 85,
-        "tick": 586,
+        "tick": 588,
         "blocked": 0,
         "script_pc": 0,
         "script_status": 0,
@@ -579,7 +579,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "6a1b7131621a7fdf",
+        "state_digest": "920d7422b353c256",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -920,7 +920,7 @@
     },
     {
       "label": "cinema-complete",
-      "tick": 1262,
+      "tick": 1264,
       "state": {
         "map": 6,
         "mode": "local-exploration",
@@ -931,7 +931,7 @@
           7
         ],
         "gate": 85,
-        "tick": 1262,
+        "tick": 1264,
         "blocked": 0,
         "script_pc": 1128,
         "script_status": 3,
@@ -1231,7 +1231,7 @@
             1,
             1,
             9,
-            8,
+            0,
             4,
             50,
             80,
@@ -1411,7 +1411,7 @@
             690,
             1677
           ],
-          "mounted": 0,
+          "mounted": 1,
           "encounter": 0,
           "building": 16
         },
@@ -1501,7 +1501,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "83df8e73d61085f2",
+        "state_digest": "f143307c9352a0fa",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1851,7 +1851,7 @@
       7
     ],
     "gate": 85,
-    "tick": 1262,
+    "tick": 1264,
     "blocked": 0,
     "script_pc": 1128,
     "script_status": 3,
@@ -2151,7 +2151,7 @@
         1,
         1,
         9,
-        8,
+        0,
         4,
         50,
         80,
@@ -2331,7 +2331,7 @@
         690,
         1677
       ],
-      "mounted": 0,
+      "mounted": 1,
       "encounter": 0,
       "building": 16
     },
@@ -2421,7 +2421,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "83df8e73d61085f2",
+    "state_digest": "f143307c9352a0fa",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

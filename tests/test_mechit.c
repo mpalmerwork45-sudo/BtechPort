@@ -54,7 +54,13 @@ static void setup(BtpState *s,const BtpResources *r,const char *kind)
     for (unsigned i=0;i<4;++i) {
         unsigned at=0x111+125*i,type=1+0xd452-0xc614+i;
         if (raw[type]!=255) { raw[at]=raw[type];raw[type]=255; }
-        if (raw[at]!=255) damaged_record(raw+at,0);
+        if (raw[at]!=255) {
+            if (!strcmp(kind,"gyro")) {
+                memcpy(raw+at+17,raw+at+86,21);
+                for (unsigned j=51;j<86;++j) raw[at+j]&=127;
+                memset(raw+at+117,0,3);if (i==2) raw[at+118]=1;
+            } else damaged_record(raw+at,0);
+        }
     }
     if (!strcmp(kind,"apprentice")) { raw[17]&=254;raw[0x111+125+124]=0; }
     BtpError e;CHECK(btp_original_decode(raw,sizeof raw,s,r,&e));
@@ -123,7 +129,7 @@ int main(int argc,char **argv)
         }
         CHECK(region(pixels,104,0,216,200)==right && region(pixels,0,100,104,100)==footer);++screens;
     }
-    fclose(f);CHECK(screens==21);
+    fclose(f);CHECK(screens==23);
     /* Native acceptance starts at the same real building menu. */
     BtpState s;setup(&s,r,"repair");step(&s,r,BTP_UP);step(&s,r,BTP_ACCEPT);CHECK(btp_save_write("work/mechit-ui-start.btp",&s,r,&e));
     step(&s,r,BTP_DOWN);step(&s,r,BTP_DOWN);step(&s,r,BTP_ACCEPT);step(&s,r,BTP_ACCEPT);
@@ -136,5 +142,16 @@ int main(int argc,char **argv)
         setup(&s,r,i ? "recruit" : "apprentice");step(&s,r,BTP_UP);step(&s,r,BTP_ACCEPT);
         CHECK(btp_save_write(i ? "work/mechit-recruit-start.btp" : "work/mechit-apprentice-start.btp",&s,r,&e));
     }
-    free(pixels);free(r);printf("PASS: %u checks; 591 complete original services, 21 screen pairs and every-input saved continuation\n",checks);return 0;
+    /* Original 1791874354558657062 retains crew through ordinary building
+       entry/exit. Exercise Jason in a nonzero bay with a passenger as well. */
+    setup(&s,r,"gyro");s.campaign.mounted=1;s.y_half+=2;s.campaign.world_y+=2;
+    const uint8_t mounts[4]={2,0,1,2};
+    for (unsigned i=0;i<4;++i) s.party.people[i][12]=mounts[i];
+    for (unsigned i=0;i<3;++i) { uint8_t *m=btp_party_mech(&s,i);m[121]=(uint8_t)((i+1u)%3u);m[122]=(uint8_t)(i==2 ? 3 : 255); }
+    step(&s,r,BTP_UP);CHECK(s.mode==BTP_ENTRY);step(&s,r,BTP_ACCEPT);CHECK(s.mode==BTP_BUILDING && s.campaign.mounted);
+    for (unsigned i=0;i<5;++i) step(&s,r,BTP_DOWN);
+    step(&s,r,BTP_ACCEPT);CHECK(s.mode==BTP_EXPLORE && s.campaign.mounted);
+    for (unsigned i=0;i<4;++i) CHECK(s.party.people[i][12]==mounts[i]);
+    for (unsigned i=0;i<3;++i) { const uint8_t *m=btp_party_mech(&s,i);CHECK(m[121]==(i+1u)%3u && m[122]==(i==2 ? 3 : 255)); }
+    free(pixels);free(r);printf("PASS: %u checks; 591 complete original services, 23 screen pairs and every-input saved continuation\n",checks);return 0;
 }

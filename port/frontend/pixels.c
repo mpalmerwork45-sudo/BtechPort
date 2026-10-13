@@ -646,7 +646,7 @@ static void service_balance(uint8_t *b,size_t *used,unsigned value)
     /* 14D3: native cash insertion also writes the terminating full stop. */
     service_number(b,used,value);if (*used+1<1024) { b[(*used)++]='.';b[(*used)++]=1; }
 }
-static int service_wrap_scrolled(const BtpResources *r,uint32_t *f,int y,const uint8_t *b,size_t n,unsigned *scrolled)
+static int service_wrap_bounds(const BtpResources *r,uint32_t *f,int y,const uint8_t *b,size_t n,unsigned *scrolled,int top,int bottom)
 {
     /* Original numeric writers change the current colour without occupying
        a character cell. Keep these colours while wrapping the 25-column panel. */
@@ -659,11 +659,11 @@ static int service_wrap_scrolled(const BtpResources *r,uint32_t *f,int y,const u
     size_t at=0;int carried=0;
     if (scrolled) *scrolled=0;
     while (at<used) {
-        if (y>184) {
+        if (y>bottom) {
             /* 1656:07CB scrolls the text area by one character row. Keep
                the border and left party panel out of that operation. */
-            for (int row=8;row<184;++row) memcpy(f+row*320+112,f+(row+8)*320+112,200*sizeof *f);
-            rectangle(f,112,184,200,8,0);y-=8;if (scrolled) ++*scrolled;
+            for (int row=top;row<bottom;++row) memcpy(f+row*320+112,f+(row+8)*320+112,200*sizeof *f);
+            rectangle(f,112,bottom,200,8,0);y-=8;if (scrolled) ++*scrolled;
         }
         if (carried) {
             /* 1656:03F5 carries the overflowing word to the next line and
@@ -690,6 +690,10 @@ static int service_wrap_scrolled(const BtpResources *r,uint32_t *f,int y,const u
     }
     return y;
 }
+static int service_wrap_scrolled(const BtpResources *r,uint32_t *f,int y,const uint8_t *b,size_t n,unsigned *scrolled)
+{
+    return service_wrap_bounds(r,f,y,b,n,scrolled,8,184);
+}
 static int service_wrap(const BtpResources *r,uint32_t *f,int y,const uint8_t *b,size_t n)
 {
     return service_wrap_scrolled(r,f,y,b,n,NULL);
@@ -713,6 +717,110 @@ static void service_yes_no(const BtpResources *r,uint32_t *f,int y,unsigned sele
 {
     rectangle(f,selected ? 144 : 112,y,selected ? 16 : 24,8,14);
     text(r,f,112,y,"Yes",selected ? 15u : 0u);text(r,f,144,y,"No",selected ? 0u : 15u);
+}
+static void medical_panel(const BtpResources *r,const BtpState *s,uint32_t *f)
+{
+    const BtpServiceState *v=&s->service;uint8_t message[1024];size_t n=0;
+    if (v->phase!=12 || v->outcome) {
+        unsigned id=v->phase!=12 ? s->story_flags[41] ? 280u : 279u : 278u+v->outcome;
+        rectangle(f,104,72,216,64,0);border_panel(r,f,104,72,216,64,0);
+        service_literal(r,message,&n,id);(void)service_wrap(r,f,80,message,n);return;
+    }
+    rectangle(f,104,88,216,80,0);border_panel(r,f,104,88,216,80,0);
+    if (v->mech==8) service_literal(r,message,&n,273);
+    else {
+        const char *name=btp_party_name(&s->party,v->mech);n=strlen(name);memcpy(message,name,n);
+    }
+    if (!v->kind) service_literal(r,message,&n,276);
+    else {
+        service_literal(r,message,&n,274);
+        unsigned rank=v->kind>=5 ? 3u : v->kind>=3 ? v->kind-2u : v->kind-1u;
+        service_literal(r,message,&n,282u+rank);service_literal(r,message,&n,275);
+        service_literal(r,message,&n,285u+v->item);
+    }
+    service_literal(r,message,&n,277);
+    message[n++]=6;message[n++]=10;
+    for (unsigned i=0;i<8;++i) if (v->amount&(1u<<i)) {
+        const char *name=btp_party_name(&s->party,i);size_t length=strlen(name);
+        message[n++]='\r';memcpy(message+n,name,length);n+=length;
+        service_literal(r,message,&n,278);
+    }
+    message[n++]=6;message[n++]=15;service_literal(r,message,&n,290);
+    (void)service_wrap_bounds(r,f,96,message,n,NULL,96,152);
+}
+static void aftermath_panel(const BtpResources *r,const BtpState *s,uint32_t *f)
+{
+    const BtpAftermathState *v=&s->aftermath;uint8_t message[1024];size_t n=0;
+    if (v->phase==10) { medical_panel(r,s,f);return; }
+    /* 103B:10A3 and 05AB's salvage/pockets calls share this scrolling
+       lower-right box. Rebuild the preceding lines from saved phases so
+       loading a held reward page retains the original visible text. */
+    rectangle(f,104,112,216,88,0);border_panel(r,f,104,112,216,88,0);
+    if (v->phase==5 || v->phase==8 || v->phase==9) {
+        service_literal(r,message,&n,291);service_literal(r,message,&n,290);
+        if (v->phase>=8) {
+            const char *name=btp_party_name(&s->party,v->pilot);size_t length=strlen(name);
+            message[n++]='\r';message[n++]='\r';memcpy(message+n,name,length);n+=length;
+            service_literal(r,message,&n,308);
+            unsigned skill=s->party.people[v->pilot][9];
+            if (skill>=2) service_literal(r,message,&n,312u+(skill>4 ? 4u : skill));
+            service_literal(r,message,&n,309);service_literal(r,message,&n,290);
+        }
+        if (v->phase==9) {
+            service_literal(r,message,&n,310);service_value(message,&n,v->cash,10);
+            service_literal(r,message,&n,311);unsigned wrecks=0;
+            for (unsigned i=12;i<16;++i) wrecks+=v->wrecks[i]!=0;
+            if (wrecks>1) service_literal(r,message,&n,312);
+            service_literal(r,message,&n,313);service_literal(r,message,&n,290);
+        }
+    } else if (v->phase==3) {
+        service_literal(r,message,&n,302);service_value(message,&n,v->cash,10);
+        service_literal(r,message,&n,303);if (v->notice) service_literal(r,message,&n,304);
+        service_literal(r,message,&n,313);
+    } else if (v->phase==6 || v->phase==7) {
+        service_literal(r,message,&n,v->phase==6 ? 292u : 293u);service_literal(r,message,&n,290);
+    } else if (v->phase==1) {
+        const char *name=btp_party_name(&s->party,v->pilot);n=strlen(name);memcpy(message,name,n);
+        service_literal(r,message,&n,297);
+    } else if (v->phase==2) {
+        if (v->notice==2) service_literal(r,message,&n,301);
+        else {
+            const char *name=btp_party_name(&s->party,v->pilot);n=strlen(name);memcpy(message,name,n);
+            service_literal(r,message,&n,298);
+            if (!v->notice) { memcpy(message+n,name,strlen(name));n+=strlen(name); }
+            service_literal(r,message,&n,v->notice ? 300u : 299u);
+            /* The source replaces the final X with the inspected model. */
+            if (n>=2) n-=2;
+            unsigned at=btp_combat_target(&s->combat,v->unit);char model[16]="'Mech";
+            if (at<s->combat.count) { memcpy(model,s->combat.unit[at].record,15);model[0]=(char)v->cash;model[15]=0; }
+            size_t length=strlen(model);while (length && model[length-1]==' ') --length;
+            memcpy(message+n,model,length);n+=length;service_literal(r,message,&n,313);
+        }
+        service_literal(r,message,&n,290);
+    } else if (v->phase==4) {
+        unsigned at=btp_combat_target(&s->combat,v->unit),count=btp_party_count(&s->party);
+        unsigned weapon=at<s->combat.count ? s->combat.unit[at].record[11] : 0;
+        char gun[12];memcpy(gun,r->combat.weapons[weapon],11);gun[11]=0;
+        size_t length=strlen(gun);while (length && gun[length-1]==' ') gun[--length]=0;
+        if (count==1) {
+            service_literal(r,message,&n,305);
+            unsigned p=btp_party_slot(&s->party,0);char old[12];memcpy(old,r->combat.weapons[s->party.people[p][11]],11);old[11]=0;
+            size_t old_n=strlen(old);while (old_n && old[old_n-1]==' ') --old_n;
+            memcpy(message+n,old,old_n);n+=old_n;service_literal(r,message,&n,306);
+            memcpy(message+n,gun,length);n+=length;service_literal(r,message,&n,307);
+        } else {
+            char heading[40];snprintf(heading,sizeof heading,"Give %s to:",gun);text(r,f,112,120,heading,15);
+            for (unsigned i=0;i<=count;++i) {
+                int y=128+(int)i*8;if (i==v->selected) rectangle(f,112,y,200,8,14);
+                unsigned p=btp_party_slot(&s->party,i),color=i==v->selected ? 0u : 15u;
+                text(r,f,112,y,i==count ? "Drop it" : btp_party_name(&s->party,p),color);
+                if (i<count) { char old[12];memcpy(old,r->combat.weapons[s->party.people[p][11]],11);old[11]=0;text(r,f,192,y,old,color); }
+            }
+            return;
+        }
+    }
+    int y=service_wrap_bounds(r,f,120,message,n,NULL,120,184);
+    if (v->phase==1 || (v->phase==4 && btp_party_count(&s->party)==1)) service_yes_no(r,f,y,v->selected);
 }
 static void mechit_panel(const BtpResources *r,const BtpState *s,uint32_t *f)
 {
@@ -751,7 +859,10 @@ static void mechit_panel(const BtpResources *r,const BtpState *s,uint32_t *f)
             service_literal(r,message,&n,v->outcome==8 ? 225u : v->outcome==9 ? 224u : 226u);
             if (v->outcome==9) service_literal(r,message,&n,264u+v->item);
             if (v->outcome==10) service_literal(r,message,&n,54);
-            (void)service_wrap(r,f,y-8,message,n);return;
+            /* The unrepairable-system message has no leading CR. The
+               healthy/unfunded strings do; only those resume on the last
+               selector row. 09B8:0002 keeps the selected mech visible. */
+            (void)service_wrap(r,f,v->outcome==9 ? y : y-8,message,n);return;
         }
         if (v->kind==3) {
             service_literal(r,message,&n,244);int y=service_wrap(r,f,8,message,n);n=0;
@@ -820,6 +931,7 @@ static void story_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
     if (r->border.format == 1) rectangle(f,104,0,216,200,0);
     if (s->service.phase) {
         const BtpServiceState *v=&s->service;char info[40];
+        if (v->phase==12) { medical_panel(r,s,f);return; }
         if (v->action==18 || v->action==44 || v->action==13 || v->phase==8) { mechit_panel(r,s,f);return; }
         if (v->action==32) {
             /* Assemble the actual 14D3:0EF3 text fragments. Numeric values
@@ -1054,8 +1166,9 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         rectangle(f,128,y+2,x-128+1,5,15);
         return;
     }
+    int battle_display=s->combat.phase || s->aftermath.phase;
     int cx=s->x_half,cy=s->y_half;
-    if (s->combat.phase) {
+    if (battle_display) {
         const BtpCombatState *c=&s->combat;
         unsigned focus=c->phase==BTP_COMBAT_TARGET || c->phase==BTP_COMBAT_KICK ? c->target_unit : c->phase==BTP_COMBAT_SCAN ? c->scan_unit : c->active_unit;
         cx=c->phase==BTP_COMBAT_MOVE ? c->cursor_x : c->unit[focus].x;
@@ -1079,6 +1192,8 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                 int wx = camera_x + x - 104, wy = camera_y + y;
                 if (r->world.loaded || (wx >= 0 && wy >= 0 && ((!s->map_id && !s->campaign.encounter) || (wx < map->width * 16 && wy < map->height * 16)))) {
                     int tx=wx>=0 ? wx/16 : (wx-15)/16,ty=wy>=0 ? wy/16 : (wy-15)/16;
+                    int ox=s->campaign.encounter || s->campaign.invasion ? s->campaign.battle_x/2 : s->map_id ? (int)(map->entrance_x[0]>>8)*64 : 0;
+                    int oy=s->campaign.encounter || s->campaign.invasion ? s->campaign.battle_y/2 : s->map_id ? (int)(map->entrance_y[0]>>12)*64 : 0;
                     unsigned tile;
                     if (s->cache.active) tile=btp_cache_tile(r,s,tx,ty);
                     else if ((s->campaign.encounter || s->campaign.invasion || s->map_id) && tx>=0 && ty>=0 && tx<map->width && ty<map->height) tile=btp_mission_tile(s,map,tx,ty);
@@ -1087,8 +1202,6 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                            viewport rebuilds surrounding world pieces even at
                            a sector edge. Its coordinate origin is the saved
                            battle origin, not the current town's entrance. */
-                        int ox=s->campaign.encounter || s->campaign.invasion ? s->campaign.battle_x/2 : s->map_id ? (int)(map->entrance_x[0]>>8)*64 : 0;
-                        int oy=s->campaign.encounter || s->campaign.invasion ? s->campaign.battle_y/2 : s->map_id ? (int)(map->entrance_y[0]>>12)*64 : 0;
                         tile=btp_world_tile(r,s,ox+tx,oy+ty);
                     }
                     if (tile < 250) {
@@ -1096,8 +1209,12 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                            three pages into these ten map tile slots. The
                            saved fixed clock supplies a deterministic phase. */
                         unsigned frame=s->cache.active ? 0u : btp_terrain_frame(tile,s->tick/4u);
-                        int destroyed=s->campaign.invasion ? s->late.invasion_event>=3 && tx>=32 && ty>=32 && tx<96 && ty<96 :
-                            s->map_id==11 && tx>=0 && ty>=0 && tx<map->width && ty<map->height;
+                        /* A viewport can straddle the Citadel boundary. Pick
+                           DESTRUCT for the displayed world tile, even after
+                           the player has entered the surrounding countryside. */
+                        int destroyed=!s->cache.active && (s->campaign.invasion ?
+                            s->late.invasion_event>=3 && tx>=32 && ty>=32 && tx<96 && ty<96 :
+                            btp_world_location(r,s,ox+tx,oy+ty)==11);
                         const BtpGraphic *sheet=s->cache.active ? s->story_flags[66] ? &r->maproom_tiles : &r->cache_tiles :
                             destroyed ? &r->destroyed_tiles : frame && r->terrain_animation.format==1 ? &r->terrain_animation : &r->tiles;
                         if (destroyed) frame=0; /* DESTRUCT's indices refer directly to its own tile sheet. */
@@ -1127,7 +1244,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                 200+((int)mark->x+(s->campaign.invasion ? 64 : 0)-cx)*8,
                 64+((int)mark->y+(s->campaign.invasion ? 64 : 0)+2-cy)*8,0,104,f);
     }
-    if (s->combat.phase) {
+    if (battle_display) {
         for (unsigned i=0;i<s->combat.count;++i) {
             const BtpCombatUnit *u=&s->combat.unit[i];unsigned terrain;
             const BtpCombatEffect *death=btp_effects_pending_death(s,i);
@@ -1155,14 +1272,14 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                 200+((int)(death ? death->tx : u->x)-cx)*8,64+((int)(death ? death->ty : u->y)+2-cy)*8,
                 death ? 0u : btp_combat_cover(map,u,&terrain),104,f);
         }
-        combat_route(r,s,cx,cy,f);combat_flash(r,s,cx,cy,f);
+        if (s->combat.phase) { combat_route(r,s,cx,cy,f);combat_flash(r,s,cx,cy,f); }
     } else if (s->mission.phase) (void)btp_draw_sprite(&r->sprites,
         (s->story_flags[2] ? 146u : 0u)+s->mission.walk,200,64,btp_mission_terrain(s,&r->map),104,f);
     else if (s->campaign.mounted && !s->story_flags[4]) (void)btp_draw_sprite(&r->sprites,
         ((s->party.people[0][12] ? s->party.mechs[s->party.people[0][12]-1][0] : s->campaign.mech[0])=='L' ? 0u : 146u)+s->campaign.mech_walk,200,64,0,104,f);
     else if (outdoors && !s->campaign.mounted) (void)btp_draw_sprite(&r->sprites,166u+s->player_walk,208,96,
         hidden_rows(map,s->x_half,s->y_half),104,f);
-    if (outdoors && !s->combat.phase && s->story_flags[4] && !s->cache.active) {
+    if (outdoors && !battle_display && s->story_flags[4]) {
         for (unsigned i=0;i<8;++i) if (s->party.people[i][0]!=255 && s->party.people[i][12]>=8) {
             if (i && btp_party_walkable(s,r,s->party.x[i],s->party.y[i],0))
                 (void)btp_draw_sprite(&r->sprites,270u+s->party.walk[i],208+8*((int)s->party.x[i]-s->campaign.world_x),
@@ -1405,9 +1522,10 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                 text(r,f,264,184,s->party.advanced_kit ? "Yes" : "No",15);
             }
         } else if (c->ui==BTP_MENU_MESSAGE) {
+            if (s->menu.notice==3) { medical_panel(r,s,f);return; }
             rectangle(f,104,72,216,88,0);border_panel(r,f,104,72,216,88,0);
             const char *message=s->menu.notice==1 ? "Save failed. Your previous save is intact." : s->menu.notice==2 ?
-                "Load failed. This slot is empty or invalid." : s->menu.notice==3 ? (s->story_flags[25] ? "Field treatment completed. Allow time before treating again." : "Everyone is healthy.") :
+                "Load failed. This slot is empty or invalid." :
                 s->menu.notice==5 ? "The water is too deep that way." :
                 "Crew allocation requires open terrain and a qualified pilot for each active 'Mech.";
             (void)wrapped(r,f,80,(const uint8_t *)message,strlen(message),15);
@@ -1430,15 +1548,12 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         }
     }
     if (s->aftermath.phase) {
-        const BtpAftermathState *v=&s->aftermath;char message[320];
-        if (v->phase==1) snprintf(message,sizeof message,"%s is a qualified pilot without a 'Mech. Do you want to salvage one of the wrecks?",btp_party_name(&s->party,v->pilot));
-        else if (v->phase==2) snprintf(message,sizeof message,"%s",v->notice==2 ? "There are no more salvageable 'Mechs on the battlefield." : v->notice ? "No chance to salvage this 'Mech." : "The 'Mech is salvaged.");
-        else if (v->phase==3) snprintf(message,sizeof message,"You dig through the soldiers' pockets and find %u C-bills in cash%s",v->cash,v->notice ? ", and confiscate their weapons." : ".");
-        else snprintf(message,sizeof message,"Recovered weapon. %s",btp_party_count(&s->party)==1 ? "Do you want to exchange your weapon?" : "Choose who receives it.");
-        rectangle(f,104,0,216,200,0);border_panel(r,f,104,0,216,200,0);int y=wrapped(r,f,16,(const uint8_t *)message,strlen(message),15)+16;
-        if (v->phase==1 || (v->phase==4 && btp_party_count(&s->party)==1)) {
-            text(r,f,112,y,"Yes",v->selected==0 ? 14u : 15u);text(r,f,152,y,"No",v->selected==1 ? 14u : 15u);
-        } else if (v->phase==4) for (unsigned i=0;i<=btp_party_count(&s->party);++i) text(r,f,112,y+(int)i*8,i==btp_party_count(&s->party) ? "Done" : btp_party_name(&s->party,btp_party_slot(&s->party,i)),i==v->selected ? 14u : 15u);
+        rectangle(f,0,0,104,200,0);combat_header(r,s,f,s->combat.active_unit,0);
+        if (s->combat.automatic&(1u<<s->combat.active_unit)) {
+            const char *message="The computer is currently moving this unit.";
+            (void)wrapped_at(r,f,8,32,11,(const uint8_t *)message,strlen(message),15);
+        }
+        aftermath_panel(r,s,f);
     }
     border_panel(r,f,0,0,104,200,1);
     if (s->mode==BTP_CACHE && s->cache.phase!=BTP_CACHE_WALK && s->cache.phase!=BTP_CACHE_DOOR) {
@@ -1509,6 +1624,13 @@ void btp_world_preview(const BtpResources *r,const BtpState *s,uint32_t f[BTP_PI
             rectangle(f,8*x[direction],8*y[direction],8,8,0);
             text(r,f,8*x[direction],8*y[direction],arrow,15);
         }
+    }
+    /* 0000:44AA..4574 marks the real position after drawing the device
+       arrow. Panning changes the viewport origin, never the player's dot. */
+    int px=(int)(wx/2u)-8*ox,py=(int)(wy/2u)-8*oy;
+    if (px>=0 && px<320 && py>=0 && py<192) {
+        if (px==319) px=318;
+        rectangle(f,px,py,2,2,s->menu.notice&15u);
     }
     text(r,f,0,192,"Arrows to move, space to exit.",15);
 }

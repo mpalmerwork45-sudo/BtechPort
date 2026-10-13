@@ -215,10 +215,8 @@ int main(int argc,char **argv)
             btp_game_tick(&view,r,BTP_OPEN_MENU);btp_game_tick(&view,r,BTP_UP);btp_game_tick(&view,r,BTP_ACCEPT);
             CHECK(view.mode==BTP_ACTIONS && view.campaign.ui==BTP_MENU_MAP);
             uint32_t *frame=malloc(BTP_PIXELS*sizeof *frame);CHECK(frame);btp_render(r,&view,0,frame);
-            /* Two source black pixels immediately left of the device glyph
-               remain unexplained by the font blit. Compare the other 63,998
-               pixels exactly, with these two explicitly masked to source. */
-            frame[70u*320u+183u]=frame[71u*320u+183u]=0;
+            /* Original player marker, including the two black pixels that
+               were formerly masked beside the device glyph. No pixel masks. */
             for (unsigned pixel=0;pixel<BTP_PIXELS;++pixel) for (int shift=16;shift>=0;shift-=8)
                 h=(h^(uint8_t)(frame[pixel]>>shift))*UINT64_C(1099511628211);
             CHECK(h==expected);free(frame);++cases;
@@ -245,6 +243,19 @@ int main(int argc,char **argv)
         exploration.x_half=(uint16_t)(1152+edge[i][0]);exploration.y_half=(uint16_t)(1664+edge[i][1]+2);
         btp_render(r,&battle,0,a);btp_render(r,&exploration,0,b);
         for (unsigned row=0;row<200;++row) CHECK(!memcmp(a+row*320+104,b+row*320+104,216*sizeof *a));
+    }
+    r->sprites.format=sprite_format;
+    /* The same northwest wall must retain DESTRUCT on both sides of the
+       town/world coordinate switch, at every terrain animation phase. */
+    r->sprites.format=0;
+    const unsigned corners[6][2]={{1,1},{3,4},{8,2},{32,1},{1,32},{126,126}};
+    for (unsigned phase=0;phase<4;++phase) for (unsigned i=0;i<6;++i) {
+        BtpState town;btp_start(&town);town.story_flags[4]=1;town.map_id=11;town.tick=4*phase;
+        town.x_half=(uint16_t)corners[i][0];town.y_half=(uint16_t)corners[i][1];
+        town.campaign.world_x=(uint16_t)(1536+town.x_half);town.campaign.world_y=(uint16_t)(1536+town.y_half);
+        BtpState world=town;world.map_id=0;world.x_half=world.campaign.world_x;world.y_half=world.campaign.world_y;
+        btp_render(r,&town,0,a);btp_render(r,&world,0,b);
+        for (unsigned y=0;y<200;++y) CHECK(!memcmp(a+y*320+104,b+y*320+104,216*sizeof *a));
     }
     r->sprites.format=sprite_format;
     btp_render(r,&s,0,a);btp_render(r,&s,0,b);CHECK(!memcmp(a,b,BTP_PIXELS*sizeof *a));

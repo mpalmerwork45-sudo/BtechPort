@@ -2,19 +2,19 @@
   "checkpoints": [
     {
       "label": "invasion-start",
-      "tick": 47664
+      "tick": 47512
     },
     {
       "label": "jenner-escape-denied",
-      "tick": 47677
+      "tick": 47525
     },
     {
       "label": "invasion-result",
-      "tick": 48812
+      "tick": 48660
     },
     {
       "label": "destroyed-citadel",
-      "tick": 48852
+      "tick": 48700
     }
   ],
   "final": {
@@ -27,7 +27,7 @@
       51
     ],
     "gate": 85,
-    "tick": 48852,
+    "tick": 48700,
     "blocked": 0,
     "script_pc": 0,
     "script_status": 0,
@@ -592,7 +592,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "fb1fb531dc26e177",
+    "state_digest": "5041927deeb9ee57",
     "effect_stage": 0,
     "combat": {
       "phase": 0,
@@ -635,6 +635,10 @@
       "automatic": 0,
       "auto_run": 0,
       "paused": 0,
+      "friends": 0,
+      "active": 0,
+      "scan": 0,
+      "menu_commands": [],
       "units": [
         {
           "x": 0,

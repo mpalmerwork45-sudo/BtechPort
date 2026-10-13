@@ -119,25 +119,109 @@ they do not claim complete original DOS journeys between the towns. The
 existing 314 original recruitment/betrayal cases and ordinary spy-combat route
 remain passing. No recruitment-rule change was needed.
 
+## Live caller combat and current presentation corrections
+
+**VERIFIED in the captured caller contexts:** five cases execute 25 complete
+original waves from `1791861341506357450/mech-command`. The normal party has
+three owned mechs and Rick on foot, opposed by one mech and six humans across
+a Y-sector boundary. Variants cover spy passengers/pilots, an armed Rex rider
+and finite ammunition. All 7,252 assertions agree: complete record hashes,
+positions, facing, heat, RNG, victory/loss, saved continuation and betrayal.
+`live-campaign-primary.*` records source identities and declared boundaries;
+`make_live_campaign_vectors.py` executes unchanged original instructions.
+
+Corrections include the original LOS reader's negative-index height buffers,
+retaining computer pilots' movement modes until their goals are reached,
+remembered AI goals, the mech-versus-infantry trample branch and sound 18,
+infantry salvo damage after armour, and keeping consumed ammunition when a
+spy changes seats. Random encounters now use the original surrounding
+16-aligned world window. Enemy cycling follows original IDs and wraps 23 to
+12; broader manual friendly selection remains an unfinished UI comparison.
+
+**VERIFIED:** five complete 216x88 result/loot panels match captured original
+RGB pixels, including border, retained lines, scrolling, colours and recipient
+highlight. Source `1791877416552610064` follows a real computer-controlled
+fight to victory, technician scavenging, scrap proceeds and personal loot.
+`aftermath-ui-primary.*` records its numerical prerequisites and region hashes.
+The held phases apply repairs/cash once, then loot and wound recovery in
+original order. Replacing a recovered weapon offers the displaced weapon
+again; Drop it ends that exchange. Every result boundary restores and
+continues, including delayed cash and healing. Existing 114 primary numeric
+salvage/cash/ejection cases remain passing. Withdrawal, salvage-result and arena
+result layouts still need full measured original comparisons.
+
+**VERIFIED:** the field-treatment panel matches all 216x80 pixels of
+`1791876954390161281/healing`. It retains the medic, original skill/equipment
+wording, green injured names and key prompt after the numerical healing has
+already happened. Save/load never heals a second time. Hospital native action
+24 now holds its medical page before returning to its BLD. Hospital and
+cooldown/healthy layouts are implemented but remain **INFERRED** until their
+own measured screen comparisons. BTTA/v19 extracts 317 original fragments.
+
+The Mechit-Lube audit now includes 23 screen pairs. The last-mech gyro warning
+starts below the final menu row; see [the detailed audit](MECHIT_LUBE_AUDIT.md).
+
+**VERIFIED:** the original overhead marker span `0000:44AA..4574` draws a 2x2
+RNG-coloured rectangle at the party coordinate after the device arrow. The
+previously masked black pixels are this marker. The complete 64,000-pixel
+GAME3 map comparison now passes without masks. Colour/RNG are saved and advance
+on logical map polls; correspondence to DOS busy-loop cadence is **APPROXIMATE**.
+Native X11 checks compare the static map outside those four asynchronous pixels,
+check the solid marker footprint, then replay exact idle ticks after F9.
+
+**VERIFIED native regression coverage:** 24 paired Citadel/world viewports at
+four animation phases keep DESTRUCT tiles on the ruined Citadel when crossing
+its northwest boundary. Tile-sheet selection now uses each displayed tile's
+world location. Five cache companions each contribute visible map pixels and
+have legal foot positions. Cache movement/room entry updates their world
+coordinates and formation; loading older stale cave coordinates recovers the
+formation before drawing. Ordinary Mechit-Lube entry and exit retain three
+pilots and a rider, including Jason in bay two. Source crew observation:
+`1791874354558657062`. Wider live original formation/collision parity remains
+**APPROXIMATE**, beyond existing primary city and footprint cases.
+
+**VERIFIED:** the final WINSCENE key sets the exit request, as the original
+`0B5D:0515..0534` does. Actual SDL letter-key and legacy function-key tests close
+the process and match headless replay. Num-Lock-off keypad arrows and Enter work
+in the Space menu; Num-Lock-on bank entry and all diagonal controls still pass.
+An active v29 invasion migration compares positions, current and per-actor
+waypoints/remembered goals, then four continued inputs. Previously only the
+active actor's destination was translated into the padded frame.
+
+The fresh ending route now contains 65,991 ordinary inputs; spy removal and
+replacement takes 50,423. Both restore before every input. The arena rental
+escape uses earlier spectator fire at (87,97), because the corrected original
+AI disables the rental's legs if the previous route waits until (78,102).
+This changes the test's player tactics, not the game rules. Original
+apprenticeship/VIEWDISK checkpoints have been re-executed against the new fresh
+route. Late GAME1 still reaches the ending in 10,856 ordinary inputs.
+
+**Current validation PASS:** all 48 regular and all 48
+ASan/UBSan/LeakSanitizer core suites, the full sanitizer script's historical
+checks, every native M4 acceptance section and all nine native follow-up tails.
+Physical SDL keypad/ending controls and real F5/F9 checks also pass. Native
+checks compare recorded inputs, complete continued state and final pixels.
+
+The initial combined native run stopped at an outdated ammo-editor checkpoint
+assumption: the corrected fight leaves that mech fully loaded, so the original
+service displays an ammo-status page instead. The generator now labels the
+actual page, and the harness types editor digits only for an amount editor.
+Campaign, hospital/jail and cache sections then passed in focused reruns;
+already passing unrelated sections were not repeated. The separate Mechit-Lube
+checks retain their ammunition-purchase and save/restore coverage.
+
 ## Remaining authorized work
 
-The owner additionally requested a thorough Mechit-Lube comparison. That
-increment is implemented and verified in [its audit](MECHIT_LUBE_AUDIT.md):
-591 complete original service cases, 21 pixel-matching screen pairs, native
-visits and seven real save/load pauses. It is a separate local commit.
+1. Complete remaining manual targeting and battle-result UI comparisons,
+   including arena and withdrawal, and broaden full original fight contexts.
+2. Expand live original doorway/corner/formation observations across towns.
+3. Compare isolated speaker events and refine timing/filtering only with
+   suitable evidence. Exact physical 8 MHz XT sound remains UNKNOWN.
+4. Verify Phoenix LAM colours and hospital/cooldown/healthy medical layouts.
+   Primary action 45 loads ENDMECH.CMP and selects the palette at 2858:0000
+   (`14D3:15DD..16A6`); its measured VGA appearance is still pending.
+5. Add fresh alternate owned-arena/win/loss and prison-loss routes. The active
+   v29 migration and existing prison/rental/invasion/ending routes are now
+   covered, but they do not establish all alternate original campaign branches.
 
-2. Trace larger fights from captured live caller state, including sector-edge
-   geometry, spy crews, ejection, targeting restrictions and aftermath.
-3. Audit city doorways, corners and formations against original movement.
-4. Compare isolated speaker events and refine filtering/cadence with explicit
-   limits on physical-XT evidence.
-5. Add alternate fresh theft/arena/loss routes and legacy-save migration cases.
-
-These four tasks are in progress; this report does not mark them complete.
-
-Additional owner observations to resolve within those tasks: black combat
-edges, wrecks appearing before their destruction notification/sound, distinct
-human/mech death sounds, the uneasy spy text on the inspected character sheet,
-replacement specialists in other hospitals/Mechit-Lubes after the spy is killed,
-and the original city/forest transition tiles. None is silently treated as
-superseded by the Mechit-Lube work.
+This batch does not mark the original five follow-ups or M4 complete.

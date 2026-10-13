@@ -1,0 +1,28 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "snapshot": "work/reference-runs/1791861341506357450/mech-command",
+  "waves": 25,
+  "cases": 5,
+  "normal": "Captured GAME3 encounter: three mechs, Rick on foot, one hostile mech and six humans. Original positions span Y sectors 12/13.",
+  "variants": "Case 1 adds a spy passenger in Commando; case 2 a spy pilot with an armed Rex passenger. Cases 3/4 repeat those branches with finite ammunition in the affected vehicle; retain consumed rounds. Execute original 103B post-wave betrayal after the first complete wave.",
+  "frame": "Compare world positions relative to a declared 16-aligned 1184/1600 window. The original retains packed world coordinates; its rules are not a 128x128 sector window.",
+  "routines": [
+    "0E31:03AB complete AI",
+    "12E8:000C complete waves, deaths and ejections",
+    "103B:08A0..0CDB spy outcome"
+  ],
+  "intercepted_boundaries": [
+    "0000:2A2B (spy display only)",
+    "0000:4CAC (spy display only)",
+    "103B:27C9 (spy display only)",
+    "1656:0004 (spy display only)",
+    "1656:0281 (spy display only)",
+    "1656:0388 (spy display only)",
+    "1656:03F5 (spy display only)",
+    "173D:002F (spy display only)",
+    "173D:0259 (spy display only)",
+    "173D:086A (spy display only)"
+  ],
+  "comparison": "Each wave: original IDs, all living world positions, facing, heat, full-record hashes and RNG, ending at victory or essential-member loss. Numeric source-state prerequisites; no source instruction edits."
+}

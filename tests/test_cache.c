@@ -1,4 +1,5 @@
 #include "core/cache.h"
+#include "core/party.h"
 #include "data/save.h"
 #include "frontend/pixels.h"
 #include <stdio.h>
@@ -39,7 +40,23 @@ int main(int argc,char **argv)
     BtpState base;CHECK(btp_save_load("Original DOS/GAME1",&base,r,&e));btp_cache_begin(&base,r);
     for (unsigned i=0;i<64 && base.mode==BTP_BUILDING;++i) input(&base,r,BTP_ACCEPT);
     CHECK(base.mode==BTP_CACHE && !base.cache.phase);for (unsigned i=0;i<256 && base.audio.sound_count;++i) input(&base,r,BTP_IDLE);
-    CHECK(!base.audio.sound_count);memset(base.story_flags+67,0,12);
+    CHECK(!base.audio.sound_count);
+    /* GAME1 brings five people. Every foot sprite must contribute visible
+       map pixels, and all follower positions must pass cache collision. */
+    uint32_t complete[BTP_PIXELS],without[BTP_PIXELS];btp_render(r,&base,0,complete);
+    CHECK(btp_party_count(&base.party)==5);
+    for (unsigned i=1;i<5;++i) {
+        CHECK(btp_party_walkable(&base,r,base.party.x[i],base.party.y[i],0));
+        BtpState hidden=base;hidden.party.people[i][0]=255;btp_render(r,&hidden,0,without);
+        unsigned different=0;for (unsigned y=0;y<200;++y) for (unsigned x=104;x<320;++x) different+=complete[y*320+x]!=without[y*320+x];
+        CHECK(different);
+    }
+    BtpState stale=base;stale.campaign.world_x=776;stale.campaign.world_y=778;
+    for (unsigned i=0;i<8;++i) { stale.party.x[i]=776;stale.party.y[i]=778; }
+    CHECK(btp_save_write("work/m4-audit/cache-old-formation.btp",&stale,r,&e));
+    CHECK(btp_save_load("work/m4-audit/cache-old-formation.btp",&stale,r,&e));btp_render(r,&stale,0,without);
+    CHECK(!memcmp(complete,without,sizeof complete));
+    memset(base.story_flags+67,0,12);
     FILE *f=fopen("tests/fixtures/cache-primary.txt","r");CHECK(f);char line[256];unsigned cases=0;
     while (fgets(line,sizeof line,f)) {
         if (line[0]=='#') continue;
@@ -80,17 +97,28 @@ int main(int argc,char **argv)
     }
     fclose(f);CHECK(cases==530);
     BtpState s;CHECK(btp_save_load("Original DOS/GAME1",&s,r,&e));f=fopen("tests/fixtures/ordinary-cache.actions","r");CHECK(f);
-    unsigned ticks=0,animations=0,room=0,phoenix=0,terminal=0,door=0;
+    unsigned ticks=0,animations=0,room=0,phoenix=0,terminal=0,door=0,final_key=0;
     while (fgets(line,sizeof line,f)) {
         line[strcspn(line,"\r\n")]=0;BtpAction action;CHECK(btp_action_parse(line,&action));input(&s,r,action);++ticks;
         if (s.cutscene.active && s.cutscene.kind>=10 && s.cutscene.kind<=14) animations|=1u<<(s.cutscene.kind-10u);
         room+=s.story_flags[66]!=0;phoenix+=s.cache.phase==BTP_CACHE_PHOENIX;terminal+=s.cache.phase==BTP_CACHE_TERMINAL;door+=s.cache.phase==BTP_CACHE_DOOR;
+        const BtpBld *script=btp_state_bld(r,&s);
+        if (!final_key && s.campaign.building==25 && s.script.status==BTP_SCRIPT_WAIT &&
+            !s.cutscene.active && !s.audio.sound_count && s.script.pc<script->length && script->bytes[s.script.pc]==255) {
+            CHECK(btp_save_write("work/m4-audit/cache-final-key.btp",&s,r,&e));final_key=1;
+        }
         CHECK(s.mode!=BTP_SCRIPT_FAULT);
     }
-    fclose(f);CHECK(ticks>10000 && s.mode==BTP_ENDING && animations==31 && room && phoenix && terminal && door);
+    fclose(f);CHECK(ticks>10000 && s.mode==BTP_ENDING && s.menu.quit && animations==31 && room && phoenix && terminal && door && final_key);
     CHECK(s.cache.hall && s.story_flags[62] && s.story_flags[63] && s.story_flags[64] && s.story_flags[65] && !s.story_flags[66]);
     for (unsigned j=67;j<=78;++j) CHECK(s.story_flags[j]==1);
     CHECK(btp_save_write("work/m4-audit/cache-ending.btp",&s,r,&e));BtpState restored;CHECK(btp_save_load("work/m4-audit/cache-ending.btp",&restored,r,&e));
+    /* Earlier saves had already reached this screen without the exit flag.
+       They remain viewable while idle, then leave on the next logical key. */
+    BtpState old_end=restored;old_end.menu.quit=0;
+    CHECK(btp_save_write("work/m4-audit/cache-old-ending.btp",&old_end,r,&e));
+    input(&old_end,r,BTP_IDLE);CHECK(!old_end.menu.quit);
+    input(&old_end,r,BTP_LEFT);CHECK(old_end.menu.quit);
     uint32_t *pixels=malloc(BTP_PIXELS*sizeof *pixels);CHECK(pixels);btp_render(r,&restored,0,pixels);free(pixels);
     btp_start(&s);f=fopen("tests/fixtures/ordinary-fresh-campaign.actions","r");CHECK(f);
     unsigned fresh_ticks=0,disk=0,qualified=0;

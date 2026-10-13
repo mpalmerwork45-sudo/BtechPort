@@ -62,10 +62,36 @@ int main(int argc,char **argv)
     }
     fclose(f);CHECK(obstacle_cases==40);
     BtpState s;btp_start(&s);f=fopen(argv[2],"r");CHECK(f);
-    uint8_t saved[BTP_STATE_BYTES],again[BTP_STATE_BYTES];unsigned actions=0,animation=0,invasion_popups=0,destroyed_during_fight=0;
+    uint8_t saved[BTP_STATE_BYTES],again[BTP_STATE_BYTES];unsigned actions=0,animation=0,invasion_popups=0,destroyed_during_fight=0,migration=0;
     while (fgets(row,sizeof row,f)) {
         row[strcspn(row,"\r\n")]=0;BtpAction a;CHECK(btp_action_parse(row,&a));
         btp_game_tick(&s,r,a);animation|=s.cutscene.kind==9;
+        if (!migration && s.campaign.invasion && s.combat.phase==BTP_COMBAT_MENU) {
+            /* Re-encode this real held invasion in the v29 cropped frame.
+               Both current and parked per-actor orders must migrate. */
+            BtpState modern=s;BtpCombatState *c=&modern.combat;
+            c->phase=BTP_COMBAT_MOVE;c->movement=1;c->goal_active=1;c->goal_x=130;c->goal_y=140;
+            c->cursor_x=132;c->cursor_y=142;c->waypoint_count=1;c->waypoint_x[0]=136;c->waypoint_y[0]=146;
+            c->plans[0].active=1;c->plans[0].movement=1;c->plans[0].x=130;c->plans[0].y=140;
+            c->plans[0].count=1;c->plans[0].wx[0]=136;c->plans[0].wy[0]=146;
+            c->plans[1].x=140;c->plans[1].y=150;
+            BtpState old=modern;old.x_half-=64;old.y_half-=64;old.campaign.battle_x=old.campaign.battle_y=1536;
+            c=&old.combat;c->goal_x-=64;c->goal_y-=64;c->cursor_x-=64;c->cursor_y-=64;c->waypoint_x[0]-=64;c->waypoint_y[0]-=64;
+            for (unsigned i=0;i<c->count;++i) {
+                c->unit[i].x-=64;c->unit[i].y-=64;
+                if (c->plans[i].active || c->plans[i].x || c->plans[i].y) { c->plans[i].x-=64;c->plans[i].y-=64; }
+                for (unsigned j=0;j<c->plans[i].count;++j) { c->plans[i].wx[j]-=64;c->plans[i].wy[j]-=64; }
+            }
+            btp_state_encode(&old,saved);memcpy(saved,"BTPT",4);saved[4]=29;
+            BtpState upgraded;CHECK(btp_state_decode(saved,sizeof saved,btp_active_map(r,&old),btp_state_bld(r,&old),&upgraded));
+            btp_state_encode(&modern,saved);btp_state_encode(&upgraded,again);CHECK(!memcmp(saved,again,sizeof saved));
+            const BtpAction continuation[4]={BTP_RIGHT,BTP_DOWN,BTP_ACCEPT,BTP_CANCEL};
+            for (unsigned j=0;j<4;++j) {
+                btp_game_tick(&modern,r,continuation[j]);btp_game_tick(&upgraded,r,continuation[j]);
+                btp_state_encode(&modern,saved);btp_state_encode(&upgraded,again);CHECK(!memcmp(saved,again,sizeof saved));
+            }
+            migration=1;
+        }
         if (s.late.invasion_popup) invasion_popups|=1u<<s.late.invasion_popup;
         if (s.campaign.invasion && s.late.invasion_event>=3) {
             CHECK(btp_active_map(r,&s)==&r->destroyed);destroyed_during_fight=1;
@@ -80,7 +106,7 @@ int main(int argc,char **argv)
         btp_state_encode(&restored,again);CHECK(!memcmp(saved,again,sizeof saved));s=restored;++actions;
     }
     fclose(f);CHECK(s.story_flags[4] && s.mode==BTP_EXPLORE && !s.campaign.invasion);
-    CHECK(invasion_popups==126 && destroyed_during_fight);
+    CHECK(invasion_popups==126 && destroyed_during_fight && migration);
     CHECK(animation ? !s.campaign.owned : s.campaign.owned);
     char save_path[256];const char *leaf=strrchr(argv[2],'/');leaf=leaf ? leaf+1 : argv[2];
     CHECK(snprintf(save_path,sizeof save_path,"work/campaign-%s.btp",leaf)>0);

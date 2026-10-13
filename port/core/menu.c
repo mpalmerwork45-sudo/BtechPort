@@ -1,4 +1,6 @@
 #include "core/menu.h"
+#include "core/npc.h"
+#include "core/service.h"
 #include "core/party.h"
 #include "core/world.h"
 #include <string.h>
@@ -90,6 +92,7 @@ void btp_menu_open(BtpState *s)
 }
 void btp_menu_close(BtpState *s)
 {
+    if (s->service.phase==12 && s->service.action==48) s->service=(BtpServiceState){0};
     unsigned intro=s->menu.from_intro;s->menu.from_intro=0;
     s->campaign.ui=s->campaign.selected=s->campaign.member=0;s->menu.io=s->menu.notice=0;
     s->mode=(uint8_t)(intro ? BTP_BEGIN : s->menu.from_story ? BTP_BUILDING : s->cache.active ? BTP_CACHE : BTP_EXPLORE);
@@ -122,7 +125,10 @@ void btp_menu_input(BtpState *s,const BtpResources *r,BtpAction a)
     }
     if (c->ui==BTP_MENU_INSPECT && s->party.enabled && btp_party_count(&s->party)>1 && (a==BTP_UP || a==BTP_DOWN)) { page(s,BTP_MENU_TRANSFER,0);return; }
     if (c->ui==BTP_MENU_MAP) {
-        if (a==BTP_ACCEPT || a==BTP_CANCEL || a==BTP_OPEN_MENU) btp_menu_close(s);
+        if (a==BTP_ACCEPT || a==BTP_CANCEL || a==BTP_OPEN_MENU) { btp_menu_close(s);return; }
+        /* Original 0000:4553 uses RNG & 15 for each marker redraw. Advance
+           on logical polls so a save/replay is independent of rendering FPS. */
+        s->menu.notice=(uint8_t)(btp_rng_next(s->npc.rng)&15u);
         if (btp_action_moves(a)) {
             int x=(int)s->menu.map_x+256*btp_action_dx(a),y=(int)s->menu.map_y+256*btp_action_dy(a);
             s->menu.map_x=(uint16_t)(x<0 ? 0 : x>2047 ? 2047 : x);
@@ -153,7 +159,7 @@ void btp_menu_input(BtpState *s,const BtpResources *r,BtpAction a)
             else { c->member=0;page(s,BTP_MENU_INSPECT,0); }
             break;
         case 4:
-            (void)btp_party_heal(s,r,0);page(s,BTP_MENU_MESSAGE,0);s->menu.notice=3;break;
+            btp_service_heal(s,r,0,1);page(s,BTP_MENU_MESSAGE,0);s->menu.notice=3;break;
         case 5:page(s,BTP_MENU_LOAD,s->menu.slot);break;
         case 6:page(s,BTP_MENU_SAVE,s->menu.slot);break;
         case 7:
@@ -235,7 +241,7 @@ int btp_actions_valid(const BtpState *s)
          s->script.status!=BTP_SCRIPT_NATIVE || s->mode!=(s->menu.from_story==1 ? BTP_ACTIONS : BTP_BUILDING)))) return 0;
     const BtpMenuState *m=&s->menu;
     if ((m->steps!=1 && m->steps!=2 && m->steps!=4) || m->sound>1 || m->speed>5 || m->outtakes>2 ||
-        m->slot>5 || m->io>2 || m->notice>5 || m->quit>1 || m->map_x>2047 || m->map_y>2047 || m->from_intro>1) return 0;
+        m->slot>5 || m->io>2 || m->notice>(s->mode==BTP_ACTIONS && s->campaign.ui==BTP_MENU_MAP ? 15u : 5u) || m->quit>1 || m->map_x>2047 || m->map_y>2047 || m->from_intro>1) return 0;
     if (m->from_intro && (s->mode!=BTP_ACTIONS || (s->campaign.ui!=BTP_MENU_LOAD && s->campaign.ui!=BTP_MENU_MESSAGE))) return 0;
     if ((s->mode==BTP_ACTIONS)!=(s->campaign.ui!=0)) return 0;
     if (s->campaign.ui>BTP_MENU_MECH_PICK || (s->campaign.ui && s->campaign.selected>=btp_actions_count(s))) return 0;

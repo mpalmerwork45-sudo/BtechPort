@@ -43,10 +43,12 @@ def main():
     else:raise RuntimeError('Arena rental did not begin combat')
     s.note('arena-rented-locust');print('begin',position(s.state),s.state['yard'],flush=True)
     while s.state['combat']['phase'] in (1,2,3):s.advance(['accept'])
-    s.waypoint(78,102)
+    # Fire on the spectator while still mobile. With the verified live AI,
+    # waiting at the western wall lets the opponent destroy the rental's legs.
+    s.waypoint(87,97)
     for _ in range(16):
         u=s.state['combat']['units'][0]
-        if (u['x'],u['y'])==(78,102):break
+        if (u['x'],u['y'])==(87,97):break
         s.round()
         print('move',position(s.state),flush=True)
     else:raise RuntimeError('Arena approach route failed')

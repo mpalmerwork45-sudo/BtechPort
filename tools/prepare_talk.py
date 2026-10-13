@@ -90,6 +90,19 @@ def extract(source):
         0x1c19,0x1c35,0x1c4b,0x1c70,0x1c97,0x1ca7,0x1cce,0x1e99,0x1ea8,
         0x1eae,0x1ed1,0x1eff,0x1f19,0x1f49,0x1f94,0x1fc9,0x2008,
         0x17ce,0x17d6,0x17dc,0xaca,0x1e3c,0x1e4d,0x1e56,0x1e70,0x1e2f))
+    # 0C31:000A medical presentation, including cooldown/healthy branches.
+    addresses.extend(DS+p for p in (0x252d,0x2538,0x2543,0x2553,0x256f,0x2587,0x2591,0x25a4,0x25cf))
+    for entry in range(0x25e2,0x2602,4):
+        offset,segment=struct.unpack_from('<HH',image,DS+entry)
+        addresses.append(segment*16+offset)
+    addresses.append(DS+0x050d) # Original 0000:2A4F held-page footer.
+    # Battle results, salvage and pockets (291 onward).
+    addresses.extend(DS+p for p in (0x38fc,0x3936,0x3954,0x39aa,0x39ca,0x39f7,
+        0xfae,0xfff,0x101d,0x102f,0x104c,0x1085,0x10b5,0x10c6,0x10e5,0x10ff,0x1113,
+        0xefe,0xf28,0xf40,0xf65,0xf9e,0xfa0))
+    for skill in (2,3,4):
+        offset,segment=struct.unpack_from('<HH',image,DS+0xf9a+4*skill)
+        addresses.append(segment*16+offset)
     blob = bytearray(); ranges = []; origins = []
     for address in addresses:
         end = image.index(0,address)
@@ -103,7 +116,7 @@ def extract(source):
     header += bytes.fromhex(EXE_SHA)+bytes.fromhex(IMAGE_SHA)
     header += b"".join(struct.pack("<HH",*r) for r in ranges)
     font = image[FONT:FONT+2048]
-    return header+blob+font, {**metadata,"format":"BTTA/v18","strings":origins,
+    return header+blob+font, {**metadata,"format":"BTTA/v19","strings":origins,
         "font":{"image_offset":FONT,"length":len(font),"sha256":hashlib.sha256(font).hexdigest()}}
 
 

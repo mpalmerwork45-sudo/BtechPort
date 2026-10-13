@@ -294,12 +294,14 @@ BtpShot btp_combat_attack_unit(BtpCombatUnit *a, BtpCombatUnit *t, const BtpComb
         shot.hit=(uint8_t)((int)btp_combat_dice(rng)>=needed);
         for (unsigned n=0;n<count;++n) {
             if (!shot.hit) break;
-            shot.hit=1;unsigned hit=damage;
+            shot.hit=1;
+            /* 12E8:0867 halves the caller's damage local itself. Subsequent
+               pellets reuse that reduced amount while armour remains. */
             if (t->record[14]) {
-                if (t->record[14]>=hit/2) { hit/=2;t->record[14]=(uint8_t)(t->record[14]-hit); }
-                else { hit-=t->record[14];t->record[14]=0; }
+                if (t->record[14]>=damage/2) { damage/=2;t->record[14]=(uint8_t)(t->record[14]-damage); }
+                else { damage-=t->record[14];t->record[14]=0; }
             }
-            unsigned taken=t->record[15]<hit ? t->record[15] : hit;
+            unsigned taken=t->record[15]<damage ? t->record[15] : damage;
             t->record[15]=(uint8_t)(t->record[15]-taken);shot.damage=(uint8_t)(shot.damage+taken);
         }
         shot.destroyed=(uint8_t)!t->record[15];return shot;

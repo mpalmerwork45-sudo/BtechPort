@@ -50,6 +50,13 @@ int btp_spy_begin(BtpState *s)
 void btp_spy_combat_finish(BtpState *s)
 {
     unsigned spy=s->story_flags[37],bay=s->party.people[spy][12];BtpCombatState *c=&s->combat;
+    if (bay<4) {
+        unsigned vehicle=btp_combat_target(c,bay);
+        /* The DOS branch edits the shared live vehicle. Carry current damage
+           and ammunition into the seat change instead of restoring the
+           party's pre-battle copy over the combat record. */
+        if (vehicle<c->count) memcpy(btp_party_mech(s,bay),c->unit[vehicle].record,125);
+    }
     btp_spy_resolve(s);
     unsigned person=btp_combat_target(c,4u+spy);
     if (person<c->count) btp_campaign_destroy(s,person);

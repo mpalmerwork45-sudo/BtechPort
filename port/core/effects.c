@@ -67,6 +67,17 @@ void btp_effects_shot(BtpState *s,unsigned actor,unsigned target,unsigned weapon
         (uint8_t)(a->infantry ? 254 : alt ? 146 : 0),
         (uint8_t)(t->infantry ? 254 : t->record[0]=='s' ? 16 : btp_mech_sprite_base(t->record[0],target>=friends))};
 }
+void btp_effects_crush(BtpState *s,unsigned actor,unsigned target)
+{
+    /* 0E31:19FC..1A93 plays effect 18 before marking a trampled soldier.
+       Weapon 33 is the saved presentation discriminator, not a gun order. */
+    BtpCombatState *c=&s->combat;BtpEffectsState *v=&s->effects;
+    if (v->count>=24) return;
+    const BtpCombatUnit *a=&c->unit[actor],*t=&c->unit[target];
+    unsigned alt=btp_mech_sprite_base(a->record[0],actor>=(c->friends ? c->friends : 1u))!=0;
+    v->shots[v->count++]=(BtpCombatEffect){(uint8_t)actor,(uint8_t)target,(uint8_t)alt,
+        a->direction,33,1,1,a->x,a->y,t->x,t->y,(uint8_t)(alt ? 146 : 0),254};
+}
 void btp_effects_tick(BtpState *s,const BtpResources *r)
 {
     BtpEffectsState *v=&s->effects;
@@ -74,10 +85,12 @@ void btp_effects_tick(BtpState *s,const BtpResources *r)
     const BtpCombatEffect *e=&v->shots[0];
     if (v->stage==BTP_EFFECT_START) {
         if (s->audio.sound_count) return;
-        if (s->combat.graphics) btp_audio_effect(s,btp_effects_fire_sound(e->weapon,visible(e,s)));
+        if (e->weapon==33) btp_audio_effect(s,18);
+        else if (s->combat.graphics) btp_audio_effect(s,btp_effects_fire_sound(e->weapon,visible(e,s)));
         v->stage=BTP_EFFECT_FIRE_SOUND;return;
     }
     if (s->audio.sound_count) return;
+    if (e->weapon==33 && v->stage==BTP_EFFECT_FIRE_SOUND) { v->stage=BTP_EFFECT_DEATH_SOUND;return; }
     if (v->stage==BTP_EFFECT_FIRE_SOUND) v->stage=BTP_EFFECT_ATTACK;
     if (v->stage==BTP_EFFECT_HIT_SOUND) v->stage=BTP_EFFECT_IMPACT;
     unsigned pose=2u*r->combat.poses[e->group][e->direction][0];
@@ -87,7 +100,7 @@ void btp_effects_tick(BtpState *s,const BtpResources *r)
             v->stage=BTP_EFFECT_HIT_SOUND;return;
         }
     } else if (v->stage==BTP_EFFECT_IMPACT || v->stage==BTP_EFFECT_LEGACY) ++v->age;
-    if (v->age<btp_effects_length(e,&r->combat)) return;
+    if (e->weapon!=33 && v->age<btp_effects_length(e,&r->combat)) return;
     if (e->dead && e->target_base!=254 && v->stage!=BTP_EFFECT_DEATH_SOUND && v->stage!=BTP_EFFECT_LEGACY) {
         /* 12E8:1C76 plays sound 8 for a wreck. The rented arena target's
            branch uses sound 7 before its two alarm messages instead. Wait
@@ -118,11 +131,12 @@ int btp_effects_valid(const BtpState *s)
         for (unsigned j=0;j<2;++j) if (v->outtakes[i][j]>=BTP_ANM_COUNT || (i>=v->count && v->outtakes[i][j])) return 0;
         const BtpCombatEffect *e=&v->shots[i];
         if (i<v->count) {
-            if (e->actor>=s->combat.count || e->target>=s->combat.count || e->group>=18 || e->direction>7 || e->weapon>32 ||
+            if (e->actor>=s->combat.count || e->target>=s->combat.count || e->group>=18 || e->direction>7 || e->weapon>33 ||
                 e->hit>1 || e->dead>1 || (!s->campaign.invasion && (e->x>127 || e->y>127 || e->tx>127 || e->ty>127)) ||
                 (e->base!=0 && e->base!=146 && e->base!=254) ||
                 (e->target_base!=0 && e->target_base!=16 && e->target_base!=146 && e->target_base!=254)) return 0;
             if (e->base!=(e->group>=4 ? 254 : e->group&1u ? 146 : 0) || (e->dead && !e->hit)) return 0;
+            if (e->weapon==33 && (e->group>1 || !e->dead || e->target_base!=254 || s->combat.unit[e->actor].infantry)) return 0;
         } else {
             const uint8_t *p=(const uint8_t *)e;
             for (unsigned j=0;j<sizeof *e;++j) if (p[j]) return 0;

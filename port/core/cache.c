@@ -11,9 +11,27 @@ static unsigned normalized(unsigned raw)
 {
     return ((raw/64u)/4u*8u+(raw%64u)/8u)*32u+(raw/64u)%4u*8u+raw%8u;
 }
+static void position_party(BtpState *s,const BtpResources *r)
+{
+    /* All people enter each cache room together. No vehicle can enter;
+       initialize legal foot positions using the ordinary compact formation. */
+    s->campaign.world_x=(uint16_t)(1536+s->x_half);
+    s->campaign.world_y=(uint16_t)(1536+s->y_half);
+    for (unsigned i=0;i<8;++i) {
+        s->party.x[i]=s->campaign.world_x;s->party.y[i]=s->campaign.world_y;
+    }
+    btp_party_follow(s,r,s->campaign.world_x,s->campaign.world_y);
+}
 static void notice(BtpState *s,unsigned id)
 {
     s->cache.phase=BTP_CACHE_NOTICE;s->cache.notice=(uint8_t)id;
+}
+void btp_cache_restore_party(BtpState *s,const BtpResources *r)
+{
+    /* Earlier native saves left world/follower coordinates at the cave or
+       previous room. Recover their formation before the first loaded draw. */
+    if (s->cache.active && (s->campaign.world_x!=1536u+s->x_half || s->campaign.world_y!=1536u+s->y_half))
+        position_party(s,r);
 }
 unsigned btp_cache_tile(const BtpResources *r,const BtpState *s,int x,int y)
 {
@@ -96,13 +114,18 @@ void btp_cache_begin(BtpState *s,const BtpResources *r)
     (void)btp_cache_door(s,r,3,124,11);
     /* Original initialization opens the door before INSTRUCT.BLD. */
     s->cache.phase=BTP_CACHE_WALK;s->cache.door=s->cache.door_step=0;
+    position_party(s,r);
     btp_game_building(s,r,23);
 }
 void btp_cache_script_end(BtpState *s,const BtpResources *r)
 {
     unsigned kind=s->campaign.building;
     if (!s->cache.active) { if (kind==20 && s->story_flags[54]) btp_cache_begin(s,r);return; }
-    if (kind==25) { s->mode=BTP_ENDING;return; }
+    if (kind==25) {
+        /* 0B5D:0515..0534 sets both exit flags after WINSCENE's final
+           key wait returns. The native frontend consumes menu.quit. */
+        s->mode=BTP_ENDING;s->menu.quit=1;return;
+    }
     s->script=(BtpScriptState){0};s->campaign.building=0;s->entry_slot=0;
     s->mode=BTP_CACHE;
     s->campaign.mounted=0;
@@ -113,6 +136,7 @@ static void room(BtpState *s,const BtpResources *r,int enter)
     s->x_half=(uint16_t)(enter ? 4 : 69);s->y_half=(uint16_t)(enter ? 34 : 57);
     if (enter) memcpy(s->cache.maproom,r->maproom.tiles,768);
     s->cache.phase=BTP_CACHE_WALK;s->cache.notice=0;
+    position_party(s,r);
 }
 static void move_cache(BtpState *s,const BtpResources *r,BtpAction a);
 void btp_cache_input(BtpState *s,const BtpResources *r,BtpAction a)
@@ -146,11 +170,17 @@ void btp_cache_input(BtpState *s,const BtpResources *r,BtpAction a)
     if (!btp_action_moves(a)) return;
     unsigned steps=s->story_flags[66] ? 1u : s->menu.steps;
     uint8_t frame=s->player_walk;unsigned before=btp_player_direction(s->facing);
+    BtpPartyState party_before=s->party;
     for (unsigned i=0;i<steps;++i) {
         move_cache(s,r,a);
         if (s->blocked || s->mode!=BTP_CACHE || s->cache.phase) break;
     }
     s->player_walk=btp_walk_next(frame,before,btp_player_direction((unsigned)a));
+    /* A two/four-step input still advances every moving person's gait only
+       once, while collision and formation updates check each half-step. */
+    for (unsigned i=1;i<8;++i) if (s->party.people[i][0]!=255 &&
+        (s->party.x[i]!=party_before.x[i] || s->party.y[i]!=party_before.y[i]))
+        s->party.walk[i]=btp_walk_next(party_before.walk[i],party_before.direction[i],s->party.direction[i]);
 }
 static void move_cache(BtpState *s,const BtpResources *r,BtpAction a)
 {
@@ -161,7 +191,12 @@ static void move_cache(BtpState *s,const BtpResources *r,BtpAction a)
     unsigned width=s->story_flags[66] ? 64u : 128u,height=s->story_flags[66] ? 48u : 128u;
     if (x<0 || y<0 || x>=(int)width-1 || y>=(int)height) { s->blocked=BTP_EDGE;return; }
     unsigned tile=btp_cache_tile(r,s,(x+1)/2,y/2);
-    if (tile<s->gate) { s->x_half=(uint16_t)x;s->y_half=(uint16_t)y;s->blocked=0;return; }
+    if (tile<s->gate) {
+        uint16_t old_x=s->campaign.world_x,old_y=s->campaign.world_y;
+        s->x_half=(uint16_t)x;s->y_half=(uint16_t)y;s->blocked=0;
+        s->campaign.world_x=(uint16_t)(1536+x);s->campaign.world_y=(uint16_t)(1536+y);
+        btp_party_follow(s,r,old_x,old_y);return;
+    }
     s->blocked=BTP_WALL;
     if (s->story_flags[66]) {
         if (tile==148) { c->phase=BTP_CACHE_EXIT;c->notice=129; }

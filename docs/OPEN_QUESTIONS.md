@@ -4,10 +4,10 @@ The authorized M4 increments have playable, tested paths. Confidence belongs
 to the individual original comparisons and recorded continuations in
 [M4 evidence](M4_PROGRESS.md) and [follow-up evidence](M4_FOLLOWUPS_EVIDENCE.md),
 rather than to every branch of the original game.
-The next five proposed tasks are in [project status](PROJECT_STATUS.md).
+The remaining authorized tasks are in [project status](PROJECT_STATUS.md).
 
 1. **Fresh-game campaign — playable route VERIFIED; broader parity UNKNOWN.**
-   A 66,119-input new-cadet route now earns companions, apprenticeships, the
+   A 65,991-input new-cadet route now earns companions, apprenticeships, the
    holodisk and password before reaching the ending, using only the authorized
    credit shortcut. It restores before every input and has selected original
    prerequisite comparisons. It is not a complete DOS recording of all those
@@ -32,7 +32,8 @@ The next five proposed tasks are in [project status](PROJECT_STATUS.md).
    cases. Placement/cadence, broader initiative and mixed-party AI still need
    complete DOS encounter traces. Two larger controlled encounters now compare
    11 waves/171 complete records, positions, facing, heat and RNG projections;
-   caller prerequisites remain explicit. Arena threshold 139 stays local;
+   caller prerequisites remain explicit. Five additional live-caller cases cover
+   25 complete waves and 7,252 checks, including spy crews and finite ammunition. Arena threshold 139 stays local;
    ordinary town/world exploration uses threshold 85. Local follower detours
    satisfy the requested collision correction but are not original pathfinding
    evidence. More doorway/corner/formation frames remain to be checked.
@@ -52,14 +53,18 @@ The next five proposed tasks are in [project status](PROJECT_STATUS.md).
    cadence and several service layouts remain approximate. Engagement,
    allocation, inspection-choice and Speed Shop selectors have complete region
    hashes. Original startup seed `0x020304` and all twelve city sectors agree;
-   the overhead frame matches 63,998/64,000 pixels, with two unexplained source
-   black pixels explicitly masked. The original eight-entry on-foot combat
-   menu and some unit headers/scan layouts still need reproduction.
+   the overhead frame matches all 64,000 pixels without masks. The former black
+   pixels are the original 2x2 flashing player marker; its DOS poll cadence is
+   approximate. Nine foot/mech menu and scan regions, 23 Mechit-Lube panels,
+   five victory/loot panels and one field-treatment panel match their captures.
+   Phoenix LAM colours, hospital/cooldown layouts and remaining battle-result
+   screens still need direct visual comparisons.
 8. **Persistence — tested represented fields.** All six supplied original saves
    roundtrip unchanged; unmodeled original bytes are preserved. Internal
-   BTPV/v31 includes active theft/audio/menu states and spy discovery. Old
+   BTPX/v33 includes active theft/audio/menu states and spy discovery. Old
    formats cannot recover history that they never stored. Active-invasion v29
-   migration needs a dedicated saved-case comparison. Original export remains limited to supported
+   migration now compares positions, current and per-actor goals/waypoints and
+   the next four inputs; stale cache follower coordinates recover on load. Original export remains limited to supported
    outdoor contexts rather than every internal native mode.
 9. **Portability — UNKNOWN.** Windows builds and audio/input behavior have not
    been tested. The independent runtime is C11/SDL2; research tools and cached

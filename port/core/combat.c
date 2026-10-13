@@ -34,8 +34,19 @@ static int los(const BtpMap *m,unsigned gate,int x,int y,int tx,int ty,const uin
     for (unsigned i=0; i<256; ++i) {
         /* The nine descriptors immediately precede the 24x24 grid at
            BUFFER:07A4. A long ray can read one of them at its edge. */
-        if (at<-9 || at>=576 || (at<0 && !prefix)) return -1;
-        unsigned tile=at<0 ? prefix[at+9] : r ? btp_world_tile(r,s,
+        if (at<(r ? -585 : -9) || at>=576 || (at<0 && !prefix)) return -1;
+        unsigned tile;
+        if (at<-9) {
+            /* 0E31:1BFE's ray can underflow the viewport into BUFFER:0564,
+               the nine raw sector-height grids before its descriptors.
+               These are height bytes, not the corresponding forest tiles. */
+            unsigned cell=(unsigned)(at+585),sector=cell/64u;
+            int ox=((int)s->campaign.battle_x+sx)/128-1+(int)(sector%3u);
+            int oy=((int)s->campaign.battle_y+sy)/128-1+(int)(sector/3u);
+            tile=btp_world_descriptor(r,s,ox*64+(int)(cell%8u)*8,
+                oy*64+(int)((cell%64u)/8u)*8);
+            if (tile<144) tile&=240u;
+        } else tile=at<0 ? prefix[at+9] : r ? btp_world_tile(r,s,
             (int)s->campaign.battle_x/2+(sx&~15)/2-8+at%24,
             (int)s->campaign.battle_y/2+(sy&~15)/2-8+at/24) : tile_at(m,sx,sy,at);
         if (tile>=gate) return 0;
@@ -392,7 +403,7 @@ static void begin_round(BtpState *s, const BtpResources *r, int enemy_ai)
         }
         if (prey==BTP_COMBAT_UNITS) continue;
     }
-    int ex=enemy.x,ey=enemy.y,px=c->unit[prey].x,py=c->unit[prey].y;
+    int ex=enemy.x,ey=enemy.y,px=c->unit[prey].x,py=c->unit[prey].y,goal_x=ex,goal_y=ey;
     unsigned distance=btp_combat_distance(ex,ey,px,py),preferred=255;
     int visible=scene_los(r,s,&terrain,ex,ey,px,py)>0;
     for (unsigned i=51;i<86;++i) {
@@ -404,7 +415,9 @@ static void begin_round(BtpState *s, const BtpResources *r, int enemy_ai)
     }
     if (preferred==255) preferred=0;
     if (enemy.infantry) preferred=r->combat.weapons[enemy.record[11]][14]>>5;
-    int close=!enemy.infantry && visible && abs(px-ex)<=3 && abs(py-ey)<2;
+    /* 0E31:0955..097C only cancels the move for vehicle against vehicle.
+       A vehicle near a person retains its facing and trampling route. */
+    int close=!enemy.infantry && !c->unit[prey].infantry && visible && abs(px-ex)<=3 && abs(py-ey)<2;
     uint8_t first_movement=255;
     uint8_t *movement=index==0 && c->friends ? &first_movement : index==0 ? &c->movement : index==1 ? &c->enemy_movement : &c->enemy_modes[index-2];*movement=255;
     if ((enemy_ai || friendly) && close) {
@@ -420,6 +433,7 @@ static void begin_round(BtpState *s, const BtpResources *r, int enemy_ai)
             if (distance>preferred) { tx=ex+sx*(int)(distance-preferred);ty=ey+sy*(int)(distance-preferred); }
             else { tx=ex;ty=ey; }
         }
+        goal_x=tx;goal_y=ty;
         *movement=(uint8_t)(enemy.heat || enemy.infantry ? 0 : 1);
         /* 0E31:046F normalizes robot IDs before 103B:2474. IDs 20/21
            cross its threshold and take six points; IDs 16..19 take three. */
@@ -447,10 +461,16 @@ static void begin_round(BtpState *s, const BtpResources *r, int enemy_ai)
     }
     if (!index && !c->friends) {
         memcpy(c->orders,orders,11);c->kick_target=orders[11];c->goal_active=0;c->waypoint_count=0;
+        int max_x=s->campaign.invasion ? 253 : 125,max_y=s->campaign.invasion ? 255 : 127;
+        c->goal_x=(uint8_t)(goal_x<0 ? 0 : goal_x>max_x ? max_x : goal_x);
+        c->goal_y=(uint8_t)(goal_y<0 ? 0 : goal_y>max_y ? max_y : goal_y);
         memset(c->waypoint_x,0,11);memset(c->waypoint_y,0,11);
     }
     if (friendly && c->friends) {
         BtpCombatPlan *p=&c->plans[index];p->movement=*movement;p->active=0;p->count=0;p->kick=orders[11];memcpy(p->orders,orders,11);
+        int max_x=s->campaign.invasion ? 253 : 125,max_y=s->campaign.invasion ? 255 : 127;
+        p->x=(uint8_t)(goal_x<0 ? 0 : goal_x>max_x ? max_x : goal_x);
+        p->y=(uint8_t)(goal_y<0 ? 0 : goal_y>max_y ? max_y : goal_y);
         memset(p->wx,0,11);memset(p->wy,0,11);
     }
     }
@@ -472,14 +492,42 @@ unsigned btp_combat_walk_frame(unsigned frame,unsigned previous,unsigned directi
         if (frames[direction][i]==frame) next=(i+1u)%4u;
     return infantry ? btp_walk_next((uint8_t)frame,(uint8_t)previous,(uint8_t)direction) : frames[direction][next];
 }
-static void advance(BtpCombatState *c, unsigned index)
+static void mark(BtpState *s,unsigned sprite,unsigned x,unsigned y);
+static void advance(BtpState *s, unsigned index)
 {
+    BtpCombatState *c=&s->combat;
     BtpCombatUnit *u=&c->unit[index];unsigned p=c->path_index[index];
     if (p>=12 || u->record[0]==255) return;
     int mx=c->path[index][p][0], my=c->path[index][p][1];
-    if (mx==2 || my==2 || (!mx && !my)) return;
+    if (mx==2 || my==2) {
+        unsigned friends=c->friends ? c->friends : 1u;
+        int arrived=c->friends ? u->x==c->plans[index].x && u->y==c->plans[index].y :
+            u->x==c->goal_x && u->y==c->goal_y;
+        if (index<friends && (c->automatic&(1u<<index)) && arrived) {
+            /* 12E8 clears a computer move when it reaches the end marker.
+               Later shots and cooling then use stationary mode (FF).
+               Enemy AI retains its command mode through wave cleanup. */
+            if (index<c->friends) c->plans[index].movement=255;
+            if (index==c->active_unit) c->movement=255;
+            if (index==1) c->enemy_movement=255;
+            else if (index>1) c->enemy_modes[index-2]=255;
+        }
+        return;
+    }
+    if (!mx && !my) return;
     int x=u->x+mx,y=u->y+my;
-    for (unsigned i=0;i<c->count;++i) if (i!=index && occupied(u,&c->unit[i],x,y)) return;
+    unsigned friends=c->friends ? c->friends : 1u;
+    for (unsigned i=0;i<c->count;++i) if (i!=index && occupied(u,&c->unit[i],x,y) &&
+        !(!u->infantry && c->unit[i].infantry && (i<friends)!=(index<friends))) return;
+    if (!u->infantry) for (unsigned i=0;i<c->count;++i)
+        if (c->unit[i].infantry && (i<friends)!=(index<friends) && occupied(u,&c->unit[i],x,y)) {
+            /* Original movement blocks friendly soldiers but crushes enemies
+               under a vehicle's two-step footprint, without an RNG draw. */
+            btp_effects_crush(s,index,i);c->unit[i].record[15]=0;
+            mark(s,126,c->unit[i].x,c->unit[i].y);
+            if (s->campaign.encounter) btp_campaign_destroy(s,i);
+            else { c->unit[i].record[0]=255;c->unit[i].x=c->unit[i].y=127; }
+        }
     unsigned direction=btp_combat_direction(u->x,u->y,x,y);
     c->walk[index]=(uint8_t)btp_combat_walk_frame(c->walk[index],u->direction,direction,u->infantry);
     u->direction=(uint8_t)direction;c->plan_direction[index]=(uint8_t)direction;
@@ -527,10 +575,10 @@ static void round_tick(BtpState *s, const BtpResources *r, int enemy_ai)
     /* Original physical 100DC: speeds 0..4 delay 12*selection units;
        selection 5 waits for a key. Host tick conversion remains approximate. */
     c->delay=(uint8_t)(s->menu.speed<5 ? s->menu.speed : 0u);c->flash=0;
-    advance(c,0);
+    advance(s,0);
     /* Ignore old in-progress target paths too: loading an earlier checkpoint
        must not reanimate the training shell. */
-    if (enemy_ai) for (unsigned i=1;i<c->count;++i) advance(c,i);
+    if (enemy_ai) for (unsigned i=1;i<c->count;++i) advance(s,i);
     BtpMap map;btp_combat_map(r,s,&map);
     unsigned terrain[BTP_COMBAT_UNITS]={0};
     for (unsigned i=0;i<c->count;++i) c->unit[i].cover=(uint8_t)btp_combat_cover(&map,&c->unit[i],&terrain[i]);
@@ -779,9 +827,13 @@ static void combat_tick(BtpState *s, const BtpResources *r, BtpAction a, int ene
             *order=(uint8_t)btp_combat_id(c,c->target_unit);
             if (kick) menu(c);else { ++c->weapon_selected;c->phase=BTP_COMBAT_WEAPONS; }
         } else if (a==BTP_ACCEPT && c->target_selected==1) {
-            for (unsigned n=0;n<c->count;++n) {
-                c->target_unit=(uint8_t)((c->target_unit+1u)%c->count);
-                if (c->target_unit!=c->active_unit && c->unit[c->target_unit].record[0]!=255) break;
+            /* 0D43:0A16 advances original IDs and wraps 23 to 12. A
+               deliberately selected friendly can be targeted, but cycling
+               beyond the enemies must not wrap back to the player's mechs. */
+            unsigned id=btp_combat_id(c,c->target_unit);
+            for (unsigned n=0;n<24;++n) {
+                id=id==23 ? 12u : id+1u;unsigned next=btp_combat_target(c,id);
+                if (next<c->count && c->unit[next].record[0]!=255) { c->target_unit=(uint8_t)next;break; }
             }
         }
         return;
@@ -1049,7 +1101,7 @@ int btp_combat_valid(const BtpState *s)
         const BtpCombatUnit *u=&c->unit[i];
         if ((u->record[0]!=255 && (u->x>(s->campaign.invasion ? 253u : s->campaign.encounter || u->infantry ? 127u : 125u) || u->y>(s->campaign.invasion ? 255u : 127u))) || u->direction>7 || u->heat>30 || u->burning>3 ||
             (u->cover!=0 && u->cover!=(u->infantry ? 2 : 8) && u->cover!=(u->infantry ? 4 : 16)) || c->moved[i]>12 || c->path_index[i]>12 ||
-            c->walk[i]>15 || c->plan_direction[i]>7 || c->fallback[i]>7 || u->infantry>1 ||
+            c->walk[i]>15 || (c->plan_direction[i]>7 && c->plan_direction[i]!=255) || c->fallback[i]>7 || u->infantry>1 ||
             (i && !s->campaign.encounter && u->infantry!=(s->mission.assignment==3)) || btp_combat_weapon_count(u)>11 || u->record[117]>3 || u->record[118]>2 || u->record[119]>2) return 0;
         if (u->infantry && (u->record[1]<2 || u->record[1]>12 || u->record[11]>13 || u->record[15]>120)) return 0;
         if (i) {

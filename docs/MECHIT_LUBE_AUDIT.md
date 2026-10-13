@@ -47,6 +47,14 @@ and lifetime-spy checks permit a replacement after a lost specialist, while
 preventing a second spy. Hospitals retain their corresponding doctor branch.
 This is not an unconditional hire option added to every visit.
 
+**VERIFIED last-row gyro correction:** the engine/gyro/sensor warning has no
+leading carriage returns, unlike healthy/unfunded notices. It now starts below
+the last listed vehicle, retaining all three menu rows. Original session
+`1791876402969678147` adds selection/result pairs to the pixel corpus. Native
+entry/exit also preserves three pilots and a passenger, including Jason in bay
+two, with every input restored. Original crew evidence is the mounted
+before/entry/inside/after sequence `1791874354558657062`.
+
 ## Evidence and verification
 
 `tools/make_mechit_vectors.py` executes the complete original repair and reload
@@ -56,7 +64,7 @@ levels, repeated critical slots, SRM6, unrelated/selected broken guns, ammo
 clipping, healthy mechs and the three unrepairable systems. Complete record
 hashes, money, confirmation counts and weapon-estimate visits agree.
 
-Twenty-one live original/port pairs match every RGB pixel in the complete
+Twenty-three live original/port pairs match every RGB pixel in the complete
 216×200 right panel and 104×100 party footer. These include the mech selectors,
 repair questions, weapon estimate/receipt, actuators, return menu, ammo entry/
 limit, apprenticeship, Speed Shop offer/purchase and recruitment. Provenance is
@@ -65,7 +73,7 @@ in `tests/fixtures/mechit-ui-primary.*`; numeric cases are in
 those region assertions; the held recruitment frame matches all pixels.
 
 Source sessions are `1791863873862567602`, `1791864147791493161`,
-`1791865266664660305` and `1791865285111355132`. Private prerequisites specify
+`1791865266664660305`, `1791865285111355132` and `1791876402969678147`. Private prerequisites specify
 party membership, damage, funds and location explicitly. They do not establish
 a complete ordinary DOS campaign replay.
 
@@ -74,9 +82,10 @@ native SDL visits agree on recorded keys, complete state and final pixels.
 Real F5/F9 checks pass on the repair question, estimate, receipt, ammo amount,
 ammo-limit notice, joining page and refit offer. BTPX/v33 stores the estimate
 and quote in existing payload padding; older approximate service saves resume
-at the real vehicle selector without changing money or damage. BTTA/v18
-extracts 273 original fragments, including the new service text.
+at the real vehicle selector without changing money or damage. BTTA/v19
+extracts 317 original fragments, retaining the service text and adding medical
+and battle-result wording.
 
 Remaining limits are the wider original campaign and physical timing, rather
 than a claim that every DOS building/animation has been compared. Numeric
-funding coverage is broader than the 21 measured screen pairs.
+funding coverage is broader than the 23 measured screen pairs.

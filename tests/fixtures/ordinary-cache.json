@@ -593,7 +593,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "b2378a4a1a628c35",
+        "state_digest": "dbfa1892c41ec913",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1510,7 +1510,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "5a628f3b20b90fa4",
+        "state_digest": "6110dad536763a8c",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -2334,8 +2334,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1554,
+            1652
           ],
           "mounted": 0,
           "encounter": 0,
@@ -2427,7 +2427,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "0288722580c35310",
+        "state_digest": "99243a7019f3bfc4",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -3251,8 +3251,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1626,
+            1660
           ],
           "mounted": 0,
           "encounter": 0,
@@ -3344,7 +3344,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "bf7c8ae89182bfe4",
+        "state_digest": "e044c6b7e1231a42",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -4168,8 +4168,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1639,
+            1660
           ],
           "mounted": 0,
           "encounter": 0,
@@ -4261,7 +4261,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "910861b65843f40f",
+        "state_digest": "494a40a1eb44abf1",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -5085,8 +5085,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1620,
+            1660
           ],
           "mounted": 0,
           "encounter": 0,
@@ -5178,7 +5178,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "caafbd70c62ea0bf",
+        "state_digest": "1429b6f910e8eee3",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -6002,8 +6002,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1620,
+            1660
           ],
           "mounted": 0,
           "encounter": 0,
@@ -6095,7 +6095,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "ead413ba72e0f584",
+        "state_digest": "011cc087394c85d8",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -6919,8 +6919,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1560,
+            1652
           ],
           "mounted": 0,
           "encounter": 0,
@@ -7012,7 +7012,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "2d305352ad16a0ce",
+        "state_digest": "96f9153caf399986",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -7836,8 +7836,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1646,
+            1650
           ],
           "mounted": 0,
           "encounter": 0,
@@ -7929,7 +7929,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "371a9e9e8d0e8ae5",
+        "state_digest": "f91de5e7e22768c9",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -8753,8 +8753,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1580,
+            1540
           ],
           "mounted": 0,
           "encounter": 0,
@@ -8846,7 +8846,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "3315aabbd4fc6376",
+        "state_digest": "277c869839b61794",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -9670,8 +9670,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1632,
+            1650
           ],
           "mounted": 0,
           "encounter": 0,
@@ -9763,7 +9763,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "006d8ac90df7139f",
+        "state_digest": "d6d2e7b24cb3d331",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -10587,8 +10587,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1632,
+            1650
           ],
           "mounted": 0,
           "encounter": 0,
@@ -10680,7 +10680,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "929039912ea7d7e3",
+        "state_digest": "d913ea40c58e6861",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -11504,8 +11504,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1651,
+            1612
           ],
           "mounted": 0,
           "encounter": 0,
@@ -11597,7 +11597,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "fea9aabec894e6a9",
+        "state_digest": "ee6d7fc638ff0749",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -12421,8 +12421,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1636,
+            1620
           ],
           "mounted": 0,
           "encounter": 0,
@@ -12514,7 +12514,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "ef7939e9c27fe3d9",
+        "state_digest": "c9a0c102fba0ae77",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -13338,8 +13338,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1625,
+            1630
           ],
           "mounted": 0,
           "encounter": 0,
@@ -13431,7 +13431,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "0092a447e0853207",
+        "state_digest": "627db0b2eb5f876b",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -14255,8 +14255,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1588,
+            1660
           ],
           "mounted": 0,
           "encounter": 0,
@@ -14348,7 +14348,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "c40af4cd69acb5ce",
+        "state_digest": "76cd88d85b2f7f14",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -15172,8 +15172,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1588,
+            1660
           ],
           "mounted": 0,
           "encounter": 0,
@@ -15265,7 +15265,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "753a63fb269faef4",
+        "state_digest": "8a4b458d3a9abbd2",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -16089,8 +16089,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1652,
+            1628
           ],
           "mounted": 0,
           "encounter": 0,
@@ -16182,7 +16182,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "4ec9b1882e76b2d0",
+        "state_digest": "3eb62ea7630eabe1",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -17006,8 +17006,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1540,
+            1586
           ],
           "mounted": 0,
           "encounter": 0,
@@ -17099,7 +17099,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "5a89d3778d578ae3",
+        "state_digest": "51bad9a77714d350",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -17923,8 +17923,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1634,
+            1660
           ],
           "mounted": 0,
           "encounter": 0,
@@ -18016,7 +18016,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "647e5ced7a65fef4",
+        "state_digest": "f13b1bb460f5d51d",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -18840,8 +18840,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1623,
+            1610
           ],
           "mounted": 0,
           "encounter": 0,
@@ -18933,7 +18933,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "aad2c4c554c71ef1",
+        "state_digest": "f0c83896a902a7f9",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -19757,8 +19757,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1623,
+            1610
           ],
           "mounted": 0,
           "encounter": 0,
@@ -19850,7 +19850,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "b8900a292b817271",
+        "state_digest": "240f4179fac15329",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -20674,8 +20674,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1558,
+            1578
           ],
           "mounted": 0,
           "encounter": 0,
@@ -20767,7 +20767,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "ee289f46995f7bc2",
+        "state_digest": "b6510e9fcf80df12",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -21591,8 +21591,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1638,
+            1630
           ],
           "mounted": 0,
           "encounter": 0,
@@ -21684,7 +21684,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "3f8d42d52290a1ce",
+        "state_digest": "9bc29fe6b80b7ba3",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -22508,8 +22508,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1661,
+            1654
           ],
           "mounted": 0,
           "encounter": 0,
@@ -22601,7 +22601,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "3b0bce5912e9a938",
+        "state_digest": "ce845c01a367d768",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -23425,8 +23425,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1571,
+            1611
           ],
           "mounted": 0,
           "encounter": 0,
@@ -23518,7 +23518,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "c2a6ccdfb9adba3f",
+        "state_digest": "9ee9bd7d196cdead",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -24342,8 +24342,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1571,
+            1611
           ],
           "mounted": 0,
           "encounter": 0,
@@ -24435,7 +24435,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "f624fc5751dd8281",
+        "state_digest": "350c85fab8fea647",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -25259,8 +25259,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1607,
+            1612
           ],
           "mounted": 0,
           "encounter": 0,
@@ -25352,7 +25352,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "3ce16196ab472dfe",
+        "state_digest": "7838d300fd60200e",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -26176,8 +26176,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1614,
+            1612
           ],
           "mounted": 0,
           "encounter": 0,
@@ -26269,7 +26269,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "ebe11d01518fc2b2",
+        "state_digest": "7d112980eb2d4462",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -27093,8 +27093,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1641,
+            1586
           ],
           "mounted": 0,
           "encounter": 0,
@@ -27186,7 +27186,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "c7dad47a892cbf1f",
+        "state_digest": "0f37e79e3dc8bfc0",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -28010,8 +28010,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1575,
+            1619
           ],
           "mounted": 0,
           "encounter": 0,
@@ -28103,7 +28103,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "27114f09d939588f",
+        "state_digest": "eb67f8322962cb6d",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -28927,8 +28927,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1575,
+            1619
           ],
           "mounted": 0,
           "encounter": 0,
@@ -29020,7 +29020,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "3c0d82f84259f3c6",
+        "state_digest": "1c61636dc39ed2c8",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -29844,8 +29844,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1550,
+            1616
           ],
           "mounted": 0,
           "encounter": 0,
@@ -29937,7 +29937,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "ca8adefc4dc50f73",
+        "state_digest": "0fe5bbab47339f7b",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -30761,8 +30761,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1660,
+            1568
           ],
           "mounted": 0,
           "encounter": 0,
@@ -30854,7 +30854,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "96de6a814b75d8dd",
+        "state_digest": "e4ab880c70de74a4",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -31678,8 +31678,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1562,
+            1596
           ],
           "mounted": 0,
           "encounter": 0,
@@ -31771,7 +31771,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "bf2d48b1e7612c21",
+        "state_digest": "2cbc8f47e0a9374f",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -32595,8 +32595,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1573,
+            1606
           ],
           "mounted": 0,
           "encounter": 0,
@@ -32688,7 +32688,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "deb7aafbc6dc0063",
+        "state_digest": "745339e4afe6a822",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -33512,8 +33512,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1573,
+            1606
           ],
           "mounted": 0,
           "encounter": 0,
@@ -33605,7 +33605,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "02236870acebdcc8",
+        "state_digest": "a05d5ebe7bd2f6e5",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -34429,8 +34429,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1634,
+            1586
           ],
           "mounted": 0,
           "encounter": 0,
@@ -34522,7 +34522,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "c321fd90df8ee5e4",
+        "state_digest": "f993f442202ff67a",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -35346,8 +35346,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1620,
+            1564
           ],
           "mounted": 0,
           "encounter": 0,
@@ -35439,7 +35439,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "20d314c9926afc20",
+        "state_digest": "f193e5c149d4dcdd",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -36263,8 +36263,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1610,
+            1624
           ],
           "mounted": 0,
           "encounter": 0,
@@ -36356,7 +36356,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "d19d22b27de9f1f6",
+        "state_digest": "6245c6f1a4c6711b",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -37180,8 +37180,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1652,
+            1576
           ],
           "mounted": 0,
           "encounter": 0,
@@ -37273,7 +37273,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "20d47a29b9e10eb2",
+        "state_digest": "b85ec18194831c6e",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -38097,8 +38097,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1652,
+            1576
           ],
           "mounted": 0,
           "encounter": 0,
@@ -38190,7 +38190,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "5e3a8660c0b49cf0",
+        "state_digest": "7b4b3383f3fe913c",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -39014,8 +39014,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1556,
+            1630
           ],
           "mounted": 0,
           "encounter": 0,
@@ -39107,7 +39107,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "2a3600418b87d9ca",
+        "state_digest": "70207b8804f45c8c",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -39931,8 +39931,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1578,
+            1634
           ],
           "mounted": 0,
           "encounter": 0,
@@ -40024,7 +40024,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "2ba909b7aac242ae",
+        "state_digest": "1c12283c641a660e",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -40848,8 +40848,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1540,
+            1604
           ],
           "mounted": 0,
           "encounter": 0,
@@ -40941,7 +40941,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "c85dce87a343e2cf",
+        "state_digest": "c6b24fc2d94a8eef",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -41765,8 +41765,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1652,
+            1558
           ],
           "mounted": 0,
           "encounter": 0,
@@ -41858,7 +41858,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "8ef9f7f9e6db6926",
+        "state_digest": "13d456dc17de3b64",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -42682,8 +42682,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1652,
+            1558
           ],
           "mounted": 0,
           "encounter": 0,
@@ -42775,7 +42775,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "5845d0ad617dd7e9",
+        "state_digest": "686bdf17b9dfc4b7",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -43599,8 +43599,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1604,
+            1578
           ],
           "mounted": 0,
           "encounter": 0,
@@ -43692,7 +43692,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "b02f16854953fbcf",
+        "state_digest": "5df5d71f51166c39",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -44516,8 +44516,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1620,
+            1594
           ],
           "mounted": 0,
           "encounter": 0,
@@ -44609,7 +44609,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "0282e013d19def73",
+        "state_digest": "2415f4e87d792bd6",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -45433,8 +45433,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1602,
+            1612
           ],
           "mounted": 0,
           "encounter": 0,
@@ -45526,7 +45526,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "423793cca4ee70b0",
+        "state_digest": "e92424ac44734ceb",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -46350,8 +46350,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1638,
+            1576
           ],
           "mounted": 0,
           "encounter": 0,
@@ -46443,7 +46443,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "ebc6a10b59ec3751",
+        "state_digest": "8ff5448a8a3058df",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -47267,8 +47267,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1638,
+            1576
           ],
           "mounted": 0,
           "encounter": 0,
@@ -47360,7 +47360,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "9e35621fd2603c90",
+        "state_digest": "dfc62878b61ea0a6",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -48184,8 +48184,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1655,
+            1540
           ],
           "mounted": 0,
           "encounter": 0,
@@ -48277,7 +48277,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "5b1692249762ae2a",
+        "state_digest": "cecef73f6c9ea8f1",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -49101,8 +49101,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1576,
+            1598
           ],
           "mounted": 0,
           "encounter": 0,
@@ -49194,7 +49194,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "fdef6bb1be1d8b7e",
+        "state_digest": "0302c23f78d924c3",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -50018,8 +50018,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1636,
+            1564
           ],
           "mounted": 0,
           "encounter": 0,
@@ -50111,7 +50111,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "c55bfd37c27ec466",
+        "state_digest": "ec953c6038d87314",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -50935,8 +50935,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1593,
+            1602
           ],
           "mounted": 0,
           "encounter": 0,
@@ -51028,7 +51028,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "87143e19b142ac67",
+        "state_digest": "ba5215acd72f9cf4",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -51852,8 +51852,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1593,
+            1602
           ],
           "mounted": 0,
           "encounter": 0,
@@ -51945,7 +51945,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "f2a026b08edaf852",
+        "state_digest": "9eea340487d26fb9",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -52769,8 +52769,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1540,
+            1619
           ],
           "mounted": 0,
           "encounter": 0,
@@ -52862,7 +52862,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "b4984e66716c147b",
+        "state_digest": "406a9d2dba297179",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -53691,8 +53691,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1540,
+            1633
           ],
           "mounted": 0,
           "encounter": 0,
@@ -53784,7 +53784,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "12351dbf37c9910c",
+        "state_digest": "63756a93d228d1e9",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -54608,8 +54608,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1540,
+            1633
           ],
           "mounted": 0,
           "encounter": 0,
@@ -54701,7 +54701,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "d4e4ceb41c5f301c",
+        "state_digest": "5299f64d1840450f",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -55525,8 +55525,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1540,
+            1570
           ],
           "mounted": 0,
           "encounter": 0,
@@ -55618,7 +55618,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "7e89d7a5e604520f",
+        "state_digest": "befcdd16e9642474",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -56442,8 +56442,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1539,
+            1565
           ],
           "mounted": 0,
           "encounter": 0,
@@ -56535,7 +56535,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "16a7303c51b5e8b0",
+        "state_digest": "ba9b10368f38336f",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -57359,8 +57359,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1574,
+            1539
           ],
           "mounted": 0,
           "encounter": 0,
@@ -57452,7 +57452,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "821d6bd2e750a79e",
+        "state_digest": "738f02dbaf35a4b0",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -58276,8 +58276,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1572,
+            1549
           ],
           "mounted": 0,
           "encounter": 0,
@@ -58369,7 +58369,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "cd238298db917a14",
+        "state_digest": "794eb1195e569336",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -59193,8 +59193,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1563,
+            1552
           ],
           "mounted": 0,
           "encounter": 0,
@@ -59286,7 +59286,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "eacc4ff4ae00c445",
+        "state_digest": "7e8238d7d44b0434",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -60110,8 +60110,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1563,
+            1556
           ],
           "mounted": 0,
           "encounter": 0,
@@ -60203,7 +60203,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "3a87fda547241a86",
+        "state_digest": "103294f39794df36",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -61027,8 +61027,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1565,
+            1563
           ],
           "mounted": 0,
           "encounter": 0,
@@ -61120,7 +61120,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "aaf7986c68ab6ac5",
+        "state_digest": "e57fde9881657814",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -61944,8 +61944,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1580,
+            1564
           ],
           "mounted": 0,
           "encounter": 0,
@@ -62037,7 +62037,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "dbcc0c909d383b4b",
+        "state_digest": "3c23f958d1210877",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -62861,8 +62861,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1575,
+            1566
           ],
           "mounted": 0,
           "encounter": 0,
@@ -62954,7 +62954,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "8935d89b1d642616",
+        "state_digest": "1731451c68b7982c",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -63778,8 +63778,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1539,
+            1565
           ],
           "mounted": 0,
           "encounter": 0,
@@ -63871,7 +63871,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "816c60afbf0521b6",
+        "state_digest": "7aea4f9524fa7cfd",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -64695,8 +64695,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1605,
+            1593
           ],
           "mounted": 0,
           "encounter": 0,
@@ -64788,7 +64788,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "1322d2c2e7ac3ea6",
+        "state_digest": "f7f3453d1f9f829e",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -65612,8 +65612,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1615,
+            1551
           ],
           "mounted": 0,
           "encounter": 0,
@@ -65705,7 +65705,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "2fbd72ae8ca05dc5",
+        "state_digest": "0411e9ab856be890",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -66529,8 +66529,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1658,
+            1541
           ],
           "mounted": 0,
           "encounter": 0,
@@ -66622,7 +66622,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "264ce20773a23cf6",
+        "state_digest": "11b05dd7254fad20",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -67446,8 +67446,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1539,
+            1551
           ],
           "mounted": 0,
           "encounter": 0,
@@ -67539,7 +67539,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "906217e98e509034",
+        "state_digest": "e3b27a7f6c1c178c",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -68372,8 +68372,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1542,
-            1662
+            1539,
+            1551
           ],
           "mounted": 0,
           "encounter": 0,
@@ -68465,7 +68465,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "ac57cb5db29c3aa1",
+        "state_digest": "9eb7e26517285b64",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -69296,8 +69296,8 @@
       "invasion": 0,
       "owned": 1,
       "world": [
-        1542,
-        1662
+        1539,
+        1551
       ],
       "mounted": 0,
       "encounter": 0,
@@ -69389,7 +69389,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "ac57cb5db29c3aa1",
+    "state_digest": "9eb7e26517285b64",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

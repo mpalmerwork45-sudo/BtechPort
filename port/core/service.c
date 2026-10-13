@@ -3,6 +3,7 @@
 #include "core/combat.h"
 #include "core/npc.h"
 #include "core/story.h"
+#include "core/menu.h"
 #include <string.h>
 #include <stdio.h>
 static const uint8_t armour_capacity[6]={0,25,40,30,50,50};
@@ -192,9 +193,34 @@ void btp_service_begin(BtpState *s,const BtpResources *r)
         s->service.outcome=3; /* The original reports undamaged armour before asking. */
     }
 }
+void btp_service_heal(BtpState *s,const BtpResources *r,unsigned hospital,int field)
+{
+    btp_party_init(s);
+    BtpServiceState v={.phase=12,.action=(uint8_t)(field==2 ? 49 : field ? 48 : 24),.item=1};
+    for (unsigned i=0;i<8;++i) if (s->party.people[i][0]!=255) {
+        const uint8_t *p=s->party.people[i];
+        if (p[10]>v.kind) { v.kind=p[10];v.mech=(uint8_t)i; }
+        if (p[15]!=10u*p[1]) v.amount|=(uint16_t)(1u<<i);
+    }
+    /* Keep the pre-treatment patient list for the original held message.
+       Numeric healing executes once; acknowledging or loading cannot repeat it. */
+    if (s->story_flags[41]) v.outcome=(uint8_t)(v.amount ? 2 : 3);
+    else if (!v.amount) {
+        if (!field) return; /* An unneeded paid treatment has no native page. */
+        v.outcome=1;
+    }
+    if (s->party.medical_kit) v.item=2;
+    if (v.kind>=3 && s->party.advanced_kit) v.item=3;
+    if (hospital) { v.kind=(uint8_t)hospital;v.item=(uint8_t)(hospital>2 ? 4 : 2);v.mech=8; }
+    (void)btp_party_heal(s,r,hospital);s->service=v;
+}
 void btp_service_input(BtpState *s,const BtpResources *r,BtpAction a)
 {
     BtpServiceState *v=&s->service;
+    if (v->phase==12) {
+        if (a==BTP_ACCEPT || a==BTP_CANCEL || a==BTP_OPEN_MENU) finish(s,r);
+        return;
+    }
     if (v->action==32) {
         if (v->phase==3) {
             if (a==BTP_LEFT || a==BTP_UP) v->selected=0;
@@ -363,6 +389,11 @@ int btp_service_valid(const BtpState *s)
     unsigned damaged=0;for (unsigned i=0;i<17;++i) { if (v->damaged[i]>35) return 0;damaged+=v->damaged[i]; }
     if (damaged>35 || (v->action!=18 && damaged) || (v->action!=18 && v->action!=20 && v->action!=44 && v->quote_credits)) return 0;
     if (!v->phase) return !v->action && !v->mech && !v->selected && !v->kind && !v->item && !v->outcome && !v->amount && !v->input[0];
+    if (v->phase==12) return (v->action==24 || v->action==48 || v->action==49) && v->mech<=8 && v->kind<=7 &&
+        v->item>=1 && v->item<=4 && v->outcome<=3 && v->amount<=255 && !v->selected && !v->input[0] &&
+        (v->action==49 ? s->mode==BTP_ENCOUNTER && s->aftermath.phase==10 :
+         v->action==48 ? s->mode==BTP_ACTIONS && s->campaign.ui==BTP_MENU_MESSAGE && s->menu.notice==3 :
+         s->mode==BTP_BUILDING && s->campaign.building==9 && s->script.status==BTP_SCRIPT_NATIVE && s->script.native_action==24);
     if (v->action==9 || v->action==11) return (v->phase==10 || v->phase==11) && v->kind==btp_party_count(&s->party) && v->kind>1 &&
         !v->mech && v->item>=1 && v->item<=(v->action==9 ? 5u : 13u) && v->selected<=v->kind && v->outcome<=1 &&
         v->amount<=(v->action==9 ? 50u : 0u) && !v->input[0] && s->mode==BTP_BUILDING &&

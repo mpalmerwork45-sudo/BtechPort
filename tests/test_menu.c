@@ -131,6 +131,27 @@ int main(int argc,char **argv)
     CHECK(s.party.people[1][15]>1 && s.story_flags[41]==63 && restore(&s,r));
     unsigned health=s.party.people[1][15];btp_menu_close(&s);btp_menu_open(&s);select_item(&s,r,4);
     CHECK(s.party.people[1][15]==health && restore(&s,r));
+    /* Original field treatment, 1791876954390161281/healing. Compare the
+       complete held 216x80 message, including rank, kit, green patient and
+       key prompt. The injury list must survive after health has changed. */
+    {
+        uint8_t raw[BTP_ORIGINAL_BYTES];FILE *source=fopen("Original DOS/GAME3","rb");CHECK(source);
+        CHECK(fread(raw,1,sizeof raw,source)==sizeof raw && !fclose(source));
+        raw[0xf45]=20;raw[0xf46]=10;raw[0xf47]=69;raw[0xf48]=128;
+        for (unsigned i=0;i<8;++i) {
+            raw[1+17*i+12]=8;
+            if (raw[1+17*i]!=255) raw[1+17*i+15]=(uint8_t)(10u*raw[1+17*i+1]);
+        }
+        raw[1+17+15]=1;raw[1+3*17+10]=4;raw[0xcf9+41]=0;raw[1+0xd451-0xc614]=1;
+        BtpState medical;CHECK(btp_original_decode(raw,sizeof raw,&medical,r,&e));
+        btp_menu_open(&medical);select_item(&medical,r,4);
+        CHECK(medical.service.phase==12 && medical.service.amount==2 && restore(&medical,r));
+        btp_render(r,&medical,0,pixels);CHECK(btp_write_ppm("work/m4-audit/healing-native.ppm",pixels));
+        CHECK(crop_hash(pixels,104,88,216,80)==UINT64_C(0x546612db066913d1));
+        CHECK(btp_save_write("work/m4-audit/healing-held.btp",&medical,r,&e));
+        unsigned hp=medical.party.people[1][15];btp_game_tick(&medical,r,BTP_ACCEPT);
+        CHECK(!medical.service.phase && medical.mode==BTP_EXPLORE && medical.party.people[1][15]==hp);
+    }
     /* Original eight physical slots become a compact, stable person list. */
     s.party.people[1][0]=255;btp_menu_close(&s);btp_menu_open(&s);select_item(&s,r,3);select_item(&s,r,1);
     CHECK(btp_actions_count(&s)==3 && !strcmp(btp_actions_label(&s,1),btp_party_name(&s.party,2)));

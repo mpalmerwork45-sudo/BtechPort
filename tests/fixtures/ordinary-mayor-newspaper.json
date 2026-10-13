@@ -1231,7 +1231,7 @@
             1,
             1,
             9,
-            8,
+            0,
             4,
             50,
             80,
@@ -1411,7 +1411,7 @@
             1200,
             1460
           ],
-          "mounted": 0,
+          "mounted": 1,
           "encounter": 0,
           "building": 14
         },
@@ -1501,7 +1501,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "d9781da6e6118b6e",
+        "state_digest": "44d5b3d7e27bb51b",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -2153,7 +2153,7 @@
             1,
             1,
             9,
-            8,
+            0,
             4,
             50,
             80,
@@ -2333,7 +2333,7 @@
             1200,
             1460
           ],
-          "mounted": 0,
+          "mounted": 1,
           "encounter": 0,
           "building": 14
         },
@@ -2423,7 +2423,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "ff6b7f326d6c99fc",
+        "state_digest": "4b1d35de6e047c69",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -2769,10 +2769,10 @@
         "map": 4,
         "mode": "local-exploration",
         "x_half": 48,
-        "y_half": 50,
+        "y_half": 52,
         "tile": [
           24,
-          25
+          26
         ],
         "gate": 85,
         "tick": 232,
@@ -3075,7 +3075,7 @@
             1,
             1,
             9,
-            8,
+            0,
             4,
             50,
             76,
@@ -3255,7 +3255,7 @@
             1200,
             1460
           ],
-          "mounted": 0,
+          "mounted": 1,
           "encounter": 0,
           "building": 14
         },
@@ -3345,7 +3345,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "7c0cc682e03ebb87",
+        "state_digest": "b4abe9fd60b2fa98",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -3689,10 +3689,10 @@
     "map": 4,
     "mode": "local-exploration",
     "x_half": 48,
-    "y_half": 50,
+    "y_half": 52,
     "tile": [
       24,
-      25
+      26
     ],
     "gate": 85,
     "tick": 232,
@@ -3995,7 +3995,7 @@
         1,
         1,
         9,
-        8,
+        0,
         4,
         50,
         76,
@@ -4175,7 +4175,7 @@
         1200,
         1460
       ],
-      "mounted": 0,
+      "mounted": 1,
       "encounter": 0,
       "building": 14
     },
@@ -4265,7 +4265,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "7c0cc682e03ebb87",
+    "state_digest": "b4abe9fd60b2fa98",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

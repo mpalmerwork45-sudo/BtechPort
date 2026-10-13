@@ -2,26 +2,35 @@
 
 ## Current M4 presentation checks
 
-The active build has 47 CTest suites. Internal saves are BTPX/v33, with a
+The active build has 48 CTest suites. Internal saves are BTPX/v33, with a
 20,480-byte payload; old versions retain explicit migrations. Current caches
-are BTTA/v18, BTCB/v11 and BTW3. The world seed is the original `0x020304`.
+are BTTA/v19, BTCB/v11 and BTW3. The world seed is the original `0x020304`.
 The older sections below describe earlier increments.
-The previous 45 regular and ASan/UBSan/LeakSanitizer suites, the historical regression
-checks, full sanitizer script, native M4 acceptance and nine follow-up tails pass.
-The historical script's final guard detected only the editor's known reference
-Git-config metadata change; its separate final verification passes after exact
-baseline restoration.
-The final reference guard verifies all 1,287 entries unchanged.
-The current combat-menu increment passes all 47 core suites and
-`python3 tools/native_smoke.py --combat-ui-only`, including real F5/F9 on
-choice, summary and detail pages. Full combined acceptance follows the remaining
-authorized fidelity tasks; see [current evidence](M4_FIDELITY_EVIDENCE.md).
+The current increment passes all 48 regular and ASan/UBSan/LeakSanitizer
+suites, the full sanitizer script's historical checks, every native M4
+acceptance section and all nine follow-up tails. Campaign/story/cache sections
+passed in focused reruns after an outdated ammo-editor checkpoint label was
+corrected; see the current evidence for that test-harness correction.
+The final reference guard checks all 1,287 entries, including Git metadata.
+Only the editor's precisely identified merge-base metadata drift is restored
+to its established baseline before this guard runs.
+`make_live_campaign_vectors.py` adds 25 complete original waves/7,252 checks;
+`make_aftermath_ui_vectors.py` adds five complete original lower-right panels.
+`--controls-only` checks physical keypad arrows/Enter, bank digits with Num Lock,
+and a letter/function key closing the current/legacy ending. The cache suite
+checks five visible companions, stale formation recovery and the final exit
+flag. Campaign tests migrate an active v29 invasion and its per-actor waypoints,
+then compare continued inputs. See [current evidence](M4_FIDELITY_EVIDENCE.md).
 Native focused checks: `--intro-only`, `--menu-only` and `--presentation-only`
 on `tools/native_smoke.py`. The menu probe includes saving/loading from the
 character, mech and overhead screens. These compare actual recorded SDL keys,
 complete canonical state and exact continued pixels.
 `--overhead-only` presses real Space keys through settings and the map entry,
 then reads the actual X11 window pixels and checks visible terrain and F5/F9.
+The four animated player-marker pixels can change between save and screenshot;
+this asynchronous comparison excludes only those pixels and checks their 2x2
+shape. The separate primary DOS comparison matches all 64,000 pixels with no
+masks. Post-F9 comparison replays the measured idle ticks, including marker RNG.
 `--m4-acceptance` bundles the native intro, six-slot menu, inspection, overhead,
 audio, original-save, aftermath, crew, campaign, hospital/jail and cache checks.
 `--story-only` includes paid treatment of an injured original GAME2 party.
@@ -46,8 +55,8 @@ The last adds 314 recruitment, inspection and post-wave spy cases.
 order when gameplay/presentation timing changes. Routine native checks replay
 short saved tails, so adding a later mission does not require repeatedly playing
 every earlier mission in real time.
-`make_fresh_campaign_replay.py` records 66,093 fresh-cadet inputs through the
-cache ending; `make_spy_replay.py` records 50,569 through inspection, spy removal
+`make_fresh_campaign_replay.py` records 65,991 fresh-cadet inputs through the
+cache ending; `make_spy_replay.py` records 50,423 through inspection, spy removal
 and replacement recruitment. C integration restores and continues before
 every input. Only the ending route uses the authorized credit shortcut; neither
 imports an original save or edits quest flags, coordinates, skills or RNG.

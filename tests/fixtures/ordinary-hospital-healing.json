@@ -3713,7 +3713,7 @@
     },
     {
       "label": "paid-healing-complete",
-      "tick": 65,
+      "tick": 66,
       "state": {
         "map": 2,
         "mode": "building",
@@ -3724,7 +3724,7 @@
           57
         ],
         "gate": 85,
-        "tick": 65,
+        "tick": 66,
         "blocked": 0,
         "script_pc": 754,
         "script_status": 1,
@@ -4314,7 +4314,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "648e503a825092c1",
+        "state_digest": "5dfb37c71d1f8f66",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -4655,7 +4655,7 @@
     },
     {
       "label": "hospital-exit",
-      "tick": 72,
+      "tick": 73,
       "state": {
         "map": 2,
         "mode": "local-exploration",
@@ -4666,7 +4666,7 @@
           57
         ],
         "gate": 85,
-        "tick": 72,
+        "tick": 73,
         "blocked": 0,
         "script_pc": 4577,
         "script_status": 3,
@@ -5256,7 +5256,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "1fb5df99d83d377e",
+        "state_digest": "5a8c584de26f2ea7",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -5606,7 +5606,7 @@
       57
     ],
     "gate": 85,
-    "tick": 72,
+    "tick": 73,
     "blocked": 0,
     "script_pc": 4577,
     "script_status": 3,
@@ -6196,7 +6196,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "1fb5df99d83d377e",
+    "state_digest": "5a8c584de26f2ea7",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

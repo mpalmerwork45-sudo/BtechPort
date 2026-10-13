@@ -2,35 +2,35 @@
   "checkpoints": [
     {
       "label": "technician-recruitment-wait",
-      "tick": 50421
+      "tick": 50273
     },
     {
       "label": "technician-spy-joined",
-      "tick": 50423
+      "tick": 50275
     },
     {
       "label": "spy-inspected",
-      "tick": 50431
+      "tick": 50283
     },
     {
       "label": "spy-combat-offer",
-      "tick": 50447
+      "tick": 50299
     },
     {
       "label": "spy-confrontation",
-      "tick": 50491
+      "tick": 50343
     },
     {
       "label": "spy-killed-in-combat",
-      "tick": 50492
+      "tick": 50344
     },
     {
       "label": "replacement-technician-joined",
-      "tick": 50562
+      "tick": 50416
     },
     {
       "label": "replacement-shop-exit",
-      "tick": 50569
+      "tick": 50423
     }
   ],
   "final": {
@@ -43,7 +43,7 @@
       34
     ],
     "gate": 85,
-    "tick": 50569,
+    "tick": 50423,
     "blocked": 0,
     "script_pc": 4979,
     "script_status": 3,
@@ -613,7 +613,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "acb45bb4e2d8acac",
+    "state_digest": "3fbeeea904c34672",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

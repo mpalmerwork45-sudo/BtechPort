@@ -1,5 +1,6 @@
 #include "data/save.h"
 #include "core/menu.h"
+#include "core/cache.h"
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
@@ -83,6 +84,7 @@ int btp_save_load(const char *path, BtpState *s, const BtpResources *r, BtpError
     BtpState loaded;
     if (!decode(bytes+HEADER_BYTES,n-HEADER_BYTES,&loaded,r))
         return fail(e,"Save contains an invalid or unsupported game state");
+    btp_cache_restore_party(&loaded,r);
     *s = loaded;
     if (e) e->text[0] = 0;
     return 1;

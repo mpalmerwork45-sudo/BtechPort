@@ -439,7 +439,9 @@ def campaign(env,work):
             wanted=subprocess.run([str(binary),'--load',str(start),'--replay',str(record),'--frame',str(expected)],cwd=ROOT,check=True,capture_output=True,text=True,timeout=20)
             if record.read_text().splitlines()!=lines[tick:]+['idle']*5 or json.loads(actual.stdout)!=json.loads(wanted.stdout) or frame.read_bytes()!=expected.read_bytes():raise RuntimeError(kind+' native input/state/frame differs')
             print(f'PASS: native {kind} tail, {len(lines)-tick+5} SDL inputs in {time.monotonic()-began:.2f}s; exact state/frame replay.',flush=True)
-        probes=[('rex','rex-crest'),('services','partial-ammo-amount'),('title',None)]
+        service_notes=json.loads((ROOT/'tests/fixtures/ordinary-services.json').read_text())['checkpoints']
+        ammo_label='partial-ammo-amount' if any(c['label']=='partial-ammo-amount' for c in service_notes) else 'ammo-status'
+        probes=[('rex','rex-crest'),('services',ammo_label),('title',None)]
         for kind,label in probes:
             if kind=='title':
                 prefix.write_text('idle\n'*30)
@@ -712,7 +714,18 @@ def overhead(env,work):
                 screen=ImageGrab.grab(xdisplay=env['DISPLAY']).crop((x.value,y.value,x.value+width.value,y.value+height.value))
                 screen.save(work/f'native-overhead-{name}-window.png')
                 visible=screen.resize((320,200),Image.Resampling.NEAREST).convert('RGB')
-                if visible.tobytes()!=Image.open(expected).convert('RGB').tobytes():
+                # DOS polls a 2x2 flashing player marker. The save and X11
+                # screenshot occur on different polls; compare the remaining
+                # map exactly and require a solid, visible marker footprint.
+                wx,wy=saved['campaign']['world'] if saved['campaign_flags'][4] else (1536+saved['x_half'],1536+saved['y_half'])
+                px=min(318,wx//2-max(0,min(11,wx//128-2))*64)
+                py=wy//2-max(0,min(13,wy//128-1))*64
+                static=visible.copy();reference=Image.open(expected).convert('RGB')
+                marker=[visible.getpixel((px+dx,py+dy)) for dy in range(2) for dx in range(2)]
+                if len(set(marker))!=1:raise RuntimeError('Player marker is not the original 2x2 rectangle')
+                for dy in range(2):
+                    for dx in range(2):static.putpixel((px+dx,py+dy),(0,0,0));reference.putpixel((px+dx,py+dy),(0,0,0))
+                if static.tobytes()!=reference.tobytes():
                     raise RuntimeError('Presented overhead pixels differ from the saved map')
                 terrain=visible.crop((0,0,320,192))
                 count=sum(pixel!=(0,0,0) for pixel in terrain.getdata())
@@ -722,7 +735,11 @@ def overhead(env,work):
                 out,err=process.communicate(timeout=10)
                 if process.returncode:raise RuntimeError(err)
                 actual=json.loads(out)
-                if actual['actions_menu']['phase']!=13 or frame.read_bytes()!=expected.read_bytes():
+                delta=actual['tick']-saved['tick']
+                if not 0<=delta<=50:raise RuntimeError('Overhead restore clock was unbounded')
+                tail=tmp/'after-restore.actions';tail.write_text('idle\n'*delta)
+                wanted=subprocess.run([str(binary),'--load',str(slot),'--replay',str(tail),'--frame',str(expected)],cwd=ROOT,check=True,capture_output=True,text=True)
+                if actual!=json.loads(wanted.stdout) or actual['actions_menu']['phase']!=13 or frame.read_bytes()!=expected.read_bytes():
                     raise RuntimeError('Overhead view was not restored visibly by F9')
                 print(f'PASS: real Space/Up/Space opens {name} overhead; {count} visible terrain pixels in actual X11 window; F5/F9 restores it.',flush=True)
             finally:
@@ -859,6 +876,47 @@ def field(env,work):
         wanted=subprocess.run([str(ROOT/'build/btech-headless'),'--load',str(work/'crew-menu.btp'),'--replay',str(record),'--frame',str(expected)],cwd=ROOT,check=True,capture_output=True,text=True)
         if json.loads(actual.stdout)!=json.loads(wanted.stdout) or frame.read_bytes()!=expected.read_bytes():raise RuntimeError('Native field continuation differs')
         print('PASS: native original-save prerequisite, crew continuation, gear transfer and field healing; exact SDL state/pixels.',flush=True)
+
+def controls(env,work):
+    """Actual keypad keys with Num Lock off, plus one-key ending exits."""
+    from reference_session import WindowKeys
+    subprocess.run([str(ROOT/'build/btp-cache-tests'),str(ROOT/'Original DOS')],cwd=ROOT,check=True,capture_output=True,text=True)
+    cases=(('keypad',None,('space','KP_2','KP_8','KP_6','KP_4','KP_Enter'),['menu','down','up','right','left','accept']),
+           ('ending-letter',work/'m4-audit/cache-final-key.btp',('q',),['accept']),
+           ('ending-legacy',work/'m4-audit/cache-old-ending.btp',('F1',),['accept']))
+    with tempfile.TemporaryDirectory(prefix='native-controls-',dir=work) as directory:
+        tmp=Path(directory)
+        for label,start,physical,wanted_keys in cases:
+            record=tmp/f'{label}.actions';frame=tmp/f'{label}.ppm';expected=tmp/'expected.ppm'
+            if not start:
+                fresh=tmp/'fresh.btp'
+                subprocess.run([str(ROOT/'build/btech-headless'),'--save',str(fresh)],cwd=ROOT,check=True,capture_output=True)
+            initial=['--load',str(start or fresh)]
+            process=subprocess.Popen([str(ROOT/'build/btech-port'),*initial,'--record',str(record),'--frame',str(frame)],
+                cwd=ROOT,env=dict(env,SDL_AUDIODRIVER='dummy'),stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+            keys=WindowKeys()
+            try:
+                window=None
+                for _ in range(100):
+                    found=[w for w,n in keys.windows() if n.startswith('BtechPort')]
+                    if len(found)==1:window=found[0];break
+                    if process.poll() is not None:raise RuntimeError(label+' window exited before key input')
+                    time.sleep(.02)
+                if window is None:raise RuntimeError(label+' window unavailable')
+                for key in physical:keys.key(window,key)
+                if not start:keys.key(window,'Ctrl+Shift+Escape')
+                out,err=process.communicate(timeout=5)
+                if process.returncode:raise RuntimeError(err)
+                logical=[a for a in record.read_text().splitlines() if a!='idle']
+                if logical!=wanted_keys:raise RuntimeError(label+' key mapping: '+repr(logical))
+                replay=subprocess.run([str(ROOT/'build/btech-headless'),*initial,'--replay',str(record),'--frame',str(expected)],
+                    cwd=ROOT,check=True,capture_output=True,text=True)
+                if json.loads(out)!=json.loads(replay.stdout) or frame.read_bytes()!=expected.read_bytes():
+                    raise RuntimeError(label+' SDL state/pixels differ from recorded replay')
+                print('PASS: native '+label+', actual X11 keys, complete state/pixel replay and process exit.',flush=True)
+            finally:
+                keys.x.XCloseDisplay(keys.display)
+                if process.poll() is None:process.terminate();process.wait(timeout=5)
 
 def intro(env,work):
     """Real held-Shift keys, both intro screens, audio and new/load branches."""
@@ -1049,6 +1107,7 @@ def main():
     parser.add_argument('--combat-ui-only',action='store_true')
     parser.add_argument('--mechit-only',action='store_true')
     parser.add_argument('--island-only',action='store_true')
+    parser.add_argument('--controls-only',action='store_true')
     args = parser.parse_args()
     work = ROOT / "work"
     work.mkdir(exist_ok=True)
@@ -1069,6 +1128,7 @@ def main():
             os.environ["DISPLAY"] = env["DISPLAY"]
             os.environ["BTECH_REFERENCE_VIRTUAL"] = "1"
             if args.m4_acceptance:
+                controls(env,work)
                 intro(env,work);menu(env,work);presentation(env,work)
                 combat_ui(env,work)
                 mechit_ui(env,work)
@@ -1077,6 +1137,8 @@ def main():
                 saves(env,work);campaign(env,work);story(env,work);cache(env,work);return
             if args.followups_only:
                 followups(env,work);return
+            if args.controls_only:
+                controls(env,work);diagonals(env,work);return
             if args.combat_ui_only:
                 combat_ui(env,work);return
             if args.mechit_only:

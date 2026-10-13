@@ -2,6 +2,7 @@
 #include "core/party.h"
 #include "core/combat.h"
 #include "data/save.h"
+#include "frontend/pixels.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,6 +11,12 @@ static unsigned checks;
 #define CHECK(x) do { ++checks;if (!(x)) { fprintf(stderr,"%s:%d: %s\n",__FILE__,__LINE__,#x);return 1; } } while (0)
 static unsigned rng(const BtpState *s) { return s->npc.rng[0]+((unsigned)s->npc.rng[1]<<8)+((unsigned)s->npc.rng[2]<<16); }
 static uint64_t hash(const uint8_t *p,size_t n) { uint64_t h=UINT64_C(14695981039346656037);for (size_t i=0;i<n;++i) h=(h^p[i])*UINT64_C(1099511628211);return h; }
+static uint64_t panel(const uint32_t *f) {
+    uint64_t h=UINT64_C(14695981039346656037);
+    for (unsigned y=112;y<200;++y) for (unsigned x=104;x<320;++x) for (int shift=16;shift>=0;shift-=8)
+        h=(h^(uint8_t)(f[y*320+x]>>shift))*UINT64_C(1099511628211);
+    return h;
+}
 static int restore(BtpState *s,const BtpResources *r) {
     uint8_t a[BTP_STATE_BYTES],b[BTP_STATE_BYTES];BtpState t;
     btp_state_encode(s,a);if (!btp_state_decode(a,sizeof a,btp_active_map(r,s),btp_state_bld(r,s),&t)) return 0;
@@ -41,9 +48,47 @@ int main(int argc,char **argv) {
         ++cases;
     }fclose(f);CHECK(cases==114);
     BtpState s;setup(&s,r,0);s.combat.unit[0].record[121]=0;s.combat.unit[0].record[122]=1;btp_campaign_destroy(&s,0);btp_campaign_eject(&s);CHECK(s.combat.friends==3 && s.combat.count==4 && !s.effects.pending);CHECK(restore(&s,r));
-    btp_campaign_destroy(&s,3);s.combat.phase=0;s.combat.won=1;btp_campaign_result(&s,r);CHECK(s.aftermath.phase==1);CHECK(restore(&s,r));CHECK(btp_save_write("work/aftermath-salvage.btp",&s,r,&e));
+    btp_campaign_destroy(&s,3);s.combat.phase=0;s.combat.won=1;btp_campaign_result(&s,r);CHECK(s.aftermath.phase==5);CHECK(restore(&s,r));
+    btp_game_tick(&s,r,BTP_ACCEPT);CHECK(s.aftermath.phase==1);CHECK(restore(&s,r));CHECK(btp_save_write("work/aftermath-salvage.btp",&s,r,&e));
     for (unsigned guard=0;guard<30 && s.mode==BTP_ENCOUNTER;++guard) { btp_game_tick(&s,r,BTP_ACCEPT);CHECK(restore(&s,r)); }
     CHECK(s.mode==BTP_EXPLORE && s.campaign.mounted && s.party.people[0][12]<4);CHECK(s.campaign.mech[117]==1 && s.campaign.mech[118]==1);
     setup(&s,r,0);s.combat.unit[0].record[121]=0;s.combat.unit[0].record[122]=255;btp_campaign_destroy(&s,0);btp_campaign_eject(&s);unsigned j=btp_combat_target(&s.combat,4);btp_campaign_destroy(&s,j);CHECK(s.effects.pending==2);s.effects.pending=0;s.combat.phase=0;s.combat.lost=1;btp_campaign_result(&s,r);CHECK(s.mode==BTP_GAME_OVER && s.party.people[0][0]==255);CHECK(restore(&s,r));
-    free(r);printf("PASS: %u checks; %u primary aftermath cases, saved salvage and crew survival/loss\n",checks,cases);return 0;
+    /* Hold every result boundary. Repairs happen after their announcement,
+       cash after its own page, and recovery after looting, exactly once. */
+    setup(&s,r,0);s.party.people[1][9]=2;s.party.people[2][10]=4;s.party.advanced_kit=1;
+    s.party.people[3][15]=1;s.story_flags[41]=63;
+    btp_campaign_destroy(&s,1);s.combat.phase=0;s.combat.won=1;unsigned cash=s.credits;
+    btp_campaign_result(&s,r);CHECK(s.aftermath.phase==5 && restore(&s,r));
+    btp_game_tick(&s,r,BTP_ACCEPT);CHECK(s.aftermath.phase==8 && s.credits==cash && restore(&s,r));
+    btp_game_tick(&s,r,BTP_ACCEPT);CHECK(s.aftermath.phase==9 && s.aftermath.cash && s.credits==cash && restore(&s,r));
+    unsigned reward=s.aftermath.cash;btp_game_tick(&s,r,BTP_IDLE);CHECK(s.credits==cash && restore(&s,r));
+    btp_game_tick(&s,r,BTP_ACCEPT);CHECK(s.credits==cash+reward && s.aftermath.phase==10 && restore(&s,r));
+    unsigned hp=s.party.people[3][15];CHECK(hp>1 && s.service.amount==8);
+    btp_game_tick(&s,r,BTP_IDLE);CHECK(s.credits==cash+reward && s.party.people[3][15]==hp && restore(&s,r));
+    btp_game_tick(&s,r,BTP_ACCEPT);CHECK(s.aftermath.phase==7 && restore(&s,r));
+    btp_game_tick(&s,r,BTP_ACCEPT);CHECK(s.mode==BTP_EXPLORE && s.credits==cash+reward && restore(&s,r));
+    /* Recovered weapons replace a gun and offer the displaced gun again;
+       the explicit Drop it row terminates that exchange, including reload. */
+    setup(&s,r,0);s.combat.phase=0;s.combat.won=1;s.combat.ids[1]=16;s.combat.unit[1].infantry=1;
+    memset(s.combat.unit[1].record,0,125);memcpy(s.combat.unit[1].record,s.party.people[0],17);
+    s.combat.unit[1].record[0]=255;s.combat.unit[1].record[11]=7;
+    s.aftermath=(BtpAftermathState){.phase=4,.applied=1,.unit=16};s.aftermath.wrecks[16]=128;
+    btp_aftermath_input(&s,r,BTP_ACCEPT);CHECK(s.party.people[0][11]==7 && s.combat.unit[1].record[11]==9 && s.aftermath.phase==4 && restore(&s,r));
+    btp_aftermath_input(&s,r,BTP_CANCEL);CHECK(!s.aftermath.phase && s.aftermath.unit==24 && restore(&s,r));
+    CHECK(btp_dialogue_load("work/talk-data.bin",&r->dialogue,&e));
+    uint8_t raw[BTP_ORIGINAL_BYTES];f=fopen("Original DOS/GAME3","rb");CHECK(f && fread(raw,1,sizeof raw,f)==sizeof raw && !fclose(f));
+    f=fopen("tests/fixtures/aftermath-ui-primary.txt","r");CHECK(f);unsigned screens=0;uint32_t frame[BTP_PIXELS];
+    while (fgets(line,sizeof line,f)) {
+        unsigned phase;uint64_t expected;CHECK(sscanf(line,"P %u %" SCNx64,&phase,&expected)==2);
+        CHECK(btp_original_decode(raw,sizeof raw,&s,r,&e));s.mode=BTP_ENCOUNTER;s.campaign.encounter=1;
+        s.combat=(BtpCombatState){.count=2,.friends=1};s.combat.ids[0]=0;s.combat.ids[1]=16;s.combat.unit[1].infantry=1;s.combat.unit[1].record[11]=9;
+        s.aftermath=(BtpAftermathState){.phase=(uint8_t)phase,.applied=2,.pilot=1,.unit=16,.notice=1,.selected=3,.cash=(uint16_t)(phase==9 ? 216 : 71)};
+        s.aftermath.wrecks[12]='L';s.party.people[1][9]=2;
+        const uint8_t weapons[4]={9,7,7,4};for (unsigned i=0;i<4;++i) s.party.people[i][11]=weapons[i];
+        btp_render(r,&s,0,frame);
+        if (panel(frame)!=expected) { fprintf(stderr,"Aftermath panel phase %u: %016" PRIx64 " != %016" PRIx64 "\n",phase,panel(frame),expected);btp_write_ppm("work/aftermath-panel.ppm",frame); }
+        CHECK(panel(frame)==expected);++screens;
+    }
+    fclose(f);CHECK(screens==5);
+    free(r);printf("PASS: %u checks; %u primary aftermath cases, %u original panels, saved salvage and crew survival/loss\n",checks,cases,screens);return 0;
 }

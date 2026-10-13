@@ -169,8 +169,24 @@
       "right": "792428b2a13a408d",
       "footer": "6c469353f84e1078",
       "screenshot_sha256": "23206686294002f501e539b8df1a448352ea18f024d8df787c05a6b51bdcb1b0"
+    },
+    {
+      "index": 21,
+      "label": "gyro-selection",
+      "run": "work/reference-runs/1791876402969678147",
+      "right": "d3731e59b95c00c2",
+      "footer": "6c469353f84e1078",
+      "screenshot_sha256": "480d56a05e427a274ad2fc4eac2df24aebe53fcaf5adef733262134cab1904d5"
+    },
+    {
+      "index": 22,
+      "label": "gyro-result",
+      "run": "work/reference-runs/1791876402969678147",
+      "right": "00a8975c52692ddf",
+      "footer": "6c469353f84e1078",
+      "screenshot_sha256": "699a782f6668d585dbf08dc923bff747c4c9afef6af03eaa9ff70df8c4963dbb"
     }
   ],
-  "prerequisites": "Private GAME3 copies at the Mechit-Lube door. People on foot, active vehicle tags; defined damage. Apprenticeship clears Jason's learned bit and Commando refit bit; recruitment uses parked flag 24 and the actual Rex/no-skilled-technician gate.",
+  "prerequisites": "Private GAME3 copies at the Mechit-Lube door. People on foot, active vehicle tags; defined damage. Apprenticeship clears Jason's learned bit and Commando refit bit; recruitment uses parked flag 24 and the actual Rex/no-skilled-technician gate. Gyro case restores all repairable systems and sets byte 118 of the last listed mech to one.",
   "comparison": "Complete 216x200 right dialog and 104x100 party footer. Original animated portraits are outside these regions; the held recruitment frame also matches all 320x200 pixels."
 }

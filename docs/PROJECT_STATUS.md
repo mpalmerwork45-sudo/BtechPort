@@ -2,7 +2,7 @@
 
 The independent C11/SDL2 port has playable implementations of the authorized
 M4a–M4e increments and the subsequent building, theft, encounter, recruitment and
-presentation requests. A recorded 66,093-input route now starts with a new cadet
+presentation requests. A recorded 65,991-input route now starts with a new cadet
 and reaches the cache ending through the actual training, companion, disk and
 password prerequisites. It uses the authorized money shortcut. M4 as a complete
 reproduction of every original campaign branch remains unfinished.
@@ -68,24 +68,30 @@ Successful pre-combat evasion produces no loot or cash.
 
 ## Verification and limits
 
-The current build has 47 CTest suites. New comparisons include 360 armour-repair,
+The current build has 48 CTest suites. New comparisons include 360 armour-repair,
 160 purchase-recipient, 32 prison/arena return, 432 water-boundary, 512 device
 direction and 314 recruitment/spy cases. Two controlled larger encounters cover
 11 original waves and 171 complete record/position/facing/heat/RNG comparisons.
+Five additional live-caller contexts cover 25 complete original waves and
+7,252 assertions, including spy pilots/passengers and finite ammunition.
 These extend the earlier campaign, medical, save and cache evidence.
 
-The fresh ending and 50,569-input spy/replacement routes restore and continue
+The fresh ending and 50,423-input spy/replacement routes restore and continue
 before every input. Nine SDL tails cover the house, cinema, hut, laser shop,
 both thefts and spy replacement, comparing recorded keys, complete continued
 state and final RGB pixels. Collision tests exercise three mechs and five people,
 each footprint at every intermediate step, all moving gaits and saved positions.
 
-**Previous batch PASS:** all 45 regular and ASan/UBSan/LeakSanitizer suites, the complete
-historical regression and full sanitizer script, native M4 acceptance and all
-nine native follow-up tails. Both reference trees pass all 1,287
-content/mode/mtime checks. The current increments pass all 47 core suites, the native combat scan/save
-checks and the original Mechit-Lube audit; its final combined acceptance is pending
-the remaining four authorized follow-ups. Work is committed locally in successive increments.
+**Current batch PASS:** all 48 regular and ASan/UBSan/LeakSanitizer suites,
+the full sanitizer script including historical checks, every native M4
+acceptance section and all nine native follow-up tails. Actual SDL checks pass
+for Num-Lock-off keypad menus, Num-Lock-on amount entry, and one-key exits from
+the final WINSCENE wait and older ending saves. Native checks include hospital
+treatment and F5/F9 on the map, character, mech, cache and title screens.
+The current fidelity evidence records the focused reruns after correcting an
+outdated test checkpoint label. Both reference trees are checked against all
+1,287 content/mode/mtime entries before handoff. Work is committed locally in
+successive increments.
 
 **VERIFIED in these bounds:** numeric rules, resource interpretation, original
 BLD branches and saved/native continuations. **APPROXIMATE:** DOS busy-loop
@@ -97,22 +103,33 @@ while owned mechs use the original garage selection rule.
 
 Internal saves are **BTPX/v33**, with a 20,480-byte payload inside the BTS1
 length/CRC envelope. The discovery marker and held spy confrontation are saved.
-Current local caches are BTTA/v18, BTCB/v11 and BTW3; the world seed is the
+Current local caches are BTTA/v19, BTCB/v11 and BTW3; the world seed is the
 original startup value `0x020304`, rather than the former research seed.
 Older saves migrate their represented fields; absent direction/exploration
 history cannot be reconstructed. Build and play need no emulator. Optional
 oracle tools execute bounded original instructions and commit numeric results
 and source hashes only.
 
-## Next five proposed tasks
+## Remaining authorized work
 
-1. **Completed:** original eight-entry on-foot combat menu, active-unit header
-   and friend/enemy summary/detail scanning; nine complete source region hashes.
-2. Trace larger DOS fights through their full live caller contexts, including
-   spy crews, multiple ejections, manual friendly targeting and aftermath.
-3. Audit all city doorways, roof corners and walking formations; compare the
-   collision correction with additional original movement frames.
-4. Compare isolated recorded combat effects and calibrate speaker filtering
-   and cadence against suitable XT recordings.
-5. Add fresh-game alternate theft/arena/loss routes and legacy-save migration
-   cases, especially active invasion saves from v29.
+The original five follow-ups are underway; this list records the actual
+unfinished portions, including subsequent owner observations.
+
+1. Finish original combat/result UI coverage: manual friendly targeting,
+   additional live caller contexts, arena outcomes, withdrawal and salvage
+   prompts. Five victory/scavenging/scrap/pocket/loot panels now match exactly;
+   rewards, healing and held-page restoration are tested.
+2. Expand live original doorway, roof-corner and formation comparisons across
+   towns. All-party collision, city joins, ruined-Citadel sheet continuity and
+   five visible cache companions have focused regression coverage.
+3. Compare isolated speaker recordings/port traces and establish defensible
+   timing/filtering calibration. An exact physical 8 MHz XT sound match is
+   still UNKNOWN; the existing instruction-clock model is APPROXIMATE.
+4. Check the Phoenix Hawk LAM palette and remaining healing layouts against
+   original presentation. Field treatment is pixel-matched; hospital and
+   cooldown/healthy layouts still need measured screen comparisons.
+5. Add fresh alternate owned-arena/win/loss and prison-loss journeys. Existing
+   prison theft, rental escape, invasion loss and fresh ending routes pass.
+   Active v29 invasion positions, current/per-actor goals and waypoints now
+   have migration and continued-input checks; stale cache formations recover
+   before the first loaded frame.
