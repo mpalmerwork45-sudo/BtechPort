@@ -1,0 +1,15 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "cases": 360,
+  "routine": "14D3:0004 actions 31/32, entries 0EDA/0EF3; ARMOR.BLD",
+  "prerequisites": "Two selected members, five armour types, destroyed/partial/full capacity, six balances, Yes/No",
+  "intercepted_boundaries": [
+    "0000:1A13",
+    "0E31:1FDF",
+    "1656:03F5",
+    "173D:0053",
+    "173D:0259"
+  ],
+  "comparison": "Armour ID flag, restored protection, remaining money and confirmation count; original instructions unchanged"
+}

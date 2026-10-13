@@ -97,7 +97,7 @@ int btp_effects_valid(const BtpState *s)
         const BtpCombatEffect *e=&v->shots[i];
         if (i<v->count) {
             if (e->actor>=s->combat.count || e->target>=s->combat.count || e->group>=18 || e->direction>7 || e->weapon>32 ||
-                e->hit>1 || e->dead>1 || e->x>127 || e->y>127 || e->tx>127 || e->ty>127 ||
+                e->hit>1 || e->dead>1 || (!s->campaign.invasion && (e->x>127 || e->y>127 || e->tx>127 || e->ty>127)) ||
                 (e->base!=0 && e->base!=146 && e->base!=254) ||
                 (e->target_base!=0 && e->target_base!=146 && e->target_base!=254)) return 0;
             if (e->base!=(e->group>=4 ? 254 : e->group&1u ? 146 : 0) || (e->dead && !e->hit)) return 0;

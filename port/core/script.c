@@ -23,7 +23,7 @@ unsigned btp_menu_count(unsigned id)
 }
 int btp_native_supported(unsigned action)
 {
-    return (action>=1 && action<=30) || action==33 || action==34 || action==35 || action==36 || action==37 || action==38 || action==39 || action==40 || action==41 || action==42 || action==43 || action==44 || action==45 || action==46 || action==47;
+    return action>=1 && action<=47;
 }
 
 static void fault(BtpScriptState *s, BtpScriptError error, uint16_t pc)

@@ -220,7 +220,7 @@ void btp_yard_result(BtpState *s,const BtpResources *r)
         int lost=s->combat.lost;
         restore_party(s);
         if (!rental) { memcpy(btp_party_mech(s,slot),player,125);s->party.mech_types[slot]=player[0]; }
-        else if (stolen && player[0]!=255) {
+        else if (stolen) {
             unsigned owned=0,free=4;
             for (unsigned i=0;i<4;++i) owned|=s->yard.types[i]!=255;
             for (unsigned i=1;i<4;++i) if (s->yard.types[i]==255 && free==4) free=i;

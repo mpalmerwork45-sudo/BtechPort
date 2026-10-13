@@ -1,0 +1,23 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "cases": 160,
+  "routines": [
+    "14D3:0004 actions 9/11",
+    "07DC:13DE armour recipients",
+    "07DC:15E6 weapon recipients"
+  ],
+  "prerequisites": "Solo, 2/4/8 people and sparse slots 0/3/7; two armour and two weapon prices, funded/insufficient, give/drop/swap/same-equipment choices.",
+  "intercepted_boundaries": [
+    "0000:2867",
+    "0E31:1FDF",
+    "14D3:181E",
+    "1656:0388",
+    "1656:03F5",
+    "1656:0B5E",
+    "173D:0053",
+    "173D:0259",
+    "173D:086A"
+  ],
+  "comparison": "Money, purchase flag, same-equipment notice and all eight complete character record fingerprints. Payment and swaps execute unmodified original instructions; UI replies are supplied."
+}

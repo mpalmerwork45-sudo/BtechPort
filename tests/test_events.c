@@ -43,7 +43,8 @@ int main(int argc,char **argv)
             unsigned attempts=0;while (!btp_campaign_random(&s,r) && ++attempts<32) {}CHECK(attempts<32);
             CHECK(s.combat.phase==BTP_COMBAT_OFFER);unsigned cash=s.credits;BtpPartyState party=s.party;
             for (unsigned i=0;i<3;++i) s.npc.rng[i]=(uint8_t)(seed>>(8*i));
-            if (!yes) input(&s,r,BTP_RIGHT);input(&s,r,BTP_ACCEPT);
+            if (!yes) input(&s,r,BTP_RIGHT);
+            input(&s,r,BTP_ACCEPT);
             CHECK((s.mode==BTP_EXPLORE)==(evaded!=0));CHECK(s.credits==cash && !memcmp(&party,&s.party,sizeof party) && !s.aftermath.phase);
             CHECK(((unsigned)s.npc.rng[0]|(unsigned)s.npc.rng[1]<<8|(unsigned)s.npc.rng[2]<<16)==next);
             if (!evaded) { CHECK(s.combat.phase==(yes ? BTP_COMBAT_CONTROL : BTP_COMBAT_AVOID));if (!yes) input(&s,r,BTP_ACCEPT);CHECK(s.combat.phase==BTP_COMBAT_CONTROL); }

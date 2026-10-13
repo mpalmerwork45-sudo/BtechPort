@@ -36,12 +36,13 @@ class Route:
         if result.returncode:raise RuntimeError(result.stderr)
         self.advance(result.stdout.splitlines())
 
-def main():
-    s=Route();image,_=unpack((ROOT/'Original DOS/BTECH.EXE').read_bytes());ds=0x36db0
+def finish(s,name='cache',prerequisite=None):
+    image,_=unpack((ROOT/'Original DOS/BTECH.EXE').read_bytes());ds=0x36db0
     requirements=[image[ds+p:ds+p+12] for p in (0x2492,0x249e,0x24aa)]
+    if hasattr(s,'travel_crew'):s.travel_crew()
     # This late original save already has disk/password prerequisites. Its
     # native import uses the existing documented deterministic RNG context.
-    keys=subprocess.check_output([str(ROOT/'build/btp-world-route'),str(s.slot),'776','780'],cwd=ROOT,text=True).splitlines()
+    keys=subprocess.check_output([str(ROOT/'build/btp-world-route'),str(s.slot),'776',str(778+2*s.state['campaign']['mounted'])],cwd=ROOT,text=True).splitlines()
     s.advance(keys)
     if s.state['mode']!='entry-confirm':raise RuntimeError('Cache entrance unreachable')
     s.note('cache-entrance');s.advance(['accept']);s.settle();s.note('cache-instructions-complete')
@@ -80,10 +81,12 @@ def main():
     s.route('found');s.settle();s.note('cache-found')
     s.route('generator');s.note('ending-start');s.settle();s.note('ending-complete')
     if s.state['mode']!='ending':raise RuntimeError('Original ending did not finish')
-    (ROOT/'tests/fixtures/ordinary-cache.actions').write_text('\n'.join(s.actions)+'\n')
-    (ROOT/'tests/fixtures/ordinary-cache.json').write_text(json.dumps(dict(
-        prerequisite='Original DOS/GAME1 imported normally; explicit late-game disk/password and trained-party context',
+    (ROOT/f'tests/fixtures/ordinary-{name}.actions').write_text('\n'.join(s.actions)+'\n')
+    (ROOT/f'tests/fixtures/ordinary-{name}.json').write_text(json.dumps(dict(
+        prerequisite=prerequisite or 'Original DOS/GAME1 imported normally; explicit late-game disk/password and trained-party context',
         route='Ordinary world travel, original entrance/instructions, all eleven security doors, secret passage, Phoenix display, MAP15 rejection/correct code, power, parts and ending',
         doors=opened,checkpoints=s.checkpoints,final=s.state),indent=2)+'\n')
     print('Saved cache-to-ending route:',len(s.actions),'ordinary inputs')
+
+def main():finish(Route())
 if __name__=='__main__':main()

@@ -5,6 +5,34 @@
 #include "core/story.h"
 #include <string.h>
 #include <stdio.h>
+static const uint8_t armour_capacity[6]={0,25,40,30,50,50};
+static const uint8_t armour_point_cost[6]={0,1,2,5,20,20};
+unsigned btp_service_mech_count(const BtpState *s)
+{
+    unsigned n=0;for (unsigned i=0;i<4;++i) n+=s->party.mech_types[i]!=255;
+    return n;
+}
+unsigned btp_service_mech_slot(const BtpState *s,unsigned ordinal)
+{
+    for (unsigned i=0;i<4;++i) if (s->party.mech_types[i]!=255) {
+        if (!ordinal) return i;
+        --ordinal;
+    }
+    return 4;
+}
+unsigned btp_armour_repair(BtpState *s,unsigned member)
+{
+    /* 14D3:0FDA repairs personal armour one point at a time. A small
+       balance buys a partial repair; this is unrelated to mech action 18. */
+    if (member>=8 || s->party.people[member][0]==255) return 0;
+    uint8_t *p=s->party.people[member];unsigned kind=p[13],changed=0;
+    if (!kind || kind>5) return 0;
+    while (p[14]<armour_capacity[kind] && s->credits>=armour_point_cost[kind]) {
+        s->credits-=armour_point_cost[kind];++p[14];++changed;
+    }
+    if (!member) s->armor_points=p[14];
+    return changed;
+}
 unsigned btp_mech_repair(BtpState *s,unsigned slot,unsigned kind,unsigned item)
 {
     uint8_t *m=btp_party_mech(s,slot);if (!m) return 0;unsigned changed=0;
@@ -69,14 +97,34 @@ static void finish(BtpState *s,const BtpResources *r)
 }
 void btp_service_begin(BtpState *s,const BtpResources *r)
 {
-    (void)r;s->service=(BtpServiceState){.phase=1,.action=s->script.native_action};
+    (void)r;btp_party_init(s);s->service=(BtpServiceState){.phase=1,.action=s->script.native_action};
     if (s->script.native_action==13) s->service.phase=7;
     if (s->script.native_action==20) { s->service.phase=3;s->service.mech=s->party.giver; }
+    if (s->script.native_action==32) {
+        unsigned member=s->party.selected,kind=s->party.people[member][13];
+        s->service.mech=(uint8_t)member;s->service.kind=(uint8_t)kind;
+        s->service.phase=(uint8_t)(s->party.people[member][14]==armour_capacity[kind] ? 4 : 3);
+        s->service.outcome=3; /* The original reports undamaged armour before asking. */
+    }
 }
 void btp_service_input(BtpState *s,const BtpResources *r,BtpAction a)
 {
     BtpServiceState *v=&s->service;
-    if (v->action==41) {
+    if (v->action==32) {
+        if (v->phase==3) {
+            if (a==BTP_LEFT || a==BTP_UP) v->selected=0;
+            if (a==BTP_RIGHT || a==BTP_DOWN) v->selected=1;
+            if (a==BTP_CANCEL || (a==BTP_ACCEPT && v->selected)) { finish(s,r);return; }
+            if (a==BTP_ACCEPT) {
+                v->amount=(uint16_t)btp_armour_repair(s,v->mech);
+                v->outcome=(uint8_t)(s->party.people[v->mech][14]==armour_capacity[v->kind] ? 1 : v->amount ? 2 : 0);
+                v->phase=4;v->selected=0;
+            }
+        } else if (a==BTP_ACCEPT || a==BTP_CANCEL) finish(s,r);
+        return;
+    }
+    if (v->action==41 || v->action==9 || v->action==11) {
+        int purchase=v->action!=41,armour=v->action==9;
         if (v->phase==9) {
             if (a==BTP_LEFT || a==BTP_UP) v->selected=0;
             if (a==BTP_RIGHT || a==BTP_DOWN) v->selected=1;
@@ -90,13 +138,22 @@ void btp_service_input(BtpState *s,const BtpResources *r,BtpAction a)
             unsigned n=btp_party_count(&s->party);
             if (a==BTP_UP) v->selected=(uint8_t)((v->selected+n)%(n+1u));
             if (a==BTP_DOWN) v->selected=(uint8_t)((v->selected+1u)%(n+1u));
-            if (a==BTP_CANCEL || (a==BTP_ACCEPT && v->selected==n)) btp_laser_next(s,r);
+            if (a==BTP_CANCEL || (a==BTP_ACCEPT && v->selected==n)) {
+                if (purchase) finish(s,r);else btp_laser_next(s,r);
+            }
             else if (a==BTP_ACCEPT) {
-                unsigned member=btp_party_slot(&s->party,v->selected),old=s->party.people[member][11];
-                s->party.people[member][11]=v->item;s->weapon=s->party.people[0][11];
+                unsigned member=btp_party_slot(&s->party,v->selected),at=armour ? 13u : 11u;
+                unsigned old=s->party.people[member][at],points=s->party.people[member][14];
+                s->party.people[member][at]=v->item;
+                if (armour) s->party.people[member][14]=(uint8_t)v->amount;
+                s->weapon=s->party.people[0][11];s->armor=s->party.people[0][13];s->armor_points=s->party.people[0][14];
                 if (old==v->item) { v->phase=11;v->outcome=1; }
-                else if (!old) btp_laser_next(s,r);
-                else v->item=(uint8_t)old; /* The displaced weapon can be given to someone else. */
+                else if (!old) { if (purchase) finish(s,r);else btp_laser_next(s,r); }
+                else v->item=(uint8_t)old;
+                /* 13DE carries both the displaced armour ID and its actual
+                   remaining protection through successive recipients. */
+                if (s->service.phase && armour) v->amount=(uint16_t)points;
+                if (s->service.phase && v->phase!=11) v->selected=0;
             }
         }
         return;
@@ -108,7 +165,8 @@ void btp_service_input(BtpState *s,const BtpResources *r,BtpAction a)
         }
         finish(s,r);return;
     }
-    unsigned count=v->phase==1 ? 5u : v->phase==2 ? v->action==18 ? 6u : 11u : v->phase==3 ? 2u : v->phase==6 ? 18u : v->phase==7 ? btp_party_count(&s->party) : 1u;
+    unsigned count=v->phase==1 ? v->action==19 ? btp_service_mech_count(s) : 5u : v->phase==2 ? v->action==18 ? 6u : 11u : v->phase==3 ? 2u : v->phase==6 ? 18u : v->phase==7 ? btp_party_count(&s->party) : 1u;
+    if (!count) { finish(s,r);return; }
     if (a==BTP_UP) v->selected=(uint8_t)((v->selected+count-1u)%count);
     if (a==BTP_DOWN) v->selected=(uint8_t)((v->selected+1u)%count);
     if (a==BTP_CANCEL && v->phase!=5) { finish(s,r);return; }
@@ -128,9 +186,10 @@ void btp_service_input(BtpState *s,const BtpResources *r,BtpAction a)
         s->party.selected=(uint8_t)slot;s->story_flags[14]=(uint8_t)slot;finish(s,r);return;
     }
     if (v->phase==1) {
-        if (v->selected==4) { finish(s,r);return; }
-        if (s->party.mech_types[v->selected]==255) return;
-        v->mech=v->selected;v->selected=0;
+        if (v->action!=19 && v->selected==4) { finish(s,r);return; }
+        unsigned slot=v->action==19 ? btp_service_mech_slot(s,v->selected) : v->selected;
+        if (slot>=4 || s->party.mech_types[slot]==255) return;
+        v->mech=(uint8_t)slot;v->selected=0;
         if (v->action==19) {
             uint8_t *m=btp_party_mech(s,v->mech);s->story_flags[18]=(uint8_t)(m[124]!=3);
             s->story_flags[17]=(uint8_t)(m[123]>3 ? 8 : m[123]+(m[124]==1 ? 4u : 0u));
@@ -174,11 +233,18 @@ int btp_service_valid(const BtpState *s)
 {
     const BtpServiceState *v=&s->service;
     if (!v->phase) return !v->action && !v->mech && !v->selected && !v->kind && !v->item && !v->outcome && !v->amount && !v->input[0];
+    if (v->action==9 || v->action==11) return (v->phase==10 || v->phase==11) && v->kind==btp_party_count(&s->party) && v->kind>1 &&
+        !v->mech && v->item>=1 && v->item<=(v->action==9 ? 5u : 13u) && v->selected<=v->kind && v->outcome<=1 &&
+        v->amount<=(v->action==9 ? 50u : 0u) && !v->input[0] && s->mode==BTP_BUILDING &&
+        s->script.status==BTP_SCRIPT_NATIVE && s->script.native_action==v->action &&
+        (s->campaign.building==(v->action==9 ? 4u : 3u) ||
+         (!s->campaign.building && s->entry_slot==(v->action==9 ? 4u : 3u)));
     if (v->action==41) return v->phase>=9 && v->phase<=11 && v->kind>=1 && v->kind<=8 && v->mech<v->kind &&
         v->item>=1 && v->item<=13 && v->selected<=(v->phase==9 ? 1u : btp_party_count(&s->party)) && v->outcome<=1 &&
         !v->amount && !v->input[0] && s->mode==BTP_BUILDING && s->campaign.building==15 &&
         s->script.status==BTP_SCRIPT_NATIVE && s->script.native_action==41;
     if (v->phase==8) return v->action==0xe9 && v->mech<8 && !v->selected && v->kind<7 && !v->item && !v->outcome && !v->amount && !v->input[0] && s->mode==BTP_BUILDING && s->script.status==BTP_SCRIPT_RECRUIT && (s->campaign.building==5 || s->campaign.building==9 || s->campaign.building==13);
-    if (v->phase>7 || (v->action!=13 && v->action!=18 && v->action!=19 && v->action!=20 && v->action!=44) || v->mech>3 || v->selected>17 || v->kind>9 || v->item>32 || v->outcome>1 || s->mode!=BTP_BUILDING || s->script.status!=BTP_SCRIPT_NATIVE || (s->campaign.building!=5 && !(s->campaign.building==9 && v->action==13)) || v->action!=s->script.native_action) return 0;
+    if (v->action==32) return (v->phase==3 || v->phase==4) && v->mech<8 && v->selected<=1 && v->kind>=1 && v->kind<=5 && !v->item && v->outcome<=3 && v->amount<=50 && !v->input[0] && s->mode==BTP_BUILDING && s->script.status==BTP_SCRIPT_NATIVE && s->script.native_action==32 && (s->campaign.building==4 || (!s->campaign.building && s->entry_slot==4));
+    if (v->phase>7 || (v->action!=13 && v->action!=18 && v->action!=19 && v->action!=20 && v->action!=44) || v->mech>3 || v->selected>17 || v->kind>9 || v->item>32 || v->outcome>1 || s->mode!=BTP_BUILDING || s->script.status!=BTP_SCRIPT_NATIVE || (s->campaign.building!=5 && !((s->campaign.building==9 || s->campaign.building==4) && v->action==13)) || v->action!=s->script.native_action) return 0;
     unsigned n=0;while (n<8 && v->input[n]) { if (v->input[n]<'0' || v->input[n]>'9') return 0;++n; }return n<8;
 }

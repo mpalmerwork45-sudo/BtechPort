@@ -514,6 +514,7 @@ def controlled_talk_context(pid, output, fixture="tests/fixtures/talk-context.js
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--script",type=Path,required=True)
+    parser.add_argument("--audio",action="store_true",help="Enable original DOSBox mixer and bounded WAV capture commands")
     args=parser.parse_args()
     commands=json.loads(args.script.read_text())
     if not isinstance(commands,list) or not 1<=len(commands)<=500:
@@ -566,7 +567,7 @@ scaler=normal2x
 core=normal
 cycles=fixed 10000
 [mixer]
-nosound=true
+nosound={'false' if args.audio else 'true'}
 [autoexec]
 mount c \"{WORK / 'dos'}\"
 c:
@@ -632,6 +633,18 @@ btech.exe
                     if path.exists():raise ValueError("Capture label already exists")
                     ImageGrab.grab(xdisplay=os.environ["DISPLAY"]).save(path)
                     print(path,flush=True)
+                elif command in ("wave-start","wave-stop"):
+                    if not args.audio:raise ValueError("WAV capture requires --audio")
+                    # DOSBox records its emulated mixer internally even with
+                    # SDL's dummy output. No desktop loopback or microphone.
+                    keys.key(window,"Ctrl+F6")
+                    time.sleep(.15)
+                    if command=="wave-stop":
+                        waves=sorted(capture.glob("*.wav"))
+                        if not waves:raise RuntimeError("DOSBox produced no WAV capture")
+                        target=capture/(parts[1]+".wav")
+                        if target.exists():raise ValueError("WAV label already exists")
+                        waves[-1].rename(target);print(target,flush=True)
                 elif command == "wait":
                     delay=float(parts[1])
                     if not 0<=delay<=10:raise ValueError("Wait must be 0..10 seconds")
@@ -656,6 +669,21 @@ btech.exe
                     print(json.dumps(memory_candidates(process.pid)), flush=True)
                 elif command == "snapshot":
                     snapshot_game(process.pid,parts[1],output)
+                elif command == "select-menu":
+                    # Read the original selector, then send ordinary keys.
+                    # This avoids stale hard-coded Down counts after a menu
+                    # remembers a previous choice; guest memory is unchanged.
+                    menu_id,item=int(parts[1]),int(parts[2])
+                    if not 1 <= menu_id < 40: raise ValueError("Invalid original menu ID")
+                    _,row=snapshot_game(process.pid,f"menu-{menu_id}-{command_index}",output)
+                    ram=(output/f"menu-{menu_id}-{command_index}-ram.bin").read_bytes()
+                    ds=int(row["data_segment"],16)*16
+                    menu=struct.unpack_from('<H',ram,ds+0x56b6)[0]*16
+                    count,current=struct.unpack_from('<HH',ram,menu+0x96+16*menu_id)
+                    if not 1 <= count <= 20 or not 0 <= item < count or current >= count:
+                        raise ValueError(f"Menu {menu_id}: count={count}, selected={current}, requested={item}")
+                    for _ in range((item-current)%count): keys.key(window,"Down");time.sleep(0.18)
+                    keys.key(window,"Return");time.sleep(0.18)
                 elif command == "route":
                     drive_route(process.pid,keys,window,output,parts[1],parts[2],parts[3])
                 elif command == "anm-trace":

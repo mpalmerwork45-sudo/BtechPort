@@ -110,6 +110,17 @@ unsigned btp_combat_weapon_count(const BtpCombatUnit *u)
     }
     return count;
 }
+unsigned btp_combat_range_to(const BtpCombatData *d,unsigned w,const BtpCombatUnit *a,const BtpCombatUnit *t)
+{
+    /* 0E31:0F53 bypasses vehicle footprint offsets for people (IDs
+       4..11 and 16..23). Personal targets use their exact coordinates. */
+    if (!t->infantry) return btp_combat_range(d,w,a->x,a->y,t->x,t->y);
+    if (w>=33) return 3;
+    unsigned distance=btp_combat_distance(a->x,a->y,t->x,t->y);
+    unsigned medium=d->weapons[w][14]&31u,near=d->weapons[w][14]>>5;
+    if (d->weapons[w][12]<128 && w!=32) { medium*=3;near*=3; }
+    return distance<near ? 0u : distance<medium ? 1u : distance<d->weapons[w][15] ? 2u : 3u;
+}
 unsigned btp_combat_weapon(const BtpCombatUnit *u, unsigned index)
 {
     if (u->infantry) return index == 0 && u->record[11] < 15 ? u->record[11] : 255;
@@ -126,7 +137,14 @@ int btp_combat_points(const BtpCombatUnit *u, unsigned movement)
     /* 0E31:046F passes the normalized robot ID + 4 to 103B:2474.
        In this early encounter that reads an inactive party slot and selects
        its minimum of three points, rather than the direct enemy default six. */
-    if (u->infantry) return movement == 2 ? 0 : 3;
+    if (u->infantry) {
+        /* Executed 103B:2474 uses dexterity, then halves the allowance for
+           armour IDs above one. Infantry Run shares this allowance. */
+        if (movement==2) return 0;
+        unsigned points=3u*u->record[2]/4u;if (points<3) points=3;
+        if (u->record[13]>1) points/=2u;
+        return (int)(points>8 ? 8 : points);
+    }
     int points = u->record[49]; unsigned left = u->record[36], right = u->record[37];
     if (movement == 2) points = u->record[50];
     else {
@@ -246,7 +264,7 @@ BtpShot btp_combat_attack_unit(BtpCombatUnit *a, BtpCombatUnit *t, const BtpComb
     BtpShot shot = {0}; unsigned w = kick ? 32 : btp_combat_weapon(a,index);
     if (kick && !btp_combat_can_kick(a)) return shot;
     if (w >= 33 || a->heat >= 30) return shot;
-    unsigned range = btp_combat_range(d,w,a->x,a->y,t->x,t->y);
+    unsigned range = btp_combat_range_to(d,w,a,t);
     if (range >= 3) return shot;
     if (!a->infantry && !kick && a->record[39+index] != 255) --a->record[39+index];
     if (!a->infantry) a->pool = (uint8_t)(a->pool+(d->weapons[w][13]&15u));

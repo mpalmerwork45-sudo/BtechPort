@@ -10,7 +10,11 @@ static unsigned checks;
 static void input(BtpState *s,const BtpResources *r,BtpAction action)
 {
     uint8_t a[BTP_STATE_BYTES],b[BTP_STATE_BYTES];BtpState copy;btp_state_encode(s,a);
-    CHECK(btp_state_decode(a,sizeof a,btp_active_map(r,s),btp_state_bld(r,s),&copy));
+    if (!btp_state_decode(a,sizeof a,btp_active_map(r,s),btp_state_bld(r,s),&copy)) {
+        fprintf(stderr,"Cache restore: tick=%u mode=%u map=%u at=%u,%u script=%u/%u disk=%u service=%u\n",
+            s->tick,s->mode,s->map_id,s->x_half,s->y_half,s->script.status,s->script.pc,s->disk_origin,s->service.phase);
+        CHECK(0);
+    }
     btp_game_tick(s,r,action);btp_game_tick(&copy,r,action);btp_state_encode(s,a);btp_state_encode(&copy,b);CHECK(!memcmp(a,b,sizeof a));
 }
 static uint64_t hash(const uint8_t *p,unsigned n)
@@ -88,5 +92,25 @@ int main(int argc,char **argv)
     for (unsigned j=67;j<=78;++j) CHECK(s.story_flags[j]==1);
     CHECK(btp_save_write("work/m4-audit/cache-ending.btp",&s,r,&e));BtpState restored;CHECK(btp_save_load("work/m4-audit/cache-ending.btp",&restored,r,&e));
     uint32_t *pixels=malloc(BTP_PIXELS*sizeof *pixels);CHECK(pixels);btp_render(r,&restored,0,pixels);free(pixels);
-    free(r);printf("PASS: %u checks, 530 executed-primary cache cases and complete input-only saved cache/ending route\n",checks);return 0;
+    btp_start(&s);f=fopen("tests/fixtures/ordinary-fresh-campaign.actions","r");CHECK(f);
+    unsigned fresh_ticks=0,disk=0,qualified=0;
+    FILE *primary=fopen("tests/fixtures/campaign-checkpoints-primary.txt","r");CHECK(primary);
+    char projection[200];unsigned checkpoint_tick=0,checkpoint_cash=0,checkpoint_count=0;uint64_t checkpoint_hash=0;
+    CHECK(fgets(projection,sizeof projection,primary));CHECK(sscanf(projection,"T %u %u %" SCNx64,&checkpoint_tick,&checkpoint_cash,&checkpoint_hash)==3);
+    while (fgets(line,sizeof line,f)) {
+        line[strcspn(line,"\r\n")]=0;BtpAction action;CHECK(btp_action_parse(line,&action));input(&s,r,action);++fresh_ticks;
+        disk|=s.disk_origin==19;qualified|=s.party.people[2][9]==4 && s.party.people[3][10]==4 && s.story_flags[54];
+        CHECK(!s.original.valid && s.mode!=BTP_SCRIPT_FAULT && s.audio.sound_count<=1);
+        if (fresh_ticks==checkpoint_tick) {
+            CHECK(s.credits==checkpoint_cash && hash((const uint8_t *)s.party.people,136)==checkpoint_hash);++checkpoint_count;
+            CHECK(fgets(projection,sizeof projection,primary));
+            if (projection[0]=='T') CHECK(sscanf(projection,"T %u %u %" SCNx64,&checkpoint_tick,&checkpoint_cash,&checkpoint_hash)==3);
+            else checkpoint_tick=0;
+        }
+    }
+    fclose(primary);fclose(f);CHECK(checkpoint_count==2 && fresh_ticks>60000 && disk && qualified && s.mode==BTP_ENDING);
+    CHECK(s.story_flags[50] && s.story_flags[53] && s.story_flags[54] && s.story_flags[65]);
+    CHECK(btp_save_write("work/m4-audit/fresh-ending.btp",&s,r,&e));
+    CHECK(btp_save_load("work/m4-audit/fresh-ending.btp",&restored,r,&e));
+    free(r);printf("PASS: %u checks, 530 primary cache cases, late-save ending and %u-input fresh-game ending\n",checks,fresh_ticks);return 0;
 }

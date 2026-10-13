@@ -16,7 +16,7 @@ uint8_t *btp_party_mech(BtpState *state,unsigned slot);
 const char *btp_party_name(const BtpPartyState *party,unsigned slot);
 const char *btp_character_name(unsigned id);
 int btp_party_recruit(BtpState *state,unsigned skill);
-void btp_party_follow(BtpState *state,uint16_t old_x,uint16_t old_y);
+void btp_party_follow(BtpState *state,const BtpResources *resources,uint16_t old_x,uint16_t old_y);
 void btp_party_encode(const BtpPartyState *party,uint8_t bytes[BTP_PARTY_BYTES]);
 int btp_party_decode(const uint8_t bytes[BTP_PARTY_BYTES],BtpPartyState *party);
 #endif

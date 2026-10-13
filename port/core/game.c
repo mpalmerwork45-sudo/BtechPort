@@ -43,6 +43,7 @@ const BtpMap *btp_active_map(const BtpResources *r,const BtpState *s)
 }
 unsigned btp_building_kind(const BtpResources *r,const BtpState *s)
 {
+    if (s->disk_origin) return 18;
     if (s->cache.active || s->yard.active) return s->campaign.building;
     return !s->map_id ? s->campaign.building : s->map_id==1 ? s->entry_slot :
         btp_active_map(r,s)->room_map[s->entry_slot&15u];
@@ -155,6 +156,16 @@ static void finish_script(BtpState *s, const BtpResources *r, const BtpMap *m)
         s->cutscene = (BtpCutsceneState){0};
         s->mode = BTP_SCRIPT_FAULT;
     } else if (s->script.status == BTP_SCRIPT_END) {
+        unsigned kind=btp_building_kind(r,s);
+        if (!s->disk_origin && btp_party_count(&s->party)>1 &&
+            (kind==19 || (kind==8 && s->story_flags[48] && !s->story_flags[50]))) {
+            /* Executed 07DC:00C3..015D chains VIEWDISK after the ruined
+               barracks, or garage when a purchased viewer is available. */
+            s->disk_origin=(uint8_t)kind;
+            btp_script_start(&s->script,&r->buildings[18],s->story_flags);
+            checkpoint(s);return;
+        }
+        unsigned disk_finished=s->disk_origin;
         if (s->campaign.invasion) {
             s->campaign.invasion=0;s->map_id=11;
             s->late.invasion_event=s->late.invasion_popup=s->late.invasion_end=0;
@@ -163,7 +174,7 @@ static void finish_script(BtpState *s, const BtpResources *r, const BtpMap *m)
             s->npc=(BtpNpcState){.rng={s->npc.rng[0],s->npc.rng[1],s->npc.rng[2]}};
             s->campaign.building=0;
             s->script=(BtpScriptState){0};
-            if (s->campaign.world_y>=1664 || s->campaign.world_x>=1664) {
+            if (s->campaign.world_y<1536 || s->campaign.world_x<1536 || s->campaign.world_y>=1664 || s->campaign.world_x>=1664) {
                 s->map_id=0;s->x_half=s->campaign.world_x;s->y_half=s->campaign.world_y;
             }
         }
@@ -182,6 +193,7 @@ static void finish_script(BtpState *s, const BtpResources *r, const BtpMap *m)
         s->bank = (BtpBankState){0};
         s->school = (BtpSchoolState){0};
         s->script.has_accounts = 0;
+        if (disk_finished) { s->disk_origin=0;s->script=(BtpScriptState){0}; }
     }
     if (status == BTP_SCRIPT_ERROR || status == BTP_SCRIPT_MENU || status == BTP_SCRIPT_END) {
         s->checkpoint_valid = 0; memset(s->story_checkpoint, 0, BTP_STORY_BYTES);
@@ -276,6 +288,19 @@ static void game_tick(BtpState *s, const BtpResources *r, BtpAction a)
         if (btp_action_moves(a)) {
             if (moved.campaign.mounted) moved.campaign.mech_walk=(uint8_t)btp_combat_walk_frame(s->campaign.mech_walk,s->campaign.mech_direction,btp_player_direction((unsigned)a),0);
             moved.player_walk=btp_walk_next(s->player_walk,btp_player_direction(s->facing),btp_player_direction((unsigned)a));
+            /* One key advances every formation sprite by one frame. In
+               four-step mode four simulated moves would otherwise wrap the
+               other pilots' gait back to its starting frame. */
+            if (moved.campaign.world_x!=s->campaign.world_x || moved.campaign.world_y!=s->campaign.world_y) {
+                unsigned direction=btp_player_direction((unsigned)a);
+                for (unsigned i=1;i<8;++i) if (moved.party.people[i][0]!=255) {
+                    unsigned mount=moved.party.people[i][12];
+                    if (mount>=8) moved.party.walk[i]=btp_walk_next(s->party.walk[i],s->party.direction[i],direction);
+                    else if (mount<4 && btp_party_mech(&moved,mount)[121]==i)
+                        moved.party.walk[i]=(uint8_t)btp_combat_walk_frame(s->party.walk[i],s->party.direction[i],direction,0);
+                    moved.party.direction[i]=(uint8_t)direction;
+                }
+            }
         }
         *s = moved;btp_world_reveal(s);
         if (s->mode == BTP_EXPLORE && !s->story_flags[4]) btp_npc_tick(s,&r->map);
@@ -496,7 +521,10 @@ void btp_game_tick_audio(BtpState *s,const BtpResources *r,BtpAction a,int16_t *
     }
     if (s->cutscene.active==3) { if (a==BTP_OPEN_MENU) s->combat.paused=1;++s->tick;btp_cutscene_tick(s,r); }
     else game_tick(s,r,a);
-    if (s->story_flags[4] && !s->campaign.encounter) { btp_party_init(s);btp_party_sync(s); }
+    /* Armour repair can initialise Jason's character record before the
+       invasion. Keep his legacy training/shop aliases coherent from that
+       point, rather than waiting for the destroyed-Citadel campaign flag. */
+    if (!s->campaign.encounter && (s->story_flags[4] || s->party.enabled)) { btp_party_init(s);btp_party_sync(s); }
     btp_audio_samples(&s->audio,r,BTP_AUDIO_TICK_SAMPLES,samples);
 }
 void btp_game_tick(BtpState *s,const BtpResources *r,BtpAction a) { btp_game_tick_audio(s,r,a,NULL); }
@@ -507,7 +535,7 @@ static uint16_t get16(const uint8_t *p) { return (uint16_t)(p[0] | (uint16_t)p[1
 void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
 {
     memset(b, 0, BTP_STATE_BYTES);
-    memcpy(b, "BTPT", 4); b[4] = 29;
+    memcpy(b, "BTPU", 4); b[4] = 30;
     for (unsigned i = 0; i < 4; ++i) b[8+i] = (uint8_t)(s->tick >> (8 * i));
     b[12] = (uint8_t)s->x_half; b[13] = (uint8_t)(s->x_half >> 8);
     b[14] = (uint8_t)s->y_half; b[15] = (uint8_t)(s->y_half >> 8);
@@ -637,6 +665,7 @@ void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
     memcpy(b+19292,&s->late,sizeof s->late);
     memcpy(b+19305,&s->yard,sizeof s->yard);
     b[19305+sizeof s->yard]=s->talk.reply;
+    b[19306+sizeof s->yard]=s->disk_origin;
 }
 
 int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *script, BtpState *s)
@@ -670,7 +699,8 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         n == BTP_STATE_BYTES && !memcmp(b,"BTPQ",4) && b[4]==26 ? 26 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPR",4) && b[4]==27 ? 27 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPS",4) && b[4]==28 ? 28 :
-        n == BTP_STATE_BYTES && !memcmp(b,"BTPT",4) && b[4]==29 ? 29 : 0;
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPT",4) && b[4]==29 ? 29 :
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPU",4) && b[4]==30 ? 30 : 0;
     if (!version) return 0;
     for (unsigned i = 5; i < 8; ++i) if (b[i]) return 0;
     if (version == 1) { for (unsigned i = 20; i < 24; ++i) if (b[i]) return 0; }
@@ -687,7 +717,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
             if (version == 9) for (unsigned i = 403; i < n; ++i) if (b[i]) return 0;
             if (version >= 10) {
                 if (b[425]) return 0;
-                unsigned start=version==10 ? 434u : version==11 ? 441u : version==12 ? 450u : version<15 ? 896u : version>=29 ? 19306u+(unsigned)sizeof(BtpYardState) : version>=28 ? 19292u+(unsigned)sizeof(BtpLateState) : version>=27 ? 18483u+(unsigned)sizeof(BtpCacheState) : version>=26 ? 18483u : version>=25 ? 18433u : version>=24 ? 15702u : version>=22 ? 15693u : version>=21 ? 15414u : version>=20 ? 11388u : version>=19 ? 11326u : version>=18 ? 11314u : version>=17 ? 2684u : version>=16 ? 2399u : 1803u;
+                unsigned start=version==10 ? 434u : version==11 ? 441u : version==12 ? 450u : version<15 ? 896u : version>=30 ? 19307u+(unsigned)sizeof(BtpYardState) : version>=29 ? 19306u+(unsigned)sizeof(BtpYardState) : version>=28 ? 19292u+(unsigned)sizeof(BtpLateState) : version>=27 ? 18483u+(unsigned)sizeof(BtpCacheState) : version>=26 ? 18483u : version>=25 ? 18433u : version>=24 ? 15702u : version>=22 ? 15693u : version>=21 ? 15414u : version>=20 ? 11388u : version>=19 ? 11326u : version>=18 ? 11314u : version>=17 ? 2684u : version>=16 ? 2399u : 1803u;
                 for (unsigned i=start;i<n;++i) if (b[i]) return 0;
                 if (version>=13) for (unsigned i=version>=15 ? 460u : 452u;i<512;++i) if (b[i]) return 0;
                 if (version==13 && b[878]) return 0; /* v14 firing-effect countdown. */
@@ -702,6 +732,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         if (result.late.invasion_event>5 || result.late.invasion_popup>6 || result.late.invasion_end>1) return 0;
     }
     if (version>=29) memcpy(&result.yard,b+19305,sizeof result.yard);
+    if (version>=30) result.disk_origin=b[19306+sizeof result.yard];
     if (version>=25) {
         memcpy(result.explored,b+16384,sizeof result.explored);
         for (unsigned i=15702;i<16384;++i) if (b[i]) return 0;
@@ -764,7 +795,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         if (result.campaign.invasion>1 || result.campaign.owned>1 || result.campaign.checkpoint_owned>1 ||
             result.campaign.world_x>2047 || result.campaign.world_y>2047 || result.campaign.building>=26 ||
             result.campaign.world_clock>=4 || result.campaign.encounter>(version>=29 ? 4u : 2u) || result.campaign.mounted>result.campaign.owned ||
-            result.campaign.mech_walk>15 || result.campaign.mech_direction>7 || result.campaign.ui>(version>=25 ? BTP_MENU_MECH : version>=23 ? BTP_MENU_RECIPIENT : version>=19 ? BTP_MENU_QUIT : 6) ||
+            result.campaign.mech_walk>15 || result.campaign.mech_direction>7 || result.campaign.ui>(version>=30 ? BTP_MENU_MECH_PICK : version>=25 ? BTP_MENU_MECH : version>=23 ? BTP_MENU_RECIPIENT : version>=19 ? BTP_MENU_QUIT : 6) ||
             result.campaign.selected>(version>=23 ? 8u : 7u) || result.campaign.member>7 || result.campaign.mech_x>2047 || result.campaign.mech_y>2047) return 0;
     }
     if (version>=16) {
@@ -773,7 +804,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
             unsigned p=2049+4*i;BtpTerrainMark *mark=&result.terrain_marks[i];
             *mark=(BtpTerrainMark){b[p],b[p+1],b[p+2],b[p+3]};
             if (mark->sprite ? (mark->sprite!=124 && mark->sprite!=125 && mark->sprite!=126 && mark->sprite!=128 && mark->sprite!=129) ||
-                (version>=29 ? mark->map>14 : mark->map!=1) || mark->x>127 || mark->y>127 :
+                (version>=29 ? mark->map>14 : mark->map!=1) || (!result.campaign.invasion && (mark->x>127 || mark->y>127)) :
                 mark->map || mark->x || mark->y) return 0;
         }
         result.effects.count=b[2305];result.effects.age=b[2306];result.effects.pending=b[2307];
@@ -788,9 +819,9 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
     result.map_id = b[16]; result.gate = b[17]; result.facing = b[18]; result.blocked = b[19];
     if ((result.map_id != 1 && !(version>=17 && result.map_id<=14 && b[28])) || (result.cache.active ? result.gate!=33 && result.gate!=139 : result.gate!=85) ||
         (version >= 10 ? result.facing != BTP_IDLE && !btp_action_moves((BtpAction)result.facing) : result.facing > BTP_RIGHT) ||
-        result.blocked > BTP_EDGE ||
-        (result.campaign.encounter ? result.x_half>=128 : result.map_id ? result.x_half >= 2 * m->width : result.x_half>=2048) ||
-        (result.campaign.encounter ? result.y_half>=128 : result.map_id ? result.y_half >= 2 * m->height && !(version>=17 && result.campaign.invasion && result.y_half<=129) : result.y_half>=2048))
+        result.blocked > (version>=30 ? BTP_WATER : BTP_EDGE) ||
+        (version>=30 && result.campaign.invasion ? result.x_half>=256 : result.campaign.encounter ? result.x_half>=128 : result.map_id ? result.x_half >= 2 * m->width : result.x_half>=2048) ||
+        (version>=30 && result.campaign.invasion ? result.y_half>257 : result.campaign.encounter ? result.y_half>=128 : result.map_id ? result.y_half >= 2 * m->height && !(version>=17 && result.campaign.invasion && result.y_half<=129) : result.y_half>=2048))
         return 0;
     if (version > 1) {
         result.mode = b[20]; result.entry_selected = b[21]; result.entry_slot = b[22];
@@ -1027,6 +1058,18 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
                 for (unsigned i = 0; i < count; ++i)
                     if (get16(script->bytes + v->menu_table + 2*i) >= script->length) return 0;
         }
+        if (version<30 && result.campaign.invasion && result.combat.phase) {
+            /* v29's invasion used a cropped town frame. Translate its live
+               positions and goals into the padded world frame; paths are deltas. */
+            BtpCombatState *c=&result.combat;result.x_half+=64;result.y_half+=64;
+            result.campaign.battle_x=result.campaign.battle_y=1472;
+            for (unsigned i=0;i<c->count;++i) { c->unit[i].x+=64;c->unit[i].y+=64; }
+            if (c->goal_active) { c->goal_x+=64;c->goal_y+=64; }
+            if (c->cursor_x || c->cursor_y || c->phase==BTP_COMBAT_MOVE) { c->cursor_x+=64;c->cursor_y+=64; }
+            for (unsigned i=0;i<c->waypoint_count;++i) { c->waypoint_x[i]+=64;c->waypoint_y[i]+=64; }
+            for (unsigned i=0;i<result.effects.count;++i) { BtpCombatEffect *e=&result.effects.shots[i];e->x+=64;e->y+=64;e->tx+=64;e->ty+=64; }
+        }
+        if (result.disk_origin && ((result.disk_origin!=8 && result.disk_origin!=19) || result.mode!=BTP_BUILDING || !result.checkpoint_valid || result.campaign.building!=result.disk_origin)) return 0;
         if (!btp_talk_valid(&result,m) || !btp_npc_valid(&result,m) || !btp_bank_valid(&result) ||
             !btp_school_valid(&result) || !btp_training_valid(&result) || !btp_cutscene_valid(&result) || !btp_combat_valid(&result) || !btp_effects_valid(&result) || !btp_service_valid(&result) ||
             (result.presentation.count && result.combat.phase!=BTP_COMBAT_ROUND) || !btp_cache_valid(&result) || !btp_yard_valid(&result)) return 0;

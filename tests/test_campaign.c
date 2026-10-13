@@ -1,4 +1,5 @@
 #include "core/training.h"
+#include "core/combat.h"
 #include "core/npc.h"
 #include "core/world.h"
 #include "data/save.h"
@@ -34,14 +35,32 @@ int main(int argc,char **argv)
         char *at=row+1+used;
         for (unsigned i=1;i<count;++i) {
             unsigned x,y;uint64_t record;CHECK(sscanf(at,"%u %u %" SCNx64 "%n",&x,&y,&record,&used)==3);at+=used;
-            CHECK(s.combat.unit[i].x==x && s.combat.unit[i].y==y);
+            CHECK(s.combat.unit[i].x==x+(invasion ? 64u : 0u) && s.combat.unit[i].y==y+(invasion ? 64u : 0u));
             CHECK(hash(s.combat.unit[i].record,125)==record);
         }
-        if (invasion) for (int y=62;y<64;++y) for (int x=56;x<64;++x)
-            CHECK(btp_mission_tile(&s,&r->map,x,y)==64);
+        if (invasion) {
+            BtpMap terrain;btp_combat_map(r,&s,&terrain);CHECK(terrain.width==128 && terrain.height==128);
+            CHECK(btp_map_tile(&terrain,32+56,32+63)==btp_map_tile(&r->map,56,63));
+            CHECK(btp_map_tile(&terrain,100,100)==btp_world_tile(r,&s,836,836));
+        }
         ++cases;
     }
     fclose(f);CHECK(cases==16);
+    f=fopen("tests/fixtures/movement-obstacles-primary.txt","r");CHECK(f);unsigned obstacle_cases=0;
+    while (fgets(row,sizeof row,f)) {
+        if (row[0]=='P') {
+            unsigned tile,mode;uint64_t expected;CHECK(sscanf(row+1,"%u %u %" SCNx64,&tile,&mode,&expected)==3);
+            BtpMap m={.width=64,.height=64};memset(m.tiles,64,4096);
+            for (unsigned y=0;y<64;++y) m.tiles[y*64+49]=m.tiles[y*64+50]=(uint8_t)tile;
+            BtpCombatUnit u={.x=96,.y=93,.direction=2};memcpy(u.record,r->combat.loans[2],125);int8_t path[12][2];
+            btp_combat_plan(&m,85,&u,NULL,105,93,mode,0,path);CHECK(hash((const uint8_t *)path,sizeof path)==expected);
+        } else {
+            unsigned x,y,result;CHECK(sscanf(row+1,"%u %u %u",&x,&y,&result)==3);
+            CHECK(btp_invasion_outside(x,y)==(result==2));
+        }
+        ++obstacle_cases;
+    }
+    fclose(f);CHECK(obstacle_cases==40);
     BtpState s;btp_start(&s);f=fopen(argv[2],"r");CHECK(f);
     uint8_t saved[BTP_STATE_BYTES],again[BTP_STATE_BYTES];unsigned actions=0,animation=0,invasion_popups=0,destroyed_during_fight=0;
     while (fgets(row,sizeof row,f)) {

@@ -6,7 +6,7 @@ typedef enum { BTP_IDLE, BTP_UP, BTP_DOWN, BTP_LEFT, BTP_RIGHT, BTP_ACCEPT, BTP_
     BTP_DIGIT_0, BTP_DIGIT_1, BTP_DIGIT_2, BTP_DIGIT_3, BTP_DIGIT_4,
     BTP_DIGIT_5, BTP_DIGIT_6, BTP_DIGIT_7, BTP_DIGIT_8, BTP_DIGIT_9, BTP_CLEAR_INPUT,
     BTP_UP_LEFT, BTP_UP_RIGHT, BTP_DOWN_LEFT, BTP_DOWN_RIGHT, BTP_OPEN_MENU, BTP_CREDIT_10000 } BtpAction;
-typedef enum { BTP_CLEAR, BTP_WALL, BTP_EDGE } BtpBlock;
+typedef enum { BTP_CLEAR, BTP_WALL, BTP_EDGE, BTP_WATER } BtpBlock;
 typedef enum { BTP_EXPLORE, BTP_ENTRY, BTP_BUILDING, BTP_SCRIPT_FAULT, BTP_QUIZ, BTP_MISSION, BTP_ACTIONS, BTP_ENCOUNTER, BTP_TITLE, BTP_GAME_OVER, BTP_LOGO, BTP_BEGIN, BTP_CACHE, BTP_ENDING, BTP_YARD } BtpMode;
 typedef enum { BTP_TALK_NONE, BTP_TALK_EMPTY, BTP_TALK_MENU, BTP_TALK_REPLY } BtpTalkPhase;
 typedef struct {
@@ -152,6 +152,7 @@ typedef struct {
     BtpCacheState cache;
     BtpLateState late;
     BtpYardState yard;
+    uint8_t disk_origin; /* Parent building while VIEWDISK runs as a child story. */
 } BtpState;
 enum { BTP_STATE_BYTES = 20480 };
 

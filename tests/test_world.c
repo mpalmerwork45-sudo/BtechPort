@@ -1,4 +1,7 @@
 #include "core/world.h"
+#include "core/party.h"
+#include "core/menu.h"
+#include "core/animation.h"
 #include "frontend/pixels.h"
 #include "data/save.h"
 #include <inttypes.h>
@@ -19,6 +22,7 @@ int main(int argc,char **argv)
     if (argc!=4) return 2;
     BtpResources *r=calloc(1,sizeof *r);BtpError e;
     CHECK(r && btp_resources_load(argv[1],r,&e) && btp_world_data_load(argv[2],&r->world,&e));
+    CHECK(btp_combat_data_load("work/combat-data.bin",&r->combat,&e));
     FILE *f=fopen(argv[3],"r");CHECK(f);char line[200];unsigned cases=0;
     while (fgets(line,sizeof line,f)) if (line[0]=='W') {
         unsigned x,y,seed;uint64_t expected;uint8_t sector[4096];
@@ -41,6 +45,59 @@ int main(int argc,char **argv)
         CHECK(fingerprint(sector,sizeof sector)==expected);++cases;
     }
     fclose(f);CHECK(cases==30);CHECK(btp_world_generate(&r->world,123456));
+    f=fopen("tests/fixtures/world-water-primary.txt","r");CHECK(f);cases=0;
+    BtpWorldData water=r->world;
+    while (fgets(line,sizeof line,f)) {
+        unsigned x,y,descriptor,rejected;int dx,dy;
+        CHECK(sscanf(line,"W %u %u %d %d %u %u",&x,&y,&dx,&dy,&descriptor,&rejected)==6);
+        memset(water.heights,descriptor==15 ? 0 : descriptor==0 ? 32 : 16,sizeof water.heights);
+        CHECK(btp_world_deep_crossing(&water,1024+x,1024+y,dx,dy)==(int)rejected);++cases;
+    }
+    fclose(f);CHECK(cases==432);
+    /* A real generated-water edge and its modal survive saving. */
+    BtpState swimmer;btp_start(&swimmer);swimmer.story_flags[4]=1;swimmer.map_id=0;
+    unsigned wet_x=0,wet_y=0;
+    for (unsigned y=32;y<1800 && !wet_x;y+=16) for (unsigned x=32;x<1800;x+=16)
+        if (!btp_world_location(r,&swimmer,(int)x/2,(int)y/2) && btp_world_deep_crossing(&r->world,x,y,-1,0)) { wet_x=x;wet_y=y;break; }
+    CHECK(wet_x);swimmer.x_half=swimmer.campaign.world_x=(uint16_t)wet_x;
+    swimmer.y_half=swimmer.campaign.world_y=(uint16_t)wet_y;swimmer.story_flags[58]=1;
+    btp_game_tick(&swimmer,r,BTP_LEFT);
+    CHECK(swimmer.blocked==BTP_WATER && swimmer.mode==BTP_ACTIONS && swimmer.menu.notice==5 && swimmer.campaign.world_x==wet_x);
+    CHECK(btp_save_write("work/water-dialog.btp",&swimmer,r,&e));BtpState water_copy;
+    CHECK(btp_save_load("work/water-dialog.btp",&water_copy,r,&e));
+    btp_game_tick(&water_copy,r,BTP_OPEN_MENU);CHECK(water_copy.mode==BTP_EXPLORE && water_copy.campaign.world_x==wet_x);
+    CHECK(remove("work/water-dialog.btp")==0);
+    /* Collision runs for every intermediate half-step, including diagonals.
+       Give MAP2 a controlled roof strip so the boundary is unambiguous. */
+    BtpMap map2=r->local[1];memset(r->local[1].tiles,64,4096);
+    for (unsigned y=0;y<64;++y) r->local[1].tiles[y*64+10]=115;
+    for (unsigned step=1;step<=4;step*=2) for (unsigned mounted=0;mounted<2;++mounted) {
+        BtpState walk;btp_start(&walk);walk.story_flags[4]=walk.story_flags[58]=1;walk.map_id=2;
+        walk.x_half=16;walk.y_half=64;walk.campaign.world_x=1296;walk.campaign.world_y=1088;
+        walk.menu.steps=(uint8_t)step;btp_party_init(&walk);
+        if (mounted) { memcpy(walk.campaign.mech,r->combat.loans[0],125);walk.party.mech_types[0]='L';walk.campaign.owned=walk.campaign.mounted=1;walk.party.people[0][12]=0; }
+        BtpState singles=walk;singles.menu.steps=1;
+        btp_game_tick(&walk,r,BTP_RIGHT);
+        for (unsigned i=0;i<step;++i) btp_game_tick(&singles,r,BTP_RIGHT);
+        CHECK(walk.campaign.world_x==singles.campaign.world_x && walk.campaign.world_y==singles.campaign.world_y);
+        CHECK(walk.x_half<19 && btp_world_tile(r,&walk,(walk.campaign.world_x+1)/2,walk.campaign.world_y/2)<85);
+    }
+    memset(r->local[1].tiles,64,4096);
+    for (unsigned step=1;step<=4;step*=2) {
+        BtpState walk;btp_start(&walk);walk.story_flags[4]=walk.story_flags[58]=1;walk.map_id=2;
+        walk.x_half=32;walk.y_half=64;walk.campaign.world_x=1312;walk.campaign.world_y=1088;
+        walk.menu.steps=(uint8_t)step;btp_party_init(&walk);
+        for (unsigned i=0;i<4;++i) { memcpy(walk.party.people[i],walk.party.people[0],17);walk.party.people[i][0]=(uint8_t)i;walk.party.people[i][12]=8; }
+        memcpy(walk.campaign.mech,r->combat.loans[0],125);memcpy(walk.party.mechs[0],r->combat.commando,125);
+        walk.campaign.mech[121]=0;walk.party.mechs[0][121]=1;walk.party.mech_types[0]='L';walk.party.mech_types[1]='C';
+        walk.party.people[0][12]=0;walk.party.people[1][12]=1;walk.campaign.owned=walk.campaign.mounted=1;
+        unsigned last[3]={UINT32_MAX,UINT32_MAX,UINT32_MAX};
+        for (unsigned key=0;key<5;++key) {
+            btp_game_tick(&walk,r,BTP_RIGHT);
+            for (unsigned i=1;i<4;++i) { CHECK(walk.party.walk[i]!=last[i-1]);last[i-1]=walk.party.walk[i]; }
+        }
+    }
+    r->local[1]=map2;
     uint8_t *raw;size_t n;CHECK(btp_read_file(argv[2],&raw,&n,&e));
     BtpWorldData untouched=r->world;
     CHECK(!btp_world_data_decode(raw,n-1,&r->world,&e) && !memcmp(&untouched,&r->world,sizeof untouched));

@@ -91,6 +91,41 @@ unsigned btp_world_tile(const BtpResources *r,const BtpState *s,int x,int y)
         x>=BTP_WORLD_ORIGIN+BTP_WORLD_SIDE || y>=BTP_WORLD_ORIGIN+BTP_WORLD_SIDE) return 255;
     return r->world.tiles[(unsigned)(y-BTP_WORLD_ORIGIN)*BTP_WORLD_SIDE+(unsigned)(x-BTP_WORLD_ORIGIN)];
 }
+unsigned btp_world_descriptor(const BtpResources *r,const BtpState *s,int x,int y)
+{
+    if (x<0 || y<0 || x>=1024 || y>=1024) return 255;
+    unsigned id=(unsigned)btp_world_location(r,s,x,y);
+    if (id) {
+        const BtpMap *m=local(r,id==11 ? 1u : id);
+        int ox=(m->entrance_x[0]>>8)*64,oy=(m->entrance_y[0]>>12)*64;
+        /* 0000:3084 paints consecutive 90.. town chunk descriptors. */
+        return 144u+(unsigned)(y-oy)/8u*(m->width/8u)+(unsigned)(x-ox)/8u;
+    }
+    if (!r->world.native) return 255;
+    unsigned at=((unsigned)y/8u+8u)*144u+(unsigned)x/8u+8u;
+    unsigned level=r->world.heights[at],mask=0;
+    if (r->world.heights[at-144u]==level) mask|=1;
+    if (r->world.heights[at+1u]==level) mask|=2;
+    if (r->world.heights[at+144u]==level) mask|=4;
+    if (r->world.heights[at-1u]==level) mask|=8;
+    return level==16 ? 112u : (level>=32 ? level-16u : level)|mask;
+}
+int btp_world_deep_crossing(const BtpWorldData *w,unsigned x,unsigned y,int dx,int dy)
+{
+    if (!w->native || x>=2048 || y>=2048) return 0;
+    /* 0000:1C12..1CC1 checks only crossings of a 16-half-step terrain
+       block. 187F:13D9 returns descriptor 0F for level-zero water joined
+       to water on all four sides. People and vehicles share this check. */
+    int bx=(int)(x/16u)+8,by=(int)(y/16u)+8,crossed=0;
+    if (dx<0 && !(x&15u)) { --bx;crossed=1; }
+    if (dx>0 && (x&15u)==15u) { ++bx;crossed=1; }
+    if (dy<0 && !(y&15u)) { --by;crossed=1; }
+    if (dy>0 && (y&15u)==15u) { ++by;crossed=1; }
+    if (!crossed) return 0;
+    unsigned at=(unsigned)by*144u+(unsigned)bx;
+    return !w->heights[at] && !w->heights[at-144u] && !w->heights[at+144u] &&
+        !w->heights[at-1u] && !w->heights[at+1u];
+}
 void btp_world_step(BtpState *s,const BtpResources *r,BtpAction a)
 {
     uint16_t old_x=s->campaign.world_x,old_y=s->campaign.world_y;
@@ -104,6 +139,11 @@ void btp_world_step(BtpState *s,const BtpResources *r,BtpAction a)
         s->facing=(uint8_t)a;
         int x=gx+btp_action_dx(a),y=gy+btp_action_dy(a);
         if (x<0 || y<0 || x>=2048 || y>=2048) s->blocked=BTP_EDGE;
+        else if (btp_world_deep_crossing(&r->world,(unsigned)gx,(unsigned)gy,btp_action_dx(a),btp_action_dy(a))) {
+            s->blocked=BTP_WATER;btp_menu_open(s);s->campaign.ui=BTP_MENU_MESSAGE;s->menu.notice=5;
+        }
+        /* The arena's temporary gate 139 must not leak into town travel:
+           roof/building tiles 115..138 still block ordinary movement. */
         else if (s->campaign.mounted ? btp_world_tile(r,s,x/2,(y-2)/2)>=s->gate ||
             btp_world_tile(r,s,x/2+1,(y-2)/2)>=s->gate : btp_world_tile(r,s,(x+1)/2,y/2)>=s->gate) s->blocked=BTP_WALL;
         else { gx=x;gy=y;s->blocked=BTP_CLEAR; }
@@ -132,7 +172,7 @@ void btp_world_step(BtpState *s,const BtpResources *r,BtpAction a)
         gx-=(m->entrance_x[0]>>8)*128;gy-=(m->entrance_y[0]>>12)*128;
     }
     s->x_half=(uint16_t)gx;s->y_half=(uint16_t)gy;
-    btp_party_follow(s,old_x,old_y);
+    btp_party_follow(s,r,old_x,old_y);
 }
 void btp_world_clock(BtpState *s,const BtpResources *r)
 {

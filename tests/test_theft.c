@@ -1,4 +1,5 @@
 #include "core/yard.h"
+#include "core/party.h"
 #include "core/combat.h"
 #include "core/animation.h"
 #include "data/save.h"
@@ -56,19 +57,47 @@ int main(int argc,char **argv)
     }
     fclose(f);CHECK(cases==68);
     const char *routes[]={"prison-theft","arena-theft"};
-    BtpState prison_start={0};
+    BtpState prison_start={0},arena_start={0};
     for (unsigned route=0;route<2;++route) {
         BtpState s;char path[180];if (route) CHECK(btp_save_load("Original DOS/GAME3",&s,r,&e));else btp_start(&s);
         snprintf(path,sizeof path,"tests/fixtures/ordinary-%s.actions",routes[route]);f=fopen(path,"r");CHECK(f);
         unsigned yard=0,alarm=0,ticks=0,owned_four=0;
         while (fgets(line,sizeof line,f)) { line[strcspn(line,"\r\n")]=0;BtpAction a;CHECK(btp_action_parse(line,&a));input(&s,r,a);
             if (!route && !yard && s.mode==BTP_YARD) prison_start=s;
+            if (route && !arena_start.yard.active && s.mode==BTP_ENCOUNTER && s.campaign.encounter==4) arena_start=s;
             yard|=s.yard.active;alarm|=s.yard.alarm!=0;
             owned_four|=s.party.mech_types[3]!=255 && !s.yard.active;CHECK(s.audio.sound_count<=1);++ticks; }
         fclose(f);CHECK(ticks>200 && s.mode==BTP_EXPLORE && yard);
         if (route) CHECK(alarm && owned_four && s.party.mech_types[0]=='L');else CHECK(s.party.mech_types[2]=='S' && s.party.people[0][12]==2 && s.campaign.mounted);
     }
     CHECK(prison_start.yard.active==1);
+    f=fopen("tests/fixtures/yard-outcomes-primary.txt","r");CHECK(f);unsigned outcomes=0;
+    const uint8_t *templates[]={r->combat.loans[0],r->combat.commando,r->combat.encounter_mechs[2],r->combat.loans[1]};
+    while (fgets(line,sizeof line,f)) {
+        unsigned rental=0,count,slot=0,stolen=0,destroyed,failed;int used;unsigned long long wanted[4];
+        if (line[0]=='A') CHECK(sscanf(line+1,"%u %u %u %u %u %u %llx %llx %llx %llx%n",&rental,&count,&slot,&stolen,&destroyed,&failed,&wanted[0],&wanted[1],&wanted[2],&wanted[3],&used)==10);
+        else CHECK(sscanf(line+1,"%u %u %u %llx %llx %llx %llx%n",&count,&destroyed,&failed,&wanted[0],&wanted[1],&wanted[2],&wanted[3],&used)==7);
+        BtpState s=line[0]=='A' ? arena_start : prison_start;CHECK(s.yard.active);
+        for (unsigned i=0;i<4;++i) {
+            memset(s.yard.mechs[i],0,125);s.yard.mechs[i][0]=255;s.yard.mechs[i][121]=s.yard.mechs[i][122]=255;
+            if (i<count) memcpy(s.yard.mechs[i],templates[i],125);
+            s.yard.mechs[i][121]=s.yard.mechs[i][122]=255;s.yard.types[i]=s.yard.mechs[i][0];
+        }
+        if (line[0]=='A') {
+            s.yard.rental=(uint8_t)rental;s.yard.slot=(uint8_t)slot;s.story_flags[35]=(uint8_t)stolen;
+            memcpy(s.combat.unit[0].record,rental ? templates[0] : templates[slot],125);
+            s.combat.unit[0].record[17]=2;if (destroyed) s.combat.unit[0].record[0]=255;
+            s.combat.unit[0].y=102;s.combat.phase=0;s.combat.lost=(uint8_t)destroyed;btp_yard_result(&s,r);
+        } else btp_yard_finish_prison(&s,r,!destroyed);
+        CHECK(s.story_flags[40]==failed);
+        for (unsigned i=0;i<4;++i) {
+            const uint8_t *m=btp_party_mech(&s,i);uint64_t actual=fingerprint(m,121);
+            if (actual!=wanted[i]) fprintf(stderr,"Yard outcome %u bay %u: actual %016llx expected %016llx, %s",outcomes,i,(unsigned long long)actual,wanted[i],line);
+            CHECK(actual==wanted[i]);
+        }
+        ++outcomes;
+    }
+    fclose(f);CHECK(outcomes==32);
     for (unsigned i=0;i<1024 && prison_start.mode==BTP_YARD;++i) input(&prison_start,r,BTP_IDLE);
     CHECK(prison_start.mode==BTP_ENCOUNTER && prison_start.campaign.encounter==3 && prison_start.combat.count==9);
     for (unsigned i=0;i<3;++i) input(&prison_start,r,BTP_ACCEPT);

@@ -35,8 +35,9 @@ void btp_shop_native(BtpState *s, const BtpResources *r)
         if (s->script.native_action==46) { btp_menu_open(s);s->campaign.ui=BTP_MENU_ALLOCATE;s->menu.from_story=1;return; }
         break;
     case 14: /* 14D3:0AF2: other party members; Jason is slot zero. */
-        if (kind!=5) { unsupported(s);return; }
-        s->story_flags[14]=0;break;
+        if (kind!=5 && kind!=4) { unsupported(s);return; }
+        btp_party_init(s);
+        s->story_flags[14]=(uint8_t)(btp_party_count(&s->party)-1u);break;
     case 16:
         if (kind!=5) { unsupported(s);return; }
         s->story_flags[15]=s->party.enabled ? s->party.people[s->party.selected][16]&1u : s->apprentice;break;
@@ -69,7 +70,9 @@ void btp_shop_native(BtpState *s, const BtpResources *r)
         break;
     case 9: case 11: {
         /* Audited unsigned price tables at DS:4F26 / 4F44; equipment
-           assignments at 0FDC:13DE / 15E6. One active party member. */
+           assignments at 07DC:13DE / 15E6. Payment precedes the
+           recipient menu; dropping the equipment does not refund it. */
+        if (s->service.phase) return;
         static const uint32_t armor_prices[6] = {0,50,150,200,10000,1000};
         static const uint32_t weapon_prices[11] = {2,10,100,10,20,35,40,80,250,1500,1500};
         static const uint8_t protection[6] = {0,25,40,30,50,50};
@@ -86,11 +89,20 @@ void btp_shop_native(BtpState *s, const BtpResources *r)
         s->story_flags[11] = 0;
         if (s->credits >= price) {
             s->credits -= price; s->story_flags[11] = 1;
-            if (s->party.enabled && s->party.selected) {
-                uint8_t *person=s->party.people[s->party.selected];
-                if (armor) { person[13]=(uint8_t)choice;person[14]=protection[choice]; } else person[11]=(uint8_t)choice;
-            } else if (armor) { s->armor = (uint8_t)choice; s->armor_points = protection[choice]; }
+            if (btp_party_count(&s->party)>1) {
+                s->service=(BtpServiceState){.phase=10,.action=s->script.native_action,
+                    .kind=(uint8_t)btp_party_count(&s->party),.item=(uint8_t)choice,
+                    .amount=(uint16_t)(armor ? protection[choice] : 0)};
+                if (s->npc.enabled) s->npc.allowance_pending=(uint8_t)btp_economy_below_cap(s);
+                return;
+            }
+            /* The solo source writes Jason directly, independently of a
+               previously remembered party selection in another building. */
+            if (armor) { s->armor = (uint8_t)choice; s->armor_points = protection[choice]; }
             else s->weapon = (uint8_t)choice;
+            if (s->party.enabled) {
+                s->party.people[0][11]=s->weapon;s->party.people[0][13]=s->armor;s->party.people[0][14]=s->armor_points;
+            }
             if (s->npc.enabled) s->npc.allowance_pending = (uint8_t)btp_economy_below_cap(s);
         }
         break;

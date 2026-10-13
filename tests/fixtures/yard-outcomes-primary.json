@@ -1,0 +1,20 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "cases": 32,
+  "routines": "14D3:0004 actions 33/34/35/40, original owned/rental/prison restoration helpers",
+  "prerequisites": "0/1/3/4 owned bays, four owned selections, normal/stolen, surviving/destroyed vehicle. Combat/minigame result supplied at 07DC:0629.",
+  "intercepted_boundaries": [
+    "0000:2DA8",
+    "0000:48B7",
+    "07DC:0629",
+    "0C67:0B98",
+    "0D43:0C72",
+    "1656:0388",
+    "1656:03F5",
+    "173D:0259",
+    "187F:104E",
+    "187F:1DA8"
+  ],
+  "comparison": "Failure flag and four 121-byte vehicle fingerprints; parked tag projected from D452; crew allocation is a subsequent UI boundary. No claim that these supplied outcomes were played battles."
+}

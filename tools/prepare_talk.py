@@ -72,6 +72,10 @@ def extract(source):
         offset,segment=struct.unpack_from('<HH',image,DS+entry)
         addresses.append(segment*16+offset)
     addresses.extend(DS+p for p in (0x3402,0x3414,0x341b,0x3421,0x3428,0x343a))
+    # Personal armour repair fragments, appended so earlier text IDs stay stable.
+    addresses.extend(DS+p for p in (0x4c1c,0x4c60,0x4c75,0x4c79,0x4c81,0x4cae,0x4cd3,0x4cee,0x4d14,0x4d4f,0x4d67))
+    # Speed Shop native headings and the offer/result appended to its BLD text.
+    addresses.extend(DS+p for p in (0x1d1e,0x1d33,0x1d9c,0x1dc8,0x1dee))
     blob = bytearray(); ranges = []; origins = []
     for address in addresses:
         end = image.index(0,address)
@@ -85,7 +89,7 @@ def extract(source):
     header += bytes.fromhex(EXE_SHA)+bytes.fromhex(IMAGE_SHA)
     header += b"".join(struct.pack("<HH",*r) for r in ranges)
     font = image[FONT:FONT+2048]
-    return header+blob+font, {**metadata,"format":"BTTA/v13","strings":origins,
+    return header+blob+font, {**metadata,"format":"BTTA/v15","strings":origins,
         "font":{"image_offset":FONT,"length":len(font),"sha256":hashlib.sha256(font).hexdigest()}}
 
 

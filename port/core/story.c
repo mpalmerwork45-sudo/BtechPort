@@ -24,7 +24,14 @@ void btp_laser_next(BtpState *s,const BtpResources *r)
 int btp_later_native(BtpState *s,const BtpResources *r)
 {
     unsigned kind=btp_building_kind(r,s),action=s->script.native_action;
-    if (action==36 || action==38) {
+    if (kind==4 && (action==13 || action==32)) {
+        if (!s->service.phase) btp_service_begin(s,r);
+        return 1;
+    }
+    if (kind==4 && action==31) {
+        /* 14D3:0EDA copies the selected person's armour ID to flag 31. */
+        btp_party_init(s);s->story_flags[31]=s->party.people[s->party.selected][13];
+    } else if (action==36 || action==38) {
         unsigned id=action==36 ? s->story_flags[37]<8 ? s->party.people[s->story_flags[37]][0] : 255u : s->party.next_id;
         if (id>=10) return 0;
         s->script.has_name=1;s->script.name_id=(uint8_t)id;s->script.name_after=s->script.text_count;
@@ -71,7 +78,12 @@ int btp_later_native(BtpState *s,const BtpResources *r)
         ++s->campaign.world_y;++s->y_half;
         s->script.position_x=(uint16_t)px;s->script.position_y=(uint16_t)(py+1u);
     } else if (kind!=9) return 0;
-    else if (action==13) { btp_service_begin(s,r);return 1; }
+    else if (action==13) {
+        /* Resume the existing selector on arrows; reopening it here would
+           reset every choice to Jason before the next input. */
+        if (!s->service.phase) btp_service_begin(s,r);
+        return 1;
+    }
     else if (action==21 || action==22) {
         unsigned member=s->party.selected;if (member>=8 || s->party.people[member][0]==255) return 0;
         uint8_t *p=s->party.people[member];

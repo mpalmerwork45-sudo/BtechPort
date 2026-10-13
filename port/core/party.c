@@ -166,14 +166,28 @@ int btp_party_recruit(BtpState *s,unsigned skill)
     p->x[slot]=s->campaign.world_x;p->y[slot]=s->campaign.world_y;
     return 1;
 }
-void btp_party_follow(BtpState *s,uint16_t old_x,uint16_t old_y)
+void btp_party_follow(BtpState *s,const BtpResources *r,uint16_t old_x,uint16_t old_y)
 {
-    BtpPartyState *p=&s->party;if (!p->enabled || (old_x==s->campaign.world_x && old_y==s->campaign.world_y)) return;
-    for (unsigned i=1;i<8;++i) if (p->people[i][0]!=255) {
-        uint16_t x=p->x[i],y=p->y[i];
-        unsigned dir=btp_combat_direction(x,y,old_x,old_y);
-        if (dir<8) { p->walk[i]=(uint8_t)(p->people[i][12]<8 ? btp_combat_walk_frame(p->walk[i],p->direction[i],dir,0) : btp_walk_next(p->walk[i],p->direction[i],dir));p->direction[i]=(uint8_t)dir; }
-        p->x[i]=old_x;p->y[i]=old_y;old_x=x;old_y=y;
+    BtpPartyState *p=&s->party;if (!p->enabled) return;
+    /* 0000:0BC9..0D30 rebuilds two compact formations around the outdoor
+       cursor on every drawing pass. Passengers do not take a person position
+       and vehicles do not trail individual character breadcrumb positions. */
+    unsigned person=0,mech=0,dir=btp_player_direction(s->facing);
+    int moved=old_x!=s->campaign.world_x || old_y!=s->campaign.world_y;
+    for (unsigned i=0;i<8;++i) if (p->people[i][0]!=255 && p->people[i][12]>=8) {
+        p->x[i]=(uint16_t)((int)s->campaign.world_x+r->combat.formation_x[person]);
+        p->y[i]=(uint16_t)((int)s->campaign.world_y+r->combat.formation_y[person++]);
+        if (i && moved) p->walk[i]=btp_walk_next(p->walk[i],p->direction[i],dir);
+        p->direction[i]=(uint8_t)dir;
+    }
+    for (unsigned i=0;i<4;++i) if (btp_party_mech(s,i)[0]!=255) {
+        p->mech_x[i]=(uint16_t)((int)s->campaign.world_x+r->combat.mech_formation_x[mech]);
+        p->mech_y[i]=(uint16_t)((int)s->campaign.world_y+r->combat.mech_formation_y[mech++]);
+        unsigned pilot=btp_party_mech(s,i)[121];
+        if (pilot<8) {
+            if (pilot && moved) p->walk[pilot]=(uint8_t)btp_combat_walk_frame(p->walk[pilot],p->direction[pilot],dir,0);
+            p->direction[pilot]=(uint8_t)dir;
+        }
     }
     btp_party_sync(s);
 }

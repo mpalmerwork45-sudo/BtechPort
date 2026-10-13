@@ -82,6 +82,7 @@ unsigned btp_combat_dice(uint8_t rng[3]);
 unsigned btp_combat_direction(int x, int y, int tx, int ty);
 unsigned btp_combat_distance(int x, int y, int tx, int ty);
 unsigned btp_combat_range(const BtpCombatData *data, unsigned weapon, int x, int y, int tx, int ty);
+unsigned btp_combat_range_to(const BtpCombatData *data,unsigned weapon,const BtpCombatUnit *actor,const BtpCombatUnit *target);
 unsigned btp_combat_weapon(const BtpCombatUnit *unit, unsigned index);
 unsigned btp_combat_weapon_count(const BtpCombatUnit *unit);
 int btp_combat_points(const BtpCombatUnit *unit, unsigned movement);

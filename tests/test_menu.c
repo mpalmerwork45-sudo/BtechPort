@@ -89,17 +89,18 @@ int main(int argc,char **argv)
     CHECK(crop_hash(pixels,152,80,40,48)==UINT64_C(0x4b2db9fe1af195cf));
     unsigned x=s.x_half,y=s.y_half;btp_game_tick(&s,r,BTP_RIGHT);CHECK(s.x_half==x && s.y_half==y && restore(&s,r));
     btp_game_tick(&s,r,BTP_CANCEL);CHECK(s.mode==BTP_EXPLORE);
-    btp_menu_open(&s);select_item(&s,r,2);select_item(&s,r,0);btp_render(r,&s,0,pixels);
+    btp_menu_open(&s);select_item(&s,r,2);btp_render(r,&s,0,pixels);
     CHECK(crop_hash(pixels,104,0,216,200)==UINT64_C(0x1491c6f034c5af95));
     CHECK(btp_save_load("Original DOS/GAME3",&s,r,&e));btp_menu_open(&s);btp_render(r,&s,0,pixels);
     CHECK(crop_hash(pixels,104,88,216,80)==UINT64_C(0xe2fb8696d8944791));select_item(&s,r,2);
-    CHECK(s.campaign.ui==BTP_MENU_ALLOCATE && restore(&s,r));select_item(&s,r,0);select_item(&s,r,4);
+    CHECK(s.campaign.ui==BTP_MENU_ALLOCATE && restore(&s,r));select_item(&s,r,0);select_item(&s,r,btp_menu_mech_count(&s));
     CHECK(!s.campaign.mounted && s.party.people[0][12]==8 && restore(&s,r));
     select_item(&s,r,1);select_item(&s,r,0);CHECK(s.party.people[1][12]==0 && restore(&s,r));
     select_item(&s,r,0);select_item(&s,r,1);CHECK(s.party.people[0][12]==1 && s.campaign.mounted && restore(&s,r));
     select_item(&s,r,btp_party_count(&s.party));CHECK(s.mode==BTP_EXPLORE && restore(&s,r));
     CHECK(btp_save_write("work/crew-menu.btp",&s,r,&e));
-    btp_menu_open(&s);select_item(&s,r,3);select_item(&s,r,0);btp_game_tick(&s,r,BTP_DOWN);
+    btp_menu_open(&s);select_item(&s,r,3);CHECK(s.campaign.ui==BTP_MENU_INSPECT_KIND && restore(&s,r));
+    select_item(&s,r,1);select_item(&s,r,0);btp_game_tick(&s,r,BTP_DOWN);
     CHECK(s.campaign.ui==BTP_MENU_TRANSFER && restore(&s,r));select_item(&s,r,0);select_item(&s,r,1);
     CHECK(s.party.people[0][11]==0 && s.weapon==0 && s.party.people[1][11]==9 && restore(&s,r));
     s.story_flags[41]=0;s.party.people[1][15]=1;btp_menu_open(&s);select_item(&s,r,4);
@@ -107,7 +108,7 @@ int main(int argc,char **argv)
     unsigned health=s.party.people[1][15];btp_menu_close(&s);btp_menu_open(&s);select_item(&s,r,4);
     CHECK(s.party.people[1][15]==health && restore(&s,r));
     /* Original eight physical slots become a compact, stable person list. */
-    s.party.people[1][0]=255;btp_menu_close(&s);btp_menu_open(&s);select_item(&s,r,3);
+    s.party.people[1][0]=255;btp_menu_close(&s);btp_menu_open(&s);select_item(&s,r,3);select_item(&s,r,1);
     CHECK(btp_actions_count(&s)==3 && !strcmp(btp_actions_label(&s,1),btp_party_name(&s.party,2)));
     s.campaign.selected=2;uint8_t legacy[BTP_STATE_BYTES];btp_state_encode(&s,legacy);
     memcpy(legacy,"BTPN",4);legacy[4]=23;BtpState migrated;

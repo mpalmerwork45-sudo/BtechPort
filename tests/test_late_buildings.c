@@ -84,6 +84,16 @@ int main(int argc,char **argv)
     }
     fclose(f);CHECK(cases==46);
     for (unsigned i=0;i<3;++i) r->buildings[14+i]=originals[i];
+    f=fopen("tests/fixtures/campaign-checkpoints-primary.txt","r");CHECK(f);unsigned disk_cases=0;
+    while (fgets(line,sizeof line,f)) if (line[0]=='D') {
+        unsigned kind,n,viewer,viewed,child;CHECK(sscanf(line+1,"%u %u %u %u %u",&kind,&n,&viewer,&viewed,&child)==5);
+        BtpBld parent=r->buildings[kind];r->buildings[kind]=(BtpBld){.length=1,.bytes={0xff}};
+        BtpState s;prerequisite(&s,n,42);s.story_flags[48]=(uint8_t)viewer;s.story_flags[50]=(uint8_t)viewed;
+        btp_game_building(&s,r,kind);CHECK((s.disk_origin!=0)==child);
+        if (child) CHECK(s.disk_origin==kind && btp_building_kind(r,&s)==18);
+        input(&s,r,BTP_IDLE);r->buildings[kind]=parent;++disk_cases;
+    }
+    fclose(f);CHECK(disk_cases==24);
     const char *routes[]={"mayor-newspaper","mayor-holodisk","mayor-chow","cinema","inventor","inventor-qualified","laser-guns"};
     for (unsigned route=0;route<7;++route) {
         BtpState s;CHECK(btp_save_load(route==5 ? "Original DOS/GAME5" : "Original DOS/GAME3",&s,r,&e));

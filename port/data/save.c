@@ -40,6 +40,7 @@ static int decode(const uint8_t *b, size_t n, BtpState *s, const BtpResources *r
     if (n>=19292 && b[4]>=27) { context.cache.active=b[18483];context.story_flags[66]=b[11426]; }
     if (n>=19305 && b[4]>=28) { context.campaign.invasion=b[2399];context.late.invasion_event=b[19302]; }
     if (n>=19306 && b[4]>=29) context.yard.active=b[19305];
+    if (n>=19886 && b[4]>=30) context.disk_origin=b[19306+sizeof context.yard];
     return n >= 24 && btp_state_decode(b,n,btp_active_map(r,&context),
         btp_state_bld(r,&context),s);
 }

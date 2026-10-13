@@ -29,6 +29,18 @@ int main(void)
         CHECK(s.credits==expected);CHECK(hash(m,125)==record);++cases;
     }
     fclose(f);CHECK(cases==47);
+    f=fopen("tests/fixtures/armour-repair-primary.txt","r");CHECK(f);unsigned armour_cases=0;
+    while (fgets(line,sizeof line,f)) {
+        unsigned member,kind,points,funds,yes,flag,after,cash,questions;
+        CHECK(sscanf(line,"%u %u %u %u %u %u %u %u %u",&member,&kind,&points,&funds,&yes,&flag,&after,&cash,&questions)==9);
+        BtpState s;btp_start(&s);btp_party_init(&s);s.credits=funds;
+        s.party.people[member][0]=(uint8_t)member;s.party.people[member][13]=(uint8_t)kind;s.party.people[member][14]=(uint8_t)points;
+        if (yes) (void)btp_armour_repair(&s,member);
+        CHECK(flag==kind && s.party.people[member][14]==after && s.credits==cash);
+        CHECK(questions==(unsigned)(points!=(kind==1 ? 25u : kind==2 ? 40u : kind==3 ? 30u : 50u)));
+        ++armour_cases;
+    }
+    fclose(f);CHECK(armour_cases==360);
     /* The same original seven-digit editor serves the ammo prompt. Erasure
        and Escape clear must keep the transaction open without charging cash. */
     BtpState s;btp_start(&s);s.story_flags[4]=1;s.campaign.owned=1;s.credits=10;
@@ -44,5 +56,5 @@ int main(void)
     CHECK(!s.service.input[0] && s.service.phase==5);
     btp_service_input(&s,r,BTP_DIGIT_2);btp_service_input(&s,r,BTP_ACCEPT);
     CHECK(s.service.phase==4 && s.service.amount==2 && s.campaign.mech[39]==2 && s.credits==6);
-    free(r);printf("PASS: %u checks, %u original service cases and ammo editor\n",checks,cases);return 0;
+    free(r);printf("PASS: %u checks, %u original service and %u armour repair cases, ammo editor\n",checks,cases,armour_cases);return 0;
 }

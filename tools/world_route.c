@@ -52,16 +52,15 @@ int main(int argc,char **argv)
             int nx=x+dx[dir],ny=y+dy[dir];
             if (nx<0 || ny<2 || nx>=2046 || ny>=2048) continue;
             int q=ny*2048+nx;if (parents[q]>=0) continue;
-            unsigned blocked=s.campaign.mounted ? btp_world_tile(r,&s,nx/2,(ny-2)/2)>=85 ||
-                btp_world_tile(r,&s,nx/2+1,(ny-2)/2)>=85 : btp_world_tile(r,&s,(nx+1)/2,ny/2)>=85;
-            if (blocked && q!=target) continue;
+            unsigned blocked=btp_world_deep_crossing(&r->world,(unsigned)(p%2048),(unsigned)(p/2048),dx[dir],dy[dir]) || (s.campaign.mounted ? btp_world_tile(r,&s,nx/2,(ny-2)/2)>=s.gate ||
+                btp_world_tile(r,&s,nx/2+1,(ny-2)/2)>=s.gate : btp_world_tile(r,&s,(nx+1)/2,ny/2)>=s.gate);
             if (q==target) blocked=0; /* Pending building entry precedes parking. */
             unsigned id=(unsigned)btp_world_location(r,&s,nx/2,ny/2);
             if (id && q!=target) {
                 const BtpMap *m=id==1 ? &r->map : id==11 ? &r->destroyed : &r->local[id-1];
                 for (unsigned i=0;i<16;++i) if (m->entrance_x[i] && m->entrance_y[i] &&
                     nx==(m->entrance_x[i]>>8)*128+(m->entrance_x[i]&127) &&
-                    ny==(m->entrance_y[i]>>12)*128+(m->entrance_y[i]&127)+(s.campaign.mounted ? 2 : 0)) blocked=1;
+                    ny==(m->entrance_y[i]>>12)*128+(m->entrance_y[i]&127)+(s.campaign.mounted ? 2 : 0)) blocked=0;
             }
             if (!blocked) { parents[q]=p;queue[end++]=q; }
         }
@@ -72,6 +71,9 @@ int main(int argc,char **argv)
         for (unsigned i=count;i>0;--i) {
             int q=queue[i-1],p=parents[q],delta=q-p;
             step(&s,r,delta==-2048 ? BTP_UP : delta==1 ? BTP_RIGHT : delta==2048 ? BTP_DOWN : BTP_LEFT);
+            /* Declining a non-target doorway commits its pending outdoor
+               step. Excluding every doorway can strand the route at a shop. */
+            if (s.mode==BTP_ENTRY && q!=target) step(&s,r,BTP_CANCEL);
             if (!encounter(&s,r)) { fprintf(stderr,"Encounter continuation requires battle orders\n");ok=0;break; }
         }
     } else fprintf(stderr,"No native walking route to %d,%d\n",tx,ty);

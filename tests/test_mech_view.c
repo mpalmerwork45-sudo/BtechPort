@@ -58,7 +58,7 @@ int main(int argc,char **argv)
     uint8_t saved[BTP_STATE_BYTES];btp_state_encode(&s,saved);
     CHECK(btp_state_decode(saved,sizeof saved,btp_active_map(r,&s),btp_state_bld(r,&s),&copy));
     btp_render(r,&s,0,frame);btp_render(r,&copy,0,second);CHECK(!memcmp(frame,second,BTP_PIXELS*sizeof *frame));
-    btp_game_tick(&copy,r,BTP_ACCEPT);CHECK(copy.campaign.ui==BTP_MENU_INSPECT && copy.campaign.member==0);
+    btp_game_tick(&copy,r,BTP_ACCEPT);CHECK(copy.mode==BTP_EXPLORE);
     CHECK(btp_write_ppm("work/mech-view.ppm",frame));
     free(frame);free(second);free(r);printf("PASS: %u checks, 18 executed original mech screens and saved inspection continuation\n",checks);return 0;
 }

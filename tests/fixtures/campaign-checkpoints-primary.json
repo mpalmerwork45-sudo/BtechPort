@@ -1,0 +1,19 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "cases": 26,
+  "routines": [
+    "14D3:0004 actions 15/21",
+    "07DC:00C3..015D"
+  ],
+  "prerequisites": "Actual input-only fresh-route apprenticeship records/cash; selected technician/medic. Building 8/19 with 1/2/5 people and viewer/viewed flags.",
+  "intercepted_boundaries": [
+    "07DC:0008",
+    "14D3:17EA",
+    "1656:0281",
+    "1656:0388",
+    "1656:03F5",
+    "173D:0259"
+  ],
+  "comparison": "Complete character records/cash at two fresh checkpoints; actual original child VIEWDISK request. Child script itself remains a separate boundary, not a whole DOS campaign replay."
+}

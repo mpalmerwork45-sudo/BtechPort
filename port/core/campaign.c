@@ -173,7 +173,9 @@ void btp_campaign_destroy(BtpState *s,unsigned unit)
     BtpCombatState *c=&s->combat;BtpCombatUnit *u=&c->unit[unit];unsigned id=c->ids[unit];
     s->aftermath.wrecks[id]=(uint8_t)(u->infantry ? 128 : u->record[0]);u->record[0]=255;
     if (id<4) s->aftermath.eject|=(uint16_t)(1u<<id);
-    if (id==4) s->effects.pending=2;
+    /* 12E8:1BD1 treats either of the first two character slots as an
+       essential party member, including Rex after he joins Jason. */
+    if (id==4 || id==5) s->effects.pending=2;
     for (unsigned i=0;i<c->count;++i) {
         for (unsigned j=0;j<11;++j) {
             if (c->plans[i].orders[j]==id) c->plans[i].orders[j]=255;
@@ -203,7 +205,9 @@ void btp_campaign_eject(BtpState *s)
                 memcpy(c->enemy_orders[k-1],c->enemy_orders[k-2],12);c->enemy_fired[k-1]=c->enemy_fired[k-2];
                 if (k==2) c->enemy_modes[0]=c->enemy_movement;else c->enemy_modes[k-2]=c->enemy_modes[k-3];
             }
-            c->unit[at]=(BtpCombatUnit){.infantry=1,.x=(uint8_t)((wreck.x+crew)&127),.y=wreck.y,.direction=wreck.direction};memcpy(c->unit[at].record,s->party.people[p],17);
+            /* Original 0D43:0A35 creates people facing direction zero,
+               independently of their destroyed vehicle's facing. */
+            c->unit[at]=(BtpCombatUnit){.infantry=1,.x=(uint8_t)((wreck.x+crew)&127),.y=wreck.y};memcpy(c->unit[at].record,s->party.people[p],17);
             c->ids[at]=(uint8_t)(4+p);c->plans[at]=(BtpCombatPlan){.movement=255,.kick=255};memset(c->plans[at].orders,255,11);
             memset(c->path[at],0,sizeof c->path[at]);c->moved[at]=c->path_index[at]=c->walk[at]=c->plan_direction[at]=c->fallback[at]=0;
             memset(c->enemy_orders[at-1],255,12);c->enemy_fired[at-1]=0;if (at==1) c->enemy_movement=255;else c->enemy_modes[at-2]=255;

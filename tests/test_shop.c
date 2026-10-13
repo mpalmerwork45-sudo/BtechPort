@@ -1,5 +1,7 @@
 #include "core/game.h"
 #include "core/npc.h"
+#include "core/party.h"
+#include "core/shop.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -57,6 +59,9 @@ static void restored_tick(BtpState *s, const BtpResources *r, BtpAction a)
 {
     uint8_t b[BTP_STATE_BYTES], again[BTP_STATE_BYTES]; BtpState copy;
     btp_state_encode(s,b);
+    if (!btp_state_decode(b,sizeof b,&r->map,btp_building_bld(r,s->entry_slot ? s->entry_slot : 1),&copy)) {
+        fprintf(stderr,"Shop save: native %u phase %u item %u kind %u selected %u slot %u status %u flag12 %u choice16 %u choice18 %u\n",s->service.action,s->service.phase,s->service.item,s->service.kind,s->service.selected,s->entry_slot,s->script.status,s->story_flags[12],s->script.choices[16],s->script.choices[18]);
+    }
     CHECK(btp_state_decode(b,sizeof b,&r->map,btp_building_bld(r,s->entry_slot ? s->entry_slot : 1),&copy));
     btp_state_encode(&copy,again); CHECK(!memcmp(b,again,sizeof b));
     btp_game_tick(s,r,a); btp_game_tick(&copy,r,a);
@@ -101,11 +106,11 @@ static void boundaries(const BtpResources *r)
     CHECK(s.story_flags[11] == 1 && s.credits == 0 && s.weapon == 1);
     enter(&s,r,3,2); restored_tick(&s,r,BTP_RIGHT); restored_tick(&s,r,BTP_ACCEPT);
     CHECK(s.credits == 2 && !s.weapon && s.script.menu_id == 15 && s.script.selected == 1);
-    /* Repair remains outside purchases; failed service preserves equipment. */
+    /* With Jason alone, the original repair branch skips the member picker. */
     enter(&s,r,4,50); restored_tick(&s,r,BTP_ACCEPT); restored_tick(&s,r,BTP_ACCEPT);
     restored_tick(&s,r,BTP_DOWN); restored_tick(&s,r,BTP_ACCEPT);
-    CHECK(s.mode == BTP_SCRIPT_FAULT && s.script.error == BTP_SCRIPT_NATIVE_CONTEXT && s.credits == 0 && s.armor == 1);
-    restored_tick(&s,r,BTP_CANCEL); CHECK(s.mode == BTP_BUILDING && s.script.menu_id == 12);
+    CHECK(s.mode == BTP_BUILDING && s.service.action==32 && s.service.phase==4 && s.service.outcome==3 && s.credits == 0 && s.armor == 1);
+    restored_tick(&s,r,BTP_ACCEPT);CHECK(s.mode == BTP_BUILDING && s.script.menu_id == 12);
     /* Primary threshold compares before adding: repeated funding can exceed cap. */
     btp_start(&s); btp_npc_init(&s,&r->map); s.credits = 43; s.npc.loop_timer = 0;
     btp_npc_frame(&s,&r->map); CHECK(s.credits == 58 && !s.npc.allowance_pending);
@@ -164,12 +169,60 @@ static void all_goods(const BtpResources *r)
             CHECK(s.mode != BTP_SCRIPT_FAULT);
         }
 }
+static uint64_t fingerprint(const uint8_t *b,size_t n)
+{
+    uint64_t h=UINT64_C(14695981039346656037);
+    for (size_t i=0;i<n;++i) h=(h^b[i])*UINT64_C(1099511628211);
+    return h;
+}
+static void recipients(const BtpResources *r)
+{
+    FILE *f=fopen("tests/fixtures/purchase-recipients-primary.txt","r");CHECK(f);
+    unsigned pattern,armour,choice,path,funded,cash,money,flag,notices,cases=0;unsigned long long wanted;
+    while (fscanf(f,"%u %u %u %u %u %u %u %u %u %llx",&pattern,&armour,&choice,&path,&funded,&cash,&money,&flag,&notices,&wanted)==10) {
+        BtpState s;unsigned slot=armour ? 4u : 3u;
+        enter(&s,r,slot,cash);
+        /* The original corpus supplies these menu selectors and character
+           records. The confirmation/recipient inputs below exercise the BLD,
+           including persistence at every modal boundary and sparse slots. */
+        s.script.choices[13]=s.script.choices[14]=(uint8_t)(armour ? choice : 1u);s.script.choices[16]=(uint8_t)(choice<=6 ? choice : 1u);
+        if (!armour && choice>9) { s.story_flags[12]=9;s.script.choices[18]=(uint8_t)(choice-9u); }
+        btp_party_init(&s);unsigned n=pattern==0 ? 1u : pattern==1 ? 2u : pattern==2 ? 4u : pattern==3 ? 8u : 3u;
+        for (unsigned i=0;i<8;++i) {
+            int active=pattern==4 ? i==0 || i==3 || i==7 : i<n;
+            const uint8_t person[17]={(uint8_t)(active ? i : 255u),8,9,7,2,2,2,2,1,2,2,9,8,2,17,80,0};
+            memcpy(s.party.people[i],person,17);
+        }
+        unsigned last=btp_party_slot(&s.party,n-1u);
+        if (path==3) s.party.people[last][armour ? 13 : 11]=(uint8_t)choice;
+        memcpy(s.skills,s.party.people[0]+4,3);memcpy(s.mech_skills,s.party.people[0]+7,2);
+        s.technician=2;s.weapon=s.party.people[0][11];s.armor=s.party.people[0][13];s.armor_points=s.party.people[0][14];
+        restored_tick(&s,r,BTP_ACCEPT);unsigned seen=0;
+        if (funded && n>1) {
+            CHECK(s.service.phase==10 && s.service.action==(armour ? 9u : 11u));
+            unsigned sequence[3]={n-1u,path==1 ? 0u : n,n},length=path==1 ? 3u : 2u;
+            if (path==2) { sequence[0]=n;length=1; }
+            for (unsigned j=0;j<length;++j) {
+                for (unsigned k=0;k<n+1u && s.service.selected!=sequence[j];++k) restored_tick(&s,r,BTP_DOWN);
+                CHECK(s.service.selected==sequence[j]);restored_tick(&s,r,BTP_ACCEPT);
+                if (s.service.phase==11) { ++seen;restored_tick(&s,r,BTP_ACCEPT); }
+            }
+            CHECK(!s.service.phase);
+        }
+        if (s.credits!=money || s.story_flags[11]!=flag || seen!=notices) fprintf(stderr,"Recipient case %u: money %u/%u flag %u/%u notice %u/%u\n",cases,s.credits,money,s.story_flags[11],flag,seen,notices);
+        CHECK(s.credits==money && s.story_flags[11]==flag && seen==notices);
+        uint64_t actual=fingerprint(&s.party.people[0][0],136);
+        if (actual!=wanted) fprintf(stderr,"Recipient case %u: %016llx != %016llx\n",cases,(unsigned long long)actual,wanted);
+        CHECK(actual==wanted);++cases;
+    }
+    CHECK(!ferror(f) && fclose(f)==0 && cases==160);
+}
 int main(int argc, char **argv)
 {
     vm_bounds();
     if (argc == 2) {
         BtpResources *r = malloc(sizeof *r); BtpError e; CHECK(r && btp_resources_load(argv[1],r,&e));
-        boundaries(r); all_goods(r); replay(r,"tests/fixtures/reference-shops.actions"); replay(r,"tests/fixtures/reference-shop-boundaries.actions"); free(r);
+        boundaries(r); all_goods(r);recipients(r); replay(r,"tests/fixtures/reference-shops.actions"); replay(r,"tests/fixtures/reference-shop-boundaries.actions"); free(r);
     }
     printf("PASS: %u shop checks\n",checks); return 0;
 }

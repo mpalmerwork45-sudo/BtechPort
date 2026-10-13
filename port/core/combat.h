@@ -15,6 +15,7 @@ void btp_combat_route(const BtpMap *map, unsigned gate, const BtpCombatState *co
 unsigned btp_combat_walk_frame(unsigned frame, unsigned previous_direction, unsigned direction, int infantry);
 void btp_combat_begin(BtpState *state, const BtpResources *resources);
 void btp_combat_map(const BtpResources *resources,const BtpState *state,BtpMap *map);
+int btp_invasion_outside(unsigned world_x,unsigned world_y);
 void btp_combat_select(BtpCombatState *combat,unsigned unit);
 void btp_combat_tick(BtpState *state, const BtpResources *resources, BtpAction action);
 /* Controlled original-turn comparisons retain the original moving target.

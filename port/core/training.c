@@ -107,7 +107,6 @@ void btp_training_native(BtpState *s, const BtpResources *r)
 uint8_t btp_mission_tile(const BtpState *s, const BtpMap *m, int x, int y)
 {
     const BtpMissionState *mission = &s->mission;
-    if (s->campaign.invasion && y>=62 && y<64 && x>=56 && x<64) return 64;
     if (mission->phase && mission->phase != BTP_MISSION_RESULT) {
         if (!mission->assignment && x == 61 && y == 61) return 0;
         if (mission->assignment == 1 && mission->rubble < 8 &&
@@ -158,12 +157,10 @@ int btp_mission_tick(BtpState *s, const BtpResources *r, BtpAction a)
         s->campaign.owned=(uint8_t)!s->combat.lost;
         s->campaign.mounted=s->campaign.owned;
         s->campaign.mech_walk=s->mission.walk;s->campaign.mech_direction=s->mission.direction;
-        s->campaign.mech_x=(uint16_t)(1536+s->x_half);s->campaign.mech_y=(uint16_t)(1536+s->y_half);
+        s->campaign.mech_x=s->campaign.world_x;s->campaign.mech_y=s->campaign.world_y;
         if (s->campaign.owned) memcpy(s->campaign.mech,s->combat.unit[0].record,125);
         if (s->x_half>=128 || s->y_half>=128) {
-            s->campaign.world_x=(uint16_t)(1536+s->x_half);
-            s->campaign.world_y=(uint16_t)(1536+s->y_half);
-            s->x_half&=127;s->y_half&=127;
+            s->x_half=(uint16_t)(s->campaign.world_x&127u);s->y_half=(uint16_t)(s->campaign.world_y&127u);
         }
         m->phase=BTP_MISSION_RESULT;s->mode=BTP_BUILDING;return 1;
     }

@@ -2,6 +2,7 @@
 """Continue ordinary training checkpoints through the invasion using inputs."""
 import json
 import sys
+import subprocess
 from collections import deque
 from pathlib import Path
 from verify_m2j import run
@@ -45,6 +46,7 @@ class Session:
         self.advance(['down']*((n-c['selected'])%10)+['accept'])
         if self.state['combat']['phase']==12:self.advance(['accept'])
     def waypoint(self,x,y,mode=1):
+        if self.state['campaign']['invasion']:x+=64;y+=64
         if self.state['combat']['goal'][0] and self.state['combat']['goal'][1]==mode:
             self.command(0 if mode else 1);self.advance(['cancel'])
         self.command(mode);c=self.state['combat'];u=c['units'][0]
@@ -89,15 +91,21 @@ if __name__=='__main__':
     s.story_popups()
     s.command(8);s.note('jenner-escape-denied');s.advance(['accept'])
     loss=len(sys.argv)>3 and sys.argv[3]=='--loss'
-    for x,y in ([(72,77),(84,85),(96,93)] if loss else [(64,105),(80,121),(116,127)]):
-        s.waypoint(x,y,2 if loan==1 else 1)
+    if not loss:
+        s.advance(subprocess.check_output([str(ROOT/'build/btp-combat-escape'),str(s.slot)],cwd=ROOT,text=True).splitlines())
+    for x,y in ([(72,77),(84,85),(96,93)] if loss else []):
+        s.waypoint(x,y,2 if loan else 1)
         for _ in range(24):
             if not s.state['combat']['phase']:break
             u=s.state['combat']['units'][0]
-            if u['x']==x and u['y']==y:break
+            if u['x']==x+64 and u['y']==y+64:break
             s.round()
         print('leg',x,y,s.state['x_half'],s.state['y_half'],s.state['combat']['lost'])
         if not s.state['combat']['phase']:break
+    if loss:
+        for _ in range(256):
+            if not s.state['combat']['phase']:break
+            s.round()
     if s.state['combat']['phase']:raise RuntimeError('Escape did not complete')
     s.note('invasion-result');s.advance(['idle'])
     for _ in range(100):

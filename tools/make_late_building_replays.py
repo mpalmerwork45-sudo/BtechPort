@@ -50,7 +50,7 @@ def main():
     # bytes, character ranks, quest flags or random seed are edited.
     s.advance(['menu','down','down','accept'])
     for member in (4,3):
-        s.advance(['down']*((member-s.state['actions_menu']['selected'])%9)+['accept']+['down']*4+['accept'])
+        s.advance(['down']*((member-s.state['actions_menu']['selected'])%(sum(p[0]!=255 for p in s.state['people'])+1))+['accept']+['down']*sum(t!=255 for t in s.state['mech_types'])+['accept'])
     s.advance(['cancel']);s.note('qualified-party-on-foot')
     s.enter(522,390);s.note('inventor-qualified-complete')
     if not s.state['campaign_flags'][53] or not s.state['campaign_flags'][54]:raise RuntimeError('Qualified inventor visit did not grant the password')

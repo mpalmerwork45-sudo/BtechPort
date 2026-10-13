@@ -4,7 +4,9 @@
 #include <stdint.h>
 #include "core/combat_rules.h"
 
-enum { BTP_MAP_MAX = 64, BTP_PACKED_BYTES = 32000, BTP_PIXELS = 64000, BTP_BLD_MAX = 9000 };
+/* Stored MTPs remain at most 64x64. The transient invasion battle includes
+   surrounding generated terrain so a waypoint can cross every town edge. */
+enum { BTP_MAP_MAX = 128, BTP_PACKED_BYTES = 32000, BTP_PIXELS = 64000, BTP_BLD_MAX = 9000 };
 typedef struct {
     uint8_t width, height;
     uint8_t tiles[BTP_MAP_MAX * BTP_MAP_MAX]; /* normalized row order */
@@ -26,7 +28,7 @@ typedef struct {
     uint8_t count, bytes[BTP_ANM_BYTES];
 } BtpAnm;
 /* 43 earlier bank/Talk strings plus 12 class transcript/rank/subject strings. */
-enum { BTP_TALK_STRINGS = 172, BTP_TALK_MAX = 8192 };
+enum { BTP_TALK_STRINGS = 188, BTP_TALK_MAX = 8192 };
 typedef struct {
     uint8_t bytes[BTP_TALK_MAX];
     uint8_t font[2048];

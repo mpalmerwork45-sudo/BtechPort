@@ -1,0 +1,15 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "encounters": 2,
+  "turns": 11,
+  "routines": [
+    "0E31:03AB AI including target search",
+    "12E8:000C complete turns",
+    "0D43:0A35 ejections called by the complete-turn program"
+  ],
+  "prerequisites": "Controlled open MAP1 terrain, two owned mechs/two people against two mechs/eight people, five character records, strong/weak vehicle structure, two seeds; computer orders for all living friends.",
+  "ejection_boundary": "Original complete-turn routine calls A35 itself. Observe the resulting activation flags and add its live people to the next AI wave.",
+  "comparison": "Every complete turn: original IDs, living positions, facing, heat, complete record fingerprints and RNG; final win/loss and ejections. No whole DOS UI encounter claim.",
+  "intercepted_boundaries": []
+}
