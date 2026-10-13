@@ -46,7 +46,7 @@ int main(void)
     BtpState s;btp_start(&s);s.story_flags[4]=1;s.campaign.owned=1;s.credits=10;
     memcpy(s.campaign.mech,r->combat.loans[0],125);btp_party_init(&s);
     s.campaign.mech[39]=0;s.campaign.mech[107]=5;
-    s.service=(BtpServiceState){.phase=5,.action=44};
+    s.service=(BtpServiceState){.phase=5,.action=44,.kind=1,.amount=5,.quote_credits=10};
     btp_service_input(&s,r,BTP_DIGIT_1);btp_service_input(&s,r,BTP_DIGIT_2);
     btp_service_input(&s,r,BTP_CANCEL);CHECK(s.service.phase==5 && !strcmp(s.service.input,"1") && s.credits==10);
     btp_service_input(&s,r,BTP_CLEAR_INPUT);CHECK(!strcmp(s.service.input,"0") && s.service.phase==5);
@@ -55,6 +55,6 @@ int main(void)
     for (unsigned i=0;i<7;++i) btp_service_input(&s,r,BTP_CANCEL);
     CHECK(!s.service.input[0] && s.service.phase==5);
     btp_service_input(&s,r,BTP_DIGIT_2);btp_service_input(&s,r,BTP_ACCEPT);
-    CHECK(s.service.phase==4 && s.service.amount==2 && s.campaign.mech[39]==2 && s.credits==6);
+    CHECK(s.service.phase==4 && s.service.outcome==1 && s.service.item==1 && s.campaign.mech[39]==2 && s.credits==6);
     free(r);printf("PASS: %u checks, %u original service and %u armour repair cases, ammo editor\n",checks,cases,armour_cases);return 0;
 }

@@ -22,19 +22,19 @@
     },
     {
       "label": "partial-armour-repair",
-      "tick": 50431
+      "tick": 50429
     },
     {
       "label": "partial-ammo-amount",
-      "tick": 50443
+      "tick": 50433
     },
     {
       "label": "ammo-purchase-boundary",
-      "tick": 50445
+      "tick": 50433
     },
     {
       "label": "speed-shop-no-funds",
-      "tick": 50467
+      "tick": 50445
     }
   ],
   "final": {
@@ -47,7 +47,7 @@
       34
     ],
     "gate": 85,
-    "tick": 50472,
+    "tick": 50450,
     "blocked": 0,
     "script_pc": 4979,
     "script_status": 3,
@@ -617,7 +617,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "babb2fcc06faa3e0",
+    "state_digest": "f492b54a1832ea46",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

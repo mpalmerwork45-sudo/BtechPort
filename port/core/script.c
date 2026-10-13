@@ -4,6 +4,15 @@
 #include <stdio.h>
 #include <inttypes.h>
 
+void btp_script_clear_text(BtpScriptState *s)
+{
+    s->text_offset=s->text_length=s->text_count=0;memset(s->text,0,sizeof s->text);
+    memset(s->text_column,0,sizeof s->text_column);memset(s->text_row,0,sizeof s->text_row);
+    s->column=s->row=s->has_cash=s->cash_after=s->has_accounts=0;s->cash_value=0;
+    s->mech_result=s->mech_after=s->has_name=s->name_after=s->name_id=0;
+    s->confirm_target=0;s->confirm_selected=0;
+}
+
 unsigned btp_menu_count(unsigned id)
 {
     switch (id) {
@@ -99,11 +108,7 @@ static void run(BtpScriptState *s, const BtpBld *b, uint8_t story[BTP_STORY_BYTE
             if (s->font != 6 && s->font != 3 && s->font != 4) { fault(s, BTP_SCRIPT_FONT, op_pc); return; }
             break;
         case 0xfd: /* Clear text panel. */
-            s->text_offset = s->text_length = s->text_count = 0;
-            memset(s->text, 0, sizeof s->text);
-            memset(s->text_column,0,sizeof s->text_column); memset(s->text_row,0,sizeof s->text_row);
-            s->column = s->row = s->has_cash = s->cash_after = s->has_accounts = 0; s->cash_value = 0;
-            s->mech_result = s->mech_after = 0;s->has_name=s->name_after=s->name_id=0; break;
+            btp_script_clear_text(s);break;
         case 0xfa: /* Explicit scene request, supported scene zero only. */
             if (!available(s, b, 1, op_pc)) return;
             s->scene = b->bytes[s->pc++];

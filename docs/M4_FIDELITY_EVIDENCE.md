@@ -42,6 +42,11 @@ only the owner's money shortcut used for the ending route.
 
 ## Remaining authorized work
 
+The owner additionally requested a thorough Mechit-Lube comparison. That
+increment is implemented and verified in [its audit](MECHIT_LUBE_AUDIT.md):
+591 complete original service cases, 21 pixel-matching screen pairs, native
+visits and seven real save/load pauses. It is a separate local commit.
+
 2. Trace larger fights from captured live caller state, including sector-edge
    geometry, spy crews, ejection, targeting restrictions and aftermath.
 3. Audit city doorways, corners and formations against original movement.
@@ -50,3 +55,10 @@ only the owner's money shortcut used for the ending route.
 5. Add alternate fresh theft/arena/loss routes and legacy-save migration cases.
 
 These four tasks are in progress; this report does not mark them complete.
+
+Additional owner observations to resolve within those tasks: black combat
+edges, wrecks appearing before their destruction notification/sound, distinct
+human/mech death sounds, the uneasy spy text on the inspected character sheet,
+replacement specialists in other hospitals/Mechit-Lubes after the spy is killed,
+and the original city/forest transition tiles. None is silently treated as
+superseded by the Mechit-Lube work.

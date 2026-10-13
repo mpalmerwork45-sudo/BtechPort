@@ -41,8 +41,22 @@ def main():
     s.note('technician-joined');print('technician',s.state['mode'],s.state['menu_id'],s.state['service'],s.state['campaign_flags'][32:40])
     def menu(n):
         s.advance(['down']*((n-s.state['menu_selected'])%6)+['accept'])
-    menu(2);s.advance(['accept']*3);s.note('partial-armour-repair');s.advance(['accept']+['down']*5+['accept'])
-    menu(3);s.advance(['accept','accept','1']);s.note('partial-ammo-amount');s.advance(['0','accept']);s.note('ammo-purchase-boundary');s.advance(['accept']+['down']*10+['accept'])
+    menu(2);s.advance(['accept']);s.note('partial-armour-repair')
+    # The original service asks for each damaged area, then returns directly
+    # to the BLD. There are no generic repair categories or eleven-bin menu.
+    for _ in range(100):
+        if not s.state['service']['phase']:break
+        s.pause()
+    else:raise RuntimeError('Original repair sequence did not finish')
+    menu(3);s.advance(['accept'])
+    if s.state['service']['phase']==5:s.advance(['1'])
+    s.note('partial-ammo-amount')
+    if s.state['service']['phase']==5:s.advance(['0','accept'])
+    s.note('ammo-purchase-boundary')
+    for _ in range(100):
+        if not s.state['service']['phase']:break
+        s.pause()
+    else:raise RuntimeError('Original ammunition sequence did not finish')
     menu(1);s.advance(['accept'])
     for _ in range(10):
         if s.state['service']['phase']==3:break

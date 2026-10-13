@@ -627,12 +627,200 @@ static void combat_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
         if (c->last_event>=4) text(r,f,112,184,"Move / change target",14);
     }
 }
+static void service_literal(const BtpResources *r,uint8_t *b,size_t *used,unsigned id)
+{
+    size_t n;const uint8_t *p=bank_literal(r,id,&n);
+    if (p && n+1<1024u-*used) { memcpy(b+*used,p,n);*used+=n;b[(*used)++]=1; }
+}
+static void service_value(uint8_t *b,size_t *used,unsigned value,unsigned color)
+{
+    char digits[16];int n=snprintf(digits,sizeof digits,"%u",value);
+    if (n<0 || (size_t)n+4>=1024u-*used) return;
+    b[(*used)++]=6;b[(*used)++]=(uint8_t)color;memcpy(b+*used,digits,(size_t)n);*used+=(size_t)n;
+    b[(*used)++]=6;b[(*used)++]=15;
+    b[(*used)++]=1;
+}
+static void service_number(uint8_t *b,size_t *used,unsigned value) { service_value(b,used,value,2); }
+static void service_balance(uint8_t *b,size_t *used,unsigned value)
+{
+    /* 14D3: native cash insertion also writes the terminating full stop. */
+    service_number(b,used,value);if (*used+1<1024) { b[(*used)++]='.';b[(*used)++]=1; }
+}
+static int service_wrap_scrolled(const BtpResources *r,uint32_t *f,int y,const uint8_t *b,size_t n,unsigned *scrolled)
+{
+    /* Original numeric writers change the current colour without occupying
+       a character cell. Keep these colours while wrapping the 25-column panel. */
+    char clean[1024];uint8_t colors[1024];uint16_t fragments[1024];size_t used=0;unsigned color=15,fragment=0;
+    for (size_t i=0;i<n && used<sizeof clean;++i) {
+        if (b[i]==6 && i+1<n && b[i+1]<16) { color=b[++i];continue; }
+        if (b[i]==1) { ++fragment;continue; }
+        fragments[used]=(uint16_t)fragment;clean[used]=(char)b[i];colors[used++]=(uint8_t)color;
+    }
+    size_t at=0;int carried=0;
+    if (scrolled) *scrolled=0;
+    while (at<used) {
+        if (y>184) {
+            /* 1656:07CB scrolls the text area by one character row. Keep
+               the border and left party panel out of that operation. */
+            for (int row=8;row<184;++row) memcpy(f+row*320+112,f+(row+8)*320+112,200*sizeof *f);
+            rectangle(f,112,184,200,8,0);y-=8;if (scrolled) ++*scrolled;
+        }
+        if (carried) {
+            /* 1656:03F5 carries the overflowing word to the next line and
+               skips surplus spaces immediately after that word. */
+            size_t end=at;while (end<used && clean[end]!=' ' && clean[end]!='\r') ++end;
+            size_t after=end;while (after<used && clean[after]==' ') ++after;
+            if (end>at && after>end+1u && fragments[end]==fragments[end-1]) {
+                size_t skip=after-end-1u;memmove(clean+end+1,clean+after,used-after);
+                memmove(colors+end+1,colors+after,used-after);
+                memmove(fragments+end+1,fragments+after,(used-after)*sizeof fragments[0]);used-=skip;
+            }
+        }
+        size_t start=at,count=0;
+        while (at<used && clean[at]!='\r' && count<25) { ++at;++count; }
+        carried=at<used && clean[at]!='\r';
+        if (at<used && clean[at]=='\r') ++at;
+        else if (at<used && count==25 && clean[at]!=' ') {
+            size_t space=count;while (space && clean[start+space-1]!=' ') --space;
+            if (space) { count=space-1;at=start+space; }
+        }
+        for (size_t i=0;i<count;++i) { char c[2]={clean[start+i],0};text(r,f,112+8*(int)i,y,c,colors[start+i]); }
+        while (at<used && clean[at]==' ') ++at;
+        y+=8;
+    }
+    return y;
+}
+static int service_wrap(const BtpResources *r,uint32_t *f,int y,const uint8_t *b,size_t n)
+{
+    return service_wrap_scrolled(r,f,y,b,n,NULL);
+}
+static int service_vehicles(const BtpResources *r,const BtpState *s,uint32_t *f,unsigned heading,unsigned selected)
+{
+    size_t n;const uint8_t *p=bank_literal(r,heading,&n);int y=p ? wrapped(r,f,8,p,n,15) : 16;
+    unsigned count=btp_service_mech_count(s);
+    for (unsigned i=0;i<count;++i) {
+        unsigned slot=btp_service_mech_slot(s,i);const uint8_t *m=slot ? s->party.mechs[slot-1] : s->campaign.mech;
+        char model[16],name[48];memcpy(model,m,15);model[0]=(char)s->party.mech_types[slot];model[15]=0;
+        /* 0C67:0B98 indexes the original name table by the crew byte. */
+        if (m[121]<8) snprintf(name,sizeof name,"%s's %s",btp_character_name(m[121]),model);
+        else snprintf(name,sizeof name,"%s",model);
+        if (i==selected) rectangle(f,112,y,200,8,14);
+        text(r,f,112,y,name,i==selected ? 0u : 15u);y+=8;
+    }
+    return y;
+}
+static void service_yes_no(const BtpResources *r,uint32_t *f,int y,unsigned selected)
+{
+    rectangle(f,selected ? 144 : 112,y,selected ? 16 : 24,8,14);
+    text(r,f,112,y,"Yes",selected ? 15u : 0u);text(r,f,144,y,"No",selected ? 0u : 15u);
+}
+static void mechit_panel(const BtpResources *r,const BtpState *s,uint32_t *f)
+{
+    const BtpServiceState *v=&s->service;uint8_t message[1024];size_t n=0;
+    if (v->phase==8) {
+        /* REPAIR/HOSPITAL retain their congratulations text. 09B8:0D58
+           appends the generated agent's actual seat after that introduction. */
+        BtpScriptState script=s->script;script.has_name=script.name_after=script.name_id=0;
+        if (btp_script_text(&script,btp_state_bld(r,s),message,sizeof message)) n=strlen((const char *)message);
+        service_literal(r,message,&n,272);const char *name=btp_party_name(&s->party,v->mech);
+        size_t length=strlen(name);if (length<sizeof message-n) { memcpy(message+n,name,length);n+=length; }
+        service_literal(r,message,&n,268);unsigned seat=s->party.people[v->mech][12];
+        if (seat>=4) service_literal(r,message,&n,269);
+        else {
+            service_literal(r,message,&n,270);const uint8_t *m=seat ? s->party.mechs[seat-1] : s->campaign.mech;
+            name=btp_character_name(m[121]);length=strlen(name);
+            if (length<sizeof message-n) { memcpy(message+n,name,length);n+=length; }
+            service_literal(r,message,&n,271);
+        }
+        (void)service_wrap(r,f,8,message,n);return;
+    }
+    if (v->action==13) {
+        uint8_t prompt[BTP_BLD_MAX+1];size_t length;
+        int y=btp_game_text(s,r,prompt,sizeof prompt,&length) ? wrapped(r,f,8,prompt,length,15) : 8;
+        for (unsigned i=0;i<btp_party_count(&s->party);++i) {
+            if (i==v->selected) rectangle(f,112,y,200,8,14);
+            text(r,f,112,y,btp_party_name(&s->party,btp_party_slot(&s->party,i)),i==v->selected ? 0u : 15u);y+=8;
+        }
+        return;
+    }
+    if (v->phase==1) { (void)service_vehicles(r,s,f,v->action==18 ? 223u : 254u,v->selected);return; }
+    if (v->action==18) {
+        if (v->outcome>=8) {
+            unsigned selected=0;while (selected<4 && btp_service_mech_slot(s,selected)!=v->mech) ++selected;
+            int y=service_vehicles(r,s,f,223,selected);
+            service_literal(r,message,&n,v->outcome==8 ? 225u : v->outcome==9 ? 224u : 226u);
+            if (v->outcome==9) service_literal(r,message,&n,264u+v->item);
+            if (v->outcome==10) service_literal(r,message,&n,54);
+            (void)service_wrap(r,f,y-8,message,n);return;
+        }
+        if (v->kind==3) {
+            service_literal(r,message,&n,244);int y=service_wrap(r,f,8,message,n);n=0;
+            BtpServiceState estimate=*v;
+            if (v->outcome==1 && v->item>=16 && v->item<=32) ++estimate.damaged[v->item-16];
+            unsigned count=btp_service_weapon_count(&estimate);
+            for (unsigned i=0;i<=count;++i) {
+                char line[32]="Nothing";
+                if (i<count) {
+                    unsigned w=btp_service_weapon_item(&estimate,i);char name[11];memcpy(name,r->combat.weapons[w-1],10);name[10]=0;
+                    snprintf(line,sizeof line,"%u %s",estimate.damaged[w-16],name);
+                }
+                if (i==v->selected) rectangle(f,112,y,200,8,14);
+                text(r,f,112,y,line,i==v->selected ? 0u : 15u);y+=8;
+            }
+            size_t a;const uint8_t *p=bank_literal(r,245,&a);
+            if (p && a>10) { memcpy(message,p+10,a-10);n=a-10; }
+            (void)service_wrap(r,f,y+8,message,n);
+            n=0;service_literal(r,message,&n,246);service_balance(message,&n,v->quote_credits);(void)service_wrap(r,f,184,message,n);
+            if (v->outcome==1) { n=0;service_literal(r,message,&n,247);(void)service_wrap(r,f,152,message,n); }
+            if (v->outcome==2) { n=0;service_literal(r,message,&n,248);(void)service_wrap(r,f,144,message,n); }
+            return;
+        }
+        if (v->phase==4 && v->outcome>=3 && v->outcome<=5) {
+            service_literal(r,message,&n,v->outcome==3 ? 231u : v->outcome==4 ? 237u : 243u);
+            (void)service_wrap(r,f,8,message,n);return;
+        }
+        if (v->kind==0) {
+            service_literal(r,message,&n,227);service_value(message,&n,v->amount,15);service_literal(r,message,&n,228);
+            service_value(message,&n,4u*v->amount,15);service_literal(r,message,&n,229);service_balance(message,&n,v->quote_credits);service_literal(r,message,&n,230);
+        } else if (v->kind==1) {
+            service_literal(r,message,&n,232);service_literal(r,message,&n,233);service_literal(r,message,&n,234);
+            service_value(message,&n,9u*v->amount,15);service_literal(r,message,&n,235);service_balance(message,&n,v->quote_credits);service_literal(r,message,&n,236);
+        } else if (v->kind==2) {
+            service_literal(r,message,&n,238);service_value(message,&n,v->amount,15);service_literal(r,message,&n,239);
+            if (v->amount>1) service_literal(r,message,&n,240);
+            service_literal(r,message,&n,241);service_balance(message,&n,v->quote_credits);service_literal(r,message,&n,242);
+        } else {
+            service_literal(r,message,&n,249);service_literal(r,message,&n,v->outcome==7 ? 253u : 250u);
+            if (v->outcome!=7) service_literal(r,message,&n,251);
+        }
+        int y=service_wrap(r,f,8,message,n);
+        if (v->phase==3 || v->outcome==6) service_yes_no(r,f,y,v->selected);
+        if (v->outcome==6) { n=0;service_literal(r,message,&n,252);(void)service_wrap(r,f,y,message,n); }
+        return;
+    }
+    if (v->outcome==4 || v->outcome==5) {
+        service_literal(r,message,&n,v->outcome==4 ? 263u : 262u);(void)service_wrap(r,f,8,message,n);return;
+    }
+    unsigned w=btp_service_ammo_weapon(s,v->mech,v->item);char name[11]={0};
+    if (w && w<=32) memcpy(name,r->combat.weapons[w-1],10);
+    service_literal(r,message,&n,255);size_t length=strlen(name);memcpy(message+n,name,length);n+=length;
+    if (v->outcome==1) { service_literal(r,message,&n,256);(void)service_wrap(r,f,8,message,n);return; }
+    service_literal(r,message,&n,257);service_value(message,&n,v->amount,10);service_literal(r,message,&n,258);
+    unsigned cost=w==24 ? 2u : w>=26 && w<=32 ? r->combat.ammo_prices[w-26] : 0u;
+    service_value(message,&n,cost,10);service_literal(r,message,&n,259);
+    /* The original editor is an inline green field, following the question. */
+    message[n++]=6;message[n++]=2;length=strlen(v->input);memcpy(message+n,v->input,length);n+=length;
+    message[n++]=6;message[n++]=15;
+    if (v->outcome==2 || v->outcome==3) service_literal(r,message,&n,v->outcome==2 ? 260u : 261u);
+    (void)service_wrap(r,f,8,message,n);
+}
 static void story_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
 {
     rectangle(f, 104, 0, 216, 200, 7); rectangle(f, 108, 4, 208, 192, 0);
     if (r->border.format == 1) rectangle(f,104,0,216,200,0);
     if (s->service.phase) {
         const BtpServiceState *v=&s->service;char info[40];
+        if (v->action==18 || v->action==44 || v->action==13 || v->phase==8) { mechit_panel(r,s,f);return; }
         if (v->action==32) {
             /* Assemble the actual 14D3:0EF3 text fragments. Numeric values
                share the original wrapped text, so Yes/No cannot overlap it. */
@@ -719,66 +907,29 @@ static void story_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
                     text(r,f,112,y,name,i==v->selected ? 0u : 15u);
                 }
             } else {
-                uint8_t message[BTP_BLD_MAX+512];size_t n=0;
+                uint8_t message[1024];size_t n=0;(void)btp_game_text(s,r,message,sizeof message,&n);
+                if (n<sizeof message) message[n++]=1;
+                service_literal(r,message,&n,185);
+                /* The BLD preserves the pre-refit choice after the record is
+                   changed; using m[124] here would quote the next upgrade. */
+                unsigned choice=s->story_flags[17];service_value(message,&n,choice<8 ? r->combat.refit_prices[choice] : 0u,15);
+                service_literal(r,message,&n,186);int y=service_wrap(r,f,8,message,n);
                 if (v->phase==3) {
-                    (void)btp_game_text(s,r,message,BTP_BLD_MAX,&n);
-                    p=bank_literal(r,185,&length);if (p && length<sizeof message-n) { memcpy(message+n,p,length);n+=length; }
-                    const uint8_t *m=v->mech ? s->party.mechs[v->mech-1] : s->campaign.mech;
-                    unsigned choice=m[123]+(m[124]==1 ? 4u : 0u);
-                    int count=snprintf(info,sizeof info,"%u",choice<8 ? r->combat.refit_prices[choice] : 0u);
-                    memcpy(message+n,info,(size_t)count);n+=(size_t)count;
-                    p=bank_literal(r,186,&length);if (p && length<sizeof message-n) { memcpy(message+n,p,length);n+=length; }
+                    service_yes_no(r,f,y,v->selected);n=0;service_literal(r,message,&n,246);service_balance(message,&n,v->quote_credits);
+                    (void)service_wrap(r,f,184,message,n);
                 } else {
-                    p=bank_literal(r,v->outcome ? 187u : 184u,&length);if (p && length<sizeof message) { memcpy(message,p,length);n=length; }
-                }
-                int y=wrapped(r,f,8,message,n,15);
-                if (v->phase==3) {
-                    if (y>184) y=184;
-                    rectangle(f,v->selected ? 144 : 112,y,v->selected ? 16 : 24,8,14);
-                    text(r,f,112,y,"Yes",v->selected ? 15u : 0u);text(r,f,144,y,"No",v->selected ? 0u : 15u);
+                    /* 0000:1A13 advances the text cursor past its Yes/No
+                       row before 09B8 appends the result. */
+                    if (n<sizeof message) message[n++]=13;
+                    if (!v->outcome && n+2<sizeof message) { message[n++]=13;message[n++]=13; }
+                    service_literal(r,message,&n,v->outcome ? 187u : 54u);unsigned scroll=0;
+                    rectangle(f,112,8,200,184,0);(void)service_wrap_scrolled(r,f,8,message,n,&scroll);
+                    if ((unsigned)y>=8u*scroll) service_yes_no(r,f,y-8*(int)scroll,v->selected);
                 }
             }
             return;
         }
-        text(r,f,112,8,v->action==44 ? "Ammunition" : v->action==13 ? "Choose a character" : "Mechit-Lube repairs",14);
-        snprintf(info,sizeof info,"C-bills: %u",s->credits);text(r,f,112,24,info,15);
-        if (v->phase==1) for (unsigned i=0;i<5;++i) {
-            char name[18]="Done";
-            if (i<4) {
-                const uint8_t *m=i ? s->party.mechs[i-1] : s->campaign.mech;
-                if (s->party.mech_types[i]==255) snprintf(name,sizeof name,"Empty bay %u",i+1);
-                else { memcpy(name,m,15);name[15]=0; }
-            }
-            text(r,f,112,48+(int)i*16,name,i==v->selected ? 14u : 15u);
-        } else if (v->phase==8) {
-            text(r,f,112,56,btp_party_name(&s->party,v->mech),15);text(r,f,112,72,"has joined the group.",15);
-        } else if (v->phase==2 && v->action==18) {
-            static const char *const rows[]={"Armour: 4 per point","Structure: 9 per point","Heat sink: 800","Weapon component: 300","Leg mechanisms: 200","Done"};
-            for (unsigned i=0;i<6;++i) text(r,f,112,48+(int)i*16,rows[i],i==v->selected ? 14u : 15u);
-        } else if (v->phase==7) {
-            for (unsigned i=0;i<btp_party_count(&s->party);++i) text(r,f,112,48+(int)i*8,btp_party_name(&s->party,btp_party_slot(&s->party,i)),i==v->selected ? 14u : 15u);
-        } else if (v->phase==6) {
-            for (unsigned i=0;i<18;++i) {
-                char name[12]="Done";if (i<17) { memcpy(name,r->combat.weapons[i+15],10);name[10]=0; }
-                text(r,f,112,40+(int)i*8,name,i==v->selected ? 14u : 15u);
-            }
-        } else if (v->phase==2) {
-            const uint8_t *m=v->mech ? s->party.mechs[v->mech-1] : s->campaign.mech;
-            for (unsigned i=0;i<11;++i) { if (i==10) snprintf(info,sizeof info,"Done");else snprintf(info,sizeof info,"Bin %u: %u / %u",i+1,m[39+i],m[107+i]);text(r,f,112,48+(int)i*10,info,i==v->selected ? 14u : 15u); }
-        } else if (v->phase==5) {
-            text(r,f,112,56,"Rounds to purchase:",15);text(r,f,112,80,v->input[0] ? v->input : "0",14);
-        } else if (v->phase==3) {
-            if (v->action==20) {
-                const uint8_t *m=v->mech ? s->party.mechs[v->mech-1] : s->campaign.mech;
-                unsigned choice=m[123]+(m[124]==1 ? 4u : 0u);
-                snprintf(info,sizeof info,"Upgrade: %u C-bills",choice<8 ? r->combat.refit_prices[choice] : 0);text(r,f,112,56,info,15);
-            } else text(r,f,112,56,"Proceed with repairs?",15);
-            text(r,f,112,88,"Yes",v->selected ? 7u : 14u);text(r,f,152,88,"No",v->selected ? 14u : 7u);
-        } else {
-            text(r,f,112,56,v->outcome ? "Service completed." : "No purchase made.",v->outcome ? 15u : 14u);
-            snprintf(info,sizeof info,"Units: %u",v->amount);text(r,f,112,80,info,15);
-        }
-        text(r,f,112,184,"Enter / Backspace",7);return;
+        text(r,f,112,8,"Invalid service state",12);return;
     }
     if (s->mode == BTP_SCRIPT_FAULT) {
         text(r,f, 110, 12, "UNSUPPORTED STORY ACTION", 12);
@@ -796,6 +947,23 @@ static void story_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
     }
     if (s->bank.phase || v->has_accounts) { bank_panel(r,s,bytes,length,f); return; }
     if (s->school.phase == BTP_SCHOOL_PRICES) { school_panel(r,s,f); return; }
+    if (btp_building_kind(r,s)==5 && !s->talk.phase && v->status!=BTP_SCRIPT_MENU) {
+        if (v->status==BTP_SCRIPT_WAIT && !v->text_count && v->native_action==19 && !s->story_flags[18]) {
+            size_t n;const uint8_t *message=bank_literal(r,184,&n);
+            if (message) (void)service_wrap(r,f,8,message,n);
+            return;
+        }
+        /* A declined apprenticeship appends a reply below its retained
+           confirmation row. Its original Yes/No remains on that page. */
+        if (v->status==BTP_SCRIPT_WAIT && v->text_count>1 && v->confirm_target && v->text[0].length<length) {
+            size_t first=v->text[0].length;int y=service_wrap(r,f,8,bytes,first);
+            service_yes_no(r,f,y,v->confirm_selected);(void)service_wrap(r,f,y,bytes+first,length-first);
+        } else {
+            int y=service_wrap(r,f,8,bytes,length);
+            if (v->status==BTP_SCRIPT_CONFIRM) service_yes_no(r,f,y,v->confirm_selected);
+        }
+        return;
+    }
     if (v->status == BTP_SCRIPT_MENU || s->talk.phase == BTP_TALK_MENU) {
         if (!s->talk.phase && !btp_script_menu_text(v,btp_state_bld(r,s),bytes,sizeof bytes,&length)) {
             text(r,f,110,12,"INVALID MENU TEXT",12); return;
@@ -815,8 +983,9 @@ static void story_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
                 text(r,f, 110, 180, "UNSUPPORTED MENU TEXT LAYOUT", 12); return;
             }
             memcpy(option, bytes + starts[i], n); option[n] = 0;
-            if (i == selected) rectangle(f, 109, y - 1, 206, 9, 14);
-            text(r,f, 110, y, option, i == selected ? 0u : 15u); y += 9;
+            if (i == selected) rectangle(f, r->dialogue.length ? 112 : 109, r->dialogue.length ? y : y-1,
+                r->dialogue.length ? 200 : 206, r->dialogue.length ? 8 : 9, 14);
+            text(r,f, 110, y, option, i == selected ? 0u : 15u); y += r->dialogue.length ? 8 : 9;
         }
     } else {
         int y = wrapped(r,f, r->dialogue.length ? 8 : 9, bytes, length, 15);
@@ -999,6 +1168,27 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
     /* The original status fields use these positions. */
     if (!(s->entry_slot == 0 && s->mode >= BTP_BUILDING)) {
         text(r,f,8,112,"Jason",15);
+        if (s->party.enabled && !s->combat.phase) {
+            /* Original 0000:4CAC/4AA6: up to four living people, with the
+               B/D/C outlines and remaining body/health in the left panel. */
+            size_t n;const uint8_t *heading=bank_literal(r,267,&n);
+            if (heading) text(r,f,72,104,(const char *)heading,15);
+            unsigned count=btp_party_count(&s->party);if (count>4) count=4;
+            for (unsigned i=0;i<count;++i) {
+                unsigned slot=btp_party_slot(&s->party,i);const uint8_t *p=s->party.people[slot];int y=112+16*(int)i;
+                text(r,f,8,y,btp_party_name(&s->party,slot),15);
+                for (unsigned stat=1;stat<=3;++stat) {
+                    int x=64+8*(int)stat;unsigned value=p[stat]>12 ? 12u : p[stat];
+                    rectangle(f,x+1,y,5,1,14);rectangle(f,x,y+1,1,13,14);
+                    rectangle(f,x+6,y+1,1,13,14);rectangle(f,x+1,y+14,5,1,14);
+                    rectangle(f,x+2,y+14-(int)value,3,(int)value,10);
+                    if (stat==1) {
+                        unsigned health=p[15]/10u;if (!health) health=1;
+                        if (health<value) rectangle(f,x+2,y+14-(int)value,3,(int)(value-health+1u),4);
+                    }
+                }
+            }
+        }
         text(r,f,8,176,"C-Bills:",15);
         snprintf(line,sizeof line,"%u",s->credits); text(r,f,8,184,line,10);
     }

@@ -579,7 +579,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "0e865a764ed50eda",
+        "state_digest": "7a0167525dc4bcd2",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1501,7 +1501,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "822e91b78b9b1aa9",
+        "state_digest": "03fb3947d23d8971",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -2421,7 +2421,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "822e91b78b9b1aa9",
+    "state_digest": "03fb3947d23d8971",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

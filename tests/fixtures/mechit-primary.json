@@ -1,0 +1,28 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "cases": 591,
+  "routines": [
+    "09B8:0002, complete repair service",
+    "09B8:1762, complete ammunition service"
+  ],
+  "snapshot": "work/reference-runs/1791863873862567602/repair-menu",
+  "prerequisites": "GAME3 records, active tags restored; three damage shapes, seven balances, five refusal policies. Ammo: working guns, unrelated broken laser, broken first/last gun; zero, three or excessive quantity.",
+  "intercepted_boundaries": [
+    "0000:1A13",
+    "0000:28A2",
+    "0C67:0B98",
+    "0D43:0CDE",
+    "0E31:1FDF",
+    "14D3:0004",
+    "14D3:17EA",
+    "14D3:1809",
+    "14D3:181E",
+    "1656:0388",
+    "1656:03F5",
+    "1656:0B5E",
+    "173D:0053",
+    "173D:0259"
+  ],
+  "comparison": "Final 125-byte mech hash, credits, repair confirmations and weapon estimate visits. Graphics/keyboard boundaries are declared; all service instructions execute."
+}

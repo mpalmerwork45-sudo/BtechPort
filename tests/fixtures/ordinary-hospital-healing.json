@@ -579,7 +579,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "096a8d257b90b4ab",
+        "state_digest": "1c2f11000d258f83",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1496,7 +1496,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "8be62d87b2b526e3",
+        "state_digest": "3bd837df8913ab9b",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -2438,7 +2438,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "643f46b64fcf0b59",
+        "state_digest": "b1e1e470f25718f1",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -3372,7 +3372,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "dcf73c9b0180c1c7",
+        "state_digest": "628eb4ad3555461f",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -4314,7 +4314,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "a65d0a1961e853f4",
+        "state_digest": "648e503a825092c1",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -5256,7 +5256,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "69543dc66b17f4d7",
+        "state_digest": "1fb5df99d83d377e",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -6196,7 +6196,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "69543dc66b17f4d7",
+    "state_digest": "1fb5df99d83d377e",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

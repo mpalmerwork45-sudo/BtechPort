@@ -2,7 +2,7 @@
 
 The independent C11/SDL2 port has playable implementations of the authorized
 M4a–M4e increments and the subsequent building, theft, encounter, recruitment and
-presentation requests. A recorded 66,115-input route now starts with a new cadet
+presentation requests. A recorded 66,093-input route now starts with a new cadet
 and reaches the cache ending through the actual training, companion, disk and
 password prerequisites. It uses the authorized money shortcut. M4 as a complete
 reproduction of every original campaign branch remains unfinished.
@@ -68,7 +68,7 @@ Successful pre-combat evasion produces no loot or cash.
 
 ## Verification and limits
 
-The current build has 46 CTest suites. New comparisons include 360 armour-repair,
+The current build has 47 CTest suites. New comparisons include 360 armour-repair,
 160 purchase-recipient, 32 prison/arena return, 432 water-boundary, 512 device
 direction and 314 recruitment/spy cases. Two controlled larger encounters cover
 11 original waves and 171 complete record/position/facing/heat/RNG comparisons.
@@ -83,8 +83,8 @@ each footprint at every intermediate step, all moving gaits and saved positions.
 **Previous batch PASS:** all 45 regular and ASan/UBSan/LeakSanitizer suites, the complete
 historical regression and full sanitizer script, native M4 acceptance and all
 nine native follow-up tails. Both reference trees pass all 1,287
-content/mode/mtime checks. The current increment passes all 46 core suites and
-the new native combat scan/save checks; its final combined acceptance is pending
+content/mode/mtime checks. The current increments pass all 47 core suites, the native combat scan/save
+checks and the original Mechit-Lube audit; its final combined acceptance is pending
 the remaining four authorized follow-ups. Work is committed locally in successive increments.
 
 **VERIFIED in these bounds:** numeric rules, resource interpretation, original
@@ -95,9 +95,9 @@ a nominal 8 MHz 8088 timing model; no exact recording from physical XT hardware
 is claimed. Enemy Jenner/UrbanMech sprite bases follow the original enemy table,
 while owned mechs use the original garage selection rule.
 
-Internal saves are **BTPW/v32**, with a 20,480-byte payload inside the BTS1
+Internal saves are **BTPX/v33**, with a 20,480-byte payload inside the BTS1
 length/CRC envelope. The discovery marker and held spy confrontation are saved.
-Current local caches are BTTA/v17, BTCB/v11 and BTW3; the world seed is the
+Current local caches are BTTA/v18, BTCB/v11 and BTW3; the world seed is the
 original startup value `0x020304`, rather than the former research seed.
 Older saves migrate their represented fields; absent direction/exploration
 history cannot be reconstructed. Build and play need no emulator. Optional

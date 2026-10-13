@@ -1,0 +1,176 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "regions": [
+    {
+      "index": 0,
+      "label": "repair-selection",
+      "run": "work/reference-runs/1791863873862567602",
+      "right": "d3731e59b95c00c2",
+      "footer": "6c469353f84e1078",
+      "screenshot_sha256": "480d56a05e427a274ad2fc4eac2df24aebe53fcaf5adef733262134cab1904d5"
+    },
+    {
+      "index": 1,
+      "label": "repair-components",
+      "run": "work/reference-runs/1791863873862567602",
+      "right": "c610755d8c7ecec6",
+      "footer": "6c469353f84e1078",
+      "screenshot_sha256": "7fb49665ea2e2a58cab8fe14614eeb42b08b1a663feb0b26a98fbd1b86785658"
+    },
+    {
+      "index": 2,
+      "label": "repair-step-1",
+      "run": "work/reference-runs/1791863873862567602",
+      "right": "6e397e49a7bffd67",
+      "footer": "d030de6a4e65a24a",
+      "screenshot_sha256": "f906d476272352c7980c91f516f4f77c72e0e151e33ec7b2d97bbde05bfbbafd"
+    },
+    {
+      "index": 3,
+      "label": "repair-step-2",
+      "run": "work/reference-runs/1791863873862567602",
+      "right": "d9e5753561364079",
+      "footer": "32530d4469857f0c",
+      "screenshot_sha256": "10d8253d9235b0aa939b85def45a6194e7940a06b9cfcd29df8d92b53c73c5ba"
+    },
+    {
+      "index": 4,
+      "label": "repair-step-3",
+      "run": "work/reference-runs/1791863873862567602",
+      "right": "23703385e42f3b6a",
+      "footer": "1fe8287be62bce79",
+      "screenshot_sha256": "6d618065293ac485295b7164c614f20a3f67d7c6665861971497fc3830201783"
+    },
+    {
+      "index": 5,
+      "label": "repair-step-4",
+      "run": "work/reference-runs/1791863873862567602",
+      "right": "1230983913cbcfbd",
+      "footer": "1fe8287be62bce79",
+      "screenshot_sha256": "f785c4286d63f44ea9ba8a64974e88b877b01d20c06ce27a83ad40a77441d468"
+    },
+    {
+      "index": 6,
+      "label": "repair-step-5",
+      "run": "work/reference-runs/1791863873862567602",
+      "right": "aff7836d69a357d8",
+      "footer": "1fe8287be62bce79",
+      "screenshot_sha256": "5027f5470e276b34272da3f059f9be97f184ae166cfbc96031dcdcf8e1df4e8a"
+    },
+    {
+      "index": 7,
+      "label": "repair-step-6",
+      "run": "work/reference-runs/1791863873862567602",
+      "right": "743b5ef1d227e7bd",
+      "footer": "922f15dbea379bfb",
+      "screenshot_sha256": "8e2c56b11422a1a02a921515f8f74a8e91882a5dcc933c2696b149f202d0d8ea"
+    },
+    {
+      "index": 8,
+      "label": "ammo-real-choice",
+      "run": "work/reference-runs/1791864147791493161",
+      "right": "206d73b141564feb",
+      "footer": "6c469353f84e1078",
+      "screenshot_sha256": "278351b00978ea0e381e35263d237399dae9d6dd79cddff7683ccf4454224f23"
+    },
+    {
+      "index": 9,
+      "label": "ammo-prompt",
+      "run": "work/reference-runs/1791864147791493161",
+      "right": "b0bb7596081e257e",
+      "footer": "6c469353f84e1078",
+      "screenshot_sha256": "9b975b730c42dcd3360ca061ed0ec0aebc6a46461c5c4eac5ca714315ed9632b"
+    },
+    {
+      "index": 10,
+      "label": "ammo-clamp",
+      "run": "work/reference-runs/1791864147791493161",
+      "right": "d332cb7234f547bf",
+      "footer": "6c469353f84e1078",
+      "screenshot_sha256": "1ef080428bc8078e60d8f9134d6af00359e02770606d9a938236055f715e43aa"
+    },
+    {
+      "index": 11,
+      "label": "apprentice-character",
+      "run": "work/reference-runs/1791865266664660305",
+      "right": "bcf85f8da31ad918",
+      "footer": "6c469353f84e1078",
+      "screenshot_sha256": "d55e2ba4ed79f5b62fa57dd42642af218151289bec33fa9e9cb812085bc922e8"
+    },
+    {
+      "index": 12,
+      "label": "apprentice-price",
+      "run": "work/reference-runs/1791865266664660305",
+      "right": "6265760ef4a327c1",
+      "footer": "6c469353f84e1078",
+      "screenshot_sha256": "7fa4fd32280cc3e08e3fe3ce13933008c102551880a70a3854f0c84d47490949"
+    },
+    {
+      "index": 13,
+      "label": "apprentice-decline",
+      "run": "work/reference-runs/1791865266664660305",
+      "right": "de15e129bbba38e7",
+      "footer": "6c469353f84e1078",
+      "screenshot_sha256": "2a947024607ee02371c618c890d7e982305346f08705658f918371af0057a12b"
+    },
+    {
+      "index": 14,
+      "label": "apprentice-paid",
+      "run": "work/reference-runs/1791865266664660305",
+      "right": "6f72867f1de54b4c",
+      "footer": "87403fb209b0eb71",
+      "screenshot_sha256": "519d8af80af0df57e68d6f7970d73967222ed71962fa603316bb5c677657ee47"
+    },
+    {
+      "index": 15,
+      "label": "speed-description",
+      "run": "work/reference-runs/1791865266664660305",
+      "right": "290ca8e2535cbfde",
+      "footer": "87403fb209b0eb71",
+      "screenshot_sha256": "519ec731be442900a3e596834d256e255d4a48878474f49b72e47c8aace09c89"
+    },
+    {
+      "index": 16,
+      "label": "speed-services",
+      "run": "work/reference-runs/1791865266664660305",
+      "right": "f9a4121345d84d15",
+      "footer": "87403fb209b0eb71",
+      "screenshot_sha256": "f7c6a46657c81d5ff1619e4ff8fb4524e740a7a93ff79acbd61a54a15f3bb286"
+    },
+    {
+      "index": 17,
+      "label": "speed-list",
+      "run": "work/reference-runs/1791865266664660305",
+      "right": "12dc86ee88e190c4",
+      "footer": "87403fb209b0eb71",
+      "screenshot_sha256": "d3c0cac71303d323230907883840eec9606176a66611c0e28282ac120036e4e9"
+    },
+    {
+      "index": 18,
+      "label": "speed-stock-offer",
+      "run": "work/reference-runs/1791865266664660305",
+      "right": "e18fe82abbb4b099",
+      "footer": "87403fb209b0eb71",
+      "screenshot_sha256": "939c8f855e9b3be80b5fd62c611a86eef08ce24c299745cce57d154a9df63698"
+    },
+    {
+      "index": 19,
+      "label": "speed-purchased",
+      "run": "work/reference-runs/1791865266664660305",
+      "right": "233421059ec74069",
+      "footer": "cb914c289a48a704",
+      "screenshot_sha256": "e3ea9ac50693663f4c300a0aaf918f77c1359c6fc8ce6d9bd1bac271b0c37934"
+    },
+    {
+      "index": 20,
+      "label": "recruit-agent",
+      "run": "work/reference-runs/1791865285111355132",
+      "right": "792428b2a13a408d",
+      "footer": "6c469353f84e1078",
+      "screenshot_sha256": "23206686294002f501e539b8df1a448352ea18f024d8df787c05a6b51bdcb1b0"
+    }
+  ],
+  "prerequisites": "Private GAME3 copies at the Mechit-Lube door. People on foot, active vehicle tags; defined damage. Apprenticeship clears Jason's learned bit and Commando refit bit; recruitment uses parked flag 24 and the actual Rex/no-skilled-technician gate.",
+  "comparison": "Complete 216x200 right dialog and 104x100 party footer. Original animated portraits are outside these regions; the held recruitment frame also matches all 320x200 pixels."
+}

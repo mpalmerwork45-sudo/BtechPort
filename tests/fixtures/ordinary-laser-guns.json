@@ -579,7 +579,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "d34dc71c02be45a1",
+        "state_digest": "7b74a0857ba2fdd9",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1501,7 +1501,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "2769e847181f8d25",
+        "state_digest": "cc81830074e33e9d",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -2427,7 +2427,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "efb64457bdfbd21c",
+        "state_digest": "69b2714c7b7b0694",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -2928,7 +2928,7 @@
         },
         "shop_refusal": 0,
         "menu_id": 30,
-        "confirm_selected": 1,
+        "confirm_selected": 0,
         "menu_choices": [
           0,
           0,
@@ -3349,7 +3349,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "5fe4cdb051c06376",
+        "state_digest": "fa8db8dc17f30510",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -3848,7 +3848,7 @@
     },
     "shop_refusal": 0,
     "menu_id": 30,
-    "confirm_selected": 1,
+    "confirm_selected": 0,
     "menu_choices": [
       0,
       0,
@@ -4269,7 +4269,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "5fe4cdb051c06376",
+    "state_digest": "fa8db8dc17f30510",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

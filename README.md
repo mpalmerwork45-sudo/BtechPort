@@ -11,6 +11,10 @@ spy outcomes and all-party walking collision/animation checks.
 The [current fidelity increment](docs/M4_FIDELITY_EVIDENCE.md) adds the original
 eight-entry on-foot combat menu, pilot/model headers and Friends/Enemies scans,
 including the original infantry descriptions and optional mech Detail Scan.
+The [Mechit-Lube audit](docs/MECHIT_LUBE_AUDIT.md) adds the original sequential
+repair questions, damaged-weapon estimates, ammunition flow, apprenticeship,
+Speed Shop presentation and agent recruitment, with 591 executed original
+service cases and 21 matching screen pairs.
 All six supplied original GAME files now import and roundtrip exactly. To use
 one, run `./build/btech-port --load 'Original DOS/GAME3'`. Export an imported
 save outdoors with `--export-original work/GAME3`; unmodeled bytes are retained.
@@ -44,7 +48,7 @@ Each person's foot point and each mech's two ground tiles are checked as the
 party walks, including every intermediate step in two/four-step mode. All
 moving members advance one gait frame per key, using their own saved positions.
 The wider campaign remains unfinished; encounter timing, follower detours, physical
-speaker response and parts of the service interface remain approximate.
+speaker response and other unaudited interface areas remain approximate.
 
 ## Acknowledgements
 

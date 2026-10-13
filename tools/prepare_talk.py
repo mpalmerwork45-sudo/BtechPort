@@ -83,6 +83,13 @@ def extract(source):
     # Original mech/on-foot command lists, header and friend/enemy scan text.
     addresses.extend(DS+p for p in (0x121e,0x3a6f,0x3abc,0x3d73,0x1174,0x1189,
         0x1195,0x1245,0x1257,0x1148,0x114f,0x115b,0x1166,0x3d94,0x3dcd,0x3e19))
+    # Complete 09B8 repair/reload dialogs. Append to retain earlier text IDs.
+    addresses.extend(DS+p for p in (0x17e5,0x17f7,0x1834,0x1879,0x1899,0x18bf,
+        0x1902,0x1919,0x192a,0x1981,0x19bc,0x1a19,0x1a4f,0x1a66,0x1a77,
+        0x1ace,0x1ada,0x1ae5,0x1ae7,0x1b44,0x1b63,0x1bb5,0x1bd3,0x1c0f,
+        0x1c19,0x1c35,0x1c4b,0x1c70,0x1c97,0x1ca7,0x1cce,0x1e99,0x1ea8,
+        0x1eae,0x1ed1,0x1eff,0x1f19,0x1f49,0x1f94,0x1fc9,0x2008,
+        0x17ce,0x17d6,0x17dc,0xaca,0x1e3c,0x1e4d,0x1e56,0x1e70,0x1e2f))
     blob = bytearray(); ranges = []; origins = []
     for address in addresses:
         end = image.index(0,address)
@@ -96,7 +103,7 @@ def extract(source):
     header += bytes.fromhex(EXE_SHA)+bytes.fromhex(IMAGE_SHA)
     header += b"".join(struct.pack("<HH",*r) for r in ranges)
     font = image[FONT:FONT+2048]
-    return header+blob+font, {**metadata,"format":"BTTA/v17","strings":origins,
+    return header+blob+font, {**metadata,"format":"BTTA/v18","strings":origins,
         "font":{"image_offset":FONT,"length":len(font),"sha256":hashlib.sha256(font).hexdigest()}}
 
 

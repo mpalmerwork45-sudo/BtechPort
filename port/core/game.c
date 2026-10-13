@@ -548,7 +548,7 @@ static uint16_t get16(const uint8_t *p) { return (uint16_t)(p[0] | (uint16_t)p[1
 void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
 {
     memset(b, 0, BTP_STATE_BYTES);
-    memcpy(b, "BTPW", 4); b[4] = 32;
+    memcpy(b, "BTPX", 4); b[4] = 33;
     for (unsigned i = 0; i < 4; ++i) b[8+i] = (uint8_t)(s->tick >> (8 * i));
     b[12] = (uint8_t)s->x_half; b[13] = (uint8_t)(s->x_half >> 8);
     b[14] = (uint8_t)s->y_half; b[15] = (uint8_t)(s->y_half >> 8);
@@ -680,6 +680,8 @@ void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
     b[19305+sizeof s->yard]=s->talk.reply;
     b[19306+sizeof s->yard]=s->disk_origin;
     b[19307+sizeof s->yard]=s->spy_discovered;
+    memcpy(b+19308+sizeof s->yard,s->service.damaged,sizeof s->service.damaged);
+    for (unsigned i=0;i<4;++i) b[19325+sizeof s->yard+i]=(uint8_t)(s->service.quote_credits>>(8u*i));
 }
 
 int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *script, BtpState *s)
@@ -716,7 +718,8 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         n == BTP_STATE_BYTES && !memcmp(b,"BTPT",4) && b[4]==29 ? 29 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPU",4) && b[4]==30 ? 30 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPV",4) && b[4]==31 ? 31 :
-        n == BTP_STATE_BYTES && !memcmp(b,"BTPW",4) && b[4]==32 ? 32 : 0;
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPW",4) && b[4]==32 ? 32 :
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPX",4) && b[4]==33 ? 33 : 0;
     if (!version) return 0;
     for (unsigned i = 5; i < 8; ++i) if (b[i]) return 0;
     if (version == 1) { for (unsigned i = 20; i < 24; ++i) if (b[i]) return 0; }
@@ -733,7 +736,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
             if (version == 9) for (unsigned i = 403; i < n; ++i) if (b[i]) return 0;
             if (version >= 10) {
                 if (b[425]) return 0;
-                unsigned start=version==10 ? 434u : version==11 ? 441u : version==12 ? 450u : version<15 ? 896u : version>=31 ? 19308u+(unsigned)sizeof(BtpYardState) : version>=30 ? 19307u+(unsigned)sizeof(BtpYardState) : version>=29 ? 19306u+(unsigned)sizeof(BtpYardState) : version>=28 ? 19292u+(unsigned)sizeof(BtpLateState) : version>=27 ? 18483u+(unsigned)sizeof(BtpCacheState) : version>=26 ? 18483u : version>=25 ? 18433u : version>=24 ? 15702u : version>=22 ? 15693u : version>=21 ? 15414u : version>=20 ? 11388u : version>=19 ? 11326u : version>=18 ? 11314u : version>=17 ? 2684u : version>=16 ? 2399u : 1803u;
+                unsigned start=version==10 ? 434u : version==11 ? 441u : version==12 ? 450u : version<15 ? 896u : version>=33 ? 19329u+(unsigned)sizeof(BtpYardState) : version>=31 ? 19308u+(unsigned)sizeof(BtpYardState) : version>=30 ? 19307u+(unsigned)sizeof(BtpYardState) : version>=29 ? 19306u+(unsigned)sizeof(BtpYardState) : version>=28 ? 19292u+(unsigned)sizeof(BtpLateState) : version>=27 ? 18483u+(unsigned)sizeof(BtpCacheState) : version>=26 ? 18483u : version>=25 ? 18433u : version>=24 ? 15702u : version>=22 ? 15693u : version>=21 ? 15414u : version>=20 ? 11388u : version>=19 ? 11326u : version>=18 ? 11314u : version>=17 ? 2684u : version>=16 ? 2399u : 1803u;
                 for (unsigned i=start;i<n;++i) if (b[i]) return 0;
                 if (version>=13) for (unsigned i=version>=15 ? 460u : 452u;i<512;++i) if (b[i]) return 0;
                 if (version==13 && b[878]) return 0; /* v14 firing-effect countdown. */
@@ -750,6 +753,10 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
     if (version>=29) memcpy(&result.yard,b+19305,sizeof result.yard);
     if (version>=30) result.disk_origin=b[19306+sizeof result.yard];
     if (version>=31) result.spy_discovered=b[19307+sizeof result.yard];
+    if (version>=33) {
+        memcpy(result.service.damaged,b+19308+sizeof result.yard,sizeof result.service.damaged);
+        for (unsigned i=0;i<4;++i) result.service.quote_credits|=(uint32_t)b[19325+sizeof result.yard+i]<<(8u*i);
+    }
     if (result.spy_discovered>1) return 0;
     if (version>=25) {
         memcpy(result.explored,b+16384,sizeof result.explored);
@@ -780,7 +787,8 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         if (!btp_party_decode(b+2812,&result.party) || !btp_party_decode(b+10240,&result.party_checkpoint)) return 0;
         result.campaign.battle_x=get16(b+11264);result.campaign.battle_y=get16(b+11266);
         result.campaign.return_x=get16(b+11268);result.campaign.return_y=get16(b+11270);result.campaign.return_map=b[11272];
-        result.service=(BtpServiceState){.phase=b[11280],.action=b[11281],.mech=b[11282],.selected=b[11283],.kind=b[11284],.item=b[11285],.outcome=b[11286],.amount=get16(b+11288)};
+        result.service.phase=b[11280];result.service.action=b[11281];result.service.mech=b[11282];result.service.selected=b[11283];
+        result.service.kind=b[11284];result.service.item=b[11285];result.service.outcome=b[11286];result.service.amount=get16(b+11288);
         memcpy(result.service.input,b+11290,8);
         result.audio=(BtpAudioState){.active=b[11300],.countdown=b[11301],.position=get16(b+11302),.divisor=get16(b+11304),.phase=get16(b+11306),.irq_phase=get16(b+11308)};
         if (version>=22) memcpy(result.audio.sounds+24,b+15414,24);
@@ -1100,6 +1108,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
             if (c->phase==BTP_COMBAT_MENU)
                 c->selected=(uint8_t)btp_combat_menu_command(c,btp_combat_menu_row(c));
         }
+        if (version<33 && result.service.phase) btp_service_upgrade(&result);
         if (result.disk_origin && ((result.disk_origin!=8 && result.disk_origin!=19) || result.mode!=BTP_BUILDING || !result.checkpoint_valid || result.campaign.building!=result.disk_origin)) return 0;
         if (!btp_talk_valid(&result,m) || !btp_npc_valid(&result,m) || !btp_bank_valid(&result) ||
             !btp_school_valid(&result) || !btp_training_valid(&result) || !btp_cutscene_valid(&result) || !btp_combat_valid(&result) || !btp_effects_valid(&result) || !btp_service_valid(&result) ||

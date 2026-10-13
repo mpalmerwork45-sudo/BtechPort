@@ -514,6 +514,61 @@ def menu(env,work):
     inspection_saves(env,work)
     overhead(env,work)
 
+def mechit_ui(env,work):
+    """Original repair/ammo/recruitment pauses, actual SDL and F5/F9."""
+    from reference_session import WindowKeys
+    binary=ROOT/'build/btech-headless';env=dict(env,SDL_AUDIODRIVER='dummy')
+    with tempfile.TemporaryDirectory(prefix='native-mechit-',dir=work) as directory:
+        tmp=Path(directory);tail=tmp/'keys.actions';record=tmp/'record.actions';expected=tmp/'expected.ppm'
+        paths=[('repairs','mechit-ui-start.btp',['down']*2+['accept']*9),
+               ('ammunition','mechit-ui-start.btp',['down']*3+['accept']*2+['9']*3+['accept']*4),
+               ('refit','mechit-apprentice-start.btp',['down','accept','accept','accept','down','accept','accept','accept']),
+               ('recruit','mechit-recruit-start.btp',['accept','accept']+['idle']*96+['accept']+['down']*5+['accept'])]
+        for label,start,keys in paths:
+            tail.write_text('\n'.join(keys)+'\n');frame=work/f'native-mechit-{label}.ppm'
+            actual=subprocess.run([str(ROOT/'build/btech-port'),'--load',str(work/start),'--smoke-replay','--smoke-fast',
+                '--replay',str(tail),'--record',str(record),'--frame',str(frame)],cwd=ROOT,env=env,check=True,capture_output=True,text=True,timeout=25)
+            wanted=subprocess.run([str(binary),'--load',str(work/start),'--replay',str(record),'--frame',str(expected)],cwd=ROOT,check=True,capture_output=True,text=True)
+            if record.read_text().splitlines()!=keys+['idle']*5 or json.loads(actual.stdout)!=json.loads(wanted.stdout) or frame.read_bytes()!=expected.read_bytes():
+                raise RuntimeError(f'Native Mechit-Lube {label} input/state/pixels differ')
+            print(f'PASS: native Mechit-Lube {label}, exact SDL inputs, complete state and pixels.',flush=True)
+        repair=['down','down','accept','accept'];ammo=['down']*3+['accept']*2
+        pages=[('repair-question','mechit-ui-start.btp',repair),
+               ('weapon-estimate','mechit-ui-start.btp',repair+['accept']*2),
+               ('repair-receipt','mechit-ui-start.btp',repair+['accept']*3),
+               ('ammo-amount','mechit-ui-start.btp',ammo),
+               ('ammo-limit','mechit-ui-start.btp',ammo+['9']*3+['accept']),
+               ('agent-join','mechit-recruit-start.btp',['accept','accept']+['idle']*96),
+               ('refit-offer','mechit-apprentice-start.btp',['down','accept','accept','accept','down','accept'])]
+        for label,start,keys in pages:
+            tail.write_text('\n'.join(keys)+'\n');page=tmp/'page.btp';slot=tmp/'slot.btp'
+            subprocess.run([str(binary),'--load',str(work/start),'--replay',str(tail),'--save',str(page)],cwd=ROOT,check=True,capture_output=True)
+            frame=work/f'native-mechit-{label}-restore.ppm'
+            process=subprocess.Popen([str(ROOT/'build/btech-port'),'--load',str(page),'--save-file',str(slot),'--frame',str(frame)],
+                cwd=ROOT,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+            keyboard=WindowKeys()
+            try:
+                for _ in range(100):
+                    found=[(w,n) for w,n in keyboard.windows() if n.startswith('BtechPort')]
+                    if len(found)==1:window=found[0][0];break
+                    if process.poll() is not None:raise RuntimeError('Mechit window failed to start')
+                    time.sleep(.05)
+                else:raise RuntimeError('Mechit window did not appear')
+                keyboard.key(window,'F5');time.sleep(.1)
+                before=json.loads(subprocess.check_output([str(binary),'--load',str(slot)],cwd=ROOT,text=True))
+                keyboard.key(window,'Right');time.sleep(.1);keyboard.key(window,'F9');keyboard.key(window,'Ctrl+Shift+Escape')
+                out,err=process.communicate(timeout=10)
+                if process.returncode:raise RuntimeError(err)
+                restored=json.loads(out);delta=restored['tick']-before['tick']
+                if not 0<=delta<=20:raise RuntimeError('Unexpected Mechit restore interval')
+                tail.write_text('idle\n'*delta)
+                wanted=json.loads(subprocess.check_output([str(binary),'--load',str(slot),'--replay',str(tail),'--frame',str(expected)],cwd=ROOT,text=True))
+                if restored!=wanted or frame.read_bytes()!=expected.read_bytes():raise RuntimeError(f'Native Mechit {label} restore differs')
+                print(f'PASS: native F5/F9 on Mechit-Lube {label}, identical saved continuation.',flush=True)
+            finally:
+                keyboard.x.XCloseDisplay(keyboard.display)
+                if process.poll() is None:process.terminate();process.wait(timeout=5)
+
 def combat_ui(env,work):
     """Controlled original mixed-party UI prerequisite, real SDL keys/F5/F9."""
     from reference_session import WindowKeys
@@ -947,6 +1002,7 @@ def main():
     parser.add_argument('--followups-only',action='store_true')
     parser.add_argument('--m4-acceptance',action='store_true')
     parser.add_argument('--combat-ui-only',action='store_true')
+    parser.add_argument('--mechit-only',action='store_true')
     args = parser.parse_args()
     work = ROOT / "work"
     work.mkdir(exist_ok=True)
@@ -969,12 +1025,15 @@ def main():
             if args.m4_acceptance:
                 intro(env,work);menu(env,work);presentation(env,work)
                 combat_ui(env,work)
+                mechit_ui(env,work)
                 original_saves(env,work);aftermath(env,work);field(env,work)
                 saves(env,work);campaign(env,work);story(env,work);cache(env,work);return
             if args.followups_only:
                 followups(env,work);return
             if args.combat_ui_only:
                 combat_ui(env,work);return
+            if args.mechit_only:
+                mechit_ui(env,work);return
             if args.intro_only:
                 intro(env,work);return
             if args.overhead_only:

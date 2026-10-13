@@ -17,7 +17,7 @@
   "checkpoints": [
     {
       "label": "fresh-trained-party",
-      "tick": 51661,
+      "tick": 51639,
       "state": {
         "map": 3,
         "mode": "local-exploration",
@@ -28,7 +28,7 @@
           14
         ],
         "gate": 85,
-        "tick": 51661,
+        "tick": 51639,
         "blocked": 0,
         "script_pc": 4293,
         "script_status": 3,
@@ -177,7 +177,7 @@
         },
         "shop_refusal": 0,
         "menu_id": 31,
-        "confirm_selected": 1,
+        "confirm_selected": 0,
         "menu_choices": [
           0,
           0,
@@ -598,7 +598,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "b6a7427d14baa26a",
+        "state_digest": "d741c69b58ec82d2",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -939,7 +939,7 @@
     },
     {
       "label": "fresh-travel-crew",
-      "tick": 51764,
+      "tick": 51742,
       "state": {
         "map": 0,
         "mode": "local-exploration",
@@ -950,7 +950,7 @@
           462
         ],
         "gate": 85,
-        "tick": 51764,
+        "tick": 51742,
         "blocked": 0,
         "script_pc": 0,
         "script_status": 0,
@@ -1515,7 +1515,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "f85e2a610a002e69",
+        "state_digest": "64685b53582eb013",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1856,7 +1856,7 @@
     },
     {
       "label": "owner-authorized-funding",
-      "tick": 51765,
+      "tick": 51743,
       "state": {
         "map": 0,
         "mode": "local-exploration",
@@ -1867,7 +1867,7 @@
           462
         ],
         "gate": 85,
-        "tick": 51765,
+        "tick": 51743,
         "blocked": 0,
         "script_pc": 0,
         "script_status": 0,
@@ -2432,7 +2432,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "57844c078b5a3295",
+        "state_digest": "693eb65f8f7b5c1b",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -2773,7 +2773,7 @@
     },
     {
       "label": "entry",
-      "tick": 52323,
+      "tick": 52301,
       "state": {
         "map": 2,
         "mode": "entry-confirm",
@@ -2784,7 +2784,7 @@
           34
         ],
         "gate": 85,
-        "tick": 52323,
+        "tick": 52301,
         "blocked": 0,
         "script_pc": 0,
         "script_status": 0,
@@ -3349,7 +3349,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "2ce72022502ac38d",
+        "state_digest": "811566426a6b7ad3",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -3690,7 +3690,7 @@
     },
     {
       "label": "apprenticeship-offer",
-      "tick": 52328,
+      "tick": 52306,
       "state": {
         "map": 2,
         "mode": "building",
@@ -3701,7 +3701,7 @@
           34
         ],
         "gate": 85,
-        "tick": 52328,
+        "tick": 52306,
         "blocked": 0,
         "script_pc": 3302,
         "script_status": 6,
@@ -4271,7 +4271,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "90ab7ead751f015f",
+        "state_digest": "e01905a134d231e5",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -4612,7 +4612,7 @@
     },
     {
       "label": "technician-qualified",
-      "tick": 52330,
+      "tick": 52308,
       "state": {
         "map": 2,
         "mode": "building",
@@ -4623,7 +4623,7 @@
           34
         ],
         "gate": 85,
-        "tick": 52330,
+        "tick": 52308,
         "blocked": 0,
         "script_pc": 218,
         "script_status": 1,
@@ -5193,7 +5193,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "a7bab5861ce6d654",
+        "state_digest": "ca94dfa9c29640ea",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -5534,7 +5534,7 @@
     },
     {
       "label": "entry",
-      "tick": 52794,
+      "tick": 52772,
       "state": {
         "map": 4,
         "mode": "entry-confirm",
@@ -5545,7 +5545,7 @@
           17
         ],
         "gate": 85,
-        "tick": 52794,
+        "tick": 52772,
         "blocked": 0,
         "script_pc": 0,
         "script_status": 0,
@@ -6110,7 +6110,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "67878446e1a8b33d",
+        "state_digest": "54e2af7a47e6ebdb",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -6451,7 +6451,7 @@
     },
     {
       "label": "medical-seminar-offer",
-      "tick": 52797,
+      "tick": 52775,
       "state": {
         "map": 4,
         "mode": "building",
@@ -6462,7 +6462,7 @@
           17
         ],
         "gate": 85,
-        "tick": 52797,
+        "tick": 52775,
         "blocked": 0,
         "script_pc": 2791,
         "script_status": 6,
@@ -7032,7 +7032,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "cc71cd535d2e11f7",
+        "state_digest": "16d230b019b36515",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -7373,7 +7373,7 @@
     },
     {
       "label": "medic-qualified",
-      "tick": 52803,
+      "tick": 52781,
       "state": {
         "map": 4,
         "mode": "building",
@@ -7384,7 +7384,7 @@
           17
         ],
         "gate": 85,
-        "tick": 52803,
+        "tick": 52781,
         "blocked": 0,
         "script_pc": 754,
         "script_status": 1,
@@ -7974,7 +7974,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "1c2d3f50c9be703e",
+        "state_digest": "2c7d8efcd1b71f3c",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -8315,7 +8315,7 @@
     },
     {
       "label": "entry",
-      "tick": 53189,
+      "tick": 53167,
       "state": {
         "map": 11,
         "mode": "entry-confirm",
@@ -8326,7 +8326,7 @@
           4
         ],
         "gate": 85,
-        "tick": 53189,
+        "tick": 53167,
         "blocked": 0,
         "script_pc": 0,
         "script_status": 0,
@@ -8891,7 +8891,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "0e66098433936909",
+        "state_digest": "ff4cf38ff268f927",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -9232,7 +9232,7 @@
     },
     {
       "label": "jeremiah-holodisk-viewed",
-      "tick": 53204,
+      "tick": 53182,
       "state": {
         "map": 11,
         "mode": "local-exploration",
@@ -9243,7 +9243,7 @@
           4
         ],
         "gate": 85,
-        "tick": 53204,
+        "tick": 53182,
         "blocked": 0,
         "script_pc": 0,
         "script_status": 0,
@@ -9808,7 +9808,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "f3ab7402b817356d",
+        "state_digest": "ce319bc446001dcb",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -10149,7 +10149,7 @@
     },
     {
       "label": "entry",
-      "tick": 55197,
+      "tick": 55175,
       "state": {
         "map": 12,
         "mode": "entry-confirm",
@@ -10160,7 +10160,7 @@
           3
         ],
         "gate": 85,
-        "tick": 55197,
+        "tick": 55175,
         "blocked": 0,
         "script_pc": 0,
         "script_status": 0,
@@ -10725,7 +10725,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "e355ac241937fa8e",
+        "state_digest": "4ad080fae7b1e128",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -11066,7 +11066,7 @@
     },
     {
       "label": "tellhim-password-earned",
-      "tick": 55222,
+      "tick": 55200,
       "state": {
         "map": 12,
         "mode": "local-exploration",
@@ -11077,7 +11077,7 @@
           3
         ],
         "gate": 85,
-        "tick": 55222,
+        "tick": 55200,
         "blocked": 0,
         "script_pc": 7784,
         "script_status": 3,
@@ -11647,7 +11647,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "b44fec4e0b734d18",
+        "state_digest": "f958f8ee3ebbef9a",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -11988,7 +11988,7 @@
     },
     {
       "label": "cache-entrance",
-      "tick": 55648,
+      "tick": 55626,
       "state": {
         "map": 13,
         "mode": "entry-confirm",
@@ -11999,7 +11999,7 @@
           6
         ],
         "gate": 85,
-        "tick": 55648,
+        "tick": 55626,
         "blocked": 0,
         "script_pc": 0,
         "script_status": 0,
@@ -12564,7 +12564,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "cc2696f0a2bad923",
+        "state_digest": "09024c1d647eef71",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -12905,7 +12905,7 @@
     },
     {
       "label": "cache-instructions-complete",
-      "tick": 55685,
+      "tick": 55663,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -12916,7 +12916,7 @@
           63
         ],
         "gate": 33,
-        "tick": 55685,
+        "tick": 55663,
         "blocked": 0,
         "script_pc": 0,
         "script_status": 0,
@@ -13481,7 +13481,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "2a98e0d5c68142d3",
+        "state_digest": "55c28943f4ee687d",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -13822,7 +13822,7 @@
     },
     {
       "label": "code-terminal-1",
-      "tick": 55708,
+      "tick": 55686,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -13833,7 +13833,7 @@
           58
         ],
         "gate": 33,
-        "tick": 55708,
+        "tick": 55686,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -14398,7 +14398,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "0e982b5ec172a321",
+        "state_digest": "79efb03c72ea7aef",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -14739,7 +14739,7 @@
     },
     {
       "label": "code-terminal-3",
-      "tick": 55790,
+      "tick": 55768,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -14750,7 +14750,7 @@
           62
         ],
         "gate": 33,
-        "tick": 55790,
+        "tick": 55768,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -15315,7 +15315,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "e6e96ce0a6ca9738",
+        "state_digest": "c815c553db2c774e",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -15656,7 +15656,7 @@
     },
     {
       "label": "code-terminal-5",
-      "tick": 55805,
+      "tick": 55783,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -15667,7 +15667,7 @@
           62
         ],
         "gate": 33,
-        "tick": 55805,
+        "tick": 55783,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -16232,7 +16232,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "0bb99ab5123aee89",
+        "state_digest": "c87b3d3216bac793",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -16573,7 +16573,7 @@
     },
     {
       "label": "door-2-opening",
-      "tick": 55826,
+      "tick": 55804,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -16584,7 +16584,7 @@
           62
         ],
         "gate": 33,
-        "tick": 55826,
+        "tick": 55804,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -17149,7 +17149,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "850ae0033b3d0ef2",
+        "state_digest": "5f49a6d408a148fd",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -17490,7 +17490,7 @@
     },
     {
       "label": "door-2-open",
-      "tick": 55858,
+      "tick": 55836,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -17501,7 +17501,7 @@
           62
         ],
         "gate": 33,
-        "tick": 55858,
+        "tick": 55836,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -18066,7 +18066,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "bf4edfa4935d6871",
+        "state_digest": "ae883786f8638433",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -18407,7 +18407,7 @@
     },
     {
       "label": "code-terminal-2",
-      "tick": 55927,
+      "tick": 55905,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -18418,7 +18418,7 @@
           58
         ],
         "gate": 33,
-        "tick": 55927,
+        "tick": 55905,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -18983,7 +18983,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "d4b0ca5cbed6f271",
+        "state_digest": "9661cf59f79790fb",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -19324,7 +19324,7 @@
     },
     {
       "label": "code-terminal-7",
-      "tick": 56033,
+      "tick": 56011,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -19335,7 +19335,7 @@
           57
         ],
         "gate": 33,
-        "tick": 56033,
+        "tick": 56011,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -19900,7 +19900,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "9d1fbb7aa3712921",
+        "state_digest": "2a13744914455bbb",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -20241,7 +20241,7 @@
     },
     {
       "label": "code-terminal-18",
-      "tick": 56243,
+      "tick": 56221,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -20252,7 +20252,7 @@
           2
         ],
         "gate": 33,
-        "tick": 56243,
+        "tick": 56221,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -20817,7 +20817,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "135fa8cecb35f0b5",
+        "state_digest": "726519f0dba41b77",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -21158,7 +21158,7 @@
     },
     {
       "label": "door-3-opening",
-      "tick": 56467,
+      "tick": 56445,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -21169,7 +21169,7 @@
           57
         ],
         "gate": 33,
-        "tick": 56467,
+        "tick": 56445,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -21734,7 +21734,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "9a5ed6c83b9d3fa4",
+        "state_digest": "39b9a89c1bd3831a",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -22075,7 +22075,7 @@
     },
     {
       "label": "door-3-open",
-      "tick": 56499,
+      "tick": 56477,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -22086,7 +22086,7 @@
           57
         ],
         "gate": 33,
-        "tick": 56499,
+        "tick": 56477,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -22651,7 +22651,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "e8c35508020d6074",
+        "state_digest": "e7f2ec422f81770e",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -22992,7 +22992,7 @@
     },
     {
       "label": "code-terminal-15",
-      "tick": 56563,
+      "tick": 56541,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -23003,7 +23003,7 @@
           38
         ],
         "gate": 33,
-        "tick": 56563,
+        "tick": 56541,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -23568,7 +23568,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "20e1a69032d1f91d",
+        "state_digest": "7a62ddd3cc3abecf",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -23909,7 +23909,7 @@
     },
     {
       "label": "code-terminal-14",
-      "tick": 56588,
+      "tick": 56566,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -23920,7 +23920,7 @@
           42
         ],
         "gate": 33,
-        "tick": 56588,
+        "tick": 56566,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -24485,7 +24485,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "db05f7b2cdfd5504",
+        "state_digest": "18a4a787d827c9bd",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -24826,7 +24826,7 @@
     },
     {
       "label": "code-terminal-11",
-      "tick": 56651,
+      "tick": 56629,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -24837,7 +24837,7 @@
           47
         ],
         "gate": 33,
-        "tick": 56651,
+        "tick": 56629,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -25402,7 +25402,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "74b98b4670566de8",
+        "state_digest": "5296af48288e362a",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -25743,7 +25743,7 @@
     },
     {
       "label": "door-1-opening",
-      "tick": 56738,
+      "tick": 56716,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -25754,7 +25754,7 @@
           62
         ],
         "gate": 33,
-        "tick": 56738,
+        "tick": 56716,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -26319,7 +26319,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "b5dddba17d2f508f",
+        "state_digest": "281ba2b0668a0501",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -26660,7 +26660,7 @@
     },
     {
       "label": "door-1-open",
-      "tick": 56770,
+      "tick": 56748,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -26671,7 +26671,7 @@
           62
         ],
         "gate": 33,
-        "tick": 56770,
+        "tick": 56748,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -27236,7 +27236,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "5e968b9b758277ed",
+        "state_digest": "c0b72015f1a088a7",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -27577,7 +27577,7 @@
     },
     {
       "label": "code-terminal-13",
-      "tick": 56867,
+      "tick": 56845,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -27588,7 +27588,7 @@
           46
         ],
         "gate": 33,
-        "tick": 56867,
+        "tick": 56845,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -28153,7 +28153,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "7a47dbaf9cf6ab53",
+        "state_digest": "b5b8f66fb74ef7a5",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -28494,7 +28494,7 @@
     },
     {
       "label": "code-terminal-31",
-      "tick": 57163,
+      "tick": 57141,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -28505,7 +28505,7 @@
           25
         ],
         "gate": 33,
-        "tick": 57163,
+        "tick": 57141,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -29070,7 +29070,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "888c176ef719513c",
+        "state_digest": "546e82539ff1d536",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -29411,7 +29411,7 @@
     },
     {
       "label": "code-terminal-4",
-      "tick": 57453,
+      "tick": 57431,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -29422,7 +29422,7 @@
           62
         ],
         "gate": 33,
-        "tick": 57453,
+        "tick": 57431,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -29987,7 +29987,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "1927a8ecf3cc3a13",
+        "state_digest": "add85a052fca9c81",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -30328,7 +30328,7 @@
     },
     {
       "label": "door-7-opening",
-      "tick": 57596,
+      "tick": 57574,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -30339,7 +30339,7 @@
           37
         ],
         "gate": 33,
-        "tick": 57596,
+        "tick": 57574,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -30904,7 +30904,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "0b69d111f4f6b6bf",
+        "state_digest": "4f531fa43a700ff9",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -31245,7 +31245,7 @@
     },
     {
       "label": "door-7-open",
-      "tick": 57628,
+      "tick": 57606,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -31256,7 +31256,7 @@
           37
         ],
         "gate": 33,
-        "tick": 57628,
+        "tick": 57606,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -31821,7 +31821,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "2bd48297b0d16688",
+        "state_digest": "581f7b9ce30fa6c6",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -32162,7 +32162,7 @@
     },
     {
       "label": "code-terminal-29",
-      "tick": 57746,
+      "tick": 57724,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -32173,7 +32173,7 @@
           21
         ],
         "gate": 33,
-        "tick": 57746,
+        "tick": 57724,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -32738,7 +32738,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "801375cdee421503",
+        "state_digest": "2636880657fb54f1",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -33079,7 +33079,7 @@
     },
     {
       "label": "code-terminal-12",
-      "tick": 58040,
+      "tick": 58018,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -33090,7 +33090,7 @@
           47
         ],
         "gate": 33,
-        "tick": 58040,
+        "tick": 58018,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -33655,7 +33655,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "e5a291f77e6fb9b7",
+        "state_digest": "d74c025f3b113afd",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -33996,7 +33996,7 @@
     },
     {
       "label": "code-terminal-6",
-      "tick": 58137,
+      "tick": 58115,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -34007,7 +34007,7 @@
           59
         ],
         "gate": 33,
-        "tick": 58137,
+        "tick": 58115,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -34572,7 +34572,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "47c19c00da6a814b",
+        "state_digest": "e8e6f86038946f8d",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -34913,7 +34913,7 @@
     },
     {
       "label": "door-5-opening",
-      "tick": 58456,
+      "tick": 58434,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -34924,7 +34924,7 @@
           37
         ],
         "gate": 33,
-        "tick": 58456,
+        "tick": 58434,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -35489,7 +35489,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "59ac39eabb2a0792",
+        "state_digest": "2ed69d543f037208",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -35830,7 +35830,7 @@
     },
     {
       "label": "door-5-open",
-      "tick": 58488,
+      "tick": 58466,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -35841,7 +35841,7 @@
           37
         ],
         "gate": 33,
-        "tick": 58488,
+        "tick": 58466,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -36406,7 +36406,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "90e84b05e6bacae4",
+        "state_digest": "d65d1c2828449432",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -36747,7 +36747,7 @@
     },
     {
       "label": "code-terminal-17",
-      "tick": 58752,
+      "tick": 58730,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -36758,7 +36758,7 @@
           38
         ],
         "gate": 33,
-        "tick": 58752,
+        "tick": 58730,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -37323,7 +37323,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "4d8eb7b9e3c28b87",
+        "state_digest": "887e9f0109577e99",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -37664,7 +37664,7 @@
     },
     {
       "label": "code-terminal-19",
-      "tick": 58761,
+      "tick": 58739,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -37675,7 +37675,7 @@
           38
         ],
         "gate": 33,
-        "tick": 58761,
+        "tick": 58739,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -38240,7 +38240,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "65a26b5add00f421",
+        "state_digest": "eb5854e0dfde3a7f",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -38581,7 +38581,7 @@
     },
     {
       "label": "code-terminal-26",
-      "tick": 58934,
+      "tick": 58912,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -38592,7 +38592,7 @@
           25
         ],
         "gate": 33,
-        "tick": 58934,
+        "tick": 58912,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -39157,7 +39157,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "41e65f36c8fc00fe",
+        "state_digest": "2d06ba926e35b828",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -39498,7 +39498,7 @@
     },
     {
       "label": "door-4-opening",
-      "tick": 59115,
+      "tick": 59093,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -39509,7 +39509,7 @@
           41
         ],
         "gate": 33,
-        "tick": 59115,
+        "tick": 59093,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -40074,7 +40074,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "aa30580250758f3b",
+        "state_digest": "2d7e7b69b3445c5d",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -40415,7 +40415,7 @@
     },
     {
       "label": "door-4-open",
-      "tick": 59147,
+      "tick": 59125,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -40426,7 +40426,7 @@
           41
         ],
         "gate": 33,
-        "tick": 59147,
+        "tick": 59125,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -40991,7 +40991,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "b8cc69638969b6a9",
+        "state_digest": "0830e8705fad9e2c",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -41332,7 +41332,7 @@
     },
     {
       "label": "code-terminal-20",
-      "tick": 59178,
+      "tick": 59156,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -41343,7 +41343,7 @@
           40
         ],
         "gate": 33,
-        "tick": 59178,
+        "tick": 59156,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -41908,7 +41908,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "082c861f51f1302a",
+        "state_digest": "4a17e0ff39afa7b8",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -42249,7 +42249,7 @@
     },
     {
       "label": "code-terminal-27",
-      "tick": 59612,
+      "tick": 59590,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -42260,7 +42260,7 @@
           16
         ],
         "gate": 33,
-        "tick": 59612,
+        "tick": 59590,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -42825,7 +42825,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "6cf4da69940f96cf",
+        "state_digest": "5572df9da75dbcc1",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -43166,7 +43166,7 @@
     },
     {
       "label": "code-terminal-22",
-      "tick": 60000,
+      "tick": 59978,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -43177,7 +43177,7 @@
           30
         ],
         "gate": 33,
-        "tick": 60000,
+        "tick": 59978,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -43742,7 +43742,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "fcf13caa74e8d124",
+        "state_digest": "4a985cb0d88d63f2",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -44083,7 +44083,7 @@
     },
     {
       "label": "door-6-opening",
-      "tick": 60023,
+      "tick": 60001,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -44094,7 +44094,7 @@
           35
         ],
         "gate": 33,
-        "tick": 60023,
+        "tick": 60001,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -44659,7 +44659,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "49574881cf29aa24",
+        "state_digest": "cc33ce12a9dba31e",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -45000,7 +45000,7 @@
     },
     {
       "label": "door-6-open",
-      "tick": 60055,
+      "tick": 60033,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -45011,7 +45011,7 @@
           35
         ],
         "gate": 33,
-        "tick": 60055,
+        "tick": 60033,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -45576,7 +45576,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "fdf9d04ea0f30f23",
+        "state_digest": "7af588cfd19101b5",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -45917,7 +45917,7 @@
     },
     {
       "label": "code-terminal-25",
-      "tick": 60213,
+      "tick": 60191,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -45928,7 +45928,7 @@
           25
         ],
         "gate": 33,
-        "tick": 60213,
+        "tick": 60191,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -46493,7 +46493,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "5a21e96b59ec4c2f",
+        "state_digest": "e39b09a25f6ffc29",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -46834,7 +46834,7 @@
     },
     {
       "label": "code-terminal-33",
-      "tick": 60569,
+      "tick": 60547,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -46845,7 +46845,7 @@
           14
         ],
         "gate": 33,
-        "tick": 60569,
+        "tick": 60547,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -47410,7 +47410,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "8673769f615a642b",
+        "state_digest": "d13bb1e44e1e83e5",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -47751,7 +47751,7 @@
     },
     {
       "label": "code-terminal-10",
-      "tick": 60861,
+      "tick": 60839,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -47762,7 +47762,7 @@
           44
         ],
         "gate": 33,
-        "tick": 60861,
+        "tick": 60839,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -48327,7 +48327,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "c81b3ad629d062a5",
+        "state_digest": "62996816982d9e57",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -48668,7 +48668,7 @@
     },
     {
       "label": "door-9-opening",
-      "tick": 61093,
+      "tick": 61071,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -48679,7 +48679,7 @@
           20
         ],
         "gate": 33,
-        "tick": 61093,
+        "tick": 61071,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -49244,7 +49244,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "d8b133bd008ab7a9",
+        "state_digest": "590ce65e076f994f",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -49585,7 +49585,7 @@
     },
     {
       "label": "door-9-open",
-      "tick": 61125,
+      "tick": 61103,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -49596,7 +49596,7 @@
           20
         ],
         "gate": 33,
-        "tick": 61125,
+        "tick": 61103,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -50161,7 +50161,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "b41f487ec49484bf",
+        "state_digest": "3b9635352f004875",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -50502,7 +50502,7 @@
     },
     {
       "label": "code-terminal-8",
-      "tick": 61576,
+      "tick": 61554,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -50513,7 +50513,7 @@
           47
         ],
         "gate": 33,
-        "tick": 61576,
+        "tick": 61554,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -51078,7 +51078,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "cf4dda7bb9c5daff",
+        "state_digest": "a4401a5460ac36bd",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -51419,7 +51419,7 @@
     },
     {
       "label": "code-terminal-9",
-      "tick": 61610,
+      "tick": 61588,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -51430,7 +51430,7 @@
           49
         ],
         "gate": 33,
-        "tick": 61610,
+        "tick": 61588,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -51995,7 +51995,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "6347c9eab2028573",
+        "state_digest": "97ca8f14639cda69",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -52336,7 +52336,7 @@
     },
     {
       "label": "code-terminal-21",
-      "tick": 61686,
+      "tick": 61664,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -52347,7 +52347,7 @@
           34
         ],
         "gate": 33,
-        "tick": 61686,
+        "tick": 61664,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -52912,7 +52912,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "50c7dc3a36034375",
+        "state_digest": "647f63d6b3518c5f",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -53253,7 +53253,7 @@
     },
     {
       "label": "door-10-opening",
-      "tick": 62116,
+      "tick": 62094,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -53264,7 +53264,7 @@
           11
         ],
         "gate": 33,
-        "tick": 62116,
+        "tick": 62094,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -53829,7 +53829,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "e309cfe69941a88f",
+        "state_digest": "020f6bd2f6fa71f1",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -54170,7 +54170,7 @@
     },
     {
       "label": "door-10-open",
-      "tick": 62148,
+      "tick": 62126,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -54181,7 +54181,7 @@
           11
         ],
         "gate": 33,
-        "tick": 62148,
+        "tick": 62126,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -54746,7 +54746,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "59db255f7eddac28",
+        "state_digest": "a07fd248cd9f8eca",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -55087,7 +55087,7 @@
     },
     {
       "label": "code-terminal-28",
-      "tick": 62489,
+      "tick": 62467,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -55098,7 +55098,7 @@
           21
         ],
         "gate": 33,
-        "tick": 62489,
+        "tick": 62467,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -55663,7 +55663,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "af711aada3631330",
+        "state_digest": "e8570d912261806a",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -56004,7 +56004,7 @@
     },
     {
       "label": "code-terminal-24",
-      "tick": 62529,
+      "tick": 62507,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -56015,7 +56015,7 @@
           29
         ],
         "gate": 33,
-        "tick": 62529,
+        "tick": 62507,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -56580,7 +56580,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "073d555cbcd02c2c",
+        "state_digest": "1946f2d50c804676",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -56921,7 +56921,7 @@
     },
     {
       "label": "code-terminal-16",
-      "tick": 62673,
+      "tick": 62651,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -56932,7 +56932,7 @@
           38
         ],
         "gate": 33,
-        "tick": 62673,
+        "tick": 62651,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -57497,7 +57497,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "39e3036e8d560927",
+        "state_digest": "9fd3edd92453774d",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -57838,7 +57838,7 @@
     },
     {
       "label": "door-11-opening",
-      "tick": 62913,
+      "tick": 62891,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -57849,7 +57849,7 @@
           20
         ],
         "gate": 33,
-        "tick": 62913,
+        "tick": 62891,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -58414,7 +58414,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "940178501af9c32e",
+        "state_digest": "681003e75cf68cac",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -58755,7 +58755,7 @@
     },
     {
       "label": "door-11-open",
-      "tick": 62945,
+      "tick": 62923,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -58766,7 +58766,7 @@
           20
         ],
         "gate": 33,
-        "tick": 62945,
+        "tick": 62923,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -59331,7 +59331,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "2b2c2a9c5a269d82",
+        "state_digest": "be455d7cea345604",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -59672,7 +59672,7 @@
     },
     {
       "label": "code-terminal-30",
-      "tick": 62999,
+      "tick": 62977,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -59683,7 +59683,7 @@
           2
         ],
         "gate": 33,
-        "tick": 62999,
+        "tick": 62977,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -60248,7 +60248,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "216b4fbe2dc3ce1d",
+        "state_digest": "64d2c6d525158d9b",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -60589,7 +60589,7 @@
     },
     {
       "label": "code-terminal-23",
-      "tick": 63448,
+      "tick": 63426,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -60600,7 +60600,7 @@
           31
         ],
         "gate": 33,
-        "tick": 63448,
+        "tick": 63426,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -61165,7 +61165,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "bc4976c1b063f217",
+        "state_digest": "9c10c113bb9f81c1",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -61506,7 +61506,7 @@
     },
     {
       "label": "code-terminal-32",
-      "tick": 63886,
+      "tick": 63864,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -61517,7 +61517,7 @@
           14
         ],
         "gate": 33,
-        "tick": 63886,
+        "tick": 63864,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -62082,7 +62082,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "5bda1e7d233233e3",
+        "state_digest": "3697e8a66ddf4e59",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -62423,7 +62423,7 @@
     },
     {
       "label": "door-8-opening",
-      "tick": 64141,
+      "tick": 64119,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -62434,7 +62434,7 @@
           33
         ],
         "gate": 33,
-        "tick": 64141,
+        "tick": 64119,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -62999,7 +62999,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "1967d28e3ca42d18",
+        "state_digest": "a55f7fdcf11a4e62",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -63340,7 +63340,7 @@
     },
     {
       "label": "door-8-open",
-      "tick": 64173,
+      "tick": 64151,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -63351,7 +63351,7 @@
           33
         ],
         "gate": 33,
-        "tick": 64173,
+        "tick": 64151,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -63916,7 +63916,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "b9754aaf12f4d821",
+        "state_digest": "e3f0570034b4aabf",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -64257,7 +64257,7 @@
     },
     {
       "label": "secret-passage",
-      "tick": 64465,
+      "tick": 64443,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -64268,7 +64268,7 @@
           41
         ],
         "gate": 33,
-        "tick": 64465,
+        "tick": 64443,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -64833,7 +64833,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "4a59ecc7c8d480b0",
+        "state_digest": "32e94bc99c3ce2aa",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -65174,7 +65174,7 @@
     },
     {
       "label": "phoenix-screen",
-      "tick": 64481,
+      "tick": 64459,
       "state": {
         "map": 14,
         "mode": "building",
@@ -65185,7 +65185,7 @@
           48
         ],
         "gate": 33,
-        "tick": 64481,
+        "tick": 64459,
         "blocked": 1,
         "script_pc": 180,
         "script_status": 5,
@@ -65755,7 +65755,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "e1e977f54388ecaf",
+        "state_digest": "81a3c55ece85a919",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -66096,7 +66096,7 @@
     },
     {
       "label": "phoenix-inspected",
-      "tick": 64486,
+      "tick": 64464,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -66107,7 +66107,7 @@
           48
         ],
         "gate": 33,
-        "tick": 64486,
+        "tick": 64464,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -66672,7 +66672,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "9a2f3d07ab7ba4e8",
+        "state_digest": "097c3d8946bc4a7e",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -67013,7 +67013,7 @@
     },
     {
       "label": "map-room",
-      "tick": 64809,
+      "tick": 64787,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -67024,7 +67024,7 @@
           17
         ],
         "gate": 139,
-        "tick": 64809,
+        "tick": 64787,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -67589,7 +67589,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "ff2ac24649cc7594",
+        "state_digest": "aecb43911215547e",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -67930,7 +67930,7 @@
     },
     {
       "label": "wrong-password",
-      "tick": 64816,
+      "tick": 64794,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -67941,7 +67941,7 @@
           14
         ],
         "gate": 139,
-        "tick": 64816,
+        "tick": 64794,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -68506,7 +68506,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "02d9fe0f0628d4e5",
+        "state_digest": "81d51dea5793b5e3",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -68847,7 +68847,7 @@
     },
     {
       "label": "password-symbol-140",
-      "tick": 64911,
+      "tick": 64889,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -68858,7 +68858,7 @@
           1
         ],
         "gate": 139,
-        "tick": 64911,
+        "tick": 64889,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -69423,7 +69423,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "b95c691d79069dbd",
+        "state_digest": "a351088104833513",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -69764,7 +69764,7 @@
     },
     {
       "label": "password-symbol-186",
-      "tick": 64948,
+      "tick": 64926,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -69775,7 +69775,7 @@
           6
         ],
         "gate": 139,
-        "tick": 64948,
+        "tick": 64926,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -70340,7 +70340,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "2a6010deed85c57d",
+        "state_digest": "e8647c9d06d00ca3",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -70681,7 +70681,7 @@
     },
     {
       "label": "password-symbol-325",
-      "tick": 64985,
+      "tick": 64963,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -70692,7 +70692,7 @@
           8
         ],
         "gate": 139,
-        "tick": 64985,
+        "tick": 64963,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -71257,7 +71257,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "8d6dc87f440a9a9e",
+        "state_digest": "4cfab01354138650",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -71598,7 +71598,7 @@
     },
     {
       "label": "password-symbol-341",
-      "tick": 65014,
+      "tick": 64992,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -71609,7 +71609,7 @@
           10
         ],
         "gate": 139,
-        "tick": 65014,
+        "tick": 64992,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -72174,7 +72174,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "1bbe34ba5eea291e",
+        "state_digest": "bcd4609fbe0f64ec",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -72515,7 +72515,7 @@
     },
     {
       "label": "password-symbol-375",
-      "tick": 65056,
+      "tick": 65034,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -72526,7 +72526,7 @@
           13
         ],
         "gate": 139,
-        "tick": 65056,
+        "tick": 65034,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -73091,7 +73091,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "f6a2270e8182c0ec",
+        "state_digest": "a36b5b1fed3fa206",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -73432,7 +73432,7 @@
     },
     {
       "label": "password-symbol-439",
-      "tick": 65097,
+      "tick": 65075,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -73443,7 +73443,7 @@
           14
         ],
         "gate": 139,
-        "tick": 65097,
+        "tick": 65075,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -74008,7 +74008,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "c1b1ff99fc4c5098",
+        "state_digest": "f214b16a1ac3c222",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -74349,7 +74349,7 @@
     },
     {
       "label": "password-symbol-443",
-      "tick": 65129,
+      "tick": 65107,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -74360,7 +74360,7 @@
           15
         ],
         "gate": 139,
-        "tick": 65129,
+        "tick": 65107,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -74925,7 +74925,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "1d23f7bc4c9678e1",
+        "state_digest": "15c75284a3e182c3",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -75266,7 +75266,7 @@
     },
     {
       "label": "white-code-accepted",
-      "tick": 65193,
+      "tick": 65171,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -75277,7 +75277,7 @@
           14
         ],
         "gate": 139,
-        "tick": 65193,
+        "tick": 65171,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -75842,7 +75842,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "7eea1d2a08c05505",
+        "state_digest": "248d29def50e0ab3",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -76183,7 +76183,7 @@
     },
     {
       "label": "map-room-exit",
-      "tick": 65233,
+      "tick": 65211,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -76194,7 +76194,7 @@
           28
         ],
         "gate": 33,
-        "tick": 65233,
+        "tick": 65211,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -76759,7 +76759,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "83201ccdb5e5ad4d",
+        "state_digest": "cd0123f15e198637",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -77100,7 +77100,7 @@
     },
     {
       "label": "hyperpulse-power",
-      "tick": 65549,
+      "tick": 65527,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -77111,7 +77111,7 @@
           7
         ],
         "gate": 33,
-        "tick": 65549,
+        "tick": 65527,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -77676,7 +77676,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "95773bd0d6db385f",
+        "state_digest": "05a7bd4fff7573e5",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -78017,7 +78017,7 @@
     },
     {
       "label": "cache-found",
-      "tick": 65661,
+      "tick": 65639,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -78028,7 +78028,7 @@
           2
         ],
         "gate": 33,
-        "tick": 65661,
+        "tick": 65639,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -78593,7 +78593,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "1410dc17b3836a64",
+        "state_digest": "8d7256d060c8bf5e",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -78934,7 +78934,7 @@
     },
     {
       "label": "ending-start",
-      "tick": 65847,
+      "tick": 65825,
       "state": {
         "map": 14,
         "mode": "building",
@@ -78945,7 +78945,7 @@
           7
         ],
         "gate": 33,
-        "tick": 65847,
+        "tick": 65825,
         "blocked": 1,
         "script_pc": 8,
         "script_status": 7,
@@ -79510,7 +79510,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "a94b110582e7670e",
+        "state_digest": "054fe525bdb2f288",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -79851,7 +79851,7 @@
     },
     {
       "label": "ending-complete",
-      "tick": 66115,
+      "tick": 66093,
       "state": {
         "map": 14,
         "mode": "ending",
@@ -79862,7 +79862,7 @@
           7
         ],
         "gate": 33,
-        "tick": 66115,
+        "tick": 66093,
         "blocked": 1,
         "script_pc": 2991,
         "script_status": 3,
@@ -80436,7 +80436,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "13cf94c2528842fa",
+        "state_digest": "c04c72e268c02ce0",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -80786,7 +80786,7 @@
       7
     ],
     "gate": 33,
-    "tick": 66115,
+    "tick": 66093,
     "blocked": 1,
     "script_pc": 2991,
     "script_status": 3,
@@ -81360,7 +81360,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "13cf94c2528842fa",
+    "state_digest": "c04c72e268c02ce0",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

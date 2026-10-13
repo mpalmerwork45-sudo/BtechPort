@@ -70,6 +70,11 @@ typedef struct {
     uint8_t phase,action,mech,selected,kind,item,outcome;
     uint16_t amount;
     char input[8];
+    /* 09B8 keeps an estimate separate from the repaired record. A weapon
+       type can remain on that estimate after its first repair clears all
+       matching critical slots. Preserve those original counts across saves. */
+    uint8_t damaged[17];
+    uint32_t quote_credits;
 } BtpServiceState;
 typedef struct {
     uint8_t active,countdown;

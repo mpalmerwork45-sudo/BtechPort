@@ -2,9 +2,9 @@
 
 ## Current M4 presentation checks
 
-The active build has 46 CTest suites. Internal saves are BTPW/v32, with a
+The active build has 47 CTest suites. Internal saves are BTPX/v33, with a
 20,480-byte payload; old versions retain explicit migrations. Current caches
-are BTTA/v17, BTCB/v11 and BTW3. The world seed is the original `0x020304`.
+are BTTA/v18, BTCB/v11 and BTW3. The world seed is the original `0x020304`.
 The older sections below describe earlier increments.
 The previous 45 regular and ASan/UBSan/LeakSanitizer suites, the historical regression
 checks, full sanitizer script, native M4 acceptance and nine follow-up tails pass.
@@ -12,7 +12,7 @@ The historical script's final guard detected only the editor's known reference
 Git-config metadata change; its separate final verification passes after exact
 baseline restoration.
 The final reference guard verifies all 1,287 entries unchanged.
-The current combat-menu increment passes all 46 core suites and
+The current combat-menu increment passes all 47 core suites and
 `python3 tools/native_smoke.py --combat-ui-only`, including real F5/F9 on
 choice, summary and detail pages. Full combined acceptance follows the remaining
 authorized fidelity tasks; see [current evidence](M4_FIDELITY_EVIDENCE.md).
@@ -46,7 +46,7 @@ The last adds 314 recruitment, inspection and post-wave spy cases.
 order when gameplay/presentation timing changes. Routine native checks replay
 short saved tails, so adding a later mission does not require repeatedly playing
 every earlier mission in real time.
-`make_fresh_campaign_replay.py` records 66,115 fresh-cadet inputs through the
+`make_fresh_campaign_replay.py` records 66,093 fresh-cadet inputs through the
 cache ending; `make_spy_replay.py` records 50,569 through inspection, spy removal
 and replacement recruitment. C integration restores and continues before
 every input. Only the ending route uses the authorized credit shortcut; neither

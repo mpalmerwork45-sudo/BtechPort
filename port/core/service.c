@@ -58,8 +58,9 @@ unsigned btp_mech_reload(BtpState *s,const BtpResources *r,unsigned slot,unsigne
     for (unsigned i=51;i<86;++i) {
         unsigned component=m[i]&127u;
         if (component>=16 && component<=32) {
-            if (m[i]&128u) return 0;
-            if (count++==bin) w=component;
+            /* 09B8:1762 can reload a working weapon while another is broken.
+               It reports the broken weapon separately at the end of the visit. */
+            if (count++==bin) { if (m[i]&128u) return 0;w=component; }
         }
     }
     if (w==24) cost=2;else if (w>=26 && w<=32) cost=r->combat.ammo_prices[w-26];else return 0;
@@ -95,11 +96,95 @@ static void finish(BtpState *s,const BtpResources *r)
     if (s->script.status==BTP_SCRIPT_RECRUIT) btp_script_condition_return(&s->script,btp_state_bld(r,s),s->story_flags,0);
     else btp_script_native_return(&s->script,btp_state_bld(r,s),s->story_flags);
 }
+unsigned btp_service_weapon_count(const BtpServiceState *v)
+{
+    unsigned n=0;for (unsigned i=0;i<17;++i) n+=v->damaged[i]!=0;
+    return n;
+}
+unsigned btp_service_weapon_item(const BtpServiceState *v,unsigned ordinal)
+{
+    for (unsigned i=0;i<17;++i) if (v->damaged[i]) {
+        if (!ordinal) return i+16;
+        --ordinal;
+    }
+    return 0;
+}
+unsigned btp_service_ammo_weapon(const BtpState *s,unsigned slot,unsigned bin)
+{
+    if (slot>=4 || bin>=10) return 0;
+    const uint8_t *m=slot ? s->party.mechs[slot-1] : s->campaign.mech;
+    unsigned n=0;
+    for (unsigned i=51;i<86;++i) if ((m[i]&127u)>=16 && (m[i]&127u)<=32) {
+        if (n++==bin) return m[i];
+    }
+    return 0;
+}
+static unsigned missing(const uint8_t *m,unsigned first,unsigned end)
+{
+    unsigned n=0;for (unsigned i=first;i<end;++i) if (m[i]<m[i+69]) n+=m[i+69]-m[i];
+    return n;
+}
+static void repair_next(BtpState *s,const BtpResources *r,unsigned kind)
+{
+    BtpServiceState *v=&s->service;const uint8_t *m=btp_party_mech(s,v->mech);
+    v->selected=v->outcome=0;v->quote_credits=s->credits;
+    for (;kind<5;++kind) {
+        unsigned n=0;
+        if (kind<2) n=missing(m,kind ? 28u : 17u,kind ? 36u : 28u);
+        else if (kind==2) { for (unsigned i=51;i<86;++i) n+=m[i]==162; }
+        else if (kind==3) n=btp_service_weapon_count(v);
+        else n=(unsigned)(m[36]!=m[105] || m[37]!=m[106]);
+        if (!n) continue;
+        v->kind=(uint8_t)kind;v->amount=(uint16_t)n;v->phase=(uint8_t)(kind==3 ? 6 : 3);
+        if (kind==4 && s->credits<200) { v->phase=4;v->outcome=7; }
+        return;
+    }
+    finish(s,r);
+}
+static void ammo_next(BtpState *s,const BtpResources *r,unsigned bin)
+{
+    BtpServiceState *v=&s->service;const uint8_t *m=btp_party_mech(s,v->mech);
+    for (;bin<10;++bin) {
+        unsigned w=btp_service_ammo_weapon(s,v->mech,bin);
+        /* The signed original descriptor tests exclude a broken weapon and
+           energy weapons; there is no eleven-bin selection menu. */
+        if (w!=24 && (w<26 || w>32)) continue;
+        v->item=(uint8_t)bin;v->selected=0;v->quote_credits=s->credits;
+        v->amount=(uint16_t)(m[107+bin]>=m[39+bin] ? m[107+bin]-m[39+bin] : 0);
+        memset(v->input,0,sizeof v->input);v->input[0]='0';v->kind=1;
+        v->phase=(uint8_t)(v->amount ? 5 : 4);v->outcome=(uint8_t)(v->amount ? 0 : 1);return;
+    }
+    int broken=0;for (unsigned i=51;i<86;++i) broken|=(m[i]&128u) && (m[i]&127u)>=16 && (m[i]&127u)<=32;
+    if (broken) { v->phase=4;v->outcome=4;v->selected=0;return; }
+    if (!v->kind) { v->phase=4;v->outcome=5;v->selected=0;return; }
+    finish(s,r);
+}
+static void reload(BtpState *s,const BtpResources *r,unsigned amount)
+{
+    BtpServiceState *v=&s->service;
+    unsigned requested=amount<v->amount ? amount : v->amount;
+    unsigned bought=btp_mech_reload(s,r,v->mech,v->item,requested);
+    if (bought<requested) { v->phase=4;v->outcome=3;return; }
+    ammo_next(s,r,v->item+1u);
+}
+void btp_service_upgrade(BtpState *s)
+{
+    BtpServiceState *v=&s->service;
+    if (v->action==20) { v->quote_credits=s->credits;return; }
+    if (v->action!=18 && v->action!=44) return;
+    /* Older saves suspended the approximate category/bin menu. Resume at
+       the real vehicle selector without changing funds or mech damage. */
+    v->phase=1;v->selected=v->mech=v->kind=v->item=v->outcome=0;v->amount=0;
+    memset(v->input,0,sizeof v->input);
+}
 void btp_service_begin(BtpState *s,const BtpResources *r)
 {
     (void)r;btp_party_init(s);s->service=(BtpServiceState){.phase=1,.action=s->script.native_action};
     if (s->script.native_action==13) s->service.phase=7;
-    if (s->script.native_action==20) { s->service.phase=3;s->service.mech=s->party.giver; }
+    /* 09B8:080A clears the counter explanation before drawing its selector;
+       the following BLD model description must start in an empty panel. */
+    if (s->script.native_action==19) btp_script_clear_text(&s->script);
+    if (s->script.native_action==20) { s->service.phase=3;s->service.mech=s->party.giver;s->service.quote_credits=s->credits; }
     if (s->script.native_action==32) {
         unsigned member=s->party.selected,kind=s->party.people[member][13];
         s->service.mech=(uint8_t)member;s->service.kind=(uint8_t)kind;
@@ -165,12 +250,53 @@ void btp_service_input(BtpState *s,const BtpResources *r,BtpAction a)
         }
         finish(s,r);return;
     }
-    unsigned count=v->phase==1 ? v->action==19 ? btp_service_mech_count(s) : 5u : v->phase==2 ? v->action==18 ? 6u : 11u : v->phase==3 ? 2u : v->phase==6 ? 18u : v->phase==7 ? btp_party_count(&s->party) : 1u;
-    if (!count) { finish(s,r);return; }
-    if (a==BTP_UP) v->selected=(uint8_t)((v->selected+count-1u)%count);
-    if (a==BTP_DOWN) v->selected=(uint8_t)((v->selected+1u)%count);
-    if (a==BTP_CANCEL && v->phase!=5) { finish(s,r);return; }
-    if (v->phase==5) {
+    if (v->action==18 && v->phase!=1) {
+        if (v->phase==3) {
+            if (a==BTP_LEFT || a==BTP_UP) v->selected=0;
+            if (a==BTP_RIGHT || a==BTP_DOWN) v->selected=1;
+            if (a==BTP_CANCEL || (a==BTP_ACCEPT && v->selected)) { repair_next(s,r,v->kind+1u);return; }
+            if (a!=BTP_ACCEPT) return;
+            unsigned changed=0;
+            if (v->kind==4) { v->phase=4;v->outcome=6;return; }
+            if (v->kind==2) { unsigned n;do { n=btp_mech_repair(s,v->mech,2,34);changed+=n; } while (n); }
+            else changed=btp_mech_repair(s,v->mech,v->kind,0);
+            if (changed<v->amount) { v->phase=4;v->outcome=(uint8_t)(3u+v->kind);return; }
+            repair_next(s,r,v->kind+1u);return;
+        }
+        if (v->phase==6) {
+            unsigned n=btp_service_weapon_count(v)+1u;
+            if (a==BTP_UP) v->selected=(uint8_t)((v->selected+n-1u)%n);
+            if (a==BTP_DOWN) v->selected=(uint8_t)((v->selected+1u)%n);
+            if (a==BTP_CANCEL || (a==BTP_ACCEPT && v->selected==n-1u)) { repair_next(s,r,4);return; }
+            if (a!=BTP_ACCEPT) return;
+            if (s->credits<300) { v->phase=4;v->outcome=2;return; }
+            unsigned w=btp_service_weapon_item(v,v->selected);
+            /* 09B8:068D charges for the estimate entry even if its first
+               purchase has already cleared every matching critical slot. */
+            (void)btp_mech_repair(s,v->mech,2,w);s->credits=v->quote_credits-300u;
+            --v->damaged[w-16];v->item=(uint8_t)w;v->selected=0;
+            /* The original completion loop at 09B8:06F9 tests entries 0..15
+               although its estimate includes entry 16 (SRM6). Preserve that
+               final-entry behavior rather than charging another invented job. */
+            unsigned remaining=0;for (unsigned i=0;i<16;++i) remaining+=v->damaged[i];
+            if (!remaining) { v->phase=4;v->outcome=1;return; }
+            v->quote_credits=s->credits;return;
+        }
+        if (v->phase==4 && (a==BTP_ACCEPT || a==BTP_CANCEL)) {
+            if (v->outcome==6) (void)btp_mech_repair(s,v->mech,3,0);
+            if (v->outcome>=6) { finish(s,r);return; }
+            repair_next(s,r,v->kind+1u);
+        }
+        return;
+    }
+    if (v->action==44 && v->phase!=1) {
+        if (v->phase==4) {
+            if (a!=BTP_ACCEPT && a!=BTP_CANCEL) return;
+            if (v->outcome==2) reload(s,r,v->amount);
+            else if (v->outcome==4 || v->outcome==5) finish(s,r);
+            else ammo_next(s,r,v->item+1u);
+            return;
+        }
         size_t n=strlen(v->input);
         if (a>=BTP_DIGIT_0 && a<=BTP_DIGIT_9 && n<7) {
             if (v->input[0]=='0') { memset(v->input,0,sizeof v->input);n=0; }
@@ -178,7 +304,18 @@ void btp_service_input(BtpState *s,const BtpResources *r,BtpAction a)
         }
         if (a==BTP_CANCEL && n) v->input[n-1]=0;
         if (a==BTP_CLEAR_INPUT) { memset(v->input,0,sizeof v->input);v->input[0]='0'; }
+        if (a==BTP_ACCEPT) {
+            unsigned amount=0;for (unsigned i=0;v->input[i];++i) amount=amount*10u+(unsigned)(v->input[i]-'0');
+            if (amount>v->amount) { v->phase=4;v->outcome=2; }
+            else reload(s,r,amount);
+        }
+        return;
     }
+    unsigned count=v->phase==1 ? btp_service_mech_count(s) : v->phase==3 ? 2u : v->phase==7 ? btp_party_count(&s->party) : 1u;
+    if (!count) { finish(s,r);return; }
+    if (a==BTP_UP) v->selected=(uint8_t)((v->selected+count-1u)%count);
+    if (a==BTP_DOWN) v->selected=(uint8_t)((v->selected+1u)%count);
+    if (a==BTP_CANCEL && v->phase!=5) { finish(s,r);return; }
     if (a!=BTP_ACCEPT) return;
     if (v->phase==7) {
         unsigned slot=btp_party_slot(&s->party,v->selected);
@@ -186,8 +323,7 @@ void btp_service_input(BtpState *s,const BtpResources *r,BtpAction a)
         s->party.selected=(uint8_t)slot;s->story_flags[14]=(uint8_t)slot;finish(s,r);return;
     }
     if (v->phase==1) {
-        if (v->action!=19 && v->selected==4) { finish(s,r);return; }
-        unsigned slot=v->action==19 ? btp_service_mech_slot(s,v->selected) : v->selected;
+        unsigned slot=btp_service_mech_slot(s,v->selected);
         if (slot>=4 || s->party.mech_types[slot]==255) return;
         v->mech=(uint8_t)slot;v->selected=0;
         if (v->action==19) {
@@ -195,43 +331,37 @@ void btp_service_input(BtpState *s,const BtpResources *r,BtpAction a)
             s->story_flags[17]=(uint8_t)(m[123]>3 ? 8 : m[123]+(m[124]==1 ? 4u : 0u));
             s->party.giver=v->mech;finish(s,r);return;
         }
-        if (v->action==20) v->phase=3;else v->phase=2;return;
-    }
-    if (v->phase==2) {
-        if (v->selected==(v->action==18 ? 5u : 10u)) { finish(s,r);return; }
-        v->kind=v->selected;v->item=v->selected;v->selected=0;
-        if (v->action==18 && v->kind==3) { v->phase=6;return; }
-        v->phase=(uint8_t)(v->action==44 ? 5 : 3);if (v->phase==5) v->input[0]='0';return;
-    }
-    if (v->phase==6) {
-        if (v->selected==17) { v->phase=2;v->selected=0;return; }
-        v->item=(uint8_t)(16+v->selected);v->phase=3;v->selected=0;return;
-    }
-    if (v->phase==3 && v->selected) {
-        if (v->action==20) { finish(s,r);return; }
-        v->phase=2;v->selected=0;return;
-    }
-    if (v->phase==3 || v->phase==5) {
-        unsigned changed=0;
         if (v->action==18) {
-            if (v->kind==2) { unsigned n;do { n=btp_mech_repair(s,v->mech,2,34);changed+=n; } while (n); }
-            else if (v->kind==3) changed=btp_mech_repair(s,v->mech,2,v->item);
-            else changed=btp_mech_repair(s,v->mech,v->kind==4 ? 3 : v->kind,0);
-        } else if (v->action==20) changed=(unsigned)btp_mech_refit(s,r,v->mech);
-        else if (v->action==44) {
-            unsigned amount=0;for (unsigned i=0;v->input[i];++i) amount=amount*10u+(unsigned)(v->input[i]-'0');
-            changed=btp_mech_reload(s,r,v->mech,v->item,amount);
-        }
+            const uint8_t *m=btp_party_mech(s,slot);
+            for (unsigned i=51;i<86;++i) if ((m[i]&128u) && (m[i]&127u)>=16 && (m[i]&127u)<=32) ++v->damaged[(m[i]&127u)-16u];
+            if (!missing(m,17,28) && !missing(m,28,36) && !btp_service_weapon_count(v) &&
+                m[36]==m[105] && m[37]==m[106]) {
+                unsigned heat=0;for (unsigned i=51;i<86;++i) heat+=m[i]==162;
+                if (!heat) {
+                    v->phase=4;v->outcome=8;
+                    for (unsigned i=117;i<120;++i) if (m[i]) { v->outcome=9;v->item=(uint8_t)(i-117u);break; }
+                    return;
+                }
+            }
+            if (!s->credits) { v->phase=4;v->outcome=10;return; }
+            repair_next(s,r,0);
+        } else if (v->action==44) ammo_next(s,r,0);
+        else v->phase=3;
+        return;
+    }
+    if (v->phase==3) {
+        if (v->selected) { finish(s,r);return; }
+        unsigned changed=(unsigned)btp_mech_refit(s,r,v->mech);
         v->amount=(uint16_t)changed;v->outcome=(uint8_t)(changed!=0);v->phase=4;v->selected=0;return;
     }
-    if (v->phase==4) {
-        if (v->action==20) { finish(s,r);return; }
-        v->phase=2;v->selected=0;memset(v->input,0,8);
-    }
+    if (v->phase==4) finish(s,r);
+
 }
 int btp_service_valid(const BtpState *s)
 {
     const BtpServiceState *v=&s->service;
+    unsigned damaged=0;for (unsigned i=0;i<17;++i) { if (v->damaged[i]>35) return 0;damaged+=v->damaged[i]; }
+    if (damaged>35 || (v->action!=18 && damaged) || (v->action!=18 && v->action!=20 && v->action!=44 && v->quote_credits)) return 0;
     if (!v->phase) return !v->action && !v->mech && !v->selected && !v->kind && !v->item && !v->outcome && !v->amount && !v->input[0];
     if (v->action==9 || v->action==11) return (v->phase==10 || v->phase==11) && v->kind==btp_party_count(&s->party) && v->kind>1 &&
         !v->mech && v->item>=1 && v->item<=(v->action==9 ? 5u : 13u) && v->selected<=v->kind && v->outcome<=1 &&
@@ -245,6 +375,11 @@ int btp_service_valid(const BtpState *s)
         s->script.status==BTP_SCRIPT_NATIVE && s->script.native_action==41;
     if (v->phase==8) return v->action==0xe9 && v->mech<8 && !v->selected && v->kind<7 && !v->item && !v->outcome && !v->amount && !v->input[0] && s->mode==BTP_BUILDING && s->script.status==BTP_SCRIPT_RECRUIT && (s->campaign.building==5 || s->campaign.building==9 || s->campaign.building==13);
     if (v->action==32) return (v->phase==3 || v->phase==4) && v->mech<8 && v->selected<=1 && v->kind>=1 && v->kind<=5 && !v->item && v->outcome<=3 && v->amount<=50 && !v->input[0] && s->mode==BTP_BUILDING && s->script.status==BTP_SCRIPT_NATIVE && s->script.native_action==32 && (s->campaign.building==4 || (!s->campaign.building && s->entry_slot==4));
-    if (v->phase>7 || (v->action!=13 && v->action!=18 && v->action!=19 && v->action!=20 && v->action!=44) || v->mech>3 || v->selected>17 || v->kind>9 || v->item>32 || v->outcome>1 || s->mode!=BTP_BUILDING || s->script.status!=BTP_SCRIPT_NATIVE || (s->campaign.building!=5 && !((s->campaign.building==9 || s->campaign.building==4) && v->action==13)) || v->action!=s->script.native_action) return 0;
+    if (v->phase>7 || (v->action!=13 && v->action!=18 && v->action!=19 && v->action!=20 && v->action!=44) || v->mech>3 || v->selected>17 || v->kind>9 || v->item>32 || v->outcome>10 || s->mode!=BTP_BUILDING || s->script.status!=BTP_SCRIPT_NATIVE || (s->campaign.building!=5 && !((s->campaign.building==9 || s->campaign.building==4) && v->action==13)) || v->action!=s->script.native_action) return 0;
+    if (v->phase==1 && v->selected>=btp_service_mech_count(s)) return 0;
+    if (v->action==18 && (v->kind>4 || (v->phase!=1 && v->phase!=3 && v->phase!=4 && v->phase!=6) ||
+        (v->phase==3 && (v->selected>1 || v->kind==3)) ||
+        (v->phase==6 && (v->kind!=3 || v->selected>btp_service_weapon_count(v))))) return 0;
+    if (v->action==44 && (v->kind>1 || v->item>9 || v->outcome>5 || (v->phase!=1 && v->phase!=4 && v->phase!=5))) return 0;
     unsigned n=0;while (n<8 && v->input[n]) { if (v->input[n]<'0' || v->input[n]>'9') return 0;++n; }return n<8;
 }
