@@ -17,7 +17,7 @@
   "checkpoints": [
     {
       "label": "fresh-trained-party",
-      "tick": 51497,
+      "tick": 51638,
       "state": {
         "map": 3,
         "mode": "local-exploration",
@@ -28,7 +28,7 @@
           14
         ],
         "gate": 85,
-        "tick": 51497,
+        "tick": 51638,
         "blocked": 0,
         "script_pc": 4293,
         "script_status": 3,
@@ -598,7 +598,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "47d8a12946848932",
+        "state_digest": "5f8e9978b0d8c299",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -630,6 +630,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -939,7 +941,7 @@
     },
     {
       "label": "fresh-travel-crew",
-      "tick": 51602,
+      "tick": 51743,
       "state": {
         "map": 0,
         "mode": "local-exploration",
@@ -950,7 +952,7 @@
           462
         ],
         "gate": 85,
-        "tick": 51602,
+        "tick": 51743,
         "blocked": 0,
         "script_pc": 0,
         "script_status": 0,
@@ -1515,7 +1517,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "28460e6cc026c7d1",
+        "state_digest": "3a2a07f021807f6d",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1547,6 +1549,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -1856,7 +1860,7 @@
     },
     {
       "label": "owner-authorized-funding",
-      "tick": 51603,
+      "tick": 51744,
       "state": {
         "map": 0,
         "mode": "local-exploration",
@@ -1867,7 +1871,7 @@
           462
         ],
         "gate": 85,
-        "tick": 51603,
+        "tick": 51744,
         "blocked": 0,
         "script_pc": 0,
         "script_status": 0,
@@ -2432,7 +2436,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "f03e19c4f06fdd0d",
+        "state_digest": "b82cfcd16eb3e9db",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -2464,6 +2468,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -2773,7 +2779,7 @@
     },
     {
       "label": "entry",
-      "tick": 52161,
+      "tick": 52302,
       "state": {
         "map": 2,
         "mode": "entry-confirm",
@@ -2784,7 +2790,7 @@
           34
         ],
         "gate": 85,
-        "tick": 52161,
+        "tick": 52302,
         "blocked": 0,
         "script_pc": 0,
         "script_status": 0,
@@ -3349,7 +3355,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "b476e01e686b6eb0",
+        "state_digest": "22329a2dbd242db2",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -3381,6 +3387,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -3690,7 +3698,7 @@
     },
     {
       "label": "apprenticeship-offer",
-      "tick": 52166,
+      "tick": 52307,
       "state": {
         "map": 2,
         "mode": "building",
@@ -3701,7 +3709,7 @@
           34
         ],
         "gate": 85,
-        "tick": 52166,
+        "tick": 52307,
         "blocked": 0,
         "script_pc": 3302,
         "script_status": 6,
@@ -4271,7 +4279,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "7bae3eee5661ed76",
+        "state_digest": "770cf23adc8d5b56",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -4303,6 +4311,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -4612,7 +4622,7 @@
     },
     {
       "label": "technician-qualified",
-      "tick": 52168,
+      "tick": 52309,
       "state": {
         "map": 2,
         "mode": "building",
@@ -4623,7 +4633,7 @@
           34
         ],
         "gate": 85,
-        "tick": 52168,
+        "tick": 52309,
         "blocked": 0,
         "script_pc": 218,
         "script_status": 1,
@@ -5193,7 +5203,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "1fc8390d4444a9b1",
+        "state_digest": "53133fbd9f51d365",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -5225,6 +5235,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -5534,7 +5546,7 @@
     },
     {
       "label": "entry",
-      "tick": 52632,
+      "tick": 52773,
       "state": {
         "map": 4,
         "mode": "entry-confirm",
@@ -5545,7 +5557,7 @@
           17
         ],
         "gate": 85,
-        "tick": 52632,
+        "tick": 52773,
         "blocked": 0,
         "script_pc": 0,
         "script_status": 0,
@@ -6110,7 +6122,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "f363d8fab947feed",
+        "state_digest": "eadd2c6ee935412d",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -6142,6 +6154,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -6451,7 +6465,7 @@
     },
     {
       "label": "medical-seminar-offer",
-      "tick": 52635,
+      "tick": 52776,
       "state": {
         "map": 4,
         "mode": "building",
@@ -6462,7 +6476,7 @@
           17
         ],
         "gate": 85,
-        "tick": 52635,
+        "tick": 52776,
         "blocked": 0,
         "script_pc": 2791,
         "script_status": 6,
@@ -7032,7 +7046,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "09fce4483c0401c7",
+        "state_digest": "6ea8ee192a4e6069",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -7064,6 +7078,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -7373,7 +7389,7 @@
     },
     {
       "label": "medic-qualified",
-      "tick": 52641,
+      "tick": 52782,
       "state": {
         "map": 4,
         "mode": "building",
@@ -7384,7 +7400,7 @@
           17
         ],
         "gate": 85,
-        "tick": 52641,
+        "tick": 52782,
         "blocked": 0,
         "script_pc": 754,
         "script_status": 1,
@@ -7974,7 +7990,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "9755af06675f0396",
+        "state_digest": "5fd91731e45cc37c",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -8006,6 +8022,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -8315,7 +8333,7 @@
     },
     {
       "label": "entry",
-      "tick": 53027,
+      "tick": 53168,
       "state": {
         "map": 11,
         "mode": "entry-confirm",
@@ -8326,7 +8344,7 @@
           4
         ],
         "gate": 85,
-        "tick": 53027,
+        "tick": 53168,
         "blocked": 0,
         "script_pc": 0,
         "script_status": 0,
@@ -8891,7 +8909,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "ddd67224f3986e4b",
+        "state_digest": "4c3d1faf9f8d8a84",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -8923,6 +8941,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -9232,7 +9252,7 @@
     },
     {
       "label": "jeremiah-holodisk-viewed",
-      "tick": 53042,
+      "tick": 53183,
       "state": {
         "map": 11,
         "mode": "local-exploration",
@@ -9243,7 +9263,7 @@
           4
         ],
         "gate": 85,
-        "tick": 53042,
+        "tick": 53183,
         "blocked": 0,
         "script_pc": 0,
         "script_status": 0,
@@ -9808,7 +9828,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "e39b6c243e676ba7",
+        "state_digest": "3c99af6a7fd0b6d2",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -9840,6 +9860,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -10149,7 +10171,7 @@
     },
     {
       "label": "entry",
-      "tick": 55057,
+      "tick": 55198,
       "state": {
         "map": 12,
         "mode": "entry-confirm",
@@ -10160,7 +10182,7 @@
           3
         ],
         "gate": 85,
-        "tick": 55057,
+        "tick": 55198,
         "blocked": 0,
         "script_pc": 0,
         "script_status": 0,
@@ -10725,7 +10747,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "257c66e3cd050380",
+        "state_digest": "bfffe277f990478f",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -10757,6 +10779,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -11066,7 +11090,7 @@
     },
     {
       "label": "tellhim-password-earned",
-      "tick": 55082,
+      "tick": 55223,
       "state": {
         "map": 12,
         "mode": "local-exploration",
@@ -11077,7 +11101,7 @@
           3
         ],
         "gate": 85,
-        "tick": 55082,
+        "tick": 55223,
         "blocked": 0,
         "script_pc": 7784,
         "script_status": 3,
@@ -11647,7 +11671,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "1210cc4331d590ea",
+        "state_digest": "764e08a9fb067f3f",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -11679,6 +11703,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -11988,7 +12014,7 @@
     },
     {
       "label": "cache-entrance",
-      "tick": 55508,
+      "tick": 55649,
       "state": {
         "map": 13,
         "mode": "entry-confirm",
@@ -11999,7 +12025,7 @@
           6
         ],
         "gate": 85,
-        "tick": 55508,
+        "tick": 55649,
         "blocked": 0,
         "script_pc": 0,
         "script_status": 0,
@@ -12564,7 +12590,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "9804b1f87222a533",
+        "state_digest": "2a77a73bf0a056f1",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -12596,6 +12622,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -12905,7 +12933,7 @@
     },
     {
       "label": "cache-instructions-complete",
-      "tick": 55545,
+      "tick": 55686,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -12916,7 +12944,7 @@
           63
         ],
         "gate": 33,
-        "tick": 55545,
+        "tick": 55686,
         "blocked": 0,
         "script_pc": 0,
         "script_status": 0,
@@ -13481,7 +13509,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "fa9e907a60dfb671",
+        "state_digest": "90ede09a80093e35",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -13513,6 +13541,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -13822,7 +13852,7 @@
     },
     {
       "label": "code-terminal-1",
-      "tick": 55568,
+      "tick": 55709,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -13833,7 +13863,7 @@
           58
         ],
         "gate": 33,
-        "tick": 55568,
+        "tick": 55709,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -14398,7 +14428,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "31e78ecdd980fa67",
+        "state_digest": "76770ac9e50b981a",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -14430,6 +14460,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -14739,7 +14771,7 @@
     },
     {
       "label": "code-terminal-3",
-      "tick": 55650,
+      "tick": 55791,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -14750,7 +14782,7 @@
           62
         ],
         "gate": 33,
-        "tick": 55650,
+        "tick": 55791,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -15315,7 +15347,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "a29a8eb84ef4adb4",
+        "state_digest": "62e0ad953a49d5ed",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -15347,6 +15379,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -15656,7 +15690,7 @@
     },
     {
       "label": "code-terminal-5",
-      "tick": 55665,
+      "tick": 55806,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -15667,7 +15701,7 @@
           62
         ],
         "gate": 33,
-        "tick": 55665,
+        "tick": 55806,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -16232,7 +16266,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "9fea84f8bd9e4d29",
+        "state_digest": "dc9b311dc6cf86ca",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -16264,6 +16298,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -16573,7 +16609,7 @@
     },
     {
       "label": "door-2-opening",
-      "tick": 55686,
+      "tick": 55827,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -16584,7 +16620,7 @@
           62
         ],
         "gate": 33,
-        "tick": 55686,
+        "tick": 55827,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -17149,7 +17185,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "945cf8a20fd442c9",
+        "state_digest": "0d9349b4b53e2f4d",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -17181,6 +17217,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -17490,7 +17528,7 @@
     },
     {
       "label": "door-2-open",
-      "tick": 55718,
+      "tick": 55859,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -17501,7 +17539,7 @@
           62
         ],
         "gate": 33,
-        "tick": 55718,
+        "tick": 55859,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -18066,7 +18104,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "29cc27af674a321a",
+        "state_digest": "6fa57ed1de4e514e",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -18098,6 +18136,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -18407,7 +18447,7 @@
     },
     {
       "label": "code-terminal-2",
-      "tick": 55787,
+      "tick": 55928,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -18418,7 +18458,7 @@
           58
         ],
         "gate": 33,
-        "tick": 55787,
+        "tick": 55928,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -18983,7 +19023,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "d773e070bed84ade",
+        "state_digest": "f84e45c83b448f28",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -19015,6 +19055,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -19324,7 +19366,7 @@
     },
     {
       "label": "code-terminal-7",
-      "tick": 55893,
+      "tick": 56034,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -19335,7 +19377,7 @@
           57
         ],
         "gate": 33,
-        "tick": 55893,
+        "tick": 56034,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -19900,7 +19942,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "e1e600f5fe99bd1f",
+        "state_digest": "afa7436304cf4d44",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -19932,6 +19974,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -20241,7 +20285,7 @@
     },
     {
       "label": "code-terminal-18",
-      "tick": 56103,
+      "tick": 56244,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -20252,7 +20296,7 @@
           2
         ],
         "gate": 33,
-        "tick": 56103,
+        "tick": 56244,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -20817,7 +20861,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "f49b1a2a6873d879",
+        "state_digest": "3588e059cede89de",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -20849,6 +20893,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -21158,7 +21204,7 @@
     },
     {
       "label": "door-3-opening",
-      "tick": 56327,
+      "tick": 56468,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -21169,7 +21215,7 @@
           57
         ],
         "gate": 33,
-        "tick": 56327,
+        "tick": 56468,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -21734,7 +21780,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "ce10ae39a493ce44",
+        "state_digest": "7b70ac2fb04fb417",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -21766,6 +21812,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -22075,7 +22123,7 @@
     },
     {
       "label": "door-3-open",
-      "tick": 56359,
+      "tick": 56500,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -22086,7 +22134,7 @@
           57
         ],
         "gate": 33,
-        "tick": 56359,
+        "tick": 56500,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -22651,7 +22699,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "5b467a275aa2a154",
+        "state_digest": "da87d4f3167b7067",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -22683,6 +22731,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -22992,7 +23042,7 @@
     },
     {
       "label": "code-terminal-15",
-      "tick": 56423,
+      "tick": 56564,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -23003,7 +23053,7 @@
           38
         ],
         "gate": 33,
-        "tick": 56423,
+        "tick": 56564,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -23568,7 +23618,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "d3748f39ec6322f3",
+        "state_digest": "b2389e5f391ab8ac",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -23600,6 +23650,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -23909,7 +23961,7 @@
     },
     {
       "label": "code-terminal-14",
-      "tick": 56448,
+      "tick": 56589,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -23920,7 +23972,7 @@
           42
         ],
         "gate": 33,
-        "tick": 56448,
+        "tick": 56589,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -24485,7 +24537,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "f087cd8031ea57b3",
+        "state_digest": "5c08e9d144456acd",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -24517,6 +24569,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -24826,7 +24880,7 @@
     },
     {
       "label": "code-terminal-11",
-      "tick": 56511,
+      "tick": 56652,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -24837,7 +24891,7 @@
           47
         ],
         "gate": 33,
-        "tick": 56511,
+        "tick": 56652,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -25402,7 +25456,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "6e3cadeccecc6a21",
+        "state_digest": "be65c4473abee3dd",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -25434,6 +25488,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -25743,7 +25799,7 @@
     },
     {
       "label": "door-1-opening",
-      "tick": 56598,
+      "tick": 56739,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -25754,7 +25810,7 @@
           62
         ],
         "gate": 33,
-        "tick": 56598,
+        "tick": 56739,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -26319,7 +26375,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "bb6ed9dc424b2717",
+        "state_digest": "e920d345b5dbd526",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -26351,6 +26407,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -26660,7 +26718,7 @@
     },
     {
       "label": "door-1-open",
-      "tick": 56630,
+      "tick": 56771,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -26671,7 +26729,7 @@
           62
         ],
         "gate": 33,
-        "tick": 56630,
+        "tick": 56771,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -27236,7 +27294,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "5882474f7d8c6265",
+        "state_digest": "c11c8010d9467c00",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -27268,6 +27326,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -27577,7 +27637,7 @@
     },
     {
       "label": "code-terminal-13",
-      "tick": 56727,
+      "tick": 56868,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -27588,7 +27648,7 @@
           46
         ],
         "gate": 33,
-        "tick": 56727,
+        "tick": 56868,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -28153,7 +28213,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "57cddf492ce0eb89",
+        "state_digest": "e518f16e4c4ab983",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -28185,6 +28245,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -28494,7 +28556,7 @@
     },
     {
       "label": "code-terminal-31",
-      "tick": 57023,
+      "tick": 57164,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -28505,7 +28567,7 @@
           25
         ],
         "gate": 33,
-        "tick": 57023,
+        "tick": 57164,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -29070,7 +29132,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "26fb29a7d7567c5a",
+        "state_digest": "cf660ab79900250e",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -29102,6 +29164,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -29411,7 +29475,7 @@
     },
     {
       "label": "code-terminal-4",
-      "tick": 57313,
+      "tick": 57454,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -29422,7 +29486,7 @@
           62
         ],
         "gate": 33,
-        "tick": 57313,
+        "tick": 57454,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -29987,7 +30051,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "d59af808a3e2ecfd",
+        "state_digest": "25d61a3995cb866f",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -30019,6 +30083,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -30328,7 +30394,7 @@
     },
     {
       "label": "door-7-opening",
-      "tick": 57456,
+      "tick": 57597,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -30339,7 +30405,7 @@
           37
         ],
         "gate": 33,
-        "tick": 57456,
+        "tick": 57597,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -30904,7 +30970,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "39cb1317ff14974d",
+        "state_digest": "39fe2acd65548e00",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -30936,6 +31002,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -31245,7 +31313,7 @@
     },
     {
       "label": "door-7-open",
-      "tick": 57488,
+      "tick": 57629,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -31256,7 +31324,7 @@
           37
         ],
         "gate": 33,
-        "tick": 57488,
+        "tick": 57629,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -31821,7 +31889,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "63cffe045dfbb349",
+        "state_digest": "fedf6569b029dc9b",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -31853,6 +31921,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -32162,7 +32232,7 @@
     },
     {
       "label": "code-terminal-29",
-      "tick": 57606,
+      "tick": 57747,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -32173,7 +32243,7 @@
           21
         ],
         "gate": 33,
-        "tick": 57606,
+        "tick": 57747,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -32738,7 +32808,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "ee7247ff156b3051",
+        "state_digest": "b8dc297af1124810",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -32770,6 +32840,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -33079,7 +33151,7 @@
     },
     {
       "label": "code-terminal-12",
-      "tick": 57900,
+      "tick": 58041,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -33090,7 +33162,7 @@
           47
         ],
         "gate": 33,
-        "tick": 57900,
+        "tick": 58041,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -33655,7 +33727,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "bab7001ffeefd168",
+        "state_digest": "83c7693e3d46a459",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -33687,6 +33759,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -33996,7 +34070,7 @@
     },
     {
       "label": "code-terminal-6",
-      "tick": 57997,
+      "tick": 58138,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -34007,7 +34081,7 @@
           59
         ],
         "gate": 33,
-        "tick": 57997,
+        "tick": 58138,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -34572,7 +34646,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "fdfe2943287ff92a",
+        "state_digest": "778b28533c686cce",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -34604,6 +34678,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -34913,7 +34989,7 @@
     },
     {
       "label": "door-5-opening",
-      "tick": 58316,
+      "tick": 58457,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -34924,7 +35000,7 @@
           37
         ],
         "gate": 33,
-        "tick": 58316,
+        "tick": 58457,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -35489,7 +35565,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "fadefb07679da863",
+        "state_digest": "36a4bec4a687739f",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -35521,6 +35597,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -35830,7 +35908,7 @@
     },
     {
       "label": "door-5-open",
-      "tick": 58348,
+      "tick": 58489,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -35841,7 +35919,7 @@
           37
         ],
         "gate": 33,
-        "tick": 58348,
+        "tick": 58489,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -36406,7 +36484,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "f20405430363ec29",
+        "state_digest": "8f48e8903c8cb03d",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -36438,6 +36516,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -36747,7 +36827,7 @@
     },
     {
       "label": "code-terminal-17",
-      "tick": 58612,
+      "tick": 58753,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -36758,7 +36838,7 @@
           38
         ],
         "gate": 33,
-        "tick": 58612,
+        "tick": 58753,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -37323,7 +37403,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "60ae314c3c320eca",
+        "state_digest": "fc92feaa377bfc64",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -37355,6 +37435,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -37664,7 +37746,7 @@
     },
     {
       "label": "code-terminal-19",
-      "tick": 58621,
+      "tick": 58762,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -37675,7 +37757,7 @@
           38
         ],
         "gate": 33,
-        "tick": 58621,
+        "tick": 58762,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -38240,7 +38322,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "ed51df6376a5851c",
+        "state_digest": "63f8eccaeebb0830",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -38272,6 +38354,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -38581,7 +38665,7 @@
     },
     {
       "label": "code-terminal-26",
-      "tick": 58794,
+      "tick": 58935,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -38592,7 +38676,7 @@
           25
         ],
         "gate": 33,
-        "tick": 58794,
+        "tick": 58935,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -39157,7 +39241,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "a7dcac7dfd5037da",
+        "state_digest": "a680625619535fc6",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -39189,6 +39273,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -39498,7 +39584,7 @@
     },
     {
       "label": "door-4-opening",
-      "tick": 58975,
+      "tick": 59116,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -39509,7 +39595,7 @@
           41
         ],
         "gate": 33,
-        "tick": 58975,
+        "tick": 59116,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -40074,7 +40160,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "d11cdcfac2e7769b",
+        "state_digest": "b12296ac32fc90ec",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -40106,6 +40192,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -40415,7 +40503,7 @@
     },
     {
       "label": "door-4-open",
-      "tick": 59007,
+      "tick": 59148,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -40426,7 +40514,7 @@
           41
         ],
         "gate": 33,
-        "tick": 59007,
+        "tick": 59148,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -40991,7 +41079,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "128006e6830260d6",
+        "state_digest": "6936e7b3eed3f02a",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -41023,6 +41111,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -41332,7 +41422,7 @@
     },
     {
       "label": "code-terminal-20",
-      "tick": 59038,
+      "tick": 59179,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -41343,7 +41433,7 @@
           40
         ],
         "gate": 33,
-        "tick": 59038,
+        "tick": 59179,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -41908,7 +41998,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "ec2df36d6668041b",
+        "state_digest": "c272c3a0ebfdfb39",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -41940,6 +42030,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -42249,7 +42341,7 @@
     },
     {
       "label": "code-terminal-27",
-      "tick": 59472,
+      "tick": 59613,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -42260,7 +42352,7 @@
           16
         ],
         "gate": 33,
-        "tick": 59472,
+        "tick": 59613,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -42825,7 +42917,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "20cda9ee417deda0",
+        "state_digest": "df3758f711b7cbc1",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -42857,6 +42949,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -43166,7 +43260,7 @@
     },
     {
       "label": "code-terminal-22",
-      "tick": 59860,
+      "tick": 60001,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -43177,7 +43271,7 @@
           30
         ],
         "gate": 33,
-        "tick": 59860,
+        "tick": 60001,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -43742,7 +43836,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "6594f0ce015ac351",
+        "state_digest": "f775a0f93e574e91",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -43774,6 +43868,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -44083,7 +44179,7 @@
     },
     {
       "label": "door-6-opening",
-      "tick": 59883,
+      "tick": 60024,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -44094,7 +44190,7 @@
           35
         ],
         "gate": 33,
-        "tick": 59883,
+        "tick": 60024,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -44659,7 +44755,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "5d3dadb54bc929fa",
+        "state_digest": "87d8437ae6211564",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -44691,6 +44787,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -45000,7 +45098,7 @@
     },
     {
       "label": "door-6-open",
-      "tick": 59915,
+      "tick": 60056,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -45011,7 +45109,7 @@
           35
         ],
         "gate": 33,
-        "tick": 59915,
+        "tick": 60056,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -45576,7 +45674,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "e0e484edd5ba2818",
+        "state_digest": "7688ebb7221f36e3",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -45608,6 +45706,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -45917,7 +46017,7 @@
     },
     {
       "label": "code-terminal-25",
-      "tick": 60073,
+      "tick": 60214,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -45928,7 +46028,7 @@
           25
         ],
         "gate": 33,
-        "tick": 60073,
+        "tick": 60214,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -46493,7 +46593,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "62066fa9135c7d44",
+        "state_digest": "cf0bd7e97e710568",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -46525,6 +46625,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -46834,7 +46936,7 @@
     },
     {
       "label": "code-terminal-33",
-      "tick": 60429,
+      "tick": 60570,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -46845,7 +46947,7 @@
           14
         ],
         "gate": 33,
-        "tick": 60429,
+        "tick": 60570,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -47410,7 +47512,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "c286c0ce1ef4bd04",
+        "state_digest": "f14a67c47093b517",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -47442,6 +47544,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -47751,7 +47855,7 @@
     },
     {
       "label": "code-terminal-10",
-      "tick": 60721,
+      "tick": 60862,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -47762,7 +47866,7 @@
           44
         ],
         "gate": 33,
-        "tick": 60721,
+        "tick": 60862,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -48327,7 +48431,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "149489f2ee39e252",
+        "state_digest": "13de68f3e7ac9895",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -48359,6 +48463,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -48668,7 +48774,7 @@
     },
     {
       "label": "door-9-opening",
-      "tick": 60953,
+      "tick": 61094,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -48679,7 +48785,7 @@
           20
         ],
         "gate": 33,
-        "tick": 60953,
+        "tick": 61094,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -49244,7 +49350,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "9cf20c53e79634af",
+        "state_digest": "08c81d767975a734",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -49276,6 +49382,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -49585,7 +49693,7 @@
     },
     {
       "label": "door-9-open",
-      "tick": 60985,
+      "tick": 61126,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -49596,7 +49704,7 @@
           20
         ],
         "gate": 33,
-        "tick": 60985,
+        "tick": 61126,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -50161,7 +50269,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "ae47fd020dc21655",
+        "state_digest": "cefe9564a86e787e",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -50193,6 +50301,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -50502,7 +50612,7 @@
     },
     {
       "label": "code-terminal-8",
-      "tick": 61436,
+      "tick": 61577,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -50513,7 +50623,7 @@
           47
         ],
         "gate": 33,
-        "tick": 61436,
+        "tick": 61577,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -51078,7 +51188,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "bb8811b76a47b6c6",
+        "state_digest": "ad52da09dae40f92",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -51110,6 +51220,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -51419,7 +51531,7 @@
     },
     {
       "label": "code-terminal-9",
-      "tick": 61470,
+      "tick": 61611,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -51430,7 +51542,7 @@
           49
         ],
         "gate": 33,
-        "tick": 61470,
+        "tick": 61611,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -51995,7 +52107,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "b9ea72e9dc029ecd",
+        "state_digest": "9df472233055eb70",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -52027,6 +52139,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -52336,7 +52450,7 @@
     },
     {
       "label": "code-terminal-21",
-      "tick": 61546,
+      "tick": 61687,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -52347,7 +52461,7 @@
           34
         ],
         "gate": 33,
-        "tick": 61546,
+        "tick": 61687,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -52912,7 +53026,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "c8ff5934a84da453",
+        "state_digest": "0582c1ca514694ba",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -52944,6 +53058,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -53253,7 +53369,7 @@
     },
     {
       "label": "door-10-opening",
-      "tick": 61976,
+      "tick": 62117,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -53264,7 +53380,7 @@
           11
         ],
         "gate": 33,
-        "tick": 61976,
+        "tick": 62117,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -53829,7 +53945,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "ad1cc9f27754a6e3",
+        "state_digest": "00016621321e1f3e",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -53861,6 +53977,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -54170,7 +54288,7 @@
     },
     {
       "label": "door-10-open",
-      "tick": 62008,
+      "tick": 62149,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -54181,7 +54299,7 @@
           11
         ],
         "gate": 33,
-        "tick": 62008,
+        "tick": 62149,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -54746,7 +54864,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "65cb0f2c3513c8fc",
+        "state_digest": "f867c647c2d74095",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -54778,6 +54896,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -55087,7 +55207,7 @@
     },
     {
       "label": "code-terminal-28",
-      "tick": 62349,
+      "tick": 62490,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -55098,7 +55218,7 @@
           21
         ],
         "gate": 33,
-        "tick": 62349,
+        "tick": 62490,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -55663,7 +55783,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "41f29c4aea62af6d",
+        "state_digest": "39a735015dae96ab",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -55695,6 +55815,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -56004,7 +56126,7 @@
     },
     {
       "label": "code-terminal-24",
-      "tick": 62389,
+      "tick": 62530,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -56015,7 +56137,7 @@
           29
         ],
         "gate": 33,
-        "tick": 62389,
+        "tick": 62530,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -56580,7 +56702,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "9bfb95366630e3ae",
+        "state_digest": "ddfa8ccd00295dd8",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -56612,6 +56734,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -56921,7 +57045,7 @@
     },
     {
       "label": "code-terminal-16",
-      "tick": 62533,
+      "tick": 62674,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -56932,7 +57056,7 @@
           38
         ],
         "gate": 33,
-        "tick": 62533,
+        "tick": 62674,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -57497,7 +57621,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "40268e69fb81f9e2",
+        "state_digest": "9c28f05e9088f555",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -57529,6 +57653,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -57838,7 +57964,7 @@
     },
     {
       "label": "door-11-opening",
-      "tick": 62773,
+      "tick": 62914,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -57849,7 +57975,7 @@
           20
         ],
         "gate": 33,
-        "tick": 62773,
+        "tick": 62914,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -58414,7 +58540,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "cf4f9a8c80844e1e",
+        "state_digest": "2c0f6edb2b672089",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -58446,6 +58572,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -58755,7 +58883,7 @@
     },
     {
       "label": "door-11-open",
-      "tick": 62805,
+      "tick": 62946,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -58766,7 +58894,7 @@
           20
         ],
         "gate": 33,
-        "tick": 62805,
+        "tick": 62946,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -59331,7 +59459,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "3b417bc705c198b2",
+        "state_digest": "056f4b0e98784175",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -59363,6 +59491,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -59672,7 +59802,7 @@
     },
     {
       "label": "code-terminal-30",
-      "tick": 62859,
+      "tick": 63000,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -59683,7 +59813,7 @@
           2
         ],
         "gate": 33,
-        "tick": 62859,
+        "tick": 63000,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -60248,7 +60378,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "075930ea8d2070a5",
+        "state_digest": "946d92fcaf155553",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -60280,6 +60410,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -60589,7 +60721,7 @@
     },
     {
       "label": "code-terminal-23",
-      "tick": 63308,
+      "tick": 63449,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -60600,7 +60732,7 @@
           31
         ],
         "gate": 33,
-        "tick": 63308,
+        "tick": 63449,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -61165,7 +61297,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "497e3db92423884c",
+        "state_digest": "7a03f7cb9e4cc20d",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -61197,6 +61329,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -61506,7 +61640,7 @@
     },
     {
       "label": "code-terminal-32",
-      "tick": 63746,
+      "tick": 63887,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -61517,7 +61651,7 @@
           14
         ],
         "gate": 33,
-        "tick": 63746,
+        "tick": 63887,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -62082,7 +62216,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "e36fde64751c6e43",
+        "state_digest": "e7319b0bbf9b8876",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -62114,6 +62248,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -62423,7 +62559,7 @@
     },
     {
       "label": "door-8-opening",
-      "tick": 64001,
+      "tick": 64142,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -62434,7 +62570,7 @@
           33
         ],
         "gate": 33,
-        "tick": 64001,
+        "tick": 64142,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -62999,7 +63135,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "cb9490926947e791",
+        "state_digest": "75e48d37b9033c66",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -63031,6 +63167,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -63340,7 +63478,7 @@
     },
     {
       "label": "door-8-open",
-      "tick": 64033,
+      "tick": 64174,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -63351,7 +63489,7 @@
           33
         ],
         "gate": 33,
-        "tick": 64033,
+        "tick": 64174,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -63916,7 +64054,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "d232993e0e9f83bc",
+        "state_digest": "1eedb756a691af5b",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -63948,6 +64086,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -64257,7 +64397,7 @@
     },
     {
       "label": "secret-passage",
-      "tick": 64325,
+      "tick": 64466,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -64268,7 +64408,7 @@
           41
         ],
         "gate": 33,
-        "tick": 64325,
+        "tick": 64466,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -64833,7 +64973,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "bb5a6f68ca67614c",
+        "state_digest": "7444a263ccaefa47",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -64865,6 +65005,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -65174,7 +65316,7 @@
     },
     {
       "label": "phoenix-screen",
-      "tick": 64341,
+      "tick": 64482,
       "state": {
         "map": 14,
         "mode": "building",
@@ -65185,7 +65327,7 @@
           48
         ],
         "gate": 33,
-        "tick": 64341,
+        "tick": 64482,
         "blocked": 1,
         "script_pc": 180,
         "script_status": 5,
@@ -65755,7 +65897,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "8d5902307ff089f5",
+        "state_digest": "0c065c639c6def86",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -65787,6 +65929,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -66096,7 +66240,7 @@
     },
     {
       "label": "phoenix-inspected",
-      "tick": 64346,
+      "tick": 64487,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -66107,7 +66251,7 @@
           48
         ],
         "gate": 33,
-        "tick": 64346,
+        "tick": 64487,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -66672,7 +66816,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "dad8363e9754e891",
+        "state_digest": "3fc48e8e86c5df50",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -66704,6 +66848,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -67013,7 +67159,7 @@
     },
     {
       "label": "map-room",
-      "tick": 64669,
+      "tick": 64810,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -67024,7 +67170,7 @@
           17
         ],
         "gate": 139,
-        "tick": 64669,
+        "tick": 64810,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -67589,7 +67735,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "135e52fdb853ecb6",
+        "state_digest": "239d2a304061f4ca",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -67621,6 +67767,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -67930,7 +68078,7 @@
     },
     {
       "label": "wrong-password",
-      "tick": 64676,
+      "tick": 64817,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -67941,7 +68089,7 @@
           14
         ],
         "gate": 139,
-        "tick": 64676,
+        "tick": 64817,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -68506,7 +68654,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "b34edd08590cb957",
+        "state_digest": "91aa3096c30d0091",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -68538,6 +68686,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -68847,7 +68997,7 @@
     },
     {
       "label": "password-symbol-140",
-      "tick": 64771,
+      "tick": 64912,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -68858,7 +69008,7 @@
           1
         ],
         "gate": 139,
-        "tick": 64771,
+        "tick": 64912,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -69423,7 +69573,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "a98e1aabab1ef9c5",
+        "state_digest": "bbf20b3dd9184756",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -69455,6 +69605,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -69764,7 +69916,7 @@
     },
     {
       "label": "password-symbol-186",
-      "tick": 64808,
+      "tick": 64949,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -69775,7 +69927,7 @@
           6
         ],
         "gate": 139,
-        "tick": 64808,
+        "tick": 64949,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -70340,7 +70492,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "373cd2b5df54045d",
+        "state_digest": "20f3b718bf748b30",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -70372,6 +70524,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -70681,7 +70835,7 @@
     },
     {
       "label": "password-symbol-325",
-      "tick": 64845,
+      "tick": 64986,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -70692,7 +70846,7 @@
           8
         ],
         "gate": 139,
-        "tick": 64845,
+        "tick": 64986,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -71257,7 +71411,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "b3d2bb8151b1cb81",
+        "state_digest": "6d8ca5edc025ecce",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -71289,6 +71443,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -71598,7 +71754,7 @@
     },
     {
       "label": "password-symbol-341",
-      "tick": 64874,
+      "tick": 65015,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -71609,7 +71765,7 @@
           10
         ],
         "gate": 139,
-        "tick": 64874,
+        "tick": 65015,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -72174,7 +72330,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "de7c87465c1a26fc",
+        "state_digest": "f2b81d492faf7f85",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -72206,6 +72362,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -72515,7 +72673,7 @@
     },
     {
       "label": "password-symbol-375",
-      "tick": 64916,
+      "tick": 65057,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -72526,7 +72684,7 @@
           13
         ],
         "gate": 139,
-        "tick": 64916,
+        "tick": 65057,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -73091,7 +73249,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "a42e857d1ec07c82",
+        "state_digest": "4701607537551842",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -73123,6 +73281,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -73432,7 +73592,7 @@
     },
     {
       "label": "password-symbol-439",
-      "tick": 64957,
+      "tick": 65098,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -73443,7 +73603,7 @@
           14
         ],
         "gate": 139,
-        "tick": 64957,
+        "tick": 65098,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -74008,7 +74168,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "cf4a0db90d234a53",
+        "state_digest": "0cab06249009d9e1",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -74040,6 +74200,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -74349,7 +74511,7 @@
     },
     {
       "label": "password-symbol-443",
-      "tick": 64989,
+      "tick": 65130,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -74360,7 +74522,7 @@
           15
         ],
         "gate": 139,
-        "tick": 64989,
+        "tick": 65130,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -74925,7 +75087,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "fe03fa7ffba44d7c",
+        "state_digest": "1b73609d17f2c1d6",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -74957,6 +75119,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -75266,7 +75430,7 @@
     },
     {
       "label": "white-code-accepted",
-      "tick": 65053,
+      "tick": 65194,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -75277,7 +75441,7 @@
           14
         ],
         "gate": 139,
-        "tick": 65053,
+        "tick": 65194,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -75842,7 +76006,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "d60d713460fad478",
+        "state_digest": "4669c6a40fef1943",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -75874,6 +76038,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -76183,7 +76349,7 @@
     },
     {
       "label": "map-room-exit",
-      "tick": 65093,
+      "tick": 65234,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -76194,7 +76360,7 @@
           28
         ],
         "gate": 33,
-        "tick": 65093,
+        "tick": 65234,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -76759,7 +76925,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "4c75679df34806cf",
+        "state_digest": "53d243f4d7d2a2cc",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -76791,6 +76957,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -77100,7 +77268,7 @@
     },
     {
       "label": "hyperpulse-power",
-      "tick": 65409,
+      "tick": 65550,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -77111,7 +77279,7 @@
           7
         ],
         "gate": 33,
-        "tick": 65409,
+        "tick": 65550,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -77676,7 +77844,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "c379eba5301312ac",
+        "state_digest": "5cf5083e5d9d3f67",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -77708,6 +77876,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -78017,7 +78187,7 @@
     },
     {
       "label": "cache-found",
-      "tick": 65521,
+      "tick": 65662,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -78028,7 +78198,7 @@
           2
         ],
         "gate": 33,
-        "tick": 65521,
+        "tick": 65662,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -78593,7 +78763,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "9b5f2349d31b8a04",
+        "state_digest": "11274ebc87b94bd7",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -78625,6 +78795,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -78934,7 +79106,7 @@
     },
     {
       "label": "ending-start",
-      "tick": 65707,
+      "tick": 65848,
       "state": {
         "map": 14,
         "mode": "building",
@@ -78945,7 +79117,7 @@
           7
         ],
         "gate": 33,
-        "tick": 65707,
+        "tick": 65848,
         "blocked": 1,
         "script_pc": 8,
         "script_status": 7,
@@ -79510,7 +79682,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "9363fe87c0520565",
+        "state_digest": "69c6b117b4064fe9",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -79542,6 +79714,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -79851,7 +80025,7 @@
     },
     {
       "label": "ending-complete",
-      "tick": 65975,
+      "tick": 66116,
       "state": {
         "map": 14,
         "mode": "ending",
@@ -79862,7 +80036,7 @@
           7
         ],
         "gate": 33,
-        "tick": 65975,
+        "tick": 66116,
         "blocked": 1,
         "script_pc": 2991,
         "script_status": 3,
@@ -80436,7 +80610,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "859dfbfa31037b26",
+        "state_digest": "42888834e81c2cdc",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -80468,6 +80642,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -80786,7 +80962,7 @@
       7
     ],
     "gate": 33,
-    "tick": 65975,
+    "tick": 66116,
     "blocked": 1,
     "script_pc": 2991,
     "script_status": 3,
@@ -81360,7 +81536,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "859dfbfa31037b26",
+    "state_digest": "42888834e81c2cdc",
     "effect_stage": 0,
     "combat": {
       "phase": 0,
@@ -81392,6 +81568,8 @@
         0,
         0
       ],
+      "target_choice": 0,
+      "weapon_ui": 0,
       "count": 0,
       "target": 0,
       "kick": 0,

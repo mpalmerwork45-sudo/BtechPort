@@ -46,7 +46,7 @@ def generate(binary):
         check(not state['animation']['active'],'Startup did not complete')
         note('computer');advance(['accept']);note('messages');advance(['accept']);note('graphics');advance(['accept']);note('orders')
         waypoint(72,77);turns(4);waypoint(84,85);turns(5)
-        choose(3);note('weapons');advance(['down','down','accept']);note('target');advance(['accept']);note('assigned');advance(['accept'])
+        choose(3);note('weapons');advance(['down','down','accept']);note('target');advance(['accept']);note('assigned');advance(['down','accept'])
         turns(2);waypoint(96,93);turns(9);waypoint(110,89);turns(80)
         check(state['combat']['won']==1,'Ordinary combat route did not win')
         note('victory')

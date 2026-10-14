@@ -39,7 +39,7 @@ typedef enum { BTP_COMBAT_NONE, BTP_COMBAT_CONTROL, BTP_COMBAT_MESSAGES, BTP_COM
     BTP_COMBAT_SCAN, BTP_COMBAT_ROUND, BTP_COMBAT_NOTICE, BTP_COMBAT_KICK,
     BTP_COMBAT_REPLACE, BTP_COMBAT_PICK, BTP_COMBAT_STORY,
     BTP_COMBAT_OFFER, BTP_COMBAT_AVOID, BTP_COMBAT_SPY,
-    BTP_COMBAT_SCAN_CHOICE, BTP_COMBAT_SCAN_DETAIL } BtpCombatPhase;
+    BTP_COMBAT_SCAN_CHOICE, BTP_COMBAT_SCAN_DETAIL, BTP_COMBAT_OVERRIDE } BtpCombatPhase;
 enum { BTP_COMBAT_UNITS = 24 };
 typedef struct {
     uint8_t movement, x, y, active, count, wx[11], wy[11], orders[11], kick;
@@ -62,6 +62,9 @@ typedef struct {
     BtpCombatPlan plans[BTP_COMBAT_UNITS];
     uint32_t automatic;
     uint8_t auto_run,paused;
+    /* Original weapon submenus clear the heading and command boxes
+       independently. Preserve that presentation across a held save. */
+    uint8_t weapon_ui;
 } BtpCombatState;
 enum { BTP_COMBAT_LEGACY_BYTES=1536, BTP_COMBAT_SAVE_BYTES = 6144 };
 enum { BTP_COMBAT_DATA_V1_BYTES = 4+375+561+15+46+93+16,
@@ -86,6 +89,7 @@ unsigned btp_combat_range(const BtpCombatData *data, unsigned weapon, int x, int
 unsigned btp_combat_range_to(const BtpCombatData *data,unsigned weapon,const BtpCombatUnit *actor,const BtpCombatUnit *target);
 unsigned btp_combat_weapon(const BtpCombatUnit *unit, unsigned index);
 unsigned btp_combat_weapon_count(const BtpCombatUnit *unit);
+unsigned btp_combat_weapon_type(const BtpCombatUnit *unit, unsigned index);
 int btp_combat_points(const BtpCombatUnit *unit, unsigned movement);
 void btp_combat_cool(BtpCombatUnit *unit, int movement, unsigned steps, unsigned terrain);
 int btp_combat_critical(BtpCombatUnit *unit, const BtpCombatData *data, unsigned location, uint8_t rng[3]);

@@ -110,6 +110,17 @@ unsigned btp_combat_weapon_count(const BtpCombatUnit *u)
     }
     return count;
 }
+unsigned btp_combat_weapon_type(const BtpCombatUnit *u,unsigned index)
+{
+    /* 0D43 lists the raw critical-slot value even if ammunition is empty
+       or its high destroyed bit is set. Firing eligibility is separate. */
+    if (u->infantry) return index ? 0u : u->record[11]+1u;
+    for (unsigned i=51,n=0;i<86;++i) {
+        unsigned type=u->record[i]&127u;
+        if (type>=16 && type<=32 && n++==index) return u->record[i];
+    }
+    return 0;
+}
 unsigned btp_combat_range_to(const BtpCombatData *d,unsigned w,const BtpCombatUnit *a,const BtpCombatUnit *t)
 {
     /* 0E31:0F53 bypasses vehicle footprint offsets for people (IDs

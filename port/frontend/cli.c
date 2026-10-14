@@ -219,7 +219,8 @@ void btp_print_state(const BtpState *s, const BtpResources *r)
         "\"weapon\":%u,\"flash\":%u,\"goal\":[%u,%u,%u,%u],\"orders\":[",c->phase,c->selected,c->round,c->step,c->won,c->fled,c->last_event,c->fired,
         c->weapon_selected,c->flash,c->goal_active,c->movement,c->goal_x,c->goal_y);
     for (unsigned i=0;i<11;++i) printf("%s%u",i ? "," : "",c->orders[i]);
-    printf("],\"count\":%u,\"target\":%u,\"kick\":%u,\"lost\":%u,\"attacker\":%u,\"shot_target\":%u,\"technician\":%u,\"apprentice\":%u,\"automatic\":%u,\"auto_run\":%u,\"paused\":%u,\"friends\":%u,\"active\":%u,\"scan\":%u,\"menu_commands\":[",
+    printf("],\"target_choice\":%u,\"weapon_ui\":%u",c->target_selected,c->weapon_ui);
+    printf(",\"count\":%u,\"target\":%u,\"kick\":%u,\"lost\":%u,\"attacker\":%u,\"shot_target\":%u,\"technician\":%u,\"apprentice\":%u,\"automatic\":%u,\"auto_run\":%u,\"paused\":%u,\"friends\":%u,\"active\":%u,\"scan\":%u,\"menu_commands\":[",
         c->count,c->target_unit,c->kick_target,c->lost,c->last_attacker,c->last_target,s->technician,s->apprentice,c->automatic,c->auto_run,c->paused,c->friends,c->active_unit,c->scan_unit);
     for (unsigned i=0;c->phase && i<btp_combat_menu_count(c);++i) printf("%s%u",i ? "," : "",btp_combat_menu_command(c,i));
     printf("],\"units\":[");

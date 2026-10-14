@@ -98,5 +98,5 @@
     "0D43:07CB target selection",
     "103B:069F withdrawal and 103B result caller"
   ],
-  "limits": "Complete unmasked UI regions; not battlefield equality. Assigned-row comparison sets the original selected row explicitly; native automatic advancement and override dialogs are outside this renderer comparison."
+  "limits": "Complete unmasked UI regions; not battlefield equality. Assigned-row comparison sets the original selected row explicitly; selection persistence and override behavior are covered separately in weapon-menu-primary."
 }

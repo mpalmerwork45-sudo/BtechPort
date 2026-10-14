@@ -2,43 +2,43 @@
   "checkpoints": [
     {
       "label": "funded-by-owner-shortcut",
-      "tick": 50303
+      "tick": 50444
     },
     {
       "label": "garage-crew-allocation",
-      "tick": 50330
+      "tick": 50471
     },
     {
       "label": "garage-checkout",
-      "tick": 50337
+      "tick": 50478
     },
     {
       "label": "walking-with-rex-piloting",
-      "tick": 50383
+      "tick": 50524
     },
     {
       "label": "hospital-menu",
-      "tick": 50750
+      "tick": 50891
     },
     {
       "label": "hospital-companion-pause",
-      "tick": 50811
+      "tick": 50952
     },
     {
       "label": "hospital-companion-joined",
-      "tick": 50813
+      "tick": 50954
     },
     {
       "label": "medical-kit",
-      "tick": 50820
+      "tick": 50961
     },
     {
       "label": "field-surgery-kit",
-      "tick": 50824
+      "tick": 50965
     },
     {
       "label": "hospital-exit",
-      "tick": 50826
+      "tick": 50967
     }
   ],
   "final": {
@@ -51,7 +51,7 @@
       17
     ],
     "gate": 85,
-    "tick": 50826,
+    "tick": 50967,
     "blocked": 0,
     "script_pc": 4577,
     "script_status": 3,
@@ -641,7 +641,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "39cd764859dc6a6d",
+    "state_digest": "ff18bfd8b01172af",
     "effect_stage": 0,
     "combat": {
       "phase": 0,
@@ -673,6 +673,8 @@
         0,
         0
       ],
+      "target_choice": 0,
+      "weapon_ui": 0,
       "count": 0,
       "target": 0,
       "kick": 0,

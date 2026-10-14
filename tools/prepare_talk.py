@@ -105,6 +105,9 @@ def extract(source):
         addresses.append(segment*16+offset)
     # Original 0D43 weapon/target headings; earlier IDs remain unchanged.
     addresses.extend(DS+p for p in (0x29a3,0x2aa8))
+    # 0D43 weapon failures/overrides and infantry prompts; 103B kick prompt.
+    addresses.extend(DS+p for p in (0x2a00,0x2a39,0x2a74,0x2ac6,0x2ada,0x2ae6,
+        0x2aec,0x2af1,0x2b0c,0x2b16,0x3ce0,0x3cfa))
     blob = bytearray(); ranges = []; origins = []
     for address in addresses:
         end = image.index(0,address)
@@ -118,7 +121,7 @@ def extract(source):
     header += bytes.fromhex(EXE_SHA)+bytes.fromhex(IMAGE_SHA)
     header += b"".join(struct.pack("<HH",*r) for r in ranges)
     font = image[FONT:FONT+2048]
-    return header+blob+font, {**metadata,"format":"BTTA/v20","strings":origins,
+    return header+blob+font, {**metadata,"format":"BTTA/v21","strings":origins,
         "font":{"image_offset":FONT,"length":len(font),"sha256":hashlib.sha256(font).hexdigest()}}
 
 

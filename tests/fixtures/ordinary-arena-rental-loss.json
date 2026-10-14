@@ -579,7 +579,7 @@
           "rental": 1,
           "variant": 3
         },
-        "state_digest": "515f131974bcc3ad",
+        "state_digest": "d39de8c8bf2b1435",
         "effect_stage": 0,
         "combat": {
           "phase": 1,
@@ -611,6 +611,8 @@
             255,
             255
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 3,
           "target": 1,
           "kick": 255,
@@ -1644,7 +1646,7 @@
           "rental": 1,
           "variant": 3
         },
-        "state_digest": "67836b71e7ddef32",
+        "state_digest": "ac0416f41216be7a",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1676,6 +1678,8 @@
             255,
             255
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 4,
           "target": 2,
           "kick": 255,
@@ -2848,7 +2852,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "b9704f421b88f8e2",
+        "state_digest": "ad64960412f9e2ca",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -2880,6 +2884,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -3778,7 +3784,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "0232444ae5a4c772",
+        "state_digest": "0eefed6685a0ad9a",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -3810,6 +3816,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -4706,7 +4714,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "0232444ae5a4c772",
+    "state_digest": "0eefed6685a0ad9a",
     "effect_stage": 0,
     "combat": {
       "phase": 0,
@@ -4738,6 +4746,8 @@
         0,
         0
       ],
+      "target_choice": 0,
+      "weapon_ui": 0,
       "count": 0,
       "target": 0,
       "kick": 0,

@@ -209,7 +209,7 @@ int btp_resources_load(const char *dir, BtpResources *r, BtpError *e)
 
 int btp_dialogue_decode(const uint8_t *b, size_t n, BtpDialogue *d, BtpError *e)
 {
-    /* BTTA/v20: source tags, 319 text ranges and original 256x8 font bytes.
+    /* BTTA/v21: source tags, 331 text ranges and original 256x8 font bytes.
        Conversion validates the audited EXE. Tags identify that source, not a
        cryptographic integrity check of the generated cache. */
     static const uint8_t tags[64] = {

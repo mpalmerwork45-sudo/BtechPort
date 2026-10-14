@@ -26,10 +26,15 @@ class Arena(Buildings):
             ['down']*max(0,y-u['y'])+['up']*max(0,u['y']-y)+['accept'])
     def spectator(self):
         self.command(3)
-        for _ in range(3):
+        for weapon in range(3):
+            self.advance(['down']*((weapon-self.state['combat']['weapon'])%4))
             self.advance(['accept'])
-            if self.state['combat']['target']!=2:self.advance(['down','accept','up'])
-            self.advance(['accept'])
+            if self.state['combat']['phase']==20:self.advance(['accept'])
+            for _ in range(24):
+                if self.state['combat']['target']==2:break
+                self.advance(['down']*((1-self.state['combat']['target_choice'])%3)+['accept'])
+            else:raise RuntimeError('Spectator absent from target selector')
+            self.advance(['down']*((0-self.state['combat']['target_choice'])%3)+['accept'])
         self.advance(['cancel'])
 
 def main():

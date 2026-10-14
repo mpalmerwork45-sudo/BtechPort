@@ -2,9 +2,9 @@
 
 ## Current M4 presentation checks
 
-The active build has 51 CTest suites. Internal saves are BTPY/v34, with a
+The active build has 51 CTest suites. Internal saves are BTPZ/v35, with a
 20,480-byte payload; old versions retain explicit migrations. Current caches
-are BTTA/v19, BTCB/v11 and BTW3. The world seed is the original `0x020304`.
+are BTTA/v21, BTCB/v11 and BTW3. The world seed is the original `0x020304`.
 The older sections below describe earlier increments.
 The current increment passes all 51 regular and ASan/UBSan/LeakSanitizer core
 suites, historical sanitizer checks, six arena/prison/theft SDL tails and the
@@ -73,8 +73,8 @@ The last adds 314 recruitment, inspection and post-wave spy cases.
 order when gameplay/presentation timing changes. Routine native checks replay
 short saved tails, so adding a later mission does not require repeatedly playing
 every earlier mission in real time.
-`make_fresh_campaign_replay.py` records 65,975 fresh-cadet inputs through the
-cache ending; `make_spy_replay.py` records 50,423 through inspection, spy removal
+`make_fresh_campaign_replay.py` records 66,116 fresh-cadet inputs through the
+cache ending; `make_spy_replay.py` records 50,564 through inspection, spy removal
 and replacement recruitment. C integration restores and continues before
 every input. Only the ending route uses the authorized credit shortcut; neither
 imports an original save or edits quest flags, coordinates, skills or RNG.
@@ -94,8 +94,14 @@ earlier menu/scan regions and restores before every target/withdrawal input.
 `native_smoke.py --combat-ui-only` also checks actual F5/F9 on the weapon list,
 target selector and both withdrawal pages. All 51 regular suites and the five
 Python tool tests pass; focused sanitizer checks cover these changed paths.
-Assigned-row colour/layout has a direct comparison; native automatic weapon
-advancement, override notices and infantry/Kick selection remain outside it.
+`make_weapon_menu_vectors.py` adds 30 unmasked regions from 20 original held
+pages. The input test keeps the original selected row, verifies both override
+choices and cancellation, checks empty/destroyed weapons, and exercises Kick
+and infantry selection. It restores before every input and migrates v34 foot
+weapon lists. Six more held pages pass actual native F5/F9 (13 combat pages
+in total). BTPZ/v35 stores presentation bits at payload offset 10233; the
+combat annex and total payload lengths are unchanged. BTTA/v21 contains 331
+original text ranges (14,473 bytes including the font and provenance header).
 
 The native intro starts at the logos. Use `--intro-preview` for equivalent
 headless replay. Escape cancels; Ctrl+Shift+Escape quits. Shift-held K/Y/R adds

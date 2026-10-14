@@ -51,7 +51,7 @@ def main():
                               '103B:069F withdrawal and 103B result caller'],
                     limits='Complete unmasked UI regions; not battlefield equality. '
                     'Assigned-row comparison sets the original selected row explicitly; '
-                    'native automatic advancement and override dialogs are outside this renderer comparison.')
+                    'selection persistence and override behavior are covered separately in weapon-menu-primary.')
     (ROOT / 'tests/fixtures/target-ui-primary.json').write_text(json.dumps(metadata, indent=2)+'\n')
     print('Original weapon/target/withdrawal regions:', len(rows))
 

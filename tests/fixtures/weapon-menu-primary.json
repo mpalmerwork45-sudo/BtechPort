@@ -1,0 +1,345 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "cases": [
+    {
+      "case": 0,
+      "label": "weapons",
+      "bounds": [
+        0,
+        0,
+        104,
+        200
+      ],
+      "rgb_sha256": "5938caabebaf6aabd9a6fab27e705931e7e346e03874f7b020015ba84028e9b6"
+    },
+    {
+      "case": 0,
+      "label": "weapons",
+      "bounds": [
+        104,
+        96,
+        216,
+        104
+      ],
+      "rgb_sha256": "433e12dc13d0dad7ed23df05fc331dcf9fdb0113c0ed62ef0fc00a40cc148c67"
+    },
+    {
+      "case": 1,
+      "label": "assigned",
+      "bounds": [
+        0,
+        0,
+        104,
+        200
+      ],
+      "rgb_sha256": "132fcdbef4be1a5f47fe964befa96c2fd7fd47748a05601fe28a8b55354265fe"
+    },
+    {
+      "case": 1,
+      "label": "assigned",
+      "bounds": [
+        104,
+        96,
+        216,
+        104
+      ],
+      "rgb_sha256": "a0d3ed04b75c3895fa191425eae0ae96b7dc85b75bd736d0638f45467684350d"
+    },
+    {
+      "case": 2,
+      "label": "override-yes",
+      "bounds": [
+        0,
+        0,
+        104,
+        200
+      ],
+      "rgb_sha256": "578c32520b70e7ee3ae7204ae79428e60c96e4bf76fe6031c8642f7334c5be59"
+    },
+    {
+      "case": 2,
+      "label": "override-yes",
+      "bounds": [
+        104,
+        96,
+        216,
+        104
+      ],
+      "rgb_sha256": "a0d3ed04b75c3895fa191425eae0ae96b7dc85b75bd736d0638f45467684350d"
+    },
+    {
+      "case": 3,
+      "label": "override-no",
+      "bounds": [
+        0,
+        0,
+        104,
+        200
+      ],
+      "rgb_sha256": "900d729b1cfae878e4e11680ec0275c00c23f5ec33811686e3827ebce200fc00"
+    },
+    {
+      "case": 3,
+      "label": "override-no",
+      "bounds": [
+        104,
+        96,
+        216,
+        104
+      ],
+      "rgb_sha256": "a0d3ed04b75c3895fa191425eae0ae96b7dc85b75bd736d0638f45467684350d"
+    },
+    {
+      "case": 4,
+      "label": "override-refused",
+      "bounds": [
+        0,
+        0,
+        104,
+        200
+      ],
+      "rgb_sha256": "132fcdbef4be1a5f47fe964befa96c2fd7fd47748a05601fe28a8b55354265fe"
+    },
+    {
+      "case": 4,
+      "label": "override-refused",
+      "bounds": [
+        104,
+        96,
+        216,
+        104
+      ],
+      "rgb_sha256": "a0d3ed04b75c3895fa191425eae0ae96b7dc85b75bd736d0638f45467684350d"
+    },
+    {
+      "case": 5,
+      "label": "replacement-target",
+      "bounds": [
+        0,
+        0,
+        104,
+        200
+      ],
+      "rgb_sha256": "ee316065cfa23f7c24b499a136567453ecd9e5bc5178ced0e34b3cadc0bfbeb9"
+    },
+    {
+      "case": 6,
+      "label": "cleared",
+      "bounds": [
+        0,
+        0,
+        104,
+        200
+      ],
+      "rgb_sha256": "132fcdbef4be1a5f47fe964befa96c2fd7fd47748a05601fe28a8b55354265fe"
+    },
+    {
+      "case": 6,
+      "label": "cleared",
+      "bounds": [
+        104,
+        96,
+        216,
+        104
+      ],
+      "rgb_sha256": "433e12dc13d0dad7ed23df05fc331dcf9fdb0113c0ed62ef0fc00a40cc148c67"
+    },
+    {
+      "case": 7,
+      "label": "empty",
+      "bounds": [
+        0,
+        0,
+        104,
+        200
+      ],
+      "rgb_sha256": "5564de7cf896f6652ec7dd227e93facaa4ce2c148323ed86528a1d1ddfbfb41d"
+    },
+    {
+      "case": 7,
+      "label": "empty",
+      "bounds": [
+        104,
+        96,
+        216,
+        104
+      ],
+      "rgb_sha256": "6bfeca39b96f89e813ee4ce2d48f1f64916ebcf591b051e189ca2c10f639b3c2"
+    },
+    {
+      "case": 8,
+      "label": "empty-dismissed",
+      "bounds": [
+        0,
+        0,
+        104,
+        200
+      ],
+      "rgb_sha256": "c21c0a6bd682925b17783215583631c032b32245410532a7b5a6b6a591f05dc0"
+    },
+    {
+      "case": 8,
+      "label": "empty-dismissed",
+      "bounds": [
+        104,
+        96,
+        216,
+        104
+      ],
+      "rgb_sha256": "6bfeca39b96f89e813ee4ce2d48f1f64916ebcf591b051e189ca2c10f639b3c2"
+    },
+    {
+      "case": 9,
+      "label": "destroyed",
+      "bounds": [
+        0,
+        0,
+        104,
+        200
+      ],
+      "rgb_sha256": "9155cad851b72af573ae4bfbc4ac6f59abe07027efe0f9c58c4cc0e5b8cb4b0f"
+    },
+    {
+      "case": 9,
+      "label": "destroyed",
+      "bounds": [
+        104,
+        96,
+        216,
+        104
+      ],
+      "rgb_sha256": "58538740d281277c0e7623a1fe9eb971ca65bb22bf6b1ed18d52afd42e9a9ad5"
+    },
+    {
+      "case": 10,
+      "label": "destroyed-dismissed",
+      "bounds": [
+        0,
+        0,
+        104,
+        200
+      ],
+      "rgb_sha256": "09fb1cdc8833bae481e09a3d88a7fb06976325cf306924efd15ee365d8d5ecf4"
+    },
+    {
+      "case": 10,
+      "label": "destroyed-dismissed",
+      "bounds": [
+        104,
+        96,
+        216,
+        104
+      ],
+      "rgb_sha256": "58538740d281277c0e7623a1fe9eb971ca65bb22bf6b1ed18d52afd42e9a9ad5"
+    },
+    {
+      "case": 11,
+      "label": "kick",
+      "bounds": [
+        0,
+        0,
+        104,
+        200
+      ],
+      "rgb_sha256": "2320d46a76687e7e50462a53e7834fd0500cf1e5be0a54027104cc023ee57e04"
+    },
+    {
+      "case": 12,
+      "label": "kick-human",
+      "bounds": [
+        0,
+        0,
+        104,
+        200
+      ],
+      "rgb_sha256": "a2be5a3d19726b0a807201d6ddf989d7d77c9998742f96e117be07f040c5038d"
+    },
+    {
+      "case": 13,
+      "label": "foot-menu",
+      "bounds": [
+        0,
+        0,
+        104,
+        200
+      ],
+      "rgb_sha256": "8f1878a85b390f4f8d99d050bfff86773a21be8bf04a14b2d6be20cb44cf2c90"
+    },
+    {
+      "case": 14,
+      "label": "foot-target",
+      "bounds": [
+        0,
+        0,
+        104,
+        200
+      ],
+      "rgb_sha256": "1a26ce5c1b37e75d85d4071548b886169be3a4a5c6124f8a1c55314447a12b83"
+    },
+    {
+      "case": 15,
+      "label": "foot-assigned",
+      "bounds": [
+        0,
+        0,
+        104,
+        200
+      ],
+      "rgb_sha256": "75a99f71d8d0ac9ed8124faf9329754d5795a02ea4a0ed6512ec415f71576e2a"
+    },
+    {
+      "case": 16,
+      "label": "foot-override",
+      "bounds": [
+        0,
+        0,
+        104,
+        200
+      ],
+      "rgb_sha256": "4d2b4375a4eec290b6a1146f86f0ebe53dc387255e31616e66324c198cfae4ee"
+    },
+    {
+      "case": 17,
+      "label": "foot-override-refused",
+      "bounds": [
+        0,
+        0,
+        104,
+        200
+      ],
+      "rgb_sha256": "6bdeb27b4407c60d9ea157a03b01961ce36a3fba517a79eee65605c6b39f5f85"
+    },
+    {
+      "case": 18,
+      "label": "foot-replacement-target",
+      "bounds": [
+        0,
+        0,
+        104,
+        200
+      ],
+      "rgb_sha256": "1a26ce5c1b37e75d85d4071548b886169be3a4a5c6124f8a1c55314447a12b83"
+    },
+    {
+      "case": 19,
+      "label": "foot-cleared",
+      "bounds": [
+        0,
+        0,
+        104,
+        200
+      ],
+      "rgb_sha256": "6bdeb27b4407c60d9ea157a03b01961ce36a3fba517a79eee65605c6b39f5f85"
+    }
+  ],
+  "capture_run": "1791959365331060258",
+  "prerequisites": "Hash original held weapon pages after ordinary keyboard/menu inputs.\n\nThe private GAME4 prerequisite activates GAME3's parked vehicles, puts Rick on\nfoot, empties one weapon and destroys another critical slot. Original files and\nexecutable instructions remain unchanged. Captures and RAM stay in work/.",
+  "routines": [
+    "0D43:0004 weapons and infantry",
+    "0D43:07CB target selection",
+    "0000:1A13 yes/no",
+    "103B kick caller at image 0x125e1"
+  ],
+  "limits": "Unmasked complete text panels and weapon window; not battlefield equality."
+}

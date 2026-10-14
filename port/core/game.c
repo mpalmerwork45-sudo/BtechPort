@@ -556,7 +556,7 @@ static uint16_t get16(const uint8_t *p) { return (uint16_t)(p[0] | (uint16_t)p[1
 void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
 {
     memset(b, 0, BTP_STATE_BYTES);
-    memcpy(b, "BTPY", 4); b[4] = 34;
+    memcpy(b, "BTPZ", 4); b[4] = 35;
     for (unsigned i = 0; i < 4; ++i) b[8+i] = (uint8_t)(s->tick >> (8 * i));
     b[12] = (uint8_t)s->x_half; b[13] = (uint8_t)(s->x_half >> 8);
     b[14] = (uint8_t)s->y_half; b[15] = (uint8_t)(s->y_half >> 8);
@@ -728,8 +728,10 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         n == BTP_STATE_BYTES && !memcmp(b,"BTPV",4) && b[4]==31 ? 31 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPW",4) && b[4]==32 ? 32 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPX",4) && b[4]==33 ? 33 :
-        n == BTP_STATE_BYTES && !memcmp(b,"BTPY",4) && b[4]==34 ? 34 : 0;
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPY",4) && b[4]==34 ? 34 :
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPZ",4) && b[4]==35 ? 35 : 0;
     if (!version) return 0;
+    if (version>=18 && version<35 && b[10233]) return 0; /* v35 weapon-window presentation bits. */
     for (unsigned i = 5; i < 8; ++i) if (b[i]) return 0;
     if (version == 1) { for (unsigned i = 20; i < 24; ++i) if (b[i]) return 0; }
     else {
@@ -1133,6 +1135,16 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
             }
             if (c->phase==BTP_COMBAT_MENU)
                 c->selected=(uint8_t)btp_combat_menu_command(c,btp_combat_menu_row(c));
+        }
+        if (version<35 && result.combat.phase) {
+            BtpCombatState *c=&result.combat;
+            if (c->phase>BTP_COMBAT_SCAN_DETAIL || c->notice>17 || c->active_unit>=BTP_COMBAT_UNITS) return 0;
+            /* Old versions put infantry into a one-weapon list. Preserve
+               its pending choice using the original direct target selector. */
+            if (c->phase==BTP_COMBAT_WEAPONS && c->unit[c->active_unit].infantry) {
+                c->phase=(uint8_t)(c->weapon_selected ? BTP_COMBAT_MENU : BTP_COMBAT_TARGET);
+                c->selected=3;c->target_selected=2;
+            }
         }
         if (version<33 && result.service.phase) btp_service_upgrade(&result);
         if (result.disk_origin && ((result.disk_origin!=8 && result.disk_origin!=19) || result.mode!=BTP_BUILDING || !result.checkpoint_valid || result.campaign.building!=result.disk_origin)) return 0;

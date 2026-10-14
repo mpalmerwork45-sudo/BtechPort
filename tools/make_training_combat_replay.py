@@ -91,15 +91,26 @@ def generate(binary,kick=False,campaign=False):
             # The duel uses two medium lasers and the machine guns so the
             # Chameleon can sustain fire without overheating.
             allowed=range(10) if state['mission']['assignment']>=4 and state['combat']['units'][0]['heat']<12 else [0,4,7,8,9]
-            while state['combat']['phase']==6:
-                if state['mission']['assignment']>=3 and state['combat']['weapon'] not in allowed:
-                    if campaign:advance(['accept','cancel'])
-                    advance(['down']);continue
+            count=sum(16<=v&127<=32 for v in state['combat']['units'][0]['record'][51:86])
+            for weapon in range(count):
+                # Menu 5 retains its row after an assignment and between
+                # visits. Choose each installed slot explicitly, including
+                # the override question when replacing an existing order.
+                advance(['down']*((weapon-state['combat']['weapon'])%(count+1)))
+                keep=state['mission']['assignment']<3 or weapon in allowed
+                if not keep and not campaign:continue
                 advance(['accept'])
+                if state['combat']['phase']==20:advance(['accept'])
+                if state['combat']['phase']==10:advance(['accept']);continue
                 if state['combat']['phase']==7:
-                    if state['combat']['units'][state['combat']['target']]['record'][0]==255:
-                        advance(['down','accept','up'])
-                    advance(['accept'])
+                    if not keep:advance(['cancel']);continue
+                    for _ in range(24):
+                        if state['combat']['units'][state['combat']['target']]['record'][0]!=255:break
+                        advance(['down']*((1-state['combat']['target_choice'])%3)+['accept'])
+                    advance(['down']*((0-state['combat']['target_choice'])%3)+['accept'])
+                check(state['combat']['phase']==6,'Weapon assignment did not return to list')
+            advance(['down']*((count-state['combat']['weapon'])%(count+1))+['accept'])
+            check(state['combat']['phase']==4,'Done did not close the weapon list')
         if campaign:
             check(state['story_flags'][0]==5 and state['recruitment']==1,'Missing natural Rick invitation')
             building(7);note('rick-lounge-menu')
@@ -175,10 +186,6 @@ def generate(binary,kick=False,campaign=False):
                 if state['combat']['won'] or state['combat']['lost']:break
                 c=state['combat'];target=c['units'][c['target']]
                 if target['record'][0]==255:
-                    command(3);advance(['accept','down','accept','up','accept'])
-                    while state['combat']['phase']==6:
-                        advance(['accept'])
-                        if state['combat']['phase']==7:advance(['accept'])
                     arm()
                 if turn%4==0:
                     c=state['combat'];target=c['units'][c['target']];u=c['units'][0]

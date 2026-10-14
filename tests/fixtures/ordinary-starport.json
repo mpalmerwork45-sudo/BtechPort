@@ -2,7 +2,7 @@
   "checkpoints": [
     {
       "label": "parked-in-starport",
-      "tick": 48898
+      "tick": 49039
     }
   ],
   "final": {
@@ -15,7 +15,7 @@
       26
     ],
     "gate": 85,
-    "tick": 48898,
+    "tick": 49039,
     "blocked": 0,
     "script_pc": 1003,
     "script_status": 3,
@@ -585,7 +585,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "bcf06b69219b72cf",
+    "state_digest": "6405031f74e98dba",
     "effect_stage": 0,
     "combat": {
       "phase": 0,
@@ -617,6 +617,8 @@
         0,
         0
       ],
+      "target_choice": 0,
+      "weapon_ui": 0,
       "count": 0,
       "target": 0,
       "kick": 0,

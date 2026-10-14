@@ -2,7 +2,7 @@
 
 The independent C11/SDL2 port has playable implementations of the authorized
 M4a–M4e increments and the subsequent building, theft, encounter, recruitment and
-presentation requests. A recorded 65,975-input route now starts with a new cadet
+presentation requests. A recorded 66,116-input route now starts with a new cadet
 and reaches the cache ending through the actual training, companion, disk and
 password prerequisites. It uses the authorized money shortcut. M4 as a complete
 reproduction of every original campaign branch remains unfinished.
@@ -76,7 +76,7 @@ Five additional live-caller contexts cover 25 complete original waves and
 7,252 assertions, including spy pilots/passengers and finite ammunition.
 These extend the earlier campaign, medical, save and cache evidence.
 
-The fresh ending and 50,423-input spy/replacement routes restore and continue
+The fresh ending and 50,564-input spy/replacement routes restore and continue
 before every input. Nine SDL tails cover the house, cinema, hut, laser shop,
 both thefts and spy replacement, comparing recorded keys, complete continued
 state and final RGB pixels. Collision tests exercise three mechs and five people,
@@ -103,9 +103,9 @@ a nominal 8 MHz 8088 timing model; no exact recording from physical XT hardware
 is claimed. Enemy Jenner/UrbanMech sprite bases follow the original enemy table,
 while owned mechs use the original garage selection rule.
 
-Internal saves are **BTPY/v34**, with a 20,480-byte payload inside the BTS1
+Internal saves are **BTPZ/v35**, with a 20,480-byte payload inside the BTS1
 length/CRC envelope. The discovery marker and held spy confrontation are saved.
-Current local caches are BTTA/v20, BTCB/v11 and BTW3; the world seed is the
+Current local caches are BTTA/v21, BTCB/v11 and BTW3; the world seed is the
 original startup value `0x020304`, rather than the former research seed.
 Older saves migrate their represented fields; absent direction/exploration
 history cannot be reconstructed. Old ambiguous decorative wreck/fire marks
@@ -118,8 +118,10 @@ and source hashes only.
 The original five follow-ups are underway; this list records the actual
 unfinished portions, including subsequent owner observations.
 
-1. Finish combat UI details: weapon override/empty/destroyed notices, selection
-   persistence, infantry/Kick selectors and direct arena/salvage comparisons.
+1. Finish direct arena/salvage comparisons and the remaining shutdown/sensor
+   weapon warnings. Weapon override/empty/destroyed notices, retained selection
+   and infantry/Kick selectors now match 20 original held pages (30 regions),
+   with restoration before every input and six additional native F5/F9 pages.
    Eight additional weapon/target/withdrawal regions now match original
    captures, including the restored party panel on return. Ordinary original
    targeting starts at enemy ID12 and cycles enemies only; a normal friendly-

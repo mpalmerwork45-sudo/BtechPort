@@ -28,7 +28,7 @@ typedef struct {
     uint8_t count, bytes[BTP_ANM_BYTES];
 } BtpAnm;
 /* 43 earlier bank/Talk strings plus 12 class transcript/rank/subject strings. */
-enum { BTP_TALK_STRINGS = 319, BTP_TALK_MAX = 16384 };
+enum { BTP_TALK_STRINGS = 331, BTP_TALK_MAX = 16384 };
 typedef struct {
     uint8_t bytes[BTP_TALK_MAX];
     uint8_t font[2048];

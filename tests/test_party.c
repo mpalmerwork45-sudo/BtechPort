@@ -70,8 +70,11 @@ int main(int argc,char **argv)
     while (s.combat.selected!=7) btp_game_tick(&s,r,BTP_DOWN);
     btp_game_tick(&s,r,BTP_ACCEPT);CHECK(s.combat.phase==BTP_COMBAT_MENU && s.combat.active_unit==1);CHECK(restore(&s,r));
     while (s.combat.selected!=3) btp_game_tick(&s,r,BTP_DOWN);
-    for (unsigned i=0;i<4;++i) { btp_game_tick(&s,r,BTP_ACCEPT);CHECK(restore(&s,r)); }
-    CHECK(s.combat.phase==BTP_COMBAT_MENU);btp_game_tick(&s,r,BTP_ACCEPT);
+    btp_game_tick(&s,r,BTP_ACCEPT);CHECK(s.combat.phase==BTP_COMBAT_TARGET && s.combat.target_selected==2 && restore(&s,r));
+    btp_game_tick(&s,r,BTP_DOWN);btp_game_tick(&s,r,BTP_ACCEPT);CHECK(restore(&s,r));
+    CHECK(s.combat.phase==BTP_COMBAT_MENU && s.combat.selected==0);
+    while (s.combat.selected!=9) btp_game_tick(&s,r,BTP_DOWN);
+    btp_game_tick(&s,r,BTP_ACCEPT);
     for (unsigned i=0;i<300 && s.combat.phase==BTP_COMBAT_ROUND;++i) { btp_game_tick(&s,r,BTP_IDLE);CHECK(restore(&s,r)); }
     CHECK(s.combat.phase==BTP_COMBAT_MENU && s.combat.round==1);
     CHECK(s.combat.enemy_fired[0]&1u);CHECK(s.combat.plans[0].orders[0]==255);

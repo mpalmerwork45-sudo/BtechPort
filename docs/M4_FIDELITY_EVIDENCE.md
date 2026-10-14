@@ -254,9 +254,9 @@ increment additionally ran the six arena/prison/theft native tails.
 
 ## Remaining authorized work
 
-1. Complete weapon override/empty/destroyed notices, selection persistence,
-   infantry/Kick selectors and direct arena/salvage comparisons. Original
-   withdrawal and weapon/target regions now have comparisons below.
+1. Complete direct arena/salvage comparisons and shutdown/sensor weapon
+   warnings. Override/empty/destroyed notices, selection persistence and
+   infantry/Kick selectors now have the additional comparisons below.
 2. Expand live original doorway/corner/formation observations across towns.
 3. Physical speaker calibration still needs suitable hardware evidence. All
    eighteen ordered tone/noise traces now agree with executed original code;
@@ -267,6 +267,54 @@ increment additionally ran the six arena/prison/theft native tails.
    town-NPC/hospital-Talk request now have saved and SDL continuations.
 
 This batch does not mark the original five follow-ups or M4 complete.
+
+## Weapon selection, override and infantry/Kick input — 2026-10-14
+
+**VERIFIED in 20 held pages / 30 complete, unmasked regions:** original run
+`1791959365331060258` exercises `0D43:0004`, `0D43:07CB`, `0000:1A13` and
+the `103B` Kick caller. Its private GAME4 prerequisite activates GAME3's
+parked vehicles, puts Rick on foot, empties the second gun and marks the third
+gun destroyed. Original saves, instructions and reference files are unchanged.
+`make_weapon_menu_vectors.py` commits only bounds, hashes and provenance;
+screenshots and full RAM remain under ignored work/.
+
+The original retains menu 5's selected weapon after assignment, across list
+visits and across actors. After targeting, both left text boxes clear. An
+existing order produces the original Yes/No override question. No preserves
+the order; a mech's Yes clears it before target selection. Infantry retains
+its old order until the next target or Cancel, using its personal weapon
+directly. Its initial target choice is Cancel because the original shares
+menu 3's selection with Use Weapons. Target here returns infantry to Move;
+Cancel returns to Use Weapons. Kick uses the same left target panels and
+returns to Kick. Empty/destroyed guns hold their original notices and cannot
+receive a new order. Selected destroyed names use the captured brown/yellow
+colours; the ammunition notice preserves the extra CR after a full text row.
+
+The port now follows these observed transitions. `test_combat_ui.c` compares
+every region while following ordinary inputs, restores before each input,
+and checks order preservation/clearing, Space acceptance, disabled guns and
+the existing damaged-hip notice. BTPZ/v35 adds two weapon-window presentation
+bits at payload byte 10233 without changing the 20,480-byte payload. Old
+infantry weapon-list saves migrate to direct selection or the command menu;
+invalid presentation bits are rejected. BTTA/v21 appends twelve original
+strings (331 ranges, 14,473-byte local cache).
+
+**PASS:** all 51 regular suites, all 51 ASan/UBSan/LeakSanitizer suites, the
+historical sanitizer corpus, five Python tool tests, all six native arena/
+prison/theft tails and F5/F9 state/pixel equality on thirteen combat pages.
+The regular run exposed two obsolete tests: infantry still assumed
+the removed one-gun list, and fresh-route apprenticeship checkpoints used
+old input offsets. Both were corrected; the original apprenticeship routine
+was re-executed to regenerate the latter expectations. Dependent routes use
+ordinary inputs through the new selectors; the fresh ending is 66,116 inputs,
+and spy removal/replacement is 50,564. The arena spectator route explicitly
+selects each gun and still triggers the alarm and permits escape.
+
+**Limits:** these comparisons cover the visible text panels and weapon window,
+not complete battlefield placement or every weapon-menu branch. Original
+shutdown and sensor warnings, further arena/salvage pages and broader live
+town/formation comparisons remain. Physical XT sound calibration remains
+UNKNOWN; the eighteen isolated effect programs already have separate evidence.
 
 ## Weapon/target panels and withdrawal — 2026-10-14
 
@@ -289,10 +337,10 @@ enemy ID12 and cycles through IDs12..23; no ordinary friendly-target gesture
 was found, so the earlier plan to add one was not justified.
 
 The assigned-row pixel comparison explicitly sets the original selected row.
-The port still advances to the next gun after assignment, whereas the captured
-original retains the selection and clears the left text. Selection persistence,
-override/empty/destroyed notices and the infantry/Kick selectors remain work
-for a subsequent behavior increment. Battlefield equality is not claimed.
+At this increment the port still advanced to the next gun after assignment;
+the subsequent behavior increment below resolves retained selection, cleared
+left text, override/empty/destroyed notices and infantry/Kick selectors.
+Battlefield equality is not claimed.
 
 **PASS:** all 51 regular CTest suites, all five Python tool tests, focused
 ASan/UBSan/LeakSanitizer combat UI/aftermath/menu/cache-format continuation

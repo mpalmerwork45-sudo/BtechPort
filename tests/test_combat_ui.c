@@ -39,7 +39,7 @@ static void setup(BtpState *s,const BtpResources *r)
     }
     c->unit[3].infantry=1;c->unit[3].x=64;c->ids[4]=13;c->ids[5]=17;
     memcpy(c->unit[4].record,r->combat.loans[0],125);c->unit[4].x=47;c->unit[4].y=47;
-    /* The source's first visible enemy human is ID17 with a Shotgun and
+    /* The source's first visible enemy human is ID17 with a Shortbow and
        full health. Equivalent relative coordinates retain its NW bearing. */
     const uint8_t human[17]={1,12,6,0,1,3,1,3,1,0,0,4,8,3,12,120,0};
     memcpy(c->unit[5].record,human,17);c->unit[5].infantry=1;c->unit[5].x=47;c->unit[5].y=47;
@@ -51,6 +51,80 @@ static void step(BtpState *s,const BtpResources *r,BtpAction a)
     btp_state_encode(s,before);CHECK(btp_state_decode(before,sizeof before,btp_active_map(r,s),btp_state_bld(r,s),&copy));
     btp_game_tick(s,r,a);btp_game_tick(&copy,r,a);
     btp_state_encode(s,before);btp_state_encode(&copy,after);CHECK(!memcmp(before,after,sizeof before));
+}
+static void command(BtpState *s,const BtpResources *r,unsigned wanted)
+{
+    CHECK(s->combat.phase==BTP_COMBAT_MENU);
+    for (unsigned i=0;i<10 && s->combat.selected!=wanted;++i) step(s,r,BTP_DOWN);
+    CHECK(s->combat.selected==wanted);step(s,r,BTP_ACCEPT);
+}
+static unsigned weapon_pages(const BtpResources *r,uint32_t *frame)
+{
+    BtpState s;setup(&s,r);BtpCombatState *c=&s.combat;BtpError e;
+    c->unit[4].x=54;c->unit[4].y=49;c->unit[5].x=47;c->unit[5].y=49;c->unit[3].y=66;
+    c->unit[0].record[40]=0;c->unit[0].record[59]|=128;
+    command(&s,r,3);
+    FILE *f=fopen("tests/fixtures/weapon-menu-primary.txt","r");CHECK(f);
+    unsigned page,x,y,w,h,current=0,regions=0;uint64_t expected;
+    while (fscanf(f," W %u %u %u %u %u %" SCNx64,&page,&x,&y,&w,&h,&expected)==6) {
+        if (page!=current) {
+            CHECK(page==current+1);current=page;
+            switch (page) {
+            case 1: step(&s,r,BTP_ACCEPT);step(&s,r,BTP_ACCEPT);CHECK(c->orders[0]==13 && !c->weapon_selected && c->weapon_ui==3);break;
+            case 2: step(&s,r,BTP_ACCEPT);CHECK(c->phase==BTP_COMBAT_OVERRIDE);break;
+            case 3: step(&s,r,BTP_RIGHT);break;
+            case 4: step(&s,r,BTP_OPEN_MENU);CHECK(c->orders[0]==13 && c->phase==BTP_COMBAT_WEAPONS);break;
+            case 5: step(&s,r,BTP_ACCEPT);step(&s,r,BTP_ACCEPT);CHECK(c->orders[0]==255 && c->phase==BTP_COMBAT_TARGET);break;
+            case 6: step(&s,r,BTP_DOWN);step(&s,r,BTP_DOWN);step(&s,r,BTP_ACCEPT);break;
+            case 7: step(&s,r,BTP_DOWN);step(&s,r,BTP_ACCEPT);CHECK(c->notice==19 && c->orders[1]==255);break;
+            case 8: step(&s,r,BTP_ACCEPT);break;
+            case 9: step(&s,r,BTP_DOWN);step(&s,r,BTP_ACCEPT);CHECK(c->notice==18 && c->orders[2]==255);break;
+            case 10: step(&s,r,BTP_ACCEPT);break;
+            case 11:
+                for (unsigned i=0;i<7;++i) step(&s,r,BTP_DOWN);
+                step(&s,r,BTP_ACCEPT);command(&s,r,4);CHECK(c->phase==BTP_COMBAT_KICK);break;
+            case 12: step(&s,r,BTP_DOWN);step(&s,r,BTP_ACCEPT);break;
+            case 13:
+                step(&s,r,BTP_DOWN);step(&s,r,BTP_ACCEPT);
+                for (unsigned i=0;i<3;++i) command(&s,r,7);
+                CHECK(c->active_unit==3 && c->weapon_selected==9);break;
+            case 14: command(&s,r,3);CHECK(c->phase==BTP_COMBAT_TARGET && c->target_selected==2);break;
+            case 15: step(&s,r,BTP_DOWN);step(&s,r,BTP_ACCEPT);CHECK(c->orders[0]==17 && c->selected==0);break;
+            case 16: command(&s,r,3);CHECK(c->phase==BTP_COMBAT_OVERRIDE);break;
+            case 17: step(&s,r,BTP_RIGHT);step(&s,r,BTP_ACCEPT);CHECK(c->orders[0]==17);break;
+            case 18: command(&s,r,3);step(&s,r,BTP_ACCEPT);CHECK(c->orders[0]==17 && c->target_selected==2);break;
+            case 19: step(&s,r,BTP_ACCEPT);CHECK(c->orders[0]==255);break;
+            default: CHECK(0);
+            }
+        }
+        btp_render(r,&s,0,frame);uint64_t actual=region_hash(frame,x,y,w,h);
+        if (actual!=expected) {
+            fprintf(stderr,"Original weapon page %u region %u,%u: %016" PRIx64 " / %016" PRIx64 "\n",page,x,y,actual,expected);
+            CHECK(btp_write_ppm("work/weapon-menu-failed.ppm",frame));
+        }
+        CHECK(actual==expected);++regions;
+        if (x==0 && (page==2 || page==7 || page==9 || page==11 || page==14 || page==16)) {
+            char path[80];snprintf(path,sizeof path,"work/weapon-ui-%u.btp",page);
+            CHECK(btp_save_write(path,&s,r,&e));
+        }
+    }
+    fclose(f);CHECK(current==19 && regions==30);
+    /* v34 had no weapon-window flags. Reject corrupt v35 bits and preserve
+       the old ordinary command state when upgrading its version header. */
+    uint8_t bytes[BTP_STATE_BYTES];BtpState copy;btp_state_encode(&s,bytes);
+    bytes[10233]=4;CHECK(!btp_state_decode(bytes,sizeof bytes,btp_active_map(r,&s),btp_state_bld(r,&s),&copy));
+    bytes[10233]=0;memcpy(bytes,"BTPY",4);bytes[4]=34;
+    CHECK(btp_state_decode(bytes,sizeof bytes,btp_active_map(r,&s),btp_state_bld(r,&s),&copy));
+    CHECK(!copy.combat.weapon_ui && copy.combat.active_unit==3 && copy.combat.weapon_selected==9);
+    for (unsigned done=0;done<2;++done) {
+        c->phase=BTP_COMBAT_WEAPONS;c->weapon_selected=(uint8_t)done;btp_state_encode(&s,bytes);
+        memcpy(bytes,"BTPY",4);bytes[4]=34;
+        CHECK(btp_state_decode(bytes,sizeof bytes,btp_active_map(r,&s),btp_state_bld(r,&s),&copy));
+        CHECK(copy.combat.phase==(done ? BTP_COMBAT_MENU : BTP_COMBAT_TARGET) && copy.combat.selected==3);
+    }
+    setup(&s,r);c->unit[0].record[36]&=(uint8_t)~8u;command(&s,r,4);
+    CHECK(c->notice==3);step(&s,r,BTP_OPEN_MENU);CHECK(c->phase==BTP_COMBAT_MENU && !c->paused);
+    return regions;
 }
 int main(int argc,char **argv)
 {
@@ -126,5 +200,6 @@ int main(int argc,char **argv)
     CHECK(c->phase==BTP_COMBAT_NOTICE && c->notice==16);step(&s,r,BTP_ACCEPT);CHECK(c->scan_unit==5);
     setup(&s,r);btp_combat_select(&s.combat,3);s.combat.selected=7;
     CHECK(btp_save_write("work/combat-ui-start.btp",&s,r,&e));
-    free(frame);free(r);printf("PASS: %u checks; nine menu/scan and eight weapon/target/withdrawal regions, foot moves and saved scans\n",checks);return 0;
+    unsigned weapon_regions=weapon_pages(r,frame);
+    free(frame);free(r);printf("PASS: %u checks; nine menu/scan, eight target/withdrawal and %u weapon regions, saved modal inputs\n",checks,weapon_regions);return 0;
 }

@@ -2,35 +2,35 @@
   "checkpoints": [
     {
       "label": "technician-recruitment-wait",
-      "tick": 50273
+      "tick": 50414
     },
     {
       "label": "technician-spy-joined",
-      "tick": 50275
-    },
-    {
-      "label": "spy-inspected",
-      "tick": 50283
-    },
-    {
-      "label": "spy-combat-offer",
-      "tick": 50299
-    },
-    {
-      "label": "spy-confrontation",
-      "tick": 50343
-    },
-    {
-      "label": "spy-killed-in-combat",
-      "tick": 50344
-    },
-    {
-      "label": "replacement-technician-joined",
       "tick": 50416
     },
     {
+      "label": "spy-inspected",
+      "tick": 50424
+    },
+    {
+      "label": "spy-combat-offer",
+      "tick": 50440
+    },
+    {
+      "label": "spy-confrontation",
+      "tick": 50484
+    },
+    {
+      "label": "spy-killed-in-combat",
+      "tick": 50485
+    },
+    {
+      "label": "replacement-technician-joined",
+      "tick": 50557
+    },
+    {
       "label": "replacement-shop-exit",
-      "tick": 50423
+      "tick": 50564
     }
   ],
   "final": {
@@ -43,7 +43,7 @@
       34
     ],
     "gate": 85,
-    "tick": 50423,
+    "tick": 50564,
     "blocked": 0,
     "script_pc": 4979,
     "script_status": 3,
@@ -613,7 +613,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "b2ce7b0840a4f5d4",
+    "state_digest": "c179bd9f7303e518",
     "effect_stage": 0,
     "combat": {
       "phase": 0,
@@ -645,6 +645,8 @@
         0,
         0
       ],
+      "target_choice": 0,
+      "weapon_ui": 0,
       "count": 0,
       "target": 0,
       "kick": 0,

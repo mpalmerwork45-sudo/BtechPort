@@ -194,10 +194,9 @@ static void load_plan(BtpCombatState *c,unsigned unit)
 void btp_combat_select(BtpCombatState *c,unsigned unit)
 {
     if (!c->friends || unit>=c->friends) return;
-    unsigned previous=c->active_unit;store_plan(c);load_plan(c,unit);
-    /* Each original weapon menu starts a new selector. Carrying a mech's
-       last weapon row into an infantry unit can make its state invalid. */
-    if (unit!=previous) c->weapon_selected=0;
+    store_plan(c);load_plan(c,unit);
+    /* Original menu 5 retains its row across units. Infantry does not use
+       that selector; a new mech list bounds it when the list is opened. */
 }
 unsigned btp_combat_cover(const BtpMap *m, const BtpCombatUnit *u, unsigned *terrain)
 {
@@ -210,7 +209,7 @@ unsigned btp_combat_cover(const BtpMap *m, const BtpCombatUnit *u, unsigned *ter
 }
 static void menu(BtpCombatState *c)
 {
-    c->phase=BTP_COMBAT_MENU; c->selected=9;
+    c->phase=BTP_COMBAT_MENU;c->selected=9;c->weapon_ui=0;
 }
 unsigned btp_combat_menu_count(const BtpCombatState *c)
 {
@@ -705,7 +704,9 @@ static void combat_tick(BtpState *s, const BtpResources *r, BtpAction a, int ene
        before the ordinary command-menu pause shortcut can replace the page. */
     if (a==BTP_OPEN_MENU && (c->phase==BTP_COMBAT_SCAN_DETAIL || c->phase==BTP_COMBAT_SCAN ||
         c->phase==BTP_COMBAT_SCAN_CHOICE || c->phase==BTP_COMBAT_SPY ||
-        (c->phase==BTP_COMBAT_NOTICE && c->notice>=15))) a=BTP_ACCEPT;
+        c->phase==BTP_COMBAT_WEAPONS || c->phase==BTP_COMBAT_TARGET ||
+        c->phase==BTP_COMBAT_KICK || c->phase==BTP_COMBAT_OVERRIDE ||
+        (c->phase==BTP_COMBAT_NOTICE && (c->notice>=15 || c->notice==3)))) a=BTP_ACCEPT;
     if (a==BTP_OPEN_MENU && c->phase>=BTP_COMBAT_MENU) {
         c->paused=1;
         if (c->phase!=BTP_COMBAT_ROUND) menu(c);
@@ -766,10 +767,14 @@ static void combat_tick(BtpState *s, const BtpResources *r, BtpAction a, int ene
         return;
     }
     if (c->phase==BTP_COMBAT_NOTICE) {
-        if (a==BTP_ACCEPT || a==BTP_CANCEL || (c->notice>=15 && a!=BTP_IDLE)) {
+        if (a==BTP_ACCEPT || a==BTP_CANCEL || ((c->notice>=15 || c->notice==3) && a!=BTP_IDLE)) {
             if (c->notice==7) { s->yard.alarm=3;notice(c,8,BTP_COMBAT_ROUND); }
             else if (c->notice==15 || c->notice==16) { c->notice=c->notice_return=0;scan_next(s,24); }
-            else { if (c->notice==8) s->yard.alarm=0;c->phase=c->notice_return;c->notice=c->notice_return=0; }
+            else {
+                if (c->notice==8) s->yard.alarm=0;
+                if (c->notice==18 || c->notice==19) c->weapon_ui|=1u;
+                c->phase=c->notice_return;c->notice=c->notice_return=0;
+            }
         }
         return;
     }
@@ -822,23 +827,53 @@ static void combat_tick(BtpState *s, const BtpResources *r, BtpAction a, int ene
         return;
     }
     if (c->phase==BTP_COMBAT_WEAPONS) {
-        if (a==BTP_UP) c->weapon_selected=(uint8_t)((c->weapon_selected+count)%(count+1));
-        if (a==BTP_DOWN) c->weapon_selected=(uint8_t)((c->weapon_selected+1u)%(count+1));
-        if (a==BTP_CANCEL || (a==BTP_ACCEPT && c->weapon_selected==count)) menu(c);
-        else if (a==BTP_ACCEPT) { c->phase=BTP_COMBAT_TARGET;c->target_selected=0; }
+        if (a==BTP_UP || a==BTP_LEFT) c->weapon_selected=(uint8_t)((c->weapon_selected+count)%(count+1));
+        if (a==BTP_DOWN || a==BTP_RIGHT) c->weapon_selected=(uint8_t)((c->weapon_selected+1u)%(count+1));
+        if (a==BTP_CANCEL || (a==BTP_ACCEPT && c->weapon_selected==count)) {
+            unsigned selected=c->selected;menu(c);c->selected=(uint8_t)selected;
+        } else if (a==BTP_ACCEPT) {
+            const BtpCombatUnit *u=&c->unit[c->active_unit];
+            unsigned type=btp_combat_weapon_type(u,c->weapon_selected);
+            if (type&128u) notice(c,18,BTP_COMBAT_WEAPONS);
+            else if (!u->record[39+c->weapon_selected]) notice(c,19,BTP_COMBAT_WEAPONS);
+            else if (c->orders[c->weapon_selected]!=255) {
+                c->phase=BTP_COMBAT_OVERRIDE;c->target_selected=0;c->weapon_ui|=1u;
+            } else {
+                c->phase=BTP_COMBAT_TARGET;c->target_selected=(uint8_t)(c->selected<3 ? c->selected : 0);
+            }
+        }
+        return;
+    }
+    if (c->phase==BTP_COMBAT_OVERRIDE) {
+        /* 0000:1A13 defaults to Yes. Declining keeps the prior order;
+           accepting a mech override clears it before opening the selector. */
+        if (a==BTP_LEFT || a==BTP_UP) c->target_selected=0;
+        if (a==BTP_RIGHT || a==BTP_DOWN) c->target_selected=1;
+        if (a==BTP_CANCEL || (a==BTP_ACCEPT && c->target_selected)) {
+            if (c->unit[c->active_unit].infantry) { menu(c);c->selected=3; }
+            else c->phase=BTP_COMBAT_WEAPONS;
+        } else if (a==BTP_ACCEPT) {
+            if (!c->unit[c->active_unit].infantry) c->orders[c->weapon_selected]=255;
+            c->phase=BTP_COMBAT_TARGET;
+            c->target_selected=(uint8_t)(c->unit[c->active_unit].infantry ? 2u : c->selected<3 ? c->selected : 0u);
+        }
         return;
     }
     if (c->phase==BTP_COMBAT_TARGET || c->phase==BTP_COMBAT_KICK) {
         int kick=c->phase==BTP_COMBAT_KICK;
-        uint8_t *order=kick ? &c->kick_target : &c->orders[c->weapon_selected];
-        if (a==BTP_UP) c->target_selected=(uint8_t)((c->target_selected+2u)%3u);
-        if (a==BTP_DOWN) c->target_selected=(uint8_t)((c->target_selected+1u)%3u);
+        int foot=c->unit[c->active_unit].infantry;
+        uint8_t *order=kick ? &c->kick_target : &c->orders[foot ? 0u : c->weapon_selected];
+        if (a==BTP_UP || a==BTP_LEFT) c->target_selected=(uint8_t)((c->target_selected+2u)%3u);
+        if (a==BTP_DOWN || a==BTP_RIGHT) c->target_selected=(uint8_t)((c->target_selected+1u)%3u);
         if (a==BTP_CANCEL || (a==BTP_ACCEPT && c->target_selected==2)) {
-            *order=255;if (kick) menu(c);else c->phase=BTP_COMBAT_WEAPONS;
+            *order=255;
+            if (kick || foot) { menu(c);c->selected=(uint8_t)(kick ? 4 : 3); }
+            else { c->selected=2;c->weapon_ui=3;c->phase=BTP_COMBAT_WEAPONS; }
         } else if (a==BTP_ACCEPT && c->target_selected==0) {
             if (c->unit[c->target_unit].record[0]==255) return;
             *order=(uint8_t)btp_combat_id(c,c->target_unit);
-            if (kick) menu(c);else { ++c->weapon_selected;c->phase=BTP_COMBAT_WEAPONS; }
+            if (kick || foot) { menu(c);c->selected=(uint8_t)(kick ? 4 : 0); }
+            else { c->selected=0;c->weapon_ui=3;c->phase=BTP_COMBAT_WEAPONS; }
         } else if (a==BTP_ACCEPT && c->target_selected==1) {
             /* 103B initializes target ID12; 0D43:0A16 wraps 23 to 12.
                The original manual selector cycles enemy slots only. */
@@ -875,7 +910,24 @@ static void combat_tick(BtpState *s, const BtpResources *r, BtpAction a, int ene
                 c->phase=BTP_COMBAT_REPLACE;c->target_selected=0;return;
             }
             c->cursor_x=c->unit[c->active_unit].x;c->cursor_y=c->unit[c->active_unit].y;c->phase=BTP_COMBAT_MOVE;
-        } else if (c->selected==3) { c->phase=BTP_COMBAT_WEAPONS;c->weapon_selected=0; }
+        } else if (c->selected==3) {
+            /* 0D43:0004 uses menu 5 only for a mech. On foot, the existing
+               menu-3 row (Use Weapons is row 2) becomes Cancel's selection. */
+            c->weapon_ui=0;
+            c->automatic&=~(UINT32_C(1)<<c->active_unit);c->auto_run=(uint8_t)(c->automatic!=0);
+            if (c->unit[c->active_unit].infantry) {
+                c->phase=(uint8_t)(c->orders[0]==255 ? BTP_COMBAT_TARGET : BTP_COMBAT_OVERRIDE);
+                c->target_selected=(uint8_t)(c->orders[0]==255 ? 2 : 0);
+            } else {
+                c->phase=BTP_COMBAT_WEAPONS;
+                if (c->weapon_selected>count) c->weapon_selected=0;
+                for (unsigned i=0;i<count;++i) {
+                    unsigned target=btp_combat_target(c,c->orders[i]);
+                    if ((btp_combat_weapon_type(&c->unit[c->active_unit],i)&128u) ||
+                        (target<c->count && c->unit[target].record[0]==255)) c->orders[i]=255;
+                }
+            }
+        }
         else if (c->selected==4) {
             if (!btp_combat_can_kick(&c->unit[c->active_unit])) notice(c,3,BTP_COMBAT_MENU);
             else { c->phase=BTP_COMBAT_KICK;c->target_selected=0; }
@@ -927,7 +979,7 @@ void btp_combat_encode(const BtpCombatState *c, uint8_t b[BTP_COMBAT_SAVE_BYTES]
 {
     memset(b,0,BTP_COMBAT_SAVE_BYTES);size_t p=0;
     for (unsigned i=0;i<4;++i) b[6138+i]=(uint8_t)(c->automatic>>(8*i));
-    b[6142]=c->auto_run;b[6143]=c->paused;
+    b[6137]=c->weapon_ui;b[6142]=c->auto_run;b[6143]=c->paused;
     for (unsigned i=0;i<2;++i) {
         const BtpCombatUnit *u=&c->unit[i];memcpy(b+p,u->record,125);p+=125;
         b[p++]=u->x;b[p++]=u->y;b[p++]=u->direction;b[p++]=u->heat;
@@ -981,8 +1033,8 @@ int btp_combat_decode(const uint8_t b[BTP_COMBAT_SAVE_BYTES], BtpCombatState *c)
 {
     *c=(BtpCombatState){0};size_t p=0;
     for (unsigned i=0;i<4;++i) c->automatic|=(uint32_t)b[6138+i]<<(8*i);
-    c->auto_run=b[6142];c->paused=b[6143];
-    if (c->automatic>4095 || c->auto_run>1 || c->paused>1) return 0;
+    c->weapon_ui=b[6137];c->auto_run=b[6142];c->paused=b[6143];
+    if (c->automatic>4095 || c->auto_run>1 || c->paused>1 || c->weapon_ui>3) return 0;
     for (unsigned i=0;i<2;++i) {
         BtpCombatUnit *u=&c->unit[i];memcpy(u->record,b+p,125);p+=125;
         u->x=b[p++];u->y=b[p++];u->direction=b[p++];u->heat=b[p++];
@@ -1024,7 +1076,7 @@ int btp_combat_decode(const uint8_t b[BTP_COMBAT_SAVE_BYTES], BtpCombatState *c)
     for (;p<1536;++p) if (b[p]) return 0;
     memset(c->enemy_modes+5,255,sizeof c->enemy_modes-5);
     memset(c->enemy_orders+6,255,sizeof c->enemy_orders-72);
-    if (!b[1536]) { for (unsigned i=1536;i<6138;++i) if (b[i]) return 0;return c->count<=7; }
+    if (!b[1536]) { for (unsigned i=1536;i<6137;++i) if (b[i]) return 0;return c->count<=7; }
     p=1536;if (b[p++]!=1) return 0;c->friends=b[p++];c->active_unit=b[p++];
     memcpy(c->ids,b+p,BTP_COMBAT_UNITS);p+=BTP_COMBAT_UNITS;
     memcpy(c->plans,b+p,sizeof c->plans);p+=sizeof c->plans;
@@ -1038,7 +1090,7 @@ int btp_combat_decode(const uint8_t b[BTP_COMBAT_SAVE_BYTES], BtpCombatState *c)
         c->enemy_modes[i-2]=b[p++];memcpy(c->enemy_orders[i-1],b+p,12);p+=12;
         c->enemy_fired[i-1]=(uint16_t)(b[p]|(unsigned)b[p+1]<<8);p+=2;
     }
-    for (;p<6138;++p) if (b[p]) return 0;
+    for (;p<6137;++p) if (b[p]) return 0;
     return c->count<=BTP_COMBAT_UNITS;
 }
 #undef COMBAT_FIELDS
@@ -1046,7 +1098,7 @@ int btp_combat_valid(const BtpState *s)
 {
     const BtpCombatState *c=&s->combat;
     if (c->count>BTP_COMBAT_UNITS || c->friends>12 || c->active_unit>=BTP_COMBAT_UNITS || c->scan_unit>=BTP_COMBAT_UNITS) return 0;
-    if (c->automatic>=(UINT32_C(1)<<(c->friends ? c->friends : 1u)) || c->auto_run>1 || c->paused>1) return 0;
+    if (c->automatic>=(UINT32_C(1)<<(c->friends ? c->friends : 1u)) || c->auto_run>1 || c->paused>1 || c->weapon_ui>3) return 0;
         if (!s->campaign.encounter && (s->mission.assignment<2 || s->mission.assignment>7 || !s->mission.phase)) {
         uint8_t b[BTP_COMBAT_SAVE_BYTES];btp_combat_encode(c,b);
         for (unsigned i=0;i<sizeof b;++i) if (b[i]) return 0;
@@ -1056,10 +1108,10 @@ int btp_combat_valid(const BtpState *s)
         (s->mission.assignment==3 ? c->count<4 || c->count>7 : c->count!=(s->mission.assignment>=6 ? s->campaign.invasion ? 5 : 4 : s->mission.assignment==5 ? 3 : 2))) ||
         c->target_unit>=c->count || c->lost>1 || (!s->campaign.encounter && c->unit[0].infantry) ||
         c->last_attacker>=c->count || c->last_target>=c->count ||
-        c->phase>BTP_COMBAT_SCAN_DETAIL || c->selected>10 || c->messages>2 || c->graphics>1 ||
+        c->phase>BTP_COMBAT_OVERRIDE || c->selected>10 || c->messages>2 || c->graphics>1 ||
         (c->movement>2 && c->movement!=255) || c->goal_active>1 || c->goal_x>(s->campaign.invasion ? 253u : 125u) || c->goal_y>(s->campaign.invasion ? 255u : 127u) ||
         c->cursor_x>(s->campaign.invasion ? 253u : 125u) || c->cursor_y>(s->campaign.invasion ? 255u : 127u) || c->weapon_selected>11 || c->target_selected>2 ||
-        c->scan_unit>=c->count || c->step>12 || c->delay>4 || c->notice>17 || c->notice_return>BTP_COMBAT_SCAN_CHOICE ||
+        c->scan_unit>=c->count || c->step>12 || c->delay>4 || c->notice>19 || c->notice_return>BTP_COMBAT_SCAN_CHOICE ||
         c->fled>1 || c->won>1 || c->fled+c->won+c->lost>1 || c->last_weapon>11 || c->last_event>5 || c->fired>=4096 ||
         c->shot.hit>1 || c->shot.location>35 || c->shot.destroyed>1 || c->shot.toppled>1 ||
         c->shot.needed < -4 || c->shot.needed>30 || (c->enemy_movement>1 && c->enemy_movement!=255) ||
@@ -1074,6 +1126,7 @@ int btp_combat_valid(const BtpState *s)
     if (c->phase==BTP_COMBAT_SPY && (!s->campaign.encounter || !s->spy_discovered || !s->story_flags[39] ||
         c->notice<10 || c->notice>14 || c->notice_return)) return 0;
     if (c->phase==BTP_COMBAT_NOTICE && c->notice_return!=BTP_COMBAT_MENU && c->notice_return!=BTP_COMBAT_CONTROL &&
+        !(c->notice_return==BTP_COMBAT_WEAPONS && c->notice>=18 && c->notice<=19) &&
         !(c->notice_return==BTP_COMBAT_SCAN_CHOICE && c->notice>=15 && c->notice<=17) &&
         !(c->notice_return==BTP_COMBAT_ROUND && s->campaign.encounter==4 && (c->notice==7 || c->notice==8))) return 0;
     if ((c->phase==BTP_COMBAT_OFFER || c->phase==BTP_COMBAT_AVOID) && (s->campaign.encounter!=1 || c->round || c->selected>1)) return 0;
@@ -1084,8 +1137,15 @@ int btp_combat_valid(const BtpState *s)
     if ((c->phase==BTP_COMBAT_SCAN || c->phase==BTP_COMBAT_SCAN_DETAIL) &&
         (c->target_selected>1 || c->selected>=(btp_combat_scan_detail(c) ? 3u : 2u))) return 0;
     if (c->phase==BTP_COMBAT_MENU && btp_combat_menu_command(c,btp_combat_menu_row(c))!=c->selected) return 0;
-    if (c->phase==BTP_COMBAT_TARGET && c->weapon_selected>=btp_combat_weapon_count(&c->unit[c->active_unit])) return 0;
-    if (c->weapon_selected>btp_combat_weapon_count(&c->unit[c->active_unit])) return 0;
+    /* Menu 5's cursor persists while another unit or an infantry selector
+       is active. It is bounded by the weapon list only while that list is in use. */
+    int foot=c->unit[c->active_unit].infantry;
+    unsigned weapons=btp_combat_weapon_count(&c->unit[c->active_unit]);
+    if (!foot && ((phase==BTP_COMBAT_WEAPONS && c->weapon_selected>weapons) ||
+        ((phase==BTP_COMBAT_TARGET || phase==BTP_COMBAT_OVERRIDE) && c->weapon_selected>=weapons))) return 0;
+    if (phase==BTP_COMBAT_WEAPONS && foot) return 0;
+    if (c->phase==BTP_COMBAT_OVERRIDE && (c->target_selected>1 || c->orders[foot ? 0u : c->weapon_selected]==255)) return 0;
+    if (c->weapon_ui && phase!=BTP_COMBAT_WEAPONS && phase!=BTP_COMBAT_TARGET && phase!=BTP_COMBAT_OVERRIDE) return 0;
     if (c->phase==BTP_COMBAT_ROUND && c->step>12) return 0;
     if (c->goal_active && c->movement>2) return 0;
     if (c->waypoint_count>11 || (c->waypoint_count && !c->goal_active) ||

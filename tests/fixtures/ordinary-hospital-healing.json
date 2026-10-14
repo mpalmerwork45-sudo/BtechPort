@@ -579,7 +579,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "4109348a1f261053",
+        "state_digest": "507f1b62634883db",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -611,6 +611,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -1496,7 +1498,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "d1dd8180edad816b",
+        "state_digest": "e902ef49ea9bb853",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1528,6 +1530,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -2438,7 +2442,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "4646487249a6db58",
+        "state_digest": "e732c24e3a60e8b0",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -2470,6 +2474,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -3372,7 +3378,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "efb7f4e089c3e462",
+        "state_digest": "13a65d7eab98d83a",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -3404,6 +3410,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -4314,7 +4322,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "51915f8c6f73c789",
+        "state_digest": "70542b47a1998c51",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -4346,6 +4354,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -5256,7 +5266,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "672c3705badf8048",
+        "state_digest": "11e6271758c509e0",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -5288,6 +5298,8 @@
             0,
             0
           ],
+          "target_choice": 0,
+          "weapon_ui": 0,
           "count": 0,
           "target": 0,
           "kick": 0,
@@ -6196,7 +6208,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "672c3705badf8048",
+    "state_digest": "11e6271758c509e0",
     "effect_stage": 0,
     "combat": {
       "phase": 0,
@@ -6228,6 +6240,8 @@
         0,
         0
       ],
+      "target_choice": 0,
+      "weapon_ui": 0,
       "count": 0,
       "target": 0,
       "kick": 0,

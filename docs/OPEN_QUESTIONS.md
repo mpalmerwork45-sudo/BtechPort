@@ -7,7 +7,7 @@ rather than to every branch of the original game.
 The remaining authorized tasks are in [project status](PROJECT_STATUS.md).
 
 1. **Fresh-game campaign — playable route VERIFIED; broader parity UNKNOWN.**
-   A 65,975-input new-cadet route now earns companions, apprenticeships, the
+   A 66,116-input new-cadet route now earns companions, apprenticeships, the
    holodisk and password before reaching the ending, using only the authorized
    credit shortcut. It restores before every input and has selected original
    prerequisite comparisons. It is not a complete DOS recording of all those
@@ -68,14 +68,16 @@ The remaining authorized tasks are in [project status](PROJECT_STATUS.md).
    healthy-with-active-cooldown and remaining battle-result screens still
    need visual comparisons.
    Eight more weapon/target/withdrawal regions now match complete original
-   captures, with seven native scan/target/withdrawal save/load pages. Native
-   automatic weapon advancement differs from the original retained selection;
-   override/empty/destroyed notices and infantry/Kick selectors need further
-   work. The normal original target selector cycles enemy IDs12..23 only.
+   captures. Another 30 regions across 20 held weapon/infantry/Kick pages now
+   match: retained selection, override Yes/No and empty/destroyed notices have
+   input/restoration coverage. Thirteen native combat pages pass F5/F9. Shutdown
+   and sensor warnings and additional arena/salvage screens remain to compare.
+   The normal original target selector cycles enemy IDs12..23 only.
 8. **Persistence — tested represented fields.** All six supplied original saves
    roundtrip unchanged; unmodeled original bytes are preserved. Internal
-   BTPY/v34 includes active theft/audio/menu states, spy discovery and world
-   sectors for debris. Ambiguous pre-v34 decorative marks are cleared. Old
+   BTPZ/v35 includes active theft/audio/menu states, spy discovery and world
+   sectors for debris and held weapon-window presentation. Pre-v35 infantry
+   weapon lists migrate to the original direct selector. Ambiguous pre-v34 decorative marks are cleared. Old
    formats cannot recover history that they never stored. Active-invasion v29
    migration now compares positions, current and per-actor goals/waypoints and
    the next four inputs; stale cache follower coordinates recover on load. Original export remains limited to supported
