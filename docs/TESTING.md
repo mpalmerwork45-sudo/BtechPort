@@ -1,15 +1,29 @@
-# Build, verification and original oracle — 2026-10-13
+# Build, verification and original oracle — 2026-10-14
 
 ## Current M4 presentation checks
 
-The active build has 52 CTest suites. Internal saves are BTPa/v36, with a
+The active build has 53 CTest suites. Internal saves are BTPa/v36, with a
 20,480-byte payload; old versions retain explicit migrations. Current caches
 are BTTA/v22, BTCB/v11 and BTW3. The world seed is the original `0x020304`.
 The older sections below describe earlier increments.
-The current increment passes all 52 regular and ASan/UBSan/LeakSanitizer core
-suites, five Python tool tests, 16 combat F5/F9 pages, six arena/prison/theft SDL
-tails, all nine building/theft follow-up tails and the ordinary hospital
-conversation. The preceding batch passed the historical sanitizer corpus.
+The current increment passes all 53 regular and ASan/UBSan/LeakSanitizer core
+suites and three native Starport-boundary encounter/menu/F5/F9 checks.
+`encounter-placement-reachability` covers 44 legal positions with ten seeds
+each, infantry/single-mech/mixed parties, 1,404 reachable enemies, unchanged
+candidate records/RNG and saved offers. Its independent terrain components
+reproduced the former trapped spawn at party `(1274,1078)`, seed 1: enemy ID20
+at `(1298,1092)`. The same test now passes. Original code supplies the footprint
+and cursor-offset evidence; the added connectivity guard is explicitly a
+requested correction, not an original-parity claim.
+`python3 tools/native_smoke.py --encounters-only` creates controlled encounter
+prerequisites through the test executable, then compares actual SDL combat-menu
+entry and F5/F9 against headless state and complete pixels for all three parties.
+The optional `python3 tools/audit_encounter_placement.py` records 25 original
+terrain-placement observations from its documented private DOS snapshot.
+The preceding batch passed all 52 then-existing suites, five Python tool tests,
+16 combat F5/F9 pages, six arena/prison/theft SDL tails, all nine building/theft
+follow-up tails and the ordinary hospital conversation. The earlier historical
+sanitizer corpus also passed.
 The preceding 48-suite increment also passed every native M4
 acceptance section and all nine follow-up tails. Campaign/story/cache sections
 passed in focused reruns after an outdated ammo-editor checkpoint label was

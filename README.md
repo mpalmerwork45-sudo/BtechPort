@@ -50,6 +50,8 @@ intermediate step in two/four-step mode. Any member can trigger a doorway. All
 moving members advance one gait frame per key, using their own saved positions.
 Normal arena returns leave checked-in mechs parked; loading an affected older
 Starport save restores that state without losing the owned vehicles.
+New random encounters check that enemies have a ground route to the party;
+ordinary enemy mechs also stay outside Starport, including fights near its walls.
 The wider campaign remains unfinished; encounter timing, recovery of old formations, physical
 speaker response and other unaudited interface areas remain approximate.
 

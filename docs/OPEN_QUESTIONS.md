@@ -1,4 +1,4 @@
-# Open questions after bounded M4 work — 2026-10-13
+# Open questions after bounded M4 work — 2026-10-14
 
 The authorized M4 increments have playable, tested paths. Confidence belongs
 to the individual original comparisons and recorded continuations in
@@ -40,6 +40,13 @@ The remaining authorized tasks are in [project status](PROJECT_STATUS.md).
    matches 40 live town observations and 1,920 executed collision decisions;
    480 doorway decisions include outer members. Recovery of old split formations,
    cache transitions and additional town corners remain to be compared.
+   A new 440-case placement regression prevents disconnected enemy spawns and
+   ordinary enemy mechs inside Starport, including from outside its boundary.
+   This owner-requested reachability protection extends the original's
+   terrain-only test, documented by 25 bounded placement observations. Initial
+   native infantry sampling and cursor-relative offsets are corrected; the
+   broader scan/spacing remains approximate. Existing saved fights keep their
+   already placed units.
 5. **Timing and NPC arrival — APPROXIMATE.** Native logical ticks replace DOS
    busy loops. Long original waits and recruitment coins can consume a
    different RNG history. Earlier explicit later-quiz prerequisites remain

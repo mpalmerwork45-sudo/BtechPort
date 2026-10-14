@@ -551,3 +551,49 @@ tails, all nine building/theft follow-up tails and the 772-input arrival/Talk
 route. Each native tail compares actual recorded input, complete continued
 state and pixels. Sanitizer builds retain two pre-existing signed-division
 warnings in character-health display code; no sanitizer failure occurs.
+
+## Reachable encounters outside Starport — 2026-10-14
+
+The reported inaccessible enemies are reproduced with an on-foot party at
+world `(1274,1078)` and encounter seed 1: the old native scan places enemy ID20
+at `(1298,1092)`, inside a disconnected Starport area. Testing legal destination
+tiles alone did not establish a route through the intervening walls.
+
+**VERIFIED original facts:** `05AB:0DA6` starts placement from the exploration
+cursor, rather than from the first mech's ground point two half-steps north.
+`05AB:1174` and `13F8` address the 24x24 working grid, sampling `ceil(x/2)` for
+infantry and both horizontal ground tiles for mechs. The native scan now uses
+these samples and cursor offsets. The inspected placement span checks terrain
+16..84 and working-grid bounds; it contains no connectivity search.
+`audit_encounter_placement.py` executes the original candidate/placement span
+in unmodified private RAM, recording 25 controlled numeric observations in
+`encounter-placement-audit.json`. Its loaded Starport viewport and four active
+loan records are explicit prerequisites, not a recording of outdoor sector
+transitions or exact native-placement parity.
+
+**Owner-requested correction, not a recovered original rule:** new native
+random encounters require each enemy's footprint to have a ground route to a
+living party member in the current battlefield. Foot and mech reachability are
+computed separately using combat's eight-direction destination rules; temporary
+unit occupancy does not close a permanent route. Mechs can approach an infantry
+member from an adjacent horizontal half-step. Ordinary enemy mechs also exclude
+both ground tiles of Starport, even when the party's map ID is outside it.
+The scan skips inaccessible positions without drawing more random numbers.
+If it cannot place an enemy, normal exploration continues. Fixed arena/prison,
+Rex and training encounters use their existing independent setup paths.
+Already saved active fights retain their existing units.
+
+**VERIFIED native regression:** `encounter-placement-reachability` checks 440
+cases at 44 legal party positions around all four Starport edges, inside town
+and on open terrain, using infantry, one mech and three mechs plus infantry.
+An independent connected-component test checks 1,404 enemies in 338 offers;
+102 cases produce no offer. Both vehicle ground tiles and infantry positions,
+candidate record identity, unchanged RNG and complete save restoration pass.
+The pre-fix implementation fails this test on the reproduction above.
+
+**PASS:** all 53 regular suites (8.38 seconds, four jobs), all 53
+ASan/UBSan/LeakSanitizer suites (98.71 seconds sequentially), and native foot,
+mech and mixed-party boundary offers. The SDL checks enter the combat menu and
+restore F5/F9 with identical complete state and pixels. BTPa/v36 and all asset
+cache versions remain unchanged. Broader placement spacing and complete
+original encounter cadence/AI comparisons remain open.

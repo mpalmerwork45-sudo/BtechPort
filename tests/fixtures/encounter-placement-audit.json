@@ -1,0 +1,540 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "snapshot": "work/reference-runs/1791962848011430927/town-start",
+  "snapshot_ram_sha256": "269d5225aa78ec90d660f7c5621fb87d8c7e0deb0bf7f229648ce06f04b4c98d",
+  "routines": [
+    "0000:17BB cursor",
+    "187F:1314 working grid",
+    "187F:1DF8 grid offsets",
+    "05AB:0D68..1462 random candidates and terrain placement"
+  ],
+  "prerequisites": "Original loaded Starport snapshot, five controlled cursor locations, four active loan templates, gate 85 and five seeds. The viewport remains the loaded Starport context, including its surrounding pieces; this does not replay sector-loading transitions.",
+  "observation": "Placement checks terrain 16..84 and viewport bounds, with two ground tiles for vehicles. It does not search for a route to the party. Numeric results document this bounded original behavior; native reachable-placement tests intentionally add a guard and are not exact-position comparisons.",
+  "intercepted_boundaries": [],
+  "no_instruction_patches": true,
+  "cases": [
+    {
+      "cursor": [
+        1276,
+        1078
+      ],
+      "seed": 1,
+      "final_rng": 9310410,
+      "units": []
+    },
+    {
+      "cursor": [
+        1276,
+        1078
+      ],
+      "seed": 2,
+      "final_rng": 10529316,
+      "units": []
+    },
+    {
+      "cursor": [
+        1276,
+        1078
+      ],
+      "seed": 3,
+      "final_rng": 14067144,
+      "units": []
+    },
+    {
+      "cursor": [
+        1276,
+        1078
+      ],
+      "seed": 17,
+      "final_rng": 7694331,
+      "units": []
+    },
+    {
+      "cursor": [
+        1276,
+        1078
+      ],
+      "seed": 1234,
+      "final_rng": 12461456,
+      "units": []
+    },
+    {
+      "cursor": [
+        1278,
+        1090
+      ],
+      "seed": 1,
+      "final_rng": 9310410,
+      "units": []
+    },
+    {
+      "cursor": [
+        1278,
+        1090
+      ],
+      "seed": 2,
+      "final_rng": 10529316,
+      "units": []
+    },
+    {
+      "cursor": [
+        1278,
+        1090
+      ],
+      "seed": 3,
+      "final_rng": 14067144,
+      "units": []
+    },
+    {
+      "cursor": [
+        1278,
+        1090
+      ],
+      "seed": 17,
+      "final_rng": 7694331,
+      "units": [
+        {
+          "id": 20,
+          "x": 1288,
+          "y": 1078
+        }
+      ]
+    },
+    {
+      "cursor": [
+        1278,
+        1090
+      ],
+      "seed": 1234,
+      "final_rng": 12461456,
+      "units": []
+    },
+    {
+      "cursor": [
+        1288,
+        1020
+      ],
+      "seed": 1,
+      "final_rng": 9310410,
+      "units": [
+        {
+          "id": 20,
+          "x": 1298,
+          "y": 1030
+        }
+      ]
+    },
+    {
+      "cursor": [
+        1288,
+        1020
+      ],
+      "seed": 2,
+      "final_rng": 10529316,
+      "units": []
+    },
+    {
+      "cursor": [
+        1288,
+        1020
+      ],
+      "seed": 3,
+      "final_rng": 14067144,
+      "units": [
+        {
+          "id": 15,
+          "x": 1299,
+          "y": 1032
+        }
+      ]
+    },
+    {
+      "cursor": [
+        1288,
+        1020
+      ],
+      "seed": 17,
+      "final_rng": 7694331,
+      "units": [
+        {
+          "id": 13,
+          "x": 1303,
+          "y": 1008
+        },
+        {
+          "id": 15,
+          "x": 1306,
+          "y": 1008
+        },
+        {
+          "id": 20,
+          "x": 1298,
+          "y": 1008
+        },
+        {
+          "id": 21,
+          "x": 1299,
+          "y": 1008
+        },
+        {
+          "id": 22,
+          "x": 1300,
+          "y": 1008
+        },
+        {
+          "id": 23,
+          "x": 1301,
+          "y": 1008
+        }
+      ]
+    },
+    {
+      "cursor": [
+        1288,
+        1020
+      ],
+      "seed": 1234,
+      "final_rng": 12461456,
+      "units": [
+        {
+          "id": 13,
+          "x": 1305,
+          "y": 1008
+        },
+        {
+          "id": 15,
+          "x": 1299,
+          "y": 1009
+        },
+        {
+          "id": 17,
+          "x": 1299,
+          "y": 1008
+        },
+        {
+          "id": 19,
+          "x": 1300,
+          "y": 1008
+        },
+        {
+          "id": 20,
+          "x": 1301,
+          "y": 1008
+        },
+        {
+          "id": 21,
+          "x": 1302,
+          "y": 1008
+        },
+        {
+          "id": 23,
+          "x": 1303,
+          "y": 1008
+        }
+      ]
+    },
+    {
+      "cursor": [
+        1409,
+        1090
+      ],
+      "seed": 1,
+      "final_rng": 9310410,
+      "units": [
+        {
+          "id": 13,
+          "x": 1422,
+          "y": 1100
+        },
+        {
+          "id": 14,
+          "x": 1425,
+          "y": 1100
+        },
+        {
+          "id": 20,
+          "x": 1419,
+          "y": 1100
+        },
+        {
+          "id": 23,
+          "x": 1420,
+          "y": 1100
+        }
+      ]
+    },
+    {
+      "cursor": [
+        1409,
+        1090
+      ],
+      "seed": 2,
+      "final_rng": 10529316,
+      "units": [
+        {
+          "id": 14,
+          "x": 1425,
+          "y": 1100
+        },
+        {
+          "id": 15,
+          "x": 1428,
+          "y": 1100
+        },
+        {
+          "id": 19,
+          "x": 1420,
+          "y": 1100
+        },
+        {
+          "id": 20,
+          "x": 1421,
+          "y": 1100
+        },
+        {
+          "id": 21,
+          "x": 1422,
+          "y": 1100
+        },
+        {
+          "id": 22,
+          "x": 1423,
+          "y": 1100
+        }
+      ]
+    },
+    {
+      "cursor": [
+        1409,
+        1090
+      ],
+      "seed": 3,
+      "final_rng": 14067144,
+      "units": [
+        {
+          "id": 12,
+          "x": 1423,
+          "y": 1100
+        },
+        {
+          "id": 13,
+          "x": 1426,
+          "y": 1100
+        },
+        {
+          "id": 15,
+          "x": 1420,
+          "y": 1101
+        },
+        {
+          "id": 20,
+          "x": 1420,
+          "y": 1100
+        },
+        {
+          "id": 22,
+          "x": 1421,
+          "y": 1100
+        }
+      ]
+    },
+    {
+      "cursor": [
+        1409,
+        1090
+      ],
+      "seed": 17,
+      "final_rng": 7694331,
+      "units": [
+        {
+          "id": 13,
+          "x": 1424,
+          "y": 1078
+        },
+        {
+          "id": 15,
+          "x": 1427,
+          "y": 1078
+        },
+        {
+          "id": 20,
+          "x": 1419,
+          "y": 1078
+        },
+        {
+          "id": 21,
+          "x": 1420,
+          "y": 1078
+        },
+        {
+          "id": 22,
+          "x": 1421,
+          "y": 1078
+        },
+        {
+          "id": 23,
+          "x": 1422,
+          "y": 1078
+        }
+      ]
+    },
+    {
+      "cursor": [
+        1409,
+        1090
+      ],
+      "seed": 1234,
+      "final_rng": 12461456,
+      "units": [
+        {
+          "id": 13,
+          "x": 1426,
+          "y": 1078
+        },
+        {
+          "id": 15,
+          "x": 1420,
+          "y": 1079
+        },
+        {
+          "id": 17,
+          "x": 1420,
+          "y": 1078
+        },
+        {
+          "id": 19,
+          "x": 1421,
+          "y": 1078
+        },
+        {
+          "id": 20,
+          "x": 1422,
+          "y": 1078
+        },
+        {
+          "id": 21,
+          "x": 1423,
+          "y": 1078
+        },
+        {
+          "id": 23,
+          "x": 1424,
+          "y": 1078
+        }
+      ]
+    },
+    {
+      "cursor": [
+        1339,
+        1117
+      ],
+      "seed": 1,
+      "final_rng": 9310410,
+      "units": []
+    },
+    {
+      "cursor": [
+        1339,
+        1117
+      ],
+      "seed": 2,
+      "final_rng": 10529316,
+      "units": []
+    },
+    {
+      "cursor": [
+        1339,
+        1117
+      ],
+      "seed": 3,
+      "final_rng": 14067144,
+      "units": []
+    },
+    {
+      "cursor": [
+        1339,
+        1117
+      ],
+      "seed": 17,
+      "final_rng": 7694331,
+      "units": [
+        {
+          "id": 13,
+          "x": 1354,
+          "y": 1105
+        },
+        {
+          "id": 15,
+          "x": 1357,
+          "y": 1105
+        },
+        {
+          "id": 20,
+          "x": 1349,
+          "y": 1105
+        },
+        {
+          "id": 21,
+          "x": 1350,
+          "y": 1105
+        },
+        {
+          "id": 22,
+          "x": 1351,
+          "y": 1105
+        },
+        {
+          "id": 23,
+          "x": 1352,
+          "y": 1105
+        }
+      ]
+    },
+    {
+      "cursor": [
+        1339,
+        1117
+      ],
+      "seed": 1234,
+      "final_rng": 12461456,
+      "units": [
+        {
+          "id": 13,
+          "x": 1356,
+          "y": 1105
+        },
+        {
+          "id": 15,
+          "x": 1350,
+          "y": 1106
+        },
+        {
+          "id": 17,
+          "x": 1350,
+          "y": 1105
+        },
+        {
+          "id": 19,
+          "x": 1351,
+          "y": 1105
+        },
+        {
+          "id": 20,
+          "x": 1352,
+          "y": 1105
+        },
+        {
+          "id": 21,
+          "x": 1353,
+          "y": 1105
+        },
+        {
+          "id": 23,
+          "x": 1354,
+          "y": 1105
+        }
+      ]
+    }
+  ]
+}

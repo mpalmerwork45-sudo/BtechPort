@@ -631,6 +631,51 @@ def combat_ui(env,work):
                 keyboard.x.XCloseDisplay(keyboard.display)
                 if process.poll() is None:process.terminate();process.wait(timeout=5)
 
+def encounter_placement(env,work):
+    """Starport-boundary offers, menu entry and real F5/F9 for three parties."""
+    from reference_session import WindowKeys
+    binary=ROOT/'build/btech-headless';native=ROOT/'build/btech-port'
+    env=dict(env,SDL_AUDIODRIVER='dummy')
+    with tempfile.TemporaryDirectory(prefix='native-encounters-',dir=work) as directory:
+        tmp=Path(directory);prefix=tmp/'boundary';tail=tmp/'keys.actions';record=tmp/'record.actions'
+        expected=tmp/'expected.ppm';slot=tmp/'slot.btp'
+        subprocess.run([str(ROOT/'build/btp-encounter-placement-tests'),str(ROOT/'Original DOS'),str(prefix)],
+            cwd=ROOT,check=True,capture_output=True,text=True)
+        for group,label in enumerate(('foot','mech','mixed')):
+            start=Path(f'{prefix}-{group}.btp');frame=work/f'native-encounter-{label}.ppm'
+            tail.write_text('accept\n'*4)
+            actual=subprocess.run([str(native),'--load',str(start),'--smoke-replay','--smoke-fast',
+                '--replay',str(tail),'--record',str(record),'--frame',str(frame)],
+                cwd=ROOT,env=env,check=True,capture_output=True,text=True,timeout=20)
+            wanted=subprocess.run([str(binary),'--load',str(start),'--replay',str(record),'--frame',str(expected)],
+                cwd=ROOT,check=True,capture_output=True,text=True)
+            if record.read_text().splitlines()!=['accept']*4+['idle']*5 or json.loads(actual.stdout)!=json.loads(wanted.stdout) or frame.read_bytes()!=expected.read_bytes():
+                raise RuntimeError('Native boundary encounter continuation differs: '+label)
+            process=subprocess.Popen([str(native),'--load',str(start),'--save-file',str(slot),'--frame',str(frame)],
+                cwd=ROOT,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+            keyboard=WindowKeys()
+            try:
+                for _ in range(100):
+                    found=[w for w,n in keyboard.windows() if n.startswith('BtechPort')]
+                    if len(found)==1:window=found[0];break
+                    if process.poll() is not None:raise RuntimeError('Boundary encounter window failed to start')
+                    time.sleep(.05)
+                else:raise RuntimeError('Boundary encounter window did not appear')
+                keyboard.key(window,'F5');time.sleep(.1)
+                before=json.loads(subprocess.check_output([str(binary),'--load',str(slot)],cwd=ROOT,text=True))
+                keyboard.key(window,'Right');keyboard.key(window,'F9');keyboard.key(window,'Ctrl+Shift+Escape')
+                out,err=process.communicate(timeout=10)
+                if process.returncode:raise RuntimeError(err)
+                restored=json.loads(out);delta=restored['tick']-before['tick']
+                if not 0<=delta<=20:raise RuntimeError('Unexpected encounter restoration interval')
+                tail.write_text('idle\n'*delta)
+                wanted=json.loads(subprocess.check_output([str(binary),'--load',str(slot),'--replay',str(tail),'--frame',str(expected)],cwd=ROOT,text=True))
+                if restored!=wanted or frame.read_bytes()!=expected.read_bytes():raise RuntimeError('Native boundary F5/F9 differs: '+label)
+                print(f'PASS: native Starport-boundary {label} encounter, combat-menu entry and F5/F9; exact continued state/pixels.',flush=True)
+            finally:
+                keyboard.x.XCloseDisplay(keyboard.display)
+                if process.poll() is None:process.terminate();process.wait(timeout=5)
+
 def cache_island(env,work):
     """Walk the visible cave-island edge through actual SDL and save/load."""
     from reference_session import WindowKeys
@@ -1120,6 +1165,7 @@ def main():
     parser.add_argument('--mechit-only',action='store_true')
     parser.add_argument('--island-only',action='store_true')
     parser.add_argument('--controls-only',action='store_true')
+    parser.add_argument('--encounters-only',action='store_true')
     args = parser.parse_args()
     work = ROOT / "work"
     work.mkdir(exist_ok=True)
@@ -1158,6 +1204,8 @@ def main():
                 followups(env,work,[('hospital-talk','town-arrival-wait','GAME2')]);return
             if args.controls_only:
                 controls(env,work);diagonals(env,work);return
+            if args.encounters_only:
+                encounter_placement(env,work);return
             if args.combat_ui_only:
                 combat_ui(env,work);return
             if args.mechit_only:

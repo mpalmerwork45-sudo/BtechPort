@@ -68,7 +68,7 @@ Successful pre-combat evasion produces no loot or cash.
 
 ## Verification and limits
 
-The current build has 52 CTest suites. New comparisons include 360 armour-repair,
+The current build has 53 CTest suites. New comparisons include 360 armour-repair,
 160 purchase-recipient, 32 prison/arena return, 432 water-boundary, 512 device
 direction and 314 recruitment/spy cases. Two controlled larger encounters cover
 11 original waves and 171 complete record/position/facing/heat/RNG comparisons.
@@ -82,10 +82,14 @@ both thefts and spy replacement, comparing recorded keys, complete continued
 state and final RGB pixels. Collision tests exercise three mechs and five people,
 each footprint at every intermediate step, all moving gaits and saved positions.
 
-**Current batch PASS:** all 52 regular and ASan/UBSan/LeakSanitizer suites,
-five Python tool tests, 16 combat F5/F9 pages, six native arena/prison/theft tails,
-all nine building/theft follow-up tails and the ordinary hospital-Talk SDL
-continuation. The preceding batch passed the historical sanitizer corpus.
+**Current batch PASS:** all 53 regular and ASan/UBSan/LeakSanitizer suites.
+The new encounter regression checks 440 cases at 44 legal party positions,
+including 1,404 reachable enemies, unchanged candidate RNG/records and saved
+offers. Three native boundary encounters pass combat-menu entry and F5/F9.
+The preceding batch passed all 52 then-existing suites, five Python tool tests,
+16 combat F5/F9 pages, six native arena/prison/theft tails, all nine
+building/theft follow-up tails and the ordinary hospital-Talk SDL continuation.
+The earlier historical sanitizer corpus also passed.
 The preceding 48-suite increment
 also passed every native M4
 acceptance section and all nine native follow-up tails. Actual SDL checks pass
@@ -105,6 +109,14 @@ a nominal 8 MHz 8088 timing model; no exact recording from physical XT hardware
 is claimed. Enemy Jenner/UrbanMech sprite bases follow the original enemy table,
 while owned mechs use the original garage selection rule.
 
+New random encounters cannot place enemies in disconnected areas behind town
+walls. Infantry uses the correct ground sample, and enemy mechs cannot spawn
+inside Starport even when the party is outside. **Owner-requested correction:**
+the reachability guard extends the original terrain-only scan; it is not claimed
+as original behavior. Twenty-five bounded original placement observations record
+that distinction. If no candidate can be placed, exploration continues. Existing
+saved fights retain their already placed units; arena/story fights are separate.
+
 Internal saves are **BTPa/v36**, with a 20,480-byte payload inside the BTS1
 length/CRC envelope. The discovery marker and held spy confrontation are saved.
 Current local caches are BTTA/v22, BTCB/v11 and BTW3; the world seed is the
@@ -117,43 +129,26 @@ and source hashes only.
 
 ## Remaining authorized work
 
-The original five follow-ups are underway; this list records the actual
-unfinished portions, including subsequent owner observations.
+These are the next five unfinished areas, in priority order. Completed fixes
+and comparisons are recorded above and in the evidence reports.
 
-1. Finish salvage success/failure/no-wreck and retry-order comparisons. Arena
-   win/loss and the qualified-pilot question now match complete original crops.
-   Shutdown and damaged/destroyed
-   sensor warnings now match nine original regions and 36 executed gate cases,
-   including retained/disabled firing orders. All 16 native combat pages pass F5/F9. Weapon override/empty/destroyed notices, retained selection
-   and infantry/Kick selectors now match 20 original held pages (30 regions),
-   with restoration before every input and six additional native F5/F9 pages.
-   Eight additional weapon/target/withdrawal regions now match original
-   captures, including the restored party panel on return. Ordinary original
-   targeting starts at enemy ID12 and cycles enemies only; a normal friendly-
-   targeting gesture has not been found. Five victory/scavenging/scrap/pocket/
-   loot panels match exactly; rewards and held-page restoration are tested.
-2. Extend doorway/formation comparisons to additional towns and cache exits.
-   Whole-party movement now matches 40 live observations, 1,920 original wall
-   decisions and 480 doorway decisions. Combat anchors match 50 original draws;
-   121,024 Starport infantry paths remain clear of roofs. Split older formations
-   and all map-boundary/doorway combinations are not fully compared.
-3. All eighteen isolated tone/noise sequences agree with executed original
-   code. Physical 8 MHz XT calibration remains UNKNOWN; the existing clock
-   model and speaker response remain APPROXIMATE. Further tuning needs evidence.
-4. Phoenix Hawk LAM colours now match the original decoder and palette writes,
-   with native save/load checks. Field/hospital treatment and injured-cooldown/
-   healthy notices match complete original crops. Healthy with active cooldown
-   now also matches a measured original crop, reached by treatment and an
-   immediate second Heal; its held save and acknowledgement preserve health.
-5. Alternate owned-arena/win/loss and prison-loss journeys now pass, including
-   arena completion, old stuck-menu recovery, reward and ownership checks.
-   Normal returns keep vehicles parked; affected older Starport saves recover
-   on load. Thirty-two original raw parking outcomes and continued movement are
-   checked separately from ownership.
-   Town/Starport NPCs and room arrivals are restored, with 95 executed original
-   cases and a normal hospital-Talk route. Regular Starport encounters are
-   infantry-only; arena setup remains separate.
-   Existing prison theft, rental escape, invasion loss and fresh ending routes pass.
-   Active v29 invasion positions, current/per-actor goals and waypoints now
-   have migration and continued-input checks; stale cache formations recover
-   before the first loaded frame.
+1. **Complete encounter comparisons.** Record full original outdoor and town
+   fights, including initial placement/spacing, mixed-party AI, initiative and
+   battle timing. The new reachability regression closes the reported trapped
+   spawn bug; it does not establish full original encounter parity.
+2. **Finish salvage.** Compare the complete success, failure and no-wreck pages
+   and the order of repeated salvage attempts. Rewards, qualified-pilot prompt,
+   victory/loot panels and arena results already have bounded comparisons.
+3. **Finish town and cache boundary checks.** Extend original doorway/formation
+   observations to the other towns, map seams and cache exits, including old
+   saves with split formations. Whole-party wall checks and parked-mech recovery
+   are implemented and tested; the remaining task is the wider transition matrix.
+4. **Cover alternate campaign/service branches.** Audit remaining BLD paths and
+   extend ordinary-input/save-load journeys beyond the tested fresh-game route,
+   theft alternatives and replacement recruits. Original-save export is still
+   restricted to supported outdoor contexts.
+5. **Complete presentation comparisons.** Obtain a live original Phoenix LAM
+   capture, compare remaining service/portrait/battle layouts and animation/NPC
+   cadence, and calibrate sound against suitable reference recordings. Effect
+   programs are verified; exact physical 8 MHz XT speaker response remains
+   UNKNOWN until recording evidence is available.

@@ -96,20 +96,76 @@ unsigned btp_campaign_candidates(BtpState *s,const BtpResources *r,BtpCombatUnit
     }
     *dx_out=dx;*dy_out=dy;return count;
 }
+enum { ENCOUNTER_SIDE=128, ENCOUNTER_CELLS=128*128 };
+static void encounter_reachable(const BtpState *s,const BtpResources *r,uint8_t reachable[ENCOUNTER_CELLS])
+{
+    BtpMap map;btp_combat_map(r,s,&map);
+    uint8_t allowed[ENCOUNTER_CELLS];uint16_t queue[ENCOUNTER_CELLS];
+    memset(reachable,0,ENCOUNTER_CELLS);
+    for (unsigned y=0;y<ENCOUNTER_SIDE;++y) for (unsigned x=0;x<ENCOUNTER_SIDE;++x) {
+        unsigned at=y*ENCOUNTER_SIDE+x;allowed[at]=0;
+        if (x>=126) continue;
+        /* 05AB:1174/13F8 and combat movement sample ceil(x/2) for a
+           person, and both adjacent ground tiles for a mech. */
+        if (btp_map_tile(&map,(int)(x+1)/2,(int)y/2)<85) allowed[at]=1;
+        int wx=(s->campaign.battle_x+(int)x)/2,wy=(s->campaign.battle_y+(int)y)/2;
+        if (btp_map_tile(&map,(int)x/2,(int)y/2)<85 && btp_map_tile(&map,(int)x/2+1,(int)y/2)<85 &&
+            btp_world_location(r,s,wx,wy)!=2 && btp_world_location(r,s,wx+1,wy)!=2) allowed[at]|=2;
+    }
+    /* Owner-requested protection beyond the original's terrain-only scan:
+       every proposed enemy must be able to approach a living party member.
+       Flood each footprint separately; ignore temporary unit occupancy and
+       use the same eight destination checks as combat movement. Starport
+       remains closed to ordinary enemy mechs, including battles outside it.
+       This guard consumes no random draws and never affects scripted fights. */
+    for (unsigned bit=1;bit<=2;bit*=2) {
+        unsigned head=0,tail=0;
+        for (unsigned i=0;i<s->combat.friends;++i) {
+            const BtpCombatUnit *u=&s->combat.unit[i];if (u->record[0]==255) continue;
+            /* A wide enemy may approach an infantryman from either side
+               even when its centre cannot occupy that exact half-step. */
+            int margin=bit==2 && u->infantry ? 1 : 0;
+            for (int offset=-margin;offset<=margin;++offset) {
+                int x=(int)u->x+offset;if (x<0 || x>=ENCOUNTER_SIDE || u->y>=ENCOUNTER_SIDE) continue;
+                unsigned at=(unsigned)u->y*ENCOUNTER_SIDE+(unsigned)x;
+                if ((allowed[at]&bit) && !(reachable[at]&bit)) {
+                    reachable[at]|=(uint8_t)bit;queue[tail++]=(uint16_t)at;
+                }
+            }
+        }
+        while (head<tail) {
+            unsigned at=queue[head++];int x=(int)(at%ENCOUNTER_SIDE),y=(int)(at/ENCOUNTER_SIDE);
+            for (int dy=-1;dy<=1;++dy) for (int dx=-1;dx<=1;++dx) {
+                int nx=x+dx,ny=y+dy;
+                if ((!dx && !dy) || nx<0 || ny<0 || nx>=ENCOUNTER_SIDE || ny>=ENCOUNTER_SIDE) continue;
+                unsigned next=(unsigned)ny*ENCOUNTER_SIDE+(unsigned)nx;
+                if ((allowed[next]&bit) && !(reachable[next]&bit)) {
+                    reachable[next]|=(uint8_t)bit;queue[tail++]=(uint16_t)next;
+                }
+            }
+        }
+    }
+}
 int btp_campaign_random(BtpState *s,const BtpResources *r)
 {
     BtpCombatUnit candidates[12];uint8_t ids[12];int dx,dy;
     unsigned count=btp_campaign_candidates(s,r,candidates,ids,&dx,&dy);
     if (!count) return 0;
     begin(s,r,1);BtpCombatState *c=&s->combat;
-    int start_x=(int)c->unit[0].x+dx,start_y=(int)c->unit[0].y+dy,x=start_x,y=start_y,scanned=0;
+    uint8_t reachable[ENCOUNTER_CELLS];encounter_reachable(s,r,reachable);
+    /* Original 05AB:0DA6/106F offsets from the exploration cursor, not
+       from the first mech's ground point two half-steps farther north. */
+    int start_x=(int)s->campaign.world_x-s->campaign.battle_x+dx;
+    int start_y=(int)s->campaign.world_y-s->campaign.battle_y+dy,x=start_x,y=start_y,scanned=0;
     for (unsigned i=0;i<count;++i) {
         int placed=0;
         for (;scanned<17*24;++scanned,++x) {
             if (x>start_x+16) { x=start_x;++y; }
-            unsigned tile=btp_world_tile(r,s,s->campaign.battle_x/2+x/2,s->campaign.battle_y/2+y/2);
+            if (x<0 || y<2 || x>=126 || y>=128 ||
+                !(reachable[(unsigned)y*ENCOUNTER_SIDE+(unsigned)x]&(candidates[i].infantry ? 1u : 2u))) continue;
+            unsigned tile=btp_world_tile(r,s,s->campaign.battle_x/2+(x+(int)candidates[i].infantry)/2,s->campaign.battle_y/2+y/2);
             unsigned second=btp_world_tile(r,s,s->campaign.battle_x/2+x/2+1,s->campaign.battle_y/2+y/2);
-            if (x>=0 && y>=2 && x<126 && y<128 && tile>15 && tile<85 &&
+            if (tile>15 && tile<85 &&
                 (candidates[i].infantry || (second>15 && second<85))) { placed=1;break; }
         }
         if (!placed) continue;
