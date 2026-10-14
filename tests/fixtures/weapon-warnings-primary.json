@@ -1,0 +1,17 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "cases": 36,
+  "routine": "0D43:0004",
+  "prerequisites": "Four actor slots; heat 0/29/30, sensors 0/1/2; automatic flag set; targets 12/13 and a kick at 12.",
+  "intercepted_boundaries": [
+    "0000:2A4F",
+    "1656:0004",
+    "1656:0281",
+    "1656:0388",
+    "1656:03F5",
+    "173D:0259"
+  ],
+  "stop": "Image D581 before weapon-window construction; other paths reach the original far return.",
+  "comparison": "Text pointers, key waits, open/refuse, cleared automatic flag, retained targets and disabled-order bits."
+}

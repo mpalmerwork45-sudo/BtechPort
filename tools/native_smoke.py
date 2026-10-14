@@ -598,6 +598,7 @@ def combat_ui(env,work):
                ('target-ui-start',None),('target-ui-target',None),
                ('target-ui-withdrawal',None),('target-ui-return',None)]
         pages += [(f'weapon-ui-{i}',None) for i in (2,7,9,11,14,16)]
+        pages += [(f'weapon-warning-{i}',None) for i in (0,2,4)]
         for label,prefix in pages:
             page=tmp/'page.btp';slot=tmp/'slot.btp'
             if prefix is None:page=work/f'{label}.btp'

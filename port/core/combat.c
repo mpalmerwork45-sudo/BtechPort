@@ -282,6 +282,21 @@ static void notice(BtpCombatState *c, unsigned id, unsigned back)
 {
     c->notice=(uint8_t)id;c->notice_return=(uint8_t)back;c->phase=BTP_COMBAT_NOTICE;
 }
+static void weapon_list(BtpCombatState *c)
+{
+    unsigned count=btp_combat_weapon_count(&c->unit[c->active_unit]);
+    uint16_t *fired=c->active_unit ? &c->enemy_fired[c->active_unit-1] : &c->fired;
+    c->phase=BTP_COMBAT_WEAPONS;
+    if (c->weapon_selected>count) c->weapon_selected=0;
+    for (unsigned i=0;i<count;++i) {
+        unsigned target=btp_combat_target(c,c->orders[i]);
+        if ((btp_combat_weapon_type(&c->unit[c->active_unit],i)&128u) ||
+            (target<c->count && c->unit[target].record[0]==255)) c->orders[i]=255;
+        /* 0D43 clears the order's high bit when displaying a live target.
+           Native target IDs and the original fired/disabled bits are separate. */
+        if (c->orders[i]!=255) *fired&=(uint16_t)~(1u<<i);
+    }
+}
 void btp_combat_begin(BtpState *s, const BtpResources *r)
 {
     BtpCombatState *c=&s->combat;
@@ -773,7 +788,16 @@ static void combat_tick(BtpState *s, const BtpResources *r, BtpAction a, int ene
             else {
                 if (c->notice==8) s->yard.alarm=0;
                 if (c->notice==18 || c->notice==19) c->weapon_ui|=1u;
+                if (c->notice==20) {
+                    /* Shutdown ORs 80h into all twelve orders after the key
+                       wait. Retain their targets, including the kick order. */
+                    uint16_t *fired=c->active_unit ? &c->enemy_fired[c->active_unit-1] : &c->fired;
+                    for (unsigned i=0;i<12;++i)
+                        if ((i==11 ? c->kick_target : c->orders[i])!=255) *fired|=(uint16_t)(1u<<i);
+                }
+                int damaged_sensors=c->notice==21;
                 c->phase=c->notice_return;c->notice=c->notice_return=0;
+                if (damaged_sensors) weapon_list(c);
             }
         }
         return;
@@ -919,13 +943,14 @@ static void combat_tick(BtpState *s, const BtpResources *r, BtpAction a, int ene
                 c->phase=(uint8_t)(c->orders[0]==255 ? BTP_COMBAT_TARGET : BTP_COMBAT_OVERRIDE);
                 c->target_selected=(uint8_t)(c->orders[0]==255 ? 2 : 0);
             } else {
-                c->phase=BTP_COMBAT_WEAPONS;
-                if (c->weapon_selected>count) c->weapon_selected=0;
-                for (unsigned i=0;i<count;++i) {
-                    unsigned target=btp_combat_target(c,c->orders[i]);
-                    if ((btp_combat_weapon_type(&c->unit[c->active_unit],i)&128u) ||
-                        (target<c->count && c->unit[target].record[0]==255)) c->orders[i]=255;
-                }
+                const BtpCombatUnit *actor=&c->unit[c->active_unit];
+                /* Original 0D43:0004 gives shutdown precedence over sensors.
+                   Damaged sensors warn and continue; destroyed sensors return
+                   to commands without discarding previously assigned targets. */
+                if (actor->heat==30) notice(c,20,BTP_COMBAT_MENU);
+                else if (actor->record[119]==1) notice(c,21,BTP_COMBAT_WEAPONS);
+                else if (actor->record[119]==2) notice(c,22,BTP_COMBAT_MENU);
+                else weapon_list(c);
             }
         }
         else if (c->selected==4) {
@@ -1111,7 +1136,7 @@ int btp_combat_valid(const BtpState *s)
         c->phase>BTP_COMBAT_OVERRIDE || c->selected>10 || c->messages>2 || c->graphics>1 ||
         (c->movement>2 && c->movement!=255) || c->goal_active>1 || c->goal_x>(s->campaign.invasion ? 253u : 125u) || c->goal_y>(s->campaign.invasion ? 255u : 127u) ||
         c->cursor_x>(s->campaign.invasion ? 253u : 125u) || c->cursor_y>(s->campaign.invasion ? 255u : 127u) || c->weapon_selected>11 || c->target_selected>2 ||
-        c->scan_unit>=c->count || c->step>12 || c->delay>4 || c->notice>19 || c->notice_return>BTP_COMBAT_SCAN_CHOICE ||
+        c->scan_unit>=c->count || c->step>12 || c->delay>4 || c->notice>22 || c->notice_return>BTP_COMBAT_SCAN_CHOICE ||
         c->fled>1 || c->won>1 || c->fled+c->won+c->lost>1 || c->last_weapon>11 || c->last_event>5 || c->fired>=4096 ||
         c->shot.hit>1 || c->shot.location>35 || c->shot.destroyed>1 || c->shot.toppled>1 ||
         c->shot.needed < -4 || c->shot.needed>30 || (c->enemy_movement>1 && c->enemy_movement!=255) ||
@@ -1126,11 +1151,15 @@ int btp_combat_valid(const BtpState *s)
     if (c->phase==BTP_COMBAT_SPY && (!s->campaign.encounter || !s->spy_discovered || !s->story_flags[39] ||
         c->notice<10 || c->notice>14 || c->notice_return)) return 0;
     if (c->phase==BTP_COMBAT_NOTICE && c->notice_return!=BTP_COMBAT_MENU && c->notice_return!=BTP_COMBAT_CONTROL &&
-        !(c->notice_return==BTP_COMBAT_WEAPONS && c->notice>=18 && c->notice<=19) &&
+        !(c->notice_return==BTP_COMBAT_WEAPONS && ((c->notice>=18 && c->notice<=19) || c->notice==21)) &&
         !(c->notice_return==BTP_COMBAT_SCAN_CHOICE && c->notice>=15 && c->notice<=17) &&
         !(c->notice_return==BTP_COMBAT_ROUND && s->campaign.encounter==4 && (c->notice==7 || c->notice==8))) return 0;
     if ((c->phase==BTP_COMBAT_OFFER || c->phase==BTP_COMBAT_AVOID) && (s->campaign.encounter!=1 || c->round || c->selected>1)) return 0;
     unsigned phase=c->notice ? c->notice_return : c->phase;
+    /* The damaged-sensor page precedes weapon-list cursor normalization. */
+    if (c->notice==21) phase=BTP_COMBAT_MENU;
+    if (c->notice>=20 && (c->unit[c->active_unit].infantry || c->selected!=3 ||
+        c->notice_return!=(c->notice==21 ? BTP_COMBAT_WEAPONS : BTP_COMBAT_MENU))) return 0;
     if ((phase==BTP_COMBAT_CONTROL || phase==BTP_COMBAT_GRAPHICS) && c->selected>1) return 0;
     if (phase==BTP_COMBAT_MESSAGES && c->selected>2) return 0;
     if (phase==BTP_COMBAT_SCAN_CHOICE && c->selected>2) return 0;

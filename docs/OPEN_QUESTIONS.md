@@ -71,13 +71,14 @@ The remaining authorized tasks are in [project status](PROJECT_STATUS.md).
    Eight more weapon/target/withdrawal regions now match complete original
    captures. Another 30 regions across 20 held weapon/infantry/Kick pages now
    match: retained selection, override Yes/No and empty/destroyed notices have
-   input/restoration coverage. Thirteen native combat pages pass F5/F9. Shutdown
-   and sensor warnings and additional arena/salvage screens remain to compare.
+   input/restoration coverage. Sixteen native combat pages pass F5/F9. Shutdown
+   and sensor warnings match nine additional regions and 36 executed gate cases;
+   additional arena/salvage screens remain to compare.
    The normal original target selector cycles enemy IDs12..23 only.
 8. **Persistence — tested represented fields.** All six supplied original saves
    roundtrip unchanged; unmodeled original bytes are preserved. Internal
-   BTPZ/v35 includes active theft/audio/menu states, spy discovery and world
-   sectors for debris and held weapon-window presentation. Pre-v35 infantry
+   BTPa/v36 includes active theft/audio/menu states, spy discovery and world
+   sectors for debris, held weapon-window presentation and weapon-entry warnings. Pre-v35 infantry
    weapon lists migrate to the original direct selector. Ambiguous pre-v34 decorative marks are cleared. Old
    formats cannot recover history that they never stored. Active-invasion v29
    migration now compares positions, current and per-actor goals/waypoints and

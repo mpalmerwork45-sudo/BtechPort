@@ -58,6 +58,70 @@ static void command(BtpState *s,const BtpResources *r,unsigned wanted)
     for (unsigned i=0;i<10 && s->combat.selected!=wanted;++i) step(s,r,BTP_DOWN);
     CHECK(s->combat.selected==wanted);step(s,r,BTP_ACCEPT);
 }
+static unsigned weapon_warnings(const BtpResources *r,uint32_t *frame)
+{
+    FILE *f=fopen("tests/fixtures/weapon-warnings-primary.txt","r");CHECK(f);
+    unsigned actor,heat,sensors,opened,automatic,disabled,waits,messages,first,cases=0;char line[200];
+    while (fgets(line,sizeof line,f)) {
+        CHECK(sscanf(line,"G %u %u %u %u %u %u %u %u %u",&actor,&heat,&sensors,&opened,&automatic,&disabled,&waits,&messages,&first)==9);
+        BtpState s;setup(&s,r);BtpCombatState *c=&s.combat;
+        for (unsigned i=0;i<4;++i) { c->unit[i].infantry=0;memcpy(c->unit[i].record,r->combat.loans[0],125);c->ids[i]=(uint8_t)i; }
+        c->ids[4]=12;c->ids[5]=13;btp_combat_select(c,actor);
+        c->unit[actor].heat=(uint8_t)heat;c->unit[actor].record[119]=(uint8_t)sensors;
+        c->automatic=1u<<actor;c->auto_run=1;c->orders[0]=12;c->orders[1]=13;c->kick_target=12;
+        c->weapon_selected=11; /* Retained other-mech cursor is bounded only on opening. */
+        command(&s,r,3);CHECK(c->automatic==automatic && c->auto_run==(automatic!=0));
+        uint16_t *fired=actor ? &c->enemy_fired[actor-1] : &c->fired;
+        CHECK(!*fired && c->orders[0]==12 && c->orders[1]==13 && c->kick_target==12);
+        if (waits) {
+            CHECK(waits==1 && c->phase==BTP_COMBAT_NOTICE);
+            CHECK(first==(c->notice==20 ? 0x2904u : c->notice==21 ? 0x292du : 0x2964u));
+            uint8_t bytes[BTP_STATE_BYTES];BtpState copy;btp_state_encode(&s,bytes);
+            memcpy(bytes,"BTPZ",4);bytes[4]=35;
+            CHECK(!btp_state_decode(bytes,sizeof bytes,btp_active_map(r,&s),btp_state_bld(r,&s),&copy));
+            step(&s,r,BTP_IDLE);CHECK(c->phase==BTP_COMBAT_NOTICE && !*fired);
+            step(&s,r,BTP_OPEN_MENU);
+        } else CHECK(first==0x29a3);
+        CHECK(c->phase==(opened ? BTP_COMBAT_WEAPONS : BTP_COMBAT_MENU) && *fired==disabled);
+        CHECK(messages==waits+opened && c->orders[0]==12 && c->orders[1]==13 && c->kick_target==12);
+        if (heat==30) {
+            c->unit[actor].heat=0;c->unit[actor].record[119]=0;command(&s,r,3);
+            CHECK(c->phase==BTP_COMBAT_WEAPONS && *fired==(1u<<11) && c->orders[0]==12 && c->orders[1]==13);
+        }
+        /* v35 ordinary command saves still migrate without changing orders. */
+        c->phase=BTP_COMBAT_MENU;uint8_t bytes[BTP_STATE_BYTES];BtpState copy;btp_state_encode(&s,bytes);
+        memcpy(bytes,"BTPZ",4);bytes[4]=35;
+        CHECK(btp_state_decode(bytes,sizeof bytes,btp_active_map(r,&s),btp_state_bld(r,&s),&copy));
+        CHECK(copy.combat.orders[0]==12 && copy.combat.orders[1]==13);++cases;
+    }
+    fclose(f);CHECK(cases==36);
+    f=fopen("tests/fixtures/weapon-warning-ui-primary.txt","r");CHECK(f);
+    unsigned page,x,y,w,h,current=99,regions=0;uint64_t expected;
+    BtpState s;setup(&s,r);BtpCombatState *c=&s.combat;BtpError e;
+    c->unit[4].x=54;c->unit[4].y=49;c->unit[5].x=47;c->unit[5].y=49;
+    c->weapon_selected=9;c->orders[0]=13;
+    while (fscanf(f," W %u %u %u %u %u %" SCNx64,&page,&x,&y,&w,&h,&expected)==6) {
+        if (page!=current) {
+            current=page;
+            if (page==0 || page==2 || page==4 || page==6) {
+                if (page==2) step(&s,r,BTP_ACCEPT); /* Done after the damaged warning. */
+                c->unit[0].heat=(uint8_t)(page==4 ? 30 : 0);
+                c->unit[0].record[119]=(uint8_t)(page==0 ? 1 : page==2 ? 2 : 0);
+                command(&s,r,3);
+            } else step(&s,r,BTP_ACCEPT);
+        }
+        btp_render(r,&s,0,frame);uint64_t actual=region_hash(frame,x,y,w,h);
+        if (actual!=expected) {
+            fprintf(stderr,"Original weapon warning %u region %u,%u: %016" PRIx64 " / %016" PRIx64 "\n",page,x,y,actual,expected);
+            CHECK(btp_write_ppm("work/weapon-warning-failed.ppm",frame));
+        }
+        CHECK(actual==expected);++regions;
+        if (page==0 || page==2 || page==4) {
+            char path[80];snprintf(path,sizeof path,"work/weapon-warning-%u.btp",page);CHECK(btp_save_write(path,&s,r,&e));
+        }
+    }
+    fclose(f);CHECK(regions==9 && c->orders[0]==13 && !c->fired);return regions;
+}
 static unsigned weapon_pages(const BtpResources *r,uint32_t *frame)
 {
     BtpState s;setup(&s,r);BtpCombatState *c=&s.combat;BtpError e;
@@ -201,5 +265,6 @@ int main(int argc,char **argv)
     setup(&s,r);btp_combat_select(&s.combat,3);s.combat.selected=7;
     CHECK(btp_save_write("work/combat-ui-start.btp",&s,r,&e));
     unsigned weapon_regions=weapon_pages(r,frame);
-    free(frame);free(r);printf("PASS: %u checks; nine menu/scan, eight target/withdrawal and %u weapon regions, saved modal inputs\n",checks,weapon_regions);return 0;
+    unsigned warning_regions=weapon_warnings(r,frame);
+    free(frame);free(r);printf("PASS: %u checks; nine menu/scan, eight target/withdrawal, %u weapon and %u warning regions; 36 warning gates, saved modal inputs\n",checks,weapon_regions,warning_regions);return 0;
 }

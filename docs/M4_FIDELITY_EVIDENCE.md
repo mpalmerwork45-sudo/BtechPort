@@ -446,3 +446,35 @@ historical sanitizer corpus, six arena/prison/theft SDL tails and the new town
 arrival/hospital-Talk SDL tail. An older synthetic missing-room test expected
 the removed context error; its expectation now follows the primary empty-room
 branch. The focused historical rerun passed without repeating the core suites.
+
+## Weapon-entry warnings — 2026-10-14
+
+**VERIFIED:** original `0D43:0004` clears the actor's automatic-control flag,
+then tests heat 30 before sensor damage. Shutdown holds DS:2904 with the
+`Press a key.` footer; acknowledgement disables all twelve existing orders by
+setting their high bits and returns to Use Weapons. Target IDs survive.
+Damaged sensors hold DS:292D without a footer and then open the weapon list.
+Destroyed sensors hold DS:2964 without a footer and return to commands,
+retaining previous orders. Drawing a live assigned weapon later clears its
+high bit; this also re-enables its assignment after cooling.
+
+`weapon-warnings-primary.*` records 36 executions across four mech actors,
+heat 0/29/30 and sensors 0/1/2. Display/key calls are observed boundaries, and
+allowed paths stop before weapon-list construction; no instruction is patched.
+`weapon-warning-ui-primary.*` records nine unmasked RGB regions from seven
+live DOS pages in run `1791961683091068424`. The private GAME3 copy retains
+three active vehicles, puts the fourth person on foot and enters an ordinary
+encounter. A normal weapon assignment precedes the warnings. The explicit
+`controlled-weapon-warning` helper changes only actor 0's heat/sensor bytes
+between pages; its before/after log and RAM stay in work/. The original changes
+order 13 to 141 after shutdown acknowledgement and back to 13 on reopening.
+
+The native engine stores those order high bits in its existing per-actor fired
+masks. BTPa/v36 persists the new held notices without adding payload bytes;
+v35 ordinary states migrate and cannot impersonate the new notice IDs.
+BTTA/v22 appends three original fragments (334 ranges, 14,644 bytes).
+**PASS:** 1,451 combat UI assertions, all nine warning regions, all 36 gate
+cases, all 51 regular and ASan/UBSan/LeakSanitizer suites, five Python tool tests
+and 16 native F5/F9 pages.
+The comparison covers the declared panels and state transitions, not full
+battlefield pixels or original animated text timing.

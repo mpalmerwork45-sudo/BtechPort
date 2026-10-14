@@ -1,0 +1,108 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "capture_run": "1791961683091068424",
+  "cases": [
+    {
+      "case": 0,
+      "label": "damaged-sensors",
+      "bounds": [
+        0,
+        0,
+        104,
+        200
+      ],
+      "rgb_sha256": "64e94657748d4588466532c969337feaf0408cc741b4bf763585d5b7bd8c90c8"
+    },
+    {
+      "case": 1,
+      "label": "damaged-sensors-after",
+      "bounds": [
+        0,
+        0,
+        104,
+        200
+      ],
+      "rgb_sha256": "bd1024e44c317806347d21321064913f09d474d55adfc5577475ff2fa0065686"
+    },
+    {
+      "case": 1,
+      "label": "damaged-sensors-after",
+      "bounds": [
+        104,
+        96,
+        216,
+        104
+      ],
+      "rgb_sha256": "1c616e1028c643728cdd24729d8e2b8bc0f38ca885509e8bcb0d0077ad7b9a89"
+    },
+    {
+      "case": 2,
+      "label": "destroyed-sensors",
+      "bounds": [
+        0,
+        0,
+        104,
+        200
+      ],
+      "rgb_sha256": "79b911254e9218f697b5bebcdded50ab8f495c2295eda4419c2f7c5354cefe13"
+    },
+    {
+      "case": 3,
+      "label": "destroyed-sensors-after",
+      "bounds": [
+        0,
+        0,
+        104,
+        200
+      ],
+      "rgb_sha256": "402a26aab851c03dc8a0ac5f3ee13ecffa12b0c401d1267582b8d773f3403a93"
+    },
+    {
+      "case": 4,
+      "label": "shutdown",
+      "bounds": [
+        0,
+        0,
+        104,
+        200
+      ],
+      "rgb_sha256": "ed0162d75914db131df0c8076aec888e1006842f9d567cdc015a2491d00d2841"
+    },
+    {
+      "case": 5,
+      "label": "shutdown-after",
+      "bounds": [
+        0,
+        0,
+        104,
+        200
+      ],
+      "rgb_sha256": "402a26aab851c03dc8a0ac5f3ee13ecffa12b0c401d1267582b8d773f3403a93"
+    },
+    {
+      "case": 6,
+      "label": "normal-after-shutdown",
+      "bounds": [
+        0,
+        0,
+        104,
+        200
+      ],
+      "rgb_sha256": "bd1024e44c317806347d21321064913f09d474d55adfc5577475ff2fa0065686"
+    },
+    {
+      "case": 6,
+      "label": "normal-after-shutdown",
+      "bounds": [
+        104,
+        96,
+        216,
+        104
+      ],
+      "rgb_sha256": "1c616e1028c643728cdd24729d8e2b8bc0f38ca885509e8bcb0d0077ad7b9a89"
+    }
+  ],
+  "prerequisites": "Private GAME3 copy retains three active vehicles, fourth person on foot. Ordinary encounter and assignment of weapon 0 to ID13. controlled-weapon-warning changes only actor 0 heat/sensors between pages; original instructions and order writes remain unchanged.",
+  "comparison": "Seven held pages, complete unmasked left panels and two weapon-list crops; no claim of battlefield equality. Original order 13 becomes 141 after shutdown acknowledgement and returns to 13 when the normal weapon list is reopened."
+}

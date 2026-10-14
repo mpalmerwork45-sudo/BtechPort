@@ -2,9 +2,9 @@
 
 ## Current M4 presentation checks
 
-The active build has 51 CTest suites. Internal saves are BTPZ/v35, with a
+The active build has 51 CTest suites. Internal saves are BTPa/v36, with a
 20,480-byte payload; old versions retain explicit migrations. Current caches
-are BTTA/v21, BTCB/v11 and BTW3. The world seed is the original `0x020304`.
+are BTTA/v22, BTCB/v11 and BTW3. The world seed is the original `0x020304`.
 The older sections below describe earlier increments.
 The current increment passes all 51 regular and ASan/UBSan/LeakSanitizer core
 suites, historical sanitizer checks, six arena/prison/theft SDL tails and the
@@ -105,6 +105,13 @@ weapon lists. Six more held pages pass actual native F5/F9 (13 combat pages
 in total). BTPZ/v35 stores presentation bits at payload offset 10233; the
 combat annex and total payload lengths are unchanged. BTTA/v21 contains 331
 original text ranges (14,473 bytes including the font and provenance header).
+
+`make_weapon_warning_vectors.py` adds 36 original heat/sensor/order gate cases
+and nine complete RGB regions across seven live DOS pages. `test_combat_ui`
+restores before every input and checks acknowledgement order writes, delayed
+weapon-list normalization, cooled-mech reopening and v35 migration. Three more
+held warning pages pass native F5/F9 (16 combat pages total). BTPa/v36 adds no
+payload bytes; BTTA/v22 has 334 strings and is 14,644 bytes.
 
 The native intro starts at the logos. Use `--intro-preview` for equivalent
 headless replay. Escape cancels; Ctrl+Shift+Escape quits. Shift-held K/Y/R adds

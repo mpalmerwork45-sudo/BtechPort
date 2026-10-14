@@ -3,7 +3,8 @@
 
 X11 events are sent only to this session's DOSBox window. Scans and snapshots are
 read-only. The explicit controlled-talk-context command sets an audited NPC/result
-precondition in the child emulator; executable/resource/save files stay unchanged.
+precondition in the child emulator. controlled-weapon-warning sets only the
+active mech's heat and sensor prerequisites; files and instructions stay unchanged.
 All exports are under ignored work/.
 """
 import ctypes as c
@@ -764,6 +765,30 @@ btech.exe
                     if npc_trace is not None: raise ValueError("Controlled context is separate from natural NPC traces")
                     if len(parts) not in (1,2): raise ValueError("Talk context takes at most one fixture")
                     controlled_talk_context(process.pid, output,parts[1] if len(parts)==2 else "tests/fixtures/talk-context.json")
+                elif command == "controlled-weapon-warning":
+                    # Two explicit data prerequisites in this private child:
+                    # actor 0 heat and its sensor-damage byte. No instructions,
+                    # files, orders or other combat records are modified.
+                    values={"normal":(0,0),"shutdown":(30,0),"damaged-sensors":(0,1),"destroyed-sensors":(0,2)}
+                    if len(parts)!=2 or parts[1] not in values:
+                        raise ValueError("Expected normal/shutdown/damaged-sensors/destroyed-sensors")
+                    label=parts[1];base,row=snapshot_game(process.pid,"before-"+label,output)
+                    ram=(output/("before-"+label+"-ram.bin")).read_bytes()
+                    ds=int(row["data_segment"],16)*16
+                    heat_segment=struct.unpack_from('<H',ram,ds+0x5548)[0]*16
+                    mech_segment=struct.unpack_from('<H',ram,ds+0x5546)[0]*16
+                    if ram[mech_segment+0xc724]==255:raise ValueError("Actor 0 must be a live mech")
+                    offsets=(heat_segment+0x6e,mech_segment+0xc724+119)
+                    os.kill(process.pid,signal.SIGSTOP)
+                    fd=os.open(f"/proc/{process.pid}/mem",os.O_RDWR)
+                    try:
+                        old=[os.pread(fd,1,base+address)[0] for address in offsets]
+                        for address,value in zip(offsets,values[label]):
+                            if os.pwrite(fd,bytes([value]),base+address)!=1:raise RuntimeError("Short weapon prerequisite write")
+                        (output/(label+"-prerequisite.json")).write_text(json.dumps(dict(
+                            kind="controlled-weapon-warning",guest_offsets=offsets,before=old,after=values[label]),indent=2)+'\n')
+                    finally:
+                        os.close(fd);os.kill(process.pid,signal.SIGCONT)
                 elif command == "controlled-shop-cash":
                     # Isolated transaction test budget, never a campaign route.
                     # Only this child game's D370 cash word pair is changed.

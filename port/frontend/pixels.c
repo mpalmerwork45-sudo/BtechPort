@@ -642,13 +642,25 @@ static void combat_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
         if (commands && at<command_length && commands[at]=='\r') ++at;
         label[used]=0;
         int selected=(c->phase==BTP_COMBAT_MENU || combat_weapon_window(c) || c->phase==BTP_COMBAT_OVERRIDE ||
-            (c->phase==BTP_COMBAT_NOTICE && c->notice==3)) && c->selected==btp_combat_menu_command(c,i);
+            (c->phase==BTP_COMBAT_NOTICE && (c->notice==3 || c->notice>=20))) && c->selected==btp_combat_menu_command(c,i);
         if (selected) rectangle(f,8,104+(int)i*8,88,8,14);
         text(r,f,8,104+(int)i*8,label,selected ? 0u : 15u);
     }
     if (combat_weapon_window(c) || c->phase==BTP_COMBAT_OVERRIDE) {
         if (c->weapon_ui&2u) rectangle(f,8,104,88,88,0);
         combat_weapon_message(r,c,f);return;
+    }
+    if (c->phase==BTP_COMBAT_NOTICE && c->notice>=20) {
+        rectangle(f,8,8,88,88,0);size_t n;const uint8_t *message=bank_literal(r,331u+c->notice-20u,&n);
+        int y=message ? wrapped_at_mode(r,f,8,8,11,message,n,15,1) : 48;
+        /* Only shutdown calls the original held-page footer. Sensor warnings
+           wait for a key silently, retaining the highlighted command below. */
+        if (c->notice==20) {
+            message=bank_literal(r,290,&n);
+            if (message && n && *message=='\r') { ++message;--n; }
+            if (message) (void)wrapped_at_mode(r,f,8,y,11,message,n,15,1);
+        }
+        return;
     }
     if (c->phase==BTP_COMBAT_NOTICE && c->notice==3) {
         rectangle(f,8,8,88,88,0);size_t n;const uint8_t *message=bank_literal(r,330,&n);

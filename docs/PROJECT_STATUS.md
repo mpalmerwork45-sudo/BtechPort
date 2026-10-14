@@ -103,9 +103,9 @@ a nominal 8 MHz 8088 timing model; no exact recording from physical XT hardware
 is claimed. Enemy Jenner/UrbanMech sprite bases follow the original enemy table,
 while owned mechs use the original garage selection rule.
 
-Internal saves are **BTPZ/v35**, with a 20,480-byte payload inside the BTS1
+Internal saves are **BTPa/v36**, with a 20,480-byte payload inside the BTS1
 length/CRC envelope. The discovery marker and held spy confrontation are saved.
-Current local caches are BTTA/v21, BTCB/v11 and BTW3; the world seed is the
+Current local caches are BTTA/v22, BTCB/v11 and BTW3; the world seed is the
 original startup value `0x020304`, rather than the former research seed.
 Older saves migrate their represented fields; absent direction/exploration
 history cannot be reconstructed. Old ambiguous decorative wreck/fire marks
@@ -118,8 +118,9 @@ and source hashes only.
 The original five follow-ups are underway; this list records the actual
 unfinished portions, including subsequent owner observations.
 
-1. Finish direct arena/salvage comparisons and the remaining shutdown/sensor
-   weapon warnings. Weapon override/empty/destroyed notices, retained selection
+1. Finish direct arena/salvage comparisons. Shutdown and damaged/destroyed
+   sensor warnings now match nine original regions and 36 executed gate cases,
+   including retained/disabled firing orders. All 16 native combat pages pass F5/F9. Weapon override/empty/destroyed notices, retained selection
    and infantry/Kick selectors now match 20 original held pages (30 regions),
    with restoration before every input and six additional native F5/F9 pages.
    Eight additional weapon/target/withdrawal regions now match original
