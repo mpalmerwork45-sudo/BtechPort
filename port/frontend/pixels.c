@@ -369,8 +369,13 @@ static void combat_flash(const BtpResources *r, const BtpState *s, int cx, int c
     if (!c->graphics || !s->effects.count || s->effects.stage<BTP_EFFECT_ATTACK || c->phase!=BTP_COMBAT_ROUND) return;
     const BtpCombatEffect *e=&s->effects.shots[0];unsigned frame=s->effects.age/2u;
     const uint8_t *pose=r->combat.poses[e->group][e->direction];unsigned count=pose[0];
-    int x=200+((int)e->x-cx)*8,y=64+((int)e->y+2-cy)*8;
-    int tx=200+((int)e->tx-cx)*8,ty=64+((int)e->ty+2-cy)*8;
+    /* 0000:0E4B gives people an 8x8 anchor at (208,96), and vehicles
+       a 24x24 anchor at (200,80). Firing/reaction poses use the same origin
+       as walking so a soldier cannot jump onto a neighbouring roof. */
+    int x=(e->base==254 ? 208 : 200)+((int)e->x-cx)*8;
+    int y=(e->base==254 ? 96 : 80)+((int)e->y-cy)*8;
+    int tx=(e->target_base==254 ? 208 : 200)+((int)e->tx-cx)*8;
+    int ty=(e->target_base==254 ? 96 : 80)+((int)e->ty-cy)*8;
     if (frame<count) {
         (void)btp_draw_sprite(&r->sprites,e->base+pose[1+frame],x,y,0,104,f);
         /* DS:2E3C is the personal hit program. Adding it to the 146-frame
@@ -900,7 +905,12 @@ static void aftermath_panel(const BtpResources *r,const BtpState *s,uint32_t *f)
     } else if (v->phase==2) {
         if (v->notice==2) service_literal(r,message,&n,301);
         else {
-            const char *name=btp_party_name(&s->party,v->pilot);n=strlen(name);memcpy(message,name,n);
+            /* 05AB:04F9 names the best technician in the inspection/result;
+               the preceding Yes/No names the available pilot instead. */
+            unsigned technician=0,skill=0;
+            for (unsigned i=0;i<8;++i) if (s->party.people[i][0]!=255 && s->party.people[i][9]>skill)
+                { technician=i;skill=s->party.people[i][9]; }
+            const char *name=btp_party_name(&s->party,technician);n=strlen(name);memcpy(message,name,n);
             service_literal(r,message,&n,298);
             if (!v->notice) { memcpy(message+n,name,strlen(name));n+=strlen(name); }
             service_literal(r,message,&n,v->notice ? 300u : 299u);
@@ -1290,12 +1300,14 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         const BtpCombatState *c=&s->combat;
         unsigned focus=c->phase==BTP_COMBAT_TARGET || c->phase==BTP_COMBAT_KICK ? c->target_unit : c->phase==BTP_COMBAT_SCAN ? c->scan_unit : c->active_unit;
         cx=c->phase==BTP_COMBAT_MOVE ? c->cursor_x : c->unit[focus].x;
-        cy=(c->phase==BTP_COMBAT_MOVE ? c->cursor_y : c->unit[focus].y)+2;
+        /* 103B:1774 centres directly on the selected unit's ground anchor.
+           The exploration mech cursor's extra two half-steps do not apply. */
+        cy=c->phase==BTP_COMBAT_MOVE ? c->cursor_y : c->unit[focus].y;
         /* Clearing a numeric position must not recenter the viewport midway
            through that unit's death sound. Keep its captured position through
            the complete queued event, while sprite visibility changes below. */
         const BtpCombatEffect *death=btp_effects_death(s,focus);
-        if (death) { cx=death->tx;cy=death->ty+2; }
+        if (death) { cx=death->tx;cy=death->ty; }
     }
     BtpMap encounter_map;
     const BtpMap *map=btp_active_map(r,s);
@@ -1364,7 +1376,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         }
         if (!pending && mark->sprite)
             (void)btp_draw_sprite(&r->sprites,(mark->sprite&254u)==124 ? 124u+(s->tick&1u) : mark->sprite,
-                200+(mx-cx)*8,64+(my+2-cy)*8,0,104,f);
+                208+(mx-cx)*8,96+(my-cy)*8,0,104,f);
     }
     if (battle_display) {
         for (unsigned i=0;i<s->combat.count;++i) {
@@ -1391,7 +1403,8 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
             unsigned base=death ? death->target_base==254 ? btp_combat_id(&s->combat,i)==4 ? 166u : 270u : death->target_base :
                 u->infantry ? s->combat.friends && i<s->combat.friends ? btp_combat_id(&s->combat,i)==4 ? 166u : 270u : 270u : btp_mech_sprite_base(u->record[0],i>=friends);
             (void)btp_draw_sprite(&r->sprites,u->record[0]=='s' || (death && death->target_base==16) ? 16u : base+s->combat.walk[i],
-                200+((int)(death ? death->tx : u->x)-cx)*8,64+((int)(death ? death->ty : u->y)+2-cy)*8,
+                (u->infantry ? 208 : 200)+((int)(death ? death->tx : u->x)-cx)*8,
+                (u->infantry ? 96 : 80)+((int)(death ? death->ty : u->y)-cy)*8,
                 death ? 0u : btp_combat_cover(map,u,&terrain),104,f);
         }
         if (s->combat.phase) { combat_route(r,s,cx,cy,f);combat_flash(r,s,cx,cy,f); }

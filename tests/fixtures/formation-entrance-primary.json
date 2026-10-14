@@ -1,0 +1,32 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "routine": "0000:1C12",
+  "cases": 480,
+  "doors": [
+    [
+      2,
+      0
+    ],
+    [
+      2,
+      1
+    ],
+    [
+      2,
+      3
+    ],
+    [
+      4,
+      2
+    ]
+  ],
+  "prerequisites": "Original Starport/MAP4 RAM; ten cursor positions near four entrances, six compact formations and eight directions. Original viewport rebuilt; active flags and outdoor positions supplied as caller prerequisites.",
+  "intercepted_boundaries": [
+    "14D3:17C6 popup",
+    "1656:03F5 text; record requested door name",
+    "0000:1A13 Yes/No returns No"
+  ],
+  "comparison": "Exact first doorway offered and collision return after declining. Original machine instructions unchanged.",
+  "no_instruction_patches": true
+}

@@ -478,3 +478,76 @@ cases, all 51 regular and ASan/UBSan/LeakSanitizer suites, five Python tool test
 and 16 native F5/F9 pages.
 The comparison covers the declared panels and state transitions, not full
 battlefield pixels or original animated text timing.
+
+## Town formations, combat anchors and parked vehicles — 2026-10-14
+
+**VERIFIED:** `0000:1C12` tests every compact infantry position and both ground
+tiles of every active mech before accepting an outdoor cursor step. A blocked
+outer member stops the entire party. The former leader-only test let the cursor
+approach a roof while followers tried local detours. The normal movement gate
+now checks the complete formation on each half-step, including two/four-step
+inputs. Parked records do not participate. Explicit turns can take a wide party
+around a building; its leader cannot squeeze through alone.
+
+`town-formation-primary.*` records 40 live DOS observations (160 exact member
+positions), including rejected wall moves: four infantry in Starport and three
+mechs plus Rick on foot in MAP4. Runs `1791962848011430927` and
+`1791963196424631180` use private GAME3 copies with stated locations/crews and
+ordinary arrow inputs. `formation-collision-primary.*` executes 1,920 original
+wall decisions at those positions with six formations and eight directions.
+The original offset words agree with the already extracted compact tables.
+
+**VERIFIED:** the same routine checks entrances for every member, in compact
+order, before stopping at that member's wall. Infantry touches the doorway
+exactly; a mech can also touch it with either horizontal neighbour. The native
+entry prompt now preserves the party cursor; declining commits only a legal
+pending step. `formation-entrance-primary.*` compares 480 executed decisions
+around four doors, including the original collision result after answering No.
+Only popup/text/key boundaries are intercepted, with No supplied explicitly.
+No original instructions are patched. The input-only route helper uses these
+same formation and doorway rules; dependent journeys have been regenerated.
+Post-building animated text timing and every possible exit/crew change remain
+outside the bounded comparison.
+
+**VERIFIED:** `0000:0E4B` supplies different sprite anchors: infantry at
+`(208,96)`, vehicles at `(200,80)`, relative to the current ground coordinate.
+`103B:1774` centres combat directly on the selected coordinate. The old native
+renderer drew people eight pixels left and sixteen pixels above their collision
+position. Walking/firing/reaction sprites, debris and the effect visibility
+estimate now use the corresponding anchors. `combat-anchors-primary.*` executes
+50 original friendly/enemy draws; complete native frames compare against those
+measured sprite positions. Another 121,024 manual/computer infantry paths over
+actual Starport tiles check every resolved step. No path penetrated a roof;
+the visible overlap was the renderer offset. Full battlefield pixels and exact
+edge visibility margins remain separate, unverified comparisons.
+
+**VERIFIED:** normal arena return must leave checked-in vehicles inactive.
+The former return path promoted every stored model tag into an active record,
+causing the outside mechs to follow a foot party. Native return now preserves
+parked records and crew seats, and only a theft escape reactivates vehicles.
+`yard-parking-primary.txt` adds raw active bytes for all 32 executed outcome
+cases, without the old fixture's ownership projection. Normal live rental win
+and loss also retain `[255,255,255,255]` active bytes in runs
+`1791962267261198406` and `1791962676085215019`.
+Save loading repairs this specific old Starport foot-party state while keeping
+ownership, damage and crew data. Movement after four ordinary arena results
+and after loading an affected save leaves all parked coordinates unchanged.
+
+**VERIFIED panels:** the two complete 216x56 original arena win/loss crops match
+the native result pages. A sixth aftermath crop compares Rick's qualified-pilot
+salvage question from run `1791962800804281833`; inspection/result wording now
+names the best technician, as `05AB:04F9` does, rather than that pilot.
+Salvage success/failure/no-wreck full-page and retry-order parity remain open.
+
+The fresh-cadet ending now takes 66,149 ordinary inputs; spy replacement takes
+50,564 and the hospital arrival/Talk route takes 772. No save bytes, coordinates,
+skills, quest flags or RNG are edited in these journeys. The fresh route uses
+the owner's authorized credit shortcut. BTPa/v36 and cache formats are unchanged.
+
+**PASS:** all 52 regular suites (7.66 seconds with four jobs), all 52
+ASan/UBSan/LeakSanitizer suites (95.57 seconds sequentially), and five Python
+tool tests. Native checks pass all 16 combat F5/F9 pages, six arena/prison/theft
+tails, all nine building/theft follow-up tails and the 772-input arrival/Talk
+route. Each native tail compares actual recorded input, complete continued
+state and pixels. Sanitizer builds retain two pre-existing signed-division
+warnings in character-health display code; no sanitizer failure occurs.

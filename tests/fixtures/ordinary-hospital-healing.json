@@ -579,7 +579,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "507f1b62634883db",
+        "state_digest": "b9250f5a2f90d121",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1498,7 +1498,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "e902ef49ea9bb853",
+        "state_digest": "4915f123ed36a795",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1846,10 +1846,10 @@
         "map": 2,
         "mode": "building",
         "x_half": 115,
-        "y_half": 115,
+        "y_half": 116,
         "tile": [
           57,
-          57
+          58
         ],
         "gate": 85,
         "tick": 58,
@@ -2349,14 +2349,14 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1396,
-            1138
+            1395,
+            1140
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 9
         },
-        "player_sprite": 173,
+        "player_sprite": 172,
         "npc_sprites": [
           270,
           270,
@@ -2442,7 +2442,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "e732c24e3a60e8b0",
+        "state_digest": "c5ac8ec0273342fa",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -2790,10 +2790,10 @@
         "map": 2,
         "mode": "building",
         "x_half": 115,
-        "y_half": 115,
+        "y_half": 116,
         "tile": [
           57,
-          57
+          58
         ],
         "gate": 85,
         "tick": 60,
@@ -3285,14 +3285,14 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1396,
-            1138
+            1395,
+            1140
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 9
         },
-        "player_sprite": 173,
+        "player_sprite": 172,
         "npc_sprites": [
           270,
           270,
@@ -3378,7 +3378,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "13a65d7eab98d83a",
+        "state_digest": "2ddb8ed8887e52f0",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -3726,10 +3726,10 @@
         "map": 2,
         "mode": "building",
         "x_half": 115,
-        "y_half": 115,
+        "y_half": 116,
         "tile": [
           57,
-          57
+          58
         ],
         "gate": 85,
         "tick": 66,
@@ -4229,14 +4229,14 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1396,
-            1138
+            1395,
+            1140
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 9
         },
-        "player_sprite": 173,
+        "player_sprite": 172,
         "npc_sprites": [
           270,
           270,
@@ -4322,7 +4322,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "70542b47a1998c51",
+        "state_digest": "8f9454bacd64478f",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -4670,7 +4670,7 @@
         "map": 2,
         "mode": "local-exploration",
         "x_half": 116,
-        "y_half": 114,
+        "y_half": 115,
         "tile": [
           58,
           57
@@ -5174,7 +5174,7 @@
           "owned": 1,
           "world": [
             1396,
-            1138
+            1139
           ],
           "mounted": 0,
           "encounter": 0,
@@ -5266,7 +5266,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "11e6271758c509e0",
+        "state_digest": "1162f45dd3523f81",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -5612,7 +5612,7 @@
     "map": 2,
     "mode": "local-exploration",
     "x_half": 116,
-    "y_half": 114,
+    "y_half": 115,
     "tile": [
       58,
       57
@@ -6116,7 +6116,7 @@
       "owned": 1,
       "world": [
         1396,
-        1138
+        1139
       ],
       "mounted": 0,
       "encounter": 0,
@@ -6208,7 +6208,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "11e6271758c509e0",
+    "state_digest": "1162f45dd3523f81",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

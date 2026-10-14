@@ -1,0 +1,34 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "cases": [
+    {
+      "win": 1,
+      "run": "1791962267261198406",
+      "label": "arena-end-37",
+      "bounds": [
+        104,
+        72,
+        216,
+        56
+      ],
+      "rgb_sha256": "004a805366e46d456a15ebb737accf6be42631bddb9b294fb312fbb5ac8900e0"
+    },
+    {
+      "win": 0,
+      "run": "1791962676085215019",
+      "label": "loss-finish-5",
+      "bounds": [
+        104,
+        72,
+        216,
+        56
+      ],
+      "rgb_sha256": "9355666c0b5b86c0f9cafb0072b41e544e2d94a7644f4053068f1750d21cd378"
+    }
+  ],
+  "prerequisite": "Hash held original arena results from played win/loss captures.\n\nThe private GAME4 is a native export of the ordinary GAME3-to-arena approach.\nBoth original fights use a rented Locust: computer orders win the first, and\nleaving weapons unassigned loses the second. No damage or result is injected.",
+  "routine": "103B:13AD..13E0 with 14D3:17C6/17EA",
+  "comparison": "Complete unmasked 216x56 result popups. Both original returns place the party at (1337,1117); rental win awards 500 C-bills and rental loss awards none.",
+  "limits": "Does not establish complete battlefield or wall-clock parity."
+}

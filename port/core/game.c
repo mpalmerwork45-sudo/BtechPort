@@ -187,8 +187,14 @@ static void finish_script(BtpState *s, const BtpResources *r, const BtpMap *m)
         }
         /* The original commits the pending outdoor step after FF. */
         if (!invasion && !s->cache.active && s->map_id && !s->script.position_x && (s->map_id!=1 || s->entry_slot || s->script.native_action != 3)) {
-            s->x_half = m->entrance_x[s->entry_slot] & 127;
-            s->y_half = (uint16_t)((m->entrance_y[s->entry_slot] & 127) + (s->campaign.mounted ? 2u : 0u));
+            if (s->story_flags[4] && s->party.enabled) {
+                /* An outer member may have opened this door. Keep the party
+                   cursor and commit only the original pending legal step. */
+                btp_world_step(s,r,(BtpAction)s->entry_action);
+            } else {
+                s->x_half = m->entrance_x[s->entry_slot] & 127;
+                s->y_half = (uint16_t)((m->entrance_y[s->entry_slot] & 127) + (s->campaign.mounted ? 2u : 0u));
+            }
         }
         s->mode = (uint8_t)(s->party.enabled && s->party.people[0][0]==255 ? BTP_GAME_OVER : BTP_EXPLORE);
         /* Scripted allocation can put Jason in any owned bay or passenger
@@ -275,19 +281,19 @@ static void game_tick(BtpState *s, const BtpResources *r, BtpAction a)
         else if (s->story_flags[4]) { ++moved.tick;btp_world_step(&moved,r,a); }
         else btp_tick(&moved,map,a);
         map=btp_active_map(r,&moved);
-        if (s->story_flags[4] && moved.mode==BTP_EXPLORE && moved.blocked && previous.map_id && btp_action_moves(a)) {
-            BtpState entrance_step=previous;
-            entrance_step.x_half=(uint16_t)((int)previous.x_half+btp_action_dx(a));
-            entrance_step.y_half=(uint16_t)((int)previous.y_half+btp_action_dy(a));
-            if (btp_entrance(&entrance_step,map)>=0) {
-                moved.x_half=entrance_step.x_half;moved.y_half=entrance_step.y_half;moved.blocked=0;
-            }
-        }
-        int entrance = moved.map_id ? btp_entrance(&moved,map) : -1;
-        if (moved.mode==BTP_EXPLORE && btp_action_moves(a) && !moved.blocked &&
-            (moved.x_half != previous.x_half || moved.y_half != previous.y_half) &&
+        int party_entry=s->story_flags[4] && previous.party.enabled && previous.map_id && moved.map_id==previous.map_id;
+        int entrance = party_entry ? btp_party_entrance(&previous,r,map,
+            (int)previous.x_half+btp_action_dx(a),(int)previous.y_half+btp_action_dy(a)) :
+            moved.map_id ? btp_entrance(&moved,map) : -1;
+        if (moved.mode==BTP_EXPLORE && btp_action_moves(a) && (party_entry || !moved.blocked) &&
+            (party_entry || moved.x_half != previous.x_half || moved.y_half != previous.y_half) &&
             (moved.map_id==previous.map_id && entrance >= 0 && map->room_map[entrance]<26)) {
             moved.x_half = previous.x_half; moved.y_half = previous.y_half;
+            if (party_entry) {
+                moved.campaign.world_x=(uint16_t)((map->entrance_x[0]>>8)*128+previous.x_half);
+                moved.campaign.world_y=(uint16_t)((map->entrance_y[0]>>12)*128+previous.y_half);
+                moved.party=previous.party;
+            }
             moved.mode = BTP_ENTRY; moved.entry_slot = (uint8_t)entrance; moved.entry_selected = 0;
             moved.entry_action = moved.facing;
             moved.campaign.building=moved.story_flags[4] ? map->room_map[entrance] : 0;
@@ -361,8 +367,11 @@ static void game_tick(BtpState *s, const BtpResources *r, BtpAction a)
         if (a == BTP_LEFT || a == BTP_UP) s->entry_selected = 0;
         if (a == BTP_RIGHT || a == BTP_DOWN) s->entry_selected = 1;
         if (a == BTP_CANCEL || (a == BTP_ACCEPT && s->entry_selected)) {
-            s->x_half = map->entrance_x[s->entry_slot] & 127;
-            s->y_half = (uint16_t)((map->entrance_y[s->entry_slot] & 127) + (s->campaign.mounted ? 2u : 0u));
+            if (s->story_flags[4] && s->party.enabled) btp_world_step(s,r,(BtpAction)s->entry_action);
+            else {
+                s->x_half = map->entrance_x[s->entry_slot] & 127;
+                s->y_half = (uint16_t)((map->entrance_y[s->entry_slot] & 127) + (s->campaign.mounted ? 2u : 0u));
+            }
         s->mode = (uint8_t)(s->party.enabled && s->party.people[0][0]==255 ? BTP_GAME_OVER : BTP_EXPLORE);
         } else if (a == BTP_ACCEPT) {
             s->story_flags[10] = 1;

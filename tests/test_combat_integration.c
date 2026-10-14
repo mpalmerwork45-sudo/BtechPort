@@ -93,12 +93,12 @@ static void route_pixels(const BtpState *menu,BtpResources *r)
         s.combat.phase=BTP_COMBAT_MOVE;s.combat.selected=0;
         s.combat.cursor_x=(uint8_t)(64+4*dx);s.combat.cursor_y=(uint8_t)(77+4*dy);
         BtpState unchanged=s;btp_render(r,&s,0,frame);CHECK(!memcmp(&s,&unchanged,sizeof s));
-        glyph(r,frame,id,208-3*dx*8,72-3*dy*8);
+        glyph(r,frame,id,208-3*dx*8,88-3*dy*8);
         step(&s,r,BTP_ACCEPT);CHECK(s.combat.goal_active);
-        btp_render(r,&s,0,frame);glyph(r,frame,id,208+dx*8,72+dy*8);
+        btp_render(r,&s,0,frame);glyph(r,frame,id,208+dx*8,88+dy*8);
         step(&s,r,BTP_ACCEPT);step(&s,r,BTP_IDLE);
         CHECK(s.combat.unit[0].x==64+dx && s.combat.unit[0].y==77+dy);
-        btp_render(r,&s,0,frame);glyph(r,frame,id,208+dx*8,72+dy*8);
+        btp_render(r,&s,0,frame);glyph(r,frame,id,208+dx*8,88+dy*8);
     }
     free(frame);r->map=map;r->sprites.format=format;
 }

@@ -184,6 +184,48 @@ int btp_party_walkable(const BtpState *s,const BtpResources *r,int x,int y,int m
     if (mech) return x<2046 && btp_world_tile(r,s,x/2,y/2)<85 && btp_world_tile(r,s,x/2+1,y/2)<85;
     return btp_world_tile(r,s,(x+1)/2,y/2)<85;
 }
+int btp_party_can_stand(const BtpState *s,const BtpResources *r,int x,int y)
+{
+    /* 0000:1C12 tests every compact foot/mech position before accepting a
+       cursor step. An outer member hitting a wall stops the whole formation;
+       letting the leader advance and sending followers around it clips roofs. */
+    if (!s->party.enabled) return btp_party_walkable(s,r,x,y-(s->campaign.mounted ? 2 : 0),s->campaign.mounted);
+    unsigned person=0,mech=0;
+    for (unsigned i=0;i<8;++i) if (s->party.people[i][0]!=255 && s->party.people[i][12]>=8) {
+        unsigned place=person++;
+        if (!btp_party_walkable(s,r,x+r->combat.formation_x[place],y+r->combat.formation_y[place],0)) return 0;
+    }
+    for (unsigned i=0;i<4;++i) {
+        const uint8_t *record=i ? s->party.mechs[i-1] : s->campaign.mech;
+        if (record[0]==255) continue; /* Owned vehicles parked at Starport stay put. */
+        unsigned place=mech++;
+        if (!btp_party_walkable(s,r,x+r->combat.mech_formation_x[place],y+r->combat.mech_formation_y[place],1)) return 0;
+    }
+    return 1;
+}
+int btp_party_entrance(const BtpState *s,const BtpResources *r,const BtpMap *m,int x,int y)
+{
+    /* 0000:1DD4/2027 checks compact members in drawing order. A foot
+       soldier can touch the door exactly; either side of a mech can do so.
+       An earlier blocked member ends the scan, just like the DOS wall test. */
+    int ox=(m->entrance_x[0]>>8)*128,oy=(m->entrance_y[0]>>12)*128;
+    unsigned person=0,mech=0;
+    for (unsigned i=0;i<12;++i) {
+        int px,py,vehicle=i>=8;
+        if (!vehicle) {
+            if (s->party.people[i][0]==255 || s->party.people[i][12]<8) continue;
+            px=x+r->combat.formation_x[person];py=y+r->combat.formation_y[person++];
+        } else {
+            const uint8_t *record=i==8 ? s->campaign.mech : s->party.mechs[i-9];
+            if (record[0]==255) continue;
+            px=x+r->combat.mech_formation_x[mech];py=y+r->combat.mech_formation_y[mech++];
+        }
+        for (unsigned door=0;door<12;++door) if (m->entrance_x[door] && m->entrance_y[door] &&
+            py==(m->entrance_y[door]&127) && abs(px-(m->entrance_x[door]&127))<=vehicle) return (int)door;
+        if (!btp_party_walkable(s,r,ox+px,oy+py,vehicle)) return -1;
+    }
+    return -1;
+}
 static int follow_step(const BtpState *s,const BtpResources *r,int x,int y,int nx,int ny,int mech)
 {
     return btp_party_walkable(s,r,nx,ny,mech) &&

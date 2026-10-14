@@ -44,10 +44,13 @@ including replacements when the previous specialist is lost. Inspection can
 expose the recruited spy; his original combat confrontation handles pilot,
 passenger and on-foot outcomes. A fresh-cadet replay reaches the cache ending
 through companions, apprenticeships, the holodisk and password prerequisites.
-Each person's foot point and each mech's two ground tiles are checked as the
-party walks, including every intermediate step in two/four-step mode. All
+Outdoors, each person's foot point and each mech's two ground tiles are checked as the
+party walks: a blocked outer member stops the whole formation, including every
+intermediate step in two/four-step mode. Any member can trigger a doorway. All
 moving members advance one gait frame per key, using their own saved positions.
-The wider campaign remains unfinished; encounter timing, follower detours, physical
+Normal arena returns leave checked-in mechs parked; loading an affected older
+Starport save restores that state without losing the owned vehicles.
+The wider campaign remains unfinished; encounter timing, recovery of old formations, physical
 speaker response and other unaudited interface areas remain approximate.
 
 ## Acknowledgements

@@ -1,0 +1,18 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "snapshot": "work/reference-runs/1791709609448346900/combat-menu",
+  "routines": [
+    "0000:0E4B unit renderer",
+    "0000:17BB camera position"
+  ],
+  "cases": 50,
+  "prerequisite": "Only the selected unit has a visible position; camera at packed 0C40/C040, original MAP1 viewport. Ten friendly/enemy mech/person IDs, five relative positions.",
+  "comparison": "Exact screen X/Y supplied to the original pixel blitter. Sprite contents, occlusion and time are separate.",
+  "intercepted_boundaries": [
+    "0000:2A93 decorative marks",
+    "187F:28EB pixel blit",
+    "187F:0377 pixel blit"
+  ],
+  "no_instruction_patches": true
+}

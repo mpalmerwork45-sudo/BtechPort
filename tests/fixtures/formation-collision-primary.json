@@ -1,0 +1,12 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "routine": "0000:1C12",
+  "cases": 1920,
+  "snapshots": "town-formation-primary.json: 40 played Starport/MAP4 frames",
+  "prerequisites": "Six active compact formations, eight directions at every recorded cursor. D55C=1 suppresses doorway questions only. Original viewport, gate 85, offset tables and instructions are unchanged.",
+  "comparison": "Exact rejection of the entire cursor step, including both mech ground tiles and all eight foot positions.",
+  "limits": "Doorway prompts, deep-water messages and damaged-save recovery are separate.",
+  "intercepted_boundaries": [],
+  "no_instruction_patches": true
+}

@@ -1,6 +1,7 @@
 /* Input-only replay helper: BFS through the native world's collision samples.
    It reads a real save, produces ordinary keys, and never changes game state. */
 #include "core/world.h"
+#include "core/party.h"
 #include "data/save.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -48,29 +49,40 @@ int main(int argc,char **argv)
     if (!parents || !queue) { free(parents);free(queue);free(r);return 1; }
     for (unsigned i=0;i<SIZE;++i) parents[i]=-1;
     int start=sy*2048+sx,target=ty*2048+tx;parents[start]=start;queue[0]=start;
+    unsigned target_map=(unsigned)btp_world_location(r,&s,tx/2,ty/2);int target_door=-1;
+    if (target_map) {
+        const BtpMap *m=target_map==1 ? &r->map : target_map==11 ? &r->destroyed : &r->local[target_map-1];
+        for (unsigned i=0;i<12;++i) if (m->entrance_x[i] && m->entrance_y[i] &&
+            tx==(m->entrance_x[i]>>8)*128+(m->entrance_x[i]&127) &&
+            ty==(m->entrance_y[i]>>12)*128+(m->entrance_y[i]&127)+(s.campaign.mounted ? 2 : 0)) target_door=(int)i;
+    }
+    int goal=start==target && target_door<0 ? start : -1;
     unsigned begin=0,end=1;
     static const int dx[8]={0,1,0,-1,1,1,-1,-1},dy[8]={-1,0,1,0,-1,1,1,-1};
-    while (begin<end && parents[target]<0) {
+    while (begin<end && goal<0) {
         int p=queue[begin++],x=p%2048,y=p/2048;
         for (unsigned dir=0;dir<8;++dir) {
             int nx=x+dx[dir],ny=y+dy[dir];
             if (nx<0 || ny<2 || nx>=2046 || ny>=2048) continue;
             int q=ny*2048+nx;if (parents[q]>=0) continue;
-            unsigned blocked=(!btp_world_location(r,&s,nx/2,ny/2) && btp_world_deep_crossing(r,&s,(unsigned)x,(unsigned)y,dx[dir],dy[dir])) || (s.campaign.mounted ? btp_world_tile(r,&s,nx/2,(ny-2)/2)>=s.gate ||
-                btp_world_tile(r,&s,nx/2+1,(ny-2)/2)>=s.gate : btp_world_tile(r,&s,(nx+1)/2,ny/2)>=s.gate);
-            if (q==target) blocked=0; /* Pending building entry precedes parking. */
+            unsigned blocked=(!btp_world_location(r,&s,nx/2,ny/2) && btp_world_deep_crossing(r,&s,(unsigned)x,(unsigned)y,dx[dir],dy[dir])) ||
+                !btp_party_can_stand(&s,r,nx,ny);
             unsigned id=(unsigned)btp_world_location(r,&s,nx/2,ny/2);
-            if (id && q!=target) {
+            if (id) {
                 const BtpMap *m=id==1 ? &r->map : id==11 ? &r->destroyed : &r->local[id-1];
-                for (unsigned i=0;i<16;++i) if (m->entrance_x[i] && m->entrance_y[i] &&
-                    nx==(m->entrance_x[i]>>8)*128+(m->entrance_x[i]&127) &&
-                    ny==(m->entrance_y[i]>>12)*128+(m->entrance_y[i]&127)+(s.campaign.mounted ? 2 : 0)) blocked=0;
+                int entry=btp_party_entrance(&s,r,m,nx-(m->entrance_x[0]>>8)*128,ny-(m->entrance_y[0]>>12)*128);
+                /* Any compact member can reach the requested door. Other
+                   questions can be declined only when the step stays legal. */
+                if (id==target_map && target_door>=0 && entry==target_door) {
+                    parents[q]=p;goal=q;break;
+                }
             }
-            if (!blocked) { parents[q]=p;queue[end++]=q; }
+            if (!blocked) { parents[q]=p;queue[end++]=q;if (q==target && target_door<0) { goal=q;break; } }
         }
     }
-    int ok=parents[target]>=0;unsigned count=0;
+    int ok=goal>=0;unsigned count=0;
     if (ok) {
+        target=goal;
         for (int q=target;q!=start;q=parents[q]) queue[count++]=q;
         for (unsigned i=count;i>0;--i) {
             int q=queue[i-1],p=parents[q],delta=q-p;
@@ -82,6 +94,6 @@ int main(int argc,char **argv)
             if (s.mode==BTP_ENTRY && q!=target) step(&s,r,BTP_CANCEL);
             if (!encounter(&s,r)) { fprintf(stderr,"Encounter continuation requires battle orders\n");ok=0;break; }
         }
-    } else fprintf(stderr,"No native walking route to %d,%d\n",tx,ty);
+    } else fprintf(stderr,"No native walking route from %d,%d to %d,%d (%u positions examined)\n",sx,sy,tx,ty,end);
     free(parents);free(queue);free(r);return !ok;
 }

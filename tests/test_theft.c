@@ -72,6 +72,7 @@ int main(int argc,char **argv)
     }
     CHECK(prison_start.yard.active==1);
     f=fopen("tests/fixtures/yard-outcomes-primary.txt","r");CHECK(f);unsigned outcomes=0;
+    FILE *parking=fopen("tests/fixtures/yard-parking-primary.txt","r");CHECK(parking);
     const uint8_t *templates[]={r->combat.loans[0],r->combat.commando,r->combat.encounter_mechs[2],r->combat.loans[1]};
     while (fgets(line,sizeof line,f)) {
         unsigned rental=0,count,slot=0,stolen=0,destroyed,failed;int used;unsigned long long wanted[4];
@@ -93,14 +94,22 @@ int main(int argc,char **argv)
             s.combat.unit[0].y=102;s.combat.phase=0;s.combat.lost=(uint8_t)destroyed;btp_yard_result(&s,r);
         } else btp_yard_finish_prison(&s,r,!destroyed);
         CHECK(s.story_flags[40]==failed);
+        char parked[128];unsigned active[4];CHECK(fgets(parked,sizeof parked,parking));
+        if (line[0]=='A') CHECK(sscanf(parked,"A %*u %*u %*u %*u %*u %u %u %u %u",&active[0],&active[1],&active[2],&active[3])==4);
+        else CHECK(sscanf(parked,"P %*u %*u %u %u %u %u",&active[0],&active[1],&active[2],&active[3])==4);
         for (unsigned i=0;i<4;++i) {
-            const uint8_t *m=btp_party_mech(&s,i);uint64_t actual=fingerprint(m,121);
+            const uint8_t *m=btp_party_mech(&s,i);CHECK(m[0]==active[i]);
+            uint8_t record[121];memcpy(record,m,sizeof record);
+            /* The older fixture compares owned models even while parked;
+               the separate raw-byte cases above now verify parking itself. */
+            if (record[0]==255 && s.party.mech_types[i]!=255) record[0]=s.party.mech_types[i];
+            uint64_t actual=fingerprint(record,sizeof record);
             if (actual!=wanted[i]) fprintf(stderr,"Yard outcome %u bay %u: actual %016llx expected %016llx, %s",outcomes,i,(unsigned long long)actual,wanted[i],line);
             CHECK(actual==wanted[i]);
         }
         ++outcomes;
     }
-    fclose(f);CHECK(outcomes==32);
+    fclose(f);fclose(parking);CHECK(outcomes==32);
     for (unsigned i=0;i<1024 && prison_start.mode==BTP_YARD;++i) input(&prison_start,r,BTP_IDLE);
     CHECK(prison_start.mode==BTP_ENCOUNTER && prison_start.campaign.encounter==3 && prison_start.combat.count==9);
     for (unsigned i=0;i<3;++i) input(&prison_start,r,BTP_ACCEPT);

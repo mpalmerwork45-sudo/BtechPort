@@ -3,18 +3,18 @@
   "checkpoints": [
     {
       "label": "entry",
-      "tick": 2131,
+      "tick": 2130,
       "state": {
         "map": 12,
         "mode": "entry-confirm",
-        "x_half": 11,
+        "x_half": 12,
         "y_half": 8,
         "tile": [
-          5,
+          6,
           4
         ],
         "gate": 85,
-        "tick": 2131,
+        "tick": 2130,
         "blocked": 0,
         "script_pc": 0,
         "script_status": 0,
@@ -486,14 +486,14 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            522,
+            524,
             392
           ],
           "mounted": 1,
           "encounter": 0,
           "building": 21
         },
-        "player_sprite": 178,
+        "player_sprite": 181,
         "npc_sprites": [
           270,
           270,
@@ -579,7 +579,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "959d1730779cdc7c",
+        "state_digest": "2af72d4926c8e322",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -922,18 +922,18 @@
     },
     {
       "label": "inventor-complete",
-      "tick": 2141,
+      "tick": 2140,
       "state": {
         "map": 12,
         "mode": "local-exploration",
-        "x_half": 10,
+        "x_half": 11,
         "y_half": 8,
         "tile": [
           5,
           4
         ],
         "gate": 85,
-        "tick": 2141,
+        "tick": 2140,
         "blocked": 0,
         "script_pc": 8411,
         "script_status": 3,
@@ -1410,7 +1410,7 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            522,
+            523,
             392
           ],
           "mounted": 1,
@@ -1503,7 +1503,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "28e880e4c2d17020",
+        "state_digest": "fc8dc7f4a0ca4d1c",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1848,14 +1848,14 @@
   "final": {
     "map": 12,
     "mode": "local-exploration",
-    "x_half": 10,
+    "x_half": 11,
     "y_half": 8,
     "tile": [
       5,
       4
     ],
     "gate": 85,
-    "tick": 2141,
+    "tick": 2140,
     "blocked": 0,
     "script_pc": 8411,
     "script_status": 3,
@@ -2332,7 +2332,7 @@
       "invasion": 0,
       "owned": 1,
       "world": [
-        522,
+        523,
         392
       ],
       "mounted": 1,
@@ -2425,7 +2425,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "28e880e4c2d17020",
+    "state_digest": "fc8dc7f4a0ca4d1c",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

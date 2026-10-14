@@ -7,10 +7,10 @@
       "state": {
         "map": 4,
         "mode": "entry-confirm",
-        "x_half": 49,
+        "x_half": 50,
         "y_half": 53,
         "tile": [
-          24,
+          25,
           26
         ],
         "gate": 85,
@@ -486,14 +486,14 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1200,
-            1460
+            1202,
+            1461
           ],
           "mounted": 1,
           "encounter": 0,
           "building": 14
         },
-        "player_sprite": 179,
+        "player_sprite": 178,
         "npc_sprites": [
           270,
           270,
@@ -579,7 +579,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "d9fefc2cb5941548",
+        "state_digest": "55a59a7f15efb1f8",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -926,10 +926,10 @@
       "state": {
         "map": 4,
         "mode": "building",
-        "x_half": 49,
+        "x_half": 50,
         "y_half": 53,
         "tile": [
-          24,
+          25,
           26
         ],
         "gate": 85,
@@ -1410,14 +1410,14 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1200,
-            1460
+            1202,
+            1461
           ],
           "mounted": 1,
           "encounter": 0,
           "building": 14
         },
-        "player_sprite": 179,
+        "player_sprite": 178,
         "npc_sprites": [
           270,
           270,
@@ -1503,7 +1503,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "7c5850e370a874e7",
+        "state_digest": "d9ac55d59f2e3653",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1850,7 +1850,7 @@
       "state": {
         "map": 4,
         "mode": "local-exploration",
-        "x_half": 48,
+        "x_half": 49,
         "y_half": 52,
         "tile": [
           24,
@@ -2334,7 +2334,7 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1200,
+            1201,
             1460
           ],
           "mounted": 1,
@@ -2427,7 +2427,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "4117aadf6e45a251",
+        "state_digest": "6d4fb685241ecd4a",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -2772,7 +2772,7 @@
   "final": {
     "map": 4,
     "mode": "local-exploration",
-    "x_half": 48,
+    "x_half": 49,
     "y_half": 52,
     "tile": [
       24,
@@ -3256,7 +3256,7 @@
       "invasion": 0,
       "owned": 1,
       "world": [
-        1200,
+        1201,
         1460
       ],
       "mounted": 1,
@@ -3349,7 +3349,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "4117aadf6e45a251",
+    "state_digest": "6d4fb685241ecd4a",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

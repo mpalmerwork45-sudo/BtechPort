@@ -2,7 +2,7 @@
 
 The independent C11/SDL2 port has playable implementations of the authorized
 M4a–M4e increments and the subsequent building, theft, encounter, recruitment and
-presentation requests. A recorded 66,116-input route now starts with a new cadet
+presentation requests. A recorded 66,149-input route now starts with a new cadet
 and reaches the cache ending through the actual training, companion, disk and
 password prerequisites. It uses the authorized money shortcut. M4 as a complete
 reproduction of every original campaign branch remains unfinished.
@@ -68,7 +68,7 @@ Successful pre-combat evasion produces no loot or cash.
 
 ## Verification and limits
 
-The current build has 51 CTest suites. New comparisons include 360 armour-repair,
+The current build has 52 CTest suites. New comparisons include 360 armour-repair,
 160 purchase-recipient, 32 prison/arena return, 432 water-boundary, 512 device
 direction and 314 recruitment/spy cases. Two controlled larger encounters cover
 11 original waves and 171 complete record/position/facing/heat/RNG comparisons.
@@ -82,9 +82,11 @@ both thefts and spy replacement, comparing recorded keys, complete continued
 state and final RGB pixels. Collision tests exercise three mechs and five people,
 each footprint at every intermediate step, all moving gaits and saved positions.
 
-**Current batch PASS:** all 51 regular and ASan/UBSan/LeakSanitizer core suites,
-the historical sanitizer checks, six native arena/prison/theft tails and the
-ordinary hospital-Talk SDL continuation. The preceding 48-suite increment
+**Current batch PASS:** all 52 regular and ASan/UBSan/LeakSanitizer suites,
+five Python tool tests, 16 combat F5/F9 pages, six native arena/prison/theft tails,
+all nine building/theft follow-up tails and the ordinary hospital-Talk SDL
+continuation. The preceding batch passed the historical sanitizer corpus.
+The preceding 48-suite increment
 also passed every native M4
 acceptance section and all nine native follow-up tails. Actual SDL checks pass
 for Num-Lock-off keypad menus, Num-Lock-on amount entry, and one-key exits from
@@ -97,7 +99,7 @@ successive increments.
 
 **VERIFIED in these bounds:** numeric rules, resource interpretation, original
 BLD branches and saved/native continuations. **APPROXIMATE:** DOS busy-loop
-cadence, encounter placement and broader AI/initiative, follower detours, several UI
+cadence, encounter placement and broader AI/initiative, recovery of older split formations, several UI
 layouts and physical speaker response. Audio uses original effect programs and
 a nominal 8 MHz 8088 timing model; no exact recording from physical XT hardware
 is claimed. Enemy Jenner/UrbanMech sprite bases follow the original enemy table,
@@ -118,7 +120,9 @@ and source hashes only.
 The original five follow-ups are underway; this list records the actual
 unfinished portions, including subsequent owner observations.
 
-1. Finish direct arena/salvage comparisons. Shutdown and damaged/destroyed
+1. Finish salvage success/failure/no-wreck and retry-order comparisons. Arena
+   win/loss and the qualified-pilot question now match complete original crops.
+   Shutdown and damaged/destroyed
    sensor warnings now match nine original regions and 36 executed gate cases,
    including retained/disabled firing orders. All 16 native combat pages pass F5/F9. Weapon override/empty/destroyed notices, retained selection
    and infantry/Kick selectors now match 20 original held pages (30 regions),
@@ -128,9 +132,11 @@ unfinished portions, including subsequent owner observations.
    targeting starts at enemy ID12 and cycles enemies only; a normal friendly-
    targeting gesture has not been found. Five victory/scavenging/scrap/pocket/
    loot panels match exactly; rewards and held-page restoration are tested.
-2. Expand live original doorway, roof-corner and formation comparisons across
-   towns. All-party collision, city joins, ruined-Citadel sheet continuity and
-   five visible cache companions have focused regression coverage.
+2. Extend doorway/formation comparisons to additional towns and cache exits.
+   Whole-party movement now matches 40 live observations, 1,920 original wall
+   decisions and 480 doorway decisions. Combat anchors match 50 original draws;
+   121,024 Starport infantry paths remain clear of roofs. Split older formations
+   and all map-boundary/doorway combinations are not fully compared.
 3. All eighteen isolated tone/noise sequences agree with executed original
    code. Physical 8 MHz XT calibration remains UNKNOWN; the existing clock
    model and speaker response remain APPROXIMATE. Further tuning needs evidence.
@@ -141,6 +147,9 @@ unfinished portions, including subsequent owner observations.
    immediate second Heal; its held save and acknowledgement preserve health.
 5. Alternate owned-arena/win/loss and prison-loss journeys now pass, including
    arena completion, old stuck-menu recovery, reward and ownership checks.
+   Normal returns keep vehicles parked; affected older Starport saves recover
+   on load. Thirty-two original raw parking outcomes and continued movement are
+   checked separately from ownership.
    Town/Starport NPCs and room arrivals are restored, with 95 executed original
    cases and a normal hospital-Talk route. Regular Starport encounters are
    infantry-only; arena setup remains separate.

@@ -84,11 +84,12 @@ int main(int argc,char **argv) {
         s.combat=(BtpCombatState){.count=2,.friends=1};s.combat.ids[0]=0;s.combat.ids[1]=16;s.combat.unit[1].infantry=1;s.combat.unit[1].record[11]=9;
         s.aftermath=(BtpAftermathState){.phase=(uint8_t)phase,.applied=2,.pilot=1,.unit=16,.notice=1,.selected=3,.cash=(uint16_t)(phase==9 ? 216 : 71)};
         s.aftermath.wrecks[12]='L';s.party.people[1][9]=2;
+        if (phase==1) { s.aftermath.pilot=3;s.aftermath.selected=0;s.party.people[3][12]=8;s.party.people[3][8]=1;s.party.people[1][9]=4; }
         const uint8_t weapons[4]={9,7,7,4};for (unsigned i=0;i<4;++i) s.party.people[i][11]=weapons[i];
         btp_render(r,&s,0,frame);
         if (panel(frame)!=expected) { fprintf(stderr,"Aftermath panel phase %u: %016" PRIx64 " != %016" PRIx64 "\n",phase,panel(frame),expected);btp_write_ppm("work/aftermath-panel.ppm",frame); }
         CHECK(panel(frame)==expected);++screens;
     }
-    fclose(f);CHECK(screens==5);
+    fclose(f);CHECK(screens==6);
     free(r);printf("PASS: %u checks; %u primary aftermath cases, %u original panels, saved salvage and crew survival/loss\n",checks,cases,screens);return 0;
 }

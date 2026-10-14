@@ -22,8 +22,11 @@ static int visible(const BtpCombatEffect *e,const BtpState *s)
     const BtpCombatUnit *focus=&c->unit[c->active_unit];
     const BtpCombatEffect *death=btp_effects_death(s,c->active_unit);
     unsigned x=death ? death->tx : focus->x,y=death ? death->ty : focus->y;
-    int ax=200+((int)e->x-(int)x)*8,ay=64+((int)e->y-(int)y)*8;
-    int tx=200+((int)e->tx-(int)x)*8,ty=64+((int)e->ty-(int)y)*8;
+    /* Match 0000:0E4B's distinct infantry and mech drawing anchors. */
+    int ax=(e->base==254 ? 208 : 200)+((int)e->x-(int)x)*8;
+    int ay=(e->base==254 ? 96 : 80)+((int)e->y-(int)y)*8;
+    int tx=(e->target_base==254 ? 208 : 200)+((int)e->tx-(int)x)*8;
+    int ty=(e->target_base==254 ? 96 : 80)+((int)e->ty-(int)y)*8;
     /* Use the renderer's clipped viewport. Exact DOS visibility margins
        at the border remain approximate until their full pixel comparison. */
     return (ax+24>104 && ax<320 && ay+24>0 && ay<200) || (tx+24>104 && tx<320 && ty+24>0 && ty<200);

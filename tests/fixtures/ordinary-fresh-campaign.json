@@ -17,18 +17,18 @@
   "checkpoints": [
     {
       "label": "fresh-trained-party",
-      "tick": 51638,
+      "tick": 51658,
       "state": {
         "map": 3,
         "mode": "local-exploration",
-        "x_half": 4,
-        "y_half": 29,
+        "x_half": 3,
+        "y_half": 25,
         "tile": [
-          2,
-          14
+          1,
+          12
         ],
         "gate": 85,
-        "tick": 51638,
+        "tick": 51658,
         "blocked": 0,
         "script_pc": 4293,
         "script_status": 3,
@@ -79,18 +79,6 @@
         "conversation_checkpoint": 0,
         "npc_pairs": [
           [
-            112,
-            1
-          ],
-          [
-            53,
-            1
-          ],
-          [
-            81,
-            1
-          ],
-          [
             53,
             1
           ],
@@ -108,6 +96,18 @@
           ],
           [
             81,
+            1
+          ],
+          [
+            70,
+            1
+          ],
+          [
+            99,
+            1
+          ],
+          [
+            53,
             1
           ]
         ],
@@ -272,7 +272,7 @@
           0,
           0,
           0,
-          109,
+          104,
           0,
           0,
           0,
@@ -505,14 +505,14 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1668,
-            925
+            1667,
+            921
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 13
         },
-        "player_sprite": 170,
+        "player_sprite": 171,
         "npc_sprites": [
           270,
           270,
@@ -566,7 +566,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 32578224,
+        "explored_digest": 2162954872,
         "map_center": [
           0,
           0
@@ -598,7 +598,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "5f8e9978b0d8c299",
+        "state_digest": "4801ed3fc619052b",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -941,18 +941,18 @@
     },
     {
       "label": "fresh-travel-crew",
-      "tick": 51743,
+      "tick": 51768,
       "state": {
         "map": 0,
         "mode": "local-exploration",
         "x_half": 1744,
-        "y_half": 925,
+        "y_half": 921,
         "tile": [
           872,
-          462
+          460
         ],
         "gate": 85,
-        "tick": 51743,
+        "tick": 51768,
         "blocked": 0,
         "script_pc": 0,
         "script_status": 0,
@@ -998,18 +998,6 @@
         "conversation_checkpoint": 0,
         "npc_pairs": [
           [
-            112,
-            0
-          ],
-          [
-            53,
-            0
-          ],
-          [
-            81,
-            0
-          ],
-          [
             53,
             0
           ],
@@ -1028,6 +1016,18 @@
           [
             81,
             0
+          ],
+          [
+            70,
+            0
+          ],
+          [
+            99,
+            0
+          ],
+          [
+            53,
+            0
           ]
         ],
         "npc_enabled": 0,
@@ -1035,9 +1035,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          68,
-          216,
-          152
+          162,
+          177,
+          48
         ],
         "npc_search": [
           0,
@@ -1191,7 +1191,7 @@
           0,
           0,
           0,
-          90,
+          84,
           0,
           0,
           0,
@@ -1425,13 +1425,13 @@
           "owned": 1,
           "world": [
             1744,
-            925
+            921
           ],
           "mounted": 1,
           "encounter": 0,
           "building": 0
         },
-        "player_sprite": 170,
+        "player_sprite": 172,
         "npc_sprites": [
           270,
           270,
@@ -1485,7 +1485,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 676402094,
+        "explored_digest": 1276104522,
         "map_center": [
           0,
           0
@@ -1517,7 +1517,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "3a2a07f021807f6d",
+        "state_digest": "a143c3519197d452",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1860,18 +1860,18 @@
     },
     {
       "label": "owner-authorized-funding",
-      "tick": 51744,
+      "tick": 51769,
       "state": {
         "map": 0,
         "mode": "local-exploration",
         "x_half": 1744,
-        "y_half": 925,
+        "y_half": 921,
         "tile": [
           872,
-          462
+          460
         ],
         "gate": 85,
-        "tick": 51744,
+        "tick": 51769,
         "blocked": 0,
         "script_pc": 0,
         "script_status": 0,
@@ -1917,18 +1917,6 @@
         "conversation_checkpoint": 0,
         "npc_pairs": [
           [
-            112,
-            0
-          ],
-          [
-            53,
-            0
-          ],
-          [
-            81,
-            0
-          ],
-          [
             53,
             0
           ],
@@ -1947,6 +1935,18 @@
           [
             81,
             0
+          ],
+          [
+            70,
+            0
+          ],
+          [
+            99,
+            0
+          ],
+          [
+            53,
+            0
           ]
         ],
         "npc_enabled": 0,
@@ -1954,9 +1954,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          68,
-          216,
-          152
+          162,
+          177,
+          48
         ],
         "npc_search": [
           0,
@@ -2110,7 +2110,7 @@
           0,
           0,
           0,
-          90,
+          84,
           0,
           0,
           0,
@@ -2344,13 +2344,13 @@
           "owned": 1,
           "world": [
             1744,
-            925
+            921
           ],
           "mounted": 1,
           "encounter": 0,
           "building": 0
         },
-        "player_sprite": 170,
+        "player_sprite": 172,
         "npc_sprites": [
           270,
           270,
@@ -2404,7 +2404,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 676402094,
+        "explored_digest": 1276104522,
         "map_center": [
           0,
           0
@@ -2436,7 +2436,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "b82cfcd16eb3e9db",
+        "state_digest": "ab5b4991b8b9550e",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -2779,19 +2779,19 @@
     },
     {
       "label": "entry",
-      "tick": 52302,
+      "tick": 52337,
       "state": {
         "map": 2,
         "mode": "entry-confirm",
         "x_half": 20,
-        "y_half": 69,
+        "y_half": 70,
         "tile": [
           10,
-          34
+          35
         ],
         "gate": 85,
-        "tick": 52302,
-        "blocked": 0,
+        "tick": 52337,
+        "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
         "script_opcode": 0,
@@ -2836,14 +2836,6 @@
         "conversation_checkpoint": 0,
         "npc_pairs": [
           [
-            70,
-            0
-          ],
-          [
-            112,
-            0
-          ],
-          [
             81,
             0
           ],
@@ -2866,16 +2858,24 @@
           [
             112,
             0
+          ],
+          [
+            70,
+            0
+          ],
+          [
+            18,
+            0
           ]
         ],
         "npc_enabled": 2,
-        "npc_phase": 2,
+        "npc_phase": 1,
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          33,
           144,
-          241
+          33,
+          226
         ],
         "npc_search": [
           98,
@@ -2884,16 +2884,6 @@
         "npc_loop_timer": 0,
         "npc_allowance_pending": 0,
         "npcs": [
-          [
-            2676,
-            32882,
-            0
-          ],
-          [
-            2674,
-            32824,
-            0
-          ],
           [
             2605,
             32840,
@@ -2922,6 +2912,16 @@
           [
             2674,
             32824,
+            0
+          ],
+          [
+            2676,
+            32882,
+            0
+          ],
+          [
+            2620,
+            32861,
             0
           ]
         ],
@@ -3029,7 +3029,7 @@
           0,
           0,
           0,
-          207,
+          201,
           1,
           0,
           0,
@@ -3263,7 +3263,7 @@
           "owned": 1,
           "world": [
             1300,
-            1092
+            1094
           ],
           "mounted": 0,
           "encounter": 0,
@@ -3271,12 +3271,12 @@
         },
         "player_sprite": 174,
         "npc_sprites": [
-          270,
-          270,
           274,
           270,
           270,
           274,
+          270,
+          270,
           270,
           270
         ],
@@ -3323,7 +3323,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 1288755035,
+        "explored_digest": 955178458,
         "map_center": [
           0,
           0
@@ -3355,7 +3355,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "22329a2dbd242db2",
+        "state_digest": "a73fdc531b833f04",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -3698,19 +3698,19 @@
     },
     {
       "label": "apprenticeship-offer",
-      "tick": 52307,
+      "tick": 52342,
       "state": {
         "map": 2,
         "mode": "building",
         "x_half": 20,
-        "y_half": 69,
+        "y_half": 70,
         "tile": [
           10,
-          34
+          35
         ],
         "gate": 85,
-        "tick": 52307,
-        "blocked": 0,
+        "tick": 52342,
+        "blocked": 1,
         "script_pc": 3302,
         "script_status": 6,
         "script_opcode": 246,
@@ -3760,14 +3760,6 @@
         "conversation_checkpoint": 0,
         "npc_pairs": [
           [
-            70,
-            0
-          ],
-          [
-            112,
-            0
-          ],
-          [
             81,
             0
           ],
@@ -3790,16 +3782,24 @@
           [
             112,
             0
+          ],
+          [
+            70,
+            0
+          ],
+          [
+            18,
+            0
           ]
         ],
         "npc_enabled": 2,
-        "npc_phase": 2,
+        "npc_phase": 1,
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          33,
           144,
-          241
+          33,
+          226
         ],
         "npc_search": [
           98,
@@ -3808,16 +3808,6 @@
         "npc_loop_timer": 0,
         "npc_allowance_pending": 0,
         "npcs": [
-          [
-            2676,
-            32882,
-            0
-          ],
-          [
-            2674,
-            32824,
-            0
-          ],
           [
             2605,
             32840,
@@ -3846,6 +3836,16 @@
           [
             2674,
             32824,
+            0
+          ],
+          [
+            2676,
+            32882,
+            0
+          ],
+          [
+            2620,
+            32861,
             0
           ]
         ],
@@ -3953,7 +3953,7 @@
           0,
           0,
           0,
-          207,
+          201,
           1,
           0,
           0,
@@ -4187,7 +4187,7 @@
           "owned": 1,
           "world": [
             1300,
-            1092
+            1094
           ],
           "mounted": 0,
           "encounter": 0,
@@ -4195,12 +4195,12 @@
         },
         "player_sprite": 174,
         "npc_sprites": [
-          270,
-          270,
           274,
           270,
           270,
           274,
+          270,
+          270,
           270,
           270
         ],
@@ -4247,7 +4247,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 1288755035,
+        "explored_digest": 955178458,
         "map_center": [
           0,
           0
@@ -4279,7 +4279,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "770cf23adc8d5b56",
+        "state_digest": "482ca8593ca9eb23",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -4622,19 +4622,19 @@
     },
     {
       "label": "technician-qualified",
-      "tick": 52309,
+      "tick": 52344,
       "state": {
         "map": 2,
         "mode": "building",
         "x_half": 20,
-        "y_half": 69,
+        "y_half": 70,
         "tile": [
           10,
-          34
+          35
         ],
         "gate": 85,
-        "tick": 52309,
-        "blocked": 0,
+        "tick": 52344,
+        "blocked": 1,
         "script_pc": 218,
         "script_status": 1,
         "script_opcode": 249,
@@ -4684,14 +4684,6 @@
         "conversation_checkpoint": 0,
         "npc_pairs": [
           [
-            70,
-            0
-          ],
-          [
-            112,
-            0
-          ],
-          [
             81,
             0
           ],
@@ -4714,16 +4706,24 @@
           [
             112,
             0
+          ],
+          [
+            70,
+            0
+          ],
+          [
+            18,
+            0
           ]
         ],
         "npc_enabled": 2,
-        "npc_phase": 2,
+        "npc_phase": 1,
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          33,
           144,
-          241
+          33,
+          226
         ],
         "npc_search": [
           98,
@@ -4732,16 +4732,6 @@
         "npc_loop_timer": 0,
         "npc_allowance_pending": 0,
         "npcs": [
-          [
-            2676,
-            32882,
-            0
-          ],
-          [
-            2674,
-            32824,
-            0
-          ],
           [
             2605,
             32840,
@@ -4770,6 +4760,16 @@
           [
             2674,
             32824,
+            0
+          ],
+          [
+            2676,
+            32882,
+            0
+          ],
+          [
+            2620,
+            32861,
             0
           ]
         ],
@@ -4877,7 +4877,7 @@
           0,
           0,
           0,
-          207,
+          201,
           1,
           0,
           0,
@@ -5111,7 +5111,7 @@
           "owned": 1,
           "world": [
             1300,
-            1092
+            1094
           ],
           "mounted": 0,
           "encounter": 0,
@@ -5119,12 +5119,12 @@
         },
         "player_sprite": 174,
         "npc_sprites": [
-          270,
-          270,
           274,
           270,
           270,
           274,
+          270,
+          270,
           270,
           270
         ],
@@ -5171,7 +5171,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 1288755035,
+        "explored_digest": 955178458,
         "map_center": [
           0,
           0
@@ -5203,7 +5203,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "53133fbd9f51d365",
+        "state_digest": "bf103a480dafab69",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -5546,18 +5546,18 @@
     },
     {
       "label": "entry",
-      "tick": 52773,
+      "tick": 52815,
       "state": {
         "map": 4,
         "mode": "entry-confirm",
         "x_half": 31,
-        "y_half": 34,
+        "y_half": 30,
         "tile": [
           15,
-          17
+          15
         ],
         "gate": 85,
-        "tick": 52773,
+        "tick": 52815,
         "blocked": 0,
         "script_pc": 0,
         "script_status": 0,
@@ -5603,14 +5603,6 @@
         "conversation_checkpoint": 0,
         "npc_pairs": [
           [
-            39,
-            0
-          ],
-          [
-            18,
-            0
-          ],
-          [
             18,
             0
           ],
@@ -5633,38 +5625,36 @@
           [
             53,
             0
+          ],
+          [
+            53,
+            0
+          ],
+          [
+            18,
+            0
           ]
         ],
         "npc_enabled": 2,
-        "npc_phase": 0,
+        "npc_phase": 2,
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          76,
-          208,
-          100
+          180,
+          6,
+          70
         ],
         "npc_search": [
-          88,
+          92,
           0
         ],
         "npc_loop_timer": 0,
         "npc_allowance_pending": 0,
         "npcs": [
           [
-            2336,
-            45089,
-            0
-          ],
-          [
             2318,
-            45070,
+            45071,
             0
-          ],
-          [
-            2317,
-            45070,
-            7
           ],
           [
             2322,
@@ -5672,7 +5662,7 @@
             6
           ],
           [
-            2335,
+            2336,
             45089,
             0
           ],
@@ -5682,14 +5672,24 @@
             0
           ],
           [
-            2308,
+            2306,
             45092,
-            2
+            0
           ],
           [
             2322,
             45093,
             6
+          ],
+          [
+            2326,
+            45093,
+            3
+          ],
+          [
+            2318,
+            45071,
+            0
           ]
         ],
         "credits": 18790,
@@ -5796,7 +5796,7 @@
           0,
           0,
           0,
-          103,
+          94,
           0,
           0,
           0,
@@ -6029,23 +6029,23 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1184,
-            1443
+            1183,
+            1438
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 9
         },
-        "player_sprite": 173,
+        "player_sprite": 166,
         "npc_sprites": [
-          279,
-          278,
-          282,
-          283,
-          278,
           270,
-          275,
-          282
+          283,
+          279,
+          270,
+          270,
+          282,
+          274,
+          270
         ],
         "quiz": {
           "phase": 0,
@@ -6090,7 +6090,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 1288755035,
+        "explored_digest": 955178458,
         "map_center": [
           0,
           0
@@ -6122,7 +6122,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "eadd2c6ee935412d",
+        "state_digest": "5d4a32620f4397bd",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -6465,18 +6465,18 @@
     },
     {
       "label": "medical-seminar-offer",
-      "tick": 52776,
+      "tick": 52818,
       "state": {
         "map": 4,
         "mode": "building",
         "x_half": 31,
-        "y_half": 34,
+        "y_half": 30,
         "tile": [
           15,
-          17
+          15
         ],
         "gate": 85,
-        "tick": 52776,
+        "tick": 52818,
         "blocked": 0,
         "script_pc": 2791,
         "script_status": 6,
@@ -6527,14 +6527,6 @@
         "conversation_checkpoint": 0,
         "npc_pairs": [
           [
-            39,
-            0
-          ],
-          [
-            18,
-            0
-          ],
-          [
             18,
             0
           ],
@@ -6557,38 +6549,36 @@
           [
             53,
             0
+          ],
+          [
+            53,
+            0
+          ],
+          [
+            18,
+            0
           ]
         ],
         "npc_enabled": 2,
-        "npc_phase": 0,
+        "npc_phase": 2,
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          76,
-          208,
-          100
+          180,
+          6,
+          70
         ],
         "npc_search": [
-          88,
+          92,
           0
         ],
         "npc_loop_timer": 0,
         "npc_allowance_pending": 0,
         "npcs": [
           [
-            2336,
-            45089,
-            0
-          ],
-          [
             2318,
-            45070,
+            45071,
             0
-          ],
-          [
-            2317,
-            45070,
-            7
           ],
           [
             2322,
@@ -6596,7 +6586,7 @@
             6
           ],
           [
-            2335,
+            2336,
             45089,
             0
           ],
@@ -6606,14 +6596,24 @@
             0
           ],
           [
-            2308,
+            2306,
             45092,
-            2
+            0
           ],
           [
             2322,
             45093,
             6
+          ],
+          [
+            2326,
+            45093,
+            3
+          ],
+          [
+            2318,
+            45071,
+            0
           ]
         ],
         "credits": 18790,
@@ -6720,7 +6720,7 @@
           0,
           0,
           0,
-          103,
+          94,
           0,
           0,
           0,
@@ -6953,23 +6953,23 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1184,
-            1443
+            1183,
+            1438
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 9
         },
-        "player_sprite": 173,
+        "player_sprite": 166,
         "npc_sprites": [
-          279,
-          278,
-          282,
-          283,
-          278,
           270,
-          275,
-          282
+          283,
+          279,
+          270,
+          270,
+          282,
+          274,
+          270
         ],
         "quiz": {
           "phase": 0,
@@ -7014,7 +7014,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 1288755035,
+        "explored_digest": 955178458,
         "map_center": [
           0,
           0
@@ -7046,7 +7046,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "6ea8ee192a4e6069",
+        "state_digest": "69c690f85f02f890",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -7389,18 +7389,18 @@
     },
     {
       "label": "medic-qualified",
-      "tick": 52782,
+      "tick": 52824,
       "state": {
         "map": 4,
         "mode": "building",
         "x_half": 31,
-        "y_half": 34,
+        "y_half": 30,
         "tile": [
           15,
-          17
+          15
         ],
         "gate": 85,
-        "tick": 52782,
+        "tick": 52824,
         "blocked": 0,
         "script_pc": 754,
         "script_status": 1,
@@ -7471,14 +7471,6 @@
         "conversation_checkpoint": 0,
         "npc_pairs": [
           [
-            39,
-            0
-          ],
-          [
-            18,
-            0
-          ],
-          [
             18,
             0
           ],
@@ -7501,38 +7493,36 @@
           [
             53,
             0
+          ],
+          [
+            53,
+            0
+          ],
+          [
+            18,
+            0
           ]
         ],
         "npc_enabled": 2,
-        "npc_phase": 0,
+        "npc_phase": 2,
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          76,
-          208,
-          100
+          180,
+          6,
+          70
         ],
         "npc_search": [
-          88,
+          92,
           0
         ],
         "npc_loop_timer": 0,
         "npc_allowance_pending": 0,
         "npcs": [
           [
-            2336,
-            45089,
-            0
-          ],
-          [
             2318,
-            45070,
+            45071,
             0
-          ],
-          [
-            2317,
-            45070,
-            7
           ],
           [
             2322,
@@ -7540,7 +7530,7 @@
             6
           ],
           [
-            2335,
+            2336,
             45089,
             0
           ],
@@ -7550,14 +7540,24 @@
             0
           ],
           [
-            2308,
+            2306,
             45092,
-            2
+            0
           ],
           [
             2322,
             45093,
             6
+          ],
+          [
+            2326,
+            45093,
+            3
+          ],
+          [
+            2318,
+            45071,
+            0
           ]
         ],
         "credits": 18290,
@@ -7664,7 +7664,7 @@
           0,
           0,
           0,
-          103,
+          94,
           0,
           0,
           0,
@@ -7897,23 +7897,23 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1184,
-            1443
+            1183,
+            1438
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 9
         },
-        "player_sprite": 173,
+        "player_sprite": 166,
         "npc_sprites": [
-          279,
-          278,
-          282,
-          283,
-          278,
           270,
-          275,
-          282
+          283,
+          279,
+          270,
+          270,
+          282,
+          274,
+          270
         ],
         "quiz": {
           "phase": 0,
@@ -7958,7 +7958,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 1288755035,
+        "explored_digest": 955178458,
         "map_center": [
           0,
           0
@@ -7990,7 +7990,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "5fd91731e45cc37c",
+        "state_digest": "d7eee3f0857d10a4",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -8333,18 +8333,18 @@
     },
     {
       "label": "entry",
-      "tick": 53168,
+      "tick": 53216,
       "state": {
         "map": 11,
         "mode": "entry-confirm",
-        "x_half": 17,
-        "y_half": 8,
+        "x_half": 18,
+        "y_half": 4,
         "tile": [
-          8,
-          4
+          9,
+          2
         ],
         "gate": 85,
-        "tick": 53168,
+        "tick": 53216,
         "blocked": 0,
         "script_pc": 0,
         "script_status": 0,
@@ -8390,14 +8390,6 @@
         "conversation_checkpoint": 0,
         "npc_pairs": [
           [
-            39,
-            0
-          ],
-          [
-            18,
-            0
-          ],
-          [
             18,
             0
           ],
@@ -8420,6 +8412,14 @@
           [
             53,
             0
+          ],
+          [
+            53,
+            0
+          ],
+          [
+            18,
+            0
           ]
         ],
         "npc_enabled": 0,
@@ -8427,9 +8427,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          62,
-          5,
-          80
+          220,
+          168,
+          124
         ],
         "npc_search": [
           0,
@@ -8583,7 +8583,7 @@
           0,
           0,
           0,
-          8,
+          255,
           0,
           0,
           0,
@@ -8816,8 +8816,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1553,
-            1545
+            1554,
+            1540
           ],
           "mounted": 0,
           "encounter": 0,
@@ -8877,7 +8877,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 1577788213,
+        "explored_digest": 3087508956,
         "map_center": [
           0,
           0
@@ -8909,7 +8909,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "4c3d1faf9f8d8a84",
+        "state_digest": "8aa0b60ae96f5ba6",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -9252,18 +9252,18 @@
     },
     {
       "label": "jeremiah-holodisk-viewed",
-      "tick": 53183,
+      "tick": 53231,
       "state": {
         "map": 11,
         "mode": "local-exploration",
-        "x_half": 17,
-        "y_half": 9,
+        "x_half": 18,
+        "y_half": 5,
         "tile": [
-          8,
-          4
+          9,
+          2
         ],
         "gate": 85,
-        "tick": 53183,
+        "tick": 53231,
         "blocked": 0,
         "script_pc": 0,
         "script_status": 0,
@@ -9309,14 +9309,6 @@
         "conversation_checkpoint": 0,
         "npc_pairs": [
           [
-            39,
-            0
-          ],
-          [
-            18,
-            0
-          ],
-          [
             18,
             0
           ],
@@ -9339,6 +9331,14 @@
           [
             53,
             0
+          ],
+          [
+            53,
+            0
+          ],
+          [
+            18,
+            0
           ]
         ],
         "npc_enabled": 0,
@@ -9346,9 +9346,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          62,
-          5,
-          80
+          220,
+          168,
+          124
         ],
         "npc_search": [
           0,
@@ -9502,7 +9502,7 @@
           0,
           0,
           0,
-          8,
+          255,
           0,
           0,
           0,
@@ -9735,14 +9735,14 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1553,
-            1545
+            1554,
+            1541
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 19
         },
-        "player_sprite": 166,
+        "player_sprite": 167,
         "npc_sprites": [
           270,
           270,
@@ -9796,7 +9796,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 1577788213,
+        "explored_digest": 3087508956,
         "map_center": [
           0,
           0
@@ -9828,7 +9828,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "3c99af6a7fd0b6d2",
+        "state_digest": "f8602233a5ae6007",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -10171,18 +10171,18 @@
     },
     {
       "label": "entry",
-      "tick": 55198,
+      "tick": 55241,
       "state": {
         "map": 12,
         "mode": "entry-confirm",
-        "x_half": 11,
-        "y_half": 6,
+        "x_half": 12,
+        "y_half": 8,
         "tile": [
-          5,
-          3
+          6,
+          4
         ],
         "gate": 85,
-        "tick": 55198,
+        "tick": 55241,
         "blocked": 0,
         "script_pc": 0,
         "script_status": 0,
@@ -10236,27 +10236,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -10265,9 +10265,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          147,
-          151,
-          249
+          50,
+          191,
+          204
         ],
         "npc_search": [
           0,
@@ -10421,7 +10421,7 @@
           0,
           0,
           0,
-          32,
+          24,
           0,
           0,
           0,
@@ -10654,8 +10654,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            522,
-            390
+            524,
+            392
           ],
           "mounted": 0,
           "encounter": 0,
@@ -10715,7 +10715,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 2347822174,
+        "explored_digest": 374643779,
         "map_center": [
           0,
           0
@@ -10747,7 +10747,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "bfffe277f990478f",
+        "state_digest": "d37fe05b2695461d",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -11090,18 +11090,18 @@
     },
     {
       "label": "tellhim-password-earned",
-      "tick": 55223,
+      "tick": 55266,
       "state": {
         "map": 12,
         "mode": "local-exploration",
-        "x_half": 10,
-        "y_half": 6,
+        "x_half": 11,
+        "y_half": 8,
         "tile": [
           5,
-          3
+          4
         ],
         "gate": 85,
-        "tick": 55223,
+        "tick": 55266,
         "blocked": 0,
         "script_pc": 7784,
         "script_status": 3,
@@ -11160,27 +11160,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -11189,9 +11189,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          147,
-          151,
-          249
+          50,
+          191,
+          204
         ],
         "npc_search": [
           0,
@@ -11345,7 +11345,7 @@
           0,
           0,
           0,
-          32,
+          24,
           0,
           0,
           0,
@@ -11578,14 +11578,14 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            522,
-            390
+            523,
+            392
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 21
         },
-        "player_sprite": 181,
+        "player_sprite": 178,
         "npc_sprites": [
           270,
           270,
@@ -11639,7 +11639,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 2347822174,
+        "explored_digest": 374643779,
         "map_center": [
           0,
           0
@@ -11671,7 +11671,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "764e08a9fb067f3f",
+        "state_digest": "4587987ff0524634",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -12014,18 +12014,18 @@
     },
     {
       "label": "cache-entrance",
-      "tick": 55649,
+      "tick": 55682,
       "state": {
         "map": 13,
         "mode": "entry-confirm",
-        "x_half": 9,
-        "y_half": 12,
+        "x_half": 10,
+        "y_half": 5,
         "tile": [
-          4,
-          6
+          5,
+          2
         ],
         "gate": 85,
-        "tick": 55649,
+        "tick": 55682,
         "blocked": 0,
         "script_pc": 0,
         "script_status": 0,
@@ -12079,27 +12079,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -12108,9 +12108,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -12264,7 +12264,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -12497,8 +12497,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            776,
-            780
+            778,
+            773
           ],
           "mounted": 1,
           "encounter": 0,
@@ -12558,7 +12558,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -12590,7 +12590,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "2a77a73bf0a056f1",
+        "state_digest": "106105651f359922",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -12933,7 +12933,7 @@
     },
     {
       "label": "cache-instructions-complete",
-      "tick": 55686,
+      "tick": 55719,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -12944,7 +12944,7 @@
           63
         ],
         "gate": 33,
-        "tick": 55686,
+        "tick": 55719,
         "blocked": 0,
         "script_pc": 0,
         "script_status": 0,
@@ -12998,27 +12998,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -13027,9 +13027,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -13183,7 +13183,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -13423,7 +13423,7 @@
           "encounter": 0,
           "building": 0
         },
-        "player_sprite": 178,
+        "player_sprite": 179,
         "npc_sprites": [
           270,
           270,
@@ -13477,7 +13477,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -13509,7 +13509,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "90ede09a80093e35",
+        "state_digest": "f94235ea32470573",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -13852,7 +13852,7 @@
     },
     {
       "label": "code-terminal-1",
-      "tick": 55709,
+      "tick": 55742,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -13863,7 +13863,7 @@
           58
         ],
         "gate": 33,
-        "tick": 55709,
+        "tick": 55742,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -13917,27 +13917,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -13946,9 +13946,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -14102,7 +14102,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -14396,7 +14396,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -14428,7 +14428,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "76770ac9e50b981a",
+        "state_digest": "bf6cf7cc8114563b",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -14771,7 +14771,7 @@
     },
     {
       "label": "code-terminal-3",
-      "tick": 55791,
+      "tick": 55824,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -14782,7 +14782,7 @@
           62
         ],
         "gate": 33,
-        "tick": 55791,
+        "tick": 55824,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -14836,27 +14836,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -14865,9 +14865,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -15021,7 +15021,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -15315,7 +15315,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -15347,7 +15347,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "62e0ad953a49d5ed",
+        "state_digest": "a735797a3a42e83d",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -15690,7 +15690,7 @@
     },
     {
       "label": "code-terminal-5",
-      "tick": 55806,
+      "tick": 55839,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -15701,7 +15701,7 @@
           62
         ],
         "gate": 33,
-        "tick": 55806,
+        "tick": 55839,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -15755,27 +15755,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -15784,9 +15784,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -15940,7 +15940,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -16234,7 +16234,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -16266,7 +16266,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "dc9b311dc6cf86ca",
+        "state_digest": "e60b5c7e7bc18da8",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -16609,7 +16609,7 @@
     },
     {
       "label": "door-2-opening",
-      "tick": 55827,
+      "tick": 55860,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -16620,7 +16620,7 @@
           62
         ],
         "gate": 33,
-        "tick": 55827,
+        "tick": 55860,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -16674,27 +16674,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -16703,9 +16703,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -16859,7 +16859,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -17153,7 +17153,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -17185,7 +17185,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "0d9349b4b53e2f4d",
+        "state_digest": "6fc9fd59c7fef3f0",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -17528,7 +17528,7 @@
     },
     {
       "label": "door-2-open",
-      "tick": 55859,
+      "tick": 55892,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -17539,7 +17539,7 @@
           62
         ],
         "gate": 33,
-        "tick": 55859,
+        "tick": 55892,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -17593,27 +17593,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -17622,9 +17622,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -17778,7 +17778,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -18072,7 +18072,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -18104,7 +18104,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "6fa57ed1de4e514e",
+        "state_digest": "873988bef82882a7",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -18447,7 +18447,7 @@
     },
     {
       "label": "code-terminal-2",
-      "tick": 55928,
+      "tick": 55961,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -18458,7 +18458,7 @@
           58
         ],
         "gate": 33,
-        "tick": 55928,
+        "tick": 55961,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -18512,27 +18512,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -18541,9 +18541,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -18697,7 +18697,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -18991,7 +18991,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -19023,7 +19023,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "f84e45c83b448f28",
+        "state_digest": "ad3db36e63abcc33",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -19366,7 +19366,7 @@
     },
     {
       "label": "code-terminal-7",
-      "tick": 56034,
+      "tick": 56067,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -19377,7 +19377,7 @@
           57
         ],
         "gate": 33,
-        "tick": 56034,
+        "tick": 56067,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -19431,27 +19431,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -19460,9 +19460,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -19616,7 +19616,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -19910,7 +19910,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -19942,7 +19942,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "afa7436304cf4d44",
+        "state_digest": "63174ad1580d6b9c",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -20285,7 +20285,7 @@
     },
     {
       "label": "code-terminal-18",
-      "tick": 56244,
+      "tick": 56277,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -20296,7 +20296,7 @@
           2
         ],
         "gate": 33,
-        "tick": 56244,
+        "tick": 56277,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -20350,27 +20350,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -20379,9 +20379,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -20535,7 +20535,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -20829,7 +20829,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -20861,7 +20861,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "3588e059cede89de",
+        "state_digest": "43986bf1b14df121",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -21204,7 +21204,7 @@
     },
     {
       "label": "door-3-opening",
-      "tick": 56468,
+      "tick": 56501,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -21215,7 +21215,7 @@
           57
         ],
         "gate": 33,
-        "tick": 56468,
+        "tick": 56501,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -21269,27 +21269,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -21298,9 +21298,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -21454,7 +21454,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -21748,7 +21748,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -21780,7 +21780,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "7b70ac2fb04fb417",
+        "state_digest": "377833ea255df18c",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -22123,7 +22123,7 @@
     },
     {
       "label": "door-3-open",
-      "tick": 56500,
+      "tick": 56533,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -22134,7 +22134,7 @@
           57
         ],
         "gate": 33,
-        "tick": 56500,
+        "tick": 56533,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -22188,27 +22188,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -22217,9 +22217,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -22373,7 +22373,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -22667,7 +22667,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -22699,7 +22699,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "da87d4f3167b7067",
+        "state_digest": "6619d7334460c73c",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -23042,7 +23042,7 @@
     },
     {
       "label": "code-terminal-15",
-      "tick": 56564,
+      "tick": 56597,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -23053,7 +23053,7 @@
           38
         ],
         "gate": 33,
-        "tick": 56564,
+        "tick": 56597,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -23107,27 +23107,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -23136,9 +23136,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -23292,7 +23292,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -23586,7 +23586,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -23618,7 +23618,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "b2389e5f391ab8ac",
+        "state_digest": "11b198bffee4fc98",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -23961,7 +23961,7 @@
     },
     {
       "label": "code-terminal-14",
-      "tick": 56589,
+      "tick": 56622,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -23972,7 +23972,7 @@
           42
         ],
         "gate": 33,
-        "tick": 56589,
+        "tick": 56622,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -24026,27 +24026,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -24055,9 +24055,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -24211,7 +24211,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -24505,7 +24505,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -24537,7 +24537,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "5c08e9d144456acd",
+        "state_digest": "4c1c8e1701aabb34",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -24880,7 +24880,7 @@
     },
     {
       "label": "code-terminal-11",
-      "tick": 56652,
+      "tick": 56685,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -24891,7 +24891,7 @@
           47
         ],
         "gate": 33,
-        "tick": 56652,
+        "tick": 56685,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -24945,27 +24945,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -24974,9 +24974,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -25130,7 +25130,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -25424,7 +25424,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -25456,7 +25456,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "be65c4473abee3dd",
+        "state_digest": "bf59a79c97d69ec2",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -25799,7 +25799,7 @@
     },
     {
       "label": "door-1-opening",
-      "tick": 56739,
+      "tick": 56772,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -25810,7 +25810,7 @@
           62
         ],
         "gate": 33,
-        "tick": 56739,
+        "tick": 56772,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -25864,27 +25864,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -25893,9 +25893,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -26049,7 +26049,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -26343,7 +26343,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -26375,7 +26375,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "e920d345b5dbd526",
+        "state_digest": "37bd22d12c9607b7",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -26718,7 +26718,7 @@
     },
     {
       "label": "door-1-open",
-      "tick": 56771,
+      "tick": 56804,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -26729,7 +26729,7 @@
           62
         ],
         "gate": 33,
-        "tick": 56771,
+        "tick": 56804,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -26783,27 +26783,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -26812,9 +26812,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -26968,7 +26968,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -27262,7 +27262,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -27294,7 +27294,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "c11c8010d9467c00",
+        "state_digest": "dd3e5d27448f3d95",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -27637,7 +27637,7 @@
     },
     {
       "label": "code-terminal-13",
-      "tick": 56868,
+      "tick": 56901,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -27648,7 +27648,7 @@
           46
         ],
         "gate": 33,
-        "tick": 56868,
+        "tick": 56901,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -27702,27 +27702,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -27731,9 +27731,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -27887,7 +27887,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -28181,7 +28181,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -28213,7 +28213,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "e518f16e4c4ab983",
+        "state_digest": "f59abf0a4183fa58",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -28556,7 +28556,7 @@
     },
     {
       "label": "code-terminal-31",
-      "tick": 57164,
+      "tick": 57197,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -28567,7 +28567,7 @@
           25
         ],
         "gate": 33,
-        "tick": 57164,
+        "tick": 57197,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -28621,27 +28621,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -28650,9 +28650,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -28806,7 +28806,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -29100,7 +29100,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -29132,7 +29132,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "cf660ab79900250e",
+        "state_digest": "2cf8c6d457238f09",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -29475,7 +29475,7 @@
     },
     {
       "label": "code-terminal-4",
-      "tick": 57454,
+      "tick": 57487,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -29486,7 +29486,7 @@
           62
         ],
         "gate": 33,
-        "tick": 57454,
+        "tick": 57487,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -29540,27 +29540,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -29569,9 +29569,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -29725,7 +29725,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -30019,7 +30019,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -30051,7 +30051,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "25d61a3995cb866f",
+        "state_digest": "1f9faa7ad4ee5228",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -30394,7 +30394,7 @@
     },
     {
       "label": "door-7-opening",
-      "tick": 57597,
+      "tick": 57630,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -30405,7 +30405,7 @@
           37
         ],
         "gate": 33,
-        "tick": 57597,
+        "tick": 57630,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -30459,27 +30459,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -30488,9 +30488,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -30644,7 +30644,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -30938,7 +30938,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -30970,7 +30970,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "39fe2acd65548e00",
+        "state_digest": "1cd85697001e26ba",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -31313,7 +31313,7 @@
     },
     {
       "label": "door-7-open",
-      "tick": 57629,
+      "tick": 57662,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -31324,7 +31324,7 @@
           37
         ],
         "gate": 33,
-        "tick": 57629,
+        "tick": 57662,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -31378,27 +31378,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -31407,9 +31407,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -31563,7 +31563,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -31857,7 +31857,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -31889,7 +31889,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "fedf6569b029dc9b",
+        "state_digest": "cdf6a19716c3774e",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -32232,7 +32232,7 @@
     },
     {
       "label": "code-terminal-29",
-      "tick": 57747,
+      "tick": 57780,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -32243,7 +32243,7 @@
           21
         ],
         "gate": 33,
-        "tick": 57747,
+        "tick": 57780,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -32297,27 +32297,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -32326,9 +32326,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -32482,7 +32482,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -32776,7 +32776,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -32808,7 +32808,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "b8dc297af1124810",
+        "state_digest": "b74eeb1f2f91b0b1",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -33151,7 +33151,7 @@
     },
     {
       "label": "code-terminal-12",
-      "tick": 58041,
+      "tick": 58074,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -33162,7 +33162,7 @@
           47
         ],
         "gate": 33,
-        "tick": 58041,
+        "tick": 58074,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -33216,27 +33216,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -33245,9 +33245,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -33401,7 +33401,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -33695,7 +33695,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -33727,7 +33727,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "83c7693e3d46a459",
+        "state_digest": "9cca3679a333acc8",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -34070,7 +34070,7 @@
     },
     {
       "label": "code-terminal-6",
-      "tick": 58138,
+      "tick": 58171,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -34081,7 +34081,7 @@
           59
         ],
         "gate": 33,
-        "tick": 58138,
+        "tick": 58171,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -34135,27 +34135,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -34164,9 +34164,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -34320,7 +34320,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -34614,7 +34614,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -34646,7 +34646,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "778b28533c686cce",
+        "state_digest": "d3db685c0a0c660d",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -34989,7 +34989,7 @@
     },
     {
       "label": "door-5-opening",
-      "tick": 58457,
+      "tick": 58490,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -35000,7 +35000,7 @@
           37
         ],
         "gate": 33,
-        "tick": 58457,
+        "tick": 58490,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -35054,27 +35054,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -35083,9 +35083,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -35239,7 +35239,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -35533,7 +35533,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -35565,7 +35565,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "36a4bec4a687739f",
+        "state_digest": "6f2f0dc19049745a",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -35908,7 +35908,7 @@
     },
     {
       "label": "door-5-open",
-      "tick": 58489,
+      "tick": 58522,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -35919,7 +35919,7 @@
           37
         ],
         "gate": 33,
-        "tick": 58489,
+        "tick": 58522,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -35973,27 +35973,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -36002,9 +36002,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -36158,7 +36158,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -36452,7 +36452,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -36484,7 +36484,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "8f48e8903c8cb03d",
+        "state_digest": "34e1e1b9738883dc",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -36827,7 +36827,7 @@
     },
     {
       "label": "code-terminal-17",
-      "tick": 58753,
+      "tick": 58786,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -36838,7 +36838,7 @@
           38
         ],
         "gate": 33,
-        "tick": 58753,
+        "tick": 58786,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -36892,27 +36892,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -36921,9 +36921,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -37077,7 +37077,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -37371,7 +37371,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -37403,7 +37403,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "fc92feaa377bfc64",
+        "state_digest": "c9587e319086fe89",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -37746,7 +37746,7 @@
     },
     {
       "label": "code-terminal-19",
-      "tick": 58762,
+      "tick": 58795,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -37757,7 +37757,7 @@
           38
         ],
         "gate": 33,
-        "tick": 58762,
+        "tick": 58795,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -37811,27 +37811,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -37840,9 +37840,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -37996,7 +37996,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -38290,7 +38290,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -38322,7 +38322,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "63f8eccaeebb0830",
+        "state_digest": "63d822816ed14a37",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -38665,7 +38665,7 @@
     },
     {
       "label": "code-terminal-26",
-      "tick": 58935,
+      "tick": 58968,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -38676,7 +38676,7 @@
           25
         ],
         "gate": 33,
-        "tick": 58935,
+        "tick": 58968,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -38730,27 +38730,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -38759,9 +38759,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -38915,7 +38915,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -39209,7 +39209,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -39241,7 +39241,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "a680625619535fc6",
+        "state_digest": "66e298dcd10250e7",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -39584,7 +39584,7 @@
     },
     {
       "label": "door-4-opening",
-      "tick": 59116,
+      "tick": 59149,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -39595,7 +39595,7 @@
           41
         ],
         "gate": 33,
-        "tick": 59116,
+        "tick": 59149,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -39649,27 +39649,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -39678,9 +39678,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -39834,7 +39834,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -40128,7 +40128,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -40160,7 +40160,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "b12296ac32fc90ec",
+        "state_digest": "c87a1b8022e7dff4",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -40503,7 +40503,7 @@
     },
     {
       "label": "door-4-open",
-      "tick": 59148,
+      "tick": 59181,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -40514,7 +40514,7 @@
           41
         ],
         "gate": 33,
-        "tick": 59148,
+        "tick": 59181,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -40568,27 +40568,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -40597,9 +40597,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -40753,7 +40753,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -41047,7 +41047,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -41079,7 +41079,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "6936e7b3eed3f02a",
+        "state_digest": "23fd2189f177c081",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -41422,7 +41422,7 @@
     },
     {
       "label": "code-terminal-20",
-      "tick": 59179,
+      "tick": 59212,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -41433,7 +41433,7 @@
           40
         ],
         "gate": 33,
-        "tick": 59179,
+        "tick": 59212,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -41487,27 +41487,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -41516,9 +41516,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -41672,7 +41672,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -41966,7 +41966,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -41998,7 +41998,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "c272c3a0ebfdfb39",
+        "state_digest": "8545c3047659b878",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -42341,7 +42341,7 @@
     },
     {
       "label": "code-terminal-27",
-      "tick": 59613,
+      "tick": 59646,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -42352,7 +42352,7 @@
           16
         ],
         "gate": 33,
-        "tick": 59613,
+        "tick": 59646,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -42406,27 +42406,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -42435,9 +42435,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -42591,7 +42591,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -42885,7 +42885,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -42917,7 +42917,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "df3758f711b7cbc1",
+        "state_digest": "1b6dc83f87932ccc",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -43260,7 +43260,7 @@
     },
     {
       "label": "code-terminal-22",
-      "tick": 60001,
+      "tick": 60034,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -43271,7 +43271,7 @@
           30
         ],
         "gate": 33,
-        "tick": 60001,
+        "tick": 60034,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -43325,27 +43325,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -43354,9 +43354,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -43510,7 +43510,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -43804,7 +43804,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -43836,7 +43836,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "f775a0f93e574e91",
+        "state_digest": "b89f60e7e5ef2570",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -44179,7 +44179,7 @@
     },
     {
       "label": "door-6-opening",
-      "tick": 60024,
+      "tick": 60057,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -44190,7 +44190,7 @@
           35
         ],
         "gate": 33,
-        "tick": 60024,
+        "tick": 60057,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -44244,27 +44244,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -44273,9 +44273,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -44429,7 +44429,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -44723,7 +44723,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -44755,7 +44755,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "87d8437ae6211564",
+        "state_digest": "2a532fe7fc229757",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -45098,7 +45098,7 @@
     },
     {
       "label": "door-6-open",
-      "tick": 60056,
+      "tick": 60089,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -45109,7 +45109,7 @@
           35
         ],
         "gate": 33,
-        "tick": 60056,
+        "tick": 60089,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -45163,27 +45163,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -45192,9 +45192,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -45348,7 +45348,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -45642,7 +45642,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -45674,7 +45674,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "7688ebb7221f36e3",
+        "state_digest": "2e868f8114bf8ce0",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -46017,7 +46017,7 @@
     },
     {
       "label": "code-terminal-25",
-      "tick": 60214,
+      "tick": 60247,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -46028,7 +46028,7 @@
           25
         ],
         "gate": 33,
-        "tick": 60214,
+        "tick": 60247,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -46082,27 +46082,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -46111,9 +46111,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -46267,7 +46267,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -46561,7 +46561,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -46593,7 +46593,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "cf0bd7e97e710568",
+        "state_digest": "e15b3eedb4f45e47",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -46936,7 +46936,7 @@
     },
     {
       "label": "code-terminal-33",
-      "tick": 60570,
+      "tick": 60603,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -46947,7 +46947,7 @@
           14
         ],
         "gate": 33,
-        "tick": 60570,
+        "tick": 60603,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -47001,27 +47001,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -47030,9 +47030,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -47186,7 +47186,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -47480,7 +47480,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -47512,7 +47512,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "f14a67c47093b517",
+        "state_digest": "c5df2fae6bd275a8",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -47855,7 +47855,7 @@
     },
     {
       "label": "code-terminal-10",
-      "tick": 60862,
+      "tick": 60895,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -47866,7 +47866,7 @@
           44
         ],
         "gate": 33,
-        "tick": 60862,
+        "tick": 60895,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -47920,27 +47920,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -47949,9 +47949,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -48105,7 +48105,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -48399,7 +48399,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -48431,7 +48431,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "13de68f3e7ac9895",
+        "state_digest": "cc250e17e6e0b49e",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -48774,7 +48774,7 @@
     },
     {
       "label": "door-9-opening",
-      "tick": 61094,
+      "tick": 61127,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -48785,7 +48785,7 @@
           20
         ],
         "gate": 33,
-        "tick": 61094,
+        "tick": 61127,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -48839,27 +48839,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -48868,9 +48868,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -49024,7 +49024,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -49318,7 +49318,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -49350,7 +49350,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "08c81d767975a734",
+        "state_digest": "68cacc95de5cc0cf",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -49693,7 +49693,7 @@
     },
     {
       "label": "door-9-open",
-      "tick": 61126,
+      "tick": 61159,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -49704,7 +49704,7 @@
           20
         ],
         "gate": 33,
-        "tick": 61126,
+        "tick": 61159,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -49758,27 +49758,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -49787,9 +49787,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -49943,7 +49943,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -50237,7 +50237,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -50269,7 +50269,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "cefe9564a86e787e",
+        "state_digest": "b9a33d58aedabce5",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -50612,7 +50612,7 @@
     },
     {
       "label": "code-terminal-8",
-      "tick": 61577,
+      "tick": 61610,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -50623,7 +50623,7 @@
           47
         ],
         "gate": 33,
-        "tick": 61577,
+        "tick": 61610,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -50677,27 +50677,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -50706,9 +50706,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -50862,7 +50862,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -51156,7 +51156,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -51188,7 +51188,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "ad52da09dae40f92",
+        "state_digest": "be17fc8671c3aaff",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -51531,7 +51531,7 @@
     },
     {
       "label": "code-terminal-9",
-      "tick": 61611,
+      "tick": 61644,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -51542,7 +51542,7 @@
           49
         ],
         "gate": 33,
-        "tick": 61611,
+        "tick": 61644,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -51596,27 +51596,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -51625,9 +51625,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -51781,7 +51781,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -52075,7 +52075,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -52107,7 +52107,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "9df472233055eb70",
+        "state_digest": "b97e3342f4e65a71",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -52450,7 +52450,7 @@
     },
     {
       "label": "code-terminal-21",
-      "tick": 61687,
+      "tick": 61720,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -52461,7 +52461,7 @@
           34
         ],
         "gate": 33,
-        "tick": 61687,
+        "tick": 61720,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -52515,27 +52515,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -52544,9 +52544,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -52700,7 +52700,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -52994,7 +52994,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -53026,7 +53026,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "0582c1ca514694ba",
+        "state_digest": "f18649cc6c4883b0",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -53369,7 +53369,7 @@
     },
     {
       "label": "door-10-opening",
-      "tick": 62117,
+      "tick": 62150,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -53380,7 +53380,7 @@
           11
         ],
         "gate": 33,
-        "tick": 62117,
+        "tick": 62150,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -53434,27 +53434,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -53463,9 +53463,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -53619,7 +53619,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -53913,7 +53913,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -53945,7 +53945,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "00016621321e1f3e",
+        "state_digest": "634cedd9fc510dd3",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -54288,7 +54288,7 @@
     },
     {
       "label": "door-10-open",
-      "tick": 62149,
+      "tick": 62182,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -54299,7 +54299,7 @@
           11
         ],
         "gate": 33,
-        "tick": 62149,
+        "tick": 62182,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -54353,27 +54353,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -54382,9 +54382,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -54538,7 +54538,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -54832,7 +54832,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -54864,7 +54864,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "f867c647c2d74095",
+        "state_digest": "371b77eaa6221fac",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -55207,7 +55207,7 @@
     },
     {
       "label": "code-terminal-28",
-      "tick": 62490,
+      "tick": 62523,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -55218,7 +55218,7 @@
           21
         ],
         "gate": 33,
-        "tick": 62490,
+        "tick": 62523,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -55272,27 +55272,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -55301,9 +55301,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -55457,7 +55457,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -55751,7 +55751,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -55783,7 +55783,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "39a735015dae96ab",
+        "state_digest": "27d91f990abb67ac",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -56126,7 +56126,7 @@
     },
     {
       "label": "code-terminal-24",
-      "tick": 62530,
+      "tick": 62563,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -56137,7 +56137,7 @@
           29
         ],
         "gate": 33,
-        "tick": 62530,
+        "tick": 62563,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -56191,27 +56191,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -56220,9 +56220,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -56376,7 +56376,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -56670,7 +56670,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -56702,7 +56702,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "ddfa8ccd00295dd8",
+        "state_digest": "f4c6c49b41549f4f",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -57045,7 +57045,7 @@
     },
     {
       "label": "code-terminal-16",
-      "tick": 62674,
+      "tick": 62707,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -57056,7 +57056,7 @@
           38
         ],
         "gate": 33,
-        "tick": 62674,
+        "tick": 62707,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -57110,27 +57110,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -57139,9 +57139,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -57295,7 +57295,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -57589,7 +57589,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -57621,7 +57621,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "9c28f05e9088f555",
+        "state_digest": "22b8a110769f320a",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -57964,7 +57964,7 @@
     },
     {
       "label": "door-11-opening",
-      "tick": 62914,
+      "tick": 62947,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -57975,7 +57975,7 @@
           20
         ],
         "gate": 33,
-        "tick": 62914,
+        "tick": 62947,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -58029,27 +58029,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -58058,9 +58058,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -58214,7 +58214,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -58508,7 +58508,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -58540,7 +58540,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "2c0f6edb2b672089",
+        "state_digest": "6e3d8868fcef9792",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -58883,7 +58883,7 @@
     },
     {
       "label": "door-11-open",
-      "tick": 62946,
+      "tick": 62979,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -58894,7 +58894,7 @@
           20
         ],
         "gate": 33,
-        "tick": 62946,
+        "tick": 62979,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -58948,27 +58948,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -58977,9 +58977,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -59133,7 +59133,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -59427,7 +59427,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -59459,7 +59459,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "056f4b0e98784175",
+        "state_digest": "d4e2c132f5ff8887",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -59802,7 +59802,7 @@
     },
     {
       "label": "code-terminal-30",
-      "tick": 63000,
+      "tick": 63033,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -59813,7 +59813,7 @@
           2
         ],
         "gate": 33,
-        "tick": 63000,
+        "tick": 63033,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -59867,27 +59867,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -59896,9 +59896,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -60052,7 +60052,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -60346,7 +60346,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -60378,7 +60378,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "946d92fcaf155553",
+        "state_digest": "e59209ecab62339c",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -60721,7 +60721,7 @@
     },
     {
       "label": "code-terminal-23",
-      "tick": 63449,
+      "tick": 63482,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -60732,7 +60732,7 @@
           31
         ],
         "gate": 33,
-        "tick": 63449,
+        "tick": 63482,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -60786,27 +60786,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -60815,9 +60815,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -60971,7 +60971,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -61265,7 +61265,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -61297,7 +61297,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "7a03f7cb9e4cc20d",
+        "state_digest": "14fcfb350e57c2fc",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -61640,7 +61640,7 @@
     },
     {
       "label": "code-terminal-32",
-      "tick": 63887,
+      "tick": 63920,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -61651,7 +61651,7 @@
           14
         ],
         "gate": 33,
-        "tick": 63887,
+        "tick": 63920,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -61705,27 +61705,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -61734,9 +61734,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -61890,7 +61890,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -62184,7 +62184,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -62216,7 +62216,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "e7319b0bbf9b8876",
+        "state_digest": "3c5c1f351ee6ef1b",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -62559,7 +62559,7 @@
     },
     {
       "label": "door-8-opening",
-      "tick": 64142,
+      "tick": 64175,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -62570,7 +62570,7 @@
           33
         ],
         "gate": 33,
-        "tick": 64142,
+        "tick": 64175,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -62624,27 +62624,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -62653,9 +62653,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -62809,7 +62809,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -63103,7 +63103,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -63135,7 +63135,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "75e48d37b9033c66",
+        "state_digest": "8a4c327277c750b5",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -63478,7 +63478,7 @@
     },
     {
       "label": "door-8-open",
-      "tick": 64174,
+      "tick": 64207,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -63489,7 +63489,7 @@
           33
         ],
         "gate": 33,
-        "tick": 64174,
+        "tick": 64207,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -63543,27 +63543,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -63572,9 +63572,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -63728,7 +63728,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -64022,7 +64022,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -64054,7 +64054,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "1eedb756a691af5b",
+        "state_digest": "aaa860e00294a2e8",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -64397,7 +64397,7 @@
     },
     {
       "label": "secret-passage",
-      "tick": 64466,
+      "tick": 64499,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -64408,7 +64408,7 @@
           41
         ],
         "gate": 33,
-        "tick": 64466,
+        "tick": 64499,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -64462,27 +64462,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -64491,9 +64491,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -64647,7 +64647,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -64941,7 +64941,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -64973,7 +64973,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "7444a263ccaefa47",
+        "state_digest": "9393a9761f49bd00",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -65316,7 +65316,7 @@
     },
     {
       "label": "phoenix-screen",
-      "tick": 64482,
+      "tick": 64515,
       "state": {
         "map": 14,
         "mode": "building",
@@ -65327,7 +65327,7 @@
           48
         ],
         "gate": 33,
-        "tick": 64482,
+        "tick": 64515,
         "blocked": 1,
         "script_pc": 180,
         "script_status": 5,
@@ -65386,27 +65386,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -65415,9 +65415,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -65571,7 +65571,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -65865,7 +65865,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -65897,7 +65897,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "0c065c639c6def86",
+        "state_digest": "ce8c66eaa7438592",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -66240,7 +66240,7 @@
     },
     {
       "label": "phoenix-inspected",
-      "tick": 64487,
+      "tick": 64520,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -66251,7 +66251,7 @@
           48
         ],
         "gate": 33,
-        "tick": 64487,
+        "tick": 64520,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -66305,27 +66305,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -66334,9 +66334,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -66490,7 +66490,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -66784,7 +66784,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -66816,7 +66816,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "3fc48e8e86c5df50",
+        "state_digest": "3dc7558f8f57a278",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -67159,7 +67159,7 @@
     },
     {
       "label": "map-room",
-      "tick": 64810,
+      "tick": 64843,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -67170,7 +67170,7 @@
           17
         ],
         "gate": 139,
-        "tick": 64810,
+        "tick": 64843,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -67224,27 +67224,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -67253,9 +67253,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -67409,7 +67409,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -67703,7 +67703,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -67735,7 +67735,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "239d2a304061f4ca",
+        "state_digest": "4e4317121337f155",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -68078,7 +68078,7 @@
     },
     {
       "label": "wrong-password",
-      "tick": 64817,
+      "tick": 64850,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -68089,7 +68089,7 @@
           14
         ],
         "gate": 139,
-        "tick": 64817,
+        "tick": 64850,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -68143,27 +68143,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -68172,9 +68172,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -68328,7 +68328,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -68622,7 +68622,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -68654,7 +68654,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "91aa3096c30d0091",
+        "state_digest": "86649b5ed81fb064",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -68997,7 +68997,7 @@
     },
     {
       "label": "password-symbol-140",
-      "tick": 64912,
+      "tick": 64945,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -69008,7 +69008,7 @@
           1
         ],
         "gate": 139,
-        "tick": 64912,
+        "tick": 64945,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -69062,27 +69062,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -69091,9 +69091,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -69247,7 +69247,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -69541,7 +69541,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -69573,7 +69573,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "bbf20b3dd9184756",
+        "state_digest": "e7bd510c1ba3ea8d",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -69916,7 +69916,7 @@
     },
     {
       "label": "password-symbol-186",
-      "tick": 64949,
+      "tick": 64982,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -69927,7 +69927,7 @@
           6
         ],
         "gate": 139,
-        "tick": 64949,
+        "tick": 64982,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -69981,27 +69981,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -70010,9 +70010,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -70166,7 +70166,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -70460,7 +70460,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -70492,7 +70492,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "20f3b718bf748b30",
+        "state_digest": "e42bad7531819f2d",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -70835,7 +70835,7 @@
     },
     {
       "label": "password-symbol-325",
-      "tick": 64986,
+      "tick": 65019,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -70846,7 +70846,7 @@
           8
         ],
         "gate": 139,
-        "tick": 64986,
+        "tick": 65019,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -70900,27 +70900,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -70929,9 +70929,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -71085,7 +71085,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -71379,7 +71379,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -71411,7 +71411,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "6d8ca5edc025ecce",
+        "state_digest": "6b8fe29260cf60a9",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -71754,7 +71754,7 @@
     },
     {
       "label": "password-symbol-341",
-      "tick": 65015,
+      "tick": 65048,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -71765,7 +71765,7 @@
           10
         ],
         "gate": 139,
-        "tick": 65015,
+        "tick": 65048,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -71819,27 +71819,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -71848,9 +71848,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -72004,7 +72004,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -72298,7 +72298,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -72330,7 +72330,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "f2b81d492faf7f85",
+        "state_digest": "ab6265df2ea88b19",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -72673,7 +72673,7 @@
     },
     {
       "label": "password-symbol-375",
-      "tick": 65057,
+      "tick": 65090,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -72684,7 +72684,7 @@
           13
         ],
         "gate": 139,
-        "tick": 65057,
+        "tick": 65090,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -72738,27 +72738,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -72767,9 +72767,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -72923,7 +72923,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -73217,7 +73217,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -73249,7 +73249,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "4701607537551842",
+        "state_digest": "8af04ac760edda6b",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -73592,7 +73592,7 @@
     },
     {
       "label": "password-symbol-439",
-      "tick": 65098,
+      "tick": 65131,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -73603,7 +73603,7 @@
           14
         ],
         "gate": 139,
-        "tick": 65098,
+        "tick": 65131,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -73657,27 +73657,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -73686,9 +73686,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -73842,7 +73842,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -74136,7 +74136,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -74168,7 +74168,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "0cab06249009d9e1",
+        "state_digest": "a760f4f7ac2a9c52",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -74511,7 +74511,7 @@
     },
     {
       "label": "password-symbol-443",
-      "tick": 65130,
+      "tick": 65163,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -74522,7 +74522,7 @@
           15
         ],
         "gate": 139,
-        "tick": 65130,
+        "tick": 65163,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -74576,27 +74576,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -74605,9 +74605,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -74761,7 +74761,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -75055,7 +75055,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -75087,7 +75087,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "1b73609d17f2c1d6",
+        "state_digest": "242cc81a1a722415",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -75430,7 +75430,7 @@
     },
     {
       "label": "white-code-accepted",
-      "tick": 65194,
+      "tick": 65227,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -75441,7 +75441,7 @@
           14
         ],
         "gate": 139,
-        "tick": 65194,
+        "tick": 65227,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -75495,27 +75495,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -75524,9 +75524,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -75680,7 +75680,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -75974,7 +75974,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -76006,7 +76006,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "4669c6a40fef1943",
+        "state_digest": "034e93ba71fefa04",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -76349,7 +76349,7 @@
     },
     {
       "label": "map-room-exit",
-      "tick": 65234,
+      "tick": 65267,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -76360,7 +76360,7 @@
           28
         ],
         "gate": 33,
-        "tick": 65234,
+        "tick": 65267,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -76414,27 +76414,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -76443,9 +76443,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -76599,7 +76599,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -76893,7 +76893,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -76925,7 +76925,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "53d243f4d7d2a2cc",
+        "state_digest": "82a7a7658351e1fb",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -77268,7 +77268,7 @@
     },
     {
       "label": "hyperpulse-power",
-      "tick": 65550,
+      "tick": 65583,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -77279,7 +77279,7 @@
           7
         ],
         "gate": 33,
-        "tick": 65550,
+        "tick": 65583,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -77333,27 +77333,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -77362,9 +77362,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -77518,7 +77518,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -77812,7 +77812,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -77844,7 +77844,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "5cf5083e5d9d3f67",
+        "state_digest": "51a415b42db10c4c",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -78187,7 +78187,7 @@
     },
     {
       "label": "cache-found",
-      "tick": 65662,
+      "tick": 65695,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -78198,7 +78198,7 @@
           2
         ],
         "gate": 33,
-        "tick": 65662,
+        "tick": 65695,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -78252,27 +78252,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -78281,9 +78281,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          87,
-          110,
-          13
+          171,
+          220,
+          27
         ],
         "npc_search": [
           0,
@@ -78437,7 +78437,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -78731,7 +78731,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -78763,7 +78763,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "11274ebc87b94bd7",
+        "state_digest": "f5d0e16b6abd93e0",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -79106,7 +79106,7 @@
     },
     {
       "label": "ending-start",
-      "tick": 65848,
+      "tick": 65881,
       "state": {
         "map": 14,
         "mode": "building",
@@ -79117,7 +79117,7 @@
           7
         ],
         "gate": 33,
-        "tick": 65848,
+        "tick": 65881,
         "blocked": 1,
         "script_pc": 8,
         "script_status": 7,
@@ -79171,27 +79171,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -79200,9 +79200,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          171,
-          220,
-          27
+          213,
+          184,
+          55
         ],
         "npc_search": [
           0,
@@ -79356,7 +79356,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -79650,7 +79650,7 @@
           "remaining": 11,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -79682,7 +79682,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "69c6b117b4064fe9",
+        "state_digest": "7f23083e571dfd36",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -80025,7 +80025,7 @@
     },
     {
       "label": "ending-complete",
-      "tick": 66116,
+      "tick": 66149,
       "state": {
         "map": 14,
         "mode": "ending",
@@ -80036,7 +80036,7 @@
           7
         ],
         "gate": 33,
-        "tick": 66116,
+        "tick": 66149,
         "blocked": 1,
         "script_pc": 2991,
         "script_status": 3,
@@ -80099,27 +80099,27 @@
             0
           ],
           [
-            54,
-            0
-          ],
-          [
-            37,
-            0
-          ],
-          [
-            54,
-            0
-          ],
-          [
-            87,
-            0
-          ],
-          [
             37,
             0
           ],
           [
             70,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            21,
+            0
+          ],
+          [
+            54,
+            0
+          ],
+          [
+            54,
             0
           ]
         ],
@@ -80128,9 +80128,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          90,
-          193,
-          186
+          45,
+          131,
+          117
         ],
         "npc_search": [
           0,
@@ -80284,7 +80284,7 @@
           0,
           0,
           0,
-          185,
+          179,
           0,
           0,
           0,
@@ -80578,7 +80578,7 @@
           "remaining": 0,
           "fraction": 0
         },
-        "explored_digest": 314569614,
+        "explored_digest": 1359087045,
         "map_center": [
           0,
           0
@@ -80610,7 +80610,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "42888834e81c2cdc",
+        "state_digest": "c9dee060d0696595",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -80962,7 +80962,7 @@
       7
     ],
     "gate": 33,
-    "tick": 66116,
+    "tick": 66149,
     "blocked": 1,
     "script_pc": 2991,
     "script_status": 3,
@@ -81025,27 +81025,27 @@
         0
       ],
       [
-        54,
-        0
-      ],
-      [
-        37,
-        0
-      ],
-      [
-        54,
-        0
-      ],
-      [
-        87,
-        0
-      ],
-      [
         37,
         0
       ],
       [
         70,
+        0
+      ],
+      [
+        4,
+        0
+      ],
+      [
+        21,
+        0
+      ],
+      [
+        54,
+        0
+      ],
+      [
+        54,
         0
       ]
     ],
@@ -81054,9 +81054,9 @@
     "npc_clock": 0,
     "npc_fault": 0,
     "npc_rng": [
-      90,
-      193,
-      186
+      45,
+      131,
+      117
     ],
     "npc_search": [
       0,
@@ -81210,7 +81210,7 @@
       0,
       0,
       0,
-      185,
+      179,
       0,
       0,
       0,
@@ -81504,7 +81504,7 @@
       "remaining": 0,
       "fraction": 0
     },
-    "explored_digest": 314569614,
+    "explored_digest": 1359087045,
     "map_center": [
       0,
       0
@@ -81536,7 +81536,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "42888834e81c2cdc",
+    "state_digest": "c9dee060d0696595",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

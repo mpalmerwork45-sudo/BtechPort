@@ -19,6 +19,8 @@ const char *btp_character_name(unsigned id);
    Original name IDs wrap and may duplicate; callers must retain the slot. */
 int btp_party_recruit(BtpState *state,unsigned skill);
 int btp_party_walkable(const BtpState *state,const BtpResources *resources,int x,int y,int mech);
+int btp_party_can_stand(const BtpState *state,const BtpResources *resources,int cursor_x,int cursor_y);
+int btp_party_entrance(const BtpState *state,const BtpResources *resources,const BtpMap *map,int local_x,int local_y);
 void btp_party_follow(BtpState *state,const BtpResources *resources,uint16_t old_x,uint16_t old_y);
 void btp_party_encode(const BtpPartyState *party,uint8_t bytes[BTP_PARTY_BYTES]);
 int btp_party_decode(const uint8_t bytes[BTP_PARTY_BYTES],BtpPartyState *party);

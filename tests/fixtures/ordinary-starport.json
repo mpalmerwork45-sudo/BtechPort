@@ -499,7 +499,7 @@
       "encounter": 0,
       "building": 8
     },
-    "player_sprite": 170,
+    "player_sprite": 173,
     "npc_sprites": [
       270,
       270,
@@ -585,7 +585,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "6405031f74e98dba",
+    "state_digest": "594c662b57415499",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

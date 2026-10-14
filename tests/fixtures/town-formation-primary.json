@@ -1,0 +1,250 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "cases": [
+    {
+      "town": 2,
+      "run": "1791962848011430927",
+      "label": "town-start",
+      "action": "idle"
+    },
+    {
+      "town": 2,
+      "run": "1791962848011430927",
+      "label": "starport-1",
+      "action": "down"
+    },
+    {
+      "town": 2,
+      "run": "1791962848011430927",
+      "label": "starport-2",
+      "action": "down"
+    },
+    {
+      "town": 2,
+      "run": "1791962848011430927",
+      "label": "starport-3",
+      "action": "down"
+    },
+    {
+      "town": 2,
+      "run": "1791962848011430927",
+      "label": "starport-4",
+      "action": "left"
+    },
+    {
+      "town": 2,
+      "run": "1791962848011430927",
+      "label": "starport-5",
+      "action": "left"
+    },
+    {
+      "town": 2,
+      "run": "1791962848011430927",
+      "label": "starport-6",
+      "action": "left"
+    },
+    {
+      "town": 2,
+      "run": "1791962848011430927",
+      "label": "starport-7",
+      "action": "left"
+    },
+    {
+      "town": 2,
+      "run": "1791962848011430927",
+      "label": "starport-8",
+      "action": "left"
+    },
+    {
+      "town": 2,
+      "run": "1791962848011430927",
+      "label": "starport-9",
+      "action": "up"
+    },
+    {
+      "town": 2,
+      "run": "1791962848011430927",
+      "label": "starport-10",
+      "action": "up"
+    },
+    {
+      "town": 2,
+      "run": "1791962848011430927",
+      "label": "starport-11",
+      "action": "up"
+    },
+    {
+      "town": 2,
+      "run": "1791962848011430927",
+      "label": "starport-12",
+      "action": "up"
+    },
+    {
+      "town": 2,
+      "run": "1791962848011430927",
+      "label": "starport-13",
+      "action": "up"
+    },
+    {
+      "town": 2,
+      "run": "1791962848011430927",
+      "label": "starport-14",
+      "action": "right"
+    },
+    {
+      "town": 2,
+      "run": "1791962848011430927",
+      "label": "starport-15",
+      "action": "right"
+    },
+    {
+      "town": 2,
+      "run": "1791962848011430927",
+      "label": "starport-16",
+      "action": "right"
+    },
+    {
+      "town": 2,
+      "run": "1791962848011430927",
+      "label": "starport-17",
+      "action": "right"
+    },
+    {
+      "town": 2,
+      "run": "1791962848011430927",
+      "label": "starport-18",
+      "action": "down"
+    },
+    {
+      "town": 2,
+      "run": "1791962848011430927",
+      "label": "starport-19",
+      "action": "down"
+    },
+    {
+      "town": 2,
+      "run": "1791962848011430927",
+      "label": "starport-20",
+      "action": "down"
+    },
+    {
+      "town": 2,
+      "run": "1791962848011430927",
+      "label": "starport-21",
+      "action": "right"
+    },
+    {
+      "town": 2,
+      "run": "1791962848011430927",
+      "label": "starport-22",
+      "action": "right"
+    },
+    {
+      "town": 4,
+      "run": "1791963196424631180",
+      "label": "mech-walk-start",
+      "action": "idle"
+    },
+    {
+      "town": 4,
+      "run": "1791963196424631180",
+      "label": "mech-walk-0",
+      "action": "down"
+    },
+    {
+      "town": 4,
+      "run": "1791963196424631180",
+      "label": "mech-walk-1",
+      "action": "down"
+    },
+    {
+      "town": 4,
+      "run": "1791963196424631180",
+      "label": "mech-walk-2",
+      "action": "down"
+    },
+    {
+      "town": 4,
+      "run": "1791963196424631180",
+      "label": "mech-walk-3",
+      "action": "down"
+    },
+    {
+      "town": 4,
+      "run": "1791963196424631180",
+      "label": "mech-walk-4",
+      "action": "right"
+    },
+    {
+      "town": 4,
+      "run": "1791963196424631180",
+      "label": "mech-walk-5",
+      "action": "right"
+    },
+    {
+      "town": 4,
+      "run": "1791963196424631180",
+      "label": "mech-walk-6",
+      "action": "right"
+    },
+    {
+      "town": 4,
+      "run": "1791963196424631180",
+      "label": "mech-walk-7",
+      "action": "right"
+    },
+    {
+      "town": 4,
+      "run": "1791963196424631180",
+      "label": "mech-walk-8",
+      "action": "up"
+    },
+    {
+      "town": 4,
+      "run": "1791963196424631180",
+      "label": "mech-walk-9",
+      "action": "up"
+    },
+    {
+      "town": 4,
+      "run": "1791963196424631180",
+      "label": "mech-walk-10",
+      "action": "up"
+    },
+    {
+      "town": 4,
+      "run": "1791963196424631180",
+      "label": "mech-walk-11",
+      "action": "up"
+    },
+    {
+      "town": 4,
+      "run": "1791963196424631180",
+      "label": "mech-walk-12",
+      "action": "left"
+    },
+    {
+      "town": 4,
+      "run": "1791963196424631180",
+      "label": "mech-walk-13",
+      "action": "left"
+    },
+    {
+      "town": 4,
+      "run": "1791963196424631180",
+      "label": "mech-walk-14",
+      "action": "left"
+    },
+    {
+      "town": 4,
+      "run": "1791963196424631180",
+      "label": "mech-walk-15",
+      "action": "left"
+    }
+  ],
+  "prerequisites": "Private GAME3 copies: Starport at (1337,1117), four people on foot and parked vehicles; MAP4 at (1178,1434), three active vehicles and Rick on foot. Encounter delay 255. Ordinary arrow inputs; no instruction edits.",
+  "comparison": "Exact cursor and every active party/mech world position after each recorded input, including whole-formation rejected wall steps.",
+  "exclusions": "Starport first Down was consumed by loading and is omitted. End the trace before the arena entry question. The earlier MAP4 run was stuck in a Mechit-Lube entry question and is not movement evidence.",
+  "limits": "Does not establish doorway triggers for outer members, recovery of malformed older formations, or DOS timing."
+}

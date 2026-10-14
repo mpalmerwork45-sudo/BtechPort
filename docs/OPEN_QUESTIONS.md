@@ -7,7 +7,7 @@ rather than to every branch of the original game.
 The remaining authorized tasks are in [project status](PROJECT_STATUS.md).
 
 1. **Fresh-game campaign — playable route VERIFIED; broader parity UNKNOWN.**
-   A 66,116-input new-cadet route now earns companions, apprenticeships, the
+   A 66,149-input new-cadet route now earns companions, apprenticeships, the
    holodisk and password before reaching the ending, using only the authorized
    credit shortcut. It restores before every input and has selected original
    prerequisite comparisons. It is not a complete DOS recording of all those
@@ -36,9 +36,10 @@ The remaining authorized tasks are in [project status](PROJECT_STATUS.md).
    11 waves/171 complete records, positions, facing, heat and RNG projections;
    caller prerequisites remain explicit. Five additional live-caller cases cover
    25 complete waves and 7,252 checks, including spy crews and finite ammunition. Arena threshold 139 stays local;
-   ordinary town/world exploration uses threshold 85. Local follower detours
-   satisfy the requested collision correction but are not original pathfinding
-   evidence. More doorway/corner/formation frames remain to be checked.
+   ordinary town/world exploration uses threshold 85. Whole-party movement
+   matches 40 live town observations and 1,920 executed collision decisions;
+   480 doorway decisions include outer members. Recovery of old split formations,
+   cache transitions and additional town corners remain to be compared.
 5. **Timing and NPC arrival — APPROXIMATE.** Native logical ticks replace DOS
    busy loops. Long original waits and recruitment coins can consume a
    different RNG history. Earlier explicit later-quiz prerequisites remain
@@ -73,7 +74,8 @@ The remaining authorized tasks are in [project status](PROJECT_STATUS.md).
    match: retained selection, override Yes/No and empty/destroyed notices have
    input/restoration coverage. Sixteen native combat pages pass F5/F9. Shutdown
    and sensor warnings match nine additional regions and 36 executed gate cases;
-   additional arena/salvage screens remain to compare.
+   the two arena result crops and qualified-pilot salvage question also match.
+   Salvage success/failure/no-wreck pages and retry order remain to compare.
    The normal original target selector cycles enemy IDs12..23 only.
 8. **Persistence — tested represented fields.** All six supplied original saves
    roundtrip unchanged; unmodeled original bytes are preserved. Internal

@@ -579,7 +579,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "217534cc534cd4ec",
+        "state_digest": "5157e0f2a802bcde",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -922,18 +922,18 @@
     },
     {
       "label": "entry",
-      "tick": 788,
+      "tick": 787,
       "state": {
         "map": 12,
         "mode": "entry-confirm",
-        "x_half": 11,
+        "x_half": 12,
         "y_half": 9,
         "tile": [
-          5,
+          6,
           4
         ],
         "gate": 85,
-        "tick": 788,
+        "tick": 787,
         "blocked": 0,
         "script_pc": 0,
         "script_status": 0,
@@ -1405,8 +1405,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            522,
-            392
+            524,
+            393
           ],
           "mounted": 1,
           "encounter": 0,
@@ -1498,7 +1498,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "59ec596dd094b522",
+        "state_digest": "d79f21500c296bd5",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1841,18 +1841,18 @@
     },
     {
       "label": "inventor-qualified-complete",
-      "tick": 813,
+      "tick": 812,
       "state": {
         "map": 12,
         "mode": "local-exploration",
-        "x_half": 10,
+        "x_half": 11,
         "y_half": 8,
         "tile": [
           5,
           4
         ],
         "gate": 85,
-        "tick": 813,
+        "tick": 812,
         "blocked": 0,
         "script_pc": 7784,
         "script_status": 3,
@@ -2329,14 +2329,14 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            522,
+            523,
             392
           ],
           "mounted": 1,
           "encounter": 0,
           "building": 21
         },
-        "player_sprite": 181,
+        "player_sprite": 178,
         "npc_sprites": [
           270,
           270,
@@ -2422,7 +2422,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "a656880791a3b447",
+        "state_digest": "78de6f6bd6d03b14",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -2767,14 +2767,14 @@
   "final": {
     "map": 12,
     "mode": "local-exploration",
-    "x_half": 10,
+    "x_half": 11,
     "y_half": 8,
     "tile": [
       5,
       4
     ],
     "gate": 85,
-    "tick": 813,
+    "tick": 812,
     "blocked": 0,
     "script_pc": 7784,
     "script_status": 3,
@@ -3251,14 +3251,14 @@
       "invasion": 0,
       "owned": 1,
       "world": [
-        522,
+        523,
         392
       ],
       "mounted": 1,
       "encounter": 0,
       "building": 21
     },
-    "player_sprite": 181,
+    "player_sprite": 178,
     "npc_sprites": [
       270,
       270,
@@ -3344,7 +3344,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "a656880791a3b447",
+    "state_digest": "78de6f6bd6d03b14",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

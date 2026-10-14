@@ -5,7 +5,9 @@ from make_late_building_replays import Buildings
 
 def main():
     s=Buildings('GAME2','hospital-talk')
-    s.world_route(1324,1100);s.note('town-arrival-wait')
+    # Leave room for all five foot soldiers, including the leftmost member.
+    s.world_route(1324,1098);s.note('town-arrival-wait')
+    if s.state['mode']!='local-exploration':raise RuntimeError('Arrival wait must remain outside every doorway')
     # The original hospital BLD requests category 5. Wait near that doorway
     # for a live walker to arrive, then walk to the clinic during its stay.
     for _ in range(256):
@@ -13,9 +15,7 @@ def main():
         s.world_route('idle',12)
     else:raise RuntimeError('No town arrival within the bounded wait')
     s.note('town-npc-arrival')
-    s.world_route(1396,1139);s.advance(['up'])
-    if s.state['mode']!='entry-confirm':raise RuntimeError('Hospital entry unavailable')
-    s.advance(['accept']);s.settle_building();s.note('hospital-menu')
+    s.enter(1396,1138);s.note('hospital-menu')
     s.advance(['down']*((3-s.state['menu_selected'])%7)+['accept'])
     if s.state['talk_phase']!=2 or not s.state['talk_count']:
         raise RuntimeError('The hospital did not offer the arrived NPC')

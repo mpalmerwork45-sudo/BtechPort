@@ -41,7 +41,7 @@
     "map": 2,
     "mode": "local-exploration",
     "x_half": 20,
-    "y_half": 68,
+    "y_half": 69,
     "tile": [
       10,
       34
@@ -525,13 +525,13 @@
       "owned": 1,
       "world": [
         1300,
-        1092
+        1093
       ],
       "mounted": 0,
       "encounter": 0,
       "building": 5
     },
-    "player_sprite": 174,
+    "player_sprite": 175,
     "npc_sprites": [
       274,
       270,
@@ -617,7 +617,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "a7f0996d5ab67503",
+    "state_digest": "34638a0f6fb931fc",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

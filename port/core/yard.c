@@ -228,7 +228,12 @@ void btp_yard_result(BtpState *s,const BtpResources *r)
             if ((mark->sprite&126u)==124 && mark->sector==0x8a) mark->sprite=mark->sector=mark->x=0;
         }
         restore_party(s);
-        if (!rental) { memcpy(btp_party_mech(s,slot),player,125);s->party.mech_types[slot]=player[0]; }
+        if (!rental) {
+            memcpy(btp_party_mech(s,slot),player,125);s->party.mech_types[slot]=player[0];
+            /* 07DC:1B41 returns the selected owned vehicle to storage. Its
+               retained model tag remains available at garage checkout. */
+            if (!stolen) btp_party_mech(s,slot)[0]=255;
+        }
         else if (stolen) {
             unsigned owned=0,free=4;
             for (unsigned i=0;i<4;++i) owned|=s->yard.types[i]!=255;
@@ -241,8 +246,15 @@ void btp_yard_result(BtpState *s,const BtpResources *r)
         if (dead) { s->party.people[0][0]=255;s->story_flags[40]=1; }
         s->campaign.owned=0;
         for (unsigned i=0;i<4;++i) {
-            uint8_t *m=btp_party_mech(s,i);if (s->party.mech_types[i]!=255) { m[0]=s->party.mech_types[i];s->campaign.owned=1; }
-            m[121]=m[122]=255;
+            uint8_t *m=btp_party_mech(s,i);
+            if (s->party.mech_types[i]!=255) {
+                s->campaign.owned=1;
+                /* Only escape/theft restores the outdoor vehicles. A normal
+                   arena return preserves parked records and their crew seats;
+                   activating them here made them chase the on-foot party. */
+                if (stolen) m[0]=s->party.mech_types[i];
+            }
+            if (stolen) m[121]=m[122]=255;
         }
         for (unsigned i=0;i<8;++i) s->party.people[i][12]=8;
         s->campaign.mounted=0;

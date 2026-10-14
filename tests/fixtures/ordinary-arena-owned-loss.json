@@ -3,19 +3,19 @@
   "checkpoints": [
     {
       "label": "owned-mech-choice",
-      "tick": 672,
+      "tick": 676,
       "state": {
         "map": 2,
         "mode": "impound-yard",
         "x_half": 59,
-        "y_half": 92,
+        "y_half": 91,
         "tile": [
           29,
-          46
+          45
         ],
         "gate": 85,
-        "tick": 672,
-        "blocked": 0,
+        "tick": 676,
+        "blocked": 1,
         "script_pc": 411,
         "script_status": 5,
         "script_opcode": 245,
@@ -69,10 +69,6 @@
         "conversation_checkpoint": 0,
         "npc_pairs": [
           [
-            4,
-            0
-          ],
-          [
             70,
             0
           ],
@@ -99,6 +95,10 @@
           [
             53,
             0
+          ],
+          [
+            70,
+            0
           ]
         ],
         "npc_enabled": 2,
@@ -106,22 +106,17 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          130,
-          232,
-          244
+          65,
+          209,
+          233
         ],
         "npc_search": [
-          90,
+          92,
           0
         ],
         "npc_loop_timer": 0,
         "npc_allowance_pending": 0,
         "npcs": [
-          [
-            2579,
-            32820,
-            2
-          ],
           [
             2676,
             32882,
@@ -156,6 +151,11 @@
             2581,
             32838,
             3
+          ],
+          [
+            2676,
+            32882,
+            0
           ]
         ],
         "credits": 15342507,
@@ -262,7 +262,7 @@
           0,
           0,
           0,
-          122,
+          121,
           1,
           0,
           0,
@@ -495,8 +495,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1340,
-            1117
+            1339,
+            1115
           ],
           "mounted": 0,
           "encounter": 0,
@@ -504,14 +504,14 @@
         },
         "player_sprite": 172,
         "npc_sprites": [
-          274,
           270,
           270,
           275,
           284,
           270,
           270,
-          274
+          274,
+          270
         ],
         "quiz": {
           "phase": 0,
@@ -588,7 +588,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "e9265f157b5eeedc",
+        "state_digest": "c5ab6ca984dcf23c",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -931,19 +931,19 @@
     },
     {
       "label": "owned-mech-waiver",
-      "tick": 673,
+      "tick": 677,
       "state": {
         "map": 2,
         "mode": "building",
         "x_half": 59,
-        "y_half": 92,
+        "y_half": 91,
         "tile": [
           29,
-          46
+          45
         ],
         "gate": 85,
-        "tick": 673,
-        "blocked": 0,
+        "tick": 677,
+        "blocked": 1,
         "script_pc": 632,
         "script_status": 2,
         "script_opcode": 251,
@@ -1001,10 +1001,6 @@
         "conversation_checkpoint": 0,
         "npc_pairs": [
           [
-            4,
-            0
-          ],
-          [
             70,
             0
           ],
@@ -1031,6 +1027,10 @@
           [
             53,
             0
+          ],
+          [
+            70,
+            0
           ]
         ],
         "npc_enabled": 2,
@@ -1038,22 +1038,17 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          130,
-          232,
-          244
+          65,
+          209,
+          233
         ],
         "npc_search": [
-          90,
+          92,
           0
         ],
         "npc_loop_timer": 0,
         "npc_allowance_pending": 0,
         "npcs": [
-          [
-            2579,
-            32820,
-            2
-          ],
           [
             2676,
             32882,
@@ -1088,6 +1083,11 @@
             2581,
             32838,
             3
+          ],
+          [
+            2676,
+            32882,
+            0
           ]
         ],
         "credits": 15342507,
@@ -1194,7 +1194,7 @@
           0,
           0,
           0,
-          122,
+          121,
           1,
           0,
           0,
@@ -1427,8 +1427,8 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1340,
-            1117
+            1339,
+            1115
           ],
           "mounted": 1,
           "encounter": 0,
@@ -1436,14 +1436,14 @@
         },
         "player_sprite": 172,
         "npc_sprites": [
-          274,
           270,
           270,
           275,
           284,
           270,
           270,
-          274
+          274,
+          270
         ],
         "quiz": {
           "phase": 0,
@@ -1520,7 +1520,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "f013c87fdcc4cdf3",
+        "state_digest": "22043ad5eef7b74b",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1863,7 +1863,7 @@
     },
     {
       "label": "arena-start",
-      "tick": 770,
+      "tick": 774,
       "state": {
         "map": 2,
         "mode": "encounter",
@@ -1874,8 +1874,8 @@
           44
         ],
         "gate": 85,
-        "tick": 770,
-        "blocked": 0,
+        "tick": 774,
+        "blocked": 1,
         "script_pc": 1703,
         "script_status": 5,
         "script_opcode": 245,
@@ -1933,10 +1933,6 @@
         "conversation_checkpoint": 0,
         "npc_pairs": [
           [
-            4,
-            0
-          ],
-          [
             70,
             0
           ],
@@ -1963,6 +1959,10 @@
           [
             53,
             0
+          ],
+          [
+            70,
+            0
           ]
         ],
         "npc_enabled": 2,
@@ -1975,17 +1975,12 @@
           10
         ],
         "npc_search": [
-          90,
+          92,
           0
         ],
         "npc_loop_timer": 0,
         "npc_allowance_pending": 0,
         "npcs": [
-          [
-            2579,
-            32820,
-            2
-          ],
           [
             2676,
             32882,
@@ -2020,6 +2015,11 @@
             2581,
             32838,
             3
+          ],
+          [
+            2676,
+            32882,
+            0
           ]
         ],
         "credits": 15342507,
@@ -2126,7 +2126,7 @@
           0,
           0,
           0,
-          122,
+          121,
           1,
           0,
           0,
@@ -2368,14 +2368,14 @@
         },
         "player_sprite": 172,
         "npc_sprites": [
-          274,
           270,
           270,
           275,
           284,
           270,
           270,
-          274
+          274,
+          270
         ],
         "quiz": {
           "phase": 0,
@@ -2452,7 +2452,7 @@
           "rental": 0,
           "variant": 3
         },
-        "state_digest": "ff3a4dec99764f99",
+        "state_digest": "d151a0e0d41f1920",
         "effect_stage": 0,
         "combat": {
           "phase": 1,
@@ -2651,7 +2651,7 @@
               ]
             },
             {
-              "x": 106,
+              "x": 83,
               "y": 114,
               "direction": 6,
               "heat": 0,
@@ -2806,7 +2806,7 @@
     },
     {
       "label": "arena-result",
-      "tick": 1971,
+      "tick": 1749,
       "state": {
         "map": 2,
         "mode": "encounter",
@@ -2817,8 +2817,8 @@
           44
         ],
         "gate": 85,
-        "tick": 1971,
-        "blocked": 0,
+        "tick": 1749,
+        "blocked": 1,
         "script_pc": 1703,
         "script_status": 5,
         "script_opcode": 245,
@@ -2876,10 +2876,6 @@
         "conversation_checkpoint": 0,
         "npc_pairs": [
           [
-            4,
-            0
-          ],
-          [
             70,
             0
           ],
@@ -2906,6 +2902,10 @@
           [
             53,
             0
+          ],
+          [
+            70,
+            0
           ]
         ],
         "npc_enabled": 2,
@@ -2913,22 +2913,17 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          85,
-          236,
-          155
+          75,
+          136,
+          99
         ],
         "npc_search": [
-          90,
+          92,
           0
         ],
         "npc_loop_timer": 0,
         "npc_allowance_pending": 0,
         "npcs": [
-          [
-            2579,
-            32820,
-            2
-          ],
           [
             2676,
             32882,
@@ -2963,6 +2958,11 @@
             2581,
             32838,
             3
+          ],
+          [
+            2676,
+            32882,
+            0
           ]
         ],
         "credits": 15342507,
@@ -3069,7 +3069,7 @@
           0,
           0,
           0,
-          122,
+          121,
           1,
           0,
           0,
@@ -3311,14 +3311,14 @@
         },
         "player_sprite": 172,
         "npc_sprites": [
-          274,
           270,
           270,
           275,
           284,
           270,
           270,
-          274
+          274,
+          270
         ],
         "quiz": {
           "phase": 0,
@@ -3395,12 +3395,12 @@
           "rental": 0,
           "variant": 3
         },
-        "state_digest": "014b981596195d30",
+        "state_digest": "c9048a4977123532",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
           "selected": 9,
-          "round": 10,
+          "round": 8,
           "step": 12,
           "won": 0,
           "fled": 0,
@@ -3472,14 +3472,14 @@
                 32,
                 0,
                 50,
-                2,
+                5,
+                0,
+                12,
+                9,
                 0,
                 1,
-                4,
-                0,
-                0,
-                0,
-                7,
+                10,
+                12,
                 2,
                 3,
                 2,
@@ -3720,9 +3720,9 @@
               ]
             },
             {
-              "x": 106,
-              "y": 114,
-              "direction": 6,
+              "x": 96,
+              "y": 98,
+              "direction": 1,
               "heat": 0,
               "pool": 5,
               "cover": 0,
@@ -3769,7 +3769,7 @@
                 255,
                 4,
                 255,
-                40,
+                42,
                 0,
                 0,
                 0,
@@ -3866,8 +3866,8 @@
           "shot": [
             4,
             1,
-            18,
-            4,
+            21,
+            2,
             1
           ]
         }
@@ -3875,7 +3875,7 @@
     },
     {
       "label": "arena-cashier",
-      "tick": 1972,
+      "tick": 1750,
       "state": {
         "map": 2,
         "mode": "building",
@@ -3886,8 +3886,8 @@
           46
         ],
         "gate": 85,
-        "tick": 1972,
-        "blocked": 0,
+        "tick": 1750,
+        "blocked": 1,
         "script_pc": 2257,
         "script_status": 2,
         "script_opcode": 251,
@@ -3945,10 +3945,6 @@
         "conversation_checkpoint": 0,
         "npc_pairs": [
           [
-            4,
-            0
-          ],
-          [
             70,
             0
           ],
@@ -3975,6 +3971,10 @@
           [
             53,
             0
+          ],
+          [
+            70,
+            0
           ]
         ],
         "npc_enabled": 2,
@@ -3982,22 +3982,17 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          16,
-          77,
-          170
+          238,
+          49,
+          210
         ],
         "npc_search": [
-          90,
+          92,
           0
         ],
         "npc_loop_timer": 0,
         "npc_allowance_pending": 0,
         "npcs": [
-          [
-            2579,
-            32820,
-            2
-          ],
           [
             2676,
             32882,
@@ -4032,6 +4027,11 @@
             2581,
             32838,
             3
+          ],
+          [
+            2676,
+            32882,
+            0
           ]
         ],
         "credits": 15342507,
@@ -4138,7 +4138,7 @@
           0,
           0,
           0,
-          122,
+          121,
           1,
           0,
           0,
@@ -4380,14 +4380,14 @@
         },
         "player_sprite": 172,
         "npc_sprites": [
-          274,
           270,
           270,
           275,
           284,
           270,
           270,
-          274
+          274,
+          270
         ],
         "quiz": {
           "phase": 0,
@@ -4464,7 +4464,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "59248c24c4cd8ae9",
+        "state_digest": "f0176140b0f71535",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -4807,7 +4807,7 @@
     },
     {
       "label": "arena-exited",
-      "tick": 1973,
+      "tick": 1751,
       "state": {
         "map": 2,
         "mode": "local-exploration",
@@ -4818,8 +4818,8 @@
           46
         ],
         "gate": 85,
-        "tick": 1973,
-        "blocked": 0,
+        "tick": 1751,
+        "blocked": 1,
         "script_pc": 2258,
         "script_status": 3,
         "script_opcode": 255,
@@ -4877,10 +4877,6 @@
         "conversation_checkpoint": 0,
         "npc_pairs": [
           [
-            4,
-            0
-          ],
-          [
             70,
             0
           ],
@@ -4907,6 +4903,10 @@
           [
             53,
             0
+          ],
+          [
+            70,
+            0
           ]
         ],
         "npc_enabled": 2,
@@ -4914,22 +4914,17 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          16,
-          77,
-          170
+          238,
+          49,
+          210
         ],
         "npc_search": [
-          90,
+          92,
           0
         ],
         "npc_loop_timer": 0,
         "npc_allowance_pending": 0,
         "npcs": [
-          [
-            2579,
-            32820,
-            2
-          ],
           [
             2676,
             32882,
@@ -4964,6 +4959,11 @@
             2581,
             32838,
             3
+          ],
+          [
+            2676,
+            32882,
+            0
           ]
         ],
         "credits": 15342507,
@@ -5070,7 +5070,7 @@
           0,
           0,
           0,
-          122,
+          121,
           1,
           0,
           0,
@@ -5312,14 +5312,14 @@
         },
         "player_sprite": 172,
         "npc_sprites": [
-          274,
           270,
           270,
           275,
           284,
           270,
           270,
-          274
+          274,
+          270
         ],
         "quiz": {
           "phase": 0,
@@ -5396,7 +5396,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "315a4370b70fe92f",
+        "state_digest": "11022d659b90dcb2",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -5748,8 +5748,8 @@
       46
     ],
     "gate": 85,
-    "tick": 1973,
-    "blocked": 0,
+    "tick": 1751,
+    "blocked": 1,
     "script_pc": 2258,
     "script_status": 3,
     "script_opcode": 255,
@@ -5807,10 +5807,6 @@
     "conversation_checkpoint": 0,
     "npc_pairs": [
       [
-        4,
-        0
-      ],
-      [
         70,
         0
       ],
@@ -5837,6 +5833,10 @@
       [
         53,
         0
+      ],
+      [
+        70,
+        0
       ]
     ],
     "npc_enabled": 2,
@@ -5844,22 +5844,17 @@
     "npc_clock": 0,
     "npc_fault": 0,
     "npc_rng": [
-      16,
-      77,
-      170
+      238,
+      49,
+      210
     ],
     "npc_search": [
-      90,
+      92,
       0
     ],
     "npc_loop_timer": 0,
     "npc_allowance_pending": 0,
     "npcs": [
-      [
-        2579,
-        32820,
-        2
-      ],
       [
         2676,
         32882,
@@ -5894,6 +5889,11 @@
         2581,
         32838,
         3
+      ],
+      [
+        2676,
+        32882,
+        0
       ]
     ],
     "credits": 15342507,
@@ -6000,7 +6000,7 @@
       0,
       0,
       0,
-      122,
+      121,
       1,
       0,
       0,
@@ -6242,14 +6242,14 @@
     },
     "player_sprite": 172,
     "npc_sprites": [
-      274,
       270,
       270,
       275,
       284,
       270,
       270,
-      274
+      274,
+      270
     ],
     "quiz": {
       "phase": 0,
@@ -6326,7 +6326,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "315a4370b70fe92f",
+    "state_digest": "11022d659b90dcb2",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

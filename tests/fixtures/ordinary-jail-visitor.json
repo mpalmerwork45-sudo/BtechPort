@@ -18,56 +18,56 @@
     },
     {
       "label": "hospital-menu",
-      "tick": 50891
+      "tick": 50899
     },
     {
       "label": "hospital-companion-pause",
-      "tick": 50952
+      "tick": 50960
     },
     {
       "label": "hospital-companion-joined",
-      "tick": 50954
+      "tick": 50962
     },
     {
       "label": "medical-kit",
-      "tick": 50961
+      "tick": 50969
     },
     {
       "label": "field-surgery-kit",
-      "tick": 50965
+      "tick": 50973
     },
     {
       "label": "hospital-exit",
-      "tick": 50967
+      "tick": 50975
     },
     {
       "label": "jail-visitor-menu",
-      "tick": 51539
+      "tick": 51559
     },
     {
       "label": "jail-companion-pause",
-      "tick": 51604
+      "tick": 51624
     },
     {
       "label": "jail-companion-joined",
-      "tick": 51635
+      "tick": 51655
     },
     {
       "label": "jail-exit",
-      "tick": 51638
+      "tick": 51658
     }
   ],
   "final": {
     "map": 3,
     "mode": "local-exploration",
-    "x_half": 4,
-    "y_half": 29,
+    "x_half": 3,
+    "y_half": 25,
     "tile": [
-      2,
-      14
+      1,
+      12
     ],
     "gate": 85,
-    "tick": 51638,
+    "tick": 51658,
     "blocked": 0,
     "script_pc": 4293,
     "script_status": 3,
@@ -118,18 +118,6 @@
     "conversation_checkpoint": 0,
     "npc_pairs": [
       [
-        112,
-        1
-      ],
-      [
-        53,
-        1
-      ],
-      [
-        81,
-        1
-      ],
-      [
         53,
         1
       ],
@@ -147,6 +135,18 @@
       ],
       [
         81,
+        1
+      ],
+      [
+        70,
+        1
+      ],
+      [
+        99,
+        1
+      ],
+      [
+        53,
         1
       ]
     ],
@@ -311,7 +311,7 @@
       0,
       0,
       0,
-      109,
+      104,
       0,
       0,
       0,
@@ -544,14 +544,14 @@
       "invasion": 0,
       "owned": 1,
       "world": [
-        1668,
-        925
+        1667,
+        921
       ],
       "mounted": 0,
       "encounter": 0,
       "building": 13
     },
-    "player_sprite": 170,
+    "player_sprite": 171,
     "npc_sprites": [
       270,
       270,
@@ -605,7 +605,7 @@
       "remaining": 0,
       "fraction": 0
     },
-    "explored_digest": 32578224,
+    "explored_digest": 2162954872,
     "map_center": [
       0,
       0
@@ -637,7 +637,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "5f8e9978b0d8c299",
+    "state_digest": "4801ed3fc619052b",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

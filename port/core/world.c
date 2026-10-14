@@ -196,8 +196,7 @@ void btp_world_step(BtpState *s,const BtpResources *r,BtpAction a)
         }
         /* The arena's temporary gate 139 must not leak into town travel:
            roof/building tiles 115..138 still block ordinary movement. */
-        else if (s->campaign.mounted ? btp_world_tile(r,s,x/2,(y-2)/2)>=s->gate ||
-            btp_world_tile(r,s,x/2+1,(y-2)/2)>=s->gate : btp_world_tile(r,s,(x+1)/2,y/2)>=s->gate) s->blocked=BTP_WALL;
+        else if (!btp_party_can_stand(s,r,x,y)) s->blocked=BTP_WALL;
         else { gx=x;gy=y;s->blocked=BTP_CLEAR; }
         static const uint8_t frames[8][4]={{0,1,2,3},{4,5,6,7},{6,7,4,5},{5,6,7,4},
             {8,9,10,11},{12,13,14,15},{15,12,13,14},{14,15,12,13}};

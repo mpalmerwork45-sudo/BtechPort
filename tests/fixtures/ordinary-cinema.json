@@ -3,18 +3,18 @@
   "checkpoints": [
     {
       "label": "entry",
-      "tick": 588,
+      "tick": 587,
       "state": {
         "map": 6,
         "mode": "entry-confirm",
-        "x_half": 51,
+        "x_half": 52,
         "y_half": 13,
         "tile": [
-          25,
+          26,
           6
         ],
         "gate": 85,
-        "tick": 588,
+        "tick": 587,
         "blocked": 0,
         "script_pc": 0,
         "script_status": 0,
@@ -93,13 +93,13 @@
           ]
         ],
         "npc_enabled": 2,
-        "npc_phase": 1,
+        "npc_phase": 0,
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          189,
-          168,
-          11
+          123,
+          212,
+          5
         ],
         "npc_search": [
           100,
@@ -253,7 +253,7 @@
           0,
           0,
           0,
-          140,
+          141,
           0,
           0,
           0,
@@ -486,14 +486,14 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            690,
-            1676
+            692,
+            1677
           ],
           "mounted": 1,
           "encounter": 0,
           "building": 16
         },
-        "player_sprite": 181,
+        "player_sprite": 178,
         "npc_sprites": [
           270,
           270,
@@ -579,7 +579,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "1a0b0340b75850b6",
+        "state_digest": "e0052d507ef7dfd5",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -922,18 +922,18 @@
     },
     {
       "label": "cinema-complete",
-      "tick": 1264,
+      "tick": 1263,
       "state": {
         "map": 6,
         "mode": "local-exploration",
-        "x_half": 51,
+        "x_half": 52,
         "y_half": 14,
         "tile": [
-          25,
+          26,
           7
         ],
         "gate": 85,
-        "tick": 1264,
+        "tick": 1263,
         "blocked": 0,
         "script_pc": 1128,
         "script_status": 3,
@@ -1017,13 +1017,13 @@
           ]
         ],
         "npc_enabled": 2,
-        "npc_phase": 1,
+        "npc_phase": 0,
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          188,
-          22,
-          244
+          120,
+          11,
+          122
         ],
         "npc_search": [
           100,
@@ -1033,8 +1033,8 @@
         "npc_allowance_pending": 0,
         "npcs": [
           [
-            1330,
-            53260,
+            1332,
+            53261,
             0
           ],
           [
@@ -1177,7 +1177,7 @@
           0,
           0,
           0,
-          140,
+          141,
           0,
           0,
           0,
@@ -1410,14 +1410,14 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            690,
-            1677
+            692,
+            1678
           ],
           "mounted": 1,
           "encounter": 0,
           "building": 16
         },
-        "player_sprite": 181,
+        "player_sprite": 178,
         "npc_sprites": [
           270,
           270,
@@ -1503,7 +1503,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "71d5f3ef07de6454",
+        "state_digest": "532afc60c4a01982",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1848,14 +1848,14 @@
   "final": {
     "map": 6,
     "mode": "local-exploration",
-    "x_half": 51,
+    "x_half": 52,
     "y_half": 14,
     "tile": [
-      25,
+      26,
       7
     ],
     "gate": 85,
-    "tick": 1264,
+    "tick": 1263,
     "blocked": 0,
     "script_pc": 1128,
     "script_status": 3,
@@ -1939,13 +1939,13 @@
       ]
     ],
     "npc_enabled": 2,
-    "npc_phase": 1,
+    "npc_phase": 0,
     "npc_clock": 0,
     "npc_fault": 0,
     "npc_rng": [
-      188,
-      22,
-      244
+      120,
+      11,
+      122
     ],
     "npc_search": [
       100,
@@ -1955,8 +1955,8 @@
     "npc_allowance_pending": 0,
     "npcs": [
       [
-        1330,
-        53260,
+        1332,
+        53261,
         0
       ],
       [
@@ -2099,7 +2099,7 @@
       0,
       0,
       0,
-      140,
+      141,
       0,
       0,
       0,
@@ -2332,14 +2332,14 @@
       "invasion": 0,
       "owned": 1,
       "world": [
-        690,
-        1677
+        692,
+        1678
       ],
       "mounted": 1,
       "encounter": 0,
       "building": 16
     },
-    "player_sprite": 181,
+    "player_sprite": 178,
     "npc_sprites": [
       270,
       270,
@@ -2425,7 +2425,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "71d5f3ef07de6454",
+    "state_digest": "532afc60c4a01982",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

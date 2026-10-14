@@ -146,8 +146,8 @@ int main(int argc,char **argv)
     }
     /* The leader is on foot below a roof. The first vehicle's desired
        formation crosses that roof, while the other vehicles and people have
-       distinct footprints. Every member remains legal at each input and the
-       blocked mech goes around the south edge instead of through the roof. */
+       distinct footprints. The original stops the entire formation when an
+       outer mech reaches the roof; only a deliberate turn can go around it. */
     for (unsigned y=8;y<18;++y) for (unsigned x=10;x<16;++x) r->local[1].tiles[y*64+x]=115;
     for (unsigned step=1;step<=4;step*=2) {
         BtpState group;btp_start(&group);group.story_flags[4]=group.story_flags[58]=1;group.map_id=2;
@@ -168,7 +168,10 @@ int main(int argc,char **argv)
             btp_state_encode(&group,before);CHECK(btp_state_decode(before,sizeof before,btp_active_map(r,&group),NULL,&copy));
             btp_state_encode(&copy,after);CHECK(!memcmp(before,after,sizeof before));
         }
-        CHECK(group.campaign.world_x==1324 && group.party.mech_x[0]>1311);
+        CHECK(group.campaign.world_x==1297 && group.blocked==BTP_WALL);
+        for (unsigned key=0;key<4u/step;++key) btp_game_tick(&group,r,BTP_DOWN);
+        for (unsigned key=0;key<32u/step;++key) btp_game_tick(&group,r,BTP_RIGHT);
+        CHECK(group.campaign.world_x==1329 && group.party.mech_x[0]>1311);
     }
     r->local[1]=map2;
     /* Captured original GAME3 sector selectors, including MAP11's return
@@ -240,7 +243,7 @@ int main(int argc,char **argv)
         battle.combat.phase=BTP_COMBAT_ROUND;battle.combat.count=2;battle.combat.unit[0].record[0]=battle.combat.unit[1].record[0]=255;
         battle.combat.unit[0].x=(uint8_t)edge[i][0];battle.combat.unit[0].y=(uint8_t)edge[i][1];
         BtpState exploration=battle;exploration.mode=BTP_EXPLORE;exploration.campaign.encounter=0;exploration.combat=(BtpCombatState){0};
-        exploration.x_half=(uint16_t)(1152+edge[i][0]);exploration.y_half=(uint16_t)(1664+edge[i][1]+2);
+        exploration.x_half=(uint16_t)(1152+edge[i][0]);exploration.y_half=(uint16_t)(1664+edge[i][1]);
         btp_render(r,&battle,0,a);btp_render(r,&exploration,0,b);
         for (unsigned row=0;row<200;++row) CHECK(!memcmp(a+row*320+104,b+row*320+104,216*sizeof *a));
     }

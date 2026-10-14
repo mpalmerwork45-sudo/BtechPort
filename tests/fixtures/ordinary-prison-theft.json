@@ -2,43 +2,43 @@
   "checkpoints": [
     {
       "label": "jail-theft-choice",
-      "tick": 51635
+      "tick": 51655
     },
     {
       "label": "impound-yard-start",
-      "tick": 51689
+      "tick": 51709
     },
     {
       "label": "boarding-mech-1",
-      "tick": 51702
+      "tick": 51722
     },
     {
       "label": "mech-1-activation-result",
-      "tick": 51752
+      "tick": 51772
     },
     {
       "label": "boarding-mech-2",
-      "tick": 51757
+      "tick": 51777
     },
     {
       "label": "mech-2-activation-result",
-      "tick": 51807
+      "tick": 51827
     },
     {
       "label": "boarding-mech-3",
-      "tick": 51812
+      "tick": 51832
     },
     {
       "label": "mech-3-activation-result",
-      "tick": 51906
+      "tick": 51926
     },
     {
       "label": "prison-crew-allocation",
-      "tick": 51908
+      "tick": 51928
     },
     {
       "label": "stinger-stolen",
-      "tick": 51929
+      "tick": 51949
     }
   ],
   "final": {
@@ -51,7 +51,7 @@
       10
     ],
     "gate": 85,
-    "tick": 51929,
+    "tick": 51949,
     "blocked": 0,
     "script_pc": 2012,
     "script_status": 3,
@@ -102,18 +102,6 @@
     "conversation_checkpoint": 0,
     "npc_pairs": [
       [
-        112,
-        1
-      ],
-      [
-        53,
-        1
-      ],
-      [
-        81,
-        1
-      ],
-      [
         53,
         1
       ],
@@ -131,6 +119,18 @@
       ],
       [
         81,
+        1
+      ],
+      [
+        70,
+        1
+      ],
+      [
+        99,
+        1
+      ],
+      [
+        53,
         1
       ]
     ],
@@ -295,7 +295,7 @@
       0,
       0,
       0,
-      109,
+      104,
       0,
       0,
       0,
@@ -589,7 +589,7 @@
       "remaining": 0,
       "fraction": 0
     },
-    "explored_digest": 32578224,
+    "explored_digest": 2162954872,
     "map_center": [
       0,
       0
@@ -621,7 +621,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "7a071f8c307a461c",
+    "state_digest": "5089e045114d10c8",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

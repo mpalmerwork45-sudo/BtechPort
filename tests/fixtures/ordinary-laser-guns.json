@@ -7,10 +7,10 @@
       "state": {
         "map": 5,
         "mode": "entry-confirm",
-        "x_half": 9,
+        "x_half": 10,
         "y_half": 32,
         "tile": [
-          4,
+          5,
           16
         ],
         "gate": 85,
@@ -486,14 +486,14 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            264,
+            266,
             1568
           ],
           "mounted": 1,
           "encounter": 0,
           "building": 15
         },
-        "player_sprite": 178,
+        "player_sprite": 179,
         "npc_sprites": [
           283,
           270,
@@ -579,7 +579,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "206fe1de466e4df1",
+        "state_digest": "de51b0ecf4d083de",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -926,10 +926,10 @@
       "state": {
         "map": 5,
         "mode": "building",
-        "x_half": 9,
+        "x_half": 10,
         "y_half": 32,
         "tile": [
-          4,
+          5,
           16
         ],
         "gate": 85,
@@ -1410,14 +1410,14 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            264,
+            266,
             1568
           ],
           "mounted": 1,
           "encounter": 0,
           "building": 15
         },
-        "player_sprite": 178,
+        "player_sprite": 179,
         "npc_sprites": [
           283,
           270,
@@ -1503,7 +1503,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "740ec91827ea014c",
+        "state_digest": "714f0dbcf1798efb",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1850,10 +1850,10 @@
       "state": {
         "map": 5,
         "mode": "building",
-        "x_half": 9,
+        "x_half": 10,
         "y_half": 32,
         "tile": [
-          4,
+          5,
           16
         ],
         "gate": 85,
@@ -2338,14 +2338,14 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            264,
+            266,
             1568
           ],
           "mounted": 1,
           "encounter": 0,
           "building": 15
         },
-        "player_sprite": 178,
+        "player_sprite": 179,
         "npc_sprites": [
           283,
           270,
@@ -2431,7 +2431,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "7048fb377053e705",
+        "state_digest": "541ddc6ad2b10815",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -2778,7 +2778,7 @@
       "state": {
         "map": 5,
         "mode": "local-exploration",
-        "x_half": 8,
+        "x_half": 9,
         "y_half": 32,
         "tile": [
           4,
@@ -3262,14 +3262,14 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            264,
+            265,
             1568
           ],
           "mounted": 1,
           "encounter": 0,
           "building": 15
         },
-        "player_sprite": 178,
+        "player_sprite": 180,
         "npc_sprites": [
           283,
           270,
@@ -3355,7 +3355,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "223026e588337349",
+        "state_digest": "f87e7af2b0055fa0",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -3700,7 +3700,7 @@
   "final": {
     "map": 5,
     "mode": "local-exploration",
-    "x_half": 8,
+    "x_half": 9,
     "y_half": 32,
     "tile": [
       4,
@@ -4184,14 +4184,14 @@
       "invasion": 0,
       "owned": 1,
       "world": [
-        264,
+        265,
         1568
       ],
       "mounted": 1,
       "encounter": 0,
       "building": 15
     },
-    "player_sprite": 178,
+    "player_sprite": 180,
     "npc_sprites": [
       283,
       270,
@@ -4277,7 +4277,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "223026e588337349",
+    "state_digest": "f87e7af2b0055fa0",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

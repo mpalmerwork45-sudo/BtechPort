@@ -1,6 +1,7 @@
 #include "data/save.h"
 #include "core/menu.h"
 #include "core/cache.h"
+#include "core/party.h"
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
@@ -85,6 +86,16 @@ int btp_save_load(const char *path, BtpState *s, const BtpResources *r, BtpError
     if (!decode(bytes+HEADER_BYTES,n-HEADER_BYTES,&loaded,r))
         return fail(e,"Save contains an invalid or unsupported game state");
     btp_cache_restore_party(&loaded,r);
+    /* Earlier arena returns reactivated the checked-in records. Repair only
+       a saved Starport foot party with the original parking flag still set;
+       arena fights, theft escapes and mounted travel retain their records. */
+    if (loaded.map_id==2 && loaded.story_flags[24] && !loaded.story_flags[35] &&
+        loaded.party.enabled && !loaded.yard.active && !loaded.campaign.encounter && !loaded.campaign.mounted &&
+        (loaded.mode==BTP_EXPLORE || loaded.mode==BTP_ACTIONS)) {
+        int on_foot=1;
+        for (unsigned i=0;i<8;++i) if (loaded.party.people[i][0]!=255 && loaded.party.people[i][12]<8) on_foot=0;
+        if (on_foot) for (unsigned i=0;i<4;++i) btp_party_mech(&loaded,i)[0]=255;
+    }
     *s = loaded;
     if (e) e->text[0] = 0;
     return 1;

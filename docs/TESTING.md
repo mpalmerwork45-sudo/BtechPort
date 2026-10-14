@@ -2,13 +2,15 @@
 
 ## Current M4 presentation checks
 
-The active build has 51 CTest suites. Internal saves are BTPa/v36, with a
+The active build has 52 CTest suites. Internal saves are BTPa/v36, with a
 20,480-byte payload; old versions retain explicit migrations. Current caches
 are BTTA/v22, BTCB/v11 and BTW3. The world seed is the original `0x020304`.
 The older sections below describe earlier increments.
-The current increment passes all 51 regular and ASan/UBSan/LeakSanitizer core
-suites, historical sanitizer checks, six arena/prison/theft SDL tails and the
-ordinary hospital conversation. The preceding 48-suite increment also passed every native M4
+The current increment passes all 52 regular and ASan/UBSan/LeakSanitizer core
+suites, five Python tool tests, 16 combat F5/F9 pages, six arena/prison/theft SDL
+tails, all nine building/theft follow-up tails and the ordinary hospital
+conversation. The preceding batch passed the historical sanitizer corpus.
+The preceding 48-suite increment also passed every native M4
 acceptance section and all nine follow-up tails. Campaign/story/cache sections
 passed in focused reruns after an outdated ammo-editor checkpoint label was
 corrected; see the current evidence for that test-harness correction.
@@ -16,7 +18,7 @@ The final reference guard checks all 1,287 entries, including Git metadata.
 Only the editor's precisely identified merge-base metadata drift is restored
 to its established baseline before this guard runs.
 `make_live_campaign_vectors.py` adds 25 complete original waves/7,252 checks;
-`make_aftermath_ui_vectors.py` adds five complete original lower-right panels.
+`make_aftermath_ui_vectors.py` adds six complete original lower-right panels.
 `--controls-only` checks physical keypad arrows/Enter, bank digits with Num Lock,
 and a letter/function key closing the current/legacy ending. The cache suite
 checks five visible companions, stale formation recovery and the final exit
@@ -48,7 +50,7 @@ private emulated RAM and commit only numeric projections/source identities.
 `make_world_mark_vectors.py` adds 126 original world-debris ring writes and
 `make_arena_finish_vectors.py` adds 28 arena completion cases.
 `make_town_npc_vectors.py` adds 50 original town initialization/expiry and
-45 Talk-waypoint cases. `make_town_talk_replay.py` records a 744-input ordinary
+45 Talk-waypoint cases. `make_town_talk_replay.py` records a 772-input ordinary
 arrival/hospital conversation; `native_smoke.py --town-only` runs its SDL tail.
 The town suite also compares 64 Starport/outside encounter contexts and restores
 roaming, menu suspension, the hospital selector, reply and returned BLD menu.
@@ -76,13 +78,18 @@ The last adds 314 recruitment, inspection and post-wave spy cases.
 order when gameplay/presentation timing changes. Routine native checks replay
 short saved tails, so adding a later mission does not require repeatedly playing
 every earlier mission in real time.
-`make_fresh_campaign_replay.py` records 66,116 fresh-cadet inputs through the
+`make_fresh_campaign_replay.py` records 66,149 fresh-cadet inputs through the
 cache ending; `make_spy_replay.py` records 50,564 through inspection, spy removal
 and replacement recruitment. C integration restores and continues before
 every input. Only the ending route uses the authorized credit shortcut; neither
 imports an original save or edits quest flags, coordinates, skills or RNG.
-World tests check three mechs and five people around a roof strip, each footprint
-at every intermediate step and each moving member's gait after save restoration.
+World tests check three mechs and five people at a roof strip: the entire party
+stops, then a deliberate turn goes around the obstacle. Each intermediate step
+and moving member's gait is checked after restoration. `town-movement-primary`
+adds 40 played DOS formation observations, 1,920 bounded collision decisions,
+480 doorway decisions, 50 sprite anchors and 121,024 Starport infantry paths.
+The corresponding `make_formation_*`, `make_town_formation_vectors.py` and
+`make_combat_anchor_vectors.py` tools retain only numeric results/provenance.
 Speaker timing is a nominal 8 MHz 8088 model; physical hardware filtering and
 interrupt/prefetch costs remain approximate. See [M4 follow-up evidence](M4_FOLLOWUPS_EVIDENCE.md).
 `make_speaker_event_vectors.py` now compares the complete ordered tone/noise

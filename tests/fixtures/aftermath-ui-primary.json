@@ -4,36 +4,49 @@
   "snapshot": "work/reference-runs/1791877416552610064",
   "comparison": "Every RGB pixel of the 216x88 lower-right panel, including border, scroll, colours and selection.",
   "prerequisite": "Private GAME3 copy with active owned vehicles; live DOS computer-controlled fight. Rex technician rank 2, one enemy mech wreck, 216 scrap C-bills, 71 pocket C-bills (287 total credit delta); loot recipient row 3 and original four personal weapons.",
+  "salvage_prerequisite": "Second private GAME3 context: three active mechs, Rick on foot with piloting 1, Rex technician 4. Ordinary computer fight reaches the qualified-pilot question. No success/failure-result pixel claim.",
   "routines": [
     "103B:10A3..12F9",
     "05AB:0002",
+    "05AB:04F9",
     "05AB:094B"
   ],
   "cases": [
     {
       "phase": 5,
       "capture": "victory-17",
+      "run": "work/reference-runs/1791877416552610064",
       "rgb_sha256": "618b89d9beddf513eca1dc0cad23012203414a1209f91e053dd1a1823c999362"
     },
     {
       "phase": 8,
       "capture": "victory-18",
+      "run": "work/reference-runs/1791877416552610064",
       "rgb_sha256": "88291c60d350a156a67414f8e6cbcd23537a199ac2a65fa063413b7603a5dd04"
     },
     {
       "phase": 9,
       "capture": "victory-19",
+      "run": "work/reference-runs/1791877416552610064",
       "rgb_sha256": "bd437fadd2645f78e179a1f692e8c4e73a08fdd63fb6cc05647ad26bee125468"
     },
     {
       "phase": 3,
       "capture": "victory-20",
+      "run": "work/reference-runs/1791877416552610064",
       "rgb_sha256": "8d57e2fb628ef45051ebc3dd0d7dac8a4e0c92a8fc730a6276df7c229baf2ede"
     },
     {
       "phase": 4,
       "capture": "loot-0",
+      "run": "work/reference-runs/1791877416552610064",
       "rgb_sha256": "5e7f824383c4f5e90fbe8d428b234b0393f818718f442aad94ac182b2d4e4f3a"
+    },
+    {
+      "phase": 1,
+      "capture": "salvage-finish-23",
+      "run": "work/reference-runs/1791962800804281833",
+      "rgb_sha256": "74a78e5f0d7f9133b5e30a6df92ba00c418c9836226493c790d33c7b4df6cb75"
     }
   ]
 }
