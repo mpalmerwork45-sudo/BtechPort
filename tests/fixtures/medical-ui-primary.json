@@ -48,7 +48,30 @@
       ],
       "rgb_sha256": "a6bea9fcb3502785b939b36050e41a6d126b09a1d3bd473e99977cd20765d544",
       "rgb_fnv64": "9cf65a8f41a01993"
+    },
+    {
+      "panel": "healthy-active-cooldown",
+      "capture": "work/reference-runs/1791961001225495111/captures/healthy-cooldown.png",
+      "crop": [
+        104,
+        72,
+        216,
+        56
+      ],
+      "rgb_sha256": "53570377094bde15cde3e300363aa62d1076ac112e19b91d89455df3a4bac0dd",
+      "rgb_fnv64": "2d569d958cd1a475",
+      "prerequisite": "Private GAME3 copy: all four people on foot, Rex has 119/120 HP, Rick Surgery rank four, Advanced Medkit. Ordinary Heal, acknowledge, then Heal again.",
+      "observed": {
+        "health": [
+          80,
+          120,
+          90,
+          70
+        ],
+        "cooldown_flag_41": 57
+      },
+      "routine": "0C31:000A, cooldown branch at image 0xC60B; DS:25CF"
     }
   ],
-  "limits": "Hospital capture uses trainee/Medkit treating Rex; healthy with active cooldown is not captured."
+  "limits": "Complete unmasked popup regions. Hospital capture uses trainee/Medkit treating Rex. Private injury/equipment prerequisites are explicit; animated text and cooldown wall-clock cadence are not compared."
 }

@@ -167,6 +167,25 @@ int main(int argc,char **argv)
            medical panel; ordinary paid clinic/save flow has its own route. */
         medical.mode=BTP_ACTIONS;medical.campaign.ui=BTP_MENU_MESSAGE;medical.menu.notice=3;
         btp_render(r,&medical,0,pixels);CHECK(crop_hash(pixels,104,88,216,80)==UINT64_C(0x9cf65a8f41a01993));
+        /* A real treatment, followed immediately by Heal again, reaches
+           0C31's healthy-with-active-cooldown branch. The DOS capture has
+           all four people at full health and flag 41 still equal to 57. */
+        raw[1+17+15]=119;CHECK(btp_original_decode(raw,sizeof raw,&medical,r,&e));
+        btp_menu_open(&medical);select_item(&medical,r,4);
+        CHECK(medical.service.phase==12 && !medical.service.outcome && medical.party.people[1][15]==120);
+        btp_game_tick(&medical,r,BTP_ACCEPT);CHECK(medical.story_flags[41]);
+        btp_menu_open(&medical);select_item(&medical,r,4);
+        CHECK(medical.service.outcome==3 && !medical.service.amount && restore(&medical,r));
+        btp_render(r,&medical,0,pixels);CHECK(crop_hash(pixels,104,72,216,56)==UINT64_C(0x2d569d958cd1a475));
+        CHECK(btp_save_write("work/m4-audit/healing-healthy-cooldown.btp",&medical,r,&e));
+        BtpState resumed;CHECK(btp_save_load("work/m4-audit/healing-healthy-cooldown.btp",&resumed,r,&e));
+        uint8_t healed[136];memcpy(healed,medical.party.people,sizeof healed);
+        unsigned balance=medical.credits;btp_game_tick(&medical,r,BTP_ACCEPT);
+        btp_game_tick(&resumed,r,BTP_ACCEPT);
+        uint8_t continued[BTP_STATE_BYTES],loaded[BTP_STATE_BYTES];
+        btp_state_encode(&medical,continued);btp_state_encode(&resumed,loaded);CHECK(!memcmp(continued,loaded,sizeof loaded));
+        CHECK(!medical.service.phase && medical.mode==BTP_EXPLORE && medical.credits==balance &&
+            !memcmp(healed,medical.party.people,sizeof healed));
     }
     /* Original eight physical slots become a compact, stable person list. */
     s.party.people[1][0]=255;btp_menu_close(&s);btp_menu_open(&s);select_item(&s,r,3);select_item(&s,r,1);

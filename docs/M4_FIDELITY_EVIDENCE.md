@@ -261,8 +261,8 @@ increment additionally ran the six arena/prison/theft native tails.
 3. Physical speaker calibration still needs suitable hardware evidence. All
    eighteen ordered tone/noise traces now agree with executed original code;
    exact physical 8 MHz XT sound remains UNKNOWN.
-4. Phoenix LAM decoding/palette registers are verified below. The healthy-with-
-   cooldown medical branch still needs a measured visual comparison.
+4. Phoenix LAM decoding/palette registers and the healthy-with-cooldown
+   medical branch now have measured comparisons below.
 5. Alternate owned-arena/win/loss and prison-loss routes and the subsequent
    town-NPC/hospital-Talk request now have saved and SDL continuations.
 
@@ -413,12 +413,33 @@ field treatment, injured cooldown, healthy party and trainee hospital treatment.
 The short notices end at row 127: their native height is corrected to 56 pixels.
 All four crop hashes pass. These are live original screen observations with
 controlled injury/equipment prerequisites, not a complete doctor-grade matrix.
-The healthy-with-active-cooldown branch still needs its own measured capture.
+The healthy-with-active-cooldown branch is covered by the later capture below.
 
 Restoring town RNG draws changes later ordinary replay outcomes. Dependent
 routes have been regenerated through actual inputs. Arena losses leave weapons
 unassigned; wins use computer control. No battle state is forced. The current
 fresh ending takes 65,975 inputs and the spy replacement route 50,423.
+
+## Healthy party during recovery — 2026-10-14
+
+**VERIFIED:** original run `1791961001225495111` loads a private GAME3 copy
+with all four characters on foot, Rex at 119/120 health, Rick at Surgery rank
+four and an Advanced Medkit. Ordinary Heal restores Rex to 120; after
+acknowledgement, a second Heal reaches `0C31`'s cooldown branch with flag 41
+still 57. The RAM capture confirms all four characters have full health.
+Its DS:25CF notice is the same wording and complete 216x56 RGB crop as the
+healthy/no-cooldown case, supplied by the distinct DS:2591 branch.
+
+The existing renderer already agrees. `medical-ui-primary.json` now records
+this fifth medical crop with the explicit prerequisites and observed timer.
+The menu test reaches the branch through treatment and another Heal, checks
+the entire crop, saves/loads its held notice, and compares complete state
+after acknowledgement without further healing or spending. Original animated
+text timing and recovery wall-clock cadence remain outside this comparison.
+
+**PASS:** focused regular and ASan/UBSan/LeakSanitizer menu/save tests. The
+preceding weapon increment already ran all 51 suites and the historical
+sanitizer corpus; this verification adds no runtime change.
 
 **PASS:** all 51 regular and ASan/UBSan/LeakSanitizer core suites, the full
 historical sanitizer corpus, six arena/prison/theft SDL tails and the new town

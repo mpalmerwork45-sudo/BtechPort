@@ -65,8 +65,9 @@ The remaining authorized tasks are in [project status](PROJECT_STATUS.md).
    Field/hospital treatment and injured-cooldown/healthy notices now match four
    complete crops. Phoenix LAM colours match the original decoder/palette
    writes and a title-checked RGB model. A direct DOS Phoenix capture,
-   healthy-with-active-cooldown and remaining battle-result screens still
-   need visual comparisons.
+   and remaining battle-result screens still need visual comparisons. The
+   healthy-with-active-cooldown case now has its fifth complete medical crop,
+   original RAM confirmation and a saved treatment/second-Heal continuation.
    Eight more weapon/target/withdrawal regions now match complete original
    captures. Another 30 regions across 20 held weapon/infantry/Kick pages now
    match: retained selection, override Yes/No and empty/destroyed notices have

@@ -52,7 +52,10 @@ private emulated RAM and commit only numeric projections/source identities.
 arrival/hospital conversation; `native_smoke.py --town-only` runs its SDL tail.
 The town suite also compares 64 Starport/outside encounter contexts and restores
 roaming, menu suspension, the hospital selector, reply and returned BLD menu.
-`medical-ui-primary.json` records four complete original treatment/notice crops.
+`medical-ui-primary.json` records five complete original treatment/notice crops,
+including a fully healed party with the recovery timer still active. The menu
+test reaches that branch by actual treatment and a second Heal, saves the held
+notice, and compares complete state after restored acknowledgement.
 `test-sanitize.sh --historical-only` rebuilds and reruns the older oracle/replay
 corpus without repeating the already-passing CTest suites. This batch used it
 after updating a legacy assertion which expected an absent Talk category to

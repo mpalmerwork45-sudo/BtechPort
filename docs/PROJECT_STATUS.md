@@ -136,7 +136,8 @@ unfinished portions, including subsequent owner observations.
 4. Phoenix Hawk LAM colours now match the original decoder and palette writes,
    with native save/load checks. Field/hospital treatment and injured-cooldown/
    healthy notices match complete original crops. Healthy with active cooldown
-   still needs a measured comparison.
+   now also matches a measured original crop, reached by treatment and an
+   immediate second Heal; its held save and acknowledgement preserve health.
 5. Alternate owned-arena/win/loss and prison-loss journeys now pass, including
    arena completion, old stuck-menu recovery, reward and ownership checks.
    Town/Starport NPCs and room arrivals are restored, with 95 executed original
