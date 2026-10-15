@@ -11,6 +11,7 @@ void btp_mech_screen(const BtpResources *resources,const uint8_t record[125],
     const char *pilot,const char *rider,unsigned heat,unsigned tick,uint32_t frame[BTP_PIXELS]);
 /* Original salvage text stream, also compared with the executable oracle. */
 size_t btp_salvage_text(const BtpResources *resources,const BtpState *state,uint8_t message[1024]);
+size_t btp_battle_text(const BtpResources *resources,const BtpBattleText *report,unsigned verbosity,uint8_t message[1024]);
 void btp_render(const BtpResources *resources, const BtpState *state, int debug,
                 uint32_t frame[BTP_PIXELS]);
 int btp_write_ppm(const char *path, const uint32_t frame[BTP_PIXELS]);

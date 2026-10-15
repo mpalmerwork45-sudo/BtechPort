@@ -501,13 +501,20 @@ def menu(env,work):
             keys.append('menu');choose(5);keys.extend(['down']*((wanted-slot)%7)+['accept']);slot=wanted
         for wanted in range(6):
             keys.append('menu');choose(4);keys.extend(['down']*((wanted-slot)%7)+['accept']);slot=wanted
-        keys.append('menu');choose(2);choose(0);keys.extend(['accept','menu']);choose(6);keys.append('cancel')
-        actions.write_text('\n'.join(keys)+'\n')
+        keys.append('menu');choose(2);choose(0);keys.append('menu');choose(6);keys.append('cancel')
+        # Physical Space chooses every highlighted item; logical Enter in
+        # the expected log remains an independent selection reference.
+        actions.write_text('\n'.join('menu' if key=='accept' else key for key in keys)+'\n')
         frame=work/'native-space-menu.ppm';expected=tmp/'expected.ppm'
         env=dict(env,SDL_AUDIODRIVER='dummy')
         actual=subprocess.run([str(ROOT/'build/btech-port'),'--smoke-replay','--smoke-fast','--replay',str(actions),'--save-file',str(base),'--record',str(record),'--frame',str(frame)],cwd=ROOT,env=env,check=True,capture_output=True,text=True,timeout=20)
         wanted=subprocess.run([str(ROOT/'build/btech-headless'),'--replay',str(record),'--save-file',str(base),'--frame',str(expected)],cwd=ROOT,check=True,capture_output=True,text=True,timeout=20)
-        if record.read_text().splitlines()!=keys+['idle']*5 or json.loads(actual.stdout)!=json.loads(wanted.stdout) or frame.read_bytes()!=expected.read_bytes():raise RuntimeError('Native menu inputs/state/pixels differ')
+        if record.read_text().splitlines()!=keys+['idle']*5 or json.loads(actual.stdout)!=json.loads(wanted.stdout) or frame.read_bytes()!=expected.read_bytes():
+            (work/'native-menu-actual.json').write_text(actual.stdout)
+            (work/'native-menu-wanted.json').write_text(wanted.stdout)
+            (work/'native-menu-actual.actions').write_text(record.read_text())
+            (work/'native-menu-wanted.actions').write_text('\n'.join(keys+['idle']*5)+'\n')
+            raise RuntimeError('Native menu inputs/state/pixels differ')
         for number in range(1,7):
             path=base if number==1 else tmp/f'slot-{number}.btp'
             state=json.loads(subprocess.run([str(ROOT/'build/btech-headless'),'--load',str(path)],cwd=ROOT,check=True,capture_output=True,text=True).stdout)
@@ -527,7 +534,10 @@ def mechit_ui(env,work):
                ('refit','mechit-apprentice-start.btp',['down','accept','accept','accept','down','accept','accept','accept']),
                ('recruit','mechit-recruit-start.btp',['accept','accept']+['idle']*96+['accept']+['down']*5+['accept'])]
         for label,start,keys in paths:
-            tail.write_text('\n'.join(keys)+'\n');frame=work/f'native-mechit-{label}.ppm'
+            # The numeric amount submits with Enter; all menu/Yes-No choices
+            # use Space, including the last-mech repair and refit selectors.
+            physical=['menu' if key=='accept' and not (label=='ammunition' and i in (8,10)) else key for i,key in enumerate(keys)]
+            tail.write_text('\n'.join(physical)+'\n');frame=work/f'native-mechit-{label}.ppm'
             actual=subprocess.run([str(ROOT/'build/btech-port'),'--load',str(work/start),'--smoke-replay','--smoke-fast',
                 '--replay',str(tail),'--record',str(record),'--frame',str(frame)],cwd=ROOT,env=env,check=True,capture_output=True,text=True,timeout=25)
             wanted=subprocess.run([str(binary),'--load',str(work/start),'--replay',str(record),'--frame',str(expected)],cwd=ROOT,check=True,capture_output=True,text=True)
@@ -591,6 +601,25 @@ def combat_ui(env,work):
             (work/'native-combat-ui-record.actions').write_text(record.read_text())
             raise RuntimeError('Native original combat UI keys/state/pixels differ')
         print('PASS: native eight-entry foot menu, friend/enemy summaries, Detail Scan and Space dismissal; exact input/state/pixels.',flush=True)
+        # Assign each unit separately, start one wave explicitly, and use
+        # Space while it runs. The source is a declared mixed-party test
+        # state; every subsequent choice passes through SDL key events.
+        keys=['accept','down','down','accept','up','up','accept',
+              'down','down','accept','up','up','accept','down','down','accept',
+              'up','up','accept','down','down','accept','down','down','accept','menu']+['idle']*2048
+        physical=['menu' if key=='accept' else key for key in keys]
+        tail.write_text('\n'.join(physical)+'\n')
+        command_start=work/'computer-control-start.btp'
+        actual=subprocess.run([str(ROOT/'build/btech-port'),'--load',str(command_start),'--smoke-replay','--smoke-fast',
+            '--replay',str(tail),'--record',str(record),'--frame',str(frame)],cwd=ROOT,env=env,check=True,capture_output=True,text=True,timeout=20)
+        tail.write_text('\n'.join(keys+['idle']*5)+'\n')
+        wanted=subprocess.run([str(binary),'--load',str(command_start),'--replay',str(tail),'--frame',str(expected)],cwd=ROOT,check=True,capture_output=True,text=True)
+        state=json.loads(actual.stdout)
+        if record.read_text().splitlines()!=physical+['idle']*5 or state!=json.loads(wanted.stdout) or frame.read_bytes()!=expected.read_bytes():
+            raise RuntimeError('Native individual computer assignments/Space continuation differ')
+        if state['combat']['phase']!=4 or state['combat']['automatic']!=15 or state['combat']['auto_run']:
+            raise RuntimeError('Computer assignment started continuous fighting or Space lost its assignments')
+        print('PASS: Space selects four individual Computer assignments and Begin Fight, then interrupts; exact Enter-equivalent state/pixels.',flush=True)
         # The target/withdrawal files come from the ordinary-input portion of
         # test_combat_ui; they include both held withdrawal messages.
         pages=[('scan-choice',['up','accept']),('scan-summary',['up','accept','accept']),
@@ -599,6 +628,7 @@ def combat_ui(env,work):
                ('target-ui-withdrawal',None),('target-ui-return',None)]
         pages += [(f'weapon-ui-{i}',None) for i in (2,7,9,11,14,16)]
         pages += [(f'weapon-warning-{i}',None) for i in (0,2,4)]
+        pages += [('computer-control-start',None),('battle-report-brief',None),('battle-report-verbose',None)]
         for label,prefix in pages:
             page=tmp/'page.btp';slot=tmp/'slot.btp'
             if prefix is None:page=work/f'{label}.btp'
@@ -1115,23 +1145,29 @@ def followups(env,work,cases=None):
         ('cinema','entry','GAME3'),('inventor','entry','GAME3'),('inventor-qualified','entry','GAME5'),
         ('laser-guns','laser-shop-robbery','GAME3'),('prison-theft','impound-yard-start',None),
         ('arena-theft','arena-rented-locust','GAME3'),
-        ('spy-replacement','technician-recruitment-wait',None)]
+        ('spy-replacement','technician-recruitment-wait',None),
+        ('alternate-services','entry','GAME3')]
     with tempfile.TemporaryDirectory(prefix='native-followup-',dir=work) as directory:
         tmp=Path(directory);prefix=tmp/'prefix.actions';start=tmp/'start.btp';tail=tmp/'tail.actions';record=tmp/'record.actions'
         for kind,label,source in cases:
             lines=(ROOT/f'tests/fixtures/ordinary-{kind}.actions').read_text().splitlines()
             facts=json.loads((ROOT/f'tests/fixtures/ordinary-{kind}.json').read_text());tick=next(c['tick'] for c in facts['checkpoints'] if c['label']==label)
-            prefix.write_text('\n'.join(lines[:tick])+'\n');tail.write_text('\n'.join(lines[tick:])+'\n')
+            prefix.write_text('\n'.join(lines[:tick])+'\n')
+            # These tails have menus and confirmations, no numeric amount
+            # editors. Compare physical Space against the original Enter
+            # replay, rather than replaying a possibly incorrect key mapping.
+            tail.write_text('\n'.join('menu' if key=='accept' else key for key in lines[tick:])+'\n')
             initial=['--load',str(ROOT/'Original DOS'/source)] if source else []
             subprocess.run([str(binary),*initial,'--replay',str(prefix),'--save',str(start)],cwd=ROOT,check=True,capture_output=True,timeout=20)
             frame=work/f'native-{kind}.ppm';expected=tmp/'expected.ppm'
             actual=subprocess.run([str(native),'--load',str(start),'--smoke-replay','--smoke-fast',
                 '--replay',str(tail),'--record',str(record),'--frame',str(frame)],cwd=ROOT,env=dict(env,SDL_AUDIODRIVER='dummy'),
                 check=True,capture_output=True,text=True,timeout=40)
-            wanted=subprocess.run([str(binary),'--load',str(start),'--replay',str(record),'--frame',str(expected)],cwd=ROOT,
+            tail.write_text('\n'.join(lines[tick:]+['idle']*5)+'\n')
+            wanted=subprocess.run([str(binary),'--load',str(start),'--replay',str(tail),'--frame',str(expected)],cwd=ROOT,
                 check=True,capture_output=True,text=True,timeout=20)
             if json.loads(actual.stdout)!=json.loads(wanted.stdout) or frame.read_bytes()!=expected.read_bytes():raise RuntimeError(kind+' SDL continuation differs')
-            print(f'PASS: native {kind}, saved ordinary entrance/route, exact input/state/pixels.',flush=True)
+            print(f'PASS: native {kind}, Space menu selections match ordinary Enter route state/pixels.',flush=True)
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)

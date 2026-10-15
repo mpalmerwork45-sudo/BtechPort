@@ -104,8 +104,13 @@ The native runtime also supports custom cache paths; see `--help`.
 Amount fields accept digits, Backspace and Enter; Space does not submit a number.
 Use the Space menu for walking step size, party inspection, equipment, map and
 all six save slots. During combat, select a unit, give movement/weapon orders,
-and use **Begin Fight** to resolve them. Combat controls are undergoing further
-comparison with the original.
+and use **Begin Fight** to resolve them. **Computer** assigns the selected unit
+without starting a fight; use **Next Mech** to assign others. Space interrupts
+automatic play at the end of the current wave and returns to the menu, retaining
+the individual assignments. Giving manual movement or weapon orders returns
+that unit to manual control.
+Space also confirms manual combat commands, movement destinations, weapon and
+target choices, and Yes/No prompts.
 
 ## Saves and useful options
 

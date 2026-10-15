@@ -807,6 +807,35 @@ btech.exe
                             "guest_offset":hex(addr),"before":list(old),"after":list(value)},indent=2)+"\n")
                     finally:
                         os.close(fd); os.kill(process.pid,signal.SIGCONT)
+                elif command == "controlled-cache-phoenix":
+                    # Presentation-only starting position in an already loaded
+                    # original cache. Ordinary Left then invokes ENDMECH.BLD;
+                    # no instructions, door/code flags or graphic data change.
+                    if parts != ["controlled-cache-phoenix"]:raise ValueError("No cache-position arguments")
+                    base,row=snapshot_game(process.pid,"before-phoenix-position",output)
+                    ram=(output/"before-phoenix-position-ram.bin").read_bytes()
+                    ds=int(row["data_segment"],16)*16;state=int(row["state_segment"],16)*16
+                    def word(address):return struct.unpack_from('<H',ram,address)[0]
+                    buffer=word(ds+0x5470)*16
+                    if row['gate']!=33 or not ram[state+0xd346] or ram[state+0xd34e]:
+                        raise ValueError("Phoenix prerequisite requires the loaded main cache")
+                    raw=ram[buffer+0x101d:buffer+0x101d+4096]
+                    if raw[(49//8*8+2//8)*64+(49%8)*8+2%8]!=247:
+                        raise ValueError("Unexpected Phoenix map tile")
+                    changes={word(ds+0x538c)*16+0xa44b:0x0c05,word(ds+0x538e)*16+0xa44d:0xc062}
+                    for i in range(8):
+                        if ram[state+0xc614+17*i]!=255:
+                            changes[state+0x400c+2*i]=0x0c05;changes[state+0x403e+2*i]=0xc062
+                    os.kill(process.pid,signal.SIGSTOP);fd=os.open(f"/proc/{process.pid}/mem",os.O_RDWR)
+                    try:
+                        before={hex(a):word(a) for a in changes}
+                        for address,value in changes.items():
+                            if os.pwrite(fd,struct.pack('<H',value),base+address)!=2:raise RuntimeError("Short cache position write")
+                        (output/"phoenix-position-prerequisite.json").write_text(json.dumps(dict(
+                            kind="controlled-cache-position",before=before,after={hex(a):v for a,v in changes.items()},
+                            scope="Live presentation check only; not an ordinary cache journey"),indent=2)+'\n')
+                    finally:
+                        os.close(fd);os.kill(process.pid,signal.SIGCONT)
                 elif command == "dump":
                     address = int(parts[2], 0)
                     length = int(parts[3], 0)

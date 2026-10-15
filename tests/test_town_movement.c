@@ -115,6 +115,19 @@ static void collision(BtpResources *r)
         CHECK(entry==door);CHECK(btp_party_can_stand(&s,r,(int)x+dx,(int)y+dy)!=(int)blocked);++cases;
     }
     fclose(file);CHECK(cases==480);
+    file=fopen("tests/fixtures/town-boundaries-primary.txt","r");CHECK(file);cases=0;unsigned towns=0;
+    while (fscanf(file," E %u %u %u %u %u %d %d %d %u",&town,&x,&y,&people,&mechs,&dx,&dy,&door,&blocked)==9) {
+        BtpState s;btp_start(&s);s.story_flags[4]=(uint8_t)(town!=1);s.map_id=(uint8_t)town;btp_party_init(&s);
+        for (unsigned i=0;i<8;++i) { s.party.people[i][0]=(uint8_t)(i<people ? i : 255);s.party.people[i][12]=8; }
+        for (unsigned i=0;i<4;++i) btp_party_mech(&s,i)[0]=(uint8_t)(i<mechs ? 'L' : 255);
+        const BtpMap *map=btp_active_map(r,&s);
+        int water=btp_world_deep_crossing(r,&s,x,y,dx,dy);
+        int entry=water ? -1 : btp_party_entrance(&s,r,map,(int)(x&127u)+dx,(int)(y&127u)+dy);
+        int rejected=water || !btp_party_can_stand(&s,r,(int)x+dx,(int)y+dy);
+        if (entry!=door || rejected!=(int)blocked) fprintf(stderr,"Extended boundary %u town %u at %u,%u %u/%u delta %d,%d: entry %d/%d block %d/%u\n",cases,town,x,y,people,mechs,dx,dy,entry,door,rejected,blocked);
+        CHECK(entry==door && rejected==(int)blocked);towns|=1u<<town;++cases;
+    }
+    fclose(file);CHECK(cases>10000 && towns==16382);printf("Extended original town boundaries: %u\n",cases);
 }
 int main(int argc,char **argv)
 {

@@ -33,7 +33,7 @@ typedef struct {
     uint8_t record[125], x, y, direction, heat, pool, burning, cover;
     uint8_t infantry; /* record[0..16] is original C614 for labor robots. */
 } BtpCombatUnit;
-typedef struct { uint8_t hit, location, damage, destroyed, toppled; int16_t needed; } BtpShot;
+typedef struct { uint8_t hit, location, damage, destroyed, toppled, criticals; int16_t needed; } BtpShot;
 typedef enum { BTP_COMBAT_NONE, BTP_COMBAT_CONTROL, BTP_COMBAT_MESSAGES, BTP_COMBAT_GRAPHICS,
     BTP_COMBAT_MENU, BTP_COMBAT_MOVE, BTP_COMBAT_WEAPONS, BTP_COMBAT_TARGET,
     BTP_COMBAT_SCAN, BTP_COMBAT_ROUND, BTP_COMBAT_NOTICE, BTP_COMBAT_KICK,

@@ -2,43 +2,43 @@
   "checkpoints": [
     {
       "label": "jail-theft-choice",
-      "tick": 51655
+      "tick": 51763
     },
     {
       "label": "impound-yard-start",
-      "tick": 51709
+      "tick": 51817
     },
     {
       "label": "boarding-mech-1",
-      "tick": 51722
+      "tick": 51830
     },
     {
       "label": "mech-1-activation-result",
-      "tick": 51772
+      "tick": 51880
     },
     {
       "label": "boarding-mech-2",
-      "tick": 51777
+      "tick": 51885
     },
     {
       "label": "mech-2-activation-result",
-      "tick": 51827
+      "tick": 51935
     },
     {
       "label": "boarding-mech-3",
-      "tick": 51832
+      "tick": 51940
     },
     {
       "label": "mech-3-activation-result",
-      "tick": 51926
+      "tick": 52034
     },
     {
       "label": "prison-crew-allocation",
-      "tick": 51928
+      "tick": 52036
     },
     {
       "label": "stinger-stolen",
-      "tick": 51949
+      "tick": 52057
     }
   ],
   "final": {
@@ -51,7 +51,7 @@
       10
     ],
     "gate": 85,
-    "tick": 51949,
+    "tick": 52057,
     "blocked": 0,
     "script_pc": 2012,
     "script_status": 3,
@@ -621,7 +621,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "5089e045114d10c8",
+    "state_digest": "8f4d2c250c668103",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

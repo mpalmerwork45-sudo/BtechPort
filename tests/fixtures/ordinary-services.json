@@ -2,39 +2,39 @@
   "checkpoints": [
     {
       "label": "parked-in-starport",
-      "tick": 49039
+      "tick": 49147
     },
     {
       "label": "civilian-clothing",
-      "tick": 49126
+      "tick": 49234
     },
     {
       "label": "rex-crest",
-      "tick": 50192
+      "tick": 50300
     },
     {
       "label": "rex-and-commando",
-      "tick": 50269
+      "tick": 50377
     },
     {
       "label": "technician-joined",
-      "tick": 50418
+      "tick": 50526
     },
     {
       "label": "partial-armour-repair",
-      "tick": 50422
+      "tick": 50530
     },
     {
       "label": "ammo-status",
-      "tick": 50426
+      "tick": 50534
     },
     {
       "label": "ammo-purchase-boundary",
-      "tick": 50426
+      "tick": 50534
     },
     {
       "label": "speed-shop-no-funds",
-      "tick": 50438
+      "tick": 50546
     }
   ],
   "final": {
@@ -47,7 +47,7 @@
       34
     ],
     "gate": 85,
-    "tick": 50443,
+    "tick": 50551,
     "blocked": 0,
     "script_pc": 4979,
     "script_status": 3,
@@ -617,7 +617,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "34638a0f6fb931fc",
+    "state_digest": "16abb31966744e80",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

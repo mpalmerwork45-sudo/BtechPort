@@ -2,6 +2,7 @@
 """Execute the original Phoenix decoder and VGA palette writes in private RAM."""
 import hashlib
 import json
+from PIL import Image
 from combat_oracle import OriginalCombat, ROOT, UC_HOOK_INSN, UC_X86_INS_OUT
 from make_party_vectors import SNAP
 from prepare_talk import EXE_SHA, IMAGE_SHA
@@ -42,6 +43,12 @@ def main():
               for channel in colours[index].to_bytes(3,'big'))
     h=14695981039346656037
     for value in rgb:h=((h^value)*1099511628211)&((1<<64)-1)
+    # Live original cache caller: only party position is supplied, then the
+    # ordinary Left/Return inputs open ENDMECH with its own palette selection.
+    capture=ROOT/'work/reference-runs/1792046692272345269/captures/phoenix-open-1.png'
+    live=Image.open(capture).convert('RGB')
+    if live.size!=(320,200) or live.tobytes()!=rgb:
+        raise RuntimeError('Live original Phoenix differs from decoded palette/frame')
     (ROOT/'tests/fixtures/phoenix-palette-primary.txt').write_text(f'F {h:016x}\n')
     facts=dict(executable_sha256=EXE_SHA,image_sha256=IMAGE_SHA,
         resource_sha256=hashlib.sha256(source).hexdigest(),
@@ -51,8 +58,10 @@ def main():
         phoenix_rgb=[f'{c:06x}' for c in colours],
         unpacked_sha256=hashlib.sha256(packed).hexdigest(),
         rgb_sha256=hashlib.sha256(rgb).hexdigest(),rgb_fnv64=f'{h:016x}',
-        confidence='VERIFIED original decoder and palette registers; RGB uses the VGA/EGA colour model checked against the live title capture.',
-        limits='This is not a live DOSBox Phoenix screenshot or an execution of the entire cache journey.',
+        live_capture_run='1792046692272345269',live_capture_label='phoenix-open-1',
+        live_rgb_sha256=hashlib.sha256(live.tobytes()).hexdigest(),
+        confidence='VERIFIED all 64000 RGB pixels against a live original DOSBox Phoenix screen, plus original decoder and palette writes.',
+        limits='Loaded original cache save; controlled cursor/party position at the Phoenix approach. Ordinary Left and Return open the original screen. This is not a fresh-game cache journey.',
         no_instruction_patches=True)
     (ROOT/'tests/fixtures/phoenix-palette-primary.json').write_text(json.dumps(facts,indent=2)+'\n')
     print('Original Phoenix: 32000 decoded bytes, 16 palette writes, RGB FNV64',f'{h:016x}')

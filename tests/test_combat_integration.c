@@ -46,7 +46,10 @@ static void decline(const BtpState *menu,const BtpResources *r,unsigned loan)
         CHECK(computer.combat.phase==BTP_COMBAT_MENU && computer.combat.paused);
         unsigned round=computer.combat.round;step(&computer,r,BTP_IDLE);CHECK(computer.combat.round==round);
         command(&computer,r,9);
-        while (computer.combat.phase && steps++<12000) step(&computer,r,BTP_IDLE);
+        while (computer.combat.phase && steps++<12000) {
+            if (computer.combat.phase==BTP_COMBAT_MENU) command(&computer,r,9);
+            else step(&computer,r,BTP_IDLE);
+        }
         CHECK(computer.combat.won && computer.mission.phase==BTP_MISSION_RETURN);
     }
     step(&s,r,BTP_ACCEPT);

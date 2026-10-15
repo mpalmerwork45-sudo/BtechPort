@@ -579,7 +579,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "b9250f5a2f90d121",
+        "state_digest": "5eafa9f3a900a529",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1498,7 +1498,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "4915f123ed36a795",
+        "state_digest": "d02c6aaf9a211bdd",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -2442,7 +2442,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "c5ac8ec0273342fa",
+        "state_digest": "f48da108d3e9eb72",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -3378,7 +3378,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "2ddb8ed8887e52f0",
+        "state_digest": "bf470ebab332f488",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -4322,7 +4322,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "8f9454bacd64478f",
+        "state_digest": "254cbd12c0fa3277",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -5266,7 +5266,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "1162f45dd3523f81",
+        "state_digest": "1dd743486efe4ef9",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -6208,7 +6208,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "1162f45dd3523f81",
+    "state_digest": "1dd743486efe4ef9",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

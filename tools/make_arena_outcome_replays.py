@@ -38,7 +38,7 @@ def arena(name, rental, win):
     for _ in range(256):
         if s.state['aftermath']['phase'] or s.state['mode'] != 'encounter':
             break
-        if not win and s.state['combat']['phase'] == 4:
+        if s.state['combat']['phase'] == 4:
             s.round()
         else:
             s.advance(['idle'] * 128)

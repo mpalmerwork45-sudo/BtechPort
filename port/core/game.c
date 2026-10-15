@@ -549,7 +549,12 @@ void btp_game_tick_audio(BtpState *s,const BtpResources *r,BtpAction a,int16_t *
         if (!s->audio.active) { s->mode=BTP_BEGIN;s->entry_selected=1; }
         return;
     }
-    if (s->cutscene.active==3) { if (a==BTP_OPEN_MENU) s->combat.paused=1;++s->tick;btp_cutscene_tick(s,r); }
+    if (s->cutscene.active==3) {
+        /* An outtake is still part of the current combat wave. Space must
+           stop continuous play just as it does between animation frames. */
+        if (a==BTP_OPEN_MENU) { s->combat.paused=1;s->combat.auto_run=0; }
+        ++s->tick;btp_cutscene_tick(s,r);
+    }
     else game_tick(s,r,a);
     /* Armour repair can initialise Jason's character record before the
        invasion. Keep his legacy training/shop aliases coherent from that
@@ -565,7 +570,7 @@ static uint16_t get16(const uint8_t *p) { return (uint16_t)(p[0] | (uint16_t)p[1
 void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
 {
     memset(b, 0, BTP_STATE_BYTES);
-    memcpy(b, "BTPb", 4); b[4] = 37;
+    memcpy(b, "BTPc", 4); b[4] = 38;
     for (unsigned i = 0; i < 4; ++i) b[8+i] = (uint8_t)(s->tick >> (8 * i));
     b[12] = (uint8_t)s->x_half; b[13] = (uint8_t)(s->x_half >> 8);
     b[14] = (uint8_t)s->y_half; b[15] = (uint8_t)(s->y_half >> 8);
@@ -691,6 +696,8 @@ void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
     memcpy(b+15693,s->script.choices+31,6);b[15699]=s->script.has_name;b[15700]=s->script.name_after;b[15701]=s->script.name_id;memcpy(b+16384,s->explored,sizeof s->explored);
     b[18432]=s->menu.from_intro;
     b[18433]=s->menu.from_story;
+    memcpy(b+15735,s->effects.text,sizeof s->effects.text);
+    memcpy(b+15975,&s->effects.shown,sizeof s->effects.shown);
     b[18434]=s->effects.stage;memcpy(b+18435,s->effects.outtakes,sizeof s->effects.outtakes);
     memcpy(b+18483,&s->cache,sizeof s->cache);
     memcpy(b+19292,&s->late,sizeof s->late);
@@ -741,8 +748,10 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         n == BTP_STATE_BYTES && !memcmp(b,"BTPY",4) && b[4]==34 ? 34 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPZ",4) && b[4]==35 ? 35 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPa",4) && b[4]==36 ? 36 :
-        n == BTP_STATE_BYTES && !memcmp(b,"BTPb",4) && b[4]==37 ? 37 : 0;
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPb",4) && b[4]==37 ? 37 :
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPc",4) && b[4]==38 ? 38 : 0;
     if (!version) return 0;
+    if (version>=18 && version<38 && b[10232]) return 0; /* v38 critical report count. */
     if (version>=18 && version<35 && b[10233]) return 0; /* v35 weapon-window presentation bits. */
     for (unsigned i = 5; i < 8; ++i) if (b[i]) return 0;
     if (version == 1) { for (unsigned i = 20; i < 24; ++i) if (b[i]) return 0; }
@@ -783,7 +792,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
     if (result.spy_discovered>1) return 0;
     if (version>=25) {
         memcpy(result.explored,b+16384,sizeof result.explored);
-        for (unsigned i=version>=37 ? 15735u : 15702u;i<16384;++i) if (b[i]) return 0;
+        for (unsigned i=version>=38 ? 15985u : version>=37 ? 15735u : 15702u;i<16384;++i) if (b[i]) return 0;
     }
     if (version>=22) {
         memcpy(result.audio.sounds+24,b+15414,24);memcpy(result.effects.shots+7,b+15438,17*sizeof result.effects.shots[0]);
@@ -799,6 +808,10 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
     }
     if (version>=25) result.menu.from_intro=b[18432];
     if (version>=26) result.menu.from_story=b[18433];
+    if (version>=38) {
+        memcpy(result.effects.text,b+15735,sizeof result.effects.text);
+        memcpy(&result.effects.shown,b+15975,sizeof result.effects.shown);
+    }
     if (version>=26) { result.effects.stage=b[18434];memcpy(result.effects.outtakes,b+18435,sizeof result.effects.outtakes); }
     if (version>=18) {
         memcpy(result.story_flags,b+2684,64);memcpy(result.story_checkpoint,b+2748,64);

@@ -23,13 +23,20 @@ def main():
     m=OriginalCombat(snapshot=SNAP);answer=1;sounds=[]
     boundaries={(0x14d3,0x17c6),(0x14d3,0x17ea),(0x1656,0x3f5),(0x1656,0x388),
         (0x173d,0x259),(0x173d,0x53),(0x173d,0x86a),(0x173d,6),(0x173d,0x6c3),
-        (0x187f,0x1314),(0x187f,0x1f04),(0x187f,0x18ef),(0,0x51b),(0,0x19bf),(0,0x1a13)}
+        (0x187f,0x1314),(0x187f,0x1f04),(0x187f,0x18ef),(0,0x51b),(0,0x19bf),(0,0x1a13),
+        (0x187f,0xd1),(0,0x28cc),(0x173d,0x63b),(0x173d,0x49d),(0x187f,0x260),
+        (0x173d,0x814),(0x187f,0x1da8),(0x187f,0xba7)}
     absolute={(m.load+segment)*16+offset:(segment,offset) for segment,offset in boundaries}
     def hook(cpu,address,size,data):
         if address not in absolute:return
         where=absolute[address];sp=cpu.reg_read(UC_X86_REG_SP);ss=cpu.reg_read(UC_X86_REG_SS)*16
         if where==(0,0x19bf):sounds.append(m.word(ss+sp+4))
         if where==(0,0x1a13):cpu.reg_write(UC_X86_REG_AX,answer)
+        if where==(0x173d,0x814):
+            # Supply the original MAP15 bytes at the audited file-read call.
+            pointer=m.word(ss+sp+8)+16*m.word(ss+sp+10)
+            assert m.word(ss+sp+12)==768
+            m.write(pointer,(ROOT/'Original DOS/MAP15.MTP').read_bytes())
         off,seg=struct.unpack('<HH',m.read(ss+sp,4))
         cpu.reg_write(UC_X86_REG_SP,sp+4);cpu.reg_write(UC_X86_REG_CS,seg);cpu.reg_write(UC_X86_REG_IP,off)
     handle=m.cpu.hook_add(UC_HOOK_CODE,hook)
@@ -70,13 +77,23 @@ def main():
             m.write(m.buffer+0x101d,p);m.write(m.state+0xd34a,b'\0');sounds.clear()
             m.call(0xb5d,0x980,limit=100000)
             rows.append(f'P {mask} {extra} {m.read(m.state+0xd34a,1)[0]} {fnv(normalized(m.read(m.buffer+0x101d,768),32)):016x} {sounds[-1]}')
+    for enter in (1,0):
+        for solved in range(2):
+            m.reset();m.write(m.buffer+0x101d,raw);m.write(m.state+0x4614,raw[:768])
+            m.write(m.state+0xd34a,bytes([solved]));m.write(m.state+0xd34e,bytes([1-enter]))
+            m.word(m.ds+0x150,33 if enter else 139)
+            m.word(m.buffer+0xa44b,0xc46 if enter else 0xc03)
+            m.word(m.buffer+0xa44d,0xc039 if enter else 0xc022)
+            m.call(0xb5d,0x55a if enter else 0x79c,71,57,limit=200000)
+            active=m.read(m.state+0xd34e,1)[0]
+            rows.append(f'R {enter} {solved} {active} {m.word(m.buffer+0xa44b)&127} {m.word(m.buffer+0xa44d)&127} {m.word(m.ds+0x150)}')
     m.cpu.hook_del(handle)
     (ROOT/'tests/fixtures/cache-primary.txt').write_text('\n'.join(rows)+'\n')
     (ROOT/'tests/fixtures/cache-primary.json').write_text(json.dumps(dict(
         executable_sha256=EXE_SHA,image_sha256=IMAGE_SHA,cases=len(rows)-1,
-        routines=['0B5D:03AA','0B5D:0AB6','0B5D:01E9','0B5D:0913','0B5D:0980'],
+        routines=['0B5D:03AA','0B5D:0AB6','0B5D:01E9','0B5D:0913','0B5D:0980','0B5D:055A','0B5D:079C'],
         prerequisites='Fresh original MAP14/MAP15 payloads, explicit used-terminal/card state and all 128 password subsets with/without an extra symbol',
         intercepted_boundaries=sorted(f'{s:04X}:{o:04X}' for s,o in boundaries),
-        comparison='Code IDs, door flags, consumed-terminal/map fingerprints, password flags/reset and sound dispatch; original instructions unchanged'),indent=2)+'\n')
+        comparison='Code IDs, door flags, consumed-terminal/map fingerprints, password flags/reset, sound dispatch, room-entry/exit cursor, room flag and collision gate; original instructions unchanged. File-read and graphics boundaries supplied for room transitions.'),indent=2)+'\n')
     print('Primary cache numeric cases:',len(rows)-1)
 if __name__=='__main__':main()

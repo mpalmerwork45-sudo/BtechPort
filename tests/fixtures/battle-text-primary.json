@@ -1,0 +1,14 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "cases": 256,
+  "routines": [
+    "12E8:0239..0CD3 shot",
+    "0E31:11AB critical",
+    "1656:03F5 text and wrapping",
+    "173D:00D5 glyph coordinates"
+  ],
+  "prerequisites": "Original mixed-party snapshot; explicit attacker/target IDs, weapon, armour/structure, seed; window 4. Sound/outtakes off. Stop before destruction cleanup.",
+  "comparison": "Complete text stream and all 88x88 interior RGB pixels reconstructed from original glyph calls; original window is (8,8)..(95,95). No battlefield or death-cleanup claim.",
+  "no_instruction_patches": true
+}

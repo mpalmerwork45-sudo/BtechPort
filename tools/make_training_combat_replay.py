@@ -171,7 +171,8 @@ def generate(binary,kick=False,campaign=False):
                 command(5);note('sixth-computer-control')
                 for _ in range(4096):
                     if not state['combat']['phase']:break
-                    advance(['idle']*32)
+                    if state['combat']['phase']==4:command(9)
+                    else:advance(['idle']*32)
                 check(not state['combat']['phase'],'Computer combat did not finish')
             else:
                 # Navigate around the training building before approaching the

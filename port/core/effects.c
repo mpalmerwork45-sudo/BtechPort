@@ -4,6 +4,21 @@
 #include "core/combat.h"
 #include <string.h>
 _Static_assert(sizeof(BtpCombatEffect)==13,"Effect encoding contains byte fields only");
+_Static_assert(sizeof(BtpBattleText)==10,"Battle text encoding contains byte fields only");
+static unsigned name_id(const BtpState *s,unsigned actor)
+{
+    const BtpCombatUnit *u=&s->combat.unit[actor];
+    if (u->infantry) return u->record[0]<10 ? u->record[0] : 0u;
+    unsigned pilot=u->record[121];
+    return s->party.enabled && pilot<8 && s->party.people[pilot][0]<10 ? s->party.people[pilot][0] : 0u;
+}
+static BtpBattleText report(const BtpState *s,unsigned actor,unsigned target,unsigned weapon)
+{
+    const BtpCombatState *c=&s->combat;
+    return (BtpBattleText){1,(uint8_t)btp_combat_id(c,actor),(uint8_t)btp_combat_id(c,target),
+        (uint8_t)name_id(s,actor),(uint8_t)name_id(s,target),(uint8_t)weapon,c->shot.hit,c->shot.location,
+        c->shot.criticals,(uint8_t)(s->campaign.encounter==4 && s->yard.rental && !s->story_flags[35] && btp_combat_id(c,target)==13)};
+}
 unsigned btp_effects_sound(unsigned w)
 {
     return w<3 ? 13u : w==3 ? 5u : w<=6 ? 11u : w<=8 ? 6u :
@@ -65,6 +80,7 @@ void btp_effects_shot(BtpState *s,unsigned actor,unsigned target,unsigned weapon
     unsigned group=a->infantry ? 4u+weapon : (weapon==32 ? 2u : 0u)+alt;
     unsigned direction=btp_combat_direction(a->x,a->y,t->x,t->y);
     if (direction>7) direction=a->direction;
+    v->text[v->count]=report(s,actor,target,weapon);
     v->shots[v->count++]=(BtpCombatEffect){(uint8_t)actor,(uint8_t)target,(uint8_t)group,
         (uint8_t)direction,(uint8_t)weapon,c->shot.hit,c->shot.destroyed,a->x,a->y,t->x,t->y,
         (uint8_t)(a->infantry ? 254 : alt ? 146 : 0),
@@ -78,6 +94,8 @@ void btp_effects_crush(BtpState *s,unsigned actor,unsigned target)
     if (v->count>=24) return;
     const BtpCombatUnit *a=&c->unit[actor],*t=&c->unit[target];
     unsigned alt=btp_mech_sprite_base(a->record[0],actor>=(c->friends ? c->friends : 1u))!=0;
+    v->text[v->count]=report(s,actor,target,33);
+    v->text[v->count].hit=1;v->text[v->count].location=v->text[v->count].criticals=0;
     v->shots[v->count++]=(BtpCombatEffect){(uint8_t)actor,(uint8_t)target,(uint8_t)alt,
         a->direction,33,1,1,a->x,a->y,t->x,t->y,(uint8_t)(alt ? 146 : 0),254};
 }
@@ -115,11 +133,14 @@ void btp_effects_tick(BtpState *s,const BtpResources *r)
     for (unsigned i=0;i<2;++i) if (v->outtakes[0][i] && s->presentation.count<24)
         s->presentation.kinds[s->presentation.count++]=v->outtakes[0][i];
     unsigned legacy=v->stage==BTP_EFFECT_LEGACY;
+    v->shown=v->text[0];
     v->age=0;--v->count;
     memmove(v->shots,v->shots+1,v->count*sizeof v->shots[0]);
     memset(&v->shots[v->count],0,sizeof v->shots[0]);
     memmove(v->outtakes,v->outtakes+1,v->count*sizeof v->outtakes[0]);
     memset(v->outtakes[v->count],0,sizeof v->outtakes[0]);
+    memmove(v->text,v->text+1,v->count*sizeof v->text[0]);
+    memset(&v->text[v->count],0,sizeof v->text[0]);
     v->stage=(uint8_t)(v->count && legacy ? BTP_EFFECT_LEGACY : BTP_EFFECT_START);
 }
 int btp_effects_valid(const BtpState *s)
@@ -127,6 +148,15 @@ int btp_effects_valid(const BtpState *s)
     const BtpEffectsState *v=&s->effects;
     if (v->count>24 || v->age>22 || v->pending>3 || v->stage>6 || (!v->count && (v->age || v->stage))) return 0;
     if (v->count && s->combat.phase!=BTP_COMBAT_ROUND) return 0;
+    for (unsigned i=0;i<25;++i) {
+        const BtpBattleText *t=i<24 ? &v->text[i] : &v->shown;
+        if (t->active>1 || t->actor>=24 || t->target>=24 || t->actor_name>=10 || t->target_name>=10 ||
+            t->weapon>33 || t->hit>1 || t->location>35 || t->criticals>8 || t->spectator>1) return 0;
+        if (!t->active || (i<24 && i>=v->count)) {
+            const uint8_t *p=(const uint8_t *)t;
+            for (unsigned k=0;k<sizeof *t;++k) if (p[k]) return 0;
+        }
+    }
     /* The saved boundary after the final outtake has no remaining frames;
        the following logical tick performs the pending outcome transition. */
     if (v->pending && (s->combat.phase!=BTP_COMBAT_ROUND || (v->pending!=3 && !s->combat.shot.destroyed))) return 0;

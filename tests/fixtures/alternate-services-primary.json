@@ -1,0 +1,274 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "cases": 928,
+  "routine": "07DC:01C0 original BLD VM, including native actions 10 and 14",
+  "prerequisites": "CLOTHES/FROB supplied as decoded original payloads; explicit cash, party size, purchase/spy/viewer/mapper/viewed flags and menu/yes-no answers. Repeated root menus leave after one transaction.",
+  "boundaries": [
+    "0000:1A13",
+    "0E31:1FDF",
+    "1656:0004",
+    "1656:0281",
+    "1656:0388",
+    "1656:03F5",
+    "1656:0B5E",
+    "173D:0259",
+    "173D:086A"
+  ],
+  "comparison": "Final money/branch flags, ordered menu choices and held-page PC sequence hashes. No original screen/pacing claim. All BLD graphs are a static audit, not execution coverage.",
+  "bld_graph_audit": [
+    {
+      "file": "ARENA.BLD",
+      "sha256": "157f2981bff60b1fc6a8b76a09fe74c85b01cd1bdfdde70ad1acd8c87ba266fa",
+      "reachable_nodes": 95,
+      "native_actions": [
+        12,
+        14,
+        17,
+        27,
+        29,
+        33,
+        34,
+        35
+      ]
+    },
+    {
+      "file": "ARMOR.BLD",
+      "sha256": "a57c31a718aa7ac16ea83c02e7ae6e7abaf3c4c1ba7de4697bc5c11abb75423f",
+      "reachable_nodes": 73,
+      "native_actions": [
+        9,
+        10,
+        12,
+        13,
+        14,
+        31,
+        32
+      ]
+    },
+    {
+      "file": "BARRACK2.BLD",
+      "sha256": "24929e3e4a7e47e29be5b1c13449f21282d32c12070256b26bfe4c6fb4284df7",
+      "reachable_nodes": 14,
+      "native_actions": [
+        14
+      ]
+    },
+    {
+      "file": "BARRACKS.BLD",
+      "sha256": "878c7b829710adaa9cb91fbf9795e8486478418eaa63cd5f8d277e2a25579eb8",
+      "reachable_nodes": 56,
+      "native_actions": [
+        12
+      ]
+    },
+    {
+      "file": "CITADEL.BLD",
+      "sha256": "dc4e215ba2c2d6be535c837f96e4158189d9e4c033df6648c9c21c264bfb817b",
+      "reachable_nodes": 104,
+      "native_actions": [
+        4,
+        5,
+        12
+      ]
+    },
+    {
+      "file": "CLOTHES.BLD",
+      "sha256": "cd2b597fcf4a3397c069a3789a5b570b2ccc3e17be1b7f92b05b092d0be94bb6",
+      "reachable_nodes": 31,
+      "native_actions": [
+        10
+      ]
+    },
+    {
+      "file": "COMSTAR.BLD",
+      "sha256": "d329d8811dae70997ed928d9952aa602a3a9bb841222ee1c544509c0ac3d1223",
+      "reachable_nodes": 38,
+      "native_actions": [
+        6,
+        7,
+        8,
+        12
+      ]
+    },
+    {
+      "file": "ENDMECH.BLD",
+      "sha256": "f7e93776db8194c6ebe13a6198d6562480741c310d98fa845aeb4eef3866f316",
+      "reachable_nodes": 25,
+      "native_actions": [
+        45
+      ]
+    },
+    {
+      "file": "ENTRANCE.BLD",
+      "sha256": "59dc8efd8e22e97da9645f3997ce894fddecd1da08de68659d67312f9dff62cf",
+      "reachable_nodes": 22,
+      "native_actions": []
+    },
+    {
+      "file": "FINDIT.BLD",
+      "sha256": "dff5a5fe6bb133b3eacc3f3e644a13a7c4965ab5eac942c28384fe44745a6480",
+      "reachable_nodes": 13,
+      "native_actions": []
+    },
+    {
+      "file": "FROB.BLD",
+      "sha256": "ce2b333d22d270596cbe3321f4d8fdb8157d21be456535ecd8ef501406f5cd0c",
+      "reachable_nodes": 72,
+      "native_actions": [
+        14
+      ]
+    },
+    {
+      "file": "GARAGE.BLD",
+      "sha256": "3aae8a8931f16e63414ab595a069f44a4b436fac1c605f13eb83269d6ce23d37",
+      "reachable_nodes": 63,
+      "native_actions": [
+        10,
+        17,
+        28,
+        29,
+        46
+      ]
+    },
+    {
+      "file": "HOSPITAL.BLD",
+      "sha256": "1ef9e77d0c762a38e7d4e37bb2a666e7ba90f9bca77f37f64a309c3619c5b26a",
+      "reachable_nodes": 155,
+      "native_actions": [
+        10,
+        12,
+        13,
+        14,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26
+      ]
+    },
+    {
+      "file": "HUT.BLD",
+      "sha256": "1e44d727c00214f685498433b4c062d74969a43fba9aa30b79b40fe0b53b5a68",
+      "reachable_nodes": 123,
+      "native_actions": []
+    },
+    {
+      "file": "INSTRUCT.BLD",
+      "sha256": "a6f11bd55102231f6931a0e74368d49ffff2d281749a02c63a798eb979d731d4",
+      "reachable_nodes": 11,
+      "native_actions": []
+    },
+    {
+      "file": "JAIL.BLD",
+      "sha256": "c73328fb9f9ca51f6e05a4bee53054afed518a1dda51810b3ee967034cbd93b0",
+      "reachable_nodes": 123,
+      "native_actions": [
+        14,
+        36,
+        37,
+        38,
+        39,
+        40
+      ]
+    },
+    {
+      "file": "LOUNGE.BLD",
+      "sha256": "3efec6eb3a03b2844c8383462351ae2e4eedb4a9713b6f9c0d3c412097a76ecf",
+      "reachable_nodes": 36,
+      "native_actions": [
+        12
+      ]
+    },
+    {
+      "file": "MAYOR.BLD",
+      "sha256": "5cfa6d15cf042d5e1b74538732cfe7c8b2577e0f26985877289f101c17273f56",
+      "reachable_nodes": 86,
+      "native_actions": [
+        14,
+        47
+      ]
+    },
+    {
+      "file": "PARTY.BLD",
+      "sha256": "bb11684bed0787b207fd29a0b76a616da3ee80b2270c0ba981de7665765fe9b4",
+      "reachable_nodes": 91,
+      "native_actions": [
+        14,
+        30
+      ]
+    },
+    {
+      "file": "REPAIR.BLD",
+      "sha256": "a22f4cab90119911693602fc290e39f4ab6d74cfd6fef765e76739d6ba8efb97",
+      "reachable_nodes": 116,
+      "native_actions": [
+        10,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        29,
+        44
+      ]
+    },
+    {
+      "file": "THEATER.BLD",
+      "sha256": "18aab58a4079eb684af299e12118d3e8256927c7407ea65933b9b1bea096c87b",
+      "reachable_nodes": 54,
+      "native_actions": [
+        42
+      ]
+    },
+    {
+      "file": "TRAINING.BLD",
+      "sha256": "a3e8d56ba58319dcdc30be305f2e45dba97fc0d7e3f26f2e4e0a7ec8bb3c0aa9",
+      "reachable_nodes": 159,
+      "native_actions": [
+        1,
+        2,
+        3,
+        12,
+        43
+      ]
+    },
+    {
+      "file": "VIEWDISK.BLD",
+      "sha256": "01599372b84c3ebd4d0ca2a6b47e369bfde9b8bedb5dd8f1ffc5ee187093e119",
+      "reachable_nodes": 56,
+      "native_actions": []
+    },
+    {
+      "file": "WEAPON.BLD",
+      "sha256": "4e08d0fb29c18f0dc0e0f7d403eb0a94aa2f308c7ee9c65fbea3c0436ae4a71d",
+      "reachable_nodes": 80,
+      "native_actions": [
+        10,
+        11,
+        12
+      ]
+    },
+    {
+      "file": "WEAPON2.BLD",
+      "sha256": "4c93942b6fe6909b123701cde0a3b4eb90db3b90b87b0ba9769be3a0908638f0",
+      "reachable_nodes": 61,
+      "native_actions": [
+        14,
+        41
+      ]
+    },
+    {
+      "file": "WINSCENE.BLD",
+      "sha256": "d4c54439a1db84867a04430061ae5a448f32c95ac6bcc9cc31eeac9654358a3e",
+      "reachable_nodes": 59,
+      "native_actions": []
+    }
+  ],
+  "no_instruction_patches": true
+}

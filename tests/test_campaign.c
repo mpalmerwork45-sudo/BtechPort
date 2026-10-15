@@ -73,6 +73,10 @@ int main(int argc,char **argv)
             /* This fixture isolates coordinate migration. Pre-v34 decorative
                marks have no recoverable world origin and migrate to empty. */
             memset(modern.terrain_marks,0,sizeof modern.terrain_marks);modern.terrain_next=0;
+            /* v29 also predates saved battle reports. Omit those new fields
+               from both sides of this coordinate-only migration fixture. */
+            memset(modern.effects.text,0,sizeof modern.effects.text);
+            modern.effects.shown=(BtpBattleText){0};c->shot.criticals=0;
             c->phase=BTP_COMBAT_MOVE;c->movement=1;c->goal_active=1;c->goal_x=130;c->goal_y=140;
             c->cursor_x=132;c->cursor_y=142;c->waypoint_count=1;c->waypoint_x[0]=136;c->waypoint_y[0]=146;
             c->plans[0].active=1;c->plans[0].movement=1;c->plans[0].x=130;c->plans[0].y=140;

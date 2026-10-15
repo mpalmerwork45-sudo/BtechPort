@@ -3,13 +3,12 @@
   "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
   "routine": "05AB:04F9 complete salvage loop",
   "cases": 384,
-  "prerequisites": "Three qualified pilots on foot, three wrecks (Locust, Commando, Wasp), four technician ranks, eight damage masks, four answer masks, three RNG seeds; empty garage.",
+  "prerequisites": "Three qualified pilots on foot, three wrecks (Locust, Chameleon, Wasp), four technician ranks, eight damage masks, four answer masks, three RNG seeds; empty garage.",
   "boundaries": [
     "0000:1A13",
-    "1656:0388",
-    "1656:03F5",
     "173D:0006",
+    "173D:00D5",
     "173D:0259"
   ],
-  "comparison": "Prompt order, automatic retries, held-page text hashes, full recovered/party records, remaining wrecks and RNG; no instruction patches."
+  "comparison": "Prompt order, automatic retries, held-page text and 200x72 interior RGB hashes from original glyph calls/scrolling, full recovered/party records, remaining wrecks and RNG. Window 1 interior (112,120)..(311,191); border separately captured. No live result screenshot or instruction patches."
 }

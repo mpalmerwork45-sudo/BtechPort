@@ -581,9 +581,10 @@ static void combat_weapon_message(const BtpResources *r,const BtpCombatState *c,
         text(r,f,8,y,"Yes",c->target_selected ? 15u : 0u);text(r,f,40,y,"No",c->target_selected ? 0u : 15u);
     }
 }
+static void combat_report_panel(const BtpResources *r,const BtpState *s,uint32_t *f);
 static void combat_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
 {
-    const BtpCombatState *c=&s->combat;char line[40];
+    const BtpCombatState *c=&s->combat;
     rectangle(f,0,0,104,200,0);
     if (c->phase==BTP_COMBAT_OFFER || c->phase==BTP_COMBAT_AVOID) {
         unsigned mechs=0,humans=0;
@@ -628,6 +629,13 @@ static void combat_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
     }
     if (c->phase==BTP_COMBAT_TARGET || c->phase==BTP_COMBAT_KICK) { combat_target_panel(r,c,f);return; }
     combat_header(r,s,f,c->active_unit,0);
+    if (c->phase==BTP_COMBAT_ROUND) {
+        combat_report_panel(r,s,f);return;
+    }
+    if (c->phase==BTP_COMBAT_MENU && (c->automatic&(1u<<c->active_unit))) {
+        size_t length;const uint8_t *p=bank_literal(r,357,&length);
+        if (p) (void)wrapped_at(r,f,8,32,11,p,length,15);
+    }
     if (c->phase==BTP_COMBAT_SCAN_CHOICE || (c->phase==BTP_COMBAT_NOTICE && c->notice>=15 && c->notice<=17)) {
         combat_scan_menu(r,c,f,1);
         if (c->phase==BTP_COMBAT_NOTICE) {
@@ -715,13 +723,6 @@ static void combat_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
                 text(r,f,112,96+(int)i*8,c->phase==BTP_COMBAT_MESSAGES ? verbosity[i] : i ? "No" : "Yes",c->selected==i ? 0u : 15u);
             }
         }
-    } else if (c->last_event && (c->messages || c->last_event>=4)) {
-        rectangle(f,104,168,216,32,0);border_panel(r,f,104,168,216,32,0);
-        if (c->last_event==1) snprintf(line,sizeof line,"Hit: %u damage",c->shot.damage);
-        else snprintf(line,sizeof line,"%s",c->last_event==2 ? "Miss" : c->last_event==3 ? "Line of sight blocked" :
-            c->last_event==4 ? "LOS beyond verified grid" : "Terrain fire unsupported");
-        text(r,f,112,176,line,c->last_event>=4 ? 12u : 15u);
-        if (c->last_event>=4) text(r,f,112,184,"Move / change target",14);
     }
 }
 static void service_literal(const BtpResources *r,uint8_t *b,size_t *used,unsigned id)
@@ -743,11 +744,11 @@ static void service_balance(uint8_t *b,size_t *used,unsigned value)
     /* 14D3: native cash insertion also writes the terminating full stop. */
     service_number(b,used,value);if (*used+1<1024) { b[(*used)++]='.';b[(*used)++]=1; }
 }
-static int service_wrap_bounds(const BtpResources *r,uint32_t *f,int y,const uint8_t *b,size_t n,unsigned *scrolled,int top,int bottom)
+static int text_wrap_bounds(const BtpResources *r,uint32_t *f,int y,const uint8_t *b,size_t n,unsigned *scrolled,int top,int bottom,int left,unsigned columns,unsigned initial_color)
 {
     /* Original numeric writers change the current colour without occupying
        a character cell. Keep these colours while wrapping the 25-column panel. */
-    char clean[1024];uint8_t colors[1024];uint16_t fragments[1024];size_t used=0;unsigned color=15,fragment=0;
+    char clean[1024];uint8_t colors[1024];uint16_t fragments[1024];size_t used=0;unsigned color=initial_color,fragment=0;
     for (size_t i=0;i<n && used<sizeof clean;++i) {
         if (b[i]==6 && i+1<n && b[i+1]<16) { color=b[++i];continue; }
         if (b[i]==1) { ++fragment;continue; }
@@ -759,8 +760,8 @@ static int service_wrap_bounds(const BtpResources *r,uint32_t *f,int y,const uin
         if (y>bottom) {
             /* 1656:07CB scrolls the text area by one character row. Keep
                the border and left party panel out of that operation. */
-            for (int row=top;row<bottom;++row) memcpy(f+row*320+112,f+(row+8)*320+112,200*sizeof *f);
-            rectangle(f,112,bottom,200,8,0);y-=8;if (scrolled) ++*scrolled;
+            for (int row=top;row<bottom;++row) memcpy(f+row*320+left,f+(row+8)*320+left,columns*8u*sizeof *f);
+            rectangle(f,left,bottom,(int)columns*8,8,0);y-=8;if (scrolled) ++*scrolled;
         }
         if (carried) {
             /* 1656:03F5 carries the overflowing word to the next line and
@@ -774,18 +775,32 @@ static int service_wrap_bounds(const BtpResources *r,uint32_t *f,int y,const uin
             }
         }
         size_t start=at,count=0;
-        while (at<used && clean[at]!='\r' && count<25) { ++at;++count; }
+        while (at<used && clean[at]!='\r' && count<columns) { ++at;++count; }
         carried=at<used && clean[at]!='\r';
         if (at<used && clean[at]=='\r') ++at;
-        else if (at<used && count==25 && clean[at]!=' ') {
-            size_t space=count;while (space && clean[start+space-1]!=' ') --space;
-            if (space) { count=space-1;at=start+space; }
+        else if (at<used && count==columns && clean[at]!=' ') {
+            /* Each original far-string call commits its drawn characters.
+               A later punctuation fragment cannot move a model name that
+               fitted the previous call back onto the following line. */
+            size_t word=at;
+            while (word>start && fragments[word-1]==fragments[at] && clean[word-1]!=' ') --word;
+            if (word>start) {
+                /* The first word of a new call can move as a whole, but
+                   characters committed by earlier calls stay on this row. */
+                count=word-start;
+                if (clean[word-1]==' ' && fragments[word-1]==fragments[at]) --count;
+                at=word;
+            }
         }
-        for (size_t i=0;i<count;++i) { char c[2]={clean[start+i],0};text(r,f,112+8*(int)i,y,c,colors[start+i]); }
+        for (size_t i=0;i<count;++i) { char c[2]={clean[start+i],0};text(r,f,left+8*(int)i,y,c,colors[start+i]); }
         while (at<used && clean[at]==' ') ++at;
         y+=8;
     }
     return y;
+}
+static int service_wrap_bounds(const BtpResources *r,uint32_t *f,int y,const uint8_t *b,size_t n,unsigned *scrolled,int top,int bottom)
+{
+    return text_wrap_bounds(r,f,y,b,n,scrolled,top,bottom,112,25,15);
 }
 static int service_wrap_scrolled(const BtpResources *r,uint32_t *f,int y,const uint8_t *b,size_t n,unsigned *scrolled)
 {
@@ -794,6 +809,71 @@ static int service_wrap_scrolled(const BtpResources *r,uint32_t *f,int y,const u
 static int service_wrap(const BtpResources *r,uint32_t *f,int y,const uint8_t *b,size_t n)
 {
     return service_wrap_scrolled(r,f,y,b,n,NULL);
+}
+static void battle_name(uint8_t *message,size_t *n,unsigned id)
+{
+    const char *name=btp_character_name(id);size_t length=strlen(name);
+    if (*n+length+1>=1024) return;
+    memcpy(message+*n,name,length);*n+=length;message[(*n)++]=1;
+}
+size_t btp_battle_text(const BtpResources *r,const BtpBattleText *t,unsigned verbosity,uint8_t message[1024])
+{
+    size_t n=0;
+    if (!verbosity || !t->active) return 0;
+    if (t->weapon==33) {
+        battle_name(message,&n,t->target_name);service_literal(r,message,&n,358);return n;
+    }
+    if (verbosity==2) {
+        if (t->actor<12) {
+            battle_name(message,&n,t->actor_name);
+            if (t->actor<4) service_literal(r,message,&n,334);
+            else service_literal(r,message,&n,338);
+        } else {
+            service_literal(r,message,&n,339);
+            service_literal(r,message,&n,t->actor<16 ? 341u : 340u);
+        }
+        if (t->actor<4 || (t->actor>=12 && t->actor<16))
+            service_literal(r,message,&n,t->weapon==32 ? 335u : 337u);
+    } else if (t->weapon==32) service_literal(r,message,&n,336);
+    if (t->weapon<32) {
+        const uint8_t *name=r->combat.weapons[t->weapon];size_t length=0;
+        while (length<11 && name[length]) ++length;
+        memcpy(message+n,name,length);n+=length;message[n++]=1;
+    }
+    if (verbosity==2) {
+        service_literal(r,message,&n,345);
+        if (t->target<12) {
+            /* 12E8 composes the friendly target name, suffix and period
+               into one far-string call before wrapping it. */
+            battle_name(message,&n,t->target_name);--n;
+            if (t->target<4) { service_literal(r,message,&n,346);--n; }
+            service_literal(r,message,&n,347);
+        } else if (t->spectator) service_literal(r,message,&n,351);
+        else { service_literal(r,message,&n,348);service_literal(r,message,&n,t->target<16 ? 349u : 350u); }
+    }
+    int human=(t->target>=4 && t->target<12) || t->target>=16;
+    /* Small arms against armour consume rolls but the original prints no
+       hit/miss suffix. Its location local is zero in this branch. */
+    if (!human && !t->location) return n;
+    service_literal(r,message,&n,t->hit ? human ? 353u : 355u : 352u);
+    if (t->hit && !human) {
+        static const uint8_t locations[]={18,19,17,25,23,24,22,27,21,20,26};
+        for (unsigned i=0;i<11;++i) if (t->location==locations[i]) {
+            service_literal(r,message,&n,359u+i);service_literal(r,message,&n,347);break;
+        }
+    }
+    for (unsigned i=0;i<t->criticals;++i) service_literal(r,message,&n,356);
+    return n;
+}
+static void combat_report_panel(const BtpResources *r,const BtpState *s,uint32_t *f)
+{
+    const BtpBattleText *t=s->effects.count ? &s->effects.text[0] : &s->effects.shown;
+    uint8_t message[1024];size_t n=btp_battle_text(r,t,s->combat.messages,message);
+    if (!n) return;
+    /* Original window 4 is the 11-by-11 text area at (8,8), above the
+       command box. Reports replace its unit header and scroll within it. */
+    rectangle(f,8,8,88,88,0);
+    (void)text_wrap_bounds(r,f,8,message,n,NULL,8,88,8,11,t->actor<12 ? 15u : 14u);
 }
 static int service_vehicles(const BtpResources *r,const BtpState *s,uint32_t *f,unsigned heading,unsigned selected)
 {
@@ -870,7 +950,7 @@ size_t btp_salvage_text(const BtpResources *r,const BtpState *s,uint8_t message[
             /* The failure branch retains the record's padding and has no
                period. Only the successful branch trims and appends '.'. */
             if (!failed) while (size && model[size-1]==' ') --size;
-            memcpy(message+n,model,size);n+=size;
+            memcpy(message+n,model,size);n+=size;message[n++]=1;
             if (!failed) service_literal(r,message,&n,313);
         }
     }

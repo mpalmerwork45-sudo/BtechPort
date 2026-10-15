@@ -17,7 +17,7 @@ if args.training:
         print('Generating',tool,*arguments,flush=True)
         subprocess.run([sys.executable,str(ROOT/'tools'/tool),*arguments],cwd=ROOT,check=True)
 for tool in ('make_later_campaign_replay.py','make_story_replay.py',
-             'make_hospital_healing_replay.py','make_late_building_replays.py',
+             'make_hospital_healing_replay.py','make_late_building_replays.py','make_alternate_service_replay.py',
              'make_prison_replay.py','make_arena_replay.py','make_cache_replay.py'):
     print('Generating',tool,flush=True)
     subprocess.run([sys.executable,str(ROOT/'tools'/tool)],cwd=ROOT,check=True)

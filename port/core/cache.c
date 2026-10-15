@@ -29,9 +29,14 @@ static void notice(BtpState *s,unsigned id)
 void btp_cache_restore_party(BtpState *s,const BtpResources *r)
 {
     /* Earlier native saves left world/follower coordinates at the cave or
-       previous room. Recover their formation before the first loaded draw. */
-    if (s->cache.active && (s->campaign.world_x!=1536u+s->x_half || s->campaign.world_y!=1536u+s->y_half))
-        position_party(s,r);
+       previous room. The leader can already be correct while a follower is
+       outside this room. Recover only demonstrably invalid positions; a
+       legal formation and its walk frames must survive loading unchanged. */
+    if (!s->cache.active) return;
+    int stale=s->campaign.world_x!=1536u+s->x_half || s->campaign.world_y!=1536u+s->y_half;
+    for (unsigned i=0;i<8;++i) if (s->party.people[i][0]!=255 &&
+        !btp_party_walkable(s,r,s->party.x[i],s->party.y[i],0)) stale=1;
+    if (stale) position_party(s,r);
 }
 unsigned btp_cache_tile(const BtpResources *r,const BtpState *s,int x,int y)
 {

@@ -48,7 +48,10 @@ typedef struct { uint8_t sprite, sector, x, y; } BtpTerrainMark;
 typedef struct {
     uint8_t actor,target,group,direction,weapon,hit,dead,x,y,tx,ty,base,target_base;
 } BtpCombatEffect;
-typedef struct { uint8_t count,age,pending,stage,outtakes[24][2];BtpCombatEffect shots[24]; } BtpEffectsState;
+/* Capture names/results when a shot resolves, before ejection or later shots
+   change the records. Presentation consumes this alongside the saved effects. */
+typedef struct { uint8_t active,actor,target,actor_name,target_name,weapon,hit,location,criticals,spectator; } BtpBattleText;
+typedef struct { uint8_t count,age,pending,stage,outtakes[24][2];BtpCombatEffect shots[24];BtpBattleText text[24],shown; } BtpEffectsState;
 typedef struct {
     uint8_t invasion, owned, mech[125];
     uint8_t checkpoint_owned, checkpoint_mech[125];

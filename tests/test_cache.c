@@ -92,12 +92,48 @@ int main(int argc,char **argv)
             }
             CHECK((unsigned)btp_cache_password(&s,r)==c && s.story_flags[62]==c && hash(s.cache.maproom,768)==mh);
             CHECK(s.audio.sound_count==1 && s.audio.sounds[0]==d);input(&s,r,BTP_IDLE);
+        } else if (line[0]=='R') {
+            unsigned enter,solved,active,x,y,gate;
+            CHECK(sscanf(line+1,"%u %u %u %u %u %u",&enter,&solved,&active,&x,&y,&gate)==6);
+            /* The original transition oracle covers cursor/room/gate. The
+               party-size and old-save recovery checks below are native
+               continuation checks, not original follower-coordinate claims. */
+            for (unsigned count=1;count<=8;++count) {
+                s=base;s.story_flags[66]=(uint8_t)!enter;s.story_flags[62]=(uint8_t)solved;
+                s.gate=(uint8_t)(enter ? 33 : 139);s.x_half=(uint16_t)(enter ? 70 : 3);s.y_half=(uint16_t)(enter ? 57 : 34);
+                memcpy(s.cache.maproom,r->maproom.tiles,768);
+                for (unsigned member=0;member<8;++member) {
+                    memcpy(s.party.people[member],base.party.people[0],17);
+                    s.party.people[member][0]=(uint8_t)(member<count ? member : 255);
+                }
+                btp_cache_restore_party(&s,r);
+                input(&s,r,enter ? BTP_RIGHT : BTP_LEFT);
+                CHECK(s.cache.phase==(enter ? (solved ? BTP_CACHE_NOTICE : BTP_CACHE_PEER) : BTP_CACHE_EXIT));
+                input(&s,r,BTP_ACCEPT);
+                if (enter && !solved) { CHECK(s.cache.phase==BTP_CACHE_CLIMB);input(&s,r,BTP_ACCEPT); }
+                CHECK(s.x_half==x && s.y_half==y && s.gate==gate && s.story_flags[66]==active);
+                CHECK(!s.cache.phase && s.mode==BTP_CACHE);
+                BtpState stable=s;btp_cache_restore_party(&s,r);CHECK(!memcmp(&stable,&s,sizeof s));
+                for (unsigned member=0;member<count;++member) {
+                    CHECK(btp_party_walkable(&s,r,s.party.x[member],s.party.y[member],0));
+                    CHECK(abs((int)s.party.x[member]-(int)s.campaign.world_x)<=8);
+                    CHECK(abs((int)s.party.y[member]-(int)s.campaign.world_y)<=8);
+                    /* Even with a correct leader, a follower left at the
+                       cave must be visible again on the first loaded frame. */
+                    BtpState broken=s;broken.party.x[member]=776;broken.party.y[member]=778;
+                    CHECK(btp_save_write("work/m4-audit/cache-split-formation.btp",&broken,r,&e));
+                    CHECK(btp_save_load("work/m4-audit/cache-split-formation.btp",&broken,r,&e));
+                    CHECK(btp_party_walkable(&broken,r,broken.party.x[member],broken.party.y[member],0));
+                    CHECK(abs((int)broken.party.x[member]-(int)broken.campaign.world_x)<=8);
+                    input(&broken,r,BTP_IDLE);
+                }
+            }
         } else CHECK(0);
         ++cases;
     }
-    fclose(f);CHECK(cases==530);
-    /* The authority here is the original decoder and actual VGA palette
-       writes, with its RGB model cross-checked against the captured title. */
+    fclose(f);CHECK(cases==534);
+    /* The original decoder/palette is now also checked against all 64,000
+       pixels of the live DOSBox Phoenix screen; see its fixture metadata. */
     f=fopen("tests/fixtures/phoenix-palette-primary.txt","r");CHECK(f);
     uint64_t phoenix_rgb=0;CHECK(fscanf(f,"F %" SCNx64,&phoenix_rgb)==1 && !fclose(f));
     BtpState s;CHECK(btp_save_load("Original DOS/GAME1",&s,r,&e));f=fopen("tests/fixtures/ordinary-cache.actions","r");CHECK(f);
@@ -150,5 +186,5 @@ int main(int argc,char **argv)
     CHECK(s.story_flags[50] && s.story_flags[53] && s.story_flags[54] && s.story_flags[65]);
     CHECK(btp_save_write("work/m4-audit/fresh-ending.btp",&s,r,&e));
     CHECK(btp_save_load("work/m4-audit/fresh-ending.btp",&restored,r,&e));
-    free(r);printf("PASS: %u checks, 530 primary cache cases, late-save ending and %u-input fresh-game ending\n",checks,fresh_ticks);return 0;
+    free(r);printf("PASS: %u checks, 534 primary cache cases, late-save ending and %u-input fresh-game ending\n",checks,fresh_ticks);return 0;
 }

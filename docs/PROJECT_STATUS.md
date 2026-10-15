@@ -2,7 +2,7 @@
 
 The independent C11/SDL2 port has playable implementations of the authorized
 M4a–M4e increments and the subsequent building, theft, encounter, recruitment and
-presentation requests. A recorded 66,149-input route now starts with a new cadet
+presentation requests. A recorded 66,257-input route now starts with a new cadet
 and reaches the cache ending through the actual training, companion, disk and
 password prerequisites. It uses the authorized money shortcut. M4 as a complete
 reproduction of every original campaign branch remains unfinished.
@@ -11,7 +11,10 @@ See [M4 evidence](M4_PROGRESS.md), [follow-up evidence](M4_FOLLOWUPS_EVIDENCE.md
 and [current fidelity work](M4_FIDELITY_EVIDENCE.md)
 and the [five-area acceptance sweep](M4_ACCEPTANCE_SWEEP.md)
 for original routines, explicit prerequisites and confidence limits. README
-credits the reverse-engineering contributors.
+credits the reverse-engineering contributors and explicitly discloses AI use
+with **OpenAI Sol 6.1 and Astra**. The independent code and documentation are
+GPL-3.0-only; the original game's source code is not used, and its assets are
+not distributed. Runners must supply their own original files.
 Reference directories are immutable; original assets and emulator RAM stay in
 ignored work files. Local commits remain on `main`, with no push.
 
@@ -69,46 +72,47 @@ Successful pre-combat evasion produces no loot or cash.
 
 ## Verification and limits
 
-The current build has 53 CTest suites. New comparisons include 360 armour-repair,
-160 purchase-recipient, 32 prison/arena return, 432 water-boundary, 512 device
-direction and 314 recruitment/spy cases. Two controlled larger encounters cover
-11 original waves and 171 complete record/position/facing/heat/RNG comparisons.
-Five additional live-caller contexts cover 25 complete original waves and
-7,252 assertions, including spy pilots/passengers and finite ammunition.
-These extend the earlier campaign, medical, save and cache evidence.
+The current build has **54 CTest suites**. The five-area sweep adds:
 
-The fresh ending and 50,564-input spy/replacement routes restore and continue
-before every input. Nine SDL tails cover the house, cinema, hut, laser shop,
-both thefts and spy replacement, comparing recorded keys, complete continued
-state and final RGB pixels. Collision tests exercise three mechs and five people,
-each footprint at every intermediate step, all moving gaits and saved positions.
+- **133 original combat waves** in four town contexts, including two complete
+  MAP4 victories and two Starport traces bounded at 64 waves each. Two MAP4
+  initial formations also match. This corrected enemy infantry avoidance and
+  heat accounting on the winning wave.
+- **384 complete salvage loops / 552 held pages**, comparing retry order,
+  records, RNG, text and every pixel of each 200-by-72 text interior.
+- **10,512 collision/doorway decisions**, covering all 13 towns, 84 doorways,
+  eight directions and three party configurations. The cache corpus now has
+  **534 original cases**, plus saved entry/exit with one through eight people
+  and recovery of demonstrably invalid older follower positions.
+- **928 original clothing/electronics visits**, a static audit of all 26 BLD
+  control graphs and a 769-input ordinary service route. Static graph coverage
+  does not establish execution of every story branch.
+- **256 original brief/verbose combat reports**, including all pixels in the
+  88-by-88 upper-left text area. A live original Phoenix LAM capture matches
+  all **64,000 RGB pixels**.
 
-**Current batch PASS:** all 53 regular and ASan/UBSan/LeakSanitizer suites.
-The new encounter regression checks 440 cases at 44 legal party positions,
-including 1,404 reachable enemies, unchanged candidate RNG/records and saved
-offers. Three native boundary encounters pass combat-menu entry and F5/F9.
-The preceding batch passed all 52 then-existing suites, five Python tool tests,
-16 combat F5/F9 pages, six native arena/prison/theft tails, all nine
-building/theft follow-up tails and the ordinary hospital-Talk SDL continuation.
-The earlier historical sanitizer corpus also passed.
-The preceding 48-suite increment
-also passed every native M4
-acceptance section and all nine native follow-up tails. Actual SDL checks pass
-for Num-Lock-off keypad menus, Num-Lock-on amount entry, and one-key exits from
-the final WINSCENE wait and older ending saves. Native checks include hospital
-treatment and F5/F9 on the map, character, mech, cache and title screens.
-The current fidelity evidence records the focused reruns after correcting an
-outdated test checkpoint label. Both reference trees are checked against all
-1,287 content/mode/mtime entries before handoff. Work is committed locally in
-successive increments.
+Computer assigns only the selected unit and leaves the menu open. Next Mech
+allows separate assignments; Begin Fight starts the wave. Space stops continuous
+play after the current wave while retaining assignments. Manual movement or
+weapon editing returns the selected actor to manual control. Original command
+loop comparisons and saved/native input checks cover this distinction.
+Space selects on all held combat menus, including movement destinations and
+replace-order prompts; during a running wave or outtake it interrupts instead.
+
+The fresh ending and **50,672-input** spy/replacement routes restore and continue
+before every input. The new native service tail joins the existing house,
+cinema, hut, laser shop, theft and replacement checks. Nineteen held combat pages
+exercise F5/F9; the cache check includes the Phoenix display, map room and ending.
+**PASS:** all 54 regular and sanitizer suites, five Python tool tests, and the
+native checks listed above. See [testing](TESTING.md) for exact commands and
+the corrected Space-test routes.
 
 **VERIFIED in these bounds:** numeric rules, resource interpretation, original
-BLD branches and saved/native continuations. **APPROXIMATE:** DOS busy-loop
-cadence, encounter placement and broader AI/initiative, recovery of older split formations, several UI
-layouts and physical speaker response. Audio uses original effect programs and
-a nominal 8 MHz 8088 timing model; no exact recording from physical XT hardware
-is claimed. Enemy Jenner/UrbanMech sprite bases follow the original enemy table,
-while owned mechs use the original garage selection rule.
+BLD branches, compared text/pixels and saved/native continuations.
+**APPROXIMATE:** DOS busy-loop cadence, broader encounter AI/initiative, some
+layouts and constrained-cache follower paths. Audio uses original effect
+programs and a nominal 8 MHz 8088 timing model; physical speaker response and
+exact hardware calibration remain **UNKNOWN** without a reference recording.
 
 New random encounters cannot place enemies in disconnected areas behind town
 walls. Infantry uses the correct ground sample, and enemy mechs cannot spawn
@@ -118,11 +122,11 @@ as original behavior. Twenty-five bounded original placement observations record
 that distinction. If no candidate can be placed, exploration continues. Existing
 saved fights retain their already placed units; arena/story fights are separate.
 
-Internal saves are **BTPb/v37**, with a 20,480-byte payload inside the BTS1
+Internal saves are **BTPc/v38**, with a 20,480-byte payload inside the BTS1
 length/CRC envelope. The discovery marker and held spy confrontation are saved.
-Salvage inspection history now persists too; 384 complete original salvage
-loops verify automatic retries, result text and the final no-wreck page.
-Current local caches are BTTA/v22, BTCB/v11 and BTW3; the world seed is the
+Salvage inspection history and queued/held battle reports persist too, retaining
+actor names and results before later attacks change their records.
+Current local caches are **BTTA/v23** (370 strings), BTCB/v11 and BTW3; the world seed is the
 original startup value `0x020304`, rather than the former research seed.
 Older saves migrate their represented fields; absent direction/exploration
 history cannot be reconstructed. Old ambiguous decorative wreck/fire marks
@@ -130,28 +134,20 @@ are cleared on migration; v34 stores their actual world sectors. Build and play 
 oracle tools execute bounded original instructions and commit numeric results
 and source hashes only.
 
-## Remaining authorized work
+## Remaining fidelity work
 
-These are the next five unfinished areas, in priority order. Completed fixes
-and comparisons are recorded above and in the evidence reports.
+The authorized five-area sweep has the bounded results above. Remaining gaps
+must not be represented as complete original-game parity:
 
-1. **Complete encounter comparisons.** Record full original outdoor and town
-   fights, including initial placement/spacing, mixed-party AI, initiative and
-   battle timing. The new reachability regression closes the reported trapped
-   spawn bug; it does not establish full original encounter parity.
-2. **Finish salvage.** Compare the complete success, failure and no-wreck pages
-   and the order of repeated salvage attempts. Rewards, qualified-pilot prompt,
-   victory/loot panels and arena results already have bounded comparisons.
-3. **Finish town and cache boundary checks.** Extend original doorway/formation
-   observations to the other towns, map seams and cache exits, including old
-   saves with split formations. Whole-party wall checks and parked-mech recovery
-   are implemented and tested; the remaining task is the wider transition matrix.
-4. **Cover alternate campaign/service branches.** Audit remaining BLD paths and
-   extend ordinary-input/save-load journeys beyond the tested fresh-game route,
-   theft alternatives and replacement recruits. Original-save export is still
-   restricted to supported outdoor contexts.
-5. **Complete presentation comparisons.** Obtain a live original Phoenix LAM
-   capture, compare remaining service/portrait/battle layouts and animation/NPC
-   cadence, and calibrate sound against suitable reference recordings. Effect
-   programs are verified; exact physical 8 MHz XT speaker response remains
-   UNKNOWN until recording evidence is available.
+1. Complete additional outdoor, arena and prison DOS fights; the two 64-wave
+   Starport observations are not victories, and elapsed combat timing remains
+   approximate.
+2. Capture live salvage success/failure/no-wreck screens and further death
+   reports; current salvage interiors and shot reports use original glyph calls.
+3. Compare long follower paths through constrained cache corridors and more
+   irregular saved formations beyond the invalid-position repair cases.
+4. Execute additional branches identified by the 26-BLD static audit and extend
+   ordinary save/load journeys. Original export remains limited to supported
+   outdoor contexts.
+5. Measure animation/NPC cadence and audio against a suitable timing reference;
+   physical 8 MHz XT sound needs hardware recordings. Windows remains untested.

@@ -156,20 +156,27 @@ int btp_campaign_random(BtpState *s,const BtpResources *r)
     /* Original 05AB:0DA6/106F offsets from the exploration cursor, not
        from the first mech's ground point two half-steps farther north. */
     int start_x=(int)s->campaign.world_x-s->campaign.battle_x+dx;
-    int start_y=(int)s->campaign.world_y-s->campaign.battle_y+dy,x=start_x,y=start_y,scanned=0;
+    int start_y=(int)s->campaign.world_y-s->campaign.battle_y+dy,x=start_x,y=start_y,column=0,mechs=0;
     for (unsigned i=0;i<count;++i) {
+        /* 05AB:11F5 leaves a gap before the vehicles; 13B7 advances three
+           half-steps after each placed mech and wraps after column eight.
+           Failed terrain/reachability candidates still advance one cell. */
+        if (!candidates[i].infantry && !mechs) { ++x;++column;mechs=1; }
         int placed=0;
-        for (;scanned<17*24;++scanned,++x) {
-            if (x>start_x+16) { x=start_x;++y; }
-            if (x<0 || y<2 || x>=126 || y>=128 ||
-                !(reachable[(unsigned)y*ENCOUNTER_SIDE+(unsigned)x]&(candidates[i].infantry ? 1u : 2u))) continue;
-            unsigned tile=btp_world_tile(r,s,s->campaign.battle_x/2+(x+(int)candidates[i].infantry)/2,s->campaign.battle_y/2+y/2);
-            unsigned second=btp_world_tile(r,s,s->campaign.battle_x/2+x/2+1,s->campaign.battle_y/2+y/2);
-            if (tile>15 && tile<85 &&
-                (candidates[i].infantry || (second>15 && second<85))) { placed=1;break; }
+        while (y<start_y+24) {
+            if (x>=0 && y>=2 && x<126 && y<128 &&
+                (reachable[(unsigned)y*ENCOUNTER_SIDE+(unsigned)x]&(candidates[i].infantry ? 1u : 2u))) {
+                unsigned tile=btp_world_tile(r,s,s->campaign.battle_x/2+(x+(int)candidates[i].infantry)/2,s->campaign.battle_y/2+y/2);
+                unsigned second=btp_world_tile(r,s,s->campaign.battle_x/2+x/2+1,s->campaign.battle_y/2+y/2);
+                if (tile>15 && tile<85 &&
+                    (candidates[i].infantry || (second>15 && second<85))) { placed=1;break; }
+            }
+            ++x;if (++column>16) { column=0;x=start_x;++y; }
         }
         if (!placed) continue;
-        unsigned at=c->count++;c->unit[at]=candidates[i];c->unit[at].x=(uint8_t)x;c->unit[at].y=(uint8_t)y;c->unit[at].direction=6;c->plan_direction[at]=255;c->ids[at]=ids[i];++x;++scanned;
+        unsigned at=c->count++;c->unit[at]=candidates[i];c->unit[at].x=(uint8_t)x;c->unit[at].y=(uint8_t)y;c->unit[at].direction=6;c->plan_direction[at]=255;c->ids[at]=ids[i];
+        x+=candidates[i].infantry ? 1 : 3;column+=candidates[i].infantry ? 1 : 3;
+        if (column>(candidates[i].infantry ? 16 : 8)) { column=0;x=start_x;++y; }
     }
     if (c->count==c->friends) { s->mode=BTP_EXPLORE;s->x_half=s->campaign.return_x;s->y_half=s->campaign.return_y;s->campaign.encounter=0;s->combat=(BtpCombatState){0};return 0; }
     return 1;

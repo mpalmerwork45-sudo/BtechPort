@@ -257,7 +257,12 @@ static void apply_damage(BtpCombatUnit *u, const BtpCombatData *d, unsigned loc,
         unsigned available = u->record[loc], taken = available < damage ? available : damage;
         u->record[loc] = (uint8_t)(available-taken); damage -= taken;
         if (available && !u->record[loc] && (loc == 28 || loc == 33)) shot->toppled = 1;
-        if (loc >= 28 && btp_combat_critical(u,d,loc,rng)) shot->destroyed = 1;
+        if (loc >= 28) {
+            /* 0E31:11AB prints one Critical! for each structural region
+               reached, including a region reduced to zero by this shot. */
+            ++shot->criticals;
+            if (btp_combat_critical(u,d,loc,rng)) shot->destroyed = 1;
+        }
         if ((loc == 31 || loc == 32) && !u->record[loc]) shot->destroyed = 1;
         if (!damage || shot->destroyed) break;
         loc = loc <= 24 ? loc+11 : overflow[loc-25];

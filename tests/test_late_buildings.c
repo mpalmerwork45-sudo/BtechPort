@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <inttypes.h>
 static unsigned checks;
 #define CHECK(x) do { ++checks;if (!(x)) { fprintf(stderr,"%s:%d: %s\n",__FILE__,__LINE__,#x);exit(1); } } while (0)
 static void input(BtpState *s,const BtpResources *r,BtpAction action)
@@ -38,6 +39,54 @@ static void prerequisite(BtpState *s,unsigned people,unsigned seed)
         const uint8_t p[]={0,8,9,7,0,0,0,0,1,0,0,9,8,0,0,80,0};
         memcpy(s->party.people[i],p,17);s->party.people[i][0]=(uint8_t)(i<people ? i : 255);
     }
+}
+static uint64_t append_byte(uint64_t hash,unsigned byte)
+{
+    return (hash^(byte&255u))*UINT64_C(1099511628211);
+}
+static unsigned alternate_services(const BtpResources *r)
+{
+    FILE *f=fopen("tests/fixtures/alternate-services-primary.txt","r");CHECK(f);
+    char line[512];unsigned cases=0;
+    while (fgets(line,sizeof line,f)) {
+        unsigned kind,count,cash,bought,spy,viewer,mapper,viewed,product,yes,money,flags[7],waits;
+        uint64_t menu_hash,wait_hash;
+        CHECK(sscanf(line,"S %u %u %u %u %u %u %u %u %u %u %u %u %u %u %u %u %u %u %u %" SCNx64 " %" SCNx64,
+            &kind,&count,&cash,&bought,&spy,&viewer,&mapper,&viewed,&product,&yes,&money,
+            &flags[0],&flags[1],&flags[2],&flags[3],&flags[4],&flags[5],&flags[6],&waits,&menu_hash,&wait_hash)==21);
+        BtpState s;prerequisite(&s,count,42);s.credits=cash;
+        s.story_flags[30]=(uint8_t)bought;s.story_flags[39]=(uint8_t)spy;
+        s.story_flags[48]=(uint8_t)viewer;s.story_flags[49]=(uint8_t)mapper;s.story_flags[50]=(uint8_t)viewed;
+        btp_game_building(&s,r,kind);btp_game_tick(&s,r,BTP_IDLE);
+        uint64_t mh=UINT64_C(14695981039346656037),wh=mh;
+        unsigned pages=0,visits=0,ticks=0;
+        /* Feed the same decisions to the real supplied BLD and restore
+           before every input. Original wait-PC hashes also check the order
+           of refusal, insufficient-funds and repeat-purchase messages. */
+        while (s.mode==BTP_BUILDING && ticks++<1000) {
+            CHECK(s.script.status!=BTP_SCRIPT_ERROR);
+            if (s.cutscene.active || s.audio.sound_count) { input(&s,r,BTP_IDLE);continue; }
+            if (s.script.status==BTP_SCRIPT_WAIT) {
+                wh=append_byte(wh,s.script.pc);wh=append_byte(wh,s.script.pc>>8);++pages;
+            } else if (s.script.status==BTP_SCRIPT_MENU) {
+                unsigned menu=s.script.menu_id,choice;
+                if (menu==29 || menu==35) { choice=visits>0 || product==2;++visits; }
+                else { CHECK(menu==36);choice=product; }
+                mh=append_byte(mh,menu);mh=append_byte(mh,choice);
+                while (s.script.selected!=choice) input(&s,r,BTP_DOWN);
+            } else if (s.script.status==BTP_SCRIPT_CONFIRM && !yes) input(&s,r,BTP_RIGHT);
+            input(&s,r,BTP_ACCEPT);
+        }
+        if (s.mode!=BTP_EXPLORE || s.credits!=money || mh!=menu_hash || wh!=wait_hash || pages!=waits)
+            fprintf(stderr,"Alternate service %u kind=%u people=%u cash=%u choices=%u/%u: mode=%u cash=%u/%u menus=%016" PRIx64 "/%016" PRIx64 " waits=%u/%u %016" PRIx64 "/%016" PRIx64 "\n",
+                cases,kind,count,cash,product,yes,s.mode,s.credits,money,mh,menu_hash,pages,waits,wh,wait_hash);
+        CHECK(ticks<1000 && s.mode==BTP_EXPLORE && s.credits==money);
+        CHECK(mh==menu_hash && wh==wait_hash && pages==waits);
+        const unsigned indices[]={14,30,36,39,48,49,50};
+        for (unsigned i=0;i<7;++i) CHECK(s.story_flags[indices[i]]==flags[i]);
+        ++cases;
+    }
+    CHECK(!fclose(f) && cases==928);return cases;
 }
 int main(int argc,char **argv)
 {
@@ -94,17 +143,19 @@ int main(int argc,char **argv)
         input(&s,r,BTP_IDLE);r->buildings[kind]=parent;++disk_cases;
     }
     fclose(f);CHECK(disk_cases==24);
-    const char *routes[]={"mayor-newspaper","mayor-holodisk","mayor-chow","cinema","inventor","inventor-qualified","laser-guns"};
-    for (unsigned route=0;route<7;++route) {
+    const char *routes[]={"mayor-newspaper","mayor-holodisk","mayor-chow","cinema","inventor","inventor-qualified","laser-guns","alternate-services"};
+    for (unsigned route=0;route<8;++route) {
         BtpState s;CHECK(btp_save_load(route==5 ? "Original DOS/GAME5" : "Original DOS/GAME3",&s,r,&e));
         char path[180];snprintf(path,sizeof path,"tests/fixtures/ordinary-%s.actions",routes[route]);f=fopen(path,"r");CHECK(f);
-        unsigned ticks=0,films=0,house_menu=0,laser_menu=0;
+        unsigned ticks=0,films=0,house_menu=0,laser_menu=0,electronics=0,clothing=0;
         while (fgets(line,sizeof line,f)) {
             line[strcspn(line,"\r\n")]=0;BtpAction action;CHECK(btp_action_parse(line,&action));
             input(&s,r,action);++ticks;
             if (s.campaign.building==16 && s.cutscene.active) films|=1u<<s.cutscene.kind;
             house_menu|=s.mode==BTP_BUILDING && s.script.status==BTP_SCRIPT_MENU && s.script.menu_id==32;
             laser_menu|=s.service.action==41 && s.service.phase==10;
+            electronics|=s.campaign.building==17 && s.script.status==BTP_SCRIPT_MENU;
+            clothing|=s.campaign.building==12;
             CHECK(s.audio.sound_count<=1); /* E4 calls finish before the following film/effect. */
         }
         fclose(f);CHECK(ticks>200 && s.mode==BTP_EXPLORE);
@@ -114,6 +165,8 @@ int main(int argc,char **argv)
         if (route==4) CHECK(!s.story_flags[53] && !s.story_flags[54]);
         if (route==5) CHECK(s.story_flags[53] && s.story_flags[54]);
         if (route==6) { CHECK(laser_menu && s.party.people[0][11]==13);for (unsigned i=1;i<4;++i) CHECK(s.party.people[i][11]>=12); }
+        if (route==7) CHECK(electronics && clothing && s.credits==15342507 && s.story_flags[30] && s.story_flags[48] && s.story_flags[49]);
     }
-    free(r);printf("PASS: %u late-building checks, 46 primary cases and seven saved ordinary routes\n",checks);return 0;
+    unsigned alternatives=alternate_services(r);
+    free(r);printf("PASS: %u late-building checks, 46 native and %u complete BLD primary cases, eight saved ordinary routes\n",checks,alternatives);return 0;
 }

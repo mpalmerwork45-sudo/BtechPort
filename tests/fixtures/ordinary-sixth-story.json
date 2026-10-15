@@ -265,29 +265,29 @@
       "label": "sixth-computer-control",
       "tick": 43527,
       "mode": "training-mission",
-      "combat_phase": 9
+      "combat_phase": 4
     },
     {
       "label": "sixth-victory",
-      "tick": 46471,
+      "tick": 46579,
       "mode": "training-mission",
       "combat_phase": 0
     },
     {
       "label": "return-to-base",
-      "tick": 46471,
+      "tick": 46579,
       "mode": "training-mission",
       "combat_phase": 0
     },
     {
       "label": "sixth-report",
-      "tick": 46488,
+      "tick": 46596,
       "mode": "building",
       "combat_phase": 0
     },
     {
       "label": "sixth-exit",
-      "tick": 46489,
+      "tick": 46597,
       "mode": "local-exploration",
       "combat_phase": 0
     }

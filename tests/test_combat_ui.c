@@ -1,4 +1,5 @@
 #include "core/combat.h"
+#include "core/animation.h"
 #include "core/campaign.h"
 #include "core/party.h"
 #include "data/save.h"
@@ -49,8 +50,16 @@ static void step(BtpState *s,const BtpResources *r,BtpAction a)
 {
     uint8_t before[BTP_STATE_BYTES],after[BTP_STATE_BYTES];BtpState copy;
     btp_state_encode(s,before);CHECK(btp_state_decode(before,sizeof before,btp_active_map(r,s),btp_state_bld(r,s),&copy));
+    BtpState space=copy;
+    int compare_space=a==BTP_ACCEPT && s->combat.phase && s->combat.phase!=BTP_COMBAT_ROUND && !s->cutscene.active;
     btp_game_tick(s,r,a);btp_game_tick(&copy,r,a);
     btp_state_encode(s,before);btp_state_encode(&copy,after);CHECK(!memcmp(before,after,sizeof before));
+    /* Every actual command, weapon/target choice and held warning exercised
+       below must behave identically with Space, including after a reload. */
+    if (compare_space) {
+        btp_game_tick(&space,r,BTP_OPEN_MENU);btp_state_encode(&space,after);
+        CHECK(!memcmp(before,after,sizeof before));
+    }
 }
 static void command(BtpState *s,const BtpResources *r,unsigned wanted)
 {
@@ -70,7 +79,7 @@ static unsigned weapon_warnings(const BtpResources *r,uint32_t *frame)
         c->unit[actor].heat=(uint8_t)heat;c->unit[actor].record[119]=(uint8_t)sensors;
         c->automatic=1u<<actor;c->auto_run=1;c->orders[0]=12;c->orders[1]=13;c->kick_target=12;
         c->weapon_selected=11; /* Retained other-mech cursor is bounded only on opening. */
-        command(&s,r,3);CHECK(c->automatic==automatic && c->auto_run==(automatic!=0));
+        command(&s,r,3);CHECK(c->automatic==automatic && c->auto_run==1);
         uint16_t *fired=actor ? &c->enemy_fired[actor-1] : &c->fired;
         CHECK(!*fired && c->orders[0]==12 && c->orders[1]==13 && c->kick_target==12);
         if (waits) {
@@ -190,6 +199,117 @@ static unsigned weapon_pages(const BtpResources *r,uint32_t *frame)
     CHECK(c->notice==3);step(&s,r,BTP_OPEN_MENU);CHECK(c->phase==BTP_COMBAT_MENU && !c->paused);
     return regions;
 }
+static void computer_commands(const BtpResources *r)
+{
+    BtpState s;setup(&s,r);s.menu.sound=0;s.menu.outtakes=0;
+    s.combat.selected=5;
+    BtpError error;CHECK(btp_save_write("work/computer-control-start.btp",&s,r,&error));
+    FILE *f=fopen("tests/fixtures/computer-control-primary.txt","r");CHECK(f);
+    char line[100];unsigned observations=0;
+    while (fgets(line,sizeof line,f) && line[0]=='C') {
+        unsigned sequence,row,flags,run;CHECK(sscanf(line,"C %u %u %u %u",&sequence,&row,&flags,&run)==4);
+        uint32_t actual=0;
+        for (unsigned i=0;i<s.combat.friends;++i)
+            if (s.combat.automatic&(1u<<i)) actual|=1u<<s.combat.ids[i];
+        CHECK(actual==flags && s.combat.auto_run==run && !s.combat.round);
+        unsigned choice=btp_combat_menu_command(&s.combat,row);
+        command(&s,r,choice);++observations;
+        if (choice!=9) {
+            CHECK(s.combat.phase==BTP_COMBAT_MENU);
+            step(&s,r,BTP_IDLE);CHECK(!s.combat.round);
+        }
+    }
+    CHECK(observations==10 && s.combat.phase==BTP_COMBAT_ROUND);
+    fclose(f);
+    /* The opening Yes enables continuous rounds. Space stops that global
+       run at the wave boundary; individual assignments and saves survive. */
+    s.combat.auto_run=1;
+    step(&s,r,BTP_OPEN_MENU);CHECK(!s.combat.auto_run && s.combat.automatic==15 && s.combat.paused);
+    unsigned ticks=0;
+    while (s.combat.phase==BTP_COMBAT_ROUND && ticks++<4096) step(&s,r,BTP_IDLE);
+    CHECK(ticks<4096 && s.combat.phase==BTP_COMBAT_MENU && s.combat.automatic==15);
+    unsigned round=s.combat.round;step(&s,r,BTP_IDLE);CHECK(s.combat.round==round);
+    command(&s,r,3);CHECK(s.combat.automatic==14); /* Manual weapons affect only Jason. */
+    step(&s,r,BTP_CANCEL);command(&s,r,7);command(&s,r,0);
+    CHECK(s.combat.automatic==12); /* Manual movement affects only Rex. */
+    setup(&s,r);s.menu.sound=0;s.combat.phase=BTP_COMBAT_ROUND;
+    s.combat.auto_run=1;s.combat.automatic=15;
+    CHECK(btp_cutscene_begin(&s,r,4,3));step(&s,r,BTP_OPEN_MENU);
+    CHECK(s.combat.paused && !s.combat.auto_run && s.combat.automatic==15);
+    ticks=0;while (s.cutscene.active && ticks++<2048) step(&s,r,BTP_IDLE);
+    CHECK(ticks<2048 && s.combat.paused && !s.combat.auto_run && s.combat.automatic==15);
+}
+static void space_commands(const BtpResources *r)
+{
+    for (unsigned foot=0;foot<2;++foot) {
+        BtpState initial;setup(&initial,r);
+        if (foot) btp_combat_select(&initial.combat,3);
+        unsigned count=btp_combat_menu_count(&initial.combat);
+        for (unsigned row=0;row<count;++row) {
+            BtpState s=initial;s.menu.sound=s.menu.outtakes=0;
+            unsigned choice=btp_combat_menu_command(&s.combat,row);
+            command(&s,r,choice); /* step compares Enter with Space. */
+            if (s.combat.phase==BTP_COMBAT_MOVE) {
+                step(&s,r,BTP_RIGHT);step(&s,r,BTP_ACCEPT);
+                CHECK(s.combat.goal_active && s.combat.phase==BTP_COMBAT_MENU);
+                /* Changing movement modes asks whether to replace orders;
+                   Space must accept that Yes/No choice too. */
+                if (!foot) {
+                    command(&s,r,choice ? 0u : 1u);
+                    CHECK(s.combat.phase==BTP_COMBAT_REPLACE);
+                    step(&s,r,BTP_ACCEPT);CHECK(s.combat.phase==BTP_COMBAT_MOVE);
+                }
+            }
+        }
+    }
+}
+static void battle_reports(const BtpResources *r,uint32_t *frame)
+{
+    FILE *f=fopen("tests/fixtures/battle-text-primary.txt","r");CHECK(f);unsigned cases=0;
+    unsigned mode,actor,target,weapon,weak,seed,hit,location,criticals;uint64_t text_hash,pixel_hash;
+    while (fscanf(f," T %u %u %u %u %u %u %u %u %u %" SCNx64 " %" SCNx64,
+        &mode,&actor,&target,&weapon,&weak,&seed,&hit,&location,&criticals,&text_hash,&pixel_hash)==11) {
+        if (!actor && target==12 && weapon!=32) {
+            /* Tie the printed critical count to actual structural damage,
+               rather than testing the presentation record in isolation. */
+            BtpCombatUnit a={.x=64,.y=64},t={.x=68,.y=64,.direction=2};
+            memcpy(a.record,r->combat.loans[0],125);memcpy(t.record,r->combat.loans[0],125);
+            memset(a.record+51,0,35);a.record[51]=(uint8_t)(weapon+1);a.record[39]=200;a.record[121]=0;
+            if (weak) { memset(t.record+17,1,19);t.record[36]=t.record[37]=0; }
+            uint8_t rng[3]={(uint8_t)seed,(uint8_t)(seed>>8),(uint8_t)(seed>>16)};
+            BtpShot result=btp_combat_attack(&a,&t,&r->combat,0,0,0,1,rng);
+            CHECK(result.hit==hit && result.location==location && result.criticals==criticals);
+        }
+        BtpState s;setup(&s,r);s.combat.phase=BTP_COMBAT_ROUND;s.combat.messages=(uint8_t)mode;
+        s.effects.shown=(BtpBattleText){1,(uint8_t)actor,(uint8_t)target,0,0,(uint8_t)weapon,
+            (uint8_t)hit,(uint8_t)location,(uint8_t)criticals,0};
+        uint8_t message[1024];size_t n=btp_battle_text(r,&s.effects.shown,mode,message);
+        uint64_t h=UINT64_C(14695981039346656037);
+        for (size_t i=0;i<n;++i) if (message[i]!=1) h=(h^message[i])*UINT64_C(1099511628211);
+        if (h!=text_hash) fprintf(stderr,"Battle text case %u: %u/%u/%u/%u/%u/%u %016" PRIx64 "/%016" PRIx64 "\n",
+            cases,mode,actor,target,weapon,weak,seed,h,text_hash);
+        CHECK(h==text_hash);
+        btp_render(r,&s,0,frame);h=region_hash(frame,8,8,88,88);
+        if (h!=pixel_hash) { fprintf(stderr,"Battle pixels case %u: %016" PRIx64 "/%016" PRIx64 "\n",cases,h,pixel_hash);CHECK(btp_write_ppm("work/m4-audit/battle-text-failed.ppm",frame)); }
+        CHECK(h==pixel_hash);
+        /* Every held report roundtrips independently of later numeric shots. */
+        uint8_t bytes[BTP_STATE_BYTES];BtpState copy;btp_state_encode(&s,bytes);
+        CHECK(btp_state_decode(bytes,sizeof bytes,btp_active_map(r,&s),btp_state_bld(r,&s),&copy));
+        btp_render(r,&copy,0,frame);CHECK(region_hash(frame,8,8,88,88)==pixel_hash);
+        if (!actor && target==12 && weapon==16 && weak && seed==1) {
+            BtpError error;CHECK(btp_save_write(mode==1 ? "work/battle-report-brief.btp" : "work/battle-report-verbose.btp",&s,r,&error));
+        }
+        ++cases;
+    }
+    fclose(f);CHECK(cases==256);
+    /* Replacement recruitment cycles through all ten names, independently
+       of the eight party slots. Rusty/Hunter reports must remain saveable. */
+    BtpState names;setup(&names,r);names.combat.phase=BTP_COMBAT_ROUND;
+    names.effects.shown=(BtpBattleText){.active=1,.actor=7,.target=0,.actor_name=8,.target_name=9,.weapon=7,.hit=1,.location=17};
+    uint8_t bytes[BTP_STATE_BYTES];BtpState copy;btp_state_encode(&names,bytes);
+    CHECK(btp_state_decode(bytes,sizeof bytes,btp_active_map(r,&names),btp_state_bld(r,&names),&copy));
+    CHECK(copy.effects.shown.actor_name==8 && copy.effects.shown.target_name==9);
+}
 int main(int argc,char **argv)
 {
     if (argc!=2) return 2;
@@ -265,6 +385,7 @@ int main(int argc,char **argv)
     setup(&s,r);btp_combat_select(&s.combat,3);s.combat.selected=7;
     CHECK(btp_save_write("work/combat-ui-start.btp",&s,r,&e));
     unsigned weapon_regions=weapon_pages(r,frame);
+    computer_commands(r);space_commands(r);battle_reports(r,frame);
     unsigned warning_regions=weapon_warnings(r,frame);
     free(frame);free(r);printf("PASS: %u checks; nine menu/scan, eight target/withdrawal, %u weapon and %u warning regions; 36 warning gates, saved modal inputs\n",checks,weapon_regions,warning_regions);return 0;
 }

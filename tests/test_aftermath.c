@@ -111,13 +111,18 @@ int main(int argc,char **argv) {
             CHECK(s.aftermath.inspected[attempt]==id);
             CHECK(eligible==(unsigned)(attempt+1==s.aftermath.attempts && !s.aftermath.notice));++attempt;
         } else if (line[0]=='W') {
-            uint64_t expected;uint8_t message[1024];CHECK(sscanf(line+1,"%" SCNx64,&expected)==1);
+            uint64_t expected,pixels;uint8_t message[1024];CHECK(sscanf(line+1,"%" SCNx64 " %" SCNx64,&expected,&pixels)==2);
             CHECK(s.aftermath.phase==2 && restore(&s,r));size_t n=btp_salvage_text(r,&s,message);
             /* Bank strings carry an ignored BLD delimiter absent from the
                original far-string calls observed by the numeric harness. */
             size_t raw_n=0;for (size_t i=0;i<n;++i) if (message[i]!=1) message[raw_n++]=message[i];n=raw_n;
             if (hash(message,n)!=expected) fprintf(stderr,"Salvage loop %u text: %.*s\n",loops,(int)n,(char *)message);
-            CHECK(hash(message,n)==expected);++pages;btp_aftermath_input(&s,r,BTP_ACCEPT);
+            CHECK(hash(message,n)==expected);
+            uint32_t frame[BTP_PIXELS];btp_render(r,&s,0,frame);uint64_t actual=UINT64_C(14695981039346656037);
+            for (unsigned y=120;y<192;++y) for (unsigned x=112;x<312;++x) for (int shift=16;shift>=0;shift-=8)
+                actual=(actual^(uint8_t)(frame[y*320+x]>>shift))*UINT64_C(1099511628211);
+            if (actual!=pixels) { fprintf(stderr,"Salvage loop %u pixels %016" PRIx64 "/%016" PRIx64 "\n",loops,actual,pixels);btp_write_ppm("work/m4-audit/salvage-failed.ppm",frame); }
+            CHECK(actual==pixels);++pages;btp_aftermath_input(&s,r,BTP_ACCEPT);
         } else if (line[0]=='Z') {
             unsigned expected_rng,mask;uint64_t people,mechs;uint8_t records[500];
             CHECK(sscanf(line+1,"%u %" SCNx64 " %" SCNx64 " %u",&expected_rng,&people,&mechs,&mask)==4);

@@ -1,0 +1,238 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "cases": [
+    {
+      "case": 0,
+      "town": 2,
+      "cursor": [
+        1337,
+        1117
+      ],
+      "seed": 4,
+      "initial": [
+        {
+          "id": 4,
+          "x": 1337,
+          "y": 1117
+        },
+        {
+          "id": 5,
+          "x": 1337,
+          "y": 1116
+        },
+        {
+          "id": 6,
+          "x": 1337,
+          "y": 1118
+        },
+        {
+          "id": 7,
+          "x": 1338,
+          "y": 1117
+        },
+        {
+          "id": 20,
+          "x": 1325,
+          "y": 1127
+        },
+        {
+          "id": 21,
+          "x": 1326,
+          "y": 1127
+        },
+        {
+          "id": 22,
+          "x": 1333,
+          "y": 1127
+        },
+        {
+          "id": 23,
+          "x": 1334,
+          "y": 1127
+        }
+      ],
+      "waves": 64,
+      "end": "64-wave observation bound"
+    },
+    {
+      "case": 1,
+      "town": 2,
+      "cursor": [
+        1337,
+        1117
+      ],
+      "seed": 5,
+      "initial": [
+        {
+          "id": 4,
+          "x": 1337,
+          "y": 1117
+        },
+        {
+          "id": 5,
+          "x": 1337,
+          "y": 1116
+        },
+        {
+          "id": 6,
+          "x": 1337,
+          "y": 1118
+        },
+        {
+          "id": 7,
+          "x": 1338,
+          "y": 1117
+        },
+        {
+          "id": 19,
+          "x": 1325,
+          "y": 1127
+        },
+        {
+          "id": 20,
+          "x": 1326,
+          "y": 1127
+        },
+        {
+          "id": 22,
+          "x": 1333,
+          "y": 1127
+        },
+        {
+          "id": 23,
+          "x": 1334,
+          "y": 1127
+        }
+      ],
+      "waves": 64,
+      "end": "64-wave observation bound"
+    },
+    {
+      "case": 2,
+      "town": 4,
+      "cursor": [
+        1180,
+        1434
+      ],
+      "seed": 1,
+      "initial": [
+        {
+          "id": 0,
+          "x": 1180,
+          "y": 1432
+        },
+        {
+          "id": 1,
+          "x": 1180,
+          "y": 1438
+        },
+        {
+          "id": 2,
+          "x": 1183,
+          "y": 1435
+        },
+        {
+          "id": 7,
+          "x": 1180,
+          "y": 1434
+        },
+        {
+          "id": 13,
+          "x": 1194,
+          "y": 1444
+        },
+        {
+          "id": 14,
+          "x": 1197,
+          "y": 1444
+        },
+        {
+          "id": 20,
+          "x": 1191,
+          "y": 1444
+        },
+        {
+          "id": 23,
+          "x": 1192,
+          "y": 1444
+        }
+      ],
+      "waves": 3,
+      "end": "victory"
+    },
+    {
+      "case": 3,
+      "town": 4,
+      "cursor": [
+        1180,
+        1434
+      ],
+      "seed": 5,
+      "initial": [
+        {
+          "id": 0,
+          "x": 1180,
+          "y": 1432
+        },
+        {
+          "id": 1,
+          "x": 1180,
+          "y": 1438
+        },
+        {
+          "id": 2,
+          "x": 1183,
+          "y": 1435
+        },
+        {
+          "id": 7,
+          "x": 1180,
+          "y": 1434
+        },
+        {
+          "id": 12,
+          "x": 1173,
+          "y": 1444
+        },
+        {
+          "id": 14,
+          "x": 1176,
+          "y": 1444
+        },
+        {
+          "id": 19,
+          "x": 1168,
+          "y": 1444
+        },
+        {
+          "id": 20,
+          "x": 1169,
+          "y": 1444
+        },
+        {
+          "id": 22,
+          "x": 1170,
+          "y": 1444
+        },
+        {
+          "id": 23,
+          "x": 1171,
+          "y": 1444
+        }
+      ],
+      "waves": 2,
+      "end": "victory"
+    }
+  ],
+  "waves": 133,
+  "routines": [
+    "05AB:0D68..1462 placement",
+    "103B:1774 actor camera",
+    "0E31:03AB complete AI",
+    "12E8:000C complete waves"
+  ],
+  "prerequisites": "Original GAME3 party in two original town payload contexts, explicit cursor and RNG; four foot soldiers in Starport, three mechs and Rick on foot in MAP4. Town file-read boundaries supplied; initial facing 6, heading 255, gait 0. Sound/verbose/outtake display disabled.",
+  "comparison": "Complete per-wave RNG, all record hashes, living coordinates/facing/heat, deaths/ejections and final victory/loss.",
+  "no_instruction_patches": true
+}

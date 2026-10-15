@@ -64,7 +64,10 @@
   "unpacked_sha256": "a9560b5a0a72f756c5a0f4e970193f387d211623be88d71f4c38873b5857645f",
   "rgb_sha256": "088688f4247e678a0de518b48b2251fc6ac21fe6b5bd9fb1bcbfb97be0632dd5",
   "rgb_fnv64": "0e18fdfc65acc854",
-  "confidence": "VERIFIED original decoder and palette registers; RGB uses the VGA/EGA colour model checked against the live title capture.",
-  "limits": "This is not a live DOSBox Phoenix screenshot or an execution of the entire cache journey.",
+  "live_capture_run": "1792046692272345269",
+  "live_capture_label": "phoenix-open-1",
+  "live_rgb_sha256": "088688f4247e678a0de518b48b2251fc6ac21fe6b5bd9fb1bcbfb97be0632dd5",
+  "confidence": "VERIFIED all 64000 RGB pixels against a live original DOSBox Phoenix screen, plus original decoder and palette writes.",
+  "limits": "Loaded original cache save; controlled cursor/party position at the Phoenix approach. Ordinary Left and Return open the original screen. This is not a fresh-game cache journey.",
   "no_instruction_patches": true
 }

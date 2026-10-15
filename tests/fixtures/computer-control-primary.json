@@ -1,0 +1,27 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "routines": [
+    "103B:14C3 complete command loop",
+    "0E31:03AB AI",
+    "103B:100D..102E interrupt"
+  ],
+  "prerequisites": "Original mixed-party snapshot; active IDs 0,1,2,7,13,17, initial manual control, menu inputs supplied.",
+  "boundaries": [
+    "0000:0E4B",
+    "0000:2A2B",
+    "05AB:18E8",
+    "103B:1774",
+    "1656:0281",
+    "1656:0388",
+    "1656:03F5",
+    "1656:0B5E",
+    "173D:002F",
+    "173D:00D5",
+    "173D:06C3",
+    "187F:18EF",
+    "187F:2B87"
+  ],
+  "comparison": "Computer selection is idempotent, affects only selected actor, returns to menu; Next rotates; Begin Fight returns; interrupt clears global run only.",
+  "no_instruction_patches": true
+}

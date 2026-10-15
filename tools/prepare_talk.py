@@ -110,6 +110,15 @@ def extract(source):
         0x2aec,0x2af1,0x2b0c,0x2b16,0x3ce0,0x3cfa))
     # 0D43 weapon-entry shutdown and damaged/destroyed sensor warnings.
     addresses.extend(DS+p for p in (0x2904,0x292d,0x2964))
+    # Combat report fragments (334 onward), including original hit colours,
+    # brief/verbose grammar and the eleven printed location names.
+    addresses.extend(DS+p for p in (0x3e44,0x3e4d,0x3e53,0x3e58,0x3e60,0x3e69,
+        0x3e73,0x3e81,0x3e87,0x3e8f,0x3e95,0x3e9a,0x3e9f,0x3ea7,
+        0x3ea9,0x3eb3,0x3eb9,0x3ec0,0x3ecd,0x3ed6,0x3ede,0x3ee7,
+        0x315e,0x3a42,0x31a6))
+    for entry in range(0x324e,0x327a,4):
+        offset,segment=struct.unpack_from('<HH',image,DS+entry)
+        addresses.append(segment*16+offset)
     blob = bytearray(); ranges = []; origins = []
     for address in addresses:
         end = image.index(0,address)
@@ -123,7 +132,7 @@ def extract(source):
     header += bytes.fromhex(EXE_SHA)+bytes.fromhex(IMAGE_SHA)
     header += b"".join(struct.pack("<HH",*r) for r in ranges)
     font = image[FONT:FONT+2048]
-    return header+blob+font, {**metadata,"format":"BTTA/v22","strings":origins,
+    return header+blob+font, {**metadata,"format":"BTTA/v23","strings":origins,
         "font":{"image_offset":FONT,"length":len(font),"sha256":hashlib.sha256(font).hexdigest()}}
 
 

@@ -1,19 +1,22 @@
 {
   "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
   "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
-  "cases": 530,
+  "cases": 534,
   "routines": [
     "0B5D:03AA",
     "0B5D:0AB6",
     "0B5D:01E9",
     "0B5D:0913",
-    "0B5D:0980"
+    "0B5D:0980",
+    "0B5D:055A",
+    "0B5D:079C"
   ],
   "prerequisites": "Fresh original MAP14/MAP15 payloads, explicit used-terminal/card state and all 128 password subsets with/without an extra symbol",
   "intercepted_boundaries": [
     "0000:051B",
     "0000:19BF",
     "0000:1A13",
+    "0000:28CC",
     "14D3:17C6",
     "14D3:17EA",
     "1656:0388",
@@ -21,11 +24,18 @@
     "173D:0006",
     "173D:0053",
     "173D:0259",
+    "173D:049D",
+    "173D:063B",
     "173D:06C3",
+    "173D:0814",
     "173D:086A",
+    "187F:00D1",
+    "187F:0260",
+    "187F:0BA7",
     "187F:1314",
     "187F:18EF",
+    "187F:1DA8",
     "187F:1F04"
   ],
-  "comparison": "Code IDs, door flags, consumed-terminal/map fingerprints, password flags/reset and sound dispatch; original instructions unchanged"
+  "comparison": "Code IDs, door flags, consumed-terminal/map fingerprints, password flags/reset, sound dispatch, room-entry/exit cursor, room flag and collision gate; original instructions unchanged. File-read and graphics boundaries supplied for room transitions."
 }
