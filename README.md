@@ -1,59 +1,172 @@
 # BtechPort
 
-Independent C11/SDL2 recreation of **BattleTech: The Crescent Hawk's Inception**,
-supplied DOS version 1.03. **M0, M1, bounded M2a–M2m and M3a–M3h are complete.**
-M4a–M4e have bounded playable implementations; [current evidence and limits](docs/M4_PROGRESS.md)
-cover the Space menu, six save slots, splash palette, combat opening prompts,
-PC-speaker effects, combat outtakes and training return-to-base message.
-The [follow-up evidence](docs/M4_FOLLOWUPS_EVIDENCE.md) records the fresh-game
-cache-ending route, additional original combat rules, replacement specialists,
-spy outcomes and all-party walking collision/animation checks.
-The [current fidelity increment](docs/M4_FIDELITY_EVIDENCE.md) adds the original
-eight-entry on-foot combat menu, pilot/model headers and Friends/Enemies scans,
-including the original infantry descriptions and optional mech Detail Scan.
-The [Mechit-Lube audit](docs/MECHIT_LUBE_AUDIT.md) adds the original sequential
-repair questions, damaged-weapon estimates, ammunition flow, apprenticeship,
-Speed Shop presentation and agent recruitment, with 591 executed original
-service cases and 21 matching screen pairs.
-All six supplied original GAME files now import and roundtrip exactly. To use
-one, run `./build/btech-port --load 'Original DOS/GAME3'`. Export an imported
-save outdoors with `--export-original work/GAME3`; unmodeled bytes are retained.
-The compatibility limits are recorded in the M4 evidence above.
-Explore MAP1, visit the Citadel, buy all weapons/armour, use ComStar and talk
-in both shops, Mechit-Lube and the lounge. Six MechWarrior assignments now reach
-their results: movement, rubble, a stationary shell, armed labor robots and a
-live Locust duel, then two live Locusts. Rick's device scene follows the natural
-lounge invitation. Weapons and Kick physical attacks are playable, with separate
-walk, run and jump orders. Mechit-Lube offers its 500-C-bill apprenticeship and
-the original early-game service responses.
-Original walking/firing/Kick/impact artwork, persistent flames and wrecks,
-force-field electricity, launch/dream animations, mixed-case font and borders
-are integrated. The seventh-assignment invasion opens the destroyed Citadel and
-outer world. Travel to Starport, park an owned mech, recruit Rex and a technician,
-inspect party equipment, and use mech repairs, ammunition and Speed Shop refits.
-The original title music, building portraits and recruitment crest now play.
-F4 follows travel across independently generated original terrain. Native
-save/load preserves party, service prompts, music, animation and combat.
-The house's newspaper/holodisk/chow, inventor's hut, cinema, laser shop and
-prison/arena theft routes are playable. Random encounters describe the attacking
-force and offer fight/avoid. Garage checkout opens crew allocation; the invasion
-shows its original messages and destroyed map during combat. Combat effects,
-hits, wrecks and arena alarms play sequentially.
-Hospital and Mechit-Lube recruiting follows the original BLD specialist gates,
-including replacements when the previous specialist is lost. Inspection can
-expose the recruited spy; his original combat confrontation handles pilot,
-passenger and on-foot outcomes. A fresh-cadet replay reaches the cache ending
-through companions, apprenticeships, the holodisk and password prerequisites.
-Outdoors, each person's foot point and each mech's two ground tiles are checked as the
-party walks: a blocked outer member stops the whole formation, including every
-intermediate step in two/four-step mode. Any member can trigger a doorway. All
-moving members advance one gait frame per key, using their own saved positions.
-Normal arena returns leave checked-in mechs parked; loading an affected older
-Starport save restores that state without losing the owned vehicles.
-New random encounters check that enemies have a ground route to the party;
-ordinary enemy mechs also stay outside Starport, including fights near its walls.
-The wider campaign remains unfinished; encounter timing, recovery of old formations, physical
-speaker response and other unaudited interface areas remain approximate.
+An independent **C11 / SDL2** recreation of **BattleTech: The Crescent Hawk's
+Inception** (1988), targeting the DOS **1.03** release.
+
+This project uses **AI-assisted reverse engineering and development**, including
+**OpenAI Sol 6.1 and Astra**, with human direction, gameplay reports and review.
+AI helps investigate the original executable, interpret observations, implement
+the port and build verification tools. AI-generated explanations are checked
+against original data and executable behavior; they are not themselves evidence
+of fidelity. See [research methods and AI use](docs/AI_AND_PROVENANCE.md).
+
+**The implementation does not use the original game's source code.** It is
+independently written from reverse-engineering research, original game data and
+observations of the DOS executable. The substantial contributions of other
+researchers are credited below.
+
+**Original game assets are not included.** Everyone running the port must supply
+the original DOS game files, including `BTECH.EXE`. Local extraction creates
+ignored caches from those files; it does not download the game.
+
+## Status
+
+The game is playable from training through the campaign ending. Exploration,
+shops and services, recruitment, mixed infantry/mech combat, the Star League
+cache and six save slots are implemented. Original graphics, animations, text
+and PC-speaker programs are read from the supplied files.
+
+Fidelity work continues. Original routine comparisons and repeatable gameplay
+routes verify specific behavior; they do not establish complete parity. Combat
+presentation/timing, wider encounter behavior, some transitions and physical
+speaker response still have limits. See [project status](docs/PROJECT_STATUS.md)
+and the [current acceptance sweep](docs/M4_ACCEPTANCE_SWEEP.md) for evidence and
+remaining work.
+
+## Build and run on Linux
+
+You need a C11 compiler (GCC or Clang), CMake 3.16 or newer, Python 3 and SDL2
+development files. On Debian, Ubuntu or Kubuntu, these can be installed with:
+
+```sh
+sudo apt install build-essential cmake python3 libsdl2-dev
+```
+
+1. Place the original DOS 1.03 game files directly in `Original DOS/` in this
+   repository. Keep the original uppercase filenames. Use the complete game
+   directory, including its executable, maps, scripts, graphics and animations.
+   The supported executable is identified in [the file audit](docs/ORIGINAL_FILES.md).
+2. From the repository root, build:
+
+   ```sh
+   ./scripts/build.sh
+   ```
+
+   This prepares the local resource caches in `work/` and builds the SDL2 game
+   and headless tools in `build/`. It leaves the original files unchanged.
+3. Run from the repository root:
+
+   ```sh
+   ./build/btech-port --data "Original DOS"
+   ```
+
+No DOS emulator, Godot, .NET or reference checkout is needed to build or play.
+Python's standard library suffices for cache preparation. Optional research
+and GUI verification tools have separate dependencies described in
+[TESTING.md](docs/TESTING.md).
+
+For an incremental rebuild after editing C code:
+
+```sh
+cmake --build build -j4
+```
+
+If your game files are elsewhere, prepare the three caches with that same path
+before configuring and building directly:
+
+```sh
+python3 tools/prepare_talk.py --data /path/to/game
+python3 tools/prepare_combat.py --data /path/to/game
+python3 tools/prepare_world.py --data /path/to/game
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+cmake --build build -j4
+./build/btech-port --data /path/to/game
+```
+
+The convenience build script and most reference tests expect `Original DOS/`.
+The native runtime also supports custom cache paths; see `--help`.
+
+## Controls
+
+| Key | Action |
+| --- | --- |
+| Arrow keys | Move or select; hold perpendicular arrows to move diagonally |
+| Numeric keypad | Move in eight directions; Num-Lock-off arrows work in menus |
+| Enter or Space | Confirm a menu choice or advance dialogue |
+| Space during exploration | Open the game menu |
+| Escape or Backspace | Back out or decline; Escape does not quit |
+| F4 | Toggle the explored overhead map |
+| F5 / F9 | Save / load the selected slot |
+| F3 | Toggle diagnostics |
+| Ctrl + Shift + Escape | Quit |
+| Hold Shift, then K, Y, R | Add 10,000 C-bills, including during the intro |
+
+Amount fields accept digits, Backspace and Enter; Space does not submit a number.
+Use the Space menu for walking step size, party inspection, equipment, map and
+all six save slots. During combat, select a unit, give movement/weapon orders,
+and use **Begin Fight** to resolve them. Combat controls are undergoing further
+comparison with the original.
+
+## Saves and useful options
+
+Native saves default to `work/player-save.btp`; slots two through six add `-2`
+through `-6` before `.btp`. They retain held menus and in-progress combat.
+Use `--save-file PATH` to change the slot base filename.
+
+```sh
+./build/btech-port --load work/player-save.btp
+./build/btech-port --mute
+./build/btech-port --help
+```
+
+Original `GAME*` saves can also be imported:
+
+```sh
+./build/btech-port --load "Original DOS/GAME3"
+```
+
+All six supplied original saves have byte-for-byte import/export comparisons.
+Export requires a previously imported original save and a supported outdoor
+state; see [save compatibility](docs/M4_PROGRESS.md). Keep exported files outside
+the original reference directory, for example `--export-original work/GAME3`.
+
+## Verification and development
+
+Run the fast headless suite after building:
+
+```sh
+ctest --test-dir build --output-on-failure
+```
+
+For the broader historical verification workflow, use `./scripts/test.sh`.
+GUI tests, sanitizer checks, deterministic replays and optional original-executable
+oracles are documented in [TESTING.md](docs/TESTING.md). Tests require your local
+game files and generated caches. Native builds and tests do not need DOSBox;
+original-game capture tools do.
+
+| Directory | Contents |
+| --- | --- |
+| `port/core/` | Deterministic game rules and serializable state |
+| `port/data/` | Resource and save readers |
+| `port/frontend/` | Rendering, SDL2 input/audio and headless entry points |
+| `tools/`, `tests/` | Extraction, original comparisons and regression tests |
+| `docs/` | Research, evidence, milestones and known gaps |
+| `work/`, `build/` | Ignored local caches, captures, saves and build output |
+
+`Original DOS/` and `UnBattletech/` are read-only reference directories, excluded
+from this repository. Do not commit proprietary assets, extracted text, original
+RAM dumps or screenshots. Findings use **VERIFIED**, **INFERRED**,
+**APPROXIMATE** and **UNKNOWN** to make their limits explicit.
+
+## License
+
+BtechPort's independently authored code and documentation are licensed under the
+**GNU General Public License, version 3 (GPL-3.0-only)**. See [LICENSE](LICENSE)
+for the full terms. Third-party dependencies retain their own licenses.
+
+This license does not cover or grant rights to the original game executable,
+artwork, music, text or other game assets. Those are not distributed here and
+must be supplied by the person running the port.
 
 ## Acknowledgements
 
@@ -80,289 +193,3 @@ that research foundation. Detailed sources and verification limits are recorded
 in the [research audit](docs/RESEARCH_AUDIT.md) and milestone evidence reports.
 The original game, artwork and story are the work of **Westwood Associates**,
 published by **Infocom**.
-
-## Build and play
-
-**M3d–M3h:** invasion, world travel, Starport recruitment, owned-mech services,
-title music and building portraits work through ordinary inputs. The training
-shell stays still as requested. See [current evidence and limits](docs/M3D_H_PROGRESS.md).
-
-From this directory on the current Kubuntu machine:
-
-```sh
-./scripts/build.sh
-./build/btech-port --data "Original DOS"
-./scripts/test.sh
-```
-
-Arrows move/select; hold two perpendicular arrows for diagonal movement. Keypad 1/3/7/9 or End/PgDn/Home/PgUp move diagonally, and keypad 2/4/6/8 moves in cardinal directions. Enter or Space advances dialogue. Space outdoors opens settings, party inspection, the overhead map and six save/load slots. **Space or Enter selects the highlighted menu item**, including settings submenus. Backspace or Escape declines; F3 toggles diagnostics, R restarts, and Ctrl+Shift+Escape closes. Hold Shift and press K, Y, R to add 10,000 credits, including during the intro. From the training start, move Up five times, confirm entry, then confirm **Request to see Katrina**. Advance the sentry and Katrina screens to return to the menu. A repeat request gets the original denial. Four Down presses select Leave; after exiting and re-entering, the menu retains that selection. Hall of Legends still has its six original screens.
-
-Bank and ammo amounts use digits (including keypad), Backspace erasure, Escape to clear
-to 0, and Enter to submit; Space does not submit.
-Space dismisses the Infocom/Westwood logos, then the BattleTech title and music.
-The played-before question opens saved games for Yes and starts training for No.
-Use `--mute` to disable the native audio device.
-
-**Show Overhead Map** in the Space menu displays explored terrain. From the
-root menu, Up selects that last entry and Space opens it. At the training
-start, only the familiar Citadel area is revealed, as in the original. The map
-reveals more as you travel. **F4 also toggles the overhead view.** It places the authentic 64×64 Citadel map within
-192×192 tiles generated independently in C. Launch directly
-into that view with `./build/btech-port --world-overview`. This bounded area uses
-owner-derived numeric inputs and the original startup seed `0x020304`; the view follows the party after
-the invasion. Thirty complete sectors across three seeds match the original
-generator. Stored town maps overlay the generated world; Starport is the first
-additional town with an input-only campaign route. The early campaign's closed
-borders remain until the attack. Builds and play need no emulator; see
-[setup and verification](docs/TESTING.md).
-
-**F5 saves; F9 loads** the selected slot. Space offers all six; Slot One is
-`work/player-save.btp`, with `-2` through `-6` suffixes for the others. Failed loads keep
-the current session intact. `--save-file FILE` chooses their base filename; `--load FILE`
-starts from a save, and `--save FILE` writes on successful exit. Paused dialogue
-and partial bank amounts restore too. These internal saves use the tested state
-format. All six supplied original DOS GAME files import/export byte-for-byte;
-export requires an imported original envelope and an outdoor state. Loading during
-input recording is refused; start the next log after loading. See
-[save/load verification](docs/M2_SAVE_EVIDENCE.md).
-
-To reach the later milestones quickly, these replays execute ordinary inputs
-through the headless core before opening an interactive native window:
-
-```sh
-./build/btech-port --replay tests/fixtures/ordinary-starport.actions
-./build/btech-port --replay tests/fixtures/ordinary-rex.actions
-./build/btech-port --replay tests/fixtures/ordinary-services.actions
-python3 tools/native_smoke.py --campaign-only
-```
-
-Space outdoors opens party actions. Inspect or Equipment
-selects the person whose equipped weapon, armour and skills are displayed.
-With owned mechs, Inspect first asks whether to examine a mech. Multi-person
-shop purchases ask who receives the item after payment, with the original
-drop/redistribute choices for displaced equipment. The garage parks the
-party's mechs, and checkout retains its original 150-credit fee. Mechit-Lube
-selects an owned mech for repairs, an ammo bin and quantity, or its original
-Speed Shop offer. Unaffordable work follows the original numeric limits.
-
-To open directly on Katrina's first conversation:
-
-```sh
-./build/btech-port --data "Original DOS" --replay tests/fixtures/citadel-katrina.actions
-```
-
-The runtime reads MAP1–14, all 26 BLDs, the original ICN/CMP artwork and ANMs,
-`BTTITLE.CMP`, `WWOODBT.SIF`, and ignored `work/talk-data.bin`,
-`work/combat-data.bin` and `work/world-data.bin`. The build prepares the caches
-reproducibly from `BTECH.EXE`. No Godot/.NET/reference runtime is required.
-Unsupported later script actions stop visibly. Failed choices roll back partial
-story, party, equipment, cash, investment and skill changes; Backspace returns to
-the menu. Use `citadel-hall.actions` for the first Hall screen.
-
-To watch the complete two-shop route through native SDL inputs (about 98 seconds, closes automatically):
-
-```sh
-./build/btech-port --smoke-shops --replay tests/fixtures/reference-shops.actions
-```
-
-For an interactive window after both purchases, omit `--smoke-shops`. The route
-buys the 50 C-bill flak vest in the Armor Shop at tile (25,62), then the 2 C-bill
-knife in the Weapons Shop at (16,22), and returns outdoors with 13 credits.
-Arrows select items and Yes/No; Enter confirms. The ordinary 35-credit start
-receives 15-credit outdoor allowances while cash plus investments are below the
-local 50-credit cap, so wait
-outside if a vest is unaffordable. Declining a purchase costs nothing; insufficient
-funds produce the original response and exit. The cap is a pre-update test rather
-than a clamp. All eleven weapons and five armour types are purchasable through
-the original menus, prices and confirmations. Solo purchases equip Jason;
-multi-person parties choose the recipient. Cash is shared, and the party
-equipment menu supports transfers. The armour shop also offers the original
-personal armour repair, including partial repair when cash is limited.
-
-To open ComStar on the verified account screen, or watch its whole transaction
-replay through SDL (about 13 seconds, closes automatically):
-
-```sh
-./build/btech-port --replay tests/fixtures/reference-bank-rates.actions
-./build/btech-port --smoke-replay --replay tests/fixtures/reference-bank.actions
-```
-
-ComStar handles cash and three stock balances: DefHes, NasDiv and BakPhar.
-Inspect accounts, change investments or review the original prospectus text.
-Buy/Sell and company selection share the original remembered selector. Requests
-beyond available cash or holdings are clipped; zero/unfunded/unowned requests
-use their original responses. The bounded MAP1 allowance/return rules include
-all three balances and preserve the observed RNG schedule. Full day/cap
-progression remains deferred.
-
-Citadel **Class** offers three personal weapon-skill courses. Tuition starts at
-75 and rises by 125 per rank; insufficient funds and mastery use the original
-responses. Successful completion starts the outdoor cooldown. Indoors the
-countdown stops; leaving and waiting allows re-enrolment. The MechWarrior assignments and barracks sleep are implemented separately from these personal classes.
-
-To watch the ordinary funded course and cooldown route (about 99 seconds):
-
-```sh
-./build/btech-port --smoke-replay --replay tests/fixtures/reference-class-funded.actions
-```
-
-Omit `--smoke-replay` to continue interactively after that route. See
-[training verification](docs/M2_TRAINING_EVIDENCE.md).
-
-Both shops' and the lounge's **Talk to others** handle empty rooms or present NPCs. Normal
-occupancy comes from travel. These explicitly labeled demos put two occupants
-inside each shop with travel disabled, matching controlled original-handler
-preconditions:
-
-```sh
-./build/btech-port --shop-talk-checkpoint armor
-./build/btech-port --shop-talk-checkpoint weapon
-```
-
-Select Talk, then a name or Done. Replies use original mixed-case text and the
-NPC's actual destination; both shop and NPC menus retain their selections.
-
-To open the NPC reply after a verified normal-start exploration replay:
-
-```sh
-./build/btech-port --replay tests/fixtures/citadel-arrival.actions
-```
-
-The replay walks south, steps off the narrow road, follows an NPC north/east and returns to the Citadel before it departs. NPC movement and stay timers make the conversation reachable; the replay supplies ordinary actions and idle ticks. Enter/Space returns to the Citadel menu. Player and cadet sprites come from the original atlas, with directional walking frames. This starts at the recorded initialized MAP1 baseline and omits the DOS startup menus.
-
-The earlier isolated handler checkpoint remains available:
-
-```sh
-./build/btech-port --conversation-checkpoint --replay tests/fixtures/citadel-talk.actions
-```
-
-Omit `--replay` to start outdoors with the visibly labeled checkpoint; five Up, Enter, three Down, Enter opens the NPC menu. Done returns immediately; selecting the NPC shows the authentic reply. Both menus remember selection independently. This checkpoint supplies controlled occupancy with travel disabled. A quick Citadel visit from the normal start still gets the original empty-room response. Custom resource/cache paths use `--data`, `--dialogue-data` and `--combat-data`; preparation is documented in [TESTING.md](docs/TESTING.md).
-
-**VERIFIED in scope:** authentic resources and bounded original BLD, movement,
-NPC, shop, banking, training and combat comparisons. M3d–M3h adds 16 invasion
-setups, 30 whole generated sectors, 65 recruitment cases, 18 mixed encounter
-setups, 47 service cases, 128 speaker pitches and the complete 17,409-step title
-interrupt trace. The current build has 43 CTest suites, with additional original
-save, aftermath, crew, medical, cache, theft and event comparisons described in
-[M4 evidence](docs/M4_PROGRESS.md).
-**APPROXIMATE:** encounter placement/timing and broader AI/initiative, following,
-several UI layouts, animation cadence, beam placement, world bootstrap and
-physical speaker filtering. The speaker clock model targets a nominal 8 MHz
-8088; exact physical XT playback is not claimed. **UNKNOWN:** complete fresh-game
-campaign coverage and remaining story/repair/theft branches. Earlier long-route
-NPC/RNG gaps and explicit later-quiz prerequisites remain documented.
-
-**M2i sprites:** all 376 original sprite crops match the EXE's RAM, and walking tests
-cover 30 player checkpoints, four exact player pixel crops and 63 NPC frame steps.
-Save/load retains walking frames; older saves start a new gait at their stored
-facing. Mechs appear in the animated preview, training, owned-party travel and
-mixed encounters. See [sprite evidence](docs/M2_SPRITE_EVIDENCE.md).
-
-```sh
-./build/btech-port --sprite-preview
-python3 tools/verify_sprites.py
-python3 tools/native_smoke.py --sprites-only
-```
-
-
-The Training Center is at half-coordinate (46,114), Barracks at (17,13), and
-the lounge at (17,89). The written quiz asks for three parts on the original
-mech diagram. Select the correct names, accept the first assignment, then choose
-Locust, Wasp or Chameleon. Drive to the southeast corner (x>=120,y>=124),
-acknowledge its message and return to x<=60,y=73..79. Terrain adds to the timer;
-success raises the allowance cap to 150. A successful first assignment unlocks
-the barracks dream/sleep sequence, which clears the training cooldown. The second
-assignment chooses one of eight rubble locations: stand beneath it to pick it up
-automatically in a Wasp or Chameleon, then return to the same reporting area.
-The Locust cannot carry rubble. Second success raises the allowance cap to 250.
-The third assignment requires sleep, then offers weapons training. Choose No
-for computer control and select message/graphics options. Walk/Run/Jump plots
-a destination: arrows show the next turn's steps and a yellow box marks the
-goal. Selecting the same mode adds a waypoint, up to twelve; changing mode asks
-whether to replace the route. Use Weapons assigns attacks to the shell; Done returns to orders and
-Begin Fight resolves a turn. Destroy it and walk back to the instructor for
-the 500-cap reward. Kick selects an enemy for a physical attack; use Next target
-to cycle among opponents. Kick and weapon orders persist. General computer
-control remains unsupported.
-The graphics option presents original firing/Kick poses, hit reactions and
-impact stars. Frame cadence and beam/projectile placement remain approximate.
-Launch and dream animations
-play with the original artwork; combat sound effects remain unimplemented. The fourth
-assignment contains 3–6 armed labor robots and raises the cap to 1000. The fifth
-is a live Locust duel, raises it to 2000 and sends Rick to the lounge. The existing
-Rick/device branch is now reachable through ordinary play. The sixth assignment
-fields two live Locusts and raises the cap to 3000 on success. Its original
-result routine grants gunnery/Kick practice on withdrawal too. The seventh can
-trigger the Jenner invasion; the eighth forces it. Escape leads to the destroyed
-Citadel, retaining the surviving training mech or continuing on foot after its
-loss. Pilot ejection and character-loss behavior still need original comparisons.
-
-Mechit-Lube is at half-coordinate (15,109). Its course costs 500 C-bills and raises
-the selected member's technician skill once. Talk, early no-owned-mech responses,
-technician recruitment and owned-mech services use the original REPAIR.BLD.
-Training loans become owned only through the original invasion-survival branch.
-
-Watch the five-assignment/Mechit-Lube route, or the separate Kick-only victory:
-
-```sh
-./build/btech-port --smoke-replay --smoke-fast --replay tests/fixtures/ordinary-training-combat.actions
-./build/btech-port --smoke-replay --smoke-fast --replay tests/fixtures/ordinary-kick.actions
-python3 tools/make_training_combat_replay.py
-python3 tools/make_training_combat_replay.py --kick
-python3 tools/make_training_combat_replay.py --campaign
-python3 tools/native_smoke.py --training-combat-only
-```
-
-Open at the third loan-mech menu, or watch the complete three-assignment route
-with accelerated SDL playback:
-
-```sh
-./build/btech-port --replay tests/fixtures/ordinary-rubble-story.actions
-./build/btech-port --smoke-replay --smoke-fast --replay tests/fixtures/ordinary-combat.actions
-python3 tools/make_combat_replay.py
-python3 tools/native_smoke.py --combat-only
-```
-
-To start inside the loaned Locust after ordinary entry and quiz inputs, or watch
-the successful mission/return/sleep route through SDL:
-
-```sh
-./build/btech-port --replay tests/fixtures/reference-diagonal-mech.actions
-./build/btech-port --smoke-replay --replay tests/fixtures/reference-mission-pass.actions
-python3 tools/verify_m2j.py
-python3 tools/native_smoke.py --diagonal-only
-```
-
-**M2j verification:** 325 original checkpoints cover the mission and sleep loop,
-all goods, lounge and four diagonal directions for people and mechs, including
-blocked attempts. Save/restart checks continue every observed new phase. The
-full-goods trace uses an explicit 20000-credit test budget; the Rick branch uses
-an explicit occupancy/story prerequisite. The mission/sleep and diagonal routes
-use ordinary inputs. Native SDL, F5/F9, keypad bank entry and sanitizer checks
-pass. See [mission and diagonal evidence](docs/M2_MISSION_EVIDENCE.md).
-
-**M2k–M2m:** second-assignment pickup, carrying, return/reward and third-assignment
-rest gating are playable. All 22 ANMs decode independently; O0 launch and O8 dream
-play in their verified contexts. The original 8×8 font and BTBORDER graphics replace
-the provisional UI assets; Yes/No entrance text is aligned inside its frame.
-See [rubble, story and animation evidence](docs/M2_RUBBLE_ANIMATION_EVIDENCE.md).
-
-```sh
-./build/btech-port --smoke-replay --replay tests/fixtures/ordinary-rubble-story.actions
-python3 tools/verify_m2kl.py
-python3 tools/native_smoke.py --rubble-only
-```
-
-The first command watches both missions, sleep and the third briefing at normal
-speed (about 126 seconds), then closes. Omit `--smoke-replay` to continue from
-the third mech menu. Automated window tests use `--smoke-fast`: the same route
-measured 3.63 seconds instead of its normal 126.24-second tick duration, about
-35× faster for this replay. Inputs, state and final image remain identical;
-short keyboard, animation and F5/F9 tests retain real-time pacing. This is a
-measured test improvement, not a whole-project speed estimate.
-
-The bounded DOSBox harness runs whole JSON input sequences on a private virtual display, captures frames/state and closes automatically. It uses no interactive terminal input, so the former per-key approval loop is removed. Original binaries, screenshots and memory dumps remain in ignored directories.
-
-Read [the milestone review](docs/PROJECT_STATUS.md), [testing](docs/TESTING.md), [banking and shop Talk evidence](docs/M2_BANKING_EVIDENCE.md), [shop purchase evidence](docs/M2_SHOPS_EVIDENCE.md), [NPC travel evidence](docs/M2_NPC_EVIDENCE.md), [Talk evidence](docs/M2_TALK_EVIDENCE.md), [Katrina evidence](docs/M2_KATRINA_EVIDENCE.md), [Hall evidence](docs/M2_CITADEL_EVIDENCE.md), [inventory](docs/ORIGINAL_FILES.md), [audit](docs/RESEARCH_AUDIT.md), [language decision](docs/LANGUAGE_DECISION.md) and [open questions](docs/OPEN_QUESTIONS.md). New code is under `port/`, automation under `tools/`/`scripts/`, regressions under `tests/`.
-
-Both supplied reference directories remain unchanged. A local Git repository on `main` records incremental milestones; originals, reference checkout, generated assets and dependencies are ignored. No pushes were made. The final reference guard also checks the reference repository’s Git metadata. No substantial GPL source was copied or translated into the runtime; this does not establish legal clean-room status or permission to redistribute proprietary assets.
