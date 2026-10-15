@@ -846,6 +846,36 @@ static void medical_panel(const BtpResources *r,const BtpState *s,uint32_t *f)
     message[n++]=6;message[n++]=15;service_literal(r,message,&n,290);
     (void)service_wrap_bounds(r,f,96,message,n,NULL,96,152);
 }
+size_t btp_salvage_text(const BtpResources *r,const BtpState *s,uint8_t message[1024])
+{
+    const BtpAftermathState *v=&s->aftermath;size_t n=0;
+    if (v->notice==2) service_literal(r,message,&n,301);
+    else {
+        unsigned technician=0,skill=0;
+        for (unsigned i=0;i<8;++i) if (s->party.people[i][0]!=255 && s->party.people[i][9]>skill)
+            { technician=i;skill=s->party.people[i][9]; }
+        const char *name=btp_party_name(&s->party,technician);size_t length=strlen(name);
+        memcpy(message+n,name,length);n+=length;service_literal(r,message,&n,298);
+        unsigned count=v->attempts ? v->attempts : 1u;
+        for (unsigned i=0;i<count;++i) {
+            unsigned failed=i+1<count || v->notice;
+            if (!failed) { memcpy(message+n,name,length);n+=length; }
+            service_literal(r,message,&n,failed ? 300u : 299u);
+            if (n>=2) n-=2; /* Replace the original template's final X. */
+            unsigned id=v->attempts ? v->inspected[i] : v->unit;
+            unsigned kind=v->attempts ? v->models[i] : v->cash;
+            unsigned at=btp_combat_target(&s->combat,id);char model[16]="'Mech";
+            if (at<s->combat.count) { memcpy(model,s->combat.unit[at].record,15);model[0]=(char)kind;model[15]=0; }
+            size_t size=strlen(model);
+            /* The failure branch retains the record's padding and has no
+               period. Only the successful branch trims and appends '.'. */
+            if (!failed) while (size && model[size-1]==' ') --size;
+            memcpy(message+n,model,size);n+=size;
+            if (!failed) service_literal(r,message,&n,313);
+        }
+    }
+    service_literal(r,message,&n,290);return n;
+}
 static void aftermath_panel(const BtpResources *r,const BtpState *s,uint32_t *f)
 {
     const BtpAftermathState *v=&s->aftermath;uint8_t message[1024];size_t n=0;
@@ -903,25 +933,7 @@ static void aftermath_panel(const BtpResources *r,const BtpState *s,uint32_t *f)
         const char *name=btp_party_name(&s->party,v->pilot);n=strlen(name);memcpy(message,name,n);
         service_literal(r,message,&n,297);
     } else if (v->phase==2) {
-        if (v->notice==2) service_literal(r,message,&n,301);
-        else {
-            /* 05AB:04F9 names the best technician in the inspection/result;
-               the preceding Yes/No names the available pilot instead. */
-            unsigned technician=0,skill=0;
-            for (unsigned i=0;i<8;++i) if (s->party.people[i][0]!=255 && s->party.people[i][9]>skill)
-                { technician=i;skill=s->party.people[i][9]; }
-            const char *name=btp_party_name(&s->party,technician);n=strlen(name);memcpy(message,name,n);
-            service_literal(r,message,&n,298);
-            if (!v->notice) { memcpy(message+n,name,strlen(name));n+=strlen(name); }
-            service_literal(r,message,&n,v->notice ? 300u : 299u);
-            /* The source replaces the final X with the inspected model. */
-            if (n>=2) n-=2;
-            unsigned at=btp_combat_target(&s->combat,v->unit);char model[16]="'Mech";
-            if (at<s->combat.count) { memcpy(model,s->combat.unit[at].record,15);model[0]=(char)v->cash;model[15]=0; }
-            size_t length=strlen(model);while (length && model[length-1]==' ') --length;
-            memcpy(message+n,model,length);n+=length;service_literal(r,message,&n,313);
-        }
-        service_literal(r,message,&n,290);
+        n=btp_salvage_text(r,s,message);
     } else if (v->phase==4) {
         unsigned at=btp_combat_target(&s->combat,v->unit),count=btp_party_count(&s->party);
         unsigned weapon=at<s->combat.count ? s->combat.unit[at].record[11] : 0;

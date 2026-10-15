@@ -1,0 +1,15 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "routine": "05AB:04F9 complete salvage loop",
+  "cases": 384,
+  "prerequisites": "Three qualified pilots on foot, three wrecks (Locust, Commando, Wasp), four technician ranks, eight damage masks, four answer masks, three RNG seeds; empty garage.",
+  "boundaries": [
+    "0000:1A13",
+    "1656:0388",
+    "1656:03F5",
+    "173D:0006",
+    "173D:0259"
+  ],
+  "comparison": "Prompt order, automatic retries, held-page text hashes, full recovered/party records, remaining wrecks and RNG; no instruction patches."
+}

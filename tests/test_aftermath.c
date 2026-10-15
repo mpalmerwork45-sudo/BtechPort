@@ -76,6 +76,58 @@ int main(int argc,char **argv) {
     btp_aftermath_input(&s,r,BTP_ACCEPT);CHECK(s.party.people[0][11]==7 && s.combat.unit[1].record[11]==9 && s.aftermath.phase==4 && restore(&s,r));
     btp_aftermath_input(&s,r,BTP_CANCEL);CHECK(!s.aftermath.phase && s.aftermath.unit==24 && restore(&s,r));
     CHECK(btp_dialogue_load("work/talk-data.bin",&r->dialogue,&e));
+    /* Full original salvage loops: retries happen inside one accepted offer,
+       and every held result (including the final no-wreck page) survives save. */
+    f=fopen("tests/fixtures/salvage-primary.txt","r");CHECK(f);unsigned loops=0,pages=0,attempt=0;
+    while (fgets(line,sizeof line,f)) {
+        if (line[0]=='C') {
+            unsigned id,skill,damage,answers,seed;
+            CHECK(sscanf(line+1,"%u %u %u %u %u",&id,&skill,&damage,&answers,&seed)==5);
+            setup(&s,r,0);s.combat.phase=0;s.combat.won=1;s.combat.friends=3;s.combat.count=6;
+            for (unsigned i=0;i<3;++i) s.npc.rng[i]=(uint8_t)(seed>>(8*i));
+            for (unsigned p=0;p<8;++p) {
+                const uint8_t person[17]={(uint8_t)(p<3 ? p : 255),8,9,7,0,0,0,1,1,(uint8_t)(p==1 ? skill : 0),0,9,8,3,30,80,0};
+                memcpy(s.party.people[p],person,17);
+            }
+            for (unsigned bay=0;bay<4;++bay) { memset(btp_party_mech(&s,bay),0,125);btp_party_mech(&s,bay)[0]=255;s.party.mech_types[bay]=255; }
+            s.aftermath=(BtpAftermathState){.phase=1,.applied=2};
+            const uint8_t ids[3]={12,13,15};
+            for (unsigned i=0;i<3;++i) {
+                s.combat.ids[i]=(uint8_t)(4+i);s.combat.unit[i]=(BtpCombatUnit){.infantry=1,.x=64,.y=64};
+                memcpy(s.combat.unit[i].record,s.party.people[i],17);
+                s.combat.ids[3+i]=ids[i];s.combat.unit[3+i]=(BtpCombatUnit){.x=74,.y=64};
+                uint8_t *m=s.combat.unit[3+i].record;memcpy(m,r->combat.loans[i],125);
+                s.aftermath.wrecks[ids[i]]=m[0];m[0]=255;
+                if (damage&(1u<<i)) { m[117]=3;m[118]=2;m[31]=m[32]=0; }
+            }
+            ++loops;
+        } else if (line[0]=='Q') {
+            unsigned pilot,answer;CHECK(sscanf(line+1,"%u %u",&pilot,&answer)==2);
+            CHECK(s.aftermath.phase==1 && s.aftermath.pilot==pilot && restore(&s,r));
+            btp_aftermath_input(&s,r,answer ? BTP_ACCEPT : BTP_CANCEL);attempt=0;
+        } else if (line[0]=='A') {
+            unsigned pilot,id,eligible;CHECK(sscanf(line+1,"%u %u %u",&pilot,&id,&eligible)==3);
+            CHECK(s.aftermath.phase==2 && s.aftermath.pilot==pilot && attempt<s.aftermath.attempts);
+            CHECK(s.aftermath.inspected[attempt]==id);
+            CHECK(eligible==(unsigned)(attempt+1==s.aftermath.attempts && !s.aftermath.notice));++attempt;
+        } else if (line[0]=='W') {
+            uint64_t expected;uint8_t message[1024];CHECK(sscanf(line+1,"%" SCNx64,&expected)==1);
+            CHECK(s.aftermath.phase==2 && restore(&s,r));size_t n=btp_salvage_text(r,&s,message);
+            /* Bank strings carry an ignored BLD delimiter absent from the
+               original far-string calls observed by the numeric harness. */
+            size_t raw_n=0;for (size_t i=0;i<n;++i) if (message[i]!=1) message[raw_n++]=message[i];n=raw_n;
+            if (hash(message,n)!=expected) fprintf(stderr,"Salvage loop %u text: %.*s\n",loops,(int)n,(char *)message);
+            CHECK(hash(message,n)==expected);++pages;btp_aftermath_input(&s,r,BTP_ACCEPT);
+        } else if (line[0]=='Z') {
+            unsigned expected_rng,mask;uint64_t people,mechs;uint8_t records[500];
+            CHECK(sscanf(line+1,"%u %" SCNx64 " %" SCNx64 " %u",&expected_rng,&people,&mechs,&mask)==4);
+            for (unsigned i=0;i<4;++i) memcpy(records+125*i,btp_party_mech(&s,i),125);
+            unsigned left=0;for (unsigned i=0;i<16;++i) if (s.aftermath.wrecks[i]) left|=1u<<i;
+            CHECK(!s.aftermath.phase && rng(&s)==expected_rng && left==mask);
+            CHECK(hash(s.party.people[0],8*17)==people && hash(records,sizeof records)==mechs);
+        } else CHECK(0);
+    }
+    fclose(f);CHECK(loops==384 && pages==552);
     uint8_t raw[BTP_ORIGINAL_BYTES];f=fopen("Original DOS/GAME3","rb");CHECK(f && fread(raw,1,sizeof raw,f)==sizeof raw && !fclose(f));
     f=fopen("tests/fixtures/aftermath-ui-primary.txt","r");CHECK(f);unsigned screens=0;uint32_t frame[BTP_PIXELS];
     while (fgets(line,sizeof line,f)) {
@@ -91,5 +143,5 @@ int main(int argc,char **argv) {
         CHECK(panel(frame)==expected);++screens;
     }
     fclose(f);CHECK(screens==6);
-    free(r);printf("PASS: %u checks; %u primary aftermath cases, %u original panels, saved salvage and crew survival/loss\n",checks,cases,screens);return 0;
+    free(r);printf("PASS: %u checks; %u primary aftermath cases, %u original panels, %u full salvage loops/%u held pages and saved crew survival/loss\n",checks,cases,screens,loops,pages);return 0;
 }

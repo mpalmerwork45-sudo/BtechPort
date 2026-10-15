@@ -349,10 +349,37 @@ static void pockets(BtpState *s)
 static void next_pilot(BtpState *s)
 {
     BtpAftermathState *v=&s->aftermath;
+    v->attempts=0;memset(v->inspected,0,sizeof v->inspected);memset(v->models,0,sizeof v->models);
     for (unsigned i=v->pilot+1u;i<8;++i) if (s->party.people[i][0]!=255 && s->party.people[i][8] && s->party.people[i][12]>=8) {
         v->pilot=(uint8_t)i;v->phase=1;v->selected=0;return;
     }
     v->pilot=8;pockets(s);
+}
+static unsigned salvage_left(const BtpAftermathState *v)
+{
+    unsigned count=0;for (unsigned i=0;i<16;++i) count+=v->wrecks[i]!=0;return count;
+}
+static void salvage_attempts(BtpState *s)
+{
+    BtpAftermathState *v=&s->aftermath;
+    /* The original takes two random draws per inspected wreck. A failed
+       inspection immediately repeats for the same pilot, without a key wait
+       or another Yes/No. The accumulated results share one held text page. */
+    do {
+        if (!salvage_left(v)) { v->phase=2;v->notice=2;return; }
+        unsigned id=btp_rng_next(s->npc.rng)&3u;id+=12u*(btp_rng_next(s->npc.rng)&1u);
+        while (!v->wrecks[id]) id=(id+1u)&15u;
+        unsigned kind=v->wrecks[id];v->wrecks[id]=0;v->unit=(uint8_t)id;v->cash=(uint16_t)kind;
+        if (v->attempts<16) { v->inspected[v->attempts]=(uint8_t)id;v->models[v->attempts++]=(uint8_t)kind; }
+        unsigned at=btp_combat_target(&s->combat,id),skill=0,slot=0;
+        for (unsigned i=0;i<8;++i) if (s->party.people[i][0]!=255 && s->party.people[i][9]>skill) skill=s->party.people[i][9];
+        while (slot<4 && btp_party_mech(s,slot)[0]!=255) ++slot;
+        v->phase=2;v->notice=1;
+        if (at<s->combat.count && kind!=128 && btp_salvage_eligible(s->combat.unit[at].record,skill)) {
+            if (slot<4) btp_salvage_copy(s,slot,v->pilot,s->combat.unit[at].record,kind);
+            v->notice=0;return;
+        }
+    } while (salvage_left(v));
 }
 static void next_weapon(BtpState *s)
 {
@@ -388,16 +415,15 @@ void btp_aftermath_input(BtpState *s,const BtpResources *r,BtpAction a)
     if (v->phase==9) { s->credits+=v->cash;v->cash=0;v->phase=0;return; }
     if (v->phase==1) {
         if (v->selected || a==BTP_CANCEL) { next_pilot(s);return; }
-        unsigned id=btp_rng_next(s->npc.rng)&3u;id+=12u*(btp_rng_next(s->npc.rng)&1u);unsigned found=24;
-        for (unsigned i=0;i<16;++i) if (v->wrecks[(id+i)&15u] && ((id+i)&15u)<16) { found=(id+i)&15u;break; }
-        if (found==24) { v->phase=2;v->notice=2;return; }
-        unsigned kind=v->wrecks[found];v->wrecks[found]=0;v->unit=(uint8_t)found;v->cash=(uint16_t)kind;
-        unsigned at=btp_combat_target(&s->combat,found),skill=0,slot=0;
-        for (unsigned i=0;i<8;++i) if (s->party.people[i][0]!=255 && s->party.people[i][9]>skill) skill=s->party.people[i][9];
-        while (slot<4 && btp_party_mech(s,slot)[0]!=255) ++slot;
-        if (at>=s->combat.count || kind==128 || slot==4 || !btp_salvage_eligible(s->combat.unit[at].record,skill)) { v->phase=2;v->notice=1;return; }
-        btp_salvage_copy(s,slot,v->pilot,s->combat.unit[at].record,kind);v->phase=2;v->notice=0;
-    } else if (v->phase==2) next_pilot(s);
+        salvage_attempts(s);
+    } else if (v->phase==2) {
+        if (v->notice==2) { v->pilot=8;pockets(s); }
+        else if (!salvage_left(v)) v->notice=2;
+        /* Older saves may hold the former per-wreck failure page. Resume
+           this pilot's search, preserving the already consumed RNG draws. */
+        else if (v->notice==1) salvage_attempts(s);
+        else next_pilot(s);
+    }
     else if (v->phase==3) { if (v->notice) next_weapon(s);else v->phase=0; }
     else if (v->phase==4) {
         unsigned p=btp_party_count(&s->party)==1 ? 0u : btp_party_slot(&s->party,v->selected);
@@ -416,7 +442,15 @@ int btp_aftermath_valid(const BtpState *s)
 {
     const BtpAftermathState *v=&s->aftermath;
     if (v->eject>15 || v->phase>11 || v->selected>8 || v->pilot>8 || v->unit>24 || v->notice>2 || v->applied>4 ||
-        (v->phase!=9 && v->cash>144)) return 0;
+        v->attempts>16 || (v->phase!=9 && v->cash>144)) return 0;
+    unsigned inspected=0;
+    for (unsigned i=0;i<16;++i) {
+        if (i>=v->attempts) { if (v->inspected[i] || v->models[i]) return 0; }
+        else {
+            if (v->inspected[i]>=16 || !v->models[i] || v->models[i]>128 || (inspected&(1u<<v->inspected[i]))) return 0;
+            inspected|=1u<<v->inspected[i];
+        }
+    }
     if (v->phase==11 && (s->campaign.encounter!=4 || s->story_flags[35] || v->applied!=1)) return 0;
     if ((v->eject || v->phase || v->applied) && !s->campaign.encounter) return 0;
     if (v->phase && (s->mode!=BTP_ENCOUNTER || s->combat.phase || !v->applied)) return 0;

@@ -1,4 +1,4 @@
-# Project status — bounded M4 acceptance, 2026-10-14
+# Project status — bounded M4 acceptance, 2026-10-15
 
 The independent C11/SDL2 port has playable implementations of the authorized
 M4a–M4e increments and the subsequent building, theft, encounter, recruitment and
@@ -9,6 +9,7 @@ reproduction of every original campaign branch remains unfinished.
 
 See [M4 evidence](M4_PROGRESS.md), [follow-up evidence](M4_FOLLOWUPS_EVIDENCE.md)
 and [current fidelity work](M4_FIDELITY_EVIDENCE.md)
+and the [five-area acceptance sweep](M4_ACCEPTANCE_SWEEP.md)
 for original routines, explicit prerequisites and confidence limits. README
 credits the reverse-engineering contributors.
 Reference directories are immutable; original assets and emulator RAM stay in
@@ -117,8 +118,10 @@ as original behavior. Twenty-five bounded original placement observations record
 that distinction. If no candidate can be placed, exploration continues. Existing
 saved fights retain their already placed units; arena/story fights are separate.
 
-Internal saves are **BTPa/v36**, with a 20,480-byte payload inside the BTS1
+Internal saves are **BTPb/v37**, with a 20,480-byte payload inside the BTS1
 length/CRC envelope. The discovery marker and held spy confrontation are saved.
+Salvage inspection history now persists too; 384 complete original salvage
+loops verify automatic retries, result text and the final no-wreck page.
 Current local caches are BTTA/v22, BTCB/v11 and BTW3; the world seed is the
 original startup value `0x020304`, rather than the former research seed.
 Older saves migrate their represented fields; absent direction/exploration

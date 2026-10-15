@@ -565,7 +565,7 @@ static uint16_t get16(const uint8_t *p) { return (uint16_t)(p[0] | (uint16_t)p[1
 void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
 {
     memset(b, 0, BTP_STATE_BYTES);
-    memcpy(b, "BTPa", 4); b[4] = 36;
+    memcpy(b, "BTPb", 4); b[4] = 37;
     for (unsigned i = 0; i < 4; ++i) b[8+i] = (uint8_t)(s->tick >> (8 * i));
     b[12] = (uint8_t)s->x_half; b[13] = (uint8_t)(s->x_half >> 8);
     b[14] = (uint8_t)s->y_half; b[15] = (uint8_t)(s->y_half >> 8);
@@ -687,6 +687,7 @@ void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
     put16(b+15659,s->aftermath.eject);b[15661]=s->aftermath.phase;b[15662]=s->aftermath.selected;
     b[15663]=s->aftermath.pilot;b[15664]=s->aftermath.unit;b[15665]=s->aftermath.notice;b[15666]=s->aftermath.applied;
     put16(b+15667,s->aftermath.cash);memcpy(b+15669,s->aftermath.wrecks,24);
+    b[15702]=s->aftermath.attempts;memcpy(b+15703,s->aftermath.inspected,16);memcpy(b+15719,s->aftermath.models,16);
     memcpy(b+15693,s->script.choices+31,6);b[15699]=s->script.has_name;b[15700]=s->script.name_after;b[15701]=s->script.name_id;memcpy(b+16384,s->explored,sizeof s->explored);
     b[18432]=s->menu.from_intro;
     b[18433]=s->menu.from_story;
@@ -739,7 +740,8 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         n == BTP_STATE_BYTES && !memcmp(b,"BTPX",4) && b[4]==33 ? 33 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPY",4) && b[4]==34 ? 34 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPZ",4) && b[4]==35 ? 35 :
-        n == BTP_STATE_BYTES && !memcmp(b,"BTPa",4) && b[4]==36 ? 36 : 0;
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPa",4) && b[4]==36 ? 36 :
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPb",4) && b[4]==37 ? 37 : 0;
     if (!version) return 0;
     if (version>=18 && version<35 && b[10233]) return 0; /* v35 weapon-window presentation bits. */
     for (unsigned i = 5; i < 8; ++i) if (b[i]) return 0;
@@ -781,12 +783,15 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
     if (result.spy_discovered>1) return 0;
     if (version>=25) {
         memcpy(result.explored,b+16384,sizeof result.explored);
-        for (unsigned i=15702;i<16384;++i) if (b[i]) return 0;
+        for (unsigned i=version>=37 ? 15735u : 15702u;i<16384;++i) if (b[i]) return 0;
     }
     if (version>=22) {
         memcpy(result.audio.sounds+24,b+15414,24);memcpy(result.effects.shots+7,b+15438,17*sizeof result.effects.shots[0]);
         result.aftermath=(BtpAftermathState){.eject=get16(b+15659),.phase=b[15661],.selected=b[15662],.pilot=b[15663],.unit=b[15664],.notice=b[15665],.applied=b[15666],.cash=get16(b+15667)};
         memcpy(result.aftermath.wrecks,b+15669,24);
+        if (version>=37) {
+            result.aftermath.attempts=b[15702];memcpy(result.aftermath.inspected,b+15703,16);memcpy(result.aftermath.models,b+15719,16);
+        }
     }
     result.menu=(BtpMenuState){.steps=1,.sound=1,.speed=2,.outtakes=0};
     if (version>=19) {

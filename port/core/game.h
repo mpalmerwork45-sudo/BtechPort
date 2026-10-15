@@ -89,6 +89,9 @@ typedef struct { uint8_t count,kinds[24]; } BtpPresentationState;
 typedef struct {
     uint16_t eject,cash;
     uint8_t phase,selected,pilot,unit,notice,applied,wrecks[24];
+    /* 05AB:04F9 appends failed inspections until this pilot succeeds or
+       exhausts the wrecks. Keep the visible sequence across native saves. */
+    uint8_t attempts,inspected[16],models[16];
 } BtpAftermathState;
 enum { BTP_ORIGINAL_BYTES=3913 };
 typedef struct { uint8_t valid,bytes[BTP_ORIGINAL_BYTES]; } BtpOriginalState;
