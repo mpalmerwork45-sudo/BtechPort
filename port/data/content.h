@@ -4,7 +4,8 @@
 
 typedef enum {
     BTP_CONTENT_NONE,
-    BTP_CONTENT_ORIGINAL_DOS_103
+    BTP_CONTENT_ORIGINAL_DOS_103,
+    BTP_CONTENT_UPDATED
 } BtpContentProfile;
 
 /* Paths are borrowed only while loading. Keep original cache inputs explicit:
@@ -26,4 +27,6 @@ typedef struct {
 int btp_content_load_original(BtpContent *content,
     const BtpOriginalContentPaths *paths, BtpError *error);
 void btp_content_close(BtpContent *content);
+int btp_content_select(BtpContent *content,BtpContentProfile profile,
+    const char *roster_path,BtpError *error);
 #endif

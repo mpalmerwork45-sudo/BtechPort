@@ -3,6 +3,9 @@
 #include "core/game.h"
 enum { BTP_SCREEN_W = 320, BTP_SCREEN_H = 200 };
 extern const uint32_t btp_palette[16]; /* opaque ARGB */
+/* Application setup precedes the original logo and never advances the game. */
+void btp_startup_screen(const BtpResources *resources,unsigned selected,
+    const char *error,uint32_t frame[BTP_PIXELS]);
 int btp_draw_sprite(const BtpGraphic *atlas, unsigned id, int x, int y,
                     unsigned hidden_rows, int clip_left, uint32_t frame[BTP_PIXELS]);
 void btp_sprite_preview(const BtpResources *resources, unsigned tick, uint32_t frame[BTP_PIXELS]);

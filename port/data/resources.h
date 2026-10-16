@@ -3,6 +3,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include "core/combat_rules.h"
+#include "data/roster.h"
 
 /* Stored MTPs remain at most 64x64. The transient invasion battle includes
    surrounding generated terrain so a waypoint can cross every town edge. */
@@ -56,6 +57,7 @@ typedef struct {
     BtpAnm animations[BTP_ANM_COUNT];
     BtpCombatData combat;
     BtpWorldData world;
+    BtpRoster roster; /* Empty in Original; immutable for a running session. */
 } BtpResources;
 
 int btp_map_decode(const uint8_t *bytes, size_t length, BtpMap *map, BtpError *error);

@@ -1,4 +1,5 @@
 #include "data/unit_data.h"
+#include "data/roster.h"
 #include <string.h>
 
 const uint8_t *btp_mech_template(const BtpCombatData *d, BtpMechTemplate kind, unsigned index)
@@ -33,6 +34,12 @@ unsigned btp_mech_sprite_base(unsigned tag,int enemy)
     /* DS:140E gives enemy Jenner/UrbanMech atlas base 0. The owned-vehicle
        dispatcher at 14D3:0E54 instead uses 146 for every non-Locust tag. */
     return tag=='L' || (enemy && (tag=='J' || tag=='U' || tag=='s')) ? 0u : 146u;
+}
+unsigned btp_mech_record_sprite(const uint8_t m[125],int enemy)
+{
+    /* Custom records carry an explicit presentation family. Their name's
+       first letter must not select a Locust, Stinger or infantry animation. */
+    return btp_roster_custom(m) ? (m[124]&1u ? 146u : 0u) : btp_mech_sprite_base(m[0],enemy);
 }
 
 unsigned btp_mech_refit_index(const uint8_t m[125])

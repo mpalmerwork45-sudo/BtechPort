@@ -22,6 +22,7 @@ BtpWeaponDefinition btp_weapon_definition(const BtpCombatData *data, unsigned in
 unsigned btp_mech_walk_points(const uint8_t record[125]);
 unsigned btp_mech_jump_points(const uint8_t record[125]);
 unsigned btp_mech_sprite_base(unsigned tag, int enemy);
+unsigned btp_mech_record_sprite(const uint8_t record[125],int enemy);
 unsigned btp_mech_refit_index(const uint8_t record[125]); /* 8 means no model recipe. */
 unsigned btp_mech_refit_price(const BtpCombatData *data, unsigned recipe);
 int btp_mech_apply_refit(const BtpCombatData *data, uint8_t record[125], unsigned recipe);

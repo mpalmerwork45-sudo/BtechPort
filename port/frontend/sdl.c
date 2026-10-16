@@ -70,6 +70,44 @@ static BtpAction key_action(SDL_Keycode key, int moving)
         default: return BTP_IDLE;
     }
 }
+static int startup(SDL_Window *window,SDL_Renderer *renderer,SDL_Texture *texture,
+    uint32_t *frame,BtpOptions *o,BtpContent *content,unsigned *credits,SDL_Keycode *accepted)
+{
+    unsigned selected=0,cheat=0;BtpError error={0};
+    SDL_SetWindowTitle(window,"BtechPort - Select game edition");
+    for (;;) {
+        btp_startup_screen(content->resources,selected,error.text,frame);
+        if (SDL_UpdateTexture(texture,NULL,frame,320*(int)sizeof *frame) ||
+            SDL_RenderClear(renderer) || SDL_RenderCopy(renderer,texture,NULL,NULL)) return -1;
+        SDL_RenderPresent(renderer);
+        SDL_Event event;
+        if (!SDL_WaitEventTimeout(&event,32)) continue;
+        if (event.type==SDL_QUIT) return 0;
+        if (event.type==SDL_KEYUP && (event.key.keysym.sym==SDLK_LSHIFT || event.key.keysym.sym==SDLK_RSHIFT)) cheat=0;
+        if (event.type!=SDL_KEYDOWN || event.key.repeat) continue;
+        SDL_Keycode key=navigation_key(event.key.keysym.sym,event.key.keysym.mod);
+        if (key==SDLK_ESCAPE && (event.key.keysym.mod&KMOD_CTRL) && (event.key.keysym.mod&KMOD_SHIFT)) return 0;
+        if ((event.key.keysym.mod&KMOD_SHIFT) && (key==SDLK_k || key==SDLK_y || key==SDLK_r)) {
+            const SDL_Keycode sequence[]={SDLK_k,SDLK_y,SDLK_r};
+            cheat=key==sequence[cheat] ? cheat+1u : key==SDLK_k ? 1u : 0u;
+            if (cheat==3) { cheat=0;if (*credits<1000) ++*credits; }
+            continue;
+        }
+        cheat=0;
+        if (key==SDLK_UP || key==SDLK_DOWN || key==SDLK_LEFT || key==SDLK_RIGHT) selected^=1u;
+        else if (key==SDLK_ESCAPE || key==SDLK_BACKSPACE) selected=0;
+        else if (key==SDLK_1 || key==SDLK_KP_1 || key==SDLK_2 || key==SDLK_KP_2 ||
+            key==SDLK_RETURN || key==SDLK_KP_ENTER || key==SDLK_SPACE) {
+            if (key==SDLK_1 || key==SDLK_KP_1) selected=0;
+            if (key==SDLK_2 || key==SDLK_KP_2) selected=1;
+            BtpContentProfile profile=selected ? BTP_CONTENT_UPDATED : BTP_CONTENT_ORIGINAL_DOS_103;
+            if (!btp_content_select(content,profile,o->roster,&error)) { fprintf(stderr,"%s\n",error.text);continue; }
+            o->edition=profile;*accepted=key;
+            SDL_SetWindowTitle(window,selected ? "BtechPort - Updated BTECH CHI" : "BtechPort - Original BTECH CHI");
+            return 1;
+        }
+    }
+}
 int main(int argc, char **argv)
 {
     BtpOptions o;
@@ -103,12 +141,26 @@ int main(int argc, char **argv)
     FILE *record = NULL;
     FILE *arrival = NULL;
     SDL_AudioDeviceID audio=0;
-    if (!o.mute && !SDL_InitSubSystem(SDL_INIT_AUDIO)) {
+    int play=1;unsigned startup_credits=0;SDL_Keycode startup_key=0;
+    if (!texture || SDL_RenderSetLogicalSize(renderer, 320, 200)) goto sdl_done;
+    /* Explicit checkpoints/replays retain their old entry points. An ordinary
+       launch chooses its content before either logo or a single audio tick. */
+    if (!o.edition && !o.load && !o.replay && !o.smoke && !o.sprite_preview && !o.world_overview &&
+        !o.conversation_checkpoint && !o.shop_talk_checkpoint && !o.title_preview && !o.intro_preview) {
+        play=startup(window,renderer,texture,frame,&o,&content,&startup_credits,&startup_key);
+        if (play<0) goto sdl_done;
+    }
+    const char *edition_title=r->roster.count ? "BtechPort - Updated BTECH CHI" : "BtechPort - Original BTECH CHI";
+    if (play) SDL_SetWindowTitle(window,edition_title);
+    if (play && !o.mute && !SDL_InitSubSystem(SDL_INIT_AUDIO)) {
         SDL_AudioSpec spec={.freq=BTP_AUDIO_RATE,.format=AUDIO_S16SYS,.channels=1,.samples=512};
         audio=SDL_OpenAudioDevice(NULL,0,&spec,NULL,0);if (audio) SDL_PauseAudioDevice(audio,0);
     }
-    if (!texture || SDL_RenderSetLogicalSize(renderer, 320, 200)) goto sdl_done;
     if (o.record) { record = fopen(o.record, "w"); if (!record) goto sdl_done; }
+    for (unsigned i=0;play && i<startup_credits;++i) {
+        btp_game_tick(&state,r,BTP_CREDIT_10000);
+        if (record && fprintf(record,"credit-10000\n")<0) goto sdl_done;
+    }
     if (o.smoke >= 5) { arrival = fopen(o.replay,"r"); if (!arrival) goto sdl_done; }
     BtpAction queue[256]; unsigned read = 0, write = 0;
     unsigned held = 0, last_arrow_write = 0, cheat_step=0;
@@ -117,7 +169,7 @@ int main(int argc, char **argv)
     uint64_t audio_samples=0,audio_nonzero=0;unsigned audio_peak_bytes=0;
     unsigned smoke_sent = 0, tail_sent = 0;
     int arrival_done = 0;
-    int running = 1, io_failed = 0;
+    int running = play, io_failed = 0;
     const char *notice = NULL;
     uint64_t notice_until = 0;
     if (o.smoke && o.smoke < 5) {
@@ -186,6 +238,7 @@ int main(int argc, char **argv)
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) running = 0;
             if (event.type == SDL_KEYUP) {
+                if (navigation_key(event.key.keysym.sym,event.key.keysym.mod)==startup_key) startup_key=0;
                 held &= ~arrow_bit(navigation_key(event.key.keysym.sym,event.key.keysym.mod));
                 if (event.key.keysym.sym==SDLK_LSHIFT || event.key.keysym.sym==SDLK_RSHIFT) cheat_step=0;
             }
@@ -193,6 +246,9 @@ int main(int argc, char **argv)
                 !movement_mode(&state)) held = 0;
             if (event.type == SDL_KEYDOWN) {
                 SDL_Keycode key = navigation_key(event.key.keysym.sym,event.key.keysym.mod);
+                /* Holding the setup confirmation must not also dismiss the
+                   first logo through keyboard auto-repeat. */
+                if (event.key.repeat && key==startup_key) continue;
                 if (key == SDLK_ESCAPE && (event.key.keysym.mod&KMOD_CTRL) && (event.key.keysym.mod&KMOD_SHIFT)) running = 0;
                 else if ((state.mode==BTP_ENDING || (state.mode==BTP_BUILDING && state.campaign.building==25 &&
                     state.script.status==BTP_SCRIPT_WAIT)) && key!=SDLK_LSHIFT && key!=SDLK_RSHIFT &&
@@ -222,7 +278,7 @@ int main(int argc, char **argv)
                         ok = 0;
                     } else {
                         char slot_path[4096];
-                        ok=btp_save_slot_path(o.save_file,state.menu.slot,slot_path,sizeof slot_path,&error);
+                        ok=btp_save_edition_slot_path(o.save_file,state.menu.slot,r,slot_path,sizeof slot_path,&error);
                         if (ok) ok = saving ? btp_save_write(slot_path,&state,r,&error) :
                             btp_save_load(slot_path,&state,r,&error);
                         if (!ok) fprintf(stderr,"%s\n",error.text);
@@ -314,7 +370,7 @@ int main(int argc, char **argv)
         }
         SDL_RenderPresent(renderer);
         if (notice && SDL_GetTicks64() >= notice_until) {
-            notice = NULL; SDL_SetWindowTitle(window,"BtechPort - Crescent Hawk's Inception");
+            notice = NULL; SDL_SetWindowTitle(window,edition_title);
         }
         if (o.debug && !notice) {
             char title[200];
@@ -354,7 +410,7 @@ int main(int argc, char **argv)
         state.weapon != 1 || state.armor != 1 || state.armor_points != 25)) {
         fputs("Native shops smoke input/state mismatch\n",stderr); result = 1;
     }
-    if (!result && o.save && !btp_save_write(o.save,&state,r,&error)) {
+    if (!result && play && o.save && !btp_save_write(o.save,&state,r,&error)) {
         fprintf(stderr,"%s\n",error.text); result = 1;
     }
     if (!result && o.export_original && !btp_original_write(o.export_original,&state,&error)) {

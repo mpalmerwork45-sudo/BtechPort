@@ -19,6 +19,7 @@
 #include "core/story.h"
 #include "core/yard.h"
 #include "core/cache.h"
+#include "core/roster_game.h"
 #include <string.h>
 
 void btp_start(BtpState *s)
@@ -257,7 +258,9 @@ static void game_tick(BtpState *s, const BtpResources *r, BtpAction a)
     }
     if (s->mode == BTP_EXPLORE) {
         if (a==BTP_OPEN_MENU || (s->story_flags[4] && a==BTP_ACCEPT)) {
-            ++s->tick;btp_menu_open(s);return;
+            ++s->tick;btp_menu_open(s);
+            if (btp_broker_available(s,r)) s->campaign.ui=BTP_MENU_UPDATED_ROOT;
+            return;
         }
         if (s->npc.fault) { ++s->tick; return; }
         BtpState moved = *s;

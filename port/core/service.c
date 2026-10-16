@@ -66,7 +66,9 @@ unsigned btp_mech_reload(BtpState *s,const BtpResources *r,unsigned slot,unsigne
             if (count++==bin) { if (m[i]&128u) return 0;w=component; }
         }
     }
-    if (w==24) cost=2;else if (w>=26 && w<=32) cost=r->combat.ammo_prices[w-26];else return 0;
+    const BtpRosterMech *definition=btp_roster_definition(&r->roster,m);
+    if (definition) cost=definition->ammo_cost[bin];
+    else if (w==24) cost=2;else if (w>=26 && w<=32) cost=r->combat.ammo_prices[w-26];else return 0;
     unsigned missing=(unsigned)m[107+bin]-m[39+bin];if (amount>missing) amount=missing;
     unsigned n=0;if (!cost) return 0;
     while (n<amount && s->credits>=cost) { s->credits-=cost;++m[39+bin];++n; }
@@ -138,7 +140,10 @@ static void ammo_next(BtpState *s,const BtpResources *r,unsigned bin)
         unsigned w=btp_service_ammo_weapon(s,v->mech,bin);
         /* The signed original descriptor tests exclude a broken weapon and
            energy weapons; there is no eleven-bin selection menu. */
-        if (w!=24 && (w<26 || w>32)) continue;
+        const BtpRosterMech *definition=btp_roster_definition(&r->roster,m);
+        /* Updated stock includes ballistic ammunition. Original service
+           eligibility and prices remain the executable-derived branch. */
+        if (definition ? (w>=128 || !definition->ammo_cost[bin]) : (w!=24 && (w<26 || w>32))) continue;
         v->item=(uint8_t)bin;v->selected=0;v->quote_credits=s->credits;
         v->amount=(uint16_t)(m[107+bin]>=m[39+bin] ? m[107+bin]-m[39+bin] : 0);
         memset(v->input,0,sizeof v->input);v->input[0]='0';v->kind=1;
@@ -342,7 +347,7 @@ void btp_service_input(BtpState *s,const BtpResources *r,BtpAction a)
         if (slot>=4 || s->party.mech_types[slot]==255) return;
         v->mech=(uint8_t)slot;v->selected=0;
         if (v->action==19) {
-            uint8_t *m=btp_party_mech(s,v->mech);s->story_flags[18]=(uint8_t)(m[124]!=3);
+            uint8_t *m=btp_party_mech(s,v->mech);s->story_flags[18]=(uint8_t)(!btp_roster_custom(m) && m[124]!=3);
             s->story_flags[17]=(uint8_t)btp_mech_refit_index(m);
             s->party.giver=v->mech;finish(s,r);return;
         }

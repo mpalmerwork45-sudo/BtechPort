@@ -88,7 +88,7 @@ void btp_effects_shot(BtpState *s,unsigned actor,unsigned target,unsigned weapon
     if (v->count>=24) return; /* At most one shot per unit in a microstep. */
     const BtpCombatUnit *a=&c->unit[actor],*t=&c->unit[target];
     unsigned friends=c->friends ? c->friends : 1u;
-    unsigned alt=!a->infantry && btp_mech_sprite_base(a->record[0],actor>=friends)!=0;
+    unsigned alt=!a->infantry && btp_mech_record_sprite(a->record,actor>=friends)!=0;
     unsigned group=a->infantry ? 4u+weapon : (weapon==32 ? 2u : 0u)+alt;
     unsigned direction=btp_combat_direction(a->x,a->y,t->x,t->y);
     if (direction>7) direction=a->direction;
@@ -96,7 +96,7 @@ void btp_effects_shot(BtpState *s,unsigned actor,unsigned target,unsigned weapon
     v->shots[v->count++]=(BtpCombatEffect){(uint8_t)actor,(uint8_t)target,(uint8_t)group,
         (uint8_t)direction,(uint8_t)weapon,c->shot.hit,c->shot.destroyed,a->x,a->y,t->x,t->y,
         (uint8_t)(a->infantry ? 254 : alt ? 146 : 0),
-        (uint8_t)(t->infantry ? 254 : t->record[0]=='s' ? 16 : btp_mech_sprite_base(t->record[0],target>=friends))};
+        (uint8_t)(t->infantry ? 254 : t->record[0]=='s' ? 16 : btp_mech_record_sprite(t->record,target>=friends))};
 }
 void btp_effects_crush(BtpState *s,unsigned actor,unsigned target)
 {
@@ -105,7 +105,7 @@ void btp_effects_crush(BtpState *s,unsigned actor,unsigned target)
     BtpCombatState *c=&s->combat;BtpEffectsState *v=&s->effects;
     if (v->count>=24) return;
     const BtpCombatUnit *a=&c->unit[actor],*t=&c->unit[target];
-    unsigned alt=btp_mech_sprite_base(a->record[0],actor>=(c->friends ? c->friends : 1u))!=0;
+    unsigned alt=btp_mech_record_sprite(a->record,actor>=(c->friends ? c->friends : 1u))!=0;
     v->text[v->count]=report(s,actor,target,33);
     v->text[v->count].hit=1;v->text[v->count].location=v->text[v->count].criticals=0;
     v->text[v->count].dead=1;

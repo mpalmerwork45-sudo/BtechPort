@@ -1,6 +1,7 @@
 /* Original-mode state codec. Keep field order, migrations and validation
    independent of the game loop; these bytes remain the BTPe/v40 contract.
-   Content ownership and future package identity do not enter this format. */
+   Package identity stays in the outer save envelope. The optional v41
+   projection adds broker UI states without changing Original's encoder. */
 #include "core/game.h"
 #include "core/talk.h"
 #include "core/npc.h"
@@ -217,7 +218,8 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         n == BTP_STATE_BYTES && !memcmp(b,"BTPb",4) && b[4]==37 ? 37 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPc",4) && b[4]==38 ? 38 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPd",4) && b[4]==39 ? 39 :
-        n == BTP_STATE_BYTES && !memcmp(b,"BTPe",4) && b[4]==40 ? 40 : 0;
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPe",4) && b[4]==40 ? 40 :
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPf",4) && b[4]==41 ? 41 : 0;
     if (!version) return 0;
     if (version>=18 && version<38 && b[10232]) return 0; /* v38 critical report count. */
     if (version>=18 && version<35 && b[10233]) return 0; /* v35 weapon-window presentation bits. */
@@ -333,7 +335,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         if (result.campaign.invasion>1 || result.campaign.owned>1 || result.campaign.checkpoint_owned>1 ||
             result.campaign.world_x>2047 || result.campaign.world_y>2047 || result.campaign.building>=26 ||
             result.campaign.world_clock>=BTP_OUTDOOR_PERIOD || result.campaign.encounter>(version>=29 ? 4u : 2u) || result.campaign.mounted>result.campaign.owned ||
-            result.campaign.mech_walk>15 || result.campaign.mech_direction>7 || result.campaign.ui>(version>=30 ? BTP_MENU_MECH_PICK : version>=25 ? BTP_MENU_MECH : version>=23 ? BTP_MENU_RECIPIENT : version>=19 ? BTP_MENU_QUIT : 6) ||
+            result.campaign.mech_walk>15 || result.campaign.mech_direction>7 || result.campaign.ui>(version>=41 ? BTP_MENU_BROKER_RESULT : version>=30 ? BTP_MENU_MECH_PICK : version>=25 ? BTP_MENU_MECH : version>=23 ? BTP_MENU_RECIPIENT : version>=19 ? BTP_MENU_QUIT : 6) ||
             result.campaign.selected>(version>=23 ? 8u : 7u) || result.campaign.member>7 || result.campaign.mech_x>2047 || result.campaign.mech_y>2047) return 0;
     }
     if (version>=16) {

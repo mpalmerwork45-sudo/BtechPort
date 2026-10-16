@@ -14,6 +14,7 @@
 #include "core/cache.h"
 #include "core/yard.h"
 #include "core/spy.h"
+#include "core/roster_game.h"
 #include "data/anm.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -115,6 +116,25 @@ static void rectangle(uint32_t *f, int x, int y, int w, int h, unsigned color)
     for (int row = y; row < y + h; ++row)
         for (int col = x; col < x + w; ++col) pixel(f, col, row, btp_palette[color]);
 }
+void btp_startup_screen(const BtpResources *r,unsigned selected,const char *error,uint32_t f[BTP_PIXELS])
+{
+    /* A new DOS-style setup page, using the supplied game's font. It is an
+       edition selector, not an emulation of obsolete video/disk hardware. */
+    rectangle(f,0,0,320,200,0);
+    text(r,f,8,16,"BattleTech",15);
+    text(r,f,8,32,"The Crescent Hawk's Inception",7);
+    text(r,f,8,56,"Select game edition:",15);
+    const char *const choices[]={"1. Original BTECH CHI","2. Updated BTECH CHI"};
+    for (unsigned i=0;i<2;++i) {
+        int y=80+(int)i*16;
+        if (i==selected) rectangle(f,8,y,304,8,7);
+        text(r,f,16,y,choices[i],i==selected ? 0u : 7u);
+    }
+    text(r,f,8,120,selected ? "Expanded mech roster." : "Original campaign and mech lineup.",7);
+    text(r,f,8,136,"Each edition keeps its own saves.",7);
+    text(r,f,8,160,"Arrows choose. Enter or Space starts.",15);
+    text(r,f,8,176,error && *error ? "Cannot start. See terminal details." : "You can also press 1 or 2.",error && *error ? 12u : 7u);
+}
 /* BTBORDER.CMP: nine 8x8 cells across its first eight scanlines.
    Original VGA snapshots establish the 13-column left frame, row-12 divider,
    and 27-column dialogue frame. The map viewport itself is unframed. */
@@ -201,6 +221,10 @@ void btp_mech_screen(const BtpResources *r,const uint8_t m[125],const char *pilo
     if (label) (void)wrapped_at(r,f,0,0,16,label,n,15);
     char name[9],weight[4];memcpy(name,m,8);name[8]=0;snprintf(weight,sizeof weight,"%u",m[16]);
     text(r,f,48,0,name,14);text(r,f,48,8,weight,14);
+    if (btp_roster_custom(m)) {
+        char model[16];memcpy(model,m,15);model[15]=0;
+        rectangle(f,0,0,128,8,0);text(r,f,0,0,model,14);
+    }
     if (pilot) {
         text(r,f,48,16,pilot,14);
         label=bank_literal(r,114,&n);text(r,f,48,24,rider ? rider : label ? (const char *)label : "None",14);
@@ -1171,6 +1195,8 @@ static void mechit_panel(const BtpResources *r,const BtpState *s,uint32_t *f)
     if (v->outcome==1) { service_literal(r,message,&n,256);(void)service_wrap(r,f,8,message,n);return; }
     service_literal(r,message,&n,257);service_value(message,&n,v->amount,10);service_literal(r,message,&n,258);
     unsigned cost=w==24 ? 2u : w>=26 && w<=32 ? r->combat.ammo_prices[w-26] : 0u;
+    const BtpRosterMech *definition=btp_roster_definition(&r->roster,btp_party_mech((BtpState *)s,v->mech));
+    if (definition && v->item<10) cost=definition->ammo_cost[v->item];
     service_value(message,&n,cost,10);service_literal(r,message,&n,259);
     /* The original editor is an inline green field, following the question. */
     message[n++]=6;message[n++]=2;length=strlen(v->input);memcpy(message+n,v->input,length);n+=length;
@@ -1545,7 +1571,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
             }
             unsigned friends=s->combat.friends ? s->combat.friends : 1u;
             unsigned base=death ? death->target_base==254 ? btp_combat_id(&s->combat,i)==4 ? 166u : 270u : death->target_base :
-                u->infantry ? s->combat.friends && i<s->combat.friends ? btp_combat_id(&s->combat,i)==4 ? 166u : 270u : 270u : btp_mech_sprite_base(u->record[0],i>=friends);
+                u->infantry ? s->combat.friends && i<s->combat.friends ? btp_combat_id(&s->combat,i)==4 ? 166u : 270u : 270u : btp_mech_record_sprite(u->record,i>=friends);
             (void)btp_draw_sprite(&r->sprites,u->record[0]=='s' || (death && death->target_base==16) ? 16u : base+s->combat.walk[i],
                 (u->infantry ? 208 : 200)+((int)(death ? death->tx : u->x)-cx)*8,
                 (u->infantry ? 96 : 80)+((int)(death ? death->ty : u->y)-cy)*8,
@@ -1555,7 +1581,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
     } else if (s->mission.phase) (void)btp_draw_sprite(&r->sprites,
         (s->story_flags[2] ? 146u : 0u)+s->mission.walk,200,64,btp_mission_terrain(s,&r->map),104,f);
     else if (s->campaign.mounted && !s->story_flags[4]) (void)btp_draw_sprite(&r->sprites,
-        ((s->party.people[0][12] ? s->party.mechs[s->party.people[0][12]-1][0] : s->campaign.mech[0])=='L' ? 0u : 146u)+s->campaign.mech_walk,200,64,0,104,f);
+        btp_mech_record_sprite(s->party.people[0][12] ? s->party.mechs[s->party.people[0][12]-1] : s->campaign.mech,0)+s->campaign.mech_walk,200,64,0,104,f);
     else if (outdoors && !s->campaign.mounted) (void)btp_draw_sprite(&r->sprites,166u+s->player_walk,208,96,
         hidden_rows(map,s->x_half,s->y_half),104,f);
     if (outdoors && !battle_display && s->story_flags[4]) {
@@ -1568,7 +1594,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
             const uint8_t *m=i ? s->party.mechs[i-1] : s->campaign.mech;
             if (m[0]==255 || !btp_party_walkable(s,r,s->party.mech_x[i],s->party.mech_y[i],1)) continue;
             unsigned pilot=m[121],walk=pilot==0 ? s->campaign.mech_walk : pilot<8 ? s->party.walk[pilot] : s->campaign.mech_walk;
-            (void)btp_draw_sprite(&r->sprites,btp_mech_sprite_base(m[0],0)+walk,
+            (void)btp_draw_sprite(&r->sprites,btp_mech_record_sprite(m,0)+walk,
                 200+8*((int)s->party.mech_x[i]-s->campaign.world_x),80+8*((int)s->party.mech_y[i]-s->campaign.world_y),0,104,f);
         }
     }
@@ -1700,7 +1726,52 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
     }
     if (s->mode==BTP_ACTIONS) {
         const BtpCampaignState *c=&s->campaign;
-        if (c->ui==BTP_MENU_ALLOCATE || c->ui==BTP_MENU_CREW || c->ui==BTP_MENU_SEAT) {
+        if (c->ui==BTP_MENU_BROKER || c->ui==BTP_MENU_BROKER_CONFIRM || c->ui==BTP_MENU_BROKER_RESULT) {
+            rectangle(f,0,0,320,200,0);border_panel(r,f,0,0,104,200,1);border_panel(r,f,104,0,216,200,0);
+            text(r,f,112,8,"Starport 'Mech broker",15);
+            snprintf(line,sizeof line,"C-bills: %u",s->credits);text(r,f,112,24,line,7);
+            unsigned id=c->ui==BTP_MENU_BROKER ? 7u*c->member+c->selected : s->menu.map_y;
+            if (c->ui==BTP_MENU_BROKER && c->selected==btp_actions_count(s)-1u) id=r->roster.count;
+            if (id<r->roster.count) {
+                const uint8_t *m=r->roster.mechs[id].record;
+                char model[16];memcpy(model,m,15);model[15]=0;
+                (void)wrapped_at(r,f,8,8,11,(const uint8_t *)model,strlen(model),15);
+                (void)btp_draw_sprite(&r->sprites,btp_mech_record_sprite(m,0),40,56,0,0,f);
+                snprintf(line,sizeof line,"%u tons",m[16]);text(r,f,8,112,line,15);
+                snprintf(line,sizeof line,"Walk: %u",m[49]);text(r,f,8,128,line,7);
+                snprintf(line,sizeof line,"Run:  %u",m[49]+(m[49]+1u)/2u);text(r,f,8,144,line,7);
+                snprintf(line,sizeof line,"Jump: %u",m[50]);text(r,f,8,160,line,7);
+            }
+            if (c->ui==BTP_MENU_BROKER) {
+                unsigned count=btp_actions_count(s);
+                for (unsigned i=0;i<count;++i) {
+                    int y=40+(int)i*16;
+                    if (i==c->selected) rectangle(f,112,y,200,8,14);
+                    unsigned color=i==c->selected ? 0u : 15u;
+                    if (i==count-1u) text(r,f,112,y,"Return to game",color);
+                    else {
+                        const BtpRosterMech *d=&r->roster.mechs[c->member*7u+i];
+                        snprintf(line,sizeof line,"%-15.15s %6u",(const char *)d->record,d->price);
+                        text(r,f,112,y,line,color);
+                    }
+                }
+                text(r,f,112,176,r->roster.count>7 ? "Left/Right: more stock." : "Enter/Space: select.",7);
+            } else if (c->ui==BTP_MENU_BROKER_CONFIRM && id<r->roster.count) {
+                snprintf(line,sizeof line,"Buy this 'Mech for %u C-bills?",r->roster.mechs[id].price);
+                int y=wrapped(r,f,48,(const uint8_t *)line,strlen(line),15)+8;
+                rectangle(f,c->selected ? 144 : 112,y,c->selected ? 16 : 24,8,14);
+                text(r,f,112,y,"Yes",c->selected ? 15u : 0u);text(r,f,144,y,"No",c->selected ? 0u : 15u);
+                const char *delivery="Delivery is outside Starport. Assign a pilot when you leave.";
+                (void)wrapped(r,f,y+24,(const uint8_t *)delivery,strlen(delivery),7);
+            } else {
+                const char *message=s->menu.notice==BTP_BROKER_BOUGHT ? "Purchased. Your 'Mech is parked outside Starport. Assign its crew when you leave." :
+                    s->menu.notice==BTP_BROKER_NO_FUNDS ? "You do not have enough C-bills." :
+                    s->menu.notice==BTP_BROKER_FULL ? "All four 'Mech places are occupied. Make room before buying another." : "The broker is unavailable here.";
+                (void)wrapped(r,f,48,(const uint8_t *)message,strlen(message),15);
+                text(r,f,112,176,"Enter/Space: continue.",7);
+            }
+            return;
+        } else if (c->ui==BTP_MENU_ALLOCATE || c->ui==BTP_MENU_CREW || c->ui==BTP_MENU_SEAT) {
             /* 0C67:0002 keeps the full allocation table on the right while
                the per-person vehicle/seat choices occupy the two left boxes. */
             rectangle(f,104,0,216,200,0);border_panel(r,f,104,0,216,200,0);
@@ -1817,7 +1888,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
             }
         } else if (c->ui!=BTP_MENU_MAP) {
             unsigned count=btp_actions_count(s);
-            int top=c->ui==BTP_MENU_ROOT ? 168-8*(int)(count+2u) : 72;
+            int top=(c->ui==BTP_MENU_ROOT || c->ui==BTP_MENU_UPDATED_ROOT) ? 168-8*(int)(count+2u) : 72;
             rectangle(f,104,top,216,8*(int)(count+2u),0);border_panel(r,f,104,top,216,8*(int)(count+2u),0);
             for (unsigned i=0;i<count;++i) {
                 int y=top+8+8*(int)i;

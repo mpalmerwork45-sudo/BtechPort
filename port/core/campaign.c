@@ -6,6 +6,7 @@
 #include "core/npc.h"
 #include "core/yard.h"
 #include "core/service.h"
+#include "core/roster_game.h"
 #include <string.h>
 static void begin(BtpState *s,const BtpResources *r,unsigned event)
 {
@@ -93,7 +94,8 @@ unsigned btp_campaign_candidates(BtpState *s,const BtpResources *r,BtpCombatUnit
            setup supplies mechs explicitly; parked ownership cannot qualify
            a random town encounter for enemy vehicles. */
         unsigned kind=btp_rng_next(s->npc.rng)%3u;
-        memcpy(candidates[count].record,btp_mech_template(&r->combat,BTP_MECH_ENCOUNTER,kind),125);ids[count++]=(uint8_t)(12+i);
+        const uint8_t *extra=btp_roster_enemy(s,r);
+        memcpy(candidates[count].record,extra ? extra : btp_mech_template(&r->combat,BTP_MECH_ENCOUNTER,kind),125);ids[count++]=(uint8_t)(12+i);
     }
     *dx_out=dx;*dy_out=dy;return count;
 }

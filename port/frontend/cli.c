@@ -13,7 +13,7 @@
 int btp_options(int argc, char **argv, BtpOptions *o)
 {
     *o = (BtpOptions){.data = "Original DOS",.dialogue_data="work/talk-data.bin",.combat_data="work/combat-data.bin",.world_data="work/world-data.bin",
-        .save_file="work/player-save.btp"};
+        .save_file="work/player-save.btp",.roster="content/updated/roster.json"};
     for (int i = 1; i < argc; ++i) {
         const char *arg = argv[i];
         if (!strcmp(arg, "--help")) {
@@ -32,6 +32,8 @@ int btp_options(int argc, char **argv, BtpOptions *o)
                  "  --sprite-preview     show original mech/human walking frames (diagnostic only)\n"
                  "  --title-preview      original title screen and PC speaker music\n"
                  "  --intro-preview      logos, title music and played-before question\n"
+                 "  --edition NAME       original or updated; bypass the startup selector\n"
+                 "  --roster FILE        updated edition's external mech definitions\n"
                  "  --mute               disable the native audio device\n"
                  "  --export-sprites FILE write original sprite crops for verification\n"
                  "  --export-tiles FILE  write 64000 decoded tile pixel indices\n"
@@ -63,6 +65,12 @@ int btp_options(int argc, char **argv, BtpOptions *o)
         else if (!strcmp(arg,"--title-preview")) o->title_preview=1;
         else if (!strcmp(arg,"--intro-preview")) o->intro_preview=1;
         else if (!strcmp(arg,"--mute")) o->mute=1;
+        else if (!strcmp(arg,"--edition")) {
+            if (++i==argc || (strcmp(argv[i],"original") && strcmp(argv[i],"updated"))) {
+                fputs("Edition must be original or updated\n",stderr); return 0;
+            }
+            o->edition=!strcmp(argv[i],"original") ? BTP_CONTENT_ORIGINAL_DOS_103 : BTP_CONTENT_UPDATED;
+        }
         else if (!strcmp(arg, "--debug")) o->debug = 1;
         else if (!strcmp(arg, "--trace")) o->trace = 1;
         else if (!strcmp(arg, "--smoke")) o->smoke = 1;
@@ -92,6 +100,7 @@ int btp_options(int argc, char **argv, BtpOptions *o)
             if (!strcmp(arg, "--export-sprites")) value = &o->sprites_output;
             if (!strcmp(arg, "--export-tiles")) value = &o->tiles_output;
             if (!strcmp(arg, "--save-file")) value = &o->save_file;
+            if (!strcmp(arg, "--roster")) value = &o->roster;
             if (!strcmp(arg, "--load")) value = &o->load;
             if (!strcmp(arg, "--save")) value = &o->save;
             if (!strcmp(arg,"--audio-report")) value=&o->audio_report;
@@ -126,7 +135,19 @@ int btp_cli_load_content(const BtpOptions *o, BtpContent *content, BtpError *err
         .directory = o->data, .dialogue = o->dialogue_data,
         .combat = o->combat_data, .world = o->world_data
     };
-    return btp_content_load_original(content, &paths, error);
+    if (!btp_content_load_original(content, &paths, error)) return 0;
+    BtpContentProfile profile=o->edition;
+    /* A supplied save identifies its edition before any state is decoded.
+       Explicit Updated plus an original save makes a separate campaign copy. */
+    if (profile==BTP_CONTENT_NONE && o->load && btp_save_is_updated(o->load)) profile=BTP_CONTENT_UPDATED;
+    if (profile==BTP_CONTENT_UPDATED && !btp_content_select(content,profile,o->roster,error)) {
+        btp_content_close(content);return 0;
+    }
+    if (profile==BTP_CONTENT_UPDATED && o->export_original) {
+        snprintf(error->text,sizeof error->text,"Updated games cannot be exported as original GAME saves");
+        btp_content_close(content);return 0;
+    }
+    return 1;
 }
 
 void btp_initial_state(const BtpOptions *o, BtpState *s, const BtpResources *r)

@@ -2,6 +2,7 @@
 #include "core/menu.h"
 #include "core/cache.h"
 #include "core/party.h"
+#include "core/roster_game.h"
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
@@ -12,7 +13,7 @@
 #include <sys/stat.h>
 #endif
 
-enum { HEADER_BYTES = 16 };
+enum { HEADER_BYTES = 16, UPDATED_HEADER_BYTES = 112 };
 static int fail(BtpError *e, const char *message)
 {
     if (e) snprintf(e->text,sizeof e->text,"%s",message);
@@ -41,6 +42,13 @@ static uint32_t checksum(const uint8_t *b, size_t n)
     }
     return ~crc;
 }
+int btp_save_is_updated(const char *path)
+{
+    if (!path) return 0;
+    FILE *f=fopen(path,"rb");if (!f) return 0;
+    char tag[4];int updated=fread(tag,1,4,f)==4 && !memcmp(tag,"BTU1",4);
+    fclose(f);return updated;
+}
 static int decode(const uint8_t *b, size_t n, BtpState *s, const BtpResources *r)
 {
     BtpState context={.map_id=n>=24 ? b[16] : 1,.entry_slot=n>=24 ? b[22] : 0};
@@ -55,12 +63,34 @@ static int decode(const uint8_t *b, size_t n, BtpState *s, const BtpResources *r
 int btp_save_write(const char *path, const BtpState *s, const BtpResources *r, BtpError *e)
 {
     if (!path || !*path || !s || !r) return fail(e,"Invalid save request");
-    uint8_t bytes[HEADER_BYTES+BTP_STATE_BYTES] = {'B','T','S','1'};
+    int updated=r->roster.count!=0;
+    size_t header=updated ? UPDATED_HEADER_BYTES : HEADER_BYTES;
+    uint8_t bytes[UPDATED_HEADER_BYTES+BTP_STATE_BYTES] = {'B','T','S','1'};
+    if (updated) {
+        memcpy(bytes,"BTU1",4);
+        memcpy(bytes+16,r->roster.package,32);memcpy(bytes+48,r->roster.version,32);
+        put32(bytes+80,r->roster.fingerprint);
+    }
     BtpState validated;
-    btp_state_encode(s,bytes+HEADER_BYTES);
-    if (!decode(bytes+HEADER_BYTES,BTP_STATE_BYTES,&validated,r))
+    btp_state_encode(s,bytes+header);
+    /* Only Updated writes v41's additional menu states. Original retains
+       the exact v40 payload and BTS1 envelope used by existing saves. */
+    if (updated) { memcpy(bytes+header,"BTPf",4);bytes[header+4]=41; }
+    if (!decode(bytes+header,BTP_STATE_BYTES,&validated,r))
         return fail(e,"Current state cannot be saved");
-    put32(bytes+4,BTP_STATE_BYTES); put32(bytes+8,checksum(bytes+HEADER_BYTES,BTP_STATE_BYTES));
+    if (!btp_roster_state_valid(s,r)) return fail(e,"Current state does not match its roster package");
+    size_t length=header+BTP_STATE_BYTES;
+    put32(bytes+4,(uint32_t)(length-HEADER_BYTES));
+    put32(bytes+8,checksum(bytes+HEADER_BYTES,length-HEADER_BYTES));
+    /* An explicit --save filename can bypass the normal slot namespace.
+       Refuse crossing editions even there, retaining the existing save. */
+    FILE *existing=fopen(path,"rb");
+    if (existing) {
+        char tag[4];size_t got=fread(tag,1,4,existing);fclose(existing);
+        if (got==4 && ((!updated && !memcmp(tag,"BTU1",4)) ||
+            (updated && (!memcmp(tag,"BTS1",4) || (unsigned char)tag[0]==12))))
+            return fail(e,"Cannot overwrite another edition's save; choose a separate filename");
+    }
     char pending[4096];
     int n = snprintf(pending,sizeof pending,"%s.tmp",path);
     if (n < 0 || (size_t)n >= sizeof pending) return fail(e,"Save path is too long");
@@ -74,7 +104,7 @@ int btp_save_write(const char *path, const BtpState *s, const BtpResources *r, B
     FILE *f = fopen(pending,"wbx");
 #endif
     if (!f) return io_fail(e,"Cannot create pending save");
-    int ok = fwrite(bytes,1,sizeof bytes,f) == sizeof bytes;
+    int ok = fwrite(bytes,1,length,f) == length;
     if (fclose(f)) ok = 0;
     if (!ok) { io_fail(e,"Cannot write save"); (void)remove(pending); return 0; }
     /* Windows rename cannot replace an existing slot. MoveFileEx performs
@@ -96,17 +126,26 @@ int btp_save_load(const char *path, BtpState *s, const BtpResources *r, BtpError
     if (!path || !*path || !s || !r) return fail(e,"Invalid load request");
     FILE *f = fopen(path,"rb");
     if (!f) return io_fail(e,"Cannot open save");
-    uint8_t bytes[HEADER_BYTES+BTP_STATE_BYTES+1];
+    uint8_t bytes[UPDATED_HEADER_BYTES+BTP_STATE_BYTES+1];
     size_t n = fread(bytes,1,sizeof bytes,f);
     int ok = !ferror(f); if (fclose(f)) ok = 0;
     if (!ok) return fail(e,"Cannot read save");
     if (n==BTP_ORIGINAL_BYTES && bytes[0]==12) return btp_original_decode(bytes,n,s,r,e);
-    if (n < HEADER_BYTES+24 || memcmp(bytes,"BTS1",4) || get32(bytes+12) ||
-        get32(bytes+4) != n-HEADER_BYTES || n > HEADER_BYTES+BTP_STATE_BYTES ||
+    int updated=n>=4 && !memcmp(bytes,"BTU1",4);
+    size_t header=updated ? UPDATED_HEADER_BYTES : HEADER_BYTES;
+    if (n < header+24 || (!updated && memcmp(bytes,"BTS1",4)) || get32(bytes+12) ||
+        get32(bytes+4) != n-HEADER_BYTES || n > header+BTP_STATE_BYTES ||
         checksum(bytes+HEADER_BYTES,n-HEADER_BYTES) != get32(bytes+8))
         return fail(e,"Save is damaged or uses an unsupported format");
+    if (updated) {
+        if (!r->roster.count) return fail(e,"This save belongs to Updated BTECH CHI");
+        if (memcmp(bytes+16,r->roster.package,32) || memcmp(bytes+48,r->roster.version,32) ||
+            get32(bytes+80)!=r->roster.fingerprint)
+            return fail(e,"Updated save requires its original roster package, version and definitions");
+        for (unsigned i=84;i<UPDATED_HEADER_BYTES;++i) if (bytes[i]) return fail(e,"Unsupported updated save metadata");
+    } else if (bytes[header+4]>40) return fail(e,"Updated state requires an edition-aware save envelope");
     BtpState loaded;
-    if (!decode(bytes+HEADER_BYTES,n-HEADER_BYTES,&loaded,r))
+    if (!decode(bytes+header,n-header,&loaded,r) || !btp_roster_state_valid(&loaded,r))
         return fail(e,"Save contains an invalid or unsupported game state");
     btp_cache_restore_party(&loaded,r);
     /* Earlier arena returns reactivated the checked-in records. Repair only
@@ -123,6 +162,24 @@ int btp_save_load(const char *path, BtpState *s, const BtpResources *r, BtpError
     if (e) e->text[0] = 0;
     return 1;
 }
+int btp_save_edition_slot_path(const char *base,unsigned slot,const BtpResources *r,
+    char *path,size_t capacity,BtpError *e)
+{
+    if (!r || !r->roster.count) return btp_save_slot_path(base,slot,path,capacity,e);
+    if (!base) return fail(e,"Invalid save slot base");
+    const char *leaf=base,*dot=NULL;
+    for (const char *p=base;*p;++p) {
+        if (*p=='/' || *p=='\\') { leaf=p+1;dot=NULL; }
+        else if (*p=='.') dot=p;
+    }
+    if (!dot || dot==leaf) dot=base+strlen(base);
+    size_t prefix=(size_t)(dot-base);
+    if (prefix>=8 && !memcmp(dot-8,"-updated",8)) return btp_save_slot_path(base,slot,path,capacity,e);
+    char named[4096];
+    if (prefix>sizeof named-10 || strlen(dot)>sizeof named-prefix-10) return fail(e,"Save path is too long");
+    memcpy(named,base,prefix);memcpy(named+prefix,"-updated",8);strcpy(named+prefix+8,dot);
+    return btp_save_slot_path(named,slot,path,capacity,e);
+}
 int btp_save_slot_path(const char *base,unsigned slot,char *path,size_t capacity,BtpError *e)
 {
     if (!base || !path || slot>5 || !capacity) return fail(e,"Invalid save slot");
@@ -135,7 +192,7 @@ int btp_save_slot_path(const char *base,unsigned slot,char *path,size_t capacity
 int btp_save_menu(BtpState *s,const BtpResources *r,const char *base,int allow_load,BtpError *e)
 {
     unsigned request=s->menu.io;if (!request) return 1;
-    char path[4096];int ok=btp_save_slot_path(base,s->menu.slot,path,sizeof path,e);
+    char path[4096];int ok=btp_save_edition_slot_path(base,s->menu.slot,r,path,sizeof path,e);
     BtpState candidate=*s;btp_menu_close(&candidate);
     if (ok && request==BTP_MENU_IO_LOAD && !allow_load) ok=fail(e,"Loading while recording is unsupported; start a new log after loading");
     if (ok) ok=request==BTP_MENU_IO_SAVE ? btp_save_write(path,&candidate,r,e) : btp_save_load(path,&candidate,r,e);

@@ -402,7 +402,7 @@ def world(env,work):
     """Real F4 map toggle, movement, F5/F9 and exact saved-clock pixels."""
     from reference_session import WindowKeys
     binary=ROOT/'build/btech-headless';slot=work/'native-area.btp';frame=work/'native-area.ppm'
-    process=subprocess.Popen([str(ROOT/'build/btech-port'),'--save-file',str(slot),'--frame',str(frame)],
+    process=subprocess.Popen([str(ROOT/'build/btech-port'),'--edition','original','--save-file',str(slot),'--frame',str(frame)],
         cwd=ROOT,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
     keys=WindowKeys()
     try:
@@ -1226,6 +1226,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--windows',action='store_true',help='Run the Windows SDL build under isolated Wine against Linux headless')
     parser.add_argument('--portability-only',action='store_true',help='Check controls, intro, saves, menus and combat presentation')
+    parser.add_argument('--updated-only',action='store_true',help='Check edition selection and Updated purchases')
     parser.add_argument("--shops-only", action="store_true")
     parser.add_argument("--m2f-only", action="store_true")
     parser.add_argument("--bank-input-only", action="store_true")
@@ -1278,6 +1279,9 @@ def main():
             env.pop("SDL_VIDEODRIVER", None)
             os.environ["DISPLAY"] = env["DISPLAY"]
             os.environ["BTECH_REFERENCE_VIRTUAL"] = "1"
+            if args.updated_only:
+                from updated_smoke import run
+                run(env,work);return
             if args.portability_only:
                 controls(env,work);diagonals(env,work);intro(env,work)
                 menu(env,work);saves(env,work);presentation(env,work)

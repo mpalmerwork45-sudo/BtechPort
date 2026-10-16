@@ -3,6 +3,7 @@
 #include "core/service.h"
 #include "core/party.h"
 #include "core/world.h"
+#include "core/roster_game.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -31,6 +32,12 @@ static unsigned root_item(const BtpState *s,unsigned item)
 unsigned btp_actions_count(const BtpState *s)
 {
     switch (s->campaign.ui) {
+    case BTP_MENU_UPDATED_ROOT:return btp_menu_mech_count(s) ? 9u : 8u;
+    case BTP_MENU_BROKER: {
+        unsigned first=7u*s->campaign.member,n=s->menu.map_x>first ? s->menu.map_x-first : 0u;
+        return (n>7 ? 7u : n)+1u;
+    }
+    case BTP_MENU_BROKER_CONFIRM:return 2;
     case BTP_MENU_ROOT:return btp_menu_mech_count(s) ? 8u : 7u;
     case BTP_MENU_ALLOCATE:return btp_party_count(&s->party)+1u;
     case BTP_MENU_CREW:return btp_menu_mech_count(s)+1u;
@@ -60,6 +67,10 @@ const char *btp_actions_label(const BtpState *s,unsigned item)
     static const char *const slots[]={"One","Two","Three","Four","Five","Six","Cancel"};
     if (item>=btp_actions_count(s)) return "";
     switch (s->campaign.ui) {
+    case BTP_MENU_UPDATED_ROOT:
+        if (item==btp_actions_count(s)-1u) return "Visit 'Mech broker";
+        /* The original entries retain their wording and order. */
+        return root[root_item(s,item)];
     case BTP_MENU_ROOT:return root[root_item(s,item)];
     case BTP_MENU_SETTINGS:return item==2 && !s->menu.sound ? "Turn Sound On" : settings[item];
     case BTP_MENU_STEPS:return steps[item];
@@ -112,6 +123,12 @@ void btp_menu_person(const BtpState *s,unsigned member,uint8_t p[17])
 void btp_menu_input(BtpState *s,const BtpResources *r,BtpAction a)
 {
     ++s->tick;BtpCampaignState *c=&s->campaign;if (s->menu.io) return;
+    if (c->ui==BTP_MENU_BROKER && (a==BTP_LEFT || a==BTP_RIGHT)) {
+        unsigned pages=(s->menu.map_x+6u)/7u;
+        if (pages) c->member=(uint8_t)((c->member+(a==BTP_LEFT ? pages-1u : 1u))%pages);
+        c->selected=0;return;
+    }
+    if (c->ui>=BTP_MENU_UPDATED_ROOT && a==BTP_OPEN_MENU) a=BTP_ACCEPT;
     if (c->ui==BTP_MENU_INSPECT && (a==BTP_LEFT || a==BTP_RIGHT)) {
         uint8_t p[17];btp_menu_person(s,c->member,p);
         if (s->campaign.owned && p[12]<4 && btp_party_mech(s,p[12])[0]!=255) {
@@ -143,7 +160,7 @@ void btp_menu_input(BtpState *s,const BtpResources *r,BtpAction a)
     if (a!=BTP_ACCEPT) return;
     unsigned item=c->selected;
     switch (c->ui) {
-    case BTP_MENU_ROOT:
+    case BTP_MENU_ROOT:case BTP_MENU_UPDATED_ROOT:
         switch (root_item(s,item)) {
         case 0:btp_menu_close(s);break;
         case 1:page(s,BTP_MENU_SETTINGS,0);break;
@@ -166,8 +183,29 @@ void btp_menu_input(BtpState *s,const BtpResources *r,BtpAction a)
             s->menu.map_x=s->story_flags[4] ? c->world_x : (uint16_t)(1536+s->x_half);
             s->menu.map_y=s->story_flags[4] ? c->world_y : (uint16_t)(1536+s->y_half);
             page(s,BTP_MENU_MAP,0);break;
+        case 8:
+            if (btp_broker_available(s,r)) {
+                c->member=0;s->menu.map_x=(uint16_t)r->roster.count;s->menu.map_y=0;
+                page(s,BTP_MENU_BROKER,0);
+            }
+            break;
         }
         break;
+    case BTP_MENU_BROKER:
+        if (item==count-1u) btp_menu_close(s);
+        else {
+            s->menu.map_y=(uint16_t)(c->member*7u+item);
+            page(s,BTP_MENU_BROKER_CONFIRM,1);
+        }
+        break;
+    case BTP_MENU_BROKER_CONFIRM:
+        if (item) page(s,BTP_MENU_BROKER,s->menu.map_y%7u);
+        else {
+            unsigned outcome=btp_broker_buy(s,r,s->menu.map_y);
+            page(s,BTP_MENU_BROKER_RESULT,0);s->menu.notice=(uint8_t)outcome;
+        }
+        break;
+    case BTP_MENU_BROKER_RESULT:page(s,BTP_MENU_BROKER,s->menu.map_y%7u);break;
     case BTP_MENU_SETTINGS:
         if (item==0) page(s,BTP_MENU_STEPS,s->menu.steps==4 ? 2u : s->menu.steps-1u);
         else if (item==1) page(s,BTP_MENU_SPEED,s->menu.speed);
@@ -244,7 +282,7 @@ int btp_actions_valid(const BtpState *s)
         m->slot>5 || m->io>2 || m->notice>(s->mode==BTP_ACTIONS && s->campaign.ui==BTP_MENU_MAP ? 15u : 5u) || m->quit>1 || m->map_x>2047 || m->map_y>2047 || m->from_intro>1) return 0;
     if (m->from_intro && (s->mode!=BTP_ACTIONS || (s->campaign.ui!=BTP_MENU_LOAD && s->campaign.ui!=BTP_MENU_MESSAGE))) return 0;
     if ((s->mode==BTP_ACTIONS)!=(s->campaign.ui!=0)) return 0;
-    if (s->campaign.ui>BTP_MENU_MECH_PICK || (s->campaign.ui && s->campaign.selected>=btp_actions_count(s))) return 0;
+    if (s->campaign.ui>BTP_MENU_BROKER_RESULT || (s->campaign.ui && s->campaign.selected>=btp_actions_count(s))) return 0;
     if (s->campaign.ui==BTP_MENU_MECH && (s->campaign.member>=4 || !s->campaign.owned || btp_party_mech((BtpState *)s,s->campaign.member)[0]==255)) return 0;
     return !m->io || (s->mode==BTP_ACTIONS && s->campaign.ui==(m->io==BTP_MENU_IO_SAVE ? BTP_MENU_SAVE : BTP_MENU_LOAD));
 }

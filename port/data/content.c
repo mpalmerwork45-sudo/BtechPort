@@ -14,6 +14,16 @@ void btp_content_close(BtpContent *content)
     free(content->resources);
     *content = (BtpContent){0};
 }
+int btp_content_select(BtpContent *content,BtpContentProfile profile,const char *path,BtpError *error)
+{
+    if (!content || !content->resources) return fail(error,"Load original resources before selecting an edition");
+    if (profile==BTP_CONTENT_UPDATED) {
+        if (!error || !btp_roster_load(path,&content->resources->roster,error->text)) return 0;
+    } else if (profile==BTP_CONTENT_ORIGINAL_DOS_103) {
+        content->resources->roster=(BtpRoster){0};
+    } else return fail(error,"Unknown game edition");
+    content->profile=profile;return 1;
+}
 
 int btp_content_load_original(BtpContent *content,
     const BtpOriginalContentPaths *paths, BtpError *error)
