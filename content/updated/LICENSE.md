@@ -1,6 +1,7 @@
 # Data license
 
-`roster.json` adapts unit records maintained by the MegaMek mm-data contributors.
+`roster.json`, the archived data in `versions/`, and `sources.json` adapt or
+describe unit records maintained by the MegaMek mm-data contributors.
 Attribution and source links are in [README.md](README.md).
 
 This adapted data is licensed under [Creative Commons Attribution-NonCommercial-

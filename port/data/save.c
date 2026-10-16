@@ -73,9 +73,9 @@ int btp_save_write(const char *path, const BtpState *s, const BtpResources *r, B
     }
     BtpState validated;
     btp_state_encode(s,bytes+header);
-    /* Only Updated writes v42's additional broker states. Original retains
+    /* Only Updated writes v43's scrolling broker state. Original retains
        the exact v40 payload and BTS1 envelope used by existing saves. */
-    if (updated) { memcpy(bytes+header,"BTPg",4);bytes[header+4]=42; }
+    if (updated) { memcpy(bytes+header,"BTPh",4);bytes[header+4]=43; }
     if (!decode(bytes+header,BTP_STATE_BYTES,&validated,r))
         return fail(e,"Current state cannot be saved");
     if (!btp_roster_state_valid(s,r)) return fail(e,"Current state does not match its roster package");
@@ -137,16 +137,27 @@ int btp_save_load(const char *path, BtpState *s, const BtpResources *r, BtpError
         get32(bytes+4) != n-HEADER_BYTES || n > header+BTP_STATE_BYTES ||
         checksum(bytes+HEADER_BYTES,n-HEADER_BYTES) != get32(bytes+8))
         return fail(e,"Save is damaged or uses an unsupported format");
+    unsigned saved_count=r->roster.count;
     if (updated) {
         if (!r->roster.count) return fail(e,"This save belongs to Updated BTECH CHI");
-        if (memcmp(bytes+16,r->roster.package,32) || memcmp(bytes+48,r->roster.version,32) ||
-            get32(bytes+80)!=r->roster.fingerprint)
-            return fail(e,"Updated save requires its original roster package, version and definitions");
+        saved_count=btp_roster_saved_count(&r->roster,bytes+16,bytes+48,get32(bytes+80));
+        if (!saved_count)
+            return fail(e,"Updated save requires its original roster or an unchanged extension of it");
         for (unsigned i=84;i<UPDATED_HEADER_BYTES;++i) if (bytes[i]) return fail(e,"Unsupported updated save metadata");
     } else if (bytes[header+4]>40) return fail(e,"Updated state requires an edition-aware save envelope");
     BtpState loaded;
-    if (!decode(bytes+header,n-header,&loaded,r) || !btp_roster_state_valid(&loaded,r))
+    if (!decode(bytes+header,n-header,&loaded,r) || !btp_roster_state_prefix_valid(&loaded,r,saved_count))
         return fail(e,"Save contains an invalid or unsupported game state");
+    if (updated && saved_count<r->roster.count && loaded.campaign.ui>=BTP_MENU_BROKER &&
+        loaded.campaign.ui<=BTP_MENU_BROKER_RESULT) {
+        /* Appending stock must not turn a held Back row into a purchase or
+           change a pending Yes/No. Existing definition order is fingerprinted. */
+        unsigned item=loaded.campaign.member+loaded.campaign.selected;
+        loaded.menu.map_x=(uint16_t)r->roster.count;
+        if (loaded.campaign.ui==BTP_MENU_BROKER)
+            btp_broker_select(&loaded,item==saved_count ? r->roster.count : item);
+    }
+    if (!btp_roster_state_valid(&loaded,r)) return fail(e,"Save contains an invalid roster state");
     btp_cache_restore_party(&loaded,r);
     /* Earlier arena returns reactivated the checked-in records. Repair only
        a saved Starport foot party with the original parking flag still set;

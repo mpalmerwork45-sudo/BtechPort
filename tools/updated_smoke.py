@@ -85,7 +85,7 @@ def run(env, work):
             str(work / "talk-data.bin"), str(work / "combat-data.bin"), str(work / "world-data.bin"),
             str(ROOT / "content/updated/roster.json"), str(start)], cwd=tmp,
             check=True, capture_output=True, timeout=20)
-        for model in range(3):
+        for model in (0, 1, 2, 13, 14, 15, 16):
             for damaged in range(2):
                 (work / f"updated-inspect-{model}-{damaged}.ppm").write_bytes(
                     Path(f"{start}-inspect-{model}-{damaged}.ppm").read_bytes())
@@ -102,6 +102,25 @@ def run(env, work):
             assert state["actions_menu"]["phase"] == 27 and state["actions_menu"]["notice"] == 1
             assert state["mech_types"][0] != 255
         print("PASS: added Starport doorway, mechanic counter and all three Space/F5/F9 purchases.", flush=True)
+        # Cross both scrolling boundaries with real keyboard events. Held
+        # saves retain the viewport and absolute model, including the two
+        # Crusaders sharing an initial and the Atlas's later catalogue code.
+        browse = ["Up", "space", "space"]
+        state, _, _, _, _ = play("broker-scroll", browse + ["Down"] * 8 + ["F5", "F9"],
+            ["--load", start], recording=False)
+        assert state["actions_menu"]["phase"] == 25 and state["actions_menu"]["selected"] == 7
+        state, _, _, _, _ = play("broker-atlas-confirm", browse + ["Down"] * 14 + ["space"], ["--load", start])
+        assert state["actions_menu"]["phase"] == 26 and state["actions_menu"]["selected"] == 1
+        for index, price, label in ((13, 50000, "zeus"), (14, 70000, "atlas"),
+                                    (15, 37000, "crusader-lrm"), (16, 39000, "crusader-srm")):
+            state, _, _, _, _ = play(f"broker-{label}", browse + ["Down"] * index +
+                ["space", "F5", "F9", "Up", "space"], ["--load", start], recording=False)
+            assert state["credits"] == 200000 - price and state["actions_menu"]["notice"] == 1
+        state, _, _, _, _ = play("broker-last-row", browse + ["Up", "Up"], ["--load", start])
+        assert state["actions_menu"]["phase"] == 25 and state["actions_menu"]["selected"] == 6
+        state, _, _, _, _ = play("broker-last-back", browse + ["Down"] * 17 + ["space", "F5"], ["--load", start])
+        assert state["actions_menu"]["phase"] == 28 and state["actions_menu"]["selected"] == 0
+        print("PASS: scrolling, wrap, held selection, Zeus/Atlas/both Crusaders and final Back row.", flush=True)
         # Buy four, attempt a fifth, then sell a middle bay. The saved result
         # is reused to check the actual visible list and freed-bay purchase.
         inputs = ["Up", "space", "space"] + ["space", "Up", "space", "space"] * 4

@@ -32,11 +32,27 @@ class RosterFormat(unittest.TestCase):
         self.data["mechs"][0]["price"] += 1
         self.assertNotEqual(self.read(self.data)["fingerprint"], expected["fingerprint"])
 
-    def test_fourth_model_without_rebuild(self):
+    def test_another_model_without_rebuild(self):
         extra = copy.deepcopy(self.data["mechs"][0])
-        extra.update(id="chi-expanded:test-model", name="TEST MODEL", save_code=163, price=1000)
+        extra.update(id="chi-expanded:test-model", name="TEST MODEL", save_code=191, price=1000)
         self.data["mechs"].append(extra)
         self.assertEqual(self.read(self.data)["mechs"][-1]["id"], "chi-expanded:test-model")
+
+    def test_original_three_unchanged(self):
+        previous = json.loads((ROOT / "content/updated/versions/0.1.0.json").read_text())
+        self.assertEqual(self.read(previous)["fingerprint"], 4022610150)
+        self.assertEqual(self.data["mechs"][:3], previous["mechs"])
+
+    def test_shared_missile_ammunition_preserved(self):
+        # Source CRD-3R has one 15-salvo SRM bin shared by two launchers;
+        # Bear has three shared bins (45 salvos) across four launchers.
+        for suffix, counts in (("crusader-crd-3r", {"srm6": (2, 15), "lrm15": (2, 16)}),
+                               ("crusader-crd-3r-bear", {"srm6": (4, 45)})):
+            mech = next(m for m in self.data["mechs"] if m["id"] == "chi-expanded:" + suffix)
+            for weapon, (count, rounds) in counts.items():
+                mounts = [m for m in mech["loadout"] if m["weapon"] == weapon]
+                self.assertEqual((len(mounts), sum(m["ammo"] for m in mounts)), (count, rounds))
+            self.assertEqual(sum(m["ammo"] for m in mech["loadout"] if m["weapon"] == "machine_gun"), 200)
 
     def test_rejected_definitions(self):
         changes = [("id", "outside:panther"), ("name", "X" * 16), ("save_code", 200),

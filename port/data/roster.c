@@ -182,6 +182,26 @@ static void hash(uint32_t *h,const void *bytes,size_t n)
 {
     const uint8_t *b=bytes;for (size_t i=0;i<n;++i) *h=(*h^b[i])*UINT32_C(16777619);
 }
+static void hash_mech(uint32_t *h,const BtpRosterMech *m)
+{
+    hash(h,m->id,sizeof m->id);hash(h,m->record,125);hash(h,m->ammo_cost,10);
+    for (unsigned j=0;j<4;++j) { uint8_t b=(uint8_t)(m->price>>(8*j));hash(h,&b,1); }
+}
+unsigned btp_roster_saved_count(const BtpRoster *r,const uint8_t package[32],
+    const uint8_t version[32],uint32_t fingerprint)
+{
+    if (!r || !r->count || memcmp(package,r->package,32)) return 0;
+    if (!memcmp(version,r->version,32) && fingerprint==r->fingerprint) return r->count;
+    /* The original save binds every old ID, byte, ammunition price and sale
+       price. Recompute that fingerprint using its saved version and each
+       shorter prefix: only appending definitions is compatible. This never
+       accepts a changed existing definition or a version-only edit. */
+    uint32_t h=UINT32_C(2166136261);hash(&h,r->package,32);hash(&h,version,32);
+    for (unsigned i=0;i+1u<r->count;++i) {
+        hash_mech(&h,&r->mechs[i]);if (h==fingerprint) return i+1u;
+    }
+    return 0;
+}
 static int compare(const void *a,const void *b)
 {
     return (int)((const BtpRosterMech *)a)->record[123]-(int)((const BtpRosterMech *)b)->record[123];
@@ -217,8 +237,7 @@ static int decode(Reader *p,BtpRoster *r)
         BtpRosterMech *m=&r->mechs[i];size_t prefix=strlen(r->package);
         if (strncmp(m->id,r->package,prefix) || m->id[prefix]!=':') return bad(p,"mech ID must belong to this package");
         for (unsigned j=0;j<i;++j) if (!strcmp(m->id,r->mechs[j].id) || m->record[123]==r->mechs[j].record[123]) return bad(p,"duplicate mech ID or save code");
-        hash(&r->fingerprint,m->id,sizeof m->id);hash(&r->fingerprint,m->record,125);hash(&r->fingerprint,m->ammo_cost,10);
-        for (unsigned j=0;j<4;++j) { uint8_t b=(uint8_t)(m->price>>(8*j));hash(&r->fingerprint,&b,1); }
+        hash_mech(&r->fingerprint,m);
     }
     return 1;
 }

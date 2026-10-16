@@ -1,7 +1,7 @@
 /* Original-mode state codec. Keep field order, migrations and validation
    independent of the game loop; these bytes remain the BTPe/v40 contract.
-   Package identity stays in the outer save envelope. The optional v41
-   projection adds broker UI states without changing Original's encoder. */
+   Package identity stays in the outer save envelope. Updated v41-v43 add
+   broker states and scrolling without changing Original's encoder. */
 #include "core/game.h"
 #include "core/talk.h"
 #include "core/npc.h"
@@ -221,7 +221,8 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         n == BTP_STATE_BYTES && !memcmp(b,"BTPd",4) && b[4]==39 ? 39 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPe",4) && b[4]==40 ? 40 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPf",4) && b[4]==41 ? 41 :
-        n == BTP_STATE_BYTES && !memcmp(b,"BTPg",4) && b[4]==42 ? 42 : 0;
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPg",4) && b[4]==42 ? 42 :
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPh",4) && b[4]==43 ? 43 : 0;
     if (!version) return 0;
     if (version>=18 && version<38 && b[10232]) return 0; /* v38 critical report count. */
     if (version>=18 && version<35 && b[10233]) return 0; /* v35 weapon-window presentation bits. */
@@ -338,7 +339,10 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
             result.campaign.world_x>2047 || result.campaign.world_y>2047 || result.campaign.building>=(version>=42 ? 27u : 26u) ||
             result.campaign.world_clock>=BTP_OUTDOOR_PERIOD || result.campaign.encounter>(version>=29 ? 4u : 2u) || result.campaign.mounted>result.campaign.owned ||
             result.campaign.mech_walk>15 || result.campaign.mech_direction>7 || result.campaign.ui>(version>=42 ? BTP_MENU_BROKER_SELL_RESULT : version>=41 ? BTP_MENU_BROKER_RESULT : version>=30 ? BTP_MENU_MECH_PICK : version>=25 ? BTP_MENU_MECH : version>=23 ? BTP_MENU_RECIPIENT : version>=19 ? BTP_MENU_QUIT : 6) ||
-            result.campaign.selected>(version>=23 ? 8u : 7u) || result.campaign.member>7 || result.campaign.mech_x>2047 || result.campaign.mech_y>2047) return 0;
+            result.campaign.selected>(version>=23 ? 8u : 7u) ||
+            result.campaign.member>(version>=43 && result.campaign.ui>=BTP_MENU_BROKER &&
+                result.campaign.ui<=BTP_MENU_BROKER_RESULT ? BTP_ROSTER_MAX-1u : 7u) ||
+            result.campaign.mech_x>2047 || result.campaign.mech_y>2047) return 0;
     }
     if (version>=16) {
         result.terrain_next=b[2048];if (result.terrain_next>63) return 0;
@@ -691,6 +695,21 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
             for (unsigned row=98;row<=103;++row) result.explored[row*16u+12u]=31;
             btp_world_reveal(&result);
         }
+    }
+    if (version>=41 && version<=42 && result.campaign.ui>=BTP_MENU_BROKER &&
+        result.campaign.ui<=BTP_MENU_BROKER_RESULT) {
+        /* v41/42 stored a seven-model page number. v43 stores the first row
+           of a scrolling window. Preserve the selected model, including an
+           old page's Back choice, before checking the new menu invariants. */
+        unsigned total=result.menu.map_x,first=7u*result.campaign.member;
+        if (!total || total>BTP_ROSTER_MAX || first>=total || result.menu.map_y>=total) return 0;
+        unsigned rows=total-first;if (rows>7) rows=7;
+        unsigned selected=result.campaign.selected;
+        if (result.campaign.ui==BTP_MENU_BROKER && selected>rows) return 0;
+        unsigned item=result.campaign.ui==BTP_MENU_BROKER ?
+            (selected==rows ? total : first+selected) : result.menu.map_y;
+        result.campaign.member=0;btp_broker_select(&result,item);
+        if (result.campaign.ui!=BTP_MENU_BROKER) result.campaign.selected=(uint8_t)selected;
     }
     if (!btp_actions_valid(&result) || !btp_audio_valid(&result) || !btp_aftermath_valid(&result)) return 0;
     if (version==41) {

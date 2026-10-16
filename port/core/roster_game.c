@@ -115,17 +115,18 @@ const uint8_t *btp_roster_enemy(BtpState *s,const BtpResources *r)
     if (!count || (btp_rng_next(s->npc.rng)&3u)) return NULL;
     return r->roster.mechs[eligible[btp_rng_next(s->npc.rng)%count]].record;
 }
-static int record_valid(const uint8_t m[125],const BtpRoster *r)
+static int record_valid(const uint8_t m[125],const BtpRoster *r,unsigned count)
 {
     if (!btp_roster_custom(m)) return 1;
     const BtpRosterMech *d=btp_roster_definition(r,m);
     /* The live record can lose its first name byte when parked/destroyed.
        Identity, maxima and presentation must still resolve to the saved pack. */
-    return d && !memcmp(m+1,d->record+1,16) && !memcmp(m+86,d->record+86,31) &&
+    return d && d<r->mechs+count && !memcmp(m+1,d->record+1,16) && !memcmp(m+86,d->record+86,31) &&
         m[49]==d->record[49] && m[50]==d->record[50] && m[38]==d->record[38] && m[124]==d->record[124];
 }
-int btp_roster_state_valid(const BtpState *s,const BtpResources *r)
+int btp_roster_state_prefix_valid(const BtpState *s,const BtpResources *r,unsigned count)
 {
+    if (count>r->roster.count) return 0;
     if (s->campaign.ui==BTP_MENU_UPDATED_ROOT) return 0;
     if (btp_broker_page(s->campaign.ui) && !btp_broker_available(s,r)) return 0;
     if (s->campaign.building==BTP_BROKER_BUILDING && (!r->roster.count || s->map_id!=2 ||
@@ -134,12 +135,17 @@ int btp_roster_state_valid(const BtpState *s,const BtpResources *r)
     if (s->campaign.ui==BTP_MENU_BROKER_SELL_CONFIRM && !btp_broker_owned(s,s->menu.map_y)) return 0;
     if (s->campaign.ui==BTP_MENU_BROKER_SELL_RESULT && s->menu.map_y>=4) return 0;
     if (s->campaign.ui==BTP_MENU_BROKER || s->campaign.ui==BTP_MENU_BROKER_CONFIRM || s->campaign.ui==BTP_MENU_BROKER_RESULT) {
-        if (!btp_broker_available(s,r) || s->menu.map_x!=r->roster.count ||
-            s->menu.map_y>=r->roster.count || s->campaign.member*7u>=r->roster.count) return 0;
+        if (!btp_broker_available(s,r) || s->menu.map_x!=count ||
+            s->menu.map_y>=count || s->campaign.member>
+                (count+1u>BTP_BROKER_ROWS ? count+1u-BTP_BROKER_ROWS : 0u)) return 0;
     }
-    if (!record_valid(s->campaign.mech,&r->roster) || !record_valid(s->campaign.checkpoint_mech,&r->roster)) return 0;
-    for (unsigned i=0;i<3;++i) if (!record_valid(s->party.mechs[i],&r->roster) || !record_valid(s->party_checkpoint.mechs[i],&r->roster)) return 0;
-    for (unsigned i=0;i<4;++i) if (!record_valid(s->yard.mechs[i],&r->roster)) return 0;
-    for (unsigned i=0;i<BTP_COMBAT_UNITS;++i) if (!s->combat.unit[i].infantry && !record_valid(s->combat.unit[i].record,&r->roster)) return 0;
+    if (!record_valid(s->campaign.mech,&r->roster,count) || !record_valid(s->campaign.checkpoint_mech,&r->roster,count)) return 0;
+    for (unsigned i=0;i<3;++i) if (!record_valid(s->party.mechs[i],&r->roster,count) || !record_valid(s->party_checkpoint.mechs[i],&r->roster,count)) return 0;
+    for (unsigned i=0;i<4;++i) if (!record_valid(s->yard.mechs[i],&r->roster,count)) return 0;
+    for (unsigned i=0;i<BTP_COMBAT_UNITS;++i) if (!s->combat.unit[i].infantry && !record_valid(s->combat.unit[i].record,&r->roster,count)) return 0;
     return 1;
+}
+int btp_roster_state_valid(const BtpState *s,const BtpResources *r)
+{
+    return btp_roster_state_prefix_valid(s,r,r->roster.count);
 }

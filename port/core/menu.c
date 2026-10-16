@@ -34,8 +34,8 @@ unsigned btp_actions_count(const BtpState *s)
     switch (s->campaign.ui) {
     case BTP_MENU_UPDATED_ROOT:return btp_menu_mech_count(s) ? 9u : 8u;
     case BTP_MENU_BROKER: {
-        unsigned first=7u*s->campaign.member,n=s->menu.map_x>first ? s->menu.map_x-first : 0u;
-        return (n>7 ? 7u : n)+1u;
+        unsigned first=s->campaign.member,n=s->menu.map_x>=first ? s->menu.map_x+1u-first : 0u;
+        return n>BTP_BROKER_ROWS ? BTP_BROKER_ROWS : n;
     }
     case BTP_MENU_BROKER_CONFIRM:case BTP_MENU_BROKER_SELL_CONFIRM:return 2;
     case BTP_MENU_BROKER_HUB:return 3;
@@ -117,6 +117,24 @@ void btp_menu_close(BtpState *s)
 static void page(BtpState *s,unsigned phase,unsigned selected)
 {
     s->campaign.ui=(uint8_t)phase;s->campaign.selected=(uint8_t)selected;s->menu.notice=0;
+    if (phase==BTP_MENU_BROKER_HUB) s->campaign.member=0;
+}
+void btp_broker_select(BtpState *s,unsigned item)
+{
+    /* Scroll only when the cursor leaves the eight visible rows. Back is the
+       final catalogue item, so Up/Down traverses every model without paging
+       controls or intermediate Back rows interrupting the list. */
+    unsigned total=s->menu.map_x+1u,first=s->campaign.member;
+    if (item>=total) item=total-1u;
+    unsigned last=total>BTP_BROKER_ROWS ? total-BTP_BROKER_ROWS : 0u;
+    if (first>last) first=last;
+    if (item<first) first=item;
+    if (item>=first+BTP_BROKER_ROWS) first=item+1u-BTP_BROKER_ROWS;
+    s->campaign.member=(uint8_t)first;s->campaign.selected=(uint8_t)(item-first);
+}
+static void broker_return(BtpState *s)
+{
+    page(s,BTP_MENU_BROKER,0);btp_broker_select(s,s->menu.map_y);
 }
 void btp_menu_person(const BtpState *s,unsigned member,uint8_t p[17])
 {
@@ -130,15 +148,18 @@ void btp_menu_input(BtpState *s,const BtpResources *r,BtpAction a)
     ++s->tick;BtpCampaignState *c=&s->campaign;if (s->menu.io) return;
     if (btp_broker_page(c->ui) && a==BTP_CANCEL) {
         if (c->ui==BTP_MENU_BROKER_HUB) btp_menu_close(s);
-        else if (c->ui==BTP_MENU_BROKER_CONFIRM) page(s,BTP_MENU_BROKER,s->menu.map_y%7u);
+        else if (c->ui==BTP_MENU_BROKER_CONFIRM) broker_return(s);
         else if (c->ui==BTP_MENU_BROKER_SELL_CONFIRM) page(s,BTP_MENU_BROKER_SELL,0);
         else page(s,BTP_MENU_BROKER_HUB,0);
         return;
     }
-    if (c->ui==BTP_MENU_BROKER && (a==BTP_LEFT || a==BTP_RIGHT)) {
-        unsigned pages=(s->menu.map_x+6u)/7u;
-        if (pages) c->member=(uint8_t)((c->member+(a==BTP_LEFT ? pages-1u : 1u))%pages);
-        c->selected=0;return;
+    if (c->ui==BTP_MENU_BROKER && (a==BTP_UP || a==BTP_DOWN || a==BTP_LEFT || a==BTP_RIGHT)) {
+        unsigned total=s->menu.map_x+1u,item=c->member+c->selected;
+        if (a==BTP_UP) item=item ? item-1u : total-1u;
+        else if (a==BTP_DOWN) item=(item+1u)%total;
+        else if (a==BTP_LEFT) item=item>BTP_BROKER_ROWS ? item-BTP_BROKER_ROWS : 0u;
+        else item=item+BTP_BROKER_ROWS<total ? item+BTP_BROKER_ROWS : total-1u;
+        btp_broker_select(s,item);return;
     }
     if (c->ui>=BTP_MENU_UPDATED_ROOT && a==BTP_OPEN_MENU) a=BTP_ACCEPT;
     if (c->ui==BTP_MENU_INSPECT && (a==BTP_LEFT || a==BTP_RIGHT)) {
@@ -204,20 +225,20 @@ void btp_menu_input(BtpState *s,const BtpResources *r,BtpAction a)
         else btp_menu_close(s);
         break;
     case BTP_MENU_BROKER:
-        if (item==count-1u) page(s,BTP_MENU_BROKER_HUB,0);
+        if (c->member+item==s->menu.map_x) page(s,BTP_MENU_BROKER_HUB,0);
         else {
-            s->menu.map_y=(uint16_t)(c->member*7u+item);
+            s->menu.map_y=(uint16_t)(c->member+item);
             page(s,BTP_MENU_BROKER_CONFIRM,1);
         }
         break;
     case BTP_MENU_BROKER_CONFIRM:
-        if (item) page(s,BTP_MENU_BROKER,s->menu.map_y%7u);
+        if (item) broker_return(s);
         else {
             unsigned outcome=btp_broker_buy(s,r,s->menu.map_y);
             page(s,BTP_MENU_BROKER_RESULT,0);s->menu.notice=(uint8_t)outcome;
         }
         break;
-    case BTP_MENU_BROKER_RESULT:page(s,BTP_MENU_BROKER,s->menu.map_y%7u);break;
+    case BTP_MENU_BROKER_RESULT:broker_return(s);break;
     case BTP_MENU_BROKER_SELL:
         if (item==count-1u) page(s,BTP_MENU_BROKER_HUB,1);
         else { s->menu.map_y=(uint16_t)btp_broker_slot(s,item);page(s,BTP_MENU_BROKER_SELL_CONFIRM,1); }

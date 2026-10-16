@@ -1,0 +1,90 @@
+{
+  "license": "CC-BY-NC-SA-4.0",
+  "consulted": "2026-10-16",
+  "mechs": [
+    {
+      "id": "chi-expanded:centurion-cn9-a",
+      "source": "https://github.com/MegaMek/mm-data/blob/e6f20e1fc2f9d6c74a6e2cdc74778b029ca14811/data/mekfiles/meks/3039u/Centurion%20CN9-A.mtf",
+      "sha256": "93b297eeda39f11e78656e5a5adf3a680cc0053ee3ecc1b64b02abe802e77cfb",
+      "rear_lasers": 1
+    },
+    {
+      "id": "chi-expanded:trebuchet-tbt-5n",
+      "source": "https://github.com/MegaMek/mm-data/blob/e6f20e1fc2f9d6c74a6e2cdc74778b029ca14811/data/mekfiles/meks/3039u/Trebuchet%20TBT-5N.mtf",
+      "sha256": "be9568572b61ee6d4c334ac6ff80bdcef2994ae5adae7309b2395a9aa2758c4e",
+      "rear_lasers": 0
+    },
+    {
+      "id": "chi-expanded:griffin-grf-1n",
+      "source": "https://github.com/MegaMek/mm-data/blob/e6f20e1fc2f9d6c74a6e2cdc74778b029ca14811/data/mekfiles/meks/3039u/Griffin%20GRF-1N.mtf",
+      "sha256": "a8e7c9a14d0bc06e4cda589457b52576382f3a5ad8fd5826aab49c9ed6d1e8ca",
+      "rear_lasers": 0
+    },
+    {
+      "id": "chi-expanded:shadow-hawk-shd-2h",
+      "source": "https://github.com/MegaMek/mm-data/blob/e6f20e1fc2f9d6c74a6e2cdc74778b029ca14811/data/mekfiles/meks/3039u/Shadow%20Hawk%20SHD-2H.mtf",
+      "sha256": "d6cdd5b06f6742b4c2f1ac5f9a9c5b5e166cc18d08e4959fb30d5d7193060513",
+      "rear_lasers": 0
+    },
+    {
+      "id": "chi-expanded:wolverine-wvr-6r",
+      "source": "https://github.com/MegaMek/mm-data/blob/e6f20e1fc2f9d6c74a6e2cdc74778b029ca14811/data/mekfiles/meks/3039u/Wolverine%20WVR-6R.mtf",
+      "sha256": "38fcf6420c55cf48dd3ad25ca2c25cf56a15125b5f261df6e94457e636841454",
+      "rear_lasers": 0
+    },
+    {
+      "id": "chi-expanded:rifleman-rfl-3n",
+      "source": "https://github.com/MegaMek/mm-data/blob/e6f20e1fc2f9d6c74a6e2cdc74778b029ca14811/data/mekfiles/meks/3039u/Rifleman%20RFL-3N.mtf",
+      "sha256": "b762b835d3e89e2afa8c550576207815cef82e33afa343171e1c574a7d3d4f1c",
+      "rear_lasers": 0
+    },
+    {
+      "id": "chi-expanded:thunderbolt-tdr-5s",
+      "source": "https://github.com/MegaMek/mm-data/blob/e6f20e1fc2f9d6c74a6e2cdc74778b029ca14811/data/mekfiles/meks/3039u/Thunderbolt%20TDR-5S.mtf",
+      "sha256": "3a54d6a0d14bad405058d54b185f0511fbf32f479eb2d906b320702d020bdab3",
+      "rear_lasers": 0
+    },
+    {
+      "id": "chi-expanded:archer-arc-2r",
+      "source": "https://github.com/MegaMek/mm-data/blob/e6f20e1fc2f9d6c74a6e2cdc74778b029ca14811/data/mekfiles/meks/3039u/Archer%20ARC-2R.mtf",
+      "sha256": "e033e63db146f31ebd0aee9db3c4b0c6d6320d0777ea7aef71df18b1b95c716a",
+      "rear_lasers": 2
+    },
+    {
+      "id": "chi-expanded:warhammer-whm-6r",
+      "source": "https://github.com/MegaMek/mm-data/blob/e6f20e1fc2f9d6c74a6e2cdc74778b029ca14811/data/mekfiles/meks/3039u/Warhammer%20WHM-6R.mtf",
+      "sha256": "84829412ae629015781f0184c3f84ce7b2fb14423649434c5482bc7a7d7e3d4e",
+      "rear_lasers": 0
+    },
+    {
+      "id": "chi-expanded:marauder-mad-3r",
+      "source": "https://github.com/MegaMek/mm-data/blob/e6f20e1fc2f9d6c74a6e2cdc74778b029ca14811/data/mekfiles/meks/3039u/Marauder%20MAD-3R.mtf",
+      "sha256": "6d8ab15dd838a12bb72e4db62c21943203ac1a7bfa469e007bc1e1e9e074faad",
+      "rear_lasers": 0
+    },
+    {
+      "id": "chi-expanded:zeus-zeu-6s",
+      "source": "https://github.com/MegaMek/mm-data/blob/e6f20e1fc2f9d6c74a6e2cdc74778b029ca14811/data/mekfiles/meks/3039u/Zeus%20ZEU-6S.mtf",
+      "sha256": "cf9afe9c37a325f15d335d5084c0a1b78354e04adeb129ba43f809882571b413",
+      "rear_lasers": 1
+    },
+    {
+      "id": "chi-expanded:atlas-as7-d",
+      "source": "https://github.com/MegaMek/mm-data/blob/e6f20e1fc2f9d6c74a6e2cdc74778b029ca14811/data/mekfiles/meks/3039u/Atlas%20AS7-D.mtf",
+      "sha256": "afed270108038d93c33b2537ac1efc6c95c532ab6012eab25e6c3a266c1474cb",
+      "rear_lasers": 2
+    },
+    {
+      "id": "chi-expanded:crusader-crd-3r",
+      "source": "https://github.com/MegaMek/mm-data/blob/e6f20e1fc2f9d6c74a6e2cdc74778b029ca14811/data/mekfiles/meks/3039u/Crusader%20CRD-3R.mtf",
+      "sha256": "cd47d39a95658c4be1ade131b316b772965010ca94b529fef0b604952cea9c36",
+      "rear_lasers": 0
+    },
+    {
+      "id": "chi-expanded:crusader-crd-3r-bear",
+      "source": "https://github.com/MegaMek/mm-data/blob/e6f20e1fc2f9d6c74a6e2cdc74778b029ca14811/data/mekfiles/meks/Force%20Manuals/Mercs/Crusader%20CRD-3R%20%28Bear%29.mtf",
+      "sha256": "ad47b376cf3946d7844930e34ac300f5179024c4d5fe0dd82e87eb527e5a20b6",
+      "rear_lasers": 0
+    }
+  ]
+}

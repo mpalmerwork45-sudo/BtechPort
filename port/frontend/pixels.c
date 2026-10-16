@@ -1752,12 +1752,12 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
             unsigned owned=btp_broker_count(s);
             snprintf(line,sizeof line,"Owned bays: %u/4",owned);text(r,f,112,32,line,owned==4 ? 14u : 7u);
             int selling=c->ui==BTP_MENU_BROKER_SELL || c->ui==BTP_MENU_BROKER_SELL_CONFIRM;
-            unsigned id=c->ui==BTP_MENU_BROKER ? 7u*c->member+c->selected :
+            unsigned id=c->ui==BTP_MENU_BROKER ? c->member+c->selected :
                 c->ui==BTP_MENU_BROKER_SELL ? btp_broker_slot(s,c->selected) : s->menu.map_y;
             const uint8_t *model=NULL;
             if (selling && btp_broker_owned(s,id)) model=id ? s->party.mechs[id-1] : s->campaign.mech;
-            if ((c->ui==BTP_MENU_BROKER || c->ui==BTP_MENU_BROKER_CONFIRM) && id<r->roster.count &&
-                (c->ui!=BTP_MENU_BROKER || c->selected<btp_actions_count(s)-1u)) model=r->roster.mechs[id].record;
+            if ((c->ui==BTP_MENU_BROKER || c->ui==BTP_MENU_BROKER_CONFIRM) && id<r->roster.count)
+                model=r->roster.mechs[id].record;
             if (model) {
                 char name[16];memcpy(name,model,15);name[15]=0;
                 if (model[0]==255 && selling) name[0]=(char)s->party.mech_types[id];
@@ -1783,7 +1783,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                 for (unsigned i=0;i<count;++i) {
                     int y=48+(int)i*16;if (i==c->selected) rectangle(f,112,y,200,8,14);
                     unsigned color=i==c->selected ? 0u : 15u;
-                    if (i==count-1u) text(r,f,112,y,"Back",color);
+                    if (selling ? i==count-1u : c->member+i==r->roster.count) text(r,f,112,y,"Back",color);
                     else if (selling) {
                         unsigned bay=btp_broker_slot(s,i);const uint8_t *m=bay ? s->party.mechs[bay-1] : s->campaign.mech;
                         char name[16];memcpy(name,m,15);name[15]=0;if (m[0]==255) name[0]=(char)s->party.mech_types[bay];
@@ -1793,14 +1793,19 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                         int width=21-(int)(strlen(price)>6 ? strlen(price) : 6);
                         snprintf(line,sizeof line,"%u %-*.*s %6s",bay+1u,width,width,name,price);text(r,f,112,y,line,color);
                     } else {
-                        const BtpRosterMech *d=&r->roster.mechs[c->member*7u+i];
+                        const BtpRosterMech *d=&r->roster.mechs[c->member+i];
                         char price[11];snprintf(price,sizeof price,"%u",d->price);
                         int width=21-(int)(strlen(price)>6 ? strlen(price) : 6);
                         snprintf(line,sizeof line,"%-*.*s %6s",width,width,(const char *)d->record,price);text(r,f,112,y,line,color);
                     }
                 }
                 if (selling && !owned) text(r,f,112,80,"No owned 'Mechs to sell.",7);
-                text(r,f,112,184,!selling && r->roster.count>7 ? "Left/Right: more stock." : "Enter/Space: select.",7);
+                if (!selling && r->roster.count>=BTP_BROKER_ROWS) {
+                    unsigned end=c->member+count;if (end>r->roster.count) end=r->roster.count;
+                    snprintf(line,sizeof line,"%u-%u/%u  Up/Down: scroll",c->member+1u,end,r->roster.count);
+                    text(r,f,112,176,line,7);
+                }
+                text(r,f,112,184,"Enter/Space: select.",7);
             } else if ((c->ui==BTP_MENU_BROKER_CONFIRM || c->ui==BTP_MENU_BROKER_SELL_CONFIRM) && model) {
                 uint32_t price=selling ? btp_broker_offer(s,r,id) : r->roster.mechs[id].price;
                 snprintf(line,sizeof line,"%s this 'Mech for %u C-bills?",selling ? "Sell" : "Buy",price);

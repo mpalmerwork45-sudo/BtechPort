@@ -1,0 +1,70 @@
+{
+  "format": "btp-chi-roster-v1",
+  "package_id": "chi-expanded",
+  "content_version": "0.1.0",
+  "mechs": [
+    {
+      "id": "chi-expanded:panther-pnt-9r",
+      "name": "PANTHER PNT-9R",
+      "save_code": 160,
+      "mass_tons": 35,
+      "walk": 4,
+      "jump": 4,
+      "engine_heat_sinks": 5,
+      "sprite": "red_stinger",
+      "price": 12000,
+      "armor": [10, 10, 12, 9, 14, 10, 10, 12, 5, 7, 5],
+      "structure": [6, 8, 8, 3, 11, 6, 8, 8],
+      "actuators": [255, 255],
+      "external_heat_sinks": [0, 4, 0, 0, 0, 0, 4, 0],
+      "loadout": [
+        {"location": "right_arm", "weapon": "ppc", "ammo": 0, "ammo_cost": 0},
+        {"location": "center_torso", "weapon": "srm4", "ammo": 25, "ammo_cost": 6}
+      ]
+    },
+    {
+      "id": "chi-expanded:hunchback-hbk-4g",
+      "name": "HUNCHBACK 4G",
+      "save_code": 161,
+      "mass_tons": 50,
+      "walk": 4,
+      "jump": 0,
+      "engine_heat_sinks": 8,
+      "sprite": "red_stinger",
+      "price": 22000,
+      "armor": [16, 20, 20, 9, 26, 16, 20, 20, 4, 5, 4],
+      "structure": [8, 12, 12, 3, 16, 8, 12, 12],
+      "actuators": [255, 255],
+      "external_heat_sinks": [0, 0, 2, 0, 1, 0, 0, 2],
+      "loadout": [
+        {"location": "left_arm", "weapon": "medium_laser", "ammo": 0, "ammo_cost": 0},
+        {"location": "right_arm", "weapon": "medium_laser", "ammo": 0, "ammo_cost": 0},
+        {"location": "right_torso", "weapon": "ac20", "ammo": 10, "ammo_cost": 12},
+        {"location": "head", "weapon": "small_laser", "ammo": 0, "ammo_cost": 0}
+      ]
+    },
+    {
+      "id": "chi-expanded:catapult-cplt-c1",
+      "name": "CATAPULT C1",
+      "save_code": 162,
+      "mass_tons": 65,
+      "walk": 4,
+      "jump": 4,
+      "engine_heat_sinks": 10,
+      "sprite": "locust",
+      "price": 36000,
+      "armor": [13, 19, 18, 9, 24, 13, 19, 18, 8, 11, 8],
+      "structure": [10, 15, 15, 3, 21, 10, 15, 15],
+      "actuators": [207, 207],
+      "external_heat_sinks": [0, 0, 2, 1, 0, 0, 0, 2],
+      "loadout": [
+        {"location": "left_arm", "weapon": "lrm15", "ammo": 8, "ammo_cost": 10},
+        {"location": "right_arm", "weapon": "lrm15", "ammo": 8, "ammo_cost": 10},
+        {"location": "left_torso", "weapon": "medium_laser", "ammo": 0, "ammo_cost": 0},
+        {"location": "right_torso", "weapon": "medium_laser", "ammo": 0, "ammo_cost": 0},
+        {"location": "center_torso", "weapon": "medium_laser", "ammo": 0, "ammo_cost": 0},
+        {"location": "center_torso", "weapon": "medium_laser", "ammo": 0, "ammo_cost": 0}
+      ]
+    }
+  ]
+}

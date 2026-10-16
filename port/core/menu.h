@@ -10,6 +10,9 @@ enum { BTP_MENU_ROOT=1, BTP_MENU_ALLOCATE, BTP_MENU_PERSON, BTP_MENU_EQUIPMENT,
     BTP_MENU_BROKER,BTP_MENU_BROKER_CONFIRM,BTP_MENU_BROKER_RESULT,
     BTP_MENU_BROKER_HUB,BTP_MENU_BROKER_SELL,BTP_MENU_BROKER_SELL_CONFIRM,BTP_MENU_BROKER_SELL_RESULT };
 enum { BTP_MENU_IO_SAVE=1, BTP_MENU_IO_LOAD=2 };
+enum { BTP_BROKER_ROWS=8 };
+/* Absolute catalogue item (count means Back); member is the first visible row. */
+void btp_broker_select(BtpState *state,unsigned item);
 void btp_menu_open(BtpState *state);
 void btp_menu_close(BtpState *state);
 void btp_menu_input(BtpState *state,const BtpResources *resources,BtpAction action);

@@ -22,4 +22,8 @@ typedef struct {
 int btp_roster_custom(const uint8_t record[125]);
 const BtpRosterMech *btp_roster_definition(const BtpRoster *roster,const uint8_t record[125]);
 int btp_roster_load(const char *path,BtpRoster *roster,char error[256]);
+/* Exact match or an unchanged prefix of this catalogue. Zero rejects edits,
+   removals, reordered save codes and a different package. */
+unsigned btp_roster_saved_count(const BtpRoster *roster,const uint8_t package[32],
+    const uint8_t version[32],uint32_t fingerprint);
 #endif
