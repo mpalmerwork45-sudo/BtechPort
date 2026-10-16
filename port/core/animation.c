@@ -48,7 +48,10 @@ int btp_cutscene_begin(BtpState *s, const BtpResources *r, unsigned kind, unsign
         (!cinema && !invasion && !yard && active!=3 && ((kind != 0 && kind != 6 && kind != 8 && (kind<9 || kind>14)) || active != (kind ? 1u : 2u))) || !r->animations[kind].count ||
         ((kind==0 || kind==8) && r->animations[kind].count != (kind ? 3u : 18u))) return 0;
     s->cutscene = (BtpCutsceneState){.active=(uint8_t)active,.kind=(uint8_t)kind,
-        .remaining=(uint16_t)(r->animations[kind].units[0]+((!kind && active!=7) || active==3 || invasion || (cinema && kind!=8) ? 50u : 0u))};
+        /* 0000:4A3D adds 50 retraces for every film except the repeating
+           dream. This includes repairs, invasion and the cache ending.
+           Failed yard startup uses its own truncated 09B8 routine. */
+        .remaining=(uint16_t)(r->animations[kind].units[0]+(kind!=8 && active!=7 ? 50u : 0u))};
     if (!s->cutscene.remaining) s->cutscene.remaining=1;
     return 1;
 }
@@ -101,10 +104,10 @@ int btp_cutscene_valid(const BtpState *s)
         (c->kind==8 ? c->cycle<7 : !c->cycle) && !c->hold && c->remaining<=16384 &&
         s->mode==BTP_BUILDING && s->script.status==BTP_SCRIPT_ANIMATION &&
         s->script.animation_kind==c->kind && (s->script.animation_flags==1 || s->script.animation_flags==2);
-    if (c->active==1 && c->kind==6) return c->step<31 && !c->cycle && !c->hold && c->remaining<=4 &&
+    if (c->active==1 && c->kind==6) return c->step<31 && !c->cycle && !c->hold && c->remaining<=(!c->step ? 54u : 4u) &&
         s->mode==BTP_BUILDING && (s->campaign.building==5 || s->campaign.building==9 || s->campaign.building==11 || s->campaign.building==13) &&
         s->script.status==BTP_SCRIPT_ANIMATION && s->script.animation_kind==6 && s->script.animation_flags==1;
-    if (c->active==1 && c->kind==9) return c->step<12 && !c->cycle && !c->hold && c->remaining<=7 &&
+    if (c->active==1 && c->kind==9) return c->step<12 && !c->cycle && !c->hold && c->remaining<=(!c->step ? 57u : 7u) &&
         s->mode==BTP_BUILDING && !s->entry_slot && s->campaign.invasion &&
         s->script.status==BTP_SCRIPT_ANIMATION && s->script.animation_kind==9 && s->script.animation_flags==1;
     if (c->active==1 && c->kind>=10 && c->kind<=14) return c->step<BTP_ANM_FRAMES && !c->cycle && !c->hold && c->remaining<=16384 &&

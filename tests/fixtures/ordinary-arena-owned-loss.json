@@ -588,7 +588,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "05ad625e38d10668",
+        "state_digest": "00fa89ae76d62a60",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1520,7 +1520,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "c104a98c8ab7b3df",
+        "state_digest": "ff597d09286356e7",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -2452,7 +2452,7 @@
           "rental": 0,
           "variant": 3
         },
-        "state_digest": "00734f28017fc79c",
+        "state_digest": "883da1d016365504",
         "effect_stage": 0,
         "combat": {
           "phase": 1,
@@ -2806,7 +2806,7 @@
     },
     {
       "label": "arena-result",
-      "tick": 1749,
+      "tick": 2453,
       "state": {
         "map": 2,
         "mode": "encounter",
@@ -2817,7 +2817,7 @@
           44
         ],
         "gate": 85,
-        "tick": 1749,
+        "tick": 2453,
         "blocked": 1,
         "script_pc": 1703,
         "script_status": 5,
@@ -3395,7 +3395,7 @@
           "rental": 0,
           "variant": 3
         },
-        "state_digest": "72fde361e5870794",
+        "state_digest": "03f75a14fc5bff97",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -3724,7 +3724,7 @@
               "y": 98,
               "direction": 1,
               "heat": 0,
-              "pool": 5,
+              "pool": 0,
               "cover": 0,
               "infantry": 0,
               "burning": 0,
@@ -3875,7 +3875,7 @@
     },
     {
       "label": "arena-cashier",
-      "tick": 1750,
+      "tick": 2454,
       "state": {
         "map": 2,
         "mode": "building",
@@ -3886,7 +3886,7 @@
           46
         ],
         "gate": 85,
-        "tick": 1750,
+        "tick": 2454,
         "blocked": 1,
         "script_pc": 2257,
         "script_status": 2,
@@ -4464,7 +4464,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "7d980ed3878ba669",
+        "state_digest": "8a3d797798b7d740",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -4807,7 +4807,7 @@
     },
     {
       "label": "arena-exited",
-      "tick": 1751,
+      "tick": 2455,
       "state": {
         "map": 2,
         "mode": "local-exploration",
@@ -4818,7 +4818,7 @@
           46
         ],
         "gate": 85,
-        "tick": 1751,
+        "tick": 2455,
         "blocked": 1,
         "script_pc": 2258,
         "script_status": 3,
@@ -5396,7 +5396,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "f0daa0d40cf3c08e",
+        "state_digest": "113ed7ad1628141f",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -5748,7 +5748,7 @@
       46
     ],
     "gate": 85,
-    "tick": 1751,
+    "tick": 2455,
     "blocked": 1,
     "script_pc": 2258,
     "script_status": 3,
@@ -6326,7 +6326,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "f0daa0d40cf3c08e",
+    "state_digest": "113ed7ad1628141f",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

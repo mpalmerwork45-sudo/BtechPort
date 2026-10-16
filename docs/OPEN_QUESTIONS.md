@@ -1,14 +1,14 @@
-# Open questions after bounded M4 work — 2026-10-15
+# Open questions after bounded M4 work — 2026-10-16
 
 The authorized M4 increments have playable, tested paths. Confidence belongs
 to the individual original comparisons and recorded continuations in
 [M4 evidence](M4_PROGRESS.md) and [follow-up evidence](M4_FOLLOWUPS_EVIDENCE.md),
 rather than to every branch of the original game.
 The latest results and remaining bounds are in [project status](PROJECT_STATUS.md)
-and the [five-area sweep](M4_ACCEPTANCE_SWEEP.md).
+and the [latest five-area sweep](M4_COMPLETION_SWEEP.md).
 
 1. **Fresh-game campaign — playable route VERIFIED; broader parity UNKNOWN.**
-   A 66,257-input new-cadet route now earns companions, apprenticeships, the
+   A 73,026-input new-cadet route now earns companions, apprenticeships, the
    holodisk and password before reaching the ending, using only the authorized
    credit shortcut. It restores before every input and has selected original
    prerequisite comparisons. It is not a complete DOS recording of all those
@@ -22,15 +22,18 @@ and the [five-area sweep](M4_ACCEPTANCE_SWEEP.md).
    rental vehicles, normal return and destruction. A bounded native guard fight
    reaches its result. Owned/rented arena wins and losses and prison loss now
    have full ordinary-input and SDL continuations; 28 original arena terminal
-   cases explain and correct the stuck fight. Complete DOS fights remain to
-   be compared.
+   cases explain and correct the stuck fight. Eight additional complete original encounters now compare 24 waves: four
+   owned/rental arena results, two prison defeats and two outdoor victories.
+   Broader fights and elapsed timing remain outside those bounds.
 3. **Later native actions — partial VERIFIED coverage.** Actions 31/32 are
    personal armour selection/repair, now supported with 360 original cases;
    they are not mech garage repair. Hospital/Mechit-Lube replacement recruiting
    and the spy have another 314 executed cases and an ordinary combat route.
    Another 928 original clothing/electronics visits and an ordinary 769-input
    saved continuation now pass. All 26 BLD control graphs have a static audit;
-   additional branches still need execution before claiming all town services.
+   124 further complete inventor/house/theatre branches now execute, with cash,
+   flags, records and event-order comparisons. More branches still need
+   execution before claiming all town services.
    Unknown actions produce diagnostics.
 4. **Whole encounters — APPROXIMATE beyond bounded comparisons.** Candidate
    generation, formations, attacks, cooling, ejection and aftermath have primary
@@ -44,8 +47,9 @@ and the [five-area sweep](M4_ACCEPTANCE_SWEEP.md).
    480 doorway decisions include outer members. Another 10,512 decisions now
    cover all 13 towns and 84 doorways. The 534-case cache corpus includes entry/
    exit; native tests restore parties of one through eight and repair old saves
-   with invalid follower positions. Long constrained-corridor follower paths
-   and legal but widely split formations remain outside exact parity claims.
+   with invalid follower positions. Another 5,760 original cache formation/first-contact cases check every member;
+   2,400 saved native steps check split legal formations and all step sizes.
+   Exact DOS follower recovery paths remain outside those legality claims.
    A new 440-case placement regression prevents disconnected enemy spawns and
    ordinary enemy mechs inside Starport, including from outside its boundary.
    This owner-requested reachability protection extends the original's
@@ -62,7 +66,12 @@ and the [five-area sweep](M4_ACCEPTANCE_SWEEP.md).
    documented. All ten populated towns now restore roaming actors; 50 original
    initialization/expiry and 45 Talk lookup cases pass. An ordinary arrival and
    hospital conversation has a complete saved/SDL route. Recorded input-only
-   playability does not establish timer parity.
+   playability does not establish timer parity. A fresh 159-step MAP1 idle
+   trace matches NPC state/RNG and saved continuations; its mean period is
+   156.825 ms, versus 128 ms in the port. Original idle loops request eleven
+   VGA retraces. This scheduler difference remains open because changing it
+   affects recruitment/allowance RNG history. Animation and tactical speed
+   requests now have 66/6 original cases and native 32 ms conversion checks.
 6. **Sound — programs VERIFIED, physical response APPROXIMATE.** All eighteen
    ordered tone/noise traces, attack effect selections, hit/wreck/arena-alarm dispatch
    and sequential continuation are checked. Busy-loop conversion is a nominal
@@ -71,8 +80,9 @@ and the [five-area sweep](M4_ACCEPTANCE_SWEEP.md).
    recordings remain unverified. PCjr audio is not implemented.
 7. **Visual parity — mixed coverage.** Title RGB, selected original popup crops,
    font/sprites and menu/inspection facts have primary comparisons. Broader
-   combat/portrait geometry, viewport-edge visibility margins, animation
-   cadence and several service layouts remain approximate. Engagement,
+   combat/portrait geometry, viewport-edge visibility margins, CPU decode cost
+   and several service layouts remain approximate. Animation opening holds
+   and battle speed delays have now been corrected against original requests. Engagement,
    allocation, inspection-choice and Speed Shop selectors have complete region
    hashes. Original startup seed `0x020304` and all twelve city sectors agree;
    the overhead frame matches all 64,000 pixels without masks. The former black
@@ -92,19 +102,23 @@ and the [five-area sweep](M4_ACCEPTANCE_SWEEP.md).
    and sensor warnings match nine additional regions and 36 executed gate cases;
    the two arena result crops and qualified-pilot salvage question also match.
    Salvage now matches 384 complete original loops and 552 held text/interior
-   pages, including automatic retries and final no-wreck notices. The interiors
-   use original glyph calls, not live result screenshots. Another 256 brief/
-   verbose combat reports match text and every pixel of their upper-left
-   interior; death-cleanup messages remain outside that report corpus.
+   pages, including automatic retries and final no-wreck notices. Three additional live success/failure/no-wreck salvage captures now match
+   their complete panels and borders. Another 256 brief/verbose combat
+   reports match text and every pixel of their upper-left interior. The new
+   384-case death/ejection corpus compares all text and 256 brief/verbose
+   interiors; quiet-mode ejection cursor/header placement remains approximate.
+   Seventeen theatre film/held-page interiors match original wrapping and
+   scrolling, including the closing sequence that previously overflowed.
    Nineteen native combat pages now pass F5/F9. Individual Computer assignments
    stay in the menu until Begin Fight; Space preserves them when it stops the
    continuous run. Key-poll latency remains approximate.
    The normal original target selector cycles enemy IDs12..23 only.
 8. **Persistence — tested represented fields.** All six supplied original saves
    roundtrip unchanged; unmodeled original bytes are preserved. Internal
-   BTPc/v38 includes active theft/audio/menu states, spy discovery and world
+   BTPd/v39 includes active theft/audio/menu states, spy discovery and world
    sectors for debris, held weapon-window presentation, weapon-entry warnings,
-   salvage inspection history and queued/held combat reports. Pre-v35 infantry
+   salvage inspection history and queued/held combat reports with casualty
+   flags. v38 reports migrate with no invented death flag. Pre-v35 infantry
    weapon lists migrate to the original direct selector. Ambiguous pre-v34 decorative marks are cleared. Old
    formats cannot recover history that they never stored. Active-invasion v29
    migration now compares positions, current and per-actor goals/waypoints and

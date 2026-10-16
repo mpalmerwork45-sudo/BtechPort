@@ -1,0 +1,24 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "cases": 66,
+  "combat_speeds": 6,
+  "seed": 1,
+  "routines": "0000:48B7/1AFD animation dispatcher/frames; 187F:23EC decoder; 0E31:1DCC combat pacing",
+  "comparison": "All packed frame hashes, ordered 173D:0006 retrace counts and startup speaker calls, flags 0/1/2. O8 repeats seven times; every other ANM adds 50 retraces after frame zero. Flags zero add 60 final retraces and O0 sound 12.",
+  "boundaries": [
+    "0000:19BF",
+    "0000:28CC",
+    "1656:0281",
+    "1656:0388",
+    "173D:0006",
+    "173D:0259",
+    "173D:0814",
+    "187F:00D1",
+    "187F:1E37",
+    "187F:3336",
+    "187F:33D0"
+  ],
+  "limits": "VGA retrace requests, not wall-clock measurements. CPU decode cost and physical XT speaker/acoustic timing are excluded.",
+  "no_instruction_patches": true
+}

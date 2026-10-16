@@ -95,7 +95,56 @@ save/restore precedes every input and animation/audio step in this comparison.
 `make_theater_text_vectors.py` records numeric hashes only; reconstructed
 original/native panels and two late-film saved checkpoints remain in `work/`.
 
-## 5. Timing audit — in progress
+## 5. Timing and sound audit
 
-Original animation, combat delay and NPC cadence comparisons are being extended.
-Physical XT calibration still requires suitable hardware recordings.
+**VERIFIED request timing:** 66 original animation executions (all 22 ANMs,
+flags 0/1/2) compare every packed frame hash, ordered retrace delay and startup
+sound request. Original `0000:48B7/1AFD` and `187F:23EC` execute unchanged;
+file reads, drawing, waits and speaker playback are explicit boundaries. All
+six `0E31:1DCC` combat speed selections are recorded too. The native test checks
+51 supported playback contexts against their requested durations within one
+32 ms tick, plus both non-cinema repair/invasion contexts.
+
+**Fixed:** repair, invasion and cache-ending films now include the original
+50-retrace pause after their opening frame. Dream playback still repeats seven
+times without that pause; normal startup keeps its sound and final hold. Combat
+speeds 1–4 now convert 12/24/36/48 VGA retraces into 6/11/17/22 logical ticks per
+advance, instead of 2/3/4/5. Speed five retains key stepping. Existing saved
+in-progress delays finish normally; new advances use the corrected conversion.
+Frame decoding cost and host scheduling are outside these duration claims.
+
+**Measured, still APPROXIMATE:** a fresh 25-second, read-only DOSBox MAP1 idle
+capture produced 160 stable samples and 159 consecutive frame transitions.
+All NPC coordinates, timers, RNG, phase and saved continuations match the native
+frame rules. The observed mean period is **156.825 ms** (median 151.952 ms,
+15 ms polling resolution), consistent with the original eleven idle retraces.
+The port currently advances an idle NPC frame every four 32 ms ticks (**128 ms**).
+This difference remains open: changing the exploration scheduler also affects
+recruitment/allowance RNG history and needs its own input-timing migration and
+regression pass. DOSBox ran its normal core at fixed 10000 cycles; this is not a
+physical XT measurement. Timestamps are stored separately from projected frames
+so they cannot defeat the two-identical-polls stability filter.
+
+**Sound:** all eighteen original tone/noise program comparisons and the
+sequential attack/impact/destruction/startup continuation tests pass. Physical
+speaker filtering, prefetch/interrupt effects and exact 8 MHz XT calibration
+remain **UNKNOWN** without suitable hardware recordings. No hardware sound
+parity is claimed from the emulator timing observations.
+
+The ordinary training, invasion, town, theft, arena, spy and ending routes were
+regenerated after the deliberate presentation delay changes. The fresh ending
+has **73,026 inputs**, and spy removal/replacement has **56,936**. Both restore
+before every input. The two fresh apprenticeship checkpoints were re-executed
+against the original routines with the new route's actual records and cash.
+
+## Verification
+
+All **55 regular suites** pass, including the focused cache rerun after updating
+its original checkpoint prerequisites. All five Python tool tests pass. Native
+`--completion-only` checks both late theatre pages and all three live-compared
+salvage result pages with actual Space/F5/F9 keys, comparing complete restored
+state and pixels. The ordinary cinema SDL tail also matches its Enter-key
+headless continuation. All **55 ASan/UBSan/LeakSanitizer suites** pass in
+121.32 seconds outside the sandbox restriction on LeakSanitizer process
+inspection; no leak checks were disabled. The reference guard is run after
+the final commit against the 1,287-entry immutable-tree baseline.

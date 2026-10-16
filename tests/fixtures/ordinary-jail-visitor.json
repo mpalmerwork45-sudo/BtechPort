@@ -2,59 +2,59 @@
   "checkpoints": [
     {
       "label": "funded-by-owner-shortcut",
-      "tick": 50552
+      "tick": 56710
     },
     {
       "label": "garage-crew-allocation",
-      "tick": 50579
+      "tick": 56737
     },
     {
       "label": "garage-checkout",
-      "tick": 50586
+      "tick": 56744
     },
     {
       "label": "walking-with-rex-piloting",
-      "tick": 50632
+      "tick": 56790
     },
     {
       "label": "hospital-menu",
-      "tick": 51007
+      "tick": 57165
     },
     {
       "label": "hospital-companion-pause",
-      "tick": 51068
+      "tick": 57250
     },
     {
       "label": "hospital-companion-joined",
-      "tick": 51070
+      "tick": 57252
     },
     {
       "label": "medical-kit",
-      "tick": 51077
+      "tick": 57259
     },
     {
       "label": "field-surgery-kit",
-      "tick": 51081
+      "tick": 57263
     },
     {
       "label": "hospital-exit",
-      "tick": 51083
+      "tick": 57265
     },
     {
       "label": "jail-visitor-menu",
-      "tick": 51667
+      "tick": 57849
     },
     {
       "label": "jail-companion-pause",
-      "tick": 51732
+      "tick": 57938
     },
     {
       "label": "jail-companion-joined",
-      "tick": 51763
+      "tick": 57972
     },
     {
       "label": "jail-exit",
-      "tick": 51766
+      "tick": 57975
     }
   ],
   "final": {
@@ -67,7 +67,7 @@
       12
     ],
     "gate": 85,
-    "tick": 51766,
+    "tick": 57975,
     "blocked": 0,
     "script_pc": 4293,
     "script_status": 3,
@@ -118,14 +118,6 @@
     "conversation_checkpoint": 0,
     "npc_pairs": [
       [
-        53,
-        1
-      ],
-      [
-        39,
-        1
-      ],
-      [
         99,
         1
       ],
@@ -148,6 +140,14 @@
       [
         53,
         1
+      ],
+      [
+        70,
+        1
+      ],
+      [
+        4,
+        1
       ]
     ],
     "npc_enabled": 2,
@@ -155,9 +155,9 @@
     "npc_clock": 0,
     "npc_fault": 0,
     "npc_rng": [
-      218,
-      112,
-      66
+      238,
+      8,
+      86
     ],
     "npc_search": [
       100,
@@ -637,7 +637,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "f1f50b62a7301fe2",
+    "state_digest": "95124daecb219797",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

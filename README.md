@@ -30,7 +30,7 @@ Fidelity work continues. Original routine comparisons and repeatable gameplay
 routes verify specific behavior; they do not establish complete parity. Combat
 presentation/timing, wider encounter behavior, some transitions and physical
 speaker response still have limits. See [project status](docs/PROJECT_STATUS.md)
-and the [current acceptance sweep](docs/M4_ACCEPTANCE_SWEEP.md) for evidence and
+and the [latest fidelity sweep](docs/M4_COMPLETION_SWEEP.md) for evidence and
 remaining work.
 
 ## Build and run on Linux

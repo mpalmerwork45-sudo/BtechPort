@@ -1,80 +1,74 @@
-# Build, verification and original oracle — 2026-10-15
+# Build, verification and original oracle — 2026-10-16
 
-## Current five-area sweep
+## Current five-area completion sweep
 
-The active build has **54 CTest suites**. Saves are **BTPc/v38** with a
+The active build has **55 CTest suites**. Saves are **BTPd/v39**, with a
 20,480-byte payload and explicit older-version migrations. Local caches are
-**BTTA/v23** (370 strings, 15,169 bytes), BTCB/v11 and BTW3. Original assets,
+**BTTA/v24** (373 strings, 15,226 bytes), BTCB/v11 and BTW3. Original assets,
 extracted text, screenshots and RAM remain outside Git.
-
-Build and run the current checks from the repository root:
 
 ```sh
 ./scripts/build.sh
 ctest --test-dir build --output-on-failure
 ./scripts/test-sanitize.sh --core-only
 python3 -m unittest discover -s tests -p test_tools.py
-python3 tools/native_smoke.py --combat-ui-only
-python3 tools/native_smoke.py --cache-only
-python3 tools/native_smoke.py --followups-only
+python3 tools/native_smoke.py --completion-only
 ```
 
-The sanitizer command rebuilds before running all current core suites. Native
-checks need the existing X11 session and XTest library; short saved prefixes
-avoid playing the whole campaign in real time. `--combat-ui-only` checks four
-individual Computer assignments, explicit Begin Fight, Space interruption and
-19 held-page F5/F9 continuations, including brief/verbose reports.
-`--followups-only` now has ten ordinary-route tails, including electronics and
-clothing; `--cache-only` covers doors, terminals, the Phoenix display, map room,
-ending and saved continuations. These compare recorded SDL inputs, complete
-canonical state and resulting pixels with the headless runtime.
-Menu, combat, Mechit-Lube and follow-up checks use physical Space selections
-against Enter-key continuations. Numeric bank/ammunition amounts retain Enter;
-the amount-editor checks separately verify that Space does not submit them.
-Combat core tests also compare Space and Enter across mech/infantry commands,
-movement destinations and replace-order prompts, and Space interruption during
-an outtake preserves per-unit assignments.
+The sanitizer command rebuilds all current core suites. Its process-inspection
+step requires running outside the restricted sandbox; leak detection stays
+enabled. Native checks use a private X11 display and bounded scripts, avoiding
+interactive terminal-input approvals. `--completion-only` checks late theatre
+pages and the live-compared salvage result pages with physical Space/F5/F9,
+then plays the ordinary cinema tail. All complete states and pixels are compared
+to headless continuations. The regular animation test now includes supplied
+ANMs and the original timing corpus; the NPC test includes both the earlier
+travel corpus and the new 159-step idle capture.
 
-The new original-executable generators require the existing optional Unicorn
-installation. They record only numeric results/hashes in fixtures:
+The optional original-executable generators require the local Unicorn package.
+Only numeric observations and hashes enter fixtures:
 
-| Tool under `tools/` | Original comparison bounds |
+| Tool under `tools/` | New comparison bounds |
 | --- | --- |
-| `make_computer_control_vectors.py` | Selected-unit assignment, Next Mech, Begin Fight and Space flags |
-| `make_battle_text_vectors.py` | 256 brief/verbose reports; original glyph calls, colours and 88-by-88 interiors |
-| `make_salvage_vectors.py` | 384 complete loops, 552 held text/200-by-72 interior pages, retries, records and RNG |
-| `make_town_encounter_vectors.py` | 133 complete waves in four contexts; two MAP4 victories and two 64-wave Starport bounds |
-| `make_town_boundary_vectors.py` | 10,512 collision/first-door cases across 13 towns and 84 doorways |
-| `make_cache_vectors.py` | 534 original cases, including solved/unsolved entry and exit |
-| `make_alternate_service_vectors.py` | 928 complete clothing/electronics visits; separate static audit of 26 BLD graphs |
-| `make_phoenix_palette_vectors.py` | Original decoder/palette and all 64,000 pixels of a live original Phoenix capture |
+| `make_complete_encounter_vectors.py` | Eight complete outdoor/arena/prison encounters, 24 waves; RNG, full records, positions, heat, facing and outcome |
+| `make_battle_text_vectors.py --deaths` | 384 casualty/ejection texts; 256 brief/verbose 88-by-88 interiors; quiet placement remains approximate |
+| `make_salvage_live_vectors.py` | Three complete 216-by-88 live result panels, including borders |
+| `make_cache_movement_vectors.py` | 5,760 formation collision/first-contact cases in both cache rooms |
+| `make_story_branch_vectors.py` | 124 complete inventor/house/theatre branches and ordered waits/sound/animation requests |
+| `make_theater_text_vectors.py` | 17 film/held-page interiors with original wrapping, scrolling and final clear |
+| `make_presentation_timing_vectors.py` | All 22 ANMs with three caller flags; packed frames, retrace delays and startup sound requests; all six combat speeds |
+| `make_npc_timing_observations.py RUN` | Fresh 25-second idle capture: 160 samples, 159 consecutive state/RNG transitions; measured mean 156.825 ms |
 
-`make_alternate_service_replay.py` adds a 769-input ordinary GAME3 continuation.
-The regenerated fresh campaign has 66,257 inputs; spy removal/replacement has
-50,672. Both long native routes restore before every input. These are native
-playability/serialization checks with selected original prerequisites, not
-complete DOS recordings of every input. Repeated oracle regeneration is only
-needed when the compared behavior or harness changes.
+The earlier 384-loop/552-page salvage, 133-wave town combat, 10,512 town
+collision, 534 cache-rule and 928 alternate-service corpora remain in use.
+These complement the new cases; none imply every original branch is covered.
 
-See [the acceptance report](M4_ACCEPTANCE_SWEEP.md) for exact evidence and
-remaining timing/hardware limitations. The reference guard checks all 1,287
-content/mode/mtime entries, including reference Git metadata, before handoff.
+The updated ordinary fresh campaign has **73,026 inputs**; spy replacement has
+**56,936**. Both restore before every input. Presentation delay corrections
+required regenerated recorded waits, not replaying the campaign in real time.
+`make_followup_replays.py --training`, `make_arena_outcome_replays.py`,
+`make_spy_replay.py` and `make_fresh_campaign_replay.py` regenerate their
+prerequisites in that order. Afterwards `make_campaign_checkpoint_vectors.py`
+re-executes the two actual apprenticeship contexts against original instructions.
+The native core also checks 2,400 saved cache steps with five/eight people,
+scattered legal positions, diagonals and all step amounts.
 
-**2026-10-15 verification:** all 54 regular suites, all 54
-ASan/UBSan/LeakSanitizer suites and all five Python tool tests pass. The sandbox prevents LeakSanitizer's process inspection;
-the successful sanitizer run used the same command outside that restriction,
-without disabling leak checks. Native intro/keypad, six-slot/settings/inspection/
-overhead, combat presentation, four Computer assignments and 19 combat F5/F9
-pages pass. All four Mechit-Lube routes and seven saved pages, ten ordinary
-shop/story tails, and the cache terminal/door/Phoenix/map-room/ending checks pass.
+See [the completion report](M4_COMPLETION_SWEEP.md) for exact evidence and
+remaining timing/hardware limitations. The port's idle NPC period remains
+128 ms; the original measured mean is 156.825 ms. Sound programs and sequential
+dispatch are checked, while physical 8 MHz XT calibration remains unverified.
 
-The expanded Space test initially included an old redundant Enter after closing
-inspection and tried to substitute Space for numeric ammunition submissions.
-The harness now selects only on actual menu/notice pages and retains Enter for
-both numeric fields. The affected menu and Mechit-Lube checks pass after those
-route corrections; the stopped bundled run is not reported as a complete pass.
-The optimized salvage oracle was regenerated: all 384-loop numeric results and
-552 text/pixel hashes are unchanged.
+**2026-10-16 verification:** all 55 regular suites and five Python tool tests
+pass. The cache suite was rerun after regenerating its original apprenticeship
+checkpoints for the updated route. Five native theatre/salvage F5/F9 pages and
+the full ordinary cinema SDL tail pass. All **55 ASan/UBSan/LeakSanitizer suites**
+pass in 121.32 seconds, with leak checks enabled. The first sandboxed run was
+stopped after LeakSanitizer reported its process-inspection restriction; the
+same command passed outside that restriction. Reference content, mode and mtime are checked
+against all 1,287 baseline entries, including reference Git metadata.
+
+Historical commands/results below describe their original milestone bounds;
+the current route counts and save/cache versions above take precedence.
 
 ## Earlier presentation increments (historical)
 
@@ -168,8 +162,8 @@ The last adds 314 recruitment, inspection and post-wave spy cases.
 order when gameplay/presentation timing changes. Routine native checks replay
 short saved tails, so adding a later mission does not require repeatedly playing
 every earlier mission in real time.
-`make_fresh_campaign_replay.py` records 66,149 fresh-cadet inputs through the
-cache ending; `make_spy_replay.py` records 50,564 through inspection, spy removal
+`make_fresh_campaign_replay.py` records 73,026 fresh-cadet inputs through the
+cache ending; `make_spy_replay.py` records 56,936 through inspection, spy removal
 and replacement recruitment. C integration restores and continues before
 every input. Only the ending route uses the authorized credit shortcut; neither
 imports an original save or edits quest flags, coordinates, skills or RNG.

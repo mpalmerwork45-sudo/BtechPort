@@ -47,181 +47,181 @@
     },
     {
       "label": "resolving",
-      "tick": 4091,
+      "tick": 4179,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 4133,
+      "tick": 4309,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 4175,
+      "tick": 4439,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 4240,
+      "tick": 4592,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 4282,
+      "tick": 4722,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 4324,
+      "tick": 4852,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 4366,
+      "tick": 4982,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 4408,
+      "tick": 5112,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "weapons",
-      "tick": 4453,
+      "tick": 5245,
       "mode": "training-mission",
       "combat_phase": 6
     },
     {
       "label": "target",
-      "tick": 4456,
+      "tick": 5248,
       "mode": "training-mission",
       "combat_phase": 7
     },
     {
       "label": "assigned",
-      "tick": 4457,
+      "tick": 5249,
       "mode": "training-mission",
       "combat_phase": 6
     },
     {
       "label": "resolving",
-      "tick": 4470,
+      "tick": 5262,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 4544,
+      "tick": 5424,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 4649,
+      "tick": 5617,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 4691,
+      "tick": 5747,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 4733,
+      "tick": 5877,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 4775,
+      "tick": 6007,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 4849,
+      "tick": 6169,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 5003,
+      "tick": 6411,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 5085,
+      "tick": 6581,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 5167,
+      "tick": 6751,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 5249,
+      "tick": 6921,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 5352,
+      "tick": 7112,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 5434,
+      "tick": 7282,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 5516,
+      "tick": 7452,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "resolving",
-      "tick": 5598,
+      "tick": 7622,
       "mode": "training-mission",
       "combat_phase": 9
     },
     {
       "label": "victory",
-      "tick": 5718,
+      "tick": 7830,
       "mode": "training-mission",
       "combat_phase": 0
     },
     {
       "label": "return-to-base",
-      "tick": 5718,
+      "tick": 7830,
       "mode": "training-mission",
       "combat_phase": 0
     },
     {
       "label": "report",
-      "tick": 5782,
+      "tick": 7894,
       "mode": "building",
       "combat_phase": 0
     },
     {
       "label": "exit",
-      "tick": 5783,
+      "tick": 7895,
       "mode": "local-exploration",
       "combat_phase": 0
     }

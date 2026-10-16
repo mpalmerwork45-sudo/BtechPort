@@ -67650,7 +67650,7 @@
           "step": 0,
           "cycle": 0,
           "hold": 0,
-          "remaining": 11,
+          "remaining": 61,
           "fraction": 0
         },
         "explored_digest": 2884363624,
@@ -67685,7 +67685,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "b49ab51407324270",
+        "state_digest": "d529e40d5b80f79e",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -68028,7 +68028,7 @@
     },
     {
       "label": "ending-complete",
-      "tick": 11281,
+      "tick": 11409,
       "state": {
         "map": 14,
         "mode": "ending",
@@ -68039,7 +68039,7 @@
           7
         ],
         "gate": 33,
-        "tick": 11281,
+        "tick": 11409,
         "blocked": 1,
         "script_pc": 2991,
         "script_status": 3,
@@ -68613,7 +68613,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "d73075476427405e",
+        "state_digest": "f8dc0f44a5b882de",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -68965,7 +68965,7 @@
       7
     ],
     "gate": 33,
-    "tick": 11281,
+    "tick": 11409,
     "blocked": 1,
     "script_pc": 2991,
     "script_status": 3,
@@ -69539,7 +69539,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "d73075476427405e",
+    "state_digest": "f8dc0f44a5b882de",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

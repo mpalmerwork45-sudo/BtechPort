@@ -307,6 +307,9 @@ class NpcTrace:
         self.state = int(row["state_segment"],16)*16
         self.pid = pid; self.output = output/(label+"-frames.json")
         self.done = threading.Event(); self.error = None; self.frames = []
+        # Keep timestamps separate: including them in projected rows would
+        # make every poll look changed and defeat the stable-frame filter.
+        self.started = time.monotonic(); self.sample_seconds = []
         self.thread = threading.Thread(target=self.observe, daemon=True)
         self.thread.start()
 
@@ -338,6 +341,7 @@ class NpcTrace:
                 row = self.project(ram)
                 if row == pending and (not self.frames or row != self.frames[-1]):
                     self.frames.append(row)
+                    self.sample_seconds.append(time.monotonic()-self.started)
                     if len(self.frames) > 12000: raise RuntimeError("NPC trace exceeded frame bound")
                 pending = row
         except Exception as error:
@@ -349,7 +353,8 @@ class NpcTrace:
         self.done.set(); self.thread.join(timeout=5)
         if self.thread.is_alive(): raise RuntimeError("NPC observer failed to stop")
         self.output.write_text(json.dumps({"kind":"read-only-outdoor-frames",
-            "frames":self.frames},indent=2)+"\n")
+            "frames":self.frames,"sample_seconds":self.sample_seconds,
+            "timing_note":"Stable two-poll observations; includes host scheduling and may skip intermediate frames."},indent=2)+"\n")
         if self.error: raise self.error
         print(f"NPC TRACE {len(self.frames)} stable samples: {self.output}",flush=True)
 
@@ -388,6 +393,7 @@ class AnmTrace(NpcTrace):
                 row = self.project(os.pread(fd,0x100000,self.base))
                 if row is not None and row == pending and (not self.frames or row != self.frames[-1]):
                     self.frames.append(row)
+                    self.sample_seconds.append(time.monotonic()-self.started)
                     if len(self.frames) > 1000: raise RuntimeError("ANM trace exceeded bound")
                 pending = row
         except Exception as error:
@@ -399,7 +405,8 @@ class AnmTrace(NpcTrace):
         self.done.set(); self.thread.join(timeout=5)
         if self.thread.is_alive(): raise RuntimeError("ANM observer failed to stop")
         self.output.write_text(json.dumps({"kind":"read-only-animation-frames",
-            "animation":self.kind,"frames":self.frames},indent=2)+"\n")
+            "animation":self.kind,"frames":self.frames,"sample_seconds":self.sample_seconds,
+            "timing_note":"Stable two-poll observations; includes host scheduling and may skip intermediate frames."},indent=2)+"\n")
         if self.error: raise self.error
         print(f"ANM TRACE O{self.kind}: {len(self.frames)} stable samples",flush=True)
 

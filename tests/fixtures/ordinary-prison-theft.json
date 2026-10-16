@@ -2,43 +2,43 @@
   "checkpoints": [
     {
       "label": "jail-theft-choice",
-      "tick": 51763
+      "tick": 57972
     },
     {
       "label": "impound-yard-start",
-      "tick": 51817
+      "tick": 58026
     },
     {
       "label": "boarding-mech-1",
-      "tick": 51830
+      "tick": 58039
     },
     {
       "label": "mech-1-activation-result",
-      "tick": 51880
+      "tick": 58089
     },
     {
       "label": "boarding-mech-2",
-      "tick": 51885
+      "tick": 58094
     },
     {
       "label": "mech-2-activation-result",
-      "tick": 51935
+      "tick": 58144
     },
     {
       "label": "boarding-mech-3",
-      "tick": 51940
+      "tick": 58149
     },
     {
       "label": "mech-3-activation-result",
-      "tick": 52034
+      "tick": 58243
     },
     {
       "label": "prison-crew-allocation",
-      "tick": 52036
+      "tick": 58245
     },
     {
       "label": "stinger-stolen",
-      "tick": 52057
+      "tick": 58266
     }
   ],
   "final": {
@@ -51,7 +51,7 @@
       10
     ],
     "gate": 85,
-    "tick": 52057,
+    "tick": 58266,
     "blocked": 0,
     "script_pc": 2012,
     "script_status": 3,
@@ -102,14 +102,6 @@
     "conversation_checkpoint": 0,
     "npc_pairs": [
       [
-        53,
-        1
-      ],
-      [
-        39,
-        1
-      ],
-      [
         99,
         1
       ],
@@ -132,6 +124,14 @@
       [
         53,
         1
+      ],
+      [
+        70,
+        1
+      ],
+      [
+        4,
+        1
       ]
     ],
     "npc_enabled": 2,
@@ -139,9 +139,9 @@
     "npc_clock": 0,
     "npc_fault": 0,
     "npc_rng": [
-      237,
-      224,
-      133
+      119,
+      16,
+      173
     ],
     "npc_search": [
       100,
@@ -621,7 +621,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "8f4d2c250c668103",
+    "state_digest": "34d3532c72149206",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

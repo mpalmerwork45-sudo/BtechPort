@@ -661,6 +661,45 @@ def combat_ui(env,work):
                 keyboard.x.XCloseDisplay(keyboard.display)
                 if process.poll() is None:process.terminate();process.wait(timeout=5)
 
+def completion_panels(env,work):
+    """Late cinema text and live-compared salvage pages, real keys and F5/F9."""
+    from reference_session import WindowKeys
+    binary=ROOT/'build/btech-headless';native=ROOT/'build/btech-port'
+    env=dict(env,SDL_AUDIODRIVER='dummy')
+    for test in ('btp-late-building-tests','btp-aftermath-tests'):
+        subprocess.run([str(ROOT/'build'/test),str(ROOT/'Original DOS')],cwd=ROOT,check=True,capture_output=True,timeout=20)
+    pages=['theater-988','theater-1125']+[f'salvage-live-{i}' for i in range(3)]
+    with tempfile.TemporaryDirectory(prefix='native-completion-',dir=work) as directory:
+        tmp=Path(directory);slot=tmp/'slot.btp';tail=tmp/'tail.actions';expected=tmp/'expected.ppm'
+        for label in pages:
+            start=work/'m4-audit'/f'{label}.btp';frame=work/f'native-{label}-restore.ppm'
+            process=subprocess.Popen([str(native),'--load',str(start),'--save-file',str(slot),'--frame',str(frame)],
+                cwd=ROOT,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+            keyboard=WindowKeys()
+            try:
+                for _ in range(100):
+                    found=[w for w,n in keyboard.windows() if n.startswith('BtechPort')]
+                    if len(found)==1:window=found[0];break
+                    if process.poll() is not None:raise RuntimeError(label+' window failed')
+                    time.sleep(.02)
+                else:raise RuntimeError(label+' window unavailable')
+                keyboard.key(window,'F5');time.sleep(.1)
+                before=json.loads(subprocess.check_output([str(binary),'--load',str(slot)],cwd=ROOT,text=True))
+                # Advance the held text with Space, then restore the earlier
+                # panel. F9 must recover its original script/scroll context.
+                keyboard.key(window,'space');keyboard.key(window,'F9');keyboard.key(window,'Ctrl+Shift+Escape')
+                out,err=process.communicate(timeout=10)
+                if process.returncode:raise RuntimeError(err)
+                actual=json.loads(out);delta=actual['tick']-before['tick']
+                if not 0<=delta<=20:raise RuntimeError(label+' unexpected restore interval')
+                tail.write_text('idle\n'*delta)
+                wanted=json.loads(subprocess.check_output([str(binary),'--load',str(slot),'--replay',str(tail),'--frame',str(expected)],cwd=ROOT,text=True))
+                if actual!=wanted or frame.read_bytes()!=expected.read_bytes():raise RuntimeError(label+' save/pixels differ')
+                print(f'PASS: native {label}, Space advances and F5/F9 restores complete state and pixels.',flush=True)
+            finally:
+                keyboard.x.XCloseDisplay(keyboard.display)
+                if process.poll() is None:process.terminate();process.wait(timeout=5)
+
 def encounter_placement(env,work):
     """Starport-boundary offers, menu entry and real F5/F9 for three parties."""
     from reference_session import WindowKeys
@@ -1202,6 +1241,7 @@ def main():
     parser.add_argument('--island-only',action='store_true')
     parser.add_argument('--controls-only',action='store_true')
     parser.add_argument('--encounters-only',action='store_true')
+    parser.add_argument('--completion-only',action='store_true')
     args = parser.parse_args()
     work = ROOT / "work"
     work.mkdir(exist_ok=True)
@@ -1229,6 +1269,9 @@ def main():
                 cache_island(env,work)
                 original_saves(env,work);aftermath(env,work);field(env,work)
                 saves(env,work);campaign(env,work);story(env,work);cache(env,work);return
+            if args.completion_only:
+                completion_panels(env,work)
+                followups(env,work,[('cinema','entry','GAME3')]);return
             if args.followups_only:
                 followups(env,work);return
             if args.arena_only:

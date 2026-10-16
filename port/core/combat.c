@@ -597,13 +597,18 @@ static void end_round(BtpState *s,const BtpResources *r)
     c->delay=0;c->flash=0;menu(c);
     if (s->campaign.invasion && s->late.invasion_event<5) invasion_event(s,r);
 }
+unsigned btp_combat_delay_ticks(unsigned speed)
+{
+    /* 0E31:1DCC requests 12*selection VGA retraces. Convert to 32 ms
+       ticks, rounding up; the advancing tick itself supplies one period.
+       Selection five is key-stepped by the caller, without a timed wait. */
+    return speed && speed<5 ? (12u*speed*100u+223u)/224u-1u : 0u;
+}
 static void round_tick(BtpState *s, const BtpResources *r, int enemy_ai)
 {
     BtpCombatState *c=&s->combat;
     if (c->delay) { --c->delay;if (c->flash) --c->flash;return; }
-    /* Original physical 100DC: speeds 0..4 delay 12*selection units;
-       selection 5 waits for a key. Host tick conversion remains approximate. */
-    c->delay=(uint8_t)(s->menu.speed<5 ? s->menu.speed : 0u);c->flash=0;
+    c->delay=(uint8_t)btp_combat_delay_ticks(s->menu.speed);c->flash=0;
     advance(s,0);
     /* Ignore old in-progress target paths too: loading an earlier checkpoint
        must not reanimate the training shell. */
@@ -1154,7 +1159,7 @@ int btp_combat_valid(const BtpState *s)
         c->phase>BTP_COMBAT_OVERRIDE || c->selected>10 || c->messages>2 || c->graphics>1 ||
         (c->movement>2 && c->movement!=255) || c->goal_active>1 || c->goal_x>(s->campaign.invasion ? 253u : 125u) || c->goal_y>(s->campaign.invasion ? 255u : 127u) ||
         c->cursor_x>(s->campaign.invasion ? 253u : 125u) || c->cursor_y>(s->campaign.invasion ? 255u : 127u) || c->weapon_selected>11 || c->target_selected>2 ||
-        c->scan_unit>=c->count || c->step>12 || c->delay>4 || c->notice>22 || c->notice_return>BTP_COMBAT_SCAN_CHOICE ||
+        c->scan_unit>=c->count || c->step>12 || c->delay>21 || c->notice>22 || c->notice_return>BTP_COMBAT_SCAN_CHOICE ||
         c->fled>1 || c->won>1 || c->fled+c->won+c->lost>1 || c->last_weapon>11 || c->last_event>5 || c->fired>=4096 ||
         c->shot.hit>1 || c->shot.location>35 || c->shot.destroyed>1 || c->shot.toppled>1 ||
         c->shot.needed < -4 || c->shot.needed>30 || (c->enemy_movement>1 && c->enemy_movement!=255) ||

@@ -130,7 +130,7 @@ static int matches(const BtpState *s, const BtpMap *m, const unsigned v[FIELDS],
     }
     return 1;
 }
-static void trace(const char *dir, const char *path)
+static void trace(const char *dir, const char *path, unsigned minimum)
 {
     BtpResources *r = malloc(sizeof *r); BtpError e;
     CHECK(r && btp_resources_load(dir,r,&e));
@@ -171,13 +171,14 @@ static void trace(const char *dir, const char *path)
     CHECK(!ferror(f)); CHECK(fclose(f) == 0);
     printf("NPC oracle: %u complete frame steps, %u cursor-only observations, %u skipped gaps, %u arrivals.\n",
         frames,cursor_only,skipped,arrivals);
-    CHECK(frames >= 450 && arrivals >= 1);
+    CHECK(frames>=minimum && (minimum<450 || arrivals>=1));
     free(r);
 }
 int main(int argc, char **argv)
 {
     synthetic();
-    if (argc == 3) trace(argv[1],argv[2]);
+    if (argc>=3) trace(argv[1],argv[2],450);
+    if (argc==4) trace(argv[1],argv[3],159);
     printf("PASS %u NPC checks\n",checks);
     return 0;
 }

@@ -1,0 +1,20 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "run": "1792125870995417125",
+  "samples": 160,
+  "complete_steps": 159,
+  "phase_cycle": 3,
+  "observed_seconds": {
+    "min": 0.13678304800032492,
+    "median": 0.1519519569997101,
+    "mean": 0.15682523382390098,
+    "max": 0.16729923299999427
+  },
+  "nominal_native_seconds": 0.128,
+  "original_idle_retraces": 11,
+  "original_routines": "0000:044A resets countdown to ten; 01F4 waits one retrace then decrements until negative; phase advances once per full loop.",
+  "input_sha256": "c858b481776e6301899b68575e9307fffd504487b791ab767762b653987d8f0a",
+  "csv_sha256": "1191016f7922f07cb6b09d576901c67d9bf72bbaea86b4c671465b7f9daeada5",
+  "limits": "25-second fresh MAP1 idle sample, DOSBox normal core fixed 10000 cycles, 15 ms two-poll observer. Host/emulator timing is not an 8 MHz XT measurement. Native cadence remains approximate."
+}
