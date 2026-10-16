@@ -30,7 +30,7 @@ Fidelity work continues. Original routine comparisons and repeatable gameplay
 routes verify specific behavior; they do not establish complete parity. Combat
 presentation/timing, wider encounter behavior, some transitions and physical
 speaker response still have limits. See [project status](docs/PROJECT_STATUS.md)
-and the [latest fidelity sweep](docs/M4_COMPLETION_SWEEP.md) for evidence and
+and the [latest fidelity sweep](docs/M4_PORTABILITY_SWEEP.md) for evidence and
 remaining work.
 
 ## Build and run on Linux
@@ -85,6 +85,34 @@ cmake --build build -j4
 
 The convenience build script and most reference tests expect `Original DOS/`.
 The native runtime also supports custom cache paths; see `--help`.
+
+## Windows build and run
+
+A Windows x86-64 executable can be cross-built on Linux with MinGW-w64 and the
+[official SDL2 MinGW development archive](https://www.libsdl.org/release/SDL2-devel-2.32.4-mingw.tar.gz).
+Install `gcc-mingw-w64-x86-64-posix` using your package manager, then extract the
+SDL archive under `local-deps/windows/` and run:
+
+```sh
+./scripts/build-windows.sh
+```
+
+For SDL2 elsewhere, set `BTP_WINDOWS_SDL2` to its
+`x86_64-w64-mingw32/lib/cmake/SDL2` directory. `BTP_WINDOWS_CC` can select a
+particular MinGW compiler. The script prepares the same three resource caches
+and creates `build-windows/btech-port.exe` with `SDL2.dll` beside it.
+
+On Windows, retain that build directory, your `Original DOS` directory and the
+three generated files `work/talk-data.bin`, `work/combat-data.bin` and
+`work/world-data.bin` under a common directory. Open a terminal there and run:
+
+```powershell
+.\build-windows\btech-port.exe --data "Original DOS"
+```
+
+The executable and its input, saves and audio queue are tested under Wine on
+Linux. Actual Windows drivers and physical audio hardware remain unverified.
+See [Windows verification](docs/M4_PORTABILITY_SWEEP.md#5-windows-build-and-verification).
 
 ## Controls
 

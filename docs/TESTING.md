@@ -1,8 +1,8 @@
 # Build, verification and original oracle — 2026-10-16
 
-## Current five-area completion sweep
+## Current cadence and portability sweep
 
-The active build has **55 CTest suites**. Saves are **BTPd/v39**, with a
+The active build has **56 CTest suites**. Saves are **BTPe/v40**, with a
 20,480-byte payload and explicit older-version migrations. Local caches are
 **BTTA/v24** (373 strings, 15,226 bytes), BTCB/v11 and BTW3. Original assets,
 extracted text, screenshots and RAM remain outside Git.
@@ -12,60 +12,86 @@ extracted text, screenshots and RAM remain outside Git.
 ctest --test-dir build --output-on-failure
 ./scripts/test-sanitize.sh --core-only
 python3 -m unittest discover -s tests -p test_tools.py
-python3 tools/native_smoke.py --completion-only
+./scripts/build-windows.sh
+python3 tools/windows_check.py --ctest
+python3 tools/native_smoke.py --windows --portability-only
 ```
 
-The sanitizer command rebuilds all current core suites. Its process-inspection
-step requires running outside the restricted sandbox; leak detection stays
-enabled. Native checks use a private X11 display and bounded scripts, avoiding
-interactive terminal-input approvals. `--completion-only` checks late theatre
-pages and the live-compared salvage result pages with physical Space/F5/F9,
-then plays the ordinary cinema tail. All complete states and pixels are compared
-to headless continuations. The regular animation test now includes supplied
-ANMs and the original timing corpus; the NPC test includes both the earlier
-travel corpus and the new 159-step idle capture.
+The sanitizer command rebuilds all current core suites. Process inspection
+requires running outside the restricted sandbox; leak detection stays enabled.
+Native checks use a private X11 display and bounded scripts, avoiding interactive
+terminal-input approvals. The Windows option runs the actual MinGW executable
+under an isolated Wine prefix, with Linux headless output as its state/pixel
+oracle. `--portability-only` groups keypad/diagonals, intro, menu/inspection/map,
+six slots, failed loads, combat controls and sequential sound checks. Its SDL
+sound device is a dummy sink; physical Windows output is outside that claim.
+Individual groups remain available, for example `--windows --controls-only`.
+`--completion-only` retains the earlier theatre/salvage Space/F5/F9 and cinema
+checks. No DOS emulator is needed for ordinary build/test runs.
 
 The optional original-executable generators require the local Unicorn package.
 Only numeric observations and hashes enter fixtures:
 
-| Tool under `tools/` | New comparison bounds |
+| Tool under `tools/` | Current comparison bounds |
 | --- | --- |
-| `make_complete_encounter_vectors.py` | Eight complete outdoor/arena/prison encounters, 24 waves; RNG, full records, positions, heat, facing and outcome |
-| `make_battle_text_vectors.py --deaths` | 384 casualty/ejection texts; 256 brief/verbose 88-by-88 interiors; quiet placement remains approximate |
+| `make_complete_encounter_vectors.py` | Eight complete outdoor/arena/prison encounters, 24 waves |
+| `make_complete_encounter_vectors.py --towns` | Four additional complete Starport/MAP4 encounters, 20 waves; full records, RNG, positions, heat, facing and outcomes |
+| `make_quiet_ejection_vectors.py` | Twelve original selected-header/ejection combinations, before/after complete 88-by-88 interiors |
+| `make_combat_visibility_vectors.py` | 2,582 original unit visibility flags, including cross-sector positions |
+| `make_cache_follow_vectors.py` | 768 continuous original inputs in both cache rooms with 1/5/8 people; all positions after each input |
+| `make_story_branch_vectors.py` | 248 complete HUT/MAYOR/THEATER branches, including parties of 1/4/5/8 and ordered waits/sound/animation requests |
+| `make_battle_text_vectors.py --deaths` | 384 casualty/ejection texts; 256 brief/verbose 88-by-88 interiors |
 | `make_salvage_live_vectors.py` | Three complete 216-by-88 live result panels, including borders |
 | `make_cache_movement_vectors.py` | 5,760 formation collision/first-contact cases in both cache rooms |
-| `make_story_branch_vectors.py` | 124 complete inventor/house/theatre branches and ordered waits/sound/animation requests |
 | `make_theater_text_vectors.py` | 17 film/held-page interiors with original wrapping, scrolling and final clear |
-| `make_presentation_timing_vectors.py` | All 22 ANMs with three caller flags; packed frames, retrace delays and startup sound requests; all six combat speeds |
-| `make_npc_timing_observations.py RUN` | Fresh 25-second idle capture: 160 samples, 159 consecutive state/RNG transitions; measured mean 156.825 ms |
+| `make_presentation_timing_vectors.py` | All 22 ANMs with three caller flags, ordered retrace/startup sound requests and all six combat speeds |
+| `make_npc_timing_observations.py RUN` | 160 live idle samples, 159 consecutive state/RNG transitions; measured mean 156.825 ms |
 
-The earlier 384-loop/552-page salvage, 133-wave town combat, 10,512 town
+The existing 384-loop/552-page salvage, 133-wave town combat, 10,512 town
 collision, 534 cache-rule and 928 alternate-service corpora remain in use.
-These complement the new cases; none imply every original branch is covered.
+The two earlier 64-wave Starport traces are still bounded traces; the newly
+completed Starport fights use different declared positions and seeds.
 
-The updated ordinary fresh campaign has **73,026 inputs**; spy replacement has
-**56,936**. Both restore before every input. Presentation delay corrections
-required regenerated recorded waits, not replaying the campaign in real time.
-`make_followup_replays.py --training`, `make_arena_outcome_replays.py`,
-`make_spy_replay.py` and `make_fresh_campaign_replay.py` regenerate their
-prerequisites in that order. Afterwards `make_campaign_checkpoint_vectors.py`
-re-executes the two actual apprenticeship contexts against original instructions.
-The native core also checks 2,400 saved cache steps with five/eight people,
-scattered legal positions, diagonals and all step amounts.
+NPC/world idle timing now accumulates eleven nominal 70 Hz retraces; keyboard
+input performs an immediate update and resets the countdown. Tests compare
+1,100 host ticks to 224 complete outdoor frames with save/load, RNG, recruitment
+and economy checks. BTPe/v40 stores two little-endian fractional clocks at
+16010–16013 and an 18-byte quiet header/ejection state at 16014–16031. Old byte
+clocks migrate elapsed time without RNG draws; absent old headers cannot be
+reconstructed. The envelope remains 20,480 payload bytes plus 16 header bytes.
 
-See [the completion report](M4_COMPLETION_SWEEP.md) for exact evidence and
-remaining timing/hardware limitations. The port's idle NPC period remains
-128 ms; the original measured mean is 156.825 ms. Sound programs and sequential
-dispatch are checked, while physical 8 MHz XT calibration remains unverified.
+The ordinary fresh campaign now has **83,339 inputs**; spy replacement has
+**66,760**. Both restore before every input. Corrected key/idle cadence required
+regenerated inputs and waits. Run `make_followup_replays.py --training`,
+`make_arena_outcome_replays.py`, `make_spy_replay.py` and
+`make_fresh_campaign_replay.py` in that order, then
+`make_campaign_checkpoint_vectors.py` for the actual apprenticeship contexts.
+The continuous cache comparison complements 2,400 saved native compatibility
+steps; it does not claim exact DOS recovery from malformed legacy formations.
 
-**2026-10-16 verification:** all 55 regular suites and five Python tool tests
-pass. The cache suite was rerun after regenerating its original apprenticeship
-checkpoints for the updated route. Five native theatre/salvage F5/F9 pages and
-the full ordinary cinema SDL tail pass. All **55 ASan/UBSan/LeakSanitizer suites**
-pass in 121.32 seconds, with leak checks enabled. The first sandboxed run was
-stopped after LeakSanitizer reported its process-inspection restriction; the
-same command passed outside that restriction. Reference content, mode and mtime are checked
-against all 1,287 baseline entries, including reference Git metadata.
+**2026-10-16 verification:** all 56 Linux suites pass (42.10 seconds), all 56
+ASan/UBSan/LeakSanitizer suites pass (135.56 seconds), and all 56 Windows suites
+pass under Wine (220.12 seconds). Five Python tool tests also pass. Windows
+checks exposed and fixed exclusive save creation, replacement of existing
+slots, path separators in tests and stack overflow in the large combat/audio
+decoder. The Windows stack reserve remains its default 2 MB. Decoder rejection
+preserves existing output and is checked with leak detection enabled.
+
+All **41 Windows SDL checks** pass: keypad/diagonals, intro/credit shortcut,
+Space choices, six saves/loads, held character/mech/map views, failed-load
+preservation, combat popups, individual Computer assignments and Space
+interruption. Nineteen held combat pages pass F5/F9 with exact state/pixel
+continuation. The combat sound case queues 44,468 nonzero samples; the return
+to base case queues none, and the device backlog stays within three ticks.
+The final report-buffer capacity adjustment also passes focused Linux,
+sanitizer and Windows combat-panel checks. This dummy-device result is not a
+physical audio recording.
+
+See [the current report](M4_PORTABILITY_SWEEP.md) for exact evidence and limits.
+Physical Windows devices and 8 MHz XT speaker calibration remain unverified.
+Reference content, mode and mtime are checked against 1,287 baseline entries,
+including nested Git metadata. Dependency archive hashes are recorded in
+[windows-dependencies.json](windows-dependencies.json).
 
 Historical commands/results below describe their original milestone bounds;
 the current route counts and save/cache versions above take precedence.
@@ -480,7 +506,8 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
 cmake --build build
 ```
 
-Core/data/pixel tests build without SDL using `-DBTP_FRONTEND=OFF`. Synthetic CTest suites can build without original assets/cache; corpus/native checks require them. Windows portability remains **UNKNOWN** until tested.
+Core/data/pixel tests build without SDL using `-DBTP_FRONTEND=OFF`. Synthetic CTest suites can build without original assets/cache; corpus/native checks require them. The Windows build is now checked under Wine; see the current verification above.
+Physical Windows drivers and hardware remain unverified.
 
 Arrows move/select; held perpendicular arrows form a diagonal while walking/driving. Keypad 1/3/7/9 and End/PgDn/Home/PgUp move diagonally; keypad 2/4/6/8 moves cardinally. Enter/Space confirms/continues; Backspace declines entry or recovers unsupported choices; F3 toggles diagnostics; F5 saves; F9 loads; R restarts; Esc quits. In bank amounts, digits type (maximum seven), Backspace erases, Escape clears to 0 without quitting/submitting, and Enter submits; Space is ignored. The 32ms step, key repetition, delays and flushing are **APPROXIMATE**. Replays accept lowercase `up`, `down`, `left`, `right`, `up-left`, `up-right`, `down-left`, `down-right`, `idle`, `accept`, `cancel`, `0`–`9` and `clear`, one per line:
 
@@ -684,9 +711,12 @@ local original assets only. Do not replace factual fixtures without reviewing
 their projection. [Evidence and limits](M2_RUBBLE_ANIMATION_EVIDENCE.md) document
 the long-wait RNG gap, live Wasp coverage and instruction/test-only Locust branch.
 
-## Internal state encoding
+## Historical internal state encoding (M3b)
 
-`BTPF` (version 15) is the current tested **2048-byte internal core encoding**
+The table below describes that earlier milestone; current BTPe/v40 additions
+are documented above and in `port/core/game.c`.
+
+`BTPF` (version 15) was the then-tested **2048-byte internal core encoding**
 (2064-byte BTS1 file), stored by F5/F9 inside a 16-byte length/CRC envelope.
 Its annex adds seven-unit combat, enemy orders/paths, target selection, Kick
 and defeat; technician/apprenticeship and their rollback values persist too.

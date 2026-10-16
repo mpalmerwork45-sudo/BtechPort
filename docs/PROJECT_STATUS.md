@@ -2,7 +2,7 @@
 
 The independent C11/SDL2 port has playable implementations of the authorized
 M4a–M4e increments and the subsequent building, theft, encounter, recruitment and
-presentation requests. A recorded 73,026-input route now starts with a new cadet
+presentation requests. A recorded 83,339-input route now starts with a new cadet
 and reaches the cache ending through the actual training, companion, disk and
 password prerequisites. It uses the authorized money shortcut. M4 as a complete
 reproduction of every original campaign branch remains unfinished.
@@ -10,7 +10,8 @@ reproduction of every original campaign branch remains unfinished.
 See [M4 evidence](M4_PROGRESS.md), [follow-up evidence](M4_FOLLOWUPS_EVIDENCE.md)
 and [current fidelity work](M4_FIDELITY_EVIDENCE.md)
 the [earlier acceptance sweep](M4_ACCEPTANCE_SWEEP.md)
-and the [latest five-area fidelity sweep](M4_COMPLETION_SWEEP.md)
+the [previous completion sweep](M4_COMPLETION_SWEEP.md)
+and the [latest cadence and portability sweep](M4_PORTABILITY_SWEEP.md)
 for original routines, explicit prerequisites and confidence limits. README
 credits the reverse-engineering contributors and explicitly discloses AI use
 with **OpenAI Sol 6.1 and Astra**. The independent code and documentation are
@@ -73,7 +74,7 @@ Successful pre-combat evasion produces no loot or cash.
 
 ## Verification and limits
 
-The current build has **55 CTest suites**. The earlier sweep established:
+The current build has **56 CTest suites**. The earlier sweep established:
 
 - **133 original combat waves** in four town contexts, including two complete
   MAP4 victories and two Starport traces bounded at 64 waves each. Two MAP4
@@ -92,15 +93,19 @@ The current build has **55 CTest suites**. The earlier sweep established:
   88-by-88 upper-left text area. A live original Phoenix LAM capture matches
   all **64,000 RGB pixels**.
 
-The latest authorized five areas add eight complete outdoor/arena/prison
+The previous five-area sweep added eight complete outdoor/arena/prison
 encounters (24 waves), 384 death/ejection report cases (256 pixel comparisons),
 three complete live salvage result panels, 5,760 cache formation/contact cases,
 2,400 saved formation steps and 124 complete inventor/house/theatre branches.
 Seventeen theatre film/text panels now match the original scrolling text engine,
 fixing overflow near the end. Sixty-six animation executions and all six combat
 speed settings expose and correct missing opening holds and overly fast tactical
-steps. A fresh 159-step NPC trace matches state transitions while measuring a
-remaining idle cadence difference: original mean 156.825 ms; native 128 ms.
+steps. The latest sweep corrects outdoor cadence to eleven nominal VGA retraces,
+with immediate keyboard updates and saved fractional phases. It adds four
+complete Starport/MAP4 victories (20 waves), twelve quiet-ejection pixel cases,
+2,582 viewport visibility cases, 768 continuous original cache movement inputs,
+and expands the HUT/MAYOR/THEATER corpus to 248 branches. A newly observed
+original enemy-kick/map-memory interaction is now reproduced.
 
 Computer assigns only the selected unit and leaves the menu open. Next Mech
 allows separate assignments; Begin Fight starts the wave. Space stops continuous
@@ -110,21 +115,21 @@ loop comparisons and saved/native input checks cover this distinction.
 Space selects on all held combat menus, including movement destinations and
 replace-order prompts; during a running wave or outtake it interrupts instead.
 
-The fresh ending and **56,936-input** spy/replacement routes restore and continue
+The fresh ending and **66,760-input** spy/replacement routes restore and continue
 before every input. The new native service tail joins the existing house,
 cinema, hut, laser shop, theft and replacement checks. Nineteen held combat pages
 exercise F5/F9; the cache check includes the Phoenix display, map room and ending.
-**PASS:** all 55 regular suites and five Python tool tests. Five additional native
-theatre/salvage pages pass Space and F5/F9 state/pixel checks, and the ordinary
-cinema SDL tail passes. All **55 ASan/UBSan/LeakSanitizer suites** also pass
-(121.32 seconds); leak checks remain enabled. See [testing](TESTING.md) for
-commands and the corrected Space-test routes.
+Current verification and exact timings are recorded in [TESTING.md](TESTING.md).
+All 56 Linux, sanitizer and Windows/Wine suites pass, along with five Python
+tests and 41 Windows SDL checks (including 19 held combat F5/F9 pages).
+The Windows build is checked under isolated Wine against Linux state/pixels;
+physical Windows hardware and an actual XT speaker recording remain untested.
 
 **VERIFIED in these bounds:** numeric rules, resource interpretation, original
 BLD branches, compared text/pixels and saved/native continuations.
 **APPROXIMATE:** DOS busy-loop cadence, broader encounter AI/initiative, some
-layouts and exact DOS recovery of irregular saved follower paths. NPC idle
-updates remain faster than the measured original cadence. Animation retrace
+layouts and exact DOS recovery of irregular saved follower paths. NPC idle updates now average eleven nominal 70 Hz retraces; host scheduling
+and exact hardware clock rates remain approximate. Animation retrace
 requests and combat speed delays now match within the 32 ms native tick. Audio
 uses original effect programs and a nominal 8 MHz 8088 timing model; physical speaker response and
 exact hardware calibration remain **UNKNOWN** without a reference recording.
@@ -137,11 +142,14 @@ as original behavior. Twenty-five bounded original placement observations record
 that distinction. If no candidate can be placed, exploration continues. Existing
 saved fights retain their already placed units; arena/story fights are separate.
 
-Internal saves are **BTPd/v39**, with a 20,480-byte payload inside the BTS1
+Internal saves are **BTPe/v40**, with a 20,480-byte payload inside the BTS1
 length/CRC envelope. The discovery marker and held spy confrontation are saved.
 Salvage inspection history and queued/held battle reports persist too, retaining
 actor names and results before later attacks change their records. v39 adds
-casualty flags; v38 reports migrate without inventing death notices.
+casualty flags; v38 reports migrate without inventing death notices. v40 adds
+fractional outdoor clocks and retained quiet-mode headers/ejection cursors.
+Earlier clock phases migrate without changing RNG; missing old headers cannot
+be reconstructed.
 Current local caches are **BTTA/v24** (373 strings), BTCB/v11 and BTW3; the world seed is the
 original startup value `0x020304`, rather than the former research seed.
 Older saves migrate their represented fields; absent direction/exploration
@@ -152,17 +160,18 @@ and source hashes only.
 
 ## Next five tasks
 
-The authorized five-area sweep is complete within its documented bounds.
-These remaining tasks do not imply complete original-game parity:
+The authorized cadence/encounter/quiet-text/cache/Windows sweep is complete
+within [its documented bounds](M4_PORTABILITY_SWEEP.md). Proposed follow-ups:
 
-1. Match exploration/NPC idle cadence to the measured eleven-retrace loop,
-   checking recruitment coins, allowances and existing saved clocks together.
-2. Compare complete mixed-party and Starport battles beyond the existing
-   64-wave bounds, including broader initiative and AI situations.
-3. Match quiet-mode ejection placement and remaining combat viewport/portrait
-   edges with full original captures; brief/verbose casualty pixels are covered.
-4. Execute more branches from the 26-BLD graph audit and compare exact follower
-   paths through constrained cache corridors. Current legality and saved
-   continuation coverage is broader than exact DOS path coverage.
-5. Check a Windows build and input/audio behavior. Physical 8 MHz XT sound
-   calibration separately needs an appropriate hardware recording.
+1. Check the Windows build on actual Windows hardware, including keyboard
+   layouts, physical audio output and a distributable executable-only package.
+2. Compare complete combat frames and projectile/beam timing, extending the
+   now-verified text interiors and viewport visibility rules.
+3. Compare additional complete encounters in other towns and with different
+   equipment, including mixed-party defeats and ejections.
+4. Execute the remaining service/story branches identified by the 26-BLD audit;
+   static graph coverage is not execution coverage.
+5. Extend continuous original cache comparisons through terminal and door
+   interactions with multiple party members, beyond the floor-only path corpus.
+
+Physical 8 MHz XT speaker calibration also needs an appropriate recording.

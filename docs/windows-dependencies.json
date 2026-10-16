@@ -1,0 +1,59 @@
+{
+  "purpose": "Optional Linux-to-Windows build and Wine verification; all dependencies are unmodified upstream archives extracted into ignored local-deps/windows.",
+  "sources": [
+    "Ubuntu 25.10 archive packages (apt-get download)",
+    "https://www.libsdl.org/release/SDL2-devel-2.32.4-mingw.tar.gz"
+  ],
+  "files": [
+    {
+      "name": "binutils-mingw-w64-x86-64_2.43.1-4ubuntu1+12_amd64.deb",
+      "bytes": 3637456,
+      "sha256": "f4612a941b066d57b8f24604ae6b82e06022887d14918c015621c0e998420f9e"
+    },
+    {
+      "name": "gcc-mingw-w64-base_13.2.0-6ubuntu1+26.1_amd64.deb",
+      "bytes": 188046,
+      "sha256": "a30c07e807e9874ea93909448c5d6d37f9569ebe60ad32de8e490aad198538a3"
+    },
+    {
+      "name": "gcc-mingw-w64-x86-64-posix-runtime_13.2.0-6ubuntu1+26.1_amd64.deb",
+      "bytes": 14036962,
+      "sha256": "aca6b438e0b55b11cedcf1170a1ee26e7979e34192e34f6e6389e560908a5bfc"
+    },
+    {
+      "name": "gcc-mingw-w64-x86-64-posix_13.2.0-6ubuntu1+26.1_amd64.deb",
+      "bytes": 35401298,
+      "sha256": "0855fa1d4a618550faac3a3e4352aa3226833b28184ad3c3b496a68a22c4eda2"
+    },
+    {
+      "name": "libwine_10.0~repack-6ubuntu1_amd64.deb",
+      "bytes": 116683888,
+      "sha256": "cc0ee97948eeef23304026a7d80dce3d79acd111ba062a75ea3cddd927aeb14e"
+    },
+    {
+      "name": "libz-mingw-w64_1.3.1+dfsg-1_all.deb",
+      "bytes": 131698,
+      "sha256": "eb4ffd7e941578c58a323331b6b6953cef8a0bd61d6e0ba82f1b9b6e66650d16"
+    },
+    {
+      "name": "mingw-w64-common_12.0.0-3_all.deb",
+      "bytes": 5822496,
+      "sha256": "ceae1609618fce5e404d47ea3d1ab6af447705e05594ab1536ff835ecd876dc1"
+    },
+    {
+      "name": "mingw-w64-x86-64-dev_12.0.0-3_all.deb",
+      "bytes": 5041398,
+      "sha256": "880be175362adef96bbe1fa9606308b55fe8bec89b7992040d9bad1041869152"
+    },
+    {
+      "name": "wine64_10.0~repack-6ubuntu1_amd64.deb",
+      "bytes": 274190,
+      "sha256": "96d3f9af1490d615100bdada28108b302b833f8c4b8ae0af6ba7ca78c8c6d5e1"
+    },
+    {
+      "name": "SDL2-devel-2.32.4-mingw.tar.gz",
+      "bytes": 13893080,
+      "sha256": "c2ec09788ab99b23b8e8e472775e5f728da549ae27898280cedbb15da87f47c1"
+    }
+  ]
+}
