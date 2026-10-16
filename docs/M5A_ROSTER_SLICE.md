@@ -8,13 +8,51 @@ quitting; Ctrl+Shift+Escape exits. The Shift K/Y/R credit shortcut also works on
 the selector and carries into the selected game.
 
 Updated loads [the three-model roster](../content/updated/README.md), exposes a
-Starport broker through the Space menu, and adds eligible random outdoor mech
+Starport broker in an unused building, and adds eligible random outdoor mech
 opponents. Owned models use the existing crew, movement, firing, inspection,
 repair, reload and salvage operations. Purchases are parked outside Starport;
 the existing garage allocation assigns crew before departure. Four owned bays
 remain the capacity, and the usual 150 C-bill garage checkout fee applies.
 Unsupported custom refits take the original no-upgrade
 branch without charging money or modifying the mech.
+
+## Broker and inspection follow-up
+
+The broker now occupies the central doorway of the existing three-door building
+northeast of Starport's Mech-It Lube: local half-step **54,50**, approached from
+**54,51** (world **1334,1075**). Only Updated adds the entrance trigger; the
+original MTP, BLD and graphic files are unchanged. Entry uses the regular Yes/No
+popup. The counter uses the original mechanic portrait and offers Buy, Sell and
+Leave. Space no longer has a broker shortcut.
+
+The four-bay ownership limit is explicit on every counter page. A full-fleet
+purchase cannot charge money or replace a record. Sales accept both original
+and custom mechs, include installed equipment, keep characters, and clear the
+chosen bay and crew references without shifting any other bay. An intact custom
+mech offers half its catalogue price; an original offers 100 C-bills per ton.
+The condition fraction weights armor/structure points, equipment, actuators and
+engine/gyro/sensor damage. It is an **APPROXIMATE authored expansion economy**,
+not a recovered original price table. The quoted confirmation defaults to No;
+cancel and account overflow leave ownership and money unchanged. Selling the
+last mech also permits leaving the garage on foot.
+
+Inspection preserves one pixel per armor/structure point where that fits. A
+larger intact capacity scales into its original well (24 pixels, or 16 for the
+head); the same fixed capacity scales damaged records, so damage shortens the
+bar. Heat retains its existing 30-point display. This is a presentation change,
+not a change to protection or damage calculations.
+
+The same follow-up includes the owner's **temporary formation workaround in
+both editions**. `btp_party_recover` regroups active followers on returning from
+buildings/battles/menus and when a unit is over 12 half-steps (six tiles) from
+its target formation offset on either axis. Placement uses terrain-checked
+footprints, preferring the original formation and otherwise nearby legal tiles.
+Parked vehicles and wrecks are skipped; ownership, damage and crew persist.
+It does not move combatants during a battle. The comment marked **TEMPORARY
+WORKAROUND** and **TODO** in [party.c](../port/core/party.c) explains the local
+route-search dead end and the intended removal. It is not original DOS
+behavior and is not a complete pathfinding fix. The recovery search is bounded;
+if no legal spot is available nearby it retains the prior position.
 
 This delivers the first playable CHI adapter in M5a. It does not complete the
 general package/weapon schema, Lua, map authoring or editor milestones. The
@@ -102,7 +140,11 @@ or hot reload for edited packs yet.
 
 Original retains the exact **BTS1 / BTPe v40 / 20,480-byte payload**. Updated uses
 a **BTU1 envelope** with package/version and a deterministic 32-bit definition
-fingerprint, plus **BTPf v41** for its additional held menu states. Live custom
+fingerprint, plus **BTPg v42** for its additional held menu states. Existing
+**BTPf v41** saves with the matching roster still load. Their old Space root
+becomes the ordinary root, and held purchase screens migrate to the building
+counter while retaining the outdoor return position, choice and purchases.
+The roster definitions/version/fingerprint have not changed. Live custom
 records carry their explicit save code and a separate high-bit marker in byte
 124; byte 123 alone is insufficient, because original UrbanMech records also
 use values in that range. The fingerprint binds the code-to-ID mapping and
@@ -113,15 +155,20 @@ states resume through the same validation path.
 
 ## Evidence and limits
 
-**VERIFIED:** the lifecycle suite buys each definition through the actual menu,
-checks insufficient funds/full bays, assigns a pilot, fires weapons, checks
+**VERIFIED:** the lifecycle suite buys each definition through the actual doorway/menu,
+checks insufficient funds/full bays, sells damaged and original mechs, reuses
+freed bays, leaves the garage after selling its first/last bay, assigns a pilot, fires weapons, checks
 movement/heat, repairs/reloads, inspects, salvages and round-trips all six slots.
 It also enters the real REPAIR.BLD and saves during repair, ammo and declined
 refit continuations, and enters GARAGE.BLD to pay, allocate the new mech's pilot
 through the real menus and leave mounted. Parser tests accept a fourth JSON-only model and reject
 malformed definitions. SDL checks exercise pre-logo timing, key controls,
 separate save names, bad-pack fallback and all three purchases with a held
-F5/F9 confirmation.
+F5/F9 confirmation. Follow-up cases cover default-No sales, cancellation,
+credit overflow, middle-bay identity, v41 held-menu migration and confinement of
+intact/damaged/extreme inspection bars. The 18 executed original inspection
+screens remain unchanged. The recovery suite covers real menu and BLD exits,
+completed/withdrawn battles, the distance threshold, terrain and inactive units.
 
 **APPROXIMATE:** broker/reload prices, temporary sprites, CHI component packing
 and encounter balance. **UNKNOWN:** long campaign balance with the expanded
@@ -139,13 +186,13 @@ python3 tools/native_smoke.py --updated-only
 ./scripts/build-windows.sh
 python3 tools/windows_check.py --ctest
 python3 tools/native_smoke.py --windows --updated-only
-python3 tools/verify_preparation.py --before work/m5-preparation/before
 python3 tools/reference_guard.py verify
 ```
 
-The last comparison requires the retained local pre-preparation binary. GUI
-checks use private virtual displays; they do not send input to the user's game.
-Results: native **58/58** (43.00 s), ASan/UBSan/LeakSanitizer **58/58**
+GUI checks use private virtual displays; they do not send input to the user's
+game. The following results belong to the initial roster slice, before the
+owner-requested regrouping changed follower positions on scene returns:
+native **58/58** (43.00 s), ASan/UBSan/LeakSanitizer **58/58**
 (135.78 s), Windows/Wine **58/58** (249.94 s, default stack reserve), and Python
 **23/23**. Linux and Windows SDL checks both passed the selector, intro and all
 three held purchase flows. The retained fresh-campaign, spy-replacement and
@@ -154,3 +201,20 @@ All **1,287 reference entries** match the original contents, modes and mtimes.
 The later added garage-menu assertions were also rerun in the focused lifecycle
 suite on native, sanitizer and Windows builds; no production code changed for
 that extension.
+
+The follow-up adds `party-straggler-recovery` and expands
+`updated-roster-lifecycle`. Native **59/59** (41.41 s),
+ASan/UBSan/LeakSanitizer **59/59** (132.44 s), Python **23/23**, and ten targeted
+Windows/Wine suites **10/10** (36.17 s) pass. The Windows selection covers the
+new roster/recovery suites, arena returns, event decisions, original mech
+inspection, original save round-trips, Space/six-slot menus, Mech-It visits,
+town movement and file integrity. It uses the default Windows stack reserve.
+Linux and Windows SDL checks pass all 20 window scenarios each, including the
+doorway, mechanic counter, all three purchases, full capacity, held sale
+confirmation/load and replacement purchase. Reviewed images are in
+ignored `work/updated-broker-*.ppm` and `work/updated-inspect-*.ppm`.
+Exact pre-preparation party-position traces are historical evidence; this
+explicit workaround intentionally changes them after regrouping. Original
+collision, crew, combat, economic and UI oracle tests remain in the CTest suite.
+The reference guard confirms all **1,287 entries** retain their original
+contents, modes and mtimes.

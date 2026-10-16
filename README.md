@@ -50,11 +50,24 @@ Enter/Space, or press 1/2. Restart and choose Original whenever you want the
 original lineup. `--edition original` or `--edition updated` skips the selector.
 
 Updated adds the **Panther PNT-9R, Hunchback HBK-4G and Catapult CPLT-C1**.
-In Starport, open the Space menu and choose **Visit 'Mech broker**. They cost
-12,000, 22,000 and 36,000 C-bills, use a free owned bay, and are parked outside
-for crew assignment when you leave. They can also appear in eligible outdoor
-encounters and be salvaged under the existing rules. The four-mech limit remains.
+In Starport, enter the central doorway of the unused three-door building
+northeast of Mech-It Lube (local position 54,50, approached from the south).
+The **'Mech Broker** uses the original mechanic portrait and offers **Buy**,
+**Sell** and **Leave**. New models cost 12,000, 22,000 and 36,000 C-bills and
+are parked outside for crew assignment when you leave through the garage.
+The fleet has **four owned bays**. The counter shows occupancy; a fifth purchase
+takes no money. Sell an original or added mech to free a bay, retaining its
+crew. Offers include installed equipment and fall with damage. Added models
+can also appear in eligible outdoor encounters and be salvaged under the
+existing rules.
 See [roster details and sources](content/updated/README.md).
+
+Inspection bars scale larger armor/structure totals into the original diagram.
+A temporary follower workaround regroups active units after building/battle
+exits and closing menus, and recovers units more than six tiles from their
+formation position. It applies to both editions and excludes parked/wrecked
+mechs. The [implementation and removal TODO](port/core/party.c) distinguish it
+from original behavior; the underlying routing still needs improvement.
 
 Updated keeps six separate save slots, starting at
 `work/player-save-updated.btp`; Original keeps `work/player-save.btp`.

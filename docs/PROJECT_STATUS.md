@@ -52,6 +52,15 @@ The [M5a CHI roster slice](M5A_ROSTER_SLICE.md) now supplies the pre-logo
 Original/Updated selector and three playable external mechs, with broker,
 encounter and save support. The separate general-schema sample remains offline;
 the rest of M5a and M5b–M5e packages/Lua/editor remain **proposed**.
+The broker follow-up moves trading into an unused Starport building, adds sales
+and clear four-bay capacity, migrates held v41 menus, and fits larger inspection
+bars inside the diagram. Native and sanitizer verification is 59/59 each,
+plus 23 Python tests and 10 targeted Windows/Wine suites.
+All 20 Updated SDL window scenarios pass on Linux and Windows/Wine.
+At the owner's request, a commented **temporary** formation recovery now applies
+in both editions after scene/menu exits and excessive separation. It keeps
+parked/wrecked mechs inactive. Its removal TODO targets the underlying follower
+route search; it is explicitly a gameplay workaround, not DOS parity evidence.
 The [inventory](CONTENT_INVENTORY.md) records the
 remaining compiled assumptions and concrete independent-game prerequisites.
 

@@ -1,11 +1,23 @@
 # Updated CHI roster — 0.1.0
 
 This optional data pack adds three mechs to the original campaign. Select
-**Updated BTECH CHI** before the Westwood/Infocom logo, then open the Space menu
-in Starport and choose **Visit 'Mech broker**. Delivery uses the existing parked
+**Updated BTECH CHI** before the Westwood/Infocom logo, then enter the central
+doorway of Starport's unused three-door building, northeast of Mech-It Lube.
+Approach local position **54,50** from the south (**54,51**). Its new **'Mech
+Broker** counter has Buy, Sell and Leave options and the original mechanic
+portrait. Delivery uses the existing parked
 mech roster; assign a pilot when leaving through the garage (the original
 150 C-bill checkout fee still applies). Four owned bays
-remain the limit. A free bay and sufficient money are required.
+remain the limit. A free bay and sufficient money are required; rejected
+purchases take no money. The Space menu has its original entries.
+
+The broker buys both original and added models. An intact added mech fetches
+half its catalogue price; an intact original mech fetches 100 C-bills per ton.
+Armor, structure, component, actuator, engine, gyro and sensor damage reduce
+the offer. Installed equipment goes with the mech; its crew stays with you.
+The confirmation shows the actual offer and defaults to No. Selling frees
+that bay without renumbering the other mechs. These are authored expansion
+prices, not an original-game mechanic.
 
 | Model | Tons | Walk/run/jump | Armament | Price | Temporary sprite |
 | --- | ---: | --- | --- | ---: | --- |
