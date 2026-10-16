@@ -690,9 +690,12 @@ art, audio, fonts and text; the original executable is not its hidden data sourc
 
 M5-P1–P5 and the [first playable M5a CHI roster slice](M5A_ROSTER_SLICE.md) are
 implemented. The owner subsequently chose an early Original/Updated selector,
-three classic additions (Panther, Hunchback and Catapult), and explicit original
+three initial additions (Panther, Hunchback and Catapult), then fourteen more
+models/variants including Zeus, Atlas and two Crusaders, with explicit original
 sprite placeholders. That CHI adapter now has shared runtime validation, stable
-definition codes, package-bound saves, a broker and encounter/salvage access.
+definition codes, package-bound saves, a scrolling broker and encounter/salvage
+access. An unchanged appended catalogue can load saves from its earlier prefix;
+arbitrary definition edits and general package migrations remain unsupported.
 The optional adapted roster has separate attribution/licensing; it is not the
 independently authored standalone demonstration described above.
 

@@ -49,11 +49,13 @@ before the Westwood/Infocom logo. Original is the default. Use arrows and
 Enter/Space, or press 1/2. Restart and choose Original whenever you want the
 original lineup. `--edition original` or `--edition updated` skips the selector.
 
-Updated adds the **Panther PNT-9R, Hunchback HBK-4G and Catapult CPLT-C1**.
+Updated adds **17 models**, from the Panther to the 100-ton Atlas, including
+Zeus and both the standard LRM-equipped Crusader and Bear's SRM variant.
 In Starport, enter the central doorway of the unused three-door building
 northeast of Mech-It Lube (local position 54,50, approached from the south).
 The **'Mech Broker** uses the original mechanic portrait and offers **Buy**,
-**Sell** and **Leave**. New models cost 12,000, 22,000 and 36,000 C-bills and
+**Sell** and **Leave**. **Up/Down scrolls** the stock; Enter or Space selects.
+New models cost 12,000–70,000 C-bills and
 are parked outside for crew assignment when you leave through the garage.
 The fleet has **four owned bays**. The counter shows occupancy; a fifth purchase
 takes no money. Sell an original or added mech to free a bay, retaining its
@@ -73,8 +75,10 @@ Updated keeps six separate save slots, starting at
 `work/player-save-updated.btp`; Original keeps `work/player-save.btp`.
 `--load` recognizes the edition. To continue an existing original save as a
 separate Updated campaign, use `--edition updated --load PATH`.
-Keep the matching roster file with Updated saves; changing definitions or their
-version makes those saves incompatible. See [save behavior](docs/M5A_ROSTER_SLICE.md#starting-switching-and-saving).
+Existing three-model Updated saves load automatically with the expanded roster.
+The loader verifies that all earlier definitions are unchanged before accepting
+appended models. Editing/removing earlier definitions still requires their
+matching roster. See [save behavior](docs/M5A_ROSTER_SLICE.md#starting-switching-and-saving).
 
 ## Build and run on Linux
 

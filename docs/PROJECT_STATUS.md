@@ -1,4 +1,4 @@
-# Project status — original fidelity and first M5a roster, 2026-10-16
+# Project status — original fidelity and expanded M5a roster, 2026-10-16
 
 The independent C11/SDL2 port has playable implementations of the authorized
 M4a–M4e increments and the subsequent building, theft, encounter, recruitment and
@@ -49,14 +49,23 @@ persistence and an offline schema/sample. The current game and BTPe/v40 saves
 remain the compatibility case. All 41 Windows SDL portability checks and eleven
 Linux Mech-It service/continuation checks pass.
 The [M5a CHI roster slice](M5A_ROSTER_SLICE.md) now supplies the pre-logo
-Original/Updated selector and three playable external mechs, with broker,
+Original/Updated selector and 17 playable external models/variants, with broker,
 encounter and save support. The separate general-schema sample remains offline;
 the rest of M5a and M5b–M5e packages/Lua/editor remain **proposed**.
 The broker follow-up moves trading into an unused Starport building, adds sales
 and clear four-bay capacity, migrates held v41 menus, and fits larger inspection
 bars inside the diagram. Native and sanitizer verification is 59/59 each,
 plus 23 Python tests and 10 targeted Windows/Wine suites.
-All 20 Updated SDL window scenarios pass on Linux and Windows/Wine.
+All 20 Updated SDL window scenarios passed on Linux and Windows/Wine for that
+initial broker follow-up. The subsequent 0.2.0 stock adds fourteen models,
+including Zeus, Atlas and standard/Bear Crusaders, an eight-row scrolling list,
+and verified loading of unchanged earlier catalogues. The first three mech
+definitions are unchanged. Updated saves use v43; Original keeps v40.
+Current expansion checks pass: native **59/59**, ASan/UBSan/LeakSanitizer
+**59/59**, Python **25/25**, eleven targeted Windows/Wine suites, and **28/28**
+SDL window scenarios on each platform. Existing Updated slots 1 and 5 load
+with the new roster; their files were preserved. Evidence and adaptation limits
+are recorded in the [roster milestone](M5A_ROSTER_SLICE.md).
 At the owner's request, a commented **temporary** formation recovery now applies
 in both editions after scene/menu exits and excessive separation. It keeps
 parked/wrecked mechs inactive. Its removal TODO targets the underlying follower

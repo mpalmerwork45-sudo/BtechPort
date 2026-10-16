@@ -160,8 +160,9 @@ restricted sandbox. See [TESTING.md](TESTING.md) for build/tool setup.
 ## Next milestone
 
 **Update, 2026-10-16:** the [first playable M5a slice](M5A_ROSTER_SLICE.md)
-now implements a separate Original/Updated selector, three external CHI mech
-definitions, broker/encounter access and package-bound saves. The text below
+now implements a separate Original/Updated selector, 17 external CHI mech
+definitions, a scrolling broker, encounter access and package-bound saves,
+including compatibility with unchanged earlier catalogues. The text below
 records the original handoff; the general weapon/package/editor work remains.
 
 **M5a — External units:** load one authored model through shared runtime

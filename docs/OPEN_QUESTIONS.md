@@ -158,9 +158,12 @@ and the [latest five-area sweep](M4_PORTABILITY_SWEEP.md).
     [schema/sample](../examples/content-demo/README.md). A custom package is not
     yet loadable. Original raw records, compiled story/presentation assumptions
     and missing package inputs are listed in the [inventory](CONTENT_INVENTORY.md).
-    M5a must establish shared runtime validation, definition/instance identity,
-    component layout, artwork mapping and custom saves. Lua/Qt adoption and the
-    final public schema remain open choices.
+    The [M5a CHI adapter](M5A_ROSTER_SLICE.md) now loads 17 optional mech
+    definitions through shared validation, explicit save IDs, placeholder art
+    and package-bound saves; an unchanged appended catalogue can load earlier
+    saves. General weapon/equipment definitions, richer component layouts,
+    custom assets and arbitrary package migrations remain to do. Lua/Qt
+    adoption and the final public schema remain open choices.
 
 Both reference trees are guarded by content, mode, timestamp and Git-metadata
 checks. Known external editor metadata drift is restored only when its exact

@@ -1,4 +1,4 @@
-# M5a first playable roster slice — 2026-10-16
+# M5a CHI roster and broker — 2026-10-16
 
 An ordinary interactive launch now asks **Original BTECH CHI** or **Updated
 BTECH CHI**, before either original intro screen or audio playback. Original is
@@ -7,7 +7,7 @@ Numeric keypad navigation and Enter work too. Escape selects Original without
 quitting; Ctrl+Shift+Escape exits. The Shift K/Y/R credit shortcut also works on
 the selector and carries into the selected game.
 
-Updated loads [the three-model roster](../content/updated/README.md), exposes a
+Updated loads [the 17-model roster](../content/updated/README.md), exposes a
 Starport broker in an unused building, and adds eligible random outdoor mech
 opponents. Owned models use the existing crew, movement, firing, inspection,
 repair, reload and salvage operations. Purchases are parked outside Starport;
@@ -15,6 +15,26 @@ the existing garage allocation assigns crew before departure. Four owned bays
 remain the capacity, and the usual 150 C-bill garage checkout fee applies.
 Unsupported custom refits take the original no-upgrade
 branch without charging money or modifying the mech.
+
+## Expanded stock and scrolling
+
+Pack **0.2.0** adds Centurion CN9-A, Trebuchet TBT-5N, Griffin GRF-1N,
+Shadow Hawk SHD-2H, Wolverine WVR-6R, Rifleman RFL-3N, Thunderbolt TDR-5S,
+Archer ARC-2R, Warhammer WHM-6R, Marauder MAD-3R, Zeus ZEU-6S, Atlas AS7-D,
+Crusader CRD-3R and Crusader CRD-3R (Bear). The initial Panther, Hunchback and
+Catapult definitions remain byte-identical. The new stock uses existing CHI
+weapon and movement operations; no model-specific combat branches were added.
+
+The standard Crusader has two LRM-15s and two SRM-6s; Bear's has four SRM-6s
+and 18 heat sinks. MegaMek's pinned source records and the CHI adaptations are
+documented in the [pack README](../content/updated/README.md).
+
+The broker has an eight-row scrolling window. Up/Down traverses every model
+and the final Back item, wrapping at either end. Left/Right jumps eight
+entries, with bounds clamping. Enter/Space selects and Backspace returns to
+the counter. The footer shows the visible stock range. Confirmations retain
+default No; cancelling or completing one returns to the same model and scroll
+position. Leaving stock clears the scroll offset before entering other menus.
 
 ## Broker and inspection follow-up
 
@@ -95,6 +115,15 @@ Original or exported as DOS GAME files. Keep the original save to resume the
 original campaign. Existing original assets and both reference directories
 remain unchanged.
 
+Released **0.1.0 three-mech Updated saves load directly in 0.2.0**, including
+those held inside broker menus. Load normally using F9, the six-slot menu or
+`--load`. The migration preserves the selected model or Back item, pending
+Yes/No, party, damage, ammunition and money. It does not rewrite the source
+save on load. Future saves use the new catalogue and v43 state. Older executables
+cannot read that state; retain earlier saves and the
+[archived three-mech pack](../content/updated/versions/0.1.0.json) to resume with
+the earlier executable/catalogue.
+
 ## External definitions and compatibility
 
 `btp-roster-check` uses the same C parser as the player:
@@ -132,19 +161,24 @@ Each model has a stable namespaced `id`, a unique `save_code` from 160 to 191,
   gun, flamer, LRM-5/10/15/20 and SRM-2/4/6, using the snake_case identifiers
   in [roster.c](../port/data/roster.c). Their rules still come from CHI data.
 
-Adding a compatible fourth definition needs a JSON edit, not a C rebuild. All
-definitions appear automatically in the broker, with seven models per page.
-Changing definitions/version requires starting a fresh Updated session or
-retaining the exact old roster for existing saves. There is no save migration
-or hot reload for edited packs yet.
+Adding compatible definitions needs a JSON edit, not a C rebuild. All appear
+automatically in the scrolling broker. To preserve existing saves, append new
+definitions using higher unused save codes while leaving earlier definitions
+unchanged. Loading verifies their entire earlier fingerprint, including IDs,
+record bytes, ammunition costs and prices, using the version stored in the save.
+The compatible old prefix must be shorter than the new roster. Merely editing
+the version, altering/removing earlier definitions, or changing packages does
+not bypass matching. There is no general migration or hot reload for edited packs.
 
 Original retains the exact **BTS1 / BTPe v40 / 20,480-byte payload**. Updated uses
 a **BTU1 envelope** with package/version and a deterministic 32-bit definition
-fingerprint, plus **BTPg v42** for its additional held menu states. Existing
-**BTPf v41** saves with the matching roster still load. Their old Space root
+fingerprint, plus **BTPh v43** for its scrolling-menu state. Existing
+**BTPf v41 / BTPg v42** saves with a matching or unchanged extended roster load.
+Their seven-model page index becomes the first visible row; old Back choices
+remain Back even when new stock has been appended. Their old Space root
 becomes the ordinary root, and held purchase screens migrate to the building
 counter while retaining the outdoor return position, choice and purchases.
-The roster definitions/version/fingerprint have not changed. Live custom
+The released 0.1.0 fingerprint is **4022610150**; 0.2.0 is **751321522**. Live custom
 records carry their explicit save code and a separate high-bit marker in byte
 124; byte 123 alone is insufficient, because original UrbanMech records also
 use values in that range. The fingerprint binds the code-to-ID mapping and
@@ -161,17 +195,19 @@ freed bays, leaves the garage after selling its first/last bay, assigns a pilot,
 movement/heat, repairs/reloads, inspects, salvages and round-trips all six slots.
 It also enters the real REPAIR.BLD and saves during repair, ammo and declined
 refit continuations, and enters GARAGE.BLD to pay, allocate the new mech's pilot
-through the real menus and leave mounted. Parser tests accept a fourth JSON-only model and reject
+through the real menus and leave mounted. Parser tests accept another JSON-only model and reject
 malformed definitions. SDL checks exercise pre-logo timing, key controls,
-separate save names, bad-pack fallback and all three purchases with a held
-F5/F9 confirmation. Follow-up cases cover default-No sales, cancellation,
+separate save names, bad-pack fallback, the initial three purchases and
+Zeus/Atlas/both Crusaders with held F5/F9 confirmations. Follow-up cases cover default-No sales, cancellation,
 credit overflow, middle-bay identity, v41 held-menu migration and confinement of
 intact/damaged/extreme inspection bars. The 18 executed original inspection
 screens remain unchanged. The recovery suite covers real menu and BLD exits,
 completed/withdrawn battles, the distance threshold, terrain and inactive units.
 
-**APPROXIMATE:** broker/reload prices, temporary sprites, CHI component packing
-and encounter balance. **UNKNOWN:** long campaign balance with the expanded
+**APPROXIMATE:** broker/reload prices, temporary sprites and shared inspection
+art, CHI component packing, per-weapon splitting of shared ammunition,
+ordinary CHI targeting for tabletop rear-mounted lasers, and encounter balance.
+**UNKNOWN:** long campaign balance with the expanded
 roster, physical Windows audio/drivers and exhaustive combinations of authored
 definitions. Source statistics and adaptation credits are in the
 [pack README](../content/updated/README.md).
@@ -218,3 +254,43 @@ explicit workaround intentionally changes them after regrouping. Original
 collision, crew, combat, economic and UI oracle tests remain in the CTest suite.
 The reference guard confirms all **1,287 entries** retain their original
 contents, modes and mtimes.
+
+### 0.2.0 expansion verification
+
+The lifecycle suite now covers **all 17 definitions**, including every fitted
+weapon, movement allowances, heat dissipation, real broker purchases, garage
+allocation, Mech-It repair/reload/refit continuations, inspection and salvage.
+Both intact and damaged bars are checked for all models plus an extreme record.
+Scrolling tests visit every item in both directions, wrap, use page jumps,
+save/load at each row, and migrate every old v42 page/Back choice.
+
+Compatibility tests load archived 0.1.0 records in v41/v42 exploration, stock,
+confirmation, purchase-result and root-menu states. They retain all three
+models, damage, ammo, crew and credits, and reject modified/removed definitions,
+a different package and a record absent from the saved catalogue. Copies of
+the owner's existing Updated slot 1 and slot 5 also loaded successfully with
+0.2.0; the original save files were not changed by these checks.
+
+| Check | Result |
+| --- | --- |
+| Native CTest | **59/59**, 42.28 s; roster test rerun after fixture-path correction, 0.67 s |
+| ASan/UBSan/LeakSanitizer | **59/59**, 135.32 s |
+| Python parser/tool tests | **25/25** |
+| Targeted Windows/Wine CTest | **11/11** across initial run and focused rerun; default Windows stack reserve |
+| Linux SDL | **28/28** window scenarios |
+| Windows/Wine SDL | **28/28** window scenarios |
+
+The initial Windows run exposed a forward-slash-only path assumption in the
+new archive fixture loader. It was corrected to accept both separators; its
+focused rerun passed in 3.83 s. The other ten Windows tests had passed in the
+initial run. These cover original inspection, save round-trips, Space/six-slot
+menus, Mech-It services, combat shots/cooling/physical attacks and core formats.
+The full Windows suite was not repeated for this expansion.
+
+Reviewed broker/Atlas/Crusader frames are collected in the ignored
+`work/roster-expansion-review.png`; logs use `work/roster-expansion-*.log`.
+The earlier full-game differential routes were not repeated: this update adds
+optional stock and broker/save handling, while the original oracle suites
+remain part of the full native and sanitizer runs. Expanded campaign balance
+and unique model artwork remain outside this verification claim.
+The final reference guard verifies all **1,287 entries** unchanged.
