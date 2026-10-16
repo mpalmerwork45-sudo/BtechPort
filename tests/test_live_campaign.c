@@ -3,6 +3,7 @@
 #include "core/party.h"
 #include "core/world.h"
 #include "core/campaign.h"
+#include "core/yard.h"
 #include "data/save.h"
 #include <inttypes.h>
 #include <stdio.h>
@@ -32,6 +33,7 @@ int main(int argc,char **argv)
     if (argc!=2 && argc!=3) return 2;
     BtpResources *r=calloc(1,sizeof *r);BtpError e;CHECK(r && btp_resources_load(argv[1],r,&e));
     CHECK(btp_combat_data_load("work/combat-data.bin",&r->combat,&e));CHECK(btp_world_data_load("work/world-data.bin",&r->world,&e));
+    CHECK(btp_dialogue_load("work/talk-data.bin",&r->dialogue,&e));
     FILE *f=fopen(argc==3 ? argv[2] : "tests/fixtures/live-campaign-primary.txt","r");CHECK(f);char line[700];
     BtpState s;unsigned current=0,unit_count=0,waves=0,placement_seed=0;
     while (fgets(line,sizeof line,f)) {
@@ -52,6 +54,22 @@ int main(int argc,char **argv)
             for (unsigned i=0;i<count;++i) { s.combat.plans[i].movement=s.combat.plans[i].kick=255;memset(s.combat.plans[i].orders,255,11); }
             for (unsigned i=0;i<3;++i) s.npc.rng[i]=(uint8_t)(seed>>(8*i));
             unit_count=0;
+        } else if (line[0]=='E') {
+            unsigned kind,rental,difficulty;
+            CHECK(sscanf(line+1,"%u %u %u",&kind,&rental,&difficulty)==3);
+            CHECK((kind==1 || kind==3 || kind==4) && rental<=1 && difficulty<=6);
+            s.campaign.encounter=(uint8_t)kind;s.story_flags[3]=(uint8_t)difficulty;
+            s.gate=85;s.story_flags[35]=0;
+            /* The arena's suspended building caller is needed for a valid
+               save at every tactical boundary, including pilot ejection. */
+            if (kind==4) {
+                s.campaign.building=10;s.script.status=BTP_SCRIPT_NATIVE;s.script.native_action=35;
+                s.yard.active=2;s.yard.phase=BTP_YARD_FIGHT;s.yard.rental=(uint8_t)rental;s.checkpoint_valid=1;
+                s.checkpoint_allowance_cap=s.allowance_cap;
+                const BtpBld *bld=btp_state_bld(r,&s);CHECK(bld);
+                for (unsigned i=1;i<bld->length;++i) if (bld->bytes[i-1]==0xf5 && bld->bytes[i]==35) { s.script.pc=(uint16_t)(i+1);break; }
+                CHECK(s.script.pc);
+            }
         } else if (line[0]=='M') {
             unsigned id;int used;CHECK(sscanf(line+1,"%u%n",&id,&used)==1 && id<4);char *at=line+1+used;
             for (unsigned i=0;i<125;++i) { unsigned b;CHECK(sscanf(at,"%u%n",&b,&used)==1 && b<256);at+=used;btp_party_mech(&s,id)[i]=(uint8_t)b; }

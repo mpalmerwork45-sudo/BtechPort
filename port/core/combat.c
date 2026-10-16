@@ -578,11 +578,6 @@ static void end_round(BtpState *s,const BtpResources *r)
 {
     BtpCombatState *c=&s->combat;
     if (btp_spy_begin(s)) return;
-    if (s->campaign.encounter==4 && !s->story_flags[35] && c->unit[0].record[0]==255) {
-        /* 103B:0F13..0F31 ends an ordinary arena match once Jason's mech
-           is gone. Surviving ejected pilots return to the cashier. */
-        c->lost=1;finish(s,r);return;
-    }
     unsigned remaining=0;
     for (unsigned i=c->friends ? c->friends : 1u;i<c->count;++i) remaining+=c->unit[i].record[0]!=255;
     BtpMap map;btp_combat_map(r,s,&map);
@@ -592,6 +587,11 @@ static void end_round(BtpState *s,const BtpResources *r)
         btp_combat_cool(&c->unit[i],mode==255 ? -1 : (int)mode,c->moved[i],terrain);
     }
     /* 12E8 completes heat accounting before 103B checks victory. */
+    if (s->campaign.encounter==4 && !s->story_flags[35] && c->unit[0].record[0]==255) {
+        /* 103B:0F13..0F31 runs after 12E8's cooling pass, including a
+           defeated arena match with a surviving ejected pilot. */
+        c->lost=1;finish(s,r);return;
+    }
     if (!remaining) { c->won=1;finish(s,r);return; }
     if (!c->goal_active) c->movement=255;
     c->delay=0;c->flash=0;menu(c);

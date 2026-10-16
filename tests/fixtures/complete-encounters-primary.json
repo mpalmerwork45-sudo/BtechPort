@@ -1,0 +1,97 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "cases": [
+    {
+      "case": 0,
+      "kind": 4,
+      "seed": 1,
+      "rental": 0,
+      "difficulty": 0,
+      "waves": 3,
+      "won": false,
+      "lost": true
+    },
+    {
+      "case": 1,
+      "kind": 4,
+      "seed": 42,
+      "rental": 0,
+      "difficulty": 6,
+      "waves": 2,
+      "won": true,
+      "lost": false
+    },
+    {
+      "case": 2,
+      "kind": 4,
+      "seed": 1,
+      "rental": 1,
+      "difficulty": 0,
+      "waves": 9,
+      "won": false,
+      "lost": true
+    },
+    {
+      "case": 3,
+      "kind": 4,
+      "seed": 42,
+      "rental": 1,
+      "difficulty": 6,
+      "waves": 2,
+      "won": true,
+      "lost": false
+    },
+    {
+      "case": 4,
+      "kind": 3,
+      "seed": 1,
+      "rental": 0,
+      "difficulty": 0,
+      "waves": 1,
+      "won": false,
+      "lost": true
+    },
+    {
+      "case": 5,
+      "kind": 3,
+      "seed": 42,
+      "rental": 0,
+      "difficulty": 0,
+      "waves": 3,
+      "won": false,
+      "lost": true
+    },
+    {
+      "case": 6,
+      "kind": 1,
+      "seed": 3,
+      "rental": 0,
+      "difficulty": 0,
+      "waves": 2,
+      "won": true,
+      "lost": false
+    },
+    {
+      "case": 7,
+      "kind": 1,
+      "seed": 8,
+      "rental": 0,
+      "difficulty": 0,
+      "waves": 2,
+      "won": true,
+      "lost": false
+    }
+  ],
+  "routines": [
+    "07DC:0D49 special opponent setup",
+    "05AB:0D68..1462 outdoor placement",
+    "103B:00A1..01B8 command/heat setup",
+    "103B:1774 actor camera",
+    "0E31:03AB AI",
+    "12E8:000C complete waves"
+  ],
+  "prerequisites": "GAME3 Jason alone, owned Wasp or rented Locust in arena/prison; three owned mechs and Rick on foot in generated sector D9 at 1263,1675. Original MAP2/MAP3 payloads or generated terrain, declared cursor, seed and arena rank. Original 103B command/heat initialization; inactive coordinates FFFF and unused facing zero. Display/sound off. Arena gate 139, others 85. Harmless rental spectator receives no orders.",
+  "comparison": "Every wave RNG, all records, living coordinates/facing/heat, death/ejection and final win/loss",
+  "no_instruction_patches": true
+}
