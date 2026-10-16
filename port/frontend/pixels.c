@@ -750,6 +750,7 @@ static int text_wrap_bounds(const BtpResources *r,uint32_t *f,int y,const uint8_
        a character cell. Keep these colours while wrapping the 25-column panel. */
     char clean[1024];uint8_t colors[1024];uint16_t fragments[1024];size_t used=0;unsigned color=initial_color,fragment=0;
     for (size_t i=0;i<n && used<sizeof clean;++i) {
+        if (b[i]==2) { color=10;continue; } /* Original retirement routine's green ink. */
         if (b[i]==6 && i+1<n && b[i+1]<16) { color=b[++i];continue; }
         if (b[i]==1) { ++fragment;continue; }
         fragments[used]=(uint16_t)fragment;clean[used]=(char)b[i];colors[used++]=(uint8_t)color;
@@ -777,8 +778,11 @@ static int text_wrap_bounds(const BtpResources *r,uint32_t *f,int y,const uint8_
         size_t start=at,count=0;
         while (at<used && clean[at]!='\r' && count<columns) { ++at;++count; }
         carried=at<used && clean[at]!='\r';
-        if (at<used && clean[at]=='\r') ++at;
-        else if (at<used && count==columns && clean[at]!=' ') {
+        /* Filling the final cell already advances the DOS text cursor.
+           A following carriage return advances again (live Rick/Wasp
+           salvage result), including when it starts a separate string. */
+        if (at<used && clean[at]=='\r' && count<columns) ++at;
+        else if (at<used && count==columns && clean[at]!=' ' && clean[at]!='\r') {
             /* Each original far-string call commits its drawn characters.
                A later punctuation fragment cannot move a model name that
                fitted the previous call back onto the following line. */
@@ -819,7 +823,12 @@ static void battle_name(uint8_t *message,size_t *n,unsigned id)
 size_t btp_battle_text(const BtpResources *r,const BtpBattleText *t,unsigned verbosity,uint8_t message[1024])
 {
     size_t n=0;
-    if (!verbosity || !t->active) return 0;
+    if (!t->active) return 0;
+    /* 0D43 prints the ejection notice even with shot reports disabled. */
+    if (!verbosity) {
+        if (t->dead && t->target<4) { message[n++]=2;service_literal(r,message,&n,371); }
+        return n;
+    }
     if (t->weapon==33) {
         battle_name(message,&n,t->target_name);service_literal(r,message,&n,358);return n;
     }
@@ -863,11 +872,23 @@ size_t btp_battle_text(const BtpResources *r,const BtpBattleText *t,unsigned ver
         }
     }
     for (unsigned i=0;i<t->criticals;++i) service_literal(r,message,&n,356);
+    if (t->dead) {
+        if (human) service_literal(r,message,&n,372);
+        else {
+            message[n++]=2; /* 0000:28A2 changes ink independently of the string. */
+            if (!t->spectator) service_literal(r,message,&n,370);
+            if (t->target<4) service_literal(r,message,&n,371);
+        }
+    }
     return n;
 }
 static void combat_report_panel(const BtpResources *r,const BtpState *s,uint32_t *f)
 {
-    const BtpBattleText *t=s->effects.count ? &s->effects.text[0] : &s->effects.shown;
+    BtpBattleText report=s->effects.count ? s->effects.text[0] : s->effects.shown;
+    /* Infantry's final report follows its impact animation (12E8:1B15).
+       Mech retirement/ejection text is composed before its wreck animation. */
+    if (s->effects.count && s->effects.shots[0].target_base==254) report.dead=0;
+    const BtpBattleText *t=&report;
     uint8_t message[1024];size_t n=btp_battle_text(r,t,s->combat.messages,message);
     if (!n) return;
     /* Original window 4 is the 11-by-11 text area at (8,8), above the

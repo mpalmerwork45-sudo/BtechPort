@@ -265,11 +265,16 @@ static void space_commands(const BtpResources *r)
 }
 static void battle_reports(const BtpResources *r,uint32_t *frame)
 {
-    FILE *f=fopen("tests/fixtures/battle-text-primary.txt","r");CHECK(f);unsigned cases=0;
-    unsigned mode,actor,target,weapon,weak,seed,hit,location,criticals;uint64_t text_hash,pixel_hash;
-    while (fscanf(f," T %u %u %u %u %u %u %u %u %u %" SCNx64 " %" SCNx64,
-        &mode,&actor,&target,&weapon,&weak,&seed,&hit,&location,&criticals,&text_hash,&pixel_hash)==11) {
-        if (!actor && target==12 && weapon!=32) {
+    for (unsigned corpus=0;corpus<2;++corpus) {
+    FILE *f=fopen(corpus ? "tests/fixtures/battle-death-primary.txt" : "tests/fixtures/battle-text-primary.txt","r");CHECK(f);unsigned cases=0;
+    unsigned mode,actor,target,weapon,weak,seed,hit,location,criticals,dead;uint64_t text_hash,pixel_hash;char line[200];
+    while (fgets(line,sizeof line,f)) {
+        dead=0;
+        if (corpus) CHECK(sscanf(line,"T %u %u %u %u %u %u %u %u %u %u %" SCNx64 " %" SCNx64,
+            &mode,&actor,&target,&weapon,&weak,&seed,&hit,&location,&criticals,&dead,&text_hash,&pixel_hash)==12);
+        else CHECK(sscanf(line,"T %u %u %u %u %u %u %u %u %u %" SCNx64 " %" SCNx64,
+            &mode,&actor,&target,&weapon,&weak,&seed,&hit,&location,&criticals,&text_hash,&pixel_hash)==11);
+        if (!corpus && !actor && target==12 && weapon!=32) {
             /* Tie the printed critical count to actual structural damage,
                rather than testing the presentation record in isolation. */
             BtpCombatUnit a={.x=64,.y=64},t={.x=68,.y=64,.direction=2};
@@ -282,26 +287,37 @@ static void battle_reports(const BtpResources *r,uint32_t *frame)
         }
         BtpState s;setup(&s,r);s.combat.phase=BTP_COMBAT_ROUND;s.combat.messages=(uint8_t)mode;
         s.effects.shown=(BtpBattleText){1,(uint8_t)actor,(uint8_t)target,0,0,(uint8_t)weapon,
-            (uint8_t)hit,(uint8_t)location,(uint8_t)criticals,0};
+            (uint8_t)hit,(uint8_t)location,(uint8_t)criticals,0,(uint8_t)dead};
         uint8_t message[1024];size_t n=btp_battle_text(r,&s.effects.shown,mode,message);
         uint64_t h=UINT64_C(14695981039346656037);
-        for (size_t i=0;i<n;++i) if (message[i]!=1) h=(h^message[i])*UINT64_C(1099511628211);
+        for (size_t i=0;i<n;++i) if (message[i]>2) h=(h^message[i])*UINT64_C(1099511628211);
         if (h!=text_hash) fprintf(stderr,"Battle text case %u: %u/%u/%u/%u/%u/%u %016" PRIx64 "/%016" PRIx64 "\n",
             cases,mode,actor,target,weapon,weak,seed,h,text_hash);
         CHECK(h==text_hash);
+        if (n && mode) {
         btp_render(r,&s,0,frame);h=region_hash(frame,8,8,88,88);
         if (h!=pixel_hash) { fprintf(stderr,"Battle pixels case %u: %016" PRIx64 "/%016" PRIx64 "\n",cases,h,pixel_hash);CHECK(btp_write_ppm("work/m4-audit/battle-text-failed.ppm",frame)); }
         CHECK(h==pixel_hash);
+        }
         /* Every held report roundtrips independently of later numeric shots. */
         uint8_t bytes[BTP_STATE_BYTES];BtpState copy;btp_state_encode(&s,bytes);
         CHECK(btp_state_decode(bytes,sizeof bytes,btp_active_map(r,&s),btp_state_bld(r,&s),&copy));
-        btp_render(r,&copy,0,frame);CHECK(region_hash(frame,8,8,88,88)==pixel_hash);
-        if (!actor && target==12 && weapon==16 && weak && seed==1) {
+        if (n && mode) { btp_render(r,&copy,0,frame);CHECK(region_hash(frame,8,8,88,88)==pixel_hash); }
+        CHECK(copy.effects.shown.dead==dead);
+        if (corpus && dead) {
+            /* v38 had no death flags: retain its report, without inventing
+               a casualty when upgrading a shot saved by that version. */
+            memcpy(bytes,"BTPc",4);bytes[4]=38;memset(bytes+15985,0,25);
+            CHECK(btp_state_decode(bytes,sizeof bytes,btp_active_map(r,&s),btp_state_bld(r,&s),&copy));
+            CHECK(!copy.effects.shown.dead && copy.effects.shown.hit==hit);
+        }
+        if (!corpus && !actor && target==12 && weapon==16 && weak && seed==1) {
             BtpError error;CHECK(btp_save_write(mode==1 ? "work/battle-report-brief.btp" : "work/battle-report-verbose.btp",&s,r,&error));
         }
         ++cases;
     }
-    fclose(f);CHECK(cases==256);
+    fclose(f);CHECK(cases==(corpus ? 384u : 256u));
+    }
     /* Replacement recruitment cycles through all ten names, independently
        of the eight party slots. Rusty/Hunter reports must remain saveable. */
     BtpState names;setup(&names,r);names.combat.phase=BTP_COMBAT_ROUND;

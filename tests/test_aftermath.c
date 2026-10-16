@@ -148,5 +148,20 @@ int main(int argc,char **argv) {
         CHECK(panel(frame)==expected);++screens;
     }
     fclose(f);CHECK(screens==6);
+    f=fopen("tests/fixtures/salvage-live-primary.txt","r");CHECK(f);unsigned live=0;
+    while (fgets(line,sizeof line,f)) {
+        unsigned notice;uint64_t expected;CHECK(sscanf(line,"L %u %" SCNx64,&notice,&expected)==2);
+        setup(&s,r,0);s.combat.phase=0;s.combat.won=1;
+        for (unsigned i=0;i<8;++i) { s.party.people[i][9]=0;if (i!=0 && i!=3) s.party.people[i][0]=255; }
+        s.party.people[3][0]=4;s.party.people[3][9]=(uint8_t)(notice ? 3 : 4);s.party.people[3][12]=8;
+        memcpy(s.combat.unit[1].record,r->combat.loans[1],125);s.combat.unit[1].record[0]=255;
+        s.aftermath=(BtpAftermathState){.phase=2,.applied=2,.pilot=3,.unit=12,.cash='W',.notice=(uint8_t)notice,
+            .attempts=1,.inspected={12},.models={'W'}};
+        CHECK(restore(&s,r));btp_render(r,&s,0,frame);
+        if (panel(frame)!=expected) fprintf(stderr,"Live salvage %u pixels %016" PRIx64 "/%016" PRIx64 "\n",notice,panel(frame),expected);
+        CHECK(btp_write_ppm("work/m4-audit/salvage-live-native.ppm",frame));CHECK(panel(frame)==expected);++live;
+        char path[80];snprintf(path,sizeof path,"work/m4-audit/salvage-live-%u.btp",notice);CHECK(btp_save_write(path,&s,r,&e));
+    }
+    CHECK(!fclose(f) && live==3);
     free(r);printf("PASS: %u checks; %u primary aftermath cases, %u original panels, %u full salvage loops/%u held pages and saved crew survival/loss\n",checks,cases,screens,loops,pages);return 0;
 }

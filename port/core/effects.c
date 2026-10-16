@@ -4,7 +4,7 @@
 #include "core/combat.h"
 #include <string.h>
 _Static_assert(sizeof(BtpCombatEffect)==13,"Effect encoding contains byte fields only");
-_Static_assert(sizeof(BtpBattleText)==10,"Battle text encoding contains byte fields only");
+_Static_assert(sizeof(BtpBattleText)==11,"Battle text encoding contains byte fields only");
 static unsigned name_id(const BtpState *s,unsigned actor)
 {
     const BtpCombatUnit *u=&s->combat.unit[actor];
@@ -17,7 +17,7 @@ static BtpBattleText report(const BtpState *s,unsigned actor,unsigned target,uns
     const BtpCombatState *c=&s->combat;
     return (BtpBattleText){1,(uint8_t)btp_combat_id(c,actor),(uint8_t)btp_combat_id(c,target),
         (uint8_t)name_id(s,actor),(uint8_t)name_id(s,target),(uint8_t)weapon,c->shot.hit,c->shot.location,
-        c->shot.criticals,(uint8_t)(s->campaign.encounter==4 && s->yard.rental && !s->story_flags[35] && btp_combat_id(c,target)==13)};
+        c->shot.criticals,(uint8_t)(s->campaign.encounter==4 && s->yard.rental && !s->story_flags[35] && btp_combat_id(c,target)==13),c->shot.destroyed};
 }
 unsigned btp_effects_sound(unsigned w)
 {
@@ -96,6 +96,7 @@ void btp_effects_crush(BtpState *s,unsigned actor,unsigned target)
     unsigned alt=btp_mech_sprite_base(a->record[0],actor>=(c->friends ? c->friends : 1u))!=0;
     v->text[v->count]=report(s,actor,target,33);
     v->text[v->count].hit=1;v->text[v->count].location=v->text[v->count].criticals=0;
+    v->text[v->count].dead=1;
     v->shots[v->count++]=(BtpCombatEffect){(uint8_t)actor,(uint8_t)target,(uint8_t)alt,
         a->direction,33,1,1,a->x,a->y,t->x,t->y,(uint8_t)(alt ? 146 : 0),254};
 }
@@ -151,7 +152,7 @@ int btp_effects_valid(const BtpState *s)
     for (unsigned i=0;i<25;++i) {
         const BtpBattleText *t=i<24 ? &v->text[i] : &v->shown;
         if (t->active>1 || t->actor>=24 || t->target>=24 || t->actor_name>=10 || t->target_name>=10 ||
-            t->weapon>33 || t->hit>1 || t->location>35 || t->criticals>8 || t->spectator>1) return 0;
+            t->weapon>33 || t->hit>1 || t->location>35 || t->criticals>8 || t->spectator>1 || t->dead>1 || (t->dead && !t->hit)) return 0;
         if (!t->active || (i<24 && i>=v->count)) {
             const uint8_t *p=(const uint8_t *)t;
             for (unsigned k=0;k<sizeof *t;++k) if (p[k]) return 0;

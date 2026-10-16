@@ -1,0 +1,28 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "cases": [
+    {
+      "notice": 0,
+      "run": "1792123964150497153",
+      "label": "salvage-live-result",
+      "rgb_sha256": "b804bae8794136a48e4e23a1cd3328e5ae437cfe3aa80822d71716a6189672ce"
+    },
+    {
+      "notice": 1,
+      "run": "1792124535589537852",
+      "label": "salvage-confirmed-failure",
+      "rgb_sha256": "7879e8c5262de8c1ea27ad2681595606d837bdad0efacdf94a2a571977930156"
+    },
+    {
+      "notice": 2,
+      "run": "1792124535589537852",
+      "label": "salvage-confirmed-none",
+      "rgb_sha256": "f7df455c0c722b69699f312e64a33d0eb8ba76877af7c23d3cca19b5277d499b"
+    }
+  ],
+  "comparison": "All 216x88 lower-right panel pixels, border and original success/failure/no-wreck text.",
+  "prerequisites": "Supplied GAME3 party, controlled next-encounter mask/RNG and Rick on foot with pilot rank 3 and technician rank 4 (success) or 3 (failure). Ordinary movement and complete manual waves with four Computer assignments. At the held failure offer, the actual enemy Wasp wreck engine is set to destroyed (3). Audit bytes and all RAM/captures remain in work.",
+  "limits": "Controlled presentation contexts, not natural acquisition of these ranks. Captures from the incomplete first failure attempt are excluded.",
+  "no_instruction_patches": true
+}

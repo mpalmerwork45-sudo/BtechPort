@@ -807,6 +807,53 @@ btech.exe
                             "guest_offset":hex(addr),"before":list(old),"after":list(value)},indent=2)+"\n")
                     finally:
                         os.close(fd); os.kill(process.pid,signal.SIGCONT)
+                elif command == "controlled-salvage-battle":
+                    # A reproducible presentation prerequisite, followed by
+                    # ordinary movement/combat. Only the encounter mask, RNG
+                    # and Rick's free pilot/technician seat are changed.
+                    if len(parts)>2 or (len(parts)==2 and parts[1]!='failure'):raise ValueError("Optional salvage argument: failure")
+                    base,row=snapshot_game(process.pid,"before-salvage-battle",output)
+                    ram=(output/"before-salvage-battle-ram.bin").read_bytes()
+                    ds=int(row['data_segment'],16)*16;state=int(row['state_segment'],16)*16
+                    if not row['world_active'] or ram[state+0xc614+3*17]!=4 or ram[state+0xc724]==255:
+                        raise ValueError("Salvage prerequisite requires the supplied GAME3 party outdoors")
+                    changes={state+0xd330:b'\0',ds+0x4fc0:(3).to_bytes(3,'little'),
+                             state+0xc614+3*17+8:bytes([3,4]),state+0xc614+3*17+12:b'\x08',
+                             state+0xc724+122:b'\xff'}
+                    if len(parts)==2:
+                        # Below rank four, a destroyed engine cannot be
+                        # salvaged. Combat skills and equipment stay intact.
+                        changes[state+0xc614+3*17+8]=bytes([3,3])
+                        for i in range(3):changes[state+0xc614+17*i+9]=bytes([min(3,ram[state+0xc614+17*i+9])])
+                    os.kill(process.pid,signal.SIGSTOP);fd=os.open(f"/proc/{process.pid}/mem",os.O_RDWR)
+                    try:
+                        before={hex(a):list(os.pread(fd,len(v),base+a)) for a,v in changes.items()}
+                        for address,value in changes.items():
+                            if os.pwrite(fd,value,base+address)!=len(value):raise RuntimeError("Short salvage prerequisite write")
+                        (output/"salvage-battle-prerequisite.json").write_text(json.dumps(dict(
+                            kind="controlled-salvage-battle",before=before,after={hex(a):list(v) for a,v in changes.items()},
+                            scope="Live result presentation only; no code, assets or save files changed"),indent=2)+'\n')
+                    finally:
+                        os.close(fd);os.kill(process.pid,signal.SIGCONT)
+                elif command == "controlled-salvage-damage":
+                    # At the held post-fight offer, damage only the engines
+                    # of actual hostile wrecks. The original rejection and
+                    # exhausted-wreck pages then execute without code edits.
+                    if parts != [command]:raise ValueError("No damage arguments")
+                    base,row=snapshot_game(process.pid,"before-salvage-damage",output)
+                    ram=(output/'before-salvage-damage-ram.bin').read_bytes()
+                    state=int(row['state_segment'],16)*16
+                    changes={state+0xc724+125*(i-8)+117:b'\x03' for i in range(12,16)
+                             if int.from_bytes(ram[state+0x393c+2*i:state+0x393e+2*i],'little')}
+                    if not changes:raise ValueError("Expected defeated hostile mech wrecks")
+                    os.kill(process.pid,signal.SIGSTOP);fd=os.open(f"/proc/{process.pid}/mem",os.O_RDWR)
+                    try:
+                        before={hex(a):list(os.pread(fd,len(v),base+a)) for a,v in changes.items()}
+                        for address,value in changes.items():
+                            if os.pwrite(fd,value,base+address)!=len(value):raise RuntimeError("Short wreck damage write")
+                        (output/'salvage-damage-prerequisite.json').write_text(json.dumps(dict(before=before,after={hex(a):list(v) for a,v in changes.items()}),indent=2)+'\n')
+                    finally:
+                        os.close(fd);os.kill(process.pid,signal.SIGCONT)
                 elif command == "controlled-cache-phoenix":
                     # Presentation-only starting position in an already loaded
                     # original cache. Ordinary Left then invokes ENDMECH.BLD;
