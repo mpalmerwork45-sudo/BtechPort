@@ -1,8 +1,8 @@
-# M5 preparation — shared original-content loading
+# M5 preparation — preserving the playable original
 
-**2026-10-16: M5-P1 and M5-P2 implemented and verified.** These are preparation
-increment from the [engine and editor plan](ENGINE_AND_EDITOR_PLAN.md), against
-the previously playable revision `901c952`. P3–P5 are now authorized and in progress.
+**2026-10-16: M5-P1 through M5-P3 implemented and verified.** These are preparation
+increments from the [engine and editor plan](ENGINE_AND_EDITOR_PLAN.md), against
+the previously playable revision `901c952`. P4–P5 are now authorized and in progress.
 
 ## P2 — Unit lookups
 
@@ -19,6 +19,27 @@ The new [before/after verifier](../tools/verify_preparation.py) retains canonica
 input traces only in temporary files, compares final save/frame bytes, and uses
 private save slots. Its fresh-campaign, spy-replacement and service routes compare
 against `work/m5-preparation/before`, retained from `3b295ab` before P2 changes.
+
+## P3 — Original story dispatch and reusable operations
+
+[original_actions.c](../port/core/original_actions.c) now owns original native
+service dispatch, held native input and transaction checkpoints. The original
+BLD interpreter, action numbers, sixteen-call service budget, blocking E4 sound,
+PCs, resume order and error recovery are retained. The game loop owns tick
+advancement, animation dispatch, position publication and script completion.
+Complex services still own their existing continuations.
+
+[commands.h](../port/core/commands.h) supplies three synchronous operations:
+active-party identity and skill queries, plus checked credit spending. BLD
+conditions and school/refit payment use them. Queries return a boolean; spending
+returns false without changing credits when insufficient, or debits and returns
+true. None starts UI, advances time or queues a continuation. Original overflow
+rules for other money operations stay in the BLD adapter/interpreter.
+
+All 57 native suites pass (42.41 seconds). All three before/after routes match
+at every canonical trace record and in their final save/frame bytes, including
+held services and the complete campaign/spy routes. This is a boundary for
+future event bindings, not a Lua implementation or a new campaign script ABI.
 
 ## Implemented boundary
 
@@ -92,15 +113,8 @@ python3 tools/native_smoke.py --windows --save-only
 python3 tools/reference_guard.py verify
 ```
 
-## Next preparation increment
+## Next preparation increments
 
-**M5-P2:** introduce named mech/weapon/appearance accessors over the existing
-records and tables, migrating actual combat, inspection, animation and service
-callers in bounded groups. Retain the original records and save bytes as the
-authority during that step. These interfaces can later consume external
-definitions without teaching every caller about package files or DOS offsets.
-
-Then isolate original BLD/native action dispatch (P3), move the existing save
-codec behind its current interface (P4), and validate a first authored content
-schema/sample (P5). The original campaign remains the playable compatibility
-case throughout those changes.
+Isolate the existing save codec (P4), then validate a first authored content
+schema/sample and finish the content inventory (P5). Original gameplay remains
+the compatibility case throughout; runtime package loading is later M5a/M5b.

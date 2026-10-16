@@ -1,3 +1,4 @@
+#include "core/original_actions.h"
 #include "core/game.h"
 #include "core/talk.h"
 #include "core/npc.h"
@@ -101,20 +102,6 @@ static void story_out(BtpState *s)
     s->allowance_cap = (uint16_t)(s->story_flags[51]|(unsigned)s->story_flags[52]<<8);
     if (s->npc.enabled) s->npc.allowance_pending = (uint8_t)btp_economy_below_cap(s);
 }
-static void checkpoint(BtpState *s)
-{
-    memcpy(s->story_checkpoint,s->story_flags,BTP_STORY_BYTES); s->checkpoint_valid = 1;
-    s->checkpoint_talk_result = s->talk_result; s->checkpoint_credits = s->credits;
-    s->checkpoint_allowance_cap = s->allowance_cap; s->checkpoint_weapon = s->weapon;
-    s->checkpoint_armor = s->armor; s->checkpoint_armor_points = s->armor_points;
-    memcpy(s->checkpoint_investments,s->investments,sizeof s->investments);
-    memcpy(s->checkpoint_skills,s->skills,sizeof s->skills);
-    memcpy(s->checkpoint_mech_skills,s->mech_skills,sizeof s->mech_skills);
-    s->checkpoint_technician=s->technician;s->checkpoint_apprentice=s->apprentice;
-    s->campaign.checkpoint_owned=s->campaign.owned;
-    memcpy(s->campaign.checkpoint_mech,s->campaign.mech,125);
-    s->party_checkpoint=s->party;
-}
 static void start_building(BtpState *s, const BtpResources *r)
 {
     uint8_t choices[BTP_MENUS]; memcpy(choices,s->script.choices,sizeof choices);
@@ -163,7 +150,7 @@ static void finish_script(BtpState *s, const BtpResources *r, const BtpMap *m)
                barracks, or garage when a purchased viewer is available. */
             s->disk_origin=(uint8_t)kind;
             btp_script_start(&s->script,&r->buildings[18],s->story_flags);
-            checkpoint(s);return;
+            btp_original_checkpoint(s);return;
         }
         unsigned disk_finished=s->disk_origin;
         if (s->campaign.invasion) {
@@ -225,7 +212,7 @@ static void finish_script(BtpState *s, const BtpResources *r, const BtpMap *m)
 }
 void btp_game_building(BtpState *s,const BtpResources *r,unsigned kind)
 {
-    s->mode=BTP_BUILDING;s->campaign.building=(uint8_t)kind;checkpoint(s);
+    s->mode=BTP_BUILDING;s->campaign.building=(uint8_t)kind;btp_original_checkpoint(s);
     start_building(s,r);
     if (s->script.status==BTP_SCRIPT_ANIMATION) {
         (void)btp_rng_next(s->npc.rng);
@@ -380,7 +367,7 @@ static void game_tick(BtpState *s, const BtpResources *r, BtpAction a)
                Jason. Parking and theft scripts handle actual disembarking. */
             if (!btp_building_kind(r,s) && !s->story_flags[20]) { btp_quiz_begin(s); return; }
             s->mode = BTP_BUILDING;
-            if (s->story_flags[4]) checkpoint(s);
+            if (s->story_flags[4]) btp_original_checkpoint(s);
             start_building(s,r);
             finish_script(s,r,map);
             if (s->mode==BTP_BUILDING && (s->script.status==BTP_SCRIPT_NATIVE || s->script.status>=BTP_SCRIPT_MONEY)) goto services;
@@ -401,7 +388,7 @@ static void game_tick(BtpState *s, const BtpResources *r, BtpAction a)
         if (a == BTP_DOWN && count) s->script.selected = (uint8_t)((s->script.selected + 1u) % count);
         s->script.choices[s->script.menu_id] = s->script.selected;
         if (a == BTP_ACCEPT) {
-            checkpoint(s);
+            btp_original_checkpoint(s);
             s->school = (BtpSchoolState){0};
             (void)btp_script_choose(&s->script, btp_state_bld(r,s), s->script.selected, s->story_flags);
         }
@@ -414,87 +401,13 @@ static void game_tick(BtpState *s, const BtpResources *r, BtpAction a)
         if (a == BTP_LEFT || a == BTP_UP) s->script.confirm_selected = 0;
         if (a == BTP_RIGHT || a == BTP_DOWN) s->script.confirm_selected = 1;
         if (a == BTP_ACCEPT) {
-            if (!s->checkpoint_valid) checkpoint(s);
+            if (!s->checkpoint_valid) btp_original_checkpoint(s);
             btp_script_confirm(&s->script,btp_state_bld(r,s),!s->script.confirm_selected,s->story_flags);
         }
     }
-    else if (s->script.status == BTP_SCRIPT_NATIVE) {
-        if (s->cache.active && s->script.native_action==45) {
-            if (a==BTP_ACCEPT || a==BTP_CANCEL || a==BTP_OPEN_MENU) {
-                s->cache.phase=BTP_CACHE_WALK;btp_script_native_return(&s->script,btp_state_bld(r,s),s->story_flags);
-            }
-        } else if (s->script.native_action == 12) btp_talk_input(s,r,a);
-        else if (s->service.phase) btp_service_input(s,r,a);
-        else if (s->bank.phase) btp_bank_input(s,r,a);
-    }
+    else if (s->script.status == BTP_SCRIPT_NATIVE) btp_original_native_input(s,r,a);
 services:
-    for (unsigned service = 0; service < 16 && (s->script.status == BTP_SCRIPT_NATIVE || s->script.status>=BTP_SCRIPT_MONEY); ++service) {
-        if (s->script.status==BTP_SCRIPT_RECRUIT) {
-            if (s->service.phase==8) break;
-            unsigned skill=s->script.money_amount;
-            if ((btp_building_kind(r,s)!=5 && btp_building_kind(r,s)!=9 && btp_building_kind(r,s)!=13) || skill>6) {
-                s->script.status=BTP_SCRIPT_ERROR;s->script.error=BTP_SCRIPT_NATIVE_CONTEXT;break;
-            }
-            unsigned recruited=(unsigned)btp_party_recruit(s,skill);
-            if (!recruited) {
-                /* The original full-party scan exits without a new agent or
-                   a spy coin. It does not fault the building interpreter. */
-                btp_script_condition_return(&s->script,btp_state_bld(r,s),s->story_flags,0);continue;
-            }
-            unsigned member=recruited-1u;
-            s->service=(BtpServiceState){.phase=8,.action=0xe9,.mech=(uint8_t)member,.kind=(uint8_t)skill};
-            s->script.money_amount=0;break;
-        }
-        if (s->script.status==BTP_SCRIPT_CONDITION) {
-            unsigned index=s->script.money_amount&255u,threshold=s->script.money_amount>>8;int yes=s->script.money_kind==0xe8;
-            for (unsigned i=0;i<8;++i) if (s->party.people[i][0]!=255) {
-                if (s->script.money_kind==0xe8 && s->party.people[i][0]==index) yes=0;
-                if (s->script.money_kind==0xed && index<=6 && s->party.people[i][4+index]>=threshold) yes=1;
-            }
-            if (s->script.money_kind==0xeb) yes=s->party.advanced_kit!=0;
-            if (s->script.money_kind==0xec) yes=s->party.medical_kit!=0;
-            btp_script_condition_return(&s->script,btp_state_bld(r,s),s->story_flags,yes);continue;
-        }
-        if (s->script.status==BTP_SCRIPT_EFFECT) {
-            /* Original E4 calls the blocking 17C5 sound routine. Suspend the
-               BLD until that clip ends; adjacent effects must not accumulate
-               behind the next movie, dialogue, or building exit. */
-            if (s->script.money_amount) { btp_audio_effect(s,s->script.money_amount);s->script.money_amount=0; }
-            if (s->audio.sound_count) break;
-            s->script.status=BTP_SCRIPT_NATIVE;btp_script_native_return(&s->script,btp_state_bld(r,s),s->story_flags);continue;
-        }
-        if (s->script.status==BTP_SCRIPT_MONEY) {
-            btp_script_money_return(&s->script,btp_state_bld(r,s),s->story_flags,&s->credits);continue;
-        }
-        if (s->script.native_action == 12) {
-            if (!s->checkpoint_valid) checkpoint(s);
-            if (!s->talk.phase) btp_talk_begin(s,r);
-            break;
-        }
-        if (s->cache.active && s->script.native_action==45 && btp_building_kind(r,s)==22) { s->cache.phase=BTP_CACHE_PHOENIX;break; }
-        if ((s->script.native_action >= 1 && s->script.native_action <= 3) || s->script.native_action==43) {
-            btp_training_native(s,r);
-            if (s->mode == BTP_MISSION) break;
-        } else if (s->script.native_action == 4 || s->script.native_action == 5) btp_school_native(s,r);
-        else if (s->script.native_action >= 6 && s->script.native_action <= 8) {
-            if (!s->bank.phase) btp_bank_native(s,r);
-            if (s->script.status == BTP_SCRIPT_NATIVE) break;
-        } else if (s->story_flags[4] && btp_building_kind(r,s)==5 &&
-            (s->script.native_action==13 || s->script.native_action==18 || s->script.native_action==19 || s->script.native_action==20 || s->script.native_action==44)) {
-            if (!s->service.phase) btp_service_begin(s,r);
-            break;
-        } else if (s->script.native_action==30 && btp_building_kind(r,s)==11 && s->story_flags[4]) {
-            btp_campaign_rex(s,r);break;
-        } else if (s->script.native_action==14 && s->story_flags[4]) {
-            s->story_flags[14]=(uint8_t)(btp_party_count(&s->party)-1u);
-            btp_script_native_return(&s->script,btp_state_bld(r,s),s->story_flags);
-        } else if (!btp_yard_native(s,r) && !btp_later_native(s,r)) btp_shop_native(s,r);
-        if (s->mode==BTP_ACTIONS || s->mode==BTP_YARD || s->mode==BTP_ENCOUNTER || s->service.phase) break;
-    }
-    if (s->script.status == BTP_SCRIPT_NATIVE && s->script.native_action != 12 && !s->bank.phase && !s->service.phase && s->mode != BTP_MISSION && s->mode!=BTP_ENCOUNTER && s->mode!=BTP_YARD && !s->menu.from_story && !(s->cache.active && s->script.native_action==45)) {
-        s->script.status = BTP_SCRIPT_ERROR; s->script.error = BTP_SCRIPT_BUDGET;
-        s->script.fault_pc = s->script.pc;
-    }
+    btp_original_services(s,r);
     if (s->script.status == BTP_SCRIPT_ANIMATION) {
         (void)btp_rng_next(s->npc.rng);
         if (!btp_cutscene_begin(s,r,s->script.animation_kind,1)) {

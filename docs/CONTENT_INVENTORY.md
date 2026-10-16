@@ -29,3 +29,18 @@ armor/current maxima (17–35 and 86–104), actuator masks (36–37/105–106),
 record bytes. Future richer instances must not discard unknown bytes used by
 original GAME round trips. Catalogue growth does not increase four owned mech
 slots, eight party members or 24 combat actors.
+
+## Story commands and continuations (P3)
+
+`core/original_actions.c` owns original BLD native dispatch, named F5 numbers,
+checkpoint creation and held native input. It delegates to the original service
+modules. `core/script.c` retains bytecode decoding, PCs, condition/money returns
+and faults. `core/game.c` owns tick ordering and completion/recovery.
+
+`core/commands.c` exposes only operations with existing callers: active-person
+and party-skill queries and checked credit spending. They complete immediately;
+BLD/service state owns subsequent text, menu, sound and transaction waits. Do not
+call an original F5 number as a future generic event command: building context,
+flags and continuation state are required. Recruitment, encounters, inventory
+and complex services need additional reusable commands when a second caller is
+implemented, rather than speculative replacement during this preparation.

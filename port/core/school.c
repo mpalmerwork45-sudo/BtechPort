@@ -1,3 +1,4 @@
+#include "core/commands.h"
 #include "core/school.h"
 #include "core/economy.h"
 #include <stdio.h>
@@ -22,9 +23,9 @@ void btp_school_native(BtpState *s, const BtpResources *r)
         s->school = (BtpSchoolState){BTP_SCHOOL_TRANSCRIPT,(uint8_t)course,(uint8_t)rank,BTP_SCHOOL_TRAINED};
         s->story_flags[9] = 0;
         if (rank == 4) s->school.outcome = BTP_SCHOOL_MASTERED;
-        else if (s->credits < btp_school_price(rank)) s->school.outcome = BTP_SCHOOL_NO_FUNDS;
+        else if (!btp_try_spend_credits(s,btp_school_price(rank))) s->school.outcome = BTP_SCHOOL_NO_FUNDS;
         else {
-            s->credits -= btp_school_price(rank); ++s->skills[course]; s->story_flags[9] = 1;
+            ++s->skills[course]; s->story_flags[9] = 1;
             if (s->npc.enabled) s->npc.allowance_pending = (uint8_t)btp_economy_below_cap(s);
         }
     } else { fault(s); return; }
