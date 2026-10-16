@@ -45,6 +45,8 @@ const BtpMap *btp_active_map(const BtpResources *r,const BtpState *s)
 }
 unsigned btp_building_kind(const BtpResources *r,const BtpState *s)
 {
+    if (r->roster.count && s->map_id==2 && s->entry_slot==BTP_BROKER_ENTRY &&
+        s->campaign.building==BTP_BROKER_BUILDING) return BTP_BROKER_BUILDING;
     if (s->disk_origin) return 18;
     if (s->cache.active || s->yard.active) return s->campaign.building;
     return !s->map_id ? s->campaign.building : s->map_id==1 ? s->entry_slot :
@@ -259,7 +261,6 @@ static void game_tick(BtpState *s, const BtpResources *r, BtpAction a)
     if (s->mode == BTP_EXPLORE) {
         if (a==BTP_OPEN_MENU || (s->story_flags[4] && a==BTP_ACCEPT)) {
             ++s->tick;btp_menu_open(s);
-            if (btp_broker_available(s,r)) s->campaign.ui=BTP_MENU_UPDATED_ROOT;
             return;
         }
         if (s->npc.fault) { ++s->tick; return; }
@@ -277,7 +278,8 @@ static void game_tick(BtpState *s, const BtpResources *r, BtpAction a)
             moved.map_id ? btp_entrance(&moved,map) : -1;
         if (moved.mode==BTP_EXPLORE && btp_action_moves(a) && (party_entry || !moved.blocked) &&
             (party_entry || moved.x_half != previous.x_half || moved.y_half != previous.y_half) &&
-            (moved.map_id==previous.map_id && entrance >= 0 && map->room_map[entrance]<26)) {
+            (moved.map_id==previous.map_id && entrance >= 0 &&
+                ((r->roster.count && moved.map_id==2 && entrance==BTP_BROKER_ENTRY) || map->room_map[entrance]<26))) {
             moved.x_half = previous.x_half; moved.y_half = previous.y_half;
             if (party_entry) {
                 moved.campaign.world_x=(uint16_t)((map->entrance_x[0]>>8)*128+previous.x_half);
@@ -286,7 +288,8 @@ static void game_tick(BtpState *s, const BtpResources *r, BtpAction a)
             }
             moved.mode = BTP_ENTRY; moved.entry_slot = (uint8_t)entrance; moved.entry_selected = 0;
             moved.entry_action = moved.facing;
-            moved.campaign.building=moved.story_flags[4] ? map->room_map[entrance] : 0;
+            moved.campaign.building=(uint8_t)(r->roster.count && moved.map_id==2 && entrance==BTP_BROKER_ENTRY ?
+                BTP_BROKER_BUILDING : moved.story_flags[4] ? map->room_map[entrance] : 0);
             uint8_t choices[BTP_MENUS]; memcpy(choices,moved.script.choices,sizeof choices);
             moved.script = (BtpScriptState){.selected=previous.script.selected};
             memcpy(moved.script.choices,choices,sizeof choices);
@@ -363,7 +366,13 @@ static void game_tick(BtpState *s, const BtpResources *r, BtpAction a)
                 s->y_half = (uint16_t)((map->entrance_y[s->entry_slot] & 127) + (s->campaign.mounted ? 2u : 0u));
             }
         s->mode = (uint8_t)(s->party.enabled && s->party.people[0][0]==255 ? BTP_GAME_OVER : BTP_EXPLORE);
+            /* Declining the added doorway leaves no native building context
+               behind in an otherwise ordinary exploration save. */
+            if (s->campaign.building==BTP_BROKER_BUILDING) {
+                s->campaign.building=0;s->entry_slot=0;s->script=(BtpScriptState){0};
+            }
         } else if (a == BTP_ACCEPT) {
+            if (btp_building_kind(r,s)==BTP_BROKER_BUILDING) { btp_broker_open(s);return; }
             s->story_flags[10] = 1;
             /* Entering a shop changes the scene, not the stored crew seats.
                Clearing mounted here made the end-of-tick party sync eject
@@ -465,6 +474,7 @@ void btp_game_tick_audio(BtpState *s,const BtpResources *r,BtpAction a,int16_t *
         if (!s->audio.active) { s->mode=BTP_BEGIN;s->entry_selected=1; }
         return;
     }
+    unsigned previous_mode=s->mode;
     if (s->cutscene.active==3) {
         /* An outtake is still part of the current combat wave. Space must
            stop continuous play just as it does between animation frames. */
@@ -476,6 +486,9 @@ void btp_game_tick_audio(BtpState *s,const BtpResources *r,BtpAction a,int16_t *
        invasion. Keep his legacy training/shop aliases coherent from that
        point, rather than waiting for the destroyed-Citadel campaign flag. */
     if (!s->campaign.encounter && (s->story_flags[4] || s->party.enabled)) { btp_party_init(s);btp_party_sync(s); }
+    /* Temporary stranded-follower recovery; party.c documents its removal
+       plan. Run only after scene return, or a follower's distance limit. */
+    btp_party_recover(s,r,previous_mode!=s->mode);
     btp_audio_samples(&s->audio,r,BTP_AUDIO_TICK_SAMPLES,samples);
 }
 void btp_game_tick(BtpState *s,const BtpResources *r,BtpAction a) { btp_game_tick_audio(s,r,a,NULL); }

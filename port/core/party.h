@@ -22,6 +22,8 @@ int btp_party_walkable(const BtpState *state,const BtpResources *resources,int x
 int btp_party_can_stand(const BtpState *state,const BtpResources *resources,int cursor_x,int cursor_y);
 int btp_party_entrance(const BtpState *state,const BtpResources *resources,const BtpMap *map,int local_x,int local_y);
 void btp_party_follow(BtpState *state,const BtpResources *resources,uint16_t old_x,uint16_t old_y);
+/* Temporary recovery for stranded followers; see TODO in party.c. */
+void btp_party_recover(BtpState *state,const BtpResources *resources,int regroup);
 void btp_party_encode(const BtpPartyState *party,uint8_t bytes[BTP_PARTY_BYTES]);
 int btp_party_decode(const uint8_t bytes[BTP_PARTY_BYTES],BtpPartyState *party);
 #endif

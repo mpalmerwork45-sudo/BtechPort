@@ -15,11 +15,19 @@
 static unsigned checks;
 #define CHECK(x) do { ++checks;if (!(x)) { fprintf(stderr,"FAIL %s:%d: %s\n",__FILE__,__LINE__,#x);exit(1); } } while (0)
 static BtpError error;
+static void save_check(BtpState *s,BtpState *copy,const BtpResources *r);
 static void setup(BtpState *s,const BtpResources *r)
 {
-    btp_start(s);s->story_flags[4]=1;s->story_flags[36]=127;s->map_id=2;s->x_half=105;s->y_half=94;
-    s->campaign.world_x=1385;s->campaign.world_y=1118;s->credits=200000;s->mech_skills[1]=1;
+    btp_start(s);s->story_flags[4]=1;s->story_flags[36]=127;s->map_id=2;s->x_half=54;s->y_half=51;
+    s->campaign.world_x=1334;s->campaign.world_y=1075;s->credits=200000;s->mech_skills[1]=1;
     btp_npc_enter(s,&r->local[1]);btp_party_init(s);
+}
+static void enter_broker(BtpState *s,BtpState *copy,const BtpResources *r)
+{
+    btp_game_tick(s,r,BTP_UP);
+    CHECK(s->mode==BTP_ENTRY && s->entry_slot==BTP_BROKER_ENTRY && btp_building_kind(r,s)==BTP_BROKER_BUILDING);
+    save_check(s,copy,r);btp_game_tick(s,r,BTP_ACCEPT);
+    CHECK(s->campaign.ui==BTP_MENU_BROKER_HUB && btp_broker_available(s,r));save_check(s,copy,r);
 }
 static void save_check(BtpState *s,BtpState *copy,const BtpResources *r)
 {
@@ -70,9 +78,10 @@ static void services(BtpState *s,BtpState *copy,const BtpResources *r,const char
         if (menu==3) for (unsigned i=0;i<10;++i) if (r->roster.mechs[model].ammo_cost[i]) CHECK(m[39+i]==3);
     }
 }
-static void garage(BtpState *s,BtpState *copy,const BtpResources *r,unsigned model)
+static void checkout(BtpState *s,BtpState *copy,const BtpResources *r,unsigned bay)
 {
-    setup(s,r);CHECK(btp_broker_buy(s,r,model)==BTP_BROKER_BOUGHT);
+    unsigned code=bay<4 ? btp_party_mech(s,bay)[123] : 0;
+    btp_game_tick(s,r,BTP_CANCEL);CHECK(s->mode==BTP_EXPLORE);
     const BtpMap *map=&r->local[1];unsigned entry=0;
     while (entry<16 && map->room_map[entry]!=8) ++entry;
     CHECK(entry<16);s->x_half=map->entrance_x[entry]&127u;s->y_half=(uint16_t)((map->entrance_y[entry]&127u)+1u);
@@ -80,21 +89,141 @@ static void garage(BtpState *s,BtpState *copy,const BtpResources *r,unsigned mod
     s->campaign.world_y=(uint16_t)((map->entrance_y[0]>>12)*128u+s->y_half);
     s->party.x[0]=s->campaign.world_x;s->party.y[0]=s->campaign.world_y;
     btp_game_tick(s,r,BTP_UP);CHECK(s->mode==BTP_ENTRY);btp_game_tick(s,r,BTP_ACCEPT);
-    for (unsigned i=0;i<32 && s->campaign.ui!=BTP_MENU_ALLOCATE;++i) {
+    for (unsigned i=0;i<32 && s->campaign.ui!=BTP_MENU_ALLOCATE && s->mode!=BTP_EXPLORE;++i) {
         CHECK(s->mode!=BTP_SCRIPT_FAULT);save_check(s,copy,r);
         if (s->script.status==BTP_SCRIPT_CONFIRM && s->script.confirm_selected) btp_game_tick(s,r,BTP_LEFT);
         btp_game_tick(s,r,BTP_ACCEPT);
     }
-    CHECK(s->campaign.ui==BTP_MENU_ALLOCATE);save_check(s,copy,r);
-    btp_game_tick(s,r,BTP_ACCEPT);CHECK(s->campaign.ui==BTP_MENU_CREW);
-    /* An empty cockpit takes the qualified pilot immediately; the seat
-       confirmation is only needed when displacing an existing pilot. */
-    btp_game_tick(s,r,BTP_ACCEPT);CHECK(s->campaign.ui==BTP_MENU_ALLOCATE);
-    CHECK(s->campaign.mech[121]==0 && s->party.people[0][12]==0);
-    btp_game_tick(s,r,BTP_DOWN);btp_game_tick(s,r,BTP_ACCEPT);
+    if (bay<4) {
+        CHECK(s->campaign.ui==BTP_MENU_ALLOCATE);save_check(s,copy,r);
+        btp_game_tick(s,r,BTP_ACCEPT);CHECK(s->campaign.ui==BTP_MENU_CREW);
+        CHECK(btp_menu_mech_count(s)==btp_broker_count(s));
+        unsigned choice=0;while (choice<4 && btp_menu_mech_slot(s,choice)!=bay) ++choice;CHECK(choice<4);
+        for (unsigned i=0;i<choice;++i) btp_game_tick(s,r,BTP_DOWN);
+        /* An empty cockpit takes the qualified pilot immediately, including
+           a later bay after an earlier owned vehicle has been sold. */
+        btp_game_tick(s,r,BTP_ACCEPT);CHECK(s->campaign.ui==BTP_MENU_ALLOCATE);
+        CHECK(btp_party_mech(s,bay)[121]==0 && s->party.people[0][12]==bay);
+    }
+    if (s->campaign.ui==BTP_MENU_ALLOCATE) { btp_game_tick(s,r,BTP_DOWN);btp_game_tick(s,r,BTP_ACCEPT); }
     for (unsigned i=0;i<32 && s->mode!=BTP_EXPLORE;++i) btp_game_tick(s,r,BTP_ACCEPT);
-    CHECK(s->mode==BTP_EXPLORE && s->campaign.mounted && !s->story_flags[24]);
-    CHECK(s->campaign.mech[123]==r->roster.mechs[model].record[123]);save_check(s,copy,r);
+    CHECK(s->mode==BTP_EXPLORE && s->campaign.mounted==(bay<4) && !s->story_flags[24]);
+    if (bay<4) CHECK(btp_party_mech(s,bay)[123]==code);
+    save_check(s,copy,r);
+}
+static void garage(BtpState *s,BtpState *copy,const BtpResources *r,unsigned model)
+{
+    setup(s,r);enter_broker(s,copy,r);CHECK(btp_broker_buy(s,r,model)==BTP_BROKER_BOUGHT);
+    checkout(s,copy,r,0);
+}
+static void sales(BtpState *s,BtpState *copy,BtpState *before,const BtpResources *r)
+{
+    setup(s,r);enter_broker(s,copy,r);
+    for (unsigned i=0;i<4;++i) CHECK(btp_broker_buy(s,r,i%3)==BTP_BROKER_BOUGHT);
+    CHECK(btp_broker_count(s)==4);
+    /* Two further purchases through the UI must leave all four records and
+       the wallet unchanged. Full capacity is a held, saveable result. */
+    btp_game_tick(s,r,BTP_ACCEPT);
+    for (unsigned attempt=0;attempt<2;++attempt) {
+        *before=*s;btp_game_tick(s,r,BTP_ACCEPT);btp_game_tick(s,r,BTP_UP);btp_game_tick(s,r,BTP_ACCEPT);
+        CHECK(s->menu.notice==BTP_BROKER_FULL && s->credits==before->credits);
+        CHECK(!memcmp(s->campaign.mech,before->campaign.mech,125) && !memcmp(s->party.mechs,before->party.mechs,375));
+        save_check(s,copy,r);btp_game_tick(s,r,BTP_ACCEPT);
+    }
+    btp_game_tick(s,r,BTP_CANCEL);btp_game_tick(s,r,BTP_DOWN);btp_game_tick(s,r,BTP_ACCEPT);
+    CHECK(s->campaign.ui==BTP_MENU_BROKER_SELL && btp_actions_count(s)==5);save_check(s,copy,r);
+    CHECK(btp_broker_offer(s,r,1)==r->roster.mechs[1].price/2);
+    uint8_t *m=btp_party_mech(s,1);m[17]=0;m[117]=2;
+    CHECK(btp_broker_offer(s,r,1)<r->roster.mechs[1].price/2);
+    btp_game_tick(s,r,BTP_DOWN);btp_game_tick(s,r,BTP_ACCEPT);
+    CHECK(s->campaign.ui==BTP_MENU_BROKER_SELL_CONFIRM && s->menu.map_y==1 && s->campaign.selected==1);
+    *before=*s;save_check(s,copy,r);btp_game_tick(s,r,BTP_ACCEPT);
+    CHECK(s->campaign.ui==BTP_MENU_BROKER_SELL && s->credits==before->credits && btp_broker_count(s)==4);
+    CHECK(!memcmp(m,btp_party_mech(before,1),125));
+    btp_game_tick(s,r,BTP_DOWN);btp_game_tick(s,r,BTP_ACCEPT);btp_game_tick(s,r,BTP_CANCEL);
+    CHECK(btp_broker_count(s)==4 && s->credits==before->credits);
+    btp_game_tick(s,r,BTP_DOWN);btp_game_tick(s,r,BTP_ACCEPT);
+    unsigned offer=btp_broker_offer(s,r,1),credits=s->credits;
+    btp_game_tick(s,r,BTP_UP);btp_game_tick(s,r,BTP_ACCEPT);
+    CHECK(s->campaign.ui==BTP_MENU_BROKER_SELL_RESULT && s->menu.notice==BTP_BROKER_SOLD);
+    CHECK(s->credits==credits+offer && btp_broker_count(s)==3 && !btp_broker_owned(s,1));
+    CHECK(m[0]==255 && m[121]==255 && m[122]==255 && !btp_roster_custom(m));
+    for (unsigned i=0;i<4;++i) if (i!=1) CHECK(!memcmp(btp_party_mech(s,i),btp_party_mech(before,i),125));
+    save_check(s,copy,r);btp_game_tick(s,r,BTP_ACCEPT);
+    CHECK(btp_actions_count(s)==4 && btp_broker_slot(s,1)==2);
+    CHECK(btp_broker_buy(s,r,2)==BTP_BROKER_BOUGHT && btp_broker_count(s)==4);
+    CHECK(btp_roster_definition(&r->roster,m)==&r->roster.mechs[2]);save_check(s,copy,r);
+    /* Overflow, original chassis and stale seat references are transactional.
+       Sale never deletes the pilot/passenger or shifts another bay's record. */
+    s->credits=UINT32_MAX;*before=*s;
+    CHECK(btp_broker_sell(s,r,2)==BTP_BROKER_CREDIT_LIMIT && !memcmp(s,before,sizeof *s));
+    s->credits=0;
+    memcpy(m,r->combat.loans[0],125);s->party.mech_types[1]=m[0];m[0]=255;
+    CHECK(btp_broker_offer(s,r,1)==(unsigned)m[16]*100u);
+    memcpy(s->party.people[1],s->party.people[0],17);s->party.people[1][0]=1;
+    s->party.people[1][12]=1;m[121]=1;*before=*s;
+    CHECK(btp_broker_sell(s,r,1)==BTP_BROKER_SOLD && s->party.people[1][12]==8);
+    CHECK(!memcmp(s->party.people[1],before->party.people[1],12));
+    for (unsigned i=0;i<4;++i) if (btp_broker_owned(s,i)) CHECK(btp_broker_sell(s,r,i)==BTP_BROKER_SOLD);
+    CHECK(!s->campaign.owned && !btp_broker_count(s) && btp_actions_count(s)==1 && s->story_flags[24]);
+    save_check(s,copy,r);CHECK(btp_broker_buy(s,r,0)==BTP_BROKER_BOUGHT && btp_broker_slot(s,0)==0);
+    save_check(s,copy,r);
+}
+static void bars(const BtpResources *r,uint32_t *frame,const char *capture)
+{
+    uint32_t *empty=malloc(BTP_PIXELS*sizeof *empty);CHECK(empty);
+    /* Compare an empty diagram against intact, damaged and extreme records.
+       Only the original eleven six-pixel wells may change; damage must reduce
+       filled area, rather than rescale a damaged mech back to full height. */
+    static const unsigned wells[][4]={{248,64,253,87},{208,32,213,55},{224,128,229,151},
+        {192,16,197,31},{192,48,197,71},{136,64,141,87},{176,32,181,55},
+        {160,128,165,151},{272,112,277,135},{288,120,293,143},{304,112,309,135}};
+    for (unsigned model=0;model<4;++model) {
+        uint8_t m[125];memcpy(m,r->roster.mechs[model%3].record,125);
+        if (model==3) { memset(m+17,255,19);memset(m+86,255,19); }
+        uint8_t blank[125];memcpy(blank,m,125);memset(blank+17,0,19);
+        btp_mech_screen(r,blank,"Jason","None",0,0,empty);
+        unsigned full=0;
+        for (unsigned damage=0;damage<2;++damage) {
+            if (damage) for (unsigned i=17;i<36;++i) m[i]/=2;
+            btp_mech_screen(r,m,"Jason","None",0,0,frame);unsigned filled=0;
+            if (capture && model<3) {
+                char path[4096];snprintf(path,sizeof path,"%s-inspect-%u-%u.ppm",capture,model,damage);
+                CHECK(btp_write_ppm(path,frame));
+            }
+            for (unsigned y=0;y<200;++y) for (unsigned x=128;x<320;++x) if (frame[y*320+x]!=empty[y*320+x]) {
+                int inside=0;
+                for (unsigned i=0;i<11;++i) if (x>=wells[i][0] && x<=wells[i][2] && y>=wells[i][1] && y<=wells[i][3]) inside=1;
+                CHECK(inside);++filled;
+            }
+            CHECK(filled);if (damage) CHECK(filled<full);else full=filled;
+        }
+    }
+    free(empty);
+}
+static void legacy_broker(BtpState *s,BtpState *copy,const BtpResources *r)
+{
+    /* Build the former BTU1/v41 wire format, including its old Space entry.
+       Loading must migrate held menus while retaining choices and purchases. */
+    for (unsigned ui=BTP_MENU_UPDATED_ROOT;ui<=BTP_MENU_BROKER_RESULT;++ui) {
+        setup(s,r);enter_broker(s,copy,r);CHECK(btp_broker_buy(s,r,1)==BTP_BROKER_BOUGHT);
+        s->campaign.building=0;s->entry_slot=0;s->campaign.ui=(uint8_t)ui;
+        s->menu.map_x=(uint16_t)r->roster.count;s->menu.map_y=1;s->campaign.selected=(uint8_t)(ui==24 ? 7 : ui==27 ? 0 : 1);
+        s->menu.notice=(uint8_t)(ui==27 ? BTP_BROKER_BOUGHT : 0);
+        uint8_t bytes[112+BTP_STATE_BYTES]={0};memcpy(bytes,"BTU1",4);
+        memcpy(bytes+16,r->roster.package,32);memcpy(bytes+48,r->roster.version,32);
+        btp_state_encode(s,bytes+112);memcpy(bytes+112,"BTPf",4);bytes[116]=41;
+        for (unsigned i=0;i<4;++i) { bytes[4+i]=(uint8_t)((sizeof bytes-16)>>(8*i));bytes[80+i]=(uint8_t)(r->roster.fingerprint>>(8*i)); }
+        uint32_t crc=UINT32_MAX;
+        for (unsigned i=16;i<sizeof bytes;++i) { crc^=bytes[i];for (unsigned bit=0;bit<8;++bit) crc=(crc>>1)^((crc&1u) ? UINT32_C(0xedb88320) : 0u); }
+        crc=~crc;for (unsigned i=0;i<4;++i) bytes[8+i]=(uint8_t)(crc>>(8*i));
+        FILE *f=fopen("btp-roster-legacy.btp","wb");CHECK(f && fwrite(bytes,1,sizeof bytes,f)==sizeof bytes && !fclose(f));
+        CHECK(btp_save_load("btp-roster-legacy.btp",copy,r,&error));CHECK(!remove("btp-roster-legacy.btp"));
+        CHECK(copy->credits==s->credits && !memcmp(copy->campaign.mech,s->campaign.mech,125));
+        CHECK(copy->campaign.ui==(ui==24 ? BTP_MENU_ROOT : ui));
+        if (ui!=24) CHECK(btp_broker_available(copy,r));
+        save_check(copy,s,r);
+    }
 }
 int main(int argc,char **argv)
 {
@@ -111,15 +240,26 @@ int main(int argc,char **argv)
     CHECK(s && copy && before && frame);
     /* Optional valid Starport checkpoint for bounded SDL purchase checks. */
     if (argc==7) { setup(s,r);CHECK(btp_save_write(argv[6],s,r,&error)); }
+    setup(s,r);btp_game_tick(s,r,BTP_OPEN_MENU);
+    CHECK(s->campaign.ui==BTP_MENU_ROOT && btp_actions_count(s)==7);
+    setup(s,original.resources);btp_game_tick(s,original.resources,BTP_UP);
+    CHECK(s->mode==BTP_EXPLORE && !btp_broker_available(s,original.resources));
+    setup(s,r);btp_game_tick(s,r,BTP_UP);btp_game_tick(s,r,BTP_DOWN);btp_game_tick(s,r,BTP_ACCEPT);
+    CHECK(s->mode==BTP_EXPLORE && s->campaign.building!=BTP_BROKER_BUILDING);save_check(s,copy,r);
+    sales(s,copy,before,r);bars(r,frame,argc==7 ? argv[6] : NULL);legacy_broker(s,copy,r);
+    setup(s,r);enter_broker(s,copy,r);
+    for (unsigned i=0;i<4;++i) CHECK(btp_broker_buy(s,r,i%3)==BTP_BROKER_BOUGHT);
+    CHECK(btp_broker_sell(s,r,0)==BTP_BROKER_SOLD);checkout(s,copy,r,3);
+    setup(s,r);enter_broker(s,copy,r);CHECK(btp_broker_buy(s,r,0)==BTP_BROKER_BOUGHT);
+    CHECK(btp_broker_sell(s,r,0)==BTP_BROKER_SOLD);checkout(s,copy,r,4);
     /* Use the real menu and purchase confirmation, including held save/load,
        then exercise the shared gameplay operations on each delivered model. */
     for (unsigned model=0;model<3;++model) {
-        const BtpRosterMech *d=&r->roster.mechs[model];setup(s,r);
+        const BtpRosterMech *d=&r->roster.mechs[model];setup(s,r);enter_broker(s,copy,r);
         s->credits=d->price-1;*before=*s;
         CHECK(btp_broker_buy(s,r,model)==BTP_BROKER_NO_FUNDS && !memcmp(s,before,sizeof *s));
         s->credits=200000;
-        btp_game_tick(s,r,BTP_OPEN_MENU);CHECK(s->campaign.ui==BTP_MENU_UPDATED_ROOT);
-        btp_game_tick(s,r,BTP_UP);btp_game_tick(s,r,BTP_ACCEPT);
+        btp_game_tick(s,r,BTP_ACCEPT);
         CHECK(s->campaign.ui==BTP_MENU_BROKER && btp_actions_count(s)==4);
         for (unsigned i=0;i<model;++i) btp_game_tick(s,r,BTP_DOWN);
         btp_game_tick(s,r,BTP_ACCEPT);CHECK(s->campaign.ui==BTP_MENU_BROKER_CONFIRM);
@@ -132,6 +272,7 @@ int main(int argc,char **argv)
         CHECK(s->party.mech_types[0]==d->record[0] && !memcmp(m+1,d->record+1,124));
         save_check(s,copy,r);btp_render(r,s,0,frame);
         btp_game_tick(s,r,BTP_ACCEPT);btp_game_tick(s,r,BTP_CANCEL);
+        CHECK(s->campaign.ui==BTP_MENU_BROKER_HUB);btp_game_tick(s,r,BTP_CANCEL);
         CHECK(s->mode==BTP_EXPLORE);
         /* The garage's restoration makes the parked record available to the
            original allocation operation; no custom pilot shortcut is used. */
@@ -167,7 +308,7 @@ int main(int argc,char **argv)
         services(s,copy,r,argv[1],model);
         garage(s,copy,r,model);
     }
-    setup(s,r);
+    setup(s,r);enter_broker(s,copy,r);
     for (unsigned i=0;i<4;++i) CHECK(btp_broker_buy(s,r,i%3)==BTP_BROKER_BOUGHT);
     *before=*s;CHECK(btp_broker_buy(s,r,0)==BTP_BROKER_FULL && !memcmp(s,before,sizeof *s));
     save_check(s,copy,r);

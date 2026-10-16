@@ -37,7 +37,9 @@ unsigned btp_actions_count(const BtpState *s)
         unsigned first=7u*s->campaign.member,n=s->menu.map_x>first ? s->menu.map_x-first : 0u;
         return (n>7 ? 7u : n)+1u;
     }
-    case BTP_MENU_BROKER_CONFIRM:return 2;
+    case BTP_MENU_BROKER_CONFIRM:case BTP_MENU_BROKER_SELL_CONFIRM:return 2;
+    case BTP_MENU_BROKER_HUB:return 3;
+    case BTP_MENU_BROKER_SELL:return btp_broker_count(s)+1u;
     case BTP_MENU_ROOT:return btp_menu_mech_count(s) ? 8u : 7u;
     case BTP_MENU_ALLOCATE:return btp_party_count(&s->party)+1u;
     case BTP_MENU_CREW:return btp_menu_mech_count(s)+1u;
@@ -103,6 +105,9 @@ void btp_menu_open(BtpState *s)
 }
 void btp_menu_close(BtpState *s)
 {
+    if (btp_broker_page(s->campaign.ui)) {
+        s->campaign.building=0;s->entry_slot=0;s->script=(BtpScriptState){0};
+    }
     if (s->service.phase==12 && s->service.action==48) s->service=(BtpServiceState){0};
     unsigned intro=s->menu.from_intro;s->menu.from_intro=0;
     s->campaign.ui=s->campaign.selected=s->campaign.member=0;s->menu.io=s->menu.notice=0;
@@ -123,6 +128,13 @@ void btp_menu_person(const BtpState *s,unsigned member,uint8_t p[17])
 void btp_menu_input(BtpState *s,const BtpResources *r,BtpAction a)
 {
     ++s->tick;BtpCampaignState *c=&s->campaign;if (s->menu.io) return;
+    if (btp_broker_page(c->ui) && a==BTP_CANCEL) {
+        if (c->ui==BTP_MENU_BROKER_HUB) btp_menu_close(s);
+        else if (c->ui==BTP_MENU_BROKER_CONFIRM) page(s,BTP_MENU_BROKER,s->menu.map_y%7u);
+        else if (c->ui==BTP_MENU_BROKER_SELL_CONFIRM) page(s,BTP_MENU_BROKER_SELL,0);
+        else page(s,BTP_MENU_BROKER_HUB,0);
+        return;
+    }
     if (c->ui==BTP_MENU_BROKER && (a==BTP_LEFT || a==BTP_RIGHT)) {
         unsigned pages=(s->menu.map_x+6u)/7u;
         if (pages) c->member=(uint8_t)((c->member+(a==BTP_LEFT ? pages-1u : 1u))%pages);
@@ -183,16 +195,16 @@ void btp_menu_input(BtpState *s,const BtpResources *r,BtpAction a)
             s->menu.map_x=s->story_flags[4] ? c->world_x : (uint16_t)(1536+s->x_half);
             s->menu.map_y=s->story_flags[4] ? c->world_y : (uint16_t)(1536+s->y_half);
             page(s,BTP_MENU_MAP,0);break;
-        case 8:
-            if (btp_broker_available(s,r)) {
-                c->member=0;s->menu.map_x=(uint16_t)r->roster.count;s->menu.map_y=0;
-                page(s,BTP_MENU_BROKER,0);
-            }
-            break;
         }
         break;
+    case BTP_MENU_BROKER_HUB:
+        c->member=0;s->menu.map_x=(uint16_t)r->roster.count;s->menu.map_y=0;
+        if (!item) page(s,BTP_MENU_BROKER,0);
+        else if (item==1) page(s,BTP_MENU_BROKER_SELL,0);
+        else btp_menu_close(s);
+        break;
     case BTP_MENU_BROKER:
-        if (item==count-1u) btp_menu_close(s);
+        if (item==count-1u) page(s,BTP_MENU_BROKER_HUB,0);
         else {
             s->menu.map_y=(uint16_t)(c->member*7u+item);
             page(s,BTP_MENU_BROKER_CONFIRM,1);
@@ -206,6 +218,18 @@ void btp_menu_input(BtpState *s,const BtpResources *r,BtpAction a)
         }
         break;
     case BTP_MENU_BROKER_RESULT:page(s,BTP_MENU_BROKER,s->menu.map_y%7u);break;
+    case BTP_MENU_BROKER_SELL:
+        if (item==count-1u) page(s,BTP_MENU_BROKER_HUB,1);
+        else { s->menu.map_y=(uint16_t)btp_broker_slot(s,item);page(s,BTP_MENU_BROKER_SELL_CONFIRM,1); }
+        break;
+    case BTP_MENU_BROKER_SELL_CONFIRM:
+        if (item) page(s,BTP_MENU_BROKER_SELL,0);
+        else {
+            unsigned outcome=btp_broker_sell(s,r,s->menu.map_y);
+            page(s,BTP_MENU_BROKER_SELL_RESULT,0);s->menu.notice=(uint8_t)outcome;
+        }
+        break;
+    case BTP_MENU_BROKER_SELL_RESULT:page(s,BTP_MENU_BROKER_SELL,0);break;
     case BTP_MENU_SETTINGS:
         if (item==0) page(s,BTP_MENU_STEPS,s->menu.steps==4 ? 2u : s->menu.steps-1u);
         else if (item==1) page(s,BTP_MENU_SPEED,s->menu.speed);
@@ -279,10 +303,10 @@ int btp_actions_valid(const BtpState *s)
          s->script.status!=BTP_SCRIPT_NATIVE || s->mode!=(s->menu.from_story==1 ? BTP_ACTIONS : BTP_BUILDING)))) return 0;
     const BtpMenuState *m=&s->menu;
     if ((m->steps!=1 && m->steps!=2 && m->steps!=4) || m->sound>1 || m->speed>5 || m->outtakes>2 ||
-        m->slot>5 || m->io>2 || m->notice>(s->mode==BTP_ACTIONS && s->campaign.ui==BTP_MENU_MAP ? 15u : 5u) || m->quit>1 || m->map_x>2047 || m->map_y>2047 || m->from_intro>1) return 0;
+        m->slot>5 || m->io>2 || m->notice>(s->mode==BTP_ACTIONS && s->campaign.ui==BTP_MENU_MAP ? 15u : s->campaign.ui==BTP_MENU_BROKER_SELL_RESULT ? BTP_BROKER_CREDIT_LIMIT : 5u) || m->quit>1 || m->map_x>2047 || m->map_y>2047 || m->from_intro>1) return 0;
     if (m->from_intro && (s->mode!=BTP_ACTIONS || (s->campaign.ui!=BTP_MENU_LOAD && s->campaign.ui!=BTP_MENU_MESSAGE))) return 0;
     if ((s->mode==BTP_ACTIONS)!=(s->campaign.ui!=0)) return 0;
-    if (s->campaign.ui>BTP_MENU_BROKER_RESULT || (s->campaign.ui && s->campaign.selected>=btp_actions_count(s))) return 0;
+    if (s->campaign.ui>BTP_MENU_BROKER_SELL_RESULT || (s->campaign.ui && s->campaign.selected>=btp_actions_count(s))) return 0;
     if (s->campaign.ui==BTP_MENU_MECH && (s->campaign.member>=4 || !s->campaign.owned || btp_party_mech((BtpState *)s,s->campaign.member)[0]==255)) return 0;
     return !m->io || (s->mode==BTP_ACTIONS && s->campaign.ui==(m->io==BTP_MENU_IO_SAVE ? BTP_MENU_SAVE : BTP_MENU_LOAD));
 }

@@ -21,6 +21,7 @@
 #include "core/story.h"
 #include "core/yard.h"
 #include "core/cache.h"
+#include "core/roster_game.h"
 #include <string.h>
 
 static void put16(uint8_t *p, uint16_t v) { p[0] = (uint8_t)v; p[1] = (uint8_t)(v >> 8); }
@@ -219,7 +220,8 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         n == BTP_STATE_BYTES && !memcmp(b,"BTPc",4) && b[4]==38 ? 38 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPd",4) && b[4]==39 ? 39 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPe",4) && b[4]==40 ? 40 :
-        n == BTP_STATE_BYTES && !memcmp(b,"BTPf",4) && b[4]==41 ? 41 : 0;
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPf",4) && b[4]==41 ? 41 :
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPg",4) && b[4]==42 ? 42 : 0;
     if (!version) return 0;
     if (version>=18 && version<38 && b[10232]) return 0; /* v38 critical report count. */
     if (version>=18 && version<35 && b[10233]) return 0; /* v35 weapon-window presentation bits. */
@@ -333,9 +335,9 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         result.campaign.ui=b[2665];result.campaign.selected=b[2666];result.campaign.member=b[2667];
         result.campaign.mech_x=get16(b+2668);result.campaign.mech_y=get16(b+2670);
         if (result.campaign.invasion>1 || result.campaign.owned>1 || result.campaign.checkpoint_owned>1 ||
-            result.campaign.world_x>2047 || result.campaign.world_y>2047 || result.campaign.building>=26 ||
+            result.campaign.world_x>2047 || result.campaign.world_y>2047 || result.campaign.building>=(version>=42 ? 27u : 26u) ||
             result.campaign.world_clock>=BTP_OUTDOOR_PERIOD || result.campaign.encounter>(version>=29 ? 4u : 2u) || result.campaign.mounted>result.campaign.owned ||
-            result.campaign.mech_walk>15 || result.campaign.mech_direction>7 || result.campaign.ui>(version>=41 ? BTP_MENU_BROKER_RESULT : version>=30 ? BTP_MENU_MECH_PICK : version>=25 ? BTP_MENU_MECH : version>=23 ? BTP_MENU_RECIPIENT : version>=19 ? BTP_MENU_QUIT : 6) ||
+            result.campaign.mech_walk>15 || result.campaign.mech_direction>7 || result.campaign.ui>(version>=42 ? BTP_MENU_BROKER_SELL_RESULT : version>=41 ? BTP_MENU_BROKER_RESULT : version>=30 ? BTP_MENU_MECH_PICK : version>=25 ? BTP_MENU_MECH : version>=23 ? BTP_MENU_RECIPIENT : version>=19 ? BTP_MENU_QUIT : 6) ||
             result.campaign.selected>(version>=23 ? 8u : 7u) || result.campaign.member>7 || result.campaign.mech_x>2047 || result.campaign.mech_y>2047) return 0;
     }
     if (version>=16) {
@@ -568,6 +570,8 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
             for (unsigned i = 0; i < BTP_STORY_BYTES; ++i) if (result.story_checkpoint[i]) return 0;
         }
         if (result.mode != BTP_EXPLORE && result.entry_slot != 1 &&
+            !(version>=42 && result.map_id==2 && result.story_flags[4] &&
+                result.entry_slot==BTP_BROKER_ENTRY && result.campaign.building==BTP_BROKER_BUILDING) &&
             !(version>=17 && result.story_flags[4] && m->room_map[result.entry_slot]<26) &&
             !(version >= 6 && (result.entry_slot == 3 || result.entry_slot == 4)) &&
             !(version >= 7 && result.entry_slot == 2) &&
@@ -689,6 +693,18 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         }
     }
     if (!btp_actions_valid(&result) || !btp_audio_valid(&result) || !btp_aftermath_valid(&result)) return 0;
+    if (version==41) {
+        /* Existing Updated games keep their purchases and pending choices.
+           Retire the old Space entry; held broker pages become the native
+           building screen and return to the same outdoor position on exit. */
+        if (result.campaign.ui==BTP_MENU_UPDATED_ROOT) {
+            result.campaign.ui=BTP_MENU_ROOT;
+            if (result.campaign.selected>=btp_actions_count(&result)) result.campaign.selected=0;
+        } else if (btp_broker_page(result.campaign.ui)) {
+            result.campaign.building=BTP_BROKER_BUILDING;result.entry_slot=BTP_BROKER_ENTRY;
+            result.script=(BtpScriptState){0};
+        }
+    }
     *s = result;
     return 1;
 }

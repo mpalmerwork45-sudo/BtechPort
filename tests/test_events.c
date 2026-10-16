@@ -52,7 +52,14 @@ int main(int argc,char **argv)
             for (unsigned i=0;i<3;++i) s.npc.rng[i]=(uint8_t)(seed>>(8*i));
             if (!yes) input(&s,r,BTP_RIGHT);
             input(&s,r,BTP_ACCEPT);
-            CHECK((s.mode==BTP_EXPLORE)==(evaded!=0));CHECK(s.credits==cash && !memcmp(&party,&s.party,sizeof party) && !s.aftermath.phase);
+            CHECK((s.mode==BTP_EXPLORE)==(evaded!=0));CHECK(s.credits==cash && !s.aftermath.phase);
+            /* Avoidance still preserves every character, vehicle and owned
+               bay. The temporary straggler workaround now regroups positions
+               when returning outdoors; an accepted fight must not do so. */
+            CHECK(!memcmp(party.people,s.party.people,sizeof party.people));
+            CHECK(!memcmp(party.mechs,s.party.mechs,sizeof party.mechs));
+            CHECK(!memcmp(party.mech_types,s.party.mech_types,sizeof party.mech_types));
+            if (!evaded) CHECK(!memcmp(&party,&s.party,sizeof party));
             CHECK(((unsigned)s.npc.rng[0]|(unsigned)s.npc.rng[1]<<8|(unsigned)s.npc.rng[2]<<16)==next);
             if (!evaded) { CHECK(s.combat.phase==(yes ? BTP_COMBAT_CONTROL : BTP_COMBAT_AVOID));if (!yes) input(&s,r,BTP_ACCEPT);CHECK(s.combat.phase==BTP_COMBAT_CONTROL); }
             input(&s,r,BTP_IDLE);

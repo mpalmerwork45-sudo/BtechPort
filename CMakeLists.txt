@@ -89,6 +89,11 @@ if(BUILD_TESTING)
     "${PROJECT_SOURCE_DIR}/work/combat-data.bin" "${PROJECT_SOURCE_DIR}/work/world-data.bin"
     "${PROJECT_SOURCE_DIR}/content/updated/roster.json")
   add_executable(btp-content-tests tests/test_content.c)
+  add_executable(btp-recovery-tests tests/test_recovery.c)
+  target_link_libraries(btp-recovery-tests PRIVATE btp_core)
+  add_test(NAME party-straggler-recovery COMMAND btp-recovery-tests
+    "${PROJECT_SOURCE_DIR}/Original DOS" "${PROJECT_SOURCE_DIR}/work/talk-data.bin"
+    "${PROJECT_SOURCE_DIR}/work/combat-data.bin" "${PROJECT_SOURCE_DIR}/work/world-data.bin")
   target_link_libraries(btp-content-tests PRIVATE btp_core)
   add_test(NAME original-content-lifetime COMMAND btp-content-tests
     "${PROJECT_SOURCE_DIR}/Original DOS" "${PROJECT_SOURCE_DIR}/work/talk-data.bin"

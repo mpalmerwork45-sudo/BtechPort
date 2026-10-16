@@ -85,10 +85,38 @@ def run(env, work):
             str(work / "talk-data.bin"), str(work / "combat-data.bin"), str(work / "world-data.bin"),
             str(ROOT / "content/updated/roster.json"), str(start)], cwd=tmp,
             check=True, capture_output=True, timeout=20)
+        for model in range(3):
+            for damaged in range(2):
+                (work / f"updated-inspect-{model}-{damaged}.ppm").write_bytes(
+                    Path(f"{start}-inspect-{model}-{damaged}.ppm").read_bytes())
+        state, _, _, _, _ = play("broker-door", ["Up"], ["--load", start])
+        assert state["mode"] == "entry-confirm"
+        state, _, _, _, _ = play("broker-hub", ["Up", "space"], ["--load", start])
+        assert state["actions_menu"]["phase"] == 28
+        state, _, _, _, _ = play("broker-stock", ["Up", "space", "space", "Down", "Down"], ["--load", start])
+        assert state["actions_menu"]["phase"] == 25
         for index, price in enumerate((12000, 22000, 36000)):
-            inputs = ["space", "Up", "space"] + ["Down"] * index + ["space", "F5", "F9", "Up", "space"]
+            inputs = ["Up", "space", "space"] + ["Down"] * index + ["space", "F5", "F9", "Up", "space"]
             state, _, _, _, record = play(f"broker-{index}", inputs, ["--load", start], recording=False)
             assert state["credits"] == 200000 - price and state["campaign"]["mounted"] == 0
             assert state["actions_menu"]["phase"] == 27 and state["actions_menu"]["notice"] == 1
             assert state["mech_types"][0] != 255
-        print("PASS: all three SDL purchases with Space, F5/F9 held confirmation, correct price and parked delivery.", flush=True)
+        print("PASS: added Starport doorway, mechanic counter and all three Space/F5/F9 purchases.", flush=True)
+        # Buy four, attempt a fifth, then sell a middle bay. The saved result
+        # is reused to check the actual visible list and freed-bay purchase.
+        inputs = ["Up", "space", "space"] + ["space", "Up", "space", "space"] * 4
+        state, _, _, _, _ = play("broker-full", inputs + ["space", "Up", "space"], ["--load", start])
+        assert state["credits"] == 152000 and state["actions_menu"]["notice"] == 3
+        sale_menu = inputs + ["BackSpace", "Down", "space", "Down"]
+        state, _, _, _, _ = play("broker-sale-list", sale_menu, ["--load", start])
+        assert state["actions_menu"]["phase"] == 29
+        state, _, _, _, _ = play("broker-sale-confirm", sale_menu + ["space"], ["--load", start])
+        assert state["actions_menu"]["phase"] == 30
+        state, _, slot, _, _ = play("broker-sale", sale_menu + ["space", "F5", "F9", "Up", "space", "F5"],
+            ["--load", start], recording=False)
+        assert state["credits"] == 158000 and state["actions_menu"]["phase"] == 31
+        assert state["actions_menu"]["notice"] == 5 and state["mech_types"][1] == 255
+        sold = slot.with_name(slot.stem + "-updated.btp")
+        state, _, _, _, _ = play("broker-replace", ["BackSpace", "space", "Down", "Down", "space", "Up", "space"], ["--load", sold])
+        assert state["credits"] == 122000 and state["mech_types"][1] == ord("C")
+        print("PASS: full bays reject payment; selling with held save/load frees the chosen bay for replacement.", flush=True)

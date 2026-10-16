@@ -73,9 +73,9 @@ int btp_save_write(const char *path, const BtpState *s, const BtpResources *r, B
     }
     BtpState validated;
     btp_state_encode(s,bytes+header);
-    /* Only Updated writes v41's additional menu states. Original retains
+    /* Only Updated writes v42's additional broker states. Original retains
        the exact v40 payload and BTS1 envelope used by existing saves. */
-    if (updated) { memcpy(bytes+header,"BTPf",4);bytes[header+4]=41; }
+    if (updated) { memcpy(bytes+header,"BTPg",4);bytes[header+4]=42; }
     if (!decode(bytes+header,BTP_STATE_BYTES,&validated,r))
         return fail(e,"Current state cannot be saved");
     if (!btp_roster_state_valid(s,r)) return fail(e,"Current state does not match its roster package");
@@ -194,9 +194,12 @@ int btp_save_menu(BtpState *s,const BtpResources *r,const char *base,int allow_l
     unsigned request=s->menu.io;if (!request) return 1;
     char path[4096];int ok=btp_save_edition_slot_path(base,s->menu.slot,r,path,sizeof path,e);
     BtpState candidate=*s;btp_menu_close(&candidate);
+    /* Save/Load closes the Space menu outside game_tick. Apply the same
+       temporary formation recovery here before publishing that return. */
+    if (request==BTP_MENU_IO_SAVE) btp_party_recover(&candidate,r,1);
     if (ok && request==BTP_MENU_IO_LOAD && !allow_load) ok=fail(e,"Loading while recording is unsupported; start a new log after loading");
     if (ok) ok=request==BTP_MENU_IO_SAVE ? btp_save_write(path,&candidate,r,e) : btp_save_load(path,&candidate,r,e);
-    if (ok) { *s=candidate;return 1; }
+    if (ok) { btp_party_recover(&candidate,r,1);*s=candidate;return 1; }
     s->menu.io=0;s->menu.notice=(uint8_t)request;s->campaign.ui=BTP_MENU_MESSAGE;s->campaign.selected=0;
     return 0;
 }

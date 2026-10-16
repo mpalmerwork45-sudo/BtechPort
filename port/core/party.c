@@ -1,4 +1,5 @@
 #include "core/party.h"
+#include "core/roster_game.h"
 #include "core/cache.h"
 #include "core/combat_rules.h"
 #include "core/animation.h"
@@ -220,6 +221,7 @@ int btp_party_entrance(const BtpState *s,const BtpResources *r,const BtpMap *m,i
             if (record[0]==255) continue;
             px=x+r->combat.mech_formation_x[mech];py=y+r->combat.mech_formation_y[mech++];
         }
+        if (!vehicle && btp_broker_door(s,r,px,py)) return BTP_BROKER_ENTRY;
         for (unsigned door=0;door<12;++door) if (m->entrance_x[door] && m->entrance_y[door] &&
             py==(m->entrance_y[door]&127) && abs(px-(m->entrance_x[door]&127))<=vehicle) return (int)door;
         if (!btp_party_walkable(s,r,ox+px,oy+py,vehicle)) return -1;
@@ -282,7 +284,7 @@ static void follow_position(const BtpState *s,const BtpResources *r,uint16_t *px
         *px=(uint16_t)(x+best%SIDE-4);*py=(uint16_t)(y+best/SIDE-4);
     }
 }
-void btp_party_follow(BtpState *s,const BtpResources *r,uint16_t old_x,uint16_t old_y)
+static void party_follow(BtpState *s,const BtpResources *r,uint16_t old_x,uint16_t old_y,int regroup)
 {
     BtpPartyState *p=&s->party;if (!p->enabled) return;
     /* 0000:0BC9..0D30 supplies the two compact formations. Each follower
@@ -294,6 +296,7 @@ void btp_party_follow(BtpState *s,const BtpResources *r,uint16_t old_x,uint16_t 
         (p->x[i]!=old_x || p->y[i]!=old_y)) initialize=0;
     for (unsigned i=0;i<4;++i) if (btp_party_mech(s,i)[0]!=255 &&
         (p->mech_x[i]!=old_x || p->mech_y[i]!=old_y)) initialize=0;
+    if (regroup) initialize=1;
     for (unsigned i=0;i<8;++i) if (p->people[i][0]!=255 && p->people[i][12]>=8) {
         unsigned ox=p->x[i],oy=p->y[i],place=person++;
         follow_position(s,r,&p->x[i],&p->y[i],(int)s->campaign.world_x+r->combat.formation_x[place],
@@ -319,6 +322,39 @@ void btp_party_follow(BtpState *s,const BtpResources *r,uint16_t old_x,uint16_t 
         }
     }
     btp_party_sync(s);
+}
+void btp_party_follow(BtpState *s,const BtpResources *r,uint16_t old_x,uint16_t old_y)
+{
+    party_follow(s,r,old_x,old_y,0);
+}
+void btp_party_recover(BtpState *s,const BtpResources *r,int regroup)
+{
+    /* TEMPORARY WORKAROUND (user-requested): the 9x9 follower search can
+       strand a unit behind an obstacle, making an owned mech disappear off
+       screen. Regroup on returning from menus/buildings/battles, or when an
+       active follower is over 12 half-steps (six tiles) from its formation
+       position. This deliberately teleports; it is not original DOS behaviour.
+       TODO: replace with a route search that can escape local dead ends and
+       preserve reachable formation positions across scene transitions. Then
+       remove this recovery and its call sites, retaining the stranded-party
+       regression cases. Never revive wrecks or pull parked Starport mechs in. */
+    if (!s->party.enabled || s->combat.phase || s->campaign.encounter || s->yard.active ||
+        (s->mode!=BTP_EXPLORE && s->mode!=BTP_CACHE)) return;
+    unsigned person=0,mech=0;
+    for (unsigned i=0;i<8;++i) if (s->party.people[i][0]!=255 && s->party.people[i][12]>=8) {
+        int gx=(int)s->campaign.world_x+r->combat.formation_x[person];
+        int gy=(int)s->campaign.world_y+r->combat.formation_y[person++];
+        if (abs((int)s->party.x[i]-gx)>12 || abs((int)s->party.y[i]-gy)>12) regroup=1;
+    }
+    for (unsigned i=0;i<4;++i) if (btp_party_mech(s,i)[0]!=255) {
+        int gx=(int)s->campaign.world_x+r->combat.mech_formation_x[mech];
+        int gy=(int)s->campaign.world_y+r->combat.mech_formation_y[mech++];
+        if (abs((int)s->party.mech_x[i]-gx)>12 || abs((int)s->party.mech_y[i]-gy)>12) regroup=1;
+    }
+    /* Reuse footprint-checked placement: exact compact offsets on open
+       ground, nearest legal tiles if an exit's walls prevent that formation.
+       Records, crew, damage, inventory and RNG remain untouched. */
+    if (regroup) party_follow(s,r,s->campaign.world_x,s->campaign.world_y,1);
 }
 void btp_party_encode(const BtpPartyState *p,uint8_t b[BTP_PARTY_BYTES])
 {
