@@ -33,6 +33,12 @@ speaker response still have limits. See [project status](docs/PROJECT_STATUS.md)
 and the [latest fidelity sweep](docs/M4_PORTABILITY_SWEEP.md) for evidence and
 remaining work.
 
+The proposed path to more mechs, custom game packages, BLD/Lua scripting and a
+Windows/Linux editor is recorded in the
+[engine and editor plan](docs/ENGINE_AND_EDITOR_PLAN.md).
+It begins with preparatory refactors that preserve the current game. These
+authoring features are planned, not yet implemented.
+
 ## Build and run on Linux
 
 You need a C11 compiler (GCC or Clang), CMake 3.16 or newer, Python 3 and SDL2

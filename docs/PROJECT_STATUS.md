@@ -39,7 +39,14 @@ ignored work files. Local commits remain on `main`, with no push.
 | Owner follow-ups | Four Jenners/ruins escape, purchase recipients, armour repair, original crew/inspection/engagement/Speed Shop selectors, world seed/city alignment, all-party collision and gait, replacement recruits and spy confrontation |
 | Fresh campaign | New-cadet input route through training, companions, paid apprenticeships, holodisk, password and cache ending; original checks at selected prerequisites |
 | Remaining original campaign | Additional branches and broader DOS combat/presentation parity |
-| M5 | Optional enhancements after relevant original behavior is established |
+| M5 | Proposed preparation, external units, custom packages and editor; see [engine and editor plan](ENGINE_AND_EDITOR_PLAN.md) |
+
+The owner-requested [engine and editor plan](ENGINE_AND_EDITOR_PLAN.md) records
+the future authoring direction separately from the remaining original fidelity
+work. Its first proposed phase, M5-P1–P5, isolates loading, unit definitions,
+original story dispatch and persistence, then prototypes authoring schemas while
+preserving current play and saves. Implementation of that phase and the later
+M5a–M5e package/editor milestones has **not started**.
 
 ## Play and verify
 
