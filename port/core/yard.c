@@ -1,3 +1,4 @@
+#include "data/unit_data.h"
 #include "core/yard.h"
 #include "core/party.h"
 #include "core/animation.h"
@@ -61,7 +62,7 @@ void btp_yard_finish_prison(BtpState *s,const BtpResources *r,int success)
        0D00/7014, then copies the Stinger template into the first empty bay. */
     restore_party(s);s->party.people[0][12]=8;s->campaign.mounted=0;
     if (success) for (unsigned i=0;i<4;++i) if (btp_party_mech(s,i)[0]==255) {
-        memcpy(btp_party_mech(s,i),r->combat.encounter_mechs[2],125);
+        memcpy(btp_party_mech(s,i),btp_mech_template(&r->combat,BTP_MECH_ENCOUNTER,2),125);
         s->party.mech_types[i]=btp_party_mech(s,i)[0];s->campaign.owned=1;break;
     }
     if (!success) s->story_flags[40]=1;
@@ -101,7 +102,7 @@ static void force_fields(BtpState *s,int open)
 static void arena_party(BtpState *s,const BtpResources *r,unsigned slot,int rental)
 {
     keep_party(s,2);s->yard.slot=(uint8_t)slot;s->yard.rental=(uint8_t)rental;s->yard.phase=BTP_YARD_LOAN;
-    uint8_t record[125];memcpy(record,rental ? r->combat.loans[0] : btp_party_mech(s,slot),125);
+    uint8_t record[125];memcpy(record,rental ? btp_mech_template(&r->combat,BTP_MECH_LOAN,0) : btp_party_mech(s,slot),125);
     if (!rental) record[0]=s->party.mech_types[slot];
     memcpy(s->campaign.mech,record,125);s->campaign.mech[121]=0;s->campaign.mech[122]=255;
     s->campaign.owned=1;s->party.mech_types[0]=record[0];s->party.people[0][12]=0;s->campaign.mounted=1;
@@ -123,7 +124,7 @@ void btp_yard_begin_arena(BtpState *s,const BtpResources *r)
     for (unsigned i=0;i<count;++i) {
         /* 07DC:0D49 replaces the second rental record from 27E8:05DE,
            then applies the normal difficulty reduction to that record. */
-        unsigned at=c->count++;BtpCombatUnit *u=&c->unit[at];memcpy(u->record,i && s->yard.rental ? r->combat.arena_spectator : r->combat.arena_mechs[kind],125);
+        unsigned at=c->count++;BtpCombatUnit *u=&c->unit[at];memcpy(u->record,i && s->yard.rental ? btp_mech_template(&r->combat,BTP_MECH_SPECTATOR,0) : btp_mech_template(&r->combat,BTP_MECH_ARENA,kind),125);
         for (unsigned k=17;k<=27;++k) u->record[k]=(uint8_t)(u->record[k]>r->combat.arena_reduction[difficulty] ? (unsigned)u->record[k]-r->combat.arena_reduction[difficulty] : 0u);
         if (difficulty>4) for (unsigned k=0;k<5;++k) { unsigned part=52u+(btp_rng_next(s->npc.rng)&31u);if (u->record[part]) u->record[part]|=128; }
         if (difficulty>5) { u->record[117]=btp_rng_next(s->npc.rng)&1u;u->record[119]=btp_rng_next(s->npc.rng)&1u;u->record[118]=btp_rng_next(s->npc.rng)&1u; }
@@ -288,7 +289,7 @@ void btp_yard_alarm(BtpState *s,const BtpResources *r,unsigned target)
     /* 12E8:1D32 dispatches two original UrbanMechs at 097D/8030 and
        097D/8070. The shifted arena origin retains these exact locations. */
     for (unsigned i=0;i<2 && c->count<24;++i) {
-        unsigned at=c->count++;BtpCombatUnit *u=&c->unit[at];memcpy(u->record,r->combat.urbanmech,125);
+        unsigned at=c->count++;BtpCombatUnit *u=&c->unit[at];memcpy(u->record,btp_mech_template(&r->combat,BTP_MECH_URBANMECH,0),125);
         u->x=61;u->y=(uint8_t)(48u+64u*i);u->direction=4;c->ids[at]=(uint8_t)(14+i);
         c->plan_direction[at]=4;c->walk[at]=8;
     }

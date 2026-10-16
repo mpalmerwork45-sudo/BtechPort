@@ -1,4 +1,5 @@
 #include "data/content.h"
+#include "data/unit_data.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -40,6 +41,14 @@ int main(int argc, char **argv)
     CHECK(content.resources != NULL);
     CHECK(content.resources->map.width && content.resources->citadel.length);
     CHECK(content.resources->dialogue.length && content.resources->world.loaded);
+    /* Definition lookups reject identities outside their original tables;
+       future authoring inputs must not become unchecked record offsets. */
+    const unsigned limits[]={3,1,1,3,11,1,1};
+    for (unsigned i=0;i<sizeof limits/sizeof limits[0];++i)
+        CHECK(btp_mech_template(&content.resources->combat,(BtpMechTemplate)i,limits[i])==NULL);
+    CHECK(btp_mech_template(NULL,BTP_MECH_LOAN,0)==NULL);
+    CHECK(btp_weapon_definition(&content.resources->combat,33).name==NULL);
+    CHECK(btp_mech_refit_price(&content.resources->combat,8)==0);
 
     /* Test every stage after resources have already been published. The file
        is synthetic and stays in this build's CTest directory, never in either

@@ -1,3 +1,4 @@
+#include "data/unit_data.h"
 #include "core/combat.h"
 #include "core/npc.h"
 #include "core/animation.h"
@@ -310,7 +311,7 @@ void btp_combat_begin(BtpState *s, const BtpResources *r)
         .count=2,.target_unit=1,.kick_target=255,.last_target=1};
     memset(c->orders,255,sizeof c->orders);
     memset(c->enemy_orders,255,sizeof c->enemy_orders);memset(c->enemy_modes,255,sizeof c->enemy_modes);
-    memcpy(c->unit[0].record,r->combat.loans[s->story_flags[2]],125);
+    memcpy(c->unit[0].record,btp_mech_template(&r->combat,BTP_MECH_LOAN,s->story_flags[2]),125);
     c->unit[0].x=64;c->unit[0].y=77;c->unit[0].direction=2;
     unsigned assignment=s->mission.assignment;
     /* 07DC:0765..07ED sets the training restriction at STATE:0090 for
@@ -332,7 +333,7 @@ void btp_combat_begin(BtpState *s, const BtpResources *r)
             u->record[1]=(uint8_t)btp_combat_dice(s->npc.rng);u->record[15]=(uint8_t)(10*u->record[1]);
             u->record[11]=(uint8_t)(btp_rng_next(s->npc.rng)%14u);
         } else {
-            memcpy(u->record,s->campaign.invasion ? r->combat.jenner : r->combat.loans[0],125);
+            memcpy(u->record,s->campaign.invasion ? btp_mech_template(&r->combat,BTP_MECH_JENNER,0) : btp_mech_template(&r->combat,BTP_MECH_LOAN,0),125);
             if (assignment==2) { u->record[36]=u->record[37]=0;memset(u->record+39,0,12); }
         }
     }

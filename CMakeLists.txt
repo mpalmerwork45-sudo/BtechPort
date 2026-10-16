@@ -16,7 +16,7 @@ endif()
 
 add_library(btp_core port/core/game.c port/core/script.c port/core/talk.c port/core/npc.c port/core/shop.c port/core/bank.c port/core/economy.c port/core/school.c port/core/training.c port/core/animation.c port/data/resources.c port/data/anm.c port/data/sprites.c port/data/save.c)
 target_include_directories(btp_core PUBLIC port)
-target_sources(btp_core PRIVATE port/data/content.c)
+target_sources(btp_core PRIVATE port/data/content.c port/data/unit_data.c)
 target_sources(btp_core PRIVATE port/core/combat_rules.c port/core/combat.c port/core/effects.c)
 target_sources(btp_core PRIVATE port/core/world.c port/data/world.c port/data/generate.c)
 target_sources(btp_core PRIVATE port/core/party.c port/core/campaign.c)

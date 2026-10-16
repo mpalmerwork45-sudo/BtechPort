@@ -1,5 +1,6 @@
 #ifndef BTP_ANIMATION_H
 #define BTP_ANIMATION_H
+#include "data/unit_data.h"
 #include <stdint.h>
 #include "core/game.h"
 /* Human walking index 0..15 corresponds to original frame 16..31.
@@ -7,7 +8,6 @@
 uint8_t btp_walk_next(uint8_t frame, unsigned previous_direction, unsigned direction);
 uint8_t btp_walk_first(unsigned direction);
 unsigned btp_player_direction(unsigned facing);
-unsigned btp_mech_sprite_base(unsigned tag,int enemy);
 /* Original 0000:240B / DS:04B0, ten tile IDs and three consecutive pages. */
 unsigned btp_terrain_frame(unsigned tile, unsigned phase); /* 0: static tile */
 int btp_cutscene_begin(BtpState *s, const BtpResources *r, unsigned kind, unsigned active);

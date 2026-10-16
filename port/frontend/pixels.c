@@ -1,3 +1,4 @@
+#include "data/unit_data.h"
 #include "frontend/pixels.h"
 #include "core/animation.h"
 #include "core/world.h"
@@ -468,7 +469,7 @@ static void combat_header(const BtpResources *r,const BtpState *s,uint32_t *f,un
     /* Original 05AB:18E8 / 1467 puts the personal weapon at rows 7/8.
        Friendly armour occupies rows 10/11; enemies show their direction. */
     text(r,f,8,64,"Weapon:",10);
-    char weapon[12];memcpy(weapon,r->combat.weapons[u->record[11]],11);weapon[11]=0;text(r,f,8,72,weapon,15);
+    char weapon[12];memcpy(weapon,btp_weapon_definition(&r->combat,u->record[11]).name,11);weapon[11]=0;text(r,f,8,72,weapon,15);
     if (id<12) {
         static const uint8_t capacity[6]={0,25,40,30,50,50};unsigned armour=u->record[13];
         text(r,f,8,80,"Armor:",10);

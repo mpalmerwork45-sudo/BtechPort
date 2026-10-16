@@ -1,3 +1,4 @@
+#include "data/unit_data.h"
 #include "core/campaign.h"
 #include "core/party.h"
 #include "core/world.h"
@@ -52,7 +53,7 @@ void btp_campaign_rex(BtpState *s,const BtpResources *r)
     memset(rex,0,17);rex[0]=p->next_id++;rex[1]=12;rex[2]=9;rex[3]=8;
     memcpy(rex+4,r->combat.rex_skills,7);rex[11]=7;rex[12]=8;rex[15]=120;
     for (unsigned i=0;i<4;++i) if (p->mech_types[i]==255) {
-        uint8_t *m=btp_party_mech(s,i);memcpy(m,r->combat.commando,125);m[0]=255;m[121]=1;p->mech_types[i]='C';
+        uint8_t *m=btp_party_mech(s,i);memcpy(m,btp_mech_template(&r->combat,BTP_MECH_COMMANDO,0),125);m[0]=255;m[121]=1;p->mech_types[i]='C';
         if (!i) s->campaign.owned=1;
         break;
     }
@@ -92,7 +93,7 @@ unsigned btp_campaign_candidates(BtpState *s,const BtpResources *r,BtpCombatUnit
            setup supplies mechs explicitly; parked ownership cannot qualify
            a random town encounter for enemy vehicles. */
         unsigned kind=btp_rng_next(s->npc.rng)%3u;
-        memcpy(candidates[count].record,r->combat.encounter_mechs[kind],125);ids[count++]=(uint8_t)(12+i);
+        memcpy(candidates[count].record,btp_mech_template(&r->combat,BTP_MECH_ENCOUNTER,kind),125);ids[count++]=(uint8_t)(12+i);
     }
     *dx_out=dx;*dy_out=dy;return count;
 }

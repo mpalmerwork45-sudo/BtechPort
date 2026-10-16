@@ -1,3 +1,4 @@
+#include "data/unit_data.h"
 #include "core/combat_rules.h"
 #include "core/npc.h"
 #include <string.h>
@@ -103,9 +104,10 @@ unsigned btp_combat_range(const BtpCombatData *d, unsigned w, int x, int y, int 
         if (y < ty) ty -= 2;
     }
     unsigned distance = btp_combat_distance(x,y,tx,ty);
-    unsigned medium = d->weapons[w][14]&31u, near = d->weapons[w][14]>>5;
-    if (d->weapons[w][12] < 128 && w != 32) { medium *= 3; near *= 3; }
-    return distance < near ? 0u : distance < medium ? 1u : distance < d->weapons[w][15] ? 2u : 3u;
+    BtpWeaponDefinition weapon=btp_weapon_definition(d,w);
+    unsigned medium = weapon.medium_range, near = weapon.near_range;
+    if (weapon.projectiles < 128 && w != 32) { medium *= 3; near *= 3; }
+    return distance < near ? 0u : distance < medium ? 1u : distance < weapon.far_range ? 2u : 3u;
 }
 unsigned btp_combat_weapon_count(const BtpCombatUnit *u)
 {
@@ -135,9 +137,10 @@ unsigned btp_combat_range_to(const BtpCombatData *d,unsigned w,const BtpCombatUn
     if (!t->infantry) return btp_combat_range(d,w,a->x,a->y,t->x,t->y);
     if (w>=33) return 3;
     unsigned distance=btp_combat_distance(a->x,a->y,t->x,t->y);
-    unsigned medium=d->weapons[w][14]&31u,near=d->weapons[w][14]>>5;
-    if (d->weapons[w][12]<128 && w!=32) { medium*=3;near*=3; }
-    return distance<near ? 0u : distance<medium ? 1u : distance<d->weapons[w][15] ? 2u : 3u;
+    BtpWeaponDefinition weapon=btp_weapon_definition(d,w);
+    unsigned medium=weapon.medium_range,near=weapon.near_range;
+    if (weapon.projectiles<128 && w!=32) { medium*=3;near*=3; }
+    return distance<near ? 0u : distance<medium ? 1u : distance<weapon.far_range ? 2u : 3u;
 }
 unsigned btp_combat_weapon(const BtpCombatUnit *u, unsigned index)
 {
@@ -163,8 +166,8 @@ int btp_combat_points(const BtpCombatUnit *u, unsigned movement)
         if (u->record[13]>1) points/=2u;
         return (int)(points>8 ? 8 : points);
     }
-    int points = u->record[49]; unsigned left = u->record[36], right = u->record[37];
-    if (movement == 2) points = u->record[50];
+    int points = (int)btp_mech_walk_points(u->record); unsigned left = u->record[36], right = u->record[37];
+    if (movement == 2) points = (int)btp_mech_jump_points(u->record);
     else {
         if (!((left|right)&8u)) points = 1;
         else {
@@ -177,7 +180,7 @@ int btp_combat_points(const BtpCombatUnit *u, unsigned movement)
             }
         }
         points -= u->heat/5;
-        if (movement == 1) points += points/2+(int)(u->record[49]&1u);
+        if (movement == 1) points += points/2+(int)(btp_mech_walk_points(u->record)&1u);
     }
     return u->heat == 30 || points < 0 ? 0 : points;
 }
@@ -287,12 +290,13 @@ BtpShot btp_combat_attack_unit(BtpCombatUnit *a, BtpCombatUnit *t, const BtpComb
     BtpShot shot = {0}; unsigned w = kick ? 32 : btp_combat_weapon(a,index);
     if (kick && !btp_combat_can_kick(a)) return shot;
     if (w >= 33 || a->heat >= 30) return shot;
+    BtpWeaponDefinition weapon=btp_weapon_definition(d,w);
     unsigned range = btp_combat_range_to(d,w,a,t);
     if (range >= 3) return shot;
     if (!a->infantry && !kick && a->record[39+index] != 255) --a->record[39+index];
-    if (!a->infantry) a->pool = (uint8_t)(a->pool+(d->weapons[w][13]&15u));
+    if (!a->infantry) a->pool = (uint8_t)(a->pool+weapon.heat);
     static const uint8_t movement_penalty[13] = {0,0,0,1,1,2,2,3,3,3,4,4,4};
-    if (a->infantry) skill=a->record[4+d->weapons[w][16]];
+    if (a->infantry) skill=a->record[4+weapon.skill];
     int needed = (kick ? 3 : (int)(2*range+4)) + movement+1 + movement_penalty[steps > 12 ? 12 : steps] - (int)skill;
     if (kick) {
         /* 12E8:02C3 passes the raw enemy ID to 0E31:1B44. For IDs 12..15
@@ -309,10 +313,10 @@ BtpShot btp_combat_attack_unit(BtpCombatUnit *a, BtpCombatUnit *t, const BtpComb
     needed += (int)(t->cover/(t->infantry ? 2u : 8u));
     shot.needed = (int16_t)needed;
     if (t->infantry) {
-        unsigned damage=127, count=d->weapons[w][12];
+        unsigned damage=127, count=weapon.projectiles;
         if (count&128u) {
-            damage=d->weapons[w][11]&15u;
-            for (unsigned n=d->weapons[w][11]>>4;n;--n) damage+=btp_combat_die(rng);
+            damage=weapon.damage&15u;
+            for (unsigned n=weapon.damage>>4;n;--n) damage+=btp_combat_die(rng);
         }
         if (!damage) damage=1;
         count&=127u;
@@ -335,7 +339,7 @@ BtpShot btp_combat_attack_unit(BtpCombatUnit *a, BtpCombatUnit *t, const BtpComb
     if (incoming == 255) incoming = 0;
     unsigned arc = d->arcs[7+(int)t->direction-(int)incoming];
     shot.location = d->locations[11*arc+btp_combat_dice(rng)];
-    unsigned damage = d->weapons[w][11], cluster = d->weapons[w][12];
+    unsigned damage = weapon.damage, cluster = weapon.projectiles;
     if (kick) { damage=a->record[16]/5u;shot.location=d->locations[3+(btp_rng_next(rng)&8u)]; }
     /* Small personal arms consume the location dice but cannot damage a mech. */
     if (cluster&128u) { shot.location=0;return shot; }

@@ -32,12 +32,6 @@ unsigned btp_player_direction(unsigned facing)
         facing == BTP_RIGHT ? 2u : facing == BTP_DOWN_RIGHT ? 3u :
         facing == BTP_DOWN_LEFT ? 5u : facing == BTP_LEFT ? 6u : facing == BTP_UP_LEFT ? 7u : 4u;
 }
-unsigned btp_mech_sprite_base(unsigned tag,int enemy)
-{
-    /* DS:140E gives enemy Jenner/UrbanMech atlas base 0. The owned-vehicle
-       dispatcher at 14D3:0E54 instead uses 146 for every non-Locust tag. */
-    return tag=='L' || (enemy && (tag=='J' || tag=='U' || tag=='s')) ? 0u : 146u;
-}
 int btp_cutscene_begin(BtpState *s, const BtpResources *r, unsigned kind, unsigned active)
 {
     int cinema=s && active==1 && s->mode==BTP_BUILDING && s->campaign.building==16 && kind<10;

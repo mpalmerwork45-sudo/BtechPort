@@ -1,8 +1,24 @@
 # M5 preparation — shared original-content loading
 
-**2026-10-16: M5-P1 implemented and verified.** This is the first preparation
+**2026-10-16: M5-P1 and M5-P2 implemented and verified.** These are preparation
 increment from the [engine and editor plan](ENGINE_AND_EDITOR_PLAN.md), against
-the previously playable revision `901c952`. M5-P2–P5 remain proposed.
+the previously playable revision `901c952`. P3–P5 are now authorized and in progress.
+
+## P2 — Unit lookups
+
+[unit_data.h](../port/data/unit_data.h) separates original template selection,
+weapon fields, movement values, sprite selection and refit recipes from their
+combat, service and rendering callers. See the [content inventory](CONTENT_INVENTORY.md)
+for field ownership and remaining original record assumptions. Existing records,
+capacities and saved bytes are retained. All 57 native suites pass after this
+increment (42.08 seconds), including refit, salvage, animation, inspection and
+original-save comparisons. The content test now includes ten lookup-boundary
+checks, bringing it to 100 checks.
+
+The new [before/after verifier](../tools/verify_preparation.py) retains canonical
+input traces only in temporary files, compares final save/frame bytes, and uses
+private save slots. Its fresh-campaign, spy-replacement and service routes compare
+against `work/m5-preparation/before`, retained from `3b295ab` before P2 changes.
 
 ## Implemented boundary
 

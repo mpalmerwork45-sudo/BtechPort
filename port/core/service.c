@@ -1,3 +1,4 @@
+#include "data/unit_data.h"
 #include "core/service.h"
 #include "core/party.h"
 #include "core/combat.h"
@@ -73,24 +74,12 @@ unsigned btp_mech_reload(BtpState *s,const BtpResources *r,unsigned slot,unsigne
 int btp_mech_refit(BtpState *s,const BtpResources *r,unsigned slot)
 {
     uint8_t *m=btp_party_mech(s,slot);if (!m || m[123]>3 || m[124]==3) return 0;
-    unsigned choice=m[123]+(m[124]==1 ? 4u : 0u),cost=r->combat.refit_prices[choice];
+    unsigned choice=btp_mech_refit_index(m),cost=btp_mech_refit_price(&r->combat,choice);
     if (!cost || s->credits<cost) return 0;
     s->credits-=cost;
-    switch (choice) {
-    case 0:m[65]=m[51]=17;m[108]=m[107]=m[40]=m[39]=255;m[124]=1;break;
-    case 1:m[79]=17;m[108]=m[40]=255;memcpy(m+17,r->combat.loans[0]+17,11);memcpy(m+86,r->combat.loans[0]+86,11);m[124]=1;break;
-    case 2:m[67]=m[66]=m[52]=m[51]=16;memset(m+107,255,5);memset(m+39,255,5);m[124]=1;break;
-    case 3:m[74]=m[65]=17;m[42]=m[41];m[110]=m[109];m[109]=m[108]=m[41]=m[40]=255;
-        memcpy(m+17,r->combat.commando_armour,11);memcpy(m+86,r->combat.commando_armour,11);m[124]=1;break;
-    case 4:m[49]=7;m[117]=0;m[73]=m[59]=16;m[111]=m[110]=m[43]=m[42]=255;m[124]|=2;break;
-    case 5:m[50]=0;m[83]=m[51]=m[85]=17;memset(m+109,255,3);memset(m+41,255,3);m[124]|=2;break;
-    case 6:m[50]=0;memcpy(m+17,r->combat.loans[0]+17,11);memcpy(m+86,r->combat.loans[0]+17,11);
-        m[84]=m[83]=17;m[113]=m[112]=m[45]=m[44]=255;m[124]|=2;break;
-    case 7:memset(m+79,16,6);m[85]=17;memset(m+107,255,10);memset(m+39,255,10);m[124]|=2;break;
-    default:return 0;
-    }
-    return 1;
+    return btp_mech_apply_refit(&r->combat,m,choice);
 }
+
 static void finish(BtpState *s,const BtpResources *r)
 {
     s->service=(BtpServiceState){0};
@@ -354,7 +343,7 @@ void btp_service_input(BtpState *s,const BtpResources *r,BtpAction a)
         v->mech=(uint8_t)slot;v->selected=0;
         if (v->action==19) {
             uint8_t *m=btp_party_mech(s,v->mech);s->story_flags[18]=(uint8_t)(m[124]!=3);
-            s->story_flags[17]=(uint8_t)(m[123]>3 ? 8 : m[123]+(m[124]==1 ? 4u : 0u));
+            s->story_flags[17]=(uint8_t)btp_mech_refit_index(m);
             s->party.giver=v->mech;finish(s,r);return;
         }
         if (v->action==18) {

@@ -1,3 +1,4 @@
+#include "data/unit_data.h"
 #include "core/training.h"
 #include "core/npc.h"
 #include "core/animation.h"
@@ -60,7 +61,7 @@ void btp_training_native(BtpState *s, const BtpResources *r)
     switch (s->script.native_action) {
     case 1:
         if (s->story_flags[0] > 7 || s->mission.phase ||
-            (s->story_flags[0]>=2 && !r->combat.loans[0][0])) { fault(s); return; }
+            (s->story_flags[0]>=2 && !btp_mech_template(&r->combat,BTP_MECH_LOAN,0)[0])) { fault(s); return; }
         (void)btp_rng_next(s->npc.rng); /* Original O0 dispatcher, even forced. */
         s->mission = (BtpMissionState){.phase=BTP_MISSION_DRIVE,.walk=6,.direction=2,
             .assignment=s->story_flags[0]};
