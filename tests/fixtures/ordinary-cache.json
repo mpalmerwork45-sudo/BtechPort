@@ -17,7 +17,7 @@
   "checkpoints": [
     {
       "label": "cache-entrance",
-      "tick": 382,
+      "tick": 414,
       "state": {
         "map": 13,
         "mode": "entry-confirm",
@@ -28,7 +28,7 @@
           2
         ],
         "gate": 85,
-        "tick": 382,
+        "tick": 414,
         "blocked": 0,
         "script_pc": 0,
         "script_status": 0,
@@ -111,9 +111,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -213,7 +213,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -267,7 +267,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -593,7 +593,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "cb94e46d9dd73f9f",
+        "state_digest": "7577ff8977d2e7a3",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -936,7 +936,7 @@
     },
     {
       "label": "cache-instructions-complete",
-      "tick": 419,
+      "tick": 451,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -947,7 +947,7 @@
           63
         ],
         "gate": 33,
-        "tick": 419,
+        "tick": 451,
         "blocked": 0,
         "script_pc": 0,
         "script_status": 0,
@@ -1030,9 +1030,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -1132,7 +1132,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -1186,7 +1186,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -1512,7 +1512,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "fd65e411f75f73cf",
+        "state_digest": "47d7d5128f42afdb",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1855,7 +1855,7 @@
     },
     {
       "label": "code-terminal-1",
-      "tick": 441,
+      "tick": 473,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -1866,7 +1866,7 @@
           58
         ],
         "gate": 33,
-        "tick": 441,
+        "tick": 473,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -1949,9 +1949,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -2051,7 +2051,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -2105,7 +2105,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -2431,7 +2431,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "2f4d393ddca7de4a",
+        "state_digest": "0bc366a8d6302eb6",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -2774,7 +2774,7 @@
     },
     {
       "label": "code-terminal-3",
-      "tick": 523,
+      "tick": 555,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -2785,7 +2785,7 @@
           62
         ],
         "gate": 33,
-        "tick": 523,
+        "tick": 555,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -2868,9 +2868,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -2970,7 +2970,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -3024,7 +3024,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -3350,7 +3350,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "6dff1707dc189056",
+        "state_digest": "3afb7fabf074b20e",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -3693,7 +3693,7 @@
     },
     {
       "label": "code-terminal-5",
-      "tick": 538,
+      "tick": 570,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -3704,7 +3704,7 @@
           62
         ],
         "gate": 33,
-        "tick": 538,
+        "tick": 570,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -3787,9 +3787,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -3889,7 +3889,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -3943,7 +3943,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -4269,7 +4269,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "d67650f521e23557",
+        "state_digest": "b948909b695250ef",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -4612,7 +4612,7 @@
     },
     {
       "label": "door-2-opening",
-      "tick": 559,
+      "tick": 591,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -4623,7 +4623,7 @@
           62
         ],
         "gate": 33,
-        "tick": 559,
+        "tick": 591,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -4706,9 +4706,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -4808,7 +4808,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -4862,7 +4862,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -5188,7 +5188,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "80173fb4ed7fb535",
+        "state_digest": "56a13dcf2a7e6aed",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -5531,7 +5531,7 @@
     },
     {
       "label": "door-2-open",
-      "tick": 591,
+      "tick": 623,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -5542,7 +5542,7 @@
           62
         ],
         "gate": 33,
-        "tick": 591,
+        "tick": 623,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -5625,9 +5625,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -5727,7 +5727,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -5781,7 +5781,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -6107,7 +6107,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "91588c447c1145b2",
+        "state_digest": "6f5c18ea0c600cfa",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -6450,7 +6450,7 @@
     },
     {
       "label": "code-terminal-2",
-      "tick": 660,
+      "tick": 692,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -6461,7 +6461,7 @@
           58
         ],
         "gate": 33,
-        "tick": 660,
+        "tick": 692,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -6544,9 +6544,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -6646,7 +6646,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -6700,7 +6700,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -7026,7 +7026,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "cac64a676ecef592",
+        "state_digest": "dd8f3eeea499cc56",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -7369,7 +7369,7 @@
     },
     {
       "label": "code-terminal-7",
-      "tick": 766,
+      "tick": 798,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -7380,7 +7380,7 @@
           57
         ],
         "gate": 33,
-        "tick": 766,
+        "tick": 798,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -7463,9 +7463,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -7565,7 +7565,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -7619,7 +7619,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -7945,7 +7945,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "ce17542ecf6928f0",
+        "state_digest": "4d528a4d615acbb7",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -8288,7 +8288,7 @@
     },
     {
       "label": "code-terminal-18",
-      "tick": 983,
+      "tick": 1015,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -8299,7 +8299,7 @@
           2
         ],
         "gate": 33,
-        "tick": 983,
+        "tick": 1015,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -8382,9 +8382,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -8484,7 +8484,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -8538,7 +8538,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -8864,7 +8864,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "6b32aa65a5649790",
+        "state_digest": "5f665786a6dd51ac",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -9207,7 +9207,7 @@
     },
     {
       "label": "door-3-opening",
-      "tick": 1214,
+      "tick": 1246,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -9218,7 +9218,7 @@
           57
         ],
         "gate": 33,
-        "tick": 1214,
+        "tick": 1246,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -9301,9 +9301,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -9403,7 +9403,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -9457,7 +9457,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -9783,7 +9783,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "72eb9c0774db877f",
+        "state_digest": "6ffe1f48e5888e03",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -10126,7 +10126,7 @@
     },
     {
       "label": "door-3-open",
-      "tick": 1246,
+      "tick": 1278,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -10137,7 +10137,7 @@
           57
         ],
         "gate": 33,
-        "tick": 1246,
+        "tick": 1278,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -10220,9 +10220,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -10322,7 +10322,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -10376,7 +10376,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -10702,7 +10702,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "2831d87b28e4cc43",
+        "state_digest": "845093a6bb36d337",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -11045,7 +11045,7 @@
     },
     {
       "label": "code-terminal-15",
-      "tick": 1316,
+      "tick": 1348,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -11056,7 +11056,7 @@
           38
         ],
         "gate": 33,
-        "tick": 1316,
+        "tick": 1348,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -11139,9 +11139,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -11241,7 +11241,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -11295,7 +11295,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -11621,7 +11621,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "ca5c59957623c791",
+        "state_digest": "45371bef2c38ff05",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -11964,7 +11964,7 @@
     },
     {
       "label": "code-terminal-14",
-      "tick": 1341,
+      "tick": 1373,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -11975,7 +11975,7 @@
           42
         ],
         "gate": 33,
-        "tick": 1341,
+        "tick": 1373,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -12058,9 +12058,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -12160,7 +12160,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -12214,7 +12214,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -12540,7 +12540,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "5e0db397e85657e7",
+        "state_digest": "81dd9e304c53e1bb",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -12883,7 +12883,7 @@
     },
     {
       "label": "code-terminal-11",
-      "tick": 1410,
+      "tick": 1442,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -12894,7 +12894,7 @@
           47
         ],
         "gate": 33,
-        "tick": 1410,
+        "tick": 1442,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -12977,9 +12977,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -13079,7 +13079,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -13133,7 +13133,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -13459,7 +13459,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "7fadbaf68cba2cb7",
+        "state_digest": "d8d70a8859635c17",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -13802,7 +13802,7 @@
     },
     {
       "label": "door-1-opening",
-      "tick": 1501,
+      "tick": 1533,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -13813,7 +13813,7 @@
           62
         ],
         "gate": 33,
-        "tick": 1501,
+        "tick": 1533,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -13896,9 +13896,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -13998,7 +13998,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -14052,7 +14052,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -14378,7 +14378,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "ad3e3fe6aeef5c52",
+        "state_digest": "857ee28fd6503cc6",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -14721,7 +14721,7 @@
     },
     {
       "label": "door-1-open",
-      "tick": 1533,
+      "tick": 1565,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -14732,7 +14732,7 @@
           62
         ],
         "gate": 33,
-        "tick": 1533,
+        "tick": 1565,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -14815,9 +14815,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -14917,7 +14917,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -14971,7 +14971,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -15297,7 +15297,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "804c57c0fd0c3078",
+        "state_digest": "d245c6a35337ab09",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -15640,7 +15640,7 @@
     },
     {
       "label": "code-terminal-13",
-      "tick": 1630,
+      "tick": 1662,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -15651,7 +15651,7 @@
           46
         ],
         "gate": 33,
-        "tick": 1630,
+        "tick": 1662,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -15734,9 +15734,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -15836,7 +15836,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -15890,7 +15890,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -16216,7 +16216,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "fe9089ff958ff49e",
+        "state_digest": "cbd974714fdee73a",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -16559,7 +16559,7 @@
     },
     {
       "label": "code-terminal-31",
-      "tick": 1934,
+      "tick": 1966,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -16570,7 +16570,7 @@
           25
         ],
         "gate": 33,
-        "tick": 1934,
+        "tick": 1966,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -16653,9 +16653,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -16755,7 +16755,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -16809,7 +16809,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -17135,7 +17135,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "77f15c5212f610c9",
+        "state_digest": "e85f9c3e7c16e465",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -17478,7 +17478,7 @@
     },
     {
       "label": "code-terminal-4",
-      "tick": 2232,
+      "tick": 2264,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -17489,7 +17489,7 @@
           62
         ],
         "gate": 33,
-        "tick": 2232,
+        "tick": 2264,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -17572,9 +17572,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -17674,7 +17674,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -17728,7 +17728,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -18054,7 +18054,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "5806b42414d97508",
+        "state_digest": "23aebaab0ada9960",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -18397,7 +18397,7 @@
     },
     {
       "label": "door-7-opening",
-      "tick": 2382,
+      "tick": 2414,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -18408,7 +18408,7 @@
           37
         ],
         "gate": 33,
-        "tick": 2382,
+        "tick": 2414,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -18491,9 +18491,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -18593,7 +18593,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -18647,7 +18647,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -18973,7 +18973,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "33c3c0f20ccea161",
+        "state_digest": "edd9be29347da6d9",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -19316,7 +19316,7 @@
     },
     {
       "label": "door-7-open",
-      "tick": 2414,
+      "tick": 2446,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -19327,7 +19327,7 @@
           37
         ],
         "gate": 33,
-        "tick": 2414,
+        "tick": 2446,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -19410,9 +19410,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -19512,7 +19512,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -19566,7 +19566,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -19892,7 +19892,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "491d2d95140e6661",
+        "state_digest": "4fc5d56c8545c409",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -20235,7 +20235,7 @@
     },
     {
       "label": "code-terminal-29",
-      "tick": 2541,
+      "tick": 2573,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -20246,7 +20246,7 @@
           21
         ],
         "gate": 33,
-        "tick": 2541,
+        "tick": 2573,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -20329,9 +20329,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -20431,7 +20431,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -20485,7 +20485,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -20811,7 +20811,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "f19878539ddc55d2",
+        "state_digest": "3651d224461e415b",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -21154,7 +21154,7 @@
     },
     {
       "label": "code-terminal-12",
-      "tick": 2851,
+      "tick": 2883,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -21165,7 +21165,7 @@
           47
         ],
         "gate": 33,
-        "tick": 2851,
+        "tick": 2883,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -21248,9 +21248,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -21350,7 +21350,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -21404,7 +21404,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -21730,7 +21730,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "c8910ca1b1d49019",
+        "state_digest": "512bbb45710f5a51",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -22073,7 +22073,7 @@
     },
     {
       "label": "code-terminal-6",
-      "tick": 2950,
+      "tick": 2982,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -22084,7 +22084,7 @@
           59
         ],
         "gate": 33,
-        "tick": 2950,
+        "tick": 2982,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -22167,9 +22167,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -22269,7 +22269,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -22323,7 +22323,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -22649,7 +22649,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "75fe2f45d982d3c4",
+        "state_digest": "8ed92b6dcb1d4c10",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -22992,7 +22992,7 @@
     },
     {
       "label": "door-5-opening",
-      "tick": 3286,
+      "tick": 3318,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -23003,7 +23003,7 @@
           37
         ],
         "gate": 33,
-        "tick": 3286,
+        "tick": 3318,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -23086,9 +23086,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -23188,7 +23188,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -23242,7 +23242,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -23568,7 +23568,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "82e29c0023e1d1df",
+        "state_digest": "2b26ebbabb431913",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -23911,7 +23911,7 @@
     },
     {
       "label": "door-5-open",
-      "tick": 3318,
+      "tick": 3350,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -23922,7 +23922,7 @@
           37
         ],
         "gate": 33,
-        "tick": 3318,
+        "tick": 3350,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -24005,9 +24005,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -24107,7 +24107,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -24161,7 +24161,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -24487,7 +24487,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "0a637a953d074429",
+        "state_digest": "aa1a55a53a92d8c2",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -24830,7 +24830,7 @@
     },
     {
       "label": "code-terminal-17",
-      "tick": 3595,
+      "tick": 3627,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -24841,7 +24841,7 @@
           38
         ],
         "gate": 33,
-        "tick": 3595,
+        "tick": 3627,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -24924,9 +24924,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -25026,7 +25026,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -25080,7 +25080,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -25406,7 +25406,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "5143aa3292baf99f",
+        "state_digest": "a2388dec7d6ee667",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -25749,7 +25749,7 @@
     },
     {
       "label": "code-terminal-19",
-      "tick": 3604,
+      "tick": 3636,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -25760,7 +25760,7 @@
           38
         ],
         "gate": 33,
-        "tick": 3604,
+        "tick": 3636,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -25843,9 +25843,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -25945,7 +25945,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -25999,7 +25999,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -26325,7 +26325,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "a5d97a23fcdee38b",
+        "state_digest": "cac404fef611a297",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -26668,7 +26668,7 @@
     },
     {
       "label": "code-terminal-26",
-      "tick": 3783,
+      "tick": 3815,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -26679,7 +26679,7 @@
           25
         ],
         "gate": 33,
-        "tick": 3783,
+        "tick": 3815,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -26762,9 +26762,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -26864,7 +26864,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -26918,7 +26918,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -27244,7 +27244,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "c789b3dc591dfec9",
+        "state_digest": "a7ea4ec3767726e9",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -27587,7 +27587,7 @@
     },
     {
       "label": "door-4-opening",
-      "tick": 3977,
+      "tick": 4009,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -27598,7 +27598,7 @@
           41
         ],
         "gate": 33,
-        "tick": 3977,
+        "tick": 4009,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -27681,9 +27681,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -27783,7 +27783,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -27837,7 +27837,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -28163,7 +28163,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "4e0401fed0af194d",
+        "state_digest": "148d81e8ffe1ff45",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -28506,7 +28506,7 @@
     },
     {
       "label": "door-4-open",
-      "tick": 4009,
+      "tick": 4041,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -28517,7 +28517,7 @@
           41
         ],
         "gate": 33,
-        "tick": 4009,
+        "tick": 4041,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -28600,9 +28600,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -28702,7 +28702,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -28756,7 +28756,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -29082,7 +29082,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "af1453d94fe4f158",
+        "state_digest": "bb99fd1bd6f088e0",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -29425,7 +29425,7 @@
     },
     {
       "label": "code-terminal-20",
-      "tick": 4043,
+      "tick": 4075,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -29436,7 +29436,7 @@
           40
         ],
         "gate": 33,
-        "tick": 4043,
+        "tick": 4075,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -29519,9 +29519,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -29621,7 +29621,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -29675,7 +29675,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -30001,7 +30001,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "6389ffb6ec0b720d",
+        "state_digest": "b54925e52dd5f881",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -30344,7 +30344,7 @@
     },
     {
       "label": "code-terminal-27",
-      "tick": 4497,
+      "tick": 4529,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -30355,7 +30355,7 @@
           16
         ],
         "gate": 33,
-        "tick": 4497,
+        "tick": 4529,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -30438,9 +30438,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -30540,7 +30540,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -30594,7 +30594,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -30920,7 +30920,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "41562c0888f776bf",
+        "state_digest": "4790de74b0388d47",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -31263,7 +31263,7 @@
     },
     {
       "label": "code-terminal-22",
-      "tick": 4902,
+      "tick": 4934,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -31274,7 +31274,7 @@
           30
         ],
         "gate": 33,
-        "tick": 4902,
+        "tick": 4934,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -31357,9 +31357,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -31459,7 +31459,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -31513,7 +31513,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -31839,7 +31839,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "c7e8f008f79ebc8c",
+        "state_digest": "38eb1bceb3e81cd8",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -32182,7 +32182,7 @@
     },
     {
       "label": "door-6-opening",
-      "tick": 4926,
+      "tick": 4958,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -32193,7 +32193,7 @@
           35
         ],
         "gate": 33,
-        "tick": 4926,
+        "tick": 4958,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -32276,9 +32276,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -32378,7 +32378,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -32432,7 +32432,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -32758,7 +32758,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "5f83e894aaf0cd7a",
+        "state_digest": "8520870fa60af136",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -33101,7 +33101,7 @@
     },
     {
       "label": "door-6-open",
-      "tick": 4958,
+      "tick": 4990,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -33112,7 +33112,7 @@
           35
         ],
         "gate": 33,
-        "tick": 4958,
+        "tick": 4990,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -33195,9 +33195,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -33297,7 +33297,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -33351,7 +33351,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -33677,7 +33677,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "d756b5f532243a4d",
+        "state_digest": "19ab4afdfb658c11",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -34020,7 +34020,7 @@
     },
     {
       "label": "code-terminal-25",
-      "tick": 5130,
+      "tick": 5162,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -34031,7 +34031,7 @@
           25
         ],
         "gate": 33,
-        "tick": 5130,
+        "tick": 5162,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -34114,9 +34114,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -34216,7 +34216,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -34270,7 +34270,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -34596,7 +34596,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "c84d0786533e11ed",
+        "state_digest": "11eaa4b279a8bc81",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -34939,7 +34939,7 @@
     },
     {
       "label": "code-terminal-33",
-      "tick": 5500,
+      "tick": 5532,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -34950,7 +34950,7 @@
           14
         ],
         "gate": 33,
-        "tick": 5500,
+        "tick": 5532,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -35033,9 +35033,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -35135,7 +35135,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -35189,7 +35189,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -35515,7 +35515,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "786067a2db3f70e1",
+        "state_digest": "ad50c7f4f8f66671",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -35858,7 +35858,7 @@
     },
     {
       "label": "code-terminal-10",
-      "tick": 5802,
+      "tick": 5834,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -35869,7 +35869,7 @@
           44
         ],
         "gate": 33,
-        "tick": 5802,
+        "tick": 5834,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -35952,9 +35952,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -36054,7 +36054,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -36108,7 +36108,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -36434,7 +36434,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "36c5e71d1a0b3cd1",
+        "state_digest": "3904230f7dc94a6d",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -36777,7 +36777,7 @@
     },
     {
       "label": "door-9-opening",
-      "tick": 6042,
+      "tick": 6074,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -36788,7 +36788,7 @@
           20
         ],
         "gate": 33,
-        "tick": 6042,
+        "tick": 6074,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -36871,9 +36871,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -36973,7 +36973,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -37027,7 +37027,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -37353,7 +37353,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "93ddf4b3a3ef7155",
+        "state_digest": "a2e05bfd72886da9",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -37696,7 +37696,7 @@
     },
     {
       "label": "door-9-open",
-      "tick": 6074,
+      "tick": 6106,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -37707,7 +37707,7 @@
           20
         ],
         "gate": 33,
-        "tick": 6074,
+        "tick": 6106,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -37790,9 +37790,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -37892,7 +37892,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -37946,7 +37946,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -38272,7 +38272,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "5cc49e857abd3a6b",
+        "state_digest": "641655b885bc1c0f",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -38615,7 +38615,7 @@
     },
     {
       "label": "code-terminal-8",
-      "tick": 6548,
+      "tick": 6580,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -38626,7 +38626,7 @@
           47
         ],
         "gate": 33,
-        "tick": 6548,
+        "tick": 6580,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -38709,9 +38709,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -38811,7 +38811,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -38865,7 +38865,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -39191,7 +39191,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "fff16e813a621c75",
+        "state_digest": "70b4d052d32eb555",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -39534,7 +39534,7 @@
     },
     {
       "label": "code-terminal-9",
-      "tick": 6587,
+      "tick": 6619,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -39545,7 +39545,7 @@
           49
         ],
         "gate": 33,
-        "tick": 6587,
+        "tick": 6619,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -39628,9 +39628,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -39730,7 +39730,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -39784,7 +39784,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -40110,7 +40110,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "d5daeefe30f17f2b",
+        "state_digest": "7d419233a7461b73",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -40453,7 +40453,7 @@
     },
     {
       "label": "code-terminal-21",
-      "tick": 6667,
+      "tick": 6699,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -40464,7 +40464,7 @@
           34
         ],
         "gate": 33,
-        "tick": 6667,
+        "tick": 6699,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -40547,9 +40547,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -40649,7 +40649,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -40703,7 +40703,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -41029,7 +41029,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "478ba44c7229a248",
+        "state_digest": "67f3ebf473ca3f50",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -41372,7 +41372,7 @@
     },
     {
       "label": "door-10-opening",
-      "tick": 7116,
+      "tick": 7148,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -41383,7 +41383,7 @@
           11
         ],
         "gate": 33,
-        "tick": 7116,
+        "tick": 7148,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -41466,9 +41466,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -41568,7 +41568,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -41622,7 +41622,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -41948,7 +41948,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "5a1a88769a02e02d",
+        "state_digest": "1c991003931d56f5",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -42291,7 +42291,7 @@
     },
     {
       "label": "door-10-open",
-      "tick": 7148,
+      "tick": 7180,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -42302,7 +42302,7 @@
           11
         ],
         "gate": 33,
-        "tick": 7148,
+        "tick": 7180,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -42385,9 +42385,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -42487,7 +42487,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -42541,7 +42541,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -42867,7 +42867,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "4a67900a77d29332",
+        "state_digest": "555533fad871c533",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -43210,7 +43210,7 @@
     },
     {
       "label": "code-terminal-28",
-      "tick": 7505,
+      "tick": 7537,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -43221,7 +43221,7 @@
           21
         ],
         "gate": 33,
-        "tick": 7505,
+        "tick": 7537,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -43304,9 +43304,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -43406,7 +43406,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -43460,7 +43460,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -43786,7 +43786,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "3da9c75113f64f36",
+        "state_digest": "cd4f22aa58c66b6a",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -44129,7 +44129,7 @@
     },
     {
       "label": "code-terminal-24",
-      "tick": 7548,
+      "tick": 7580,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -44140,7 +44140,7 @@
           29
         ],
         "gate": 33,
-        "tick": 7548,
+        "tick": 7580,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -44223,9 +44223,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -44325,7 +44325,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -44379,7 +44379,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -44705,7 +44705,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "79967fba29415bfe",
+        "state_digest": "8c881d9f84970d72",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -45048,7 +45048,7 @@
     },
     {
       "label": "code-terminal-16",
-      "tick": 7698,
+      "tick": 7730,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -45059,7 +45059,7 @@
           38
         ],
         "gate": 33,
-        "tick": 7698,
+        "tick": 7730,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -45142,9 +45142,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -45244,7 +45244,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -45298,7 +45298,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -45624,7 +45624,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "63edd3a0cf55cb4c",
+        "state_digest": "50671d6a874331cc",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -45967,7 +45967,7 @@
     },
     {
       "label": "door-11-opening",
-      "tick": 7942,
+      "tick": 7974,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -45978,7 +45978,7 @@
           20
         ],
         "gate": 33,
-        "tick": 7942,
+        "tick": 7974,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -46061,9 +46061,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -46163,7 +46163,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -46217,7 +46217,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -46543,7 +46543,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "65b40b26d79fb801",
+        "state_digest": "dff14a8632db8245",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -46886,7 +46886,7 @@
     },
     {
       "label": "door-11-open",
-      "tick": 7974,
+      "tick": 8006,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -46897,7 +46897,7 @@
           20
         ],
         "gate": 33,
-        "tick": 7974,
+        "tick": 8006,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -46980,9 +46980,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -47082,7 +47082,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -47136,7 +47136,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -47462,7 +47462,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "f20a535eae211919",
+        "state_digest": "38d509169afabddd",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -47805,7 +47805,7 @@
     },
     {
       "label": "code-terminal-30",
-      "tick": 8028,
+      "tick": 8060,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -47816,7 +47816,7 @@
           2
         ],
         "gate": 33,
-        "tick": 8028,
+        "tick": 8060,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -47899,9 +47899,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -48001,7 +48001,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -48055,7 +48055,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -48381,7 +48381,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "98a312554c1446a3",
+        "state_digest": "00bca9b34db15eab",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -48724,7 +48724,7 @@
     },
     {
       "label": "code-terminal-23",
-      "tick": 8499,
+      "tick": 8531,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -48735,7 +48735,7 @@
           31
         ],
         "gate": 33,
-        "tick": 8499,
+        "tick": 8531,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -48818,9 +48818,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -48920,7 +48920,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -48974,7 +48974,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -49300,7 +49300,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "f2f88f5ff6983956",
+        "state_digest": "f0095609c54cd0fa",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -49643,7 +49643,7 @@
     },
     {
       "label": "code-terminal-32",
-      "tick": 8958,
+      "tick": 8990,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -49654,7 +49654,7 @@
           14
         ],
         "gate": 33,
-        "tick": 8958,
+        "tick": 8990,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -49737,9 +49737,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -49839,7 +49839,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -49893,7 +49893,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -50219,7 +50219,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "5fc7d9e1b94e988b",
+        "state_digest": "2f68bc886f71dfd4",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -50562,7 +50562,7 @@
     },
     {
       "label": "door-8-opening",
-      "tick": 9219,
+      "tick": 9251,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -50573,7 +50573,7 @@
           33
         ],
         "gate": 33,
-        "tick": 9219,
+        "tick": 9251,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -50656,9 +50656,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -50758,7 +50758,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -50812,7 +50812,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -51138,7 +51138,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "d40f7f48585af0c7",
+        "state_digest": "97054c323bec376b",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -51481,7 +51481,7 @@
     },
     {
       "label": "door-8-open",
-      "tick": 9251,
+      "tick": 9283,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -51492,7 +51492,7 @@
           33
         ],
         "gate": 33,
-        "tick": 9251,
+        "tick": 9283,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -51575,9 +51575,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -51677,7 +51677,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -51731,7 +51731,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -52057,7 +52057,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "fbcf6af2de4babf2",
+        "state_digest": "c4c4bb1676ff10fe",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -52400,7 +52400,7 @@
     },
     {
       "label": "secret-passage",
-      "tick": 9551,
+      "tick": 9583,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -52411,7 +52411,7 @@
           41
         ],
         "gate": 33,
-        "tick": 9551,
+        "tick": 9583,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -52494,9 +52494,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -52596,7 +52596,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -52650,7 +52650,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -52976,7 +52976,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "be788e2add7440ab",
+        "state_digest": "5315ebf4ebeec917",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -53319,7 +53319,7 @@
     },
     {
       "label": "phoenix-screen",
-      "tick": 9567,
+      "tick": 9599,
       "state": {
         "map": 14,
         "mode": "building",
@@ -53330,7 +53330,7 @@
           48
         ],
         "gate": 33,
-        "tick": 9567,
+        "tick": 9599,
         "blocked": 1,
         "script_pc": 180,
         "script_status": 5,
@@ -53418,9 +53418,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -53520,7 +53520,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -53574,7 +53574,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -53900,7 +53900,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "9f4e59c2967052dc",
+        "state_digest": "c7c578a486fad505",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -54243,7 +54243,7 @@
     },
     {
       "label": "phoenix-inspected",
-      "tick": 9572,
+      "tick": 9604,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -54254,7 +54254,7 @@
           48
         ],
         "gate": 33,
-        "tick": 9572,
+        "tick": 9604,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -54337,9 +54337,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -54439,7 +54439,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -54493,7 +54493,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -54819,7 +54819,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "c4e689c2ed3ca2ff",
+        "state_digest": "61767876cf3b063f",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -55162,7 +55162,7 @@
     },
     {
       "label": "map-room",
-      "tick": 9906,
+      "tick": 9938,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -55173,7 +55173,7 @@
           17
         ],
         "gate": 139,
-        "tick": 9906,
+        "tick": 9938,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -55256,9 +55256,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -55358,7 +55358,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -55412,7 +55412,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -55738,7 +55738,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "638171f92935aaeb",
+        "state_digest": "44461e5e59199427",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -56081,7 +56081,7 @@
     },
     {
       "label": "wrong-password",
-      "tick": 9912,
+      "tick": 9944,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -56092,7 +56092,7 @@
           14
         ],
         "gate": 139,
-        "tick": 9912,
+        "tick": 9944,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -56175,9 +56175,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -56277,7 +56277,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -56331,7 +56331,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -56657,7 +56657,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "f48c9ddcd56b3238",
+        "state_digest": "a0baf8f6cb3e7944",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -57000,7 +57000,7 @@
     },
     {
       "label": "password-symbol-140",
-      "tick": 10016,
+      "tick": 10048,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -57011,7 +57011,7 @@
           2
         ],
         "gate": 139,
-        "tick": 10016,
+        "tick": 10048,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -57094,9 +57094,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -57196,7 +57196,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -57250,7 +57250,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -57576,7 +57576,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "ce05d3ce3d85a5ea",
+        "state_digest": "b1a5c5424276be1e",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -57919,7 +57919,7 @@
     },
     {
       "label": "password-symbol-186",
-      "tick": 10052,
+      "tick": 10084,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -57930,7 +57930,7 @@
           7
         ],
         "gate": 139,
-        "tick": 10052,
+        "tick": 10084,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -58013,9 +58013,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -58115,7 +58115,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -58169,7 +58169,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -58495,7 +58495,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "e33d7aef8b382270",
+        "state_digest": "35468904c9b0770c",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -58838,7 +58838,7 @@
     },
     {
       "label": "password-symbol-325",
-      "tick": 10090,
+      "tick": 10122,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -58849,7 +58849,7 @@
           8
         ],
         "gate": 139,
-        "tick": 10090,
+        "tick": 10122,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -58932,9 +58932,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -59034,7 +59034,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -59088,7 +59088,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -59414,7 +59414,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "20ffe586e953e876",
+        "state_digest": "34304ef0e0a4c26e",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -59757,7 +59757,7 @@
     },
     {
       "label": "password-symbol-341",
-      "tick": 10118,
+      "tick": 10150,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -59768,7 +59768,7 @@
           9
         ],
         "gate": 139,
-        "tick": 10118,
+        "tick": 10150,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -59851,9 +59851,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -59953,7 +59953,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -60007,7 +60007,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -60333,7 +60333,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "aded82f98f4ffbd5",
+        "state_digest": "f7966a76bb80a969",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -60676,7 +60676,7 @@
     },
     {
       "label": "password-symbol-375",
-      "tick": 10192,
+      "tick": 10224,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -60687,7 +60687,7 @@
           15
         ],
         "gate": 139,
-        "tick": 10192,
+        "tick": 10224,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -60770,9 +60770,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -60872,7 +60872,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -60926,7 +60926,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -61252,7 +61252,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "2fcd351afdd16ea4",
+        "state_digest": "aefd316a09e988e0",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -61595,7 +61595,7 @@
     },
     {
       "label": "password-symbol-439",
-      "tick": 10240,
+      "tick": 10272,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -61606,7 +61606,7 @@
           14
         ],
         "gate": 139,
-        "tick": 10240,
+        "tick": 10272,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -61689,9 +61689,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -61791,7 +61791,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -61845,7 +61845,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -62171,7 +62171,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "b5297c4349bf3954",
+        "state_digest": "6b65964035747b7c",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -62514,7 +62514,7 @@
     },
     {
       "label": "password-symbol-443",
-      "tick": 10269,
+      "tick": 10301,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -62525,7 +62525,7 @@
           15
         ],
         "gate": 139,
-        "tick": 10269,
+        "tick": 10301,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -62608,9 +62608,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -62710,7 +62710,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -62764,7 +62764,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -63090,7 +63090,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "353018b472bd867b",
+        "state_digest": "ab928e9629030aaf",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -63433,7 +63433,7 @@
     },
     {
       "label": "white-code-accepted",
-      "tick": 10341,
+      "tick": 10373,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -63444,7 +63444,7 @@
           14
         ],
         "gate": 139,
-        "tick": 10341,
+        "tick": 10373,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -63527,9 +63527,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -63629,7 +63629,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -63683,7 +63683,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -64009,7 +64009,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "bd3cd1be65819229",
+        "state_digest": "c66f1b77e3153cc1",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -64352,7 +64352,7 @@
     },
     {
       "label": "map-room-exit",
-      "tick": 10381,
+      "tick": 10413,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -64363,7 +64363,7 @@
           28
         ],
         "gate": 33,
-        "tick": 10381,
+        "tick": 10413,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -64446,9 +64446,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -64548,7 +64548,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -64602,7 +64602,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -64928,7 +64928,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "4a7aaa95157cb4ae",
+        "state_digest": "4c74084d6c9bf5aa",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -65271,7 +65271,7 @@
     },
     {
       "label": "hyperpulse-power",
-      "tick": 10706,
+      "tick": 10738,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -65282,7 +65282,7 @@
           7
         ],
         "gate": 33,
-        "tick": 10706,
+        "tick": 10738,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -65365,9 +65365,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -65467,7 +65467,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -65521,7 +65521,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -65847,7 +65847,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "37ed93b833e3aeb4",
+        "state_digest": "bccff2782efdc7a0",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -66190,7 +66190,7 @@
     },
     {
       "label": "cache-found",
-      "tick": 10822,
+      "tick": 10854,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -66201,7 +66201,7 @@
           2
         ],
         "gate": 33,
-        "tick": 10822,
+        "tick": 10854,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -66284,9 +66284,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          100,
-          230,
-          226
+          157,
+          191,
+          5
         ],
         "npc_search": [
           0,
@@ -66386,7 +66386,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -66440,7 +66440,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -66766,7 +66766,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "e45a7fb77652529a",
+        "state_digest": "67baa4cfba4f28b2",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -67109,7 +67109,7 @@
     },
     {
       "label": "ending-start",
-      "tick": 11013,
+      "tick": 11045,
       "state": {
         "map": 14,
         "mode": "building",
@@ -67120,7 +67120,7 @@
           7
         ],
         "gate": 33,
-        "tick": 11013,
+        "tick": 11045,
         "blocked": 1,
         "script_pc": 8,
         "script_status": 7,
@@ -67203,9 +67203,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          178,
-          205,
-          196
+          78,
+          126,
+          10
         ],
         "npc_search": [
           0,
@@ -67305,7 +67305,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -67359,7 +67359,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -67685,7 +67685,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "d529e40d5b80f79e",
+        "state_digest": "79e2442e9d1325dd",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -68028,7 +68028,7 @@
     },
     {
       "label": "ending-complete",
-      "tick": 11409,
+      "tick": 11441,
       "state": {
         "map": 14,
         "mode": "ending",
@@ -68039,7 +68039,7 @@
           7
         ],
         "gate": 33,
-        "tick": 11409,
+        "tick": 11441,
         "blocked": 1,
         "script_pc": 2991,
         "script_status": 3,
@@ -68131,9 +68131,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          43,
-          220,
-          73
+          196,
+          224,
+          174
         ],
         "npc_search": [
           0,
@@ -68233,7 +68233,7 @@
           0
         ],
         "investments": [
-          598951,
+          623907,
           0,
           0
         ],
@@ -68287,7 +68287,7 @@
           0,
           0,
           0,
-          184,
+          153,
           0,
           1,
           0,
@@ -68613,7 +68613,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "f8dc0f44a5b882de",
+        "state_digest": "55875f5ff2f2808d",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -68965,7 +68965,7 @@
       7
     ],
     "gate": 33,
-    "tick": 11409,
+    "tick": 11441,
     "blocked": 1,
     "script_pc": 2991,
     "script_status": 3,
@@ -69057,9 +69057,9 @@
     "npc_clock": 0,
     "npc_fault": 0,
     "npc_rng": [
-      43,
-      220,
-      73
+      196,
+      224,
+      174
     ],
     "npc_search": [
       0,
@@ -69159,7 +69159,7 @@
       0
     ],
     "investments": [
-      598951,
+      623907,
       0,
       0
     ],
@@ -69213,7 +69213,7 @@
       0,
       0,
       0,
-      184,
+      153,
       0,
       1,
       0,
@@ -69539,7 +69539,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "f8dc0f44a5b882de",
+    "state_digest": "55875f5ff2f2808d",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

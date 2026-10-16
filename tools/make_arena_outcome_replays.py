@@ -5,11 +5,16 @@ from make_arena_replay import Arena
 from make_later_campaign_replay import Later, ROOT
 
 
-def arena(name, rental, win):
+def arena(name, rental, win, waiting=0):
     s = Arena('GAME3', name)
     source = json.loads((ROOT / 'tests/fixtures/ordinary-arena-theft.json').read_text())
     entrance = [c['tick'] for c in source['checkpoints'] if c['label'] == 'entry'][-1]
-    s.advance((ROOT / 'tests/fixtures/ordinary-arena-theft.actions').read_text().splitlines()[:entrance])
+    approach=(ROOT / 'tests/fixtures/ordinary-arena-theft.actions').read_text().splitlines()[:entrance]
+    s.advance(approach[:-1])
+    if waiting:
+        if s.state['mode']!='local-exploration':raise RuntimeError('Arena wait must be outdoors')
+        s.advance(['idle']*waiting)
+    s.advance(approach[-1:])
     s.advance(['accept'])
     confirmations = 0
     for _ in range(256):
@@ -28,9 +33,9 @@ def arena(name, rental, win):
         raise RuntimeError('Arena did not start')
     s.note('arena-start');s.advance(['accept', 'accept', 'accept'])
     if rental and win:
-        # Two ordinary unarmed turns alter the approach and subsequent rolls.
+        # One ordinary unarmed turn alters the approach and subsequent rolls.
         # All damage, ammunition and victory still come from live combat.
-        s.round();s.round()
+        s.round()
     # Leaving weapons unassigned exercises a real defeat for either loan
     # choice, independent of which opponent wins a computer-vs-computer roll.
     if win:
@@ -45,11 +50,13 @@ def arena(name, rental, win):
     else:
         raise RuntimeError('Arena result did not arrive')
     if s.state['aftermath']['phase'] != 11 or bool(s.state['combat']['won']) != win:
+        if rental and win:return False
         raise RuntimeError('Unexpected arena outcome')
     s.note('arena-result');s.advance(['menu']);s.note('arena-cashier');s.settle_building()
     if s.state['mode'] != 'local-exploration' or s.state['people'][0][0] == 255:
         raise RuntimeError('Surviving arena pilot did not return to town')
     s.note('arena-exited');s.save(name)
+    return True
 
 
 def prison():
@@ -78,7 +85,11 @@ def prison():
 def main():
     for rental in (False, True):
         for win in (False, True):
-            arena(f'arena-{"rental" if rental else "owned"}-{"win" if win else "loss"}', rental, win)
+            # Search only ordinary waits for a surviving rental walkthrough.
+            # The saved input route records the wait; no seed/state is edited.
+            for waiting in (range(0,101,5) if rental and win else (0,)):
+                if arena(f'arena-{"rental" if rental else "owned"}-{"win" if win else "loss"}', rental, win,waiting):break
+            else:raise RuntimeError('No rental victory within the bounded ordinary-input search')
     prison()
 
 

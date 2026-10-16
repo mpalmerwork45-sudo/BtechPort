@@ -27,7 +27,7 @@ static int encounter(BtpState *s,const BtpResources *r)
 }
 int main(int argc,char **argv)
 {
-    if (argc!=4) return 2;
+    if (argc!=4 && !(argc==5 && !strcmp(argv[4],"--next"))) return 2;
     BtpResources *r=calloc(1,sizeof *r);BtpError e;BtpState s;
     if (!r || !btp_resources_load("Original DOS",r,&e) ||
         !btp_combat_data_load("work/combat-data.bin",&r->combat,&e) ||
@@ -93,6 +93,9 @@ int main(int argc,char **argv)
                step. Excluding every doorway can strand the route at a shop. */
             if (s.mode==BTP_ENTRY && q!=target) step(&s,r,BTP_CANCEL);
             if (!encounter(&s,r)) { fprintf(stderr,"Encounter continuation requires battle orders\n");ok=0;break; }
+            /* Adaptive callers can replan after one multi-step key without
+               predicting a different encounter/NPC clock or editing saves. */
+            if (argc==5) break;
         }
     } else fprintf(stderr,"No native walking route from %d,%d to %d,%d (%u positions examined)\n",sx,sy,tx,ty,end);
     free(parents);free(queue);free(r);return !ok;

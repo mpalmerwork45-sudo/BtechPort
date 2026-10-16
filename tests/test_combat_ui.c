@@ -2,6 +2,7 @@
 #include "core/animation.h"
 #include "core/campaign.h"
 #include "core/party.h"
+#include "core/effects.h"
 #include "data/save.h"
 #include "frontend/pixels.h"
 #include <stdio.h>
@@ -326,6 +327,25 @@ static void battle_reports(const BtpResources *r,uint32_t *frame)
     CHECK(btp_state_decode(bytes,sizeof bytes,btp_active_map(r,&names),btp_state_bld(r,&names),&copy));
     CHECK(copy.effects.shown.actor_name==8 && copy.effects.shown.target_name==9);
 }
+static void quiet_ejections(const BtpResources *r,uint32_t *frame)
+{
+    FILE *f=fopen("tests/fixtures/quiet-ejection-primary.txt","r");CHECK(f);
+    unsigned active,target,cases=0;uint64_t before,after;
+    while (fscanf(f," Q %u %u %" SCNx64 " %" SCNx64,&active,&target,&before,&after)==4) {
+        BtpState s;setup(&s,r);s.combat.phase=BTP_COMBAT_ROUND;
+        s.combat.active_unit=(uint8_t)(active==7 ? 3u : active);btp_effects_begin_round(&s);
+        btp_render(r,&s,0,frame);CHECK(region_hash(frame,8,8,88,88)==before);
+        s.effects.quiet.ejections=1;
+        btp_render(r,&s,0,frame);CHECK(region_hash(frame,8,8,88,88)==after);
+        uint8_t bytes[BTP_STATE_BYTES];BtpState copy;btp_state_encode(&s,bytes);
+        CHECK(btp_state_decode(bytes,sizeof bytes,btp_active_map(r,&s),btp_state_bld(r,&s),&copy));
+        btp_render(r,&copy,0,frame);CHECK(region_hash(frame,8,8,88,88)==after);
+        /* Destruction must not change the retained selected-unit model. */
+        s.combat.unit[target].record[0]=255;
+        btp_render(r,&s,0,frame);CHECK(region_hash(frame,8,8,88,88)==after);++cases;
+    }
+    CHECK(!fclose(f) && cases==12);
+}
 int main(int argc,char **argv)
 {
     if (argc!=2) return 2;
@@ -401,7 +421,7 @@ int main(int argc,char **argv)
     setup(&s,r);btp_combat_select(&s.combat,3);s.combat.selected=7;
     CHECK(btp_save_write("work/combat-ui-start.btp",&s,r,&e));
     unsigned weapon_regions=weapon_pages(r,frame);
-    computer_commands(r);space_commands(r);battle_reports(r,frame);
+    computer_commands(r);space_commands(r);battle_reports(r,frame);quiet_ejections(r,frame);
     unsigned warning_regions=weapon_warnings(r,frame);
     free(frame);free(r);printf("PASS: %u checks; nine menu/scan, eight target/withdrawal, %u weapon and %u warning regions; 36 warning gates, saved modal inputs\n",checks,weapon_regions,warning_regions);return 0;
 }

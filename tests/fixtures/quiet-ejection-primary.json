@@ -1,0 +1,13 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "cases": 12,
+  "routines": [
+    "05AB:18E8 unit header",
+    "0D43:0A35 retirement",
+    "1656:03F5 wrapping",
+    "173D:00D5 glyphs"
+  ],
+  "prerequisites": "GAME3 three active mechs and Rick on foot; quiet mode, window 4 cleared before selected-unit header, then one friendly ejection.",
+  "comparison": "All 88x88 text-window pixels before and after retirement, including retained header and cursor; no instruction edits."
+}

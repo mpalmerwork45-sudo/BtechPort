@@ -3,7 +3,7 @@
   "checkpoints": [
     {
       "label": "entry",
-      "tick": 2130,
+      "tick": 2386,
       "state": {
         "map": 12,
         "mode": "entry-confirm",
@@ -14,7 +14,7 @@
           4
         ],
         "gate": 85,
-        "tick": 2130,
+        "tick": 2386,
         "blocked": 0,
         "script_pc": 0,
         "script_status": 0,
@@ -97,9 +97,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          146,
-          110,
-          172
+          5,
+          12,
+          55
         ],
         "npc_search": [
           0,
@@ -199,7 +199,7 @@
           0
         ],
         "investments": [
-          915267,
+          1218003,
           0,
           0
         ],
@@ -253,7 +253,7 @@
           0,
           0,
           0,
-          19,
+          249,
           0,
           0,
           0,
@@ -579,7 +579,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "4c83bf930fdafa6e",
+        "state_digest": "7ee9f3121816a7a3",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -922,7 +922,7 @@
     },
     {
       "label": "inventor-complete",
-      "tick": 2140,
+      "tick": 2396,
       "state": {
         "map": 12,
         "mode": "local-exploration",
@@ -933,7 +933,7 @@
           4
         ],
         "gate": 85,
-        "tick": 2140,
+        "tick": 2396,
         "blocked": 0,
         "script_pc": 8411,
         "script_status": 3,
@@ -1021,9 +1021,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          146,
-          110,
-          172
+          5,
+          12,
+          55
         ],
         "npc_search": [
           0,
@@ -1123,7 +1123,7 @@
           0
         ],
         "investments": [
-          915267,
+          1218003,
           0,
           0
         ],
@@ -1177,7 +1177,7 @@
           0,
           0,
           0,
-          19,
+          249,
           0,
           0,
           0,
@@ -1503,7 +1503,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "a8288ff64402fed0",
+        "state_digest": "137f8c67835cfb19",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1855,7 +1855,7 @@
       4
     ],
     "gate": 85,
-    "tick": 2140,
+    "tick": 2396,
     "blocked": 0,
     "script_pc": 8411,
     "script_status": 3,
@@ -1943,9 +1943,9 @@
     "npc_clock": 0,
     "npc_fault": 0,
     "npc_rng": [
-      146,
-      110,
-      172
+      5,
+      12,
+      55
     ],
     "npc_search": [
       0,
@@ -2045,7 +2045,7 @@
       0
     ],
     "investments": [
-      915267,
+      1218003,
       0,
       0
     ],
@@ -2099,7 +2099,7 @@
       0,
       0,
       0,
-      19,
+      249,
       0,
       0,
       0,
@@ -2425,7 +2425,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "a8288ff64402fed0",
+    "state_digest": "137f8c67835cfb19",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

@@ -1,9 +1,9 @@
 {
   "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
   "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
-  "cases": 124,
+  "cases": 248,
   "routine": "07DC:01C0 complete original BLD VM with native party-count, meal and theater-exit actions",
-  "prerequisites": "HUT rank 0/3/4 technician/medic combinations and repeat visits; MAYOR solo/group, three activities, repeats and six health boundaries; THEATER refusal and 0/4/5/6-credit boundaries. Explicit one/five-person parties.",
+  "prerequisites": "HUT rank 0/3/4 technician/medic combinations and repeat visits; MAYOR solo/group, three activities, repeats and six health boundaries; THEATER refusal and 0/4/5/6-credit boundaries. Explicit one/four/five/eight-person parties, including the HUT party-size boundary and the last occupied skill slot.",
   "comparison": "Cash, branch flags, complete party records, ordered menu choices, held-page PCs and requested animation/sound sequence. Presentation calls are boundaries, not pixel/timing evidence.",
   "executed_nodes": {
     "21": [

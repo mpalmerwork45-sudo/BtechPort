@@ -5,6 +5,7 @@
 #include <string.h>
 _Static_assert(sizeof(BtpCombatEffect)==13,"Effect encoding contains byte fields only");
 _Static_assert(sizeof(BtpBattleText)==11,"Battle text encoding contains byte fields only");
+_Static_assert(sizeof(BtpQuietReport)==18,"Quiet header encoding contains byte fields only");
 static unsigned name_id(const BtpState *s,unsigned actor)
 {
     const BtpCombatUnit *u=&s->combat.unit[actor];
@@ -19,6 +20,16 @@ static BtpBattleText report(const BtpState *s,unsigned actor,unsigned target,uns
         (uint8_t)name_id(s,actor),(uint8_t)name_id(s,target),(uint8_t)weapon,c->shot.hit,c->shot.location,
         c->shot.criticals,(uint8_t)(s->campaign.encounter==4 && s->yard.rental && !s->story_flags[35] && btp_combat_id(c,target)==13),c->shot.destroyed};
 }
+void btp_effects_begin_round(BtpState *s)
+{
+    s->effects.shown=(BtpBattleText){0};s->effects.quiet=(BtpQuietReport){0};
+    if (s->combat.messages) return;
+    /* Quiet retirement appends to the command header's existing cursor.
+       Keep its original name/model before a casualty clears record[0]. */
+    unsigned active=s->combat.active_unit;
+    BtpQuietReport *q=&s->effects.quiet;q->active=1;q->name=(uint8_t)name_id(s,active);
+    if (!s->combat.unit[active].infantry) memcpy(q->mech,s->combat.unit[active].record,15);
+}
 unsigned btp_effects_sound(unsigned w)
 {
     return w<3 ? 13u : w==3 ? 5u : w<=6 ? 11u : w<=8 ? 6u :
@@ -31,20 +42,21 @@ unsigned btp_effects_fire_sound(unsigned w,int visible)
        Physical, ballistic and missile sounds precede that visibility test. */
     return !visible && (w==12 || w==13 || (w>=15 && w<=18)) ? 0u : btp_effects_sound(w);
 }
+int btp_combat_visible(int x,int y,int infantry,int focus_x,int focus_y)
+{
+    /* 0000:0E4B admits humans by their anchor, and mechs across a two-cell
+       wider left/bottom margin. This flag also gates beam sound playback. */
+    int dx=x-focus_x,dy=y-focus_y;
+    return dx>=(infantry ? -13 : -15) && dx<=13 && dy>=-12 && dy<=(infantry ? 12 : 14);
+}
 static int visible(const BtpCombatEffect *e,const BtpState *s)
 {
     const BtpCombatState *c=&s->combat;
     const BtpCombatUnit *focus=&c->unit[c->active_unit];
     const BtpCombatEffect *death=btp_effects_death(s,c->active_unit);
     unsigned x=death ? death->tx : focus->x,y=death ? death->ty : focus->y;
-    /* Match 0000:0E4B's distinct infantry and mech drawing anchors. */
-    int ax=(e->base==254 ? 208 : 200)+((int)e->x-(int)x)*8;
-    int ay=(e->base==254 ? 96 : 80)+((int)e->y-(int)y)*8;
-    int tx=(e->target_base==254 ? 208 : 200)+((int)e->tx-(int)x)*8;
-    int ty=(e->target_base==254 ? 96 : 80)+((int)e->ty-(int)y)*8;
-    /* Use the renderer's clipped viewport. Exact DOS visibility margins
-       at the border remain approximate until their full pixel comparison. */
-    return (ax+24>104 && ax<320 && ay+24>0 && ay<200) || (tx+24>104 && tx<320 && ty+24>0 && ty<200);
+    return btp_combat_visible(e->x,e->y,e->base==254,(int)x,(int)y) ||
+        btp_combat_visible(e->tx,e->ty,e->target_base==254,(int)x,(int)y);
 }
 const BtpCombatEffect *btp_effects_death(const BtpState *s,unsigned target)
 {
@@ -134,6 +146,8 @@ void btp_effects_tick(BtpState *s,const BtpResources *r)
     for (unsigned i=0;i<2;++i) if (v->outtakes[0][i] && s->presentation.count<24)
         s->presentation.kinds[s->presentation.count++]=v->outtakes[0][i];
     unsigned legacy=v->stage==BTP_EFFECT_LEGACY;
+    if (v->quiet.active && !s->combat.messages && v->text[0].dead && v->text[0].target<4 && v->quiet.ejections<4)
+        ++v->quiet.ejections;
     v->shown=v->text[0];
     v->age=0;--v->count;
     memmove(v->shots,v->shots+1,v->count*sizeof v->shots[0]);
@@ -147,6 +161,12 @@ void btp_effects_tick(BtpState *s,const BtpResources *r)
 int btp_effects_valid(const BtpState *s)
 {
     const BtpEffectsState *v=&s->effects;
+    const BtpQuietReport *q=&v->quiet;
+    if (q->active>1 || q->name>=10 || q->ejections>4) return 0;
+    if (!q->active) {
+        const uint8_t *p=(const uint8_t *)q;for (unsigned i=0;i<sizeof *q;++i) if (p[i]) return 0;
+    }
+    for (unsigned i=0;i<15;++i) if (q->mech[i] && (q->mech[i]<32 || q->mech[i]>126)) return 0;
     if (v->count>24 || v->age>22 || v->pending>3 || v->stage>6 || (!v->count && (v->age || v->stage))) return 0;
     if (v->count && s->combat.phase!=BTP_COMBAT_ROUND) return 0;
     for (unsigned i=0;i<25;++i) {

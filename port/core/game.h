@@ -14,8 +14,8 @@ typedef struct {
 } BtpTalkState;
 typedef struct { uint16_t x, y; uint8_t direction; } BtpNpc;
 typedef struct {
-    uint8_t enabled, phase, clock, rng[3], bias, fault, loop_timer, allowance_pending;
-    uint16_t search;
+    uint8_t enabled, phase, rng[3], bias, fault, loop_timer, allowance_pending;
+    uint16_t search, clock;
     BtpNpc actor[8];
 } BtpNpcState;
 typedef enum { BTP_BANK_NONE, BTP_BANK_MENU, BTP_BANK_AMOUNT, BTP_BANK_MESSAGE } BtpBankPhase;
@@ -51,12 +51,14 @@ typedef struct {
 /* Capture names/results when a shot resolves, before ejection or later shots
    change the records. Presentation consumes this alongside the saved effects. */
 typedef struct { uint8_t active,actor,target,actor_name,target_name,weapon,hit,location,criticals,spectator,dead; } BtpBattleText;
-typedef struct { uint8_t count,age,pending,stage,outtakes[24][2];BtpCombatEffect shots[24];BtpBattleText text[24],shown; } BtpEffectsState;
+typedef struct { uint8_t active,name,mech[15],ejections; } BtpQuietReport;
+typedef struct { uint8_t count,age,pending,stage,outtakes[24][2];BtpCombatEffect shots[24];BtpBattleText text[24],shown;BtpQuietReport quiet; } BtpEffectsState;
 typedef struct {
     uint8_t invasion, owned, mech[125];
     uint8_t checkpoint_owned, checkpoint_mech[125];
     uint16_t world_x,world_y;
-    uint8_t building, world_clock, encounter_mask, encounter;
+    uint8_t building, encounter_mask, encounter;
+    uint16_t world_clock;
     uint8_t mounted, mech_walk, mech_direction;
     uint8_t ui, selected, member;
     uint16_t mech_x,mech_y;

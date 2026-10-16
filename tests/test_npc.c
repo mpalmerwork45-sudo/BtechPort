@@ -63,6 +63,35 @@ static void synthetic(void)
     btp_state_encode(&s,encoded);
     CHECK(btp_state_decode(encoded,sizeof encoded,&map,NULL,&restored));
     btp_state_encode(&restored,again); CHECK(!memcmp(encoded,again,sizeof again));
+    /* 35.2 seconds contains exactly 224 eleven-retrace updates at nominal
+       70 Hz. Compare complete NPC/economy state to the frame-level oracle
+       path, including a save/reload at every fractional clock position. */
+    BtpState timed=s,frames=s;
+    for (unsigned i=0;i<1100;++i) {
+        btp_npc_tick(&timed,&map);
+        btp_state_encode(&timed,again);
+        CHECK(btp_state_decode(again,sizeof again,&map,NULL,&restored));
+        btp_npc_tick(&restored,&map);
+        BtpState uninterrupted=timed;btp_npc_tick(&uninterrupted,&map);
+        CHECK(!memcmp(&restored.npc,&uninterrupted.npc,sizeof restored.npc));
+    }
+    for (unsigned i=0;i<224;++i) btp_npc_frame(&frames,&map);
+    CHECK(!timed.npc.clock && !memcmp(&timed.npc,&frames.npc,sizeof timed.npc));
+    CHECK(timed.credits==frames.credits && !memcmp(timed.story_flags,frames.story_flags,sizeof timed.story_flags));
+    /* Movement consumes one full update immediately and restarts the idle
+       countdown, even when it follows only one idle host tick. */
+    btp_npc_tick(&timed,&map);btp_npc_input(&timed,&map,BTP_RIGHT);
+    btp_npc_frame(&frames,&map);
+    CHECK(!memcmp(&timed.npc,&frames.npc,sizeof timed.npc));
+    memcpy(again,encoded,sizeof again);memcpy(again,"BTPd",4);again[4]=39;
+    memset(again+16010,0,4);again[152]=2;again[2659]=3;
+    CHECK(btp_state_decode(again,sizeof again,&map,NULL,&restored));
+    CHECK(restored.npc.clock==448 && restored.campaign.world_clock==672 &&
+        !memcmp(restored.npc.rng,s.npc.rng,3));
+    memcpy(again,encoded,sizeof again);again[16010]=0x4c;again[16011]=4;
+    CHECK(!btp_state_decode(again,sizeof again,&map,NULL,&restored));
+    memcpy(again,encoded,sizeof again);again[16012]=0x4c;again[16013]=4;
+    CHECK(!btp_state_decode(again,sizeof again,&map,NULL,&restored));
     const unsigned corrupt[] = {151,152,158,164,201,202};
     const uint8_t invalid[] = {3,4,1,8,2,1};
     for (unsigned i = 0; i < sizeof corrupt/sizeof corrupt[0]; ++i) {

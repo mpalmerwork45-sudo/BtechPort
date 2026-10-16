@@ -223,13 +223,11 @@ void btp_world_step(BtpState *s,const BtpResources *r,BtpAction a)
     s->x_half=(uint16_t)gx;s->y_half=(uint16_t)gy;
     btp_party_follow(s,r,old_x,old_y);
 }
-void btp_world_clock(BtpState *s,const BtpResources *r)
+void btp_world_clock(BtpState *s,const BtpResources *r,BtpAction action)
 {
-    /* Main-loop cadence remains the existing fixed four-tick approximation.
-       The original draws even on indoor city terrain, with D346 excluding
-       the separate area-map mode. Encounter-mask decisions are explicit. */
-    if (++s->campaign.world_clock==4) {
-        s->campaign.world_clock=0;
+    /* The same outdoor cadence drives towns, encounters and the economy;
+       a two/four-step key still consumes only one update. */
+    if (btp_outdoor_due(&s->campaign.world_clock,action)) {
         /* Restore roaming actors in older town saves on their first outdoor
            update. Use this clock's existing RNG/economy work exactly once. */
         if (!s->npc.enabled && s->map_id && s->map_id<=10) btp_npc_enter(s,local(r,s->map_id));
@@ -244,7 +242,7 @@ void btp_world_clock(BtpState *s,const BtpResources *r)
 }
 void btp_world_move(BtpState *s,const BtpResources *r,BtpAction a)
 {
-    ++s->tick;btp_world_step(s,r,a);btp_world_clock(s,r);
+    ++s->tick;btp_world_step(s,r,a);btp_world_clock(s,r,a);
 }
 void btp_world_actions(BtpState *s,const BtpResources *r,BtpAction a)
 {

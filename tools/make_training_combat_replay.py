@@ -132,7 +132,11 @@ def generate(binary,kick=False,campaign=False):
         for attempt,assignment in enumerate([5]*5 if campaign else [2] if kick else [3,4]):
             withdrawing=campaign and attempt<4
             if assignment>2:
-                advance(['idle']*(state['story_flags'][20]*4));building(0);quiz()
+                advance(['idle']*((state['story_flags'][20]*1100+223)//224))
+                # An ordinary short wait keeps this deterministic sixth
+                # assignment walkthrough on a surviving computer-play line.
+                if campaign and not withdrawing:advance(['idle']*15)
+                building(0);quiz()
                 advance(['accept','accept'])
             check(state['menu_id']==7,'Missing loan menu')
             advance(['down']*((2-state['menu_selected'])%3)+['accept'])

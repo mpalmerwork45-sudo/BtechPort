@@ -21,7 +21,7 @@ def main():
     if s.state['mode']!='local-exploration' or s.state['map']!=2:raise RuntimeError('Garage transition failed')
     s.note('parked-in-starport');s.save_fixture('starport')
     s.world_route(1370,1088);s.advance(['accept']*3);s.note('civilian-clothing')
-    s.world_route(1394,1116);s.advance(['accept']*4);s.wait_outdoors(s.state['campaign_flags'][29]*4)
+    s.world_route(1394,1116);s.advance(['accept']*4);s.wait_outdoors((s.state['campaign_flags'][29]*1100+223)//224)
     s.advance(['right','left','accept'])
     for _ in range(100):
         if s.state['mode']=='encounter':break

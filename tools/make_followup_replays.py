@@ -8,12 +8,13 @@ parser.add_argument('--training',action='store_true',help='Regenerate combat pre
 args=parser.parse_args()
 if args.training:
     for tool,arguments in (
+        ('make_training_replay.py',['--generate']),
         ('make_combat_replay.py',['--generate']),
         ('make_training_combat_replay.py',['--generate']),
         ('make_training_combat_replay.py',['--kick','--generate']),
         ('make_training_combat_replay.py',['--campaign','--generate']),
-        ('make_campaign_replay.py',['4','0']),
-        ('make_campaign_replay.py',['4','0','--loss'])):
+        ('make_campaign_replay.py',['9','0']),
+        ('make_campaign_replay.py',['9','0','--loss'])):
         print('Generating',tool,*arguments,flush=True)
         subprocess.run([sys.executable,str(ROOT/'tools'/tool),*arguments],cwd=ROOT,check=True)
 for tool in ('make_later_campaign_replay.py','make_story_replay.py',

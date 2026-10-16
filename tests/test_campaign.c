@@ -115,7 +115,9 @@ int main(int argc,char **argv)
     fclose(f);CHECK(s.story_flags[4] && s.mode==BTP_EXPLORE && !s.campaign.invasion);
     CHECK(invasion_popups==126 && destroyed_during_fight && migration);
     CHECK(animation ? !s.campaign.owned : s.campaign.owned);
-    char save_path[256];const char *leaf=strrchr(argv[2],'/');leaf=leaf ? leaf+1 : argv[2];
+    char save_path[256];const char *leaf=strrchr(argv[2],'/'),*back=strrchr(argv[2],'\\');
+    if (back && (!leaf || back>leaf)) leaf=back;
+    leaf=leaf ? leaf+1 : argv[2];
     CHECK(snprintf(save_path,sizeof save_path,"work/campaign-%s.btp",leaf)>0);
     CHECK(btp_save_write(save_path,&s,r,&e));
     BtpState loaded;CHECK(btp_save_load(save_path,&loaded,r,&e));

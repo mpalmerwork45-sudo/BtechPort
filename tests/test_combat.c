@@ -16,8 +16,18 @@ static unsigned seed_value(const uint8_t rng[3]) { return rng[0]+256u*rng[1]+655
 int main(int argc, char **argv)
 {
     if (argc != 3 && argc != 4) return 2;
-    uint8_t *raw = NULL; size_t length = 0; BtpError error; BtpCombatData d;
+    uint8_t *raw = NULL; size_t length = 0; BtpError error;
+    /* The decoded audio programs are too large for a Windows stack frame. */
+    static BtpCombatData d;
     if (!btp_read_file(argv[1],&raw,&length,&error) || !btp_combat_data_decode(raw,length,&d)) return 2;
+    /* Reject corrupt tables without committing a partial decoded object.
+       This also exercises the decoder's heap cleanup under LeakSanitizer. */
+    uint64_t decoded=fingerprint((const uint8_t *)&d,sizeof d);
+    size_t arc=4+sizeof d.loans+sizeof d.weapons;
+    uint8_t original_arc=raw[arc];raw[arc]=255;
+    int accepted=btp_combat_data_decode(raw,length,&d);raw[arc]=original_arc;
+    if (accepted || fingerprint((const uint8_t *)&d,sizeof d)!=decoded ||
+        btp_combat_data_decode(raw,length-1,&d)) { free(raw); return 1; }
     free(raw); BtpMap map={0};
     if (argc == 4) {
         if (!btp_read_file(argv[3],&raw,&length,&error) || !btp_map_decode(raw,length,&map,&error)) return 2;

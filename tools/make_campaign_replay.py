@@ -71,7 +71,7 @@ class Session:
 if __name__=='__main__':
     s=Session(ROOT/'tests/fixtures/ordinary-sixth-story.actions')
     pause=int(sys.argv[1]) if len(sys.argv)>1 else 28
-    s.advance(['idle']*(s.state['story_flags'][20]*4+pause));s.route(0);s.advance(['accept','accept'])
+    s.advance(['idle']*((s.state['story_flags'][20]*1100+223)//224+pause));s.route(0);s.advance(['accept','accept'])
     from exepack import unpack
     import struct
     from prepare_talk import DS

@@ -2,35 +2,35 @@
   "checkpoints": [
     {
       "label": "technician-recruitment-wait",
-      "tick": 56682
+      "tick": 66502
     },
     {
       "label": "technician-spy-joined",
-      "tick": 56684
+      "tick": 66504
     },
     {
       "label": "spy-inspected",
-      "tick": 56692
+      "tick": 66512
     },
     {
       "label": "spy-combat-offer",
-      "tick": 56700
+      "tick": 66524
     },
     {
       "label": "spy-confrontation",
-      "tick": 56832
+      "tick": 66656
     },
     {
       "label": "spy-killed-in-combat",
-      "tick": 56833
+      "tick": 66657
     },
     {
       "label": "replacement-technician-joined",
-      "tick": 56929
+      "tick": 66753
     },
     {
       "label": "replacement-shop-exit",
-      "tick": 56936
+      "tick": 66760
     }
   ],
   "final": {
@@ -43,7 +43,7 @@
       34
     ],
     "gate": 85,
-    "tick": 56936,
+    "tick": 66760,
     "blocked": 0,
     "script_pc": 4979,
     "script_status": 3,
@@ -94,19 +94,7 @@
     "conversation_checkpoint": 0,
     "npc_pairs": [
       [
-        81,
-        0
-      ],
-      [
-        70,
-        0
-      ],
-      [
-        53,
-        0
-      ],
-      [
-        53,
+        39,
         0
       ],
       [
@@ -114,7 +102,15 @@
         0
       ],
       [
-        81,
+        99,
+        0
+      ],
+      [
+        99,
+        0
+      ],
+      [
+        18,
         0
       ],
       [
@@ -122,12 +118,16 @@
         0
       ],
       [
-        70,
+        18,
+        0
+      ],
+      [
+        99,
         0
       ]
     ],
     "npc_enabled": 2,
-    "npc_phase": 1,
+    "npc_phase": 2,
     "npc_clock": 0,
     "npc_fault": 0,
     "npc_rng": [
@@ -136,50 +136,50 @@
       93
     ],
     "npc_search": [
-      74,
-      0
+      18,
+      8
     ],
     "npc_loop_timer": 0,
     "npc_allowance_pending": 1,
     "npcs": [
       [
-        2609,
-        32843,
-        2
-      ],
-      [
-        2676,
-        32882,
+        2672,
+        32789,
         0
-      ],
-      [
-        2583,
-        32838,
-        2
-      ],
-      [
-        2578,
-        32836,
-        2
       ],
       [
         2620,
-        32857,
-        0
+        32861,
+        4
       ],
       [
-        2609,
-        32842,
-        2
+        2611,
+        32843,
+        6
       ],
       [
-        2581,
-        32822,
+        2612,
+        32843,
+        7
+      ],
+      [
+        2625,
+        32851,
+        1
+      ],
+      [
+        2597,
+        32838,
         3
       ],
       [
-        2676,
-        32882,
+        2624,
+        32852,
+        1
+      ],
+      [
+        2613,
+        32849,
         0
       ]
     ],
@@ -287,7 +287,7 @@
       0,
       0,
       0,
-      87,
+      91,
       1,
       0,
       0,
@@ -338,8 +338,8 @@
         0,
         0,
         0,
-        2,
-        4,
+        3,
+        3,
         1,
         0,
         0,
@@ -529,14 +529,14 @@
     },
     "player_sprite": 175,
     "npc_sprites": [
-      274,
       270,
-      275,
+      270,
+      282,
+      282,
       274,
-      281,
-      274,
       275,
-      270
+      277,
+      280
     ],
     "quiz": {
       "phase": 0,
@@ -563,8 +563,8 @@
       "rubble_tile": 0
     },
     "mech_skills": [
-      2,
-      4
+      3,
+      3
     ],
     "device": 1,
     "recruitment": 0,
@@ -613,7 +613,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "169732738b24b29d",
+    "state_digest": "1f7b0881f585dc8e",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

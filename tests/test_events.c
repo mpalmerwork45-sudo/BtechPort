@@ -59,5 +59,12 @@ int main(int argc,char **argv)
         } else CHECK(0);
         ++cases;
     }
-    fclose(f);CHECK(cases==155);free(r);printf("PASS: %u event checks, 155 executed-primary sound/encounter cases\n",checks);return 0;
+    fclose(f);CHECK(cases==155);
+    f=fopen("tests/fixtures/combat-visibility-primary.txt","r");CHECK(f);
+    unsigned infantry,centre,visible,positions=0;int dx,dy;
+    while (fscanf(f," V %u %u %d %d %u",&infantry,&centre,&dx,&dy,&visible)==5) {
+        CHECK((unsigned)btp_combat_visible((int)centre+dx,(int)centre+dy,(int)infantry,(int)centre,(int)centre)==visible);++positions;
+    }
+    CHECK(!fclose(f) && positions==2582);
+    free(r);printf("PASS: %u event checks, 155 sound/encounter and %u visibility cases\n",checks,positions);return 0;
 }

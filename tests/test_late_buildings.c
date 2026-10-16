@@ -135,7 +135,7 @@ static unsigned story_branches(const BtpResources *r)
         const unsigned indices[]={14,43,53,54};for (unsigned i=0;i<4;++i) CHECK(s.story_flags[indices[i]]==flags[i]);
         ++cases;
     }
-    CHECK(!fclose(f) && cases==124);return cases;
+    CHECK(!fclose(f) && cases==248);return cases;
 }
 static void theater_pixels(const BtpResources *r)
 {

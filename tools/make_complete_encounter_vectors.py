@@ -18,17 +18,22 @@ from prepare_talk import EXE_SHA, IMAGE_SHA
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--case', type=int, help='Probe one case in ignored work files')
+    parser.add_argument('--towns', action='store_true', help='Additional complete Starport and mixed-party town fights')
     args = parser.parse_args()
     m = OriginalCombat(snapshot=SNAP)
-    rows, details = [], []
+    rows, details, records = [], [], []
     contexts = [(4, seed, rental, difficulty) for seed, rental, difficulty in
                 ((1, 0, 0), (42, 0, 6), (1, 1, 0), (42, 1, 6))]
     contexts += [(3, seed, 0, 0) for seed in (1, 42)]
     contexts += [(1, seed, 0, 0) for seed in (3, 8)]
+    if args.towns:contexts=[(1,seed,0,0) for seed in (4,5,1,42)]
     for case, (kind, seed, rental, difficulty) in enumerate(contexts):
         if args.case is not None and args.case != case:
             continue
         town, x, y, bx, by = (2, 1323, 1111, 1216, 1024) if kind == 4 else (3, 1680, 932, 1664, 896) if kind == 3 else (0, 1263, 1675, 1184, 1600)
+        if args.towns:
+            town,x,y=(2,1320,1110) if case<2 else (4,1180,1434)
+            bx=(x-64)//16*16;by=(y-64)//16*16
         if town:load_town(m, town)
         else:
             # This sector and its combat window contain no town overlay.
@@ -62,9 +67,15 @@ def main():
         elif kind == 3:m.write(m.state+0xd30c, [7])
         else:
             m.write(m.state+0xc724+122, [255]);m.write(m.state+0xc614+3*17+12, [8])
+        if args.towns and town==2:
+            # The port admits only infantry. Use the four actual GAME3
+            # people with their original equipment and no active vehicles.
+            friends=[4,5,6,7]
+            for bay in range(4):
+                m.write(m.state+0xc724+125*bay,[255]);m.write(m.state+0xc614+17*bay+12,[8])
         for u in friends:
             m.word(m.state+0x406a+2*u, 1)
-            place = 4 if u == 7 else u
+            place = u if args.towns and town==2 else 4 if u == 7 else u
             m.word(m.state+0x4004+2*u, px+(m.word(m.ds+0x45c+2*place) if kind == 1 else 0))
             m.word(m.state+0x4036+2*u, py+(m.word(m.ds+0x474+2*place) if kind == 1 else 0))
         span(m, 0x103b, 0xa1, 0x1b8, {6: 1})
@@ -116,20 +127,23 @@ def main():
                 if face == 255:face = m.read(m.state+0x45b6+u, 1)[0]
                 heat = m.read(m.state+(0x6e+u if u < 4 else 0x66+u), 1)[0] if u < 4 or 12 <= u < 16 else 0
                 rows.append(f'U {u} {wx-bx} {wy-by} {face} {heat} {fingerprint(raw):016x}')
+                records.append(dict(case=case,wave=turn+1,id=u,record=list(raw)))
             won = all(m.read(address(m, u), 1)[0] == 255 for u in ids if u >= 12)
             lost = m.read(m.state+0xc614, 1)[0] == 255 or kind == 4 and m.read(m.state+0xc724, 1)[0] == 255 or kind == 1 and m.read(m.state+0xc625, 1)[0] == 255
             if won or lost:
                 rows.append(f'Z {case} {int(won)} {int(lost)}')
                 break
         else:raise RuntimeError(f'Case {case} exceeded 128 complete waves')
-        details.append(dict(case=case,kind=kind,seed=seed,rental=rental,difficulty=difficulty,waves=turn+1,won=won,lost=lost))
+        details.append(dict(case=case,kind=kind,town=town,cursor=[x,y],seed=seed,rental=rental,difficulty=difficulty,waves=turn+1,won=won,lost=lost))
         print(details[-1], flush=True)
-    prefix = ROOT/('work/m4-audit/complete-encounters-probe' if args.case is not None else 'tests/fixtures/complete-encounters-primary')
+    prefix = ROOT/('work/m4-audit/complete-encounters-probe' if args.case is not None else 'tests/fixtures/complete-town-encounters-primary' if args.towns else 'tests/fixtures/complete-encounters-primary')
     prefix.with_suffix('.txt').write_text('\n'.join(rows)+'\n')
+    (ROOT/'work/m4-next').mkdir(parents=True,exist_ok=True)
+    (ROOT/'work/m4-next/complete-records.json').write_text(json.dumps(records)+'\n')
     prefix.with_suffix('.json').write_text(json.dumps(dict(
         executable_sha256=EXE_SHA,image_sha256=IMAGE_SHA,cases=details,
         routines=['07DC:0D49 special opponent setup','05AB:0D68..1462 outdoor placement','103B:00A1..01B8 command/heat setup','103B:1774 actor camera','0E31:03AB AI','12E8:000C complete waves'],
-        prerequisites='GAME3 Jason alone, owned Wasp or rented Locust in arena/prison; three owned mechs and Rick on foot in generated sector D9 at 1263,1675. Original MAP2/MAP3 payloads or generated terrain, declared cursor, seed and arena rank. Original 103B command/heat initialization; inactive coordinates FFFF and unused facing zero. Display/sound off. Arena gate 139, others 85. Harmless rental spectator receives no orders.',
+        prerequisites=('GAME3 four infantry in Starport; three mechs and Rick on foot in MAP4. Actual party equipment and original opponent placement.' if args.towns else 'GAME3 Jason alone, owned Wasp or rented Locust in arena/prison; three owned mechs and Rick on foot in generated sector D9 at 1263,1675.')+' Original town payloads or generated terrain, declared cursor, seed and arena rank. Original 103B command/heat initialization; inactive coordinates FFFF and unused facing zero. Display/sound off. Arena gate 139, others 85. Harmless rental spectator receives no orders.',
         comparison='Every wave RNG, all records, living coordinates/facing/heat, death/ejection and final win/loss',
         no_instruction_patches=True),indent=2)+'\n')
 

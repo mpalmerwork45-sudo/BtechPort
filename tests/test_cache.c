@@ -31,6 +31,39 @@ static unsigned normal(unsigned raw)
 {
     return (raw/64/4*8+raw%64/8)*32+raw/64%4*8+raw%8;
 }
+static void formation_walks(const BtpResources *r,const BtpState *base)
+{
+    FILE *f=fopen("tests/fixtures/cache-follow-primary.txt","r");CHECK(f);
+    const BtpAction directions[]={BTP_UP,BTP_UP_RIGHT,BTP_RIGHT,BTP_DOWN_RIGHT,
+        BTP_DOWN,BTP_DOWN_LEFT,BTP_LEFT,BTP_UP_LEFT};
+    BtpState s=*base;char line[180];unsigned count=0,moves=0;
+    while (fgets(line,sizeof line,f)) {
+        if (line[0]=='C') {
+            unsigned room,x,y;CHECK(sscanf(line+1,"%u %u %u %u",&room,&count,&x,&y)==4);
+            s=*base;s.story_flags[66]=(uint8_t)room;s.gate=(uint8_t)(room ? 139 : 33);
+            s.x_half=(uint16_t)x;s.y_half=(uint16_t)y;
+            memcpy(s.cache.maproom,r->maproom.tiles,768);
+            for (unsigned i=0;i<8;++i) {
+                memcpy(s.party.people[i],base->party.people[0],17);s.party.people[i][0]=(uint8_t)(i<count ? i : 255);
+                s.party.people[i][12]=8;
+            }
+            s.campaign.world_x=0;btp_cache_restore_party(&s,r);
+        } else {
+            unsigned steps,direction,x,y;int used=0;
+            CHECK(sscanf(line,"W %u %u %u %u%n",&steps,&direction,&x,&y,&used)==4 && direction<8);
+            s.menu.steps=(uint8_t)steps;input(&s,r,directions[direction]);
+            CHECK(s.mode==BTP_CACHE && !s.cache.phase && !s.blocked && s.x_half==x && s.y_half==y);
+            const char *p=line+used;
+            for (unsigned i=0;i<count;++i) {
+                CHECK(sscanf(p,"%u %u%n",&x,&y,&used)==2);p+=used;
+                CHECK(s.party.x[i]==1536u+x && s.party.y[i]==1536u+y);
+                CHECK(btp_party_walkable(&s,r,s.party.x[i],s.party.y[i],0));
+            }
+            ++moves;
+        }
+    }
+    CHECK(!fclose(f) && moves==768);
+}
 static void formation_contacts(const BtpResources *r,const BtpState *base)
 {
     FILE *f=fopen("tests/fixtures/cache-movement-primary.txt","r");CHECK(f);
@@ -84,6 +117,7 @@ int main(int argc,char **argv)
     CHECK(base.mode==BTP_CACHE && !base.cache.phase);for (unsigned i=0;i<256 && base.audio.sound_count;++i) input(&base,r,BTP_IDLE);
     CHECK(!base.audio.sound_count);
     formation_contacts(r,&base);
+    formation_walks(r,&base);
     /* GAME1 brings five people. Every foot sprite must contribute visible
        map pixels, and all follower positions must pass cache collision. */
     uint32_t complete[BTP_PIXELS],without[BTP_PIXELS];btp_render(r,&base,0,complete);

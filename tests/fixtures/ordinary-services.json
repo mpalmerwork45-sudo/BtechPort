@@ -2,39 +2,39 @@
   "checkpoints": [
     {
       "label": "parked-in-starport",
-      "tick": 55259
+      "tick": 64818
     },
     {
       "label": "civilian-clothing",
-      "tick": 55346
+      "tick": 64905
     },
     {
       "label": "rex-crest",
-      "tick": 56412
+      "tick": 66204
     },
     {
       "label": "rex-and-commando",
-      "tick": 56513
+      "tick": 66305
     },
     {
       "label": "technician-joined",
-      "tick": 56684
+      "tick": 66504
     },
     {
       "label": "partial-armour-repair",
-      "tick": 56688
+      "tick": 66508
     },
     {
       "label": "ammo-status",
-      "tick": 56692
+      "tick": 66512
     },
     {
       "label": "ammo-purchase-boundary",
-      "tick": 56692
+      "tick": 66512
     },
     {
       "label": "speed-shop-no-funds",
-      "tick": 56704
+      "tick": 66524
     }
   ],
   "final": {
@@ -47,7 +47,7 @@
       34
     ],
     "gate": 85,
-    "tick": 56709,
+    "tick": 66529,
     "blocked": 0,
     "script_pc": 4979,
     "script_status": 3,
@@ -98,19 +98,7 @@
     "conversation_checkpoint": 0,
     "npc_pairs": [
       [
-        81,
-        0
-      ],
-      [
-        70,
-        0
-      ],
-      [
-        53,
-        0
-      ],
-      [
-        53,
+        39,
         0
       ],
       [
@@ -118,7 +106,15 @@
         0
       ],
       [
-        81,
+        99,
+        0
+      ],
+      [
+        99,
+        0
+      ],
+      [
+        18,
         0
       ],
       [
@@ -126,12 +122,16 @@
         0
       ],
       [
-        70,
+        18,
+        0
+      ],
+      [
+        99,
         0
       ]
     ],
     "npc_enabled": 2,
-    "npc_phase": 0,
+    "npc_phase": 2,
     "npc_clock": 0,
     "npc_fault": 0,
     "npc_rng": [
@@ -140,50 +140,50 @@
       108
     ],
     "npc_search": [
-      74,
-      0
+      19,
+      8
     ],
     "npc_loop_timer": 0,
     "npc_allowance_pending": 1,
     "npcs": [
       [
-        2609,
-        32843,
-        2
-      ],
-      [
-        2676,
-        32882,
+        2672,
+        32789,
         0
-      ],
-      [
-        2583,
-        32838,
-        2
-      ],
-      [
-        2578,
-        32836,
-        2
       ],
       [
         2620,
-        32857,
-        0
+        32861,
+        4
       ],
       [
-        2609,
-        32842,
-        2
+        2611,
+        32843,
+        6
       ],
       [
-        2581,
-        32822,
+        2612,
+        32843,
+        7
+      ],
+      [
+        2625,
+        32851,
+        1
+      ],
+      [
+        2596,
+        32837,
         3
       ],
       [
-        2676,
-        32882,
+        2624,
+        32852,
+        1
+      ],
+      [
+        2613,
+        32849,
         0
       ]
     ],
@@ -291,7 +291,7 @@
       0,
       0,
       0,
-      89,
+      95,
       1,
       0,
       0,
@@ -342,8 +342,8 @@
         0,
         0,
         0,
-        2,
-        4,
+        3,
+        3,
         1,
         0,
         0,
@@ -533,14 +533,14 @@
     },
     "player_sprite": 175,
     "npc_sprites": [
-      274,
       270,
-      275,
+      270,
+      282,
+      282,
       274,
-      281,
       274,
-      275,
-      270
+      277,
+      280
     ],
     "quiz": {
       "phase": 0,
@@ -567,8 +567,8 @@
       "rubble_tile": 0
     },
     "mech_skills": [
-      2,
-      4
+      3,
+      3
     ],
     "device": 1,
     "recruitment": 0,
@@ -617,7 +617,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "1964f412bac5db0e",
+    "state_digest": "30b694504ec95742",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

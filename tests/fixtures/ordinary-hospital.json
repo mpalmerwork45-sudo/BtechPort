@@ -2,43 +2,43 @@
   "checkpoints": [
     {
       "label": "funded-by-owner-shortcut",
-      "tick": 56710
+      "tick": 66530
     },
     {
       "label": "garage-crew-allocation",
-      "tick": 56737
+      "tick": 66557
     },
     {
       "label": "garage-checkout",
-      "tick": 56744
+      "tick": 66564
     },
     {
       "label": "walking-with-rex-piloting",
-      "tick": 56790
+      "tick": 66610
     },
     {
       "label": "hospital-menu",
-      "tick": 57165
+      "tick": 67001
     },
     {
       "label": "hospital-companion-pause",
-      "tick": 57250
+      "tick": 67086
     },
     {
       "label": "hospital-companion-joined",
-      "tick": 57252
+      "tick": 67088
     },
     {
       "label": "medical-kit",
-      "tick": 57259
+      "tick": 67095
     },
     {
       "label": "field-surgery-kit",
-      "tick": 57263
+      "tick": 67099
     },
     {
       "label": "hospital-exit",
-      "tick": 57265
+      "tick": 67101
     }
   ],
   "final": {
@@ -51,7 +51,7 @@
       15
     ],
     "gate": 85,
-    "tick": 57265,
+    "tick": 67101,
     "blocked": 0,
     "script_pc": 4577,
     "script_status": 3,
@@ -122,7 +122,19 @@
     "conversation_checkpoint": 0,
     "npc_pairs": [
       [
-        81,
+        99,
+        0
+      ],
+      [
+        39,
+        0
+      ],
+      [
+        39,
+        0
+      ],
+      [
+        99,
         0
       ],
       [
@@ -130,27 +142,15 @@
         0
       ],
       [
-        81,
-        0
-      ],
-      [
-        4,
-        0
-      ],
-      [
-        81,
-        0
-      ],
-      [
-        81,
-        0
-      ],
-      [
-        64,
+        53,
         0
       ],
       [
         112,
+        0
+      ],
+      [
+        99,
         0
       ]
     ],
@@ -164,51 +164,51 @@
       119
     ],
     "npc_search": [
-      96,
+      67,
       0
     ],
     "npc_loop_timer": 0,
     "npc_allowance_pending": 0,
     "npcs": [
       [
-        2306,
+        2352,
+        45106,
+        0
+      ],
+      [
+        2338,
+        45085,
+        2
+      ],
+      [
+        2336,
+        45093,
+        4
+      ],
+      [
+        2352,
+        45106,
+        0
+      ],
+      [
+        2308,
         45092,
-        0
+        2
       ],
       [
-        2306,
+        2318,
         45092,
-        0
-      ],
-      [
-        2306,
-        45092,
-        0
-      ],
-      [
-        2316,
-        45066,
-        0
-      ],
-      [
-        2306,
-        45092,
-        0
-      ],
-      [
-        2306,
-        45092,
-        0
-      ],
-      [
-        2332,
-        45072,
         6
       ],
       [
-        2363,
+        2354,
         45084,
         6
+      ],
+      [
+        2352,
+        45106,
+        0
       ]
     ],
     "credits": 9440,
@@ -315,7 +315,7 @@
       0,
       0,
       0,
-      237,
+      177,
       0,
       0,
       0,
@@ -366,8 +366,8 @@
         0,
         0,
         0,
-        2,
-        4,
+        3,
+        3,
         1,
         0,
         0,
@@ -558,13 +558,13 @@
     "player_sprite": 167,
     "npc_sprites": [
       270,
+      274,
+      273,
       270,
-      270,
-      270,
-      270,
-      270,
+      275,
       283,
-      283
+      284,
+      270
     ],
     "quiz": {
       "phase": 0,
@@ -591,8 +591,8 @@
       "rubble_tile": 0
     },
     "mech_skills": [
-      2,
-      4
+      3,
+      3
     ],
     "device": 1,
     "recruitment": 0,
@@ -641,7 +641,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "830d7a5bad948d74",
+    "state_digest": "a60c2e4c4fe89dd2",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

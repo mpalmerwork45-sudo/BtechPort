@@ -3,6 +3,7 @@
 /UnBattletech/
 # Local tools, generated assets, experiments, and screenshots.
 /build/
+/build-windows/
 /work/
 /local-deps/
 __pycache__/

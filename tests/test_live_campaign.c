@@ -133,6 +133,8 @@ int main(int argc,char **argv)
             if (hash(u->record,u->infantry ? 17u : 125u)!=expected || (u->record[0]!=255 && (u->x!=x || u->y!=y || u->direction!=face || u->heat!=heat))) {
                 fprintf(stderr,"Live case=%u wave=%u id=%u pos=%u,%u/%d,%d face=%u/%u heat=%u/%u record=%016" PRIx64 "/%016" PRIx64 "\n",
                     current,s.combat.round,id,u->x,u->y,x,y,u->direction,face,u->heat,heat,hash(u->record,u->infantry ? 17u : 125u),expected);++failures;
+                FILE *dump=fopen("work/live-record-difference.bin","wb");
+                if (dump) { (void)fwrite(u->record,1,u->infantry ? 17u : 125u,dump);(void)fclose(dump); }
             }
         } else if (line[0]=='Z') {
             unsigned won,lost;CHECK(sscanf(line+1,"%u %u %u",&current,&won,&lost)==3);

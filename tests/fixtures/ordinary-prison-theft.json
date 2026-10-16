@@ -2,43 +2,43 @@
   "checkpoints": [
     {
       "label": "jail-theft-choice",
-      "tick": 57972
+      "tick": 67856
     },
     {
       "label": "impound-yard-start",
-      "tick": 58026
+      "tick": 67910
     },
     {
       "label": "boarding-mech-1",
-      "tick": 58039
+      "tick": 67923
     },
     {
       "label": "mech-1-activation-result",
-      "tick": 58089
+      "tick": 67973
     },
     {
       "label": "boarding-mech-2",
-      "tick": 58094
+      "tick": 67978
     },
     {
       "label": "mech-2-activation-result",
-      "tick": 58144
+      "tick": 68028
     },
     {
       "label": "boarding-mech-3",
-      "tick": 58149
+      "tick": 68033
     },
     {
       "label": "mech-3-activation-result",
-      "tick": 58243
+      "tick": 68127
     },
     {
       "label": "prison-crew-allocation",
-      "tick": 58245
+      "tick": 68129
     },
     {
       "label": "stinger-stolen",
-      "tick": 58266
+      "tick": 68150
     }
   ],
   "final": {
@@ -51,7 +51,7 @@
       10
     ],
     "gate": 85,
-    "tick": 58266,
+    "tick": 68150,
     "blocked": 0,
     "script_pc": 2012,
     "script_status": 3,
@@ -102,36 +102,36 @@
     "conversation_checkpoint": 0,
     "npc_pairs": [
       [
-        99,
-        1
-      ],
-      [
-        18,
-        1
-      ],
-      [
         81,
-        1
-      ],
-      [
-        70,
-        1
-      ],
-      [
-        99,
-        1
+        0
       ],
       [
         53,
-        1
+        0
       ],
       [
-        70,
-        1
+        39,
+        0
+      ],
+      [
+        112,
+        0
+      ],
+      [
+        112,
+        0
+      ],
+      [
+        99,
+        0
       ],
       [
         4,
-        1
+        0
+      ],
+      [
+        112,
+        0
       ]
     ],
     "npc_enabled": 2,
@@ -151,43 +151,43 @@
     "npc_allowance_pending": 0,
     "npcs": [
       [
-        0,
-        0,
+        3332,
+        28701,
         0
       ],
       [
-        0,
-        0,
+        3360,
+        28680,
         0
       ],
       [
-        0,
-        0,
+        3358,
+        28692,
         0
       ],
       [
-        0,
-        0,
+        3342,
+        28701,
         0
       ],
       [
-        0,
-        0,
+        3342,
+        28701,
         0
       ],
       [
-        0,
-        0,
+        3342,
+        28701,
         0
       ],
       [
-        0,
-        0,
+        3382,
+        28728,
         0
       ],
       [
-        0,
-        0,
+        3342,
+        28701,
         0
       ]
     ],
@@ -295,7 +295,7 @@
       0,
       0,
       0,
-      104,
+      154,
       0,
       0,
       0,
@@ -346,8 +346,8 @@
         0,
         0,
         0,
-        2,
-        4,
+        3,
+        3,
         1,
         0,
         0,
@@ -571,8 +571,8 @@
       "rubble_tile": 0
     },
     "mech_skills": [
-      2,
-      4
+      3,
+      3
     ],
     "device": 1,
     "recruitment": 0,
@@ -621,7 +621,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "34d3532c72149206",
+    "state_digest": "4c10ee6cc5ef3099",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

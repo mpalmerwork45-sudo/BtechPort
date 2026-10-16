@@ -579,7 +579,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "07bd8ee94ebb8a7d",
+        "state_digest": "0d597143d388e8b1",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1498,7 +1498,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "280da02d488badf9",
+        "state_digest": "b4631d4453438685",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1960,9 +1960,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          206,
-          142,
-          2
+          12,
+          98,
+          198
         ],
         "npc_search": [
           100,
@@ -2116,7 +2116,7 @@
           0,
           0,
           0,
-          244,
+          202,
           1,
           1,
           0,
@@ -2134,7 +2134,7 @@
           1,
           0,
           0,
-          9,
+          0,
           1,
           0,
           1,
@@ -2442,7 +2442,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "a2d247d4628b1fc6",
+        "state_digest": "0149fd10b455fb21",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -2896,9 +2896,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          206,
-          142,
-          2
+          12,
+          98,
+          198
         ],
         "npc_search": [
           100,
@@ -3052,7 +3052,7 @@
           0,
           0,
           0,
-          244,
+          202,
           1,
           1,
           0,
@@ -3378,7 +3378,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "9da97f22d4b0bc84",
+        "state_digest": "cbc63e2ed0c843d8",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -3840,9 +3840,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          243,
-          56,
-          11
+          131,
+          139,
+          25
         ],
         "npc_search": [
           100,
@@ -3996,7 +3996,7 @@
           0,
           0,
           0,
-          244,
+          202,
           1,
           1,
           5,
@@ -4322,7 +4322,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "9b192b1b17eb6eab",
+        "state_digest": "2f192e21122beccc",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -4784,9 +4784,9 @@
         "npc_clock": 0,
         "npc_fault": 0,
         "npc_rng": [
-          243,
-          56,
-          11
+          131,
+          139,
+          25
         ],
         "npc_search": [
           100,
@@ -4940,7 +4940,7 @@
           0,
           0,
           0,
-          244,
+          202,
           1,
           1,
           5,
@@ -5266,7 +5266,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "ca163a19c4133a75",
+        "state_digest": "c98b13b2259ab2be",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -5726,9 +5726,9 @@
     "npc_clock": 0,
     "npc_fault": 0,
     "npc_rng": [
-      243,
-      56,
-      11
+      131,
+      139,
+      25
     ],
     "npc_search": [
       100,
@@ -5882,7 +5882,7 @@
       0,
       0,
       0,
-      244,
+      202,
       1,
       1,
       5,
@@ -6208,7 +6208,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "ca163a19c4133a75",
+    "state_digest": "c98b13b2259ab2be",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

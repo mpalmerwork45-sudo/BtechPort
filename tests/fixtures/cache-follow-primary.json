@@ -1,0 +1,13 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "inputs": 768,
+  "contexts": 6,
+  "routines": [
+    "0000:218F movement",
+    "0000:051B complete formation",
+    "187F:1314/1DF8 viewport"
+  ],
+  "prerequisites": "Cache-entry RAM, original MAP14/MAP15 payloads, 1/5/8 people on foot, no active mechs, 1/2/4 step settings (MAP15 uses one). Continuous legal routes; interactions excluded. D55C suppresses entry questions.",
+  "comparison": "Cursor and every compact member position after each input; no state reset between steps, no instruction edits. Does not establish recovery paths from malformed legacy formations."
+}

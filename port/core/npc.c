@@ -62,7 +62,7 @@ void btp_npc_init(BtpState *s, const BtpMap *m)
 int btp_npc_valid(const BtpState *s, const BtpMap *m)
 {
     const BtpNpcState *n = &s->npc;
-    if (n->enabled > 2 || n->phase > 2 || n->clock >= BTP_NPC_FRAME_TICKS ||
+    if (n->enabled > 2 || n->phase > 2 || n->clock >= BTP_OUTDOOR_PERIOD ||
         (n->bias != 0 && n->bias != 8) || n->fault > BTP_NPC_BAD_CONTEXT || n->allowance_pending > 1) return 0;
     if (!n->enabled) {
         if (n->phase || n->clock || n->bias || n->search || n->fault || n->loop_timer || n->allowance_pending ||
@@ -189,11 +189,22 @@ void btp_npc_frame(BtpState *s,const BtpMap *m)
     s->npc.allowance_pending=(uint8_t)btp_economy_below_cap(s);
     btp_npc_advance(s,m);
 }
-void btp_npc_tick(BtpState *s, const BtpMap *m)
+int btp_outdoor_due(uint16_t *clock, BtpAction action)
+{
+    /* 0000:01F4 waits one retrace and tests a countdown initially set to
+       ten at 044A. 002D's keyboard path bypasses that wait altogether. */
+    if (action!=BTP_IDLE) { *clock=0;return 1; }
+    *clock=(uint16_t)(*clock+BTP_OUTDOOR_TICK);
+    if (*clock<BTP_OUTDOOR_PERIOD) return 0;
+    *clock=(uint16_t)(*clock-BTP_OUTDOOR_PERIOD);return 1;
+}
+void btp_npc_input(BtpState *s, const BtpMap *m, BtpAction action)
 {
     btp_npc_init(s,m);
     if (!s->npc.enabled || s->npc.fault) return;
-    if (++s->npc.clock == BTP_NPC_FRAME_TICKS) {
-        s->npc.clock = 0; btp_npc_frame(s,m);
-    }
+    if (btp_outdoor_due(&s->npc.clock,action)) btp_npc_frame(s,m);
+}
+void btp_npc_tick(BtpState *s, const BtpMap *m)
+{
+    btp_npc_input(s,m,BTP_IDLE);
 }

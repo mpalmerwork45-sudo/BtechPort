@@ -1,0 +1,8 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "cases": 2582,
+  "routine": "0000:0E4B writes state:42F6 visibility flags",
+  "prerequisites": "One active GAME3 mech or infantry at declared offsets; cursor half-tile 64/0/127, crossing sector boundaries using normal packed coordinates.",
+  "comparison": "Exact unit visibility controlling sprite admission and beam sound; original instructions unchanged. Does not claim complete battlefield pixel parity."
+}

@@ -5,6 +5,12 @@
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
+#ifdef _WIN32
+#include <windows.h>
+#include <fcntl.h>
+#include <io.h>
+#include <sys/stat.h>
+#endif
 
 enum { HEADER_BYTES = 16 };
 static int fail(BtpError *e, const char *message)
@@ -58,13 +64,30 @@ int btp_save_write(const char *path, const BtpState *s, const BtpResources *r, B
     char pending[4096];
     int n = snprintf(pending,sizeof pending,"%s.tmp",path);
     if (n < 0 || (size_t)n >= sizeof pending) return fail(e,"Save path is too long");
-    /* C11 exclusive creation avoids overwriting an unrelated pending file. */
+    /* MSVCRT ignores C11's x modifier. Use its exclusive-create descriptor
+       API so an existing pending file is preserved on Windows too. */
+#ifdef _WIN32
+    int fd=_open(pending,_O_WRONLY|_O_CREAT|_O_EXCL|_O_BINARY,_S_IREAD|_S_IWRITE);
+    FILE *f=fd<0 ? NULL : _fdopen(fd,"wb");
+    if (fd>=0 && !f) { int saved_errno=errno;(void)_close(fd);(void)remove(pending);errno=saved_errno; }
+#else
     FILE *f = fopen(pending,"wbx");
+#endif
     if (!f) return io_fail(e,"Cannot create pending save");
     int ok = fwrite(bytes,1,sizeof bytes,f) == sizeof bytes;
     if (fclose(f)) ok = 0;
     if (!ok) { io_fail(e,"Cannot write save"); (void)remove(pending); return 0; }
+    /* Windows rename cannot replace an existing slot. MoveFileEx performs
+       the same-directory replacement without deleting the old save first. */
+#ifdef _WIN32
+    if (!MoveFileExA(pending,path,MOVEFILE_REPLACE_EXISTING|MOVEFILE_WRITE_THROUGH)) {
+        DWORD code=GetLastError();
+        if (e) snprintf(e->text,sizeof e->text,"Cannot replace save: Windows error %lu",(unsigned long)code);
+        (void)remove(pending);return 0;
+    }
+#else
     if (rename(pending,path)) { io_fail(e,"Cannot replace save"); (void)remove(pending); return 0; }
+#endif
     if (e) e->text[0] = 0;
     return 1;
 }

@@ -504,7 +504,7 @@ static void begin_round(BtpState *s, const BtpResources *r, int enemy_ai)
     memset(c->moved,0,sizeof c->moved);memset(c->path_index,0,sizeof c->path_index);
     memset(c->enemy_fired,0,sizeof c->enemy_fired);
     c->fired=0;c->step=0;c->delay=0;c->last_event=0;c->flash=0;c->phase=BTP_COMBAT_ROUND;
-    s->effects.shown=(BtpBattleText){0};
+    btp_effects_begin_round(s);
     ++c->round;
 }
 unsigned btp_combat_walk_frame(unsigned frame,unsigned previous,unsigned direction,int infantry)
@@ -645,7 +645,7 @@ static void round_tick(BtpState *s, const BtpResources *r, int enemy_ai)
             if (s->party.enabled && !attacker->infantry && attacker->record[121]<8)
                 skill=s->party.people[attacker->record[121]][i==11 ? 8 : 7];
             c->shot=btp_combat_attack_unit(attacker,enemy,&r->combat,i,movement==255 ? -1 : movement,c->moved[target],
-                skill,btp_combat_id(c,actor),s->npc.rng);
+                skill,btp_combat_id(c,actor),s->explored,s->npc.rng);
             if (ignition && !c->shot.hit) btp_combat_ignite(s,enemy);
             c->last_attacker=(uint8_t)actor;c->last_target=(uint8_t)target;
             c->last_weapon=(uint8_t)i;c->last_event=(uint8_t)(c->shot.hit ? 1 : 2);

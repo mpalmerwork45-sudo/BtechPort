@@ -368,6 +368,9 @@ static void combat_flash(const BtpResources *r, const BtpState *s, int cx, int c
     const BtpCombatState *c=&s->combat;
     if (!c->graphics || !s->effects.count || s->effects.stage<BTP_EFFECT_ATTACK || c->phase!=BTP_COMBAT_ROUND) return;
     const BtpCombatEffect *e=&s->effects.shots[0];unsigned frame=s->effects.age/2u;
+    int actor_visible=btp_combat_visible(e->x,e->y,e->base==254,cx,cy);
+    int target_visible=btp_combat_visible(e->tx,e->ty,e->target_base==254,cx,cy);
+    if (!actor_visible && !target_visible) return;
     const uint8_t *pose=r->combat.poses[e->group][e->direction];unsigned count=pose[0];
     /* 0000:0E4B gives people an 8x8 anchor at (208,96), and vehicles
        a 24x24 anchor at (200,80). Firing/reaction poses use the same origin
@@ -377,11 +380,11 @@ static void combat_flash(const BtpResources *r, const BtpState *s, int cx, int c
     int tx=(e->target_base==254 ? 208 : 200)+((int)e->tx-cx)*8;
     int ty=(e->target_base==254 ? 96 : 80)+((int)e->ty-cy)*8;
     if (frame<count) {
-        (void)btp_draw_sprite(&r->sprites,e->base+pose[1+frame],x,y,0,104,f);
+        if (actor_visible) (void)btp_draw_sprite(&r->sprites,e->base+pose[1+frame],x,y,0,104,f);
         /* DS:2E3C is the personal hit program. Adding it to the 146-frame
            mech family selects Jason's human sprites (178..181). Mechs keep
            their current pose under the separately drawn impact. */
-        if (e->hit && c->unit[e->target].infantry) (void)btp_draw_sprite(&r->sprites,e->target_base+r->combat.reaction[frame&3u],tx,ty,0,104,f);
+        if (target_visible && e->hit && c->unit[e->target].infantry) (void)btp_draw_sprite(&r->sprites,e->target_base+r->combat.reaction[frame&3u],tx,ty,0,104,f);
         /* The original poses, projectile artwork and impact order are data
            driven. Beam interpolation and native cadence remain approximate. */
         if (e->weapon!=32 && frame+1==count) {
@@ -397,7 +400,7 @@ static void combat_flash(const BtpResources *r, const BtpState *s, int cx, int c
                     (ax+bx)/2,(ay+by)/2,0,104,f);
             }
         }
-    } else if (e->hit && e->weapon>=7 && frame<count+3) {
+    } else if (target_visible && e->hit && e->weapon>=7 && frame<count+3) {
         (void)btp_draw_sprite(&r->sprites,250u+r->combat.impact[frame-count],tx+4,ty+6,0,104,f);
     }
 }
@@ -889,6 +892,17 @@ static void combat_report_panel(const BtpResources *r,const BtpState *s,uint32_t
        Mech retirement/ejection text is composed before its wreck animation. */
     if (s->effects.count && s->effects.shots[0].target_base==254) report.dead=0;
     const BtpBattleText *t=&report;
+    if (!s->combat.messages && s->effects.quiet.active) {
+        const BtpQuietReport *q=&s->effects.quiet;uint8_t message[1024];size_t n;
+        char model[16];memcpy(model,q->mech,15);model[15]=0;
+        n=(size_t)snprintf((char *)message,sizeof message,q->mech[0] ? "%s's\r%s" : "%s",
+            btp_character_name(q->name),model);
+        unsigned count=q->ejections+(unsigned)(s->effects.count && t->active && t->dead && t->target<4);
+        if (count) message[n++]=2; /* Original retirement's green text. */
+        for (unsigned i=0;i<count;++i) service_literal(r,message,&n,371);
+        rectangle(f,8,8,88,88,0);
+        (void)text_wrap_bounds(r,f,8,message,n,NULL,8,88,8,11,15);return;
+    }
     uint8_t message[1024];size_t n=btp_battle_text(r,t,s->combat.messages,message);
     if (!n) return;
     /* Original window 4 is the 11-by-11 text area at (8,8), above the
@@ -1511,6 +1525,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
             const BtpCombatUnit *u=&s->combat.unit[i];unsigned terrain;
             const BtpCombatEffect *death=btp_effects_pending_death(s,i);
             if (u->record[0]==255 && !death) continue;
+            if (!btp_combat_visible(death ? death->tx : u->x,death ? death->ty : u->y,u->infantry,cx,cy)) continue;
             /* Original ejection follows the mech destruction presentation.
                Suppress its newly activated crew while that mech is pending. */
             int crew_pending=0;

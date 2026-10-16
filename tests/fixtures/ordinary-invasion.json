@@ -2,19 +2,19 @@
   "checkpoints": [
     {
       "label": "invasion-start",
-      "tick": 52921
+      "tick": 62320
     },
     {
       "label": "jenner-escape-denied",
-      "tick": 52934
+      "tick": 62333
     },
     {
       "label": "invasion-result",
-      "tick": 54769
+      "tick": 64168
     },
     {
       "label": "destroyed-citadel",
-      "tick": 54773
+      "tick": 64172
     }
   ],
   "final": {
@@ -27,7 +27,7 @@
       781
     ],
     "gate": 85,
-    "tick": 54773,
+    "tick": 64172,
     "blocked": 0,
     "script_pc": 0,
     "script_status": 0,
@@ -93,7 +93,7 @@
         0
       ],
       [
-        70,
+        4,
         0
       ],
       [
@@ -110,9 +110,9 @@
     "npc_clock": 0,
     "npc_fault": 0,
     "npc_rng": [
-      126,
-      114,
-      106
+      112,
+      14,
+      38
     ],
     "npc_search": [
       0,
@@ -317,8 +317,8 @@
         0,
         0,
         0,
-        2,
-        4,
+        3,
+        3,
         1,
         0,
         0,
@@ -509,13 +509,13 @@
     "player_sprite": 175,
     "npc_sprites": [
       270,
-      279,
-      285,
-      277,
+      278,
+      282,
+      284,
       275,
-      281,
-      281,
-      281
+      276,
+      280,
+      274
     ],
     "quiz": {
       "phase": 0,
@@ -542,8 +542,8 @@
       "rubble_tile": 0
     },
     "mech_skills": [
-      2,
-      4
+      3,
+      3
     ],
     "device": 1,
     "recruitment": 0,
@@ -592,7 +592,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "db9b26f12a854d29",
+    "state_digest": "f995aae0d3ccf656",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

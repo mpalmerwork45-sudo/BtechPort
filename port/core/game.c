@@ -303,7 +303,7 @@ static void game_tick(BtpState *s, const BtpResources *r, BtpAction a)
         }
         if (moved.mode!=BTP_EXPLORE || moved.blocked) break;
         }
-        if (s->story_flags[4] && steps>1 && moved.mode==BTP_EXPLORE) btp_world_clock(&moved,r);
+        if (s->story_flags[4] && steps>1 && moved.mode==BTP_EXPLORE) btp_world_clock(&moved,r,a);
         if (btp_action_moves(a)) {
             if (moved.campaign.mounted) moved.campaign.mech_walk=(uint8_t)btp_combat_walk_frame(s->campaign.mech_walk,s->campaign.mech_direction,btp_player_direction((unsigned)a),0);
             moved.player_walk=btp_walk_next(s->player_walk,btp_player_direction(s->facing),btp_player_direction((unsigned)a));
@@ -322,7 +322,7 @@ static void game_tick(BtpState *s, const BtpResources *r, BtpAction a)
             }
         }
         *s = moved;btp_world_reveal(s);
-        if (s->mode == BTP_EXPLORE && !s->story_flags[4]) btp_npc_tick(s,&r->map);
+        if (s->mode == BTP_EXPLORE && !s->story_flags[4]) btp_npc_input(s,&r->map,a);
         return;
     }
     ++s->tick;
@@ -570,7 +570,7 @@ static uint16_t get16(const uint8_t *p) { return (uint16_t)(p[0] | (uint16_t)p[1
 void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
 {
     memset(b, 0, BTP_STATE_BYTES);
-    memcpy(b, "BTPd", 4); b[4] = 39;
+    memcpy(b, "BTPe", 4); b[4] = 40;
     for (unsigned i = 0; i < 4; ++i) b[8+i] = (uint8_t)(s->tick >> (8 * i));
     b[12] = (uint8_t)s->x_half; b[13] = (uint8_t)(s->x_half >> 8);
     b[14] = (uint8_t)s->y_half; b[15] = (uint8_t)(s->y_half >> 8);
@@ -593,7 +593,7 @@ void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
     memcpy(b+128,s->npc_pairs,16);
     b[144] = s->talk.room; b[145] = s->talk.actor; b[146] = s->talk_result; b[147] = s->recruitment;
     b[148] = s->checkpoint_talk_result; b[149] = s->conversation_checkpoint;
-    b[150] = s->npc.enabled; b[151] = s->npc.phase; b[152] = s->npc.clock;
+    b[150] = s->npc.enabled; b[151] = s->npc.phase;
     memcpy(b+153,s->npc.rng,3); put16(b+156,s->npc.search);
     b[158] = s->npc.bias; b[159] = s->npc.fault;
     for (unsigned i = 0; i < 8; ++i) {
@@ -659,7 +659,7 @@ void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
     memcpy(b+2527,s->campaign.checkpoint_mech,125);
     put16(b+2652,s->campaign.world_x);put16(b+2654,s->campaign.world_y);
     b[2656]=s->story_flags[36];b[2657]=s->story_checkpoint[36];
-    b[2658]=s->campaign.building;b[2659]=s->campaign.world_clock;
+    b[2658]=s->campaign.building;
     b[2660]=s->campaign.encounter_mask;b[2661]=s->campaign.encounter;
     b[2662]=s->campaign.mounted;b[2663]=s->campaign.mech_walk;b[2664]=s->campaign.mech_direction;
     b[2665]=s->campaign.ui;b[2666]=s->campaign.selected;b[2667]=s->campaign.member;
@@ -702,6 +702,10 @@ void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
         const BtpBattleText *t=i<24 ? &s->effects.text[i] : &s->effects.shown;
         memcpy(b+15735+10*i,t,10);b[15985+i]=t->dead;
     }
+    /* v40 retains the fractional retrace phase; the old byte clocks are
+       reserved rather than silently truncating a partial idle interval. */
+    put16(b+16010,s->npc.clock);put16(b+16012,s->campaign.world_clock);
+    memcpy(b+16014,&s->effects.quiet,sizeof s->effects.quiet);
     b[18434]=s->effects.stage;memcpy(b+18435,s->effects.outtakes,sizeof s->effects.outtakes);
     memcpy(b+18483,&s->cache,sizeof s->cache);
     memcpy(b+19292,&s->late,sizeof s->late);
@@ -754,7 +758,8 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         n == BTP_STATE_BYTES && !memcmp(b,"BTPa",4) && b[4]==36 ? 36 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPb",4) && b[4]==37 ? 37 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPc",4) && b[4]==38 ? 38 :
-        n == BTP_STATE_BYTES && !memcmp(b,"BTPd",4) && b[4]==39 ? 39 : 0;
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPd",4) && b[4]==39 ? 39 :
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPe",4) && b[4]==40 ? 40 : 0;
     if (!version) return 0;
     if (version>=18 && version<38 && b[10232]) return 0; /* v38 critical report count. */
     if (version>=18 && version<35 && b[10233]) return 0; /* v35 weapon-window presentation bits. */
@@ -797,7 +802,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
     if (result.spy_discovered>1) return 0;
     if (version>=25) {
         memcpy(result.explored,b+16384,sizeof result.explored);
-        for (unsigned i=version>=39 ? 16010u : version>=38 ? 15985u : version>=37 ? 15735u : 15702u;i<16384;++i) if (b[i]) return 0;
+        for (unsigned i=version>=40 ? 16032u : version>=39 ? 16010u : version>=38 ? 15985u : version>=37 ? 15735u : 15702u;i<16384;++i) if (b[i]) return 0;
     }
     if (version>=22) {
         memcpy(result.audio.sounds+24,b+15414,24);memcpy(result.effects.shots+7,b+15438,17*sizeof result.effects.shots[0]);
@@ -819,6 +824,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
             memcpy(t,b+15735+10*i,10);if (version>=39) t->dead=b[15985+i];
         }
     }
+    if (version>=40) memcpy(&result.effects.quiet,b+16014,sizeof result.effects.quiet);
     if (version>=26) { result.effects.stage=b[18434];memcpy(result.effects.outtakes,b+18435,sizeof result.effects.outtakes); }
     if (version>=18) {
         memcpy(result.story_flags,b+2684,64);memcpy(result.story_checkpoint,b+2748,64);
@@ -859,14 +865,16 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         memcpy(result.campaign.checkpoint_mech,b+2527,125);
         result.campaign.world_x=get16(b+2652);result.campaign.world_y=get16(b+2654);
         result.story_flags[36]=b[2656];result.story_checkpoint[36]=b[2657];
-        result.campaign.building=b[2658];result.campaign.world_clock=b[2659];
+        result.campaign.building=b[2658];
+        if (b[2659]>=(version>=40 ? 1u : 4u)) return 0;
+        result.campaign.world_clock=version>=40 ? get16(b+16012) : (uint16_t)(b[2659]*BTP_OUTDOOR_TICK);
         result.campaign.encounter_mask=b[2660];result.campaign.encounter=b[2661];
         result.campaign.mounted=b[2662];result.campaign.mech_walk=b[2663];result.campaign.mech_direction=b[2664];
         result.campaign.ui=b[2665];result.campaign.selected=b[2666];result.campaign.member=b[2667];
         result.campaign.mech_x=get16(b+2668);result.campaign.mech_y=get16(b+2670);
         if (result.campaign.invasion>1 || result.campaign.owned>1 || result.campaign.checkpoint_owned>1 ||
             result.campaign.world_x>2047 || result.campaign.world_y>2047 || result.campaign.building>=26 ||
-            result.campaign.world_clock>=4 || result.campaign.encounter>(version>=29 ? 4u : 2u) || result.campaign.mounted>result.campaign.owned ||
+            result.campaign.world_clock>=BTP_OUTDOOR_PERIOD || result.campaign.encounter>(version>=29 ? 4u : 2u) || result.campaign.mounted>result.campaign.owned ||
             result.campaign.mech_walk>15 || result.campaign.mech_direction>7 || result.campaign.ui>(version>=30 ? BTP_MENU_MECH_PICK : version>=25 ? BTP_MENU_MECH : version>=23 ? BTP_MENU_RECIPIENT : version>=19 ? BTP_MENU_QUIT : 6) ||
             result.campaign.selected>(version>=23 ? 8u : 7u) || result.campaign.member>7 || result.campaign.mech_x>2047 || result.campaign.mech_y>2047) return 0;
     }
@@ -937,7 +945,11 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
                 result.talk_result = b[146]; result.recruitment = b[147];
                 result.checkpoint_talk_result = b[148]; result.conversation_checkpoint = b[149];
                 if (version >= 5) {
-                    result.npc.enabled = b[150]; result.npc.phase = b[151]; result.npc.clock = b[152];
+                    result.npc.enabled = b[150]; result.npc.phase = b[151];
+                    if (b[152]>=(version>=40 ? 1u : 4u)) return 0;
+                    /* Legacy clocks counted elapsed 32 ms ticks. Migrate
+                       that elapsed time without consuming RNG or timers. */
+                    result.npc.clock=version>=40 ? get16(b+16010) : (uint16_t)(b[152]*BTP_OUTDOOR_TICK);
                     memcpy(result.npc.rng,b+153,3); result.npc.search = get16(b+156);
                     result.npc.bias = b[158]; result.npc.fault = b[159];
                     result.npc.loop_timer = b[200];

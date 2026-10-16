@@ -37,9 +37,9 @@ def main():
     handle=m.cpu.hook_add(UC_HOOK_CODE,hook)
     for kind,name in ((21,'HUT'),(14,'MAYOR'),(16,'THEATER')):
         script=decrypt((ROOT/f'Original DOS/{name}.BLD').read_bytes());seen[kind]=set()
-        if kind==21:cases=itertools.product((1,5),(20,),range(2),(0,3,4),(0,3,4),(80,),(0,),(1,))
-        elif kind==14:cases=itertools.product((1,5),(20,),range(2),(0,),(0,),(0,1,5,6,76,80),range(3),(1,))
-        else:cases=itertools.product((1,5),(0,4,5,6),(0,),(0,),(0,),(80,),(0,),range(2))
+        if kind==21:cases=itertools.product((1,4,5,8),(20,),range(2),(0,3,4),(0,3,4),(80,),(0,),(1,))
+        elif kind==14:cases=itertools.product((1,4,5,8),(20,),range(2),(0,),(0,),(0,1,5,6,76,80),range(3),(1,))
+        else:cases=itertools.product((1,4,5,8),(0,4,5,6),(0,),(0,),(0,),(80,),(0,),range(2))
         for count,cash,repeat,tech,medic,health,choice,yes in cases:
             m.reset();visits=0;waits.clear();menus.clear();events.clear();m.write(m.state+0xa0,script)
             flags=bytearray(80);flags[4]=1;flags[43 if kind==14 else 53]=repeat
@@ -54,7 +54,7 @@ def main():
     (ROOT/'tests/fixtures/story-branches-primary.txt').write_text('\n'.join(rows)+'\n')
     (ROOT/'tests/fixtures/story-branches-primary.json').write_text(json.dumps(dict(executable_sha256=EXE_SHA,image_sha256=IMAGE_SHA,cases=len(rows),
         routine='07DC:01C0 complete original BLD VM with native party-count, meal and theater-exit actions',
-        prerequisites='HUT rank 0/3/4 technician/medic combinations and repeat visits; MAYOR solo/group, three activities, repeats and six health boundaries; THEATER refusal and 0/4/5/6-credit boundaries. Explicit one/five-person parties.',
+        prerequisites='HUT rank 0/3/4 technician/medic combinations and repeat visits; MAYOR solo/group, three activities, repeats and six health boundaries; THEATER refusal and 0/4/5/6-credit boundaries. Explicit one/four/five/eight-person parties, including the HUT party-size boundary and the last occupied skill slot.',
         comparison='Cash, branch flags, complete party records, ordered menu choices, held-page PCs and requested animation/sound sequence. Presentation calls are boundaries, not pixel/timing evidence.',
         executed_nodes={str(k):sorted(v) for k,v in seen.items()},intercepted_boundaries=sorted(f'{s:04X}:{o:04X}' for s,o in boundaries),no_instruction_patches=True),indent=2)+'\n')
     print('Original complete story branch cases:',len(rows))

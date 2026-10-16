@@ -2,59 +2,59 @@
   "checkpoints": [
     {
       "label": "funded-by-owner-shortcut",
-      "tick": 56710
+      "tick": 66530
     },
     {
       "label": "garage-crew-allocation",
-      "tick": 56737
+      "tick": 66557
     },
     {
       "label": "garage-checkout",
-      "tick": 56744
+      "tick": 66564
     },
     {
       "label": "walking-with-rex-piloting",
-      "tick": 56790
+      "tick": 66610
     },
     {
       "label": "hospital-menu",
-      "tick": 57165
+      "tick": 67001
     },
     {
       "label": "hospital-companion-pause",
-      "tick": 57250
+      "tick": 67086
     },
     {
       "label": "hospital-companion-joined",
-      "tick": 57252
+      "tick": 67088
     },
     {
       "label": "medical-kit",
-      "tick": 57259
+      "tick": 67095
     },
     {
       "label": "field-surgery-kit",
-      "tick": 57263
+      "tick": 67099
     },
     {
       "label": "hospital-exit",
-      "tick": 57265
+      "tick": 67101
     },
     {
       "label": "jail-visitor-menu",
-      "tick": 57849
+      "tick": 67733
     },
     {
       "label": "jail-companion-pause",
-      "tick": 57938
+      "tick": 67822
     },
     {
       "label": "jail-companion-joined",
-      "tick": 57972
+      "tick": 67856
     },
     {
       "label": "jail-exit",
-      "tick": 57975
+      "tick": 67859
     }
   ],
   "final": {
@@ -67,7 +67,7 @@
       12
     ],
     "gate": 85,
-    "tick": 57975,
+    "tick": 67859,
     "blocked": 0,
     "script_pc": 4293,
     "script_status": 3,
@@ -118,36 +118,36 @@
     "conversation_checkpoint": 0,
     "npc_pairs": [
       [
-        99,
-        1
-      ],
-      [
-        18,
-        1
-      ],
-      [
         81,
-        1
-      ],
-      [
-        70,
-        1
-      ],
-      [
-        99,
-        1
+        0
       ],
       [
         53,
-        1
+        0
       ],
       [
-        70,
-        1
+        39,
+        0
+      ],
+      [
+        112,
+        0
+      ],
+      [
+        112,
+        0
+      ],
+      [
+        99,
+        0
       ],
       [
         4,
-        1
+        0
+      ],
+      [
+        112,
+        0
       ]
     ],
     "npc_enabled": 2,
@@ -167,43 +167,43 @@
     "npc_allowance_pending": 0,
     "npcs": [
       [
-        0,
-        0,
+        3332,
+        28701,
         0
       ],
       [
-        0,
-        0,
+        3360,
+        28680,
         0
       ],
       [
-        0,
-        0,
+        3358,
+        28692,
         0
       ],
       [
-        0,
-        0,
+        3342,
+        28701,
         0
       ],
       [
-        0,
-        0,
+        3342,
+        28701,
         0
       ],
       [
-        0,
-        0,
+        3342,
+        28701,
         0
       ],
       [
-        0,
-        0,
+        3382,
+        28728,
         0
       ],
       [
-        0,
-        0,
+        3342,
+        28701,
         0
       ]
     ],
@@ -311,7 +311,7 @@
       0,
       0,
       0,
-      104,
+      154,
       0,
       0,
       0,
@@ -362,8 +362,8 @@
         0,
         0,
         0,
-        2,
-        4,
+        3,
+        3,
         1,
         0,
         0,
@@ -587,8 +587,8 @@
       "rubble_tile": 0
     },
     "mech_skills": [
-      2,
-      4
+      3,
+      3
     ],
     "device": 1,
     "recruitment": 0,
@@ -637,7 +637,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "95124daecb219797",
+    "state_digest": "1ab0d242cc518a9e",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

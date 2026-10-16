@@ -17,52 +17,59 @@ int btp_combat_data_decode(const uint8_t *b, size_t n, BtpCombatData *d)
     int v3=v4 || (n==BTP_COMBAT_DATA_V3_BYTES && !memcmp(b,"BTC3",4));
     int v2=v3 || (n==BTP_COMBAT_DATA_V2_BYTES && !memcmp(b,"BTC2",4));
     if (!v2 && (n!=BTP_COMBAT_DATA_V1_BYTES || memcmp(b,"BTC1",4))) return 0;
-    BtpCombatData v={0}; size_t p = 4;
-#define COPY(field) do { memcpy(v.field,b+p,sizeof v.field); p += sizeof v.field; } while (0)
+    /* Expanded speaker programs make this object larger than one megabyte.
+       Decode transactionally on the heap: nesting two copies exceeded the
+       default Windows stack, and a bad cache must leave the caller intact. */
+    BtpCombatData *v=calloc(1,sizeof *v);
+    if (!v) return 0;
+    size_t p = 4;
+#define COPY(field) do { memcpy(v->field,b+p,sizeof v->field); p += sizeof v->field; } while (0)
     COPY(loans); COPY(weapons); COPY(arcs); COPY(locations); COPY(clusters);
     COPY(critical_start); COPY(critical_count);
     if (v2) { COPY(poses);COPY(reaction);COPY(impact); }
     if (v3) { COPY(jenner); }
     if (v4) { COPY(commando);COPY(rex_skills);COPY(rex_x);COPY(rex_y);COPY(encounter_weapons);COPY(encounter_mechs); }
-    if (v5) { for (unsigned i=0;i<8;++i) { v.refit_prices[i]=(uint16_t)(b[p]|(unsigned)b[p+1]<<8);p+=2; } COPY(ammo_prices);COPY(commando_armour); }
-    if (v6) { COPY(building_portraits);for (unsigned i=0;i<26;++i) if (v.building_portraits[i]>=22) return 0; }
+    if (v5) { for (unsigned i=0;i<8;++i) { v->refit_prices[i]=(uint16_t)(b[p]|(unsigned)b[p+1]<<8);p+=2; } COPY(ammo_prices);COPY(commando_armour); }
+    if (v6) { COPY(building_portraits);for (unsigned i=0;i<26;++i) if (v->building_portraits[i]>=22) goto invalid; }
     if (v7) {
-        v.sound_calibration=(uint16_t)(b[p]|(unsigned)b[p+1]<<8);p+=2;
-        for (unsigned i=0;i<314;++i) { v.sound_words[i]=(uint16_t)(b[p]|(unsigned)b[p+1]<<8);p+=2; }
-        if (!btp_sound_programs(&v)) return 0;
+        v->sound_calibration=(uint16_t)(b[p]|(unsigned)b[p+1]<<8);p+=2;
+        for (unsigned i=0;i<314;++i) { v->sound_words[i]=(uint16_t)(b[p]|(unsigned)b[p+1]<<8);p+=2; }
+        if (!btp_sound_programs(v)) goto invalid;
     }
     if (v8) {
-        memcpy(v.medical,b+p,v9 ? 32u : 24u);p+=v9 ? 32u : 24u;
+        memcpy(v->medical,b+p,v9 ? 32u : 24u);p+=v9 ? 32u : 24u;
         COPY(formation_x);COPY(formation_y);COPY(mech_formation_x);COPY(mech_formation_y);
-        for (unsigned i=0;i<8;++i) { v.medical_prices[i]=(uint16_t)(b[p]|(unsigned)b[p+1]<<8);p+=2; }
+        for (unsigned i=0;i<8;++i) { v->medical_prices[i]=(uint16_t)(b[p]|(unsigned)b[p+1]<<8);p+=2; }
     }
     if (v10) {
         COPY(cache_tx);COPY(cache_ty);COPY(cache_color);COPY(cache_dx);COPY(cache_dy);
         COPY(cache_red);COPY(cache_blue);COPY(cache_yellow);
-        for (unsigned i=0;i<7;++i) { v.cache_password[i]=(uint16_t)(b[p]|(unsigned)b[p+1]<<8);p+=2;if (v.cache_password[i]>=768) return 0; }
+        for (unsigned i=0;i<7;++i) { v->cache_password[i]=(uint16_t)(b[p]|(unsigned)b[p+1]<<8);p+=2;if (v->cache_password[i]>=768) goto invalid; }
         COPY(cache_secret);COPY(cache_door_tiles);
         COPY(cache_mini_colors);
-        for (unsigned i=0;i<33;++i) if (v.cache_tx[i]>127 || v.cache_ty[i]>127 || v.cache_color[i]>2) return 0;
-        for (unsigned i=0;i<12;++i) if (v.cache_dx[i]>126 || v.cache_dy[i]>126 || v.cache_red[i]>33 || v.cache_blue[i]>33 || v.cache_yellow[i]>33) return 0;
-        for (unsigned i=0;i<2;++i) for (unsigned j=0;j<250;++j) if (v.cache_mini_colors[i][j]>15) return 0;
+        for (unsigned i=0;i<33;++i) if (v->cache_tx[i]>127 || v->cache_ty[i]>127 || v->cache_color[i]>2) goto invalid;
+        for (unsigned i=0;i<12;++i) if (v->cache_dx[i]>126 || v->cache_dy[i]>126 || v->cache_red[i]>33 || v->cache_blue[i]>33 || v->cache_yellow[i]>33) goto invalid;
+        for (unsigned i=0;i<2;++i) for (unsigned j=0;j<250;++j) if (v->cache_mini_colors[i][j]>15) goto invalid;
     }
     if (v11) { COPY(arena_mechs);COPY(arena_spectator);COPY(urbanmech);COPY(arena_levels);COPY(arena_reduction);COPY(special_x);COPY(special_y); }
 #undef COPY
-    for (unsigned i = 0; i < 15; ++i) if (v.arcs[i] > 3) return 0;
-    for (unsigned i = 2; i < 46; ++i) if (v.locations[i] < 17 || v.locations[i] > 27) return 0;
+    for (unsigned i = 0; i < 15; ++i) if (v->arcs[i] > 3) goto invalid;
+    for (unsigned i = 2; i < 46; ++i) if (v->locations[i] < 17 || v->locations[i] > 27) goto invalid;
     for (unsigned i = 15; i < 33; ++i)
-        if (!v.weapons[i][12] || v.weapons[i][12] > 8 || v.weapons[i][11] > 20) return 0;
+        if (!v->weapons[i][12] || v->weapons[i][12] > 8 || v->weapons[i][11] > 20) goto invalid;
     for (unsigned i = 0; i < 8; ++i)
-        if (v.critical_start[i] < 51 || v.critical_start[i]+v.critical_count[i] > 86) return 0;
+        if (v->critical_start[i] < 51 || v->critical_start[i]+v->critical_count[i] > 86) goto invalid;
     if (v2) {
         for (unsigned g=0;g<18;++g) for (unsigned dir=0;dir<8;++dir) {
-            unsigned count=v.poses[g][dir][0];if (!count || count>8) return 0;
-            for (unsigned j=0;j<8;++j) if (j<count ? v.poses[g][dir][j+1]>127 : v.poses[g][dir][j+1]) return 0;
+            unsigned count=v->poses[g][dir][0];if (!count || count>8) goto invalid;
+            for (unsigned j=0;j<8;++j) if (j<count ? v->poses[g][dir][j+1]>127 : v->poses[g][dir][j+1]) goto invalid;
         }
-        for (unsigned i=0;i<4;++i) if (v.reaction[i]>127) return 0;
-        for (unsigned i=0;i<3;++i) if (v.impact[i]>125) return 0;
+        for (unsigned i=0;i<4;++i) if (v->reaction[i]>127) goto invalid;
+        for (unsigned i=0;i<3;++i) if (v->impact[i]>125) goto invalid;
     }
-    *d = v; return 1;
+    *d = *v; free(v); return 1;
+invalid:
+    free(v); return 0;
 }
 unsigned btp_combat_die(uint8_t rng[3])
 {
@@ -274,7 +281,7 @@ int btp_combat_can_kick(const BtpCombatUnit *u)
     return !u->infantry && u->record[0] != 255 && (u->record[36]&8u) && (u->record[37]&8u);
 }
 BtpShot btp_combat_attack_unit(BtpCombatUnit *a, BtpCombatUnit *t, const BtpCombatData *d,
-    unsigned index, int movement, unsigned steps, unsigned skill, unsigned unit_id, uint8_t rng[3])
+    unsigned index, int movement, unsigned steps, unsigned skill, unsigned unit_id, const uint8_t *explored, uint8_t rng[3])
 {
     int kick = !a->infantry && index == 11;
     BtpShot shot = {0}; unsigned w = kick ? 32 : btp_combat_weapon(a,index);
@@ -288,12 +295,14 @@ BtpShot btp_combat_attack_unit(BtpCombatUnit *a, BtpCombatUnit *t, const BtpComb
     if (a->infantry) skill=a->record[4+d->weapons[w][16]];
     int needed = (kick ? 3 : (int)(2*range+4)) + movement+1 + movement_penalty[steps > 12 ? 12 : steps] - (int)skill;
     if (kick) {
-        /* 12E8:02C3 passes the raw enemy ID to 0E31:1B44, although its
-           hip check uses the normalized record. ID 12 reads inactive slot
-           12 in early training, adding all six missing-actuator penalties. */
-        if (unit_id==12 || unit_id==13) needed+=6;
-        else for (unsigned leg=36;leg<=37;++leg)
-            for (unsigned mask=1;mask<=4;mask<<=1) needed += !(a->record[leg]&mask);
+        /* 12E8:02C3 passes the raw enemy ID to 0E31:1B44. For IDs 12..15
+           C724+125*id+36/37 lands inside CB0C's explored-map bytes. Preserve
+           that original bug: its penalty varies with exploration history,
+           rather than always assuming six absent actuators. */
+        for (unsigned leg=36;leg<=37;++leg) {
+            unsigned bits=unit_id>=12 && unit_id<16 ? explored ? explored[125u*unit_id-1000u+leg] : 0u : a->record[leg];
+            for (unsigned mask=1;mask<=4;mask<<=1) needed += !(bits&mask);
+        }
     }
     if (!a->infantry && a->record[119]) needed += 2;
     if (!a->infantry) needed += (a->heat >= 8)+(a->heat >= 13)+(a->heat >= 17)+(a->heat >= 24);
@@ -342,7 +351,7 @@ BtpShot btp_combat_attack_unit(BtpCombatUnit *a, BtpCombatUnit *t, const BtpComb
 BtpShot btp_combat_attack(BtpCombatUnit *a, BtpCombatUnit *t, const BtpCombatData *d,
     unsigned index, int movement, unsigned steps, unsigned skill, uint8_t rng[3])
 {
-    return btp_combat_attack_unit(a,t,d,index,movement,steps,skill,0,rng);
+    return btp_combat_attack_unit(a,t,d,index,movement,steps,skill,0,NULL,rng);
 }
 BtpShot btp_combat_shoot(BtpCombatUnit *a, BtpCombatUnit *t, const BtpCombatData *d,
     unsigned index, int movement, unsigned steps, unsigned skill, uint8_t rng[3])

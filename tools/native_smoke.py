@@ -11,6 +11,20 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 
+def windows_frontend():
+    """Use the Windows SDL executable; keep Linux headless as the oracle."""
+    from windows_check import WINE,environment,arguments
+    original=subprocess.Popen
+    def launch(command,*args,**kwargs):
+        if command and Path(str(command[0])).resolve()==ROOT/'build/btech-port':
+            command=[str(WINE),*arguments([ROOT/'build-windows/btech-port.exe',*command[1:]])]
+            kwargs['env']=environment(kwargs.get('env',os.environ))
+            # Exercise the Windows SDL audio queue without requiring a
+            # physical Windows audio endpoint on this Linux test host.
+            kwargs['env']['SDL_AUDIODRIVER']='dummy'
+        return original(command,*args,**kwargs)
+    subprocess.Popen=launch
+
 def saves(env, work):
     from reference_session import WindowKeys
     with tempfile.TemporaryDirectory(prefix="native-save-",dir=work) as directory:
@@ -188,9 +202,9 @@ def diagonals(env, work):
         for kind in ('human','mech','bank-keypad'):
             start=tmp/(kind+'.btp'); prefix=tmp/'prefix.actions'
             if kind == 'mech':
-                f=json.loads((ROOT/'tests/fixtures/reference-mission-pass.json').read_text())
-                tick=next(r['tick'] for r in f['checkpoints'] if r['label']=='mission-start')
-                lines=(ROOT/'tests/fixtures/reference-mission-pass.actions').read_text().splitlines()[:tick]
+                f=json.loads((ROOT/'tests/fixtures/ordinary-rubble-story.json').read_text())
+                tick=next(r['tick'] for r in f['checkpoints'] if r['label']=='first-mech')
+                lines=(ROOT/'tests/fixtures/ordinary-rubble-story.actions').read_text().splitlines()[:tick]
             elif kind == 'bank-keypad':
                 f=json.loads((ROOT/'tests/fixtures/reference-bank.json').read_text())
                 tick=next(r['tick'] for r in f['checkpoints'] if r['label']=='bank-invest-amount')
@@ -1210,6 +1224,8 @@ def followups(env,work,cases=None):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--windows',action='store_true',help='Run the Windows SDL build under isolated Wine against Linux headless')
+    parser.add_argument('--portability-only',action='store_true',help='Check controls, intro, saves, menus and combat presentation')
     parser.add_argument("--shops-only", action="store_true")
     parser.add_argument("--m2f-only", action="store_true")
     parser.add_argument("--bank-input-only", action="store_true")
@@ -1243,6 +1259,7 @@ def main():
     parser.add_argument('--encounters-only',action='store_true')
     parser.add_argument('--completion-only',action='store_true')
     args = parser.parse_args()
+    if args.windows:windows_frontend()
     work = ROOT / "work"
     work.mkdir(exist_ok=True)
     read_fd, write_fd = os.pipe()
@@ -1261,6 +1278,10 @@ def main():
             env.pop("SDL_VIDEODRIVER", None)
             os.environ["DISPLAY"] = env["DISPLAY"]
             os.environ["BTECH_REFERENCE_VIRTUAL"] = "1"
+            if args.portability_only:
+                controls(env,work);diagonals(env,work);intro(env,work)
+                menu(env,work);saves(env,work);presentation(env,work)
+                combat_ui(env,work);return
             if args.m4_acceptance:
                 controls(env,work)
                 intro(env,work);menu(env,work);presentation(env,work)

@@ -5,13 +5,20 @@
   "state_edits": false,
   "scope": "Input-only route; native quest outcomes, not long-wait DOS NPC/RNG equivalence",
   "native_rubble_target": [
-    29,
-    15
+    53,
+    24
   ],
   "checkpoints": [
     {
+      "label": "first-mech",
+      "tick": 992,
+      "expected": {
+        "mode": "training-mission"
+      }
+    },
+    {
       "label": "first-success",
-      "tick": 1262,
+      "tick": 1241,
       "expected": {
         "mode": "local-exploration",
         "allowance_cap": 150,
@@ -23,28 +30,28 @@
     },
     {
       "label": "rubble-animation",
-      "tick": 2300,
+      "tick": 2486,
       "expected": {
         "mode": "training-mission"
       }
     },
     {
       "label": "rubble-pickup",
-      "tick": 2442,
+      "tick": 2644,
       "expected": {
         "mode": "training-mission"
       }
     },
     {
       "label": "rubble-carrying",
-      "tick": 2443,
+      "tick": 2645,
       "expected": {
         "mode": "training-mission"
       }
     },
     {
       "label": "rubble-result",
-      "tick": 2500,
+      "tick": 2719,
       "expected": {
         "mode": "building",
         "allowance_cap": 250,
@@ -56,7 +63,7 @@
     },
     {
       "label": "third-tired",
-      "tick": 3548,
+      "tick": 4026,
       "expected": {
         "mode": "building",
         "allowance_cap": 250
@@ -64,21 +71,21 @@
     },
     {
       "label": "dream-animation",
-      "tick": 3708,
+      "tick": 4186,
       "expected": {
         "mode": "building"
       }
     },
     {
       "label": "rest-wake",
-      "tick": 3764,
+      "tick": 4242,
       "expected": {
         "mode": "building"
       }
     },
     {
       "label": "third-rested",
-      "tick": 3939,
+      "tick": 4417,
       "expected": {
         "mode": "building",
         "allowance_cap": 250,
@@ -90,7 +97,7 @@
     },
     {
       "label": "third-mech-menu",
-      "tick": 3940,
+      "tick": 4418,
       "expected": {
         "mode": "building"
       }
