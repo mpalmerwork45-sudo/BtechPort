@@ -36,9 +36,13 @@ remaining work.
 The proposed path to more mechs, custom game packages, BLD/Lua scripting and a
 Windows/Linux editor is recorded in the
 [engine and editor plan](docs/ENGINE_AND_EDITOR_PLAN.md).
-Preparation has begun with a shared content loader that preserves the current
-game; see [the first preparation increment](docs/M5_PREPARATION.md).
-Custom packages, Lua and the editor are still planned features.
+The preparation work adds shared content loading, named unit lookups, separate
+original-script dispatch and save encoding, plus a validated authoring sample.
+See [implementation and verification](docs/M5_PREPARATION.md) and the
+[three-model prototype](examples/content-demo/README.md). The prototype is an
+offline data example; custom unit loading, game packages, Lua and the editor
+remain planned features. The existing build and game files are still sufficient
+to play.
 
 ## Build and run on Linux
 

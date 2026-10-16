@@ -2,16 +2,18 @@
 
 Recorded **2026-10-16**, against implementation commit `c29ea75`.
 
-**Status: M5-P1 implemented; later preparation and features proposed.** This document records
-the discussion about additional mechs, external game data, BLD/Lua scripting and
-a Windows/Linux game editor. The first shared-loading refactor is complete;
-see [preparation evidence](M5_PREPARATION.md). New package, Lua and editor
-facilities remain proposed. Existing fidelity work remains tracked in
+**Status: M5-P1–P5 implemented and verified within documented bounds.** This document
+records the discussion about additional mechs, external game data, BLD/Lua
+scripting and a Windows/Linux game editor. Shared loading, semantic unit
+lookups, original action dispatch, persistence isolation and an offline
+schema/sample are in place; see [preparation evidence](M5_PREPARATION.md) and the
+[content inventory](CONTENT_INVENTORY.md). Runtime packages, Lua and the editor
+remain proposed. Original fidelity work is tracked in
 [PROJECT_STATUS.md](PROJECT_STATUS.md).
 
-For the immediate work, start with [the five preparation increments](#9-preparation-that-can-be-done-now).
-The [later milestones](#10-subsequent-milestones-and-dependencies) and
-[verification gates](#11-verification-and-delivery-rules) follow the design.
+The [five preparation increments](#9-preparation-that-can-be-done-now) record
+the completed scope. The [later milestones](#10-subsequent-milestones-and-dependencies)
+and [verification gates](#11-verification-and-delivery-rules) describe next work.
 
 ## 1. Intended result and scope
 
@@ -47,10 +49,11 @@ documented limits. It should not silently change the original rules in pursuit
 of a cleaner general engine. Supporting more chassis does not imply increasing
 party size, changing combat rules or rewriting the renderer at the same time.
 
-## 2. What the repository already provides
+## 2. Repository baseline before preparation
 
 These are **VERIFIED source observations** at the commit above. They establish
 implementation structure, not universal fidelity to the original executable.
+For owners after P1–P5, see the [current content inventory](CONTENT_INVENTORY.md).
 
 | Area | Present implementation | Consequence for the transition |
 | --- | --- | --- |
@@ -65,8 +68,8 @@ implementation structure, not universal fidelity to the original executable.
 | Saves | State encoding, migrations and validation are largely in [game.c](../port/core/game.c); file envelopes and original saves have [separate readers](../port/data/save.c) | Extract the existing codec before introducing a new package-aware save format |
 | Maps | [world.c](../port/core/world.c) combines generated landscape, local maps, story transitions and terrain rules | Custom maps need explicit placement, collision and overlay metadata, not original map-number conventions |
 
-The current baseline is BTPe/v40 saves, a 20,480-byte payload, and BTTA/v24,
-BTCB/v11 and BTW3 caches. The latest recorded verification includes 56 native,
+That baseline used BTPe/v40 saves, a 20,480-byte payload, and BTTA/v24,
+BTCB/v11 and BTW3 caches. Verification recorded at that point included 56 native,
 56 sanitizer and 56 Windows/Wine suites, plus saved campaign routes and SDL
 checks. These are previous results, not tests rerun for this plan. See
 [TESTING.md](TESTING.md) and [the portability report](M4_PORTABILITY_SWEEP.md).
@@ -452,9 +455,9 @@ come from the same versioned schemas/metadata used by validation.
 
 ## 9. Preparation that can be done now
 
-This is the current preparation phase. It produces useful, maintained
+This preparation phase produces useful, maintained
 boundaries while the current game remains the only required runtime profile.
-**P1 is implemented and verified; P2–P5 are proposed / not started.** Each is a separate reviewable
+**P1–P5 are implemented.** See [verification and bounds](M5_PREPARATION.md). Each is a separate reviewable
 increment with local commits; it is not one large rewrite.
 
 ### M5-P1 — One content-loading and lifetime boundary
@@ -482,6 +485,9 @@ and a native startup/save smoke pass. No new save version or changed asset bytes
 
 ### M5-P2 — Semantic unit and presentation lookups
 
+**Implemented:** see [preparation evidence](M5_PREPARATION.md) and
+[content ownership](CONTENT_INVENTORY.md). The criteria below record its scope.
+
 **Touchpoints:** [combat_rules.h](../port/core/combat_rules.h),
 [combat_rules.c](../port/core/combat_rules.c), [party.c](../port/core/party.c),
 [service.c](../port/core/service.c), [animation.c](../port/core/animation.c),
@@ -501,6 +507,9 @@ comparisons remain identical, including RNG and raw records. Original GAME
 round trips still match. New lookups serve actual callers, not unused scaffolding.
 
 ### M5-P3 — An explicit original story/action adapter
+
+**Implemented:** see [preparation evidence](M5_PREPARATION.md) and
+[content ownership](CONTENT_INVENTORY.md). The criteria below record its scope.
 
 **Touchpoints:** [script.c](../port/core/script.c),
 [game.c](../port/core/game.c), [story.c](../port/core/story.c),
@@ -522,6 +531,9 @@ and no attempted translation of the original campaign in this increment.
 
 ### M5-P4 — Isolate persistence without changing its bytes
 
+**Implemented:** see [preparation evidence](M5_PREPARATION.md) and
+[content ownership](CONTENT_INVENTORY.md). The criteria below record its scope.
+
 **Touchpoints:** encode/decode/migration code in
 [game.c](../port/core/game.c), [game.h](../port/core/game.h),
 [save.c](../port/data/save.c) and [original_save.c](../port/data/original_save.c).
@@ -540,6 +552,9 @@ combat and ending continuations retain pixels, sound order and next actions.
 Check Windows stack use and sanitizers for ownership/memory changes.
 
 ### M5-P5 — Content inventory and a validated authoring prototype
+
+**Implemented:** see [preparation evidence](M5_PREPARATION.md) and
+[content ownership](CONTENT_INVENTORY.md). The criteria below record its scope.
 
 **Touchpoints:** original loaders/preparation tools, the new lookup interfaces,
 new schema/validation tooling under `tools/`, and documentation under `docs/`.
@@ -651,7 +666,7 @@ nested Git metadata. Keep original assets, extracted data and captures ignored.
 
 The recommended direction is C11 core/SDL player, original adapters, versioned
 JSON content, structured events plus embedded Lua, and a separate Qt editor.
-Lua/Qt versions, parser/image dependencies and public schemas are still choices
+Lua/Qt versions, parser/image dependencies and final public schemas are still choices
 to validate, not dependencies adopted by this document.
 
 Resolve these questions when their milestones supply evidence:
@@ -673,6 +688,8 @@ to apply; see [README](../README.md#license) and
 are separate from the engine. The standalone demonstration must supply its own
 art, audio, fonts and text; the original executable is not its hidden data source.
 
-M5-P1 is complete. The next implementation recommendation is **M5-P2, then P3–P5**.
-That leaves a playable original game at each step and gives the first expanded
-mech package and editor real interfaces to build on.
+M5-P1–P5 are implemented. The next implementation recommendation is **M5a:
+external units**, beginning with one model loaded through shared validation and
+exercised through its full lifecycle. The provisional sample provides concrete
+input and diagnostics; runtime loading, instance identity and custom saves still
+need implementation before an expanded roster is playable.

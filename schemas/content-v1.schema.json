@@ -1,0 +1,561 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "BtechPort provisional unit authoring prototype v1",
+  "description": "Offline authoring experiment. Not a runtime package format. Semantic checks are in tools/validate_content.py.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "schema_version",
+    "package_id",
+    "content_version",
+    "rules_profile",
+    "assets",
+    "weapons",
+    "mechs"
+  ],
+  "properties": {
+    "format": {
+      "const": "btp-units-prototype"
+    },
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "package_id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_-]{0,31}$(?![\\s\\S])"
+    },
+    "content_version": {
+      "type": "string",
+      "maxLength": 32,
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$(?![\\s\\S])"
+    },
+    "rules_profile": {
+      "const": "prototype-tactics-v1"
+    },
+    "assets": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 256,
+      "items": {
+        "$ref": "#/$defs/asset"
+      }
+    },
+    "weapons": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 256,
+      "items": {
+        "$ref": "#/$defs/weapon"
+      }
+    },
+    "mechs": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 256,
+      "items": {
+        "$ref": "#/$defs/mech"
+      }
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "maxLength": 96,
+      "pattern": "^[a-z][a-z0-9_-]*:[a-z][a-z0-9_.-]*$(?![\\s\\S])",
+      "description": "Stable package:local identity; unrelated to name, list order, party slot or original DOS tag."
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 48,
+      "pattern": "^[^\\x00-\\x1f\\x7f\\uD800-\\uDFFF]+$(?![\\s\\S])"
+    },
+    "locations": {
+      "type": "string",
+      "enum": [
+        "head",
+        "center_torso",
+        "left_torso",
+        "right_torso",
+        "left_arm",
+        "right_arm",
+        "left_leg",
+        "right_leg"
+      ]
+    },
+    "armor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "head",
+        "center_torso",
+        "left_torso",
+        "right_torso",
+        "left_arm",
+        "right_arm",
+        "left_leg",
+        "right_leg"
+      ],
+      "properties": {
+        "head": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255,
+          "description": "Maximum armor points at this location."
+        },
+        "center_torso": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255,
+          "description": "Maximum armor points at this location."
+        },
+        "left_torso": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255,
+          "description": "Maximum armor points at this location."
+        },
+        "right_torso": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255,
+          "description": "Maximum armor points at this location."
+        },
+        "left_arm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255,
+          "description": "Maximum armor points at this location."
+        },
+        "right_arm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255,
+          "description": "Maximum armor points at this location."
+        },
+        "left_leg": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255,
+          "description": "Maximum armor points at this location."
+        },
+        "right_leg": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255,
+          "description": "Maximum armor points at this location."
+        }
+      }
+    },
+    "structure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "head",
+        "center_torso",
+        "left_torso",
+        "right_torso",
+        "left_arm",
+        "right_arm",
+        "left_leg",
+        "right_leg"
+      ],
+      "properties": {
+        "head": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 255,
+          "description": "Maximum internal structure points at this location."
+        },
+        "center_torso": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 255,
+          "description": "Maximum internal structure points at this location."
+        },
+        "left_torso": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 255,
+          "description": "Maximum internal structure points at this location."
+        },
+        "right_torso": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 255,
+          "description": "Maximum internal structure points at this location."
+        },
+        "left_arm": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 255,
+          "description": "Maximum internal structure points at this location."
+        },
+        "right_arm": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 255,
+          "description": "Maximum internal structure points at this location."
+        },
+        "left_leg": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 255,
+          "description": "Maximum internal structure points at this location."
+        },
+        "right_leg": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 255,
+          "description": "Maximum internal structure points at this location."
+        }
+      }
+    },
+    "asset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "width",
+        "height",
+        "frame_width",
+        "frame_height",
+        "directions",
+        "states"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "kind": {
+          "enum": [
+            "placeholder",
+            "external_sheet"
+          ]
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 240,
+          "description": "For external_sheet only: portable relative path, exact case, forward slashes. File presence is checked; image decoding is deferred."
+        },
+        "width": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8192,
+          "description": "Declared sheet width in pixels."
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8192,
+          "description": "Declared sheet height in pixels."
+        },
+        "frame_width": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 256
+        },
+        "frame_height": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 256
+        },
+        "directions": {
+          "type": "integer",
+          "const": 8
+        },
+        "states": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "idle",
+            "walk",
+            "fire",
+            "hit",
+            "wreck"
+          ],
+          "properties": {
+            "idle": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 32,
+              "items": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 65535
+              }
+            },
+            "walk": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 32,
+              "items": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 65535
+              }
+            },
+            "fire": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 32,
+              "items": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 65535
+              }
+            },
+            "hit": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 32,
+              "items": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 65535
+              }
+            },
+            "wreck": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 32,
+              "items": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 65535
+              }
+            }
+          },
+          "description": "Each entry is the first row-major frame of an eight-direction block (N, NE, E, SE, S, SW, W, NW); arrays give animation time order."
+        }
+      }
+    },
+    "weapon": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "kind",
+        "damage",
+        "projectiles",
+        "heat",
+        "ammo_per_shot",
+        "range"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "$ref": "#/$defs/name"
+        },
+        "kind": {
+          "enum": [
+            "energy",
+            "ballistic",
+            "missile"
+          ]
+        },
+        "damage": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 255,
+          "description": "Damage points per projectile."
+        },
+        "projectiles": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20
+        },
+        "heat": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255,
+          "description": "Heat per trigger pull."
+        },
+        "ammo_per_shot": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 20,
+          "description": "Zero for energy; positive for ballistic/missile."
+        },
+        "range": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "near",
+            "medium",
+            "far"
+          ],
+          "properties": {
+            "near": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 255,
+              "description": "Inclusive range in combat grid cells; near <= medium <= far."
+            },
+            "medium": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 255,
+              "description": "Inclusive range in combat grid cells; near <= medium <= far."
+            },
+            "far": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 255,
+              "description": "Inclusive range in combat grid cells; near <= medium <= far."
+            }
+          }
+        }
+      }
+    },
+    "mount": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "slot",
+        "weapon",
+        "location",
+        "ammo"
+      ],
+      "properties": {
+        "slot": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "weapon": {
+          "$ref": "#/$defs/id"
+        },
+        "location": {
+          "$ref": "#/$defs/locations"
+        },
+        "ammo": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255,
+          "description": "Initial ammunition units, not a mutable runtime counter; zero for energy mounts."
+        }
+      }
+    },
+    "mech": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "mass_tons",
+        "movement",
+        "heat_sinks",
+        "armor",
+        "structure",
+        "rear_armor",
+        "capabilities",
+        "presentation",
+        "loadout"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "$ref": "#/$defs/name"
+        },
+        "mass_tons": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200
+        },
+        "movement": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "walk",
+            "jump"
+          ],
+          "properties": {
+            "walk": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 11,
+              "description": "Base movement points; run uses the rule profile, not a second stat."
+            },
+            "jump": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 11
+            }
+          }
+        },
+        "heat_sinks": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "armor": {
+          "$ref": "#/$defs/armor"
+        },
+        "structure": {
+          "$ref": "#/$defs/structure"
+        },
+        "rear_armor": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "center_torso",
+            "left_torso",
+            "right_torso"
+          ],
+          "properties": {
+            "center_torso": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 255
+            },
+            "left_torso": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 255
+            },
+            "right_torso": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 255
+            }
+          }
+        },
+        "capabilities": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 4,
+          "items": {
+            "enum": [
+              "walk",
+              "run",
+              "jump",
+              "kick"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "presentation": {
+          "$ref": "#/$defs/id"
+        },
+        "loadout": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 11,
+          "items": {
+            "$ref": "#/$defs/mount"
+          }
+        }
+      }
+    }
+  }
+}

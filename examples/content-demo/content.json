@@ -1,0 +1,222 @@
+{
+  "format": "btp-units-prototype",
+  "schema_version": 1,
+  "package_id": "workshop",
+  "content_version": "0.1.0",
+  "rules_profile": "prototype-tactics-v1",
+  "assets": [
+    {
+      "id": "workshop:training-shapes",
+      "kind": "placeholder",
+      "width": 128,
+      "height": 96,
+      "frame_width": 16,
+      "frame_height": 16,
+      "directions": 8,
+      "states": {
+        "idle": [
+          0
+        ],
+        "walk": [
+          8,
+          16
+        ],
+        "fire": [
+          24
+        ],
+        "hit": [
+          32
+        ],
+        "wreck": [
+          40
+        ]
+      }
+    }
+  ],
+  "weapons": [
+    {
+      "id": "workshop:spark-beam",
+      "name": "Spark Beam",
+      "kind": "energy",
+      "damage": 3,
+      "projectiles": 1,
+      "heat": 2,
+      "ammo_per_shot": 0,
+      "range": {
+        "near": 3,
+        "medium": 6,
+        "far": 9
+      }
+    },
+    {
+      "id": "workshop:stone-cannon",
+      "name": "Stone Cannon",
+      "kind": "ballistic",
+      "damage": 7,
+      "projectiles": 1,
+      "heat": 1,
+      "ammo_per_shot": 1,
+      "range": {
+        "near": 2,
+        "medium": 5,
+        "far": 8
+      }
+    }
+  ],
+  "mechs": [
+    {
+      "id": "workshop:trail-kite",
+      "name": "Trail Kite",
+      "mass_tons": 24,
+      "movement": {
+        "walk": 8,
+        "jump": 0
+      },
+      "heat_sinks": 8,
+      "armor": {
+        "head": 6,
+        "center_torso": 12,
+        "left_torso": 12,
+        "right_torso": 12,
+        "left_arm": 12,
+        "right_arm": 12,
+        "left_leg": 12,
+        "right_leg": 12
+      },
+      "structure": {
+        "head": 6,
+        "center_torso": 6,
+        "left_torso": 6,
+        "right_torso": 6,
+        "left_arm": 6,
+        "right_arm": 6,
+        "left_leg": 6,
+        "right_leg": 6
+      },
+      "rear_armor": {
+        "center_torso": 6,
+        "left_torso": 4,
+        "right_torso": 4
+      },
+      "capabilities": [
+        "walk",
+        "run",
+        "kick"
+      ],
+      "presentation": "workshop:training-shapes",
+      "loadout": [
+        {
+          "slot": 0,
+          "weapon": "workshop:spark-beam",
+          "location": "right_arm",
+          "ammo": 0
+        }
+      ]
+    },
+    {
+      "id": "workshop:quarry-guard",
+      "name": "Quarry Guard",
+      "mass_tons": 76,
+      "movement": {
+        "walk": 3,
+        "jump": 0
+      },
+      "heat_sinks": 8,
+      "armor": {
+        "head": 20,
+        "center_torso": 40,
+        "left_torso": 40,
+        "right_torso": 40,
+        "left_arm": 40,
+        "right_arm": 40,
+        "left_leg": 40,
+        "right_leg": 40
+      },
+      "structure": {
+        "head": 18,
+        "center_torso": 18,
+        "left_torso": 18,
+        "right_torso": 18,
+        "left_arm": 18,
+        "right_arm": 18,
+        "left_leg": 18,
+        "right_leg": 18
+      },
+      "rear_armor": {
+        "center_torso": 20,
+        "left_torso": 13,
+        "right_torso": 13
+      },
+      "capabilities": [
+        "walk",
+        "run",
+        "kick"
+      ],
+      "presentation": "workshop:training-shapes",
+      "loadout": [
+        {
+          "slot": 0,
+          "weapon": "workshop:stone-cannon",
+          "location": "right_torso",
+          "ammo": 18
+        },
+        {
+          "slot": 1,
+          "weapon": "workshop:spark-beam",
+          "location": "left_arm",
+          "ammo": 0
+        }
+      ]
+    },
+    {
+      "id": "workshop:ridge-hopper",
+      "name": "Ridge Hopper",
+      "mass_tons": 38,
+      "movement": {
+        "walk": 5,
+        "jump": 4
+      },
+      "heat_sinks": 8,
+      "armor": {
+        "head": 10,
+        "center_torso": 20,
+        "left_torso": 20,
+        "right_torso": 20,
+        "left_arm": 20,
+        "right_arm": 20,
+        "left_leg": 20,
+        "right_leg": 20
+      },
+      "structure": {
+        "head": 10,
+        "center_torso": 10,
+        "left_torso": 10,
+        "right_torso": 10,
+        "left_arm": 10,
+        "right_arm": 10,
+        "left_leg": 10,
+        "right_leg": 10
+      },
+      "rear_armor": {
+        "center_torso": 10,
+        "left_torso": 6,
+        "right_torso": 6
+      },
+      "capabilities": [
+        "walk",
+        "run",
+        "kick",
+        "jump"
+      ],
+      "presentation": "workshop:training-shapes",
+      "loadout": [
+        {
+          "slot": 0,
+          "weapon": "workshop:spark-beam",
+          "location": "right_arm",
+          "ammo": 0
+        }
+      ]
+    }
+  ]
+}

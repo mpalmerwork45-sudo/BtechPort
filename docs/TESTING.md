@@ -1,15 +1,42 @@
 # Build, verification and original oracle — 2026-10-16
 
-## M5-P1 content-loading preparation
+## M5-P1–P5 preparation
 
-The current build has **57 CTest suites**. All pass on Linux (42.11 seconds).
-The new `original-content-lifetime` suite has 90 checks and also passes under
-ASan/UBSan with leak detection and Windows/Wine. Both players match the retained
-pre-refactor binaries' state, frame and save bytes in four scenarios each.
-The sanitized player also resumes all four snapshots exactly. Linux intro and
-Linux/Windows SDL save/load checks pass; scope and commands are in
-[M5_PREPARATION.md](M5_PREPARATION.md).
-The existing BTPe/v40 save format and cache versions are unchanged.
+The current **57 CTest suites** pass on Linux (41.94 seconds), under ASan/UBSan/LeakSanitizer
+(133.48 seconds), and under Windows/Wine (222.08 seconds). The content-lifetime
+suite now has 100 checks, including lookup boundaries. P2–P4 each passed all
+native suites and exact before/after comparisons for fresh-campaign, spy and
+ordinary-service routes. The existing BTPe/v40 save/cache formats are unchanged.
+
+All **41 Windows SDL portability checks** pass, including six slots,
+character/mech/map views, failed loads, nineteen held combat pages and ordered
+sound. **Eleven Linux Mech-It checks** pass: four service/recruitment routes and
+seven F5/F9 held continuations. Windows checks use the actual MinGW player with
+the default stack reserve, on Wine/private X11; audio is queued to a dummy sink.
+These checks do not measure physical Windows devices or XT speakers.
+
+**Nineteen Python tool tests** pass, including fourteen authoring cases. The
+regular `scripts/test.sh` now includes all Python `test_*.py` suites. The new
+[prototype](../examples/content-demo/README.md) validates without the original
+resources or a compiled player; it does not make custom units loadable yet.
+
+```sh
+ctest --test-dir build --output-on-failure
+./scripts/test-sanitize.sh --core-only
+python3 tools/windows_check.py --ctest
+python3 -m unittest discover -s tests -p 'test_*.py'
+python3 tools/validate_content.py examples/content-demo/content.json
+python3 tools/native_smoke.py --windows --portability-only
+python3 tools/native_smoke.py --mechit-only
+python3 tools/reference_guard.py verify
+```
+
+For a local before/after comparison, retain the prior headless executable before
+editing and run `python3 tools/verify_preparation.py --before PATH`. It compares
+every canonical trace record and final save/frame bytes using private temporary
+slots. The local pre-P2 binary remains in `work/m5-preparation/before`; it is not
+a distributed fixture. See [scope and evidence](M5_PREPARATION.md) for the
+increment-by-increment record and the previously verified P1 loader cases.
 
 ## Previous cadence and portability sweep
 

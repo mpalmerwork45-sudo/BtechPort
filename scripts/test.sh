@@ -11,7 +11,7 @@ build/btp-save-tests "Original DOS"
 build/btp-school-tests "Original DOS"
 build/btp-training-tests "Original DOS"
 build/btp-anm-tests "Original DOS"
-python3 -m unittest discover -s tests -p test_tools.py
+python3 -m unittest discover -s tests -p 'test_*.py'
 SDL_VIDEODRIVER=dummy SDL_AUDIODRIVER=dummy build/btech-port --smoke --record work/native-smoke.actions --frame work/native-smoke.ppm
 python3 tools/verify_m1.py --native-log work/native-smoke.actions
 SDL_VIDEODRIVER=dummy SDL_AUDIODRIVER=dummy build/btech-port --smoke-citadel --record work/native-citadel.actions --frame work/native-citadel.ppm

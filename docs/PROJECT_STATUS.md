@@ -1,4 +1,4 @@
-# Project status — bounded M4 acceptance, 2026-10-16
+# Project status — original fidelity and M5 preparation, 2026-10-16
 
 The independent C11/SDL2 port has playable implementations of the authorized
 M4a–M4e increments and the subsequent building, theft, encounter, recruitment and
@@ -39,15 +39,18 @@ ignored work files. Local commits remain on `main`, with no push.
 | Owner follow-ups | Four Jenners/ruins escape, purchase recipients, armour repair, original crew/inspection/engagement/Speed Shop selectors, world seed/city alignment, all-party collision and gait, replacement recruits and spy confrontation |
 | Fresh campaign | New-cadet input route through training, companions, paid apprenticeships, holodisk, password and cache ending; original checks at selected prerequisites |
 | Remaining original campaign | Additional branches and broader DOS combat/presentation parity |
-| M5 | M5-P1 shared content loading complete; further preparation, external units, packages and editor proposed in the [plan](ENGINE_AND_EDITOR_PLAN.md) |
+| M5 | M5-P1–P5 preparation implemented; external units, packages and editor remain proposed in the [plan](ENGINE_AND_EDITOR_PLAN.md) |
 
 The owner-requested [engine and editor plan](ENGINE_AND_EDITOR_PLAN.md) records
 the future authoring direction separately from the remaining original fidelity
-work. [M5-P1 is complete](M5_PREPARATION.md): both players share original-content
-loading, ownership and cleanup; failed loads preserve existing content. The
-next preparation steps isolate unit definitions, original story dispatch and
-persistence, then prototype authoring schemas while preserving play and saves.
-M5-P2–P5 and the later M5a–M5e package/editor milestones remain **proposed**.
+work. [M5-P1–P5 are implemented](M5_PREPARATION.md): shared content ownership,
+named unit/weapon/presentation/refit lookups, original action dispatch, isolated
+persistence and an offline schema/sample. The current game and BTPe/v40 saves
+remain the compatibility case. All 41 Windows SDL portability checks and eleven
+Linux Mech-It service/continuation checks pass.
+M5a–M5e runtime package/editor milestones remain **proposed**; the three-model
+sample is not yet playable. The [inventory](CONTENT_INVENTORY.md) records the
+remaining compiled assumptions and concrete independent-game prerequisites.
 
 ## Play and verify
 
@@ -82,10 +85,13 @@ Successful pre-combat evasion produces no loot or cash.
 
 ## Verification and limits
 
-The current build has **57 CTest suites**, all passing on Linux. M5-P1 adds
-content-lifetime checks, also passing under sanitizers and Windows/Wine, with
-exact pre-refactor state/frame/save comparisons for both entry points. See
-[preparation verification](M5_PREPARATION.md) for its bounded checks.
+The current build has **57 CTest suites**, passing on Linux, under
+ASan/UBSan/LeakSanitizer and under Windows/Wine. The content-lifetime suite now
+has 100 checks. Nineteen Python tool tests pass, including fourteen new authoring
+cases. The P2–P4 fresh-campaign, spy-replacement and service routes match a
+retained pre-refactor player at every canonical trace record and in final
+save/frame bytes. See [preparation verification](M5_PREPARATION.md) for scope,
+commands and interactive checks.
 The earlier fidelity sweep established:
 
 - **133 original combat waves** in four town contexts, including two complete
@@ -170,7 +176,7 @@ are cleared on migration; v34 stores their actual world sectors. Build and play 
 oracle tools execute bounded original instructions and commit numeric results
 and source hashes only.
 
-## Next five tasks
+## Remaining original-fidelity tasks
 
 The authorized cadence/encounter/quiet-text/cache/Windows sweep is complete
 within [its documented bounds](M4_PORTABILITY_SWEEP.md). Proposed follow-ups:
@@ -187,3 +193,7 @@ within [its documented bounds](M4_PORTABILITY_SWEEP.md). Proposed follow-ups:
    interactions with multiple party members, beyond the floor-only path corpus.
 
 Physical 8 MHz XT speaker calibration also needs an appropriate recording.
+
+The separate authoring direction next proceeds to **M5a external units**, as
+defined in the [engine/editor plan](ENGINE_AND_EDITOR_PLAN.md). Preparation
+completion does not imply that these original-fidelity tasks are complete.
