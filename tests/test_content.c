@@ -3,6 +3,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef _WIN32
+#include <direct.h>
+#include <process.h>
+#define process_id() _getpid()
+#define make_directory(path) _mkdir(path)
+#define remove_directory(path) _rmdir(path)
+#else
+#include <sys/stat.h>
+#include <unistd.h>
+#define process_id() getpid()
+#define make_directory(path) mkdir(path,0700)
+#define remove_directory(path) rmdir(path)
+#endif
 
 static unsigned checks;
 #define CHECK(x) do { ++checks; if (!(x)) { fprintf(stderr,"FAIL %s:%d: %s\n",__FILE__,__LINE__,#x); exit(1); } } while (0)
@@ -24,9 +37,55 @@ static void rejected(BtpContent *content, const BtpOriginalContentPaths *paths)
     free(snapshot);
 }
 
+static void edition_art(BtpContent *content,const char *roster_path)
+{
+    BtpError error;
+    CHECK(btp_content_select(content,BTP_CONTENT_UPDATED,roster_path,&error));
+    CHECK(content->resources->broker_portrait.count==1);
+    BtpResources *snapshot=malloc(sizeof *snapshot);CHECK(snapshot);
+    *snapshot=*content->resources;
+    /* A failed/sanitized run must not poison the next test's fixture path. */
+    char directory[80],art[96],roster_file[96],portrait_file[112];
+    snprintf(directory,sizeof directory,"btp-content-test-pack-%ld",(long)process_id());
+    snprintf(art,sizeof art,"%s/art",directory);
+    snprintf(roster_file,sizeof roster_file,"%s/roster.json",directory);
+    snprintf(portrait_file,sizeof portrait_file,"%s/broker.anm",art);
+    CHECK(make_directory(directory)==0);
+    CHECK(make_directory(art)==0);
+    uint8_t *bytes;size_t length;
+    CHECK(btp_read_file(roster_path,&bytes,&length,&error));
+    FILE *file=fopen(roster_file,"wb");CHECK(file);
+    CHECK(fwrite(bytes,1,length,file)==length && !fclose(file));free(bytes);
+
+    /* Older/custom packs without a portrait still load. Art is cosmetic:
+       it neither changes definition/save identity nor any original ANM. */
+    CHECK(btp_content_select(content,BTP_CONTENT_UPDATED,roster_file,NULL));
+    CHECK(!content->resources->broker_portrait.count);
+    CHECK(!memcmp(&snapshot->roster,&content->resources->roster,sizeof snapshot->roster));
+    CHECK(!memcmp(snapshot->animations,content->resources->animations,sizeof snapshot->animations));
+    CHECK(btp_content_select(content,BTP_CONTENT_UPDATED,roster_path,&error));
+    file=fopen(portrait_file,"wb");CHECK(file);
+    CHECK(fwrite("XX",1,2,file)==2 && !fclose(file));
+    CHECK(!btp_content_select(content,BTP_CONTENT_UPDATED,roster_file,&error));
+    CHECK(error.text[0] && content->profile==BTP_CONTENT_UPDATED);
+    CHECK(!memcmp(snapshot,content->resources,sizeof *snapshot));
+
+    CHECK(btp_content_select(content,BTP_CONTENT_ORIGINAL_DOS_103,NULL,&error));
+    CHECK(!content->resources->roster.count && !content->resources->broker_portrait.count);
+    CHECK(!memcmp(snapshot->animations,content->resources->animations,sizeof snapshot->animations));
+    CHECK(!btp_content_select(content,BTP_CONTENT_UPDATED,roster_file,&error));
+    CHECK(content->profile==BTP_CONTENT_ORIGINAL_DOS_103 && !content->resources->roster.count);
+    CHECK(!content->resources->broker_portrait.count);
+    free(snapshot);
+    CHECK(!remove(portrait_file));
+    CHECK(!remove(roster_file));
+    CHECK(remove_directory(art)==0);
+    CHECK(remove_directory(directory)==0);
+}
+
 int main(int argc, char **argv)
 {
-    CHECK(argc == 5);
+    CHECK(argc == 5 || argc == 6);
     const BtpOriginalContentPaths paths = {
         .directory = argv[1], .dialogue = argv[2], .combat = argv[3], .world = argv[4]
     };
@@ -41,6 +100,7 @@ int main(int argc, char **argv)
     CHECK(content.resources != NULL);
     CHECK(content.resources->map.width && content.resources->citadel.length);
     CHECK(content.resources->dialogue.length && content.resources->world.loaded);
+    if (argc==6) edition_art(&content,argv[5]);
     /* Definition lookups reject identities outside their original tables;
        future authoring inputs must not become unchecked record offsets. */
     const unsigned limits[]={3,1,1,3,11,1,1};

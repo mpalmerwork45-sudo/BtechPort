@@ -58,6 +58,8 @@ typedef struct {
     BtpCombatData combat;
     BtpWorldData world;
     BtpRoster roster; /* Empty in Original; immutable for a running session. */
+    /* Cosmetic Updated-pack art, separate from original O*.ANM and save IDs. */
+    BtpAnm broker_portrait;
 } BtpResources;
 
 int btp_map_decode(const uint8_t *bytes, size_t length, BtpMap *map, BtpError *error);

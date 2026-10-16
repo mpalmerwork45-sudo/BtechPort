@@ -66,6 +66,16 @@ Current expansion checks pass: native **59/59**, ASan/UBSan/LeakSanitizer
 SDL window scenarios on each platform. Existing Updated slots 1 and 5 load
 with the new roster; their files were preserved. Evidence and adaptation limits
 are recorded in the [roster milestone](M5A_ROSTER_SLICE.md).
+The broker now has [new AI-generated artwork](../content/updated/art/README.md)
+and the other buildings' description/compact-choice layout. The selected male
+salesman master, final prompt, exact 88×88 preview and ANM are included, along
+with a reproducible converter. Optional pack-local art does not change roster
+fingerprints or saves; older packs retain the mechanic fallback. General
+custom-building mappings and animated new portraits remain future work.
+Broker-art checks pass: native **59/59**, Python **29/29**, four focused
+sanitizer and Windows suites each, and **28/28** Updated SDL window scenarios
+on each platform. Exact portrait pixels and malformed/missing-art behavior
+are covered; the selected image is static.
 At the owner's request, a commented **temporary** formation recovery now applies
 in both editions after scene/menu exits and excessive separation. It keeps
 parked/wrecked mechs inactive. Its removal TODO targets the underlying follower

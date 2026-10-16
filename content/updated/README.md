@@ -4,8 +4,9 @@ This optional data pack adds **17 mech models/variants** to the original campaig
 **Updated BTECH CHI** before the Westwood/Infocom logo, then enter the central
 doorway of Starport's unused three-door building, northeast of Mech-It Lube.
 Approach local position **54,50** from the south (**54,51**). Its new **'Mech
-Broker** counter has Buy, Sell and Leave options and the original mechanic
-portrait. Delivery uses the existing parked
+Broker** counter has Buy, Sell and Leave options, a descriptive introduction,
+compact menu rows and a [newly generated broker portrait](art/README.md).
+Delivery uses the existing parked
 mech roster; assign a pilot when leaving through the garage (the original
 150 C-bill checkout fee still applies). Four owned bays
 remain the limit. A free bay and sufficient money are required; rejected
@@ -109,8 +110,10 @@ rules apply. Quirks and tabletop construction rules are not implemented.
 The adapted [roster.json](roster.json), archived pack and source manifest are separately licensed under
 **CC BY-NC-SA 4.0**; see [LICENSE.md](LICENSE.md) and the
 [upstream license](https://github.com/MegaMek/mm-data/blob/main/LICENSE).
-This data pack is separate from the GPL engine. No upstream engine code, unit
-art, original CHI art, music or executable is included in it. The original
+This data pack is separate from the GPL engine. The new broker artwork has its
+own [provenance and GPL license notice](art/README.md); it is not adapted from
+mm-data. No upstream engine code or artwork, original CHI art, music or
+executable is included here. The original
 assets must still be supplied by the person running the game. No endorsement
 by MegaMek or the BattleTech rights holders is implied.
 

@@ -116,6 +116,7 @@ int btp_read_file(const char *path, uint8_t **bytes, size_t *length, BtpError *e
 int btp_resources_load(const char *dir, BtpResources *r, BtpError *e)
 {
     memset(&r->roster,0,sizeof r->roster);
+    memset(&r->broker_portrait,0,sizeof r->broker_portrait);
     memset(&r->dialogue, 0, sizeof r->dialogue);
     memset(&r->combat,0,sizeof r->combat);
     memset(&r->world,0,sizeof r->world);

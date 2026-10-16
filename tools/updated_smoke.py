@@ -101,7 +101,7 @@ def run(env, work):
             assert state["credits"] == 200000 - price and state["campaign"]["mounted"] == 0
             assert state["actions_menu"]["phase"] == 27 and state["actions_menu"]["notice"] == 1
             assert state["mech_types"][0] != 255
-        print("PASS: added Starport doorway, mechanic counter and all three Space/F5/F9 purchases.", flush=True)
+        print("PASS: added Starport doorway, broker counter and all three Space/F5/F9 purchases.", flush=True)
         # Cross both scrolling boundaries with real keyboard events. Held
         # saves retain the viewport and absolute model, including the two
         # Crusaders sharing an initial and the Atlas's later catalogue code.

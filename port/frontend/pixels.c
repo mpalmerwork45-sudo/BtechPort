@@ -1738,19 +1738,19 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         const BtpCampaignState *c=&s->campaign;
         if (btp_broker_page(c->ui)) {
             rectangle(f,0,0,320,200,0);border_panel(r,f,0,0,104,200,1);border_panel(r,f,104,0,216,200,0);
-            /* Use the actual mechanic portrait, exactly as REPAIR/GARAGE do. */
+            /* Updated packs may supply their own portrait without replacing
+               the original mechanic used by REPAIR/GARAGE. Older packs fall
+               back to that mechanic; both paths use the native ANM palette. */
             unsigned mechanic=r->combat.building_portraits[5];uint8_t packed[BTP_ANM_PACKED];
-            if (mechanic<BTP_ANM_COUNT && r->animations[mechanic].count &&
-                btp_anm_frame(&r->animations[mechanic],r->animations[mechanic].count-1u,packed)) {
+            const BtpAnm *broker_art=r->broker_portrait.count ? &r->broker_portrait :
+                mechanic<BTP_ANM_COUNT ? &r->animations[mechanic] : NULL;
+            if (broker_art && broker_art->count && btp_anm_frame(broker_art,broker_art->count-1u,packed)) {
                 for (unsigned i=0;i<88u*88u;++i) {
                     unsigned value=i&1u ? packed[i/2u]&15u : packed[i/2u]>>4;
                     f[(8u+i/88u)*320u+8u+i%88u]=btp_palette[sprite_palette[value]];
                 }
             }
-            text(r,f,112,8,"Starport 'Mech broker",15);
-            snprintf(line,sizeof line,"C-bills: %u",s->credits);text(r,f,112,24,line,7);
             unsigned owned=btp_broker_count(s);
-            snprintf(line,sizeof line,"Owned bays: %u/4",owned);text(r,f,112,32,line,owned==4 ? 14u : 7u);
             int selling=c->ui==BTP_MENU_BROKER_SELL || c->ui==BTP_MENU_BROKER_SELL_CONFIRM;
             unsigned id=c->ui==BTP_MENU_BROKER ? c->member+c->selected :
                 c->ui==BTP_MENU_BROKER_SELL ? btp_broker_slot(s,c->selected) : s->menu.map_y;
@@ -1763,27 +1763,41 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                 if (model[0]==255 && selling) name[0]=(char)s->party.mech_types[id];
                 (void)wrapped_at(r,f,8,112,11,(const uint8_t *)name,strlen(name),15);
                 snprintf(line,sizeof line,"%u tons",model[16]);text(r,f,8,136,line,7);
-                snprintf(line,sizeof line,"Walk: %u",model[49]);text(r,f,8,152,line,7);
-                snprintf(line,sizeof line,"Run:  %u",model[49]+(model[49]+1u)/2u);text(r,f,8,168,line,7);
-                snprintf(line,sizeof line,"Jump: %u",model[50]);text(r,f,8,184,line,7);
+                snprintf(line,sizeof line,"Walk: %u",model[49]);text(r,f,8,144,line,7);
+                snprintf(line,sizeof line,"Run:  %u",model[49]+(model[49]+1u)/2u);text(r,f,8,152,line,7);
+                snprintf(line,sizeof line,"Jump: %u",model[50]);text(r,f,8,160,line,7);
             } else {
-                const char *description="'Mech sales and purchases. Four owned bays.";
-                (void)wrapped_at(r,f,8,112,11,(const uint8_t *)description,strlen(description),7);
+                const char *description="Starport 'Mech Broker";
+                (void)wrapped_at(r,f,8,112,11,(const uint8_t *)description,strlen(description),15);
             }
+            snprintf(line,sizeof line,"Bays: %u/4",owned);text(r,f,8,168,line,owned==4 ? 14u : 7u);
+            text(r,f,8,176,"C-Bills:",15);
+            snprintf(line,sizeof line,"%u",s->credits);text(r,f,8,184,line,10);
             if (c->ui==BTP_MENU_BROKER_HUB) {
+                /* Match the original building rhythm: prose at the top,
+                   then consecutive eight-pixel choices after "Will you:". */
+                const char *message="A sharply dressed broker flashes a well-practiced smile. Beyond the glass, 'Mechs await new owners. \"Quality machines. Very reasonable prices.\"";
+                int y=wrapped(r,f,8,(const uint8_t *)message,strlen(message),15)+8;
+                text(r,f,112,y,"Will you:",15);y+=8;
                 const char *const items[]={"Buy a 'Mech","Sell a 'Mech","Leave"};
                 for (unsigned i=0;i<3;++i) {
-                    int y=64+(int)i*16;if (i==c->selected) rectangle(f,112,y,200,8,14);
-                    text(r,f,112,y,items[i],i==c->selected ? 0u : 15u);
+                    int row=y+(int)i*8;if (i==c->selected) rectangle(f,112,row,200,8,14);
+                    text(r,f,112,row,items[i],i==c->selected ? 0u : 15u);
                 }
-                const char *message="Purchased 'Mechs are parked in the garage. Sale offers reflect damage and include equipment.";
-                (void)wrapped(r,f,120,(const uint8_t *)message,strlen(message),7);
             } else if (c->ui==BTP_MENU_BROKER || c->ui==BTP_MENU_BROKER_SELL) {
+                const char *message=selling ? "The broker eyes your 'Mechs. \"Let's see what they're worth, equipment included.\"" :
+                    "\"Take your pick. Delivery to the garage is included.\"";
+                int y=wrapped(r,f,8,(const uint8_t *)message,strlen(message),15)+8;
+                if (selling && !owned) {
+                    text(r,f,112,y,"No owned 'Mechs to sell.",15);y+=16;
+                } else {
+                    text(r,f,112,y,selling ? "Sell which 'Mech?" : "Buy which 'Mech?",15);y+=8;
+                }
                 unsigned count=btp_actions_count(s);
                 for (unsigned i=0;i<count;++i) {
-                    int y=48+(int)i*16;if (i==c->selected) rectangle(f,112,y,200,8,14);
+                    int row=y+(int)i*8;if (i==c->selected) rectangle(f,112,row,200,8,14);
                     unsigned color=i==c->selected ? 0u : 15u;
-                    if (selling ? i==count-1u : c->member+i==r->roster.count) text(r,f,112,y,"Back",color);
+                    if (selling ? i==count-1u : c->member+i==r->roster.count) text(r,f,112,row,"Back",color);
                     else if (selling) {
                         unsigned bay=btp_broker_slot(s,i);const uint8_t *m=bay ? s->party.mechs[bay-1] : s->campaign.mech;
                         char name[16];memcpy(name,m,15);name[15]=0;if (m[0]==255) name[0]=(char)s->party.mech_types[bay];
@@ -1791,15 +1805,14 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                         /* Size the label around the numeric quote so that it
                            stays inside the frame; the side panel keeps its name. */
                         int width=21-(int)(strlen(price)>6 ? strlen(price) : 6);
-                        snprintf(line,sizeof line,"%u %-*.*s %6s",bay+1u,width,width,name,price);text(r,f,112,y,line,color);
+                        snprintf(line,sizeof line,"%u %-*.*s %6s",bay+1u,width,width,name,price);text(r,f,112,row,line,color);
                     } else {
                         const BtpRosterMech *d=&r->roster.mechs[c->member+i];
                         char price[11];snprintf(price,sizeof price,"%u",d->price);
                         int width=21-(int)(strlen(price)>6 ? strlen(price) : 6);
-                        snprintf(line,sizeof line,"%-*.*s %6s",width,width,(const char *)d->record,price);text(r,f,112,y,line,color);
+                        snprintf(line,sizeof line,"%-*.*s %6s",width,width,(const char *)d->record,price);text(r,f,112,row,line,color);
                     }
                 }
-                if (selling && !owned) text(r,f,112,80,"No owned 'Mechs to sell.",7);
                 if (!selling && r->roster.count>=BTP_BROKER_ROWS) {
                     unsigned end=c->member+count;if (end>r->roster.count) end=r->roster.count;
                     snprintf(line,sizeof line,"%u-%u/%u  Up/Down: scroll",c->member+1u,end,r->roster.count);
@@ -1809,7 +1822,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
             } else if ((c->ui==BTP_MENU_BROKER_CONFIRM || c->ui==BTP_MENU_BROKER_SELL_CONFIRM) && model) {
                 uint32_t price=selling ? btp_broker_offer(s,r,id) : r->roster.mechs[id].price;
                 snprintf(line,sizeof line,"%s this 'Mech for %u C-bills?",selling ? "Sell" : "Buy",price);
-                int y=wrapped(r,f,56,(const uint8_t *)line,strlen(line),15)+8;
+                int y=wrapped(r,f,8,(const uint8_t *)line,strlen(line),15)+8;
                 rectangle(f,c->selected ? 144 : 112,y,c->selected ? 16 : 24,8,14);
                 text(r,f,112,y,"Yes",c->selected ? 15u : 0u);text(r,f,144,y,"No",c->selected ? 0u : 15u);
                 const char *notice=selling ? "Its equipment is included. Its crew stays with you." : "Delivery is outside Starport. Assign a pilot when you leave.";
@@ -1820,7 +1833,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                     s->menu.notice==BTP_BROKER_FULL ? "All four bays are occupied. No money was taken. Sell a 'Mech to make room." :
                     s->menu.notice==BTP_BROKER_SOLD ? "Sale completed. The bay is now free. Your crew stays with you." :
                     s->menu.notice==BTP_BROKER_CREDIT_LIMIT ? "Your account cannot hold the sale proceeds. Nothing was sold." : "The broker is unavailable here.";
-                (void)wrapped(r,f,56,(const uint8_t *)message,strlen(message),15);
+                (void)wrapped(r,f,8,(const uint8_t *)message,strlen(message),15);
                 text(r,f,112,184,"Enter/Space: continue.",7);
             }
             return;

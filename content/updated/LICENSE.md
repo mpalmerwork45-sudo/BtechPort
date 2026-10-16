@@ -11,3 +11,8 @@ liability apply. Changes for CHI are described in the README.
 
 The engine source remains under the repository's GPL-3.0-only license. This
 data license grants no rights to the original CHI assets or BattleTech trademarks.
+
+The newly generated broker images and ANM in [art/](art/README.md) are separate
+from the adapted unit records and use the repository's GPL-3.0-only license
+to the extent copyright applies. Their generation prompt and provenance are
+recorded alongside the images.

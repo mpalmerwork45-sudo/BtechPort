@@ -97,7 +97,8 @@ if(BUILD_TESTING)
   target_link_libraries(btp-content-tests PRIVATE btp_core)
   add_test(NAME original-content-lifetime COMMAND btp-content-tests
     "${PROJECT_SOURCE_DIR}/Original DOS" "${PROJECT_SOURCE_DIR}/work/talk-data.bin"
-    "${PROJECT_SOURCE_DIR}/work/combat-data.bin" "${PROJECT_SOURCE_DIR}/work/world-data.bin")
+    "${PROJECT_SOURCE_DIR}/work/combat-data.bin" "${PROJECT_SOURCE_DIR}/work/world-data.bin"
+    "${PROJECT_SOURCE_DIR}/content/updated/roster.json")
   add_executable(btp-encounter-placement-tests tests/test_encounter_placement.c)
   target_link_libraries(btp-encounter-placement-tests PRIVATE btp_core)
   add_test(NAME encounter-placement-reachability COMMAND btp-encounter-placement-tests "${PROJECT_SOURCE_DIR}/Original DOS")

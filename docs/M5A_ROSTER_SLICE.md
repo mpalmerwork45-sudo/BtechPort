@@ -42,8 +42,9 @@ The broker now occupies the central doorway of the existing three-door building
 northeast of Starport's Mech-It Lube: local half-step **54,50**, approached from
 **54,51** (world **1334,1075**). Only Updated adds the entrance trigger; the
 original MTP, BLD and graphic files are unchanged. Entry uses the regular Yes/No
-popup. The counter uses the original mechanic portrait and offers Buy, Sell and
-Leave. Space no longer has a broker shortcut.
+popup. The counter now uses a newly generated male broker portrait and offers
+Buy, Sell and Leave after a descriptive introduction, with consecutive
+eight-pixel menu rows. Space no longer has a broker shortcut.
 
 The four-bay ownership limit is explicit on every counter page. A full-fleet
 purchase cannot charge money or replace a record. Sales accept both original
@@ -78,6 +79,33 @@ This delivers the first playable CHI adapter in M5a. It does not complete the
 general package/weapon schema, Lua, map authoring or editor milestones. The
 [earlier authoring sample](../examples/content-demo/README.md) remains a separate
 offline prototype and is not the runtime roster format.
+
+## Custom broker portrait
+
+The [broker artwork guide](../content/updated/art/README.md) records the selected
+AI-generated master, final prompt, exact 88×88 preview, native ANM export and
+reproduction command. This is owner-requested **authored expansion content**.
+`art/broker.anm` resolves beside the selected roster, with the original mechanic
+as the fallback for packs without that file. A malformed file fails the content
+selection atomically. The art remains separate from gameplay definitions, so
+the 0.2.0 fingerprint stays **751321522** and earlier saves still load.
+
+Credits and bay occupancy now occupy the left panel, alongside the selected
+model's details. The right panel follows the other buildings' prose/choice
+layout; stock and sale choices also have eight-pixel row spacing. The eight-row
+scroll window, control mappings and default-No confirmations are unchanged.
+
+**VERIFIED (2026-10-16):** native CTest **59/59** (43.21 s), Python **29/29**,
+the four focused content/roster/ANM/pixel suites under ASan/UBSan/LeakSanitizer
+**4/4**, and the same four Windows/Wine suites **4/4**. The final optional-error
+buffer lifetime correction was followed by focused content/roster reruns on
+native and Windows plus the four sanitizer and portrait-export checks.
+Linux and Windows SDL both pass **28/28** selector/broker window scenarios,
+including real Space selection, scrolling, held purchase/sale confirmations,
+F5/F9, full bays and replacement purchases. Six broker screens were visually
+reviewed in `work/broker-screen-review.png`. The converter test compares the
+actual native portrait crop with the indexed PNG exactly. These are separate
+from original-game fidelity comparisons: this broker is new expansion content.
 
 ## Starting, switching and saving
 
