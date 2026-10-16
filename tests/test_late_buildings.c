@@ -88,6 +88,54 @@ static unsigned alternate_services(const BtpResources *r)
     }
     CHECK(!fclose(f) && cases==928);return cases;
 }
+static unsigned story_branches(const BtpResources *r)
+{
+    FILE *f=fopen("tests/fixtures/story-branches-primary.txt","r");CHECK(f);
+    char line[512];unsigned cases=0;
+    while (fgets(line,sizeof line,f)) {
+        unsigned kind,count,cash,repeat,tech,medic,health,choice,yes,money,flags[4],waits;
+        uint64_t expected_menu,expected_wait,expected_event,expected_people;
+        CHECK(sscanf(line,"B %u %u %u %u %u %u %u %u %u %u %u %u %u %u %u %" SCNx64 " %" SCNx64 " %" SCNx64 " %" SCNx64,
+            &kind,&count,&cash,&repeat,&tech,&medic,&health,&choice,&yes,&money,&flags[0],&flags[1],&flags[2],&flags[3],&waits,
+            &expected_menu,&expected_wait,&expected_event,&expected_people)==19);
+        BtpState s;prerequisite(&s,count,42);s.credits=cash;s.party.people[count-1][9]=(uint8_t)tech;
+        s.party.people[0][10]=(uint8_t)medic;s.party.people[0][15]=(uint8_t)health;
+        s.technician=(uint8_t)(count==1 ? tech : 0);
+        s.story_flags[kind==14 ? 43 : 53]=(uint8_t)repeat;
+        btp_game_building(&s,r,kind);btp_game_tick(&s,r,BTP_IDLE);
+        uint64_t mh=UINT64_C(14695981039346656037),wh=mh,eh=mh,ph=mh;
+        unsigned pages=0,visits=0,ticks=0,last_animation=0,last_effect=0;
+        /* Every actual wait, answer, movie frame and sound continuation is
+           saved before input. Compare the VM's complete branch outcome. */
+        while (s.mode==BTP_BUILDING && ticks++<10000) {
+            CHECK(s.script.status!=BTP_SCRIPT_ERROR && s.audio.sound_count<=1);
+            unsigned animation=s.cutscene.active ? s.script.pc : 0;
+            unsigned effect=s.script.status==BTP_SCRIPT_EFFECT ? s.script.pc : 0;
+            if (animation && animation!=last_animation) {
+                eh=append_byte(eh,1);eh=append_byte(eh,s.cutscene.kind);eh=append_byte(eh,s.script.animation_flags);
+            }
+            if (effect && effect!=last_effect) { CHECK(s.audio.sound_count==1);eh=append_byte(eh,0);eh=append_byte(eh,s.audio.sounds[0]); }
+            last_animation=animation;last_effect=effect;
+            if (s.cutscene.active || s.audio.sound_count) { input(&s,r,BTP_IDLE);continue; }
+            if (s.script.status==BTP_SCRIPT_WAIT) { wh=append_byte(wh,s.script.pc);wh=append_byte(wh,s.script.pc>>8);++pages; }
+            else if (s.script.status==BTP_SCRIPT_MENU) {
+                CHECK(s.script.menu_id==32);unsigned item=visits++ ? 2u : choice;
+                mh=append_byte(mh,32);mh=append_byte(mh,item);
+                while (s.script.selected!=item) input(&s,r,BTP_DOWN);
+            } else if (s.script.status==BTP_SCRIPT_CONFIRM && !yes) input(&s,r,BTP_RIGHT);
+            input(&s,r,BTP_ACCEPT);
+        }
+        for (unsigned i=0;i<8*17;++i) ph=append_byte(ph,((const uint8_t *)s.party.people)[i]);
+        if (s.credits!=money || mh!=expected_menu || wh!=expected_wait || eh!=expected_event || ph!=expected_people)
+            fprintf(stderr,"Story branch %u kind %u: money %u/%u waits %u/%u menu %016" PRIx64 "/%016" PRIx64 " wait %016" PRIx64 "/%016" PRIx64 " event %016" PRIx64 "/%016" PRIx64 " people %016" PRIx64 "/%016" PRIx64 "\n",
+                cases,kind,s.credits,money,pages,waits,mh,expected_menu,wh,expected_wait,eh,expected_event,ph,expected_people);
+        CHECK(ticks<10000 && s.mode==BTP_EXPLORE && s.credits==money && pages==waits);
+        CHECK(mh==expected_menu && wh==expected_wait && eh==expected_event && ph==expected_people);
+        const unsigned indices[]={14,43,53,54};for (unsigned i=0;i<4;++i) CHECK(s.story_flags[indices[i]]==flags[i]);
+        ++cases;
+    }
+    CHECK(!fclose(f) && cases==124);return cases;
+}
 int main(int argc,char **argv)
 {
     if (argc!=2) return 2;
@@ -167,6 +215,6 @@ int main(int argc,char **argv)
         if (route==6) { CHECK(laser_menu && s.party.people[0][11]==13);for (unsigned i=1;i<4;++i) CHECK(s.party.people[i][11]>=12); }
         if (route==7) CHECK(electronics && clothing && s.credits==15342507 && s.story_flags[30] && s.story_flags[48] && s.story_flags[49]);
     }
-    unsigned alternatives=alternate_services(r);
+    unsigned alternatives=alternate_services(r)+story_branches(r);
     free(r);printf("PASS: %u late-building checks, 46 native and %u complete BLD primary cases, eight saved ordinary routes\n",checks,alternatives);return 0;
 }
