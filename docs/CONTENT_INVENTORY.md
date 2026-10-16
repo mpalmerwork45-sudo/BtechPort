@@ -44,3 +44,22 @@ call an original F5 number as a future generic event command: building context,
 flags and continuation state are required. Recruitment, encounters, inventory
 and complex services need additional reusable commands when a second caller is
 implemented, rather than speculative replacement during this preparation.
+
+## Persistence ownership (P4)
+
+| State or data | Current owner | Future package boundary |
+| --- | --- | --- |
+| Resources, immutable templates, decoded graphics/text/sound tables | `data/content.c`, outside `BtpState` | Package loader owns definitions; saves reference stable IDs, never pointers |
+| Party records, credits, damage/ammo, world exploration, RNG and flags | `BtpState`; payload in `core/state_codec.c` | Retain simulation instance data separately from definitions |
+| BLD PC, checkpoint, service quote, combat plan, menu and selection | Existing state structs and codec | Event runner must serialize pending operations and their arguments, not a Lua coroutine stack |
+| Cutscene frame, sound queue/progress, delayed destruction and combat messages | Existing presentation/audio state in codec | Preserve exactly-once continuation and ordered notifications when restoring |
+| File envelope, CRC, pending-file replacement, six slots | `data/save.c` | Keep file integrity separate from package compatibility decisions |
+| Original GAME records and otherwise uninterpreted bytes | `data/original_save.c`, `BtpOriginalState` | Original profile retains lossless original import/export; custom packages need a different contract |
+
+The payload decoder builds a candidate and publishes it only after validation;
+file loading also uses a candidate. Extraction preserved all existing migrations
+and their validation order. Old saves still use the original profile implicitly.
+A future custom save needs package ID, content version, rules/API version and
+stable definition IDs; its envelope/schema version is a separate concern from
+content updates. Do not insert placeholder package fields into BTPe/v40 or claim
+that custom instances can already be written to original GAME files.

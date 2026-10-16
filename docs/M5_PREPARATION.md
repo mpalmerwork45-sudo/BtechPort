@@ -1,8 +1,8 @@
 # M5 preparation — preserving the playable original
 
-**2026-10-16: M5-P1 through M5-P3 implemented and verified.** These are preparation
+**2026-10-16: M5-P1 through M5-P4 implemented and verified.** These are preparation
 increments from the [engine and editor plan](ENGINE_AND_EDITOR_PLAN.md), against
-the previously playable revision `901c952`. P4–P5 are now authorized and in progress.
+the previously playable revision `901c952`. P5 is now authorized and in progress.
 
 ## P2 — Unit lookups
 
@@ -40,6 +40,21 @@ All 57 native suites pass (42.41 seconds). All three before/after routes match
 at every canonical trace record and in their final save/frame bytes, including
 held services and the complete campaign/spy routes. This is a boundary for
 future event bindings, not a Lua implementation or a new campaign script ABI.
+
+## P4 — Persistence boundary
+
+[state_codec.c](../port/core/state_codec.c) owns the existing payload encoder,
+decoder, historic migrations and validation. The moved function bodies are
+byte-for-byte identical to their previous source in `game.c`; public entry
+points, BTPe/v40, the 20,480-byte payload and BTS1 envelope are unchanged.
+`data/save.c` still owns file integrity, transactional loading and slot I/O;
+`data/original_save.c` still owns original GAME import/export and unknown bytes.
+
+All 57 native suites pass (42.26 seconds), including original GAME round trips,
+failed-load preservation and the existing old-version and held-state cases.
+Fresh-campaign, spy-replacement and service traces, final saves and frames match
+the retained pre-P2 executable. Full sanitizer and Windows/Wine phase checks
+follow after P5; no new format version or package fields were introduced.
 
 ## Implemented boundary
 
@@ -113,8 +128,7 @@ python3 tools/native_smoke.py --windows --save-only
 python3 tools/reference_guard.py verify
 ```
 
-## Next preparation increments
+## Next preparation increment
 
-Isolate the existing save codec (P4), then validate a first authored content
-schema/sample and finish the content inventory (P5). Original gameplay remains
-the compatibility case throughout; runtime package loading is later M5a/M5b.
+Validate a first authored content schema/sample and finish the content inventory
+(P5). Runtime package loading remains later M5a/M5b work.

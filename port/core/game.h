@@ -185,6 +185,7 @@ const BtpBld *btp_building_bld(const BtpResources *resources, unsigned slot);
 const BtpMap *btp_active_map(const BtpResources *resources,const BtpState *state);
 unsigned btp_building_kind(const BtpResources *resources,const BtpState *state);
 const BtpBld *btp_state_bld(const BtpResources *resources,const BtpState *state);
+/* state_codec.c preserves the original-profile payload and historic migrations. */
 void btp_state_encode(const BtpState *state, uint8_t output[BTP_STATE_BYTES]);
 int btp_state_decode(const uint8_t *bytes, size_t length, const BtpMap *map,
     const BtpBld *script, BtpState *state);
