@@ -593,7 +593,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "e68a38e6731ac903",
+        "state_digest": "cb94e46d9dd73f9f",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1512,7 +1512,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "935c20cfff27f74b",
+        "state_digest": "fd65e411f75f73cf",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1855,18 +1855,18 @@
     },
     {
       "label": "code-terminal-1",
-      "tick": 442,
+      "tick": 441,
       "state": {
         "map": 14,
         "mode": "cache",
         "x_half": 18,
-        "y_half": 116,
+        "y_half": 117,
         "tile": [
           9,
           58
         ],
         "gate": 33,
-        "tick": 442,
+        "tick": 441,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -2339,7 +2339,7 @@
           "owned": 1,
           "world": [
             1554,
-            1652
+            1653
           ],
           "mounted": 0,
           "encounter": 0,
@@ -2431,7 +2431,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "6ad6505e9bf19882",
+        "state_digest": "2f4d393ddca7de4a",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -2774,18 +2774,18 @@
     },
     {
       "label": "code-terminal-3",
-      "tick": 524,
+      "tick": 523,
       "state": {
         "map": 14,
         "mode": "cache",
         "x_half": 90,
-        "y_half": 124,
+        "y_half": 125,
         "tile": [
           45,
           62
         ],
         "gate": 33,
-        "tick": 524,
+        "tick": 523,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -3258,7 +3258,7 @@
           "owned": 1,
           "world": [
             1626,
-            1660
+            1661
           ],
           "mounted": 0,
           "encounter": 0,
@@ -3350,7 +3350,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "bfd0fd71a7892d58",
+        "state_digest": "6dff1707dc189056",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -3693,18 +3693,18 @@
     },
     {
       "label": "code-terminal-5",
-      "tick": 539,
+      "tick": 538,
       "state": {
         "map": 14,
         "mode": "cache",
         "x_half": 103,
-        "y_half": 124,
+        "y_half": 125,
         "tile": [
           51,
           62
         ],
         "gate": 33,
-        "tick": 539,
+        "tick": 538,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -4177,7 +4177,7 @@
           "owned": 1,
           "world": [
             1639,
-            1660
+            1661
           ],
           "mounted": 0,
           "encounter": 0,
@@ -4269,7 +4269,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "6c0223142b9e412d",
+        "state_digest": "d67650f521e23557",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -4612,18 +4612,18 @@
     },
     {
       "label": "door-2-opening",
-      "tick": 560,
+      "tick": 559,
       "state": {
         "map": 14,
         "mode": "cache",
         "x_half": 84,
-        "y_half": 124,
+        "y_half": 125,
         "tile": [
           42,
           62
         ],
         "gate": 33,
-        "tick": 560,
+        "tick": 559,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -5096,7 +5096,7 @@
           "owned": 1,
           "world": [
             1620,
-            1660
+            1661
           ],
           "mounted": 0,
           "encounter": 0,
@@ -5188,7 +5188,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "4aa692f161fb8b15",
+        "state_digest": "80173fb4ed7fb535",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -5531,18 +5531,18 @@
     },
     {
       "label": "door-2-open",
-      "tick": 592,
+      "tick": 591,
       "state": {
         "map": 14,
         "mode": "cache",
         "x_half": 84,
-        "y_half": 124,
+        "y_half": 125,
         "tile": [
           42,
           62
         ],
         "gate": 33,
-        "tick": 592,
+        "tick": 591,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -6015,7 +6015,7 @@
           "owned": 1,
           "world": [
             1620,
-            1660
+            1661
           ],
           "mounted": 0,
           "encounter": 0,
@@ -6107,7 +6107,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "90ff79ce5640b892",
+        "state_digest": "91588c447c1145b2",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -6450,18 +6450,18 @@
     },
     {
       "label": "code-terminal-2",
-      "tick": 661,
+      "tick": 660,
       "state": {
         "map": 14,
         "mode": "cache",
         "x_half": 24,
-        "y_half": 116,
+        "y_half": 117,
         "tile": [
           12,
           58
         ],
         "gate": 33,
-        "tick": 661,
+        "tick": 660,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -6934,7 +6934,7 @@
           "owned": 1,
           "world": [
             1560,
-            1652
+            1653
           ],
           "mounted": 0,
           "encounter": 0,
@@ -7026,7 +7026,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "fe1dbbbbba2bd5a6",
+        "state_digest": "cac64a676ecef592",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -7369,18 +7369,18 @@
     },
     {
       "label": "code-terminal-7",
-      "tick": 767,
+      "tick": 766,
       "state": {
         "map": 14,
         "mode": "cache",
         "x_half": 110,
-        "y_half": 114,
+        "y_half": 115,
         "tile": [
           55,
           57
         ],
         "gate": 33,
-        "tick": 767,
+        "tick": 766,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -7853,7 +7853,7 @@
           "owned": 1,
           "world": [
             1646,
-            1650
+            1651
           ],
           "mounted": 0,
           "encounter": 0,
@@ -7945,7 +7945,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "02674b77775b830a",
+        "state_digest": "ce17542ecf6928f0",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -8288,18 +8288,18 @@
     },
     {
       "label": "code-terminal-18",
-      "tick": 977,
+      "tick": 983,
       "state": {
         "map": 14,
         "mode": "cache",
-        "x_half": 44,
-        "y_half": 4,
+        "x_half": 43,
+        "y_half": 5,
         "tile": [
-          22,
+          21,
           2
         ],
         "gate": 33,
-        "tick": 977,
+        "tick": 983,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -8771,14 +8771,14 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1580,
-            1540
+            1579,
+            1541
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 0
         },
-        "player_sprite": 176,
+        "player_sprite": 175,
         "npc_sprites": [
           270,
           270,
@@ -8864,7 +8864,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "99cc73fe0c481430",
+        "state_digest": "6b32aa65a5649790",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -9207,18 +9207,18 @@
     },
     {
       "label": "door-3-opening",
-      "tick": 1201,
+      "tick": 1214,
       "state": {
         "map": 14,
         "mode": "cache",
         "x_half": 96,
-        "y_half": 114,
+        "y_half": 115,
         "tile": [
           48,
           57
         ],
         "gate": 33,
-        "tick": 1201,
+        "tick": 1214,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -9691,7 +9691,7 @@
           "owned": 1,
           "world": [
             1632,
-            1650
+            1651
           ],
           "mounted": 0,
           "encounter": 0,
@@ -9783,7 +9783,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "6ef30a8b5ad49291",
+        "state_digest": "72eb9c0774db877f",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -10126,18 +10126,18 @@
     },
     {
       "label": "door-3-open",
-      "tick": 1233,
+      "tick": 1246,
       "state": {
         "map": 14,
         "mode": "cache",
         "x_half": 96,
-        "y_half": 114,
+        "y_half": 115,
         "tile": [
           48,
           57
         ],
         "gate": 33,
-        "tick": 1233,
+        "tick": 1246,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -10610,7 +10610,7 @@
           "owned": 1,
           "world": [
             1632,
-            1650
+            1651
           ],
           "mounted": 0,
           "encounter": 0,
@@ -10702,7 +10702,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "012c7261a066a1c1",
+        "state_digest": "2831d87b28e4cc43",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -11045,18 +11045,18 @@
     },
     {
       "label": "code-terminal-15",
-      "tick": 1297,
+      "tick": 1316,
       "state": {
         "map": 14,
         "mode": "cache",
         "x_half": 115,
-        "y_half": 76,
+        "y_half": 77,
         "tile": [
           57,
           38
         ],
         "gate": 33,
-        "tick": 1297,
+        "tick": 1316,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -11529,7 +11529,7 @@
           "owned": 1,
           "world": [
             1651,
-            1612
+            1613
           ],
           "mounted": 0,
           "encounter": 0,
@@ -11621,7 +11621,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "0f5f8dd046cc4e5d",
+        "state_digest": "ca5c59957623c791",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -11964,18 +11964,18 @@
     },
     {
       "label": "code-terminal-14",
-      "tick": 1322,
+      "tick": 1341,
       "state": {
         "map": 14,
         "mode": "cache",
         "x_half": 100,
-        "y_half": 84,
+        "y_half": 85,
         "tile": [
           50,
           42
         ],
         "gate": 33,
-        "tick": 1322,
+        "tick": 1341,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -12448,7 +12448,7 @@
           "owned": 1,
           "world": [
             1636,
-            1620
+            1621
           ],
           "mounted": 0,
           "encounter": 0,
@@ -12540,7 +12540,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "9aea930aaced8439",
+        "state_digest": "5e0db397e85657e7",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -12883,18 +12883,18 @@
     },
     {
       "label": "code-terminal-11",
-      "tick": 1385,
+      "tick": 1410,
       "state": {
         "map": 14,
         "mode": "cache",
         "x_half": 89,
-        "y_half": 94,
+        "y_half": 95,
         "tile": [
           44,
           47
         ],
         "gate": 33,
-        "tick": 1385,
+        "tick": 1410,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -13367,7 +13367,7 @@
           "owned": 1,
           "world": [
             1625,
-            1630
+            1631
           ],
           "mounted": 0,
           "encounter": 0,
@@ -13459,7 +13459,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "87197eebc081aa77",
+        "state_digest": "7fadbaf68cba2cb7",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -13802,18 +13802,18 @@
     },
     {
       "label": "door-1-opening",
-      "tick": 1472,
+      "tick": 1501,
       "state": {
         "map": 14,
         "mode": "cache",
         "x_half": 52,
-        "y_half": 124,
+        "y_half": 125,
         "tile": [
           26,
           62
         ],
         "gate": 33,
-        "tick": 1472,
+        "tick": 1501,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -14286,7 +14286,7 @@
           "owned": 1,
           "world": [
             1588,
-            1660
+            1661
           ],
           "mounted": 0,
           "encounter": 0,
@@ -14378,7 +14378,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "20417976a59a7372",
+        "state_digest": "ad3e3fe6aeef5c52",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -14721,18 +14721,18 @@
     },
     {
       "label": "door-1-open",
-      "tick": 1504,
+      "tick": 1533,
       "state": {
         "map": 14,
         "mode": "cache",
         "x_half": 52,
-        "y_half": 124,
+        "y_half": 125,
         "tile": [
           26,
           62
         ],
         "gate": 33,
-        "tick": 1504,
+        "tick": 1533,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -15205,7 +15205,7 @@
           "owned": 1,
           "world": [
             1588,
-            1660
+            1661
           ],
           "mounted": 0,
           "encounter": 0,
@@ -15297,7 +15297,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "73b279f6ecfd7218",
+        "state_digest": "804c57c0fd0c3078",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -15640,18 +15640,18 @@
     },
     {
       "label": "code-terminal-13",
-      "tick": 1601,
+      "tick": 1630,
       "state": {
         "map": 14,
         "mode": "cache",
         "x_half": 116,
-        "y_half": 92,
+        "y_half": 93,
         "tile": [
           58,
           46
         ],
         "gate": 33,
-        "tick": 1601,
+        "tick": 1630,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -16124,13 +16124,13 @@
           "owned": 1,
           "world": [
             1652,
-            1628
+            1629
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 0
         },
-        "player_sprite": 174,
+        "player_sprite": 177,
         "npc_sprites": [
           270,
           270,
@@ -16216,7 +16216,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "6d124b03d3b362ad",
+        "state_digest": "fe9089ff958ff49e",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -16559,18 +16559,18 @@
     },
     {
       "label": "code-terminal-31",
-      "tick": 1897,
+      "tick": 1934,
       "state": {
         "map": 14,
         "mode": "cache",
         "x_half": 4,
-        "y_half": 50,
+        "y_half": 51,
         "tile": [
           2,
           25
         ],
         "gate": 33,
-        "tick": 1897,
+        "tick": 1934,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -17043,7 +17043,7 @@
           "owned": 1,
           "world": [
             1540,
-            1586
+            1587
           ],
           "mounted": 0,
           "encounter": 0,
@@ -17135,7 +17135,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "30744bfb9098b560",
+        "state_digest": "77f15c5212f610c9",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -17478,18 +17478,18 @@
     },
     {
       "label": "code-terminal-4",
-      "tick": 2187,
+      "tick": 2232,
       "state": {
         "map": 14,
         "mode": "cache",
         "x_half": 98,
-        "y_half": 124,
+        "y_half": 125,
         "tile": [
           49,
           62
         ],
         "gate": 33,
-        "tick": 2187,
+        "tick": 2232,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -17962,7 +17962,7 @@
           "owned": 1,
           "world": [
             1634,
-            1660
+            1661
           ],
           "mounted": 0,
           "encounter": 0,
@@ -18054,7 +18054,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "03bb80b252887799",
+        "state_digest": "5806b42414d97508",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -18397,18 +18397,18 @@
     },
     {
       "label": "door-7-opening",
-      "tick": 2330,
+      "tick": 2382,
       "state": {
         "map": 14,
         "mode": "cache",
-        "x_half": 87,
-        "y_half": 74,
+        "x_half": 88,
+        "y_half": 75,
         "tile": [
-          43,
+          44,
           37
         ],
         "gate": 33,
-        "tick": 2330,
+        "tick": 2382,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -18880,14 +18880,14 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1623,
-            1610
+            1624,
+            1611
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 0
         },
-        "player_sprite": 176,
+        "player_sprite": 175,
         "npc_sprites": [
           270,
           270,
@@ -18973,7 +18973,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "bd58da03f72d15f7",
+        "state_digest": "33c3c0f20ccea161",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -19316,18 +19316,18 @@
     },
     {
       "label": "door-7-open",
-      "tick": 2362,
+      "tick": 2414,
       "state": {
         "map": 14,
         "mode": "cache",
-        "x_half": 87,
-        "y_half": 74,
+        "x_half": 88,
+        "y_half": 75,
         "tile": [
-          43,
+          44,
           37
         ],
         "gate": 33,
-        "tick": 2362,
+        "tick": 2414,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -19799,14 +19799,14 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1623,
-            1610
+            1624,
+            1611
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 0
         },
-        "player_sprite": 176,
+        "player_sprite": 175,
         "npc_sprites": [
           270,
           270,
@@ -19892,7 +19892,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "eceee603d2eb0cab",
+        "state_digest": "491d2d95140e6661",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -20235,18 +20235,18 @@
     },
     {
       "label": "code-terminal-29",
-      "tick": 2480,
+      "tick": 2541,
       "state": {
         "map": 14,
         "mode": "cache",
         "x_half": 22,
-        "y_half": 42,
+        "y_half": 43,
         "tile": [
           11,
           21
         ],
         "gate": 33,
-        "tick": 2480,
+        "tick": 2541,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -20719,7 +20719,7 @@
           "owned": 1,
           "world": [
             1558,
-            1578
+            1579
           ],
           "mounted": 0,
           "encounter": 0,
@@ -20811,7 +20811,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "f662f24f58c60cb4",
+        "state_digest": "f19878539ddc55d2",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -21154,18 +21154,18 @@
     },
     {
       "label": "code-terminal-12",
-      "tick": 2774,
+      "tick": 2851,
       "state": {
         "map": 14,
         "mode": "cache",
         "x_half": 102,
-        "y_half": 94,
+        "y_half": 95,
         "tile": [
           51,
           47
         ],
         "gate": 33,
-        "tick": 2774,
+        "tick": 2851,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -21638,13 +21638,13 @@
           "owned": 1,
           "world": [
             1638,
-            1630
+            1631
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 0
         },
-        "player_sprite": 174,
+        "player_sprite": 177,
         "npc_sprites": [
           270,
           270,
@@ -21730,7 +21730,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "f4fa71d7189f066d",
+        "state_digest": "c8910ca1b1d49019",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -22073,18 +22073,18 @@
     },
     {
       "label": "code-terminal-6",
-      "tick": 2871,
+      "tick": 2950,
       "state": {
         "map": 14,
         "mode": "cache",
         "x_half": 125,
-        "y_half": 118,
+        "y_half": 119,
         "tile": [
           62,
           59
         ],
         "gate": 33,
-        "tick": 2871,
+        "tick": 2950,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -22557,7 +22557,7 @@
           "owned": 1,
           "world": [
             1661,
-            1654
+            1655
           ],
           "mounted": 0,
           "encounter": 0,
@@ -22649,7 +22649,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "5d7c23ee5c42a44c",
+        "state_digest": "75fe2f45d982d3c4",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -22992,18 +22992,18 @@
     },
     {
       "label": "door-5-opening",
-      "tick": 3190,
+      "tick": 3286,
       "state": {
         "map": 14,
         "mode": "cache",
-        "x_half": 35,
-        "y_half": 75,
+        "x_half": 36,
+        "y_half": 74,
         "tile": [
-          17,
+          18,
           37
         ],
         "gate": 33,
-        "tick": 3190,
+        "tick": 3286,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -23475,14 +23475,14 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1571,
-            1611
+            1572,
+            1610
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 0
         },
-        "player_sprite": 167,
+        "player_sprite": 169,
         "npc_sprites": [
           270,
           270,
@@ -23568,7 +23568,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "7ef5649952c3e9b7",
+        "state_digest": "82e29c0023e1d1df",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -23911,18 +23911,18 @@
     },
     {
       "label": "door-5-open",
-      "tick": 3222,
+      "tick": 3318,
       "state": {
         "map": 14,
         "mode": "cache",
-        "x_half": 35,
-        "y_half": 75,
+        "x_half": 36,
+        "y_half": 74,
         "tile": [
-          17,
+          18,
           37
         ],
         "gate": 33,
-        "tick": 3222,
+        "tick": 3318,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -24394,14 +24394,14 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1571,
-            1611
+            1572,
+            1610
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 0
         },
-        "player_sprite": 167,
+        "player_sprite": 169,
         "npc_sprites": [
           270,
           270,
@@ -24487,7 +24487,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "b4e62f653c94b289",
+        "state_digest": "0a637a953d074429",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -24830,18 +24830,18 @@
     },
     {
       "label": "code-terminal-17",
-      "tick": 3486,
+      "tick": 3595,
       "state": {
         "map": 14,
         "mode": "cache",
         "x_half": 71,
-        "y_half": 76,
+        "y_half": 77,
         "tile": [
           35,
           38
         ],
         "gate": 33,
-        "tick": 3486,
+        "tick": 3595,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -25314,7 +25314,7 @@
           "owned": 1,
           "world": [
             1607,
-            1612
+            1613
           ],
           "mounted": 0,
           "encounter": 0,
@@ -25406,7 +25406,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "3b38c61cc2263c10",
+        "state_digest": "5143aa3292baf99f",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -25749,18 +25749,18 @@
     },
     {
       "label": "code-terminal-19",
-      "tick": 3495,
+      "tick": 3604,
       "state": {
         "map": 14,
         "mode": "cache",
         "x_half": 78,
-        "y_half": 76,
+        "y_half": 77,
         "tile": [
           39,
           38
         ],
         "gate": 33,
-        "tick": 3495,
+        "tick": 3604,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -26233,7 +26233,7 @@
           "owned": 1,
           "world": [
             1614,
-            1612
+            1613
           ],
           "mounted": 0,
           "encounter": 0,
@@ -26325,7 +26325,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "0f46cd48acece9aa",
+        "state_digest": "a5d97a23fcdee38b",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -26668,18 +26668,18 @@
     },
     {
       "label": "code-terminal-26",
-      "tick": 3668,
+      "tick": 3783,
       "state": {
         "map": 14,
         "mode": "cache",
         "x_half": 105,
-        "y_half": 50,
+        "y_half": 51,
         "tile": [
           52,
           25
         ],
         "gate": 33,
-        "tick": 3668,
+        "tick": 3783,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -27152,7 +27152,7 @@
           "owned": 1,
           "world": [
             1641,
-            1586
+            1587
           ],
           "mounted": 0,
           "encounter": 0,
@@ -27244,7 +27244,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "412b64fce449c412",
+        "state_digest": "c789b3dc591dfec9",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -27587,18 +27587,18 @@
     },
     {
       "label": "door-4-opening",
-      "tick": 3849,
+      "tick": 3977,
       "state": {
         "map": 14,
         "mode": "cache",
-        "x_half": 39,
-        "y_half": 83,
+        "x_half": 40,
+        "y_half": 82,
         "tile": [
-          19,
+          20,
           41
         ],
         "gate": 33,
-        "tick": 3849,
+        "tick": 3977,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -28070,14 +28070,14 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1575,
-            1619
+            1576,
+            1618
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 0
         },
-        "player_sprite": 167,
+        "player_sprite": 169,
         "npc_sprites": [
           270,
           270,
@@ -28163,7 +28163,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "5a82905dd8acedf5",
+        "state_digest": "4e0401fed0af194d",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -28506,18 +28506,18 @@
     },
     {
       "label": "door-4-open",
-      "tick": 3881,
+      "tick": 4009,
       "state": {
         "map": 14,
         "mode": "cache",
-        "x_half": 39,
-        "y_half": 83,
+        "x_half": 40,
+        "y_half": 82,
         "tile": [
-          19,
+          20,
           41
         ],
         "gate": 33,
-        "tick": 3881,
+        "tick": 4009,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -28989,14 +28989,14 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1575,
-            1619
+            1576,
+            1618
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 0
         },
-        "player_sprite": 167,
+        "player_sprite": 169,
         "npc_sprites": [
           270,
           270,
@@ -29082,7 +29082,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "b0271270881b76a0",
+        "state_digest": "af1453d94fe4f158",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -29425,18 +29425,18 @@
     },
     {
       "label": "code-terminal-20",
-      "tick": 3912,
+      "tick": 4043,
       "state": {
         "map": 14,
         "mode": "cache",
         "x_half": 14,
-        "y_half": 80,
+        "y_half": 81,
         "tile": [
           7,
           40
         ],
         "gate": 33,
-        "tick": 3912,
+        "tick": 4043,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -29909,7 +29909,7 @@
           "owned": 1,
           "world": [
             1550,
-            1616
+            1617
           ],
           "mounted": 0,
           "encounter": 0,
@@ -30001,7 +30001,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "005a5115f23db291",
+        "state_digest": "6389ffb6ec0b720d",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -30344,18 +30344,18 @@
     },
     {
       "label": "code-terminal-27",
-      "tick": 4346,
+      "tick": 4497,
       "state": {
         "map": 14,
         "mode": "cache",
         "x_half": 124,
-        "y_half": 32,
+        "y_half": 33,
         "tile": [
           62,
           16
         ],
         "gate": 33,
-        "tick": 4346,
+        "tick": 4497,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -30828,13 +30828,13 @@
           "owned": 1,
           "world": [
             1660,
-            1568
+            1569
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 0
         },
-        "player_sprite": 174,
+        "player_sprite": 177,
         "npc_sprites": [
           270,
           270,
@@ -30920,7 +30920,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "b409c5d35a41a151",
+        "state_digest": "41562c0888f776bf",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -31263,18 +31263,18 @@
     },
     {
       "label": "code-terminal-22",
-      "tick": 4734,
+      "tick": 4902,
       "state": {
         "map": 14,
         "mode": "cache",
-        "x_half": 26,
-        "y_half": 60,
+        "x_half": 25,
+        "y_half": 61,
         "tile": [
-          13,
+          12,
           30
         ],
         "gate": 33,
-        "tick": 4734,
+        "tick": 4902,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -31746,14 +31746,14 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1562,
-            1596
+            1561,
+            1597
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 0
         },
-        "player_sprite": 176,
+        "player_sprite": 175,
         "npc_sprites": [
           270,
           270,
@@ -31839,7 +31839,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "bbc66fceb41f30c5",
+        "state_digest": "c7e8f008f79ebc8c",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -32182,18 +32182,18 @@
     },
     {
       "label": "door-6-opening",
-      "tick": 4757,
+      "tick": 4926,
       "state": {
         "map": 14,
         "mode": "cache",
         "x_half": 37,
-        "y_half": 70,
+        "y_half": 71,
         "tile": [
           18,
           35
         ],
         "gate": 33,
-        "tick": 4757,
+        "tick": 4926,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -32666,7 +32666,7 @@
           "owned": 1,
           "world": [
             1573,
-            1606
+            1607
           ],
           "mounted": 0,
           "encounter": 0,
@@ -32758,7 +32758,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "0069fde88431bc4e",
+        "state_digest": "5f83e894aaf0cd7a",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -33101,18 +33101,18 @@
     },
     {
       "label": "door-6-open",
-      "tick": 4789,
+      "tick": 4958,
       "state": {
         "map": 14,
         "mode": "cache",
         "x_half": 37,
-        "y_half": 70,
+        "y_half": 71,
         "tile": [
           18,
           35
         ],
         "gate": 33,
-        "tick": 4789,
+        "tick": 4958,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -33585,7 +33585,7 @@
           "owned": 1,
           "world": [
             1573,
-            1606
+            1607
           ],
           "mounted": 0,
           "encounter": 0,
@@ -33677,7 +33677,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "11c0d81414ce0c99",
+        "state_digest": "d756b5f532243a4d",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -34020,18 +34020,18 @@
     },
     {
       "label": "code-terminal-25",
-      "tick": 4947,
+      "tick": 5130,
       "state": {
         "map": 14,
         "mode": "cache",
         "x_half": 98,
-        "y_half": 50,
+        "y_half": 51,
         "tile": [
           49,
           25
         ],
         "gate": 33,
-        "tick": 4947,
+        "tick": 5130,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -34504,7 +34504,7 @@
           "owned": 1,
           "world": [
             1634,
-            1586
+            1587
           ],
           "mounted": 0,
           "encounter": 0,
@@ -34596,7 +34596,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "d320afe770ca9b4e",
+        "state_digest": "c84d0786533e11ed",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -34939,18 +34939,18 @@
     },
     {
       "label": "code-terminal-33",
-      "tick": 5303,
+      "tick": 5500,
       "state": {
         "map": 14,
         "mode": "cache",
         "x_half": 84,
-        "y_half": 28,
+        "y_half": 29,
         "tile": [
           42,
           14
         ],
         "gate": 33,
-        "tick": 5303,
+        "tick": 5500,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -35423,13 +35423,13 @@
           "owned": 1,
           "world": [
             1620,
-            1564
+            1565
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 0
         },
-        "player_sprite": 174,
+        "player_sprite": 177,
         "npc_sprites": [
           270,
           270,
@@ -35515,7 +35515,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "431fa5f8f14a333d",
+        "state_digest": "786067a2db3f70e1",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -35858,18 +35858,18 @@
     },
     {
       "label": "code-terminal-10",
-      "tick": 5595,
+      "tick": 5802,
       "state": {
         "map": 14,
         "mode": "cache",
         "x_half": 74,
-        "y_half": 88,
+        "y_half": 89,
         "tile": [
           37,
           44
         ],
         "gate": 33,
-        "tick": 5595,
+        "tick": 5802,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -36342,13 +36342,13 @@
           "owned": 1,
           "world": [
             1610,
-            1624
+            1625
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 0
         },
-        "player_sprite": 174,
+        "player_sprite": 177,
         "npc_sprites": [
           270,
           270,
@@ -36434,7 +36434,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "043114939f0fa86f",
+        "state_digest": "36c5e71d1a0b3cd1",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -36777,18 +36777,18 @@
     },
     {
       "label": "door-9-opening",
-      "tick": 5827,
+      "tick": 6042,
       "state": {
         "map": 14,
         "mode": "cache",
         "x_half": 116,
-        "y_half": 40,
+        "y_half": 41,
         "tile": [
           58,
           20
         ],
         "gate": 33,
-        "tick": 5827,
+        "tick": 6042,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -37261,7 +37261,7 @@
           "owned": 1,
           "world": [
             1652,
-            1576
+            1577
           ],
           "mounted": 0,
           "encounter": 0,
@@ -37353,7 +37353,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "8d0347a862bc67fa",
+        "state_digest": "93ddf4b3a3ef7155",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -37696,18 +37696,18 @@
     },
     {
       "label": "door-9-open",
-      "tick": 5859,
+      "tick": 6074,
       "state": {
         "map": 14,
         "mode": "cache",
         "x_half": 116,
-        "y_half": 40,
+        "y_half": 41,
         "tile": [
           58,
           20
         ],
         "gate": 33,
-        "tick": 5859,
+        "tick": 6074,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -38180,7 +38180,7 @@
           "owned": 1,
           "world": [
             1652,
-            1576
+            1577
           ],
           "mounted": 0,
           "encounter": 0,
@@ -38272,7 +38272,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "a70293d26129f858",
+        "state_digest": "5cc49e857abd3a6b",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -38615,18 +38615,18 @@
     },
     {
       "label": "code-terminal-8",
-      "tick": 6310,
+      "tick": 6548,
       "state": {
         "map": 14,
         "mode": "cache",
-        "x_half": 20,
-        "y_half": 94,
+        "x_half": 19,
+        "y_half": 95,
         "tile": [
-          10,
+          9,
           47
         ],
         "gate": 33,
-        "tick": 6310,
+        "tick": 6548,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -39098,14 +39098,14 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1556,
-            1630
+            1555,
+            1631
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 0
         },
-        "player_sprite": 174,
+        "player_sprite": 177,
         "npc_sprites": [
           270,
           270,
@@ -39191,7 +39191,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "d562f7d36b94bcb2",
+        "state_digest": "fff16e813a621c75",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -39534,18 +39534,18 @@
     },
     {
       "label": "code-terminal-9",
-      "tick": 6344,
+      "tick": 6587,
       "state": {
         "map": 14,
         "mode": "cache",
         "x_half": 42,
-        "y_half": 98,
+        "y_half": 99,
         "tile": [
           21,
           49
         ],
         "gate": 33,
-        "tick": 6344,
+        "tick": 6587,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -40018,7 +40018,7 @@
           "owned": 1,
           "world": [
             1578,
-            1634
+            1635
           ],
           "mounted": 0,
           "encounter": 0,
@@ -40110,7 +40110,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "8cabc2490b169aa4",
+        "state_digest": "d5daeefe30f17f2b",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -40453,18 +40453,18 @@
     },
     {
       "label": "code-terminal-21",
-      "tick": 6420,
+      "tick": 6667,
       "state": {
         "map": 14,
         "mode": "cache",
         "x_half": 4,
-        "y_half": 68,
+        "y_half": 69,
         "tile": [
           2,
           34
         ],
         "gate": 33,
-        "tick": 6420,
+        "tick": 6667,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -40937,7 +40937,7 @@
           "owned": 1,
           "world": [
             1540,
-            1604
+            1605
           ],
           "mounted": 0,
           "encounter": 0,
@@ -41029,7 +41029,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "1570d4f81eab05f1",
+        "state_digest": "478ba44c7229a248",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -41372,18 +41372,18 @@
     },
     {
       "label": "door-10-opening",
-      "tick": 6850,
+      "tick": 7116,
       "state": {
         "map": 14,
         "mode": "cache",
-        "x_half": 116,
-        "y_half": 22,
+        "x_half": 115,
+        "y_half": 23,
         "tile": [
-          58,
+          57,
           11
         ],
         "gate": 33,
-        "tick": 6850,
+        "tick": 7116,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -41855,14 +41855,14 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1652,
-            1558
+            1651,
+            1559
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 0
         },
-        "player_sprite": 176,
+        "player_sprite": 175,
         "npc_sprites": [
           270,
           270,
@@ -41948,7 +41948,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "3bbe6d25bab62a82",
+        "state_digest": "5a1a88769a02e02d",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -42291,18 +42291,18 @@
     },
     {
       "label": "door-10-open",
-      "tick": 6882,
+      "tick": 7148,
       "state": {
         "map": 14,
         "mode": "cache",
-        "x_half": 116,
-        "y_half": 22,
+        "x_half": 115,
+        "y_half": 23,
         "tile": [
-          58,
+          57,
           11
         ],
         "gate": 33,
-        "tick": 6882,
+        "tick": 7148,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -42774,14 +42774,14 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1652,
-            1558
+            1651,
+            1559
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 0
         },
-        "player_sprite": 176,
+        "player_sprite": 175,
         "npc_sprites": [
           270,
           270,
@@ -42867,7 +42867,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "a04742bb453d3d95",
+        "state_digest": "4a67900a77d29332",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -43210,18 +43210,18 @@
     },
     {
       "label": "code-terminal-28",
-      "tick": 7223,
+      "tick": 7505,
       "state": {
         "map": 14,
         "mode": "cache",
-        "x_half": 68,
-        "y_half": 42,
+        "x_half": 67,
+        "y_half": 43,
         "tile": [
-          34,
+          33,
           21
         ],
         "gate": 33,
-        "tick": 7223,
+        "tick": 7505,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -43693,14 +43693,14 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1604,
-            1578
+            1603,
+            1579
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 0
         },
-        "player_sprite": 176,
+        "player_sprite": 175,
         "npc_sprites": [
           270,
           270,
@@ -43786,7 +43786,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "2c35aa7621294a4d",
+        "state_digest": "3da9c75113f64f36",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -44129,18 +44129,18 @@
     },
     {
       "label": "code-terminal-24",
-      "tick": 7263,
+      "tick": 7548,
       "state": {
         "map": 14,
         "mode": "cache",
         "x_half": 84,
-        "y_half": 58,
+        "y_half": 59,
         "tile": [
           42,
           29
         ],
         "gate": 33,
-        "tick": 7263,
+        "tick": 7548,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -44613,7 +44613,7 @@
           "owned": 1,
           "world": [
             1620,
-            1594
+            1595
           ],
           "mounted": 0,
           "encounter": 0,
@@ -44705,7 +44705,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "485c8e57663984da",
+        "state_digest": "79967fba29415bfe",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -45048,18 +45048,18 @@
     },
     {
       "label": "code-terminal-16",
-      "tick": 7407,
+      "tick": 7698,
       "state": {
         "map": 14,
         "mode": "cache",
         "x_half": 66,
-        "y_half": 76,
+        "y_half": 77,
         "tile": [
           33,
           38
         ],
         "gate": 33,
-        "tick": 7407,
+        "tick": 7698,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -45532,13 +45532,13 @@
           "owned": 1,
           "world": [
             1602,
-            1612
+            1613
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 0
         },
-        "player_sprite": 174,
+        "player_sprite": 175,
         "npc_sprites": [
           270,
           270,
@@ -45624,7 +45624,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "2b30c07630e38cff",
+        "state_digest": "63edd3a0cf55cb4c",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -45967,18 +45967,18 @@
     },
     {
       "label": "door-11-opening",
-      "tick": 7647,
+      "tick": 7942,
       "state": {
         "map": 14,
         "mode": "cache",
         "x_half": 102,
-        "y_half": 40,
+        "y_half": 41,
         "tile": [
           51,
           20
         ],
         "gate": 33,
-        "tick": 7647,
+        "tick": 7942,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -46451,7 +46451,7 @@
           "owned": 1,
           "world": [
             1638,
-            1576
+            1577
           ],
           "mounted": 0,
           "encounter": 0,
@@ -46543,7 +46543,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "7e2306090783d63b",
+        "state_digest": "65b40b26d79fb801",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -46886,18 +46886,18 @@
     },
     {
       "label": "door-11-open",
-      "tick": 7679,
+      "tick": 7974,
       "state": {
         "map": 14,
         "mode": "cache",
         "x_half": 102,
-        "y_half": 40,
+        "y_half": 41,
         "tile": [
           51,
           20
         ],
         "gate": 33,
-        "tick": 7679,
+        "tick": 7974,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -47370,7 +47370,7 @@
           "owned": 1,
           "world": [
             1638,
-            1576
+            1577
           ],
           "mounted": 0,
           "encounter": 0,
@@ -47462,7 +47462,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "a839d34cce03ed6f",
+        "state_digest": "f20a535eae211919",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -47805,18 +47805,18 @@
     },
     {
       "label": "code-terminal-30",
-      "tick": 7733,
+      "tick": 8028,
       "state": {
         "map": 14,
         "mode": "cache",
         "x_half": 119,
-        "y_half": 4,
+        "y_half": 5,
         "tile": [
           59,
           2
         ],
         "gate": 33,
-        "tick": 7733,
+        "tick": 8028,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -48289,7 +48289,7 @@
           "owned": 1,
           "world": [
             1655,
-            1540
+            1541
           ],
           "mounted": 0,
           "encounter": 0,
@@ -48381,7 +48381,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "f501a38fc67d4f15",
+        "state_digest": "98a312554c1446a3",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -48724,18 +48724,18 @@
     },
     {
       "label": "code-terminal-23",
-      "tick": 8182,
+      "tick": 8499,
       "state": {
         "map": 14,
         "mode": "cache",
         "x_half": 40,
-        "y_half": 62,
+        "y_half": 63,
         "tile": [
           20,
           31
         ],
         "gate": 33,
-        "tick": 8182,
+        "tick": 8499,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -49208,13 +49208,13 @@
           "owned": 1,
           "world": [
             1576,
-            1598
+            1599
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 0
         },
-        "player_sprite": 174,
+        "player_sprite": 177,
         "npc_sprites": [
           270,
           270,
@@ -49300,7 +49300,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "de2559883213f32d",
+        "state_digest": "f2f88f5ff6983956",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -49643,18 +49643,18 @@
     },
     {
       "label": "code-terminal-32",
-      "tick": 8620,
+      "tick": 8958,
       "state": {
         "map": 14,
         "mode": "cache",
-        "x_half": 100,
-        "y_half": 28,
+        "x_half": 99,
+        "y_half": 29,
         "tile": [
-          50,
+          49,
           14
         ],
         "gate": 33,
-        "tick": 8620,
+        "tick": 8958,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -50126,14 +50126,14 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1636,
-            1564
+            1635,
+            1565
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 0
         },
-        "player_sprite": 174,
+        "player_sprite": 177,
         "npc_sprites": [
           270,
           270,
@@ -50219,7 +50219,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "026e45b3eaa4675e",
+        "state_digest": "5fc7d9e1b94e988b",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -50562,18 +50562,18 @@
     },
     {
       "label": "door-8-opening",
-      "tick": 8875,
+      "tick": 9219,
       "state": {
         "map": 14,
         "mode": "cache",
-        "x_half": 57,
-        "y_half": 66,
+        "x_half": 58,
+        "y_half": 67,
         "tile": [
-          28,
+          29,
           33
         ],
         "gate": 33,
-        "tick": 8875,
+        "tick": 9219,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -51045,14 +51045,14 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1593,
-            1602
+            1594,
+            1603
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 0
         },
-        "player_sprite": 176,
+        "player_sprite": 175,
         "npc_sprites": [
           270,
           270,
@@ -51138,7 +51138,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "47c31a4db4c1f500",
+        "state_digest": "d40f7f48585af0c7",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -51481,18 +51481,18 @@
     },
     {
       "label": "door-8-open",
-      "tick": 8907,
+      "tick": 9251,
       "state": {
         "map": 14,
         "mode": "cache",
-        "x_half": 57,
-        "y_half": 66,
+        "x_half": 58,
+        "y_half": 67,
         "tile": [
-          28,
+          29,
           33
         ],
         "gate": 33,
-        "tick": 8907,
+        "tick": 9251,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -51964,14 +51964,14 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1593,
-            1602
+            1594,
+            1603
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 0
         },
-        "player_sprite": 176,
+        "player_sprite": 175,
         "npc_sprites": [
           270,
           270,
@@ -52057,7 +52057,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "c9c82d73b8567dfd",
+        "state_digest": "fbcf6af2de4babf2",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -52400,18 +52400,18 @@
     },
     {
       "label": "secret-passage",
-      "tick": 9199,
+      "tick": 9551,
       "state": {
         "map": 14,
         "mode": "cache",
-        "x_half": 4,
-        "y_half": 83,
+        "x_half": 3,
+        "y_half": 82,
         "tile": [
-          2,
+          1,
           41
         ],
         "gate": 33,
-        "tick": 9199,
+        "tick": 9551,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -52883,14 +52883,14 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1540,
-            1619
+            1539,
+            1618
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 0
         },
-        "player_sprite": 168,
+        "player_sprite": 167,
         "npc_sprites": [
           270,
           270,
@@ -52976,7 +52976,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "4a8139fbbe37280d",
+        "state_digest": "be788e2add7440ab",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -53319,18 +53319,18 @@
     },
     {
       "label": "phoenix-screen",
-      "tick": 9215,
+      "tick": 9567,
       "state": {
         "map": 14,
         "mode": "building",
-        "x_half": 4,
-        "y_half": 97,
+        "x_half": 3,
+        "y_half": 96,
         "tile": [
-          2,
+          1,
           48
         ],
         "gate": 33,
-        "tick": 9215,
+        "tick": 9567,
         "blocked": 1,
         "script_pc": 180,
         "script_status": 5,
@@ -53807,14 +53807,14 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1540,
-            1633
+            1539,
+            1632
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 22
         },
-        "player_sprite": 167,
+        "player_sprite": 166,
         "npc_sprites": [
           270,
           270,
@@ -53900,7 +53900,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "1a3f7fc1a3cdc8c1",
+        "state_digest": "9f4e59c2967052dc",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -54243,18 +54243,18 @@
     },
     {
       "label": "phoenix-inspected",
-      "tick": 9220,
+      "tick": 9572,
       "state": {
         "map": 14,
         "mode": "cache",
-        "x_half": 4,
-        "y_half": 97,
+        "x_half": 3,
+        "y_half": 96,
         "tile": [
-          2,
+          1,
           48
         ],
         "gate": 33,
-        "tick": 9220,
+        "tick": 9572,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -54726,14 +54726,14 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1540,
-            1633
+            1539,
+            1632
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 0
         },
-        "player_sprite": 167,
+        "player_sprite": 166,
         "npc_sprites": [
           270,
           270,
@@ -54819,7 +54819,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "dc7f9f4d76359975",
+        "state_digest": "c4e689c2ed3ca2ff",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -55162,7 +55162,7 @@
     },
     {
       "label": "map-room",
-      "tick": 9543,
+      "tick": 9906,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -55173,7 +55173,7 @@
           17
         ],
         "gate": 139,
-        "tick": 9543,
+        "tick": 9906,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -55652,7 +55652,7 @@
           "encounter": 0,
           "building": 0
         },
-        "player_sprite": 172,
+        "player_sprite": 171,
         "npc_sprites": [
           270,
           270,
@@ -55738,7 +55738,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "60e5aeff46c77164",
+        "state_digest": "638171f92935aaeb",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -56081,18 +56081,18 @@
     },
     {
       "label": "wrong-password",
-      "tick": 9550,
+      "tick": 9912,
       "state": {
         "map": 14,
         "mode": "cache",
-        "x_half": 3,
+        "x_half": 4,
         "y_half": 29,
         "tile": [
-          1,
+          2,
           14
         ],
         "gate": 139,
-        "tick": 9550,
+        "tick": 9912,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -56564,14 +56564,14 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1539,
+            1540,
             1565
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 0
         },
-        "player_sprite": 179,
+        "player_sprite": 178,
         "npc_sprites": [
           270,
           270,
@@ -56657,7 +56657,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "b50f2b1217615341",
+        "state_digest": "f48c9ddcd56b3238",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -57000,18 +57000,937 @@
     },
     {
       "label": "password-symbol-140",
-      "tick": 9645,
+      "tick": 10016,
+      "state": {
+        "map": 14,
+        "mode": "cache",
+        "x_half": 40,
+        "y_half": 5,
+        "tile": [
+          20,
+          2
+        ],
+        "gate": 139,
+        "tick": 10016,
+        "blocked": 1,
+        "script_pc": 0,
+        "script_status": 0,
+        "script_opcode": 0,
+        "script_error": 0,
+        "fault_pc": 0,
+        "menu_selected": 0,
+        "text_offset": 0,
+        "text_length": 0,
+        "text_digest": 0,
+        "story_flags": [
+          7,
+          0,
+          2,
+          0,
+          1,
+          1,
+          2,
+          1,
+          0,
+          0,
+          1,
+          1,
+          6,
+          5,
+          4,
+          2,
+          3,
+          6,
+          1,
+          1,
+          0,
+          0,
+          0
+        ],
+        "text_spans": [],
+        "talk_phase": 0,
+        "talk_selected": 0,
+        "talk_count": 0,
+        "talk_mask": 0,
+        "talk_actor": 0,
+        "talk_result": 0,
+        "conversation_checkpoint": 0,
+        "npc_pairs": [
+          [
+            53,
+            0
+          ],
+          [
+            18,
+            0
+          ],
+          [
+            81,
+            0
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            18,
+            0
+          ],
+          [
+            112,
+            0
+          ],
+          [
+            18,
+            0
+          ],
+          [
+            81,
+            0
+          ]
+        ],
+        "npc_enabled": 0,
+        "npc_phase": 0,
+        "npc_clock": 0,
+        "npc_fault": 0,
+        "npc_rng": [
+          100,
+          230,
+          226
+        ],
+        "npc_search": [
+          0,
+          0
+        ],
+        "npc_loop_timer": 0,
+        "npc_allowance_pending": 0,
+        "npcs": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "credits": 50876,
+        "allowance_cap": 3000,
+        "equipment": {
+          "weapon": 13,
+          "armor": 3,
+          "armor_points": 30
+        },
+        "shop_refusal": 0,
+        "menu_id": 0,
+        "confirm_selected": 0,
+        "menu_choices": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "investments": [
+          598951,
+          0,
+          0
+        ],
+        "bank_phase": 0,
+        "bank_company": 0,
+        "bank_outcome": 0,
+        "bank_clamped": 0,
+        "bank_available": 0,
+        "bank_amount": 0,
+        "bank_input": "",
+        "has_accounts": 0,
+        "skills": [
+          4,
+          4,
+          4
+        ],
+        "school_phase": 0,
+        "school_course": 0,
+        "school_before": 0,
+        "school_outcome": 0,
+        "service": {
+          "phase": 0,
+          "action": 0,
+          "mech": 0,
+          "selected": 0,
+          "kind": 0,
+          "item": 0,
+          "amount": 0
+        },
+        "campaign_flags": [
+          7,
+          0,
+          2,
+          0,
+          1,
+          1,
+          2,
+          1,
+          0,
+          0,
+          1,
+          1,
+          6,
+          5,
+          4,
+          2,
+          3,
+          6,
+          1,
+          1,
+          0,
+          0,
+          0,
+          184,
+          0,
+          1,
+          0,
+          1,
+          1,
+          0,
+          1,
+          0,
+          1,
+          0,
+          0,
+          0,
+          127,
+          2,
+          1,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          0,
+          0,
+          1,
+          0,
+          1,
+          1,
+          184,
+          11,
+          1,
+          1,
+          0,
+          0,
+          0,
+          1,
+          29,
+          22,
+          31,
+          0,
+          1
+        ],
+        "people": [
+          [
+            0,
+            8,
+            9,
+            7,
+            4,
+            4,
+            4,
+            2,
+            2,
+            1,
+            1,
+            13,
+            8,
+            3,
+            30,
+            80,
+            3
+          ],
+          [
+            1,
+            12,
+            9,
+            8,
+            1,
+            3,
+            2,
+            4,
+            4,
+            2,
+            1,
+            12,
+            8,
+            3,
+            30,
+            120,
+            3
+          ],
+          [
+            3,
+            9,
+            5,
+            8,
+            1,
+            1,
+            1,
+            0,
+            0,
+            4,
+            1,
+            12,
+            8,
+            3,
+            30,
+            90,
+            3
+          ],
+          [
+            4,
+            7,
+            3,
+            2,
+            0,
+            0,
+            0,
+            1,
+            3,
+            1,
+            1,
+            12,
+            8,
+            3,
+            30,
+            70,
+            3
+          ],
+          [
+            5,
+            10,
+            9,
+            5,
+            0,
+            1,
+            1,
+            0,
+            0,
+            2,
+            4,
+            12,
+            8,
+            3,
+            30,
+            100,
+            3
+          ],
+          [
+            255,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            8,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            255,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            8,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            255,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            8,
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        "mech_types": [
+          67,
+          67,
+          83,
+          255
+        ],
+        "audio": {
+          "active": 0,
+          "position": 0,
+          "divisor": 0,
+          "effects": 1,
+          "effect": 15,
+          "event": 6,
+          "remaining": 5541
+        },
+        "aftermath": {
+          "phase": 0,
+          "pilot": 0,
+          "selected": 0,
+          "cash": 0,
+          "eject": 0
+        },
+        "actions_menu": {
+          "phase": 0,
+          "selected": 0,
+          "steps": 1,
+          "sound": 1,
+          "speed": 2,
+          "outtakes": 0,
+          "slot": 0,
+          "io": 0,
+          "notice": 0
+        },
+        "campaign": {
+          "invasion": 0,
+          "owned": 1,
+          "world": [
+            1576,
+            1541
+          ],
+          "mounted": 0,
+          "encounter": 0,
+          "building": 0
+        },
+        "player_sprite": 175,
+        "npc_sprites": [
+          270,
+          270,
+          270,
+          270,
+          270,
+          270,
+          270,
+          270
+        ],
+        "quiz": {
+          "phase": 0,
+          "selected": 0,
+          "round": 0,
+          "point": 0,
+          "failed": 0,
+          "used": 0
+        },
+        "mission": {
+          "phase": 0,
+          "corner": 0,
+          "warned": 0,
+          "elapsed": 0,
+          "idle": 0,
+          "terrain": 0,
+          "assignment": 0,
+          "rubble": 0,
+          "carrying": 0,
+          "rubble_target": [
+            0,
+            0
+          ],
+          "rubble_tile": 0
+        },
+        "mech_skills": [
+          2,
+          2
+        ],
+        "device": 1,
+        "recruitment": 0,
+        "animation_request": [
+          0,
+          0
+        ],
+        "animation": {
+          "active": 0,
+          "kind": 0,
+          "step": 0,
+          "cycle": 0,
+          "hold": 0,
+          "remaining": 0,
+          "fraction": 0
+        },
+        "explored_digest": 2884363624,
+        "map_center": [
+          0,
+          0
+        ],
+        "intro_load": 0,
+        "cache": {
+          "active": 1,
+          "phase": 0,
+          "terminal": 0,
+          "hall": 1,
+          "cards": [
+            29,
+            22,
+            31
+          ],
+          "white": 0,
+          "power": 0,
+          "found": 0,
+          "room": 1
+        },
+        "yard": {
+          "active": 0,
+          "phase": 0,
+          "timer": 0,
+          "checked": 0,
+          "attempts": 0,
+          "selected": 0,
+          "slot": 0,
+          "rental": 0,
+          "variant": 0
+        },
+        "state_digest": "ce05d3ce3d85a5ea",
+        "effect_stage": 0,
+        "combat": {
+          "phase": 0,
+          "selected": 0,
+          "round": 0,
+          "step": 0,
+          "won": 0,
+          "fled": 0,
+          "event": 0,
+          "fired": 0,
+          "weapon": 0,
+          "flash": 0,
+          "goal": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "orders": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "target_choice": 0,
+          "weapon_ui": 0,
+          "count": 0,
+          "target": 0,
+          "kick": 0,
+          "lost": 0,
+          "attacker": 0,
+          "shot_target": 0,
+          "technician": 1,
+          "apprentice": 1,
+          "automatic": 0,
+          "auto_run": 0,
+          "paused": 0,
+          "friends": 0,
+          "active": 0,
+          "scan": 0,
+          "menu_commands": [],
+          "units": [
+            {
+              "x": 0,
+              "y": 0,
+              "direction": 0,
+              "heat": 0,
+              "pool": 0,
+              "cover": 0,
+              "infantry": 0,
+              "burning": 0,
+              "record": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "x": 0,
+              "y": 0,
+              "direction": 0,
+              "heat": 0,
+              "pool": 0,
+              "cover": 0,
+              "infantry": 0,
+              "burning": 0,
+              "record": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          ],
+          "waypoints": [],
+          "effects": [
+            0,
+            0,
+            0
+          ],
+          "shot": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "label": "password-symbol-186",
+      "tick": 10052,
       "state": {
         "map": 14,
         "mode": "cache",
         "x_half": 38,
-        "y_half": 3,
+        "y_half": 14,
         "tile": [
           19,
-          1
+          7
         ],
         "gate": 139,
-        "tick": 9645,
+        "tick": 10052,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -57484,13 +58403,13 @@
           "owned": 1,
           "world": [
             1574,
-            1539
+            1550
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 0
         },
-        "player_sprite": 173,
+        "player_sprite": 180,
         "npc_sprites": [
           270,
           270,
@@ -57576,926 +58495,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "922d4f4cbf45a38c",
-        "effect_stage": 0,
-        "combat": {
-          "phase": 0,
-          "selected": 0,
-          "round": 0,
-          "step": 0,
-          "won": 0,
-          "fled": 0,
-          "event": 0,
-          "fired": 0,
-          "weapon": 0,
-          "flash": 0,
-          "goal": [
-            0,
-            0,
-            0,
-            0
-          ],
-          "orders": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          "target_choice": 0,
-          "weapon_ui": 0,
-          "count": 0,
-          "target": 0,
-          "kick": 0,
-          "lost": 0,
-          "attacker": 0,
-          "shot_target": 0,
-          "technician": 1,
-          "apprentice": 1,
-          "automatic": 0,
-          "auto_run": 0,
-          "paused": 0,
-          "friends": 0,
-          "active": 0,
-          "scan": 0,
-          "menu_commands": [],
-          "units": [
-            {
-              "x": 0,
-              "y": 0,
-              "direction": 0,
-              "heat": 0,
-              "pool": 0,
-              "cover": 0,
-              "infantry": 0,
-              "burning": 0,
-              "record": [
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0
-              ]
-            },
-            {
-              "x": 0,
-              "y": 0,
-              "direction": 0,
-              "heat": 0,
-              "pool": 0,
-              "cover": 0,
-              "infantry": 0,
-              "burning": 0,
-              "record": [
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0
-              ]
-            }
-          ],
-          "waypoints": [],
-          "effects": [
-            0,
-            0,
-            0
-          ],
-          "shot": [
-            0,
-            0,
-            0,
-            0,
-            0
-          ]
-        }
-      }
-    },
-    {
-      "label": "password-symbol-186",
-      "tick": 9682,
-      "state": {
-        "map": 14,
-        "mode": "cache",
-        "x_half": 36,
-        "y_half": 13,
-        "tile": [
-          18,
-          6
-        ],
-        "gate": 139,
-        "tick": 9682,
-        "blocked": 1,
-        "script_pc": 0,
-        "script_status": 0,
-        "script_opcode": 0,
-        "script_error": 0,
-        "fault_pc": 0,
-        "menu_selected": 0,
-        "text_offset": 0,
-        "text_length": 0,
-        "text_digest": 0,
-        "story_flags": [
-          7,
-          0,
-          2,
-          0,
-          1,
-          1,
-          2,
-          1,
-          0,
-          0,
-          1,
-          1,
-          6,
-          5,
-          4,
-          2,
-          3,
-          6,
-          1,
-          1,
-          0,
-          0,
-          0
-        ],
-        "text_spans": [],
-        "talk_phase": 0,
-        "talk_selected": 0,
-        "talk_count": 0,
-        "talk_mask": 0,
-        "talk_actor": 0,
-        "talk_result": 0,
-        "conversation_checkpoint": 0,
-        "npc_pairs": [
-          [
-            53,
-            0
-          ],
-          [
-            18,
-            0
-          ],
-          [
-            81,
-            0
-          ],
-          [
-            4,
-            0
-          ],
-          [
-            18,
-            0
-          ],
-          [
-            112,
-            0
-          ],
-          [
-            18,
-            0
-          ],
-          [
-            81,
-            0
-          ]
-        ],
-        "npc_enabled": 0,
-        "npc_phase": 0,
-        "npc_clock": 0,
-        "npc_fault": 0,
-        "npc_rng": [
-          100,
-          230,
-          226
-        ],
-        "npc_search": [
-          0,
-          0
-        ],
-        "npc_loop_timer": 0,
-        "npc_allowance_pending": 0,
-        "npcs": [
-          [
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0
-          ]
-        ],
-        "credits": 50876,
-        "allowance_cap": 3000,
-        "equipment": {
-          "weapon": 13,
-          "armor": 3,
-          "armor_points": 30
-        },
-        "shop_refusal": 0,
-        "menu_id": 0,
-        "confirm_selected": 0,
-        "menu_choices": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ],
-        "investments": [
-          598951,
-          0,
-          0
-        ],
-        "bank_phase": 0,
-        "bank_company": 0,
-        "bank_outcome": 0,
-        "bank_clamped": 0,
-        "bank_available": 0,
-        "bank_amount": 0,
-        "bank_input": "",
-        "has_accounts": 0,
-        "skills": [
-          4,
-          4,
-          4
-        ],
-        "school_phase": 0,
-        "school_course": 0,
-        "school_before": 0,
-        "school_outcome": 0,
-        "service": {
-          "phase": 0,
-          "action": 0,
-          "mech": 0,
-          "selected": 0,
-          "kind": 0,
-          "item": 0,
-          "amount": 0
-        },
-        "campaign_flags": [
-          7,
-          0,
-          2,
-          0,
-          1,
-          1,
-          2,
-          1,
-          0,
-          0,
-          1,
-          1,
-          6,
-          5,
-          4,
-          2,
-          3,
-          6,
-          1,
-          1,
-          0,
-          0,
-          0,
-          184,
-          0,
-          1,
-          0,
-          1,
-          1,
-          0,
-          1,
-          0,
-          1,
-          0,
-          0,
-          0,
-          127,
-          2,
-          1,
-          0,
-          0,
-          0,
-          1,
-          1,
-          1,
-          0,
-          0,
-          1,
-          0,
-          1,
-          1,
-          184,
-          11,
-          1,
-          1,
-          0,
-          0,
-          0,
-          1,
-          29,
-          22,
-          31,
-          0,
-          1
-        ],
-        "people": [
-          [
-            0,
-            8,
-            9,
-            7,
-            4,
-            4,
-            4,
-            2,
-            2,
-            1,
-            1,
-            13,
-            8,
-            3,
-            30,
-            80,
-            3
-          ],
-          [
-            1,
-            12,
-            9,
-            8,
-            1,
-            3,
-            2,
-            4,
-            4,
-            2,
-            1,
-            12,
-            8,
-            3,
-            30,
-            120,
-            3
-          ],
-          [
-            3,
-            9,
-            5,
-            8,
-            1,
-            1,
-            1,
-            0,
-            0,
-            4,
-            1,
-            12,
-            8,
-            3,
-            30,
-            90,
-            3
-          ],
-          [
-            4,
-            7,
-            3,
-            2,
-            0,
-            0,
-            0,
-            1,
-            3,
-            1,
-            1,
-            12,
-            8,
-            3,
-            30,
-            70,
-            3
-          ],
-          [
-            5,
-            10,
-            9,
-            5,
-            0,
-            1,
-            1,
-            0,
-            0,
-            2,
-            4,
-            12,
-            8,
-            3,
-            30,
-            100,
-            3
-          ],
-          [
-            255,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            8,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            255,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            8,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            255,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            8,
-            0,
-            0,
-            0,
-            0
-          ]
-        ],
-        "mech_types": [
-          67,
-          67,
-          83,
-          255
-        ],
-        "audio": {
-          "active": 0,
-          "position": 0,
-          "divisor": 0,
-          "effects": 1,
-          "effect": 15,
-          "event": 6,
-          "remaining": 5541
-        },
-        "aftermath": {
-          "phase": 0,
-          "pilot": 0,
-          "selected": 0,
-          "cash": 0,
-          "eject": 0
-        },
-        "actions_menu": {
-          "phase": 0,
-          "selected": 0,
-          "steps": 1,
-          "sound": 1,
-          "speed": 2,
-          "outtakes": 0,
-          "slot": 0,
-          "io": 0,
-          "notice": 0
-        },
-        "campaign": {
-          "invasion": 0,
-          "owned": 1,
-          "world": [
-            1572,
-            1549
-          ],
-          "mounted": 0,
-          "encounter": 0,
-          "building": 0
-        },
-        "player_sprite": 168,
-        "npc_sprites": [
-          270,
-          270,
-          270,
-          270,
-          270,
-          270,
-          270,
-          270
-        ],
-        "quiz": {
-          "phase": 0,
-          "selected": 0,
-          "round": 0,
-          "point": 0,
-          "failed": 0,
-          "used": 0
-        },
-        "mission": {
-          "phase": 0,
-          "corner": 0,
-          "warned": 0,
-          "elapsed": 0,
-          "idle": 0,
-          "terrain": 0,
-          "assignment": 0,
-          "rubble": 0,
-          "carrying": 0,
-          "rubble_target": [
-            0,
-            0
-          ],
-          "rubble_tile": 0
-        },
-        "mech_skills": [
-          2,
-          2
-        ],
-        "device": 1,
-        "recruitment": 0,
-        "animation_request": [
-          0,
-          0
-        ],
-        "animation": {
-          "active": 0,
-          "kind": 0,
-          "step": 0,
-          "cycle": 0,
-          "hold": 0,
-          "remaining": 0,
-          "fraction": 0
-        },
-        "explored_digest": 2884363624,
-        "map_center": [
-          0,
-          0
-        ],
-        "intro_load": 0,
-        "cache": {
-          "active": 1,
-          "phase": 0,
-          "terminal": 0,
-          "hall": 1,
-          "cards": [
-            29,
-            22,
-            31
-          ],
-          "white": 0,
-          "power": 0,
-          "found": 0,
-          "room": 1
-        },
-        "yard": {
-          "active": 0,
-          "phase": 0,
-          "timer": 0,
-          "checked": 0,
-          "attempts": 0,
-          "selected": 0,
-          "slot": 0,
-          "rental": 0,
-          "variant": 0
-        },
-        "state_digest": "2f8e15d2f00247d0",
+        "state_digest": "e33d7aef8b382270",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -58838,18 +58838,18 @@
     },
     {
       "label": "password-symbol-325",
-      "tick": 9719,
+      "tick": 10090,
       "state": {
         "map": 14,
         "mode": "cache",
-        "x_half": 27,
-        "y_half": 16,
+        "x_half": 28,
+        "y_half": 17,
         "tile": [
-          13,
+          14,
           8
         ],
         "gate": 139,
-        "tick": 9719,
+        "tick": 10090,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -59321,14 +59321,14 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1563,
-            1552
+            1564,
+            1553
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 0
         },
-        "player_sprite": 181,
+        "player_sprite": 180,
         "npc_sprites": [
           270,
           270,
@@ -59414,7 +59414,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "509b9b4c8a5bd840",
+        "state_digest": "20ffe586e953e876",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -59757,18 +59757,18 @@
     },
     {
       "label": "password-symbol-341",
-      "tick": 9748,
+      "tick": 10118,
       "state": {
         "map": 14,
         "mode": "cache",
         "x_half": 27,
-        "y_half": 20,
+        "y_half": 19,
         "tile": [
           13,
-          10
+          9
         ],
         "gate": 139,
-        "tick": 9748,
+        "tick": 10118,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -60241,13 +60241,13 @@
           "owned": 1,
           "world": [
             1563,
-            1556
+            1555
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 0
         },
-        "player_sprite": 178,
+        "player_sprite": 166,
         "npc_sprites": [
           270,
           270,
@@ -60333,7 +60333,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "ce5237937108f604",
+        "state_digest": "aded82f98f4ffbd5",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -60676,18 +60676,18 @@
     },
     {
       "label": "password-symbol-375",
-      "tick": 9790,
+      "tick": 10192,
       "state": {
         "map": 14,
         "mode": "cache",
-        "x_half": 29,
-        "y_half": 27,
+        "x_half": 31,
+        "y_half": 30,
         "tile": [
-          14,
-          13
+          15,
+          15
         ],
         "gate": 139,
-        "tick": 9790,
+        "tick": 10192,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -61159,14 +61159,14 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1565,
-            1563
+            1567,
+            1566
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 0
         },
-        "player_sprite": 169,
+        "player_sprite": 174,
         "npc_sprites": [
           270,
           270,
@@ -61252,7 +61252,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "b403ef4029eb595e",
+        "state_digest": "2fcd351afdd16ea4",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -61595,18 +61595,18 @@
     },
     {
       "label": "password-symbol-439",
-      "tick": 9831,
+      "tick": 10240,
       "state": {
         "map": 14,
         "mode": "cache",
-        "x_half": 44,
-        "y_half": 28,
+        "x_half": 43,
+        "y_half": 29,
         "tile": [
-          22,
+          21,
           14
         ],
         "gate": 139,
-        "tick": 9831,
+        "tick": 10240,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -62078,14 +62078,14 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1580,
-            1564
+            1579,
+            1565
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 0
         },
-        "player_sprite": 172,
+        "player_sprite": 173,
         "npc_sprites": [
           270,
           270,
@@ -62171,7 +62171,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "0c7d05ecc3a161f3",
+        "state_digest": "b5297c4349bf3954",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -62514,18 +62514,18 @@
     },
     {
       "label": "password-symbol-443",
-      "tick": 9863,
+      "tick": 10269,
       "state": {
         "map": 14,
         "mode": "cache",
-        "x_half": 39,
+        "x_half": 40,
         "y_half": 30,
         "tile": [
-          19,
+          20,
           15
         ],
         "gate": 139,
-        "tick": 9863,
+        "tick": 10269,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -62997,14 +62997,14 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1575,
+            1576,
             1566
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 0
         },
-        "player_sprite": 179,
+        "player_sprite": 181,
         "npc_sprites": [
           270,
           270,
@@ -63090,7 +63090,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "25af82c3784fdf64",
+        "state_digest": "353018b472bd867b",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -63433,18 +63433,18 @@
     },
     {
       "label": "white-code-accepted",
-      "tick": 9927,
+      "tick": 10341,
       "state": {
         "map": 14,
         "mode": "cache",
-        "x_half": 3,
+        "x_half": 4,
         "y_half": 29,
         "tile": [
-          1,
+          2,
           14
         ],
         "gate": 139,
-        "tick": 9927,
+        "tick": 10341,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -63916,14 +63916,14 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1539,
+            1540,
             1565
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 0
         },
-        "player_sprite": 181,
+        "player_sprite": 179,
         "npc_sprites": [
           270,
           270,
@@ -64009,7 +64009,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "93edaf2cf61ecc35",
+        "state_digest": "bd3cd1be65819229",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -64352,7 +64352,7 @@
     },
     {
       "label": "map-room-exit",
-      "tick": 9967,
+      "tick": 10381,
       "state": {
         "map": 14,
         "mode": "cache",
@@ -64363,7 +64363,7 @@
           28
         ],
         "gate": 33,
-        "tick": 9967,
+        "tick": 10381,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -64928,7 +64928,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "3658f88746776276",
+        "state_digest": "4a7aaa95157cb4ae",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -65271,18 +65271,18 @@
     },
     {
       "label": "hyperpulse-power",
-      "tick": 10283,
+      "tick": 10706,
       "state": {
         "map": 14,
         "mode": "cache",
-        "x_half": 79,
+        "x_half": 80,
         "y_half": 15,
         "tile": [
-          39,
+          40,
           7
         ],
         "gate": 33,
-        "tick": 10283,
+        "tick": 10706,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -65754,14 +65754,14 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1615,
+            1616,
             1551
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 0
         },
-        "player_sprite": 181,
+        "player_sprite": 179,
         "npc_sprites": [
           270,
           270,
@@ -65847,7 +65847,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "db23ab4edc66d350",
+        "state_digest": "37ed93b833e3aeb4",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -66190,18 +66190,18 @@
     },
     {
       "label": "cache-found",
-      "tick": 10395,
+      "tick": 10822,
       "state": {
         "map": 14,
         "mode": "cache",
-        "x_half": 122,
+        "x_half": 121,
         "y_half": 5,
         "tile": [
-          61,
+          60,
           2
         ],
         "gate": 33,
-        "tick": 10395,
+        "tick": 10822,
         "blocked": 1,
         "script_pc": 0,
         "script_status": 0,
@@ -66673,14 +66673,14 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1658,
+            1657,
             1541
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 0
         },
-        "player_sprite": 173,
+        "player_sprite": 171,
         "npc_sprites": [
           270,
           270,
@@ -66766,7 +66766,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "4dcd1f7c79c4da8c",
+        "state_digest": "e45a7fb77652529a",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -67109,18 +67109,18 @@
     },
     {
       "label": "ending-start",
-      "tick": 10581,
+      "tick": 11013,
       "state": {
         "map": 14,
         "mode": "building",
-        "x_half": 3,
-        "y_half": 15,
+        "x_half": 4,
+        "y_half": 14,
         "tile": [
-          1,
+          2,
           7
         ],
         "gate": 33,
-        "tick": 10581,
+        "tick": 11013,
         "blocked": 1,
         "script_pc": 8,
         "script_status": 7,
@@ -67592,14 +67592,14 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1539,
-            1551
+            1540,
+            1550
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 25
         },
-        "player_sprite": 179,
+        "player_sprite": 181,
         "npc_sprites": [
           270,
           270,
@@ -67685,7 +67685,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "402ea8590094e5cc",
+        "state_digest": "b49ab51407324270",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -68028,18 +68028,18 @@
     },
     {
       "label": "ending-complete",
-      "tick": 10849,
+      "tick": 11281,
       "state": {
         "map": 14,
         "mode": "ending",
-        "x_half": 3,
-        "y_half": 15,
+        "x_half": 4,
+        "y_half": 14,
         "tile": [
-          1,
+          2,
           7
         ],
         "gate": 33,
-        "tick": 10849,
+        "tick": 11281,
         "blocked": 1,
         "script_pc": 2991,
         "script_status": 3,
@@ -68520,14 +68520,14 @@
           "invasion": 0,
           "owned": 1,
           "world": [
-            1539,
-            1551
+            1540,
+            1550
           ],
           "mounted": 0,
           "encounter": 0,
           "building": 25
         },
-        "player_sprite": 179,
+        "player_sprite": 181,
         "npc_sprites": [
           270,
           270,
@@ -68613,7 +68613,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "5196ec5cd6c4c784",
+        "state_digest": "d73075476427405e",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -68958,14 +68958,14 @@
   "final": {
     "map": 14,
     "mode": "ending",
-    "x_half": 3,
-    "y_half": 15,
+    "x_half": 4,
+    "y_half": 14,
     "tile": [
-      1,
+      2,
       7
     ],
     "gate": 33,
-    "tick": 10849,
+    "tick": 11281,
     "blocked": 1,
     "script_pc": 2991,
     "script_status": 3,
@@ -69446,14 +69446,14 @@
       "invasion": 0,
       "owned": 1,
       "world": [
-        1539,
-        1551
+        1540,
+        1550
       ],
       "mounted": 0,
       "encounter": 0,
       "building": 25
     },
-    "player_sprite": 179,
+    "player_sprite": 181,
     "npc_sprites": [
       270,
       270,
@@ -69539,7 +69539,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "5196ec5cd6c4c784",
+    "state_digest": "d73075476427405e",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

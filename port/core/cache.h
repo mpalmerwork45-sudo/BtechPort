@@ -8,6 +8,9 @@ void btp_cache_restore_party(BtpState *state,const BtpResources *resources);
 void btp_cache_script_end(BtpState *state,const BtpResources *resources);
 void btp_cache_input(BtpState *state,const BtpResources *resources,BtpAction action);
 unsigned btp_cache_tile(const BtpResources *resources,const BtpState *state,int x,int y);
+/* First blocked compact member; x/y start at the proposed cursor and return
+   the contact point. A negative result means the whole party can advance. */
+int btp_cache_contact(const BtpState *state,const BtpResources *resources,int *x,int *y);
 int btp_cache_terminal(BtpState *state,const BtpResources *resources,unsigned x,unsigned y);
 int btp_cache_door(BtpState *state,const BtpResources *resources,unsigned x,unsigned y,int door);
 void btp_cache_toggle(BtpState *state,unsigned x,unsigned y);

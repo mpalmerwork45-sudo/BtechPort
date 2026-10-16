@@ -42,9 +42,10 @@ int main(int argc,char **argv)
         for (unsigned d=0;d<4;++d) {
             int nx=x+dx[d],ny=y+dy[d];if (nx<0 || ny<0 || nx>=width-1 || ny>=height) continue;
             int q=ny*128+nx;if (parents[q]>=0) continue;
-            unsigned tile=btp_cache_tile(r,&s,(nx+1)/2,ny/2);
-            if (goal(&s,r,argv[2],index,nx,ny,tile)) { parents[q]=p;target=q;break; }
-            if (tile<s.gate) { parents[q]=p;queue[end++]=q; }
+            int cx=nx,cy=ny,member=btp_cache_contact(&s,r,&cx,&cy);
+            unsigned tile=cx<0 || cy<0 ? 255u : btp_cache_tile(r,&s,(cx+1)/2,cy/2);
+            if (goal(&s,r,argv[2],index,cx,cy,tile)) { parents[q]=p;target=q;break; }
+            if (member<0) { parents[q]=p;queue[end++]=q; }
         }
     }
     if (target<0) { fprintf(stderr,"No reachable %s %u from %u,%u\n",argv[2],index,s.x_half,s.y_half);free(r);return 1; }

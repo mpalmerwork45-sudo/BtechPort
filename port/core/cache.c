@@ -187,6 +187,19 @@ void btp_cache_input(BtpState *s,const BtpResources *r,BtpAction a)
         (s->party.x[i]!=party_before.x[i] || s->party.y[i]!=party_before.y[i]))
         s->party.walk[i]=btp_walk_next(party_before.walk[i],party_before.direction[i],s->party.direction[i]);
 }
+int btp_cache_contact(const BtpState *s,const BtpResources *r,int *x,int *y)
+{
+    /* 0000:1C12 scans compact foot positions in order even inside MAP14/15.
+       A follower touching a terminal/door is the interaction point; the
+       leader cannot advance while that follower is against a wall. */
+    unsigned place=0;
+    for (unsigned i=0;i<8;++i) if (s->party.people[i][0]!=255 && s->party.people[i][12]>=8) {
+        int px=*x+r->combat.formation_x[place],py=*y+r->combat.formation_y[place];++place;
+        unsigned tile=px<0 || py<0 ? 255u : btp_cache_tile(r,s,(px+1)/2,py/2);
+        if (tile>=s->gate) { *x=px;*y=py;return (int)place-1; }
+    }
+    return -1;
+}
 static void move_cache(BtpState *s,const BtpResources *r,BtpAction a)
 {
     BtpCacheState *c=&s->cache;
@@ -195,13 +208,16 @@ static void move_cache(BtpState *s,const BtpResources *r,BtpAction a)
     s->facing=(uint8_t)a;
     unsigned width=s->story_flags[66] ? 64u : 128u,height=s->story_flags[66] ? 48u : 128u;
     if (x<0 || y<0 || x>=(int)width-1 || y>=(int)height) { s->blocked=BTP_EDGE;return; }
-    unsigned tile=btp_cache_tile(r,s,(x+1)/2,y/2);
-    if (tile<s->gate) {
+    if (btp_cache_contact(s,r,&x,&y)<0) {
         uint16_t old_x=s->campaign.world_x,old_y=s->campaign.world_y;
         s->x_half=(uint16_t)x;s->y_half=(uint16_t)y;s->blocked=0;
         s->campaign.world_x=(uint16_t)(1536+x);s->campaign.world_y=(uint16_t)(1536+y);
         btp_party_follow(s,r,old_x,old_y);return;
     }
+    /* A member outside the loaded room is a boundary, not a Phoenix tile.
+       The out-of-range sentinel 255 must never dispatch a story interaction. */
+    if (x<0 || y<0 || x>=(int)width-1 || y>=(int)height) { s->blocked=BTP_EDGE;return; }
+    unsigned tile=x<0 || y<0 ? 255u : btp_cache_tile(r,s,(x+1)/2,y/2);
     s->blocked=BTP_WALL;
     if (s->story_flags[66]) {
         if (tile==148) { c->phase=BTP_CACHE_EXIT;c->notice=129; }

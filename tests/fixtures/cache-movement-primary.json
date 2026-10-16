@@ -1,0 +1,22 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "cases": 5760,
+  "routine": "0000:1C12 with original 187F:1314 viewport",
+  "prerequisites": "Original cache-entry RAM; fresh MAP14/MAP15, gates 33/139, 120 sampled legal cursor positions per room, 1/5/8 compact people, eight directions. Doors initially closed. Some larger formations intentionally overlap obstacles to exercise older-save recovery decisions.",
+  "comparison": "Whole-step rejection and first blocked compact member/tile, including contacts made by followers. No wall-clock or complete-route claim.",
+  "intercepted_boundaries": [
+    "0B5D:01E9 cache interaction",
+    "0B5D:0288 cache interaction",
+    "0B5D:02A8 cache interaction",
+    "0B5D:02D2 cache interaction",
+    "0B5D:03AA cache interaction",
+    "0B5D:04AB cache interaction",
+    "0B5D:055A cache interaction",
+    "0B5D:079C cache interaction",
+    "0B5D:0913 cache interaction",
+    "0B5D:0980 cache interaction",
+    "0B5D:0AB6 cache interaction"
+  ],
+  "no_instruction_patches": true
+}

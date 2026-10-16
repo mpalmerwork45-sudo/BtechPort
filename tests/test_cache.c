@@ -31,6 +31,48 @@ static unsigned normal(unsigned raw)
 {
     return (raw/64/4*8+raw%64/8)*32+raw/64%4*8+raw%8;
 }
+static void formation_contacts(const BtpResources *r,const BtpState *base)
+{
+    FILE *f=fopen("tests/fixtures/cache-movement-primary.txt","r");CHECK(f);
+    unsigned room,x,y,count,blocked,tile,cases=0;int dx,dy,member;
+    while (fscanf(f," C %u %u %u %u %d %d %u %d %u",&room,&x,&y,&count,&dx,&dy,&blocked,&member,&tile)==9) {
+        BtpState s=*base;s.story_flags[66]=(uint8_t)room;s.gate=(uint8_t)(room ? 139 : 33);
+        memset(s.story_flags+67,0,12);memcpy(s.cache.maproom,r->maproom.tiles,768);
+        for (unsigned i=0;i<8;++i) { s.party.people[i][0]=(uint8_t)(i<count ? i : 255);s.party.people[i][12]=8; }
+        int cx=(int)x+dx,cy=(int)y+dy;
+        int at=btp_cache_contact(&s,r,&cx,&cy);
+        if ((at>=0)!=blocked || at!=member) fprintf(stderr,"Cache collision %u at %u,%u room %u count %u dir %d,%d: %d/%d\n",cases,x,y,room,count,dx,dy,at,member);
+        CHECK((unsigned)(at>=0)==blocked && at==member);
+        if (at>=0) CHECK(btp_cache_tile(r,&s,(cx+1)/2,cy/2)==tile);
+        ++cases;
+    }
+    CHECK(!fclose(f) && cases==5760);
+    /* Compatibility stress: legal but scattered old formations are retained
+       on load. All followers must remain on floor during narrow-corridor,
+       diagonal and repeated two/four-step walks, including room transitions. */
+    const BtpAction directions[]={BTP_UP,BTP_UP_RIGHT,BTP_RIGHT,BTP_DOWN_RIGHT,
+        BTP_DOWN,BTP_DOWN_LEFT,BTP_LEFT,BTP_UP_LEFT};
+    for (room=0;room<2;++room) for (count=5;count<=8;count+=3) {
+        BtpState s=*base;s.story_flags[66]=(uint8_t)room;s.gate=(uint8_t)(room ? 139 : 33);
+        s.x_half=(uint16_t)(room ? 4 : 6);s.y_half=(uint16_t)(room ? 34 : 122);
+        memcpy(s.cache.maproom,r->maproom.tiles,768);
+        for (unsigned i=0;i<8;++i) { memcpy(s.party.people[i],base->party.people[0],17);s.party.people[i][0]=(uint8_t)(i<count ? i : 255); }
+        btp_cache_restore_party(&s,r);
+        for (unsigned i=1;i<count/2;++i) {
+            uint16_t old_x=s.party.x[i],old_y=s.party.y[i];s.party.x[i]=s.party.x[count-i];s.party.y[i]=s.party.y[count-i];
+            s.party.x[count-i]=old_x;s.party.y[count-i]=old_y;
+        }
+        BtpState kept=s;btp_cache_restore_party(&s,r);CHECK(!memcmp(&kept,&s,sizeof s));
+        unsigned random=42;
+        for (unsigned tick=0;tick<600;++tick) {
+            random=random*1664525u+1013904223u;s.menu.steps=(uint8_t)(tick%3==0 ? 4 : tick%3==1 ? 2 : 1);
+            input(&s,r,s.audio.sound_count ? BTP_IDLE : s.cache.phase ? BTP_CANCEL : directions[(random>>24)&7u]);
+            if (s.mode!=BTP_CACHE) fprintf(stderr,"Cache stress room %u count %u tick %u mode %u phase %u at %u,%u\n",room,count,tick,s.mode,s.cache.phase,s.x_half,s.y_half);
+            CHECK(s.mode==BTP_CACHE);
+            for (unsigned i=0;i<count;++i) CHECK(btp_party_walkable(&s,r,s.party.x[i],s.party.y[i],0));
+        }
+    }
+}
 int main(int argc,char **argv)
 {
     if (argc!=2) return 2;
@@ -41,6 +83,7 @@ int main(int argc,char **argv)
     for (unsigned i=0;i<64 && base.mode==BTP_BUILDING;++i) input(&base,r,BTP_ACCEPT);
     CHECK(base.mode==BTP_CACHE && !base.cache.phase);for (unsigned i=0;i<256 && base.audio.sound_count;++i) input(&base,r,BTP_IDLE);
     CHECK(!base.audio.sound_count);
+    formation_contacts(r,&base);
     /* GAME1 brings five people. Every foot sprite must contribute visible
        map pixels, and all follower positions must pass cache collision. */
     uint32_t complete[BTP_PIXELS],without[BTP_PIXELS];btp_render(r,&base,0,complete);
