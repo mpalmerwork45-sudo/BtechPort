@@ -1,0 +1,18 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "cases": 17,
+  "routine": "07DC:01C0 complete THEATER.BLD with 1656:03F5 text and 1656:07CB scroll",
+  "comparison": "200x184 interior RGB hashes at every film/held page after the opening clear; original glyph rasterization, wrapping, scroll and final clear.",
+  "prerequisites": "Five credits and Yes to admission; original text window 6. ANM/audio/native exit/key calls supplied as boundaries; no timing claim.",
+  "boundaries": [
+    "0000:19BF",
+    "0000:1A13",
+    "0000:48B7",
+    "0E31:1FDF",
+    "173D:00D5",
+    "173D:0259",
+    "173D:086A"
+  ],
+  "no_instruction_patches": true
+}

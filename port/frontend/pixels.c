@@ -1297,6 +1297,21 @@ static void story_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
     }
     if (s->bank.phase || v->has_accounts) { bank_panel(r,s,bytes,length,f); return; }
     if (s->school.phase == BTP_SCHOOL_PRICES) { school_panel(r,s,f); return; }
+    if (btp_building_kind(r,s)==16) {
+        /* THEATER.BLD appends dialogue throughout the film. 1656:07CB
+           scrolls within the right panel; truncation loses its final lines.
+           Keep FC string boundaries so later words wrap as in the DOS calls. */
+        uint8_t message[1024];size_t n=0;
+        const BtpBld *b=btp_state_bld(r,s);
+        for (unsigned i=0;i<v->text_count;++i) {
+            BtpTextSpan span=v->text[i];
+            if (span.length+1u>sizeof message-n) return;
+            memcpy(message+n,b->bytes+span.offset,span.length);n+=span.length;message[n++]=1;
+        }
+        int y=service_wrap(r,f,8,message,n);
+        if (v->status==BTP_SCRIPT_CONFIRM) service_yes_no(r,f,y,v->confirm_selected);
+        return;
+    }
     if (btp_building_kind(r,s)==5 && !s->talk.phase && v->status!=BTP_SCRIPT_MENU) {
         if (v->status==BTP_SCRIPT_WAIT && !v->text_count && v->native_action==19 && !s->story_flags[18]) {
             size_t n;const uint8_t *message=bank_literal(r,184,&n);

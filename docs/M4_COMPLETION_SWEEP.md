@@ -85,6 +85,16 @@ requests match. Native continuations save before every input, film frame and
 sound step. These branches required no game-rule changes. Executed bytecode
 nodes are recorded separately from the earlier 26-file static graph audit.
 
+**Theatre overflow fixed:** 17 additional film/held-page checkpoints execute
+the original BLD and `1656:03F5/07CB` text engine. Every 200-by-184 interior
+pixel matches, including the three-row scroll near the end and the final
+clear/closing page. The former generic wrapper stopped at the panel bottom
+and displayed an overflow diagnostic. Theatre text now uses the bounded
+scrolling renderer, retaining the individual FC string boundaries. Native
+save/restore precedes every input and animation/audio step in this comparison.
+`make_theater_text_vectors.py` records numeric hashes only; reconstructed
+original/native panels and two late-film saved checkpoints remain in `work/`.
+
 ## 5. Timing audit — in progress
 
 Original animation, combat delay and NPC cadence comparisons are being extended.

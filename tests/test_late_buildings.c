@@ -7,6 +7,7 @@
 #include "core/training.h"
 #include "core/service.h"
 #include "data/save.h"
+#include "frontend/pixels.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -136,6 +137,43 @@ static unsigned story_branches(const BtpResources *r)
     }
     CHECK(!fclose(f) && cases==124);return cases;
 }
+static void theater_pixels(const BtpResources *r)
+{
+    BtpState s;prerequisite(&s,1,42);s.credits=5;
+    btp_game_building(&s,r,16);btp_game_tick(&s,r,BTP_IDLE);
+    FILE *f=fopen("tests/fixtures/theater-text-primary.txt","r");CHECK(f);
+    unsigned cases=0,last_animation=0,ticks=0;uint32_t frame[BTP_PIXELS];
+    while (s.mode==BTP_BUILDING && ticks++<10000) {
+        unsigned animation=s.cutscene.active ? s.script.pc : 0;
+        int held=!s.cutscene.active && !s.audio.sound_count && s.script.status==BTP_SCRIPT_WAIT;
+        if (s.script.pc>=659 && (held || (animation && animation!=last_animation))) {
+            char event;unsigned pc,scroll;uint64_t expected;
+            CHECK(fscanf(f," %c %u %u %" SCNx64,&event,&pc,&scroll,&expected)==4);
+            CHECK(event==(held ? 'W' : 'A') && pc==s.script.pc);
+            btp_render(r,&s,0,frame);uint64_t hash=UINT64_C(14695981039346656037);
+            char path[96];snprintf(path,sizeof path,"work/m4-audit/theater-native-%c-%u.ppm",event,pc);
+            FILE *out=fopen(path,"wb");CHECK(out);fprintf(out,"P6\n200 184\n255\n");
+            for (unsigned y=8;y<192;++y) for (unsigned x=112;x<312;++x) {
+                uint32_t color=frame[y*320+x];
+                const uint8_t rgb[]={(uint8_t)(color>>16),(uint8_t)(color>>8),(uint8_t)color};
+                for (unsigned j=0;j<3;++j) hash=append_byte(hash,rgb[j]);
+                CHECK(fwrite(rgb,1,3,out)==3);
+            }
+            CHECK(!fclose(out));
+            if (hash!=expected) fprintf(stderr,"Theater %c PC %u (%u scrolls): %016" PRIx64 "/%016" PRIx64 "\n",event,pc,scroll,hash,expected);
+            CHECK(hash==expected);
+            if (pc==988 || pc==1125) {
+                BtpError error;snprintf(path,sizeof path,"work/m4-audit/theater-%u.btp",pc);
+                CHECK(btp_save_write(path,&s,r,&error));
+            }
+            ++cases;
+        }
+        last_animation=animation;
+        input(&s,r,s.cutscene.active || s.audio.sound_count ? BTP_IDLE : BTP_ACCEPT);
+    }
+    CHECK(ticks<10000 && s.mode==BTP_EXPLORE && cases==17);
+    char extra;CHECK(fscanf(f," %c",&extra)==EOF);CHECK(!fclose(f));
+}
 int main(int argc,char **argv)
 {
     if (argc!=2) return 2;
@@ -215,6 +253,6 @@ int main(int argc,char **argv)
         if (route==6) { CHECK(laser_menu && s.party.people[0][11]==13);for (unsigned i=1;i<4;++i) CHECK(s.party.people[i][11]>=12); }
         if (route==7) CHECK(electronics && clothing && s.credits==15342507 && s.story_flags[30] && s.story_flags[48] && s.story_flags[49]);
     }
-    unsigned alternatives=alternate_services(r)+story_branches(r);
+    unsigned alternatives=alternate_services(r)+story_branches(r);theater_pixels(r);
     free(r);printf("PASS: %u late-building checks, 46 native and %u complete BLD primary cases, eight saved ordinary routes\n",checks,alternatives);return 0;
 }
