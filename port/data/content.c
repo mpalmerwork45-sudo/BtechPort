@@ -1,0 +1,41 @@
+#include "data/content.h"
+#include <stdio.h>
+#include <stdlib.h>
+
+static int fail(BtpError *error, const char *message)
+{
+    if (error) snprintf(error->text, sizeof error->text, "%s", message);
+    return 0;
+}
+
+void btp_content_close(BtpContent *content)
+{
+    if (!content) return;
+    free(content->resources);
+    *content = (BtpContent){0};
+}
+
+int btp_content_load_original(BtpContent *content,
+    const BtpOriginalContentPaths *paths, BtpError *error)
+{
+    if (!content || !paths || !paths->directory || !paths->dialogue ||
+        !paths->combat || !paths->world)
+        return fail(error, "Original content requires resource and cache paths");
+
+    /* Speaker programs make this several megabytes. Build on the heap and
+       publish only a complete load, preserving the Windows default stack and
+       any existing content if one of the later caches is missing or invalid. */
+    BtpResources *candidate = calloc(1, sizeof *candidate);
+    if (!candidate) return fail(error, "Content allocation failed");
+    if (!btp_resources_load(paths->directory, candidate, error) ||
+        !btp_dialogue_load(paths->dialogue, &candidate->dialogue, error) ||
+        !btp_combat_data_load(paths->combat, &candidate->combat, error) ||
+        !btp_world_data_load(paths->world, &candidate->world, error)) {
+        free(candidate);
+        return 0;
+    }
+    btp_content_close(content);
+    content->resources = candidate;
+    content->profile = BTP_CONTENT_ORIGINAL_DOS_103;
+    return 1;
+}

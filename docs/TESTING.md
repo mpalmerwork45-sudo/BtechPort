@@ -1,8 +1,19 @@
 # Build, verification and original oracle — 2026-10-16
 
-## Current cadence and portability sweep
+## M5-P1 content-loading preparation
 
-The active build has **56 CTest suites**. Saves are **BTPe/v40**, with a
+The current build has **57 CTest suites**. All pass on Linux (42.11 seconds).
+The new `original-content-lifetime` suite has 90 checks and also passes under
+ASan/UBSan with leak detection and Windows/Wine. Both players match the retained
+pre-refactor binaries' state, frame and save bytes in four scenarios each.
+The sanitized player also resumes all four snapshots exactly. Linux intro and
+Linux/Windows SDL save/load checks pass; scope and commands are in
+[M5_PREPARATION.md](M5_PREPARATION.md).
+The existing BTPe/v40 save format and cache versions are unchanged.
+
+## Previous cadence and portability sweep
+
+That sweep had **56 CTest suites**. Saves are **BTPe/v40**, with a
 20,480-byte payload and explicit older-version migrations. Local caches are
 **BTTA/v24** (373 strings, 15,226 bytes), BTCB/v11 and BTW3. Original assets,
 extracted text, screenshots and RAM remain outside Git.

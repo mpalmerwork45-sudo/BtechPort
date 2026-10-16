@@ -118,6 +118,17 @@ int btp_options(int argc, char **argv, BtpOptions *o)
     return 1;
 }
 
+int btp_cli_load_content(const BtpOptions *o, BtpContent *content, BtpError *error)
+{
+    /* Both players use the same original profile and existing CLI defaults.
+       Package selection can later enter here without changing game startup. */
+    const BtpOriginalContentPaths paths = {
+        .directory = o->data, .dialogue = o->dialogue_data,
+        .combat = o->combat_data, .world = o->world_data
+    };
+    return btp_content_load_original(content, &paths, error);
+}
+
 void btp_initial_state(const BtpOptions *o, BtpState *s, const BtpResources *r)
 {
     if (o->shop_talk_checkpoint) btp_start_shop_conversation_checkpoint(s,r,(unsigned)o->shop_talk_checkpoint);

@@ -36,8 +36,9 @@ remaining work.
 The proposed path to more mechs, custom game packages, BLD/Lua scripting and a
 Windows/Linux editor is recorded in the
 [engine and editor plan](docs/ENGINE_AND_EDITOR_PLAN.md).
-It begins with preparatory refactors that preserve the current game. These
-authoring features are planned, not yet implemented.
+Preparation has begun with a shared content loader that preserves the current
+game; see [the first preparation increment](docs/M5_PREPARATION.md).
+Custom packages, Lua and the editor are still planned features.
 
 ## Build and run on Linux
 

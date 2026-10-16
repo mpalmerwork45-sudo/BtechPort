@@ -2,11 +2,12 @@
 
 Recorded **2026-10-16**, against implementation commit `c29ea75`.
 
-**Status: proposed design and implementation sequence.** This document records
+**Status: M5-P1 implemented; later preparation and features proposed.** This document records
 the discussion about additional mechs, external game data, BLD/Lua scripting and
-a Windows/Linux game editor. None of the new package, Lua or editor facilities
-described below is implemented by this documentation change. Existing fidelity
-work remains tracked in [PROJECT_STATUS.md](PROJECT_STATUS.md).
+a Windows/Linux game editor. The first shared-loading refactor is complete;
+see [preparation evidence](M5_PREPARATION.md). New package, Lua and editor
+facilities remain proposed. Existing fidelity work remains tracked in
+[PROJECT_STATUS.md](PROJECT_STATUS.md).
 
 For the immediate work, start with [the five preparation increments](#9-preparation-that-can-be-done-now).
 The [later milestones](#10-subsequent-milestones-and-dependencies) and
@@ -451,12 +452,15 @@ come from the same versioned schemas/metadata used by validation.
 
 ## 9. Preparation that can be done now
 
-This is the recommended next engineering phase. It produces useful, maintained
+This is the current preparation phase. It produces useful, maintained
 boundaries while the current game remains the only required runtime profile.
-All five items are **PROPOSED / NOT STARTED**. Each is a separate reviewable
+**P1 is implemented and verified; P2–P5 are proposed / not started.** Each is a separate reviewable
 increment with local commits; it is not one large rewrite.
 
 ### M5-P1 — One content-loading and lifetime boundary
+
+**Complete:** see [implementation and checks](M5_PREPARATION.md). The following
+scope and acceptance criteria describe the completed increment.
 
 **Touchpoints:** [headless.c](../port/frontend/headless.c),
 [sdl.c](../port/frontend/sdl.c), [cli.c](../port/frontend/cli.c),
@@ -669,6 +673,6 @@ to apply; see [README](../README.md#license) and
 are separate from the engine. The standalone demonstration must supply its own
 art, audio, fonts and text; the original executable is not its hidden data source.
 
-The immediate implementation recommendation is **M5-P1, followed by P2–P5**.
+M5-P1 is complete. The next implementation recommendation is **M5-P2, then P3–P5**.
 That leaves a playable original game at each step and gives the first expanded
 mech package and editor real interfaces to build on.

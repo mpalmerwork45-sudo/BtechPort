@@ -150,6 +150,14 @@ and the [latest five-area sweep](M4_PORTABILITY_SWEEP.md).
     independent C does not itself establish a formal clean-room process or
     rights to original assets.
 
+11. **Custom games and authoring — first preparation increment complete.**
+    The [transition plan](ENGINE_AND_EDITOR_PLAN.md) separates preparation from
+    external units, independent packages, scripting and the desktop editor.
+    [M5-P1](M5_PREPARATION.md) gives both players shared content ownership and
+    loading while preserving the original profile. Original record layouts,
+    fixed definitions and story assumptions still need the P2–P5 work; a custom
+    package is not yet loadable. Lua/Qt adoption and public schemas remain open.
+
 Both reference trees are guarded by content, mode, timestamp and Git-metadata
 checks. Known external editor metadata drift is restored only when its exact
 baseline is established. No reference code is copied into the port and no

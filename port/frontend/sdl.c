@@ -75,15 +75,15 @@ int main(int argc, char **argv)
     BtpOptions o;
     int parsed = btp_options(argc, argv, &o);
     if (parsed <= 0) return parsed == -1 ? 0 : 1;
-    BtpResources *r = malloc(sizeof *r);
+    BtpContent content = {0};
     uint32_t *frame = malloc(BTP_PIXELS * sizeof *frame);
     BtpError error;
     int result = 1;
-    if (!r || !frame) { free(r); free(frame); return 1; }
-    if (!btp_resources_load(o.data, r, &error) || !btp_dialogue_load(o.dialogue_data,&r->dialogue,&error) ||
-        !btp_combat_data_load(o.combat_data,&r->combat,&error) || !btp_world_data_load(o.world_data,&r->world,&error)) {
+    if (!frame) return 1;
+    if (!btp_cli_load_content(&o, &content, &error)) {
         fprintf(stderr, "%s\nRun ./scripts/build.sh to prepare the resource caches.\n", error.text); goto done;
     }
+    BtpResources *r = content.resources;
     if (o.headless) { result = btp_run_headless(&o, r); goto done; }
     if (o.tiles_output || o.sprites_output) { fputs("Asset export requires --headless\n", stderr); goto done; }
     BtpState state; btp_initial_state(&o,&state,r);
@@ -370,6 +370,6 @@ sdl_done:
     if (window) SDL_DestroyWindow(window);
     SDL_Quit();
 done:
-    free(frame); free(r);
+    free(frame); btp_content_close(&content);
     return result;
 }

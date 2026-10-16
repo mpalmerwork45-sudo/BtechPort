@@ -39,14 +39,15 @@ ignored work files. Local commits remain on `main`, with no push.
 | Owner follow-ups | Four Jenners/ruins escape, purchase recipients, armour repair, original crew/inspection/engagement/Speed Shop selectors, world seed/city alignment, all-party collision and gait, replacement recruits and spy confrontation |
 | Fresh campaign | New-cadet input route through training, companions, paid apprenticeships, holodisk, password and cache ending; original checks at selected prerequisites |
 | Remaining original campaign | Additional branches and broader DOS combat/presentation parity |
-| M5 | Proposed preparation, external units, custom packages and editor; see [engine and editor plan](ENGINE_AND_EDITOR_PLAN.md) |
+| M5 | M5-P1 shared content loading complete; further preparation, external units, packages and editor proposed in the [plan](ENGINE_AND_EDITOR_PLAN.md) |
 
 The owner-requested [engine and editor plan](ENGINE_AND_EDITOR_PLAN.md) records
 the future authoring direction separately from the remaining original fidelity
-work. Its first proposed phase, M5-P1–P5, isolates loading, unit definitions,
-original story dispatch and persistence, then prototypes authoring schemas while
-preserving current play and saves. Implementation of that phase and the later
-M5a–M5e package/editor milestones has **not started**.
+work. [M5-P1 is complete](M5_PREPARATION.md): both players share original-content
+loading, ownership and cleanup; failed loads preserve existing content. The
+next preparation steps isolate unit definitions, original story dispatch and
+persistence, then prototype authoring schemas while preserving play and saves.
+M5-P2–P5 and the later M5a–M5e package/editor milestones remain **proposed**.
 
 ## Play and verify
 
@@ -81,7 +82,11 @@ Successful pre-combat evasion produces no loot or cash.
 
 ## Verification and limits
 
-The current build has **56 CTest suites**. The earlier sweep established:
+The current build has **57 CTest suites**, all passing on Linux. M5-P1 adds
+content-lifetime checks, also passing under sanitizers and Windows/Wine, with
+exact pre-refactor state/frame/save comparisons for both entry points. See
+[preparation verification](M5_PREPARATION.md) for its bounded checks.
+The earlier fidelity sweep established:
 
 - **133 original combat waves** in four town contexts, including two complete
   MAP4 victories and two Starport traces bounded at 64 waves each. Two MAP4
@@ -127,7 +132,7 @@ before every input. The new native service tail joins the existing house,
 cinema, hut, laser shop, theft and replacement checks. Nineteen held combat pages
 exercise F5/F9; the cache check includes the Phoenix display, map room and ending.
 Current verification and exact timings are recorded in [TESTING.md](TESTING.md).
-All 56 Linux, sanitizer and Windows/Wine suites pass, along with five Python
+That sweep passed all 56 Linux, sanitizer and Windows/Wine suites, along with five Python
 tests and 41 Windows SDL checks (including 19 held combat F5/F9 pages).
 The Windows build is checked under isolated Wine against Linux state/pixels;
 physical Windows hardware and an actual XT speaker recording remain untested.
