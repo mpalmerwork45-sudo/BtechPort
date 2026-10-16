@@ -1,4 +1,4 @@
-# Project status — original fidelity and M5 preparation, 2026-10-16
+# Project status — original fidelity and first M5a roster, 2026-10-16
 
 The independent C11/SDL2 port has playable implementations of the authorized
 M4a–M4e increments and the subsequent building, theft, encounter, recruitment and
@@ -39,7 +39,7 @@ ignored work files. Local commits remain on `main`, with no push.
 | Owner follow-ups | Four Jenners/ruins escape, purchase recipients, armour repair, original crew/inspection/engagement/Speed Shop selectors, world seed/city alignment, all-party collision and gait, replacement recruits and spy confrontation |
 | Fresh campaign | New-cadet input route through training, companions, paid apprenticeships, holodisk, password and cache ending; original checks at selected prerequisites |
 | Remaining original campaign | Additional branches and broader DOS combat/presentation parity |
-| M5 | M5-P1–P5 preparation implemented; external units, packages and editor remain proposed in the [plan](ENGINE_AND_EDITOR_PLAN.md) |
+| M5 | P1–P5 preparation and the [first playable M5a roster](M5A_ROSTER_SLICE.md) implemented; general packages, Lua and editor remain in the [plan](ENGINE_AND_EDITOR_PLAN.md) |
 
 The owner-requested [engine and editor plan](ENGINE_AND_EDITOR_PLAN.md) records
 the future authoring direction separately from the remaining original fidelity
@@ -48,8 +48,11 @@ named unit/weapon/presentation/refit lookups, original action dispatch, isolated
 persistence and an offline schema/sample. The current game and BTPe/v40 saves
 remain the compatibility case. All 41 Windows SDL portability checks and eleven
 Linux Mech-It service/continuation checks pass.
-M5a–M5e runtime package/editor milestones remain **proposed**; the three-model
-sample is not yet playable. The [inventory](CONTENT_INVENTORY.md) records the
+The [M5a CHI roster slice](M5A_ROSTER_SLICE.md) now supplies the pre-logo
+Original/Updated selector and three playable external mechs, with broker,
+encounter and save support. The separate general-schema sample remains offline;
+the rest of M5a and M5b–M5e packages/Lua/editor remain **proposed**.
+The [inventory](CONTENT_INVENTORY.md) records the
 remaining compiled assumptions and concrete independent-game prerequisites.
 
 ## Play and verify

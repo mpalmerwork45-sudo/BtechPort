@@ -39,10 +39,29 @@ Windows/Linux editor is recorded in the
 The preparation work adds shared content loading, named unit lookups, separate
 original-script dispatch and save encoding, plus a validated authoring sample.
 See [implementation and verification](docs/M5_PREPARATION.md) and the
-[three-model prototype](examples/content-demo/README.md). The prototype is an
-offline data example; custom unit loading, game packages, Lua and the editor
-remain planned features. The existing build and game files are still sufficient
-to play.
+[three-model prototype](examples/content-demo/README.md). The prototype remains
+an offline example. The first playable [M5a roster slice](docs/M5A_ROSTER_SLICE.md)
+now loads an optional external roster; general game packages, Lua and the editor
+remain planned features.
+
+An ordinary launch first asks **Original BTECH CHI** or **Updated BTECH CHI**,
+before the Westwood/Infocom logo. Original is the default. Use arrows and
+Enter/Space, or press 1/2. Restart and choose Original whenever you want the
+original lineup. `--edition original` or `--edition updated` skips the selector.
+
+Updated adds the **Panther PNT-9R, Hunchback HBK-4G and Catapult CPLT-C1**.
+In Starport, open the Space menu and choose **Visit 'Mech broker**. They cost
+12,000, 22,000 and 36,000 C-bills, use a free owned bay, and are parked outside
+for crew assignment when you leave. They can also appear in eligible outdoor
+encounters and be salvaged under the existing rules. The four-mech limit remains.
+See [roster details and sources](content/updated/README.md).
+
+Updated keeps six separate save slots, starting at
+`work/player-save-updated.btp`; Original keeps `work/player-save.btp`.
+`--load` recognizes the edition. To continue an existing original save as a
+separate Updated campaign, use `--edition updated --load PATH`.
+Keep the matching roster file with Updated saves; changing definitions or their
+version makes those saves incompatible. See [save behavior](docs/M5A_ROSTER_SLICE.md#starting-switching-and-saving).
 
 ## Build and run on Linux
 
@@ -113,7 +132,8 @@ For SDL2 elsewhere, set `BTP_WINDOWS_SDL2` to its
 particular MinGW compiler. The script prepares the same three resource caches
 and creates `build-windows/btech-port.exe` with `SDL2.dll` beside it.
 
-On Windows, retain that build directory, your `Original DOS` directory and the
+On Windows, retain that build directory, the `content` directory for Updated,
+your `Original DOS` directory and the
 three generated files `work/talk-data.bin`, `work/combat-data.bin` and
 `work/world-data.bin` under a common directory. Open a terminal there and run:
 
@@ -207,6 +227,9 @@ RAM dumps or screenshots. Findings use **VERIFIED**, **INFERRED**,
 BtechPort's independently authored code and documentation are licensed under the
 **GNU General Public License, version 3 (GPL-3.0-only)**. See [LICENSE](LICENSE)
 for the full terms. Third-party dependencies retain their own licenses.
+The optional [Updated roster data](content/updated/README.md) adapts MegaMek
+unit records and has a separate **CC BY-NC-SA 4.0** data license. It is not
+covered by the engine's GPL license.
 
 This license does not cover or grant rights to the original game executable,
 artwork, music, text or other game assets. Those are not distributed here and

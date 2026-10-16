@@ -30,5 +30,9 @@ dumps and captures stay in ignored local directories. The GPL-3.0 license for
 this project's authored code and documentation does not license the original
 game or third-party dependencies.
 
+The optional [Updated CHI roster](../content/updated/README.md) adapts numerical
+unit records from MegaMek's mm-data contributors. Its sources, CHI adaptations
+and separate CC BY-NC-SA 4.0 data license are recorded alongside the pack.
+
 See [PROJECT_STATUS.md](PROJECT_STATUS.md) for current scope and
 [TESTING.md](TESTING.md) for repeatable verification procedures.

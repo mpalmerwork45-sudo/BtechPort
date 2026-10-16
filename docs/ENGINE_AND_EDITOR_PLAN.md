@@ -277,7 +277,7 @@ on the Windows stack.
 
 ### 5.3 First acceptance set
 
-Use three independently authored models: a fast scout, a heavily armed ground
+For the later independent demonstration, use three independently authored models: a fast scout, a heavily armed ground
 unit and a jump-capable raider. They should exercise different existing
 capabilities without requiring a new combat system. Use newly created art or
 clearly marked local development placeholders; original artwork is not part of
@@ -688,8 +688,15 @@ to apply; see [README](../README.md#license) and
 are separate from the engine. The standalone demonstration must supply its own
 art, audio, fonts and text; the original executable is not its hidden data source.
 
-M5-P1–P5 are implemented. The next implementation recommendation is **M5a:
-external units**, beginning with one model loaded through shared validation and
-exercised through its full lifecycle. The provisional sample provides concrete
-input and diagnostics; runtime loading, instance identity and custom saves still
-need implementation before an expanded roster is playable.
+M5-P1–P5 and the [first playable M5a CHI roster slice](M5A_ROSTER_SLICE.md) are
+implemented. The owner subsequently chose an early Original/Updated selector,
+three classic additions (Panther, Hunchback and Catapult), and explicit original
+sprite placeholders. That CHI adapter now has shared runtime validation, stable
+definition codes, package-bound saves, a broker and encounter/salvage access.
+The optional adapted roster has separate attribution/licensing; it is not the
+independently authored standalone demonstration described above.
+
+The rest of M5a still needs general external weapon/equipment definitions,
+richer component semantics, authored refit variants and original art support.
+The provisional general schema must be reconciled with the runtime adapter
+before treating it as a stable editor contract. M5b–M5e remain future work.
