@@ -1,0 +1,4 @@
+#!/bin/sh
+# The same launcher works from any current directory.
+root=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+exec python3 "$root/BtechPort.pyw" "$@"

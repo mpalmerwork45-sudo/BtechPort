@@ -87,7 +87,7 @@ class GraphicsEditor:
         else: art['images'].append(im)
         self.selected = im['id']; self.document.replace_art(art); self.owner.refresh()
         parent=self.owner.parent
-        if parent.current and parent.collection=='mechs':parent.stop_sprite();parent.start_sprite()
+        if parent.current and parent.collection in ('mechs','people'):parent.stop_sprite();parent.start_sprite()
     def new(self):
         f=Form(self,'New graphic'); f.field('name','New image'); f.field('kind','tile',['tile','sprite','icon','screen'])
         f.field('width',16); f.field('height',16); f.field('frames',1,label='Images (unit movement: 32; character: 16)')

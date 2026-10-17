@@ -4,6 +4,9 @@ The sprite editor opens from **right-click the roster animation → Edit sprite*
 or by double-clicking a sprite in **Maps / events → Graphics / sprites**.
 Tiles, icons and screens keep the general pixel editor. Original artwork is
 copied into the project before editing; neither reference directory is changed.
+The [Unit Library](UNIT_LIBRARY_AND_LAUNCHER.md) also opens this editor for stored
+designs. **Save to library** retains their edited sprites with the blueprint;
+importing a design then carries its owned unit graphics into a game.
 
 ## Editing movement
 

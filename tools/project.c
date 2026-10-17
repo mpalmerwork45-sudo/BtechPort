@@ -4,6 +4,7 @@
 #include "data/file.h"
 #include "frontend/pixels.h"
 #include "data/sprites.h"
+#include "data/unit_data.h"
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -111,8 +112,64 @@ static int provenance(const char *roster,const char *directory,BtpError *error)
     return 1;
 }
 
+static int original_units(const char *output,const char *cache)
+{
+    /* Reuse the authored-definition exporter for local original templates.
+       Only symbolic numeric blueprints leave the cache; no binary resources
+       or sprites are copied. Library prices are an explicit authored estimate. */
+    BtpCombatData *combat=calloc(1,sizeof *combat);BtpRoster *roster=calloc(1,sizeof *roster);
+    BtpError error={0};BtpCombatProfile profile={0};int ok=combat && roster;
+    if (ok) ok=btp_combat_data_load(cache,combat,&error);
+    if (ok) {
+        strcpy(roster->package,"chi-original");strcpy(roster->version,"1.0.0");
+        const BtpMechTemplate kinds[]={BTP_MECH_LOAN,BTP_MECH_COMMANDO,BTP_MECH_JENNER,BTP_MECH_ENCOUNTER,BTP_MECH_ARENA,BTP_MECH_URBANMECH};
+        const unsigned counts[]={3,1,1,3,11,1};
+        for (unsigned group=0;group<6;++group) for (unsigned i=0;i<counts[group];++i) {
+            const uint8_t *m=btp_mech_template(combat,kinds[group],i);unsigned weapons=0;
+            for (unsigned at=51;at<86;++at) weapons+=(m[at]&127u)>=16 && (m[at]&127u)<=32;
+            if (!weapons || weapons>10 || m[16]<20 || m[16]>100 || !m[49]) continue;
+            unsigned found=0;while(found<roster->count && memcmp(roster->mechs[found].record,m,15))++found;
+            if(found<roster->count)continue;
+            BtpRosterMech *unit=&roster->mechs[roster->count++];memcpy(unit->record,m,125);
+            snprintf(unit->id,sizeof unit->id,"chi-original:template-%u",roster->count);
+            unit->price=(uint32_t)m[16]*350u;
+            unit->record[124]=(uint8_t)(btp_mech_record_sprite(m,0)==146 ? 193 : 192);
+            /* Template damage/actor flags are instance state. Export intact
+               capacities, keeping armament, gait and heat-sink definitions. */
+            for(unsigned at=17;at<36;++at)if(unit->record[at+69]>unit->record[at])unit->record[at]=unit->record[at+69];
+            /* The training Chameleon has dummy structure, including zero
+               limbs. Use the minimum compatible with its armour for this
+               authored adaptation, documented with the library entry. */
+            for(unsigned part=0;part<8;++part) {
+                unsigned armor=unit->record[17+part];
+                if(part==1)armor+=unit->record[25];
+                if(part==4)armor+=unit->record[26];
+                if(part==6)armor+=unit->record[27];
+                if(part==3 && armor>=3)armor-=3;
+                unsigned minimum=(armor+1u)/2u;if(!minimum)minimum=1;
+                if(unit->record[28+part]<minimum)unit->record[28+part]=(uint8_t)minimum;
+            }
+            for(unsigned at=36;at<38;++at)unit->record[at]=m[at+69];
+            for(unsigned at=51,bin=0;at<86;++at) {
+                unsigned type=m[at]&127u;unit->record[at]=(uint8_t)type;
+                if(type>=16 && type<=32) {
+                    unsigned consuming=(type>=20 && type<=24) || type>=26;
+                    unit->ammo_cost[bin]=(uint8_t)(consuming ? 3u : 0u);
+                    unit->record[39+bin]=(uint8_t)(consuming ? (m[107+bin] && m[107+bin]!=255 ? m[107+bin] : 20u) : 255u);
+                    ++bin;
+                }
+            }
+        }
+        ok=roster->count && btp_definitions_export(output,roster,combat,&profile,error.text);
+    }
+    if(!ok)fprintf(stderr,"%s\n",error.text);
+    free(combat);free(roster);return ok;
+}
+
 int main(int argc,char **argv)
 {
+    if(argc==5 && !strcmp(argv[1],"export-original-units") && !strcmp(argv[3],"--combat-data"))
+        return original_units(argv[2],argv[4]) ? 0 : 1;
     if (argc>=2 && !strcmp(argv[1],"source-sprite")) {
         if ((argc!=6 && argc!=8) || strcmp(argv[2],"--data") || strcmp(argv[4],"--sprite") || (argc==8 && strcmp(argv[6],"--frames"))) {
             fputs("Usage: btp-project source-sprite --data DIRECTORY --sprite 0..375 [--frames 1..32]\n",stderr);return 2;
@@ -131,6 +188,7 @@ int main(int argc,char **argv)
     if (argc<3) {
         fputs("Usage:\n  btp-project validate DIRECTORY\n  btp-project validate-content FILE\n"
             "  btp-project export NEW_DIRECTORY --roster FILE --combat-data FILE\n"
+            "  btp-project export-original-units NEW_FILE --combat-data FILE\n"
             "  btp-project preview-tiles --data DIRECTORY --sheet chi:land|chi:destroyed\n"
             "Export reads adjacent combat.json and art, writing explicit references.\n",stderr);return 2;
     }

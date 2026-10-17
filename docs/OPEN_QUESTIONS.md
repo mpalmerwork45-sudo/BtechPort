@@ -185,6 +185,10 @@ and the [latest five-area sweep](M4_PORTABILITY_SWEEP.md).
     cues, richer equipment abilities, arbitrary character/rule models, a script
     IDE/debugger and package migrations remain. Its guide lists the current
     five editor follow-ups, including authored repair/reload/salvage services.
+    The [shared Unit Library](UNIT_LIBRARY_AND_LAUNCHER.md) and launcher now add
+    reusable editable blueprints and application/game startup controls. Infantry
+    squads and per-character sprites remain unsupported; existing infantry uses
+    individual character templates and shared NPC/enemy artwork.
     Native Windows Tk verification and the full editor toolkit choice remain
     open. Original raw records and compiled assumptions are catalogued in the
     [content inventory](CONTENT_INVENTORY.md).

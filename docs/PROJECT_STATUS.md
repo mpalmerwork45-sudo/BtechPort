@@ -1,4 +1,13 @@
-# Project status — original fidelity and editable projects, 2026-10-17
+# Project status — original fidelity and editable projects, 2026-10-18
+
+The [shared Unit Library and launcher](UNIT_LIBRARY_AND_LAUNCHER.md) now provide
+57 blueprints (41 mechs, ten vehicles, six infantry templates), editable directly
+in the library and copied between games with dependency closure, explicit
+updates/variants and source attribution. Infantry properties are also available
+in the main roster editor. The desktop launch window starts Original/Updated,
+the demos and custom games, resumes F5 saves, opens the editor/library and builds
+the application with two jobs. Linux and Windows entry scripts are included.
+Fresh checks and portability bounds are in [TESTING](TESTING.md#unit-library-and-desktop-launcher).
 
 The [sprite editor](SPRITE_EDITOR.md) now has movement directions, named poses,
 frame thumbnails, previous/next navigation, copy/paste, onion skin and playback

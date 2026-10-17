@@ -19,6 +19,23 @@ researchers are credited below.
 the original DOS game files, including `BTECH.EXE`. Local extraction creates
 ignored caches from those files; it does not download the game.
 
+## Start the application
+
+**Linux:** double-click `BtechPort.desktop` if present, or run `./BtechPort` once
+and choose **Create launch shortcut**. **Windows:** double-click `BtechPort.cmd`
+or `BtechPort.pyw` with Python/Tk installed.
+
+The launch window provides **New game**, **Continue quicksave**, **Open editor**,
+**Unit Library** and **New project**. Select Original, Updated, a demo or your own
+project. **Build application** builds the local executables; **Player setup**
+sets the original files if needed. The independent demos run without them.
+See the [launcher and Unit Library guide](docs/UNIT_LIBRARY_AND_LAUNCHER.md).
+
+The shared **Unit Library** currently offers 57 available mech, vehicle and
+infantry blueprints. Edit designs and sprites inside the library, import selected
+designs into games, or export game designs back as updates/variants. Dependencies,
+source credits, conflict handling and Undo/Redo accompany imports.
+
 ## Status
 
 The game is playable from training through the campaign ending. Exploration,
@@ -53,7 +70,7 @@ remain available as before. [Authored maps and events](docs/M5_MAPS_EVENTS_EDITO
 now support entrances, overlays, shop stock, recruitment, transfers, battles and
 saved continuations. Try [Frontier Depot](examples/adventure-demo/README.md).
 For a BattleTech adventure, try **[BattleTech: Last Beacon](examples/battletech-demo/README.md)**:
-three maps, nine established mech variants, a Phoenix Hawk/Trebuchet starting
+three maps, nine established mech variants and ten vehicles, a Phoenix Hawk/Trebuchet starting
 team, two mercenary contracts, a broker, recruitment and two endings. It uses
 your supplied CHI graphics/sound and defaults to Enhanced combat:
 
@@ -80,8 +97,8 @@ editable art and no requirement for CHI files:
 python3 tools/game_editor.py examples/vehicle-lab
 ```
 
-Use **New project** to work on a copy. **Import vehicles** adds selected catalogue
-presets to an authored project. [Vehicle rules and source notes](content/catalogues/vehicles/README.md)
+Use **New project** to work on a copy. **Unit Library → Vehicles → Import into game**
+adds selected presets to an authored project. [Vehicle rules and source notes](content/catalogues/vehicles/README.md)
 identify approximations; these presets do not replace the original campaign roster.
 
 For clear editor text on Linux, use the distribution's Python with `python3-tk`

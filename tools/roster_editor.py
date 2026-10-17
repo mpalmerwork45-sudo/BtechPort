@@ -84,8 +84,9 @@ def configure_editor_style(window):
 
 
 class RosterEditor:
-    def __init__(self, window: tk.Tk, validator: Path, state_dir: Path):
+    def __init__(self, window: tk.Tk, validator: Path, state_dir: Path, library_context=None):
         self.window, self.validator, self.state_dir = window, validator, state_dir
+        self.library_context = library_context
         self.document: ProjectDocument | None = None
         self.map_editor = None
         self.current = None
@@ -106,14 +107,14 @@ class RosterEditor:
         window.minsize(940, 690)
         header = ttk.Frame(window, style="App.TFrame", padding=(16, 12, 16, 8))
         header.pack(fill="x")
-        ttk.Label(header, text="Game editor", style="Title.TLabel").pack(side="left")
+        ttk.Label(header, text="Library unit editor" if library_context else "Game editor", style="Title.TLabel").pack(side="left")
         self.profile_label = ttk.Label(header, text="Create a game or open a project.", style="Muted.TLabel")
         self.profile_label.pack(side="right", anchor="s", pady=3)
         actions = ttk.Frame(window, style="Card.TFrame", padding=(9, 7))
         actions.pack(fill="x", padx=14, pady=(0, 8))
         toolbar = ttk.Frame(actions, style="Card.TFrame", borderwidth=0)
         toolbar.pack(fill="x")
-        for group in [[("New project", self.new_project), ("Open", self.open_project), ("Save", self.save)],
+        for group in [[("Save to library", self.save)] if library_context else [("New project", self.new_project), ("Open", self.open_project), ("Save", self.save)],
                       [("Undo", self.undo), ("Redo", self.redo)], [("Validate", self.validate)]]:
             if toolbar.winfo_children():
                 ttk.Separator(toolbar, orient="vertical").pack(side="left", fill="y", padx=8, pady=3)
@@ -124,11 +125,12 @@ class RosterEditor:
                    command=lambda: self.guarded(self.play)).pack(side="right", padx=2)
         author_bar = ttk.Frame(actions, style="Card.TFrame", borderwidth=0, padding=(0, 6, 0, 0))
         author_bar.pack(fill="x")
-        ttk.Button(author_bar, text="Maps / events", style="Toolbar.TButton",
-                   command=lambda: self.guarded(self.edit_adventure)).pack(side="left", padx=2)
-        ttk.Button(author_bar, text="Export game", style="Toolbar.TButton",
+        ttk.Button(author_bar, text="Graphics / sprites" if library_context else "Maps / events", style="Toolbar.TButton",
+                   command=lambda: self.guarded(self.library_graphics if library_context else self.edit_adventure)).pack(side="left", padx=2)
+        if not library_context:
+            ttk.Button(author_bar,text="Unit Library",style="Toolbar.TButton",command=lambda:self.guarded(self.open_library)).pack(side="left",padx=2)
+        if not library_context: ttk.Button(author_bar, text="Export game", style="Toolbar.TButton",
                    command=lambda: self.guarded(self.export_project)).pack(side="left", padx=2)
-        ttk.Button(author_bar,text="Import vehicles",style="Toolbar.TButton",command=lambda:self.guarded(self.vehicle_catalogue)).pack(side="left",padx=2)
         ttk.Button(author_bar,text="Ammunition",style="Toolbar.TButton",command=lambda:self.guarded(self.ammunition)).pack(side="left",padx=2)
         ttk.Button(author_bar, text="Player setup", style="Toolbar.TButton",
                    command=lambda: self.guarded(self.setup)).pack(side="right", padx=2)
@@ -150,7 +152,9 @@ class RosterEditor:
         self.roster_count = ttk.Label(sidebar_title, text="", style="CardMuted.TLabel")
         self.roster_count.pack(side="right")
         self.kind = tk.StringVar(value="Mechs")
-        box = ttk.Combobox(left, textvariable=self.kind, values=["Mechs", "Vehicles", "Weapons", "Equipment"], state="readonly")
+        kinds=["Mechs", "Vehicles", "Infantry", "Weapons", "Equipment"]
+        if library_context:kinds=[library_context.bundle['kind']]+([] if library_context.bundle['kind']=='Infantry' else ['Weapons','Equipment'])
+        box = ttk.Combobox(left, textvariable=self.kind, values=kinds, state="readonly")
         box.pack(fill="x", pady=(0, 12))
         box.bind("<<ComboboxSelected>>", lambda _e: self.guarded(self.change_kind))
         self.search = tk.StringVar()
@@ -168,9 +172,9 @@ class RosterEditor:
         self.listing.bind("<<ListboxSelect>>", lambda _e: self.guarded(self.select))
         buttons = ttk.Frame(left, style="Card.TFrame", borderwidth=0)
         buttons.pack(fill="x", pady=(10, 0))
-        ttk.Button(buttons, text="Duplicate / add", command=lambda: self.guarded(self.duplicate)).pack(side="left")
-        ttk.Button(buttons, text="Delete", style="Danger.TButton", command=lambda: self.guarded(self.delete)).pack(side="right")
-        ttk.Button(left,text="New definition...",command=lambda:self.guarded(self.new_definition)).pack(fill="x",pady=(8,0))
+        self.duplicate_button=ttk.Button(buttons, text="Duplicate / add", command=lambda: self.guarded(self.duplicate));self.duplicate_button.pack(side="left")
+        self.delete_button=ttk.Button(buttons, text="Delete", style="Danger.TButton", command=lambda: self.guarded(self.delete));self.delete_button.pack(side="right")
+        self.definition_button=ttk.Button(left,text="New definition...",command=lambda:self.guarded(self.new_definition));self.definition_button.pack(fill="x",pady=(8,0))
         selection=ttk.Frame(right);selection.pack(fill='x',pady=(0,8))
         self.selection_title = ttk.Label(selection, text="Definition details", style="App.TLabel", padding=(2, 2, 0, 6),wraplength=370)
         self.selection_title.pack(side='left',anchor='n')
@@ -191,14 +195,13 @@ class RosterEditor:
         window.bind("<Control-s>", lambda _e: self.guarded(self.save))
         window.bind("<Control-z>", lambda _e: self.guarded(self.undo))
         window.bind("<Control-y>", lambda _e: self.guarded(self.redo))
+        window.bind('<Destroy>',lambda e:self.stop_sprite() if e.widget==window else None,add='+')
         self.populate()
 
     @staticmethod
     def defaults() -> dict:
-        suffix = ".exe" if os.name == "nt" else ""
-        return {"player": str(ROOT / "build" / ("btech-port" + suffix)), "data": str(ROOT / "Original DOS"),
-                **{key + "-data": str(ROOT / "work" / (key + "-data.bin")) for key in ["combat", "world"]},
-                "dialogue-data": str(ROOT / "work/talk-data.bin")}
+        from app_runtime import default_settings
+        return default_settings()
 
     def guarded(self, operation):
         try:
@@ -261,7 +264,7 @@ class RosterEditor:
 
     def change_kind(self):
         self.apply_form()
-        self.collection = {'Weapons':'weapons','Equipment':'equipment'}.get(self.kind.get(),'mechs')
+        self.collection = {'Weapons':'weapons','Equipment':'equipment','Infantry':'people'}.get(self.kind.get(),'mechs')
         self.current = None
         self.refresh_list()
 
@@ -275,13 +278,13 @@ class RosterEditor:
             self.visible = []
             self.listing.delete(0, "end")
             query = self.search.get().lower()
-            for item in self.document.content.get(self.collection,[]):
+            for item in self.values():
                 if self.collection=='mechs' and (item.get('kind')=='vehicle') != (self.kind.get()=='Vehicles'):continue
-                if query and query not in (item["name"] + " " + item["id"]).lower():
+                if query and query not in (item.get("name",item['id']) + " " + item["id"]).lower():
                     continue
                 self.visible.append(item["id"])
-                self.listing.insert("end", (f"{item['mass_tons']:3d}t  " if self.collection == "mechs" else "") + item["name"])
-            total = len(self.document.content.get(self.collection,[]))
+                self.listing.insert("end", (f"{item['mass_tons']:3d}t  " if self.collection == "mechs" else "") + item.get("name",item['id']))
+            total = len(self.values())
             self.roster_count.configure(text=str(total) if len(self.visible) == total else f"{len(self.visible)} / {total}")
             if self.visible:
                 index = self.visible.index(selected) if selected in self.visible else 0
@@ -303,7 +306,13 @@ class RosterEditor:
             self.populate()
 
     def item(self):
-        return next(v for v in self.document.content[self.collection] if v["id"] == self.current)
+        return next(v for v in self.values() if v["id"] == self.current)
+
+    def values(self):
+        if self.collection=='people':
+            people=self.document.adventure['people'] if self.document.adventure else []
+            return [p for p in people if p['id']==self.library_context.bundle['definition']] if self.library_context else people
+        return self.document.content.get(self.collection,[])
 
     def tab(self, name):
         # Long anatomy/component forms remain reachable at the minimum window
@@ -339,7 +348,7 @@ class RosterEditor:
     def field(self, frame, row, label, path, integer=False, choices=None, readonly=False):
         value = self.item()
         for part in path:
-            value = value[part]
+            value = value.get(part,'') if isinstance(value,dict) else value[part]
         variable = tk.StringVar(value=str(value))
         variable.trace_add("write", lambda *_: self.changed())
         self.variables[tuple(path)] = (variable, integer)
@@ -359,6 +368,8 @@ class RosterEditor:
 
     def populate(self):
         self.stop_sprite()
+        for button in (self.duplicate_button,self.delete_button,self.definition_button):
+            button.state(['disabled'] if self.library_context and self.collection in ('mechs','people') else ['!disabled'])
         for tab in self.notebook.tabs():
             self.notebook.nametowidget(tab).destroy()
         self.variables = {}
@@ -371,11 +382,24 @@ class RosterEditor:
                       "Use the roster to edit mechs and weapons. Open Maps / events to build terrain, place people and write your story.",
                       style="CardMuted.TLabel", wraplength=450, justify="left").pack(anchor="w")
             return
-        self.selection_title.configure(text=self.item()["name"])
-        if self.collection=='mechs':self.start_sprite()
+        self.selection_title.configure(text=self.item().get("name",self.current))
+        if self.collection in ('mechs','people'):self.start_sprite()
         general = self.tab("Properties")
         self.field(general, 0, "Stable ID", ["id"], readonly=True)
         self.field(general, 1, "Full name", ["name"])
+        if self.collection=='people':
+            names=('jason','rex','edward','russ','rick','zeke','possum','marco','rusty','hunter')
+            choices=[f'actor:{i}' for i in range(10)]+['chi:'+n for n in names]
+            self.field(general,2,'Actor identity',['identity'],choices=choices)
+            for row,label in enumerate(('Strength','Dexterity','Intelligence'),3):
+                self.field(general,row,label,['attributes',row-3],integer=True)
+            self.field(general,6,'Personal weapon (0-13)',['weapon'],integer=True)
+            self.field(general,7,'Personal armour (0-5)',['armor'],integer=True)
+            ttk.Label(general,text='Individual infantry / character template.\nNPC and enemy infantry share the project infantry sprite.',style='CardMuted.TLabel').grid(row=8,column=0,columnspan=2,sticky='w',pady=10)
+            skills=self.tab('Skills')
+            for row,label in enumerate(('Sidearms','Rifles','Heavy arms','Gunnery','Piloting','Technical','Medical')):
+                self.field(skills,row,label+' (0-4)',['skills',row],integer=True)
+            return
         self.field(general, 2, "Game label", ["label"])
         if self.collection == "mechs":
             vehicle=self.item().get('kind')=='vehicle'
@@ -423,7 +447,9 @@ class RosterEditor:
         if not self.form_dirty or not self.document or not self.current:
             return
         content = copy.deepcopy(self.document.content)
-        item = next(v for v in content[self.collection] if v["id"] == self.current)
+        adventure = copy.deepcopy(self.document.adventure)
+        values=adventure['people'] if self.collection=='people' else content[self.collection]
+        item = next(v for v in values if v["id"] == self.current)
         for path, (variable, integer) in self.variables.items():
             target = item
             for key in path[:-1]:
@@ -431,10 +457,10 @@ class RosterEditor:
             try:
                 target[path[-1]] = int(variable.get()) if integer else variable.get()
             except ValueError as exc:
-                raise EditorError(f"{'.'.join(path)} must be a whole number.") from exc
+                raise EditorError(f"{'.'.join(map(str,path))} must be a whole number.") from exc
         if self.collection == "mechs":
             item["loadout"] = copy.deepcopy(self.loadout)
-        self.document.replace(content)
+        self.document.replace_both(content,adventure)
         self.form_dirty = False
 
     def refresh_mounts(self):
@@ -483,6 +509,12 @@ class RosterEditor:
     def duplicate(self):
         if self.document and self.current:
             self.apply_form()
+            if self.collection=='people':
+                from unit_library import fresh_id
+                a=copy.deepcopy(self.document.adventure);value=copy.deepcopy(self.item())
+                value['id']=fresh_id(self.document.manifest['package_id'],a['people'],'person')
+                value['name']=value.get('name','Infantry')[:89]+' copy';a['people'].append(value)
+                self.document.replace_adventure(a);self.refresh_list(value['id']);return
             index = next(i for i, value in enumerate(self.document.content[self.collection]) if value["id"] == self.current)
             identity = self.document.duplicate(self.collection, index)
             self.search.set("")
@@ -493,6 +525,8 @@ class RosterEditor:
 
     def new_definition(self):
         if not self.document:return
+        if self.collection=='people':
+            self.edit_adventure();self.map_editor.person_dialog();return
         from adventure_editor import Form
         from unit_editing import add_unit,add_weapon,add_equipment
         self.apply_form();f=Form(self,'New definition')
@@ -543,6 +577,7 @@ class RosterEditor:
 
     def choose_sprite(self):
         self.apply_form()
+        infantry=self.collection=='people'
         from adventure_editor import Form
         from unit_editing import assign_graphic
         from graphics_editor import photo
@@ -556,21 +591,26 @@ class RosterEditor:
             im=next(i for i in sprites if i['id']==f.values['image'].get());preview.image=photo(f.window,im,zoom=4);preview.configure(image=preview.image)
         choice.bind('<<ComboboxSelected>>',show);show()
         def apply(v):
+            if infantry:
+                from art_editing import bind
+                art=copy.deepcopy(self.document.art)
+                for slot in ('npc','enemy'):bind(art,slot,v['image'])
+                self.document.replace_art(art);self.refresh_list(identity);return
             content=copy.deepcopy(self.document.content);assign_graphic(content,identity,v['image']);self.document.replace(content);self.refresh_list(identity)
         f.submit(apply)
 
     def stop_sprite(self):
         if self.sprite_timer is not None:self.window.after_cancel(self.sprite_timer)
         self.sprite_timer=None;self.sprite_photos=[];self.sprite_source=None
-        self.sprite_panel.pack_forget()
+        if self.sprite_panel.winfo_exists():self.sprite_panel.pack_forget()
 
     def start_sprite(self):
-        from editor_units import unit_sprite
+        from editor_units import unit_sprite,person_sprite
         from graphics_editor import photo
         self.sprite_panel.pack(side='right')
         self.sprite_canvas.delete('all')
         try:
-            self.sprite_source=unit_sprite(self.document,self.settings,self.item())
+            self.sprite_source=person_sprite(self.document,self.settings) if self.collection=='people' else unit_sprite(self.document,self.settings,self.item())
             image=self.sprite_source;zoom=max(1,min(5,96//max(image['width'],image['height'])))
             self.sprite_photos=[photo(self.window,image,frame=i,zoom=zoom) for i in range(len(image['frames']))]
         except (EditorError,OSError,KeyError,StopIteration) as exc:
@@ -592,6 +632,8 @@ class RosterEditor:
 
     def edit_unit_sprite(self):
         self.apply_form()
+        if self.collection=='people':
+            self.edit_person_sprite();return
         if self.document.adventure is None:raise EditorError('Editable sprites require an authored adventure project.')
         from art_editing import clone_image
         from editor_units import unit_sprite
@@ -613,6 +655,29 @@ class RosterEditor:
         self.edit_adventure();self.map_editor.edit_graphics();library=self.map_editor.art_editor
         library.selected=image['id'];library.refresh();open_image_editor(library,image)
         self.refresh_list(unit_id)
+
+    def edit_person_sprite(self):
+        from editor_units import person_sprite
+        from art_editing import clone_image,bind
+        from graphics_editor import open_image_editor
+        image=person_sprite(self.document,self.settings)
+        if not any(i['id']==image['id'] for i in self.document.art['images']):
+            image=clone_image(image,self.document.manifest['package_id'],self.document.art['images'])
+            art=copy.deepcopy(self.document.art);art['images'].append(image)
+            for slot in ('npc','enemy'):bind(art,slot,image['id'])
+            self.document.replace_art(art)
+        self.edit_adventure();self.map_editor.edit_graphics();library=self.map_editor.art_editor
+        if self.library_context:self.map_editor.window.withdraw()
+        library.selected=image['id'];library.refresh();open_image_editor(library,image)
+
+    def open_library(self):
+        from library_browser import LibraryBrowser
+        if getattr(self,'unit_library_window',None) and self.unit_library_window.window.winfo_exists():
+            self.unit_library_window.window.lift();return
+        self.unit_library_window=LibraryBrowser(self)
+
+    def library_graphics(self):
+        self.edit_adventure();self.map_editor.window.withdraw();self.map_editor.edit_graphics()
 
     def vehicle_catalogue(self):
         if not self.document:return
@@ -653,6 +718,9 @@ class RosterEditor:
     def delete(self):
         if self.document and self.current:
             self.apply_form()
+            if self.collection=='people':
+                a=copy.deepcopy(self.document.adventure);a['people']=[p for p in a['people'] if p['id']!=self.current]
+                self.document.replace_adventure(a);self.current=None;self.refresh_list();return
             content = copy.deepcopy(self.document.content)
             content[self.collection] = [v for v in content[self.collection] if v["id"] != self.current]
             self.document.replace(content)
@@ -701,7 +769,9 @@ class RosterEditor:
             if self.map_editor:
                 self.map_editor.apply_pending()
             self.apply_form()
-            self.status.set(self.document.save())
+            if self.library_context:self.library_context.commit(self)
+            result=self.document.save()
+            if not self.library_context:self.status.set(result)
             self.refresh_list()
 
     def validate(self):
@@ -752,6 +822,8 @@ class RosterEditor:
     def launch_player(self, here=None):
         if self.document:
             self.apply_form()
+            from app_runtime import prepare_original
+            if self.document.manifest['requires']!='none':prepare_original(self.settings)
             command = self.document.play_command(self.settings, self.state_dir, here=here)
             self.state_dir.mkdir(parents=True, exist_ok=True)
             with (self.state_dir / "player.log").open("a", encoding="utf-8") as log:
@@ -787,16 +859,20 @@ class RosterEditor:
 
     def close(self):
         def finish():
+            library=getattr(self,'unit_library_window',None)
+            if library and library.window.winfo_exists():
+                library.close()
+                if library.window.winfo_exists():return
             if self.discard_or_save():
                 self.window.destroy()
         self.guarded(finish)
 
 
 def main():
+    from app_runtime import binary
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("project", nargs="?", type=Path)
-    suffix = ".exe" if os.name == "nt" else ""
-    parser.add_argument("--validator", type=Path, default=ROOT / "build" / ("btp-project" + suffix))
+    parser.add_argument("--validator", type=Path, default=binary('btp-project'))
     parser.add_argument("--state-dir", type=Path, default=ROOT / "work/roster-editor")
     args = parser.parse_args()
     window = tk.Tk()

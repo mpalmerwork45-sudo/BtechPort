@@ -67,6 +67,11 @@ class ProjectDocument:
         run_validator(self.validator, self.root)
         self.manifest = json.loads((self.root / "project.json").read_bytes())
         self.snapshot = {name: child(self.root, name).read_bytes() for name in references(self.manifest)}
+        # Attribution travels through history/save/export, without becoming
+        # a runtime dependency or part of the game's content fingerprint.
+        metadata = child(self.root, 'LIBRARY-SOURCES.json')
+        if metadata.exists(): self.snapshot[metadata.name] = metadata.read_bytes()
+        self.metadata = {name: data for name, data in self.snapshot.items() if name == 'LIBRARY-SOURCES.json'}
         self.content = json.loads(self.snapshot[self.manifest["definitions"]])
         self.adventure = json.loads(self.snapshot[self.manifest["adventure"]]) if "adventure" in self.manifest else None
         self.art = (json.loads(self.snapshot[self.manifest["graphics"]]) if "graphics" in self.manifest
@@ -75,13 +80,14 @@ class ProjectDocument:
         self.saved_adventure = copy.deepcopy(self.adventure)
         self.saved_art = copy.deepcopy(self.art)
         self.saved_manifest = copy.deepcopy(self.manifest)
+        self.saved_metadata = copy.deepcopy(self.metadata)
         self.undo_stack: list[dict] = []
         self.redo_stack: list[dict] = []
 
     @property
     def dirty(self) -> bool:
         return (self.content != self.saved or self.adventure != self.saved_adventure
-                or self.art != self.saved_art or self.manifest != self.saved_manifest)
+                or self.art != self.saved_art or self.manifest != self.saved_manifest or self.metadata != self.saved_metadata)
 
     def replace(self, content: dict) -> None:
         self.replace_both(content, self.adventure)
@@ -101,25 +107,27 @@ class ProjectDocument:
             manifest["graphics"] = name
         self.replace_all(self.content, self.adventure if adventure is None else adventure, art, manifest)
 
-    def replace_all(self, content, adventure, art, manifest):
-        if (content, adventure, art, manifest) != (self.content, self.adventure, self.art, self.manifest):
-            self.undo_stack.append(copy.deepcopy((self.content, self.adventure, self.art, self.manifest)))
+    def replace_all(self, content, adventure, art, manifest, metadata=None):
+        metadata = self.metadata if metadata is None else metadata
+        if (content, adventure, art, manifest, metadata) != (self.content, self.adventure, self.art, self.manifest, self.metadata):
+            self.undo_stack.append(copy.deepcopy((self.content, self.adventure, self.art, self.manifest, self.metadata)))
             self.undo_stack = self.undo_stack[-40:]
             self.redo_stack.clear()
             self.content = copy.deepcopy(content)
             self.adventure = copy.deepcopy(adventure)
             self.art = copy.deepcopy(art)
             self.manifest = copy.deepcopy(manifest)
+            self.metadata = copy.deepcopy(metadata)
 
     def undo(self) -> None:
         if self.undo_stack:
-            self.redo_stack.append((self.content, self.adventure, self.art, self.manifest))
-            self.content, self.adventure, self.art, self.manifest = self.undo_stack.pop()
+            self.redo_stack.append((self.content, self.adventure, self.art, self.manifest, self.metadata))
+            self.content, self.adventure, self.art, self.manifest, self.metadata = self.undo_stack.pop()
 
     def redo(self) -> None:
         if self.redo_stack:
-            self.undo_stack.append((self.content, self.adventure, self.art, self.manifest))
-            self.content, self.adventure, self.art, self.manifest = self.redo_stack.pop()
+            self.undo_stack.append((self.content, self.adventure, self.art, self.manifest, self.metadata))
+            self.content, self.adventure, self.art, self.manifest, self.metadata = self.redo_stack.pop()
 
     def files(self) -> dict[str, bytes]:
         files = dict(self.snapshot)
@@ -131,6 +139,9 @@ class ProjectDocument:
             files[self.manifest["graphics"]] = encoded(self.art)
         if self.manifest != self.saved_manifest:
             files["project.json"] = encoded(self.manifest)
+        if 'LIBRARY-SOURCES.json' in files and 'LIBRARY-SOURCES.json' not in self.metadata:
+            files['LIBRARY-SOURCES.json'] = encoded([])
+        files.update(self.metadata)
         return files
 
     def unchanged_on_disk(self) -> None:
@@ -227,6 +238,7 @@ class ProjectDocument:
         self.saved_adventure = copy.deepcopy(self.adventure)
         self.saved_art = copy.deepcopy(self.art)
         self.saved_manifest = copy.deepcopy(self.manifest)
+        self.saved_metadata = copy.deepcopy(self.metadata)
         return result
 
     def duplicate(self, collection: str, index: int) -> str:
@@ -255,7 +267,7 @@ class ProjectDocument:
                 raise EditorError(f"Configure an existing {key} path in Player setup.")
         # One save namespace per exact edit. Preview never loads or overwrites
         # a user's normal campaign or a previous content revision.
-        digest = hashlib.sha256(b"".join(self.snapshot.values())).hexdigest()[:20]
+        digest = hashlib.sha256(b"".join(self.snapshot[name] for name in references(self.manifest))).hexdigest()[:20]
         work = state_dir / "play" / self.manifest["package_id"] / digest
         work.mkdir(parents=True, exist_ok=True)
         replay = work / "start.actions"

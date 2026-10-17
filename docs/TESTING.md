@@ -1,4 +1,52 @@
-# Build, verification and original oracle — 2026-10-17
+# Build, verification and original oracle — 2026-10-18
+
+## Unit Library and desktop launcher
+
+The [Unit Library/launcher guide](UNIT_LIBRARY_AND_LAUNCHER.md) records the
+implemented workflows, source/adaptation distinctions and remaining bounds.
+
+| Fresh check | Result |
+| --- | --- |
+| Full Python suite | **120/120**, 5.25 s |
+| Focused native gameplay | **4/4**, 1.07 s |
+| Library tests with ASan/UBSan/LeakSanitizer validator | **11/11**, 2.44 s |
+| Windows/Wine exporter and validator | Original seven-model export validates |
+| Linux library/editor/launcher GUI | Editing, imports/exports, sprites, new hovercraft, revisions, cancel-close, Undo/Redo, save/reopen/export and minimum layout pass |
+| Linux SDL from launcher | Imported-vehicle project starts and resumes a real F5 save; Original and Updated start at their normal logos |
+| Portable executable entry | Starts from a different directory with clean system Python |
+| Existing world/art/sprite GUI workflow | Pass |
+| Reference directories | **1,287/1,287** unchanged against this turn's snapshot |
+
+The four native suites are `vehicles-multiple-planets`,
+`battletech-demo-contracts`, `authored-adventure-continuations` and
+`authored-project-content`. The eleven new Python cases exercise editable
+revisions/stale windows, variants, dependency closure/equipment, imported vehicle
+play, shared-weapon conflicts, invalid/import-dependency rollback, attribution
+history/export, free infantry identities, independent-to-CHI sprites, original
+blueprint export and launcher save namespaces. Metadata-only changes retain the
+same game namespace. The UI also checks that closing a library respects cancelled
+unsaved unit edits. Screenshots: `work/unit-library.png`,
+`work/btechport-launcher.png`.
+
+LeakSanitizer refuses the sandbox's tracing environment; the eleven-validator
+run passed outside that sandbox with leak checking retained. The original-unit
+tool is the only new C execution path; native and MinGW builds used two jobs,
+one platform build at a time. Existing C runtime/save semantics are unchanged.
+The application build helper also configures and builds its three targets.
+
+```sh
+python3 -m unittest discover -s tests -p 'test_*.py'
+python3 tools/native_smoke.py --library-editor-only
+python3 tools/native_smoke.py --world-art-editor-only
+env BTP_PROJECT_TOOL="$PWD/build/sanitize/btp-project" \
+  python3 -m unittest discover -s tests -p test_unit_library.py
+```
+
+The historical reference guard still has the previously documented external
+Git-config metadata drift; this increment changed neither tree nor the baseline.
+Native Windows Tk, file associations, desktop security prompts and physical
+audio are outside these checks. Linux Tk/SDL and Windows C/Wine results are
+reported separately.
 
 ## Sprite workflow and BattleTech-demo vehicles
 
