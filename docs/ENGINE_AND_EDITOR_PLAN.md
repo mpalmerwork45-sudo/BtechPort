@@ -594,8 +594,10 @@ been hidden inside these refactors.
 
 These milestones extend the existing optional M5 direction. Their completion
 requires delivered behavior and evidence, not just new directories or classes.
-M5a has a playable CHI roster implementation; its general weapon/presentation
-contract is unfinished. M5b–M5e remain **PROPOSED / NOT STARTED**.
+This is the original milestone outline. See section 13 for current progress:
+M5a and the CHI-dependent maps/events portion of M5b are implemented, along
+with a small M5c roster editor. Independent content and the rest of M5c–M5e
+remain proposed.
 
 | Milestone | Deliverable | Completion gate |
 | --- | --- | --- |
@@ -714,11 +716,14 @@ before treating it as a stable editor contract. M5b–M5e remain future work.
 ## 13. Next five tasks toward an editor
 
 Updated **2026-10-17** after the categorized broker and 31-model roster. These
-were proposed after that increment. **Tasks 1 and 2 are now implemented**, with
+were proposed after that increment. **Tasks 1–3 and the small roster portion of
+task 5 are now implemented**, with
 commands, explicit CHI-profile limits and verification in
 [M5 authoring/projects](M5_AUTHORING_PROJECTS.md). Task 2 is the CHI-dependent
-foundation, not the independent-game milestone. Task 3 is next. A GUI can now
-begin editing unit/weapon files the player already understands.
+foundation, not the independent-game milestone. See
+[maps/events and the roster editor](M5_MAPS_EVENTS_EDITOR.md) for task 3's
+CHI-dependent scope and the shipped GUI. Task 4 and the full map/event editor
+remain next.
 
 1. **Finish the content definition boundary (M5a).** Reconcile
    `btp-chi-roster-v1`, `combat.json` and the provisional general schema into one

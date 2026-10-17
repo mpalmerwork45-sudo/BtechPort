@@ -1,0 +1,14 @@
+{
+  "format": "btp-project-v1",
+  "schema_version": 1,
+  "package_id": "frontier",
+  "content_version": "1.0.0",
+  "title": "Frontier authoring demo",
+  "requires": "chi-original-dos-1.03",
+  "startup": "authored-adventure-v1",
+  "rules_profile": "chi:updated-lrm-v1",
+  "save_policy": "strict-content-v1",
+  "definitions": "content.json",
+  "assets": [],
+  "adventure": "adventure.json"
+}

@@ -11,6 +11,7 @@
 #include "core/audio.h"
 #include "core/yard.h"
 #include "core/spy.h"
+#include "core/events.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -69,7 +70,7 @@ int btp_combat_los(const BtpMap *m,unsigned gate,int x,int y,int tx,int ty)
 }
 int btp_combat_scene_los(const BtpResources *r,const BtpState *s,const BtpMap *m,int x,int y,int tx,int ty)
 {
-    if (!s->campaign.encounter || !r->world.native) return btp_combat_los(m,s->gate,x,y,tx,ty);
+    if (s->event.enabled || !s->campaign.encounter || !r->world.native) return btp_combat_los(m,s->gate,x,y,tx,ty);
     uint8_t prefix[9];
     int bx=((int)s->campaign.battle_x+x)&~15,by=((int)s->campaign.battle_y+y)&~15;
     for (unsigned i=0;i<9;++i) prefix[i]=(uint8_t)btp_world_descriptor(r,s,
@@ -130,7 +131,7 @@ static void plan_points(const BtpMap *m, unsigned gate, const BtpCombatUnit *u,
             int offset=trial ? (int)((trial+1)/2)*(trial&1u ? 1 : -1) : 0;
             unsigned d=(unsigned)((int)heading+offset+8)&7u;
             int nx=x+dx[d], ny=y+dy[d]; unsigned mask;
-            if (nx<0 || ny<0 || nx>=2*m->width-2 || ny>=2*m->height) continue;
+            if (nx<0 || ny<0 || nx>=2*m->width-2 || ny>=2*m->height-(m->authored && !u->infantry ? 2 : 0)) continue;
             int at=grid(u->x,u->y,nx,ny,0,&mask);
             /* Executed 0E31:0006 checks blocking tiles for Jump as well.
                103B:1BAC skips terrain costs in Jump; it does not skip walls. */
@@ -177,6 +178,7 @@ void btp_combat_plan_actor(const BtpMap *map,const BtpState *s,unsigned actor,
 }
 void btp_combat_map(const BtpResources *r,const BtpState *s,BtpMap *m)
 {
+    const BtpScene *scene=btp_scene(r,s);if (scene) { *m=scene->rules;return; }
     if (s->campaign.invasion) {
         *m=(BtpMap){.width=128,.height=128};
         for (int y=0;y<128;++y) for (int x=0;x<128;++x) {
@@ -1059,7 +1061,7 @@ static void combat_tick(BtpState *s, const BtpResources *r, BtpAction a, int ene
             /* 103B:069F rejects a menu flee during the invasion; 0610's
                outside-Citadel result 2 bypasses it. Walking out still works. */
             if (s->campaign.invasion) notice(c,5,BTP_COMBAT_MENU);
-            else if (s->campaign.encounter>=3) notice(c,6,BTP_COMBAT_MENU);
+            else if (s->campaign.encounter>=3 && !s->event.enabled) notice(c,6,BTP_COMBAT_MENU);
             else { c->fled=1;finish(s,r); }
         }
         else if (c->selected==10) {

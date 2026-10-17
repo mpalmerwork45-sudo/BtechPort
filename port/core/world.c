@@ -7,6 +7,7 @@
 #include "core/economy.h"
 #include "core/menu.h"
 #include "core/yard.h"
+#include "core/events.h"
 #include <string.h>
 #include <stdlib.h>
 
@@ -95,6 +96,7 @@ static const BtpMap *local(const BtpResources *r,unsigned id)
 }
 int btp_world_populated(const BtpResources *r,const BtpState *s)
 {
+    if (s->event.enabled) return 0; /* Authored scenes permit crew allocation. */
     int bx=(int)s->campaign.world_x/16+8,by=(int)s->campaign.world_y/16+8;
     /* The original paints town chunk descriptors into its generated sector
        before checking this neighbourhood. MTP overlays must participate,

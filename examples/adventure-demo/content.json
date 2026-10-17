@@ -1,0 +1,212 @@
+{
+  "format": "btp-content-v1",
+  "schema_version": 1,
+  "package_id": "frontier",
+  "content_version": "1.0.0",
+  "rules": {
+    "id": "chi:updated-lrm-v1",
+    "distance_scale": 3,
+    "minimum_range": 6,
+    "short_range": 7,
+    "medium_range": 14,
+    "long_range": 21
+  },
+  "services": {
+    "broker": {
+      "id": "workshop:broker",
+      "behavior": "chi-broker-v1"
+    },
+    "reload": {
+      "id": "workshop:reload",
+      "behavior": "chi-reload-v1"
+    }
+  },
+  "ammunition": [
+    {
+      "id": "workshop:sky-round",
+      "price_per_shot": 3
+    }
+  ],
+  "presentations": [
+    {
+      "id": "workshop:biped",
+      "source": "chi:red-stinger"
+    },
+    {
+      "id": "workshop:reverse-leg",
+      "source": "chi:locust"
+    }
+  ],
+  "weapons": [
+    {
+      "id": "workshop:ember-beam",
+      "name": "Ember focused beam projector",
+      "label": "Ember Beam",
+      "behavior": "medium_laser",
+      "ammunition": "none",
+      "damage": 7,
+      "projectiles": 1,
+      "heat": 4,
+      "ranges": {
+        "short": 8,
+        "medium": 18,
+        "long": 30
+      }
+    },
+    {
+      "id": "workshop:cool-beam",
+      "name": "Cool beam projector",
+      "label": "Cool Beam",
+      "behavior": "medium_laser",
+      "ammunition": "none",
+      "damage": 2,
+      "projectiles": 1,
+      "heat": 0,
+      "ranges": {
+        "short": 3,
+        "medium": 9,
+        "long": 15
+      }
+    },
+    {
+      "id": "workshop:sky-lance",
+      "name": "Sky Lance missile launcher",
+      "label": "Sky Lance",
+      "behavior": "lrm5",
+      "ammunition": "workshop:sky-round",
+      "damage": 1,
+      "projectiles": 5,
+      "heat": 2,
+      "ranges": {
+        "short": 21,
+        "medium": 45,
+        "long": 66
+      }
+    }
+  ],
+  "mechs": [
+    {
+      "id": "workshop:rook",
+      "name": "Rook experimental patrol BattleMech",
+      "label": "Rook",
+      "mass_tons": 45,
+      "price": 1000,
+      "presentation": "workshop:biped",
+      "movement": {
+        "walk": 5,
+        "jump": 3
+      },
+      "engine_heat_sinks": 8,
+      "armor": {
+        "left_arm": 12,
+        "left_torso": 10,
+        "left_leg": 12,
+        "head": 9,
+        "center_torso": 10,
+        "right_arm": 12,
+        "right_torso": 10,
+        "right_leg": 12,
+        "left_rear": 2,
+        "center_rear": 2,
+        "right_rear": 2
+      },
+      "structure": {
+        "left_arm": 6,
+        "left_torso": 6,
+        "left_leg": 6,
+        "head": 3,
+        "center_torso": 6,
+        "right_arm": 6,
+        "right_torso": 6,
+        "right_leg": 6
+      },
+      "actuators": {
+        "left_arm": 15,
+        "right_arm": 15,
+        "left_leg": 15,
+        "right_leg": 15
+      },
+      "external_heat_sinks": {
+        "left_arm": 0,
+        "left_torso": 0,
+        "left_leg": 0,
+        "head": 0,
+        "center_torso": 0,
+        "right_arm": 0,
+        "right_torso": 0,
+        "right_leg": 0
+      },
+      "loadout": [
+        {
+          "weapon": "workshop:ember-beam",
+          "location": "left_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "workshop:cool-beam",
+          "location": "right_arm",
+          "ammunition": 0
+        }
+      ]
+    },
+    {
+      "id": "workshop:kite",
+      "name": "Kite long-range support BattleMech",
+      "label": "Kite",
+      "mass_tons": 30,
+      "price": 1000,
+      "presentation": "workshop:reverse-leg",
+      "movement": {
+        "walk": 6,
+        "jump": 0
+      },
+      "engine_heat_sinks": 8,
+      "armor": {
+        "left_arm": 12,
+        "left_torso": 10,
+        "left_leg": 12,
+        "head": 9,
+        "center_torso": 10,
+        "right_arm": 12,
+        "right_torso": 10,
+        "right_leg": 12,
+        "left_rear": 2,
+        "center_rear": 2,
+        "right_rear": 2
+      },
+      "structure": {
+        "left_arm": 6,
+        "left_torso": 6,
+        "left_leg": 6,
+        "head": 3,
+        "center_torso": 6,
+        "right_arm": 6,
+        "right_torso": 6,
+        "right_leg": 6
+      },
+      "actuators": {
+        "left_arm": 15,
+        "right_arm": 15,
+        "left_leg": 15,
+        "right_leg": 15
+      },
+      "external_heat_sinks": {
+        "left_arm": 0,
+        "left_torso": 0,
+        "left_leg": 0,
+        "head": 0,
+        "center_torso": 0,
+        "right_arm": 0,
+        "right_torso": 0,
+        "right_leg": 0
+      },
+      "loadout": [
+        {
+          "weapon": "workshop:sky-lance",
+          "location": "right_torso",
+          "ammunition": 24
+        }
+      ]
+    }
+  ]
+}

@@ -128,7 +128,7 @@ int main(int argc, char **argv)
     BtpState state; btp_initial_state(&o,&state,r);
     if (o.load && !btp_save_load(o.load,&state,r,&error)) { fprintf(stderr,"%s\n",error.text); goto done; }
     if (o.replay && o.smoke < 5 && !btp_replay(o.replay, &state, r, o.trace,o.save_file)) goto done;
-    if (!o.replay && !o.load && !o.smoke && !o.sprite_preview && !o.world_overview && !o.conversation_checkpoint && !o.shop_talk_checkpoint && !o.title_preview) state.mode=BTP_LOGO;
+    if (!state.event.enabled && !o.replay && !o.load && !o.smoke && !o.sprite_preview && !o.world_overview && !o.conversation_checkpoint && !o.shop_talk_checkpoint && !o.title_preview) state.mode=BTP_LOGO;
     SDL_SetMainReady();
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_TIMER)) {
         fprintf(stderr, "SDL: %s\n", SDL_GetError()); goto done;

@@ -20,6 +20,7 @@ target_sources(btp_core PRIVATE port/data/content.c port/data/unit_data.c port/d
 target_sources(btp_core PRIVATE port/data/combat_profile.c)
 target_sources(btp_core PRIVATE port/data/json.c port/data/definitions.c)
 target_sources(btp_core PRIVATE port/data/digest.c port/data/project.c port/data/file.c)
+target_sources(btp_core PRIVATE port/data/adventure.c port/core/events.c)
 target_sources(btp_core PRIVATE port/core/combat_rules.c port/core/combat.c port/core/effects.c)
 target_sources(btp_core PRIVATE port/core/combat_ai.c)
 target_sources(btp_core PRIVATE port/core/world.c port/data/world.c port/data/generate.c)
@@ -111,6 +112,12 @@ if(BUILD_TESTING)
     "${PROJECT_SOURCE_DIR}/content/updated/roster.json")
   add_executable(btp-content-tests tests/test_content.c)
   add_executable(btp-project-tests tests/test_project.c)
+  add_executable(btp-adventure-tests tests/test_adventure.c)
+  target_link_libraries(btp-adventure-tests PRIVATE btp_pixels)
+  add_test(NAME authored-adventure-continuations COMMAND btp-adventure-tests
+    "${PROJECT_SOURCE_DIR}/Original DOS" "${PROJECT_SOURCE_DIR}/work/talk-data.bin"
+    "${PROJECT_SOURCE_DIR}/work/combat-data.bin" "${PROJECT_SOURCE_DIR}/work/world-data.bin"
+    "${PROJECT_SOURCE_DIR}/examples/adventure-demo")
   target_link_libraries(btp-project-tests PRIVATE btp_pixels)
   add_test(NAME authored-project-content COMMAND btp-project-tests
     "${PROJECT_SOURCE_DIR}/Original DOS" "${PROJECT_SOURCE_DIR}/work/talk-data.bin"

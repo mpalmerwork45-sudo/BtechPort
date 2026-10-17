@@ -7,7 +7,7 @@ typedef enum { BTP_IDLE, BTP_UP, BTP_DOWN, BTP_LEFT, BTP_RIGHT, BTP_ACCEPT, BTP_
     BTP_DIGIT_5, BTP_DIGIT_6, BTP_DIGIT_7, BTP_DIGIT_8, BTP_DIGIT_9, BTP_CLEAR_INPUT,
     BTP_UP_LEFT, BTP_UP_RIGHT, BTP_DOWN_LEFT, BTP_DOWN_RIGHT, BTP_OPEN_MENU, BTP_CREDIT_10000 } BtpAction;
 typedef enum { BTP_CLEAR, BTP_WALL, BTP_EDGE, BTP_WATER } BtpBlock;
-typedef enum { BTP_EXPLORE, BTP_ENTRY, BTP_BUILDING, BTP_SCRIPT_FAULT, BTP_QUIZ, BTP_MISSION, BTP_ACTIONS, BTP_ENCOUNTER, BTP_TITLE, BTP_GAME_OVER, BTP_LOGO, BTP_BEGIN, BTP_CACHE, BTP_ENDING, BTP_YARD } BtpMode;
+typedef enum { BTP_EXPLORE, BTP_ENTRY, BTP_BUILDING, BTP_SCRIPT_FAULT, BTP_QUIZ, BTP_MISSION, BTP_ACTIONS, BTP_ENCOUNTER, BTP_TITLE, BTP_GAME_OVER, BTP_LOGO, BTP_BEGIN, BTP_CACHE, BTP_ENDING, BTP_YARD, BTP_EVENT } BtpMode;
 typedef enum { BTP_TALK_NONE, BTP_TALK_EMPTY, BTP_TALK_MENU, BTP_TALK_REPLY } BtpTalkPhase;
 typedef struct {
     uint8_t phase, selected, count, mask, room, actor,reply;
@@ -122,6 +122,13 @@ typedef struct {
     uint8_t ids[7],membership[8],types[4],mechs[4][125];
     uint8_t gate_count,gates[16][3]; /* normalized x, y, replacement tile */
 } BtpYardState;
+/* A continuation is a node identity within the fingerprinted package, never
+   a C/Lua stack. A tick commits an effect and advances before any save pause. */
+typedef struct {
+    uint16_t node;
+    uint8_t enabled,phase,selected,page,origin_map,origin_entry;
+    uint8_t flags[64],done[32],people[8];
+} BtpEventState;
 typedef struct {
     uint32_t tick;
     uint16_t x_half, y_half;
@@ -175,6 +182,7 @@ typedef struct {
     uint8_t combat_profile;
     uint32_t combat_fingerprint;
     uint8_t project; /* Requires the package-bound save envelope, including before owning a custom mech. */
+    BtpEventState event;
 } BtpState;
 enum { BTP_STATE_BYTES = 20480 };
 

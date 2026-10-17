@@ -3,6 +3,7 @@
 #include "core/school.h"
 #include "core/training.h"
 #include "core/npc.h"
+#include "core/events.h"
 #include <string.h>
 
 static void native_fault(BtpState *s, BtpScriptError error)
@@ -155,6 +156,13 @@ int btp_game_text(const BtpState *s, const BtpResources *r, uint8_t *out, size_t
 {
     if (!s || !r || !out || !length || !capacity) return 0;
     *length = 0; out[0] = 0;
+    if (s->event.enabled && s->mode==BTP_EVENT) {
+        const BtpAdventure *a=btp_adventure(r);
+        if (!a || s->event.node>=a->node_count) return 0;
+        const char *text=a->nodes[s->event.node].text;size_t n=strlen(text);
+        if (n>=capacity) return 0;
+        memcpy(out,text,n+1);*length=n;return 1;
+    }
     if (s->mode == BTP_QUIZ || s->mode == BTP_MISSION || s->script.mech_result)
         return btp_training_text(s,r,out,capacity,length);
     if (!s->talk.phase) {

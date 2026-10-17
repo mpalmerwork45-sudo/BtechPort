@@ -8,7 +8,7 @@
 #include "core/service.h"
 #include "core/roster_game.h"
 #include <string.h>
-static void begin(BtpState *s,const BtpResources *r,unsigned event)
+void btp_campaign_begin(BtpState *s,const BtpResources *r,unsigned event)
 {
     BtpCampaignState *v=&s->campaign;
     v->return_map=s->map_id;v->return_x=s->x_half;v->return_y=s->y_half;
@@ -61,7 +61,7 @@ void btp_campaign_rex(BtpState *s,const BtpResources *r)
     s->campaign.world_x=1385;s->campaign.world_y=1118;s->x_half=105;s->y_half=94;
     s->script.position_x=0x0a69;s->script.position_y=0x805e;
     s->campaign.mounted=0;for (unsigned i=0;i<8;++i) p->people[i][12]=8;
-    begin(s,r,2);BtpCombatState *c=&s->combat;
+    btp_campaign_begin(s,r,2);BtpCombatState *c=&s->combat;
     unsigned x=114+(btp_rng_next(s->npc.rng)&1u),y=93+(btp_rng_next(s->npc.rng)&1u);
     unsigned count=2+(btp_rng_next(s->npc.rng)&3u);
     for (unsigned i=0;i<count;++i) {
@@ -154,7 +154,7 @@ int btp_campaign_random(BtpState *s,const BtpResources *r)
     BtpCombatUnit candidates[12];uint8_t ids[12];int dx,dy;
     unsigned count=btp_campaign_candidates(s,r,candidates,ids,&dx,&dy);
     if (!count) return 0;
-    begin(s,r,1);BtpCombatState *c=&s->combat;
+    btp_campaign_begin(s,r,1);BtpCombatState *c=&s->combat;
     uint8_t reachable[ENCOUNTER_CELLS];encounter_reachable(s,r,reachable);
     /* Original 05AB:0DA6/106F offsets from the exploration cursor, not
        from the first mech's ground point two half-steps farther north. */

@@ -22,6 +22,7 @@ typedef struct {
 int btp_json_load(BtpJson *json,const char *path,char error[256]);
 void btp_json_close(BtpJson *json);
 unsigned btp_json_field(BtpJson *json,unsigned object,const char *key);
+unsigned btp_json_optional(BtpJson *json,unsigned object,const char *key);
 int btp_json_done(BtpJson *json,unsigned object);
 int btp_json_error(BtpJson *json,unsigned node,const char *message);
 int btp_json_string(BtpJson *json,unsigned node,char *out,size_t capacity);

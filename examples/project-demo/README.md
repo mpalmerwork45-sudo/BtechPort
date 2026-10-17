@@ -11,5 +11,6 @@ directory and three caches, as shown in the [project guide](../../docs/M5_AUTHOR
 No original game files or generated artwork are included in this example.
 
 This project uses the original CHI campaign. Its models can be bought at the
-Starport broker. Authored maps/events and a game independent of original assets
-are later milestones. Edit a copy and use a new save base after changing it.
+Starport broker. See [Frontier Depot](../adventure-demo/README.md) for authored
+maps/events. A game independent of original assets remains a later milestone.
+Edit a copy and use a new save base after changing it.

@@ -11,6 +11,7 @@
 enum { BTP_MAP_MAX = 128, BTP_PACKED_BYTES = 32000, BTP_PIXELS = 64000, BTP_BLD_MAX = 9000 };
 typedef struct {
     uint8_t width, height;
+    uint8_t authored; /* Rule maps use complete actor footprints at edges. */
     uint8_t tiles[BTP_MAP_MAX * BTP_MAP_MAX]; /* normalized row order */
     uint16_t entrance_x[16], entrance_y[16]; /* original packed words */
     uint8_t npc_names[8][16], places[16][16], room_map[16], npc_routes[8];

@@ -49,8 +49,14 @@ Use `btp-project export` to make an editable copy of Updated, or start with the
 [Workshop example](examples/project-demo/README.md). The
 [project guide](docs/M5_AUTHORING_PROJECTS.md#create-validate-and-play) gives
 export, validation and play commands for both platforms. Original and Updated
-remain available as before. Authored maps/events, Lua, independent games and the
-desktop editor are the next stages.
+remain available as before. [Authored maps and events](docs/M5_MAPS_EVENTS_EDITOR.md)
+now support entrances, overlays, shop stock, recruitment, transfers, battles and
+saved continuations. Try [Frontier Depot](examples/adventure-demo/README.md).
+A small desktop roster editor edits mech/weapon forms, validates, saves and
+launches the player: `python3 tools/roster_editor.py work/editor-ready`.
+Its [guide](docs/M5_MAPS_EVENTS_EDITOR.md#roster-editor) covers project creation
+and Windows setup. Lua, independent assets and map/event GUI editing remain
+later work.
 
 An ordinary launch first asks **Original BTECH CHI** or **Updated BTECH CHI**,
 before the Westwood/Infocom logo. Original is the default. Use arrows and

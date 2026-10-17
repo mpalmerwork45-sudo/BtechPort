@@ -20,6 +20,7 @@
 #include "core/yard.h"
 #include "core/cache.h"
 #include "core/roster_game.h"
+#include "core/events.h"
 #include <string.h>
 
 const BtpCombatProfile *btp_active_combat_profile(const BtpState *s,const BtpResources *r)
@@ -51,6 +52,7 @@ void btp_start(BtpState *s)
 }
 const BtpMap *btp_active_map(const BtpResources *r,const BtpState *s)
 {
+    const BtpScene *scene=btp_scene(r,s);if (scene) return &scene->visual;
     if (s->cache.active && s->story_flags[66]) return &r->maproom;
     /* Original 103B:0FC0 switches maps after the third invasion message,
        while TRAINING.BLD is still suspended in its combat native call. */
@@ -68,6 +70,7 @@ unsigned btp_building_kind(const BtpResources *r,const BtpState *s)
 }
 const BtpBld *btp_state_bld(const BtpResources *r,const BtpState *s)
 {
+    if (s->event.enabled) return NULL;
     unsigned kind=btp_building_kind(r,s);
     return kind<8 ? btp_building_bld(r,kind) : kind<26 ? &r->buildings[kind] : NULL;
 }
@@ -241,6 +244,7 @@ void btp_game_building(BtpState *s,const BtpResources *r,unsigned kind)
 }
 static void game_tick(BtpState *s, const BtpResources *r, BtpAction a)
 {
+    if (s->event.enabled) { btp_events_tick(s,r,a);return; }
     const BtpMap *map=btp_active_map(r,s);
     story_in(s);
     if (s->mode==BTP_GAME_OVER || s->mode==BTP_ENDING) {
@@ -535,6 +539,6 @@ int btp_action_dy(BtpAction a)
 }
 const char *btp_mode_name(unsigned mode)
 {
-    static const char *names[] = {"local-exploration", "entry-confirm", "building", "script-error", "training-quiz", "training-mission","actions","encounter","title","game-over","logos","played-before","cache","ending","impound-yard"};
-    return mode <= BTP_YARD ? names[mode] : "invalid";
+    static const char *names[] = {"local-exploration", "entry-confirm", "building", "script-error", "training-quiz", "training-mission","actions","encounter","title","game-over","logos","played-before","cache","ending","impound-yard","authored-event"};
+    return mode <= BTP_EVENT ? names[mode] : "invalid";
 }

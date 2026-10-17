@@ -4,6 +4,7 @@
 #include "core/party.h"
 #include "core/roster_game.h"
 #include "data/project.h"
+#include "core/events.h"
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
@@ -58,8 +59,9 @@ static int decode(const uint8_t *b, size_t n, BtpState *s, const BtpResources *r
     if (n>=19305 && b[4]>=28) { context.campaign.invasion=b[2399];context.late.invasion_event=b[19302]; }
     if (n>=19306 && b[4]>=29) context.yard.active=b[19305];
     if (n>=19886 && b[4]>=30) context.disk_origin=b[19306+sizeof context.yard];
+    if (n>=20185 && b[4]>=48) context.event.enabled=1;
     return n >= 24 && btp_state_decode(b,n,btp_active_map(r,&context),
-        btp_state_bld(r,&context),s);
+        btp_state_bld(r,&context),s) && btp_events_valid(s,r);
 }
 int btp_save_write(const char *path, const BtpState *s, const BtpResources *r, BtpError *e)
 {
@@ -184,7 +186,7 @@ int btp_save_load(const char *path, BtpState *s, const BtpResources *r, BtpError
         return fail(e,"Save contains an invalid or unsupported game state");
     unsigned rule_offset=project ? 112u : 84u;
     if (!!loaded.project!=project || (!v2 && (loaded.combat_profile || bytes[header+4]>=45)) ||
-        (v2 && ((project ? bytes[header+4]!=47 : bytes[header+4]!=45 && bytes[header+4]!=46) || get32(bytes+rule_offset)!=loaded.combat_profile || get32(bytes+rule_offset+4)!=loaded.combat_fingerprint)) ||
+        (v2 && ((project ? bytes[header+4]!=47 && bytes[header+4]!=48 : bytes[header+4]!=45 && bytes[header+4]!=46) || get32(bytes+rule_offset)!=loaded.combat_profile || get32(bytes+rule_offset+4)!=loaded.combat_fingerprint)) ||
         (loaded.combat_profile && !btp_active_combat_profile(&loaded,r)) ||
         (loaded.campaign.ui>=BTP_MENU_UPDATED_SETTINGS && loaded.campaign.ui<=BTP_MENU_COMBAT_RULES &&
             (!updated || !r->combat_profile.fingerprint)))

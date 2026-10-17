@@ -1,0 +1,1014 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "BtechPort authored adventure v1",
+  "$comment": "Structure only. C loader validates references, layout, collision, text fit and supported CHI capacities.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "format": {
+      "const": "btp-adventure-v1"
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "tiles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 63,
+            "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+          },
+          "key": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1,
+            "pattern": "^[!-~]$"
+          },
+          "graphic": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 249
+          },
+          "sheet": {
+            "enum": [
+              "chi:land",
+              "chi:destroyed"
+            ]
+          },
+          "terrain": {
+            "enum": [
+              "clear",
+              "rough",
+              "water",
+              "woods",
+              "wall"
+            ]
+          },
+          "mini_color": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 15
+          }
+        },
+        "required": [
+          "id",
+          "key",
+          "graphic",
+          "sheet",
+          "terrain",
+          "mini_color"
+        ]
+      },
+      "minItems": 1,
+      "maxItems": 64
+    },
+    "maps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 63,
+            "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 63,
+            "pattern": "^[ -~]+$"
+          },
+          "origin": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 960
+            },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 16,
+              "maxLength": 64
+            },
+            "minItems": 16,
+            "maxItems": 64
+          },
+          "overlays": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "at": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 63
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                },
+                "rows": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^[ -~]+$"
+                  },
+                  "minItems": 1,
+                  "maxItems": 64
+                }
+              },
+              "required": [
+                "at",
+                "rows"
+              ]
+            },
+            "minItems": 0,
+            "maxItems": 32
+          },
+          "entrances": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "maxLength": 63,
+                  "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+                },
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 24,
+                  "pattern": "^[ -~]+$"
+                },
+                "at": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 127
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                },
+                "event": {
+                  "type": "string",
+                  "maxLength": 63,
+                  "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "at",
+                "event"
+              ]
+            },
+            "minItems": 0,
+            "maxItems": 16
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "origin",
+          "rows",
+          "overlays",
+          "entrances"
+        ]
+      },
+      "minItems": 1,
+      "maxItems": 16
+    },
+    "people": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 63,
+            "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+          },
+          "identity": {
+            "enum": [
+              "chi:jason",
+              "chi:rex",
+              "chi:edward",
+              "chi:russ",
+              "chi:rick",
+              "chi:zeke",
+              "chi:possum",
+              "chi:marco",
+              "chi:rusty",
+              "chi:hunter"
+            ]
+          },
+          "attributes": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 2,
+              "maximum": 12
+            },
+            "minItems": 3,
+            "maxItems": 3
+          },
+          "skills": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4
+            },
+            "minItems": 7,
+            "maxItems": 7
+          },
+          "weapon": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 13
+          },
+          "armor": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 5
+          }
+        },
+        "required": [
+          "id",
+          "identity",
+          "attributes",
+          "skills",
+          "weapon",
+          "armor"
+        ]
+      },
+      "minItems": 1,
+      "maxItems": 16
+    },
+    "shops": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 63,
+            "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+          },
+          "stock": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 63,
+              "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+            },
+            "minItems": 1,
+            "maxItems": 256
+          }
+        },
+        "required": [
+          "id",
+          "stock"
+        ]
+      },
+      "minItems": 0,
+      "maxItems": 16
+    },
+    "encounters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 63,
+            "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+          },
+          "map": {
+            "type": "string",
+            "maxLength": 63,
+            "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+          },
+          "party_at": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 127
+            },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "enemies": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "mech",
+                    "person"
+                  ]
+                },
+                "definition": {
+                  "type": "string",
+                  "maxLength": 63,
+                  "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+                },
+                "at": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 127
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                }
+              },
+              "required": [
+                "kind",
+                "definition",
+                "at"
+              ]
+            },
+            "minItems": 1,
+            "maxItems": 12
+          }
+        },
+        "required": [
+          "id",
+          "map",
+          "party_at",
+          "enemies"
+        ]
+      },
+      "minItems": 0,
+      "maxItems": 16
+    },
+    "flags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 63,
+        "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+      },
+      "minItems": 0,
+      "maxItems": 64
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "op": {
+                "const": "end"
+              },
+              "portrait": {
+                "enum": [
+                  "none",
+                  "broker",
+                  "training",
+                  "lounge",
+                  "prison",
+                  "inventor",
+                  "cinema",
+                  "hospital",
+                  "comstar",
+                  "clothes",
+                  "video-hut",
+                  "mayor"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "op"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "op": {
+                "const": "say"
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1023,
+                "pattern": "^[ -~]+$"
+              },
+              "next": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "portrait": {
+                "enum": [
+                  "none",
+                  "broker",
+                  "training",
+                  "lounge",
+                  "prison",
+                  "inventor",
+                  "cinema",
+                  "hospital",
+                  "comstar",
+                  "clothes",
+                  "video-hut",
+                  "mayor"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "op",
+              "text",
+              "next"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "op": {
+                "const": "choice"
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 240,
+                "pattern": "^[ -~]+$"
+              },
+              "options": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "label": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 24,
+                      "pattern": "^[ -~]+$"
+                    },
+                    "next": {
+                      "type": "string",
+                      "maxLength": 63,
+                      "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+                    }
+                  },
+                  "required": [
+                    "label",
+                    "next"
+                  ]
+                },
+                "minItems": 1,
+                "maxItems": 5
+              },
+              "cancel": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "portrait": {
+                "enum": [
+                  "none",
+                  "broker",
+                  "training",
+                  "lounge",
+                  "prison",
+                  "inventor",
+                  "cinema",
+                  "hospital",
+                  "comstar",
+                  "clothes",
+                  "video-hut",
+                  "mayor"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "op",
+              "text",
+              "options",
+              "cancel"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "op": {
+                "const": "if"
+              },
+              "flag": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "value": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "then": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "else": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "portrait": {
+                "enum": [
+                  "none",
+                  "broker",
+                  "training",
+                  "lounge",
+                  "prison",
+                  "inventor",
+                  "cinema",
+                  "hospital",
+                  "comstar",
+                  "clothes",
+                  "video-hut",
+                  "mayor"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "op",
+              "flag",
+              "value",
+              "then",
+              "else"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "op": {
+                "const": "flag"
+              },
+              "flag": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "value": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "next": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "portrait": {
+                "enum": [
+                  "none",
+                  "broker",
+                  "training",
+                  "lounge",
+                  "prison",
+                  "inventor",
+                  "cinema",
+                  "hospital",
+                  "comstar",
+                  "clothes",
+                  "video-hut",
+                  "mayor"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "op",
+              "flag",
+              "value",
+              "next"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "op": {
+                "const": "reward"
+              },
+              "credits": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 999999
+              },
+              "next": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "failure": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "portrait": {
+                "enum": [
+                  "none",
+                  "broker",
+                  "training",
+                  "lounge",
+                  "prison",
+                  "inventor",
+                  "cinema",
+                  "hospital",
+                  "comstar",
+                  "clothes",
+                  "video-hut",
+                  "mayor"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "op",
+              "credits",
+              "next",
+              "failure"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "op": {
+                "const": "recruit"
+              },
+              "person": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "next": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "failure": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "portrait": {
+                "enum": [
+                  "none",
+                  "broker",
+                  "training",
+                  "lounge",
+                  "prison",
+                  "inventor",
+                  "cinema",
+                  "hospital",
+                  "comstar",
+                  "clothes",
+                  "video-hut",
+                  "mayor"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "op",
+              "person",
+              "next",
+              "failure"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "op": {
+                "const": "transfer"
+              },
+              "map": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "at": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 127
+                },
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "next": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "failure": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "portrait": {
+                "enum": [
+                  "none",
+                  "broker",
+                  "training",
+                  "lounge",
+                  "prison",
+                  "inventor",
+                  "cinema",
+                  "hospital",
+                  "comstar",
+                  "clothes",
+                  "video-hut",
+                  "mayor"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "op",
+              "map",
+              "at",
+              "next",
+              "failure"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "op": {
+                "const": "shop"
+              },
+              "shop": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "next": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "portrait": {
+                "enum": [
+                  "none",
+                  "broker",
+                  "training",
+                  "lounge",
+                  "prison",
+                  "inventor",
+                  "cinema",
+                  "hospital",
+                  "comstar",
+                  "clothes",
+                  "video-hut",
+                  "mayor"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "op",
+              "shop",
+              "next"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "op": {
+                "const": "battle"
+              },
+              "encounter": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "win": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "loss": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "flee": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "failure": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "portrait": {
+                "enum": [
+                  "none",
+                  "broker",
+                  "training",
+                  "lounge",
+                  "prison",
+                  "inventor",
+                  "cinema",
+                  "hospital",
+                  "comstar",
+                  "clothes",
+                  "video-hut",
+                  "mayor"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "op",
+              "encounter",
+              "win",
+              "loss",
+              "flee",
+              "failure"
+            ]
+          }
+        ]
+      },
+      "minItems": 1,
+      "maxItems": 256
+    },
+    "start": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "map": {
+          "type": "string",
+          "maxLength": 63,
+          "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+        },
+        "at": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 127
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "event": {
+          "type": "string",
+          "maxLength": 63,
+          "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+        },
+        "credits": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 999999
+        },
+        "party": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "person": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "mech": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 63,
+                    "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+                  },
+                  {
+                    "const": "none"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "person",
+              "mech"
+            ]
+          },
+          "minItems": 1,
+          "maxItems": 8
+        }
+      },
+      "required": [
+        "map",
+        "at",
+        "event",
+        "credits",
+        "party"
+      ]
+    }
+  },
+  "required": [
+    "format",
+    "schema_version",
+    "tiles",
+    "maps",
+    "people",
+    "shops",
+    "encounters",
+    "flags",
+    "events",
+    "start"
+  ]
+}

@@ -105,9 +105,15 @@ int btp_json_type(BtpJson *j,unsigned n,char type)
 unsigned btp_json_field(BtpJson *j,unsigned object,const char *key)
 {
     if (!btp_json_type(j,object,'{')) return 0;
+    unsigned found=btp_json_optional(j,object,key);if (found) return found;
+    char message[96];snprintf(message,sizeof message,"missing field: %s",key);btp_json_error(j,object,message);return 0;
+}
+unsigned btp_json_optional(BtpJson *j,unsigned object,const char *key)
+{
+    if (!object || j->nodes[object].type!='{') return 0;
     for (unsigned i=j->nodes[object].first;i;i=j->nodes[i].next)
         if (!strcmp(j->nodes[i].key,key)) { j->nodes[i].used=1;return i; }
-    char message[96];snprintf(message,sizeof message,"missing field: %s",key);btp_json_error(j,object,message);return 0;
+    return 0;
 }
 int btp_json_done(BtpJson *j,unsigned object)
 {

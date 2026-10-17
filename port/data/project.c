@@ -73,12 +73,20 @@ BtpProject *btp_project_load(const char *root,BtpRoster *roster,BtpPortraits *po
     if (!expected(&j,1,"format","btp-project-v1") || !btp_json_uint(&j,btp_json_field(&j,1,"schema_version"),1,1,&v) ||
         !text(&j,1,"package_id",p->id,sizeof p->id) || !text(&j,1,"content_version",p->version,sizeof p->version) ||
         !text(&j,1,"title",p->title,sizeof p->title) || !expected(&j,1,"requires","chi-original-dos-1.03") ||
-        !expected(&j,1,"startup","chi-training-v1") || !expected(&j,1,"save_policy","strict-content-v1") ||
+        !expected(&j,1,"save_policy","strict-content-v1") ||
         !text(&j,1,"definitions",relative,sizeof relative)) goto done;
     if (!btp_project_path(root,relative,path,error) || !btp_definitions_load(path,&p->definitions,error->text)) goto done;
     btp_digest_add(&digest,p->definitions.source_digest,32);
     if (strcmp(p->id,p->definitions.id) || strcmp(p->version,p->definitions.version)) { fail(error,"project.json","package ID/version disagrees with definitions");goto done; }
     if (!expected(&j,1,"rules_profile",p->definitions.rules.fingerprint ? "chi:updated-lrm-v1" : "chi:legacy-v1")) goto done;
+    char startup[64];if (!text(&j,1,"startup",startup,sizeof startup)) goto done;
+    unsigned adventure=btp_json_optional(&j,1,"adventure");
+    if (adventure) {
+        if (strcmp(startup,"authored-adventure-v1")) { btp_json_error(&j,adventure,"adventure requires startup authored-adventure-v1");goto done; }
+        if (!btp_json_string(&j,adventure,relative,sizeof relative) || !btp_project_path(root,relative,path,error) ||
+            !btp_adventure_load(path,&p->definitions,&p->adventure,error->text)) goto done;
+        btp_digest_add(&digest,p->adventure.source_digest,32);
+    } else if (strcmp(startup,"chi-training-v1")) { btp_json_error(&j,1,"unsupported startup or missing adventure");goto done; }
     unsigned assets=btp_json_field(&j,1,"assets"),seen=0;
     if (!btp_json_type(&j,assets,'[')) goto done;
     const char *const slots[]={"broker","training","lounge","prison","inventor","cinema","hospital","comstar","clothes","video-hut","mayor"};

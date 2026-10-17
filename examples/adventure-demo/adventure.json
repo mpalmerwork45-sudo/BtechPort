@@ -1,0 +1,536 @@
+{
+  "format": "btp-adventure-v1",
+  "schema_version": 1,
+  "tiles": [
+    {
+      "id": "frontier:grass",
+      "key": ".",
+      "graphic": 64,
+      "sheet": "chi:land",
+      "terrain": "clear",
+      "mini_color": 2
+    },
+    {
+      "id": "frontier:road",
+      "key": "=",
+      "graphic": 82,
+      "sheet": "chi:land",
+      "terrain": "clear",
+      "mini_color": 7
+    },
+    {
+      "id": "frontier:roof",
+      "key": "#",
+      "graphic": 97,
+      "sheet": "chi:land",
+      "terrain": "wall",
+      "mini_color": 8
+    },
+    {
+      "id": "frontier:door",
+      "key": "D",
+      "graphic": 160,
+      "sheet": "chi:land",
+      "terrain": "wall",
+      "mini_color": 14
+    },
+    {
+      "id": "frontier:forest",
+      "key": "T",
+      "graphic": 47,
+      "sheet": "chi:land",
+      "terrain": "woods",
+      "mini_color": 10
+    },
+    {
+      "id": "frontier:water",
+      "key": "~",
+      "graphic": 15,
+      "sheet": "chi:land",
+      "terrain": "water",
+      "mini_color": 1
+    }
+  ],
+  "maps": [
+    {
+      "id": "frontier:depot-map",
+      "name": "Frontier Depot",
+      "origin": [
+        64,
+        64
+      ],
+      "rows": [
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "================================",
+        "================================",
+        "================================",
+        "================================",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................"
+      ],
+      "overlays": [
+        {
+          "at": [
+            10,
+            6
+          ],
+          "rows": [
+            "#####",
+            "#####",
+            "##D##"
+          ]
+        },
+        {
+          "at": [
+            18,
+            6
+          ],
+          "rows": [
+            "#####",
+            "#####",
+            "##D##"
+          ]
+        }
+      ],
+      "entrances": [
+        {
+          "id": "frontier:broker-door",
+          "name": "Frontier Motors",
+          "at": [
+            24,
+            20
+          ],
+          "event": "frontier:broker"
+        },
+        {
+          "id": "frontier:hall-door",
+          "name": "Patrol office",
+          "at": [
+            40,
+            20
+          ],
+          "event": "frontier:hall"
+        },
+        {
+          "id": "frontier:trail",
+          "name": "Proving ground",
+          "at": [
+            54,
+            28
+          ],
+          "event": "frontier:to-field"
+        }
+      ]
+    },
+    {
+      "id": "frontier:field",
+      "name": "Proving Ground",
+      "origin": [
+        96,
+        64
+      ],
+      "rows": [
+        "................................",
+        "................................",
+        "................................",
+        ".....................TTTTTT.....",
+        ".....................TTTTTT.....",
+        ".....................TTTTTT.....",
+        ".....................TTTTTT.....",
+        ".....................TTTTTT.....",
+        ".....................TTTTTT.....",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        ".....~~~~~~~....................",
+        ".....~~~~~~~....................",
+        ".....~~~~~~~....................",
+        ".....~~~~~~~....................",
+        "................................",
+        "................................"
+      ],
+      "overlays": [],
+      "entrances": [
+        {
+          "id": "frontier:return",
+          "name": "Frontier Depot",
+          "at": [
+            10,
+            28
+          ],
+          "event": "frontier:to-town"
+        },
+        {
+          "id": "frontier:patrol-marker",
+          "name": "Patrol contract",
+          "at": [
+            22,
+            28
+          ],
+          "event": "frontier:patrol-check"
+        }
+      ]
+    }
+  ],
+  "people": [
+    {
+      "id": "frontier:leader",
+      "identity": "chi:jason",
+      "attributes": [
+        8,
+        9,
+        7
+      ],
+      "skills": [
+        2,
+        2,
+        2,
+        3,
+        3,
+        2,
+        1
+      ],
+      "weapon": 7,
+      "armor": 2
+    },
+    {
+      "id": "frontier:pilot",
+      "identity": "chi:rex",
+      "attributes": [
+        8,
+        8,
+        8
+      ],
+      "skills": [
+        2,
+        2,
+        2,
+        3,
+        3,
+        2,
+        1
+      ],
+      "weapon": 7,
+      "armor": 2
+    },
+    {
+      "id": "frontier:trespasser",
+      "identity": "chi:hunter",
+      "attributes": [
+        2,
+        2,
+        2
+      ],
+      "skills": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "weapon": 0,
+      "armor": 0
+    }
+  ],
+  "shops": [
+    {
+      "id": "frontier:depot",
+      "stock": [
+        "workshop:kite"
+      ]
+    }
+  ],
+  "encounters": [
+    {
+      "id": "frontier:patrol",
+      "map": "frontier:field",
+      "party_at": [
+        16,
+        28
+      ],
+      "enemies": [
+        {
+          "kind": "person",
+          "definition": "frontier:trespasser",
+          "at": [
+            30,
+            26
+          ]
+        }
+      ]
+    }
+  ],
+  "flags": [
+    "frontier:hired",
+    "frontier:cleared"
+  ],
+  "events": [
+    {
+      "id": "frontier:end",
+      "op": "end"
+    },
+    {
+      "id": "frontier:welcome",
+      "op": "say",
+      "text": "Welcome to Frontier Depot. The west doorway is a mech broker. The east doorway offers a recruit and a patrol contract. Follow the road east to the proving ground. Space opens your menu. F5 saves and F9 restores this exact project.",
+      "next": "frontier:end"
+    },
+    {
+      "id": "frontier:broker",
+      "op": "choice",
+      "text": "Welcome to Frontier Motors. Every model here comes from this project. What can I do for you?",
+      "options": [
+        {
+          "label": "Browse mechs",
+          "next": "frontier:shop"
+        },
+        {
+          "label": "About this depot",
+          "next": "frontier:about"
+        },
+        {
+          "label": "Leave",
+          "next": "frontier:end"
+        }
+      ],
+      "cancel": "frontier:end"
+    },
+    {
+      "id": "frontier:shop",
+      "op": "shop",
+      "shop": "frontier:depot",
+      "next": "frontier:broker"
+    },
+    {
+      "id": "frontier:about",
+      "op": "say",
+      "text": "Our catalogue is selected by this building, independently of the full roster. You can buy, sell and assign pilots from the Space menu outside. The depot uses original-game artwork supplied by you.",
+      "next": "frontier:broker"
+    },
+    {
+      "id": "frontier:hall",
+      "op": "choice",
+      "text": "A mechanic needs help with an armed trespasser at the proving ground. A pilot is also seeking work.",
+      "options": [
+        {
+          "label": "Recruit the pilot",
+          "next": "frontier:hire-check"
+        },
+        {
+          "label": "Ask about the patrol",
+          "next": "frontier:job-check"
+        },
+        {
+          "label": "Leave",
+          "next": "frontier:end"
+        }
+      ],
+      "cancel": "frontier:end"
+    },
+    {
+      "id": "frontier:hire-check",
+      "op": "if",
+      "flag": "frontier:hired",
+      "value": 1,
+      "then": "frontier:already-hired",
+      "else": "frontier:hire"
+    },
+    {
+      "id": "frontier:hire",
+      "op": "recruit",
+      "person": "frontier:pilot",
+      "next": "frontier:hired-flag",
+      "failure": "frontier:no-room"
+    },
+    {
+      "id": "frontier:hired-flag",
+      "op": "flag",
+      "flag": "frontier:hired",
+      "value": 1,
+      "next": "frontier:hired"
+    },
+    {
+      "id": "frontier:hired",
+      "op": "say",
+      "text": "Rex joins your party. He can pilot an additional mech. Buy one at the broker, then assign its crew from the Space menu outside.",
+      "next": "frontier:hall"
+    },
+    {
+      "id": "frontier:already-hired",
+      "op": "say",
+      "text": "The pilot has already joined your expedition.",
+      "next": "frontier:hall"
+    },
+    {
+      "id": "frontier:no-room",
+      "op": "say",
+      "text": "There is no room in the party, or that pilot is already with you.",
+      "next": "frontier:hall"
+    },
+    {
+      "id": "frontier:job-check",
+      "op": "if",
+      "flag": "frontier:cleared",
+      "value": 1,
+      "then": "frontier:thanks",
+      "else": "frontier:job"
+    },
+    {
+      "id": "frontier:job",
+      "op": "say",
+      "text": "Travel east along the road. At the proving ground, approach the patrol marker. Defeat the trespasser and you will receive 2500 C-bills. You can withdraw from this battle using the combat menu.",
+      "next": "frontier:hall"
+    },
+    {
+      "id": "frontier:thanks",
+      "op": "say",
+      "text": "The proving ground is secure. Your payment has already been credited. Thank you.",
+      "next": "frontier:end"
+    },
+    {
+      "id": "frontier:to-field",
+      "op": "transfer",
+      "map": "frontier:field",
+      "at": [
+        12,
+        28
+      ],
+      "next": "frontier:field-intro",
+      "failure": "frontier:blocked"
+    },
+    {
+      "id": "frontier:field-intro",
+      "op": "say",
+      "text": "The proving ground lies ahead. Approach the marker to your east to begin the patrol. The return gate is just west of you.",
+      "next": "frontier:end"
+    },
+    {
+      "id": "frontier:to-town",
+      "op": "transfer",
+      "map": "frontier:depot-map",
+      "at": [
+        50,
+        28
+      ],
+      "next": "frontier:end",
+      "failure": "frontier:blocked"
+    },
+    {
+      "id": "frontier:blocked",
+      "op": "say",
+      "text": "Your formation cannot fit at the destination. Reassign crew or reduce your formation and try again.",
+      "next": "frontier:end"
+    },
+    {
+      "id": "frontier:patrol-check",
+      "op": "if",
+      "flag": "frontier:cleared",
+      "value": 1,
+      "then": "frontier:thanks",
+      "else": "frontier:patrol-choice"
+    },
+    {
+      "id": "frontier:patrol-choice",
+      "op": "choice",
+      "text": "An armed trespasser challenges your patrol. Engage?",
+      "options": [
+        {
+          "label": "Engage",
+          "next": "frontier:fight"
+        },
+        {
+          "label": "Leave peacefully",
+          "next": "frontier:end"
+        }
+      ],
+      "cancel": "frontier:end"
+    },
+    {
+      "id": "frontier:fight",
+      "op": "battle",
+      "encounter": "frontier:patrol",
+      "win": "frontier:reward",
+      "loss": "frontier:defeat",
+      "flee": "frontier:withdraw",
+      "failure": "frontier:blocked"
+    },
+    {
+      "id": "frontier:reward",
+      "op": "reward",
+      "credits": 2500,
+      "next": "frontier:cleared-flag",
+      "failure": "frontier:full-wallet"
+    },
+    {
+      "id": "frontier:cleared-flag",
+      "op": "flag",
+      "flag": "frontier:cleared",
+      "value": 1,
+      "next": "frontier:victory"
+    },
+    {
+      "id": "frontier:victory",
+      "op": "say",
+      "text": "Patrol complete. The depot credits your account with 2500 C-bills. This reward can only be collected once, including after saving and restoring.",
+      "next": "frontier:end"
+    },
+    {
+      "id": "frontier:withdraw",
+      "op": "say",
+      "text": "You withdraw from the proving ground. The contract remains open.",
+      "next": "frontier:end"
+    },
+    {
+      "id": "frontier:defeat",
+      "op": "say",
+      "text": "Your patrol has been defeated. Restore a saved game to try again.",
+      "next": "frontier:end"
+    },
+    {
+      "id": "frontier:full-wallet",
+      "op": "say",
+      "text": "Your account cannot hold the reward. Spend some credits and return.",
+      "next": "frontier:end"
+    }
+  ],
+  "start": {
+    "map": "frontier:depot-map",
+    "at": [
+      24,
+      28
+    ],
+    "event": "frontier:welcome",
+    "credits": 12000,
+    "party": [
+      {
+        "person": "frontier:leader",
+        "mech": "workshop:rook"
+      }
+    ]
+  }
+}

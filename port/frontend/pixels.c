@@ -13,6 +13,7 @@
 #include "core/service.h"
 #include "core/menu.h"
 #include "core/cache.h"
+#include "core/events.h"
 #include "core/yard.h"
 #include "core/spy.h"
 #include "core/roster_game.h"
@@ -1456,8 +1457,44 @@ static void story_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
     }
 }
 
+static void event_panel(const BtpResources *r,const BtpState *s,uint32_t f[BTP_PIXELS])
+{
+    const BtpAdventure *a=btp_adventure(r);const BtpEventState *v=&s->event;
+    const BtpEventNode *e=&a->nodes[v->node];
+    rectangle(f,0,0,320,200,0);border_panel(r,f,0,0,104,200,1);border_panel(r,f,104,0,216,200,0);
+    text(r,f,8,112,"C-Bills:",15);char money[16];snprintf(money,sizeof money,"%u",s->credits);text(r,f,8,128,money,10);
+    unsigned portrait=e->portrait;
+    if (portrait && r->portraits.image[portrait-1].count) {
+        const BtpAnm *art=&r->portraits.image[portrait-1];uint8_t packed[BTP_ANM_PACKED];
+        if (btp_anm_frame(art,art->count-1u,packed)) for (unsigned i=0;i<88u*88u;++i) {
+            unsigned color=i&1u ? packed[i/2]&15u : packed[i/2]>>4;
+            f[(8+i/88u)*320+8+i%88u]=btp_palette[sprite_palette[color]];
+        }
+    }
+    if (v->phase==BTP_EVENT_ENTRY) {
+        const BtpSceneEntrance *door=&a->maps[v->origin_map].entrances[v->origin_entry];
+        text(r,f,112,16,"Enter",15);text(r,f,112,32,door->name,15);
+        rectangle(f,v->selected ? 160 : 112,56,v->selected ? 16 : 24,8,14);
+        text(r,f,112,56,"Yes",v->selected ? 15u : 0u);text(r,f,160,56,"No",v->selected ? 0u : 15u);
+    } else if (v->phase==BTP_EVENT_FAULT) {
+        const char *message="Event stopped: command limit or party placement failure. Escape returns to the map.";
+        (void)wrapped(r,f,16,(const uint8_t *)message,strlen(message),15);
+    } else {
+        char lines[96][28];unsigned count=btp_event_lines(e->text,lines),start=v->page*20u;
+        for (unsigned i=start;i<count && i<start+20;++i) text(r,f,112,8+8*(int)(i-start),lines[i],15);
+        if (v->phase==BTP_EVENT_SELECT) {
+            int y=16+8*(int)count;
+            for (unsigned i=0;i<e->count;++i) {
+                if (i==v->selected) rectangle(f,112,y,200,8,14);
+                text(r,f,112,y,e->labels[i],i==v->selected ? 0u : 15u);y+=8;
+            }
+            text(r,f,112,184,"Esc: back",7);
+        } else text(r,f,112,184,start+20<count ? "Space: next page" : "Space: continue",7);
+    }
+}
 void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[BTP_PIXELS])
 {
+    if (s->mode==BTP_EVENT && btp_scene(r,s)) { event_panel(r,s,f);return; }
     if (s->mode==BTP_ACTIONS && s->campaign.ui==BTP_MENU_MAP) {
         btp_world_preview(r,s,f);return;
     }
@@ -1533,6 +1570,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
     }
     BtpMap encounter_map;
     const BtpMap *map=btp_active_map(r,s);
+    const BtpScene *scene=btp_scene(r,s);
     if (s->campaign.encounter || s->campaign.invasion) { btp_combat_map(r,s,&encounter_map);map=&encounter_map; }
     int camera_x = cx * 8 - 96, camera_y = cy * 8 - 96;
     int outdoors=s->mode==BTP_EXPLORE || s->mode==BTP_ENTRY || s->mode==BTP_MISSION ||
@@ -1547,7 +1585,9 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                     int ox=s->campaign.encounter || s->campaign.invasion ? s->campaign.battle_x/2 : s->map_id ? (int)(map->entrance_x[0]>>8)*64 : 0;
                     int oy=s->campaign.encounter || s->campaign.invasion ? s->campaign.battle_y/2 : s->map_id ? (int)(map->entrance_y[0]>>12)*64 : 0;
                     unsigned tile;
-                    if (s->cache.active) tile=btp_cache_tile(r,s,tx,ty);
+                    const BtpSceneTile *authored=scene ? &btp_adventure(r)->tiles[tx>=0 && ty>=0 && tx<scene->visual.width && ty<scene->visual.height ? scene->cells[ty*64+tx] : 0] : NULL;
+                    if (authored) tile=authored->graphic;
+                    else if (s->cache.active) tile=btp_cache_tile(r,s,tx,ty);
                     else if ((s->campaign.encounter || s->campaign.invasion || s->map_id) && tx>=0 && ty>=0 && tx<map->width && ty<map->height) tile=btp_mission_tile(s,map,tx,ty);
                     else {
                         /* Combat uses a finite local rules grid, but the DOS
@@ -1560,11 +1600,11 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                         /* 320B skips ANIMATE's first blank tile; 240B swaps
                            three pages into these ten map tile slots. The
                            saved fixed clock supplies a deterministic phase. */
-                        unsigned frame=s->cache.active ? 0u : btp_terrain_frame(tile,s->tick/4u);
+                        unsigned frame=s->cache.active || authored ? 0u : btp_terrain_frame(tile,s->tick/4u);
                         /* A viewport can straddle the Citadel boundary. Pick
                            DESTRUCT for the displayed world tile, even after
                            the player has entered the surrounding countryside. */
-                        int destroyed=!s->cache.active && (s->campaign.invasion ?
+                        int destroyed=authored ? authored->sheet!=0 : !s->cache.active && (s->campaign.invasion ?
                             s->late.invasion_event>=3 && tx>=32 && ty>=32 && tx<96 && ty<96 :
                             btp_world_location(r,s,ox+tx,oy+ty)==11);
                         const BtpGraphic *sheet=s->cache.active ? s->story_flags[66] ? &r->maproom_tiles : &r->cache_tiles :
@@ -1585,6 +1625,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         s->map_id ? (int)(map->entrance_x[0]>>8)*128 : 0;
     int origin_y=s->campaign.encounter || s->campaign.invasion ? s->campaign.battle_y :
         s->map_id ? (int)(map->entrance_y[0]>>12)*128 : 0;
+    if (scene) { origin_x=(int)(2*scene->origin_x);origin_y=(int)(2*scene->origin_y); }
     for (unsigned i=0;i<64 && !s->cache.active;++i) {
         const BtpTerrainMark *mark=&s->terrain_marks[i];
         int mx=(mark->sector&15)*128+mark->x-origin_x;
@@ -1636,7 +1677,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
     else if (s->campaign.mounted && !s->story_flags[4]) (void)btp_draw_sprite(&r->sprites,
         btp_mech_record_sprite(s->party.people[0][12] ? s->party.mechs[s->party.people[0][12]-1] : s->campaign.mech,0)+s->campaign.mech_walk,200,64,0,104,f);
     else if (outdoors && !s->campaign.mounted) (void)btp_draw_sprite(&r->sprites,166u+s->player_walk,208,96,
-        hidden_rows(map,s->x_half,s->y_half),104,f);
+        scene ? 0u : hidden_rows(map,s->x_half,s->y_half),104,f);
     if (outdoors && !battle_display && s->story_flags[4]) {
         for (unsigned i=0;i<8;++i) if (s->party.people[i][0]!=255 && s->party.people[i][12]>=8) {
             if (i && btp_party_walkable(s,r,s->party.x[i],s->party.y[i],0))
@@ -1803,7 +1844,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
             unsigned owned=btp_broker_count(s);
             int selling=c->ui==BTP_MENU_BROKER_SELL || c->ui==BTP_MENU_BROKER_SELL_CONFIRM;
             unsigned catalogue[BTP_ROSTER_MAX];
-            unsigned stock=btp_roster_catalogue(&r->roster,s->menu.broker_class,r->roster.count,catalogue);
+            unsigned stock=btp_events_catalogue(s,r,s->menu.broker_class,r->roster.count,catalogue);
             unsigned ordinal=c->member+c->selected;
             unsigned id=c->ui==BTP_MENU_BROKER ? (ordinal<stock ? catalogue[ordinal] : r->roster.count) :
                 c->ui==BTP_MENU_BROKER_SELL ? btp_broker_slot(s,c->selected) : s->menu.map_y;
@@ -1844,7 +1885,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                 for (unsigned i=0;i<5;++i) {
                     int row=y+(int)i*8;if (i==c->selected) rectangle(f,112,row,200,8,14);
                     if (i<4) {
-                        unsigned count=btp_roster_catalogue(&r->roster,i+1u,r->roster.count,catalogue);
+                        unsigned count=btp_events_catalogue(s,r,i+1u,r->roster.count,catalogue);
                         snprintf(line,sizeof line,"%s (%u)",btp_roster_class_name(i+1u),count);
                     } else snprintf(line,sizeof line,"Back");
                     text(r,f,112,row,line,i==c->selected ? 0u : 15u);
@@ -2079,6 +2120,17 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
 void btp_world_preview(const BtpResources *r,const BtpState *s,uint32_t f[BTP_PIXELS])
 {
     rectangle(f,0,0,320,200,0);
+    const BtpScene *scene=btp_scene(r,s);
+    if (scene) {
+        int scale=2,ox=(320-scale*scene->visual.width)/2,oy=(184-scale*scene->visual.height)/2;
+        const BtpAdventure *a=btp_adventure(r);
+        for (unsigned y=0;y<scene->visual.height;++y) for (unsigned x=0;x<scene->visual.width;++x) {
+            if (!btp_world_seen(s,(scene->origin_x+x)/8,(scene->origin_y+y)/8)) continue;
+            rectangle(f,ox+scale*(int)x,oy+scale*(int)y,scale,scale,a->tiles[scene->cells[y*64+x]].color);
+        }
+        rectangle(f,ox+s->x_half,oy+s->y_half,2,2,15);
+        text(r,f,8,8,scene->name,15);text(r,f,8,192,"Space: return to game",15);return;
+    }
     if (s->cache.active) {
         unsigned room=s->story_flags[66]!=0,width=room ? 32u : 64u,height=room ? 24u : 64u;
         int ox=(320-(int)width)/2,oy=(192-(int)height)/2;

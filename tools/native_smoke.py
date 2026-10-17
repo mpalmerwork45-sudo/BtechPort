@@ -1294,6 +1294,8 @@ def main():
     parser.add_argument('--portability-only',action='store_true',help='Check controls, intro, saves, menus and combat presentation')
     parser.add_argument('--updated-only',action='store_true',help='Check edition selection and Updated purchases')
     parser.add_argument('--project-only',action='store_true',help='Check project loading, weapons, broker and package saves')
+    parser.add_argument('--adventure-only',action='store_true',help='Check authored maps, event screens, combat and saves')
+    parser.add_argument('--editor-only',action='store_true',help='Check the desktop roster editor and Play launch')
     parser.add_argument('--updated-combat-only',action='store_true',help='Check Updated rules settings and held LRM combat saves')
     parser.add_argument('--building-art-only',action='store_true',help='Check Updated building portraits and held saves')
     parser.add_argument("--shops-only", action="store_true")
@@ -1353,6 +1355,12 @@ def main():
             if args.project_only:
                 from project_smoke import run
                 run(env,work);return
+            if args.adventure_only:
+                from adventure_smoke import run
+                run(env,work);return
+            if args.editor_only:
+                from adventure_smoke import editor
+                editor(env,work);return
             if args.updated_combat_only:
                 from updated_combat_smoke import run
                 run(env,work);return

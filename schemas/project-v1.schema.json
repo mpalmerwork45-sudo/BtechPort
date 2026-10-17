@@ -31,7 +31,10 @@
       "const": "chi-original-dos-1.03"
     },
     "startup": {
-      "const": "chi-training-v1"
+      "enum": [
+        "chi-training-v1",
+        "authored-adventure-v1"
+      ]
     },
     "rules_profile": {
       "enum": [
@@ -89,6 +92,11 @@
       },
       "minItems": 0,
       "maxItems": 11
+    },
+    "adventure": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1023
     }
   },
   "required": [
@@ -103,5 +111,28 @@
     "save_policy",
     "definitions",
     "assets"
+  ],
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "startup": {
+            "const": "authored-adventure-v1"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "adventure"
+        ]
+      },
+      "else": {
+        "not": {
+          "required": [
+            "adventure"
+          ]
+        }
+      }
+    }
   ]
 }

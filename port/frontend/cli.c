@@ -4,6 +4,7 @@
 #include "core/world.h"
 #include "core/audio.h"
 #include "core/combat.h"
+#include "core/events.h"
 #include "data/save.h"
 #include "data/sprites.h"
 #include <stdio.h>
@@ -173,6 +174,7 @@ void btp_initial_state(const BtpOptions *o, BtpState *s, const BtpResources *r)
     /* Fresh Updated campaigns opt in. Loading a save below replaces this
        state, preserving the saved policy (including old saves' Legacy). */
     if (r->roster.count && r->combat_profile.fingerprint) (void)btp_set_combat_profile(s,r,1);
+    btp_events_start(s,r);
     if (o->title_preview) btp_audio_start(s);
     if (o->intro_preview) s->mode=BTP_LOGO;
 }
@@ -266,6 +268,13 @@ void btp_print_state(const BtpState *s, const BtpResources *r)
     uint8_t encoded[BTP_STATE_BYTES];btp_state_encode(s,encoded);uint64_t state_hash=UINT64_C(14695981039346656037);
     for (unsigned i=0;i<BTP_STATE_BYTES;++i) state_hash=(state_hash^encoded[i])*UINT64_C(1099511628211);
     printf(",\"state_digest\":\"%016llx\",\"effect_stage\":%u",(unsigned long long)state_hash,s->effects.stage);
+    if (s->event.enabled) {
+        printf(",\"authored_event\":{\"node\":%u,\"phase\":%u,\"page\":%u,\"selected\":%u,\"flags\":[",
+            s->event.node,s->event.phase,s->event.page,s->event.selected);
+        const BtpAdventure *a=btp_adventure(r);
+        for (unsigned i=0;i<a->flag_count;++i) printf("%s%u",i ? "," : "",s->event.flags[i]);
+        fputs("]}",stdout);
+    }
     printf(",\"combat\":{\"phase\":%u,\"selected\":%u,\"round\":%u,\"step\":%u,\"won\":%u,\"fled\":%u,\"event\":%u,\"fired\":%u,"
         "\"weapon\":%u,\"flash\":%u,\"goal\":[%u,%u,%u,%u],\"orders\":[",c->phase,c->selected,c->round,c->step,c->won,c->fled,c->last_event,c->fired,
         c->weapon_selected,c->flash,c->goal_active,c->movement,c->goal_x,c->goal_y);

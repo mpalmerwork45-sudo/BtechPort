@@ -8,4 +8,6 @@
 int btp_party_has_person(const BtpState *state, unsigned identity);
 int btp_party_has_skill(const BtpState *state, unsigned skill, unsigned minimum);
 int btp_try_spend_credits(BtpState *state, uint32_t amount);
+int btp_grant_credits(BtpState *state,uint32_t amount);
+int btp_recruit_person(BtpState *state,const uint8_t person[17]);
 #endif

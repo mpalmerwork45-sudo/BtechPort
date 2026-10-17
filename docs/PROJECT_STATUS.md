@@ -1,10 +1,14 @@
 # Project status — original fidelity and editable projects, 2026-10-17
 
-Editor-roadmap tasks 1–2 now provide a shared authoring contract, validator,
+Editor-roadmap tasks 1–3 now provide a shared authoring contract, validator,
 31-model export, 256-model project catalogue, per-mount weapon definitions and
 an explicit CHI-dependent project loader with strict package saves. See
 [implementation, commands and limits](M5_AUTHORING_PROJECTS.md). This is the M5b
-foundation; maps/events, a standalone game and the GUI editor remain later tasks.
+foundation plus authored maps/events and saved command continuations. A small
+roster GUI now edits, validates and launches these projects. See
+[maps/events/editor](M5_MAPS_EVENTS_EDITOR.md) for the playable Frontier example,
+commands, tests and limits. Independent assets/Lua and the full map/event GUI
+remain later tasks; the original campaign remains playable.
 
 The independent C11/SDL2 port has playable implementations of the authorized
 M4a–M4e increments and the subsequent building, theft, encounter, recruitment and

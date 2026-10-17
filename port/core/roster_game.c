@@ -4,6 +4,7 @@
 #include "core/npc.h"
 #include "core/menu.h"
 #include "core/economy.h"
+#include "core/events.h"
 #include <string.h>
 
 int btp_broker_page(unsigned page)
@@ -43,6 +44,8 @@ unsigned btp_broker_slot(const BtpState *s,unsigned ordinal)
 }
 int btp_broker_available(const BtpState *s,const BtpResources *r)
 {
+    if (s->event.enabled) return btp_scene(r,s) && s->event.phase==BTP_EVENT_TRADING &&
+        s->mode==BTP_ACTIONS && btp_broker_page(s->campaign.ui);
     return r->roster.count && s->map_id==2 && s->story_flags[4] && !s->yard.active &&
         !s->cache.active && !s->combat.phase && !s->campaign.encounter &&
         s->mode==BTP_ACTIONS && btp_broker_page(s->campaign.ui) &&
@@ -50,7 +53,8 @@ int btp_broker_available(const BtpState *s,const BtpResources *r)
 }
 unsigned btp_broker_buy(BtpState *s,const BtpResources *r,unsigned definition)
 {
-    if (!btp_broker_available(s,r) || definition>=r->roster.count) return BTP_BROKER_UNAVAILABLE;
+    if (!btp_broker_available(s,r) || definition>=r->roster.count ||
+        (s->event.enabled && !btp_events_stock(s,r,definition))) return BTP_BROKER_UNAVAILABLE;
     const BtpRosterMech *d=&r->roster.mechs[definition];
     unsigned bay=0;while (bay<4 && btp_broker_owned(s,bay)) ++bay;
     if (bay==4) return BTP_BROKER_FULL;
@@ -60,7 +64,7 @@ unsigned btp_broker_buy(BtpState *s,const BtpResources *r,unsigned definition)
        The existing garage/exit allocation restores their complete records. */
     btp_party_init(s);
     uint8_t *m=btp_party_mech(s,bay);memcpy(m,d->record,125);
-    s->party.mech_types[bay]=m[0];m[0]=255;
+    s->party.mech_types[bay]=m[0];if (!s->event.enabled) m[0]=255;
     s->campaign.owned=1;s->story_flags[24]=1;s->credits-=d->price;
     if (s->npc.enabled) s->npc.allowance_pending=(uint8_t)btp_economy_below_cap(s);
     return BTP_BROKER_BOUGHT;
@@ -142,7 +146,7 @@ int btp_roster_state_prefix_valid(const BtpState *s,const BtpResources *r,unsign
     if (s->campaign.ui==BTP_MENU_BROKER_CLASSES && s->campaign.member) return 0;
     if (s->campaign.ui==BTP_MENU_BROKER || s->campaign.ui==BTP_MENU_BROKER_CONFIRM || s->campaign.ui==BTP_MENU_BROKER_RESULT) {
         unsigned indices[BTP_ROSTER_MAX];
-        unsigned listed=btp_roster_catalogue(&r->roster,s->menu.broker_class,count,indices);
+        unsigned listed=btp_events_catalogue(s,r,s->menu.broker_class,count,indices);
         if (!btp_broker_available(s,r) || s->menu.map_x!=listed || s->campaign.member>
             (listed+1u>BTP_BROKER_ROWS ? listed+1u-BTP_BROKER_ROWS : 0u)) return 0;
         if (!listed) {

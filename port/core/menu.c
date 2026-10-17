@@ -4,6 +4,7 @@
 #include "core/party.h"
 #include "core/world.h"
 #include "core/roster_game.h"
+#include "core/events.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -146,7 +147,7 @@ void btp_broker_select(BtpState *s,unsigned item)
 void btp_broker_browse(BtpState *s,const BtpResources *r,unsigned item)
 {
     unsigned indices[BTP_ROSTER_MAX];
-    unsigned count=btp_roster_catalogue(&r->roster,s->menu.broker_class,r->roster.count,indices);
+    unsigned count=btp_events_catalogue(s,r,s->menu.broker_class,r->roster.count,indices);
     s->menu.map_x=(uint16_t)count;btp_broker_select(s,item);
     item=s->campaign.member+s->campaign.selected;
     if (item<count) s->menu.map_y=(uint16_t)indices[item];
@@ -154,7 +155,7 @@ void btp_broker_browse(BtpState *s,const BtpResources *r,unsigned item)
 static void broker_return(BtpState *s,const BtpResources *r)
 {
     unsigned indices[BTP_ROSTER_MAX],item=0;
-    unsigned count=btp_roster_catalogue(&r->roster,s->menu.broker_class,r->roster.count,indices);
+    unsigned count=btp_events_catalogue(s,r,s->menu.broker_class,r->roster.count,indices);
     while (item<count && indices[item]!=s->menu.map_y) ++item;
     page(s,BTP_MENU_BROKER,0);btp_broker_browse(s,r,item);
 }

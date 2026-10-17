@@ -128,8 +128,10 @@ range/attack algorithms require another implemented behavior/profile version.
 
 ## Manifest, assets and dependencies
 
-The initial manifest supports `chi-original-dos-1.03` as its declared dependency
-and `chi-training-v1` as startup. It verifies package/version and rule identity
+The manifest supports `chi-original-dos-1.03` as its declared dependency
+and `chi-training-v1` as startup, or `authored-adventure-v1` with an explicit
+`adventure` JSON reference. See [maps/events/editor](M5_MAPS_EVENTS_EDITOR.md).
+It verifies package/version and rule identity
 against the referenced definitions. It loads no adjacent roster, combat or art
 file by convention: every project file is explicitly referenced. Undeclared
 portrait slots use the original art supplied by the declared CHI dependency.
@@ -147,7 +149,7 @@ this package-relative path restriction.
 The only supported policy is **strict-content-v1**. `BTG1` saves bind package ID,
 content version and SHA-256 of the exact manifest, definitions and declared
 asset bytes. The fingerprint hashes their individual 32-byte SHA-256 digests in
-manifest, definitions, then declared-asset order. Parsing and hashing use the
+manifest, definitions, optional adventure, then declared-asset order. Parsing and hashing use the
 same loaded snapshots, so an edit during loading cannot bind different bytes.
 This deliberately
 includes whitespace, ordering, labels and cosmetic art: any change requires
@@ -178,10 +180,11 @@ inputs and export sources. They are not the new authoring contract. The earlier
 runtime format; their invented construction and sprite semantics are not
 silently converted into CHI behaviors. New projects use only `btp-content-v1`.
 
-Next is roadmap task 3: authored maps, entrances, broker stock/services and saved
-event continuations. Original BLD remains a compatibility adapter. A later Lua
-host should call shared game commands. Tasks 4–5 then prove an independent tiny
-game and build the Windows/Linux editor on the same loader.
+Roadmap task 3 now supplies [authored maps, entrances, broker stock and saved
+event continuations](M5_MAPS_EVENTS_EDITOR.md), together with a small roster
+editor. Original BLD remains a compatibility adapter. A later Lua host should
+call shared game commands. Task 4 and the remaining task 5 scope prove an
+independent tiny game and add map/event editing to the desktop tool.
 
 ## Verification
 
