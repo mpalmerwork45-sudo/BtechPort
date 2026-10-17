@@ -74,11 +74,10 @@ Both reference directories pass the 1,287-entry content/mode/mtime guard.
 
 ## Recommended next five milestones
 
-1. **Show real CHI tiles in the editor.** Decode a preview atlas from the player's
-   supplied files through the shared loader. Add a visual tile palette, selection
-   stamps for complete buildings/trees/shorelines, and entrance/formation footprint
-   overlays. Keep numeric IDs for diagnostics. The present CHI map editor uses
-   swatches, making coherent original scenery unnecessarily hard to assemble.
+1. **Finish scene composition tools.** [Real tile previews, a visual graphic
+   picker and marker dragging](EDITOR_GRAPHICS_AND_DRAGGING.md) are implemented.
+   Add selection stamps for complete buildings/trees/shorelines, group moves and
+   entrance/formation footprint overlays. Keep numeric IDs for diagnostics.
    Gate: build and play a new town using the GUI without consulting tile numbers.
 
 2. **Author repairs, reloads and salvage.** Add validated service commands through
@@ -111,4 +110,4 @@ Both reference directories pass the 1,287-entry content/mode/mtime guard.
 Start with **1**, then **2**. Those remove the largest visible authoring and
 gameplay gaps in this demo. The current core already supports more authored
 maps, conversations and contracts; increasing content alone would not solve the
-editor's tile selection, service and playtesting limitations.
+editor's scene-composition, service and playtesting limitations.

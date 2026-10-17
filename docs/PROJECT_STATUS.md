@@ -1,5 +1,13 @@
 # Project status — original fidelity and editable projects, 2026-10-17
 
+[Visual editor improvements](EDITOR_GRAPHICS_AND_DRAGGING.md) add real CHI tile
+previews and thumbnails, a full-sheet graphic picker, drag-and-drop markers and
+a refreshed desktop layout. Every drag is one undo step. The editor decodes
+supplied art in memory through the gameplay palette and adds no original art
+to custom packages. Full native **69/69**, Python **88/88**, focused Wine and
+sanitizer checks, and all three Linux Tk workflows pass. Windows atlas output
+matches Linux; native Windows Tk interaction remains unverified.
+
 [Authored walking](AUTHORED_WALKING.md) now keeps all active mechs/infantry in
 the original compact formation, tests entrances against each member's ground
 position and preserves one gait increment per 1/2/4-step key. It removes the

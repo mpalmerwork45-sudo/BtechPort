@@ -72,6 +72,11 @@ roster editing, shared validation, undo/redo, export and Play here:
 python3 tools/game_editor.py examples/beacon-demo
 ```
 
+[Visual editing](docs/EDITOR_GRAPHICS_AND_DRAGGING.md) now includes real map
+graphics, a thumbnail palette, a full tile-sheet picker and marker dragging,
+with a cleaner desktop layout. CHI projects use the original game folder from
+**Player setup**; **Reload graphics** refreshes the previews.
+
 [Last Beacon](examples/beacon-demo/README.md) is a complete tiny quest with its
 own graphics, font, text, sound and a bounded Lua event. It requires **no original
 files or caches**. Use New project in the editor to make your own copy. The guide

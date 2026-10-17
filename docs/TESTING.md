@@ -1,5 +1,11 @@
 # Build, verification and original oracle — 2026-10-17
 
+The [visual editor increment](EDITOR_GRAPHICS_AND_DRAGGING.md#verification)
+passes **69 native CTests, 88 Python tests**, three focused Wine/sanitizer
+suites per platform and all three Linux Tk workflows. Tests exercise original
+tile decoding, binary Windows/Linux atlas equality, graphic picking, dragging
+every marker kind, one-step history, cancellation, save/reopen and minimum sizes.
+
 ## Independent game and map/event editor
 
 Roadmap tasks 4 and 5 now have a self-contained demonstration and a first useful

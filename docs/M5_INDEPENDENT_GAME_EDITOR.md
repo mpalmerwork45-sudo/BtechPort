@@ -59,18 +59,24 @@ one undo/redo history. The latter has three tabs:
 - **Maps:** create/resize maps and edit names/world origins; paint base tiles or
   rectangular overlays; transparent erase applies only to overlays. A whole
   mouse stroke is one undo step. Zoom/scroll, a terrain view and selected-layer
-  bounds help distinguish artwork from collision. Independent games show actual
-  package tile pixels; CHI projects show terrain/key swatches.
+  bounds help distinguish artwork from collision. Both independent and CHI
+  projects show actual map pixels and palette thumbnails. **Edit tile → Choose
+  graphic…** browses the complete applicable sheets. CHI previews use the original
+  folder from **Player setup**, through the shared decoder and gameplay palette.
 - **Placement:** choose Entrance, NPC, Encounter or Start, then click the map.
   Entrances/NPCs select an event; NPCs select a character template. Encounter
   forms declare map, party spawn and individual enemies, with Add/Edit/Remove.
-  The marker list supports editing and removal. Coordinates are half tiles;
+  Drag markers or their labels on the map to reposition doors/NPCs, party spawns,
+  individual enemies and the start. Each release is one undo step; Escape cancels.
+  The marker list supports selection, editing and removal. Coordinates are half tiles;
   the cursor/status also shows tile coordinates. World origins/overlays use
   whole tiles. Place doors far enough in front of roofs for a full mech party.
   Entrances respond to each member's ground contact, using the original compact
   formation: foot exact, mech ground anchor or horizontal neighbour. The first
   mech's anchor is two half-steps north of the party cursor. See
   [walking and event contact](AUTHORED_WALKING.md).
+  See [visual editing controls and verification](EDITOR_GRAPHICS_AND_DRAGGING.md)
+  for graphic selection, marker behavior and the refreshed desktop layout.
 - **Events:** New/Duplicate/Delete, opcode selection, dialogue, portraits,
   continuations, up to five choices and typed forms for conditions, flags,
   credits, recruitment, transfer, shop, battle, Lua routes and finish. Apply
