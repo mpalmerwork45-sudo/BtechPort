@@ -174,10 +174,12 @@ and the [latest five-area sweep](M4_PORTABILITY_SWEEP.md).
     roster and binds saves to exact project snapshots. The
     [maps/events increment](M5_MAPS_EVENTS_EDITOR.md) adds finite maps, overlays,
     entrances, explicit saved event commands and a small Tk roster editor.
-    A two-map example covers recruitment, shops, combat and a once-only reward.
-    These projects still require original CHI assets and extracted caches.
-    Independent assets/fonts/UI, general character definitions, richer equipment
-    abilities, Lua, a visual map/event editor and package migrations remain to do.
+    The [independent game/editor](M5_INDEPENDENT_GAME_EDITOR.md) now supplies
+    Last Beacon with its own pixels/font/sounds/text, named character templates,
+    bounded Lua routing and a visual map/event editor with export and Play here.
+    It needs no original resources; CHI-profile projects keep their explicit
+    original dependency. Richer equipment abilities, arbitrary character/rule
+    models, asset/animation tools, a script IDE and package migrations remain.
     Native Windows Tk verification and the full editor toolkit choice remain
     open. Original raw records and compiled assumptions are catalogued in the
     [content inventory](CONTENT_INVENTORY.md).

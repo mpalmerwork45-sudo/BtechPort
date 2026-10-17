@@ -2,8 +2,10 @@
 
 Implemented 2026-10-17. This completes tasks 1 and 2 of the
 [editor roadmap](ENGINE_AND_EDITOR_PLAN.md#13-next-five-tasks-toward-an-editor).
-It prepares editable **CHI-dependent games**; authored maps, events, Lua, a
-standalone campaign and the desktop editor remain subsequent milestones.
+It records editable **CHI-dependent games**. Subsequent increments now add
+[maps/events](M5_MAPS_EVENTS_EDITOR.md) and an
+[independent demo with the map/event editor](M5_INDEPENDENT_GAME_EDITOR.md).
+The explicit original-dependency rules below apply to CHI-profile projects.
 
 ## Create, validate and play
 
@@ -182,9 +184,9 @@ silently converted into CHI behaviors. New projects use only `btp-content-v1`.
 
 Roadmap task 3 now supplies [authored maps, entrances, broker stock and saved
 event continuations](M5_MAPS_EVENTS_EDITOR.md), together with a small roster
-editor. Original BLD remains a compatibility adapter. A later Lua host should
-call shared game commands. Task 4 and the remaining task 5 scope prove an
-independent tiny game and add map/event editing to the desktop tool.
+editor. Original BLD remains a compatibility adapter. Task 4 and task 5 now
+supply an [independent tiny game, bounded Lua command routes and map/event
+desktop editing](M5_INDEPENDENT_GAME_EDITOR.md).
 
 ## Verification
 

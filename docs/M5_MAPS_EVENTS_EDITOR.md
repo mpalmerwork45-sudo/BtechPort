@@ -1,6 +1,9 @@
 # Authored maps, events and the small roster editor
 
 Implemented 2026-10-17: roadmap task 3 and the roster portion of task 5.
+This document records that CHI-dependent increment. The subsequent
+[independent game/editor](M5_INDEPENDENT_GAME_EDITOR.md) implements task 4 and
+extends the same GUI with map painting, placement, event forms and export.
 These are **CHI-dependent projects** using the existing C player and validator.
 Original and Updated still use their existing campaign, original BLD adapter
 and save formats. This increment introduces no original-game behavior claims.
@@ -91,9 +94,9 @@ files. Existing saves remain bound to the original project snapshot.
 
 For a CHI-campaign project the Starport broker offers the project roster. For
 an authored adventure, each shop lists its own stock IDs: adding a mech to the
-roster does not automatically add it to every shop. Edit that stock in the JSON
-for now. Ammo types, rule profiles, map painting, event forms, custom art/audio
-editing and stable-ID migrations are outside this small GUI increment.
+roster does not automatically add it to every shop. The subsequent game editor
+now edits stock, maps and events through forms. Ammo types, rule profiles,
+custom art/audio editing and stable-ID migrations remain outside the GUI.
 
 ## Map and event authoring contract
 

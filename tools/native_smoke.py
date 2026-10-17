@@ -1296,6 +1296,8 @@ def main():
     parser.add_argument('--project-only',action='store_true',help='Check project loading, weapons, broker and package saves')
     parser.add_argument('--adventure-only',action='store_true',help='Check authored maps, event screens, combat and saves')
     parser.add_argument('--editor-only',action='store_true',help='Check the desktop roster editor and Play launch')
+    parser.add_argument('--independent-only',action='store_true',help='Check independent quest and saved SDL screens without original files')
+    parser.add_argument('--map-editor-only',action='store_true',help='Check map painting, event forms, export and Play here')
     parser.add_argument('--updated-combat-only',action='store_true',help='Check Updated rules settings and held LRM combat saves')
     parser.add_argument('--building-art-only',action='store_true',help='Check Updated building portraits and held saves')
     parser.add_argument("--shops-only", action="store_true")
@@ -1352,6 +1354,14 @@ def main():
             env.pop("SDL_VIDEODRIVER", None)
             os.environ["DISPLAY"] = env["DISPLAY"]
             os.environ["BTECH_REFERENCE_VIRTUAL"] = "1"
+            if args.independent_only:
+                from independent_smoke import run
+                run(env,work)
+                return
+            if args.map_editor_only:
+                from independent_smoke import editor
+                editor(env,work)
+                return
             if args.project_only:
                 from project_smoke import run
                 run(env,work);return

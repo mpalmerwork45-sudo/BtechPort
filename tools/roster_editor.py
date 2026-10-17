@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Small Windows/Linux roster editor for CHI-dependent project packages."""
+"""Windows/Linux game editor for independent and CHI-dependent projects."""
 from __future__ import annotations
 
 import argparse
@@ -23,6 +23,7 @@ class RosterEditor:
     def __init__(self, window: tk.Tk, validator: Path, state_dir: Path):
         self.window, self.validator, self.state_dir = window, validator, state_dir
         self.document: ProjectDocument | None = None
+        self.map_editor = None
         self.current = None
         self.collection = "mechs"
         self.variables: dict[tuple[str, ...], tuple[tk.StringVar, bool]] = {}
@@ -37,7 +38,7 @@ class RosterEditor:
         style = ttk.Style(window)
         if "clam" in style.theme_names() and os.name != "nt":
             style.theme_use("clam")
-        window.title("BtechPort roster editor")
+        window.title("BtechPort game editor")
         window.geometry("1000x740")
         window.minsize(940, 690)
         toolbar = ttk.Frame(window, padding=8)
@@ -46,7 +47,12 @@ class RosterEditor:
                                ("Validate", self.validate), ("Undo", self.undo), ("Redo", self.redo),
                                ("Play", self.play), ("Player setup", self.setup)]:
             ttk.Button(toolbar, text=label, command=lambda cb=command: self.guarded(cb)).pack(side="left", padx=3)
-        ttk.Label(window, text="CHI-dependent projects | original files required | edits require a new campaign", padding=(12, 2)).pack(anchor="w")
+        author_bar = ttk.Frame(window,padding=(8,0))
+        author_bar.pack(fill="x")
+        ttk.Button(author_bar,text="Maps / events",command=lambda:self.guarded(self.edit_adventure)).pack(side="left",padx=3)
+        ttk.Button(author_bar,text="Export game",command=lambda:self.guarded(self.export_project)).pack(side="left",padx=3)
+        self.profile_label = ttk.Label(window, text="Open an independent game or a CHI-dependent project.", padding=(12, 2))
+        self.profile_label.pack(anchor="w")
         self.project_label = ttk.Label(window, text="Open a project or create one from a template.", padding=(12, 4))
         self.project_label.pack(anchor="w")
         body = ttk.Panedwindow(window, orient="horizontal")
@@ -100,6 +106,8 @@ class RosterEditor:
             return None
 
     def discard_or_save(self) -> bool:
+        if self.map_editor:
+            self.map_editor.apply_pending()
         if not self.document or not (self.document.dirty or self.form_dirty):
             return True
         answer = messagebox.askyesnocancel("Unsaved edits", "Save your changes before closing this project?", parent=self.window)
@@ -110,12 +118,16 @@ class RosterEditor:
         return True
 
     def set_document(self, document: ProjectDocument):
+        if self.map_editor:
+            self.map_editor.window.destroy()
+            self.map_editor = None
         self.document = document
         self.current = None
         self.form_dirty = False
         self.search.set("")
         self.refresh_list()
         self.project_label.configure(text=f"{document.manifest['title']} - {document.root}")
+        self.profile_label.configure(text="Independent game | all runtime content is in the package" if document.manifest["requires"] == "none" else "CHI-dependent project | original files required")
         self.status.set("Project opened. Existing saves require this exact content; Play starts a separate campaign.")
 
     def open_project(self):
@@ -128,7 +140,9 @@ class RosterEditor:
     def new_project(self):
         if not self.discard_or_save():
             return
-        template = self.document.root if self.document else ROOT / "examples/project-demo"
+        # A new standalone author can start without exporting or locating any
+        # original assets. An open project remains the template for variants.
+        template = self.document.root if self.document else ROOT / "examples/beacon-demo"
         package_id = simpledialog.askstring("New project", "New package ID (lowercase letters, digits, hyphens):", parent=self.window)
         if not package_id:
             return
@@ -350,21 +364,26 @@ class RosterEditor:
 
     def save(self):
         if self.document:
+            if self.map_editor:
+                self.map_editor.apply_pending()
             self.apply_form()
             self.status.set(self.document.save())
             self.refresh_list()
 
     def validate(self):
         if self.document:
+            if self.map_editor:
+                self.map_editor.apply_pending()
             self.apply_form()
             self.status.set(self.document.validate())
 
     def setup(self):
         dialog = tk.Toplevel(self.window)
-        dialog.title("Player setup - explicit local dependencies")
+        dialog.title("Player setup")
         dialog.transient(self.window)
         values = {key: tk.StringVar(value=value) for key, value in self.settings.items()}
-        for row, key in enumerate(["player", "data", "dialogue-data", "combat-data", "world-data"]):
+        keys = ["player"] if self.document and self.document.manifest["requires"] == "none" else ["player", "data", "dialogue-data", "combat-data", "world-data"]
+        for row, key in enumerate(keys):
             ttk.Label(dialog, text=key).grid(row=row, column=0, padx=8, pady=6)
             ttk.Entry(dialog, textvariable=values[key], width=65).grid(row=row, column=1, padx=8, pady=6)
             def browse(k=key):
@@ -377,16 +396,49 @@ class RosterEditor:
             self.state_dir.mkdir(parents=True, exist_ok=True)
             (self.state_dir / "settings.json").write_text(json.dumps(self.settings, indent=2), encoding="utf-8")
             dialog.destroy()
-        ttk.Button(dialog, text="Save setup", command=lambda: self.guarded(apply)).grid(row=5, column=1, pady=12)
+        ttk.Button(dialog, text="Save setup", command=lambda: self.guarded(apply)).grid(row=len(keys), column=1, pady=12)
 
     def play(self):
         if self.document:
+            if self.map_editor:
+                self.map_editor.apply_pending()
+            self.launch_player()
+
+    def launch_player(self, here=None):
+        if self.document:
             self.apply_form()
-            command = self.document.play_command(self.settings, self.state_dir)
+            command = self.document.play_command(self.settings, self.state_dir, here=here)
             self.state_dir.mkdir(parents=True, exist_ok=True)
             with (self.state_dir / "player.log").open("a", encoding="utf-8") as log:
                 subprocess.Popen(command, cwd=self.state_dir, stdout=log, stderr=log)
             self.status.set("Player launched with a fresh campaign and separate playtest save slots. See player.log for launch diagnostics.")
+
+    def edit_adventure(self):
+        if not self.document:
+            raise EditorError("Open or create a project first.")
+        self.apply_form()
+        if self.map_editor and self.map_editor.window.winfo_exists():
+            self.map_editor.window.lift()
+        else:
+            from adventure_editor import AdventureEditor
+            self.map_editor = AdventureEditor(self)
+
+    def export_project(self):
+        if self.document:
+            if self.map_editor:
+                self.map_editor.apply_pending()
+            self.apply_form()
+            parent = filedialog.askdirectory(title="Export game into a NEW subfolder of", parent=self.window)
+            if not parent:
+                return
+            name = simpledialog.askstring("Export folder", "New folder name:", initialvalue=self.document.manifest["package_id"] + "-export", parent=self.window)
+            if not name:
+                return
+            if Path(name).name != name or name in (".", "..") or "\\" in name:
+                raise EditorError("Choose one new folder name.")
+            target = Path(parent) / name
+            self.document.export(target)
+            self.status.set(f"Validated project exported to {target}. Saves and caches were excluded.")
 
     def close(self):
         def finish():

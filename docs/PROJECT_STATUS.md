@@ -1,14 +1,19 @@
 # Project status — original fidelity and editable projects, 2026-10-17
 
-Editor-roadmap tasks 1–3 now provide a shared authoring contract, validator,
+Editor-roadmap tasks 1–5 now provide a shared authoring contract, validator,
 31-model export, 256-model project catalogue, per-mount weapon definitions and
 an explicit CHI-dependent project loader with strict package saves. See
 [implementation, commands and limits](M5_AUTHORING_PROJECTS.md). This is the M5b
-foundation plus authored maps/events and saved command continuations. A small
-roster GUI now edits, validates and launches these projects. See
+foundation plus authored maps/events and saved command continuations. The
+desktop GUI now edits rosters, maps and events, validates, saves, exports and
+launches these projects. See
 [maps/events/editor](M5_MAPS_EVENTS_EDITOR.md) for the playable Frontier example,
-commands, tests and limits. Independent assets/Lua and the full map/event GUI
-remain later tasks; the original campaign remains playable.
+commands, tests and limits, and the
+[independent game/editor guide](M5_INDEPENDENT_GAME_EDITOR.md) for Last Beacon,
+which uses its own assets/font/sounds and a bounded Lua command route without
+original files or caches. The first useful editor is implemented within those
+bounds; rich scripting, asset/animation tools and packaging remain future work.
+The original campaign remains playable.
 
 The independent C11/SDL2 port has playable implementations of the authorized
 M4a–M4e increments and the subsequent building, theft, encounter, recruitment and
@@ -74,7 +79,7 @@ full regression suite, seeded comparisons, Windows, sanitizers and SDL saves.
 | Owner follow-ups | Four Jenners/ruins escape, purchase recipients, armour repair, original crew/inspection/engagement/Speed Shop selectors, world seed/city alignment, all-party collision and gait, replacement recruits and spy confrontation |
 | Fresh campaign | New-cadet input route through training, companions, paid apprenticeships, holodisk, password and cache ending; original checks at selected prerequisites |
 | Remaining original campaign | Additional branches and broader DOS combat/presentation parity |
-| M5 | Preparation, Updated roster, shared definitions, CHI-dependent projects, authored maps/events and small roster GUI implemented; independent games, Lua and full map/event editor remain in the [plan](ENGINE_AND_EDITOR_PLAN.md) |
+| M5 | Preparation, Updated roster, definitions/projects, authored maps/events, independent miniature game, bounded Lua and first roster/map/event editor implemented; rich authoring remains in the [plan](ENGINE_AND_EDITOR_PLAN.md) |
 | Updated LRM1–LRM5 | Saved Enhanced/Legacy profiles, LRM minimum range, weapon-aware positioning and volleys, live firing checks and release verification |
 
 The owner-requested [engine and editor plan](ENGINE_AND_EDITOR_PLAN.md) records
@@ -89,8 +94,9 @@ The [M5a CHI roster slice](M5A_ROSTER_SLICE.md) now supplies the pre-logo
 Original/Updated selector and 31 playable external models/variants, with broker,
 encounter and save support. The early general-schema sample remains an offline
 prototype; current project schemas are consumed by the shared C loader. M5a,
-the CHI-dependent part of M5b and a small M5c roster GUI are implemented;
-independent content, Lua and the broader editor remain **proposed**.
+M5b's independent miniature game and the first M5c roster/map/event GUI are
+implemented. Richer events, scripting tools and asset/animation authoring remain
+**proposed**.
 The broker occupies an unused Starport building, offers buying/selling with
 four owned bays, and groups stock into Light, Medium, Heavy and Assault classes,
 sorted by tonnage/name with eight-row scrolling. Inspection bars fit their
@@ -105,8 +111,8 @@ The [pack guide](../content/updated/README.md) records source statistics,
 temporary sprites, authored prices and adaptation limits. The original story
 LAM and training Jenners retain their original definitions.
 The [five editor tasks](ENGINE_AND_EDITOR_PLAN.md#13-next-five-tasks-toward-an-editor)
-now have their first three steps implemented, plus the small roster portion of
-step 5. Step 4's independent miniature game and the full map/event GUI remain.
+now have all five bounded steps implemented. Their gates and remaining limits
+are recorded in the independent game/editor guide.
 The broker now has [new AI-generated artwork](../content/updated/art/README.md)
 and the other buildings' description/compact-choice layout. The selected male
 salesman master, final prompt, exact 88×88 preview and ANM are included, along
@@ -282,7 +288,7 @@ within [its documented bounds](M4_PORTABILITY_SWEEP.md). Proposed follow-ups:
 
 Physical 8 MHz XT speaker calibration also needs an appropriate recording.
 
-The separate authoring direction next proceeds to independent assets and a
-miniature game, then visual map/event tools, as defined in the
+The separate authoring direction next proceeds to richer commands/scripts and
+asset/animation tools, as defined in the
 [engine/editor plan](ENGINE_AND_EDITOR_PLAN.md). Authored feature completion
 does not imply that these original-fidelity tasks are complete.

@@ -52,11 +52,21 @@ export, validation and play commands for both platforms. Original and Updated
 remain available as before. [Authored maps and events](docs/M5_MAPS_EVENTS_EDITOR.md)
 now support entrances, overlays, shop stock, recruitment, transfers, battles and
 saved continuations. Try [Frontier Depot](examples/adventure-demo/README.md).
-A small desktop roster editor edits mech/weapon forms, validates, saves and
-launches the player: `python3 tools/roster_editor.py work/editor-ready`.
-Its [guide](docs/M5_MAPS_EVENTS_EDITOR.md#roster-editor) covers project creation
-and Windows setup. Lua, independent assets and map/event GUI editing remain
-later work.
+The [game editor and independent demo](docs/M5_INDEPENDENT_GAME_EDITOR.md)
+now add map painting, overlays, entrances/NPCs, encounters, event/choice forms,
+roster editing, shared validation, undo/redo, export and Play here:
+
+```sh
+./build/btech-port --project examples/beacon-demo --save-file work/beacon-game.btp
+python3 tools/game_editor.py examples/beacon-demo
+```
+
+[Last Beacon](examples/beacon-demo/README.md) is a complete tiny quest with its
+own graphics, font, text, sound and a bounded Lua event. It requires **no original
+files or caches**. Use New project in the editor to make your own copy. The guide
+includes a build without original files and Windows setup. The old roster-editor
+launcher remains supported, including `work/editor-ready` for the exported
+31-mech CHI roster. Rich script/asset/animation tools remain future work.
 
 An ordinary launch first asks **Original BTECH CHI** or **Updated BTECH CHI**,
 before the Westwood/Infocom logo. Original is the default. Use arrows and

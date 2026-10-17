@@ -2,16 +2,19 @@
 
 Recorded **2026-10-16**, against implementation commit `c29ea75`.
 
-**Status: M5-P1–P5 and the CHI-specific part of M5a are implemented.** Updated
+**Status: preparation, external definitions, independent demo and first editor
+implemented within the bounds in section 13.** Updated
 now has 31 external mech definitions, a categorized broker, optional building
 art and saved Enhanced/Legacy combat profiles. This document
 records the discussion about additional mechs, external game data, BLD/Lua
 scripting and a Windows/Linux game editor. Shared loading, semantic unit
 lookups, original action dispatch, persistence isolation and an offline
 schema/sample are in place; see [preparation evidence](M5_PREPARATION.md) and the
-[content inventory](CONTENT_INVENTORY.md). Runtime packages, Lua and the editor
-remain proposed. [The next five tasks](#13-next-five-tasks-toward-an-editor)
-turn the current expansion support into an authoring workflow. Original fidelity work is tracked in
+[content inventory](CONTENT_INVENTORY.md). Runtime packages, a bounded Lua host
+and the roster/map/event editor are now implemented; see the
+[independent game guide](M5_INDEPENDENT_GAME_EDITOR.md). The
+[five tasks](#13-next-five-tasks-toward-an-editor) record those gates and the
+remaining rich-authoring limits. Original fidelity work is tracked in
 [PROJECT_STATUS.md](PROJECT_STATUS.md).
 
 The [five preparation increments](#9-preparation-that-can-be-done-now) record
@@ -595,9 +598,8 @@ been hidden inside these refactors.
 These milestones extend the existing optional M5 direction. Their completion
 requires delivered behavior and evidence, not just new directories or classes.
 This is the original milestone outline. See section 13 for current progress:
-M5a and the CHI-dependent maps/events portion of M5b are implemented, along
-with a small M5c roster editor. Independent content and the rest of M5c–M5e
-remain proposed.
+M5a, M5b's independent miniature game and the first M5c roster/map/event editor
+are implemented within their recorded bounds. M5d–M5e remain proposed.
 
 | Milestone | Deliverable | Completion gate |
 | --- | --- | --- |
@@ -717,14 +719,16 @@ CHI-dependent parts of M5b/M5c and the remaining independent-game work.
 ## 13. Next five tasks toward an editor
 
 Updated **2026-10-17** after the categorized broker and 31-model roster. These
-were proposed after that increment. **Tasks 1–3 and the small roster portion of
-task 5 are now implemented**, with
+were proposed after that increment. **Tasks 1–5 are now implemented within their
+bounded first-editor scope**, with
 commands, explicit CHI-profile limits and verification in
 [M5 authoring/projects](M5_AUTHORING_PROJECTS.md). Task 2 is the CHI-dependent
 foundation, not the independent-game milestone. See
 [maps/events and the roster editor](M5_MAPS_EVENTS_EDITOR.md) for task 3's
-CHI-dependent scope and the shipped GUI. Task 4 and the full map/event editor
-remain next.
+CHI-dependent scope. The [independent game/editor guide](M5_INDEPENDENT_GAME_EDITOR.md)
+records task 4's Last Beacon demonstration, bounded Lua host and task 5's map,
+placement/event forms, export and Play here. Richer scripting and asset/animation
+authoring remain next.
 
 1. **Finish the content definition boundary (M5a).** Reconcile
    `btp-chi-roster-v1`, `combat.json` and the provisional general schema into one
@@ -777,9 +781,10 @@ remain next.
    its files. Rich scripting tools, animation/audio authoring and publishing
    remain M5d/M5e.
 
-The **small roster editor** is now implemented: edit names, movement, armor,
-loadouts, prices and presentation; validate; then launch the player with that
-CHI-dependent project. A full Unlimited Adventures-style game editor still
-needs task 4 and the map/event portion of task 5.
+The roster editor now forms part of the first game editor: edit names, movement,
+armor, loadouts, prices and presentation, then author maps/events, validate,
+save/export and launch the same player. Last Beacon proves the independent route;
+CHI-dependent projects remain available. More commands, script debugging and
+asset/animation tools belong to M5d–M5e.
 Neither route requires replacing the current playable game or changing the two
 reference directories. Keep each increment playable and separately committed.
