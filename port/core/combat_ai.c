@@ -50,7 +50,7 @@ static int shot_value(BtpAttackQuery q,const BtpCombatUnit *a,unsigned mount)
     return value>0 ? value : 0;
 }
 static int volley(const BtpState *s,const BtpResources *r,const BtpCombatUnit *a,
-    const BtpCombatUnit *target,unsigned actor,unsigned mode,unsigned steps,unsigned terrain,uint8_t orders[12],unsigned id)
+    const BtpCombatUnit *target,unsigned actor,unsigned mode,unsigned steps,unsigned terrain,uint8_t orders[12],unsigned id,int exact)
 {
     int value[12]={0};unsigned heat[12]={0};uint16_t used=0;
     unsigned total_heat=0;int total=-cooling_cost(a,mode,steps,terrain,0);
@@ -60,6 +60,26 @@ static int volley(const BtpState *s,const BtpResources *r,const BtpCombatUnit *a
         BtpAttackQuery q=btp_combat_query(a,target,&r->combat,btp_active_combat_profile(s,r),w,
             mode==255 ? -1 : (int)mode,0,btp_combat_actor_skill(s,actor,w),btp_combat_id(&s->combat,actor),s->explored);
         value[w]=shot_value(q,a,w);heat[w]=q.heat;
+    }
+    if (exact) {
+        /* Only shortlisted positions pay for all subsets. Ten mounts plus
+           Kick need at most 2048 masks; cooling is cached by total heat. */
+        unsigned mounts[11],count=0,max_heat=0;
+        for (unsigned w=0;w<12;++w) if (value[w]) { mounts[count++]=w;max_heat+=heat[w]; }
+        if (max_heat>255) max_heat=255;
+        int costs[256],values[2048]={0};uint8_t heats[2048]={0};
+        for (unsigned h=0;h<=max_heat;++h) costs[h]=cooling_cost(a,mode,steps,terrain,h);
+        unsigned chosen=0;int best=-costs[0];
+        for (unsigned mask=1;mask<(1u<<count);++mask) {
+            unsigned bit=0;while (!(mask&(1u<<bit))) ++bit;
+            unsigned previous=mask&(mask-1u),w=mounts[bit];
+            unsigned h=heats[previous]+heat[w];if (h>255) h=255;
+            heats[mask]=(uint8_t)h;values[mask]=values[previous]+value[w];
+            int utility=values[mask]-costs[h];
+            if (utility>best) { best=utility;chosen=mask; }
+        }
+        for (unsigned i=0;i<count;++i) if (chosen&(1u<<i)) orders[mounts[i]]=(uint8_t)id;
+        return best;
     }
     /* A bounded marginal-utility selection gives position scoring a cooling-
        aware volley. Live firing rechecks eligibility as units move/die. */
@@ -83,12 +103,11 @@ static int inside(const BtpState *s,int x,int y)
     /* Do not turn a support reposition into the player's map-edge escape. */
     return x>=2 && x<=123 && y>=2 && y<=125;
 }
-static int candidate(const BtpState *s,const BtpResources *r,const BtpMap *map,unsigned actor,
-    const unsigned targets[TARGETS],unsigned count,unsigned mode,int x,int y,BtpAiPlan *out)
+static int score_plan(const BtpState *s,const BtpResources *r,const BtpMap *map,unsigned actor,
+    const unsigned targets[TARGETS],unsigned count,BtpAiPlan *out,int exact)
 {
     const BtpCombatState *c=&s->combat;BtpCombatUnit a=c->unit[actor];
-    *out=(BtpAiPlan){.movement=(uint8_t)mode,.target=255,.score=INT_MIN};memset(out->path,2,sizeof out->path);
-    if (mode!=255) btp_combat_plan_actor(map,s,actor,x,y,mode,out->path);
+    unsigned mode=out->movement;out->steps=0;out->target=255;out->score=INT_MIN;
     for (unsigned i=0;i<12;++i) {
         int mx=out->path[i][0],my=out->path[i][1];if (mx==2 || my==2) break;
         int nx=(int)a.x+mx,ny=(int)a.y+my;
@@ -106,7 +125,7 @@ static int candidate(const BtpState *s,const BtpResources *r,const BtpMap *map,u
         int visible=btp_combat_scene_los(r,s,map,a.x,a.y,t.x,t.y)>0;
         uint8_t orders[12];memset(orders,255,sizeof orders);
         unsigned distance=btp_combat_distance(a.x,a.y,t.x,t.y);
-        int score=visible ? volley(s,r,&a,&t,actor,mode,out->steps,terrain,orders,btp_combat_id(c,target)) : -500;
+        int score=visible ? volley(s,r,&a,&t,actor,mode,out->steps,terrain,orders,btp_combat_id(c,target),exact) : -500;
         int armed=0;for (unsigned w=0;w<12;++w) armed|=orders[w]!=255;
         /* No useful shot: make progress toward a target/clear ray rather than
            winning by standing still forever outside every usable weapon. */
@@ -139,6 +158,13 @@ static int candidate(const BtpState *s,const BtpResources *r,const BtpMap *map,u
     }
     return out->target!=255;
 }
+static int candidate(const BtpState *s,const BtpResources *r,const BtpMap *map,unsigned actor,
+    const unsigned targets[TARGETS],unsigned count,unsigned mode,int x,int y,BtpAiPlan *out)
+{
+    *out=(BtpAiPlan){.movement=(uint8_t)mode};memset(out->path,2,sizeof out->path);
+    if (mode!=255) btp_combat_plan_actor(map,s,actor,x,y,mode,out->path);
+    return score_plan(s,r,map,actor,targets,count,out,0);
+}
 int btp_combat_ai_plan(const BtpState *s,const BtpResources *r,const BtpMap *map,unsigned actor,BtpAiPlan *out)
 {
     const BtpCombatState *c=&s->combat;
@@ -160,6 +186,7 @@ int btp_combat_ai_plan(const BtpState *s,const BtpResources *r,const BtpMap *map
     }
     if (!count) return 0;
     candidate(s,r,map,actor,targets,count,255,a->x,a->y,out);unsigned examined=1;
+    BtpAiPlan shortlist[8];shortlist[0]=*out;unsigned retained=1;
     int destinations[DESTINATIONS][2];unsigned n=0;
     for (unsigned radius=0;radius<3;++radius) for (unsigned d=0;d<8;++d) {
         int length=radius==0 ? 2 : radius==1 ? 6 : 12;
@@ -168,7 +195,61 @@ int btp_combat_ai_plan(const BtpState *s,const BtpResources *r,const BtpMap *map
     for (unsigned i=0;i<count;++i) { destinations[n][0]=c->unit[targets[i]].x;destinations[n++][1]=c->unit[targets[i]].y; }
     for (unsigned mode=0;mode<3;++mode) if (btp_combat_points(a,mode)>0) for (unsigned d=0;d<n;++d) {
         BtpAiPlan next;candidate(s,r,map,actor,targets,count,mode,destinations[d][0],destinations[d][1],&next);++examined;
-        if (next.score>out->score) *out=next;
+        unsigned at=0;
+        while (at<retained && shortlist[at].score>=next.score) ++at;
+        if (at<8) {
+            if (retained<8) ++retained;
+            for (unsigned i=retained-1;i>at;--i) shortlist[i]=shortlist[i-1];
+            shortlist[at]=next;
+        }
+    }
+    out->score=INT_MIN;
+    for (unsigned i=0;i<retained;++i) {
+        score_plan(s,r,map,actor,targets,count,&shortlist[i],1);++examined;
+        if (shortlist[i].score>out->score) *out=shortlist[i];
     }
     out->candidates=examined;return 1;
+}
+int btp_combat_ai_fire(const BtpState *s,const BtpResources *r,const BtpMap *map,
+    unsigned actor,unsigned target,unsigned mount,int movement)
+{
+    const BtpCombatState *c=&s->combat;const BtpCombatUnit *a=&c->unit[actor],*t=&c->unit[target];
+    const BtpCombatProfile *profile=btp_active_combat_profile(s,r);
+    unsigned friends=c->friends ? c->friends : 1u;
+    if (!profile || a->infantry || (actor<friends && !(c->automatic&(UINT32_C(1)<<actor)))) return 1;
+    BtpAttackQuery now=btp_combat_query(a,t,&r->combat,profile,mount,movement,c->moved[target],
+        btp_combat_actor_skill(s,actor,mount),btp_combat_id(c,actor),s->explored);
+    int value=shot_value(now,a,mount);if (!value) return 0;
+    unsigned terrain;(void)btp_combat_cover(map,a,&terrain);
+    unsigned mode=movement<0 ? 255u : (unsigned)movement;
+    if (value+cooling_cost(a,mode,c->moved[actor],terrain,0)<=cooling_cost(a,mode,c->moved[actor],terrain,now.heat)) return 0;
+    unsigned weapon=mount==11 ? 32u : btp_combat_weapon(a,mount);
+    if (!btp_combat_profile_lrm(weapon) || c->step>=11) return 1;
+    /* A unit fires once per microstep. Reserve opportunities for the rest of
+       its useful volley: two launchers must not both wait for step twelve. */
+    unsigned pending=0;uint16_t fired=actor ? c->enemy_fired[actor-1] : c->fired;
+    for (unsigned w=0;w<12;++w) {
+        unsigned order=actor ? c->enemy_orders[actor-1][w] : c->friends ?
+            w==11 ? c->plans[0].kick : c->plans[0].orders[w] : w==11 ? c->kick_target : c->orders[w];
+        if (order==255 || (fired&(1u<<w))) continue;
+        unsigned next=btp_combat_target(c,order);if (next>=c->count || c->unit[next].record[0]==255) continue;
+        BtpAttackQuery q=btp_combat_query(a,&c->unit[next],&r->combat,profile,w,movement,c->moved[next],
+            btp_combat_actor_skill(s,actor,w),btp_combat_id(c,actor),s->explored);
+        pending+=shot_value(q,a,w)>0;
+    }
+    if (pending>=12u-c->step) return 1;
+    BtpCombatUnit future=*a;unsigned at=c->path_index[actor];
+    for (unsigned remaining=11u-c->step;remaining && at<12;--remaining,++at) {
+        int mx=c->path[actor][at][0],my=c->path[actor][at][1];
+        if (mx==2 || my==2 || (!mx && !my)) break;
+        future.x=(uint8_t)((int)future.x+mx);future.y=(uint8_t)((int)future.y+my);
+        if (btp_combat_scene_los(r,s,map,future.x,future.y,t->x,t->y)<=0) continue;
+        BtpAttackQuery later=btp_combat_query(&future,t,&r->combat,profile,mount,movement,c->moved[target],
+            btp_combat_actor_skill(s,actor,mount),btp_combat_id(c,actor),s->explored);
+        /* Only forecast our committed path against the target's current
+           position. Recheck each microstep; final opportunity always falls
+           through, so a blocked route cannot defer a useful shot forever. */
+        if (shot_value(later,a,mount)>value+20) return 0;
+    }
+    return 1;
 }

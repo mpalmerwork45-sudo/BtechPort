@@ -27,7 +27,14 @@ the pre-change baseline; the delivery record below distinguishes completed work.
   Catapult, Trebuchet and Archer cases retreat when supplied and approach with
   empty launchers; Atlas accepts its useful close fight. Blocked maps hold
   safely. Six focused native suites pass (`work/lrm-stage3.log`).
-  LRM4–LRM5 remain in progress; new-game defaults are not enabled yet.
+- **LRM4 implemented:** exact cooling-aware volleys for eight shortlisted
+  positions, live shot valuation and bounded LRM deferral. Remaining useful
+  mounts reserve firing opportunities. A synthetic two-launcher retreat fires
+  each launcher once and resumes identically through every tick, including
+  held effects; per-unit Computer/Next/Space controls and the stationary shell
+  pass. The focused policy suite has 20,167 checks. Original combat/UI/pacing
+  regressions also pass (`work/lrm-stage4.log`).
+  LRM5 remains in progress; new-game defaults are not enabled yet.
 
 ## Movement calculations
 

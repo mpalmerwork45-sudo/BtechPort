@@ -4,10 +4,12 @@
 #include "core/combat.h"
 #include "core/combat_ai.h"
 #include "core/npc.h"
+#include "core/party.h"
 #include "frontend/pixels.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 static unsigned checks;
 #define CHECK(x) do { ++checks;if (!(x)) { fprintf(stderr,"FAIL %s:%d: %s\n",__FILE__,__LINE__,#x);exit(1); } } while (0)
 static BtpError error;
@@ -17,7 +19,9 @@ static void same(const BtpState *a,const BtpState *b)
 }
 static void roundtrip(BtpState *s,const BtpResources *r)
 {
-    BtpState restored;CHECK(btp_save_write("work/lrm/held.btp",s,r,&error));
+    BtpState restored;int saved=btp_save_write("work/lrm/held.btp",s,r,&error);
+    if (!saved) fprintf(stderr,"save: %s; mission=%u phase=%u combat valid=%d\n",error.text,s->mission.assignment,s->combat.phase,btp_combat_valid(s));
+    CHECK(saved);
     CHECK(btp_save_is_updated("work/lrm/held.btp"));CHECK(btp_save_load("work/lrm/held.btp",&restored,r,&error));
     same(s,&restored);CHECK(!remove("work/lrm/held.btp"));
 }
@@ -138,10 +142,112 @@ static void tactics(BtpResources *r)
         unsigned distance=btp_combat_distance(p.x,p.y,t->x,t->y),start=btp_combat_distance(a->x,a->y,t->x,t->y),shots=0;
         for (unsigned w=0;w<12;++w) shots+=p.orders[w]!=255;
         printf("plan %-16.16s empty=%u distance=%u->%u mode=%u steps=%u shots=%u score=%d\n",a->record,empty,start,distance,p.movement,p.steps,shots,p.score);
-        CHECK(p.candidates<=85 && p.steps<=12);
+        CHECK(p.candidates<=93 && p.steps<=12);
         if (i<3) CHECK(empty ? distance<start : distance>start);
         memset(map.tiles,255,sizeof map.tiles);CHECK(btp_combat_ai_plan(&s,r,&map,0,&p));CHECK(!p.steps);memset(map.tiles,64,sizeof map.tiles);
     }
+    /* Every model, including mixed assault loadouts, must obey ammunition,
+       damage and heat constraints. No random draws are used by planning. */
+    for (unsigned model=0;model<r->roster.count;++model) for (unsigned scenario=0;scenario<6;++scenario) {
+        s=base;BtpCombatUnit *a=&s.combat.unit[0],*t=&s.combat.unit[1];
+        memcpy(a->record,r->roster.mechs[model].record,125);a->x=40;a->y=64;a->heat=(uint8_t)(scenario==1 ? 20 : scenario==2 ? 29 : 0);a->pool=0;
+        memcpy(t->record,r->combat.jenner,125);t->x=68;t->y=64;
+        if (scenario==3) for (unsigned w=0;w<10;++w) if (a->record[39+w]!=255) a->record[39+w]=0;
+        if (scenario==4) { a->record[36]=a->record[37]=0;a->record[50]=0; }
+        if (scenario==5) for (unsigned k=51;k<86;++k) if (a->record[k]>=26 && a->record[k]<=29) a->record[k]|=128;
+        before=s;BtpAiPlan p;CHECK(btp_combat_ai_plan(&s,r,&map,0,&p));same(&s,&before);
+        BtpCombatUnit projected=*a;projected.x=p.x;projected.y=p.y;unsigned terrain;
+        projected.cover=(uint8_t)btp_combat_cover(&map,&projected,&terrain);BtpCombatUnit unarmed=projected;
+        for (unsigned w=0;w<12;++w) if (p.orders[w]!=255) {
+            CHECK(w!=10 && (w==11 ? btp_combat_can_kick(a) : btp_combat_weapon(a,w)<33));
+            unsigned weapon=w==11 ? 32u : btp_combat_weapon(a,w);
+            projected.pool=(uint8_t)(projected.pool+(r->combat.weapons[weapon][13]&15u));
+        }
+        btp_combat_cool(&projected,p.movement==255 ? -1 : p.movement,p.steps,terrain);
+        btp_combat_cool(&unarmed,p.movement==255 ? -1 : p.movement,p.steps,terrain);
+        CHECK(unarmed.heat==30 || projected.heat<30);
+        CHECK(p.steps<=(p.movement==255 ? 0u : (unsigned)btp_combat_points(a,p.movement)));
+    }
+}
+static void firing(BtpResources *r)
+{
+    BtpState s;battle_base(&s,r);s.combat_profile=1;s.combat_fingerprint=r->combat_profile.fingerprint;
+    BtpCombatState *c=&s.combat;BtpCombatUnit *a=&c->unit[0],*t=&c->unit[1];
+    a->x=64;a->y=64;t->x=80;t->y=64;a->record[51]=29;a->record[39]=10;s.mech_skills[0]=0;
+    c->automatic=1;c->step=0;c->path_index[0]=0;memset(c->path[0],2,sizeof c->path[0]);
+    for (unsigned i=0;i<6;++i) { c->path[0][i][0]=-1;c->path[0][i][1]=0; }
+    BtpMap map=r->map;memset(map.tiles,64,sizeof map.tiles);BtpState before=s;
+    CHECK(!btp_combat_ai_fire(&s,r,&map,0,1,0,-1));same(&s,&before);
+    c->step=11;CHECK(btp_combat_ai_fire(&s,r,&map,0,1,0,-1));
+    c->step=0;c->automatic=0;CHECK(btp_combat_ai_fire(&s,r,&map,0,1,0,-1));
+    c->automatic=1;a->record[39]=0;CHECK(!btp_combat_ai_fire(&s,r,&map,0,1,0,-1));
+    a->record[39]=10;a->heat=29;CHECK(!btp_combat_ai_fire(&s,r,&map,0,1,0,-1));
+}
+static void resumed_tick(BtpState *s,const BtpResources *r,BtpAction action)
+{
+    uint8_t bytes[BTP_STATE_BYTES];BtpState restored;
+    btp_state_encode(s,bytes);CHECK(btp_state_decode(bytes,sizeof bytes,btp_active_map(r,s),btp_state_bld(r,s),&restored));
+    btp_game_tick(s,r,action);btp_game_tick(&restored,r,action);same(s,&restored);
+}
+static void live_volley(BtpResources *r)
+{
+    BtpState s;battle_base(&s,r);BtpMap saved_map=r->map;memset(r->map.tiles,64,sizeof r->map.tiles);
+    s.combat_profile=1;s.combat_fingerprint=r->combat_profile.fingerprint;
+    s.mission.assignment=2;s.story_flags[0]=2;btp_combat_begin(&s,r);s.combat.phase=BTP_COMBAT_MENU;
+    BtpCombatState *c=&s.combat;BtpCombatUnit *a=&c->unit[0],*target=&c->unit[1];
+    /* Declared synthetic pure-LRM fixture, with twelve running advances to
+       exercise the final-opportunity deadline. It is not a roster model. */
+    memcpy(a->record,r->combat.loans[0],125);memset(a->record+51,0,35);
+    a->record[51]=a->record[52]=26;a->record[39]=a->record[40]=10;a->record[49]=8;a->record[50]=0;
+    a->x=64;a->y=64;a->heat=a->pool=0;memcpy(target->record,r->combat.loans[0],125);target->infantry=0;target->x=88;target->y=64;
+    s.menu.sound=0;s.menu.speed=0;s.menu.outtakes=0;s.mech_skills[0]=2;
+    c->automatic=1;c->graphics=1;c->selected=9;btp_combat_tick(&s,r,BTP_ACCEPT);
+    CHECK(c->phase==BTP_COMBAT_ROUND);
+    memset(c->orders,255,11);c->orders[0]=c->orders[1]=(uint8_t)btp_combat_id(c,1);c->kick_target=255;
+    c->movement=1;c->goal_x=52;c->goal_y=64;
+    for (unsigned i=0;i<12;++i) { c->path[0][i][0]=-1;c->path[0][i][1]=0; }
+    roundtrip(&s,r);CHECK(btp_save_write("work/lrm/retreat.btp",&s,r,&error));
+    unsigned ticks=0,first=0,shots=0,effects=0,deferred=0;uint16_t fired=0;
+    while (c->phase==BTP_COMBAT_ROUND && ticks++<4096) {
+        resumed_tick(&s,r,BTP_IDLE);
+        CHECK(target->x==88 && target->y==64); /* Training shell stays still. */
+        if (c->step && !c->fired && !deferred) {
+            deferred=1;roundtrip(&s,r);CHECK(btp_save_write("work/lrm/deferred.btp",&s,r,&error));
+        }
+        if (c->fired!=fired) { if (!shots) first=c->step; ++shots;fired=c->fired; }
+        if (s.effects.count && !effects) {
+            effects=1;roundtrip(&s,r);CHECK(btp_save_write("work/lrm/effects.btp",&s,r,&error));
+        }
+    }
+    CHECK(ticks<4096 && c->phase==BTP_COMBAT_MENU && deferred && effects);
+    CHECK(shots==2 && first>1 && c->fired==3 && a->record[39]==9 && a->record[40]==9);
+    printf("live retreat: first shot at microstep %u, two launchers each fired once; %u resumed ticks\n",first,ticks);
+    roundtrip(&s,r);r->map=saved_map;
+}
+static void controls(BtpResources *r)
+{
+    BtpState s;CHECK(btp_save_load("Original DOS/GAME3",&s,r,&error));
+    CHECK(!s.combat_profile);CHECK(btp_set_combat_profile(&s,r,1));
+    s.campaign.encounter=1;s.mode=BTP_ENCOUNTER;s.x_half=64;s.y_half=66;
+    s.campaign.battle_x=1152;s.campaign.battle_y=1664;s.menu.sound=0;s.menu.outtakes=0;s.menu.speed=0;
+    s.combat=(BtpCombatState){.phase=BTP_COMBAT_MENU,.selected=5,.count=3,.friends=2,
+        .target_unit=2,.last_target=2,.movement=255,.kick_target=255,.enemy_movement=255};
+    BtpCombatState *c=&s.combat;memset(c->orders,255,11);memset(c->enemy_orders,255,sizeof c->enemy_orders);
+    memset(c->enemy_modes,255,sizeof c->enemy_modes);
+    for (unsigned i=0;i<3;++i) {
+        memset(c->path[i],2,sizeof c->path[i]);
+        c->ids[i]=(uint8_t)(i==2 ? 12 : i);c->unit[i].x=(uint8_t)(i==2 ? 90 : 60);c->unit[i].y=(uint8_t)(60+6*i);
+        memcpy(c->unit[i].record,i==2 ? r->combat.jenner : btp_party_mech(&s,i),125);
+        if (i<2) { c->plans[i].movement=c->plans[i].kick=255;memset(c->plans[i].orders,255,11); }
+    }
+    resumed_tick(&s,r,BTP_OPEN_MENU);CHECK(c->automatic==1 && !c->auto_run && !c->round && c->phase==BTP_COMBAT_MENU);
+    c->selected=7;resumed_tick(&s,r,BTP_OPEN_MENU);CHECK(c->active_unit==1);
+    c->selected=5;resumed_tick(&s,r,BTP_OPEN_MENU);CHECK(c->automatic==3 && !c->auto_run && !c->round);
+    c->selected=9;resumed_tick(&s,r,BTP_OPEN_MENU);CHECK(c->phase==BTP_COMBAT_ROUND);
+    c->auto_run=1;resumed_tick(&s,r,BTP_OPEN_MENU);CHECK(c->paused && !c->auto_run && c->automatic==3);
+    unsigned ticks=0;while (c->phase==BTP_COMBAT_ROUND && ticks++<4096) resumed_tick(&s,r,BTP_IDLE);
+    CHECK(ticks<4096 && c->phase==BTP_COMBAT_MENU && c->automatic==3);
+    roundtrip(&s,r);c->selected=3;resumed_tick(&s,r,BTP_OPEN_MENU);CHECK(c->automatic==1);
 }
 int main(int argc,char **argv)
 {
@@ -149,6 +255,7 @@ int main(int argc,char **argv)
     BtpOriginalContentPaths paths={argv[1],"work/talk-data.bin","work/combat-data.bin","work/world-data.bin"};
     CHECK(btp_content_load_original(&content,&paths,&error));
     CHECK(btp_content_select(&content,BTP_CONTENT_UPDATED,"content/updated/roster.json",&error));
-    profiles(content.resources);parser(&content.resources->combat_profile);queries(content.resources);manual_rules(content.resources);tactics(content.resources);
+    profiles(content.resources);parser(&content.resources->combat_profile);queries(content.resources);manual_rules(content.resources);tactics(content.resources);firing(content.resources);
+    live_volley(content.resources);controls(content.resources);
     btp_content_close(&content);printf("Updated combat: %u checks passed\n",checks);return 0;
 }

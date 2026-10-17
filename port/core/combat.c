@@ -681,6 +681,7 @@ static void round_tick(BtpState *s, const BtpResources *r, int enemy_ai)
             int ignition=enemy->cover && terrain[target]>=16 && terrain[target]<=63 &&
                 ((w>=16 && w<=18) || w==11);
             int movement=actor ? (actor==1 ? c->enemy_movement : c->enemy_modes[actor-2]) : c->friends ? (c->plans[0].active || (c->automatic&1u)) ? c->plans[0].movement : 255 : (c->goal_active || (c->automatic&1u)) ? c->movement : 255;
+            if (!btp_combat_ai_fire(s,r,&map,actor,target,i,movement==255 ? -1 : movement)) continue;
             unsigned skill=actor ? 0u : s->mech_skills[i==11 ? 1 : 0];
             /* 12E8:03B5 / 071B also use an enemy vehicle's pilot slot in
                C614's skill table. Loan opponents commonly alias Jason. */

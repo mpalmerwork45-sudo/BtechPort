@@ -12,4 +12,8 @@ typedef struct {
 int btp_combat_ai_plan(const BtpState *state,const BtpResources *resources,
     const BtpMap *map,unsigned actor,BtpAiPlan *plan);
 unsigned btp_combat_actor_skill(const BtpState *state,unsigned actor,unsigned weapon);
+/* Automated orders may wait for an improving shot along their own path.
+   Existing order/fired bytes suffice to resume this decision after a save. */
+int btp_combat_ai_fire(const BtpState *state,const BtpResources *resources,const BtpMap *map,
+    unsigned actor,unsigned target,unsigned mount,int movement);
 #endif
