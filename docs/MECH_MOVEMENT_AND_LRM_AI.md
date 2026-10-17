@@ -1,13 +1,16 @@
 # Mech movement audit and Updated LRM combat plan — 2026-10-17
 
-The current mech movement allowances match the original calculations in the
-tested cases. The combat AI can fire LRMs, but its original range heuristic
-does not provide good fire-support tactics for the expanded roster. An optional
-Updated-mode planner is justified; the original attack rules do not require an
-LRM-specific fix on the evidence below. The owner has requested a plan for that
-planner **including LRM minimum range**. The implementation plan below is
-now being implemented at the owner's request. The dated audit above remains
-the pre-change baseline; the delivery record below distinguishes completed work.
+The mech movement allowances match the original calculations in the tested
+cases. All five requested Updated combat milestones are implemented. Fresh
+Updated games use Enhanced tactics and LRM minimum range; older saves retain
+Legacy until changed through Space → Change game settings → Combat rules.
+Original mode retains the original planner and attack rules.
+
+The original range heuristic does not provide good fire-support tactics for
+the expanded roster, but the evidence does not justify changing the original
+attack rules. Enhanced is an explicitly authored adaptation. The dated audit
+below remains the pre-change baseline; the delivery and release records
+distinguish it from the new behavior.
 
 ## Implementation record
 
@@ -34,7 +37,72 @@ the pre-change baseline; the delivery record below distinguishes completed work.
   held effects; per-unit Computer/Next/Space controls and the stationary shell
   pass. The focused policy suite has 20,167 checks. Original combat/UI/pacing
   regressions also pass (`work/lrm-stage4.log`).
-  LRM5 remains in progress; new-game defaults are not enabled yet.
+- **LRM5 implemented:** Enhanced defaults for new Updated campaigns, full
+  native regression, focused sanitizer/Wine checks, startup and held-screen
+  checks on both SDL builds, and 1,344 deterministic seeded comparisons.
+  The final focused policy suite has **25,136 checks**, including footprint
+  checks on every advance through terrain, streets and encounter boundaries.
+  Release measurements and remaining limits follow.
+
+## Release results
+
+Native CTest passes **64/64** (41.82 seconds); Python passes **32/32**. Nine
+focused ASan/UBSan/LeakSanitizer suites and the same nine Windows/Wine suites
+pass. The final rules-page layout also passes focused native/UI checks.
+Linux and Windows SDL each exercise nine startup scenarios and nine held
+states: old Updated save, rules choice, enable/disable, target, retreat,
+deferred launcher, effects and Original import. F5/F9 continuations match
+headless state and pixels. Space selects the rules, and new-game setup
+selects Enhanced while both types of old save retain Legacy.
+
+`btp-lrm-ai-audit` runs **448 prerequisites per policy**, at most eight rounds
+each: seven real models plus a labeled synthetic pure-LRM carrier, seven
+conditions and eight fixed seeds. Conditions are close/medium supplied,
+empty ammo, heat 20, one round per finite-ammo mount, destroyed launchers and
+a stationary training target. Other opponents are active Jenners. Terrain
+is deliberately open; this measures local tactics, not campaign balance.
+
+| Mean per prerequisite | Legacy profile | Legacy orders + Enhanced rules/filter | Enhanced profile |
+|---|---:|---:|---:|
+| Armor/internal points removed from opponent | 248.43 | 262.79 | 250.13 |
+| Armor/internal points lost | 77.90 | 94.04 | 78.23 |
+| Finite-ammo rounds used | 7.44 | 6.31 | 6.60 |
+| Peak round-end heat | 18.35 | 11.44 | 9.74 |
+| Rounds without a move or shot | 0.85 | 0.29 | 0.06 |
+| Won within eight rounds | 61% | 67% | 68% |
+| Lost within eight rounds | 9% | 12% | 9% |
+
+The middle policy uses old order planning with the same Enhanced numeric
+rules and live firing filter as the final column. The final planner reduces
+damage received and heat in these cases. Damage dealt is lower partly because
+encounters can finish earlier; these figures do not establish universally
+better tactics. Different decisions consume combat RNG differently. All
+**1,344 result rows match between Linux and Windows**, after normalizing line
+endings. No stocked real-model case oscillated between alternate round-end
+positions. A few empty/destroyed synthetic pure-LRM cases did; closing on a
+moving opponent with only Kick is still a limitation, not a useful support role.
+
+Planning evaluates at most **93 candidates per actor**, including eight exact
+volley refinements, four eligible targets and at most 2,048 weapon subsets.
+A 24-mech stress mix of Stalker, Atlas, Highlander and Catapult (more mech
+planners than normal mixed parties) was measured over 31 runs:
+
+| Debug build | Median | 95th percentile | Maximum |
+|---|---:|---:|---:|
+| Linux | 17.62 ms | 18.14 ms | 18.30 ms |
+| Windows under Wine | 18 ms | 20 ms | 20 ms |
+
+These `clock()` measurements exclude rendering/audio and driver scheduling;
+they are not promises for every machine. Decisions use fixed operation counts,
+never elapsed time. The ordinary C planner makes no model or network calls.
+
+Remaining limits: expected damage uses original raw cluster averages rather
+than a complete armor/critical-hit probability tree; threat estimates use
+current positions, not unseen orders; navigation remains the original local
+route method. Global squad strategy, indirect fire, new ammunition and broad
+campaign balance are outside this increment. The existing formation recovery
+workaround is separate. Review traces and reproducible commands are in
+[TESTING.md](TESTING.md#updated-combat-release).
 
 ## Movement calculations
 
@@ -73,14 +141,14 @@ every mech by its combat walk statistic. The new audit verifies combat budgets;
 it does not claim different model speeds on the world map or exact tabletop
 movement rules. No movement-rule change was needed for the current roster.
 
-## What the current AI does
+## What the Legacy AI does
 
 **VERIFIED native behavior:** `btp-mech-tactics-audit` runs the real automatic
 player planner in **644 controlled open-ground scenarios**: every external
 model, seven separations, cool/hot, and stock/empty missile ammunition.
 These are planner probes, rather than campaign outcome comparisons.
 
-The current shared planner:
+The compatibility planner:
 
 1. Chooses a nearby target, generally preferring its own unit class.
 2. Scans installed weapon components for a preferred range. The original scan
@@ -127,7 +195,7 @@ use range to avoid shorter-range return fire and protect its missile supply.
 
 ## Updated combat plan
 
-**Authorized implementation plan; see the delivery record above for status.**
+**Implemented design; retained from the authorized plan, with results above.**
 Introduce one versioned Updated combat profile that combines weapon-aware
 tactics with an LRM close-range accuracy penalty. Derive tactics from working
 weapons, ammunition and movement, so a Catapult, Archer, Crusader or future
@@ -184,7 +252,7 @@ half-tile positions and vehicle footprint adjustments. Its non-personal range
 thresholds generally scale by three; interpreting six as six screen tiles or
 six raw coordinate steps would be inconsistent with its other ranges.
 
-Proposed calculation, shared by attack resolution, AI and targeting feedback:
+Implemented calculation, shared by attack resolution, AI and targeting feedback:
 
 1. Obtain `D`, the effective CHI shot distance, using the existing
    `btp_combat_range_to` target-footprint behavior. Infantry targets retain
@@ -215,8 +283,8 @@ Proposed calculation, shared by attack resolution, AI and targeting feedback:
 
 **Deliberate Updated range adjustment:** the extracted CHI LRM rows currently
 end short range at `D < 21`, medium at `D < 45`, and long at `D < 66`.
-The proposed short-range boundary becomes `D < 24`; the other two remain.
-Without that small adjustment, the proposed six-unit penalty would consume
+The Enhanced short-range boundary becomes `D < 24`; the other two remain.
+Without that small adjustment, the six-unit penalty would consume
 CHI's entire short-range band. Record this change alongside the penalty,
 rather than silently changing the original table or claiming exact hex-map
 equivalence. Check the transition visually before finalizing this profile.
@@ -384,8 +452,8 @@ The first release excludes indirect fire/spotters, new missile ammunition,
 Clan/advanced launchers, other weapon minimum ranges, a general weapon editor,
 global squad strategy and a replacement pathfinding engine. Its concrete goal
 is credible direct-fire LRM behavior with measurable compatibility and save
-support. Balance and worst-case planning time remain **UNKNOWN** until the
-proposed gates run.
+support. Bounded scenario outcomes and planning times are recorded above;
+broad campaign balance remains unverified.
 
 ## Reproduction
 

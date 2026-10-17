@@ -94,11 +94,11 @@ and the [latest five-area sweep](M4_PORTABILITY_SWEEP.md).
    recordings remain unverified. PCjr audio is not implemented.
    The [movement/LRM audit](MECH_MOVEMENT_AND_LRM_AI.md) confirms current model
    movement budgets and identifies original-planner limitations for missile
-   support. The owner-requested [Updated combat plan](MECH_MOVEMENT_AND_LRM_AI.md#updated-combat-plan)
-   now includes a minimum-range accuracy penalty, explicit distance scaling,
-   a short-range-band adjustment and five implementation/verification gates.
-   Balance and planning performance remain UNKNOWN until implemented and
-   measured; current AI and LRM rules are unchanged.
+   support. The [Updated implementation](MECH_MOVEMENT_AND_LRM_AI.md) now adds
+   an optional minimum-range penalty, explicit distance scaling and weapon-aware
+   tactics. Bounded seeded comparisons and planning timings are recorded there;
+   broad campaign balance, global squad strategy and indirect fire remain open.
+   Original mode retains the original planner and attack rules.
 7. **Visual parity — mixed coverage.** Title RGB, selected original popup crops,
    font/sprites and menu/inspection facts have primary comparisons. Broader
    combat/portrait geometry, CPU decode cost and several service layouts

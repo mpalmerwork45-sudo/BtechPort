@@ -1,5 +1,59 @@
 # Build, verification and original oracle — 2026-10-17
 
+## Updated combat release
+
+All five [LRM milestones](MECH_MOVEMENT_AND_LRM_AI.md) are implemented. The
+full native run passes **64/64 suites** in 41.82 seconds; Python passes
+**32/32**. The focused Updated policy test passes **25,136 checks**, covering
+profile parsing/identity, six slots, old-save migration, range boundaries,
+pure queries, heat/ammo/damage legality, paths through terrain and streets,
+escape bounds, the arena spectator, per-unit controls and saved shot effects.
+A final UI/layout check passes the Updated and original combat-UI suites.
+
+Nine focused sanitizer suites pass with ASan/UBSan/LeakSanitizer, as do the
+same nine Windows/Wine suites. Selection:
+`updated-combat-policy|updated-roster-lifecycle|original-game-roundtrips|combat-primary-(shots|rules|enemy-ai|navigation|cooling)|combat-ui-save-progression`.
+Build one platform at a time with **two jobs**. The policy tests use synthetic
+maps/loadouts where declared; they do not replace original executable fixtures.
+
+Linux and Windows SDL each pass **18 scenarios**: nine startup/edition checks
+and nine held rules/combat/import states. The checks use real Space/F5/F9 input,
+edition-aware paths and exact resumed headless state/pixels. The settings and
+minimum-range panels were also visually reviewed. The held retreat/effect
+files contain declared synthetic actors; loading them for UI comparison
+uses the normal game's terrain, not the in-memory open-ground audit map.
+
+The seeded audit covers **1,344 cases**, with identical normalized CSV output
+on Linux and Windows. It compares Legacy, Legacy order planning with Enhanced
+rules/live firing, and the complete Enhanced profile. Conditions, results,
+limitations and 24-mech planning timings are in the
+[release results](MECH_MOVEMENT_AND_LRM_AI.md#release-results). This measures
+authored Updated tactics; original numeric behavior remains covered by the
+separate executable-derived fixtures.
+
+```sh
+ctest --test-dir build --output-on-failure
+python3 -m unittest discover -s tests -p 'test_*.py'
+./build/btp-lrm-ai-audit 'Original DOS' > work/lrm/comparison.csv 2> work/lrm/performance.log
+python3 tools/windows_check.py build-windows/btp-lrm-ai-audit.exe 'Original DOS' > work/lrm/comparison-windows.csv
+python3 tools/native_smoke.py --updated-combat-only
+python3 tools/native_smoke.py --windows --updated-combat-only
+```
+
+Local logs are `work/lrm-native.log`, `work/lrm-python.log`,
+`work/lrm-final-native.log`, `work/lrm-sanitize.log`, `work/lrm-windows.log`,
+`work/lrm-sdl-linux.log` and `work/lrm-sdl-windows.log`; scenarios, snapshots,
+CSV comparisons and review images are under `work/lrm/`.
+Native CTest creates the held prerequisites before the SDL checks.
+The normalized comparison CSV has SHA-256
+`073ece834488e754ba2c222a6b49e74d8091ddd61165eaaaabd5d3f43a2b6130`.
+
+Current combat data remains **BTCC/v12**. Enhanced saves and the new settings
+pages use **BTPj/v45** (20,480 bytes) in **BTU2**, binding rules and roster.
+Ordinary Legacy/Original states retain **BTPi/v44** and their old envelopes.
+Old Updated and imported Original games select Legacy; fresh Updated games
+select Enhanced if their pack supplies a valid `combat.json`.
+
 ## Weapon effects, fire and mech audits
 
 The [weapon/fire increment](WEAPON_PRESENTATION.md) passes **63/63 native
@@ -19,14 +73,10 @@ headless state/pixel comparison and dummy audio.
 The [requested movement/LRM analysis](MECH_MOVEMENT_AND_LRM_AI.md) adds 644
 controlled native planner probes and 24 original LRM to-hit observations.
 Those planner scenarios establish the recorded behavior; they are not a whole
-campaign AI-quality comparison. AI and numeric attack rules are unchanged.
-The subsequent [Updated LRM plan](MECH_MOVEMENT_AND_LRM_AI.md#verification-matrix-and-speed-budget)
-defines future range, tactics, save/control and performance checks. Its
-LRM1–LRM5 gates are proposed, not additional passing tests. The planning-only
-update was checked against current code/data and documentation links; it did
-not require a game rebuild or another gameplay suite run.
+campaign AI-quality comparison. That audit did not change AI or numeric rules;
+the subsequent Updated implementation and its separate verification are above.
 
-Current local combat data is **BTCC/v12**. New internal saves are **BTPi/v44**,
+That increment used **BTCC/v12** and **BTPi/v44** saves,
 with the same 20,480-byte payload and separate Original/Updated envelopes.
 Older held presentation states and fire phases migrate explicitly. The fresh
 ending uses 75,573 inputs and spy replacement 58,886 after replay regeneration.

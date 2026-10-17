@@ -149,6 +149,9 @@ int main(int argc, char **argv)
         !o.conversation_checkpoint && !o.shop_talk_checkpoint && !o.title_preview && !o.intro_preview) {
         play=startup(window,renderer,texture,frame,&o,&content,&startup_credits,&startup_key);
         if (play<0) goto sdl_done;
+        /* Content was chosen after the provisional Original state. Apply
+           fresh-campaign defaults before the logo; setup credits follow. */
+        if (play) { btp_initial_state(&o,&state,r);state.mode=BTP_LOGO; }
     }
     const char *edition_title=r->roster.count ? "BtechPort - Updated BTECH CHI" : "BtechPort - Original BTECH CHI";
     if (play) SDL_SetWindowTitle(window,edition_title);

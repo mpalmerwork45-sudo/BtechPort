@@ -1997,8 +1997,11 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
             }
         } else if (c->ui!=BTP_MENU_MAP) {
             if (c->ui==BTP_MENU_COMBAT_RULES) {
-                const char *description="Enhanced adds smarter tactics and LRM close-range penalties. Old saves begin in Legacy.";
-                (void)wrapped(r,f,8,(const uint8_t *)description,strlen(description),15);
+                /* Use the cleared left well: right-side text would be
+                   printed directly over the live town map above the menu. */
+                const char *description="Enhanced: smarter tactics. LRMs lose accuracy up close. Old saves start in Legacy.";
+                rectangle(f,8,8,88,88,0);
+                (void)wrapped_at(r,f,8,8,11,(const uint8_t *)description,strlen(description),15);
             }
             unsigned count=btp_actions_count(s);
             int top=(c->ui==BTP_MENU_ROOT || c->ui==BTP_MENU_UPDATED_ROOT) ? 168-8*(int)(count+2u) : 72;

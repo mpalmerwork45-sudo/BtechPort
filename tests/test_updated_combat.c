@@ -9,7 +9,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 static unsigned checks;
 #define CHECK(x) do { ++checks;if (!(x)) { fprintf(stderr,"FAIL %s:%d: %s\n",__FILE__,__LINE__,#x);exit(1); } } while (0)
 static BtpError error;
@@ -30,12 +29,14 @@ static void profiles(BtpResources *r)
     BtpState s,restored;btp_start(&s);btp_npc_init(&s,&r->map);
     uint8_t original[BTP_STATE_BYTES];btp_state_encode(&s,original);CHECK(original[4]==44);
     CHECK(r->combat_profile.fingerprint && !s.combat_profile);roundtrip(&s,r);
+    CHECK(btp_save_write("work/lrm/legacy.btp",&s,r,&error));
     CHECK(btp_set_combat_profile(&s,r,1));CHECK(btp_active_combat_profile(&s,r));
     for (unsigned slot=0;slot<6;++slot) {
         char path[256];s.menu.slot=(uint8_t)slot;
         CHECK(btp_save_edition_slot_path("work/lrm/slots.btp",slot,r,path,sizeof path,&error));
         CHECK(btp_save_write(path,&s,r,&error));CHECK(btp_save_load(path,&restored,r,&error));same(&s,&restored);CHECK(!remove(path));
     }
+    s.menu.slot=0;
     CHECK(btp_save_write("work/lrm/held.btp",&s,r,&error));
     uint32_t fingerprint=r->combat_profile.fingerprint;r->combat_profile.fingerprint^=1;
     restored=s;CHECK(!btp_save_load("work/lrm/held.btp",&restored,r,&error));same(&s,&restored);
@@ -46,6 +47,7 @@ static void profiles(BtpResources *r)
     CHECK(s.campaign.ui==BTP_MENU_UPDATED_SETTINGS && btp_actions_count(&s)==7);roundtrip(&s,r);
     for (unsigned i=0;i<4;++i) btp_menu_input(&s,r,BTP_DOWN);
     btp_menu_input(&s,r,BTP_OPEN_MENU);CHECK(s.campaign.ui==BTP_MENU_COMBAT_RULES);roundtrip(&s,r);
+    CHECK(btp_save_write("work/lrm/settings.btp",&s,r,&error));
     btp_menu_input(&s,r,BTP_UP);btp_menu_input(&s,r,BTP_OPEN_MENU);CHECK(s.combat_profile==1);roundtrip(&s,r);
     btp_menu_close(&s);CHECK(btp_set_combat_profile(&s,r,0));
     BtpRoster roster=r->roster;r->roster=(BtpRoster){0};CHECK(!btp_set_combat_profile(&s,r,1));
@@ -183,6 +185,42 @@ static void firing(BtpResources *r)
     c->automatic=1;a->record[39]=0;CHECK(!btp_combat_ai_fire(&s,r,&map,0,1,0,-1));
     a->record[39]=10;a->heat=29;CHECK(!btp_combat_ai_fire(&s,r,&map,0,1,0,-1));
 }
+static void terrain_routes(BtpResources *r)
+{
+    BtpState base,s;battle_base(&base,r);base.combat_profile=1;base.combat_fingerprint=r->combat_profile.fingerprint;
+    for (unsigned shape=0;shape<8;++shape) for (unsigned parity=0;parity<4;++parity) {
+        s=base;BtpMap map=r->map;memset(map.tiles,shape==1 ? 31 : shape==2 ? 0 : 64,sizeof map.tiles);
+        BtpCombatUnit *a=&s.combat.unit[0],*t=&s.combat.unit[1];
+        memcpy(a->record,r->roster.mechs[2].record,125);a->x=(uint8_t)(64+(parity&1));a->y=(uint8_t)(64+(parity>>1));
+        memcpy(t->record,r->combat.jenner,125);t->x=80;t->y=64;t->infantry=0;
+        if (shape==3) for (unsigned y=20;y<41;++y) { map.tiles[y*64+29]=255;map.tiles[y*64+36]=255; }
+        if (shape==4 || shape==5) { a->x=(uint8_t)(shape==4 ? 2 : 123);t->x=(uint8_t)(shape==4 ? 18 : 106); }
+        if (shape==6) { a->burning=3;a->record[117]=2;a->heat=20; }
+        if (shape==7) {
+            map.width=map.height=128;s.campaign.invasion=1;a->x=(uint8_t)(parity<2 ? 63 : 190);a->y=100;t->x=140;t->y=110;
+        }
+        BtpAiPlan p;CHECK(btp_combat_ai_plan(&s,r,&map,0,&p));unsigned steps=0;
+        int x=a->x,y=a->y;
+        for (unsigned i=0;i<12 && p.path[i][0]!=2 && p.path[i][1]!=2;++i) {
+            if (!p.path[i][0] && !p.path[i][1]) break;
+            x+=p.path[i][0];y+=p.path[i][1];++steps;
+            CHECK(shape==7 ? !btp_invasion_outside((unsigned)(1472+x),(unsigned)(1472+y)) : x>=2 && x<=123 && y>=2 && y<=125);
+            /* Independently inspect both half-step footprint cells at every
+               executed advance, including the sides of a narrow street. */
+            int tile_x=(x+1)/2;
+            CHECK(btp_map_tile(&map,tile_x,y/2)<s.gate);
+            CHECK(btp_map_tile(&map,tile_x+(x&1 ? -1 : 1),y/2)<s.gate);
+            CHECK(y!=t->y || abs(x-t->x)>=3);
+        }
+        CHECK(steps==p.steps && x==p.x && y==p.y);
+    }
+    /* Arena spectator ID13 remains protected even when nearest and armed. */
+    s=base;s.campaign.encounter=4;s.yard.rental=1;s.story_flags[35]=0;
+    s.combat.count=3;s.combat.friends=1;s.combat.ids[0]=0;s.combat.ids[1]=13;s.combat.ids[2]=12;
+    s.combat.unit[2]=s.combat.unit[1];s.combat.unit[2].x=100;
+    BtpMap map=r->map;memset(map.tiles,64,sizeof map.tiles);BtpAiPlan p;
+    CHECK(btp_combat_ai_plan(&s,r,&map,0,&p));CHECK(p.target==2);
+}
 static void resumed_tick(BtpState *s,const BtpResources *r,BtpAction action)
 {
     uint8_t bytes[BTP_STATE_BYTES];BtpState restored;
@@ -256,6 +294,6 @@ int main(int argc,char **argv)
     CHECK(btp_content_load_original(&content,&paths,&error));
     CHECK(btp_content_select(&content,BTP_CONTENT_UPDATED,"content/updated/roster.json",&error));
     profiles(content.resources);parser(&content.resources->combat_profile);queries(content.resources);manual_rules(content.resources);tactics(content.resources);firing(content.resources);
-    live_volley(content.resources);controls(content.resources);
+    terrain_routes(content.resources);live_volley(content.resources);controls(content.resources);
     btp_content_close(&content);printf("Updated combat: %u checks passed\n",checks);return 0;
 }

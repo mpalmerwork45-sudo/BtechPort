@@ -32,9 +32,10 @@ presentation/timing, wider encounter behavior, some transitions and physical
 speaker response still have limits. See [project status](docs/PROJECT_STATUS.md)
 and the [weapon/fire presentation audit](docs/WEAPON_PRESENTATION.md) for the
 latest evidence. The [mech movement and LRM AI analysis](docs/MECH_MOVEMENT_AND_LRM_AI.md)
-records the current calculations and proposed Updated tactics.
+records the verified movement calculations and implemented Updated combat rules.
 
-New saves use v44; older saves remain loadable, including held combat effects.
+Original/Legacy saves retain v44; Enhanced combat and its settings use v45.
+Older saves remain loadable, including held combat effects.
 Rebuilding prepares the updated local combat cache from your original files.
 
 The proposed path to more mechs, custom game packages, BLD/Lua scripting and a
@@ -74,6 +75,19 @@ crew. Offers include installed equipment and fall with damage. Added models
 can also appear in eligible outdoor encounters and be salvaged under the
 existing rules.
 See [roster details and sources](content/updated/README.md).
+
+New Updated games use **Enhanced combat**: mechs choose positions and volleys
+from their usable weapons, ammunition and heat. LRM carriers can retreat and
+wait for a better shot while moving. LRMs receive an accuracy penalty within
+six adapted range units; close shots remain possible, and the targeting panel
+shows the penalty. These authored rules apply equally to player and enemy
+attacks. The planner runs locally as deterministic C code.
+
+**Existing saves keep Legacy combat**, including Original saves imported into
+Updated. Outside a battle, press **Space → Change game settings → Combat rules**
+and select **Enhanced** to enable it, or **Legacy** to restore the original rules
+and planning. This preserves your party, mechs and progress. Original mode
+always retains Legacy combat. See [rules, limits and test results](docs/MECH_MOVEMENT_AND_LRM_AI.md).
 
 Inspection bars scale larger armor/structure totals into the original diagram.
 A temporary follower workaround regroups active units after building/battle

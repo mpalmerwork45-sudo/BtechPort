@@ -85,11 +85,33 @@ original-game feature. Prices and ammunition costs are authored for this port.
 
 ## Existing Updated saves
 
+New campaigns now start with **Enhanced combat**. Existing saves and imported
+Original games retain **Legacy**. To switch outside combat, use **Space →
+Change game settings → Combat rules → Enhanced / Legacy**. Progress and owned
+mechs are retained. Both manual and automatic LRM shots use the selected
+rules; the target panel shows any close-range accuracy penalty.
+
+The optional adjacent [`combat.json`](combat.json) selects the versioned
+`chi-updated-lrm-v1` / `weapon-aware-v1` profile. Its range units are the
+original effective shot distance divided by three, rounded down and clamped
+to one. Minimum range is six; the close modifier is `max(0, 7 - range)`.
+Short/medium/long limits are 7/14/21. This is an authored CHI adaptation.
+Other weapon ranges retain the original rules. See the
+[implementation and evidence](../../docs/MECH_MOVEMENT_AND_LRM_AI.md).
+
+The bounded loader rejects malformed, duplicate or unknown rule fields. A
+pack with no `combat.json` remains Legacy. Enhanced saves bind a semantic
+rules fingerprint as well as the roster; loading with missing or changed
+required rules fails without replacing the current game. Enhanced states
+use BTPj/v45 in a BTU2 envelope. Legacy states keep BTU1/v44, except while
+held on one of the new settings pages. These choices share the existing
+six Updated slots; no extra save directory is needed.
+
 The first 17 definitions and their save codes are unchanged. Saves from the
 released three-model **0.1.0** and 17-model **0.2.0** packs load automatically
 in **0.3.0**, including
 held broker menus, damage, ammunition, crew and money. No manual conversion is
-needed. A subsequent save records the new pack and v44 state, including the
+needed. A subsequent Legacy save records the new pack and v44 state, including the
 scrolling menu and the current weapon/fire presentation phase.
 
 Compatibility is checked by recomputing the saved fingerprint against the
@@ -100,7 +122,7 @@ The archived [0.1.0 pack](versions/0.1.0.json) and [0.2.0 pack](versions/0.2.0.j
 remain available via `--roster` for sessions using an exact earlier catalogue.
 Keep earlier save copies if you intend to return to an older pack/executable;
 those cannot read saves with the new catalogue identity. The 0.1.0 executable
-also cannot read v43 state. Earlier executables cannot read v44 saves; their
+also cannot read v43 state. Earlier executables cannot read v44/v45 saves; their
 existing saves remain loadable in the current executable.
 
 ## Sources and adaptation

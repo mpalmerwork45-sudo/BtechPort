@@ -217,6 +217,13 @@ and statistics are not original-game fidelity claims.
 
 ## Starting, switching and saving
 
+The subsequent [Updated combat release](MECH_MOVEMENT_AND_LRM_AI.md) adds
+Enhanced rules for fresh Updated campaigns. Older saves retain Legacy, which
+can be changed outside combat under Space → Change game settings → Combat
+rules. Enhanced and the new settings pages use BTU2/BTPj-v45, with a separate
+combat fingerprint; the roster compatibility and six slot paths below remain
+in effect. Ordinary Legacy states continue to use BTU1/v44.
+
 Run from the repository root after the usual build:
 
 ```sh

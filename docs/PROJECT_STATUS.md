@@ -29,18 +29,21 @@ not a claim of cycle-exact XT timing. Save formats and numeric rules are unchang
 The following [weapon/fire presentation audit](WEAPON_PRESENTATION.md) adds
 2,400 original weapon sequences and 720 fire/debris redraw observations, fixes
 sound/pose order and trajectory/impact rendering, and makes flames follow map
-redraws. Fire and wrecks remain visible outdoors. Current saves are v44, with
+redraws. Fire and wrecks remain visible outdoors. That increment wrote v44, with
 older held presentation/PCM support. All **63 native suites**, **32 Python
 tests**, seven focused sanitizer/Wine suites per platform and five SDL
 effect/fire F5/F9 scenarios per platform pass in their recorded bounds.
-The requested [movement/LRM analysis and plan](MECH_MOVEMENT_AND_LRM_AI.md)
-confirms 1,872 movement-budget cases and now records five proposed Updated
-combat gates, LRM1–LRM5: saved rules profiles, minimum-range penalties,
-positioning, heat/ammo-aware volleys, and release verification. The plan
-includes an explicit CHI distance conversion and a small Updated LRM
-short-range adjustment. Existing Updated saves would retain Legacy until
-changed outside combat. This is planning only; combat AI and LRM rules remain
-unchanged in the current game.
+The [movement/LRM implementation](MECH_MOVEMENT_AND_LRM_AI.md) preserves those
+1,872 movement-budget cases and implements LRM1–LRM5: explicit saved profiles,
+LRM minimum-range penalties, usable-loadout positioning, sustainable volleys
+and live firing decisions. Fresh Updated campaigns default to Enhanced;
+existing Updated/imported saves remain Legacy until changed outside combat.
+Original retains its rules and planner. Enhanced uses BTPj/v45 inside BTU2,
+with a semantic combat fingerprint; ordinary Legacy/Original states remain
+v44. A missing optional rules file selects Legacy for a new pack.
+The deterministic planner is local C code, with no model calls. The
+[release verification record](TESTING.md#updated-combat-release) covers the
+full regression suite, seeded comparisons, Windows, sanitizers and SDL saves.
 
 ## Milestones
 
@@ -62,6 +65,7 @@ unchanged in the current game.
 | Fresh campaign | New-cadet input route through training, companions, paid apprenticeships, holodisk, password and cache ending; original checks at selected prerequisites |
 | Remaining original campaign | Additional branches and broader DOS combat/presentation parity |
 | M5 | P1–P5 preparation and the [first playable M5a roster](M5A_ROSTER_SLICE.md) implemented; general packages, Lua and editor remain in the [plan](ENGINE_AND_EDITOR_PLAN.md) |
+| Updated LRM1–LRM5 | Saved Enhanced/Legacy profiles, LRM minimum range, weapon-aware positioning and volleys, live firing checks and release verification |
 
 The owner-requested [engine and editor plan](ENGINE_AND_EDITOR_PLAN.md) records
 the future authoring direction separately from the remaining original fidelity
@@ -80,8 +84,9 @@ fit their original wells even for assault models. Pack 0.3.0 adds Phoenix Hawk
 PXH-1, Dragon, Grasshopper, Highlander HGN-733, Stalker and Jenner; Shadow Hawk
 and Rifleman were already available. All 17 previous definitions are unchanged.
 Both 0.1.0 and 0.2.0 saves load automatically, including held/scrolled broker
-menus and confirmations. Both editions now write v44 presentation states;
-their Original/Updated save envelopes and slot namespaces remain separate.
+menus and confirmations. Legacy/Original still write v44 presentation states;
+Enhanced and the new settings pages use v45. Their edition envelopes and
+slot namespaces remain separate.
 The [pack guide](../content/updated/README.md) records source statistics,
 temporary sprites, authored prices and adaptation limits. The original story
 LAM and training Jenners retain their original definitions.
@@ -222,9 +227,11 @@ as original behavior. Twenty-five bounded original placement observations record
 that distinction. If no candidate can be placed, exploration continues. Existing
 saved fights retain their already placed units; arena/story fights are separate.
 
-Internal saves are **BTPi/v44**, with a 20,480-byte payload inside the Original
+Ordinary Legacy/Original saves are **BTPi/v44**, with a 20,480-byte payload inside the Original
 BTS1 or Updated BTU1 length/CRC envelope. Older v40-v43 held effects retain
 their stage meanings; new queues use the verified presentation sequence.
+Enhanced and held combat-rule settings use BTPj/v45 in BTU2, with saved policy
+and a semantic rules fingerprint. The payload size remains 20,480 bytes.
 The discovery marker and held spy confrontation are saved.
 Salvage inspection history and queued/held battle reports persist too, retaining
 actor names and results before later attacks change their records. v39 adds

@@ -8,7 +8,7 @@ import time
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def run(env, work, building_art_only=False):
+def run(env, work, building_art_only=False, setup_only=False):
     from reference_session import WindowKeys
     env = dict(env, SDL_AUDIODRIVER="dummy")
     with tempfile.TemporaryDirectory(prefix="updated-ui-", dir=work) as directory:
@@ -84,7 +84,9 @@ def run(env, work, building_art_only=False):
             updated = name.startswith("updated")
             state, audio, slot, frame, record = play(name, choice + ["F5"])
             chosen = slot.with_name(slot.stem + "-updated.btp") if updated else slot
-            assert chosen.read_bytes()[:4] == (b"BTU1" if updated else b"BTS1")
+            assert chosen.read_bytes()[:4] == (b"BTU2" if updated else b"BTS1")
+            if updated:
+                assert state["combat_rules"] == "enhanced"
             if updated:
                 assert not slot.exists()
             assert state["mode"] == "logos", state["mode"]
@@ -96,11 +98,14 @@ def run(env, work, building_art_only=False):
             print(f"PASS: {name} selection, logo, save namespace and automatic edition detection.", flush=True)
         state, _, _, _, _ = play("credit", ["Shift+k+y+r", "2", "space", "space", "Return"])
         assert state["credits"] == 10035 and state["mode"] == "local-exploration", state
+        assert state["combat_rules"] == "enhanced"
         state, audio, _, _, _ = play("bad-roster", ["2"], ["--roster", tmp / "missing.json"], True)
         assert state["tick"] == 0 and not audio["opened"]
         state, _, _, _, _ = play("fallback", ["2", "1"], ["--roster", tmp / "missing.json"], True)
         assert state["mode"] == "logos"
         print("PASS: setup credit shortcut, new-game branch, bad-roster rejection and Original fallback.", flush=True)
+        if setup_only:
+            return
 
         start = tmp / "starport.btp"
         subprocess.run([str(ROOT / "build/btp-roster-tests"), str(ROOT / "Original DOS"),

@@ -1293,6 +1293,7 @@ def main():
     parser.add_argument('--windows',action='store_true',help='Run the Windows SDL build under isolated Wine against Linux headless')
     parser.add_argument('--portability-only',action='store_true',help='Check controls, intro, saves, menus and combat presentation')
     parser.add_argument('--updated-only',action='store_true',help='Check edition selection and Updated purchases')
+    parser.add_argument('--updated-combat-only',action='store_true',help='Check Updated rules settings and held LRM combat saves')
     parser.add_argument('--building-art-only',action='store_true',help='Check Updated building portraits and held saves')
     parser.add_argument("--shops-only", action="store_true")
     parser.add_argument("--m2f-only", action="store_true")
@@ -1348,6 +1349,9 @@ def main():
             env.pop("SDL_VIDEODRIVER", None)
             os.environ["DISPLAY"] = env["DISPLAY"]
             os.environ["BTECH_REFERENCE_VIRTUAL"] = "1"
+            if args.updated_combat_only:
+                from updated_combat_smoke import run
+                run(env,work);return
             if args.updated_only or args.building_art_only:
                 from updated_smoke import run
                 run(env,work,building_art_only=args.building_art_only);return

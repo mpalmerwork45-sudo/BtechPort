@@ -156,6 +156,9 @@ void btp_initial_state(const BtpOptions *o, BtpState *s, const BtpResources *r)
     else if (o->conversation_checkpoint) btp_start_conversation_checkpoint(s);
     else btp_start(s);
     btp_npc_init(s,&r->map);
+    /* Fresh Updated campaigns opt in. Loading a save below replaces this
+       state, preserving the saved policy (including old saves' Legacy). */
+    if (r->roster.count && r->combat_profile.fingerprint) (void)btp_set_combat_profile(s,r,1);
     if (o->title_preview) btp_audio_start(s);
     if (o->intro_preview) s->mode=BTP_LOGO;
 }
@@ -238,6 +241,8 @@ void btp_print_state(const BtpState *s, const BtpResources *r)
         s->mech_skills[0],s->mech_skills[1],s->story_flags[47],s->recruitment,s->script.animation_kind,s->script.animation_flags,
         s->cutscene.active,s->cutscene.kind,s->cutscene.step,s->cutscene.cycle,s->cutscene.hold,s->cutscene.remaining,s->cutscene.refresh_fraction);
     const BtpCombatState *c=&s->combat;
+    if (r->roster.count) printf(",\"combat_rules\":\"%s\",\"combat_fingerprint\":%u",
+        s->combat_profile ? "enhanced" : "legacy",s->combat_fingerprint);
     uint32_t fog=UINT32_C(2166136261);for (unsigned i=0;i<sizeof s->explored;++i) fog=(fog^s->explored[i])*UINT32_C(16777619);
     printf(",\"explored_digest\":%u,\"map_center\":[%u,%u],\"intro_load\":%u",fog,s->menu.map_x,s->menu.map_y,s->menu.from_intro);
     printf(",\"cache\":{\"active\":%u,\"phase\":%u,\"terminal\":%u,\"hall\":%u,\"cards\":[%u,%u,%u],\"white\":%u,\"power\":%u,\"found\":%u,\"room\":%u}",
