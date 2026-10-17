@@ -20,6 +20,11 @@ The [requested movement/LRM analysis](MECH_MOVEMENT_AND_LRM_AI.md) adds 644
 controlled native planner probes and 24 original LRM to-hit observations.
 Those planner scenarios establish the recorded behavior; they are not a whole
 campaign AI-quality comparison. AI and numeric attack rules are unchanged.
+The subsequent [Updated LRM plan](MECH_MOVEMENT_AND_LRM_AI.md#verification-matrix-and-speed-budget)
+defines future range, tactics, save/control and performance checks. Its
+LRM1–LRM5 gates are proposed, not additional passing tests. The planning-only
+update was checked against current code/data and documentation links; it did
+not require a game rebuild or another gameplay suite run.
 
 Current local combat data is **BTCC/v12**. New internal saves are **BTPi/v44**,
 with the same 20,480-byte payload and separate Original/Updated envelopes.

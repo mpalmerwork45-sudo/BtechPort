@@ -33,9 +33,14 @@ redraws. Fire and wrecks remain visible outdoors. Current saves are v44, with
 older held presentation/PCM support. All **63 native suites**, **32 Python
 tests**, seven focused sanitizer/Wine suites per platform and five SDL
 effect/fire F5/F9 scenarios per platform pass in their recorded bounds.
-The requested [movement/LRM analysis](MECH_MOVEMENT_AND_LRM_AI.md) confirms
-1,872 movement-budget cases and proposes an optional Updated AI policy;
-combat AI and LRM rules remain unchanged.
+The requested [movement/LRM analysis and plan](MECH_MOVEMENT_AND_LRM_AI.md)
+confirms 1,872 movement-budget cases and now records five proposed Updated
+combat gates, LRM1–LRM5: saved rules profiles, minimum-range penalties,
+positioning, heat/ammo-aware volleys, and release verification. The plan
+includes an explicit CHI distance conversion and a small Updated LRM
+short-range adjustment. Existing Updated saves would retain Legacy until
+changed outside combat. This is planning only; combat AI and LRM rules remain
+unchanged in the current game.
 
 ## Milestones
 
