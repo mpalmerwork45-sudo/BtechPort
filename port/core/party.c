@@ -37,6 +37,22 @@ const char *btp_party_name(const BtpPartyState *p,unsigned slot)
 {
     return btp_character_name(slot<8 ? p->people[slot][0] : 255);
 }
+const char *btp_content_character_name(const BtpResources *r,unsigned id)
+{
+    const BtpAdventure *a=btp_adventure(r);
+    if (a) for (unsigned i=0;i<a->person_count;++i)
+        if (a->people[i].record[0]==id && a->people[i].name[0]) return a->people[i].name;
+    return btp_character_name(id);
+}
+const char *btp_content_party_name(const BtpResources *r,const BtpState *s,unsigned slot)
+{
+    const BtpAdventure *a=btp_adventure(r);
+    if (a && slot<8 && s->event.people[slot]<a->person_count && s->party.people[slot][0]!=255) {
+        const char *name=a->people[s->event.people[slot]].name;
+        if (*name) return name;
+    }
+    return btp_party_name(&s->party,slot);
+}
 void btp_party_init(BtpState *s)
 {
     BtpPartyState *p=&s->party;if (p->enabled) return;

@@ -1,5 +1,9 @@
 # Last Beacon
 
+For the BattleTech setting, established 'Mechs and original-game presentation,
+play **[BattleTech: Last Beacon](../battletech-demo/README.md)**. This version is
+retained as the asset-free engine/editor template.
+
 A small, independently authored demonstration game for BtechPort. All text,
 pixels, font, tones and unit definitions are supplied in this directory.
 No original game, extracted cache or external asset pack is required.

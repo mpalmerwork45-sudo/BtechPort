@@ -1,0 +1,36 @@
+{
+  "format": "btp-project-v1",
+  "schema_version": 1,
+  "package_id": "battletech-beacon",
+  "content_version": "1.0.0",
+  "title": "BattleTech - Last Beacon",
+  "requires": "chi-original-dos-1.03",
+  "startup": "authored-adventure-v1",
+  "rules_profile": "chi:updated-lrm-v1",
+  "save_policy": "strict-content-v1",
+  "definitions": "content.json",
+  "adventure": "adventure.json",
+  "scripts": [
+    {
+      "id": "beacon:contract",
+      "file": "contract.lua"
+    }
+  ],
+  "assets": [
+    {
+      "id": "beacon:portrait-broker",
+      "slot": "broker",
+      "file": "art/broker.anm"
+    },
+    {
+      "id": "beacon:portrait-training",
+      "slot": "training",
+      "file": "art/training.anm"
+    },
+    {
+      "id": "beacon:portrait-comstar",
+      "slot": "comstar",
+      "file": "art/comstar.anm"
+    }
+  ]
+}

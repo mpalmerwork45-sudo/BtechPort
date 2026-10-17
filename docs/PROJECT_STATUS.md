@@ -1,5 +1,14 @@
 # Project status — original fidelity and editable projects, 2026-10-17
 
+The main authored play demo is now **[BattleTech: Last Beacon](BATTLETECH_DEMO.md)**:
+three maps, nine sourced variants, a Phoenix Hawk/Trebuchet starting team,
+two mercenary contracts, recruitment, trading and two endings, using supplied
+original graphics/sounds and Enhanced combat. Authored character names now work
+through the CHI renderer's menus and combat text. Run
+`sh scripts/play-battletech-demo.sh`. The independent asset-free example remains
+an editor template. The next recommended work is a real CHI tile palette/stamps,
+then authored repair/reload/salvage services; the linked plan describes five gates.
+
 Editor-roadmap tasks 1–5 now provide a shared authoring contract, validator,
 31-model export, 256-model project catalogue, per-mount weapon definitions and
 an explicit CHI-dependent project loader with strict package saves. See

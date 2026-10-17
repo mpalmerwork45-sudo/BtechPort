@@ -1,0 +1,65 @@
+{
+  "license": "CC-BY-NC-SA-4.0",
+  "consulted": "2026-10-16",
+  "mechs": [
+    {
+      "id": "chi-expanded:trebuchet-tbt-5n",
+      "source": "https://github.com/MegaMek/mm-data/blob/e6f20e1fc2f9d6c74a6e2cdc74778b029ca14811/data/mekfiles/meks/3039u/Trebuchet%20TBT-5N.mtf",
+      "sha256": "be9568572b61ee6d4c334ac6ff80bdcef2994ae5adae7309b2395a9aa2758c4e",
+      "rear_lasers": 0
+    },
+    {
+      "id": "chi-expanded:griffin-grf-1n",
+      "source": "https://github.com/MegaMek/mm-data/blob/e6f20e1fc2f9d6c74a6e2cdc74778b029ca14811/data/mekfiles/meks/3039u/Griffin%20GRF-1N.mtf",
+      "sha256": "a8e7c9a14d0bc06e4cda589457b52576382f3a5ad8fd5826aab49c9ed6d1e8ca",
+      "rear_lasers": 0
+    },
+    {
+      "id": "chi-expanded:phoenix-hawk-pxh-1",
+      "source": "https://github.com/MegaMek/mm-data/blob/e6f20e1fc2f9d6c74a6e2cdc74778b029ca14811/data/mekfiles/meks/3039u/Phoenix%20Hawk%20PXH-1.mtf",
+      "sha256": "72079195b65f56fdbc2c8919066cfe194f2af0eef4e5262f1521cccdbaa85bec",
+      "rear_lasers": 0,
+      "consulted": "2026-10-17"
+    },
+    {
+      "id": "chi-expanded:jenner-jr7-d",
+      "source": "https://github.com/MegaMek/mm-data/blob/e6f20e1fc2f9d6c74a6e2cdc74778b029ca14811/data/mekfiles/meks/3039u/Jenner%20JR7-D.mtf",
+      "sha256": "534458c60ebac823bab8d5f760a7d02804e3e9bed0570207b9813e2f44a9882d",
+      "rear_lasers": 0,
+      "consulted": "2026-10-17"
+    },
+    {
+      "id": "chi-expanded:javelin-jvn-10n",
+      "source": "https://github.com/MegaMek/mm-data/blob/e6f20e1fc2f9d6c74a6e2cdc74778b029ca14811/data/mekfiles/meks/3039u/Javelin%20JVN-10N.mtf",
+      "sha256": "1f9a785a4633fe37d104cce90b3d02fecf340568aa4f15d389a049afdd9d5332",
+      "rear_lasers": 0,
+      "consulted": "2026-10-17"
+    },
+    {
+      "id": "chi-expanded:clint-clnt-2-3t",
+      "source": "https://github.com/MegaMek/mm-data/blob/e6f20e1fc2f9d6c74a6e2cdc74778b029ca14811/data/mekfiles/meks/3039u/Clint%20CLNT-2-3T.mtf",
+      "sha256": "7a7788b084cd3913178f9bb17eda88bf5aaeeccf8b8ada30a15c9db5b27bdf4d",
+      "rear_lasers": 0,
+      "consulted": "2026-10-17"
+    },
+    {
+      "id": "chi-expanded:whitworth-wth-1",
+      "source": "https://github.com/MegaMek/mm-data/blob/e6f20e1fc2f9d6c74a6e2cdc74778b029ca14811/data/mekfiles/meks/3039u/Whitworth%20WTH-1.mtf",
+      "sha256": "1680893b9a87b835600f5322ea8956ef1d34b2fb16a7443e7aaf692ea7e1ac44",
+      "rear_lasers": 0,
+      "consulted": "2026-10-17"
+    },
+    {
+      "id": "chi-expanded:urbanmech-um-r60",
+      "source": "https://github.com/MegaMek/mm-data/blob/e6f20e1fc2f9d6c74a6e2cdc74778b029ca14811/data/mekfiles/meks/3039u/UrbanMech%20UM-R60.mtf",
+      "sha256": "c9a8fcda784ea128dda98cfc7ca8a70816ab667ec8cfd8b21cb2ee4b023a895e",
+      "rear_lasers": 0,
+      "consulted": "2026-10-17"
+    },
+    {
+      "id": "chi-expanded:panther-pnt-9r",
+      "source": "https://github.com/MegaMek/mm-data/blob/main/data/mekfiles/meks/3039u/Panther%20PNT-9R.mtf",
+      "note": "Inherited from Updated 0.1.0; its README records this unpinned source, without a source hash."
+    }
+  ]
+}

@@ -8,18 +8,23 @@ import time
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def run(env, work):
+def run(env, work, battletech=False):
     from reference_session import WindowKeys
     env = dict(env, SDL_AUDIODRIVER="dummy")
     with tempfile.TemporaryDirectory(prefix="adventure-ui-", dir=work) as directory:
         tmp = Path(directory)
         prefix = tmp / "fixture"
         inputs = [ROOT / "Original DOS", work / "talk-data.bin", work / "combat-data.bin", work / "world-data.bin"]
-        project = ROOT / "examples/adventure-demo"
-        subprocess.run([str(ROOT / "build/btp-adventure-tests"), *map(str, inputs), str(project), str(prefix)],
+        project = ROOT / ("examples/battletech-demo" if battletech else "examples/adventure-demo")
+        title = "BattleTech - Last Beacon" if battletech else "Frontier authoring demo"
+        package = "battletech-beacon" if battletech else "frontier"
+        test = "btp-battletech-demo-tests" if battletech else "btp-adventure-tests"
+        subprocess.run([str(ROOT / "build" / test), *map(str, inputs), str(project), str(prefix)],
                        cwd=tmp, check=True, capture_output=True, text=True, timeout=30)
         args = ["--project", project, *[arg for key, value in zip(["data", "dialogue-data", "combat-data", "world-data"], inputs) for arg in ("--" + key, value)]]
-        for label in ["welcome", "map", "entrance", "choices", "broker", "purchase", "recruit", "combat", "victory", "overview"]:
+        labels = (["welcome", "town", "broker", "recruit", "overview", "road-enemies", "road-combat", "road-victory", "second-contract", "relay-enemies", "relay-combat", "ending"]
+                  if battletech else ["welcome", "map", "entrance", "choices", "broker", "purchase", "recruit", "combat", "victory", "overview"])
+        for label in labels:
             slot, final, frame = tmp / f"{label}.btp", tmp / f"{label}-final.btp", work / f"adventure-{label}.ppm"
             process = subprocess.Popen([str(ROOT / "build/btech-port"), *map(str, args), "--load", f"{prefix}-{label}.btp",
                 "--save-file", str(slot), "--save", str(final), "--frame", str(frame)], cwd=tmp, env=env,
@@ -28,7 +33,7 @@ def run(env, work):
             try:
                 window = None
                 for _ in range(200):
-                    matches = [w for w, title in keys.windows() if "Frontier authoring demo" in title]
+                    matches = [w for w, window_title in keys.windows() if title == window_title]
                     if len(matches) == 1:
                         window = matches[0]
                         break
@@ -42,7 +47,7 @@ def run(env, work):
                 keys.key(window, "Ctrl+Shift+Escape")
                 out, err = process.communicate(timeout=15)
                 assert process.returncode == 0 and not err, err
-                assert slot.with_name(slot.stem + "-project-frontier.btp").read_bytes()[:4] == b"BTG1"
+                assert slot.with_name(slot.stem + "-project-" + package + ".btp").read_bytes()[:4] == b"BTG1"
                 restored = tmp / "restored.ppm"
                 headless = subprocess.run([str(ROOT / "build/btech-headless"), *map(str, args), "--load", str(final), "--frame", str(restored)],
                     cwd=tmp, capture_output=True, text=True, check=True, timeout=10)
@@ -54,6 +59,15 @@ def run(env, work):
                 if process.poll() is None:
                     process.terminate()
                     process.wait(timeout=5)
+        if battletech:
+            replay = subprocess.run([str(ROOT / "build/btech-port"), *map(str, args),
+                "--smoke-replay", "--smoke-fast", "--replay", str(prefix) + ".actions"],
+                cwd=tmp, env=env, capture_output=True, text=True, timeout=60)
+            assert replay.returncode == 0, replay.stderr
+            state = json.loads(replay.stdout)
+            assert state["mode"] == "ending" and state["credits"] == 41000, state
+            assert state["authored_event"]["flags"] == [1, 0, 1, 1, 1, 1, 1], state
+            print("PASS: complete BattleTech contract route through real SDL, both battles and final payment.", flush=True)
 
 
 def editor(env, work):

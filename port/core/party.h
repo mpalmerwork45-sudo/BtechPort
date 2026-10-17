@@ -15,6 +15,9 @@ unsigned btp_party_ordinal(const BtpPartyState *party,unsigned slot);
 uint8_t *btp_party_mech(BtpState *state,unsigned slot);
 const char *btp_party_name(const BtpPartyState *party,unsigned slot);
 const char *btp_character_name(unsigned id);
+/* Authored names override display only; original identity/rules remain intact. */
+const char *btp_content_character_name(const BtpResources *resources,unsigned id);
+const char *btp_content_party_name(const BtpResources *resources,const BtpState *state,unsigned slot);
 /* Return the recruited slot plus one, or zero when the party is full.
    Original name IDs wrap and may duplicate; callers must retain the slot. */
 int btp_party_recruit(BtpState *state,unsigned skill);

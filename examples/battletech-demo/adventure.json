@@ -1,0 +1,1224 @@
+{
+  "format": "btp-adventure-v1",
+  "schema_version": 1,
+  "tiles": [
+    {
+      "id": "beacon:grass",
+      "key": ".",
+      "graphic": 64,
+      "sheet": "chi:land",
+      "terrain": "clear",
+      "mini_color": 2
+    },
+    {
+      "id": "beacon:grass-detail",
+      "key": ",",
+      "graphic": 66,
+      "sheet": "chi:land",
+      "terrain": "clear",
+      "mini_color": 2
+    },
+    {
+      "id": "beacon:road",
+      "key": "=",
+      "graphic": 70,
+      "sheet": "chi:land",
+      "terrain": "clear",
+      "mini_color": 7
+    },
+    {
+      "id": "beacon:woods",
+      "key": "T",
+      "graphic": 47,
+      "sheet": "chi:land",
+      "terrain": "woods",
+      "mini_color": 10
+    },
+    {
+      "id": "beacon:rocks",
+      "key": "R",
+      "graphic": 60,
+      "sheet": "chi:land",
+      "terrain": "rough",
+      "mini_color": 8
+    },
+    {
+      "id": "beacon:water",
+      "key": "w",
+      "graphic": 15,
+      "sheet": "chi:land",
+      "terrain": "water",
+      "mini_color": 1
+    },
+    {
+      "id": "beacon:building-a",
+      "key": "a",
+      "graphic": 115,
+      "sheet": "chi:land",
+      "terrain": "wall",
+      "mini_color": 8
+    },
+    {
+      "id": "beacon:building-b",
+      "key": "b",
+      "graphic": 116,
+      "sheet": "chi:land",
+      "terrain": "wall",
+      "mini_color": 8
+    },
+    {
+      "id": "beacon:building-c",
+      "key": "c",
+      "graphic": 119,
+      "sheet": "chi:land",
+      "terrain": "wall",
+      "mini_color": 8
+    },
+    {
+      "id": "beacon:building-d",
+      "key": "d",
+      "graphic": 120,
+      "sheet": "chi:land",
+      "terrain": "wall",
+      "mini_color": 8
+    },
+    {
+      "id": "beacon:building-e",
+      "key": "e",
+      "graphic": 121,
+      "sheet": "chi:land",
+      "terrain": "wall",
+      "mini_color": 8
+    },
+    {
+      "id": "beacon:building-f",
+      "key": "f",
+      "graphic": 122,
+      "sheet": "chi:land",
+      "terrain": "wall",
+      "mini_color": 8
+    },
+    {
+      "id": "beacon:building-g",
+      "key": "g",
+      "graphic": 123,
+      "sheet": "chi:land",
+      "terrain": "wall",
+      "mini_color": 8
+    },
+    {
+      "id": "beacon:building-h",
+      "key": "h",
+      "graphic": 125,
+      "sheet": "chi:land",
+      "terrain": "wall",
+      "mini_color": 8
+    },
+    {
+      "id": "beacon:building-i",
+      "key": "i",
+      "graphic": 127,
+      "sheet": "chi:land",
+      "terrain": "wall",
+      "mini_color": 8
+    },
+    {
+      "id": "beacon:shore-j",
+      "key": "j",
+      "graphic": 0,
+      "sheet": "chi:land",
+      "terrain": "water",
+      "mini_color": 1
+    },
+    {
+      "id": "beacon:shore-k",
+      "key": "k",
+      "graphic": 1,
+      "sheet": "chi:land",
+      "terrain": "water",
+      "mini_color": 1
+    },
+    {
+      "id": "beacon:shore-l",
+      "key": "l",
+      "graphic": 2,
+      "sheet": "chi:land",
+      "terrain": "water",
+      "mini_color": 1
+    },
+    {
+      "id": "beacon:shore-m",
+      "key": "m",
+      "graphic": 3,
+      "sheet": "chi:land",
+      "terrain": "water",
+      "mini_color": 1
+    },
+    {
+      "id": "beacon:shore-n",
+      "key": "n",
+      "graphic": 4,
+      "sheet": "chi:land",
+      "terrain": "water",
+      "mini_color": 1
+    },
+    {
+      "id": "beacon:shore-o",
+      "key": "o",
+      "graphic": 5,
+      "sheet": "chi:land",
+      "terrain": "water",
+      "mini_color": 1
+    },
+    {
+      "id": "beacon:shore-p",
+      "key": "p",
+      "graphic": 6,
+      "sheet": "chi:land",
+      "terrain": "water",
+      "mini_color": 1
+    },
+    {
+      "id": "beacon:shore-q",
+      "key": "q",
+      "graphic": 7,
+      "sheet": "chi:land",
+      "terrain": "water",
+      "mini_color": 1
+    },
+    {
+      "id": "beacon:wood-edge-s",
+      "key": "s",
+      "graphic": 32,
+      "sheet": "chi:land",
+      "terrain": "woods",
+      "mini_color": 10
+    },
+    {
+      "id": "beacon:wood-edge-t",
+      "key": "t",
+      "graphic": 33,
+      "sheet": "chi:land",
+      "terrain": "woods",
+      "mini_color": 10
+    },
+    {
+      "id": "beacon:wood-edge-u",
+      "key": "u",
+      "graphic": 34,
+      "sheet": "chi:land",
+      "terrain": "woods",
+      "mini_color": 10
+    },
+    {
+      "id": "beacon:wood-edge-v",
+      "key": "v",
+      "graphic": 40,
+      "sheet": "chi:land",
+      "terrain": "woods",
+      "mini_color": 10
+    },
+    {
+      "id": "beacon:wood-edge-x",
+      "key": "x",
+      "graphic": 41,
+      "sheet": "chi:land",
+      "terrain": "woods",
+      "mini_color": 10
+    },
+    {
+      "id": "beacon:wood-edge-y",
+      "key": "y",
+      "graphic": 46,
+      "sheet": "chi:land",
+      "terrain": "woods",
+      "mini_color": 10
+    }
+  ],
+  "maps": [
+    {
+      "id": "beacon:town",
+      "name": "Grayhaven - mercenary depot",
+      "origin": [
+        64,
+        64
+      ],
+      "rows": [
+        ",..................,................",
+        "............,..................,....",
+        ".....,..................,...........",
+        ".................,..................",
+        "..........,..................,......",
+        "...,..................,.............",
+        "...............,..................,.",
+        "........,..................,........",
+        ".,..................,...............",
+        ".............,..................,...",
+        "......,..................,..........",
+        "..................,.................",
+        "...........,..................,.....",
+        "....,..................,............",
+        "................,..................,",
+        "====================================",
+        "====================================",
+        "..............,..................,..",
+        ".......,..................,.........",
+        ",..................,................",
+        "............,..................,....",
+        ".....,..................,...........",
+        ".................,..................",
+        "..........,..................,......",
+        "...,..................,.............",
+        "...............,..................,.",
+        "........,..................,........",
+        ".,..................,..............."
+      ],
+      "overlays": [
+        {
+          "at": [
+            9,
+            8
+          ],
+          "rows": [
+            "abbbc",
+            "deeef",
+            "ghhhi"
+          ]
+        },
+        {
+          "at": [
+            18,
+            8
+          ],
+          "rows": [
+            "abbbc",
+            "deeef",
+            "ghhhi"
+          ]
+        },
+        {
+          "at": [
+            28,
+            4
+          ],
+          "rows": [
+            "abbbc",
+            "deeef",
+            "ghhhi"
+          ]
+        },
+        {
+          "at": [
+            3,
+            3
+          ],
+          "rows": [
+            "sttu",
+            "vTTy",
+            "vTTy",
+            "sttu"
+          ]
+        },
+        {
+          "at": [
+            20,
+            21
+          ],
+          "rows": [
+            "jkkl",
+            "mwwn",
+            "oppq"
+          ]
+        }
+      ],
+      "entrances": [
+        {
+          "id": "beacon:exchange",
+          "name": "Mech exchange",
+          "at": [
+            24,
+            26
+          ],
+          "event": "beacon:broker"
+        },
+        {
+          "id": "beacon:office",
+          "name": "Contract office",
+          "at": [
+            40,
+            26
+          ],
+          "event": "beacon:office"
+        },
+        {
+          "id": "beacon:comstar",
+          "name": "ComStar liaison",
+          "at": [
+            60,
+            18
+          ],
+          "event": "beacon:news"
+        },
+        {
+          "id": "beacon:pilot",
+          "name": "Talk to Cole",
+          "at": [
+            34,
+            32
+          ],
+          "event": "beacon:hire-check",
+          "person": "beacon:cole"
+        },
+        {
+          "id": "beacon:east-road",
+          "name": "East: Quarry Road",
+          "at": [
+            64,
+            32
+          ],
+          "event": "beacon:road-gate"
+        }
+      ]
+    },
+    {
+      "id": "beacon:road",
+      "name": "Quarry Road - pirate checkpoint",
+      "origin": [
+        100,
+        64
+      ],
+      "rows": [
+        ",..................,................",
+        "............,..................,....",
+        ".....,..................,...........",
+        ".................,..................",
+        "..........,..................,......",
+        "...,..................,.............",
+        "...............,..................,.",
+        "........,..................,........",
+        ".,..................,...............",
+        ".............,..................,...",
+        "......,..................,..........",
+        "..................,.................",
+        "...........,..................,.....",
+        "....,..................,............",
+        "................,..................,",
+        "====================================",
+        "====================================",
+        "..............,..................,..",
+        ".......,..................,.........",
+        ",..................,................",
+        "............,..................,....",
+        ".....,..................,...........",
+        ".................,..................",
+        "..........,..................,......",
+        "...,..................,.............",
+        "...............,..................,.",
+        "........,..................,........",
+        ".,..................,..............."
+      ],
+      "overlays": [
+        {
+          "at": [
+            5,
+            4
+          ],
+          "rows": [
+            "stttu",
+            "vTTTy",
+            "vTTTy",
+            "stttu"
+          ]
+        },
+        {
+          "at": [
+            21,
+            7
+          ],
+          "rows": [
+            ".RR.",
+            "RRRR",
+            ".RR."
+          ]
+        },
+        {
+          "at": [
+            24,
+            20
+          ],
+          "rows": [
+            "sttu",
+            "vTTy",
+            "sttu"
+          ]
+        }
+      ],
+      "entrances": [
+        {
+          "id": "beacon:road-back",
+          "name": "West: Grayhaven",
+          "at": [
+            8,
+            32
+          ],
+          "event": "beacon:return-town"
+        },
+        {
+          "id": "beacon:checkpoint",
+          "name": "Pirate checkpoint",
+          "at": [
+            34,
+            32
+          ],
+          "event": "beacon:road-check"
+        },
+        {
+          "id": "beacon:relay-road",
+          "name": "East: relay station",
+          "at": [
+            64,
+            32
+          ],
+          "event": "beacon:relay-gate"
+        }
+      ]
+    },
+    {
+      "id": "beacon:relay",
+      "name": "High Ridge - relay station",
+      "origin": [
+        136,
+        64
+      ],
+      "rows": [
+        ",..................,................",
+        "............,..................,....",
+        ".....,..................,...........",
+        ".................,..................",
+        "..........,..................,......",
+        "...,..................,.............",
+        "...............,..................,.",
+        "........,..................,........",
+        ".,..................,...............",
+        ".............,..................,...",
+        "......,..................,..........",
+        "..................,.................",
+        "...........,..................,.....",
+        "....,..................,............",
+        "................,..................,",
+        "====================================",
+        "====================================",
+        "..............,..................,..",
+        ".......,..................,.........",
+        ",..................,................",
+        "............,..................,....",
+        ".....,..................,...........",
+        ".................,..................",
+        "..........,..................,......",
+        "...,..................,.............",
+        "...............,..................,.",
+        "........,..................,........",
+        ".,..................,..............."
+      ],
+      "overlays": [
+        {
+          "at": [
+            27,
+            7
+          ],
+          "rows": [
+            "abbbbc",
+            "deeeef",
+            "ghhhhi"
+          ]
+        },
+        {
+          "at": [
+            9,
+            4
+          ],
+          "rows": [
+            "stttu",
+            "vTTTy",
+            "stttu"
+          ]
+        },
+        {
+          "at": [
+            22,
+            20
+          ],
+          "rows": [
+            ".RRR.",
+            "RRRRR",
+            ".RRR."
+          ]
+        },
+        {
+          "at": [
+            4,
+            21
+          ],
+          "rows": [
+            "jkkkl",
+            "mwwwn",
+            "opppq"
+          ]
+        }
+      ],
+      "entrances": [
+        {
+          "id": "beacon:relay-back",
+          "name": "West: Quarry Road",
+          "at": [
+            8,
+            32
+          ],
+          "event": "beacon:return-road"
+        },
+        {
+          "id": "beacon:relay-fight",
+          "name": "Relay defenders",
+          "at": [
+            40,
+            32
+          ],
+          "event": "beacon:relay-check"
+        }
+      ]
+    }
+  ],
+  "people": [
+    {
+      "id": "beacon:rowan",
+      "identity": "actor:0",
+      "name": "Rowan",
+      "attributes": [
+        9,
+        9,
+        9
+      ],
+      "skills": [
+        3,
+        3,
+        3,
+        4,
+        4,
+        2,
+        2
+      ],
+      "weapon": 7,
+      "armor": 2
+    },
+    {
+      "id": "beacon:mira",
+      "identity": "actor:1",
+      "name": "Mira",
+      "attributes": [
+        9,
+        9,
+        9
+      ],
+      "skills": [
+        3,
+        3,
+        3,
+        4,
+        4,
+        2,
+        2
+      ],
+      "weapon": 7,
+      "armor": 2
+    },
+    {
+      "id": "beacon:cole",
+      "identity": "actor:3",
+      "name": "Cole",
+      "attributes": [
+        9,
+        9,
+        9
+      ],
+      "skills": [
+        2,
+        2,
+        2,
+        3,
+        3,
+        2,
+        2
+      ],
+      "weapon": 7,
+      "armor": 2
+    }
+  ],
+  "shops": [
+    {
+      "id": "beacon:exchange",
+      "stock": [
+        "chi-expanded:panther-pnt-9r",
+        "chi-expanded:trebuchet-tbt-5n",
+        "chi-expanded:griffin-grf-1n",
+        "chi-expanded:phoenix-hawk-pxh-1",
+        "chi-expanded:jenner-jr7-d",
+        "chi-expanded:javelin-jvn-10n",
+        "chi-expanded:clint-clnt-2-3t",
+        "chi-expanded:whitworth-wth-1",
+        "chi-expanded:urbanmech-um-r60"
+      ]
+    }
+  ],
+  "encounters": [
+    {
+      "id": "beacon:roadblock",
+      "map": "beacon:road",
+      "party_at": [
+        18,
+        32
+      ],
+      "enemies": [
+        {
+          "kind": "mech",
+          "definition": "chi-expanded:javelin-jvn-10n",
+          "at": [
+            42,
+            28
+          ]
+        }
+      ]
+    },
+    {
+      "id": "beacon:relay-guard",
+      "map": "beacon:relay",
+      "party_at": [
+        18,
+        32
+      ],
+      "enemies": [
+        {
+          "kind": "mech",
+          "definition": "chi-expanded:jenner-jr7-d",
+          "at": [
+            42,
+            28
+          ]
+        },
+        {
+          "kind": "mech",
+          "definition": "chi-expanded:urbanmech-um-r60",
+          "at": [
+            52,
+            34
+          ]
+        }
+      ]
+    }
+  ],
+  "flags": [
+    "beacon:accepted",
+    "beacon:hired",
+    "beacon:road-clear",
+    "beacon:paid-road",
+    "beacon:relay-contract",
+    "beacon:relay-clear",
+    "beacon:paid-relay"
+  ],
+  "events": [
+    {
+      "id": "beacon:end",
+      "op": "end"
+    },
+    {
+      "id": "beacon:welcome",
+      "op": "say",
+      "text": "Lyran Commonwealth border, 3025. You command Beacon Company: Rowan in a Phoenix Hawk PXH-1, with Mira in a Trebuchet TBT-5N. Pirates have cut Grayhaven's road to its relay. Your employer offers 8,000 C-bills to reopen the road. A second job waits beyond it.",
+      "next": "beacon:directions",
+      "portrait": "training"
+    },
+    {
+      "id": "beacon:directions",
+      "op": "say",
+      "text": "Visit the contract office at the eastern garage door, north of the road. The west door is a 'Mech exchange. Cole, a spare pilot, waits on the road between them. ComStar has an office northeast. Travel east when ready. Space opens inspection, crew, map and saves; F5 saves, F9 restores.",
+      "next": "beacon:offer",
+      "portrait": "training"
+    },
+    {
+      "id": "beacon:office",
+      "op": "lua",
+      "script": "beacon:contract",
+      "routes": [
+        "beacon:offer",
+        "beacon:road-report",
+        "beacon:reminder",
+        "beacon:relay-report",
+        "beacon:second-offer"
+      ],
+      "failure": "beacon:script-error"
+    },
+    {
+      "id": "beacon:offer",
+      "op": "choice",
+      "text": "Militia captain: Clear the Javelin blocking Quarry Road. Your two 'Mechs should be enough. Payment: 8,000 C-bills.",
+      "options": [
+        {
+          "label": "Accept the contract",
+          "next": "beacon:accept"
+        },
+        {
+          "label": "Tactical briefing",
+          "next": "beacon:tactics"
+        },
+        {
+          "label": "Not yet",
+          "next": "beacon:end"
+        }
+      ],
+      "cancel": "beacon:end",
+      "portrait": "training"
+    },
+    {
+      "id": "beacon:accept",
+      "op": "flag",
+      "flag": "beacon:accepted",
+      "value": 1,
+      "next": "beacon:brief"
+    },
+    {
+      "id": "beacon:brief",
+      "op": "say",
+      "text": "Contract accepted. Follow the road east to the checkpoint. Phoenix Hawk: fast jump-capable skirmisher with a large laser. Trebuchet: twin LRM-15 support; keep it behind the Hawk. Enhanced rules penalize LRMs inside minimum range. Return here after the fight.",
+      "next": "beacon:end",
+      "portrait": "training"
+    },
+    {
+      "id": "beacon:tactics",
+      "op": "say",
+      "text": "Walk, run and jump are available in manual combat. Use trees for cover. The Hawk's jump jets can cross obstacles, but jumping and lasers add heat. Keep the Trebuchet back; its medium lasers are the fallback at close range. Computer combat is available. You can pause it with Space.",
+      "next": "beacon:offer",
+      "portrait": "training"
+    },
+    {
+      "id": "beacon:reminder",
+      "op": "say",
+      "text": "The contract is open. Head east along Quarry Road, clear the pirate Javelin and report back here. You may withdraw and try again; damage and ammunition use persist.",
+      "next": "beacon:end",
+      "portrait": "training"
+    },
+    {
+      "id": "beacon:broker",
+      "op": "choice",
+      "text": "The broker wipes grease from a sales slate. Nine Succession Wars models, inspected this morning. Cash on delivery.",
+      "options": [
+        {
+          "label": "Buy or sell a 'Mech",
+          "next": "beacon:shop"
+        },
+        {
+          "label": "Ask about crew",
+          "next": "beacon:crew-info"
+        },
+        {
+          "label": "Leave",
+          "next": "beacon:end"
+        }
+      ],
+      "cancel": "beacon:end",
+      "portrait": "broker"
+    },
+    {
+      "id": "beacon:shop",
+      "op": "shop",
+      "shop": "beacon:exchange",
+      "next": "beacon:broker"
+    },
+    {
+      "id": "beacon:crew-info",
+      "op": "say",
+      "text": "You can own four 'Mechs. A purchase needs a pilot: use Allocate People from the Space menu outside. Cole is looking for work near the road. Keep some C-bills in reserve; these are used machines, not a limitless militia arsenal.",
+      "next": "beacon:broker",
+      "portrait": "broker"
+    },
+    {
+      "id": "beacon:hire-check",
+      "op": "if",
+      "flag": "beacon:hired",
+      "value": 1,
+      "then": "beacon:already-hired",
+      "else": "beacon:hire-offer"
+    },
+    {
+      "id": "beacon:hire-offer",
+      "op": "choice",
+      "text": "Cole taps his neurohelmet. I'm a pilot, not a passenger. Got a spare cockpit? I'll sign on for this contract.",
+      "options": [
+        {
+          "label": "Recruit Cole",
+          "next": "beacon:hire"
+        },
+        {
+          "label": "Later",
+          "next": "beacon:end"
+        }
+      ],
+      "cancel": "beacon:end",
+      "portrait": "training"
+    },
+    {
+      "id": "beacon:hire",
+      "op": "recruit",
+      "person": "beacon:cole",
+      "next": "beacon:hired",
+      "failure": "beacon:full"
+    },
+    {
+      "id": "beacon:hired",
+      "op": "flag",
+      "flag": "beacon:hired",
+      "value": 1,
+      "next": "beacon:hire-info"
+    },
+    {
+      "id": "beacon:hire-info",
+      "op": "say",
+      "text": "Cole joins Beacon Company. Buy him a 'Mech at the exchange and assign him through the Space menu. Until then, put him in a passenger seat or keep him out of trouble on foot.",
+      "next": "beacon:end",
+      "portrait": "training"
+    },
+    {
+      "id": "beacon:already-hired",
+      "op": "say",
+      "text": "Cole is already part of Beacon Company.",
+      "next": "beacon:end",
+      "portrait": "training"
+    },
+    {
+      "id": "beacon:full",
+      "op": "say",
+      "text": "There is no free place in your company.",
+      "next": "beacon:end",
+      "portrait": "training"
+    },
+    {
+      "id": "beacon:news",
+      "op": "say",
+      "text": "The ComStar liaison lowers her voice. This is a local relay, not an HPG. The pirates want the traffic records and the militia's landing schedule. Reopen the road first. If you recover the station, I can relay your report to our employer.",
+      "next": "beacon:end",
+      "portrait": "comstar"
+    },
+    {
+      "id": "beacon:road-gate",
+      "op": "if",
+      "flag": "beacon:accepted",
+      "value": 1,
+      "then": "beacon:to-road",
+      "else": "beacon:need-contract"
+    },
+    {
+      "id": "beacon:need-contract",
+      "op": "say",
+      "text": "Visit the contract office before deploying. Your employer must authorize this job.",
+      "next": "beacon:end",
+      "portrait": "training"
+    },
+    {
+      "id": "beacon:to-road",
+      "op": "transfer",
+      "map": "beacon:road",
+      "at": [
+        12,
+        32
+      ],
+      "next": "beacon:road-intro",
+      "failure": "beacon:blocked"
+    },
+    {
+      "id": "beacon:road-intro",
+      "op": "say",
+      "text": "A pirate Javelin JVN-10N holds the checkpoint ahead, east along the road. Its paired SRM-6 launchers are dangerous close up. Keep your missile support at range and let the Phoenix Hawk draw it out. West leads home.",
+      "next": "beacon:end",
+      "portrait": "training"
+    },
+    {
+      "id": "beacon:return-town",
+      "op": "transfer",
+      "map": "beacon:town",
+      "at": [
+        60,
+        32
+      ],
+      "next": "beacon:end",
+      "failure": "beacon:blocked"
+    },
+    {
+      "id": "beacon:road-check",
+      "op": "if",
+      "flag": "beacon:road-clear",
+      "value": 1,
+      "then": "beacon:road-secure",
+      "else": "beacon:road-choice"
+    },
+    {
+      "id": "beacon:road-choice",
+      "op": "choice",
+      "text": "Sensors identify a Javelin JVN-10N: 30 tons, two SRM-6 launchers. The pirate orders you to turn back.",
+      "options": [
+        {
+          "label": "Engage the Javelin",
+          "next": "beacon:road-battle"
+        },
+        {
+          "label": "Withdraw for now",
+          "next": "beacon:end"
+        }
+      ],
+      "cancel": "beacon:end",
+      "portrait": "training"
+    },
+    {
+      "id": "beacon:road-battle",
+      "op": "battle",
+      "encounter": "beacon:roadblock",
+      "win": "beacon:road-cleared",
+      "loss": "beacon:defeat",
+      "flee": "beacon:withdraw",
+      "failure": "beacon:blocked"
+    },
+    {
+      "id": "beacon:road-cleared",
+      "op": "flag",
+      "flag": "beacon:road-clear",
+      "value": 1,
+      "next": "beacon:road-secure"
+    },
+    {
+      "id": "beacon:road-secure",
+      "op": "say",
+      "text": "Quarry Road is clear. Return west to the contract office for your 8,000 C-bills. The militia also requests help at the relay; you may take that job or settle the first contract and leave.",
+      "next": "beacon:end",
+      "portrait": "training"
+    },
+    {
+      "id": "beacon:road-report",
+      "op": "reward",
+      "credits": 8000,
+      "next": "beacon:road-paid",
+      "failure": "beacon:blocked"
+    },
+    {
+      "id": "beacon:road-paid",
+      "op": "flag",
+      "flag": "beacon:paid-road",
+      "value": 1,
+      "next": "beacon:second-offer"
+    },
+    {
+      "id": "beacon:second-offer",
+      "op": "choice",
+      "text": "8,000 C-bills paid. Two pirates hold the relay: a Jenner and an UrbanMech. Another 15,000 if you take it. Accept?",
+      "options": [
+        {
+          "label": "Take the relay job",
+          "next": "beacon:relay-accept"
+        },
+        {
+          "label": "End our contract here",
+          "next": "beacon:short-ending"
+        },
+        {
+          "label": "Prepare first",
+          "next": "beacon:end"
+        }
+      ],
+      "cancel": "beacon:end",
+      "portrait": "training"
+    },
+    {
+      "id": "beacon:relay-accept",
+      "op": "flag",
+      "flag": "beacon:relay-contract",
+      "value": 1,
+      "next": "beacon:relay-brief"
+    },
+    {
+      "id": "beacon:relay-brief",
+      "op": "say",
+      "text": "The relay contract is signed. Continue east past the cleared checkpoint. Jenner JR7-D: four medium lasers and SRM-4. UrbanMech UM-R60: slow, but its AC/10 hits hard. Use your mobility and missile range. Return to Grayhaven for payment when the station is secure.",
+      "next": "beacon:end",
+      "portrait": "training"
+    },
+    {
+      "id": "beacon:short-ending",
+      "op": "finish",
+      "portrait": "training",
+      "text": "Beacon Company leaves Grayhaven with its first contract fulfilled. The road is open, the convoy is moving, and 8,000 C-bills have reached your account. The relay will be somebody else's war. Contract complete."
+    },
+    {
+      "id": "beacon:relay-gate",
+      "op": "if",
+      "flag": "beacon:paid-road",
+      "value": 1,
+      "then": "beacon:relay-authorized",
+      "else": "beacon:report-first"
+    },
+    {
+      "id": "beacon:relay-authorized",
+      "op": "if",
+      "flag": "beacon:relay-contract",
+      "value": 1,
+      "then": "beacon:to-relay",
+      "else": "beacon:report-first"
+    },
+    {
+      "id": "beacon:report-first",
+      "op": "say",
+      "text": "Report to the Grayhaven contract office before continuing. The road contract must be settled and the relay job accepted.",
+      "next": "beacon:end",
+      "portrait": "training"
+    },
+    {
+      "id": "beacon:to-relay",
+      "op": "transfer",
+      "map": "beacon:relay",
+      "at": [
+        12,
+        32
+      ],
+      "next": "beacon:relay-intro",
+      "failure": "beacon:blocked"
+    },
+    {
+      "id": "beacon:relay-intro",
+      "op": "say",
+      "text": "High Ridge relay comes into view. Two pirate 'Mechs guard the eastern approach. Move east to challenge them. The road west remains open if you need to withdraw.",
+      "next": "beacon:end",
+      "portrait": "training"
+    },
+    {
+      "id": "beacon:return-road",
+      "op": "transfer",
+      "map": "beacon:road",
+      "at": [
+        60,
+        32
+      ],
+      "next": "beacon:end",
+      "failure": "beacon:blocked"
+    },
+    {
+      "id": "beacon:relay-check",
+      "op": "if",
+      "flag": "beacon:relay-clear",
+      "value": 1,
+      "then": "beacon:relay-secure",
+      "else": "beacon:relay-choice"
+    },
+    {
+      "id": "beacon:relay-choice",
+      "op": "choice",
+      "text": "Jenner JR7-D and UrbanMech UM-R60 detected. One fast striker, one AC/10 gun platform. Your approach is exposed.",
+      "options": [
+        {
+          "label": "Attack the defenders",
+          "next": "beacon:relay-battle"
+        },
+        {
+          "label": "Pull back",
+          "next": "beacon:end"
+        }
+      ],
+      "cancel": "beacon:end",
+      "portrait": "training"
+    },
+    {
+      "id": "beacon:relay-battle",
+      "op": "battle",
+      "encounter": "beacon:relay-guard",
+      "win": "beacon:relay-cleared",
+      "loss": "beacon:defeat",
+      "flee": "beacon:withdraw",
+      "failure": "beacon:blocked"
+    },
+    {
+      "id": "beacon:relay-cleared",
+      "op": "flag",
+      "flag": "beacon:relay-clear",
+      "value": 1,
+      "next": "beacon:relay-secure"
+    },
+    {
+      "id": "beacon:relay-secure",
+      "op": "say",
+      "text": "The pirate 'Mechs are down. Militia technicians secure the relay and recover the traffic records. Return west through Quarry Road to the contract office for your final payment.",
+      "next": "beacon:end",
+      "portrait": "training"
+    },
+    {
+      "id": "beacon:relay-report",
+      "op": "reward",
+      "credits": 15000,
+      "next": "beacon:relay-paid",
+      "failure": "beacon:blocked"
+    },
+    {
+      "id": "beacon:relay-paid",
+      "op": "flag",
+      "flag": "beacon:paid-relay",
+      "value": 1,
+      "next": "beacon:ending"
+    },
+    {
+      "id": "beacon:ending",
+      "op": "finish",
+      "portrait": "comstar",
+      "text": "The restored relay carries the convoy's landing clearance. Grayhaven's militia can breathe again. ComStar confirms the transfer: 15,000 C-bills, on top of the road contract. Beacon Company has earned a name, a battered pair of 'Mechs, and a reason to take the next job. Last Beacon - contract complete."
+    },
+    {
+      "id": "beacon:withdraw",
+      "op": "say",
+      "text": "You break contact. The job remains open. Damage and ammunition expenditure carry over; regroup before attacking again.",
+      "next": "beacon:end",
+      "portrait": "training"
+    },
+    {
+      "id": "beacon:defeat",
+      "op": "say",
+      "text": "Beacon Company has been defeated. Restore an earlier save to attempt the contract again.",
+      "next": "beacon:end",
+      "portrait": "training"
+    },
+    {
+      "id": "beacon:blocked",
+      "op": "say",
+      "text": "Your company cannot complete that action here. Check crew assignments and leave room for the full formation.",
+      "next": "beacon:end",
+      "portrait": "training"
+    },
+    {
+      "id": "beacon:script-error",
+      "op": "say",
+      "text": "The contract could not be resolved. Check the player log; no payment has been applied.",
+      "next": "beacon:end",
+      "portrait": "training"
+    }
+  ],
+  "start": {
+    "map": "beacon:town",
+    "at": [
+      24,
+      32
+    ],
+    "event": "beacon:welcome",
+    "credits": 18000,
+    "party": [
+      {
+        "person": "beacon:rowan",
+        "mech": "chi-expanded:phoenix-hawk-pxh-1"
+      },
+      {
+        "person": "beacon:mira",
+        "mech": "chi-expanded:trebuchet-tbt-5n"
+      }
+    ]
+  }
+}

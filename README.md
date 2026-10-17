@@ -52,6 +52,17 @@ export, validation and play commands for both platforms. Original and Updated
 remain available as before. [Authored maps and events](docs/M5_MAPS_EVENTS_EDITOR.md)
 now support entrances, overlays, shop stock, recruitment, transfers, battles and
 saved continuations. Try [Frontier Depot](examples/adventure-demo/README.md).
+For a BattleTech adventure, try **[BattleTech: Last Beacon](examples/battletech-demo/README.md)**:
+three maps, nine established mech variants, a Phoenix Hawk/Trebuchet starting
+team, two mercenary contracts, a broker, recruitment and two endings. It uses
+your supplied CHI graphics/sound and defaults to Enhanced combat:
+
+```sh
+sh scripts/play-battletech-demo.sh
+python3 tools/game_editor.py examples/battletech-demo
+```
+
+See [verification and the next editor milestones](docs/BATTLETECH_DEMO.md).
 The [game editor and independent demo](docs/M5_INDEPENDENT_GAME_EDITOR.md)
 now add map painting, overlays, entrances/NPCs, encounters, event/choice forms,
 roster editing, shared validation, undo/redo, export and Play here:

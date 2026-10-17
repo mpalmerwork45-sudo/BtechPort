@@ -504,7 +504,7 @@ static void spy_panel(const BtpResources *r,const BtpState *s,uint32_t *f)
     for (unsigned i=0;i<count;++i) {
         const uint8_t *p;size_t length;
         if (ids[i]>=254) {
-            p=(const uint8_t *)btp_party_name(&s->party,ids[i]==255 ? spy : witness);length=strlen((const char *)p);
+            p=(const uint8_t *)btp_content_party_name(r,s,ids[i]==255 ? spy : witness);length=strlen((const char *)p);
         } else p=bank_literal(r,ids[i],&length);
         if (p && length<=sizeof message-n) { memcpy(message+n,p,length);n+=length; }
     }
@@ -517,11 +517,11 @@ static void combat_header(const BtpResources *r,const BtpState *s,uint32_t *f,un
     unsigned id=btp_combat_id(c,unit);char message[384];size_t n;
     if (!u->infantry) {
         char model[16];memcpy(model,u->record,15);model[15]=0;
-        const char *pilot=u->record[121]<8 ? btp_party_name(&s->party,u->record[121]) : "None";
+        const char *pilot=u->record[121]<8 ? btp_content_party_name(r,s,u->record[121]) : "None";
         snprintf(message,sizeof message,id<4 ? "%s's\r%s" : "Enemy\r%s",id<4 ? pilot : model,model);
         (void)wrapped_at(r,f,8,8,11,(const uint8_t *)message,strlen(message),15);return;
     }
-    const char *name=id<12 ? btp_character_name(u->record[0]) : "Enemy human";
+    const char *name=id<12 ? btp_content_character_name(r,u->record[0]) : "Enemy human";
     if (!scan) { text(r,f,8,8,name,15);return; }
     if (btp_spy_unit(s,unit)) {
         const uint8_t *warning=bank_literal(r,189,&n);
@@ -761,7 +761,7 @@ static void combat_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
     if (c->phase==BTP_COMBAT_PICK) {
         rectangle(f,104,64,216,96,0);border_panel(r,f,104,64,216,96,0);
         text(r,f,112,72,"Choose a friendly unit:",15);
-        unsigned id=c->ids[c->scan_unit];text(r,f,112,96,id>=4 ? btp_party_name(&s->party,id-4) : "Owned 'Mech",14);
+        unsigned id=c->ids[c->scan_unit];text(r,f,112,96,id>=4 ? btp_content_party_name(r,s,id-4) : "Owned 'Mech",14);
         text(r,f,112,128,"Arrows / Enter / Backspace",7);
     } else if (c->phase==BTP_COMBAT_MOVE) {
         rectangle(f,200,64,24,1,14);rectangle(f,200,87,24,1,14);
@@ -892,9 +892,9 @@ static int service_wrap(const BtpResources *r,uint32_t *f,int y,const uint8_t *b
 {
     return service_wrap_scrolled(r,f,y,b,n,NULL);
 }
-static void battle_name(uint8_t *message,size_t *n,unsigned id)
+static void battle_name(const BtpResources *r,uint8_t *message,size_t *n,unsigned id)
 {
-    const char *name=btp_character_name(id);size_t length=strlen(name);
+    const char *name=btp_content_character_name(r,id);size_t length=strlen(name);
     if (*n+length+1>=1024) return;
     memcpy(message+*n,name,length);*n+=length;message[(*n)++]=1;
 }
@@ -908,11 +908,11 @@ size_t btp_battle_text(const BtpResources *r,const BtpBattleText *t,unsigned ver
         return n;
     }
     if (t->weapon==33) {
-        battle_name(message,&n,t->target_name);service_literal(r,message,&n,358);return n;
+        battle_name(r,message,&n,t->target_name);service_literal(r,message,&n,358);return n;
     }
     if (verbosity==2) {
         if (t->actor<12) {
-            battle_name(message,&n,t->actor_name);
+            battle_name(r,message,&n,t->actor_name);
             if (t->actor<4) service_literal(r,message,&n,334);
             else service_literal(r,message,&n,338);
         } else {
@@ -934,7 +934,7 @@ size_t btp_battle_text(const BtpResources *r,const BtpBattleText *t,unsigned ver
         if (t->target<12) {
             /* 12E8 composes the friendly target name, suffix and period
                into one far-string call before wrapping it. */
-            battle_name(message,&n,t->target_name);--n;
+            battle_name(r,message,&n,t->target_name);--n;
             if (t->target<4) { service_literal(r,message,&n,346);--n; }
             service_literal(r,message,&n,347);
         } else if (t->spectator) service_literal(r,message,&n,351);
@@ -974,7 +974,7 @@ static void combat_report_panel(const BtpResources *r,const BtpState *s,uint32_t
         const BtpQuietReport *q=&s->effects.quiet;uint8_t message[1024];size_t n;
         char model[16];memcpy(model,q->mech,15);model[15]=0;
         n=(size_t)snprintf((char *)message,sizeof message,q->mech[0] ? "%s's\r%s" : "%s",
-            btp_character_name(q->name),model);
+            btp_content_character_name(r,q->name),model);
         unsigned count=q->ejections+(unsigned)(current_report && t->active && t->dead && t->target<4);
         if (count) message[n++]=2; /* Original retirement's green text. */
         for (unsigned i=0;i<count;++i) service_literal(r,message,&n,371);
@@ -996,7 +996,7 @@ static int service_vehicles(const BtpResources *r,const BtpState *s,uint32_t *f,
         unsigned slot=btp_service_mech_slot(s,i);const uint8_t *m=slot ? s->party.mechs[slot-1] : s->campaign.mech;
         char model[16],name[48];memcpy(model,m,15);model[0]=(char)s->party.mech_types[slot];model[15]=0;
         /* 0C67:0B98 indexes the original name table by the crew byte. */
-        if (m[121]<8) snprintf(name,sizeof name,"%s's %s",btp_character_name(m[121]),model);
+        if (m[121]<8) snprintf(name,sizeof name,"%s's %s",(btp_adventure(r) ? btp_content_party_name(r,s,m[121]) : btp_character_name(m[121])),model);
         else snprintf(name,sizeof name,"%s",model);
         if (i==selected) rectangle(f,112,y,200,8,14);
         text(r,f,112,y,name,i==selected ? 0u : 15u);y+=8;
@@ -1020,7 +1020,7 @@ static void medical_panel(const BtpResources *r,const BtpState *s,uint32_t *f)
     rectangle(f,104,88,216,80,0);border_panel(r,f,104,88,216,80,0);
     if (v->mech==8) service_literal(r,message,&n,273);
     else {
-        const char *name=btp_party_name(&s->party,v->mech);n=strlen(name);memcpy(message,name,n);
+        const char *name=btp_content_party_name(r,s,v->mech);n=strlen(name);memcpy(message,name,n);
     }
     if (!v->kind) service_literal(r,message,&n,276);
     else {
@@ -1032,7 +1032,7 @@ static void medical_panel(const BtpResources *r,const BtpState *s,uint32_t *f)
     service_literal(r,message,&n,277);
     message[n++]=6;message[n++]=10;
     for (unsigned i=0;i<8;++i) if (v->amount&(1u<<i)) {
-        const char *name=btp_party_name(&s->party,i);size_t length=strlen(name);
+        const char *name=btp_content_party_name(r,s,i);size_t length=strlen(name);
         message[n++]='\r';memcpy(message+n,name,length);n+=length;
         service_literal(r,message,&n,278);
     }
@@ -1047,7 +1047,7 @@ size_t btp_salvage_text(const BtpResources *r,const BtpState *s,uint8_t message[
         unsigned technician=0,skill=0;
         for (unsigned i=0;i<8;++i) if (s->party.people[i][0]!=255 && s->party.people[i][9]>skill)
             { technician=i;skill=s->party.people[i][9]; }
-        const char *name=btp_party_name(&s->party,technician);size_t length=strlen(name);
+        const char *name=btp_content_party_name(r,s,technician);size_t length=strlen(name);
         memcpy(message+n,name,length);n+=length;service_literal(r,message,&n,298);
         unsigned count=v->attempts ? v->attempts : 1u;
         for (unsigned i=0;i<count;++i) {
@@ -1104,7 +1104,7 @@ static void aftermath_panel(const BtpResources *r,const BtpState *s,uint32_t *f)
     if (v->phase==5 || v->phase==8 || v->phase==9) {
         service_literal(r,message,&n,291);service_literal(r,message,&n,290);
         if (v->phase>=8) {
-            const char *name=btp_party_name(&s->party,v->pilot);size_t length=strlen(name);
+            const char *name=btp_content_party_name(r,s,v->pilot);size_t length=strlen(name);
             message[n++]='\r';message[n++]='\r';memcpy(message+n,name,length);n+=length;
             service_literal(r,message,&n,308);
             unsigned skill=s->party.people[v->pilot][9];
@@ -1123,7 +1123,7 @@ static void aftermath_panel(const BtpResources *r,const BtpState *s,uint32_t *f)
         service_literal(r,message,&n,303);if (v->notice) service_literal(r,message,&n,304);
         service_literal(r,message,&n,313);
     } else if (v->phase==1) {
-        const char *name=btp_party_name(&s->party,v->pilot);n=strlen(name);memcpy(message,name,n);
+        const char *name=btp_content_party_name(r,s,v->pilot);n=strlen(name);memcpy(message,name,n);
         service_literal(r,message,&n,297);
     } else if (v->phase==2) {
         n=btp_salvage_text(r,s,message);
@@ -1143,7 +1143,7 @@ static void aftermath_panel(const BtpResources *r,const BtpState *s,uint32_t *f)
             for (unsigned i=0;i<=count;++i) {
                 int y=128+(int)i*8;if (i==v->selected) rectangle(f,112,y,200,8,14);
                 unsigned p=btp_party_slot(&s->party,i),color=i==v->selected ? 0u : 15u;
-                text(r,f,112,y,i==count ? "Drop it" : btp_party_name(&s->party,p),color);
+                text(r,f,112,y,i==count ? "Drop it" : btp_content_party_name(r,s,p),color);
                 if (i<count) { char old[12];memcpy(old,r->combat.weapons[s->party.people[p][11]],11);old[11]=0;text(r,f,192,y,old,color); }
             }
             return;
@@ -1160,13 +1160,13 @@ static void mechit_panel(const BtpResources *r,const BtpState *s,uint32_t *f)
            appends the generated agent's actual seat after that introduction. */
         BtpScriptState script=s->script;script.has_name=script.name_after=script.name_id=0;
         if (btp_script_text(&script,btp_state_bld(r,s),message,sizeof message)) n=strlen((const char *)message);
-        service_literal(r,message,&n,272);const char *name=btp_party_name(&s->party,v->mech);
+        service_literal(r,message,&n,272);const char *name=btp_content_party_name(r,s,v->mech);
         size_t length=strlen(name);if (length<sizeof message-n) { memcpy(message+n,name,length);n+=length; }
         service_literal(r,message,&n,268);unsigned seat=s->party.people[v->mech][12];
         if (seat>=4) service_literal(r,message,&n,269);
         else {
             service_literal(r,message,&n,270);const uint8_t *m=seat ? s->party.mechs[seat-1] : s->campaign.mech;
-            name=btp_character_name(m[121]);length=strlen(name);
+            name=(btp_adventure(r) ? btp_content_party_name(r,s,m[121]) : btp_character_name(m[121]));length=strlen(name);
             if (length<sizeof message-n) { memcpy(message+n,name,length);n+=length; }
             service_literal(r,message,&n,271);
         }
@@ -1177,7 +1177,7 @@ static void mechit_panel(const BtpResources *r,const BtpState *s,uint32_t *f)
         int y=btp_game_text(s,r,prompt,sizeof prompt,&length) ? wrapped(r,f,8,prompt,length,15) : 8;
         for (unsigned i=0;i<btp_party_count(&s->party);++i) {
             if (i==v->selected) rectangle(f,112,y,200,8,14);
-            text(r,f,112,y,btp_party_name(&s->party,btp_party_slot(&s->party,i)),i==v->selected ? 0u : 15u);y+=8;
+            text(r,f,112,y,btp_content_party_name(r,s,btp_party_slot(&s->party,i)),i==v->selected ? 0u : 15u);y+=8;
         }
         return;
     }
@@ -1319,7 +1319,7 @@ static void story_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
                 for (unsigned i=0;i<=n;++i) {
                     int y=40+(int)i*16;
                     if (i==v->selected) rectangle(f,112,y,200,8,14);
-                    text(r,f,112,y,i==n ? "Drop it" : btp_party_name(&s->party,btp_party_slot(&s->party,i)),i==v->selected ? 0u : 15u);
+                    text(r,f,112,y,i==n ? "Drop it" : btp_content_party_name(r,s,btp_party_slot(&s->party,i)),i==v->selected ? 0u : 15u);
                     if (i<n) {
                         unsigned slot=btp_party_slot(&s->party,i);
                         if (armour) { size_t length;const uint8_t *name=bank_literal(r,102u+s->party.people[slot][13],&length);snprintf(gun,sizeof gun,"%s",name ? (const char *)name : ""); }
@@ -1347,7 +1347,7 @@ static void story_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
                 for (unsigned i=0;i<n;++i) {
                     unsigned slot=btp_service_mech_slot(s,i);const uint8_t *m=slot ? s->party.mechs[slot-1] : s->campaign.mech;
                     char model[16],name[48];memcpy(model,m,15);model[0]=(char)s->party.mech_types[slot];model[15]=0;
-                    if (m[121]<8) snprintf(name,sizeof name,"%s's %s",btp_character_name(m[121]),model);
+                    if (m[121]<8) snprintf(name,sizeof name,"%s's %s",(btp_adventure(r) ? btp_content_party_name(r,s,m[121]) : btp_character_name(m[121])),model);
                     else snprintf(name,sizeof name,"%s",model);
                     int y=16+8*(int)i;
                     if (i==v->selected) rectangle(f,112,y,200,8,14);
@@ -1459,6 +1459,27 @@ static void story_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
     }
 }
 
+/* Authored projects share the original menus, including their sizing and
+   keyboard behavior, but display their declared people rather than Jason/Rex. */
+static const char *actions_label(const BtpResources *r,const BtpState *s,unsigned item)
+{
+    if (btp_adventure(r)) {
+        unsigned ui=s->campaign.ui;
+        if (ui==BTP_MENU_ALLOCATE || ui==BTP_MENU_PERSON || ui==BTP_MENU_HEAL ||
+            ui==BTP_MENU_RECIPIENT || ui==BTP_MENU_EQUIPMENT) {
+            if (item<btp_party_count(&s->party)) return btp_content_party_name(r,s,btp_party_slot(&s->party,item));
+        }
+        if (ui==BTP_MENU_MECH_PICK && item<btp_menu_mech_count(s)) {
+            const uint8_t *m=btp_party_mech((BtpState *)s,btp_menu_mech_slot(s,item));
+            static char name[64];
+            if (m[121]<8) {
+                snprintf(name,sizeof name,"%s's %.15s",btp_content_party_name(r,s,m[121]),m);
+                return name;
+            }
+        }
+    }
+    return btp_actions_label(s,item);
+}
 static void event_panel(const BtpResources *r,const BtpState *s,uint32_t f[BTP_PIXELS])
 {
     const BtpAdventure *a=btp_adventure(r);const BtpEventState *v=&s->event;
@@ -1534,8 +1555,8 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         const uint8_t *m;unsigned heat=0,id;
         if (s->combat.phase) { const BtpCombatUnit *u=&s->combat.unit[s->combat.scan_unit];m=u->record;heat=u->heat;id=btp_combat_id(&s->combat,s->combat.scan_unit); }
         else { id=s->campaign.member;m=id ? s->party.mechs[id-1] : s->campaign.mech; }
-        const char *pilot=id<4 && m[121]<8 ? btp_party_name(&s->party,m[121]) : NULL;
-        const char *rider=id<4 && m[122]<8 ? btp_party_name(&s->party,m[122]) : NULL;
+        const char *pilot=id<4 && m[121]<8 ? btp_content_party_name(r,s,m[121]) : NULL;
+        const char *rider=id<4 && m[122]<8 ? btp_content_party_name(r,s,m[122]) : NULL;
         btp_mech_screen(r,m,pilot,rider,heat,s->tick,f);return;
     }
     if (s->mode == BTP_QUIZ && s->quiz.phase == BTP_QUIZ_QUESTION) {
@@ -1737,7 +1758,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
             unsigned count=btp_party_count(&s->party);if (count>4) count=4;
             for (unsigned i=0;i<count;++i) {
                 unsigned slot=btp_party_slot(&s->party,i);const uint8_t *p=s->party.people[slot];int y=112+16*(int)i;
-                text(r,f,8,y,btp_party_name(&s->party,slot),15);
+                text(r,f,8,y,btp_content_party_name(r,s,slot),15);
                 for (unsigned stat=1;stat<=3;++stat) {
                     int x=64+8*(int)stat;unsigned value=p[stat]>12 ? 12u : p[stat];
                     rectangle(f,x+1,y,5,1,14);rectangle(f,x,y+1,1,13,14);
@@ -1983,7 +2004,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                         for (unsigned end=15;end && model[end-1]==' ';--end) model[end-1]=0;
                         role=m[121]==member ? "pilot" : "rider";
                     }
-                    snprintf(assignment,sizeof assignment,"%s %s%s%s",btp_party_name(&s->party,member),model,mount<4 ? " " : "",role);
+                    snprintf(assignment,sizeof assignment,"%s %s%s%s",btp_content_party_name(r,s,member),model,mount<4 ? " " : "",role);
                 }
                 unsigned selected=c->ui==BTP_MENU_ALLOCATE ? c->selected : btp_party_ordinal(&s->party,c->member);
                 if (i==selected) rectangle(f,112,y,200,8,14);
@@ -1993,12 +2014,12 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
             for (unsigned i=0;i<4;++i) {
                 const uint8_t *m=btp_party_mech((BtpState *)s,i);if (m[0]==255) continue;
                 char model[16];memcpy(model,m,15);model[15]=0;text(r,f,112,y,model,15);
-                text(r,f,112,y+8,"Pilot:",15);text(r,f,168,y+8,m[121]<8 ? btp_party_name(&s->party,m[121]) : "None",2);
-                text(r,f,112,y+16,"Rider:",15);text(r,f,168,y+16,m[122]<8 ? btp_party_name(&s->party,m[122]) : "None",2);y+=24;
+                text(r,f,112,y+8,"Pilot:",15);text(r,f,168,y+8,m[121]<8 ? btp_content_party_name(r,s,m[121]) : "None",2);
+                text(r,f,112,y+16,"Rider:",15);text(r,f,168,y+16,m[122]<8 ? btp_content_party_name(r,s,m[122]) : "None",2);y+=24;
             }
             if (c->ui!=BTP_MENU_ALLOCATE) {
                 rectangle(f,0,0,104,200,0);
-                char info[96];snprintf(info,sizeof info,"%s is %sa qualified 'Mech pilot.",btp_party_name(&s->party,c->member),s->party.people[c->member][8] ? "" : "not ");
+                char info[96];snprintf(info,sizeof info,"%s is %sa qualified 'Mech pilot.",btp_content_party_name(r,s,c->member),s->party.people[c->member][8] ? "" : "not ");
                 (void)wrapped_at(r,f,8,8,11,(const uint8_t *)info,strlen(info),15);
                 text(r,f,8,104,c->ui==BTP_MENU_CREW ? "Assign to" : "Assign as",15);
                 text(r,f,8,112,c->ui==BTP_MENU_CREW ? "which" : "the pilot?",15);
@@ -2006,7 +2027,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                     text(r,f,8,120,"vehicle?",15);
                     for (unsigned i=0;i<btp_actions_count(s);++i) {
                         int row=128+8*(int)i;if (i==c->selected) rectangle(f,8,row,88,8,14);
-                        text(r,f,8,row,btp_actions_label(s,i),i==c->selected ? 0u : 15u);
+                        text(r,f,8,row,actions_label(r,s,i),i==c->selected ? 0u : 15u);
                     }
                 } else {
                     rectangle(f,c->selected ? 40 : 8,128,c->selected ? 16 : 24,8,14);
@@ -2024,13 +2045,13 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                 text(r,f,112,8,c->ui==BTP_MENU_MECH_PICK ? "Examine which 'Mech?" : "Examine which character?",15);
                 for (unsigned i=0;i<btp_actions_count(s);++i) {
                     int y=16+8*(int)i;if (i==c->selected) rectangle(f,112,y,200,8,14);
-                    text(r,f,112,y,btp_actions_label(s,i),i==c->selected ? 0u : 15u);
+                    text(r,f,112,y,actions_label(r,s,i),i==c->selected ? 0u : 15u);
                 }
             }
         } else if (c->ui==BTP_MENU_INSPECT) {
             uint8_t p[17];btp_menu_person(s,c->member,p);
             rectangle(f,104,0,216,200,0);border_panel(r,f,104,0,216,200,0);
-            text(r,f,112,8,"Name  :",10);text(r,f,176,8,btp_character_name(p[0]),15);
+            text(r,f,112,8,"Name  :",10);text(r,f,176,8,btp_content_character_name(r,p[0]),15);
             text(r,f,112,16,"Weapon:",10);char weapon[12];memcpy(weapon,r->combat.weapons[p[11]],11);weapon[11]=0;text(r,f,176,16,weapon,15);
             text(r,f,112,24,"Armor :",10);
             size_t n;const uint8_t *armor=bank_literal(r,102u+p[13],&n);
@@ -2039,7 +2060,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
             unsigned health=p[1] ? p[15]/p[1] : 0;if (health>10) health=10;
             const uint8_t *condition=bank_literal(r,91u+health,&n);
             if (condition) {
-                char message[128];snprintf(message,sizeof message,"%s%s",btp_character_name(p[0]),(const char *)condition);
+                char message[128];snprintf(message,sizeof message,"%s%s",btp_content_character_name(r,p[0]),(const char *)condition);
                 (void)wrapped_at(r,f,176,40,17,(const uint8_t *)message,strlen(message),15);
             }
             /* 0000:39B3..39FC places the spy warning at text row eight in
@@ -2078,7 +2099,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
             for (unsigned i=0;i<7;++i) {
                 int y=112+8*(int)i;
                 if (i==c->selected) rectangle(f,8,y,88,8,14);
-                text(r,f,8,y,btp_actions_label(s,i),i==c->selected ? 0u : 15u);
+                text(r,f,8,y,actions_label(r,s,i),i==c->selected ? 0u : 15u);
             }
         } else if (c->ui!=BTP_MENU_MAP) {
             if (c->ui==BTP_MENU_COMBAT_RULES) {
@@ -2094,7 +2115,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
             for (unsigned i=0;i<count;++i) {
                 int y=top+8+8*(int)i;
                 if (i==c->selected) rectangle(f,112,y,200,8,14);
-                text(r,f,112,y,btp_actions_label(s,i),i==c->selected ? 0u : 15u);
+                text(r,f,112,y,actions_label(r,s,i),i==c->selected ? 0u : 15u);
             }
         }
     }

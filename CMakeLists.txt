@@ -135,6 +135,12 @@ if(BUILD_TESTING)
   add_executable(btp-content-tests tests/test_content.c)
   add_executable(btp-project-tests tests/test_project.c)
   add_executable(btp-adventure-tests tests/test_adventure.c)
+  add_executable(btp-battletech-demo-tests tests/test_battletech_demo.c)
+  target_link_libraries(btp-battletech-demo-tests PRIVATE btp_pixels)
+  add_test(NAME battletech-demo-contracts COMMAND btp-battletech-demo-tests
+    "${PROJECT_SOURCE_DIR}/Original DOS" "${PROJECT_SOURCE_DIR}/work/talk-data.bin"
+    "${PROJECT_SOURCE_DIR}/work/combat-data.bin" "${PROJECT_SOURCE_DIR}/work/world-data.bin"
+    "${PROJECT_SOURCE_DIR}/examples/battletech-demo")
   target_link_libraries(btp-adventure-tests PRIVATE btp_pixels)
   add_test(NAME authored-adventure-continuations COMMAND btp-adventure-tests
     "${PROJECT_SOURCE_DIR}/Original DOS" "${PROJECT_SOURCE_DIR}/work/talk-data.bin"

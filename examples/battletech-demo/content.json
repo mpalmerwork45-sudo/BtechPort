@@ -1,0 +1,965 @@
+{
+  "format": "btp-content-v1",
+  "schema_version": 1,
+  "package_id": "battletech-beacon",
+  "content_version": "1.0.0",
+  "rules": {
+    "id": "chi:updated-lrm-v1",
+    "distance_scale": 3,
+    "minimum_range": 6,
+    "short_range": 7,
+    "medium_range": 14,
+    "long_range": 21
+  },
+  "services": {
+    "broker": {
+      "id": "chi-expanded:broker",
+      "behavior": "chi-broker-v1"
+    },
+    "reload": {
+      "id": "chi-expanded:reload",
+      "behavior": "chi-reload-v1"
+    }
+  },
+  "ammunition": [
+    {
+      "id": "chi:ammo-ac5-6",
+      "price_per_shot": 6
+    },
+    {
+      "id": "chi:ammo-ac10-8",
+      "price_per_shot": 8
+    },
+    {
+      "id": "chi:ammo-ac20-12",
+      "price_per_shot": 12
+    },
+    {
+      "id": "chi:ammo-machine_gun-1",
+      "price_per_shot": 1
+    },
+    {
+      "id": "chi:ammo-lrm5-4",
+      "price_per_shot": 4
+    },
+    {
+      "id": "chi:ammo-lrm10-7",
+      "price_per_shot": 7
+    },
+    {
+      "id": "chi:ammo-lrm15-10",
+      "price_per_shot": 10
+    },
+    {
+      "id": "chi:ammo-lrm20-12",
+      "price_per_shot": 12
+    },
+    {
+      "id": "chi:ammo-srm2-4",
+      "price_per_shot": 4
+    },
+    {
+      "id": "chi:ammo-srm4-6",
+      "price_per_shot": 6
+    },
+    {
+      "id": "chi:ammo-srm6-8",
+      "price_per_shot": 8
+    }
+  ],
+  "presentations": [
+    {
+      "id": "chi:locust",
+      "source": "chi:locust"
+    },
+    {
+      "id": "chi:red-stinger",
+      "source": "chi:red-stinger"
+    }
+  ],
+  "weapons": [
+    {
+      "id": "chi:weapon-small_laser-0",
+      "name": "SmallLaser",
+      "label": "SmallLaser",
+      "behavior": "small_laser",
+      "ammunition": "none",
+      "damage": 3,
+      "projectiles": 1,
+      "heat": 1,
+      "ranges": {
+        "short": 6,
+        "medium": 9,
+        "long": 12
+      }
+    },
+    {
+      "id": "chi:weapon-medium_laser-0",
+      "name": "Med Laser",
+      "label": "Med Laser",
+      "behavior": "medium_laser",
+      "ammunition": "none",
+      "damage": 5,
+      "projectiles": 1,
+      "heat": 3,
+      "ranges": {
+        "short": 12,
+        "medium": 21,
+        "long": 30
+      }
+    },
+    {
+      "id": "chi:weapon-large_laser-0",
+      "name": "LargeLaser",
+      "label": "LargeLaser",
+      "behavior": "large_laser",
+      "ammunition": "none",
+      "damage": 8,
+      "projectiles": 1,
+      "heat": 8,
+      "ranges": {
+        "short": 18,
+        "medium": 33,
+        "long": 48
+      }
+    },
+    {
+      "id": "chi:weapon-ppc-0",
+      "name": "PPC",
+      "label": "PPC",
+      "behavior": "ppc",
+      "ammunition": "none",
+      "damage": 10,
+      "projectiles": 1,
+      "heat": 10,
+      "ranges": {
+        "short": 21,
+        "medium": 39,
+        "long": 57
+      }
+    },
+    {
+      "id": "chi:weapon-ac5-6",
+      "name": "AutoCann/5",
+      "label": "AutoCann/5",
+      "behavior": "ac5",
+      "ammunition": "chi:ammo-ac5-6",
+      "damage": 5,
+      "projectiles": 1,
+      "heat": 1,
+      "ranges": {
+        "short": 21,
+        "medium": 39,
+        "long": 57
+      }
+    },
+    {
+      "id": "chi:weapon-ac10-8",
+      "name": "AutoCann10",
+      "label": "AutoCann10",
+      "behavior": "ac10",
+      "ammunition": "chi:ammo-ac10-8",
+      "damage": 10,
+      "projectiles": 1,
+      "heat": 3,
+      "ranges": {
+        "short": 18,
+        "medium": 33,
+        "long": 48
+      }
+    },
+    {
+      "id": "chi:weapon-ac20-12",
+      "name": "AutoCann20",
+      "label": "AutoCann20",
+      "behavior": "ac20",
+      "ammunition": "chi:ammo-ac20-12",
+      "damage": 20,
+      "projectiles": 1,
+      "heat": 7,
+      "ranges": {
+        "short": 12,
+        "medium": 21,
+        "long": 30
+      }
+    },
+    {
+      "id": "chi:weapon-machine_gun-1",
+      "name": "MachineGun",
+      "label": "MachineGun",
+      "behavior": "machine_gun",
+      "ammunition": "chi:ammo-machine_gun-1",
+      "damage": 2,
+      "projectiles": 1,
+      "heat": 0,
+      "ranges": {
+        "short": 6,
+        "medium": 9,
+        "long": 12
+      }
+    },
+    {
+      "id": "chi:weapon-flamer-0",
+      "name": "Flamer",
+      "label": "Flamer",
+      "behavior": "flamer",
+      "ammunition": "none",
+      "damage": 2,
+      "projectiles": 1,
+      "heat": 3,
+      "ranges": {
+        "short": 6,
+        "medium": 9,
+        "long": 12
+      }
+    },
+    {
+      "id": "chi:weapon-lrm5-4",
+      "name": "LRMissile5",
+      "label": "LRMissile5",
+      "behavior": "lrm5",
+      "ammunition": "chi:ammo-lrm5-4",
+      "damage": 1,
+      "projectiles": 5,
+      "heat": 2,
+      "ranges": {
+        "short": 21,
+        "medium": 45,
+        "long": 66
+      }
+    },
+    {
+      "id": "chi:weapon-lrm10-7",
+      "name": "LRMissil10",
+      "label": "LRMissil10",
+      "behavior": "lrm10",
+      "ammunition": "chi:ammo-lrm10-7",
+      "damage": 1,
+      "projectiles": 10,
+      "heat": 4,
+      "ranges": {
+        "short": 21,
+        "medium": 45,
+        "long": 66
+      }
+    },
+    {
+      "id": "chi:weapon-lrm15-10",
+      "name": "LRMissil15",
+      "label": "LRMissil15",
+      "behavior": "lrm15",
+      "ammunition": "chi:ammo-lrm15-10",
+      "damage": 1,
+      "projectiles": 15,
+      "heat": 5,
+      "ranges": {
+        "short": 21,
+        "medium": 45,
+        "long": 66
+      }
+    },
+    {
+      "id": "chi:weapon-lrm20-12",
+      "name": "LRMissil20",
+      "label": "LRMissil20",
+      "behavior": "lrm20",
+      "ammunition": "chi:ammo-lrm20-12",
+      "damage": 1,
+      "projectiles": 20,
+      "heat": 6,
+      "ranges": {
+        "short": 21,
+        "medium": 45,
+        "long": 66
+      }
+    },
+    {
+      "id": "chi:weapon-srm2-4",
+      "name": "SRMissile2",
+      "label": "SRMissile2",
+      "behavior": "srm2",
+      "ammunition": "chi:ammo-srm2-4",
+      "damage": 2,
+      "projectiles": 2,
+      "heat": 2,
+      "ranges": {
+        "short": 12,
+        "medium": 21,
+        "long": 30
+      }
+    },
+    {
+      "id": "chi:weapon-srm4-6",
+      "name": "SRMissile4",
+      "label": "SRMissile4",
+      "behavior": "srm4",
+      "ammunition": "chi:ammo-srm4-6",
+      "damage": 2,
+      "projectiles": 4,
+      "heat": 3,
+      "ranges": {
+        "short": 12,
+        "medium": 21,
+        "long": 30
+      }
+    },
+    {
+      "id": "chi:weapon-srm6-8",
+      "name": "SRMissile6",
+      "label": "SRMissile6",
+      "behavior": "srm6",
+      "ammunition": "chi:ammo-srm6-8",
+      "damage": 2,
+      "projectiles": 6,
+      "heat": 4,
+      "ranges": {
+        "short": 12,
+        "medium": 21,
+        "long": 30
+      }
+    }
+  ],
+  "mechs": [
+    {
+      "id": "chi-expanded:panther-pnt-9r",
+      "name": "Panther PNT-9R",
+      "label": "PANTHER PNT-9R",
+      "mass_tons": 35,
+      "price": 12000,
+      "presentation": "chi:red-stinger",
+      "movement": {
+        "walk": 4,
+        "jump": 4
+      },
+      "engine_heat_sinks": 5,
+      "armor": {
+        "left_arm": 10,
+        "left_torso": 10,
+        "left_leg": 12,
+        "head": 9,
+        "center_torso": 14,
+        "right_arm": 10,
+        "right_torso": 10,
+        "right_leg": 12,
+        "left_rear": 5,
+        "center_rear": 7,
+        "right_rear": 5
+      },
+      "structure": {
+        "left_arm": 6,
+        "left_torso": 8,
+        "left_leg": 8,
+        "head": 3,
+        "center_torso": 11,
+        "right_arm": 6,
+        "right_torso": 8,
+        "right_leg": 8
+      },
+      "actuators": {
+        "left_arm": 15,
+        "right_arm": 15,
+        "left_leg": 15,
+        "right_leg": 15
+      },
+      "external_heat_sinks": {
+        "left_arm": 0,
+        "left_torso": 4,
+        "left_leg": 0,
+        "head": 0,
+        "center_torso": 0,
+        "right_arm": 0,
+        "right_torso": 4,
+        "right_leg": 0
+      },
+      "loadout": [
+        {
+          "weapon": "chi:weapon-ppc-0",
+          "location": "right_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "chi:weapon-srm4-6",
+          "location": "center_torso",
+          "ammunition": 25
+        }
+      ]
+    },
+    {
+      "id": "chi-expanded:trebuchet-tbt-5n",
+      "name": "Trebuchet TBT-5N",
+      "label": "TREBUCHET 5N",
+      "mass_tons": 50,
+      "price": 24000,
+      "presentation": "chi:red-stinger",
+      "movement": {
+        "walk": 5,
+        "jump": 0
+      },
+      "engine_heat_sinks": 10,
+      "armor": {
+        "left_arm": 10,
+        "left_torso": 11,
+        "left_leg": 15,
+        "head": 9,
+        "center_torso": 22,
+        "right_arm": 10,
+        "right_torso": 11,
+        "right_leg": 15,
+        "left_rear": 5,
+        "center_rear": 7,
+        "right_rear": 5
+      },
+      "structure": {
+        "left_arm": 8,
+        "left_torso": 12,
+        "left_leg": 12,
+        "head": 3,
+        "center_torso": 16,
+        "right_arm": 8,
+        "right_torso": 12,
+        "right_leg": 12
+      },
+      "actuators": {
+        "left_arm": 15,
+        "right_arm": 14,
+        "left_leg": 15,
+        "right_leg": 15
+      },
+      "external_heat_sinks": {
+        "left_arm": 0,
+        "left_torso": 0,
+        "left_leg": 0,
+        "head": 0,
+        "center_torso": 0,
+        "right_arm": 0,
+        "right_torso": 0,
+        "right_leg": 0
+      },
+      "loadout": [
+        {
+          "weapon": "chi:weapon-lrm15-10",
+          "location": "left_arm",
+          "ammunition": 8
+        },
+        {
+          "weapon": "chi:weapon-medium_laser-0",
+          "location": "left_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "chi:weapon-medium_laser-0",
+          "location": "right_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "chi:weapon-medium_laser-0",
+          "location": "right_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "chi:weapon-lrm15-10",
+          "location": "right_torso",
+          "ammunition": 8
+        }
+      ]
+    },
+    {
+      "id": "chi-expanded:griffin-grf-1n",
+      "name": "Griffin GRF-1N",
+      "label": "GRIFFIN GRF-1N",
+      "mass_tons": 55,
+      "price": 28000,
+      "presentation": "chi:red-stinger",
+      "movement": {
+        "walk": 5,
+        "jump": 5
+      },
+      "engine_heat_sinks": 11,
+      "armor": {
+        "left_arm": 14,
+        "left_torso": 20,
+        "left_leg": 18,
+        "head": 9,
+        "center_torso": 20,
+        "right_arm": 14,
+        "right_torso": 20,
+        "right_leg": 18,
+        "left_rear": 6,
+        "center_rear": 7,
+        "right_rear": 6
+      },
+      "structure": {
+        "left_arm": 9,
+        "left_torso": 13,
+        "left_leg": 13,
+        "head": 3,
+        "center_torso": 18,
+        "right_arm": 9,
+        "right_torso": 13,
+        "right_leg": 13
+      },
+      "actuators": {
+        "left_arm": 15,
+        "right_arm": 15,
+        "left_leg": 15,
+        "right_leg": 15
+      },
+      "external_heat_sinks": {
+        "left_arm": 0,
+        "left_torso": 0,
+        "left_leg": 0,
+        "head": 0,
+        "center_torso": 1,
+        "right_arm": 0,
+        "right_torso": 0,
+        "right_leg": 0
+      },
+      "loadout": [
+        {
+          "weapon": "chi:weapon-ppc-0",
+          "location": "right_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "chi:weapon-lrm10-7",
+          "location": "right_torso",
+          "ammunition": 24
+        }
+      ]
+    },
+    {
+      "id": "chi-expanded:phoenix-hawk-pxh-1",
+      "name": "Phoenix Hawk PXH-1",
+      "label": "PHOENIX HAWK 1",
+      "mass_tons": 45,
+      "price": 25000,
+      "presentation": "chi:red-stinger",
+      "movement": {
+        "walk": 6,
+        "jump": 6
+      },
+      "engine_heat_sinks": 10,
+      "armor": {
+        "left_arm": 10,
+        "left_torso": 18,
+        "left_leg": 15,
+        "head": 6,
+        "center_torso": 23,
+        "right_arm": 10,
+        "right_torso": 18,
+        "right_leg": 15,
+        "left_rear": 4,
+        "center_rear": 5,
+        "right_rear": 4
+      },
+      "structure": {
+        "left_arm": 7,
+        "left_torso": 11,
+        "left_leg": 11,
+        "head": 3,
+        "center_torso": 14,
+        "right_arm": 7,
+        "right_torso": 11,
+        "right_leg": 11
+      },
+      "actuators": {
+        "left_arm": 15,
+        "right_arm": 15,
+        "left_leg": 15,
+        "right_leg": 15
+      },
+      "external_heat_sinks": {
+        "left_arm": 0,
+        "left_torso": 0,
+        "left_leg": 0,
+        "head": 0,
+        "center_torso": 0,
+        "right_arm": 0,
+        "right_torso": 0,
+        "right_leg": 0
+      },
+      "loadout": [
+        {
+          "weapon": "chi:weapon-medium_laser-0",
+          "location": "left_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "chi:weapon-machine_gun-1",
+          "location": "left_arm",
+          "ammunition": 100
+        },
+        {
+          "weapon": "chi:weapon-large_laser-0",
+          "location": "right_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "chi:weapon-medium_laser-0",
+          "location": "right_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "chi:weapon-machine_gun-1",
+          "location": "right_arm",
+          "ammunition": 100
+        }
+      ]
+    },
+    {
+      "id": "chi-expanded:jenner-jr7-d",
+      "name": "Jenner JR7-D",
+      "label": "JENNER JR7-D",
+      "mass_tons": 35,
+      "price": 15000,
+      "presentation": "chi:locust",
+      "movement": {
+        "walk": 7,
+        "jump": 5
+      },
+      "engine_heat_sinks": 9,
+      "armor": {
+        "left_arm": 4,
+        "left_torso": 8,
+        "left_leg": 6,
+        "head": 7,
+        "center_torso": 10,
+        "right_arm": 4,
+        "right_torso": 8,
+        "right_leg": 6,
+        "left_rear": 4,
+        "center_rear": 3,
+        "right_rear": 4
+      },
+      "structure": {
+        "left_arm": 6,
+        "left_torso": 8,
+        "left_leg": 8,
+        "head": 3,
+        "center_torso": 11,
+        "right_arm": 6,
+        "right_torso": 8,
+        "right_leg": 8
+      },
+      "actuators": {
+        "left_arm": 12,
+        "right_arm": 12,
+        "left_leg": 15,
+        "right_leg": 15
+      },
+      "external_heat_sinks": {
+        "left_arm": 0,
+        "left_torso": 0,
+        "left_leg": 0,
+        "head": 1,
+        "center_torso": 0,
+        "right_arm": 0,
+        "right_torso": 0,
+        "right_leg": 0
+      },
+      "loadout": [
+        {
+          "weapon": "chi:weapon-medium_laser-0",
+          "location": "left_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "chi:weapon-medium_laser-0",
+          "location": "left_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "chi:weapon-medium_laser-0",
+          "location": "right_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "chi:weapon-medium_laser-0",
+          "location": "right_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "chi:weapon-srm4-6",
+          "location": "center_torso",
+          "ammunition": 25
+        }
+      ]
+    },
+    {
+      "id": "chi-expanded:javelin-jvn-10n",
+      "name": "Javelin JVN-10N",
+      "label": "JAVELIN JVN-10N",
+      "mass_tons": 30,
+      "price": 13000,
+      "presentation": "chi:red-stinger",
+      "movement": {
+        "walk": 6,
+        "jump": 6
+      },
+      "engine_heat_sinks": 7,
+      "armor": {
+        "left_arm": 6,
+        "left_torso": 8,
+        "left_leg": 8,
+        "head": 6,
+        "center_torso": 8,
+        "right_arm": 6,
+        "right_torso": 8,
+        "right_leg": 8,
+        "left_rear": 2,
+        "center_rear": 2,
+        "right_rear": 2
+      },
+      "structure": {
+        "left_arm": 5,
+        "left_torso": 7,
+        "left_leg": 7,
+        "head": 3,
+        "center_torso": 10,
+        "right_arm": 5,
+        "right_torso": 7,
+        "right_leg": 7
+      },
+      "actuators": {
+        "left_arm": 15,
+        "right_arm": 15,
+        "left_leg": 15,
+        "right_leg": 15
+      },
+      "external_heat_sinks": {
+        "left_arm": 0,
+        "left_torso": 1,
+        "left_leg": 0,
+        "head": 0,
+        "center_torso": 0,
+        "right_arm": 0,
+        "right_torso": 2,
+        "right_leg": 0
+      },
+      "loadout": [
+        {
+          "weapon": "chi:weapon-srm6-8",
+          "location": "left_torso",
+          "ammunition": 15
+        },
+        {
+          "weapon": "chi:weapon-srm6-8",
+          "location": "right_torso",
+          "ammunition": 15
+        }
+      ]
+    },
+    {
+      "id": "chi-expanded:clint-clnt-2-3t",
+      "name": "Clint CLNT-2-3T",
+      "label": "CLINT CLNT-2-3T",
+      "mass_tons": 40,
+      "price": 21000,
+      "presentation": "chi:red-stinger",
+      "movement": {
+        "walk": 6,
+        "jump": 6
+      },
+      "engine_heat_sinks": 9,
+      "armor": {
+        "left_arm": 6,
+        "left_torso": 6,
+        "left_leg": 8,
+        "head": 9,
+        "center_torso": 11,
+        "right_arm": 6,
+        "right_torso": 6,
+        "right_leg": 8,
+        "left_rear": 4,
+        "center_rear": 4,
+        "right_rear": 4
+      },
+      "structure": {
+        "left_arm": 6,
+        "left_torso": 10,
+        "left_leg": 10,
+        "head": 3,
+        "center_torso": 12,
+        "right_arm": 6,
+        "right_torso": 10,
+        "right_leg": 10
+      },
+      "actuators": {
+        "left_arm": 15,
+        "right_arm": 14,
+        "left_leg": 15,
+        "right_leg": 15
+      },
+      "external_heat_sinks": {
+        "left_arm": 0,
+        "left_torso": 0,
+        "left_leg": 0,
+        "head": 0,
+        "center_torso": 0,
+        "right_arm": 0,
+        "right_torso": 1,
+        "right_leg": 0
+      },
+      "loadout": [
+        {
+          "weapon": "chi:weapon-medium_laser-0",
+          "location": "left_torso",
+          "ammunition": 0
+        },
+        {
+          "weapon": "chi:weapon-ac5-6",
+          "location": "right_arm",
+          "ammunition": 20
+        },
+        {
+          "weapon": "chi:weapon-medium_laser-0",
+          "location": "center_torso",
+          "ammunition": 0
+        }
+      ]
+    },
+    {
+      "id": "chi-expanded:whitworth-wth-1",
+      "name": "Whitworth WTH-1",
+      "label": "WHITWORTH WTH-1",
+      "mass_tons": 40,
+      "price": 22000,
+      "presentation": "chi:red-stinger",
+      "movement": {
+        "walk": 4,
+        "jump": 4
+      },
+      "engine_heat_sinks": 6,
+      "armor": {
+        "left_arm": 12,
+        "left_torso": 12,
+        "left_leg": 18,
+        "head": 9,
+        "center_torso": 16,
+        "right_arm": 12,
+        "right_torso": 12,
+        "right_leg": 18,
+        "left_rear": 6,
+        "center_rear": 7,
+        "right_rear": 6
+      },
+      "structure": {
+        "left_arm": 6,
+        "left_torso": 10,
+        "left_leg": 10,
+        "head": 3,
+        "center_torso": 12,
+        "right_arm": 6,
+        "right_torso": 10,
+        "right_leg": 10
+      },
+      "actuators": {
+        "left_arm": 14,
+        "right_arm": 14,
+        "left_leg": 15,
+        "right_leg": 15
+      },
+      "external_heat_sinks": {
+        "left_arm": 0,
+        "left_torso": 2,
+        "left_leg": 0,
+        "head": 0,
+        "center_torso": 0,
+        "right_arm": 0,
+        "right_torso": 2,
+        "right_leg": 0
+      },
+      "loadout": [
+        {
+          "weapon": "chi:weapon-medium_laser-0",
+          "location": "left_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "chi:weapon-lrm10-7",
+          "location": "left_torso",
+          "ammunition": 12
+        },
+        {
+          "weapon": "chi:weapon-medium_laser-0",
+          "location": "right_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "chi:weapon-lrm10-7",
+          "location": "right_torso",
+          "ammunition": 12
+        },
+        {
+          "weapon": "chi:weapon-medium_laser-0",
+          "location": "head",
+          "ammunition": 0
+        }
+      ]
+    },
+    {
+      "id": "chi-expanded:urbanmech-um-r60",
+      "name": "UrbanMech UM-R60",
+      "label": "URBANMECH R60",
+      "mass_tons": 30,
+      "price": 10000,
+      "presentation": "chi:red-stinger",
+      "movement": {
+        "walk": 2,
+        "jump": 2
+      },
+      "engine_heat_sinks": 2,
+      "armor": {
+        "left_arm": 10,
+        "left_torso": 8,
+        "left_leg": 12,
+        "head": 9,
+        "center_torso": 11,
+        "right_arm": 10,
+        "right_torso": 8,
+        "right_leg": 12,
+        "left_rear": 4,
+        "center_rear": 8,
+        "right_rear": 4
+      },
+      "structure": {
+        "left_arm": 5,
+        "left_torso": 7,
+        "left_leg": 7,
+        "head": 3,
+        "center_torso": 10,
+        "right_arm": 5,
+        "right_torso": 7,
+        "right_leg": 7
+      },
+      "actuators": {
+        "left_arm": 12,
+        "right_arm": 12,
+        "left_leg": 15,
+        "right_leg": 15
+      },
+      "external_heat_sinks": {
+        "left_arm": 0,
+        "left_torso": 2,
+        "left_leg": 2,
+        "head": 1,
+        "center_torso": 0,
+        "right_arm": 0,
+        "right_torso": 2,
+        "right_leg": 2
+      },
+      "loadout": [
+        {
+          "weapon": "chi:weapon-small_laser-0",
+          "location": "left_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "chi:weapon-ac10-8",
+          "location": "right_arm",
+          "ammunition": 10
+        }
+      ]
+    }
+  ]
+}
