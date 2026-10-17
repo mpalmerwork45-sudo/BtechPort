@@ -42,4 +42,7 @@ from **Vehicles** (one scrolling list). Selling accepts either type.
 - **VERIFIED:** Unit Library preview has an Edit sprite button and right-click
   Edit/Select sprite actions. Real Tk editing, library save and game import pass
   (`python3 tools/native_smoke.py --library-editor-only`).
-- Services and later stages remain in progress.
+- **VERIFIED (engine/model):** [service buildings](AUTHORED_SERVICES.md), including
+  atomic payment/result branches, templates, saved one-time salvage and target
+  validation. The GUI workflow will receive the combined editor smoke check.
+- Event/quest, map/art, animation/unit and delivery stages remain in progress.

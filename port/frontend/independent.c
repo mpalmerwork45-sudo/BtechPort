@@ -192,7 +192,7 @@ static void actions(Canvas *c,const BtpResources *r,const BtpState *s)
         v->ui==BTP_MENU_SAVE ? "Save game - choose a slot" : v->ui==BTP_MENU_LOAD ? "Load game - choose a slot" : "Expedition menu";
     text(c,100,16,heading,14);
     if (v->ui==BTP_MENU_BROKER_HUB) {
-        const char *const labels[]={"Buy a unit","Sell a unit","Leave"};for (unsigned i=0;i<3;++i) selection(c,i,v->selected,top+(int)i*12,labels[i]);return;
+        const char *const labels[]={"Mechs","Vehicles","Sell a unit","Leave"};for (unsigned i=0;i<4;++i) selection(c,i,v->selected,top+(int)i*12,labels[i]);return;
     }
     if (v->ui==BTP_MENU_BROKER || v->ui==BTP_MENU_BROKER_SELL) {
         unsigned stock=btp_events_catalogue(s,r,s->menu.broker_class,r->roster.count,indices);

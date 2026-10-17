@@ -9,6 +9,7 @@
 #include "core/roster_game.h"
 #include "core/world.h"
 #include "core/lua_events.h"
+#include "core/authored_services.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -95,6 +96,11 @@ static void run(BtpState *s,const BtpResources *r)
         unsigned done=v->done[n/8u]&(1u<<(n%8u)),target=e->next[0];
         s->mode=BTP_EVENT;
         switch (e->op) {
+        case BTP_EVENT_REPAIR:case BTP_EVENT_REARM:case BTP_EVENT_HEAL:case BTP_EVENT_SALVAGE: {
+            unsigned outcome=e->op==BTP_EVENT_SALVAGE && done ? 2u : btp_authored_service(s,r,e);
+            if (!outcome && e->op==BTP_EVENT_SALVAGE) v->done[n/8u]|=(uint8_t)(1u<<(n%8u));
+            target=e->next[outcome];break;
+        }
         case BTP_EVENT_FINISH:v->phase=BTP_EVENT_TEXT;return;
         case BTP_EVENT_LUA: {
             char error[256];
@@ -313,7 +319,7 @@ int btp_events_valid(const BtpState *s,const BtpResources *r)
         s->script.pc || s->mission.phase || s->campaign.building || s->entry_slot) return 0;
     for (unsigned i=a->flag_count;i<64;++i) if (v->flags[i]) return 0;
     for (unsigned i=0;i<256;++i) if ((v->done[i/8u]&(1u<<(i%8u))) &&
-        (i>=a->node_count || (a->nodes[i].op!=BTP_EVENT_REWARD && a->nodes[i].op!=BTP_EVENT_RECRUIT))) return 0;
+        (i>=a->node_count || (a->nodes[i].op!=BTP_EVENT_REWARD && a->nodes[i].op!=BTP_EVENT_RECRUIT && a->nodes[i].op!=BTP_EVENT_SALVAGE))) return 0;
     for (unsigned i=0;i<8;++i) if (s->party.people[i][0]!=255 &&
         (v->people[i]>=a->person_count || a->people[v->people[i]].record[0]!=s->party.people[i][0])) return 0;
     const BtpEventNode *e=&a->nodes[v->node];

@@ -370,8 +370,9 @@ int btp_adventure_load(const char *path,const BtpDefinitions *d,BtpAdventure *ou
     }
     for (unsigned i=0;i<a->node_count;++i) {
         unsigned n=nodes[i];BtpEventNode *e=&a->nodes[i];
-        const char *const ops[]={"end","say","choice","if","flag","reward","recruit","transfer","shop","battle","lua","finish","picture"};
-        if (!option(&j,n,"op",ops,a->version==2 ? 13u : 12u,&e->op)) goto done;
+        const char *const ops[]={"end","say","choice","if","flag","reward","recruit","transfer","shop","battle","lua","finish","picture","repair","rearm","heal","salvage"};
+        if (!option(&j,n,"op",ops,17,&e->op)) goto done;
+        if (a->version==1 && e->op==BTP_EVENT_PICTURE) { btp_json_error(&j,n,"picture requires adventure v2");goto done; }
         e->picture=65535;unsigned image=btp_json_optional(&j,n,"image");
         if (image && (a->version!=2 || !btp_json_string(&j,image,e->image,sizeof e->image) ||
             (e->op!=BTP_EVENT_PICTURE && e->op!=BTP_EVENT_SAY && e->op!=BTP_EVENT_CHOICE && e->op!=BTP_EVENT_FINISH))) goto done;
@@ -394,6 +395,17 @@ int btp_adventure_load(const char *path,const BtpDefinitions *d,BtpAdventure *ou
             if (!next(&j,n,"next",a,&e->next[0])) goto done;
         }
         switch (e->op) {
+        case BTP_EVENT_REPAIR:case BTP_EVENT_REARM:case BTP_EVENT_HEAL:case BTP_EVENT_SALVAGE: {
+            if (!number(&j,n,"cost",0,999999,&e->value) || !next(&j,n,"failure",a,&e->next[1]) ||
+                !next(&j,n,"unchanged",a,&e->next[2])) goto done;
+            if (e->op==BTP_EVENT_SALVAGE) {
+                if (!REF(&j,n,"mech",d->mechs,d->mech_count,&e->x)) goto done;
+            } else {
+                unsigned slot=btp_json_optional(&j,n,"slot");
+                if (slot) { if (!btp_json_uint(&j,slot,0,e->op==BTP_EVENT_HEAL ? 7u : 3u,&v)) goto done;e->argument=v+1u; }
+            }
+            break;
+        }
         case BTP_EVENT_LUA: {
             /* Resolve the package script after all manifest inputs load. */
             if (!string(&j,n,"script",e->text,64) || !btp_content_id(e->text,1) || !next(&j,n,"failure",a,&e->next[5])) goto done;

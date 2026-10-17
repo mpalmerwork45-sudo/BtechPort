@@ -5,7 +5,7 @@ import math
 from numbers import Real
 from editor_model import EditorError
 
-OPS = ("end", "say", "choice", "if", "flag", "reward", "recruit", "transfer", "shop", "battle", "lua", "finish", "picture")
+OPS = ("end", "say", "choice", "if", "flag", "reward", "recruit", "transfer", "shop", "battle", "lua", "finish", "picture", "repair", "rearm", "heal", "salvage")
 
 
 def new_id(document, collection, stem):
@@ -60,6 +60,9 @@ def event_template(document, op, identity=None):
     if op == "battle": event.update(encounter=a["encounters"][0]["id"] if a["encounters"] else "", win=end, loss=end, flee=end)
     if op == "lua": event.update(script=document.manifest.get("scripts", [{}])[0].get("id", ""), routes=[end])
     if op == "picture": event["image"] = document.art["images"][0]["id"] if document.art["images"] else ""
+    if op in ('repair','rearm','heal','salvage'):
+        event.update(cost=100,next=end,failure=end,unchanged=end)
+        if op=='salvage':event['mech']=document.content['mechs'][0]['id']
     return event
 
 

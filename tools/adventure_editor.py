@@ -700,7 +700,20 @@ class AdventureEditor:
         self.event_listing.bind("<<ListboxSelect>>",lambda _:self.guard(self.populate_event))
         buttons=ttk.Frame(left);buttons.pack(fill="x")
         for label,callback in [("New",self.new_event),("Duplicate",self.duplicate_event),("Delete",self.delete_event)]:ttk.Button(buttons,text=label,command=lambda cb=callback:self.guard(cb)).pack(side="left")
+        ttk.Button(left,text='Service building...',command=lambda:self.guard(self.service_template)).pack(fill='x',padx=6,pady=6)
         self.event_id=None;self.event_vars={};self.event_text=None;self.event_pending=False
+
+    def service_template(self):
+        from building_templates import PRESETS,service_building
+        self.apply_pending();f=Form(self,'New service building')
+        f.field('preset','Full service depot',list(PRESETS));f.field('name','Service depot')
+        for op,cost in [('repair',500),('rearm',200),('heal',100),('salvage',1000)]:f.field(op,cost,label=op.title()+' price')
+        f.field('mech',self.document.content['mechs'][0]['id'],[m['id'] for m in self.document.content['mechs']],label='Salvage chassis (once only)')
+        f.field('door','None',['None']+[d['id'] for m in self.adventure['maps'] for d in m['entrances']],label='Attach to entrance')
+        def apply(v):
+            self.event_id=service_building(self.document,v['preset'],v['name'],{op:int(v[op]) for op in ('repair','rearm','heal','salvage')},v['mech'],None if v['door']=='None' else v['door'])
+            self.refresh();self.populate_event()
+        f.submit(apply)
 
     def refresh_events(self):
         self.event_listing.delete(0,"end")
@@ -744,11 +757,14 @@ class AdventureEditor:
             field("portrait",e.get("portrait","none"),["none","broker","training"] if self.document.manifest["requires"]=="none" else ["none","broker","training","lounge","prison","inventor","cinema","hospital","comstar","clothes","video-hut","mayor"])
         if e["op"] in ("picture","say","choice","finish"):
             field("image",e.get("image","none"),(["none"] if e["op"]!="picture" else [])+[im["id"] for im in self.document.art["images"] if e["op"]=="picture" or (im["width"]<=88 and im["height"]<=88)])
-        for key in ("next","failure","then","else","cancel","win","loss","flee"):
+        for key in ("next","failure","unchanged","then","else","cancel","win","loss","flee"):
             if key in e:field(key,e[key],events)
         for key,collection in [("flag","flags"),("person","people"),("map","maps"),("shop","shops"),("encounter","encounters")]:
             if key in e:field(key,e[key],[v if isinstance(v,str) else v["id"] for v in self.adventure[collection]])
-        for key in ("value","credits"):
+        if 'mech' in e:field('mech',e['mech'],[v['id'] for v in self.document.content['mechs']])
+        if e['op'] in ('repair','rearm','heal'):
+            field('slot',str(e['slot']+1) if 'slot' in e else 'All',['All']+[str(i+1) for i in range(8 if e['op']=='heal' else 4)])
+        for key in ("value","credits","cost"):
             if key in e:field(key,e[key])
         if "at" in e:field("x",e["at"][0]);field("y",e["at"][1])
         if e["op"]=="choice":
@@ -767,8 +783,11 @@ class AdventureEditor:
         if not self.event_id:return
         e=copy.deepcopy(self.event_draft);values={k:v.get() for k,v in self.event_vars.items()}
         e.update({k:values[k] for k in e if k not in ("text","options","routes","at") and k in values})
-        for key in ("value","credits"):
+        for key in ("value","credits","cost"):
             if key in e:e[key]=int(values[key])
+        if e['op'] in ('repair','rearm','heal'):
+            if values['slot']=='All':e.pop('slot',None)
+            else:e['slot']=int(values['slot'])-1
         if self.event_text:e["text"]=" ".join(self.event_text.get("1.0","end-1c").split())
         if "at" in e:e["at"]=[int(values["x"]),int(values["y"])]
         if e["op"]=="choice":e["options"]=[dict(label=values[f"label_{i+1}"],next=values[f"choice_{i+1}"]) for i in range(int(values["choice_count"]))]
