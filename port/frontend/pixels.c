@@ -34,6 +34,22 @@ const uint32_t btp_palette[16] = {
 static const uint8_t terrain_palette[16] = {0,1,2,3,4,9,6,7,8,1,10,11,12,13,14,15};
 static const uint8_t sprite_palette[16] = {0,0,2,3,4,9,6,7,8,1,10,11,12,13,14,15};
 
+int btp_map_tile_atlas(const BtpGraphic *sheet,uint32_t atlas[BTP_TILE_ATLAS_PIXELS])
+{
+    if (!sheet || !atlas || sheet->format!=1) return 0;
+    for (unsigned i=0;i<BTP_TILE_ATLAS_PIXELS;++i) atlas[i]=btp_palette[0];
+    /* This is a static editor view of the decoded sheet. Gameplay's terrain
+       animation substitutions are deliberately left to the running game. */
+    for (unsigned tile=0;tile<250;++tile)
+        for (unsigned y=0;y<16;++y)
+            for (unsigned x=0;x<16;++x) {
+                unsigned color=sheet->pixels[tile*256+y*16+x]&15u;
+                unsigned target=((tile/16)*16+y)*BTP_TILE_ATLAS_SIDE+(tile%16)*16+x;
+                atlas[target]=btp_palette[terrain_palette[color]];
+            }
+    return 1;
+}
+
 int btp_draw_sprite(const BtpGraphic *atlas, unsigned id, int x, int y,
                     unsigned hidden_rows, int clip_left, uint32_t f[BTP_PIXELS])
 {

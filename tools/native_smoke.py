@@ -1299,6 +1299,7 @@ def main():
     parser.add_argument('--editor-only',action='store_true',help='Check the desktop roster editor and Play launch')
     parser.add_argument('--independent-only',action='store_true',help='Check independent quest and saved SDL screens without original files')
     parser.add_argument('--map-editor-only',action='store_true',help='Check map painting, event forms, export and Play here')
+    parser.add_argument('--editor-visual-only',action='store_true',help='Check original tile previews, visual picker and marker dragging')
     parser.add_argument('--updated-combat-only',action='store_true',help='Check Updated rules settings and held LRM combat saves')
     parser.add_argument('--building-art-only',action='store_true',help='Check Updated building portraits and held saves')
     parser.add_argument("--shops-only", action="store_true")
@@ -1355,6 +1356,10 @@ def main():
             env.pop("SDL_VIDEODRIVER", None)
             os.environ["DISPLAY"] = env["DISPLAY"]
             os.environ["BTECH_REFERENCE_VIRTUAL"] = "1"
+            if args.editor_visual_only:
+                from editor_visual_smoke import run
+                run(env,work)
+                return
             if args.battletech_demo_only:
                 from adventure_smoke import run
                 run(env,work,battletech=True)

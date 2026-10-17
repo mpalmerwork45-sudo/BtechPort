@@ -71,7 +71,7 @@ target_link_libraries(btp-audio-render PRIVATE btp_core)
 add_executable(btp-roster-check tools/roster_check.c)
 target_link_libraries(btp-roster-check PRIVATE btp_core)
 add_executable(btp-project tools/project.c)
-target_link_libraries(btp-project PRIVATE btp_core)
+target_link_libraries(btp-project PRIVATE btp_pixels)
 
 if(BTP_FRONTEND)
   find_package(SDL2 QUIET CONFIG)

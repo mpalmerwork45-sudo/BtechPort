@@ -1,6 +1,8 @@
 """Reversible authoring operations; only the C loader decides game legality."""
 from __future__ import annotations
 import copy
+import math
+from numbers import Real
 from editor_model import EditorError
 
 OPS = ("end", "say", "choice", "if", "flag", "reward", "recruit", "transfer", "shop", "battle", "lua", "finish")
@@ -64,3 +66,108 @@ def copy_adventure(document):
     if document.adventure is None:
         raise EditorError("This project uses the CHI campaign. Open an authored template or create an independent game first.")
     return copy.deepcopy(document.adventure)
+
+
+def _marker_scene(adventure, scene_index):
+    if isinstance(scene_index, bool) or not isinstance(scene_index, int):
+        raise EditorError("Choose an existing map before moving a marker.")
+    scenes = adventure.get("maps", [])
+    if not 0 <= scene_index < len(scenes):
+        raise EditorError("The marker's map no longer exists.")
+    return scenes[scene_index]
+
+
+def scene_markers(adventure, scene_index):
+    """Return detached marker descriptions in drawing/list order.
+
+    A ref is (kind, map ID, object ID, enemy index or None). IDs keep a door
+    or encounter selected when its collection is reordered; the map ID stops
+    an in-progress drag from affecting a different map. Enemy records have
+    no authored IDs, so their index is valid until the enemy list is edited.
+    Coordinates and labels are copies, never mutable document references.
+    """
+    scene = _marker_scene(adventure, scene_index)
+    map_id = scene["id"]
+    markers = []
+
+    def append(kind, identity, at, label, enemy_index=None):
+        markers.append(dict(ref=(kind, map_id, identity, enemy_index),
+                            at=list(at), label=label))
+
+    for door in scene.get("entrances", []):
+        kind = "npc" if "person" in door else "entrance"
+        append(kind, door["id"], door["at"],
+               ("NPC " if kind == "npc" else "Door ") + door["name"])
+    for encounter in adventure.get("encounters", []):
+        if encounter["map"] != map_id:
+            continue
+        name = encounter["id"].split(":")[-1]
+        append("party", encounter["id"], encounter["party_at"],
+               f"Fight {name} / party")
+        for index, enemy in enumerate(encounter["enemies"]):
+            definition = enemy["definition"].split(":")[-1]
+            append("enemy", encounter["id"], enemy["at"],
+                   f"Fight {name} / enemy {index + 1}: {definition}", index)
+    start = adventure.get("start", {})
+    if start.get("map") == map_id:
+        append("start", "start", start["at"], "START")
+    return markers
+
+
+def move_marker(adventure, scene_index, ref, at):
+    """Move exactly one marker, returning whether its coordinate changed.
+
+    The UI can update a detached drag preview repeatedly, then submit that
+    snapshot once for undo. Movement snaps to the nearest half-tile position
+    and rejects out-of-map destinations and overlapping entrances. Terrain
+    and full formation legality still belong to the shared C validator.
+    No document data changes on an invalid or stale reference.
+    """
+    scene = _marker_scene(adventure, scene_index)
+    if not isinstance(ref, (tuple, list)) or len(ref) != 4:
+        raise EditorError("The marker selection is stale; select it again.")
+    ref = tuple(ref)
+    kind, map_id, identity, enemy_index = ref
+    if (kind not in ("entrance", "npc", "party", "enemy", "start")
+            or not isinstance(map_id, str) or not isinstance(identity, str)
+            or (kind == "enemy" and (isinstance(enemy_index, bool)
+                or not isinstance(enemy_index, int) or enemy_index < 0))
+            or (kind != "enemy" and enemy_index is not None)):
+        raise EditorError("The marker selection is stale; select it again.")
+    if map_id != scene["id"]:
+        raise EditorError("The marker belongs to a different map; select it again.")
+    if len([m for m in scene_markers(adventure, scene_index) if m["ref"] == ref]) != 1:
+        raise EditorError("The marker selection is stale; select it again.")
+    if not isinstance(at, (tuple, list)) or len(at) != 2:
+        raise EditorError("A marker needs an x and y coordinate.")
+    snapped = []
+    for value in at:
+        try:
+            if isinstance(value, bool) or not isinstance(value, Real) or not math.isfinite(value):
+                raise ValueError
+            snapped.append(math.floor(value + 0.5))
+        except (ValueError, OverflowError, TypeError) as exc:
+            raise EditorError("Marker coordinates must be finite numbers.") from exc
+    width, height = len(scene["rows"][0]) * 2, len(scene["rows"]) * 2
+    if not 0 <= snapped[0] < width or not 0 <= snapped[1] < height:
+        raise EditorError("The marker must stay inside the map.")
+
+    if kind in ("entrance", "npc"):
+        matches = [door for door in scene["entrances"] if door["id"] == identity]
+        if len(matches) != 1:
+            raise EditorError("The marker ID is ambiguous; fix duplicate IDs before moving it.")
+        record = matches[0]
+        coordinate = "at"
+        if any(door is not record and door["at"] == snapped for door in scene["entrances"]):
+            raise EditorError("Another entrance or NPC already occupies that position.")
+    elif kind in ("party", "enemy"):
+        encounter = next(e for e in adventure["encounters"]
+                         if e["id"] == identity and e["map"] == map_id)
+        record = encounter if kind == "party" else encounter["enemies"][enemy_index]
+        coordinate = "party_at" if kind == "party" else "at"
+    else:  # The exact ref check above permits only the fixed campaign-start ref.
+        record, coordinate = adventure["start"], "at"
+    if record[coordinate] == snapped:
+        return False
+    record[coordinate] = snapped
+    return True

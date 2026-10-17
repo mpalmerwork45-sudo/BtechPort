@@ -2,7 +2,11 @@
 #define BTP_PIXELS_H
 #include "core/game.h"
 enum { BTP_SCREEN_W = 320, BTP_SCREEN_H = 200 };
+enum { BTP_TILE_ATLAS_SIDE = 256, BTP_TILE_ATLAS_PIXELS = 65536 };
 extern const uint32_t btp_palette[16]; /* opaque ARGB */
+/* Static map tiles use the same display palette as the terrain renderer.
+   The last six cells are black: original format-1 sheets contain 250 tiles. */
+int btp_map_tile_atlas(const BtpGraphic *sheet,uint32_t atlas[BTP_TILE_ATLAS_PIXELS]);
 /* Application setup precedes the original logo and never advances the game. */
 void btp_startup_screen(const BtpResources *resources,unsigned selected,
     const char *error,uint32_t frame[BTP_PIXELS]);

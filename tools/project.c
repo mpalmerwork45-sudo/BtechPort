@@ -2,17 +2,63 @@
 #include "data/content.h"
 #include "data/portraits.h"
 #include "data/file.h"
+#include "frontend/pixels.h"
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #ifdef _WIN32
 #include <direct.h>
+#include <fcntl.h>
+#include <io.h>
 #define make_directory(p) _mkdir(p)
 #else
 #include <sys/stat.h>
 #define make_directory(p) mkdir(p,0700)
 #endif
+
+static int preview_tiles(const char *directory,const char *name)
+{
+    BtpError error={0};
+    if (strcmp(name,"chi:land") && strcmp(name,"chi:destroyed")) {
+        fprintf(stderr,"Unknown tile sheet: %.180s (use chi:land or chi:destroyed)\n",name);return 0;
+    }
+    /* The original resource set is large enough to exceed Windows' default
+       stack. This read-only preview shares the validated game loader. */
+    BtpResources *resources=calloc(1,sizeof *resources);
+    uint32_t *atlas=malloc(BTP_TILE_ATLAS_PIXELS*sizeof *atlas);
+    int ok=resources && atlas;
+    if (!ok) snprintf(error.text,sizeof error.text,"Tile preview allocation failed");
+    if (ok) ok=btp_resources_load(directory,resources,&error);
+    if (ok) {
+        const BtpGraphic *sheet=!strcmp(name,"chi:land") ? &resources->tiles : &resources->destroyed_tiles;
+        ok=btp_map_tile_atlas(sheet,atlas);
+        if (!ok) snprintf(error.text,sizeof error.text,"Tile preview requires a format-1 map tile sheet");
+    }
+#ifdef _WIN32
+    /* Tk consumes P6 bytes from a pipe; text mode would corrupt LF pixels. */
+    if (ok && _setmode(_fileno(stdout),_O_BINARY)==-1) {
+        ok=0;snprintf(error.text,sizeof error.text,"Cannot set binary tile preview output");
+    }
+#endif
+    if (ok) {
+        ok=fprintf(stdout,"P6\n%d %d\n255\n",BTP_TILE_ATLAS_SIDE,BTP_TILE_ATLAS_SIDE)>0;
+        unsigned char row[BTP_TILE_ATLAS_SIDE*3];
+        for (unsigned y=0;y<BTP_TILE_ATLAS_SIDE && ok;++y) {
+            for (unsigned x=0;x<BTP_TILE_ATLAS_SIDE;++x) {
+                uint32_t color=atlas[y*BTP_TILE_ATLAS_SIDE+x];
+                row[x*3]=(unsigned char)(color>>16);
+                row[x*3+1]=(unsigned char)(color>>8);
+                row[x*3+2]=(unsigned char)color;
+            }
+            ok=fwrite(row,1,sizeof row,stdout)==sizeof row;
+        }
+        if (fflush(stdout)) ok=0;
+        if (!ok) snprintf(error.text,sizeof error.text,"Cannot write tile preview output");
+    }
+    if (!ok) fprintf(stderr,"%s\n",error.text);
+    free(atlas);free(resources);return ok;
+}
 
 static int provenance(const char *roster,const char *directory,BtpError *error)
 {
@@ -41,9 +87,16 @@ static int provenance(const char *roster,const char *directory,BtpError *error)
 
 int main(int argc,char **argv)
 {
+    if (argc>=2 && !strcmp(argv[1],"preview-tiles")) {
+        if (argc!=6 || strcmp(argv[2],"--data") || strcmp(argv[4],"--sheet")) {
+            fputs("Usage: btp-project preview-tiles --data DIRECTORY --sheet chi:land|chi:destroyed\n",stderr);return 2;
+        }
+        return preview_tiles(argv[3],argv[5]) ? 0 : 1;
+    }
     if (argc<3) {
         fputs("Usage:\n  btp-project validate DIRECTORY\n  btp-project validate-content FILE\n"
             "  btp-project export NEW_DIRECTORY --roster FILE --combat-data FILE\n"
+            "  btp-project preview-tiles --data DIRECTORY --sheet chi:land|chi:destroyed\n"
             "Export reads adjacent combat.json and art, writing explicit references.\n",stderr);return 2;
     }
     BtpError error={0};int ok=0;
