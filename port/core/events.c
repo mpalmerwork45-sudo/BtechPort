@@ -181,13 +181,7 @@ void btp_events_tick(BtpState *s,const BtpResources *r,BtpAction action)
         uint8_t walk[8],directions[8];memcpy(walk,s->party.walk,8);memcpy(directions,s->party.direction,8);
         for (unsigned step=0;step<s->menu.steps;++step) {
             int x=(int)s->x_half+btp_action_dx(action),y=(int)s->y_half+btp_action_dy(action);
-            int entrance=-1;
-            for (unsigned i=0;i<m->entrance_count;++i) if (x==m->entrances[i].x && y==m->entrances[i].y) {
-                int recruited=0;
-                if (m->entrances[i].person!=255) for (unsigned k=0;k<8;++k)
-                    if (s->party.people[k][0]!=255 && s->event.people[k]==m->entrances[i].person) recruited=1;
-                if (!recruited) entrance=(int)i;
-            }
+            int entrance=btp_party_entrance(s,r,&m->rules,x,y);
             if (entrance>=0) {
                 v->origin_map=(uint8_t)(s->map_id-BTP_AUTHORED_MAP_FIRST);v->origin_entry=(uint8_t)entrance;
                 advance(s,m->entrances[entrance].event);v->phase=BTP_EVENT_ENTRY;s->mode=BTP_EVENT;break;
@@ -210,7 +204,19 @@ void btp_events_tick(BtpState *s,const BtpResources *r,BtpAction action)
     if (v->phase==BTP_EVENT_ENTRY) {
         if (action==BTP_LEFT || action==BTP_UP) v->selected=0;
         if (action==BTP_RIGHT || action==BTP_DOWN) v->selected=1;
-        if (action==BTP_CANCEL || (action==BTP_ACCEPT && v->selected)) { v->phase=BTP_EVENT_INACTIVE;v->selected=0;s->mode=BTP_EXPLORE; }
+        if (action==BTP_CANCEL || (action==BTP_ACCEPT && v->selected)) {
+            v->phase=BTP_EVENT_INACTIVE;v->selected=0;s->mode=BTP_EXPLORE;
+            /* DOS No resumes the interrupted wall test. The saved facing
+               retains this pending half-step while the Yes/No prompt is up;
+               do not re-trigger the marker or add another animation frame. */
+            const BtpScene *m=btp_scene(r,s);BtpAction pending=(BtpAction)s->facing;
+            int x=(int)s->x_half+btp_action_dx(pending),y=(int)s->y_half+btp_action_dy(pending);
+            int wx=(int)(2*m->origin_x)+x,wy=(int)(2*m->origin_y)+y;
+            if (btp_action_moves(pending) && btp_party_can_stand(s,r,wx,wy)) {
+                position(s,m,s->map_id-BTP_AUTHORED_MAP_FIRST,(unsigned)x,(unsigned)y);s->blocked=BTP_CLEAR;
+                btp_party_recover(s,r,1);btp_world_reveal(s);
+            } else s->blocked=BTP_WALL;
+        }
         else if (action==BTP_ACCEPT) run(s,r);
     } else if (v->phase==BTP_EVENT_TEXT && action==BTP_ACCEPT) {
         char lines[96][28];unsigned count=btp_event_lines(e->text,lines);

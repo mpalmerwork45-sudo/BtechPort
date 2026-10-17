@@ -136,6 +136,12 @@ if(BUILD_TESTING)
   add_executable(btp-project-tests tests/test_project.c)
   add_executable(btp-adventure-tests tests/test_adventure.c)
   add_executable(btp-battletech-demo-tests tests/test_battletech_demo.c)
+  add_executable(btp-authored-movement-tests tests/test_authored_movement.c)
+  target_link_libraries(btp-authored-movement-tests PRIVATE btp_pixels)
+  add_test(NAME authored-formation-movement COMMAND btp-authored-movement-tests
+    "${PROJECT_SOURCE_DIR}/Original DOS" "${PROJECT_SOURCE_DIR}/work/talk-data.bin"
+    "${PROJECT_SOURCE_DIR}/work/combat-data.bin" "${PROJECT_SOURCE_DIR}/work/world-data.bin"
+    "${PROJECT_SOURCE_DIR}/examples/battletech-demo")
   target_link_libraries(btp-battletech-demo-tests PRIVATE btp_pixels)
   add_test(NAME battletech-demo-contracts COMMAND btp-battletech-demo-tests
     "${PROJECT_SOURCE_DIR}/Original DOS" "${PROJECT_SOURCE_DIR}/work/talk-data.bin"

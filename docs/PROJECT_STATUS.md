@@ -1,5 +1,13 @@
 # Project status — original fidelity and editable projects, 2026-10-17
 
+[Authored walking](AUTHORED_WALKING.md) now keeps all active mechs/infantry in
+the original compact formation, tests entrances against each member's ground
+position and preserves one gait increment per 1/2/4-step key. It removes the
+generated-world water test from custom-scene followers and fixes stale mounted
+positions in the asset-free renderer. Existing demo package fingerprints and
+saves are retained. The full native suite passes **69/69** and Python **69/69**;
+the linked evidence records focused Windows/sanitizer and real-input SDL checks.
+
 The main authored play demo is now **[BattleTech: Last Beacon](BATTLETECH_DEMO.md)**:
 three maps, nine sourced variants, a Phoenix Hawk/Trebuchet starting team,
 two mercenary contracts, recruitment, trading and two endings, using supplied

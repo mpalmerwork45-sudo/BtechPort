@@ -67,6 +67,10 @@ one undo/redo history. The latter has three tabs:
   The marker list supports editing and removal. Coordinates are half tiles;
   the cursor/status also shows tile coordinates. World origins/overlays use
   whole tiles. Place doors far enough in front of roofs for a full mech party.
+  Entrances respond to each member's ground contact, using the original compact
+  formation: foot exact, mech ground anchor or horizontal neighbour. The first
+  mech's anchor is two half-steps north of the party cursor. See
+  [walking and event contact](AUTHORED_WALKING.md).
 - **Events:** New/Duplicate/Delete, opcode selection, dialogue, portraits,
   continuations, up to five choices and typed forms for conditions, flags,
   credits, recruitment, transfer, shop, battle, Lua routes and finish. Apply

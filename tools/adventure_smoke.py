@@ -42,6 +42,12 @@ def run(env, work, battletech=False):
                     time.sleep(.025)
                 if window is None:
                     raise RuntimeError("Authored player window did not appear")
+                walking = battletech and label == "town"
+                if walking:
+                    # Real SDL key input must move both formation sprites.
+                    # The surrounding authored markers are deliberately avoided.
+                    for key in ["Right", "Down", "Right", "Up"]:
+                        keys.key(window, key)
                 keys.key(window, "F5")
                 keys.key(window, "F9")
                 keys.key(window, "Ctrl+Shift+Escape")
@@ -53,6 +59,24 @@ def run(env, work, battletech=False):
                     cwd=tmp, capture_output=True, text=True, check=True, timeout=10)
                 assert json.loads(out)["state_digest"] == json.loads(headless.stdout)["state_digest"], label
                 assert frame.read_bytes() == restored.read_bytes(), label
+                if walking:
+                    source = subprocess.run([str(ROOT / "build/btech-headless"), *map(str,args),
+                        "--load", f"{prefix}-town.btp"],cwd=tmp,capture_output=True,text=True,check=True,timeout=10)
+                    before, actual = json.loads(source.stdout), json.loads(out)
+                    idle = actual["tick"] - before["tick"] - 4
+                    assert 0 <= idle < 500, actual
+                    path = tmp / "walking.actions"
+                    path.write_text("right\ndown\nright\nup\n" + "idle\n" * idle)
+                    expected_frame = tmp / "walking.ppm"
+                    expected = subprocess.run([str(ROOT / "build/btech-headless"), *map(str,args),
+                        "--load", f"{prefix}-town.btp", "--replay",str(path),"--frame",str(expected_frame)],
+                        cwd=tmp,capture_output=True,text=True,check=True,timeout=10)
+                    wanted = json.loads(expected.stdout)
+                    assert actual["mode"] == "local-exploration"
+                    assert (actual["x_half"],actual["y_half"]) == (before["x_half"]+2,before["y_half"])
+                    assert actual["player_sprite"] == wanted["player_sprite"]
+                    assert frame.read_bytes() == expected_frame.read_bytes(), "SDL walking/gait differs from ordinary-input route"
+                    print("PASS: real SDL walking keys move the full mech formation with matching saved gait/pixels.",flush=True)
                 print(f"PASS: authored {label}, F5/F9, same SDL/headless state and pixels.", flush=True)
             finally:
                 keys.x.XCloseDisplay(keys.display)

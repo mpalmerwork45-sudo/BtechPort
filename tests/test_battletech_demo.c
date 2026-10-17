@@ -7,6 +7,7 @@
 #include "data/project.h"
 #include "data/save.h"
 #include "frontend/pixels.h"
+#include "authored_walk.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -33,7 +34,9 @@ static void checkpoint(const char *label)
 }
 static void input(BtpAction a)
 { if(recording)fprintf(recording,"%s\n",btp_action_name(a));btp_game_tick(s,r,a);checkpoint("tick"); }
-static void walk(BtpAction a,unsigned n) { while(n--)input(a); }
+static void route_input(BtpState *state,const BtpResources *resources,BtpAction a)
+{ (void)state;(void)resources;input(a); }
+static void go(const char *door) { CHECK(authored_walk_to(s,r,door,route_input)); }
 static void text_pages(void)
 {
     unsigned pages=0;
@@ -71,10 +74,10 @@ int main(int argc,char **argv)
     FILE *old_recording=recording;recording=NULL;
     /* Optional recruit/purchase/crew branch is checked without making a third
        pilot a prerequisite for completing either contract. */
-    walk(BTP_RIGHT,10);enter();input(BTP_ACCEPT);text_pages();
+    go("beacon:pilot");enter();input(BTP_ACCEPT);text_pages();
     CHECK(btp_party_count(&s->party)==3 && s->event.flags[1]);
     CHECK(!strcmp(btp_content_party_name(r,s,2),"Cole"));checkpoint("recruit");
-    walk(BTP_LEFT,9);walk(BTP_UP,6);enter();input(BTP_ACCEPT);
+    go("beacon:exchange");enter();input(BTP_ACCEPT);
     CHECK(s->event.phase==BTP_EVENT_TRADING);checkpoint("broker");
     unsigned javelin=0;while(javelin<r->roster.count && strcmp(r->roster.mechs[javelin].id,"chi-expanded:javelin-jvn-10n"))++javelin;
     CHECK(javelin<r->roster.count && btp_broker_buy(s,r,javelin)==BTP_BROKER_BOUGHT);
@@ -83,10 +86,10 @@ int main(int argc,char **argv)
     *s=*saved;recording=old_recording;
     input(BTP_OPEN_MENU);input(BTP_UP);input(BTP_ACCEPT);
     CHECK(s->campaign.ui==BTP_MENU_MAP);checkpoint("overview");input(BTP_ACCEPT);
-    /* Take the clear southern lane, avoiding optional recruit/shop entrances.
-       All travel, decisions and combat in the recorded route are real inputs. */
-    walk(BTP_DOWN,4);walk(BTP_RIGHT,40);walk(BTP_UP,4);enter();text_pages();CHECK(s->map_id==17);
-    checkpoint("road");walk(BTP_RIGHT,22);enter();CHECK(s->event.phase==BTP_EVENT_SELECT);
+    /* The route robot avoids optional markers and emits ordinary inputs.
+       Every member's ground contact can now offer the requested doorway. */
+    go("beacon:east-road");enter();text_pages();CHECK(s->map_id==17);
+    checkpoint("road");go("beacon:checkpoint");enter();CHECK(s->event.phase==BTP_EVENT_SELECT);
     checkpoint("road-enemies");input(BTP_ACCEPT);
     *saved=*s;old_recording=recording;recording=NULL;
     /* Declining automation then selecting Retreat exercises the actual flee
@@ -95,22 +98,22 @@ int main(int argc,char **argv)
     input(BTP_UP);input(BTP_ACCEPT);CHECK(s->event.phase==BTP_EVENT_TEXT && !s->event.flags[2]);checkpoint("withdraw");
     *s=*saved;recording=old_recording;
     fight("road-combat");CHECK(s->event.flags[2] && s->credits==18000);checkpoint("road-victory");text_pages();
-    walk(BTP_LEFT,25);enter();CHECK(s->map_id==16);
-    walk(BTP_LEFT,20);walk(BTP_UP,6);enter();CHECK(s->event.phase==BTP_EVENT_SELECT && s->credits==26000 && s->event.flags[3]);checkpoint("second-contract");
+    go("beacon:road-back");enter();CHECK(s->map_id==16);
+    go("beacon:office");enter();CHECK(s->event.phase==BTP_EVENT_SELECT && s->credits==26000 && s->event.flags[3]);checkpoint("second-contract");
     *saved=*s;old_recording=recording;recording=NULL;
     input(BTP_DOWN);input(BTP_ACCEPT);checkpoint("short-ending");text_pages();
     CHECK(s->event.phase==BTP_EVENT_COMPLETE && !s->event.flags[6]);input(BTP_ACCEPT);CHECK(s->menu.quit);
     *s=*saved;recording=old_recording;
     input(BTP_ACCEPT);CHECK(s->event.flags[4]);text_pages();
     /* Revisit the office: its receipt must prevent a second 8,000 payment. */
-    input(BTP_DOWN);walk(BTP_UP,2);enter();CHECK(s->credits==26000);input(BTP_CANCEL);
-    walk(BTP_DOWN,9);walk(BTP_RIGHT,24);walk(BTP_UP,4);enter();text_pages();
-    walk(BTP_DOWN,4);walk(BTP_RIGHT,52);walk(BTP_UP,4);enter();text_pages();CHECK(s->map_id==18);checkpoint("relay");
-    walk(BTP_RIGHT,28);enter();checkpoint("relay-enemies");input(BTP_ACCEPT);
+    go("beacon:office");enter();CHECK(s->credits==26000);input(BTP_CANCEL);
+    go("beacon:east-road");enter();text_pages();
+    go("beacon:relay-road");enter();text_pages();CHECK(s->map_id==18);checkpoint("relay");
+    go("beacon:relay-fight");enter();checkpoint("relay-enemies");input(BTP_ACCEPT);
     fight("relay-combat");CHECK(s->event.flags[5] && s->credits==26000);checkpoint("relay-victory");text_pages();
-    walk(BTP_LEFT,31);enter();CHECK(s->map_id==17);
-    walk(BTP_DOWN,4);walk(BTP_LEFT,52);walk(BTP_UP,4);enter();CHECK(s->map_id==16);
-    walk(BTP_LEFT,20);walk(BTP_UP,6);enter();
+    go("beacon:relay-back");enter();CHECK(s->map_id==17);
+    go("beacon:road-back");enter();CHECK(s->map_id==16);
+    go("beacon:office");enter();
     CHECK(s->event.flags[6] && s->credits==41000);checkpoint("ending");text_pages();
     CHECK(s->event.phase==BTP_EVENT_COMPLETE);checkpoint("complete");input(BTP_ACCEPT);CHECK(s->menu.quit);
     free(saved);CHECK(!remove("bt-demo-roundtrip.btp"));if(recording)CHECK(!fclose(recording));

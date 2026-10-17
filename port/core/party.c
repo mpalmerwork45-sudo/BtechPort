@@ -228,7 +228,9 @@ int btp_party_entrance(const BtpState *s,const BtpResources *r,const BtpMap *m,i
     /* 0000:1DD4/2027 checks compact members in drawing order. A foot
        soldier can touch the door exactly; either side of a mech can do so.
        An earlier blocked member ends the scan, just like the DOS wall test. */
-    int ox=(m->entrance_x[0]>>8)*128,oy=(m->entrance_y[0]>>12)*128;
+    const BtpScene *scene=btp_scene(r,s);
+    int ox=scene ? (int)(2*scene->origin_x) : (m->entrance_x[0]>>8)*128;
+    int oy=scene ? (int)(2*scene->origin_y) : (m->entrance_y[0]>>12)*128;
     unsigned person=0,mech=0;
     for (unsigned i=0;i<12;++i) {
         int px,py,vehicle=i>=8;
@@ -240,9 +242,22 @@ int btp_party_entrance(const BtpState *s,const BtpResources *r,const BtpMap *m,i
             if (record[0]==255) continue;
             px=x+r->combat.mech_formation_x[mech];py=y+r->combat.mech_formation_y[mech++];
         }
-        if (!vehicle && btp_broker_door(s,r,px,py)) return BTP_BROKER_ENTRY;
-        for (unsigned door=0;door<12;++door) if (m->entrance_x[door] && m->entrance_y[door] &&
-            py==(m->entrance_y[door]&127) && abs(px-(m->entrance_x[door]&127))<=vehicle) return (int)door;
+        if (scene) {
+            /* Authored markers use the same ground contact as DOS doors,
+               including an outer mech's second tile. A recruited NPC no
+               longer occupies its old marker. Do this before the member's
+               wall check, preserving original first-contact ordering. */
+            for (unsigned door=0;door<scene->entrance_count;++door) {
+                const BtpSceneEntrance *e=&scene->entrances[door];int recruited=0;
+                if (e->person!=255) for (unsigned k=0;k<8;++k)
+                    if (s->party.people[k][0]!=255 && s->event.people[k]==e->person) recruited=1;
+                if (!recruited && py==e->y && abs(px-e->x)<=vehicle) return (int)door;
+            }
+        } else {
+            if (!vehicle && btp_broker_door(s,r,px,py)) return BTP_BROKER_ENTRY;
+            for (unsigned door=0;door<12;++door) if (m->entrance_x[door] && m->entrance_y[door] &&
+                py==(m->entrance_y[door]&127) && abs(px-(m->entrance_x[door]&127))<=vehicle) return (int)door;
+        }
         if (!btp_party_walkable(s,r,ox+px,oy+py,vehicle)) return -1;
     }
     return -1;
@@ -250,7 +265,7 @@ int btp_party_entrance(const BtpState *s,const BtpResources *r,const BtpMap *m,i
 static int follow_step(const BtpState *s,const BtpResources *r,int x,int y,int nx,int ny,int mech)
 {
     return btp_party_walkable(s,r,nx,ny,mech) &&
-        (s->cache.active || btp_world_location(r,s,nx/2,ny/2) ||
+        (btp_scene(r,s) || s->cache.active || btp_world_location(r,s,nx/2,ny/2) ||
          !btp_world_deep_crossing(r,s,(unsigned)x,(unsigned)y,nx-x,ny-y));
 }
 static void follow_position(const BtpState *s,const BtpResources *r,uint16_t *px,uint16_t *py,int gx,int gy,int mech,int initialize)
@@ -316,10 +331,18 @@ static void party_follow(BtpState *s,const BtpResources *r,uint16_t old_x,uint16
     for (unsigned i=0;i<4;++i) if (btp_party_mech(s,i)[0]!=255 &&
         (p->mech_x[i]!=old_x || p->mech_y[i]!=old_y)) initialize=0;
     if (regroup) initialize=1;
+    /* 0000:0BC9..0D30 rebuilds a compact formation, not independent paths.
+       Authored movement has already checked every member at the destination.
+       Place that accepted formation exactly, so followers cannot get caught
+       on a generated-world water boundary or an irrelevant detour. Retain
+       the documented recovery search for imported/scattered illegal states. */
+    int compact=btp_scene(r,s) && btp_party_can_stand(s,r,s->campaign.world_x,s->campaign.world_y);
     for (unsigned i=0;i<8;++i) if (p->people[i][0]!=255 && p->people[i][12]>=8) {
         unsigned ox=p->x[i],oy=p->y[i],place=person++;
-        follow_position(s,r,&p->x[i],&p->y[i],(int)s->campaign.world_x+r->combat.formation_x[place],
-            (int)s->campaign.world_y+r->combat.formation_y[place],0,initialize);
+        int gx=(int)s->campaign.world_x+r->combat.formation_x[place];
+        int gy=(int)s->campaign.world_y+r->combat.formation_y[place];
+        if (compact) { p->x[i]=(uint16_t)gx;p->y[i]=(uint16_t)gy; }
+        else follow_position(s,r,&p->x[i],&p->y[i],gx,gy,0,initialize);
         if (initialize && (old_x!=s->campaign.world_x || old_y!=s->campaign.world_y))
             p->direction[i]=(uint8_t)btp_player_direction(s->facing);
         if (!initialize && i && (p->x[i]!=ox || p->y[i]!=oy)) {
@@ -329,8 +352,10 @@ static void party_follow(BtpState *s,const BtpResources *r,uint16_t old_x,uint16
     }
     for (unsigned i=0;i<4;++i) if (btp_party_mech(s,i)[0]!=255) {
         unsigned ox=p->mech_x[i],oy=p->mech_y[i],place=mech++;
-        follow_position(s,r,&p->mech_x[i],&p->mech_y[i],(int)s->campaign.world_x+r->combat.mech_formation_x[place],
-            (int)s->campaign.world_y+r->combat.mech_formation_y[place],1,initialize);
+        int gx=(int)s->campaign.world_x+r->combat.mech_formation_x[place];
+        int gy=(int)s->campaign.world_y+r->combat.mech_formation_y[place];
+        if (compact) { p->mech_x[i]=(uint16_t)gx;p->mech_y[i]=(uint16_t)gy; }
+        else follow_position(s,r,&p->mech_x[i],&p->mech_y[i],gx,gy,1,initialize);
         unsigned pilot=btp_party_mech(s,i)[121];
         if (initialize && pilot<8 && (old_x!=s->campaign.world_x || old_y!=s->campaign.world_y))
             p->direction[pilot]=(uint8_t)btp_player_direction(s->facing);

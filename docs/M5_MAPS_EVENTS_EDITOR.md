@@ -142,6 +142,13 @@ Every formation member is collision checked at each individual half step,
 including two/four-step exploration. Map transfers and combat setup check the
 whole current formation at the destination; a formation which cannot fit takes
 the declared failure branch. Leave generous room around starts and transfers.
+Normal authored walking now places every active member at the original compact
+offset after each accepted half-step. Door markers are ground-contact positions:
+any foot soldier can touch one exactly, while a mech's ground anchor or either
+horizontal neighbour can touch it. The first mech's anchor is cursor Y minus
+two half-steps. An earlier blocked member prevents a later member from activating
+a door. No resumes a legal pending step. See the
+[walking correction and primary evidence](AUTHORED_WALKING.md).
 The shared follower recovery remains available after scene returns. No random
 CHI encounters or town NPC scripts are injected into authored maps.
 

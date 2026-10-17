@@ -1,11 +1,13 @@
 #include "core/events.h"
 #include "core/combat.h"
 #include "core/menu.h"
+#include "core/party.h"
 #include "core/audio.h"
 #include "data/content.h"
 #include "data/project.h"
 #include "data/save.h"
 #include "frontend/pixels.h"
+#include "authored_walk.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -28,8 +30,25 @@ static void pause_at(BtpState *s,const BtpResources *r,const char *label)
 }
 static void action(BtpState *s,const BtpResources *r,BtpAction a)
 { if (recording) fprintf(recording,"%s\n",btp_action_name(a));btp_game_tick(s,r,a);pause_at(s,r,"tick"); }
-static void walk(BtpState *s,const BtpResources *r,BtpAction a,unsigned n)
-{ while (n--) action(s,r,a); }
+static void mounted_pixels(const BtpState *start,const BtpResources *r)
+{
+    BtpState *s=malloc(sizeof *s);uint32_t *a=malloc(BTP_PIXELS*sizeof *a),*b=malloc(BTP_PIXELS*sizeof *b);
+    CHECK(s && a && b);*s=*start;s->mode=BTP_EXPLORE;s->event.phase=BTP_EVENT_INACTIVE;
+    memcpy(s->party.people[1],r->project->adventure.people[1].record,17);s->event.people[1]=1;
+    uint8_t *mech=btp_party_mech(s,1);memcpy(mech,r->roster.mechs[1].record,125);
+    mech[121]=1;mech[122]=255;s->party.people[1][12]=1;btp_party_recover(s,r,1);
+    btp_render(r,s,0,a);
+    /* Pilot foot coordinates remain stale while mounted. They must never
+       place a vehicle; its own saved anchor and gait drive the pixels. */
+    for (unsigned i=0;i<2;++i) { s->party.x[i]+=30;s->party.y[i]+=30; }
+    btp_render(r,s,0,b);CHECK(!memcmp(a,b,BTP_PIXELS*sizeof *a));
+    ++s->party.mech_x[1];btp_render(r,s,0,b);CHECK(memcmp(a,b,BTP_PIXELS*sizeof *a));
+    --s->party.mech_x[1];mech[122]=1;mech[121]=255;
+    btp_render(r,s,0,a);s->party.x[1]+=3;s->party.y[1]+=3;btp_render(r,s,0,b);
+    CHECK(!memcmp(a,b,BTP_PIXELS*sizeof *a)); /* A passenger draws no duplicate. */
+    mech[0]=255;btp_render(r,s,0,b);CHECK(memcmp(a,b,BTP_PIXELS*sizeof *a));
+    free(s);free(a);free(b);
+}
 int main(int argc,char **argv)
 {
     CHECK(argc==2 || argc==3);capture=argc==3 ? argv[2] : NULL;
@@ -40,18 +59,19 @@ int main(int argc,char **argv)
     CHECK(!btp_content_load_project(&c,"missing-independent-project",NULL,&error) && c.resources==r);
     error.text[0]=0;
     BtpState *s=calloc(1,sizeof *s);CHECK(s);btp_start(s);s->project=1;CHECK(btp_set_combat_profile(s,r,1));btp_events_start(s,r);
+    mounted_pixels(s,r);
     pause_at(s,r,"welcome");action(s,r,BTP_ACCEPT);pause_at(s,r,"town");
     action(s,r,BTP_OPEN_MENU);action(s,r,BTP_UP);action(s,r,BTP_ACCEPT);
     CHECK(s->mode==BTP_ACTIONS && s->campaign.ui==BTP_MENU_MAP);pause_at(s,r,"overview");
     uint32_t *overview=malloc(BTP_PIXELS*sizeof *overview);CHECK(overview);btp_render(r,s,0,overview);
     CHECK(overview[56*320+116]==r->project->independent.palette[6]);free(overview);
     action(s,r,BTP_ACCEPT);CHECK(s->mode==BTP_EXPLORE);
-    walk(s,r,BTP_RIGHT,10);walk(s,r,BTP_UP,2);CHECK(s->event.phase==BTP_EVENT_ENTRY);pause_at(s,r,"npc");
+    CHECK(authored_walk_to(s,r,"beacon:mira-marker",action));pause_at(s,r,"npc");
     action(s,r,BTP_ACCEPT);CHECK(s->event.phase==BTP_EVENT_SELECT);pause_at(s,r,"choice");
     action(s,r,BTP_ACCEPT);CHECK(s->event.flags[0] && s->party.people[1][0]==1);pause_at(s,r,"recruit");action(s,r,BTP_ACCEPT);
-    walk(s,r,BTP_DOWN,1);walk(s,r,BTP_RIGHT,20);CHECK(s->event.phase==BTP_EVENT_ENTRY);
+    CHECK(authored_walk_to(s,r,"beacon:road",action));
     action(s,r,BTP_ACCEPT);CHECK(s->map_id==17);action(s,r,BTP_ACCEPT);pause_at(s,r,"wilderness");
-    walk(s,r,BTP_RIGHT,28);CHECK(s->event.phase==BTP_EVENT_ENTRY);action(s,r,BTP_ACCEPT);action(s,r,BTP_ACCEPT);
+    CHECK(authored_walk_to(s,r,"beacon:relay",action));action(s,r,BTP_ACCEPT);action(s,r,BTP_ACCEPT);
     CHECK(s->combat.phase==BTP_COMBAT_CONTROL);pause_at(s,r,"combat");
     BtpState *checkpoint=malloc(sizeof *checkpoint);CHECK(checkpoint);*checkpoint=*s;
     FILE *saved_recording=recording;recording=NULL;
@@ -73,9 +93,9 @@ int main(int argc,char **argv)
         if (phase!=s->combat.phase || !(ticks%32)) pause_at(s,r,"tick");
     }
     CHECK(ticks<30000 && s->event.flags[1] && !s->event.flags[2] && s->credits==2000 && samples);pause_at(s,r,"victory");
-    action(s,r,BTP_ACCEPT);walk(s,r,BTP_LEFT,29);CHECK(s->event.phase==BTP_EVENT_ENTRY);
-    action(s,r,BTP_ACCEPT);CHECK(s->map_id==16);walk(s,r,BTP_LEFT,10);walk(s,r,BTP_UP,6);
-    CHECK(s->event.phase==BTP_EVENT_ENTRY);action(s,r,BTP_ACCEPT);
+    action(s,r,BTP_ACCEPT);CHECK(authored_walk_to(s,r,"beacon:back",action));
+    action(s,r,BTP_ACCEPT);CHECK(s->map_id==16);CHECK(authored_walk_to(s,r,"beacon:office-door",action));
+    action(s,r,BTP_ACCEPT);
     CHECK(s->event.phase==BTP_EVENT_TEXT && s->event.flags[2] && s->credits==4500);pause_at(s,r,"ending");
     action(s,r,BTP_ACCEPT);CHECK(s->event.phase==BTP_EVENT_COMPLETE && s->mode==BTP_ENDING);pause_at(s,r,"complete");
     action(s,r,BTP_ACCEPT);CHECK(s->menu.quit);

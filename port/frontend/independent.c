@@ -124,12 +124,23 @@ static void map(Canvas *c,const BtpResources *r,const BtpState *s)
             const BtpCombatEffect *e=&s->effects.shots[0];
             beam(c,(int)e->x*8-cx+8,(int)e->y*8-cy+4,(int)e->tx*8-cx+8,(int)e->ty*8-cy+4,e->actor<combat->friends ? 14u : 12u);
         }
-    } else for (unsigned i=0;i<8;++i) if (s->party.people[i][0]!=255) {
-        unsigned mount=s->party.people[i][12];if (mount<4 && btp_party_mech((BtpState *)s,mount)[121]!=i) continue;
-        unsigned family=mount<4 ? btp_party_mech((BtpState *)s,mount)[124]&1u : 2u;
-        int x=(int)(i ? s->party.x[i] : s->campaign.world_x)-(int)(2*m->origin_x);
-        int y=(int)(i ? s->party.y[i] : s->campaign.world_y)-(int)(2*m->origin_y);
-        image(c,c->art->sprites[family][(i ? s->party.walk[i] : s->player_walk)&3u],x*8-cx,y*8-cy-(mount<4 ? 16 : 8),16,16,1,224);
+    } else {
+        for (unsigned i=0;i<8;++i) if (s->party.people[i][0]!=255 && s->party.people[i][12]>=8) {
+            int x=(int)(i ? s->party.x[i] : s->campaign.world_x)-(int)(2*m->origin_x);
+            int y=(int)(i ? s->party.y[i] : s->campaign.world_y)-(int)(2*m->origin_y);
+            image(c,c->art->sprites[2][(i ? s->party.walk[i] : s->player_walk)&3u],x*8-cx,y*8-cy-8,16,16,1,224);
+        }
+        /* Mounted people retain stale foot coordinates. Draw each active
+           vehicle once at its saved ground anchor, including an unassigned
+           purchase; passengers never create another vehicle sprite. */
+        for (unsigned i=0;i<4;++i) {
+            const uint8_t *mech=i ? s->party.mechs[i-1] : s->campaign.mech;
+            if (mech[0]==255) continue;
+            unsigned pilot=mech[121],walk=pilot && pilot<8 ? s->party.walk[pilot] : s->campaign.mech_walk;
+            int x=(int)s->party.mech_x[i]-(int)(2*m->origin_x);
+            int y=(int)s->party.mech_y[i]-(int)(2*m->origin_y);
+            image(c,c->art->sprites[mech[124]&1u][walk&3u],x*8-cx,y*8-cy-16,16,16,1,224);
+        }
     }
     box(c,224,12,96,170,1);text(c,229,20,"Team",14);
     for (unsigned i=0;i<8;++i) if (s->party.people[i][0]!=255) text(c,229,34+(int)i*12,person(r,s,i),15);

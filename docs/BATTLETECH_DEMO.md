@@ -1,5 +1,9 @@
 # BattleTech demo and the next editor work
 
+The subsequent [walking correction](AUTHORED_WALKING.md) fixes separated mechs
+and applies original member-ground entrance checks, compact formation movement
+and per-key gait to authored exploration. Existing package saves remain usable.
+
 Implemented 2026-10-17. **BattleTech: Last Beacon** turns the demonstration into
 a short mercenary adventure with recognizable BattleMechs and the original
 CHI graphics, font, borders and combat sound. The original asset-free Beacon
