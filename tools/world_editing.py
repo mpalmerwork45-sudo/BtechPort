@@ -96,7 +96,25 @@ def create_world(adventure, prefix, width=32, height=32, name="World"):
     if not adventure["jigsaws"]:
         add_jigsaw(adventure, prefix, name="Open ground")
     piece = adventure["jigsaws"][0]["id"]
-    adventure["world"] = dict(id=f"{prefix}:world", name=name, pieces=[[piece]*width for _ in range(height)], patches=[], cities=[])
+    existing=all_worlds(adventure)
+    if len(existing)>=16:raise EditorError('A project supports up to 16 planets.')
+    if sum(len(w['pieces'])*len(w['pieces'][0]) for w in existing)+width*height>16384:
+        raise EditorError('Planets share a total of 256 sectors (1,048,576 tiles). Choose a smaller world.')
+    world=dict(id=identity(prefix,existing,'world') if existing else f'{prefix}:world',name=name,pieces=[[piece]*width for _ in range(height)],patches=[],cities=[])
+    if existing:
+        adventure.pop('world',None);adventure['worlds']=[*existing,world]
+    else:adventure['world']=world
+    return world['id']
+
+
+def all_worlds(adventure):
+    return adventure.get('worlds', [adventure['world']] if 'world' in adventure else [])
+
+
+def get_world(adventure,world_id=None):
+    values=all_worlds(adventure)
+    if not values:raise EditorError('Create a world first.')
+    return next((w for w in values if w['id']==world_id),values[0])
 
 
 def add_jigsaw(adventure, prefix, rows=None, name="New jigsaw"):
@@ -107,8 +125,8 @@ def add_jigsaw(adventure, prefix, rows=None, name="New jigsaw"):
     return value
 
 
-def world_size(adventure):
-    pieces = adventure["world"]["pieces"]
+def world_size(adventure,world_id=None):
+    pieces = get_world(adventure,world_id)["pieces"]
     return 8*len(pieces[0]), 8*len(pieces)
 
 
@@ -133,10 +151,10 @@ def set_patch(world, cells):
     world["patches"] = patches
 
 
-def world_tile(adventure, x, y, include_cities=True, patches=None, pieces=None, cities=None):
-    w, h = world_size(adventure)
+def world_tile(adventure, x, y, include_cities=True, patches=None, pieces=None, cities=None, world_id=None):
+    w, h = world_size(adventure,world_id)
     if not 0 <= x < w or not 0 <= y < h: return None
-    world = adventure["world"]
+    world = get_world(adventure,world_id)
     if include_cities:
         for scene in cities if cities is not None else adventure["maps"]:
             if scene["id"] not in world["cities"]: continue
@@ -149,17 +167,20 @@ def world_tile(adventure, x, y, include_cities=True, patches=None, pieces=None, 
     return pieces[world["pieces"][y//8][x//8]]["rows"][y%8][x%8]
 
 
-def assign_city(adventure, map_id, at=None, enabled=True):
+def assign_city(adventure, map_id, at=None, enabled=True, world_id=None):
+    world=get_world(adventure,world_id)
     scene = next(m for m in adventure["maps"] if m["id"] == map_id)
     if enabled:
         if at is not None: scene["origin"] = list(at)
-        w, h = world_size(adventure); x, y = scene["origin"]
+        if any(w is not world and map_id in w['cities'] for w in all_worlds(adventure)):
+            raise EditorError('This city is on another planet. Remove that placement first, or clone the local map.')
+        w, h = world_size(adventure,world_id); x, y = scene["origin"]
         if x < 0 or y < 0 or x+len(scene["rows"][0]) > w or y+len(scene["rows"]) > h:
             raise EditorError("The whole city must fit inside the world.")
         for other in adventure["maps"]:
-            if other is scene or other["id"] not in adventure["world"]["cities"]: continue
+            if other is scene or other["id"] not in world["cities"]: continue
             ox, oy = other["origin"]
             if x < ox+len(other["rows"][0]) and ox < x+len(scene["rows"][0]) and y < oy+len(other["rows"]) and oy < y+len(scene["rows"]):
                 raise EditorError("City rectangles cannot overlap.")
-        if map_id not in adventure["world"]["cities"]: adventure["world"]["cities"].append(map_id)
-    elif map_id in adventure["world"]["cities"]: adventure["world"]["cities"].remove(map_id)
+        if map_id not in world["cities"]: world["cities"].append(map_id)
+    elif map_id in world["cities"]: world["cities"].remove(map_id)

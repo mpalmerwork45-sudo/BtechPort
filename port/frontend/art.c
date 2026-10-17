@@ -37,6 +37,19 @@ int btp_art_sprite(const BtpResources *r,unsigned slot,unsigned frame,int x,int 
     if (!r->project || slot>=BTP_ART_BINDINGS) return 0;
     return btp_art_draw(r,r->project->graphics.bindings[slot],frame,x,y,left,top,right,bottom,f);
 }
+int btp_art_unit(const BtpResources *r,const uint8_t m[125],unsigned frame,unsigned direction,
+    int x,int y,int left,int top,int right,int bottom,uint32_t f[BTP_PIXELS])
+{
+    if (!r->project || (m[124]!=192 && m[124]!=193)) return 0;
+    const BtpDefinitions *d=&r->project->definitions;if (m[123]>=d->mech_count) return 0;
+    const BtpPresentationDefinition *p=&d->presentations[d->mechs[m[123]].presentation];
+    if (p->graphic>=r->project->graphics.count) return 0;
+    const BtpArtImage *im=&r->project->graphics.images[p->graphic];
+    /* A 32-frame unit sheet is N,NE,E,SE,S,SW,W,NW, four frames each.
+       Smaller sheets retain the original walk-index convention. */
+    if (im->count==32) frame=(direction&7u)*4u+frame%4u;
+    return btp_art_draw(r,p->graphic,frame,x+(24-(int)im->width)/2,y+24-(int)im->height,left,top,right,bottom,f);
+}
 int btp_art_picture(const BtpResources *r,const BtpState *s,uint32_t f[BTP_PIXELS])
 {
     const BtpAdventure *a=btp_adventure(r);if (!a || s->event.phase!=BTP_EVENT_TEXT) return 0;
@@ -49,7 +62,8 @@ int btp_art_world_map(const BtpResources *r,const BtpState *s,uint32_t f[BTP_PIX
 {
     const BtpAdventure *a=btp_adventure(r);const BtpScene *m=btp_scene(r,s);
     if (!a || !m || !m->world) return 0;
-    unsigned w=a->world_width/8,h=a->world_height/8,scale=280/w;
+    const BtpAuthoredWorld *world=&a->worlds[m->world-1];
+    unsigned w=world->width/8,h=world->height/8,scale=280/w;
     if (scale>160/h) scale=160/h;
     if (scale>4) scale=4;
     int ox=(320-(int)(w*scale))/2,oy=(184-(int)(h*scale))/2;

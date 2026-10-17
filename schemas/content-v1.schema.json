@@ -150,13 +150,42 @@
               "chi:locust",
               "chi:red-stinger",
               "package:walker-a",
-              "package:walker-b"
+              "package:walker-b",
+              "package:art"
             ]
+          },
+          "image": {
+            "type": "string",
+            "maxLength": 63,
+            "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
           }
         },
         "required": [
           "id",
           "source"
+        ],
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "source": {
+                  "const": "package:art"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "image"
+              ]
+            },
+            "else": {
+              "not": {
+                "required": [
+                  "image"
+                ]
+              }
+            }
+          }
         ]
       },
       "minItems": 1,
@@ -301,7 +330,7 @@
           },
           "mass_tons": {
             "type": "integer",
-            "minimum": 20,
+            "minimum": 5,
             "maximum": 100
           },
           "price": {
@@ -327,6 +356,13 @@
                 "type": "integer",
                 "minimum": 0,
                 "maximum": 12
+              },
+              "type": {
+                "enum": [
+                  "tracked",
+                  "wheeled",
+                  "hover"
+                ]
               }
             },
             "required": [
@@ -340,133 +376,217 @@
             "maximum": 30
           },
           "armor": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "left_arm": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 83
+            "oneOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "left_arm": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 83
+                  },
+                  "left_torso": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 83
+                  },
+                  "left_leg": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 83
+                  },
+                  "head": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 83
+                  },
+                  "center_torso": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 83
+                  },
+                  "right_arm": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 83
+                  },
+                  "right_torso": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 83
+                  },
+                  "right_leg": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 83
+                  },
+                  "left_rear": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 83
+                  },
+                  "center_rear": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 83
+                  },
+                  "right_rear": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 83
+                  }
+                },
+                "required": [
+                  "left_arm",
+                  "left_torso",
+                  "left_leg",
+                  "head",
+                  "center_torso",
+                  "right_arm",
+                  "right_torso",
+                  "right_leg",
+                  "left_rear",
+                  "center_rear",
+                  "right_rear"
+                ]
               },
-              "left_torso": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 83
-              },
-              "left_leg": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 83
-              },
-              "head": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 83
-              },
-              "center_torso": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 83
-              },
-              "right_arm": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 83
-              },
-              "right_torso": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 83
-              },
-              "right_leg": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 83
-              },
-              "left_rear": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 83
-              },
-              "center_rear": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 83
-              },
-              "right_rear": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 83
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "front": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 255
+                  },
+                  "left": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 255
+                  },
+                  "right": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 255
+                  },
+                  "rear": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 255
+                  },
+                  "turret": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 255
+                  }
+                },
+                "required": [
+                  "front",
+                  "left",
+                  "right",
+                  "rear",
+                  "turret"
+                ]
               }
-            },
-            "required": [
-              "left_arm",
-              "left_torso",
-              "left_leg",
-              "head",
-              "center_torso",
-              "right_arm",
-              "right_torso",
-              "right_leg",
-              "left_rear",
-              "center_rear",
-              "right_rear"
             ]
           },
           "structure": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "left_arm": {
-                "type": "integer",
-                "minimum": 1,
-                "maximum": 40
+            "oneOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "left_arm": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 40
+                  },
+                  "left_torso": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 40
+                  },
+                  "left_leg": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 40
+                  },
+                  "head": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 40
+                  },
+                  "center_torso": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 40
+                  },
+                  "right_arm": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 40
+                  },
+                  "right_torso": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 40
+                  },
+                  "right_leg": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 40
+                  }
+                },
+                "required": [
+                  "left_arm",
+                  "left_torso",
+                  "left_leg",
+                  "head",
+                  "center_torso",
+                  "right_arm",
+                  "right_torso",
+                  "right_leg"
+                ]
               },
-              "left_torso": {
-                "type": "integer",
-                "minimum": 1,
-                "maximum": 40
-              },
-              "left_leg": {
-                "type": "integer",
-                "minimum": 1,
-                "maximum": 40
-              },
-              "head": {
-                "type": "integer",
-                "minimum": 1,
-                "maximum": 40
-              },
-              "center_torso": {
-                "type": "integer",
-                "minimum": 1,
-                "maximum": 40
-              },
-              "right_arm": {
-                "type": "integer",
-                "minimum": 1,
-                "maximum": 40
-              },
-              "right_torso": {
-                "type": "integer",
-                "minimum": 1,
-                "maximum": 40
-              },
-              "right_leg": {
-                "type": "integer",
-                "minimum": 1,
-                "maximum": 40
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "front": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100
+                  },
+                  "left": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100
+                  },
+                  "right": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100
+                  },
+                  "rear": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100
+                  },
+                  "turret": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100
+                  }
+                },
+                "required": [
+                  "front",
+                  "left",
+                  "right",
+                  "rear",
+                  "turret"
+                ]
               }
-            },
-            "required": [
-              "left_arm",
-              "left_torso",
-              "left_leg",
-              "head",
-              "center_torso",
-              "right_arm",
-              "right_torso",
-              "right_leg"
             ]
           },
           "actuators": {
@@ -577,7 +697,12 @@
                     "center_torso",
                     "right_arm",
                     "right_torso",
-                    "right_leg"
+                    "right_leg",
+                    "front",
+                    "left",
+                    "right",
+                    "rear",
+                    "turret"
                   ]
                 },
                 "ammunition": {
@@ -594,6 +719,49 @@
             },
             "minItems": 1,
             "maxItems": 10
+          },
+          "kind": {
+            "enum": [
+              "mech",
+              "vehicle"
+            ]
+          },
+          "equipment": {
+            "type": "array",
+            "maxItems": 16,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "definition": {
+                  "type": "string",
+                  "maxLength": 63,
+                  "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+                },
+                "location": {
+                  "enum": [
+                    "left_arm",
+                    "left_torso",
+                    "left_leg",
+                    "head",
+                    "center_torso",
+                    "right_arm",
+                    "right_torso",
+                    "right_leg"
+                  ]
+                },
+                "quantity": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 12
+                }
+              },
+              "required": [
+                "definition",
+                "location",
+                "quantity"
+              ]
+            }
           }
         },
         "required": [
@@ -607,13 +775,103 @@
           "engine_heat_sinks",
           "armor",
           "structure",
-          "actuators",
-          "external_heat_sinks",
           "loadout"
+        ],
+        "allOf": [
+          {
+            "if": {
+              "required": [
+                "kind"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "vehicle"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "movement": {
+                  "required": [
+                    "type"
+                  ],
+                  "properties": {
+                    "jump": {
+                      "const": 0
+                    }
+                  }
+                }
+              },
+              "not": {
+                "anyOf": [
+                  {
+                    "required": [
+                      "external_heat_sinks"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "actuators"
+                    ]
+                  }
+                ]
+              }
+            },
+            "else": {
+              "required": [
+                "external_heat_sinks",
+                "actuators"
+              ],
+              "properties": {
+                "mass_tons": {
+                  "minimum": 20
+                }
+              }
+            }
+          }
         ]
       },
       "minItems": 1,
       "maxItems": 256
+    },
+    "equipment": {
+      "type": "array",
+      "maxItems": 256,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 63,
+            "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 95,
+            "pattern": "^[ -~]+$"
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 11,
+            "pattern": "^[ -~]+$"
+          },
+          "behavior": {
+            "enum": [
+              "heat_sink",
+              "jump_jet"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "label",
+          "behavior"
+        ]
+      }
     }
   },
   "required": [

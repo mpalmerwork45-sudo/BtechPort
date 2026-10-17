@@ -127,6 +127,8 @@ typedef struct {
 typedef struct {
     uint16_t node,map,return_map,origin_map;
     uint8_t enabled,phase,selected,page,origin_entry;
+    uint16_t explore_offset;
+    uint8_t explore_width,explore_height,planet;
     uint8_t flags[64],done[32],people[8];
 } BtpEventState;
 typedef struct {

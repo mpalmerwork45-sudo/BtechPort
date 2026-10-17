@@ -7,6 +7,7 @@
 #include "core/combat.h"
 #include "core/world.h"
 #include "core/events.h"
+#include "data/unit_data.h"
 #include <stdlib.h>
 #include <string.h>
 unsigned btp_party_count(const BtpPartyState *p)
@@ -192,11 +193,15 @@ int btp_party_walkable(const BtpState *s,const BtpResources *r,int x,int y,int m
     const BtpScene *scene=btp_scene(r,s);
     if (scene) {
         const BtpAdventure *a=btp_adventure(r);
-        if (!scene->world) return btp_scene_stand(scene,x-(int)(2*scene->origin_x),y-(int)(2*scene->origin_y),mech);
-        if (x<0 || y<0 || x>=(int)(2*a->world_width)-2 || y>=(int)(2*a->world_height)-(mech ? 2 : 0)) return 0;
+        if (!scene->world && !btp_scene_stand(scene,x-(int)(2*scene->origin_x),y-(int)(2*scene->origin_y),mech!=0)) return 0;
+        if (!scene->world && mech<=1) return 1;
+        const BtpAuthoredWorld *world=scene->world ? &a->worlds[scene->world-1] : NULL;
+        if (scene->world && (x<0 || y<0 || x>=(int)(2*world->width)-2 || y>=(int)(2*world->height)-(mech ? 2 : 0))) return 0;
         const BtpSceneTile *first=btp_scene_tile(a,scene,(mech ? x/2 : (x+1)/2)-(int)scene->origin_x,y/2-(int)scene->origin_y);
         const BtpSceneTile *second=mech ? btp_scene_tile(a,scene,x/2+1-(int)scene->origin_x,y/2-(int)scene->origin_y) : first;
-        return first && second && first->terrain!=4 && second->terrain!=4;
+        static const unsigned terrain[]={0,31,15,47,85};
+        return first && second && first->terrain!=4 && second->terrain!=4 &&
+            (mech<=1 || (btp_vehicle_terrain((unsigned)mech-1,terrain[first->terrain]) && btp_vehicle_terrain((unsigned)mech-1,terrain[second->terrain])));
     }
     if (x<0 || y<0 || x>=2048 || y>=2048) return 0;
     /* Cache corridors use their own tile gate and origin. Testing the
@@ -226,11 +231,11 @@ int btp_party_can_stand(const BtpState *s,const BtpResources *r,int x,int y)
         const uint8_t *record=i ? s->party.mechs[i-1] : s->campaign.mech;
         if (record[0]==255) continue; /* Owned vehicles parked at Starport stay put. */
         unsigned place=mech++;
-        if (!btp_party_walkable(s,r,x+r->combat.mech_formation_x[place],y+r->combat.mech_formation_y[place],1)) return 0;
+        if (!btp_party_walkable(s,r,x+r->combat.mech_formation_x[place],y+r->combat.mech_formation_y[place],1+(int)btp_vehicle_kind(record))) return 0;
     }
     return 1;
 }
-int btp_party_entrance(const BtpState *s,const BtpResources *r,const BtpMap *m,int x,int y)
+int btp_party_entrance_scene(const BtpState *s,const BtpResources *r,const BtpMap *m,int x,int y,unsigned *origin)
 {
     /* 0000:1DD4/2027 checks compact members in drawing order. A foot
        soldier can touch the door exactly; either side of a mech can do so.
@@ -240,13 +245,14 @@ int btp_party_entrance(const BtpState *s,const BtpResources *r,const BtpMap *m,i
     int oy=scene ? (int)(2*scene->origin_y) : (m->entrance_y[0]>>12)*128;
     unsigned person=0,mech=0;
     for (unsigned i=0;i<12;++i) {
-        int px,py,vehicle=i>=8;
+        int px,py,vehicle=i>=8,drive=vehicle;
         if (!vehicle) {
             if (s->party.people[i][0]==255 || s->party.people[i][12]<8) continue;
             px=x+r->combat.formation_x[person];py=y+r->combat.formation_y[person++];
         } else {
             const uint8_t *record=i==8 ? s->campaign.mech : s->party.mechs[i-9];
             if (record[0]==255) continue;
+            drive=1+(int)btp_vehicle_kind(record);
             px=x+r->combat.mech_formation_x[mech];py=y+r->combat.mech_formation_y[mech++];
         }
         if (scene) {
@@ -254,21 +260,36 @@ int btp_party_entrance(const BtpState *s,const BtpResources *r,const BtpMap *m,i
                including an outer mech's second tile. A recruited NPC no
                longer occupies its old marker. Do this before the member's
                wall check, preserving original first-contact ordering. */
-            for (unsigned door=0;door<scene->entrance_count;++door) {
-                const BtpSceneEntrance *e=&scene->entrances[door];int recruited=0;
+            const BtpAdventure *a=btp_adventure(r);int previous=-1;
+            for (int side=-vehicle;side<=vehicle;++side) {
+                int wx=ox+px+side,wy=oy+py;
+                int at=scene->world ? btp_adventure_world_at(a,scene->world,wx>=0 ? wx/2 : -1,wy>=0 ? wy/2 : -1) : (int)s->event.map;
+                if (at<0 || at==previous) continue;
+                previous=at;const BtpScene *target=&a->maps[at];
+                /* A follower can touch an entrance in the adjacent sector
+                   before the leader crosses. Keep that door's owning scene
+                   in the prompt/save, without relocating the party early. */
+                for (unsigned door=0;door<target->entrance_count;++door) {
+                const BtpSceneEntrance *e=&target->entrances[door];int recruited=0;
                 if (e->person!=255) for (unsigned k=0;k<8;++k)
                     if (s->party.people[k][0]!=255 && s->event.people[k]==e->person) recruited=1;
-                if (!recruited && py==e->y && abs(px-e->x)<=vehicle) return (int)door;
+                if (!recruited && oy+py==(int)(2*target->origin_y+e->y) && abs(ox+px-(int)(2*target->origin_x+e->x))<=vehicle) {
+                    if (origin) *origin=(unsigned)at;
+                    return (int)door;
+                }
+                }
             }
         } else {
             if (!vehicle && btp_broker_door(s,r,px,py)) return BTP_BROKER_ENTRY;
             for (unsigned door=0;door<12;++door) if (m->entrance_x[door] && m->entrance_y[door] &&
                 py==(m->entrance_y[door]&127) && abs(px-(m->entrance_x[door]&127))<=vehicle) return (int)door;
         }
-        if (!btp_party_walkable(s,r,ox+px,oy+py,vehicle)) return -1;
+        if (!btp_party_walkable(s,r,ox+px,oy+py,drive)) return -1;
     }
     return -1;
 }
+int btp_party_entrance(const BtpState *s,const BtpResources *r,const BtpMap *m,int x,int y)
+{ return btp_party_entrance_scene(s,r,m,x,y,NULL); }
 static int follow_step(const BtpState *s,const BtpResources *r,int x,int y,int nx,int ny,int mech)
 {
     return btp_party_walkable(s,r,nx,ny,mech) &&
@@ -362,7 +383,7 @@ static void party_follow(BtpState *s,const BtpResources *r,uint16_t old_x,uint16
         int gx=(int)s->campaign.world_x+r->combat.mech_formation_x[place];
         int gy=(int)s->campaign.world_y+r->combat.mech_formation_y[place];
         if (compact) { p->mech_x[i]=(uint16_t)gx;p->mech_y[i]=(uint16_t)gy; }
-        else follow_position(s,r,&p->mech_x[i],&p->mech_y[i],gx,gy,1,initialize);
+        else follow_position(s,r,&p->mech_x[i],&p->mech_y[i],gx,gy,1+(int)btp_vehicle_kind(btp_party_mech(s,i)),initialize);
         unsigned pilot=btp_party_mech(s,i)[121];
         if (initialize && pilot<8 && (old_x!=s->campaign.world_x || old_y!=s->campaign.world_y))
             p->direction[pilot]=(uint8_t)btp_player_direction(s->facing);

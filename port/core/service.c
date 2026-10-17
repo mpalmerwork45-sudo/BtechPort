@@ -49,8 +49,8 @@ unsigned btp_mech_repair(BtpState *s,unsigned slot,unsigned kind,unsigned item)
             m[i]&=127u;++changed;if (item==34) break;
         }
         if (changed) s->credits-=cost;
-    } else if (kind==3 && (m[36]!=m[105] || m[37]!=m[106]) && s->credits>=200) {
-        m[36]=m[105];m[37]=m[106];s->credits-=200;changed=1;
+    } else if (kind==3 && (m[36]!=m[105] || m[37]!=m[106] || (btp_vehicle_kind(m) && m[118])) && s->credits>=200) {
+        m[36]=m[105];m[37]=m[106];if (btp_vehicle_kind(m)) m[118]=0;s->credits-=200;changed=1;
     }
     return changed;
 }
@@ -125,7 +125,7 @@ static void repair_next(BtpState *s,const BtpResources *r,unsigned kind)
         if (kind<2) n=missing(m,kind ? 28u : 17u,kind ? 36u : 28u);
         else if (kind==2) { for (unsigned i=51;i<86;++i) n+=m[i]==162; }
         else if (kind==3) n=btp_service_weapon_count(v);
-        else n=(unsigned)(m[36]!=m[105] || m[37]!=m[106]);
+        else n=(unsigned)(m[36]!=m[105] || m[37]!=m[106] || (btp_vehicle_kind(m) && m[118]));
         if (!n) continue;
         v->kind=(uint8_t)kind;v->amount=(uint16_t)n;v->phase=(uint8_t)(kind==3 ? 6 : 3);
         if (kind==4 && s->credits<200) { v->phase=4;v->outcome=7; }

@@ -6,15 +6,16 @@
 /* Bounded, immutable authored scenes. Visual tiles and rule tiles are
    separate: artwork never determines whether a roof can be walked through. */
 enum { BTP_LOCAL_SCENES=16, BTP_SCENES=272, BTP_EVENT_NODES=256, BTP_EVENT_FLAGS=64,
-    BTP_SCENE_TILES=4096, BTP_JIGSAWS=1024, BTP_SCENE_PEOPLE=16, BTP_SCENE_SHOPS=16,
+    BTP_SCENE_TILES=4096, BTP_JIGSAWS=1024, BTP_WORLDS=16, BTP_SCENE_PEOPLE=16, BTP_SCENE_SHOPS=16,
     BTP_SCENE_BATTLES=16, BTP_EVENT_OPTIONS=6, BTP_AUTHORED_MAP_FIRST=16 };
 typedef struct { char id[64],image[64];uint16_t graphic;uint8_t key,sheet,terrain,color; } BtpSceneTile;
 typedef struct { char id[64],name[25],image[64];uint8_t x,y,person;uint16_t event,icon; } BtpSceneEntrance;
 typedef struct {
     char id[64],name[64];unsigned origin_x,origin_y;
     BtpMap visual,rules;uint16_t cells[4096];
-    unsigned entrance_count,world;BtpSceneEntrance entrances[64];
+    unsigned entrance_count,world,explore_offset,explore_width,explore_height;BtpSceneEntrance entrances[64];
 } BtpScene;
+typedef struct { char id[64],name[64];unsigned width,height,base,explore_offset; } BtpAuthoredWorld;
 typedef struct { char id[64],name[64];uint16_t cells[64]; } BtpJigsaw;
 typedef struct { char id[64],name[32];uint8_t record[17]; } BtpScenePerson;
 typedef struct { char id[64];unsigned count;uint16_t stock[256]; } BtpSceneShop;
@@ -33,8 +34,8 @@ typedef struct {
 } BtpEventNode;
 typedef struct {
     unsigned loaded,map_count,tile_count,person_count,shop_count,battle_count,node_count,flag_count;
-    unsigned version,local_count,jigsaw_count,world_width,world_height,world_base;
-    char world_id[64],world_name[64];
+    unsigned version,local_count,jigsaw_count,world_count,explore_cells;
+    BtpAuthoredWorld worlds[BTP_WORLDS];
     uint8_t source_digest[32];
     unsigned start_map,start_x,start_y,start_event,credits,party_count;
     uint8_t party[8];uint16_t mechs[8]; /* 256 means on foot. */
@@ -48,7 +49,7 @@ int btp_adventure_load(const char *path,const BtpDefinitions *definitions,BtpAdv
 int btp_scene_stand(const BtpScene *scene,int x,int y,int mech);
 /* Compiled world sectors keep the original tactical window small. Tile IDs
    remain 16-bit throughout composition and graphics never become rule IDs. */
-int btp_adventure_world_at(const BtpAdventure *adventure,int x,int y);
+int btp_adventure_world_at(const BtpAdventure *adventure,unsigned world,int x,int y);
 const BtpSceneTile *btp_scene_tile(const BtpAdventure *adventure,const BtpScene *scene,int x,int y);
 /* Shared wrapping keeps validation, saved page indices and rendering aligned. */
 unsigned btp_event_lines(const char *text,char lines[96][28]);

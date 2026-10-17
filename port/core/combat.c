@@ -136,6 +136,9 @@ static void plan_points(const BtpMap *m, unsigned gate, const BtpCombatUnit *u,
             /* Executed 0E31:0006 checks blocking tiles for Jump as well.
                103B:1BAC skips terrain costs in Jump; it does not skip walls. */
             if (tile_at(m,u->x,u->y,at)>=gate || (!u->infantry && tile_at(m,u->x,u->y,at+(nx&1 ? -1 : 1))>=gate)) continue;
+            unsigned vehicle=u->infantry ? 0u : btp_vehicle_kind(u->record);
+            if (vehicle && (!btp_vehicle_terrain(vehicle,tile_at(m,u->x,u->y,at)) ||
+                !btp_vehicle_terrain(vehicle,tile_at(m,u->x,u->y,at+(nx&1 ? -1 : 1))))) continue;
             /* 0E31:16AB blocks a mech on allied infantry. Enemy infantry
                is eligible for trampling, so it must not divert the planned
                path before the movement routine can resolve that contact. */
@@ -147,7 +150,7 @@ static void plan_points(const BtpMap *m, unsigned gate, const BtpCombatUnit *u,
             steps[i][0]=dx[d]; steps[i][1]=dy[d]; x=nx; y=ny; heading=d; break;
         }
         unsigned mask, tile=tile_at(m,u->x,u->y,grid(u->x,u->y,x,y,1,&mask));
-        int cost=movement==2 || tile>=64 || !(tile&mask) ? 1 : (tile&240u)==32 ? 3 : 2;
+        int cost=movement==2 || (!u->infantry && btp_vehicle_kind(u->record)==3 && tile<16) || tile>=64 || !(tile&mask) ? 1 : (tile&240u)==32 ? 3 : 2;
         points-=cost;
     }
 }

@@ -7,21 +7,23 @@ from adventure_editor import Form
 from adventure_editing import composite
 from editor_model import EditorError
 from world_editing import (create_world, add_jigsaw, assign_city, world_size,
-                           patch_cells, set_patch, line, token)
+                           patch_cells, set_patch, line, token, all_worlds, get_world)
 
 
 class WorldEditor:
     def __init__(self, owner):
         self.owner=owner; self.document=owner.document
-        self.window=tk.Toplevel(owner.window);self.window.title('World and jigsaws');self.window.geometry('1040x760');self.window.minsize(840,600)
-        self.stroke=None;self.drag=None;self.cache={};self.pending=False;self.last=None;self.city=None
+        self.window=tk.Toplevel(owner.window);self.window.title('World and jigsaws');self.window.geometry('1000x730');self.window.minsize(840,600)
+        self.stroke=None;self.drag=None;self.cache={};self.pending=False;self.last=None;self.city=None;self.world_id=None
         bar=ttk.Frame(self.window,padding=8);bar.pack(fill='x')
         for title,cb in [('Create world',self.new_world),('Place city',self.city_form),('Edit city',self.edit_city),('Remove city',self.remove_city),('Undo',owner.undo),('Redo',owner.redo),('Save',owner.save),('Validate',owner.validate)]:
-            ttk.Button(bar,text=title,command=lambda f=cb:self.guard(f)).pack(side='left',padx=3)
+            ttk.Button(bar,text=title,width=0,style='Toolbar.TButton',command=lambda f=cb:self.guard(f)).pack(side='left',padx=3)
         controls=ttk.Frame(self.window,padding=(8,0,8,8));controls.pack(fill='x')
+        self.planet=ttk.Combobox(controls,state='readonly',width=22);self.planet.pack(side='left',padx=(0,8));self.planet.bind('<<ComboboxSelected>>',lambda _:self.change_planet())
+        ttk.Button(controls,text='Rename',command=lambda:self.guard(self.rename_world)).pack(side='left',padx=(0,8))
         self.tool=tk.StringVar(value='Jigsaw');ttk.Combobox(controls,textvariable=self.tool,state='readonly',values=['Jigsaw','Tile','Erase patch','Move city','Play here'],width=16).pack(side='left')
         self.zoom=tk.StringVar(value='4');z=ttk.Combobox(controls,textvariable=self.zoom,values=['1','2','4','8','16'],state='readonly',width=4);z.pack(side='left',padx=8);z.bind('<<ComboboxSelected>>',lambda _:self.draw())
-        ttk.Label(controls,text='Tile brush comes from the map palette. Cities cover world terrain.',style='Muted.TLabel').pack(side='left')
+        ttk.Label(controls,text='Tile brush: map palette',style='Muted.TLabel',wraplength=170).pack(side='left')
         body=ttk.Panedwindow(self.window,orient='horizontal');body.pack(fill='both',expand=True,padx=8)
         side=ttk.Frame(body);view=ttk.Frame(body);body.add(side,weight=1);body.add(view,weight=5)
         ttk.Label(side,text='JIGSAWS',style='Section.TLabel',padding=6).pack(anchor='w')
@@ -49,17 +51,31 @@ class WorldEditor:
     def scroll(self,axis,args):getattr(self.canvas,axis+'view')(*args);self.schedule()
     def schedule(self):
         if not self.pending:self.pending=True;self.window.after_idle(self.draw)
+    def current_world(self,a=None):return get_world(self.adventure if a is None else a,self.world_id)
+    def change_planet(self):
+        self.cancel();self.world_id=all_worlds(self.document.adventure)[self.planet.current()]['id'];self.city=None;self.cache={};self.draw()
     def refresh(self):
+        worlds=all_worlds(self.document.adventure);self.planet.configure(values=[w['name'] for w in worlds])
+        if worlds:
+            w=get_world(self.document.adventure,self.world_id);self.world_id=w['id'];self.planet.current(worlds.index(w))
+            if self.city not in w['cities']:self.city=None
         selected=self.listing.selection();self.cache={};self.listing.delete(*self.listing.get_children())
         for j in self.document.adventure.get('jigsaws',[]):self.listing.insert('','end',iid=j['id'],text=j['name'])
         if selected and self.listing.exists(selected[0]):self.listing.selection_set(selected[0])
         elif self.listing.get_children():self.listing.selection_set(self.listing.get_children()[0])
         self.draw()
     def new_world(self):
-        if 'world' in self.adventure:raise EditorError('This project already has a world. Paint it, or undo its creation before replacing it.')
-        f=Form(self,'Create world');f.field('name','World');f.field('width',32,label='Width in 8×8 jigsaws');f.field('height',32,label='Height in 8×8 jigsaws')
+        f=Form(self,'Create world');f.field('name','World');f.field('width',32,label='Width in 8x8 jigsaws');f.field('height',32,label='Height in 8x8 jigsaws')
         def apply(v):
-            a=copy.deepcopy(self.document.adventure);create_world(a,self.document.content['package_id'],int(v['width']),int(v['height']),v['name']);self.owner.commit(a)
+            a=copy.deepcopy(self.document.adventure);self.world_id=create_world(a,self.document.content['package_id'],int(v['width']),int(v['height']),v['name']);self.owner.commit(a)
+        f.submit(apply)
+    def rename_world(self):
+        world=self.current_world()
+        if not world:raise EditorError('Create a world first.')
+        identity=world['id'];f=Form(self,'Planet name');f.field('name',world['name'])
+        def apply(v):
+            if not v['name'] or len(v['name'])>63:raise EditorError('Use a planet name of 1-63 characters.')
+            a=copy.deepcopy(self.document.adventure);get_world(a,identity)['name']=v['name'];self.owner.commit(a)
         f.submit(apply)
     def selected_jigsaw(self):
         selected=self.listing.selection()
@@ -74,14 +90,14 @@ class WorldEditor:
         j=self.selected_jigsaw()
         if j:JigsawEditor(self,j)
     def city_form(self):
-        if 'world' not in self.adventure:raise EditorError('Create a world first.')
+        if not all_worlds(self.adventure):raise EditorError('Create a world first.')
         f=Form(self,'Place city on world');f.field('map',self.city or self.adventure['maps'][0]['id'],[m['id'] for m in self.adventure['maps']]);f.field('x',0);f.field('y',0)
         def apply(v):
-            a=copy.deepcopy(self.document.adventure);assign_city(a,v['map'],(int(v['x']),int(v['y'])));self.city=v['map'];self.owner.commit(a)
+            a=copy.deepcopy(self.document.adventure);assign_city(a,v['map'],(int(v['x']),int(v['y'])),world_id=self.world_id);self.city=v['map'];self.owner.commit(a)
         f.submit(apply)
     def remove_city(self):
         if self.city:
-            a=copy.deepcopy(self.document.adventure);assign_city(a,self.city,enabled=False);self.city=None;self.owner.commit(a)
+            a=copy.deepcopy(self.document.adventure);assign_city(a,self.city,enabled=False,world_id=self.world_id);self.city=None;self.owner.commit(a)
     def edit_city(self):
         if not self.city:raise EditorError('Choose Move city and click a city, or place one first.')
         self.owner.scene_index=next(i for i,m in enumerate(self.adventure['maps']) if m['id']==self.city);self.owner.layer_choice.current(0);self.owner.refresh();self.owner.window.lift()
@@ -103,21 +119,21 @@ class WorldEditor:
         self.pending=False
         if not self.window.winfo_exists():return
         self.canvas.delete('all');a=self.adventure
-        if 'world' not in a:
+        if not all_worlds(a):
             self.info.set('Create a world, paint jigsaws, then place local maps as cities.');return
-        z=int(self.zoom.get());w,h=world_size(a);self.canvas.configure(scrollregion=(0,0,w*z,h*z))
+        z=int(self.zoom.get());w,h=world_size(a,self.world_id);self.canvas.configure(scrollregion=(0,0,w*z,h*z))
         x0=max(0,int(self.canvas.canvasx(0)//z));y0=max(0,int(self.canvas.canvasy(0)//z))
         x1=min(w,int(self.canvas.canvasx(self.canvas.winfo_width())//z)+2);y1=min(h,int(self.canvas.canvasy(self.canvas.winfo_height())//z)+2)
         tiles={token(t):t for t in a['tiles']};jigs={j['id']:j for j in a['jigsaws']}
         for py in range(y0//8,(y1+7)//8):
             for px in range(x0//8,(x1+7)//8):
-                j=jigs[a['world']['pieces'][py][px]];self.canvas.create_image(px*8*z,py*8*z,image=self.picture(j,z,tiles),anchor='nw')
+                j=jigs[self.current_world(a)['pieces'][py][px]];self.canvas.create_image(px*8*z,py*8*z,image=self.picture(j,z,tiles),anchor='nw')
                 if z>=4:self.canvas.create_rectangle(px*8*z,py*8*z,(px+1)*8*z,(py+1)*8*z,outline='#57615f')
-        cells=patch_cells(a['world'])
+        cells=patch_cells(self.current_world(a))
         # Only draw the visible viewport. A 1024-square world must not create
         # a million Tk canvas items every time a brush moves.
         for m in a['maps']:
-            if m['id'] not in a['world']['cities']:continue
+            if m['id'] not in self.current_world(a)['cities']:continue
             ox,oy=m['origin'];grid=composite(m)
             for y in range(max(0,y0-oy),min(len(grid),y1-oy)):
                 for x in range(max(0,x0-ox),min(len(grid[0]),x1-ox)):cells[ox+x,oy+y]=grid[y][x]
@@ -127,14 +143,14 @@ class WorldEditor:
             if im:self.canvas.create_image(x*z,y*z,image=im,anchor='nw')
             else:self.canvas.create_rectangle(x*z,y*z,(x+1)*z,(y+1)*z,fill='#558866',outline='')
         for m in a['maps']:
-            if m['id'] not in a['world']['cities']:continue
+            if m['id'] not in self.current_world(a)['cities']:continue
             ox,oy=m['origin'];color='#ffff88' if m['id']==self.city else '#ffffff'
             self.canvas.create_rectangle(ox*z,oy*z,(ox+len(m['rows'][0]))*z,(oy+len(m['rows']))*z,outline=color,width=2)
             self.canvas.create_text(ox*z+3,oy*z+3,text=m['name'],fill=color,anchor='nw')
-        self.info.set(f"{a['world']['name']} · {w} × {h} tiles · {len(a['jigsaws'])} jigsaws · {len(a['world']['cities'])} cities")
+        self.info.set(f"{self.current_world(a)['name']} | {w} x {h} tiles | {len(a['jigsaws'])} jigsaws | {len(self.current_world(a)['cities'])} cities")
     def pointer(self,e,start):
-        if 'world' not in self.adventure:raise EditorError('Create a world first.')
-        z=int(self.zoom.get());p=(int(self.canvas.canvasx(e.x)//z),int(self.canvas.canvasy(e.y)//z));w,h=world_size(self.adventure)
+        if not all_worlds(self.adventure):raise EditorError('Create a world first.')
+        z=int(self.zoom.get());p=(int(self.canvas.canvasx(e.x)//z),int(self.canvas.canvasy(e.y)//z));w,h=world_size(self.adventure,self.world_id)
         if not(0<=p[0]<w and 0<=p[1]<h):return
         if start:
             self.stroke=copy.deepcopy(self.document.adventure);self.last=p
@@ -142,9 +158,9 @@ class WorldEditor:
                 self.drag=None
                 for m in self.stroke['maps']:
                     ox,oy=m['origin']
-                    if m['id'] in self.stroke['world']['cities'] and ox<=p[0]<ox+len(m['rows'][0]) and oy<=p[1]<oy+len(m['rows']):self.city=m['id'];self.drag=(p[0]-ox,p[1]-oy);break
+                    if m['id'] in self.current_world(self.stroke)['cities'] and ox<=p[0]<ox+len(m['rows'][0]) and oy<=p[1]<oy+len(m['rows']):self.city=m['id'];self.drag=(p[0]-ox,p[1]-oy);break
             elif self.tool.get()=='Play here':
-                self.cancel();self.owner.save();self.owner.parent.launch_player((f'world:sector-{p[0]//64}-{p[1]//64}',(p[0]%64)*2,(p[1]%64)*2));return
+                self.cancel();self.owner.save();self.owner.parent.launch_player((f"world:{'planet-'+str(all_worlds(self.adventure).index(self.current_world())+1)+'-' if 'worlds' in self.adventure else ''}sector-{p[0]//64}-{p[1]//64}",(p[0]%64)*2,(p[1]%64)*2));return
         if self.stroke is None:return
         if self.tool.get()=='Move city':
             if self.drag:
@@ -152,21 +168,21 @@ class WorldEditor:
         elif self.tool.get()=='Jigsaw':
             j=self.selected_jigsaw()
             if j:
-                for x,y in line(self.last[0]//8,self.last[1]//8,p[0]//8,p[1]//8):self.stroke['world']['pieces'][y][x]=j['id']
+                for x,y in line(self.last[0]//8,self.last[1]//8,p[0]//8,p[1]//8):self.current_world(self.stroke)['pieces'][y][x]=j['id']
         else:
-            cells=patch_cells(self.stroke['world']);selected=self.owner.brush.curselection()
+            cells=patch_cells(self.current_world(self.stroke));selected=self.owner.brush.curselection()
             if not selected or selected[0]>=len(self.stroke['tiles']):raise EditorError('Select a tile in the map palette first.')
             value=token(self.stroke['tiles'][selected[0]])
             for x,y in line(*self.last,*p):
                 if self.tool.get()=='Erase patch':cells.pop((x,y),None)
                 else:cells[x,y]=value
-            set_patch(self.stroke['world'],cells)
+            set_patch(self.current_world(self.stroke),cells)
         self.last=p;self.draw()
     def finish(self):
         if self.stroke is None:return
         a=self.stroke
         try:
-            if self.drag:assign_city(a,self.city)
+            if self.drag:assign_city(a,self.city,world_id=self.world_id)
         finally:self.stroke=None;self.drag=None
         self.owner.commit(a)
     def cancel(self):self.stroke=None;self.drag=None;self.draw()

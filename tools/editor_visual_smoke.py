@@ -114,7 +114,7 @@ def run(env, work):
                 ed.edit_tile()
                 pump()
                 form = dialog("Tile definition")
-                button(form, "Choose graphic…").invoke()
+                button(form, "Choose graphic...").invoke()
                 pump()
                 picker = dialog("Choose tile graphic")
                 picker.geometry("720x630+80+50")
@@ -277,8 +277,12 @@ def run(env, work):
                 window.geometry("940x690+8+8");ed.window.geometry("960x650+8+8");pump()
                 delete=button(ed.window,"Delete selected marker")
                 assert delete.winfo_rooty()+delete.winfo_height()<=ed.window.winfo_rooty()+ed.window.winfo_height()
-                assert ed.canvas.winfo_width()>400 and ed.brush.winfo_height()>=40
+                screenshot('minimum',ed.window)
+                assert ed.canvas.winfo_width()>400 and ed.brush.winfo_height()>=40, (ed.canvas.winfo_width(),ed.brush.winfo_height())
                 assert ed.markers.winfo_height()>=16
+                for label in ['World / jigsaws','Graphics / sprites','Edit pixels','Clone']:
+                    control=button(ed.window,label)
+                    assert control.winfo_rootx()+control.winfo_width()<=ed.window.winfo_rootx()+ed.window.winfo_width(),label
                 for label in ["New project","Open","Save","Validate","Undo","Redo","Play","Player setup","Maps / events","Export game"]:
                     control=button(window,label)
                     assert control.winfo_rootx()>=window.winfo_rootx()

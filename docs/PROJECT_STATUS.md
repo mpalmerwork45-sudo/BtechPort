@@ -1,5 +1,29 @@
 # Project status — original fidelity and editable projects, 2026-10-17
 
+[World/art editing](M5_WORLD_ART_EDITOR.md) and
+[vehicles/multiple planets](M5_VEHICLES_AND_PLANETS.md) are implemented as bounded
+authoring features: 4,096 tile definitions, 1,024 jigsaws, up to 16 planets
+sharing 256 world sectors, city overlays, separate discovery and transfers.
+The editor paints/clones actual tile pixels, flips/rotates/nudges frames, imports
+images, edits animation frames and shows an animated unit preview with sprite
+context actions. New mech/weapon/heat-sink/jump-jet definitions and ten sourced
+vehicle presets are available. The asset-free
+[Vehicle proving ground](../examples/vehicle-lab/README.md) exercises two planets,
+three starting vehicles, a depot and a live battle. Vehicle construction and
+critical rules remain explicitly approximate.
+
+Current verification: **70/70 native CTests**, **103/103 Python tests**,
+**9/9 focused Wine** and **9/9 sanitizer suites**, plus **15 Python editor tests
+with sanitized binaries**. All four Linux Tk workflows pass. Linux and Windows
+SDL each pass seven vehicle/map/inspection/combat/depot F5/F9 checks against
+headless state and full-frame pixels. Native Windows Tk remains unverified.
+The strict reference guard reports only the addition of
+`vscode-merge-base = origin/main` in `UnBattletech/.git/config` and the associated
+Git directory/config timestamps; removing that line in memory reproduces the
+baseline hash. All original assets and reference research/source files match.
+The reference directories and baseline were not edited to conceal this metadata
+difference. See [verification details](TESTING.md#world-art-vehicles-and-planets).
+
 [Visual editor improvements](EDITOR_GRAPHICS_AND_DRAGGING.md) add real CHI tile
 previews and thumbnails, a full-sheet graphic picker, drag-and-drop markers and
 a refreshed desktop layout. Every drag is one undo step. The editor decodes
@@ -22,8 +46,8 @@ two mercenary contracts, recruitment, trading and two endings, using supplied
 original graphics/sounds and Enhanced combat. Authored character names now work
 through the CHI renderer's menus and combat text. Run
 `sh scripts/play-battletech-demo.sh`. The independent asset-free example remains
-an editor template. The next recommended work is a real CHI tile palette/stamps,
-then authored repair/reload/salvage services; the linked plan describes five gates.
+an editor template. Tile palettes, stamps and pixel editing are now implemented;
+authored repair/reload/salvage services and richer event authoring are next.
 
 Editor-roadmap tasks 1–5 now provide a shared authoring contract, validator,
 31-model export, 256-model project catalogue, per-mount weapon definitions and
@@ -37,7 +61,8 @@ commands, tests and limits, and the
 [independent game/editor guide](M5_INDEPENDENT_GAME_EDITOR.md) for Last Beacon,
 which uses its own assets/font/sounds and a bounded Lua command route without
 original files or caches. The first useful editor is implemented within those
-bounds; rich scripting, asset/animation tools and packaging remain future work.
+bounds; richer scripting and packaging remain future work. Pixel/frame and
+multi-planet world authoring are now implemented as described above.
 The original campaign remains playable.
 
 The independent C11/SDL2 port has playable implementations of the authorized
@@ -120,8 +145,8 @@ Original/Updated selector and 31 playable external models/variants, with broker,
 encounter and save support. The early general-schema sample remains an offline
 prototype; current project schemas are consumed by the shared C loader. M5a,
 M5b's independent miniature game and the first M5c roster/map/event GUI are
-implemented. Richer events, scripting tools and asset/animation authoring remain
-**proposed**.
+implemented. Richer events and scripting tools remain **proposed**; the current
+world/art and vehicle guides describe the implemented asset/animation tools.
 The broker occupies an unused Starport building, offers buying/selling with
 four owned bays, and groups stock into Light, Medium, Heavy and Assault classes,
 sorted by tonnage/name with eight-row scrolling. Inspection bars fit their

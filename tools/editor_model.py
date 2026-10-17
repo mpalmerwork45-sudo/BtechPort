@@ -96,7 +96,7 @@ class ProjectDocument:
         manifest = copy.deepcopy(self.manifest)
         if "graphics" not in manifest:
             name = "graphics.json"
-            if name in self.snapshot or child(self.root, name).exists():
+            if name not in self.snapshot and child(self.root, name).exists():
                 raise EditorError("graphics.json already exists outside this project's declarations. Rename it or declare it before editing graphics.")
             manifest["graphics"] = name
         self.replace_all(self.content, self.adventure if adventure is None else adventure, art, manifest)
@@ -234,7 +234,7 @@ class ProjectDocument:
         values = content[collection]
         original = copy.deepcopy(values[index])
         prefix = self.manifest["package_id"]
-        stem = "mech" if collection == "mechs" else "weapon"
+        stem = {"mechs":"mech","weapons":"weapon","equipment":"equipment"}[collection]
         existing = {item["id"] for item in values}
         serial = 1
         while f"{prefix}:{stem}-{serial}" in existing:

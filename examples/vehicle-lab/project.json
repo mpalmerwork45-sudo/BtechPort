@@ -1,0 +1,17 @@
+{
+  "format": "btp-project-v1",
+  "schema_version": 1,
+  "package_id": "vehicle-lab",
+  "content_version": "1.0.0",
+  "title": "BattleTech: Vehicle proving ground",
+  "requires": "none",
+  "startup": "authored-adventure-v1",
+  "rules_profile": "chi:updated-lrm-v1",
+  "save_policy": "strict-content-v1",
+  "definitions": "content.json",
+  "adventure": "adventure.json",
+  "presentation": "presentation.json",
+  "scripts": [],
+  "assets": [],
+  "graphics": "graphics.json"
+}

@@ -9,6 +9,11 @@
 static const char *const bodies[]={"left_arm","left_torso","left_leg","head","center_torso","right_arm","right_torso","right_leg","left_rear","center_rear","right_rear"};
 static const char *const behaviors[]={"small_laser","medium_laser","large_laser","ppc","ac2","ac5","ac10","ac20","machine_gun","flamer","lrm5","lrm10","lrm15","lrm20","srm2","srm4","srm6"};
 static const unsigned starts[]={51,58,79,85,83,65,72,81},slots[]={7,7,2,1,2,7,7,2};
+/* Vehicle facings use five independent armor/structure regions in the CHI
+   instance envelope. These are not mech limbs; vehicle combat branches below
+   the adapter never invoke the original limb/gyro rules for these records. */
+static const char *const vehicle_parts[]={"front","left","right","rear","turret"};
+static const unsigned vehicle_regions[]={0,1,5,6,4};
 const char *btp_behavior_name(unsigned i) { return i<17 ? behaviors[i] : ""; }
 const char *btp_body_name(unsigned i) { return i<11 ? bodies[i] : ""; }
 static int str(BtpJson *j,unsigned obj,const char *key,char *out,size_t cap) { return btp_json_string(j,btp_json_field(j,obj,key),out,cap); }
@@ -42,6 +47,12 @@ static int body(BtpJson *j,unsigned obj,const char *key,unsigned *out,unsigned c
 {
     unsigned n=btp_json_field(j,obj,key);
     for (unsigned i=0;i<count;++i) if (!num(j,n,bodies[i],lo,hi,&out[i])) return 0;
+    return btp_json_done(j,n);
+}
+static int vehicle_body(BtpJson *j,unsigned obj,const char *key,unsigned *out,unsigned hi)
+{
+    unsigned n=btp_json_field(j,obj,key);
+    for (unsigned i=0;i<5;++i) if (!num(j,n,vehicle_parts[i],0,hi,&out[vehicle_regions[i]])) return 0;
     return btp_json_done(j,n);
 }
 static int rules(BtpJson *j,unsigned n,BtpCombatProfile *p)
@@ -81,11 +92,16 @@ static int parse(BtpJson *j,BtpDefinitions *d)
     for (unsigned n=j->nodes[a].first;n;n=j->nodes[n].next) {
         if (d->presentation_count==BTP_DEFINITION_LIMIT) return btp_json_error(j,n,"at most 256 presentation definitions");
         BtpPresentationDefinition *v=&d->presentations[d->presentation_count++];char source[64];
-        if (!id(j,n,v->id,sizeof v->id,1) || !str(j,n,"source",source,sizeof source) || !btp_json_done(j,n) ||
+        v->graphic=65535;
+        if (!id(j,n,v->id,sizeof v->id,1) || !str(j,n,"source",source,sizeof source) ||
             !unique(j,n,d->presentations,d->presentation_count,sizeof *v)) return 0;
-        if (strcmp(source,"chi:locust") && strcmp(source,"chi:red-stinger") && strcmp(source,"package:walker-a") && strcmp(source,"package:walker-b")) return btp_json_error(j,n,"unsupported sprite source");
+        if (!strcmp(source,"package:art")) {
+            if (!str(j,n,"image",v->image,sizeof v->image)) return 0;
+            v->independent=2;
+        } else if (strcmp(source,"chi:locust") && strcmp(source,"chi:red-stinger") && strcmp(source,"package:walker-a") && strcmp(source,"package:walker-b")) return btp_json_error(j,n,"unsupported sprite source");
         v->sprite=(unsigned)(!strcmp(source,"chi:red-stinger") || !strcmp(source,"package:walker-b"));
-        v->independent=(unsigned)!strncmp(source,"package:",8);
+        if (!v->independent) v->independent=(unsigned)!strncmp(source,"package:",8);
+        if (!btp_json_done(j,n)) return 0;
     }
     a=array(j,1,"weapons");if (!a) return 0;
     for (unsigned n=j->nodes[a].first;n;n=j->nodes[n].next) {
@@ -109,31 +125,84 @@ static int parse(BtpJson *j,BtpDefinitions *d)
             !unique(j,n,d->weapons,d->weapon_count,sizeof *v)) return 0;
         if (v->near_range>v->medium_range || v->medium_range>v->far_range) return btp_json_error(j,ranges,"ranges must be ascending");
     }
+    a=btp_json_optional(j,1,"equipment");
+    if (a && !btp_json_type(j,a,'[')) return 0;
+    for (unsigned n=a ? j->nodes[a].first : 0;n;n=j->nodes[n].next) {
+        if (d->equipment_count==BTP_DEFINITION_LIMIT) return btp_json_error(j,n,"at most 256 equipment definitions");
+        BtpEquipmentDefinition *e=&d->equipment[d->equipment_count++];char behavior[32];
+        if (!id(j,n,e->id,sizeof e->id,1) || !str(j,n,"name",e->name,sizeof e->name) ||
+            !str(j,n,"label",e->label,sizeof e->label) || !str(j,n,"behavior",behavior,sizeof behavior) ||
+            !btp_json_done(j,n) || !unique(j,n,d->equipment,d->equipment_count,sizeof *e)) return 0;
+        if (!strcmp(behavior,"heat_sink")) e->behavior=0;
+        else if (!strcmp(behavior,"jump_jet")) e->behavior=1;
+        else return btp_json_error(j,n,"supported equipment behaviors are heat_sink and jump_jet");
+    }
     a=array(j,1,"mechs");if (!a) return 0;
     for (unsigned n=j->nodes[a].first;n;n=j->nodes[n].next) {
         if (d->mech_count==BTP_DEFINITION_LIMIT) return btp_json_error(j,n,"at most 256 mech definitions");
         BtpMechDefinition *v=&d->mechs[d->mech_count++];char presentation[64];
+        unsigned kind=btp_json_optional(j,n,"kind");char kind_name[16]="mech";
+        if (kind && !btp_json_string(j,kind,kind_name,sizeof kind_name)) return 0;
+        if (strcmp(kind_name,"mech") && strcmp(kind_name,"vehicle")) return btp_json_error(j,n,"unit kind must be mech or vehicle");
+        int vehicle=!strcmp(kind_name,"vehicle");
         if (!id(j,n,v->id,sizeof v->id,1) || !str(j,n,"name",v->name,sizeof v->name) || !str(j,n,"label",v->label,sizeof v->label) ||
             !str(j,n,"presentation",presentation,sizeof presentation) || !reference(j,n,presentation,d->presentations,d->presentation_count,sizeof d->presentations[0],&v->presentation) ||
-            !num(j,n,"mass_tons",20,100,&v->mass) || !num(j,n,"price",1,999999,&v->price) || !num(j,n,"engine_heat_sinks",0,30,&v->sinks)) return 0;
+            !num(j,n,"mass_tons",vehicle ? 5u : 20u,100,&v->mass) || !num(j,n,"price",1,999999,&v->price) || !num(j,n,"engine_heat_sinks",0,30,&v->sinks)) return 0;
         if (v->label[0]<'A' || v->label[0]>'Z') return btp_json_error(j,n,"short label must start with an uppercase letter");
         unsigned movement=btp_json_field(j,n,"movement");
-        if (!num(j,movement,"walk",1,12,&v->walk) || !num(j,movement,"jump",0,12,&v->jump) || !btp_json_done(j,movement) ||
-            !body(j,n,"armor",v->armor,11,0,83) || !body(j,n,"structure",v->structure,8,1,40) || !body(j,n,"external_heat_sinks",v->external_sinks,8,0,7)) return 0;
+        if (vehicle) {
+            char drive[16];if (!str(j,movement,"type",drive,sizeof drive)) return 0;
+            v->vehicle=!strcmp(drive,"tracked") ? 1u : !strcmp(drive,"wheeled") ? 2u : !strcmp(drive,"hover") ? 3u : 0u;
+            if (!v->vehicle) return btp_json_error(j,movement,"vehicle movement must be tracked, wheeled or hover");
+        }
+        if (!num(j,movement,"walk",1,12,&v->walk) || !num(j,movement,"jump",0,vehicle ? 0u : 12u,&v->jump) || !btp_json_done(j,movement)) return 0;
+        if (vehicle) {
+            if (!vehicle_body(j,n,"armor",v->armor,255) || !vehicle_body(j,n,"structure",v->structure,100)) return 0;
+            for (unsigned i=0;i<4;++i) if (!v->structure[vehicle_regions[i]]) return btp_json_error(j,n,"vehicle hull structure must be positive");
+            if (!v->structure[4] && v->armor[4]) return btp_json_error(j,n,"turret armor requires turret structure");
+        } else {
+        if (!body(j,n,"armor",v->armor,11,0,83) || !body(j,n,"structure",v->structure,8,1,40) || !body(j,n,"external_heat_sinks",v->external_sinks,8,0,7)) return 0;
         unsigned act=btp_json_field(j,n,"actuators"),la,ra,ll,rl;
         if (!num(j,act,"left_arm",0,15,&la) || !num(j,act,"right_arm",0,15,&ra) || !num(j,act,"left_leg",0,15,&ll) || !num(j,act,"right_leg",0,15,&rl) || !btp_json_done(j,act)) return 0;
         v->actuators[0]=la*16+ll;v->actuators[1]=ra*16+rl;
+        }
         unsigned loadout=array(j,n,"loadout");if (!loadout) return 0;
         for (unsigned m=j->nodes[loadout].first;m;m=j->nodes[m].next) {
             if (v->count==10) return btp_json_error(j,m,"CHI campaign supports at most ten mounted weapons");
             BtpMountDefinition *mount=&v->mounts[v->count++];char weapon[64],location[32];
             if (!str(j,m,"weapon",weapon,sizeof weapon) || !reference(j,m,weapon,d->weapons,d->weapon_count,sizeof d->weapons[0],&mount->weapon) ||
                 !str(j,m,"location",location,sizeof location) || !num(j,m,"ammunition",0,254,&mount->ammo) || !btp_json_done(j,m)) return 0;
-            for (mount->location=0;mount->location<8 && strcmp(location,bodies[mount->location]);++mount->location) {}
+            if (vehicle) {
+                unsigned part=0;while (part<5 && strcmp(location,vehicle_parts[part])) ++part;
+                if (part==5 || !v->structure[vehicle_regions[part]]) return btp_json_error(j,m,"unknown or absent vehicle location");
+                mount->location=vehicle_regions[part];
+            } else for (mount->location=0;mount->location<8 && strcmp(location,bodies[mount->location]);++mount->location) {}
             if (mount->location==8) return btp_json_error(j,m,"unknown body location");
             if (!!mount->ammo == !strcmp(d->weapons[mount->weapon].ammunition,"none")) return btp_json_error(j,m,"ammunition capacity disagrees with weapon");
         }
+        unsigned equipment=btp_json_optional(j,n,"equipment"),jets=0,items=0;
+        if (equipment && !btp_json_type(j,equipment,'[')) return 0;
+        for (unsigned item=equipment ? j->nodes[equipment].first : 0;item;item=j->nodes[item].next) {
+            char definition[64],location[32];unsigned index,quantity,part;
+            if (vehicle || ++items>16) return btp_json_error(j,item,"at most 16 equipment entries; mech equipment is not supported on vehicles");
+            if (!str(j,item,"definition",definition,sizeof definition) || !reference(j,item,definition,d->equipment,d->equipment_count,sizeof d->equipment[0],&index) ||
+                !str(j,item,"location",location,sizeof location) || !num(j,item,"quantity",1,12,&quantity) || !btp_json_done(j,item)) return 0;
+            for (part=0;part<8 && strcmp(location,bodies[part]);++part) {}
+            if (part==8) return btp_json_error(j,item,"unknown equipment location");
+            if (!d->equipment[index].behavior) v->external_sinks[part]+=quantity;
+            else {
+                if (part==0 || part==3 || part==5) return btp_json_error(j,item,"jump jets require a torso or leg location");
+                jets+=quantity;
+            }
+        }
+        /* Heat sinks become real, damageable critical entries. Jump jets use
+           CHI's chassis jump rating; individual jet criticals are not modeled. */
+        if (jets) {
+            if (v->jump || jets>12) return btp_json_error(j,n,"installed jump jets require base movement.jump 0 and at most 12 jets");
+            v->jump=jets;
+        }
         if (!v->count || !btp_json_done(j,n) || !unique(j,n,d->mechs,d->mech_count,sizeof *v)) return btp_json_error(j,n,"mech needs a supported loadout");
+        if (vehicle) continue;
         unsigned used[8]={0},sinks=v->sinks;
         for (unsigned i=0;i<v->count;++i) ++used[v->mounts[i].location];
         for (unsigned i=0;i<8;++i) {
@@ -168,17 +237,27 @@ int btp_definitions_compile(BtpDefinitions *d,BtpRoster *r,char error[256])
         memset(b,' ',15);memcpy(b,m->label,strlen(m->label));b[16]=(uint8_t)m->mass;b[38]=(uint8_t)m->sinks;
         b[49]=(uint8_t)m->walk;b[50]=(uint8_t)m->jump;b[120]=1;b[121]=b[122]=255;
         b[123]=(uint8_t)i;b[124]=(uint8_t)(192u|d->presentations[m->presentation].sprite);
+        /* Byte 15 is unused by authored mech names (15 characters). Its
+           immutable drive tag survives saves and is checked against the pack. */
+        b[15]=(uint8_t)m->vehicle;
         for (unsigned k=0;k<11;++k) b[17+k]=(uint8_t)m->armor[k];
         for (unsigned k=0;k<8;++k) b[28+k]=(uint8_t)m->structure[k];
         for (unsigned k=0;k<2;++k) b[36+k]=(uint8_t)m->actuators[k];
         unsigned bin=0;
-        for (unsigned at=51;at<86;) {
+        if (m->vehicle) {
+            for (unsigned k=0;k<m->count;++k) {
+                const BtpMountDefinition *mount=&m->mounts[k];const BtpAuthoredWeapon *w=&d->weapons[mount->weapon];
+                b[51+k]=(uint8_t)(w->behavior+16u);b[39+k]=(uint8_t)(mount->ammo ? mount->ammo : 255);
+                for (unsigned a=0;a<d->ammo_count;++a) if (!strcmp(d->ammo[a].id,w->ammunition)) v->ammo_cost[k]=(uint8_t)d->ammo[a].price;
+                d->mount_weapon[i][k]=(uint16_t)mount->weapon;d->mount_location[i][k]=(uint8_t)mount->location;
+            }
+        } else for (unsigned at=51;at<86;) {
             unsigned loc=0;while (starts[loc]!=at) ++loc;unsigned used=0;
             for (unsigned k=0;k<m->count;++k) if (m->mounts[k].location==loc) {
                 const BtpMountDefinition *mount=&m->mounts[k];const BtpAuthoredWeapon *w=&d->weapons[mount->weapon];
                 b[at+used++]=(uint8_t)(w->behavior+16u);b[39+bin]=(uint8_t)(mount->ammo ? mount->ammo : 255);
                 for (unsigned a=0;a<d->ammo_count;++a) if (!strcmp(d->ammo[a].id,w->ammunition)) v->ammo_cost[bin]=(uint8_t)d->ammo[a].price;
-                d->mount_weapon[i][bin++]=(uint16_t)mount->weapon;
+                d->mount_location[i][bin]=(uint8_t)loc;d->mount_weapon[i][bin++]=(uint16_t)mount->weapon;
             }
             for (unsigned k=0;k<m->external_sinks[loc];++k) b[at+used++]=34;
             at+=slots[loc];

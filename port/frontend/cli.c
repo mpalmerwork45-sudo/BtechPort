@@ -306,8 +306,8 @@ void btp_print_state(const BtpState *s, const BtpResources *r)
     for (unsigned i=0;i<BTP_STATE_BYTES;++i) state_hash=(state_hash^encoded[i])*UINT64_C(1099511628211);
     printf(",\"state_digest\":\"%016llx\",\"effect_stage\":%u",(unsigned long long)state_hash,s->effects.stage);
     if (s->event.enabled) {
-        printf(",\"authored_event\":{\"node\":%u,\"phase\":%u,\"page\":%u,\"selected\":%u,\"flags\":[",
-            s->event.node,s->event.phase,s->event.page,s->event.selected);
+        printf(",\"authored_event\":{\"node\":%u,\"phase\":%u,\"page\":%u,\"selected\":%u,\"map\":%u,\"planet\":%u,\"flags\":[",
+            s->event.node,s->event.phase,s->event.page,s->event.selected,s->event.map,s->event.planet);
         const BtpAdventure *a=btp_adventure(r);
         for (unsigned i=0;i<a->flag_count;++i) printf("%s%u",i ? "," : "",s->event.flags[i]);
         fputs("]}",stdout);

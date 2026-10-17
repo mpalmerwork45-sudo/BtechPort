@@ -86,12 +86,13 @@ class AdventureEditor:
         self.images = {}
         self.graphics = {}
         self.art_cache = None
+        self.hover=None;self.hover_light=True
         ttk.Style(self.window).configure("Tiles.Treeview",rowheight=40)
         bar = ttk.Frame(self.window, padding=6);bar.pack(fill="x")
         for label, action in [("Save", self.save), ("Validate", self.validate), ("Undo", self.undo), ("Redo", self.redo), ("Play", self.play), ("Play here", self.play_here), ("Export", parent.export_project)]:
-            ttk.Button(bar, text=label, command=lambda cb=action: self.guard(cb)).pack(side="left", padx=3)
-        ttk.Button(bar,text="World / jigsaws",command=lambda:self.guard(self.edit_landscape)).pack(side="left",padx=3)
-        ttk.Button(bar,text="Graphics / sprites",command=lambda:self.guard(self.edit_graphics)).pack(side="left",padx=3)
+            ttk.Button(bar, text=label, width=len(label), style='Toolbar.TButton', command=lambda cb=action: self.guard(cb)).pack(side="left", padx=3)
+        ttk.Button(bar,text="World / jigsaws",width=15,style='Toolbar.TButton',command=lambda:self.guard(self.edit_landscape)).pack(side="left",padx=3)
+        ttk.Button(bar,text="Graphics / sprites",width=18,style='Toolbar.TButton',command=lambda:self.guard(self.edit_graphics)).pack(side="left",padx=3)
         self.tabs = ttk.Notebook(self.window);self.tabs.pack(fill="both", expand=True)
         self.map_tab = ttk.Frame(self.tabs);self.tabs.add(self.map_tab, text="Maps")
         self.event_tab = ttk.Frame(self.tabs);self.tabs.add(self.event_tab, text="Events")
@@ -178,7 +179,7 @@ class AdventureEditor:
         side.columnconfigure(0,weight=1);side.rowconfigure(1,weight=4);side.rowconfigure(7,weight=2)
         title=ttk.Frame(side);title.grid(row=0,column=0,sticky="ew",pady=(0,6))
         ttk.Label(title,text="TILES",style="Section.TLabel").pack(side="left")
-        ttk.Button(title,text="Browse all…",command=lambda:self.guard(self.graphic_picker)).pack(side="right")
+        ttk.Button(title,text="Browse all...",command=lambda:self.guard(self.graphic_picker)).pack(side="right")
         palette=ttk.Frame(side);palette.grid(row=1,column=0,sticky="nsew")
         self.brush=TilePalette(palette,show="tree",selectmode="browse",height=1,style="Tiles.Treeview")
         self.brush.column("#0",width=218,minwidth=180,stretch=True)
@@ -187,11 +188,17 @@ class AdventureEditor:
         self.brush.bind("<<TreeviewSelect>>",lambda _:self.select_brush())
         self.brush_info=tk.StringVar();ttk.Label(side,textvariable=self.brush_info,style="Muted.TLabel",wraplength=235,padding=(0,5)).grid(row=2,column=0,sticky="ew")
         tile_buttons=ttk.Frame(side);tile_buttons.grid(row=3,column=0,sticky="ew",pady=(0,8))
-        ttk.Button(tile_buttons,text="Edit tile",command=lambda:self.guard(self.edit_tile)).pack(side="left",fill="x",expand=True,padx=(0,4))
-        ttk.Button(tile_buttons,text="Duplicate",command=lambda:self.guard(self.duplicate_tile)).pack(side="left",fill="x",expand=True)
+        tile_buttons.columnconfigure((0,1,2),weight=1)
+        for column,(label,callback) in enumerate([('Edit pixels',self.edit_tile_pixels),('Properties',self.edit_tile),('Clone',self.duplicate_tile)]):
+            ttk.Button(tile_buttons,text=label,width=0,style='Toolbar.TButton',command=lambda cb=callback:self.guard(cb)).grid(row=0,column=column,sticky='ew',padx=2)
+        self.tile_menu=tk.Menu(self.brush,tearoff=False)
+        for label,callback in [('Edit pixels',self.edit_tile_pixels),('Properties',self.edit_tile),('Clone tile',self.duplicate_tile)]:
+            self.tile_menu.add_command(label=label,command=lambda cb=callback:self.guard(cb))
+        self.brush.bind('<Button-3>',self.tile_context)
+        self.brush.bind('<Double-1>',lambda _:self.guard(self.edit_tile_pixels))
         ttk.Separator(side).grid(row=4,column=0,sticky="ew",pady=4)
         ttk.Label(side,text="MARKERS",style="Section.TLabel",padding=(0,5)).grid(row=5,column=0,sticky="w")
-        ttk.Label(side,text="Drag on map · double-click to edit",style="Muted.TLabel").grid(row=6,column=0,sticky="w",pady=(0,5))
+        ttk.Label(side,text="Drag on map | double-click to edit",style="Muted.TLabel").grid(row=6,column=0,sticky="w",pady=(0,5))
         marker_box=ttk.Frame(side);marker_box.grid(row=7,column=0,sticky="nsew")
         self.markers=tk.Listbox(marker_box,exportselection=False,height=1,relief="flat",borderwidth=0,highlightthickness=1,highlightbackground="#cfd8df",selectbackground="#dcebed",selectforeground="#163d44",font="TkDefaultFont")
         marker_scroll=ttk.Scrollbar(marker_box,command=self.markers.yview);self.markers.configure(yscrollcommand=marker_scroll.set)
@@ -211,13 +218,41 @@ class AdventureEditor:
         self.canvas.bind("<Button-3>",lambda e:self.guard(lambda:self.sample_tile(e)))
         self.canvas.bind("<Control-c>",lambda _:self.guard(self.copy_selection))
         self.canvas.bind("<Control-v>",lambda _:self.tool.set("Paste"))
+        self.canvas.bind('<Motion>',self.hover_move)
+        self.canvas.bind('<Leave>',lambda _:self.clear_hover())
+        self.hover_timer=self.canvas.after(380,self.blink_hover)
+        self.canvas.bind('<Destroy>',self.stop_hover)
+
+    def hover_move(self,event):
+        size=int(self.zoom.get());point=(int(self.canvas.canvasx(event.x)//size),int(self.canvas.canvasy(event.y)//size))
+        scene=self.scene()
+        self.hover=point if 0<=point[0]<len(scene['rows'][0]) and 0<=point[1]<len(scene['rows']) else None
+        self.draw_hover()
+
+    def clear_hover(self):self.hover=None;self.canvas.delete('brush-hover')
+
+    def draw_hover(self):
+        self.canvas.delete('brush-hover')
+        if self.hover is None:return
+        x,y=self.hover;size=int(self.zoom.get())
+        self.canvas.create_rectangle(x*size+1,y*size+1,(x+1)*size-1,(y+1)*size-1,
+            outline='#ffffff' if self.hover_light else '#243641',width=2,tags='brush-hover')
+
+    def blink_hover(self):
+        if not self.canvas.winfo_exists():return
+        if self.hover_timer is not None:self.canvas.after_cancel(self.hover_timer)
+        self.hover_light=not self.hover_light;self.draw_hover();self.hover_timer=self.canvas.after(380,self.blink_hover)
+
+    def stop_hover(self,event):
+        if event.widget==self.canvas and self.hover_timer is not None:
+            self.canvas.after_cancel(self.hover_timer);self.hover_timer=None
 
     def reload_graphics(self):
         self.cancel_gesture()
         self.images.clear()
         try:
             self.graphics=load_tiles(self.document,self.parent.settings)
-            self.graphics_note.set("Graphics ready · original terrain colors" if self.document.manifest["requires"]!="none" else "Graphics ready · package artwork")
+            self.graphics_note.set("Graphics ready | original terrain colors" if self.document.manifest["requires"]!="none" else "Graphics ready | package artwork")
         except EditorError as exc:
             self.graphics=art_tiles(self.document);self.graphics_note.set(f"Graphics unavailable: {exc}  Use Player setup, then Reload graphics.")
         self.refresh()
@@ -240,7 +275,7 @@ class AdventureEditor:
         index=selected[0]
         if index<len(self.adventure["tiles"]):
             tile=self.adventure["tiles"][index]
-            self.brush_info.set(f"{tile['terrain'].title()} · graphic {tile['graphic']} · {tile['sheet']}")
+            self.brush_info.set(f"{tile['terrain'].title()} | graphic {tile['graphic']} | {tile['sheet']}")
         else:self.brush_info.set("Transparent erase applies to the selected overlay.")
 
     def change_map(self):
@@ -273,7 +308,7 @@ class AdventureEditor:
             if selected:self.canvas.create_oval(x-10,y-10,x+10,y+10,outline="white",width=2,tags=tags)
             self.canvas.create_oval(x-5,y-5,x+5,y+5,fill=color,outline="#10242b",width=2,tags=tags)
             left=x+9+len(label)*7>len(grid[0])*size
-            label_item=self.canvas.create_text(x-9 if left else x+9,max(16,y-9),text=label,fill="#f6fbff",anchor="se" if left else "sw",font=("TkDefaultFont",9,"bold"),tags=tags)
+            label_item=self.canvas.create_text(x-9 if left else x+9,max(16,y-9),text=label,fill="#f6fbff",anchor="se" if left else "sw",font="TkHeadingFont",tags=tags)
             bounds=self.canvas.bbox(label_item)
             if bounds:
                 bg=self.canvas.create_rectangle(bounds[0]-4,bounds[1]-2,bounds[2]+4,bounds[3]+2,fill="#20343e",outline="",tags=tags)
@@ -288,9 +323,10 @@ class AdventureEditor:
                 unit=encounter["enemies"][enemy]
                 catalog=self.document.content["mechs"] if unit["kind"]=="mech" else self.adventure["people"]
                 label=next((e.get("name",e["id"].split(":")[-1]) for e in catalog if e["id"]==unit["definition"]),unit["definition"].split(":")[-1])
-            label=label[:23]+"…" if len(label)>24 else label
+            label=label[:23]+"..." if len(label)>24 else label
             marker(value["at"],label,colors[kind],tag,value["ref"]==self.selected_marker)
         marker(self.cursor,"preview","#bf91d5")
+        self.draw_hover()
 
     def hit_marker(self,px,py):
         size=int(self.zoom.get());values=scene_markers(self.stroke or self.adventure,self.scene_index)
@@ -315,7 +351,7 @@ class AdventureEditor:
                 marker=next(m for m in scene_markers(self.adventure,self.scene_index) if m["ref"]==ref)
                 self.stroke=copy_adventure(self.document);self.selected_marker=ref
                 self.drag=dict(ref=ref,pointer=(px,py),at=tuple(marker["at"]),scene=self.scene_index)
-                self.refresh_markers();self.draw();self.status.set("Drag marker · snaps to half tiles · Escape cancels")
+                self.refresh_markers();self.draw();self.status.set("Drag marker | snaps to half tiles | Escape cancels")
                 return
         elif self.drag is not None:
             drag=self.drag
@@ -325,7 +361,7 @@ class AdventureEditor:
             at=[max(0,min(2*len(scene["rows"][0])-1,at[0])),max(0,min(2*len(scene["rows"])-1,at[1]))]
             try:move_marker(self.stroke,self.scene_index,drag["ref"],at)
             except EditorError as exc:self.status.set(str(exc));return
-            self.draw();self.status.set(f"Marker at half-tile {at[0]},{at[1]} · release to place · Escape cancels")
+            self.draw();self.status.set(f"Marker at half-tile {at[0]},{at[1]} | release to place | Escape cancels")
             return
         if not 0<=y<len(scene["rows"]) or not 0<=x<len(scene["rows"][0]): return
         if tool in ("Paint","Line","Rectangle","Fill","Paste"):
@@ -389,7 +425,7 @@ class AdventureEditor:
             a=self.stroke;drag=self.drag;self.stroke=None;self.drag=None
             if a==self.adventure:
                 self.draw()
-                if drag:self.status.set("Marker selected · drag to move or double-click to edit.")
+                if drag:self.status.set("Marker selected | drag to move or double-click to edit.")
             else:self.commit(a)
 
     def cancel_gesture(self):
@@ -439,8 +475,27 @@ class AdventureEditor:
         if a["schema_version"]==1 and len(a["tiles"])<64:
             used={t["key"] for t in a["tiles"]};tile["key"]=next(chr(c) for c in range(33,127) if chr(c) not in used)
         else:upgrade(a);tile.pop("key",None)
-        tile["id"]=new_id(self.document,"tiles","tile");a["tiles"].append(tile);self.commit(a)
+        tile["id"]=new_id(self.document,"tiles","tile");a["tiles"].append(tile)
+        # A clone owns its pixels: editing it must not repaint its source.
+        if tile['sheet']=='package:art':
+            from art_editing import clone_image
+            art=copy.deepcopy(self.document.art)
+            source=next(i for i in art['images'] if i['id']==tile['graphic'])
+            image=clone_image(source,self.document.content['package_id'],art['images'])
+            art['images'].append(image);tile['graphic']=image['id']
+            self.document.replace_art(art,a);self.refresh()
+        else:self.commit(a)
         self.brush.selection_clear(0,"end");self.brush.selection_set(len(a["tiles"])-1);self.edit_tile()
+
+    def tile_context(self,event):
+        item=self.brush.identify_row(event.y)
+        if not item:return
+        self.brush.selection_set(item);self.select_brush()
+        try:self.tile_menu.tk_popup(event.x_root,event.y_root)
+        finally:self.tile_menu.grab_release()
+
+    def edit_tile_pixels(self):
+        self.edit_graphics();self.art_editor.edit_map_tile()
 
     def new_overlay(self): self.overlay_dialog()
     def layer_properties(self):
@@ -476,7 +531,7 @@ class AdventureEditor:
         form.field("sheet",tile["sheet"],(["package:tiles"] if self.document.manifest["requires"]=="none" else ["chi:land","chi:destroyed"])+["package:art"])
         form.field("terrain",tile["terrain"],["clear","rough","water","woods","wall"]);form.field("mini_color",tile["mini_color"])
         preview=ttk.Label(form.body)
-        ttk.Button(form.body,text="Choose graphic…",command=lambda:self.guard(lambda:self.graphic_picker(form))).grid(row=form.row,column=0,padx=10,pady=10,sticky="w")
+        ttk.Button(form.body,text="Choose graphic...",command=lambda:self.guard(lambda:self.graphic_picker(form))).grid(row=form.row,column=0,padx=10,pady=10,sticky="w")
         preview.grid(row=form.row,column=1,sticky="w",padx=10,pady=10);form.row+=1
         def show_preview(*_):
             try:graphic=form.values["graphic"].get() if form.values["sheet"].get()=="package:art" else int(form.values["graphic"].get())
@@ -519,7 +574,7 @@ class AdventureEditor:
         def select(index):
             state["selected"]=index;x=(index%columns)*cell;y=(index//columns)*cell
             canvas.coords("selection",x+1,y+1,x+cell-1,y+cell-1)
-            note.set(f"Graphic {index} · {sheet.get()} · double-click to use")
+            note.set(f"Graphic {index} | {sheet.get()} | double-click to use")
         def draw_sheet(_=None):
             canvas.delete("all");source=self.graphics.get(sheet.get(),());state["keys"]=list(source) if isinstance(source,dict) else list(range(len(source)));count=len(source)
             canvas.configure(scrollregion=(0,0,columns*cell,((count+columns-1)//columns)*cell));canvas.yview_moveto(0)

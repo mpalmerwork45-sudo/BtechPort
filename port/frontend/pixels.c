@@ -245,6 +245,21 @@ static void mech_bar(uint32_t *f,int x,int bottom,unsigned working,unsigned stru
 void btp_mech_screen(const BtpResources *r,const uint8_t m[125],const char *pilot,
     const char *rider,unsigned heat,unsigned tick,uint32_t f[BTP_PIXELS])
 {
+    if (btp_vehicle_kind(m)) {
+        rectangle(f,0,0,320,200,0);border_panel(r,f,0,0,320,200,0);
+        char line[64],model[16];memcpy(model,m,15);model[15]=0;text(r,f,8,8,model,14);
+        snprintf(line,sizeof line,"%u tons  %s",m[16],btp_vehicle_kind(m)==1 ? "Tracked" : btp_vehicle_kind(m)==2 ? "Wheeled" : "Hover");text(r,f,8,20,line,15);
+        if (pilot) { snprintf(line,sizeof line,"Commander: %s",pilot);text(r,f,8,32,line,15); }
+        (void)btp_art_unit(r,m,tick/8u,0,266,24,0,0,320,200,f);
+        static const unsigned parts[]={17,18,22,23,21};
+        text(r,f,8,52,"Facing       Armor   Structure",15);
+        for (unsigned i=0;i<5;++i) {
+            unsigned p=parts[i];if (!m[p+80]) continue;
+            snprintf(line,sizeof line,"%-11s %3u/%3u    %2u/%2u",btp_vehicle_location(p),m[p],m[p+69],m[p+11],m[p+80]);text(r,f,8,64+(int)i*12,line,14);
+        }
+        snprintf(line,sizeof line,"Cruise %u   Flank %u   Motive: %s",m[49],(3u*m[49]+1u)/2u,m[118]>=2 ? "Stopped" : m[118] ? "Damaged" : "OK");text(r,f,8,130,line,15);
+        text(r,f,8,174,"Space: return",15);return;
+    }
     for (unsigned i=0;i<BTP_PIXELS;++i) f[i]=btp_palette[terrain_palette[r->quiz_diagram.pixels[i]&15u]];
     rectangle(f,0,0,128,200,0);
     size_t n;const uint8_t *label=bank_literal(r,108,&n);
@@ -439,8 +454,8 @@ static void combat_flash(const BtpResources *r, const BtpState *s, int cx, int c
     if (s->effects.stage>=BTP_EFFECT_POSES) {
         int pose_frame=btp_effects_pose(s,&r->combat);
         if (pose_frame>=0) {
-            if (actor_visible) (void)btp_draw_sprite(&r->sprites,e->base+pose[1+(unsigned)pose_frame],x,y,0,104,f);
-            if (target_visible && btp_effects_reaction(s))
+            if (actor_visible && (c->unit[e->actor].infantry || !btp_art_unit(r,c->unit[e->actor].record,(unsigned)pose_frame,e->direction,x,y,104,0,320,200,f))) (void)btp_draw_sprite(&r->sprites,e->base+pose[1+(unsigned)pose_frame],x,y,0,104,f);
+            if (target_visible && btp_effects_reaction(s) && (c->unit[e->target].infantry || !btp_art_unit(r,c->unit[e->target].record,(unsigned)pose_frame,c->unit[e->target].direction,tx,ty,104,0,320,200,f)))
                 (void)btp_draw_sprite(&r->sprites,e->target_base+r->combat.reaction[(unsigned)pose_frame&3u],tx,ty,0,104,f);
         }
         if (s->effects.stage==BTP_EFFECT_FLIGHT || s->effects.stage==BTP_EFFECT_BEAM_SOUND) {
@@ -464,7 +479,7 @@ static void combat_flash(const BtpResources *r, const BtpState *s, int cx, int c
         return;
     }
     if (frame<count) {
-        if (actor_visible) (void)btp_draw_sprite(&r->sprites,e->base+pose[1+frame],x,y,0,104,f);
+        if (actor_visible && (c->unit[e->actor].infantry || !btp_art_unit(r,c->unit[e->actor].record,frame,e->direction,x,y,104,0,320,200,f))) (void)btp_draw_sprite(&r->sprites,e->base+pose[1+frame],x,y,0,104,f);
         /* DS:2E3C is the personal hit program. Adding it to the 146-frame
            mech family selects Jason's human sprites (178..181). Mechs keep
            their current pose under the separately drawn impact. */
@@ -1632,6 +1647,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                     unsigned tile;
                     const BtpSceneTile *authored=scene ? btp_scene_tile(btp_adventure(r),scene,tx,ty) : NULL;
                     if (authored) tile=authored->graphic;
+                    else if (scene) tile=255; /* Finite authored maps never leak CHI world tiles. */
                     else if (s->cache.active) tile=btp_cache_tile(r,s,tx,ty);
                     else if ((s->campaign.encounter || s->campaign.invasion || s->map_id) && tx>=0 && ty>=0 && tx<map->width && ty<map->height) tile=btp_mission_tile(s,map,tx,ty);
                     else {
@@ -1715,7 +1731,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
             unsigned slot=u->infantry ? i<friends ? btp_combat_id(&s->combat,i)==4 ? 0u : 1u : 2u : base>=146 ? 4u : 3u;
             int ux=(u->infantry ? 208 : 200)+((int)(death ? death->tx : u->x)-cx)*8;
             int uy=(u->infantry ? 96 : 80)+((int)(death ? death->ty : u->y)-cy)*8;
-            if (!btp_art_sprite(r,slot,s->combat.walk[i],ux,uy,104,0,320,200,f))
+            if ((u->infantry || !btp_art_unit(r,u->record,s->combat.walk[i],u->direction,ux,uy,104,0,320,200,f)) && !btp_art_sprite(r,slot,s->combat.walk[i],ux,uy,104,0,320,200,f))
             (void)btp_draw_sprite(&r->sprites,u->record[0]=='s' || (death && death->target_base==16) ? 16u : base+s->combat.walk[i],
                 (u->infantry ? 208 : 200)+((int)(death ? death->tx : u->x)-cx)*8,
                 (u->infantry ? 96 : 80)+((int)(death ? death->ty : u->y)-cy)*8,
@@ -1751,7 +1767,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
             const uint8_t *m=i ? s->party.mechs[i-1] : s->campaign.mech;
             if (m[0]==255 || !btp_party_walkable(s,r,s->party.mech_x[i],s->party.mech_y[i],1)) continue;
             unsigned pilot=m[121],walk=pilot==0 ? s->campaign.mech_walk : pilot<8 ? s->party.walk[pilot] : s->campaign.mech_walk;
-            if (!btp_art_sprite(r,m[124]&1u ? 4u : 3u,walk,200+8*((int)s->party.mech_x[i]-s->campaign.world_x),80+8*((int)s->party.mech_y[i]-s->campaign.world_y),104,0,320,200,f))
+            if (!btp_art_unit(r,m,walk,pilot<8 ? s->party.direction[pilot] : s->campaign.mech_direction,200+8*((int)s->party.mech_x[i]-s->campaign.world_x),80+8*((int)s->party.mech_y[i]-s->campaign.world_y),104,0,320,200,f) && !btp_art_sprite(r,m[124]&1u ? 4u : 3u,walk,200+8*((int)s->party.mech_x[i]-s->campaign.world_x),80+8*((int)s->party.mech_y[i]-s->campaign.world_y),104,0,320,200,f))
             (void)btp_draw_sprite(&r->sprites,btp_mech_record_sprite(m,0)+walk,
                 200+8*((int)s->party.mech_x[i]-s->campaign.world_x),80+8*((int)s->party.mech_y[i]-s->campaign.world_y),0,104,f);
         }
@@ -2190,7 +2206,7 @@ void btp_world_preview(const BtpResources *r,const BtpState *s,uint32_t f[BTP_PI
     rectangle(f,0,0,320,200,0);
     const BtpScene *scene=btp_scene(r,s);
     if (scene) {
-        if (btp_art_world_map(r,s,f)) { text(r,f,8,8,btp_adventure(r)->world_name,15);text(r,f,8,192,"Space: return to game",15);return; }
+        if (btp_art_world_map(r,s,f)) { text(r,f,8,8,btp_adventure(r)->worlds[btp_scene(r,s)->world-1].name,15);text(r,f,8,192,"Space: return to game",15);return; }
         int scale=2,ox=(320-scale*scene->visual.width)/2,oy=(184-scale*scene->visual.height)/2;
         const BtpAdventure *a=btp_adventure(r);
         for (unsigned y=0;y<scene->visual.height;++y) for (unsigned x=0;x<scene->visual.width;++x) {

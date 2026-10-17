@@ -63,8 +63,29 @@ static int decode(const uint8_t *b, size_t n, BtpState *s, const BtpResources *r
         if (!btp_events_decode(&context,b+20057)) return 0;
         if (b[4]==48) context.event.map=(uint16_t)(context.map_id-16u);
     }
-    return n >= 24 && btp_state_decode(b,n,btp_active_map(r,&context),
-        btp_state_bld(r,&context),s) && btp_events_valid(s,r);
+    if (n<24 || !btp_state_decode(b,n,btp_active_map(r,&context),btp_state_bld(r,&context),s)) return 0;
+    if (s->event.enabled && n>=20185 && b[20057+127]<2) {
+        /* The first authored-world saves used the original 128-column
+           discovery bitmap. Repack it once into the bounded planet regions;
+           the surrounding save envelope still requires identical content. */
+        const BtpAdventure *a=btp_adventure(r);const BtpScene *m=btp_scene(r,s);
+        if (!a || !m || a->world_count>1) return 0;
+        if (a->world_count) {
+            uint8_t old[2048];memcpy(old,s->explored,sizeof old);memset(s->explored,0,sizeof s->explored);
+            for (unsigned i=0;i<a->map_count;++i) {
+                const BtpScene *map=&a->maps[i];
+                if (map->world && i!=a->worlds[map->world-1].base) continue;
+                unsigned ox=map->world ? 0 : map->origin_x/8,oy=map->world ? 0 : map->origin_y/8;
+                for (unsigned y=0;y<map->explore_height;++y) for (unsigned x=0;x<map->explore_width;++x) {
+                    unsigned bit=map->explore_offset+y*map->explore_width+x;
+                    if (old[(oy+y)*16+(ox+x)/8]&(128u>>((ox+x)&7u))) s->explored[bit/8]|=(uint8_t)(128u>>(bit&7u));
+                }
+            }
+        }
+        s->event.planet=(uint8_t)m->world;s->event.explore_offset=(uint16_t)m->explore_offset;
+        s->event.explore_width=(uint8_t)m->explore_width;s->event.explore_height=(uint8_t)m->explore_height;
+    }
+    return btp_events_valid(s,r);
 }
 int btp_save_write(const char *path, const BtpState *s, const BtpResources *r, BtpError *e)
 {

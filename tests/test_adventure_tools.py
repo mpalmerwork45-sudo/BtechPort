@@ -104,7 +104,10 @@ class AdventureTools(unittest.TestCase):
         save = self.root / "game.btp"
         self.play("--save", save)
         good = save.read_bytes()
-        for offset, value in [(20059, 255), (20065 + 63, 1), (20057, 0), (20058, 5), (20062, 3), (20184, 1)]:
+        # Event extensions 1 (wide scenes) and 2 (planets) are supported.
+        # Reject a future version, reserved bytes and invalid planet metadata.
+        for offset, value in [(20059, 255), (20065 + 63, 1), (20057, 0), (20058, 5), (20062, 3),
+                              (20184, 3), (20057 + 122, 1), (20057 + 121, 17)]:
             bad = bytearray(good)
             bad[160 + offset] = value
             struct.pack_into("<I", bad, 8, zlib.crc32(bad[16:]))

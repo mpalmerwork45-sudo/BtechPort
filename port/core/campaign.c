@@ -272,6 +272,7 @@ unsigned btp_aftermath_cash(uint8_t rng[3],unsigned count)
 }
 int btp_salvage_eligible(const uint8_t m[125],unsigned skill)
 {
+    if (btp_vehicle_kind(m)) return skill>=4 || m[118]!=2;
     return skill>=4 || (m[117]!=3 && m[118]!=2 && m[31]!=0);
 }
 void btp_salvage_copy(BtpState *s,unsigned slot,unsigned pilot,const uint8_t m[125],unsigned kind)
@@ -279,7 +280,10 @@ void btp_salvage_copy(BtpState *s,unsigned slot,unsigned pilot,const uint8_t m[1
     if (slot>=4 || pilot>=8) return;
     uint8_t *dest=btp_party_mech(s,slot);memmove(dest+1,m+1,124);dest[0]=(uint8_t)kind;
     dest[121]=(uint8_t)pilot;s->party.people[pilot][12]=(uint8_t)slot;
-    dest[117]=dest[118]=1;if (!dest[31]) dest[31]=1;if (!dest[32]) dest[32]=1;
+    if (btp_vehicle_kind(dest)) {
+        static const unsigned parts[]={28,29,33,34,32};dest[118]=1;
+        for (unsigned i=0;i<5;++i) if (!dest[parts[i]] && dest[parts[i]+69]) dest[parts[i]]=1;
+    } else { dest[117]=dest[118]=1;if (!dest[31]) dest[31]=1;if (!dest[32]) dest[32]=1; }
     s->party.mech_types[slot]=(uint8_t)kind;s->campaign.owned=1;
 }
 void btp_campaign_destroy(BtpState *s,unsigned unit)

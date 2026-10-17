@@ -10,29 +10,33 @@ import time
 ROOT=Path(__file__).resolve().parents[1]
 
 
-def fixtures(work, directory):
+def fixtures(work, directory, vehicles=False):
     package=directory/"game"
-    shutil.copytree(ROOT/"examples/beacon-demo",package)
+    shutil.copytree(ROOT/('examples/vehicle-lab' if vehicles else 'examples/beacon-demo'),package)
     prefix=directory/"held"
-    subprocess.run([str(ROOT/"build/btp-independent-tests"),str(package),str(prefix)],cwd=directory,check=True,capture_output=True,text=True,timeout=30)
+    command=[str(ROOT/'build/btp-vehicles-planets-tests'),str(package),str(directory/'scene.ppm'),str(prefix)] if vehicles else [str(ROOT/"build/btp-independent-tests"),str(package),str(prefix)]
+    subprocess.run(command,cwd=directory,check=True,capture_output=True,text=True,timeout=30)
     return package,prefix
 
 
-def run(env,work):
+def run(env,work,vehicles=False):
     from reference_session import WindowKeys
     env=dict(env,SDL_AUDIODRIVER="dummy")
     with tempfile.TemporaryDirectory(prefix="beacon-ui-",dir=work) as directory:
-        tmp=Path(directory);project,prefix=fixtures(work,tmp)
+        tmp=Path(directory);project,prefix=fixtures(work,tmp,vehicles)
+        title='BattleTech: Vehicle proving ground' if vehicles else 'Last Beacon'
+        identity='vehicle-lab' if vehicles else 'last-beacon'
         # No original directory, cache paths, roster or art directory exists
         # in this working directory. Only the declared package is supplied.
-        for label in ["welcome","town","npc","choice","recruit","wilderness","combat","victory","ending"]:
-            slot=tmp/f"{label}.btp";final=tmp/f"{label}-final.btp";frame=work/f"beacon-{label}.ppm"
+        labels=['town','overview','inspection','planet','combat','victory','depot'] if vehicles else ["welcome","town","npc","choice","recruit","wilderness","combat","victory","ending"]
+        for label in labels:
+            slot=tmp/f"{label}.btp";final=tmp/f"{label}-final.btp";frame=work/f"{identity}-{label}.ppm"
             process=subprocess.Popen([str(ROOT/"build/btech-port"),"--project",str(project),"--load",f"{prefix}-{label}.btp","--save-file",str(slot),"--save",str(final),"--frame",str(frame)],cwd=tmp,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
             keys=WindowKeys()
             try:
                 window=None
                 for _ in range(240):
-                    window=next((w for w,title in keys.windows() if title=="Last Beacon"),None)
+                    window=next((w for w,name in keys.windows() if name==title),None)
                     if window:break
                     if process.poll() is not None:raise RuntimeError(process.communicate()[1])
                     time.sleep(.025)
@@ -40,15 +44,16 @@ def run(env,work):
                 keys.key(window,"F5");keys.key(window,"F9");keys.key(window,"Ctrl+Shift+Escape")
                 out,err=process.communicate(timeout=20)
                 assert process.returncode==0 and not err,err
-                assert slot.with_name(slot.stem+"-project-last-beacon.btp").read_bytes()[:4]==b"BTG1"
+                assert slot.with_name(slot.stem+f"-project-{identity}.btp").read_bytes()[:4]==b"BTG1"
                 restored=tmp/"restored.ppm"
                 result=subprocess.run([str(ROOT/"build/btech-headless"),"--project",str(project),"--load",str(final),"--frame",str(restored)],cwd=tmp,capture_output=True,text=True,check=True,timeout=15)
                 assert json.loads(out)["state_digest"]==json.loads(result.stdout)["state_digest"],label
                 assert frame.read_bytes()==restored.read_bytes(),label
-                print(f"PASS: independent {label}, SDL F5/F9, same headless state/pixels, no original inputs.",flush=True)
+                print(f"PASS: {identity} {label}, SDL F5/F9, same headless state/pixels, no original inputs.",flush=True)
             finally:
                 keys.x.XCloseDisplay(keys.display)
                 if process.poll() is None:process.terminate();process.wait(timeout=5)
+        if vehicles:return
         # Execute the full recorded ordinary-input quest through SDL as well.
         result=subprocess.run([str(ROOT/"build/btech-port"),"--project",str(project),"--smoke-replay","--smoke-fast","--replay",str(prefix)+".actions"],cwd=tmp,env=env,capture_output=True,text=True,timeout=60)
         assert result.returncode==0,result.stderr

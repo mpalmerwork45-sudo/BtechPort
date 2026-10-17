@@ -24,6 +24,9 @@ unsigned btp_combat_mount_range(const BtpCombatData *data,const BtpCombatProfile
 
 unsigned btp_mech_walk_points(const uint8_t record[125]);
 unsigned btp_mech_jump_points(const uint8_t record[125]);
+unsigned btp_vehicle_kind(const uint8_t record[125]); /* 0 mech, 1 tracks, 2 wheels, 3 hover */
+int btp_vehicle_terrain(unsigned kind,unsigned terrain);
+const char *btp_vehicle_location(unsigned record_location);
 unsigned btp_mech_sprite_base(unsigned tag, int enemy);
 unsigned btp_mech_record_sprite(const uint8_t record[125],int enemy);
 unsigned btp_mech_refit_index(const uint8_t record[125]); /* 8 means no model recipe. */

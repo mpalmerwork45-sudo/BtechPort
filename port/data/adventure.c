@@ -1,5 +1,6 @@
 #include "data/adventure.h"
 #include "data/json.h"
+#include "data/unit_data.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -78,15 +79,17 @@ static int rows(BtpJson *j,unsigned field,BtpAdventure *a,BtpScene *m,unsigned o
     if (!overlay) { m->visual.width=(uint8_t)width;m->visual.height=(uint8_t)height; }
     return 1;
 }
-int btp_adventure_world_at(const BtpAdventure *a,int x,int y)
+int btp_adventure_world_at(const BtpAdventure *a,unsigned world,int x,int y)
 {
-    if (x<0 || y<0 || (unsigned)x>=a->world_width || (unsigned)y>=a->world_height) return -1;
-    return (int)(a->world_base+(unsigned)y/64*(a->world_width/64)+(unsigned)x/64);
+    if (!world || world>a->world_count) return -1;
+    const BtpAuthoredWorld *w=&a->worlds[world-1];
+    if (x<0 || y<0 || (unsigned)x>=w->width || (unsigned)y>=w->height) return -1;
+    return (int)(w->base+(unsigned)y/64*(w->width/64)+(unsigned)x/64);
 }
 const BtpSceneTile *btp_scene_tile(const BtpAdventure *a,const BtpScene *m,int x,int y)
 {
     if (m->world) {
-        int wx=(int)m->origin_x+x,wy=(int)m->origin_y+y,index=btp_adventure_world_at(a,wx,wy);
+        int wx=(int)m->origin_x+x,wy=(int)m->origin_y+y,index=btp_adventure_world_at(a,m->world,wx,wy);
         if (index<0) return NULL;
         m=&a->maps[index];x=wx-(int)m->origin_x;y=wy-(int)m->origin_y;
     }
@@ -102,7 +105,7 @@ static void compile_map(BtpAdventure *a,BtpScene *m)
         m->visual.tiles[at]=(uint8_t)(t->graphic&255u);m->rules.tiles[at]=(uint8_t)rule[t->terrain];
     }
 }
-static int world(BtpJson *j,unsigned n,BtpAdventure *a)
+static int jigsaws(BtpJson *j,BtpAdventure *a)
 {
     unsigned jigsaws=btp_json_optional(j,1,"jigsaws"),definitions[BTP_JIGSAWS];
     if (jigsaws) {
@@ -123,8 +126,14 @@ static int world(BtpJson *j,unsigned n,BtpAdventure *a)
             if (y!=8 || !btp_json_done(j,z)) return btp_json_error(j,z,"jigsaw must be 8x8 tiles");
         }
     }
-    if (!n) return 1;
-    if (!a->jigsaw_count || !string(j,n,"id",a->world_id,64) || !btp_content_id(a->world_id,1) || !string(j,n,"name",a->world_name,64)) return btp_json_error(j,n,"world needs jigsaws and a namespaced ID");
+    return 1;
+}
+static int world(BtpJson *j,unsigned n,BtpAdventure *a,int plural)
+{
+    if (a->world_count==BTP_WORLDS) return btp_json_error(j,n,"at most 16 worlds");
+    BtpAuthoredWorld *w=&a->worlds[a->world_count++];unsigned wi=a->world_count;
+    if (!a->jigsaw_count || !string(j,n,"id",w->id,64) || !btp_content_id(w->id,1) || !string(j,n,"name",w->name,64)) return btp_json_error(j,n,"world needs jigsaws and a namespaced ID");
+    for (unsigned i=0;i+1<wi;++i) if (!strcmp(a->worlds[i].id,w->id)) return btp_json_error(j,n,"duplicate world ID");
     unsigned grid=btp_json_field(j,n,"pieces"),width=0,height=0;
     if (!btp_json_type(j,grid,'[')) return 0;
     for (unsigned r=j->nodes[grid].first;r;r=j->nodes[r].next) {
@@ -137,10 +146,15 @@ static int world(BtpJson *j,unsigned n,BtpAdventure *a)
         width=x;++height;
     }
     if (!width || !height || width%8 || height%8) return btp_json_error(j,grid,"world dimensions must be multiples of eight jigsaws (8..128)");
-    a->world_width=8*width;a->world_height=8*height;a->world_base=a->map_count;
-    for (unsigned y=0;y<a->world_height;y+=64) for (unsigned x=0;x<a->world_width;x+=64) {
-        BtpScene *m=&a->maps[a->map_count++];m->origin_x=x;m->origin_y=y;m->world=1;m->visual.width=m->visual.height=64;
-        snprintf(m->id,sizeof m->id,"world:sector-%u-%u",x/64,y/64);snprintf(m->name,sizeof m->name,"%s",a->world_name);
+    w->width=8*width;w->height=8*height;w->base=a->map_count;w->explore_offset=a->explore_cells;
+    a->explore_cells+=width*height;
+    if (a->explore_cells>16384 || a->map_count+width*height/64>BTP_SCENES) return btp_json_error(j,n,"worlds share at most 256 sectors (1048576 tiles)");
+    for (unsigned y=0;y<w->height;y+=64) for (unsigned x=0;x<w->width;x+=64) {
+        BtpScene *m=&a->maps[a->map_count++];m->origin_x=x;m->origin_y=y;m->world=wi;m->explore_offset=w->explore_offset;m->explore_width=width;m->explore_height=height;m->visual.width=m->visual.height=64;
+        if (plural) snprintf(m->id,sizeof m->id,"world:planet-%u-sector-%u-%u",wi,x/64,y/64);
+        else snprintf(m->id,sizeof m->id,"world:sector-%u-%u",x/64,y/64);
+        for (unsigned k=0;k<a->local_count;++k) if (!strcmp(m->id,a->maps[k].id)) return btp_json_error(j,n,"map uses a reserved generated sector ID");
+        snprintf(m->name,sizeof m->name,"%s",w->name);
         for (unsigned dy=0;dy<64;++dy) for (unsigned dx=0;dx<64;++dx) {
             unsigned wx=x+dx,wy=y+dy,p=a->pieces[(wy/8)*128+wx/8];
             m->cells[dy*64+dx]=a->jigsaws[p].cells[(wy&7u)*8+(wx&7u)];
@@ -154,7 +168,7 @@ static int world(BtpJson *j,unsigned n,BtpAdventure *a)
         for (unsigned r=j->nodes[rs].first;r;r=j->nodes[r].next) {
             unsigned xx=0;if (yy==64 || !btp_json_type(j,r,'[')) return btp_json_error(j,r,"patch exceeds 64x64");
             for (unsigned c=j->nodes[r].first;c;c=j->nodes[c].next) {
-                unsigned t;int at=btp_adventure_world_at(a,(int)(ox+xx),(int)(oy+yy));
+                unsigned t;int at=btp_adventure_world_at(a,wi,(int)(ox+xx),(int)(oy+yy));
                 if (xx==64 || at<0 || !reference(j,c,a->tiles,sizeof *a->tiles,a->tile_count,&t)) return btp_json_error(j,c,"patch must fit inside world");
                 BtpScene *m=&a->maps[at];m->cells[((oy+yy)&63u)*64+((ox+xx)&63u)]=(uint16_t)t;++xx;
             }
@@ -167,20 +181,26 @@ static int world(BtpJson *j,unsigned n,BtpAdventure *a)
     for (unsigned c=j->nodes[cities].first;c;c=j->nodes[c].next) {
         unsigned city;if (!reference(j,c,a->maps,sizeof *a->maps,a->local_count,&city)) return 0;
         BtpScene *src=&a->maps[city];
-        if (src->world || src->origin_x+src->visual.width>a->world_width || src->origin_y+src->visual.height>a->world_height) return btp_json_error(j,c,"duplicate city or city outside world");
-        src->world=1;
+        if (src->world || src->origin_x+src->visual.width>w->width || src->origin_y+src->visual.height>w->height) return btp_json_error(j,c,"duplicate city or city outside world");
+        for (unsigned k=0;k<a->local_count;++k) {
+            const BtpScene *other=&a->maps[k];if (other->world!=wi) continue;
+            if (src->origin_x<other->origin_x+other->visual.width && other->origin_x<src->origin_x+src->visual.width &&
+                src->origin_y<other->origin_y+other->visual.height && other->origin_y<src->origin_y+src->visual.height)
+                return btp_json_error(j,c,"cities overlap on this world");
+        }
+        src->world=wi;src->explore_offset=w->explore_offset;src->explore_width=width;src->explore_height=height;
         for (unsigned y=0;y<src->visual.height;++y) for (unsigned x=0;x<src->visual.width;++x) {
-            unsigned wx=src->origin_x+x,wy=src->origin_y+y;BtpScene *m=&a->maps[btp_adventure_world_at(a,(int)wx,(int)wy)];
+            unsigned wx=src->origin_x+x,wy=src->origin_y+y;BtpScene *m=&a->maps[btp_adventure_world_at(a,wi,(int)wx,(int)wy)];
             m->cells[(wy&63u)*64+(wx&63u)]=src->cells[y*64+x];
         }
         for (unsigned i=0;i<src->entrance_count;++i) {
             unsigned wx=2*src->origin_x+src->entrances[i].x,wy=2*src->origin_y+src->entrances[i].y;
-            BtpScene *m=&a->maps[btp_adventure_world_at(a,(int)(wx/2),(int)(wy/2))];
+            BtpScene *m=&a->maps[btp_adventure_world_at(a,wi,(int)(wx/2),(int)(wy/2))];
             if (m->entrance_count==64) return btp_json_error(j,c,"world sector exceeds 64 entrances");
             BtpSceneEntrance *door=&m->entrances[m->entrance_count++];*door=src->entrances[i];door->x=(uint8_t)(wx&127u);door->y=(uint8_t)(wy&127u);
         }
     }
-    for (unsigned i=a->world_base;i<a->map_count;++i) compile_map(a,&a->maps[i]);
+    for (unsigned i=w->base;i<a->map_count;++i) compile_map(a,&a->maps[i]);
     return btp_json_done(j,n);
 }
 int btp_scene_stand(const BtpScene *m,int x,int y,int mech)
@@ -240,7 +260,7 @@ int btp_adventure_load(const char *path,const BtpDefinitions *d,BtpAdventure *ou
             if (!pair(&j,btp_json_field(&j,o,"at"),63,&x,&y) || !rows(&j,btp_json_field(&j,o,"rows"),a,m,x,y,1) || !btp_json_done(&j,o)) goto done;
         }
         compile_map(a,m);
-        for (unsigned k=0;k<i;++k) {
+        for (unsigned k=0;a->version==1 && k<i;++k) {
             const BtpScene *b=&a->maps[k];
             if (m->origin_x<b->origin_x+b->visual.width && b->origin_x<m->origin_x+m->visual.width &&
                 m->origin_y<b->origin_y+b->visual.height && b->origin_y<m->origin_y+m->visual.height) { btp_json_error(&j,n,"world map extents overlap; use local overlays instead");goto done; }
@@ -264,7 +284,26 @@ int btp_adventure_load(const char *path,const BtpDefinitions *d,BtpAdventure *ou
         if (!btp_json_done(&j,n)) goto done;
     }
     a->local_count=a->map_count;
-    if (a->version==2 && !world(&j,btp_json_optional(&j,1,"world"),a)) goto done;
+    if (a->version==2) {
+        if (!jigsaws(&j,a)) goto done;
+        unsigned single=btp_json_optional(&j,1,"world"),many=btp_json_optional(&j,1,"worlds");
+        if (single && many) { btp_json_error(&j,many,"choose world or worlds, not both");goto done; }
+        if (single && !world(&j,single,a,0)) goto done;
+        if (many) {
+            if (!btp_json_type(&j,many,'[')) goto done;
+            for (unsigned n=j.nodes[many].first;n;n=j.nodes[n].next) if (!world(&j,n,a,1)) goto done;
+        }
+    }
+    /* Local interiors not placed on a planet still need their own discovery
+       region. They must never reveal terrain on a planet at the same XY. */
+    if (a->world_count) for (unsigned i=0;i<a->local_count;++i) {
+        BtpScene *m=&a->maps[i];if (m->world) continue;
+        m->explore_offset=a->explore_cells;
+        m->explore_width=(m->origin_x%8+m->visual.width+7)/8;
+        m->explore_height=(m->origin_y%8+m->visual.height+7)/8;
+        a->explore_cells+=m->explore_width*m->explore_height;
+        if (a->explore_cells>16384) { btp_json_error(&j,1,"worlds and unplaced local maps exceed discovery capacity");goto done; }
+    }
     for (unsigned i=0;i<a->person_count;++i) {
         unsigned n=people[i];uint8_t *p=a->people[i].record;
         const char *const names[]={"chi:jason","chi:rex","chi:edward","chi:russ","chi:rick","chi:zeke","chi:possum","chi:marco","chi:rusty","chi:hunter"};
@@ -320,6 +359,11 @@ int btp_adventure_load(const char *path,const BtpDefinitions *d,BtpAdventure *ou
                 !pair(&j,btp_json_field(&j,z,"at"),127,&x,&y) || !btp_json_done(&j,z)) goto done;
             e->definition=(uint16_t)v;e->x=(uint8_t)x;e->y=(uint8_t)y;
             if (!btp_scene_stand(m,(int)x,(int)y,!e->infantry) || (e->infantry ? ++infantry>8 : ++mechs>4)) { btp_json_error(&j,z,"enemy spawn blocked or exceeds 4 mechs / 8 infantry");goto done; }
+            if (!e->infantry && d->mechs[v].vehicle &&
+                (!btp_vehicle_terrain(d->mechs[v].vehicle,btp_map_tile(&m->rules,(int)x/2,(int)y/2)) ||
+                 !btp_vehicle_terrain(d->mechs[v].vehicle,btp_map_tile(&m->rules,(int)x/2+1,(int)y/2)))) {
+                btp_json_error(&j,z,"enemy vehicle cannot use this terrain");goto done;
+            }
             for (unsigned k=0;k+1<b->count;++k) if (abs((int)x-b->enemies[k].x)<3 && abs((int)y-b->enemies[k].y)<3) { btp_json_error(&j,z,"enemy spawns overlap");goto done; }
         }
         if (!b->count || !btp_json_done(&j,n)) { btp_json_error(&j,n,"encounter needs enemies");goto done; }

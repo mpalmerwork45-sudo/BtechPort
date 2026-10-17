@@ -84,7 +84,7 @@ static void event(Canvas *c,const BtpResources *r,const BtpState *s)
 static void overview(Canvas *c,const BtpResources *r,const BtpState *s)
 {
     const BtpScene *m=btp_scene(r,s);if (!m) return;
-    if (btp_art_world_map(r,s,c->f)) { text(c,5,16,r->project->adventure.world_name,15);return; }
+    if (btp_art_world_map(r,s,c->f)) { text(c,5,16,r->project->adventure.worlds[m->world-1].name,15);return; }
     unsigned scale=2;int left=96,top=28;
     text(c,100,16,m->name,15);
     for (unsigned y=0;y<m->visual.height;++y) for (unsigned x=0;x<m->visual.width;++x) {
@@ -124,7 +124,7 @@ static void map(Canvas *c,const BtpResources *r,const BtpState *s)
             const BtpCombatUnit *u=&combat->unit[i];const BtpCombatEffect *pending=btp_effects_pending_death(s,i);
             unsigned family=u->record[0]==255 && !pending ? 4u : u->infantry ? (i<combat->friends ? 2u : 3u) : u->record[124]&1u;
             unsigned slot=family==4 ? 5u : u->infantry ? i<combat->friends ? combat->ids[i]==4 ? 0u : 1u : 2u : 3u+(family&1u);
-            if (!btp_art_sprite(r,slot,combat->walk[i],(int)u->x*8-cx,(int)u->y*8-cy,0,12,224,150,c->f))
+            if ((u->infantry || family==4 || !btp_art_unit(r,u->record,combat->walk[i],u->direction,(int)u->x*8-cx-4,(int)u->y*8-cy-24,0,12,224,150,c->f)) && !btp_art_sprite(r,slot,combat->walk[i],(int)u->x*8-cx,(int)u->y*8-cy,0,12,224,150,c->f))
                 image(c,c->art->sprites[family][combat->walk[i]&3u],(int)u->x*8-cx,(int)u->y*8-cy,16,16,1,224);
             if (i==combat->active_unit) { int x=(int)u->x*8-cx,y=(int)u->y*8-cy;if (x>=0 && x<220 && y>=14 && y<148) box(c,x,y-2,12,1,14); }
         }
@@ -152,7 +152,7 @@ static void map(Canvas *c,const BtpResources *r,const BtpState *s)
             unsigned pilot=mech[121],walk=pilot && pilot<8 ? s->party.walk[pilot] : s->campaign.mech_walk;
             int x=(int)s->party.mech_x[i]-(int)(2*m->origin_x);
             int y=(int)s->party.mech_y[i]-(int)(2*m->origin_y);
-            if (!btp_art_sprite(r,3u+(mech[124]&1u),walk,x*8-cx,y*8-cy-16,0,12,224,150,c->f)) image(c,c->art->sprites[mech[124]&1u][walk&3u],x*8-cx,y*8-cy-16,16,16,1,224);
+            if (!btp_art_unit(r,mech,walk,pilot<8 ? s->party.direction[pilot] : s->campaign.mech_direction,x*8-cx-4,y*8-cy-24,0,12,224,150,c->f) && !btp_art_sprite(r,3u+(mech[124]&1u),walk,x*8-cx,y*8-cy-16,0,12,224,150,c->f)) image(c,c->art->sprites[mech[124]&1u][walk&3u],x*8-cx,y*8-cy-16,16,16,1,224);
         }
     }
     box(c,224,12,96,170,1);text(c,229,20,"Team",14);
@@ -171,19 +171,28 @@ static void actions(Canvas *c,const BtpResources *r,const BtpState *s)
     }
     if (v->ui==BTP_MENU_MECH) {
         const uint8_t *m=btp_party_mech((BtpState *)s,v->member);memcpy(line,m,15);line[15]=0;text(c,100,20,line,14);
+        if (btp_vehicle_kind(m)) {
+            box(c,8,20,80,95,1);(void)btp_art_unit(r,m,s->tick/8u,0,34,44,8,20,88,115,c->f);
+            static const unsigned regions[]={17,18,22,23,21};
+            for (unsigned i=0;i<5;++i) {
+                unsigned p=regions[i];snprintf(line,sizeof line,"%-6s A%3u/%3u S%2u/%2u",btp_vehicle_location(p),m[p],m[p+69],m[p+11],m[p+80]);text(c,100,40+(int)i*18,line,15);
+            }
+            snprintf(line,sizeof line,"Cruise %u  Flank %u",m[49],(3u*m[49]+1)/2);text(c,100,144,line,14);
+            snprintf(line,sizeof line,"Motive damage %u/2",m[118]);text(c,100,160,line,7);return;
+        }
         unsigned current=0,maximum=0;for (unsigned i=0;i<11;++i) { current+=m[17+i];maximum+=m[86+i]; }
         snprintf(line,sizeof line,"Armor %u / %u",current,maximum);text(c,100,40,line,15);
         box(c,100,54,200,5,8);if (maximum) box(c,100,54,(int)(current*200u/maximum),5,10);
         snprintf(line,sizeof line,"Walk %u   Jump %u",m[49],m[50]);text(c,100,74,line,15);return;
     }
     unsigned count=btp_actions_count(s);int top=30;
-    const char *heading=btp_broker_page(v->ui) ? "Walker exchange" : v->ui==BTP_MENU_INSPECT_KIND ? "Inspect a walker?" :
-        v->ui==BTP_MENU_ALLOCATE ? "Choose a person to assign" : v->ui==BTP_MENU_CREW || v->ui==BTP_MENU_MECH_PICK ? "Choose a walker" :
+    const char *heading=btp_broker_page(v->ui) ? "Unit exchange" : v->ui==BTP_MENU_INSPECT_KIND ? "Inspect a unit?" :
+        v->ui==BTP_MENU_ALLOCATE ? "Choose a person to assign" : v->ui==BTP_MENU_CREW || v->ui==BTP_MENU_MECH_PICK ? "Choose a unit" :
         v->ui==BTP_MENU_SEAT ? "Assign as pilot?" : v->ui==BTP_MENU_QUIT ? "Quit this expedition?" :
         v->ui==BTP_MENU_SAVE ? "Save game - choose a slot" : v->ui==BTP_MENU_LOAD ? "Load game - choose a slot" : "Expedition menu";
     text(c,100,16,heading,14);
     if (v->ui==BTP_MENU_BROKER_HUB) {
-        const char *const labels[]={"Buy a walker","Sell a walker","Leave"};for (unsigned i=0;i<3;++i) selection(c,i,v->selected,top+(int)i*12,labels[i]);return;
+        const char *const labels[]={"Buy a unit","Sell a unit","Leave"};for (unsigned i=0;i<3;++i) selection(c,i,v->selected,top+(int)i*12,labels[i]);return;
     }
     if (v->ui==BTP_MENU_BROKER || v->ui==BTP_MENU_BROKER_SELL) {
         unsigned stock=btp_events_catalogue(s,r,s->menu.broker_class,r->roster.count,indices);

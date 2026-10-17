@@ -34,6 +34,16 @@ void btp_world_animate_marks(BtpState *s,int camera_x,int camera_y)
 
 void btp_world_reveal(BtpState *s)
 {
+    if (s->event.enabled && s->event.explore_width) {
+        int x=s->campaign.world_x/16,y=s->campaign.world_y/16;
+        if (!s->event.planet) { x-=(s->campaign.world_x-s->x_half)/16;y-=(s->campaign.world_y-s->y_half)/16; }
+        for (int yy=y-1;yy<=y+1;++yy) for (int xx=x-1;xx<=x+1;++xx)
+            if (xx>=0 && yy>=0 && xx<s->event.explore_width && yy<s->event.explore_height) {
+                unsigned bit=s->event.explore_offset+(unsigned)yy*s->event.explore_width+(unsigned)xx;
+                s->explored[bit/8]|=(uint8_t)(128u>>(bit&7u));
+            }
+        return;
+    }
     unsigned x=s->story_flags[4] ? s->campaign.world_x : 1536u+s->x_half;
     unsigned y=s->story_flags[4] ? s->campaign.world_y : 1536u+s->y_half;
     if (x>=2048 || y>=2048 || s->story_flags[58]) return;
@@ -50,6 +60,12 @@ void btp_world_reveal(BtpState *s)
 }
 int btp_world_seen(const BtpState *s,unsigned x,unsigned y)
 {
+    if (s->event.enabled && s->event.explore_width) {
+        if (!s->event.planet) { x-=(s->campaign.world_x-s->x_half)/16u;y-=(s->campaign.world_y-s->y_half)/16u; }
+        if (x>=s->event.explore_width || y>=s->event.explore_height) return 0;
+        unsigned bit=s->event.explore_offset+y*s->event.explore_width+x;
+        return s->explored[bit/8]&(128u>>(bit&7u));
+    }
     return x<128 && y<128 && (s->explored[y*16u+x/8u]&(128u>>(x&7u)));
 }
 static unsigned world_level(const BtpResources *r,const BtpState *s,int bx,int by);

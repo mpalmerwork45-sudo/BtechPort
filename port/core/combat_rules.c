@@ -1,4 +1,5 @@
 #include "data/unit_data.h"
+#include "data/definitions.h"
 #include "core/combat_rules.h"
 #include "core/npc.h"
 #include <string.h>
@@ -183,6 +184,11 @@ unsigned btp_combat_weapon(const BtpCombatUnit *u, unsigned index)
 }
 int btp_combat_points(const BtpCombatUnit *u, unsigned movement)
 {
+    if (!u->infantry && btp_vehicle_kind(u->record)) {
+        if (movement==2 || u->record[118]>=2) return 0;
+        int points=(int)u->record[49]-(int)u->record[118];
+        return movement==1 ? (3*points+1)/2 : points;
+    }
     /* 0E31:046F passes the normalized robot ID + 4 to 103B:2474.
        In this early encounter that reads an inactive party slot and selects
        its minimum of three points, rather than the direct enemy default six. */
@@ -215,6 +221,9 @@ int btp_combat_points(const BtpCombatUnit *u, unsigned movement)
 void btp_combat_cool(BtpCombatUnit *u, int movement, unsigned steps, unsigned terrain)
 {
     if (u->infantry) return;
+    /* Conventional vehicles dissipate their designed energy-weapon load;
+       movement and ballistic weapons do not build mech heat. */
+    if (btp_vehicle_kind(u->record)) { u->heat=u->pool=0;if (u->burning) --u->burning;return; }
     int amount = movement+1;
     if (amount == 3 && steps > 3) amount = (int)steps;
     amount += 5*u->record[117] - u->record[38] + u->pool;
@@ -290,6 +299,24 @@ int btp_combat_critical(BtpCombatUnit *u, const BtpCombatData *d, unsigned loc, 
 static void apply_damage(BtpCombatUnit *u, const BtpCombatData *d, unsigned loc, unsigned damage,
     uint8_t rng[3], BtpShot *shot)
 {
+    if (btp_vehicle_kind(u->record)) {
+        unsigned armor=u->record[loc],taken=armor<damage ? armor : damage;
+        u->record[loc]=(uint8_t)(armor-taken);damage-=taken;
+        if (damage) {
+            unsigned structure=loc+11u;armor=u->record[structure];taken=armor<damage ? armor : damage;
+            u->record[structure]=(uint8_t)(armor-taken);++shot->criticals;
+            /* Explicit simplified vehicle model: a penetrated region can
+               damage the motive system or one weapon in that region. Any
+               exhausted hull/turret structure destroys the vehicle. */
+            if (!u->record[structure]) shot->destroyed=1;
+            else if (btp_combat_die(rng)<=2 && u->record[118]<2) ++u->record[118];
+            else if (d->definitions && u->record[123]<d->definitions->mech_count) {
+                const BtpMechDefinition *model=&d->definitions->mechs[u->record[123]];
+                for (unsigned i=0;i<model->count;++i) if (d->definitions->mount_location[u->record[123]][i]==loc-17 && u->record[51+i]<128) { u->record[51+i]|=128;break; }
+            }
+        }
+        return;
+    }
     static const uint8_t overflow[11] = {29,32,34,18,21,18,255,255,23,21,23};
     while (damage && !shot->destroyed) {
         unsigned available = u->record[loc], taken = available < damage ? available : damage;
@@ -309,7 +336,7 @@ static void apply_damage(BtpCombatUnit *u, const BtpCombatData *d, unsigned loc,
 }
 int btp_combat_can_kick(const BtpCombatUnit *u)
 {
-    return !u->infantry && u->record[0] != 255 && (u->record[36]&8u) && (u->record[37]&8u);
+    return !u->infantry && !btp_vehicle_kind(u->record) && u->record[0] != 255 && (u->record[36]&8u) && (u->record[37]&8u);
 }
 BtpAttackQuery btp_combat_query(const BtpCombatUnit *a,const BtpCombatUnit *t,
     const BtpCombatData *d,const BtpCombatProfile *profile,unsigned index,int movement,
@@ -394,15 +421,20 @@ BtpShot btp_combat_attack_profile(BtpCombatUnit *a,BtpCombatUnit *t,const BtpCom
     if (incoming == 255) incoming = 0;
     unsigned arc = d->arcs[7+(int)t->direction-(int)incoming];
     shot.location = d->locations[11*arc+btp_combat_dice(rng)];
+    if (btp_vehicle_kind(t->record)) {
+        unsigned relative=(btp_combat_direction(t->x,t->y,a->x,a->y)+8u-t->direction)&7u;
+        shot.location=(uint8_t)(relative<=1 || relative==7 ? 17 : relative<=3 ? 22 : relative<=5 ? 23 : 18);
+        if (t->record[101] && btp_combat_die(rng)==6) shot.location=21;
+    }
     unsigned damage = weapon.damage, cluster = weapon.projectiles;
-    if (kick) { damage=a->record[16]/5u;shot.location=d->locations[3+(btp_rng_next(rng)&8u)]; }
+    if (kick) { damage=a->record[16]/5u;if (!btp_vehicle_kind(t->record)) shot.location=d->locations[3+(btp_rng_next(rng)&8u)]; }
     /* Small personal arms consume the location dice but cannot damage a mech. */
     if (cluster&128u) { shot.location=0;return shot; }
     if (cluster > 1) damage *= d->clusters[7*btp_combat_dice(rng)+cluster];
     shot.hit = (uint8_t)((int)btp_combat_dice(rng) >= needed);
     if (shot.hit) {
         shot.damage = (uint8_t)damage;
-        if (w==11) t->burning=3;
+        if (w==11 && !btp_vehicle_kind(t->record)) t->burning=3;
         else apply_damage(t,d,shot.location,damage,rng,&shot);
     }
     return shot;

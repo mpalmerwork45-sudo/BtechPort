@@ -33,7 +33,7 @@ BtpWeaponDefinition btp_unit_weapon_definition(const BtpCombatData *d,const BtpC
     if (w) {
         static const unsigned cluster[]={1,1,1,1,1,1,1,1,1,1,4,6,7,8,2,3,5};
         return (BtpWeaponDefinition){.name=(const uint8_t *)w->label,.damage=w->damage,.projectiles=cluster[w->behavior],
-            .heat=w->heat,.near_range=w->near_range,.medium_range=w->medium_range,.far_range=w->far_range,.skill=3};
+            .heat=btp_vehicle_kind(u->record) ? 0u : w->heat,.near_range=w->near_range,.medium_range=w->medium_range,.far_range=w->far_range,.skill=3};
     }
     unsigned type=mount==11 && !u->infantry ? 33u : btp_combat_weapon_type(u,mount)&127u;
     return btp_weapon_definition(d,type ? type-1u : 33u);
@@ -55,6 +55,23 @@ unsigned btp_combat_mount_range(const BtpCombatData *d,const BtpCombatProfile *p
 
 unsigned btp_mech_walk_points(const uint8_t m[125]) { return m[49]; }
 unsigned btp_mech_jump_points(const uint8_t m[125]) { return m[50]; }
+unsigned btp_vehicle_kind(const uint8_t m[125])
+{ return (m[124]==192 || m[124]==193) && m[15]<=3 ? m[15] : 0; }
+int btp_vehicle_terrain(unsigned kind,unsigned tile)
+{
+    /* Authored terrain uses 15 water, 31 rough and 47 woods. Zero is clear.
+       Original records have no drive tag and never enter this branch. */
+    if (!kind) return 1;
+    if (tile>=85) return 0;
+    if (tile>0 && tile<16) return kind==3;
+    if (tile>=32 && tile<64) return kind==1;
+    if (tile>=16 && tile<32) return kind!=2;
+    return 1;
+}
+const char *btp_vehicle_location(unsigned loc)
+{
+    return loc==17 ? "Front" : loc==18 ? "Left side" : loc==22 ? "Right side" : loc==23 ? "Rear" : loc==21 ? "Turret" : "Hull";
+}
 
 unsigned btp_mech_sprite_base(unsigned tag,int enemy)
 {

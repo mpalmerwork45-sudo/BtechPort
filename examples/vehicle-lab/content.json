@@ -1,0 +1,808 @@
+{
+  "format": "btp-content-v1",
+  "package_id": "vehicle-lab",
+  "mechs": [
+    {
+      "id": "vehicles:patton",
+      "name": "Patton",
+      "label": "Patton",
+      "kind": "vehicle",
+      "mass_tons": 65,
+      "price": 24750,
+      "presentation": "vehicles:patton-view",
+      "movement": {
+        "type": "tracked",
+        "walk": 4,
+        "jump": 0
+      },
+      "engine_heat_sinks": 10,
+      "armor": {
+        "front": 80,
+        "left": 38,
+        "right": 38,
+        "rear": 38,
+        "turret": 38
+      },
+      "structure": {
+        "front": 7,
+        "left": 7,
+        "right": 7,
+        "rear": 7,
+        "turret": 7
+      },
+      "loadout": [
+        {
+          "weapon": "vehicles:weapon-1",
+          "location": "turret",
+          "ammunition": 20
+        },
+        {
+          "weapon": "vehicles:weapon-2",
+          "location": "turret",
+          "ammunition": 24
+        },
+        {
+          "weapon": "vehicles:weapon-3",
+          "location": "rear",
+          "ammunition": 0
+        },
+        {
+          "weapon": "vehicles:weapon-4",
+          "location": "front",
+          "ammunition": 0
+        }
+      ]
+    },
+    {
+      "id": "vehicles:rommel",
+      "name": "Rommel",
+      "label": "Rommel",
+      "kind": "vehicle",
+      "mass_tons": 65,
+      "price": 24250,
+      "presentation": "vehicles:rommel-view",
+      "movement": {
+        "type": "tracked",
+        "walk": 4,
+        "jump": 0
+      },
+      "engine_heat_sinks": 10,
+      "armor": {
+        "front": 60,
+        "left": 29,
+        "right": 29,
+        "rear": 29,
+        "turret": 29
+      },
+      "structure": {
+        "front": 7,
+        "left": 7,
+        "right": 7,
+        "rear": 7,
+        "turret": 7
+      },
+      "loadout": [
+        {
+          "weapon": "vehicles:weapon-5",
+          "location": "turret",
+          "ammunition": 20
+        },
+        {
+          "weapon": "vehicles:weapon-2",
+          "location": "turret",
+          "ammunition": 24
+        },
+        {
+          "weapon": "vehicles:weapon-4",
+          "location": "front",
+          "ammunition": 0
+        }
+      ]
+    },
+    {
+      "id": "vehicles:pegasus",
+      "name": "Pegasus",
+      "label": "Pegasus",
+      "kind": "vehicle",
+      "mass_tons": 35,
+      "price": 13750,
+      "presentation": "vehicles:pegasus-view",
+      "movement": {
+        "type": "hover",
+        "walk": 8,
+        "jump": 0
+      },
+      "engine_heat_sinks": 3,
+      "armor": {
+        "front": 36,
+        "left": 17,
+        "right": 17,
+        "rear": 17,
+        "turret": 17
+      },
+      "structure": {
+        "front": 4,
+        "left": 4,
+        "right": 4,
+        "rear": 4,
+        "turret": 4
+      },
+      "loadout": [
+        {
+          "weapon": "vehicles:weapon-6",
+          "location": "turret",
+          "ammunition": 8
+        },
+        {
+          "weapon": "vehicles:weapon-6",
+          "location": "turret",
+          "ammunition": 7
+        },
+        {
+          "weapon": "vehicles:weapon-7",
+          "location": "front",
+          "ammunition": 0
+        }
+      ]
+    },
+    {
+      "id": "vehicles:skulker",
+      "name": "Skulker",
+      "label": "Skulker",
+      "kind": "vehicle",
+      "mass_tons": 20,
+      "price": 7500,
+      "presentation": "vehicles:skulker-view",
+      "movement": {
+        "type": "wheeled",
+        "walk": 7,
+        "jump": 0
+      },
+      "engine_heat_sinks": 3,
+      "armor": {
+        "front": 30,
+        "left": 14,
+        "right": 14,
+        "rear": 14,
+        "turret": 0
+      },
+      "structure": {
+        "front": 2,
+        "left": 2,
+        "right": 2,
+        "rear": 2,
+        "turret": 0
+      },
+      "loadout": [
+        {
+          "weapon": "vehicles:weapon-7",
+          "location": "front",
+          "ammunition": 0
+        }
+      ]
+    },
+    {
+      "id": "vehicles:drillson",
+      "name": "Drillson",
+      "label": "Drillson",
+      "kind": "vehicle",
+      "mass_tons": 50,
+      "price": 20500,
+      "presentation": "vehicles:drillson-view",
+      "movement": {
+        "type": "hover",
+        "walk": 9,
+        "jump": 0
+      },
+      "engine_heat_sinks": 10,
+      "armor": {
+        "front": 40,
+        "left": 19,
+        "right": 19,
+        "rear": 19,
+        "turret": 19
+      },
+      "structure": {
+        "front": 5,
+        "left": 5,
+        "right": 5,
+        "rear": 5,
+        "turret": 5
+      },
+      "loadout": [
+        {
+          "weapon": "vehicles:weapon-8",
+          "location": "turret",
+          "ammunition": 0
+        },
+        {
+          "weapon": "vehicles:weapon-9",
+          "location": "turret",
+          "ammunition": 25
+        },
+        {
+          "weapon": "vehicles:weapon-9",
+          "location": "turret",
+          "ammunition": 25
+        },
+        {
+          "weapon": "vehicles:weapon-10",
+          "location": "front",
+          "ammunition": 12
+        },
+        {
+          "weapon": "vehicles:weapon-11",
+          "location": "left",
+          "ammunition": 100
+        },
+        {
+          "weapon": "vehicles:weapon-11",
+          "location": "right",
+          "ammunition": 100
+        }
+      ]
+    },
+    {
+      "id": "vehicles:galleon",
+      "name": "Galleon",
+      "label": "Galleon",
+      "kind": "vehicle",
+      "mass_tons": 30,
+      "price": 12000,
+      "presentation": "vehicles:galleon-view",
+      "movement": {
+        "type": "tracked",
+        "walk": 6,
+        "jump": 0
+      },
+      "engine_heat_sinks": 5,
+      "armor": {
+        "front": 20,
+        "left": 9,
+        "right": 9,
+        "rear": 9,
+        "turret": 9
+      },
+      "structure": {
+        "front": 3,
+        "left": 3,
+        "right": 3,
+        "rear": 3,
+        "turret": 3
+      },
+      "loadout": [
+        {
+          "weapon": "vehicles:weapon-7",
+          "location": "turret",
+          "ammunition": 0
+        },
+        {
+          "weapon": "vehicles:weapon-4",
+          "location": "left",
+          "ammunition": 0
+        },
+        {
+          "weapon": "vehicles:weapon-4",
+          "location": "right",
+          "ammunition": 0
+        }
+      ]
+    },
+    {
+      "id": "vehicles:scorpion",
+      "name": "Scorpion",
+      "label": "Scorpion",
+      "kind": "vehicle",
+      "mass_tons": 25,
+      "price": 9750,
+      "presentation": "vehicles:scorpion-view",
+      "movement": {
+        "type": "tracked",
+        "walk": 4,
+        "jump": 0
+      },
+      "engine_heat_sinks": 0,
+      "armor": {
+        "front": 24,
+        "left": 10,
+        "right": 10,
+        "rear": 10,
+        "turret": 10
+      },
+      "structure": {
+        "front": 3,
+        "left": 3,
+        "right": 3,
+        "rear": 3,
+        "turret": 3
+      },
+      "loadout": [
+        {
+          "weapon": "vehicles:weapon-12",
+          "location": "turret",
+          "ammunition": 20
+        },
+        {
+          "weapon": "vehicles:weapon-11",
+          "location": "front",
+          "ammunition": 100
+        }
+      ]
+    },
+    {
+      "id": "vehicles:vedette",
+      "name": "Vedette",
+      "label": "Vedette",
+      "kind": "vehicle",
+      "mass_tons": 50,
+      "price": 18500,
+      "presentation": "vehicles:vedette-view",
+      "movement": {
+        "type": "tracked",
+        "walk": 5,
+        "jump": 0
+      },
+      "engine_heat_sinks": 0,
+      "armor": {
+        "front": 32,
+        "left": 16,
+        "right": 16,
+        "rear": 16,
+        "turret": 16
+      },
+      "structure": {
+        "front": 5,
+        "left": 5,
+        "right": 5,
+        "rear": 5,
+        "turret": 5
+      },
+      "loadout": [
+        {
+          "weapon": "vehicles:weapon-12",
+          "location": "turret",
+          "ammunition": 20
+        },
+        {
+          "weapon": "vehicles:weapon-11",
+          "location": "front",
+          "ammunition": 100
+        }
+      ]
+    },
+    {
+      "id": "vehicles:lrm-carrier",
+      "name": "LRM Carrier",
+      "label": "LRM Carrier",
+      "kind": "vehicle",
+      "mass_tons": 60,
+      "price": 22500,
+      "presentation": "vehicles:lrm-carrier-view",
+      "movement": {
+        "type": "tracked",
+        "walk": 3,
+        "jump": 0
+      },
+      "engine_heat_sinks": 0,
+      "armor": {
+        "front": 21,
+        "left": 9,
+        "right": 9,
+        "rear": 9,
+        "turret": 0
+      },
+      "structure": {
+        "front": 6,
+        "left": 6,
+        "right": 6,
+        "rear": 6,
+        "turret": 0
+      },
+      "loadout": [
+        {
+          "weapon": "vehicles:weapon-13",
+          "location": "front",
+          "ammunition": 8
+        },
+        {
+          "weapon": "vehicles:weapon-13",
+          "location": "front",
+          "ammunition": 8
+        },
+        {
+          "weapon": "vehicles:weapon-13",
+          "location": "front",
+          "ammunition": 8
+        }
+      ]
+    },
+    {
+      "id": "vehicles:srm-carrier",
+      "name": "SRM Carrier",
+      "label": "SRM Carrier",
+      "kind": "vehicle",
+      "mass_tons": 60,
+      "price": 26000,
+      "presentation": "vehicles:srm-carrier-view",
+      "movement": {
+        "type": "tracked",
+        "walk": 3,
+        "jump": 0
+      },
+      "engine_heat_sinks": 0,
+      "armor": {
+        "front": 21,
+        "left": 9,
+        "right": 9,
+        "rear": 9,
+        "turret": 0
+      },
+      "structure": {
+        "front": 6,
+        "left": 6,
+        "right": 6,
+        "rear": 6,
+        "turret": 0
+      },
+      "loadout": [
+        {
+          "weapon": "vehicles:weapon-6",
+          "location": "front",
+          "ammunition": 10
+        },
+        {
+          "weapon": "vehicles:weapon-6",
+          "location": "front",
+          "ammunition": 10
+        },
+        {
+          "weapon": "vehicles:weapon-6",
+          "location": "front",
+          "ammunition": 10
+        },
+        {
+          "weapon": "vehicles:weapon-6",
+          "location": "front",
+          "ammunition": 10
+        },
+        {
+          "weapon": "vehicles:weapon-6",
+          "location": "front",
+          "ammunition": 10
+        },
+        {
+          "weapon": "vehicles:weapon-6",
+          "location": "front",
+          "ammunition": 10
+        },
+        {
+          "weapon": "vehicles:weapon-6",
+          "location": "front",
+          "ammunition": 10
+        },
+        {
+          "weapon": "vehicles:weapon-6",
+          "location": "front",
+          "ammunition": 10
+        },
+        {
+          "weapon": "vehicles:weapon-6",
+          "location": "front",
+          "ammunition": 10
+        },
+        {
+          "weapon": "vehicles:weapon-6",
+          "location": "front",
+          "ammunition": 10
+        }
+      ]
+    }
+  ],
+  "weapons": [
+    {
+      "id": "vehicles:weapon-1",
+      "name": "Ac10",
+      "label": "Ac10",
+      "behavior": "ac10",
+      "ammunition": "vehicles:ammo-1",
+      "damage": 10,
+      "projectiles": 1,
+      "heat": 3,
+      "ranges": {
+        "short": 15,
+        "medium": 30,
+        "long": 45
+      }
+    },
+    {
+      "id": "vehicles:weapon-2",
+      "name": "Lrm5",
+      "label": "Lrm5",
+      "behavior": "lrm5",
+      "ammunition": "vehicles:ammo-2",
+      "damage": 1,
+      "projectiles": 5,
+      "heat": 2,
+      "ranges": {
+        "short": 21,
+        "medium": 42,
+        "long": 63
+      }
+    },
+    {
+      "id": "vehicles:weapon-3",
+      "name": "Flamer",
+      "label": "Flamer",
+      "behavior": "flamer",
+      "ammunition": "none",
+      "damage": 2,
+      "projectiles": 1,
+      "heat": 3,
+      "ranges": {
+        "short": 3,
+        "medium": 6,
+        "long": 9
+      }
+    },
+    {
+      "id": "vehicles:weapon-4",
+      "name": "Small Laser",
+      "label": "Small Laser",
+      "behavior": "small_laser",
+      "ammunition": "none",
+      "damage": 3,
+      "projectiles": 1,
+      "heat": 1,
+      "ranges": {
+        "short": 3,
+        "medium": 6,
+        "long": 9
+      }
+    },
+    {
+      "id": "vehicles:weapon-5",
+      "name": "Ac20",
+      "label": "Ac20",
+      "behavior": "ac20",
+      "ammunition": "vehicles:ammo-3",
+      "damage": 20,
+      "projectiles": 1,
+      "heat": 7,
+      "ranges": {
+        "short": 9,
+        "medium": 18,
+        "long": 27
+      }
+    },
+    {
+      "id": "vehicles:weapon-6",
+      "name": "Srm6",
+      "label": "Srm6",
+      "behavior": "srm6",
+      "ammunition": "vehicles:ammo-4",
+      "damage": 2,
+      "projectiles": 6,
+      "heat": 4,
+      "ranges": {
+        "short": 9,
+        "medium": 18,
+        "long": 27
+      }
+    },
+    {
+      "id": "vehicles:weapon-7",
+      "name": "Medium Laser",
+      "label": "Medium Lase",
+      "behavior": "medium_laser",
+      "ammunition": "none",
+      "damage": 5,
+      "projectiles": 1,
+      "heat": 3,
+      "ranges": {
+        "short": 9,
+        "medium": 18,
+        "long": 27
+      }
+    },
+    {
+      "id": "vehicles:weapon-8",
+      "name": "Large Laser",
+      "label": "Large Laser",
+      "behavior": "large_laser",
+      "ammunition": "none",
+      "damage": 8,
+      "projectiles": 1,
+      "heat": 8,
+      "ranges": {
+        "short": 15,
+        "medium": 30,
+        "long": 45
+      }
+    },
+    {
+      "id": "vehicles:weapon-9",
+      "name": "Srm2",
+      "label": "Srm2",
+      "behavior": "srm2",
+      "ammunition": "vehicles:ammo-5",
+      "damage": 2,
+      "projectiles": 2,
+      "heat": 2,
+      "ranges": {
+        "short": 9,
+        "medium": 18,
+        "long": 27
+      }
+    },
+    {
+      "id": "vehicles:weapon-10",
+      "name": "Lrm10",
+      "label": "Lrm10",
+      "behavior": "lrm10",
+      "ammunition": "vehicles:ammo-6",
+      "damage": 1,
+      "projectiles": 10,
+      "heat": 4,
+      "ranges": {
+        "short": 21,
+        "medium": 42,
+        "long": 63
+      }
+    },
+    {
+      "id": "vehicles:weapon-11",
+      "name": "Machine Gun",
+      "label": "Machine Gun",
+      "behavior": "machine_gun",
+      "ammunition": "vehicles:ammo-7",
+      "damage": 2,
+      "projectiles": 1,
+      "heat": 0,
+      "ranges": {
+        "short": 3,
+        "medium": 6,
+        "long": 9
+      }
+    },
+    {
+      "id": "vehicles:weapon-12",
+      "name": "Ac5",
+      "label": "Ac5",
+      "behavior": "ac5",
+      "ammunition": "vehicles:ammo-8",
+      "damage": 5,
+      "projectiles": 1,
+      "heat": 1,
+      "ranges": {
+        "short": 18,
+        "medium": 36,
+        "long": 54
+      }
+    },
+    {
+      "id": "vehicles:weapon-13",
+      "name": "Lrm20",
+      "label": "Lrm20",
+      "behavior": "lrm20",
+      "ammunition": "vehicles:ammo-9",
+      "damage": 1,
+      "projectiles": 20,
+      "heat": 6,
+      "ranges": {
+        "short": 21,
+        "medium": 42,
+        "long": 63
+      }
+    }
+  ],
+  "ammunition": [
+    {
+      "id": "vehicles:ammo-1",
+      "price_per_shot": 3
+    },
+    {
+      "id": "vehicles:ammo-2",
+      "price_per_shot": 3
+    },
+    {
+      "id": "vehicles:ammo-3",
+      "price_per_shot": 3
+    },
+    {
+      "id": "vehicles:ammo-4",
+      "price_per_shot": 3
+    },
+    {
+      "id": "vehicles:ammo-5",
+      "price_per_shot": 3
+    },
+    {
+      "id": "vehicles:ammo-6",
+      "price_per_shot": 3
+    },
+    {
+      "id": "vehicles:ammo-7",
+      "price_per_shot": 3
+    },
+    {
+      "id": "vehicles:ammo-8",
+      "price_per_shot": 3
+    },
+    {
+      "id": "vehicles:ammo-9",
+      "price_per_shot": 3
+    }
+  ],
+  "presentations": [
+    {
+      "id": "vehicles:patton-view",
+      "source": "package:art",
+      "image": "vehicles:patton-sprite"
+    },
+    {
+      "id": "vehicles:rommel-view",
+      "source": "package:art",
+      "image": "vehicles:rommel-sprite"
+    },
+    {
+      "id": "vehicles:pegasus-view",
+      "source": "package:art",
+      "image": "vehicles:pegasus-sprite"
+    },
+    {
+      "id": "vehicles:skulker-view",
+      "source": "package:art",
+      "image": "vehicles:skulker-sprite"
+    },
+    {
+      "id": "vehicles:drillson-view",
+      "source": "package:art",
+      "image": "vehicles:drillson-sprite"
+    },
+    {
+      "id": "vehicles:galleon-view",
+      "source": "package:art",
+      "image": "vehicles:galleon-sprite"
+    },
+    {
+      "id": "vehicles:scorpion-view",
+      "source": "package:art",
+      "image": "vehicles:scorpion-sprite"
+    },
+    {
+      "id": "vehicles:vedette-view",
+      "source": "package:art",
+      "image": "vehicles:vedette-sprite"
+    },
+    {
+      "id": "vehicles:lrm-carrier-view",
+      "source": "package:art",
+      "image": "vehicles:lrm-carrier-sprite"
+    },
+    {
+      "id": "vehicles:srm-carrier-view",
+      "source": "package:art",
+      "image": "vehicles:srm-carrier-sprite"
+    }
+  ],
+  "schema_version": 1,
+  "content_version": "1.0.0",
+  "rules": {
+    "id": "chi:updated-lrm-v1",
+    "distance_scale": 3,
+    "minimum_range": 6,
+    "short_range": 7,
+    "medium_range": 14,
+    "long_range": 21
+  },
+  "services": {
+    "broker": {
+      "id": "workshop:broker",
+      "behavior": "chi-broker-v1"
+    },
+    "reload": {
+      "id": "workshop:reload",
+      "behavior": "chi-reload-v1"
+    }
+  }
+}

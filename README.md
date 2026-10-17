@@ -64,7 +64,29 @@ python3 tools/game_editor.py examples/battletech-demo
 
 See [verification and the next editor milestones](docs/BATTLETECH_DEMO.md).
 The [world and graphics editor guide](docs/M5_WORLD_ART_EDITOR.md) covers jigsaws,
-city placement, the full tile browser, image imports and pixel/animation editing.
+multiple planets, city placement, the full tile browser and pixel/animation editing.
+Select a tile and **Edit pixels** to draw it; **Clone**, **Flip X/Y**, rotations,
+nudging, fill, transparency and undo/redo are available. Roster selections show
+animated sprites; right-click to edit or choose one. Mechs, vehicles, weapons
+and heat-sink/jump-jet equipment can be created through **New definition**.
+
+Try the new **[Vehicle proving ground](examples/vehicle-lab/README.md)** with
+Patton, Rommel, Pegasus, Skulker, Drillson, Galleon, Scorpion, Vedette and the two
+missile carriers. It has two planets, a depot and a live battle, with original
+editable art and no requirement for CHI files:
+
+```sh
+./build/btech-port --project examples/vehicle-lab --save-file work/vehicle-lab.btp
+python3 tools/game_editor.py examples/vehicle-lab
+```
+
+Use **New project** to work on a copy. **Import vehicles** adds selected catalogue
+presets to an authored project. [Vehicle rules and source notes](content/catalogues/vehicles/README.md)
+identify approximations; these presets do not replace the original campaign roster.
+
+For clear editor text on Linux, use the distribution's Python with `python3-tk`
+and `python3-pil`. The launcher prefers that interpreter when Conda's minimal Tk
+is active and the system Tk is available. Windows uses normal Python/Tk.
 The [game editor and independent demo](docs/M5_INDEPENDENT_GAME_EDITOR.md)
 now add map painting, overlays, entrances/NPCs, encounters, event/choice forms,
 roster editing, shared validation, undo/redo, export and Play here:
@@ -84,7 +106,8 @@ own graphics, font, text, sound and a bounded Lua event. It requires **no origin
 files or caches**. Use New project in the editor to make your own copy. The guide
 includes a build without original files and Windows setup. The old roster-editor
 launcher remains supported, including `work/editor-ready` for the exported
-31-mech CHI roster. Rich script/asset/animation tools remain future work.
+31-mech CHI roster. Richer script authoring, packaging and construction rules
+remain future work; the pixel, frame and world tools described above are usable now.
 
 An ordinary launch first asks **Original BTECH CHI** or **Updated BTECH CHI**,
 before the Westwood/Infocom logo. Original is the default. Use arrows and

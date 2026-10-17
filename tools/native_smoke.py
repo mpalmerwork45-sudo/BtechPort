@@ -9,6 +9,10 @@ import tempfile
 import time
 from pathlib import Path
 
+if __name__=='__main__' and any('editor' in argument for argument in __import__('sys').argv[1:]):
+    from editor_runtime import prefer_system_tk
+    prefer_system_tk()
+
 ROOT = Path(__file__).resolve().parents[1]
 
 def windows_frontend():
@@ -1298,6 +1302,7 @@ def main():
     parser.add_argument('--battletech-demo-only',action='store_true',help='Check BattleTech demo screens, saves and complete two-contract route')
     parser.add_argument('--editor-only',action='store_true',help='Check the desktop roster editor and Play launch')
     parser.add_argument('--independent-only',action='store_true',help='Check independent quest and saved SDL screens without original files')
+    parser.add_argument('--vehicles-only',action='store_true',help='Check vehicles, planets, map, inspection and depot SDL save/load screens')
     parser.add_argument('--map-editor-only',action='store_true',help='Check map painting, event forms, export and Play here')
     parser.add_argument('--editor-visual-only',action='store_true',help='Check original tile previews, visual picker and marker dragging')
     parser.add_argument('--world-art-editor-only',action='store_true',help='Check jigsaw/city and pixel/animation editing')
@@ -1369,9 +1374,9 @@ def main():
                 from adventure_smoke import run
                 run(env,work,battletech=True)
                 return
-            if args.independent_only:
+            if args.independent_only or args.vehicles_only:
                 from independent_smoke import run
-                run(env,work)
+                run(env,work,vehicles=args.vehicles_only)
                 return
             if args.map_editor_only:
                 from independent_smoke import editor

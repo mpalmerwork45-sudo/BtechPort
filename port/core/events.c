@@ -30,6 +30,11 @@ static void aliases(BtpState *s)
 }
 static void position(BtpState *s,const BtpScene *m,unsigned map,unsigned x,unsigned y)
 {
+    /* Planet maps may reuse coordinates. Clear only the transient debris
+       cache when travelling between them; discovery has separate bit ranges. */
+    if (s->event.planet!=m->world) { memset(s->terrain_marks,0,sizeof s->terrain_marks);s->terrain_next=0; }
+    s->event.planet=(uint8_t)m->world;s->event.explore_offset=(uint16_t)m->explore_offset;
+    s->event.explore_width=(uint8_t)m->explore_width;s->event.explore_height=(uint8_t)m->explore_height;
     s->event.map=(uint16_t)map;
     s->map_id=(uint8_t)(map<239 ? BTP_AUTHORED_MAP_FIRST+map : 255);s->x_half=(uint16_t)x;s->y_half=(uint16_t)y;
     s->campaign.world_x=(uint16_t)(2*m->origin_x+x);s->campaign.world_y=(uint16_t)(2*m->origin_y+y);
@@ -39,7 +44,7 @@ static int place(BtpState *s,const BtpResources *r,unsigned map,unsigned x,unsig
     const BtpAdventure *a=btp_adventure(r);const BtpScene *m=&a->maps[map];BtpState candidate=*s;
     if (m->world) {
         unsigned wx=2*m->origin_x+x,wy=2*m->origin_y+y;
-        int at=btp_adventure_world_at(a,(int)(wx/2),(int)(wy/2));if (at<0) return 0;
+        int at=btp_adventure_world_at(a,m->world,(int)(wx/2),(int)(wy/2));if (at<0) return 0;
         map=(unsigned)at;m=&a->maps[map];x=wx-2*m->origin_x;y=wy-2*m->origin_y;
     }
     position(&candidate,m,map,x,y);
@@ -196,15 +201,15 @@ void btp_events_tick(BtpState *s,const BtpResources *r,BtpAction action)
             int x=(int)s->x_half+btp_action_dx(action),y=(int)s->y_half+btp_action_dy(action);
             int wx=(int)(2*m->origin_x)+x,wy=(int)(2*m->origin_y)+y;
             if (m->world) {
-                int at=btp_adventure_world_at(a,wx>=0 ? wx/2 : -1,wy>=0 ? wy/2 : -1);
+                int at=btp_adventure_world_at(a,m->world,wx>=0 ? wx/2 : -1,wy>=0 ? wy/2 : -1);
                 if (at<0) { s->blocked=BTP_EDGE;break; }
                 map=(unsigned)at;m=&a->maps[map];x=wx-(int)(2*m->origin_x);y=wy-(int)(2*m->origin_y);
             }
             BtpState probe=*s;position(&probe,m,map,(unsigned)x,(unsigned)y);
-            int entrance=btp_party_entrance(&probe,r,&m->rules,x,y);
+            unsigned door_map=map;int entrance=btp_party_entrance_scene(&probe,r,&m->rules,x,y,&door_map);
             if (entrance>=0) {
-                v->origin_map=(uint16_t)map;v->origin_entry=(uint8_t)entrance;
-                advance(s,m->entrances[entrance].event);v->phase=BTP_EVENT_ENTRY;s->mode=BTP_EVENT;break;
+                v->origin_map=(uint16_t)door_map;v->origin_entry=(uint8_t)entrance;
+                advance(s,a->maps[door_map].entrances[entrance].event);v->phase=BTP_EVENT_ENTRY;s->mode=BTP_EVENT;break;
             }
             if (!btp_party_can_stand(s,r,wx,wy)) { s->blocked=BTP_WALL;break; }
             uint16_t ox=s->campaign.world_x,oy=s->campaign.world_y;
@@ -233,7 +238,7 @@ void btp_events_tick(BtpState *s,const BtpResources *r,BtpAction action)
             int wx=(int)(2*m->origin_x)+x,wy=(int)(2*m->origin_y)+y;
             if (btp_action_moves(pending) && btp_party_can_stand(s,r,wx,wy)) {
                 if (m->world) {
-                    int at=btp_adventure_world_at(a,wx/2,wy/2);if (at<0) return;
+                    int at=btp_adventure_world_at(a,m->world,wx/2,wy/2);if (at<0) return;
                     const BtpScene *target=&a->maps[at];position(s,target,(unsigned)at,(unsigned)(wx-2*(int)target->origin_x),(unsigned)(wy-2*(int)target->origin_y));
                 } else position(s,m,s->event.map,(unsigned)x,(unsigned)y);
                 s->blocked=BTP_CLEAR;
@@ -276,18 +281,24 @@ void btp_events_encode(const BtpState *s,uint8_t b[128])
     memcpy(b+8,v->flags,64);memcpy(b+72,v->done,32);memcpy(b+104,v->people,8);
     b[112]=(uint8_t)v->map;b[113]=(uint8_t)(v->map>>8);
     b[114]=(uint8_t)v->return_map;b[115]=(uint8_t)(v->return_map>>8);
-    b[116]=(uint8_t)(v->origin_map>>8);b[127]=1;
+    b[116]=(uint8_t)(v->origin_map>>8);b[127]=2;
+    b[117]=(uint8_t)v->explore_offset;b[118]=(uint8_t)(v->explore_offset>>8);
+    b[119]=v->explore_width;b[120]=v->explore_height;b[121]=v->planet;
 }
 int btp_events_decode(BtpState *s,const uint8_t b[128])
 {
     BtpEventState *v=&s->event;
     *v=(BtpEventState){.enabled=b[0],.phase=b[1],.node=(uint16_t)(b[2]|(unsigned)b[3]<<8),.selected=b[4],.page=b[5],.origin_map=b[6],.origin_entry=b[7]};
     memcpy(v->flags,b+8,64);memcpy(v->done,b+72,32);memcpy(v->people,b+104,8);
-    if (b[127]>1) return 0;
+    if (b[127]>2) return 0;
     if (b[127]) {
         v->map=(uint16_t)(b[112]|(unsigned)b[113]<<8);v->return_map=(uint16_t)(b[114]|(unsigned)b[115]<<8);v->origin_map|=(uint16_t)((unsigned)b[116]<<8);
     }
-    for (unsigned i=b[127] ? 117u : 112u;i<127;++i) if (b[i]) return 0;
+    if (b[127]==2) {
+        v->explore_offset=(uint16_t)(b[117]|(unsigned)b[118]<<8);v->explore_width=b[119];v->explore_height=b[120];v->planet=b[121];
+        if (v->planet>BTP_WORLDS || v->explore_width>128 || v->explore_height>128 || v->explore_offset+(unsigned)v->explore_width*v->explore_height>16384) return 0;
+    }
+    for (unsigned i=b[127]==2 ? 122u : b[127] ? 117u : 112u;i<127;++i) if (b[i]) return 0;
     for (unsigned i=0;i<64;++i) if (v->flags[i]>1) return 0;
     return v->enabled==1 && v->phase<=BTP_EVENT_COMPLETE && v->node<256 && v->selected<6 && v->page<5 &&
         v->origin_map<BTP_SCENES && v->map<BTP_SCENES && v->return_map<BTP_SCENES;
@@ -307,6 +318,8 @@ int btp_events_valid(const BtpState *s,const BtpResources *r)
         (v->people[i]>=a->person_count || a->people[v->people[i]].record[0]!=s->party.people[i][0])) return 0;
     const BtpEventNode *e=&a->nodes[v->node];
     const BtpScene *scene=btp_scene(r,s);
+    if (v->planet!=scene->world || v->explore_offset!=scene->explore_offset || v->explore_width!=scene->explore_width || v->explore_height!=scene->explore_height) return 0;
+    if (s->map_id!=(v->map<239 ? BTP_AUTHORED_MAP_FIRST+v->map : 255)) return 0;
     if (s->x_half>=2*scene->visual.width || s->y_half>=2*scene->visual.height) return 0;
     if (v->phase==BTP_EVENT_FIGHTING) {
         if (e->op!=BTP_EVENT_BATTLE || s->mode!=BTP_ENCOUNTER || s->campaign.encounter!=5 ||

@@ -1,5 +1,74 @@
 # Build, verification and original oracle — 2026-10-17
 
+## World, art, vehicles and planets
+
+The [world/art guide](M5_WORLD_ART_EDITOR.md) and
+[vehicle/planet guide](M5_VEHICLES_AND_PLANETS.md) describe this new authoring
+increment and its approximation boundaries.
+
+| Check | Result |
+| --- | --- |
+| Native CTest regression suite | **70/70**, 44.03 s |
+| Python tool/editor regression suite | **103/103**, 4.20 s |
+| Focused Windows/Wine CTest | **9/9**, 28.29 s |
+| Focused ASan/UBSan/LeakSanitizer | **9/9**, 0.69 s |
+| Python world/art/unit tests with sanitized C tools | **15/15**, 2.01 s |
+| Linux Tk | Roster, map/events, original tile/marker and world/art workflows pass |
+| Vehicle SDL held screens | **7/7 Linux and 7/7 Windows/Wine**, F5/F9 and full state/pixel comparisons |
+
+The later vehicle checkpoint expansion and Vedette bow-machine-gun correction
+were checked again through the vehicle sanitizer suite and both SDL platforms.
+The full C suite was not repeatedly rerun for these data/test-only refinements.
+Builds used two jobs, with only one platform build running at a time.
+
+The vehicle C scenario follows ordinary movement/entrance actions through two
+planets at identical city coordinates, runs an actual three-versus-two battle
+with computer orders, returns and buys a vehicle. Saves are round-tripped during
+travel, combat, results and trading. Rules tests exercise all ten vehicle models,
+drive terrain, movement, no jump/kick/heat and damage facings. New Python checks
+cover catalogue import/re-import/export, independent unit sprite assignments,
+equipment validation, separate local/planet discovery, legacy single-world fog
+migration, a door contacted across a sector boundary, and atomic map/art saves.
+
+Pixel tests check alpha-preserving transforms, rectangular animation constraints,
+copying indexed tiles without modifying sources, local/shared undo and independent
+clones. Real GUI checks paint pixels, flip/undo, clone frames/tiles, invoke the
+palette and sprite context menus, import vehicles, animate previews, paint under
+the blinking map cursor, drag cities, switch planets and save/reopen. Minimum-size
+windows retain their toolbars, tile palette and marker controls. Screenshots in
+ignored `work/`: `pixel-editor.png`, `roster-vehicle-editor.png`,
+`editor-graphics-minimum.png`, `world-art-editor.png` and `vehicle-lab-*.ppm`.
+
+```sh
+ctest --test-dir build --output-on-failure
+python3 -m unittest discover -s tests -p 'test_*.py'
+python3 tools/native_smoke.py --world-art-editor-only
+python3 tools/native_smoke.py --editor-visual-only
+python3 tools/native_smoke.py --map-editor-only
+python3 tools/native_smoke.py --editor-only
+python3 tools/native_smoke.py --vehicles-only
+python3 tools/native_smoke.py --windows --vehicles-only
+```
+
+The nine focused C suites match
+`vehicles-multiple-planets|independent-game-complete|authored-|combat-primary-rules|combat-primary-cooling|combat-primary-physical|save-file-integrity`.
+Run them with `ctest --test-dir build/sanitize --output-on-failure -R '...'`
+or `python3 tools/windows_check.py --ctest -R '...'` after the appropriate build.
+For the 15 sanitized Python cases, set `BTP_PROJECT_TOOL` and `BTP_HEADLESS` to
+absolute paths in `build/sanitize`, then discover `test_*editor.py`.
+
+**Reference check qualification:** 1,285/1,287 entries match the historical
+content/mode/mtime baseline exactly. The two differences are `UnBattletech/.git`
+and its `config`: a single `vscode-merge-base = origin/main` line was added, with
+timestamps 2026-10-17 12:02:30 UTC. Removing only that line in memory reproduces
+the original config SHA-256. All supplied game assets, reference source and
+research files match. The reference files and guard baseline were left as found;
+the strict guard's nonzero result is not presented as a pass.
+
+These tests verify authored features and regressions. They do not establish
+tabletop vehicle fidelity, DOS equivalence for new features, native Windows Tk
+behavior or physical audio/driver behavior.
+
 The [visual editor increment](EDITOR_GRAPHICS_AND_DRAGGING.md#verification)
 passes **69 native CTests, 88 Python tests**, three focused Wine/sanitizer
 suites per platform and all three Linux Tk workflows. Tests exercise original

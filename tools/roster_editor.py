@@ -9,6 +9,9 @@ import os
 from pathlib import Path
 import subprocess
 import sys
+if __name__ == '__main__':
+    from editor_runtime import prefer_system_tk
+    prefer_system_tk()
 import tkinter as tk
 from tkinter import font as tkfont
 from tkinter import ttk, filedialog, messagebox, simpledialog
@@ -28,11 +31,18 @@ def configure_editor_style(window):
     palette = dict(background="#f3f3f0", surface="#ffffff", text="#293747",
                    muted="#637181", border="#d9dfe3", accent="#286c80",
                    selection="#deedf2")
-    font = tkfont.nametofont("TkDefaultFont").actual()
-    size = font["size"]
-    heading = (font["family"], size + 1 if size > 0 else size - 1, "bold")
-    title = (font["family"], size + 5 if size > 0 else size - 5, "bold")
-    style.configure(".", background=palette["background"], foreground=palette["text"])
+    # Configure Tk's named fonts once: mixing a named-font token with a size
+    # tuple makes Tk treat that token as a missing *family*, causing fallback
+    # glyphs. Positive point sizes keep the user's system DPI scaling intact.
+    families=set(tkfont.families(window))
+    choices=('Segoe UI','Noto Sans','DejaVu Sans') if os.name=='nt' else ('Noto Sans','DejaVu Sans','Liberation Sans')
+    family=next((name for name in choices if name in families),tkfont.nametofont('TkDefaultFont').actual('family'))
+    for name in ('TkDefaultFont','TkTextFont','TkMenuFont','TkHeadingFont','TkCaptionFont','TkSmallCaptionFont','TkIconFont','TkTooltipFont'):
+        tkfont.nametofont(name).configure(family=family,size=10,weight='normal')
+    tkfont.nametofont('TkHeadingFont').configure(weight='bold')
+    heading = (family, 11, "bold")
+    title = (family, 16, "bold")
+    style.configure(".", background=palette["background"], foreground=palette["text"],font='TkDefaultFont')
     for name in ("App.TFrame", "TFrame"):
         style.configure(name, background=palette["background"])
     style.configure("Card.TFrame", background=palette["surface"],
@@ -45,7 +55,7 @@ def configure_editor_style(window):
     style.configure("Heading.TLabel", background=palette["surface"], foreground=palette["text"], font=heading)
     style.configure("Title.TLabel", background=palette["background"], foreground=palette["text"], font=title)
     style.configure("Section.TLabel", background=palette["surface"], foreground=palette["accent"],
-                    font=(font["family"], size, "bold"))
+                    font='TkHeadingFont')
     style.configure("TButton", padding=(10, 6))
     style.configure("Toolbar.TButton", padding=(9, 5))
     style.configure("Accent.TButton", background=palette["accent"], foreground="#ffffff",
@@ -59,7 +69,7 @@ def configure_editor_style(window):
     style.configure("TNotebook.Tab", padding=(11, 7))
     style.map("TNotebook.Tab", background=[("selected", palette["surface"])],
               foreground=[("selected", palette["accent"])])
-    style.configure("Treeview", rowheight=25, background=palette["surface"], fieldbackground=palette["surface"])
+    style.configure("Treeview", rowheight=tkfont.nametofont('TkDefaultFont').metrics('linespace')+10, background=palette["surface"], fieldbackground=palette["surface"])
     style.configure("Treeview.Heading", padding=(8, 6))
     style.map("Treeview", background=[("selected", palette["selection"])],
               foreground=[("selected", palette["text"])])
@@ -84,6 +94,7 @@ class RosterEditor:
         self.loadout = []
         self.populating = False
         self.form_dirty = False
+        self.sprite_timer=None;self.sprite_photos=[];self.sprite_index=0;self.sprite_source=None
         self.settings = self.defaults()
         try:
             self.settings.update(json.loads((state_dir / "settings.json").read_text()))
@@ -117,6 +128,8 @@ class RosterEditor:
                    command=lambda: self.guarded(self.edit_adventure)).pack(side="left", padx=2)
         ttk.Button(author_bar, text="Export game", style="Toolbar.TButton",
                    command=lambda: self.guarded(self.export_project)).pack(side="left", padx=2)
+        ttk.Button(author_bar,text="Import vehicles",style="Toolbar.TButton",command=lambda:self.guarded(self.vehicle_catalogue)).pack(side="left",padx=2)
+        ttk.Button(author_bar,text="Ammunition",style="Toolbar.TButton",command=lambda:self.guarded(self.ammunition)).pack(side="left",padx=2)
         ttk.Button(author_bar, text="Player setup", style="Toolbar.TButton",
                    command=lambda: self.guarded(self.setup)).pack(side="right", padx=2)
         project = ttk.Frame(window, padding=(17, 0, 17, 7))
@@ -137,7 +150,7 @@ class RosterEditor:
         self.roster_count = ttk.Label(sidebar_title, text="", style="CardMuted.TLabel")
         self.roster_count.pack(side="right")
         self.kind = tk.StringVar(value="Mechs")
-        box = ttk.Combobox(left, textvariable=self.kind, values=["Mechs", "Weapons"], state="readonly")
+        box = ttk.Combobox(left, textvariable=self.kind, values=["Mechs", "Vehicles", "Weapons", "Equipment"], state="readonly")
         box.pack(fill="x", pady=(0, 12))
         box.bind("<<ComboboxSelected>>", lambda _e: self.guarded(self.change_kind))
         self.search = tk.StringVar()
@@ -157,8 +170,19 @@ class RosterEditor:
         buttons.pack(fill="x", pady=(10, 0))
         ttk.Button(buttons, text="Duplicate / add", command=lambda: self.guarded(self.duplicate)).pack(side="left")
         ttk.Button(buttons, text="Delete", style="Danger.TButton", command=lambda: self.guarded(self.delete)).pack(side="right")
-        self.selection_title = ttk.Label(right, text="Definition details", style="App.TLabel", padding=(2, 2, 0, 6))
-        self.selection_title.pack(anchor="w")
+        ttk.Button(left,text="New definition...",command=lambda:self.guarded(self.new_definition)).pack(fill="x",pady=(8,0))
+        selection=ttk.Frame(right);selection.pack(fill='x',pady=(0,8))
+        self.selection_title = ttk.Label(selection, text="Definition details", style="App.TLabel", padding=(2, 2, 0, 6),wraplength=370)
+        self.selection_title.pack(side='left',anchor='n')
+        self.sprite_panel=ttk.Frame(selection)
+        self.sprite_canvas=tk.Canvas(self.sprite_panel,width=120,height=100,background='#e1e1e1',highlightthickness=1,highlightbackground='#cfd8df')
+        self.sprite_canvas.pack()
+        ttk.Label(self.sprite_panel,text='Right-click for sprite tools',style='Muted.TLabel').pack()
+        self.sprite_menu=tk.Menu(self.sprite_canvas,tearoff=False)
+        self.sprite_menu.add_command(label='Edit sprite',command=lambda:self.guarded(self.edit_unit_sprite))
+        self.sprite_menu.add_command(label='Select sprite',command=lambda:self.guarded(self.choose_sprite))
+        self.sprite_canvas.bind('<Button-3>',self.sprite_context)
+        self.sprite_canvas.bind('<Double-Button-1>',lambda _:self.guarded(self.edit_unit_sprite))
         self.notebook = ttk.Notebook(right)
         self.notebook.pack(fill="both", expand=True)
         self.status = tk.StringVar(value="Ready")
@@ -237,7 +261,7 @@ class RosterEditor:
 
     def change_kind(self):
         self.apply_form()
-        self.collection = "mechs" if self.kind.get() == "Mechs" else "weapons"
+        self.collection = {'Weapons':'weapons','Equipment':'equipment'}.get(self.kind.get(),'mechs')
         self.current = None
         self.refresh_list()
 
@@ -251,12 +275,13 @@ class RosterEditor:
             self.visible = []
             self.listing.delete(0, "end")
             query = self.search.get().lower()
-            for item in self.document.content[self.collection]:
+            for item in self.document.content.get(self.collection,[]):
+                if self.collection=='mechs' and (item.get('kind')=='vehicle') != (self.kind.get()=='Vehicles'):continue
                 if query and query not in (item["name"] + " " + item["id"]).lower():
                     continue
                 self.visible.append(item["id"])
                 self.listing.insert("end", (f"{item['mass_tons']:3d}t  " if self.collection == "mechs" else "") + item["name"])
-            total = len(self.document.content[self.collection])
+            total = len(self.document.content.get(self.collection,[]))
             self.roster_count.configure(text=str(total) if len(self.visible) == total else f"{len(self.visible)} / {total}")
             if self.visible:
                 index = self.visible.index(selected) if selected in self.visible else 0
@@ -333,6 +358,7 @@ class RosterEditor:
         self.status.set("Unsaved edits. Validate checks the complete project; Save preserves disk files if validation fails.")
 
     def populate(self):
+        self.stop_sprite()
         for tab in self.notebook.tabs():
             self.notebook.nametowidget(tab).destroy()
         self.variables = {}
@@ -346,23 +372,28 @@ class RosterEditor:
                       style="CardMuted.TLabel", wraplength=450, justify="left").pack(anchor="w")
             return
         self.selection_title.configure(text=self.item()["name"])
+        if self.collection=='mechs':self.start_sprite()
         general = self.tab("Properties")
         self.field(general, 0, "Stable ID", ["id"], readonly=True)
         self.field(general, 1, "Full name", ["name"])
         self.field(general, 2, "Game label", ["label"])
         if self.collection == "mechs":
+            vehicle=self.item().get('kind')=='vehicle'
             for row, (label, path) in enumerate([("Mass (tons)", ["mass_tons"]), ("Price (C-bills)", ["price"]),
                     ("Walk", ["movement", "walk"]), ("Jump", ["movement", "jump"]),
                     ("Engine heat sinks", ["engine_heat_sinks"])], 3):
                 self.field(general, row, label, path, integer=True)
             self.field(general, 8, "Presentation", ["presentation"], choices=[p["id"] for p in self.document.content["presentations"]])
-            for name, key in [("Armor", "armor"), ("Structure", "structure"), ("Components", "external_heat_sinks")]:
+            ttk.Button(general,text='Choose sprite...',command=lambda:self.guarded(self.choose_sprite)).grid(row=9,column=1,sticky='w',pady=8)
+            if vehicle:self.field(general,10,'Drive type',['movement','type'],choices=['tracked','wheeled','hover'])
+            for name, key in [("Armor", "armor"), ("Structure", "structure")]+([] if vehicle else [("Equipment", "external_heat_sinks")]):
                 frame = self.tab(name)
                 for row, field in enumerate(self.item()[key]):
                     self.field(frame, row, field.replace("_", " ").title(), [key, field], integer=True)
                 if key == "external_heat_sinks":
                     for row, field in enumerate(self.item()["actuators"], len(LOCATIONS)):
                         self.field(frame, row, field.replace("_", " ").title() + " actuators (0-15)", ["actuators", field], integer=True)
+                    ttk.Button(frame,text='Installed equipment',command=lambda:self.guarded(self.installed_equipment)).grid(row=12,column=1,sticky='w',pady=10)
             self.loadout = copy.deepcopy(self.item()["loadout"])
             frame = self.tab("Loadout")
             self.mounts = ttk.Treeview(frame, columns=("weapon", "location", "ammo"), show="headings", height=12, selectmode="browse")
@@ -376,6 +407,9 @@ class RosterEditor:
             for label, cb in [("Add mount", lambda: self.mount_dialog(True)), ("Edit mount", lambda: self.mount_dialog(False)), ("Remove mount", self.remove_mount)]:
                 ttk.Button(buttons, text=label, command=lambda f=cb: self.guarded(f)).pack(side="left", padx=4)
             self.refresh_mounts()
+        elif self.collection=='equipment':
+            self.field(general,3,'Behavior',['behavior'],choices=['heat_sink','jump_jet'])
+            ttk.Label(general,text='Heat sink: one cooling point and one damageable component slot.\nJump jet: one jump point; CHI does not model individual jet damage.\nInstall these on a mech in its Equipment tab.',style='CardMuted.TLabel',wraplength=490).grid(row=4,column=0,columnspan=2,pady=16,sticky='w')
         else:
             self.field(general, 3, "Behavior", ["behavior"], choices=WEAPONS)
             self.field(general, 4, "Ammunition", ["ammunition"], choices=["none"] + [p["id"] for p in self.document.content["ammunition"]])
@@ -422,7 +456,9 @@ class RosterEditor:
         dialog.transient(self.window)
         dialog.grab_set()
         values = {key: tk.StringVar(value=str(value)) for key, value in mount.items()}
-        for row, (key, choices) in enumerate([("weapon", weapons), ("location", LOCATIONS), ("ammunition", None)]):
+        locations=['front','left','right','rear','turret'] if self.item().get('kind')=='vehicle' else LOCATIONS
+        if adding:values['location'].set(locations[0])
+        for row, (key, choices) in enumerate([("weapon", weapons), ("location", locations), ("ammunition", None)]):
             ttk.Label(dialog, text=key.title()).grid(row=row, column=0, padx=12, pady=8)
             widget = ttk.Combobox(dialog, textvariable=values[key], values=choices, state="readonly", width=42) if choices else ttk.Entry(dialog, textvariable=values[key])
             widget.grid(row=row, column=1, padx=12, pady=8, sticky="ew")
@@ -452,6 +488,167 @@ class RosterEditor:
             self.search.set("")
             self.refresh_list(identity)
             self.status.set("Copy added with a new stable ID. Edit its properties, then Validate.")
+
+    def guard(self,fn):return self.guarded(fn)
+
+    def new_definition(self):
+        if not self.document:return
+        from adventure_editor import Form
+        from unit_editing import add_unit,add_weapon,add_equipment
+        self.apply_form();f=Form(self,'New definition')
+        if self.kind.get()=='Equipment':
+            f.field('name','Heat sink');f.field('behavior','heat_sink',['heat_sink','jump_jet'])
+        elif self.kind.get()=='Weapons':
+            f.field('name','New weapon');f.field('behavior','medium_laser',WEAPONS)
+        else:
+            f.field('name','New vehicle' if self.kind.get()=='Vehicles' else 'New mech')
+            f.field('kind','tracked' if self.kind.get()=='Vehicles' else 'mech',['mech','tracked','wheeled','hover'])
+        def apply(v):
+            content=copy.deepcopy(self.document.content)
+            if self.collection=='equipment':identity=add_equipment(content,v['behavior'],v['name'])
+            elif 'behavior' in v:identity=add_weapon(content,v['behavior'],v['name'])
+            else:
+                identity=add_unit(content,v['kind'],v['name']);self.kind.set('Mechs' if v['kind']=='mech' else 'Vehicles');self.collection='mechs'
+            self.document.replace(content);self.search.set('');self.refresh_list(identity)
+        f.submit(apply)
+
+    def installed_equipment(self):
+        self.apply_form()
+        from adventure_editor import Form
+        unit_id=self.current;equipment=self.document.content.get('equipment',[])
+        if not equipment:raise EditorError('Choose Equipment in the roster, then New definition to create a heat sink or jump jet first.')
+        original=copy.deepcopy(self.item().get('equipment',[]));f=Form(self,'Installed mech equipment')
+        choice=f.field('entry','New',['New',*[str(i+1) for i in range(len(original))]])
+        f.field('definition',equipment[0]['id'],[e['id'] for e in equipment]);f.field('location','left_torso',LOCATIONS);f.field('quantity',1)
+        f.field('action','Install / update',['Install / update','Remove'])
+        def select(_):
+            value=f.values['entry'].get()
+            if value!='New':
+                for key,value in original[int(value)-1].items():f.values[key].set(str(value))
+        choice.bind('<<ComboboxSelected>>',select)
+        ttk.Label(f.body,text='Heat sinks add to the numeric external sinks above.\nFor installed jump jets, set the base Jump property to 0.',wraplength=480).grid(row=f.row,column=0,columnspan=2,pady=10);f.row+=1
+        def apply(v):
+            content=copy.deepcopy(self.document.content);unit=next(m for m in content['mechs'] if m['id']==unit_id)
+            entries=copy.deepcopy(original);index=None if v['entry']=='New' else int(v['entry'])-1
+            if v['action']=='Remove':
+                if index is not None:entries.pop(index)
+            else:
+                quantity=int(v['quantity'])
+                if not 1<=quantity<=12:raise EditorError('Equipment quantity must be 1-12.')
+                entry=dict(definition=v['definition'],location=v['location'],quantity=quantity)
+                if index is None:entries.append(entry)
+                else:entries[index]=entry
+            unit['equipment']=entries;self.document.replace(content);self.refresh_list(unit_id)
+        f.submit(apply)
+
+    def choose_sprite(self):
+        self.apply_form()
+        from adventure_editor import Form
+        from unit_editing import assign_graphic
+        from graphics_editor import photo
+        sprites=[im for im in self.document.art['images'] if im['kind']=='sprite']
+        if not sprites:
+            self.edit_adventure();self.map_editor.edit_graphics()
+            self.status.set('Create or import a sprite in Graphics, then choose it for this unit.');return
+        identity=self.current;f=Form(self,'Choose unit sprite');choice=f.field('image',sprites[0]['id'],[i['id'] for i in sprites])
+        preview=ttk.Label(f.body);preview.grid(row=f.row,column=0,columnspan=2,pady=12);f.row+=1
+        def show(*_):
+            im=next(i for i in sprites if i['id']==f.values['image'].get());preview.image=photo(f.window,im,zoom=4);preview.configure(image=preview.image)
+        choice.bind('<<ComboboxSelected>>',show);show()
+        def apply(v):
+            content=copy.deepcopy(self.document.content);assign_graphic(content,identity,v['image']);self.document.replace(content);self.refresh_list(identity)
+        f.submit(apply)
+
+    def stop_sprite(self):
+        if self.sprite_timer is not None:self.window.after_cancel(self.sprite_timer)
+        self.sprite_timer=None;self.sprite_photos=[];self.sprite_source=None
+        self.sprite_panel.pack_forget()
+
+    def start_sprite(self):
+        from editor_units import unit_sprite
+        from graphics_editor import photo
+        self.sprite_panel.pack(side='right')
+        self.sprite_canvas.delete('all')
+        try:
+            self.sprite_source=unit_sprite(self.document,self.settings,self.item())
+            image=self.sprite_source;zoom=max(1,min(5,96//max(image['width'],image['height'])))
+            self.sprite_photos=[photo(self.window,image,frame=i,zoom=zoom) for i in range(len(image['frames']))]
+        except (EditorError,OSError,KeyError,StopIteration) as exc:
+            self.sprite_canvas.create_text(60,50,text='Sprite unavailable\nCheck Player setup',width=110,fill='#637181',font='TkDefaultFont')
+            self.status.set(str(exc));return
+        self.sprite_index=0;self.animate_sprite()
+
+    def animate_sprite(self):
+        self.sprite_timer=None
+        if not self.sprite_photos or not self.sprite_canvas.winfo_exists():return
+        self.sprite_canvas.delete('animation')
+        self.sprite_canvas.create_image(60,50,image=self.sprite_photos[self.sprite_index],tags='animation')
+        self.sprite_index=(self.sprite_index+1)%len(self.sprite_photos)
+        self.sprite_timer=self.window.after(140,self.animate_sprite)
+
+    def sprite_context(self,event):
+        try:self.sprite_menu.tk_popup(event.x_root,event.y_root)
+        finally:self.sprite_menu.grab_release()
+
+    def edit_unit_sprite(self):
+        self.apply_form()
+        if self.document.adventure is None:raise EditorError('Editable sprites require an authored adventure project.')
+        from art_editing import clone_image
+        from editor_units import unit_sprite
+        from unit_editing import assign_graphic
+        from graphics_editor import PixelEditor
+        unit_id=self.current;view=next(p for p in self.document.content['presentations'] if p['id']==self.item()['presentation'])
+        image=unit_sprite(self.document,self.settings,self.item())
+        if view['source']!='package:art':
+            # Editing a reference sprite explicitly makes a package copy;
+            # the original resources and other units' choices stay intact.
+            image=clone_image(image,self.document.content['package_id'],self.document.art['images'])
+            art=copy.deepcopy(self.document.art);art['images'].append(image)
+            content=copy.deepcopy(self.document.content);assign_graphic(content,unit_id,image['id'])
+            manifest=copy.deepcopy(self.document.manifest)
+            if 'graphics' not in manifest:
+                if 'graphics.json' not in self.document.snapshot and (self.document.root/'graphics.json').exists():raise EditorError('Declare or rename the existing graphics.json before copying a sprite.')
+                manifest['graphics']='graphics.json'
+            self.document.replace_all(content,self.document.adventure,art,manifest)
+        self.edit_adventure();self.map_editor.edit_graphics();library=self.map_editor.art_editor
+        library.selected=image['id'];library.refresh();PixelEditor(library,image)
+        self.refresh_list(unit_id)
+
+    def vehicle_catalogue(self):
+        if not self.document:return
+        if self.document.adventure is None:raise EditorError('Vehicles require an authored adventure project. Create one from a demo first.')
+        from adventure_editor import Form
+        from unit_editing import import_catalogue
+        self.apply_form();catalogue=ROOT/'content/catalogues/vehicles';data=json.loads((catalogue/'units.json').read_text())
+        f=Form(self,'Add vehicles');listing=tk.Listbox(f.body,selectmode='multiple',exportselection=False,height=12,width=55)
+        listing.grid(row=0,column=0,columnspan=2,padx=10,pady=10);f.row=1
+        for unit in data['mechs']:listing.insert('end',f"{unit['mass_tons']:3d}t  {unit['name']} ({unit['movement']['type']})")
+        listing.selection_set(0,'end')
+        ttk.Label(f.body,text='Adds editable definitions and original pixel sprites.\nPlace units in Start, shop stock or encounters under Maps / events.',wraplength=500).grid(row=1,column=0,columnspan=2);f.row=2
+        def apply(_):
+            ids=[data['mechs'][i]['id'] for i in listing.curselection()]
+            if not ids:return
+            import_catalogue(self.document,catalogue,ids);self.kind.set('Vehicles');self.collection='mechs';self.search.set('');self.refresh_list(ids[0])
+            if self.map_editor:self.map_editor.refresh()
+        f.submit(apply)
+
+    def ammunition(self):
+        if not self.document:return
+        from adventure_editor import Form
+        from unit_editing import add_ammo
+        self.apply_form();f=Form(self,'Ammunition definitions');ids=[a['id'] for a in self.document.content['ammunition']]
+        choice=f.field('id','New',['New',*ids]);f.field('price',3,label='Price per shot (1-254)')
+        def select(_):
+            entry=next((a for a in self.document.content['ammunition'] if a['id']==f.values['id'].get()),None)
+            if entry:f.values['price'].set(str(entry['price_per_shot']))
+        choice.bind('<<ComboboxSelected>>',select)
+        def apply(v):
+            content=copy.deepcopy(self.document.content);price=int(v['price'])
+            if not 1<=price<=254:raise EditorError('Ammunition price must be 1-254 per shot.')
+            if v['id']=='New':add_ammo(content,price)
+            else:next(a for a in content['ammunition'] if a['id']==v['id'])['price_per_shot']=price
+            self.document.replace(content);self.refresh_list()
+        f.submit(apply)
 
     def delete(self):
         if self.document and self.current:

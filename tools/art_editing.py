@@ -35,6 +35,58 @@ def write_pixels(image, frame, rows):
     image["frames"][frame] = ["".join(row) for row in rows]
 
 
+def transform(image, operation, frame=0, all_frames=False, wrap=False):
+    """Transform straight RGBA pixels without resampling or losing alpha.
+
+    Frames share dimensions. Rotating a rectangular animation therefore needs
+    all frames selected; rejecting it first keeps the pending edit atomic.
+    """
+    w, h = image['width'], image['height']
+    rotate = operation in ('Rotate right', 'Rotate left')
+    shifts = {'Nudge left': (-1, 0), 'Nudge right': (1, 0),
+              'Nudge up': (0, -1), 'Nudge down': (0, 1)}
+    if operation not in ('Flip X', 'Flip Y', 'Rotate right', 'Rotate left', 'Clear') and operation not in shifts:
+        raise EditorError('Unknown pixel transformation.')
+    if rotate and w != h:
+        if not all_frames and len(image['frames']) > 1:
+            raise EditorError('Select All frames to rotate a rectangular animation.')
+        if h > 320 or w > 200:
+            raise EditorError('The rotated image would exceed the 320x200 image limit.')
+    for index in range(len(image['frames'])) if all_frames else [frame]:
+        rows = pixels(image, index)
+        if operation == 'Flip X': result = [row[::-1] for row in rows]
+        elif operation == 'Flip Y': result = rows[::-1]
+        elif operation == 'Rotate right': result = [list(row) for row in zip(*rows[::-1])]
+        elif operation == 'Rotate left': result = [list(row) for row in zip(*rows)][::-1]
+        elif operation == 'Clear': result = [[TRANSPARENT]*w for _ in range(h)]
+        else:
+            dx, dy = shifts[operation]
+            result = [[rows[(y-dy)%h][(x-dx)%w] if wrap or (0 <= x-dx < w and 0 <= y-dy < h)
+                       else TRANSPARENT for x in range(w)] for y in range(h)]
+        write_pixels(image, index, result)
+    if rotate: image['width'], image['height'] = h, w
+
+
+def editable_tile(art, adventure, index, prefix, decoded):
+    """Detach an indexed tile into owned artwork, keeping every map reference.
+
+    The caller commits art and adventure in one shared history entry. Original
+    sheets are only read; editing a tile definition changes all its placements.
+    """
+    from world_editing import upgrade
+    tile = adventure['tiles'][index]
+    if tile['sheet'] == 'package:art':
+        return next(im for im in art['images'] if im['id'] == tile['graphic'])
+    try: colors = decoded[tile['sheet']][tile['graphic']]
+    except (KeyError, IndexError): raise EditorError('Wait for the map graphics preview to load first.')
+    im = new_image(prefix, art['images'], tile['id'].split(':')[-1][:80] + ' pixels')
+    im['frames'] = [[''.join(color.lstrip('#')+'ff' for color in row) for row in colors]]
+    upgrade(adventure)
+    tile.update(sheet='package:art', graphic=im['id'])
+    art['images'].append(im)
+    return im
+
+
 def brush(image, frame, start, end, color, tool="Pencil"):
     if len(color) != 8 or any(c not in "0123456789abcdef" for c in color): raise EditorError("Color needs eight RGBA hexadecimal digits.")
     rows = pixels(image, frame)

@@ -1299,6 +1299,99 @@
         "patches",
         "cities"
       ]
+    },
+    "worlds": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 63,
+            "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 63
+          },
+          "pieces": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "minItems": 8,
+              "maxItems": 128
+            },
+            "minItems": 8,
+            "maxItems": 128
+          },
+          "patches": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "at": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 1023
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                },
+                "rows": {
+                  "type": "array",
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "maxLength": 63,
+                      "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+                    },
+                    "minItems": 1,
+                    "maxItems": 64
+                  },
+                  "minItems": 1,
+                  "maxItems": 64
+                }
+              },
+              "required": [
+                "at",
+                "rows"
+              ]
+            },
+            "minItems": 0,
+            "maxItems": 4096
+          },
+          "cities": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 63,
+              "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+            },
+            "minItems": 0,
+            "maxItems": 16
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "pieces",
+          "patches",
+          "cities"
+        ]
+      },
+      "minItems": 1,
+      "maxItems": 16
     }
   },
   "required": [
@@ -1312,5 +1405,11 @@
     "flags",
     "events",
     "start"
-  ]
+  ],
+  "not": {
+    "required": [
+      "world",
+      "worlds"
+    ]
+  }
 }

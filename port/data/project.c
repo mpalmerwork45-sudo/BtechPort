@@ -102,7 +102,7 @@ BtpProject *btp_project_load(const char *root,BtpRoster *roster,BtpPortraits *po
         for (unsigned i=0;i<p->definitions.presentation_count;++i) if (!p->definitions.presentations[i].independent) { fail(error,"content.json","independent games require package sprite sources");goto done; }
     } else if (presentation) { fail(error,"project.json","presentation is only supported by independent games");goto done; }
     if (!independent) {
-        for (unsigned i=0;i<p->definitions.presentation_count;++i) if (p->definitions.presentations[i].independent) { fail(error,"content.json","package sprites require an independent presentation");goto done; }
+        for (unsigned i=0;i<p->definitions.presentation_count;++i) if (p->definitions.presentations[i].independent==1) { fail(error,"content.json","package sprites require an independent presentation");goto done; }
         for (unsigned i=0;i<p->adventure.tile_count;++i) if (p->adventure.tiles[i].sheet==2) { fail(error,"adventure.json","package tiles require an independent presentation");goto done; }
     }
     unsigned graphics=btp_json_optional(&j,1,"graphics");
@@ -110,6 +110,12 @@ BtpProject *btp_project_load(const char *root,BtpRoster *roster,BtpPortraits *po
         if (!adventure || !btp_json_string(&j,graphics,relative,sizeof relative) || !btp_project_path(root,relative,path,error) ||
             !btp_art_load(path,&p->graphics,error->text)) goto done;
         btp_digest_add(&digest,p->graphics.source_digest,32);
+    }
+    for (unsigned i=0;i<p->definitions.presentation_count;++i) {
+        BtpPresentationDefinition *sprite=&p->definitions.presentations[i];
+        if (sprite->independent!=2) continue;
+        sprite->graphic=btp_art_find(&p->graphics,sprite->image);
+        if (sprite->graphic==BTP_ART_NONE || p->graphics.images[sprite->graphic].kind!=1) { fail(error,sprite->id,"unit presentation requires a sprite image");goto done; }
     }
     for (unsigned i=0;i<p->adventure.tile_count;++i) {
         BtpSceneTile *t=&p->adventure.tiles[i];if (t->sheet!=3) continue;

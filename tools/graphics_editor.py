@@ -6,7 +6,7 @@ from tkinter import ttk, filedialog, colorchooser, messagebox
 from adventure_editor import Form
 from editor_model import EditorError
 from art_editing import (new_image, clone_image, import_image, original_sprite,
-                         display_rows, pixels, brush, bind, SLOTS, DEFAULT_COLORS)
+                         display_rows, pixels, brush, bind, transform, editable_tile, SLOTS, DEFAULT_COLORS)
 from world_editing import graphic_tile
 
 
@@ -25,8 +25,8 @@ class GraphicsEditor:
         self.selected = None; self.preview_image = None
         bar = ttk.Frame(self.window, padding=8); bar.pack(fill='x')
         for name, cb in [('New', self.new), ('Import', self.import_file), ('Clone', self.clone),
-                         ('Edit pixels', self.edit), ('Copy original', self.original), ('Delete', self.delete)]:
-            ttk.Button(bar, text=name, command=lambda f=cb: self.guard(f)).pack(side='left', padx=3)
+                         ('Edit pixels', self.edit), ('Copy map tile', self.map_tile), ('Copy original', self.original), ('Delete', self.delete)]:
+            ttk.Button(bar, text=name, width=0, style='Toolbar.TButton', command=lambda f=cb: self.guard(f)).pack(side='left', padx=3)
         body = ttk.Panedwindow(self.window, orient='horizontal'); body.pack(fill='both', expand=True, padx=8)
         left = ttk.Frame(body); right = ttk.Frame(body, padding=12); body.add(left, weight=2); body.add(right, weight=3)
         self.search = tk.StringVar(); ttk.Entry(left, textvariable=self.search).pack(fill='x', pady=(0,8))
@@ -45,7 +45,7 @@ class GraphicsEditor:
         actions = ttk.Frame(right); actions.pack(fill='x')
         ttk.Button(actions, text='Use as map tile', command=lambda: self.guard(self.use_tile)).pack(side='left')
         ttk.Button(actions, text='Assign sprite role', command=lambda: self.guard(self.binding)).pack(side='left', padx=8)
-        ttk.Label(self.window, text='Images belong to this package. Changes share the map editor’s Save, Undo and Redo.',
+        ttk.Label(self.window, text='Images belong to this package. Changes share the map editor shared Save, Undo and Redo.',
                   style='Muted.TLabel', padding=10).pack(fill='x')
         self.refresh()
 
@@ -70,7 +70,7 @@ class GraphicsEditor:
         z = max(1, min(6, 330//max(im['width'], im['height'])))
         self.preview_image = photo(self.window, im, zoom=z)
         self.preview.create_image(10,10, image=self.preview_image, anchor='nw')
-        self.info.set(f"{im['name']}\n{im['id']}\n{im['width']} × {im['height']} · {len(im['frames'])} frame(s) · {im['kind']}")
+        self.info.set(f"{im['name']}\n{im['id']}\n{im['width']} x {im['height']} | {len(im['frames'])} frame(s) | {im['kind']}")
     def put(self, im, old=None):
         art = copy.deepcopy(self.document.art)
         if old:
@@ -79,6 +79,8 @@ class GraphicsEditor:
             art['images'][art['images'].index(current)] = im
         else: art['images'].append(im)
         self.selected = im['id']; self.document.replace_art(art); self.owner.refresh()
+        parent=self.owner.parent
+        if parent.current and parent.collection=='mechs':parent.stop_sprite();parent.start_sprite()
     def new(self):
         f=Form(self,'New graphic'); f.field('name','New image'); f.field('kind','tile',['tile','sprite','icon','screen'])
         f.field('width',16); f.field('height',16); f.field('frames',1)
@@ -109,6 +111,29 @@ class GraphicsEditor:
             im=original_sprite(self.document,self.owner.parent.settings,int(v['first']),int(v['frames']))
             self.put(clone_image(im,self.document.content['package_id'],self.document.art['images']))
         f.submit(apply)
+    def map_tile(self):
+        selected=self.owner.brush.curselection()
+        if not selected:raise EditorError('Choose a map tile in the palette first.')
+        tile=self.document.adventure['tiles'][selected[0]]
+        if tile['sheet']=='package:art':
+            source=next(i for i in self.document.art['images'] if i['id']==tile['graphic'])
+            self.put(clone_image(source,self.document.content['package_id'],self.document.art['images']))
+        else:
+            try:colors=self.owner.graphics[tile['sheet']][tile['graphic']]
+            except (KeyError,IndexError):raise EditorError('Wait for the map graphics preview to load first.')
+            im=new_image(self.document.content['package_id'],self.document.art['images'],'Copied map tile')
+            im['frames']=[[''.join(color.lstrip('#')+'ff' for color in row) for row in colors]]
+            self.put(im)
+        self.edit()
+    def edit_map_tile(self):
+        selected=self.owner.brush.curselection()
+        if not selected or selected[0]>=len(self.document.adventure['tiles']):raise EditorError('Choose a map tile in the palette first.')
+        art=copy.deepcopy(self.document.art);a=copy.deepcopy(self.document.adventure)
+        im=editable_tile(art,a,selected[0],self.document.content['package_id'],self.owner.graphics)
+        self.selected=im['id']
+        if art!=self.document.art or a!=self.document.adventure:
+            self.document.replace_art(art,a);self.owner.refresh()
+        self.refresh();self.edit()
     def delete(self):
         if not self.current():return
         art=copy.deepcopy(self.document.art); art['images']=[i for i in art['images'] if i['id']!=self.selected]
@@ -116,7 +141,7 @@ class GraphicsEditor:
         self.owner.status.set('Image removed. Validate reports any remaining references; Undo restores it.')
     def use_tile(self):
         im=self.current()
-        if not im or im['kind']!='tile':raise EditorError('Choose a 16×16 tile image first.')
+        if not im or im['kind']!='tile':raise EditorError('Choose a 16x16 tile image first.')
         a=copy.deepcopy(self.document.adventure)
         value=graphic_tile(a,self.document.content['package_id'],'package:art',im['id'])
         self.owner.commit(a)
@@ -135,12 +160,12 @@ class PixelEditor:
     """Stage an image independently; Apply produces one shared undo entry."""
     def __init__(self, owner, image):
         self.owner=owner; self.original=copy.deepcopy(image); self.image=copy.deepcopy(image)
-        self.window=tk.Toplevel(owner.window); self.window.title('Pixel editor — '+image['name']); self.window.geometry('920x730')
+        self.window=tk.Toplevel(owner.window); self.window.title('Pixel editor - '+image['name']); self.window.geometry('920x730')
         self.history=[]; self.future=[]; self.before=None; self.last=None; self.playing=False
         bar=ttk.Frame(self.window,padding=8); bar.pack(fill='x')
         self.tool=tk.StringVar(value='Pencil'); ttk.Combobox(bar,textvariable=self.tool,values=['Pencil','Line','Rectangle','Fill','Erase','Eyedropper'],state='readonly',width=12).pack(side='left')
         self.color=tk.StringVar(value='ffffffff'); ttk.Entry(bar,textvariable=self.color,width=10).pack(side='left',padx=5)
-        ttk.Button(bar,text='Color…',command=self.choose_color).pack(side='left')
+        ttk.Button(bar,text='Color...',command=self.choose_color).pack(side='left')
         self.zoom=tk.StringVar(value=str(min(16,max(2,512//max(image['width'],image['height'])))))
         z=ttk.Combobox(bar,textvariable=self.zoom,values=['1','2','4','8','16','24','32'],width=4,state='readonly'); z.pack(side='left',padx=8);z.bind('<<ComboboxSelected>>',lambda _:self.draw())
         for title,cb in [('Undo',self.undo),('Redo',self.redo),('Apply',self.apply)]:ttk.Button(bar,text=title,command=lambda f=cb:self.owner.guard(f)).pack(side='left',padx=3)
@@ -151,6 +176,18 @@ class PixelEditor:
         ttk.Label(frames,text='Frame').pack(side='left');self.frame=ttk.Combobox(frames,state='readonly',width=5);self.frame.pack(side='left',padx=6)
         self.frame.bind('<<ComboboxSelected>>',lambda _:self.draw())
         for title,cb in [('Clone frame',self.add_frame),('Delete frame',self.delete_frame),('Play / stop',self.play)]:ttk.Button(frames,text=title,command=lambda f=cb:self.owner.guard(f)).pack(side='left',padx=4)
+        transforms=ttk.Frame(self.window,padding=(8,0,8,8));transforms.pack(fill='x')
+        for title in ('Flip X','Flip Y'):
+            ttk.Button(transforms,text=title,command=lambda op=title:self.owner.guard(lambda:self.transform(op))).pack(side='left',padx=3)
+        more=ttk.Menubutton(transforms,text='Transform');menu=tk.Menu(more,tearoff=False)
+        for title in ('Rotate right','Rotate left','Nudge left','Nudge right','Nudge up','Nudge down','Clear'):
+            menu.add_command(label=title,command=lambda op=title:self.owner.guard(lambda:self.transform(op)))
+        more.configure(menu=menu);more.pack(side='left',padx=3)
+        self.all_frames=tk.BooleanVar(value=False);self.wrap=tk.BooleanVar(value=False)
+        ttk.Checkbutton(transforms,text='All frames',variable=self.all_frames).pack(side='left',padx=8)
+        ttk.Checkbutton(transforms,text='Wrap nudged pixels',variable=self.wrap).pack(side='left')
+        self.grid=tk.BooleanVar(value=True)
+        ttk.Checkbutton(transforms,text='Grid',variable=self.grid,command=self.draw).pack(side='left',padx=8)
         view=ttk.Frame(self.window);view.pack(fill='both',expand=True,padx=8,pady=(0,8));view.columnconfigure(0,weight=1);view.rowconfigure(0,weight=1)
         self.canvas=tk.Canvas(view,highlightthickness=0,background='#d6d6d6')
         sx=ttk.Scrollbar(view,orient='horizontal',command=self.canvas.xview);sy=ttk.Scrollbar(view,command=self.canvas.yview)
@@ -167,7 +204,7 @@ class PixelEditor:
         self.canvas.delete('all');z=int(self.zoom.get());self.preview=photo(self.window,self.image,max(0,self.frame.current()),z)
         self.canvas.create_image(0,0,image=self.preview,anchor='nw');w,h=self.image['width']*z,self.image['height']*z
         self.canvas.configure(scrollregion=(0,0,w,h))
-        if z>=8:
+        if z>=8 and self.grid.get():
             for x in range(0,w+1,z):self.canvas.create_line(x,0,x,h,fill='#888888')
             for y in range(0,h+1,z):self.canvas.create_line(0,y,w,y,fill='#888888')
     def choose_color(self):
@@ -192,6 +229,11 @@ class PixelEditor:
     def redo(self):
         self.playing=False
         if self.future:self.history.append(self.image);self.image=self.future.pop();self.refresh_frames();self.draw()
+    def transform(self, operation):
+        self.playing=False;self.finish();candidate=copy.deepcopy(self.image)
+        transform(candidate,operation,self.frame.current(),self.all_frames.get(),self.wrap.get())
+        if candidate!=self.image:
+            self.history.append(self.image);self.history=self.history[-40:];self.future=[];self.image=candidate;self.draw()
     def add_frame(self):
         if len(self.image['frames'])==32:raise EditorError('An image can have at most 32 frames.')
         self.history.append(copy.deepcopy(self.image));self.future=[];self.image['frames'].append(copy.deepcopy(self.image['frames'][self.frame.current()]));self.refresh_frames();self.frame.current(len(self.image['frames'])-1);self.draw()
