@@ -3,6 +3,7 @@
 #include "core/cache.h"
 #include "core/party.h"
 #include "core/roster_game.h"
+#include "data/project.h"
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
@@ -13,7 +14,7 @@
 #include <sys/stat.h>
 #endif
 
-enum { HEADER_BYTES = 16, UPDATED_HEADER_BYTES = 112 };
+enum { HEADER_BYTES = 16, UPDATED_HEADER_BYTES = 112, PROJECT_HEADER_BYTES = 160 };
 static int fail(BtpError *e, const char *message)
 {
     if (e) snprintf(e->text,sizeof e->text,"%s",message);
@@ -64,14 +65,16 @@ int btp_save_write(const char *path, const BtpState *s, const BtpResources *r, B
 {
     if (!path || !*path || !s || !r) return fail(e,"Invalid save request");
     int updated=r->roster.count!=0;
+    int project=r->project!=NULL;
+    if (!!s->project!=project) return fail(e,"State and project context disagree");
     if (s->combat_profile>1 || (!!s->combat_profile != !!s->combat_fingerprint) ||
         (s->combat_profile && !btp_active_combat_profile(s,r)))
         return fail(e,"Current combat rules do not match the loaded Updated profile");
     if (s->campaign.ui>=BTP_MENU_UPDATED_SETTINGS && s->campaign.ui<=BTP_MENU_COMBAT_RULES &&
         (!updated || !r->combat_profile.fingerprint))
         return fail(e,"Updated combat settings require their rule definition");
-    size_t header=updated ? UPDATED_HEADER_BYTES : HEADER_BYTES;
-    uint8_t bytes[UPDATED_HEADER_BYTES+BTP_STATE_BYTES] = {'B','T','S','1'};
+    size_t header=project ? PROJECT_HEADER_BYTES : updated ? UPDATED_HEADER_BYTES : HEADER_BYTES;
+    uint8_t bytes[PROJECT_HEADER_BYTES+BTP_STATE_BYTES] = {'B','T','S','1'};
     if (updated) {
         memcpy(bytes,"BTU1",4);
         memcpy(bytes+16,r->roster.package,32);memcpy(bytes+48,r->roster.version,32);
@@ -83,6 +86,14 @@ int btp_save_write(const char *path, const BtpState *s, const BtpResources *r, B
         /* BTU2 binds rules as well as roster. Old BTU1 remains Legacy. */
         memcpy(bytes,"BTU2",4);put32(bytes+84,s->combat_profile);
         put32(bytes+88,s->combat_fingerprint);
+    }
+    if (project) {
+        /* v1 policy deliberately has no automatic migration. Bind every
+           authored input before interpreting local unit handles or orders. */
+        memset(bytes+16,0,PROJECT_HEADER_BYTES-16);memcpy(bytes,"BTG1",4);
+        memcpy(bytes+16,r->project->id,32);memcpy(bytes+48,r->project->version,32);
+        memcpy(bytes+80,r->project->digest,32);
+        put32(bytes+112,s->combat_profile);put32(bytes+116,s->combat_fingerprint);
     }
     /* v44 retains the payload size and edition-specific outer envelopes.
        Older Original and Updated payloads still load through their codecs. */
@@ -96,8 +107,11 @@ int btp_save_write(const char *path, const BtpState *s, const BtpResources *r, B
        Refuse crossing editions even there, retaining the existing save. */
     FILE *existing=fopen(path,"rb");
     if (existing) {
-        char tag[4];size_t got=fread(tag,1,4,existing);fclose(existing);
-        if (got==4 && ((!updated && (!memcmp(tag,"BTU1",4) || !memcmp(tag,"BTU2",4))) ||
+        char tag[PROJECT_HEADER_BYTES];size_t got=fread(tag,1,sizeof tag,existing);fclose(existing);
+        if ((project && (got<PROJECT_HEADER_BYTES || memcmp(tag,"BTG1",4) || memcmp(tag+16,bytes+16,96))) ||
+            (!project && got>=4 && !memcmp(tag,"BTG1",4)))
+            return fail(e,"Cannot overwrite another project/content version's save; choose a separate filename");
+        if (got>=4 && ((!updated && (!memcmp(tag,"BTU1",4) || !memcmp(tag,"BTU2",4))) ||
             (updated && (!memcmp(tag,"BTS1",4) || (unsigned char)tag[0]==12))))
             return fail(e,"Cannot overwrite another edition's save; choose a separate filename");
     }
@@ -136,20 +150,26 @@ int btp_save_load(const char *path, BtpState *s, const BtpResources *r, BtpError
     if (!path || !*path || !s || !r) return fail(e,"Invalid load request");
     FILE *f = fopen(path,"rb");
     if (!f) return io_fail(e,"Cannot open save");
-    uint8_t bytes[UPDATED_HEADER_BYTES+BTP_STATE_BYTES+1];
+    uint8_t bytes[PROJECT_HEADER_BYTES+BTP_STATE_BYTES+1];
     size_t n = fread(bytes,1,sizeof bytes,f);
     int ok = !ferror(f); if (fclose(f)) ok = 0;
     if (!ok) return fail(e,"Cannot read save");
+    int project=n>=4 && !memcmp(bytes,"BTG1",4);
+    if (project!=!!r->project) return fail(e,project ? "Project save requires --project with its original content directory" : "Project campaigns require their own saves; start a new project campaign");
     if (n==BTP_ORIGINAL_BYTES && bytes[0]==12) return btp_original_decode(bytes,n,s,r,e);
-    int v2=n>=4 && !memcmp(bytes,"BTU2",4);
+    int v2=project || (n>=4 && !memcmp(bytes,"BTU2",4));
     int updated=v2 || (n>=4 && !memcmp(bytes,"BTU1",4));
-    size_t header=updated ? UPDATED_HEADER_BYTES : HEADER_BYTES;
+    size_t header=project ? PROJECT_HEADER_BYTES : updated ? UPDATED_HEADER_BYTES : HEADER_BYTES;
     if (n < header+24 || (!updated && memcmp(bytes,"BTS1",4)) || get32(bytes+12) ||
         get32(bytes+4) != n-HEADER_BYTES || n > header+BTP_STATE_BYTES ||
         checksum(bytes+HEADER_BYTES,n-HEADER_BYTES) != get32(bytes+8))
         return fail(e,"Save is damaged or uses an unsupported format");
     unsigned saved_count=r->roster.count;
-    if (updated) {
+    if (project) {
+        if (memcmp(bytes+16,r->project->id,32) || memcmp(bytes+48,r->project->version,32) || memcmp(bytes+80,r->project->digest,32))
+            return fail(e,"Project save requires the exact saved content; restore that project or start a new campaign with a separate save filename");
+        for (unsigned i=120;i<PROJECT_HEADER_BYTES;++i) if (bytes[i]) return fail(e,"Unsupported project save metadata");
+    } else if (updated) {
         if (!r->roster.count) return fail(e,"This save belongs to Updated BTECH CHI");
         saved_count=btp_roster_saved_count(&r->roster,bytes+16,bytes+48,get32(bytes+80));
         if (!saved_count)
@@ -162,8 +182,9 @@ int btp_save_load(const char *path, BtpState *s, const BtpResources *r, BtpError
     BtpState loaded;
     if (!decode(bytes+header,n-header,&loaded,r) || !btp_roster_state_prefix_valid(&loaded,r,saved_count))
         return fail(e,"Save contains an invalid or unsupported game state");
-    if ((!v2 && (loaded.combat_profile || bytes[header+4]>=45)) ||
-        (v2 && ((bytes[header+4]!=45 && bytes[header+4]!=46) || get32(bytes+84)!=loaded.combat_profile || get32(bytes+88)!=loaded.combat_fingerprint)) ||
+    unsigned rule_offset=project ? 112u : 84u;
+    if (!!loaded.project!=project || (!v2 && (loaded.combat_profile || bytes[header+4]>=45)) ||
+        (v2 && ((project ? bytes[header+4]!=47 : bytes[header+4]!=45 && bytes[header+4]!=46) || get32(bytes+rule_offset)!=loaded.combat_profile || get32(bytes+rule_offset+4)!=loaded.combat_fingerprint)) ||
         (loaded.combat_profile && !btp_active_combat_profile(&loaded,r)) ||
         (loaded.campaign.ui>=BTP_MENU_UPDATED_SETTINGS && loaded.campaign.ui<=BTP_MENU_COMBAT_RULES &&
             (!updated || !r->combat_profile.fingerprint)))
@@ -217,6 +238,11 @@ int btp_save_edition_slot_path(const char *base,unsigned slot,const BtpResources
     }
     if (!dot || dot==leaf) dot=base+strlen(base);
     size_t prefix=(size_t)(dot-base);
+    if (r->project) {
+        char named[4096];int n=snprintf(named,sizeof named,"%.*s-project-%s%s",(int)prefix,base,r->project->id,dot);
+        if (n<0 || (size_t)n>=sizeof named) return fail(e,"Project save path is too long");
+        return btp_save_slot_path(named,slot,path,capacity,e);
+    }
     if (prefix>=8 && !memcmp(dot-8,"-updated",8)) return btp_save_slot_path(base,slot,path,capacity,e);
     char named[4096];
     if (prefix>sizeof named-10 || strlen(dot)>sizeof named-prefix-10) return fail(e,"Save path is too long");

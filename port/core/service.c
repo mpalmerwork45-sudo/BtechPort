@@ -76,7 +76,7 @@ unsigned btp_mech_reload(BtpState *s,const BtpResources *r,unsigned slot,unsigne
 }
 int btp_mech_refit(BtpState *s,const BtpResources *r,unsigned slot)
 {
-    uint8_t *m=btp_party_mech(s,slot);if (!m || m[123]>3 || m[124]==3) return 0;
+    uint8_t *m=btp_party_mech(s,slot);if (!m || btp_roster_custom(m) || m[123]>3 || m[124]==3) return 0;
     unsigned choice=btp_mech_refit_index(m),cost=btp_mech_refit_price(&r->combat,choice);
     if (!cost || !btp_try_spend_credits(s,cost)) return 0;
     return btp_mech_apply_refit(&r->combat,m,choice);

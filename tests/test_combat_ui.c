@@ -288,7 +288,7 @@ static void battle_reports(const BtpResources *r,uint32_t *frame)
         }
         BtpState s;setup(&s,r);s.combat.phase=BTP_COMBAT_ROUND;s.combat.messages=(uint8_t)mode;
         s.effects.shown=(BtpBattleText){1,(uint8_t)actor,(uint8_t)target,0,0,(uint8_t)weapon,
-            (uint8_t)hit,(uint8_t)location,(uint8_t)criticals,0,(uint8_t)dead};
+            (uint8_t)hit,(uint8_t)location,(uint8_t)criticals,0,(uint8_t)dead,0,0};
         uint8_t message[1024];size_t n=btp_battle_text(r,&s.effects.shown,mode,message);
         uint64_t h=UINT64_C(14695981039346656037);
         for (size_t i=0;i<n;++i) if (message[i]>2) h=(h^message[i])*UINT64_C(1099511628211);

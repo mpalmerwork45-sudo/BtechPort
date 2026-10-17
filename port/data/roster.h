@@ -7,7 +7,7 @@
    Codes are explicitly assigned by a package, never inferred from its order,
    a display name, a sprite, or a party slot. Saved packages also retain their
    namespaced identities and definition fingerprint. */
-enum { BTP_ROSTER_MAX=32, BTP_ROSTER_CODE=160, BTP_ROSTER_ID=64 };
+enum { BTP_ROSTER_MAX=256, BTP_LEGACY_ROSTER_MAX=32, BTP_ROSTER_CODE=160, BTP_ROSTER_ID=64 };
 enum { BTP_ROSTER_ALL, BTP_ROSTER_LIGHT, BTP_ROSTER_MEDIUM, BTP_ROSTER_HEAVY, BTP_ROSTER_ASSAULT };
 typedef struct {
     char id[BTP_ROSTER_ID];

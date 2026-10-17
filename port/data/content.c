@@ -1,5 +1,6 @@
 #include "data/content.h"
 #include "data/portraits.h"
+#include "data/project.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -13,6 +14,7 @@ static int fail(BtpError *error, const char *message)
 void btp_content_close(BtpContent *content)
 {
     if (!content) return;
+    if (content->resources) free(content->resources->project);
     free(content->resources);
     *content = (BtpContent){0};
 }
@@ -38,6 +40,8 @@ int btp_content_select(BtpContent *content,BtpContentProfile profile,const char 
         content->resources->combat_profile=(BtpCombatProfile){0};
         memset(&content->resources->portraits,0,sizeof content->resources->portraits);
     } else return fail(error,"Unknown game edition");
+    free(content->resources->project);content->resources->project=NULL;
+    content->resources->combat.definitions=NULL;
     content->profile=profile;if (error) error->text[0]=0;return 1;
 }
 
@@ -64,4 +68,21 @@ int btp_content_load_original(BtpContent *content,
     content->resources = candidate;
     content->profile = BTP_CONTENT_ORIGINAL_DOS_103;
     return 1;
+}
+
+int btp_content_load_project(BtpContent *content,const char *directory,
+    const BtpOriginalContentPaths *dependency,BtpError *error)
+{
+    BtpContent candidate={0};
+    if (!content || !directory) return fail(error,"Project directory is required");
+    /* Stage the whole dependency and package. A typo in a later asset never
+       replaces a playable context or frees definitions still in use. */
+    if (!btp_content_load_original(&candidate,dependency,error)) return 0;
+    BtpResources *r=candidate.resources;
+    r->project=btp_project_load(directory,&r->roster,&r->portraits,error);
+    if (!r->project) { btp_content_close(&candidate);return 0; }
+    r->combat.definitions=&r->project->definitions;
+    r->combat_profile=r->project->definitions.rules;
+    candidate.profile=BTP_CONTENT_PROJECT;
+    btp_content_close(content);*content=candidate;return 1;
 }

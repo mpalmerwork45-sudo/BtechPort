@@ -182,7 +182,7 @@ static int mech(Reader *p,BtpRosterMech *m)
     }
     if (!take(p,'}') || seen!=16383) return bad(p,"incomplete mech definition");
     if (!identifier(m->id,1) || !name[0] || name[0]<'A' || name[0]>'Z' ||
-        b[123]<BTP_ROSTER_CODE || b[123]>=BTP_ROSTER_CODE+BTP_ROSTER_MAX ||
+        b[123]<BTP_ROSTER_CODE || b[123]>=BTP_ROSTER_CODE+BTP_LEGACY_ROSTER_MAX ||
         b[16]<20 || b[16]>100 || !b[49] || b[49]>12 || b[50]>12 || b[38]>30 || !m->price)
         return bad(p,"invalid mech identity, weight, movement, heat or price");
     for (unsigned i=0;i<8;++i) if (!b[28+i] || b[28+i]>40 || b[17+i]>2u*b[28+i]+(i==3 ? 3u : 0u))
@@ -254,7 +254,7 @@ static int decode(Reader *p,BtpRoster *r)
         else {
             int another=1;if (!take(p,'[')) return 0;
             while (another) {
-                if (r->count==BTP_ROSTER_MAX) return bad(p,"too many mech definitions");
+                if (r->count==BTP_LEGACY_ROSTER_MAX) return bad(p,"too many mech definitions");
                 if (!mech(p,&r->mechs[r->count++]) || !next(p,']',&another)) return 0;
             }
             if (!take(p,']')) return 0;
@@ -292,11 +292,11 @@ int btp_roster_load(const char *path,BtpRoster *roster,char error[256])
 }
 int btp_roster_custom(const uint8_t m[125])
 {
-    return m && (m[124]==128 || m[124]==129) &&
-        m[123]>=BTP_ROSTER_CODE && m[123]<BTP_ROSTER_CODE+BTP_ROSTER_MAX;
+    return m && ((m[124]==192 || m[124]==193) || ((m[124]==128 || m[124]==129) &&
+        m[123]>=BTP_ROSTER_CODE && m[123]<BTP_ROSTER_CODE+BTP_LEGACY_ROSTER_MAX));
 }
 const BtpRosterMech *btp_roster_definition(const BtpRoster *r,const uint8_t m[125])
 {
-    if (r && btp_roster_custom(m)) for (unsigned i=0;i<r->count;++i) if (r->mechs[i].record[123]==m[123]) return &r->mechs[i];
+    if (r && btp_roster_custom(m)) for (unsigned i=0;i<r->count;++i) if (r->mechs[i].record[123]==m[123] && r->mechs[i].record[124]==m[124]) return &r->mechs[i];
     return NULL;
 }

@@ -42,13 +42,15 @@ Rebuilding prepares the updated local combat cache from your original files.
 The proposed path to more mechs, custom game packages, BLD/Lua scripting and a
 Windows/Linux editor is recorded in the
 [engine and editor plan](docs/ENGINE_AND_EDITOR_PLAN.md).
-The preparation work adds shared content loading, named unit lookups, separate
-original-script dispatch and save encoding, plus a validated authoring sample.
-See [implementation and verification](docs/M5_PREPARATION.md) and the
-[three-model prototype](examples/content-demo/README.md). The prototype remains
-an offline example. The first playable [M5a roster slice](docs/M5A_ROSTER_SLICE.md)
-now loads an optional external roster; general game packages, Lua and the editor
-remain planned features.
+The [shared authoring format and project loader](docs/M5_AUTHORING_PROJECTS.md)
+now support editable CHI-dependent projects, up to 256 mech definitions, custom
+weapon statistics, explicit portrait assets and separate package-bound saves.
+Use `btp-project export` to make an editable copy of Updated, or start with the
+[Workshop example](examples/project-demo/README.md). The
+[project guide](docs/M5_AUTHORING_PROJECTS.md#create-validate-and-play) gives
+export, validation and play commands for both platforms. Original and Updated
+remain available as before. Authored maps/events, Lua, independent games and the
+desktop editor are the next stages.
 
 An ordinary launch first asks **Original BTECH CHI** or **Updated BTECH CHI**,
 before the Westwood/Infocom logo. Original is the default. Use arrows and

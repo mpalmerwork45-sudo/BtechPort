@@ -50,7 +50,7 @@ typedef struct {
 } BtpCombatEffect;
 /* Capture names/results when a shot resolves, before ejection or later shots
    change the records. Presentation consumes this alongside the saved effects. */
-typedef struct { uint8_t active,actor,target,actor_name,target_name,weapon,hit,location,criticals,spectator,dead; } BtpBattleText;
+typedef struct { uint8_t active,actor,target,actor_name,target_name,weapon,hit,location,criticals,spectator,dead,authored,content_weapon; } BtpBattleText;
 typedef struct { uint8_t active,name,mech[15],ejections; } BtpQuietReport;
 typedef struct { uint8_t count,age,pending,stage,outtakes[24][2];BtpCombatEffect shots[24];BtpBattleText text[24],shown;BtpQuietReport quiet; } BtpEffectsState;
 typedef struct {
@@ -174,6 +174,7 @@ typedef struct {
        Zero is Legacy, including every save predating this field. */
     uint8_t combat_profile;
     uint32_t combat_fingerprint;
+    uint8_t project; /* Requires the package-bound save envelope, including before owning a custom mech. */
 } BtpState;
 enum { BTP_STATE_BYTES = 20480 };
 

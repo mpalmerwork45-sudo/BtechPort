@@ -1,0 +1,13 @@
+{
+  "format": "btp-project-v1",
+  "schema_version": 1,
+  "package_id": "workshop",
+  "content_version": "1.0.0",
+  "title": "Workshop CHI project",
+  "requires": "chi-original-dos-1.03",
+  "startup": "chi-training-v1",
+  "rules_profile": "chi:updated-lrm-v1",
+  "save_policy": "strict-content-v1",
+  "definitions": "content.json",
+  "assets": []
+}

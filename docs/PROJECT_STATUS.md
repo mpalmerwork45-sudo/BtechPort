@@ -1,4 +1,10 @@
-# Project status — original fidelity and expanded M5a roster, 2026-10-17
+# Project status — original fidelity and editable projects, 2026-10-17
+
+Editor-roadmap tasks 1–2 now provide a shared authoring contract, validator,
+31-model export, 256-model project catalogue, per-mount weapon definitions and
+an explicit CHI-dependent project loader with strict package saves. See
+[implementation, commands and limits](M5_AUTHORING_PROJECTS.md). This is the M5b
+foundation; maps/events, a standalone game and the GUI editor remain later tasks.
 
 The independent C11/SDL2 port has playable implementations of the authorized
 M4a–M4e increments and the subsequent building, theft, encounter, recruitment and
@@ -64,7 +70,7 @@ full regression suite, seeded comparisons, Windows, sanitizers and SDL saves.
 | Owner follow-ups | Four Jenners/ruins escape, purchase recipients, armour repair, original crew/inspection/engagement/Speed Shop selectors, world seed/city alignment, all-party collision and gait, replacement recruits and spy confrontation |
 | Fresh campaign | New-cadet input route through training, companions, paid apprenticeships, holodisk, password and cache ending; original checks at selected prerequisites |
 | Remaining original campaign | Additional branches and broader DOS combat/presentation parity |
-| M5 | P1–P5 preparation and the [first playable M5a roster](M5A_ROSTER_SLICE.md) implemented; general packages, Lua and editor remain in the [plan](ENGINE_AND_EDITOR_PLAN.md) |
+| M5 | Preparation, Updated roster, shared definitions and CHI-dependent editable projects implemented; authored maps/events, independent games, Lua and editor remain in the [plan](ENGINE_AND_EDITOR_PLAN.md) |
 | Updated LRM1–LRM5 | Saved Enhanced/Legacy profiles, LRM minimum range, weapon-aware positioning and volleys, live firing checks and release verification |
 
 The owner-requested [engine and editor plan](ENGINE_AND_EDITOR_PLAN.md) records

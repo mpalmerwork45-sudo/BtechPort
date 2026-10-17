@@ -66,6 +66,7 @@ typedef struct {
     BtpCombatData combat;
     BtpWorldData world;
     BtpRoster roster; /* Empty in Original; immutable for a running session. */
+    struct BtpProject *project; /* Owned by BtpContent; NULL for released editions. */
     BtpCombatProfile combat_profile; /* Optional authored Updated rules. */
     /* Cosmetic Updated-pack art, separate from original O*.ANM and save IDs. */
     BtpPortraits portraits;

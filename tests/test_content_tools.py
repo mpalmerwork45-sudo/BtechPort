@@ -9,7 +9,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'tools'))
-import validate_content as content
+import validate_content_prototype as content
 
 
 class ContentTools(unittest.TestCase):
@@ -175,7 +175,7 @@ class ContentTools(unittest.TestCase):
         path = self.directory / 'sample with spaces.json'
         path.write_text(json.dumps(self.sample), encoding='utf-8')
         def run(*args):
-            return subprocess.run([sys.executable, str(ROOT / 'tools/validate_content.py'),
+            return subprocess.run([sys.executable, str(ROOT / 'tools/validate_content_prototype.py'),
                                    str(path), *args], cwd=self.directory,
                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False)
         success = run('--canonical')

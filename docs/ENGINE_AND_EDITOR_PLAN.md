@@ -714,9 +714,11 @@ before treating it as a stable editor contract. M5b–M5e remain future work.
 ## 13. Next five tasks toward an editor
 
 Updated **2026-10-17** after the categorized broker and 31-model roster. These
-are proposed work, not features implemented by that increment. The next useful
-milestone is **a shared authoring contract and validator**, followed by a small
-project loader. A GUI can then edit files the player already understands.
+were proposed after that increment. **Tasks 1 and 2 are now implemented**, with
+commands, explicit CHI-profile limits and verification in
+[M5 authoring/projects](M5_AUTHORING_PROJECTS.md). Task 2 is the CHI-dependent
+foundation, not the independent-game milestone. Task 3 is next. A GUI can now
+begin editing unit/weapon files the player already understands.
 
 1. **Finish the content definition boundary (M5a).** Reconcile
    `btp-chi-roster-v1`, `combat.json` and the provisional general schema into one

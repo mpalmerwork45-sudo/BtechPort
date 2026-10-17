@@ -18,6 +18,8 @@ add_library(btp_core port/core/game.c port/core/script.c port/core/talk.c port/c
 target_include_directories(btp_core PUBLIC port)
 target_sources(btp_core PRIVATE port/data/content.c port/data/unit_data.c port/data/roster.c port/data/portraits.c)
 target_sources(btp_core PRIVATE port/data/combat_profile.c)
+target_sources(btp_core PRIVATE port/data/json.c port/data/definitions.c)
+target_sources(btp_core PRIVATE port/data/digest.c port/data/project.c port/data/file.c)
 target_sources(btp_core PRIVATE port/core/combat_rules.c port/core/combat.c port/core/effects.c)
 target_sources(btp_core PRIVATE port/core/combat_ai.c)
 target_sources(btp_core PRIVATE port/core/world.c port/data/world.c port/data/generate.c)
@@ -50,6 +52,8 @@ add_executable(btp-audio-render tools/audio_render.c)
 target_link_libraries(btp-audio-render PRIVATE btp_core)
 add_executable(btp-roster-check tools/roster_check.c)
 target_link_libraries(btp-roster-check PRIVATE btp_core)
+add_executable(btp-project tools/project.c)
+target_link_libraries(btp-project PRIVATE btp_core)
 
 if(BTP_FRONTEND)
   find_package(SDL2 QUIET CONFIG)
@@ -106,6 +110,12 @@ if(BUILD_TESTING)
     "${PROJECT_SOURCE_DIR}/work/combat-data.bin" "${PROJECT_SOURCE_DIR}/work/world-data.bin"
     "${PROJECT_SOURCE_DIR}/content/updated/roster.json")
   add_executable(btp-content-tests tests/test_content.c)
+  add_executable(btp-project-tests tests/test_project.c)
+  target_link_libraries(btp-project-tests PRIVATE btp_pixels)
+  add_test(NAME authored-project-content COMMAND btp-project-tests
+    "${PROJECT_SOURCE_DIR}/Original DOS" "${PROJECT_SOURCE_DIR}/work/talk-data.bin"
+    "${PROJECT_SOURCE_DIR}/work/combat-data.bin" "${PROJECT_SOURCE_DIR}/work/world-data.bin"
+    "${PROJECT_SOURCE_DIR}/content/updated/roster.json" "${PROJECT_SOURCE_DIR}/examples/project-demo")
   add_executable(btp-recovery-tests tests/test_recovery.c)
   target_link_libraries(btp-recovery-tests PRIVATE btp_core)
   add_test(NAME party-straggler-recovery COMMAND btp-recovery-tests

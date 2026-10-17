@@ -1,4 +1,9 @@
-# Unit authoring prototype
+# Archived unit authoring prototype
+
+This offline experiment predates the shared runtime contract. New work should
+use the [playable Workshop project](../project-demo/README.md) and
+[project guide](../../docs/M5_AUTHORING_PROJECTS.md). Its unimplemented sprite
+and construction semantics are not silently treated as CHI content.
 
 This independently authored example defines **Trail Kite**, **Quarry Guard** and
 **Ridge Hopper**, two weapons and one placeholder sprite sheet. Its names and
@@ -12,8 +17,8 @@ before committing to a runtime loader or editor.
 From the repository root, using only Python's standard library:
 
 ```sh
-python3 tools/validate_content.py examples/content-demo/content.json
-python3 tools/validate_content.py examples/content-demo/content.json --canonical
+python3 tools/validate_content_prototype.py examples/content-demo/content.json
+python3 tools/validate_content_prototype.py examples/content-demo/content.json --canonical
 python3 -m unittest discover -s tests -p test_content_tools.py
 ```
 
@@ -25,7 +30,7 @@ sample until authored files replace its placeholder.
 
 ## Contract and limits
 
-[content-v1.schema.json](../../schemas/content-v1.schema.json) supplies structural
+[content-v1.schema.json](../../schemas/archive/content-prototype-v1.schema.json) supplies structural
 rules, field units, limits and required fields. The offline validator reads that
 same schema, then checks references and cross-field consistency. Its small JSON
 Schema keyword subset is specific to this file; unsupported schema keywords

@@ -76,7 +76,7 @@ void btp_party_transfer(BtpState *s,unsigned giver,unsigned recipient,unsigned i
 static unsigned structure(const uint8_t m[125],unsigned component)
 {
     static const unsigned ends[]={58,65,72,79,81,83,85,86},parts[]={28,29,33,34,30,35,32,31};
-    if (m[123]==200) return 1;
+    if (m[123]==200 && !btp_roster_custom(m)) return 1;
     for (unsigned i=0;i<8;++i) if (component<ends[i]) return m[parts[i]];
     return 0;
 }

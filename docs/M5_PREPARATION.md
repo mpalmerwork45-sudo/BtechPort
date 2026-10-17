@@ -1,5 +1,9 @@
 # M5 preparation — preserving the playable original
 
+Historical preparation report. The later [authoring/project milestone](M5_AUTHORING_PROJECTS.md)
+implements runtime definitions and CHI-dependent packages. The provisional
+sample and its validator below are retained as an archived experiment.
+
 **2026-10-16: P1–P5 implemented and verified within the bounds below.**
 These are the five bounded increments in the
 [engine/editor plan](ENGINE_AND_EDITOR_PLAN.md). P1 was previously completed;
@@ -77,9 +81,9 @@ characters, factions, encounters, stock/services, story/native actions, fonts,
 text, UI, animations, sound and persistence, then lists the concrete missing
 inputs for an independent game.
 
-The provisional [schema](../schemas/content-v1.schema.json),
+The provisional [schema](../schemas/archive/content-prototype-v1.schema.json),
 [three-model example](../examples/content-demo/README.md) and
-[offline validator](../tools/validate_content.py) exercise namespaced IDs,
+[offline validator](../tools/validate_content_prototype.py) exercise namespaced IDs,
 weapon references, explicit mount slots, units/bounds, capabilities, sprite
 geometry and animation blocks. The validator also rejects malformed JSON,
 duplicate IDs/keys, incompatible loadouts and nonportable/escaping asset paths.
@@ -146,7 +150,7 @@ ctest --test-dir build --output-on-failure
 python3 tools/windows_check.py --ctest
 python3 tools/verify_preparation.py --before work/m5-preparation/before
 python3 -m unittest discover -s tests -p 'test_*.py'
-python3 tools/validate_content.py examples/content-demo/content.json
+python3 tools/validate_content_prototype.py examples/content-demo/content.json
 python3 tools/native_smoke.py --windows --portability-only
 python3 tools/native_smoke.py --mechit-only
 python3 tools/reference_guard.py verify

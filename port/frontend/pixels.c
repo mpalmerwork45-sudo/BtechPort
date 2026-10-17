@@ -1,4 +1,5 @@
 #include "data/unit_data.h"
+#include "data/definitions.h"
 #include "frontend/pixels.h"
 #include "core/animation.h"
 #include "core/world.h"
@@ -243,10 +244,11 @@ void btp_mech_screen(const BtpResources *r,const uint8_t m[125],const char *pilo
     mech_blocks(f,34,6,10,(int)sinks);
     static const char *const locations[]={"LA","LT","RA","RT","LL","RL","CT","H"};
     int row=6;
-    for (unsigned i=51;i<=85;++i) {
+    for (unsigned i=51,bin=0;i<=85;++i) {
         unsigned component=m[i]&127u;if (component<16 || component>32) continue;
         unsigned part=i>=85 ? 7u : i>=83 ? 6u : i>=81 ? 5u : i>=79 ? 4u : i>=72 ? 3u : i>=65 ? 2u : i>=58 ? 1u : 0u;
-        char weapon[12];memcpy(weapon,r->combat.weapons[component-1],11);weapon[11]=0;
+        BtpCombatUnit viewed={0};memcpy(viewed.record,m,125);
+        char weapon[12];memcpy(weapon,btp_unit_weapon_definition(&r->combat,&viewed,bin++).name,11);weapon[11]=0;
         unsigned color=m[i]&128u ? 8u : 14u;
         text(r,f,0,8*row,weapon,color);text(r,f,88,8*row,locations[part],color);++row;
     }
@@ -554,10 +556,10 @@ static void combat_scan_menu(const BtpResources *r,const BtpCombatState *c,uint3
         text(r,f,8,112+(int)i*8,label,i==c->selected ? 0u : 15u);
     }
 }
-static const char *combat_range_name(const BtpResources *r,const BtpCombatProfile *profile,unsigned weapon,const BtpCombatUnit *actor,const BtpCombatUnit *target)
+static const char *combat_range_name(const BtpResources *r,const BtpCombatProfile *profile,unsigned mount,const BtpCombatUnit *actor,const BtpCombatUnit *target)
 {
     static const char *const names[]={"Short","Med","Long","OUT"};
-    return names[btp_combat_profile_range(&r->combat,profile,weapon,actor,target,NULL)];
+    return names[btp_combat_mount_range(&r->combat,profile,actor,target,mount,NULL)];
 }
 static void combat_target_panel(const BtpResources *r,const BtpCombatState *c,uint32_t *f,const BtpCombatProfile *profile)
 {
@@ -575,14 +577,14 @@ static void combat_target_panel(const BtpResources *r,const BtpCombatState *c,ui
     if (heading) (void)wrapped_at(r,f,8,8,11,heading,n,15);
     char name[16];memcpy(name,target->record,15);name[11]=0;
     text(r,f,8,40,"Target:",10);text(r,f,8,48,target->infantry ? "Human" : name,15);
-    text(r,f,8,56,"Range:",10);text(r,f,8,64,combat_range_name(r,profile,c->phase==BTP_COMBAT_KICK ? 32u : type ? type-1u : 33u,actor,target),15);
+    text(r,f,8,56,"Range:",10);text(r,f,8,64,combat_range_name(r,profile,c->phase==BTP_COMBAT_KICK ? 11u : c->weapon_selected,actor,target),15);
     if (target->infantry && target->record[11]<33) {
         memcpy(name,r->combat.weapons[target->record[11]],11);name[11]=0;
         text(r,f,8,72,"Weapon:",10);text(r,f,8,80,name,15);
     }
     if (profile && c->phase!=BTP_COMBAT_KICK && type && btp_combat_profile_lrm(type-1u)) {
         unsigned penalty=0;
-        (void)btp_combat_profile_range(&r->combat,profile,type-1u,actor,target,&penalty);
+        (void)btp_combat_mount_range(&r->combat,profile,actor,target,c->weapon_selected,&penalty);
         char modifier[16];snprintf(modifier,sizeof modifier,"+%u to hit",penalty);
         /* The lower command well is eleven columns wide. Keep this separate
            from the original target/infantry weapon facts above it. */
@@ -611,7 +613,7 @@ static void combat_weapons_panel(const BtpResources *r,const BtpCombatState *c,u
         unsigned target=i<count ? btp_combat_target(c,c->orders[i]) : c->count;
         int assigned=target<c->count && c->unit[target].record[0]!=255;
         unsigned color=type&128u ? 8u : assigned ? 14u : 15u;
-        if (type) { memcpy(name,r->combat.weapons[(type&127u)-1u],11);name[11]=0; }
+        if (type) { memcpy(name,btp_unit_weapon_definition(&r->combat,actor,i).name,11);name[11]=0; }
         if (i==c->weapon_selected) rectangle(f,80,y,80,8,14);
         text(r,f,80,y,name,i==c->weapon_selected ? type&128u ? 6u : 0u : color);
         if (i==count) break;
@@ -622,7 +624,7 @@ static void combat_weapons_panel(const BtpResources *r,const BtpCombatState *c,u
         if (!assigned) { text(r,f,208,y,"None",color);continue; }
         const BtpCombatUnit *unit=&c->unit[target];memcpy(name,unit->record,8);name[8]=0;
         text(r,f,208,y,unit->infantry ? "Human" : name,color);
-        text(r,f,272,y,combat_range_name(r,profile,(type&127u)-1u,actor,unit),color);
+        text(r,f,272,y,combat_range_name(r,profile,i,actor,unit),color);
     }
 }
 static int combat_weapon_window(const BtpCombatState *c)
@@ -644,7 +646,7 @@ static void combat_weapon_message(const BtpResources *r,const BtpCombatState *c,
         snprintf(question,sizeof question,"%s%.11s%s%.11s%s%s%s",
             r->dialogue.bytes+r->dialogue.offset[322],r->combat.weapons[actor->record[11]],
             r->dialogue.bytes+r->dialogue.offset[323],target->infantry ? (const char *)r->dialogue.bytes+r->dialogue.offset[324] : (const char *)target->record,
-            r->dialogue.bytes+r->dialogue.offset[325],combat_range_name(r,NULL,actor->record[11],actor,target),
+            r->dialogue.bytes+r->dialogue.offset[325],combat_range_name(r,NULL,0,actor,target),
             r->dialogue.bytes+r->dialogue.offset[326]);
         message=(const uint8_t *)question;n=strlen(question);
     }
@@ -919,6 +921,8 @@ size_t btp_battle_text(const BtpResources *r,const BtpBattleText *t,unsigned ver
     } else if (t->weapon==32) service_literal(r,message,&n,336);
     if (t->weapon<32) {
         const uint8_t *name=r->combat.weapons[t->weapon];size_t length=0;
+        if (t->authored && r->combat.definitions && t->content_weapon<r->combat.definitions->weapon_count)
+            name=(const uint8_t *)r->combat.definitions->weapons[t->content_weapon].label;
         while (length<11 && name[length]) ++length;
         memcpy(message+n,name,length);n+=length;message[n++]=1;
     }
@@ -1236,7 +1240,10 @@ static void mechit_panel(const BtpResources *r,const BtpState *s,uint32_t *f)
         service_literal(r,message,&n,v->outcome==4 ? 263u : 262u);(void)service_wrap(r,f,8,message,n);return;
     }
     unsigned w=btp_service_ammo_weapon(s,v->mech,v->item);char name[11]={0};
-    if (w && w<=32) memcpy(name,r->combat.weapons[w-1],10);
+    if (w && w<=32) {
+        BtpCombatUnit unit={0};const uint8_t *record=btp_party_mech((BtpState *)s,v->mech);
+        if (record) { memcpy(unit.record,record,125);memcpy(name,btp_unit_weapon_definition(&r->combat,&unit,v->item).name,10); }
+    }
     service_literal(r,message,&n,255);size_t length=strlen(name);memcpy(message+n,name,length);n+=length;
     if (v->outcome==1) { service_literal(r,message,&n,256);(void)service_wrap(r,f,8,message,n);return; }
     service_literal(r,message,&n,257);service_value(message,&n,v->amount,10);service_literal(r,message,&n,258);
@@ -1886,7 +1893,12 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
             } else if ((c->ui==BTP_MENU_BROKER_CONFIRM || c->ui==BTP_MENU_BROKER_SELL_CONFIRM) && model) {
                 uint32_t price=selling ? btp_broker_offer(s,r,id) : r->roster.mechs[id].price;
                 snprintf(line,sizeof line,"%s this 'Mech for %u C-bills?",selling ? "Sell" : "Buy",price);
-                int y=wrapped(r,f,8,(const uint8_t *)line,strlen(line),15)+8;
+                int top=8;
+                if (!selling && r->combat.definitions && id<r->combat.definitions->mech_count) {
+                    const char *full=r->combat.definitions->mechs[id].name;
+                    top=wrapped(r,f,top,(const uint8_t *)full,strlen(full),14)+8;
+                }
+                int y=wrapped(r,f,top,(const uint8_t *)line,strlen(line),15)+8;
                 rectangle(f,c->selected ? 144 : 112,y,c->selected ? 16 : 24,8,14);
                 text(r,f,112,y,"Yes",c->selected ? 15u : 0u);text(r,f,144,y,"No",c->selected ? 0u : 15u);
                 const char *notice=selling ? "Its equipment is included. Its crew stays with you." : "Delivery is outside Starport. Assign a pilot when you leave.";

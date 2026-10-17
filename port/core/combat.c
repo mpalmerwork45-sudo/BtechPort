@@ -1,4 +1,5 @@
 #include "data/unit_data.h"
+#include "data/definitions.h"
 #include "core/combat.h"
 #include "core/combat_ai.h"
 #include "core/npc.h"
@@ -671,7 +672,7 @@ static void round_tick(BtpState *s, const BtpResources *r, int enemy_ai)
             BtpCombatUnit *attacker=&c->unit[actor],*enemy=&c->unit[target];
             unsigned w=i==11 ? 32 : btp_combat_weapon(attacker,i);
             if (w>=33 || (i==11 && !btp_combat_can_kick(attacker))) { *order=255;continue; }
-            if (attacker->heat>=30 || btp_combat_profile_range(&r->combat,btp_active_combat_profile(s,r),w,attacker,enemy,NULL)>=3) continue;
+            if (attacker->heat>=30 || btp_combat_mount_range(&r->combat,btp_active_combat_profile(s,r),attacker,enemy,i,NULL)>=3) continue;
             /* 0E31:1BFE returns visible immediately for E48E and unit 13.
                The arena alarm clears E48E; ordinary shots use the ray. */
             int los=s->campaign.encounter==4 && s->yard.rental && !s->story_flags[35] && btp_combat_id(c,target)==13 ? 1 :
@@ -693,7 +694,15 @@ static void round_tick(BtpState *s, const BtpResources *r, int enemy_ai)
             c->last_attacker=(uint8_t)actor;c->last_target=(uint8_t)target;
             c->last_weapon=(uint8_t)i;c->last_event=(uint8_t)(c->shot.hit ? 1 : 2);
             *fired|=(uint16_t)(1u<<i);c->flash=c->graphics && c->last_event<=2 ? 3 : 0;
+            unsigned queued=s->effects.count;
             btp_effects_shot(s,actor,target,w);
+            const BtpAuthoredWeapon *definition=attacker->infantry ? NULL : btp_authored_weapon(r->combat.definitions,attacker->record,i);
+            if (definition && s->effects.count>queued) {
+                /* Keep the actual authored weapon in queued text even when
+                   another mount shares its animation/sound behavior. */
+                s->effects.text[queued].authored=1;
+                s->effects.text[queued].content_weapon=(uint8_t)(definition-r->combat.definitions->weapons);
+            }
             if (c->graphics) {
                 unsigned kind=0;
                 if (c->shot.hit && !enemy->infantry && (w==10 || w==11)) kind=1;

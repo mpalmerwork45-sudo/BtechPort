@@ -5,7 +5,8 @@
 typedef enum {
     BTP_CONTENT_NONE,
     BTP_CONTENT_ORIGINAL_DOS_103,
-    BTP_CONTENT_UPDATED
+    BTP_CONTENT_UPDATED,
+    BTP_CONTENT_PROJECT
 } BtpContentProfile;
 
 /* Paths are borrowed only while loading. Keep original cache inputs explicit:
@@ -29,4 +30,6 @@ int btp_content_load_original(BtpContent *content,
 void btp_content_close(BtpContent *content);
 int btp_content_select(BtpContent *content,BtpContentProfile profile,
     const char *roster_path,BtpError *error);
+int btp_content_load_project(BtpContent *content,const char *directory,
+    const BtpOriginalContentPaths *dependency,BtpError *error);
 #endif

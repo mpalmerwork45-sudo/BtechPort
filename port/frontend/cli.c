@@ -34,6 +34,7 @@ int btp_options(int argc, char **argv, BtpOptions *o)
                  "  --intro-preview      logos, title music and played-before question\n"
                  "  --edition NAME       original or updated; bypass the startup selector\n"
                  "  --roster FILE        updated edition's external mech definitions\n"
+                 "  --project DIRECTORY editable project; requires explicit --data and three cache paths\n"
                  "  --mute               disable the native audio device\n"
                  "  --export-sprites FILE write original sprite crops for verification\n"
                  "  --export-tiles FILE  write 64000 decoded tile pixel indices\n"
@@ -101,6 +102,11 @@ int btp_options(int argc, char **argv, BtpOptions *o)
             if (!strcmp(arg, "--export-tiles")) value = &o->tiles_output;
             if (!strcmp(arg, "--save-file")) value = &o->save_file;
             if (!strcmp(arg, "--roster")) value = &o->roster;
+            if (!strcmp(arg, "--project")) value = &o->project;
+            if (!strcmp(arg,"--data")) o->explicit_dependencies|=1;
+            if (!strcmp(arg,"--dialogue-data")) o->explicit_dependencies|=2;
+            if (!strcmp(arg,"--combat-data")) o->explicit_dependencies|=4;
+            if (!strcmp(arg,"--world-data")) o->explicit_dependencies|=8;
             if (!strcmp(arg, "--load")) value = &o->load;
             if (!strcmp(arg, "--save")) value = &o->save;
             if (!strcmp(arg,"--audio-report")) value=&o->audio_report;
@@ -135,6 +141,13 @@ int btp_cli_load_content(const BtpOptions *o, BtpContent *content, BtpError *err
         .directory = o->data, .dialogue = o->dialogue_data,
         .combat = o->combat_data, .world = o->world_data
     };
+    if (o->project) {
+        if (o->edition || o->export_original || o->explicit_dependencies!=15) {
+            snprintf(error->text,sizeof error->text,"--project needs explicit --data, --dialogue-data, --combat-data, --world-data; do not combine with --edition or --export-original");
+            return 0;
+        }
+        return btp_content_load_project(content,o->project,&paths,error);
+    }
     if (!btp_content_load_original(content, &paths, error)) return 0;
     BtpContentProfile profile=o->edition;
     /* A supplied save identifies its edition before any state is decoded.
@@ -155,6 +168,7 @@ void btp_initial_state(const BtpOptions *o, BtpState *s, const BtpResources *r)
     if (o->shop_talk_checkpoint) btp_start_shop_conversation_checkpoint(s,r,(unsigned)o->shop_talk_checkpoint);
     else if (o->conversation_checkpoint) btp_start_conversation_checkpoint(s);
     else btp_start(s);
+    s->project=(uint8_t)(r->project!=NULL);
     btp_npc_init(s,&r->map);
     /* Fresh Updated campaigns opt in. Loading a save below replaces this
        state, preserving the saved policy (including old saves' Legacy). */

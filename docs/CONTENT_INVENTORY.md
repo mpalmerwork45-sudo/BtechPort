@@ -1,5 +1,13 @@
 # Content boundaries and remaining original assumptions
 
+The original preparation inventory below is historical. The later
+[authoring/project milestone](M5_AUTHORING_PROJECTS.md) externalizes named mech,
+weapon, ammunition, presentation and service definitions, embeds the selected
+combat profile and loads explicit CHI-dependent manifests. Its shared C
+validator replaces the provisional authoring contract for new runtime content.
+The new adapter supports 256 models; released legacy rosters still use 32 codes.
+Maps, event continuations, BLD, campaign rules and most UI remain the next boundary.
+
 This inventory accompanies [M5 preparation](M5_PREPARATION.md). It distinguishes
 the reusable interface from the original adapter behind it. Moving an operation
 behind an interface does not make every original format authorable.
@@ -96,7 +104,7 @@ M5b implement the corresponding package inputs.
 ## Stable identity and the prototype
 
 The [sample](../examples/content-demo/README.md) and
-[schema](../schemas/content-v1.schema.json) distinguish these identities:
+[schema](../schemas/archive/content-prototype-v1.schema.json) distinguish these identities:
 
 | Identity | Current mapping | Future authored representation |
 | --- | --- | --- |

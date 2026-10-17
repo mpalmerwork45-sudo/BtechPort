@@ -1,4 +1,5 @@
 #include "core/roster_game.h"
+#include "data/definitions.h"
 #include "core/party.h"
 #include "core/npc.h"
 #include "core/menu.h"
@@ -126,6 +127,10 @@ static int record_valid(const uint8_t m[125],const BtpRoster *r,unsigned count)
 }
 int btp_roster_state_prefix_valid(const BtpState *s,const BtpResources *r,unsigned count)
 {
+    for (unsigned i=0;i<25;++i) {
+        const BtpBattleText *t=i<24 ? &s->effects.text[i] : &s->effects.shown;
+        if (t->authored && (!r->combat.definitions || t->content_weapon>=r->combat.definitions->weapon_count)) return 0;
+    }
     if (count>r->roster.count) return 0;
     if (s->campaign.ui==BTP_MENU_UPDATED_ROOT) return 0;
     if (btp_broker_page(s->campaign.ui) && !btp_broker_available(s,r)) return 0;

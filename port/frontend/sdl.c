@@ -1,6 +1,7 @@
 #define SDL_MAIN_HANDLED
 #include <SDL.h>
 #include "frontend/cli.h"
+#include "data/project.h"
 #include "data/save.h"
 #include "core/audio.h"
 #include "core/combat.h"
@@ -145,7 +146,7 @@ int main(int argc, char **argv)
     if (!texture || SDL_RenderSetLogicalSize(renderer, 320, 200)) goto sdl_done;
     /* Explicit checkpoints/replays retain their old entry points. An ordinary
        launch chooses its content before either logo or a single audio tick. */
-    if (!o.edition && !o.load && !o.replay && !o.smoke && !o.sprite_preview && !o.world_overview &&
+    if (!o.edition && !o.project && !o.load && !o.replay && !o.smoke && !o.sprite_preview && !o.world_overview &&
         !o.conversation_checkpoint && !o.shop_talk_checkpoint && !o.title_preview && !o.intro_preview) {
         play=startup(window,renderer,texture,frame,&o,&content,&startup_credits,&startup_key);
         if (play<0) goto sdl_done;
@@ -153,7 +154,7 @@ int main(int argc, char **argv)
            fresh-campaign defaults before the logo; setup credits follow. */
         if (play) { btp_initial_state(&o,&state,r);state.mode=BTP_LOGO; }
     }
-    const char *edition_title=r->roster.count ? "BtechPort - Updated BTECH CHI" : "BtechPort - Original BTECH CHI";
+    const char *edition_title=r->project ? r->project->title : r->roster.count ? "BtechPort - Updated BTECH CHI" : "BtechPort - Original BTECH CHI";
     if (play) SDL_SetWindowTitle(window,edition_title);
     if (play && !o.mute && !SDL_InitSubSystem(SDL_INIT_AUDIO)) {
         SDL_AudioSpec spec={.freq=BTP_AUDIO_RATE,.format=AUDIO_S16SYS,.channels=1,.samples=512};

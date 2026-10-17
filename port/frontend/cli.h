@@ -4,7 +4,8 @@
 #include "data/content.h"
 typedef struct {
     const char *data, *dialogue_data, *combat_data, *world_data, *replay, *record, *frame, *tiles_output, *sprites_output;
-    const char *save_file, *load, *save, *audio_report, *export_original, *roster;
+    const char *save_file, *load, *save, *audio_report, *export_original, *roster, *project;
+    unsigned explicit_dependencies;
     int sprite_preview, world_overview, headless, debug, trace, smoke, smoke_fast, conversation_checkpoint, shop_talk_checkpoint;
     int title_preview,intro_preview,mute;
     BtpContentProfile edition; /* NONE asks on an ordinary interactive launch. */

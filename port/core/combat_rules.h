@@ -6,7 +6,7 @@
 enum { BTP_SOUND_COUNT=18, BTP_SOUND_EVENTS=8192 };
 typedef struct { uint32_t clocks; uint16_t divisor; uint8_t type,level; } BtpSpeakerEvent;
 
-typedef struct {
+typedef struct BtpCombatData {
     uint8_t loans[3][125], weapons[33][17], arcs[15], locations[46], clusters[93];
     uint8_t critical_start[8], critical_count[8];
     /* Four mech pose groups and fourteen personal-weapon groups; each row
@@ -31,6 +31,7 @@ typedef struct {
     uint8_t cache_mini_colors[2][250];
     uint8_t arena_mechs[11][125],arena_spectator[125],urbanmech[125];
     uint8_t arena_levels[11],arena_reduction[7],special_x[16],special_y[16];
+    const struct BtpDefinitions *definitions; /* Borrowed immutable project content. */
 } BtpCombatData;
 typedef struct {
     uint8_t record[125], x, y, direction, heat, pool, burning, cover;

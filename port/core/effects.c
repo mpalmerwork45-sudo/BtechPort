@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 _Static_assert(sizeof(BtpCombatEffect)==13,"Effect encoding contains byte fields only");
-_Static_assert(sizeof(BtpBattleText)==11,"Battle text encoding contains byte fields only");
+_Static_assert(sizeof(BtpBattleText)==13,"Battle text encoding contains byte fields only");
 _Static_assert(sizeof(BtpQuietReport)==18,"Quiet header encoding contains byte fields only");
 static unsigned name_id(const BtpState *s,unsigned actor)
 {
@@ -20,7 +20,7 @@ static BtpBattleText report(const BtpState *s,unsigned actor,unsigned target,uns
     const BtpCombatState *c=&s->combat;
     return (BtpBattleText){1,(uint8_t)btp_combat_id(c,actor),(uint8_t)btp_combat_id(c,target),
         (uint8_t)name_id(s,actor),(uint8_t)name_id(s,target),(uint8_t)weapon,c->shot.hit,c->shot.location,
-        c->shot.criticals,(uint8_t)(s->campaign.encounter==4 && s->yard.rental && !s->story_flags[35] && btp_combat_id(c,target)==13),c->shot.destroyed};
+        c->shot.criticals,(uint8_t)(s->campaign.encounter==4 && s->yard.rental && !s->story_flags[35] && btp_combat_id(c,target)==13),c->shot.destroyed,0,0};
 }
 void btp_effects_begin_round(BtpState *s)
 {
@@ -368,7 +368,8 @@ int btp_effects_valid(const BtpState *s)
     for (unsigned i=0;i<25;++i) {
         const BtpBattleText *t=i<24 ? &v->text[i] : &v->shown;
         if (t->active>1 || t->actor>=24 || t->target>=24 || t->actor_name>=10 || t->target_name>=10 ||
-            t->weapon>33 || t->hit>1 || t->location>35 || t->criticals>8 || t->spectator>1 || t->dead>1 || (t->dead && !t->hit)) return 0;
+            t->weapon>33 || t->hit>1 || t->location>35 || t->criticals>8 || t->spectator>1 || t->dead>1 || (t->dead && !t->hit) ||
+            t->authored>1 || (!t->authored && t->content_weapon) || (t->authored && !s->project)) return 0;
         if (!t->active || (i<24 && i>=v->count)) {
             const uint8_t *p=(const uint8_t *)t;
             for (unsigned k=0;k<sizeof *t;++k) if (p[k]) return 0;

@@ -18,6 +18,9 @@ typedef struct {
     unsigned damage, projectiles, heat, near_range, medium_range, far_range, skill;
 } BtpWeaponDefinition;
 BtpWeaponDefinition btp_weapon_definition(const BtpCombatData *data, unsigned index);
+BtpWeaponDefinition btp_unit_weapon_definition(const BtpCombatData *data,const BtpCombatUnit *unit,unsigned mount);
+unsigned btp_combat_mount_range(const BtpCombatData *data,const BtpCombatProfile *profile,
+    const BtpCombatUnit *actor,const BtpCombatUnit *target,unsigned mount,unsigned *minimum);
 
 unsigned btp_mech_walk_points(const uint8_t record[125]);
 unsigned btp_mech_jump_points(const uint8_t record[125]);

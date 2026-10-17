@@ -318,8 +318,8 @@ BtpAttackQuery btp_combat_query(const BtpCombatUnit *a,const BtpCombatUnit *t,
     BtpAttackQuery q={.band=3};int kick=!a->infantry && index==11;
     unsigned w=kick ? 32u : btp_combat_weapon(a,index);
     if ((kick && !btp_combat_can_kick(a)) || w>=33 || a->heat>=30) return q;
-    BtpWeaponDefinition weapon=btp_weapon_definition(d,w);
-    unsigned range=btp_combat_profile_range(d,profile,w,a,t,&q.minimum);q.band=range;
+    BtpWeaponDefinition weapon=btp_unit_weapon_definition(d,a,index);
+    unsigned range=btp_combat_mount_range(d,profile,a,t,index,&q.minimum);q.band=range;
     if (range>=3) return q;
     static const uint8_t movement_penalty[13] = {0,0,0,1,1,2,2,3,3,3,4,4,4};
     if (a->infantry) skill=a->record[4+weapon.skill];
@@ -362,7 +362,7 @@ BtpShot btp_combat_attack_profile(BtpCombatUnit *a,BtpCombatUnit *t,const BtpCom
     BtpAttackQuery q=btp_combat_query(a,t,d,profile,index,movement,steps,skill,unit_id,explored);
     if (!q.valid) return shot;
     unsigned w=kick ? 32u : btp_combat_weapon(a,index);
-    BtpWeaponDefinition weapon=btp_weapon_definition(d,w);
+    BtpWeaponDefinition weapon=btp_unit_weapon_definition(d,a,index);
     if (!a->infantry && !kick && a->record[39+index]!=255) --a->record[39+index];
     if (!a->infantry) a->pool=(uint8_t)(a->pool+weapon.heat);
     int needed=q.needed;

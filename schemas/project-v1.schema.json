@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "BtechPort CHI-dependent project v1",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "format": {
+      "const": "btp-project-v1"
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "package_id": {
+      "type": "string",
+      "maxLength": 31,
+      "pattern": "^[a-z][a-z0-9._-]*$"
+    },
+    "content_version": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 31,
+      "pattern": "^[ -~]+$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 95,
+      "pattern": "^[ -~]+$"
+    },
+    "requires": {
+      "const": "chi-original-dos-1.03"
+    },
+    "startup": {
+      "const": "chi-training-v1"
+    },
+    "rules_profile": {
+      "enum": [
+        "chi:legacy-v1",
+        "chi:updated-lrm-v1"
+      ]
+    },
+    "save_policy": {
+      "const": "strict-content-v1"
+    },
+    "definitions": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1023,
+      "pattern": "^[ -~]+$"
+    },
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 63,
+            "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+          },
+          "slot": {
+            "enum": [
+              "broker",
+              "training",
+              "lounge",
+              "prison",
+              "inventor",
+              "cinema",
+              "hospital",
+              "comstar",
+              "clothes",
+              "video-hut",
+              "mayor"
+            ]
+          },
+          "file": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1023,
+            "pattern": "^[ -~]+$"
+          }
+        },
+        "required": [
+          "id",
+          "slot",
+          "file"
+        ]
+      },
+      "minItems": 0,
+      "maxItems": 11
+    }
+  },
+  "required": [
+    "format",
+    "schema_version",
+    "package_id",
+    "content_version",
+    "title",
+    "requires",
+    "startup",
+    "rules_profile",
+    "save_policy",
+    "definitions",
+    "assets"
+  ]
+}

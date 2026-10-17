@@ -64,6 +64,7 @@ int btp_original_decode(const uint8_t *b,size_t n,BtpState *out,const BtpResourc
 }
 int btp_original_encode(const BtpState *s,uint8_t b[BTP_ORIGINAL_BYTES],BtpError *e)
 {
+    if (s && s->project) return fail(e,"Project campaigns cannot be exported as original GAME saves");
     if (!s || !b || !s->original.valid || s->original.bytes[0]!=12) return fail(e,"export requires an imported original save");
     /* DOS GAME files have no package identity and cannot resolve added units. */
     for (unsigned i=0;i<4;++i) if (btp_roster_custom(i ? s->party.mechs[i-1] : s->campaign.mech))
