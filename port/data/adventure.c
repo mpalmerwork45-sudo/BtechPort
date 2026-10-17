@@ -96,11 +96,11 @@ int btp_adventure_load(const char *path,const BtpDefinitions *d,BtpAdventure *ou
     }
     for (unsigned i=0;i<a->tile_count;++i) {
         unsigned n=tiles[i];BtpSceneTile *t=&a->tiles[i];char key[2];
-        const char *const sheets[]={"chi:land","chi:destroyed"},*const terrain[]={"clear","rough","water","woods","wall"};
+        const char *const sheets[]={"chi:land","chi:destroyed","package:tiles"},*const terrain[]={"clear","rough","water","woods","wall"};
         if (!string(&j,n,"key",key,sizeof key) || key[0]==' ' || !number(&j,n,"graphic",0,249,&v)) goto done;
         t->key=(uint8_t)key[0];t->graphic=(uint8_t)v;
         for (unsigned k=0;k<i;++k) if (a->tiles[k].key==t->key) { btp_json_error(&j,n,"duplicate tile key");goto done; }
-        if (!option(&j,n,"sheet",sheets,2,&v)) goto done;
+        if (!option(&j,n,"sheet",sheets,3,&v)) goto done;
         t->sheet=(uint8_t)v;
         if (!option(&j,n,"terrain",terrain,5,&v)) goto done;
         t->terrain=(uint8_t)v;
@@ -132,8 +132,12 @@ int btp_adventure_load(const char *path,const BtpDefinitions *d,BtpAdventure *ou
         for (unsigned door=j.nodes[doors].first;door;door=j.nodes[door].next) {
             if (m->entrance_count==16) { btp_json_error(&j,door,"at most 16 entrances per map");goto done; }
             BtpSceneEntrance *e=&m->entrances[m->entrance_count++];unsigned x,y;
+            e->person=255;
             if (!string(&j,door,"id",e->id,64) || !btp_content_id(e->id,1) || !string(&j,door,"name",e->name,sizeof e->name) ||
-                !pair(&j,btp_json_field(&j,door,"at"),127,&x,&y) || !next(&j,door,"event",a,&e->event) || !btp_json_done(&j,door)) goto done;
+                !pair(&j,btp_json_field(&j,door,"at"),127,&x,&y) || !next(&j,door,"event",a,&e->event)) goto done;
+            unsigned person=btp_json_optional(&j,door,"person");
+            if (person) { if (!reference(&j,person,a->people,sizeof *a->people,a->person_count,&v)) goto done;e->person=(uint8_t)v; }
+            if (!btp_json_done(&j,door)) goto done;
             e->x=(uint8_t)x;e->y=(uint8_t)y;
             if (!btp_scene_stand(m,(int)x,(int)y,0)) { btp_json_error(&j,door,"entrance must be on accessible ground in front of the building");goto done; }
             for (unsigned k=0;k+1<m->entrance_count;++k) if (!strcmp(e->id,m->entrances[k].id) || (e->x==m->entrances[k].x && e->y==m->entrances[k].y)) { btp_json_error(&j,door,"duplicate entrance ID/position");goto done; }
@@ -143,7 +147,15 @@ int btp_adventure_load(const char *path,const BtpDefinitions *d,BtpAdventure *ou
     for (unsigned i=0;i<a->person_count;++i) {
         unsigned n=people[i];uint8_t *p=a->people[i].record;
         const char *const names[]={"chi:jason","chi:rex","chi:edward","chi:russ","chi:rick","chi:zeke","chi:possum","chi:marco","chi:rusty","chi:hunter"};
-        if (!option(&j,n,"identity",names,10,&v)) goto done;
+        unsigned identity=btp_json_field(&j,n,"identity");
+        if (!btp_json_string(&j,identity,text,sizeof text)) goto done;
+        for (v=0;v<10 && strcmp(text,names[v]);++v) {}
+        if (v==10) {
+            if (strlen(text)!=7 || strncmp(text,"actor:",6) || text[6]<'0' || text[6]>'9') { btp_json_error(&j,identity,"unsupported actor identity");goto done; }
+            v=(unsigned)(text[6]-'0');
+        }
+        unsigned name=btp_json_optional(&j,n,"name");
+        if (name && !btp_json_string(&j,name,a->people[i].name,sizeof a->people[i].name)) goto done;
         p[0]=(uint8_t)v;
         const char *const keys[]={"attributes","skills"};
         for (unsigned k=0;k<2;++k) {
@@ -193,14 +205,14 @@ int btp_adventure_load(const char *path,const BtpDefinitions *d,BtpAdventure *ou
     }
     for (unsigned i=0;i<a->node_count;++i) {
         unsigned n=nodes[i];BtpEventNode *e=&a->nodes[i];
-        const char *const ops[]={"end","say","choice","if","flag","reward","recruit","transfer","shop","battle"};
-        if (!option(&j,n,"op",ops,10,&e->op)) goto done;
+        const char *const ops[]={"end","say","choice","if","flag","reward","recruit","transfer","shop","battle","lua","finish"};
+        if (!option(&j,n,"op",ops,12,&e->op)) goto done;
         unsigned portrait=btp_json_optional(&j,n,"portrait");
         if (portrait) {
             const char *const art[]={"none","broker","training","lounge","prison","inventor","cinema","hospital","comstar","clothes","video-hut","mayor"};
             if (!option(&j,n,"portrait",art,12,&e->portrait)) goto done;
         }
-        if (e->op==BTP_EVENT_SAY || e->op==BTP_EVENT_CHOICE) if (!string(&j,n,"text",e->text,e->op==BTP_EVENT_SAY ? sizeof e->text : 241)) goto done;
+        if (e->op==BTP_EVENT_SAY || e->op==BTP_EVENT_FINISH || e->op==BTP_EVENT_CHOICE) if (!string(&j,n,"text",e->text,e->op==BTP_EVENT_CHOICE ? 241 : sizeof e->text)) goto done;
         if (e->op==BTP_EVENT_CHOICE) {
             unsigned options=btp_json_field(&j,n,"options");if (!btp_json_type(&j,options,'[')) goto done;
             for (unsigned z=j.nodes[options].first;z;z=j.nodes[z].next) {
@@ -209,10 +221,21 @@ int btp_adventure_load(const char *path,const BtpDefinitions *d,BtpAdventure *ou
                 ++e->count;
             }
             if (!e->count || !next(&j,n,"cancel",a,&e->next[5])) goto done;
-        } else if (e->op!=BTP_EVENT_END && e->op!=BTP_EVENT_IF && e->op!=BTP_EVENT_BATTLE) {
+        } else if (e->op!=BTP_EVENT_END && e->op!=BTP_EVENT_FINISH && e->op!=BTP_EVENT_LUA && e->op!=BTP_EVENT_IF && e->op!=BTP_EVENT_BATTLE) {
             if (!next(&j,n,"next",a,&e->next[0])) goto done;
         }
         switch (e->op) {
+        case BTP_EVENT_LUA: {
+            /* Resolve the package script after all manifest inputs load. */
+            if (!string(&j,n,"script",e->text,64) || !btp_content_id(e->text,1) || !next(&j,n,"failure",a,&e->next[5])) goto done;
+            unsigned routes=btp_json_field(&j,n,"routes");if (!btp_json_type(&j,routes,'[')) goto done;
+            for (unsigned z=j.nodes[routes].first;z;z=j.nodes[z].next) {
+                if (e->count==5) { btp_json_error(&j,z,"at most five Lua routes");goto done; }
+                if (!reference(&j,z,a->nodes,sizeof *a->nodes,a->node_count,&v)) goto done;
+                e->next[e->count++]=(uint16_t)v;
+            }
+            if (!e->count) { btp_json_error(&j,routes,"Lua needs declared command routes");goto done; }break;
+        }
         case BTP_EVENT_IF:case BTP_EVENT_FLAG:
             if (!REF(&j,n,"flag",a->flags,a->flag_count,&e->argument) || !number(&j,n,"value",0,1,&e->value)) goto done;
             if (e->op==BTP_EVENT_IF && (!next(&j,n,"then",a,&e->next[0]) || !next(&j,n,"else",a,&e->next[1]))) goto done;
@@ -234,7 +257,7 @@ int btp_adventure_load(const char *path,const BtpDefinitions *d,BtpAdventure *ou
             break;
         default:break;
         }
-        if (e->op==BTP_EVENT_SAY || e->op==BTP_EVENT_CHOICE) {
+        if (e->op==BTP_EVENT_SAY || e->op==BTP_EVENT_FINISH || e->op==BTP_EVENT_CHOICE) {
             char lines[96][28];unsigned count=btp_event_lines(e->text,lines);
             if (!count || (e->op==BTP_EVENT_CHOICE && count+e->count>21)) { btp_json_error(&j,n,"text/choices exceed the event panel; split into a say node first");goto done; }
         }

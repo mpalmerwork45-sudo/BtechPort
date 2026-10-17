@@ -255,7 +255,9 @@ int btp_cache_valid(const BtpState *s)
         if (c->phase || c->selected || c->terminal || c->notice || c->door || c->door_step || c->hall) return 0;
         for (unsigned i=0;i<33;++i) if (c->used[i]) return 0;
         for (unsigned i=0;i<768;++i) if (c->maproom[i]) return 0;
-        return s->mode!=BTP_CACHE && s->mode!=BTP_ENDING;
+        /* Authored endings own their continuation in events.c, without
+           pretending to be an original Star League cache completion. */
+        return s->mode!=BTP_CACHE && (s->mode!=BTP_ENDING || s->event.enabled);
     }
     if (!s->story_flags[58] || s->map_id!=14 || s->campaign.mounted || (s->gate!=(s->story_flags[66] ? 139u : 33u)) ||
         (s->mode!=BTP_CACHE && s->mode!=BTP_BUILDING && s->mode!=BTP_ACTIONS && s->mode!=BTP_SCRIPT_FAULT && s->mode!=BTP_ENDING)) return 0;

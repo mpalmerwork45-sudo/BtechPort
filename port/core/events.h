@@ -3,10 +3,11 @@
 #include "core/game.h"
 #include "data/adventure.h"
 enum { BTP_EVENT_INACTIVE, BTP_EVENT_ENTRY, BTP_EVENT_TEXT, BTP_EVENT_SELECT,
-    BTP_EVENT_TRADING, BTP_EVENT_FIGHTING, BTP_EVENT_FAULT };
+    BTP_EVENT_TRADING, BTP_EVENT_FIGHTING, BTP_EVENT_FAULT, BTP_EVENT_COMPLETE };
 const BtpAdventure *btp_adventure(const BtpResources *resources);
 const BtpScene *btp_scene(const BtpResources *resources,const BtpState *state);
 void btp_events_start(BtpState *state,const BtpResources *resources);
+int btp_events_preview(BtpState *state,const BtpResources *resources,const char *map,unsigned x,unsigned y);
 void btp_events_tick(BtpState *state,const BtpResources *resources,BtpAction action);
 int btp_events_valid(const BtpState *state,const BtpResources *resources);
 void btp_events_encode(const BtpState *state,uint8_t bytes[128]);

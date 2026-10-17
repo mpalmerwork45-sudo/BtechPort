@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "BtechPort CHI-dependent project v1",
+  "title": "BtechPort directory project v1",
   "type": "object",
   "additionalProperties": false,
   "properties": {
@@ -28,7 +28,10 @@
       "pattern": "^[ -~]+$"
     },
     "requires": {
-      "const": "chi-original-dos-1.03"
+      "enum": [
+        "chi-original-dos-1.03",
+        "none"
+      ]
     },
     "startup": {
       "enum": [
@@ -97,6 +100,37 @@
       "type": "string",
       "minLength": 1,
       "maxLength": 1023
+    },
+    "presentation": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1023,
+      "pattern": "^[ -~]+$"
+    },
+    "scripts": {
+      "type": "array",
+      "maxItems": 16,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 63,
+            "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+          },
+          "file": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1023,
+            "pattern": "^[ -~]+$"
+          }
+        },
+        "required": [
+          "id",
+          "file"
+        ]
+      }
     }
   },
   "required": [
@@ -130,6 +164,36 @@
         "not": {
           "required": [
             "adventure"
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "requires": {
+            "const": "none"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "presentation",
+          "adventure"
+        ],
+        "properties": {
+          "startup": {
+            "const": "authored-adventure-v1"
+          },
+          "assets": {
+            "maxItems": 0
+          }
+        }
+      },
+      "else": {
+        "not": {
+          "required": [
+            "presentation"
           ]
         }
       }

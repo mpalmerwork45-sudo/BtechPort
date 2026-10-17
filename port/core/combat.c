@@ -893,7 +893,9 @@ static void combat_tick(BtpState *s, const BtpResources *r, BtpAction a, int ene
     if (c->phase==BTP_COMBAT_MOVE) {
         if (btp_action_moves(a)) {
             int x=c->cursor_x+btp_action_dx(a), y=c->cursor_y+btp_action_dy(a);
-            int width=s->campaign.invasion ? 256 : 2*r->map.width,height=s->campaign.invasion ? 256 : 2*r->map.height;
+            const BtpScene *scene=btp_scene(r,s);
+            int width=scene ? 2*scene->visual.width : s->campaign.invasion ? 256 : 2*r->map.width;
+            int height=scene ? 2*scene->visual.height : s->campaign.invasion ? 256 : 2*r->map.height;
             if (x>=0 && x<width-2 && y>=0 && y<height-2) { c->cursor_x=(uint8_t)x;c->cursor_y=(uint8_t)y; }
         }
         if (a==BTP_ACCEPT) {

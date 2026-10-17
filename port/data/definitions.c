@@ -83,8 +83,9 @@ static int parse(BtpJson *j,BtpDefinitions *d)
         BtpPresentationDefinition *v=&d->presentations[d->presentation_count++];char source[64];
         if (!id(j,n,v->id,sizeof v->id,1) || !str(j,n,"source",source,sizeof source) || !btp_json_done(j,n) ||
             !unique(j,n,d->presentations,d->presentation_count,sizeof *v)) return 0;
-        if (strcmp(source,"chi:locust") && strcmp(source,"chi:red-stinger")) return btp_json_error(j,n,"unsupported sprite source (requires original dependency)");
-        v->sprite=(unsigned)!strcmp(source,"chi:red-stinger");
+        if (strcmp(source,"chi:locust") && strcmp(source,"chi:red-stinger") && strcmp(source,"package:walker-a") && strcmp(source,"package:walker-b")) return btp_json_error(j,n,"unsupported sprite source");
+        v->sprite=(unsigned)(!strcmp(source,"chi:red-stinger") || !strcmp(source,"package:walker-b"));
+        v->independent=(unsigned)!strncmp(source,"package:",8);
     }
     a=array(j,1,"weapons");if (!a) return 0;
     for (unsigned n=j->nodes[a].first;n;n=j->nodes[n].next) {

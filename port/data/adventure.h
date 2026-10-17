@@ -9,13 +9,13 @@ enum { BTP_SCENES=16, BTP_EVENT_NODES=256, BTP_EVENT_FLAGS=64,
     BTP_SCENE_TILES=64, BTP_SCENE_PEOPLE=16, BTP_SCENE_SHOPS=16,
     BTP_SCENE_BATTLES=16, BTP_EVENT_OPTIONS=6, BTP_AUTHORED_MAP_FIRST=16 };
 typedef struct { char id[64];uint8_t key,graphic,sheet,terrain,color; } BtpSceneTile;
-typedef struct { char id[64],name[25];uint8_t x,y;uint16_t event; } BtpSceneEntrance;
+typedef struct { char id[64],name[25];uint8_t x,y,person;uint16_t event; } BtpSceneEntrance;
 typedef struct {
     char id[64],name[64];unsigned origin_x,origin_y;
     BtpMap visual,rules;uint8_t cells[4096];
     unsigned entrance_count;BtpSceneEntrance entrances[16];
 } BtpScene;
-typedef struct { char id[64];uint8_t record[17]; } BtpScenePerson;
+typedef struct { char id[64],name[32];uint8_t record[17]; } BtpScenePerson;
 typedef struct { char id[64];unsigned count;uint16_t stock[256]; } BtpSceneShop;
 typedef struct { uint8_t x,y,infantry;uint16_t definition; } BtpSceneEnemy;
 typedef struct {
@@ -23,7 +23,7 @@ typedef struct {
 } BtpSceneBattle;
 typedef enum { BTP_EVENT_END, BTP_EVENT_SAY, BTP_EVENT_CHOICE, BTP_EVENT_IF,
     BTP_EVENT_FLAG, BTP_EVENT_REWARD, BTP_EVENT_RECRUIT, BTP_EVENT_TRANSFER,
-    BTP_EVENT_SHOP, BTP_EVENT_BATTLE } BtpEventOp;
+    BTP_EVENT_SHOP, BTP_EVENT_BATTLE, BTP_EVENT_LUA, BTP_EVENT_FINISH } BtpEventOp;
 typedef struct {
     char id[64],text[1024],labels[BTP_EVENT_OPTIONS][25];
     uint16_t next[BTP_EVENT_OPTIONS];

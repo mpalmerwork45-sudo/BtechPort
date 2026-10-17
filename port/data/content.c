@@ -21,6 +21,8 @@ void btp_content_close(BtpContent *content)
 int btp_content_select(BtpContent *content,BtpContentProfile profile,const char *path,BtpError *error)
 {
     if (!content || !content->resources) return fail(error,"Load original resources before selecting an edition");
+    if (content->resources->project && content->resources->project->independent.loaded)
+        return fail(error,"Reload original resources before selecting a CHI edition");
     /* Keep the optional diagnostic buffer alive through the success path. */
     BtpError local_error;
     if (profile==BTP_CONTENT_UPDATED) {
@@ -77,10 +79,22 @@ int btp_content_load_project(BtpContent *content,const char *directory,
     if (!content || !directory) return fail(error,"Project directory is required");
     /* Stage the whole dependency and package. A typo in a later asset never
        replaces a playable context or frees definitions still in use. */
-    if (!btp_content_load_original(&candidate,dependency,error)) return 0;
+    candidate.resources=calloc(1,sizeof *candidate.resources);
+    if (!candidate.resources) return fail(error,"Content allocation failed");
     BtpResources *r=candidate.resources;
     r->project=btp_project_load(directory,&r->roster,&r->portraits,error);
     if (!r->project) { btp_content_close(&candidate);return 0; }
+    if (r->project->independent.loaded) btp_independent_resources(r);
+    else {
+        if (!dependency) { btp_content_close(&candidate);return fail(error,"CHI project requires explicit --data, --dialogue-data, --combat-data, --world-data"); }
+        BtpContent original={0};
+        if (!btp_content_load_original(&original,dependency,error)) { btp_content_close(&candidate);return 0; }
+        /* Preserve the validated package while publishing only a complete
+           original dependency. Independent projects never enter this path. */
+        original.resources->project=r->project;r->project=NULL;
+        original.resources->roster=r->roster;original.resources->portraits=r->portraits;
+        btp_content_close(&candidate);candidate=original;r=candidate.resources;
+    }
     r->combat.definitions=&r->project->definitions;
     r->combat_profile=r->project->definitions.rules;
     candidate.profile=BTP_CONTENT_PROJECT;

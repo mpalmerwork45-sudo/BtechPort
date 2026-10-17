@@ -8,6 +8,8 @@
 #include "core/menu.h"
 #include "core/roster_game.h"
 #include "core/world.h"
+#include "core/lua_events.h"
+#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
@@ -76,6 +78,11 @@ static void run(BtpState *s,const BtpResources *r)
         unsigned done=v->done[n/8u]&(1u<<(n%8u)),target=e->next[0];
         s->mode=BTP_EVENT;
         switch (e->op) {
+        case BTP_EVENT_FINISH:v->phase=BTP_EVENT_TEXT;return;
+        case BTP_EVENT_LUA: {
+            char error[256];
+            if (!btp_lua_event(r,s,&target,error)) { fprintf(stderr,"%s\n",error);target=e->next[5]; }break;
+        }
         case BTP_EVENT_END:
             v->phase=BTP_EVENT_INACTIVE;s->mode=(uint8_t)(s->party.people[0][0]==255 ? BTP_GAME_OVER : BTP_EXPLORE);btp_party_recover(s,r,1);return;
         case BTP_EVENT_SAY:v->phase=BTP_EVENT_TEXT;return;
@@ -103,7 +110,7 @@ static void run(BtpState *s,const BtpResources *r)
     }
     s->mode=BTP_EVENT;v->phase=BTP_EVENT_FAULT;
 }
-void btp_events_start(BtpState *s,const BtpResources *r)
+static void initialize(BtpState *s,const BtpResources *r,int preview)
 {
     const BtpAdventure *a=btp_adventure(r);if (!a) return;
     s->event=(BtpEventState){.enabled=1,.node=(uint16_t)a->start_event,.origin_map=(uint8_t)a->start_map,.origin_entry=255};
@@ -122,7 +129,19 @@ void btp_events_start(BtpState *s,const BtpResources *r)
     aliases(s);position(s,&a->maps[a->start_map],a->start_map,a->start_x,a->start_y);
     s->mode=BTP_EXPLORE;
     if (!place(s,r,a->start_map,a->start_x,a->start_y)) { s->mode=BTP_EVENT;s->event.phase=BTP_EVENT_FAULT;return; }
-    run(s,r);
+    if (!preview) run(s,r);
+}
+void btp_events_start(BtpState *s,const BtpResources *r) { initialize(s,r,0); }
+int btp_events_preview(BtpState *s,const BtpResources *r,const char *map,unsigned x,unsigned y)
+{
+    const BtpAdventure *a=btp_adventure(r);if (!a) return 0;
+    unsigned i=0;while (i<a->map_count && strcmp(a->maps[i].id,map)) ++i;
+    if (i==a->map_count) return 0;
+    /* A fresh playtest skips start-event side effects. No normal campaign
+       state or save is loaded, and the full formation must fit here. */
+    initialize(s,r,1);
+    if (!place(s,r,i,x,y)) { s->mode=BTP_EVENT;s->event.phase=BTP_EVENT_FAULT;return 0; }
+    s->event.phase=BTP_EVENT_INACTIVE;s->event.origin_map=(uint8_t)i;return 1;
 }
 static void result(BtpState *s,const BtpResources *r)
 {
@@ -142,6 +161,7 @@ void btp_events_tick(BtpState *s,const BtpResources *r,BtpAction action)
 {
     const BtpAdventure *a=btp_adventure(r);BtpEventState *v=&s->event;
     if (s->mode==BTP_GAME_OVER) { ++s->tick;return; }
+    if (v->phase==BTP_EVENT_COMPLETE) { ++s->tick;if (action==BTP_ACCEPT || action==BTP_OPEN_MENU) s->menu.quit=1;return; }
     if (s->mode==BTP_ACTIONS) {
         ++s->tick;btp_menu_input(s,r,action==BTP_OPEN_MENU ? BTP_ACCEPT : action);
         if (s->mode!=BTP_ACTIONS && v->phase==BTP_EVENT_TRADING) { advance(s,a->nodes[v->node].next[0]);run(s,r); }
@@ -162,7 +182,12 @@ void btp_events_tick(BtpState *s,const BtpResources *r,BtpAction action)
         for (unsigned step=0;step<s->menu.steps;++step) {
             int x=(int)s->x_half+btp_action_dx(action),y=(int)s->y_half+btp_action_dy(action);
             int entrance=-1;
-            for (unsigned i=0;i<m->entrance_count;++i) if (x==m->entrances[i].x && y==m->entrances[i].y) entrance=(int)i;
+            for (unsigned i=0;i<m->entrance_count;++i) if (x==m->entrances[i].x && y==m->entrances[i].y) {
+                int recruited=0;
+                if (m->entrances[i].person!=255) for (unsigned k=0;k<8;++k)
+                    if (s->party.people[k][0]!=255 && s->event.people[k]==m->entrances[i].person) recruited=1;
+                if (!recruited) entrance=(int)i;
+            }
             if (entrance>=0) {
                 v->origin_map=(uint8_t)(s->map_id-BTP_AUTHORED_MAP_FIRST);v->origin_entry=(uint8_t)entrance;
                 advance(s,m->entrances[entrance].event);v->phase=BTP_EVENT_ENTRY;s->mode=BTP_EVENT;break;
@@ -190,6 +215,7 @@ void btp_events_tick(BtpState *s,const BtpResources *r,BtpAction action)
     } else if (v->phase==BTP_EVENT_TEXT && action==BTP_ACCEPT) {
         char lines[96][28];unsigned count=btp_event_lines(e->text,lines);
         if ((v->page+1u)*20u<count) ++v->page;
+        else if (e->op==BTP_EVENT_FINISH) { v->page=0;v->phase=BTP_EVENT_COMPLETE;s->mode=BTP_ENDING; }
         else { advance(s,e->next[0]);run(s,r); }
     } else if (v->phase==BTP_EVENT_SELECT) {
         if (action==BTP_UP) v->selected=(uint8_t)((v->selected+e->count-1u)%e->count);
@@ -226,7 +252,7 @@ int btp_events_decode(BtpState *s,const uint8_t b[128])
     memcpy(v->flags,b+8,64);memcpy(v->done,b+72,32);memcpy(v->people,b+104,8);
     for (unsigned i=112;i<128;++i) if (b[i]) return 0;
     for (unsigned i=0;i<64;++i) if (v->flags[i]>1) return 0;
-    return v->enabled==1 && v->phase<=BTP_EVENT_FAULT && v->node<256 && v->selected<6 && v->page<5 && v->origin_map<16;
+    return v->enabled==1 && v->phase<=BTP_EVENT_COMPLETE && v->node<256 && v->selected<6 && v->page<5 && v->origin_map<16;
 }
 int btp_events_valid(const BtpState *s,const BtpResources *r)
 {
@@ -254,10 +280,11 @@ int btp_events_valid(const BtpState *s,const BtpResources *r)
     } else if (s->campaign.encounter || s->combat.phase) return 0;
     if (v->phase==BTP_EVENT_TRADING && (e->op!=BTP_EVENT_SHOP || s->mode!=BTP_ACTIONS || !btp_broker_page(s->campaign.ui))) return 0;
     if (v->phase==BTP_EVENT_TEXT) {
-        char lines[96][28];if (e->op!=BTP_EVENT_SAY || v->page*20u>=btp_event_lines(e->text,lines) || v->selected) return 0;
+        char lines[96][28];if ((e->op!=BTP_EVENT_SAY && e->op!=BTP_EVENT_FINISH) || v->page*20u>=btp_event_lines(e->text,lines) || v->selected) return 0;
     } else if (v->page) return 0;
     if (v->phase==BTP_EVENT_SELECT && (e->op!=BTP_EVENT_CHOICE || v->selected>=e->count)) return 0;
     if (v->phase==BTP_EVENT_ENTRY && (v->selected>1 || v->origin_entry==255 || a->maps[v->origin_map].entrances[v->origin_entry].event!=v->node)) return 0;
+    if ((v->phase==BTP_EVENT_COMPLETE)!=(s->mode==BTP_ENDING) || (v->phase==BTP_EVENT_COMPLETE && e->op!=BTP_EVENT_FINISH)) return 0;
     if ((v->phase==BTP_EVENT_ENTRY || v->phase==BTP_EVENT_TEXT || v->phase==BTP_EVENT_SELECT || v->phase==BTP_EVENT_FAULT)!=(s->mode==BTP_EVENT)) return 0;
     return 1;
 }

@@ -3,11 +3,17 @@
 #include "data/definitions.h"
 #include "data/resources.h"
 #include "data/adventure.h"
+#include "data/independent.h"
+enum { BTP_LUA_SCRIPTS=16, BTP_LUA_SOURCE=8192 };
+typedef struct { char id[64],source[BTP_LUA_SOURCE+1];size_t length; } BtpLuaScript;
 typedef struct BtpProject {
     char id[32],version[32],title[96];
     uint8_t digest[32];
     BtpDefinitions definitions;
     BtpAdventure adventure;
+    BtpIndependent independent;
+    unsigned script_count;
+    BtpLuaScript scripts[BTP_LUA_SCRIPTS];
 } BtpProject;
 /* A CHI-dependent editable directory. Validation and runtime use the same
    loader, including decoding every explicitly declared portrait. Caller owns

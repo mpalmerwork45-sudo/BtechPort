@@ -120,7 +120,9 @@ int main(int argc, char **argv)
     int result = 1;
     if (!frame) return 1;
     if (!btp_cli_load_content(&o, &content, &error)) {
-        fprintf(stderr, "%s\nRun ./scripts/build.sh to prepare the resource caches.\n", error.text); goto done;
+        fprintf(stderr,"%s\n",error.text);
+        if (!o.project) fputs("Run ./scripts/build.sh to prepare the resource caches.\n",stderr);
+        goto done;
     }
     BtpResources *r = content.resources;
     if (o.headless) { result = btp_run_headless(&o, r); goto done; }

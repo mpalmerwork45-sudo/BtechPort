@@ -1,0 +1,572 @@
+{
+  "format": "btp-adventure-v1",
+  "schema_version": 1,
+  "tiles": [
+    {
+      "id": "beacon:grass",
+      "key": ".",
+      "graphic": 0,
+      "sheet": "package:tiles",
+      "terrain": "clear",
+      "mini_color": 2
+    },
+    {
+      "id": "beacon:road",
+      "key": "d",
+      "graphic": 1,
+      "sheet": "package:tiles",
+      "terrain": "clear",
+      "mini_color": 6
+    },
+    {
+      "id": "beacon:water",
+      "key": "w",
+      "graphic": 2,
+      "sheet": "package:tiles",
+      "terrain": "water",
+      "mini_color": 9
+    },
+    {
+      "id": "beacon:trees",
+      "key": "T",
+      "graphic": 3,
+      "sheet": "package:tiles",
+      "terrain": "woods",
+      "mini_color": 3
+    },
+    {
+      "id": "beacon:wall",
+      "key": "#",
+      "graphic": 4,
+      "sheet": "package:tiles",
+      "terrain": "wall",
+      "mini_color": 8
+    },
+    {
+      "id": "beacon:door",
+      "key": "D",
+      "graphic": 5,
+      "sheet": "package:tiles",
+      "terrain": "wall",
+      "mini_color": 14
+    },
+    {
+      "id": "beacon:beacon",
+      "key": "B",
+      "graphic": 6,
+      "sheet": "package:tiles",
+      "terrain": "wall",
+      "mini_color": 10
+    },
+    {
+      "id": "beacon:rocks",
+      "key": "R",
+      "graphic": 7,
+      "sheet": "package:tiles",
+      "terrain": "rough",
+      "mini_color": 8
+    }
+  ],
+  "maps": [
+    {
+      "id": "beacon:town",
+      "name": "Grayhaven",
+      "origin": [
+        64,
+        64
+      ],
+      "rows": [
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        ".........ddddddddddddddd........",
+        ".........ddddddddddddddd........",
+        ".........ddddddddddddddd........",
+        "..........ddddddddddddddddddd...",
+        "..........ddddddddddddddddddd...",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................"
+      ],
+      "overlays": [
+        {
+          "at": [
+            9,
+            5
+          ],
+          "rows": [
+            "######",
+            "######",
+            "######",
+            "######",
+            "###D##"
+          ]
+        },
+        {
+          "at": [
+            18,
+            5
+          ],
+          "rows": [
+            "######",
+            "######",
+            "######",
+            "######",
+            "##D###"
+          ]
+        },
+        {
+          "at": [
+            3,
+            2
+          ],
+          "rows": [
+            "TTT",
+            "T.T",
+            "TTT"
+          ]
+        }
+      ],
+      "entrances": [
+        {
+          "id": "beacon:depot-door",
+          "name": "Walker Exchange",
+          "at": [
+            24,
+            22
+          ],
+          "event": "beacon:shop"
+        },
+        {
+          "id": "beacon:office-door",
+          "name": "Relay Office",
+          "at": [
+            40,
+            22
+          ],
+          "event": "beacon:office"
+        },
+        {
+          "id": "beacon:road",
+          "name": "Leave for the relay",
+          "at": [
+            54,
+            28
+          ],
+          "event": "beacon:travel"
+        },
+        {
+          "id": "beacon:mira-marker",
+          "name": "Talk to Mira",
+          "person": "beacon:mira",
+          "at": [
+            34,
+            26
+          ],
+          "event": "beacon:office"
+        }
+      ]
+    },
+    {
+      "id": "beacon:wild",
+      "name": "The silent relay",
+      "origin": [
+        96,
+        64
+      ],
+      "rows": [
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................",
+        "................................"
+      ],
+      "overlays": [
+        {
+          "at": [
+            22,
+            5
+          ],
+          "rows": [
+            "TTTTT",
+            "T...T",
+            "TTT.T"
+          ]
+        },
+        {
+          "at": [
+            21,
+            12
+          ],
+          "rows": [
+            ".B.",
+            "...",
+            "..."
+          ]
+        },
+        {
+          "at": [
+            4,
+            3
+          ],
+          "rows": [
+            "wwww",
+            "wwww",
+            "wwww"
+          ]
+        }
+      ],
+      "entrances": [
+        {
+          "id": "beacon:back",
+          "name": "Return to Grayhaven",
+          "at": [
+            10,
+            28
+          ],
+          "event": "beacon:return"
+        },
+        {
+          "id": "beacon:relay",
+          "name": "Restore the relay",
+          "at": [
+            40,
+            28
+          ],
+          "event": "beacon:relay-check"
+        }
+      ]
+    }
+  ],
+  "people": [
+    {
+      "id": "beacon:rowan",
+      "identity": "actor:0",
+      "name": "Rowan",
+      "attributes": [
+        8,
+        9,
+        8
+      ],
+      "skills": [
+        2,
+        2,
+        2,
+        3,
+        3,
+        1,
+        1
+      ],
+      "weapon": 0,
+      "armor": 0
+    },
+    {
+      "id": "beacon:mira",
+      "identity": "actor:1",
+      "name": "Mira",
+      "attributes": [
+        8,
+        9,
+        8
+      ],
+      "skills": [
+        2,
+        2,
+        2,
+        3,
+        3,
+        2,
+        2
+      ],
+      "weapon": 0,
+      "armor": 0
+    }
+  ],
+  "shops": [
+    {
+      "id": "beacon:depot",
+      "stock": [
+        "workshop:rook",
+        "workshop:kite"
+      ]
+    }
+  ],
+  "encounters": [
+    {
+      "id": "beacon:guardian",
+      "map": "beacon:wild",
+      "party_at": [
+        24,
+        28
+      ],
+      "enemies": [
+        {
+          "kind": "mech",
+          "definition": "beacon:warden",
+          "at": [
+            34,
+            26
+          ]
+        }
+      ]
+    }
+  ],
+  "flags": [
+    "beacon:hired",
+    "beacon:cleared",
+    "beacon:paid"
+  ],
+  "events": [
+    {
+      "id": "beacon:end",
+      "op": "end"
+    },
+    {
+      "id": "beacon:welcome",
+      "op": "say",
+      "portrait": "training",
+      "text": "Grayhaven's last relay has gone silent. Without it the valley will lose contact with the rescue fleet. Visit the Relay Office, recruit Mira, and take your walker east to the beacon.",
+      "next": "beacon:end"
+    },
+    {
+      "id": "beacon:shop",
+      "op": "shop",
+      "shop": "beacon:depot",
+      "next": "beacon:end"
+    },
+    {
+      "id": "beacon:office",
+      "op": "lua",
+      "script": "beacon:contract",
+      "routes": [
+        "beacon:offer",
+        "beacon:reward",
+        "beacon:reminder",
+        "beacon:completed"
+      ],
+      "failure": "beacon:script-error"
+    },
+    {
+      "id": "beacon:offer",
+      "op": "choice",
+      "portrait": "training",
+      "text": "Mira folds a survey map. The relay guardian has malfunctioned. I can help. Will you take me along?",
+      "options": [
+        {
+          "label": "Recruit Mira",
+          "next": "beacon:recruit"
+        },
+        {
+          "label": "Later",
+          "next": "beacon:end"
+        }
+      ],
+      "cancel": "beacon:end"
+    },
+    {
+      "id": "beacon:recruit",
+      "op": "recruit",
+      "person": "beacon:mira",
+      "next": "beacon:hired",
+      "failure": "beacon:full"
+    },
+    {
+      "id": "beacon:hired",
+      "op": "flag",
+      "flag": "beacon:hired",
+      "value": 1,
+      "next": "beacon:brief"
+    },
+    {
+      "id": "beacon:brief",
+      "op": "say",
+      "portrait": "training",
+      "text": "Mira joins the expedition. Walk east out of town, then follow the old survey track to the relay. Defeat its broken guardian and return here. You can save at any time with F5.",
+      "next": "beacon:end"
+    },
+    {
+      "id": "beacon:full",
+      "op": "say",
+      "text": "There is no free place in the expedition.",
+      "next": "beacon:end"
+    },
+    {
+      "id": "beacon:reminder",
+      "op": "say",
+      "portrait": "training",
+      "text": "The beacon is east of Grayhaven. Mira waits for the guardian to be cleared. Come back when the relay is transmitting.",
+      "next": "beacon:end"
+    },
+    {
+      "id": "beacon:travel",
+      "op": "transfer",
+      "map": "beacon:wild",
+      "at": [
+        12,
+        28
+      ],
+      "next": "beacon:wild-intro",
+      "failure": "beacon:blocked"
+    },
+    {
+      "id": "beacon:wild-intro",
+      "op": "say",
+      "text": "An old mast rises over the trees. A derelict Warden blocks its access panel. Approach the relay to engage it. Computer control is available for this demonstration.",
+      "next": "beacon:end"
+    },
+    {
+      "id": "beacon:return",
+      "op": "transfer",
+      "map": "beacon:town",
+      "at": [
+        50,
+        28
+      ],
+      "next": "beacon:end",
+      "failure": "beacon:blocked"
+    },
+    {
+      "id": "beacon:relay-check",
+      "op": "if",
+      "flag": "beacon:cleared",
+      "value": 1,
+      "then": "beacon:relay-live",
+      "else": "beacon:fight-choice"
+    },
+    {
+      "id": "beacon:fight-choice",
+      "op": "choice",
+      "text": "The broken Warden turns toward your expedition. Clear the relay approach?",
+      "options": [
+        {
+          "label": "Engage guardian",
+          "next": "beacon:battle"
+        },
+        {
+          "label": "Step away",
+          "next": "beacon:end"
+        }
+      ],
+      "cancel": "beacon:end"
+    },
+    {
+      "id": "beacon:battle",
+      "op": "battle",
+      "encounter": "beacon:guardian",
+      "win": "beacon:cleared",
+      "loss": "beacon:defeat",
+      "flee": "beacon:withdraw",
+      "failure": "beacon:blocked"
+    },
+    {
+      "id": "beacon:cleared",
+      "op": "flag",
+      "flag": "beacon:cleared",
+      "value": 1,
+      "next": "beacon:relay-live"
+    },
+    {
+      "id": "beacon:relay-live",
+      "op": "say",
+      "text": "The beacon pulses across the valley. Grayhaven is back on the network. Return to the Relay Office to report your success.",
+      "next": "beacon:end"
+    },
+    {
+      "id": "beacon:withdraw",
+      "op": "say",
+      "text": "You withdraw. The relay remains silent; you may return and try again.",
+      "next": "beacon:end"
+    },
+    {
+      "id": "beacon:defeat",
+      "op": "say",
+      "text": "The guardian prevails. Restore an earlier save to try the expedition again.",
+      "next": "beacon:end"
+    },
+    {
+      "id": "beacon:reward",
+      "op": "reward",
+      "credits": 2500,
+      "next": "beacon:paid",
+      "failure": "beacon:blocked"
+    },
+    {
+      "id": "beacon:paid",
+      "op": "flag",
+      "flag": "beacon:paid",
+      "value": 1,
+      "next": "beacon:ending"
+    },
+    {
+      "id": "beacon:ending",
+      "op": "finish",
+      "portrait": "training",
+      "text": "A voice crackles over the restored link. The rescue fleet has heard Grayhaven. Your expedition receives 2500 credits, and Mira smiles as the first transport crosses the evening sky. The valley has a future. Last Beacon - complete."
+    },
+    {
+      "id": "beacon:completed",
+      "op": "say",
+      "text": "The rescue fleet is on its way. Your contract has already been paid.",
+      "next": "beacon:end"
+    },
+    {
+      "id": "beacon:blocked",
+      "op": "say",
+      "text": "The expedition cannot complete that action here. Clear space for the whole party and try again.",
+      "next": "beacon:end"
+    },
+    {
+      "id": "beacon:script-error",
+      "op": "say",
+      "text": "The contract script reported an error. Check the player log; no reward or party change was applied.",
+      "next": "beacon:end"
+    }
+  ],
+  "start": {
+    "map": "beacon:town",
+    "at": [
+      24,
+      28
+    ],
+    "event": "beacon:welcome",
+    "credits": 2000,
+    "party": [
+      {
+        "person": "beacon:rowan",
+        "mech": "workshop:rook"
+      }
+    ]
+  }
+}

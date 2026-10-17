@@ -8,7 +8,7 @@
    adapter is intentionally limited to capabilities the player implements. */
 enum { BTP_DEFINITION_LIMIT=256, BTP_CONTENT_NAME=96 };
 typedef struct { char id[64];unsigned price; } BtpAmmoDefinition;
-typedef struct { char id[64];unsigned sprite; } BtpPresentationDefinition;
+typedef struct { char id[64];unsigned sprite,independent; } BtpPresentationDefinition;
 typedef struct {
     char id[64],name[BTP_CONTENT_NAME],label[12],ammunition[64];
     unsigned behavior,damage,projectiles,heat,near_range,medium_range,far_range;

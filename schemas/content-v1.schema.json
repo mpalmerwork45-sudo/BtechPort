@@ -148,7 +148,9 @@
           "source": {
             "enum": [
               "chi:locust",
-              "chi:red-stinger"
+              "chi:red-stinger",
+              "package:walker-a",
+              "package:walker-b"
             ]
           }
         },

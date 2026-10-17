@@ -1,0 +1,21 @@
+{
+  "format": "btp-project-v1",
+  "schema_version": 1,
+  "package_id": "last-beacon",
+  "content_version": "1.0.0",
+  "title": "Last Beacon",
+  "requires": "none",
+  "startup": "authored-adventure-v1",
+  "rules_profile": "chi:updated-lrm-v1",
+  "save_policy": "strict-content-v1",
+  "definitions": "content.json",
+  "adventure": "adventure.json",
+  "presentation": "presentation.json",
+  "scripts": [
+    {
+      "id": "beacon:contract",
+      "file": "contract.lua"
+    }
+  ],
+  "assets": []
+}

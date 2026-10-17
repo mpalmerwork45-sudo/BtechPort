@@ -1,4 +1,5 @@
 #include "frontend/cli.h"
+#include "data/project.h"
 #include "core/npc.h"
 #include "core/training.h"
 #include "core/world.h"
@@ -35,7 +36,8 @@ int btp_options(int argc, char **argv, BtpOptions *o)
                  "  --intro-preview      logos, title music and played-before question\n"
                  "  --edition NAME       original or updated; bypass the startup selector\n"
                  "  --roster FILE        updated edition's external mech definitions\n"
-                 "  --project DIRECTORY editable project; requires explicit --data and three cache paths\n"
+                 "  --project DIRECTORY authored project; independent projects need no DOS files\n"
+                 "  --play-here MAP X Y  new authored playtest at half-tile coordinates\n"
                  "  --mute               disable the native audio device\n"
                  "  --export-sprites FILE write original sprite crops for verification\n"
                  "  --export-tiles FILE  write 64000 decoded tile pixel indices\n"
@@ -67,6 +69,14 @@ int btp_options(int argc, char **argv, BtpOptions *o)
         else if (!strcmp(arg,"--title-preview")) o->title_preview=1;
         else if (!strcmp(arg,"--intro-preview")) o->intro_preview=1;
         else if (!strcmp(arg,"--mute")) o->mute=1;
+        else if (!strcmp(arg,"--play-here")) {
+            if (i+3>=argc) { fputs("--play-here needs MAP X Y\n",stderr);return 0; }
+            o->play_map=argv[++i];char *end;unsigned long x=strtoul(argv[++i],&end,10);
+            if (!*argv[i] || *end || x>127) { fputs("Invalid playtest X\n",stderr);return 0; }
+            unsigned long y=strtoul(argv[++i],&end,10);
+            if (!*argv[i] || *end || y>127) { fputs("Invalid playtest Y\n",stderr);return 0; }
+            o->play_x=(unsigned)x;o->play_y=(unsigned)y;
+        }
         else if (!strcmp(arg,"--edition")) {
             if (++i==argc || (strcmp(argv[i],"original") && strcmp(argv[i],"updated"))) {
                 fputs("Edition must be original or updated\n",stderr); return 0;
@@ -131,6 +141,7 @@ int btp_options(int argc, char **argv, BtpOptions *o)
     if (o->smoke_fast && (o->smoke < 5 || !o->replay || o->headless)) {
         fputs("Accelerated smoke requires a native replay smoke mode\n",stderr); return 0;
     }
+    if (o->play_map && (!o->project || o->load)) { fputs("Play here requires a project and a fresh campaign\n",stderr);return 0; }
     return 1;
 }
 
@@ -143,11 +154,24 @@ int btp_cli_load_content(const BtpOptions *o, BtpContent *content, BtpError *err
         .combat = o->combat_data, .world = o->world_data
     };
     if (o->project) {
-        if (o->edition || o->export_original || o->explicit_dependencies!=15) {
-            snprintf(error->text,sizeof error->text,"--project needs explicit --data, --dialogue-data, --combat-data, --world-data; do not combine with --edition or --export-original");
+        if (o->edition || o->export_original) {
+            snprintf(error->text,sizeof error->text,"Do not combine --project with --edition or --export-original");
             return 0;
         }
-        return btp_content_load_project(content,o->project,&paths,error);
+        /* Validate package identity first, so independent games can run with
+           every original input absent. CHI packages retain explicit paths. */
+        if (!btp_content_load_project(content,o->project,o->explicit_dependencies==15 ? &paths : NULL,error)) return 0;
+        if (!content->resources->project->independent.loaded && o->explicit_dependencies!=15) {
+            btp_content_close(content);snprintf(error->text,sizeof error->text,"CHI project needs explicit --data, --dialogue-data, --combat-data, --world-data");return 0;
+        }
+        if (o->play_map) {
+            const BtpAdventure *a=&content->resources->project->adventure;unsigned at=0;
+            while (at<a->map_count && strcmp(a->maps[at].id,o->play_map)) ++at;
+            if (at==a->map_count || !btp_scene_stand(&a->maps[at],(int)o->play_x,(int)o->play_y,0)) {
+                btp_content_close(content);snprintf(error->text,sizeof error->text,"Unknown or blocked Play here destination");return 0;
+            }
+        }
+        return 1;
     }
     if (!btp_content_load_original(content, &paths, error)) return 0;
     BtpContentProfile profile=o->edition;
@@ -174,7 +198,8 @@ void btp_initial_state(const BtpOptions *o, BtpState *s, const BtpResources *r)
     /* Fresh Updated campaigns opt in. Loading a save below replaces this
        state, preserving the saved policy (including old saves' Legacy). */
     if (r->roster.count && r->combat_profile.fingerprint) (void)btp_set_combat_profile(s,r,1);
-    btp_events_start(s,r);
+    if (o->play_map) (void)btp_events_preview(s,r,o->play_map,o->play_x,o->play_y);
+    else btp_events_start(s,r);
     if (o->title_preview) btp_audio_start(s);
     if (o->intro_preview) s->mode=BTP_LOGO;
 }

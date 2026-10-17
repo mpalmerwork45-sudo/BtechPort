@@ -1,6 +1,8 @@
 #include "data/unit_data.h"
 #include "data/definitions.h"
 #include "frontend/pixels.h"
+#include "frontend/independent.h"
+#include "data/project.h"
 #include "core/animation.h"
 #include "core/world.h"
 #include "core/bank.h"
@@ -1476,6 +1478,8 @@ static void event_panel(const BtpResources *r,const BtpState *s,uint32_t f[BTP_P
         text(r,f,112,16,"Enter",15);text(r,f,112,32,door->name,15);
         rectangle(f,v->selected ? 160 : 112,56,v->selected ? 16 : 24,8,14);
         text(r,f,112,56,"Yes",v->selected ? 15u : 0u);text(r,f,160,56,"No",v->selected ? 0u : 15u);
+    } else if (v->phase==BTP_EVENT_COMPLETE) {
+        text(r,f,112,32,"The End",14);text(r,f,112,56,"Press any key to exit.",15);
     } else if (v->phase==BTP_EVENT_FAULT) {
         const char *message="Event stopped: command limit or party placement failure. Escape returns to the map.";
         (void)wrapped(r,f,16,(const uint8_t *)message,strlen(message),15);
@@ -1494,7 +1498,8 @@ static void event_panel(const BtpResources *r,const BtpState *s,uint32_t f[BTP_P
 }
 void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[BTP_PIXELS])
 {
-    if (s->mode==BTP_EVENT && btp_scene(r,s)) { event_panel(r,s,f);return; }
+    if (r->project && r->project->independent.loaded) { btp_independent_render(r,s,f);return; }
+    if ((s->mode==BTP_EVENT || s->mode==BTP_ENDING) && btp_scene(r,s)) { event_panel(r,s,f);return; }
     if (s->mode==BTP_ACTIONS && s->campaign.ui==BTP_MENU_MAP) {
         btp_world_preview(r,s,f);return;
     }
@@ -1679,6 +1684,12 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
     else if (outdoors && !s->campaign.mounted) (void)btp_draw_sprite(&r->sprites,166u+s->player_walk,208,96,
         scene ? 0u : hidden_rows(map,s->x_half,s->y_half),104,f);
     if (outdoors && !battle_display && s->story_flags[4]) {
+        if (scene) for (unsigned i=0;i<scene->entrance_count;++i) {
+            const BtpSceneEntrance *npc=&scene->entrances[i];if (npc->person==255) continue;
+            int recruited=0;for (unsigned k=0;k<8;++k) if (s->party.people[k][0]!=255 && s->event.people[k]==npc->person) recruited=1;
+            if (!recruited) (void)btp_draw_sprite(&r->sprites,270u+(s->tick/8u)%4u,
+                208+8*((int)npc->x-cx),88+8*((int)npc->y-cy),0,104,f);
+        }
         for (unsigned i=0;i<8;++i) if (s->party.people[i][0]!=255 && s->party.people[i][12]>=8) {
             if (i && btp_party_walkable(s,r,s->party.x[i],s->party.y[i],0))
                 (void)btp_draw_sprite(&r->sprites,270u+s->party.walk[i],208+8*((int)s->party.x[i]-s->campaign.world_x),
@@ -2119,6 +2130,10 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
 
 void btp_world_preview(const BtpResources *r,const BtpState *s,uint32_t f[BTP_PIXELS])
 {
+    if (r->project && r->project->independent.loaded) {
+        BtpState view=*s;view.mode=BTP_ACTIONS;view.campaign.ui=BTP_MENU_MAP;
+        btp_independent_render(r,&view,f);return;
+    }
     rectangle(f,0,0,320,200,0);
     const BtpScene *scene=btp_scene(r,s);
     if (scene) {

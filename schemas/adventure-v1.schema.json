@@ -36,7 +36,8 @@
           "sheet": {
             "enum": [
               "chi:land",
-              "chi:destroyed"
+              "chi:destroyed",
+              "package:tiles"
             ]
           },
           "terrain": {
@@ -170,6 +171,11 @@
                   "type": "string",
                   "maxLength": 63,
                   "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+                },
+                "person": {
+                  "type": "string",
+                  "maxLength": 63,
+                  "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
                 }
               },
               "required": [
@@ -217,7 +223,17 @@
               "chi:possum",
               "chi:marco",
               "chi:rusty",
-              "chi:hunter"
+              "chi:hunter",
+              "actor:0",
+              "actor:1",
+              "actor:2",
+              "actor:3",
+              "actor:4",
+              "actor:5",
+              "actor:6",
+              "actor:7",
+              "actor:8",
+              "actor:9"
             ]
           },
           "attributes": {
@@ -249,6 +265,12 @@
             "type": "integer",
             "minimum": 0,
             "maximum": 5
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 31,
+            "pattern": "^[ -~]+$"
           }
         },
         "required": [
@@ -920,6 +942,88 @@
               "win",
               "loss",
               "flee",
+              "failure"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "op": {
+                "const": "finish"
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1023,
+                "pattern": "^[ -~]+$"
+              },
+              "portrait": {
+                "enum": [
+                  "none",
+                  "broker",
+                  "training",
+                  "lounge",
+                  "prison",
+                  "inventor",
+                  "cinema",
+                  "hospital",
+                  "comstar",
+                  "clothes",
+                  "video-hut",
+                  "mayor"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "op",
+              "text"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "op": {
+                "const": "lua"
+              },
+              "script": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "routes": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 5,
+                "items": {
+                  "type": "string",
+                  "maxLength": 63,
+                  "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+                }
+              },
+              "failure": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              }
+            },
+            "required": [
+              "id",
+              "op",
+              "script",
+              "routes",
               "failure"
             ]
           }

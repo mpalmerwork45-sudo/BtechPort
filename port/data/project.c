@@ -6,6 +6,7 @@
 #include "data/digest.h"
 #include "data/anm.h"
 #include "data/file.h"
+#include "core/lua_events.h"
 #include <dirent.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -70,11 +71,14 @@ BtpProject *btp_project_load(const char *root,BtpRoster *roster,BtpPortraits *po
     if (!p || !r || !art) { fail(error,root,"project allocation failed");goto done; }
     if (!btp_project_path(root,"project.json",manifest_path,error) || !btp_json_load(&j,manifest_path,error->text)) goto done;
     btp_digest_add(&digest,j.source_digest,32);
+    char requires[64];
     if (!expected(&j,1,"format","btp-project-v1") || !btp_json_uint(&j,btp_json_field(&j,1,"schema_version"),1,1,&v) ||
         !text(&j,1,"package_id",p->id,sizeof p->id) || !text(&j,1,"content_version",p->version,sizeof p->version) ||
-        !text(&j,1,"title",p->title,sizeof p->title) || !expected(&j,1,"requires","chi-original-dos-1.03") ||
+        !text(&j,1,"title",p->title,sizeof p->title) || !text(&j,1,"requires",requires,sizeof requires) ||
         !expected(&j,1,"save_policy","strict-content-v1") ||
         !text(&j,1,"definitions",relative,sizeof relative)) goto done;
+    int independent=!strcmp(requires,"none");
+    if (!independent && strcmp(requires,"chi-original-dos-1.03")) { fail(error,"project.json","unsupported dependency");goto done; }
     if (!btp_project_path(root,relative,path,error) || !btp_definitions_load(path,&p->definitions,error->text)) goto done;
     btp_digest_add(&digest,p->definitions.source_digest,32);
     if (strcmp(p->id,p->definitions.id) || strcmp(p->version,p->definitions.version)) { fail(error,"project.json","package ID/version disagrees with definitions");goto done; }
@@ -87,11 +91,46 @@ BtpProject *btp_project_load(const char *root,BtpRoster *roster,BtpPortraits *po
             !btp_adventure_load(path,&p->definitions,&p->adventure,error->text)) goto done;
         btp_digest_add(&digest,p->adventure.source_digest,32);
     } else if (strcmp(startup,"chi-training-v1")) { btp_json_error(&j,1,"unsupported startup or missing adventure");goto done; }
+    unsigned presentation=btp_json_optional(&j,1,"presentation");
+    if (independent) {
+        if (!adventure || !presentation || !btp_json_string(&j,presentation,relative,sizeof relative) ||
+            !btp_project_path(root,relative,path,error) || !btp_independent_load(path,&p->independent,error->text)) { if (!*error->text) fail(error,"project.json","independent games require an adventure and presentation");goto done; }
+        btp_digest_add(&digest,p->independent.source_digest,32);
+        for (unsigned i=0;i<p->adventure.tile_count;++i) if (p->adventure.tiles[i].sheet!=2 || p->adventure.tiles[i].graphic>=p->independent.tile_count) { fail(error,"adventure.json","independent tiles must reference declared package graphics");goto done; }
+        for (unsigned i=0;i<p->adventure.person_count;++i) if (!*p->adventure.people[i].name) { fail(error,"adventure.json","independent characters require display names");goto done; }
+        for (unsigned i=0;i<p->definitions.presentation_count;++i) if (!p->definitions.presentations[i].independent) { fail(error,"content.json","independent games require package sprite sources");goto done; }
+    } else if (presentation) { fail(error,"project.json","presentation is only supported by independent games");goto done; }
+    if (!independent) {
+        for (unsigned i=0;i<p->definitions.presentation_count;++i) if (p->definitions.presentations[i].independent) { fail(error,"content.json","package sprites require an independent presentation");goto done; }
+        for (unsigned i=0;i<p->adventure.tile_count;++i) if (p->adventure.tiles[i].sheet==2) { fail(error,"adventure.json","package tiles require an independent presentation");goto done; }
+    }
+    unsigned scripts=btp_json_optional(&j,1,"scripts");
+    if (scripts) {
+        if (!btp_json_type(&j,scripts,'[')) goto done;
+        for (unsigned n=j.nodes[scripts].first;n;n=j.nodes[n].next) {
+            if (p->script_count==BTP_LUA_SCRIPTS) { btp_json_error(&j,n,"at most sixteen Lua scripts");goto done; }
+            BtpLuaScript *script=&p->scripts[p->script_count];
+            if (!text(&j,n,"id",script->id,sizeof script->id) || !btp_content_id(script->id,1) || !text(&j,n,"file",relative,sizeof relative) || !btp_json_done(&j,n)) goto done;
+            for (unsigned k=0;k<p->script_count;++k) if (!strcmp(script->id,p->scripts[k].id)) { btp_json_error(&j,n,"duplicate script ID");goto done; }
+            if (!btp_project_path(root,relative,path,error)) goto done;
+            FILE *f=fopen(path,"rb");if (!f) { fail(error,relative,"cannot open Lua source");goto done; }
+            script->length=fread(script->source,1,sizeof script->source,f);int bad=ferror(f);if (fclose(f)) bad=1;
+            if (bad || !script->length || script->length>BTP_LUA_SOURCE || memchr(script->source,0,script->length)) { fail(error,relative,"Lua source must be 1..8192 bytes of text");goto done; }
+            if (!btp_lua_compile(script->source,script->length,error->text)) goto done;
+            BtpDigest hash;uint8_t bytes[32];btp_digest_start(&hash);btp_digest_add(&hash,script->source,script->length);btp_digest_finish(&hash,bytes);btp_digest_add(&digest,bytes,32);++p->script_count;
+        }
+    }
+    for (unsigned i=0;i<p->adventure.node_count;++i) if (p->adventure.nodes[i].op==BTP_EVENT_LUA) {
+        BtpEventNode *node=&p->adventure.nodes[i];unsigned k=0;
+        while (k<p->script_count && strcmp(node->text,p->scripts[k].id)) ++k;
+        if (k==p->script_count) { fail(error,node->id,"unresolved Lua script ID");goto done; }node->argument=k;
+    }
     unsigned assets=btp_json_field(&j,1,"assets"),seen=0;
     if (!btp_json_type(&j,assets,'[')) goto done;
     const char *const slots[]={"broker","training","lounge","prison","inventor","cinema","hospital","comstar","clothes","video-hut","mayor"};
     char ids[BTP_PORTRAIT_COUNT][64]={{0}};unsigned count=0;
     for (unsigned n=j.nodes[assets].first;n;n=j.nodes[n].next) {
+        if (independent) { btp_json_error(&j,n,"independent portraits belong in the presentation file");goto done; }
         char slot[32],identity[64];
         if (!text(&j,n,"id",identity,sizeof identity) || !text(&j,n,"slot",slot,sizeof slot) || !text(&j,n,"file",relative,sizeof relative) || !btp_json_done(&j,n)) goto done;
         unsigned i=0;while (i<BTP_PORTRAIT_COUNT && strcmp(slots[i],slot)) ++i;
@@ -109,6 +148,7 @@ BtpProject *btp_project_load(const char *root,BtpRoster *roster,BtpPortraits *po
         int decoded=btp_anm_decode(bytes,length,&art->image[i],error);
         if (!decoded) { char detail[256];snprintf(detail,sizeof detail,"%s",error->text);fail(error,relative,detail);goto done; }
     }
+    if (independent) for (unsigned i=0;i<p->adventure.node_count;++i) if (p->adventure.nodes[i].portrait>2) { fail(error,p->adventure.nodes[i].id,"independent profile supports none/broker/training portraits");goto done; }
     if (!btp_json_done(&j,1) || !btp_definitions_compile(&p->definitions,r,error->text)) goto done;
     btp_digest_finish(&digest,p->digest);*roster=*r;*portraits=*art;ok=1;
 done:
