@@ -2,13 +2,16 @@
 
 Recorded **2026-10-16**, against implementation commit `c29ea75`.
 
-**Status: M5-P1–P5 implemented and verified within documented bounds.** This document
+**Status: M5-P1–P5 and the CHI-specific part of M5a are implemented.** Updated
+now has 31 external mech definitions, a categorized broker, optional building
+art and saved Enhanced/Legacy combat profiles. This document
 records the discussion about additional mechs, external game data, BLD/Lua
 scripting and a Windows/Linux game editor. Shared loading, semantic unit
 lookups, original action dispatch, persistence isolation and an offline
 schema/sample are in place; see [preparation evidence](M5_PREPARATION.md) and the
 [content inventory](CONTENT_INVENTORY.md). Runtime packages, Lua and the editor
-remain proposed. Original fidelity work is tracked in
+remain proposed. [The next five tasks](#13-next-five-tasks-toward-an-editor)
+turn the current expansion support into an authoring workflow. Original fidelity work is tracked in
 [PROJECT_STATUS.md](PROJECT_STATUS.md).
 
 The [five preparation increments](#9-preparation-that-can-be-done-now) record
@@ -591,7 +594,8 @@ been hidden inside these refactors.
 
 These milestones extend the existing optional M5 direction. Their completion
 requires delivered behavior and evidence, not just new directories or classes.
-All are **PROPOSED / NOT STARTED**.
+M5a has a playable CHI roster implementation; its general weapon/presentation
+contract is unfinished. M5b–M5e remain **PROPOSED / NOT STARTED**.
 
 | Milestone | Deliverable | Completion gate |
 | --- | --- | --- |
@@ -690,11 +694,14 @@ art, audio, fonts and text; the original executable is not its hidden data sourc
 
 M5-P1–P5 and the [first playable M5a CHI roster slice](M5A_ROSTER_SLICE.md) are
 implemented. The owner subsequently chose an early Original/Updated selector,
-three initial additions (Panther, Hunchback and Catapult), then fourteen more
-models/variants including Zeus, Atlas and two Crusaders, with explicit original
-sprite placeholders. That CHI adapter now has shared runtime validation, stable
-definition codes, package-bound saves, a scrolling broker and encounter/salvage
-access. An unchanged appended catalogue can load saves from its earlier prefix;
+three initial additions (Panther, Hunchback and Catapult), then 28 more
+models/variants including Zeus, Atlas, two Crusaders and the eight additions in
+pack 0.4.0, with explicit original sprite placeholders. That CHI adapter now has
+shared runtime validation, stable definition codes, package-bound saves, a broker
+with four weight classes and scrolling, and encounter/salvage access. Optional
+pack artwork and combat rules have also been implemented. An unchanged appended
+catalogue can load saves from its earlier prefix, preserving held purchase
+identities even when a sorted category gains earlier rows;
 arbitrary definition edits and general package migrations remain unsupported.
 The optional adapted roster has separate attribution/licensing; it is not the
 independently authored standalone demonstration described above.
@@ -703,3 +710,68 @@ The rest of M5a still needs general external weapon/equipment definitions,
 richer component semantics, authored refit variants and original art support.
 The provisional general schema must be reconciled with the runtime adapter
 before treating it as a stable editor contract. M5b–M5e remain future work.
+
+## 13. Next five tasks toward an editor
+
+Updated **2026-10-17** after the categorized broker and 31-model roster. These
+are proposed work, not features implemented by that increment. The next useful
+milestone is **a shared authoring contract and validator**, followed by a small
+project loader. A GUI can then edit files the player already understands.
+
+1. **Finish the content definition boundary (M5a).** Reconcile
+   `btp-chi-roster-v1`, `combat.json` and the provisional general schema into one
+   versioned authoring model. Give mechs, weapons, ammunition, services and
+   presentation stable IDs. Separate definitions from owned instances with
+   damage, crew and remaining ammunition. Move original record conversion into
+   its adapter; new content should not depend on CHI's 125-byte records,
+   15-character names, weapon-number table or 32-definition limit. Keep fleet
+   capacity a separate rules decision. Provide a shared validator and a CLI
+   that reports the file, definition and field for errors. Gate: export/import
+   all current definitions without changing gameplay; add a model and a
+   supported weapon definition without editing C; Original regression tests
+   still pass. Do not promise unsupported equipment merely because JSON can
+   name it.
+2. **Load editable projects as explicit packages (M5b foundation).** Add a
+   directory manifest with package/schema versions, startup, rule profile and
+   asset/definition references. First support an Updated project that declares
+   its dependence on the user's original files. Resolve paths relative to the
+   package, without silently falling back to repository assets. Bind saves to
+   package identity and content compatibility. Give edited definitions an
+   explicit new-campaign or migration policy; today's append-only fingerprint
+   check cannot migrate arbitrary edits. Gate: load the same project in both
+   frontends on Linux and Windows, reject missing references clearly, and keep
+   the existing Original/Updated campaigns and saves usable.
+3. **Expose maps, buildings and events as authored content (M5b).** Define tile
+   graphics, collision/terrain, world origins, local overlays, entrances,
+   encounters, shops and initial party placement explicitly. Use the broker's
+   location and stock as a small first conversion of a hardcoded feature.
+   Add reusable commands for dialogue, choices, conditions, flags, transfers,
+   recruitment, rewards and battles, with saved event continuations and
+   exactly-once results. Keep original BLD behind its compatibility adapter.
+   Optional bounded Lua should call the same commands; it must not write raw
+   state or require serializing a live Lua stack. Gate: an authored building
+   can branch, sell a chosen roster, start combat and reward its outcome;
+   saving at each pause resumes correctly.
+4. **Prove the player with a tiny independent game (M5b completion).** Supply a
+   small town, wilderness area, two buildings, one recruit, one battle and an
+   ending, using newly authored graphics, font, text and audio. Include one
+   small Lua event to exercise that API. Run it with original files and
+   extracted caches unavailable. Gate: start, explore, talk, recruit, fight,
+   receive the reward and finish; save/reload during dialogue and battle. This
+   exposes missing game-specific assumptions before the GUI depends on them.
+5. **Build the first useful desktop editor (M5c).** Keep the planned separate
+   Windows/Linux editor and C/SDL player. Add project creation/open/save, unit
+   and weapon property forms, map painting, entrances/NPC/event placement,
+   basic event forms, validation messages, undo/redo and Play here. Launch the
+   existing player for previews, using the same loader and rules; do not build
+   a second simulation inside the editor. Gate: create and modify the tiny
+   game, reopen the project and play the exported result without hand-editing
+   its files. Rich scripting tools, animation/audio authoring and publishing
+   remain M5d/M5e.
+
+For an earlier practical tool, a **small roster editor** can follow tasks 1–2:
+edit names, movement, armor, loadouts, prices and presentation; validate; then
+launch Updated with that project. It should explicitly label its CHI-dependent
+scope. A full Unlimited Adventures-style game editor still needs tasks 3–5.
+Neither route requires replacing the current playable game or changing the two
+reference directories. Keep each increment playable and separately committed.
