@@ -150,6 +150,26 @@ unsigned btp_combat_range_to(const BtpCombatData *d,unsigned w,const BtpCombatUn
     if (weapon.projectiles<128 && w!=32) { medium*=3;near*=3; }
     return distance<near ? 0u : distance<medium ? 1u : distance<weapon.far_range ? 2u : 3u;
 }
+/* Keep the original asymmetric mech footprint when adapting range units.
+   Infantry uses its exact anchor, just as the compatibility range query does. */
+unsigned btp_combat_shot_distance(const BtpCombatUnit *a,const BtpCombatUnit *t)
+{
+    int x=t->x,y=t->y;
+    if (!t->infantry && btp_combat_distance(a->x,a->y,x,y)>3) {
+        if (a->x<x) --x;else if (a->x>x) ++x;
+        if (a->y<y) y-=2;
+    }
+    return btp_combat_distance(a->x,a->y,x,y);
+}
+unsigned btp_combat_profile_range(const BtpCombatData *d,const BtpCombatProfile *p,
+    unsigned w,const BtpCombatUnit *a,const BtpCombatUnit *t,unsigned *minimum)
+{
+    if (minimum) *minimum=0;
+    if (!p || !btp_combat_profile_lrm(w)) return btp_combat_range_to(d,w,a,t);
+    unsigned range=btp_combat_shot_distance(a,t)/p->scale;if (!range) range=1;
+    if (minimum && range<=p->minimum) *minimum=p->minimum+1u-range;
+    return range<=p->short_range ? 0u : range<=p->medium_range ? 1u : range<=p->long_range ? 2u : 3u;
+}
 unsigned btp_combat_weapon(const BtpCombatUnit *u, unsigned index)
 {
     if (u->infantry) return index == 0 && u->record[11] < 15 ? u->record[11] : 255;
@@ -291,18 +311,16 @@ int btp_combat_can_kick(const BtpCombatUnit *u)
 {
     return !u->infantry && u->record[0] != 255 && (u->record[36]&8u) && (u->record[37]&8u);
 }
-BtpShot btp_combat_attack_unit(BtpCombatUnit *a, BtpCombatUnit *t, const BtpCombatData *d,
-    unsigned index, int movement, unsigned steps, unsigned skill, unsigned unit_id, const uint8_t *explored, uint8_t rng[3])
+BtpAttackQuery btp_combat_query(const BtpCombatUnit *a,const BtpCombatUnit *t,
+    const BtpCombatData *d,const BtpCombatProfile *profile,unsigned index,int movement,
+    unsigned steps,unsigned skill,unsigned unit_id,const uint8_t *explored)
 {
-    int kick = !a->infantry && index == 11;
-    BtpShot shot = {0}; unsigned w = kick ? 32 : btp_combat_weapon(a,index);
-    if (kick && !btp_combat_can_kick(a)) return shot;
-    if (w >= 33 || a->heat >= 30) return shot;
+    BtpAttackQuery q={.band=3};int kick=!a->infantry && index==11;
+    unsigned w=kick ? 32u : btp_combat_weapon(a,index);
+    if ((kick && !btp_combat_can_kick(a)) || w>=33 || a->heat>=30) return q;
     BtpWeaponDefinition weapon=btp_weapon_definition(d,w);
-    unsigned range = btp_combat_range_to(d,w,a,t);
-    if (range >= 3) return shot;
-    if (!a->infantry && !kick && a->record[39+index] != 255) --a->record[39+index];
-    if (!a->infantry) a->pool = (uint8_t)(a->pool+weapon.heat);
+    unsigned range=btp_combat_profile_range(d,profile,w,a,t,&q.minimum);q.band=range;
+    if (range>=3) return q;
     static const uint8_t movement_penalty[13] = {0,0,0,1,1,2,2,3,3,3,4,4,4};
     if (a->infantry) skill=a->record[4+weapon.skill];
     int needed = (kick ? 3 : (int)(2*range+4)) + movement+1 + movement_penalty[steps > 12 ? 12 : steps] - (int)skill;
@@ -319,6 +337,35 @@ BtpShot btp_combat_attack_unit(BtpCombatUnit *a, BtpCombatUnit *t, const BtpComb
     if (!a->infantry && a->record[119]) needed += 2;
     if (!a->infantry) needed += (a->heat >= 8)+(a->heat >= 13)+(a->heat >= 17)+(a->heat >= 24);
     needed += (int)(t->cover/(t->infantry ? 2u : 8u));
+    needed+=(int)q.minimum;q.needed=needed;q.heat=weapon.heat;q.valid=1;
+    /* Enumerate probabilities, not random draws. damage36 estimates raw
+       damage before location armour/criticals; it is not a promised outcome. */
+    for (unsigned first=1;first<=6;++first) for (unsigned second=1;second<=6;++second) {
+        unsigned roll=first+second;q.hit36+=(int)roll>=needed;
+        unsigned damage=kick ? a->record[16]/5u : weapon.damage;
+        if (t->infantry) {
+            damage=weapon.projectiles&128u ? (weapon.damage&15u)+7u*(weapon.damage>>4)/2u : 127u;
+            if (t->record[14]) damage/=2;
+            damage*=weapon.projectiles&127u;
+            if (damage>t->record[15]) damage=t->record[15];
+        } else if (weapon.projectiles&128u) damage=0;
+        else if (!kick && weapon.projectiles>1) damage*=d->clusters[7u*roll+weapon.projectiles];
+        q.damage36+=damage;
+    }
+    return q;
+}
+BtpShot btp_combat_attack_profile(BtpCombatUnit *a,BtpCombatUnit *t,const BtpCombatData *d,
+    unsigned index,int movement,unsigned steps,unsigned skill,unsigned unit_id,const uint8_t *explored,
+    uint8_t rng[3],const BtpCombatProfile *profile)
+{
+    int kick=!a->infantry && index==11;BtpShot shot={0};
+    BtpAttackQuery q=btp_combat_query(a,t,d,profile,index,movement,steps,skill,unit_id,explored);
+    if (!q.valid) return shot;
+    unsigned w=kick ? 32u : btp_combat_weapon(a,index);
+    BtpWeaponDefinition weapon=btp_weapon_definition(d,w);
+    if (!a->infantry && !kick && a->record[39+index]!=255) --a->record[39+index];
+    if (!a->infantry) a->pool=(uint8_t)(a->pool+weapon.heat);
+    int needed=q.needed;
     shot.needed = (int16_t)needed;
     if (t->infantry) {
         unsigned damage=127, count=weapon.projectiles;
@@ -359,6 +406,11 @@ BtpShot btp_combat_attack_unit(BtpCombatUnit *a, BtpCombatUnit *t, const BtpComb
         else apply_damage(t,d,shot.location,damage,rng,&shot);
     }
     return shot;
+}
+BtpShot btp_combat_attack_unit(BtpCombatUnit *a,BtpCombatUnit *t,const BtpCombatData *d,
+    unsigned index,int movement,unsigned steps,unsigned skill,unsigned unit_id,const uint8_t *explored,uint8_t rng[3])
+{
+    return btp_combat_attack_profile(a,t,d,index,movement,steps,skill,unit_id,explored,rng,NULL);
 }
 BtpShot btp_combat_attack(BtpCombatUnit *a, BtpCombatUnit *t, const BtpCombatData *d,
     unsigned index, int movement, unsigned steps, unsigned skill, uint8_t rng[3])

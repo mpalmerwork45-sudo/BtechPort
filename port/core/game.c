@@ -22,6 +22,20 @@
 #include "core/roster_game.h"
 #include <string.h>
 
+const BtpCombatProfile *btp_active_combat_profile(const BtpState *s,const BtpResources *r)
+{
+    return s->combat_profile==1 && r->roster.count && r->combat_profile.fingerprint &&
+        s->combat_fingerprint==r->combat_profile.fingerprint ? &r->combat_profile : NULL;
+}
+int btp_set_combat_profile(BtpState *s,const BtpResources *r,unsigned enhanced)
+{
+    /* Never change the rules underneath a held encounter or scripted fight. */
+    if (enhanced>1 || !r->roster.count || (enhanced && !r->combat_profile.fingerprint) ||
+        s->combat.phase!=BTP_COMBAT_NONE || s->campaign.encounter ||
+        (s->mode!=BTP_EXPLORE && s->mode!=BTP_ACTIONS && s->mode!=BTP_CACHE)) return 0;
+    s->combat_profile=(uint8_t)enhanced;s->combat_fingerprint=enhanced ? r->combat_profile.fingerprint : 0;
+    return 1;
+}
 void btp_start(BtpState *s)
 {
     *s = (BtpState){.x_half = 69, .y_half = 25, .map_id = 1, .gate = 85,

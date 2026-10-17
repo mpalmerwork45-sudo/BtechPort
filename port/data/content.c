@@ -22,17 +22,20 @@ int btp_content_select(BtpContent *content,BtpContentProfile profile,const char 
     /* Keep the optional diagnostic buffer alive through the success path. */
     BtpError local_error;
     if (profile==BTP_CONTENT_UPDATED) {
-        BtpRoster roster;
+        BtpRoster roster;BtpCombatProfile rules;
         if (!error) error=&local_error;
         /* Publish definitions and art together only after both validate.
            Cosmetic changes deliberately do not change the roster fingerprint. */
         if (!btp_roster_load(path,&roster,error->text)) return 0;
+        if (!btp_combat_profile_load(path,&rules,error->text)) return 0;
         BtpPortraits *portraits=btp_portraits_load(path,error);
         if (!portraits) return 0;
         content->resources->roster=roster;content->resources->portraits=*portraits;
+        content->resources->combat_profile=rules;
         free(portraits);
     } else if (profile==BTP_CONTENT_ORIGINAL_DOS_103) {
         content->resources->roster=(BtpRoster){0};
+        content->resources->combat_profile=(BtpCombatProfile){0};
         memset(&content->resources->portraits,0,sizeof content->resources->portraits);
     } else return fail(error,"Unknown game edition");
     content->profile=profile;if (error) error->text[0]=0;return 1;

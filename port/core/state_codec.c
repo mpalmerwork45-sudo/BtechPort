@@ -26,11 +26,19 @@
 
 static void put16(uint8_t *p, uint16_t v) { p[0] = (uint8_t)v; p[1] = (uint8_t)(v >> 8); }
 static uint16_t get16(const uint8_t *p) { return (uint16_t)(p[0] | (uint16_t)p[1] << 8); }
+static void put32(uint8_t *p,uint32_t n) { for (unsigned i=0;i<4;++i) p[i]=(uint8_t)(n>>(8u*i)); }
+static uint32_t get32(const uint8_t *p) { return (uint32_t)p[0]|(uint32_t)p[1]<<8|(uint32_t)p[2]<<16|(uint32_t)p[3]<<24; }
 
 void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
 {
     memset(b, 0, BTP_STATE_BYTES);
     memcpy(b, "BTPi", 4); b[4] = 44;
+    /* Original/ordinary Legacy states keep their v44 bytes. Updated rule
+       identity and the new settings pages require an explicit v45 payload. */
+    if (s->combat_profile || s->campaign.ui>=BTP_MENU_UPDATED_SETTINGS) {
+        memcpy(b,"BTPj",4);b[4]=45;b[20000]=s->combat_profile;
+        put32(b+20001,s->combat_fingerprint);
+    }
     for (unsigned i = 0; i < 4; ++i) b[8+i] = (uint8_t)(s->tick >> (8 * i));
     b[12] = (uint8_t)s->x_half; b[13] = (uint8_t)(s->x_half >> 8);
     b[14] = (uint8_t)s->y_half; b[15] = (uint8_t)(s->y_half >> 8);
@@ -223,7 +231,8 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         n == BTP_STATE_BYTES && !memcmp(b,"BTPf",4) && b[4]==41 ? 41 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPg",4) && b[4]==42 ? 42 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPh",4) && b[4]==43 ? 43 :
-        n == BTP_STATE_BYTES && !memcmp(b,"BTPi",4) && b[4]==44 ? 44 : 0;
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPi",4) && b[4]==44 ? 44 :
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPj",4) && b[4]==45 ? 45 : 0;
     if (!version) return 0;
     if (version>=18 && version<38 && b[10232]) return 0; /* v38 critical report count. */
     if (version>=18 && version<35 && b[10233]) return 0; /* v35 weapon-window presentation bits. */
@@ -243,13 +252,17 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
             if (version >= 10) {
                 if (b[425]) return 0;
                 unsigned start=version==10 ? 434u : version==11 ? 441u : version==12 ? 450u : version<15 ? 896u : version>=33 ? 19329u+(unsigned)sizeof(BtpYardState) : version>=31 ? 19308u+(unsigned)sizeof(BtpYardState) : version>=30 ? 19307u+(unsigned)sizeof(BtpYardState) : version>=29 ? 19306u+(unsigned)sizeof(BtpYardState) : version>=28 ? 19292u+(unsigned)sizeof(BtpLateState) : version>=27 ? 18483u+(unsigned)sizeof(BtpCacheState) : version>=26 ? 18483u : version>=25 ? 18433u : version>=24 ? 15702u : version>=22 ? 15693u : version>=21 ? 15414u : version>=20 ? 11388u : version>=19 ? 11326u : version>=18 ? 11314u : version>=17 ? 2684u : version>=16 ? 2399u : 1803u;
-                for (unsigned i=start;i<n;++i) if (b[i]) return 0;
+                for (unsigned i=start;i<n;++i) if (b[i] && !(version>=45 && i>=20000 && i<20005)) return 0;
                 if (version>=13) for (unsigned i=version>=15 ? 460u : 452u;i<512;++i) if (b[i]) return 0;
                 if (version==13 && b[878]) return 0; /* v14 firing-effect countdown. */
             }
         }
     }
     BtpState result = {.credits=35,.allowance_cap=50};
+    if (version>=45) {
+        result.combat_profile=b[20000];result.combat_fingerprint=get32(b+20001);
+        if (result.combat_profile>1 || (!!result.combat_profile != !!result.combat_fingerprint)) return 0;
+    }
     if (version>=27) memcpy(&result.cache,b+18483,sizeof result.cache);
     if (version>=28) {
         memcpy(&result.late,b+19292,sizeof result.late);
@@ -340,7 +353,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         if (result.campaign.invasion>1 || result.campaign.owned>1 || result.campaign.checkpoint_owned>1 ||
             result.campaign.world_x>2047 || result.campaign.world_y>2047 || result.campaign.building>=(version>=42 ? 27u : 26u) ||
             result.campaign.world_clock>=BTP_OUTDOOR_PERIOD || result.campaign.encounter>(version>=29 ? 4u : 2u) || result.campaign.mounted>result.campaign.owned ||
-            result.campaign.mech_walk>15 || result.campaign.mech_direction>7 || result.campaign.ui>(version>=42 ? BTP_MENU_BROKER_SELL_RESULT : version>=41 ? BTP_MENU_BROKER_RESULT : version>=30 ? BTP_MENU_MECH_PICK : version>=25 ? BTP_MENU_MECH : version>=23 ? BTP_MENU_RECIPIENT : version>=19 ? BTP_MENU_QUIT : 6) ||
+            result.campaign.mech_walk>15 || result.campaign.mech_direction>7 || result.campaign.ui>(version>=45 ? BTP_MENU_COMBAT_RULES : version>=42 ? BTP_MENU_BROKER_SELL_RESULT : version>=41 ? BTP_MENU_BROKER_RESULT : version>=30 ? BTP_MENU_MECH_PICK : version>=25 ? BTP_MENU_MECH : version>=23 ? BTP_MENU_RECIPIENT : version>=19 ? BTP_MENU_QUIT : 6) ||
             result.campaign.selected>(version>=23 ? 8u : 7u) ||
             result.campaign.member>(version>=43 && result.campaign.ui>=BTP_MENU_BROKER &&
                 result.campaign.ui<=BTP_MENU_BROKER_RESULT ? BTP_ROSTER_MAX-1u : 7u) ||

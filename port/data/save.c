@@ -46,7 +46,7 @@ int btp_save_is_updated(const char *path)
 {
     if (!path) return 0;
     FILE *f=fopen(path,"rb");if (!f) return 0;
-    char tag[4];int updated=fread(tag,1,4,f)==4 && !memcmp(tag,"BTU1",4);
+    char tag[4];int updated=fread(tag,1,4,f)==4 && (!memcmp(tag,"BTU1",4) || !memcmp(tag,"BTU2",4));
     fclose(f);return updated;
 }
 static int decode(const uint8_t *b, size_t n, BtpState *s, const BtpResources *r)
@@ -64,6 +64,11 @@ int btp_save_write(const char *path, const BtpState *s, const BtpResources *r, B
 {
     if (!path || !*path || !s || !r) return fail(e,"Invalid save request");
     int updated=r->roster.count!=0;
+    if (s->combat_profile>1 || (!!s->combat_profile != !!s->combat_fingerprint) ||
+        (s->combat_profile && !btp_active_combat_profile(s,r)))
+        return fail(e,"Current combat rules do not match the loaded Updated profile");
+    if (s->campaign.ui>=BTP_MENU_UPDATED_SETTINGS && (!updated || !r->combat_profile.fingerprint))
+        return fail(e,"Updated combat settings require their rule definition");
     size_t header=updated ? UPDATED_HEADER_BYTES : HEADER_BYTES;
     uint8_t bytes[UPDATED_HEADER_BYTES+BTP_STATE_BYTES] = {'B','T','S','1'};
     if (updated) {
@@ -73,6 +78,11 @@ int btp_save_write(const char *path, const BtpState *s, const BtpResources *r, B
     }
     BtpState validated;
     btp_state_encode(s,bytes+header);
+    if (updated && bytes[header+4]>=45) {
+        /* BTU2 binds rules as well as roster. Old BTU1 remains Legacy. */
+        memcpy(bytes,"BTU2",4);put32(bytes+84,s->combat_profile);
+        put32(bytes+88,s->combat_fingerprint);
+    }
     /* v44 retains the payload size and edition-specific outer envelopes.
        Older Original and Updated payloads still load through their codecs. */
     if (!decode(bytes+header,BTP_STATE_BYTES,&validated,r))
@@ -86,7 +96,7 @@ int btp_save_write(const char *path, const BtpState *s, const BtpResources *r, B
     FILE *existing=fopen(path,"rb");
     if (existing) {
         char tag[4];size_t got=fread(tag,1,4,existing);fclose(existing);
-        if (got==4 && ((!updated && !memcmp(tag,"BTU1",4)) ||
+        if (got==4 && ((!updated && (!memcmp(tag,"BTU1",4) || !memcmp(tag,"BTU2",4))) ||
             (updated && (!memcmp(tag,"BTS1",4) || (unsigned char)tag[0]==12))))
             return fail(e,"Cannot overwrite another edition's save; choose a separate filename");
     }
@@ -130,7 +140,8 @@ int btp_save_load(const char *path, BtpState *s, const BtpResources *r, BtpError
     int ok = !ferror(f); if (fclose(f)) ok = 0;
     if (!ok) return fail(e,"Cannot read save");
     if (n==BTP_ORIGINAL_BYTES && bytes[0]==12) return btp_original_decode(bytes,n,s,r,e);
-    int updated=n>=4 && !memcmp(bytes,"BTU1",4);
+    int v2=n>=4 && !memcmp(bytes,"BTU2",4);
+    int updated=v2 || (n>=4 && !memcmp(bytes,"BTU1",4));
     size_t header=updated ? UPDATED_HEADER_BYTES : HEADER_BYTES;
     if (n < header+24 || (!updated && memcmp(bytes,"BTS1",4)) || get32(bytes+12) ||
         get32(bytes+4) != n-HEADER_BYTES || n > header+BTP_STATE_BYTES ||
@@ -142,12 +153,19 @@ int btp_save_load(const char *path, BtpState *s, const BtpResources *r, BtpError
         saved_count=btp_roster_saved_count(&r->roster,bytes+16,bytes+48,get32(bytes+80));
         if (!saved_count)
             return fail(e,"Updated save requires its original roster or an unchanged extension of it");
-        for (unsigned i=84;i<UPDATED_HEADER_BYTES;++i) if (bytes[i]) return fail(e,"Unsupported updated save metadata");
+        for (unsigned i=v2 ? 92u : 84u;i<UPDATED_HEADER_BYTES;++i) if (bytes[i]) return fail(e,"Unsupported updated save metadata");
+        if (v2 && (get32(bytes+84)>1 || (!!get32(bytes+84)!=!!get32(bytes+88))))
+            return fail(e,"Unsupported Updated combat profile");
     } else if (bytes[header+4]>40 && bytes[header+4]!=44)
         return fail(e,"Updated state requires an edition-aware save envelope");
     BtpState loaded;
     if (!decode(bytes+header,n-header,&loaded,r) || !btp_roster_state_prefix_valid(&loaded,r,saved_count))
         return fail(e,"Save contains an invalid or unsupported game state");
+    if ((!v2 && (loaded.combat_profile || bytes[header+4]>=45)) ||
+        (v2 && (bytes[header+4]!=45 || get32(bytes+84)!=loaded.combat_profile || get32(bytes+88)!=loaded.combat_fingerprint)) ||
+        (loaded.combat_profile && !btp_active_combat_profile(&loaded,r)) ||
+        (loaded.campaign.ui>=BTP_MENU_UPDATED_SETTINGS && (!updated || !r->combat_profile.fingerprint)))
+        return fail(e,"Save requires its original Updated combat rule definition");
     if (updated && saved_count<r->roster.count && loaded.campaign.ui>=BTP_MENU_BROKER &&
         loaded.campaign.ui<=BTP_MENU_BROKER_RESULT) {
         /* Appending stock must not turn a held Back row into a purchase or

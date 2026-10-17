@@ -50,6 +50,8 @@ unsigned btp_actions_count(const BtpState *s)
     case BTP_MENU_RECIPIENT:return btp_party_count(&s->party)+1u;
     case BTP_MENU_PERSON:case BTP_MENU_EQUIPMENT:case BTP_MENU_HEAL:return s->party.enabled ? btp_party_count(&s->party) : 1u;
     case BTP_MENU_SETTINGS:return 6;
+    case BTP_MENU_UPDATED_SETTINGS:return 7;
+    case BTP_MENU_COMBAT_RULES:return 3;
     case BTP_MENU_STEPS:case BTP_MENU_OUTTAKES:return 3;
     case BTP_MENU_SPEED:return 6;
     case BTP_MENU_LOAD:case BTP_MENU_SAVE:return 7;
@@ -75,6 +77,10 @@ const char *btp_actions_label(const BtpState *s,unsigned item)
         return root[root_item(s,item)];
     case BTP_MENU_ROOT:return root[root_item(s,item)];
     case BTP_MENU_SETTINGS:return item==2 && !s->menu.sound ? "Turn Sound On" : settings[item];
+    case BTP_MENU_UPDATED_SETTINGS:
+        if (item==4) return s->combat_profile ? "Combat rules: Enhanced" : "Combat rules: Legacy";
+        return item==2 && !s->menu.sound ? "Turn Sound On" : settings[item-(item>4)];
+    case BTP_MENU_COMBAT_RULES:return item==0 ? "Enhanced" : item==1 ? "Legacy" : "Cancel";
     case BTP_MENU_STEPS:return steps[item];
     case BTP_MENU_SPEED:return speed[item];
     case BTP_MENU_OUTTAKES:return frequency[item];
@@ -196,7 +202,7 @@ void btp_menu_input(BtpState *s,const BtpResources *r,BtpAction a)
     case BTP_MENU_ROOT:case BTP_MENU_UPDATED_ROOT:
         switch (root_item(s,item)) {
         case 0:btp_menu_close(s);break;
-        case 1:page(s,BTP_MENU_SETTINGS,0);break;
+        case 1:page(s,r->roster.count && r->combat_profile.fingerprint ? BTP_MENU_UPDATED_SETTINGS : BTP_MENU_SETTINGS,0);break;
         case 2:
             btp_party_init(s);
             if (btp_world_populated(r,s)) { page(s,BTP_MENU_MESSAGE,0);s->menu.notice=4; }
@@ -251,7 +257,14 @@ void btp_menu_input(BtpState *s,const BtpResources *r,BtpAction a)
         }
         break;
     case BTP_MENU_BROKER_SELL_RESULT:page(s,BTP_MENU_BROKER_SELL,0);break;
-    case BTP_MENU_SETTINGS:
+    case BTP_MENU_COMBAT_RULES:
+        if (item<2) (void)btp_set_combat_profile(s,r,item==0);
+        page(s,BTP_MENU_UPDATED_SETTINGS,4);break;
+    case BTP_MENU_SETTINGS:case BTP_MENU_UPDATED_SETTINGS:
+        if (c->ui==BTP_MENU_UPDATED_SETTINGS) {
+            if (item==4) { page(s,BTP_MENU_COMBAT_RULES,s->combat_profile ? 0u : 1u);break; }
+            if (item>4) --item;
+        }
         if (item==0) page(s,BTP_MENU_STEPS,s->menu.steps==4 ? 2u : s->menu.steps-1u);
         else if (item==1) page(s,BTP_MENU_SPEED,s->menu.speed);
         else if (item==2) { s->menu.sound^=1u;btp_menu_close(s); }
@@ -327,7 +340,7 @@ int btp_actions_valid(const BtpState *s)
         m->slot>5 || m->io>2 || m->notice>(s->mode==BTP_ACTIONS && s->campaign.ui==BTP_MENU_MAP ? 15u : s->campaign.ui==BTP_MENU_BROKER_SELL_RESULT ? BTP_BROKER_CREDIT_LIMIT : 5u) || m->quit>1 || m->map_x>2047 || m->map_y>2047 || m->from_intro>1) return 0;
     if (m->from_intro && (s->mode!=BTP_ACTIONS || (s->campaign.ui!=BTP_MENU_LOAD && s->campaign.ui!=BTP_MENU_MESSAGE))) return 0;
     if ((s->mode==BTP_ACTIONS)!=(s->campaign.ui!=0)) return 0;
-    if (s->campaign.ui>BTP_MENU_BROKER_SELL_RESULT || (s->campaign.ui && s->campaign.selected>=btp_actions_count(s))) return 0;
+    if (s->campaign.ui>BTP_MENU_COMBAT_RULES || (s->campaign.ui && s->campaign.selected>=btp_actions_count(s))) return 0;
     if (s->campaign.ui==BTP_MENU_MECH && (s->campaign.member>=4 || !s->campaign.owned || btp_party_mech((BtpState *)s,s->campaign.member)[0]==255)) return 0;
     return !m->io || (s->mode==BTP_ACTIONS && s->campaign.ui==(m->io==BTP_MENU_IO_SAVE ? BTP_MENU_SAVE : BTP_MENU_LOAD));
 }

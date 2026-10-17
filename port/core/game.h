@@ -168,10 +168,16 @@ typedef struct {
     BtpYardState yard;
     uint8_t disk_origin; /* Parent building while VIEWDISK runs as a child story. */
     uint8_t spy_discovered; /* Original transient word 374A, saved explicitly. */
+    /* Authored combat policy travels with the campaign and held orders.
+       Zero is Legacy, including every save predating this field. */
+    uint8_t combat_profile;
+    uint32_t combat_fingerprint;
 } BtpState;
 enum { BTP_STATE_BYTES = 20480 };
 
 void btp_start(BtpState *state);
+const BtpCombatProfile *btp_active_combat_profile(const BtpState *state,const BtpResources *resources);
+int btp_set_combat_profile(BtpState *state,const BtpResources *resources,unsigned enhanced);
 void btp_game_building(BtpState *state,const BtpResources *resources,unsigned kind);
 void btp_tick(BtpState *state, const BtpMap *map, BtpAction action);
 void btp_game_tick(BtpState *state, const BtpResources *resources, BtpAction action);

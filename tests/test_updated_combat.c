@@ -1,0 +1,101 @@
+#include "data/content.h"
+#include "data/save.h"
+#include "core/menu.h"
+#include "core/combat.h"
+#include "core/npc.h"
+#include "frontend/pixels.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+static unsigned checks;
+#define CHECK(x) do { ++checks;if (!(x)) { fprintf(stderr,"FAIL %s:%d: %s\n",__FILE__,__LINE__,#x);exit(1); } } while (0)
+static BtpError error;
+static void same(const BtpState *a,const BtpState *b)
+{
+    uint8_t x[BTP_STATE_BYTES],y[BTP_STATE_BYTES];btp_state_encode(a,x);btp_state_encode(b,y);CHECK(!memcmp(x,y,sizeof x));
+}
+static void roundtrip(BtpState *s,const BtpResources *r)
+{
+    BtpState restored;CHECK(btp_save_write("work/lrm/held.btp",s,r,&error));
+    CHECK(btp_save_is_updated("work/lrm/held.btp"));CHECK(btp_save_load("work/lrm/held.btp",&restored,r,&error));
+    same(s,&restored);CHECK(!remove("work/lrm/held.btp"));
+}
+static void profiles(BtpResources *r)
+{
+    BtpState s,restored;btp_start(&s);btp_npc_init(&s,&r->map);
+    uint8_t original[BTP_STATE_BYTES];btp_state_encode(&s,original);CHECK(original[4]==44);
+    CHECK(r->combat_profile.fingerprint && !s.combat_profile);roundtrip(&s,r);
+    CHECK(btp_set_combat_profile(&s,r,1));CHECK(btp_active_combat_profile(&s,r));
+    for (unsigned slot=0;slot<6;++slot) {
+        char path[256];s.menu.slot=(uint8_t)slot;
+        CHECK(btp_save_edition_slot_path("work/lrm/slots.btp",slot,r,path,sizeof path,&error));
+        CHECK(btp_save_write(path,&s,r,&error));CHECK(btp_save_load(path,&restored,r,&error));same(&s,&restored);CHECK(!remove(path));
+    }
+    CHECK(btp_save_write("work/lrm/held.btp",&s,r,&error));
+    uint32_t fingerprint=r->combat_profile.fingerprint;r->combat_profile.fingerprint^=1;
+    restored=s;CHECK(!btp_save_load("work/lrm/held.btp",&restored,r,&error));same(&s,&restored);
+    r->combat_profile.fingerprint=fingerprint;CHECK(!remove("work/lrm/held.btp"));
+    s.combat.phase=BTP_COMBAT_MENU;CHECK(!btp_set_combat_profile(&s,r,0));CHECK(s.combat_profile==1);s.combat.phase=0;
+    CHECK(btp_set_combat_profile(&s,r,0));btp_state_encode(&s,original);CHECK(original[4]==44);
+    btp_menu_open(&s);btp_menu_input(&s,r,BTP_DOWN);btp_menu_input(&s,r,BTP_ACCEPT);
+    CHECK(s.campaign.ui==BTP_MENU_UPDATED_SETTINGS && btp_actions_count(&s)==7);roundtrip(&s,r);
+    for (unsigned i=0;i<4;++i) btp_menu_input(&s,r,BTP_DOWN);
+    btp_menu_input(&s,r,BTP_OPEN_MENU);CHECK(s.campaign.ui==BTP_MENU_COMBAT_RULES);roundtrip(&s,r);
+    btp_menu_input(&s,r,BTP_UP);btp_menu_input(&s,r,BTP_OPEN_MENU);CHECK(s.combat_profile==1);roundtrip(&s,r);
+    btp_menu_close(&s);CHECK(btp_set_combat_profile(&s,r,0));
+    BtpRoster roster=r->roster;r->roster=(BtpRoster){0};CHECK(!btp_set_combat_profile(&s,r,1));
+    btp_menu_open(&s);btp_menu_input(&s,r,BTP_DOWN);btp_menu_input(&s,r,BTP_ACCEPT);
+    CHECK(s.campaign.ui==BTP_MENU_SETTINGS && btp_actions_count(&s)==6);r->roster=roster;
+}
+static void parser(const BtpCombatProfile *expected)
+{
+    BtpCombatProfile p=*expected;
+    CHECK(btp_combat_profile_load("work/lrm/no-pack/roster.json",&p,error.text) && !p.fingerprint);
+    const char *prefix="{\"format\":\"btp-combat-v1\",\"profile\":\"chi-updated-lrm-v1\",\"planner\":\"weapon-aware-v1\",";
+    const char *cases[]={
+        "\"distance_scale\":3,\"minimum_range\":6,\"short_range\":7,\"medium_range\":14,\"long_range\":21,\"weapons\":[\"lrm20\",\"lrm5\",\"lrm15\",\"lrm10\"]}",
+        "\"distance_scale\":0,\"minimum_range\":6,\"short_range\":7,\"medium_range\":14,\"long_range\":21,\"weapons\":[\"lrm5\",\"lrm10\",\"lrm15\",\"lrm20\"]}",
+        "\"distance_scale\":3,\"distance_scale\":3}","\"unknown\":1}","}","\"distance_scale\":03}",
+        "\"distance_scale\":3,\"minimum_range\":6,\"short_range\":7,\"medium_range\":14,\"long_range\":21,\"weapons\":[\"lrm5\",\"lrm10\",\"lrm15\",\"lrm15\"]}"};
+    for (unsigned i=0;i<sizeof cases/sizeof cases[0];++i) {
+        FILE *f=fopen("work/lrm/combat.json","wb");CHECK(f);CHECK(fputs(prefix,f)>=0 && fputs(cases[i],f)>=0 && !fclose(f));
+        p=*expected;int ok=btp_combat_profile_load("work/lrm/roster.json",&p,error.text);CHECK(ok==(i==0));CHECK(p.fingerprint==expected->fingerprint);
+    }
+    CHECK(!remove("work/lrm/combat.json"));
+}
+static void queries(BtpResources *r)
+{
+    /* Independent expected boundaries. Infantry anchors bypass the original
+       vehicle footprint; further scenarios exercise that adjustment. */
+    static const unsigned distances[]={0,2,5,6,8,9,11,12,14,15,17,18,20,21,23,24,44,45,65,66};
+    static const unsigned penalty[]={6,6,6,5,5,4,4,3,3,2,2,1,1,0,0,0,0,0,0,0};
+    for (unsigned w=25;w<=28;++w) for (unsigned j=0;j<sizeof distances/sizeof distances[0];++j) {
+        BtpCombatUnit a={.x=32,.y=32},b={.x=(uint8_t)(32+2*distances[j]),.y=32,.infantry=1};
+        memcpy(a.record,r->combat.loans[0],125);memset(a.record+51,0,35);a.record[51]=(uint8_t)(w+1);a.record[39]=10;
+        b.record[15]=80;BtpCombatUnit before=a,target=b;unsigned p=99;
+        unsigned band=btp_combat_profile_range(&r->combat,&r->combat_profile,w,&a,&b,&p);
+        CHECK(p==penalty[j]);CHECK(band==(j<15 ? 0u : j<17 ? 1u : j<19 ? 2u : 3u));
+        BtpAttackQuery q=btp_combat_query(&a,&b,&r->combat,&r->combat_profile,0,-1,0,0,0,NULL);
+        CHECK(!memcmp(&a,&before,sizeof a) && !memcmp(&b,&target,sizeof b));CHECK(q.valid==(band<3));
+        if (q.valid) CHECK(q.needed==(int)(4+2*band+p));
+        uint8_t rng[3]={1,2,3};BtpShot shot=btp_combat_attack_profile(&a,&b,&r->combat,0,-1,0,0,0,NULL,rng,&r->combat_profile);
+        if (q.valid) { CHECK(shot.needed==q.needed);CHECK(a.record[39]==9 && a.pool==q.heat); }
+        else CHECK(!memcmp(&a,&before,sizeof a));
+    }
+    for (unsigned w=15;w<33;++w) if (!btp_combat_profile_lrm(w)) {
+        BtpCombatUnit a={.x=32,.y=32},b;memcpy(a.record,r->combat.loans[0],125);b=a;b.x=44;b.y=36;
+        memset(a.record+51,0,35);a.record[51]=(uint8_t)(w+1);a.record[39]=10;
+        unsigned index=w==32 ? 11u : 0u;
+        BtpAttackQuery old=btp_combat_query(&a,&b,&r->combat,NULL,index,0,4,2,0,NULL);
+        BtpAttackQuery newq=btp_combat_query(&a,&b,&r->combat,&r->combat_profile,index,0,4,2,0,NULL);CHECK(!memcmp(&old,&newq,sizeof old));
+    }
+}
+int main(int argc,char **argv)
+{
+    CHECK(argc==2);BtpContent content={0};
+    BtpOriginalContentPaths paths={argv[1],"work/talk-data.bin","work/combat-data.bin","work/world-data.bin"};
+    CHECK(btp_content_load_original(&content,&paths,&error));
+    CHECK(btp_content_select(&content,BTP_CONTENT_UPDATED,"content/updated/roster.json",&error));
+    profiles(content.resources);parser(&content.resources->combat_profile);queries(content.resources);
+    btp_content_close(&content);printf("Updated combat: %u checks passed\n",checks);return 0;
+}

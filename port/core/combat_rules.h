@@ -2,6 +2,7 @@
 #define BTP_COMBAT_RULES_H
 #include <stdint.h>
 #include <stddef.h>
+#include "data/combat_profile.h"
 enum { BTP_SOUND_COUNT=18, BTP_SOUND_EVENTS=8192 };
 typedef struct { uint32_t clocks; uint16_t divisor; uint8_t type,level; } BtpSpeakerEvent;
 
@@ -90,6 +91,17 @@ unsigned btp_combat_direction(int x, int y, int tx, int ty);
 unsigned btp_combat_distance(int x, int y, int tx, int ty);
 unsigned btp_combat_range(const BtpCombatData *data, unsigned weapon, int x, int y, int tx, int ty);
 unsigned btp_combat_range_to(const BtpCombatData *data,unsigned weapon,const BtpCombatUnit *actor,const BtpCombatUnit *target);
+/* Pure preview shared by the planner, targeting panel and actual attack. */
+typedef struct { unsigned band,minimum,hit36,damage36,heat;int needed,valid; } BtpAttackQuery;
+unsigned btp_combat_shot_distance(const BtpCombatUnit *actor,const BtpCombatUnit *target);
+unsigned btp_combat_profile_range(const BtpCombatData *data,const BtpCombatProfile *profile,
+    unsigned weapon,const BtpCombatUnit *actor,const BtpCombatUnit *target,unsigned *minimum);
+BtpAttackQuery btp_combat_query(const BtpCombatUnit *actor,const BtpCombatUnit *target,
+    const BtpCombatData *data,const BtpCombatProfile *profile,unsigned index,int movement,
+    unsigned target_steps,unsigned skill,unsigned unit_id,const uint8_t *explored);
+BtpShot btp_combat_attack_profile(BtpCombatUnit *attacker,BtpCombatUnit *target,
+    const BtpCombatData *data,unsigned index,int movement,unsigned target_steps,
+    unsigned skill,unsigned unit_id,const uint8_t *explored,uint8_t rng[3],const BtpCombatProfile *profile);
 unsigned btp_combat_weapon(const BtpCombatUnit *unit, unsigned index);
 unsigned btp_combat_weapon_count(const BtpCombatUnit *unit);
 unsigned btp_combat_weapon_type(const BtpCombatUnit *unit, unsigned index);

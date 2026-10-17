@@ -1,0 +1,11 @@
+{
+  "format": "btp-combat-v1",
+  "profile": "chi-updated-lrm-v1",
+  "planner": "weapon-aware-v1",
+  "distance_scale": 3,
+  "minimum_range": 6,
+  "short_range": 7,
+  "medium_range": 14,
+  "long_range": 21,
+  "weapons": ["lrm5", "lrm10", "lrm15", "lrm20"]
+}

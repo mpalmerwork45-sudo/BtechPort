@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include "core/combat_rules.h"
 #include "data/roster.h"
+#include "data/combat_profile.h"
 
 /* Stored MTPs remain at most 64x64. The transient invasion battle includes
    surrounding generated terrain so a waypoint can cross every town edge. */
@@ -65,6 +66,7 @@ typedef struct {
     BtpCombatData combat;
     BtpWorldData world;
     BtpRoster roster; /* Empty in Original; immutable for a running session. */
+    BtpCombatProfile combat_profile; /* Optional authored Updated rules. */
     /* Cosmetic Updated-pack art, separate from original O*.ANM and save IDs. */
     BtpPortraits portraits;
 } BtpResources;

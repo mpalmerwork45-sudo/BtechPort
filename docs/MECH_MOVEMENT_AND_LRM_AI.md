@@ -6,7 +6,18 @@ does not provide good fire-support tactics for the expanded roster. An optional
 Updated-mode planner is justified; the original attack rules do not require an
 LRM-specific fix on the evidence below. The owner has requested a plan for that
 planner **including LRM minimum range**. The implementation plan below is
-**PROPOSED**; this documentation update changes no gameplay or save formats.
+now being implemented at the owner's request. The dated audit above remains
+the pre-change baseline; the delivery record below distinguishes completed work.
+
+## Implementation record
+
+- **LRM1 implemented:** bounded external combat profile, explicit saved policy,
+  Enhanced/Legacy settings and pure range/attack queries. Enhanced payloads
+  use BTPj/v45 inside BTU2; ordinary Original/Legacy states retain v44 bytes.
+  Old saves select Legacy; rule fingerprint mismatches reject transactionally.
+  Eight focused native suites pass, including original attacks/AI, roster,
+  original saves and the new profile/query tests (`work/lrm-stage1.log`).
+- LRM2–LRM5 remain in progress. New-game defaults are not enabled yet.
 
 ## Movement calculations
 
@@ -99,7 +110,7 @@ use range to avoid shorter-range return fire and protect its missile supply.
 
 ## Updated combat plan
 
-**PROPOSED, planning authorized; implementation remains a subsequent task.**
+**Authorized implementation plan; see the delivery record above for status.**
 Introduce one versioned Updated combat profile that combines weapon-aware
 tactics with an LRM close-range accuracy penalty. Derive tactics from working
 weapons, ammunition and movement, so a Catapult, Archer, Crusader or future
