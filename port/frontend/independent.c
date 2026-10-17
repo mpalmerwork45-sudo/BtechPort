@@ -1,4 +1,5 @@
 #include "frontend/independent.h"
+#include "frontend/art.h"
 #include "data/project.h"
 #include "data/unit_data.h"
 #include "core/events.h"
@@ -65,7 +66,9 @@ static void portrait(Canvas *c,unsigned slot)
 static void event(Canvas *c,const BtpResources *r,const BtpState *s)
 {
     const BtpAdventure *a=&r->project->adventure;const BtpEventNode *e=&a->nodes[s->event.node];
-    portrait(c,e->portrait>1);char lines[96][28];unsigned count=btp_event_lines(e->text,lines);
+    portrait(c,e->portrait>1);
+    if (e->picture!=BTP_ART_NONE) (void)btp_art_draw(r,e->picture,s->tick/8u,8,20,8,12,96,108,c->f);
+    char lines[96][28];unsigned count=btp_event_lines(e->text,lines);
     if (s->event.phase==BTP_EVENT_ENTRY) {
         const BtpSceneEntrance *door=&a->maps[s->event.origin_map].entrances[s->event.origin_entry];
         text(c,100,24,door->name,14);text(c,100,48,door->person==255 ? "Enter this building?" : "Talk to this person?",15);
@@ -81,6 +84,7 @@ static void event(Canvas *c,const BtpResources *r,const BtpState *s)
 static void overview(Canvas *c,const BtpResources *r,const BtpState *s)
 {
     const BtpScene *m=btp_scene(r,s);if (!m) return;
+    if (btp_art_world_map(r,s,c->f)) { text(c,5,16,r->project->adventure.world_name,15);return; }
     unsigned scale=2;int left=96,top=28;
     text(c,100,16,m->name,15);
     for (unsigned y=0;y<m->visual.height;++y) for (unsigned x=0;x<m->visual.width;++x) {
@@ -95,17 +99,23 @@ static void map(Canvas *c,const BtpResources *r,const BtpState *s)
 {
     const BtpScene *m=btp_scene(r,s);if (!m) return;
     int cx=(int)s->x_half*8-108,cy=(int)s->y_half*8-76;
-    for (unsigned y=0;y<m->visual.height;++y) for (unsigned x=0;x<m->visual.width;++x) {
-        const BtpSceneTile *t=&r->project->adventure.tiles[m->cells[y*64+x]];
-        int px=(int)x*16-cx,py=(int)y*16-cy;
+    for (int y=cy/16-1;y<=cy/16+11;++y) for (int x=cx/16-1;x<=cx/16+15;++x) {
+        const BtpSceneTile *t=btp_scene_tile(&r->project->adventure,m,x,y);if (!t) continue;
+        int px=x*16-cx,py=y*16-cy;
         if (px<=-16 || px>=224 || py<=-16 || py>=150) continue;
-        image(c,c->art->tiles[t->graphic],px,py,16,16,0,224);
+        if (t->sheet==3) (void)btp_art_draw(r,t->graphic,s->tick/8u,px,py,0,12,224,150,c->f);
+        else image(c,c->art->tiles[t->graphic],px,py,16,16,0,224);
     }
     for (unsigned i=0;i<m->entrance_count;++i) {
         const BtpSceneEntrance *door=&m->entrances[i];int x=(int)door->x*8-cx,y=(int)door->y*8-cy;
         int recruited=0;if (door->person!=255) for (unsigned k=0;k<8;++k) if (s->party.people[k][0]!=255 && s->event.people[k]==door->person) recruited=1;
         if (recruited) continue;
-        if (door->person!=255) image(c,c->art->sprites[2][(s->tick/16u)&3u],x,y-8,16,16,1,224);
+        if (door->icon!=BTP_ART_NONE) {
+            const BtpArtImage *im=&r->project->graphics.images[door->icon];
+            (void)btp_art_draw(r,door->icon,s->tick/8u,x-(int)im->width/2,y-(int)im->height,0,12,224,150,c->f);
+        } else if (door->person!=255) {
+            if (!btp_art_sprite(r,1,s->tick/16u,x,y-8,0,12,224,150,c->f)) image(c,c->art->sprites[2][(s->tick/16u)&3u],x,y-8,16,16,1,224);
+        }
         else { if (x>=0 && x<220 && y>=12 && y<146) { box(c,x,y,5,3,14);box(c,x+2,y-2,1,7,15); } }
     }
     if (s->combat.phase) {
@@ -113,7 +123,9 @@ static void map(Canvas *c,const BtpResources *r,const BtpState *s)
         for (unsigned i=0;i<combat->count;++i) {
             const BtpCombatUnit *u=&combat->unit[i];const BtpCombatEffect *pending=btp_effects_pending_death(s,i);
             unsigned family=u->record[0]==255 && !pending ? 4u : u->infantry ? (i<combat->friends ? 2u : 3u) : u->record[124]&1u;
-            image(c,c->art->sprites[family][combat->walk[i]&3u],(int)u->x*8-cx,(int)u->y*8-cy,16,16,1,224);
+            unsigned slot=family==4 ? 5u : u->infantry ? i<combat->friends ? combat->ids[i]==4 ? 0u : 1u : 2u : 3u+(family&1u);
+            if (!btp_art_sprite(r,slot,combat->walk[i],(int)u->x*8-cx,(int)u->y*8-cy,0,12,224,150,c->f))
+                image(c,c->art->sprites[family][combat->walk[i]&3u],(int)u->x*8-cx,(int)u->y*8-cy,16,16,1,224);
             if (i==combat->active_unit) { int x=(int)u->x*8-cx,y=(int)u->y*8-cy;if (x>=0 && x<220 && y>=14 && y<148) box(c,x,y-2,12,1,14); }
         }
         if (combat->phase==BTP_COMBAT_MOVE) {
@@ -128,7 +140,8 @@ static void map(Canvas *c,const BtpResources *r,const BtpState *s)
         for (unsigned i=0;i<8;++i) if (s->party.people[i][0]!=255 && s->party.people[i][12]>=8) {
             int x=(int)(i ? s->party.x[i] : s->campaign.world_x)-(int)(2*m->origin_x);
             int y=(int)(i ? s->party.y[i] : s->campaign.world_y)-(int)(2*m->origin_y);
-            image(c,c->art->sprites[2][(i ? s->party.walk[i] : s->player_walk)&3u],x*8-cx,y*8-cy-8,16,16,1,224);
+            unsigned walk=i ? s->party.walk[i] : s->player_walk;
+            if (!btp_art_sprite(r,i ? 1u : 0u,walk,x*8-cx,y*8-cy-8,0,12,224,150,c->f)) image(c,c->art->sprites[2][walk&3u],x*8-cx,y*8-cy-8,16,16,1,224);
         }
         /* Mounted people retain stale foot coordinates. Draw each active
            vehicle once at its saved ground anchor, including an unassigned
@@ -139,7 +152,7 @@ static void map(Canvas *c,const BtpResources *r,const BtpState *s)
             unsigned pilot=mech[121],walk=pilot && pilot<8 ? s->party.walk[pilot] : s->campaign.mech_walk;
             int x=(int)s->party.mech_x[i]-(int)(2*m->origin_x);
             int y=(int)s->party.mech_y[i]-(int)(2*m->origin_y);
-            image(c,c->art->sprites[mech[124]&1u][walk&3u],x*8-cx,y*8-cy-16,16,16,1,224);
+            if (!btp_art_sprite(r,3u+(mech[124]&1u),walk,x*8-cx,y*8-cy-16,0,12,224,150,c->f)) image(c,c->art->sprites[mech[124]&1u][walk&3u],x*8-cx,y*8-cy-16,16,16,1,224);
         }
     }
     box(c,224,12,96,170,1);text(c,229,20,"Team",14);
@@ -254,6 +267,7 @@ static void combat(Canvas *c,const BtpResources *r,const BtpState *s)
 }
 void btp_independent_render(const BtpResources *r,const BtpState *s,uint32_t f[BTP_PIXELS])
 {
+    if (btp_art_picture(r,s,f)) return;
     Canvas c={&r->project->independent,f};frame(&c,r,s);
     if (s->mode==BTP_EVENT || s->mode==BTP_ENDING) event(&c,r,s);
     else if (s->mode==BTP_ACTIONS) actions(&c,r,s);

@@ -4,6 +4,7 @@
 #include "data/resources.h"
 #include "data/adventure.h"
 #include "data/independent.h"
+#include "data/art.h"
 enum { BTP_LUA_SCRIPTS=16, BTP_LUA_SOURCE=8192 };
 typedef struct { char id[64],source[BTP_LUA_SOURCE+1];size_t length; } BtpLuaScript;
 typedef struct BtpProject {
@@ -12,6 +13,7 @@ typedef struct BtpProject {
     BtpDefinitions definitions;
     BtpAdventure adventure;
     BtpIndependent independent;
+    BtpArt graphics;
     unsigned script_count;
     BtpLuaScript scripts[BTP_LUA_SCRIPTS];
 } BtpProject;

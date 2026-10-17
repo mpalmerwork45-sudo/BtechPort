@@ -190,7 +190,14 @@ int btp_party_recruit(BtpState *s,unsigned skill)
 int btp_party_walkable(const BtpState *s,const BtpResources *r,int x,int y,int mech)
 {
     const BtpScene *scene=btp_scene(r,s);
-    if (scene) return btp_scene_stand(scene,x-(int)(2*scene->origin_x),y-(int)(2*scene->origin_y),mech);
+    if (scene) {
+        const BtpAdventure *a=btp_adventure(r);
+        if (!scene->world) return btp_scene_stand(scene,x-(int)(2*scene->origin_x),y-(int)(2*scene->origin_y),mech);
+        if (x<0 || y<0 || x>=(int)(2*a->world_width)-2 || y>=(int)(2*a->world_height)-(mech ? 2 : 0)) return 0;
+        const BtpSceneTile *first=btp_scene_tile(a,scene,(mech ? x/2 : (x+1)/2)-(int)scene->origin_x,y/2-(int)scene->origin_y);
+        const BtpSceneTile *second=mech ? btp_scene_tile(a,scene,x/2+1-(int)scene->origin_x,y/2-(int)scene->origin_y) : first;
+        return first && second && first->terrain!=4 && second->terrain!=4;
+    }
     if (x<0 || y<0 || x>=2048 || y>=2048) return 0;
     /* Cache corridors use their own tile gate and origin. Testing the
        generated terrain underneath would hide perfectly legal followers. */

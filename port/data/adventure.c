@@ -2,6 +2,7 @@
 #include "data/json.h"
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 static int string(BtpJson *j,unsigned n,const char *key,char *out,size_t size)
 { return btp_json_string(j,btp_json_field(j,n,key),out,size); }
@@ -48,22 +49,139 @@ static int rows(BtpJson *j,unsigned field,BtpAdventure *a,BtpScene *m,unsigned o
     if (!btp_json_type(j,field,'[')) return 0;
     unsigned width=0,height=0;
     for (unsigned n=j->nodes[field].first;n;n=j->nodes[n].next) {
-        char row[65];if (!btp_json_string(j,n,row,sizeof row)) return 0;
-        unsigned len=(unsigned)strlen(row);
+        char row[65];unsigned len=0;
+        if (a->version==1) { if (!btp_json_string(j,n,row,sizeof row)) return 0;len=(unsigned)strlen(row); }
+        else {
+            if (!btp_json_type(j,n,'[')) return 0;
+            for (unsigned c=j->nodes[n].first;c;c=j->nodes[c].next) ++len;
+        }
         if (!len || (height && len!=width) || oy+height>=64 || ox+len>64 ||
             (overlay && (oy+height>=m->visual.height || ox+len>m->visual.width))) return btp_json_error(j,n,"rows must form a rectangle inside the map (maximum 64 x 64)");
         width=len;
+        unsigned cell=j->nodes[n].first;
         for (unsigned x=0;x<len;++x) {
-            if (overlay && row[x]==' ') continue;
-            unsigned t=0;while (t<a->tile_count && a->tiles[t].key!=(unsigned char)row[x]) ++t;
-            if (t==a->tile_count) return btp_json_error(j,n,"row contains an undefined tile key");
-            m->cells[(oy+height)*64+ox+x]=(uint8_t)t;
+            unsigned t=0;
+            if (a->version==1) {
+                if (overlay && row[x]==' ') continue;
+                while (t<a->tile_count && a->tiles[t].key!=(unsigned char)row[x]) ++t;
+                if (t==a->tile_count) return btp_json_error(j,n,"row contains an undefined tile key");
+            } else {
+                if (overlay && j->nodes[cell].type=='"' && !strcmp(j->nodes[cell].text," ")) { cell=j->nodes[cell].next;continue; }
+                if (!reference(j,cell,a->tiles,sizeof *a->tiles,a->tile_count,&t)) return 0;
+                cell=j->nodes[cell].next;
+            }
+            m->cells[(oy+height)*64+ox+x]=(uint16_t)t;
         }
         ++height;
     }
     if (!height || (!overlay && (height<16 || width<16))) return btp_json_error(j,field,"map must be 16..64 tiles in each dimension");
     if (!overlay) { m->visual.width=(uint8_t)width;m->visual.height=(uint8_t)height; }
     return 1;
+}
+int btp_adventure_world_at(const BtpAdventure *a,int x,int y)
+{
+    if (x<0 || y<0 || (unsigned)x>=a->world_width || (unsigned)y>=a->world_height) return -1;
+    return (int)(a->world_base+(unsigned)y/64*(a->world_width/64)+(unsigned)x/64);
+}
+const BtpSceneTile *btp_scene_tile(const BtpAdventure *a,const BtpScene *m,int x,int y)
+{
+    if (m->world) {
+        int wx=(int)m->origin_x+x,wy=(int)m->origin_y+y,index=btp_adventure_world_at(a,wx,wy);
+        if (index<0) return NULL;
+        m=&a->maps[index];x=wx-(int)m->origin_x;y=wy-(int)m->origin_y;
+    }
+    if (x<0 || y<0 || x>=m->visual.width || y>=m->visual.height) return NULL;
+    return &a->tiles[m->cells[y*64+x]];
+}
+static void compile_map(BtpAdventure *a,BtpScene *m)
+{
+    m->rules.width=m->visual.width;m->rules.height=m->visual.height;m->rules.authored=1;
+    const unsigned rule[]={0,31,15,47,85};
+    for (unsigned y=0;y<m->visual.height;++y) for (unsigned x=0;x<m->visual.width;++x) {
+        BtpSceneTile *t=&a->tiles[m->cells[y*64+x]];unsigned at=y*m->visual.width+x;
+        m->visual.tiles[at]=(uint8_t)(t->graphic&255u);m->rules.tiles[at]=(uint8_t)rule[t->terrain];
+    }
+}
+static int world(BtpJson *j,unsigned n,BtpAdventure *a)
+{
+    unsigned jigsaws=btp_json_optional(j,1,"jigsaws"),definitions[BTP_JIGSAWS];
+    if (jigsaws) {
+        if (!ids(j,"jigsaws",a->jigsaws,sizeof *a->jigsaws,BTP_JIGSAWS,&a->jigsaw_count,definitions)) return 0;
+        for (unsigned i=0;i<a->jigsaw_count;++i) {
+            unsigned z=definitions[i],grid=btp_json_field(j,z,"rows"),y=0;
+            BtpJigsaw *piece=&a->jigsaws[i];
+            if (!string(j,z,"name",piece->name,sizeof piece->name) || !btp_json_type(j,grid,'[')) return 0;
+            for (unsigned r=j->nodes[grid].first;r;r=j->nodes[r].next) {
+                unsigned x=0;if (y==8 || !btp_json_type(j,r,'[')) return btp_json_error(j,r,"jigsaw must be 8x8 tiles");
+                for (unsigned c=j->nodes[r].first;c;c=j->nodes[c].next) {
+                    unsigned tile;if (x==8 || !reference(j,c,a->tiles,sizeof *a->tiles,a->tile_count,&tile)) return btp_json_error(j,c,"jigsaw must contain 8x8 valid tile IDs");
+                    piece->cells[y*8+x++]=(uint16_t)tile;
+                }
+                if (x!=8) return btp_json_error(j,r,"jigsaw must be 8x8 tiles");
+                ++y;
+            }
+            if (y!=8 || !btp_json_done(j,z)) return btp_json_error(j,z,"jigsaw must be 8x8 tiles");
+        }
+    }
+    if (!n) return 1;
+    if (!a->jigsaw_count || !string(j,n,"id",a->world_id,64) || !btp_content_id(a->world_id,1) || !string(j,n,"name",a->world_name,64)) return btp_json_error(j,n,"world needs jigsaws and a namespaced ID");
+    unsigned grid=btp_json_field(j,n,"pieces"),width=0,height=0;
+    if (!btp_json_type(j,grid,'[')) return 0;
+    for (unsigned r=j->nodes[grid].first;r;r=j->nodes[r].next) {
+        unsigned x=0;if (height==128 || !btp_json_type(j,r,'[')) return btp_json_error(j,r,"world exceeds 128x128 jigsaws");
+        for (unsigned c=j->nodes[r].first;c;c=j->nodes[c].next) {
+            unsigned piece;if (x==128 || !reference(j,c,a->jigsaws,sizeof *a->jigsaws,a->jigsaw_count,&piece)) return 0;
+            a->pieces[height*128+x++]=(uint16_t)piece;
+        }
+        if (!x || (height && x!=width)) return btp_json_error(j,r,"world rows must form a rectangle");
+        width=x;++height;
+    }
+    if (!width || !height || width%8 || height%8) return btp_json_error(j,grid,"world dimensions must be multiples of eight jigsaws (8..128)");
+    a->world_width=8*width;a->world_height=8*height;a->world_base=a->map_count;
+    for (unsigned y=0;y<a->world_height;y+=64) for (unsigned x=0;x<a->world_width;x+=64) {
+        BtpScene *m=&a->maps[a->map_count++];m->origin_x=x;m->origin_y=y;m->world=1;m->visual.width=m->visual.height=64;
+        snprintf(m->id,sizeof m->id,"world:sector-%u-%u",x/64,y/64);snprintf(m->name,sizeof m->name,"%s",a->world_name);
+        for (unsigned dy=0;dy<64;++dy) for (unsigned dx=0;dx<64;++dx) {
+            unsigned wx=x+dx,wy=y+dy,p=a->pieces[(wy/8)*128+wx/8];
+            m->cells[dy*64+dx]=a->jigsaws[p].cells[(wy&7u)*8+(wx&7u)];
+        }
+    }
+    unsigned patches=btp_json_field(j,n,"patches");if (!btp_json_type(j,patches,'[')) return 0;
+    unsigned count=0;
+    for (unsigned p=j->nodes[patches].first;p;p=j->nodes[p].next) {
+        unsigned ox,oy,yy=0,ww=0,rs=btp_json_field(j,p,"rows");
+        if (++count>4096 || !pair(j,btp_json_field(j,p,"at"),1023,&ox,&oy) || !btp_json_type(j,rs,'[')) return btp_json_error(j,p,"invalid world patch");
+        for (unsigned r=j->nodes[rs].first;r;r=j->nodes[r].next) {
+            unsigned xx=0;if (yy==64 || !btp_json_type(j,r,'[')) return btp_json_error(j,r,"patch exceeds 64x64");
+            for (unsigned c=j->nodes[r].first;c;c=j->nodes[c].next) {
+                unsigned t;int at=btp_adventure_world_at(a,(int)(ox+xx),(int)(oy+yy));
+                if (xx==64 || at<0 || !reference(j,c,a->tiles,sizeof *a->tiles,a->tile_count,&t)) return btp_json_error(j,c,"patch must fit inside world");
+                BtpScene *m=&a->maps[at];m->cells[((oy+yy)&63u)*64+((ox+xx)&63u)]=(uint16_t)t;++xx;
+            }
+            if (!xx || (yy && xx!=ww)) return btp_json_error(j,r,"patch rows must form a rectangle");
+            ww=xx;++yy;
+        }
+        if (!yy || !btp_json_done(j,p)) return btp_json_error(j,p,"empty world patch");
+    }
+    unsigned cities=btp_json_field(j,n,"cities");if (!btp_json_type(j,cities,'[')) return 0;
+    for (unsigned c=j->nodes[cities].first;c;c=j->nodes[c].next) {
+        unsigned city;if (!reference(j,c,a->maps,sizeof *a->maps,a->local_count,&city)) return 0;
+        BtpScene *src=&a->maps[city];
+        if (src->world || src->origin_x+src->visual.width>a->world_width || src->origin_y+src->visual.height>a->world_height) return btp_json_error(j,c,"duplicate city or city outside world");
+        src->world=1;
+        for (unsigned y=0;y<src->visual.height;++y) for (unsigned x=0;x<src->visual.width;++x) {
+            unsigned wx=src->origin_x+x,wy=src->origin_y+y;BtpScene *m=&a->maps[btp_adventure_world_at(a,(int)wx,(int)wy)];
+            m->cells[(wy&63u)*64+(wx&63u)]=src->cells[y*64+x];
+        }
+        for (unsigned i=0;i<src->entrance_count;++i) {
+            unsigned wx=2*src->origin_x+src->entrances[i].x,wy=2*src->origin_y+src->entrances[i].y;
+            BtpScene *m=&a->maps[btp_adventure_world_at(a,(int)(wx/2),(int)(wy/2))];
+            if (m->entrance_count==64) return btp_json_error(j,c,"world sector exceeds 64 entrances");
+            BtpSceneEntrance *door=&m->entrances[m->entrance_count++];*door=src->entrances[i];door->x=(uint8_t)(wx&127u);door->y=(uint8_t)(wy&127u);
+        }
+    }
+    for (unsigned i=a->world_base;i<a->map_count;++i) compile_map(a,&a->maps[i]);
+    return btp_json_done(j,n);
 }
 int btp_scene_stand(const BtpScene *m,int x,int y,int mech)
 {
@@ -74,12 +192,12 @@ int btp_scene_stand(const BtpScene *m,int x,int y,int mech)
 int btp_adventure_load(const char *path,const BtpDefinitions *d,BtpAdventure *out,char error[256])
 {
     BtpAdventure *a=calloc(1,sizeof *a);BtpJson j={0};int ok=0;char text[64];unsigned v;
-    unsigned tiles[64],maps[16],people[16],shops[16],battles[16],nodes[256];
+    unsigned tiles[BTP_SCENE_TILES],maps[16],people[16],shops[16],battles[16],nodes[256];
     if (!a) return 0;
-    if (!btp_json_load(&j,path,error)) goto done;
-    if (!string(&j,1,"format",text,sizeof text) || strcmp(text,"btp-adventure-v1") ||
-        !number(&j,1,"schema_version",1,1,&v)) { btp_json_error(&j,1,"expected btp-adventure-v1, schema_version 1");goto done; }
-    if (!ids(&j,"tiles",a->tiles,sizeof *a->tiles,64,&a->tile_count,tiles) ||
+    if (!btp_json_load_large(&j,path,error)) goto done;
+    if (!string(&j,1,"format",text,sizeof text) || (strcmp(text,"btp-adventure-v1") && strcmp(text,"btp-adventure-v2")) ||
+        !number(&j,1,"schema_version",1,2,&a->version) || (a->version==1 ? strcmp(text,"btp-adventure-v1") : strcmp(text,"btp-adventure-v2"))) { btp_json_error(&j,1,"expected btp-adventure-v1/v2 with matching schema version");goto done; }
+    if (!ids(&j,"tiles",a->tiles,sizeof *a->tiles,a->version==1 ? 64u : BTP_SCENE_TILES,&a->tile_count,tiles) ||
         !ids(&j,"maps",a->maps,sizeof *a->maps,16,&a->map_count,maps) ||
         !ids(&j,"people",a->people,sizeof *a->people,16,&a->person_count,people) ||
         !ids(&j,"shops",a->shops,sizeof *a->shops,16,&a->shop_count,shops) ||
@@ -96,12 +214,16 @@ int btp_adventure_load(const char *path,const BtpDefinitions *d,BtpAdventure *ou
     }
     for (unsigned i=0;i<a->tile_count;++i) {
         unsigned n=tiles[i];BtpSceneTile *t=&a->tiles[i];char key[2];
-        const char *const sheets[]={"chi:land","chi:destroyed","package:tiles"},*const terrain[]={"clear","rough","water","woods","wall"};
-        if (!string(&j,n,"key",key,sizeof key) || key[0]==' ' || !number(&j,n,"graphic",0,249,&v)) goto done;
-        t->key=(uint8_t)key[0];t->graphic=(uint8_t)v;
-        for (unsigned k=0;k<i;++k) if (a->tiles[k].key==t->key) { btp_json_error(&j,n,"duplicate tile key");goto done; }
-        if (!option(&j,n,"sheet",sheets,3,&v)) goto done;
+        const char *const sheets[]={"chi:land","chi:destroyed","package:tiles","package:art"},*const terrain[]={"clear","rough","water","woods","wall"};
+        if (a->version==1) {
+            if (!string(&j,n,"key",key,sizeof key) || key[0]==' ') goto done;
+            t->key=(uint8_t)key[0];
+            for (unsigned k=0;k<i;++k) if (a->tiles[k].key==t->key) { btp_json_error(&j,n,"duplicate tile key");goto done; }
+        }
+        if (!option(&j,n,"sheet",sheets,a->version==1 ? 3u : 4u,&v)) goto done;
         t->sheet=(uint8_t)v;
+        if (t->sheet==3) { if (!string(&j,n,"graphic",t->image,sizeof t->image)) goto done;t->graphic=65535; }
+        else { if (!number(&j,n,"graphic",0,t->sheet==2 && a->version==2 ? 4095u : 249u,&v)) goto done;t->graphic=(uint16_t)v; }
         if (!option(&j,n,"terrain",terrain,5,&v)) goto done;
         t->terrain=(uint8_t)v;
         if (!number(&j,n,"mini_color",0,15,&v) || !btp_json_done(&j,n)) goto done;
@@ -117,12 +239,7 @@ int btp_adventure_load(const char *path,const BtpDefinitions *d,BtpAdventure *ou
             unsigned x,y;if (++count>32) { btp_json_error(&j,o,"at most 32 overlays per map");goto done; }
             if (!pair(&j,btp_json_field(&j,o,"at"),63,&x,&y) || !rows(&j,btp_json_field(&j,o,"rows"),a,m,x,y,1) || !btp_json_done(&j,o)) goto done;
         }
-        m->rules.width=m->visual.width;m->rules.height=m->visual.height;m->rules.authored=1;
-        const unsigned rule[]={0,31,15,47,85};
-        for (unsigned y=0;y<m->visual.height;++y) for (unsigned x=0;x<m->visual.width;++x) {
-            BtpSceneTile *t=&a->tiles[m->cells[y*64+x]];unsigned at=y*m->visual.width+x;
-            m->visual.tiles[at]=t->graphic;m->rules.tiles[at]=(uint8_t)rule[t->terrain];
-        }
+        compile_map(a,m);
         for (unsigned k=0;k<i;++k) {
             const BtpScene *b=&a->maps[k];
             if (m->origin_x<b->origin_x+b->visual.width && b->origin_x<m->origin_x+m->visual.width &&
@@ -132,11 +249,13 @@ int btp_adventure_load(const char *path,const BtpDefinitions *d,BtpAdventure *ou
         for (unsigned door=j.nodes[doors].first;door;door=j.nodes[door].next) {
             if (m->entrance_count==16) { btp_json_error(&j,door,"at most 16 entrances per map");goto done; }
             BtpSceneEntrance *e=&m->entrances[m->entrance_count++];unsigned x,y;
-            e->person=255;
+            e->person=255;e->icon=65535;
             if (!string(&j,door,"id",e->id,64) || !btp_content_id(e->id,1) || !string(&j,door,"name",e->name,sizeof e->name) ||
                 !pair(&j,btp_json_field(&j,door,"at"),127,&x,&y) || !next(&j,door,"event",a,&e->event)) goto done;
             unsigned person=btp_json_optional(&j,door,"person");
             if (person) { if (!reference(&j,person,a->people,sizeof *a->people,a->person_count,&v)) goto done;e->person=(uint8_t)v; }
+            unsigned icon=btp_json_optional(&j,door,"icon");
+            if (icon && (a->version!=2 || !btp_json_string(&j,icon,e->image,sizeof e->image))) goto done;
             if (!btp_json_done(&j,door)) goto done;
             e->x=(uint8_t)x;e->y=(uint8_t)y;
             if (!btp_scene_stand(m,(int)x,(int)y,0)) { btp_json_error(&j,door,"entrance must be on accessible ground in front of the building");goto done; }
@@ -144,6 +263,8 @@ int btp_adventure_load(const char *path,const BtpDefinitions *d,BtpAdventure *ou
         }
         if (!btp_json_done(&j,n)) goto done;
     }
+    a->local_count=a->map_count;
+    if (a->version==2 && !world(&j,btp_json_optional(&j,1,"world"),a)) goto done;
     for (unsigned i=0;i<a->person_count;++i) {
         unsigned n=people[i];uint8_t *p=a->people[i].record;
         const char *const names[]={"chi:jason","chi:rex","chi:edward","chi:russ","chi:rick","chi:zeke","chi:possum","chi:marco","chi:rusty","chi:hunter"};
@@ -205,8 +326,12 @@ int btp_adventure_load(const char *path,const BtpDefinitions *d,BtpAdventure *ou
     }
     for (unsigned i=0;i<a->node_count;++i) {
         unsigned n=nodes[i];BtpEventNode *e=&a->nodes[i];
-        const char *const ops[]={"end","say","choice","if","flag","reward","recruit","transfer","shop","battle","lua","finish"};
-        if (!option(&j,n,"op",ops,12,&e->op)) goto done;
+        const char *const ops[]={"end","say","choice","if","flag","reward","recruit","transfer","shop","battle","lua","finish","picture"};
+        if (!option(&j,n,"op",ops,a->version==2 ? 13u : 12u,&e->op)) goto done;
+        e->picture=65535;unsigned image=btp_json_optional(&j,n,"image");
+        if (image && (a->version!=2 || !btp_json_string(&j,image,e->image,sizeof e->image) ||
+            (e->op!=BTP_EVENT_PICTURE && e->op!=BTP_EVENT_SAY && e->op!=BTP_EVENT_CHOICE && e->op!=BTP_EVENT_FINISH))) goto done;
+        if (e->op==BTP_EVENT_PICTURE && !image) { btp_json_error(&j,n,"picture event requires an image");goto done; }
         unsigned portrait=btp_json_optional(&j,n,"portrait");
         if (portrait) {
             const char *const art[]={"none","broker","training","lounge","prison","inventor","cinema","hospital","comstar","clothes","video-hut","mayor"};

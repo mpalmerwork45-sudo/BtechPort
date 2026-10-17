@@ -48,7 +48,7 @@ static char *string(Reader *p,unsigned node)
 static unsigned value(Reader *p,unsigned parent,unsigned index,char *key,unsigned depth)
 {
     BtpJson *j=p->j;
-    if (depth>DEPTH_LIMIT || j->count==NODE_LIMIT) return (unsigned)btp_json_error(j,parent,"JSON nesting/node limit exceeded");
+    if (depth>DEPTH_LIMIT || j->count==j->limit) return (unsigned)btp_json_error(j,parent,"JSON nesting/node limit exceeded");
     unsigned id=++j->count;BtpJsonNode *n=&j->nodes[id];
     n->parent=parent;n->index=index;n->key=key;space(p);
     if (p->at==p->end) return (unsigned)btp_json_error(j,id,"missing value");
@@ -83,21 +83,25 @@ static unsigned value(Reader *p,unsigned parent,unsigned index,char *key,unsigne
     n->number=number;return id;
 }
 void btp_json_close(BtpJson *j) { free(j->bytes);free(j->nodes);*j=(BtpJson){0}; }
-int btp_json_load(BtpJson *j,const char *path,char error[256])
+static int load(BtpJson *j,const char *path,char error[256],size_t limit,unsigned nodes)
 {
-    *j=(BtpJson){.file=path,.error=error};error[0]=0;
+    *j=(BtpJson){.file=path,.error=error,.limit=nodes};error[0]=0;
     FILE *f=fopen(path,"rb");
     if (!f) return btp_json_error(j,0,"cannot open file");
-    j->bytes=malloc(BYTE_LIMIT+1);j->nodes=calloc(NODE_LIMIT+1,sizeof *j->nodes);
+    j->bytes=malloc(limit+1);j->nodes=calloc(nodes+1,sizeof *j->nodes);
     if (!j->bytes || !j->nodes) { fclose(f);return btp_json_error(j,0,"allocation failed"); }
-    size_t size=fread(j->bytes,1,BYTE_LIMIT+1,f);int bad=ferror(f);if (fclose(f)) bad=1;
-    if (bad || size>BYTE_LIMIT) return btp_json_error(j,0,"cannot read file (limit 1 MiB)");
+    size_t size=fread(j->bytes,1,limit+1,f);int bad=ferror(f);if (fclose(f)) bad=1;
+    if (bad || size>limit) return btp_json_error(j,0,limit==BYTE_LIMIT ? "cannot read file (limit 1 MiB)" : "cannot read file (limit 16 MiB)");
     if (memchr(j->bytes,0,size)) return btp_json_error(j,0,"embedded NUL");
     BtpDigest digest;btp_digest_start(&digest);btp_digest_add(&digest,j->bytes,size);btp_digest_finish(&digest,j->source_digest);
     Reader p={j,j->bytes,j->bytes+size};
     if (!value(&p,0,0,NULL,0)) return 0;
     space(&p);return p.at==p.end || btp_json_error(j,1,"trailing data");
 }
+int btp_json_load(BtpJson *j,const char *path,char error[256])
+{ return load(j,path,error,BYTE_LIMIT,NODE_LIMIT); }
+int btp_json_load_large(BtpJson *j,const char *path,char error[256])
+{ return load(j,path,error,16u*1024u*1024u,300000); }
 int btp_json_type(BtpJson *j,unsigned n,char type)
 {
     return (n && j->nodes[n].type==(unsigned char)type) || btp_json_error(j,n,"missing field or wrong value type");

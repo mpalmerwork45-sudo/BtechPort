@@ -96,13 +96,38 @@ BtpProject *btp_project_load(const char *root,BtpRoster *roster,BtpPortraits *po
         if (!adventure || !presentation || !btp_json_string(&j,presentation,relative,sizeof relative) ||
             !btp_project_path(root,relative,path,error) || !btp_independent_load(path,&p->independent,error->text)) { if (!*error->text) fail(error,"project.json","independent games require an adventure and presentation");goto done; }
         btp_digest_add(&digest,p->independent.source_digest,32);
-        for (unsigned i=0;i<p->adventure.tile_count;++i) if (p->adventure.tiles[i].sheet!=2 || p->adventure.tiles[i].graphic>=p->independent.tile_count) { fail(error,"adventure.json","independent tiles must reference declared package graphics");goto done; }
+        for (unsigned i=0;i<p->adventure.tile_count;++i) if (p->adventure.tiles[i].sheet!=3 &&
+            (p->adventure.tiles[i].sheet!=2 || p->adventure.tiles[i].graphic>=p->independent.tile_count)) { fail(error,"adventure.json","independent tiles must reference declared package graphics");goto done; }
         for (unsigned i=0;i<p->adventure.person_count;++i) if (!*p->adventure.people[i].name) { fail(error,"adventure.json","independent characters require display names");goto done; }
         for (unsigned i=0;i<p->definitions.presentation_count;++i) if (!p->definitions.presentations[i].independent) { fail(error,"content.json","independent games require package sprite sources");goto done; }
     } else if (presentation) { fail(error,"project.json","presentation is only supported by independent games");goto done; }
     if (!independent) {
         for (unsigned i=0;i<p->definitions.presentation_count;++i) if (p->definitions.presentations[i].independent) { fail(error,"content.json","package sprites require an independent presentation");goto done; }
         for (unsigned i=0;i<p->adventure.tile_count;++i) if (p->adventure.tiles[i].sheet==2) { fail(error,"adventure.json","package tiles require an independent presentation");goto done; }
+    }
+    unsigned graphics=btp_json_optional(&j,1,"graphics");
+    if (graphics) {
+        if (!adventure || !btp_json_string(&j,graphics,relative,sizeof relative) || !btp_project_path(root,relative,path,error) ||
+            !btp_art_load(path,&p->graphics,error->text)) goto done;
+        btp_digest_add(&digest,p->graphics.source_digest,32);
+    }
+    for (unsigned i=0;i<p->adventure.tile_count;++i) {
+        BtpSceneTile *t=&p->adventure.tiles[i];if (t->sheet!=3) continue;
+        unsigned im=btp_art_find(&p->graphics,t->image);
+        if (im==BTP_ART_NONE || p->graphics.images[im].kind!=0) { fail(error,t->id,"tile references a missing/non-tile graphic");goto done; }
+        t->graphic=(uint16_t)im;
+    }
+    for (unsigned i=0;i<p->adventure.map_count;++i) for (unsigned k=0;k<p->adventure.maps[i].entrance_count;++k) {
+        BtpSceneEntrance *door=&p->adventure.maps[i].entrances[k];if (!*door->image) continue;
+        unsigned im=btp_art_find(&p->graphics,door->image);
+        if (im==BTP_ART_NONE || p->graphics.images[im].width>64 || p->graphics.images[im].height>64) { fail(error,door->id,"entrance icon missing or larger than 64x64");goto done; }
+        door->icon=(uint16_t)im;
+    }
+    for (unsigned i=0;i<p->adventure.node_count;++i) {
+        BtpEventNode *e=&p->adventure.nodes[i];if (!*e->image) continue;
+        unsigned im=btp_art_find(&p->graphics,e->image);
+        if (im==BTP_ART_NONE || (e->op!=BTP_EVENT_PICTURE && (p->graphics.images[im].width>88 || p->graphics.images[im].height>88))) { fail(error,e->id,"event image missing or larger than its 88x88 portrait panel");goto done; }
+        e->picture=(uint16_t)im;
     }
     unsigned scripts=btp_json_optional(&j,1,"scripts");
     if (scripts) {

@@ -1,0 +1,112 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "format": {
+      "const": "btp-art-v1"
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "images": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 63,
+            "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 95
+          },
+          "kind": {
+            "enum": [
+              "tile",
+              "sprite",
+              "icon",
+              "screen"
+            ]
+          },
+          "width": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 320
+          },
+          "height": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200
+          },
+          "frames": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^(?:[0-9a-fA-F]{8})+$"
+              },
+              "minItems": 1,
+              "maxItems": 200
+            },
+            "minItems": 1,
+            "maxItems": 32
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "kind",
+          "width",
+          "height",
+          "frames"
+        ]
+      },
+      "minItems": 0,
+      "maxItems": 4096
+    },
+    "bindings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "slot": {
+            "enum": [
+              "player",
+              "npc",
+              "enemy",
+              "locust",
+              "stinger",
+              "wreck"
+            ]
+          },
+          "image": {
+            "type": "string",
+            "maxLength": 63,
+            "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+          }
+        },
+        "required": [
+          "slot",
+          "image"
+        ]
+      },
+      "minItems": 0,
+      "maxItems": 6
+    }
+  },
+  "required": [
+    "format",
+    "schema_version",
+    "images",
+    "bindings"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "BtechPort RGBA graphics library",
+  "$comment": "C loader also validates exact row lengths, kind dimensions, unique IDs, references and the 1048576 pixel budget."
+}

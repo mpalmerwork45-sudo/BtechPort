@@ -8,7 +8,8 @@ from tkinter import ttk, messagebox
 
 from editor_model import EditorError
 from adventure_editing import OPS, composite, paint, event_template, new_id, copy_adventure, scene_markers, move_marker
-from editor_tiles import load_tiles
+from editor_tiles import load_tiles, art_tiles
+from world_editing import token, upgrade, graphic_tile, draw as draw_tiles, fill as fill_tiles
 
 
 class TilePalette(ttk.Treeview):
@@ -77,14 +78,20 @@ class AdventureEditor:
         self.scene_index = 0
         self.stroke = None
         self.drag = None
+        self.paint_start = self.paint_last = None
+        self.selection_rect = self.clipboard = None
+        self.world_editor = self.art_editor = None
         self.selected_marker = None
         self.cursor = tuple(self.document.adventure["start"]["at"])
         self.images = {}
         self.graphics = {}
+        self.art_cache = None
         ttk.Style(self.window).configure("Tiles.Treeview",rowheight=40)
         bar = ttk.Frame(self.window, padding=6);bar.pack(fill="x")
         for label, action in [("Save", self.save), ("Validate", self.validate), ("Undo", self.undo), ("Redo", self.redo), ("Play", self.play), ("Play here", self.play_here), ("Export", parent.export_project)]:
             ttk.Button(bar, text=label, command=lambda cb=action: self.guard(cb)).pack(side="left", padx=3)
+        ttk.Button(bar,text="World / jigsaws",command=lambda:self.guard(self.edit_landscape)).pack(side="left",padx=3)
+        ttk.Button(bar,text="Graphics / sprites",command=lambda:self.guard(self.edit_graphics)).pack(side="left",padx=3)
         self.tabs = ttk.Notebook(self.window);self.tabs.pack(fill="both", expand=True)
         self.map_tab = ttk.Frame(self.tabs);self.tabs.add(self.map_tab, text="Maps")
         self.event_tab = ttk.Frame(self.tabs);self.tabs.add(self.event_tab, text="Events")
@@ -118,6 +125,10 @@ class AdventureEditor:
 
     def refresh(self):
         if not self.window.winfo_exists(): return
+        if self.art_cache != self.document.art:
+            self.art_cache=self.document.art
+            self.graphics.pop("package:art",None);self.graphics.update(art_tiles(self.document))
+            self.images={k:v for k,v in self.images.items() if k[0]!="package:art"}
         self.scene_index = min(self.scene_index, len(self.adventure["maps"])-1)
         scenes = [m["name"] for m in self.adventure["maps"]]
         self.map_choice.configure(values=scenes);self.map_choice.current(self.scene_index)
@@ -127,11 +138,13 @@ class AdventureEditor:
         self.brush.delete(*self.brush.get_children())
         for i,tile in enumerate(self.adventure["tiles"]):
             image=self.tile_image(tile["sheet"],tile["graphic"],32)
-            self.brush.insert("","end",iid=str(i),text=f" {tile['key']}  {tile['id'].split(':')[-1]}",image=image or "")
+            self.brush.insert("","end",iid=str(i),text=f" {tile.get('key','')}  {tile['id'].split(':')[-1]}",image=image or "")
         self.brush.insert("","end",iid=str(len(self.adventure["tiles"])),text=" Erase overlay",image="")
         self.brush.selection_set(min(brush[0] if brush else 0,self.brush.size()-1))
         self.select_brush()
         self.draw();self.refresh_events();self.refresh_world();self.refresh_markers()
+        if self.world_editor and self.world_editor.window.winfo_exists():self.world_editor.refresh()
+        if self.art_editor and self.art_editor.window.winfo_exists():self.art_editor.refresh()
 
     def scene(self): return self.adventure["maps"][self.scene_index]
 
@@ -153,7 +166,7 @@ class AdventureEditor:
         self.layer_choice.bind("<<ComboboxSelected>>",lambda _:self.draw())
         self.tool=tk.StringVar(value="Paint")
         ttk.Label(controls,text="Tool").pack(side="left",padx=(12,6))
-        ttk.Combobox(controls,textvariable=self.tool,values=["Paint","Move markers","Entrance","NPC","Encounter","Start","Play here"],state="readonly",width=16).pack(side="left")
+        ttk.Combobox(controls,textvariable=self.tool,values=["Paint","Line","Rectangle","Fill","Eyedropper","Select","Paste","Move markers","Entrance","NPC","Encounter","Start","Play here"],state="readonly",width=16).pack(side="left")
         self.zoom=tk.StringVar(value="24")
         ttk.Label(controls,text="Zoom").pack(side="left",padx=(12,6))
         z=ttk.Combobox(controls,textvariable=self.zoom,values=["16","24","32"],state="readonly",width=4);z.pack(side="left");z.bind("<<ComboboxSelected>>",lambda _:self.draw())
@@ -163,7 +176,9 @@ class AdventureEditor:
         body=ttk.Panedwindow(self.map_tab,orient="horizontal");body.pack(fill="both",expand=True)
         side=ttk.Frame(body,width=254,padding=8);view=ttk.Frame(body,padding=(0,8,8,8));body.add(side,weight=1);body.add(view,weight=5)
         side.columnconfigure(0,weight=1);side.rowconfigure(1,weight=4);side.rowconfigure(7,weight=2)
-        ttk.Label(side,text="TILE PALETTE",style="Section.TLabel",padding=(0,0,0,6)).grid(row=0,column=0,sticky="w")
+        title=ttk.Frame(side);title.grid(row=0,column=0,sticky="ew",pady=(0,6))
+        ttk.Label(title,text="TILES",style="Section.TLabel").pack(side="left")
+        ttk.Button(title,text="Browse all…",command=lambda:self.guard(self.graphic_picker)).pack(side="right")
         palette=ttk.Frame(side);palette.grid(row=1,column=0,sticky="nsew")
         self.brush=TilePalette(palette,show="tree",selectmode="browse",height=1,style="Tiles.Treeview")
         self.brush.column("#0",width=218,minwidth=180,stretch=True)
@@ -193,6 +208,9 @@ class AdventureEditor:
         self.canvas.bind("<B1-Motion>",lambda e:self.guard(lambda:self.pointer(e,False)))
         self.canvas.bind("<ButtonRelease-1>",lambda _:self.guard(self.finish_stroke))
         self.canvas.bind("<Double-Button-1>",lambda e:self.guard(lambda:self.double_marker(e)))
+        self.canvas.bind("<Button-3>",lambda e:self.guard(lambda:self.sample_tile(e)))
+        self.canvas.bind("<Control-c>",lambda _:self.guard(self.copy_selection))
+        self.canvas.bind("<Control-v>",lambda _:self.tool.set("Paste"))
 
     def reload_graphics(self):
         self.cancel_gesture()
@@ -201,12 +219,14 @@ class AdventureEditor:
             self.graphics=load_tiles(self.document,self.parent.settings)
             self.graphics_note.set("Graphics ready · original terrain colors" if self.document.manifest["requires"]!="none" else "Graphics ready · package artwork")
         except EditorError as exc:
-            self.graphics={};self.graphics_note.set(f"Graphics unavailable: {exc}  Use Player setup, then Reload graphics.")
+            self.graphics=art_tiles(self.document);self.graphics_note.set(f"Graphics unavailable: {exc}  Use Player setup, then Reload graphics.")
         self.refresh()
 
     def tile_image(self,sheet,graphic,size):
         tiles=self.graphics.get(sheet,())
-        if not 0<=graphic<len(tiles):return None
+        if isinstance(tiles,dict):
+            if graphic not in tiles:return None
+        elif not isinstance(graphic,int) or not 0<=graphic<len(tiles):return None
         cache=(sheet,graphic,size)
         if cache not in self.images:
             source=tiles[graphic];im=tk.PhotoImage(master=self.window,width=size,height=size)
@@ -224,12 +244,12 @@ class AdventureEditor:
         else:self.brush_info.set("Transparent erase applies to the selected overlay.")
 
     def change_map(self):
-        index=self.map_choice.current();self.finish_stroke();self.scene_index=index;self.selected_marker=None;self.layer_choice.current(0);self.refresh()
+        index=self.map_choice.current();self.finish_stroke();self.scene_index=index;self.selected_marker=None;self.selection_rect=None;self.layer_choice.current(0);self.refresh()
 
     def draw(self):
         scene=(self.stroke or self.adventure)["maps"][self.scene_index];grid=composite(scene);size=int(self.zoom.get())
         self.canvas.delete("all");self.canvas.configure(scrollregion=(0,0,len(grid[0])*size,len(grid)*size))
-        tiles={t["key"]:t for t in self.adventure["tiles"]}
+        tiles={token(t):t for t in self.adventure["tiles"]}
         terrain_colors={"clear":"#28574d","rough":"#947b64","water":"#457caa","woods":"#397557","wall":"#b45a60"}
         for y,row in enumerate(grid):
             for x,key in enumerate(row):
@@ -239,7 +259,10 @@ class AdventureEditor:
                     self.canvas.create_image(x*size,y*size,image=image,anchor="nw")
                 else:
                     self.canvas.create_rectangle(x*size,y*size,(x+1)*size,(y+1)*size,fill=color,outline="#20303b")
-                    if not self.terrain.get(): self.canvas.create_text(x*size+size/2,y*size+size/2,text=key,fill="white")
+                    if not self.terrain.get(): self.canvas.create_text(x*size+size/2,y*size+size/2,text=key[-2:],fill="white")
+        if self.selection_rect:
+            x0,y0,x1,y1=self.selection_rect
+            self.canvas.create_rectangle(x0*size,y0*size,(x1+1)*size,(y1+1)*size,outline="#8ee4e8",width=3)
         if self.layer_choice.current()>0:
             layer=scene["overlays"][self.layer_choice.current()-1];ox,oy=layer["at"]
             self.canvas.create_rectangle(ox*size,oy*size,(ox+len(layer["rows"][0]))*size,(oy+len(layer["rows"]))*size,outline="#edcc75",width=3)
@@ -280,6 +303,7 @@ class AdventureEditor:
         return self.selected_marker if self.selected_marker in hits else hits[-1] if hits else None
 
     def pointer(self,event,first):
+        if first:self.canvas.focus_set()
         size=int(self.zoom.get());px=self.canvas.canvasx(event.x);py=self.canvas.canvasy(event.y)
         x,y=int(px//size),int(py//size)
         scene=self.scene()
@@ -304,12 +328,27 @@ class AdventureEditor:
             self.draw();self.status.set(f"Marker at half-tile {at[0]},{at[1]} · release to place · Escape cancels")
             return
         if not 0<=y<len(scene["rows"]) or not 0<=x<len(scene["rows"][0]): return
-        if tool=="Paint":
-            if first: self.stroke=copy_adventure(self.document)
+        if tool in ("Paint","Line","Rectangle","Fill","Paste"):
+            if first:
+                self.stroke=copy_adventure(self.document);self.paint_start=self.paint_last=(x,y)
             if self.stroke is None: return
             index=self.brush.curselection()[0] if self.brush.curselection() else 0
-            key=self.adventure["tiles"][index]["key"] if index<len(self.adventure["tiles"]) else " "
-            paint(self.stroke["maps"][self.scene_index],max(0,self.layer_choice.current()),x,y,key);self.draw()
+            key=token(self.adventure["tiles"][index]) if index<len(self.adventure["tiles"]) else " "
+            layer=max(0,self.layer_choice.current())
+            if tool in ("Line","Rectangle"):self.stroke=copy_adventure(self.document)
+            target=self.stroke["maps"][self.scene_index]
+            if tool=="Fill":
+                if first:fill_tiles(target,layer,x,y,key)
+            elif tool=="Paste":
+                if first and self.clipboard:
+                    for yy,row in enumerate(self.clipboard):
+                        for xx,value in enumerate(row):paint(target,layer,x+xx,y+yy,value)
+            else:draw_tiles(target,layer,self.paint_start if tool in ("Line","Rectangle") else self.paint_last,(x,y),key,tool)
+            self.paint_last=(x,y);self.draw()
+        elif tool=="Select":
+            if first:self.paint_start=(x,y)
+            if self.paint_start:
+                x0,x1=sorted((self.paint_start[0],x));y0,y1=sorted((self.paint_start[1],y));self.selection_rect=(x0,y0,x1,y1);self.draw()
         elif first:
             if tool in ("Entrance","NPC"): self.entrance_dialog(at=half,npc=tool=="NPC")
             elif tool=="Encounter": self.encounter_dialog(at=half)
@@ -317,7 +356,33 @@ class AdventureEditor:
                 a=copy_adventure(self.document);a["start"].update(map=scene["id"],at=list(half));self.commit(a)
             elif tool=="Play here": self.play_here()
             elif tool=="Move markers":self.selected_marker=None;self.draw()
+            elif tool=="Eyedropper":self.sample_tile(event)
         self.status.set(f"Tile {x},{y} | half-tile {half[0]},{half[1]} | {tool}")
+
+    def sample_tile(self,event):
+        size=int(self.zoom.get());x=int(self.canvas.canvasx(event.x)//size);y=int(self.canvas.canvasy(event.y)//size)
+        grid=composite(self.scene())
+        if not 0<=y<len(grid) or not 0<=x<len(grid[0]):return
+        index=next(i for i,t in enumerate(self.adventure["tiles"]) if token(t)==grid[y][x])
+        self.brush.selection_set(str(index));self.brush.see(str(index));self.select_brush();self.tool.set("Paint")
+
+    def copy_selection(self):
+        if not self.selection_rect:raise EditorError("Use Select and drag a rectangle first. Ctrl+C copies; Ctrl+V chooses Paste.")
+        x0,y0,x1,y1=self.selection_rect;grid=composite(self.scene())
+        self.clipboard=[row[x0:x1+1] for row in grid[y0:y1+1]]
+        self.status.set(f"Copied {x1-x0+1} x {y1-y0+1} tiles. Ctrl+V, then click to paste.")
+
+    def edit_landscape(self):
+        self.apply_pending()
+        if self.world_editor and self.world_editor.window.winfo_exists():self.world_editor.window.lift();return
+        from world_editor import WorldEditor
+        self.world_editor=WorldEditor(self)
+
+    def edit_graphics(self):
+        self.apply_pending()
+        if self.art_editor and self.art_editor.window.winfo_exists():self.art_editor.window.lift();return
+        from graphics_editor import GraphicsEditor
+        self.art_editor=GraphicsEditor(self)
 
     def finish_stroke(self):
         if self.stroke is not None:
@@ -344,7 +409,8 @@ class AdventureEditor:
         def apply(v):
             w,h=int(v["width"]),int(v["height"])
             if not 16<=w<=64 or not 16<=h<=64: raise EditorError("Map dimensions are 16..64 tiles.")
-            a=copy_adventure(self.document);a["maps"].append(dict(id=v["id"],name=v["name"],origin=[int(v["origin_x"]),int(v["origin_y"])],rows=[a["tiles"][0]["key"]*w for _ in range(h)],overlays=[],entrances=[]))
+            a=copy_adventure(self.document);key=token(a["tiles"][0]);row=key*w if a["schema_version"]==1 else [key]*w
+            a["maps"].append(dict(id=v["id"],name=v["name"],origin=[int(v["origin_x"]),int(v["origin_y"])],rows=[copy.deepcopy(row) for _ in range(h)],overlays=[],entrances=[]))
             self.scene_index=len(a["maps"])-1;self.commit(a)
         form.submit(apply)
 
@@ -356,7 +422,8 @@ class AdventureEditor:
             if not 16<=w<=64 or not 16<=h<=64: raise EditorError("Map dimensions are 16..64 tiles.")
             a=copy_adventure(self.document);m=a["maps"][self.scene_index]
             if any(o["at"][0]+len(o["rows"][0])>w or o["at"][1]+len(o["rows"])>h for o in m["overlays"]):raise EditorError("Resize or remove overlays before shrinking across them.")
-            key=a["tiles"][0]["key"];m.update(name=v["name"],origin=[int(v["origin_x"]),int(v["origin_y"])],rows=[(m["rows"][y]+key*w)[:w] if y<len(m["rows"]) else key*w for y in range(h)])
+            key=token(a["tiles"][0]);row=key*w if a["schema_version"]==1 else [key]*w
+            m.update(name=v["name"],origin=[int(v["origin_x"]),int(v["origin_y"])],rows=[(m["rows"][y]+row)[:w] if y<len(m["rows"]) else copy.deepcopy(row) for y in range(h)])
             self.commit(a)
         form.submit(apply)
 
@@ -368,9 +435,11 @@ class AdventureEditor:
         selected=self.brush.curselection()
         if not selected or selected[0]>=len(self.adventure["tiles"]):return
         a=copy_adventure(self.document);tile=copy.deepcopy(a["tiles"][selected[0]])
-        used={t["key"] for t in a["tiles"]};key=next((chr(c) for c in range(33,127) if chr(c) not in used),None)
-        if key is None:raise EditorError("No unused tile key remains.")
-        tile.update(id=new_id(self.document,"tiles","tile"),key=key);a["tiles"].append(tile);self.commit(a)
+        if len(a["tiles"])>=4096:raise EditorError("The tile library is full (4096 definitions).")
+        if a["schema_version"]==1 and len(a["tiles"])<64:
+            used={t["key"] for t in a["tiles"]};tile["key"]=next(chr(c) for c in range(33,127) if chr(c) not in used)
+        else:upgrade(a);tile.pop("key",None)
+        tile["id"]=new_id(self.document,"tiles","tile");a["tiles"].append(tile);self.commit(a)
         self.brush.selection_clear(0,"end");self.brush.selection_set(len(a["tiles"])-1);self.edit_tile()
 
     def new_overlay(self): self.overlay_dialog()
@@ -385,7 +454,8 @@ class AdventureEditor:
         def apply(v):
             x,y,w,h=(int(v[k]) for k in ("x","y","width","height"));scene=self.scene()
             if min(x,y)<0 or min(w,h)<1 or x+w>len(scene["rows"][0]) or y+h>len(scene["rows"]): raise EditorError("Overlay must fit within the map.")
-            layer=dict(at=[x,y],rows=[(old["rows"][row]+" "*w)[:w] if row<len(old["rows"]) else " "*w for row in range(h)])
+            blank=" "*w if self.adventure["schema_version"]==1 else [" "]*w
+            layer=dict(at=[x,y],rows=[(old["rows"][row]+blank)[:w] if row<len(old["rows"]) and isinstance(old["rows"][row],type(blank)) else copy.deepcopy(blank) for row in range(h)])
             a=copy_adventure(self.document);layers=a["maps"][self.scene_index]["overlays"]
             if index is None:layers.append(layer)
             else:layers[index]=layer
@@ -400,66 +470,82 @@ class AdventureEditor:
     def edit_tile(self):
         if not self.brush.curselection() or self.brush.curselection()[0]>=len(self.adventure["tiles"]):return
         index=self.brush.curselection()[0];tile=self.adventure["tiles"][index];form=Form(self,"Tile definition")
-        form.field("id",tile["id"]);form.field("key",tile["key"]);form.field("graphic",tile["graphic"])
-        form.field("sheet",tile["sheet"],["package:tiles"] if self.document.manifest["requires"]=="none" else ["chi:land","chi:destroyed"])
+        form.field("id",tile["id"])
+        if "key" in tile:form.field("key",tile["key"])
+        form.field("graphic",tile["graphic"])
+        form.field("sheet",tile["sheet"],(["package:tiles"] if self.document.manifest["requires"]=="none" else ["chi:land","chi:destroyed"])+["package:art"])
         form.field("terrain",tile["terrain"],["clear","rough","water","woods","wall"]);form.field("mini_color",tile["mini_color"])
         preview=ttk.Label(form.body)
         ttk.Button(form.body,text="Choose graphic…",command=lambda:self.guard(lambda:self.graphic_picker(form))).grid(row=form.row,column=0,padx=10,pady=10,sticky="w")
         preview.grid(row=form.row,column=1,sticky="w",padx=10,pady=10);form.row+=1
         def show_preview(*_):
-            try:graphic=int(form.values["graphic"].get())
+            try:graphic=form.values["graphic"].get() if form.values["sheet"].get()=="package:art" else int(form.values["graphic"].get())
             except ValueError:graphic=-1
             image=self.tile_image(form.values["sheet"].get(),graphic,64)
             preview.configure(image=image or "",text="Graphics unavailable" if image is None else "")
         form.values["graphic"].trace_add("write",show_preview);form.values["sheet"].trace_add("write",show_preview);show_preview()
         def apply(v):
-            if len(v["key"])!=1 or v["key"]==" ":raise EditorError("A tile key is one non-space character.")
-            a=copy_adventure(self.document);old=a["tiles"][index]["key"]
-            if any(t["key"]==v["key"] for i,t in enumerate(a["tiles"]) if i!=index):raise EditorError("Tile key already exists.")
-            for m in a["maps"]:
-                for layer in [m,*m["overlays"]]:layer["rows"]=[row.replace(old,v["key"]) for row in layer["rows"]]
-            v["graphic"],v["mini_color"]=int(v["graphic"]),int(v["mini_color"]);a["tiles"][index]=v;self.images.clear();self.commit(a)
+            if v["id"]!=tile["id"]:raise EditorError("Existing tile IDs stay stable. Duplicate to create a new identity.")
+            a=copy_adventure(self.document)
+            if "key" in v:
+                if len(v["key"])!=1 or v["key"]==" ":raise EditorError("A tile key is one non-space character.")
+                old=a["tiles"][index]["key"]
+                if any(t["key"]==v["key"] for i,t in enumerate(a["tiles"]) if i!=index):raise EditorError("Tile key already exists.")
+                for m in a["maps"]:
+                    for layer in [m,*m["overlays"]]:layer["rows"]=[row.replace(old,v["key"]) for row in layer["rows"]]
+            if v["sheet"]=="package:art":upgrade(a);v.pop("key",None)
+            else:v["graphic"]=int(v["graphic"])
+            v["mini_color"]=int(v["mini_color"]);a["tiles"][index]=v;self.images.clear();self.commit(a)
         form.submit(apply)
 
-    def graphic_picker(self,form):
+    def graphic_picker(self,form=None):
         if not self.graphics:raise EditorError("Load the original graphics through Player setup before choosing a tile.")
-        window=tk.Toplevel(form.window);window.title("Choose tile graphic");window.transient(form.window);window.geometry("720x630")
+        parent=form.window if form else self.window
+        window=tk.Toplevel(parent);window.title("Choose tile graphic");window.transient(parent);window.geometry("720x630")
         header=ttk.Frame(window,padding=12);header.pack(fill="x")
         ttk.Label(header,text="Choose a map tile",style="Heading.TLabel").pack(side="left")
-        sheet=tk.StringVar(value=form.values["sheet"].get())
+        sheet=tk.StringVar(value=form.values["sheet"].get() if form else next(iter(self.graphics)))
         choices=ttk.Combobox(header,textvariable=sheet,values=list(self.graphics),state="readonly",width=20);choices.pack(side="right")
         shell=ttk.Frame(window,padding=(12,0,12,0));shell.pack(fill="both",expand=True)
         canvas=tk.Canvas(shell,background="#edf1f2",highlightthickness=0)
         scroll=ttk.Scrollbar(shell,command=canvas.yview);canvas.configure(yscrollcommand=scroll.set)
         scroll.pack(side="right",fill="y");canvas.pack(fill="both",expand=True)
         note=tk.StringVar();ttk.Label(window,textvariable=note,style="Muted.TLabel",padding=12).pack(fill="x")
-        try:selected=int(form.values["graphic"].get())
-        except ValueError:selected=0
+        selected=0
+        if form:
+            try:selected=int(form.values["graphic"].get())
+            except ValueError:pass
         state={"selected":selected};columns=12;cell=54
         def select(index):
             state["selected"]=index;x=(index%columns)*cell;y=(index//columns)*cell
             canvas.coords("selection",x+1,y+1,x+cell-1,y+cell-1)
             note.set(f"Graphic {index} · {sheet.get()} · double-click to use")
         def draw_sheet(_=None):
-            canvas.delete("all");count=len(self.graphics.get(sheet.get(),()))
+            canvas.delete("all");source=self.graphics.get(sheet.get(),());state["keys"]=list(source) if isinstance(source,dict) else list(range(len(source)));count=len(source)
             canvas.configure(scrollregion=(0,0,columns*cell,((count+columns-1)//columns)*cell));canvas.yview_moveto(0)
             canvas.create_rectangle(0,0,0,0,fill="#cde5e5",outline="#367b83",width=2,tags="selection")
             for i in range(count):
                 x=(i%columns)*cell;y=(i//columns)*cell;tag=f"tile-{i}"
-                canvas.create_image(x+cell/2,y+20,image=self.tile_image(sheet.get(),i,32),tags=tag)
+                canvas.create_image(x+cell/2,y+20,image=self.tile_image(sheet.get(),state["keys"][i],32),tags=tag)
                 canvas.create_text(x+cell/2,y+45,text=str(i),fill="#31434b",font="TkSmallCaptionFont",tags=tag)
             select(max(0,min(state["selected"],count-1)))
         def click(event):
             x=canvas.canvasx(event.x);y=canvas.canvasy(event.y);index=int(y//cell)*columns+int(x//cell)
             if 0<=x<columns*cell and 0<=index<len(self.graphics.get(sheet.get(),())):select(index)
         def use():
-            form.values["sheet"].set(sheet.get());form.values["graphic"].set(str(state["selected"]));window.destroy()
+            if not state["keys"]:raise EditorError("No tiles in this sheet. Create or import a 16x16 tile in Graphics / sprites.")
+            value=state["keys"][state["selected"]]
+            if form:form.values["sheet"].set(sheet.get());form.values["graphic"].set(str(value))
+            else:
+                a=copy_adventure(self.document);key=graphic_tile(a,self.document.manifest["package_id"],sheet.get(),value);self.commit(a)
+                index=next(i for i,t in enumerate(a["tiles"]) if token(t)==key);self.brush.selection_set(str(index));self.brush.see(str(index));self.tool.set("Paint")
+            window.destroy()
         canvas.bind("<Button-1>",click);canvas.bind("<Double-Button-1>",lambda e:(click(e),use()))
         canvas.bind("<Button-4>",lambda _:canvas.yview_scroll(-3,"units"));canvas.bind("<Button-5>",lambda _:canvas.yview_scroll(3,"units"))
         canvas.bind("<MouseWheel>",lambda e:canvas.yview_scroll(-1 if e.delta>0 else 1,"units"))
         choices.bind("<<ComboboxSelected>>",draw_sheet)
         footer=ttk.Frame(window,padding=(12,0,12,12));footer.pack(fill="x")
-        ttk.Button(footer,text="Use graphic",style="Accent.TButton",command=use).pack(side="right")
+        ttk.Button(footer,text="Use graphic",style="Accent.TButton",command=lambda:self.guard(use)).pack(side="right")
         ttk.Button(footer,text="Cancel",command=window.destroy).pack(side="right",padx=8)
         window.bind("<Escape>",lambda _:window.destroy());draw_sheet()
 
@@ -501,10 +587,12 @@ class AdventureEditor:
         for key,value in dict(id=old["id"],name=old["name"],x=old["at"][0],y=old["at"][1]).items():form.field(key,value)
         form.field("event",old["event"],[e["id"] for e in self.adventure["events"]])
         form.field("person",old.get("person",self.adventure["people"][0]["id"] if npc else "none"),["none"]+[p["id"] for p in self.adventure["people"]])
+        form.field("icon",old.get("icon","none"),["none"]+[im["id"] for im in self.document.art["images"] if im["width"]<=64 and im["height"]<=64],label="Map entrance / NPC graphic")
         def apply(v):
             d=dict(id=v["id"],name=v["name"],at=[int(v["x"]),int(v["y"])],event=v["event"])
             if v["person"]!="none":d["person"]=v["person"]
             a=copy_adventure(self.document);dest=a["maps"][self.scene_index]["entrances"]
+            if v["icon"]!="none":upgrade(a);d["icon"]=v["icon"]
             if index is None:dest.append(d)
             else:dest[index]=d
             self.commit(a)
@@ -599,6 +687,8 @@ class AdventureEditor:
                 if self.event_text and self.event_text.edit_modified():self.event_pending=True;self.event_text.edit_modified(False)
             self.event_text.bind("<<Modified>>",modified)
             field("portrait",e.get("portrait","none"),["none","broker","training"] if self.document.manifest["requires"]=="none" else ["none","broker","training","lounge","prison","inventor","cinema","hospital","comstar","clothes","video-hut","mayor"])
+        if e["op"] in ("picture","say","choice","finish"):
+            field("image",e.get("image","none"),(["none"] if e["op"]!="picture" else [])+[im["id"] for im in self.document.art["images"] if e["op"]=="picture" or (im["width"]<=88 and im["height"]<=88)])
         for key in ("next","failure","then","else","cancel","win","loss","flee"):
             if key in e:field(key,e[key],events)
         for key,collection in [("flag","flags"),("person","people"),("map","maps"),("shop","shops"),("encounter","encounters")]:
@@ -629,6 +719,9 @@ class AdventureEditor:
         if e["op"]=="choice":e["options"]=[dict(label=values[f"label_{i+1}"],next=values[f"choice_{i+1}"]) for i in range(int(values["choice_count"]))]
         if e["op"]=="lua":e["routes"]=[values[f"route_{i+1}"] for i in range(int(values["route_count"]))]
         a=copy_adventure(self.document);index=next(i for i,v in enumerate(a["events"]) if v["id"]==self.event_id)
+        if "image" in values:
+            if values["image"]!="none":upgrade(a);e["image"]=values["image"]
+            else:e.pop("image",None)
         if e["id"]!=self.event_id:raise EditorError("Existing event IDs stay stable. Duplicate to create a new identity.")
         a["events"][index]=e;self.event_pending=False;self.commit(a)
 

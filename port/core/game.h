@@ -125,8 +125,8 @@ typedef struct {
 /* A continuation is a node identity within the fingerprinted package, never
    a C/Lua stack. A tick commits an effect and advances before any save pause. */
 typedef struct {
-    uint16_t node;
-    uint8_t enabled,phase,selected,page,origin_map,origin_entry;
+    uint16_t node,map,return_map,origin_map;
+    uint8_t enabled,phase,selected,page,origin_entry;
     uint8_t flags[64],done[32],people[8];
 } BtpEventState;
 typedef struct {

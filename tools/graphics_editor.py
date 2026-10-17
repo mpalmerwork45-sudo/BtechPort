@@ -1,0 +1,211 @@
+"""Package image library and non-destructive pixel/animation editor."""
+from __future__ import annotations
+import copy
+import tkinter as tk
+from tkinter import ttk, filedialog, colorchooser, messagebox
+from adventure_editor import Form
+from editor_model import EditorError
+from art_editing import (new_image, clone_image, import_image, original_sprite,
+                         display_rows, pixels, brush, bind, SLOTS, DEFAULT_COLORS)
+from world_editing import graphic_tile
+
+
+def photo(parent, image, frame=0, zoom=1):
+    result = tk.PhotoImage(master=parent, width=image['width'], height=image['height'])
+    result.put(' '.join('{'+' '.join(row)+'}' for row in display_rows(image, frame)))
+    return result.zoom(zoom) if zoom != 1 else result
+
+
+class GraphicsEditor:
+    def __init__(self, owner):
+        self.owner, self.document = owner, owner.document
+        self.window = tk.Toplevel(owner.window)
+        self.window.title('Graphics and sprites'); self.window.geometry('880x650')
+        self.window.minsize(720, 500)
+        self.selected = None; self.preview_image = None
+        bar = ttk.Frame(self.window, padding=8); bar.pack(fill='x')
+        for name, cb in [('New', self.new), ('Import', self.import_file), ('Clone', self.clone),
+                         ('Edit pixels', self.edit), ('Copy original', self.original), ('Delete', self.delete)]:
+            ttk.Button(bar, text=name, command=lambda f=cb: self.guard(f)).pack(side='left', padx=3)
+        body = ttk.Panedwindow(self.window, orient='horizontal'); body.pack(fill='both', expand=True, padx=8)
+        left = ttk.Frame(body); right = ttk.Frame(body, padding=12); body.add(left, weight=2); body.add(right, weight=3)
+        self.search = tk.StringVar(); ttk.Entry(left, textvariable=self.search).pack(fill='x', pady=(0,8))
+        self.search.trace_add('write', lambda *_: self.refresh())
+        listing = ttk.Frame(left); listing.pack(fill='both', expand=True)
+        self.listing = ttk.Treeview(listing, columns=('kind',), show='tree headings', selectmode='browse')
+        self.listing.heading('#0', text='Image'); self.listing.heading('kind', text='Kind')
+        self.listing.column('#0', width=200); self.listing.column('kind', width=65, stretch=False)
+        scroll = ttk.Scrollbar(listing, command=self.listing.yview); self.listing.configure(yscrollcommand=scroll.set)
+        scroll.pack(side='right', fill='y'); self.listing.pack(fill='both', expand=True)
+        self.listing.bind('<<TreeviewSelect>>', lambda _: self.select())
+        self.listing.bind('<Double-1>', lambda _: self.guard(self.edit))
+        self.preview = tk.Canvas(right, background='#e1e1e1', height=320, highlightthickness=0)
+        self.preview.pack(fill='both', expand=True)
+        self.info = tk.StringVar(); ttk.Label(right, textvariable=self.info, wraplength=370).pack(fill='x', pady=12)
+        actions = ttk.Frame(right); actions.pack(fill='x')
+        ttk.Button(actions, text='Use as map tile', command=lambda: self.guard(self.use_tile)).pack(side='left')
+        ttk.Button(actions, text='Assign sprite role', command=lambda: self.guard(self.binding)).pack(side='left', padx=8)
+        ttk.Label(self.window, text='Images belong to this package. Changes share the map editor’s Save, Undo and Redo.',
+                  style='Muted.TLabel', padding=10).pack(fill='x')
+        self.refresh()
+
+    def guard(self, fn): return self.owner.guard(fn)
+    def current(self):
+        return next((i for i in self.document.art['images'] if i['id'] == self.selected), None)
+    def refresh(self):
+        self.listing.delete(*self.listing.get_children())
+        query = self.search.get().lower()
+        for im in self.document.art['images']:
+            if query in (im['name']+' '+im['id']).lower():
+                self.listing.insert('', 'end', iid=im['id'], text=im['name'], values=(im['kind'],))
+        if self.selected and self.listing.exists(self.selected): self.listing.selection_set(self.selected)
+        self.show()
+    def select(self):
+        if self.listing.selection(): self.selected = self.listing.selection()[0]
+        self.show()
+    def show(self):
+        self.preview.delete('all'); im = self.current()
+        if not im:
+            self.info.set('Create, import or clone an image. RGBA transparency and up to 32 frames are supported.'); return
+        z = max(1, min(6, 330//max(im['width'], im['height'])))
+        self.preview_image = photo(self.window, im, zoom=z)
+        self.preview.create_image(10,10, image=self.preview_image, anchor='nw')
+        self.info.set(f"{im['name']}\n{im['id']}\n{im['width']} × {im['height']} · {len(im['frames'])} frame(s) · {im['kind']}")
+    def put(self, im, old=None):
+        art = copy.deepcopy(self.document.art)
+        if old:
+            current = self.current()
+            if current != old: raise EditorError('This image changed while its pixel editor was open. Reopen it before applying.')
+            art['images'][art['images'].index(current)] = im
+        else: art['images'].append(im)
+        self.selected = im['id']; self.document.replace_art(art); self.owner.refresh()
+    def new(self):
+        f=Form(self,'New graphic'); f.field('name','New image'); f.field('kind','tile',['tile','sprite','icon','screen'])
+        f.field('width',16); f.field('height',16); f.field('frames',1)
+        def apply(v):
+            im=new_image(self.document.content['package_id'],self.document.art['images'],v['name'],v['kind'],int(v['width']),int(v['height']),int(v['frames']))
+            self.put(im); self.edit()
+        f.submit(apply)
+    def clone(self):
+        if self.current(): self.put(clone_image(self.current(),self.document.content['package_id'],self.document.art['images']))
+    def edit(self):
+        if self.current(): PixelEditor(self,self.current())
+    def import_file(self):
+        path=filedialog.askopenfilename(parent=self.window,title='Import image or sprite sheet',filetypes=[('Images','*.png *.jpg *.jpeg *.bmp *.gif'),('All files','*')])
+        if not path:return
+        f=Form(self,'Import graphic'); f.field('kind','screen',['tile','sprite','icon','screen','tile sheet'])
+        f.field('frame_width',0,label='Frame width (0 = whole image)'); f.field('frame_height',0,label='Frame height (0 = whole image)')
+        def apply(v):
+            if v['kind']=='tile sheet':
+                from art_editing import import_tiles
+                art=copy.deepcopy(self.document.art)
+                art['images'].extend(import_tiles(path,self.document.content['package_id'],art['images']))
+                self.document.replace_art(art); self.owner.refresh()
+            else:self.put(import_image(path,self.document.content['package_id'],self.document.art['images'],v['kind'],int(v['frame_width']) or None,int(v['frame_height']) or None))
+        f.submit(apply)
+    def original(self):
+        f=Form(self,'Copy original sprite into package'); f.field('first',0,label='First sprite (Locust 0, Stinger 146, player 166, NPC 270)'); f.field('frames',16)
+        def apply(v):
+            im=original_sprite(self.document,self.owner.parent.settings,int(v['first']),int(v['frames']))
+            self.put(clone_image(im,self.document.content['package_id'],self.document.art['images']))
+        f.submit(apply)
+    def delete(self):
+        if not self.current():return
+        art=copy.deepcopy(self.document.art); art['images']=[i for i in art['images'] if i['id']!=self.selected]
+        self.document.replace_art(art); self.selected=None; self.owner.refresh()
+        self.owner.status.set('Image removed. Validate reports any remaining references; Undo restores it.')
+    def use_tile(self):
+        im=self.current()
+        if not im or im['kind']!='tile':raise EditorError('Choose a 16×16 tile image first.')
+        a=copy.deepcopy(self.document.adventure)
+        value=graphic_tile(a,self.document.content['package_id'],'package:art',im['id'])
+        self.owner.commit(a)
+        index=next(i for i,t in enumerate(a['tiles']) if t['id']==value)
+        self.owner.brush.selection_set(str(index)); self.owner.select_brush(); self.owner.window.lift()
+    def binding(self):
+        im=self.current()
+        if not im or im['kind']!='sprite':raise EditorError('Choose a sprite image first.')
+        f=Form(self,'Assign sprite role'); f.field('slot','player',SLOTS)
+        def apply(v):
+            art=copy.deepcopy(self.document.art); bind(art,v['slot'],im['id']); self.document.replace_art(art); self.owner.refresh()
+        f.submit(apply)
+
+
+class PixelEditor:
+    """Stage an image independently; Apply produces one shared undo entry."""
+    def __init__(self, owner, image):
+        self.owner=owner; self.original=copy.deepcopy(image); self.image=copy.deepcopy(image)
+        self.window=tk.Toplevel(owner.window); self.window.title('Pixel editor — '+image['name']); self.window.geometry('920x730')
+        self.history=[]; self.future=[]; self.before=None; self.last=None; self.playing=False
+        bar=ttk.Frame(self.window,padding=8); bar.pack(fill='x')
+        self.tool=tk.StringVar(value='Pencil'); ttk.Combobox(bar,textvariable=self.tool,values=['Pencil','Line','Rectangle','Fill','Erase','Eyedropper'],state='readonly',width=12).pack(side='left')
+        self.color=tk.StringVar(value='ffffffff'); ttk.Entry(bar,textvariable=self.color,width=10).pack(side='left',padx=5)
+        ttk.Button(bar,text='Color…',command=self.choose_color).pack(side='left')
+        self.zoom=tk.StringVar(value=str(min(16,max(2,512//max(image['width'],image['height'])))))
+        z=ttk.Combobox(bar,textvariable=self.zoom,values=['1','2','4','8','16','24','32'],width=4,state='readonly'); z.pack(side='left',padx=8);z.bind('<<ComboboxSelected>>',lambda _:self.draw())
+        for title,cb in [('Undo',self.undo),('Redo',self.redo),('Apply',self.apply)]:ttk.Button(bar,text=title,command=lambda f=cb:self.owner.guard(f)).pack(side='left',padx=3)
+        colors=ttk.Frame(self.window,padding=(8,0)); colors.pack(fill='x')
+        for c in DEFAULT_COLORS:
+            tk.Button(colors,background='#'+c,width=2,command=lambda value=c:self.color.set(value+'ff')).pack(side='left')
+        frames=ttk.Frame(self.window,padding=8);frames.pack(fill='x')
+        ttk.Label(frames,text='Frame').pack(side='left');self.frame=ttk.Combobox(frames,state='readonly',width=5);self.frame.pack(side='left',padx=6)
+        self.frame.bind('<<ComboboxSelected>>',lambda _:self.draw())
+        for title,cb in [('Clone frame',self.add_frame),('Delete frame',self.delete_frame),('Play / stop',self.play)]:ttk.Button(frames,text=title,command=lambda f=cb:self.owner.guard(f)).pack(side='left',padx=4)
+        view=ttk.Frame(self.window);view.pack(fill='both',expand=True,padx=8,pady=(0,8));view.columnconfigure(0,weight=1);view.rowconfigure(0,weight=1)
+        self.canvas=tk.Canvas(view,highlightthickness=0,background='#d6d6d6')
+        sx=ttk.Scrollbar(view,orient='horizontal',command=self.canvas.xview);sy=ttk.Scrollbar(view,command=self.canvas.yview)
+        self.canvas.configure(xscrollcommand=sx.set,yscrollcommand=sy.set);self.canvas.grid(row=0,column=0,sticky='nsew');sx.grid(row=1,column=0,sticky='ew');sy.grid(row=0,column=1,sticky='ns')
+        self.canvas.bind('<Button-1>',lambda e:self.owner.guard(lambda:self.stroke(e,True)))
+        self.canvas.bind('<B1-Motion>',lambda e:self.owner.guard(lambda:self.stroke(e,False)))
+        self.canvas.bind('<ButtonRelease-1>',lambda _:self.finish())
+        self.window.bind('<Control-z>',lambda _:self.undo());self.window.bind('<Control-y>',lambda _:self.redo())
+        self.window.protocol('WM_DELETE_WINDOW',self.close);self.refresh_frames();self.draw()
+    def refresh_frames(self):
+        current=max(0,self.frame.current());self.frame.configure(values=list(range(1,len(self.image['frames'])+1)));self.frame.current(min(current,len(self.image['frames'])-1))
+    def draw(self):
+        if not self.window.winfo_exists():return
+        self.canvas.delete('all');z=int(self.zoom.get());self.preview=photo(self.window,self.image,max(0,self.frame.current()),z)
+        self.canvas.create_image(0,0,image=self.preview,anchor='nw');w,h=self.image['width']*z,self.image['height']*z
+        self.canvas.configure(scrollregion=(0,0,w,h))
+        if z>=8:
+            for x in range(0,w+1,z):self.canvas.create_line(x,0,x,h,fill='#888888')
+            for y in range(0,h+1,z):self.canvas.create_line(0,y,w,y,fill='#888888')
+    def choose_color(self):
+        chosen=colorchooser.askcolor('#'+self.color.get()[:6],parent=self.window)[1]
+        if chosen:self.color.set(chosen[1:]+'ff')
+    def stroke(self,e,start):
+        self.playing=False;z=int(self.zoom.get());p=(int(self.canvas.canvasx(e.x)//z),int(self.canvas.canvasy(e.y)//z))
+        if not (0<=p[0]<self.image['width'] and 0<=p[1]<self.image['height']):return
+        if self.tool.get()=='Eyedropper':self.color.set(pixels(self.image,self.frame.current())[p[1]][p[0]]);return
+        if start:self.before=copy.deepcopy(self.image);self.first=self.last=p
+        if self.before is None:return
+        shape=self.tool.get() in ('Line','Rectangle')
+        if shape:self.image=copy.deepcopy(self.before)
+        brush(self.image,self.frame.current(),self.first if shape else self.last,p,'00000000' if self.tool.get()=='Erase' else self.color.get().lower(),self.tool.get())
+        self.last=p;self.draw()
+    def finish(self):
+        if self.before is not None and self.before!=self.image:self.history.append(self.before);self.history=self.history[-40:];self.future=[]
+        self.before=None
+    def undo(self):
+        self.playing=False;self.finish()
+        if self.history:self.future.append(self.image);self.image=self.history.pop();self.refresh_frames();self.draw()
+    def redo(self):
+        self.playing=False
+        if self.future:self.history.append(self.image);self.image=self.future.pop();self.refresh_frames();self.draw()
+    def add_frame(self):
+        if len(self.image['frames'])==32:raise EditorError('An image can have at most 32 frames.')
+        self.history.append(copy.deepcopy(self.image));self.future=[];self.image['frames'].append(copy.deepcopy(self.image['frames'][self.frame.current()]));self.refresh_frames();self.frame.current(len(self.image['frames'])-1);self.draw()
+    def delete_frame(self):
+        if len(self.image['frames'])==1:raise EditorError('Keep at least one frame.')
+        self.history.append(copy.deepcopy(self.image));self.future=[];self.image['frames'].pop(self.frame.current());self.refresh_frames();self.draw()
+    def play(self):
+        self.playing=not self.playing
+        if self.playing:self.animate()
+    def animate(self):
+        if not self.window.winfo_exists() or not self.playing:return
+        self.frame.current((self.frame.current()+1)%len(self.image['frames']));self.draw();self.window.after(120,self.animate)
+    def apply(self):
+        self.finish();self.owner.selected=self.original['id'];self.owner.put(self.image,self.original);self.window.destroy()
+    def close(self):
+        if self.image!=self.original and not messagebox.askyesno('Discard pixel edits?','Close without applying these pixel edits?',parent=self.window):return
+        self.window.destroy()

@@ -171,7 +171,10 @@ int btp_cli_load_content(const BtpOptions *o, BtpContent *content, BtpError *err
         if (o->play_map) {
             const BtpAdventure *a=&content->resources->project->adventure;unsigned at=0;
             while (at<a->map_count && strcmp(a->maps[at].id,o->play_map)) ++at;
-            if (at==a->map_count || !btp_scene_stand(&a->maps[at],(int)o->play_x,(int)o->play_y,0)) {
+            /* World sector edges are continuous terrain. The complete-party
+               probe below checks the composed world, including both sides. */
+            if (at==a->map_count || (!a->maps[at].world && !btp_scene_stand(&a->maps[at],(int)o->play_x,(int)o->play_y,0)) ||
+                o->play_x>=2u*a->maps[at].visual.width || o->play_y>=2u*a->maps[at].visual.height) {
                 btp_content_close(content);snprintf(error->text,sizeof error->text,"Unknown or blocked Play here destination");return 0;
             }
             BtpState *probe=calloc(1,sizeof *probe);

@@ -187,9 +187,18 @@ def load_tiles(document, settings: dict, sheet: str | None = None) -> dict[str, 
     if document.manifest["requires"] == "none":
         if sheet not in (None, "package:tiles"):
             raise EditorError(f"An independent project cannot preview tile sheet {sheet}.")
-        return {"package:tiles": _package_tiles(document)}
+        result = {"package:tiles": _package_tiles(document)}
+        if sheet is None: result.update(art_tiles(document))
+        return result
     sheets = CHI_SHEETS if sheet is None else (sheet,)
     if not settings.get("data"):
         raise EditorError("Configure an existing Original data path in Player setup to preview CHI tiles.")
-    return {name: load_original_atlas(document.validator, Path(settings["data"]), name)
-            for name in sheets}
+    result = {name: load_original_atlas(document.validator, Path(settings["data"]), name) for name in sheets}
+    if sheet is None: result.update(art_tiles(document))
+    return result
+
+
+def art_tiles(document):
+    from art_editing import display_rows
+    images = getattr(document, "art", {}).get("images", [])
+    return {"package:art": {im["id"]: display_rows(im) for im in images if im["kind"] == "tile"}} if images else {}

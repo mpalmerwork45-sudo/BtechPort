@@ -5,7 +5,7 @@ import math
 from numbers import Real
 from editor_model import EditorError
 
-OPS = ("end", "say", "choice", "if", "flag", "reward", "recruit", "transfer", "shop", "battle", "lua", "finish")
+OPS = ("end", "say", "choice", "if", "flag", "reward", "recruit", "transfer", "shop", "battle", "lua", "finish", "picture")
 
 
 def new_id(document, collection, stem):
@@ -37,7 +37,7 @@ def paint(scene, layer, x, y, key):
     if key == " " and layer == 0:
         raise EditorError("Transparent erase applies to overlays; choose a base tile.")
     row = target["rows"][y]
-    target["rows"][y] = row[:x] + key + row[x+1:]
+    target["rows"][y] = row[:x] + (key if isinstance(row,str) else [key]) + row[x+1:]
 
 
 def event_template(document, op, identity=None):
@@ -59,6 +59,7 @@ def event_template(document, op, identity=None):
     if op == "shop": event["shop"] = a["shops"][0]["id"] if a["shops"] else ""
     if op == "battle": event.update(encounter=a["encounters"][0]["id"] if a["encounters"] else "", win=end, loss=end, flee=end)
     if op == "lua": event.update(script=document.manifest.get("scripts", [{}])[0].get("id", ""), routes=[end])
+    if op == "picture": event["image"] = document.art["images"][0]["id"] if document.art["images"] else ""
     return event
 
 

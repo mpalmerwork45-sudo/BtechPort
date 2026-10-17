@@ -51,6 +51,7 @@ def references(manifest: dict) -> list[str]:
     return list(dict.fromkeys(["project.json", manifest["definitions"],
         *([manifest["adventure"]] if "adventure" in manifest else []),
         *([manifest["presentation"]] if "presentation" in manifest else []),
+        *([manifest["graphics"]] if "graphics" in manifest else []),
         *[script["file"] for script in manifest.get("scripts", [])],
         *[asset["file"] for asset in manifest["assets"]]]))
 
@@ -68,14 +69,19 @@ class ProjectDocument:
         self.snapshot = {name: child(self.root, name).read_bytes() for name in references(self.manifest)}
         self.content = json.loads(self.snapshot[self.manifest["definitions"]])
         self.adventure = json.loads(self.snapshot[self.manifest["adventure"]]) if "adventure" in self.manifest else None
+        self.art = (json.loads(self.snapshot[self.manifest["graphics"]]) if "graphics" in self.manifest
+                    else dict(format="btp-art-v1", schema_version=1, images=[], bindings=[]))
         self.saved = copy.deepcopy(self.content)
         self.saved_adventure = copy.deepcopy(self.adventure)
+        self.saved_art = copy.deepcopy(self.art)
+        self.saved_manifest = copy.deepcopy(self.manifest)
         self.undo_stack: list[dict] = []
         self.redo_stack: list[dict] = []
 
     @property
     def dirty(self) -> bool:
-        return self.content != self.saved or self.adventure != self.saved_adventure
+        return (self.content != self.saved or self.adventure != self.saved_adventure
+                or self.art != self.saved_art or self.manifest != self.saved_manifest)
 
     def replace(self, content: dict) -> None:
         self.replace_both(content, self.adventure)
@@ -84,22 +90,36 @@ class ProjectDocument:
         self.replace_both(self.content, adventure)
 
     def replace_both(self, content, adventure):
-        if content != self.content or adventure != self.adventure:
-            self.undo_stack.append(copy.deepcopy((self.content, self.adventure)))
+        self.replace_all(content, adventure, self.art, self.manifest)
+
+    def replace_art(self, art, adventure=None):
+        manifest = copy.deepcopy(self.manifest)
+        if "graphics" not in manifest:
+            name = "graphics.json"
+            if name in self.snapshot or child(self.root, name).exists():
+                raise EditorError("graphics.json already exists outside this project's declarations. Rename it or declare it before editing graphics.")
+            manifest["graphics"] = name
+        self.replace_all(self.content, self.adventure if adventure is None else adventure, art, manifest)
+
+    def replace_all(self, content, adventure, art, manifest):
+        if (content, adventure, art, manifest) != (self.content, self.adventure, self.art, self.manifest):
+            self.undo_stack.append(copy.deepcopy((self.content, self.adventure, self.art, self.manifest)))
             self.undo_stack = self.undo_stack[-40:]
             self.redo_stack.clear()
             self.content = copy.deepcopy(content)
             self.adventure = copy.deepcopy(adventure)
+            self.art = copy.deepcopy(art)
+            self.manifest = copy.deepcopy(manifest)
 
     def undo(self) -> None:
         if self.undo_stack:
-            self.redo_stack.append((self.content, self.adventure))
-            self.content, self.adventure = self.undo_stack.pop()
+            self.redo_stack.append((self.content, self.adventure, self.art, self.manifest))
+            self.content, self.adventure, self.art, self.manifest = self.undo_stack.pop()
 
     def redo(self) -> None:
         if self.redo_stack:
-            self.undo_stack.append((self.content, self.adventure))
-            self.content, self.adventure = self.redo_stack.pop()
+            self.undo_stack.append((self.content, self.adventure, self.art, self.manifest))
+            self.content, self.adventure, self.art, self.manifest = self.redo_stack.pop()
 
     def files(self) -> dict[str, bytes]:
         files = dict(self.snapshot)
@@ -107,6 +127,10 @@ class ProjectDocument:
             files[self.manifest["definitions"]] = encoded(self.content)
         if self.adventure != self.saved_adventure:
             files[self.manifest["adventure"]] = encoded(self.adventure)
+        if "graphics" in self.manifest and (self.art != self.saved_art or self.manifest["graphics"] not in files):
+            files[self.manifest["graphics"]] = encoded(self.art)
+        if self.manifest != self.saved_manifest:
+            files["project.json"] = encoded(self.manifest)
         return files
 
     def unchanged_on_disk(self) -> None:
@@ -117,6 +141,9 @@ class ProjectDocument:
                 unchanged = False
             if not unchanged:
                 raise EditorError(f"{name} changed outside this editor. Reopen the project before saving; your disk files were preserved.")
+        for name in self.files().keys() - self.snapshot.keys():
+            if child(self.root, name).exists():
+                raise EditorError(f"{name} appeared outside this editor. Reopen before saving; your disk file was preserved.")
 
     def stage(self, root: Path) -> None:
         for name, data in self.files().items():
@@ -144,20 +171,22 @@ class ProjectDocument:
             return
         try:
             entries = json.loads(journal.read_bytes())
-            if not isinstance(entries, list) or not 1 <= len(entries) <= 2:
+            if not isinstance(entries, list) or not 1 <= len(entries) <= 128:
                 raise ValueError("Invalid transaction")
             prepared = []
             for entry in entries:
                 path = child(root, entry["file"])
-                old = base64.b64decode(entry["old"], validate=True)
-                current = path.read_bytes()
-                if current != old and hashlib.sha256(current).hexdigest() != entry["new_sha256"]:
+                old = base64.b64decode(entry["old"], validate=True) if entry["old"] is not None else None
+                current = path.read_bytes() if path.exists() else None
+                if current != old and (current is None or hashlib.sha256(current).hexdigest() != entry["new_sha256"]):
                     raise EditorError("An interrupted save also has external edits. Files were preserved; restore or review .btp-editor-transaction.json before reopening.")
                 prepared.append((path, old))
             # A crash leaves either old or new complete file snapshots. Roll
             # back all of them before the shared validator reads the package.
             for path, old in prepared:
-                ProjectDocument.atomic_file(path, old)
+                if old is None:
+                    if path.exists(): path.unlink()
+                else: ProjectDocument.atomic_file(path, old)
             journal.unlink()
         except (ValueError, KeyError, TypeError) as exc:
             raise EditorError("Cannot recover the editor's interrupted save journal; disk files were preserved.") from exc
@@ -173,9 +202,9 @@ class ProjectDocument:
         self.unchanged_on_disk()
         if not self.dirty:
             return result  # Preserve original formatting and package digest.
-        changed = {name: data for name, data in self.files().items() if data != self.snapshot[name]}
+        changed = {name: data for name, data in self.files().items() if data != self.snapshot.get(name)}
         journal = child(self.root, ".btp-editor-transaction.json")
-        transaction = [{"file": name, "old": base64.b64encode(self.snapshot[name]).decode("ascii"),
+        transaction = [{"file": name, "old": base64.b64encode(self.snapshot[name]).decode("ascii") if name in self.snapshot else None,
                         "new_sha256": hashlib.sha256(data).hexdigest()} for name, data in changed.items()]
         # Validate the entire candidate first. A durable rollback journal
         # protects a save that updates both definitions and adventure files.
@@ -186,7 +215,9 @@ class ProjectDocument:
         try:
             self.unchanged_on_disk()
             for name, data in changed.items():
-                self.atomic_file(child(self.root, name), data)
+                path = child(self.root, name)
+                path.parent.mkdir(parents=True, exist_ok=True)
+                self.atomic_file(path, data)
         except Exception:
             self.recover(self.root)
             raise
@@ -194,6 +225,8 @@ class ProjectDocument:
         self.snapshot.update(changed)
         self.saved = copy.deepcopy(self.content)
         self.saved_adventure = copy.deepcopy(self.adventure)
+        self.saved_art = copy.deepcopy(self.art)
+        self.saved_manifest = copy.deepcopy(self.manifest)
         return result
 
     def duplicate(self, collection: str, index: int) -> str:

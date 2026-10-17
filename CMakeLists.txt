@@ -22,6 +22,7 @@ target_sources(btp_core PRIVATE port/data/json.c port/data/definitions.c)
 target_sources(btp_core PRIVATE port/data/digest.c port/data/project.c port/data/file.c)
 target_sources(btp_core PRIVATE port/data/adventure.c port/core/events.c)
 target_sources(btp_core PRIVATE port/data/independent.c port/core/lua_events.c)
+target_sources(btp_core PRIVATE port/data/art.c)
 # Vendored Lua core only: libraries exposing files, OS or dynamic modules are
 # not linked into the event host. This also avoids a runtime DLL dependency.
 set(BTP_LUA_SOURCES lapi lcode lctype ldebug ldo ldump lfunc lgc llex lmem lobject
@@ -52,7 +53,7 @@ target_sources(btp_core PRIVATE port/core/spy.c)
 target_sources(btp_core PRIVATE port/core/cache.c)
 target_sources(btp_core PRIVATE port/core/yard.c port/core/original_actions.c port/core/commands.c)
 target_sources(btp_core PRIVATE port/core/roster_game.c)
-add_library(btp_pixels port/frontend/pixels.c port/frontend/independent.c)
+add_library(btp_pixels port/frontend/pixels.c port/frontend/independent.c port/frontend/art.c)
 target_link_libraries(btp_pixels PUBLIC btp_core)
 add_executable(btech-headless port/frontend/headless.c port/frontend/cli.c)
 target_link_libraries(btech-headless PRIVATE btp_pixels)

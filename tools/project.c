@@ -3,6 +3,7 @@
 #include "data/portraits.h"
 #include "data/file.h"
 #include "frontend/pixels.h"
+#include "data/sprites.h"
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -59,6 +60,31 @@ static int preview_tiles(const char *directory,const char *name)
     if (!ok) fprintf(stderr,"%s\n",error.text);
     free(atlas);free(resources);return ok;
 }
+static int source_sprite(const char *directory,unsigned first,unsigned count)
+{
+    if (!count || count>32 || first>=BTP_SPRITE_COUNT || count>BTP_SPRITE_COUNT-first) return 0;
+    BtpResources *r=calloc(1,sizeof *r);BtpError error={0};BtpSpriteRect rect;
+    if (!r || !btp_resources_load(directory,r,&error) || !btp_sprite_rect(first,&rect)) { fprintf(stderr,"%s\n",error.text);free(r);return 0; }
+    for (unsigned i=0;i<count;++i) {
+        BtpSpriteRect next;btp_sprite_rect(first+i,&next);
+        if (next.width!=rect.width || next.height!=rect.height) { fputs("Choose frames with equal dimensions.\n",stderr);free(r);return 0; }
+    }
+    printf("{\"id\":\"chi:sprite-%u\",\"name\":\"Original sprite %u\",\"kind\":\"sprite\",\"width\":%u,\"height\":%u,\"frames\":[",first,first,rect.width,rect.height);
+    const unsigned palette[]={0,0,2,3,4,9,6,7,8,1,10,11,12,13,14,15};
+    for (unsigned i=0;i<count;++i) {
+        btp_sprite_rect(first+i,&rect);printf("%s[",i ? "," : "");
+        for (unsigned y=0;y<rect.height;++y) {
+            printf("%s\"",y ? "," : "");
+            for (unsigned x=0;x<rect.width;++x) {
+                unsigned color=r->sprites.pixels[(rect.y+y)*320+rect.x+x]&15u;
+                printf("%06x%02x",btp_palette[palette[color]]&0xffffffu,color ? 255u : 0u);
+            }
+            putchar('"');
+        }
+        putchar(']');
+    }
+    puts("]}");free(r);return !ferror(stdout);
+}
 
 static int provenance(const char *roster,const char *directory,BtpError *error)
 {
@@ -87,6 +113,15 @@ static int provenance(const char *roster,const char *directory,BtpError *error)
 
 int main(int argc,char **argv)
 {
+    if (argc>=2 && !strcmp(argv[1],"source-sprite")) {
+        if ((argc!=6 && argc!=8) || strcmp(argv[2],"--data") || strcmp(argv[4],"--sprite") || (argc==8 && strcmp(argv[6],"--frames"))) {
+            fputs("Usage: btp-project source-sprite --data DIRECTORY --sprite 0..375 [--frames 1..32]\n",stderr);return 2;
+        }
+        char *end;unsigned long first=strtoul(argv[5],&end,10);if (!*argv[5] || *end || first>=BTP_SPRITE_COUNT) return 2;
+        unsigned long count=1;
+        if (argc==8) { count=strtoul(argv[7],&end,10);if (!*argv[7] || *end || !count || count>32) return 2; }
+        return source_sprite(argv[3],(unsigned)first,(unsigned)count) ? 0 : 1;
+    }
     if (argc>=2 && !strcmp(argv[1],"preview-tiles")) {
         if (argc!=6 || strcmp(argv[2],"--data") || strcmp(argv[4],"--sheet")) {
             fputs("Usage: btp-project preview-tiles --data DIRECTORY --sheet chi:land|chi:destroyed\n",stderr);return 2;

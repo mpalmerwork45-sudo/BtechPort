@@ -46,7 +46,7 @@ void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
         memcpy(b,"BTPk",4);b[4]=46;b[20005]=s->menu.broker_class;
     }
     if (s->project) { memcpy(b,"BTPl",4);b[4]=47;b[20006]=s->project; }
-    if (s->event.enabled) { memcpy(b,"BTPm",4);b[4]=48;btp_events_encode(s,b+20057); }
+    if (s->event.enabled) { memcpy(b,"BTPn",4);b[4]=49;btp_events_encode(s,b+20057); }
     for (unsigned i = 0; i < 4; ++i) b[8+i] = (uint8_t)(s->tick >> (8 * i));
     b[12] = (uint8_t)s->x_half; b[13] = (uint8_t)(s->x_half >> 8);
     b[14] = (uint8_t)s->y_half; b[15] = (uint8_t)(s->y_half >> 8);
@@ -244,7 +244,8 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         n == BTP_STATE_BYTES && !memcmp(b,"BTPj",4) && b[4]==45 ? 45 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPk",4) && b[4]==46 ? 46 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPl",4) && b[4]==47 ? 47 :
-        n == BTP_STATE_BYTES && !memcmp(b,"BTPm",4) && b[4]==48 ? 48 : 0;
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPm",4) && b[4]==48 ? 48 :
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPn",4) && b[4]==49 ? 49 : 0;
     if (!version) return 0;
     if (version>=18 && version<38 && b[10232]) return 0; /* v38 critical report count. */
     if (version>=18 && version<35 && b[10233]) return 0; /* v35 weapon-window presentation bits. */
@@ -407,7 +408,8 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
     result.x_half = (uint16_t)(b[12] | (uint16_t)b[13] << 8);
     result.y_half = (uint16_t)(b[14] | (uint16_t)b[15] << 8);
     result.map_id = b[16]; result.gate = b[17]; result.facing = b[18]; result.blocked = b[19];
-    if ((result.map_id != 1 && !(version>=48 && result.map_id>=16 && result.map_id<32) && !(version>=17 && result.map_id<=14 && b[28])) || (result.cache.active ? result.gate!=33 && result.gate!=139 : result.gate!=85) ||
+    if (version==48) { result.event.map=(uint16_t)(result.map_id-16u);result.event.return_map=(uint16_t)(result.campaign.return_map>=16 ? result.campaign.return_map-16u : 0u); }
+    if ((result.map_id != 1 && !(version>=48 && result.map_id>=16 && (version>=49 || result.map_id<32)) && !(version>=17 && result.map_id<=14 && b[28])) || (result.cache.active ? result.gate!=33 && result.gate!=139 : result.gate!=85) ||
         (version >= 10 ? result.facing != BTP_IDLE && !btp_action_moves((BtpAction)result.facing) : result.facing > BTP_RIGHT) ||
         result.blocked > (version>=30 ? BTP_WATER : BTP_EDGE) ||
         (version>=30 && result.campaign.invasion ? result.x_half>=256 : result.campaign.encounter ? result.x_half>=128 : result.map_id ? result.x_half >= 2 * m->width : result.x_half>=2048) ||

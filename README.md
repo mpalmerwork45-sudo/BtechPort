@@ -63,6 +63,8 @@ python3 tools/game_editor.py examples/battletech-demo
 ```
 
 See [verification and the next editor milestones](docs/BATTLETECH_DEMO.md).
+The [world and graphics editor guide](docs/M5_WORLD_ART_EDITOR.md) covers jigsaws,
+city placement, the full tile browser, image imports and pixel/animation editing.
 The [game editor and independent demo](docs/M5_INDEPENDENT_GAME_EDITOR.md)
 now add map painting, overlays, entrances/NPCs, encounters, event/choice forms,
 roster editing, shared validation, undo/redo, export and Play here:
