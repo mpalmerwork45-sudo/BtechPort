@@ -24,6 +24,7 @@ typedef struct BtpDefinitions {
     char id[32],version[32],broker[64],reload[64];
     unsigned weapon_count,mech_count,ammo_count,presentation_count;
     BtpCombatProfile rules;
+    uint8_t source_digest[32];
     BtpAuthoredWeapon weapons[BTP_DEFINITION_LIMIT];
     BtpMechDefinition mechs[BTP_DEFINITION_LIMIT];
     BtpAmmoDefinition ammo[BTP_DEFINITION_LIMIT];

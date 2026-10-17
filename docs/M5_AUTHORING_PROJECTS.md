@@ -146,7 +146,10 @@ this package-relative path restriction.
 
 The only supported policy is **strict-content-v1**. `BTG1` saves bind package ID,
 content version and SHA-256 of the exact manifest, definitions and declared
-asset bytes. File lengths delimit the fingerprint inputs. This deliberately
+asset bytes. The fingerprint hashes their individual 32-byte SHA-256 digests in
+manifest, definitions, then declared-asset order. Parsing and hashing use the
+same loaded snapshots, so an edit during loading cannot bind different bytes.
+This deliberately
 includes whitespace, ordering, labels and cosmetic art: any change requires
 restoring the old project to load its saves, or starting a new campaign with a
 different save filename. Attribution documents are outside the fingerprint.
@@ -192,9 +195,34 @@ working directory, export/art/provenance, malformed JSON, capacities, reference
 failures, path escapes, edited definitions, and adding a model/weapon using JSON
 alone. Existing Original/Updated regressions remain separate.
 
-Final platform and presentation results are recorded in the completion entry
-below. No new original-game behavior was inferred for this refactor; it reuses
+No new original-game behavior was inferred for this refactor; it reuses
 the existing evidence and original regression fixtures. The independent engine
 remains GPL-3.0-only. Exporting does not change the source roster/art licenses;
 the Updated roster's MegaMek attribution and CC BY-NC-SA 4.0 notice travel with
 it. Original proprietary assets still must be supplied separately.
+
+### Completion checks — 2026-10-17
+
+| Check | Result |
+| --- | --- |
+| Native CTest | All 65 tests pass, including the 64 existing regression cases |
+| Python tools | All 46 tests pass, including 13 new project/CLI cases |
+| ASan/UBSan/leak checks | Eight selected content, combat, presentation and save suites pass; all 13 project/CLI cases also pass with sanitized executables |
+| Windows/Wine | Fourteen selected content, combat, presentation and save suites pass; Windows validator and headless project launch pass |
+| Cross-platform saves | A Windows-written project save loads on Linux with an identical canonical state digest |
+| SDL, Linux and Windows | Five project checkpoints per platform: training-ground start, broker confirmation, purchase result, custom weapon menu and visible authored battle text; F5/F9 and final frame/state agree with headless |
+| Reference guard | All 1,287 entries match the content/mode/mtime baseline |
+
+The affected project/save checks were rerun after the final slot-name and
+optional-error-buffer fixes. The SDL cases run through
+`python3 tools/native_smoke.py --project-only` and
+`python3 tools/native_smoke.py --windows --project-only`; captured frames are
+local `work/project-*.ppm` artifacts. The report checkpoint uses the original
+wait-for-input combat speed so its text remains visible during F5/F9 checks.
+
+A complete editable export is available locally in **`work/editor-ready`**:
+31 models, 16 mounted weapon definitions, 11 portraits and copied attribution.
+It is ignored generated content, not an additional shipped pack. Validate it
+with `./build/btp-project validate work/editor-ready`, and use it in the play
+command above. Existing saves and both reference trees are preserved. No push
+was performed.

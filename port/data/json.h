@@ -15,6 +15,7 @@ typedef struct {
     char *bytes;
     BtpJsonNode *nodes;
     unsigned count;
+    uint8_t source_digest[32]; /* Exact snapshot, before in-place string decoding. */
     const char *file;
     char *error;
 } BtpJson;

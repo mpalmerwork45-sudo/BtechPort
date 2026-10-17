@@ -239,6 +239,9 @@ int btp_save_edition_slot_path(const char *base,unsigned slot,const BtpResources
     if (!dot || dot==leaf) dot=base+strlen(base);
     size_t prefix=(size_t)(dot-base);
     if (r->project) {
+        char suffix[48];int length=snprintf(suffix,sizeof suffix,"-project-%s",r->project->id);
+        if (length>0 && prefix>=(size_t)length && !memcmp(dot-length,suffix,(size_t)length))
+            return btp_save_slot_path(base,slot,path,capacity,e);
         char named[4096];int n=snprintf(named,sizeof named,"%.*s-project-%s%s",(int)prefix,base,r->project->id,dot);
         if (n<0 || (size_t)n>=sizeof named) return fail(e,"Project save path is too long");
         return btp_save_slot_path(named,slot,path,capacity,e);

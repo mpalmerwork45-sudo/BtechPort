@@ -1,4 +1,5 @@
 #include "data/json.h"
+#include "data/digest.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -92,6 +93,7 @@ int btp_json_load(BtpJson *j,const char *path,char error[256])
     size_t size=fread(j->bytes,1,BYTE_LIMIT+1,f);int bad=ferror(f);if (fclose(f)) bad=1;
     if (bad || size>BYTE_LIMIT) return btp_json_error(j,0,"cannot read file (limit 1 MiB)");
     if (memchr(j->bytes,0,size)) return btp_json_error(j,0,"embedded NUL");
+    BtpDigest digest;btp_digest_start(&digest);btp_digest_add(&digest,j->bytes,size);btp_digest_finish(&digest,j->source_digest);
     Reader p={j,j->bytes,j->bytes+size};
     if (!value(&p,0,0,NULL,0)) return 0;
     space(&p);return p.at==p.end || btp_json_error(j,1,"trailing data");

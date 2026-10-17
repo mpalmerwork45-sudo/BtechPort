@@ -7,6 +7,7 @@
 #include "core/party.h"
 #include "core/npc.h"
 #include "core/menu.h"
+#include "core/combat.h"
 #include "frontend/pixels.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,6 +24,34 @@ static void roundtrip(BtpState *s,BtpState *copy,const BtpResources *r)
     CHECK(btp_save_write("project-test-save.btp",s,r,&error));
     CHECK(btp_save_load("project-test-save.btp",copy,r,&error));same(s,copy);
     CHECK(!remove("project-test-save.btp"));
+}
+static void capture(const char *prefix,const char *name,BtpState *s,const BtpResources *r)
+{
+    char path[4096];snprintf(path,sizeof path,"%s-%s.btp",prefix,name);CHECK(btp_save_write(path,s,r,&error));
+    uint32_t *frame=malloc(320u*200u*sizeof *frame);CHECK(frame);btp_render(r,s,0,frame);
+    snprintf(path,sizeof path,"%s-%s.ppm",prefix,name);CHECK(btp_write_ppm(path,frame));free(frame);
+}
+static void fixtures(const char *prefix,BtpState *s,const BtpResources *r)
+{
+    /* Controlled presentation checkpoints, separate from normal startup. */
+    btp_start(s);s->project=1;btp_npc_init(s,&r->map);CHECK(btp_set_combat_profile(s,r,1));capture(prefix,"start",s,r);
+    s->story_flags[4]=1;s->story_flags[36]=127;s->map_id=2;s->x_half=54;s->y_half=51;
+    s->campaign.world_x=1334;s->campaign.world_y=1075;s->credits=200000;btp_npc_enter(s,&r->local[1]);btp_party_init(s);
+    btp_game_tick(s,r,BTP_UP);btp_game_tick(s,r,BTP_ACCEPT);
+    btp_game_tick(s,r,BTP_ACCEPT);btp_game_tick(s,r,BTP_DOWN);btp_game_tick(s,r,BTP_ACCEPT);btp_game_tick(s,r,BTP_ACCEPT);
+    CHECK(s->campaign.ui==BTP_MENU_BROKER_CONFIRM);capture(prefix,"broker",s,r);
+    btp_game_tick(s,r,BTP_UP);btp_game_tick(s,r,BTP_ACCEPT);CHECK(s->menu.notice==BTP_BROKER_BOUGHT);capture(prefix,"purchase",s,r);
+    btp_start(s);s->project=1;btp_npc_init(s,&r->map);CHECK(btp_set_combat_profile(s,r,1));
+    FILE *f=fopen("tests/fixtures/ordinary-combat.actions","r");CHECK(f);char line[128];
+    while (s->combat.phase!=BTP_COMBAT_MENU && fgets(line,sizeof line,f)) {
+        line[strcspn(line,"\r\n")]=0;BtpAction action;CHECK(btp_action_parse(line,&action));btp_game_tick(s,r,action);
+    }
+    CHECK(!fclose(f));CHECK(s->combat.phase==BTP_COMBAT_MENU);
+    memcpy(s->combat.unit[0].record,r->roster.mechs[0].record,125);s->combat.phase=BTP_COMBAT_WEAPONS;s->combat.weapon_ui=1;
+    capture(prefix,"weapons",s,r);s->combat.phase=BTP_COMBAT_ROUND;s->combat.weapon_ui=0;
+    s->combat.delay=1;s->menu.speed=5; /* Original wait-for-input attack pause. */
+    s->effects.shown=(BtpBattleText){.active=1,.actor=0,.target=12,.actor_name=1,.weapon=16,.hit=1,.location=17,.authored=1,.content_weapon=0};
+    capture(prefix,"report",s,r);
 }
 static void export_equivalence(BtpContent *c,const char *roster)
 {
@@ -73,13 +102,14 @@ static void custom_rules(BtpResources *r)
 }
 int main(int argc,char **argv)
 {
-    CHECK(argc==7);BtpOriginalContentPaths paths={argv[1],argv[2],argv[3],argv[4]};BtpContent c={0};
+    CHECK(argc==7 || argc==8);BtpOriginalContentPaths paths={argv[1],argv[2],argv[3],argv[4]};BtpContent c={0};
     BtpDigest hash;uint8_t digest[32];btp_digest_start(&hash);btp_digest_add(&hash,"abc",3);btp_digest_finish(&hash,digest);
     const uint8_t known[]={0xba,0x78,0x16,0xbf,0x8f,0x01,0xcf,0xea,0x41,0x41,0x40,0xde,0x5d,0xae,0x22,0x23,0xb0,0x03,0x61,0xa3,0x96,0x17,0x7a,0x9c,0xb4,0x10,0xff,0x61,0xf2,0x00,0x15,0xad};CHECK(!memcmp(digest,known,32));
     CHECK(btp_content_load_original(&c,&paths,&error));export_equivalence(&c,argv[5]);
     CHECK(btp_content_load_project(&c,argv[6],&paths,&error));BtpResources *r=c.resources;CHECK(c.profile==BTP_CONTENT_PROJECT && r->project && r->roster.count==2);
     custom_rules(r);
     BtpResources *before=c.resources;CHECK(!btp_content_load_project(&c,"no-such-project",&paths,&error));CHECK(c.resources==before && c.profile==BTP_CONTENT_PROJECT);
+    CHECK(!btp_content_load_project(&c,"no-such-project",&paths,NULL));CHECK(c.resources==before);
     BtpState *s=calloc(1,sizeof *s),*copy=calloc(1,sizeof *copy);CHECK(s && copy);
     btp_start(s);s->project=1;btp_npc_init(s,&r->map);CHECK(btp_set_combat_profile(s,r,1));roundtrip(s,copy,r);
     s->effects.shown=(BtpBattleText){.active=1,.actor=0,.target=12,.weapon=16,.hit=1,.location=17,.authored=1,.content_weapon=1};
@@ -91,7 +121,9 @@ int main(int argc,char **argv)
     CHECK(btp_save_load("project-test-save.btp",copy,r,&error));same(s,copy);CHECK(!remove("project-test-save.btp"));free(snapshot);
     for (unsigned slot=0;slot<6;++slot) {
         char path[128];CHECK(btp_save_edition_slot_path("party.btp",slot,r,path,sizeof path,&error));CHECK(strstr(path,"-project-workshop"));
+        char explicit_path[128];CHECK(btp_save_edition_slot_path("party-project-workshop.btp",slot,r,explicit_path,sizeof explicit_path,&error));CHECK(!strcmp(path,explicit_path));
     }
+    if (argc==8) fixtures(argv[7],s,r);
     /* The high catalogue handle (including 200, an original salvage sentinel)
        must work independently of the old 160..191 save-code range. */
     BtpDefinitions *d=&r->project->definitions;

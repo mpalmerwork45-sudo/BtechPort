@@ -19,7 +19,7 @@
 #define make_directory(p) mkdir(p,0700)
 #endif
 
-static int fail(BtpError *e,const char *path,const char *why) { snprintf(e->text,sizeof e->text,"%.150s: %.100s",path,why);return 0; }
+static int fail(BtpError *e,const char *path,const char *why) { if (e) snprintf(e->text,sizeof e->text,"%.150s: %.100s",path,why);return 0; }
 int btp_project_path(const char *root,const char *relative,char out[4096],BtpError *e)
 {
     /* Package paths are portable and confined to real child entries. Reject
@@ -31,7 +31,7 @@ int btp_project_path(const char *root,const char *relative,char out[4096],BtpErr
         char leaf[256];size_t n=0;
         while (*p && *p!='/') {
             unsigned c=(unsigned char)*p++;
-            if (n==255 || c<33 || c>126 || strchr("\\:*?\"<>|",(int)c)) return fail(e,relative,"unsupported portable path");
+            if (n==255 || c<32 || c>126 || strchr("\\:*?\"<>|",(int)c)) return fail(e,relative,"unsupported portable path");
             leaf[n++]=(char)c;
         }
         leaf[n]=0;
@@ -56,19 +56,6 @@ int btp_project_path(const char *root,const char *relative,char out[4096],BtpErr
     }
     return 1;
 }
-static int digest_file(BtpDigest *d,const char *path,BtpError *e)
-{
-    FILE *f=fopen(path,"rb");if (!f) return fail(e,path,"cannot read content fingerprint");
-    uint8_t buffer[4096];size_t n,total=0;
-    while ((n=fread(buffer,1,sizeof buffer,f))) {
-        total+=n;if (total>1048576) { fclose(f);return fail(e,path,"project file exceeds 1 MiB limit"); }
-        btp_digest_add(d,buffer,n);
-    }
-    int ok=!ferror(f);if (fclose(f)) ok=0;
-    /* Length suffix separates files even when their bytes concatenate alike. */
-    uint8_t size[8];for (unsigned i=0;i<8;++i) size[i]=(uint8_t)((uint64_t)total>>(8*i));btp_digest_add(d,size,8);
-    return ok || fail(e,path,"cannot hash file");
-}
 static int text(BtpJson *j,unsigned obj,const char *key,char *out,size_t n) { return btp_json_string(j,btp_json_field(j,obj,key),out,n); }
 static int expected(BtpJson *j,unsigned obj,const char *key,const char *want)
 {
@@ -77,16 +64,19 @@ static int expected(BtpJson *j,unsigned obj,const char *key,const char *want)
 }
 BtpProject *btp_project_load(const char *root,BtpRoster *roster,BtpPortraits *portraits,BtpError *error)
 {
+    BtpError ignored;if (!error) error=&ignored;
     BtpProject *p=calloc(1,sizeof *p);BtpRoster *r=calloc(1,sizeof *r);BtpPortraits *art=calloc(1,sizeof *art);
     BtpJson j={0};BtpDigest digest;btp_digest_start(&digest);char path[4096],manifest_path[4096],relative[1024];unsigned v;int ok=0;
     if (!p || !r || !art) { fail(error,root,"project allocation failed");goto done; }
-    if (!btp_project_path(root,"project.json",manifest_path,error) || !digest_file(&digest,manifest_path,error) || !btp_json_load(&j,manifest_path,error->text)) goto done;
+    if (!btp_project_path(root,"project.json",manifest_path,error) || !btp_json_load(&j,manifest_path,error->text)) goto done;
+    btp_digest_add(&digest,j.source_digest,32);
     if (!expected(&j,1,"format","btp-project-v1") || !btp_json_uint(&j,btp_json_field(&j,1,"schema_version"),1,1,&v) ||
         !text(&j,1,"package_id",p->id,sizeof p->id) || !text(&j,1,"content_version",p->version,sizeof p->version) ||
         !text(&j,1,"title",p->title,sizeof p->title) || !expected(&j,1,"requires","chi-original-dos-1.03") ||
         !expected(&j,1,"startup","chi-training-v1") || !expected(&j,1,"save_policy","strict-content-v1") ||
         !text(&j,1,"definitions",relative,sizeof relative)) goto done;
-    if (!btp_project_path(root,relative,path,error) || !digest_file(&digest,path,error) || !btp_definitions_load(path,&p->definitions,error->text)) goto done;
+    if (!btp_project_path(root,relative,path,error) || !btp_definitions_load(path,&p->definitions,error->text)) goto done;
+    btp_digest_add(&digest,p->definitions.source_digest,32);
     if (strcmp(p->id,p->definitions.id) || strcmp(p->version,p->definitions.version)) { fail(error,"project.json","package ID/version disagrees with definitions");goto done; }
     if (!expected(&j,1,"rules_profile",p->definitions.rules.fingerprint ? "chi:updated-lrm-v1" : "chi:legacy-v1")) goto done;
     unsigned assets=btp_json_field(&j,1,"assets"),seen=0;
@@ -100,10 +90,15 @@ BtpProject *btp_project_load(const char *root,BtpRoster *roster,BtpPortraits *po
         if (!btp_content_id(identity,1) || i==BTP_PORTRAIT_COUNT || (seen&(1u<<i))) { btp_json_error(&j,n,"unsupported or duplicate portrait slot/ID");goto done; }
         for (unsigned k=0;k<count;++k) if (!strcmp(ids[k],identity)) { btp_json_error(&j,n,"duplicate asset ID");goto done; }
         strcpy(ids[count++],identity);seen|=1u<<i;
-        if (!btp_project_path(root,relative,path,error) || !digest_file(&digest,path,error)) goto done;
-        uint8_t *bytes=NULL;size_t length=0;
-        if (!btp_read_file(path,&bytes,&length,error)) goto done;
-        int decoded=btp_anm_decode(bytes,length,&art->image[i],error);free(bytes);
+        if (!btp_project_path(root,relative,path,error)) goto done;
+        /* Hash the bytes we actually decode. Reopening files for hashing can
+           bind a save to a different edit when an editor writes during load. */
+        uint8_t bytes[BTP_ANM_BYTES+1];FILE *file=fopen(path,"rb");
+        if (!file) { fail(error,relative,"cannot open portrait");goto done; }
+        size_t length=fread(bytes,1,sizeof bytes,file);int bad=ferror(file);if (fclose(file)) bad=1;
+        if (bad) { fail(error,relative,"cannot read portrait");goto done; }
+        BtpDigest asset;uint8_t asset_digest[32];btp_digest_start(&asset);btp_digest_add(&asset,bytes,length);btp_digest_finish(&asset,asset_digest);btp_digest_add(&digest,asset_digest,32);
+        int decoded=btp_anm_decode(bytes,length,&art->image[i],error);
         if (!decoded) { char detail[256];snprintf(detail,sizeof detail,"%s",error->text);fail(error,relative,detail);goto done; }
     }
     if (!btp_json_done(&j,1) || !btp_definitions_compile(&p->definitions,r,error->text)) goto done;

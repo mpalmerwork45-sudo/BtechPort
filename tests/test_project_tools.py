@@ -10,8 +10,8 @@ import tempfile
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
-TOOL = ROOT / "build/btp-project"
-PLAYER = ROOT / "build/btech-headless"
+TOOL = Path(os.environ.get("BTP_PROJECT_TOOL", ROOT / "build/btp-project"))
+PLAYER = Path(os.environ.get("BTP_HEADLESS", ROOT / "build/btech-headless"))
 
 
 class ProjectTools(unittest.TestCase):
@@ -57,8 +57,7 @@ class ProjectTools(unittest.TestCase):
         h = hashlib.sha256()
         for filename in ["project.json", "content.json"]:
             b = (self.project / filename).read_bytes()
-            h.update(b)
-            h.update(len(b).to_bytes(8, "little"))
+            h.update(hashlib.sha256(b).digest())
         self.assertIn(h.hexdigest(), result)
         self.run_tool("validate-content", self.project / "content.json")
         self.play()  # Foreign working directory: no repository fallback.
@@ -180,6 +179,9 @@ class ProjectTools(unittest.TestCase):
         self.assertIn("31 mechs", self.run_tool("validate", exported))
         manifest = json.loads((exported / "project.json").read_text())
         self.assertEqual(len(manifest["assets"]), 11)
+        for source, target in [("LICENSE.md", "LICENSE.md"), ("sources.json", "sources.json"),
+                               ("README.md", "SOURCE-README.md"), ("art/README.md", "ART-SOURCE-README.md")]:
+            self.assertEqual((ROOT / "content/updated" / source).read_bytes(), (exported / target).read_bytes())
         before = (exported / "content.json").read_bytes()
         self.run_tool(*command, ok=False)
         self.assertEqual(before, (exported / "content.json").read_bytes())

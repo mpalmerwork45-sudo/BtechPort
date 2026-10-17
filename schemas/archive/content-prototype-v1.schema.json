@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "BtechPort provisional unit authoring prototype v1",
-  "description": "Offline authoring experiment. Not a runtime package format. Semantic checks are in tools/validate_content.py.",
+  "description": "Offline authoring experiment. Not a runtime package format. Semantic checks are in tools/validate_content_prototype.py.",
   "type": "object",
   "additionalProperties": false,
   "required": [

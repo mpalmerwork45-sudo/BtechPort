@@ -152,7 +152,7 @@ int btp_definitions_load(const char *path,BtpDefinitions *out,char error[256])
     if (!d) { snprintf(error,256,"Definitions allocation failed");return 0; }
     if (btp_json_load(&j,path,error)) ok=parse(&j,d);
     if (!ok && !error[0]) snprintf(error,256,"%.180s: invalid content definition",path);
-    if (ok) *out=*d;
+    if (ok) { memcpy(d->source_digest,j.source_digest,32);*out=*d; }
     btp_json_close(&j);free(d);return ok;
 }
 int btp_definitions_compile(BtpDefinitions *d,BtpRoster *r,char error[256])
