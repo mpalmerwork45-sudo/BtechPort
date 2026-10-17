@@ -596,7 +596,7 @@ class RosterEditor:
         from art_editing import clone_image
         from editor_units import unit_sprite
         from unit_editing import assign_graphic
-        from graphics_editor import PixelEditor
+        from graphics_editor import open_image_editor
         unit_id=self.current;view=next(p for p in self.document.content['presentations'] if p['id']==self.item()['presentation'])
         image=unit_sprite(self.document,self.settings,self.item())
         if view['source']!='package:art':
@@ -611,7 +611,7 @@ class RosterEditor:
                 manifest['graphics']='graphics.json'
             self.document.replace_all(content,self.document.adventure,art,manifest)
         self.edit_adventure();self.map_editor.edit_graphics();library=self.map_editor.art_editor
-        library.selected=image['id'];library.refresh();PixelEditor(library,image)
+        library.selected=image['id'];library.refresh();open_image_editor(library,image)
         self.refresh_list(unit_id)
 
     def vehicle_catalogue(self):

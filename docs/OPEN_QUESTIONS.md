@@ -178,13 +178,19 @@ and the [latest five-area sweep](M4_PORTABILITY_SWEEP.md).
     Last Beacon with its own pixels/font/sounds/text, named character templates,
     bounded Lua routing and a visual map/event editor with export and Play here.
     It needs no original resources; CHI-profile projects keep their explicit
-    original dependency. Richer equipment abilities, arbitrary character/rule
-    models, asset/animation tools, a script IDE and package migrations remain.
+    original dependency. Multi-planet jigsaw worlds, city overlays, pixel drawing,
+    owned graphics, new definitions and vehicle presets are now implemented.
+    The [sprite editor](SPRITE_EDITOR.md) adds direction/pose editing, shared-image
+    labels and independent previews. Named action animations, frame timing/sound
+    cues, richer equipment abilities, arbitrary character/rule models, a script
+    IDE/debugger and package migrations remain. Its guide lists the current
+    five editor follow-ups, including authored repair/reload/salvage services.
     Native Windows Tk verification and the full editor toolkit choice remain
     open. Original raw records and compiled assumptions are catalogued in the
     [content inventory](CONTENT_INVENTORY.md).
 
 Both reference trees are guarded by content, mode, timestamp and Git-metadata
-checks. Known external editor metadata drift is restored only when its exact
-baseline is established. No reference code is copied into the port and no
+checks. The current external Git-config metadata difference is documented in
+[TESTING](TESTING.md); the reference files and baseline are left as found.
+No reference code is copied into the port and no
 remote push is authorized.

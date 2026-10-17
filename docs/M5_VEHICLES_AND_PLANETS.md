@@ -15,6 +15,9 @@ The current unit has an animated sprite preview; its context menu edits or
 selects its sprite. **Choose sprite** is also available in the properties.
 Editing an original sprite makes a project-owned copy and changes that unit's
 presentation, preserving other units' choices and the source files.
+The [sprite editor](SPRITE_EDITOR.md) identifies movement directions and frame
+numbers, with previous/next navigation, clickable poses, copy/paste, onion skin
+and a separate direction-local animation preview.
 
 Weapon templates cover the 17 existing CHI weapon behaviors; damage, heat,
 projectile count, ranges, ammunition and per-mount loadouts are editable.

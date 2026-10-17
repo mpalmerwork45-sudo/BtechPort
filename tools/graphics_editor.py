@@ -16,6 +16,13 @@ def photo(parent, image, frame=0, zoom=1):
     return result.zoom(zoom) if zoom != 1 else result
 
 
+def open_image_editor(owner, image):
+    if image['kind']=='sprite':
+        from sprite_editor import SpriteEditor
+        return SpriteEditor(owner,image)
+    return PixelEditor(owner,image)
+
+
 class GraphicsEditor:
     def __init__(self, owner):
         self.owner, self.document = owner, owner.document
@@ -83,7 +90,7 @@ class GraphicsEditor:
         if parent.current and parent.collection=='mechs':parent.stop_sprite();parent.start_sprite()
     def new(self):
         f=Form(self,'New graphic'); f.field('name','New image'); f.field('kind','tile',['tile','sprite','icon','screen'])
-        f.field('width',16); f.field('height',16); f.field('frames',1)
+        f.field('width',16); f.field('height',16); f.field('frames',1,label='Images (unit movement: 32; character: 16)')
         def apply(v):
             im=new_image(self.document.content['package_id'],self.document.art['images'],v['name'],v['kind'],int(v['width']),int(v['height']),int(v['frames']))
             self.put(im); self.edit()
@@ -91,7 +98,7 @@ class GraphicsEditor:
     def clone(self):
         if self.current(): self.put(clone_image(self.current(),self.document.content['package_id'],self.document.art['images']))
     def edit(self):
-        if self.current(): PixelEditor(self,self.current())
+        if self.current(): return open_image_editor(self,self.current())
     def import_file(self):
         path=filedialog.askopenfilename(parent=self.window,title='Import image or sprite sheet',filetypes=[('Images','*.png *.jpg *.jpeg *.bmp *.gif'),('All files','*')])
         if not path:return
@@ -172,10 +179,7 @@ class PixelEditor:
         colors=ttk.Frame(self.window,padding=(8,0)); colors.pack(fill='x')
         for c in DEFAULT_COLORS:
             tk.Button(colors,background='#'+c,width=2,command=lambda value=c:self.color.set(value+'ff')).pack(side='left')
-        frames=ttk.Frame(self.window,padding=8);frames.pack(fill='x')
-        ttk.Label(frames,text='Frame').pack(side='left');self.frame=ttk.Combobox(frames,state='readonly',width=5);self.frame.pack(side='left',padx=6)
-        self.frame.bind('<<ComboboxSelected>>',lambda _:self.draw())
-        for title,cb in [('Clone frame',self.add_frame),('Delete frame',self.delete_frame),('Play / stop',self.play)]:ttk.Button(frames,text=title,command=lambda f=cb:self.owner.guard(f)).pack(side='left',padx=4)
+        self.build_frames()
         transforms=ttk.Frame(self.window,padding=(8,0,8,8));transforms.pack(fill='x')
         for title in ('Flip X','Flip Y'):
             ttk.Button(transforms,text=title,command=lambda op=title:self.owner.guard(lambda:self.transform(op))).pack(side='left',padx=3)
@@ -197,16 +201,23 @@ class PixelEditor:
         self.canvas.bind('<ButtonRelease-1>',lambda _:self.finish())
         self.window.bind('<Control-z>',lambda _:self.undo());self.window.bind('<Control-y>',lambda _:self.redo())
         self.window.protocol('WM_DELETE_WINDOW',self.close);self.refresh_frames();self.draw()
+    def build_frames(self):
+        frames=ttk.Frame(self.window,padding=8);frames.pack(fill='x')
+        ttk.Label(frames,text='Frame').pack(side='left');self.frame=ttk.Combobox(frames,state='readonly',width=5);self.frame.pack(side='left',padx=6)
+        self.frame.bind('<<ComboboxSelected>>',lambda _:self.draw())
+        for title,cb in [('Clone frame',self.add_frame),('Delete frame',self.delete_frame),('Play / stop',self.play)]:ttk.Button(frames,text=title,command=lambda f=cb:self.owner.guard(f)).pack(side='left',padx=4)
     def refresh_frames(self):
         current=max(0,self.frame.current());self.frame.configure(values=list(range(1,len(self.image['frames'])+1)));self.frame.current(min(current,len(self.image['frames'])-1))
     def draw(self):
         if not self.window.winfo_exists():return
-        self.canvas.delete('all');z=int(self.zoom.get());self.preview=photo(self.window,self.image,max(0,self.frame.current()),z)
+        self.canvas.delete('all');z=int(self.zoom.get());self.preview=self.edit_photo(z)
         self.canvas.create_image(0,0,image=self.preview,anchor='nw');w,h=self.image['width']*z,self.image['height']*z
         self.canvas.configure(scrollregion=(0,0,w,h))
         if z>=8 and self.grid.get():
             for x in range(0,w+1,z):self.canvas.create_line(x,0,x,h,fill='#888888')
             for y in range(0,h+1,z):self.canvas.create_line(0,y,w,y,fill='#888888')
+    def edit_photo(self, zoom):
+        return photo(self.window,self.image,max(0,self.frame.current()),zoom)
     def choose_color(self):
         chosen=colorchooser.askcolor('#'+self.color.get()[:6],parent=self.window)[1]
         if chosen:self.color.set(chosen[1:]+'ff')

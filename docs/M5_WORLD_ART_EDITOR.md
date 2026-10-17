@@ -44,11 +44,15 @@ Use **New project** to make an independent copy. Open **Maps / events**.
   The planet selector switches between worlds; **Create world** adds another,
   and **Rename** edits its name. Transfer events connect their local maps.
 - **Graphics / sprites** creates/imports/clones package images. Double-click an
-  image for pencil/line/rectangle/fill/erase, RGBA colors, frame cloning, preview
+  image for pencil/line/rectangle/fill/erase, RGBA colors, frame editing, preview
   and undo. Flip X/Y, rotate left/right, nudge, wrap, clear and grid controls
   operate on one frame or all frames. Apply commits the staged image to shared
   document history. Right-clicking an animated roster preview also opens these
   tools or selects a different sprite for that unit.
+  Sprites open the [dedicated sprite editor](SPRITE_EDITOR.md), with labelled
+  directions/poses, thumbnails, previous/next controls, independent playback,
+  frame copy/paste and a faint previous-frame guide. Shared original poses are
+  identified explicitly. Tiles/screens retain the general frame controls.
   PNG/JPEG/BMP/GIF imports need Pillow (`python3-pil`); sprite-sheet frame sizes
   must divide the input exactly. **Tile sheet** imports all 16×16 cells as
   separate images, including sheets with more than 256 tiles.
