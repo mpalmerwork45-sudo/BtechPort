@@ -85,6 +85,7 @@ for stale pilot positions, moving mech anchors, passengers and absent vehicles.
 | Linux BattleTech SDL | **12/12** held F5/F9 screens, real walking keys with matching headless gait/pixels, complete two-contract route |
 | Windows/Wine BattleTech SDL | **12/12** held F5/F9 screens, real walking keys with matching Linux headless gait/pixels, complete two-contract route |
 | Linux independent SDL | **9/9** held F5/F9 screens and complete quest |
+| Windows/Wine independent SDL | **9/9** held F5/F9 screens and complete quest |
 
 Focused platform tests cover authored walking, both demos, the earlier authored
 adventure and original party setup. The full native suite also retains the
@@ -107,3 +108,5 @@ and `work/authored-walking-*.png`. Verification covers the stated authored and
 existing primary cases, not every original game branch or physical Windows
 hardware. All package JSON/assets remain unchanged, including the BattleTech
 demo's strict content fingerprint, so its existing project saves remain usable.
+The reference guard verifies all **1,287** entries unchanged in content, mode
+and modification time.

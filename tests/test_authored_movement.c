@@ -113,6 +113,10 @@ static void movement(void)
     CHECK(s->x_half==saved->x_half && s->y_half==saved->y_half && s->blocked==BTP_WALL);
     CHECK(!memcmp(s->party.mech_x,saved->party.mech_x,sizeof s->party.mech_x));
     CHECK(!memcmp(s->party.mech_y,saved->party.mech_y,sizeof s->party.mech_y));formation();
+    /* A four-step key must stop at the intermediate blocked step, rather
+       than checking only its final cursor or leaving one vehicle behind. */
+    fresh(24,30,4,0);wall(16,15);s->menu.steps=4;tick(BTP_RIGHT);
+    CHECK(s->x_half==26 && s->y_half==30 && s->blocked==BTP_WALL);formation();
     /* Foot soldiers use their own compact offsets even while active mechs
        accompany them, and every displayed person must move with the group. */
     fresh(14,14,2,2);walk(BTP_RIGHT,4,5);walk(BTP_DOWN_RIGHT,2,4);walk(BTP_UP_LEFT,1,4);
@@ -143,8 +147,10 @@ static void entrances(void)
        touch a door with either edge. A cursor-only test misses this door. */
     fresh(24,30,2,0);door(26,34);s->menu.steps=4;tick(BTP_RIGHT);
     CHECK(s->event.phase==BTP_EVENT_ENTRY && s->event.origin_entry==0 && s->x_half==24);
+    unsigned leader_walk=s->campaign.mech_walk,follower_walk=s->party.walk[1];
     same_continuation(BTP_CANCEL);
     CHECK(s->mode==BTP_EXPLORE && s->x_half==25 && s->y_half==30);formation();
+    CHECK(s->campaign.mech_walk==leader_walk && s->party.walk[1]==follower_walk);
     /* Accepting uses the same held continuation, without walking through a
        building to make the event fire. */
     fresh(24,30,2,0);door(24,34);tick(BTP_RIGHT);
