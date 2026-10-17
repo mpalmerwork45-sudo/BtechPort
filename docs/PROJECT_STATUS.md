@@ -2,7 +2,7 @@
 
 The independent C11/SDL2 port has playable implementations of the authorized
 M4a–M4e increments and the subsequent building, theft, encounter, recruitment and
-presentation requests. A recorded 78,829-input route now starts with a new cadet
+presentation requests. A recorded 75,573-input route now starts with a new cadet
 and reaches the cache ending through the actual training, companion, disk and
 password prerequisites. It uses the authorized money shortcut. M4 as a complete
 reproduction of every original campaign branch remains unfinished.
@@ -26,8 +26,16 @@ speed pause between movement steps and applies it after each attack, matching
 waits, and speed 5 holds attacks rather than movement. The controlled default
 movement-only wave falls from 3.904 s to 0.384 s; this is a native comparison,
 not a claim of cycle-exact XT timing. Save formats and numeric rules are unchanged.
-All **61 native suites**, **32 Python tests**, five focused sanitizer/Wine
-suites per platform and four SDL pacing scenarios per platform pass.
+The following [weapon/fire presentation audit](WEAPON_PRESENTATION.md) adds
+2,400 original weapon sequences and 720 fire/debris redraw observations, fixes
+sound/pose order and trajectory/impact rendering, and makes flames follow map
+redraws. Fire and wrecks remain visible outdoors. Current saves are v44, with
+older held presentation/PCM support. All **63 native suites**, **32 Python
+tests**, seven focused sanitizer/Wine suites per platform and five SDL
+effect/fire F5/F9 scenarios per platform pass in their recorded bounds.
+The requested [movement/LRM analysis](MECH_MOVEMENT_AND_LRM_AI.md) confirms
+1,872 movement-budget cases and proposes an optional Updated AI policy;
+combat AI and LRM rules remain unchanged.
 
 ## Milestones
 
@@ -67,7 +75,8 @@ fit their original wells even for assault models. Pack 0.3.0 adds Phoenix Hawk
 PXH-1, Dragon, Grasshopper, Highlander HGN-733, Stalker and Jenner; Shadow Hawk
 and Rifleman were already available. All 17 previous definitions are unchanged.
 Both 0.1.0 and 0.2.0 saves load automatically, including held/scrolled broker
-menus and confirmations. Updated saves use v43; Original keeps v40.
+menus and confirmations. Both editions now write v44 presentation states;
+their Original/Updated save envelopes and slot namespaces remain separate.
 The [pack guide](../content/updated/README.md) records source statistics,
 temporary sprites, authored prices and adaptation limits. The original story
 LAM and training Jenners retain their original definitions.
@@ -176,7 +185,7 @@ loop comparisons and saved/native input checks cover this distinction.
 Space selects on all held combat menus, including movement destinations and
 replace-order prompts; during a running wave or outtake it interrupts instead.
 
-The fresh ending and **62,142-input** spy/replacement routes restore and continue
+The fresh ending and **58,886-input** spy/replacement routes restore and continue
 before every input. The new native service tail joins the existing house,
 cinema, hut, laser shop, theft and replacement checks. Nineteen held combat pages
 exercise F5/F9; the cache check includes the Phoenix display, map room and ending.
@@ -193,7 +202,9 @@ layouts and exact DOS recovery of irregular saved follower paths. NPC idle updat
 and exact hardware clock rates remain approximate. Animation retrace
 requests match within the 32 ms native tick. Combat speed waits now occur after
 attacks, with movement and graphics-off waits checked by the
-[pacing audit](COMBAT_PACING.md); detailed firing/projectile/impact cadence
+[pacing audit](COMBAT_PACING.md). Weapon poses, trajectories, impact positions,
+sound order and explicit retrace requests have the subsequent
+[presentation audit](WEAPON_PRESENTATION.md); CPU-dependent drawing time
 remains approximate. Audio
 uses original effect programs and a nominal 8 MHz 8088 timing model; physical speaker response and
 exact hardware calibration remain **UNKNOWN** without a reference recording.
@@ -206,15 +217,17 @@ as original behavior. Twenty-five bounded original placement observations record
 that distinction. If no candidate can be placed, exploration continues. Existing
 saved fights retain their already placed units; arena/story fights are separate.
 
-Internal saves are **BTPe/v40**, with a 20,480-byte payload inside the BTS1
-length/CRC envelope. The discovery marker and held spy confrontation are saved.
+Internal saves are **BTPi/v44**, with a 20,480-byte payload inside the Original
+BTS1 or Updated BTU1 length/CRC envelope. Older v40-v43 held effects retain
+their stage meanings; new queues use the verified presentation sequence.
+The discovery marker and held spy confrontation are saved.
 Salvage inspection history and queued/held battle reports persist too, retaining
 actor names and results before later attacks change their records. v39 adds
 casualty flags; v38 reports migrate without inventing death notices. v40 adds
 fractional outdoor clocks and retained quiet-mode headers/ejection cursors.
 Earlier clock phases migrate without changing RNG; missing old headers cannot
 be reconstructed.
-Current local caches are **BTTA/v24** (373 strings), BTCB/v11 and BTW3; the world seed is the
+Current local caches are **BTTA/v24** (373 strings), BTCC/v12 and BTW3; the world seed is the
 original startup value `0x020304`, rather than the former research seed.
 Older saves migrate their represented fields; absent direction/exploration
 history cannot be reconstructed. Old ambiguous decorative wreck/fire marks

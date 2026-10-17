@@ -1,0 +1,17 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "cases": 720,
+  "routines": [
+    "103B:27C9 world mark insertion",
+    "0000:2A93 map decoration renderer"
+  ],
+  "prerequisites": "One live fire/corpse/wreck entry, four camera positions including sector seams, nine viewport positions and four consecutive redraws; original VGA path.",
+  "boundaries": [
+    "187F:28EB pixel blit",
+    "187F:0377 pixel blit"
+  ],
+  "comparison": "Visibility, exact screen anchor, sprite byte before/after each redraw. Visible fire toggles once per redraw; offscreen fire and static debris retain their bytes.",
+  "limits": "Original redraw semantics; host scheduling and CPU drawing cost remain separate. Both original outdoor 0000:051B and combat 0000:0E4B call this shared ring renderer.",
+  "no_instruction_patches": true
+}

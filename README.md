@@ -30,8 +30,12 @@ Fidelity work continues. Original routine comparisons and repeatable gameplay
 routes verify specific behavior; they do not establish complete parity. Combat
 presentation/timing, wider encounter behavior, some transitions and physical
 speaker response still have limits. See [project status](docs/PROJECT_STATUS.md)
-and the [latest fidelity sweep](docs/M4_PORTABILITY_SWEEP.md) for evidence and
-remaining work.
+and the [weapon/fire presentation audit](docs/WEAPON_PRESENTATION.md) for the
+latest evidence. The [mech movement and LRM AI analysis](docs/MECH_MOVEMENT_AND_LRM_AI.md)
+records the current calculations and proposed Updated tactics.
+
+New saves use v44; older saves remain loadable, including held combat effects.
+Rebuilding prepares the updated local combat cache from your original files.
 
 The proposed path to more mechs, custom game packages, BLD/Lua scripting and a
 Windows/Linux editor is recorded in the

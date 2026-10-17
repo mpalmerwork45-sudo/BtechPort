@@ -73,9 +73,8 @@ int btp_save_write(const char *path, const BtpState *s, const BtpResources *r, B
     }
     BtpState validated;
     btp_state_encode(s,bytes+header);
-    /* Only Updated writes v43's scrolling broker state. Original retains
-       the exact v40 payload and BTS1 envelope used by existing saves. */
-    if (updated) { memcpy(bytes+header,"BTPh",4);bytes[header+4]=43; }
+    /* v44 retains the payload size and edition-specific outer envelopes.
+       Older Original and Updated payloads still load through their codecs. */
     if (!decode(bytes+header,BTP_STATE_BYTES,&validated,r))
         return fail(e,"Current state cannot be saved");
     if (!btp_roster_state_valid(s,r)) return fail(e,"Current state does not match its roster package");
@@ -144,7 +143,8 @@ int btp_save_load(const char *path, BtpState *s, const BtpResources *r, BtpError
         if (!saved_count)
             return fail(e,"Updated save requires its original roster or an unchanged extension of it");
         for (unsigned i=84;i<UPDATED_HEADER_BYTES;++i) if (bytes[i]) return fail(e,"Unsupported updated save metadata");
-    } else if (bytes[header+4]>40) return fail(e,"Updated state requires an edition-aware save envelope");
+    } else if (bytes[header+4]>40 && bytes[header+4]!=44)
+        return fail(e,"Updated state requires an edition-aware save envelope");
     BtpState loaded;
     if (!decode(bytes+header,n-header,&loaded,r) || !btp_roster_state_prefix_valid(&loaded,r,saved_count))
         return fail(e,"Save contains an invalid or unsupported game state");

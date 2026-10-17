@@ -126,12 +126,13 @@ static void sequential_audio(const BtpState *menu,BtpResources *r)
         CHECK(!memcmp(encoded,again,sizeof encoded) && !memcmp(a,b,sizeof a));
         CHECK(s.audio.sound_count<=1 && s.combat.phase==BTP_COMBAT_ROUND && s.combat.step==11);
         if (busy) CHECK(s.effects.count==count && s.effects.age==age);
-        if (count && stage==BTP_EFFECT_START && s.effects.stage==BTP_EFFECT_FIRE_SOUND) {
+        if (count && ((stage==BTP_EFFECT_POSES && s.effects.stage==BTP_EFFECT_SHOT_SOUND) ||
+            (stage==BTP_EFFECT_FLIGHT && s.effects.stage==BTP_EFFECT_BEAM_SOUND))) {
             CHECK(sound<6 && btp_effects_sound(s.effects.shots[0].weapon)==expected[sound++]);
             if (s.audio.sound_count) CHECK(s.audio.sounds[0]==expected[sound-1]);
             if (count==2) CHECK(outtake);
         }
-        if (stage==BTP_EFFECT_ATTACK && s.effects.stage==BTP_EFFECT_HIT_SOUND) {
+        if ((stage==BTP_EFFECT_BEAM_SOUND || stage==BTP_EFFECT_SHOT_SOUND) && s.effects.stage==BTP_EFFECT_STRIKE_SOUND) {
             CHECK(sound<6 && expected[sound++]==4);
             if (s.audio.sound_count) CHECK(s.audio.sounds[0]==4);
         }

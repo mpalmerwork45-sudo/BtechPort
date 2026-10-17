@@ -1,7 +1,7 @@
 /* Original-mode state codec. Keep field order, migrations and validation
-   independent of the game loop; these bytes remain the BTPe/v40 contract.
-   Package identity stays in the outer save envelope. Updated v41-v43 add
-   broker states and scrolling without changing Original's encoder. */
+   independent of the game loop. v44 adds weapon-presentation stage tags using
+   the existing stage/age bytes; v40-v43 held stages retain their old meaning.
+   Package identity stays in the outer save envelope. */
 #include "core/game.h"
 #include "core/talk.h"
 #include "core/npc.h"
@@ -30,7 +30,7 @@ static uint16_t get16(const uint8_t *p) { return (uint16_t)(p[0] | (uint16_t)p[1
 void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
 {
     memset(b, 0, BTP_STATE_BYTES);
-    memcpy(b, "BTPe", 4); b[4] = 40;
+    memcpy(b, "BTPi", 4); b[4] = 44;
     for (unsigned i = 0; i < 4; ++i) b[8+i] = (uint8_t)(s->tick >> (8 * i));
     b[12] = (uint8_t)s->x_half; b[13] = (uint8_t)(s->x_half >> 8);
     b[14] = (uint8_t)s->y_half; b[15] = (uint8_t)(s->y_half >> 8);
@@ -222,7 +222,8 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         n == BTP_STATE_BYTES && !memcmp(b,"BTPe",4) && b[4]==40 ? 40 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPf",4) && b[4]==41 ? 41 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPg",4) && b[4]==42 ? 42 :
-        n == BTP_STATE_BYTES && !memcmp(b,"BTPh",4) && b[4]==43 ? 43 : 0;
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPh",4) && b[4]==43 ? 43 :
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPi",4) && b[4]==44 ? 44 : 0;
     if (!version) return 0;
     if (version>=18 && version<38 && b[10232]) return 0; /* v38 critical report count. */
     if (version>=18 && version<35 && b[10233]) return 0; /* v35 weapon-window presentation bits. */
@@ -289,6 +290,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
     }
     if (version>=40) memcpy(&result.effects.quiet,b+16014,sizeof result.effects.quiet);
     if (version>=26) { result.effects.stage=b[18434];memcpy(result.effects.outtakes,b+18435,sizeof result.effects.outtakes); }
+    if (version<44 && result.effects.stage>BTP_EFFECT_LEGACY) return 0;
     if (version>=18) {
         memcpy(result.story_flags,b+2684,64);memcpy(result.story_checkpoint,b+2748,64);
         if (version>=21) {
@@ -370,6 +372,9 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         memcpy(result.effects.shots,b+2308,7*sizeof result.effects.shots[0]);
     }
     for (unsigned i = 0; i < 4; ++i) result.tick |= (uint32_t)b[8+i] << (8 * i);
+    if (version<44) for (unsigned i=0;i<64;++i)
+        if ((result.terrain_marks[i].sprite&254u)==124)
+            result.terrain_marks[i].sprite=(uint8_t)((124u+(result.tick&1u))^1u);
     result.x_half = (uint16_t)(b[12] | (uint16_t)b[13] << 8);
     result.y_half = (uint16_t)(b[14] | (uint16_t)b[15] << 8);
     result.map_id = b[16]; result.gate = b[17]; result.facing = b[18]; result.blocked = b[19];

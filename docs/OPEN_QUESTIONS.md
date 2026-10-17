@@ -81,14 +81,21 @@ and the [latest five-area sweep](M4_PORTABILITY_SWEEP.md).
    requests have 66/6 original cases and native 32 ms conversion checks. The
    [combat pacing follow-up](COMBAT_PACING.md) adds 48 complete original waves:
    speed waits belong after attacks, not movement, and graphics-off skips pose
-   waits. The port now follows those boundaries. Detailed firing-pose, sound-start,
-   projectile/beam and impact cadence remain the next presentation comparison.
+   waits. The port now follows those boundaries. The subsequent
+   [weapon/fire audit](WEAPON_PRESENTATION.md) adds 2,400 original presentation
+   and 720 fire-redraw cases, correcting pose waits, sound order, trajectories
+   and impacts. CPU-dependent projectile/beam drawing time remains approximate.
+   Fire follows actual redraws and persists outdoors with the debris ring.
 6. **Sound — programs VERIFIED, physical response APPROXIMATE.** All eighteen
    ordered tone/noise traces, attack effect selections, hit/wreck/arena-alarm dispatch
    and sequential continuation are checked. Busy-loop conversion is a nominal
    Intel 8 MHz 8088 model with midpoint IMUL timing. Prefetch contention,
    interrupts, physical speaker filtering/volume and actual XT calibration
    recordings remain unverified. PCjr audio is not implemented.
+   The [movement/LRM audit](MECH_MOVEMENT_AND_LRM_AI.md) confirms current model
+   movement budgets and identifies original-planner limitations for missile
+   support. An optional Updated tactical policy is proposed; no AI or LRM
+   minimum-range rules changed in the presentation work.
 7. **Visual parity — mixed coverage.** Title RGB, selected original popup crops,
    font/sprites and menu/inspection facts have primary comparisons. Broader
    combat/portrait geometry, CPU decode cost and several service layouts

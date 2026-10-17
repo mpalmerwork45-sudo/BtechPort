@@ -1,8 +1,48 @@
 # Build, verification and original oracle — 2026-10-17
 
+## Weapon effects, fire and mech audits
+
+The [weapon/fire increment](WEAPON_PRESENTATION.md) passes **63/63 native
+CTest suites** (41.84 seconds) and **32/32 Python tests**. Seven focused
+ASan/UBSan/LeakSanitizer suites pass (5.88 seconds), as do the same seven
+Windows/Wine suites (23.98 seconds). Subsequent focused checks cover the final
+queued-report crop and visible-movement versus empty-microstep fire behavior.
+
+Original observations include **2,400 weapon presentations**, **720 fire/debris
+redraws**, and **1,872 movement allowances** using the dimensions of the current
+roster and original loans. The weapon suite also checks 200 timed/sound
+sequences, every older saved presentation stage, saved PCM and held report
+pixels. Linux and Windows SDL each pass five F5/F9 animation continuations:
+firing pose, missile flight, beam sound, impact and outdoor fire, with exact
+headless state/pixel comparison and dummy audio.
+
+The [requested movement/LRM analysis](MECH_MOVEMENT_AND_LRM_AI.md) adds 644
+controlled native planner probes and 24 original LRM to-hit observations.
+Those planner scenarios establish the recorded behavior; they are not a whole
+campaign AI-quality comparison. AI and numeric attack rules are unchanged.
+
+Current local combat data is **BTCC/v12**. New internal saves are **BTPi/v44**,
+with the same 20,480-byte payload and separate Original/Updated envelopes.
+Older held presentation states and fire phases migrate explicitly. The fresh
+ending uses 75,573 inputs and spy replacement 58,886 after replay regeneration.
+
+```sh
+ctest --test-dir build --output-on-failure
+python3 -m unittest discover -s tests -p 'test_*.py'
+python3 tools/native_smoke.py --weapon-effects-only
+python3 tools/native_smoke.py --windows --weapon-effects-only
+```
+
+The focused sanitizer/Wine selection is:
+`weapon-presentation-primary|world-marks-primary|mech-movement-extended-primary|combat-ui-save-progression|combat-primary-pacing|original-game-roundtrips|updated-roster-lifecycle`.
+Local traces, scenario output, GUI frames and logs are in
+`work/weapon-presentation/`. Explicit retrace requests and event/geometry order
+are verified; physical XT CPU/blit time and speaker calibration remain outside
+those claims.
+
 ## Combat pacing correction
 
-**61/61 native CTest suites pass** (41.68 seconds), together with **32/32
+That increment passed **61/61 native CTest suites** (41.68 seconds), together with **32/32
 Python tests**. Five focused combat/roster suites pass with
 ASan/UBSan/LeakSanitizer (5.08 seconds) and under Windows/Wine (17.64 seconds).
 Linux and Windows SDL each pass four normal-clock pacing scenarios with

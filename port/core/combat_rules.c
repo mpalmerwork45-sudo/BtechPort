@@ -7,7 +7,8 @@
 int btp_combat_data_decode(const uint8_t *b, size_t n, BtpCombatData *d)
 {
     if (!b || !d) return 0;
-    int v11=n==BTP_COMBAT_DATA_BYTES && !memcmp(b,"BTCB",4);
+    int v12=n==BTP_COMBAT_DATA_BYTES && !memcmp(b,"BTCC",4);
+    int v11=v12 || (n==BTP_COMBAT_DATA_V11_BYTES && !memcmp(b,"BTCB",4));
     int v10=v11 || (n==BTP_COMBAT_DATA_V10_BYTES && !memcmp(b,"BTCA",4));
     int v9=v10 || (n==BTP_COMBAT_DATA_V9_BYTES && !memcmp(b,"BTC9",4));
     int v8=v9 || (n==BTP_COMBAT_DATA_V8_BYTES && !memcmp(b,"BTC8",4));
@@ -53,6 +54,13 @@ int btp_combat_data_decode(const uint8_t *b, size_t n, BtpCombatData *d)
         for (unsigned i=0;i<2;++i) for (unsigned j=0;j<250;++j) if (v->cache_mini_colors[i][j]>15) goto invalid;
     }
     if (v11) { COPY(arena_mechs);COPY(arena_spectator);COPY(urbanmech);COPY(arena_levels);COPY(arena_reduction);COPY(special_x);COPY(special_y); }
+    if (v12) {
+        COPY(muzzle);COPY(missile);
+        for (unsigned i=0;i<3;++i) for (unsigned a=0;a<2;++a) for (unsigned j=0;j<8;++j)
+            if (v->muzzle[i][a][j]<-24 || v->muzzle[i][a][j]>24) goto invalid;
+        for (unsigned i=0;i<8;++i) for (unsigned j=0;j<6;++j)
+            if (v->missile[i][j]<26 || v->missile[i][j]>41) goto invalid;
+    }
 #undef COPY
     for (unsigned i = 0; i < 15; ++i) if (v->arcs[i] > 3) goto invalid;
     for (unsigned i = 2; i < 46; ++i) if (v->locations[i] < 17 || v->locations[i] > 27) goto invalid;

@@ -3,6 +3,7 @@
 #include "core/npc.h"
 #include "core/animation.h"
 #include "core/combat.h"
+#include "core/world.h"
 #include <string.h>
 
 /* Numeric original DS:28C4/28D8/28EC tables, not a reference implementation. */
@@ -191,6 +192,7 @@ int btp_mission_tick(BtpState *s, const BtpResources *r, BtpAction a)
     if (a == BTP_IDLE && m->idle) { --m->idle; return 0; }
     m->idle = 10;
     if (btp_action_moves(a)) move(s,&r->map,a);
+    btp_world_animate_marks(s,1536+s->x_half,1536+s->y_half);
     if (!m->assignment) m->elapsed = (uint16_t)(m->elapsed+1u+(unsigned)(btp_mission_terrain(s,&r->map)>>3));
     if (m->assignment==1 && !m->corner && s->x_half/2u+1u >= btp_rubble_x[m->rubble] &&
         s->x_half/2u <= btp_rubble_x[m->rubble] && s->y_half/2u == (unsigned)btp_rubble_y[m->rubble]+1u) {

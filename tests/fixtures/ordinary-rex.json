@@ -2,19 +2,19 @@
   "checkpoints": [
     {
       "label": "parked-in-starport",
-      "tick": 60308
+      "tick": 57052
     },
     {
       "label": "civilian-clothing",
-      "tick": 60395
+      "tick": 57139
     },
     {
       "label": "rex-crest",
-      "tick": 61694
+      "tick": 58438
     },
     {
       "label": "rex-and-commando",
-      "tick": 61795
+      "tick": 58539
     }
   ],
   "final": {
@@ -27,7 +27,7 @@
       47
     ],
     "gate": 85,
-    "tick": 61795,
+    "tick": 58539,
     "blocked": 0,
     "script_pc": 6030,
     "script_status": 3,
@@ -597,7 +597,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "b674e8ee8090372a",
+    "state_digest": "c68ae687f033d662",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

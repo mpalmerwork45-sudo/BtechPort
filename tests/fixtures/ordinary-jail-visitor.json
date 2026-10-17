@@ -2,59 +2,59 @@
   "checkpoints": [
     {
       "label": "funded-by-owner-shortcut",
-      "tick": 62020
+      "tick": 58764
     },
     {
       "label": "garage-crew-allocation",
-      "tick": 62047
+      "tick": 58791
     },
     {
       "label": "garage-checkout",
-      "tick": 62054
+      "tick": 58798
     },
     {
       "label": "walking-with-rex-piloting",
-      "tick": 62100
+      "tick": 58844
     },
     {
       "label": "hospital-menu",
-      "tick": 62491
+      "tick": 59235
     },
     {
       "label": "hospital-companion-pause",
-      "tick": 62576
+      "tick": 59320
     },
     {
       "label": "hospital-companion-joined",
-      "tick": 62578
+      "tick": 59322
     },
     {
       "label": "medical-kit",
-      "tick": 62585
+      "tick": 59329
     },
     {
       "label": "field-surgery-kit",
-      "tick": 62589
+      "tick": 59333
     },
     {
       "label": "hospital-exit",
-      "tick": 62591
+      "tick": 59335
     },
     {
       "label": "jail-visitor-menu",
-      "tick": 63223
+      "tick": 59967
     },
     {
       "label": "jail-companion-pause",
-      "tick": 63312
+      "tick": 60056
     },
     {
       "label": "jail-companion-joined",
-      "tick": 63346
+      "tick": 60090
     },
     {
       "label": "jail-exit",
-      "tick": 63349
+      "tick": 60093
     }
   ],
   "final": {
@@ -67,7 +67,7 @@
       12
     ],
     "gate": 85,
-    "tick": 63349,
+    "tick": 60093,
     "blocked": 0,
     "script_pc": 4293,
     "script_status": 3,
@@ -637,7 +637,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "920e3a16f93fcc31",
+    "state_digest": "43dcd9c0a74d140d",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

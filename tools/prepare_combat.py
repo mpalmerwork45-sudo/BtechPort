@@ -56,7 +56,18 @@ def extract(source):
         arena_ranges.append((segment*16+offset,125))
     arena_ranges.extend(((0x27e80+0x5de,125),(0x27e80+0x65b,125),(DS+0x140e,11),(DS+0x165a,7),(DS+0x1642,16),(DS+0x164e,16)))
     arena=b''.join(image[a:a+n] for a,n in arena_ranges)
-    return b"BTCB"+b"".join(parts)+programs+jenner+extra+sound+field+cache+arena, {**metadata,"format":"BTCA/v11","ranges":origins,
+    # 12E8:17B2/17CD/17E8 choose origins by sprite family. The missile
+    # interpreter repeats six frames through FE 07; preserve its data.
+    presentation=image[DS+0x2d28:DS+0x2d58]
+    for direction in range(8):
+        off,segment=struct.unpack_from('<HH',image,DS+0x2dd8+direction*4)
+        at=segment*16+off;program=image[at:at+8]
+        if program[6:]!=bytes([254,7]) or any(not 26<=v<=41 for v in program[:6]):
+            raise ValueError('Unexpected missile loop')
+        presentation+=program[:6]
+    return b"BTCC"+b"".join(parts)+programs+jenner+extra+sound+field+cache+arena+presentation, {**metadata,"format":"BTCC/v12","ranges":origins,
+        'weapon_presentation':{'muzzle_table':DS+0x2d28,'missile_pointers':DS+0x2dd8,
+            'length':len(presentation),'sha256':hashlib.sha256(presentation).hexdigest()},
         'arena_tables':[{'image_offset':a,'length':n,'sha256':hashlib.sha256(image[a:a+n]).hexdigest()} for a,n in arena_ranges],
         'cache_tables':[{'image_offset':a,'length':n,'sha256':hashlib.sha256(image[a:a+n]).hexdigest()} for a,n in cache_ranges],
         'field_tables':{'image_offsets':[DS+0x2602,DS+0x3a16,DS+0x4f6e],'lengths':[32,24,16],'sha256':hashlib.sha256(field).hexdigest()},

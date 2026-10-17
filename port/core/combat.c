@@ -609,6 +609,7 @@ unsigned btp_combat_delay_ticks(unsigned speed)
 static void round_tick(BtpState *s, const BtpResources *r, int enemy_ai)
 {
     BtpCombatState *c=&s->combat;
+    uint8_t moved_before[BTP_COMBAT_UNITS];memcpy(moved_before,c->moved,sizeof moved_before);
     /* The original movement loop (12E8:1002..1286) has no speed wait.
        Keep one visible movement microstep per host tick. */
     c->flash=0;
@@ -616,6 +617,15 @@ static void round_tick(BtpState *s, const BtpResources *r, int enemy_ai)
     /* Ignore old in-progress target paths too: loading an earlier checkpoint
        must not reanimate the training shell. */
     if (enemy_ai) for (unsigned i=1;i<c->count;++i) advance(s,i);
+    /* The original redraws movement only when a visible unit advances.
+       Empty microsteps and offscreen opponents must not accelerate fire. */
+    for (unsigned i=0;i<c->count;++i) if (moved_before[i]!=c->moved[i] &&
+        btp_combat_visible(c->unit[i].x,c->unit[i].y,c->unit[i].infantry,
+            c->unit[c->active_unit].x,c->unit[c->active_unit].y)) {
+        int ox=s->campaign.encounter || s->campaign.invasion ? s->campaign.battle_x : 1536;
+        int oy=s->campaign.encounter || s->campaign.invasion ? s->campaign.battle_y : 1536;
+        btp_world_animate_marks(s,ox+c->unit[c->active_unit].x,oy+c->unit[c->active_unit].y);break;
+    }
     BtpMap map;btp_combat_map(r,s,&map);
     unsigned terrain[BTP_COMBAT_UNITS]={0};
     for (unsigned i=0;i<c->count;++i) c->unit[i].cover=(uint8_t)btp_combat_cover(&map,&c->unit[i],&terrain[i]);

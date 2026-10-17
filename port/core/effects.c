@@ -2,6 +2,8 @@
 #include "core/audio.h"
 #include "core/animation.h"
 #include "core/combat.h"
+#include "core/world.h"
+#include <stdlib.h>
 #include <string.h>
 _Static_assert(sizeof(BtpCombatEffect)==13,"Effect encoding contains byte fields only");
 _Static_assert(sizeof(BtpBattleText)==11,"Battle text encoding contains byte fields only");
@@ -49,14 +51,18 @@ int btp_combat_visible(int x,int y,int infantry,int focus_x,int focus_y)
     int dx=x-focus_x,dy=y-focus_y;
     return dx>=(infantry ? -13 : -15) && dx<=13 && dy>=-12 && dy<=(infantry ? 12 : 14);
 }
-static int visible(const BtpCombatEffect *e,const BtpState *s)
+static void effect_focus(const BtpState *s,int *x,int *y)
 {
     const BtpCombatState *c=&s->combat;
     const BtpCombatUnit *focus=&c->unit[c->active_unit];
     const BtpCombatEffect *death=btp_effects_death(s,c->active_unit);
-    unsigned x=death ? death->tx : focus->x,y=death ? death->ty : focus->y;
-    return btp_combat_visible(e->x,e->y,e->base==254,(int)x,(int)y) ||
-        btp_combat_visible(e->tx,e->ty,e->target_base==254,(int)x,(int)y);
+    *x=death ? death->tx : focus->x;*y=death ? death->ty : focus->y;
+}
+static int visible(const BtpCombatEffect *e,const BtpState *s)
+{
+    int x,y;effect_focus(s,&x,&y);
+    return btp_combat_visible(e->x,e->y,e->base==254,x,y) ||
+        btp_combat_visible(e->tx,e->ty,e->target_base==254,x,y);
 }
 const BtpCombatEffect *btp_effects_death(const BtpState *s,unsigned target)
 {
@@ -70,6 +76,73 @@ unsigned btp_effects_length(const BtpCombatEffect *e, const BtpCombatData *d)
     unsigned pose=d->poses[e->group][e->direction][0];
     return 2u*(pose+(e->hit && e->weapon>=7 ? 3u : 0u));
 }
+unsigned btp_effects_trail_kind(unsigned w)
+{
+    return w==10 || w==11 || (w>=25 && w<=31) ? 1u :
+        w==12 || w==13 ? 2u : w>=15 && w<=18 ? 3u : 0u;
+}
+unsigned btp_effects_beam_color(const BtpCombatEffect *e,unsigned actor_id)
+{
+    /* VGA branches at 12E8:15D1/1608: personal energy weapons are yellow/
+       green, vehicle lasers red/magenta. These are original palette indices. */
+    return btp_effects_trail_kind(e->weapon)==2 ? actor_id>=16 ? 10u : 14u : actor_id>=12 ? 5u : 12u;
+}
+void btp_effects_trail(const BtpCombatEffect *e,const BtpCombatData *d,int cx,int cy,BtpEffectTrail *trail)
+{
+    *trail=(BtpEffectTrail){.kind=btp_effects_trail_kind(e->weapon)};
+    if (!trail->kind || e->direction>7) return;
+    /* 0E31:1DF8 / 12E8:16A8 use eight-pixel world anchors, independently
+       of the sprite's top-left corner. Beams offset their muzzle by family;
+       missiles start at the anchor and advance four pixels per draw. */
+    int x=208+8*((int)e->x-cx),y=96+8*((int)e->y-cy);
+    int tx=208+8*((int)e->tx-cx),ty=96+8*((int)e->ty-cy)-(e->target_base==254 ? 0 : 8);
+    int stride=trail->kind==1 ? 4 : 1;
+    if (stride==1) {
+        unsigned family=e->base==254 ? 2u : e->base==146 ? 1u : 0u;
+        x+=d->muzzle[family][0][e->direction];y+=d->muzzle[family][1][e->direction];
+        tx+=3;ty+=3;
+    }
+    int dx=abs(tx-x),dy=abs(ty-y);
+    if (dx<=8 && dy<=8) return; /* Original close-range branch draws no trail. */
+    int sx=(tx>x)-(tx<x),sy=(ty>y)-(ty<y),major=dx>dy ? dx : dy;
+    int minor=dx>dy ? dy : dx,error=major/2;
+    /* Independent integer line rasterization. Keeping the full offscreen
+       ordinal preserves the original missile program phase when it enters
+       the viewport. Only visible samples consume native presentation ticks. */
+    for (unsigned ordinal=0;ordinal<2048 && (x!=tx || y!=ty);++ordinal) {
+        if (x>=104 && x<320 && y>=0 && y<200 && trail->count<BTP_EFFECT_TRAIL_POINTS) {
+            unsigned sprite=trail->kind==1 ? 104u+d->missile[e->direction][ordinal%6u] : 0;
+            trail->points[trail->count++]=(BtpEffectPoint){(int16_t)x,(int16_t)y,(uint16_t)sprite};
+        }
+        if (dx>dy) { if (x!=tx) x+=sx*stride; }
+        else if (y!=ty) y+=sy*stride;
+        error-=minor;
+        if (error<0) {
+            if (dx>dy) { if (y!=ty) y+=sy*stride; }
+            else if (x!=tx) x+=sx*stride;
+            error+=major;
+        }
+    }
+}
+int btp_effects_pose(const BtpState *s,const BtpCombatData *d)
+{
+    const BtpEffectsState *v=&s->effects;
+    if (!s->combat.graphics || !v->count || v->shots[0].weapon==33 || v->stage==BTP_EFFECT_PENDING) return -1;
+    const BtpCombatEffect *e=&v->shots[0];unsigned n=d->poses[e->group][e->direction][0];
+    if (!n) return -1;
+    if (v->stage>=BTP_EFFECT_POSES) {
+        unsigned frame=v->stage==BTP_EFFECT_POSES ? (unsigned)v->age*224u/500u : n-1;
+        return (int)(frame<n ? frame : n-1);
+    }
+    return v->stage>=BTP_EFFECT_ATTACK && v->age/2u<n ? (int)(v->age/2u) : -1;
+}
+int btp_effects_reaction(const BtpState *s)
+{
+    if (!s->effects.count) return 0;
+    const BtpCombatEffect *e=&s->effects.shots[0];
+    return e->hit && e->target_base==254 &&
+        (s->effects.stage<BTP_EFFECT_POSES || btp_effects_trail_kind(e->weapon)!=1);
+}
 const BtpCombatEffect *btp_effects_pending_death(const BtpState *s,unsigned target)
 {
     /* Numeric attacks finish the entire microstep before presentation. Keep
@@ -78,7 +151,8 @@ const BtpCombatEffect *btp_effects_pending_death(const BtpState *s,unsigned targ
        existing saved effect record holds everything needed for restoration. */
     for (unsigned i=0;i<s->effects.count;++i) {
         const BtpCombatEffect *e=&s->effects.shots[i];
-        if (e->dead && e->target==target && (i || s->effects.stage<BTP_EFFECT_DEATH_SOUND)) return e;
+        if (e->dead && e->target==target && (i || (s->effects.stage>=BTP_EFFECT_POSES ?
+            s->effects.stage!=BTP_EFFECT_RETIRE_SOUND : s->effects.stage<BTP_EFFECT_DEATH_SOUND))) return e;
     }
     return NULL;
 }
@@ -86,6 +160,7 @@ void btp_effects_shot(BtpState *s,unsigned actor,unsigned target,unsigned weapon
 {
     BtpCombatState *c=&s->combat;BtpEffectsState *v=&s->effects;
     if (v->count>=24) return; /* At most one shot per unit in a microstep. */
+    if (!v->count) { v->stage=BTP_EFFECT_PENDING;v->age=0; }
     const BtpCombatUnit *a=&c->unit[actor],*t=&c->unit[target];
     unsigned friends=c->friends ? c->friends : 1u;
     unsigned alt=!a->infantry && btp_mech_record_sprite(a->record,actor>=friends)!=0;
@@ -104,6 +179,7 @@ void btp_effects_crush(BtpState *s,unsigned actor,unsigned target)
        Weapon 33 is the saved presentation discriminator, not a gun order. */
     BtpCombatState *c=&s->combat;BtpEffectsState *v=&s->effects;
     if (v->count>=24) return;
+    if (!v->count) { v->stage=BTP_EFFECT_PENDING;v->age=0; }
     const BtpCombatUnit *a=&c->unit[actor],*t=&c->unit[target];
     unsigned alt=btp_mech_record_sprite(a->record,actor>=(c->friends ? c->friends : 1u))!=0;
     v->text[v->count]=report(s,actor,target,33);
@@ -112,7 +188,38 @@ void btp_effects_crush(BtpState *s,unsigned actor,unsigned target)
     v->shots[v->count++]=(BtpCombatEffect){(uint8_t)actor,(uint8_t)target,(uint8_t)alt,
         a->direction,33,1,1,a->x,a->y,t->x,t->y,(uint8_t)(alt ? 146 : 0),254};
 }
-void btp_effects_tick(BtpState *s,const BtpResources *r)
+static void redraw_marks(BtpState *s)
+{
+    int x,y;effect_focus(s,&x,&y);
+    int ox=s->campaign.encounter || s->campaign.invasion ? s->campaign.battle_x : 1536;
+    int oy=s->campaign.encounter || s->campaign.invasion ? s->campaign.battle_y : 1536;
+    btp_world_animate_marks(s,ox+x,oy+y);
+}
+static void complete_effect(BtpState *s)
+{
+    BtpEffectsState *v=&s->effects;const BtpCombatEffect *e=&v->shots[0];
+    for (unsigned i=0;i<2;++i) if (v->outtakes[0][i] && s->presentation.count<24)
+        s->presentation.kinds[s->presentation.count++]=v->outtakes[0][i];
+    unsigned legacy=v->stage==BTP_EFFECT_LEGACY,modern=v->stage>=BTP_EFFECT_POSES;
+    if (modern && s->combat.graphics && !e->hit) redraw_marks(s); /* 12E8:1ADD miss cleanup. */
+    /* 12E8:0D76 pauses after each attack. Enemy crushing has a timed
+       pause but skips speed five's key wait (0E31:1A21). */
+    s->combat.delay=(uint8_t)(s->menu.speed==5 ? e->weapon!=33 : btp_combat_delay_ticks(s->menu.speed));
+    if (v->quiet.active && !s->combat.messages && v->text[0].dead && v->text[0].target<4 && v->quiet.ejections<4)
+        ++v->quiet.ejections;
+    v->shown=v->text[0];v->age=0;--v->count;
+    memmove(v->shots,v->shots+1,v->count*sizeof v->shots[0]);
+    memset(&v->shots[v->count],0,sizeof v->shots[0]);
+    memmove(v->outtakes,v->outtakes+1,v->count*sizeof v->outtakes[0]);
+    memset(v->outtakes[v->count],0,sizeof v->outtakes[0]);
+    memmove(v->text,v->text+1,v->count*sizeof v->text[0]);
+    memset(&v->text[v->count],0,sizeof v->text[0]);
+    v->stage=(uint8_t)(!v->count ? BTP_EFFECT_START : modern ? BTP_EFFECT_PENDING :
+        legacy ? BTP_EFFECT_LEGACY : BTP_EFFECT_START);
+}
+/* v40-v43 held presentations retain their stage/age interpretation. A new
+   queue uses the verified sequence below; old queued sounds never restart. */
+static void legacy_tick(BtpState *s,const BtpResources *r)
 {
     BtpEffectsState *v=&s->effects;
     if (!v->count) return;
@@ -150,24 +257,100 @@ void btp_effects_tick(BtpState *s,const BtpResources *r)
         btp_audio_effect(s,s->campaign.encounter==4 && btp_combat_id(&s->combat,e->target)==13 ? 7u : 8u);
         v->stage=BTP_EFFECT_DEATH_SOUND;return;
     }
-    for (unsigned i=0;i<2;++i) if (v->outtakes[0][i] && s->presentation.count<24)
-        s->presentation.kinds[s->presentation.count++]=v->outtakes[0][i];
-    unsigned legacy=v->stage==BTP_EFFECT_LEGACY;
-    /* The original pauses once per attack, even with graphics disabled.
-       Crushing an enemy has the same timed pause but no key wait at speed 5
-       (0E31:1A21). Keep the report visible while this saved wait elapses. */
-    s->combat.delay=(uint8_t)(s->menu.speed==5 ? e->weapon!=33 : btp_combat_delay_ticks(s->menu.speed));
-    if (v->quiet.active && !s->combat.messages && v->text[0].dead && v->text[0].target<4 && v->quiet.ejections<4)
-        ++v->quiet.ejections;
-    v->shown=v->text[0];
-    v->age=0;--v->count;
-    memmove(v->shots,v->shots+1,v->count*sizeof v->shots[0]);
-    memset(&v->shots[v->count],0,sizeof v->shots[0]);
-    memmove(v->outtakes,v->outtakes+1,v->count*sizeof v->outtakes[0]);
-    memset(v->outtakes[v->count],0,sizeof v->outtakes[0]);
-    memmove(v->text,v->text+1,v->count*sizeof v->text[0]);
-    memset(&v->text[v->count],0,sizeof v->text[0]);
-    v->stage=(uint8_t)(v->count && legacy ? BTP_EFFECT_LEGACY : BTP_EFFECT_START);
+    complete_effect(s);
+}
+static void strike_sound(BtpState *s)
+{
+    if (s->effects.shots[0].hit) btp_audio_effect(s,4);
+    s->effects.stage=BTP_EFFECT_STRIKE_SOUND;s->effects.age=0;
+}
+void btp_effects_tick(BtpState *s,const BtpResources *r)
+{
+    BtpEffectsState *v=&s->effects;
+    if (!v->count || s->audio.sound_count) return;
+    if (v->stage<BTP_EFFECT_POSES) { legacy_tick(s,r);return; }
+    const BtpCombatEffect *e=&v->shots[0];
+    /* Zero-duration transitions may share a host tick. Visible poses, missile
+       samples, speaker clips and the final impact hold remain distinct. */
+    for (unsigned transitions=0;transitions<6;++transitions) {
+        if (s->audio.sound_count) return;
+        switch (v->stage) {
+        case BTP_EFFECT_PENDING:
+            v->stage=BTP_EFFECT_POSES;
+            if (s->combat.graphics && e->weapon!=33) {
+                int x,y;effect_focus(s,&x,&y);
+                if (btp_combat_visible(e->x,e->y,e->base==254,x,y)) { redraw_marks(s);return; }
+            }
+            break;
+        case BTP_EFFECT_POSES: {
+            if (e->weapon==33) {
+                btp_audio_effect(s,18);v->stage=BTP_EFFECT_SHOT_SOUND;return;
+            }
+            if (!s->combat.graphics) { v->stage=BTP_EFFECT_RETIRE_SOUND;break; }
+            unsigned poses=r->combat.poses[e->group][e->direction][0];
+            /* 12E8:1503 requests five retraces after each firing pose.
+               Accumulate the conversion so rounding does not grow per pose. */
+            int x,y;effect_focus(s,&x,&y);
+            int actor_visible=btp_combat_visible(e->x,e->y,e->base==254,x,y);
+            unsigned previous=(unsigned)v->age*224u/500u;
+            if (actor_visible && ++v->age*224u<poses*500u) {
+                if ((unsigned)v->age*224u/500u!=previous) redraw_marks(s);
+                return;
+            }
+            v->age=0;v->stage=BTP_EFFECT_SHOT_SOUND;
+            if (btp_effects_trail_kind(e->weapon)<2)
+                btp_audio_effect(s,btp_effects_fire_sound(e->weapon,visible(e,s)));
+            break;
+        }
+        case BTP_EFFECT_SHOT_SOUND:
+            if (e->weapon==33) { v->stage=BTP_EFFECT_RETIRE_SOUND;break; }
+            if (btp_effects_trail_kind(e->weapon)) {
+                BtpEffectTrail trail;int x,y;effect_focus(s,&x,&y);
+                btp_effects_trail(e,&r->combat,x,y,&trail);
+                v->stage=BTP_EFFECT_FLIGHT;v->age=0;
+                if (trail.count) { if (trail.kind==1) redraw_marks(s);return; }
+                if (trail.kind>=2 && visible(e,s)) {
+                    btp_audio_effect(s,btp_effects_fire_sound(e->weapon,1));v->stage=BTP_EFFECT_BEAM_SOUND;break;
+                }
+            }
+            strike_sound(s);break;
+        case BTP_EFFECT_FLIGHT: {
+            BtpEffectTrail trail;int x,y;effect_focus(s,&x,&y);
+            btp_effects_trail(e,&r->combat,x,y,&trail);
+            if (trail.kind>=2) {
+                btp_audio_effect(s,btp_effects_fire_sound(e->weapon,visible(e,s)));
+                v->stage=BTP_EFFECT_BEAM_SOUND;v->age=0;break;
+            }
+            if (++v->age<trail.count) { redraw_marks(s);return; }
+            strike_sound(s);break;
+        }
+        case BTP_EFFECT_BEAM_SOUND: strike_sound(s);break;
+        case BTP_EFFECT_STRIKE_SOUND:
+            if (e->hit && e->weapon>=7) {
+                int x,y;effect_focus(s,&x,&y);
+                if (btp_combat_visible(e->tx,e->ty,e->target_base==254,x,y)) {
+                    /* Original 1A78 draws all three impacts without waits,
+                       then 1ABE holds the last for five retraces. At the host
+                       display boundary only that final frame is retained. */
+                    v->stage=BTP_EFFECT_IMPACT_HOLD;v->age=0;
+                    redraw_marks(s);redraw_marks(s);redraw_marks(s);return;
+                }
+            }
+            v->stage=BTP_EFFECT_RETIRE_SOUND;break;
+        case BTP_EFFECT_IMPACT_HOLD:
+            if (++v->age*224u<500u) return;
+            v->stage=BTP_EFFECT_RETIRE_SOUND;v->age=0;break;
+        case BTP_EFFECT_RETIRE_SOUND:
+            complete_effect(s);return;
+        default:return;
+        }
+        /* A dead vehicle is retained until its own sound, rather than
+           displaying later numeric damage during another queued attack. */
+        if (v->stage==BTP_EFFECT_RETIRE_SOUND && e->dead && e->target_base!=254) {
+            btp_audio_effect(s,s->campaign.encounter==4 && btp_combat_id(&s->combat,e->target)==13 ? 7u : 8u);
+            v->age=0;return;
+        }
+    }
 }
 int btp_effects_valid(const BtpState *s)
 {
@@ -178,7 +361,9 @@ int btp_effects_valid(const BtpState *s)
         const uint8_t *p=(const uint8_t *)q;for (unsigned i=0;i<sizeof *q;++i) if (p[i]) return 0;
     }
     for (unsigned i=0;i<15;++i) if (q->mech[i] && (q->mech[i]<32 || q->mech[i]>126)) return 0;
-    if (v->count>24 || v->age>22 || v->pending>3 || v->stage>6 || (!v->count && (v->age || v->stage))) return 0;
+    if (v->count>24 || v->pending>3 || v->stage>BTP_EFFECT_PENDING || (!v->count && (v->age || v->stage))) return 0;
+    if (v->stage<BTP_EFFECT_POSES ? v->age>22 : v->stage==BTP_EFFECT_POSES ? v->age>17 :
+        v->stage==BTP_EFFECT_FLIGHT ? v->age>55 : v->stage==BTP_EFFECT_IMPACT_HOLD ? v->age>2 : v->age!=0) return 0;
     if (v->count && s->combat.phase!=BTP_COMBAT_ROUND) return 0;
     for (unsigned i=0;i<25;++i) {
         const BtpBattleText *t=i<24 ? &v->text[i] : &v->shown;

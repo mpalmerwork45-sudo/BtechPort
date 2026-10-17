@@ -11,6 +11,8 @@ typedef struct {
     /* Four mech pose groups and fourteen personal-weapon groups; each row
        is a count followed by up to eight frames from original programs. */
     uint8_t poses[18][8][9], reaction[4], impact[3];
+    /* Original directional beam origins and six-frame missile loops. */
+    int8_t muzzle[3][2][8];uint8_t missile[8][6];
     uint8_t jenner[125];
     uint8_t commando[125], rex_skills[7], rex_x[8], rex_y[8];
     uint8_t encounter_weapons[22], encounter_mechs[3][125];
@@ -77,7 +79,8 @@ enum { BTP_COMBAT_DATA_V1_BYTES = 4+375+561+15+46+93+16,
     BTP_COMBAT_DATA_V8_BYTES = BTP_COMBAT_DATA_V7_BYTES+24+24+16,
     BTP_COMBAT_DATA_V9_BYTES = BTP_COMBAT_DATA_V7_BYTES+32+24+16,
     BTP_COMBAT_DATA_V10_BYTES = BTP_COMBAT_DATA_V9_BYTES+99+60+14+18+12+500,
-    BTP_COMBAT_DATA_BYTES = BTP_COMBAT_DATA_V10_BYTES+11*125+250+11+7+32 };
+    BTP_COMBAT_DATA_V11_BYTES = BTP_COMBAT_DATA_V10_BYTES+11*125+250+11+7+32,
+    BTP_COMBAT_DATA_BYTES = BTP_COMBAT_DATA_V11_BYTES+48+48 };
 int btp_sound_programs(BtpCombatData *data);
 uint32_t btp_speaker_busy_clocks(unsigned duration,unsigned repeats);
 int btp_combat_data_decode(const uint8_t *bytes, size_t length, BtpCombatData *data);

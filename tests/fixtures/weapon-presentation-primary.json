@@ -1,0 +1,22 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "cases": 2400,
+  "routine": "12E8:12C7 complete surviving attack presentation; 0000:1732 original animation interpreter",
+  "prerequisites": "Camera 64,64; two mech families and infantry; their applicable weapons; eight directions; hit/miss, infantry targets, graphics off, close and partially offscreen shots; VGA palette.",
+  "boundaries": [
+    "0000:19BF",
+    "0000:2A93",
+    "0000:48B7",
+    "0E31:1F09",
+    "0E31:1F73",
+    "173D:0006",
+    "173D:031C",
+    "173D:06C3",
+    "187F:0377",
+    "187F:28EB"
+  ],
+  "comparison": "Ordered pose/wait/sound/draw observations; all visible missile/beam coordinates and frame/color IDs; exact impact anchors and frame order.",
+  "limits": "Requested retraces and event order, not physical XT decode/blit cost or speaker calibration. Casualties and outtake playback have their separate existing comparisons.",
+  "no_instruction_patches": true
+}

@@ -414,14 +414,41 @@ static void combat_flash(const BtpResources *r, const BtpState *s, int cx, int c
     int y=(e->base==254 ? 96 : 80)+((int)e->y-cy)*8;
     int tx=(e->target_base==254 ? 208 : 200)+((int)e->tx-cx)*8;
     int ty=(e->target_base==254 ? 96 : 80)+((int)e->ty-cy)*8;
+    if (s->effects.stage>=BTP_EFFECT_POSES) {
+        int pose_frame=btp_effects_pose(s,&r->combat);
+        if (pose_frame>=0) {
+            if (actor_visible) (void)btp_draw_sprite(&r->sprites,e->base+pose[1+(unsigned)pose_frame],x,y,0,104,f);
+            if (target_visible && btp_effects_reaction(s))
+                (void)btp_draw_sprite(&r->sprites,e->target_base+r->combat.reaction[(unsigned)pose_frame&3u],tx,ty,0,104,f);
+        }
+        if (s->effects.stage==BTP_EFFECT_FLIGHT || s->effects.stage==BTP_EFFECT_BEAM_SOUND) {
+            BtpEffectTrail trail;btp_effects_trail(e,&r->combat,cx,cy,&trail);
+            if (trail.kind==1) {
+                if (s->effects.age<trail.count) {
+                    const BtpEffectPoint *p=&trail.points[s->effects.age];
+                    (void)btp_draw_sprite(&r->sprites,p->sprite,p->x,p->y,0,104,f);
+                }
+            } else {
+                unsigned color=btp_effects_beam_color(e,btp_combat_id(c,e->actor));
+                for (unsigned i=0;i<trail.count;++i) pixel(f,trail.points[i].x,trail.points[i].y,btp_palette[color]);
+            }
+        }
+        if (target_visible && s->effects.stage==BTP_EFFECT_IMPACT_HOLD) {
+            /* 12E8:1A78 uses the world anchor, eight pixels above a mech,
+               and retains the final impact frame during its five retraces. */
+            int ix=208+8*((int)e->tx-cx),iy=96+8*((int)e->ty-cy)-(e->target_base==254 ? 0 : 8);
+            (void)btp_draw_sprite(&r->sprites,250u+r->combat.impact[2],ix,iy,0,104,f);
+        }
+        return;
+    }
     if (frame<count) {
         if (actor_visible) (void)btp_draw_sprite(&r->sprites,e->base+pose[1+frame],x,y,0,104,f);
         /* DS:2E3C is the personal hit program. Adding it to the 146-frame
            mech family selects Jason's human sprites (178..181). Mechs keep
            their current pose under the separately drawn impact. */
         if (target_visible && e->hit && c->unit[e->target].infantry) (void)btp_draw_sprite(&r->sprites,e->target_base+r->combat.reaction[frame&3u],tx,ty,0,104,f);
-        /* The original poses, projectile artwork and impact order are data
-           driven. Beam interpolation and native cadence remain approximate. */
+        /* Compatibility rendering for an older held presentation. New queues
+           use the original trajectories and clock in the branch above. */
         if (e->weapon!=32 && frame+1==count) {
             int ax=x+(e->base==254 ? 4 : 12),ay=y+12,bx=tx+12,by=ty+12;
             int dx=bx-ax,dy=by-ay,steps=abs(dx)>abs(dy) ? abs(dx) : abs(dy);
@@ -922,17 +949,18 @@ size_t btp_battle_text(const BtpResources *r,const BtpBattleText *t,unsigned ver
 }
 static void combat_report_panel(const BtpResources *r,const BtpState *s,uint32_t *f)
 {
-    BtpBattleText report=s->effects.count ? s->effects.text[0] : s->effects.shown;
+    int current_report=s->effects.count && !s->combat.delay && s->effects.stage!=BTP_EFFECT_PENDING;
+    BtpBattleText report=current_report ? s->effects.text[0] : s->effects.shown;
     /* Infantry's final report follows its impact animation (12E8:1B15).
        Mech retirement/ejection text is composed before its wreck animation. */
-    if (s->effects.count && s->effects.shots[0].target_base==254) report.dead=0;
+    if (current_report && s->effects.shots[0].target_base==254) report.dead=0;
     const BtpBattleText *t=&report;
     if (!s->combat.messages && s->effects.quiet.active) {
         const BtpQuietReport *q=&s->effects.quiet;uint8_t message[1024];size_t n;
         char model[16];memcpy(model,q->mech,15);model[15]=0;
         n=(size_t)snprintf((char *)message,sizeof message,q->mech[0] ? "%s's\r%s" : "%s",
             btp_character_name(q->name),model);
-        unsigned count=q->ejections+(unsigned)(s->effects.count && t->active && t->dead && t->target<4);
+        unsigned count=q->ejections+(unsigned)(current_report && t->active && t->dead && t->target<4);
         if (count) message[n++]=2; /* Original retirement's green text. */
         for (unsigned i=0;i<count;++i) service_literal(r,message,&n,371);
         rectangle(f,8,8,88,88,0);
@@ -1553,8 +1581,8 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
             unsigned offset=death->target_base==254 ? 0u : 1u;
             if (mx==(int)death->tx-(int)offset && my==(int)death->ty-(int)offset) pending=1;
         }
-        if (!pending && mark->sprite)
-            (void)btp_draw_sprite(&r->sprites,(mark->sprite&254u)==124 ? 124u+(s->tick&1u) : mark->sprite,
+        if (!pending && mark->sprite && mx-cx>=-13 && mx-cx<=13 && my-cy>=-12 && my-cy<=12)
+            (void)btp_draw_sprite(&r->sprites,(mark->sprite&254u)==124 ? mark->sprite^1u : mark->sprite,
                 208+(mx-cx)*8,96+(my-cy)*8,0,104,f);
     }
     if (battle_display) {
@@ -1576,8 +1604,8 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
             if (crew_pending) continue;
             if (s->combat.graphics && s->effects.count && s->effects.stage>=BTP_EFFECT_ATTACK) {
                 const BtpCombatEffect *e=&s->effects.shots[0];
-                unsigned pose=r->combat.poses[e->group][e->direction][0];
-                if (s->effects.age/2u<pose && (i==e->actor || (e->hit && i==e->target && u->infantry))) continue;
+                if (btp_effects_pose(s,&r->combat)>=0 &&
+                    (i==e->actor || (i==e->target && btp_effects_reaction(s)))) continue;
             }
             unsigned friends=s->combat.friends ? s->combat.friends : 1u;
             unsigned base=death ? death->target_base==254 ? btp_combat_id(&s->combat,i)==4 ? 166u : 270u : death->target_base :

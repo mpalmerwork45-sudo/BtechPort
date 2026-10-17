@@ -14,6 +14,9 @@ void btp_world_clock(BtpState *state,const BtpResources *resources,BtpAction act
 void btp_world_actions(BtpState *state,const BtpResources *resources,BtpAction action);
 void btp_world_reveal(BtpState *state);
 void btp_world_mark(BtpState *state,unsigned sprite,int x,int y);
+/* 0000:2A93 toggles visible fire after each actual map redraw. The saved
+   sprite byte names the next frame; rendering uses the previously drawn one. */
+void btp_world_animate_marks(BtpState *state,int camera_x,int camera_y);
 int btp_world_seen(const BtpState *state,unsigned x,unsigned y);
 unsigned btp_world_mini(const BtpResources *resources,const BtpState *state,unsigned x,unsigned y);
 unsigned btp_world_device_direction(unsigned x,unsigned y);

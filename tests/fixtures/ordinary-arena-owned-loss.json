@@ -588,7 +588,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "9602b4dd3742cb2e",
+        "state_digest": "c594e2f6365af88e",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1520,7 +1520,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "ab8c57ca41114695",
+        "state_digest": "017f808da757d5f5",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -2452,7 +2452,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "2f3bfaa850c0ff3d",
+        "state_digest": "373d2345b811e4dd",
         "effect_stage": 0,
         "combat": {
           "phase": 1,
@@ -2806,7 +2806,7 @@
     },
     {
       "label": "arena-result",
-      "tick": 2238,
+      "tick": 2246,
       "state": {
         "map": 2,
         "mode": "encounter",
@@ -2817,7 +2817,7 @@
           44
         ],
         "gate": 85,
-        "tick": 2238,
+        "tick": 2246,
         "blocked": 1,
         "script_pc": 1703,
         "script_status": 5,
@@ -3395,7 +3395,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "9635cff82edbf6a2",
+        "state_digest": "90bb5c459bf5851a",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -3875,7 +3875,7 @@
     },
     {
       "label": "arena-cashier",
-      "tick": 2239,
+      "tick": 2247,
       "state": {
         "map": 2,
         "mode": "building",
@@ -3886,7 +3886,7 @@
           46
         ],
         "gate": 85,
-        "tick": 2239,
+        "tick": 2247,
         "blocked": 1,
         "script_pc": 2257,
         "script_status": 2,
@@ -4464,7 +4464,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "bf843085f502ffdb",
+        "state_digest": "a5f144f382d53e93",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -4807,7 +4807,7 @@
     },
     {
       "label": "arena-exited",
-      "tick": 2240,
+      "tick": 2248,
       "state": {
         "map": 2,
         "mode": "local-exploration",
@@ -4818,7 +4818,7 @@
           46
         ],
         "gate": 85,
-        "tick": 2240,
+        "tick": 2248,
         "blocked": 1,
         "script_pc": 2258,
         "script_status": 3,
@@ -5396,7 +5396,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "58d900412e520199",
+        "state_digest": "8dd82b1f98d2df51",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -5748,7 +5748,7 @@
       46
     ],
     "gate": 85,
-    "tick": 2240,
+    "tick": 2248,
     "blocked": 1,
     "script_pc": 2258,
     "script_status": 3,
@@ -6326,7 +6326,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "58d900412e520199",
+    "state_digest": "8dd82b1f98d2df51",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

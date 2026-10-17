@@ -5,6 +5,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 parser=argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--training',action='store_true',help='Regenerate combat prerequisites and both invasion routes first')
+parser.add_argument('--complete',action='store_true',help='Also regenerate dependent arena outcomes, spy replacement and fresh ending/checkpoint comparisons')
 args=parser.parse_args()
 if args.training:
     for tool,arguments in (
@@ -22,3 +23,8 @@ for tool in ('make_later_campaign_replay.py','make_story_replay.py',
              'make_prison_replay.py','make_arena_replay.py','make_cache_replay.py'):
     print('Generating',tool,flush=True)
     subprocess.run([sys.executable,str(ROOT/'tools'/tool)],cwd=ROOT,check=True)
+if args.complete:
+    for tool in ('make_arena_outcome_replays.py','make_spy_replay.py',
+                 'make_fresh_campaign_replay.py','make_campaign_checkpoint_vectors.py'):
+        print('Generating',tool,flush=True)
+        subprocess.run([sys.executable,str(ROOT/'tools'/tool)],cwd=ROOT,check=True)

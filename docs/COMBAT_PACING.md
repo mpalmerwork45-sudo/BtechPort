@@ -1,5 +1,10 @@
 # Combat pacing correction — 2026-10-17
 
+The subsequent [weapon/fire presentation increment](WEAPON_PRESENTATION.md)
+implements the follow-up proposed below. It introduces v44 saves for the new
+presentation states while retaining older-save support. This page records the
+earlier movement-pause correction and its measurements.
+
 The combat-speed pause belongs after each attack, rather than between movement
 steps. The previous port called the correct delay helper at the wrong boundary.
 At the default speed, that inserted ten idle ticks between every pair of
@@ -93,7 +98,7 @@ python3 tools/native_smoke.py --combat-pacing-only
 python3 tools/native_smoke.py --windows --combat-pacing-only
 ```
 
-## Recommended next increment
+## Follow-up (now implemented)
 
 Compare the complete on-map weapon presentation: firing poses, the point at
 which sound starts, projectile/beam travel, and impact-frame timing. The

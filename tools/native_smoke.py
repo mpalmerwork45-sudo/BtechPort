@@ -595,6 +595,41 @@ def mechit_ui(env,work):
                 keyboard.x.XCloseDisplay(keyboard.display)
                 if process.poll() is None:process.terminate();process.wait(timeout=5)
 
+def weapon_effects(env,work):
+    """Real SDL F5/F9 while weapon effects and outdoor fire are advancing."""
+    from reference_session import WindowKeys
+    binary=ROOT/'build/btech-headless';env=dict(env,SDL_AUDIODRIVER='dummy')
+    with tempfile.TemporaryDirectory(prefix='native-effects-',dir=work) as directory:
+        tmp=Path(directory)
+        for label in ('firing-pose','missile-flight','beam-sound','impact','outdoor-fire'):
+            start=work/'weapon-presentation'/f'{label}.btp';slot=tmp/'slot.btp'
+            frame=work/'weapon-presentation'/f'native-{label}.ppm';expected=tmp/'expected.ppm';tail=tmp/'tail.actions'
+            process=subprocess.Popen([str(ROOT/'build/btech-port'),'--load',str(start),'--save-file',str(slot),'--frame',str(frame)],
+                cwd=ROOT,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+            keyboard=WindowKeys()
+            try:
+                for _ in range(100):
+                    found=[w for w,n in keyboard.windows() if n.startswith('BtechPort')]
+                    if len(found)==1:window=found[0];break
+                    if process.poll() is not None:raise RuntimeError(label+' window failed')
+                    time.sleep(.02)
+                else:raise RuntimeError(label+' window unavailable')
+                keyboard.key(window,'F5');time.sleep(.1)
+                before=json.loads(subprocess.check_output([str(binary),'--load',str(slot)],cwd=ROOT,text=True))
+                time.sleep(.15);keyboard.key(window,'F9');keyboard.key(window,'Ctrl+Shift+Escape')
+                out,err=process.communicate(timeout=10)
+                if process.returncode:raise RuntimeError(err)
+                actual=json.loads(out);delta=actual['tick']-before['tick']
+                if not 0<=delta<=20:raise RuntimeError(label+' restore clock was unbounded')
+                tail.write_text('idle\n'*delta)
+                wanted=json.loads(subprocess.check_output([str(binary),'--load',str(slot),'--replay',str(tail),'--frame',str(expected)],cwd=ROOT,text=True))
+                if actual!=wanted or frame.read_bytes()!=expected.read_bytes():raise RuntimeError(label+' SDL state/pixels differ')
+                print(f'PASS: native F5/F9 {label}; exact state/pixels after resumed animation.',flush=True)
+            finally:
+                keyboard.x.XCloseDisplay(keyboard.display)
+                if process.poll() is None:process.terminate();process.wait(timeout=5)
+
+
 def combat_pacing(env,work):
     """Use the real 32ms SDL loop and audio queue for short combat waves."""
     binary=ROOT/'build/btech-headless'
@@ -1287,6 +1322,7 @@ def main():
     parser.add_argument('--m4-acceptance',action='store_true')
     parser.add_argument('--combat-ui-only',action='store_true')
     parser.add_argument('--combat-pacing-only',action='store_true')
+    parser.add_argument('--weapon-effects-only',action='store_true')
     parser.add_argument('--mechit-only',action='store_true')
     parser.add_argument('--island-only',action='store_true')
     parser.add_argument('--controls-only',action='store_true')
@@ -1347,6 +1383,8 @@ def main():
                 combat_ui(env,work);return
             if args.combat_pacing_only:
                 combat_pacing(env,work);return
+            if args.weapon_effects_only:
+                weapon_effects(env,work);return
             if args.mechit_only:
                 mechit_ui(env,work);return
             if args.island_only:

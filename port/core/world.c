@@ -19,6 +19,17 @@ void btp_world_mark(BtpState *s,unsigned sprite,int x,int y)
         (uint8_t)((wy/128u)*16u+wx/128u),(uint8_t)(wx&127u),(uint8_t)(wy&127u)};
     s->terrain_next=(uint8_t)((s->terrain_next+1u)&63u);
 }
+void btp_world_animate_marks(BtpState *s,int camera_x,int camera_y)
+{
+    if (s->cache.active) return;
+    for (unsigned i=0;i<64;++i) {
+        BtpTerrainMark *m=&s->terrain_marks[i];
+        if ((m->sprite&254u)!=124) continue;
+        int dx=(m->sector&15)*128+m->x-camera_x;
+        int dy=(m->sector>>4)*128+m->y-camera_y;
+        if (dx>=-13 && dx<=13 && dy>=-12 && dy<=12) m->sprite^=1u;
+    }
+}
 
 void btp_world_reveal(BtpState *s)
 {
@@ -228,6 +239,7 @@ void btp_world_clock(BtpState *s,const BtpResources *r,BtpAction action)
     /* The same outdoor cadence drives towns, encounters and the economy;
        a two/four-step key still consumes only one update. */
     if (btp_outdoor_due(&s->campaign.world_clock,action)) {
+        btp_world_animate_marks(s,s->campaign.world_x,s->campaign.world_y);
         /* Restore roaming actors in older town saves on their first outdoor
            update. Use this clock's existing RNG/economy work exactly once. */
         if (!s->npc.enabled && s->map_id && s->map_id<=10) btp_npc_enter(s,local(r,s->map_id));

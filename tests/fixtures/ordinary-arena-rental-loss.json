@@ -579,7 +579,7 @@
           "rental": 1,
           "variant": 0
         },
-        "state_digest": "bc8cf5c5d81a09cb",
+        "state_digest": "3e15377b5c054c6b",
         "effect_stage": 0,
         "combat": {
           "phase": 1,
@@ -1070,7 +1070,7 @@
     },
     {
       "label": "arena-result",
-      "tick": 1794,
+      "tick": 1802,
       "state": {
         "map": 2,
         "mode": "encounter",
@@ -1081,7 +1081,7 @@
           44
         ],
         "gate": 85,
-        "tick": 1794,
+        "tick": 1802,
         "blocked": 1,
         "script_pc": 1703,
         "script_status": 5,
@@ -1646,7 +1646,7 @@
           "rental": 1,
           "variant": 0
         },
-        "state_digest": "cd4a793293c3f47a",
+        "state_digest": "a71f04c051c11dc2",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -2263,7 +2263,7 @@
     },
     {
       "label": "arena-cashier",
-      "tick": 1795,
+      "tick": 1803,
       "state": {
         "map": 2,
         "mode": "building",
@@ -2274,7 +2274,7 @@
           46
         ],
         "gate": 85,
-        "tick": 1795,
+        "tick": 1803,
         "blocked": 1,
         "script_pc": 2257,
         "script_status": 2,
@@ -2852,7 +2852,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "a2399f5f3f0a0acb",
+        "state_digest": "4c97636ab66b5193",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -3195,7 +3195,7 @@
     },
     {
       "label": "arena-exited",
-      "tick": 1796,
+      "tick": 1804,
       "state": {
         "map": 2,
         "mode": "local-exploration",
@@ -3206,7 +3206,7 @@
           46
         ],
         "gate": 85,
-        "tick": 1796,
+        "tick": 1804,
         "blocked": 1,
         "script_pc": 2258,
         "script_status": 3,
@@ -3784,7 +3784,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "b64cb7862110ea41",
+        "state_digest": "d9c67b6a499a9289",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -4136,7 +4136,7 @@
       46
     ],
     "gate": 85,
-    "tick": 1796,
+    "tick": 1804,
     "blocked": 1,
     "script_pc": 2258,
     "script_status": 3,
@@ -4714,7 +4714,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "b64cb7862110ea41",
+    "state_digest": "d9c67b6a499a9289",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

@@ -48,6 +48,12 @@ int main(int argc, char **argv)
             BtpCombatUnit u = {0}; memcpy(u.record,d.loans[a],125);
             u.heat=(uint8_t)c; u.record[36]=(uint8_t)e; u.record[37]=(uint8_t)f;
             passed = btp_combat_points(&u,b) == (int)g;
+        } else if (line[0]=='M') {
+            unsigned walk,jump,mode,heat,left,right,expected;
+            if (sscanf(line+1,"%u %u %u %u %u %u %u",&walk,&jump,&mode,&heat,&left,&right,&expected)!=7) return 2;
+            BtpCombatUnit u={.heat=(uint8_t)heat};memcpy(u.record,d.loans[0],125);
+            u.record[49]=(uint8_t)walk;u.record[50]=(uint8_t)jump;u.record[36]=(uint8_t)left;u.record[37]=(uint8_t)right;
+            passed=btp_combat_points(&u,mode)==(int)expected;
         } else if (line[0]=='H') {
             unsigned loan,heat,steps,pool,engine,cooling,sinks,burning,cover,terrain,after_heat,after_pool,after_burn;int mode;
             if (sscanf(line+1,"%u %d %u %u %u %u %u %u %u %u %u %u %u %u",&loan,&mode,&heat,&steps,&pool,

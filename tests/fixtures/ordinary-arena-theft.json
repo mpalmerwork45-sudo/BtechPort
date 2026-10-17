@@ -579,7 +579,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "a5f10c8fa46cc703",
+        "state_digest": "1307321fddd7f1e3",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1503,7 +1503,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "092e8f3ecf0bf997",
+        "state_digest": "52ecca08bd4e6877",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -2422,7 +2422,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "6c6ec421a08afa77",
+        "state_digest": "04f50865c979a8d7",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -3341,7 +3341,7 @@
           "rental": 1,
           "variant": 0
         },
-        "state_digest": "bc8cf5c5d81a09cb",
+        "state_digest": "3e15377b5c054c6b",
         "effect_stage": 0,
         "combat": {
           "phase": 1,
@@ -3832,7 +3832,7 @@
     },
     {
       "label": "arena-wall-approach",
-      "tick": 1412,
+      "tick": 1420,
       "state": {
         "map": 2,
         "mode": "encounter",
@@ -3843,7 +3843,7 @@
           49
         ],
         "gate": 85,
-        "tick": 1412,
+        "tick": 1420,
         "blocked": 1,
         "script_pc": 1703,
         "script_status": 5,
@@ -4408,7 +4408,7 @@
           "rental": 1,
           "variant": 0
         },
-        "state_digest": "05670f19f73f155f",
+        "state_digest": "5e3a7ceb8523df97",
         "effect_stage": 0,
         "combat": {
           "phase": 4,
@@ -4899,7 +4899,7 @@
     },
     {
       "label": "arena-urbanmech-alarm",
-      "tick": 1790,
+      "tick": 1794,
       "state": {
         "map": 2,
         "mode": "encounter",
@@ -4910,7 +4910,7 @@
           49
         ],
         "gate": 85,
-        "tick": 1790,
+        "tick": 1794,
         "blocked": 1,
         "script_pc": 1703,
         "script_status": 5,
@@ -5475,7 +5475,7 @@
           "rental": 1,
           "variant": 0
         },
-        "state_digest": "360a656a50d5f191",
+        "state_digest": "585c92ad20a987de",
         "effect_stage": 0,
         "combat": {
           "phase": 4,
@@ -6240,7 +6240,7 @@
     },
     {
       "label": "arena-mech-stolen",
-      "tick": 2129,
+      "tick": 2121,
       "state": {
         "map": 0,
         "mode": "local-exploration",
@@ -6251,7 +6251,7 @@
           562
         ],
         "gate": 85,
-        "tick": 2129,
+        "tick": 2121,
         "blocked": 1,
         "script_pc": 3375,
         "script_status": 3,
@@ -6821,7 +6821,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "38bdb7f43c1b483f",
+        "state_digest": "161f36e16a746d47",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -7173,7 +7173,7 @@
       562
     ],
     "gate": 85,
-    "tick": 2129,
+    "tick": 2121,
     "blocked": 1,
     "script_pc": 3375,
     "script_status": 3,
@@ -7743,7 +7743,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "38bdb7f43c1b483f",
+    "state_digest": "161f36e16a746d47",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

@@ -89,7 +89,8 @@ The first 17 definitions and their save codes are unchanged. Saves from the
 released three-model **0.1.0** and 17-model **0.2.0** packs load automatically
 in **0.3.0**, including
 held broker menus, damage, ammunition, crew and money. No manual conversion is
-needed. A subsequent save records the new pack and the v43 scrolling-menu state.
+needed. A subsequent save records the new pack and v44 state, including the
+scrolling menu and the current weapon/fire presentation phase.
 
 Compatibility is checked by recomputing the saved fingerprint against the
 unchanged prefix of the new roster. Editing or removing an existing definition,
@@ -99,7 +100,8 @@ The archived [0.1.0 pack](versions/0.1.0.json) and [0.2.0 pack](versions/0.2.0.j
 remain available via `--roster` for sessions using an exact earlier catalogue.
 Keep earlier save copies if you intend to return to an older pack/executable;
 those cannot read saves with the new catalogue identity. The 0.1.0 executable
-also cannot read v43 state.
+also cannot read v43 state. Earlier executables cannot read v44 saves; their
+existing saves remain loadable in the current executable.
 
 ## Sources and adaptation
 

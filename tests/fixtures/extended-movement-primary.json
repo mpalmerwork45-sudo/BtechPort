@@ -1,0 +1,141 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "cases": 1872,
+  "routine": "103B:22BC",
+  "models": [
+    {
+      "id": "original-loan-0",
+      "walk": 8,
+      "jump": 0
+    },
+    {
+      "id": "original-loan-1",
+      "walk": 6,
+      "jump": 6
+    },
+    {
+      "id": "original-loan-2",
+      "walk": 6,
+      "jump": 6
+    },
+    {
+      "id": "chi-expanded:panther-pnt-9r",
+      "walk": 4,
+      "jump": 4
+    },
+    {
+      "id": "chi-expanded:hunchback-hbk-4g",
+      "walk": 4,
+      "jump": 0
+    },
+    {
+      "id": "chi-expanded:catapult-cplt-c1",
+      "walk": 4,
+      "jump": 4
+    },
+    {
+      "id": "chi-expanded:centurion-cn9-a",
+      "walk": 4,
+      "jump": 0
+    },
+    {
+      "id": "chi-expanded:trebuchet-tbt-5n",
+      "walk": 5,
+      "jump": 0
+    },
+    {
+      "id": "chi-expanded:griffin-grf-1n",
+      "walk": 5,
+      "jump": 5
+    },
+    {
+      "id": "chi-expanded:shadow-hawk-shd-2h",
+      "walk": 5,
+      "jump": 3
+    },
+    {
+      "id": "chi-expanded:wolverine-wvr-6r",
+      "walk": 5,
+      "jump": 5
+    },
+    {
+      "id": "chi-expanded:rifleman-rfl-3n",
+      "walk": 4,
+      "jump": 0
+    },
+    {
+      "id": "chi-expanded:thunderbolt-tdr-5s",
+      "walk": 4,
+      "jump": 0
+    },
+    {
+      "id": "chi-expanded:archer-arc-2r",
+      "walk": 4,
+      "jump": 0
+    },
+    {
+      "id": "chi-expanded:warhammer-whm-6r",
+      "walk": 4,
+      "jump": 0
+    },
+    {
+      "id": "chi-expanded:marauder-mad-3r",
+      "walk": 4,
+      "jump": 0
+    },
+    {
+      "id": "chi-expanded:zeus-zeu-6s",
+      "walk": 4,
+      "jump": 0
+    },
+    {
+      "id": "chi-expanded:atlas-as7-d",
+      "walk": 3,
+      "jump": 0
+    },
+    {
+      "id": "chi-expanded:crusader-crd-3r",
+      "walk": 4,
+      "jump": 0
+    },
+    {
+      "id": "chi-expanded:crusader-crd-3r-bear",
+      "walk": 4,
+      "jump": 0
+    },
+    {
+      "id": "chi-expanded:phoenix-hawk-pxh-1",
+      "walk": 6,
+      "jump": 6
+    },
+    {
+      "id": "chi-expanded:dragon-drg-1n",
+      "walk": 5,
+      "jump": 0
+    },
+    {
+      "id": "chi-expanded:grasshopper-ghr-5h",
+      "walk": 4,
+      "jump": 4
+    },
+    {
+      "id": "chi-expanded:highlander-hgn-733",
+      "walk": 3,
+      "jump": 3
+    },
+    {
+      "id": "chi-expanded:stalker-stk-3f",
+      "walk": 3,
+      "jump": 0
+    },
+    {
+      "id": "chi-expanded:jenner-jr7-d",
+      "walk": 7,
+      "jump": 5
+    }
+  ],
+  "prerequisites": "Original loan record with each model's walk/jump bytes; three movement modes, six heat levels and four actuator states. No path/collision or time assumptions.",
+  "comparison": "Original numeric movement allowance; the expanded models themselves are authored content, not original units.",
+  "no_instruction_patches": true
+}

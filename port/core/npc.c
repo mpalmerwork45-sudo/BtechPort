@@ -1,6 +1,7 @@
 #include "core/npc.h"
 #include "core/economy.h"
 #include "core/animation.h"
+#include "core/world.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -183,6 +184,7 @@ void btp_npc_frame(BtpState *s,const BtpMap *m)
 {
     btp_npc_init(s,m);
     if (!s->npc.enabled || s->npc.fault) return;
+    btp_world_animate_marks(s,1536+s->x_half,1536+s->y_half);
     (void)btp_rng_next(s->npc.rng); /* Main-loop encounter check also draws on MAP1. */
     for (unsigned i=20;i<=22;++i) if (s->story_flags[i]) --s->story_flags[i];
     if (s->npc.loop_timer--==0) btp_economy_wrap(s);
