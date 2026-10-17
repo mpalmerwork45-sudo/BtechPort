@@ -30,6 +30,7 @@ int btp_options(int argc, char **argv, BtpOptions *o)
                  "  --headless           run without SDL/display/audio\n"
                  "  --replay FILE        logical actions: arrows/idle/accept/cancel/0..9/clear\n"
                  "  --trace              print canonical JSON state after each replay action\n"
+                 "  --event-trace FILE   headless JSONL command entries, flags and credits\n"
                  "  --frame FILE         write final 320x200 RGB PPM\n"
                  "  --sprite-preview     show original mech/human walking frames (diagnostic only)\n"
                  "  --title-preview      original title screen and PC speaker music\n"
@@ -85,6 +86,7 @@ int btp_options(int argc, char **argv, BtpOptions *o)
         }
         else if (!strcmp(arg, "--debug")) o->debug = 1;
         else if (!strcmp(arg, "--trace")) o->trace = 1;
+        else if (!strcmp(arg,"--event-trace")) { if (++i==argc) return 0;o->event_trace=argv[i]; }
         else if (!strcmp(arg, "--smoke")) o->smoke = 1;
         else if (!strcmp(arg, "--smoke-citadel")) o->smoke = 2;
         else if (!strcmp(arg, "--smoke-katrina")) o->smoke = 3;
@@ -371,13 +373,18 @@ int btp_replay(const char *path, BtpState *s, const BtpResources *r, int trace,c
     return ok;
 }
 
-int btp_run_headless(const BtpOptions *o, BtpResources *r)
+static void event_trace(void *context,const BtpState *s,const BtpResources *r,const BtpEventNode *e);
+static int run_headless(const BtpOptions *o, BtpResources *r,FILE *trace)
 {
+    /* Loading a checkpoint replaces the bootstrap state. Do not report the
+       discarded bootstrap commands as if they ran in the resumed session. */
+    if (o->load) btp_events_observe(NULL,NULL);
     BtpState state; btp_initial_state(o,&state,r);
     BtpError error;
     if (o->load && !btp_save_load(o->load,&state,r,&error)) {
         fprintf(stderr,"%s\n",error.text); return 1;
     }
+    if (trace) btp_events_observe(event_trace,trace);
     int result = 0;
     if (o->record || o->smoke) { fputs("--record/--smoke require the native frontend\n", stderr); return 1; }
     if (o->trace) btp_print_state(&state, r);
@@ -424,5 +431,24 @@ int btp_run_headless(const BtpOptions *o, BtpResources *r)
     if (!result && o->export_original && !btp_original_write(o->export_original,&state,&error)) {
         fprintf(stderr,"%s\n",error.text);result=1;
     }
+    return result;
+}
+
+static void event_trace(void *context,const BtpState *s,const BtpResources *r,const BtpEventNode *e)
+{
+    FILE *f=context;const BtpAdventure *a=btp_adventure(r);
+    fprintf(f,"{\"tick\":%u,\"event\":\"%s\",\"op\":%u,\"credits\":%u,\"flags\":{",s->tick,e->id,e->op,s->credits);
+    for (unsigned i=0;i<a->flag_count;++i) fprintf(f,"%s\"%s\":%u",i ? "," : "",a->flags[i],s->event.flags[i]);
+    fputs("}}\n",f);
+}
+int btp_run_headless(const BtpOptions *o,BtpResources *r)
+{
+    FILE *trace=NULL;
+    if (o->event_trace) {
+        trace=fopen(o->event_trace,"wb");if (!trace) { fputs("Cannot open event trace\n",stderr);return 1; }
+        btp_events_observe(event_trace,trace);
+    }
+    int result=run_headless(o,r,trace);btp_events_observe(NULL,NULL);
+    if (trace) { int bad=ferror(trace);if (fclose(trace) || bad) result=1; }
     return result;
 }

@@ -86,7 +86,7 @@ class LibraryBrowser:
         self.owner=owner
         owner.state_dir.mkdir(parents=True,exist_ok=True)
         self.library=UnitLibrary(Path(owner.settings.get('library-root',ROOT/'work/unit-library')),owner.validator)
-        self.window=tk.Toplevel(owner.window);self.window.title('BtechPort - Unit Library')
+        self.window=tk.Toplevel(owner.window);self.window.title('BattleTech Construction Kit - Unit Library')
         self.window.geometry('1000x730');self.window.minsize(940,650)
         self.timer=None;self.photos=[];self.phase=0;self.documents=[];self.editors=[]
         header=ttk.Frame(self.window,padding=(16,12));header.pack(fill='x')

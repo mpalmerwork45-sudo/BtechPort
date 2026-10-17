@@ -102,7 +102,7 @@ class RosterEditor:
         except (OSError, ValueError):
             pass
         self.palette = configure_editor_style(window)
-        window.title("BtechPort game editor")
+        window.title("BattleTech Construction Kit")
         window.geometry("1000x740")
         window.minsize(940, 690)
         header = ttk.Frame(window, style="App.TFrame", padding=(16, 12, 16, 8))

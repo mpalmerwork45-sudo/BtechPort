@@ -232,6 +232,20 @@ int btp_adventure_load(const char *path,const BtpDefinitions *d,BtpAdventure *ou
         for (unsigned k=0;k<a->flag_count;++k) if (!strcmp(id,a->flags[k])) { btp_json_error(&j,n,"duplicate flag ID");goto done; }
         ++a->flag_count;
     }
+    unsigned objectives=btp_json_optional(&j,1,"objectives");
+    if (objectives) {
+        if (!btp_json_type(&j,objectives,'[')) goto done;
+        for (unsigned n=j.nodes[objectives].first;n;n=j.nodes[n].next) {
+            if (a->objective_count==32) { btp_json_error(&j,n,"at most 32 objectives");goto done; }
+            BtpObjective *o=&a->objectives[a->objective_count];
+            if (!string(&j,n,"id",o->id,sizeof o->id) || !btp_content_id(o->id,1) ||
+                !string(&j,n,"title",o->title,sizeof o->title) || !string(&j,n,"text",o->text,sizeof o->text) ||
+                !REF(&j,n,"active",a->flags,a->flag_count,&o->active) || !REF(&j,n,"complete",a->flags,a->flag_count,&o->complete) || !btp_json_done(&j,n)) goto done;
+            for (unsigned i=0;i<a->objective_count;++i) if (!strcmp(a->objectives[i].id,o->id)) { btp_json_error(&j,n,"duplicate objective ID");goto done; }
+            char lines[96][28];if (btp_event_lines(o->text,lines)>13) { btp_json_error(&j,n,"objective text exceeds 13 wrapped lines");goto done; }
+            ++a->objective_count;
+        }
+    }
     for (unsigned i=0;i<a->tile_count;++i) {
         unsigned n=tiles[i];BtpSceneTile *t=&a->tiles[i];char key[2];
         const char *const sheets[]={"chi:land","chi:destroyed","package:tiles","package:art"},*const terrain[]={"clear","rough","water","woods","wall"};

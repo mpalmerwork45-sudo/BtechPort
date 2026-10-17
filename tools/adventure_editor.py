@@ -72,7 +72,7 @@ class AdventureEditor:
             raise EditorError("This project uses the CHI campaign. Open examples/beacon-demo or examples/adventure-demo for map/event editing.")
         self.window = tk.Toplevel(parent.window)
         self.window.transient(parent.window)
-        self.window.title("BtechPort maps and events")
+        self.window.title("BattleTech Construction Kit - Maps and events")
         self.window.geometry("1000x720")
         self.window.minsize(960, 650)
         self.scene_index = 0
@@ -701,7 +701,12 @@ class AdventureEditor:
         buttons=ttk.Frame(left);buttons.pack(fill="x")
         for label,callback in [("New",self.new_event),("Duplicate",self.duplicate_event),("Delete",self.delete_event)]:ttk.Button(buttons,text=label,command=lambda cb=callback:self.guard(cb)).pack(side="left")
         ttk.Button(left,text='Service building...',command=lambda:self.guard(self.service_template)).pack(fill='x',padx=6,pady=6)
+        ttk.Button(left,text='Event graph / quests...',command=lambda:self.guard(self.event_graph)).pack(fill='x',padx=6,pady=3)
         self.event_id=None;self.event_vars={};self.event_text=None;self.event_pending=False
+
+    def event_graph(self):
+        from event_workbench import EventGraph
+        self.apply_pending();return EventGraph(self)
 
     def service_template(self):
         from building_templates import PRESETS,service_building

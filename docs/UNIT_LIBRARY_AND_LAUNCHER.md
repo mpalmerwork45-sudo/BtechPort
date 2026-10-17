@@ -2,7 +2,8 @@
 
 ## Start the application and play
 
-On this checkout, double-click **BtechPort.desktop**. The launcher has **New game**,
+On this checkout, double-click **BtechPort.desktop** to open **BattleTech
+Construction Kit**. The launcher has **New game**,
 **Continue quicksave**, **Open editor**, **Unit Library** and **New project**.
 Choose Original, Updated, BattleTech demo, Vehicle proving ground, Independent
 demo, or a custom project folder. No command arguments are needed.

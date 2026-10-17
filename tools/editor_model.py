@@ -69,9 +69,10 @@ class ProjectDocument:
         self.snapshot = {name: child(self.root, name).read_bytes() for name in references(self.manifest)}
         # Attribution travels through history/save/export, without becoming
         # a runtime dependency or part of the game's content fingerprint.
-        metadata = child(self.root, 'LIBRARY-SOURCES.json')
-        if metadata.exists(): self.snapshot[metadata.name] = metadata.read_bytes()
-        self.metadata = {name: data for name, data in self.snapshot.items() if name == 'LIBRARY-SOURCES.json'}
+        for name in ('LIBRARY-SOURCES.json','EDITOR.json'):
+            metadata=child(self.root,name)
+            if metadata.exists():self.snapshot[name]=metadata.read_bytes()
+        self.metadata = {name: data for name, data in self.snapshot.items() if name in ('LIBRARY-SOURCES.json','EDITOR.json')}
         self.content = json.loads(self.snapshot[self.manifest["definitions"]])
         self.adventure = json.loads(self.snapshot[self.manifest["adventure"]]) if "adventure" in self.manifest else None
         self.art = (json.loads(self.snapshot[self.manifest["graphics"]]) if "graphics" in self.manifest
@@ -141,6 +142,8 @@ class ProjectDocument:
             files["project.json"] = encoded(self.manifest)
         if 'LIBRARY-SOURCES.json' in files and 'LIBRARY-SOURCES.json' not in self.metadata:
             files['LIBRARY-SOURCES.json'] = encoded([])
+        if 'EDITOR.json' in files and 'EDITOR.json' not in self.metadata:
+            files['EDITOR.json'] = encoded({})
         files.update(self.metadata)
         return files
 

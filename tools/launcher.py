@@ -33,7 +33,7 @@ def create_shortcut():
     # remain portable when the checkout moves; regenerate this shortcut then.
     path=ROOT/'BtechPort.desktop'
     def quote(value):return '"'+str(value).replace('\\','\\\\').replace('"','\\"').replace('$','\\$').replace('`','\\`')+'"'
-    path.write_text('[Desktop Entry]\nType=Application\nName=BtechPort\nComment=Play games, edit projects and browse the Unit Library\n'
+    path.write_text('[Desktop Entry]\nType=Application\nName=BattleTech Construction Kit\nComment=Play games, edit projects and browse the Unit Library\n'
                     +'Exec='+quote('python3')+' '+quote(ROOT/'BtechPort.pyw')+'\nPath='+str(ROOT)+'\n'
                     +'Icon=applications-games\nTerminal=false\nCategories=Game;Development;\n',encoding='utf-8')
     path.chmod(0o755)
@@ -46,9 +46,9 @@ class Launcher:
         self.state_dir.mkdir(parents=True,exist_ok=True)
         self.paths=settings();self.editors=[];self.running=[];self.build_process=None;self.callbacks=set()
         configure_editor_style(window)
-        window.title('BtechPort');window.geometry('780x610');window.minsize(730,570)
+        window.title('BattleTech Construction Kit');window.geometry('780x610');window.minsize(730,570)
         header=ttk.Frame(window,padding=(24,20,24,12));header.pack(fill='x')
-        ttk.Label(header,text='BtechPort',style='Title.TLabel').pack(anchor='w')
+        ttk.Label(header,text='BattleTech Construction Kit',style='Title.TLabel').pack(anchor='w')
         ttk.Label(header,text='Play a game, build your own, or work on the shared Unit Library.',style='Muted.TLabel').pack(anchor='w',pady=(6,0))
         body=ttk.Frame(window,padding=(24,0));body.pack(fill='both',expand=True)
         ttk.Label(body,text='Game or project',style='Section.TLabel').pack(anchor='w')
@@ -82,7 +82,7 @@ class Launcher:
     def guard(self,method):
         try:return method()
         except (EditorError,OSError,ValueError,KeyError,subprocess.SubprocessError) as exc:
-            self.status.set(str(exc));messagebox.showerror('BtechPort',str(exc),parent=self.window)
+            self.status.set(str(exc));messagebox.showerror('BattleTech Construction Kit',str(exc),parent=self.window)
 
     def describe(self):self.description.set(GAMES[self.choice.get()])
 

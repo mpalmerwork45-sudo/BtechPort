@@ -1,5 +1,9 @@
 # BtechPort
 
+The editor and desktop launcher are named **BattleTech Construction Kit**. They
+create and edit game packages for the BtechPort player, including maps, events,
+artwork and the shared Unit Library.
+
 An independent **C11 / SDL2** recreation of **BattleTech: The Crescent Hawk's
 Inception** (1988), targeting the DOS **1.03** release.
 

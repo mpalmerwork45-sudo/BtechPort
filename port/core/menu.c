@@ -28,7 +28,9 @@ unsigned btp_menu_mech_slot(const BtpState *s,unsigned ordinal)
 }
 static unsigned root_item(const BtpState *s,unsigned item)
 {
-    return item+(unsigned)(!btp_menu_mech_count(s) && item>=2);
+    unsigned at=item+(unsigned)(!btp_menu_mech_count(s) && item>=2);
+    /* Authored games add the journal immediately before the overhead map. */
+    return s->event.enabled && at>=7 ? (at==7 ? 8u : 7u) : at;
 }
 unsigned btp_actions_count(const BtpState *s)
 {
@@ -42,7 +44,7 @@ unsigned btp_actions_count(const BtpState *s)
     case BTP_MENU_BROKER_HUB:return 4;
     case BTP_MENU_BROKER_CLASSES:return 5;
     case BTP_MENU_BROKER_SELL:return btp_broker_count(s)+1u;
-    case BTP_MENU_ROOT:return btp_menu_mech_count(s) ? 8u : 7u;
+    case BTP_MENU_ROOT:return (btp_menu_mech_count(s) ? 8u : 7u)+s->event.enabled;
     case BTP_MENU_ALLOCATE:return btp_party_count(&s->party)+1u;
     case BTP_MENU_CREW:return btp_menu_mech_count(s)+1u;
     case BTP_MENU_INSPECT_KIND:return 2;
@@ -64,7 +66,7 @@ unsigned btp_actions_count(const BtpState *s)
 const char *btp_actions_label(const BtpState *s,unsigned item)
 {
     static const char *const root[]={"Return to game","Change game settings","Allocate men in 'Mechs",
-        "Inspect Character","Heal Characters","Load Game","Save Game","Show Overhead Map"};
+        "Inspect Character","Heal Characters","Load Game","Save Game","Show Overhead Map","Objective journal"};
     static const char *const settings[]={"Change movement rate","Set combat speed","Turn Sound Off",
         "Set outtake frequency","Quit game","Cancel"};
     static const char *const steps[]={"One step","Two steps","Four steps"};
@@ -216,6 +218,13 @@ void btp_menu_input(BtpState *s,const BtpResources *r,BtpAction a)
         }
         return;
     }
+    if (c->ui==BTP_MENU_JOURNAL) {
+        unsigned total=btp_journal_count(s,r);if (!total) total=1;
+        if (a==BTP_UP || a==BTP_LEFT) c->member=(uint8_t)((c->member+total-1u)%total);
+        if (a==BTP_DOWN || a==BTP_RIGHT) c->member=(uint8_t)((c->member+1u)%total);
+        if (a==BTP_ACCEPT || a==BTP_CANCEL || a==BTP_OPEN_MENU) btp_menu_close(s);
+        return;
+    }
     unsigned count=btp_actions_count(s);
     if (a==BTP_UP || a==BTP_LEFT) c->selected=(uint8_t)((c->selected+count-1)%count);
     if (a==BTP_DOWN || a==BTP_RIGHT) c->selected=(uint8_t)((c->selected+1)%count);
@@ -242,6 +251,7 @@ void btp_menu_input(BtpState *s,const BtpResources *r,BtpAction a)
             btp_service_heal(s,r,0,1);page(s,BTP_MENU_MESSAGE,0);s->menu.notice=3;break;
         case 5:page(s,BTP_MENU_LOAD,s->menu.slot);break;
         case 6:page(s,BTP_MENU_SAVE,s->menu.slot);break;
+        case 8:c->member=0;page(s,BTP_MENU_JOURNAL,0);break;
         case 7:
             s->menu.map_x=s->story_flags[4] ? c->world_x : (uint16_t)(1536+s->x_half);
             s->menu.map_y=s->story_flags[4] ? c->world_y : (uint16_t)(1536+s->y_half);
@@ -375,7 +385,8 @@ int btp_actions_valid(const BtpState *s)
         m->slot>5 || m->io>2 || m->notice>(s->mode==BTP_ACTIONS && s->campaign.ui==BTP_MENU_MAP ? 15u : s->campaign.ui==BTP_MENU_BROKER_SELL_RESULT ? BTP_BROKER_CREDIT_LIMIT : 5u) || m->quit>1 || m->map_x>2047 || m->map_y>2047 || m->from_intro>1) return 0;
     if (m->from_intro && (s->mode!=BTP_ACTIONS || (s->campaign.ui!=BTP_MENU_LOAD && s->campaign.ui!=BTP_MENU_MESSAGE))) return 0;
     if ((s->mode==BTP_ACTIONS)!=(s->campaign.ui!=0)) return 0;
-    if (s->campaign.ui>BTP_MENU_BROKER_CLASSES || (s->campaign.ui && s->campaign.selected>=btp_actions_count(s))) return 0;
+    if (s->campaign.ui>BTP_MENU_JOURNAL || (s->campaign.ui && s->campaign.selected>=btp_actions_count(s))) return 0;
+    if (s->campaign.ui==BTP_MENU_JOURNAL && (!s->event.enabled || s->campaign.member>=32)) return 0;
     if (m->broker_class>BTP_ROSTER_VEHICLES || (m->broker_class &&
         (s->campaign.ui<BTP_MENU_BROKER || s->campaign.ui>BTP_MENU_BROKER_RESULT))) return 0;
     if (s->campaign.ui==BTP_MENU_MECH && (s->campaign.member>=4 || !s->campaign.owned || btp_party_mech((BtpState *)s,s->campaign.member)[0]==255)) return 0;

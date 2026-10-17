@@ -1558,6 +1558,13 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
     if (s->mode==BTP_ACTIONS && s->campaign.ui==BTP_MENU_MAP) {
         btp_world_preview(r,s,f);return;
     }
+    if (s->mode==BTP_ACTIONS && s->campaign.ui==BTP_MENU_JOURNAL && btp_adventure(r)) {
+        rectangle(f,0,0,320,200,0);border_panel(r,f,0,0,104,200,1);border_panel(r,f,104,0,216,200,0);
+        text(r,f,8,16,"Journal",14);char journal[1024],lines[96][28];btp_journal_text(s,r,s->campaign.member,journal);
+        unsigned n=btp_event_lines(journal,lines);
+        for (unsigned i=0;i<n && i<20;++i) text(r,f,112,8+(int)i*8,lines[i],15);
+        text(r,f,112,176,"Arrows: browse",7);text(r,f,112,184,"Space: return",7);return;
+    }
     if (s->cache.active && s->cache.phase==BTP_CACHE_PHOENIX) {
         /* Native action 45 selects 2858:0000, not the title/sprite palette.
            In particular source 5 stays magenta and source 13 becomes blue. */

@@ -164,6 +164,12 @@ static void actions(Canvas *c,const BtpResources *r,const BtpState *s)
     const BtpCampaignState *v=&s->campaign;char line[96];unsigned indices[256];
     portrait(c,0);
     if (v->ui==BTP_MENU_MAP) { overview(c,r,s);return; }
+    if (v->ui==BTP_MENU_JOURNAL) {
+        char journal[1024],lines[96][28];btp_journal_text(s,r,v->member,journal);
+        unsigned n=btp_event_lines(journal,lines);text(c,100,16,"Objective journal",14);
+        for (unsigned i=0;i<n && i<18;++i) text(c,100,32+(int)i*8,lines[i],15);
+        text(c,100,178,"Arrows: browse  SPACE: back",14);return;
+    }
     if (v->ui==BTP_MENU_INSPECT) {
         const uint8_t *p=s->party.people[v->member];text(c,100,20,person(r,s,v->member),14);
         const char *const labels[]={"Strength","Dexterity","Intelligence","Sidearms","Rifles","Heavy arms","Gunnery","Piloting","Technical","Medical"};

@@ -74,8 +74,7 @@ static void vehicle_exchange(void)
     }
     /* Buy through the real grouped/scrolling menu, then use the same crew
        assignment API as the allocation dialog. No extra test money is needed. */
-    input(BTP_ACCEPT);CHECK(s->campaign.ui==BTP_MENU_BROKER_CLASSES);
-    input(BTP_ACCEPT);CHECK(s->campaign.ui==BTP_MENU_BROKER);
+    input(BTP_DOWN);input(BTP_ACCEPT);CHECK(s->campaign.ui==BTP_MENU_BROKER && s->menu.broker_class==BTP_ROSTER_VEHICLES);
     unsigned attempts=0;
     while(s->menu.map_y!=skulker && attempts++<count)input(BTP_DOWN);
     CHECK(s->menu.map_y==skulker);input(BTP_ACCEPT);input(BTP_UP);input(BTP_ACCEPT);

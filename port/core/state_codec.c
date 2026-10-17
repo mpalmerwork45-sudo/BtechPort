@@ -370,9 +370,9 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         if (result.campaign.invasion>1 || result.campaign.owned>1 || result.campaign.checkpoint_owned>1 ||
             result.campaign.world_x>2047 || result.campaign.world_y>2047 || result.campaign.building>=(version>=42 ? 27u : 26u) ||
             result.campaign.world_clock>=BTP_OUTDOOR_PERIOD || result.campaign.encounter>(version>=48 ? 5u : version>=29 ? 4u : 2u) || result.campaign.mounted>result.campaign.owned ||
-            result.campaign.mech_walk>15 || result.campaign.mech_direction>7 || result.campaign.ui>(version>=46 ? BTP_MENU_BROKER_CLASSES : version>=45 ? BTP_MENU_COMBAT_RULES : version>=42 ? BTP_MENU_BROKER_SELL_RESULT : version>=41 ? BTP_MENU_BROKER_RESULT : version>=30 ? BTP_MENU_MECH_PICK : version>=25 ? BTP_MENU_MECH : version>=23 ? BTP_MENU_RECIPIENT : version>=19 ? BTP_MENU_QUIT : 6) ||
+            result.campaign.mech_walk>15 || result.campaign.mech_direction>7 || result.campaign.ui>(version>=49 ? BTP_MENU_JOURNAL : version>=46 ? BTP_MENU_BROKER_CLASSES : version>=45 ? BTP_MENU_COMBAT_RULES : version>=42 ? BTP_MENU_BROKER_SELL_RESULT : version>=41 ? BTP_MENU_BROKER_RESULT : version>=30 ? BTP_MENU_MECH_PICK : version>=25 ? BTP_MENU_MECH : version>=23 ? BTP_MENU_RECIPIENT : version>=19 ? BTP_MENU_QUIT : 6) ||
             result.campaign.selected>(version>=23 ? 8u : 7u) ||
-            result.campaign.member>(version>=43 && result.campaign.ui>=BTP_MENU_BROKER &&
+            result.campaign.member>(version>=49 && result.campaign.ui==BTP_MENU_JOURNAL ? 31u : version>=43 && result.campaign.ui>=BTP_MENU_BROKER &&
                 result.campaign.ui<=BTP_MENU_BROKER_RESULT ? (version>=47 ? BTP_ROSTER_MAX : BTP_LEGACY_ROSTER_MAX)-1u : 7u) ||
             result.campaign.mech_x>2047 || result.campaign.mech_y>2047) return 0;
     }

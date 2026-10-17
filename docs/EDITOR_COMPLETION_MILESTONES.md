@@ -45,4 +45,7 @@ from **Vehicles** (one scrolling list). Selling accepts either type.
 - **VERIFIED (engine/model):** [service buildings](AUTHORED_SERVICES.md), including
   atomic payment/result branches, templates, saved one-time salvage and target
   validation. The GUI workflow will receive the combined editor smoke check.
-- Event/quest, map/art, animation/unit and delivery stages remain in progress.
+- **VERIFIED (Linux):** [event graph, journal and checkpoints](EVENT_WORKBENCH.md)
+  pass engine/model and real Tk checks. Service/event forms use the same workflow.
+  The editor/launcher display name is **BattleTech Construction Kit**.
+- Map/art, animation/unit and delivery stages remain in progress.

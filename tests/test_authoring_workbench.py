@@ -12,6 +12,8 @@ ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'tools'))
 from editor_model import ProjectDocument,EditorError
 from building_templates import service_building
+from event_workbench import connect,dialogue_branch,edges,editor_commit,editor_data
+from playtest_workbench import make_checkpoint
 TOOL=Path(os.environ.get('BTP_PROJECT_TOOL',ROOT/'build/btp-project'))
 PLAYER=Path(os.environ.get('BTP_HEADLESS',ROOT/'build/btech-headless'))
 
@@ -50,5 +52,31 @@ class AuthoringWorkbenchTests(unittest.TestCase):
         a=copy.deepcopy(self.doc.adventure);e=next(e for e in a['events'] if e['op']=='heal');e['slot']=8
         self.doc.replace_adventure(a)
         with self.assertRaises(EditorError):self.doc.save()
+
+    def test_connected_dialogue_and_layout_undo(self):
+        menu=service_building(self.doc,'Clinic','Clinic',{'heal':20})
+        branch=dialogue_branch(self.doc,menu,'Ask about work','Come back when you need assistance.')
+        connect(self.doc,branch,'next',menu);self.doc.validate()
+        self.assertEqual(dict(edges(next(e for e in self.doc.adventure['events'] if e['id']==branch)))['next'],menu)
+        editor_commit(self.doc,{'event_layout':{menu:[100,200]}});self.doc.undo();self.assertEqual(editor_data(self.doc),{})
+        self.doc.redo();self.doc.save();reopened=ProjectDocument(self.project,TOOL)
+        self.assertEqual(editor_data(reopened)['event_layout'][menu],[100,200])
+
+    def test_objectives_journal_trace_and_snapshot_checkpoint(self):
+        a=copy.deepcopy(self.doc.adventure);active,complete=a['flags'][:2]
+        a['objectives']=[dict(id='beacon:objective',title='Recover the beacon',text='Find and recover the missing beacon.',active=active,complete=complete)]
+        start=a['start']['event'];a['events'].append(dict(id='beacon:activate',op='flag',flag=active,value=1,next=start));a['start']['event']='beacon:activate'
+        self.doc.replace_adventure(a);self.doc.save();settings={'player':str(PLAYER)}
+        first=make_checkpoint(self.doc,settings,self.root/'checkpoints','journal','accept\nmenu\nup\nup\naccept\n')
+        state=json.loads((first/'state.json').read_bytes());self.assertEqual(state['authored_event']['flags'][0],1)
+        trace=[json.loads(line) for line in (first/'events.jsonl').read_text().splitlines()]
+        self.assertEqual(trace[0]['event'],'beacon:activate');self.assertEqual(trace[1]['flags'][active],1)
+        # The saved journal is a real validated continuation, and later edits
+        # cannot silently change its project definitions or flag meanings.
+        self.doc.content['mechs'][0]['name']='A later working revision'
+        second=make_checkpoint(self.doc,settings,self.root/'checkpoints','resume','accept\n',first)
+        self.assertEqual((second/'game/content.json').read_bytes(),(first/'game/content.json').read_bytes())
+        self.assertEqual((second/'events.jsonl').read_text(),'')
+        with self.assertRaises(EditorError):make_checkpoint(self.doc,settings,self.root/'checkpoints','resume','')
 
 if __name__=='__main__':unittest.main()

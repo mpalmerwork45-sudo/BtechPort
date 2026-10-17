@@ -19,6 +19,7 @@ typedef struct { char id[64],name[64];unsigned width,height,base,explore_offset;
 typedef struct { char id[64],name[64];uint16_t cells[64]; } BtpJigsaw;
 typedef struct { char id[64],name[32];uint8_t record[17]; } BtpScenePerson;
 typedef struct { char id[64];unsigned count;uint16_t stock[256]; } BtpSceneShop;
+typedef struct { char id[64],title[49],text[385];unsigned active,complete; } BtpObjective;
 typedef struct { uint8_t x,y,infantry;uint16_t definition; } BtpSceneEnemy;
 typedef struct {
     char id[64];unsigned map,x,y,count;BtpSceneEnemy enemies[12];
@@ -35,7 +36,8 @@ typedef struct {
 } BtpEventNode;
 typedef struct {
     unsigned loaded,map_count,tile_count,person_count,shop_count,battle_count,node_count,flag_count;
-    unsigned version,local_count,jigsaw_count,world_count,explore_cells;
+    unsigned version,local_count,jigsaw_count,world_count,explore_cells,objective_count;
+    BtpObjective objectives[32];
     BtpAuthoredWorld worlds[BTP_WORLDS];
     uint8_t source_digest[32];
     unsigned start_map,start_x,start_y,start_event,credits,party_count;

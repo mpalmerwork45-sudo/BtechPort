@@ -14,6 +14,27 @@
 #include <string.h>
 #include <stdlib.h>
 
+static BtpEventObserver observer;
+static void *observer_context;
+void btp_events_observe(BtpEventObserver callback,void *context) { observer=callback;observer_context=context; }
+unsigned btp_journal_count(const BtpState *s,const BtpResources *r)
+{
+    const BtpAdventure *a=btp_adventure(r);unsigned count=0;
+    if (a) for (unsigned i=0;i<a->objective_count;++i) count+=s->event.flags[a->objectives[i].active] || s->event.flags[a->objectives[i].complete];
+    return count;
+}
+void btp_journal_text(const BtpState *s,const BtpResources *r,unsigned page,char out[1024])
+{
+    const BtpAdventure *a=btp_adventure(r);unsigned count=btp_journal_count(s,r),at=0;
+    strcpy(out,"No objectives discovered.");
+    if (!a || !count) return;
+    for (unsigned i=0;i<a->objective_count;++i) {
+        const BtpObjective *o=&a->objectives[i];
+        if (!s->event.flags[o->active] && !s->event.flags[o->complete]) continue;
+        if (at++==page%count) { snprintf(out,1024,"%u/%u %s. %s. %s",page%count+1u,count,s->event.flags[o->complete] ? "Complete" : "Active",o->title,o->text);return; }
+    }
+}
+
 const BtpAdventure *btp_adventure(const BtpResources *r)
 { return r->project && r->project->adventure.loaded ? &r->project->adventure : NULL; }
 const BtpScene *btp_scene(const BtpResources *r,const BtpState *s)
@@ -94,6 +115,7 @@ static void run(BtpState *s,const BtpResources *r)
     for (unsigned budget=0;budget<64;++budget) {
         const BtpEventNode *e=&a->nodes[v->node];unsigned n=v->node;
         unsigned done=v->done[n/8u]&(1u<<(n%8u)),target=e->next[0];
+        if (observer) observer(observer_context,s,r,e);
         s->mode=BTP_EVENT;
         switch (e->op) {
         case BTP_EVENT_REPAIR:case BTP_EVENT_REARM:case BTP_EVENT_HEAL:case BTP_EVENT_SALVAGE: {
@@ -324,6 +346,7 @@ int btp_events_valid(const BtpState *s,const BtpResources *r)
         (v->people[i]>=a->person_count || a->people[v->people[i]].record[0]!=s->party.people[i][0])) return 0;
     const BtpEventNode *e=&a->nodes[v->node];
     const BtpScene *scene=btp_scene(r,s);
+    if (s->campaign.ui==BTP_MENU_JOURNAL && s->campaign.member>=(btp_journal_count(s,r) ? btp_journal_count(s,r) : 1u)) return 0;
     if (v->planet!=scene->world || v->explore_offset!=scene->explore_offset || v->explore_width!=scene->explore_width || v->explore_height!=scene->explore_height) return 0;
     if (s->map_id!=(v->map<239 ? BTP_AUTHORED_MAP_FIRST+v->map : 255)) return 0;
     if (s->x_half>=2*scene->visual.width || s->y_half>=2*scene->visual.height) return 0;
