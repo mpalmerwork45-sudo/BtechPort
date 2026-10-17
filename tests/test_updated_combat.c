@@ -65,6 +65,11 @@ static void parser(const BtpCombatProfile *expected)
 }
 static void queries(BtpResources *r)
 {
+    static const unsigned footprint[][3]={{106,64,20},{108,64,21},{20,64,21},{64,108,21},{64,20,22},{80,80,21},{48,48,23},{81,79,21}};
+    for (unsigned i=0;i<sizeof footprint/sizeof footprint[0];++i) {
+        BtpCombatUnit a={.x=64,.y=64},b={.x=(uint8_t)footprint[i][0],.y=(uint8_t)footprint[i][1]};
+        CHECK(btp_combat_shot_distance(&a,&b)==footprint[i][2]);
+    }
     /* Independent expected boundaries. Infantry anchors bypass the original
        vehicle footprint; further scenarios exercise that adjustment. */
     static const unsigned distances[]={0,2,5,6,8,9,11,12,14,15,17,18,20,21,23,24,44,45,65,66};
@@ -90,12 +95,39 @@ static void queries(BtpResources *r)
         BtpAttackQuery newq=btp_combat_query(&a,&b,&r->combat,&r->combat_profile,index,0,4,2,0,NULL);CHECK(!memcmp(&old,&newq,sizeof old));
     }
 }
+static void battle_base(BtpState *s,const BtpResources *r)
+{
+    btp_start(s);btp_npc_init(s,&r->map);
+    FILE *f=fopen("tests/fixtures/ordinary-combat.actions","r");CHECK(f);char line[128];
+    while (s->combat.phase!=BTP_COMBAT_MENU && fgets(line,sizeof line,f)) {
+        line[strcspn(line,"\r\n")]=0;BtpAction a;CHECK(btp_action_parse(line,&a));btp_game_tick(s,r,a);
+    }
+    CHECK(!fclose(f));CHECK(s->combat.phase==BTP_COMBAT_MENU);
+}
+static void manual_rules(BtpResources *r)
+{
+    BtpState base,s;battle_base(&base,r);memset(r->map.tiles,64,sizeof r->map.tiles);
+    for (unsigned enhanced=0;enhanced<2;++enhanced) {
+        s=base;s.combat_profile=(uint8_t)enhanced;s.combat_fingerprint=enhanced ? r->combat_profile.fingerprint : 0;
+        BtpCombatState *c=&s.combat;c->unit[0].x=64;c->unit[0].y=64;c->unit[1].x=80;c->unit[1].y=64;
+        c->unit[0].record[51]=26;c->unit[0].record[39]=10;s.mech_skills[0]=0;
+        c->automatic=0;c->auto_run=0;c->graphics=0;s.menu.sound=0;s.menu.speed=0;
+        c->phase=BTP_COMBAT_TARGET;c->weapon_selected=0;c->target_unit=1;c->target_selected=0;
+        if (enhanced) CHECK(btp_save_write("work/lrm/target.btp",&s,r,&error));
+        roundtrip(&s,r);c->phase=BTP_COMBAT_MENU;c->selected=9;
+        memset(c->orders,255,sizeof c->orders);c->orders[0]=(uint8_t)btp_combat_id(c,1);c->kick_target=255;
+        btp_combat_tick(&s,r,BTP_ACCEPT);CHECK(c->phase==BTP_COMBAT_ROUND);
+        for (unsigned tick=0;tick<128 && !c->fired;++tick) btp_game_tick(&s,r,BTP_IDLE);
+        CHECK(c->fired&1u);CHECK(c->shot.needed==(enhanced ? 9 : 4));CHECK(c->unit[0].record[39]==9);
+        roundtrip(&s,r);
+    }
+}
 int main(int argc,char **argv)
 {
     CHECK(argc==2);BtpContent content={0};
     BtpOriginalContentPaths paths={argv[1],"work/talk-data.bin","work/combat-data.bin","work/world-data.bin"};
     CHECK(btp_content_load_original(&content,&paths,&error));
     CHECK(btp_content_select(&content,BTP_CONTENT_UPDATED,"content/updated/roster.json",&error));
-    profiles(content.resources);parser(&content.resources->combat_profile);queries(content.resources);
+    profiles(content.resources);parser(&content.resources->combat_profile);queries(content.resources);manual_rules(content.resources);
     btp_content_close(&content);printf("Updated combat: %u checks passed\n",checks);return 0;
 }

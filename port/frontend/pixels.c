@@ -554,12 +554,12 @@ static void combat_scan_menu(const BtpResources *r,const BtpCombatState *c,uint3
         text(r,f,8,112+(int)i*8,label,i==c->selected ? 0u : 15u);
     }
 }
-static const char *combat_range_name(const BtpResources *r,unsigned weapon,const BtpCombatUnit *actor,const BtpCombatUnit *target)
+static const char *combat_range_name(const BtpResources *r,const BtpCombatProfile *profile,unsigned weapon,const BtpCombatUnit *actor,const BtpCombatUnit *target)
 {
     static const char *const names[]={"Short","Med","Long","OUT"};
-    return names[btp_combat_range_to(&r->combat,weapon,actor,target)];
+    return names[btp_combat_profile_range(&r->combat,profile,weapon,actor,target,NULL)];
 }
-static void combat_target_panel(const BtpResources *r,const BtpCombatState *c,uint32_t *f)
+static void combat_target_panel(const BtpResources *r,const BtpCombatState *c,uint32_t *f,const BtpCombatProfile *profile)
 {
     /* 0D43:07CB keeps the battlefield visible. Target facts occupy the
        upper left box and the three choices replace the command list. */
@@ -575,10 +575,18 @@ static void combat_target_panel(const BtpResources *r,const BtpCombatState *c,ui
     if (heading) (void)wrapped_at(r,f,8,8,11,heading,n,15);
     char name[16];memcpy(name,target->record,15);name[11]=0;
     text(r,f,8,40,"Target:",10);text(r,f,8,48,target->infantry ? "Human" : name,15);
-    text(r,f,8,56,"Range:",10);text(r,f,8,64,combat_range_name(r,c->phase==BTP_COMBAT_KICK ? 32u : type ? type-1u : 33u,actor,target),15);
+    text(r,f,8,56,"Range:",10);text(r,f,8,64,combat_range_name(r,profile,c->phase==BTP_COMBAT_KICK ? 32u : type ? type-1u : 33u,actor,target),15);
     if (target->infantry && target->record[11]<33) {
         memcpy(name,r->combat.weapons[target->record[11]],11);name[11]=0;
         text(r,f,8,72,"Weapon:",10);text(r,f,8,80,name,15);
+    }
+    if (profile && c->phase!=BTP_COMBAT_KICK && type && btp_combat_profile_lrm(type-1u)) {
+        unsigned penalty=0;
+        (void)btp_combat_profile_range(&r->combat,profile,type-1u,actor,target,&penalty);
+        char modifier[16];snprintf(modifier,sizeof modifier,"+%u to hit",penalty);
+        /* The lower command well is eleven columns wide. Keep this separate
+           from the original target/infantry weapon facts above it. */
+        text(r,f,8,144,"LRM close:",10);text(r,f,8,152,modifier,penalty ? 14u : 15u);
     }
     static const char *const choices[]={"Target here","Next enemy","Cancel"};
     for (unsigned i=0;i<3;++i) {
@@ -586,7 +594,7 @@ static void combat_target_panel(const BtpResources *r,const BtpCombatState *c,ui
         text(r,f,8,y,choices[i],i==c->target_selected ? 0u : 15u);
     }
 }
-static void combat_weapons_panel(const BtpResources *r,const BtpCombatState *c,uint32_t *f)
+static void combat_weapons_panel(const BtpResources *r,const BtpCombatState *c,uint32_t *f,const BtpCombatProfile *profile)
 {
     /* 0D43:0004 sizes the bottom window to the installed weapon count.
        Draw after the left frame: this panel overlaps its rightmost four
@@ -614,7 +622,7 @@ static void combat_weapons_panel(const BtpResources *r,const BtpCombatState *c,u
         if (!assigned) { text(r,f,208,y,"None",color);continue; }
         const BtpCombatUnit *unit=&c->unit[target];memcpy(name,unit->record,8);name[8]=0;
         text(r,f,208,y,unit->infantry ? "Human" : name,color);
-        text(r,f,272,y,combat_range_name(r,(type&127u)-1u,actor,unit),color);
+        text(r,f,272,y,combat_range_name(r,profile,(type&127u)-1u,actor,unit),color);
     }
 }
 static int combat_weapon_window(const BtpCombatState *c)
@@ -636,7 +644,7 @@ static void combat_weapon_message(const BtpResources *r,const BtpCombatState *c,
         snprintf(question,sizeof question,"%s%.11s%s%.11s%s%s%s",
             r->dialogue.bytes+r->dialogue.offset[322],r->combat.weapons[actor->record[11]],
             r->dialogue.bytes+r->dialogue.offset[323],target->infantry ? (const char *)r->dialogue.bytes+r->dialogue.offset[324] : (const char *)target->record,
-            r->dialogue.bytes+r->dialogue.offset[325],combat_range_name(r,actor->record[11],actor,target),
+            r->dialogue.bytes+r->dialogue.offset[325],combat_range_name(r,NULL,actor->record[11],actor,target),
             r->dialogue.bytes+r->dialogue.offset[326]);
         message=(const uint8_t *)question;n=strlen(question);
     }
@@ -692,7 +700,7 @@ static void combat_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
         }
         return;
     }
-    if (c->phase==BTP_COMBAT_TARGET || c->phase==BTP_COMBAT_KICK) { combat_target_panel(r,c,f);return; }
+    if (c->phase==BTP_COMBAT_TARGET || c->phase==BTP_COMBAT_KICK) { combat_target_panel(r,c,f,btp_active_combat_profile(s,r));return; }
     combat_header(r,s,f,c->active_unit,0);
     if (c->phase==BTP_COMBAT_ROUND) {
         combat_report_panel(r,s,f);return;
@@ -1988,6 +1996,10 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                 text(r,f,8,y,btp_actions_label(s,i),i==c->selected ? 0u : 15u);
             }
         } else if (c->ui!=BTP_MENU_MAP) {
+            if (c->ui==BTP_MENU_COMBAT_RULES) {
+                const char *description="Enhanced adds smarter tactics and LRM close-range penalties. Old saves begin in Legacy.";
+                (void)wrapped(r,f,8,(const uint8_t *)description,strlen(description),15);
+            }
             unsigned count=btp_actions_count(s);
             int top=(c->ui==BTP_MENU_ROOT || c->ui==BTP_MENU_UPDATED_ROOT) ? 168-8*(int)(count+2u) : 72;
             rectangle(f,104,top,216,8*(int)(count+2u),0);border_panel(r,f,104,top,216,8*(int)(count+2u),0);
@@ -2008,7 +2020,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         aftermath_panel(r,s,f);
     }
     border_panel(r,f,0,0,104,200,1);
-    if (combat_weapon_window(&s->combat) && s->cutscene.active!=2) combat_weapons_panel(r,&s->combat,f);
+    if (combat_weapon_window(&s->combat) && s->cutscene.active!=2) combat_weapons_panel(r,&s->combat,f,btp_active_combat_profile(s,r));
     if (s->mode==BTP_CACHE && s->cache.phase!=BTP_CACHE_WALK && s->cache.phase!=BTP_CACHE_DOOR) {
         uint8_t message[512];size_t n=0;
         rectangle(f,104,0,216,200,0);border_panel(r,f,104,0,216,200,0);

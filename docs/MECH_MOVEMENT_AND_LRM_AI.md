@@ -17,7 +17,12 @@ the pre-change baseline; the delivery record below distinguishes completed work.
   Old saves select Legacy; rule fingerprint mismatches reject transactionally.
   Eight focused native suites pass, including original attacks/AI, roster,
   original saves and the new profile/query tests (`work/lrm-stage1.log`).
-- LRM2–LRM5 remain in progress. New-game defaults are not enabled yet.
+- **LRM2 implemented:** manual, friendly and enemy resolution share the Updated
+  range query; the target panel displays the close-range modifier within its
+  existing border. Independent boundaries, footprint cases, actual manual
+  shots and held saves pass; four focused suites pass (`work/lrm-stage2.log`).
+  The target panel has been visually reviewed. LRM3–LRM5 remain in progress;
+  new-game defaults are not enabled yet.
 
 ## Movement calculations
 

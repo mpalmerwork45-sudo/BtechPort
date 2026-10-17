@@ -642,7 +642,7 @@ static void round_tick(BtpState *s, const BtpResources *r, int enemy_ai)
             BtpCombatUnit *attacker=&c->unit[actor],*enemy=&c->unit[target];
             unsigned w=i==11 ? 32 : btp_combat_weapon(attacker,i);
             if (w>=33 || (i==11 && !btp_combat_can_kick(attacker))) { *order=255;continue; }
-            if (attacker->heat>=30 || btp_combat_range_to(&r->combat,w,attacker,enemy)>=3) continue;
+            if (attacker->heat>=30 || btp_combat_profile_range(&r->combat,btp_active_combat_profile(s,r),w,attacker,enemy,NULL)>=3) continue;
             /* 0E31:1BFE returns visible immediately for E48E and unit 13.
                The arena alarm clears E48E; ordinary shots use the ray. */
             int los=s->campaign.encounter==4 && s->yard.rental && !s->story_flags[35] && btp_combat_id(c,target)==13 ? 1 :
@@ -657,8 +657,8 @@ static void round_tick(BtpState *s, const BtpResources *r, int enemy_ai)
                C614's skill table. Loan opponents commonly alias Jason. */
             if (s->party.enabled && !attacker->infantry && attacker->record[121]<8)
                 skill=s->party.people[attacker->record[121]][i==11 ? 8 : 7];
-            c->shot=btp_combat_attack_unit(attacker,enemy,&r->combat,i,movement==255 ? -1 : movement,c->moved[target],
-                skill,btp_combat_id(c,actor),s->explored,s->npc.rng);
+            c->shot=btp_combat_attack_profile(attacker,enemy,&r->combat,i,movement==255 ? -1 : movement,c->moved[target],
+                skill,btp_combat_id(c,actor),s->explored,s->npc.rng,btp_active_combat_profile(s,r));
             if (ignition && !c->shot.hit) btp_combat_ignite(s,enemy);
             c->last_attacker=(uint8_t)actor;c->last_target=(uint8_t)target;
             c->last_weapon=(uint8_t)i;c->last_event=(uint8_t)(c->shot.hit ? 1 : 2);
@@ -1185,7 +1185,7 @@ int btp_combat_valid(const BtpState *s)
         c->scan_unit>=c->count || c->step>12 || c->delay>21 || c->notice>22 || c->notice_return>BTP_COMBAT_SCAN_CHOICE ||
         c->fled>1 || c->won>1 || c->fled+c->won+c->lost>1 || c->last_weapon>11 || c->last_event>5 || c->fired>=4096 ||
         c->shot.hit>1 || c->shot.location>35 || c->shot.destroyed>1 || c->shot.toppled>1 ||
-        c->shot.needed < -4 || c->shot.needed>30 || (c->enemy_movement>1 && c->enemy_movement!=255) ||
+        c->shot.needed < -4 || c->shot.needed>(s->combat_profile ? 42 : 30) || (c->enemy_movement>1 && c->enemy_movement!=255) ||
         c->flash>3 || (c->flash && (c->phase!=BTP_COMBAT_ROUND || !c->graphics || c->last_event<1 || c->last_event>2))) return 0;
     if ((!c->phase && !c->fled && !c->won && !c->lost) || (c->phase &&
         (((c->fled || c->won || c->lost) && !(c->phase==BTP_COMBAT_STORY && s->late.invasion_end)) ||
