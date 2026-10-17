@@ -1,0 +1,2324 @@
+{
+  "format": "btp-content-v1",
+  "schema_version": 1,
+  "rules": {
+    "id": "chi:updated-lrm-v1",
+    "distance_scale": 3,
+    "minimum_range": 6,
+    "short_range": 7,
+    "medium_range": 14,
+    "long_range": 21
+  },
+  "services": {
+    "broker": {
+      "id": "chi-expanded:broker",
+      "behavior": "chi-broker-v1"
+    },
+    "reload": {
+      "id": "chi-expanded:reload",
+      "behavior": "chi-reload-v1"
+    }
+  },
+  "package_id": "mech-library",
+  "content_version": "1.0.0",
+  "ammunition": [
+    {
+      "id": "mech-library:ammo-1",
+      "price_per_shot": 3
+    },
+    {
+      "id": "mech-library:ammo-2",
+      "price_per_shot": 3
+    },
+    {
+      "id": "mech-library:ammo-3",
+      "price_per_shot": 3
+    },
+    {
+      "id": "mech-library:ammo-4",
+      "price_per_shot": 3
+    },
+    {
+      "id": "mech-library:ammo-5",
+      "price_per_shot": 3
+    },
+    {
+      "id": "mech-library:ammo-6",
+      "price_per_shot": 3
+    },
+    {
+      "id": "mech-library:ammo-7",
+      "price_per_shot": 3
+    },
+    {
+      "id": "mech-library:ammo-8",
+      "price_per_shot": 3
+    },
+    {
+      "id": "mech-library:ammo-9",
+      "price_per_shot": 3
+    },
+    {
+      "id": "mech-library:ammo-10",
+      "price_per_shot": 3
+    },
+    {
+      "id": "mech-library:ammo-11",
+      "price_per_shot": 3
+    }
+  ],
+  "weapons": [
+    {
+      "id": "mech-library:weapon-1",
+      "name": "Medium Laser",
+      "label": "Medium Lase",
+      "behavior": "medium_laser",
+      "ammunition": "none",
+      "damage": 5,
+      "projectiles": 1,
+      "heat": 3,
+      "ranges": {
+        "short": 9,
+        "medium": 18,
+        "long": 27
+      }
+    },
+    {
+      "id": "mech-library:weapon-2",
+      "name": "Machine Gun",
+      "label": "Machine Gun",
+      "behavior": "machine_gun",
+      "ammunition": "mech-library:ammo-1",
+      "damage": 2,
+      "projectiles": 1,
+      "heat": 0,
+      "ranges": {
+        "short": 3,
+        "medium": 6,
+        "long": 9
+      }
+    },
+    {
+      "id": "mech-library:weapon-3",
+      "name": "Small Laser",
+      "label": "Small Laser",
+      "behavior": "small_laser",
+      "ammunition": "none",
+      "damage": 3,
+      "projectiles": 1,
+      "heat": 1,
+      "ranges": {
+        "short": 3,
+        "medium": 6,
+        "long": 9
+      }
+    },
+    {
+      "id": "mech-library:weapon-4",
+      "name": "Flamer",
+      "label": "Flamer",
+      "behavior": "flamer",
+      "ammunition": "none",
+      "damage": 2,
+      "projectiles": 1,
+      "heat": 3,
+      "ranges": {
+        "short": 3,
+        "medium": 6,
+        "long": 9
+      }
+    },
+    {
+      "id": "mech-library:weapon-5",
+      "name": "Lrm5",
+      "label": "Lrm5",
+      "behavior": "lrm5",
+      "ammunition": "mech-library:ammo-2",
+      "damage": 1,
+      "projectiles": 5,
+      "heat": 2,
+      "ranges": {
+        "short": 21,
+        "medium": 42,
+        "long": 63
+      }
+    },
+    {
+      "id": "mech-library:weapon-6",
+      "name": "Lrm10",
+      "label": "Lrm10",
+      "behavior": "lrm10",
+      "ammunition": "mech-library:ammo-3",
+      "damage": 1,
+      "projectiles": 10,
+      "heat": 4,
+      "ranges": {
+        "short": 21,
+        "medium": 42,
+        "long": 63
+      }
+    },
+    {
+      "id": "mech-library:weapon-7",
+      "name": "Large Laser",
+      "label": "Large Laser",
+      "behavior": "large_laser",
+      "ammunition": "none",
+      "damage": 8,
+      "projectiles": 1,
+      "heat": 8,
+      "ranges": {
+        "short": 15,
+        "medium": 30,
+        "long": 45
+      }
+    },
+    {
+      "id": "mech-library:weapon-8",
+      "name": "Srm2",
+      "label": "Srm2",
+      "behavior": "srm2",
+      "ammunition": "mech-library:ammo-4",
+      "damage": 2,
+      "projectiles": 2,
+      "heat": 2,
+      "ranges": {
+        "short": 9,
+        "medium": 18,
+        "long": 27
+      }
+    },
+    {
+      "id": "mech-library:weapon-9",
+      "name": "Ac2",
+      "label": "Ac2",
+      "behavior": "ac2",
+      "ammunition": "mech-library:ammo-5",
+      "damage": 2,
+      "projectiles": 1,
+      "heat": 1,
+      "ranges": {
+        "short": 24,
+        "medium": 48,
+        "long": 72
+      }
+    },
+    {
+      "id": "mech-library:weapon-10",
+      "name": "Ac10",
+      "label": "Ac10",
+      "behavior": "ac10",
+      "ammunition": "mech-library:ammo-6",
+      "damage": 10,
+      "projectiles": 1,
+      "heat": 3,
+      "ranges": {
+        "short": 15,
+        "medium": 30,
+        "long": 45
+      }
+    },
+    {
+      "id": "mech-library:weapon-11",
+      "name": "Srm6",
+      "label": "Srm6",
+      "behavior": "srm6",
+      "ammunition": "mech-library:ammo-7",
+      "damage": 2,
+      "projectiles": 6,
+      "heat": 4,
+      "ranges": {
+        "short": 9,
+        "medium": 18,
+        "long": 27
+      }
+    },
+    {
+      "id": "mech-library:weapon-12",
+      "name": "Srm4",
+      "label": "Srm4",
+      "behavior": "srm4",
+      "ammunition": "mech-library:ammo-8",
+      "damage": 2,
+      "projectiles": 4,
+      "heat": 3,
+      "ranges": {
+        "short": 9,
+        "medium": 18,
+        "long": 27
+      }
+    },
+    {
+      "id": "mech-library:weapon-13",
+      "name": "Ppc",
+      "label": "Ppc",
+      "behavior": "ppc",
+      "ammunition": "none",
+      "damage": 10,
+      "projectiles": 1,
+      "heat": 10,
+      "ranges": {
+        "short": 18,
+        "medium": 36,
+        "long": 54
+      }
+    },
+    {
+      "id": "mech-library:weapon-14",
+      "name": "Ac5",
+      "label": "Ac5",
+      "behavior": "ac5",
+      "ammunition": "mech-library:ammo-9",
+      "damage": 5,
+      "projectiles": 1,
+      "heat": 1,
+      "ranges": {
+        "short": 18,
+        "medium": 36,
+        "long": 54
+      }
+    },
+    {
+      "id": "mech-library:weapon-15",
+      "name": "Lrm15",
+      "label": "Lrm15",
+      "behavior": "lrm15",
+      "ammunition": "mech-library:ammo-10",
+      "damage": 1,
+      "projectiles": 15,
+      "heat": 5,
+      "ranges": {
+        "short": 21,
+        "medium": 42,
+        "long": 63
+      }
+    },
+    {
+      "id": "mech-library:weapon-16",
+      "name": "Ac20",
+      "label": "Ac20",
+      "behavior": "ac20",
+      "ammunition": "mech-library:ammo-11",
+      "damage": 20,
+      "projectiles": 1,
+      "heat": 7,
+      "ranges": {
+        "short": 9,
+        "medium": 18,
+        "long": 27
+      }
+    }
+  ],
+  "mechs": [
+    {
+      "id": "mech-library:flea-fle-15",
+      "name": "Flea FLE-15",
+      "label": "Flea",
+      "mass_tons": 20,
+      "price": 10500,
+      "presentation": "chi:locust",
+      "movement": {
+        "walk": 6,
+        "jump": 0
+      },
+      "engine_heat_sinks": 4,
+      "armor": {
+        "left_arm": 4,
+        "left_torso": 5,
+        "left_leg": 4,
+        "head": 5,
+        "center_torso": 8,
+        "right_arm": 4,
+        "right_torso": 5,
+        "right_leg": 4,
+        "left_rear": 3,
+        "center_rear": 3,
+        "right_rear": 3
+      },
+      "structure": {
+        "left_arm": 3,
+        "left_torso": 5,
+        "left_leg": 4,
+        "head": 3,
+        "center_torso": 6,
+        "right_arm": 3,
+        "right_torso": 5,
+        "right_leg": 4
+      },
+      "actuators": {
+        "left_arm": 12,
+        "right_arm": 12,
+        "left_leg": 15,
+        "right_leg": 15
+      },
+      "external_heat_sinks": {
+        "left_arm": 0,
+        "left_torso": 2,
+        "left_leg": 1,
+        "head": 0,
+        "center_torso": 0,
+        "right_arm": 0,
+        "right_torso": 2,
+        "right_leg": 1
+      },
+      "loadout": [
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "left_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-2",
+          "location": "left_arm",
+          "ammunition": 100
+        },
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "right_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-2",
+          "location": "right_arm",
+          "ammunition": 100
+        },
+        {
+          "weapon": "mech-library:weapon-3",
+          "location": "left_torso",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-3",
+          "location": "right_torso",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-4",
+          "location": "center_torso",
+          "ammunition": 0
+        }
+      ]
+    },
+    {
+      "id": "mech-library:spider-sdr-5v",
+      "name": "Spider SDR-5V",
+      "label": "Spider",
+      "mass_tons": 30,
+      "price": 11500,
+      "presentation": "chi:red-stinger",
+      "movement": {
+        "walk": 8,
+        "jump": 8
+      },
+      "engine_heat_sinks": 9,
+      "armor": {
+        "left_arm": 5,
+        "left_torso": 6,
+        "left_leg": 6,
+        "head": 6,
+        "center_torso": 8,
+        "right_arm": 5,
+        "right_torso": 6,
+        "right_leg": 6,
+        "left_rear": 2,
+        "center_rear": 4,
+        "right_rear": 2
+      },
+      "structure": {
+        "left_arm": 5,
+        "left_torso": 7,
+        "left_leg": 7,
+        "head": 3,
+        "center_torso": 10,
+        "right_arm": 5,
+        "right_torso": 7,
+        "right_leg": 7
+      },
+      "actuators": {
+        "left_arm": 15,
+        "right_arm": 15,
+        "left_leg": 15,
+        "right_leg": 15
+      },
+      "external_heat_sinks": {
+        "left_arm": 0,
+        "left_torso": 0,
+        "left_leg": 0,
+        "head": 1,
+        "center_torso": 0,
+        "right_arm": 0,
+        "right_torso": 0,
+        "right_leg": 0
+      },
+      "loadout": [
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "center_torso",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "center_torso",
+          "ammunition": 0
+        }
+      ]
+    },
+    {
+      "id": "mech-library:firestarter-fs9-h",
+      "name": "Firestarter FS9-H",
+      "label": "Firestarter",
+      "mass_tons": 35,
+      "price": 16250,
+      "presentation": "chi:red-stinger",
+      "movement": {
+        "walk": 6,
+        "jump": 6
+      },
+      "engine_heat_sinks": 8,
+      "armor": {
+        "left_arm": 6,
+        "left_torso": 11,
+        "left_leg": 8,
+        "head": 9,
+        "center_torso": 13,
+        "right_arm": 6,
+        "right_torso": 11,
+        "right_leg": 8,
+        "left_rear": 5,
+        "center_rear": 6,
+        "right_rear": 5
+      },
+      "structure": {
+        "left_arm": 6,
+        "left_torso": 8,
+        "left_leg": 8,
+        "head": 3,
+        "center_torso": 11,
+        "right_arm": 6,
+        "right_torso": 8,
+        "right_leg": 8
+      },
+      "actuators": {
+        "left_arm": 14,
+        "right_arm": 14,
+        "left_leg": 15,
+        "right_leg": 15
+      },
+      "external_heat_sinks": {
+        "left_arm": 0,
+        "left_torso": 0,
+        "left_leg": 1,
+        "head": 0,
+        "center_torso": 0,
+        "right_arm": 0,
+        "right_torso": 0,
+        "right_leg": 1
+      },
+      "loadout": [
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "left_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-4",
+          "location": "left_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "right_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-4",
+          "location": "right_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-2",
+          "location": "left_torso",
+          "ammunition": 100
+        },
+        {
+          "weapon": "mech-library:weapon-2",
+          "location": "right_torso",
+          "ammunition": 100
+        },
+        {
+          "weapon": "mech-library:weapon-4",
+          "location": "center_torso",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-4",
+          "location": "center_torso",
+          "ammunition": 0
+        }
+      ]
+    },
+    {
+      "id": "mech-library:firefly-ffl-4a",
+      "name": "Firefly FFL-4A",
+      "label": "Firefly",
+      "mass_tons": 30,
+      "price": 14500,
+      "presentation": "chi:locust",
+      "movement": {
+        "walk": 5,
+        "jump": 4
+      },
+      "engine_heat_sinks": 6,
+      "armor": {
+        "left_arm": 10,
+        "left_torso": 11,
+        "left_leg": 14,
+        "head": 8,
+        "center_torso": 15,
+        "right_arm": 10,
+        "right_torso": 11,
+        "right_leg": 14,
+        "left_rear": 3,
+        "center_rear": 5,
+        "right_rear": 3
+      },
+      "structure": {
+        "left_arm": 5,
+        "left_torso": 7,
+        "left_leg": 7,
+        "head": 3,
+        "center_torso": 10,
+        "right_arm": 5,
+        "right_torso": 7,
+        "right_leg": 7
+      },
+      "actuators": {
+        "left_arm": 12,
+        "right_arm": 12,
+        "left_leg": 15,
+        "right_leg": 15
+      },
+      "external_heat_sinks": {
+        "left_arm": 0,
+        "left_torso": 2,
+        "left_leg": 0,
+        "head": 0,
+        "center_torso": 0,
+        "right_arm": 0,
+        "right_torso": 2,
+        "right_leg": 0
+      },
+      "loadout": [
+        {
+          "weapon": "mech-library:weapon-3",
+          "location": "left_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-3",
+          "location": "right_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "left_torso",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-3",
+          "location": "left_torso",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "right_torso",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-5",
+          "location": "right_torso",
+          "ammunition": 24
+        },
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "center_torso",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-3",
+          "location": "center_torso",
+          "ammunition": 0
+        }
+      ]
+    },
+    {
+      "id": "mech-library:valkyrie-vlk-qa",
+      "name": "Valkyrie VLK-QA",
+      "label": "Valkyrie",
+      "mass_tons": 30,
+      "price": 11500,
+      "presentation": "chi:red-stinger",
+      "movement": {
+        "walk": 5,
+        "jump": 5
+      },
+      "engine_heat_sinks": 6,
+      "armor": {
+        "left_arm": 9,
+        "left_torso": 12,
+        "left_leg": 12,
+        "head": 8,
+        "center_torso": 14,
+        "right_arm": 9,
+        "right_torso": 12,
+        "right_leg": 12,
+        "left_rear": 2,
+        "center_rear": 4,
+        "right_rear": 2
+      },
+      "structure": {
+        "left_arm": 5,
+        "left_torso": 7,
+        "left_leg": 7,
+        "head": 3,
+        "center_torso": 10,
+        "right_arm": 5,
+        "right_torso": 7,
+        "right_leg": 7
+      },
+      "actuators": {
+        "left_arm": 15,
+        "right_arm": 14,
+        "left_leg": 15,
+        "right_leg": 15
+      },
+      "external_heat_sinks": {
+        "left_arm": 0,
+        "left_torso": 2,
+        "left_leg": 0,
+        "head": 0,
+        "center_torso": 1,
+        "right_arm": 0,
+        "right_torso": 2,
+        "right_leg": 0
+      },
+      "loadout": [
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "right_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-6",
+          "location": "left_torso",
+          "ammunition": 12
+        }
+      ]
+    },
+    {
+      "id": "mech-library:wolfhound-wlf-1",
+      "name": "Wolfhound WLF-1",
+      "label": "Wolfhound",
+      "mass_tons": 35,
+      "price": 14750,
+      "presentation": "chi:red-stinger",
+      "movement": {
+        "walk": 6,
+        "jump": 0
+      },
+      "engine_heat_sinks": 8,
+      "armor": {
+        "left_arm": 12,
+        "left_torso": 11,
+        "left_leg": 16,
+        "head": 9,
+        "center_torso": 16,
+        "right_arm": 12,
+        "right_torso": 11,
+        "right_leg": 16,
+        "left_rear": 5,
+        "center_rear": 6,
+        "right_rear": 5
+      },
+      "structure": {
+        "left_arm": 6,
+        "left_torso": 8,
+        "left_leg": 8,
+        "head": 3,
+        "center_torso": 11,
+        "right_arm": 6,
+        "right_torso": 8,
+        "right_leg": 8
+      },
+      "actuators": {
+        "left_arm": 15,
+        "right_arm": 14,
+        "left_leg": 15,
+        "right_leg": 15
+      },
+      "external_heat_sinks": {
+        "left_arm": 0,
+        "left_torso": 0,
+        "left_leg": 1,
+        "head": 0,
+        "center_torso": 0,
+        "right_arm": 0,
+        "right_torso": 0,
+        "right_leg": 1
+      },
+      "loadout": [
+        {
+          "weapon": "mech-library:weapon-7",
+          "location": "right_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "left_torso",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "right_torso",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "center_torso",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "center_torso",
+          "ammunition": 0
+        }
+      ]
+    },
+    {
+      "id": "mech-library:assassin-asn-21",
+      "name": "Assassin ASN-21",
+      "label": "Assassin",
+      "mass_tons": 40,
+      "price": 15500,
+      "presentation": "chi:red-stinger",
+      "movement": {
+        "walk": 7,
+        "jump": 7
+      },
+      "engine_heat_sinks": 10,
+      "armor": {
+        "left_arm": 6,
+        "left_torso": 10,
+        "left_leg": 6,
+        "head": 8,
+        "center_torso": 12,
+        "right_arm": 6,
+        "right_torso": 10,
+        "right_leg": 6,
+        "left_rear": 2,
+        "center_rear": 4,
+        "right_rear": 2
+      },
+      "structure": {
+        "left_arm": 6,
+        "left_torso": 10,
+        "left_leg": 10,
+        "head": 3,
+        "center_torso": 12,
+        "right_arm": 6,
+        "right_torso": 10,
+        "right_leg": 10
+      },
+      "actuators": {
+        "left_arm": 15,
+        "right_arm": 14,
+        "left_leg": 15,
+        "right_leg": 15
+      },
+      "external_heat_sinks": {
+        "left_arm": 0,
+        "left_torso": 0,
+        "left_leg": 0,
+        "head": 0,
+        "center_torso": 0,
+        "right_arm": 0,
+        "right_torso": 0,
+        "right_leg": 0
+      },
+      "loadout": [
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "right_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-8",
+          "location": "left_torso",
+          "ammunition": 50
+        },
+        {
+          "weapon": "mech-library:weapon-5",
+          "location": "right_torso",
+          "ammunition": 24
+        }
+      ]
+    },
+    {
+      "id": "mech-library:vulcan-vl-2t",
+      "name": "Vulcan VL-2T",
+      "label": "Vulcan",
+      "mass_tons": 40,
+      "price": 16000,
+      "presentation": "chi:red-stinger",
+      "movement": {
+        "walk": 6,
+        "jump": 6
+      },
+      "engine_heat_sinks": 9,
+      "armor": {
+        "left_arm": 6,
+        "left_torso": 8,
+        "left_leg": 10,
+        "head": 8,
+        "center_torso": 10,
+        "right_arm": 6,
+        "right_torso": 8,
+        "right_leg": 10,
+        "left_rear": 4,
+        "center_rear": 6,
+        "right_rear": 4
+      },
+      "structure": {
+        "left_arm": 6,
+        "left_torso": 10,
+        "left_leg": 10,
+        "head": 3,
+        "center_torso": 12,
+        "right_arm": 6,
+        "right_torso": 10,
+        "right_leg": 10
+      },
+      "actuators": {
+        "left_arm": 14,
+        "right_arm": 14,
+        "left_leg": 15,
+        "right_leg": 15
+      },
+      "external_heat_sinks": {
+        "left_arm": 0,
+        "left_torso": 0,
+        "left_leg": 0,
+        "head": 0,
+        "center_torso": 0,
+        "right_arm": 0,
+        "right_torso": 1,
+        "right_leg": 0
+      },
+      "loadout": [
+        {
+          "weapon": "mech-library:weapon-2",
+          "location": "left_arm",
+          "ammunition": 200
+        },
+        {
+          "weapon": "mech-library:weapon-4",
+          "location": "right_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "left_torso",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-9",
+          "location": "right_torso",
+          "ammunition": 45
+        }
+      ]
+    },
+    {
+      "id": "mech-library:enforcer-enf-4r",
+      "name": "Enforcer ENF-4R",
+      "label": "Enforcer",
+      "mass_tons": 50,
+      "price": 19000,
+      "presentation": "chi:red-stinger",
+      "movement": {
+        "walk": 4,
+        "jump": 4
+      },
+      "engine_heat_sinks": 8,
+      "armor": {
+        "left_arm": 14,
+        "left_torso": 17,
+        "left_leg": 20,
+        "head": 9,
+        "center_torso": 23,
+        "right_arm": 14,
+        "right_torso": 17,
+        "right_leg": 20,
+        "left_rear": 3,
+        "center_rear": 4,
+        "right_rear": 3
+      },
+      "structure": {
+        "left_arm": 8,
+        "left_torso": 12,
+        "left_leg": 12,
+        "head": 3,
+        "center_torso": 16,
+        "right_arm": 8,
+        "right_torso": 12,
+        "right_leg": 12
+      },
+      "actuators": {
+        "left_arm": 14,
+        "right_arm": 14,
+        "left_leg": 15,
+        "right_leg": 15
+      },
+      "external_heat_sinks": {
+        "left_arm": 0,
+        "left_torso": 2,
+        "left_leg": 0,
+        "head": 0,
+        "center_torso": 0,
+        "right_arm": 0,
+        "right_torso": 2,
+        "right_leg": 0
+      },
+      "loadout": [
+        {
+          "weapon": "mech-library:weapon-7",
+          "location": "left_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-10",
+          "location": "right_arm",
+          "ammunition": 10
+        },
+        {
+          "weapon": "mech-library:weapon-3",
+          "location": "left_torso",
+          "ammunition": 0
+        }
+      ]
+    },
+    {
+      "id": "mech-library:dervish-dv-6m",
+      "name": "Dervish DV-6M",
+      "label": "Dervish",
+      "mass_tons": 55,
+      "price": 22250,
+      "presentation": "chi:red-stinger",
+      "movement": {
+        "walk": 5,
+        "jump": 5
+      },
+      "engine_heat_sinks": 10,
+      "armor": {
+        "left_arm": 10,
+        "left_torso": 15,
+        "left_leg": 15,
+        "head": 8,
+        "center_torso": 20,
+        "right_arm": 10,
+        "right_torso": 15,
+        "right_leg": 15,
+        "left_rear": 4,
+        "center_rear": 4,
+        "right_rear": 4
+      },
+      "structure": {
+        "left_arm": 9,
+        "left_torso": 13,
+        "left_leg": 13,
+        "head": 3,
+        "center_torso": 18,
+        "right_arm": 9,
+        "right_torso": 13,
+        "right_leg": 13
+      },
+      "actuators": {
+        "left_arm": 14,
+        "right_arm": 14,
+        "left_leg": 15,
+        "right_leg": 15
+      },
+      "external_heat_sinks": {
+        "left_arm": 0,
+        "left_torso": 0,
+        "left_leg": 0,
+        "head": 0,
+        "center_torso": 0,
+        "right_arm": 0,
+        "right_torso": 0,
+        "right_leg": 0
+      },
+      "loadout": [
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "left_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-8",
+          "location": "left_arm",
+          "ammunition": 50
+        },
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "right_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-8",
+          "location": "right_arm",
+          "ammunition": 50
+        },
+        {
+          "weapon": "mech-library:weapon-6",
+          "location": "left_torso",
+          "ammunition": 12
+        },
+        {
+          "weapon": "mech-library:weapon-6",
+          "location": "right_torso",
+          "ammunition": 12
+        }
+      ]
+    },
+    {
+      "id": "mech-library:kintaro-kto-18",
+      "name": "Kintaro KTO-18",
+      "label": "Kintaro",
+      "mass_tons": 55,
+      "price": 22250,
+      "presentation": "chi:red-stinger",
+      "movement": {
+        "walk": 5,
+        "jump": 0
+      },
+      "engine_heat_sinks": 10,
+      "armor": {
+        "left_arm": 18,
+        "left_torso": 18,
+        "left_leg": 23,
+        "head": 9,
+        "center_torso": 26,
+        "right_arm": 18,
+        "right_torso": 18,
+        "right_leg": 23,
+        "left_rear": 7,
+        "center_rear": 9,
+        "right_rear": 7
+      },
+      "structure": {
+        "left_arm": 9,
+        "left_torso": 13,
+        "left_leg": 13,
+        "head": 3,
+        "center_torso": 18,
+        "right_arm": 9,
+        "right_torso": 13,
+        "right_leg": 13
+      },
+      "actuators": {
+        "left_arm": 15,
+        "right_arm": 15,
+        "left_leg": 15,
+        "right_leg": 15
+      },
+      "external_heat_sinks": {
+        "left_arm": 0,
+        "left_torso": 0,
+        "left_leg": 0,
+        "head": 0,
+        "center_torso": 0,
+        "right_arm": 0,
+        "right_torso": 0,
+        "right_leg": 0
+      },
+      "loadout": [
+        {
+          "weapon": "mech-library:weapon-11",
+          "location": "left_arm",
+          "ammunition": 15
+        },
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "left_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-5",
+          "location": "left_arm",
+          "ammunition": 24
+        },
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "right_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-11",
+          "location": "right_torso",
+          "ammunition": 15
+        },
+        {
+          "weapon": "mech-library:weapon-11",
+          "location": "center_torso",
+          "ammunition": 15
+        }
+      ]
+    },
+    {
+      "id": "mech-library:quickdraw-qkd-4g",
+      "name": "Quickdraw QKD-4G",
+      "label": "Quickdraw",
+      "mass_tons": 60,
+      "price": 24000,
+      "presentation": "chi:red-stinger",
+      "movement": {
+        "walk": 5,
+        "jump": 5
+      },
+      "engine_heat_sinks": 12,
+      "armor": {
+        "left_arm": 11,
+        "left_torso": 14,
+        "left_leg": 15,
+        "head": 9,
+        "center_torso": 17,
+        "right_arm": 11,
+        "right_torso": 14,
+        "right_leg": 15,
+        "left_rear": 7,
+        "center_rear": 8,
+        "right_rear": 7
+      },
+      "structure": {
+        "left_arm": 10,
+        "left_torso": 14,
+        "left_leg": 14,
+        "head": 3,
+        "center_torso": 20,
+        "right_arm": 10,
+        "right_torso": 14,
+        "right_leg": 14
+      },
+      "actuators": {
+        "left_arm": 15,
+        "right_arm": 15,
+        "left_leg": 15,
+        "right_leg": 15
+      },
+      "external_heat_sinks": {
+        "left_arm": 0,
+        "left_torso": 0,
+        "left_leg": 0,
+        "head": 1,
+        "center_torso": 0,
+        "right_arm": 0,
+        "right_torso": 0,
+        "right_leg": 0
+      },
+      "loadout": [
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "left_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "right_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-6",
+          "location": "left_torso",
+          "ammunition": 12
+        },
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "right_torso",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "right_torso",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-12",
+          "location": "center_torso",
+          "ammunition": 25
+        }
+      ]
+    },
+    {
+      "id": "mech-library:cataphract-ctf-1x",
+      "name": "Cataphract CTF-1X",
+      "label": "Cataphract",
+      "mass_tons": 70,
+      "price": 27500,
+      "presentation": "chi:locust",
+      "movement": {
+        "walk": 4,
+        "jump": 0
+      },
+      "engine_heat_sinks": 11,
+      "armor": {
+        "left_arm": 22,
+        "left_torso": 16,
+        "left_leg": 22,
+        "head": 9,
+        "center_torso": 26,
+        "right_arm": 22,
+        "right_torso": 16,
+        "right_leg": 22,
+        "left_rear": 6,
+        "center_rear": 9,
+        "right_rear": 6
+      },
+      "structure": {
+        "left_arm": 11,
+        "left_torso": 15,
+        "left_leg": 15,
+        "head": 3,
+        "center_torso": 22,
+        "right_arm": 11,
+        "right_torso": 15,
+        "right_leg": 15
+      },
+      "actuators": {
+        "left_arm": 15,
+        "right_arm": 14,
+        "left_leg": 15,
+        "right_leg": 15
+      },
+      "external_heat_sinks": {
+        "left_arm": 0,
+        "left_torso": 0,
+        "left_leg": 2,
+        "head": 1,
+        "center_torso": 0,
+        "right_arm": 0,
+        "right_torso": 0,
+        "right_leg": 2
+      },
+      "loadout": [
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "left_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-13",
+          "location": "right_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "right_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "left_torso",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-10",
+          "location": "right_torso",
+          "ammunition": 10
+        },
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "right_torso",
+          "ammunition": 0
+        }
+      ]
+    },
+    {
+      "id": "mech-library:jagermech-jm6-s",
+      "name": "JagerMech JM6-S",
+      "label": "JagerMech",
+      "mass_tons": 65,
+      "price": 25750,
+      "presentation": "chi:red-stinger",
+      "movement": {
+        "walk": 4,
+        "jump": 0
+      },
+      "engine_heat_sinks": 10,
+      "armor": {
+        "left_arm": 6,
+        "left_torso": 13,
+        "left_leg": 11,
+        "head": 9,
+        "center_torso": 16,
+        "right_arm": 6,
+        "right_torso": 13,
+        "right_leg": 11,
+        "left_rear": 3,
+        "center_rear": 5,
+        "right_rear": 3
+      },
+      "structure": {
+        "left_arm": 10,
+        "left_torso": 15,
+        "left_leg": 15,
+        "head": 3,
+        "center_torso": 21,
+        "right_arm": 10,
+        "right_torso": 15,
+        "right_leg": 15
+      },
+      "actuators": {
+        "left_arm": 12,
+        "right_arm": 12,
+        "left_leg": 15,
+        "right_leg": 15
+      },
+      "external_heat_sinks": {
+        "left_arm": 0,
+        "left_torso": 0,
+        "left_leg": 0,
+        "head": 0,
+        "center_torso": 0,
+        "right_arm": 0,
+        "right_torso": 0,
+        "right_leg": 0
+      },
+      "loadout": [
+        {
+          "weapon": "mech-library:weapon-14",
+          "location": "left_arm",
+          "ammunition": 20
+        },
+        {
+          "weapon": "mech-library:weapon-9",
+          "location": "left_arm",
+          "ammunition": 23
+        },
+        {
+          "weapon": "mech-library:weapon-14",
+          "location": "right_arm",
+          "ammunition": 20
+        },
+        {
+          "weapon": "mech-library:weapon-9",
+          "location": "right_arm",
+          "ammunition": 22
+        },
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "left_torso",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "right_torso",
+          "ammunition": 0
+        }
+      ]
+    },
+    {
+      "id": "mech-library:guillotine-glt-4l",
+      "name": "Guillotine GLT-4L",
+      "label": "Guillotine",
+      "mass_tons": 70,
+      "price": 27500,
+      "presentation": "chi:red-stinger",
+      "movement": {
+        "walk": 4,
+        "jump": 4
+      },
+      "engine_heat_sinks": 11,
+      "armor": {
+        "left_arm": 20,
+        "left_torso": 22,
+        "left_leg": 22,
+        "head": 9,
+        "center_torso": 27,
+        "right_arm": 20,
+        "right_torso": 22,
+        "right_leg": 22,
+        "left_rear": 8,
+        "center_rear": 12,
+        "right_rear": 8
+      },
+      "structure": {
+        "left_arm": 11,
+        "left_torso": 15,
+        "left_leg": 15,
+        "head": 3,
+        "center_torso": 22,
+        "right_arm": 11,
+        "right_torso": 15,
+        "right_leg": 15
+      },
+      "actuators": {
+        "left_arm": 12,
+        "right_arm": 14,
+        "left_leg": 15,
+        "right_leg": 15
+      },
+      "external_heat_sinks": {
+        "left_arm": 0,
+        "left_torso": 5,
+        "left_leg": 1,
+        "head": 0,
+        "center_torso": 0,
+        "right_arm": 0,
+        "right_torso": 4,
+        "right_leg": 1
+      },
+      "loadout": [
+        {
+          "weapon": "mech-library:weapon-7",
+          "location": "left_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "right_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "right_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "left_torso",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "right_torso",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-11",
+          "location": "center_torso",
+          "ammunition": 15
+        }
+      ]
+    },
+    {
+      "id": "mech-library:black-knight-bl-7-knt",
+      "name": "Black Knight BL-7-KNT",
+      "label": "Black Knight",
+      "mass_tons": 75,
+      "price": 30250,
+      "presentation": "chi:red-stinger",
+      "movement": {
+        "walk": 4,
+        "jump": 0
+      },
+      "engine_heat_sinks": 12,
+      "armor": {
+        "left_arm": 20,
+        "left_torso": 20,
+        "left_leg": 20,
+        "head": 9,
+        "center_torso": 25,
+        "right_arm": 20,
+        "right_torso": 20,
+        "right_leg": 20,
+        "left_rear": 7,
+        "center_rear": 8,
+        "right_rear": 7
+      },
+      "structure": {
+        "left_arm": 12,
+        "left_torso": 16,
+        "left_leg": 16,
+        "head": 3,
+        "center_torso": 23,
+        "right_arm": 12,
+        "right_torso": 16,
+        "right_leg": 16
+      },
+      "actuators": {
+        "left_arm": 15,
+        "right_arm": 15,
+        "left_leg": 15,
+        "right_leg": 15
+      },
+      "external_heat_sinks": {
+        "left_arm": 0,
+        "left_torso": 2,
+        "left_leg": 2,
+        "head": 0,
+        "center_torso": 0,
+        "right_arm": 0,
+        "right_torso": 2,
+        "right_leg": 2
+      },
+      "loadout": [
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "left_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-13",
+          "location": "right_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "right_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-7",
+          "location": "left_torso",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "left_torso",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-7",
+          "location": "right_torso",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "right_torso",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-3",
+          "location": "head",
+          "ammunition": 0
+        }
+      ]
+    },
+    {
+      "id": "mech-library:orion-on1-k",
+      "name": "Orion ON1-K",
+      "label": "Orion",
+      "mass_tons": 75,
+      "price": 28750,
+      "presentation": "chi:red-stinger",
+      "movement": {
+        "walk": 4,
+        "jump": 0
+      },
+      "engine_heat_sinks": 10,
+      "armor": {
+        "left_arm": 24,
+        "left_torso": 22,
+        "left_leg": 32,
+        "head": 9,
+        "center_torso": 36,
+        "right_arm": 24,
+        "right_torso": 22,
+        "right_leg": 32,
+        "left_rear": 10,
+        "center_rear": 10,
+        "right_rear": 10
+      },
+      "structure": {
+        "left_arm": 12,
+        "left_torso": 16,
+        "left_leg": 16,
+        "head": 3,
+        "center_torso": 23,
+        "right_arm": 12,
+        "right_torso": 16,
+        "right_leg": 16
+      },
+      "actuators": {
+        "left_arm": 14,
+        "right_arm": 14,
+        "left_leg": 15,
+        "right_leg": 15
+      },
+      "external_heat_sinks": {
+        "left_arm": 0,
+        "left_torso": 0,
+        "left_leg": 0,
+        "head": 0,
+        "center_torso": 0,
+        "right_arm": 0,
+        "right_torso": 0,
+        "right_leg": 0
+      },
+      "loadout": [
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "left_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "right_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-15",
+          "location": "left_torso",
+          "ammunition": 16
+        },
+        {
+          "weapon": "mech-library:weapon-12",
+          "location": "left_torso",
+          "ammunition": 25
+        },
+        {
+          "weapon": "mech-library:weapon-10",
+          "location": "right_torso",
+          "ammunition": 20
+        }
+      ]
+    },
+    {
+      "id": "mech-library:awesome-aws-8q",
+      "name": "Awesome AWS-8Q",
+      "label": "Awesome",
+      "mass_tons": 80,
+      "price": 30000,
+      "presentation": "chi:red-stinger",
+      "movement": {
+        "walk": 3,
+        "jump": 0
+      },
+      "engine_heat_sinks": 9,
+      "armor": {
+        "left_arm": 24,
+        "left_torso": 24,
+        "left_leg": 33,
+        "head": 9,
+        "center_torso": 30,
+        "right_arm": 24,
+        "right_torso": 24,
+        "right_leg": 33,
+        "left_rear": 10,
+        "center_rear": 19,
+        "right_rear": 10
+      },
+      "structure": {
+        "left_arm": 13,
+        "left_torso": 17,
+        "left_leg": 17,
+        "head": 3,
+        "center_torso": 25,
+        "right_arm": 13,
+        "right_torso": 17,
+        "right_leg": 17
+      },
+      "actuators": {
+        "left_arm": 15,
+        "right_arm": 14,
+        "left_leg": 15,
+        "right_leg": 15
+      },
+      "external_heat_sinks": {
+        "left_arm": 0,
+        "left_torso": 5,
+        "left_leg": 2,
+        "head": 0,
+        "center_torso": 2,
+        "right_arm": 5,
+        "right_torso": 3,
+        "right_leg": 2
+      },
+      "loadout": [
+        {
+          "weapon": "mech-library:weapon-13",
+          "location": "right_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-13",
+          "location": "left_torso",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-13",
+          "location": "right_torso",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-3",
+          "location": "head",
+          "ammunition": 0
+        }
+      ]
+    },
+    {
+      "id": "mech-library:victor-vtr-9b",
+      "name": "Victor VTR-9B",
+      "label": "Victor",
+      "mass_tons": 80,
+      "price": 30000,
+      "presentation": "chi:red-stinger",
+      "movement": {
+        "walk": 4,
+        "jump": 4
+      },
+      "engine_heat_sinks": 12,
+      "armor": {
+        "left_arm": 15,
+        "left_torso": 20,
+        "left_leg": 20,
+        "head": 9,
+        "center_torso": 30,
+        "right_arm": 15,
+        "right_torso": 20,
+        "right_leg": 20,
+        "left_rear": 10,
+        "center_rear": 15,
+        "right_rear": 10
+      },
+      "structure": {
+        "left_arm": 13,
+        "left_torso": 17,
+        "left_leg": 17,
+        "head": 3,
+        "center_torso": 25,
+        "right_arm": 13,
+        "right_torso": 17,
+        "right_leg": 17
+      },
+      "actuators": {
+        "left_arm": 15,
+        "right_arm": 12,
+        "left_leg": 15,
+        "right_leg": 15
+      },
+      "external_heat_sinks": {
+        "left_arm": 0,
+        "left_torso": 0,
+        "left_leg": 1,
+        "head": 0,
+        "center_torso": 0,
+        "right_arm": 0,
+        "right_torso": 1,
+        "right_leg": 1
+      },
+      "loadout": [
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "left_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "left_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-16",
+          "location": "right_arm",
+          "ammunition": 15
+        },
+        {
+          "weapon": "mech-library:weapon-12",
+          "location": "left_torso",
+          "ammunition": 25
+        }
+      ]
+    },
+    {
+      "id": "mech-library:charger-cgr-1a1",
+      "name": "Charger CGR-1A1",
+      "label": "Charger",
+      "mass_tons": 80,
+      "price": 30500,
+      "presentation": "chi:red-stinger",
+      "movement": {
+        "walk": 5,
+        "jump": 0
+      },
+      "engine_heat_sinks": 10,
+      "armor": {
+        "left_arm": 15,
+        "left_torso": 20,
+        "left_leg": 20,
+        "head": 9,
+        "center_torso": 25,
+        "right_arm": 15,
+        "right_torso": 20,
+        "right_leg": 20,
+        "left_rear": 5,
+        "center_rear": 6,
+        "right_rear": 5
+      },
+      "structure": {
+        "left_arm": 13,
+        "left_torso": 17,
+        "left_leg": 17,
+        "head": 3,
+        "center_torso": 25,
+        "right_arm": 13,
+        "right_torso": 17,
+        "right_leg": 17
+      },
+      "actuators": {
+        "left_arm": 14,
+        "right_arm": 15,
+        "left_leg": 15,
+        "right_leg": 15
+      },
+      "external_heat_sinks": {
+        "left_arm": 0,
+        "left_torso": 0,
+        "left_leg": 0,
+        "head": 0,
+        "center_torso": 0,
+        "right_arm": 0,
+        "right_torso": 0,
+        "right_leg": 0
+      },
+      "loadout": [
+        {
+          "weapon": "mech-library:weapon-3",
+          "location": "left_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-3",
+          "location": "right_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-3",
+          "location": "left_torso",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-3",
+          "location": "right_torso",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-3",
+          "location": "head",
+          "ammunition": 0
+        }
+      ]
+    },
+    {
+      "id": "mech-library:thug-thg-10e",
+      "name": "Thug THG-10E",
+      "label": "Thug",
+      "mass_tons": 80,
+      "price": 30000,
+      "presentation": "chi:locust",
+      "movement": {
+        "walk": 4,
+        "jump": 0
+      },
+      "engine_heat_sinks": 12,
+      "armor": {
+        "left_arm": 25,
+        "left_torso": 24,
+        "left_leg": 33,
+        "head": 9,
+        "center_torso": 33,
+        "right_arm": 25,
+        "right_torso": 24,
+        "right_leg": 33,
+        "left_rear": 8,
+        "center_rear": 10,
+        "right_rear": 8
+      },
+      "structure": {
+        "left_arm": 13,
+        "left_torso": 17,
+        "left_leg": 17,
+        "head": 3,
+        "center_torso": 25,
+        "right_arm": 13,
+        "right_torso": 17,
+        "right_leg": 17
+      },
+      "actuators": {
+        "left_arm": 15,
+        "right_arm": 15,
+        "left_leg": 15,
+        "right_leg": 15
+      },
+      "external_heat_sinks": {
+        "left_arm": 1,
+        "left_torso": 3,
+        "left_leg": 0,
+        "head": 0,
+        "center_torso": 0,
+        "right_arm": 1,
+        "right_torso": 2,
+        "right_leg": 0
+      },
+      "loadout": [
+        {
+          "weapon": "mech-library:weapon-13",
+          "location": "left_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-13",
+          "location": "right_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-12",
+          "location": "left_torso",
+          "ammunition": 13
+        },
+        {
+          "weapon": "mech-library:weapon-12",
+          "location": "right_torso",
+          "ammunition": 12
+        }
+      ]
+    },
+    {
+      "id": "mech-library:cyclops-cp-10-z",
+      "name": "Cyclops CP-10-Z",
+      "label": "Cyclops",
+      "mass_tons": 90,
+      "price": 34000,
+      "presentation": "chi:red-stinger",
+      "movement": {
+        "walk": 4,
+        "jump": 0
+      },
+      "engine_heat_sinks": 12,
+      "armor": {
+        "left_arm": 10,
+        "left_torso": 20,
+        "left_leg": 17,
+        "head": 9,
+        "center_torso": 30,
+        "right_arm": 10,
+        "right_torso": 20,
+        "right_leg": 17,
+        "left_rear": 8,
+        "center_rear": 11,
+        "right_rear": 8
+      },
+      "structure": {
+        "left_arm": 15,
+        "left_torso": 19,
+        "left_leg": 19,
+        "head": 3,
+        "center_torso": 29,
+        "right_arm": 15,
+        "right_torso": 19,
+        "right_leg": 19
+      },
+      "actuators": {
+        "left_arm": 15,
+        "right_arm": 15,
+        "left_leg": 15,
+        "right_leg": 15
+      },
+      "external_heat_sinks": {
+        "left_arm": 0,
+        "left_torso": 0,
+        "left_leg": 0,
+        "head": 0,
+        "center_torso": 0,
+        "right_arm": 0,
+        "right_torso": 0,
+        "right_leg": 0
+      },
+      "loadout": [
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "left_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "right_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-6",
+          "location": "left_torso",
+          "ammunition": 12
+        },
+        {
+          "weapon": "mech-library:weapon-16",
+          "location": "right_torso",
+          "ammunition": 20
+        },
+        {
+          "weapon": "mech-library:weapon-12",
+          "location": "center_torso",
+          "ammunition": 25
+        }
+      ]
+    },
+    {
+      "id": "mech-library:banshee-bnc-3e",
+      "name": "Banshee BNC-3E",
+      "label": "Banshee",
+      "mass_tons": 95,
+      "price": 34750,
+      "presentation": "chi:red-stinger",
+      "movement": {
+        "walk": 4,
+        "jump": 0
+      },
+      "engine_heat_sinks": 15,
+      "armor": {
+        "left_arm": 21,
+        "left_torso": 30,
+        "left_leg": 26,
+        "head": 9,
+        "center_torso": 40,
+        "right_arm": 21,
+        "right_torso": 30,
+        "right_leg": 26,
+        "left_rear": 10,
+        "center_rear": 17,
+        "right_rear": 10
+      },
+      "structure": {
+        "left_arm": 16,
+        "left_torso": 20,
+        "left_leg": 20,
+        "head": 3,
+        "center_torso": 30,
+        "right_arm": 16,
+        "right_torso": 20,
+        "right_leg": 20
+      },
+      "actuators": {
+        "left_arm": 15,
+        "right_arm": 15,
+        "left_leg": 15,
+        "right_leg": 15
+      },
+      "external_heat_sinks": {
+        "left_arm": 0,
+        "left_torso": 0,
+        "left_leg": 0,
+        "head": 0,
+        "center_torso": 0,
+        "right_arm": 0,
+        "right_torso": 0,
+        "right_leg": 1
+      },
+      "loadout": [
+        {
+          "weapon": "mech-library:weapon-14",
+          "location": "left_torso",
+          "ammunition": 20
+        },
+        {
+          "weapon": "mech-library:weapon-13",
+          "location": "right_torso",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-3",
+          "location": "head",
+          "ammunition": 0
+        }
+      ]
+    },
+    {
+      "id": "mech-library:battlemaster-blr-1g",
+      "name": "BattleMaster BLR-1G",
+      "label": "BattleMaster",
+      "mass_tons": 85,
+      "price": 34750,
+      "presentation": "chi:red-stinger",
+      "movement": {
+        "walk": 4,
+        "jump": 0
+      },
+      "engine_heat_sinks": 13,
+      "armor": {
+        "left_arm": 24,
+        "left_torso": 28,
+        "left_leg": 26,
+        "head": 9,
+        "center_torso": 40,
+        "right_arm": 24,
+        "right_torso": 28,
+        "right_leg": 26,
+        "left_rear": 8,
+        "center_rear": 11,
+        "right_rear": 8
+      },
+      "structure": {
+        "left_arm": 14,
+        "left_torso": 18,
+        "left_leg": 18,
+        "head": 3,
+        "center_torso": 27,
+        "right_arm": 14,
+        "right_torso": 18,
+        "right_leg": 18
+      },
+      "actuators": {
+        "left_arm": 15,
+        "right_arm": 15,
+        "left_leg": 15,
+        "right_leg": 15
+      },
+      "external_heat_sinks": {
+        "left_arm": 0,
+        "left_torso": 0,
+        "left_leg": 2,
+        "head": 0,
+        "center_torso": 0,
+        "right_arm": 0,
+        "right_torso": 1,
+        "right_leg": 2
+      },
+      "loadout": [
+        {
+          "weapon": "mech-library:weapon-2",
+          "location": "left_arm",
+          "ammunition": 100
+        },
+        {
+          "weapon": "mech-library:weapon-2",
+          "location": "left_arm",
+          "ammunition": 100
+        },
+        {
+          "weapon": "mech-library:weapon-13",
+          "location": "right_arm",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-11",
+          "location": "left_torso",
+          "ammunition": 30
+        },
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "left_torso",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "left_torso",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "left_torso",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "right_torso",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "right_torso",
+          "ammunition": 0
+        },
+        {
+          "weapon": "mech-library:weapon-1",
+          "location": "right_torso",
+          "ammunition": 0
+        }
+      ]
+    },
+    {
+      "id": "mech-library:king-crab-kgc-0000",
+      "name": "King Crab KGC-0000",
+      "label": "King Crab",
+      "mass_tons": 100,
+      "price": 37000,
+      "presentation": "chi:locust",
+      "movement": {
+        "walk": 3,
+        "jump": 0
+      },
+      "engine_heat_sinks": 12,
+      "armor": {
+        "left_arm": 33,
+        "left_torso": 29,
+        "left_leg": 34,
+        "head": 9,
+        "center_torso": 39,
+        "right_arm": 33,
+        "right_torso": 29,
+        "right_leg": 34,
+        "left_rear": 10,
+        "center_rear": 12,
+        "right_rear": 10
+      },
+      "structure": {
+        "left_arm": 17,
+        "left_torso": 21,
+        "left_leg": 21,
+        "head": 3,
+        "center_torso": 31,
+        "right_arm": 17,
+        "right_torso": 21,
+        "right_leg": 21
+      },
+      "actuators": {
+        "left_arm": 15,
+        "right_arm": 15,
+        "left_leg": 15,
+        "right_leg": 15
+      },
+      "external_heat_sinks": {
+        "left_arm": 0,
+        "left_torso": 0,
+        "left_leg": 1,
+        "head": 0,
+        "center_torso": 1,
+        "right_arm": 0,
+        "right_torso": 0,
+        "right_leg": 1
+      },
+      "loadout": [
+        {
+          "weapon": "mech-library:weapon-16",
+          "location": "left_arm",
+          "ammunition": 5
+        },
+        {
+          "weapon": "mech-library:weapon-16",
+          "location": "right_arm",
+          "ammunition": 5
+        },
+        {
+          "weapon": "mech-library:weapon-15",
+          "location": "left_torso",
+          "ammunition": 8
+        },
+        {
+          "weapon": "mech-library:weapon-7",
+          "location": "right_torso",
+          "ammunition": 0
+        }
+      ]
+    }
+  ],
+  "presentations": [
+    {
+      "id": "chi:locust",
+      "source": "chi:locust"
+    },
+    {
+      "id": "chi:red-stinger",
+      "source": "chi:red-stinger"
+    }
+  ]
+}

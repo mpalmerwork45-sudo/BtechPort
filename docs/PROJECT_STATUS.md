@@ -1,13 +1,20 @@
 # Project status — original fidelity and editable projects, 2026-10-18
 
 The [shared Unit Library and launcher](UNIT_LIBRARY_AND_LAUNCHER.md) now provide
-57 blueprints (41 mechs, ten vehicles, six infantry templates), editable directly
+82 blueprints (66 mechs, ten vehicles, six infantry templates), editable directly
 in the library and copied between games with dependency closure, explicit
 updates/variants and source attribution. Infantry properties are also available
 in the main roster editor. The desktop launch window starts Original/Updated,
 the demos and custom games, resumes F5 saves, opens the editor/library and builds
 the application with two jobs. Linux and Windows entry scripts are included.
 Fresh checks and portability bounds are in [TESTING](TESTING.md#unit-library-and-desktop-launcher).
+
+The [25 new classic mech presets](../content/catalogues/mechs/README.md) use pinned
+MegaMek records with documented CHI conversions and retained data attribution.
+Library defaults now consistently assign Locust to reverse-jointed chassis,
+red Stinger to the others, and original infantry animation to character
+templates. A one-time migration preserves author statistics/custom artwork;
+already-imported projects require an explicit replacement to adopt changes.
 
 The [sprite editor](SPRITE_EDITOR.md) now has movement directions, named poses,
 frame thumbnails, previous/next navigation, copy/paste, onion skin and playback

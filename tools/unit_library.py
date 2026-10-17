@@ -78,11 +78,16 @@ def closure(document, identity, kind='Mechs'):
     return dict(format=FORMAT, schema_version=1, entry_id=identity, revision=1, kind=kind,
                 name=unit.get('name', identity), definition=identity, content=content,
                 person=person, graphics=art, presentation=presentation,
+                infantry_source=('chi:infantry' if person and document.manifest['requires'] != 'none'
+                                 and not any(b['slot'] == 'npc' for b in art['bindings']) else 'package'),
                 provenance=dict(project=document.manifest['title'], documents=source))
 
 
 def needs_original(bundle):
-    return any(p['source'].startswith('chi:') for p in bundle['content']['presentations'])
+    # Infantry has no mech presentation. Preserve its external art dependency
+    # explicitly instead of accidentally previewing an independent demo sprite.
+    return (bundle.get('infantry_source') == 'chi:infantry'
+            or any(p['source'].startswith('chi:') for p in bundle['content']['presentations']))
 
 
 def preview_files(bundle):
@@ -123,6 +128,11 @@ def preview_files(bundle):
     if not content['mechs']:
         for key in ('mechs', 'weapons', 'ammunition', 'presentations'):
             content[key] = copy.deepcopy(fallback[key])
+        # Use one neutral mech; the CHI demo also contains owned vehicle art
+        # which is not a dependency of an infantry blueprint.
+        content['mechs'] = content['mechs'][:1]
+        view = content['mechs'][0]['presentation']
+        content['presentations'] = [p for p in content['presentations'] if p['id'] == view]
     presentation = copy.deepcopy(bundle.get('presentation')) or read_json(ROOT / 'examples/beacon-demo/presentation.json')
     files = {'project.json': manifest, 'content.json': content, 'adventure.json': adventure,
              'graphics.json': bundle['graphics'], 'presentation.json': presentation}
@@ -167,6 +177,8 @@ class UnitLibrary:
             raise EditorError('Library entry requires a name and definition ID.')
         if bundle['kind']=='Infantry' and not isinstance(bundle.get('person'),dict):
             raise EditorError('Infantry entry requires a character template.')
+        if bundle.get('infantry_source', 'package') not in ('package', 'chi:infantry'):
+            raise EditorError('Unsupported infantry sprite source.')
 
     def validate(self, bundle):
         self.check_header(bundle)
@@ -270,6 +282,10 @@ def import_units(document, bundles, policy='keep', infantry_art=False):
             elif identity is None: raise EditorError('No free infantry actor identity (ten identities per game).')
             else: value['identity'] = f'actor:{identity}' if manifest['requires'] == 'none' else 'chi:'+slots[identity]
             if infantry_art:
+                if bundle.get('infantry_source') == 'chi:infantry':
+                    # Removing overrides restores the native CHI infantry
+                    # animations. Original pixels remain external assets.
+                    art['bindings'] = [b for b in art['bindings'] if b['slot'] not in ('npc', 'enemy')]
                 for binding in bundle['graphics']['bindings']:
                     art['bindings'] = [b for b in art['bindings'] if b['slot'] != binding['slot']]
                     art['bindings'].append(rewrite(binding, mapping))

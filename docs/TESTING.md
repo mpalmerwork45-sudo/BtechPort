@@ -5,7 +5,37 @@
 The [Unit Library/launcher guide](UNIT_LIBRARY_AND_LAUNCHER.md) records the
 implemented workflows, source/adaptation distinctions and remaining bounds.
 
-| Fresh check | Result |
+### Classic catalogue and original animation defaults — 2026-10-18
+
+- **126/126 Python tests**, 14.66 s.
+- **17/17 library cases** with the ASan/UBSan/LeakSanitizer C validator,
+  14.99 s; the gameplay subprocess remains the ordinary headless player.
+- Every one of the **25 new mechs** initializes with its specified mass,
+  movement and sprite bit, enters real computer-controlled combat and fires
+  player weapons during a bounded 1,800-tick scenario. These check adapter
+  functionality, not tabletop combat parity or full battles for every chassis.
+- All 25 import together with shared dependencies; a game starts/saves with
+  new King Crab/Spider units. Armour, weapons, heat sinks, ammunition splitting
+  and specific source adaptations have regression coverage.
+- Original-infantry reference preview/edit/export/import and rejection by
+  independent projects, one-time migration, edited-stat preservation, owned-art
+  preservation and idempotent seeding pass. The catalogue seeds without a cache.
+- Linux Tk/SDL library smoke passes, including exact decoded-frame comparisons
+  for Locust, red Stinger, cached Jenner and infantry, plus the prior editing,
+  launcher, quicksave and clean-entry workflows.
+- The Windows C validator under Wine accepts `mech-library 1.0.0` with
+  **25 mechs / 16 weapon definitions**. No C runtime rebuild was required.
+- **1,287/1,287 reference entries** remain unchanged against
+  `work/reference-before-library-expansion.json`; the existing user map diff
+  remains outside this work. The user's 57-entry library was backed up to
+  `work/unit-library-before-classic-20261018` and updated to 82 entries.
+
+Source records are pinned/hashed in `content/catalogues/mechs/sources.json`.
+No live downloads are used by the tests or normal library population.
+
+### Earlier launcher milestone
+
+| Milestone check | Result |
 | --- | --- |
 | Full Python suite | **120/120**, 5.25 s |
 | Focused native gameplay | **4/4**, 1.07 s |

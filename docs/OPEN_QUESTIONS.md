@@ -1,4 +1,4 @@
-# Open questions after bounded M4 work and authoring increments — 2026-10-17
+# Open questions after bounded M4 work and authoring increments — 2026-10-18
 
 The authorized M4 increments have playable, tested paths. Confidence belongs
 to the individual original comparisons and recorded continuations in
@@ -6,6 +6,13 @@ to the individual original comparisons and recorded continuations in
 rather than to every branch of the original game.
 The latest results and remaining bounds are in [project status](PROJECT_STATUS.md)
 and the [latest five-area sweep](M4_PORTABILITY_SWEEP.md).
+
+The Unit Library now includes 25 additional classic chassis and corrected
+original animation defaults. These remain CHI adaptations: rear firing arcs,
+shared ammunition bins, split weapon criticals, construction legality and
+per-character infantry art are not added by the catalogue expansion. Its
+[source and adaptation notes](../content/catalogues/mechs/README.md) distinguish
+checked numeric specifications from runtime simplifications.
 
 1. **Fresh-game campaign — playable route VERIFIED; broader parity UNKNOWN.**
    A 83,339-input new-cadet route now earns companions, apprenticeships, the

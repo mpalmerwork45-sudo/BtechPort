@@ -40,13 +40,21 @@ Open **Unit Library** from the launcher or game editor. The default shared folde
 is `work/unit-library`; **Library folder** chooses another and persists that
 choice. A single library serves multiple game projects.
 
-The first population currently supplies **57 entries**: **41 mechs**, **10
+The first population currently supplies **82 entries**: **66 mechs**, **10
 vehicles** and **6 individual infantry/character templates**. This includes all
-31 Updated designs, seven symbolic CHI template adaptations and the three
-independent demonstration walkers. Existing stable IDs are deduplicated. The
-Expanded/CHI numeric catalogues require the prepared local combat cache; the
-vehicle and authored example entries are available without it. **Add missing
-built-ins** adds newly available entries and preserves every existing edit.
+31 Updated designs, seven symbolic CHI template adaptations, three demonstration
+walkers and [25 additional classic chassis](../content/catalogues/mechs/README.md).
+Existing stable IDs are deduplicated. The original/Updated numeric exports
+require the prepared local combat cache; the new 25-model catalogue does not.
+**Add missing built-ins** also adds entries that become available later.
+
+Mech defaults use **Locust** for reverse-jointed designs and **red Stinger** for
+the others. Infantry defaults use the original CHI character animation. These
+external sprite references need your original game files for preview/play.
+Existing shipped entries receive the correction once; edited statistics and
+owned custom sprites are retained, and later choices are preserved. Already
+imported games change only through an explicit import/replace action. The
+independent demo projects retain their own artwork.
 
 - Filter **All / Mechs / Vehicles / Infantry**, search name/ID/drive type, and
   filter weight class. Units have animated previews and source/dependency notes.
@@ -81,14 +89,17 @@ Infantry currently means an individual character, not a platoon. Imports choose
 a free local actor identity; the runtime still has ten actor identities, sixteen
 character templates and eight party places. Infantry artwork remains shared
 across NPC/enemy roles. **Install shared NPC/enemy infantry artwork** explicitly
-opts into replacing those global roles. Per-character sprite assignments remain
+opts into replacing those global roles, or restoring the native animations when
+importing an original-infantry reference. Per-character sprite assignments remain
 future engine work.
 
 ## Files, dependencies and bounds
 
 Each entry is a separate `*.unit.json` file using `btp-library-unit-v1`, with a
 stable library ID, definition ID, revision, kind, symbolic content, optional
-person, RGBA graphics, optional independent presentation and provenance. The
+person, RGBA graphics, optional independent presentation and provenance. An
+optional `infantry_source` field (`package` or `chi:infantry`) preserves infantry's
+external sprite dependency; old bundles without it retain package behavior. The
 filename is a hash of its library ID. There is no combined compiled-roster cap
 on the folder; each game's existing 256 mech/vehicle, weapon and equipment
 definition limits still apply. Entry files are bounded at 16 MiB.
@@ -116,9 +127,11 @@ claims. Original/Updated campaign rules and records remain unchanged.
 
 ## Verification
 
-Fresh verification includes **120 Python tests**, four focused native gameplay
-suites, the original-unit exporter built for Windows and validated under Wine,
-and the library tests against the sanitized validator. Actual Linux Tk checks
+Fresh verification includes **126 Python tests**, all 25 new mechs starting and
+firing in actual combat, the full catalogue accepted by the Windows validator
+under Wine, and **17 library cases** against the sanitized validator. The
+earlier milestone's original exporter/native gameplay checks remain recorded
+in TESTING. Actual Linux Tk checks compare original animation frames and
 cover built-ins, editing properties/sprites in the library, revisions, multiple
 imports, game-to-library export, infantry identities/shared art, Undo/Redo,
 save/reopen/export, minimum-window controls and cancelling an unsaved close.

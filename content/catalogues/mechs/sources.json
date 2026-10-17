@@ -1,0 +1,233 @@
+{
+  "license": "CC-BY-NC-SA-4.0",
+  "credit": "MegaMek mm-data contributors",
+  "consulted": "2026-10-18",
+  "commit": "41c091a1318d70b3d7cdb56eaa191f84ddf25115",
+  "mechs": [
+    {
+      "id": "mech-library:flea-fle-15",
+      "filename": "Flea FLE-15.mtf",
+      "source": "https://github.com/MegaMek/mm-data/blob/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/Flea%20FLE-15.mtf",
+      "download": "https://raw.githubusercontent.com/MegaMek/mm-data/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/Flea%20FLE-15.mtf",
+      "sha256": "b5d4d44e0df2971fbde26614193e7e65a03d93566ae50c1a7a0944885a3e949a",
+      "sarna": "https://www.sarna.net/wiki/Flea",
+      "rear_weapons": 2
+    },
+    {
+      "id": "mech-library:spider-sdr-5v",
+      "filename": "Spider SDR-5V.mtf",
+      "source": "https://github.com/MegaMek/mm-data/blob/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/Spider%20SDR-5V.mtf",
+      "download": "https://raw.githubusercontent.com/MegaMek/mm-data/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/Spider%20SDR-5V.mtf",
+      "sha256": "2cd02e45c8be583b1f860e6768054e18b04bd4819f4369a43420663a65723a34",
+      "sarna": "https://www.sarna.net/wiki/Spider",
+      "rear_weapons": 0
+    },
+    {
+      "id": "mech-library:firestarter-fs9-h",
+      "filename": "Firestarter FS9-H.mtf",
+      "source": "https://github.com/MegaMek/mm-data/blob/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/Firestarter%20FS9-H.mtf",
+      "download": "https://raw.githubusercontent.com/MegaMek/mm-data/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/Firestarter%20FS9-H.mtf",
+      "sha256": "13134187273120edbcd30228a47bdb96ad983243fe76bc5db39d5229d254a4d8",
+      "sarna": "https://www.sarna.net/wiki/Firestarter",
+      "rear_weapons": 1
+    },
+    {
+      "id": "mech-library:firefly-ffl-4a",
+      "filename": "Firefly FFL-4A.mtf",
+      "source": "https://github.com/MegaMek/mm-data/blob/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3050U/Firefly%20FFL-4A.mtf",
+      "download": "https://raw.githubusercontent.com/MegaMek/mm-data/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3050U/Firefly%20FFL-4A.mtf",
+      "sha256": "001d18606a4b3b0df79c43aa2a5d89b6eee7f8db2801fdc3a4c245722061e38a",
+      "sarna": "https://www.sarna.net/wiki/Firefly",
+      "rear_weapons": 0
+    },
+    {
+      "id": "mech-library:valkyrie-vlk-qa",
+      "filename": "Valkyrie VLK-QA.mtf",
+      "source": "https://github.com/MegaMek/mm-data/blob/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/Valkyrie%20VLK-QA.mtf",
+      "download": "https://raw.githubusercontent.com/MegaMek/mm-data/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/Valkyrie%20VLK-QA.mtf",
+      "sha256": "09e3fe118678e70d10238466fcac77510ff49f6ce4bb27aa0be0223d9264b276",
+      "sarna": "https://www.sarna.net/wiki/Valkyrie",
+      "rear_weapons": 0
+    },
+    {
+      "id": "mech-library:wolfhound-wlf-1",
+      "filename": "Wolfhound WLF-1.mtf",
+      "source": "https://github.com/MegaMek/mm-data/blob/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/Wolfhound%20WLF-1.mtf",
+      "download": "https://raw.githubusercontent.com/MegaMek/mm-data/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/Wolfhound%20WLF-1.mtf",
+      "sha256": "a2c7d48c1bc150b0088f7edd9bf5052948bf28862e68c4d021a56060a0880d98",
+      "sarna": "https://www.sarna.net/wiki/Wolfhound",
+      "rear_weapons": 1
+    },
+    {
+      "id": "mech-library:assassin-asn-21",
+      "filename": "Assassin ASN-21.mtf",
+      "source": "https://github.com/MegaMek/mm-data/blob/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/Assassin%20ASN-21.mtf",
+      "download": "https://raw.githubusercontent.com/MegaMek/mm-data/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/Assassin%20ASN-21.mtf",
+      "sha256": "516d5f02d28b1c4a59cbe123c8cfd74547581802239cc3fb941d3c0842cb53e2",
+      "sarna": "https://www.sarna.net/wiki/Assassin",
+      "rear_weapons": 0
+    },
+    {
+      "id": "mech-library:vulcan-vl-2t",
+      "filename": "Vulcan VL-2T.mtf",
+      "source": "https://github.com/MegaMek/mm-data/blob/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/Vulcan%20VL-2T.mtf",
+      "download": "https://raw.githubusercontent.com/MegaMek/mm-data/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/Vulcan%20VL-2T.mtf",
+      "sha256": "7dee0f3669d99fefcf63d3c65eb07c1967e202d9d4e02303947a9aff3ef91fbd",
+      "sarna": "https://www.sarna.net/wiki/Vulcan",
+      "rear_weapons": 0
+    },
+    {
+      "id": "mech-library:enforcer-enf-4r",
+      "filename": "Enforcer ENF-4R.mtf",
+      "source": "https://github.com/MegaMek/mm-data/blob/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/Enforcer%20ENF-4R.mtf",
+      "download": "https://raw.githubusercontent.com/MegaMek/mm-data/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/Enforcer%20ENF-4R.mtf",
+      "sha256": "3fac2d969f26af1ff4afa49d621f7bf503da78230c32ab8073d61b1d1dc17d8d",
+      "sarna": "https://www.sarna.net/wiki/Enforcer",
+      "rear_weapons": 0
+    },
+    {
+      "id": "mech-library:dervish-dv-6m",
+      "filename": "Dervish DV-6M.mtf",
+      "source": "https://github.com/MegaMek/mm-data/blob/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/Dervish%20DV-6M.mtf",
+      "download": "https://raw.githubusercontent.com/MegaMek/mm-data/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/Dervish%20DV-6M.mtf",
+      "sha256": "a064e061bc3929c7635d09277f937a5caa3d7f0b173e201feb1d7b628bc07e10",
+      "sarna": "https://www.sarna.net/wiki/Dervish",
+      "rear_weapons": 0
+    },
+    {
+      "id": "mech-library:kintaro-kto-18",
+      "filename": "Kintaro KTO-18.mtf",
+      "source": "https://github.com/MegaMek/mm-data/blob/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/Kintaro%20KTO-18.mtf",
+      "download": "https://raw.githubusercontent.com/MegaMek/mm-data/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/Kintaro%20KTO-18.mtf",
+      "sha256": "7e05962c015c26c1ec801ca7b0d071ccf3d7bf8670cfd103ae22d7c0b0e1efe6",
+      "sarna": "https://www.sarna.net/wiki/Kintaro",
+      "rear_weapons": 0
+    },
+    {
+      "id": "mech-library:quickdraw-qkd-4g",
+      "filename": "Quickdraw QKD-4G.mtf",
+      "source": "https://github.com/MegaMek/mm-data/blob/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/Quickdraw%20QKD-4G.mtf",
+      "download": "https://raw.githubusercontent.com/MegaMek/mm-data/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/Quickdraw%20QKD-4G.mtf",
+      "sha256": "7b06deaf2b1ddfa4a9db44e8651b0ce9cb09561be989700566cce7c28e5eac33",
+      "sarna": "https://www.sarna.net/wiki/Quickdraw",
+      "rear_weapons": 2
+    },
+    {
+      "id": "mech-library:cataphract-ctf-1x",
+      "filename": "Cataphract CTF-1X.mtf",
+      "source": "https://github.com/MegaMek/mm-data/blob/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/Cataphract%20CTF-1X.mtf",
+      "download": "https://raw.githubusercontent.com/MegaMek/mm-data/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/Cataphract%20CTF-1X.mtf",
+      "sha256": "2cce916ed327ea1aaaa3fb4178f69a3b9caf3792dd5eae8e271b2da72007ac5d",
+      "sarna": "https://www.sarna.net/wiki/Cataphract",
+      "rear_weapons": 2
+    },
+    {
+      "id": "mech-library:jagermech-jm6-s",
+      "filename": "JagerMech JM6-S.mtf",
+      "source": "https://github.com/MegaMek/mm-data/blob/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/JagerMech%20JM6-S.mtf",
+      "download": "https://raw.githubusercontent.com/MegaMek/mm-data/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/JagerMech%20JM6-S.mtf",
+      "sha256": "2c5c758cc40db9e78777bc75b3d045470b1e6eded77ea6ba0f3ea53a0b520917",
+      "sarna": "https://www.sarna.net/wiki/JagerMech",
+      "rear_weapons": 0
+    },
+    {
+      "id": "mech-library:guillotine-glt-4l",
+      "filename": "Guillotine GLT-4L.mtf",
+      "source": "https://github.com/MegaMek/mm-data/blob/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/Guillotine%20GLT-4L.mtf",
+      "download": "https://raw.githubusercontent.com/MegaMek/mm-data/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/Guillotine%20GLT-4L.mtf",
+      "sha256": "3b6de320f9c554114cb213a0ba909c683597399c48fc49113ca7dff11f5b5424",
+      "sarna": "https://www.sarna.net/wiki/Guillotine",
+      "rear_weapons": 0
+    },
+    {
+      "id": "mech-library:black-knight-bl-7-knt",
+      "filename": "Black Knight BL-7-KNT.mtf",
+      "source": "https://github.com/MegaMek/mm-data/blob/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/Black%20Knight%20BL-7-KNT.mtf",
+      "download": "https://raw.githubusercontent.com/MegaMek/mm-data/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/Black%20Knight%20BL-7-KNT.mtf",
+      "sha256": "637d92d1af2d73c8310a170bc088da621c3ca2a467a1312bf0935c16d08f01a9",
+      "sarna": "https://www.sarna.net/wiki/Black_Knight",
+      "rear_weapons": 0
+    },
+    {
+      "id": "mech-library:orion-on1-k",
+      "filename": "Orion ON1-K.mtf",
+      "source": "https://github.com/MegaMek/mm-data/blob/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/Orion%20ON1-K.mtf",
+      "download": "https://raw.githubusercontent.com/MegaMek/mm-data/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/Orion%20ON1-K.mtf",
+      "sha256": "1073237f81c66e79cdb88cf472a0860c347c88894ca203fb9324d703d4a7aa35",
+      "sarna": "https://www.sarna.net/wiki/Orion",
+      "rear_weapons": 0
+    },
+    {
+      "id": "mech-library:awesome-aws-8q",
+      "filename": "Awesome AWS-8Q.mtf",
+      "source": "https://github.com/MegaMek/mm-data/blob/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/Awesome%20AWS-8Q.mtf",
+      "download": "https://raw.githubusercontent.com/MegaMek/mm-data/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/Awesome%20AWS-8Q.mtf",
+      "sha256": "3961589723e6cea035360d3e7b5b6e55665d6a533e44f4c66b8ac56d3f009fcc",
+      "sarna": "https://www.sarna.net/wiki/Awesome",
+      "rear_weapons": 0
+    },
+    {
+      "id": "mech-library:victor-vtr-9b",
+      "filename": "Victor VTR-9B.mtf",
+      "source": "https://github.com/MegaMek/mm-data/blob/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/Victor%20VTR-9B.mtf",
+      "download": "https://raw.githubusercontent.com/MegaMek/mm-data/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/Victor%20VTR-9B.mtf",
+      "sha256": "cd4664236c4eb8809665a65a95adb74083ca732a93bdd10e8da40ac0446f456d",
+      "sarna": "https://www.sarna.net/wiki/Victor",
+      "rear_weapons": 0
+    },
+    {
+      "id": "mech-library:charger-cgr-1a1",
+      "filename": "Charger CGR-1A1.mtf",
+      "source": "https://github.com/MegaMek/mm-data/blob/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/Charger%20CGR-1A1.mtf",
+      "download": "https://raw.githubusercontent.com/MegaMek/mm-data/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/Charger%20CGR-1A1.mtf",
+      "sha256": "fe7c2b554a42546b88df0e97e8e9ddb85539e04970213ed8b0ca8cca2b3c8ac4",
+      "sarna": "https://www.sarna.net/wiki/Charger",
+      "rear_weapons": 0
+    },
+    {
+      "id": "mech-library:thug-thg-10e",
+      "filename": "Thug THG-10E.mtf",
+      "source": "https://github.com/MegaMek/mm-data/blob/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/Thug%20THG-10E.mtf",
+      "download": "https://raw.githubusercontent.com/MegaMek/mm-data/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/Thug%20THG-10E.mtf",
+      "sha256": "7717b75c578868804b2127c3426a42f7b1e75eab4bb1854e4e88567894a1b527",
+      "sarna": "https://www.sarna.net/wiki/Thug",
+      "rear_weapons": 0
+    },
+    {
+      "id": "mech-library:cyclops-cp-10-z",
+      "filename": "Cyclops CP-10-Z.mtf",
+      "source": "https://github.com/MegaMek/mm-data/blob/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/Cyclops%20CP-10-Z.mtf",
+      "download": "https://raw.githubusercontent.com/MegaMek/mm-data/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/Cyclops%20CP-10-Z.mtf",
+      "sha256": "df75a7265f5f58685d40228df0fd9f7153a88f5aa0d89ead06648e7af8ed8009",
+      "sarna": "https://www.sarna.net/wiki/Cyclops",
+      "rear_weapons": 0
+    },
+    {
+      "id": "mech-library:banshee-bnc-3e",
+      "filename": "Banshee BNC-3E.mtf",
+      "source": "https://github.com/MegaMek/mm-data/blob/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/Banshee%20BNC-3E.mtf",
+      "download": "https://raw.githubusercontent.com/MegaMek/mm-data/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/Banshee%20BNC-3E.mtf",
+      "sha256": "cbf215dfaf009773c31409d40896a01341c625a015b08e9fe4ab60671d5cd4e3",
+      "sarna": "https://www.sarna.net/wiki/Banshee",
+      "rear_weapons": 0
+    },
+    {
+      "id": "mech-library:battlemaster-blr-1g",
+      "filename": "BattleMaster BLR-1G.mtf",
+      "source": "https://github.com/MegaMek/mm-data/blob/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/BattleMaster%20BLR-1G.mtf",
+      "download": "https://raw.githubusercontent.com/MegaMek/mm-data/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/BattleMaster%20BLR-1G.mtf",
+      "sha256": "3dfb875dea979fc0b54f042a4376156faedd47eb74cbb0505e208537cc13e5d1",
+      "sarna": "https://www.sarna.net/wiki/BattleMaster",
+      "rear_weapons": 2
+    },
+    {
+      "id": "mech-library:king-crab-kgc-0000",
+      "filename": "King Crab KGC-0000.mtf",
+      "source": "https://github.com/MegaMek/mm-data/blob/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/King%20Crab%20KGC-0000.mtf",
+      "download": "https://raw.githubusercontent.com/MegaMek/mm-data/41c091a1318d70b3d7cdb56eaa191f84ddf25115/data/mekfiles/meks/3039u/King%20Crab%20KGC-0000.mtf",
+      "sha256": "2bfbbffcd70a50861ff68e42be75e92f1b74b516e2aef3f56d88009f5345a968",
+      "sarna": "https://www.sarna.net/wiki/King_Crab",
+      "rear_weapons": 0
+    }
+  ]
+}

@@ -32,7 +32,19 @@ def run(env,work):
             try:
                 app=RosterEditor(window,tool,temp/'state');app.settings['library-root']=str(temp/'library');app.set_document(doc)
                 app.open_library();browser=app.unit_library_window;pump()
-                assert len(browser.bundles)>=57
+                assert len(browser.bundles)>=82
+                # Check both requested mech silhouettes against the decoded
+                # original animation, including a migrated cached Jenner.
+                from art_editing import original_sprite
+                for identity,first in [('mech-library:king-crab-kgc-0000',0),
+                                       ('mech-library:awesome-aws-8q',146),
+                                       ('chi-original:template-5',0)]:
+                    choose(browser,'Mechs',identity);assert len(browser.photos)==4
+                    preview=browser.edit();pump()
+                    expected=original_sprite(preview.document,app.settings,first,16)
+                    assert preview.sprite_source['frames']==expected['frames']
+                    assert len({str(f) for f in expected['frames'][:4]})>1
+                    preview.close();pump()
                 choose(browser,'Vehicles','vehicles:patton');assert len(browser.photos)==4
                 editor=browser.edit();pump();editor.variables[('name',)][0].set('Patton Library Test')
                 editor.variables[('price',)][0].set('12345');editor.save();pump()
@@ -48,6 +60,7 @@ def run(env,work):
                 with patch.object(messagebox,'askyesnocancel',return_value=True):browser.export_from_game()
                 pump();assert browser.bundles['vehicles:patton']['revision']==3
                 choose(browser,'Infantry','beacon:cole');infantry=browser.edit();pump()
+                assert infantry.sprite_source['frames']==original_sprite(infantry.document,app.settings,270,16)['frames']
                 infantry.variables[('name',)][0].set('Cole Library Test')
                 infantry.variables[('attributes',0)][0].set('11');infantry.save();pump()
                 opened=[]

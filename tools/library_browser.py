@@ -10,27 +10,40 @@ from tkinter import ttk, filedialog, messagebox
 
 from editor_model import EditorError, ProjectDocument, encoded
 from unit_library import UnitLibrary, KINDS, ROOT, closure, import_units, needs_original, stage_preview
+from library_defaults import apply_sprite_defaults
 
 
 def seed_library(library, paths):
-    """Add missing shipped designs, preserving every edited library entry."""
-    existing={entry['entry_id'] for entry in library.entries()}
+    """Add shipped designs and migrate default art once, retaining author edits."""
+    existing={entry['entry_id']:entry for entry in library.entries()}
     added=0
     def add(document,kind,values,source=None):
         nonlocal added
         for item in values:
-            if item['id'] in existing:continue
+            if item['id'] in existing:
+                prior=existing[item['id']];migrated=apply_sprite_defaults(prior)
+                if migrated!=prior:existing[item['id']]=library.save(migrated,expected=prior)
+                continue
             bundle=closure(document,item['id'],kind)
             if source:bundle['provenance']['documents'].update(source)
-            library.save(bundle);existing.add(item['id']);added+=1
+            existing[item['id']]=library.save(apply_sprite_defaults(bundle));added+=1
     doc=ProjectDocument(ROOT/'examples/vehicle-lab',library.validator)
     add(doc,'Vehicles',doc.content['mechs'],{'VEHICLE-SOURCE-README.md':(ROOT/'content/catalogues/vehicles/README.md').read_text()})
-    # Independent templates and all authored characters remain available even
-    # on a machine without original CHI files or extracted numeric tables.
+    # Numeric templates can be browsed without DOS files; their requested
+    # default animations now carry an explicit original-asset dependency.
     for path in ('battletech-demo','beacon-demo','adventure-demo'):
         doc=ProjectDocument(ROOT/'examples'/path,library.validator)
         add(doc,'Infantry',doc.adventure['people'])
         add(doc,'Mechs',doc.content['mechs'])
+    # This authored catalogue is self-contained numeric content; no combat
+    # cache or online download is needed to browse/import its definitions.
+    catalogue=ROOT/'content/catalogues/mechs'
+    doc=ProjectDocument(ROOT/'examples/battletech-demo',library.validator)
+    doc.replace(json.loads((catalogue/'units.json').read_text()))
+    doc.manifest['title']='Classic Inner Sphere mech catalogue'
+    add(doc,'Mechs',doc.content['mechs'],{'SOURCE-README.md':(catalogue/'README.md').read_text(),
+                                       'LICENSE.md':(catalogue/'LICENSE.md').read_text(),
+                                       'sources.json':(catalogue/'sources.json').read_text()})
     cache=Path(paths['combat-data'])
     if cache.exists():
         with tempfile.TemporaryDirectory(prefix='library-builtins-') as tmp:
@@ -169,15 +182,17 @@ class LibraryBrowser:
             from editor_units import indexed_sprite
             from art_editing import original_sprite
             from graphics_editor import photo
+            source=type('SpriteSource',(),dict(validator=self.owner.validator))()
             if bundle['kind']=='Infantry':
                 binding=next((b for b in bundle['graphics']['bindings'] if b['slot']=='npc'),None)
-                image=next(i for i in bundle['graphics']['images'] if i['id']==binding['image']) if binding else indexed_sprite(bundle['presentation'] or json.loads((ROOT/'examples/beacon-demo/presentation.json').read_text()),2)
+                if binding:image=next(i for i in bundle['graphics']['images'] if i['id']==binding['image'])
+                elif bundle.get('infantry_source')=='chi:infantry':image=original_sprite(source,self.owner.settings,270,16)
+                else:image=indexed_sprite(bundle['presentation'] or json.loads((ROOT/'examples/beacon-demo/presentation.json').read_text()),2)
             else:
                 p=bundle['content']['presentations'][0]
                 if p['source']=='package:art':image=next(i for i in bundle['graphics']['images'] if i['id']==p['image'])
                 elif p['source'].startswith('package:walker'):image=indexed_sprite(bundle['presentation'],0 if p['source'].endswith('a') else 1)
                 else:
-                    source=type('SpriteSource',(),dict(validator=self.owner.validator))()
                     image=original_sprite(source,self.owner.settings,0 if p['source']=='chi:locust' else 146,16)
             frames=range(16,20) if len(image['frames'])==32 else range(min(4,len(image['frames'])))
             zoom=max(1,min(5,144//max(image['width'],image['height'])))
@@ -197,7 +212,7 @@ class LibraryBrowser:
 
     def builtins(self):
         count=seed_library(self.library,self.owner.settings);self.refresh()
-        self.status.set(f'{len(self.bundles)} designs in the library. Added {count} missing built-ins; existing entries preserved.')
+        self.status.set(f'{len(self.bundles)} designs in the library. Added {count} missing built-ins; default sprites checked.')
 
     def folder(self):
         path=filedialog.askdirectory(title='Shared Unit Library folder',parent=self.window)
@@ -288,6 +303,7 @@ class LibraryBrowser:
         bundle['name']=name
         (bundle['person'] or bundle['content']['mechs'][0])['name']=bundle['name']
         bundle['provenance']['project']='Created in Unit Library from '+bundle['provenance']['project']
+        bundle=apply_sprite_defaults(bundle)
         saved=self.library.save(bundle,variant=True);self.refresh(saved['entry_id']);return self.edit()
 
     def destroyed(self,event):

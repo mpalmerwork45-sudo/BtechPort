@@ -31,8 +31,11 @@ project. **Build application** builds the local executables; **Player setup**
 sets the original files if needed. The independent demos run without them.
 See the [launcher and Unit Library guide](docs/UNIT_LIBRARY_AND_LAUNCHER.md).
 
-The shared **Unit Library** currently offers 57 available mech, vehicle and
-infantry blueprints. Edit designs and sprites inside the library, import selected
+The shared **Unit Library** currently offers **82 blueprints: 66 mechs, ten
+vehicles and six infantry templates**, including [25 additional classic
+mechs](content/catalogues/mechs/README.md). Mechs use Locust or red Stinger
+animations according to leg type; infantry uses the original animations.
+Edit designs and sprites inside the library, import selected
 designs into games, or export game designs back as updates/variants. Dependencies,
 source credits, conflict handling and Undo/Redo accompany imports.
 
