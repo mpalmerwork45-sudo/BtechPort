@@ -117,7 +117,7 @@ static void sequential_audio(const BtpState *menu,BtpResources *r)
     btp_effects_shot(&s,0,1,17);btp_effects_shot(&s,0,1,9);btp_effects_shot(&s,0,1,6);
     s.effects.outtakes[0][0]=4;
     const unsigned expected[]={2,4,3,4,11,4};unsigned sound=0,ticks=0,outtake=0;
-    while ((s.effects.count || s.presentation.count || s.cutscene.active) && ticks++<4096) {
+    while ((s.effects.count || s.presentation.count || s.cutscene.active || s.combat.delay) && ticks++<4096) {
         unsigned count=s.effects.count,stage=s.effects.stage,age=s.effects.age,busy=s.audio.sound_count;
         uint8_t encoded[BTP_STATE_BYTES],again[BTP_STATE_BYTES];BtpState copy;int16_t a[BTP_AUDIO_TICK_SAMPLES],b[BTP_AUDIO_TICK_SAMPLES];
         btp_state_encode(&s,encoded);CHECK(btp_state_decode(encoded,sizeof encoded,&r->map,&r->training,&copy));

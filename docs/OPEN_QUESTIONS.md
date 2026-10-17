@@ -78,7 +78,11 @@ and the [latest five-area sweep](M4_PORTABILITY_SWEEP.md).
    NPC, recruitment, allowance and encounter clocks share this rule; ordinary
    routes have been regenerated for the changed RNG cadence. Host scheduling
    and continuous DOS keyboard polling remain approximate. Animation and tactical speed
-   requests now have 66/6 original cases and native 32 ms conversion checks.
+   requests have 66/6 original cases and native 32 ms conversion checks. The
+   [combat pacing follow-up](COMBAT_PACING.md) adds 48 complete original waves:
+   speed waits belong after attacks, not movement, and graphics-off skips pose
+   waits. The port now follows those boundaries. Detailed firing-pose, sound-start,
+   projectile/beam and impact cadence remain the next presentation comparison.
 6. **Sound — programs VERIFIED, physical response APPROXIMATE.** All eighteen
    ordered tone/noise traces, attack effect selections, hit/wreck/arena-alarm dispatch
    and sequential continuation are checked. Busy-loop conversion is a nominal

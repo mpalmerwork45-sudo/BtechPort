@@ -1,8 +1,8 @@
-# Project status — original fidelity and expanded M5a roster, 2026-10-16
+# Project status — original fidelity and expanded M5a roster, 2026-10-17
 
 The independent C11/SDL2 port has playable implementations of the authorized
 M4a–M4e increments and the subsequent building, theft, encounter, recruitment and
-presentation requests. A recorded 83,339-input route now starts with a new cadet
+presentation requests. A recorded 78,829-input route now starts with a new cadet
 and reaches the cache ending through the actual training, companion, disk and
 password prerequisites. It uses the authorized money shortcut. M4 as a complete
 reproduction of every original campaign branch remains unfinished.
@@ -19,6 +19,15 @@ GPL-3.0-only; the original game's source code is not used, and its assets are
 not distributed. Runners must supply their own original files.
 Reference directories are immutable; original assets and emulator RAM stay in
 ignored work files. Local commits remain on `main`, with no push.
+
+The latest [combat pacing correction](COMBAT_PACING.md) removes the misplaced
+speed pause between movement steps and applies it after each attack, matching
+48 complete original-wave observations. Graphics-off skips hidden animation
+waits, and speed 5 holds attacks rather than movement. The controlled default
+movement-only wave falls from 3.904 s to 0.384 s; this is a native comparison,
+not a claim of cycle-exact XT timing. Save formats and numeric rules are unchanged.
+All **61 native suites**, **32 Python tests**, five focused sanitizer/Wine
+suites per platform and four SDL pacing scenarios per platform pass.
 
 ## Milestones
 
@@ -72,7 +81,7 @@ Optional pack-local art does not change roster fingerprints or saves; older
 packs retain each original presentation. Explicit BLD animations and held
 frames take priority. General custom-building manifests and animated new
 portraits remain future work.
-The latest checks pass native **60/60**, Python **32/32**, and five focused
+The preceding roster/art checks passed native **60/60**, Python **32/32**, and five focused
 sanitizer and Windows suites each. Linux and Windows SDL each pass **34/34** selector/trading
 scenarios and **10/10** building visits, exact portrait crops, F5/F9 and full-frame
 restore. Actual building screens were visually reviewed; all pixels
@@ -167,7 +176,7 @@ loop comparisons and saved/native input checks cover this distinction.
 Space selects on all held combat menus, including movement destinations and
 replace-order prompts; during a running wave or outtake it interrupts instead.
 
-The fresh ending and **66,760-input** spy/replacement routes restore and continue
+The fresh ending and **62,142-input** spy/replacement routes restore and continue
 before every input. The new native service tail joins the existing house,
 cinema, hut, laser shop, theft and replacement checks. Nineteen held combat pages
 exercise F5/F9; the cache check includes the Phoenix display, map room and ending.
@@ -182,7 +191,10 @@ BLD branches, compared text/pixels and saved/native continuations.
 **APPROXIMATE:** DOS busy-loop cadence, broader encounter AI/initiative, some
 layouts and exact DOS recovery of irregular saved follower paths. NPC idle updates now average eleven nominal 70 Hz retraces; host scheduling
 and exact hardware clock rates remain approximate. Animation retrace
-requests and combat speed delays now match within the 32 ms native tick. Audio
+requests match within the 32 ms native tick. Combat speed waits now occur after
+attacks, with movement and graphics-off waits checked by the
+[pacing audit](COMBAT_PACING.md); detailed firing/projectile/impact cadence
+remains approximate. Audio
 uses original effect programs and a nominal 8 MHz 8088 timing model; physical speaker response and
 exact hardware calibration remain **UNKNOWN** without a reference recording.
 

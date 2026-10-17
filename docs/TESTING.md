@@ -1,8 +1,43 @@
 # Build, verification and original oracle — 2026-10-17
 
+## Combat pacing correction
+
+**61/61 native CTest suites pass** (41.68 seconds), together with **32/32
+Python tests**. Five focused combat/roster suites pass with
+ASan/UBSan/LeakSanitizer (5.08 seconds) and under Windows/Wine (17.64 seconds).
+Linux and Windows SDL each pass four normal-clock pacing scenarios with
+exact input/state/pixels: movement, a held attack, Enter and Space. The GUI
+checks use isolated displays, generated test saves and a dummy audio sink.
+
+The new original-executable fixture observes 48 complete waves across all six
+speed settings, graphics on/off and zero/one/two attacks. The regression checks
+the verified post-attack wait boundary, free movement, graphics-off pose skips,
+queued reports and save/PCM continuation. Existing numeric combat, sound,
+outtake, arena, spy, Updated roster and fresh-ending checks also pass. The
+input-only routes were regenerated for the deliberate pacing change; the
+original apprenticeship checkpoint comparison was rerun against those inputs.
+
+The same default-speed movement-only checkpoint takes 122 native ticks before
+the change and 12 afterwards: 3.904 s versus 0.384 s. This measures removal of
+the erroneous native waits; physical XT wall-clock equivalence and detailed
+weapon-animation cadence remain approximate. See [the audit](COMBAT_PACING.md)
+for original call sites, limits, the unchanged save formats and next work.
+
+```sh
+python3 tools/make_combat_pacing_vectors.py
+ctest --test-dir build --output-on-failure
+python3 -m unittest discover -s tests -p 'test_*.py'
+python3 tools/native_smoke.py --combat-pacing-only
+python3 tools/native_smoke.py --windows --combat-pacing-only
+```
+
+The focused sanitizer/Wine selection is:
+`combat-primary-pacing|combat-ui-save-progression|combat-event-primary|combat-primary-complete-encounters|updated-roster-lifecycle`.
+Local before/after measurements and platform logs are in `work/combat-pacing/`.
+
 ## Updated roster 0.3.0 and building artwork
 
-The latest roster/art follow-up passes **60/60 native CTest suites**, **32/32
+The preceding roster/art follow-up passed **60/60 native CTest suites**, **32/32
 Python tests**, five focused ASan/UBSan/LeakSanitizer suites and the same five
 Windows/Wine suites. All 23 models pass the lifecycle checks, including the
 Grasshopper's 22 heat sinks and all ten Stalker weapons. Both earlier released

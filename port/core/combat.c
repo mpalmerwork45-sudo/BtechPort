@@ -600,16 +600,18 @@ static void end_round(BtpState *s,const BtpResources *r)
 }
 unsigned btp_combat_delay_ticks(unsigned speed)
 {
-    /* 0E31:1DCC requests 12*selection VGA retraces. Convert to 32 ms
-       ticks, rounding up; the advancing tick itself supplies one period.
-       Selection five is key-stepped by the caller, without a timed wait. */
+    /* 12E8:0D76 calls 0E31:1DCC after an attack, not after a movement
+       microstep. Convert its 12*selection retraces to 32 ms ticks; the
+       report's first displayed tick supplies one period. Speed five waits
+       for a key at that same attack boundary. */
     return speed && speed<5 ? (12u*speed*100u+223u)/224u-1u : 0u;
 }
 static void round_tick(BtpState *s, const BtpResources *r, int enemy_ai)
 {
     BtpCombatState *c=&s->combat;
-    if (c->delay) { --c->delay;if (c->flash) --c->flash;return; }
-    c->delay=(uint8_t)btp_combat_delay_ticks(s->menu.speed);c->flash=0;
+    /* The original movement loop (12E8:1002..1286) has no speed wait.
+       Keep one visible movement microstep per host tick. */
+    c->flash=0;
     advance(s,0);
     /* Ignore old in-progress target paths too: loading an earlier checkpoint
        must not reanimate the training shell. */
@@ -719,7 +721,9 @@ static void combat_tick(BtpState *s, const BtpResources *r, BtpAction a, int ene
     if (a==BTP_OPEN_MENU) {
         if (c->phase==BTP_COMBAT_ROUND) {
             /* 103B:100D..102E preserves individual computer assignments. */
-            c->paused=1;c->auto_run=0;return;
+            c->paused=1;c->auto_run=0;
+            if (s->menu.speed==5) c->delay=0; /* Space also acknowledges a held attack. */
+            return;
         }
         a=BTP_ACCEPT;
     }
@@ -749,8 +753,16 @@ static void combat_tick(BtpState *s, const BtpResources *r, BtpAction a, int ene
         s->presentation.kinds[s->presentation.count]=0;
         (void)btp_cutscene_begin(s,r,kind,3);return;
     }
-    if (s->effects.count) { btp_effects_tick(s,r);return; }
     if (s->audio.sound_count) return;
+    /* Apply pacing after each completed report/outtake, before another
+       queued actor or movement can advance. The same saved delay byte also
+       finishes a wait restored from an earlier executable. */
+    if (c->phase==BTP_COMBAT_ROUND && c->delay) {
+        if (s->menu.speed==5) { if (a!=BTP_IDLE) c->delay=0; }
+        else { --c->delay;if (c->flash) --c->flash; }
+        return;
+    }
+    if (s->effects.count) { btp_effects_tick(s,r);return; }
     if (c->phase==BTP_COMBAT_SPY) {
         if (a==BTP_ACCEPT || a==BTP_CANCEL || a==BTP_OPEN_MENU) {
             btp_spy_combat_finish(s);
@@ -793,7 +805,7 @@ static void combat_tick(BtpState *s, const BtpResources *r, BtpAction a, int ene
     }
     unsigned count=btp_combat_weapon_count(&c->unit[c->active_unit]);
     if (c->phase==BTP_COMBAT_ROUND) {
-        if (s->menu.speed!=5 || a!=BTP_IDLE) round_tick(s,r,enemy_ai);
+        round_tick(s,r,enemy_ai);
         return;
     }
     if (c->phase==BTP_COMBAT_NOTICE) {

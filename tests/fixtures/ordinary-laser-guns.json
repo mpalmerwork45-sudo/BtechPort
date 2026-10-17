@@ -579,7 +579,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "40bd127e000141de",
+        "state_digest": "4329a4df14eb60a1",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1503,7 +1503,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "2385c512ff049763",
+        "state_digest": "1283ee914b29d298",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -2431,7 +2431,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "b3548c28744edc27",
+        "state_digest": "e00169502af478a3",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -3355,7 +3355,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "025d1a79ac045fe9",
+        "state_digest": "d760a4442aec2fec",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -4277,7 +4277,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "025d1a79ac045fe9",
+    "state_digest": "d760a4442aec2fec",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

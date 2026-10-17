@@ -1503,7 +1503,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "e1a1f88bfc9bf0e7",
+        "state_digest": "092e8f3ecf0bf997",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1953,8 +1953,8 @@
         "npcs": [
           [
             2615,
-            32850,
-            3
+            32849,
+            4
           ],
           [
             2628,
@@ -2338,7 +2338,7 @@
         },
         "player_sprite": 172,
         "npc_sprites": [
-          274,
+          272,
           277,
           277,
           270,
@@ -2422,7 +2422,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "04e79879af424848",
+        "state_digest": "6c6ec421a08afa77",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -2872,8 +2872,8 @@
         "npcs": [
           [
             2615,
-            32850,
-            3
+            32849,
+            4
           ],
           [
             2628,
@@ -3257,7 +3257,7 @@
         },
         "player_sprite": 172,
         "npc_sprites": [
-          274,
+          272,
           277,
           277,
           270,
@@ -3341,7 +3341,7 @@
           "rental": 1,
           "variant": 0
         },
-        "state_digest": "fe8bb0f2e903f89d",
+        "state_digest": "bc8cf5c5d81a09cb",
         "effect_stage": 0,
         "combat": {
           "phase": 1,
@@ -3832,7 +3832,7 @@
     },
     {
       "label": "arena-wall-approach",
-      "tick": 1652,
+      "tick": 1412,
       "state": {
         "map": 2,
         "mode": "encounter",
@@ -3843,7 +3843,7 @@
           49
         ],
         "gate": 85,
-        "tick": 1652,
+        "tick": 1412,
         "blocked": 1,
         "script_pc": 1703,
         "script_status": 5,
@@ -3939,8 +3939,8 @@
         "npcs": [
           [
             2615,
-            32850,
-            3
+            32849,
+            4
           ],
           [
             2628,
@@ -4324,7 +4324,7 @@
         },
         "player_sprite": 172,
         "npc_sprites": [
-          274,
+          272,
           277,
           277,
           270,
@@ -4408,7 +4408,7 @@
           "rental": 1,
           "variant": 0
         },
-        "state_digest": "9446d8d047bfaf18",
+        "state_digest": "05670f19f73f155f",
         "effect_stage": 0,
         "combat": {
           "phase": 4,
@@ -4899,7 +4899,7 @@
     },
     {
       "label": "arena-urbanmech-alarm",
-      "tick": 2090,
+      "tick": 1790,
       "state": {
         "map": 2,
         "mode": "encounter",
@@ -4910,7 +4910,7 @@
           49
         ],
         "gate": 85,
-        "tick": 2090,
+        "tick": 1790,
         "blocked": 1,
         "script_pc": 1703,
         "script_status": 5,
@@ -5006,8 +5006,8 @@
         "npcs": [
           [
             2615,
-            32850,
-            3
+            32849,
+            4
           ],
           [
             2628,
@@ -5391,7 +5391,7 @@
         },
         "player_sprite": 172,
         "npc_sprites": [
-          274,
+          272,
           277,
           277,
           270,
@@ -5475,7 +5475,7 @@
           "rental": 1,
           "variant": 0
         },
-        "state_digest": "ba1cc7d1be60ddbd",
+        "state_digest": "360a656a50d5f191",
         "effect_stage": 0,
         "combat": {
           "phase": 4,
@@ -6240,7 +6240,7 @@
     },
     {
       "label": "arena-mech-stolen",
-      "tick": 2529,
+      "tick": 2129,
       "state": {
         "map": 0,
         "mode": "local-exploration",
@@ -6251,7 +6251,7 @@
           562
         ],
         "gate": 85,
-        "tick": 2529,
+        "tick": 2129,
         "blocked": 1,
         "script_pc": 3375,
         "script_status": 3,
@@ -6821,7 +6821,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "78da026df9fe5588",
+        "state_digest": "38bdb7f43c1b483f",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -7173,7 +7173,7 @@
       562
     ],
     "gate": 85,
-    "tick": 2529,
+    "tick": 2129,
     "blocked": 1,
     "script_pc": 3375,
     "script_status": 3,
@@ -7743,7 +7743,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "78da026df9fe5588",
+    "state_digest": "38bdb7f43c1b483f",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

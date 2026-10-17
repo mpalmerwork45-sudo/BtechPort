@@ -595,6 +595,37 @@ def mechit_ui(env,work):
                 keyboard.x.XCloseDisplay(keyboard.display)
                 if process.poll() is None:process.terminate();process.wait(timeout=5)
 
+def combat_pacing(env,work):
+    """Use the real 32ms SDL loop and audio queue for short combat waves."""
+    binary=ROOT/'build/btech-headless'
+    env=dict(env,SDL_AUDIODRIVER='dummy')
+    with tempfile.TemporaryDirectory(prefix='native-pacing-',dir=work) as directory:
+        tmp=Path(directory)
+        cases=[('move',['idle']*12,4),('key',['idle']*20,9),
+               ('key-enter',['idle']*16+['accept']+['idle']*20,4),
+               ('key-space',['idle']*16+['menu']+['idle']*20,4)]
+        for label,actions,phase in cases:
+            start=work/f'combat-pacing-{"move" if label=="move" else "key"}.btp'
+            tail=tmp/'tail.actions';record=tmp/'record.actions'
+            frame=work/f'native-pacing-{label}.ppm';expected=tmp/'expected.ppm'
+            tail.write_text('\n'.join(actions)+'\n')
+            # Deliberately omit --smoke-fast: the normal clock and queue
+            # backpressure must permit the same progress as the core test.
+            actual=subprocess.run([str(ROOT/'build/btech-port'),'--load',str(start),
+                '--smoke-replay','--replay',str(tail),'--record',str(record),'--frame',str(frame)],
+                cwd=ROOT,env=env,check=True,capture_output=True,text=True,timeout=20)
+            wanted=subprocess.run([str(binary),'--load',str(start),'--replay',str(record),
+                '--frame',str(expected)],cwd=ROOT,check=True,capture_output=True,text=True,timeout=10)
+            state=json.loads(actual.stdout)
+            if record.read_text().splitlines()!=actions+['idle']*5 or state!=json.loads(wanted.stdout) or frame.read_bytes()!=expected.read_bytes():
+                raise RuntimeError(f'Combat pacing {label}: SDL input/state/pixels differ')
+            if state['combat']['phase']!=phase:
+                raise RuntimeError(f'Combat pacing {label}: movement or attack wait finished at the wrong boundary')
+            if label=='key' and state['combat']['step']!=1:
+                raise RuntimeError('Key-wait mode did not hold immediately after the first attack')
+            print(f'PASS: native combat pacing {label}; normal clock, exact input/state/pixels.',flush=True)
+
+
 def combat_ui(env,work):
     """Controlled original mixed-party UI prerequisite, real SDL keys/F5/F9."""
     from reference_session import WindowKeys
@@ -1255,6 +1286,7 @@ def main():
     parser.add_argument('--town-only',action='store_true')
     parser.add_argument('--m4-acceptance',action='store_true')
     parser.add_argument('--combat-ui-only',action='store_true')
+    parser.add_argument('--combat-pacing-only',action='store_true')
     parser.add_argument('--mechit-only',action='store_true')
     parser.add_argument('--island-only',action='store_true')
     parser.add_argument('--controls-only',action='store_true')
@@ -1313,6 +1345,8 @@ def main():
                 encounter_placement(env,work);return
             if args.combat_ui_only:
                 combat_ui(env,work);return
+            if args.combat_pacing_only:
+                combat_pacing(env,work);return
             if args.mechit_only:
                 mechit_ui(env,work);return
             if args.island_only:

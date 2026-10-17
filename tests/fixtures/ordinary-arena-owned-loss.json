@@ -119,8 +119,8 @@
         "npcs": [
           [
             2615,
-            32850,
-            3
+            32849,
+            4
           ],
           [
             2628,
@@ -504,7 +504,7 @@
         },
         "player_sprite": 172,
         "npc_sprites": [
-          274,
+          272,
           277,
           277,
           270,
@@ -588,7 +588,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "e0505ac658f72500",
+        "state_digest": "9602b4dd3742cb2e",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1051,8 +1051,8 @@
         "npcs": [
           [
             2615,
-            32850,
-            3
+            32849,
+            4
           ],
           [
             2628,
@@ -1436,7 +1436,7 @@
         },
         "player_sprite": 172,
         "npc_sprites": [
-          274,
+          272,
           277,
           277,
           270,
@@ -1520,7 +1520,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "4e6a7d4c7511b887",
+        "state_digest": "ab8c57ca41114695",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -1983,8 +1983,8 @@
         "npcs": [
           [
             2615,
-            32850,
-            3
+            32849,
+            4
           ],
           [
             2628,
@@ -2368,7 +2368,7 @@
         },
         "player_sprite": 172,
         "npc_sprites": [
-          274,
+          272,
           277,
           277,
           270,
@@ -2452,7 +2452,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "714b7973e0d38ed3",
+        "state_digest": "2f3bfaa850c0ff3d",
         "effect_stage": 0,
         "combat": {
           "phase": 1,
@@ -2806,7 +2806,7 @@
     },
     {
       "label": "arena-result",
-      "tick": 2978,
+      "tick": 2238,
       "state": {
         "map": 2,
         "mode": "encounter",
@@ -2817,7 +2817,7 @@
           44
         ],
         "gate": 85,
-        "tick": 2978,
+        "tick": 2238,
         "blocked": 1,
         "script_pc": 1703,
         "script_status": 5,
@@ -2926,8 +2926,8 @@
         "npcs": [
           [
             2615,
-            32850,
-            3
+            32849,
+            4
           ],
           [
             2628,
@@ -3311,7 +3311,7 @@
         },
         "player_sprite": 172,
         "npc_sprites": [
-          274,
+          272,
           277,
           277,
           270,
@@ -3395,7 +3395,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "b946d1ade7eaf9ef",
+        "state_digest": "9635cff82edbf6a2",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -3875,7 +3875,7 @@
     },
     {
       "label": "arena-cashier",
-      "tick": 2979,
+      "tick": 2239,
       "state": {
         "map": 2,
         "mode": "building",
@@ -3886,7 +3886,7 @@
           46
         ],
         "gate": 85,
-        "tick": 2979,
+        "tick": 2239,
         "blocked": 1,
         "script_pc": 2257,
         "script_status": 2,
@@ -3995,8 +3995,8 @@
         "npcs": [
           [
             2615,
-            32850,
-            3
+            32849,
+            4
           ],
           [
             2628,
@@ -4380,7 +4380,7 @@
         },
         "player_sprite": 172,
         "npc_sprites": [
-          274,
+          272,
           277,
           277,
           270,
@@ -4464,7 +4464,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "5db68b7dd69b2024",
+        "state_digest": "bf843085f502ffdb",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -4807,7 +4807,7 @@
     },
     {
       "label": "arena-exited",
-      "tick": 2980,
+      "tick": 2240,
       "state": {
         "map": 2,
         "mode": "local-exploration",
@@ -4818,7 +4818,7 @@
           46
         ],
         "gate": 85,
-        "tick": 2980,
+        "tick": 2240,
         "blocked": 1,
         "script_pc": 2258,
         "script_status": 3,
@@ -4927,8 +4927,8 @@
         "npcs": [
           [
             2615,
-            32850,
-            3
+            32849,
+            4
           ],
           [
             2628,
@@ -5312,7 +5312,7 @@
         },
         "player_sprite": 172,
         "npc_sprites": [
-          274,
+          272,
           277,
           277,
           270,
@@ -5396,7 +5396,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "446aa7188fcb954f",
+        "state_digest": "58d900412e520199",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -5748,7 +5748,7 @@
       46
     ],
     "gate": 85,
-    "tick": 2980,
+    "tick": 2240,
     "blocked": 1,
     "script_pc": 2258,
     "script_status": 3,
@@ -5857,8 +5857,8 @@
     "npcs": [
       [
         2615,
-        32850,
-        3
+        32849,
+        4
       ],
       [
         2628,
@@ -6242,7 +6242,7 @@
     },
     "player_sprite": 172,
     "npc_sprites": [
-      274,
+      272,
       277,
       277,
       270,
@@ -6326,7 +6326,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "446aa7188fcb954f",
+    "state_digest": "58d900412e520199",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

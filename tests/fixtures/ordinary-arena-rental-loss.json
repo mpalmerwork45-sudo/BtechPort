@@ -110,8 +110,8 @@
         "npcs": [
           [
             2615,
-            32850,
-            3
+            32849,
+            4
           ],
           [
             2628,
@@ -495,7 +495,7 @@
         },
         "player_sprite": 172,
         "npc_sprites": [
-          274,
+          272,
           277,
           277,
           270,
@@ -579,7 +579,7 @@
           "rental": 1,
           "variant": 0
         },
-        "state_digest": "fe8bb0f2e903f89d",
+        "state_digest": "bc8cf5c5d81a09cb",
         "effect_stage": 0,
         "combat": {
           "phase": 1,
@@ -1070,7 +1070,7 @@
     },
     {
       "label": "arena-result",
-      "tick": 2374,
+      "tick": 1794,
       "state": {
         "map": 2,
         "mode": "encounter",
@@ -1081,7 +1081,7 @@
           44
         ],
         "gate": 85,
-        "tick": 2374,
+        "tick": 1794,
         "blocked": 1,
         "script_pc": 1703,
         "script_status": 5,
@@ -1177,8 +1177,8 @@
         "npcs": [
           [
             2615,
-            32850,
-            3
+            32849,
+            4
           ],
           [
             2628,
@@ -1562,7 +1562,7 @@
         },
         "player_sprite": 172,
         "npc_sprites": [
-          274,
+          272,
           277,
           277,
           270,
@@ -1646,7 +1646,7 @@
           "rental": 1,
           "variant": 0
         },
-        "state_digest": "fee4716a96cc11a8",
+        "state_digest": "cd4a793293c3f47a",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -2263,7 +2263,7 @@
     },
     {
       "label": "arena-cashier",
-      "tick": 2375,
+      "tick": 1795,
       "state": {
         "map": 2,
         "mode": "building",
@@ -2274,7 +2274,7 @@
           46
         ],
         "gate": 85,
-        "tick": 2375,
+        "tick": 1795,
         "blocked": 1,
         "script_pc": 2257,
         "script_status": 2,
@@ -2383,8 +2383,8 @@
         "npcs": [
           [
             2615,
-            32850,
-            3
+            32849,
+            4
           ],
           [
             2628,
@@ -2768,7 +2768,7 @@
         },
         "player_sprite": 172,
         "npc_sprites": [
-          274,
+          272,
           277,
           277,
           270,
@@ -2852,7 +2852,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "08818e7b14847c3f",
+        "state_digest": "a2399f5f3f0a0acb",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -3195,7 +3195,7 @@
     },
     {
       "label": "arena-exited",
-      "tick": 2376,
+      "tick": 1796,
       "state": {
         "map": 2,
         "mode": "local-exploration",
@@ -3206,7 +3206,7 @@
           46
         ],
         "gate": 85,
-        "tick": 2376,
+        "tick": 1796,
         "blocked": 1,
         "script_pc": 2258,
         "script_status": 3,
@@ -3315,8 +3315,8 @@
         "npcs": [
           [
             2615,
-            32850,
-            3
+            32849,
+            4
           ],
           [
             2628,
@@ -3700,7 +3700,7 @@
         },
         "player_sprite": 172,
         "npc_sprites": [
-          274,
+          272,
           277,
           277,
           270,
@@ -3784,7 +3784,7 @@
           "rental": 0,
           "variant": 0
         },
-        "state_digest": "ce91461a38052554",
+        "state_digest": "b64cb7862110ea41",
         "effect_stage": 0,
         "combat": {
           "phase": 0,
@@ -4136,7 +4136,7 @@
       46
     ],
     "gate": 85,
-    "tick": 2376,
+    "tick": 1796,
     "blocked": 1,
     "script_pc": 2258,
     "script_status": 3,
@@ -4245,8 +4245,8 @@
     "npcs": [
       [
         2615,
-        32850,
-        3
+        32849,
+        4
       ],
       [
         2628,
@@ -4630,7 +4630,7 @@
     },
     "player_sprite": 172,
     "npc_sprites": [
-      274,
+      272,
       277,
       277,
       270,
@@ -4714,7 +4714,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "ce91461a38052554",
+    "state_digest": "b64cb7862110ea41",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

@@ -1,7 +1,7 @@
 #ifndef BTP_COMBAT_H
 #define BTP_COMBAT_H
 #include "core/game.h"
-/* Idle ticks between tactical advances at the original VGA speed setting. */
+/* Idle ticks after an attack report at the original VGA speed setting. */
 unsigned btp_combat_delay_ticks(unsigned speed);
 
 int btp_combat_los(const BtpMap *map, unsigned gate, int x, int y, int tx, int ty);

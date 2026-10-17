@@ -113,6 +113,12 @@ advance, instead of 2/3/4/5. Speed five retains key stepping. Existing saved
 in-progress delays finish normally; new advances use the corrected conversion.
 Frame decoding cost and host scheduling are outside these duration claims.
 
+**Correction, 2026-10-17:** the duration conversion above was correct, but its
+application to every movement advance was not. Complete original-wave traces
+show that this wait belongs after each attack; speed five also holds attacks
+only. [The pacing correction](COMBAT_PACING.md) supersedes that part of this
+earlier sweep and removes hidden pose waits when graphics are disabled.
+
 **Measured, still APPROXIMATE:** a fresh 25-second, read-only DOSBox MAP1 idle
 capture produced 160 stable samples and 159 consecutive frame transitions.
 All NPC coordinates, timers, RNG, phase and saved continuations match the native

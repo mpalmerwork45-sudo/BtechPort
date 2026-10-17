@@ -2,43 +2,43 @@
   "checkpoints": [
     {
       "label": "funded-by-owner-shortcut",
-      "tick": 66530
+      "tick": 62020
     },
     {
       "label": "garage-crew-allocation",
-      "tick": 66557
+      "tick": 62047
     },
     {
       "label": "garage-checkout",
-      "tick": 66564
+      "tick": 62054
     },
     {
       "label": "walking-with-rex-piloting",
-      "tick": 66610
+      "tick": 62100
     },
     {
       "label": "hospital-menu",
-      "tick": 67001
+      "tick": 62491
     },
     {
       "label": "hospital-companion-pause",
-      "tick": 67086
+      "tick": 62576
     },
     {
       "label": "hospital-companion-joined",
-      "tick": 67088
+      "tick": 62578
     },
     {
       "label": "medical-kit",
-      "tick": 67095
+      "tick": 62585
     },
     {
       "label": "field-surgery-kit",
-      "tick": 67099
+      "tick": 62589
     },
     {
       "label": "hospital-exit",
-      "tick": 67101
+      "tick": 62591
     }
   ],
   "final": {
@@ -51,7 +51,7 @@
       15
     ],
     "gate": 85,
-    "tick": 67101,
+    "tick": 62591,
     "blocked": 0,
     "script_pc": 4577,
     "script_status": 3,
@@ -641,7 +641,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "a60c2e4c4fe89dd2",
+    "state_digest": "5eabd68c55b60bdd",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

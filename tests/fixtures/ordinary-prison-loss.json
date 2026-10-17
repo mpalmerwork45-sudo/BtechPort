@@ -2,15 +2,15 @@
   "checkpoints": [
     {
       "label": "prison-yard",
-      "tick": 67910
+      "tick": 63400
     },
     {
       "label": "prison-guards",
-      "tick": 68798
+      "tick": 64288
     },
     {
       "label": "prison-loss",
-      "tick": 68930
+      "tick": 64548
     }
   ],
   "final": {
@@ -23,7 +23,7 @@
       10
     ],
     "gate": 85,
-    "tick": 68930,
+    "tick": 64548,
     "blocked": 0,
     "script_pc": 4293,
     "script_status": 3,
@@ -597,7 +597,7 @@
       "rental": 0,
       "variant": 0
     },
-    "state_digest": "36dbec08857164e4",
+    "state_digest": "5e92e7ace3b63605",
     "effect_stage": 0,
     "combat": {
       "phase": 0,

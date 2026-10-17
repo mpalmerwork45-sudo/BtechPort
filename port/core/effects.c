@@ -119,9 +119,15 @@ void btp_effects_tick(BtpState *s,const BtpResources *r)
     const BtpCombatEffect *e=&v->shots[0];
     if (v->stage==BTP_EFFECT_START) {
         if (s->audio.sound_count) return;
-        if (e->weapon==33) btp_audio_effect(s,18);
-        else if (s->combat.graphics) btp_audio_effect(s,btp_effects_fire_sound(e->weapon,visible(e,s)));
-        v->stage=BTP_EFFECT_FIRE_SOUND;return;
+        if (!s->combat.graphics && e->weapon!=33) {
+            /* 12E8:12DF jumps directly to casualty handling when graphics
+               are disabled. Hidden firing/impact poses consume no time. */
+            v->age=(uint8_t)btp_effects_length(e,&r->combat);v->stage=BTP_EFFECT_IMPACT;
+        } else {
+            if (e->weapon==33) btp_audio_effect(s,18);
+            else btp_audio_effect(s,btp_effects_fire_sound(e->weapon,visible(e,s)));
+            v->stage=BTP_EFFECT_FIRE_SOUND;return;
+        }
     }
     if (s->audio.sound_count) return;
     if (e->weapon==33 && v->stage==BTP_EFFECT_FIRE_SOUND) { v->stage=BTP_EFFECT_DEATH_SOUND;return; }
@@ -133,7 +139,8 @@ void btp_effects_tick(BtpState *s,const BtpResources *r)
             if (s->combat.graphics) btp_audio_effect(s,4);
             v->stage=BTP_EFFECT_HIT_SOUND;return;
         }
-    } else if (v->stage==BTP_EFFECT_IMPACT || v->stage==BTP_EFFECT_LEGACY) ++v->age;
+    } else if ((v->stage==BTP_EFFECT_IMPACT || v->stage==BTP_EFFECT_LEGACY) &&
+        v->age<btp_effects_length(e,&r->combat)) ++v->age;
     if (e->weapon!=33 && v->age<btp_effects_length(e,&r->combat)) return;
     if (e->dead && e->target_base!=254 && v->stage!=BTP_EFFECT_DEATH_SOUND && v->stage!=BTP_EFFECT_LEGACY) {
         /* 12E8:1C76 plays sound 8 for a wreck. The rented arena target's
@@ -146,6 +153,10 @@ void btp_effects_tick(BtpState *s,const BtpResources *r)
     for (unsigned i=0;i<2;++i) if (v->outtakes[0][i] && s->presentation.count<24)
         s->presentation.kinds[s->presentation.count++]=v->outtakes[0][i];
     unsigned legacy=v->stage==BTP_EFFECT_LEGACY;
+    /* The original pauses once per attack, even with graphics disabled.
+       Crushing an enemy has the same timed pause but no key wait at speed 5
+       (0E31:1A21). Keep the report visible while this saved wait elapses. */
+    s->combat.delay=(uint8_t)(s->menu.speed==5 ? e->weapon!=33 : btp_combat_delay_ticks(s->menu.speed));
     if (v->quiet.active && !s->combat.messages && v->text[0].dead && v->text[0].target<4 && v->quiet.ejections<4)
         ++v->quiet.ejections;
     v->shown=v->text[0];

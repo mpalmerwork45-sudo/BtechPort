@@ -1,0 +1,18 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "cases": 48,
+  "prerequisites": "MAP1 snapshot; player loan 0 at 84,85; target loan 2 at 90,85; seed 123456; zero skills/heat; optional walk to 88,85; 0/1/2 player gun orders; no enemy orders.",
+  "routines": "103B:1774 route/camera; 12E8:000C complete wave; 12E8:1002 movement; 12E8:12C7 attack presentation; 12E8:0D76 -> 0E31:1DCC post-attack speed pause.",
+  "boundaries": [
+    "0000:19BF",
+    "0000:48B7",
+    "0E31:1F09",
+    "173D:0006",
+    "173D:0259",
+    "173D:06C3"
+  ],
+  "comparison": "Ordered attack/pause calls and retrace/key counts inside 48 full waves. Movement adds no speed pause. Graphics-off skips pose waits. All six speed selections, idle/moving and zero/one/two attacks.",
+  "limits": "Retrace requests, not physical XT wall-clock measurements. CPU drawing, sound duration, outtake playback and numeric combat rules are outside this fixture; covered separately where documented.",
+  "no_instruction_patches": true
+}
