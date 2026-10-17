@@ -2,6 +2,7 @@
 #include "data/save.h"
 #include "core/menu.h"
 #include "core/combat.h"
+#include "core/combat_ai.h"
 #include "core/npc.h"
 #include "frontend/pixels.h"
 #include <stdio.h>
@@ -106,7 +107,7 @@ static void battle_base(BtpState *s,const BtpResources *r)
 }
 static void manual_rules(BtpResources *r)
 {
-    BtpState base,s;battle_base(&base,r);memset(r->map.tiles,64,sizeof r->map.tiles);
+    BtpState base,s;battle_base(&base,r);BtpMap saved_map=r->map;memset(r->map.tiles,64,sizeof r->map.tiles);
     for (unsigned enhanced=0;enhanced<2;++enhanced) {
         s=base;s.combat_profile=(uint8_t)enhanced;s.combat_fingerprint=enhanced ? r->combat_profile.fingerprint : 0;
         BtpCombatState *c=&s.combat;c->unit[0].x=64;c->unit[0].y=64;c->unit[1].x=80;c->unit[1].y=64;
@@ -121,6 +122,26 @@ static void manual_rules(BtpResources *r)
         CHECK(c->fired&1u);CHECK(c->shot.needed==(enhanced ? 9 : 4));CHECK(c->unit[0].record[39]==9);
         roundtrip(&s,r);
     }
+    r->map=saved_map;
+}
+static void tactics(BtpResources *r)
+{
+    BtpState base,s,before;battle_base(&base,r);BtpMap map=r->map;memset(map.tiles,64,sizeof map.tiles);
+    base.combat_profile=1;base.combat_fingerprint=r->combat_profile.fingerprint;
+    static const unsigned models[]={2,4,10,14,15,16,21};
+    for (unsigned i=0;i<sizeof models/sizeof models[0];++i) for (unsigned empty=0;empty<2;++empty) {
+        s=base;BtpCombatUnit *a=&s.combat.unit[0],*t=&s.combat.unit[1];
+        memcpy(a->record,r->roster.mechs[models[i]].record,125);a->x=32;a->y=64;a->heat=a->pool=0;
+        memcpy(t->record,r->combat.jenner,125);t->x=(uint8_t)(empty ? 100 : 48);t->y=64;t->heat=t->pool=0;
+        if (empty) for (unsigned w=0;w<10;++w) if (a->record[39+w]!=255) a->record[39+w]=0;
+        before=s;BtpAiPlan p;CHECK(btp_combat_ai_plan(&s,r,&map,0,&p));same(&s,&before);
+        unsigned distance=btp_combat_distance(p.x,p.y,t->x,t->y),start=btp_combat_distance(a->x,a->y,t->x,t->y),shots=0;
+        for (unsigned w=0;w<12;++w) shots+=p.orders[w]!=255;
+        printf("plan %-16.16s empty=%u distance=%u->%u mode=%u steps=%u shots=%u score=%d\n",a->record,empty,start,distance,p.movement,p.steps,shots,p.score);
+        CHECK(p.candidates<=85 && p.steps<=12);
+        if (i<3) CHECK(empty ? distance<start : distance>start);
+        memset(map.tiles,255,sizeof map.tiles);CHECK(btp_combat_ai_plan(&s,r,&map,0,&p));CHECK(!p.steps);memset(map.tiles,64,sizeof map.tiles);
+    }
 }
 int main(int argc,char **argv)
 {
@@ -128,6 +149,6 @@ int main(int argc,char **argv)
     BtpOriginalContentPaths paths={argv[1],"work/talk-data.bin","work/combat-data.bin","work/world-data.bin"};
     CHECK(btp_content_load_original(&content,&paths,&error));
     CHECK(btp_content_select(&content,BTP_CONTENT_UPDATED,"content/updated/roster.json",&error));
-    profiles(content.resources);parser(&content.resources->combat_profile);queries(content.resources);manual_rules(content.resources);
+    profiles(content.resources);parser(&content.resources->combat_profile);queries(content.resources);manual_rules(content.resources);tactics(content.resources);
     btp_content_close(&content);printf("Updated combat: %u checks passed\n",checks);return 0;
 }

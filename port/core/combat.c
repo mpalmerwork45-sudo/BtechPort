@@ -1,5 +1,6 @@
 #include "data/unit_data.h"
 #include "core/combat.h"
+#include "core/combat_ai.h"
 #include "core/npc.h"
 #include "core/animation.h"
 #include "core/effects.h"
@@ -65,7 +66,7 @@ int btp_combat_los(const BtpMap *m,unsigned gate,int x,int y,int tx,int ty)
 {
     return los(m,gate,x,y,tx,ty,NULL,NULL,NULL);
 }
-static int scene_los(const BtpResources *r,const BtpState *s,const BtpMap *m,int x,int y,int tx,int ty)
+int btp_combat_scene_los(const BtpResources *r,const BtpState *s,const BtpMap *m,int x,int y,int tx,int ty)
 {
     if (!s->campaign.encounter || !r->world.native) return btp_combat_los(m,s->gate,x,y,tx,ty);
     uint8_t prefix[9];
@@ -165,6 +166,13 @@ static unsigned movement_gate(const BtpState *s)
     /* 09B8's mounted arena view sets the original terrain threshold to 139.
        The personal exploration threshold would incorrectly block its exit. */
     return s->campaign.encounter==4 ? 139u : s->gate;
+}
+void btp_combat_plan_actor(const BtpMap *map,const BtpState *s,unsigned actor,
+    int x,int y,unsigned movement,int8_t steps[12][2])
+{
+    const BtpCombatState *c=&s->combat;const BtpCombatUnit *u=&c->unit[actor];
+    plan_points(map,movement_gate(s),u,NULL,x,y,movement,1,btp_combat_points(u,movement),
+        NULL,NULL,0,c->unit,c->count,actor,c->friends ? c->friends : 1u,steps);
 }
 void btp_combat_map(const BtpResources *r,const BtpState *s,BtpMap *m)
 {
@@ -386,6 +394,27 @@ static void computer_plan(BtpState *s,const BtpResources *r,const BtpMap *terrai
     int friendly=index<friends;
     if (friendly && !(c->automatic&(UINT32_C(1)<<index))) return;
     if (c->unit[index].record[0]==255) return;
+    /* Updated orders use explicit saved policy. Story eligibility still
+       precedes planning: in particular the target shell cannot become mobile. */
+    if (!c->unit[index].infantry && (friendly || (enemy_ai && s->mission.assignment!=2))) {
+        BtpAiPlan plan;
+        if (btp_combat_ai_plan(s,r,terrain,index,&plan)) {
+            memcpy(c->path[index],plan.path,sizeof plan.path);c->plan_direction[index]=plan.direction;
+            if (index) {
+                memcpy(c->enemy_orders[index-1],plan.orders,12);
+                if (index==1) c->enemy_movement=plan.movement;else c->enemy_modes[index-2]=plan.movement;
+            } else if (!c->friends) {
+                c->movement=plan.movement;memcpy(c->orders,plan.orders,11);c->kick_target=plan.orders[11];
+                c->goal_active=c->waypoint_count=0;c->goal_x=plan.x;c->goal_y=plan.y;
+                memset(c->waypoint_x,0,11);memset(c->waypoint_y,0,11);
+            }
+            if (friendly && c->friends) {
+                BtpCombatPlan *p=&c->plans[index];*p=(BtpCombatPlan){.movement=plan.movement,.x=plan.x,.y=plan.y,.kick=plan.orders[11]};
+                memcpy(p->orders,plan.orders,11);
+            }
+            return;
+        }
+    }
     /* 0E31:03AB: the weapon-component range scan intentionally uses the
        component value as the table index, even when ammunition is empty. */
     BtpCombatUnit enemy=c->unit[index];enemy.direction=c->plan_direction[index];
@@ -410,7 +439,7 @@ static void computer_plan(BtpState *s,const BtpResources *r,const BtpMap *terrai
     }
     int ex=enemy.x,ey=enemy.y,px=c->unit[prey].x,py=c->unit[prey].y,goal_x=ex,goal_y=ey;
     unsigned distance=btp_combat_distance(ex,ey,px,py),preferred=255;
-    int visible=scene_los(r,s,terrain,ex,ey,px,py)>0;
+    int visible=btp_combat_scene_los(r,s,terrain,ex,ey,px,py)>0;
     for (unsigned i=51;i<86;++i) {
         unsigned component=enemy.record[i];
         if (component>=16 && component<=32) {
@@ -646,7 +675,7 @@ static void round_tick(BtpState *s, const BtpResources *r, int enemy_ai)
             /* 0E31:1BFE returns visible immediately for E48E and unit 13.
                The arena alarm clears E48E; ordinary shots use the ray. */
             int los=s->campaign.encounter==4 && s->yard.rental && !s->story_flags[35] && btp_combat_id(c,target)==13 ? 1 :
-                scene_los(r,s,&map,attacker->x,attacker->y,enemy->x,enemy->y);
+                btp_combat_scene_los(r,s,&map,attacker->x,attacker->y,enemy->x,enemy->y);
             if (!los) { if (!c->flash) c->last_event=3;continue; }
             if (los<0) { if (!c->flash) c->last_event=4;continue; }
             int ignition=enemy->cover && terrain[target]>=16 && terrain[target]<=63 &&
@@ -1185,7 +1214,7 @@ int btp_combat_valid(const BtpState *s)
         c->scan_unit>=c->count || c->step>12 || c->delay>21 || c->notice>22 || c->notice_return>BTP_COMBAT_SCAN_CHOICE ||
         c->fled>1 || c->won>1 || c->fled+c->won+c->lost>1 || c->last_weapon>11 || c->last_event>5 || c->fired>=4096 ||
         c->shot.hit>1 || c->shot.location>35 || c->shot.destroyed>1 || c->shot.toppled>1 ||
-        c->shot.needed < -4 || c->shot.needed>(s->combat_profile ? 42 : 30) || (c->enemy_movement>1 && c->enemy_movement!=255) ||
+        c->shot.needed < -4 || c->shot.needed>(s->combat_profile ? 42 : 30) || (c->enemy_movement>(s->combat_profile ? 2u : 1u) && c->enemy_movement!=255) ||
         c->flash>3 || (c->flash && (c->phase!=BTP_COMBAT_ROUND || !c->graphics || c->last_event<1 || c->last_event>2))) return 0;
     if ((!c->phase && !c->fled && !c->won && !c->lost) || (c->phase &&
         (((c->fled || c->won || c->lost) && !(c->phase==BTP_COMBAT_STORY && s->late.invasion_end)) ||
@@ -1254,7 +1283,7 @@ int btp_combat_valid(const BtpState *s)
         if (i) {
             if (i>=(c->friends ? c->friends : 1u)) alive+=u->record[0]!=255;
             unsigned movement=i==1 ? c->enemy_movement : c->enemy_modes[i-2];
-            if ((movement>(i<c->friends ? 2u : 1u) && movement!=255) || c->enemy_fired[i-1]>=4096) return 0;
+            if ((movement>(i<c->friends || s->combat_profile ? 2u : 1u) && movement!=255) || c->enemy_fired[i-1]>=4096) return 0;
             for (unsigned w=0;w<12;++w) if (c->enemy_orders[i-1][w]!=255 && (c->friends ? btp_combat_target(c,c->enemy_orders[i-1][w])>=c->count : c->enemy_orders[i-1][w]!=0)) return 0;
         }
         for (unsigned j=0;j<12;++j) for (unsigned k=0;k<2;++k) if (c->path[i][j][k]<-1 || c->path[i][j][k]>2) return 0;

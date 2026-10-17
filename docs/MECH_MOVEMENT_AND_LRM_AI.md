@@ -21,8 +21,13 @@ the pre-change baseline; the delivery record below distinguishes completed work.
   range query; the target panel displays the close-range modifier within its
   existing border. Independent boundaries, footprint cases, actual manual
   shots and held saves pass; four focused suites pass (`work/lrm-stage2.log`).
-  The target panel has been visually reviewed. LRM3–LRM5 remain in progress;
-  new-game defaults are not enabled yet.
+  The target panel has been visually reviewed.
+- **LRM3 implemented:** deterministic candidate paths, usable-weapon scoring,
+  incoming-fire/heat estimates and stable position preferences. Controlled
+  Catapult, Trebuchet and Archer cases retreat when supplied and approach with
+  empty launchers; Atlas accepts its useful close fight. Blocked maps hold
+  safely. Six focused native suites pass (`work/lrm-stage3.log`).
+  LRM4–LRM5 remain in progress; new-game defaults are not enabled yet.
 
 ## Movement calculations
 

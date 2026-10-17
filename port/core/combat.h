@@ -5,6 +5,9 @@
 unsigned btp_combat_delay_ticks(unsigned speed);
 
 int btp_combat_los(const BtpMap *map, unsigned gate, int x, int y, int tx, int ty);
+int btp_combat_scene_los(const BtpResources *resources,const BtpState *state,const BtpMap *map,int x,int y,int tx,int ty);
+void btp_combat_plan_actor(const BtpMap *map,const BtpState *state,unsigned actor,
+    int x,int y,unsigned movement,int8_t steps[12][2]);
 void btp_combat_plan(const BtpMap *map, unsigned gate, const BtpCombatUnit *unit,
     const BtpCombatUnit *other, int tx, int ty, unsigned movement, int computer,
     int8_t steps[12][2]);
