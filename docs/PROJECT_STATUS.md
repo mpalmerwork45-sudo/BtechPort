@@ -75,21 +75,26 @@ persistence and an offline schema/sample. The current game and BTPe/v40 saves
 remain the compatibility case. All 41 Windows SDL portability checks and eleven
 Linux Mech-It service/continuation checks pass.
 The [M5a CHI roster slice](M5A_ROSTER_SLICE.md) now supplies the pre-logo
-Original/Updated selector and 23 playable external models/variants, with broker,
+Original/Updated selector and 31 playable external models/variants, with broker,
 encounter and save support. The separate general-schema sample remains offline;
 the rest of M5a and M5b–M5e packages/Lua/editor remain **proposed**.
 The broker occupies an unused Starport building, offers buying/selling with
-four owned bays, and uses an eight-row scrolling catalogue. Inspection bars
-fit their original wells even for assault models. Pack 0.3.0 adds Phoenix Hawk
-PXH-1, Dragon, Grasshopper, Highlander HGN-733, Stalker and Jenner; Shadow Hawk
-and Rifleman were already available. All 17 previous definitions are unchanged.
-Both 0.1.0 and 0.2.0 saves load automatically, including held/scrolled broker
-menus and confirmations. Legacy/Original still write v44 presentation states;
-Enhanced and the new settings pages use v45. Their edition envelopes and
+four owned bays, and groups stock into Light, Medium, Heavy and Assault classes,
+sorted by tonnage/name with eight-row scrolling. Inspection bars fit their
+original wells even for assault models. Pack 0.4.0 adds Ostsol OTL-4D, Javelin
+JVN-10N, Cicada CDA-2A, Clint CLNT-2-3T, Hermes II HER-2S, Whitworth WTH-1,
+UrbanMech UM-R60 and Ostroc OSR-2C. All 23 previous definitions are unchanged.
+The 0.1.0, 0.2.0 and 0.3.0 saves load automatically, including held/scrolled
+broker menus and confirmations. Ordinary Legacy/Original states still use v44;
+Enhanced and the settings pages use v45; held category menus use v46. Edition envelopes and
 slot namespaces remain separate.
 The [pack guide](../content/updated/README.md) records source statistics,
 temporary sprites, authored prices and adaptation limits. The original story
 LAM and training Jenners retain their original definitions.
+The [next five editor tasks](ENGINE_AND_EDITOR_PLAN.md#13-next-five-tasks-toward-an-editor)
+start with one shared authoring contract and validator, then project loading,
+maps/events, an independent miniature game and the desktop editor. A smaller
+CHI roster editor can follow the first two tasks.
 The broker now has [new AI-generated artwork](../content/updated/art/README.md)
 and the other buildings' description/compact-choice layout. The selected male
 salesman master, final prompt, exact 88×88 preview and ANM are included, along

@@ -1,5 +1,49 @@
 # Build, verification and original oracle — 2026-10-17
 
+## Broker categories and roster 0.4.0
+
+**VERIFIED within these bounds:** Buy exposes four weight classes, with
+tonnage/name ordering, scrolling, Back, Enter/Space selection and saved held
+choices. The lifecycle suite covers all **31 models**, including all eight new
+definitions, movement, firing every fitted weapon, cooling, repair/reload,
+inspection, garage allocation, sale and salvage. Energy-only Ostsol/Cicada
+records do not charge for reloads. The first 23 definitions are unchanged.
+
+Save checks cover old flat menus and category menus against the archived
+0.1.0/0.2.0/0.3.0 packs: scrolled models, Back, pending Yes/No, completed
+purchases, empty classes, and new stock sorting ahead of a held selection.
+Both Enhanced and Legacy category states round-trip; Legacy works with no
+optional combat rule file. Invalid class/count/definition combinations fail
+validation. Six-slot and original-save regression tests remain in the suite.
+
+| Check | Result |
+| --- | --- |
+| Full native CTest | **64/64**, 42.86 s |
+| Python tools/parser tests | **33/33**, 2.71 s |
+| Focused ASan/UBSan/LeakSanitizer | **9/9**, 4.24 s |
+| Focused Windows/Wine CTest | **9/9**, 30.46 s; default stack reserve |
+| Linux SDL | **46/46** window scenarios |
+| Windows/Wine SDL | **46/46** window scenarios |
+
+The nine focused suites cover Updated roster/combat, original save round-trips,
+Space/six-slot menus, Mech-It visits, combat shots/cooling, core formats and save
+file integrity. SDL checks cover all four categories and restored full frames,
+21 purchases including all eight additions, scrolling/wrap, Atlas confirmation,
+full bays, selling and replacement. The Linux review sheet is
+`work/broker-categories-review.png`; logs are `work/broker-categories-*.log`.
+Windows category frames also match the native headless renderer after reload.
+
+Repeat with the normal build, CTest and Python commands below, plus
+`python3 tools/native_smoke.py --updated-only` and its `--windows` variant.
+The authored broker/roster additions have no original-DOS counterpart. Their
+campaign balance, unique mech artwork and a physical Windows run remain
+outside these checks. The full original-game campaign route was not replayed;
+the existing original oracle suites passed in the full native run.
+
+Category menus add **BTPk/v46**, storing the weight class at payload byte 20005
+inside Updated's BTU2 envelope. Ordinary states retain v44/v45. No existing
+unit definition, original save layout, combat rule or asset was changed.
+
 ## Updated combat release
 
 All five [LRM milestones](MECH_MOVEMENT_AND_LRM_AI.md) are implemented. The

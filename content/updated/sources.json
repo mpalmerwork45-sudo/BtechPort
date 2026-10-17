@@ -127,6 +127,62 @@
       "sha256": "534458c60ebac823bab8d5f760a7d02804e3e9bed0570207b9813e2f44a9882d",
       "rear_lasers": 0,
       "consulted": "2026-10-17"
+    },
+    {
+      "id": "chi-expanded:ostsol-otl-4d",
+      "source": "https://github.com/MegaMek/mm-data/blob/e6f20e1fc2f9d6c74a6e2cdc74778b029ca14811/data/mekfiles/meks/3039u/Ostsol%20OTL-4D.mtf",
+      "sha256": "3121f1ec29a3f109a12dda200f3c5a7d93c1f8597fef4fd745eaf8f368622fcc",
+      "rear_lasers": 2,
+      "consulted": "2026-10-17"
+    },
+    {
+      "id": "chi-expanded:javelin-jvn-10n",
+      "source": "https://github.com/MegaMek/mm-data/blob/e6f20e1fc2f9d6c74a6e2cdc74778b029ca14811/data/mekfiles/meks/3039u/Javelin%20JVN-10N.mtf",
+      "sha256": "1f9a785a4633fe37d104cce90b3d02fecf340568aa4f15d389a049afdd9d5332",
+      "rear_lasers": 0,
+      "consulted": "2026-10-17"
+    },
+    {
+      "id": "chi-expanded:cicada-cda-2a",
+      "source": "https://github.com/MegaMek/mm-data/blob/e6f20e1fc2f9d6c74a6e2cdc74778b029ca14811/data/mekfiles/meks/3039u/Cicada%20CDA-2A.mtf",
+      "sha256": "9dff0fef135a16c13cedd653a14aec3bbf88f59fcd4a71e57703cd71195a4184",
+      "rear_lasers": 0,
+      "consulted": "2026-10-17"
+    },
+    {
+      "id": "chi-expanded:clint-clnt-2-3t",
+      "source": "https://github.com/MegaMek/mm-data/blob/e6f20e1fc2f9d6c74a6e2cdc74778b029ca14811/data/mekfiles/meks/3039u/Clint%20CLNT-2-3T.mtf",
+      "sha256": "7a7788b084cd3913178f9bb17eda88bf5aaeeccf8b8ada30a15c9db5b27bdf4d",
+      "rear_lasers": 0,
+      "consulted": "2026-10-17"
+    },
+    {
+      "id": "chi-expanded:hermes-ii-her-2s",
+      "source": "https://github.com/MegaMek/mm-data/blob/e6f20e1fc2f9d6c74a6e2cdc74778b029ca14811/data/mekfiles/meks/3039u/Hermes%20II%20HER-2S.mtf",
+      "sha256": "fec4d5ade9d46e151c267a3a274cab9fd04b2c9e986052c7fc3b09dc072e4689",
+      "rear_lasers": 0,
+      "consulted": "2026-10-17"
+    },
+    {
+      "id": "chi-expanded:whitworth-wth-1",
+      "source": "https://github.com/MegaMek/mm-data/blob/e6f20e1fc2f9d6c74a6e2cdc74778b029ca14811/data/mekfiles/meks/3039u/Whitworth%20WTH-1.mtf",
+      "sha256": "1680893b9a87b835600f5322ea8956ef1d34b2fb16a7443e7aaf692ea7e1ac44",
+      "rear_lasers": 0,
+      "consulted": "2026-10-17"
+    },
+    {
+      "id": "chi-expanded:urbanmech-um-r60",
+      "source": "https://github.com/MegaMek/mm-data/blob/e6f20e1fc2f9d6c74a6e2cdc74778b029ca14811/data/mekfiles/meks/3039u/UrbanMech%20UM-R60.mtf",
+      "sha256": "c9a8fcda784ea128dda98cfc7ca8a70816ab667ec8cfd8b21cb2ee4b023a895e",
+      "rear_lasers": 0,
+      "consulted": "2026-10-17"
+    },
+    {
+      "id": "chi-expanded:ostroc-osr-2c",
+      "source": "https://github.com/MegaMek/mm-data/blob/e6f20e1fc2f9d6c74a6e2cdc74778b029ca14811/data/mekfiles/meks/3039u/Ostroc%20OSR-2C.mtf",
+      "sha256": "76e2524783d392dbf4c74a6938b56e8c52912138782069fe00477a51bfdbbfdd",
+      "rear_lasers": 0,
+      "consulted": "2026-10-17"
     }
   ]
 }

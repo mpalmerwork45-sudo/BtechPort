@@ -35,9 +35,14 @@ void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
     memcpy(b, "BTPi", 4); b[4] = 44;
     /* Original/ordinary Legacy states keep their v44 bytes. Updated rule
        identity and the new settings pages require an explicit v45 payload. */
-    if (s->combat_profile || s->campaign.ui>=BTP_MENU_UPDATED_SETTINGS) {
+    if (s->combat_profile || (s->campaign.ui>=BTP_MENU_UPDATED_SETTINGS && s->campaign.ui<=BTP_MENU_COMBAT_RULES)) {
         memcpy(b,"BTPj",4);b[4]=45;b[20000]=s->combat_profile;
         put32(b+20001,s->combat_fingerprint);
+    }
+    /* Category state needs v46, including Legacy games with no combat pack.
+       Ordinary saves retain v44/v45; zero class still means the old flat list. */
+    if (s->menu.broker_class || s->campaign.ui==BTP_MENU_BROKER_CLASSES) {
+        memcpy(b,"BTPk",4);b[4]=46;b[20005]=s->menu.broker_class;
     }
     for (unsigned i = 0; i < 4; ++i) b[8+i] = (uint8_t)(s->tick >> (8 * i));
     b[12] = (uint8_t)s->x_half; b[13] = (uint8_t)(s->x_half >> 8);
@@ -232,7 +237,8 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         n == BTP_STATE_BYTES && !memcmp(b,"BTPg",4) && b[4]==42 ? 42 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPh",4) && b[4]==43 ? 43 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPi",4) && b[4]==44 ? 44 :
-        n == BTP_STATE_BYTES && !memcmp(b,"BTPj",4) && b[4]==45 ? 45 : 0;
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPj",4) && b[4]==45 ? 45 :
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPk",4) && b[4]==46 ? 46 : 0;
     if (!version) return 0;
     if (version>=18 && version<38 && b[10232]) return 0; /* v38 critical report count. */
     if (version>=18 && version<35 && b[10233]) return 0; /* v35 weapon-window presentation bits. */
@@ -252,7 +258,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
             if (version >= 10) {
                 if (b[425]) return 0;
                 unsigned start=version==10 ? 434u : version==11 ? 441u : version==12 ? 450u : version<15 ? 896u : version>=33 ? 19329u+(unsigned)sizeof(BtpYardState) : version>=31 ? 19308u+(unsigned)sizeof(BtpYardState) : version>=30 ? 19307u+(unsigned)sizeof(BtpYardState) : version>=29 ? 19306u+(unsigned)sizeof(BtpYardState) : version>=28 ? 19292u+(unsigned)sizeof(BtpLateState) : version>=27 ? 18483u+(unsigned)sizeof(BtpCacheState) : version>=26 ? 18483u : version>=25 ? 18433u : version>=24 ? 15702u : version>=22 ? 15693u : version>=21 ? 15414u : version>=20 ? 11388u : version>=19 ? 11326u : version>=18 ? 11314u : version>=17 ? 2684u : version>=16 ? 2399u : 1803u;
-                for (unsigned i=start;i<n;++i) if (b[i] && !(version>=45 && i>=20000 && i<20005)) return 0;
+                for (unsigned i=start;i<n;++i) if (b[i] && !(version>=45 && i>=20000 && i<(version>=46 ? 20006u : 20005u))) return 0;
                 if (version>=13) for (unsigned i=version>=15 ? 460u : 452u;i<512;++i) if (b[i]) return 0;
                 if (version==13 && b[878]) return 0; /* v14 firing-effect countdown. */
             }
@@ -291,10 +297,11 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
     }
     result.menu=(BtpMenuState){.steps=1,.sound=1,.speed=2,.outtakes=0};
     if (version>=19) {
-        result.menu=(BtpMenuState){b[11314],b[11315],b[11316],b[11317],b[11318],b[11319],b[11320],b[11321],get16(b+11322),get16(b+11324),0,0};
+        result.menu=(BtpMenuState){b[11314],b[11315],b[11316],b[11317],b[11318],b[11319],b[11320],b[11321],get16(b+11322),get16(b+11324),0,0,0};
     }
     if (version>=25) result.menu.from_intro=b[18432];
     if (version>=26) result.menu.from_story=b[18433];
+    if (version>=46) result.menu.broker_class=b[20005];
     if (version>=38) {
         for (unsigned i=0;i<25;++i) {
             BtpBattleText *t=i<24 ? &result.effects.text[i] : &result.effects.shown;
@@ -353,7 +360,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         if (result.campaign.invasion>1 || result.campaign.owned>1 || result.campaign.checkpoint_owned>1 ||
             result.campaign.world_x>2047 || result.campaign.world_y>2047 || result.campaign.building>=(version>=42 ? 27u : 26u) ||
             result.campaign.world_clock>=BTP_OUTDOOR_PERIOD || result.campaign.encounter>(version>=29 ? 4u : 2u) || result.campaign.mounted>result.campaign.owned ||
-            result.campaign.mech_walk>15 || result.campaign.mech_direction>7 || result.campaign.ui>(version>=45 ? BTP_MENU_COMBAT_RULES : version>=42 ? BTP_MENU_BROKER_SELL_RESULT : version>=41 ? BTP_MENU_BROKER_RESULT : version>=30 ? BTP_MENU_MECH_PICK : version>=25 ? BTP_MENU_MECH : version>=23 ? BTP_MENU_RECIPIENT : version>=19 ? BTP_MENU_QUIT : 6) ||
+            result.campaign.mech_walk>15 || result.campaign.mech_direction>7 || result.campaign.ui>(version>=46 ? BTP_MENU_BROKER_CLASSES : version>=45 ? BTP_MENU_COMBAT_RULES : version>=42 ? BTP_MENU_BROKER_SELL_RESULT : version>=41 ? BTP_MENU_BROKER_RESULT : version>=30 ? BTP_MENU_MECH_PICK : version>=25 ? BTP_MENU_MECH : version>=23 ? BTP_MENU_RECIPIENT : version>=19 ? BTP_MENU_QUIT : 6) ||
             result.campaign.selected>(version>=23 ? 8u : 7u) ||
             result.campaign.member>(version>=43 && result.campaign.ui>=BTP_MENU_BROKER &&
                 result.campaign.ui<=BTP_MENU_BROKER_RESULT ? BTP_ROSTER_MAX-1u : 7u) ||

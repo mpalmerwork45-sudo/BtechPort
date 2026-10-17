@@ -3,6 +3,40 @@
 #include <stdlib.h>
 #include <string.h>
 
+unsigned btp_roster_class(unsigned tons)
+{
+    return tons<=35 ? BTP_ROSTER_LIGHT : tons<=55 ? BTP_ROSTER_MEDIUM :
+        tons<=75 ? BTP_ROSTER_HEAVY : BTP_ROSTER_ASSAULT;
+}
+const char *btp_roster_class_name(unsigned weight_class)
+{
+    static const char *const names[]={"All","Light","Medium","Heavy","Assault"};
+    return weight_class<=BTP_ROSTER_ASSAULT ? names[weight_class] : "";
+}
+static int catalogue_before(const BtpRosterMech *a,const BtpRosterMech *b)
+{
+    if (a->record[16]!=b->record[16]) return a->record[16]<b->record[16];
+    int name=memcmp(a->record,b->record,15);
+    return name ? name<0 : strcmp(a->id,b->id)<0;
+}
+unsigned btp_roster_catalogue(const BtpRoster *r,unsigned weight_class,
+    unsigned limit,unsigned indices[BTP_ROSTER_MAX])
+{
+    if (weight_class>BTP_ROSTER_ASSAULT) return 0;
+    if (limit>r->count) limit=r->count;
+    if (limit>BTP_ROSTER_MAX) limit=BTP_ROSTER_MAX;
+    unsigned count=0;
+    for (unsigned i=0;i<limit;++i) {
+        if (weight_class && btp_roster_class(r->mechs[i].record[16])!=weight_class) continue;
+        unsigned at=count++;
+        while (weight_class && at && catalogue_before(&r->mechs[i],&r->mechs[indices[at-1]])) {
+            indices[at]=indices[at-1];--at;
+        }
+        indices[at]=i;
+    }
+    return count;
+}
+
 /* A deliberately small JSON contract: bounded objects/arrays, unsigned
    integers and printable ASCII strings. No recursive generic parser, locale
    conversions, implicit coercions, ignored keys, or executable content. */

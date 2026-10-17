@@ -7,7 +7,7 @@ Numeric keypad navigation and Enter work too. Escape selects Original without
 quitting; Ctrl+Shift+Escape exits. The Shift K/Y/R credit shortcut also works on
 the selector and carries into the selected game.
 
-Updated loads [the 23-model roster](../content/updated/README.md), exposes a
+Updated loads [the 31-model roster](../content/updated/README.md), exposes a
 Starport broker in an unused building, and adds eligible random outdoor mech
 opponents. Owned models use the existing crew, movement, firing, inspection,
 repair, reload and salvage operations. Purchases are parked outside Starport;
@@ -39,12 +39,32 @@ Grasshopper's 22 heat sinks and the Stalker's ten weapon mounts without
 model-specific runtime changes. Sources, prices and sprite choices are in the
 pack guide; all six new records use the same pinned mm-data revision.
 
-The broker has an eight-row scrolling window. Up/Down traverses every model
-and the final Back item, wrapping at either end. Left/Right jumps eight
-entries, with bounds clamping. Enter/Space selects and Backspace returns to
-the counter. The footer shows the visible stock range. Confirmations retain
+Pack **0.4.0** appends Ostsol OTL-4D, Javelin JVN-10N, Cicada CDA-2A,
+Clint CLNT-2-3T, Hermes II HER-2S, Whitworth WTH-1, UrbanMech UM-R60 and
+Ostroc OSR-2C. All 23 previous definitions remain unchanged; 0.3.0 is archived.
+These use the same pinned source revision, adapter and temporary sprite rules.
+Ostsol and Cicada are the first all-energy additions, so their lifecycle checks
+also verify that reloading cannot spend money or alter their energy weapons.
+
+Buy now opens **Light (4), Medium (11), Heavy (12), Assault (4)**. Each class
+sorts stock by tonnage, then name, without changing definition/save codes.
+The stock view has an eight-row scrolling window. Up/Down traverses every model
+in the class and the final Back item, wrapping at either end. Left/Right jumps
+eight entries, with bounds clamping. Enter/Space selects and Backspace returns
+one level: stock → classes → counter → outside. The footer shows the visible
+stock range. Confirmations retain
 default No; cancelling or completing one returns to the same model and scroll
 position. Leaving stock clears the scroll offset before entering other menus.
+Selling retains the combined list of owned bays. An empty class in a smaller
+pack shows a clear message and Back.
+
+Held category menus use **BTPk/v46** in Updated's **BTU2** envelope. This saves
+the class separately from the absolute definition index. Existing flat broker
+saves remain flat until returning to Buy at the counter. Loading a compatible
+extended roster relocates a category cursor by definition identity; a held Back
+or Yes/No cannot become a different purchase when new stock sorts before it.
+Legacy packs without `combat.json` can use and save the category menus too.
+Other screens keep their existing v44/v45 encoding.
 
 ## Broker and inspection follow-up
 
@@ -440,3 +460,23 @@ optional stock and broker/save handling, while the original oracle suites
 remain part of the full native and sanitizer runs. Expanded campaign balance
 and unique model artwork remain outside this verification claim.
 The final reference guard verifies all **1,287 entries** unchanged.
+
+### 0.4.0 categories and eight more models — 2026-10-17
+
+The current [verification record](TESTING.md#broker-categories-and-roster-040)
+covers **64 native suites**, **33 Python tests**, **nine focused sanitizer**
+and **nine Windows/Wine suites**, plus **46 SDL window scenarios per platform**.
+All pass. Every one of the 31 definitions completes the headless lifecycle;
+all eight new purchases also pass real keyboard confirmation and F5/F9 checks
+on Linux and Windows. Four category screenshots match restored headless frames
+on both platforms. The reviewed menu sheet shows class counts, stock, scrolling,
+Back and an assault purchase confirmation without text/border overflow.
+
+Old flat saves and newer category saves retain definition identity, credits,
+damage, ammo and crew when compatible stock is appended. Categories with no
+models remain navigable, including old small packs without combat rules.
+Classification and ordering are derived views: the underlying definition order,
+23 old save codes and record bytes remain unchanged. Pack 0.3.0 is archived;
+0.4.0 adds only eight definitions. The source manifest records the pinned
+mm-data files, hashes and rear-laser adaptation. No new engine code or art was
+copied from those sources.

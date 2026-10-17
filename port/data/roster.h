@@ -8,6 +8,7 @@
    a display name, a sprite, or a party slot. Saved packages also retain their
    namespaced identities and definition fingerprint. */
 enum { BTP_ROSTER_MAX=32, BTP_ROSTER_CODE=160, BTP_ROSTER_ID=64 };
+enum { BTP_ROSTER_ALL, BTP_ROSTER_LIGHT, BTP_ROSTER_MEDIUM, BTP_ROSTER_HEAVY, BTP_ROSTER_ASSAULT };
 typedef struct {
     char id[BTP_ROSTER_ID];
     uint8_t record[125], ammo_cost[10];
@@ -19,6 +20,13 @@ typedef struct {
     unsigned count;
     BtpRosterMech mechs[BTP_ROSTER_MAX];
 } BtpRoster;
+unsigned btp_roster_class(unsigned tons);
+const char *btp_roster_class_name(unsigned weight_class);
+/* Presentation indices only: never reorder definitions/save codes. ALL keeps
+   the old flat order for held saves; classes sort by tonnage, name, then ID.
+   limit restricts the view to an older, fingerprint-validated save prefix. */
+unsigned btp_roster_catalogue(const BtpRoster *roster,unsigned weight_class,
+    unsigned limit,unsigned indices[BTP_ROSTER_MAX]);
 int btp_roster_custom(const uint8_t record[125]);
 const BtpRosterMech *btp_roster_definition(const BtpRoster *roster,const uint8_t record[125]);
 int btp_roster_load(const char *path,BtpRoster *roster,char error[256]);

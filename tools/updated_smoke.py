@@ -121,43 +121,67 @@ def run(env, work, building_art_only=False, setup_only=False):
         assert state["mode"] == "entry-confirm"
         state, _, _, _, _ = play("broker-hub", ["Up", "space"], ["--load", start])
         assert state["actions_menu"]["phase"] == 28
-        state, _, _, _, _ = play("broker-stock", ["Up", "space", "space", "Down", "Down"], ["--load", start])
-        assert state["actions_menu"]["phase"] == 25
+        # Presentation order is independent of stable definition/save codes.
+        classes = ((24, 29, 22, 0), (25, 26, 27, 28, 17, 3, 1, 4, 5, 6, 7),
+                   (18, 30, 23, 8, 2, 15, 16, 9, 10, 19, 11, 12), (13, 21, 20, 14))
+        browse = ["Up", "space", "space"]
+
+        def pick(index):
+            weight_class = next(i for i, models in enumerate(classes) if index in models)
+            return ["Down"] * weight_class + ["space"] + ["Down"] * classes[weight_class].index(index)
+
+        state, _, _, _, _ = play("broker-classes", browse + ["F5", "F9"], ["--load", start], recording=False)
+        assert state["actions_menu"]["phase"] == 34
+        for weight_class, name in enumerate(("light", "medium", "heavy", "assault")):
+            state, _, slot, frame, _ = play(f"broker-{name}-stock",
+                browse + ["Down"] * weight_class + ["space", "F5", "F9"], ["--load", start], recording=False)
+            assert state["actions_menu"]["phase"] == 25
+            saved = slot.with_name(slot.stem + "-updated.btp")
+            raw = saved.read_bytes()
+            assert raw[:4] == b"BTU2" and raw[112:117] == b"BTPk." and raw[112 + 20005] == weight_class + 1
+            restored = tmp / "restored.ppm"
+            subprocess.run([str(ROOT / "build/btech-headless"), "--load", str(saved),
+                "--frame", str(restored)], cwd=ROOT, check=True, capture_output=True, timeout=10)
+            assert frame.read_bytes() == restored.read_bytes(), name
+        print("PASS: four weight classes, F5/F9 and exact restored frames.", flush=True)
         for index, price in enumerate((12000, 22000, 36000)):
-            inputs = ["Up", "space", "space"] + ["Down"] * index + ["space", "F5", "F9", "Up", "space"]
+            inputs = browse + pick(index) + ["space", "F5", "F9", "Up", "space"]
             state, _, _, _, record = play(f"broker-{index}", inputs, ["--load", start], recording=False)
             assert state["credits"] == 200000 - price and state["campaign"]["mounted"] == 0
             assert state["actions_menu"]["phase"] == 27 and state["actions_menu"]["notice"] == 1
             assert state["mech_types"][0] != 255
         print("PASS: added Starport doorway, broker counter and all three Space/F5/F9 purchases.", flush=True)
         # Cross both scrolling boundaries with real keyboard events. Held
-        # saves retain the viewport and absolute model, including the two
-        # Crusaders sharing an initial and the Atlas's later catalogue code.
-        browse = ["Up", "space", "space"]
-        state, _, _, _, _ = play("broker-scroll", browse + ["Down"] * 8 + ["F5", "F9"],
+        # saves retain the viewport and absolute model inside its weight class.
+        heavy = browse + ["Down", "Down", "space"]
+        state, _, _, _, _ = play("broker-scroll", heavy + ["Down"] * 8 + ["F5", "F9"],
             ["--load", start], recording=False)
         assert state["actions_menu"]["phase"] == 25 and state["actions_menu"]["selected"] == 7
-        state, _, _, _, _ = play("broker-atlas-confirm", browse + ["Down"] * 14 + ["space"], ["--load", start])
+        state, _, _, _, _ = play("broker-atlas-confirm", browse + pick(14) + ["space"], ["--load", start])
         assert state["actions_menu"]["phase"] == 26 and state["actions_menu"]["selected"] == 1
         for index, price, label in ((13, 50000, "zeus"), (14, 70000, "atlas"),
                                     (15, 37000, "crusader-lrm"), (16, 39000, "crusader-srm"),
                                     (17, 25000, "phoenix-hawk"), (18, 31000, "dragon"),
                                     (19, 45000, "grasshopper"), (20, 62000, "highlander"),
-                                    (21, 57000, "stalker"), (22, 15000, "jenner")):
-            state, _, _, _, _ = play(f"broker-{label}", browse + ["Down"] * index +
+                                    (21, 57000, "stalker"), (22, 15000, "jenner"),
+                                    (23, 33000, "ostsol"), (24, 13000, "javelin"),
+                                    (25, 18000, "cicada"), (26, 21000, "clint"),
+                                    (27, 20000, "hermes-ii"), (28, 22000, "whitworth"),
+                                    (29, 10000, "urbanmech"), (30, 34000, "ostroc")):
+            state, _, _, _, _ = play(f"broker-{label}", browse + pick(index) +
                 ["space", "F5", "F9", "Up", "space"], ["--load", start], recording=False)
             assert state["credits"] == 200000 - price and state["actions_menu"]["notice"] == 1
-        state, _, _, _, _ = play("broker-last-row", browse + ["Up", "Up"], ["--load", start])
+        state, _, _, _, _ = play("broker-last-row", heavy + ["Up", "Up"], ["--load", start])
         assert state["actions_menu"]["phase"] == 25 and state["actions_menu"]["selected"] == 6
-        state, _, _, _, _ = play("broker-last-back", browse + ["Down"] * len(catalogue) + ["space", "F5"], ["--load", start])
-        assert state["actions_menu"]["phase"] == 28 and state["actions_menu"]["selected"] == 0
-        print("PASS: scrolling, wrap, held selection, ten later-model purchases and final Back row.", flush=True)
+        state, _, _, _, _ = play("broker-last-back", heavy + ["Up", "space", "F5", "F9"], ["--load", start], recording=False)
+        assert state["actions_menu"]["phase"] == 34 and state["actions_menu"]["selected"] == 2
+        print("PASS: scrolling, wrap, held selection, eighteen later-model purchases and category Back row.", flush=True)
         # Buy four, attempt a fifth, then sell a middle bay. The saved result
         # is reused to check the actual visible list and freed-bay purchase.
-        inputs = ["Up", "space", "space"] + ["space", "Up", "space", "space"] * 4
+        inputs = browse + pick(0) + ["space", "Up", "space", "space"] * 4
         state, _, _, _, _ = play("broker-full", inputs + ["space", "Up", "space"], ["--load", start])
         assert state["credits"] == 152000 and state["actions_menu"]["notice"] == 3
-        sale_menu = inputs + ["BackSpace", "Down", "space", "Down"]
+        sale_menu = inputs + ["BackSpace", "BackSpace", "Down", "space", "Down"]
         state, _, _, _, _ = play("broker-sale-list", sale_menu, ["--load", start])
         assert state["actions_menu"]["phase"] == 29
         state, _, _, _, _ = play("broker-sale-confirm", sale_menu + ["space"], ["--load", start])
@@ -167,6 +191,6 @@ def run(env, work, building_art_only=False, setup_only=False):
         assert state["credits"] == 158000 and state["actions_menu"]["phase"] == 31
         assert state["actions_menu"]["notice"] == 5 and state["mech_types"][1] == 255
         sold = slot.with_name(slot.stem + "-updated.btp")
-        state, _, _, _, _ = play("broker-replace", ["BackSpace", "space", "Down", "Down", "space", "Up", "space"], ["--load", sold])
+        state, _, _, _, _ = play("broker-replace", ["BackSpace", "space"] + pick(2) + ["space", "Up", "space"], ["--load", sold])
         assert state["credits"] == 122000 and state["mech_types"][1] == ord("C")
         print("PASS: full bays reject payment; selling with held save/load frees the chosen bay for replacement.", flush=True)

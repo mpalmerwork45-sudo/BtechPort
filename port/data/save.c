@@ -67,7 +67,8 @@ int btp_save_write(const char *path, const BtpState *s, const BtpResources *r, B
     if (s->combat_profile>1 || (!!s->combat_profile != !!s->combat_fingerprint) ||
         (s->combat_profile && !btp_active_combat_profile(s,r)))
         return fail(e,"Current combat rules do not match the loaded Updated profile");
-    if (s->campaign.ui>=BTP_MENU_UPDATED_SETTINGS && (!updated || !r->combat_profile.fingerprint))
+    if (s->campaign.ui>=BTP_MENU_UPDATED_SETTINGS && s->campaign.ui<=BTP_MENU_COMBAT_RULES &&
+        (!updated || !r->combat_profile.fingerprint))
         return fail(e,"Updated combat settings require their rule definition");
     size_t header=updated ? UPDATED_HEADER_BYTES : HEADER_BYTES;
     uint8_t bytes[UPDATED_HEADER_BYTES+BTP_STATE_BYTES] = {'B','T','S','1'};
@@ -162,18 +163,31 @@ int btp_save_load(const char *path, BtpState *s, const BtpResources *r, BtpError
     if (!decode(bytes+header,n-header,&loaded,r) || !btp_roster_state_prefix_valid(&loaded,r,saved_count))
         return fail(e,"Save contains an invalid or unsupported game state");
     if ((!v2 && (loaded.combat_profile || bytes[header+4]>=45)) ||
-        (v2 && (bytes[header+4]!=45 || get32(bytes+84)!=loaded.combat_profile || get32(bytes+88)!=loaded.combat_fingerprint)) ||
+        (v2 && ((bytes[header+4]!=45 && bytes[header+4]!=46) || get32(bytes+84)!=loaded.combat_profile || get32(bytes+88)!=loaded.combat_fingerprint)) ||
         (loaded.combat_profile && !btp_active_combat_profile(&loaded,r)) ||
-        (loaded.campaign.ui>=BTP_MENU_UPDATED_SETTINGS && (!updated || !r->combat_profile.fingerprint)))
+        (loaded.campaign.ui>=BTP_MENU_UPDATED_SETTINGS && loaded.campaign.ui<=BTP_MENU_COMBAT_RULES &&
+            (!updated || !r->combat_profile.fingerprint)))
         return fail(e,"Save requires its original Updated combat rule definition");
     if (updated && saved_count<r->roster.count && loaded.campaign.ui>=BTP_MENU_BROKER &&
         loaded.campaign.ui<=BTP_MENU_BROKER_RESULT) {
-        /* Appending stock must not turn a held Back row into a purchase or
-           change a pending Yes/No. Existing definition order is fingerprinted. */
+        /* New models can sort before old ones within a class. Preserve the
+           held definition, Back, and pending Yes/No, not its old row number.
+           Flat legacy saves still use their fingerprinted definition order. */
         unsigned item=loaded.campaign.member+loaded.campaign.selected;
-        loaded.menu.map_x=(uint16_t)r->roster.count;
-        if (loaded.campaign.ui==BTP_MENU_BROKER)
-            btp_broker_select(&loaded,item==saved_count ? r->roster.count : item);
+        unsigned indices[BTP_ROSTER_MAX];
+        unsigned count=btp_roster_catalogue(&r->roster,loaded.menu.broker_class,r->roster.count,indices);
+        if (item==loaded.menu.map_x) item=count;
+        else if (loaded.menu.broker_class) {
+            item=0;while (item<count && indices[item]!=loaded.menu.map_y) ++item;
+        }
+        loaded.menu.map_x=(uint16_t)count;
+        if (loaded.campaign.ui==BTP_MENU_BROKER) {
+            /* An empty old class has no previous model to retain on Back. */
+            if (count && loaded.menu.broker_class &&
+                btp_roster_class(r->roster.mechs[loaded.menu.map_y].record[16])!=loaded.menu.broker_class)
+                loaded.menu.map_y=(uint16_t)indices[0];
+            btp_broker_browse(&loaded,r,item);
+        }
     }
     if (!btp_roster_state_valid(&loaded,r)) return fail(e,"Save contains an invalid roster state");
     btp_cache_restore_party(&loaded,r);

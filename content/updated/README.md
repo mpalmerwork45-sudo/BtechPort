@@ -1,6 +1,6 @@
-# Updated CHI roster — 0.3.0
+# Updated CHI roster — 0.4.0
 
-This optional data pack adds **23 mech models/variants** to the original campaign. Select
+This optional data pack adds **31 mech models/variants** to the original campaign. Select
 **Updated BTECH CHI** before the Westwood/Infocom logo, then enter the central
 doorway of Starport's unused three-door building, northeast of Mech-It Lube.
 Approach local position **54,50** from the south (**54,51**). Its new **'Mech
@@ -19,10 +19,22 @@ Video Hut and mayor's house. Their
 and conversion instructions. Original mode retains the original presentation;
 the new art does not change scripts, roster identity or save compatibility.
 
-**Up/Down scrolls** the catalogue one row at a time. Left/Right jumps eight
-entries; Enter or Space selects. Back is the last item, and Backspace returns
-to the counter. The footer shows the visible range. Save/load preserves the
-highlight and scroll position, including a pending purchase confirmation.
+**Buy a 'Mech** opens four weight classes, with the number of models shown:
+
+| Class | Weight | Stock |
+| --- | --- | ---: |
+| Light | 20–35 tons | 4 |
+| Medium | 40–55 tons | 11 |
+| Heavy | 60–75 tons | 12 |
+| Assault | 80–100 tons | 4 |
+
+Within each class, models sort by tonnage and then name. **Up/Down scrolls**
+one row at a time; Left/Right jumps eight entries. Enter or Space selects.
+Back is the last item; Backspace also returns one level, from stock to classes
+to the counter. The footer shows the visible range when scrolling is needed.
+Save/load preserves the class, highlight, scroll position and pending purchase.
+Prices are shown on each row; the selected model's tonnage and movement are
+shown below the portrait. Selling still lists your owned bays together.
 
 The broker buys both original and added models. An intact added mech fetches
 half its catalogue price; an intact original mech fetches 100 C-bills per ton.
@@ -57,13 +69,21 @@ prices, not an original-game mechanic.
 | Highlander HGN-733 | 90 | 3/5/3 | AC/10, LRM-20, SRM-6, two medium lasers | 62,000 |
 | Stalker STK-3F | 85 | 3/5/0 | Two large and four medium lasers, two LRM-10s, two SRM-6s | 57,000 |
 | Jenner JR7-D | 35 | 7/11/5 | Four medium lasers, SRM-4 | 15,000 |
+| Ostsol OTL-4D | 60 | 5/8/0 | Two large lasers, four medium lasers | 33,000 |
+| Javelin JVN-10N | 30 | 6/9/6 | Two SRM-6s | 13,000 |
+| Cicada CDA-2A | 40 | 8/12/0 | Two medium lasers, small laser | 18,000 |
+| Clint CLNT-2-3T | 40 | 6/9/6 | AC/5, two medium lasers | 21,000 |
+| Hermes II HER-2S | 40 | 6/9/0 | AC/5, medium laser, flamer | 20,000 |
+| Whitworth WTH-1 | 40 | 4/6/4 | Two LRM-10s, three medium lasers | 22,000 |
+| UrbanMech UM-R60 | 30 | 2/3/2 | AC/10, small laser | 10,000 |
+| Ostroc OSR-2C | 60 | 5/8/0 | Two large lasers, two medium lasers, SRM-4 | 34,000 |
 
 The LRM Crusader is the standard mixed-range CRD-3R, not an LRM-only refit.
 Charles Bear's documented variant replaces the arm LRMs with SRM-6s and has
 18 heat sinks instead of ten. This optional campaign roster does not enforce
 historical introduction dates or faction availability.
 
-The six models at the bottom are new in 0.3.0; Shadow Hawk and Rifleman were
+Phoenix Hawk through Jenner were new in 0.3.0; Shadow Hawk and Rifleman were
 already available in 0.2.0. PXH-1 is the conventional Phoenix Hawk, separate
 from the original story's Phoenix Hawk LAM. The broker's Jenner also has its
 own definition; scripted training Jenners retain their original records.
@@ -71,7 +91,12 @@ HGN-733 supplies an AC/10 Highlander compatible with CHI's weapon set; Gauss
 rifles are not implemented. The Grasshopper has 22 heat sinks and the Stalker
 uses all ten available weapon mounts.
 
-Catapult, Marauder, Stalker and Jenner use the **Locust** sprite;
+The last eight models are new in 0.4.0. Ostsol and Cicada need no ammunition;
+the Ostsol's two rear lasers use ordinary CHI targeting, as with the earlier
+rear-mounted weapons. The UrbanMech is a separate broker definition from any
+original CHI record. Whitworth's LRMs use the selected Legacy/Enhanced rules.
+
+Catapult, Marauder, Stalker, Jenner and Cicada use the **Locust** sprite;
 all other additions use the **red Stinger**. These are the owner's temporary
 art choices. Inspection also retains the existing shared CHI diagram, with
 armor bars scaled to fit even the Atlas's larger capacities.
@@ -103,26 +128,30 @@ The bounded loader rejects malformed, duplicate or unknown rule fields. A
 pack with no `combat.json` remains Legacy. Enhanced saves bind a semantic
 rules fingerprint as well as the roster; loading with missing or changed
 required rules fails without replacing the current game. Enhanced states
-use BTPj/v45 in a BTU2 envelope. Legacy states keep BTU1/v44, except while
-held on one of the new settings pages. These choices share the existing
+use BTPj/v45 in a BTU2 envelope. Held category menus use BTPk/v46 in BTU2,
+including Legacy games with no combat rule file. Ordinary Legacy states keep
+BTU1/v44, except while held on the Updated settings pages. These choices share the existing
 six Updated slots; no extra save directory is needed.
 
-The first 17 definitions and their save codes are unchanged. Saves from the
-released three-model **0.1.0** and 17-model **0.2.0** packs load automatically
-in **0.3.0**, including
+The first 23 definitions and their save codes are unchanged. Saves from the
+released three-model **0.1.0**, 17-model **0.2.0** and 23-model **0.3.0** packs load automatically
+in **0.4.0**, including
 held broker menus, damage, ammunition, crew and money. No manual conversion is
-needed. A subsequent Legacy save records the new pack and v44 state, including the
-scrolling menu and the current weapon/fire presentation phase.
+needed. A held old flat catalogue keeps its original order until you return
+to the counter and choose Buy again. Category saves retain the actual selected
+model when appended stock sorts before it; Back stays Back. A subsequent save
+records the new pack and the state version required by the current screen.
 
 Compatibility is checked by recomputing the saved fingerprint against the
 unchanged prefix of the new roster. Editing or removing an existing definition,
 changing its ID/code or price, or switching packages still fails explicitly.
 This supports appended stock; it is not a general migration for edited mods.
-The archived [0.1.0 pack](versions/0.1.0.json) and [0.2.0 pack](versions/0.2.0.json)
+The archived [0.1.0 pack](versions/0.1.0.json), [0.2.0 pack](versions/0.2.0.json)
+and [0.3.0 pack](versions/0.3.0.json)
 remain available via `--roster` for sessions using an exact earlier catalogue.
 Keep earlier save copies if you intend to return to an older pack/executable;
 those cannot read saves with the new catalogue identity. The 0.1.0 executable
-also cannot read v43 state. Earlier executables cannot read v44/v45 saves; their
+also cannot read v43 state. Earlier executables cannot read newer v44/v45/v46 states; their
 existing saves remain loadable in the current executable.
 
 ## Sources and adaptation
@@ -133,7 +162,7 @@ Thanks to **MegaMek's mm-data contributors** for the structured unit records:
 - [Hunchback HBK-4G](https://github.com/MegaMek/mm-data/blob/main/data/mekfiles/meks/3039u/Hunchback%20HBK-4G.mtf)
 - [Catapult CPLT-C1](https://github.com/MegaMek/mm-data/blob/main/data/mekfiles/meks/3039u/Catapult%20CPLT-C1.mtf)
 
-The twenty additions after the initial three use mm-data commit
+The 28 additions after the initial three use mm-data commit
 [`e6f20e1fc2f9d6c74a6e2cdc74778b029ca14811`](https://github.com/MegaMek/mm-data/tree/e6f20e1fc2f9d6c74a6e2cdc74778b029ca14811).
 [sources.json](sources.json) records each pinned source URL, SHA-256 and number
 of rear-mounted lasers. In particular, the SRM variant comes from
@@ -148,7 +177,7 @@ locations, ammunition capacities, actuator presence and heat sinks inform this
 adaptation. Display names are shortened to fit CHI's 15-character field.
 CHI represents weapons with one component descriptor, rather than tabletop
 critical-slot footprints; heat sinks are placed in the remaining available
-component slots. The twenty later models retain their source heat-sink
+component slots. The 28 later models retain their source heat-sink
 locations. Shared ammo bins are divided among matching weapons while preserving
 the total number of salvos: the standard Crusader's 15 SRM salvos become 8+7,
 and Bear's 45 become 12+11+11+11. CHI reloads each weapon's bin separately.

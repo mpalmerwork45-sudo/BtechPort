@@ -1795,7 +1795,10 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
             }
             unsigned owned=btp_broker_count(s);
             int selling=c->ui==BTP_MENU_BROKER_SELL || c->ui==BTP_MENU_BROKER_SELL_CONFIRM;
-            unsigned id=c->ui==BTP_MENU_BROKER ? c->member+c->selected :
+            unsigned catalogue[BTP_ROSTER_MAX];
+            unsigned stock=btp_roster_catalogue(&r->roster,s->menu.broker_class,r->roster.count,catalogue);
+            unsigned ordinal=c->member+c->selected;
+            unsigned id=c->ui==BTP_MENU_BROKER ? (ordinal<stock ? catalogue[ordinal] : r->roster.count) :
                 c->ui==BTP_MENU_BROKER_SELL ? btp_broker_slot(s,c->selected) : s->menu.map_y;
             const uint8_t *model=NULL;
             if (selling && btp_broker_owned(s,id)) model=id ? s->party.mechs[id-1] : s->campaign.mech;
@@ -1827,20 +1830,38 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                     int row=y+(int)i*8;if (i==c->selected) rectangle(f,112,row,200,8,14);
                     text(r,f,112,row,items[i],i==c->selected ? 0u : 15u);
                 }
+            } else if (c->ui==BTP_MENU_BROKER_CLASSES) {
+                const char *message="\"Something light and quick? Or a little more firepower?\"";
+                int y=wrapped(r,f,8,(const uint8_t *)message,strlen(message),15)+8;
+                text(r,f,112,y,"Choose a weight class:",15);y+=8;
+                for (unsigned i=0;i<5;++i) {
+                    int row=y+(int)i*8;if (i==c->selected) rectangle(f,112,row,200,8,14);
+                    if (i<4) {
+                        unsigned count=btp_roster_catalogue(&r->roster,i+1u,r->roster.count,catalogue);
+                        snprintf(line,sizeof line,"%s (%u)",btp_roster_class_name(i+1u),count);
+                    } else snprintf(line,sizeof line,"Back");
+                    text(r,f,112,row,line,i==c->selected ? 0u : 15u);
+                }
+                text(r,f,112,184,"Enter/Space: select.",7);
             } else if (c->ui==BTP_MENU_BROKER || c->ui==BTP_MENU_BROKER_SELL) {
                 const char *message=selling ? "The broker eyes your 'Mechs. \"Let's see what they're worth, equipment included.\"" :
                     "\"Take your pick. Delivery to the garage is included.\"";
                 int y=wrapped(r,f,8,(const uint8_t *)message,strlen(message),15)+8;
                 if (selling && !owned) {
                     text(r,f,112,y,"No owned 'Mechs to sell.",15);y+=16;
+                } else if (!selling && !stock) {
+                    text(r,f,112,y,"No 'Mechs in this class.",15);y+=16;
                 } else {
-                    text(r,f,112,y,selling ? "Sell which 'Mech?" : "Buy which 'Mech?",15);y+=8;
+                    if (!selling && s->menu.broker_class)
+                        snprintf(line,sizeof line,"%s 'Mechs:",btp_roster_class_name(s->menu.broker_class));
+                    else snprintf(line,sizeof line,"%s which 'Mech?",selling ? "Sell" : "Buy");
+                    text(r,f,112,y,line,15);y+=8;
                 }
                 unsigned count=btp_actions_count(s);
                 for (unsigned i=0;i<count;++i) {
                     int row=y+(int)i*8;if (i==c->selected) rectangle(f,112,row,200,8,14);
                     unsigned color=i==c->selected ? 0u : 15u;
-                    if (selling ? i==count-1u : c->member+i==r->roster.count) text(r,f,112,row,"Back",color);
+                    if (selling ? i==count-1u : c->member+i==stock) text(r,f,112,row,"Back",color);
                     else if (selling) {
                         unsigned bay=btp_broker_slot(s,i);const uint8_t *m=bay ? s->party.mechs[bay-1] : s->campaign.mech;
                         char name[16];memcpy(name,m,15);name[15]=0;if (m[0]==255) name[0]=(char)s->party.mech_types[bay];
@@ -1850,15 +1871,15 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                         int width=21-(int)(strlen(price)>6 ? strlen(price) : 6);
                         snprintf(line,sizeof line,"%u %-*.*s %6s",bay+1u,width,width,name,price);text(r,f,112,row,line,color);
                     } else {
-                        const BtpRosterMech *d=&r->roster.mechs[c->member+i];
+                        const BtpRosterMech *d=&r->roster.mechs[catalogue[c->member+i]];
                         char price[11];snprintf(price,sizeof price,"%u",d->price);
                         int width=21-(int)(strlen(price)>6 ? strlen(price) : 6);
                         snprintf(line,sizeof line,"%-*.*s %6s",width,width,(const char *)d->record,price);text(r,f,112,row,line,color);
                     }
                 }
-                if (!selling && r->roster.count>=BTP_BROKER_ROWS) {
-                    unsigned end=c->member+count;if (end>r->roster.count) end=r->roster.count;
-                    snprintf(line,sizeof line,"%u-%u/%u  Up/Down: scroll",c->member+1u,end,r->roster.count);
+                if (!selling && stock>=BTP_BROKER_ROWS) {
+                    unsigned end=c->member+count;if (end>stock) end=stock;
+                    snprintf(line,sizeof line,"%u-%u/%u  Up/Down: scroll",c->member+1u,end,stock);
                     text(r,f,112,176,line,7);
                 }
                 text(r,f,112,184,"Enter/Space: select.",7);

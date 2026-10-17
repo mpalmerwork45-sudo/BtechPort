@@ -25,8 +25,39 @@ static const unsigned specs[][6]={
     {75,4,0,16,5,0},{80,4,0,17,5,146},{100,3,0,20,7,146},
     {65,4,0,10,8,146},{65,4,0,18,8,146},
     {45,6,6,10,5,146},{60,5,0,10,4,146},{70,4,4,22,6,146},
-    {90,3,3,13,5,146},{85,3,0,20,10,0},{35,7,5,10,5,0}
+    {90,3,3,13,5,146},{85,3,0,20,10,0},{35,7,5,10,5,0},
+    {60,5,0,16,6,146},{30,6,6,10,2,146},{40,8,0,10,3,0},
+    {40,6,6,10,3,146},{40,6,0,10,3,146},{40,4,4,10,5,146},
+    {30,2,2,11,2,146},{60,5,0,15,5,146}
 };
+/* Expected display order, independently listed by tonnage and model name.
+   Definition indices and custom save codes remain in their original order. */
+static const unsigned class_count[]={4,11,12,4};
+static const unsigned class_models[4][12]={
+    {24,29,22,0}, {25,26,27,28,17,3,1,4,5,6,7},
+    {18,30,23,8,2,15,16,9,10,19,11,12}, {13,21,20,14}
+};
+static void flat_catalogue(BtpState *s,const BtpResources *r)
+{
+    /* A held pre-category menu, retained solely to test old-save behavior. */
+    s->campaign.ui=BTP_MENU_BROKER;s->campaign.member=s->campaign.selected=0;
+    s->menu.broker_class=0;s->menu.map_x=(uint16_t)r->roster.count;s->menu.map_y=0;
+}
+static void browse_model(BtpState *s,const BtpResources *r,unsigned model)
+{
+    unsigned weight_class=0,row=0;
+    for (;weight_class<4;++weight_class) {
+        for (row=0;row<class_count[weight_class] && class_models[weight_class][row]!=model;++row) {}
+        if (row<class_count[weight_class]) break;
+    }
+    CHECK(weight_class<4 && s->campaign.ui==BTP_MENU_BROKER_HUB);
+    btp_game_tick(s,r,BTP_OPEN_MENU);CHECK(s->campaign.ui==BTP_MENU_BROKER_CLASSES);
+    for (unsigned i=0;i<weight_class;++i) btp_game_tick(s,r,BTP_DOWN);
+    btp_game_tick(s,r,BTP_OPEN_MENU);
+    CHECK(s->campaign.ui==BTP_MENU_BROKER && s->menu.broker_class==weight_class+1u);
+    for (unsigned i=0;i<row;++i) btp_game_tick(s,r,BTP_DOWN);
+    CHECK(s->campaign.member+s->campaign.selected==row && s->menu.map_y==model);
+}
 static void save_check(BtpState *s,BtpState *copy,const BtpResources *r);
 static void setup(BtpState *s,const BtpResources *r)
 {
@@ -45,7 +76,10 @@ static void save_check(BtpState *s,BtpState *copy,const BtpResources *r)
 {
     if (!btp_save_write("btp-roster-held.btp",s,r,&error)) fprintf(stderr,"%s (ui %u)\n",error.text,s->campaign.ui);
     else {
-        CHECK(btp_save_load("btp-roster-held.btp",copy,r,&error));
+        int loaded=btp_save_load("btp-roster-held.btp",copy,r,&error);
+        if (!loaded) fprintf(stderr,"%s (ui %u, class %u, count %u, model %u)\n",error.text,
+            s->campaign.ui,s->menu.broker_class,s->menu.map_x,s->menu.map_y);
+        CHECK(loaded);
         uint8_t a[BTP_STATE_BYTES],b[BTP_STATE_BYTES];btp_state_encode(s,a);btp_state_encode(copy,b);
         CHECK(!memcmp(a,b,sizeof a));CHECK(!remove("btp-roster-held.btp"));return;
     }
@@ -135,14 +169,15 @@ static void sales(BtpState *s,BtpState *copy,BtpState *before,const BtpResources
     CHECK(btp_broker_count(s)==4);
     /* Two further purchases through the UI must leave all four records and
        the wallet unchanged. Full capacity is a held, saveable result. */
-    btp_game_tick(s,r,BTP_ACCEPT);
+    browse_model(s,r,0);
     for (unsigned attempt=0;attempt<2;++attempt) {
         *before=*s;btp_game_tick(s,r,BTP_ACCEPT);btp_game_tick(s,r,BTP_UP);btp_game_tick(s,r,BTP_ACCEPT);
         CHECK(s->menu.notice==BTP_BROKER_FULL && s->credits==before->credits);
         CHECK(!memcmp(s->campaign.mech,before->campaign.mech,125) && !memcmp(s->party.mechs,before->party.mechs,375));
         save_check(s,copy,r);btp_game_tick(s,r,BTP_ACCEPT);
     }
-    btp_game_tick(s,r,BTP_CANCEL);btp_game_tick(s,r,BTP_DOWN);btp_game_tick(s,r,BTP_ACCEPT);
+    btp_game_tick(s,r,BTP_CANCEL);btp_game_tick(s,r,BTP_CANCEL);
+    btp_game_tick(s,r,BTP_DOWN);btp_game_tick(s,r,BTP_ACCEPT);
     CHECK(s->campaign.ui==BTP_MENU_BROKER_SELL && btp_actions_count(s)==5);save_check(s,copy,r);
     CHECK(btp_broker_offer(s,r,1)==r->roster.mechs[1].price/2);
     uint8_t *m=btp_party_mech(s,1);m[17]=0;m[117]=2;
@@ -301,53 +336,56 @@ static void extension_saves(BtpState *s,BtpState *copy,BtpState *before,BtpResou
     memcpy(s->campaign.mech,current->mechs[14].record,125);old_save(s,previous,42);
     CHECK(!btp_save_load("btp-roster-legacy.btp",copy,r,&error) && !memcmp(copy,before,sizeof *copy));
     CHECK(!remove("btp-roster-legacy.btp"));
-    /* The released 17-model pack already wrote v43 scrolling menus. Appending
-       six models must retain scrolled choices, old Back, and pending Yes/No. */
-    snprintf(path,sizeof path,"%.*sversions/0.2.0.json",(int)parent,roster_path);
-    CHECK(btp_roster_load(path,previous,diagnostic));
-    CHECK(previous->count==17 && previous->fingerprint==UINT32_C(751321522));
-    CHECK(!memcmp(current->mechs,previous->mechs,17*sizeof previous->mechs[0]));
-    static const unsigned choices[]={0,7,8,16,17};
-    for (unsigned scene=0;scene<9;++scene) {
-        r->roster=*previous;setup(s,r);enter_broker(s,copy,r);
-        CHECK(btp_broker_buy(s,r,13)==BTP_BROKER_BOUGHT);
-        CHECK(btp_broker_buy(s,r,14)==BTP_BROKER_BOUGHT);
-        CHECK(btp_broker_buy(s,r,16)==BTP_BROKER_BOUGHT);
-        s->campaign.mech[17]-=2;btp_party_mech(s,2)[39]=2;
-        if (!scene) btp_game_tick(s,r,BTP_CANCEL);
-        else if (scene<8) {
-            btp_game_tick(s,r,BTP_ACCEPT);
-            unsigned choice=scene<=5 ? choices[scene-1] : 16;
-            for (unsigned i=0;i<choice;++i) btp_game_tick(s,r,BTP_DOWN);
-            if (scene>=6) {
-                btp_game_tick(s,r,BTP_ACCEPT);
-                if (scene==6) btp_game_tick(s,r,BTP_UP);
+    /* Released 17/23-model packs already wrote flat scrolling menus. Appending
+       stock must retain scrolled choices, old Back, and pending Yes/No. */
+    for (unsigned pack=2;pack<=3;++pack) {
+        snprintf(path,sizeof path,"%.*sversions/0.%u.0.json",(int)parent,roster_path,pack);
+        CHECK(btp_roster_load(path,previous,diagnostic));
+        CHECK(previous->count==(pack==2 ? 17u : 23u));
+        CHECK(previous->fingerprint==(pack==2 ? UINT32_C(751321522) : UINT32_C(1754795853)));
+        CHECK(!memcmp(current->mechs,previous->mechs,previous->count*sizeof previous->mechs[0]));
+        const unsigned choices[]={0,7,8,previous->count-1u,previous->count};
+        for (unsigned scene=0;scene<9;++scene) {
+            r->roster=*previous;setup(s,r);enter_broker(s,copy,r);
+            CHECK(btp_broker_buy(s,r,13)==BTP_BROKER_BOUGHT);
+            CHECK(btp_broker_buy(s,r,14)==BTP_BROKER_BOUGHT);
+            CHECK(btp_broker_buy(s,r,16)==BTP_BROKER_BOUGHT);
+            s->campaign.mech[17]-=2;btp_party_mech(s,2)[39]=2;
+            if (!scene) btp_game_tick(s,r,BTP_CANCEL);
+            else if (scene<8) {
+                flat_catalogue(s,r);
+                unsigned choice=scene<=5 ? choices[scene-1] : 16;
+                for (unsigned i=0;i<choice;++i) btp_game_tick(s,r,BTP_DOWN);
+                if (scene>=6) {
+                    btp_game_tick(s,r,BTP_ACCEPT);
+                    if (scene==6) btp_game_tick(s,r,BTP_UP);
+                }
             }
+            CHECK(btp_save_write("btp-roster-legacy.btp",s,r,&error));
+            *before=*s;r->roster=*current;
+            CHECK(btp_save_load("btp-roster-legacy.btp",copy,r,&error));
+            CHECK(copy->credits==before->credits && !memcmp(copy->campaign.mech,before->campaign.mech,125));
+            CHECK(!memcmp(copy->party.mechs,before->party.mechs,sizeof copy->party.mechs));
+            CHECK(!memcmp(copy->party.people,before->party.people,sizeof copy->party.people));
+            if (scene>=1 && scene<=5) {
+                unsigned choice=choices[scene-1];
+                CHECK(copy->campaign.member+copy->campaign.selected==(choice==previous->count ? current->count : choice));
+                btp_game_tick(copy,r,BTP_ACCEPT);
+                CHECK(copy->campaign.ui==(choice==previous->count ? BTP_MENU_BROKER_HUB : BTP_MENU_BROKER_CONFIRM));
+                if (choice<previous->count) CHECK(copy->menu.map_y==choice);
+            } else if (scene==6 || scene==7) {
+                CHECK(copy->campaign.selected==scene-6 && copy->menu.map_y==16);
+                btp_game_tick(copy,r,BTP_ACCEPT);
+                CHECK(copy->credits==before->credits-(scene==6 ? current->mechs[16].price : 0));
+            }
+            save_check(copy,s,r);
         }
-        CHECK(btp_save_write("btp-roster-legacy.btp",s,r,&error));
-        *before=*s;r->roster=*current;
-        CHECK(btp_save_load("btp-roster-legacy.btp",copy,r,&error));
-        CHECK(copy->credits==before->credits && !memcmp(copy->campaign.mech,before->campaign.mech,125));
-        CHECK(!memcmp(copy->party.mechs,before->party.mechs,sizeof copy->party.mechs));
-        CHECK(!memcmp(copy->party.people,before->party.people,sizeof copy->party.people));
-        if (scene>=1 && scene<=5) {
-            unsigned choice=choices[scene-1];
-            CHECK(copy->campaign.member+copy->campaign.selected==(choice==17 ? current->count : choice));
-            btp_game_tick(copy,r,BTP_ACCEPT);
-            CHECK(copy->campaign.ui==(choice==17 ? BTP_MENU_BROKER_HUB : BTP_MENU_BROKER_CONFIRM));
-            if (choice<17) CHECK(copy->menu.map_y==choice);
-        } else if (scene==6 || scene==7) {
-            CHECK(copy->campaign.selected==scene-6 && copy->menu.map_y==16);
-            btp_game_tick(copy,r,BTP_ACCEPT);
-            CHECK(copy->credits==before->credits-(scene==6 ? current->mechs[16].price : 0));
-        }
-        save_check(copy,s,r);
     }
     CHECK(!remove("btp-roster-legacy.btp"));free(previous);free(current);
 }
 static void scrolling(BtpState *s,BtpState *copy,const BtpResources *r,uint32_t *frame)
 {
-    setup(s,r);enter_broker(s,copy,r);btp_game_tick(s,r,BTP_ACCEPT);
+    setup(s,r);enter_broker(s,copy,r);flat_catalogue(s,r);
     unsigned total=r->roster.count+1u;
     /* Both directions cross viewport edges, wrap, and retain the exact row
        on save/load. Rendering every row exercises the bottom border too. */
@@ -373,6 +411,103 @@ static void scrolling(BtpState *s,BtpState *copy,const BtpResources *r,uint32_t 
     }
     CHECK(!remove("btp-roster-legacy.btp"));
 }
+static void categories(BtpState *s,BtpState *copy,BtpResources *r,uint32_t *frame)
+{
+    const unsigned masses[]={20,35,40,55,60,75,80,100};
+    for (unsigned i=0;i<8;++i) CHECK(btp_roster_class(masses[i])==i/2u+1u);
+    BtpCombatProfile profile=r->combat_profile;
+    for (unsigned enhanced=0;enhanced<2;++enhanced) {
+        /* Old roster-only packs have no combat.json. Their new menus must
+           still save with Legacy rules, without requiring that optional file. */
+        r->combat_profile=enhanced ? profile : (BtpCombatProfile){0};
+        for (unsigned weight_class=1;weight_class<=4;++weight_class) {
+            setup(s,r);enter_broker(s,copy,r);
+            if (enhanced) { s->combat_profile=1;s->combat_fingerprint=profile.fingerprint; }
+            btp_game_tick(s,r,BTP_ACCEPT);CHECK(btp_actions_count(s)==5);
+            for (unsigned i=1;i<weight_class;++i) btp_game_tick(s,r,BTP_DOWN);
+            save_check(s,copy,r);btp_render(r,s,0,frame);
+            btp_game_tick(s,r,BTP_ACCEPT);
+            unsigned count=class_count[weight_class-1u];CHECK(s->menu.map_x==count);
+            for (unsigned direction=0;direction<2;++direction) for (unsigned step=0;step<=count;++step) {
+                unsigned item=direction ? (count+1u-step)%(count+1u) : step;
+                CHECK(s->campaign.member+s->campaign.selected==item);
+                CHECK(s->menu.broker_class==weight_class && s->campaign.selected<btp_actions_count(s));
+                if (item<count) CHECK(s->menu.map_y==class_models[weight_class-1u][item]);
+                save_check(s,copy,r);btp_render(r,s,0,frame);
+                btp_game_tick(s,r,direction ? BTP_UP : BTP_DOWN);
+            }
+            btp_game_tick(s,r,BTP_RIGHT);
+            CHECK(s->campaign.member+s->campaign.selected==(count>8 ? 8u : count));
+            btp_game_tick(s,r,BTP_LEFT);CHECK(!s->campaign.member && !s->campaign.selected);
+            /* No and Cancel return to the same model without spending money. */
+            btp_game_tick(s,r,BTP_ACCEPT);save_check(s,copy,r);btp_game_tick(s,r,BTP_ACCEPT);
+            CHECK(s->campaign.ui==BTP_MENU_BROKER && !s->campaign.selected && s->credits==200000);
+            btp_game_tick(s,r,BTP_ACCEPT);btp_game_tick(s,r,BTP_CANCEL);
+            CHECK(s->campaign.ui==BTP_MENU_BROKER && !s->campaign.selected && s->credits==200000);
+            /* Invalid class, filtered count, and an unrelated definition are
+               rejected, rather than silently becoming a different purchase. */
+            *copy=*s;copy->menu.broker_class=5;CHECK(!btp_actions_valid(copy));
+            *copy=*s;++copy->menu.map_x;CHECK(!btp_roster_state_valid(copy,r));
+            *copy=*s;copy->menu.map_y=(uint16_t)class_models[weight_class%4u][0];
+            CHECK(!btp_roster_state_valid(copy,r));
+            btp_game_tick(s,r,BTP_UP);btp_game_tick(s,r,BTP_OPEN_MENU);
+            CHECK(s->campaign.ui==BTP_MENU_BROKER_CLASSES && s->campaign.selected==weight_class-1u);
+            save_check(s,copy,r);btp_game_tick(s,r,BTP_CANCEL);
+            CHECK(s->campaign.ui==BTP_MENU_BROKER_HUB && !s->menu.broker_class);
+        }
+    }
+    r->combat_profile=profile;
+}
+static void category_extensions(BtpState *s,BtpState *copy,BtpState *before,BtpResources *r,
+    const char *roster_path,uint32_t *frame)
+{
+    BtpRoster *current=malloc(sizeof *current),*previous=malloc(sizeof *previous);CHECK(current && previous);
+    *current=r->roster;char path[4096],diagnostic[256];size_t parent=0;
+    for (size_t i=0;roster_path[i];++i) if (roster_path[i]=='/' || roster_path[i]=='\\') parent=i+1u;
+    for (unsigned pack=1;pack<=3;++pack) {
+        snprintf(path,sizeof path,"%.*sversions/0.%u.0.json",(int)parent,roster_path,pack);
+        CHECK(btp_roster_load(path,previous,diagnostic));
+        for (unsigned weight_class=1;weight_class<=4;++weight_class) for (unsigned scene=0;scene<5;++scene) {
+            r->roster=*previous;setup(s,r);enter_broker(s,copy,r);
+            btp_game_tick(s,r,BTP_ACCEPT);
+            for (unsigned i=1;i<weight_class;++i) btp_game_tick(s,r,BTP_DOWN);
+            btp_game_tick(s,r,BTP_ACCEPT);unsigned count=s->menu.map_x;
+            if (!count && scene>1) continue;
+            btp_game_tick(s,r,BTP_UP); /* Back, including the empty Assault class. */
+            if (scene!=1 && count) btp_game_tick(s,r,BTP_UP); /* Last old model. */
+            if (scene>=2) {
+                btp_game_tick(s,r,BTP_ACCEPT);
+                if (scene>=3) btp_game_tick(s,r,BTP_UP);
+                if (scene==4) btp_game_tick(s,r,BTP_ACCEPT);
+            }
+            save_check(s,copy,r);btp_render(r,s,0,frame);
+            CHECK(btp_save_write("btp-roster-category.btp",s,r,&error));
+            *before=*s;r->roster=*current;
+            CHECK(btp_save_load("btp-roster-category.btp",copy,r,&error));
+            CHECK(!remove("btp-roster-category.btp"));
+            CHECK(copy->menu.broker_class==weight_class && copy->menu.map_x==class_count[weight_class-1u]);
+            CHECK(copy->credits==before->credits && !memcmp(copy->campaign.mech,before->campaign.mech,125));
+            CHECK(!memcmp(copy->party.mechs,before->party.mechs,sizeof copy->party.mechs));
+            if (scene==1 || !count) {
+                CHECK(copy->campaign.member+copy->campaign.selected==copy->menu.map_x);
+                btp_game_tick(copy,r,BTP_ACCEPT);
+                CHECK(copy->campaign.ui==BTP_MENU_BROKER_CLASSES && copy->campaign.selected==weight_class-1u);
+            } else {
+                unsigned model=before->menu.map_y,row=0;
+                while (row<class_count[weight_class-1u] && class_models[weight_class-1u][row]!=model) ++row;
+                CHECK(row<class_count[weight_class-1u] && copy->menu.map_y==model);
+                if (scene==3) {
+                    CHECK(!copy->campaign.selected);btp_game_tick(copy,r,BTP_ACCEPT);
+                    CHECK(copy->credits==before->credits-current->mechs[model].price);
+                }
+                if (scene>=2) btp_game_tick(copy,r,BTP_ACCEPT);
+                CHECK(copy->campaign.ui==BTP_MENU_BROKER && copy->campaign.member+copy->campaign.selected==row);
+            }
+            save_check(copy,s,r);
+        }
+    }
+    r->roster=*current;free(previous);free(current);
+}
 int main(int argc,char **argv)
 {
     CHECK(argc==6 || argc==7);
@@ -396,6 +531,7 @@ int main(int argc,char **argv)
     CHECK(s->mode==BTP_EXPLORE && s->campaign.building!=BTP_BROKER_BUILDING);save_check(s,copy,r);
     sales(s,copy,before,r);bars(r,frame,argc==7 ? argv[6] : NULL);legacy_broker(s,copy,r);
     extension_saves(s,copy,before,r,argv[5]);scrolling(s,copy,r,frame);
+    categories(s,copy,r,frame);category_extensions(s,copy,before,r,argv[5],frame);
     setup(s,r);enter_broker(s,copy,r);
     for (unsigned i=0;i<4;++i) CHECK(btp_broker_buy(s,r,i%3)==BTP_BROKER_BOUGHT);
     CHECK(btp_broker_sell(s,r,0)==BTP_BROKER_SOLD);checkout(s,copy,r,3);
@@ -408,10 +544,7 @@ int main(int argc,char **argv)
         s->credits=d->price-1;*before=*s;
         CHECK(btp_broker_buy(s,r,model)==BTP_BROKER_NO_FUNDS && !memcmp(s,before,sizeof *s));
         s->credits=200000;
-        btp_game_tick(s,r,BTP_ACCEPT);
-        CHECK(s->campaign.ui==BTP_MENU_BROKER && btp_actions_count(s)==BTP_BROKER_ROWS);
-        for (unsigned i=0;i<model;++i) btp_game_tick(s,r,BTP_DOWN);
-        CHECK(s->campaign.member+s->campaign.selected==model);save_check(s,copy,r);
+        browse_model(s,r,model);save_check(s,copy,r);
         btp_game_tick(s,r,BTP_ACCEPT);CHECK(s->campaign.ui==BTP_MENU_BROKER_CONFIRM);
         save_check(s,copy,r);
         btp_game_tick(s,r,BTP_UP);unsigned credits=s->credits;btp_game_tick(s,r,BTP_ACCEPT);
@@ -422,6 +555,7 @@ int main(int argc,char **argv)
         CHECK(s->party.mech_types[0]==d->record[0] && !memcmp(m+1,d->record+1,124));
         save_check(s,copy,r);btp_render(r,s,0,frame);
         btp_game_tick(s,r,BTP_ACCEPT);btp_game_tick(s,r,BTP_CANCEL);
+        CHECK(s->campaign.ui==BTP_MENU_BROKER_CLASSES);btp_game_tick(s,r,BTP_CANCEL);
         CHECK(s->campaign.ui==BTP_MENU_BROKER_HUB);btp_game_tick(s,r,BTP_CANCEL);
         CHECK(s->mode==BTP_EXPLORE);
         /* The garage's restoration makes the parked record available to the
@@ -459,8 +593,14 @@ int main(int argc,char **argv)
         for (unsigned i=51;i<86;++i) if ((m[i]&127u)>=16 && (m[i]&127u)<=32) { slot=i;break; }
         unsigned type=m[slot];m[slot]|=128;CHECK(btp_mech_repair(s,0,2,type)==1 && m[slot]==type);
         while (bin<10 && !d->ammo_cost[bin]) ++bin;
-        CHECK(bin<10);m[39+bin]=0;credits=s->credits;
-        CHECK(btp_mech_reload(s,r,0,bin,3)==3 && m[39+bin]==3 && s->credits==credits-3u*d->ammo_cost[bin]);
+        credits=s->credits;
+        if (bin<10) {
+            m[39+bin]=0;
+            CHECK(btp_mech_reload(s,r,0,bin,3)==3 && m[39+bin]==3 && s->credits==credits-3u*d->ammo_cost[bin]);
+        } else {
+            /* Ostsol/Cicada are energy-only: no ammunition purchase or fee. */
+            CHECK(!btp_mech_reload(s,r,0,0,3) && m[39]==255 && s->credits==credits);
+        }
         credits=s->credits;CHECK(!btp_mech_refit(s,r,0) && s->credits==credits);
         btp_mech_screen(r,m,"Jason","None",0,0,frame);
         CHECK(btp_salvage_eligible(m,4));btp_salvage_copy(s,1,0,m,m[0]);

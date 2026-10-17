@@ -7,7 +7,7 @@
 
 int btp_broker_page(unsigned page)
 {
-    return page>=BTP_MENU_BROKER && page<=BTP_MENU_BROKER_SELL_RESULT;
+    return (page>=BTP_MENU_BROKER && page<=BTP_MENU_BROKER_SELL_RESULT) || page==BTP_MENU_BROKER_CLASSES;
 }
 int btp_broker_door(const BtpState *s,const BtpResources *r,int x,int y)
 {
@@ -19,7 +19,7 @@ int btp_broker_door(const BtpState *s,const BtpResources *r,int x,int y)
 void btp_broker_open(BtpState *s)
 {
     s->mode=BTP_ACTIONS;s->campaign.ui=BTP_MENU_BROKER_HUB;
-    s->campaign.selected=s->campaign.member=0;s->menu.notice=0;
+    s->campaign.selected=s->campaign.member=0;s->menu.notice=s->menu.broker_class=0;
     s->script=(BtpScriptState){0};
 }
 unsigned btp_broker_owned(const BtpState *s,unsigned bay)
@@ -134,10 +134,23 @@ int btp_roster_state_prefix_valid(const BtpState *s,const BtpResources *r,unsign
         (s->mode!=BTP_ENTRY && !btp_broker_page(s->campaign.ui)))) return 0;
     if (s->campaign.ui==BTP_MENU_BROKER_SELL_CONFIRM && !btp_broker_owned(s,s->menu.map_y)) return 0;
     if (s->campaign.ui==BTP_MENU_BROKER_SELL_RESULT && s->menu.map_y>=4) return 0;
+    if (s->campaign.ui==BTP_MENU_BROKER_CLASSES && s->campaign.member) return 0;
     if (s->campaign.ui==BTP_MENU_BROKER || s->campaign.ui==BTP_MENU_BROKER_CONFIRM || s->campaign.ui==BTP_MENU_BROKER_RESULT) {
-        if (!btp_broker_available(s,r) || s->menu.map_x!=count ||
-            s->menu.map_y>=count || s->campaign.member>
-                (count+1u>BTP_BROKER_ROWS ? count+1u-BTP_BROKER_ROWS : 0u)) return 0;
+        unsigned indices[BTP_ROSTER_MAX];
+        unsigned listed=btp_roster_catalogue(&r->roster,s->menu.broker_class,count,indices);
+        if (!btp_broker_available(s,r) || s->menu.map_x!=listed || s->campaign.member>
+            (listed+1u>BTP_BROKER_ROWS ? listed+1u-BTP_BROKER_ROWS : 0u)) return 0;
+        if (!listed) {
+            if (s->campaign.ui!=BTP_MENU_BROKER || s->menu.map_y) return 0;
+        } else {
+            unsigned item=0;while (item<listed && indices[item]!=s->menu.map_y) ++item;
+            if (item==listed) return 0;
+            /* Old flat saves did not keep map_y in sync while browsing. New
+               category saves do: preserve this identity through pack growth. */
+            if (s->menu.broker_class && s->campaign.ui==BTP_MENU_BROKER &&
+                s->campaign.member+s->campaign.selected<listed &&
+                indices[s->campaign.member+s->campaign.selected]!=s->menu.map_y) return 0;
+        }
     }
     if (!record_valid(s->campaign.mech,&r->roster,count) || !record_valid(s->campaign.checkpoint_mech,&r->roster,count)) return 0;
     for (unsigned i=0;i<3;++i) if (!record_valid(s->party.mechs[i],&r->roster,count) || !record_valid(s->party_checkpoint.mechs[i],&r->roster,count)) return 0;
