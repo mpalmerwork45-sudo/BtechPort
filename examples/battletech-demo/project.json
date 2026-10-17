@@ -2,7 +2,7 @@
   "format": "btp-project-v1",
   "schema_version": 1,
   "package_id": "battletech-beacon",
-  "content_version": "1.0.0",
+  "content_version": "1.1.0",
   "title": "BattleTech - Last Beacon",
   "requires": "chi-original-dos-1.03",
   "startup": "authored-adventure-v1",
@@ -32,5 +32,6 @@
       "slot": "comstar",
       "file": "art/comstar.anm"
     }
-  ]
+  ],
+  "graphics": "graphics.json"
 }

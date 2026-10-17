@@ -56,12 +56,19 @@ The company is ready to fight without buying anything.
    the **Jenner JR7-D** and **UrbanMech UM-R60**, then return to the contract
    office for another 15,000 C-bills and the full ending.
 
-The western garage is the **Mech exchange**, with nine sourced variants grouped
-by weight. The stock includes Panther, Javelin, Jenner, UrbanMech, Clint,
-Whitworth, Phoenix Hawk, Trebuchet and Griffin. Buy/sell uses the existing
-four-bay limit and CHI-scale prices. Cole is recruitable on the road between
-the garages. Buy him a machine and use **Space → Allocate People** to assign
-him; otherwise he remains infantry until assigned a passenger seat. The
+The western garage is the **Mech exchange**, with nine mech variants and ten
+combat vehicles grouped by weight. Mechs include Panther, Javelin, Jenner,
+UrbanMech, Clint, Whitworth, Phoenix Hawk, Trebuchet and Griffin. Vehicles are
+**Patton, Rommel, Pegasus, Skulker, Drillson, Galleon, Scorpion, Vedette, LRM
+Carrier and SRM Carrier**. They have editable, animated directional sprites.
+Enter the exchange, choose **Buy or sell units**, then **Buy** and a weight class.
+Skulker, Galleon and Scorpion are light; Pegasus, Drillson and Vedette are medium;
+Patton, Rommel and the missile carriers are heavy.
+
+Buy/sell uses the existing four-bay total across mechs and vehicles and CHI-scale
+prices. Cole is recruitable on the road between the garages. Buy him a machine
+and use **Space → Allocate People** to assign him; otherwise he remains infantry
+until assigned a passenger seat. The
 northeastern office is the ComStar liaison, with information about the relay.
 
 Use arrows/numpad or diagonals to move, Space/Enter to select, Escape to cancel,
@@ -77,7 +84,10 @@ reload or salvage event yet; save before deploying. Both contracts have been
 completed using the supplied two 'Mechs and their initial ammunition. Combat
 is the port's adapted CHI/Enhanced rules, not a full tabletop rules simulator.
 Original Locust/red-Stinger presentation proxies remain in use for expanded
-models; these are not newly drawn model-specific sprites.
+mech models; these are not newly drawn model-specific mech sprites. Vehicles use
+the independent artwork in `graphics.json`. Tracked/wheeled/hover movement,
+damage facings and motive damage are implemented; firing arcs, independent
+turrets and detailed crew/engine critical tables remain approximate or absent.
 
 ## Edit
 
@@ -91,10 +101,13 @@ needs the player and all four original dependency paths. **Play here** starts
 with fresh flags; use ordinary Play to test the complete quest. Lua only routes
 the contract office to declared commands; rewards and quest flags are saved
 by the shared event system.
+Choose **Vehicles** in the roster to edit these designs. Right-click an animated
+preview and choose **Edit sprite** to edit individual driving directions/poses.
 
 Project saves bind the exact package snapshot. Editing the shipped package
 requires a new campaign; the earlier independent demo and main CHI saves belong
-to their own packages. `tools/make_battletech_demo.py` regenerates this example
+to their own packages. The vehicle additions are package version **1.1.0** and
+require a fresh demo game. `tools/make_battletech_demo.py` regenerates this example
 through the existing Updated exporter and overwrites its scenario files.
 
 See [credits and sources](CREDITS.md), [licensing](LICENSE.md), and the

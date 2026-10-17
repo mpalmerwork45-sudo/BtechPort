@@ -1,5 +1,39 @@
 # Build, verification and original oracle — 2026-10-17
 
+## Sprite workflow and BattleTech-demo vehicles
+
+The [dedicated sprite editor](SPRITE_EDITOR.md) adds direction/pose labels,
+thumbnails, next/previous navigation, independent animation preview, frame
+copy/paste and preview-only onion skin. The original shared mech/character gaits
+and new 32-image per-unit layouts are distinguished explicitly.
+
+Fresh checks for this follow-up:
+
+- **109/109 Python tests**, 4.20 s, including six new sprite cases.
+- **3/3 focused native suites**: vehicle/planet rules, authored formation and
+  the BattleTech demo. The expanded demo test also passes after adding stock
+  checks for all ten vehicles, an ordinary grouped-menu Skulker purchase,
+  assignment to Cole, field movement and entry into mixed mech/vehicle combat.
+- **Linux Tk world/art workflow passes**: both sprite entry points, direction
+  and thumbnail navigation, copies/pastes/undo/redo, separate playback, timer
+  cleanup, character aliases, scrolling, staging, Apply/discard and save/reopen.
+- **15/15 Linux SDL demo screens** pass F5/F9 with identical resumed headless
+  state/full-frame pixels. These include vehicle purchase, field and combat.
+  The complete original two-contract demo route still reaches its final payment.
+- New-project/export/reimport preserve all 19 definitions, vehicle artwork and
+  `VEHICLE-SOURCE-README.md`. Existing hand-edited demo maps, tile choices and
+  entrance coordinates were compared with the pre-change copy and preserved.
+
+Screenshots inspected: `work/sprite-editor.png` and
+`work/adventure-vehicle-{purchase,field,combat}.png`. The demo is version 1.1.0;
+its changed package fingerprint requires a new demo game. Both reference trees
+match the 1,287-entry snapshot taken before the demo update; the older historical
+guard's pre-existing Git metadata qualification below still applies.
+
+No C runtime or save format changed in this follow-up. Native Windows Tk remains
+unverified, and Windows/Wine was not rerun for this Python UI/data change. The
+preceding broad native/Wine/sanitizer results below are historical checks.
+
 ## World, art, vehicles and planets
 
 The [world/art guide](M5_WORLD_ART_EDITOR.md) and

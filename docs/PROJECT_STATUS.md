@@ -1,5 +1,19 @@
 # Project status — original fidelity and editable projects, 2026-10-17
 
+The [sprite editor](SPRITE_EDITOR.md) now has movement directions, named poses,
+frame thumbnails, previous/next navigation, copy/paste, onion skin and playback
+that leaves the editing selection in place. It displays the original shared
+gaits and the new eight-direction sheets correctly. Its guide records the
+remaining animation, artwork, event-debugging, service and distribution work.
+
+**BattleTech: Last Beacon 1.1.0** adds all ten vehicle presets to the existing
+Mech exchange, alongside the nine mechs, with independent directional graphics.
+Existing hand-edited demo terrain and doorway placement are preserved. A fresh
+demo game is required because the package content changed. Fresh verification:
+**109/109 Python**, **3/3 focused native suites**, the real Linux sprite-editor
+workflow and **15/15 Linux SDL demo save/load screens**, plus the completed
+two-contract route. See [follow-up evidence](TESTING.md#sprite-workflow-and-battletech-demo-vehicles).
+
 [World/art editing](M5_WORLD_ART_EDITOR.md) and
 [vehicles/multiple planets](M5_VEHICLES_AND_PLANETS.md) are implemented as bounded
 authoring features: 4,096 tile definitions, 1,024 jigsaws, up to 16 planets
@@ -12,7 +26,7 @@ vehicle presets are available. The asset-free
 three starting vehicles, a depot and a live battle. Vehicle construction and
 critical rules remain explicitly approximate.
 
-Current verification: **70/70 native CTests**, **103/103 Python tests**,
+The preceding full world/art/vehicle verification: **70/70 native CTests**, **103/103 Python tests**,
 **9/9 focused Wine** and **9/9 sanitizer suites**, plus **15 Python editor tests
 with sanitized binaries**. All four Linux Tk workflows pass. Linux and Windows
 SDL each pass seven vehicle/map/inspection/combat/depot F5/F9 checks against
@@ -41,7 +55,7 @@ saves are retained. The full native suite passes **69/69** and Python **69/69**;
 the linked evidence records focused Windows/sanitizer and real-input SDL checks.
 
 The main authored play demo is now **[BattleTech: Last Beacon](BATTLETECH_DEMO.md)**:
-three maps, nine sourced variants, a Phoenix Hawk/Trebuchet starting team,
+three maps, nine mech variants and ten vehicles, a Phoenix Hawk/Trebuchet starting team,
 two mercenary contracts, recruitment, trading and two endings, using supplied
 original graphics/sounds and Enhanced combat. Authored character names now work
 through the CHI renderer's menus and combat text. Run

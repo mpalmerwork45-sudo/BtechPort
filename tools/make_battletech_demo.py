@@ -5,6 +5,7 @@ Only JSON and our generated portraits enter the package. Original DOS resources
 and extracted caches stay external. Regeneration overwrites this shipped example.
 """
 import json
+import copy
 from pathlib import Path
 import shutil
 import subprocess
@@ -16,6 +17,35 @@ OUT = ROOT / "examples/battletech-demo"
 
 def write(name, value):
     (OUT / name).write_text(json.dumps(value, indent=2) + "\n", encoding="ascii")
+
+
+def add_vehicles(package):
+    """Extend the exchange without regenerating an author's maps or entrances."""
+    from editor_model import ProjectDocument
+    from unit_editing import import_catalogue
+    document = ProjectDocument(package, ROOT / 'build/btp-project')
+    ids = import_catalogue(document, ROOT / 'content/catalogues/vehicles')
+    adventure = copy.deepcopy(document.adventure)
+    shop = next(s for s in adventure['shops'] if s['id'] == 'beacon:exchange')
+    shop['stock'].extend(identity for identity in ids if identity not in shop['stock'])
+    # Only the exchange-related text changes. Existing terrain, doorway moves,
+    # encounters, flags and starting company stay exactly as the author left them.
+    texts = {
+        'beacon:directions': "Visit the contract office at the eastern garage door, north of the road. The west door exchanges 'Mechs and combat vehicles. Cole, a spare pilot, waits on the road between them. ComStar has an office northeast. Travel east when ready. Space opens inspection, crew, map and saves; F5 saves, F9 restores.",
+        'beacon:broker': "The broker wipes grease from a sales slate. Nine 'Mech models and ten combat vehicles: tanks, hovercraft, scouts and missile carriers. Stock is grouped by weight. Cash on delivery.",
+        'beacon:crew-info': "Four bays total, shared by 'Mechs and vehicles. Every active unit needs a pilot or driver: use Allocate People from the Space menu outside. Cole is looking for work near the road. Sell a unit here to free a bay. Keep some C-bills in reserve.",
+        'beacon:hire-info': "Cole joins Beacon Company. Buy him a 'Mech or vehicle at the exchange and assign him through the Space menu. Until then, put him in a passenger seat or keep him out of trouble on foot.",
+    }
+    for node in adventure['events']:
+        if node['id'] in texts: node['text'] = texts[node['id']]
+        if node['id'] == 'beacon:broker': node['options'][0]['label'] = 'Buy or sell units'
+    content = copy.deepcopy(document.content)
+    manifest = copy.deepcopy(document.manifest)
+    content['content_version'] = manifest['content_version'] = '1.1.0'
+    document.replace_all(content, adventure, document.art, manifest)
+    document.save()
+    shutil.copyfile(ROOT / 'content/catalogues/vehicles/README.md',
+                    Path(package) / 'VEHICLE-SOURCE-README.md')
 
 
 def main():
@@ -214,6 +244,7 @@ else
   return game.command("beacon:offer")
 end
 ''',encoding="ascii")
+    add_vehicles(OUT)
     subprocess.run([str(ROOT / "build/btp-project"),"validate",str(OUT)],check=True)
 
 

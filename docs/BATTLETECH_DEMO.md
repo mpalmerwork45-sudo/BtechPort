@@ -1,5 +1,20 @@
 # BattleTech demo and the next editor work
 
+The vehicle follow-up is **version 1.1.0**. The western Mech exchange now stocks
+all ten catalogue vehicles as well as the nine mechs. Vehicles include the
+requested Patton, Rommel, Pegasus, Skulker, Drillson and Galleon, plus Scorpion,
+Vedette and the LRM/SRM Carriers. New directional artwork and its provenance
+travel with the package. Mechs and vehicles share the four owned bays.
+Existing edited map/entrance data was preserved; no generator was run over it.
+The generator includes vehicles on future deliberate regeneration.
+
+The new stock changes the package fingerprint, so start a fresh demo campaign.
+The [latest checks](TESTING.md#sprite-workflow-and-battletech-demo-vehicles)
+include purchasing/driving a Skulker with Cole, entering combat, fifteen SDL
+save/load screens and the complete two-contract route. The current remaining
+editor work is listed in the [sprite-editor guide](SPRITE_EDITOR.md#remaining-editor-work);
+the five milestones below are the earlier roadmap, now partly implemented.
+
 The subsequent [walking correction](AUTHORED_WALKING.md) fixes separated mechs
 and applies original member-ground entrance checks, compact formation movement
 and per-key gait to authored exploration. Existing package saves remain usable.

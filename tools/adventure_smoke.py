@@ -22,7 +22,7 @@ def run(env, work, battletech=False):
         subprocess.run([str(ROOT / "build" / test), *map(str, inputs), str(project), str(prefix)],
                        cwd=tmp, check=True, capture_output=True, text=True, timeout=30)
         args = ["--project", project, *[arg for key, value in zip(["data", "dialogue-data", "combat-data", "world-data"], inputs) for arg in ("--" + key, value)]]
-        labels = (["welcome", "town", "broker", "recruit", "overview", "road-enemies", "road-combat", "road-victory", "second-contract", "relay-enemies", "relay-combat", "ending"]
+        labels = (["welcome", "town", "broker", "recruit", "vehicle-purchase", "vehicle-field", "vehicle-combat", "overview", "road-enemies", "road-combat", "road-victory", "second-contract", "relay-enemies", "relay-combat", "ending"]
                   if battletech else ["welcome", "map", "entrance", "choices", "broker", "purchase", "recruit", "combat", "victory", "overview"])
         for label in labels:
             slot, final, frame = tmp / f"{label}.btp", tmp / f"{label}-final.btp", work / f"adventure-{label}.ppm"

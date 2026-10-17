@@ -6,6 +6,7 @@
 #include "data/content.h"
 #include "data/project.h"
 #include "data/save.h"
+#include "data/unit_data.h"
 #include "frontend/pixels.h"
 #include "authored_walk.h"
 #include <stdio.h>
@@ -59,6 +60,35 @@ static void fight(const char *label)
     CHECK(ticks<60000 && s->event.phase==BTP_EVENT_TEXT);
     printf("%s completed in %u ticks.\n",label,ticks);
 }
+static void vehicle_exchange(void)
+{
+    static const char *ids[]={"patton","rommel","pegasus","skulker","drillson","galleon",
+        "scorpion","vedette","lrm-carrier","srm-carrier"};
+    unsigned stock[BTP_ROSTER_MAX];
+    unsigned count=btp_events_catalogue(s,r,0,r->roster.count,stock),skulker=0;
+    for (unsigned v=0;v<sizeof ids/sizeof ids[0];++v) {
+        char id[64];snprintf(id,sizeof id,"vehicles:%s",ids[v]);unsigned i=0;
+        while(i<count && strcmp(r->roster.mechs[stock[i]].id,id))++i;
+        CHECK(i<count && btp_vehicle_kind(r->roster.mechs[stock[i]].record));
+        if(v==3)skulker=stock[i];
+    }
+    /* Buy through the real grouped/scrolling menu, then use the same crew
+       assignment API as the allocation dialog. No extra test money is needed. */
+    input(BTP_ACCEPT);CHECK(s->campaign.ui==BTP_MENU_BROKER_CLASSES);
+    input(BTP_ACCEPT);CHECK(s->campaign.ui==BTP_MENU_BROKER);
+    unsigned attempts=0;
+    while(s->menu.map_y!=skulker && attempts++<count)input(BTP_DOWN);
+    CHECK(s->menu.map_y==skulker);input(BTP_ACCEPT);input(BTP_UP);input(BTP_ACCEPT);
+    CHECK(s->menu.notice==BTP_BROKER_BOUGHT && btp_broker_count(s)==3);
+    checkpoint("vehicle-purchase");
+    input(BTP_ACCEPT);input(BTP_CANCEL);input(BTP_CANCEL);input(BTP_CANCEL);input(BTP_CANCEL);
+    CHECK(s->event.phase==BTP_EVENT_INACTIVE);
+    btp_party_allocate(s,2,2,121);CHECK(s->party.people[2][12]==2);
+    go("beacon:east-road");enter();text_pages();checkpoint("vehicle-field");
+    go("beacon:checkpoint");enter();input(BTP_ACCEPT);
+    CHECK(s->combat.friends==3 && btp_vehicle_kind(s->combat.unit[2].record)==2);
+    checkpoint("vehicle-combat");
+}
 int main(int argc,char **argv)
 {
     CHECK(argc==6 || argc==7);capture=argc==7?argv[6]:NULL;
@@ -79,10 +109,12 @@ int main(int argc,char **argv)
     CHECK(!strcmp(btp_content_party_name(r,s,2),"Cole"));checkpoint("recruit");
     go("beacon:exchange");enter();input(BTP_ACCEPT);
     CHECK(s->event.phase==BTP_EVENT_TRADING);checkpoint("broker");
+    BtpState *exchange=malloc(sizeof *exchange);CHECK(exchange);*exchange=*s;
     unsigned javelin=0;while(javelin<r->roster.count && strcmp(r->roster.mechs[javelin].id,"chi-expanded:javelin-jvn-10n"))++javelin;
     CHECK(javelin<r->roster.count && btp_broker_buy(s,r,javelin)==BTP_BROKER_BOUGHT);
     CHECK(s->credits==5000 && btp_broker_count(s)==3);btp_party_allocate(s,2,2,121);
     CHECK(s->party.people[2][12]==2);checkpoint("crew");
+    *s=*exchange;vehicle_exchange();free(exchange);
     *s=*saved;recording=old_recording;
     input(BTP_OPEN_MENU);input(BTP_UP);input(BTP_ACCEPT);
     CHECK(s->campaign.ui==BTP_MENU_MAP);checkpoint("overview");input(BTP_ACCEPT);
@@ -117,5 +149,5 @@ int main(int argc,char **argv)
     CHECK(s->event.flags[6] && s->credits==41000);checkpoint("ending");text_pages();
     CHECK(s->event.phase==BTP_EVENT_COMPLETE);checkpoint("complete");input(BTP_ACCEPT);CHECK(s->menu.quit);
     free(saved);CHECK(!remove("bt-demo-roundtrip.btp"));if(recording)CHECK(!fclose(recording));
-    free(s);btp_content_close(&content);puts("PASS: BattleTech two-contract route, withdrawal, both endings, receipts and saved continuations.");return 0;
+    free(s);btp_content_close(&content);puts("PASS: BattleTech contracts, ten vehicle stock entries, vehicle purchase/crew/combat, withdrawal, endings and saved continuations.");return 0;
 }

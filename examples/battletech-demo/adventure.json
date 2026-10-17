@@ -665,7 +665,17 @@
         "chi-expanded:javelin-jvn-10n",
         "chi-expanded:clint-clnt-2-3t",
         "chi-expanded:whitworth-wth-1",
-        "chi-expanded:urbanmech-um-r60"
+        "chi-expanded:urbanmech-um-r60",
+        "vehicles:patton",
+        "vehicles:rommel",
+        "vehicles:pegasus",
+        "vehicles:skulker",
+        "vehicles:drillson",
+        "vehicles:galleon",
+        "vehicles:scorpion",
+        "vehicles:vedette",
+        "vehicles:lrm-carrier",
+        "vehicles:srm-carrier"
       ]
     }
   ],
@@ -739,7 +749,7 @@
     {
       "id": "beacon:directions",
       "op": "say",
-      "text": "Visit the contract office at the eastern garage door, north of the road. The west door is a 'Mech exchange. Cole, a spare pilot, waits on the road between them. ComStar has an office northeast. Travel east when ready. Space opens inspection, crew, map and saves; F5 saves, F9 restores.",
+      "text": "Visit the contract office at the eastern garage door, north of the road. The west door exchanges 'Mechs and combat vehicles. Cole, a spare pilot, waits on the road between them. ComStar has an office northeast. Travel east when ready. Space opens inspection, crew, map and saves; F5 saves, F9 restores.",
       "next": "beacon:offer",
       "portrait": "training"
     },
@@ -808,10 +818,10 @@
     {
       "id": "beacon:broker",
       "op": "choice",
-      "text": "The broker wipes grease from a sales slate. Nine Succession Wars models, inspected this morning. Cash on delivery.",
+      "text": "The broker wipes grease from a sales slate. Nine 'Mech models and ten combat vehicles: tanks, hovercraft, scouts and missile carriers. Stock is grouped by weight. Cash on delivery.",
       "options": [
         {
-          "label": "Buy or sell a 'Mech",
+          "label": "Buy or sell units",
           "next": "beacon:shop"
         },
         {
@@ -835,7 +845,7 @@
     {
       "id": "beacon:crew-info",
       "op": "say",
-      "text": "You can own four 'Mechs. A purchase needs a pilot: use Allocate People from the Space menu outside. Cole is looking for work near the road. Keep some C-bills in reserve; these are used machines, not a limitless militia arsenal.",
+      "text": "Four bays total, shared by 'Mechs and vehicles. Every active unit needs a pilot or driver: use Allocate People from the Space menu outside. Cole is looking for work near the road. Sell a unit here to free a bay. Keep some C-bills in reserve.",
       "next": "beacon:broker",
       "portrait": "broker"
     },
@@ -881,7 +891,7 @@
     {
       "id": "beacon:hire-info",
       "op": "say",
-      "text": "Cole joins Beacon Company. Buy him a 'Mech at the exchange and assign him through the Space menu. Until then, put him in a passenger seat or keep him out of trouble on foot.",
+      "text": "Cole joins Beacon Company. Buy him a 'Mech or vehicle at the exchange and assign him through the Space menu. Until then, put him in a passenger seat or keep him out of trouble on foot.",
       "next": "beacon:end",
       "portrait": "training"
     },

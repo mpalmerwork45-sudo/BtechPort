@@ -274,7 +274,7 @@ class ProjectDocument:
             staging = Path(directory) / "package"
             staging.mkdir()
             self.stage(staging)
-            for name in ["README.md", "LICENSE.md", "SOURCE-README.md", "ART-SOURCE-README.md", "sources.json", "CREDITS.md"]:
+            for name in ["README.md", "LICENSE.md", "SOURCE-README.md", "ART-SOURCE-README.md", "VEHICLE-SOURCE-README.md", "sources.json", "CREDITS.md"]:
                 source = child(self.root, name)
                 if source.is_file():
                     shutil.copyfile(source, staging / name)
@@ -299,7 +299,7 @@ def create_project(template: Path, target: Path, package_id: str, title: str, va
         content.update(package_id=package_id, content_version="1.0.0")
         (staging / "project.json").write_bytes(encoded(manifest))
         child(staging, manifest["definitions"]).write_bytes(encoded(content))
-        for name in ["README.md", "SOURCE-README.md", "ART-SOURCE-README.md", "LICENSE.md", "sources.json", "CREDITS.md"]:
+        for name in ["README.md", "SOURCE-README.md", "ART-SOURCE-README.md", "VEHICLE-SOURCE-README.md", "LICENSE.md", "sources.json", "CREDITS.md"]:
             path = child(source.root, name)
             if path.is_file():
                 shutil.copyfile(path, staging / name)
