@@ -1,4 +1,4 @@
-# M5a CHI roster and broker — 2026-10-16
+# M5a CHI roster and broker — 2026-10-17
 
 An ordinary interactive launch now asks **Original BTECH CHI** or **Updated
 BTECH CHI**, before either original intro screen or audio playback. Original is
@@ -7,7 +7,7 @@ Numeric keypad navigation and Enter work too. Escape selects Original without
 quitting; Ctrl+Shift+Escape exits. The Shift K/Y/R credit shortcut also works on
 the selector and carries into the selected game.
 
-Updated loads [the 17-model roster](../content/updated/README.md), exposes a
+Updated loads [the 23-model roster](../content/updated/README.md), exposes a
 Starport broker in an unused building, and adds eligible random outdoor mech
 opponents. Owned models use the existing crew, movement, firing, inspection,
 repair, reload and salvage operations. Purchases are parked outside Starport;
@@ -18,7 +18,7 @@ branch without charging money or modifying the mech.
 
 ## Expanded stock and scrolling
 
-Pack **0.2.0** adds Centurion CN9-A, Trebuchet TBT-5N, Griffin GRF-1N,
+Pack **0.2.0** added Centurion CN9-A, Trebuchet TBT-5N, Griffin GRF-1N,
 Shadow Hawk SHD-2H, Wolverine WVR-6R, Rifleman RFL-3N, Thunderbolt TDR-5S,
 Archer ARC-2R, Warhammer WHM-6R, Marauder MAD-3R, Zeus ZEU-6S, Atlas AS7-D,
 Crusader CRD-3R and Crusader CRD-3R (Bear). The initial Panther, Hunchback and
@@ -28,6 +28,16 @@ weapon and movement operations; no model-specific combat branches were added.
 The standard Crusader has two LRM-15s and two SRM-6s; Bear's has four SRM-6s
 and 18 heat sinks. MegaMek's pinned source records and the CHI adaptations are
 documented in the [pack README](../content/updated/README.md).
+
+Pack **0.3.0** appends Phoenix Hawk PXH-1, Dragon DRG-1N, Grasshopper GHR-5H,
+Highlander HGN-733, Stalker STK-3F and Jenner JR7-D. Shadow Hawk and Rifleman
+were already present. All 17 released definitions and codes remain unchanged.
+The Phoenix Hawk is a conventional mech independent of the original story LAM;
+the broker Jenner does not replace training enemies. HGN-733 uses the supported
+AC/10, avoiding a new Gauss weapon rule. The existing adapter handles the
+Grasshopper's 22 heat sinks and the Stalker's ten weapon mounts without
+model-specific runtime changes. Sources, prices and sprite choices are in the
+pack guide; all six new records use the same pinned mm-data revision.
 
 The broker has an eight-row scrolling window. Up/Down traverses every model
 and the final Back item, wrapping at either end. Left/Right jumps eight
@@ -153,6 +163,58 @@ review is retained locally as `work/building-screen-review.png`. These are
 authored expansion illustrations; no claim of original artwork parity or new
 portrait animation is made.
 
+## 0.3.0 roster and three more illustrations — 2026-10-17
+
+The six appended models bring the catalogue to **23**, using save codes
+177–182 and fingerprint **1754795853**. The exact previous 17-model document
+is archived at [versions/0.2.0.json](../content/updated/versions/0.2.0.json).
+Compatibility checks exercise its real v43 saves while exploring, at the broker,
+on both sides of a scroll boundary, at the old final model/Back, and in either
+pending Yes/No choice. Damage, ammunition, crew and credits survive. The earlier
+three-model v41/v42 compatibility and edited-definition rejection tests remain.
+
+**VERIFIED:** the lifecycle suite buys all 23 models through the real broker,
+assigns them in the garage, fires every weapon, checks movement/cooling, visits
+Mech-It for repair/reload/refit, inspects, salvages and round-trips saves. Cooling
+checks include the Grasshopper's 22 sinks and low-heat clamping; firing includes
+all ten Stalker mounts. Encounter checks cover both a Catapult's 80-ton limit
+and the full roster when an Atlas is owned. Independent parser checks preserve
+the old definitions and source ammunition totals, including shared bins.
+
+Updated also adds the clothes shop's haughty dapper proprietor, an unbranded
+1980s electronics-store interior with a distant clerk for Video Hut, and a
+silhouetted intruder in the mayor's stylish futuristic house. Built-in generation
+prompts and selected masters are retained in the [art directory](../content/updated/art/README.md).
+The additions map original building IDs 12, 17 and 14 to optional native ANMs.
+They use the existing scene-priority rules and require no new script operations.
+All ten ordinary building-art cases enter real doors, execute real scripts,
+compare state against Original, and check every pixel outside the art panel.
+The PNG/ANM/native crops match exactly. The broker remains the eleventh portrait.
+
+The actual new Linux building screens were reviewed in
+`work/building-additions-screen-review.png`; intact/damaged inspection captures
+cover the six new mechs, with their intact panels reviewed in
+`work/roster03-inspection-review.png`. Verification logs use `work/roster03-*.log`.
+These are **authored expansion content**. Temporary shared sprites/inspection
+art, prices and campaign balance retain the limitations described below.
+
+| Check | Result |
+|---|---|
+| Native CTest | **60/60**, 42.13 s |
+| Python tools and independent ANM decoding | **32/32**, 1.68 s |
+| Focused ASan/UBSan/LeakSanitizer | **5/5**, 1.87 s |
+| Same focused Windows/Wine suites | **5/5**, 16.73 s, default stack reserve |
+| Linux SDL selector/broker | **34/34**, including all six new held purchases |
+| Windows SDL selector/broker | **34/34**, same checks with the MinGW player |
+| Linux SDL building visits | **10/10**, exact crop, F5/F9, restored full frame |
+| Windows SDL building visits | **10/10**, same checks with the MinGW player |
+
+The five focused suites are the same ones listed for the preceding art update.
+The full Windows/sanitizer suites and fresh full-campaign differential routes
+were not repeated for these bounded data/art additions. The full native run
+includes the retained original-game oracle suites; expansion illustrations
+and statistics are not original-game fidelity claims.
+
 ## Starting, switching and saving
 
 Run from the repository root after the usual build:
@@ -189,13 +251,14 @@ Original or exported as DOS GAME files. Keep the original save to resume the
 original campaign. Existing original assets and both reference directories
 remain unchanged.
 
-Released **0.1.0 three-mech Updated saves load directly in 0.2.0**, including
+Released **0.1.0 and 0.2.0 Updated saves load directly in 0.3.0**, including
 those held inside broker menus. Load normally using F9, the six-slot menu or
 `--load`. The migration preserves the selected model or Back item, pending
 Yes/No, party, damage, ammunition and money. It does not rewrite the source
 save on load. Future saves use the new catalogue and v43 state. Older executables
 cannot read that state; retain earlier saves and the
-[archived three-mech pack](../content/updated/versions/0.1.0.json) to resume with
+[archived three-mech pack](../content/updated/versions/0.1.0.json) or
+[17-model pack](../content/updated/versions/0.2.0.json) to resume with
 the earlier executable/catalogue.
 
 ## External definitions and compatibility
@@ -252,7 +315,8 @@ Their seven-model page index becomes the first visible row; old Back choices
 remain Back even when new stock has been appended. Their old Space root
 becomes the ordinary root, and held purchase screens migrate to the building
 counter while retaining the outdoor return position, choice and purchases.
-The released 0.1.0 fingerprint is **4022610150**; 0.2.0 is **751321522**. Live custom
+The released fingerprints are **4022610150** (0.1.0), **751321522** (0.2.0),
+and **1754795853** (0.3.0). Live custom
 records carry their explicit save code and a separate high-bit marker in byte
 124; byte 123 alone is insufficient, because original UrbanMech records also
 use values in that range. The fingerprint binds the code-to-ID mapping and
@@ -272,7 +336,8 @@ refit continuations, and enters GARAGE.BLD to pay, allocate the new mech's pilot
 through the real menus and leave mounted. Parser tests accept another JSON-only model and reject
 malformed definitions. SDL checks exercise pre-logo timing, key controls,
 separate save names, bad-pack fallback, the initial three purchases and
-Zeus/Atlas/both Crusaders with held F5/F9 confirmations. Follow-up cases cover default-No sales, cancellation,
+Zeus/Atlas/both Crusaders and the six 0.3.0 models with held F5/F9 confirmations.
+Follow-up cases cover default-No sales, cancellation,
 credit overflow, middle-bay identity, v41 held-menu migration and confinement of
 intact/damaged/extreme inspection bars. The 18 executed original inspection
 screens remain unchanged. The recovery suite covers real menu and BLD exits,

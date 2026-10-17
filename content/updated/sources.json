@@ -85,6 +85,48 @@
       "source": "https://github.com/MegaMek/mm-data/blob/e6f20e1fc2f9d6c74a6e2cdc74778b029ca14811/data/mekfiles/meks/Force%20Manuals/Mercs/Crusader%20CRD-3R%20%28Bear%29.mtf",
       "sha256": "ad47b376cf3946d7844930e34ac300f5179024c4d5fe0dd82e87eb527e5a20b6",
       "rear_lasers": 0
+    },
+    {
+      "id": "chi-expanded:phoenix-hawk-pxh-1",
+      "source": "https://github.com/MegaMek/mm-data/blob/e6f20e1fc2f9d6c74a6e2cdc74778b029ca14811/data/mekfiles/meks/3039u/Phoenix%20Hawk%20PXH-1.mtf",
+      "sha256": "72079195b65f56fdbc2c8919066cfe194f2af0eef4e5262f1521cccdbaa85bec",
+      "rear_lasers": 0,
+      "consulted": "2026-10-17"
+    },
+    {
+      "id": "chi-expanded:dragon-drg-1n",
+      "source": "https://github.com/MegaMek/mm-data/blob/e6f20e1fc2f9d6c74a6e2cdc74778b029ca14811/data/mekfiles/meks/3039u/Dragon%20DRG-1N.mtf",
+      "sha256": "b96a1d86deb8993a30b80c248d1a1e4750d6f690e3800743d033bbc60814ee9f",
+      "rear_lasers": 1,
+      "consulted": "2026-10-17"
+    },
+    {
+      "id": "chi-expanded:grasshopper-ghr-5h",
+      "source": "https://github.com/MegaMek/mm-data/blob/e6f20e1fc2f9d6c74a6e2cdc74778b029ca14811/data/mekfiles/meks/3039u/Grasshopper%20GHR-5H.mtf",
+      "sha256": "ac1c0dc7ab9f7263ced67d8c859796f6dc0814aebbae2897f3829f37736362eb",
+      "rear_lasers": 0,
+      "consulted": "2026-10-17"
+    },
+    {
+      "id": "chi-expanded:highlander-hgn-733",
+      "source": "https://github.com/MegaMek/mm-data/blob/e6f20e1fc2f9d6c74a6e2cdc74778b029ca14811/data/mekfiles/meks/3039u/Highlander%20HGN-733.mtf",
+      "sha256": "3578c966c6cf3fe1e247c87a4f6f246868293cae5c27e4f6130925c339b4b24f",
+      "rear_lasers": 0,
+      "consulted": "2026-10-17"
+    },
+    {
+      "id": "chi-expanded:stalker-stk-3f",
+      "source": "https://github.com/MegaMek/mm-data/blob/e6f20e1fc2f9d6c74a6e2cdc74778b029ca14811/data/mekfiles/meks/3039u/Stalker%20STK-3F.mtf",
+      "sha256": "caa1a00eb507d0f5ceb8c485db2bdc872497598fc00d15765d2df2af86618eda",
+      "rear_lasers": 0,
+      "consulted": "2026-10-17"
+    },
+    {
+      "id": "chi-expanded:jenner-jr7-d",
+      "source": "https://github.com/MegaMek/mm-data/blob/e6f20e1fc2f9d6c74a6e2cdc74778b029ca14811/data/mekfiles/meks/3039u/Jenner%20JR7-D.mtf",
+      "sha256": "534458c60ebac823bab8d5f760a7d02804e3e9bed0570207b9813e2f44a9882d",
+      "rear_lasers": 0,
+      "consulted": "2026-10-17"
     }
   ]
 }

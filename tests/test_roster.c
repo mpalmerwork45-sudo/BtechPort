@@ -23,7 +23,9 @@ static const unsigned specs[][6]={
     {55,5,3,12,4,146},{55,5,5,12,3,146},{60,4,0,10,6,146},
     {65,4,0,15,8,146},{70,4,0,10,6,146},{70,4,0,18,9,146},
     {75,4,0,16,5,0},{80,4,0,17,5,146},{100,3,0,20,7,146},
-    {65,4,0,10,8,146},{65,4,0,18,8,146}
+    {65,4,0,10,8,146},{65,4,0,18,8,146},
+    {45,6,6,10,5,146},{60,5,0,10,4,146},{70,4,4,22,6,146},
+    {90,3,3,13,5,146},{85,3,0,20,10,0},{35,7,5,10,5,0}
 };
 static void save_check(BtpState *s,BtpState *copy,const BtpResources *r);
 static void setup(BtpState *s,const BtpResources *r)
@@ -298,6 +300,49 @@ static void extension_saves(BtpState *s,BtpState *copy,BtpState *before,BtpResou
     }
     memcpy(s->campaign.mech,current->mechs[14].record,125);old_save(s,previous,42);
     CHECK(!btp_save_load("btp-roster-legacy.btp",copy,r,&error) && !memcmp(copy,before,sizeof *copy));
+    CHECK(!remove("btp-roster-legacy.btp"));
+    /* The released 17-model pack already wrote v43 scrolling menus. Appending
+       six models must retain scrolled choices, old Back, and pending Yes/No. */
+    snprintf(path,sizeof path,"%.*sversions/0.2.0.json",(int)parent,roster_path);
+    CHECK(btp_roster_load(path,previous,diagnostic));
+    CHECK(previous->count==17 && previous->fingerprint==UINT32_C(751321522));
+    CHECK(!memcmp(current->mechs,previous->mechs,17*sizeof previous->mechs[0]));
+    static const unsigned choices[]={0,7,8,16,17};
+    for (unsigned scene=0;scene<9;++scene) {
+        r->roster=*previous;setup(s,r);enter_broker(s,copy,r);
+        CHECK(btp_broker_buy(s,r,13)==BTP_BROKER_BOUGHT);
+        CHECK(btp_broker_buy(s,r,14)==BTP_BROKER_BOUGHT);
+        CHECK(btp_broker_buy(s,r,16)==BTP_BROKER_BOUGHT);
+        s->campaign.mech[17]-=2;btp_party_mech(s,2)[39]=2;
+        if (!scene) btp_game_tick(s,r,BTP_CANCEL);
+        else if (scene<8) {
+            btp_game_tick(s,r,BTP_ACCEPT);
+            unsigned choice=scene<=5 ? choices[scene-1] : 16;
+            for (unsigned i=0;i<choice;++i) btp_game_tick(s,r,BTP_DOWN);
+            if (scene>=6) {
+                btp_game_tick(s,r,BTP_ACCEPT);
+                if (scene==6) btp_game_tick(s,r,BTP_UP);
+            }
+        }
+        CHECK(btp_save_write("btp-roster-legacy.btp",s,r,&error));
+        *before=*s;r->roster=*current;
+        CHECK(btp_save_load("btp-roster-legacy.btp",copy,r,&error));
+        CHECK(copy->credits==before->credits && !memcmp(copy->campaign.mech,before->campaign.mech,125));
+        CHECK(!memcmp(copy->party.mechs,before->party.mechs,sizeof copy->party.mechs));
+        CHECK(!memcmp(copy->party.people,before->party.people,sizeof copy->party.people));
+        if (scene>=1 && scene<=5) {
+            unsigned choice=choices[scene-1];
+            CHECK(copy->campaign.member+copy->campaign.selected==(choice==17 ? current->count : choice));
+            btp_game_tick(copy,r,BTP_ACCEPT);
+            CHECK(copy->campaign.ui==(choice==17 ? BTP_MENU_BROKER_HUB : BTP_MENU_BROKER_CONFIRM));
+            if (choice<17) CHECK(copy->menu.map_y==choice);
+        } else if (scene==6 || scene==7) {
+            CHECK(copy->campaign.selected==scene-6 && copy->menu.map_y==16);
+            btp_game_tick(copy,r,BTP_ACCEPT);
+            CHECK(copy->credits==before->credits-(scene==6 ? current->mechs[16].price : 0));
+        }
+        save_check(copy,s,r);
+    }
     CHECK(!remove("btp-roster-legacy.btp"));free(previous);free(current);
 }
 static void scrolling(BtpState *s,BtpState *copy,const BtpResources *r,uint32_t *frame)
@@ -404,8 +449,11 @@ int main(int argc,char **argv)
             }
             CHECK(hits);
         }
-        attacker.heat=20;attacker.pool=0;btp_combat_cool(&attacker,-1,0,255);
-        CHECK(attacker.heat==20u-specs[model][3]);
+        attacker.heat=30;attacker.pool=0;btp_combat_cool(&attacker,-1,0,255);
+        CHECK(attacker.heat==30u-specs[model][3]);
+        /* The Grasshopper's 22 sinks must clamp low heat to zero. */
+        attacker.heat=20;btp_combat_cool(&attacker,-1,0,255);
+        CHECK(attacker.heat==(specs[model][3]<20 ? 20u-specs[model][3] : 0));
         m[17]-=2;s->credits=100000;CHECK(btp_mech_repair(s,0,0,0)==2 && m[17]==m[86]);
         unsigned slot=0,bin=0;
         for (unsigned i=51;i<86;++i) if ((m[i]&127u)>=16 && (m[i]&127u)<=32) { slot=i;break; }
@@ -451,14 +499,20 @@ int main(int argc,char **argv)
     setup(s,r);uint8_t rng[3];memcpy(rng,s->npc.rng,3);
     CHECK(!btp_roster_enemy(s,r) && !memcmp(rng,s->npc.rng,3));
     s->map_id=0;CHECK(!btp_roster_enemy(s,original.resources) && !memcmp(rng,s->npc.rng,3));
-    s->campaign.owned=1;s->party.mech_types[0]='C';memcpy(s->campaign.mech,r->roster.mechs[2].record,125);
-    uint32_t seen=0,eligible=0;
-    for (unsigned i=0;i<r->roster.count;++i) if (r->roster.mechs[i].record[16]<=80)
-        eligible|=UINT32_C(1)<<(r->roster.mechs[i].record[123]-BTP_ROSTER_CODE);
-    for (unsigned i=0;i<512;++i) {
-        const uint8_t *m=btp_roster_enemy(s,r);if (m) seen|=1u<<(m[123]-BTP_ROSTER_CODE);
+    for (unsigned tier=0;tier<2;++tier) {
+        /* Catapult ownership excludes the new assault models; Atlas ownership
+           makes the entire catalogue eligible, including Highlander/Stalker. */
+        unsigned model=tier ? 14 : 2,limit=tier ? 115 : 80;
+        s->campaign.owned=1;s->party.mech_types[0]=r->roster.mechs[model].record[0];
+        memcpy(s->campaign.mech,r->roster.mechs[model].record,125);
+        uint32_t seen=0,eligible=0;
+        for (unsigned i=0;i<r->roster.count;++i) if (r->roster.mechs[i].record[16]<=limit)
+            eligible|=UINT32_C(1)<<(r->roster.mechs[i].record[123]-BTP_ROSTER_CODE);
+        for (unsigned i=0;i<2048;++i) {
+            const uint8_t *m=btp_roster_enemy(s,r);if (m) seen|=1u<<(m[123]-BTP_ROSTER_CODE);
+        }
+        CHECK(seen==eligible);
     }
-    CHECK(seen==eligible);
     free(frame);free(before);free(copy);free(s);btp_content_close(&original);btp_content_close(&content);
     printf("PASS: %u updated roster, lifecycle, broker and edition-save checks\n",checks);return 0;
 }

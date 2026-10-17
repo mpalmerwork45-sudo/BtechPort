@@ -23,7 +23,8 @@ class PortraitExport(unittest.TestCase):
             subprocess.run([ROOT / "build/btp-building-art-tests", ROOT / "Original DOS",
                 ROOT / "work/talk-data.bin", ROOT / "work/combat-data.bin", ROOT / "work/world-data.bin",
                 ROOT / "content/updated/roster.json", prefix], cwd=directory, check=True, capture_output=True, timeout=30)
-            for name in ("training", "lounge", "prison", "inventor", "cinema", "hospital", "comstar"):
+            for name in ("training", "lounge", "prison", "inventor", "cinema", "hospital", "comstar",
+                         "clothes", "video-hut", "mayor"):
                 with self.subTest(portrait=name), Image.open(f"{prefix}-{name}.ppm") as rendered, Image.open(ART / f"{name}.png") as expected:
                     self.assertEqual(rendered.crop((8, 8, 96, 96)).tobytes(), expected.convert("RGB").tobytes())
 
@@ -40,7 +41,8 @@ class PortraitExport(unittest.TestCase):
         self.assertEqual(actual, indices)
 
     def test_selected_asset_reproducible(self):
-        for name in ("broker", "training", "lounge", "prison", "inventor", "cinema", "hospital", "comstar"):
+        for name in ("broker", "training", "lounge", "prison", "inventor", "cinema", "hospital", "comstar",
+                     "clothes", "video-hut", "mayor"):
             with self.subTest(portrait=name):
                 with Image.open(ART / f"{name}-master.png") as source:
                     preview = convert(source)

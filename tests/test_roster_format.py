@@ -43,6 +43,29 @@ class RosterFormat(unittest.TestCase):
         self.assertEqual(self.read(previous)["fingerprint"], 4022610150)
         self.assertEqual(self.data["mechs"][:3], previous["mechs"])
 
+    def test_released_seventeen_unchanged(self):
+        previous = json.loads((ROOT / "content/updated/versions/0.2.0.json").read_text())
+        self.assertEqual(self.read(previous)["fingerprint"], 751321522)
+        self.assertEqual(self.data["mechs"][:17], previous["mechs"])
+
+    def test_new_ammunition_preserved(self):
+        # Capacities from the cited MTF bins, including shared ammo split among
+        # weapons in CHI. Do not silently multiply shared MG/LRM/SRM reserves.
+        expected = {
+            "phoenix-hawk-pxh-1": {"machine_gun": (2, 200)},
+            "dragon-drg-1n": {"ac5": (1, 40), "lrm10": (1, 24)},
+            "grasshopper-ghr-5h": {"lrm5": (1, 24)},
+            "highlander-hgn-733": {"ac10": (1, 20), "lrm20": (1, 18), "srm6": (1, 30)},
+            "stalker-stk-3f": {"lrm10": (2, 24), "srm6": (2, 30)},
+            "jenner-jr7-d": {"srm4": (1, 25)},
+        }
+        for suffix, counts in expected.items():
+            mech = next(m for m in self.data["mechs"] if m["id"] == "chi-expanded:" + suffix)
+            for weapon, (count, rounds) in counts.items():
+                with self.subTest(model=suffix, weapon=weapon):
+                    mounts = [m for m in mech["loadout"] if m["weapon"] == weapon]
+                    self.assertEqual((len(mounts), sum(m["ammo"] for m in mounts)), (count, rounds))
+
     def test_shared_missile_ammunition_preserved(self):
         # Source CRD-3R has one 15-salvo SRM bin shared by two launchers;
         # Bear has three shared bins (45 salvos) across four launchers.

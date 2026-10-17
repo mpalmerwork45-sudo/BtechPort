@@ -66,7 +66,8 @@ static void edition_art(BtpContent *content,const char *roster_path)
     CHECK(!memcmp(snapshot->animations,content->resources->animations,sizeof snapshot->animations));
     /* A pack can provide any subset. Exercise each filename, then corrupt
        the final file to catch publishing earlier art before validation ends. */
-    const char *names[]={"broker","training","lounge","prison","inventor","cinema","hospital","comstar"};
+    const char *names[]={"broker","training","lounge","prison","inventor","cinema","hospital","comstar",
+        "clothes","video-hut","mayor"};
     for (unsigned i=0;i<BTP_PORTRAIT_COUNT;++i) {
         snprintf(portrait_file,sizeof portrait_file,"%s/%s.anm",art,names[i]);
         file=fopen(portrait_file,"wb");CHECK(file);
@@ -81,7 +82,7 @@ static void edition_art(BtpContent *content,const char *roster_path)
     file=fopen(portrait_file,"wb");CHECK(file);
     CHECK(fwrite("XX",1,2,file)==2 && !fclose(file));
     CHECK(!btp_content_select(content,BTP_CONTENT_UPDATED,roster_file,&error));
-    CHECK(strstr(error.text,"comstar") && content->profile==BTP_CONTENT_UPDATED);
+    CHECK(strstr(error.text,names[BTP_PORTRAIT_COUNT-1]) && content->profile==BTP_CONTENT_UPDATED);
     CHECK(!memcmp(snapshot,content->resources,sizeof *snapshot));
 
     CHECK(btp_content_select(content,BTP_CONTENT_ORIGINAL_DOS_103,NULL,&error));

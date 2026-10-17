@@ -158,11 +158,13 @@ and the [latest five-area sweep](M4_PORTABILITY_SWEEP.md).
     [schema/sample](../examples/content-demo/README.md). A custom package is not
     yet loadable. Original raw records, compiled story/presentation assumptions
     and missing package inputs are listed in the [inventory](CONTENT_INVENTORY.md).
-    The [M5a CHI adapter](M5A_ROSTER_SLICE.md) now loads 17 optional mech
+    The [M5a CHI adapter](M5A_ROSTER_SLICE.md) now loads 23 optional mech
     definitions through shared validation, explicit save IDs, placeholder art
     and package-bound saves; an unchanged appended catalogue can load earlier
-    saves. General weapon/equipment definitions, richer component layouts,
-    custom assets and arbitrary package migrations remain to do. Lua/Qt
+    saves. Eleven fixed optional building illustrations load native ANMs;
+    general asset manifests and animated custom portraits remain future work.
+    General weapon/equipment definitions, richer component layouts,
+    and arbitrary package migrations remain to do. Lua/Qt
     adoption and the final public schema remain open choices.
 
 Both reference trees are guarded by content, mode, timestamp and Git-metadata

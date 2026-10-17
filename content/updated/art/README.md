@@ -11,6 +11,13 @@ cinema attendant, clinician and ComStar Adept. These also use the built-in
 image generation tool; their exact prompts are in
 [building-prompts.json](building-prompts.json).
 
+Three more portraits were generated in built-in mode on 2026-10-17. The clothes
+shop has a ridiculous, officious dandy haughtily presenting his clothes. Video
+Hut is a 1980s electronics store with an aisle view and a distant clerk, without
+Tandy branding. The mayor's house shows a silhouetted intruder in a restrained
+futuristic living room with tasteful furniture. Their exact prompts and style
+provenance are in [building-additions-prompts.json](building-additions-prompts.json).
+
 Every portrait has a selected `<name>-master.png`, an exact **88×88** indexed
 `<name>.png` preview, and a single-frame `<name>.anm` (**3,954 bytes**). The
 portraits use 12–14 colors from the game's display palette.
@@ -25,6 +32,9 @@ portraits use 12–14 colors from the game's display palette.
 | Cinema | `cinema` | 16 |
 | Hospital | `hospital` | 9 |
 | ComStar | `comstar` | 2 |
+| Clothes shop | `clothes` | 12 |
+| Video Hut / Frob's Electronics | `video-hut` | 17 |
+| Mayor's house | `mayor` | 14 |
 
 Broker files and its original prompt:
 
@@ -62,35 +72,36 @@ and 9 is dark blue; treating ANM indices as ordinary EGA would change the colors
 Non-square or transparent inputs are rejected so cropping/background choices
 remain explicit. The PNG preview and ANM encode exactly the same pixels.
 
-Updated loads these eight optional `art/<name>.anm` files relative to the
+Updated loads these eleven optional `art/<name>.anm` files relative to the
 selected **roster JSON file**. Replacing one changes the corresponding building
 on the next launch, without rebuilding C, changing mech definitions, or
 migrating saves. Each missing file falls back independently to the original
 presentation (the mechanic for the broker). An existing but malformed file
 rejects the entire edition switch with a named diagnostic, preserving the
 previously loaded content. Choosing Original clears all optional portraits.
-The 0.2.0 roster fingerprint remains **751321522**, Updated saves remain v43,
-and Original saves remain v40. Original O*.ANM files are never replaced.
+Art does not contribute to roster identity. The current 0.3.0 roster fingerprint
+is **1754795853**; Updated saves remain v43 and Original saves remain v40.
+Original O*.ANM files are never replaced.
 
 The renderer displays the last ANM frame as a **static** portrait in the
 88×88 building panel. Explicit original BLD animations and their held frames
 take priority, preserving the cinema films and other story scenes. Training
 quizzes and Katrina's Citadel portrait retain their original presentation.
-The eight assignments above are a bounded filename convention; a general
+The eleven assignments above are a bounded filename convention; a general
 building manifest/editor and animated custom characters remain future work.
 
 ## Verification
 
 **VERIFIED:** the independent Python ANM reader reproduces every exported
 four-bit pixel. Actual building visits compare every portrait crop byte-for-byte
-with its PNG, exercising the C decoder and renderer palette. The new seven
+with its PNG, exercising the C decoder and renderer palette. The ten ordinary
 buildings also compare every pixel outside the portrait with Original, round-trip
 held saves, and continue their real BLD scripts with identical state changes.
 All ten cinema animation IDs and the training quiz retain Original rendering.
 Content tests cover each missing-art fallback, malformed-art rollback, unchanged
 roster identity, and switching back to Original.
 
-The bounded window check visits all seven buildings and verifies their exact
+The bounded window check visits all ten ordinary buildings and verifies their exact
 portraits, F5/F9 and the restored full frame on a private display:
 
 ```sh

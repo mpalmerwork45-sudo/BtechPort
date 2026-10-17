@@ -1,6 +1,6 @@
-# Updated CHI roster — 0.2.0
+# Updated CHI roster — 0.3.0
 
-This optional data pack adds **17 mech models/variants** to the original campaign. Select
+This optional data pack adds **23 mech models/variants** to the original campaign. Select
 **Updated BTECH CHI** before the Westwood/Infocom logo, then enter the central
 doorway of Starport's unused three-door building, northeast of Mech-It Lube.
 Approach local position **54,50** from the south (**54,51**). Its new **'Mech
@@ -13,7 +13,8 @@ remain the limit. A free bay and sufficient money are required; rejected
 purchases take no money. The Space menu has its original entries.
 
 Updated also supplies new static 1980s anime-style portraits for the Training
-Center, lounge, prison, inventor's hut, cinema, hospital and ComStar. Their
+Center, lounge, prison, inventor's hut, cinema, hospital, ComStar, clothes shop,
+Video Hut and mayor's house. Their
 [artwork guide](art/README.md) includes masters, exact prompts, native ANM files
 and conversion instructions. Original mode retains the original presentation;
 the new art does not change scripts, roster identity or save compatibility.
@@ -50,13 +51,27 @@ prices, not an original-game mechanic.
 | Atlas AS7-D | 100 | 3/5/0 | AC/20, LRM-20, SRM-6, four medium lasers | 70,000 |
 | Crusader CRD-3R (“CRUSADER 3R LRM”) | 65 | 4/6/0 | Two LRM-15s, two SRM-6s, two medium lasers, two machine guns | 37,000 |
 | Crusader CRD-3R (Bear) (“CRUSADER BEAR”) | 65 | 4/6/0 | Four SRM-6s, two medium lasers, two machine guns | 39,000 |
+| Phoenix Hawk PXH-1 | 45 | 6/9/6 | Large laser, two medium lasers, two machine guns | 25,000 |
+| Dragon DRG-1N | 60 | 5/8/0 | AC/5, LRM-10, two medium lasers | 31,000 |
+| Grasshopper GHR-5H | 70 | 4/6/4 | Large laser, four medium lasers, LRM-5 | 45,000 |
+| Highlander HGN-733 | 90 | 3/5/3 | AC/10, LRM-20, SRM-6, two medium lasers | 62,000 |
+| Stalker STK-3F | 85 | 3/5/0 | Two large and four medium lasers, two LRM-10s, two SRM-6s | 57,000 |
+| Jenner JR7-D | 35 | 7/11/5 | Four medium lasers, SRM-4 | 15,000 |
 
 The LRM Crusader is the standard mixed-range CRD-3R, not an LRM-only refit.
 Charles Bear's documented variant replaces the arm LRMs with SRM-6s and has
 18 heat sinks instead of ten. This optional campaign roster does not enforce
 historical introduction dates or faction availability.
 
-Catapult and Marauder use the **Locust** sprite for their reverse-jointed legs;
+The six models at the bottom are new in 0.3.0; Shadow Hawk and Rifleman were
+already available in 0.2.0. PXH-1 is the conventional Phoenix Hawk, separate
+from the original story's Phoenix Hawk LAM. The broker's Jenner also has its
+own definition; scripted training Jenners retain their original records.
+HGN-733 supplies an AC/10 Highlander compatible with CHI's weapon set; Gauss
+rifles are not implemented. The Grasshopper has 22 heat sinks and the Stalker
+uses all ten available weapon mounts.
+
+Catapult, Marauder, Stalker and Jenner use the **Locust** sprite;
 all other additions use the **red Stinger**. These are the owner's temporary
 art choices. Inspection also retains the existing shared CHI diagram, with
 armor bars scaled to fit even the Atlas's larger capacities.
@@ -70,8 +85,9 @@ original-game feature. Prices and ammunition costs are authored for this port.
 
 ## Existing Updated saves
 
-The first three definitions and their save codes are unchanged. Saves from the
-released three-model **0.1.0** pack load automatically in **0.2.0**, including
+The first 17 definitions and their save codes are unchanged. Saves from the
+released three-model **0.1.0** and 17-model **0.2.0** packs load automatically
+in **0.3.0**, including
 held broker menus, damage, ammunition, crew and money. No manual conversion is
 needed. A subsequent save records the new pack and the v43 scrolling-menu state.
 
@@ -79,9 +95,11 @@ Compatibility is checked by recomputing the saved fingerprint against the
 unchanged prefix of the new roster. Editing or removing an existing definition,
 changing its ID/code or price, or switching packages still fails explicitly.
 This supports appended stock; it is not a general migration for edited mods.
-The [archived 0.1.0 pack](versions/0.1.0.json) remains available via `--roster`
-for sessions using the exact earlier catalogue. Keep earlier save copies if
-you also intend to run the older executable; it cannot read new v43 saves.
+The archived [0.1.0 pack](versions/0.1.0.json) and [0.2.0 pack](versions/0.2.0.json)
+remain available via `--roster` for sessions using an exact earlier catalogue.
+Keep earlier save copies if you intend to return to an older pack/executable;
+those cannot read saves with the new catalogue identity. The 0.1.0 executable
+also cannot read v43 state.
 
 ## Sources and adaptation
 
@@ -91,7 +109,7 @@ Thanks to **MegaMek's mm-data contributors** for the structured unit records:
 - [Hunchback HBK-4G](https://github.com/MegaMek/mm-data/blob/main/data/mekfiles/meks/3039u/Hunchback%20HBK-4G.mtf)
 - [Catapult CPLT-C1](https://github.com/MegaMek/mm-data/blob/main/data/mekfiles/meks/3039u/Catapult%20CPLT-C1.mtf)
 
-The fourteen additions use mm-data commit
+The twenty additions after the initial three use mm-data commit
 [`e6f20e1fc2f9d6c74a6e2cdc74778b029ca14811`](https://github.com/MegaMek/mm-data/tree/e6f20e1fc2f9d6c74a6e2cdc74778b029ca14811).
 [sources.json](sources.json) records each pinned source URL, SHA-256 and number
 of rear-mounted lasers. In particular, the SRM variant comes from
@@ -100,12 +118,13 @@ of rear-mounted lasers. In particular, the SRM variant comes from
 provided the initial variant identification; the actual imported statistics
 come from the linked unit records.
 
-Consulted 2026-10-16. Variant mass, movement, armor distribution, weapon
+Consulted 2026-10-16 and 2026-10-17, as recorded for each source. Variant mass,
+movement, armor distribution, weapon
 locations, ammunition capacities, actuator presence and heat sinks inform this
 adaptation. Display names are shortened to fit CHI's 15-character field.
 CHI represents weapons with one component descriptor, rather than tabletop
 critical-slot footprints; heat sinks are placed in the remaining available
-component slots. The new fourteen models retain their source heat-sink
+component slots. The twenty later models retain their source heat-sink
 locations. Shared ammo bins are divided among matching weapons while preserving
 the total number of salvos: the standard Crusader's 15 SRM salvos become 8+7,
 and Bear's 45 become 12+11+11+11. CHI reloads each weapon's bin separately.
@@ -113,7 +132,7 @@ Rear-mounted lasers use ordinary CHI targeting; rear-only firing arcs are not
 represented by this adapter. Original CHI firing, damage, heat and movement
 rules apply. Quirks and tabletop construction rules are not implemented.
 
-The adapted [roster.json](roster.json), archived pack and source manifest are separately licensed under
+The adapted [roster.json](roster.json), archived packs and source manifest are separately licensed under
 **CC BY-NC-SA 4.0**; see [LICENSE.md](LICENSE.md) and the
 [upstream license](https://github.com/MegaMek/mm-data/blob/main/LICENSE).
 This data pack is separate from the GPL engine. The new building artwork has its

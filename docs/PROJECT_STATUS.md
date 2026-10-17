@@ -49,37 +49,33 @@ persistence and an offline schema/sample. The current game and BTPe/v40 saves
 remain the compatibility case. All 41 Windows SDL portability checks and eleven
 Linux Mech-It service/continuation checks pass.
 The [M5a CHI roster slice](M5A_ROSTER_SLICE.md) now supplies the pre-logo
-Original/Updated selector and 17 playable external models/variants, with broker,
+Original/Updated selector and 23 playable external models/variants, with broker,
 encounter and save support. The separate general-schema sample remains offline;
 the rest of M5a and M5b–M5e packages/Lua/editor remain **proposed**.
-The broker follow-up moves trading into an unused Starport building, adds sales
-and clear four-bay capacity, migrates held v41 menus, and fits larger inspection
-bars inside the diagram. Native and sanitizer verification is 59/59 each,
-plus 23 Python tests and 10 targeted Windows/Wine suites.
-All 20 Updated SDL window scenarios passed on Linux and Windows/Wine for that
-initial broker follow-up. The subsequent 0.2.0 stock adds fourteen models,
-including Zeus, Atlas and standard/Bear Crusaders, an eight-row scrolling list,
-and verified loading of unchanged earlier catalogues. The first three mech
-definitions are unchanged. Updated saves use v43; Original keeps v40.
-Current expansion checks pass: native **59/59**, ASan/UBSan/LeakSanitizer
-**59/59**, Python **25/25**, eleven targeted Windows/Wine suites, and **28/28**
-SDL window scenarios on each platform. Existing Updated slots 1 and 5 load
-with the new roster; their files were preserved. Evidence and adaptation limits
-are recorded in the [roster milestone](M5A_ROSTER_SLICE.md).
+The broker occupies an unused Starport building, offers buying/selling with
+four owned bays, and uses an eight-row scrolling catalogue. Inspection bars
+fit their original wells even for assault models. Pack 0.3.0 adds Phoenix Hawk
+PXH-1, Dragon, Grasshopper, Highlander HGN-733, Stalker and Jenner; Shadow Hawk
+and Rifleman were already available. All 17 previous definitions are unchanged.
+Both 0.1.0 and 0.2.0 saves load automatically, including held/scrolled broker
+menus and confirmations. Updated saves use v43; Original keeps v40.
+The [pack guide](../content/updated/README.md) records source statistics,
+temporary sprites, authored prices and adaptation limits. The original story
+LAM and training Jenners retain their original definitions.
 The broker now has [new AI-generated artwork](../content/updated/art/README.md)
 and the other buildings' description/compact-choice layout. The selected male
 salesman master, final prompt, exact 88×88 preview and ANM are included, along
-with a reproducible converter. Seven further static portraits now cover the
-Training Center, lounge, prison, inventor's hut, cinema, hospital and ComStar.
+with a reproducible converter. Ten further static illustrations cover the
+Training Center, lounge, prison, inventor's hut, cinema, hospital, ComStar,
+clothes shop, Video Hut and mayor's house.
 Optional pack-local art does not change roster fingerprints or saves; older
 packs retain each original presentation. Explicit BLD animations and held
 frames take priority. General custom-building manifests and animated new
 portraits remain future work.
-The seven-building follow-up passes native **60/60**, Python **30/30**, and
-five focused sanitizer and Windows suites each. Linux and Windows SDL each
-pass **7/7** building visits, exact portrait crops, F5/F9 and full-frame restore.
-The earlier broker work passed **28/28** selector/trading window scenarios on
-each platform. Actual building screens were visually reviewed; all pixels
+The latest checks pass native **60/60**, Python **32/32**, and five focused
+sanitizer and Windows suites each. Linux and Windows SDL each pass **34/34** selector/trading
+scenarios and **10/10** building visits, exact portrait crops, F5/F9 and full-frame
+restore. Actual building screens were visually reviewed; all pixels
 outside the new portraits and the original script continuations are compared.
 Missing/malformed-art behavior, cinema scene priority and the training quiz
 are also covered. See the [recorded evidence](M5A_ROSTER_SLICE.md).

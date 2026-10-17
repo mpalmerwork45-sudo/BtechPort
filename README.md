@@ -49,8 +49,9 @@ before the Westwood/Infocom logo. Original is the default. Use arrows and
 Enter/Space, or press 1/2. Restart and choose Original whenever you want the
 original lineup. `--edition original` or `--edition updated` skips the selector.
 
-Updated adds **17 models**, from the Panther to the 100-ton Atlas, including
-Zeus and both the standard LRM-equipped Crusader and Bear's SRM variant.
+Updated adds **23 models**, from the Panther to the 100-ton Atlas, including
+Zeus, both Crusader variants, Phoenix Hawk, Shadow Hawk, Dragon, Grasshopper,
+Highlander, Rifleman, Stalker and Jenner.
 In Starport, enter the central doorway of the unused three-door building
 northeast of Mech-It Lube (local position 54,50, approached from the south).
 The **'Mech Broker** has a newly generated 1980s anime-style salesman portrait,
@@ -58,7 +59,8 @@ a building description and compact **Buy**, **Sell** and **Leave** choices.
 **Up/Down scrolls** the stock; Enter or Space selects. The
 [artwork guide](content/updated/art/README.md) includes masters, prompts and
 PNG-to-ANM conversion instructions. Updated also adds portraits to the Training
-Center, lounge, prison, inventor's hut, cinema, hospital and ComStar. These
+Center, lounge, prison, inventor's hut, cinema, hospital, ComStar, clothes shop,
+Video Hut and mayor's house. These
 static illustrations preserve the buildings' scripts and original cutscenes.
 New models cost 12,000–70,000 C-bills and
 are parked outside for crew assignment when you leave through the garage.
@@ -80,7 +82,7 @@ Updated keeps six separate save slots, starting at
 `work/player-save-updated.btp`; Original keeps `work/player-save.btp`.
 `--load` recognizes the edition. To continue an existing original save as a
 separate Updated campaign, use `--edition updated --load PATH`.
-Existing three-model Updated saves load automatically with the expanded roster.
+Existing three-model and 17-model Updated saves load automatically with the expanded roster.
 The loader verifies that all earlier definitions are unchanged before accepting
 appended models. Editing/removing earlier definitions still requires their
 matching roster. See [save behavior](docs/M5A_ROSTER_SLICE.md#starting-switching-and-saving).

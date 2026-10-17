@@ -32,7 +32,8 @@ typedef struct {
    cutscene identities keep their original meanings. */
 enum { BTP_PORTRAIT_BROKER, BTP_PORTRAIT_TRAINING, BTP_PORTRAIT_LOUNGE,
     BTP_PORTRAIT_PRISON, BTP_PORTRAIT_INVENTOR, BTP_PORTRAIT_CINEMA,
-    BTP_PORTRAIT_HOSPITAL, BTP_PORTRAIT_COMSTAR, BTP_PORTRAIT_COUNT };
+    BTP_PORTRAIT_HOSPITAL, BTP_PORTRAIT_COMSTAR, BTP_PORTRAIT_CLOTHES,
+    BTP_PORTRAIT_VIDEO_HUT, BTP_PORTRAIT_MAYOR, BTP_PORTRAIT_COUNT };
 typedef struct { BtpAnm image[BTP_PORTRAIT_COUNT]; } BtpPortraits;
 /* 43 earlier bank/Talk strings plus 12 class transcript/rank/subject strings. */
 enum { BTP_TALK_STRINGS = 373, BTP_TALK_MAX = 16384 };

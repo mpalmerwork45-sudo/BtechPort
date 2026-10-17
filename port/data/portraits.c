@@ -9,7 +9,10 @@
    The broker retains its previously released filename and added building ID. */
 static const struct { unsigned building;const char *name; } slots[BTP_PORTRAIT_COUNT]={
     {26,"broker"},{0,"training"},{7,"lounge"},{13,"prison"},
-    {21,"inventor"},{16,"cinema"},{9,"hospital"},{2,"comstar"}
+    {21,"inventor"},{16,"cinema"},{9,"hospital"},{2,"comstar"},
+    /* Frob's Electronics is Video Hut (17), not the VIEWDISK scene (18).
+       Mayor's ordinary room art still yields to its scripted holodisk. */
+    {12,"clothes"},{17,"video-hut"},{14,"mayor"}
 };
 
 static int load_one(const char *directory,const char *name,BtpAnm *portrait,BtpError *error)
@@ -60,7 +63,7 @@ BtpPortraits *btp_portraits_load(const char *roster_path,BtpError *error)
         return NULL;
     }
     memcpy(directory,roster_path,prefix);directory[prefix]=0;
-    /* Eight ANMs exceed 128 KiB. Keep staging off the Windows thread stack. */
+    /* The portrait set exceeds 128 KiB. Keep staging off the Windows stack. */
     BtpPortraits *result=calloc(1,sizeof *result);
     if (!result) {
         if (error) snprintf(error->text,sizeof error->text,"Portrait allocation failed");

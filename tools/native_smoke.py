@@ -1227,7 +1227,7 @@ def main():
     parser.add_argument('--windows',action='store_true',help='Run the Windows SDL build under isolated Wine against Linux headless')
     parser.add_argument('--portability-only',action='store_true',help='Check controls, intro, saves, menus and combat presentation')
     parser.add_argument('--updated-only',action='store_true',help='Check edition selection and Updated purchases')
-    parser.add_argument('--building-art-only',action='store_true',help='Check seven Updated building portraits and held saves')
+    parser.add_argument('--building-art-only',action='store_true',help='Check Updated building portraits and held saves')
     parser.add_argument("--shops-only", action="store_true")
     parser.add_argument("--m2f-only", action="store_true")
     parser.add_argument("--bank-input-only", action="store_true")

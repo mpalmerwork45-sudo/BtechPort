@@ -16,7 +16,8 @@ static unsigned checks;
 static BtpError error;
 static const struct { unsigned building;const char *name; } cases[]={
     {0,"training"},{7,"lounge"},{13,"prison"},{21,"inventor"},
-    {16,"cinema"},{9,"hospital"},{2,"comstar"}
+    {16,"cinema"},{9,"hospital"},{2,"comstar"},
+    {12,"clothes"},{17,"video-hut"},{14,"mayor"}
 };
 
 static void enter(BtpState *s,const BtpResources *r,unsigned building)
@@ -31,7 +32,7 @@ static void enter(BtpState *s,const BtpResources *r,unsigned building)
     } else {
         /* Controlled outdoor prerequisites at real MTP doors. Enter through
            normal movement so checkpoints carry valid map and party context. */
-        s->map_id=(uint8_t)(building==13 ? 3 : building==21 ? 12 : building==16 ? 6 : 2);
+        s->map_id=(uint8_t)(building==13 ? 3 : building==21 ? 12 : building==16 ? 6 : building==14 ? 4 : 2);
         s->story_flags[4]=1;s->story_flags[36]=127;s->weapon=9;s->mech_skills[1]=1;
         const BtpMap *map=btp_active_map(r,s);unsigned slot=0;
         while (slot<16 && map->room_map[slot]!=building) ++slot;
@@ -71,7 +72,8 @@ int main(int argc,char **argv)
     BtpResources *r=content.resources;
     BtpState *s=malloc(sizeof *s),*copy=malloc(sizeof *copy);CHECK(s && copy);
     uint32_t *frame=malloc(BTP_PIXELS*sizeof *frame),*baseline=malloc(BTP_PIXELS*sizeof *baseline);CHECK(frame && baseline);
-    CHECK(r->roster.fingerprint==751321522u);
+    /* Portrait integration is independent of the pack's current catalogue. */
+    CHECK(r->roster.count && r->roster.fingerprint);
     for (unsigned i=0;i<sizeof cases/sizeof cases[0];++i) {
         unsigned building=cases[i].building;
         CHECK(btp_portrait_for_building(r,building)!=NULL);
