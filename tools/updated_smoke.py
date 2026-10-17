@@ -1,4 +1,4 @@
-"""Bounded SDL checks for the edition selector and Updated broker."""
+"""Bounded SDL checks for Updated selection, trading and building portraits."""
 import json
 from pathlib import Path
 import subprocess
@@ -8,7 +8,7 @@ import time
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def run(env, work):
+def run(env, work, building_art_only=False):
     from reference_session import WindowKeys
     env = dict(env, SDL_AUDIODRIVER="dummy")
     with tempfile.TemporaryDirectory(prefix="updated-ui-", dir=work) as directory:
@@ -52,6 +52,27 @@ def run(env, work):
                 if process.poll() is None:
                     process.terminate()
                     process.wait(timeout=5)
+
+        if building_art_only:
+            from PIL import Image
+            prefix = tmp / "visit"
+            subprocess.run([str(ROOT / "build/btp-building-art-tests"), str(ROOT / "Original DOS"),
+                str(work / "talk-data.bin"), str(work / "combat-data.bin"), str(work / "world-data.bin"),
+                str(ROOT / "content/updated/roster.json"), str(prefix)], cwd=tmp,
+                check=True, capture_output=True, timeout=30)
+            for name in ("training", "lounge", "prison", "inventor", "cinema", "hospital", "comstar"):
+                state, _, slot, frame, _ = play(f"building-{name}", ["F5", "F9"],
+                    ["--load", f"{prefix}-{name}.btp"], recording=False)
+                saved = slot.with_name(slot.stem + "-updated.btp")
+                assert state["mode"] == "building" and saved.read_bytes()[:4] == b"BTU1"
+                with Image.open(frame) as actual, Image.open(ROOT / f"content/updated/art/{name}.png") as expected:
+                    assert actual.crop((8, 8, 96, 96)).tobytes() == expected.convert("RGB").tobytes(), name
+                restored = tmp / "restored.ppm"
+                subprocess.run([str(ROOT / "build/btech-headless"), "--load", str(saved),
+                    "--frame", str(restored)], cwd=ROOT, check=True, capture_output=True, timeout=10)
+                assert frame.read_bytes() == restored.read_bytes(), name
+                print(f"PASS: {name} native window, exact portrait, F5/F9 and restored full frame.", flush=True)
+            return
 
         state, audio, slot, frame, _ = play("selector", ["Escape", "F5"])
         assert state["tick"] == 0 and not audio["opened"] and not slot.exists()

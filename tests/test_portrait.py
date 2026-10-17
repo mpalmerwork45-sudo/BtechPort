@@ -16,6 +16,17 @@ ART = ROOT / "content/updated/art"
 
 
 class PortraitExport(unittest.TestCase):
+    @unittest.skipUnless((ROOT / "build/btp-building-art-tests").exists(), "build the native tests first")
+    def test_native_building_pixels(self):
+        with tempfile.TemporaryDirectory(prefix="building-art-") as directory:
+            prefix = Path(directory) / "visit"
+            subprocess.run([ROOT / "build/btp-building-art-tests", ROOT / "Original DOS",
+                ROOT / "work/talk-data.bin", ROOT / "work/combat-data.bin", ROOT / "work/world-data.bin",
+                ROOT / "content/updated/roster.json", prefix], cwd=directory, check=True, capture_output=True, timeout=30)
+            for name in ("training", "lounge", "prison", "inventor", "cinema", "hospital", "comstar"):
+                with self.subTest(portrait=name), Image.open(f"{prefix}-{name}.ppm") as rendered, Image.open(ART / f"{name}.png") as expected:
+                    self.assertEqual(rendered.crop((8, 8, 96, 96)).tobytes(), expected.convert("RGB").tobytes())
+
     def test_four_bit_round_trip(self):
         # Cross literal packet boundaries with every index, including the two
         # black entries and swapped blues; decode with the independent reader.
@@ -29,12 +40,14 @@ class PortraitExport(unittest.TestCase):
         self.assertEqual(actual, indices)
 
     def test_selected_asset_reproducible(self):
-        with Image.open(ART / "broker-master.png") as source:
-            preview = convert(source)
-        with Image.open(ART / "broker.png") as saved:
-            self.assertEqual(preview.convert("RGB").tobytes(), saved.convert("RGB").tobytes())
-        self.assertEqual(encode(preview.tobytes()), (ART / "broker.anm").read_bytes())
-        self.assertLess(len(encode(preview.tobytes())), 4096)
+        for name in ("broker", "training", "lounge", "prison", "inventor", "cinema", "hospital", "comstar"):
+            with self.subTest(portrait=name):
+                with Image.open(ART / f"{name}-master.png") as source:
+                    preview = convert(source)
+                with Image.open(ART / f"{name}.png") as saved:
+                    self.assertEqual(preview.convert("RGB").tobytes(), saved.convert("RGB").tobytes())
+                self.assertEqual(encode(preview.tobytes()), (ART / f"{name}.anm").read_bytes())
+                self.assertLess(len(encode(preview.tobytes())), 4096)
         self.assertEqual(PALETTE[5], (85, 85, 255))
         self.assertEqual(PALETTE[9], (0, 0, 170))
 

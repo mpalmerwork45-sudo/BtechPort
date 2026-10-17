@@ -16,7 +16,7 @@ endif()
 
 add_library(btp_core port/core/game.c port/core/script.c port/core/talk.c port/core/npc.c port/core/shop.c port/core/bank.c port/core/economy.c port/core/school.c port/core/training.c port/core/animation.c port/data/resources.c port/data/anm.c port/data/sprites.c port/data/save.c)
 target_include_directories(btp_core PUBLIC port)
-target_sources(btp_core PRIVATE port/data/content.c port/data/unit_data.c port/data/roster.c)
+target_sources(btp_core PRIVATE port/data/content.c port/data/unit_data.c port/data/roster.c port/data/portraits.c)
 target_sources(btp_core PRIVATE port/core/combat_rules.c port/core/combat.c port/core/effects.c)
 target_sources(btp_core PRIVATE port/core/world.c port/data/world.c port/data/generate.c)
 target_sources(btp_core PRIVATE port/core/party.c port/core/campaign.c)
@@ -82,6 +82,12 @@ endif()
 set(DART_TESTING_TIMEOUT 120 CACHE STRING "Bound each headless comparison" FORCE)
 include(CTest)
 if(BUILD_TESTING)
+  add_executable(btp-building-art-tests tests/test_building_art.c)
+  target_link_libraries(btp-building-art-tests PRIVATE btp_pixels)
+  add_test(NAME updated-building-portraits COMMAND btp-building-art-tests
+    "${PROJECT_SOURCE_DIR}/Original DOS" "${PROJECT_SOURCE_DIR}/work/talk-data.bin"
+    "${PROJECT_SOURCE_DIR}/work/combat-data.bin" "${PROJECT_SOURCE_DIR}/work/world-data.bin"
+    "${PROJECT_SOURCE_DIR}/content/updated/roster.json")
   add_executable(btp-roster-tests tests/test_roster.c)
   target_link_libraries(btp-roster-tests PRIVATE btp_pixels)
   add_test(NAME updated-roster-lifecycle COMMAND btp-roster-tests

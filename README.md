@@ -56,8 +56,10 @@ northeast of Mech-It Lube (local position 54,50, approached from the south).
 The **'Mech Broker** has a newly generated 1980s anime-style salesman portrait,
 a building description and compact **Buy**, **Sell** and **Leave** choices.
 **Up/Down scrolls** the stock; Enter or Space selects. The
-[artwork guide](content/updated/art/README.md) includes the master, prompt and
-PNG-to-ANM conversion instructions for replacing his portrait.
+[artwork guide](content/updated/art/README.md) includes masters, prompts and
+PNG-to-ANM conversion instructions. Updated also adds portraits to the Training
+Center, lounge, prison, inventor's hut, cinema, hospital and ComStar. These
+static illustrations preserve the buildings' scripts and original cutscenes.
 New models cost 12,000–70,000 C-bills and
 are parked outside for crew assignment when you leave through the garage.
 The fleet has **four owned bays**. The counter shows occupancy; a fifth purchase
@@ -250,9 +252,9 @@ for the full terms. Third-party dependencies retain their own licenses.
 The optional [Updated roster data](content/updated/README.md) adapts MegaMek
 unit records and has a separate **CC BY-NC-SA 4.0** data license. It is not
 covered by the engine's GPL license.
-The [newly generated broker artwork](content/updated/art/README.md) is a separate
+The [newly generated building artwork](content/updated/art/README.md) is a separate
 contribution under GPL-3.0-only to the extent copyright applies; its AI provenance
-and generation prompt are recorded with the assets.
+and generation prompts are recorded with the assets.
 
 This license does not cover or grant rights to the original game executable,
 artwork, music, text or other game assets. Those are not distributed here and

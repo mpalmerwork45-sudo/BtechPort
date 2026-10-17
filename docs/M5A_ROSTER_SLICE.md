@@ -107,6 +107,52 @@ reviewed in `work/broker-screen-review.png`. The converter test compares the
 actual native portrait crop with the indexed PNG exactly. These are separate
 from original-game fidelity comparisons: this broker is new expansion content.
 
+## Seven additional building portraits — 2026-10-17
+
+Updated now includes static portraits for the Training Center, lounge, prison,
+inventor's hut, cinema, hospital and ComStar. Each has an AI-generated master,
+88×88 indexed PNG and single-frame native ANM. The built-in generation mode,
+exact prompts and local style-reference provenance are in
+[building-prompts.json](../content/updated/art/building-prompts.json); original
+reference images remain excluded from Git. See the
+[artwork guide](../content/updated/art/README.md) for the filename/building table.
+
+`port/data/portraits.c` loads the eight optional portraits, including the broker,
+beside the selected roster. The candidate is heap-allocated for the default
+Windows stack, and publishes only after every present file validates. Missing
+files independently retain original presentation; a malformed final file also
+leaves the entire previous edition intact. Original selection clears the art.
+The 0.2.0 roster fingerprint remains **751321522**, with no save migration.
+
+Only ordinary building portrait panels use the additions. Explicit BLD
+animations and held frames override them, including the cinema's O0 scene.
+The full-screen training quiz, Katrina's Citadel, story text, choices and game
+state retain their existing behavior. This fixed eight-scene mapping is a
+bounded extension, not the future general package manifest/editor.
+
+**VERIFIED:** all seven tests enter real MTP doors through normal movement with
+controlled campaign prerequisites, execute the supplied BLD scripts, round-trip
+held saves and compare subsequent state changes with Original. Every screen
+pixel outside the 88×88 art is unchanged; the crop exactly matches the exported
+PNG. All ten cinema animation IDs and training quiz frames match Original.
+
+| Check | Result |
+|---|---|
+| Native CTest | **60/60**, 42.26 s |
+| Python tools and independent ANM decoding | **30/30**, 1.36 s |
+| Focused ASan/UBSan/LeakSanitizer | **5/5**, 1.46 s |
+| Same focused Windows/Wine suites | **5/5**, 16.65 s |
+| Linux SDL building visits | **7/7**, exact crop, F5/F9, full restored frame |
+| Windows SDL under Wine | **7/7**, same checks with the MinGW player |
+
+Focused suites are `updated-building-portraits`, `updated-roster-lifecycle`,
+`original-content-lifetime`, `animation-delta-bounds` and
+`core-formats-state-pixels`. Window checks use private Xvfb and temporary saves,
+with no interaction with the user's running game. The actual Linux screen
+review is retained locally as `work/building-screen-review.png`. These are
+authored expansion illustrations; no claim of original artwork parity or new
+portrait animation is made.
+
 ## Starting, switching and saving
 
 Run from the repository root after the usual build:

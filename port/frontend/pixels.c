@@ -16,6 +16,7 @@
 #include "core/spy.h"
 #include "core/roster_game.h"
 #include "data/anm.h"
+#include "data/portraits.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -1720,11 +1721,17 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         snprintf(line, sizeof line, "TICK %u", s->tick); text(r,f, 8, 178, line, 14);
     }
     unsigned building=btp_building_kind(r,s),portrait=building<26 ? r->combat.building_portraits[building] : 0;
-    if (s->cutscene.active || ((s->mode == BTP_BUILDING || s->mode==BTP_ENDING) && (s->script.animation_kind || portrait))) {
+    /* Optional building art is scenery. Explicit BLD scenes and held film
+       frames keep priority, including cinema O0 (kind zero, nonzero flags).
+       Combat, mech quizzes, the prison yard and other modes never use it. */
+    const BtpAnm *building_art=s->mode==BTP_BUILDING && !s->cutscene.active &&
+        !s->script.animation_kind && !s->script.animation_flags ? btp_portrait_for_building(r,building) : NULL;
+    if (s->cutscene.active || building_art || ((s->mode == BTP_BUILDING || s->mode==BTP_ENDING) && (s->script.animation_kind || portrait))) {
         unsigned kind = s->cutscene.active ? s->cutscene.kind : s->script.animation_kind ? s->script.animation_kind : portrait;
-        unsigned step = s->cutscene.active ? s->cutscene.step : r->animations[kind].count-1u;
+        const BtpAnm *animation=building_art ? building_art : &r->animations[kind];
+        unsigned step = s->cutscene.active ? s->cutscene.step : animation->count-1u;
         uint8_t packed[BTP_ANM_PACKED];
-        if (btp_anm_frame(&r->animations[kind],step,packed)) {
+        if (btp_anm_frame(animation,step,packed)) {
             if (s->cutscene.active == 2) rectangle(f,104,0,216,200,0);
             for (unsigned i = 0; i < 88u*88u; ++i) {
                 unsigned value = i&1u ? packed[i/2u]&15u : packed[i/2u]>>4;
@@ -1742,8 +1749,8 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                the original mechanic used by REPAIR/GARAGE. Older packs fall
                back to that mechanic; both paths use the native ANM palette. */
             unsigned mechanic=r->combat.building_portraits[5];uint8_t packed[BTP_ANM_PACKED];
-            const BtpAnm *broker_art=r->broker_portrait.count ? &r->broker_portrait :
-                mechanic<BTP_ANM_COUNT ? &r->animations[mechanic] : NULL;
+            const BtpAnm *broker_art=btp_portrait_for_building(r,BTP_BROKER_BUILDING);
+            if (!broker_art && mechanic<BTP_ANM_COUNT) broker_art=&r->animations[mechanic];
             if (broker_art && broker_art->count && btp_anm_frame(broker_art,broker_art->count-1u,packed)) {
                 for (unsigned i=0;i<88u*88u;++i) {
                     unsigned value=i&1u ? packed[i/2u]&15u : packed[i/2u]>>4;

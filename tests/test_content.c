@@ -1,5 +1,6 @@
 #include "data/content.h"
 #include "data/unit_data.h"
+#include "data/portraits.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -41,7 +42,7 @@ static void edition_art(BtpContent *content,const char *roster_path)
 {
     BtpError error;
     CHECK(btp_content_select(content,BTP_CONTENT_UPDATED,roster_path,&error));
-    CHECK(content->resources->broker_portrait.count==1);
+    for (unsigned i=0;i<BTP_PORTRAIT_COUNT;++i) CHECK(content->resources->portraits.image[i].count==1);
     BtpResources *snapshot=malloc(sizeof *snapshot);CHECK(snapshot);
     *snapshot=*content->resources;
     /* A failed/sanitized run must not poison the next test's fixture path. */
@@ -60,24 +61,40 @@ static void edition_art(BtpContent *content,const char *roster_path)
     /* Older/custom packs without a portrait still load. Art is cosmetic:
        it neither changes definition/save identity nor any original ANM. */
     CHECK(btp_content_select(content,BTP_CONTENT_UPDATED,roster_file,NULL));
-    CHECK(!content->resources->broker_portrait.count);
+    for (unsigned i=0;i<BTP_PORTRAIT_COUNT;++i) CHECK(!content->resources->portraits.image[i].count);
     CHECK(!memcmp(&snapshot->roster,&content->resources->roster,sizeof snapshot->roster));
     CHECK(!memcmp(snapshot->animations,content->resources->animations,sizeof snapshot->animations));
+    /* A pack can provide any subset. Exercise each filename, then corrupt
+       the final file to catch publishing earlier art before validation ends. */
+    const char *names[]={"broker","training","lounge","prison","inventor","cinema","hospital","comstar"};
+    for (unsigned i=0;i<BTP_PORTRAIT_COUNT;++i) {
+        snprintf(portrait_file,sizeof portrait_file,"%s/%s.anm",art,names[i]);
+        file=fopen(portrait_file,"wb");CHECK(file);
+        const BtpAnm *image=&snapshot->portraits.image[i];
+        CHECK(fwrite(image->bytes,1,image->length,file)==image->length && !fclose(file));
+        CHECK(btp_content_select(content,BTP_CONTENT_UPDATED,roster_file,&error));
+        for (unsigned j=0;j<BTP_PORTRAIT_COUNT;++j)
+            CHECK(content->resources->portraits.image[j].count==(j<=i));
+        CHECK(!memcmp(&snapshot->roster,&content->resources->roster,sizeof snapshot->roster));
+    }
     CHECK(btp_content_select(content,BTP_CONTENT_UPDATED,roster_path,&error));
     file=fopen(portrait_file,"wb");CHECK(file);
     CHECK(fwrite("XX",1,2,file)==2 && !fclose(file));
     CHECK(!btp_content_select(content,BTP_CONTENT_UPDATED,roster_file,&error));
-    CHECK(error.text[0] && content->profile==BTP_CONTENT_UPDATED);
+    CHECK(strstr(error.text,"comstar") && content->profile==BTP_CONTENT_UPDATED);
     CHECK(!memcmp(snapshot,content->resources,sizeof *snapshot));
 
     CHECK(btp_content_select(content,BTP_CONTENT_ORIGINAL_DOS_103,NULL,&error));
-    CHECK(!content->resources->roster.count && !content->resources->broker_portrait.count);
+    CHECK(!content->resources->roster.count);
+    for (unsigned i=0;i<BTP_PORTRAIT_COUNT;++i) CHECK(!content->resources->portraits.image[i].count);
     CHECK(!memcmp(snapshot->animations,content->resources->animations,sizeof snapshot->animations));
     CHECK(!btp_content_select(content,BTP_CONTENT_UPDATED,roster_file,&error));
     CHECK(content->profile==BTP_CONTENT_ORIGINAL_DOS_103 && !content->resources->roster.count);
-    CHECK(!content->resources->broker_portrait.count);
+    for (unsigned i=0;i<BTP_PORTRAIT_COUNT;++i) CHECK(!content->resources->portraits.image[i].count);
     free(snapshot);
-    CHECK(!remove(portrait_file));
+    for (unsigned i=0;i<BTP_PORTRAIT_COUNT;++i) {
+        snprintf(portrait_file,sizeof portrait_file,"%s/%s.anm",art,names[i]);CHECK(!remove(portrait_file));
+    }
     CHECK(!remove(roster_file));
     CHECK(remove_directory(art)==0);
     CHECK(remove_directory(directory)==0);

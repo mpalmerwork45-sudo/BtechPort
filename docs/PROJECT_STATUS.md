@@ -69,13 +69,20 @@ are recorded in the [roster milestone](M5A_ROSTER_SLICE.md).
 The broker now has [new AI-generated artwork](../content/updated/art/README.md)
 and the other buildings' description/compact-choice layout. The selected male
 salesman master, final prompt, exact 88×88 preview and ANM are included, along
-with a reproducible converter. Optional pack-local art does not change roster
-fingerprints or saves; older packs retain the mechanic fallback. General
-custom-building mappings and animated new portraits remain future work.
-Broker-art checks pass: native **59/59**, Python **29/29**, four focused
-sanitizer and Windows suites each, and **28/28** Updated SDL window scenarios
-on each platform. Exact portrait pixels and malformed/missing-art behavior
-are covered; the selected image is static.
+with a reproducible converter. Seven further static portraits now cover the
+Training Center, lounge, prison, inventor's hut, cinema, hospital and ComStar.
+Optional pack-local art does not change roster fingerprints or saves; older
+packs retain each original presentation. Explicit BLD animations and held
+frames take priority. General custom-building manifests and animated new
+portraits remain future work.
+The seven-building follow-up passes native **60/60**, Python **30/30**, and
+five focused sanitizer and Windows suites each. Linux and Windows SDL each
+pass **7/7** building visits, exact portrait crops, F5/F9 and full-frame restore.
+The earlier broker work passed **28/28** selector/trading window scenarios on
+each platform. Actual building screens were visually reviewed; all pixels
+outside the new portraits and the original script continuations are compared.
+Missing/malformed-art behavior, cinema scene priority and the training quiz
+are also covered. See the [recorded evidence](M5A_ROSTER_SLICE.md).
 At the owner's request, a commented **temporary** formation recovery now applies
 in both editions after scene/menu exits and excessive separation. It keeps
 parked/wrecked mechs inactive. Its removal TODO targets the underlying follower

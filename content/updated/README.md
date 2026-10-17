@@ -12,6 +12,12 @@ mech roster; assign a pilot when leaving through the garage (the original
 remain the limit. A free bay and sufficient money are required; rejected
 purchases take no money. The Space menu has its original entries.
 
+Updated also supplies new static 1980s anime-style portraits for the Training
+Center, lounge, prison, inventor's hut, cinema, hospital and ComStar. Their
+[artwork guide](art/README.md) includes masters, exact prompts, native ANM files
+and conversion instructions. Original mode retains the original presentation;
+the new art does not change scripts, roster identity or save compatibility.
+
 **Up/Down scrolls** the catalogue one row at a time. Left/Right jumps eight
 entries; Enter or Space selects. Back is the last item, and Backspace returns
 to the counter. The footer shows the visible range. Save/load preserves the
@@ -110,7 +116,7 @@ rules apply. Quirks and tabletop construction rules are not implemented.
 The adapted [roster.json](roster.json), archived pack and source manifest are separately licensed under
 **CC BY-NC-SA 4.0**; see [LICENSE.md](LICENSE.md) and the
 [upstream license](https://github.com/MegaMek/mm-data/blob/main/LICENSE).
-This data pack is separate from the GPL engine. The new broker artwork has its
+This data pack is separate from the GPL engine. The new building artwork has its
 own [provenance and GPL license notice](art/README.md); it is not adapted from
 mm-data. No upstream engine code or artwork, original CHI art, music or
 executable is included here. The original

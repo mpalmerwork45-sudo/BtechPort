@@ -1,4 +1,25 @@
-# Build, verification and original oracle — 2026-10-16
+# Build, verification and original oracle — 2026-10-17
+
+## Updated building artwork
+
+The latest cosmetic follow-up passes **60/60 native CTest suites**, **30/30
+Python tests**, five focused ASan/UBSan/LeakSanitizer suites and the same five
+Windows/Wine suites. The seven new building portraits each pass exact pixel,
+held-save and real-script continuation checks. All original cinema animation
+IDs and the training quiz retain their rendering priority. Missing art falls
+back independently; malformed art rolls back the complete content switch.
+
+Linux and Windows SDL each pass seven real-window portrait/F5/F9/full-frame
+checks. The bounded commands are:
+
+```sh
+python3 tools/native_smoke.py --building-art-only
+python3 tools/native_smoke.py --windows --building-art-only
+```
+
+See [the recorded results](M5A_ROSTER_SLICE.md#seven-additional-building-portraits--2026-10-17)
+and [asset provenance](../content/updated/art/README.md). These optional pictures
+are new authored content, separate from original-game differential evidence.
 
 ## M5-P1–P5 preparation
 

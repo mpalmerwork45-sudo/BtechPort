@@ -28,6 +28,12 @@ typedef struct {
     uint16_t length, end[BTP_ANM_FRAMES], units[BTP_ANM_FRAMES];
     uint8_t count, bytes[BTP_ANM_BYTES];
 } BtpAnm;
+/* Optional Updated art has its own slots; original O*.ANM indices and saved
+   cutscene identities keep their original meanings. */
+enum { BTP_PORTRAIT_BROKER, BTP_PORTRAIT_TRAINING, BTP_PORTRAIT_LOUNGE,
+    BTP_PORTRAIT_PRISON, BTP_PORTRAIT_INVENTOR, BTP_PORTRAIT_CINEMA,
+    BTP_PORTRAIT_HOSPITAL, BTP_PORTRAIT_COMSTAR, BTP_PORTRAIT_COUNT };
+typedef struct { BtpAnm image[BTP_PORTRAIT_COUNT]; } BtpPortraits;
 /* 43 earlier bank/Talk strings plus 12 class transcript/rank/subject strings. */
 enum { BTP_TALK_STRINGS = 373, BTP_TALK_MAX = 16384 };
 typedef struct {
@@ -59,7 +65,7 @@ typedef struct {
     BtpWorldData world;
     BtpRoster roster; /* Empty in Original; immutable for a running session. */
     /* Cosmetic Updated-pack art, separate from original O*.ANM and save IDs. */
-    BtpAnm broker_portrait;
+    BtpPortraits portraits;
 } BtpResources;
 
 int btp_map_decode(const uint8_t *bytes, size_t length, BtpMap *map, BtpError *error);
