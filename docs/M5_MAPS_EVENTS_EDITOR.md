@@ -34,7 +34,11 @@ event rather than showing CHI's logo and new-cadet questions.
 
 ## Roster editor
 
-Run with **Python 3.10 or newer and Tk**; there are no pip dependencies:
+Run with **Python 3.10 or newer and Tk**; there are no pip dependencies.
+
+This small tool uses Tk to ship useful forms without introducing a Qt build
+dependency. The full map/event editor's toolkit remains an architectural choice;
+the C player and shared validation do not depend on either GUI toolkit.
 
 ```sh
 python3 tools/roster_editor.py work/editor-ready
@@ -190,6 +194,26 @@ raw state or serialize a live Lua stack. The independent-assets demonstration
 and that binding remain task 4.
 
 ## Verification
+
+Completed 2026-10-17, with two-job builds run one platform at a time:
+
+| Check | Result |
+| --- | --- |
+| Full native CTest | **66/66**, 21.77 s |
+| Full Python tools tests | **59/59**, 2.87 s |
+| Focused Windows/Wine CTest | **9/9**, 36.25 s |
+| Focused ASan/UBSan/LeakSanitizer CTest | **9/9**, 16.39 s |
+| Python adventure/editor/project tests using sanitized binaries | **26/26** |
+| Linux SDL authored checkpoints | **10/10** |
+| Windows/Wine SDL authored checkpoints | **10/10**, same restored state/pixels as Linux |
+| Linux Tk editor smoke | **PASS**, including loadout editing and real-player launch |
+
+The nine focused CTest suites cover authored continuations, Updated roster and
+combat policy, original content lifetime, combat menus, weapon presentation,
+save integrity and original save round trips. The authored continuation suite
+also passed on the final Windows and sanitizer builds. Native Windows Tk,
+physical Windows audio/drivers and a complete new original-campaign playthrough
+were not tested in this increment.
 
 **VERIFIED by project-specific tests:** `authored-adventure-continuations`
 plays the depot route, restricted stock, recruitment and repeat visits,

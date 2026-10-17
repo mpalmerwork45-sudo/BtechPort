@@ -74,20 +74,23 @@ full regression suite, seeded comparisons, Windows, sanitizers and SDL saves.
 | Owner follow-ups | Four Jenners/ruins escape, purchase recipients, armour repair, original crew/inspection/engagement/Speed Shop selectors, world seed/city alignment, all-party collision and gait, replacement recruits and spy confrontation |
 | Fresh campaign | New-cadet input route through training, companions, paid apprenticeships, holodisk, password and cache ending; original checks at selected prerequisites |
 | Remaining original campaign | Additional branches and broader DOS combat/presentation parity |
-| M5 | Preparation, Updated roster, shared definitions and CHI-dependent editable projects implemented; authored maps/events, independent games, Lua and editor remain in the [plan](ENGINE_AND_EDITOR_PLAN.md) |
+| M5 | Preparation, Updated roster, shared definitions, CHI-dependent projects, authored maps/events and small roster GUI implemented; independent games, Lua and full map/event editor remain in the [plan](ENGINE_AND_EDITOR_PLAN.md) |
 | Updated LRM1–LRM5 | Saved Enhanced/Legacy profiles, LRM minimum range, weapon-aware positioning and volleys, live firing checks and release verification |
 
 The owner-requested [engine and editor plan](ENGINE_AND_EDITOR_PLAN.md) records
 the future authoring direction separately from the remaining original fidelity
 work. [M5-P1–P5 are implemented](M5_PREPARATION.md): shared content ownership,
 named unit/weapon/presentation/refit lookups, original action dispatch, isolated
-persistence and an offline schema/sample. The current game and BTPe/v40 saves
-remain the compatibility case. All 41 Windows SDL portability checks and eleven
-Linux Mech-It service/continuation checks pass.
+persistence and an offline schema/sample. That preparation preserved BTPe/v40
+saves; its 41 Windows SDL and eleven Linux Mech-It checks remain recorded in
+the preparation evidence. Current authoring verification is recorded in the
+[maps/events guide](M5_MAPS_EVENTS_EDITOR.md#verification).
 The [M5a CHI roster slice](M5A_ROSTER_SLICE.md) now supplies the pre-logo
 Original/Updated selector and 31 playable external models/variants, with broker,
-encounter and save support. The separate general-schema sample remains offline;
-the rest of M5a and M5b–M5e packages/Lua/editor remain **proposed**.
+encounter and save support. The early general-schema sample remains an offline
+prototype; current project schemas are consumed by the shared C loader. M5a,
+the CHI-dependent part of M5b and a small M5c roster GUI are implemented;
+independent content, Lua and the broader editor remain **proposed**.
 The broker occupies an unused Starport building, offers buying/selling with
 four owned bays, and groups stock into Light, Medium, Heavy and Assault classes,
 sorted by tonnage/name with eight-row scrolling. Inspection bars fit their
@@ -101,10 +104,9 @@ slot namespaces remain separate.
 The [pack guide](../content/updated/README.md) records source statistics,
 temporary sprites, authored prices and adaptation limits. The original story
 LAM and training Jenners retain their original definitions.
-The [next five editor tasks](ENGINE_AND_EDITOR_PLAN.md#13-next-five-tasks-toward-an-editor)
-start with one shared authoring contract and validator, then project loading,
-maps/events, an independent miniature game and the desktop editor. A smaller
-CHI roster editor can follow the first two tasks.
+The [five editor tasks](ENGINE_AND_EDITOR_PLAN.md#13-next-five-tasks-toward-an-editor)
+now have their first three steps implemented, plus the small roster portion of
+step 5. Step 4's independent miniature game and the full map/event GUI remain.
 The broker now has [new AI-generated artwork](../content/updated/art/README.md)
 and the other buildings' description/compact-choice layout. The selected male
 salesman master, final prompt, exact 88×88 preview and ANM are included, along
@@ -280,6 +282,7 @@ within [its documented bounds](M4_PORTABILITY_SWEEP.md). Proposed follow-ups:
 
 Physical 8 MHz XT speaker calibration also needs an appropriate recording.
 
-The separate authoring direction next proceeds to **M5a external units**, as
-defined in the [engine/editor plan](ENGINE_AND_EDITOR_PLAN.md). Preparation
-completion does not imply that these original-fidelity tasks are complete.
+The separate authoring direction next proceeds to independent assets and a
+miniature game, then visual map/event tools, as defined in the
+[engine/editor plan](ENGINE_AND_EDITOR_PLAN.md). Authored feature completion
+does not imply that these original-fidelity tasks are complete.

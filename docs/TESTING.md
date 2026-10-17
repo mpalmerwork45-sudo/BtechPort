@@ -1,5 +1,33 @@
 # Build, verification and original oracle — 2026-10-17
 
+## Authored maps, events and roster editor
+
+Roadmap tasks 1–3 and the small roster portion of task 5 are implemented.
+The [verification record](M5_MAPS_EVENTS_EDITOR.md#verification) gives the
+tested behavior and limits: **66/66 native CTest**, **59/59 Python tests**,
+**9/9 focused Windows/Wine** and **9/9 focused sanitizer suites**. Another
+**26 Python tests** pass using sanitized player/validator binaries.
+Linux and Windows/Wine each pass ten authored SDL save/load checkpoints with
+matching headless state and pixels. The Linux Tk smoke edits/saves/reopens a
+roster, exercises undo/redo and loadout forms, and launches the real player.
+The native Windows Tk desktop remains unverified.
+
+Repeat the full CTest/Python commands below, or focus on the authored work:
+
+```sh
+ctest --test-dir build -R authored-adventure-continuations --output-on-failure
+python3 -m unittest discover -s tests -p 'test_adventure_tools.py'
+python3 -m unittest discover -s tests -p 'test_editor_model.py'
+python3 tools/native_smoke.py --adventure-only
+python3 tools/native_smoke.py --windows --adventure-only
+python3 tools/native_smoke.py --editor-only
+```
+
+These are independently authored feature tests, not DOS equivalence claims.
+Original campaign behavior remains covered by the existing oracle regressions.
+See the [guide](M5_MAPS_EVENTS_EDITOR.md) for package requirements, saved
+continuations, editor setup and current authoring bounds.
+
 ## Broker categories and roster 0.4.0
 
 **VERIFIED within these bounds:** Buy exposes four weight classes, with

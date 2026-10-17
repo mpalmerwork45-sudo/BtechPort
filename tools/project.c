@@ -52,7 +52,9 @@ int main(int argc,char **argv)
     if (!strcmp(argv[1],"validate") && argc==3) {
         BtpProject *p=btp_project_load(argv[2],r,art,&error);
         if (p) {
-            printf("Valid project %s %s: %u mechs, %u weapons; SHA-256 ",p->id,p->version,r->count,p->definitions.weapon_count);
+            printf("Valid project %s %s: %u mechs, %u weapons",p->id,p->version,r->count,p->definitions.weapon_count);
+            if (p->adventure.loaded) printf("; %u maps, %u event nodes",p->adventure.map_count,p->adventure.node_count);
+            fputs("; SHA-256 ",stdout);
             for (unsigned i=0;i<32;++i) printf("%02x",p->digest[i]);
             puts("");free(p);ok=1;
         }

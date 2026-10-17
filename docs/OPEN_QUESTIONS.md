@@ -1,4 +1,4 @@
-# Open questions after bounded M4 work — 2026-10-16
+# Open questions after bounded M4 work and authoring increments — 2026-10-17
 
 The authorized M4 increments have playable, tested paths. Confidence belongs
 to the individual original comparisons and recorded continuations in
@@ -164,22 +164,23 @@ and the [latest five-area sweep](M4_PORTABILITY_SWEEP.md).
     independent C does not itself establish a formal clean-room process or
     rights to original assets.
 
-11. **Custom games and authoring — preparation implemented.**
+11. **Custom games and authoring — CHI-dependent projects implemented.**
     The [transition plan](ENGINE_AND_EDITOR_PLAN.md) separates preparation from
     external units, independent packages, scripting and the desktop editor.
     [M5-P1–P5](M5_PREPARATION.md) establish content ownership, unit lookups,
-    original dispatch and persistence boundaries plus a provisional
-    [schema/sample](../examples/content-demo/README.md). A custom package is not
-    yet loadable. Original raw records, compiled story/presentation assumptions
-    and missing package inputs are listed in the [inventory](CONTENT_INVENTORY.md).
-    The [M5a CHI adapter](M5A_ROSTER_SLICE.md) now loads 23 optional mech
-    definitions through shared validation, explicit save IDs, placeholder art
-    and package-bound saves; an unchanged appended catalogue can load earlier
-    saves. Eleven fixed optional building illustrations load native ANMs;
-    general asset manifests and animated custom portraits remain future work.
-    General weapon/equipment definitions, richer component layouts,
-    and arbitrary package migrations remain to do. Lua/Qt
-    adoption and the final public schema remain open choices.
+    original dispatch and persistence boundaries. The
+    [shared project loader](M5_AUTHORING_PROJECTS.md) now loads validated
+    mech/weapon definitions and declared portraits, exports the 31-model Updated
+    roster and binds saves to exact project snapshots. The
+    [maps/events increment](M5_MAPS_EVENTS_EDITOR.md) adds finite maps, overlays,
+    entrances, explicit saved event commands and a small Tk roster editor.
+    A two-map example covers recruitment, shops, combat and a once-only reward.
+    These projects still require original CHI assets and extracted caches.
+    Independent assets/fonts/UI, general character definitions, richer equipment
+    abilities, Lua, a visual map/event editor and package migrations remain to do.
+    Native Windows Tk verification and the full editor toolkit choice remain
+    open. Original raw records and compiled assumptions are catalogued in the
+    [content inventory](CONTENT_INVENTORY.md).
 
 Both reference trees are guarded by content, mode, timestamp and Git-metadata
 checks. Known external editor metadata drift is restored only when its exact

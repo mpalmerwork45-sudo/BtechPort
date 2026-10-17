@@ -708,10 +708,11 @@ arbitrary definition edits and general package migrations remain unsupported.
 The optional adapted roster has separate attribution/licensing; it is not the
 independently authored standalone demonstration described above.
 
-The rest of M5a still needs general external weapon/equipment definitions,
-richer component semantics, authored refit variants and original art support.
-The provisional general schema must be reconciled with the runtime adapter
-before treating it as a stable editor contract. M5b–M5e remain future work.
+The subsequent shared authoring contract now supplies external weapon
+definitions, per-mount loadouts and explicit presentation references for the
+supported CHI behaviors. Richer equipment/component semantics, arbitrary new
+unit art and package migrations remain open. Section 13 records the implemented
+CHI-dependent parts of M5b/M5c and the remaining independent-game work.
 
 ## 13. Next five tasks toward an editor
 
@@ -776,9 +777,9 @@ remain next.
    its files. Rich scripting tools, animation/audio authoring and publishing
    remain M5d/M5e.
 
-For an earlier practical tool, a **small roster editor** can follow tasks 1–2:
-edit names, movement, armor, loadouts, prices and presentation; validate; then
-launch Updated with that project. It should explicitly label its CHI-dependent
-scope. A full Unlimited Adventures-style game editor still needs tasks 3–5.
+The **small roster editor** is now implemented: edit names, movement, armor,
+loadouts, prices and presentation; validate; then launch the player with that
+CHI-dependent project. A full Unlimited Adventures-style game editor still
+needs task 4 and the map/event portion of task 5.
 Neither route requires replacing the current playable game or changing the two
 reference directories. Keep each increment playable and separately committed.
