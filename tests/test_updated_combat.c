@@ -265,7 +265,7 @@ static void live_volley(BtpResources *r)
 static void controls(BtpResources *r)
 {
     BtpState s;CHECK(btp_save_load("Original DOS/GAME3",&s,r,&error));
-    CHECK(!s.combat_profile);CHECK(btp_set_combat_profile(&s,r,1));
+    CHECK(s.combat_profile && s.combat_fingerprint==r->combat_profile.fingerprint);
     s.campaign.encounter=1;s.mode=BTP_ENCOUNTER;s.x_half=64;s.y_half=66;
     s.campaign.battle_x=1152;s.campaign.battle_y=1664;s.menu.sound=0;s.menu.outtakes=0;s.menu.speed=0;
     s.combat=(BtpCombatState){.phase=BTP_COMBAT_MENU,.selected=5,.count=3,.friends=2,

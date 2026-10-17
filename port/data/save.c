@@ -158,7 +158,15 @@ int btp_save_load(const char *path, BtpState *s, const BtpResources *r, BtpError
     if (!ok) return fail(e,"Cannot read save");
     int project=n>=4 && !memcmp(bytes,"BTG1",4);
     if (project!=!!r->project) return fail(e,project ? "Project save requires --project with its original content directory" : "Project campaigns require their own saves; start a new project campaign");
-    if (n==BTP_ORIGINAL_BYTES && bytes[0]==12) return btp_original_decode(bytes,n,s,r,e);
+    if (n==BTP_ORIGINAL_BYTES && bytes[0]==12) {
+        BtpState imported;
+        if (!btp_original_decode(bytes,n,&imported,r,e)) return 0;
+        /* Importing into Updated creates a new edition campaign. There is
+           no saved Updated rule choice in a DOS GAME record, so use the
+           edition's Enhanced default, including a held combat encounter. */
+        if (r->roster.count && r->combat_profile.fingerprint) { imported.combat_profile=1;imported.combat_fingerprint=r->combat_profile.fingerprint; }
+        *s=imported;return 1;
+    }
     int v2=project || (n>=4 && !memcmp(bytes,"BTU2",4));
     int updated=v2 || (n>=4 && !memcmp(bytes,"BTU1",4));
     size_t header=project ? PROJECT_HEADER_BYTES : updated ? UPDATED_HEADER_BYTES : HEADER_BYTES;
@@ -223,6 +231,9 @@ int btp_save_load(const char *path, BtpState *s, const BtpResources *r, BtpError
         int on_foot=1;
         for (unsigned i=0;i<8;++i) if (loaded.party.people[i][0]!=255 && loaded.party.people[i][12]<8) on_foot=0;
         if (on_foot) for (unsigned i=0;i<4;++i) btp_party_mech(&loaded,i)[0]=255;
+    }
+    if (!updated && r->roster.count && r->combat_profile.fingerprint) {
+        loaded.combat_profile=1;loaded.combat_fingerprint=r->combat_profile.fingerprint;
     }
     *s = loaded;
     if (e) e->text[0] = 0;
