@@ -177,7 +177,7 @@ static void sales(BtpState *s,BtpState *copy,BtpState *before,const BtpResources
         save_check(s,copy,r);btp_game_tick(s,r,BTP_ACCEPT);
     }
     btp_game_tick(s,r,BTP_CANCEL);btp_game_tick(s,r,BTP_CANCEL);
-    btp_game_tick(s,r,BTP_DOWN);btp_game_tick(s,r,BTP_ACCEPT);
+    btp_game_tick(s,r,BTP_DOWN);btp_game_tick(s,r,BTP_DOWN);btp_game_tick(s,r,BTP_ACCEPT);
     CHECK(s->campaign.ui==BTP_MENU_BROKER_SELL && btp_actions_count(s)==5);save_check(s,copy,r);
     CHECK(btp_broker_offer(s,r,1)==r->roster.mechs[1].price/2);
     uint8_t *m=btp_party_mech(s,1);m[17]=0;m[117]=2;
@@ -446,7 +446,7 @@ static void categories(BtpState *s,BtpState *copy,BtpResources *r,uint32_t *fram
             CHECK(s->campaign.ui==BTP_MENU_BROKER && !s->campaign.selected && s->credits==200000);
             /* Invalid class, filtered count, and an unrelated definition are
                rejected, rather than silently becoming a different purchase. */
-            *copy=*s;copy->menu.broker_class=5;CHECK(!btp_actions_valid(copy));
+            *copy=*s;copy->menu.broker_class=6;CHECK(!btp_actions_valid(copy));
             *copy=*s;++copy->menu.map_x;CHECK(!btp_roster_state_valid(copy,r));
             *copy=*s;copy->menu.map_y=(uint16_t)class_models[weight_class%4u][0];
             CHECK(!btp_roster_state_valid(copy,r));

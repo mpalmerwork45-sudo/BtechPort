@@ -66,7 +66,8 @@ def run(env,work):
                 opened=[]
                 def capture(*args):
                     value=open_image_editor(*args);opened.append(value);return value
-                with patch('graphics_editor.open_image_editor',side_effect=capture):infantry.edit_unit_sprite()
+                infantry.close();pump()
+                with patch('graphics_editor.open_image_editor',side_effect=capture):infantry=browser.edit_sprite()
                 pump();sprite=opened[-1];sprite.color.set('42ab88ff')
                 sprite.canvas.event_generate('<Button-1>',x=1,y=1);sprite.canvas.event_generate('<ButtonRelease-1>',x=1,y=1);pump()
                 sprite.apply();infantry.save();pump();infantry.close();pump()

@@ -1953,8 +1953,8 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                 const char *message="A sharply dressed broker flashes a well-practiced smile. Beyond the glass, 'Mechs await new owners. \"Quality machines. Very reasonable prices.\"";
                 int y=wrapped(r,f,8,(const uint8_t *)message,strlen(message),15)+8;
                 text(r,f,112,y,"Will you:",15);y+=8;
-                const char *const items[]={"Buy a 'Mech","Sell a 'Mech","Leave"};
-                for (unsigned i=0;i<3;++i) {
+                const char *const items[]={"Mechs","Vehicles","Sell a unit","Leave"};
+                for (unsigned i=0;i<4;++i) {
                     int row=y+(int)i*8;if (i==c->selected) rectangle(f,112,row,200,8,14);
                     text(r,f,112,row,items[i],i==c->selected ? 0u : 15u);
                 }
@@ -1976,13 +1976,15 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                     "\"Take your pick. Delivery to the garage is included.\"";
                 int y=wrapped(r,f,8,(const uint8_t *)message,strlen(message),15)+8;
                 if (selling && !owned) {
-                    text(r,f,112,y,"No owned 'Mechs to sell.",15);y+=16;
+                    text(r,f,112,y,"No owned units to sell.",15);y+=16;
                 } else if (!selling && !stock) {
-                    text(r,f,112,y,"No 'Mechs in this class.",15);y+=16;
+                    text(r,f,112,y,"No units in this category.",15);y+=16;
                 } else {
-                    if (!selling && s->menu.broker_class)
+                    if (!selling && s->menu.broker_class==BTP_ROSTER_VEHICLES)
+                        snprintf(line,sizeof line,"Vehicles:");
+                    else if (!selling && s->menu.broker_class)
                         snprintf(line,sizeof line,"%s 'Mechs:",btp_roster_class_name(s->menu.broker_class));
-                    else snprintf(line,sizeof line,"%s which 'Mech?",selling ? "Sell" : "Buy");
+                    else snprintf(line,sizeof line,"%s which unit?",selling ? "Sell" : "Buy");
                     text(r,f,112,y,line,15);y+=8;
                 }
                 unsigned count=btp_actions_count(s);
@@ -2013,7 +2015,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                 text(r,f,112,184,"Enter/Space: select.",7);
             } else if ((c->ui==BTP_MENU_BROKER_CONFIRM || c->ui==BTP_MENU_BROKER_SELL_CONFIRM) && model) {
                 uint32_t price=selling ? btp_broker_offer(s,r,id) : r->roster.mechs[id].price;
-                snprintf(line,sizeof line,"%s this 'Mech for %u C-bills?",selling ? "Sell" : "Buy",price);
+                snprintf(line,sizeof line,"%s this unit for %u C-bills?",selling ? "Sell" : "Buy",price);
                 int top=8;
                 if (!selling && r->combat.definitions && id<r->combat.definitions->mech_count) {
                     const char *full=r->combat.definitions->mechs[id].name;

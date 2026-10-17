@@ -39,7 +39,7 @@ unsigned btp_actions_count(const BtpState *s)
         return n>BTP_BROKER_ROWS ? BTP_BROKER_ROWS : n;
     }
     case BTP_MENU_BROKER_CONFIRM:case BTP_MENU_BROKER_SELL_CONFIRM:return 2;
-    case BTP_MENU_BROKER_HUB:return 3;
+    case BTP_MENU_BROKER_HUB:return 4;
     case BTP_MENU_BROKER_CLASSES:return 5;
     case BTP_MENU_BROKER_SELL:return btp_broker_count(s)+1u;
     case BTP_MENU_ROOT:return btp_menu_mech_count(s) ? 8u : 7u;
@@ -162,6 +162,7 @@ static void broker_return(BtpState *s,const BtpResources *r)
 static void broker_back(BtpState *s)
 {
     unsigned weight_class=s->menu.broker_class;
+    if (weight_class==BTP_ROSTER_VEHICLES) { page(s,BTP_MENU_BROKER_HUB,1);return; }
     page(s,weight_class ? BTP_MENU_BROKER_CLASSES : BTP_MENU_BROKER_HUB,weight_class ? weight_class-1u : 0u);
 }
 void btp_menu_person(const BtpState *s,unsigned member,uint8_t p[17])
@@ -250,7 +251,11 @@ void btp_menu_input(BtpState *s,const BtpResources *r,BtpAction a)
     case BTP_MENU_BROKER_HUB:
         c->member=0;s->menu.map_x=(uint16_t)r->roster.count;s->menu.map_y=0;
         if (!item) page(s,BTP_MENU_BROKER_CLASSES,0);
-        else if (item==1) page(s,BTP_MENU_BROKER_SELL,0);
+        else if (item==1) {
+            s->menu.broker_class=BTP_ROSTER_VEHICLES;
+            page(s,BTP_MENU_BROKER,0);btp_broker_browse(s,r,0);
+        }
+        else if (item==2) page(s,BTP_MENU_BROKER_SELL,0);
         else btp_menu_close(s);
         break;
     case BTP_MENU_BROKER_CLASSES:
@@ -276,7 +281,7 @@ void btp_menu_input(BtpState *s,const BtpResources *r,BtpAction a)
         break;
     case BTP_MENU_BROKER_RESULT:broker_return(s,r);break;
     case BTP_MENU_BROKER_SELL:
-        if (item==count-1u) page(s,BTP_MENU_BROKER_HUB,1);
+        if (item==count-1u) page(s,BTP_MENU_BROKER_HUB,2);
         else { s->menu.map_y=(uint16_t)btp_broker_slot(s,item);page(s,BTP_MENU_BROKER_SELL_CONFIRM,1); }
         break;
     case BTP_MENU_BROKER_SELL_CONFIRM:
@@ -371,7 +376,7 @@ int btp_actions_valid(const BtpState *s)
     if (m->from_intro && (s->mode!=BTP_ACTIONS || (s->campaign.ui!=BTP_MENU_LOAD && s->campaign.ui!=BTP_MENU_MESSAGE))) return 0;
     if ((s->mode==BTP_ACTIONS)!=(s->campaign.ui!=0)) return 0;
     if (s->campaign.ui>BTP_MENU_BROKER_CLASSES || (s->campaign.ui && s->campaign.selected>=btp_actions_count(s))) return 0;
-    if (m->broker_class>BTP_ROSTER_ASSAULT || (m->broker_class &&
+    if (m->broker_class>BTP_ROSTER_VEHICLES || (m->broker_class &&
         (s->campaign.ui<BTP_MENU_BROKER || s->campaign.ui>BTP_MENU_BROKER_RESULT))) return 0;
     if (s->campaign.ui==BTP_MENU_MECH && (s->campaign.member>=4 || !s->campaign.owned || btp_party_mech((BtpState *)s,s->campaign.member)[0]==255)) return 0;
     return !m->io || (s->mode==BTP_ACTIONS && s->campaign.ui==(m->io==BTP_MENU_IO_SAVE ? BTP_MENU_SAVE : BTP_MENU_LOAD));

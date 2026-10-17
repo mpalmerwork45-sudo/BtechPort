@@ -8,7 +8,7 @@
    a display name, a sprite, or a party slot. Saved packages also retain their
    namespaced identities and definition fingerprint. */
 enum { BTP_ROSTER_MAX=256, BTP_LEGACY_ROSTER_MAX=32, BTP_ROSTER_CODE=160, BTP_ROSTER_ID=64 };
-enum { BTP_ROSTER_ALL, BTP_ROSTER_LIGHT, BTP_ROSTER_MEDIUM, BTP_ROSTER_HEAVY, BTP_ROSTER_ASSAULT };
+enum { BTP_ROSTER_ALL, BTP_ROSTER_LIGHT, BTP_ROSTER_MEDIUM, BTP_ROSTER_HEAVY, BTP_ROSTER_ASSAULT, BTP_ROSTER_VEHICLES };
 typedef struct {
     char id[BTP_ROSTER_ID];
     uint8_t record[125], ammo_cost[10];

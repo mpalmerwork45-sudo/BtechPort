@@ -97,6 +97,18 @@ int main(int argc,char **argv)
     CHECK(s->event.planet==1 && btp_world_seen(s,0,0));roundtrip(s,r);
     CHECK(authored_walk_to(s,r,"lab:depot-door",action));action(s,r,BTP_ACCEPT);CHECK(s->event.phase==BTP_EVENT_TRADING);
     snapshot(s,r,"depot");
+    /* Vehicles use a single scrollable catalogue and never leak into mech
+       weight classes. Back returns directly to the Vehicles hub item. */
+    action(s,r,BTP_ACCEPT);CHECK(s->campaign.ui==BTP_MENU_BROKER_CLASSES);
+    for (unsigned cls=1;cls<=4;++cls) {
+        unsigned indices[BTP_ROSTER_MAX];CHECK(!btp_events_catalogue(s,r,cls,r->roster.count,indices));
+    }
+    action(s,r,BTP_CANCEL);action(s,r,BTP_DOWN);action(s,r,BTP_OPEN_MENU);
+    CHECK(s->campaign.ui==BTP_MENU_BROKER && s->menu.broker_class==BTP_ROSTER_VEHICLES);
+    CHECK(s->menu.map_x==10);roundtrip(s,r);snapshot(s,r,"vehicle-catalogue");
+    for (unsigned i=0;i<9;++i) action(s,r,BTP_DOWN);
+    CHECK(s->campaign.member>0);roundtrip(s,r);
+    action(s,r,BTP_CANCEL);CHECK(s->campaign.ui==BTP_MENU_BROKER_HUB && s->campaign.selected==1);
     CHECK(btp_broker_buy(s,r,1)==BTP_BROKER_BOUGHT);roundtrip(s,r);
     CHECK(!remove("vehicles-planets.btp"));free(s);btp_content_close(&content);
     puts("PASS: vehicle rules, terrain, two planets, ordinary transfers/combat/shop, independent discovery and save/load.");return 0;

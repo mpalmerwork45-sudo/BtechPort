@@ -10,8 +10,8 @@ unsigned btp_roster_class(unsigned tons)
 }
 const char *btp_roster_class_name(unsigned weight_class)
 {
-    static const char *const names[]={"All","Light","Medium","Heavy","Assault"};
-    return weight_class<=BTP_ROSTER_ASSAULT ? names[weight_class] : "";
+    static const char *const names[]={"All","Light","Medium","Heavy","Assault","Vehicles"};
+    return weight_class<=BTP_ROSTER_VEHICLES ? names[weight_class] : "";
 }
 static int catalogue_before(const BtpRosterMech *a,const BtpRosterMech *b)
 {
@@ -22,12 +22,16 @@ static int catalogue_before(const BtpRosterMech *a,const BtpRosterMech *b)
 unsigned btp_roster_catalogue(const BtpRoster *r,unsigned weight_class,
     unsigned limit,unsigned indices[BTP_ROSTER_MAX])
 {
-    if (weight_class>BTP_ROSTER_ASSAULT) return 0;
+    if (weight_class>BTP_ROSTER_VEHICLES) return 0;
     if (limit>r->count) limit=r->count;
     if (limit>BTP_ROSTER_MAX) limit=BTP_ROSTER_MAX;
     unsigned count=0;
     for (unsigned i=0;i<limit;++i) {
-        if (weight_class && btp_roster_class(r->mechs[i].record[16])!=weight_class) continue;
+        /* Zero retains the old flat catalogue for existing saves. The four
+           weight classes contain mechs only; vehicles have one shared list. */
+        int vehicle=btp_roster_custom(r->mechs[i].record) && r->mechs[i].record[15]>0 && r->mechs[i].record[15]<=3;
+        if (weight_class==BTP_ROSTER_VEHICLES ? !vehicle :
+            weight_class && (vehicle || btp_roster_class(r->mechs[i].record[16])!=weight_class)) continue;
         unsigned at=count++;
         while (weight_class && at && catalogue_before(&r->mechs[i],&r->mechs[indices[at-1]])) {
             indices[at]=indices[at-1];--at;

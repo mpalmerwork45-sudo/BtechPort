@@ -117,6 +117,13 @@ class LibraryBrowser:
         self.listing.bind('<<TreeviewSelect>>',lambda _:self.guard(self.show))
         self.listing.bind('<Double-1>',lambda _:self.guard(self.edit))
         self.canvas=tk.Canvas(right,width=240,height=160,background='#dfe5e8',highlightthickness=0);self.canvas.pack(fill='x')
+        # Library artwork belongs to the blueprint, not to the currently open
+        # game. Reuse the staged editor so Apply and Save to library stay explicit.
+        ttk.Button(right,text='Edit sprite...',command=lambda:self.guard(self.edit_sprite)).pack(fill='x',pady=(6,0))
+        self.sprite_menu=tk.Menu(self.window,tearoff=False)
+        self.sprite_menu.add_command(label='Edit sprite...',command=lambda:self.guard(self.edit_sprite))
+        self.sprite_menu.add_command(label='Select sprite...',command=lambda:self.guard(self.select_sprite))
+        self.canvas.bind('<Button-3>',self.sprite_popup)
         detail=ttk.Frame(right);detail.pack(fill='both',expand=True,pady=(10,0))
         self.details=tk.Text(detail,height=6,width=30,wrap='word',borderwidth=0,font='TkDefaultFont',background='#f3f3f0',foreground='#293747')
         ds=ttk.Scrollbar(detail,command=self.details.yview);self.details.configure(yscrollcommand=ds.set)
@@ -261,6 +268,21 @@ class LibraryBrowser:
         window.title('Unit Library - '+bundle['name'])
         window.bind('<Destroy>',lambda e:context.temp.cleanup() if e.widget==window else None,add='+')
         self.editors.append(editor);return editor
+
+    def edit_sprite(self):
+        editor=self.edit()
+        if editor:editor.edit_unit_sprite()
+        return editor
+
+    def select_sprite(self):
+        editor=self.edit()
+        if editor:editor.choose_sprite()
+        return editor
+
+    def sprite_popup(self,event):
+        if not self.selected():return
+        try:self.sprite_menu.tk_popup(event.x_root,event.y_root)
+        finally:self.sprite_menu.grab_release()
 
     def duplicate(self):
         if self.selected():

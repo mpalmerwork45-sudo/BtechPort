@@ -104,7 +104,7 @@ typedef struct {
     uint8_t steps,sound,speed,outtakes,slot,io,notice,quit;
     uint16_t map_x,map_y;
     uint8_t from_intro,from_story;
-    /* Zero retains old flat broker saves; 1..4 select a weight class. */
+    /* Zero retains old flat broker saves; 1..4 mech weights, 5 vehicles. */
     uint8_t broker_class;
 } BtpMenuState;
 typedef struct {
