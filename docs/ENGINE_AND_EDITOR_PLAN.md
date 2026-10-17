@@ -1,5 +1,10 @@
 # Plan: reusable runtime, custom games and an editor
 
+The current [BattleTech demo follow-up](BATTLETECH_DEMO.md#recommended-next-five-milestones)
+sets out the next five concrete gates after the first editor: real tile previews
+and stamps; repair/reload/salvage commands; objectives and event debugging; asset
+authoring; packaging and explicit save migration.
+
 Recorded **2026-10-16**, against implementation commit `c29ea75`.
 
 **Status: preparation, external definitions, independent demo and first editor

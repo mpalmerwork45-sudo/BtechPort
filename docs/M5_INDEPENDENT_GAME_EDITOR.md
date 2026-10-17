@@ -1,5 +1,9 @@
 # Independent demonstration game and map/event editor
 
+The later [BattleTech demo](BATTLETECH_DEMO.md) adds a three-map mercenary
+scenario with established mech variants and original CHI presentation. This
+document continues to describe the asset-free engine/editor template.
+
 Implemented 2026-10-17. Scope: roadmap task 4 and the map/event portion of
 task 5. Original/Updated, CHI-dependent authored projects and their saves remain
 supported. Both reference directories remain protected.

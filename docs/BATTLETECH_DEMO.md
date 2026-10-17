@@ -39,9 +39,34 @@ ctest --test-dir build -R battletech-demo-contracts --output-on-failure
 python3 tools/native_smoke.py --battletech-demo-only
 ```
 
-Results and screenshots are recorded under ignored `work/`; completed platform
-results are added below after validation. These checks establish a playable
-authored scenario, not new DOS parity or broad randomized balance claims.
+**VERIFIED**, 2026-10-17:
+
+| Check | Result |
+| --- | --- |
+| Full native CTest | **68/68**, 43.95 s |
+| Full Python tools suite | **69/69**, 2.96 s |
+| Focused Windows/Wine CTest | **4/4**, 14.12 s |
+| Focused ASan/UBSan/LeakSanitizer CTest | **4/4**, 4.33 s |
+| Linux SDL | **12/12** held F5/F9 screens, identical resumed headless state/pixels; full two-battle route passed |
+| Windows/Wine SDL | **12/12** held F5/F9 screens, identical Linux headless state/pixels; full two-battle route passed |
+| Editor document workflow | New copy, C validation, export, declared assets and attribution preserved |
+| Launcher | Fresh authored campaign, 18,000 C-bills, Enhanced combat |
+
+The focused platform checks cover the demo, authored continuations, original
+content lifetime and combat UI/save progression. The ordinary full route wins
+its battles in 1,447 and 1,890 simulation ticks, respectively, using the default
+seed. This is a completed route, not a randomized balance survey. Screenshots
+of the actual original-style map, dialogue and battle prompts were inspected.
+Native Windows hardware/Tk and physical audio were not tested in this increment.
+No new DOS equivalence claims are made for the invented maps or scenario.
+
+Builds used two jobs, one platform at a time. Native and Windows builds produced
+no warnings; sanitizer compilation retains the two previously recorded sign
+conversion warnings in original-renderer code, with no runtime sanitizer error.
+Logs/screenshots are in ignored `work/battletech-demo-*.log`, `work/bt-demo-*`
+and `work/adventure-*.ppm`. The package's validated content digest is
+`03af2458539d9b184815bd6d76820e2d39fcce47c29703efdd059a0cfdb40d9c`.
+Both reference directories pass the 1,287-entry content/mode/mtime guard.
 
 ## Recommended next five milestones
 
