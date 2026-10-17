@@ -59,7 +59,9 @@ class IndependentTools(unittest.TestCase):
         self.assertEqual(state["authored_event"]["flags"],[0,0,0])
         self.play("--play-here","missing:map",12,28,ok=False)
         self.play("--play-here","beacon:town",24,14,ok=False)
+        self.play("--play-here","beacon:town",24,20,ok=False)
         self.play("--play-here","beacon:wild",12,28,"--load","absent.btp",ok=False)
+        self.play("--intro-preview",ok=False)
 
     def test_lua_compile_references_and_path_bounds(self):
         (self.game/"contract.lua").write_text("if then bad end")

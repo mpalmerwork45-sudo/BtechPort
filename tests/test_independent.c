@@ -41,6 +41,11 @@ int main(int argc,char **argv)
     error.text[0]=0;
     BtpState *s=calloc(1,sizeof *s);CHECK(s);btp_start(s);s->project=1;CHECK(btp_set_combat_profile(s,r,1));btp_events_start(s,r);
     pause_at(s,r,"welcome");action(s,r,BTP_ACCEPT);pause_at(s,r,"town");
+    action(s,r,BTP_OPEN_MENU);action(s,r,BTP_UP);action(s,r,BTP_ACCEPT);
+    CHECK(s->mode==BTP_ACTIONS && s->campaign.ui==BTP_MENU_MAP);pause_at(s,r,"overview");
+    uint32_t *overview=malloc(BTP_PIXELS*sizeof *overview);CHECK(overview);btp_render(r,s,0,overview);
+    CHECK(overview[56*320+116]==r->project->independent.palette[6]);free(overview);
+    action(s,r,BTP_ACCEPT);CHECK(s->mode==BTP_EXPLORE);
     walk(s,r,BTP_RIGHT,10);walk(s,r,BTP_UP,2);CHECK(s->event.phase==BTP_EVENT_ENTRY);pause_at(s,r,"npc");
     action(s,r,BTP_ACCEPT);CHECK(s->event.phase==BTP_EVENT_SELECT);pause_at(s,r,"choice");
     action(s,r,BTP_ACCEPT);CHECK(s->event.flags[0] && s->party.people[1][0]==1);pause_at(s,r,"recruit");action(s,r,BTP_ACCEPT);

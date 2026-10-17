@@ -190,11 +190,11 @@ envelope. v47 projects and existing Original/Updated saves remain supported.
 Changing maps/events requires restoring their saved snapshot or a new campaign.
 
 The original BLD interpreter remains behind its compatibility adapter. These
-new commands are an explicit saved state machine, not an extension of the BLD
-bytecode. Lua is not installed or required. A future bounded Lua binding can
-issue these commands and save their continuations; it must not expose writable
-raw state or serialize a live Lua stack. The independent-assets demonstration
-and that binding remain task 4.
+commands are an explicit saved state machine, not an extension of the BLD
+bytecode. The subsequent independent-game increment now provides a bounded Lua
+host which selects declared command continuations; it exposes no writable raw
+state and saves no VM stack. No system Lua installation is required. See
+[the Lua API and independent demo](M5_INDEPENDENT_GAME_EDITOR.md#bounded-lua-commands).
 
 ## Verification
 

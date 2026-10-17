@@ -1,0 +1,3 @@
+# Keep vendored Lua byte-for-byte identical to its official release, including
+# upstream trailing blank lines. Whitespace checks still apply to our sources.
+third_party/lua/* -whitespace

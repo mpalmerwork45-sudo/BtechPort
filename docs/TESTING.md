@@ -1,5 +1,31 @@
 # Build, verification and original oracle — 2026-10-17
 
+## Independent game and map/event editor
+
+Roadmap tasks 4 and 5 now have a self-contained demonstration and a first useful
+roster/map/event editor. The [implementation/verification guide](M5_INDEPENDENT_GAME_EDITOR.md)
+records commands, schema/API bounds and evidence: **67/67 native CTest**,
+**69/69 Python tests**, **8/8 focused Windows/Wine** and **8/8 focused sanitizer
+suites**, plus **8 independent Python tests using sanitized binaries**.
+Linux and Windows SDL each pass nine held F5/F9 screens with matching resumed
+headless state/pixels, and the complete ordinary-input quest with battle,
+payment and ending. This runs from an isolated directory containing only the
+declared demo package; no original resource/cache arguments are supplied.
+
+The real Linux Tk check creates/paints a map and overlay, uses undo/redo,
+authors a branching event, places NPC/encounter records, saves/reopens both
+roster and map edits, exports and launches Play here. The existing roster GUI
+check remains separate. Native Windows Tk and physical audio/driver testing
+remain outside those claims. Lua tests include compile errors, missing OS API,
+undeclared command targets, infinite loops and allocation-budget exhaustion.
+An interrupted two-file editor save restores both original snapshots on reopen.
+
+```sh
+python3 tools/native_smoke.py --independent-only
+python3 tools/native_smoke.py --windows --independent-only
+python3 tools/native_smoke.py --map-editor-only
+```
+
 ## Authored maps, events and roster editor
 
 Roadmap tasks 1–3 and the small roster portion of task 5 are implemented.

@@ -184,9 +184,10 @@ profile; it contains no prior Updated preference. Existing Updated saves retain
 their explicit saved Enhanced/Legacy choice and old compatibility policy. A
 pack without an Enhanced profile retains its supported Legacy behavior.
 
-**VERIFIED so far:** full native CTest 67/67 and Python tools 67/67. The complete
+**VERIFIED:** full native CTest 67/67 and Python tools 69/69. The complete
 independent quest test saves/restores every held dialogue and ordinary action,
-regular combat checkpoints, payment, ending and quit; authored PCM is nonzero.
+regular combat checkpoints, the revealed overhead map, payment, ending and quit;
+authored PCM is nonzero.
 It checks manual combat cursor movement without an original map loaded. Python
 tests exercise absent/malformed assets, strict art/script binding, Lua syntax,
 path escapes, infinite loops, memory exhaustion, missing OS APIs, undeclared
@@ -197,4 +198,35 @@ state/pixels, plus a full ordinary-input quest through combat/ending. The Tk
 smoke creates a map, paints a stroke/overlay, uses undo/redo, edits a branching
 event, places an NPC/encounter, saves both roster/map changes, reopens, exports
 and launches the real player at a chosen map position. Screenshots/logs live
-in ignored `work/`. Windows and sanitizer completion results follow below.
+in ignored `work/`.
+
+| Completion check | Result |
+| --- | --- |
+| Full native CTest | **67/67**, 22.01 s |
+| Full Python tools suite | **69/69**, 3.17 s |
+| Focused Windows/Wine CTest | **8/8**, 27.33 s |
+| Focused ASan/UBSan/LeakSanitizer CTest | **8/8**, 3.54 s |
+| Independent Python tests using sanitized binaries | **8/8** |
+| Linux SDL | **9/9** held F5/F9 screens, plus the complete recorded quest |
+| Windows/Wine SDL | **9/9** held F5/F9 screens, plus the complete recorded quest |
+| Linux Tk | Map/event workflow and existing roster workflow tested |
+
+The focused suites cover independent completion, authored projects/adventures,
+Updated combat/roster, original content lifetime, original save round trips and
+save integrity. Final independent builds also pass targeted Wine/sanitizer
+reruns. Builds use two jobs and preserve the default Windows stack reserve.
+No new DOS-equivalence claims are made for the authored demonstration.
+Native Windows Tk, physical Windows audio/drivers and a complete fresh original
+campaign playthrough were not tested in this increment. Lua, source and package
+licenses/credits remain in the repository; no proprietary assets are committed.
+
+Reproduce the new checks with the prepared native build:
+
+```sh
+ctest --test-dir build -R independent-game-complete --output-on-failure
+python3 -m unittest discover -s tests -p 'test_independent_tools.py'
+python3 -m unittest discover -s tests -p 'test_updated_defaults.py'
+python3 tools/native_smoke.py --independent-only
+python3 tools/native_smoke.py --windows --independent-only
+python3 tools/native_smoke.py --map-editor-only
+```

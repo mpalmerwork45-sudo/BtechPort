@@ -164,12 +164,21 @@ int btp_cli_load_content(const BtpOptions *o, BtpContent *content, BtpError *err
         if (!content->resources->project->independent.loaded && o->explicit_dependencies!=15) {
             btp_content_close(content);snprintf(error->text,sizeof error->text,"CHI project needs explicit --data, --dialogue-data, --combat-data, --world-data");return 0;
         }
+        if (content->resources->project->independent.loaded &&
+            (o->intro_preview || o->title_preview || o->sprite_preview || o->tiles_output || o->sprites_output || o->conversation_checkpoint || o->shop_talk_checkpoint)) {
+            btp_content_close(content);snprintf(error->text,sizeof error->text,"Original-resource diagnostics are unavailable in an independent game");return 0;
+        }
         if (o->play_map) {
             const BtpAdventure *a=&content->resources->project->adventure;unsigned at=0;
             while (at<a->map_count && strcmp(a->maps[at].id,o->play_map)) ++at;
             if (at==a->map_count || !btp_scene_stand(&a->maps[at],(int)o->play_x,(int)o->play_y,0)) {
                 btp_content_close(content);snprintf(error->text,sizeof error->text,"Unknown or blocked Play here destination");return 0;
             }
+            BtpState *probe=calloc(1,sizeof *probe);
+            if (!probe) { btp_content_close(content);snprintf(error->text,sizeof error->text,"Playtest allocation failed");return 0; }
+            btp_start(probe);probe->project=1;
+            int fits=btp_events_preview(probe,content->resources,o->play_map,o->play_x,o->play_y);free(probe);
+            if (!fits) { btp_content_close(content);snprintf(error->text,sizeof error->text,"The complete initial party cannot fit at this Play here destination");return 0; }
         }
         return 1;
     }

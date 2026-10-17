@@ -153,7 +153,11 @@ static void actions(Canvas *c,const BtpResources *r,const BtpState *s)
         snprintf(line,sizeof line,"Walk %u   Jump %u",m[49],m[50]);text(c,100,74,line,15);return;
     }
     unsigned count=btp_actions_count(s);int top=30;
-    text(c,100,16,btp_broker_page(v->ui) ? "Walker exchange" : "Game menu",14);
+    const char *heading=btp_broker_page(v->ui) ? "Walker exchange" : v->ui==BTP_MENU_INSPECT_KIND ? "Inspect a walker?" :
+        v->ui==BTP_MENU_ALLOCATE ? "Choose a person to assign" : v->ui==BTP_MENU_CREW || v->ui==BTP_MENU_MECH_PICK ? "Choose a walker" :
+        v->ui==BTP_MENU_SEAT ? "Assign as pilot?" : v->ui==BTP_MENU_QUIT ? "Quit this expedition?" :
+        v->ui==BTP_MENU_SAVE ? "Save game - choose a slot" : v->ui==BTP_MENU_LOAD ? "Load game - choose a slot" : "Expedition menu";
+    text(c,100,16,heading,14);
     if (v->ui==BTP_MENU_BROKER_HUB) {
         const char *const labels[]={"Buy a walker","Sell a walker","Leave"};for (unsigned i=0;i<3;++i) selection(c,i,v->selected,top+(int)i*12,labels[i]);return;
     }
@@ -177,6 +181,10 @@ static void actions(Canvas *c,const BtpResources *r,const BtpState *s)
         const char *label=btp_actions_label(s,i);
         if (v->ui==BTP_MENU_ALLOCATE || v->ui==BTP_MENU_PERSON || v->ui==BTP_MENU_HEAL || v->ui==BTP_MENU_RECIPIENT || v->ui==BTP_MENU_EQUIPMENT) {
             if (i<btp_party_count(&s->party)) label=person(r,s,btp_party_slot(&s->party,i));
+        }
+        if ((v->ui==BTP_MENU_MECH_PICK || v->ui==BTP_MENU_CREW) && i<btp_menu_mech_count(s)) {
+            const uint8_t *record=btp_party_mech((BtpState *)s,btp_menu_mech_slot(s,i));
+            snprintf(line,sizeof line,"%.15s",record);label=line;
         }
         selection(c,i,v->selected,top+(int)i*12,label);
     }
