@@ -42,6 +42,9 @@ class SpriteEditor(PixelEditor):
         self.draw()
 
     def build_frames(self):
+        if hasattr(self.window,'workspace'):
+            from editor_art_layout import build_sprite
+            return build_sprite(self)
         panel = ttk.Frame(self.window, padding=8)
         panel.pack(fill='x')
         panel.columnconfigure(1, weight=1)
@@ -177,6 +180,9 @@ class SpriteEditor(PixelEditor):
         for direction, button in self.directions.items():
             button.state(['disabled'] if self.view.get() == 'All images' else ['!disabled'])
             button.state(['pressed'] if direction == self.direction else ['!pressed'])
+        if hasattr(self,'direction_choice'):
+            self.direction_choice.current(self.direction)
+            self.direction_choice.configure(state='disabled' if self.view.get()=='All images' else 'readonly')
         self.strip.delete('all')
         self.thumbnails = []
         zoom = max(1, 64 // max(self.image['width'], self.image['height']))

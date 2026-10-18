@@ -268,9 +268,15 @@ class LibraryBrowser:
         bundle=closure(self.owner.document,self.owner.current,kind);expected=next((b for b in self.library.entries() if b['entry_id']==bundle['entry_id']),None)
         variant=False
         if expected:
-            answer=messagebox.askyesnocancel('Existing library design','Update the library entry?\nYes: update it. No: save a new variant.',parent=self.window)
-            if answer is None:return
-            variant=not answer
+            if workspace_of(self):
+                from editor_pickers import named_choice
+                answer=named_choice(self,'Existing library design','This design already exists in the shared library. Choose how to export it.',('Update design','Create variant'))
+                if answer is None:return
+                variant=answer=='Create variant'
+            else:
+                answer=messagebox.askyesnocancel('Existing library design','Update the library entry?\nYes: update it. No: save a new variant.',parent=self.window)
+                if answer is None:return
+                variant=not answer
         saved=self.library.export_unit(self.owner.document,self.owner.current,kind,variant,expected if not variant else None)
         self.refresh(saved['entry_id']);self.status.set('Blueprint and its dependencies exported to the shared library.')
 
@@ -354,6 +360,8 @@ class LibraryBrowser:
         if event.widget==self.window:self.stop()
 
     def close(self):
+        if hasattr(self.window,'workspace'):
+            self.window.workspace.hide(self.window);return
         for editor in self.editors:
             if editor.window.winfo_exists():
                 editor.close()

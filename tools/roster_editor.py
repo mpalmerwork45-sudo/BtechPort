@@ -92,6 +92,7 @@ class RosterEditor:
         self._editor_scope = EditorScope(self)
         if hasattr(window,'workspace'):window.workspace.attach_scope(self._editor_scope)
         self.map_editor = None
+        self.art_editor = None
         self.current = None
         self.collection = "mechs"
         self.variables: dict[tuple[str, ...], tuple[tk.StringVar, bool]] = {}
@@ -610,7 +611,7 @@ class RosterEditor:
         from graphics_editor import photo
         sprites=[im for im in self.document.art['images'] if im['kind']=='sprite']
         if not sprites:
-            self.edit_adventure();self.map_editor.edit_graphics()
+            self.graphics_editor()
             self.status.set('Create or import a sprite in Graphics, then choose it for this unit.');return
         identity=self.current;f=Form(self,'Choose unit sprite');choice=f.field('image',sprites[0]['id'],[i['id'] for i in sprites])
         preview=ttk.Label(f.body);preview.grid(row=f.row,column=0,columnspan=2,pady=12);f.row+=1
@@ -665,7 +666,6 @@ class RosterEditor:
         self.apply_form()
         if self.collection=='people':
             self.edit_person_sprite();return
-        if self.document.adventure is None:raise EditorError('Editable sprites require an authored adventure project.')
         from art_editing import clone_image
         from editor_units import unit_sprite
         from unit_editing import assign_graphic
@@ -683,7 +683,7 @@ class RosterEditor:
                 if 'graphics.json' not in self.document.snapshot and (self.document.root/'graphics.json').exists():raise EditorError('Declare or rename the existing graphics.json before copying a sprite.')
                 manifest['graphics']='graphics.json'
             self.document.replace_all(content,self.document.adventure,art,manifest)
-        self.edit_adventure();self.map_editor.edit_graphics();library=self.map_editor.art_editor
+        library=self.graphics_editor()
         library.selected=image['id'];library.refresh();open_image_editor(library,image)
         self.refresh_list(unit_id)
 
@@ -698,8 +698,7 @@ class RosterEditor:
             adventure=copy.deepcopy(self.document.adventure)
             next(p for p in adventure['people'] if p['id']==self.current)['image']=image['id']
             self.document.replace_art(art,adventure=adventure)
-        self.edit_adventure();self.map_editor.edit_graphics();library=self.map_editor.art_editor
-        if self.library_context:self.map_editor.window.withdraw()
+        library=self.graphics_editor()
         library.selected=image['id'];library.refresh();open_image_editor(library,image)
 
     def open_library(self):
@@ -709,7 +708,16 @@ class RosterEditor:
         self.unit_library_window=LibraryBrowser(self)
 
     def library_graphics(self):
-        self.edit_adventure();self.map_editor.window.withdraw();self.map_editor.edit_graphics()
+        return self.graphics_editor()
+
+    def graphics_editor(self):
+        from graphics_editor import GraphicsEditor
+        from editor_workspace import existing_view
+        existing=existing_view(self,'graphics')
+        if existing:self.art_editor=existing;return existing
+        if self.art_editor and self.art_editor.window.winfo_exists():self.art_editor.window.lift();return self.art_editor
+        self.art_editor=GraphicsEditor(self)
+        return self.art_editor
 
     def vehicle_catalogue(self):
         if not self.document:return

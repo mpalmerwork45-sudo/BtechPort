@@ -5,17 +5,24 @@ import tkinter as tk
 from tkinter import ttk,filedialog
 from editor_model import EditorError
 from delivery import asset_report
+from editor_workspace import view_window,existing_view
+from editor_session import guard
 
 def report(editor):
     if not editor.document:return
-    editor.apply_form();editor.document.validate()
-    result=asset_report(editor.document);window=tk.Toplevel(editor.window);window.title('Assets and dependencies');window.geometry('850x620')
+    existing=existing_view(editor,'asset-report')
+    if existing:return existing
+    editor._editor_scope.transact(editor.document.validate)
+    from types import SimpleNamespace
+    view=SimpleNamespace(owner=editor)
+    result=asset_report(editor.document);window=view_window(view,editor,'asset-report','Assets and dependencies');view.window=window;window.geometry('850x620')
     text=tk.Text(window,wrap='word');text.pack(fill='both',expand=True,padx=12,pady=12)
     text.insert('1.0',json.dumps(result,indent=2));text.configure(state='disabled')
     def save():
         path=filedialog.asksaveasfilename(parent=window,title='Save asset report',initialfile='ASSETS.json',defaultextension='.json')
         if path:Path(path).write_text(json.dumps(result,indent=2)+'\n')
-    ttk.Button(window,text='Save report...',command=lambda:editor.guarded(save)).pack(pady=(0,12))
+    ttk.Button(window,text='Save report...',command=lambda:guard(view,save)).pack(pady=(0,12))
+    return view
 
 def menu(editor,parent):
     button=ttk.Menubutton(parent,text='Delivery');options=tk.Menu(button,tearoff=False);button.configure(menu=options)

@@ -20,6 +20,14 @@ Back/Forward, saves unapplied artwork and persists the layout. Screenshot:
 `work/editor-workspace.png`. The existing launcher/library workflow continues
 to pass after the editor entry point switches to the workspace.
 
+UI3 extends that journey to verify that editing a unit sprite creates no map
+editor, Back restores the selected map, event-inspector text saves correctly,
+and Cancel preserves unfinished inspector fields. The construction-kit and
+world-art GUI journeys pass. Two graph tests cover loops, disconnected events,
+deterministic non-overlapping placement and bounded neighbour selection.
+Screenshots: `work/editor-workspace-sprite.png` and
+`work/editor-workspace-graph.png`.
+
 ## Construction Kit five-milestone verification — 2026-10-18
 
 - Linux build: two jobs; **72/72 CTests** (44.51 s), **136/136 Python tests**

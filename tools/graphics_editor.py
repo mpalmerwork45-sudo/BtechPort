@@ -33,6 +33,7 @@ def open_image_editor(owner, image):
 class GraphicsEditor:
     def __init__(self, owner):
         self.owner, self.document = owner, owner.document
+        self.editor=scope_of(owner).owner
         self.window = view_window(self,owner,'graphics','Artwork')
         self.window.title('Graphics and sprites'); self.window.geometry('880x650')
         self.window.minsize(720, 500)
@@ -66,7 +67,18 @@ class GraphicsEditor:
 
     def guard(self, fn): return guard(self,fn)
     def close(self):
+        if hasattr(self.window,'workspace'):
+            if scope_of(self).confirm_view(self):self.window.workspace.hide(self.window)
+            return
         if scope_of(self).confirm_close(self):self.window.destroy()
+    def map_view(self):
+        # Artwork is independent of map UI. Only a map-specific command opens
+        # that view; unit/library sprite editing never constructs a hidden map.
+        self.editor.edit_adventure();return self.editor.map_editor
+    def refresh_views(self):
+        maps=self.editor.map_editor
+        if maps and maps.window.winfo_exists():maps.refresh()
+        self.refresh()
     def current(self):
         return next((i for i in self.document.art['images'] if i['id'] == self.selected), None)
     def refresh(self):
@@ -91,12 +103,12 @@ class GraphicsEditor:
     def put(self, im, old=None,metadata=None):
         art = copy.deepcopy(self.document.art)
         if old:
-            current = self.current()
+            current = next((i for i in art['images'] if i['id']==old['id']),None)
             if current != old: raise EditorError('This image changed while its pixel editor was open. Reopen it before applying.')
             art['images'][art['images'].index(current)] = im
         else: art['images'].append(im)
-        self.selected = im['id']; self.document.replace_art(art,metadata=metadata); self.owner.refresh()
-        parent=self.owner.parent
+        self.selected = im['id']; self.document.replace_art(art,metadata=metadata); self.refresh_views()
+        parent=self.editor
         if parent.current and parent.collection in ('mechs','people'):parent.stop_sprite();parent.start_sprite()
     def new(self):
         f=Form(self,'New graphic'); f.field('name','New image'); f.field('kind','tile',['tile','sprite','icon','screen'])
@@ -119,57 +131,57 @@ class GraphicsEditor:
                 from art_editing import import_tiles
                 art=copy.deepcopy(self.document.art)
                 art['images'].extend(import_tiles(path,self.document.content['package_id'],art['images']))
-                self.document.replace_art(art); self.owner.refresh()
+                self.document.replace_art(art); self.refresh_views()
             else:self.put(import_image(path,self.document.content['package_id'],self.document.art['images'],v['kind'],int(v['frame_width']) or None,int(v['frame_height']) or None))
         f.submit(apply)
     def original(self):
         f=Form(self,'Copy original sprite into package'); f.field('first',0,label='First sprite (Locust 0, Stinger 146, player 166, NPC 270)'); f.field('frames',16)
         def apply(v):
-            im=original_sprite(self.document,self.owner.parent.settings,int(v['first']),int(v['frames']))
+            im=original_sprite(self.document,self.editor.settings,int(v['first']),int(v['frames']))
             self.put(clone_image(im,self.document.content['package_id'],self.document.art['images']))
         f.submit(apply)
     def map_tile(self):
-        selected=self.owner.brush.curselection()
+        selected=self.map_view().brush.curselection()
         if not selected:raise EditorError('Choose a map tile in the palette first.')
         tile=self.document.adventure['tiles'][selected[0]]
         if tile['sheet']=='package:art':
             source=next(i for i in self.document.art['images'] if i['id']==tile['graphic'])
             self.put(clone_image(source,self.document.content['package_id'],self.document.art['images']))
         else:
-            try:colors=self.owner.graphics[tile['sheet']][tile['graphic']]
+            try:colors=self.map_view().graphics[tile['sheet']][tile['graphic']]
             except (KeyError,IndexError):raise EditorError('Wait for the map graphics preview to load first.')
             im=new_image(self.document.content['package_id'],self.document.art['images'],'Copied map tile')
             im['frames']=[[''.join(color.lstrip('#')+'ff' for color in row) for row in colors]]
             self.put(im)
         self.edit()
     def edit_map_tile(self):
-        selected=self.owner.brush.curselection()
+        selected=self.map_view().brush.curselection()
         if not selected or selected[0]>=len(self.document.adventure['tiles']):raise EditorError('Choose a map tile in the palette first.')
         art=copy.deepcopy(self.document.art);a=copy.deepcopy(self.document.adventure)
-        im=editable_tile(art,a,selected[0],self.document.content['package_id'],self.owner.graphics)
+        im=editable_tile(art,a,selected[0],self.document.content['package_id'],self.map_view().graphics)
         self.selected=im['id']
         if art!=self.document.art or a!=self.document.adventure:
-            self.document.replace_art(art,a);self.owner.refresh()
+            self.document.replace_art(art,a);self.refresh_views()
         self.refresh();self.edit()
     def delete(self):
         if not self.current():return
         art=copy.deepcopy(self.document.art); art['images']=[i for i in art['images'] if i['id']!=self.selected]
-        self.document.replace_art(art); self.selected=None; self.owner.refresh()
-        self.owner.status.set('Image removed. Validate reports any remaining references; Undo restores it.')
+        self.document.replace_art(art); self.selected=None; self.refresh_views()
+        self.editor.status.set('Image removed. Validate reports any remaining references; Undo restores it.')
     def use_tile(self):
         im=self.current()
         if not im or im['kind']!='tile':raise EditorError('Choose a 16x16 tile image first.')
         a=copy.deepcopy(self.document.adventure)
         value=graphic_tile(a,self.document.content['package_id'],'package:art',im['id'])
-        self.owner.commit(a)
+        self.document.replace_adventure(a);self.refresh_views()
         index=next(i for i,t in enumerate(a['tiles']) if t['id']==value)
-        self.owner.brush.selection_set(str(index)); self.owner.select_brush(); self.owner.window.lift()
+        self.map_view().brush.selection_set(str(index)); self.map_view().select_brush(); self.map_view().window.lift()
     def binding(self):
         im=self.current()
         if not im or im['kind']!='sprite':raise EditorError('Choose a sprite image first.')
         f=Form(self,'Assign sprite role'); f.field('slot','player',SLOTS)
         def apply(v):
-            art=copy.deepcopy(self.document.art); bind(art,v['slot'],im['id']); self.document.replace_art(art); self.owner.refresh()
+            art=copy.deepcopy(self.document.art); bind(art,v['slot'],im['id']); self.document.replace_art(art); self.refresh_views()
         f.submit(apply)
 
 
@@ -181,43 +193,47 @@ class PixelEditor:
         self.original_layers=copy.deepcopy(self.image);self.pixel_selection=None;self.pixel_clipboard=None
         self.window=view_window(self,owner,'pixels',image['name'],image['id']); self.window.title('Pixel editor - '+image['name']); self.window.geometry('920x730')
         self.history=[]; self.future=[]; self.before=None; self.last=None; self.playing=False
-        bar=ttk.Frame(self.window,padding=8); bar.pack(fill='x')
-        self.tool=tk.StringVar(value='Pencil'); ttk.Combobox(bar,textvariable=self.tool,values=['Pencil','Line','Rectangle','Fill','Erase','Eyedropper','Select','Paste selection'],state='readonly',width=15).pack(side='left')
-        self.color=tk.StringVar(value='ffffffff'); ttk.Entry(bar,textvariable=self.color,width=10).pack(side='left',padx=5)
-        ttk.Button(bar,text='Color...',command=self.choose_color).pack(side='left')
-        self.zoom=tk.StringVar(value=str(min(16,max(2,512//max(image['width'],image['height'])))))
-        z=ttk.Combobox(bar,textvariable=self.zoom,values=['1','2','4','8','16','24','32'],width=4,state='readonly'); z.pack(side='left',padx=8);z.bind('<<ComboboxSelected>>',lambda _:self.draw())
-        for title,cb in [('Undo',self.undo),('Redo',self.redo),('Apply',self.apply)]:ttk.Button(bar,text=title,command=lambda f=cb:self.guard(f)).pack(side='left',padx=3)
-        colors=ttk.Frame(self.window,padding=(8,0)); colors.pack(fill='x')
-        swatches=tk.Canvas(colors,width=384,height=24,highlightthickness=0);swatches.pack(side='left')
-        for i,c in enumerate(DEFAULT_COLORS):swatches.create_rectangle(i*24,0,i*24+23,23,fill='#'+c,outline='#999999')
-        swatches.bind('<Button-1>',lambda e:self.color.set(DEFAULT_COLORS[max(0,min(15,e.x//24))]+'ff'))
-        self.build_frames()
-        transforms=ttk.Frame(self.window,padding=(8,0,8,8));transforms.pack(fill='x')
-        for title in ('Flip X','Flip Y'):
-            ttk.Button(transforms,text=title,command=lambda op=title:self.guard(lambda:self.transform(op))).pack(side='left',padx=3)
-        more=ttk.Menubutton(transforms,text='Transform');menu=tk.Menu(more,tearoff=False)
-        for title in ('Rotate right','Rotate left','Nudge left','Nudge right','Nudge up','Nudge down','Clear'):
-            menu.add_command(label=title,command=lambda op=title:self.guard(lambda:self.transform(op)))
-        more.configure(menu=menu);more.pack(side='left',padx=3)
-        self.all_frames=tk.BooleanVar(value=False);self.wrap=tk.BooleanVar(value=False)
-        ttk.Checkbutton(transforms,text='All frames',variable=self.all_frames).pack(side='left',padx=8)
-        ttk.Checkbutton(transforms,text='Wrap nudged pixels',variable=self.wrap).pack(side='left')
-        self.grid=tk.BooleanVar(value=True)
-        ttk.Checkbutton(transforms,text='Grid',variable=self.grid,command=self.draw).pack(side='left',padx=8)
-        extra=ttk.Menubutton(transforms,text='Selection / canvas');em=tk.Menu(extra,tearoff=False)
-        for title,method in [('Copy selection',self.copy_pixels),('Cut selection',lambda:self.copy_pixels(True)),('Crop to selection',self.crop),('Resize canvas',self.resize_dialog),('Export PNG sheet',self.export_dialog)]:em.add_command(label=title,command=lambda f=method:self.guard(f))
-        extra.configure(menu=em);extra.pack(side='left',padx=6)
-        # Keep the extra controls in the palette row; the drawing canvas
-        # retains its useful size on a 1024x768 desktop.
-        ttk.Label(colors,text=' Layer').pack(side='left');self.layer=ttk.Combobox(colors,state='readonly',width=16);self.layer.pack(side='left',padx=4);self.layer.bind('<<ComboboxSelected>>',lambda _:self.change_layer())
-        layers_button=ttk.Menubutton(colors,text='Layers');layers_menu=tk.Menu(layers_button,tearoff=False)
-        for title,method in [('New layer',self.new_layer),('Rename',self.rename_layer),('Show / hide',self.toggle_layer),('Raise',lambda:self.reorder_layer(1)),('Lower',lambda:self.reorder_layer(-1)),('Delete',self.delete_layer)]:layers_menu.add_command(label=title,command=lambda f=method:self.guard(f))
-        layers_button.configure(menu=layers_menu);layers_button.pack(side='left',padx=4)
-        view=ttk.Frame(self.window);view.pack(fill='both',expand=True,padx=8,pady=(0,8));view.columnconfigure(0,weight=1);view.rowconfigure(0,weight=1)
-        self.canvas=tk.Canvas(view,highlightthickness=0,background='#d6d6d6')
-        sx=ttk.Scrollbar(view,orient='horizontal',command=self.canvas.xview);sy=ttk.Scrollbar(view,command=self.canvas.yview)
-        self.canvas.configure(xscrollcommand=sx.set,yscrollcommand=sy.set);self.canvas.grid(row=0,column=0,sticky='nsew');sx.grid(row=1,column=0,sticky='ew');sy.grid(row=0,column=1,sticky='ns')
+        if hasattr(self.window,'workspace'):
+            from editor_art_layout import build_pixel
+            build_pixel(self)
+        else:
+            bar=ttk.Frame(self.window,padding=8); bar.pack(fill='x')
+            self.tool=tk.StringVar(value='Pencil'); ttk.Combobox(bar,textvariable=self.tool,values=['Pencil','Line','Rectangle','Fill','Erase','Eyedropper','Select','Paste selection'],state='readonly',width=15).pack(side='left')
+            self.color=tk.StringVar(value='ffffffff'); ttk.Entry(bar,textvariable=self.color,width=10).pack(side='left',padx=5)
+            ttk.Button(bar,text='Color...',command=self.choose_color).pack(side='left')
+            self.zoom=tk.StringVar(value=str(min(16,max(2,512//max(image['width'],image['height'])))))
+            z=ttk.Combobox(bar,textvariable=self.zoom,values=['1','2','4','8','16','24','32'],width=4,state='readonly'); z.pack(side='left',padx=8);z.bind('<<ComboboxSelected>>',lambda _:self.draw())
+            for title,cb in [('Undo',self.undo),('Redo',self.redo),('Apply',self.apply)]:ttk.Button(bar,text=title,command=lambda f=cb:self.guard(f)).pack(side='left',padx=3)
+            colors=ttk.Frame(self.window,padding=(8,0)); colors.pack(fill='x')
+            swatches=tk.Canvas(colors,width=384,height=24,highlightthickness=0);swatches.pack(side='left')
+            for i,c in enumerate(DEFAULT_COLORS):swatches.create_rectangle(i*24,0,i*24+23,23,fill='#'+c,outline='#999999')
+            swatches.bind('<Button-1>',lambda e:self.color.set(DEFAULT_COLORS[max(0,min(15,e.x//24))]+'ff'))
+            self.build_frames()
+            transforms=ttk.Frame(self.window,padding=(8,0,8,8));transforms.pack(fill='x')
+            for title in ('Flip X','Flip Y'):
+                ttk.Button(transforms,text=title,command=lambda op=title:self.guard(lambda:self.transform(op))).pack(side='left',padx=3)
+            more=ttk.Menubutton(transforms,text='Transform');menu=tk.Menu(more,tearoff=False)
+            for title in ('Rotate right','Rotate left','Nudge left','Nudge right','Nudge up','Nudge down','Clear'):
+                menu.add_command(label=title,command=lambda op=title:self.guard(lambda:self.transform(op)))
+            more.configure(menu=menu);more.pack(side='left',padx=3)
+            self.all_frames=tk.BooleanVar(value=False);self.wrap=tk.BooleanVar(value=False)
+            ttk.Checkbutton(transforms,text='All frames',variable=self.all_frames).pack(side='left',padx=8)
+            ttk.Checkbutton(transforms,text='Wrap nudged pixels',variable=self.wrap).pack(side='left')
+            self.grid=tk.BooleanVar(value=True)
+            ttk.Checkbutton(transforms,text='Grid',variable=self.grid,command=self.draw).pack(side='left',padx=8)
+            extra=ttk.Menubutton(transforms,text='Selection / canvas');em=tk.Menu(extra,tearoff=False)
+            for title,method in [('Copy selection',self.copy_pixels),('Cut selection',lambda:self.copy_pixels(True)),('Crop to selection',self.crop),('Resize canvas',self.resize_dialog),('Export PNG sheet',self.export_dialog)]:em.add_command(label=title,command=lambda f=method:self.guard(f))
+            extra.configure(menu=em);extra.pack(side='left',padx=6)
+            # Keep the extra controls in the palette row; the drawing canvas
+            # retains its useful size on a 1024x768 desktop.
+            ttk.Label(colors,text=' Layer').pack(side='left');self.layer=ttk.Combobox(colors,state='readonly',width=16);self.layer.pack(side='left',padx=4);self.layer.bind('<<ComboboxSelected>>',lambda _:self.change_layer())
+            layers_button=ttk.Menubutton(colors,text='Layers');layers_menu=tk.Menu(layers_button,tearoff=False)
+            for title,method in [('New layer',self.new_layer),('Rename',self.rename_layer),('Show / hide',self.toggle_layer),('Raise',lambda:self.reorder_layer(1)),('Lower',lambda:self.reorder_layer(-1)),('Delete',self.delete_layer)]:layers_menu.add_command(label=title,command=lambda f=method:self.guard(f))
+            layers_button.configure(menu=layers_menu);layers_button.pack(side='left',padx=4)
+            view=ttk.Frame(self.window);view.pack(fill='both',expand=True,padx=8,pady=(0,8));view.columnconfigure(0,weight=1);view.rowconfigure(0,weight=1)
+            self.canvas=tk.Canvas(view,highlightthickness=0,background='#d6d6d6')
+            sx=ttk.Scrollbar(view,orient='horizontal',command=self.canvas.xview);sy=ttk.Scrollbar(view,command=self.canvas.yview)
+            self.canvas.configure(xscrollcommand=sx.set,yscrollcommand=sy.set);self.canvas.grid(row=0,column=0,sticky='nsew');sx.grid(row=1,column=0,sticky='ew');sy.grid(row=0,column=1,sticky='ns')
         self.canvas.bind('<Button-1>',lambda e:self.guard(lambda:self.stroke(e,True)))
         self.canvas.bind('<B1-Motion>',lambda e:self.guard(lambda:self.stroke(e,False)))
         self.canvas.bind('<ButtonRelease-1>',lambda _:self.finish())
@@ -237,7 +253,7 @@ class PixelEditor:
         self.image=state['image'];self.original=state['original'];self.original_layers=state['layers']
         self.history=state['history'];self.future=state['future'];self.refresh_frames();self.refresh_layers();self.draw()
     def build_frames(self):
-        frames=ttk.Frame(self.window,padding=8);frames.pack(fill='x')
+        frames=ttk.Frame(getattr(self,'frame_host',self.window),padding=8);frames.pack(fill='x')
         ttk.Label(frames,text='Frame').pack(side='left');self.frame=ttk.Combobox(frames,state='readonly',width=5);self.frame.pack(side='left',padx=6)
         self.frame.bind('<<ComboboxSelected>>',lambda _:self.draw())
         for title,cb in [('Clone frame',self.add_frame),('Delete frame',self.delete_frame),('Play / stop',self.play)]:ttk.Button(frames,text=title,command=lambda f=cb:self.guard(f)).pack(side='left',padx=4)
@@ -326,6 +342,9 @@ class PixelEditor:
     def apply(self):
         apply_draft(self);self.window.destroy()
     def close(self):
+        if hasattr(self.window,'workspace'):
+            if scope_of(self).confirm_view(self):self.window.destroy()
+            return
         if self.image!=self.original_layers:
             answer=messagebox.askyesnocancel('Unfinished artwork','Apply pixel edits before closing?',parent=self.window)
             if answer is None:return

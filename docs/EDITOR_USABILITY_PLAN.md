@@ -240,6 +240,13 @@ line arguments and source/distribution entry points still reach the right view.
 
 ### UI3 Connected authoring workflows
 
+**Implemented with focused Linux verification:** direct unit/library sprite
+editing, searchable named references, a canvas-first art layout, event properties
+in the shared inspector, nearby-event filtering, arrange/zoom/fit and draggable
+connections are in place. World views have their own tile brush and city opening;
+map markers link to their events. Navigation and layout retain selections and
+view state. Dependency checks and recovery are completed in UI4.
+
 1. **Worlds and maps:** integrate world, city and jigsaw views; keep a local tile
    palette in the active workspace. Open city overlays and entrance destinations
    directly. Preserve painting, fill/stamps, grouped dragging, collision and

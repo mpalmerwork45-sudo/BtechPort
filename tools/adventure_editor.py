@@ -60,10 +60,13 @@ class Form:
     def field(self, key, value, choices=None, label=None):
         ttk.Label(self.body, text=label or key.replace("_", " ").title()).grid(row=self.row, column=0, sticky="w", padx=10, pady=4)
         var = tk.StringVar(value=str(value))
-        widget = ttk.Combobox(self.body, textvariable=var, values=choices, state="readonly", width=48) if choices is not None else ttk.Entry(self.body, textvariable=var, width=50)
+        from editor_pickers import ReferenceBox,pick_reference
+        widget = ReferenceBox(self.body,self,var,choices,width=38) if choices is not None else ttk.Entry(self.body, textvariable=var, width=42)
         widget.grid(row=self.row, column=1, sticky="ew", padx=10, pady=4)
         self.values[key] = var
         self.widgets[key]=widget
+        if choices and (len(choices)>8 or any(':' in str(v) for v in choices)):
+            ttk.Button(self.body,text='Browse...',command=lambda:pick_reference(self,widget.ids,var,label or key)).grid(row=self.row,column=2,padx=(4,0))
         if isinstance(value,int):self.integers.add(key)
         self.row += 1
         return widget
@@ -147,6 +150,7 @@ class AdventureEditor:
         # lists must scroll inside their pane rather than push controls away.
         self.tabs.pack_forget();self.tabs.pack(fill="both",expand=True)
         self.build_maps();self.build_events();self.build_world();self.reload_graphics()
+        if hasattr(self.window,'workspace'):self.tabs.hide(self.event_tab)
         self.window.bind("<Control-s>", lambda _: self.guard(self.save))
         self.window.bind("<Control-z>", lambda _: self.guard(self.undo))
         self.window.bind("<Control-y>", lambda _: self.guard(self.redo))
@@ -483,9 +487,7 @@ class AdventureEditor:
 
     def edit_graphics(self):
         self.apply_pending()
-        if self.art_editor and self.art_editor.window.winfo_exists():self.art_editor.window.lift();return
-        from graphics_editor import GraphicsEditor
-        self.art_editor=GraphicsEditor(self)
+        self.art_editor=self.parent.graphics_editor()
 
     def finish_stroke(self):
         if self.stroke is not None:
@@ -707,6 +709,7 @@ class AdventureEditor:
     def select_marker(self):
         if self.markers.curselection():
             self.selected_marker=self.marker_ids[self.markers.curselection()[0]];self.draw()
+            if hasattr(self.window,'workspace'):self.window.workspace.update_inspector()
 
     def edit_marker(self):
         if not self.markers.curselection():return
@@ -994,6 +997,9 @@ class AdventureEditor:
     def play(self):self.save();self.parent.launch_player()
     def play_here(self):self.save();self.parent.launch_player((self.scene()["id"],*self.cursor))
     def close(self):
+        if hasattr(self.window,'workspace'):
+            if not scope_of(self).confirm_view(self):return
+            self.cancel_gesture();self.event_pending=False;self.populate_event();self.window.workspace.hide(self.window);return
         # Shared document edits remain in the parent even if this window closes.
         if not scope_of(self).confirm_close(self):return
         self.window.destroy();self.parent.map_editor=None

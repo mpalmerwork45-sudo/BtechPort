@@ -44,6 +44,7 @@ class EditorPane(ttk.Frame):
         super().__init__(workspace.tabs)
         self.workspace,self.key,self.caption,self.controller,self.scope=workspace,key,title,controller,scope
         self.close_callback=None
+        self.jobs=set()
     def title(self,value=None):
         if value is None:return self.caption
         self.caption=value;self.workspace.tabs.tab(self,text=value if len(value)<=22 else value[:19]+'...')
@@ -57,8 +58,20 @@ class EditorPane(ttk.Frame):
         if name=='WM_DELETE_WINDOW':
             if callback is not None:self.close_callback=callback
             return self.close_callback
+    def after(self,ms,callback=None,*args):
+        if callback is None:return super().after(ms)
+        job=None
+        def run():
+            self.jobs.discard(job)
+            if self.winfo_exists():return callback(*args)
+        job=super().after(ms,run);self.jobs.add(job);return job
+    def after_cancel(self,job):
+        self.jobs.discard(job);return super().after_cancel(job)
     def destroy(self):
+        for job in list(self.jobs):self.after_cancel(job)
         if self.workspace.views.get(self.key) is self:self.workspace.views.pop(self.key,None)
+        custom=self.workspace.custom_inspectors.pop(self.key,None)
+        if custom is not None:custom.destroy()
         super().destroy()
 
 
@@ -67,9 +80,9 @@ class Workspace:
         from roster_editor import RosterEditor,configure_editor_style
         self.window,self.validator,self.state_dir=window,validator,Path(state_dir)
         window.workspace=self
-        self.views={};self.scopes=[];self.history=[];self.history_index=-1
+        self.views={};self.scopes=[];self.history=[];self.history_index=-1;self.custom_inspectors={}
         self.navigating=False;self.tree_refreshing=False;self.tree_actions={};self.last_tree_selection=None
-        self.last_signature=None;self.problems=[];self.closing=False;self.timer=None
+        self.last_signature=None;self.problems=[];self.closing=False;self.timer=None;self.restoring=False
         self.layout_file=self.state_dir/'workspace.json'
         try:self.layout=json.loads(self.layout_file.read_text())
         except (OSError,ValueError):self.layout={}
@@ -84,7 +97,9 @@ class Workspace:
         ttk.Label(self.explorer,text='PROJECT',style='Section.TLabel').pack(anchor='w',pady=(2,6))
         self.query=tk.StringVar();ttk.Entry(self.explorer,textvariable=self.query,width=22).pack(fill='x',pady=(0,6))
         self.query.trace_add('write',lambda *_:self.refresh_tree())
-        self.tree=ttk.Treeview(self.explorer,show='tree',selectmode='browse');self.tree.pack(fill='both',expand=True)
+        tree_host=ttk.Frame(self.explorer);tree_host.pack(fill='both',expand=True)
+        self.tree=ttk.Treeview(tree_host,show='tree',selectmode='browse');self.tree.pack(side='left',fill='both',expand=True)
+        tree_scroll=ttk.Scrollbar(tree_host,command=self.tree.yview);tree_scroll.pack(side='right',fill='y');self.tree.configure(yscrollcommand=tree_scroll.set)
         self.tree.bind('<<TreeviewSelect>>',self.select_tree)
         self.tree.bind('<Return>',lambda _:self.select_tree(force=True))
         self.tree.bind('<ButtonRelease-1>',lambda _:self.select_tree(force=True))
@@ -101,9 +116,10 @@ class Workspace:
         self.tabs.bind('<<NotebookTabChanged>>',self.tab_changed)
         self.inspector=ttk.Frame(self.horizontal,padding=10);self.horizontal.add(self.inspector,weight=1)
         ttk.Label(self.inspector,text='INSPECTOR',style='Section.TLabel').pack(anchor='w')
-        self.inspect_title=tk.StringVar(value='Selection');ttk.Label(self.inspector,textvariable=self.inspect_title,font='TkHeadingFont',wraplength=210).pack(anchor='w',pady=10)
-        self.inspect_text=tk.StringVar();ttk.Label(self.inspector,textvariable=self.inspect_text,wraplength=210,justify='left').pack(anchor='w',fill='x')
-        self.inspect_actions=ttk.Frame(self.inspector);self.inspect_actions.pack(fill='x',pady=12)
+        self.inspect_generic=ttk.Frame(self.inspector);self.inspect_generic.pack(fill='both',expand=True)
+        self.inspect_title=tk.StringVar(value='Selection');ttk.Label(self.inspect_generic,textvariable=self.inspect_title,font='TkHeadingFont',wraplength=210).pack(anchor='w',pady=10)
+        self.inspect_text=tk.StringVar();ttk.Label(self.inspect_generic,textvariable=self.inspect_text,wraplength=210,justify='left').pack(anchor='w',fill='x')
+        self.inspect_actions=ttk.Frame(self.inspect_generic);self.inspect_actions.pack(fill='x',pady=12)
         self.bottom=ttk.Notebook(self.vertical);self.vertical.add(self.bottom,weight=1)
         self.problem_page=ttk.Frame(self.bottom);self.bottom.add(self.problem_page,text='Problems')
         self.problem_list=ttk.Treeview(self.problem_page,columns=('scope','message'),show='headings',height=4)
@@ -144,24 +160,74 @@ class Workspace:
         return scope_of(self.active_owner()) or self.app._editor_scope
 
     def activate(self,view):
-        if view.winfo_exists():self.tabs.select(view)
+        if view.winfo_exists():self.tabs.add(view,text=view.caption[:22]);self.tabs.select(view)
+
+    def hide(self,view):
+        # Map/asset browsers provide shared caches to their open child views.
+        # Closing their tab retains that controller, without a hidden OS window.
+        self.tabs.hide(view)
 
     def tab_changed(self,_=None):
         view=self.current_view()
         if not view:return
-        if not self.navigating and (self.history_index<0 or self.history[self.history_index]!=view.key):
-            self.history=self.history[:self.history_index+1]+[view.key];self.history_index=len(self.history)-1
+        self.record_navigation()
         self.breadcrumb.set(view.caption)
         self.update_inspector()
 
     def navigate(self,step):
         index=self.history_index+step
         while 0<=index<len(self.history):
-            view=self.views.get(self.history[index])
+            entry=self.history[index];view=self.views.get(entry['key'])
             if view and view.winfo_exists():
-                self.history_index=index;self.navigating=True
-                self.tabs.select(view);self.window.update_idletasks();self.navigating=False;return
+                self.navigating=True
+                try:
+                    self.restore_view(view,entry['state']);self.tabs.select(view);self.window.update_idletasks();self.history_index=index
+                except Exception as error:report(self.active_owner(),error)
+                finally:self.navigating=False
+                return
             index+=step
+
+    def view_state(self,view):
+        owner=view.controller;kind=view.key[1];state={}
+        if owner is None:return state
+        if kind=='roster':state.update(kind=owner.kind.get(),current=owner.current)
+        elif kind=='maps':state.update(map=owner.scene()['id'],marker=owner.selected_marker,cursor=owner.cursor,tab=owner.tabs.index(owner.tabs.select()))
+        elif kind=='world':state.update(world=owner.world_id,city=owner.city)
+        elif kind=='events':state.update(event=owner.selected,filter=owner.view_mode.get())
+        elif kind=='graphics':state.update(selected=owner.selected)
+        elif kind=='pixels':
+            state.update(frame=owner.frame.current())
+            if hasattr(owner,'view'):state.update(view=owner.view.get(),direction=owner.direction,phase=owner.phase)
+        if hasattr(owner,'zoom'):state['zoom']=owner.zoom.get()
+        if hasattr(owner,'canvas'):state['scroll']=[owner.canvas.xview()[0],owner.canvas.yview()[0]]
+        return state
+
+    def record_navigation(self):
+        view=self.current_view()
+        if self.navigating or self.restoring or not view:return
+        entry=dict(key=view.key,state=self.view_state(view))
+        if self.history_index>=0 and self.history[self.history_index]==entry:return
+        self.history=self.history[:self.history_index+1]+[entry];self.history_index=len(self.history)-1
+
+    def restore_view(self,view,state):
+        owner=view.controller;kind=view.key[1]
+        if owner is None:return
+        if kind=='roster':
+            self.open_unit(state.get('kind','Mechs'),state.get('current'),owner)
+        elif kind=='maps':
+            owner.map_choice.current(next(i for i,m in enumerate(owner.adventure['maps']) if m['id']==state['map']));owner.change_map()
+            owner.selected_marker=tuple(state['marker']) if state.get('marker') else None;owner.cursor=tuple(state.get('cursor',owner.cursor));owner.tabs.select(state.get('tab',0))
+        elif kind=='world':owner.world_id=state.get('world');owner.city=state.get('city');owner.refresh()
+        elif kind=='events':owner.selected=state.get('event');owner.view_mode.set(state.get('filter','Nearby events'));owner.edit()
+        elif kind=='graphics':owner.selected=state.get('selected');owner.refresh()
+        elif kind=='pixels':
+            if hasattr(owner,'view'):
+                owner.view.set(state.get('view',owner.view.get()));owner.direction=state.get('direction',owner.direction);owner.phase=state.get('phase',0);owner.refresh_frames()
+            else:owner.frame.current(state.get('frame',0))
+        if 'zoom' in state and hasattr(owner,'zoom'):owner.zoom.set(state['zoom'])
+        if hasattr(owner,'draw'):owner.draw()
+        if 'scroll' in state and hasattr(owner,'canvas'):
+            owner.canvas.xview_moveto(state['scroll'][0]);owner.canvas.yview_moveto(state['scroll'][1])
 
     def action(self,name,method,menu,shortcut=None):
         self.actions[name]=method
@@ -234,7 +300,7 @@ class Workspace:
         if view.controller is self.app:
             self.show_welcome();return
         if view.close_callback:view.close_callback()
-        else:view.destroy()
+        elif not view.scope or view.scope.confirm_view(view):view.destroy()
 
     def save_all(self):
         failures=[]
@@ -253,16 +319,19 @@ class Workspace:
         owner.tabs.select(owner.map_tab);self.update_inspector()
     def open_event(self,identity=None):
         owner=self.map_view()
-        if identity:owner.event_id=identity;owner.refresh_events();owner.populate_event()
-        owner.tabs.select(owner.event_tab);self.update_inspector()
-    def open_world(self):self.map_view().edit_landscape()
-    def open_art(self):self.map_view().edit_graphics()
+        graph=owner.event_graph()
+        if identity:graph.selected=identity
+        graph.edit();graph.window.lift();graph.fit();self.update_inspector()
+    def open_world(self,identity=None):
+        owner=self.map_view();owner.edit_landscape()
+        if identity:owner.world_editor.world_id=identity;owner.world_editor.refresh()
+    def open_art(self):return self.app.graphics_editor()
     def open_playtest(self):
         from playtest_workbench import PlaytestWindow
         owner=self.map_view();return open_view(owner,'playtest',lambda:PlaytestWindow(owner))
 
     def open_unit(self,kind,identity=None,owner=None):
-        owner=owner or self.app;owner.window.lift();owner.kind.set(kind);owner.change_kind()
+        owner=owner or self.app;owner.apply_form();owner.window.lift();owner.kind.set(kind);owner.change_kind()
         if identity:owner.refresh_list(identity)
         self.update_inspector()
 
@@ -273,7 +342,7 @@ class Workspace:
         try:
             self.tree.delete(*self.tree.get_children());self.tree_actions={};query=self.query.get().casefold()
             def row(parent,key,label,action=None):
-                self.tree.insert(parent,'end',iid=key,text=label,open=not parent or label in opened)
+                self.tree.insert(parent,'end',iid=key,text=label,open=label in opened or (not opened and label=='Local maps'))
                 if action:self.tree_actions[key]=action
                 return key
             document=self.app.document
@@ -287,14 +356,17 @@ class Workspace:
                         if query and query not in (label+' '+value['id']).casefold():continue
                         row(category,kind+':'+value['id'],label,lambda k=kind,i=value['id']:self.open_unit(k,i))
                 if document.adventure:
-                    row('','worlds','Worlds / planets',self.open_world)
+                    worlds=row('','worlds','Worlds / planets',self.open_world)
+                    from world_editing import all_worlds
+                    for planet in all_worlds(document.adventure):
+                        if not query or query in (planet['name']+' '+planet['id']).casefold():row(worlds,'world:'+planet['id'],planet['name'],lambda i=planet['id']:self.open_world(i))
                     maps=row('','maps','Local maps',self.open_map)
                     for scene in document.adventure['maps']:
                         if not query or query in (scene['name']+' '+scene['id']).casefold():row(maps,'map:'+scene['id'],scene['name'],lambda i=scene['id']:self.open_map(i))
                     events=row('','events','Events / objectives',self.open_event)
                     for event in document.adventure['events']:
                         if not query or query in str(event).casefold():row(events,'event:'+event['id'],event['id'].split(':')[-1]+' ('+event['op']+')',lambda i=event['id']:self.open_event(i))
-                    row('','art','Artwork',self.open_art)
+                row('','art','Artwork',self.open_art)
             row('','library','Shared Unit Library',self.app.open_library)
             for item in selection:
                 if self.tree.exists(item):self.tree.selection_set(item)
@@ -305,7 +377,7 @@ class Workspace:
         selected=self.tree.selection()
         if selected and selected[0] in self.tree_actions:
             if selected[0]==self.last_tree_selection and not force:return
-            self.last_tree_selection=selected[0];guard(self.app,self.tree_actions[selected[0]])
+            self.record_navigation();self.last_tree_selection=selected[0];guard(self.app,self.tree_actions[selected[0]]);self.record_navigation()
 
     def tree_menu(self,event):
         selected=self.tree.identify_row(event.y)
@@ -319,6 +391,11 @@ class Workspace:
     def update_inspector(self):
         if not hasattr(self,'app'):return
         owner=self.active_owner();view=self.current_view()
+        for panel in self.custom_inspectors.values():panel.pack_forget()
+        custom=self.custom_inspectors.get(view.key) if view else None
+        if custom is not None:
+            self.inspect_generic.pack_forget();custom.pack(fill='both',expand=True);return
+        self.inspect_generic.pack(fill='both',expand=True)
         self.inspect_title.set(view.caption if view else 'Selection')
         scope=scope_of(owner);document=scope.document if scope else None
         lines=[('Shared library design' if scope and scope.owner.library_context else 'Project')]
@@ -331,6 +408,15 @@ class Workspace:
                 for label,callback in [('Edit sprite',owner.edit_unit_sprite),('Choose sprite',owner.choose_sprite)]:ttk.Button(self.inspect_actions,text=label,command=lambda f=callback:guard(owner,f)).pack(fill='x',pady=3)
         elif hasattr(owner,'scene'):
             scene=owner.scene();lines.extend([scene['name'],scene['id'],f'{len(scene["rows"][0])} x {len(scene["rows"])} tiles'])
+            marker=owner.selected_marker
+            if marker and marker[0] in ('entrance','npc'):
+                entrance=next((e for e in scene['entrances'] if e['id']==marker[2]),None)
+                if entrance:
+                    lines.extend([entrance['name'],'Position: '+str(entrance['at'])])
+                    ttk.Button(self.inspect_actions,text='Edit entrance',command=lambda:guard(owner,owner.edit_marker)).pack(fill='x',pady=3)
+                    ttk.Button(self.inspect_actions,text='Open event',command=lambda:self.open_event(entrance['event'])).pack(fill='x',pady=3)
+                    event=next((e for e in owner.adventure['events'] if e['id']==entrance['event']),None)
+                    if event and event['op']=='transfer':ttk.Button(self.inspect_actions,text='Open destination map',command=lambda:self.open_map(event['map'])).pack(fill='x',pady=3)
         else:lines.append('Select an object to edit its properties. Changes belong to the scope shown above.')
         self.inspect_text.set('\n\n'.join(lines))
 
@@ -338,6 +424,7 @@ class Workspace:
         self.problems.append(problem);index=str(len(self.problems)-1)
         title=scope.document.manifest['title'] if scope.document else 'Editor'
         self.problem_list.insert('','end',iid=index,values=(title,problem['message']))
+        if str(self.bottom) not in self.vertical.panes():self.vertical.add(self.bottom,weight=1)
         self.bottom.select(self.problem_page);self.status.set(problem['message'])
         self.log(problem.get('details') or problem['message'])
 
@@ -393,14 +480,41 @@ class Workspace:
     def project_changed(self):
         path=str(self.app.document.root)
         self.layout['recent']=[path]+[p for p in self.layout.get('recent',[]) if p!=path][:7]
-        self.refresh_tree();self.app.window.lift();self.persist_layout()
+        self.refresh_tree();self.app.window.lift()
+        saved=self.layout.get('projects',{}).get(path)
+        if saved:self.window.after_idle(lambda:self.restore_tabs(saved))
 
     def project_replacing(self,scope):
         # Notebook pages are siblings, so replacing a project must retire all
         # its views explicitly rather than rely on a Toplevel's child teardown.
+        self.persist_layout()
         for view in list(self.views.values()):
             if view.scope is scope and view.controller is not scope.owner and view.key[1]!='library':view.destroy()
         scope.live();self.last_tree_selection=None
+
+    def restore_tabs(self,saved):
+        self.restoring=True
+        try:
+            for entry in saved.get('tabs',[]):
+                try:
+                    kind=entry['kind'];identity=entry.get('identity');owner=self.app
+                    if kind=='roster':view=owner.window
+                    elif kind=='maps':view=self.map_view().window
+                    elif kind=='world':self.open_world();view=owner.map_editor.world_editor.window
+                    elif kind=='graphics':view=self.open_art().window
+                    elif kind=='events':view=self.map_view().event_graph().window
+                    elif kind=='pixels':
+                        from graphics_editor import open_image_editor
+                        image=next(i for i in owner.document.art['images'] if i['id']==identity)
+                        view=open_image_editor(owner.graphics_editor(),image).window
+                    else:continue
+                    self.restore_view(view,entry.get('state',{}))
+                except (KeyError,ValueError,StopIteration):continue
+            selected=saved.get('active')
+            if selected:
+                view=next((v for v in self.views.values() if v.scope is self.app._editor_scope and [v.key[1],v.key[2]]==selected),None)
+                if view:view.lift()
+        finally:self.restoring=False
 
     def command_picker(self):
         dialog=tk.Toplevel(self.window);dialog.title('Find command');dialog.transient(self.window)
@@ -454,7 +568,7 @@ class Workspace:
             for i,fraction in enumerate(self.layout.get(key,[])):
                 if i<len(host.panes())-1:host.sashpos(i,int(max(.1,min(.9,fraction))*extent))
         for name,pane,host in [('explorer',self.explorer,self.horizontal),('inspector',self.inspector,self.horizontal),('bottom',self.bottom,self.vertical)]:
-            if name in self.layout.get('hidden',[]) and str(pane) in host.panes():host.forget(pane)
+            if name in self.layout.get('hidden',['bottom']) and str(pane) in host.panes():host.forget(pane)
 
     def persist_layout(self):
         self.layout['geometry']=self.window.geometry()
@@ -462,6 +576,10 @@ class Workspace:
             extent=host.winfo_width() if host is self.horizontal else host.winfo_height()
             self.layout[key]=[host.sashpos(i)/max(1,extent) for i in range(len(host.panes())-1)]
         self.layout['hidden']=[name for name,pane,host in [('explorer',self.explorer,self.horizontal),('inspector',self.inspector,self.horizontal),('bottom',self.bottom,self.vertical)] if str(pane) not in host.panes()]
+        if self.app.document:
+            tabs=[dict(kind=v.key[1],identity=v.key[2],state=self.view_state(v)) for v in self.views.values() if v.scope is self.app._editor_scope and v.key[1]!='library' and self.tabs.tab(v,'state')!='hidden']
+            active=self.current_view()
+            self.layout.setdefault('projects',{})[str(self.app.document.root)]=dict(tabs=tabs,active=[active.key[1],active.key[2]] if active else None)
         self.state_dir.mkdir(parents=True,exist_ok=True)
         from editor_model import ProjectDocument,encoded
         ProjectDocument.atomic_file(self.layout_file,encoded(self.layout))

@@ -114,7 +114,7 @@ class EditorScope:
     def dirty(self):
         return bool(self.document and self.document.dirty) or any(d.pending() for d in self.live())
 
-    def transact(self, operation, only=None):
+    def transact(self, operation, only=None, subset=None):
         """A failed save restores document AND widget drafts, including bad text.
 
         Apply callbacks must not destroy their view. Accept callbacks run only
@@ -126,7 +126,7 @@ class EditorScope:
         before = copy.deepcopy(document.__dict__) if document else None
         drafts = self.live()
         states = [(d, copy.deepcopy(d.capture())) for d in drafts]
-        selected = [only] if only else sorted(drafts, key=lambda d: (d.priority, drafts.index(d)), reverse=True)
+        selected = [only] if only else sorted(drafts if subset is None else subset, key=lambda d: (d.priority, drafts.index(d)), reverse=True)
         applied = []
         self.collecting = True
         try:
@@ -165,6 +165,22 @@ class EditorScope:
             return False
         if answer:
             self.owner.save()
+        return True
+
+    def confirm_view(self,view):
+        """Closing a tab applies/discards its drafts, without saving the disk."""
+        window=getattr(view,'window',view)
+        def belongs(draft):
+            child=draft.view.window
+            while child is not None:
+                if child is window:return True
+                child=getattr(child,'master',None)
+            return False
+        pending=[d for d in self.live() if belongs(d) and d.pending()]
+        if not pending:return True
+        answer=messagebox.askyesnocancel('Unfinished edits','Apply this tab\'s unfinished edits before closing?',parent=visible_parent(window))
+        if answer is None:return False
+        if answer:self.transact(lambda:None,subset=pending)
         return True
 
 

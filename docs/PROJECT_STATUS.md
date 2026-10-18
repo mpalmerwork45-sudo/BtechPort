@@ -5,8 +5,10 @@ defines five stages for dialog/draft reliability, a unified workspace, connected
 authoring workflows, consistent history/recovery, and presentation/performance.
 UI1 protects registered drafts during save/close and fixes dialog ownership.
 UI2 provides the default tabbed workspace, explorer, inspector, Problems panel,
-command search and embedded authoring views. Focused Linux GUI/model checks pass;
-connected workflows, full recovery and polish are in progress.
+command search and embedded authoring views. UI3 connects units to their artwork,
+adds named/searchable pickers, puts event fields in the inspector and provides
+graph filtering/arrangement, a canvas-first sprite layout and navigation state.
+Focused Linux GUI/model checks pass; full recovery and polish are in progress.
 
 **BattleTech Construction Kit** is the editor/launcher name. The authorized
 [five editor milestones](EDITOR_COMPLETION_MILESTONES.md) are implemented with

@@ -26,9 +26,13 @@ class WorldEditor:
         ttk.Button(controls,text='Generate...',command=lambda:self.guard(self.generate)).pack(side='left',padx=(0,8))
         self.tool=tk.StringVar(value='Jigsaw');ttk.Combobox(controls,textvariable=self.tool,state='readonly',values=['Jigsaw','Tile','Erase patch','Move city','Play here'],width=16).pack(side='left')
         self.zoom=tk.StringVar(value='4');z=ttk.Combobox(controls,textvariable=self.zoom,values=['1','2','4','8','16'],state='readonly',width=4);z.pack(side='left',padx=8);z.bind('<<ComboboxSelected>>',lambda _:self.draw())
-        ttk.Label(controls,text='Tile brush: map palette',style='Muted.TLabel',wraplength=170).pack(side='left')
         body=ttk.Panedwindow(self.window,orient='horizontal');body.pack(fill='both',expand=True,padx=8)
         side=ttk.Frame(body);view=ttk.Frame(body);body.add(side,weight=1);body.add(view,weight=5)
+        from editor_pickers import ReferenceBox,pick_reference
+        self.tile_id=tk.StringVar(value=owner.adventure['tiles'][0]['id'])
+        ttk.Label(side,text='Tile brush',style='Section.TLabel').pack(anchor='w',pady=6)
+        self.tile_choice=ReferenceBox(side,self,self.tile_id,[t['id'] for t in owner.adventure['tiles']],width=22);self.tile_choice.pack(fill='x')
+        ttk.Button(side,text='Browse tiles...',command=lambda:pick_reference(self,self.tile_choice.ids,self.tile_id,'World tile brush')).pack(fill='x',pady=(4,8))
         ttk.Label(side,text='JIGSAWS',style='Section.TLabel',padding=6).pack(anchor='w')
         shell=ttk.Frame(side);shell.pack(fill='both',expand=True)
         self.listing=ttk.Treeview(shell,show='tree',selectmode='browse',style='Tiles.Treeview');self.listing.column('#0',width=200)
@@ -44,6 +48,7 @@ class WorldEditor:
         self.canvas.bind('<Button-1>',lambda e:self.guard(lambda:self.pointer(e,True)))
         self.canvas.bind('<B1-Motion>',lambda e:self.guard(lambda:self.pointer(e,False)))
         self.canvas.bind('<ButtonRelease-1>',lambda _:self.guard(self.finish))
+        self.canvas.bind('<Double-1>',lambda e:self.guard(lambda:self.open_city(e)))
         self.window.bind('<Escape>',lambda _:self.cancel())
         self.window.protocol('WM_DELETE_WINDOW',lambda:self.guard(self.close))
         self.info=tk.StringVar();ttk.Label(self.window,textvariable=self.info,style='Status.TLabel',padding=8).pack(fill='x')
@@ -53,6 +58,9 @@ class WorldEditor:
     def guard(self, fn):return guard(self,fn)
     def restore_draft(self,state):self.stroke=state['stroke'];self.drag=state['drag'];self.draw()
     def close(self):
+        if hasattr(self.window,'workspace'):
+            if scope_of(self).confirm_view(self):self.cancel();self.window.workspace.hide(self.window)
+            return
         if scope_of(self).confirm_close(self):self.cancel();self.window.destroy()
     @property
     def adventure(self):return self.stroke or self.document.adventure
@@ -63,6 +71,7 @@ class WorldEditor:
     def change_planet(self):
         self.cancel();self.world_id=all_worlds(self.document.adventure)[self.planet.current()]['id'];self.city=None;self.cache={};self.draw()
     def refresh(self):
+        self.tile_choice.configure(values=[t['id'] for t in self.document.adventure['tiles']])
         worlds=all_worlds(self.document.adventure);self.planet.configure(values=[w['name'] for w in worlds])
         if worlds:
             w=get_world(self.document.adventure,self.world_id);self.world_id=w['id'];self.planet.current(worlds.index(w))
@@ -72,6 +81,14 @@ class WorldEditor:
         if selected and self.listing.exists(selected[0]):self.listing.selection_set(selected[0])
         elif self.listing.get_children():self.listing.selection_set(self.listing.get_children()[0])
         self.draw()
+    def open_city(self,event):
+        z=int(self.zoom.get());x=self.canvas.canvasx(event.x)/z;y=self.canvas.canvasy(event.y)/z
+        world=self.current_world()
+        if not world:return
+        for scene in self.adventure['maps']:
+            ox,oy=scene['origin']
+            if scene['id'] in world['cities'] and ox<=x<ox+len(scene['rows'][0]) and oy<=y<oy+len(scene['rows']):
+                self.cancel();self.owner.map_choice.current(self.adventure['maps'].index(scene));self.owner.change_map();self.owner.tabs.select(self.owner.map_tab);self.owner.window.lift();return
     def new_world(self):
         f=Form(self,'Create world');f.field('name','World');f.field('width',32,label='Width in 8x8 jigsaws');f.field('height',32,label='Height in 8x8 jigsaws')
         def apply(v):
@@ -188,9 +205,10 @@ class WorldEditor:
             if j:
                 for x,y in line(self.last[0]//8,self.last[1]//8,p[0]//8,p[1]//8):self.current_world(self.stroke)['pieces'][y][x]=j['id']
         else:
-            cells=patch_cells(self.current_world(self.stroke));selected=self.owner.brush.curselection()
-            if not selected or selected[0]>=len(self.stroke['tiles']):raise EditorError('Select a tile in the map palette first.')
-            value=token(self.stroke['tiles'][selected[0]])
+            cells=patch_cells(self.current_world(self.stroke))
+            tile=next((t for t in self.stroke['tiles'] if t['id']==self.tile_id.get()),None)
+            if tile is None:raise EditorError('Choose a tile in this world view first.')
+            value=token(tile)
             for x,y in line(*self.last,*p):
                 if self.tool.get()=='Erase patch':cells.pop((x,y),None)
                 else:cells[x,y]=value
