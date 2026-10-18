@@ -76,7 +76,7 @@ class GraphicsEditor:
     def show(self):
         self.preview.delete('all'); im = self.current()
         if not im:
-            self.info.set('Create, import or clone an image. RGBA transparency and up to 32 frames are supported.'); return
+            self.info.set('Create, import or clone an image. RGBA transparency and up to 256 frames are supported.'); return
         z = max(1, min(6, 330//max(im['width'], im['height'])))
         self.preview_image = photo(self.window, im, zoom=z)
         self.preview.create_image(10,10, image=self.preview_image, anchor='nw')
@@ -281,7 +281,7 @@ class PixelEditor:
         if candidate!=self.image:
             self.history.append(self.image);self.history=self.history[-40:];self.future=[];self.image=candidate;self.draw()
     def add_frame(self):
-        if len(self.image['frames'])==32:raise EditorError('An image can have at most 32 frames.')
+        if len(self.image['frames'])==256:raise EditorError('An image can have at most 256 frames.')
         self.history.append(copy.deepcopy(self.image));self.future=[]
         for layer in self.image['_layers']:layer['frames'].append(copy.deepcopy(layer['frames'][self.frame.current()]))
         self.image['frames'].append(copy.deepcopy(self.image['frames'][self.frame.current()]));flatten(self.image);self.refresh_frames();self.frame.current(len(self.image['frames'])-1);self.draw()

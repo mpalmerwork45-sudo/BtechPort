@@ -5,9 +5,10 @@ Keep the CHI sequences aligned with core/animation.c and core/combat.c; a
 32-image per-unit presentation follows frontend/art.c's eight-direction layout.
 """
 import copy
+from action_tracks import ACTIONS,entries
 
 DIRECTIONS = ('Up', 'Up right', 'Right', 'Down right', 'Down', 'Down left', 'Left', 'Up left')
-VIEWS = ('Unit movement', 'Character movement', 'Original mech movement', 'All images')
+VIEWS = ('Unit movement', 'Character movement', 'Original mech movement', 'All images') + tuple(a.title() for a in ACTIONS)
 MECH_FRAMES = ((0,1,2,3), (4,5,6,7), (6,7,4,5), (5,6,7,4),
                (8,9,10,11), (12,13,14,15), (15,12,13,14), (14,15,12,13))
 PERSON_FIRST = (8,4,4,4,0,12,12,12)
@@ -15,6 +16,9 @@ PERSON_FIRST = (8,4,4,4,0,12,12,12)
 
 def sequence(image, view, direction=0):
     count = len(image['frames'])
+    if view.lower() in ACTIONS:
+        track=entries(image,view.lower(),direction)
+        return tuple(f['frame'] for f in track) if track else (0,)
     if view == 'All images': return tuple(range(count))
     if view in ('Unit movement', 'Original mech movement'):
         frames = range(direction*4, direction*4+4) if count == 32 and view == 'Unit movement' else MECH_FRAMES[direction]
@@ -37,11 +41,13 @@ def default_view(document, image):
 def describe(image, view, direction, frame, phase=None):
     frames = sequence(image, view, direction)
     place = phase if phase is not None else (frames.index(frame) if frame in frames else 0)
+    if view.lower() in ACTIONS:return f'{view} - {DIRECTIONS[direction]} | Frame {place+1}/{len(frames)} | Image {frame+1}'
     if view == 'All images': return f"Image {frame+1} of {len(image['frames'])} | {image['name']}"
     return f"{DIRECTIONS[direction]} - movement frame {place+1} of {len(frames)} | Image {frame+1} of {len(image['frames'])}"
 
 
 def sharing_note(image, view, direction):
+    if view.lower() in ACTIONS:return 'Named action track. Edit action defines image order, 32 ms durations and combat sound cues.'
     if view == 'All images': return 'All stored images. Choose a movement preview to see which images the player uses.'
     frames = set(sequence(image, view, direction))
     shared = [DIRECTIONS[d] for d in range(8) if d != direction and frames & set(sequence(image, view, d))]

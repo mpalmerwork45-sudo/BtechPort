@@ -51,4 +51,7 @@ from **Vehicles** (one scrolling list). Selling accepts either type.
 - **VERIFIED (Linux):** [map/art tools](CONSTRUCTION_KIT_ART_TOOLS.md): building
   stamps, grouped markers, starting-formation footprints, deterministic world
   generation, pixel selections/layers/crop and PNG sheet export.
-- Animation/unit and delivery stages remain in progress.
+- **VERIFIED (Linux):** [unit actions and construction](UNIT_ACTION_ANIMATIONS.md):
+  named animation/timing/cues, per-character art, library round trips, construction
+  guidance and additional authored equipment adapters.
+- Delivery/compatibility stage remains in progress.

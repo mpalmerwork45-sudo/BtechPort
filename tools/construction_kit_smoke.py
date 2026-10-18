@@ -54,7 +54,18 @@ def run(env,work):
                 pixel.copy_pixels();assert pixel.pixel_clipboard;pixel.crop();pump();assert pixel.image['width']==3
                 pixel.undo();pump();assert pixel.image['width']==8 and len(pixel.image['_layers'])==2
                 pixel.window.lift();pump();ImageGrab.grab(xdisplay=env['DISPLAY']).save(work/'construction-kit-pixels.png');pixel.apply();pump()
-                reopened_pixel=open_image_editor(art,art.current());pump();assert len(reopened_pixel.image['_layers'])==2;reopened_pixel.close();pump()
+                reopened_pixel=open_image_editor(art,art.current());pump();assert len(reopened_pixel.image['_layers'])==2;
+                from action_tracks import edit_track
+                edit_track(reopened_pixel);pump()
+                form=next(w for w in art.window.winfo_children() if isinstance(w,tk.Toplevel) and w.title()=='Animation action')
+                def descendants(w):
+                    for child in w.winfo_children():
+                        yield child
+                        yield from descendants(child)
+                apply=next(w for w in descendants(form) if w.winfo_class()=='TButton' and w.cget('text')=='Apply');apply.invoke();pump()
+                assert reopened_pixel.image['animations']['walk']['directions'][0]==[dict(frame=0,ticks=4)]
+                reopened_pixel.clone_pose();pump();assert len(reopened_pixel.image['frames'])==5
+                reopened_pixel.apply();pump()
                 owner.save();reopened=ProjectDocument(doc.root,doc.validator)
                 assert editor_data(reopened)==editor_data(doc)
                 print('PASS: Construction Kit title, services, graph dragging, checkpoints/trace, building stamps, footprints and layered sprite selection/crop/undo/save/reopen.')

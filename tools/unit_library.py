@@ -60,6 +60,7 @@ def closure(document, identity, kind='Mechs'):
         # global infantry artwork during an ordinary person import.
         art['bindings'] = copy.deepcopy([b for b in document.art['bindings'] if b['slot'] in ('npc', 'enemy')])
         image_ids.update(b['image'] for b in art['bindings'])
+        if person.get('image'):image_ids.add(person['image'])
     art['images'] = copy.deepcopy([i for i in document.art['images'] if i['id'] in image_ids])
     source = {}
     for name in SOURCE_FILES:
@@ -81,7 +82,7 @@ def closure(document, identity, kind='Mechs'):
                 name=unit.get('name', identity), definition=identity, content=content,
                 person=person, graphics=art, presentation=presentation,editing=editing,
                 infantry_source=('chi:infantry' if person and document.manifest['requires'] != 'none'
-                                 and not any(b['slot'] == 'npc' for b in art['bindings']) else 'package'),
+                                 and not person.get('image') and not any(b['slot'] == 'npc' for b in art['bindings']) else 'package'),
                 provenance=dict(project=document.manifest['title'], documents=source))
 
 

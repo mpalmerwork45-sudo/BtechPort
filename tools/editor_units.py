@@ -11,7 +11,9 @@ def indexed_sprite(source, index):
     return dict(id='library:indexed-sprite',name='Indexed sprite',kind='sprite',width=16,height=16,frames=frames)
 
 
-def person_sprite(document, settings):
+def person_sprite(document, settings, person=None):
+    if person and person.get("image"):
+        return copy.deepcopy(next(i for i in document.art["images"] if i["id"]==person["image"]))
     binding=next((b for b in document.art['bindings'] if b['slot']=='npc'),None)
     if binding:return copy.deepcopy(next(i for i in document.art['images'] if i['id']==binding['image']))
     if document.manifest['requires']!='none':return original_sprite(document,settings,270,16)

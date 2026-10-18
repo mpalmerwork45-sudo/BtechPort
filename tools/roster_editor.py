@@ -395,7 +395,8 @@ class RosterEditor:
                 self.field(general,row,label,['attributes',row-3],integer=True)
             self.field(general,6,'Personal weapon (0-13)',['weapon'],integer=True)
             self.field(general,7,'Personal armour (0-5)',['armor'],integer=True)
-            ttk.Label(general,text='Individual infantry / character template.\nNPC and enemy infantry share the project infantry sprite.',style='CardMuted.TLabel').grid(row=8,column=0,columnspan=2,sticky='w',pady=10)
+            ttk.Label(general,text='Individual infantry / character template.\nEach template can select its own sprite; an unset sprite uses the project default.',style='CardMuted.TLabel').grid(row=8,column=0,columnspan=2,sticky='w',pady=10)
+            ttk.Button(general,text='Choose sprite...',command=lambda:self.guarded(self.choose_sprite)).grid(row=9,column=1,sticky='w')
             skills=self.tab('Skills')
             for row,label in enumerate(('Sidearms','Rifles','Heavy arms','Gunnery','Piloting','Technical','Medical')):
                 self.field(skills,row,label+' (0-4)',['skills',row],integer=True)
@@ -409,6 +410,8 @@ class RosterEditor:
                 self.field(general, row, label, path, integer=True)
             self.field(general, 8, "Presentation", ["presentation"], choices=[p["id"] for p in self.document.content["presentations"]])
             ttk.Button(general,text='Choose sprite...',command=lambda:self.guarded(self.choose_sprite)).grid(row=9,column=1,sticky='w',pady=8)
+            from construction_guidance import show as guidance
+            ttk.Button(general,text='Construction guidance',command=lambda:self.guarded(lambda:guidance(self))).grid(row=11,column=1,sticky='w',pady=8)
             if vehicle:self.field(general,10,'Drive type',['movement','type'],choices=['tracked','wheeled','hover'])
             for name, key in [("Armor", "armor"), ("Structure", "structure")]+([] if vehicle else [("Equipment", "external_heat_sinks")]):
                 frame = self.tab(name)
@@ -432,7 +435,7 @@ class RosterEditor:
                 ttk.Button(buttons, text=label, command=lambda f=cb: self.guarded(f)).pack(side="left", padx=4)
             self.refresh_mounts()
         elif self.collection=='equipment':
-            self.field(general,3,'Behavior',['behavior'],choices=['heat_sink','jump_jet'])
+            self.field(general,3,'Behavior',['behavior'],choices=['heat_sink','jump_jet','engine_heat_sink','armor_plating'])
             ttk.Label(general,text='Heat sink: one cooling point and one damageable component slot.\nJump jet: one jump point; CHI does not model individual jet damage.\nInstall these on a mech in its Equipment tab.',style='CardMuted.TLabel',wraplength=490).grid(row=4,column=0,columnspan=2,pady=16,sticky='w')
         else:
             self.field(general, 3, "Behavior", ["behavior"], choices=WEAPONS)
@@ -531,7 +534,7 @@ class RosterEditor:
         from unit_editing import add_unit,add_weapon,add_equipment
         self.apply_form();f=Form(self,'New definition')
         if self.kind.get()=='Equipment':
-            f.field('name','Heat sink');f.field('behavior','heat_sink',['heat_sink','jump_jet'])
+            f.field('name','Heat sink');f.field('behavior','heat_sink',['heat_sink','jump_jet','engine_heat_sink','armor_plating'])
         elif self.kind.get()=='Weapons':
             f.field('name','New weapon');f.field('behavior','medium_laser',WEAPONS)
         else:
@@ -592,10 +595,9 @@ class RosterEditor:
         choice.bind('<<ComboboxSelected>>',show);show()
         def apply(v):
             if infantry:
-                from art_editing import bind
-                art=copy.deepcopy(self.document.art)
-                for slot in ('npc','enemy'):bind(art,slot,v['image'])
-                self.document.replace_art(art);self.refresh_list(identity);return
+                adventure=copy.deepcopy(self.document.adventure)
+                next(p for p in adventure['people'] if p['id']==identity)['image']=v['image']
+                self.document.replace_adventure(adventure);self.refresh_list(identity);return
             content=copy.deepcopy(self.document.content);assign_graphic(content,identity,v['image']);self.document.replace(content);self.refresh_list(identity)
         f.submit(apply)
 
@@ -610,7 +612,7 @@ class RosterEditor:
         self.sprite_panel.pack(side='right')
         self.sprite_canvas.delete('all')
         try:
-            self.sprite_source=person_sprite(self.document,self.settings) if self.collection=='people' else unit_sprite(self.document,self.settings,self.item())
+            self.sprite_source=person_sprite(self.document,self.settings,self.item()) if self.collection=='people' else unit_sprite(self.document,self.settings,self.item())
             image=self.sprite_source;zoom=max(1,min(5,96//max(image['width'],image['height'])))
             self.sprite_photos=[photo(self.window,image,frame=i,zoom=zoom) for i in range(len(image['frames']))]
         except (EditorError,OSError,KeyError,StopIteration) as exc:
@@ -660,12 +662,13 @@ class RosterEditor:
         from editor_units import person_sprite
         from art_editing import clone_image,bind
         from graphics_editor import open_image_editor
-        image=person_sprite(self.document,self.settings)
-        if not any(i['id']==image['id'] for i in self.document.art['images']):
+        image=person_sprite(self.document,self.settings,self.item())
+        if not self.item().get('image'):
             image=clone_image(image,self.document.manifest['package_id'],self.document.art['images'])
             art=copy.deepcopy(self.document.art);art['images'].append(image)
-            for slot in ('npc','enemy'):bind(art,slot,image['id'])
-            self.document.replace_art(art)
+            adventure=copy.deepcopy(self.document.adventure)
+            next(p for p in adventure['people'] if p['id']==self.current)['image']=image['id']
+            self.document.replace_art(art,adventure=adventure)
         self.edit_adventure();self.map_editor.edit_graphics();library=self.map_editor.art_editor
         if self.library_context:self.map_editor.window.withdraw()
         library.selected=image['id'];library.refresh();open_image_editor(library,image)

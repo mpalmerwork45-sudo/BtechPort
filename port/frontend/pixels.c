@@ -454,8 +454,8 @@ static void combat_flash(const BtpResources *r, const BtpState *s, int cx, int c
     if (s->effects.stage>=BTP_EFFECT_POSES) {
         int pose_frame=btp_effects_pose(s,&r->combat);
         if (pose_frame>=0) {
-            if (actor_visible && (c->unit[e->actor].infantry || !btp_art_unit(r,c->unit[e->actor].record,(unsigned)pose_frame,e->direction,x,y,104,0,320,200,f))) (void)btp_draw_sprite(&r->sprites,e->base+pose[1+(unsigned)pose_frame],x,y,0,104,f);
-            if (target_visible && btp_effects_reaction(s) && (c->unit[e->target].infantry || !btp_art_unit(r,c->unit[e->target].record,(unsigned)pose_frame,c->unit[e->target].direction,tx,ty,104,0,320,200,f)))
+            if (actor_visible && !btp_art_actor(r,s,e->actor,x,y,104,0,320,200,f) && (c->unit[e->actor].infantry || !btp_art_unit(r,c->unit[e->actor].record,(unsigned)pose_frame,e->direction,x,y,104,0,320,200,f))) (void)btp_draw_sprite(&r->sprites,e->base+pose[1+(unsigned)pose_frame],x,y,0,104,f);
+            if (target_visible && btp_effects_reaction(s) && !btp_art_actor(r,s,e->target,tx,ty,104,0,320,200,f) && (c->unit[e->target].infantry || !btp_art_unit(r,c->unit[e->target].record,(unsigned)pose_frame,c->unit[e->target].direction,tx,ty,104,0,320,200,f)))
                 (void)btp_draw_sprite(&r->sprites,e->target_base+r->combat.reaction[(unsigned)pose_frame&3u],tx,ty,0,104,f);
         }
         if (s->effects.stage==BTP_EFFECT_FLIGHT || s->effects.stage==BTP_EFFECT_BEAM_SOUND) {
@@ -471,6 +471,7 @@ static void combat_flash(const BtpResources *r, const BtpState *s, int cx, int c
             }
         }
         if (target_visible && s->effects.stage==BTP_EFFECT_IMPACT_HOLD) {
+            (void)btp_art_actor(r,s,e->target,tx,ty,104,0,320,200,f);
             /* 12E8:1A78 uses the world anchor, eight pixels above a mech,
                and retains the final impact frame during its five retraces. */
             int ix=208+8*((int)e->tx-cx),iy=96+8*((int)e->ty-cy)-(e->target_base==254 ? 0 : 8);
@@ -479,7 +480,7 @@ static void combat_flash(const BtpResources *r, const BtpState *s, int cx, int c
         return;
     }
     if (frame<count) {
-        if (actor_visible && (c->unit[e->actor].infantry || !btp_art_unit(r,c->unit[e->actor].record,frame,e->direction,x,y,104,0,320,200,f))) (void)btp_draw_sprite(&r->sprites,e->base+pose[1+frame],x,y,0,104,f);
+        if (actor_visible && !btp_art_actor(r,s,e->actor,x,y,104,0,320,200,f) && (c->unit[e->actor].infantry || !btp_art_unit(r,c->unit[e->actor].record,frame,e->direction,x,y,104,0,320,200,f))) (void)btp_draw_sprite(&r->sprites,e->base+pose[1+frame],x,y,0,104,f);
         /* DS:2E3C is the personal hit program. Adding it to the 146-frame
            mech family selects Jason's human sprites (178..181). Mechs keep
            their current pose under the separately drawn impact. */
@@ -1714,7 +1715,11 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         for (unsigned i=0;i<s->combat.count;++i) {
             const BtpCombatUnit *u=&s->combat.unit[i];unsigned terrain;
             const BtpCombatEffect *death=btp_effects_pending_death(s,i);
-            if (u->record[0]==255 && !death) continue;
+            if (u->record[0]==255 && !death) {
+                if (s->effects.count && s->effects.stage==BTP_EFFECT_RETIRE_SOUND && s->effects.shots[0].target==i)
+                    (void)btp_art_actor(r,s,i,(u->infantry ? 208 : 200)+((int)u->x-cx)*8,(u->infantry ? 96 : 80)+((int)u->y-cy)*8,104,0,320,200,f);
+                continue;
+            }
             if (!btp_combat_visible(death ? death->tx : u->x,death ? death->ty : u->y,u->infantry,cx,cy)) continue;
             /* Original ejection follows the mech destruction presentation.
                Suppress its newly activated crew while that mech is pending. */
@@ -1738,7 +1743,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
             unsigned slot=u->infantry ? i<friends ? btp_combat_id(&s->combat,i)==4 ? 0u : 1u : 2u : base>=146 ? 4u : 3u;
             int ux=(u->infantry ? 208 : 200)+((int)(death ? death->tx : u->x)-cx)*8;
             int uy=(u->infantry ? 96 : 80)+((int)(death ? death->ty : u->y)-cy)*8;
-            if ((u->infantry || !btp_art_unit(r,u->record,s->combat.walk[i],u->direction,ux,uy,104,0,320,200,f)) && !btp_art_sprite(r,slot,s->combat.walk[i],ux,uy,104,0,320,200,f))
+            if (!btp_art_actor(r,s,i,ux,uy,104,0,320,200,f) && (u->infantry || !btp_art_unit(r,u->record,s->combat.walk[i],u->direction,ux,uy,104,0,320,200,f)) && !btp_art_sprite(r,slot,s->combat.walk[i],ux,uy,104,0,320,200,f))
             (void)btp_draw_sprite(&r->sprites,u->record[0]=='s' || (death && death->target_base==16) ? 16u : base+s->combat.walk[i],
                 (u->infantry ? 208 : 200)+((int)(death ? death->tx : u->x)-cx)*8,
                 (u->infantry ? 96 : 80)+((int)(death ? death->ty : u->y)-cy)*8,
@@ -1750,7 +1755,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
     else if (s->campaign.mounted && !s->story_flags[4]) (void)btp_draw_sprite(&r->sprites,
         btp_mech_record_sprite(s->party.people[0][12] ? s->party.mechs[s->party.people[0][12]-1] : s->campaign.mech,0)+s->campaign.mech_walk,200,64,0,104,f);
     else if (outdoors && !s->campaign.mounted) {
-        if (!btp_art_sprite(r,0,s->player_walk,208,96,104,0,320,200,f)) (void)btp_draw_sprite(&r->sprites,166u+s->player_walk,208,96,
+        if (!btp_art_person(r,s->event.people[0],s->player_walk,s->party.direction[0],208,96,104,0,320,200,f) && !btp_art_sprite(r,0,s->player_walk,208,96,104,0,320,200,f)) (void)btp_draw_sprite(&r->sprites,166u+s->player_walk,208,96,
             scene ? 0u : hidden_rows(map,s->x_half,s->y_half),104,f);
     }
     if (outdoors && !battle_display && s->story_flags[4]) {
@@ -1761,12 +1766,12 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
             if (npc->icon!=BTP_ART_NONE) {
                 const BtpArtImage *im=&r->project->graphics.images[npc->icon];
                 (void)btp_art_draw(r,npc->icon,s->tick/8u,208+8*((int)npc->x-cx)-(int)im->width/2,96+8*((int)npc->y-cy)-(int)im->height,104,0,320,200,f);
-            } else if (npc->person!=255 && !btp_art_sprite(r,1,s->tick/8u,208+8*((int)npc->x-cx),88+8*((int)npc->y-cy),104,0,320,200,f))
+            } else if (npc->person!=255 && !btp_art_person(r,npc->person,s->tick/8u,4,208+8*((int)npc->x-cx),88+8*((int)npc->y-cy),104,0,320,200,f) && !btp_art_sprite(r,1,s->tick/8u,208+8*((int)npc->x-cx),88+8*((int)npc->y-cy),104,0,320,200,f))
                 (void)btp_draw_sprite(&r->sprites,270u+(s->tick/8u)%4u,208+8*((int)npc->x-cx),88+8*((int)npc->y-cy),0,104,f);
         }
         for (unsigned i=0;i<8;++i) if (s->party.people[i][0]!=255 && s->party.people[i][12]>=8) {
             if (i && btp_party_walkable(s,r,s->party.x[i],s->party.y[i],0) &&
-                !btp_art_sprite(r,1,s->party.walk[i],208+8*((int)s->party.x[i]-s->campaign.world_x),96+8*((int)s->party.y[i]-s->campaign.world_y),104,0,320,200,f))
+                !btp_art_person(r,s->event.people[i],s->party.walk[i],s->party.direction[i],208+8*((int)s->party.x[i]-s->campaign.world_x),96+8*((int)s->party.y[i]-s->campaign.world_y),104,0,320,200,f) && !btp_art_sprite(r,1,s->party.walk[i],208+8*((int)s->party.x[i]-s->campaign.world_x),96+8*((int)s->party.y[i]-s->campaign.world_y),104,0,320,200,f))
                 (void)btp_draw_sprite(&r->sprites,270u+s->party.walk[i],208+8*((int)s->party.x[i]-s->campaign.world_x),
                     96+8*((int)s->party.y[i]-s->campaign.world_y),0,104,f);
         }

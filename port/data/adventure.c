@@ -320,6 +320,9 @@ int btp_adventure_load(const char *path,const BtpDefinitions *d,BtpAdventure *ou
     }
     for (unsigned i=0;i<a->person_count;++i) {
         unsigned n=people[i];uint8_t *p=a->people[i].record;
+        a->people[i].graphic=65535;
+        unsigned image=btp_json_optional(&j,n,"image");
+        if (image && !btp_json_string(&j,image,a->people[i].image,sizeof a->people[i].image)) goto done;
         const char *const names[]={"chi:jason","chi:rex","chi:edward","chi:russ","chi:rick","chi:zeke","chi:possum","chi:marco","chi:rusty","chi:hunter"};
         unsigned identity=btp_json_field(&j,n,"identity");
         if (!btp_json_string(&j,identity,text,sizeof text)) goto done;

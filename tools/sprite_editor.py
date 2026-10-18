@@ -7,6 +7,7 @@ from tkinter import ttk
 
 from graphics_editor import PixelEditor, photo
 from pixel_tools import target,flatten
+from action_tracks import edit_track,entries
 from sprite_editing import (DIRECTIONS, VIEWS, default_view, describe,
                             onion_rows, paste_frame, sequence, sharing_note)
 
@@ -100,6 +101,8 @@ class SpriteEditor(PixelEditor):
 
         tools = ttk.Frame(panel)
         tools.grid(row=2, column=0, columnspan=3, sticky='ew', pady=(8, 0))
+        ttk.Button(tools,text='Edit action...',command=lambda:self.owner.guard(lambda:edit_track(self))).pack(side='left',padx=(0,4))
+        ttk.Button(tools,text='Clone image',command=lambda:self.owner.guard(self.clone_pose)).pack(side='left',padx=(0,4))
         ttk.Button(tools, text='Copy frame', command=self.copy_frame).pack(side='left')
         self.paste_button = ttk.Button(tools, text='Paste frame', command=lambda: self.owner.guard(self.paste),
                                       state='disabled')
@@ -107,8 +110,7 @@ class SpriteEditor(PixelEditor):
         self.onion = tk.BooleanVar(value=False)
         ttk.Checkbutton(tools, text='Show previous frame faintly', variable=self.onion,
                         command=self.draw).pack(side='left')
-        ttk.Label(tools, text='Alt + Left/Right: change frame',
-                  style='Muted.TLabel').pack(side='right')
+        
         self.note = tk.StringVar()
         ttk.Label(panel, textvariable=self.note, wraplength=865,
                   style='Muted.TLabel').grid(row=3, column=0, columnspan=3,
@@ -243,14 +245,21 @@ class SpriteEditor(PixelEditor):
         self.play_button.configure(text='Pause preview' if self.playing else 'Play preview')
         self.draw_animation()
         if self.playing:
-            self.preview_timer = self.window.after(round(1000 / int(self.fps.get())), self.animate)
+            self.preview_timer = self.window.after(self.frame_delay(), self.animate)
 
     def animate(self):
         self.preview_timer = None
         if not self.playing: return
         self.preview_phase = (self.preview_phase + 1) % len(self.frames())
         self.draw_animation()
-        self.preview_timer = self.window.after(round(1000 / int(self.fps.get())), self.animate)
+        self.preview_timer = self.window.after(self.frame_delay(), self.animate)
+
+    def frame_delay(self):
+        track=entries(self.image,self.view.get().lower(),self.direction)
+        return 32*track[self.preview_phase%len(track)]["ticks"] if track else round(1000/int(self.fps.get()))
+
+    def clone_pose(self):
+        self.view.set("All images");self.add_frame();self.phase=len(self.image["frames"])-1;self.refresh_frames();self.draw()
 
     def destroyed(self, event):
         if event.widget == self.window:

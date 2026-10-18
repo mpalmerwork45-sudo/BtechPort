@@ -17,7 +17,7 @@ typedef struct {
 } BtpScene;
 typedef struct { char id[64],name[64];unsigned width,height,base,explore_offset; } BtpAuthoredWorld;
 typedef struct { char id[64],name[64];uint16_t cells[64]; } BtpJigsaw;
-typedef struct { char id[64],name[32];uint8_t record[17]; } BtpScenePerson;
+typedef struct { char id[64],name[32],image[64];uint16_t graphic;uint8_t record[17]; } BtpScenePerson;
 typedef struct { char id[64];unsigned count;uint16_t stock[256]; } BtpSceneShop;
 typedef struct { char id[64],title[49],text[385];unsigned active,complete; } BtpObjective;
 typedef struct { uint8_t x,y,infantry;uint16_t definition; } BtpSceneEnemy;

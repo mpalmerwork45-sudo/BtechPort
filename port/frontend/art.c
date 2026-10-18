@@ -1,6 +1,8 @@
 #include "frontend/art.h"
 #include "data/project.h"
 #include "core/events.h"
+#include "core/art_actions.h"
+#include "core/effects.h"
 #include "core/world.h"
 #include "frontend/pixels.h"
 
@@ -48,7 +50,27 @@ int btp_art_unit(const BtpResources *r,const uint8_t m[125],unsigned frame,unsig
     /* A 32-frame unit sheet is N,NE,E,SE,S,SW,W,NW, four frames each.
        Smaller sheets retain the original walk-index convention. */
     if (im->count==32) frame=(direction&7u)*4u+frame%4u;
+    frame=btp_art_frame(&r->project->graphics,p->graphic,BTP_ANIM_WALK,direction,(frame%4u)*4u,frame);
     return btp_art_draw(r,p->graphic,frame,x+(24-(int)im->width)/2,y+24-(int)im->height,left,top,right,bottom,f);
+}
+int btp_art_person(const BtpResources *r,unsigned person,unsigned frame,unsigned direction,
+    int x,int y,int left,int top,int right,int bottom,uint32_t f[BTP_PIXELS])
+{
+    unsigned im=btp_person_image(r,person);if (!r->project || im>=r->project->graphics.count) return 0;
+    frame=btp_art_frame(&r->project->graphics,im,BTP_ANIM_WALK,direction,(frame%4u)*4u,frame);
+    return btp_art_draw(r,im,frame,x,y,left,top,right,bottom,f);
+}
+int btp_art_actor(const BtpResources *r,const BtpState *s,unsigned actor,
+    int x,int y,int left,int top,int right,int bottom,uint32_t f[BTP_PIXELS])
+{
+    unsigned im=btp_actor_image(r,s,actor);if (!r->project || im>=r->project->graphics.count) return 0;
+    const BtpCombatUnit *u=&s->combat.unit[actor];unsigned elapsed,action=btp_actor_action(s,actor,&elapsed);
+    const BtpArt *art=&r->project->graphics;
+    if (!u->infantry && !btp_art_track(art,im,action)) return 0;
+    if (u->record[0]==255 && action!=BTP_ANIM_DESTRUCTION && !btp_effects_pending_death(s,actor)) return 0;
+    unsigned frame=btp_art_frame(art,im,action,u->direction,elapsed,s->combat.walk[actor]);
+    if (!u->infantry) { x+=(24-(int)art->images[im].width)/2;y+=24-(int)art->images[im].height; }
+    return btp_art_draw(r,im,frame,x,y,left,top,right,bottom,f);
 }
 int btp_art_picture(const BtpResources *r,const BtpState *s,uint32_t f[BTP_PIXELS])
 {

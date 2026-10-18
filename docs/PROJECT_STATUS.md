@@ -1,5 +1,9 @@
 # Project status — original fidelity and editable projects, 2026-10-18
 
+2026-10-18: Unit action animations, individual infantry graphics and construction
+guidance pass the focused Linux engine/model/Tk checks; see
+[animation contract](UNIT_ACTION_ANIMATIONS.md). Delivery work continues.
+
 **BattleTech Construction Kit** is the editor/launcher name. The current
 [five milestones](EDITOR_COMPLETION_MILESTONES.md) have completed authored
 services/templates, event graph/journal/checkpoints, and building/pixel tools

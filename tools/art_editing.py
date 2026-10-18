@@ -13,8 +13,8 @@ DEFAULT_COLORS = ("000000", "0000aa", "00aa00", "00aaaa", "aa0000", "aa00aa", "a
 
 
 def new_image(prefix, images, name="New image", kind="tile", width=16, height=16, frames=1):
-    if not 1 <= width <= 320 or not 1 <= height <= 200 or not 1 <= frames <= 32:
-        raise EditorError("Images are at most 320x200 pixels, with 1..32 animation frames.")
+    if not 1 <= width <= 320 or not 1 <= height <= 200 or not 1 <= frames <= 256:
+        raise EditorError("Images are at most 320x200 pixels, with 1..256 animation frames.")
     if kind == "tile" and (width, height) != (16, 16): raise EditorError("Map tiles must be 16x16 pixels.")
     if kind in ("sprite", "icon") and max(width, height) > 64: raise EditorError("Sprites/icons are at most 64x64 pixels.")
     return dict(id=identity(prefix, images, "image"), name=name, kind=kind, width=width, height=height,

@@ -114,7 +114,7 @@ static void map(Canvas *c,const BtpResources *r,const BtpState *s)
             const BtpArtImage *im=&r->project->graphics.images[door->icon];
             (void)btp_art_draw(r,door->icon,s->tick/8u,x-(int)im->width/2,y-(int)im->height,0,12,224,150,c->f);
         } else if (door->person!=255) {
-            if (!btp_art_sprite(r,1,s->tick/16u,x,y-8,0,12,224,150,c->f)) image(c,c->art->sprites[2][(s->tick/16u)&3u],x,y-8,16,16,1,224);
+            if (!btp_art_person(r,door->person,s->tick/16u,4,x,y-8,0,12,224,150,c->f) && !btp_art_sprite(r,1,s->tick/16u,x,y-8,0,12,224,150,c->f)) image(c,c->art->sprites[2][(s->tick/16u)&3u],x,y-8,16,16,1,224);
         }
         else { if (x>=0 && x<220 && y>=12 && y<146) { box(c,x,y,5,3,14);box(c,x+2,y-2,1,7,15); } }
     }
@@ -124,7 +124,7 @@ static void map(Canvas *c,const BtpResources *r,const BtpState *s)
             const BtpCombatUnit *u=&combat->unit[i];const BtpCombatEffect *pending=btp_effects_pending_death(s,i);
             unsigned family=u->record[0]==255 && !pending ? 4u : u->infantry ? (i<combat->friends ? 2u : 3u) : u->record[124]&1u;
             unsigned slot=family==4 ? 5u : u->infantry ? i<combat->friends ? combat->ids[i]==4 ? 0u : 1u : 2u : 3u+(family&1u);
-            if ((u->infantry || family==4 || !btp_art_unit(r,u->record,combat->walk[i],u->direction,(int)u->x*8-cx-4,(int)u->y*8-cy-24,0,12,224,150,c->f)) && !btp_art_sprite(r,slot,combat->walk[i],(int)u->x*8-cx,(int)u->y*8-cy,0,12,224,150,c->f))
+            if (!btp_art_actor(r,s,i,(int)u->x*8-cx-(u->infantry ? 0 : 4),(int)u->y*8-cy-(u->infantry ? 0 : 24),0,12,224,150,c->f) && (u->infantry || family==4 || !btp_art_unit(r,u->record,combat->walk[i],u->direction,(int)u->x*8-cx-4,(int)u->y*8-cy-24,0,12,224,150,c->f)) && !btp_art_sprite(r,slot,combat->walk[i],(int)u->x*8-cx,(int)u->y*8-cy,0,12,224,150,c->f))
                 image(c,c->art->sprites[family][combat->walk[i]&3u],(int)u->x*8-cx,(int)u->y*8-cy,16,16,1,224);
             if (i==combat->active_unit) { int x=(int)u->x*8-cx,y=(int)u->y*8-cy;if (x>=0 && x<220 && y>=14 && y<148) box(c,x,y-2,12,1,14); }
         }
@@ -141,7 +141,7 @@ static void map(Canvas *c,const BtpResources *r,const BtpState *s)
             int x=(int)(i ? s->party.x[i] : s->campaign.world_x)-(int)(2*m->origin_x);
             int y=(int)(i ? s->party.y[i] : s->campaign.world_y)-(int)(2*m->origin_y);
             unsigned walk=i ? s->party.walk[i] : s->player_walk;
-            if (!btp_art_sprite(r,i ? 1u : 0u,walk,x*8-cx,y*8-cy-8,0,12,224,150,c->f)) image(c,c->art->sprites[2][walk&3u],x*8-cx,y*8-cy-8,16,16,1,224);
+            if (!btp_art_person(r,s->event.people[i],walk,s->party.direction[i],x*8-cx,y*8-cy-8,0,12,224,150,c->f) && !btp_art_sprite(r,i ? 1u : 0u,walk,x*8-cx,y*8-cy-8,0,12,224,150,c->f)) image(c,c->art->sprites[2][walk&3u],x*8-cx,y*8-cy-8,16,16,1,224);
         }
         /* Mounted people retain stale foot coordinates. Draw each active
            vehicle once at its saved ground anchor, including an unassigned

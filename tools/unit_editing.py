@@ -22,7 +22,7 @@ def add_ammo(content, price=3):
 
 
 def add_equipment(content,behavior='heat_sink',name='Heat sink'):
-    if behavior not in ('heat_sink','jump_jet'):raise EditorError('Choose a supported heat sink or jump jet behavior.')
+    if behavior not in ('heat_sink','jump_jet','engine_heat_sink','armor_plating'):raise EditorError('Choose a supported equipment behavior.')
     library=content.setdefault('equipment',[])
     if len(library)>=256:raise EditorError('The equipment library is full (256 definitions).')
     item=dict(id=identity(content['package_id'],library,'equipment'),name=name,label=name[:11],behavior=behavior)

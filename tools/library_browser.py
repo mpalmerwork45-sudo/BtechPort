@@ -192,7 +192,8 @@ class LibraryBrowser:
             source=type('SpriteSource',(),dict(validator=self.owner.validator))()
             if bundle['kind']=='Infantry':
                 binding=next((b for b in bundle['graphics']['bindings'] if b['slot']=='npc'),None)
-                if binding:image=next(i for i in bundle['graphics']['images'] if i['id']==binding['image'])
+                if unit.get('image'):image=next(i for i in bundle['graphics']['images'] if i['id']==unit['image'])
+                elif binding:image=next(i for i in bundle['graphics']['images'] if i['id']==binding['image'])
                 elif bundle.get('infantry_source')=='chi:infantry':image=original_sprite(source,self.owner.settings,270,16)
                 else:image=indexed_sprite(bundle['presentation'] or json.loads((ROOT/'examples/beacon-demo/presentation.json').read_text()),2)
             else:

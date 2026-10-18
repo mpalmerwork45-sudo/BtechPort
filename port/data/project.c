@@ -111,6 +111,12 @@ BtpProject *btp_project_load(const char *root,BtpRoster *roster,BtpPortraits *po
             !btp_art_load(path,&p->graphics,error->text)) goto done;
         btp_digest_add(&digest,p->graphics.source_digest,32);
     }
+    for (unsigned i=0;i<p->adventure.person_count;++i) {
+        BtpScenePerson *person=&p->adventure.people[i];if (!*person->image) continue;
+        unsigned im=btp_art_find(&p->graphics,person->image);
+        if (im==BTP_ART_NONE || p->graphics.images[im].kind!=1) { fail(error,person->id,"person requires a sprite image");goto done; }
+        person->graphic=(uint16_t)im;
+    }
     for (unsigned i=0;i<p->definitions.presentation_count;++i) {
         BtpPresentationDefinition *sprite=&p->definitions.presentations[i];
         if (sprite->independent!=2) continue;

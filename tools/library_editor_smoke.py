@@ -155,7 +155,7 @@ def run(env,work):
                 try:
                     deadline=time.monotonic()+10;found=None
                     while time.monotonic()<deadline:
-                        found=next((w for w,n in keys.windows() if n=='BtechPort'),None)
+                        found=next((w for w,n in keys.windows() if n=='BattleTech Construction Kit'),None)
                         if found:break
                         if process.poll() is not None:raise AssertionError(process.communicate()[1])
                         pump();time.sleep(.025)

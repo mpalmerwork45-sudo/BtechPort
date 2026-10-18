@@ -1,4 +1,5 @@
 #include "core/effects.h"
+#include "core/art_actions.h"
 #include "core/audio.h"
 #include "core/animation.h"
 #include "core/combat.h"
@@ -232,7 +233,7 @@ static void legacy_tick(BtpState *s,const BtpResources *r)
             v->age=(uint8_t)btp_effects_length(e,&r->combat);v->stage=BTP_EFFECT_IMPACT;
         } else {
             if (e->weapon==33) btp_audio_effect(s,18);
-            else btp_audio_effect(s,btp_effects_fire_sound(e->weapon,visible(e,s)));
+            else btp_audio_effect(s,btp_action_sound(r,s,e->actor,BTP_ANIM_FIRE,btp_effects_fire_sound(e->weapon,visible(e,s))));
             v->stage=BTP_EFFECT_FIRE_SOUND;return;
         }
     }
@@ -254,14 +255,14 @@ static void legacy_tick(BtpState *s,const BtpResources *r)
            branch uses sound 7 before its two alarm messages instead. Wait
            for this clip before any outtake or outcome can advance. Humans
            take 1B7F's corpse branch and skip the wreck/sound-8 branch. */
-        btp_audio_effect(s,s->campaign.encounter==4 && btp_combat_id(&s->combat,e->target)==13 ? 7u : 8u);
+        btp_audio_effect(s,btp_action_sound(r,s,e->target,BTP_ANIM_DESTRUCTION,e->target_base==254 ? 0u : s->campaign.encounter==4 && btp_combat_id(&s->combat,e->target)==13 ? 7u : 8u));
         v->stage=BTP_EFFECT_DEATH_SOUND;return;
     }
     complete_effect(s);
 }
-static void strike_sound(BtpState *s)
+static void strike_sound(BtpState *s,const BtpResources *r)
 {
-    if (s->effects.shots[0].hit) btp_audio_effect(s,4);
+    if (s->effects.shots[0].hit) btp_audio_effect(s,btp_action_sound(r,s,s->effects.shots[0].target,BTP_ANIM_DAMAGE,4));
     s->effects.stage=BTP_EFFECT_STRIKE_SOUND;s->effects.age=0;
 }
 void btp_effects_tick(BtpState *s,const BtpResources *r)
@@ -293,13 +294,14 @@ void btp_effects_tick(BtpState *s,const BtpResources *r)
             int x,y;effect_focus(s,&x,&y);
             int actor_visible=btp_combat_visible(e->x,e->y,e->base==254,x,y);
             unsigned previous=(unsigned)v->age*224u/500u;
-            if (actor_visible && ++v->age*224u<poses*500u) {
+            unsigned duration=btp_action_duration(r,s,e->actor,BTP_ANIM_FIRE);
+            if (actor_visible && ++v->age<(duration ? duration : (poses*500u+223u)/224u)) {
                 if ((unsigned)v->age*224u/500u!=previous) redraw_marks(s);
                 return;
             }
             v->age=0;v->stage=BTP_EFFECT_SHOT_SOUND;
             if (btp_effects_trail_kind(e->weapon)<2)
-                btp_audio_effect(s,btp_effects_fire_sound(e->weapon,visible(e,s)));
+                btp_audio_effect(s,btp_action_sound(r,s,e->actor,BTP_ANIM_FIRE,btp_effects_fire_sound(e->weapon,visible(e,s))));
             break;
         }
         case BTP_EFFECT_SHOT_SOUND:
@@ -310,21 +312,21 @@ void btp_effects_tick(BtpState *s,const BtpResources *r)
                 v->stage=BTP_EFFECT_FLIGHT;v->age=0;
                 if (trail.count) { if (trail.kind==1) redraw_marks(s);return; }
                 if (trail.kind>=2 && visible(e,s)) {
-                    btp_audio_effect(s,btp_effects_fire_sound(e->weapon,1));v->stage=BTP_EFFECT_BEAM_SOUND;break;
+                    btp_audio_effect(s,btp_action_sound(r,s,e->actor,BTP_ANIM_FIRE,btp_effects_fire_sound(e->weapon,1)));v->stage=BTP_EFFECT_BEAM_SOUND;break;
                 }
             }
-            strike_sound(s);break;
+            strike_sound(s,r);break;
         case BTP_EFFECT_FLIGHT: {
             BtpEffectTrail trail;int x,y;effect_focus(s,&x,&y);
             btp_effects_trail(e,&r->combat,x,y,&trail);
             if (trail.kind>=2) {
-                btp_audio_effect(s,btp_effects_fire_sound(e->weapon,visible(e,s)));
+                btp_audio_effect(s,btp_action_sound(r,s,e->actor,BTP_ANIM_FIRE,btp_effects_fire_sound(e->weapon,visible(e,s))));
                 v->stage=BTP_EFFECT_BEAM_SOUND;v->age=0;break;
             }
             if (++v->age<trail.count) { redraw_marks(s);return; }
-            strike_sound(s);break;
+            strike_sound(s,r);break;
         }
-        case BTP_EFFECT_BEAM_SOUND: strike_sound(s);break;
+        case BTP_EFFECT_BEAM_SOUND: strike_sound(s,r);break;
         case BTP_EFFECT_STRIKE_SOUND:
             if (e->hit && e->weapon>=7) {
                 int x,y;effect_focus(s,&x,&y);
@@ -338,16 +340,17 @@ void btp_effects_tick(BtpState *s,const BtpResources *r)
             }
             v->stage=BTP_EFFECT_RETIRE_SOUND;break;
         case BTP_EFFECT_IMPACT_HOLD:
-            if (++v->age*224u<500u) return;
+            if (++v->age<(btp_action_duration(r,s,e->target,BTP_ANIM_DAMAGE) ? btp_action_duration(r,s,e->target,BTP_ANIM_DAMAGE) : 3u)) return;
             v->stage=BTP_EFFECT_RETIRE_SOUND;v->age=0;break;
         case BTP_EFFECT_RETIRE_SOUND:
+            if (e->dead && ++v->age<btp_action_duration(r,s,e->target,BTP_ANIM_DESTRUCTION)) return;
             complete_effect(s);return;
         default:return;
         }
         /* A dead vehicle is retained until its own sound, rather than
            displaying later numeric damage during another queued attack. */
-        if (v->stage==BTP_EFFECT_RETIRE_SOUND && e->dead && e->target_base!=254) {
-            btp_audio_effect(s,s->campaign.encounter==4 && btp_combat_id(&s->combat,e->target)==13 ? 7u : 8u);
+        if (v->stage==BTP_EFFECT_RETIRE_SOUND && e->dead && (e->target_base!=254 || btp_action_sound(r,s,e->target,BTP_ANIM_DESTRUCTION,0))) {
+            btp_audio_effect(s,btp_action_sound(r,s,e->target,BTP_ANIM_DESTRUCTION,e->target_base==254 ? 0u : s->campaign.encounter==4 && btp_combat_id(&s->combat,e->target)==13 ? 7u : 8u));
             v->age=0;return;
         }
     }
@@ -362,8 +365,8 @@ int btp_effects_valid(const BtpState *s)
     }
     for (unsigned i=0;i<15;++i) if (q->mech[i] && (q->mech[i]<32 || q->mech[i]>126)) return 0;
     if (v->count>24 || v->pending>3 || v->stage>BTP_EFFECT_PENDING || (!v->count && (v->age || v->stage))) return 0;
-    if (v->stage<BTP_EFFECT_POSES ? v->age>22 : v->stage==BTP_EFFECT_POSES ? v->age>17 :
-        v->stage==BTP_EFFECT_FLIGHT ? v->age>55 : v->stage==BTP_EFFECT_IMPACT_HOLD ? v->age>2 : v->age!=0) return 0;
+    if (v->stage<BTP_EFFECT_POSES ? v->age>22 : v->stage==BTP_EFFECT_POSES ? 0 :
+        v->stage==BTP_EFFECT_FLIGHT ? v->age>55 : (v->stage==BTP_EFFECT_IMPACT_HOLD || v->stage==BTP_EFFECT_RETIRE_SOUND) ? 0 : v->age!=0) return 0;
     if (v->count && s->combat.phase!=BTP_COMBAT_ROUND) return 0;
     for (unsigned i=0;i<25;++i) {
         const BtpBattleText *t=i<24 ? &v->text[i] : &v->shown;

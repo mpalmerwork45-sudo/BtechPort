@@ -135,7 +135,9 @@ static int parse(BtpJson *j,BtpDefinitions *d)
             !btp_json_done(j,n) || !unique(j,n,d->equipment,d->equipment_count,sizeof *e)) return 0;
         if (!strcmp(behavior,"heat_sink")) e->behavior=0;
         else if (!strcmp(behavior,"jump_jet")) e->behavior=1;
-        else return btp_json_error(j,n,"supported equipment behaviors are heat_sink and jump_jet");
+        else if (!strcmp(behavior,"engine_heat_sink")) e->behavior=2;
+        else if (!strcmp(behavior,"armor_plating")) e->behavior=3;
+        else return btp_json_error(j,n,"supported equipment: heat_sink, jump_jet, engine_heat_sink, armor_plating");
     }
     a=array(j,1,"mechs");if (!a) return 0;
     for (unsigned n=j->nodes[a].first;n;n=j->nodes[n].next) {
@@ -190,6 +192,12 @@ static int parse(BtpJson *j,BtpDefinitions *d)
             for (part=0;part<8 && strcmp(location,bodies[part]);++part) {}
             if (part==8) return btp_json_error(j,item,"unknown equipment location");
             if (!d->equipment[index].behavior) v->external_sinks[part]+=quantity;
+            /* Authored adapters: engine cooling occupies no external critical;
+               plating adds front armor points, checked against structure below. */
+            else if (d->equipment[index].behavior==2) {
+                if (part!=4) return btp_json_error(j,item,"engine heat sinks require center_torso");
+                v->sinks+=quantity;
+            } else if (d->equipment[index].behavior==3) v->armor[part]+=quantity;
             else {
                 if (part==0 || part==3 || part==5) return btp_json_error(j,item,"jump jets require a torso or leg location");
                 jets+=quantity;
