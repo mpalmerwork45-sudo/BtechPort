@@ -1,5 +1,10 @@
 # Project status — original fidelity and editable projects, 2026-10-18
 
+**Proposed next work:** the [editor usability plan](EDITOR_USABILITY_PLAN.md)
+defines five stages for dialog/draft reliability, a unified workspace, connected
+authoring workflows, consistent history/recovery, and presentation/performance.
+The plan awaits the user's go-ahead; implementation has not begun.
+
 **BattleTech Construction Kit** is the editor/launcher name. The authorized
 [five editor milestones](EDITOR_COMPLETION_MILESTONES.md) are implemented with
 bounded verification: transactional service buildings; connected events,

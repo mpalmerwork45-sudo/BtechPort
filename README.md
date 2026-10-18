@@ -44,6 +44,10 @@ See the [five milestones](docs/EDITOR_COMPLETION_MILESTONES.md) and
 starts with `ConstructionKit` and includes Python/Tk/Pillow/SDL; a Windows kit
 starts with `ConstructionKit.cmd` and can use an installed or supplied Python runtime.
 
+The proposed [editor usability plan](docs/EDITOR_USABILITY_PLAN.md) covers a
+unified workspace, reliable dialogs, shared saving and recovery, and more direct
+authoring workflows. It is awaiting review before implementation.
+
 The shared **Unit Library** currently offers **82 blueprints: 66 mechs, ten
 vehicles and six infantry templates**, including [25 additional classic
 mechs](content/catalogues/mechs/README.md). Mechs use Locust or red Stinger
