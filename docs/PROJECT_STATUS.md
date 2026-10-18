@@ -1,10 +1,27 @@
 # Project status — original fidelity and editable projects, 2026-10-18
 
-**Next phase — PROPOSED:** [AI authoring milestones AI1–AI8](AI_AUTHORING_PLAN.md)
-keep the Construction Kit editor central while adding a shared authoring
-interface, searchable content, visual feedback, automated mission tests,
-reviewable changes, richer mission mechanics and modular campaigns. No AI
-authoring implementation was added by this planning change.
+**AI authoring first pass — VERIFIED:** implementation commit `4f1ff6f`;
+[author guide](AI_AUTHORING_GUIDE.md).
+API v1 provides compiled capability discovery, bounded project/usage/map/route
+queries, structured diagnostics and shared editing commands. Whole batches
+validate through C, check revisions/write scope, record retry receipts and
+publish through the editor's journal. GUI command-file exchange preserves
+manual work, supports one-step Undo/Redo and refuses stale results. No model
+or network service is needed.
+
+The separate **Relay Contract** example is created by 99 recorded commands.
+Its 39-step ordinary-input scenario completes a two-mech battle, workshop
+visit, once-only payment, objective and multiple save/reloads. Full-map previews
+use the editor decoder. Native tests **73/73** and Python tests **188/188** pass;
+the real GUI paint/batch/Undo/save/Play journey passes. Windows targets build;
+the Windows scenario passes under isolated Wine. Native Windows Tk remains
+**UNKNOWN**. See [verification](TESTING.md#ai-authoring-first-pass--2026-10-18).
+
+Broader catalogues, scenario coverage, protected regions/live sessions and
+richer campaign mechanics remain in [AI3–AI8](AI_AUTHORING_PLAN.md). Authoring
+work used separate projects and disposable test copies. Subsequent Last Beacon
+artwork/map edits in the working tree were left untouched and outside these
+commits. Both reference directories remain unchanged.
 
 **User's Last Beacon revision — VERIFIED:** `bed75e9` preserves the revised
 maps and editable artwork together with `EDITOR.json` (construction sets,

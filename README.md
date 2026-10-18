@@ -92,10 +92,14 @@ The proposed path to more mechs, custom game packages, BLD/Lua scripting and a
 Windows/Linux editor is recorded in the
 [engine and editor plan](docs/ENGINE_AND_EDITOR_PLAN.md).
 
-The next proposed phase is [AI authoring with the Construction Kit](docs/AI_AUTHORING_PLAN.md):
-eight milestones for shared editing commands, content discovery, mission
-testing, human review and richer campaigns. The full manual editor remains
-central, and generated games will run without an AI service.
+The first pass of [AI authoring](docs/AI_AUTHORING_GUIDE.md) is available:
+inspect projects, apply validated command batches, render maps and run ordinary
+gameplay scenarios through `python3 tools/author.py`. The editor has **Project →
+Export authoring summary** and **Apply authoring command file**, with one-step
+Undo and revision checks. Try **Relay Contract (command-created)** in the launcher.
+The [eight-milestone plan](docs/AI_AUTHORING_PLAN.md) records the later discovery,
+testing, review and campaign work. The full manual editor remains central;
+generated games run without an AI service.
 
 The [shared authoring format and project loader](docs/M5_AUTHORING_PROJECTS.md)
 now support editable CHI-dependent projects, up to 256 mech definitions, custom

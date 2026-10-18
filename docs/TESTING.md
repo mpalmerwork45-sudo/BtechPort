@@ -1,5 +1,64 @@
 # Build, verification and original oracle — 2026-10-18
 
+## AI authoring first pass — 2026-10-18
+
+**VERIFIED** at implementation commit `4f1ff6f`: API v1 inspection and
+transactional editing over the shared editor document; compiled C capability
+limits; schema corrections for sprite action
+tracks, tile dimensions/pixel case, services, objectives and person artwork.
+Command descriptors generate the reference and batch/scenario schemas.
+
+- Native build: `env PATH=/usr/bin:/bin cmake --build build -j2` passes.
+  The inherited Conda linker could not read host `.relr.dyn` sections; the
+  documented system toolchain succeeded. No compiler configuration was changed.
+- `python3 -m unittest discover -s tests -p 'test_*.py'`: **188/188 PASS**, 17.67 s.
+  Fourteen authoring tests cover read-only/headless inspection, dry runs,
+  connected batches, invalid references/capacities, cancellation, scope,
+  stale disk/document revisions, human paint, Undo/Redo, durable request retries,
+  interrupted saves, schemas, construction details, planets, image/Lua imports,
+  scenario failure reports and deterministic package reproduction.
+- `ctest --test-dir build --output-on-failure`: **73/73 PASS**, 44.41 s,
+  including the original campaign and Last Beacon contract routes.
+- `python3 tools/native_smoke.py --editor-authoring-only`: **PASS** on isolated
+  Linux Xvfb. Real mouse painting on a building, summary export, menu-invoked
+  command-file application, one-step Undo/Redo, stale revision refusal,
+  save/reopen and normal SDL Play are exercised. Screenshot:
+  `work/editor-authoring.png`. Tk remains outside headless imports.
+- Relay Contract: 99 recorded authoring commands create 2 maps, 29 events,
+  editable constructions/patterns and the imported Phoenix Hawk/Trebuchet/Jenner.
+  Its normal 39-step route passes in **1,701 ticks**. Independent headless run:
+  **0.164 s**, with real combat, repair no-op/no charge, 4,000-credit payment,
+  repeat-payment refusal, objective completion and save/reload. Report:
+  `work/authoring/relay-route-01/report.json`; frames and replay accompany it.
+- Full-map preview generated through the shared tile decoder and visually
+  inspected alongside the player's frame: `work/authoring/depot.png` and
+  `work/authoring/relay-route-01/step-006.png`. This verifies this map rendering
+  path, not all collision or arbitrary mission reachability.
+- Memory/timing fixture: a disposable copy of the user's 128-image Last Beacon,
+  applying 100 event-text patches as one saved batch: **0.544 s** for apply,
+  **0.70 s** total process elapsed, **36,712 KiB** peak RSS (`/usr/bin/time`).
+  The batch retains one Undo snapshot. This is a declared local fixture, not
+  a maximum-size campaign benchmark or a hardware-independent guarantee.
+- Windows cross-build: `btp-project`, `btp-author-playtest`, `btech-port` pass
+  with **two** compiler jobs. `python3 tools/windows_check.py --ctest -R
+  '^authoring-relay-contract$'`: **1/1 PASS** under isolated Wine, 3.24 s,
+  including combat and exact save/reload. Native Windows Python/Tk and writer
+  locking are **UNKNOWN**; Wine's C test does not establish those results.
+- Reference guard: **1,287 entries unchanged** against
+  `work/reference-before-map-construction.json`. The test-time Last Beacon
+  baseline matched `bed75e9`; authoring checks used disposable copies. Later
+  artwork/map edits found in its working tree were left untouched and unstaged.
+
+The C loader remains the semantic authority. Schema checks are structural;
+they do not prove route reachability, animation frame references, budgets that
+interact, or arbitrary Lua behavior. Full AI3/AI4 discovery/coverage and AI5 live
+session/protected-review features remain later work. The scenario uses the
+ordinary runtime initial RNG state; it is not a multi-seed balance study.
+No new DOS fidelity or tabletop-rule claim is made by the authored demo.
+
+Further execution details and reproducible commands are in the
+[author guide](AI_AUTHORING_GUIDE.md) and [recorded recipe](../examples/authoring/README.md).
+
 ## Last Beacon user revision and AI authoring plan — 2026-10-18
 
 The user requested committing their revised Last Beacon and recording a plan

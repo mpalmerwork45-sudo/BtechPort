@@ -6,6 +6,13 @@ report discrepancies from playing the original game, set priorities and review
 results. This disclosure describes the project workflow; it does not attribute
 every file or finding to a particular model.
 
+The AI authoring command interface now also records reproducible game-creation
+requests. [Relay Contract](../examples/relay-contract/README.md) is a separate
+example, with its command recipe, imported-unit attribution and gameplay
+scenario checked into the repository. The user's improved Last Beacon remains
+their manually revised reference. A generated mission passing its declared
+scenario is evidence for that route, not proof of every branch or game balance.
+
 AI is used to investigate file formats and original machine-code routines,
 interpret emulator observations, write the independent C implementation,
 develop extraction and comparison tools, and maintain documentation. It can

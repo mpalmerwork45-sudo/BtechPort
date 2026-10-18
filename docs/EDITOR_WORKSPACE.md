@@ -3,9 +3,12 @@
 The editor now keeps maps, units, library designs, artwork and events in one
 tabbed window. The separate SDL game window is used for playtesting.
 
-The proposed [AI authoring milestones](AI_AUTHORING_PLAN.md) add shared tools
-for automated creation, testing and review while retaining this full manual
-workspace. They are a development plan, not currently available AI controls.
+The first [AI authoring pass](AI_AUTHORING_GUIDE.md) adds command-file exchange.
+**Project → Export authoring summary** describes the current document and valid
+drafts. **Apply authoring command file** validates a batch in the background,
+checks that the document has not changed, then applies it as one Undo action.
+Save publishes it. This requires no model or network connection. Live remote
+sessions and detailed change review remain [later milestones](AI_AUTHORING_PLAN.md).
 
 ## Start editing
 

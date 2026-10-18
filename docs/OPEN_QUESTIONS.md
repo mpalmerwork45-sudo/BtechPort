@@ -7,12 +7,14 @@ rather than to every branch of the original game.
 The latest results and remaining bounds are in [project status](PROJECT_STATUS.md)
 and the [latest five-area sweep](M4_PORTABILITY_SWEEP.md).
 
-The [AI authoring plan](AI_AUTHORING_PLAN.md) is the next proposed phase, with
-the full human editor retained. The operation contract, schema/loader gaps,
-live-document revision handling, mission primitives and campaign capacity
-extensions remain implementation work. The first recommended milestones are
-AI1 (discovery/contract) and AI2 (transactional authoring commands). Model/provider
-selection is optional and does not block these foundations.
+The [AI authoring first pass](AI_AUTHORING_GUIDE.md) delivers AI1/AI2 and a small
+preview/scenario loop while retaining the full editor. Later work: searchable
+catalogues/contact sheets; broader branch/navigation/balance tests; a Changes
+review view, protected regions and live remote sessions; richer mission
+mechanics and measured campaign capacity. CLI work cannot inspect another
+editor process's unsaved forms: use the explicit GUI command-file exchange or
+close/save before CLI publication. Native Windows Tk remains unverified.
+Model/provider selection is optional and does not block these tools.
 
 The Unit Library now includes 25 additional classic chassis and corrected
 original animation defaults. These remain CHI adaptations: rear firing arcs,

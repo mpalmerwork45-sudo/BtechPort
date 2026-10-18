@@ -3,9 +3,14 @@
 Recorded 2026-10-18 against `266d21f`, with the user's revised Last Beacon
 preserved in `bed75e9`.
 
-**Status: PROPOSED.** This document records the requested implementation plan;
-AI1–AI8 below are not implemented by this planning change. Existing capabilities
-are identified separately. The editor remains the primary human workspace.
+**Status: FIRST PASS IMPLEMENTED, 2026-10-18.** AI1/AI2 now have the versioned
+inspection/command contract, transactional CLI, shared editor operations and
+command-file exchange described in the [author guide](AI_AUTHORING_GUIDE.md).
+A minimal AI3 map preview and AI4 ordinary-input scenario runner prove a separate
+Relay Contract mission. Tests and remaining boundaries are recorded in
+[Testing](TESTING.md#ai-authoring-first-pass--2026-10-18). The fuller AI3–AI8
+scope below remains proposed; this is not a live remote authoring session or
+complete protected-content review system. The editor remains the human workspace.
 
 ## 1. Intended result
 
@@ -542,8 +547,9 @@ name/module layout (AI1–AI2), source-module format and exact capacity targets
 (AI7), and which external assistant transports are useful (AI8). These do not
 block the first authoring contract or require choosing an AI provider now.
 
-**Recommended next work: AI1, followed by AI2.** Finish the discovery/format
-contract, then implement one complete transactional mission-creation journey.
-AI3–AI4 make it practical for an agent to inspect and test its work; AI5 adds
-the integrated human/AI editing cycle. No new authoring implementation is
-authorized merely by recording this plan.
+**Next work after the first pass: complete AI3 and extend AI4.** Add searchable
+asset catalogues/contact sheets and broader scenario assertions/branch coverage.
+The first pass already proves command-created content, normal mission play,
+save/reload and GUI paint followed by a constrained command-file revision.
+AI5 adds protected regions, richer review and live sessions beyond that explicit
+file exchange. Remaining milestones require their own authorization.
