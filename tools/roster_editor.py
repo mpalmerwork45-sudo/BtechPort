@@ -17,6 +17,7 @@ from tkinter import font as tkfont
 from tkinter import ttk, filedialog, messagebox, simpledialog
 
 from editor_model import EditorError, ProjectDocument, create_project
+from editor_session import EditorScope, FieldError, guard, report
 
 ROOT = Path(__file__).resolve().parents[1]
 LOCATIONS = ["left_arm", "left_torso", "left_leg", "head", "center_torso", "right_arm", "right_torso", "right_leg"]
@@ -88,6 +89,7 @@ class RosterEditor:
         self.window, self.validator, self.state_dir = window, validator, state_dir
         self.library_context = library_context
         self.document: ProjectDocument | None = None
+        self._editor_scope = EditorScope(self)
         self.map_editor = None
         self.current = None
         self.collection = "mechs"
@@ -194,12 +196,15 @@ class RosterEditor:
         self.notebook.pack(fill="both", expand=True)
         self.status = tk.StringVar(value="Ready")
         ttk.Label(window, textvariable=self.status, style="Status.TLabel", wraplength=900).pack(fill="x")
+        self.error_label=ttk.Label(window,text='',foreground='#a03030',wraplength=850,padding=8)
         window.protocol("WM_DELETE_WINDOW", self.close)
         window.bind("<Control-s>", lambda _e: self.guarded(self.save))
         window.bind("<Control-z>", lambda _e: self.guarded(self.undo))
         window.bind("<Control-y>", lambda _e: self.guarded(self.redo))
         window.bind('<Destroy>',lambda e:self.stop_sprite() if e.widget==window else None,add='+')
         self.populate()
+        self.draft=self._editor_scope.register(self,lambda:self.form_dirty,self.apply_form,
+            self.capture_draft,self.restore_draft)
 
     @staticmethod
     def defaults() -> dict:
@@ -207,26 +212,34 @@ class RosterEditor:
         return default_settings()
 
     def guarded(self, operation):
-        try:
-            return operation()
-        except (EditorError, OSError, ValueError, KeyError, IndexError) as exc:
-            self.status.set(str(exc))
-            messagebox.showerror("Roster editor", str(exc), parent=self.window)
-            return None
+        return guard(self,operation)
+
+    def show_error(self,error):
+        self.error_label.configure(text=str(error));self.error_label.pack(side='bottom',fill='x')
+        control=self.field_controls.get(tuple(error.field)) if isinstance(error,FieldError) and error.field else None
+        if control is not None:
+            page=control
+            while page.master is not self.notebook:page=page.master
+            self.notebook.select(page);control.state(['invalid']);control.focus_set()
+
+    def capture_draft(self):
+        return dict(current=self.current,collection=self.collection,kind=self.kind.get(),
+            values=[(list(k),v.get()) for k,(v,_) in self.variables.items()],
+            loadout=copy.deepcopy(self.loadout),dirty=self.form_dirty)
+
+    def restore_draft(self,state):
+        self.current=state['current'];self.collection=state['collection'];self.kind.set(state['kind'])
+        self.populate()
+        for key,value in state['values']:
+            if tuple(key) in self.variables:self.variables[tuple(key)][0].set(value)
+        self.loadout=state['loadout'];self.form_dirty=state['dirty']
+        if self.current and self.collection=='mechs':self.refresh_mounts()
 
     def discard_or_save(self) -> bool:
-        if self.map_editor:
-            self.map_editor.apply_pending()
-        if not self.document or not (self.document.dirty or self.form_dirty):
-            return True
-        answer = messagebox.askyesnocancel("Unsaved edits", "Save your changes before closing this project?", parent=self.window)
-        if answer is None:
-            return False
-        if answer:
-            self.save()
-        return True
+        return self._editor_scope.confirm_close()
 
-    def set_document(self, document: ProjectDocument):
+    def set_document(self, document: ProjectDocument, check=True):
+        if self.document is not None and check and not self.discard_or_save():return
         if self.map_editor:
             self.map_editor.window.destroy()
             self.map_editor = None
@@ -245,7 +258,7 @@ class RosterEditor:
             return
         path = filedialog.askdirectory(title="Open directory containing project.json", parent=self.window)
         if path:
-            self.set_document(ProjectDocument(Path(path), self.validator))
+            self.set_document(ProjectDocument(Path(path), self.validator),check=False)
 
     def new_project(self):
         if not self.discard_or_save():
@@ -263,7 +276,7 @@ class RosterEditor:
             return
         parent = filedialog.askdirectory(title="Create project folder inside", parent=self.window)
         if parent:
-            self.set_document(create_project(template, Path(parent) / package_id, package_id, title, self.validator))
+            self.set_document(create_project(template, Path(parent) / package_id, package_id, title, self.validator),check=False)
 
     def change_kind(self):
         self.apply_form()
@@ -359,6 +372,7 @@ class RosterEditor:
         title.grid(row=row, column=0, sticky="w", padx=(0, 14), pady=5)
         control = ttk.Combobox(frame, textvariable=variable, values=choices, state="readonly") if choices is not None else ttk.Entry(frame, textvariable=variable, state="readonly" if readonly else "normal")
         control.grid(row=row, column=1, sticky="ew", pady=5)
+        self.field_controls[tuple(path)]=control
         if hasattr(frame, "editor_canvas"):
             self.bind_form_scroll(title, frame.editor_canvas)
             # Keep native combobox wheel selection instead of scrolling twice.
@@ -376,6 +390,7 @@ class RosterEditor:
         for tab in self.notebook.tabs():
             self.notebook.nametowidget(tab).destroy()
         self.variables = {}
+        self.field_controls = {}
         self.form_dirty = False
         if not self.current:
             self.selection_title.configure(text="Definition details")
@@ -463,7 +478,7 @@ class RosterEditor:
             try:
                 target[path[-1]] = int(variable.get()) if integer else variable.get()
             except ValueError as exc:
-                raise EditorError(f"{'.'.join(map(str,path))} must be a whole number.") from exc
+                raise FieldError(f"{'.'.join(map(str,path))} must be a whole number.",path) from exc
         if self.collection == "mechs":
             item["loadout"] = copy.deepcopy(self.loadout)
         self.document.replace_both(content,adventure)
@@ -483,28 +498,22 @@ class RosterEditor:
             raise EditorError("Create a weapon definition first.")
         index = len(self.loadout) if adding else int(selected[0])
         mount = dict(weapon=weapons[0], location="left_arm", ammunition=0) if adding else self.loadout[index]
-        dialog = tk.Toplevel(self.window)
-        dialog.title("Weapon mount")
-        dialog.transient(self.window)
-        dialog.grab_set()
-        values = {key: tk.StringVar(value=str(value)) for key, value in mount.items()}
+        from adventure_editor import Form
+        dialog=Form(self,'Weapon mount')
         locations=['front','left','right','rear','turret'] if self.item().get('kind')=='vehicle' else LOCATIONS
-        if adding:values['location'].set(locations[0])
-        for row, (key, choices) in enumerate([("weapon", weapons), ("location", locations), ("ammunition", None)]):
-            ttk.Label(dialog, text=key.title()).grid(row=row, column=0, padx=12, pady=8)
-            widget = ttk.Combobox(dialog, textvariable=values[key], values=choices, state="readonly", width=42) if choices else ttk.Entry(dialog, textvariable=values[key])
-            widget.grid(row=row, column=1, padx=12, pady=8, sticky="ew")
-        def apply():
-            new = {key: int(value.get()) if key == "ammunition" else value.get() for key, value in values.items()}
+        if adding:mount['location']=locations[0]
+        for key, choices in [("weapon", weapons), ("location", locations), ("ammunition", None)]:
+            dialog.field(key,mount[key],choices)
+        def apply(values):
+            new = {key: int(value) if key == "ammunition" else value for key, value in values.items()}
             if adding:
                 self.loadout.append(new)
             else:
                 self.loadout[index] = new
             self.changed()
             self.refresh_mounts()
-            dialog.destroy()
-        ttk.Button(dialog, text="Apply", command=lambda: self.guarded(apply)).grid(row=3, column=1, pady=12)
-        dialog.bind("<Escape>", lambda _e: dialog.destroy())
+        dialog.submit(apply)
+        return dialog
 
     def remove_mount(self):
         if self.mounts.selection():
@@ -777,20 +786,13 @@ class RosterEditor:
 
     def save(self):
         if self.document:
-            if self.map_editor:
-                self.map_editor.apply_pending()
-            self.apply_form()
-            if self.library_context:self.library_context.commit(self)
-            result=self.document.save()
+            result=self._editor_scope.transact(lambda:self.library_context.commit(self) if self.library_context else self.document.save())
             if not self.library_context:self.status.set(result)
             self.refresh_list()
 
     def validate(self):
         if self.document:
-            if self.map_editor:
-                self.map_editor.apply_pending()
-            self.apply_form()
-            self.status.set(self.document.validate())
+            self.status.set(self._editor_scope.transact(self.document.validate))
 
     def setup(self):
         dialog = tk.Toplevel(self.window)
@@ -888,6 +890,8 @@ def main():
     args = parser.parse_args()
     window = tk.Tk()
     app = RosterEditor(window, args.validator, args.state_dir.resolve())
+    import traceback
+    window.report_callback_exception=lambda kind,error,tb:report(app,error,''.join(traceback.format_exception(kind,error,tb)))
     if args.project:
         app.guarded(lambda: app.set_document(ProjectDocument(args.project, args.validator)))
     window.mainloop()

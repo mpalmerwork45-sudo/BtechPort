@@ -7,6 +7,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 
 from editor_model import EditorError
+from editor_session import guard, register, apply_draft, scope_of, visible_parent, FieldError
 from adventure_editing import OPS, composite, paint, event_template, new_id, copy_adventure, scene_markers, move_marker
 from editor_tiles import load_tiles, art_tiles
 from world_editing import token, upgrade, graphic_tile, draw as draw_tiles, fill as fill_tiles
@@ -36,16 +37,24 @@ class Form:
         self.owner = owner
         self.window = tk.Toplevel(owner.window)
         self.window.title(title)
-        self.window.transient(owner.window)
+        self.window.transient(visible_parent(owner))
         self.window.columnconfigure(1, weight=1)
         shell,self.body=scroll_frame(self.window)
         shell.pack(fill="both",expand=True)
         self.body.columnconfigure(1,weight=1)
         self.window.minsize(580,250)
         self.window.geometry("700x650")
-        self.values = {}
+        self.values = {};self.widgets={};self.integers=set();self.tracked=[]
         self.row = 0
-        self.window.bind("<Escape>", lambda _: self.window.destroy())
+        self.error=tk.StringVar()
+        ttk.Label(self.window,textvariable=self.error,foreground='#a03030',wraplength=620,padding=8).pack(side='bottom',fill='x')
+        self.window.bind("<Escape>", lambda _: self.close())
+        self.window.protocol('WM_DELETE_WINDOW',self.close)
+        self.previous_grab=self.window.grab_current()
+        self.window.grab_set()
+        def restore_grab(event):
+            if event.widget==self.window and self.previous_grab is not None and self.previous_grab.winfo_exists():self.previous_grab.grab_set()
+        self.window.bind('<Destroy>',restore_grab,add='+')
 
     def field(self, key, value, choices=None, label=None):
         ttk.Label(self.body, text=label or key.replace("_", " ").title()).grid(row=self.row, column=0, sticky="w", padx=10, pady=4)
@@ -53,15 +62,47 @@ class Form:
         widget = ttk.Combobox(self.body, textvariable=var, values=choices, state="readonly", width=48) if choices is not None else ttk.Entry(self.body, textvariable=var, width=50)
         widget.grid(row=self.row, column=1, sticky="ew", padx=10, pady=4)
         self.values[key] = var
+        self.widgets[key]=widget
+        if isinstance(value,int):self.integers.add(key)
         self.row += 1
         return widget
 
     def submit(self, callback):
-        def apply():
-            callback({k: v.get() for k, v in self.values.items()})
-            self.window.destroy()
+        self.callback=callback;self.initial=self.capture_draft()
+        self.draft=register(self,pending=lambda:self.capture_draft()!=self.initial,
+            apply=self.apply_pending,capture=self.capture_draft,restore=self.restore_draft,
+            accept=self.accept_draft,priority=100)
         # Keep Apply reachable while scrolling through a long party form.
-        ttk.Button(self.window, text="Apply", command=lambda: self.owner.guard(apply)).pack(side="bottom",anchor="e",pady=8,padx=12)
+        ttk.Button(self.window, text="Apply", command=lambda: guard(self,lambda:apply_draft(self))).pack(side="bottom",anchor="e",pady=8,padx=12)
+
+    def track(self,value):
+        # Nested enemy/stock forms edit mutable lists in their parent draft.
+        self.tracked.append(value)
+
+    def capture_draft(self):return dict(values={k:v.get() for k,v in self.values.items()},tracked=copy.deepcopy(self.tracked))
+    def restore_draft(self,state):
+        for key,value in state['values'].items():self.values[key].set(value)
+        for target,value in zip(self.tracked,state['tracked']):
+            target.clear();target.update(value) if isinstance(target,dict) else target.extend(value)
+    def apply_pending(self):
+        values={k:v.get() for k,v in self.values.items()}
+        for key in self.integers:
+            try:int(values[key])
+            except ValueError:raise FieldError(key.replace('_',' ').capitalize()+' must be a whole number.',key)
+        self.callback(values)
+    def accept_draft(self):self.window.destroy()
+    def show_error(self,error):
+        self.error.set(str(error));self.window.lift()
+        key=getattr(error,'field',None)
+        widget=self.widgets.get(key)
+        if widget is not None:widget.focus_set();widget.state(['invalid'])
+    def guard(self,operation):return guard(self,operation)
+    def close(self):
+        if hasattr(self,'initial') and self.capture_draft()!=self.initial:
+            answer=messagebox.askyesnocancel('Unfinished form','Apply these changes before closing?',parent=self.window)
+            if answer is None:return
+            if answer:return guard(self,lambda:apply_draft(self))
+        self.window.destroy()
 
 
 class AdventureEditor:
@@ -110,12 +151,23 @@ class AdventureEditor:
         self.window.bind("<Escape>", lambda _: self.cancel_gesture())
         self.window.protocol("WM_DELETE_WINDOW",lambda:self.guard(self.close))
         self.tabs.bind("<<NotebookTabChanged>>",lambda _:self.guard(self.apply_pending))
+        self.draft=register(self,pending=lambda:self.event_pending or self.stroke is not None,
+            apply=self.apply_pending,capture=self.capture_draft,restore=self.restore_draft,priority=20)
 
     def guard(self, action):
-        try:
-            return action()
-        except (EditorError, OSError, ValueError, KeyError, IndexError) as exc:
-            self.status.set(str(exc));messagebox.showerror("Map/event editor", str(exc), parent=self.window)
+        return guard(self,action)
+
+    def capture_draft(self):
+        return dict(event_id=self.event_id,template=copy.deepcopy(getattr(self,'event_draft',None)),
+            values={k:v.get() for k,v in self.event_vars.items()},pending=self.event_pending,
+            text=self.event_text.get('1.0','end-1c') if self.event_text else None,stroke=copy.deepcopy(self.stroke))
+    def restore_draft(self,state):
+        self.event_id=state['event_id'];self.stroke=state['stroke']
+        if state['template']:
+            self.render_event_form(state['template'])
+            for k,v in state['values'].items():self.event_vars[k].set(v)
+            if self.event_text and state['text'] is not None:self.event_text.delete('1.0','end');self.event_text.insert('1.0',state['text'])
+        self.event_pending=state['pending']
 
     @property
     def adventure(self): return self.document.adventure
@@ -694,7 +746,7 @@ class AdventureEditor:
 
     def encounter_dialog(self,index=None,at=None,selected_enemy=None):
         old=copy.deepcopy(self.adventure["encounters"][index]) if index is not None else dict(id=new_id(self.document,"encounters","encounter"),map=self.scene()["id"],party_at=list(at),enemies=[])
-        form=Form(self,"Encounter and enemy spawns")
+        form=Form(self,"Encounter and enemy spawns");form.track(old)
         form.field("id",old["id"]);form.field("map",old["map"],[m["id"] for m in self.adventure["maps"]]);form.field("party_x",old["party_at"][0]);form.field("party_y",old["party_at"][1])
         listing=tk.Listbox(form.body,height=6,width=60,exportselection=False);listing.grid(row=form.row,column=0,columnspan=2,padx=10,sticky="ew");form.row+=1
         def refresh():
@@ -706,7 +758,7 @@ class AdventureEditor:
             if edit and not selected:return
             at_index=selected[0] if edit else None
             enemy=old["enemies"][at_index] if edit else dict(kind="mech",definition=self.document.content["mechs"][0]["id"],at=[min(120,old["party_at"][0]+8),old["party_at"][1]])
-            dialog=Form(self,"Enemy placement");kind=dialog.field("kind",enemy["kind"],["mech","person"])
+            dialog=Form(form,"Enemy placement");kind=dialog.field("kind",enemy["kind"],["mech","person"])
             def choices():return [m["id"] for m in (self.document.content["mechs"] if dialog.values["kind"].get()=="mech" else self.adventure["people"])]
             definition=dialog.field("definition",enemy["definition"],choices())
             kind.bind("<<ComboboxSelected>>",lambda _: (definition.configure(values=choices()),dialog.values["definition"].set(choices()[0])))
@@ -928,8 +980,8 @@ class AdventureEditor:
     def apply_pending(self):
         self.finish_stroke()
         if self.event_pending:self.apply_event()
-    def save(self):self.apply_pending();self.parent.apply_form();self.status.set(self.document.save());self.parent.refresh_list()
-    def validate(self):self.apply_pending();self.parent.apply_form();self.status.set(self.document.validate())
+    def save(self):self.parent.save();self.status.set(self.parent.status.get())
+    def validate(self):self.parent.validate();self.status.set(self.parent.status.get())
     def undo(self):
         if self.stroke is not None:
             self.cancel_gesture();return
@@ -941,4 +993,5 @@ class AdventureEditor:
     def play_here(self):self.save();self.parent.launch_player((self.scene()["id"],*self.cursor))
     def close(self):
         # Shared document edits remain in the parent even if this window closes.
-        self.apply_pending();self.window.destroy();self.parent.map_editor=None
+        if not scope_of(self).confirm_close(self):return
+        self.window.destroy();self.parent.map_editor=None

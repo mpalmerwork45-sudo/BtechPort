@@ -34,7 +34,7 @@ def edit_track(editor):
     from tkinter import ttk
     action=editor.view.get().lower()
     if action not in ACTIONS:action='walk'
-    f=Form(editor.owner,'Animation action')
+    f=Form(editor,'Animation action')
     f.field('action',action,ACTIONS)
     f.field('layout','Shared',['Shared','Eight directions'])
     f.field('sound',0)

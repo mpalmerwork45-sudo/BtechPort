@@ -1,4 +1,5 @@
 """Graph and quest authoring; every edge remains an ordinary event reference."""
+from editor_session import guard
 import copy
 import json
 import tkinter as tk
@@ -41,15 +42,15 @@ class EventGraph:
         self.window=tk.Toplevel(owner.window);self.window.title('Event graph');self.window.geometry('1000x700')
         bar=ttk.Frame(self.window,padding=8);bar.pack(fill='x')
         for label,method in [('Edit node',self.edit),('Connect branch',self.link),('Add dialogue branch',self.branch),('Objectives',self.objectives),('Playtest / checkpoints',self.debug),('Refresh',self.draw)]:
-            ttk.Button(bar,text=label,command=lambda f=method:owner.guard(f)).pack(side='left',padx=3)
+            ttk.Button(bar,text=label,command=lambda f=method:guard(self,f)).pack(side='left',padx=3)
         ttk.Label(self.window,text='Drag nodes to arrange them. Double-click to edit. Arrows show named success, failure and dialogue branches.',padding=(10,0,10,8)).pack(fill='x')
         body=ttk.Frame(self.window);body.pack(fill='both',expand=True)
         self.canvas=tk.Canvas(body,background='#edf0f4',highlightthickness=0)
         y=ttk.Scrollbar(body,command=self.canvas.yview);x=ttk.Scrollbar(body,orient='horizontal',command=self.canvas.xview)
         self.canvas.configure(yscrollcommand=y.set,xscrollcommand=x.set)
         y.pack(side='right',fill='y');x.pack(side='bottom',fill='x');self.canvas.pack(fill='both',expand=True)
-        self.canvas.bind('<Button-1>',self.press);self.canvas.bind('<B1-Motion>',self.motion);self.canvas.bind('<ButtonRelease-1>',lambda e:owner.guard(lambda:self.release(e)))
-        self.canvas.bind('<Double-1>',lambda e:owner.guard(self.edit));self.draw()
+        self.canvas.bind('<Button-1>',self.press);self.canvas.bind('<B1-Motion>',self.motion);self.canvas.bind('<ButtonRelease-1>',lambda e:guard(self,lambda:self.release(e)))
+        self.canvas.bind('<Double-1>',lambda e:guard(self,self.edit));self.draw()
 
     def draw(self):
         self.canvas.delete('all');events=self.document.adventure['events'];saved=editor_data(self.document).get('event_layout',{})
@@ -95,7 +96,7 @@ class EventGraph:
         if not self.selected:return
         e=next(e for e in self.document.adventure['events'] if e['id']==self.selected);branches=dict(edges(e))
         if not branches:raise EditorError('This event has no outgoing branches. Change its operation in Edit node first.')
-        f=Form(self.owner,'Connect event branch');key=next(iter(branches));f.field('branch',key,list(branches))
+        f=Form(self,'Connect event branch');key=next(iter(branches));f.field('branch',key,list(branches))
         f.field('destination',branches[key],[e['id'] for e in self.document.adventure['events']])
         def apply(v):connect(self.document,self.selected,v['branch'],v['destination']);self.owner.refresh();self.draw()
         f.submit(apply)
@@ -103,7 +104,7 @@ class EventGraph:
     def branch(self):
         from adventure_editor import Form
         if not self.selected:return
-        f=Form(self.owner,'New dialogue branch');f.field('label','Ask a question');f.field('text','The conversation continues.')
+        f=Form(self,'New dialogue branch');f.field('label','Ask a question');f.field('text','The conversation continues.')
         def apply(v):dialogue_branch(self.document,self.selected,v['label'],v['text']);self.owner.refresh();self.draw()
         f.submit(apply)
 
@@ -119,8 +120,8 @@ class ObjectiveEditor:
         ttk.Label(self.window,text='Objectives appear when their Active flag is set; Complete flags retain finished entries.',padding=12,wraplength=640).pack(fill='x')
         self.listing=tk.Listbox(self.window,exportselection=False);self.listing.pack(fill='both',expand=True,padx=12)
         bar=ttk.Frame(self.window,padding=12);bar.pack(fill='x')
-        for text,method in [('New',lambda:self.edit(True)),('Edit',lambda:self.edit(False)),('Delete',self.delete)]:ttk.Button(bar,text=text,command=lambda f=method:owner.guard(f)).pack(side='left',padx=4)
-        self.listing.bind('<Double-1>',lambda _:owner.guard(lambda:self.edit(False)));self.refresh()
+        for text,method in [('New',lambda:self.edit(True)),('Edit',lambda:self.edit(False)),('Delete',self.delete)]:ttk.Button(bar,text=text,command=lambda f=method:guard(self,f)).pack(side='left',padx=4)
+        self.listing.bind('<Double-1>',lambda _:guard(self,lambda:self.edit(False)));self.refresh()
     def refresh(self):
         self.listing.delete(0,'end')
         for o in self.document.adventure.get('objectives',[]):self.listing.insert('end',o['title'])
@@ -131,7 +132,7 @@ class ObjectiveEditor:
         if not new and not self.listing.curselection():return
         index=None if new else self.listing.curselection()[0]
         old=dict(id=identity(self.document.manifest['package_id'],a.get('objectives',[]),'objective'),title='New objective',text='Describe the objective.',active=flags[0],complete=flags[1]) if new else a['objectives'][index]
-        f=Form(self.owner,'Objective')
+        f=Form(self,'Objective')
         for k in ('id','title','text','active','complete'):f.field(k,old[k],flags if k in ('active','complete') else None)
         def apply(v):
             a=copy.deepcopy(self.document.adventure);values=a.setdefault('objectives',[])

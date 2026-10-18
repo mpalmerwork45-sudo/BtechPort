@@ -11,6 +11,7 @@ from world_editing import graphic_tile
 from pixel_tools import begin_layers,target,flatten,export_layers,add_layer,selected_pixels,paste_selection,resize_canvas,export_sheet
 from event_workbench import editor_data
 from editor_model import encoded
+from editor_session import guard, register, apply_draft, scope_of
 
 
 def photo(parent, image, frame=0, zoom=1):
@@ -58,8 +59,11 @@ class GraphicsEditor:
         ttk.Label(self.window, text='Images belong to this package. Changes share the map editor shared Save, Undo and Redo.',
                   style='Muted.TLabel', padding=10).pack(fill='x')
         self.refresh()
+        self.window.protocol('WM_DELETE_WINDOW',lambda:self.guard(self.close))
 
-    def guard(self, fn): return self.owner.guard(fn)
+    def guard(self, fn): return guard(self,fn)
+    def close(self):
+        if scope_of(self).confirm_close(self):self.window.destroy()
     def current(self):
         return next((i for i in self.document.art['images'] if i['id'] == self.selected), None)
     def refresh(self):
@@ -180,7 +184,7 @@ class PixelEditor:
         ttk.Button(bar,text='Color...',command=self.choose_color).pack(side='left')
         self.zoom=tk.StringVar(value=str(min(16,max(2,512//max(image['width'],image['height'])))))
         z=ttk.Combobox(bar,textvariable=self.zoom,values=['1','2','4','8','16','24','32'],width=4,state='readonly'); z.pack(side='left',padx=8);z.bind('<<ComboboxSelected>>',lambda _:self.draw())
-        for title,cb in [('Undo',self.undo),('Redo',self.redo),('Apply',self.apply)]:ttk.Button(bar,text=title,command=lambda f=cb:self.owner.guard(f)).pack(side='left',padx=3)
+        for title,cb in [('Undo',self.undo),('Redo',self.redo),('Apply',self.apply)]:ttk.Button(bar,text=title,command=lambda f=cb:self.guard(f)).pack(side='left',padx=3)
         colors=ttk.Frame(self.window,padding=(8,0)); colors.pack(fill='x')
         swatches=tk.Canvas(colors,width=384,height=24,highlightthickness=0);swatches.pack(side='left')
         for i,c in enumerate(DEFAULT_COLORS):swatches.create_rectangle(i*24,0,i*24+23,23,fill='#'+c,outline='#999999')
@@ -188,10 +192,10 @@ class PixelEditor:
         self.build_frames()
         transforms=ttk.Frame(self.window,padding=(8,0,8,8));transforms.pack(fill='x')
         for title in ('Flip X','Flip Y'):
-            ttk.Button(transforms,text=title,command=lambda op=title:self.owner.guard(lambda:self.transform(op))).pack(side='left',padx=3)
+            ttk.Button(transforms,text=title,command=lambda op=title:self.guard(lambda:self.transform(op))).pack(side='left',padx=3)
         more=ttk.Menubutton(transforms,text='Transform');menu=tk.Menu(more,tearoff=False)
         for title in ('Rotate right','Rotate left','Nudge left','Nudge right','Nudge up','Nudge down','Clear'):
-            menu.add_command(label=title,command=lambda op=title:self.owner.guard(lambda:self.transform(op)))
+            menu.add_command(label=title,command=lambda op=title:self.guard(lambda:self.transform(op)))
         more.configure(menu=menu);more.pack(side='left',padx=3)
         self.all_frames=tk.BooleanVar(value=False);self.wrap=tk.BooleanVar(value=False)
         ttk.Checkbutton(transforms,text='All frames',variable=self.all_frames).pack(side='left',padx=8)
@@ -199,29 +203,41 @@ class PixelEditor:
         self.grid=tk.BooleanVar(value=True)
         ttk.Checkbutton(transforms,text='Grid',variable=self.grid,command=self.draw).pack(side='left',padx=8)
         extra=ttk.Menubutton(transforms,text='Selection / canvas');em=tk.Menu(extra,tearoff=False)
-        for title,method in [('Copy selection',self.copy_pixels),('Cut selection',lambda:self.copy_pixels(True)),('Crop to selection',self.crop),('Resize canvas',self.resize_dialog),('Export PNG sheet',self.export_dialog)]:em.add_command(label=title,command=lambda f=method:self.owner.guard(f))
+        for title,method in [('Copy selection',self.copy_pixels),('Cut selection',lambda:self.copy_pixels(True)),('Crop to selection',self.crop),('Resize canvas',self.resize_dialog),('Export PNG sheet',self.export_dialog)]:em.add_command(label=title,command=lambda f=method:self.guard(f))
         extra.configure(menu=em);extra.pack(side='left',padx=6)
         # Keep the extra controls in the palette row; the drawing canvas
         # retains its useful size on a 1024x768 desktop.
         ttk.Label(colors,text=' Layer').pack(side='left');self.layer=ttk.Combobox(colors,state='readonly',width=16);self.layer.pack(side='left',padx=4);self.layer.bind('<<ComboboxSelected>>',lambda _:self.change_layer())
         layers_button=ttk.Menubutton(colors,text='Layers');layers_menu=tk.Menu(layers_button,tearoff=False)
-        for title,method in [('New layer',self.new_layer),('Rename',self.rename_layer),('Show / hide',self.toggle_layer),('Raise',lambda:self.reorder_layer(1)),('Lower',lambda:self.reorder_layer(-1)),('Delete',self.delete_layer)]:layers_menu.add_command(label=title,command=lambda f=method:self.owner.guard(f))
+        for title,method in [('New layer',self.new_layer),('Rename',self.rename_layer),('Show / hide',self.toggle_layer),('Raise',lambda:self.reorder_layer(1)),('Lower',lambda:self.reorder_layer(-1)),('Delete',self.delete_layer)]:layers_menu.add_command(label=title,command=lambda f=method:self.guard(f))
         layers_button.configure(menu=layers_menu);layers_button.pack(side='left',padx=4)
         view=ttk.Frame(self.window);view.pack(fill='both',expand=True,padx=8,pady=(0,8));view.columnconfigure(0,weight=1);view.rowconfigure(0,weight=1)
         self.canvas=tk.Canvas(view,highlightthickness=0,background='#d6d6d6')
         sx=ttk.Scrollbar(view,orient='horizontal',command=self.canvas.xview);sy=ttk.Scrollbar(view,command=self.canvas.yview)
         self.canvas.configure(xscrollcommand=sx.set,yscrollcommand=sy.set);self.canvas.grid(row=0,column=0,sticky='nsew');sx.grid(row=1,column=0,sticky='ew');sy.grid(row=0,column=1,sticky='ns')
-        self.canvas.bind('<Button-1>',lambda e:self.owner.guard(lambda:self.stroke(e,True)))
-        self.canvas.bind('<B1-Motion>',lambda e:self.owner.guard(lambda:self.stroke(e,False)))
+        self.canvas.bind('<Button-1>',lambda e:self.guard(lambda:self.stroke(e,True)))
+        self.canvas.bind('<B1-Motion>',lambda e:self.guard(lambda:self.stroke(e,False)))
         self.canvas.bind('<ButtonRelease-1>',lambda _:self.finish())
         self.window.bind('<Control-z>',lambda _:self.undo());self.window.bind('<Control-y>',lambda _:self.redo())
-        self.canvas.bind('<Control-c>',lambda _:self.owner.guard(self.copy_pixels));self.canvas.bind('<Control-v>',lambda _:self.tool.set('Paste selection'))
+        self.canvas.bind('<Control-c>',lambda _:self.guard(self.copy_pixels));self.canvas.bind('<Control-v>',lambda _:self.tool.set('Paste selection'))
         self.window.protocol('WM_DELETE_WINDOW',self.close);self.refresh_frames();self.refresh_layers();self.draw()
+        self.draft=register(self,pending=lambda:self.image!=self.original_layers,
+            apply=self.apply_pending,capture=self.capture_draft,restore=self.restore_draft,
+            accept=self.accept_draft,priority=50)
+    @property
+    def document(self):return self.owner.document
+    def guard(self,fn):return guard(self,fn)
+    def capture_draft(self):
+        return dict(image=copy.deepcopy(self.image),original=copy.deepcopy(self.original),
+            layers=copy.deepcopy(self.original_layers),history=copy.deepcopy(self.history),future=copy.deepcopy(self.future))
+    def restore_draft(self,state):
+        self.image=state['image'];self.original=state['original'];self.original_layers=state['layers']
+        self.history=state['history'];self.future=state['future'];self.refresh_frames();self.refresh_layers();self.draw()
     def build_frames(self):
         frames=ttk.Frame(self.window,padding=8);frames.pack(fill='x')
         ttk.Label(frames,text='Frame').pack(side='left');self.frame=ttk.Combobox(frames,state='readonly',width=5);self.frame.pack(side='left',padx=6)
         self.frame.bind('<<ComboboxSelected>>',lambda _:self.draw())
-        for title,cb in [('Clone frame',self.add_frame),('Delete frame',self.delete_frame),('Play / stop',self.play)]:ttk.Button(frames,text=title,command=lambda f=cb:self.owner.guard(f)).pack(side='left',padx=4)
+        for title,cb in [('Clone frame',self.add_frame),('Delete frame',self.delete_frame),('Play / stop',self.play)]:ttk.Button(frames,text=title,command=lambda f=cb:self.guard(f)).pack(side='left',padx=4)
     def refresh_frames(self):
         current=max(0,self.frame.current());self.frame.configure(values=list(range(1,len(self.image['frames'])+1)));self.frame.current(min(current,len(self.image['frames'])-1))
     def draw(self):
@@ -296,13 +312,21 @@ class PixelEditor:
     def animate(self):
         if not self.window.winfo_exists() or not self.playing:return
         self.frame.current((self.frame.current()+1)%len(self.image['frames']));self.draw();self.window.after(120,self.animate)
-    def apply(self):
+    def apply_pending(self):
         self.finish();self.owner.selected=self.original['id'];clean,layers=export_layers(self.image)
         data=editor_data(self.owner.document);data.setdefault('pixel_layers',{})[clean['id']]=layers
         metadata=dict(self.owner.document.metadata);metadata['EDITOR.json']=encoded(data)
-        self.owner.put(clean,self.original,metadata);self.window.destroy()
+        self.owner.put(clean,self.original,metadata)
+    def accept_draft(self):
+        self.original=copy.deepcopy(next(i for i in self.document.art['images'] if i['id']==self.original['id']))
+        self.original_layers=copy.deepcopy(self.image)
+    def apply(self):
+        apply_draft(self);self.window.destroy()
     def close(self):
-        if self.image!=self.original_layers and not messagebox.askyesno('Discard pixel edits?','Close without applying these pixel edits?',parent=self.window):return
+        if self.image!=self.original_layers:
+            answer=messagebox.askyesnocancel('Unfinished artwork','Apply pixel edits before closing?',parent=self.window)
+            if answer is None:return
+            if answer:apply_draft(self)
         self.window.destroy()
 
     def refresh_layers(self):
@@ -312,7 +336,7 @@ class PixelEditor:
         self.finish();self.before=copy.deepcopy(self.image);operation();flatten(self.image);self.finish();self.refresh_layers();self.draw()
     def new_layer(self):self.layer_edit(lambda:add_layer(self.image,'Layer '+str(len(self.image['_layers'])+1)))
     def rename_layer(self):
-        f=Form(self.owner,'Layer name');f.field('name',self.image['_layers'][self.image['_layer']]['name'])
+        f=Form(self,'Layer name');f.field('name',self.image['_layers'][self.image['_layer']]['name'])
         def apply(v):
             if not v['name'] or len(v['name'])>48:raise EditorError('Layer names use 1..48 characters.')
             self.layer_edit(lambda:self.image['_layers'][self.image['_layer']].update(name=v['name']))
@@ -341,7 +365,7 @@ class PixelEditor:
         if not self.pixel_selection:raise EditorError('Select a rectangle to crop first.')
         x0,y0,x1,y1=self.pixel_selection;self.layer_edit(lambda:resize_canvas(self.image,x1-x0+1,y1-y0+1,x0,y0));self.pixel_selection=None;self.draw()
     def resize_dialog(self):
-        f=Form(self.owner,'Resize canvas (crop / pad, all layers and frames)');f.field('width',self.image['width']);f.field('height',self.image['height']);f.field('x',0,label='Source left');f.field('y',0,label='Source top')
+        f=Form(self,'Resize canvas (crop / pad, all layers and frames)');f.field('width',self.image['width']);f.field('height',self.image['height']);f.field('x',0,label='Source left');f.field('y',0,label='Source top')
         f.submit(lambda v:self.layer_edit(lambda:resize_canvas(self.image,int(v['width']),int(v['height']),int(v['x']),int(v['y']))))
     def export_dialog(self):
         path=filedialog.asksaveasfilename(parent=self.window,title='Export sprite sheet',defaultextension='.png',filetypes=[('PNG','*.png')])

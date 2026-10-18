@@ -128,7 +128,7 @@ def run(env,work):
                 library.selected=editor.image['id'];before=copy.deepcopy(doc.art)
                 discarded=library.edit();pump();assert isinstance(discarded,SpriteEditor)
                 discarded.transform('Clear')
-                with patch.object(messagebox,'askyesno',return_value=True):discarded.close()
+                with patch.object(messagebox,'askyesnocancel',return_value=False):discarded.close()
                 pump();assert doc.art==before
                 # Original characters share diagonal/cardinal images; the
                 # editor must expose that aliasing instead of inventing poses.

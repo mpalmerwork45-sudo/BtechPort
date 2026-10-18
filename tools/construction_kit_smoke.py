@@ -57,7 +57,7 @@ def run(env,work):
                 reopened_pixel=open_image_editor(art,art.current());pump();assert len(reopened_pixel.image['_layers'])==2;
                 from action_tracks import edit_track
                 edit_track(reopened_pixel);pump()
-                form=next(w for w in art.window.winfo_children() if isinstance(w,tk.Toplevel) and w.title()=='Animation action')
+                form=next(w for w in reopened_pixel.window.winfo_children() if isinstance(w,tk.Toplevel) and w.title()=='Animation action')
                 def descendants(w):
                     for child in w.winfo_children():
                         yield child

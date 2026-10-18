@@ -6,6 +6,7 @@ from tkinter import ttk
 from adventure_editor import Form
 from adventure_editing import composite
 from editor_model import EditorError
+from editor_session import guard, register, apply_draft, scope_of
 from world_editing import (create_world, add_jigsaw, assign_city, world_size,
                            patch_cells, set_patch, line, token, all_worlds, get_world)
 
@@ -43,10 +44,15 @@ class WorldEditor:
         self.canvas.bind('<B1-Motion>',lambda e:self.guard(lambda:self.pointer(e,False)))
         self.canvas.bind('<ButtonRelease-1>',lambda _:self.guard(self.finish))
         self.window.bind('<Escape>',lambda _:self.cancel())
-        self.window.protocol('WM_DELETE_WINDOW',lambda:(self.cancel(),self.window.destroy()))
+        self.window.protocol('WM_DELETE_WINDOW',lambda:self.guard(self.close))
         self.info=tk.StringVar();ttk.Label(self.window,textvariable=self.info,style='Status.TLabel',padding=8).pack(fill='x')
         self.refresh()
-    def guard(self, fn):return self.owner.guard(fn)
+        self.draft=register(self,pending=lambda:self.stroke is not None,apply=self.finish,
+            capture=lambda:dict(stroke=copy.deepcopy(self.stroke),drag=self.drag),restore=self.restore_draft,priority=30)
+    def guard(self, fn):return guard(self,fn)
+    def restore_draft(self,state):self.stroke=state['stroke'];self.drag=state['drag'];self.draw()
+    def close(self):
+        if scope_of(self).confirm_close(self):self.cancel();self.window.destroy()
     @property
     def adventure(self):return self.stroke or self.document.adventure
     def scroll(self,axis,args):getattr(self.canvas,axis+'view')(*args);self.schedule()
@@ -208,6 +214,20 @@ class JigsawEditor:
         self.tile=ttk.Combobox(self.window,state='readonly',values=[t['id'] for t in owner.adventure['tiles']],width=55);self.tile.pack(pady=8);selected=owner.owner.brush.curselection();self.tile.current(min(selected[0] if selected else 0,len(owner.adventure['tiles'])-1))
         self.canvas=tk.Canvas(self.window,width=320,height=320,highlightthickness=0);self.canvas.pack()
         self.canvas.bind('<Button-1>',lambda e:self.paint(e,True));self.canvas.bind('<B1-Motion>',lambda e:self.paint(e,False));self.canvas.bind('<ButtonRelease-1>',lambda _:self.finish());self.draw()
+        self.draft=register(self,pending=lambda:self.jigsaw!=self.original or self.name.get()!=self.original['name'],
+            apply=self.apply_pending,capture=self.capture_draft,restore=self.restore_draft,accept=self.accept_draft,priority=50)
+        self.window.protocol('WM_DELETE_WINDOW',lambda:guard(self,self.close))
+    def capture_draft(self):return dict(jigsaw=copy.deepcopy(self.jigsaw),original=copy.deepcopy(self.original),name=self.name.get(),history=copy.deepcopy(self.history),future=copy.deepcopy(self.future))
+    def restore_draft(self,state):
+        self.jigsaw=state['jigsaw'];self.original=state['original'];self.name.set(state['name']);self.history=state['history'];self.future=state['future'];self.draw()
+    def accept_draft(self):self.original=copy.deepcopy(self.jigsaw)
+    def close(self):
+        from tkinter import messagebox
+        if self.draft and self.draft.pending():
+            answer=messagebox.askyesnocancel('Unfinished jigsaw','Apply changes before closing?',parent=self.window)
+            if answer is None:return
+            if answer:apply_draft(self)
+        self.window.destroy()
     def draw(self):
         self.canvas.delete('all');tiles={t['id']:t for t in self.owner.adventure['tiles']}
         for y,row in enumerate(self.jigsaw['rows']):
@@ -230,7 +250,8 @@ class JigsawEditor:
         if self.history:self.future.append(self.jigsaw);self.jigsaw=self.history.pop();self.draw()
     def redo(self):
         if self.future:self.history.append(self.jigsaw);self.jigsaw=self.future.pop();self.draw()
-    def apply(self):
+    def apply_pending(self):
         a=copy.deepcopy(self.owner.document.adventure);old=next(j for j in a['jigsaws'] if j['id']==self.original['id'])
         if old!=self.original:raise EditorError('This jigsaw changed while the dialog was open. Reopen it.')
-        self.jigsaw['name']=self.name.get();a['jigsaws'][a['jigsaws'].index(old)]=self.jigsaw;self.owner.owner.commit(a);self.window.destroy()
+        self.jigsaw['name']=self.name.get();a['jigsaws'][a['jigsaws'].index(old)]=self.jigsaw;self.owner.owner.commit(a)
+    def apply(self):apply_draft(self);self.window.destroy()

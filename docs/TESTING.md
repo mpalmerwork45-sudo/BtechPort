@@ -1,5 +1,19 @@
 # Build, verification and original oracle — 2026-10-18
 
+## Editor usability UI1
+
+`python3 tools/native_smoke.py --editor-usability-only` passes real Tk checks for
+inline invalid ammunition/action input, modal ownership, cancel-close, saving
+unapplied artwork and rollback of both document changes and invalid field text.
+The existing construction-kit and library-editor GUI journeys also pass, as do
+7 editor-model and 17 unit-library tests. This is private-display Linux evidence;
+real window-manager stacking and native Windows focus remain later checks.
+
+Library saves prepare a fresh validated temporary baseline before the durable
+library write, retaining revision-conflict detection and preserving drafts when
+validation fails. The new reference baseline contains 1,287 entries in
+`work/reference-before-editor-usability.json`.
+
 ## Construction Kit five-milestone verification — 2026-10-18
 
 - Linux build: two jobs; **72/72 CTests** (44.51 s), **136/136 Python tests**

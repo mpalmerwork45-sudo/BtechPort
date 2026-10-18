@@ -101,10 +101,10 @@ class SpriteEditor(PixelEditor):
 
         tools = ttk.Frame(panel)
         tools.grid(row=2, column=0, columnspan=3, sticky='ew', pady=(8, 0))
-        ttk.Button(tools,text='Edit action...',command=lambda:self.owner.guard(lambda:edit_track(self))).pack(side='left',padx=(0,4))
-        ttk.Button(tools,text='Clone image',command=lambda:self.owner.guard(self.clone_pose)).pack(side='left',padx=(0,4))
+        ttk.Button(tools,text='Edit action...',command=lambda:self.guard(lambda:edit_track(self))).pack(side='left',padx=(0,4))
+        ttk.Button(tools,text='Clone image',command=lambda:self.guard(self.clone_pose)).pack(side='left',padx=(0,4))
         ttk.Button(tools, text='Copy frame', command=self.copy_frame).pack(side='left')
-        self.paste_button = ttk.Button(tools, text='Paste frame', command=lambda: self.owner.guard(self.paste),
+        self.paste_button = ttk.Button(tools, text='Paste frame', command=lambda: self.guard(self.paste),
                                       state='disabled')
         self.paste_button.pack(side='left', padx=(4, 12))
         self.onion = tk.BooleanVar(value=False)

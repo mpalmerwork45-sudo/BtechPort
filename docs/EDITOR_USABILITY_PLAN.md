@@ -2,7 +2,7 @@
 
 Recorded 2026-10-18 against implementation commit `cf4d5e4`.
 
-**Status: proposed, awaiting the user's go-ahead.** The five stages bring the
+**Status: approved and in progress.** The five stages bring the
 existing editors into one project workspace and make errors, saving, navigation
 and recovery predictable.
 
@@ -186,13 +186,18 @@ fragile matching of English error text.
 
 ## 5. Milestones
 
-All five stages are proposed. UI1 establishes the safety foundation; UI2 builds
+The user approved all five stages. UI1 establishes the safety foundation; UI2 builds
 the shell; UI3 moves workflows into it; UI4 completes consistent editing and
 recovery; UI5 completes polish and platform checks. Each stage includes focused
 tests and documentation. The sequence is incremental, not a single replacement
 of the whole interface.
 
 ### UI1 Dialog reliability and unfinished edits
+
+**Implemented with focused Linux verification:** dialog ownership, registered
+drafts, inline form errors, cancel-close protection and rollback of failed saves
+are in place. Real Tk regression and library/construction workflows pass. Later
+stages replace the remaining separate windows and complete shared history/recovery.
 
 1. Introduce explicit error/dialog ownership, with a common callback boundary.
    Update forms, weapon mounts, graphics, sprites, worlds, jigsaws, library tools,

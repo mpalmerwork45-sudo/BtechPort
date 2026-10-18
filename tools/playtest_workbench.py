@@ -1,4 +1,5 @@
 """Immutable project snapshots and real-player event traces for author testing."""
+from editor_session import guard
 import json
 from pathlib import Path
 import queue
@@ -52,17 +53,17 @@ class PlaytestWindow:
         top=ttk.Frame(self.window,padding=10);top.pack(fill='x')
         ttk.Label(top,text='New checkpoint name').pack(side='left');self.name=tk.StringVar(value='test-1');ttk.Entry(top,textvariable=self.name,width=22).pack(side='left',padx=8)
         for text,method in [('Run from start',lambda:self.run(False)),('Run from selected',lambda:self.run(True)),('Play selected',self.play)]:
-            ttk.Button(top,text=text,command=lambda f=method:owner.guard(f)).pack(side='left',padx=3)
+            ttk.Button(top,text=text,command=lambda f=method:guard(self,f)).pack(side='left',padx=3)
         body=ttk.Panedwindow(self.window,orient='horizontal');body.pack(fill='both',expand=True,padx=10)
         left=ttk.Frame(body);right=ttk.Frame(body);body.add(left,weight=1);body.add(right,weight=3)
-        self.listing=tk.Listbox(left,exportselection=False,width=25);self.listing.pack(fill='both',expand=True);self.listing.bind('<<ListboxSelect>>',lambda _:owner.guard(self.show))
+        self.listing=tk.Listbox(left,exportselection=False,width=25);self.listing.pack(fill='both',expand=True);self.listing.bind('<<ListboxSelect>>',lambda _:guard(self,self.show))
         ttk.Label(right,text='Actions (one per line: up, down, left, right, accept, cancel, menu, idle)').pack(anchor='w')
         self.actions=tk.Text(right,height=6,wrap='none');self.actions.pack(fill='x',pady=6);self.actions.insert('1.0','accept\n')
         ttk.Label(right,text='State, flags and event entries (double-click an event to edit it)').pack(anchor='w')
         self.trace=ttk.Treeview(right,columns=('tick','credits'),show='tree headings');self.trace.heading('#0',text='Event / state');self.trace.heading('tick',text='Tick');self.trace.heading('credits',text='Credits')
         self.trace.column('tick',width=70,stretch=False);self.trace.column('credits',width=90,stretch=False)
         scroll=ttk.Scrollbar(right,command=self.trace.yview);self.trace.configure(yscrollcommand=scroll.set);scroll.pack(side='right',fill='y');self.trace.pack(fill='both',expand=True)
-        self.trace.bind('<Double-1>',lambda _:owner.guard(self.edit_event))
+        self.trace.bind('<Double-1>',lambda _:guard(self,self.edit_event))
         self.status=tk.StringVar(value='Each run saves its own game snapshot; your ordinary game saves are untouched.')
         ttk.Label(self.window,textvariable=self.status,padding=10,wraplength=900).pack(fill='x');self.refresh()
 

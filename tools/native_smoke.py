@@ -1301,6 +1301,7 @@ def main():
     parser.add_argument('--adventure-only',action='store_true',help='Check authored maps, event screens, combat and saves')
     parser.add_argument('--battletech-demo-only',action='store_true',help='Check BattleTech demo screens, saves and complete two-contract route')
     parser.add_argument('--editor-only',action='store_true',help='Check the desktop roster editor and Play launch')
+    parser.add_argument('--editor-usability-only',action='store_true',help='Check editor dialogs, drafts and workspace workflows')
     parser.add_argument('--independent-only',action='store_true',help='Check independent quest and saved SDL screens without original files')
     parser.add_argument('--vehicles-only',action='store_true',help='Check vehicles, planets, map, inspection and depot SDL save/load screens')
     parser.add_argument('--map-editor-only',action='store_true',help='Check map painting, event forms, export and Play here')
@@ -1367,6 +1368,10 @@ def main():
             os.environ["BTECH_REFERENCE_VIRTUAL"] = "1"
             if args.delivery_only:
                 subprocess.run([str(args.delivery_only.resolve()/"ConstructionKit"),"--check-runtime"],env=env,cwd="/tmp",check=True,timeout=40)
+                return
+            if args.editor_usability_only:
+                from editor_usability_smoke import run
+                run(env,work)
                 return
             if args.construction_kit_only:
                 from construction_kit_smoke import run

@@ -11,6 +11,7 @@ from tkinter import ttk, filedialog, messagebox
 from editor_model import EditorError, ProjectDocument, encoded
 from unit_library import UnitLibrary, KINDS, ROOT, closure, import_units, needs_original, stage_preview
 from library_defaults import apply_sprite_defaults
+from editor_session import guard
 
 
 def seed_library(library, paths):
@@ -75,9 +76,21 @@ class EntryContext:
         stage_preview(bundle,Path(self.temp.name))
 
     def commit(self,editor):
-        self.bundle=self.browser.library.export_unit(editor.document,self.bundle['definition'],
-            self.bundle['kind'],expected=self.bundle)
-        self.browser.refresh(self.bundle['entry_id'])
+        # Prepare the temporary package before the one durable library write.
+        # A validation/stale-revision failure leaves both the library and the
+        # old working baseline intact, so the author can correct and retry.
+        replacement=tempfile.TemporaryDirectory(prefix='unit-edit-',dir=self.browser.owner.state_dir)
+        try:
+            editor.document.stage(Path(replacement.name))
+            candidate=ProjectDocument(Path(replacement.name),editor.validator)
+            saved=self.browser.library.export_unit(candidate,self.bundle['definition'],self.bundle['kind'],expected=self.bundle)
+        except Exception:
+            replacement.cleanup();raise
+        previous=self.temp;self.temp=replacement;self.bundle=saved
+        for key,value in candidate.__dict__.items():
+            if key not in ('undo_stack','redo_stack'):setattr(editor.document,key,value)
+        previous.cleanup()
+        guard(self.browser,lambda:self.browser.refresh(self.bundle['entry_id']))
         editor.status.set(f"Saved to Unit Library, revision {self.bundle['revision']}. Import explicitly to update a game.")
 
 
@@ -150,9 +163,7 @@ class LibraryBrowser:
         self.builtins()
 
     def guard(self,method):
-        try:return method()
-        except (EditorError,OSError,ValueError,KeyError,IndexError,StopIteration) as exc:
-            self.status.set(str(exc));messagebox.showerror('Unit Library',str(exc),parent=self.window)
+        return guard(self,method)
 
     def refresh(self,select=None):
         if not hasattr(self,'listing'):return
