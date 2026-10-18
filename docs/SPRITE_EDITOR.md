@@ -59,39 +59,24 @@ by a chosen role.
 Create a new sheet through **Graphics / sprites → New**, choosing kind **sprite**
 and 32 images for a new directional unit or 16 for an original-style character.
 Importing a sheet accepts explicit frame dimensions and reads cells left-to-right,
-then top-to-bottom. Sprites remain limited to 32 images, each at most 64×64 RGBA
+then top-to-bottom. Sprites support up to 256 images, each at most 64×64 RGBA
 pixels. Clone a complete sprite in the library to make an independent design.
 
-## Verification
+## Named actions and artwork tools
 
-Six Python cases cover sheet imports, original mech/character frame mapping,
-shared directions, short sheets, usage detection, independent frame pastes,
-dimension changes after rotation and non-mutating onion-skin previews. The full
-Python suite passes **109/109**.
+**Edit action** defines idle/walk/fire/jump/damage/destruction tracks with image
+order, duration and sequential combat sound cues. **Clone image** adds a pose.
+See [the action contract](UNIT_ACTION_ANIMATIONS.md) and
+[selection/layer/stamp tools](CONSTRUCTION_KIT_ART_TOOLS.md).
 
-The actual Linux Tk workflow checks roster and library entry points, frame and
-direction buttons, thumbnails, copy/paste/undo/redo, staged edits, independent
-playback, timer cleanup, original character aliases, all-image scrolling,
-Apply/discard, atomic save/reopen and minimum-window controls. Screenshot:
-`work/sprite-editor.png`. Runtime code and save formats are unchanged by the
-sprite UI. Native Windows Tk interaction is still unverified.
+## Verification and remaining bounds
 
-## Remaining editor work
+The current Linux engine, Python and Tk checks cover action timing, fallback,
+individual infantry art, library import/export, layers, direction/frame controls,
+copy/paste/undo, staged edits and save/reopen. See [TESTING](TESTING.md).
 
-1. **Animation authoring beyond walking:** named idle/fire/hit/wreck/jump actions,
-   per-frame duration, sprite anchors, sound cues and runtime support for these
-   declarations. Current previews describe the existing movement layouts.
-2. **Richer artwork and scene tools:** pixel selections/layers, resizing/cropping,
-   sprite-sheet export/reimport, reusable named building stamps, grouped movement
-   of artwork with its entrances, and visible formation/entrance footprints.
-3. **Event and quest debugging:** a connected event graph, objective journal,
-   flag/command tracing, clickable validation errors and saved test checkpoints.
-   Existing event forms and bounded Lua routes remain usable.
-4. **More authored gameplay services and construction support:** repair, reload,
-   healing and salvage commands with cost/result branches; construction guidance
-   for units/equipment and support for additional equipment behaviors. Vehicle
-   turret/arcs/critical rules remain a separate engine limitation.
-5. **Distribution and compatibility:** a packaged launcher with dependency setup,
-   an asset/provenance report, deliberate save migration between package revisions,
-   and native Windows GUI verification. Existing export and strict snapshot saves
-   work, but edited packages require fresh saves.
+The [five editor milestones](EDITOR_COMPLETION_MILESTONES.md) are implemented.
+Remaining extensions include arbitrary sprite anchors, imported audio cues,
+full tabletop construction/vehicle rules, general save remapping after gameplay
+changes, and native Windows Tk verification. Original gait and optional named
+tracks coexist; exploration still advances with CHI's logical movement steps.

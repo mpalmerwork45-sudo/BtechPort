@@ -1,16 +1,19 @@
 # Project status — original fidelity and editable projects, 2026-10-18
 
-2026-10-18: Unit action animations, individual infantry graphics and construction
-guidance pass the focused Linux engine/model/Tk checks; see
-[animation contract](UNIT_ACTION_ANIMATIONS.md). Delivery work continues.
+**BattleTech Construction Kit** is the editor/launcher name. The authorized
+[five editor milestones](EDITOR_COMPLETION_MILESTONES.md) are implemented with
+bounded verification: transactional service buildings; connected events,
+objectives/journal and checkpoints; building/world/pixel tools; named unit
+animations, equipment guidance and individual infantry sprites; and
+[distribution, asset reports and explicit save migration](CONSTRUCTION_KIT_DELIVERY.md).
+Broker navigation separates **Mechs** (weight classes) from **Vehicles** (one
+scrolling list). Unit Library sprite editing preserves editable layers and actions.
 
-**BattleTech Construction Kit** is the editor/launcher name. The current
-[five milestones](EDITOR_COMPLETION_MILESTONES.md) have completed authored
-services/templates, event graph/journal/checkpoints, and building/pixel tools
-through Linux engine, model and Tk checks. Named combat animations, unit
-construction extensions and delivery/migration are still being implemented.
-Broker navigation now separates mech weight classes from a single vehicle list.
-The Unit Library has direct sprite editing, including saved editable layers.
+Linux engine/model/GUI and bundled-runtime checks pass. Windows cross-build,
+Wine engine/SDL and sanitizer checks pass; native Windows Tk remains unverified.
+Migration accepts cosmetic changes and append-only definitions with unchanged
+existing gameplay/ordinals. Construction remains the bounded CHI adapter, not a
+complete tabletop unit designer. Exact limits are in the feature guides.
 
 The [shared Unit Library and launcher](UNIT_LIBRARY_AND_LAUNCHER.md) now provide
 82 blueprints (66 mechs, ten vehicles, six infantry templates), editable directly
@@ -32,7 +35,7 @@ The [sprite editor](SPRITE_EDITOR.md) now has movement directions, named poses,
 frame thumbnails, previous/next navigation, copy/paste, onion skin and playback
 that leaves the editing selection in place. It displays the original shared
 gaits and the new eight-direction sheets correctly. Its guide records the
-remaining animation, artwork, event-debugging, service and distribution work.
+new action tools and remaining bounds.
 
 **BattleTech: Last Beacon 1.1.0** adds all ten vehicle presets to the existing
 Mech exchange, alongside the nine mechs, with independent directional graphics.

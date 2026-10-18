@@ -9,10 +9,18 @@ and the [latest five-area sweep](M4_PORTABILITY_SWEEP.md).
 
 The Unit Library now includes 25 additional classic chassis and corrected
 original animation defaults. These remain CHI adaptations: rear firing arcs,
-shared ammunition bins, split weapon criticals, construction legality and
-per-character infantry art are not added by the catalogue expansion. Its
+shared ammunition bins, split weapon criticals and full construction legality
+remain outside the adapter. Individual infantry sprites are now supported. Its
 [source and adaptation notes](../content/catalogues/mechs/README.md) distinguish
 checked numeric specifications from runtime simplifications.
+
+Editor follow-ups after the [five milestones](EDITOR_COMPLETION_MILESTONES.md):
+Windows Tk needs native verification; Windows dependency bundling requires a
+supplied full Python installation; Linux bundles require compatible glibc/X11.
+Save migration preserves existing rule/topology/ordinal structure and rejects
+arbitrary remaps. Sprite anchors, imported audio, full construction tonnage and
+vehicle turret/arcs/critical rules remain future extensions. Scripted salvage
+awards an authored chassis; selecting arbitrary combat wrecks is not implemented.
 
 1. **Fresh-game campaign — playable route VERIFIED; broader parity UNKNOWN.**
    A 83,339-input new-cadet route now earns companions, apprenticeships, the

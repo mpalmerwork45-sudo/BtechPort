@@ -30,5 +30,12 @@ int main(int argc,char **argv)
     CHECK(btp_actor_image(r,s,1)==0);
     /* Queued audio holds presentation time; rendering cannot enqueue cues. */
     s->audio.sound_count=1;btp_effects_tick(s,r);CHECK(s->effects.age==20 && s->audio.sound_count==1);
+    s->audio.sound_count=0;s->menu.sound=1;s->effects.age=0;
+    for (unsigned tick=1;tick<30;++tick) {
+        btp_effects_tick(s,r);CHECK(s->effects.stage==BTP_EFFECT_POSES && s->effects.age==tick && !s->audio.sound_count);
+    }
+    btp_effects_tick(s,r);CHECK(s->audio.sound_count==1 && s->audio.sounds[0]==3);
+    for (unsigned tick=0;tick<10;++tick) btp_effects_tick(s,r);
+    CHECK(s->audio.sound_count==1); /* One transition cue, no render/tick backlog. */
     free(pixels);free(s);btp_content_close(&c);puts("PASS: action timing, fallback, actor mapping, frame output and audio hold");return 0;
 }

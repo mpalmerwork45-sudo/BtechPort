@@ -9,7 +9,7 @@ import tempfile
 import time
 from pathlib import Path
 
-if __name__=='__main__' and any('editor' in argument for argument in __import__('sys').argv[1:]):
+if __name__=='__main__' and any('editor' in argument or 'construction-kit' in argument for argument in __import__('sys').argv[1:]):
     from editor_runtime import prefer_system_tk
     prefer_system_tk()
 
@@ -1307,6 +1307,7 @@ def main():
     parser.add_argument('--editor-visual-only',action='store_true',help='Check original tile previews, visual picker and marker dragging')
     parser.add_argument('--world-art-editor-only',action='store_true',help='Check jigsaw/city and pixel/animation editing')
     parser.add_argument('--library-editor-only',action='store_true',help='Check shared library editing/import/export and desktop game launch')
+    parser.add_argument('--delivery-only',type=Path,help='Check an unpacked Linux Construction Kit using its bundled runtime')
     parser.add_argument('--construction-kit-only',action='store_true',help='Check service/quest/event and advanced authoring workflows')
     parser.add_argument('--updated-combat-only',action='store_true',help='Check Updated rules settings and held LRM combat saves')
     parser.add_argument('--building-art-only',action='store_true',help='Check Updated building portraits and held saves')
@@ -1364,6 +1365,9 @@ def main():
             env.pop("SDL_VIDEODRIVER", None)
             os.environ["DISPLAY"] = env["DISPLAY"]
             os.environ["BTECH_REFERENCE_VIRTUAL"] = "1"
+            if args.delivery_only:
+                subprocess.run([str(args.delivery_only.resolve()/"ConstructionKit"),"--check-runtime"],env=env,cwd="/tmp",check=True,timeout=40)
+                return
             if args.construction_kit_only:
                 from construction_kit_smoke import run
                 run(env,work)

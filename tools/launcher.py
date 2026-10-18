@@ -33,8 +33,9 @@ def create_shortcut():
     # remain portable when the checkout moves; regenerate this shortcut then.
     path=ROOT/'BtechPort.desktop'
     def quote(value):return '"'+str(value).replace('\\','\\\\').replace('"','\\"').replace('$','\\$').replace('`','\\`')+'"'
+    launch=quote(ROOT/'ConstructionKit') if (ROOT/'ConstructionKit').is_file() else quote('python3')+' '+quote(ROOT/'BtechPort.pyw')
     path.write_text('[Desktop Entry]\nType=Application\nName=BattleTech Construction Kit\nComment=Play games, edit projects and browse the Unit Library\n'
-                    +'Exec='+quote('python3')+' '+quote(ROOT/'BtechPort.pyw')+'\nPath='+str(ROOT)+'\n'
+                    +'Exec='+launch+'\nPath='+str(ROOT)+'\n'
                     +'Icon=applications-games\nTerminal=false\nCategories=Game;Development;\n',encoding='utf-8')
     path.chmod(0o755)
     return path
@@ -52,7 +53,7 @@ class Launcher:
         ttk.Label(header,text='Play a game, build your own, or work on the shared Unit Library.',style='Muted.TLabel').pack(anchor='w',pady=(6,0))
         body=ttk.Frame(window,padding=(24,0));body.pack(fill='both',expand=True)
         ttk.Label(body,text='Game or project',style='Section.TLabel').pack(anchor='w')
-        self.choice=tk.StringVar(value='BattleTech demo')
+        self.choice=tk.StringVar(value='Independent demo' if (os.environ.get('BTP_BUNDLED_RUNTIME') or (ROOT/'DISTRIBUTION.json').is_file()) and not (ROOT/'Original DOS').exists() else 'BattleTech demo')
         self.game=ttk.Combobox(body,textvariable=self.choice,values=tuple(GAMES),state='readonly',font='TkDefaultFont')
         self.game.pack(fill='x',pady=8);self.game.bind('<<ComboboxSelected>>',lambda _:self.describe())
         self.description=tk.StringVar();ttk.Label(body,textvariable=self.description,wraplength=660).pack(fill='x',pady=(0,12))
@@ -169,7 +170,11 @@ class Launcher:
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--create-shortcut',action='store_true')
+    parser.add_argument('--check-runtime',action='store_true',help='bounded launcher/editor/PNG/player check (requires a display)')
     args=parser.parse_args()
+    if args.check_runtime:
+        from runtime_probe import check
+        check();return
     if args.create_shortcut:print(create_shortcut());return
     window=tk.Tk();Launcher(window);window.mainloop()
 

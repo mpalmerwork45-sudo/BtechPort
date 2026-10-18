@@ -9,6 +9,7 @@ def prefer_system_tk():
     # Some Conda builds use old X core fonts (no Xft), including broken UTF-8
     # glyph fallback. Keep the same launch command but use a complete local
     # system Tk when available. Nothing is installed or downloaded at startup.
+    if os.environ.get('BTP_BUNDLED_RUNTIME'):return
     candidate=Path('/usr/bin/python3')
     if sys.platform!='linux' or not candidate.exists():return
     root=Path(__file__).resolve().parents[1]/'local-deps/editor-tk/root/usr/lib'

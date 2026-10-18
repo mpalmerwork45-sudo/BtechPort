@@ -74,7 +74,7 @@ def run(env,work):
                 choose(browser,'Infantry','beacon:cole');browser.infantry_art.set(True);browser.import_selected();pump()
                 person=next(p for p in doc.adventure['people'] if p['id']=='beacon:cole')
                 assert person['name']=='Cole Library Test' and person['attributes'][0]==11
-                assert any(b['slot']=='npc' for b in doc.art['bindings'])
+                assert person.get('image') and any(i['id']==person['image'] for i in doc.art['images'])
                 assert len({p['identity'] for p in doc.adventure['people']})==3
                 # Imported vehicles become real starting units, rather than
                 # just remaining unused library entries in this test project.

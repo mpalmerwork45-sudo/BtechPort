@@ -1,4 +1,4 @@
-# BtechPort
+# BtechPort and the BattleTech Construction Kit
 
 The editor and desktop launcher are named **BattleTech Construction Kit**. They
 create and edit game packages for the BtechPort player, including maps, events,
@@ -34,6 +34,15 @@ The launch window provides **New game**, **Continue quicksave**, **Open editor**
 project. **Build application** builds the local executables; **Player setup**
 sets the original files if needed. The independent demos run without them.
 See the [launcher and Unit Library guide](docs/UNIT_LIBRARY_AND_LAUNCHER.md).
+
+The Construction Kit now includes service-building templates, a connected event
+graph and quest journal, saved playtest checkpoints, building stamps, layered
+pixel editing, generated jigsaw worlds, named animation actions and individual
+infantry sprites. **Delivery** provides asset reports and explicit save migration.
+See the [five milestones](docs/EDITOR_COMPLETION_MILESTONES.md) and
+[distribution guide](docs/CONSTRUCTION_KIT_DELIVERY.md). A packaged Linux kit
+starts with `ConstructionKit` and includes Python/Tk/Pillow/SDL; a Windows kit
+starts with `ConstructionKit.cmd` and can use an installed or supplied Python runtime.
 
 The shared **Unit Library** currently offers **82 blueprints: 66 mechs, ten
 vehicles and six infantry templates**, including [25 additional classic

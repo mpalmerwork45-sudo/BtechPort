@@ -54,4 +54,7 @@ from **Vehicles** (one scrolling list). Selling accepts either type.
 - **VERIFIED (Linux):** [unit actions and construction](UNIT_ACTION_ANIMATIONS.md):
   named animation/timing/cues, per-character art, library round trips, construction
   guidance and additional authored equipment adapters.
-- Delivery/compatibility stage remains in progress.
+- **VERIFIED (Linux; Windows cross-build/Wine):** [delivery and migration](CONSTRUCTION_KIT_DELIVERY.md),
+  including a bundled Linux launcher/editor/player check and migration refusal
+  tests. Windows Python runtime inclusion is optional explicit input; a native
+  Windows Tk pass remains **UNKNOWN**, with a bounded probe supplied.

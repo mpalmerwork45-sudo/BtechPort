@@ -131,6 +131,9 @@ class RosterEditor:
             ttk.Button(author_bar,text="Unit Library",style="Toolbar.TButton",command=lambda:self.guarded(self.open_library)).pack(side="left",padx=2)
         if not library_context: ttk.Button(author_bar, text="Export game", style="Toolbar.TButton",
                    command=lambda: self.guarded(self.export_project)).pack(side="left", padx=2)
+        if not library_context:
+            from delivery_gui import menu as delivery_menu
+            delivery_menu(self,author_bar)
         ttk.Button(author_bar,text="Ammunition",style="Toolbar.TButton",command=lambda:self.guarded(self.ammunition)).pack(side="left",padx=2)
         ttk.Button(author_bar, text="Player setup", style="Toolbar.TButton",
                    command=lambda: self.guarded(self.setup)).pack(side="right", padx=2)
@@ -614,7 +617,11 @@ class RosterEditor:
         try:
             self.sprite_source=person_sprite(self.document,self.settings,self.item()) if self.collection=='people' else unit_sprite(self.document,self.settings,self.item())
             image=self.sprite_source;zoom=max(1,min(5,96//max(image['width'],image['height'])))
-            self.sprite_photos=[photo(self.window,image,frame=i,zoom=zoom) for i in range(len(image['frames']))]
+            from action_tracks import entries
+            track=entries(image,'walk',4)
+            frames=[e['frame'] for e in track] if track else range(len(image['frames']))
+            self.sprite_delays=[32*e['ticks'] for e in track] if track else [140]*len(image['frames'])
+            self.sprite_photos=[photo(self.window,image,frame=i,zoom=zoom) for i in frames]
         except (EditorError,OSError,KeyError,StopIteration) as exc:
             self.sprite_canvas.create_text(60,50,text='Sprite unavailable\nCheck Player setup',width=110,fill='#637181',font='TkDefaultFont')
             self.status.set(str(exc));return
@@ -625,8 +632,9 @@ class RosterEditor:
         if not self.sprite_photos or not self.sprite_canvas.winfo_exists():return
         self.sprite_canvas.delete('animation')
         self.sprite_canvas.create_image(60,50,image=self.sprite_photos[self.sprite_index],tags='animation')
+        delay=self.sprite_delays[self.sprite_index]
         self.sprite_index=(self.sprite_index+1)%len(self.sprite_photos)
-        self.sprite_timer=self.window.after(140,self.animate_sprite)
+        self.sprite_timer=self.window.after(delay,self.animate_sprite)
 
     def sprite_context(self,event):
         try:self.sprite_menu.tk_popup(event.x_root,event.y_root)

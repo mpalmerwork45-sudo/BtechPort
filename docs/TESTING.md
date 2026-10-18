@@ -1,20 +1,42 @@
 # Build, verification and original oracle — 2026-10-18
 
-2026-10-18: Unit action animations, individual infantry graphics and construction
-guidance pass the focused Linux engine/model/Tk checks; see
-[animation contract](UNIT_ACTION_ANIMATIONS.md). Delivery work continues.
+## Construction Kit five-milestone verification — 2026-10-18
 
-## Construction Kit milestones in progress
+- Linux build: two jobs; **72/72 CTests** (44.51 s), **136/136 Python tests**
+  (15.88 s). The strengthened action-duration/one-cue test passes separately.
+- **9/9 ASan/UBSan/LeakSanitizer checks** (0.86 s) cover authored animation,
+  services, vehicles, independent game, formation, event continuations, project
+  loading, combat pacing and save integrity. The sandbox initially prevented
+  LeakSanitizer's process inspection; the same checks passed outside tracing.
+- Windows cross-build succeeds. The same **9/9 engine checks pass under Wine**;
+  seven Windows SDL screens (town, overview, inspection, planet, combat, victory,
+  depot) match headless state/pixels and pass F5/F9 continuations.
+- Linux Tk workflows pass for service/quest graphs, checkpoints and flags,
+  building stamps/formation overlays, layered pixel editing and named actions.
+  The Unit Library workflow passes unit/sprite edits, per-character infantry art,
+  import/export, undo/redo, launcher start/resume and Original/Updated startup.
+- The bundled Linux interpreter runs the real launcher, roster/map editor,
+  PNG round trip, C validator and SDL player from outside the checkout. System
+  Python/Tk/Pillow are not used by that packaged invocation.
+- All **1,287 reference entries** match `work/reference-before-editor-five.json`.
+  The existing user's demo terrain changes remain uncommitted and untouched.
 
-Verified so far: authored service transactions and saved one-time salvage;
-event graph/flags/journal/checkpoint integration; broker vehicle classification;
-stamps and grouped movement; pixel alpha layers, selections, crop and PNG
-round-trip; seeded jigsaw generation and starting formation overlays.
-Targeted Python workbench/scene tests and existing 17 library tests pass.
-Linux Tk checks pass with `--construction-kit-only`, `--world-art-editor-only`
-and `--library-editor-only` in `tools/native_smoke.py`. The renamed launcher,
-library edit/save/import and ordinary game start/resume are included.
-Final full-suite/sanitizer/Windows checks follow the remaining milestones.
+Logs: `work/editor-five-native.log`, `work/editor-five-python.log`,
+`work/editor-five-windows.log`, and `work/editor-five-sanitize-outside.log`.
+The initial traced sanitizer failure remains separately recorded.
+
+```sh
+python3 tools/native_smoke.py --construction-kit-only
+python3 tools/native_smoke.py --library-editor-only
+python3 tools/native_smoke.py --windows --vehicles-only
+python3 tools/native_smoke.py --delivery-only work/releases/ConstructionKit-linux
+```
+
+See [delivery bounds and native Windows probe](CONSTRUCTION_KIT_DELIVERY.md).
+**Native Windows Tk remains unverified.** Windows output requires installed
+Python/Tk/Pillow unless the packager supplies a full Windows Python tree. Linux
+runtime bundles require compatible glibc, X11 and system fonts; they are not an
+all-distributions packaging guarantee.
 
 ## Unit Library and desktop launcher
 

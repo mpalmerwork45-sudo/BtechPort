@@ -202,7 +202,10 @@ class LibraryBrowser:
                 elif p['source'].startswith('package:walker'):image=indexed_sprite(bundle['presentation'],0 if p['source'].endswith('a') else 1)
                 else:
                     image=original_sprite(source,self.owner.settings,0 if p['source']=='chi:locust' else 146,16)
-            frames=range(16,20) if len(image['frames'])==32 else range(min(4,len(image['frames'])))
+            from action_tracks import entries
+            track=entries(image,'walk',4)
+            frames=[e['frame'] for e in track] if track else range(16,20) if len(image['frames'])==32 else range(min(4,len(image['frames'])))
+            self.delays=[32*e['ticks'] for e in track] if track else [140]*len(frames)
             zoom=max(1,min(5,144//max(image['width'],image['height'])))
             self.photos=[photo(self.window,image,frame=f,zoom=zoom) for f in frames];self.animate()
         except (EditorError,OSError,KeyError,StopIteration):
@@ -212,7 +215,8 @@ class LibraryBrowser:
         self.timer=None
         if not self.photos:return
         self.canvas.delete('preview');self.canvas.create_image(120,80,image=self.photos[self.phase%len(self.photos)],tags='preview')
-        self.phase+=1;self.timer=self.window.after(140,self.animate)
+        delay=self.delays[self.phase%len(self.photos)]
+        self.phase+=1;self.timer=self.window.after(delay,self.animate)
 
     def stop(self):
         if self.timer is not None:self.window.after_cancel(self.timer)

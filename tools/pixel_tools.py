@@ -7,6 +7,7 @@ from editor_model import EditorError
 
 def begin_layers(image,saved=None):
     result=copy.deepcopy(image)
+    if saved is not None and not isinstance(saved,dict):raise EditorError('Invalid saved editing metadata.')
     if saved and saved.get('flattened')==image['frames']:
         layers=saved.get('layers')
         if not isinstance(layers,list) or not 1<=len(layers)<=8:raise EditorError('Invalid saved editing layers.')
@@ -14,7 +15,9 @@ def begin_layers(image,saved=None):
             if not isinstance(layer,dict) or not isinstance(layer.get('name'),str) or type(layer.get('visible'))!=bool or len(layer.get('frames',[]))!=len(image['frames']):raise EditorError('Invalid saved editing layer.')
             for frame in layer['frames']:
                 if len(frame)!=image['height'] or any(not isinstance(row,str) or len(row)!=8*image['width'] or any(c not in '0123456789abcdef' for c in row) for row in frame):raise EditorError('Saved editing layers have invalid pixels or dimensions.')
-        result['_layers']=copy.deepcopy(saved['layers']);result['_layer']=min(saved.get('active',0),len(result['_layers'])-1)
+        active=saved.get('active',0)
+        if type(active)!=int or not 0<=active<len(layers):raise EditorError('Invalid active editing layer.')
+        result['_layers']=copy.deepcopy(saved['layers']);result['_layer']=active
     else:result['_layers']=[dict(name='Base',visible=True,frames=copy.deepcopy(image['frames']))];result['_layer']=0
     return result
 
