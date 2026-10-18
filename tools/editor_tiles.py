@@ -200,5 +200,5 @@ def load_tiles(document, settings: dict, sheet: str | None = None) -> dict[str, 
 
 def art_tiles(document):
     from art_editing import display_rows
-    images = getattr(document, "art", {}).get("images", [])
-    return {"package:art": {im["id"]: display_rows(im) for im in images if im["kind"] == "tile"}} if images else {}
+    images = [im for im in getattr(document, "art", {}).get("images", []) if im['kind']=='tile']
+    return {"package:art": {im["id"]: display_rows(im) for im in images}} if images else {}

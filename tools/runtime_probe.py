@@ -6,7 +6,7 @@ from PIL import Image
 from app_runtime import ROOT,binary
 from launcher import Launcher
 from editor_model import ProjectDocument
-from roster_editor import RosterEditor
+from editor_workspace import create_editor
 
 def check():
     # The same code can be run on Windows with its packaged interpreter.
@@ -17,7 +17,7 @@ def check():
         window=tk.Tk();errors=[];window.report_callback_exception=lambda kind,error,tb:errors.append(error)
         try:
             app=Launcher(window,tmp/'settings');window.update();assert window.title()=='BattleTech Construction Kit'
-            editor=RosterEditor(tk.Toplevel(window),binary('btp-project'),tmp/'editor')
+            editor=create_editor(tk.Toplevel(window),binary('btp-project'),tmp/'editor')
             doc=ProjectDocument(ROOT/'examples/beacon-demo',binary('btp-project'));editor.set_document(doc);window.update()
             editor.edit_adventure();window.update();assert editor.map_editor.canvas.winfo_width()>0
             if errors:raise errors[0]

@@ -37,6 +37,13 @@ editor's Play action retains its own isolated test slots.
 
 ## Shared library workflow
 
+The [workspace guide](EDITOR_WORKSPACE.md) describes tabs, scoped saves, shared
+history and recovery. The current editor embeds the library and each edited
+design in the same window. Use **Save / Ctrl+S** on a design tab to save that
+library design; **Play > Preview library design** runs its preview scene. F5
+starts the open game project. Legacy standalone adapters retain their old
+**Save to library** and **Play** buttons.
+
 Open **Unit Library** from the launcher or game editor. The default shared folder
 is `work/unit-library`; **Library folder** chooses another and persists that
 choice. A single library serves multiple game projects.

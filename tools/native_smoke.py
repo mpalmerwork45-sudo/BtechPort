@@ -1302,6 +1302,9 @@ def main():
     parser.add_argument('--battletech-demo-only',action='store_true',help='Check BattleTech demo screens, saves and complete two-contract route')
     parser.add_argument('--editor-only',action='store_true',help='Check the desktop roster editor and Play launch')
     parser.add_argument('--editor-usability-only',action='store_true',help='Check editor dialogs, drafts and workspace workflows')
+    parser.add_argument('--editor-focus-only',action='store_true',help='Check modal focus under KWin on an isolated display/session')
+    parser.add_argument('--editor-benchmark-only',action='store_true',help='Measure the declared large fixture in a fresh process')
+    parser.add_argument('--editor-library-workspace-only',action='store_true',help='Check asynchronous library scope saving and recovery')
     parser.add_argument('--independent-only',action='store_true',help='Check independent quest and saved SDL screens without original files')
     parser.add_argument('--vehicles-only',action='store_true',help='Check vehicles, planets, map, inspection and depot SDL save/load screens')
     parser.add_argument('--map-editor-only',action='store_true',help='Check map painting, event forms, export and Play here')
@@ -1353,7 +1356,7 @@ def main():
     read_fd, write_fd = os.pipe()
     with (work / "native-xvfb.log").open("w") as log:
         xvfb = subprocess.Popen([str(ROOT / "local-deps/xvfb/usr/bin/Xvfb"),
-            "-displayfd", str(write_fd), "-screen", "0", "1600x1000x24" if args.editor_usability_only else "1024x768x24", "-nolisten", "tcp"],
+            "-displayfd", str(write_fd), "-screen", "0", "1600x1000x24" if args.editor_usability_only or args.editor_focus_only else "1024x768x24", "-nolisten", "tcp"],
             pass_fds=(write_fd,), stdout=log, stderr=subprocess.STDOUT)
         os.close(write_fd)
         try:
@@ -1366,6 +1369,18 @@ def main():
             env.pop("SDL_VIDEODRIVER", None)
             os.environ["DISPLAY"] = env["DISPLAY"]
             os.environ["BTECH_REFERENCE_VIRTUAL"] = "1"
+            if args.editor_focus_only:
+                from editor_focus_smoke import run
+                run(env,work)
+                return
+            if args.editor_benchmark_only:
+                from editor_benchmark import standalone
+                standalone(env,work)
+                return
+            if args.editor_library_workspace_only:
+                from editor_workspace_library_smoke import run
+                run(env,work)
+                return
             if args.delivery_only:
                 subprocess.run([str(args.delivery_only.resolve()/"ConstructionKit"),"--check-runtime"],env=env,cwd="/tmp",check=True,timeout=40)
                 return

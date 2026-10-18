@@ -5,8 +5,8 @@ checkout commands `./BtechPort` and `BtechPort.cmd` remain usable.
 
 ## Export a game
 
-**Delivery → Export game** creates a validated new project directory. **Assets
-and dependencies** lists declared files, SHA-256 hashes, owned pixel images,
+**File > Export game** creates a validated new project directory. **Project >
+Assets and dependencies** lists declared files, SHA-256 hashes, owned pixel images,
 external original-game requirements and source documents. The report can be
 saved as JSON. Library imports retain source attribution and editable art layers.
 An inventory does not establish permission to redistribute imported artwork.
@@ -58,7 +58,7 @@ probe and ordinary editing are run on a Windows host.
 
 ## Migrate a saved game deliberately
 
-Use **Delivery → Migrate an old save**. Select the exact old project snapshot,
+Use **Project > Migrate an old save**. Select the exact old project snapshot,
 its save, and a new output filename. The currently open, saved project is the
 destination. A playtest checkpoint's `game` folder is a suitable old snapshot.
 The equivalent command is:

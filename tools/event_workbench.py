@@ -83,7 +83,10 @@ class EventProperties:
         self.render_event_form=AdventureEditor.render_event_form.__get__(self)
         self.apply_event=AdventureEditor.apply_event.__get__(self)
         self.capture_draft=AdventureEditor.capture_draft.__get__(self)
-        self.restore_draft=AdventureEditor.restore_draft.__get__(self)
+        def restore(state):
+            AdventureEditor.restore_draft(self,state);self.layout_form()
+        self.restore_draft=restore
+        self.error=tk.StringVar();ttk.Label(parent,textvariable=self.error,foreground='#a03030',wraplength=220,padding=6).pack(fill='x')
         self.draft=register(self,pending=lambda:self.event_pending,apply=self.apply_pending,
             capture=self.capture_draft,restore=self.restore_draft,priority=20)
     @property
@@ -99,14 +102,21 @@ class EventProperties:
             event=next((e for e in self.adventure['events'] if e['id']==identity),None)
             if event:
                 self.render_event_form(copy.deepcopy(event))
-                for child in self.event_form.winfo_children():
-                    if isinstance(child,(ttk.Entry,ttk.Combobox,tk.Text)):child.configure(width=20)
-                    elif isinstance(child,ttk.Label):child.configure(wraplength=200)
-                    # A narrow inspector stacks labels and fields vertically.
-                    info=child.grid_info()
-                    if info:
-                        row=int(info['row']);column=int(info.get('column',0))
-                        child.grid_configure(row=row*2+min(column,1),column=0,columnspan=1,sticky='ew')
+                self.layout_form()
+    def layout_form(self):
+        for child in self.event_form.winfo_children():
+            if isinstance(child,(ttk.Entry,ttk.Combobox,tk.Text)):child.configure(width=20)
+            elif isinstance(child,ttk.Label):child.configure(wraplength=200)
+            info=child.grid_info()
+            if info:
+                row=int(info['row']);column=int(info.get('column',0))
+                child.grid_configure(row=row*2+min(column,1),column=0,columnspan=1,sticky='ew')
+    def show_error(self,error):
+        self.error.set(str(error));self.window.lift()
+        key=getattr(error,'field',None);variable=self.event_vars.get(key)
+        if variable:
+            for widget in self.event_form.winfo_children():
+                if isinstance(widget,ttk.Entry) and str(widget.cget('textvariable'))==str(variable):widget.focus_set();break
 
 
 @recoverable_forms
@@ -125,6 +135,8 @@ class EventGraph:
         chooser=ttk.Combobox(controls,textvariable=self.view_mode,values=('Nearby events','All events'),width=16,state='readonly');chooser.pack(side='left');chooser.bind('<<ComboboxSelected>>',lambda _:self.draw())
         self.zoom=tk.StringVar(value='1');zoom=ttk.Combobox(controls,textvariable=self.zoom,values=('0.35','0.5','0.75','1','1.25','1.5'),width=5,state='readonly');zoom.pack(side='left',padx=8);zoom.bind('<<ComboboxSelected>>',lambda _:self.draw())
         ttk.Label(controls,text='Drag a named output to a node to connect it.',wraplength=320).pack(side='left')
+        from editor_ui import flow_toolbar
+        flow_toolbar(bar);flow_toolbar(controls)
         body=ttk.Frame(self.window);body.pack(fill='both',expand=True)
         self.canvas=tk.Canvas(body,background='#edf0f4',highlightthickness=0)
         y=ttk.Scrollbar(body,command=self.canvas.yview);x=ttk.Scrollbar(body,orient='horizontal',command=self.canvas.xview)
@@ -141,6 +153,16 @@ class EventGraph:
     def draw(self):
         self.canvas.delete('all');all_events=self.document.adventure['events'];saved=editor_data(self.document).get('event_layout',{})
         defaults=graph_arrangement(all_events);z=float(self.zoom.get())
+        from tkinter import font as tkfont
+        if not hasattr(self,'graph_font'):
+            self.graph_font=tkfont.Font(family=tkfont.nametofont('TkDefaultFont').actual('family'))
+        # Node geometry uses canvas pixels. Scale its labels with the graph,
+        # so zooming out cannot leave full-size text overlapping other nodes.
+        self.graph_font.configure(size=-max(6,round(13*z)))
+        def label_text(value):
+            if self.graph_font.measure(value)<=210*z:return value
+            while value and self.graph_font.measure(value+'...')>210*z:value=value[:-1]
+            return value+'...'
         self.positions={e['id']:saved.get(e['id'],defaults[e['id']]) for e in all_events}
         visible=graph_neighbours(all_events,self.selected) if self.view_mode.get()=='Nearby events' else set(self.positions)
         events=[e for e in all_events if e['id'] in visible]
@@ -157,11 +179,11 @@ class EventGraph:
             x,y=self.positions[e['id']];tag='node:'+e['id']
             height=max(85,70+len(edges(e))*18)
             self.canvas.create_rectangle(x*z,y*z,(x+230)*z,(y+height)*z,fill='#fff3cd' if e['id']==self.selected else '#ffffff',outline='#346b93',width=2,tags=tag)
-            self.canvas.create_text((x+10)*z,(y+12)*z,anchor='nw',text=e['op'].upper(),fill='#306383',tags=tag)
-            self.canvas.create_text((x+10)*z,(y+34)*z,anchor='nw',text=e['id'],width=210*z,fill='#273747',tags=tag)
+            self.canvas.create_text((x+10)*z,(y+12)*z,anchor='nw',text=e['op'].upper(),font=self.graph_font,fill='#306383',tags=tag)
+            self.canvas.create_text((x+10)*z,(y+34)*z,anchor='nw',text=label_text(e['id']),font=self.graph_font,fill='#273747',tags=tag)
             for index,(label,_) in enumerate(edges(e)):
                 py=(y+65+index*18)*z;port='port|'+e['id']+'|'+label
-                self.canvas.create_text((x+218)*z,py,anchor='e',text=label,fill='#436477',tags=port)
+                self.canvas.create_text((x+218)*z,py,anchor='e',text=label,font=self.graph_font,fill='#436477',tags=port)
                 self.canvas.create_oval((x+226)*z,py-4,(x+234)*z,py+4,fill='#39748b',outline='',tags=port)
         bounds=self.canvas.bbox('all') or (0,0,900,600);self.canvas.configure(scrollregion=(0,0,max(bounds[2]+40,900),max(bounds[3]+40,600)))
 

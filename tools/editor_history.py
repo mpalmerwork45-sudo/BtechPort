@@ -59,5 +59,5 @@ def history(workspace, redo=False):
     label=labels[-1] if labels else 'Nothing to '+('redo' if redo else 'undo')
     (scope.document.redo if redo else scope.document.undo)()
     refresh_scope(workspace,scope)
-    scope.seen_revision=scope.document.revision
+    scope.seen_revision=(id(scope.document),scope.document.revision)
     workspace.status.set(('Redid ' if redo else 'Undid ')+label)

@@ -225,6 +225,7 @@ class RosterEditor:
         return guard(self,operation)
 
     def show_error(self,error):
+        if hasattr(self.window,'workspace'):self.window.lift()
         self.error_label.configure(text=str(error));self.error_label.pack(side='bottom',fill='x')
         control=self.field_controls.get(tuple(error.field)) if isinstance(error,FieldError) and error.field else None
         if control is not None:
@@ -397,6 +398,8 @@ class RosterEditor:
     def changed(self):
         self.form_dirty = True
         self.status.set("Unsaved edits. Validate checks the complete project; Save preserves disk files if validation fails.")
+        workspace=getattr(self._editor_scope,'workspace',None)
+        if workspace:workspace.status.set(self.status.get())
 
     def populate(self):
         self.stop_sprite()
@@ -859,6 +862,8 @@ class RosterEditor:
 
     def launch_player(self, here=None):
         if self.document:
+            if hasattr(self.window,'workspace'):
+                return self.window.workspace.play_session.start(self._editor_scope,here=here)
             self.apply_form()
             from app_runtime import prepare_original
             if self.document.manifest['requires']!='none':prepare_original(self.settings)
@@ -892,6 +897,10 @@ class RosterEditor:
             if Path(name).name != name or name in (".", "..") or "\\" in name:
                 raise EditorError("Choose one new folder name.")
             target = Path(parent) / name
+            workspace=getattr(self._editor_scope,'workspace',None)
+            if workspace:
+                from editor_tasks import export
+                return export(workspace,self._editor_scope,target)
             self.document.export(target)
             self.status.set(f"Validated project exported to {target}. Saves and caches were excluded.")
 
@@ -919,8 +928,6 @@ def main():
     window = tk.Tk()
     from editor_workspace import create_editor
     app = create_editor(window, args.validator, args.state_dir.resolve())
-    import traceback
-    window.report_callback_exception=lambda kind,error,tb:report(app,error,''.join(traceback.format_exception(kind,error,tb)))
     if args.project:
         app.guarded(lambda: app.set_document(ProjectDocument(args.project, args.validator)))
     window.mainloop()

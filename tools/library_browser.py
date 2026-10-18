@@ -168,10 +168,10 @@ class LibraryBrowser:
     def guard(self,method):
         return guard(self,method)
 
-    def refresh(self,select=None):
+    def refresh(self,select=None,entries=None):
         if not hasattr(self,'listing'):return
         selection=select or (self.listing.selection()[0] if self.listing.selection() else None)
-        self.listing.delete(*self.listing.get_children());self.bundles={b['entry_id']:b for b in self.library.entries()}
+        self.listing.delete(*self.listing.get_children());self.bundles={b['entry_id']:b for b in (self.library.entries() if entries is None else entries)}
         query=self.query.get().casefold()
         for identity,bundle in self.bundles.items():
             if self.kind.get()!='All' and bundle['kind']!=self.kind.get():continue
@@ -237,6 +237,22 @@ class LibraryBrowser:
         self.timer=None;self.photos=[];self.phase=0
 
     def builtins(self):
+        workspace=workspace_of(self)
+        if workspace:
+            if getattr(self,'seeding',False):return
+            self.seeding=True;self.bundles=getattr(self,'bundles',{})
+            library=self.library;settings=dict(self.owner.settings)
+            def work(cancel):
+                count=seed_library(library,settings)
+                return count,library.entries()
+            def done(result):
+                self.seeding=False
+                if self.library is not library:return
+                count,entries=result;self.refresh(entries=entries)
+                self.status.set(f'{len(entries)} library designs. Added {count} missing built-ins.')
+            def failed(error):self.seeding=False;raise error
+            workspace.tasks.submit('Loading Unit Library',self,work,done,failed,cancellable=False)
+            return
         count=seed_library(self.library,self.owner.settings);self.refresh()
         self.status.set(f'{len(self.bundles)} designs in the library. Added {count} missing built-ins; default sprites checked.')
 
@@ -257,6 +273,22 @@ class LibraryBrowser:
         self.owner.apply_form()
         if self.owner.map_editor:self.owner.map_editor.apply_pending()
         policy={'Keep existing':'keep','Replace selected designs':'replace','Import variants':'variant'}[self.policy.get()]
+        workspace=workspace_of(self)
+        if workspace:
+            from editor_tasks import snapshot,signature
+            scope=self.owner._editor_scope;candidate=snapshot(scope);stamp=signature(scope)
+            bundles=copy.deepcopy(self.selected());infantry=self.infantry_art.get()
+            def work(cancel):return import_units(candidate,bundles,policy,infantry)
+            def done(result):
+                if stamp!=signature(scope):raise EditorError('The project changed during import. Import again to include current edits; no definitions were replaced.')
+                scope.transact(lambda:None)
+                with scope.document.command('Import library designs'):
+                    scope.document.replace_all(candidate.content,candidate.adventure,candidate.art,candidate.manifest,candidate.metadata)
+                if result:
+                    kind,identity=result[0];workspace.open_unit(kind,identity,self.owner)
+                self.status.set(f'Imported {len(result)} designs. Undo restores the previous roster.')
+            workspace.tasks.submit('Importing library designs',self,work,done)
+            return
         result=import_units(self.owner.document,self.selected(),policy,self.infantry_art.get())
         if result:
             kind,identity=result[0];self.owner.kind.set(kind);self.owner.change_kind();self.owner.refresh_list(identity)
@@ -279,6 +311,13 @@ class LibraryBrowser:
                 answer=messagebox.askyesnocancel('Existing library design','Update the library entry?\nYes: update it. No: save a new variant.',parent=self.window)
                 if answer is None:return
                 variant=not answer
+        workspace=workspace_of(self)
+        if workspace:
+            from editor_tasks import snapshot
+            candidate=snapshot(self.owner._editor_scope);identity=self.owner.current;library=self.library
+            def done(saved):self.refresh(saved['entry_id']);self.status.set('Design and dependencies exported to Unit Library.')
+            workspace.tasks.submit('Exporting library design',self,lambda cancel:library.export_unit(candidate,identity,kind,variant,expected if not variant else None),done,cancellable=False)
+            return
         saved=self.library.export_unit(self.owner.document,self.owner.current,kind,variant,expected if not variant else None)
         self.refresh(saved['entry_id']);self.status.set('Blueprint and its dependencies exported to the shared library.')
 

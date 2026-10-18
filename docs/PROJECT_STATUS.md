@@ -1,17 +1,21 @@
 # Project status — original fidelity and editable projects, 2026-10-18
 
-**Current work:** the approved [editor usability plan](EDITOR_USABILITY_PLAN.md)
-defines five stages for dialog/draft reliability, a unified workspace, connected
-authoring workflows, consistent history/recovery, and presentation/performance.
-UI1 protects registered drafts during save/close and fixes dialog ownership.
-UI2 provides the default tabbed workspace, explorer, inspector, Problems panel,
-command search and embedded authoring views. UI3 connects units to their artwork,
-adds named/searchable pickers, puts event fields in the inspector and provides
-graph filtering/arrangement, a canvas-first sprite layout and navigation state.
-UI4 adds shared labelled history, revision refresh, private draft recovery and
-usage-aware deletion/replacement. Focused Linux GUI/model checks pass, including
-a fresh-session recovery of invalid fields, layers and dialogue. Background jobs,
-polish and the final integration/platform checks are in progress in UI5.
+The approved [editor usability stages UI1–UI5](EDITOR_USABILITY_PLAN.md) are
+implemented. The [workspace guide](EDITOR_WORKSPACE.md) covers the tabbed editor,
+explorer/Inspector, Problems, direct asset navigation, scoped project/library
+saves, labelled Undo/Redo and private draft recovery. UI5 adds bounded background
+tasks, stale-validation protection, isolated Play/Stop and library preview,
+scrollable/reflowing controls, scale settings, tooltips and keyboard help.
+
+**VERIFIED:** 141 Python tests, 72 native CTests and 72 Windows/Wine CTests pass.
+Linux GUI journeys cover independent save targets, partial Save All, invalid
+fields/art recovery, missing-source recovery into a copy, edits during durable
+writes, simulated write failure, navigation and real SDL Play/Stop. KWin checks
+cover modal stacking, restored focus/grabs and minimize/restore on an isolated
+desktop. Scaling captures cover 100%, 150% and 200%. Larger-fixture timings and
+package checks are recorded in [TESTING](TESTING.md#editor-workspace-ui5--2026-10-18).
+**UNKNOWN:** native Windows Tk and physical multi-monitor interaction. Wine
+engine success does not close those GUI verification gates.
 
 **BattleTech Construction Kit** is the editor/launcher name. The authorized
 [five editor milestones](EDITOR_COMPLETION_MILESTONES.md) are implemented with

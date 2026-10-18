@@ -190,6 +190,11 @@ class WorldEditor:
         z=int(self.zoom.get());p=(int(self.canvas.canvasx(e.x)//z),int(self.canvas.canvasy(e.y)//z));w,h=world_size(self.adventure,self.world_id)
         if not(0<=p[0]<w and 0<=p[1]<h):return
         if start:
+            if self.tool.get() not in ('Move city','Play here') and not (getattr(e,'state',0)&4):
+                for city in self.document.adventure['maps']:
+                    ox,oy=city['origin']
+                    if city['id'] in self.current_world()['cities'] and ox<=p[0]<ox+len(city['rows'][0]) and oy<=p[1]<oy+len(city['rows']):
+                        self.city=city['id'];self.draw();return
             self.stroke=copy.deepcopy(self.document.adventure);self.last=p
             if self.tool.get()=='Move city':
                 self.drag=None

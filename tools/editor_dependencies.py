@@ -61,7 +61,7 @@ def replacements(document,identity):
     section,collection,_,value=original
     return [item for item,info in all_items.items() if item!=identity and info[:2]==(section,collection)
             and (collection!='images' or (info[3].get('kind'),info[3].get('width'),info[3].get('height'))==(value.get('kind'),value.get('width'),value.get('height')))
-            and (collection!='mechs' or info[3].get('unit_type','mech')==value.get('unit_type','mech'))]
+            and (collection!='mechs' or info[3].get('kind','mech')==value.get('kind','mech'))]
 
 
 def remove(document,identity,replacement=None):

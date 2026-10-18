@@ -247,7 +247,7 @@ class PixelEditor:
         self.window.bind('<Control-z>',lambda _:self.undo());self.window.bind('<Control-y>',lambda _:self.redo())
         self.canvas.bind('<Control-c>',lambda _:self.guard(self.copy_pixels));self.canvas.bind('<Control-v>',lambda _:self.tool.set('Paste selection'))
         self.window.protocol('WM_DELETE_WINDOW',self.close);self.refresh_frames();self.refresh_layers();self.draw()
-        self.draft=register(self,pending=lambda:self.image!=self.original_layers,
+        self.draft=register(self,pending=lambda:any(v!=self.original_layers.get(k) for k,v in self.image.items() if k!='_layer'),
             apply=self.apply_pending,capture=self.capture_draft,restore=self.restore_draft,
             accept=self.accept_draft,priority=50)
     @property

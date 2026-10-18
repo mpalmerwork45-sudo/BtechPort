@@ -80,6 +80,20 @@ class PlaytestWindow:
         if self.busy:return
         source=self.selected() if resume else None
         if resume and source is None:raise EditorError('Select a checkpoint to continue.')
+        if hasattr(self.window,'workspace'):
+            from editor_tasks import snapshot
+            from editor_session import scope_of
+            candidate=snapshot(scope_of(self));settings=dict(self.owner.parent.settings)
+            name=self.name.get();actions=self.actions.get('1.0','end-1c');root=self.root
+            self.busy=True;self.status.set('Preparing checkpoint and running the player…')
+            def done(path):
+                self.busy=False;self.refresh(path);self.status.set('Checkpoint saved. Select it to inspect flags, continue or play.')
+            def failed(error):self.busy=False;raise error
+            try:self.window.workspace.tasks.submit('Running checkpoint',self,lambda cancel:make_checkpoint(candidate,settings,root,name,actions,source),done,failed,cancellable=False)
+            except Exception:
+                self.busy=False
+                raise
+            return
         self.owner.apply_pending();self.document.save()
         # The worker reads a detached document; editing can continue without
         # racing its mutable arrays or touching Tk from the worker thread.
@@ -115,11 +129,15 @@ class PlaytestWindow:
         if not selected or not selected[0].startswith('event-'):return
         identity=self.trace.item(selected[0],'text')
         if not any(e['id']==identity for e in self.document.adventure['events']):raise EditorError('This checkpoint event is absent from the current game.')
+        if hasattr(self.window,'workspace'):return self.window.workspace.open_event(identity)
         self.owner.event_id=identity;self.owner.refresh_events();self.owner.populate_event();self.owner.tabs.select(self.owner.event_tab);self.owner.window.lift()
 
     def play(self):
         path=self.selected()
         if not path:raise EditorError('Select a saved checkpoint.')
+        if hasattr(self.window,'workspace'):
+            from editor_session import scope_of
+            return self.window.workspace.play_session.start(scope_of(self),checkpoint=path)
         settings=self.owner.parent.settings;doc=ProjectDocument(path/'game',self.document.validator)
         command=doc.play_command(settings,self.owner.parent.state_dir)
         command+=['--load',str(path/'state.btp')]

@@ -68,7 +68,7 @@ def report(owner, error, details=''):
             focus.focus_set()
 
 
-def guard(owner, operation):
+def guard(owner, operation, publish=True):
     try:
         scope = scope_of(owner)
         document = scope.document if scope else None
@@ -76,7 +76,7 @@ def guard(owner, operation):
             result = operation()
             # A completed art command publishes to the shared history. Open
             # forms and unfinished pointer gestures remain recoverable drafts.
-            publish_art(owner)
+            if publish:publish_art(owner)
             return result
     except Exception as error:
         report(owner, error, traceback.format_exc())
@@ -123,7 +123,7 @@ class EditorScope:
     def dirty(self):
         return bool(self.document and self.document.dirty) or any(d.pending() for d in self.live())
 
-    def transact(self, operation, only=None, subset=None):
+    def transact(self, operation, only=None, subset=None, preview=False):
         """A failed save restores document AND widget drafts, including bad text.
 
         Apply callbacks must not destroy their view. Accept callbacks run only
@@ -166,6 +166,12 @@ class EditorScope:
             raise
         else:
             self.failure_owner = None
+            if preview:
+                if document is not None:
+                    document.__dict__.clear();document.__dict__.update(before)
+                for draft,state in states:
+                    if draft.alive():draft.restore(state)
+                return result
             for draft in applied:
                 if draft.alive():
                     draft.accept()

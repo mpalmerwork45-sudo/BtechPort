@@ -66,6 +66,7 @@ def run(env, work):
                 window.destroy()
         workspace_journey(directory,document.validator,env,work)
         recovery_journey(directory,document.validator)
+        tasks_journey(directory,document.validator,env,work)
 
 
 def workspace_journey(directory,validator,env,work):
@@ -153,6 +154,7 @@ def recovery_journey(directory,validator):
         record=workspace.recovery.read(workspace.recovery.path(app._editor_scope))
         assert any(e['state'].get('values',{}).get('sound')=='invalid sound' for e in record['drafts'] if isinstance(e['state'].get('values'),dict))
     finally:workspace.closing=True;root.destroy()
+
     # A new process has no old callbacks or Tk widgets to rely on.
     root=tk.Tk();workspace=Workspace(root,validator,state);app=workspace.app
     try:
@@ -171,4 +173,108 @@ def recovery_journey(directory,validator):
         assert not workspace.recovery.path(app._editor_scope).exists()
         assert not app._editor_scope.dirty()
         print('PASS: shared artwork Undo/Redo and crash recovery restore layers, event text and invalid unit/animation fields before a valid save.')
+        # A lost/moved project must still be recoverable from its recorded
+        # baseline. The source bytes and raw invalid inputs remain intact.
+        from unittest.mock import patch
+        moved=directory/'recover-original-moved';project.root.rename(moved)
+        target=directory/'recovered-copy';target.mkdir()
+        with patch('editor_recovery.filedialog.askdirectory',return_value=str(target)):
+            scope=workspace.recovery.copy_into(record,root)
+        root.update()
+        assert scope.document.root==target and app.variables[('mass_tons',)][0].get()=='unfinished mass'
+        assert (moved/project.manifest['definitions']).is_file()
+        assert scope.document.snapshot==baseline and workspace.recovery.path(scope).is_file()
+        print('PASS: a missing source project recovers into a separate copy, retaining invalid fields and its own recovery record.')
     finally:workspace.closing=True;root.destroy()
+
+
+
+def tasks_journey(directory,validator,env,work):
+    import threading
+    import time
+    import tkinter as tk
+    from unittest.mock import patch
+    from pathlib import Path
+    from PIL import ImageGrab
+    from editor_model import create_project,ProjectDocument
+    from editor_workspace import Workspace
+    from editor_tasks import save,validate
+    project=create_project(Path('examples/beacon-demo'),directory/'task-game','task-test','Background tasks',validator)
+    root=tk.Tk();workspace=Workspace(root,validator,directory/'task-settings');app=workspace.app;app.set_document(project);root.update()
+    errors=[];root.report_callback_exception=lambda kind,error,tb:errors.append(error)
+    beats=[];running=True
+    def heartbeat():
+        if running:beats.append(time.monotonic());root.after(10,heartbeat)
+    heartbeat()
+    def pump_until(predicate,timeout=15):
+        deadline=time.monotonic()+timeout
+        while not predicate():
+            root.update()
+            if errors:raise errors.pop(0)
+            if time.monotonic()>deadline:raise AssertionError('Editor task did not finish')
+            time.sleep(.005)
+        root.update()
+    try:
+        field=app.variables[('price',)][0];field.set('4321')
+        before=(project.root/project.manifest['definitions']).read_bytes()
+        gate=threading.Event();entered=threading.Event();original=ProjectDocument.validate
+        def slow(document):entered.set();gate.wait(5);return original(document)
+        with patch.object(ProjectDocument,'validate',slow):
+            started=time.monotonic();save(workspace,app._editor_scope);feedback=time.monotonic()-started
+            pump_until(entered.is_set);field=app.variables[('price',)][0];field.set('4567')
+            root.after(200,gate.set);pump_until(lambda:not workspace.tasks.jobs)
+        assert (project.root/project.manifest['definitions']).read_bytes()==before,'Stale validation saved earlier fields'
+        assert 'changed during validation' in app.status.get()
+        save(workspace,app._editor_scope);pump_until(lambda:not workspace.tasks.jobs)
+        assert not app._editor_scope.dirty()
+        assert ProjectDocument(project.root,validator).content['mechs'][0]['price']==4567
+        gate=threading.Event();entered=threading.Event();original_save=ProjectDocument.save
+        def slow_save(document):entered.set();gate.wait(5);return original_save(document)
+        app.variables[('price',)][0].set('5000')
+        with patch.object(ProjectDocument,'save',slow_save):
+            save(workspace,app._editor_scope);pump_until(entered.is_set)
+            app.variables[('price',)][0].set('5050');gate.set();pump_until(lambda:not workspace.tasks.jobs)
+        assert ProjectDocument(project.root,validator).content['mechs'][0]['price']==5000
+        assert app.variables[('price',)][0].get()=='5050' and app._editor_scope.dirty()
+        assert 'Newer edits remain unsaved' in app.status.get()
+        before=dict(ProjectDocument(project.root,validator).snapshot)
+        with patch.object(ProjectDocument,'save',side_effect=OSError('Simulated disk write failure')):
+            save(workspace,app._editor_scope);pump_until(lambda:not workspace.tasks.jobs)
+        assert ProjectDocument(project.root,validator).snapshot==before and app._editor_scope.dirty()
+        assert app.variables[('price',)][0].get()=='5050' and not app._editor_scope.saving
+        save(workspace,app._editor_scope);pump_until(lambda:not workspace.tasks.jobs)
+        assert ProjectDocument(project.root,validator).content['mechs'][0]['price']==5050 and not app._editor_scope.dirty()
+        print('PASS: edits during a durable save remain unsaved; write failure preserves disk and current edits, and retry saves them.')
+        # Navigation stays live during validation; callbacks are retired on
+        # close without reactivating a closed tab or losing later edits.
+        workspace.open_map();validate(workspace,app._editor_scope);workspace.app.window.lift()
+        pump_until(lambda:not workspace.tasks.jobs)
+        gaps=[b-a for a,b in zip(beats,beats[1:])]
+        print(f'PASS: background save rejects stale validation, saves corrected inputs, and leaves navigation responsive; initial feedback {feedback*1000:.1f}ms, heartbeat max {max(gaps,default=0)*1000:.1f}ms.')
+        for percent in (100,150,200):
+            workspace.scale(percent);root.update();workspace.open_map();root.update()
+            ImageGrab.grab(xdisplay=env['DISPLAY']).save(work/f'editor-scale-{percent}.png')
+        workspace.scale(100);root.update()
+        # Play the real SDL game from a validated private snapshot and stop
+        # exactly the process this workspace launched.
+        app.settings['player']=str(Path('build/btech-port').resolve())
+        gate=threading.Event();entered=threading.Event();original_export=ProjectDocument.export
+        def slow_export(document,target):entered.set();gate.wait(5);return original_export(document,target)
+        with patch.object(ProjectDocument,'export',slow_export):
+            unrelated=workspace.tasks.submit('Independent operation',app,lambda cancel:gate.wait(5))
+            workspace.play_session.start(app._editor_scope);pump_until(entered.is_set)
+            workspace.play_session.stop()
+            assert not unrelated.cancelled.is_set()
+            gate.set();pump_until(lambda:not workspace.tasks.jobs)
+            assert workspace.play_session.process is None and not workspace.play_session.preparing
+        workspace.play_session.start(app._editor_scope)
+        pump_until(lambda:workspace.play_session.process is not None)
+        process=workspace.play_session.process;root.after(200,workspace.play_session.stop)
+        pump_until(lambda:workspace.play_session.process is None)
+        assert process.poll() is not None
+        assert not app._editor_scope.dirty()
+        print('PASS: 100/150/200% workspace captures, isolated preparation cancellation and real snapshot Play/Stop without changing editor or ordinary game saves.')
+        from editor_benchmark import run as benchmark
+        benchmark(workspace,directory/'large-fixture',validator,work)
+    finally:
+        running=False;workspace.closing=True;root.destroy()

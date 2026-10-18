@@ -26,11 +26,24 @@ def scroll_frame(parent, width=660, height=590):
     shell=ttk.Frame(parent)
     canvas=tk.Canvas(shell,highlightthickness=0,width=width,height=height)
     bar=ttk.Scrollbar(shell,orient="vertical",command=canvas.yview)
-    canvas.configure(yscrollcommand=bar.set)
+    horizontal=ttk.Scrollbar(shell,orient='horizontal',command=canvas.xview)
+    canvas.configure(yscrollcommand=bar.set,xscrollcommand=horizontal.set)
+    horizontal.pack(side='bottom',fill='x')
     bar.pack(side="right",fill="y");canvas.pack(side="left",fill="both",expand=True)
     body=ttk.Frame(canvas,padding=8);item=canvas.create_window(0,0,window=body,anchor="nw")
-    body.bind("<Configure>",lambda _:canvas.configure(scrollregion=canvas.bbox("all")))
-    canvas.bind("<Configure>",lambda e:canvas.itemconfigure(item,width=e.width))
+    tag='EditorScroll'+str(id(canvas))
+    def wheel(event):
+        canvas.yview_scroll(-1 if getattr(event,'num',None)==4 or getattr(event,'delta',0)>0 else 1,'units');return 'break'
+    for sequence in ('<MouseWheel>','<Button-4>','<Button-5>'):canvas.bind_class(tag,sequence,wheel)
+    def layout(_=None):
+        canvas.itemconfigure(item,width=max(canvas.winfo_width(),body.winfo_reqwidth()),height=max(canvas.winfo_height(),body.winfo_reqheight()))
+        canvas.configure(scrollregion=canvas.bbox('all'))
+        def attach(widget):
+            if not isinstance(widget,(tk.Text,tk.Listbox,ttk.Treeview,ttk.Combobox)):
+                if tag not in widget.bindtags():widget.bindtags((tag,*widget.bindtags()))
+                for child in widget.winfo_children():attach(child)
+        attach(body)
+    body.bind('<Configure>',layout);canvas.bind('<Configure>',layout)
     return shell,body
 
 
@@ -56,7 +69,9 @@ class Form:
         self.previous_grab=self.window.grab_current()
         self.window.grab_set()
         def restore_grab(event):
-            if event.widget==self.window and self.previous_grab is not None and self.previous_grab.winfo_exists():self.previous_grab.grab_set()
+            if event.widget==self.window:
+                if getattr(self,'size_job',None):self.window.after_cancel(self.size_job)
+                if self.previous_grab is not None and self.previous_grab.winfo_exists():self.previous_grab.grab_set()
         self.window.bind('<Destroy>',restore_grab,add='+')
 
     def field(self, key, value, choices=None, label=None):
@@ -80,6 +95,8 @@ class Form:
             accept=self.accept_draft,priority=100)
         # Keep Apply reachable while scrolling through a long party form.
         ttk.Button(self.window, text="Apply", command=lambda: guard(self,lambda:apply_draft(self))).pack(side="bottom",anchor="e",pady=8,padx=12)
+        from editor_ui import size_form
+        self.size_job=self.window.after_idle(lambda:size_form(self))
 
     def track(self,value):
         # Nested enemy/stock forms edit mutable lists in their parent draft.
@@ -148,7 +165,9 @@ class AdventureEditor:
         self.event_tab = ttk.Frame(self.tabs);self.tabs.add(self.event_tab, text="Events")
         self.world_tab = ttk.Frame(self.tabs);self.tabs.add(self.world_tab, text="People, shops and start")
         self.status = tk.StringVar(value="Choose a tile to paint. Drag an existing marker to move it; Escape cancels a drag.")
-        ttk.Label(self.window, textvariable=self.status, style="Status.TLabel",wraplength=960).pack(side="bottom",fill="x")
+        status_label=ttk.Label(self.window, textvariable=self.status, style="Status.TLabel",wraplength=960)
+        if not hasattr(self.window,'workspace'):status_label.pack(side="bottom",fill="x")
+        else:self.status.trace_add('write',lambda *_:self.window.workspace.status.set(self.status.get()) if self.window.winfo_exists() else None)
         # Reserve the status strip before the flexible notebook. Long marker
         # lists must scroll inside their pane rather than push controls away.
         self.tabs.pack_forget();self.tabs.pack(fill="both",expand=True)
@@ -214,19 +233,19 @@ class AdventureEditor:
     def build_maps(self):
         top = ttk.Frame(self.map_tab,padding=6);top.pack(fill="x")
         ttk.Label(top,text="Map",style="Section.TLabel").pack(side="left",padx=(4,8))
-        self.map_choice=ttk.Combobox(top,state="readonly",width=30);self.map_choice.pack(side="left")
+        self.map_choice=ttk.Combobox(top,state="readonly",width=22);self.map_choice.pack(side="left")
         self.map_choice.bind("<<ComboboxSelected>>",lambda _:self.change_map())
-        for title,actions in [("Map actions",[("New map",self.new_map),("Map properties",self.map_properties),("Delete map",self.delete_map)]),
-                              ("Layer actions",[("Add overlay",self.new_overlay),("Layer properties",self.layer_properties),("Move building and markers",self.move_building),("Delete layer",self.delete_layer)]),
-                              ("Buildings",[("Save selection as stamp",self.capture_building),("Place building stamp",self.place_building)])]:
-            button=ttk.Menubutton(top,text=title);menu=tk.Menu(button,tearoff=False)
-            for label,action in actions:menu.add_command(label=label,command=lambda cb=action:self.guard(cb))
-            button.configure(menu=menu);button.pack(side="left",padx=6)
-        ttk.Button(top,text="Player setup",command=self.parent.setup).pack(side="right",padx=4)
-        ttk.Button(top,text="Reload graphics",command=self.reload_graphics).pack(side="right",padx=4)
+        actions=ttk.Menubutton(top,text='Map actions');menu=tk.Menu(actions,tearoff=False);actions.configure(menu=menu);actions.pack(side='left',padx=6)
+        for title,items in [('Map',[('New map',self.new_map),('Properties',self.map_properties),('Delete map',self.delete_map)]),
+                            ('Layers',[('Add overlay',self.new_overlay),('Properties',self.layer_properties),('Move building',self.move_building),('Delete layer',self.delete_layer)]),
+                            ('Buildings',[('Save selection as stamp',self.capture_building),('Place stamp',self.place_building)])]:
+            submenu=tk.Menu(menu,tearoff=False)
+            for label,action in items:submenu.add_command(label=label,command=lambda cb=action:self.guard(cb))
+            menu.add_cascade(label=title,menu=submenu)
+        menu.add_separator();menu.add_command(label='Reload graphics',command=self.reload_graphics);menu.add_command(label='Player setup',command=self.parent.setup)
         controls=ttk.Frame(self.map_tab,padding=6);controls.pack(fill="x")
         ttk.Label(controls,text="Layer").pack(side="left",padx=(4,8))
-        self.layer_choice=ttk.Combobox(controls,state="readonly",width=26,values=["Base"]);self.layer_choice.current(0);self.layer_choice.pack(side="left")
+        self.layer_choice=ttk.Combobox(controls,state="readonly",width=12,values=["Base"]);self.layer_choice.current(0);self.layer_choice.pack(side="left")
         self.layer_choice.bind("<<ComboboxSelected>>",lambda _:self.draw())
         self.tool=tk.StringVar(value="Paint")
         ttk.Label(controls,text="Tool").pack(side="left",padx=(12,6))
@@ -234,37 +253,54 @@ class AdventureEditor:
         self.zoom=tk.StringVar(value="24")
         ttk.Label(controls,text="Zoom").pack(side="left",padx=(12,6))
         z=ttk.Combobox(controls,textvariable=self.zoom,values=["16","24","32"],state="readonly",width=4);z.pack(side="left");z.bind("<<ComboboxSelected>>",lambda _:self.draw())
-        self.terrain=tk.BooleanVar(value=False);ttk.Checkbutton(controls,text="Collision",variable=self.terrain,command=self.draw).pack(side="left",padx=8)
-        self.footprints=tk.BooleanVar(value=False);ttk.Checkbutton(controls,text='Starting formation',variable=self.footprints,command=lambda:self.guard(self.toggle_footprints)).pack(side='left')
+        self.terrain=tk.BooleanVar(value=False)
+        self.footprints=tk.BooleanVar(value=False)
+        om=tk.Menu(menu,tearoff=False);menu.add_cascade(label='Overlays',menu=om)
+        om.add_checkbutton(label='Collision',variable=self.terrain,command=self.draw);om.add_checkbutton(label='Starting formation',variable=self.footprints,command=lambda:self.guard(self.toggle_footprints))
+        from editor_ui import flow_toolbar
+        flow_toolbar(top);flow_toolbar(controls)
         self.graphics_note=tk.StringVar()
-        ttk.Label(self.map_tab,textvariable=self.graphics_note,style="Muted.TLabel",padding=(12,2),wraplength=940).pack(fill="x")
-        body=ttk.Panedwindow(self.map_tab,orient="horizontal");body.pack(fill="both",expand=True)
-        side=ttk.Frame(body,width=254,padding=8);view=ttk.Frame(body,padding=(0,8,8,8));body.add(side,weight=1);body.add(view,weight=5)
-        side.columnconfigure(0,weight=1);side.rowconfigure(1,weight=4);side.rowconfigure(7,weight=2)
+        self.graphics_label=ttk.Label(self.map_tab,textvariable=self.graphics_note,style="Muted.TLabel",padding=(12,2),wraplength=940)
+        if not hasattr(self.window,'workspace'):self.graphics_label.pack(fill='x')
+        else:
+            from editor_ui import tooltip
+            tooltip(actions,self.graphics_note.get)
+        body=ttk.Panedwindow(self.map_tab,orient="horizontal");self.map_body=body;body.pack(fill="both",expand=True)
+        sidebar=ttk.Notebook(body);self.sidebar=sidebar
+        # Scroll the controls as a group on short/high-DPI displays instead of
+        # shrinking the tile list to zero underneath its fixed-size buttons.
+        tile_shell,side=scroll_frame(sidebar,width=254,height=300);sidebar.add(tile_shell,text='Tiles')
+        marker_shell,marker_side=scroll_frame(sidebar,width=254,height=300);sidebar.add(marker_shell,text='Markers')
+        view=ttk.Frame(body,padding=(0,8,8,8));body.add(sidebar,weight=1);body.add(view,weight=5)
+        side.columnconfigure(0,weight=1);side.rowconfigure(1,weight=1)
         title=ttk.Frame(side);title.grid(row=0,column=0,sticky="ew",pady=(0,6))
         ttk.Label(title,text="TILES",style="Section.TLabel").pack(side="left")
         ttk.Button(title,text="Browse all...",command=lambda:self.guard(self.graphic_picker)).pack(side="right")
         palette=ttk.Frame(side);palette.grid(row=1,column=0,sticky="nsew")
-        self.brush=TilePalette(palette,show="tree",selectmode="browse",height=1,style="Tiles.Treeview")
+        self.brush=TilePalette(palette,show="tree",selectmode="browse",height=4,style="Tiles.Treeview")
         self.brush.column("#0",width=218,minwidth=180,stretch=True)
         brush_scroll=ttk.Scrollbar(palette,command=self.brush.yview);self.brush.configure(yscrollcommand=brush_scroll.set)
         brush_scroll.pack(side="right",fill="y");self.brush.pack(side="left",fill="both",expand=True)
         self.brush.bind("<<TreeviewSelect>>",lambda _:self.select_brush())
-        self.brush_info=tk.StringVar();ttk.Label(side,textvariable=self.brush_info,style="Muted.TLabel",wraplength=235,padding=(0,5)).grid(row=2,column=0,sticky="ew")
+        self.brush_info=tk.StringVar();brush_info=ttk.Label(side,textvariable=self.brush_info,style="Muted.TLabel",wraplength=235,padding=(0,5))
+        if not hasattr(self.window,'workspace'):brush_info.grid(row=2,column=0,sticky="ew")
+        else:
+            from editor_ui import tooltip
+            tooltip(self.brush,self.brush_info.get)
         tile_buttons=ttk.Frame(side);tile_buttons.grid(row=3,column=0,sticky="ew",pady=(0,8))
         tile_buttons.columnconfigure((0,1,2),weight=1)
-        for column,(label,callback) in enumerate([('Edit pixels',self.edit_tile_pixels),('Properties',self.edit_tile),('Clone',self.duplicate_tile)]):
-            ttk.Button(tile_buttons,text=label,width=0,style='Toolbar.TButton',command=lambda cb=callback:self.guard(cb)).grid(row=0,column=column,sticky='ew',padx=2)
+        tile_actions=ttk.Menubutton(tile_buttons,text='Tile actions');tile_actions.pack(fill='x')
         self.tile_menu=tk.Menu(self.brush,tearoff=False)
+        tile_actions.configure(menu=self.tile_menu)
         for label,callback in [('Edit pixels',self.edit_tile_pixels),('Properties',self.edit_tile),('Clone tile',self.duplicate_tile)]:
             self.tile_menu.add_command(label=label,command=lambda cb=callback:self.guard(cb))
         self.brush.bind('<Button-3>',self.tile_context)
         self.brush.bind('<Double-1>',lambda _:self.guard(self.edit_tile_pixels))
-        ttk.Separator(side).grid(row=4,column=0,sticky="ew",pady=4)
+        side=marker_side;side.columnconfigure(0,weight=1);side.rowconfigure(7,weight=1)
         ttk.Label(side,text="MARKERS",style="Section.TLabel",padding=(0,5)).grid(row=5,column=0,sticky="w")
         ttk.Label(side,text="Drag on map | double-click to edit",style="Muted.TLabel").grid(row=6,column=0,sticky="w",pady=(0,5))
         marker_box=ttk.Frame(side);marker_box.grid(row=7,column=0,sticky="nsew")
-        self.markers=tk.Listbox(marker_box,exportselection=False,height=1,relief="flat",borderwidth=0,highlightthickness=1,highlightbackground="#cfd8df",selectbackground="#dcebed",selectforeground="#163d44",font="TkDefaultFont")
+        self.markers=tk.Listbox(marker_box,exportselection=False,height=3,relief="flat",borderwidth=0,highlightthickness=1,highlightbackground="#cfd8df",selectbackground="#dcebed",selectforeground="#163d44",font="TkDefaultFont")
         marker_scroll=ttk.Scrollbar(marker_box,command=self.markers.yview);self.markers.configure(yscrollcommand=marker_scroll.set)
         marker_scroll.pack(side="right",fill="y");self.markers.pack(side="left",fill="both",expand=True)
         self.markers.bind("<<ListboxSelect>>",lambda _:self.select_marker())
@@ -327,8 +363,10 @@ class AdventureEditor:
         try:
             self.graphics=load_tiles(self.document,self.parent.settings)
             self.graphics_note.set("Graphics ready | original terrain colors" if self.document.manifest["requires"]!="none" else "Graphics ready | package artwork")
+            if hasattr(self.window,'workspace'):self.graphics_label.pack_forget()
         except EditorError as exc:
             self.graphics=art_tiles(self.document);self.graphics_note.set(f"Graphics unavailable: {exc}  Use Player setup, then Reload graphics.")
+            self.graphics_label.pack(fill='x',before=self.map_body)
         self.refresh()
 
     def tile_image(self,sheet,graphic,size):
@@ -426,6 +464,7 @@ class AdventureEditor:
                 self.stroke=copy_adventure(self.document);self.selected_marker=ref
                 self.drag=dict(ref=ref,pointer=(px,py),at=tuple(marker["at"]),scene=self.scene_index)
                 self.refresh_markers();self.draw();self.status.set("Drag marker | snaps to half tiles | Escape cancels")
+                if hasattr(self.window,'workspace'):self.window.workspace.update_inspector()
                 return
         elif self.drag is not None:
             drag=self.drag
@@ -859,7 +898,7 @@ class AdventureEditor:
         op.bind("<<ComboboxSelected>>",lambda event:self.guard(lambda:change(event)))
         if "text" in e:
             ttk.Label(self.event_form,text="Dialogue").grid(row=row,column=0,sticky="nw",pady=5)
-            self.event_text=tk.Text(self.event_form,height=7,width=48,wrap="word");self.event_text.grid(row=row,column=1,sticky="ew");self.event_text.insert("1.0",e["text"]);row+=1
+            self.event_text=tk.Text(self.event_form,height=7,width=48,wrap="word",undo=True);self.event_text.grid(row=row,column=1,sticky="ew");self.event_text.insert("1.0",e["text"]);row+=1
             self.event_text.edit_modified(False)
             def modified(_):
                 if self.event_text and self.event_text.edit_modified():self.event_pending=True;self.event_text.edit_modified(False)
@@ -893,13 +932,16 @@ class AdventureEditor:
         if not self.event_id:return
         e=copy.deepcopy(self.event_draft);values={k:v.get() for k,v in self.event_vars.items()}
         e.update({k:values[k] for k in e if k not in ("text","options","routes","at") and k in values})
+        def integer(key):
+            try:return int(values[key])
+            except ValueError:raise FieldError(key.replace('_',' ').capitalize()+' must be a whole number.',key)
         for key in ("value","credits","cost"):
-            if key in e:e[key]=int(values[key])
+            if key in e:e[key]=integer(key)
         if e['op'] in ('repair','rearm','heal'):
             if values['slot']=='All':e.pop('slot',None)
-            else:e['slot']=int(values['slot'])-1
+            else:e['slot']=integer('slot')-1
         if self.event_text:e["text"]=" ".join(self.event_text.get("1.0","end-1c").split())
-        if "at" in e:e["at"]=[int(values["x"]),int(values["y"])]
+        if "at" in e:e["at"]=[integer('x'),integer('y')]
         if e["op"]=="choice":e["options"]=[dict(label=values[f"label_{i+1}"],next=values[f"choice_{i+1}"]) for i in range(int(values["choice_count"]))]
         if e["op"]=="lua":e["routes"]=[values[f"route_{i+1}"] for i in range(int(values["route_count"]))]
         a=copy_adventure(self.document);index=next(i for i,v in enumerate(a["events"]) if v["id"]==self.event_id)

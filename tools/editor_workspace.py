@@ -89,7 +89,9 @@ class Workspace:
         configure_editor_style(window)
         window.title('BattleTech Construction Kit');window.geometry('1280x800');window.minsize(960,620)
         self.status=tk.StringVar(value='Open a project or choose a template to begin.')
-        self.actions={}
+        self.actions={};self.action_entries={};self.action_buttons={}
+        from editor_ui import TextHistory
+        self.text_history=TextHistory(window)
         self.toolbar=ttk.Frame(window,padding=(10,6));self.toolbar.pack(fill='x')
         self.vertical=ttk.Panedwindow(window,orient='vertical');self.vertical.pack(fill='both',expand=True)
         self.horizontal=ttk.Panedwindow(self.vertical,orient='horizontal');self.vertical.add(self.horizontal,weight=8)
@@ -108,18 +110,20 @@ class Workspace:
         navigation=ttk.Frame(self.centre,padding=(4,2));navigation.pack(fill='x')
         ttk.Button(navigation,text='Back',width=6,command=lambda:self.navigate(-1)).pack(side='left')
         ttk.Button(navigation,text='Forward',width=8,command=lambda:self.navigate(1)).pack(side='left')
-        self.breadcrumb=tk.StringVar(value='Welcome');ttk.Label(navigation,textvariable=self.breadcrumb).pack(side='left',padx=8)
+        self.breadcrumb=tk.StringVar(value='Welcome');breadcrumb=ttk.Label(navigation,textvariable=self.breadcrumb,width=1)
         ttk.Button(navigation,text='Close tab',command=self.close_tab).pack(side='right')
         overflow=ttk.Menubutton(navigation,text='Open tabs');self.tab_menu=tk.Menu(overflow,tearoff=False,postcommand=self.fill_tab_menu)
         overflow.configure(menu=self.tab_menu);overflow.pack(side='right',padx=4)
+        breadcrumb.pack(side='left',fill='x',expand=True,padx=8)
         self.tabs=ttk.Notebook(self.centre);self.tabs.pack(fill='both',expand=True)
         self.tabs.bind('<<NotebookTabChanged>>',self.tab_changed)
         self.inspector=ttk.Frame(self.horizontal,padding=10);self.horizontal.add(self.inspector,weight=1)
         ttk.Label(self.inspector,text='INSPECTOR',style='Section.TLabel').pack(anchor='w')
-        self.inspect_generic=ttk.Frame(self.inspector);self.inspect_generic.pack(fill='both',expand=True)
-        self.inspect_title=tk.StringVar(value='Selection');ttk.Label(self.inspect_generic,textvariable=self.inspect_title,font='TkHeadingFont',wraplength=210).pack(anchor='w',pady=10)
-        self.inspect_text=tk.StringVar();ttk.Label(self.inspect_generic,textvariable=self.inspect_text,wraplength=210,justify='left').pack(anchor='w',fill='x')
-        self.inspect_actions=ttk.Frame(self.inspect_generic);self.inspect_actions.pack(fill='x',pady=12)
+        from adventure_editor import scroll_frame
+        self.inspect_generic,inspect_body=scroll_frame(self.inspector,width=210,height=300);self.inspect_generic.pack(fill='both',expand=True)
+        self.inspect_title=tk.StringVar(value='Selection');ttk.Label(inspect_body,textvariable=self.inspect_title,font='TkHeadingFont',wraplength=210).pack(anchor='w',pady=10)
+        self.inspect_text=tk.StringVar();ttk.Label(inspect_body,textvariable=self.inspect_text,wraplength=210,justify='left').pack(anchor='w',fill='x')
+        self.inspect_actions=ttk.Frame(inspect_body);self.inspect_actions.pack(fill='x',pady=12)
         self.bottom=ttk.Notebook(self.vertical);self.vertical.add(self.bottom,weight=1)
         self.problem_page=ttk.Frame(self.bottom);self.bottom.add(self.problem_page,text='Problems')
         self.problem_list=ttk.Treeview(self.problem_page,columns=('scope','message'),show='headings',height=4)
@@ -127,13 +131,17 @@ class Workspace:
         self.problem_list.column('scope',width=180,stretch=False);self.problem_list.column('message',width=650)
         self.problem_list.pack(fill='both',expand=True);self.problem_list.bind('<Double-1>',self.open_problem);self.problem_list.bind('<Return>',self.open_problem)
         self.output=tk.Text(self.bottom,height=5,wrap='word',state='disabled',font='TkFixedFont');self.bottom.add(self.output,text='Output')
-        ttk.Label(window,textvariable=self.status,style='Status.TLabel').pack(fill='x')
+        footer=ttk.Frame(window);footer.pack(side='bottom',fill='x',before=self.vertical);footer.columnconfigure(0,weight=1)
+        ttk.Label(footer,textvariable=self.status,style='Status.TLabel',width=1).grid(row=0,column=0,sticky='ew')
+        self.busybar=ttk.Progressbar(footer,mode='indeterminate',length=90);self.busy=False
         pane=self.add_view(None,None,'roster','Units')
         self.app=RosterEditor(pane,validator,self.state_dir)
         pane.controller=self.app;pane.scope=self.app._editor_scope
         self.attach_scope(self.app._editor_scope)
         from editor_recovery import Recovery
         self.recovery=Recovery(self)
+        from editor_tasks import Tasks,PlaySession
+        self.tasks=Tasks(self);self.play_session=PlaySession(self)
         self.install_actions();self.show_welcome();self.restore_layout()
         window.protocol('WM_DELETE_WINDOW',self.close)
         import traceback
@@ -145,6 +153,14 @@ class Workspace:
         if event.widget is self.window:
             self.closing=True
             if self.timer:self.window.after_cancel(self.timer);self.timer=None
+            self.tasks.shutdown();self.play_session.shutdown()
+
+    def update_busy(self):
+        active=any(not job.quiet for job in self.tasks.jobs)
+        if active==self.busy:return
+        self.busy=active
+        if active:self.busybar.grid(row=0,column=1,padx=8);self.busybar.start(70)
+        else:self.busybar.stop();self.busybar.grid_remove()
 
     def attach_scope(self,scope):
         scope.workspace=self;scope.on_problem=lambda problem:self.problem(scope,problem)
@@ -181,6 +197,8 @@ class Workspace:
         self.record_navigation()
         self.breadcrumb.set(view.caption)
         self.update_inspector()
+        status=getattr(view.controller,'status',None)
+        if status is not None:self.status.set(status.get())
 
     def navigate(self,step):
         index=self.history_index+step
@@ -198,7 +216,7 @@ class Workspace:
     def view_state(self,view):
         owner=view.controller;kind=view.key[1];state={}
         if owner is None:return state
-        if kind=='roster':state.update(kind=owner.kind.get(),current=owner.current)
+        if kind in ('roster','library-unit'):state.update(kind=owner.kind.get(),current=owner.current)
         elif kind=='maps':state.update(map=owner.scene()['id'],marker=owner.selected_marker,cursor=owner.cursor,tab=owner.tabs.index(owner.tabs.select()))
         elif kind=='world':state.update(world=owner.world_id,city=owner.city)
         elif kind=='events':state.update(event=owner.selected,filter=owner.view_mode.get())
@@ -220,11 +238,16 @@ class Workspace:
     def restore_view(self,view,state):
         owner=view.controller;kind=view.key[1]
         if owner is None:return
-        if kind=='roster':
+        if kind in ('roster','library-unit'):
             self.open_unit(state.get('kind','Mechs'),state.get('current'),owner)
         elif kind=='maps':
             owner.map_choice.current(next(i for i,m in enumerate(owner.adventure['maps']) if m['id']==state['map']));owner.change_map()
-            owner.selected_marker=tuple(state['marker']) if state.get('marker') else None;owner.cursor=tuple(state.get('cursor',owner.cursor));owner.tabs.select(state.get('tab',0))
+            owner.selected_marker=tuple(state['marker']) if state.get('marker') else None;owner.cursor=tuple(state.get('cursor',owner.cursor))
+            # Old layouts can refer to the Events page, now hidden in favour
+            # of its own workspace tab. Never restore an inaccessible page.
+            page=state.get('tab',0)
+            if page not in range(len(owner.tabs.tabs())) or owner.tabs.tab(page,'state')=='hidden':page=0
+            owner.tabs.select(page)
         elif kind=='world':owner.world_id=state.get('world');owner.city=state.get('city');owner.refresh()
         elif kind=='events':owner.selected=state.get('event');owner.view_mode.set(state.get('filter','Nearby events'));owner.edit()
         elif kind=='graphics':owner.selected=state.get('selected');owner.refresh()
@@ -239,8 +262,11 @@ class Workspace:
 
     def action(self,name,method,menu,shortcut=None):
         self.actions[name]=method
+        self.action_entries[name]=(menu,0 if menu.index('end') is None else menu.index('end')+1)
         menu.add_command(label=name,command=lambda:self.invoke(name),accelerator=shortcut or '')
-    def invoke(self,name):return guard(self.active_owner(),self.actions[name])
+    def invoke(self,name):
+        if not self.command_enabled(name):self.status.set(name+' is unavailable for the current selection or while a conflicting task runs.');return
+        return guard(self.active_owner(),self.actions[name],publish=False)
 
     def fill_tab_menu(self):
         self.tab_menu.delete(0,'end')
@@ -252,9 +278,10 @@ class Workspace:
         for name,sub in groups.items():menu.add_cascade(label=name,menu=sub)
         self.action('New project',self.app.new_project,groups['File'])
         self.action('Open project',self.app.open_project,groups['File'])
-        self.action('Save active scope',lambda:self.active_scope().owner.save(),groups['File'],'Ctrl+S')
-        self.action('Save project',self.app.save,groups['File'])
-        self.action('Save all',self.save_all,groups['File'])
+        from editor_tasks import save,validate
+        self.action('Save active scope',lambda:save(self,self.active_scope()),groups['File'],'Ctrl+S')
+        self.action('Save project',lambda:save(self,self.app._editor_scope),groups['File'])
+        self.action('Save all',self.save_all_async,groups['File'])
         self.action('Recovery drafts',self.recovery.browse,groups['File'])
         self.action('Export game',self.app.export_project,groups['File'])
         self.action('Close tab',self.close_tab,groups['File'],'Ctrl+W')
@@ -265,7 +292,8 @@ class Workspace:
         for name,pane,parent in [('Project explorer',self.explorer,self.horizontal),('Inspector',self.inspector,self.horizontal),('Problems and output',self.bottom,self.vertical)]:
             self.action(name,lambda p=pane,host=parent:self.toggle_panel(host,p),groups['View'])
         self.action('Reset layout',self.reset_layout,groups['View'])
-        self.action('Validate',lambda:self.active_scope().owner.validate(),groups['Project'])
+        for percent in (100,150,200):self.action(f'Interface scale {percent}%',lambda p=percent:self.scale(p),groups['View'])
+        self.action('Validate',lambda:validate(self,self.active_scope()),groups['Project'])
         self.action('Unit Library',self.app.open_library,groups['Project'])
         self.action('Player setup',self.app.setup,groups['Project'])
         self.action('Ammunition',lambda:self.active_scope().owner.ammunition(),groups['Project'])
@@ -277,12 +305,18 @@ class Workspace:
         from save_migration import dialog
         self.action('Assets and dependencies',lambda:assets(self.app),groups['Project'])
         self.action('Migrate an old save',lambda:dialog(self.app),groups['Project'])
-        self.action('Play from start',self.app.play,groups['Play'],'F5')
-        self.action('Play from here',lambda:self.map_view().play_here(),groups['Play'])
+        self.action('Play from start',lambda:self.play_session.start(self.app._editor_scope),groups['Play'],'F5')
+        self.action('Preview library design',lambda:self.play_session.start(self.active_scope()),groups['Play'])
+        self.action('Play from here',self.play_here,groups['Play'])
         self.action('Checkpoints and trace',self.open_playtest,groups['Play'])
+        self.action('Stop test',self.play_session.stop,groups['Play'])
+        self.action('Cancel background tasks',self.tasks.cancel,groups['Project'])
         self.action('Shortcuts and help',self.help,groups['Help'])
         for text,action in [('Save','Save active scope'),('Undo','Undo'),('Redo','Redo'),('Validate','Validate')]:
-            ttk.Button(self.toolbar,text=text,command=lambda a=action:self.invoke(a)).pack(side='left',padx=3)
+            button=ttk.Button(self.toolbar,text=text,command=lambda a=action:self.invoke(a));button.pack(side='left',padx=3)
+            self.action_buttons[action]=button
+            from editor_ui import tooltip
+            tooltip(button,lambda a=action:self.command_label(a))
         ttk.Button(self.toolbar,text='Find command...',command=self.command_picker).pack(side='left',padx=14)
         play=ttk.Menubutton(self.toolbar,text='Play',style='Accent.TButton');play.configure(menu=groups['Play']);play.pack(side='right')
         keys={'<Control-s>':'Save active scope','<Control-z>':'Undo','<Control-y>':'Redo','<Control-Shift-Z>':'Redo','<Control-w>':'Close tab','<Control-Shift-P>':'Find command','<F5>':'Play from start'}
@@ -292,10 +326,50 @@ class Workspace:
     def shortcut(self,event,action):
         if self.window.grab_current() is not None:return
         if action in ('Undo','Redo') and isinstance(event.widget,tk.Text):return
+        if action in ('Undo','Redo') and self.text_history.undo(event.widget,action=='Redo'):return 'break'
         self.invoke(action);return 'break'
 
+    def command_label(self,name):
+        scope=self.active_scope();document=scope.document if scope else None
+        if document and name in ('Undo','Redo'):
+            labels=document.undo_labels if name=='Undo' else document.redo_labels
+            return name+(' '+labels[-1] if labels else '')
+        return name
+
+    def command_enabled(self,name):
+        scope=self.active_scope();document=scope.document if scope else None
+        if name=='Save project':return bool(self.app.document) and not getattr(self.app._editor_scope,'saving',False)
+        if name=='Save all':return any(s.document and not getattr(s,'saving',False) and s.dirty() for s in self.scopes)
+        if name=='Save active scope' or name=='Validate':return bool(document) and not getattr(scope,'saving',False)
+        if name in ('Undo','Redo'):
+            return bool(document and ((document.undo_stack if name=='Undo' else document.redo_stack) or any(d.pending() for d in scope.live())))
+        if name in ('Export game','Assets and dependencies','Migrate an old save'):return bool(self.app.document)
+        if name in ('New definition','Duplicate definition','Delete definition','Ammunition','Find usages'):return bool(document)
+        if name in ('Play from start','Play from here','Checkpoints and trace'):return bool(self.app.document) and not self.play_session.preparing
+        if name=='Preview library design':return bool(document and scope.owner.library_context) and not self.play_session.preparing
+        if name=='Stop test':return self.play_session.preparing or self.play_session.process is not None
+        if name=='Cancel background tasks':return any(j.cancellable and not j.quiet for j in self.tasks.jobs)
+        return True
+
+    def update_commands(self):
+        for name,(menu,index) in self.action_entries.items():
+            enabled=self.command_enabled(name);menu.entryconfigure(index,state='normal' if enabled else 'disabled',label=self.command_label(name))
+            if name in self.action_buttons:self.action_buttons[name].state(['!disabled' if enabled else 'disabled'])
+
+    def scale(self,percent):
+        from roster_editor import configure_editor_style
+        hidden=[(host,pane) for host,pane in ((self.horizontal,self.explorer),(self.horizontal,self.inspector),(self.vertical,self.bottom)) if str(pane) not in host.panes()]
+        self.window.tk.call('tk','scaling',(96/72)*percent/100);configure_editor_style(self.window)
+        self.layout['scale']=percent;self.window.update_idletasks();self.reset_layout()
+        for host,pane in hidden:host.forget(pane)
+        if percent>=150 and self.window.winfo_width()<1600 and str(self.explorer) in self.horizontal.panes():self.horizontal.forget(self.explorer)
+        self.window.update_idletasks()
+        if str(self.explorer) not in self.horizontal.panes() and str(self.inspector) in self.horizontal.panes():
+            self.horizontal.sashpos(0,max(480,self.horizontal.winfo_width()-min(400,int(230*percent/100))))
+        self.status.set(f'Interface scale {percent}%. View menus can collapse panels; fields and artwork remain scrollable.')
+
     def next_tab(self):
-        tabs=self.tabs.tabs()
+        tabs=tuple(p for p in self.tabs.tabs() if self.tabs.tab(p,'state')!='hidden')
         if tabs:self.tabs.select(tabs[(tabs.index(self.tabs.select())+1)%len(tabs)])
         return 'break'
 
@@ -312,6 +386,8 @@ class Workspace:
         elif not view.scope or view.scope.confirm_view(view):view.destroy()
 
     def close_scope(self,scope):
+        if self.tasks.busy(scope):self.status.set('This scope is finishing a durable save. Close it after the save finishes.');return
+        self.tasks.cancel(scope)
         if not scope.confirm_close():return
         self.recovery.clear(scope)
         # Library sprite tabs are notebook siblings, not children of the unit
@@ -320,6 +396,24 @@ class Workspace:
             if pane.scope is scope and pane.controller is not scope.owner:pane.destroy()
         scope.owner.window.destroy()
         if scope in self.scopes:self.scopes.remove(scope)
+
+    def play_here(self):
+        maps=self.map_view();self.play_session.start(self.app._editor_scope,(maps.scene()['id'],*maps.cursor))
+
+    def save_all_async(self,finished=None):
+        from editor_tasks import save
+        remaining=[s for s in self.scopes if s.owner.window.winfo_exists() and s.document and s.dirty()]
+        failures=[]
+        def next_scope(ok=True):
+            if not ok:failures.append(True)
+            if remaining:
+                scope=remaining.pop(0)
+                try:save(self,scope,next_scope)
+                except Exception as error:report(scope.owner,error);next_scope(False)
+            else:
+                self.status.set('Some scopes could not be saved. See Problems.' if failures else 'All requested snapshots saved.')
+                if finished:finished(not failures)
+        next_scope()
 
     def save_all(self):
         failures=[]
@@ -434,6 +528,7 @@ class Workspace:
             if 'mass_tons' in value:lines.extend([str(value['mass_tons'])+' tons',str(value.get('price',0))+' C-bills'])
             if owner.collection in ('mechs','people'):
                 for label,callback in [('Edit sprite',owner.edit_unit_sprite),('Choose sprite',owner.choose_sprite)]:ttk.Button(self.inspect_actions,text=label,command=lambda f=callback:guard(owner,f)).pack(fill='x',pady=3)
+            if owner.library_context:ttk.Button(self.inspect_actions,text='Preview design',command=lambda:self.invoke('Preview library design')).pack(fill='x',pady=3)
         elif hasattr(owner,'scene'):
             scene=owner.scene();lines.extend([scene['name'],scene['id'],f'{len(scene["rows"][0])} x {len(scene["rows"])} tiles'])
             marker=owner.selected_marker
@@ -460,7 +555,12 @@ class Workspace:
         selected=self.problem_list.selection()
         if not selected:return
         problem=self.problems[int(selected[0])];owner=problem['owner']
-        if owner.window.winfo_exists():owner.window.lift();owner.window.focus_set()
+        if owner.window.winfo_exists():
+            owner.window.lift();owner.window.focus_set()
+            if hasattr(owner,'show_error'):
+                from editor_session import FieldError
+                owner.show_error(FieldError(problem['message'],problem.get('field')))
+        else:self.log(problem.get('details') or problem['message']);self.bottom.select(self.output)
 
     def log(self,text):
         self.output.configure(state='normal');self.output.insert('end',text+'\n');self.output.see('end');self.output.configure(state='disabled')
@@ -514,6 +614,9 @@ class Workspace:
         if saved:self.window.after_idle(lambda:self.restore_tabs(saved))
 
     def project_replacing(self,scope):
+        if getattr(scope,'saving',False):
+            from editor_model import EditorError
+            raise EditorError('A save is in progress. Wait for it to finish before switching projects.')
         # Notebook pages are siblings, so replacing a project must retire all
         # its views explicitly rather than rely on a Toplevel's child teardown.
         self.persist_layout()
@@ -561,7 +664,16 @@ class Workspace:
         entry.bind('<Return>',choose);listing.bind('<Return>',choose);listing.bind('<Double-1>',choose);dialog.bind('<Escape>',lambda _:dialog.destroy())
 
     def help(self):
-        self.log('Ctrl+S: save active scope | Ctrl+Z / Ctrl+Y: undo / redo | Ctrl+Tab: next tab\nCtrl+W: close tab | Ctrl+Shift+P: find command | F5: play\nProject and shared-library designs save separately. Double-click Problems to locate an error.')
+        self.log('Ctrl+S: save active project or library design | Ctrl+Z / Ctrl+Y: undo / redo\n'
+            'Ctrl+Shift+Z: redo | Ctrl+Tab: next tab | Ctrl+W: close tab\n'
+            'Ctrl+Shift+P: find command | F5: play from start | Escape: cancel the current gesture\n\n'
+            'Save project gathers every project tab. Library designs save separately; Save all reports each scope.\n'
+            'If you edit during save validation, save again when prompted; nothing is written by the outdated validation.\n'
+            'Double-click a Problem to find its editor. View > Reset layout restores hidden panels.\n'
+            'File > Recovery drafts reviews unfinished work without publishing it into a game.\n'
+            'Play uses a private snapshot and private saves. Play > Stop test stops only this session.\n\n'
+            'Workspace guide: '+str(Path(__file__).resolve().parents[1]/'docs/EDITOR_WORKSPACE.md'))
+        if str(self.bottom) not in self.vertical.panes():self.vertical.add(self.bottom,weight=1)
         self.bottom.select(self.output)
 
     def toggle_panel(self,host,pane):
@@ -571,6 +683,7 @@ class Workspace:
             else:host.add(pane,weight=1)
 
     def reset_layout(self):
+        for pane in tuple(self.horizontal.panes()):self.horizontal.forget(pane)
         for pane in (self.explorer,self.centre,self.inspector):
             if str(pane) not in self.horizontal.panes():self.horizontal.add(pane,weight=5 if pane is self.centre else 1)
         if str(self.bottom) not in self.vertical.panes():self.vertical.add(self.bottom,weight=1)
@@ -579,6 +692,7 @@ class Workspace:
         self.vertical.sashpos(0,max(340,self.vertical.winfo_height()-155))
 
     def restore_layout(self):
+        if 'scale' in self.layout:self.scale(self.layout['scale'])
         self.reset_layout()
         geometry=self.layout.get('geometry')
         if geometry:
@@ -617,6 +731,7 @@ class Workspace:
     def poll(self):
         if self.closing:return
         self.recovery.tick()
+        self.update_commands()
         from editor_history import refresh_scope
         for current in self.scopes:
             if not current.owner.window.winfo_exists() or not current.document:continue
@@ -626,16 +741,28 @@ class Workspace:
         scope=self.app._editor_scope
         signature=(id(self.app.document),len(self.app.document.undo_stack) if self.app.document else 0,id(self.app.document.content) if self.app.document else 0,id(self.app.document.adventure) if self.app.document else 0)
         if signature!=self.last_signature:self.last_signature=signature;self.refresh_tree();self.update_inspector()
-        if self.app.document:self.window.title('BattleTech Construction Kit - '+self.app.document.manifest['title']+(' *' if scope.dirty() else ''))
+        dirt={id(s):s.dirty() for s in self.scopes if s.owner.window.winfo_exists()}
+        if self.app.document:self.window.title('BattleTech Construction Kit - '+self.app.document.manifest['title']+(' *' if dirt.get(id(scope)) else ''))
+        for pane in self.views.values():
+            if pane.scope and pane.scope.document:
+                title=pane.caption if len(pane.caption)<=22 else pane.caption[:19]+'...'
+                if dirt.get(id(pane.scope)):title+=' *'
+                if self.tabs.tab(pane,'text')!=title:self.tabs.tab(pane,text=title)
         self.timer=self.window.after(300,self.poll)
 
     def close(self):
+        if any(self.tasks.busy(s) for s in self.scopes):self.status.set('A durable operation is finishing. Close the editor after it completes.');return
         dirty=[s for s in self.scopes if s.owner.window.winfo_exists() and s.dirty()]
         if dirty:
             titles='\n'.join(s.document.manifest['title'] for s in dirty if s.document)
             answer=messagebox.askyesnocancel('Unsaved changes','Save these scopes before closing?\n\n'+titles,parent=self.window)
             if answer is None:return
-            if answer and not self.save_all():return
+            if answer:
+                self.save_all_async(lambda ok:self.finish_close() if ok and not any(s.dirty() for s in self.scopes if s.owner.window.winfo_exists()) else None)
+                return
+        self.finish_close()
+
+    def finish_close(self):
         self.persist_layout();self.closing=True
         for scope in self.scopes:
             if scope.owner.window.winfo_exists() and scope.document:self.recovery.clear(scope)

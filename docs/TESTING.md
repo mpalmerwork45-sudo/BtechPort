@@ -1,5 +1,79 @@
 # Build, verification and original oracle — 2026-10-18
 
+## Editor workspace UI5 — 2026-10-18
+
+The [workspace guide](EDITOR_WORKSPACE.md) describes the implemented UI1–UI5
+flows. All destructive/recovery tests use temporary project, library and editor
+state directories. The user's existing demo edit is preserved.
+
+| Check | Actual result |
+| --- | --- |
+| Full Python suite | **141/141 PASS**, 15.83 s |
+| Native build and CTests | **72/72 PASS**, 44.48 s; build capped at two jobs |
+| Windows cross-build and Wine CTests | **72/72 PASS**, 271.47 s; separate two-job build and private Wine prefix |
+| Workspace usability | PASS: visible errors, raw-draft rollback, tab reuse, navigation, shared art history, project save/reopen and layout persistence |
+| Background save integrity | PASS: edit during validation writes nothing; edit during durable write stays unsaved; simulated disk-write failure preserves disk/current work and permits retry |
+| Recovery | PASS: fresh-session invalid unit/action fields, layered art and event text; missing source restored into a separate copy; baseline conflict rejected by model test |
+| Library scopes | PASS: asynchronous load, same-ID project/design independence, partial Save All, library art/field recovery, real SDL design preview, coordinated dependent-tab close |
+| Existing GUI journeys | PASS: roster, map/events, decoded original graphics and marker drags, worlds/art/sprites, library/launcher and construction-kit services/checkpoints |
+| Window-manager interaction | PASS under isolated **KWin/Xvfb/DBus**: invalid-field focus, transient dialog stacking, real file-chooser cancellation/grab restoration, minimize/restore |
+| Scaling | Captures inspected at **100/150/200%**; compact menus, wrapping toolbars and scrollable palettes/forms keep controls reachable |
+| Play/Stop | PASS: real SDL private-snapshot launch, process-specific Stop, cancellation of preparation leaves unrelated jobs running |
+| References | **1,287/1,287 unchanged**, including content, mode and mtime, against `work/reference-before-editor-usability.json` |
+
+The native engine was not changed by this UI refactor. The full native and
+Windows/Wine suites form an integration check; repeated C rebuilds and campaign
+playthroughs were not used for each presentation adjustment. Earlier sanitizer
+results remain in the preceding milestone record rather than being claimed as
+a new UI5 run.
+
+Performance was measured with a 10 ms Tk heartbeat while taking a detached
+validation snapshot. The Beacon-derived ordinary edit gave initial feedback in
+**8.9 ms**, with a longest heartbeat gap of **25.3 ms**. The larger declared
+fixture contains **200 units, 16 maps, 256 events and 1,024 extra images**
+(2,928,194 package bytes): feedback **34.3 ms**, validation completion **121.7 ms**,
+longest heartbeat gap **34.4 ms**, process peak/current RSS **89.2 MiB** after the
+full multi-journey test. This meets the proposed 100 ms feedback/500 ms progress
+targets on these fixtures. It does not establish those bounds for every author
+project, atlas size or original-resource extraction. Linux memory uses
+`/proc/self/status` VmHWM/VmRSS; inherited pre-exec resource counters are excluded.
+
+Reproduce the new checks:
+
+```sh
+python3 -m unittest discover -s tests -p 'test_*.py'
+python3 tools/native_smoke.py --editor-usability-only
+python3 tools/native_smoke.py --editor-library-workspace-only
+python3 tools/native_smoke.py --editor-focus-only
+python3 tools/native_smoke.py --editor-benchmark-only
+python3 tools/native_smoke.py --editor-visual-only
+python3 tools/windows_check.py --ctest
+python3 tools/reference_guard.py verify --manifest work/reference-before-editor-usability.json
+```
+
+Local visual evidence: `work/editor-workspace.png`,
+`work/editor-workspace-sprite.png`, `work/editor-workspace-graph.png`,
+`work/editor-scale-{100,150,200}.png`, `work/editor-kwin-focus.png` and
+`work/editor-performance.json`. These are generated local evidence, not
+redistributed original-game assets. `--editor-benchmark-only` measures a fresh
+process and replaces the performance JSON with that run's results.
+
+**UNKNOWN:** native Windows Python/Tk interaction and physical multi-monitor
+behaviour. KWin inside a private display verifies real window-manager policies,
+but does not establish all desktop/monitor configurations. On native Windows:
+
+1. Run `ConstructionKit.cmd` and `py -3 tools/runtime_probe.py` using installed
+   Python/Tk/Pillow, or the kit's supplied full Python installation.
+2. Create a Beacon-template copy; edit a unit and its sprite, open a map and an
+   event, then save/reopen. Confirm shared Undo and independent library saves.
+3. Submit invalid ammunition/animation fields; cancel a file chooser and an
+   unsaved close. Check visible errors, keyboard focus and retained input.
+4. Exercise View's 100/150/200% scales, keyboard-only navigation, minimize/restore
+   and moving between available monitors. Reset layout after removing a monitor.
+5. On the disposable copy, interrupt the editor with an unsaved invalid field
+   and art change; reopen and recover them. Run/stop a playtest and verify the
+   editor still has its work and ordinary save files remain intact.
+
 ## Editor UI4 — 2026-10-18
 
 **VERIFIED (Linux private display / real shared validator):**

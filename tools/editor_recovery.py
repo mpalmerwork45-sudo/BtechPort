@@ -11,8 +11,10 @@ import hashlib
 import json
 from pathlib import Path
 import time
+import os
+import tempfile
 import tkinter as tk
-from tkinter import ttk, filedialog
+from tkinter import ttk, filedialog, messagebox
 from editor_model import EditorError, ProjectDocument, child, encoded
 from editor_session import guard, scope_of
 
@@ -89,6 +91,7 @@ def capture(scope):
     context=getattr(scope.owner,'library_context',None)
     return dict(version=1,identity=identity(scope),title=document.manifest['title'],root=str(document.root),
         baseline=document.snapshot,state={k:getattr(document,k) for k in FIELDS},drafts=drafts,
+        views=[describe(p.controller,scope.workspace) for p in scope.workspace.views.values() if p.scope is scope and p.controller is not None and scope.workspace.tabs.tab(p,'state')!='hidden'],
         library=dict(root=str(context.browser.library.root),bundle=context.bundle) if context else None)
 
 
@@ -150,13 +153,41 @@ class Recovery:
     def __init__(self,workspace):
         self.workspace=workspace;self.root=workspace.state_dir/'recovery'
         self.root.mkdir(parents=True,exist_ok=True)
-        self.last={};self.offered=set();self.last_check=0;self.restoring=False
+        self.last={};self.offered=set();self.last_check=0;self.restoring=False;self.writing=set();self.generations={}
 
     def path(self,scope):return self.root/(hashlib.sha256(identity(scope).encode()).hexdigest()+'.json')
 
-    def write(self,scope):
+    def write(self,scope,background=False):
         if not scope.document or not scope.owner.window.winfo_exists():return
         if not scope.dirty():self.clear(scope);return
+        key=identity(scope)
+        if key in self.writing:return
+        if background and hasattr(self.workspace,'tasks'):
+            record=copy.deepcopy(capture(scope));path=self.path(scope);generation=self.generations.get(key,0)
+            last=self.last.get(key);self.writing.add(key)
+            def work(cancel):
+                payload=pack(record);digest=hashlib.sha256(encoded(payload)).hexdigest()
+                if digest==last or cancel.is_set():return None,digest
+                payload['timestamp']=time.time();data=encoded(payload)
+                if len(data)>128*1024*1024:raise EditorError('Draft recovery exceeds 128 MiB. Save a working copy.')
+                fd,name=tempfile.mkstemp(prefix='.draft-',dir=path.parent)
+                with os.fdopen(fd,'wb') as stream:stream.write(data);stream.flush();os.fsync(stream.fileno())
+                return Path(name),digest
+            def dispose(result):
+                self.writing.discard(key)
+                if result and result[0]:result[0].unlink(missing_ok=True)
+            def done(result):
+                self.writing.discard(key)
+                file,digest=result
+                if self.generations.get(key,0)!=generation or key in self.pending():dispose(result);return
+                if file:os.replace(file,path)
+                self.last[key]=digest
+            def failed(error):self.writing.discard(key);raise error
+            try:self.workspace.tasks.submit('Writing recovery',scope.owner,work,done,failed,quiet=True,dispose=dispose)
+            except Exception:
+                self.writing.discard(key)
+                raise
+            return
         record=capture(scope);payload=pack(record);digest=hashlib.sha256(encoded(payload)).hexdigest()
         if self.last.get(record['identity'])==digest:return
         payload['timestamp']=time.time();data=encoded(payload)
@@ -166,6 +197,7 @@ class Recovery:
     def clear(self,scope):
         if not scope.document:return
         if identity(scope) in self.pending():return
+        key=identity(scope);self.generations[key]=self.generations.get(key,0)+1
         path=self.path(scope)
         if path.exists():path.unlink()
         self.last.pop(identity(scope),None)
@@ -175,7 +207,7 @@ class Recovery:
         self.last_check=time.monotonic()
         for scope in self.workspace.scopes:
             if scope.owner.window.winfo_exists() and scope.document and identity(scope) not in self.pending():
-                guard(scope.owner,lambda s=scope:self.write(s))
+                guard(scope.owner,lambda s=scope:self.write(s,background=True))
 
     def pending(self):return getattr(self,'awaiting',set())
 
@@ -208,20 +240,14 @@ class Recovery:
         def recover():
             target=scope
             if conflict:
-                folder=filedialog.askdirectory(parent=window,title='Choose an empty directory for recovered project')
-                if not folder:return
-                root=Path(folder)
-                if any(root.iterdir()):raise EditorError('Choose an empty directory; existing files will be preserved.')
-                for name,data in record['baseline'].items():
-                    file=child(root,name);file.parent.mkdir(parents=True,exist_ok=True);file.write_bytes(data)
-                document=ProjectDocument(root,scope.owner.validator)
-                if self.workspace.app._editor_scope.dirty():
-                    raise EditorError('Save or close the current project before opening the recovered copy. The baseline copy is available at '+str(root))
-                self.workspace.app.set_document(document);target=self.workspace.app._editor_scope
-            self.restore(target,record,allow_copy=conflict)
+                target=self.copy_into(record,window)
+                if target is None:return
+            else:self.restore(target,record)
             # Keep the recovery until a successful save or explicit discard.
             self.last.pop(key,None);finish()
-        def discard():path.unlink(missing_ok=True);finish()
+        def discard():
+            self.awaiting.discard(key);scope.unrestored_recovery=False
+            self.clear(scope);finish()
         ttk.Button(bar,text='Recover into copy' if conflict else 'Recover',command=lambda:guard(scope.owner,recover)).pack(side='left',padx=4)
         ttk.Button(bar,text='Review fields',command=lambda:detail.pack(fill='both',expand=True,before=bar,padx=12,pady=6)).pack(side='left',padx=4)
         ttk.Button(bar,text='Discard recovery',command=discard).pack(side='right',padx=4)
@@ -230,7 +256,7 @@ class Recovery:
         window.protocol('WM_DELETE_WINDOW',window.destroy)
 
     def restore(self,scope,record,allow_copy=False):
-        self.restoring=True
+        self.restoring=True;scope.unrestored_recovery=False
         try:
             if allow_copy:
                 with scope.document.command('Recover into copy'):scope.document.replace_all(*(copy.deepcopy(record['state'][k]) for k in FIELDS))
@@ -240,6 +266,9 @@ class Recovery:
             # Restore parent drafts first; nested forms then bind to the same
             # tracked list, preserving enemy placement edits and invalid text.
             restored={}
+            for route in record.get('views',[]):
+                try:restored[json.dumps(pack(route),sort_keys=True)]=open_route(scope,route,restored)
+                except (KeyError,StopIteration,EditorError):pass
             # Build views while the roster/event inputs still contain valid
             # document values. Navigation must not submit recovered bad text.
             for entry in record['drafts']:
@@ -264,8 +293,24 @@ class Recovery:
             scope.seen_revision=(id(scope.document),scope.document.revision)
         finally:self.restoring=False
 
+    def copy_into(self,record,parent):
+        """The saved baseline makes recovery independent of a missing source."""
+        app=self.workspace.app
+        if app._editor_scope.dirty():raise EditorError('Save or close the current project before opening a recovered copy.')
+        folder=filedialog.askdirectory(parent=parent,title='Choose an empty directory for recovered project')
+        if not folder:return None
+        root=Path(folder)
+        if any(root.iterdir()):raise EditorError('Choose an empty directory; existing files will be preserved.')
+        for name,data in record['baseline'].items():
+            file=child(root,name);file.parent.mkdir(parents=True,exist_ok=True);file.write_bytes(data)
+        app.set_document(ProjectDocument(root,self.workspace.validator),check=False)
+        target=app._editor_scope;self.restore(target,record,allow_copy=True)
+        # The source recovery remains available until explicitly discarded.
+        # The copy gets its own private recovery identity and normal Save.
+        self.write(target)
+        return target
+
     def browse(self):
-        from editor_pickers import named_choice
         paths=sorted(self.root.glob('*.json'),key=lambda p:p.stat().st_mtime,reverse=True)
         if not paths:self.workspace.status.set('No unsaved recovery drafts.');return
         window=tk.Toplevel(self.workspace.window);window.title('Recovery drafts');window.transient(self.workspace.window)
@@ -279,9 +324,36 @@ class Recovery:
             if record.get('library'):
                 self.workspace.app.open_library();browser=self.workspace.app.unit_library_window
                 if str(browser.library.root)!=record['library']['root']:raise EditorError('Open the recorded library folder first: '+record['library']['root'])
-                browser.refresh(record['library']['bundle']['entry_id']);editor=browser.edit();scope=editor._editor_scope
+                entry=record['library']['bundle']['entry_id']
+                if not any(b['entry_id']==entry for b in browser.library.entries()):raise EditorError('This library entry is missing. Use Recover into copy to preserve its unfinished design.')
+                browser.refresh(entry);editor=browser.edit();scope=editor._editor_scope
             else:
+                if not Path(record['root']).is_dir():raise EditorError('The original project is missing. Use Recover into copy to restore it into a new folder.')
                 if not self.workspace.app.discard_or_save():return
                 self.workspace.app.set_document(ProjectDocument(Path(record['root']),self.workspace.validator),check=False);scope=self.workspace.app._editor_scope
             self.offered.discard(identity(scope));window.destroy();self.offer(scope)
-        ttk.Button(window,text='Open and review',command=lambda:guard(self.workspace.app,open_selected)).pack(pady=8)
+        def copy_selected():
+            selected=listing.curselection()
+            if selected and self.copy_into(records[selected[0]],window):window.destroy()
+        def review_selected():
+            selected=listing.curselection()
+            if selected:
+                self.workspace.log(json.dumps(pack(records[selected[0]]['drafts']),indent=2))
+                if str(self.workspace.bottom) not in self.workspace.vertical.panes():self.workspace.vertical.add(self.workspace.bottom,weight=1)
+                self.workspace.bottom.select(self.workspace.output)
+        def discard_selected():
+            selected=listing.curselection()
+            if not selected:return
+            index=selected[0];record=records[index]
+            if not messagebox.askyesno('Discard recovery',f"Discard unfinished edits for {record['title']}? Saved project and library files are preserved.",parent=window):return
+            key=record['identity'];self.pending().discard(key)
+            self.generations[key]=self.generations.get(key,0)+1;self.last.pop(key,None)
+            paths[index].unlink(missing_ok=True)
+            paths.pop(index);records.pop(index);listing.delete(index)
+            for scope in self.workspace.scopes:
+                if scope.document and identity(scope)==key:scope.unrestored_recovery=False
+        bar=ttk.Frame(window);bar.pack(pady=8)
+        ttk.Button(bar,text='Open and review',command=lambda:guard(self.workspace.app,open_selected)).pack(side='left',padx=4)
+        ttk.Button(bar,text='Recover into copy',command=lambda:guard(self.workspace.app,copy_selected)).pack(side='left',padx=4)
+        ttk.Button(bar,text='Review fields',command=review_selected).pack(side='left',padx=4)
+        ttk.Button(bar,text='Discard recovery',command=lambda:guard(self.workspace.app,discard_selected)).pack(side='left',padx=4)

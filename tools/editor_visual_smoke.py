@@ -62,10 +62,10 @@ def run(env, work):
                 ed = app.map_editor
                 ed.window.geometry("1000x720+8+8")
                 pump()
-                assert set(ed.graphics) == {"chi:land", "chi:destroyed"}, ed.graphics_note.get()
+                assert {"chi:land", "chi:destroyed"}.issubset(ed.graphics), ed.graphics_note.get()
                 assert all(ed.brush.item(str(i), "image") for i in range(len(doc.adventure["tiles"])))
                 assert "Graphics ready" in ed.graphics_note.get()
-                for sheet in ed.graphics:
+                for sheet in ("chi:land", "chi:destroyed"):
                     for graphic, size in [(0, 16), (100, 24), (249, 32)]:
                         image = ed.tile_image(sheet, graphic, size)
                         assert image is ed.tile_image(sheet, graphic, size)
@@ -90,10 +90,10 @@ def run(env, work):
                 data_path=app.settings["data"]
                 app.settings["data"]=str(tmp/"missing-original")
                 ed.reload_graphics();pump()
-                assert not ed.graphics and "Graphics unavailable" in ed.graphics_note.get()
+                assert not {"chi:land","chi:destroyed"}.intersection(ed.graphics) and "Graphics unavailable" in ed.graphics_note.get()
                 assert len(ed.brush.get_children())==len(doc.adventure["tiles"])+1
                 app.settings["data"]=data_path;ed.reload_graphics();pump()
-                assert set(ed.graphics)=={"chi:land","chi:destroyed"}
+                assert {"chi:land","chi:destroyed"}.issubset(ed.graphics)
                 print("PASS: missing-art fallback, setup guidance and reload preserve the project.",flush=True)
 
                 def dialog(title):
@@ -275,12 +275,16 @@ def run(env, work):
                 # At the supported minimum sizes, workspace lists shrink and
                 # scroll while the editing actions remain on screen.
                 window.geometry("940x690+8+8");ed.window.geometry("960x650+8+8");pump()
+                ed.sidebar.select(1);pump()
                 delete=button(ed.window,"Delete selected marker")
                 assert delete.winfo_rooty()+delete.winfo_height()<=ed.window.winfo_rooty()+ed.window.winfo_height()
                 screenshot('minimum',ed.window)
-                assert ed.canvas.winfo_width()>400 and ed.brush.winfo_height()>=40, (ed.canvas.winfo_width(),ed.brush.winfo_height())
+                assert ed.canvas.winfo_width()>400,ed.canvas.winfo_width()
                 assert ed.markers.winfo_height()>=16
-                for label in ['World / jigsaws','Graphics / sprites','Edit pixels','Clone']:
+                ed.sidebar.select(0);pump();assert ed.brush.winfo_height()>=40
+                menu_labels=[ed.tile_menu.entrycget(i,'label') for i in range(ed.tile_menu.index('end')+1)]
+                assert 'Edit pixels' in menu_labels and 'Clone tile' in menu_labels
+                for label in ['World / jigsaws','Graphics / sprites']:
                     control=button(ed.window,label)
                     assert control.winfo_rootx()+control.winfo_width()<=ed.window.winfo_rootx()+ed.window.winfo_width(),label
                 for label in ["New project","Open","Save","Validate","Undo","Redo","Play","Player setup","Maps / events","Export game"]:

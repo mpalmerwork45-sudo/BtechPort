@@ -132,11 +132,10 @@ def editor(env, work):
             app.notebook.select(4)
             window.update()
             app.mounts.selection_set("0")
-            app.mount_dialog(False)
+            form=app.mount_dialog(False)
             window.update()
-            dialog = next(w for w in window.winfo_children() if isinstance(w, tk.Toplevel))
-            weapon_box = next(w for w in dialog.winfo_children() if w.winfo_class() == "TCombobox")
-            weapon_box.set(app.document.content["weapons"][1]["id"])
+            dialog = form.window
+            form.values['weapon'].set(app.document.content["weapons"][1]["id"])
             next(w for w in dialog.winfo_children() if w.winfo_class() == "TButton").invoke()
             app.save()
             assert app.item()["loadout"][0]["weapon"] == app.document.content["weapons"][1]["id"]

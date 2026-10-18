@@ -63,7 +63,13 @@ def build_pixel(editor):
     editor.build_frames()
     # Reserve the full frame controls; a canvas may scroll, but the timeline's
     # Next/Copy/Paste controls must not fall beneath its pane by default.
-    window.after_idle(lambda:split.sashpos(0,max(120,split.winfo_height()-editor.frame_host.winfo_reqheight())))
+    editor.art_split=split;editor.timeline_placed=False
+    def place_timeline(_=None):
+        if not editor.timeline_placed and split.winfo_height()>250:
+            split.sashpos(0,max(120,split.winfo_height()-editor.frame_host.winfo_reqheight()-5));editor.timeline_placed=True
+    split.bind('<Configure>',place_timeline)
+    from editor_ui import flow_toolbar
+    flow_toolbar(tools)
     workspace.update_inspector()
 
 

@@ -38,6 +38,7 @@ class ReferenceBox(ttk.Combobox):
     def chosen(self,*_):
         if self.syncing:return
         if self.display.get() in self.labels:self.stored.set(self.ids[self.labels.index(self.display.get())])
+        elif self.display.get() in self.ids:self.stored.set(self.display.get())
 
 
 def pick_reference(owner,values,variable,title='Choose an asset'):
@@ -51,6 +52,11 @@ def pick_reference(owner,values,variable,title='Choose an asset'):
     canvas=tk.Canvas(right,width=180,height=190,highlightthickness=0,background='#e2e6e9');canvas.pack(fill='x')
     detail=tk.StringVar();ttk.Label(right,textvariable=detail,wraplength=190,padding=8).pack(fill='x')
     scope=scope_of(owner);images={i['id']:i for i in scope.document.art['images']} if scope and scope.document else {}
+    if scope and scope.document:
+        presentations={p['id']:p.get('image') for p in scope.document.content.get('presentations',[])}
+        for unit in scope.document.content.get('mechs',[]):
+            source=images.get(presentations.get(unit.get('presentation')))
+            if source:images[unit['id']]=source
     from types import SimpleNamespace
     picker=SimpleNamespace(window=window,owner=owner,show_error=lambda error:detail.set(str(error)))
     photos={};timer=None;phase=0
@@ -75,7 +81,15 @@ def pick_reference(owner,values,variable,title='Choose an asset'):
     def refresh(*_):
         listing.delete(*listing.get_children());query=search.get().casefold()
         for value in values:
-            if not query or query in (names.get(value,'')+' '+str(value)).casefold():listing.insert('','end',iid=str(value),text=names.get(value,str(value)))
+            if not query or query in (names.get(value,'')+' '+str(value)).casefold():
+                picture=images.get(value);thumbnail=None
+                if picture:
+                    if value not in photos:
+                        from graphics_editor import photo
+                        raw=photo(window,picture);factor=max(1,(max(picture['width'],picture['height'])+23)//24)
+                        photos[value]=raw.subsample(factor)
+                    thumbnail=photos[value]
+                listing.insert('','end',iid=str(value),text=names.get(value,str(value)),image=thumbnail or '')
         if listing.exists(variable.get()):listing.selection_set(variable.get())
         elif listing.get_children():listing.selection_set(listing.get_children()[0])
     def close():

@@ -2,9 +2,17 @@
 
 Recorded 2026-10-18 against implementation commit `cf4d5e4`.
 
-**Status: approved and in progress.** The five stages bring the
+**Status: UI1–UI5 implemented; native Windows Tk and physical multi-monitor
+verification remain UNKNOWN.** The five stages bring the
 existing editors into one project workspace and make errors, saving, navigation
 and recovery predictable.
+
+Use the [workspace guide](EDITOR_WORKSPACE.md) for the implemented interface and
+[TESTING](TESTING.md#editor-workspace-ui5--2026-10-18) for measured results. Stage
+commits are `060941d` (UI1), `2362fa8` (UI2), `e730bc0` (UI3) and `ea4f15a` (UI4);
+the following UI5 commits contain background tasks, polish and delivery checks.
+This document retains the approved requirements below; implementation does not
+imply verification on an unavailable desktop.
 
 The [previous five editor milestones](EDITOR_COMPLETION_MILESTONES.md) delivered
 authoring capabilities. This plan makes those capabilities easier to use. Each
@@ -317,6 +325,15 @@ content checks and migration rules.
 
 ### UI5 Presentation responsiveness and release checks
 
+**Implemented with Linux verification:** two worker threads and an eight-job
+queue handle validation, imports/exports, recovery writes, checkpoint runs and
+playtest preparation. The status indicator and Output show active work. Saving
+rejects changed validation inputs, preserves edits made during the durable write
+and retains failed drafts for retry. Play/Stop owns a private snapshot and its
+player process. Named fonts, reflowing controls, scrollable forms/palettes,
+tooltips and shortcut help complete the presentation pass. Native Windows Tk and
+physical multi-monitor behaviour remain explicit open verification gates.
+
 1. Apply consistent system-font sizing, spacing, labels, selection/focus states
    and toolbar styles. Use proper icons with readable labels, not font-dependent
    decorative characters. Keep advanced IDs/settings available without placing
@@ -342,6 +359,17 @@ visible feedback within 100 ms for normal interactions and progress within
 500 ms for longer work on the test machine; these are targets, not current
 measurements. Controls remain accessible at 100%, 150% and 200% scaling. Starting
 and stopping a test returns focus appropriately and preserves pending editor work.
+
+Implementation choices: recovery checks changed scopes approximately every two
+seconds rather than using a separate idle/maximum-delay timer. Large operations
+use detached snapshots in the bounded worker pool and the existing C validator
+subprocess; Tk remains on the GUI thread. Existing validator text is retained;
+unmapped loader failures are project-level Problems, while editor field errors
+carry a concrete owner/field. Legacy standalone adapters remain for compatibility
+and regression tools. Ordinary workspace Save/Validate/Play use background jobs;
+some project-switch confirmation and small form/import setup paths remain
+synchronous. The declared large fixture meets the feedback target; this is not
+a latency guarantee for all projects or original-resource preparation.
 
 ## 6. Verification and delivery
 

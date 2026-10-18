@@ -38,15 +38,20 @@ See the [launcher and Unit Library guide](docs/UNIT_LIBRARY_AND_LAUNCHER.md).
 The Construction Kit now includes service-building templates, a connected event
 graph and quest journal, saved playtest checkpoints, building stamps, layered
 pixel editing, generated jigsaw worlds, named animation actions and individual
-infantry sprites. **Delivery** provides asset reports and explicit save migration.
+infantry sprites. **Project** provides asset reports and explicit save migration.
 See the [five milestones](docs/EDITOR_COMPLETION_MILESTONES.md) and
 [distribution guide](docs/CONSTRUCTION_KIT_DELIVERY.md). A packaged Linux kit
 starts with `ConstructionKit` and includes Python/Tk/Pillow/SDL; a Windows kit
 starts with `ConstructionKit.cmd` and can use an installed or supplied Python runtime.
 
-The approved [editor usability plan](docs/EDITOR_USABILITY_PLAN.md) covers a
-unified workspace, reliable dialogs, shared saving and recovery, and more direct
-authoring workflows. Implementation is progressing in verified stages.
+The editor now uses a single tabbed workspace with an explorer, Inspector,
+Problems/output, direct unit-to-sprite and entrance-to-event navigation, shared
+Undo/Redo and private recovery drafts. Project and library saves have explicit
+separate scopes. Validation, imports, exports and playtest preparation run in the
+background; Play/Stop manages an isolated test game. See the
+[workspace guide](docs/EDITOR_WORKSPACE.md), [implementation stages](docs/EDITOR_USABILITY_PLAN.md)
+and [verification results](docs/TESTING.md#editor-workspace-ui5--2026-10-18).
+Native Windows editor interaction remains unverified.
 
 The shared **Unit Library** currently offers **82 blueprints: 66 mechs, ten
 vehicles and six infantry templates**, including [25 additional classic
