@@ -8,6 +8,20 @@ Tests use disposable project and settings directories; the existing user's
 `examples/battletech-demo/adventure.json` edit is preserved. No engine source or
 original resource changed.
 
+**Preview picker follow-up — VERIFIED:** building, wall and road designers now
+offer explicit Project tiles / All tiles choices with an optional sheet filter.
+`--editor-visual-only` passed against both real CHI sheets: automatic registration
+and assignment use one Undo, repeated choices reuse definitions, same-numbered
+graphics from different sheets remain distinct, Cancel leaves data unchanged,
+and saved assignments survive reopening. The controls fit at 560×410 and switching
+collections scrolls to the selected graphic. `test_map_construction.py` passed
+**11/11**, including aggregate sheet cloning and hidden-source filtering;
+`--map-construction-only` also passed the workspace/recovery/SDL journey.
+Reference verification remains **1,287/1,287 unchanged**. Screenshots are local
+`work/editor-graphics-construction-{building,wall,road}.png`. The full-suite and
+native results below are from the preceding construction milestone, not reruns
+for this picker-only change.
+
 | Check | Actual result |
 | --- | --- |
 | Full Python suite | **151/151 PASS**, 15.824 s |

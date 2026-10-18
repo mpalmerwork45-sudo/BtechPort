@@ -302,5 +302,78 @@ def run(env, work):
                 assert value['terrain']=='wall';doc.validate();picker.close();ed.undo();pump()
                 assert doc.adventure==before and doc.art==old_art
                 print('PASS: Clone ALL 250 original map tiles produces independent editable pixels, preserves wall collision, validates and undoes as one operation.',flush=True)
+
+                # A construction part can choose an existing palette entry or
+                # register an atlas cell. Same-index graphics in different
+                # sheets must not alias, and registration + assignment is one
+                # Undo. Exercise the visible controls in each designer.
+                from tile_editing import metadata
+                unused=[i for i in range(85,250) if not any(t['graphic']==i and t['sheet'] in ('chi:land','chi:destroyed') for t in doc.adventure['tiles'])]
+                graphic=unused[0]
+                assigned=[]
+                for kind,bank,index in [('Building','chi:land',graphic),('Wall','chi:destroyed',graphic),('Road','chi:land',unused[1])]:
+                    designer=ed.construction(kind);pump()
+                    role=designer.selected_role
+                    picker=designer.choose_part();pump()
+                    assert picker.mode.get()=='Project tiles'
+                    assert picker.selected==designer.profile['parts'][role]
+                    assert picker.keys==[t['id'] for t in doc.adventure['tiles']]
+                    picker.select(doc.adventure['tiles'][0]['id'])
+                    count=len(doc.adventure['tiles'])
+                    button(picker.window,'Use graphic').invoke();pump()
+                    assert designer.profile['parts'][role]==doc.adventure['tiles'][0]['id']
+                    assert len(doc.adventure['tiles'])==count
+
+                    picker=designer.choose_part();pump()
+                    picker.mode_buttons['All tiles'].invoke();pump()
+                    assert picker.mode.get()=='All tiles' and picker.sheet.get()=='All tiles'
+                    picker.window.geometry('560x410+8+8');pump()
+                    for control in [*picker.mode_buttons.values(),picker.choices,button(picker.window,'Use graphic'),button(picker.window,'Cancel')]:
+                        assert control.winfo_rootx()>=picker.window.winfo_rootx()
+                        assert control.winfo_rootx()+control.winfo_width()<=picker.window.winfo_rootx()+picker.window.winfo_width()
+                        assert control.winfo_rooty()+control.winfo_height()<=picker.window.winfo_rooty()+picker.window.winfo_height()
+                    picker.window.geometry('760x650+8+8');pump()
+                    assert {('chi:land',index),('chi:destroyed',index)}.issubset(picker.keys)
+                    assert any(key[0]=='package:art' for key in picker.keys)
+                    picker.select((bank,index))
+                    picker.canvas.yview_moveto((picker.keys.index((bank,index))//picker.columns)/((len(picker.keys)+picker.columns-1)//picker.columns));pump()
+                    before=copy.deepcopy(doc.adventure);before_meta=copy.deepcopy(doc.metadata);before_art=copy.deepcopy(doc.art)
+                    history=len(doc.undo_stack)
+                    screenshot('construction-'+kind.lower(),picker.window)
+                    button(picker.window,'Use graphic').invoke();pump()
+                    value=next(t for t in doc.adventure['tiles'] if t['sheet']==bank and t['graphic']==index)
+                    assert len(doc.adventure['tiles'])==count+1
+                    assert value['terrain']=='wall'
+                    assert designer.profile['parts'][role]==value['id']
+                    assert ed.brush.selection()==(str(count),)
+                    assert doc.art==before_art and len(doc.undo_stack)==history+1
+                    after=copy.deepcopy(doc.adventure);after_meta=copy.deepcopy(doc.metadata)
+                    ed.undo();designer.refresh();pump()
+                    assert doc.adventure==before and doc.metadata==before_meta and doc.art==before_art
+                    ed.redo();designer.refresh();pump()
+                    assert doc.adventure==after and doc.metadata==after_meta
+
+                    picker=designer.choose_part();pump()
+                    picker.mode_buttons['All tiles'].invoke();pump()
+                    assert picker.selected==(bank,index)
+                    top=picker.keys.index(picker.selected)//picker.columns*picker.cell
+                    assert picker.canvas.canvasy(0)<=top and top+picker.cell<=picker.canvas.canvasy(picker.canvas.winfo_height())
+                    # Returning to Project tiles retains the matching entry.
+                    picker.mode_buttons['Project tiles'].invoke();pump()
+                    assert picker.selected==value['id']
+                    picker.mode_buttons['All tiles'].invoke();pump()
+                    button(picker.window,'Use graphic').invoke();pump()
+                    assert doc.adventure==after and doc.metadata==after_meta
+                    assert len(doc.undo_stack)==history+1
+                    picker=designer.choose_part();pump();picker.mode_buttons['All tiles'].invoke();pump()
+                    picker.select((bank,249));button(picker.window,'Cancel').invoke();pump()
+                    assert doc.adventure==after and doc.metadata==after_meta
+                    assigned.append((designer.current,role,value['id']))
+                    designer.window.destroy();pump()
+                assert len({identity for _,_,identity in assigned})==3
+                doc.validate();doc.save();reopened=ProjectDocument(doc.root,tool)
+                profiles={p['id']:p for p in metadata(reopened)['construction_sets']}
+                for profile,role,identity in assigned:assert profiles[profile]['parts'][role]==identity
+                print('PASS: building, wall and road pickers expose project/all tiles, auto-register missing source graphics, reuse existing definitions, cancel cleanly, undo atomically and retain choices after reopening.',flush=True)
             finally:
                 window.destroy()

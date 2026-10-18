@@ -4,7 +4,7 @@ import tkinter as tk
 from tkinter import ttk
 from editor_model import EditorError,encoded
 from editor_session import guard,visible_parent,scope_of,apply_draft
-from tile_editing import create_tile,clone_sheet,ensure_tile,tile,select_tile,edit_pixels,metadata
+from tile_editing import create_tile,clone_sheet,ensure_tile,tile,select_tile,edit_pixels,metadata,sheet_graphics
 
 
 class TileBrowser:
@@ -17,19 +17,27 @@ class TileBrowser:
         self.window.bind('<Destroy>',self.destroyed,add='+')
         self.status=tk.StringVar();self.selected=None;self.keys=[];self.columns=12;self.cell=54
         header=ttk.Frame(self.window,padding=10);header.pack(fill='x')
-        ttk.Label(header,text='Choose a map tile',style='Heading.TLabel').pack(side='left')
-        initial=form.values['sheet'].get() if form else ('Project tiles' if selected else next(iter(maps.graphics),'Project tiles'))
+        ttk.Label(header,text='Choose a map tile',style='Heading.TLabel').pack(anchor='w')
+        initial=form.values['sheet'].get() if form else ('Project tiles' if selected else 'All tiles')
         self.sheet=tk.StringVar(value=initial)
-        self.choices=ttk.Combobox(header,textvariable=self.sheet,state='readonly',width=22);self.choices.pack(side='right')
+        # Construction parts start on the project's paint palette, but the
+        # complete source atlas must be an obvious, separate browsing option.
+        source_bar=ttk.Frame(header);source_bar.pack(fill='x',pady=(8,0))
+        self.mode=tk.StringVar();self.mode_buttons={}
+        for name in ('Project tiles','All tiles'):
+            button=ttk.Radiobutton(source_bar,text=name,variable=self.mode,value=name,command=lambda name=name:self.show_collection(name))
+            button.pack(side='left',padx=(0,10));self.mode_buttons[name]=button
+        ttk.Label(source_bar,text='Sheet').pack(side='left',padx=(8,4))
+        self.choices=ttk.Combobox(source_bar,textvariable=self.sheet,state='readonly',width=22);self.choices.pack(side='left')
         self.choices.bind('<<ComboboxSelected>>',lambda _:self.refresh())
         bar=ttk.Frame(self.window,padding=(8,0));bar.pack(fill='x')
         for label,callback in [('Add tile',self.new),('Clone',self.clone),('Edit pixels',self.edit),('Properties',self.properties),('Remove',self.remove)]:
             ttk.Button(bar,text=label,width=0,command=lambda f=callback:guard(self,f)).pack(side='left',padx=3)
         more=ttk.Menubutton(bar,text='More');menu=tk.Menu(more,tearoff=False);more.configure(menu=menu);more.pack(side='left',padx=3)
-        menu.add_command(label='Clone ALL tiles in this sheet to project tiles',command=lambda:guard(self,self.clone_all))
+        menu.add_command(label='Clone ALL tiles in this view to project tiles',command=lambda:guard(self,self.clone_all))
         menu.add_command(label='Restore hidden source graphics',command=lambda:guard(self,self.unhide))
         from editor_ui import flow_toolbar
-        flow_toolbar(bar)
+        flow_toolbar(source_bar);flow_toolbar(bar)
         footer=ttk.Frame(self.window,padding=10);footer.pack(side='bottom',fill='x')
         ttk.Button(footer,text='Use graphic',style='Accent.TButton',command=lambda:guard(self,self.use)).pack(side='right')
         ttk.Button(footer,text='Cancel',command=self.close).pack(side='right',padx=8)
@@ -61,21 +69,36 @@ class TileBrowser:
         self.timer=None
         if self.document.revision!=self.revision:self.revision=self.document.revision;self.refresh()
         self.timer=self.window.after(250,self.poll)
+    def show_collection(self,name):
+        previous=self.source() if self.selected is not None else None
+        self.sheet.set(name)
+        if previous:
+            self.selected=(previous['sheet'],previous['graphic']) if name=='All tiles' else next((t['id'] for t in self.document.adventure['tiles'] if t['sheet']==previous['sheet'] and t['graphic']==previous['graphic']),None)
+        self.refresh()
+        row=self.keys.index(self.selected)//self.columns if self.selected is not None else 0
+        self.canvas.yview_moveto(row/max(1,(len(self.keys)+self.columns-1)//self.columns))
+    def value(self,key):
+        if self.sheet.get()=='Project tiles':return tile(self.document,key)
+        bank,graphic=key if self.sheet.get()=='All tiles' else (self.sheet.get(),key)
+        return dict(sheet=bank,graphic=graphic)
     def refresh(self):
-        self.owner.refresh();self.choices.configure(values=[*self.owner.graphics,'Project tiles'])
+        self.owner.refresh();self.choices.configure(values=['All tiles',*self.owner.graphics])
         self.canvas.delete('all');sheet=self.sheet.get();data=metadata(self.document)
+        self.mode.set('Project tiles' if sheet=='Project tiles' else 'All tiles')
+        self.choices.configure(state='disabled' if sheet=='Project tiles' else 'readonly')
         hidden=data.get('hidden_tile_graphics',[])
         if sheet=='Project tiles':self.keys=[t['id'] for t in self.document.adventure['tiles']]
+        elif sheet=='All tiles':self.keys=[(bank,key) for bank,key in sheet_graphics(self.owner.graphics) if [bank,str(key)] not in hidden]
         else:
             source=self.owner.graphics.get(sheet,{})
             self.keys=[k for k in (source if isinstance(source,dict) else range(len(source))) if [sheet,str(k)] not in hidden]
         names=data.get('tile_names',{})
         for index,key in enumerate(self.keys):
-            value=tile(self.document,key) if sheet=='Project tiles' else dict(sheet=sheet,graphic=key)
+            value=self.value(key)
             x,y=index%self.columns*self.cell,index//self.columns*self.cell
             image=self.owner.tile_image(value['sheet'],value['graphic'],32)
             if image:self.canvas.create_image(x+27,y+20,image=image)
-            label=names.get(key,key.split(':')[-1] if isinstance(key,str) else str(key))
+            label=(value['sheet'].split(':')[-1][:4]+' '+str(value['graphic']).split(':')[-1]) if sheet=='All tiles' else names.get(key,key.split(':')[-1] if isinstance(key,str) else str(key))
             self.canvas.create_text(x+27,y+45,text=label[:8],fill='#31434b',font='TkSmallCaptionFont')
         self.canvas.configure(scrollregion=(0,0,self.columns*self.cell,((len(self.keys)+self.columns-1)//self.columns)*self.cell))
         self.select(self.selected if self.selected in self.keys else (self.keys[0] if self.keys else None))
@@ -84,13 +107,16 @@ class TileBrowser:
         if key is None:self.status.set('No tiles here. Add a tile or restore hidden source graphics.');return
         index=self.keys.index(key);x,y=index%self.columns*self.cell,index//self.columns*self.cell
         self.canvas.create_rectangle(x+1,y+1,x+self.cell-1,y+self.cell-1,outline='#286c80',width=3,tags='selection')
-        self.status.set(f'{key} | {self.sheet.get()} | Double-click to use. Original source sheets remain read-only.')
+        value=self.value(key)
+        registered='id' in value or any(t['sheet']==value['sheet'] and t['graphic']==value['graphic'] for t in self.document.adventure['tiles'])
+        action='Uses an existing project tile.' if registered else 'Automatically adds this graphic to project tiles when chosen.'
+        self.status.set(f"{value['sheet']} | {value['graphic']} | {action} Double-click to use.")
     def click(self,event):
         x,y=self.canvas.canvasx(event.x),self.canvas.canvasy(event.y);index=int(y//self.cell)*self.columns+int(x//self.cell)
         if 0<=x<self.columns*self.cell and 0<=index<len(self.keys):self.select(self.keys[index])
     def source(self):
         if self.selected is None:raise EditorError('Select a tile first.')
-        return tile(self.document,self.selected) if self.sheet.get()=='Project tiles' else dict(sheet=self.sheet.get(),graphic=self.selected)
+        return self.value(self.selected)
     def definition(self):
         source=self.source()
         return source['id'] if 'id' in source else ensure_tile(self.document,source['sheet'],source['graphic'])

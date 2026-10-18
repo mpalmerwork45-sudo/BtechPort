@@ -50,8 +50,11 @@ Open a local map from the explorer. The **Tiles** sidebar contains actual graphi
 previews. Select a tile, then paint on the map. **Browse all...** opens the full
 graphic chooser. **Tile actions** or the tile's context menu provides pixel
 editing, properties and cloning. Double-click a tile to edit its pixels.
-The chooser also adds/removes tiles and provides **More > Clone ALL tiles in
-this sheet to project tiles**. These are independent editable copies, grouped
+The chooser has **Project tiles** and **All tiles** choices, with a sheet filter.
+Choosing a graphic absent from the project palette adds it automatically;
+existing definitions are reused. The same chooser serves building, wall and
+road preview parts. It also adds/removes tiles and provides **More > Clone ALL
+tiles in this view to project tiles**. These are independent editable copies, grouped
 into one Undo operation.
 
 The Tool selector includes paint, line, rectangle, fill, eyedropper, selection,

@@ -24,6 +24,20 @@ class ConstructionTests(unittest.TestCase):
         before=copy.deepcopy(decoded);ids=clone_sheet(self.doc,decoded,'test');self.assertEqual(len(ids),2)
         self.assertEqual(before,decoded);self.doc.validate();self.doc.undo();self.assertEqual(self.doc.adventure,a);self.assertEqual(self.doc.art,art)
         self.doc.redo();self.doc.save();self.assertEqual(self.doc.art,ProjectDocument(self.doc.root,self.doc.validator).art)
+    def test_clone_all_sheets_keeps_same_index_graphics_distinct(self):
+        decoded={'first':[[['#112233']*16 for _ in range(16)]],
+                 'second':{0:[['#445566']*16 for _ in range(16)]}}
+        ids=clone_sheet(self.doc,decoded,'All tiles')
+        self.assertEqual(len(ids),2);self.assertNotEqual(ids[0],ids[1])
+        values=[next(t for t in self.doc.adventure['tiles'] if t['id']==identity) for identity in ids]
+        pixels=[next(i for i in self.doc.art['images'] if i['id']==t['graphic'])['frames'][0][0][:8] for t in values]
+        self.assertEqual(pixels,['112233ff','445566ff'])
+        self.assertEqual([metadata(self.doc)['tile_sources'][t['graphic']] for t in values],
+                         [dict(sheet='first',graphic=0),dict(sheet='second',graphic=0)])
+        self.doc.validate()
+        from event_workbench import editor_commit
+        data=metadata(self.doc);data['hidden_tile_graphics']=[['second','0']];editor_commit(self.doc,data)
+        self.assertEqual(len(clone_sheet(self.doc,decoded,'All tiles')),1)
     def test_cut_paste_and_persistent_pattern(self):
         rect=(0,0,2,2);rows=capture(self.doc,0,rect);old=copy.deepcopy(self.doc.adventure)
         self.assertEqual(cut(self.doc,0,rect),rows);self.doc.undo();self.assertEqual(old,self.doc.adventure)

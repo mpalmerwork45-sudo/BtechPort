@@ -9,7 +9,13 @@ original 1024 × 1024 dimensions. Shared forms, asset pickers and several previe
 panes reserve their actions before the scrolling body so confirmation buttons
 remain accessible.
 
-**VERIFIED for this increment:** **151/151 Python**, **72/72 native CTests**,
+The preview chooser now exposes **Project tiles** and **All tiles**, including
+sheet filtering. Building/wall/road choices automatically register missing
+graphics in the palette and reuse existing definitions. **VERIFIED:** all three
+designer journeys, atomic Undo, cancellation, save/reopen, minimum-size controls,
+**11/11 construction tests**, and the existing construction GUI/game-output check.
+
+**VERIFIED for the preceding construction milestone:** **151/151 Python**, **72/72 native CTests**,
 new Linux GUI authoring/save/reopen/recovery journeys, existing world/art and
 workspace journeys, Clone ALL of an actual 250-tile CHI sheet, and matching
 SDL/headless state and frame for a constructed game. **1,287 reference entries

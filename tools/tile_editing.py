@@ -56,6 +56,12 @@ def copy_graphic(art,prefix,decoded,sheet,graphic,name='Tile copy'):
     image['name']=name[:95];art['images'].append(image);return image
 
 
+def sheet_graphics(decoded,sheet=None):
+    """Identify graphics by both bank and index; two banks can share index 0."""
+    return [(bank,key) for bank in ([sheet] if sheet else decoded)
+            for key in (decoded.get(bank,{}) if isinstance(decoded.get(bank),dict) else range(len(decoded.get(bank,()))))]
+
+
 def create_tile(document,decoded=None,source=None,name='New tile',terrain=None):
     """Create blank pixels or clone a graphic/definition, returning stable ID."""
     a=copy.deepcopy(document.adventure);art=copy.deepcopy(document.art);data=metadata(document);prefix=document.manifest['package_id']
@@ -77,8 +83,9 @@ def create_tile(document,decoded=None,source=None,name='New tile',terrain=None):
 
 def clone_sheet(document,decoded,sheet):
     """One undoable transaction; the source sheet is never edited or removed."""
+    hidden=metadata(document).get('hidden_tile_graphics',[])
     sources=([dict(t) for t in document.adventure['tiles']] if sheet=='Project tiles' else
-             [source_definition(document,sheet,k) for k in (decoded.get(sheet,{}) if isinstance(decoded.get(sheet),dict) else range(len(decoded.get(sheet,()))))])
+             [source_definition(document,bank,key) for bank,key in sheet_graphics(decoded,None if sheet=='All tiles' else sheet) if [bank,str(key)] not in hidden])
     if not sources:raise EditorError('There are no tiles to clone in this sheet.')
     a=copy.deepcopy(document.adventure);art=copy.deepcopy(document.art);data=metadata(document);prefix=document.manifest['package_id'];result=[]
     # Preflight before allocating the copied frames. Budget rejection changes

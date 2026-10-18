@@ -86,7 +86,11 @@ sets saved with the project. Reopening it returns to its existing tab.
    **Clone tile for this part**, **Edit tile pixels** or open **Tile properties**.
    New/cloned images and their tile definitions enter the artwork library and
    map palette automatically. Choose/Edit/Clone are also below the preview and
-   in its Inspector.
+   in its Inspector. **Choose tile** offers **Project tiles** and **All tiles**
+   for buildings, walls and roads. All tiles includes every loaded sheet, with
+   an optional sheet filter. Choosing an unregistered graphic adds it to the
+   project palette automatically; choosing it again reuses its existing tile.
+   Registration and the part assignment share one Undo operation.
 5. **Use on map**, then click to place the preview. Each building/wall becomes a
    separate overlay; select that overlay for fine painting or **Move building**.
    The whole result must fit—an edge click never silently crops it. Escape
@@ -157,9 +161,10 @@ tile to that cell and selects it as the brush. Save a complete jigsaw through
 ## Tile management and world creation
 
 **Browse all... / Choose a map tile** now provides Add, Clone, Edit pixels,
-Properties and Remove. **More > Clone ALL tiles in this sheet to project tiles**
-copies the entire selected bank, with independent editable pixels and one Undo
-entry. Existing collision definitions are preserved; unregistered original
+Properties and Remove. **More > Clone ALL tiles in this view to project tiles**
+copies the selected project palette, sheet or All tiles collection (excluding
+hidden source graphics), with independent editable pixels and one Undo entry.
+Existing collision definitions are preserved; unregistered original
 graphics get terrain-band defaults that can be refined in Properties.
 
 Deleting a project tile checks references in maps, jigsaws, patterns, building
