@@ -15,14 +15,24 @@ graphics in the palette and reuse existing definitions. **VERIFIED:** all three
 designer journeys, atomic Undo, cancellation, save/reopen, minimum-size controls,
 **11/11 construction tests**, and the existing construction GUI/game-output check.
 
-The map editor's visible **Construct** row selects saved building/wall/road
-designs for direct placement or connected road drawing; the Tool list exposes
-these modes too. Designs persist through project Save/reopen. The chooser now
+The map editor's **Construct** row now draws editable footprints using saved
+tile styles: Brush, Line, Rectangle, Courtyard and Erase; buildings support
+1–32 stories and walls 1–3 within map bounds. Subsequent strokes extend the same
+object, erase holes or raise/lower sections; roofs, corners and visible faces
+regenerate together. **New building / New wall** starts another object, and a
+footprint selector resumes saved objects. Roads support width, shaped strokes
+and neighbour-aware erasure. Styles and map footprints persist independently
+through Save/reopen; the player uses compiled ordinary overlays.
+
+**VERIFIED for direct drawing:** **157/157 Python tests**, live map box/cross/
+courtyard/mixed-height/wall drawing, atomic Undo, resumed editing after reopening,
+unfinished-stroke recovery and matching SDL/headless output for the drawn
+courtyard. Map bounds and existing manually painted layers are protected.
+Existing tile-browser and workspace GUI journeys pass, including event-inspector
+draft saving alongside the new map-drawing drafts. The chooser
 remembers per-project collection/filter, selections and scroll positions across
 restarts, outside game data/history. Workspace tabs offer right-click **Close**
-through the existing draft safeguards. **VERIFIED:** updated visual-picker,
-construction and workspace GUI journeys, including direct map placement/Undo,
-reopened designs, preferences read by a fresh editor and closing the clicked tab.
+through the existing draft safeguards.
 
 **VERIFIED for the preceding construction milestone:** **151/151 Python**, **72/72 native CTests**,
 new Linux GUI authoring/save/reopen/recovery journeys, existing world/art and

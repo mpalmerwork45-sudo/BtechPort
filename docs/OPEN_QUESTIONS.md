@@ -195,6 +195,13 @@ awards an authored chassis; selecting arbitrary combat wrecks is not implemented
     It needs no original resources; CHI-profile projects keep their explicit
     original dependency. Multi-planet jigsaw worlds, city overlays, pixel drawing,
     owned graphics, new definitions and vehicle presets are now implemented.
+    Direct map footprint drawing now covers irregular buildings, courtyards,
+    mixed heights, joined walls and shaped roads. Saved footprints remain
+    editable and compile to ordinary game overlays. Combining later hand-painted
+    layer details with automatic footprint rebuilding remains open: changed
+    generated layers are protected from replacement. Exterior heights do not
+    introduce interior floors or a runtime elevation system. See the
+    [construction guide](M5_WORLD_ART_EDITOR.md#buildings-walls-and-roads).
     The [sprite editor](SPRITE_EDITOR.md) adds direction/pose editing, shared-image
     labels and independent previews. Named action animations, frame timing/sound
     cues, richer equipment abilities, arbitrary character/rule models, a script

@@ -71,22 +71,32 @@ Ctrl+V on the canvas to copy, cut and paste. Copy captures visible terrain;
 Cut clears the selected layer. A stroke or marker drag is one Undo operation;
 Escape cancels the unfinished gesture.
 
-The map's visible **Construct** row places saved designs directly:
+The map's visible **Construct** row draws footprints using a saved tile style:
 
-1. Choose **Building**, **Wall** or **Road**, then a named design.
-2. For buildings/walls, click **Place building / Place wall**, move the preview
-   over the map and click to place. Each placement becomes a separate overlay.
-3. For roads, click **Draw roads** and drag across the map. Endpoints, bends and
-   junctions connect automatically in the selected layer.
+1. Choose **Building**, **Wall** or **Road**, then a style. **Create style...**
+   starts one if needed; **Edit style...** opens its corner/face tile designer.
+2. For a one-storey box, choose **Rectangle**, **Stories 1**, click **Draw
+   building** and drag its bounds on the map. Additional strokes extend the
+   same footprint into crosses, L shapes or other irregular outlines.
+3. Click **New building**, choose **Courtyard**, **Stories 3**, and drag another
+   rectangle. **Width** sets the ring thickness. Alternatively, right-drag a
+   Rectangle to remove an interior area from an existing building. Paint a
+   different Stories value over a section to create stepped roofs.
+4. Walls use **Draw wall**, usually with **Line**, **Brush** or **Courtyard**.
+   Choose 1–3 stories and a width. Roads use **Draw roads** with the same shapes;
+   ends, bends and junctions reconnect automatically in the selected layer.
 
-Escape stops placement/drawing; Ctrl+Z undoes a placement or road stroke. The
-Tool selector also includes Building, Wall and Road. **Edit design...** opens
-the selected designer; when that type has no designs, **Create design...** starts
-one. In a designer, **New set** adds a design and **Use on map** arms placement.
-Designs (names, heights, footprints and part tiles) are saved with the project
-by **Save / Ctrl+S**, and remain available after closing tabs or restarting.
-Changing a saved footprint affects future placements; existing placements keep
-their shape. Editing a shared tile's pixels affects every use of that tile.
+**New building / New wall** starts a separate object. The footprint dropdown
+beside Width returns to a saved object for further drawing. Each stroke rebuilds
+its roof, corners and visible faces; Ctrl+Z undoes the whole stroke. Escape
+cancels unfinished drawing or leaves the tool. Buildings support 1–32 stories
+provided the footprint and all projected faces fit within the map.
+
+**Save / Ctrl+S** persists styles, per-map footprints/heights and generated tiles.
+They remain editable after closing tabs or restarting. The designer's **Draw
+on map** selects its tile style; its demonstration shape stays in the designer.
+**Save pattern** and the Pattern Library retain ordinary fixed-shape stamping.
+Editing a shared tile's pixels affects every use of that tile.
 
 **Construction tools** in the explorer, or **Project**, also opens the Building,
 Wall and Road designers and the **Pattern Library**. Paint a footprint with

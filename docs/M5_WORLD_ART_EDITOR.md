@@ -73,18 +73,41 @@ reverses automatic v1-to-v2 map conversion.
 Open **Construction tools** in the project explorer, **Project > Building/Wall/
 Road designer**, or **Map actions > Construct**. Each designer has named part
 sets saved with the project. Reopening it returns to its existing tab. The map
-editor also has a visible **Construct** row: select Building, Wall or Road and
-a named design. **Place building / Place wall** arms a preview to click onto
-the map; **Draw roads** starts a drag brush that joins road segments. The Tool
-selector provides the same three modes. Escape stops placement/drawing.
-**Edit design...** opens the selected set; **Create design...** starts one when
-that type has none. **Save / Ctrl+S** persists designs, art and placed terrain
-together; closing the designer does not remove its designs.
+editor's **Construct** row selects Building, Wall or Road and a named tile style.
+**Draw building / Draw wall / Draw roads** lets you draw the actual shape on the
+map. The Tool selector provides the same modes. **Edit style...** opens the
+selected part set; **Create style...** starts one when that type has none.
+
+Choose **Shape** (Brush, Line, Rectangle, Courtyard or Erase), **Stories** and
+**Width**, then drag on the map. Rectangle fills a footprint; Courtyard creates
+a hollow ring with the chosen thickness. Overlapping strokes extend one object
+into arbitrary outlines. Right-drag erases the selected shape; painting a new
+height over a section creates stepped roofs. The live preview recalculates
+outside edges, inner corners, roof levels and visible wall faces. A fixed
+projection datum prevents existing floors shifting when another floor is raised.
+
+**New building / New wall** starts a separate footprint. Select a saved object
+in the dropdown beside Width to continue drawing it, including after reopening.
+Each stroke rebuilds only that object's overlay and is one Undo operation,
+including any newly required tile variants. Erasing an interior reveals the
+underlying terrain; erasing the whole footprint removes its overlay. Escape
+cancels the unfinished stroke, or leaves the tool if no stroke is pending.
+Buildings allow **1–32 stories** and walls **1–3**, subject to the map bounds:
+the footprint and projected faces must fit completely. Red preview outlines
+indicate an invalid edge. Invalid drawing cannot silently clip the building.
+
+**Save / Ctrl+S** persists styles, map footprints/heights, art and compiled terrain
+together. The editor stores footprint records in `EDITOR.json`; the game uses
+ordinary overlay tiles, with no new runtime dependency. A manually repainted or
+rearranged generated layer is protected from silent replacement: undo those
+layer edits before rebuilding its footprint. Tile pixel edits remain shared.
+
+To configure the style's demonstration shape and component tiles in its designer:
 
 1. **Footprint...** starts a rectangle, cross, L shape, courtyard, line or empty
    grid, up to 32 × 32 cells. Walls and roads use thin cross/L presets.
 2. Paint the footprint at the desired height. Left-drag draws; right-drag erases.
-   Height **0** erases, buildings support **1–8 storeys**, walls **1–3**, and roads
+   Height **0** erases, buildings support **1–32 storeys**, walls **1–3**, and roads
    occupy one level. Painting different heights creates stepped roofs.
 3. The live preview projects walls down and right in the CHI view. It resolves
    exposed roof edges, inward corners, south/east faces and top/middle/base
@@ -101,13 +124,10 @@ together; closing the designer does not remove its designs.
    remembers its last collection, sheet filter, selection and scroll position
    per project, with separate positions for each collection/sheet. Preferences
    survive editor restarts and are stored outside the game data.
-5. **Use on map**, then click to place the preview. Each building/wall becomes a
-   separate overlay; select that overlay for fine painting or **Move building**.
-   The whole result must fit—an edge click never silently crops it. Escape
-   cancels placement. Add an **Entrance** marker and event using the usual map
-   tools, then save an entrance-aware stamp if that complete building is reusable.
-   Later placements can use the saved design directly from the map's Construct
-   row, without opening its designer again.
+5. **Draw on map** arms the style for free drawing; the demonstration footprint
+   remains in the designer. **Save pattern** stores that particular demonstration
+   shape for optional stamping from the Pattern Library. Add entrances/events
+   to completed map buildings with the usual marker tools.
 
 Part assignments are shared by matching cells in that set. Editing a tile changes
 every placement using its ID. Clone the tile for an independent variant. **New
@@ -128,8 +148,11 @@ The Road designer also provides **Draw connecting roads**. Drag on the map:
 straight sections, bends, ends, T junctions and crossroads are selected from
 the set's 16 north/east/south/west connection patterns. Existing roads in that
 set and selected layer reconnect as the stroke crosses them. A complete stroke
-is one Undo operation. Slanting strokes form connected orthogonal steps rather
-than isolated diagonal cells. Road tiles default to clear terrain; building and wall
+is one Undo operation. Width supports 1–8 tiles; Rectangle and Courtyard draw
+larger areas or connected road rings. Right-drag erases roads from this style,
+updating neighbouring junctions. Base-layer road erasure uses the first clear
+terrain tile; overlay erasure reveals the layer below. Slanting strokes form
+connected orthogonal steps. Road tiles default to clear terrain; building and wall
 parts default to blocking wall terrain. **Tile properties** changes collision
 separately from the artwork.
 

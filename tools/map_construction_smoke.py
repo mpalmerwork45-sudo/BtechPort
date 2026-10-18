@@ -73,7 +73,9 @@ def run(env,work):
                 maps.window.lift();maps.refresh();pump();construct=maps.construction_tools
                 construct.kind_choice.set('Building');construct.kind_choice.event_generate('<<ComboboxSelected>>');pump()
                 visible(construct.place_button);visible(construct.edit_button);assert construct.profile()['id']==builder.current
-                construct.place_button.invoke();pump();assert maps.tool.get()=='Building'
+                # Pattern stamping remains available as a separate workflow;
+                # the construction brush below draws new footprints instead.
+                maps.use_pattern(compile_rows(builder.profile),builder.profile['name'],overlay=True);pump()
                 maps.zoom.set('16');maps.canvas.xview_moveto(0);maps.canvas.yview_moveto(0);maps.draw();pump();snap('map-tools')
                 n=len(maps.scene()['overlays']);gesture(maps.canvas,(2*16+2,2*16+2),(2*16+2,2*16+2))
                 assert len(maps.scene()['overlays'])==n+1;doc.validate()
@@ -89,7 +91,7 @@ def run(env,work):
                 wall=maps.construction('Wall');f=wall.reshape();f.values['shape'].set('L shape');f.values['width'].set('6');f.values['height'].set('6');f.values['stories'].set('3');f.apply_button.invoke();pump();snap('wall')
                 assert max(map(max,wall.profile['footprint']))==3
                 maps.window.lift();construct.kind_choice.set('Wall');construct.kind_choice.event_generate('<<ComboboxSelected>>');pump()
-                construct.place_button.invoke();pump();assert maps.tool.get()=='Wall'
+                construct.place_button.invoke();construct.stories.set('3');pump();assert maps.tool.get()=='Wall'
                 before=copy.deepcopy(doc.adventure);history=len(doc.undo_stack)
                 gesture(maps.canvas,(20*16+2,3*16+2),(20*16+2,3*16+2))
                 assert len(maps.scene()['overlays'])==len(before['maps'][maps.scene_index]['overlays'])+1
@@ -98,7 +100,7 @@ def run(env,work):
                 workspace.edit_history(True);pump();assert doc.adventure==after
                 maps.cancel_gesture();assert maps.tool.get()=='Select'
                 construct.kind_choice.set('Road');construct.kind_choice.event_generate('<<ComboboxSelected>>');pump()
-                assert construct.edit_button.cget('text')=='Create design...'
+                assert construct.edit_button.cget('text')=='Create style...'
                 construct.edit_button.invoke();pump();road=workspace.current_view().controller
                 assert road.kind=='Road';maps.window.lift();construct.place_button.invoke();pump()
                 assert maps.tool.get()=='Road';maps.layer_choice.current(0);maps.zoom.set('16');maps.draw();pump()
@@ -183,9 +185,11 @@ def run(env,work):
                 # Selecting the construction tool directly also arms its saved
                 # design; no detour through a designer window is required.
                 maps.tool_choice.set('Building');maps.tool_choice.event_generate('<<ComboboxSelected>>');pump()
-                assert maps.tool.get()=='Building' and maps.clipboard==compile_rows(construct.profile())
+                assert maps.tool.get()=='Building' and construct.active_id==construct.profile()['id']
                 maps.tool_choice.set('Road');maps.tool_choice.event_generate('<<ComboboxSelected>>');pump()
                 assert maps.road_profile==construct.profile()['id'] and maps.tool.get()=='Road'
                 print('PASS: fresh workspace restores construction tabs, unfinished height painting and invalid footprint fields, then saves corrected work.',flush=True)
-                print('PASS: visible map construction controls place saved buildings/walls with Undo, draw connected roads, and reload all three design types after reopening.',flush=True)
+                print('PASS: visible map construction controls draw walls with Undo, draw connected roads, and reload all three tile styles after reopening.',flush=True)
             finally:workspace.closing=True;window.destroy()
+    from drawn_construction_smoke import run as drawn_journey
+    drawn_journey(env,work)

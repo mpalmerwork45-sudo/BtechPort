@@ -46,6 +46,8 @@ def history(workspace, redo=False):
     if not scope or not scope.document:return
     view=workspace.active_owner()
     if not redo:
+        construction=getattr(view,'construction_tools',None)
+        if construction and construction.stroke is not None:construction.cancel();return
         if getattr(view,'before',None) is not None:
             if hasattr(view,'image'):view.image=view.before
             elif hasattr(view,'jigsaw'):view.jigsaw=view.before

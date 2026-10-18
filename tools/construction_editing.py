@@ -29,12 +29,13 @@ def preset(kind,width=9,height=9,stories=2,shape='Cross'):
     return rows
 
 
-def geometry(profile):
+def geometry(profile,with_origin=False):
     """Return a rectangular grid of part names, with transparent outside cells."""
-    rows=profile['footprint'];kind=profile['kind'];maximum=3 if kind=='Wall' else 1 if kind=='Road' else 8
-    if not rows or not rows[0] or len(rows)>32 or len(rows[0])>32 or any(len(r)!=len(rows[0]) for r in rows):raise EditorError('Use a rectangular footprint up to 32×32 cells.')
+    rows=profile['footprint'];kind=profile['kind'];maximum=3 if kind=='Wall' else 1 if kind=='Road' else 32
+    limit=64 if profile.get('map_drawn') else 32
+    if not rows or not rows[0] or len(rows)>limit or len(rows[0])>limit or any(len(r)!=len(rows[0]) for r in rows):raise EditorError(f'Use a rectangular footprint up to {limit}×{limit} cells.')
     if any(type(v)!=int or not 0<=v<=maximum for r in rows for v in r):raise EditorError(f'{kind} heights must be 0..{maximum}; zero is empty.')
-    width,height=len(rows[0]),len(rows);highest=max(map(max,rows));cells={}
+    width,height=len(rows[0]),len(rows);highest=profile.get('datum',max(map(max,rows)));cells={}
     def at(x,y):return rows[y][x] if 0<=x<width and 0<=y<height else 0
     def half(x,y,index,value):
         cells.setdefault((x,y),['empty','empty'])[index]=value
@@ -56,11 +57,11 @@ def geometry(profile):
         corners=((1,-1,0,1),(1,1,1,2),(-1,1,2,3),(-1,-1,3,0))
         inner=sum(1<<i for i,(dx,dy,a,b) in enumerate(corners) if not mask&(1<<a|1<<b) and at(x+dx,y+dy)<h)
         cells[x+highest-h,y+highest-h]=[f'roof_{mask}_{inner}']*2
-    if not cells:return [[' ']]
+    if not cells:return ((0,0),[[' ']]) if with_origin else [[' ']]
     x0=min(x for x,y in cells);y0=min(y for x,y in cells);x1=max(x for x,y in cells);y1=max(y for x,y in cells)
     result=[[' ']*(x1-x0+1) for _ in range(y1-y0+1)]
     for (x,y),parts in cells.items():result[y-y0][x-x0]=parts[0] if parts[0]==parts[1] else 'join|'+parts[0]+'|'+parts[1]
-    return result
+    return ((x0,y0),result) if with_origin else result
 
 
 def part_name(role):
@@ -118,8 +119,8 @@ def compile_rows(profile):
     return [[profile['parts'][p] if p!=' ' else ' ' for p in row] for row in roles]
 
 
-def put_profile(document,profile,label='Edit construction set'):
-    profile=copy.deepcopy(profile);roles=geometry(profile);a=copy.deepcopy(document.adventure);art=copy.deepcopy(document.art);data=metadata(document);prefix=document.manifest['package_id']
+def supply_parts(a,art,data,prefix,profile,roles):
+    """Extend a style for newly drawn corners without changing its demo shape."""
     valid={t['id'] for t in a['tiles']}
     for role in sorted({p for row in roles for p in row if p!=' '}):
         if role in profile['parts']:
@@ -128,7 +129,13 @@ def put_profile(document,profile,label='Edit construction set'):
         image=new_image(prefix,art['images'],part_name(role)[:95]);image['frames']=[[''.join(row) for row in default_pixels(role,profile['kind'])]];art['images'].append(image)
         value=graphic_tile(a,prefix,'package:art',image['id'],'clear' if profile['kind']=='Road' else 'wall',8)
         profile['parts'][role]=value;data.setdefault('tile_names',{})[value]=part_name(role)
-    check_budget(art,a);profiles=data.setdefault('construction_sets',[])
+    check_budget(art,a)
+
+
+def put_profile(document,profile,label='Edit construction set'):
+    profile=copy.deepcopy(profile);roles=geometry(profile);a=copy.deepcopy(document.adventure);art=copy.deepcopy(document.art);data=metadata(document);prefix=document.manifest['package_id']
+    supply_parts(a,art,data,prefix,profile,roles)
+    profiles=data.setdefault('construction_sets',[])
     old=next((p for p in profiles if p['id']==profile['id']),None)
     if old:profiles[profiles.index(old)]=profile
     else:profiles.append(profile)
@@ -144,27 +151,25 @@ def new_profile(document,kind='Building',name=None):
     return put_profile(document,value,'New '+kind.lower()+' set')
 
 
-def draw_road(adventure,scene_index,layer,start,end,profile,width=1):
+def draw_road(adventure,scene_index,layer,start,end,profile,width=1,shape='Brush',erase=False):
     """Merge neighbour masks after a stroke, including old endpoints/junctions."""
     from adventure_editing import paint
-    from world_editing import line,token
+    from world_editing import token
     if not 1<=width<=8:raise EditorError('Road width must be 1..8 tiles.')
     scene=adventure['maps'][scene_index];ids={token(t):t['id'] for t in adventure['tiles']};keys={t['id']:token(t) for t in adventure['tiles']}
     target=scene if layer==0 else scene['overlays'][layer-1];ox,oy=(0,0) if layer==0 else target['at']
     road_ids={v for k,v in profile['parts'].items() if k.startswith('road_')}
     occupied={(x+ox,y+oy) for y,row in enumerate(target['rows']) for x,t in enumerate(row) if ids.get(t) in road_ids}
-    points=[];previous=None
-    for point in line(*start,*end):
-        if previous and point[0]!=previous[0] and point[1]!=previous[1]:
-            # Roads use cardinal connection tiles. Bridge diagonal mouse
-            # samples so a quick slanting drag cannot leave isolated squares.
-            # A canonical bridge also makes a reversed stroke follow itself.
-            points.append(min((point[0],previous[1]),(previous[0],point[1])))
-        points.append(point);previous=point
-    stroke={(x+xx,y+yy) for x,y in points for xx in range(width) for yy in range(width)}
+    from map_construction import stroke_cells
+    stroke=stroke_cells(start,end,shape,width)
     def inside(p):return ox<=p[0]<ox+len(target['rows'][0]) and oy<=p[1]<oy+len(target['rows'])
     if not all(inside(p) for p in stroke):raise EditorError('The whole road brush must fit in the selected layer.')
-    occupied|=stroke;affected=stroke|{(x+dx,y+dy) for x,y in stroke for dx,dy in NEIGHBOURS}
+    if erase:
+        ground=' ' if layer else token(next((t for t in adventure['tiles'] if t['terrain']=='clear'),adventure['tiles'][0]))
+        for x,y in occupied&stroke:paint(scene,layer,x,y,ground)
+        occupied-=stroke
+    else:occupied|=stroke
+    affected=stroke|{(x+dx,y+dy) for x,y in stroke for dx,dy in NEIGHBOURS}
     for x,y in affected&occupied:
         if not inside((x,y)):continue
         mask=sum(1<<i for i,(dx,dy) in enumerate(NEIGHBOURS) if (x+dx,y+dy) in occupied)

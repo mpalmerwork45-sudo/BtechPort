@@ -1,5 +1,34 @@
 # Build, verification and original oracle — 2026-10-18
 
+## Direct footprint drawing — 2026-10-18
+
+**VERIFIED:** the map construction controls draw new footprints from a tile
+style. The style designer's demonstration shape is no longer the map brush.
+
+| Check | Actual result |
+| --- | --- |
+| Python suite | **157/157 PASS**, 15.906 s, including five new drawn-construction cases |
+| Footprint model | Box, extended cross, erased hole, mixed heights, three-story courtyard and connected wall; 32-story projection; map-edge rejection is atomic |
+| Persistent objects | Footprints/heights and their generated overlays save/reopen; subsequent edits replace one overlay; removing all footprint cells reveals the untouched ground |
+| Preservation | Existing styles retain their demonstration footprint; newly needed parts join the style; manually painted layers are rejected for rebuilding rather than overwritten |
+| Actual Tk drawing | Pointer-driven rectangle, multiple-stroke cross, right-drag erasure, raised section, courtyard with width 2, and connected three-story wall; live preview changes no committed game data |
+| History/recovery | One Undo per stroke includes art/style/object changes; fresh workspace restores unfinished map drawing and edits saved footprints without duplicate overlays |
+| Actual player | The newly drawn courtyard's SDL and headless frames and state digests match |
+| Existing GUI journeys | Visual tile picker and remembered views, ordinary map/marker editing, workspace tab Close, shared history, event drafts, recovery, background saves and Play/Stop pass |
+| References | **1,287/1,287 unchanged**; existing user edits in the BattleTech demo are left unstaged |
+
+Commands: `python3 -m unittest discover -s tests -p 'test_*.py'`,
+`python3 tools/native_smoke.py --map-construction-only`,
+`python3 tools/native_smoke.py --editor-visual-only`,
+`python3 tools/native_smoke.py --editor-usability-only`, and the reference guard
+command below. The construction GUI journey now also runs
+`tools/drawn_construction_smoke.py` on a disposable map with clear arrival points.
+
+Local evidence: `work/drawn-construction-{box-preview,cross-and-heights,three-story-courtyard,wall,reopened-and-reshaped}.png`
+and `work/drawn-construction-{player,headless}.ppm`. Native Windows Tk remains
+**UNKNOWN**. The C engine was unchanged and not rebuilt; the native CTest results
+below are earlier milestone verification.
+
 ## Map construction and tile workflow — 2026-10-18
 
 Implementation milestone: `9bc57ae`, followed by usability/provenance verification

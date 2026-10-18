@@ -185,16 +185,17 @@ class AdventureEditor:
         self.window.bind("<Escape>", lambda _: self.cancel_gesture())
         self.window.protocol("WM_DELETE_WINDOW",lambda:self.guard(self.close))
         self.tabs.bind("<<NotebookTabChanged>>",lambda _:self.guard(self.apply_pending))
-        self.draft=register(self,pending=lambda:self.event_pending or self.stroke is not None,
+        self.draft=register(self,pending=lambda:self.event_pending or self.stroke is not None or self.construction_tools.stroke is not None,
             apply=self.apply_pending,capture=self.capture_draft,restore=self.restore_draft,priority=20)
 
     def guard(self, action):
         return guard(self,action)
 
     def capture_draft(self):
+        construction=getattr(self,'construction_tools',None)
         return dict(event_id=self.event_id,template=copy.deepcopy(getattr(self,'event_draft',None)),
             values={k:v.get() for k,v in self.event_vars.items()},pending=self.event_pending,
-            text=self.event_text.get('1.0','end-1c') if self.event_text else None,stroke=copy.deepcopy(self.stroke))
+            text=self.event_text.get('1.0','end-1c') if self.event_text else None,stroke=copy.deepcopy(self.stroke),construction=construction.capture() if construction else None)
     def restore_draft(self,state):
         self.event_id=state['event_id'];self.stroke=state['stroke']
         if state['template']:
@@ -202,6 +203,7 @@ class AdventureEditor:
             for k,v in state['values'].items():self.event_vars[k].set(v)
             if self.event_text and state['text'] is not None:self.event_text.delete('1.0','end');self.event_text.insert('1.0',state['text'])
         self.event_pending=state['pending']
+        if state.get('construction') and hasattr(self,'construction_tools'):self.construction_tools.restore(state['construction'])
 
     @property
     def adventure(self): return self.document.adventure
@@ -329,7 +331,9 @@ class AdventureEditor:
         self.canvas.bind("<B1-Motion>",lambda e:self.guard(lambda:self.pointer(e,False)))
         self.canvas.bind("<ButtonRelease-1>",lambda _:self.guard(self.finish_stroke))
         self.canvas.bind("<Double-Button-1>",lambda e:self.guard(lambda:self.double_marker(e)))
-        self.canvas.bind("<Button-3>",lambda e:self.guard(lambda:self.sample_tile(e)))
+        self.canvas.bind("<Button-3>",lambda e:self.guard(lambda:self.pointer(e,True,erase=True) if self.tool.get() in ('Building','Wall','Road') else self.sample_tile(e)))
+        self.canvas.bind('<B3-Motion>',lambda e:self.guard(lambda:self.pointer(e,False,erase=True)) if self.tool.get() in ('Building','Wall','Road') else None)
+        self.canvas.bind('<ButtonRelease-3>',lambda _:self.guard(self.finish_stroke) if self.tool.get() in ('Building','Wall','Road') else None)
         self.canvas.bind("<Control-c>",lambda _:self.guard(self.copy_selection))
         self.canvas.bind("<Control-x>",lambda _:self.guard(self.cut_selection))
         self.canvas.bind("<Control-v>",lambda _:self.tool.set("Paste"))
@@ -348,9 +352,10 @@ class AdventureEditor:
 
     def draw_hover(self):
         self.canvas.delete('brush-hover')
+        self.construction_tools.draw_preview()
         if self.hover is None:return
         x,y=self.hover;size=int(self.zoom.get())
-        if self.tool.get() in ('Paste','Building','Wall') and self.clipboard:
+        if self.tool.get()=='Paste' and self.clipboard:
             # Preview the whole block; red bounds make an invalid edge paste
             # visible before the click. Paste never silently crops a building.
             w,h=len(self.clipboard[0]),len(self.clipboard);scene=self.scene()
@@ -422,7 +427,7 @@ class AdventureEditor:
         index=self.map_choice.current();self.finish_stroke();self.scene_index=index;self.selected_marker=None;self.selection_rect=None;self.layer_choice.current(0);self.refresh()
 
     def draw(self):
-        scene=(self.stroke or self.adventure)["maps"][self.scene_index];grid=composite(scene);size=int(self.zoom.get())
+        scene=self.construction_tools.preview_scene((self.stroke or self.adventure)["maps"][self.scene_index]);grid=composite(scene);size=int(self.zoom.get())
         self.canvas.delete("all");self.canvas.configure(scrollregion=(0,0,len(grid[0])*size,len(grid)*size))
         tiles={token(t):t for t in self.adventure["tiles"]}
         terrain_colors={"clear":"#28574d","rough":"#947b64","water":"#457caa","woods":"#397557","wall":"#b45a60"}
@@ -478,13 +483,16 @@ class AdventureEditor:
                     if ref is not None and ref not in hits:hits.append(ref)
         return self.selected_marker if self.selected_marker in hits else hits[-1] if hits else None
 
-    def pointer(self,event,first):
+    def pointer(self,event,first,erase=False):
         if first:self.canvas.focus_set()
         size=int(self.zoom.get());px=self.canvas.canvasx(event.x);py=self.canvas.canvasy(event.y)
         x,y=int(px//size),int(py//size)
         scene=self.scene()
         half=(int(px*2//size),int(py*2//size));self.cursor=half
         tool=self.tool.get()
+        if tool in ('Building','Wall'):
+            if 0<=y<len(scene['rows']) and 0<=x<len(scene['rows'][0]):self.construction_tools.pointer((x,y),first,erase)
+            return
         if first and tool not in ('Select','Paste','Building','Wall','Road'):
             ref=self.hit_marker(px,py)
             if ref is not None:
@@ -505,9 +513,9 @@ class AdventureEditor:
             self.draw();self.status.set(f"Marker at half-tile {at[0]},{at[1]} | release to place | Escape cancels")
             return
         if not 0<=y<len(scene["rows"]) or not 0<=x<len(scene["rows"][0]): return
-        if tool in ("Paint","Line","Rectangle","Fill","Paste","Building","Wall","Road"):
+        if tool in ("Paint","Line","Rectangle","Fill","Paste","Road"):
             if first:
-                self.stroke=copy_adventure(self.document);self.paint_start=self.paint_last=(x,y)
+                self.stroke=copy_adventure(self.document);self.paint_start=self.paint_last=(x,y);self.road_erasing=erase
             if self.stroke is None: return
             index=self.brush.curselection()[0] if self.brush.curselection() else 0
             key=token(self.adventure["tiles"][index]) if index<len(self.adventure["tiles"]) else " "
@@ -516,7 +524,7 @@ class AdventureEditor:
             target=self.stroke["maps"][self.scene_index]
             if tool=="Fill":
                 if first:fill_tiles(target,layer,x,y,key)
-            elif tool in ('Paste','Building','Wall'):
+            elif tool=='Paste':
                 if first and self.clipboard:
                     from map_patterns import paste
                     try:
@@ -533,7 +541,9 @@ class AdventureEditor:
                 profile=next((p for p in metadata(self.document).get('construction_sets',[]) if p['id']==self.road_profile),None)
                 if profile is None:
                     self.stroke=None;raise EditorError('Choose a saved Road design in the Construct row, then click Draw roads.')
-                try:draw_road(self.stroke,self.scene_index,layer,self.paint_last,(x,y),profile,self.road_width)
+                shape=self.construction_tools.shape.get();start=self.paint_last
+                if shape in ('Line','Rectangle','Courtyard'):self.stroke=copy_adventure(self.document);start=self.paint_start
+                try:draw_road(self.stroke,self.scene_index,layer,start,(x,y),profile,int(self.construction_tools.width.get()),shape,self.road_erasing or shape=='Erase')
                 except Exception:self.stroke=None;raise
             else:draw_tiles(target,layer,self.paint_start if tool in ("Line","Rectangle") else self.paint_last,(x,y),key,tool)
             self.paint_last=(x,y);self.draw()
@@ -605,6 +615,7 @@ class AdventureEditor:
         self.art_editor=self.parent.graphics_editor()
 
     def finish_stroke(self):
+        if self.construction_tools.stroke is not None:self.construction_tools.finish();return
         if self.stroke is not None:
             a=self.stroke;drag=self.drag;self.stroke=None;self.drag=None
             if a==self.adventure:
@@ -613,7 +624,8 @@ class AdventureEditor:
             else:self.commit(a)
 
     def cancel_gesture(self):
-        if self.stroke is not None:
+        if self.construction_tools.stroke is not None:self.construction_tools.cancel()
+        elif self.stroke is not None:
             self.stroke=None;self.drag=None
             self.draw();self.status.set("Move / paint stroke cancelled.")
         elif self.tool.get() in ('Paste','Building','Wall','Road'):self.tool.set('Select');self.draw_hover()
@@ -1074,7 +1086,7 @@ class AdventureEditor:
     def save(self):self.parent.save();self.status.set(self.parent.status.get())
     def validate(self):self.parent.validate();self.status.set(self.parent.status.get())
     def undo(self):
-        if self.stroke is not None:
+        if self.stroke is not None or self.construction_tools.stroke is not None:
             self.cancel_gesture();return
         if self.event_pending:
             self.event_pending=False;self.populate_event();return

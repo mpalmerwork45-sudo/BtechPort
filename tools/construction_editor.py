@@ -36,7 +36,7 @@ class ConstructionEditor:
         self.window=view_window(self,owner,'construction',kind+' designer',kind);self.window.geometry('1080x760')
         bar=ttk.Frame(self.window,padding=8);bar.pack(fill='x')
         self.choice=ttk.Combobox(bar,state='readonly',width=24);self.choice.pack(side='left',padx=4);self.choice.bind('<<ComboboxSelected>>',lambda _:guard(self,self.change))
-        for label,callback in [('New set',self.new),('Duplicate',self.duplicate),('Rename',self.rename),('Footprint...',self.reshape),('Save pattern',self.save_pattern),('Use on map',self.use)]:
+        for label,callback in [('New set',self.new),('Duplicate',self.duplicate),('Rename',self.rename),('Footprint...',self.reshape),('Save pattern',self.save_pattern),('Draw on map',self.use)]:
             ttk.Button(bar,text=label,width=0,command=lambda f=callback:guard(self,f)).pack(side='left',padx=3)
         if kind=='Road':ttk.Button(bar,text='Draw connecting roads',command=lambda:guard(self,self.road_brush)).pack(side='left',padx=3)
         from editor_ui import flow_toolbar
@@ -48,7 +48,7 @@ class ConstructionEditor:
         controls=ttk.Frame(left);controls.pack(fill='x')
         ttk.Label(controls,text='Paint height (0 erases)').pack(side='left')
         self.height=tk.StringVar(value='1' if kind=='Road' else '2')
-        ttk.Combobox(controls,textvariable=self.height,values=[str(i) for i in range(2 if kind=='Road' else 4 if kind=='Wall' else 9)],state='readonly',width=3).pack(side='left',padx=8)
+        ttk.Combobox(controls,textvariable=self.height,values=[str(i) for i in range(2 if kind=='Road' else 4 if kind=='Wall' else 33)],state='readonly',width=3).pack(side='left',padx=8)
         ttk.Label(left,text='Left-drag draws; right-drag erases.\nDifferent heights create stepped roofs.',wraplength=320,padding=(0,8)).pack(anchor='w')
         self.footprint=self.make_canvas(left);self.footprint.bind('<Button-1>',lambda e:guard(self,lambda:self.paint(e,True)))
         self.footprint.bind('<B1-Motion>',lambda e:guard(self,lambda:self.paint(e,False)))
@@ -171,7 +171,7 @@ class ConstructionEditor:
         if self.selected_role:tile_menu(self,self.owner,self.profile['parts'].get(self.selected_role),self.assign,event)
     def use(self):
         self.finish()
-        if self.profile:self.owner.construction_tools.activate(self.profile,connect=False)
+        if self.profile:self.owner.construction_tools.activate(self.profile)
     def save_pattern(self):
         self.finish()
         if not self.profile:return

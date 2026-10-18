@@ -51,7 +51,7 @@ def usages(document,identity):
             if exact or row:found.append(Usage(section,path,asset or section,value))
     for section in ('content','adventure','art','manifest'):walk(getattr(document,section),section)
     editor=json.loads(document.metadata.get('EDITOR.json',b'{}'))
-    for collection in ('building_stamps','map_patterns','construction_sets'):
+    for collection in ('building_stamps','map_patterns','construction_sets','map_constructions'):
         if collection in editor:walk(editor[collection],'editor',(collection,))
     name=document.manifest.get('presentation')
     if name:walk(json.loads(document.metadata.get(name,document.snapshot[name])),'presentation')
