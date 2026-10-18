@@ -1,5 +1,17 @@
 # Build, verification and original oracle — 2026-10-18
 
+## Construction Kit milestones in progress
+
+Verified so far: authored service transactions and saved one-time salvage;
+event graph/flags/journal/checkpoint integration; broker vehicle classification;
+stamps and grouped movement; pixel alpha layers, selections, crop and PNG
+round-trip; seeded jigsaw generation and starting formation overlays.
+Targeted Python workbench/scene tests and existing 17 library tests pass.
+Linux Tk checks pass with `--construction-kit-only`, `--world-art-editor-only`
+and `--library-editor-only` in `tools/native_smoke.py`. The renamed launcher,
+library edit/save/import and ordinary game start/resume are included.
+Final full-suite/sanitizer/Windows checks follow the remaining milestones.
+
 ## Unit Library and desktop launcher
 
 The [Unit Library/launcher guide](UNIT_LIBRARY_AND_LAUNCHER.md) records the

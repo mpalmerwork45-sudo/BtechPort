@@ -39,7 +39,23 @@ def run(env,work):
                 while test.busy and time.monotonic()<deadline:pump();time.sleep(.02)
                 assert not test.busy and test.selected() and (test.selected()/'state.btp').exists(),test.status.get()
                 assert test.trace.get_children();test.window.lift();pump();ImageGrab.grab(xdisplay=env['DISPLAY']).save(work/'construction-kit-checkpoint.png')
-                test.window.destroy();owner.save();reopened=ProjectDocument(doc.root,doc.validator)
+                test.window.destroy()
+                from scene_tools import capture_stamp,place_stamp,move_group
+                scene=doc.adventure['maps'][0];door=scene['entrances'][0];x,y=[v//2 for v in door['at']]
+                stamp=capture_stamp(doc,0,(x,y,x+1,y+1),'GUI depot');index=place_stamp(doc,0,stamp,24,18)-1;move_group(doc,0,index,26,21);owner.refresh()
+                owner.footprints.set(True);owner.toggle_footprints();owner.hover=(8,8);owner.draw_hover();pump();assert owner.canvas.find_withtag('brush-hover')
+                from art_editing import new_image
+                from graphics_editor import open_image_editor
+                owner.edit_graphics();art=owner.art_editor;image=new_image('kit-test',doc.art['images'],'Layer test','sprite',8,8,4);art.put(image)
+                pixel=open_image_editor(art,image);pump();pixel.new_layer();pixel.color.set('00ff0080')
+                pixel.canvas.event_generate('<Button-1>',x=1,y=1);pixel.canvas.event_generate('<ButtonRelease-1>',x=1,y=1);pump()
+                assert pixel.image['frames'][pixel.frame.current()][0][:8]=='00ff0080'
+                pixel.tool.set('Select');pixel.canvas.event_generate('<Button-1>',x=0,y=0);pixel.canvas.event_generate('<B1-Motion>',x=47,y=47);pixel.canvas.event_generate('<ButtonRelease-1>',x=47,y=47);pump()
+                pixel.copy_pixels();assert pixel.pixel_clipboard;pixel.crop();pump();assert pixel.image['width']==3
+                pixel.undo();pump();assert pixel.image['width']==8 and len(pixel.image['_layers'])==2
+                pixel.window.lift();pump();ImageGrab.grab(xdisplay=env['DISPLAY']).save(work/'construction-kit-pixels.png');pixel.apply();pump()
+                reopened_pixel=open_image_editor(art,art.current());pump();assert len(reopened_pixel.image['_layers'])==2;reopened_pixel.close();pump()
+                owner.save();reopened=ProjectDocument(doc.root,doc.validator)
                 assert editor_data(reopened)==editor_data(doc)
-                print('PASS: Construction Kit title, services, event forms/graph dragging, shared metadata, saved checkpoints and runtime trace inspection.')
+                print('PASS: Construction Kit title, services, graph dragging, checkpoints/trace, building stamps, footprints and layered sprite selection/crop/undo/save/reopen.')
             finally:window.destroy()

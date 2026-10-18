@@ -99,14 +99,14 @@ class ProjectDocument:
     def replace_both(self, content, adventure):
         self.replace_all(content, adventure, self.art, self.manifest)
 
-    def replace_art(self, art, adventure=None):
+    def replace_art(self, art, adventure=None,metadata=None):
         manifest = copy.deepcopy(self.manifest)
         if "graphics" not in manifest:
             name = "graphics.json"
             if name not in self.snapshot and child(self.root, name).exists():
                 raise EditorError("graphics.json already exists outside this project's declarations. Rename it or declare it before editing graphics.")
             manifest["graphics"] = name
-        self.replace_all(self.content, self.adventure if adventure is None else adventure, art, manifest)
+        self.replace_all(self.content, self.adventure if adventure is None else adventure, art, manifest,metadata)
 
     def replace_all(self, content, adventure, art, manifest, metadata=None):
         metadata = self.metadata if metadata is None else metadata

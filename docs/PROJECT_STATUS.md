@@ -1,5 +1,13 @@
 # Project status — original fidelity and editable projects, 2026-10-18
 
+**BattleTech Construction Kit** is the editor/launcher name. The current
+[five milestones](EDITOR_COMPLETION_MILESTONES.md) have completed authored
+services/templates, event graph/journal/checkpoints, and building/pixel tools
+through Linux engine, model and Tk checks. Named combat animations, unit
+construction extensions and delivery/migration are still being implemented.
+Broker navigation now separates mech weight classes from a single vehicle list.
+The Unit Library has direct sprite editing, including saved editable layers.
+
 The [shared Unit Library and launcher](UNIT_LIBRARY_AND_LAUNCHER.md) now provide
 82 blueprints (66 mechs, ten vehicles, six infantry templates), editable directly
 in the library and copied between games with dependency closure, explicit

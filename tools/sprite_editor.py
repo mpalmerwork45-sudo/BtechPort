@@ -6,6 +6,7 @@ import tkinter as tk
 from tkinter import ttk
 
 from graphics_editor import PixelEditor, photo
+from pixel_tools import target,flatten
 from sprite_editing import (DIRECTIONS, VIEWS, default_view, describe,
                             onion_rows, paste_frame, sequence, sharing_note)
 
@@ -215,14 +216,14 @@ class SpriteEditor(PixelEditor):
 
     def copy_frame(self):
         self.finish()
-        self.clipboard = copy.deepcopy(self.image['frames'][self.frame.current()])
+        self.clipboard = copy.deepcopy(target(self.image)['frames'][self.frame.current()])
         self.paste_button.state(['!disabled'])
 
     def paste(self):
         self.finish()
         self.playing = False
         candidate = copy.deepcopy(self.image)
-        paste_frame(candidate, self.frame.current(), self.clipboard)
+        paste_frame(target(candidate), self.frame.current(), self.clipboard);flatten(candidate,self.frame.current())
         if candidate != self.image:
             self.history.append(self.image)
             self.history = self.history[-40:]

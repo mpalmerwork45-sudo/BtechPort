@@ -87,6 +87,7 @@ class AdventureEditor:
         self.graphics = {}
         self.art_cache = None
         self.hover=None;self.hover_light=True
+        self.formation_preview=None
         ttk.Style(self.window).configure("Tiles.Treeview",rowheight=40)
         bar = ttk.Frame(self.window, padding=6);bar.pack(fill="x")
         for label, action in [("Save", self.save), ("Validate", self.validate), ("Undo", self.undo), ("Redo", self.redo), ("Play", self.play), ("Play here", self.play_here), ("Export", parent.export_project)]:
@@ -155,7 +156,8 @@ class AdventureEditor:
         self.map_choice=ttk.Combobox(top,state="readonly",width=30);self.map_choice.pack(side="left")
         self.map_choice.bind("<<ComboboxSelected>>",lambda _:self.change_map())
         for title,actions in [("Map actions",[("New map",self.new_map),("Map properties",self.map_properties),("Delete map",self.delete_map)]),
-                              ("Layer actions",[("Add overlay",self.new_overlay),("Layer properties",self.layer_properties),("Delete layer",self.delete_layer)])]:
+                              ("Layer actions",[("Add overlay",self.new_overlay),("Layer properties",self.layer_properties),("Move building and markers",self.move_building),("Delete layer",self.delete_layer)]),
+                              ("Buildings",[("Save selection as stamp",self.capture_building),("Place building stamp",self.place_building)])]:
             button=ttk.Menubutton(top,text=title);menu=tk.Menu(button,tearoff=False)
             for label,action in actions:menu.add_command(label=label,command=lambda cb=action:self.guard(cb))
             button.configure(menu=menu);button.pack(side="left",padx=6)
@@ -171,7 +173,8 @@ class AdventureEditor:
         self.zoom=tk.StringVar(value="24")
         ttk.Label(controls,text="Zoom").pack(side="left",padx=(12,6))
         z=ttk.Combobox(controls,textvariable=self.zoom,values=["16","24","32"],state="readonly",width=4);z.pack(side="left");z.bind("<<ComboboxSelected>>",lambda _:self.draw())
-        self.terrain=tk.BooleanVar(value=False);ttk.Checkbutton(controls,text="Collision / terrain",variable=self.terrain,command=self.draw).pack(side="left",padx=8)
+        self.terrain=tk.BooleanVar(value=False);ttk.Checkbutton(controls,text="Collision",variable=self.terrain,command=self.draw).pack(side="left",padx=8)
+        self.footprints=tk.BooleanVar(value=False);ttk.Checkbutton(controls,text='Starting formation',variable=self.footprints,command=lambda:self.guard(self.toggle_footprints)).pack(side='left')
         self.graphics_note=tk.StringVar()
         ttk.Label(self.map_tab,textvariable=self.graphics_note,style="Muted.TLabel",padding=(12,2),wraplength=940).pack(fill="x")
         body=ttk.Panedwindow(self.map_tab,orient="horizontal");body.pack(fill="both",expand=True)
@@ -237,6 +240,16 @@ class AdventureEditor:
         x,y=self.hover;size=int(self.zoom.get())
         self.canvas.create_rectangle(x*size+1,y*size+1,(x+1)*size-1,(y+1)*size-1,
             outline='#ffffff' if self.hover_light else '#243641',width=2,tags='brush-hover')
+        if self.footprints.get() and self.formation_preview:
+            from scene_tools import formation_cells
+            for cx,cy,blocked in formation_cells(self.document,self.scene_index,(x*2,y*2),self.formation_preview):
+                self.canvas.create_rectangle(cx*size+2,cy*size+2,(cx+1)*size-2,(cy+1)*size-2,
+                    outline='#ff6472' if blocked else '#65f3a7',width=3,tags='brush-hover')
+
+    def toggle_footprints(self):
+        from scene_tools import formation_data
+        if self.footprints.get():self.formation_preview=formation_data(self.document,self.parent.settings)
+        self.draw_hover()
 
     def blink_hover(self):
         if not self.canvas.winfo_exists():return
@@ -501,6 +514,32 @@ class AdventureEditor:
     def layer_properties(self):
         if self.layer_choice.current()<1: return self.map_properties()
         self.overlay_dialog(self.layer_choice.current()-1)
+
+    def capture_building(self):
+        from scene_tools import capture_stamp
+        if not self.selection_rect:raise EditorError('Use Select to mark a building rectangle, including its entrance.')
+        f=Form(self,'Building stamp');f.field('name','Building')
+        def apply(v):capture_stamp(self.document,self.scene_index,self.selection_rect,v['name']);self.status.set('Building stamp saved with its entrance and event references.')
+        f.submit(apply)
+
+    def place_building(self):
+        from scene_tools import place_stamp
+        from event_workbench import editor_data
+        stamps=editor_data(self.document).get('building_stamps',[])
+        if not stamps:raise EditorError('Save a building selection as a stamp first.')
+        labels={s['name']+' | '+s['id']:s['id'] for s in stamps};f=Form(self,'Place building stamp')
+        f.field('stamp',next(iter(labels)),list(labels));f.field('x',self.cursor[0]//2);f.field('y',self.cursor[1]//2)
+        def apply(v):
+            index=place_stamp(self.document,self.scene_index,labels[v['stamp']],int(v['x']),int(v['y']));self.refresh();self.layer_choice.current(index);self.draw()
+        f.submit(apply)
+
+    def move_building(self):
+        from scene_tools import move_group
+        index=self.layer_choice.current()-1
+        if index<0:raise EditorError('Select a building overlay first.')
+        old=self.scene()['overlays'][index];f=Form(self,'Move building and contained markers');f.field('x',old['at'][0]);f.field('y',old['at'][1])
+        def apply(v):move_group(self.document,self.scene_index,index,int(v['x']),int(v['y']));self.refresh()
+        f.submit(apply)
 
     def overlay_dialog(self,index=None):
         old=self.scene()["overlays"][index] if index is not None else dict(at=[0,0],rows=[" "*4]*4)

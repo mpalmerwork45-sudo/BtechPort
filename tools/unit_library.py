@@ -75,9 +75,11 @@ def closure(document, identity, kind='Mechs'):
     if 'presentation' in document.manifest:
         presentation = json.loads(document.snapshot[document.manifest['presentation']])
     unit = person or content['mechs'][0]
+    editor=json.loads(document.metadata.get('EDITOR.json',b'{}'))
+    editing={'pixel_layers':{key:copy.deepcopy(value) for key,value in editor.get('pixel_layers',{}).items() if key in image_ids}}
     return dict(format=FORMAT, schema_version=1, entry_id=identity, revision=1, kind=kind,
                 name=unit.get('name', identity), definition=identity, content=content,
-                person=person, graphics=art, presentation=presentation,
+                person=person, graphics=art, presentation=presentation,editing=editing,
                 infantry_source=('chi:infantry' if person and document.manifest['requires'] != 'none'
                                  and not any(b['slot'] == 'npc' for b in art['bindings']) else 'package'),
                 provenance=dict(project=document.manifest['title'], documents=source))
@@ -136,6 +138,7 @@ def preview_files(bundle):
     presentation = copy.deepcopy(bundle.get('presentation')) or read_json(ROOT / 'examples/beacon-demo/presentation.json')
     files = {'project.json': manifest, 'content.json': content, 'adventure.json': adventure,
              'graphics.json': bundle['graphics'], 'presentation.json': presentation}
+    if bundle.get('editing'):files['EDITOR.json']=bundle['editing']
     for name, text in bundle['provenance'].get('documents', {}).items():
         if name in SOURCE_FILES and isinstance(text,str): files[name] = text
     return files
@@ -233,6 +236,7 @@ def import_units(document, bundles, policy='keep', infantry_art=False):
     content, adventure, art, manifest = map(copy.deepcopy,
         (document.content, document.adventure, document.art, document.manifest))
     imported = []
+    editor=json.loads(document.metadata.get('EDITOR.json',b'{}'))
     source_records = json.loads(document.metadata.get('LIBRARY-SOURCES.json', b'[]'))
     for original in bundles:
         bundle = copy.deepcopy(original)
@@ -292,6 +296,9 @@ def import_units(document, bundles, policy='keep', infantry_art=False):
         if found is not None and policy != 'variant': target[target.index(found)] = value
         else: target.append(value)
         imported.append((bundle['kind'], value['id']))
+        for image_id,layer_data in bundle.get('editing',{}).get('pixel_layers',{}).items():
+            resolved=mapping.get(image_id,image_id)
+            if any(i['id']==resolved for i in art['images']):editor.setdefault('pixel_layers',{})[resolved]=copy.deepcopy(layer_data)
         source_records = [s for s in source_records if s['definition'] != value['id']]
         source_records.append(dict(definition=value['id'], entry_id=bundle['entry_id'],
                                    revision=bundle['revision'], provenance=bundle['provenance']))
@@ -311,6 +318,7 @@ def import_units(document, bundles, policy='keep', infantry_art=False):
         run_validator(document.validator, directory)
     metadata = copy.deepcopy(document.metadata)
     metadata['LIBRARY-SOURCES.json'] = encoded(source_records)
+    if editor:metadata['EDITOR.json']=encoded(editor)
     document.replace_all(content, adventure, art, manifest, metadata)
     return imported
 

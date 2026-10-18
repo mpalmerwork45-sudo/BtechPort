@@ -21,6 +21,7 @@ class WorldEditor:
         controls=ttk.Frame(self.window,padding=(8,0,8,8));controls.pack(fill='x')
         self.planet=ttk.Combobox(controls,state='readonly',width=22);self.planet.pack(side='left',padx=(0,8));self.planet.bind('<<ComboboxSelected>>',lambda _:self.change_planet())
         ttk.Button(controls,text='Rename',command=lambda:self.guard(self.rename_world)).pack(side='left',padx=(0,8))
+        ttk.Button(controls,text='Generate...',command=lambda:self.guard(self.generate)).pack(side='left',padx=(0,8))
         self.tool=tk.StringVar(value='Jigsaw');ttk.Combobox(controls,textvariable=self.tool,state='readonly',values=['Jigsaw','Tile','Erase patch','Move city','Play here'],width=16).pack(side='left')
         self.zoom=tk.StringVar(value='4');z=ttk.Combobox(controls,textvariable=self.zoom,values=['1','2','4','8','16'],state='readonly',width=4);z.pack(side='left',padx=8);z.bind('<<ComboboxSelected>>',lambda _:self.draw())
         ttk.Label(controls,text='Tile brush: map palette',style='Muted.TLabel',wraplength=170).pack(side='left')
@@ -76,6 +77,16 @@ class WorldEditor:
         def apply(v):
             if not v['name'] or len(v['name'])>63:raise EditorError('Use a planet name of 1-63 characters.')
             a=copy.deepcopy(self.document.adventure);get_world(a,identity)['name']=v['name'];self.owner.commit(a)
+        f.submit(apply)
+    def generate(self):
+        from event_workbench import editor_data
+        from scene_tools import generate_world
+        world=self.current_world();saved=editor_data(self.document).get('world_generation',{}).get(world['id'],{})
+        f=Form(self,'Generate world from weighted jigsaws');f.field('seed',saved.get('seed',1));f.field('edges','Yes' if saved.get('match_edges',True) else 'No',['Yes','No'],label='Match terrain at jigsaw edges')
+        for j in self.adventure['jigsaws']:f.field(j['id'],saved.get('weights',{}).get(j['id'],1),label=j['name']+' weight (0 excludes)')
+        def apply(v):
+            weights={j['id']:int(v[j['id']]) for j in self.adventure['jigsaws'] if int(v[j['id']])}
+            generate_world(self.document,world['id'],int(v['seed']),weights,v['edges']=='Yes');self.owner.refresh()
         f.submit(apply)
     def selected_jigsaw(self):
         selected=self.listing.selection()

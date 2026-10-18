@@ -8,6 +8,9 @@ from editor_model import EditorError
 from art_editing import (new_image, clone_image, import_image, original_sprite,
                          display_rows, pixels, brush, bind, transform, editable_tile, SLOTS, DEFAULT_COLORS)
 from world_editing import graphic_tile
+from pixel_tools import begin_layers,target,flatten,export_layers,add_layer,selected_pixels,paste_selection,resize_canvas,export_sheet
+from event_workbench import editor_data
+from editor_model import encoded
 
 
 def photo(parent, image, frame=0, zoom=1):
@@ -78,14 +81,14 @@ class GraphicsEditor:
         self.preview_image = photo(self.window, im, zoom=z)
         self.preview.create_image(10,10, image=self.preview_image, anchor='nw')
         self.info.set(f"{im['name']}\n{im['id']}\n{im['width']} x {im['height']} | {len(im['frames'])} frame(s) | {im['kind']}")
-    def put(self, im, old=None):
+    def put(self, im, old=None,metadata=None):
         art = copy.deepcopy(self.document.art)
         if old:
             current = self.current()
             if current != old: raise EditorError('This image changed while its pixel editor was open. Reopen it before applying.')
             art['images'][art['images'].index(current)] = im
         else: art['images'].append(im)
-        self.selected = im['id']; self.document.replace_art(art); self.owner.refresh()
+        self.selected = im['id']; self.document.replace_art(art,metadata=metadata); self.owner.refresh()
         parent=self.owner.parent
         if parent.current and parent.collection in ('mechs','people'):parent.stop_sprite();parent.start_sprite()
     def new(self):
@@ -166,19 +169,22 @@ class GraphicsEditor:
 class PixelEditor:
     """Stage an image independently; Apply produces one shared undo entry."""
     def __init__(self, owner, image):
-        self.owner=owner; self.original=copy.deepcopy(image); self.image=copy.deepcopy(image)
+        self.owner=owner; self.original=copy.deepcopy(image)
+        self.image=begin_layers(image,editor_data(owner.document).get('pixel_layers',{}).get(image['id']))
+        self.original_layers=copy.deepcopy(self.image);self.pixel_selection=None;self.pixel_clipboard=None
         self.window=tk.Toplevel(owner.window); self.window.title('Pixel editor - '+image['name']); self.window.geometry('920x730')
         self.history=[]; self.future=[]; self.before=None; self.last=None; self.playing=False
         bar=ttk.Frame(self.window,padding=8); bar.pack(fill='x')
-        self.tool=tk.StringVar(value='Pencil'); ttk.Combobox(bar,textvariable=self.tool,values=['Pencil','Line','Rectangle','Fill','Erase','Eyedropper'],state='readonly',width=12).pack(side='left')
+        self.tool=tk.StringVar(value='Pencil'); ttk.Combobox(bar,textvariable=self.tool,values=['Pencil','Line','Rectangle','Fill','Erase','Eyedropper','Select','Paste selection'],state='readonly',width=15).pack(side='left')
         self.color=tk.StringVar(value='ffffffff'); ttk.Entry(bar,textvariable=self.color,width=10).pack(side='left',padx=5)
         ttk.Button(bar,text='Color...',command=self.choose_color).pack(side='left')
         self.zoom=tk.StringVar(value=str(min(16,max(2,512//max(image['width'],image['height'])))))
         z=ttk.Combobox(bar,textvariable=self.zoom,values=['1','2','4','8','16','24','32'],width=4,state='readonly'); z.pack(side='left',padx=8);z.bind('<<ComboboxSelected>>',lambda _:self.draw())
         for title,cb in [('Undo',self.undo),('Redo',self.redo),('Apply',self.apply)]:ttk.Button(bar,text=title,command=lambda f=cb:self.owner.guard(f)).pack(side='left',padx=3)
         colors=ttk.Frame(self.window,padding=(8,0)); colors.pack(fill='x')
-        for c in DEFAULT_COLORS:
-            tk.Button(colors,background='#'+c,width=2,command=lambda value=c:self.color.set(value+'ff')).pack(side='left')
+        swatches=tk.Canvas(colors,width=384,height=24,highlightthickness=0);swatches.pack(side='left')
+        for i,c in enumerate(DEFAULT_COLORS):swatches.create_rectangle(i*24,0,i*24+23,23,fill='#'+c,outline='#999999')
+        swatches.bind('<Button-1>',lambda e:self.color.set(DEFAULT_COLORS[max(0,min(15,e.x//24))]+'ff'))
         self.build_frames()
         transforms=ttk.Frame(self.window,padding=(8,0,8,8));transforms.pack(fill='x')
         for title in ('Flip X','Flip Y'):
@@ -192,6 +198,15 @@ class PixelEditor:
         ttk.Checkbutton(transforms,text='Wrap nudged pixels',variable=self.wrap).pack(side='left')
         self.grid=tk.BooleanVar(value=True)
         ttk.Checkbutton(transforms,text='Grid',variable=self.grid,command=self.draw).pack(side='left',padx=8)
+        extra=ttk.Menubutton(transforms,text='Selection / canvas');em=tk.Menu(extra,tearoff=False)
+        for title,method in [('Copy selection',self.copy_pixels),('Cut selection',lambda:self.copy_pixels(True)),('Crop to selection',self.crop),('Resize canvas',self.resize_dialog),('Export PNG sheet',self.export_dialog)]:em.add_command(label=title,command=lambda f=method:self.owner.guard(f))
+        extra.configure(menu=em);extra.pack(side='left',padx=6)
+        # Keep the extra controls in the palette row; the drawing canvas
+        # retains its useful size on a 1024x768 desktop.
+        ttk.Label(colors,text=' Layer').pack(side='left');self.layer=ttk.Combobox(colors,state='readonly',width=16);self.layer.pack(side='left',padx=4);self.layer.bind('<<ComboboxSelected>>',lambda _:self.change_layer())
+        layers_button=ttk.Menubutton(colors,text='Layers');layers_menu=tk.Menu(layers_button,tearoff=False)
+        for title,method in [('New layer',self.new_layer),('Rename',self.rename_layer),('Show / hide',self.toggle_layer),('Raise',lambda:self.reorder_layer(1)),('Lower',lambda:self.reorder_layer(-1)),('Delete',self.delete_layer)]:layers_menu.add_command(label=title,command=lambda f=method:self.owner.guard(f))
+        layers_button.configure(menu=layers_menu);layers_button.pack(side='left',padx=4)
         view=ttk.Frame(self.window);view.pack(fill='both',expand=True,padx=8,pady=(0,8));view.columnconfigure(0,weight=1);view.rowconfigure(0,weight=1)
         self.canvas=tk.Canvas(view,highlightthickness=0,background='#d6d6d6')
         sx=ttk.Scrollbar(view,orient='horizontal',command=self.canvas.xview);sy=ttk.Scrollbar(view,command=self.canvas.yview)
@@ -200,7 +215,8 @@ class PixelEditor:
         self.canvas.bind('<B1-Motion>',lambda e:self.owner.guard(lambda:self.stroke(e,False)))
         self.canvas.bind('<ButtonRelease-1>',lambda _:self.finish())
         self.window.bind('<Control-z>',lambda _:self.undo());self.window.bind('<Control-y>',lambda _:self.redo())
-        self.window.protocol('WM_DELETE_WINDOW',self.close);self.refresh_frames();self.draw()
+        self.canvas.bind('<Control-c>',lambda _:self.owner.guard(self.copy_pixels));self.canvas.bind('<Control-v>',lambda _:self.tool.set('Paste selection'))
+        self.window.protocol('WM_DELETE_WINDOW',self.close);self.refresh_frames();self.refresh_layers();self.draw()
     def build_frames(self):
         frames=ttk.Frame(self.window,padding=8);frames.pack(fill='x')
         ttk.Label(frames,text='Frame').pack(side='left');self.frame=ttk.Combobox(frames,state='readonly',width=5);self.frame.pack(side='left',padx=6)
@@ -210,12 +226,18 @@ class PixelEditor:
         current=max(0,self.frame.current());self.frame.configure(values=list(range(1,len(self.image['frames'])+1)));self.frame.current(min(current,len(self.image['frames'])-1))
     def draw(self):
         if not self.window.winfo_exists():return
+        # Layered animation undo can otherwise retain hundreds of megabytes.
+        # Bound history by pixels as well as stroke count on modest machines.
+        def size(im):return im['width']*im['height']*8*len(im['frames'])*(1+len(im.get('_layers',[])))
+        while len(self.history)>1 and sum(size(im) for im in self.history)>32*1024*1024:self.history.pop(0)
         self.canvas.delete('all');z=int(self.zoom.get());self.preview=self.edit_photo(z)
         self.canvas.create_image(0,0,image=self.preview,anchor='nw');w,h=self.image['width']*z,self.image['height']*z
         self.canvas.configure(scrollregion=(0,0,w,h))
         if z>=8 and self.grid.get():
             for x in range(0,w+1,z):self.canvas.create_line(x,0,x,h,fill='#888888')
             for y in range(0,h+1,z):self.canvas.create_line(0,y,w,y,fill='#888888')
+        if self.pixel_selection:
+            x0,y0,x1,y1=self.pixel_selection;self.canvas.create_rectangle(x0*z,y0*z,(x1+1)*z,(y1+1)*z,outline='#20a4ef',width=2)
     def edit_photo(self, zoom):
         return photo(self.window,self.image,max(0,self.frame.current()),zoom)
     def choose_color(self):
@@ -225,32 +247,49 @@ class PixelEditor:
         self.playing=False;z=int(self.zoom.get());p=(int(self.canvas.canvasx(e.x)//z),int(self.canvas.canvasy(e.y)//z))
         if not (0<=p[0]<self.image['width'] and 0<=p[1]<self.image['height']):return
         if self.tool.get()=='Eyedropper':self.color.set(pixels(self.image,self.frame.current())[p[1]][p[0]]);return
+        if self.tool.get()=='Select':
+            if start:self.first=p
+            x0,x1=sorted((self.first[0],p[0]));y0,y1=sorted((self.first[1],p[1]));self.pixel_selection=(x0,y0,x1,y1);self.draw();return
+        if self.tool.get()=='Paste selection':
+            if start and self.pixel_clipboard:
+                self.before=copy.deepcopy(self.image);paste_selection(self.image,self.frame.current(),self.pixel_clipboard,*p);self.finish();self.draw()
+            return
         if start:self.before=copy.deepcopy(self.image);self.first=self.last=p
         if self.before is None:return
         shape=self.tool.get() in ('Line','Rectangle')
         if shape:self.image=copy.deepcopy(self.before)
-        brush(self.image,self.frame.current(),self.first if shape else self.last,p,'00000000' if self.tool.get()=='Erase' else self.color.get().lower(),self.tool.get())
+        brush(target(self.image),self.frame.current(),self.first if shape else self.last,p,'00000000' if self.tool.get()=='Erase' else self.color.get().lower(),self.tool.get())
+        flatten(self.image,self.frame.current())
         self.last=p;self.draw()
     def finish(self):
         if self.before is not None and self.before!=self.image:self.history.append(self.before);self.history=self.history[-40:];self.future=[]
         self.before=None
     def undo(self):
         self.playing=False;self.finish()
-        if self.history:self.future.append(self.image);self.image=self.history.pop();self.refresh_frames();self.draw()
+        if self.history:self.future.append(self.image);self.image=self.history.pop();self.refresh_frames();self.refresh_layers();self.draw()
     def redo(self):
         self.playing=False
-        if self.future:self.history.append(self.image);self.image=self.future.pop();self.refresh_frames();self.draw()
+        if self.future:self.history.append(self.image);self.image=self.future.pop();self.refresh_frames();self.refresh_layers();self.draw()
     def transform(self, operation):
         self.playing=False;self.finish();candidate=copy.deepcopy(self.image)
-        transform(candidate,operation,self.frame.current(),self.all_frames.get(),self.wrap.get())
+        if operation.startswith('Rotate'):
+            for layer in candidate['_layers']:
+                im=dict(candidate,frames=layer['frames']);transform(im,operation,self.frame.current(),self.all_frames.get(),self.wrap.get())
+            candidate['width'],candidate['height']=im['width'],im['height']
+        else:transform(target(candidate),operation,self.frame.current(),self.all_frames.get(),self.wrap.get())
+        flatten(candidate)
         if candidate!=self.image:
             self.history.append(self.image);self.history=self.history[-40:];self.future=[];self.image=candidate;self.draw()
     def add_frame(self):
         if len(self.image['frames'])==32:raise EditorError('An image can have at most 32 frames.')
-        self.history.append(copy.deepcopy(self.image));self.future=[];self.image['frames'].append(copy.deepcopy(self.image['frames'][self.frame.current()]));self.refresh_frames();self.frame.current(len(self.image['frames'])-1);self.draw()
+        self.history.append(copy.deepcopy(self.image));self.future=[]
+        for layer in self.image['_layers']:layer['frames'].append(copy.deepcopy(layer['frames'][self.frame.current()]))
+        self.image['frames'].append(copy.deepcopy(self.image['frames'][self.frame.current()]));flatten(self.image);self.refresh_frames();self.frame.current(len(self.image['frames'])-1);self.draw()
     def delete_frame(self):
         if len(self.image['frames'])==1:raise EditorError('Keep at least one frame.')
-        self.history.append(copy.deepcopy(self.image));self.future=[];self.image['frames'].pop(self.frame.current());self.refresh_frames();self.draw()
+        self.history.append(copy.deepcopy(self.image));self.future=[]
+        for layer in self.image['_layers']:layer['frames'].pop(self.frame.current())
+        self.image['frames'].pop(self.frame.current());self.refresh_frames();self.draw()
     def play(self):
         self.playing=not self.playing
         if self.playing:self.animate()
@@ -258,7 +297,52 @@ class PixelEditor:
         if not self.window.winfo_exists() or not self.playing:return
         self.frame.current((self.frame.current()+1)%len(self.image['frames']));self.draw();self.window.after(120,self.animate)
     def apply(self):
-        self.finish();self.owner.selected=self.original['id'];self.owner.put(self.image,self.original);self.window.destroy()
+        self.finish();self.owner.selected=self.original['id'];clean,layers=export_layers(self.image)
+        data=editor_data(self.owner.document);data.setdefault('pixel_layers',{})[clean['id']]=layers
+        metadata=dict(self.owner.document.metadata);metadata['EDITOR.json']=encoded(data)
+        self.owner.put(clean,self.original,metadata);self.window.destroy()
     def close(self):
-        if self.image!=self.original and not messagebox.askyesno('Discard pixel edits?','Close without applying these pixel edits?',parent=self.window):return
+        if self.image!=self.original_layers and not messagebox.askyesno('Discard pixel edits?','Close without applying these pixel edits?',parent=self.window):return
         self.window.destroy()
+
+    def refresh_layers(self):
+        self.layer.configure(values=[('' if l['visible'] else '[hidden] ')+l['name'] for l in self.image['_layers']]);self.layer.current(self.image['_layer'])
+    def change_layer(self):self.finish();self.image['_layer']=self.layer.current();self.draw()
+    def layer_edit(self,operation):
+        self.finish();self.before=copy.deepcopy(self.image);operation();flatten(self.image);self.finish();self.refresh_layers();self.draw()
+    def new_layer(self):self.layer_edit(lambda:add_layer(self.image,'Layer '+str(len(self.image['_layers'])+1)))
+    def rename_layer(self):
+        f=Form(self.owner,'Layer name');f.field('name',self.image['_layers'][self.image['_layer']]['name'])
+        def apply(v):
+            if not v['name'] or len(v['name'])>48:raise EditorError('Layer names use 1..48 characters.')
+            self.layer_edit(lambda:self.image['_layers'][self.image['_layer']].update(name=v['name']))
+        f.submit(apply)
+    def toggle_layer(self):
+        def change():
+            layer=self.image['_layers'][self.image['_layer']];layer['visible']=not layer['visible']
+        self.layer_edit(change)
+    def reorder_layer(self,delta):
+        index=self.image['_layer'];new=index+delta
+        if 0<=new<len(self.image['_layers']):
+            def change():
+                layers=self.image['_layers'];layers[index],layers[new]=layers[new],layers[index];self.image['_layer']=new
+            self.layer_edit(change)
+    def delete_layer(self):
+        if len(self.image['_layers'])==1:raise EditorError('Keep at least one layer.')
+        def change():self.image['_layers'].pop(self.image['_layer']);self.image['_layer']=max(0,self.image['_layer']-1)
+        self.layer_edit(change)
+    def copy_pixels(self,cut=False):
+        if not self.pixel_selection:raise EditorError('Select a rectangle of pixels first.')
+        self.pixel_clipboard=selected_pixels(self.image,self.frame.current(),self.pixel_selection)
+        if cut:
+            x0,y0,x1,y1=self.pixel_selection
+            self.layer_edit(lambda:brush(target(self.image),self.frame.current(),(x0,y0),(x1,y1),'00000000','Rectangle'))
+    def crop(self):
+        if not self.pixel_selection:raise EditorError('Select a rectangle to crop first.')
+        x0,y0,x1,y1=self.pixel_selection;self.layer_edit(lambda:resize_canvas(self.image,x1-x0+1,y1-y0+1,x0,y0));self.pixel_selection=None;self.draw()
+    def resize_dialog(self):
+        f=Form(self.owner,'Resize canvas (crop / pad, all layers and frames)');f.field('width',self.image['width']);f.field('height',self.image['height']);f.field('x',0,label='Source left');f.field('y',0,label='Source top')
+        f.submit(lambda v:self.layer_edit(lambda:resize_canvas(self.image,int(v['width']),int(v['height']),int(v['x']),int(v['y']))))
+    def export_dialog(self):
+        path=filedialog.asksaveasfilename(parent=self.window,title='Export sprite sheet',defaultextension='.png',filetypes=[('PNG','*.png')])
+        if path:export_sheet(self.image,path,1 if len(self.image['frames'])%4 else 4)

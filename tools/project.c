@@ -168,6 +168,17 @@ static int original_units(const char *output,const char *cache)
 
 int main(int argc,char **argv)
 {
+    if (argc==4 && !strcmp(argv[1],"formation") && !strcmp(argv[2],"--combat-data")) {
+        BtpCombatData *c=calloc(1,sizeof *c);BtpError error={0};int ok=c && btp_combat_data_load(argv[3],c,&error);
+        if (ok) {
+            fputs("{\"people\":[",stdout);
+            for (unsigned i=0;i<8;++i) printf("%s[%d,%d]",i ? "," : "",c->formation_x[i],c->formation_y[i]);
+            fputs("],\"mechs\":[",stdout);
+            for (unsigned i=0;i<4;++i) printf("%s[%d,%d]",i ? "," : "",c->mech_formation_x[i],c->mech_formation_y[i]);
+            puts("]}");
+        } else fprintf(stderr,"%s\n",c ? error.text : "Cannot allocate formation data");
+        free(c);return ok ? 0 : 1;
+    }
     if(argc==5 && !strcmp(argv[1],"export-original-units") && !strcmp(argv[3],"--combat-data"))
         return original_units(argv[2],argv[4]) ? 0 : 1;
     if (argc>=2 && !strcmp(argv[1],"source-sprite")) {

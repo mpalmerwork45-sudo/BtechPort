@@ -48,4 +48,7 @@ from **Vehicles** (one scrolling list). Selling accepts either type.
 - **VERIFIED (Linux):** [event graph, journal and checkpoints](EVENT_WORKBENCH.md)
   pass engine/model and real Tk checks. Service/event forms use the same workflow.
   The editor/launcher display name is **BattleTech Construction Kit**.
-- Map/art, animation/unit and delivery stages remain in progress.
+- **VERIFIED (Linux):** [map/art tools](CONSTRUCTION_KIT_ART_TOOLS.md): building
+  stamps, grouped markers, starting-formation footprints, deterministic world
+  generation, pixel selections/layers/crop and PNG sheet export.
+- Animation/unit and delivery stages remain in progress.
