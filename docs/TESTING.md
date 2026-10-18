@@ -1,5 +1,20 @@
 # Build, verification and original oracle — 2026-10-18
 
+## Editor UI4 — 2026-10-18
+
+**VERIFIED (Linux private display / real shared validator):**
+`python3 tools/native_smoke.py --editor-usability-only` passes the existing
+ownership/workspace journeys and a new fresh-session recovery journey. Shared
+artwork Undo/Redo restores layers; recovery restores invalid mass and animation
+fields, unfinished dialogue and layered art without altering package files.
+Correcting the fields then saves and retires the recovery record.
+
+`python3 -m unittest discover -s tests -p test_editor_safety.py` passes three
+data-integrity checks: grouped history/rollback, referenced-weapon replacement,
+and recovery refusal after an external baseline change. Existing editor-model
+tests also pass (7). Native Windows GUI behaviour is still **UNKNOWN**.
+
+
 ## Editor usability UI1
 
 `python3 tools/native_smoke.py --editor-usability-only` passes real Tk checks for

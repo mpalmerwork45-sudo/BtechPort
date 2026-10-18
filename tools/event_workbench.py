@@ -5,6 +5,7 @@ import copy
 import json
 import tkinter as tk
 from tkinter import ttk
+from editor_recovery import recoverable_forms
 from editor_model import EditorError,encoded
 from world_editing import identity
 
@@ -108,6 +109,7 @@ class EventProperties:
                         child.grid_configure(row=row*2+min(column,1),column=0,columnspan=1,sticky='ew')
 
 
+@recoverable_forms
 class EventGraph:
     def __init__(self,owner):
         self.owner=owner;self.document=owner.document;self.selected=owner.event_id;self.drag=None;self.connection=None
@@ -236,6 +238,7 @@ class EventGraph:
         from playtest_workbench import PlaytestWindow
         return open_view(self.owner,'playtest',lambda:PlaytestWindow(self.owner))
 
+@recoverable_forms
 class ObjectiveEditor:
     def __init__(self,owner):
         self.owner=owner;self.document=owner.document

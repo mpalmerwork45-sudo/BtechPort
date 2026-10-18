@@ -132,11 +132,19 @@ class Workspace:
         self.app=RosterEditor(pane,validator,self.state_dir)
         pane.controller=self.app;pane.scope=self.app._editor_scope
         self.attach_scope(self.app._editor_scope)
+        from editor_recovery import Recovery
+        self.recovery=Recovery(self)
         self.install_actions();self.show_welcome();self.restore_layout()
         window.protocol('WM_DELETE_WINDOW',self.close)
         import traceback
         window.report_callback_exception=lambda kind,error,tb:report(self.active_owner(),error,''.join(traceback.format_exception(kind,error,tb)))
         self.timer=window.after(250,self.poll)
+        window.bind('<Destroy>',self.destroyed,add='+')
+
+    def destroyed(self,event):
+        if event.widget is self.window:
+            self.closing=True
+            if self.timer:self.window.after_cancel(self.timer);self.timer=None
 
     def attach_scope(self,scope):
         scope.workspace=self;scope.on_problem=lambda problem:self.problem(scope,problem)
@@ -247,6 +255,7 @@ class Workspace:
         self.action('Save active scope',lambda:self.active_scope().owner.save(),groups['File'],'Ctrl+S')
         self.action('Save project',self.app.save,groups['File'])
         self.action('Save all',self.save_all,groups['File'])
+        self.action('Recovery drafts',self.recovery.browse,groups['File'])
         self.action('Export game',self.app.export_project,groups['File'])
         self.action('Close tab',self.close_tab,groups['File'],'Ctrl+W')
         self.action('Close editor',self.close,groups['File'])
@@ -263,6 +272,7 @@ class Workspace:
         self.action('New definition',lambda:self.active_scope().owner.new_definition(),groups['Project'])
         self.action('Duplicate definition',lambda:self.active_scope().owner.duplicate(),groups['Project'])
         self.action('Delete definition',lambda:self.active_scope().owner.delete(),groups['Project'])
+        self.action('Find usages',self.find_usages,groups['Project'])
         from delivery_gui import report as assets
         from save_migration import dialog
         self.action('Assets and dependencies',lambda:assets(self.app),groups['Project'])
@@ -290,9 +300,8 @@ class Workspace:
         return 'break'
 
     def edit_history(self,redo):
-        owner=self.active_owner()
-        callback=getattr(owner,'redo' if redo else 'undo',None)
-        (callback or getattr(self.active_scope().owner,'redo' if redo else 'undo'))()
+        from editor_history import history
+        history(self,redo)
 
     def close_tab(self):
         view=self.current_view()
@@ -301,6 +310,16 @@ class Workspace:
             self.show_welcome();return
         if view.close_callback:view.close_callback()
         elif not view.scope or view.scope.confirm_view(view):view.destroy()
+
+    def close_scope(self,scope):
+        if not scope.confirm_close():return
+        self.recovery.clear(scope)
+        # Library sprite tabs are notebook siblings, not children of the unit
+        # tab. Retire them before its temporary package is cleaned up.
+        for pane in list(self.views.values()):
+            if pane.scope is scope and pane.controller is not scope.owner:pane.destroy()
+        scope.owner.window.destroy()
+        if scope in self.scopes:self.scopes.remove(scope)
 
     def save_all(self):
         failures=[]
@@ -312,6 +331,15 @@ class Workspace:
         return not failures
 
     def map_view(self):self.app.edit_adventure();return self.app.map_editor
+    def find_usages(self):
+        from editor_dependencies import dialog
+        owner=self.active_owner();pane=self.current_view();identity=None
+        if pane and pane.key[1] in ('pixels','jigsaw'):identity=pane.key[2]
+        elif pane and pane.key[1] in ('graphics','events'):identity=owner.selected
+        elif pane and pane.key[1]=='maps':identity=owner.scene()['id']
+        else:identity=getattr(owner,'current',None)
+        if isinstance(identity,str):dialog(owner,identity)
+        else:self.status.set('Select a unit, map, event or image to find its usages.')
     def open_map(self,identity=None):
         owner=self.map_view()
         if identity:
@@ -478,6 +506,7 @@ class Workspace:
         form.submit(create);return form
 
     def project_changed(self):
+        self.window.after_idle(lambda:self.recovery.offer(self.app._editor_scope))
         path=str(self.app.document.root)
         self.layout['recent']=[path]+[p for p in self.layout.get('recent',[]) if p!=path][:7]
         self.refresh_tree();self.app.window.lift()
@@ -488,6 +517,7 @@ class Workspace:
         # Notebook pages are siblings, so replacing a project must retire all
         # its views explicitly rather than rely on a Toplevel's child teardown.
         self.persist_layout()
+        self.recovery.clear(scope)
         for view in list(self.views.values()):
             if view.scope is scope and view.controller is not scope.owner and view.key[1]!='library':view.destroy()
         scope.live();self.last_tree_selection=None
@@ -586,6 +616,13 @@ class Workspace:
 
     def poll(self):
         if self.closing:return
+        self.recovery.tick()
+        from editor_history import refresh_scope
+        for current in self.scopes:
+            if not current.owner.window.winfo_exists() or not current.document:continue
+            revision=(id(current.document),current.document.revision)
+            if getattr(current,'seen_revision',None)!=revision:
+                current.seen_revision=revision;refresh_scope(self,current)
         scope=self.app._editor_scope
         signature=(id(self.app.document),len(self.app.document.undo_stack) if self.app.document else 0,id(self.app.document.content) if self.app.document else 0,id(self.app.document.adventure) if self.app.document else 0)
         if signature!=self.last_signature:self.last_signature=signature;self.refresh_tree();self.update_inspector()
@@ -600,6 +637,8 @@ class Workspace:
             if answer is None:return
             if answer and not self.save_all():return
         self.persist_layout();self.closing=True
+        for scope in self.scopes:
+            if scope.owner.window.winfo_exists() and scope.document:self.recovery.clear(scope)
         if self.timer:self.window.after_cancel(self.timer)
         self.window.destroy()
 

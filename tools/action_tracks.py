@@ -35,6 +35,7 @@ def edit_track(editor):
     action=editor.view.get().lower()
     if action not in ACTIONS:action='walk'
     f=Form(editor,'Animation action')
+    f.recovery_action=dict(method='animation_action',args=[])
     f.field('action',action,ACTIONS)
     f.field('layout','Shared',['Shared','Eight directions'])
     f.field('sound',0)

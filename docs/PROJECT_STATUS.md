@@ -8,7 +8,10 @@ UI2 provides the default tabbed workspace, explorer, inspector, Problems panel,
 command search and embedded authoring views. UI3 connects units to their artwork,
 adds named/searchable pickers, puts event fields in the inspector and provides
 graph filtering/arrangement, a canvas-first sprite layout and navigation state.
-Focused Linux GUI/model checks pass; full recovery and polish are in progress.
+UI4 adds shared labelled history, revision refresh, private draft recovery and
+usage-aware deletion/replacement. Focused Linux GUI/model checks pass, including
+a fresh-session recovery of invalid fields, layers and dialogue. Background jobs,
+polish and the final integration/platform checks are in progress in UI5.
 
 **BattleTech Construction Kit** is the editor/launcher name. The authorized
 [five editor milestones](EDITOR_COMPLETION_MILESTONES.md) are implemented with

@@ -16,6 +16,7 @@ import tkinter as tk
 from tkinter import font as tkfont
 from tkinter import ttk, filedialog, messagebox, simpledialog
 
+from editor_recovery import recoverable_forms
 from editor_model import EditorError, ProjectDocument, create_project
 from editor_session import EditorScope, FieldError, guard, report
 
@@ -84,6 +85,7 @@ def configure_editor_style(window):
     return palette
 
 
+@recoverable_forms
 class RosterEditor:
     def __init__(self, window: tk.Tk, validator: Path, state_dir: Path, library_context=None):
         self.window, self.validator, self.state_dir = window, validator, state_dir
@@ -757,6 +759,9 @@ class RosterEditor:
 
     def delete(self):
         if self.document and self.current:
+            if hasattr(self._editor_scope,'workspace'):
+                from editor_dependencies import dialog
+                return dialog(self,self.current,delete=True)
             self.apply_form()
             if self.collection=='people':
                 a=copy.deepcopy(self.document.adventure);a['people']=[p for p in a['people'] if p['id']!=self.current]
@@ -893,6 +898,7 @@ class RosterEditor:
     def close(self):
         workspace=getattr(self._editor_scope,'workspace',None)
         if workspace and self is workspace.app:return workspace.close()
+        if workspace:return workspace.close_scope(self._editor_scope)
         def finish():
             library=getattr(self,'unit_library_window',None)
             if library and library.window.winfo_exists():

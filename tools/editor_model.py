@@ -15,6 +15,7 @@ from pathlib import Path
 import shutil
 import subprocess
 import tempfile
+from contextlib import contextmanager
 
 
 class EditorError(Exception):
@@ -84,6 +85,45 @@ class ProjectDocument:
         self.saved_metadata = copy.deepcopy(self.metadata)
         self.undo_stack: list[dict] = []
         self.redo_stack: list[dict] = []
+        self.undo_labels, self.redo_labels = [], []
+        self.revision = 0
+        self._command_depth = 0
+        self._command_label = None
+
+    @contextmanager
+    def command(self, label=None):
+        """Group one user action, including nested forms, into one undo step.
+
+        No Tk objects or listeners live on the document: worker snapshots and
+        recovery can safely copy it. Failed actions restore the in-memory state.
+        """
+        if self._command_depth:
+            yield
+            return
+        before = (self.content, self.adventure, self.art, self.manifest, self.metadata)
+        history = (list(self.undo_stack), list(self.redo_stack), list(self.undo_labels), list(self.redo_labels))
+        revision = self.revision
+        self._command_depth, self._command_label = 1, label
+        try:
+            yield
+        except Exception:
+            self.content, self.adventure, self.art, self.manifest, self.metadata = before
+            self.undo_stack, self.redo_stack, self.undo_labels, self.redo_labels = history
+            self.revision = revision
+            raise
+        finally:
+            self._command_depth, self._command_label = 0, None
+
+    def edit_label(self, content, adventure, art, manifest, metadata):
+        if art != self.art: return 'Edit artwork'
+        if content != self.content: return 'Edit unit definitions'
+        if adventure != self.adventure:
+            for key, label in [('maps','Edit map'), ('world','Edit world'), ('worlds','Edit planet'),
+                               ('jigsaws','Edit jigsaw'), ('events','Edit event'), ('people','Edit character'),
+                               ('shops','Edit shop'), ('start','Edit starting party')]:
+                if (adventure or {}).get(key) != (self.adventure or {}).get(key): return label
+            return 'Edit adventure'
+        return 'Edit authoring metadata' if metadata != self.metadata else 'Edit package'
 
     @property
     def dirty(self) -> bool:
@@ -111,9 +151,16 @@ class ProjectDocument:
     def replace_all(self, content, adventure, art, manifest, metadata=None):
         metadata = self.metadata if metadata is None else metadata
         if (content, adventure, art, manifest, metadata) != (self.content, self.adventure, self.art, self.manifest, self.metadata):
-            self.undo_stack.append(copy.deepcopy((self.content, self.adventure, self.art, self.manifest, self.metadata)))
-            self.undo_stack = self.undo_stack[-40:]
+            label = self._command_label or self.edit_label(content, adventure, art, manifest, metadata)
+            # Only the first replacement in a command records the previous state.
+            if self._command_depth != 2:
+                self.undo_stack.append(copy.deepcopy((self.content, self.adventure, self.art, self.manifest, self.metadata)))
+                self.undo_stack = self.undo_stack[-40:]
+                self.undo_labels.append(label); self.undo_labels = self.undo_labels[-40:]
+            if self._command_depth: self._command_depth = 2
             self.redo_stack.clear()
+            self.redo_labels.clear()
+            self.revision += 1
             self.content = copy.deepcopy(content)
             self.adventure = copy.deepcopy(adventure)
             self.art = copy.deepcopy(art)
@@ -122,13 +169,17 @@ class ProjectDocument:
 
     def undo(self) -> None:
         if self.undo_stack:
+            self.redo_labels.append(self.undo_labels.pop() if self.undo_labels else 'Edit')
             self.redo_stack.append((self.content, self.adventure, self.art, self.manifest, self.metadata))
             self.content, self.adventure, self.art, self.manifest, self.metadata = self.undo_stack.pop()
+            self.revision += 1
 
     def redo(self) -> None:
         if self.redo_stack:
+            self.undo_labels.append(self.redo_labels.pop() if self.redo_labels else 'Edit')
             self.undo_stack.append((self.content, self.adventure, self.art, self.manifest, self.metadata))
             self.content, self.adventure, self.art, self.manifest, self.metadata = self.redo_stack.pop()
+            self.revision += 1
 
     def files(self) -> dict[str, bytes]:
         files = dict(self.snapshot)

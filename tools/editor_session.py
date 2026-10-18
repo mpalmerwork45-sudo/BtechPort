@@ -7,6 +7,7 @@ from __future__ import annotations
 import copy
 from dataclasses import dataclass
 import traceback
+from contextlib import nullcontext
 from tkinter import messagebox
 from editor_model import EditorError
 
@@ -69,7 +70,14 @@ def report(owner, error, details=''):
 
 def guard(owner, operation):
     try:
-        return operation()
+        scope = scope_of(owner)
+        document = scope.document if scope else None
+        with document.command() if document else nullcontext():
+            result = operation()
+            # A completed art command publishes to the shared history. Open
+            # forms and unfinished pointer gestures remain recoverable drafts.
+            publish_art(owner)
+            return result
     except Exception as error:
         report(owner, error, traceback.format_exc())
         return None
@@ -97,6 +105,7 @@ class EditorScope:
         self.on_problem = None
         self.failure_owner = None
         self.collecting = False
+        self.applying = set()
 
     @property
     def document(self):
@@ -121,22 +130,32 @@ class EditorScope:
         after all drafts and the requested validation/save have succeeded.
         """
         if self.collecting:
+            if only and id(only) not in self.applying:
+                self.applying.add(id(only))
+                try: only.apply()
+                finally: self.applying.remove(id(only))
+                # The outer transaction accepts every changed art ancestor.
+                if only not in self.applied: self.applied.append(only)
             return operation()
         document = self.document
         before = copy.deepcopy(document.__dict__) if document else None
         drafts = self.live()
         states = [(d, copy.deepcopy(d.capture())) for d in drafts]
         selected = [only] if only else sorted(drafts if subset is None else subset, key=lambda d: (d.priority, drafts.index(d)), reverse=True)
-        applied = []
+        applied = self.applied = []
         self.collecting = True
         try:
-            for draft in selected:
-                if draft.alive() and (only or draft.pending()):
-                    self.failure_owner = draft.view
-                    draft.apply()
-                    applied.append(draft)
-            self.failure_owner = self.owner
-            result = operation()
+            with document.command('Apply edits') if document else nullcontext():
+                for draft in selected:
+                    if draft.alive() and (only or draft.pending()):
+                        self.failure_owner = draft.view
+                        self.applying.add(id(draft))
+                        try: draft.apply()
+                        finally: self.applying.remove(id(draft))
+                        if draft not in applied: applied.append(draft)
+                        publish_art(getattr(draft.view,'owner',None), nested=True)
+                self.failure_owner = self.owner
+                result = operation()
         except Exception:
             if document is not None:
                 document.__dict__.clear()
@@ -195,3 +214,14 @@ def apply_draft(view):
         return scope.transact(lambda: None, only=view.draft)
     view.apply_pending()
     view.accept_draft()
+
+
+def publish_art(view, nested=False):
+    """Only embedded art tools publish at gesture/command boundaries."""
+    if view is None or not getattr(view,'shared_art',False): return
+    scope=scope_of(view)
+    draft=getattr(view,'draft',None)
+    if (scope and draft and draft.alive() and hasattr(scope,'workspace')
+            and (not scope.collecting or nested) and getattr(view,'before',None) is None
+            and draft.pending()):
+        apply_draft(view)

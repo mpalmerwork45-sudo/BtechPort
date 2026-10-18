@@ -8,6 +8,7 @@ import tempfile
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 
+from editor_recovery import recoverable_forms
 from editor_model import EditorError, ProjectDocument, encoded
 from unit_library import UnitLibrary, KINDS, ROOT, closure, import_units, needs_original, stage_preview
 from library_defaults import apply_sprite_defaults
@@ -89,12 +90,13 @@ class EntryContext:
             replacement.cleanup();raise
         previous=self.temp;self.temp=replacement;self.bundle=saved
         for key,value in candidate.__dict__.items():
-            if key not in ('undo_stack','redo_stack'):setattr(editor.document,key,value)
+            if key not in ('undo_stack','redo_stack','undo_labels','redo_labels','revision','_command_depth','_command_label'):setattr(editor.document,key,value)
         previous.cleanup()
         guard(self.browser,lambda:self.browser.refresh(self.bundle['entry_id']))
         editor.status.set(f"Saved to Unit Library, revision {self.bundle['revision']}. Import explicitly to update a game.")
 
 
+@recoverable_forms
 class LibraryBrowser:
     def __init__(self,owner):
         self.owner=owner
@@ -295,7 +297,9 @@ class LibraryBrowser:
         editor.kind.set(bundle['kind']);editor.change_kind();editor.refresh_list(bundle['definition'])
         window.title('Unit Library - '+bundle['name'])
         window.bind('<Destroy>',lambda e:context.temp.cleanup() if e.widget==window else None,add='+')
-        self.editors.append(editor);return editor
+        self.editors.append(editor)
+        if hasattr(window,'workspace'):window.after_idle(lambda:window.workspace.recovery.offer(editor._editor_scope))
+        return editor
 
     def edit_sprite(self):
         editor=self.edit()

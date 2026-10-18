@@ -280,6 +280,14 @@ package copy when editing is requested.
 
 ### UI4 Consistent history saving and recovery
 
+**Implemented, focused Linux/model journeys pass:** the document has grouped,
+labelled history; embedded artwork publishes completed gestures to it, and other
+clean views refresh on revision changes. Recovery retains raw drafts and uses
+whitelisted form routes to reconstruct their editors. Conflicting baselines
+require a separate copy. Deletion shows explicit usages and validates compatible
+replacement. UI5 moves recovery writes and validation off the GUI thread and
+completes timing, scaling and integration checks.
+
 1. Complete labelled shared transactions for maps, unit properties, pixel edits,
    frame/layer changes, jigsaws, event graphs and imports. Make stale editors
    refresh instead of overwriting newer data; scope history separately for each

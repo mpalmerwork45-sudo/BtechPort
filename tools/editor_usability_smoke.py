@@ -65,6 +65,7 @@ def run(env, work):
             finally:
                 window.destroy()
         workspace_journey(directory,document.validator,env,work)
+        recovery_journey(directory,document.validator)
 
 
 def workspace_journey(directory,validator,env,work):
@@ -122,3 +123,52 @@ def workspace_journey(directory,validator,env,work):
         finally:
             if workspace:workspace.closing=True
             window.destroy()
+
+
+def recovery_journey(directory,validator):
+    import copy
+    import tkinter as tk
+    from editor_model import create_project,ProjectDocument
+    from editor_workspace import Workspace
+    from editor_recovery import identity
+    from art_editing import new_image
+    from graphics_editor import open_image_editor
+    from action_tracks import edit_track
+    project=create_project(__import__('pathlib').Path('examples/beacon-demo'),directory/'recover-game','recover-test','Recovery test',validator)
+    state=directory/'recover-settings'
+    root=tk.Tk();workspace=Workspace(root,validator,state);app=workspace.app;app.set_document(project);root.update()
+    try:
+        art=app.graphics_editor();image=new_image('recover-test',project.art['images'],'Recovery sprite','sprite',8,8,4);art.put(image)
+        pixel=open_image_editor(art,image);app.save();root.update()
+        pixel.window.lift();pixel.new_layer();root.update()
+        assert len(pixel.image['_layers'])==2
+        workspace.edit_history(False);root.update();assert len(pixel.image['_layers'])==1
+        workspace.edit_history(True);root.update();assert len(pixel.image['_layers'])==2
+        app.edit_adventure();graph=app.map_editor.event_graph()
+        event=next(e for e in project.adventure['events'] if e['op']=='say')
+        graph.selected=event['id'];graph.edit();graph.properties.event_text.insert('end',' Unfinished dialogue.');graph.properties.event_pending=True
+        edit_track(pixel);form=[d.view for d in app._editor_scope.live() if hasattr(d.view,'callback')][-1];form.values['sound'].set('invalid sound')
+        app.variables[('mass_tons',)][0].set('unfinished mass')
+        baseline=dict(project.snapshot);workspace.recovery.write(app._editor_scope)
+        record=workspace.recovery.read(workspace.recovery.path(app._editor_scope))
+        assert any(e['state'].get('values',{}).get('sound')=='invalid sound' for e in record['drafts'] if isinstance(e['state'].get('values'),dict))
+    finally:workspace.closing=True;root.destroy()
+    # A new process has no old callbacks or Tk widgets to rely on.
+    root=tk.Tk();workspace=Workspace(root,validator,state);app=workspace.app
+    try:
+        app.set_document(ProjectDocument(project.root,validator));workspace.recovery.offered.add(identity(app._editor_scope));root.update()
+        workspace.recovery.restore(app._editor_scope,record);root.update()
+        assert not getattr(app._editor_scope,'unrestored_recovery',False)
+        assert app.variables[('mass_tons',)][0].get()=='unfinished mass'
+        pixel=next(v.controller for v in workspace.views.values() if v.key[1]=='pixels')
+        assert len(pixel.image['_layers'])==2
+        forms=[d.view for d in app._editor_scope.live() if hasattr(d.view,'callback')]
+        assert len(forms)==1 and forms[0].values['sound'].get()=='invalid sound'
+        assert 'Unfinished dialogue.' in app.map_editor.event_graph().properties.event_text.get('1.0','end')
+        assert app.document.snapshot==baseline
+        app.variables[('mass_tons',)][0].set(str(app.item()['mass_tons']));forms[0].values['sound'].set('0')
+        app.save();root.update();workspace.recovery.write(app._editor_scope)
+        assert not workspace.recovery.path(app._editor_scope).exists()
+        assert not app._editor_scope.dirty()
+        print('PASS: shared artwork Undo/Redo and crash recovery restore layers, event text and invalid unit/animation fields before a valid save.')
+    finally:workspace.closing=True;root.destroy()

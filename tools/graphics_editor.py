@@ -4,6 +4,7 @@ import copy
 import tkinter as tk
 from tkinter import ttk, filedialog, colorchooser, messagebox
 from adventure_editor import Form
+from editor_recovery import recoverable_forms
 from editor_model import EditorError
 from art_editing import (new_image, clone_image, import_image, original_sprite,
                          display_rows, pixels, brush, bind, transform, editable_tile, SLOTS, DEFAULT_COLORS)
@@ -30,6 +31,7 @@ def open_image_editor(owner, image):
     return PixelEditor(owner,image)
 
 
+@recoverable_forms
 class GraphicsEditor:
     def __init__(self, owner):
         self.owner, self.document = owner, owner.document
@@ -165,6 +167,9 @@ class GraphicsEditor:
         self.refresh();self.edit()
     def delete(self):
         if not self.current():return
+        if hasattr(self.window,'workspace'):
+            from editor_dependencies import dialog
+            return dialog(self,self.selected,delete=True)
         art=copy.deepcopy(self.document.art); art['images']=[i for i in art['images'] if i['id']!=self.selected]
         self.document.replace_art(art); self.selected=None; self.refresh_views()
         self.editor.status.set('Image removed. Validate reports any remaining references; Undo restores it.')
@@ -185,7 +190,9 @@ class GraphicsEditor:
         f.submit(apply)
 
 
+@recoverable_forms
 class PixelEditor:
+    shared_art = True
     """Stage an image independently; Apply produces one shared undo entry."""
     def __init__(self, owner, image):
         self.owner=owner; self.original=copy.deepcopy(image)
@@ -299,10 +306,14 @@ class PixelEditor:
     def finish(self):
         if self.before is not None and self.before!=self.image:self.history.append(self.before);self.history=self.history[-40:];self.future=[]
         self.before=None
+        from editor_session import publish_art
+        publish_art(self)
     def undo(self):
+        if hasattr(self.window,'workspace'):return self.window.workspace.edit_history(False)
         self.playing=False;self.finish()
         if self.history:self.future.append(self.image);self.image=self.history.pop();self.refresh_frames();self.refresh_layers();self.draw()
     def redo(self):
+        if hasattr(self.window,'workspace'):return self.window.workspace.edit_history(True)
         self.playing=False
         if self.future:self.history.append(self.image);self.image=self.future.pop();self.refresh_frames();self.refresh_layers();self.draw()
     def transform(self, operation):

@@ -6,6 +6,7 @@ from pathlib import Path
 import tkinter as tk
 from tkinter import ttk, messagebox
 
+from editor_recovery import recoverable_forms
 from editor_model import EditorError
 from editor_session import guard, register, apply_draft, scope_of, visible_parent, FieldError
 from editor_workspace import view_window,open_view
@@ -36,6 +37,7 @@ def scroll_frame(parent, width=660, height=590):
 class Form:
     def __init__(self, owner, title):
         self.owner = owner
+        self.recovery_action=copy.deepcopy(getattr(owner,'_form_action',None))
         self.window = tk.Toplevel(owner.window)
         self.window.title(title)
         self.window.transient(visible_parent(owner))
@@ -109,6 +111,7 @@ class Form:
         self.window.destroy()
 
 
+@recoverable_forms
 class AdventureEditor:
     def __init__(self, parent):
         self.parent = parent
@@ -534,6 +537,9 @@ class AdventureEditor:
 
     def delete_map(self):
         if len(self.adventure["maps"])==1:raise EditorError("Keep at least one map.")
+        if hasattr(self.window,'workspace'):
+            from editor_dependencies import dialog
+            return dialog(self,self.scene()['id'],delete=True)
         a=copy_adventure(self.document);a["maps"].pop(self.scene_index);self.commit(a)
 
     def duplicate_tile(self):
@@ -758,12 +764,14 @@ class AdventureEditor:
             listing.delete(0,"end")
             for enemy in old["enemies"]:listing.insert("end",f"{enemy['kind']} {enemy['definition']} at {enemy['at']}")
             if selected_enemy is not None and selected_enemy<len(old["enemies"]):listing.selection_set(selected_enemy)
-        def enemy_dialog(edit=False):
+        def enemy_dialog(edit=False,recovered_index=None):
             selected=listing.curselection()
+            if recovered_index is not None:selected=(recovered_index,)
             if edit and not selected:return
             at_index=selected[0] if edit else None
             enemy=old["enemies"][at_index] if edit else dict(kind="mech",definition=self.document.content["mechs"][0]["id"],at=[min(120,old["party_at"][0]+8),old["party_at"][1]])
             dialog=Form(form,"Enemy placement");kind=dialog.field("kind",enemy["kind"],["mech","person"])
+            dialog.recovery_action=dict(method='enemy',args=[edit,at_index])
             def choices():return [m["id"] for m in (self.document.content["mechs"] if dialog.values["kind"].get()=="mech" else self.adventure["people"])]
             definition=dialog.field("definition",enemy["definition"],choices())
             kind.bind("<<ComboboxSelected>>",lambda _: (definition.configure(values=choices()),dialog.values["definition"].set(choices()[0])))
@@ -774,6 +782,7 @@ class AdventureEditor:
                 else:old["enemies"][at_index]=enemy
                 refresh()
             dialog.submit(apply)
+        form.recovery_children={'enemy':enemy_dialog};form.on_restore=refresh
         buttons=ttk.Frame(form.body);buttons.grid(row=form.row,column=0,columnspan=2);form.row+=1
         ttk.Button(buttons,text="Add enemy",command=lambda:self.guard(enemy_dialog)).pack(side="left")
         ttk.Button(buttons,text="Edit enemy",command=lambda:self.guard(lambda:enemy_dialog(True))).pack(side="left")
@@ -907,6 +916,9 @@ class AdventureEditor:
         a=copy_adventure(self.document);e=copy.deepcopy(next(v for v in a["events"] if v["id"]==self.event_id));e["id"]=new_id(self.document,"events","event");a["events"].append(e);self.event_id=e["id"];self.commit(a);self.populate_event()
     def delete_event(self):
         if not self.event_id:return
+        if hasattr(self.window,'workspace'):
+            from editor_dependencies import dialog
+            return dialog(self,self.event_id,delete=True)
         a=copy_adventure(self.document)
         if len(a["events"])==1:raise EditorError("Keep at least one event.")
         a["events"]=[v for v in a["events"] if v["id"]!=self.event_id];self.event_id=None;self.commit(a)
@@ -932,6 +944,11 @@ class AdventureEditor:
             elif key=="shops":self.shop_dialog(index)
     def delete_world(self):
         if self.world_listing.curselection():
+            if hasattr(self.window,'workspace'):
+                from editor_dependencies import dialog
+                key,index=self.world_ids[self.world_listing.curselection()[0]]
+                item=self.adventure[key][index]
+                return dialog(self,item['id'] if isinstance(item,dict) else item,delete=True)
             key,index=self.world_ids[self.world_listing.curselection()[0]];a=copy_adventure(self.document);a[key].pop(index);self.commit(a)
 
     def person_dialog(self,index=None):

@@ -5,6 +5,7 @@ import tkinter as tk
 from tkinter import ttk
 from adventure_editor import Form
 from adventure_editing import composite
+from editor_recovery import recoverable_forms
 from editor_model import EditorError
 from editor_session import guard, register, apply_draft, scope_of
 from editor_workspace import view_window,open_view
@@ -12,6 +13,7 @@ from world_editing import (create_world, add_jigsaw, assign_city, world_size,
                            patch_cells, set_patch, line, token, all_worlds, get_world)
 
 
+@recoverable_forms
 class WorldEditor:
     def __init__(self, owner):
         self.owner=owner; self.document=owner.document
@@ -225,6 +227,7 @@ class WorldEditor:
 
 
 class JigsawEditor:
+    shared_art = True
     def __init__(self,owner,jigsaw):
         self.owner=owner;self.original=copy.deepcopy(jigsaw);self.jigsaw=copy.deepcopy(jigsaw);self.history=[];self.future=[];self.before=None;self.last=None
         self.window=view_window(self,owner,'jigsaw',jigsaw['name'],jigsaw['id']);self.window.geometry('550x480')
@@ -264,10 +267,14 @@ class JigsawEditor:
     def finish(self):
         if self.before is not None and self.before!=self.jigsaw:self.history.append(self.before);self.future=[]
         self.before=None
+        from editor_session import publish_art
+        publish_art(self)
     def undo(self):
+        if hasattr(self.window,'workspace'):return self.window.workspace.edit_history(False)
         self.finish()
         if self.history:self.future.append(self.jigsaw);self.jigsaw=self.history.pop();self.draw()
     def redo(self):
+        if hasattr(self.window,'workspace'):return self.window.workspace.edit_history(True)
         if self.future:self.history.append(self.jigsaw);self.jigsaw=self.future.pop();self.draw()
     def apply_pending(self):
         a=copy.deepcopy(self.owner.document.adventure);old=next(j for j in a['jigsaws'] if j['id']==self.original['id'])
