@@ -1036,6 +1036,73 @@
               "target"
             ],
             "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "asset.annotate"
+              },
+              "id": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "changes": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "maxLength": 120
+                  },
+                  "description": {
+                    "type": "string",
+                    "maxLength": 2048
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64
+                    },
+                    "minItems": 0,
+                    "maxItems": 32
+                  },
+                  "edges": {
+                    "type": "object",
+                    "properties": {
+                      "north": {
+                        "type": "string",
+                        "maxLength": 64
+                      },
+                      "east": {
+                        "type": "string",
+                        "maxLength": 64
+                      },
+                      "south": {
+                        "type": "string",
+                        "maxLength": 64
+                      },
+                      "west": {
+                        "type": "string",
+                        "maxLength": 64
+                      }
+                    },
+                    "required": [],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "op",
+              "id",
+              "changes"
+            ],
+            "additionalProperties": false
           }
         ]
       },

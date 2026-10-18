@@ -47,6 +47,11 @@ class TileBrowser:
         self.choices.bind('<<ComboboxSelected>>',lambda _:self.refresh())
         ttk.Checkbutton(source_bar,text='Animated only',variable=self.animated_only,command=self.refresh).pack(side='left',padx=8)
         ttk.Checkbutton(source_bar,text='Animate tiles',variable=maps.tile_animation.enabled,command=maps.tile_animation.refresh).pack(side='left',padx=8)
+        search_bar=ttk.Frame(header);search_bar.pack(fill='x',pady=(6,0))
+        ttk.Label(search_bar,text='Search names / tags / terrain').pack(side='left')
+        self.query=tk.StringVar();search_entry=ttk.Entry(search_bar,textvariable=self.query);search_entry.pack(side='left',fill='x',expand=True,padx=8)
+        search_entry.bind('<Return>',lambda _:guard(self,self.refresh))
+        ttk.Button(search_bar,text='Search',command=lambda:guard(self,self.refresh)).pack(side='left')
         bar=ttk.Frame(self.window,padding=(8,0));bar.pack(fill='x')
         for label,callback in [('Add tile',self.new),('Clone',self.clone),('Edit pixels',self.edit),('Properties',self.properties),('Remove',self.remove)]:
             ttk.Button(bar,text=label,width=0,command=lambda f=callback:guard(self,f)).pack(side='left',padx=3)
@@ -160,6 +165,14 @@ class TileBrowser:
             self.keys=[k for k in (source if isinstance(source,dict) else range(len(source))) if [sheet,str(k)] not in hidden]
         if self.active_filter:
             self.keys=[key for key in self.keys if tile_loop(self.owner.graphics,self.value(key)['sheet'],self.value(key)['graphic'])]
+        if self.query.get():
+            from asset_catalogue import catalogue,matches,parse_query
+            query=parse_query(self.query.get())
+            records=catalogue(self.document,'project' if sheet=='Project tiles' else 'atlas',decoded=self.owner.graphics)
+            matches_by_id={r['id'] for r in records if matches(r,query)}
+            matches_by_source={(r.get('sheet'),r.get('graphic')) for r in records if matches(r,query)}
+            self.keys=[k for k in self.keys if (k in matches_by_id if sheet=='Project tiles' else
+                (self.value(k)['sheet'],self.value(k)['graphic']) in matches_by_source)]
         names=data.get('tile_names',{})
         for index,key in enumerate(self.keys):
             value=self.value(key)

@@ -49,3 +49,28 @@ def export_summary(workspace,path=None):
         ProjectDocument.atomic_file(path,encoded(result))
         workspace.status.set('Exported authoring summary, including current editor drafts.')
     return workspace.tasks.submit('Inspect authoring snapshot',scope.owner,lambda cancel:summary(candidate,candidate.validator),done)
+
+
+def check_mission(workspace):
+    from authoring_analysis import analyze
+    from editor_session import clear_problems
+    import json,os
+    scope=workspace.active_scope();candidate=snapshot(scope);stamp=signature(scope)
+    settings=dict(scope.owner.settings)
+    analyzer=Path(__file__).resolve().parents[1]/'build'/('btp-author-analyze.exe' if os.name=='nt' else 'btp-author-analyze')
+    def done(result):
+        if signature(scope)!=stamp:raise AuthoringError('revision.conflict','The document changed during mission checks; run Check mission again.')
+        clear_problems(scope)
+        for diagnostic in result['diagnostics']:
+            problem=dict(diagnostic,owner=scope.owner,field=None,details=json.dumps(diagnostic,indent=2))
+            identity=diagnostic.get('object_id');location=diagnostic.get('location')
+            if location and location.get('map'):
+                def navigate(where=location):
+                    workspace.open_map(where['map']);maps=workspace.app.map_editor;maps.cursor=tuple(where['at']);maps.draw()
+                problem['navigate']=navigate
+            elif identity and any(e['id']==identity for e in (scope.document.adventure or {}).get('events',[])):
+                problem['navigate']=lambda identity=identity:workspace.open_event(identity)
+            workspace.problem(scope,problem)
+        message=f"Mission checks: {sum(p['severity']=='error' for p in result['diagnostics'])} errors, {sum(p['severity']=='warning' for p in result['diagnostics'])} warnings."
+        scope.owner.status.set(message);workspace.status.set(message);workspace.log(message+' '+result['coverage'])
+    return workspace.tasks.submit('Check mission',scope.owner,lambda cancel:analyze(candidate,analyzer,settings),done)

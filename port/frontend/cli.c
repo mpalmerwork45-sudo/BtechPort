@@ -202,7 +202,7 @@ int btp_cli_load_content(const BtpOptions *o, BtpContent *content, BtpError *err
     return 1;
 }
 
-void btp_initial_state(const BtpOptions *o, BtpState *s, const BtpResources *r)
+void btp_initial_state_seeded(const BtpOptions *o,BtpState *s,const BtpResources *r,const uint8_t seed[3])
 {
     if (o->shop_talk_checkpoint) btp_start_shop_conversation_checkpoint(s,r,(unsigned)o->shop_talk_checkpoint);
     else if (o->conversation_checkpoint) btp_start_conversation_checkpoint(s);
@@ -213,10 +213,12 @@ void btp_initial_state(const BtpOptions *o, BtpState *s, const BtpResources *r)
        state, preserving the saved policy (including old saves' Legacy). */
     if (r->roster.count && r->combat_profile.fingerprint) (void)btp_set_combat_profile(s,r,1);
     if (o->play_map) (void)btp_events_preview(s,r,o->play_map,o->play_x,o->play_y);
-    else btp_events_start(s,r);
+    else btp_events_start_seeded(s,r,seed);
     if (o->title_preview) btp_audio_start(s);
     if (o->intro_preview) s->mode=BTP_LOGO;
 }
+void btp_initial_state(const BtpOptions *o,BtpState *s,const BtpResources *r)
+{ btp_initial_state_seeded(o,s,r,NULL); }
 
 void btp_print_state(const BtpState *s, const BtpResources *r)
 {

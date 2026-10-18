@@ -1,5 +1,20 @@
 # Build, verification and original oracle — 2026-10-18
 
+## Discovery and mission checks — paused work in progress, 2026-10-18
+
+Focused tests: **29/29 PASS** (14 existing authoring, 8 catalogue, 7 mission
+analysis), plus **18/18 Unit Library PASS**. The private-display authoring GUI
+journey passes with catalogue weapon search, original sprite preview, metadata
+form, tagged tile picker, existing batch Undo/stale checks and normal Play.
+Native authoring/player-analysis tools build with the system toolchain and two
+jobs. Relay Contract lint reports no findings across two maps and 4,248 reached
+compact-formation positions. Reference guard: **1,287 entries unchanged**.
+
+The expanded seed/hold/retreat/suite paths, newest Check mission GUI action,
+full regressions and Windows checks are **PENDING**, not covered by the older
+completed results below. See the [handoff](AI_AUTHORING_HANDOFF.md) for exact
+resume work and commands.
+
 ## AI authoring first pass — 2026-10-18
 
 **VERIFIED** at implementation commit `4f1ff6f`: API v1 inspection and

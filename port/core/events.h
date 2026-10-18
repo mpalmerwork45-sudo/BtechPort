@@ -13,6 +13,9 @@ void btp_journal_text(const BtpState *state,const BtpResources *resources,unsign
 const BtpAdventure *btp_adventure(const BtpResources *resources);
 const BtpScene *btp_scene(const BtpResources *resources,const BtpState *state);
 void btp_events_start(BtpState *state,const BtpResources *resources);
+/* Scenario seeds enter before the first event (including an immediate battle).
+   NULL retains the normal game's original initial random state. */
+void btp_events_start_seeded(BtpState *state,const BtpResources *resources,const uint8_t seed[3]);
 int btp_events_preview(BtpState *state,const BtpResources *resources,const char *map,unsigned x,unsigned y);
 void btp_events_tick(BtpState *state,const BtpResources *resources,BtpAction action);
 int btp_events_valid(const BtpState *state,const BtpResources *resources);

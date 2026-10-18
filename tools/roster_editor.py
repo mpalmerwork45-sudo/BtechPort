@@ -309,10 +309,12 @@ class RosterEditor:
             selected = choose or self.current
             self.visible = []
             self.listing.delete(0, "end")
-            query = self.search.get().lower()
+            from asset_catalogue import search_document
+            query = self.search.get()
+            matching=search_document(self.document,query) if query else None
             for item in self.values():
                 if self.collection=='mechs' and (item.get('kind')=='vehicle') != (self.kind.get()=='Vehicles'):continue
-                if query and query not in (item.get("name",item['id']) + " " + item["id"]).lower():
+                if matching is not None and item['id'] not in matching and query.casefold() not in (item.get('name',item['id'])+' '+item['id']).casefold():
                     continue
                 self.visible.append(item["id"])
                 self.listing.insert("end", (f"{item['mass_tons']:3d}t  " if self.collection == "mechs" else "") + item.get("name",item['id']))

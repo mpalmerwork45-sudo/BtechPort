@@ -1,5 +1,12 @@
 # Project status — original fidelity and editable projects, 2026-10-18
 
+**Current session — PAUSED at the user's request:** the approved AI3 discovery
+and AI4 testing pass is in progress. Catalogue/visual tools and mission analysis
+have focused tests and a successful GUI journey. Expanded seeded policies and
+scenario suites are written but still need their new route coverage and full
+regressions. Resume from the [checkpoint handoff](AI_AUTHORING_HANDOFF.md).
+The earlier completed first pass below remains a separate verified milestone.
+
 **AI authoring first pass — VERIFIED:** implementation commit `4f1ff6f`;
 [author guide](AI_AUTHORING_GUIDE.md).
 API v1 provides compiled capability discovery, bounded project/usage/map/route

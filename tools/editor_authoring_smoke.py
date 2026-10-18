@@ -70,6 +70,26 @@ def run(env,work):
             assert next(e for e in doc.adventure['events'] if e['id']=='relay:briefing')['text']==updated
             app.settings.update({'player':str(root/'build/btech-port'),'data':str(root/'Original DOS'),
                 'dialogue-data':str(root/'work/talk-data.bin'),'combat-data':str(root/'work/combat-data.bin'),'world-data':str(root/'work/world-data.bin')})
+            workspace.invoke('Content catalogue');pump()
+            from editor_workspace import existing_view
+            catalogue=existing_view(app,'catalogue');assert catalogue is not None
+            catalogue.query.set('kind:mech weapon:lrm');catalogue.refresh();pump()
+            assert any(r['name']=='Trebuchet TBT-5N' for r in catalogue.records.values())
+            assert catalogue.photos,'Catalogue did not decode the selected unit sprite'
+            catalogue.query.set('kind:tile id:frontier:grass');catalogue.refresh();pump()
+            catalogue.listing.selection_set('project/frontier:grass');pump()
+            form=catalogue.edit();pump();form.values['tags'].set('grassland, human-edited')
+            for widget in form.footer.winfo_children():
+                if widget.winfo_class()=='TButton' and widget.cget('text')=='Apply':widget.invoke();break
+            pump();assert 'human-edited' in editor_data(doc)['catalogue']['frontier:grass']['tags']
+            catalogue.query.set('tag:human-edited');catalogue.refresh();pump()
+            assert list(catalogue.records)==['project/frontier:grass']
+            catalogue.use();pump();assert maps.tool.get()=='Paint'
+            # Search the normal tile picker through the same catalogue tags.
+            from tile_browser import TileBrowser
+            picker=TileBrowser(maps,selected='frontier:grass');picker.query.set('tag:human-edited');picker.refresh();pump()
+            assert picker.keys==['frontier:grass'];picker.close();pump()
+            print('PASS: shared catalogue numeric/weapon search, original sprite preview, metadata form and tagged tile picker.',flush=True)
             workspace.invoke('Play from start');pump(lambda:not workspace.play_session.preparing)
             process=workspace.play_session.process;assert process is not None
             deadline=time.monotonic()+.3;pump(lambda:time.monotonic()>deadline)

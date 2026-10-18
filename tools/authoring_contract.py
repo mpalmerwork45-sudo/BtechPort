@@ -172,6 +172,11 @@ operation('art.bind','Bind an owned sprite to a supported runtime actor slot.',
 operation('script.import','Import a bounded Lua source and declare its ID; events still declare allowed continuations.',
           dict(id=ID,file=TEXT,target=dict(type='string',pattern=r'^[a-zA-Z0-9_-]+\.lua$'),mode=enum('create','replace')),
           ['id','file','target'],['manifest.scripts','scripts'],dict(id='demo:contract',file='scripts/contract.lua',target='contract.lua'))
+operation('asset.annotate','Describe an asset for both human pickers and automated discovery; metadata does not change gameplay.',
+          dict(id=ID,changes=obj(dict(name=dict(type='string',maxLength=120),description=dict(type='string',maxLength=2048),
+              tags=array(dict(type='string',minLength=1,maxLength=64),0,32),
+              edges=obj({s:dict(type='string',maxLength=64) for s in ('north','east','south','west')})))),
+          ['id','changes'],['editor.catalogue'],dict(id='demo:grass',changes={'description':'Open grassland','tags':['grassland','outdoors']}))
 
 BATCH_SCHEMA = obj(dict(api_version={'const':API_VERSION},request_id=dict(type='string',minLength=1,maxLength=96,pattern=r'^[a-zA-Z0-9._-]+$'),
     project_id=dict(type='string',minLength=1,maxLength=31),expected_revision=dict(anyOf=[dict(type='string',pattern='^[0-9a-f]{64}$'),{'const':'new'}]),

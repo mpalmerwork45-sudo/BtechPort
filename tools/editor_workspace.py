@@ -225,6 +225,7 @@ class Workspace:
         elif kind=='construction':state.update(current=owner.current,role=owner.selected_role,footprint_zoom=owner.footprint_zoom.get(),
             footprint_scroll=[owner.footprint.xview()[0],owner.footprint.yview()[0]],preview_scroll=[owner.preview.xview()[0],owner.preview.yview()[0]])
         elif kind=='patterns':state.update(selected=owner.selected)
+        elif kind=='catalogue':state.update(query=owner.query.get(),source=owner.source.get())
         elif kind=='pixels':
             state.update(frame=owner.frame.current())
             if owner.map_context:state.update(map_context=owner.map_context,show_neighbours=owner.show_neighbours.get())
@@ -258,6 +259,7 @@ class Workspace:
         elif kind=='graphics':owner.selected=state.get('selected');owner.refresh()
         elif kind=='construction':owner.current=state.get('current');owner.selected_role=state.get('role');owner.refresh()
         elif kind=='patterns':owner.selected=state.get('selected');owner.refresh()
+        elif kind=='catalogue':owner.source.set(state.get('source','project'));owner.query.set(state.get('query',''));owner.reload()
         elif kind=='pixels':
             if hasattr(owner,'view'):
                 owner.view.set(state.get('view',owner.view.get()));owner.direction=state.get('direction',owner.direction);owner.phase=state.get('phase',0);owner.refresh_frames()
@@ -313,9 +315,12 @@ class Workspace:
         self.action('Reset layout',self.reset_layout,groups['View'])
         for percent in (100,150,200):self.action(f'Interface scale {percent}%',lambda p=percent:self.scale(p),groups['View'])
         self.action('Validate',lambda:validate(self,self.active_scope()),groups['Project'])
-        from editor_authoring import apply_file,export_summary
+        from editor_authoring import apply_file,export_summary,check_mission
         self.action('Apply authoring command file',lambda:apply_file(self),groups['Project'])
         self.action('Export authoring summary',lambda:export_summary(self),groups['Project'])
+        self.action('Check mission',lambda:check_mission(self),groups['Project'])
+        from catalogue_browser import open_catalogue
+        self.action('Content catalogue',lambda:open_catalogue(self.active_scope().owner),groups['Project'])
         self.action('Unit Library',self.app.open_library,groups['Project'])
         self.action('Player setup',self.app.setup,groups['Project'])
         self.action('Ammunition',lambda:self.active_scope().owner.ammunition(),groups['Project'])
@@ -372,6 +377,8 @@ class Workspace:
         if name in ('Undo','Redo'):
             return bool(document and ((document.undo_stack if name=='Undo' else document.redo_stack) or any(d.pending() for d in scope.live())))
         if name in ('Export game','Assets and dependencies','Migrate an old save','Apply authoring command file','Export authoring summary'):return bool(self.app.document)
+        if name=='Content catalogue':return bool(document)
+        if name=='Check mission':return bool(document and document.adventure)
         if name in ('New definition','Duplicate definition','Delete definition','Ammunition','Find usages'):return bool(document)
         if name in ('Building designer','Wall designer','Road designer','Pattern Library'):return bool(self.app.document and self.app.document.adventure)
         if name in ('Play from start','Play from here','Checkpoints and trace'):return bool(self.app.document) and not self.play_session.preparing
@@ -607,6 +614,7 @@ class Workspace:
         selected=self.problem_list.selection()
         if not selected:return
         problem=self.problems[int(selected[0])];owner=problem['owner']
+        if problem.get('navigate'):problem['navigate']();return
         if owner.window.winfo_exists():
             owner.window.lift();owner.window.focus_set()
             if hasattr(owner,'show_error'):
@@ -690,6 +698,9 @@ class Workspace:
                     elif kind=='events':view=self.map_view().event_graph().window
                     elif kind=='construction':view=self.map_view().construction(identity).window
                     elif kind=='patterns':view=self.map_view().patterns().window
+                    elif kind=='catalogue':
+                        from catalogue_browser import open_catalogue
+                        view=open_catalogue(owner).window
                     elif kind=='jigsaw':
                         from world_editor import JigsawEditor
                         maps=self.map_view();maps.edit_landscape();world=maps.world_editor

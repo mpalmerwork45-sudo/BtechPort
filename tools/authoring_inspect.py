@@ -19,7 +19,7 @@ def capabilities(tool):
     return dict(api_version=API_VERSION,runtime=runtime,runtime_sha256=hashlib.sha256(Path(tool).read_bytes()).hexdigest(),
         operations=OPERATIONS, features=dict(transactional_batches=True,expected_revision=True,dry_run=True,
         persisted_requests=True,gui_undo=True,live_remote_session=False,protected_regions=False,
-        reinforcement_events=False,escort_events=False),
+        reinforcement_events=False,escort_events=False,asset_search=True,contact_sheets=True,animation_strips=True,event_graph_preview=True),
         bounds=dict(operations_per_batch=512,request_bytes=16777216,query_page=100,receipts=512),
         schemas='schemas/',guide='docs/AI_AUTHORING_GUIDE.md')
 

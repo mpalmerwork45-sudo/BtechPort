@@ -1,5 +1,12 @@
 # Authoring games with commands
 
+**Development checkpoint:** the next catalogue/visual/mission-checking pass is
+in progress and paused at the user's request. New `catalogue`, `contact-sheet`,
+`animation`, `graph`, `world-preview`, `lint` and `suite` commands are present;
+the expanded scenario policies still need route verification. Consult the
+[handoff](AI_AUTHORING_HANDOFF.md) before resuming development. The completed
+first-pass instructions below describe the earlier verified milestone.
+
 The Construction Kit now supports a model-independent, display-independent
 authoring CLI. It edits ordinary projects through the same document,
 construction, import, validation and history operations used by the GUI.

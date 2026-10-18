@@ -126,6 +126,9 @@ def apply_operation(doc, op, imports):
             # tuning a new combat policy is outside this authoring pass.
             content['rules']={'id':op['changes']['rules_profile']}
         doc.replace_all(content,a,doc.art,manifest);return manifest['package_id']
+    if name=='asset.annotate':
+        from asset_catalogue import annotate
+        return annotate(doc,op['id'],op['changes'])
     if name=='start.set': a['start'].update(copy.deepcopy(op['changes']))
     elif name=='flags.add': a['flags'].extend(v for v in op['ids'] if v not in a['flags'])
     elif name=='map.create':

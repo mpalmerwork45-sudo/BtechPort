@@ -76,6 +76,12 @@ def create_tile(document,decoded=None,source=None,name='New tile',terrain=None):
     else:
         image=new_image(prefix,art['images'],name);art['images'].append(image);terrain=terrain or 'clear';mini=2
     value=graphic_tile(a,prefix,'package:art',image['id'],terrain,mini)
+    if source:
+        from asset_catalogue import atlas_id
+        notes=data.get('catalogue',{}).get(source.get('id'),data.get('catalogue',{}).get(atlas_id(source['sheet'],source['graphic'])))
+        if notes:
+            data.setdefault('catalogue',{})[value]=copy.deepcopy(notes)
+            data['catalogue'][value]['name']=name
     data.setdefault('tile_names',{})[value]=name
     check_budget(art,a);meta=dict(document.metadata);meta['EDITOR.json']=encoded(data)
     with document.command('Create tile' if source is None else 'Clone tile'):document.replace_art(art,a,meta)

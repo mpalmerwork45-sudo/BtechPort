@@ -78,6 +78,8 @@ def closure(document, identity, kind='Mechs'):
     unit = person or content['mechs'][0]
     editor=json.loads(document.metadata.get('EDITOR.json',b'{}'))
     editing={'pixel_layers':{key:copy.deepcopy(value) for key,value in editor.get('pixel_layers',{}).items() if key in image_ids}}
+    editing['catalogue']={key:copy.deepcopy(value) for key,value in editor.get('catalogue',{}).items()
+                          if key in image_ids or key==identity or any(key==w['id'] for w in content['weapons'])}
     return dict(format=FORMAT, schema_version=1, entry_id=identity, revision=1, kind=kind,
                 name=unit.get('name', identity), definition=identity, content=content,
                 person=person, graphics=art, presentation=presentation,editing=editing,
@@ -301,6 +303,11 @@ def import_units(document, bundles, policy='keep', infantry_art=False, validate=
         if found is not None and policy != 'variant': target[target.index(found)] = value
         else: target.append(value)
         imported.append((bundle['kind'], value['id']))
+        for asset_id,notes in bundle.get('editing',{}).get('catalogue',{}).items():
+            # Remap the unit itself for variants and all renamed dependency
+            # IDs. Existing destination descriptions win on shared assets.
+            resolved=value['id'] if asset_id==bundle['definition'] else mapping.get(asset_id,asset_id)
+            editor.setdefault('catalogue',{}).setdefault(resolved,copy.deepcopy(notes))
         for image_id,layer_data in bundle.get('editing',{}).get('pixel_layers',{}).items():
             resolved=mapping.get(image_id,image_id)
             if any(i['id']==resolved for i in art['images']):editor.setdefault('pixel_layers',{})[resolved]=copy.deepcopy(layer_data)

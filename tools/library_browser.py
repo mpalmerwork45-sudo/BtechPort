@@ -14,6 +14,7 @@ from unit_library import UnitLibrary, KINDS, ROOT, closure, import_units, needs_
 from library_defaults import apply_sprite_defaults
 from editor_session import guard
 from editor_workspace import view_window,workspace_of
+from asset_catalogue import bundle_record,matches,parse_query
 
 
 def seed_library(library, paths):
@@ -172,13 +173,13 @@ class LibraryBrowser:
         if not hasattr(self,'listing'):return
         selection=select or (self.listing.selection()[0] if self.listing.selection() else None)
         self.listing.delete(*self.listing.get_children());self.bundles={b['entry_id']:b for b in (self.library.entries() if entries is None else entries)}
-        query=self.query.get().casefold()
+        query=parse_query(self.query.get())
         for identity,bundle in self.bundles.items():
             if self.kind.get()!='All' and bundle['kind']!=self.kind.get():continue
             unit=bundle['person'] or bundle['content']['mechs'][0];mass=unit.get('mass_tons',0)
             weight='Light' if mass<=35 else 'Medium' if mass<=55 else 'Heavy' if mass<=75 else 'Assault'
             if self.weight.get()!='All weights' and (not mass or weight!=self.weight.get()):continue
-            if query and query not in (bundle['name']+' '+identity+' '+str(unit.get('movement',{}))).casefold():continue
+            if query and not matches(bundle_record(bundle),query):continue
             self.listing.insert('','end',iid=identity,text=bundle['name'],values=(bundle['kind'],mass or '-'))
         children=self.listing.get_children()
         if children:self.listing.selection_set(selection if selection in children else children[0])

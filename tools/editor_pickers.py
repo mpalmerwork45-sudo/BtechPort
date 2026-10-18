@@ -79,9 +79,11 @@ def pick_reference(owner,values,variable,title='Choose an asset'):
                 if len(frames)>1:timer=window.after(140,animate)
             animate()
     def refresh(*_):
-        listing.delete(*listing.get_children());query=search.get().casefold()
+        from asset_catalogue import search_document
+        listing.delete(*listing.get_children());query=search.get()
+        matching=search_document(scope.document,query) if query and scope and scope.document else None
         for value in values:
-            if not query or query in (names.get(value,'')+' '+str(value)).casefold():
+            if not query or (matching is not None and value in matching) or query.casefold() in (names.get(value,'')+' '+str(value)).casefold():
                 picture=images.get(value);thumbnail=None
                 if picture:
                     if value not in photos:

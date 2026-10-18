@@ -642,3 +642,28 @@ Write scope: `manifest.scripts`, `scripts`.
   "target": "contract.lua"
 }
 ```
+
+## asset.annotate
+
+Describe an asset for both human pickers and automated discovery; metadata does not change gameplay.
+
+Write scope: `editor.catalogue`.
+
+| Field | Structural constraint |
+| --- | --- |
+| `id` * | `{"type":"string","maxLength":63,"pattern":"^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"}` |
+| `changes` * | `{"type":"object","properties":{"name":{"type":"string","maxLength":120},"description":{"type":"string","maxLength":2048},"tags":{"type":"array","items":{"type":"string","minLength":1,"maxLength":64},"minItems":0,"maxItems":32},"edges":{"type":"object","properties":{"north":{"type":"string","maxLength":64},"east":{"type":"string","maxLength":64},"south":{"type":"string","maxLength":64},"west":{"type":"string","maxLength":64}},"required":[],"additionalProperties":false}},"required":[],"additionalProperties":false}` |
+
+```json
+{
+  "op": "asset.annotate",
+  "id": "demo:grass",
+  "changes": {
+    "description": "Open grassland",
+    "tags": [
+      "grassland",
+      "outdoors"
+    ]
+  }
+}
+```

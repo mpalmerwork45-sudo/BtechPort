@@ -25,6 +25,8 @@ class PatternLibrary:
         ttk.Label(self.window,textvariable=self.info,wraplength=900,padding=8).pack(side='bottom',fill='x')
         body=ttk.Panedwindow(self.window,orient='horizontal');body.pack(fill='both',expand=True,padx=8,pady=8)
         left=ttk.Frame(body);right=ttk.Frame(body);body.add(left,weight=1);body.add(right,weight=3)
+        self.query=tk.StringVar();search=ttk.Entry(left,textvariable=self.query);search.pack(fill='x',pady=(0,8))
+        search.bind('<Return>',lambda _:guard(self,self.refresh))
         self.listing=ttk.Treeview(left,show='tree',selectmode='browse');self.listing.column('#0',width=230)
         sy=ttk.Scrollbar(left,command=self.listing.yview);self.listing.configure(yscrollcommand=sy.set)
         sy.pack(side='right',fill='y');self.listing.pack(fill='both',expand=True)
@@ -42,7 +44,9 @@ class PatternLibrary:
     def current(self):return next((p for p in self.values() if p['id']==self.selected),None)
     def refresh(self):
         self.listing.delete(*self.listing.get_children())
-        values=self.values()
+        from asset_catalogue import search_document
+        matching=search_document(self.document,self.query.get()) if self.query.get() else None
+        values=[p for p in self.values() if matching is None or p['id'] in matching]
         for p in values:self.listing.insert('','end',iid=p['id'],text=p['name']+f"  ({len(p['rows'][0])} × {len(p['rows'])})")
         if values:
             if self.selected not in {p['id'] for p in values}:self.selected=values[0]['id']

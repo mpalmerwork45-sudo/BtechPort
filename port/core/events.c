@@ -155,11 +155,12 @@ static void run(BtpState *s,const BtpResources *r)
     }
     s->mode=BTP_EVENT;v->phase=BTP_EVENT_FAULT;
 }
-static void initialize(BtpState *s,const BtpResources *r,int preview)
+static void initialize(BtpState *s,const BtpResources *r,int preview,const uint8_t seed[3])
 {
     const BtpAdventure *a=btp_adventure(r);if (!a) return;
     s->event=(BtpEventState){.enabled=1,.node=(uint16_t)a->start_event,.origin_map=(uint16_t)a->start_map,.origin_entry=255};
     memset(s->event.people,255,8);s->npc=(BtpNpcState){.rng={31,66,171}};
+    if(seed)memcpy(s->npc.rng,seed,3);
     s->story_flags[4]=1;s->credits=a->credits;memset(s->explored,0,sizeof s->explored);
     btp_party_init(s);memset(s->party.people,0,sizeof s->party.people);
     for (unsigned i=0;i<8;++i) s->party.people[i][0]=255;
@@ -176,7 +177,8 @@ static void initialize(BtpState *s,const BtpResources *r,int preview)
     if (!place(s,r,a->start_map,a->start_x,a->start_y)) { s->mode=BTP_EVENT;s->event.phase=BTP_EVENT_FAULT;return; }
     if (!preview) run(s,r);
 }
-void btp_events_start(BtpState *s,const BtpResources *r) { initialize(s,r,0); }
+void btp_events_start(BtpState *s,const BtpResources *r) { initialize(s,r,0,NULL); }
+void btp_events_start_seeded(BtpState *s,const BtpResources *r,const uint8_t seed[3]) { initialize(s,r,0,seed); }
 int btp_events_preview(BtpState *s,const BtpResources *r,const char *map,unsigned x,unsigned y)
 {
     const BtpAdventure *a=btp_adventure(r);if (!a) return 0;
@@ -184,7 +186,7 @@ int btp_events_preview(BtpState *s,const BtpResources *r,const char *map,unsigne
     if (i==a->map_count) return 0;
     /* A fresh playtest skips start-event side effects. No normal campaign
        state or save is loaded, and the full formation must fit here. */
-    initialize(s,r,1);
+    initialize(s,r,1,NULL);
     if (!place(s,r,i,x,y)) { s->mode=BTP_EVENT;s->event.phase=BTP_EVENT_FAULT;return 0; }
     s->event.phase=BTP_EVENT_INACTIVE;s->event.origin_map=(uint16_t)i;return 1;
 }

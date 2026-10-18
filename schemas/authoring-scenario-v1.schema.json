@@ -9,6 +9,11 @@
       "minimum": 1,
       "maximum": 120000
     },
+    "seed": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 16777215
+    },
     "expected_revision": {
       "type": "string",
       "pattern": "^[0-9a-f]{64}$"
@@ -131,7 +136,16 @@
                 "const": "battle"
               },
               "control": {
-                "const": "computer"
+                "enum": [
+                  "computer",
+                  "hold",
+                  "retreat"
+                ]
+              },
+              "until_round": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 1024
               }
             },
             "required": [
@@ -153,8 +167,82 @@
               },
               "party_count": {
                 "type": "integer",
-                "minimum": 1,
+                "minimum": 0,
                 "maximum": 8
+              },
+              "owned_mechs": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 4
+              },
+              "alive_party": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 8
+              },
+              "battle_outcome": {
+                "enum": [
+                  "none",
+                  "pending",
+                  "win",
+                  "loss",
+                  "retreat"
+                ]
+              },
+              "round_min": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 65535
+              },
+              "round_max": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 65535
+              },
+              "person": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "health_min": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 255
+              },
+              "mech": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "armor_min": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 2805
+              },
+              "armor_max": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 2805
+              },
+              "structure_min": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 2040
+              },
+              "structure_max": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 2040
+              },
+              "ammo_min": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 2550
+              },
+              "ammo_max": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 2550
               },
               "phase": {
                 "enum": [
@@ -240,6 +328,41 @@
                 "required": [
                   "objective"
                 ]
+              },
+              {
+                "required": [
+                  "owned_mechs"
+                ]
+              },
+              {
+                "required": [
+                  "alive_party"
+                ]
+              },
+              {
+                "required": [
+                  "battle_outcome"
+                ]
+              },
+              {
+                "required": [
+                  "round_min"
+                ]
+              },
+              {
+                "required": [
+                  "round_max"
+                ]
+              },
+              {
+                "required": [
+                  "person"
+                ]
+              },
+              {
+                "required": [
+                  "mech"
+                ]
               }
             ],
             "allOf": [
@@ -264,6 +387,90 @@
                 "then": {
                   "required": [
                     "status"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "required": [
+                    "health_min"
+                  ]
+                },
+                "then": {
+                  "required": [
+                    "person"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "required": [
+                    "armor_min"
+                  ]
+                },
+                "then": {
+                  "required": [
+                    "mech"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "required": [
+                    "armor_max"
+                  ]
+                },
+                "then": {
+                  "required": [
+                    "mech"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "required": [
+                    "structure_min"
+                  ]
+                },
+                "then": {
+                  "required": [
+                    "mech"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "required": [
+                    "structure_max"
+                  ]
+                },
+                "then": {
+                  "required": [
+                    "mech"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "required": [
+                    "ammo_min"
+                  ]
+                },
+                "then": {
+                  "required": [
+                    "mech"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "required": [
+                    "ammo_max"
+                  ]
+                },
+                "then": {
+                  "required": [
+                    "mech"
                   ]
                 }
               }

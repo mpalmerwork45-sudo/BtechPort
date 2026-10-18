@@ -77,6 +77,8 @@ target_compile_definitions(btp-project PRIVATE BTP_RUNTIME_VERSION="${PROJECT_VE
 target_link_libraries(btp-project PRIVATE btp_pixels)
 add_executable(btp-author-playtest tools/author_playtest.c port/frontend/cli.c)
 target_link_libraries(btp-author-playtest PRIVATE btp_pixels)
+add_executable(btp-author-analyze tools/author_analyze.c port/frontend/cli.c)
+target_link_libraries(btp-author-analyze PRIVATE btp_pixels)
 
 if(BTP_FRONTEND)
   find_package(SDL2 QUIET CONFIG)
