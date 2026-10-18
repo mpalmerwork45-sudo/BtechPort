@@ -236,7 +236,7 @@ int btp_adventure_load(const char *path,const BtpDefinitions *d,BtpAdventure *ou
     if (objectives) {
         if (!btp_json_type(&j,objectives,'[')) goto done;
         for (unsigned n=j.nodes[objectives].first;n;n=j.nodes[n].next) {
-            if (a->objective_count==32) { btp_json_error(&j,n,"at most 32 objectives");goto done; }
+            if (a->objective_count==BTP_OBJECTIVES) { btp_json_error(&j,n,"at most 32 objectives");goto done; }
             BtpObjective *o=&a->objectives[a->objective_count];
             if (!string(&j,n,"id",o->id,sizeof o->id) || !btp_content_id(o->id,1) ||
                 !string(&j,n,"title",o->title,sizeof o->title) || !string(&j,n,"text",o->text,sizeof o->text) ||
@@ -281,7 +281,7 @@ int btp_adventure_load(const char *path,const BtpDefinitions *d,BtpAdventure *ou
         }
         unsigned doors=btp_json_field(&j,n,"entrances");if (!btp_json_type(&j,doors,'[')) goto done;
         for (unsigned door=j.nodes[doors].first;door;door=j.nodes[door].next) {
-            if (m->entrance_count==16) { btp_json_error(&j,door,"at most 16 entrances per map");goto done; }
+            if (m->entrance_count==BTP_SCENE_ENTRANCES) { btp_json_error(&j,door,"at most 16 entrances per map");goto done; }
             BtpSceneEntrance *e=&m->entrances[m->entrance_count++];unsigned x,y;
             e->person=255;e->icon=65535;
             if (!string(&j,door,"id",e->id,64) || !btp_content_id(e->id,1) || !string(&j,door,"name",e->name,sizeof e->name) ||

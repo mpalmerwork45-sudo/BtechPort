@@ -1,0 +1,701 @@
+{
+  "tile_names": {
+    "relay-contract:tile-1": "East Single",
+    "relay-contract:tile-2": "East Single / South Single",
+    "relay-contract:tile-3": "outside / East Single",
+    "relay-contract:tile-4": "South Single / outside",
+    "relay-contract:tile-5": "Roof centre",
+    "relay-contract:tile-6": "Roof S W edge",
+    "relay-contract:tile-7": "Roof N edge",
+    "relay-contract:tile-8": "Roof E edge",
+    "relay-contract:tile-9": "Roof N E edge",
+    "relay-contract:tile-10": "Roof S edge",
+    "relay-contract:tile-11": "Roof E S edge",
+    "relay-contract:tile-12": "Roof W edge",
+    "relay-contract:tile-13": "Roof N W edge",
+    "relay-contract:tile-14": "South Single",
+    "relay-contract:tile-15": "East Single",
+    "relay-contract:tile-16": "East Single / South Single",
+    "relay-contract:tile-17": "outside / East Single",
+    "relay-contract:tile-18": "South Single / outside",
+    "relay-contract:tile-19": "Roof centre",
+    "relay-contract:tile-20": "Roof S W edge",
+    "relay-contract:tile-21": "Roof N edge",
+    "relay-contract:tile-22": "Roof E edge",
+    "relay-contract:tile-23": "Roof N E edge",
+    "relay-contract:tile-24": "Roof S edge",
+    "relay-contract:tile-25": "Roof E S edge",
+    "relay-contract:tile-26": "Roof W edge",
+    "relay-contract:tile-27": "Roof N W edge",
+    "relay-contract:tile-28": "South Single",
+    "relay-contract:tile-29": "Road N E W",
+    "relay-contract:tile-30": "Road S W",
+    "relay-contract:tile-31": "Road N S W",
+    "relay-contract:tile-32": "Road E S W",
+    "relay-contract:tile-33": "Road N E S W",
+    "relay-contract:tile-34": "Road N E",
+    "relay-contract:tile-35": "Road E S",
+    "relay-contract:tile-36": "Road N E S",
+    "relay-contract:tile-37": "Road N W",
+    "relay-contract:tile-38": "East Base",
+    "relay-contract:tile-39": "East Top",
+    "relay-contract:tile-40": "East Base / South Base",
+    "relay-contract:tile-41": "East Top / South Top",
+    "relay-contract:tile-42": "outside / East Base",
+    "relay-contract:tile-43": "outside / East Top",
+    "relay-contract:tile-44": "South Base / outside",
+    "relay-contract:tile-45": "South Top / outside",
+    "relay-contract:tile-46": "South Base",
+    "relay-contract:tile-47": "South Top",
+    "relay-contract:tile-48": "South Single / East Single",
+    "relay-contract:tile-49": "Roof E W edge",
+    "relay-contract:tile-50": "Roof S W edge / inner NE",
+    "relay-contract:tile-51": "Roof N E edge / inner SW",
+    "relay-contract:tile-52": "Roof N S edge",
+    "relay-contract:tile-53": "Roof E S edge / inner NW",
+    "relay-contract:tile-54": "Roof N W edge / inner SE",
+    "relay-contract:tile-55": "Roof E W edge",
+    "relay-contract:tile-56": "Roof N E W edge",
+    "relay-contract:tile-57": "Roof E S W edge"
+  },
+  "construction_sets": [
+    {
+      "id": "relay:depot",
+      "name": "Relay depot",
+      "kind": "Building",
+      "footprint": [
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          1
+        ]
+      ],
+      "parts": {
+        "east_single": "relay-contract:tile-1",
+        "join|east_single|south_single": "relay-contract:tile-2",
+        "join|empty|east_single": "relay-contract:tile-3",
+        "join|south_single|empty": "relay-contract:tile-4",
+        "roof_0_0": "relay-contract:tile-5",
+        "roof_12_0": "relay-contract:tile-6",
+        "roof_1_0": "relay-contract:tile-7",
+        "roof_2_0": "relay-contract:tile-8",
+        "roof_3_0": "relay-contract:tile-9",
+        "roof_4_0": "relay-contract:tile-10",
+        "roof_6_0": "relay-contract:tile-11",
+        "roof_8_0": "relay-contract:tile-12",
+        "roof_9_0": "relay-contract:tile-13",
+        "south_single": "relay-contract:tile-14",
+        "east_base": "relay-contract:tile-38",
+        "east_top": "relay-contract:tile-39",
+        "join|east_base|south_base": "relay-contract:tile-40",
+        "join|east_top|south_top": "relay-contract:tile-41",
+        "join|empty|east_base": "relay-contract:tile-42",
+        "join|empty|east_top": "relay-contract:tile-43",
+        "join|south_base|empty": "relay-contract:tile-44",
+        "join|south_top|empty": "relay-contract:tile-45",
+        "south_base": "relay-contract:tile-46",
+        "south_top": "relay-contract:tile-47",
+        "join|south_single|east_single": "relay-contract:tile-48",
+        "roof_10_0": "relay-contract:tile-49",
+        "roof_12_1": "relay-contract:tile-50",
+        "roof_3_4": "relay-contract:tile-51",
+        "roof_5_0": "relay-contract:tile-52",
+        "roof_6_8": "relay-contract:tile-53",
+        "roof_9_2": "relay-contract:tile-54"
+      }
+    },
+    {
+      "id": "relay:wall",
+      "name": "Compound wall",
+      "kind": "Wall",
+      "footprint": [
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          1
+        ]
+      ],
+      "parts": {
+        "east_single": "relay-contract:tile-15",
+        "join|east_single|south_single": "relay-contract:tile-16",
+        "join|empty|east_single": "relay-contract:tile-17",
+        "join|south_single|empty": "relay-contract:tile-18",
+        "roof_0_0": "relay-contract:tile-19",
+        "roof_12_0": "relay-contract:tile-20",
+        "roof_1_0": "relay-contract:tile-21",
+        "roof_2_0": "relay-contract:tile-22",
+        "roof_3_0": "relay-contract:tile-23",
+        "roof_4_0": "relay-contract:tile-24",
+        "roof_6_0": "relay-contract:tile-25",
+        "roof_8_0": "relay-contract:tile-26",
+        "roof_9_0": "relay-contract:tile-27",
+        "south_single": "relay-contract:tile-28",
+        "roof_10_0": "relay-contract:tile-55",
+        "roof_11_0": "relay-contract:tile-56",
+        "roof_14_0": "relay-contract:tile-57"
+      }
+    },
+    {
+      "id": "relay:road",
+      "name": "Depot roads",
+      "kind": "Road",
+      "footprint": [
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          1
+        ]
+      ],
+      "parts": {
+        "road_11": "relay-contract:tile-29",
+        "road_12": "relay-contract:tile-30",
+        "road_13": "relay-contract:tile-31",
+        "road_14": "relay-contract:tile-32",
+        "road_15": "relay-contract:tile-33",
+        "road_3": "relay-contract:tile-34",
+        "road_6": "relay-contract:tile-35",
+        "road_7": "relay-contract:tile-36",
+        "road_9": "relay-contract:tile-37",
+        "road_0": "relay-contract:tile-58",
+        "road_1": "relay-contract:tile-59",
+        "road_2": "relay-contract:tile-60",
+        "road_4": "relay-contract:tile-61",
+        "road_5": "relay-contract:tile-62",
+        "road_8": "relay-contract:tile-63",
+        "road_10": "relay-contract:tile-64"
+      }
+    }
+  ],
+  "map_constructions": [
+    {
+      "id": "relay:office-building",
+      "name": "Building 1",
+      "map": "relay:town",
+      "kind": "Building",
+      "style": "relay:depot",
+      "datum": 2,
+      "cells": [
+        [
+          10,
+          3,
+          2
+        ],
+        [
+          10,
+          4,
+          2
+        ],
+        [
+          10,
+          5,
+          2
+        ],
+        [
+          10,
+          6,
+          2
+        ],
+        [
+          11,
+          3,
+          2
+        ],
+        [
+          11,
+          4,
+          2
+        ],
+        [
+          11,
+          5,
+          2
+        ],
+        [
+          11,
+          6,
+          2
+        ],
+        [
+          12,
+          3,
+          2
+        ],
+        [
+          12,
+          4,
+          2
+        ],
+        [
+          12,
+          5,
+          2
+        ],
+        [
+          12,
+          6,
+          2
+        ],
+        [
+          13,
+          3,
+          2
+        ],
+        [
+          13,
+          4,
+          2
+        ],
+        [
+          13,
+          5,
+          2
+        ],
+        [
+          13,
+          6,
+          2
+        ],
+        [
+          14,
+          3,
+          2
+        ],
+        [
+          14,
+          4,
+          2
+        ],
+        [
+          14,
+          5,
+          2
+        ],
+        [
+          14,
+          6,
+          2
+        ],
+        [
+          15,
+          3,
+          2
+        ],
+        [
+          15,
+          4,
+          2
+        ],
+        [
+          15,
+          5,
+          2
+        ],
+        [
+          15,
+          6,
+          2
+        ]
+      ],
+      "overlay": 0,
+      "rendered": {
+        "at": [
+          10,
+          3
+        ],
+        "rows": [
+          [
+            "relay-contract:tile-13",
+            "relay-contract:tile-7",
+            "relay-contract:tile-7",
+            "relay-contract:tile-7",
+            "relay-contract:tile-7",
+            "relay-contract:tile-9",
+            "relay-contract:tile-43",
+            " "
+          ],
+          [
+            "relay-contract:tile-12",
+            "relay-contract:tile-5",
+            "relay-contract:tile-5",
+            "relay-contract:tile-5",
+            "relay-contract:tile-5",
+            "relay-contract:tile-8",
+            "relay-contract:tile-39",
+            "relay-contract:tile-42"
+          ],
+          [
+            "relay-contract:tile-12",
+            "relay-contract:tile-5",
+            "relay-contract:tile-5",
+            "relay-contract:tile-5",
+            "relay-contract:tile-5",
+            "relay-contract:tile-8",
+            "relay-contract:tile-39",
+            "relay-contract:tile-38"
+          ],
+          [
+            "relay-contract:tile-6",
+            "relay-contract:tile-10",
+            "relay-contract:tile-10",
+            "relay-contract:tile-10",
+            "relay-contract:tile-10",
+            "relay-contract:tile-11",
+            "relay-contract:tile-39",
+            "relay-contract:tile-38"
+          ],
+          [
+            "relay-contract:tile-45",
+            "relay-contract:tile-47",
+            "relay-contract:tile-47",
+            "relay-contract:tile-47",
+            "relay-contract:tile-47",
+            "relay-contract:tile-47",
+            "relay-contract:tile-41",
+            "relay-contract:tile-38"
+          ],
+          [
+            " ",
+            "relay-contract:tile-44",
+            "relay-contract:tile-46",
+            "relay-contract:tile-46",
+            "relay-contract:tile-46",
+            "relay-contract:tile-46",
+            "relay-contract:tile-46",
+            "relay-contract:tile-40"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "relay:workshop-building",
+      "name": "Building 2",
+      "map": "relay:town",
+      "kind": "Building",
+      "style": "relay:depot",
+      "datum": 1,
+      "cells": [
+        [
+          22,
+          3,
+          1
+        ],
+        [
+          22,
+          4,
+          1
+        ],
+        [
+          22,
+          5,
+          1
+        ],
+        [
+          22,
+          6,
+          1
+        ],
+        [
+          23,
+          3,
+          1
+        ],
+        [
+          23,
+          6,
+          1
+        ],
+        [
+          24,
+          3,
+          1
+        ],
+        [
+          24,
+          6,
+          1
+        ],
+        [
+          25,
+          3,
+          1
+        ],
+        [
+          25,
+          6,
+          1
+        ],
+        [
+          26,
+          3,
+          1
+        ],
+        [
+          26,
+          4,
+          1
+        ],
+        [
+          26,
+          5,
+          1
+        ],
+        [
+          26,
+          6,
+          1
+        ]
+      ],
+      "overlay": 1,
+      "rendered": {
+        "at": [
+          22,
+          3
+        ],
+        "rows": [
+          [
+            "relay-contract:tile-54",
+            "relay-contract:tile-52",
+            "relay-contract:tile-52",
+            "relay-contract:tile-52",
+            "relay-contract:tile-51",
+            "relay-contract:tile-3"
+          ],
+          [
+            "relay-contract:tile-49",
+            "relay-contract:tile-48",
+            "relay-contract:tile-14",
+            "relay-contract:tile-14",
+            "relay-contract:tile-49",
+            "relay-contract:tile-1"
+          ],
+          [
+            "relay-contract:tile-49",
+            "relay-contract:tile-1",
+            " ",
+            " ",
+            "relay-contract:tile-49",
+            "relay-contract:tile-1"
+          ],
+          [
+            "relay-contract:tile-50",
+            "relay-contract:tile-52",
+            "relay-contract:tile-52",
+            "relay-contract:tile-52",
+            "relay-contract:tile-53",
+            "relay-contract:tile-1"
+          ],
+          [
+            "relay-contract:tile-4",
+            "relay-contract:tile-14",
+            "relay-contract:tile-14",
+            "relay-contract:tile-14",
+            "relay-contract:tile-14",
+            "relay-contract:tile-2"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "relay:compound",
+      "name": "Wall 3",
+      "map": "relay:town",
+      "kind": "Wall",
+      "style": "relay:wall",
+      "datum": 1,
+      "cells": [
+        [
+          29,
+          3,
+          1
+        ],
+        [
+          29,
+          4,
+          1
+        ],
+        [
+          29,
+          5,
+          1
+        ],
+        [
+          29,
+          6,
+          1
+        ],
+        [
+          29,
+          7,
+          1
+        ],
+        [
+          29,
+          8,
+          1
+        ],
+        [
+          29,
+          9,
+          1
+        ],
+        [
+          29,
+          10,
+          1
+        ],
+        [
+          29,
+          11,
+          1
+        ]
+      ],
+      "overlay": 2,
+      "rendered": {
+        "at": [
+          29,
+          3
+        ],
+        "rows": [
+          [
+            "relay-contract:tile-56",
+            "relay-contract:tile-17"
+          ],
+          [
+            "relay-contract:tile-55",
+            "relay-contract:tile-15"
+          ],
+          [
+            "relay-contract:tile-55",
+            "relay-contract:tile-15"
+          ],
+          [
+            "relay-contract:tile-55",
+            "relay-contract:tile-15"
+          ],
+          [
+            "relay-contract:tile-55",
+            "relay-contract:tile-15"
+          ],
+          [
+            "relay-contract:tile-55",
+            "relay-contract:tile-15"
+          ],
+          [
+            "relay-contract:tile-55",
+            "relay-contract:tile-15"
+          ],
+          [
+            "relay-contract:tile-55",
+            "relay-contract:tile-15"
+          ],
+          [
+            "relay-contract:tile-57",
+            "relay-contract:tile-15"
+          ],
+          [
+            "relay-contract:tile-18",
+            "relay-contract:tile-16"
+          ]
+        ]
+      }
+    }
+  ],
+  "map_patterns": [
+    {
+      "id": "relay-contract:pattern-1",
+      "name": "Relay office",
+      "rows": [
+        [
+          "relay-contract:tile-13",
+          "relay-contract:tile-7",
+          "relay-contract:tile-7",
+          "relay-contract:tile-7",
+          "relay-contract:tile-7",
+          "relay-contract:tile-9",
+          "relay-contract:tile-43",
+          "frontier:grass"
+        ],
+        [
+          "relay-contract:tile-12",
+          "relay-contract:tile-5",
+          "relay-contract:tile-5",
+          "relay-contract:tile-5",
+          "relay-contract:tile-5",
+          "relay-contract:tile-8",
+          "relay-contract:tile-39",
+          "relay-contract:tile-42"
+        ],
+        [
+          "relay-contract:tile-12",
+          "relay-contract:tile-5",
+          "relay-contract:tile-5",
+          "relay-contract:tile-5",
+          "relay-contract:tile-5",
+          "relay-contract:tile-8",
+          "relay-contract:tile-39",
+          "relay-contract:tile-38"
+        ],
+        [
+          "relay-contract:tile-6",
+          "relay-contract:tile-10",
+          "relay-contract:tile-10",
+          "relay-contract:tile-10",
+          "relay-contract:tile-10",
+          "relay-contract:tile-11",
+          "relay-contract:tile-39",
+          "relay-contract:tile-38"
+        ],
+        [
+          "relay-contract:tile-45",
+          "relay-contract:tile-47",
+          "relay-contract:tile-47",
+          "relay-contract:tile-47",
+          "relay-contract:tile-47",
+          "relay-contract:tile-47",
+          "relay-contract:tile-41",
+          "relay-contract:tile-38"
+        ],
+        [
+          "frontier:grass",
+          "relay-contract:tile-44",
+          "relay-contract:tile-46",
+          "relay-contract:tile-46",
+          "relay-contract:tile-46",
+          "relay-contract:tile-46",
+          "relay-contract:tile-46",
+          "relay-contract:tile-40"
+        ]
+      ]
+    }
+  ]
+}

@@ -93,13 +93,13 @@ def package(output,platform='linux',python_runtime=None):
         for name in tracked:
             if not name:continue
             p=Path(name)
-            if (p.parts[0] in ('tools','docs','content','examples','port','third_party','tests','cmake') and p.suffix in ('.py','.md','.json','.anm','.txt','.lua','.c','.h','.actions','.cmake')) or name in ('BtechPort.pyw','BtechPort.cmd','LICENSE','README.md','CMakeLists.txt','third_party/lua/COPYRIGHT','third_party/lua/LICENSE'):
+            if (p.parts[0] in ('tools','docs','content','examples','port','third_party','tests','cmake','schemas') and p.suffix in ('.py','.md','.json','.anm','.txt','.lua','.c','.h','.actions','.cmake')) or name in ('BtechPort.pyw','BtechPort.cmd','LICENSE','README.md','CMakeLists.txt','third_party/lua/COPYRIGHT','third_party/lua/LICENSE'):
                 copy_file(ROOT/p,stage/p,inventory)
         # Also include new delivery tools before their first incremental commit.
         for name in ('delivery.py','save_migration.py','delivery_gui.py','runtime_probe.py'):
             if (ROOT/'tools'/name).exists():copy_file(ROOT/'tools'/name,stage/'tools'/name,inventory)
         folder=ROOT/('build-windows' if platform=='windows' else 'build');suffix='.exe' if platform=='windows' else ''
-        for name in ('btech-port','btech-headless','btp-project'):copy_file(folder/(name+suffix),stage/'build'/(name+suffix),inventory)
+        for name in ('btech-port','btech-headless','btp-project','btp-author-playtest'):copy_file(folder/(name+suffix),stage/'build'/(name+suffix),inventory)
         if platform=='linux':requirements=linux_runtime(stage,inventory)
         else:
             for dll in folder.glob('*.dll'):copy_file(dll,stage/'build'/dll.name,inventory)

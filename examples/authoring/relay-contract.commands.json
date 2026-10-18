@@ -1,0 +1,1063 @@
+{
+  "api_version": 1,
+  "request_id": "relay-contract-001",
+  "project_id": "relay-contract",
+  "expected_revision": "new",
+  "label": "Create Relay Contract mission",
+  "scope": [
+    "*"
+  ],
+  "operations": [
+    {
+      "op": "unit.import",
+      "file": "units/phoenix-hawk.json"
+    },
+    {
+      "op": "unit.import",
+      "file": "units/trebuchet.json"
+    },
+    {
+      "op": "unit.import",
+      "file": "units/jenner.json"
+    },
+    {
+      "op": "object.remove",
+      "collection": "maps",
+      "id": "frontier:depot-map"
+    },
+    {
+      "op": "object.remove",
+      "collection": "maps",
+      "id": "frontier:field"
+    },
+    {
+      "op": "object.remove",
+      "collection": "people",
+      "id": "frontier:leader"
+    },
+    {
+      "op": "object.remove",
+      "collection": "people",
+      "id": "frontier:pilot"
+    },
+    {
+      "op": "object.remove",
+      "collection": "people",
+      "id": "frontier:trespasser"
+    },
+    {
+      "op": "object.remove",
+      "collection": "shops",
+      "id": "frontier:depot"
+    },
+    {
+      "op": "object.remove",
+      "collection": "encounters",
+      "id": "frontier:patrol"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "frontier:end"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "frontier:welcome"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "frontier:broker"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "frontier:shop"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "frontier:about"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "frontier:hall"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "frontier:hire-check"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "frontier:hire"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "frontier:hired-flag"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "frontier:hired"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "frontier:already-hired"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "frontier:no-room"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "frontier:job-check"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "frontier:job"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "frontier:thanks"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "frontier:to-field"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "frontier:field-intro"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "frontier:to-town"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "frontier:blocked"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "frontier:patrol-check"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "frontier:patrol-choice"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "frontier:fight"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "frontier:reward"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "frontier:cleared-flag"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "frontier:victory"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "frontier:withdraw"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "frontier:defeat"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "frontier:full-wallet"
+    },
+    {
+      "op": "construction.style",
+      "value": {
+        "id": "relay:depot",
+        "name": "Relay depot",
+        "kind": "Building",
+        "footprint": [
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1
+          ]
+        ],
+        "parts": {}
+      }
+    },
+    {
+      "op": "construction.style",
+      "value": {
+        "id": "relay:wall",
+        "name": "Compound wall",
+        "kind": "Wall",
+        "footprint": [
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1
+          ]
+        ],
+        "parts": {}
+      }
+    },
+    {
+      "op": "construction.style",
+      "value": {
+        "id": "relay:road",
+        "name": "Depot roads",
+        "kind": "Road",
+        "footprint": [
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1
+          ]
+        ],
+        "parts": {}
+      }
+    },
+    {
+      "op": "map.create",
+      "id": "relay:town",
+      "name": "Greybank Relay Depot",
+      "width": 32,
+      "height": 24,
+      "tile": "frontier:grass"
+    },
+    {
+      "op": "map.create",
+      "id": "relay:field",
+      "name": "Relay Approach",
+      "width": 32,
+      "height": 24,
+      "tile": "frontier:grass"
+    },
+    {
+      "op": "map.paint",
+      "map": "relay:town",
+      "tile": "frontier:forest",
+      "start": [
+        1,
+        1
+      ],
+      "end": [
+        6,
+        6
+      ],
+      "tool": "Rectangle"
+    },
+    {
+      "op": "map.paint",
+      "map": "relay:town",
+      "tile": "frontier:forest",
+      "start": [
+        2,
+        17
+      ],
+      "end": [
+        4,
+        21
+      ],
+      "tool": "Rectangle"
+    },
+    {
+      "op": "map.paint",
+      "map": "relay:town",
+      "tile": "frontier:forest",
+      "start": [
+        24,
+        16
+      ],
+      "end": [
+        29,
+        21
+      ],
+      "tool": "Rectangle"
+    },
+    {
+      "op": "map.paint",
+      "map": "relay:town",
+      "tile": "frontier:water",
+      "start": [
+        0,
+        10
+      ],
+      "end": [
+        3,
+        15
+      ],
+      "tool": "Rectangle"
+    },
+    {
+      "op": "construction.draw",
+      "map": "relay:town",
+      "style": "relay:depot",
+      "id": "relay:office-building",
+      "start": [
+        10,
+        3
+      ],
+      "end": [
+        15,
+        6
+      ],
+      "shape": "Rectangle",
+      "stories": 2
+    },
+    {
+      "op": "construction.draw",
+      "map": "relay:town",
+      "style": "relay:depot",
+      "id": "relay:workshop-building",
+      "start": [
+        22,
+        3
+      ],
+      "end": [
+        26,
+        6
+      ],
+      "shape": "Courtyard",
+      "stories": 1
+    },
+    {
+      "op": "construction.draw",
+      "map": "relay:town",
+      "style": "relay:wall",
+      "id": "relay:compound",
+      "start": [
+        29,
+        3
+      ],
+      "end": [
+        29,
+        11
+      ],
+      "stories": 1
+    },
+    {
+      "op": "road.draw",
+      "map": "relay:town",
+      "style": "relay:road",
+      "start": [
+        6,
+        10
+      ],
+      "end": [
+        27,
+        10
+      ]
+    },
+    {
+      "op": "road.draw",
+      "map": "relay:town",
+      "style": "relay:road",
+      "start": [
+        8,
+        10
+      ],
+      "end": [
+        8,
+        19
+      ]
+    },
+    {
+      "op": "road.draw",
+      "map": "relay:town",
+      "style": "relay:road",
+      "start": [
+        12,
+        9
+      ],
+      "end": [
+        12,
+        10
+      ]
+    },
+    {
+      "op": "road.draw",
+      "map": "relay:town",
+      "style": "relay:road",
+      "start": [
+        24,
+        8
+      ],
+      "end": [
+        24,
+        10
+      ]
+    },
+    {
+      "op": "pattern.capture",
+      "map": "relay:town",
+      "rect": [
+        10,
+        3,
+        17,
+        8
+      ],
+      "name": "Relay office"
+    },
+    {
+      "op": "map.paint",
+      "map": "relay:field",
+      "tile": "frontier:forest",
+      "start": [
+        2,
+        2
+      ],
+      "end": [
+        6,
+        7
+      ],
+      "tool": "Rectangle"
+    },
+    {
+      "op": "map.paint",
+      "map": "relay:field",
+      "tile": "frontier:forest",
+      "start": [
+        24,
+        15
+      ],
+      "end": [
+        28,
+        20
+      ],
+      "tool": "Rectangle"
+    },
+    {
+      "op": "road.draw",
+      "map": "relay:field",
+      "style": "relay:road",
+      "start": [
+        5,
+        18
+      ],
+      "end": [
+        24,
+        9
+      ]
+    },
+    {
+      "op": "object.put",
+      "collection": "people",
+      "value": {
+        "id": "relay:rowan",
+        "identity": "actor:0",
+        "name": "Rowan",
+        "attributes": [
+          9,
+          9,
+          9
+        ],
+        "skills": [
+          3,
+          3,
+          3,
+          4,
+          4,
+          2,
+          2
+        ],
+        "weapon": 7,
+        "armor": 2
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "people",
+      "value": {
+        "id": "relay:mira",
+        "identity": "actor:1",
+        "name": "Mira",
+        "attributes": [
+          9,
+          9,
+          9
+        ],
+        "skills": [
+          3,
+          3,
+          3,
+          4,
+          4,
+          2,
+          2
+        ],
+        "weapon": 7,
+        "armor": 2
+      }
+    },
+    {
+      "op": "flags.add",
+      "ids": [
+        "relay:accepted",
+        "relay:cleared",
+        "relay:paid"
+      ]
+    },
+    {
+      "op": "object.put",
+      "collection": "objectives",
+      "value": {
+        "id": "relay:contract",
+        "title": "Secure the relay",
+        "text": "Clear the raider on the relay approach, then return to the depot for payment.",
+        "active": "relay:accepted",
+        "complete": "relay:paid"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "shops",
+      "value": {
+        "id": "relay:stock",
+        "stock": [
+          "chi-expanded:phoenix-hawk-pxh-1",
+          "chi-expanded:trebuchet-tbt-5n",
+          "chi-expanded:jenner-jr7-d"
+        ]
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "encounters",
+      "value": {
+        "id": "relay:raider",
+        "map": "relay:field",
+        "party_at": [
+          12,
+          36
+        ],
+        "enemies": [
+          {
+            "kind": "mech",
+            "definition": "chi-expanded:jenner-jr7-d",
+            "at": [
+              42,
+              22
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "relay:end",
+        "op": "end"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "relay:welcome",
+        "op": "say",
+        "portrait": "none",
+        "text": "Greybank has lost contact with its relay. Your Phoenix Hawk and Trebuchet are the only machines available. The depot offers 4,000 credits to clear the approach.",
+        "next": "relay:offer"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "relay:offer",
+        "op": "choice",
+        "portrait": "none",
+        "text": "Will you take the relay contract?",
+        "options": [
+          {
+            "label": "Accept contract",
+            "next": "relay:accept"
+          },
+          {
+            "label": "Decide later",
+            "next": "relay:end"
+          }
+        ],
+        "cancel": "relay:end"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "relay:accept",
+        "op": "flag",
+        "flag": "relay:accepted",
+        "value": 1,
+        "next": "relay:briefing"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "relay:briefing",
+        "op": "say",
+        "portrait": "none",
+        "text": "Take the south road to the relay. A Jenner is blocking the approach. Withdraw if necessary. Return here when the route is clear.",
+        "next": "relay:end"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "relay:office",
+        "op": "if",
+        "flag": "relay:cleared",
+        "value": 1,
+        "then": "relay:receipt",
+        "else": "relay:accepted-check"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "relay:accepted-check",
+        "op": "if",
+        "flag": "relay:accepted",
+        "value": 1,
+        "then": "relay:briefing",
+        "else": "relay:offer"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "relay:receipt",
+        "op": "if",
+        "flag": "relay:paid",
+        "value": 1,
+        "then": "relay:debrief",
+        "else": "relay:pay"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "relay:pay",
+        "op": "reward",
+        "credits": 4000,
+        "next": "relay:paid",
+        "failure": "relay:end"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "relay:paid",
+        "op": "flag",
+        "flag": "relay:paid",
+        "value": 1,
+        "next": "relay:thanks"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "relay:thanks",
+        "op": "say",
+        "portrait": "none",
+        "text": "The relay is transmitting again. Your account has been credited with 4,000. Good work, commander.",
+        "next": "relay:debrief"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "relay:debrief",
+        "op": "choice",
+        "portrait": "none",
+        "text": "The contract is complete. Explore the depot or end this mission.",
+        "options": [
+          {
+            "label": "Keep exploring",
+            "next": "relay:end"
+          },
+          {
+            "label": "Finish mission",
+            "next": "relay:finish"
+          }
+        ],
+        "cancel": "relay:end"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "relay:finish",
+        "op": "finish",
+        "portrait": "none",
+        "text": "Greybank is back on the network. Contract complete."
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "relay:to-field",
+        "op": "transfer",
+        "map": "relay:field",
+        "at": [
+          12,
+          38
+        ],
+        "next": "relay:end",
+        "failure": "relay:end"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "relay:to-town",
+        "op": "transfer",
+        "map": "relay:town",
+        "at": [
+          16,
+          38
+        ],
+        "next": "relay:end",
+        "failure": "relay:end"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "relay:challenge",
+        "op": "if",
+        "flag": "relay:cleared",
+        "value": 1,
+        "then": "relay:clear-text",
+        "else": "relay:challenge-offer"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "relay:challenge-offer",
+        "op": "choice",
+        "portrait": "none",
+        "text": "A Jenner guards the relay approach. Engage the raider?",
+        "options": [
+          {
+            "label": "Engage",
+            "next": "relay:battle"
+          },
+          {
+            "label": "Withdraw",
+            "next": "relay:end"
+          }
+        ],
+        "cancel": "relay:end"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "relay:battle",
+        "op": "battle",
+        "encounter": "relay:raider",
+        "win": "relay:won",
+        "loss": "relay:lost",
+        "flee": "relay:retreated",
+        "failure": "relay:unavailable"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "relay:won",
+        "op": "flag",
+        "flag": "relay:cleared",
+        "value": 1,
+        "next": "relay:clear-text"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "relay:clear-text",
+        "op": "say",
+        "portrait": "none",
+        "text": "The approach is secure. Return to the depot for your payment.",
+        "next": "relay:end"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "relay:lost",
+        "op": "say",
+        "portrait": "none",
+        "text": "The raider holds the relay. Return to the depot and regroup.",
+        "next": "relay:to-town"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "relay:retreated",
+        "op": "say",
+        "portrait": "none",
+        "text": "You withdraw from the relay. The contract remains open.",
+        "next": "relay:end"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "relay:unavailable",
+        "op": "say",
+        "portrait": "none",
+        "text": "The lance cannot deploy here. Return to the depot.",
+        "next": "relay:end"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "relay:workshop",
+        "op": "choice",
+        "portrait": "none",
+        "text": "The depot offers machines and basic repairs.",
+        "options": [
+          {
+            "label": "Browse machines",
+            "next": "relay:shop"
+          },
+          {
+            "label": "Repair lance - 100",
+            "next": "relay:repair"
+          },
+          {
+            "label": "Leave",
+            "next": "relay:end"
+          }
+        ],
+        "cancel": "relay:end"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "relay:shop",
+        "op": "shop",
+        "shop": "relay:stock",
+        "next": "relay:workshop"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "relay:repair",
+        "op": "repair",
+        "cost": 100,
+        "next": "relay:repaired",
+        "failure": "relay:no-funds",
+        "unchanged": "relay:no-work"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "relay:repaired",
+        "op": "say",
+        "portrait": "none",
+        "text": "The lance is repaired.",
+        "next": "relay:workshop"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "relay:no-funds",
+        "op": "say",
+        "portrait": "none",
+        "text": "You cannot afford repairs.",
+        "next": "relay:workshop"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "relay:no-work",
+        "op": "say",
+        "portrait": "none",
+        "text": "Your machines need no repairs.",
+        "next": "relay:workshop"
+      }
+    },
+    {
+      "op": "entrance.put",
+      "map": "relay:town",
+      "value": {
+        "id": "relay:office",
+        "name": "Contract office",
+        "at": [
+          25,
+          18
+        ],
+        "event": "relay:office"
+      }
+    },
+    {
+      "op": "entrance.put",
+      "map": "relay:town",
+      "value": {
+        "id": "relay:workshop",
+        "name": "Mech workshop",
+        "at": [
+          48,
+          18
+        ],
+        "event": "relay:workshop"
+      }
+    },
+    {
+      "op": "entrance.put",
+      "map": "relay:town",
+      "value": {
+        "id": "relay:south-road",
+        "name": "Relay road",
+        "at": [
+          16,
+          42
+        ],
+        "event": "relay:to-field"
+      }
+    },
+    {
+      "op": "entrance.put",
+      "map": "relay:field",
+      "value": {
+        "id": "relay:depot-road",
+        "name": "Depot road",
+        "at": [
+          12,
+          42
+        ],
+        "event": "relay:to-town"
+      }
+    },
+    {
+      "op": "entrance.put",
+      "map": "relay:field",
+      "value": {
+        "id": "relay:raider-marker",
+        "name": "Relay approach",
+        "at": [
+          28,
+          30
+        ],
+        "event": "relay:challenge"
+      }
+    },
+    {
+      "op": "start.set",
+      "changes": {
+        "map": "relay:town",
+        "at": [
+          12,
+          34
+        ],
+        "event": "relay:welcome",
+        "credits": 5000,
+        "party": [
+          {
+            "person": "relay:rowan",
+            "mech": "chi-expanded:phoenix-hawk-pxh-1"
+          },
+          {
+            "person": "relay:mira",
+            "mech": "chi-expanded:trebuchet-tbt-5n"
+          }
+        ]
+      }
+    }
+  ]
+}

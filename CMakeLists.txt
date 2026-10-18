@@ -73,7 +73,10 @@ target_link_libraries(btp-audio-render PRIVATE btp_core)
 add_executable(btp-roster-check tools/roster_check.c)
 target_link_libraries(btp-roster-check PRIVATE btp_core)
 add_executable(btp-project tools/project.c)
+target_compile_definitions(btp-project PRIVATE BTP_RUNTIME_VERSION="${PROJECT_VERSION}")
 target_link_libraries(btp-project PRIVATE btp_pixels)
+add_executable(btp-author-playtest tools/author_playtest.c port/frontend/cli.c)
+target_link_libraries(btp-author-playtest PRIVATE btp_pixels)
 
 if(BTP_FRONTEND)
   find_package(SDL2 QUIET CONFIG)
@@ -112,6 +115,17 @@ endif()
 set(DART_TESTING_TIMEOUT 120 CACHE STRING "Bound each headless comparison" FORCE)
 include(CTest)
 if(BUILD_TESTING)
+  file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/authoring-scenario")
+  add_test(NAME authoring-relay-contract COMMAND btp-author-playtest
+    --project "${PROJECT_SOURCE_DIR}/examples/relay-contract"
+    --scenario "${PROJECT_SOURCE_DIR}/examples/authoring/relay-contract.scenario.json"
+    --artifacts "${CMAKE_CURRENT_BINARY_DIR}/authoring-scenario"
+    --data "${PROJECT_SOURCE_DIR}/Original DOS"
+    --dialogue-data "${PROJECT_SOURCE_DIR}/work/talk-data.bin"
+    --combat-data "${PROJECT_SOURCE_DIR}/work/combat-data.bin"
+    --world-data "${PROJECT_SOURCE_DIR}/work/world-data.bin")
+  set_tests_properties(authoring-relay-contract PROPERTIES
+    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/authoring-scenario" TIMEOUT 45)
   add_executable(btp-art-actions-tests tests/test_art_actions.c)
   target_link_libraries(btp-art-actions-tests PRIVATE btp_pixels)
   add_test(NAME authored-action-animation COMMAND btp-art-actions-tests "${PROJECT_SOURCE_DIR}/examples/beacon-demo")

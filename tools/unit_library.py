@@ -229,7 +229,7 @@ class UnitLibrary:
         return self.save(bundle, expected, variant)
 
 
-def import_units(document, bundles, policy='keep', infantry_art=False):
+def import_units(document, bundles, policy='keep', infantry_art=False, validate=True):
     """Merge as one undo transaction; validate before changing the document.
 
     Replacements update the selected blueprint but preserve conflicting shared
@@ -312,15 +312,17 @@ def import_units(document, bundles, policy='keep', infantry_art=False):
         if 'graphics' not in manifest and (document.root/'graphics.json').exists():
             raise EditorError('graphics.json already exists outside the project declarations.')
         manifest.setdefault('graphics', 'graphics.json')
-    # Validate a detached candidate without touching shared history or disk.
-    with tempfile.TemporaryDirectory(prefix='btp-library-import-') as tmp:
-        directory = Path(tmp)
-        document.stage(directory)
-        for name, value in ((manifest['definitions'], content), (manifest['adventure'], adventure),
-                            ('project.json', manifest)):
-            (directory/name).write_bytes(encoded(value))
-        if 'graphics' in manifest: (directory/manifest['graphics']).write_bytes(encoded(art))
-        run_validator(document.validator, directory)
+    # A standalone GUI import validates here. A transactional authoring batch
+    # defers validation until all forward references have been supplied.
+    if validate:
+        with tempfile.TemporaryDirectory(prefix='btp-library-import-') as tmp:
+            directory = Path(tmp)
+            document.stage(directory)
+            for name, value in ((manifest['definitions'], content), (manifest['adventure'], adventure),
+                                ('project.json', manifest)):
+                (directory/name).write_bytes(encoded(value))
+            if 'graphics' in manifest: (directory/manifest['graphics']).write_bytes(encoded(art))
+            run_validator(document.validator, directory)
     metadata = copy.deepcopy(document.metadata)
     metadata['LIBRARY-SOURCES.json'] = encoded(source_records)
     if editor:metadata['EDITOR.json']=encoded(editor)

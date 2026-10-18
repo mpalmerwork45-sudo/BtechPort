@@ -5,6 +5,7 @@
 #include "frontend/pixels.h"
 #include "data/sprites.h"
 #include "data/unit_data.h"
+#include "data/art.h"
 #include "core/animation.h"
 #include <errno.h>
 #include <stdio.h>
@@ -19,6 +20,30 @@
 #include <sys/stat.h>
 #define make_directory(p) mkdir(p,0700)
 #endif
+
+static int capabilities(void)
+{
+    /* Query the compiled adapter's constants. Authoring clients must not
+       advertise expanded limits merely because a schema accepts them. */
+    printf("{\"format\":\"btp-runtime-capabilities-v1\",\"runtime_version\":\"%s\","
+        "\"formats\":[\"btp-project-v1\",\"btp-content-v1\",\"btp-adventure-v1\",\"btp-adventure-v2\",\"btp-art-v1\",\"btp-presentation-v1\"],"
+        "\"limits\":{\"maps\":%u,\"events\":%u,\"flags\":%u,\"tiles\":%u,\"jigsaws\":%u,\"worlds\":%u,"
+        "\"people\":%u,\"shops\":%u,\"encounters\":%u,\"objectives\":%u,\"definitions_per_collection\":%u,"
+        "\"images\":%u,\"frames_per_image\":%u,\"art_pixels\":%u,\"animation_tracks\":%u,"
+        "\"world_sectors_total\":%u,\"discovery_cells\":%u,\"map_min_side\":16,\"map_width\":64,\"map_height\":64,\"entrances_per_map\":%u,"
+        "\"overlays_per_map\":32,\"enemies_per_encounter\":12,\"choice_options\":%u},"
+        "\"event_ops\":[\"end\",\"say\",\"choice\",\"if\",\"flag\",\"reward\",\"recruit\",\"transfer\",\"shop\",\"battle\",\"lua\",\"finish\",\"picture\",\"repair\",\"rearm\",\"heal\",\"salvage\"],"
+        "\"lua_api\":[\"game.flag\",\"game.credits\",\"game.command\"],"
+        "\"coordinate_spaces\":{\"map_tile\":\"16 pixels; local origin; rows and overlays\","
+        "\"movement\":\"8 pixels; local origin; entrances, start, enemies and transfers\","
+        "\"world_tile\":\"16 pixels; planet origin; city origins and patches\","
+        "\"jigsaw\":\"8 by 8 map tiles; world pieces grid\"},\"logical_tick_ms\":32}\n",
+        BTP_RUNTIME_VERSION,BTP_LOCAL_SCENES,BTP_EVENT_NODES,BTP_EVENT_FLAGS,BTP_SCENE_TILES,BTP_JIGSAWS,BTP_WORLDS,
+        BTP_SCENE_PEOPLE,BTP_SCENE_SHOPS,BTP_SCENE_BATTLES,BTP_OBJECTIVES,BTP_DEFINITION_LIMIT,
+        BTP_ART_IMAGES,BTP_ART_FRAMES,BTP_ART_PIXELS,BTP_ART_TRACKS,BTP_SCENES-BTP_LOCAL_SCENES,
+        BTP_AUTHORED_DISCOVERY,BTP_SCENE_ENTRANCES,BTP_EVENT_OPTIONS-1);
+    return ferror(stdout) ? 1 : 0;
+}
 
 static int terrain_animations(const char *directory)
 {
@@ -202,6 +227,7 @@ static int original_units(const char *output,const char *cache)
 
 int main(int argc,char **argv)
 {
+    if (argc==2 && !strcmp(argv[1],"capabilities")) return capabilities();
     if (argc==4 && !strcmp(argv[1],"formation") && !strcmp(argv[2],"--combat-data")) {
         BtpCombatData *c=calloc(1,sizeof *c);BtpError error={0};int ok=c && btp_combat_data_load(argv[3],c,&error);
         if (ok) {

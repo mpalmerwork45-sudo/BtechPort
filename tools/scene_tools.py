@@ -5,7 +5,7 @@ import json
 import subprocess
 from adventure_editing import composite,scene_markers,move_marker
 from editor_model import EditorError,encoded
-from event_workbench import editor_data,editor_commit
+from event_editing import editor_data,editor_commit
 from world_editing import identity,get_world,token
 
 def formation_data(document,settings):

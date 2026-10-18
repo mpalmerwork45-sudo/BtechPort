@@ -1,0 +1,284 @@
+{
+  "type": "object",
+  "properties": {
+    "format": {
+      "const": "btp-author-scenario-v1"
+    },
+    "max_ticks": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 120000
+    },
+    "expected_revision": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "input"
+              },
+              "action": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+              },
+              "repeat": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 120000
+              }
+            },
+            "required": [
+              "op",
+              "action"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "pages"
+              }
+            },
+            "required": [
+              "op"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "enter"
+              }
+            },
+            "required": [
+              "op"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "checkpoint"
+              }
+            },
+            "required": [
+              "op"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "capture"
+              }
+            },
+            "required": [
+              "op"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "walk"
+              },
+              "entrance": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              }
+            },
+            "required": [
+              "op",
+              "entrance"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "choose"
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+              }
+            },
+            "required": [
+              "op",
+              "label"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "battle"
+              },
+              "control": {
+                "const": "computer"
+              }
+            },
+            "required": [
+              "op",
+              "control"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "assert"
+              },
+              "credits": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 16777215
+              },
+              "party_count": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 8
+              },
+              "phase": {
+                "enum": [
+                  "exploration",
+                  "entry",
+                  "text",
+                  "choice",
+                  "shop",
+                  "battle",
+                  "fault",
+                  "complete"
+                ]
+              },
+              "map": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "event": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "flag": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "value": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 255
+              },
+              "objective": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "status": {
+                "enum": [
+                  "inactive",
+                  "active",
+                  "complete"
+                ]
+              }
+            },
+            "required": [
+              "op"
+            ],
+            "additionalProperties": false,
+            "anyOf": [
+              {
+                "required": [
+                  "credits"
+                ]
+              },
+              {
+                "required": [
+                  "party_count"
+                ]
+              },
+              {
+                "required": [
+                  "phase"
+                ]
+              },
+              {
+                "required": [
+                  "map"
+                ]
+              },
+              {
+                "required": [
+                  "event"
+                ]
+              },
+              {
+                "required": [
+                  "flag"
+                ]
+              },
+              {
+                "required": [
+                  "objective"
+                ]
+              }
+            ],
+            "allOf": [
+              {
+                "if": {
+                  "required": [
+                    "flag"
+                  ]
+                },
+                "then": {
+                  "required": [
+                    "value"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "required": [
+                    "objective"
+                  ]
+                },
+                "then": {
+                  "required": [
+                    "status"
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "minItems": 1,
+      "maxItems": 256
+    }
+  },
+  "required": [
+    "format",
+    "steps"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

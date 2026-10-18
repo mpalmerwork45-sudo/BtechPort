@@ -1,0 +1,1057 @@
+{
+  "type": "object",
+  "properties": {
+    "api_version": {
+      "const": 1
+    },
+    "request_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 96,
+      "pattern": "^[a-zA-Z0-9._-]+$"
+    },
+    "project_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 31
+    },
+    "expected_revision": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        {
+          "const": "new"
+        }
+      ]
+    },
+    "label": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "scope": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1024
+      },
+      "minItems": 1,
+      "maxItems": 64
+    },
+    "operations": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "object.put"
+              },
+              "collection": {
+                "enum": [
+                  "maps",
+                  "tiles",
+                  "jigsaws",
+                  "people",
+                  "shops",
+                  "encounters",
+                  "events",
+                  "objectives",
+                  "mechs",
+                  "weapons",
+                  "equipment",
+                  "ammunition",
+                  "presentations",
+                  "images"
+                ]
+              },
+              "value": {
+                "type": "object"
+              },
+              "mode": {
+                "enum": [
+                  "create",
+                  "replace"
+                ]
+              }
+            },
+            "required": [
+              "op",
+              "collection",
+              "value"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "object.patch"
+              },
+              "collection": {
+                "enum": [
+                  "maps",
+                  "tiles",
+                  "jigsaws",
+                  "people",
+                  "shops",
+                  "encounters",
+                  "events",
+                  "objectives",
+                  "mechs",
+                  "weapons",
+                  "equipment",
+                  "ammunition",
+                  "presentations",
+                  "images"
+                ]
+              },
+              "id": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "changes": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "op",
+              "collection",
+              "id",
+              "changes"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "object.remove"
+              },
+              "collection": {
+                "enum": [
+                  "maps",
+                  "tiles",
+                  "jigsaws",
+                  "people",
+                  "shops",
+                  "encounters",
+                  "events",
+                  "objectives",
+                  "mechs",
+                  "weapons",
+                  "equipment",
+                  "ammunition",
+                  "presentations",
+                  "images"
+                ]
+              },
+              "id": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              }
+            },
+            "required": [
+              "op",
+              "collection",
+              "id"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "project.configure"
+              },
+              "changes": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 1024
+                  },
+                  "content_version": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 1024
+                  },
+                  "rules_profile": {
+                    "enum": [
+                      "chi:legacy-v1",
+                      "chi:updated-lrm-v1"
+                    ]
+                  }
+                },
+                "required": [],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "op",
+              "changes"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "start.set"
+              },
+              "changes": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "op",
+              "changes"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "flags.add"
+              },
+              "ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 63,
+                  "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+                },
+                "minItems": 1,
+                "maxItems": 64
+              }
+            },
+            "required": [
+              "op",
+              "ids"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "map.create"
+              },
+              "id": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+              },
+              "width": {
+                "type": "integer",
+                "minimum": 16,
+                "maximum": 64
+              },
+              "height": {
+                "type": "integer",
+                "minimum": 16,
+                "maximum": 64
+              },
+              "tile": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "origin": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1023
+                },
+                "minItems": 2,
+                "maxItems": 2
+              }
+            },
+            "required": [
+              "op",
+              "id",
+              "name",
+              "width",
+              "height",
+              "tile"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "map.paint"
+              },
+              "map": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "tile": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "start": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1023
+                },
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "end": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1023
+                },
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "tool": {
+                "enum": [
+                  "Paint",
+                  "Rectangle",
+                  "Fill"
+                ]
+              },
+              "layer": {
+                "type": "integer",
+                "minimum": -1,
+                "maximum": 32
+              }
+            },
+            "required": [
+              "op",
+              "map",
+              "tile",
+              "start"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "entrance.put"
+              },
+              "map": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "value": {
+                "type": "object"
+              },
+              "mode": {
+                "enum": [
+                  "create",
+                  "replace"
+                ]
+              }
+            },
+            "required": [
+              "op",
+              "map",
+              "value"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "marker.move"
+              },
+              "map": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "kind": {
+                "enum": [
+                  "start",
+                  "entrance",
+                  "npc",
+                  "party",
+                  "enemy"
+                ]
+              },
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+              },
+              "at": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1023
+                },
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "enemy_index": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 11
+              }
+            },
+            "required": [
+              "op",
+              "map",
+              "kind",
+              "id",
+              "at"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "event.connect"
+              },
+              "source": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "branch": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+              },
+              "target": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              }
+            },
+            "required": [
+              "op",
+              "source",
+              "branch",
+              "target"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "world.create"
+              },
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+              },
+              "width": {
+                "type": "integer",
+                "minimum": 8,
+                "maximum": 128
+              },
+              "height": {
+                "type": "integer",
+                "minimum": 8,
+                "maximum": 128
+              }
+            },
+            "required": [
+              "op",
+              "name"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "world.paint"
+              },
+              "world": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "jigsaw": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "start": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1023
+                },
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "end": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1023
+                },
+                "minItems": 2,
+                "maxItems": 2
+              }
+            },
+            "required": [
+              "op",
+              "world",
+              "jigsaw",
+              "start"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "world.generate"
+              },
+              "world": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "seed": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 4294967295
+              },
+              "weights": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 1000
+                }
+              },
+              "match_edges": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "op",
+              "world",
+              "seed",
+              "weights"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "world.patch"
+              },
+              "world": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "at": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1023
+                },
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "rows": {
+                "type": "array",
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "maxLength": 63,
+                    "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+                  },
+                  "minItems": 1,
+                  "maxItems": 64
+                },
+                "minItems": 1,
+                "maxItems": 64
+              }
+            },
+            "required": [
+              "op",
+              "world",
+              "at",
+              "rows"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "city.place"
+              },
+              "world": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "map": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "at": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1023
+                },
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "enabled": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "op",
+              "world",
+              "map"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "construction.style"
+              },
+              "value": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "op",
+              "value"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "construction.draw"
+              },
+              "map": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "style": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "id": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "start": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1023
+                },
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "end": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1023
+                },
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "shape": {
+                "enum": [
+                  "Brush",
+                  "Rectangle",
+                  "Courtyard",
+                  "Erase"
+                ]
+              },
+              "stories": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 32
+              },
+              "width": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 8
+              },
+              "erase": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "op",
+              "map",
+              "style",
+              "start",
+              "stories"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "road.draw"
+              },
+              "map": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "style": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "start": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1023
+                },
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "end": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1023
+                },
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "width": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 8
+              },
+              "layer": {
+                "type": "integer",
+                "minimum": -1,
+                "maximum": 32
+              },
+              "erase": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "op",
+              "map",
+              "style",
+              "start",
+              "end"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "pattern.capture"
+              },
+              "map": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "rect": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 63
+                },
+                "minItems": 4,
+                "maxItems": 4
+              },
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+              }
+            },
+            "required": [
+              "op",
+              "map",
+              "rect",
+              "name"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "pattern.place"
+              },
+              "map": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "id": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "at": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1023
+                },
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "layer": {
+                "type": "integer",
+                "minimum": -1,
+                "maximum": 32
+              }
+            },
+            "required": [
+              "op",
+              "map",
+              "id",
+              "at"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "unit.import"
+              },
+              "file": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+              },
+              "policy": {
+                "enum": [
+                  "keep",
+                  "replace",
+                  "variant"
+                ]
+              },
+              "infantry_art": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "op",
+              "file"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "art.import"
+              },
+              "file": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+              },
+              "kind": {
+                "enum": [
+                  "tile",
+                  "sprite",
+                  "icon",
+                  "screen"
+                ]
+              },
+              "frame_width": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 320
+              },
+              "frame_height": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 200
+              },
+              "id": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+              }
+            },
+            "required": [
+              "op",
+              "file",
+              "kind"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "art.clone"
+              },
+              "source": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "id": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+              }
+            },
+            "required": [
+              "op",
+              "source",
+              "id"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "art.bind"
+              },
+              "slot": {
+                "enum": [
+                  "player",
+                  "npc",
+                  "enemy",
+                  "locust",
+                  "stinger",
+                  "wreck"
+                ]
+              },
+              "image": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              }
+            },
+            "required": [
+              "op",
+              "slot",
+              "image"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "script.import"
+              },
+              "id": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "file": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+              },
+              "target": {
+                "type": "string",
+                "pattern": "^[a-zA-Z0-9_-]+\\.lua$"
+              },
+              "mode": {
+                "enum": [
+                  "create",
+                  "replace"
+                ]
+              }
+            },
+            "required": [
+              "op",
+              "id",
+              "file",
+              "target"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
+      "minItems": 1,
+      "maxItems": 512
+    }
+  },
+  "required": [
+    "api_version",
+    "request_id",
+    "project_id",
+    "expected_revision",
+    "label",
+    "scope",
+    "operations"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

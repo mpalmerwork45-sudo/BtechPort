@@ -313,6 +313,9 @@ class Workspace:
         self.action('Reset layout',self.reset_layout,groups['View'])
         for percent in (100,150,200):self.action(f'Interface scale {percent}%',lambda p=percent:self.scale(p),groups['View'])
         self.action('Validate',lambda:validate(self,self.active_scope()),groups['Project'])
+        from editor_authoring import apply_file,export_summary
+        self.action('Apply authoring command file',lambda:apply_file(self),groups['Project'])
+        self.action('Export authoring summary',lambda:export_summary(self),groups['Project'])
         self.action('Unit Library',self.app.open_library,groups['Project'])
         self.action('Player setup',self.app.setup,groups['Project'])
         self.action('Ammunition',lambda:self.active_scope().owner.ammunition(),groups['Project'])
@@ -368,7 +371,7 @@ class Workspace:
         if name=='Save active scope' or name=='Validate':return bool(document) and not getattr(scope,'saving',False)
         if name in ('Undo','Redo'):
             return bool(document and ((document.undo_stack if name=='Undo' else document.redo_stack) or any(d.pending() for d in scope.live())))
-        if name in ('Export game','Assets and dependencies','Migrate an old save'):return bool(self.app.document)
+        if name in ('Export game','Assets and dependencies','Migrate an old save','Apply authoring command file','Export authoring summary'):return bool(self.app.document)
         if name in ('New definition','Duplicate definition','Delete definition','Ammunition','Find usages'):return bool(document)
         if name in ('Building designer','Wall designer','Road designer','Pattern Library'):return bool(self.app.document and self.app.document.adventure)
         if name in ('Play from start','Play from here','Checkpoints and trace'):return bool(self.app.document) and not self.play_session.preparing

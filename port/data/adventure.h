@@ -7,7 +7,8 @@
    separate: artwork never determines whether a roof can be walked through. */
 enum { BTP_LOCAL_SCENES=16, BTP_SCENES=272, BTP_EVENT_NODES=256, BTP_EVENT_FLAGS=64,
     BTP_SCENE_TILES=4096, BTP_JIGSAWS=1024, BTP_WORLDS=16, BTP_SCENE_PEOPLE=16, BTP_SCENE_SHOPS=16,
-    BTP_SCENE_BATTLES=16, BTP_EVENT_OPTIONS=6, BTP_AUTHORED_MAP_FIRST=16 };
+    BTP_SCENE_BATTLES=16, BTP_EVENT_OPTIONS=6, BTP_AUTHORED_MAP_FIRST=16,
+    BTP_SCENE_ENTRANCES=16, BTP_OBJECTIVES=32, BTP_AUTHORED_DISCOVERY=16384 };
 typedef struct { char id[64],image[64];uint16_t graphic;uint8_t key,sheet,terrain,color; } BtpSceneTile;
 typedef struct { char id[64],name[25],image[64];uint8_t x,y,person;uint16_t event,icon; } BtpSceneEntrance;
 typedef struct {
@@ -37,7 +38,7 @@ typedef struct {
 typedef struct {
     unsigned loaded,map_count,tile_count,person_count,shop_count,battle_count,node_count,flag_count;
     unsigned version,local_count,jigsaw_count,world_count,explore_cells,objective_count;
-    BtpObjective objectives[32];
+    BtpObjective objectives[BTP_OBJECTIVES];
     BtpAuthoredWorld worlds[BTP_WORLDS];
     uint8_t source_digest[32];
     unsigned start_map,start_x,start_y,start_event,credits,party_count;

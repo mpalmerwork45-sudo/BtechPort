@@ -1,0 +1,3254 @@
+{
+  "format": "btp-authoring-receipts-v1",
+  "requests": {
+    "relay-contract-001": {
+      "hash": "aac42a92b938d43b768025e2f57fcd1c1d01b8a717e354fdf5598f48f637c5e7",
+      "result": {
+        "api_version": 1,
+        "status": "applied",
+        "request_id": "relay-contract-001",
+        "base_revision": "908ffcc7c709d4712ec5421008a12e7ee9d7fca86025f99fd4b05bb22390e3c3",
+        "result_revision": "13b4625bce8fc83e552df42b2b65dabb7fed6f0456b6389ad87670980b7f4c22",
+        "changes": [
+          {
+            "path": "manifest.graphics",
+            "object_id": null,
+            "change": "modified",
+            "fields": []
+          },
+          {
+            "path": "content.ammunition/chi:ammo-lrm15-10",
+            "object_id": "chi:ammo-lrm15-10",
+            "change": "created",
+            "fields": [
+              "id",
+              "price_per_shot"
+            ]
+          },
+          {
+            "path": "content.ammunition/chi:ammo-machine_gun-1",
+            "object_id": "chi:ammo-machine_gun-1",
+            "change": "created",
+            "fields": [
+              "id",
+              "price_per_shot"
+            ]
+          },
+          {
+            "path": "content.ammunition/chi:ammo-srm4-6",
+            "object_id": "chi:ammo-srm4-6",
+            "change": "created",
+            "fields": [
+              "id",
+              "price_per_shot"
+            ]
+          },
+          {
+            "path": "content.mechs/chi-expanded:jenner-jr7-d",
+            "object_id": "chi-expanded:jenner-jr7-d",
+            "change": "created",
+            "fields": [
+              "actuators",
+              "armor",
+              "engine_heat_sinks",
+              "external_heat_sinks",
+              "id",
+              "label",
+              "loadout",
+              "mass_tons",
+              "movement",
+              "name",
+              "presentation",
+              "price",
+              "structure"
+            ]
+          },
+          {
+            "path": "content.mechs/chi-expanded:phoenix-hawk-pxh-1",
+            "object_id": "chi-expanded:phoenix-hawk-pxh-1",
+            "change": "created",
+            "fields": [
+              "actuators",
+              "armor",
+              "engine_heat_sinks",
+              "external_heat_sinks",
+              "id",
+              "label",
+              "loadout",
+              "mass_tons",
+              "movement",
+              "name",
+              "presentation",
+              "price",
+              "structure"
+            ]
+          },
+          {
+            "path": "content.mechs/chi-expanded:trebuchet-tbt-5n",
+            "object_id": "chi-expanded:trebuchet-tbt-5n",
+            "change": "created",
+            "fields": [
+              "actuators",
+              "armor",
+              "engine_heat_sinks",
+              "external_heat_sinks",
+              "id",
+              "label",
+              "loadout",
+              "mass_tons",
+              "movement",
+              "name",
+              "presentation",
+              "price",
+              "structure"
+            ]
+          },
+          {
+            "path": "content.presentations/chi:locust",
+            "object_id": "chi:locust",
+            "change": "created",
+            "fields": [
+              "id",
+              "source"
+            ]
+          },
+          {
+            "path": "content.presentations/chi:red-stinger",
+            "object_id": "chi:red-stinger",
+            "change": "created",
+            "fields": [
+              "id",
+              "source"
+            ]
+          },
+          {
+            "path": "content.weapons/chi:weapon-large_laser-0",
+            "object_id": "chi:weapon-large_laser-0",
+            "change": "created",
+            "fields": [
+              "ammunition",
+              "behavior",
+              "damage",
+              "heat",
+              "id",
+              "label",
+              "name",
+              "projectiles",
+              "ranges"
+            ]
+          },
+          {
+            "path": "content.weapons/chi:weapon-lrm15-10",
+            "object_id": "chi:weapon-lrm15-10",
+            "change": "created",
+            "fields": [
+              "ammunition",
+              "behavior",
+              "damage",
+              "heat",
+              "id",
+              "label",
+              "name",
+              "projectiles",
+              "ranges"
+            ]
+          },
+          {
+            "path": "content.weapons/chi:weapon-machine_gun-1",
+            "object_id": "chi:weapon-machine_gun-1",
+            "change": "created",
+            "fields": [
+              "ammunition",
+              "behavior",
+              "damage",
+              "heat",
+              "id",
+              "label",
+              "name",
+              "projectiles",
+              "ranges"
+            ]
+          },
+          {
+            "path": "content.weapons/chi:weapon-medium_laser-0",
+            "object_id": "chi:weapon-medium_laser-0",
+            "change": "created",
+            "fields": [
+              "ammunition",
+              "behavior",
+              "damage",
+              "heat",
+              "id",
+              "label",
+              "name",
+              "projectiles",
+              "ranges"
+            ]
+          },
+          {
+            "path": "content.weapons/chi:weapon-srm4-6",
+            "object_id": "chi:weapon-srm4-6",
+            "change": "created",
+            "fields": [
+              "ammunition",
+              "behavior",
+              "damage",
+              "heat",
+              "id",
+              "label",
+              "name",
+              "projectiles",
+              "ranges"
+            ]
+          },
+          {
+            "path": "adventure.encounters/frontier:patrol",
+            "object_id": "frontier:patrol",
+            "change": "removed",
+            "fields": [
+              "enemies",
+              "id",
+              "map",
+              "party_at"
+            ]
+          },
+          {
+            "path": "adventure.encounters/relay:raider",
+            "object_id": "relay:raider",
+            "change": "created",
+            "fields": [
+              "enemies",
+              "id",
+              "map",
+              "party_at"
+            ]
+          },
+          {
+            "path": "adventure.events/frontier:about",
+            "object_id": "frontier:about",
+            "change": "removed",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/frontier:already-hired",
+            "object_id": "frontier:already-hired",
+            "change": "removed",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/frontier:blocked",
+            "object_id": "frontier:blocked",
+            "change": "removed",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/frontier:broker",
+            "object_id": "frontier:broker",
+            "change": "removed",
+            "fields": [
+              "cancel",
+              "id",
+              "op",
+              "options",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/frontier:cleared-flag",
+            "object_id": "frontier:cleared-flag",
+            "change": "removed",
+            "fields": [
+              "flag",
+              "id",
+              "next",
+              "op",
+              "value"
+            ]
+          },
+          {
+            "path": "adventure.events/frontier:defeat",
+            "object_id": "frontier:defeat",
+            "change": "removed",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/frontier:end",
+            "object_id": "frontier:end",
+            "change": "removed",
+            "fields": [
+              "id",
+              "op"
+            ]
+          },
+          {
+            "path": "adventure.events/frontier:field-intro",
+            "object_id": "frontier:field-intro",
+            "change": "removed",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/frontier:fight",
+            "object_id": "frontier:fight",
+            "change": "removed",
+            "fields": [
+              "encounter",
+              "failure",
+              "flee",
+              "id",
+              "loss",
+              "op",
+              "win"
+            ]
+          },
+          {
+            "path": "adventure.events/frontier:full-wallet",
+            "object_id": "frontier:full-wallet",
+            "change": "removed",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/frontier:hall",
+            "object_id": "frontier:hall",
+            "change": "removed",
+            "fields": [
+              "cancel",
+              "id",
+              "op",
+              "options",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/frontier:hire",
+            "object_id": "frontier:hire",
+            "change": "removed",
+            "fields": [
+              "failure",
+              "id",
+              "next",
+              "op",
+              "person"
+            ]
+          },
+          {
+            "path": "adventure.events/frontier:hire-check",
+            "object_id": "frontier:hire-check",
+            "change": "removed",
+            "fields": [
+              "else",
+              "flag",
+              "id",
+              "op",
+              "then",
+              "value"
+            ]
+          },
+          {
+            "path": "adventure.events/frontier:hired",
+            "object_id": "frontier:hired",
+            "change": "removed",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/frontier:hired-flag",
+            "object_id": "frontier:hired-flag",
+            "change": "removed",
+            "fields": [
+              "flag",
+              "id",
+              "next",
+              "op",
+              "value"
+            ]
+          },
+          {
+            "path": "adventure.events/frontier:job",
+            "object_id": "frontier:job",
+            "change": "removed",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/frontier:job-check",
+            "object_id": "frontier:job-check",
+            "change": "removed",
+            "fields": [
+              "else",
+              "flag",
+              "id",
+              "op",
+              "then",
+              "value"
+            ]
+          },
+          {
+            "path": "adventure.events/frontier:no-room",
+            "object_id": "frontier:no-room",
+            "change": "removed",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/frontier:patrol-check",
+            "object_id": "frontier:patrol-check",
+            "change": "removed",
+            "fields": [
+              "else",
+              "flag",
+              "id",
+              "op",
+              "then",
+              "value"
+            ]
+          },
+          {
+            "path": "adventure.events/frontier:patrol-choice",
+            "object_id": "frontier:patrol-choice",
+            "change": "removed",
+            "fields": [
+              "cancel",
+              "id",
+              "op",
+              "options",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/frontier:reward",
+            "object_id": "frontier:reward",
+            "change": "removed",
+            "fields": [
+              "credits",
+              "failure",
+              "id",
+              "next",
+              "op"
+            ]
+          },
+          {
+            "path": "adventure.events/frontier:shop",
+            "object_id": "frontier:shop",
+            "change": "removed",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "shop"
+            ]
+          },
+          {
+            "path": "adventure.events/frontier:thanks",
+            "object_id": "frontier:thanks",
+            "change": "removed",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/frontier:to-field",
+            "object_id": "frontier:to-field",
+            "change": "removed",
+            "fields": [
+              "at",
+              "failure",
+              "id",
+              "map",
+              "next",
+              "op"
+            ]
+          },
+          {
+            "path": "adventure.events/frontier:to-town",
+            "object_id": "frontier:to-town",
+            "change": "removed",
+            "fields": [
+              "at",
+              "failure",
+              "id",
+              "map",
+              "next",
+              "op"
+            ]
+          },
+          {
+            "path": "adventure.events/frontier:victory",
+            "object_id": "frontier:victory",
+            "change": "removed",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/frontier:welcome",
+            "object_id": "frontier:welcome",
+            "change": "removed",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/frontier:withdraw",
+            "object_id": "frontier:withdraw",
+            "change": "removed",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/relay:accept",
+            "object_id": "relay:accept",
+            "change": "created",
+            "fields": [
+              "flag",
+              "id",
+              "next",
+              "op",
+              "value"
+            ]
+          },
+          {
+            "path": "adventure.events/relay:accepted-check",
+            "object_id": "relay:accepted-check",
+            "change": "created",
+            "fields": [
+              "else",
+              "flag",
+              "id",
+              "op",
+              "then",
+              "value"
+            ]
+          },
+          {
+            "path": "adventure.events/relay:battle",
+            "object_id": "relay:battle",
+            "change": "created",
+            "fields": [
+              "encounter",
+              "failure",
+              "flee",
+              "id",
+              "loss",
+              "op",
+              "win"
+            ]
+          },
+          {
+            "path": "adventure.events/relay:briefing",
+            "object_id": "relay:briefing",
+            "change": "created",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "portrait",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/relay:challenge",
+            "object_id": "relay:challenge",
+            "change": "created",
+            "fields": [
+              "else",
+              "flag",
+              "id",
+              "op",
+              "then",
+              "value"
+            ]
+          },
+          {
+            "path": "adventure.events/relay:challenge-offer",
+            "object_id": "relay:challenge-offer",
+            "change": "created",
+            "fields": [
+              "cancel",
+              "id",
+              "op",
+              "options",
+              "portrait",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/relay:clear-text",
+            "object_id": "relay:clear-text",
+            "change": "created",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "portrait",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/relay:debrief",
+            "object_id": "relay:debrief",
+            "change": "created",
+            "fields": [
+              "cancel",
+              "id",
+              "op",
+              "options",
+              "portrait",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/relay:end",
+            "object_id": "relay:end",
+            "change": "created",
+            "fields": [
+              "id",
+              "op"
+            ]
+          },
+          {
+            "path": "adventure.events/relay:finish",
+            "object_id": "relay:finish",
+            "change": "created",
+            "fields": [
+              "id",
+              "op",
+              "portrait",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/relay:lost",
+            "object_id": "relay:lost",
+            "change": "created",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "portrait",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/relay:no-funds",
+            "object_id": "relay:no-funds",
+            "change": "created",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "portrait",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/relay:no-work",
+            "object_id": "relay:no-work",
+            "change": "created",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "portrait",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/relay:offer",
+            "object_id": "relay:offer",
+            "change": "created",
+            "fields": [
+              "cancel",
+              "id",
+              "op",
+              "options",
+              "portrait",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/relay:office",
+            "object_id": "relay:office",
+            "change": "created",
+            "fields": [
+              "else",
+              "flag",
+              "id",
+              "op",
+              "then",
+              "value"
+            ]
+          },
+          {
+            "path": "adventure.events/relay:paid",
+            "object_id": "relay:paid",
+            "change": "created",
+            "fields": [
+              "flag",
+              "id",
+              "next",
+              "op",
+              "value"
+            ]
+          },
+          {
+            "path": "adventure.events/relay:pay",
+            "object_id": "relay:pay",
+            "change": "created",
+            "fields": [
+              "credits",
+              "failure",
+              "id",
+              "next",
+              "op"
+            ]
+          },
+          {
+            "path": "adventure.events/relay:receipt",
+            "object_id": "relay:receipt",
+            "change": "created",
+            "fields": [
+              "else",
+              "flag",
+              "id",
+              "op",
+              "then",
+              "value"
+            ]
+          },
+          {
+            "path": "adventure.events/relay:repair",
+            "object_id": "relay:repair",
+            "change": "created",
+            "fields": [
+              "cost",
+              "failure",
+              "id",
+              "next",
+              "op",
+              "unchanged"
+            ]
+          },
+          {
+            "path": "adventure.events/relay:repaired",
+            "object_id": "relay:repaired",
+            "change": "created",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "portrait",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/relay:retreated",
+            "object_id": "relay:retreated",
+            "change": "created",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "portrait",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/relay:shop",
+            "object_id": "relay:shop",
+            "change": "created",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "shop"
+            ]
+          },
+          {
+            "path": "adventure.events/relay:thanks",
+            "object_id": "relay:thanks",
+            "change": "created",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "portrait",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/relay:to-field",
+            "object_id": "relay:to-field",
+            "change": "created",
+            "fields": [
+              "at",
+              "failure",
+              "id",
+              "map",
+              "next",
+              "op"
+            ]
+          },
+          {
+            "path": "adventure.events/relay:to-town",
+            "object_id": "relay:to-town",
+            "change": "created",
+            "fields": [
+              "at",
+              "failure",
+              "id",
+              "map",
+              "next",
+              "op"
+            ]
+          },
+          {
+            "path": "adventure.events/relay:unavailable",
+            "object_id": "relay:unavailable",
+            "change": "created",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "portrait",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/relay:welcome",
+            "object_id": "relay:welcome",
+            "change": "created",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "portrait",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/relay:won",
+            "object_id": "relay:won",
+            "change": "created",
+            "fields": [
+              "flag",
+              "id",
+              "next",
+              "op",
+              "value"
+            ]
+          },
+          {
+            "path": "adventure.events/relay:workshop",
+            "object_id": "relay:workshop",
+            "change": "created",
+            "fields": [
+              "cancel",
+              "id",
+              "op",
+              "options",
+              "portrait",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.flags",
+            "object_id": null,
+            "change": "modified",
+            "fields": []
+          },
+          {
+            "path": "adventure.format",
+            "object_id": null,
+            "change": "modified",
+            "fields": []
+          },
+          {
+            "path": "adventure.maps/frontier:depot-map",
+            "object_id": "frontier:depot-map",
+            "change": "removed",
+            "fields": [
+              "entrances",
+              "id",
+              "name",
+              "origin",
+              "overlays",
+              "rows"
+            ]
+          },
+          {
+            "path": "adventure.maps/frontier:field",
+            "object_id": "frontier:field",
+            "change": "removed",
+            "fields": [
+              "entrances",
+              "id",
+              "name",
+              "origin",
+              "overlays",
+              "rows"
+            ]
+          },
+          {
+            "path": "adventure.maps/relay:field",
+            "object_id": "relay:field",
+            "change": "created",
+            "fields": [
+              "entrances",
+              "id",
+              "name",
+              "origin",
+              "overlays",
+              "rows"
+            ]
+          },
+          {
+            "path": "adventure.maps/relay:town",
+            "object_id": "relay:town",
+            "change": "created",
+            "fields": [
+              "entrances",
+              "id",
+              "name",
+              "origin",
+              "overlays",
+              "rows"
+            ]
+          },
+          {
+            "path": "adventure.objectives/relay:contract",
+            "object_id": "relay:contract",
+            "change": "created",
+            "fields": [
+              "active",
+              "complete",
+              "id",
+              "text",
+              "title"
+            ]
+          },
+          {
+            "path": "adventure.people/frontier:leader",
+            "object_id": "frontier:leader",
+            "change": "removed",
+            "fields": [
+              "armor",
+              "attributes",
+              "id",
+              "identity",
+              "skills",
+              "weapon"
+            ]
+          },
+          {
+            "path": "adventure.people/frontier:pilot",
+            "object_id": "frontier:pilot",
+            "change": "removed",
+            "fields": [
+              "armor",
+              "attributes",
+              "id",
+              "identity",
+              "skills",
+              "weapon"
+            ]
+          },
+          {
+            "path": "adventure.people/frontier:trespasser",
+            "object_id": "frontier:trespasser",
+            "change": "removed",
+            "fields": [
+              "armor",
+              "attributes",
+              "id",
+              "identity",
+              "skills",
+              "weapon"
+            ]
+          },
+          {
+            "path": "adventure.people/relay:mira",
+            "object_id": "relay:mira",
+            "change": "created",
+            "fields": [
+              "armor",
+              "attributes",
+              "id",
+              "identity",
+              "name",
+              "skills",
+              "weapon"
+            ]
+          },
+          {
+            "path": "adventure.people/relay:rowan",
+            "object_id": "relay:rowan",
+            "change": "created",
+            "fields": [
+              "armor",
+              "attributes",
+              "id",
+              "identity",
+              "name",
+              "skills",
+              "weapon"
+            ]
+          },
+          {
+            "path": "adventure.schema_version",
+            "object_id": null,
+            "change": "modified",
+            "fields": []
+          },
+          {
+            "path": "adventure.shops/frontier:depot",
+            "object_id": "frontier:depot",
+            "change": "removed",
+            "fields": [
+              "id",
+              "stock"
+            ]
+          },
+          {
+            "path": "adventure.shops/relay:stock",
+            "object_id": "relay:stock",
+            "change": "created",
+            "fields": [
+              "id",
+              "stock"
+            ]
+          },
+          {
+            "path": "adventure.start",
+            "object_id": null,
+            "change": "modified",
+            "fields": []
+          },
+          {
+            "path": "adventure.tiles/frontier:door",
+            "object_id": "frontier:door",
+            "change": "modified",
+            "fields": [
+              "key"
+            ]
+          },
+          {
+            "path": "adventure.tiles/frontier:forest",
+            "object_id": "frontier:forest",
+            "change": "modified",
+            "fields": [
+              "key"
+            ]
+          },
+          {
+            "path": "adventure.tiles/frontier:grass",
+            "object_id": "frontier:grass",
+            "change": "modified",
+            "fields": [
+              "key"
+            ]
+          },
+          {
+            "path": "adventure.tiles/frontier:road",
+            "object_id": "frontier:road",
+            "change": "modified",
+            "fields": [
+              "key"
+            ]
+          },
+          {
+            "path": "adventure.tiles/frontier:roof",
+            "object_id": "frontier:roof",
+            "change": "modified",
+            "fields": [
+              "key"
+            ]
+          },
+          {
+            "path": "adventure.tiles/frontier:water",
+            "object_id": "frontier:water",
+            "change": "modified",
+            "fields": [
+              "key"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-1",
+            "object_id": "relay-contract:tile-1",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-10",
+            "object_id": "relay-contract:tile-10",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-11",
+            "object_id": "relay-contract:tile-11",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-12",
+            "object_id": "relay-contract:tile-12",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-13",
+            "object_id": "relay-contract:tile-13",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-14",
+            "object_id": "relay-contract:tile-14",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-15",
+            "object_id": "relay-contract:tile-15",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-16",
+            "object_id": "relay-contract:tile-16",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-17",
+            "object_id": "relay-contract:tile-17",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-18",
+            "object_id": "relay-contract:tile-18",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-19",
+            "object_id": "relay-contract:tile-19",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-2",
+            "object_id": "relay-contract:tile-2",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-20",
+            "object_id": "relay-contract:tile-20",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-21",
+            "object_id": "relay-contract:tile-21",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-22",
+            "object_id": "relay-contract:tile-22",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-23",
+            "object_id": "relay-contract:tile-23",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-24",
+            "object_id": "relay-contract:tile-24",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-25",
+            "object_id": "relay-contract:tile-25",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-26",
+            "object_id": "relay-contract:tile-26",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-27",
+            "object_id": "relay-contract:tile-27",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-28",
+            "object_id": "relay-contract:tile-28",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-29",
+            "object_id": "relay-contract:tile-29",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-3",
+            "object_id": "relay-contract:tile-3",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-30",
+            "object_id": "relay-contract:tile-30",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-31",
+            "object_id": "relay-contract:tile-31",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-32",
+            "object_id": "relay-contract:tile-32",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-33",
+            "object_id": "relay-contract:tile-33",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-34",
+            "object_id": "relay-contract:tile-34",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-35",
+            "object_id": "relay-contract:tile-35",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-36",
+            "object_id": "relay-contract:tile-36",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-37",
+            "object_id": "relay-contract:tile-37",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-38",
+            "object_id": "relay-contract:tile-38",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-39",
+            "object_id": "relay-contract:tile-39",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-4",
+            "object_id": "relay-contract:tile-4",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-40",
+            "object_id": "relay-contract:tile-40",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-41",
+            "object_id": "relay-contract:tile-41",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-42",
+            "object_id": "relay-contract:tile-42",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-43",
+            "object_id": "relay-contract:tile-43",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-44",
+            "object_id": "relay-contract:tile-44",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-45",
+            "object_id": "relay-contract:tile-45",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-46",
+            "object_id": "relay-contract:tile-46",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-47",
+            "object_id": "relay-contract:tile-47",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-48",
+            "object_id": "relay-contract:tile-48",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-49",
+            "object_id": "relay-contract:tile-49",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-5",
+            "object_id": "relay-contract:tile-5",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-50",
+            "object_id": "relay-contract:tile-50",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-51",
+            "object_id": "relay-contract:tile-51",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-52",
+            "object_id": "relay-contract:tile-52",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-53",
+            "object_id": "relay-contract:tile-53",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-54",
+            "object_id": "relay-contract:tile-54",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-55",
+            "object_id": "relay-contract:tile-55",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-56",
+            "object_id": "relay-contract:tile-56",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-57",
+            "object_id": "relay-contract:tile-57",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-58",
+            "object_id": "relay-contract:tile-58",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-59",
+            "object_id": "relay-contract:tile-59",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-6",
+            "object_id": "relay-contract:tile-6",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-60",
+            "object_id": "relay-contract:tile-60",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-61",
+            "object_id": "relay-contract:tile-61",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-62",
+            "object_id": "relay-contract:tile-62",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-63",
+            "object_id": "relay-contract:tile-63",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-64",
+            "object_id": "relay-contract:tile-64",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-7",
+            "object_id": "relay-contract:tile-7",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-8",
+            "object_id": "relay-contract:tile-8",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-9",
+            "object_id": "relay-contract:tile-9",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-1",
+            "object_id": "relay-contract:image-1",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-10",
+            "object_id": "relay-contract:image-10",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-11",
+            "object_id": "relay-contract:image-11",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-12",
+            "object_id": "relay-contract:image-12",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-13",
+            "object_id": "relay-contract:image-13",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-14",
+            "object_id": "relay-contract:image-14",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-15",
+            "object_id": "relay-contract:image-15",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-16",
+            "object_id": "relay-contract:image-16",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-17",
+            "object_id": "relay-contract:image-17",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-18",
+            "object_id": "relay-contract:image-18",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-19",
+            "object_id": "relay-contract:image-19",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-2",
+            "object_id": "relay-contract:image-2",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-20",
+            "object_id": "relay-contract:image-20",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-21",
+            "object_id": "relay-contract:image-21",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-22",
+            "object_id": "relay-contract:image-22",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-23",
+            "object_id": "relay-contract:image-23",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-24",
+            "object_id": "relay-contract:image-24",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-25",
+            "object_id": "relay-contract:image-25",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-26",
+            "object_id": "relay-contract:image-26",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-27",
+            "object_id": "relay-contract:image-27",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-28",
+            "object_id": "relay-contract:image-28",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-29",
+            "object_id": "relay-contract:image-29",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-3",
+            "object_id": "relay-contract:image-3",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-30",
+            "object_id": "relay-contract:image-30",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-31",
+            "object_id": "relay-contract:image-31",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-32",
+            "object_id": "relay-contract:image-32",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-33",
+            "object_id": "relay-contract:image-33",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-34",
+            "object_id": "relay-contract:image-34",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-35",
+            "object_id": "relay-contract:image-35",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-36",
+            "object_id": "relay-contract:image-36",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-37",
+            "object_id": "relay-contract:image-37",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-38",
+            "object_id": "relay-contract:image-38",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-39",
+            "object_id": "relay-contract:image-39",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-4",
+            "object_id": "relay-contract:image-4",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-40",
+            "object_id": "relay-contract:image-40",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-41",
+            "object_id": "relay-contract:image-41",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-42",
+            "object_id": "relay-contract:image-42",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-43",
+            "object_id": "relay-contract:image-43",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-44",
+            "object_id": "relay-contract:image-44",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-45",
+            "object_id": "relay-contract:image-45",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-46",
+            "object_id": "relay-contract:image-46",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-47",
+            "object_id": "relay-contract:image-47",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-48",
+            "object_id": "relay-contract:image-48",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-49",
+            "object_id": "relay-contract:image-49",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-5",
+            "object_id": "relay-contract:image-5",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-50",
+            "object_id": "relay-contract:image-50",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-51",
+            "object_id": "relay-contract:image-51",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-52",
+            "object_id": "relay-contract:image-52",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-53",
+            "object_id": "relay-contract:image-53",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-54",
+            "object_id": "relay-contract:image-54",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-55",
+            "object_id": "relay-contract:image-55",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-56",
+            "object_id": "relay-contract:image-56",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-57",
+            "object_id": "relay-contract:image-57",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-58",
+            "object_id": "relay-contract:image-58",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-59",
+            "object_id": "relay-contract:image-59",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-6",
+            "object_id": "relay-contract:image-6",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-60",
+            "object_id": "relay-contract:image-60",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-61",
+            "object_id": "relay-contract:image-61",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-62",
+            "object_id": "relay-contract:image-62",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-63",
+            "object_id": "relay-contract:image-63",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-64",
+            "object_id": "relay-contract:image-64",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-7",
+            "object_id": "relay-contract:image-7",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-8",
+            "object_id": "relay-contract:image-8",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-9",
+            "object_id": "relay-contract:image-9",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "editor.construction_sets/relay:depot",
+            "object_id": "relay:depot",
+            "change": "created",
+            "fields": [
+              "footprint",
+              "id",
+              "kind",
+              "name",
+              "parts"
+            ]
+          },
+          {
+            "path": "editor.construction_sets/relay:road",
+            "object_id": "relay:road",
+            "change": "created",
+            "fields": [
+              "footprint",
+              "id",
+              "kind",
+              "name",
+              "parts"
+            ]
+          },
+          {
+            "path": "editor.construction_sets/relay:wall",
+            "object_id": "relay:wall",
+            "change": "created",
+            "fields": [
+              "footprint",
+              "id",
+              "kind",
+              "name",
+              "parts"
+            ]
+          },
+          {
+            "path": "editor.map_constructions/relay:compound",
+            "object_id": "relay:compound",
+            "change": "created",
+            "fields": [
+              "cells",
+              "datum",
+              "id",
+              "kind",
+              "map",
+              "name",
+              "overlay",
+              "rendered",
+              "style"
+            ]
+          },
+          {
+            "path": "editor.map_constructions/relay:office-building",
+            "object_id": "relay:office-building",
+            "change": "created",
+            "fields": [
+              "cells",
+              "datum",
+              "id",
+              "kind",
+              "map",
+              "name",
+              "overlay",
+              "rendered",
+              "style"
+            ]
+          },
+          {
+            "path": "editor.map_constructions/relay:workshop-building",
+            "object_id": "relay:workshop-building",
+            "change": "created",
+            "fields": [
+              "cells",
+              "datum",
+              "id",
+              "kind",
+              "map",
+              "name",
+              "overlay",
+              "rendered",
+              "style"
+            ]
+          },
+          {
+            "path": "editor.map_patterns/relay-contract:pattern-1",
+            "object_id": "relay-contract:pattern-1",
+            "change": "created",
+            "fields": [
+              "id",
+              "name",
+              "rows"
+            ]
+          },
+          {
+            "path": "editor.tile_names",
+            "object_id": null,
+            "change": "modified",
+            "fields": []
+          },
+          {
+            "path": "provenance/LIBRARY-SOURCES.json",
+            "object_id": null,
+            "change": "modified",
+            "fields": []
+          }
+        ],
+        "operations": [
+          {
+            "operation": 0,
+            "result": [
+              [
+                "Mechs",
+                "chi-expanded:phoenix-hawk-pxh-1"
+              ]
+            ]
+          },
+          {
+            "operation": 1,
+            "result": [
+              [
+                "Mechs",
+                "chi-expanded:trebuchet-tbt-5n"
+              ]
+            ]
+          },
+          {
+            "operation": 2,
+            "result": [
+              [
+                "Mechs",
+                "chi-expanded:jenner-jr7-d"
+              ]
+            ]
+          },
+          {
+            "operation": 3,
+            "result": "frontier:depot-map"
+          },
+          {
+            "operation": 4,
+            "result": "frontier:field"
+          },
+          {
+            "operation": 5,
+            "result": "frontier:leader"
+          },
+          {
+            "operation": 6,
+            "result": "frontier:pilot"
+          },
+          {
+            "operation": 7,
+            "result": "frontier:trespasser"
+          },
+          {
+            "operation": 8,
+            "result": "frontier:depot"
+          },
+          {
+            "operation": 9,
+            "result": "frontier:patrol"
+          },
+          {
+            "operation": 10,
+            "result": "frontier:end"
+          },
+          {
+            "operation": 11,
+            "result": "frontier:welcome"
+          },
+          {
+            "operation": 12,
+            "result": "frontier:broker"
+          },
+          {
+            "operation": 13,
+            "result": "frontier:shop"
+          },
+          {
+            "operation": 14,
+            "result": "frontier:about"
+          },
+          {
+            "operation": 15,
+            "result": "frontier:hall"
+          },
+          {
+            "operation": 16,
+            "result": "frontier:hire-check"
+          },
+          {
+            "operation": 17,
+            "result": "frontier:hire"
+          },
+          {
+            "operation": 18,
+            "result": "frontier:hired-flag"
+          },
+          {
+            "operation": 19,
+            "result": "frontier:hired"
+          },
+          {
+            "operation": 20,
+            "result": "frontier:already-hired"
+          },
+          {
+            "operation": 21,
+            "result": "frontier:no-room"
+          },
+          {
+            "operation": 22,
+            "result": "frontier:job-check"
+          },
+          {
+            "operation": 23,
+            "result": "frontier:job"
+          },
+          {
+            "operation": 24,
+            "result": "frontier:thanks"
+          },
+          {
+            "operation": 25,
+            "result": "frontier:to-field"
+          },
+          {
+            "operation": 26,
+            "result": "frontier:field-intro"
+          },
+          {
+            "operation": 27,
+            "result": "frontier:to-town"
+          },
+          {
+            "operation": 28,
+            "result": "frontier:blocked"
+          },
+          {
+            "operation": 29,
+            "result": "frontier:patrol-check"
+          },
+          {
+            "operation": 30,
+            "result": "frontier:patrol-choice"
+          },
+          {
+            "operation": 31,
+            "result": "frontier:fight"
+          },
+          {
+            "operation": 32,
+            "result": "frontier:reward"
+          },
+          {
+            "operation": 33,
+            "result": "frontier:cleared-flag"
+          },
+          {
+            "operation": 34,
+            "result": "frontier:victory"
+          },
+          {
+            "operation": 35,
+            "result": "frontier:withdraw"
+          },
+          {
+            "operation": 36,
+            "result": "frontier:defeat"
+          },
+          {
+            "operation": 37,
+            "result": "frontier:full-wallet"
+          },
+          {
+            "operation": 38,
+            "result": "relay:depot"
+          },
+          {
+            "operation": 39,
+            "result": "relay:wall"
+          },
+          {
+            "operation": 40,
+            "result": "relay:road"
+          },
+          {
+            "operation": 41,
+            "result": "relay:town"
+          },
+          {
+            "operation": 42,
+            "result": "relay:field"
+          },
+          {
+            "operation": 43,
+            "result": "relay:town"
+          },
+          {
+            "operation": 44,
+            "result": "relay:town"
+          },
+          {
+            "operation": 45,
+            "result": "relay:town"
+          },
+          {
+            "operation": 46,
+            "result": "relay:town"
+          },
+          {
+            "operation": 47,
+            "result": "relay:office-building"
+          },
+          {
+            "operation": 48,
+            "result": "relay:workshop-building"
+          },
+          {
+            "operation": 49,
+            "result": "relay:compound"
+          },
+          {
+            "operation": 50,
+            "result": "relay:town"
+          },
+          {
+            "operation": 51,
+            "result": "relay:town"
+          },
+          {
+            "operation": 52,
+            "result": "relay:town"
+          },
+          {
+            "operation": 53,
+            "result": "relay:town"
+          },
+          {
+            "operation": 54,
+            "result": "relay-contract:pattern-1"
+          },
+          {
+            "operation": 55,
+            "result": "relay:field"
+          },
+          {
+            "operation": 56,
+            "result": "relay:field"
+          },
+          {
+            "operation": 57,
+            "result": "relay:field"
+          },
+          {
+            "operation": 58,
+            "result": "relay:rowan"
+          },
+          {
+            "operation": 59,
+            "result": "relay:mira"
+          },
+          {
+            "operation": 60,
+            "result": null
+          },
+          {
+            "operation": 61,
+            "result": "relay:contract"
+          },
+          {
+            "operation": 62,
+            "result": "relay:stock"
+          },
+          {
+            "operation": 63,
+            "result": "relay:raider"
+          },
+          {
+            "operation": 64,
+            "result": "relay:end"
+          },
+          {
+            "operation": 65,
+            "result": "relay:welcome"
+          },
+          {
+            "operation": 66,
+            "result": "relay:offer"
+          },
+          {
+            "operation": 67,
+            "result": "relay:accept"
+          },
+          {
+            "operation": 68,
+            "result": "relay:briefing"
+          },
+          {
+            "operation": 69,
+            "result": "relay:office"
+          },
+          {
+            "operation": 70,
+            "result": "relay:accepted-check"
+          },
+          {
+            "operation": 71,
+            "result": "relay:receipt"
+          },
+          {
+            "operation": 72,
+            "result": "relay:pay"
+          },
+          {
+            "operation": 73,
+            "result": "relay:paid"
+          },
+          {
+            "operation": 74,
+            "result": "relay:thanks"
+          },
+          {
+            "operation": 75,
+            "result": "relay:debrief"
+          },
+          {
+            "operation": 76,
+            "result": "relay:finish"
+          },
+          {
+            "operation": 77,
+            "result": "relay:to-field"
+          },
+          {
+            "operation": 78,
+            "result": "relay:to-town"
+          },
+          {
+            "operation": 79,
+            "result": "relay:challenge"
+          },
+          {
+            "operation": 80,
+            "result": "relay:challenge-offer"
+          },
+          {
+            "operation": 81,
+            "result": "relay:battle"
+          },
+          {
+            "operation": 82,
+            "result": "relay:won"
+          },
+          {
+            "operation": 83,
+            "result": "relay:clear-text"
+          },
+          {
+            "operation": 84,
+            "result": "relay:lost"
+          },
+          {
+            "operation": 85,
+            "result": "relay:retreated"
+          },
+          {
+            "operation": 86,
+            "result": "relay:unavailable"
+          },
+          {
+            "operation": 87,
+            "result": "relay:workshop"
+          },
+          {
+            "operation": 88,
+            "result": "relay:shop"
+          },
+          {
+            "operation": 89,
+            "result": "relay:repair"
+          },
+          {
+            "operation": 90,
+            "result": "relay:repaired"
+          },
+          {
+            "operation": 91,
+            "result": "relay:no-funds"
+          },
+          {
+            "operation": 92,
+            "result": "relay:no-work"
+          },
+          {
+            "operation": 93,
+            "result": "relay:town"
+          },
+          {
+            "operation": 94,
+            "result": "relay:town"
+          },
+          {
+            "operation": 95,
+            "result": "relay:town"
+          },
+          {
+            "operation": 96,
+            "result": "relay:field"
+          },
+          {
+            "operation": 97,
+            "result": "relay:field"
+          },
+          {
+            "operation": 98,
+            "result": null
+          }
+        ],
+        "validation": "Valid project relay-contract 1.0.0: 5 mechs, 8 weapons; 2 maps, 29 event nodes; SHA-256 88f05893091a84e2ab14eab3792f9655ddce6ad479efe43741e25c3167da6b5c",
+        "diagnostics": []
+      }
+    }
+  }
+}

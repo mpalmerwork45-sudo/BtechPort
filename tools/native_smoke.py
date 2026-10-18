@@ -1313,6 +1313,7 @@ def main():
     parser.add_argument('--editor-paint-only',action='store_true',help='Check visible-surface painting, construction details and marker tool isolation')
     parser.add_argument('--editor-play-tile-only',action='store_true',help='Check Play retry and neighbour-aware map tile editing')
     parser.add_argument('--editor-tile-animation-only',action='store_true',help='Check animated terrain selection, preview, cloning and frame timing')
+    parser.add_argument('--editor-authoring-only',action='store_true',help='Check human paint, authoring command batches, Undo, stale rejection and Play')
     parser.add_argument('--world-art-editor-only',action='store_true',help='Check jigsaw/city and pixel/animation editing')
     parser.add_argument('--map-construction-only',action='store_true',help='Check building/wall/road tools, tile management, patterns and original-size world creation')
     parser.add_argument('--library-editor-only',action='store_true',help='Check shared library editing/import/export and desktop game launch')
@@ -1361,7 +1362,7 @@ def main():
     read_fd, write_fd = os.pipe()
     with (work / "native-xvfb.log").open("w") as log:
         xvfb = subprocess.Popen([str(ROOT / "local-deps/xvfb/usr/bin/Xvfb"),
-            "-displayfd", str(write_fd), "-screen", "0", "1600x1000x24" if args.editor_usability_only or args.editor_focus_only or args.editor_canvas_only or args.editor_paint_only or args.editor_play_tile_only or args.editor_tile_animation_only else "1024x768x24", "-nolisten", "tcp"],
+            "-displayfd", str(write_fd), "-screen", "0", "1600x1000x24" if args.editor_usability_only or args.editor_focus_only or args.editor_canvas_only or args.editor_paint_only or args.editor_play_tile_only or args.editor_tile_animation_only or args.editor_authoring_only else "1024x768x24", "-nolisten", "tcp"],
             pass_fds=(write_fd,), stdout=log, stderr=subprocess.STDOUT)
         os.close(write_fd)
         try:
@@ -1427,6 +1428,10 @@ def main():
                 return
             if args.editor_tile_animation_only:
                 from editor_tile_animation_smoke import run
+                run(env,work)
+                return
+            if args.editor_authoring_only:
+                from editor_authoring_smoke import run
                 run(env,work)
                 return
             if args.battletech_demo_only:

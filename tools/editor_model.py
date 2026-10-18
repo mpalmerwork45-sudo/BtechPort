@@ -61,19 +61,28 @@ def encoded(value: dict) -> bytes:
     return (json.dumps(value, indent=2, ensure_ascii=True) + "\n").encode("ascii")
 
 
+AUTHORING_RECEIPTS = 'AUTHORING.json'
+METADATA_FILES = ('LIBRARY-SOURCES.json', 'EDITOR.json', AUTHORING_RECEIPTS)
+
+
 class ProjectDocument:
-    def __init__(self, directory: Path, validator: Path):
+    def __init__(self, directory: Path, validator: Path, recover=True):
         self.root, self.validator = directory.resolve(), validator.resolve()
-        self.recover(self.root)
+        if recover:
+            if child(self.root, '.btp-editor-transaction.json').exists():
+                from project_lock import project_lock
+                with project_lock(self.root): self.recover(self.root)
+        elif child(self.root, '.btp-editor-transaction.json').exists():
+            raise EditorError('Interrupted save needs recovery; open the project in the editor before inspecting it.')
         run_validator(self.validator, self.root)
         self.manifest = json.loads((self.root / "project.json").read_bytes())
         self.snapshot = {name: child(self.root, name).read_bytes() for name in references(self.manifest)}
         # Attribution travels through history/save/export, without becoming
         # a runtime dependency or part of the game's content fingerprint.
-        for name in ('LIBRARY-SOURCES.json','EDITOR.json'):
+        for name in METADATA_FILES:
             metadata=child(self.root,name)
             if metadata.exists():self.snapshot[name]=metadata.read_bytes()
-        self.metadata = {name: data for name, data in self.snapshot.items() if name in ('LIBRARY-SOURCES.json','EDITOR.json')}
+        self.metadata = {name: data for name, data in self.snapshot.items() if name in METADATA_FILES}
         self.content = json.loads(self.snapshot[self.manifest["definitions"]])
         self.adventure = json.loads(self.snapshot[self.manifest["adventure"]]) if "adventure" in self.manifest else None
         self.art = (json.loads(self.snapshot[self.manifest["graphics"]]) if "graphics" in self.manifest
@@ -169,16 +178,22 @@ class ProjectDocument:
 
     def undo(self) -> None:
         if self.undo_stack:
+            receipts = self.metadata.get(AUTHORING_RECEIPTS)
             self.redo_labels.append(self.undo_labels.pop() if self.undo_labels else 'Edit')
             self.redo_stack.append((self.content, self.adventure, self.art, self.manifest, self.metadata))
             self.content, self.adventure, self.art, self.manifest, self.metadata = self.undo_stack.pop()
+            # Undo reverses the edit, not the record that this request ran.
+            # A delayed CLI retry must never resurrect an intentionally undone edit.
+            if receipts is not None: self.metadata = dict(self.metadata, **{AUTHORING_RECEIPTS: receipts})
             self.revision += 1
 
     def redo(self) -> None:
         if self.redo_stack:
+            receipts = self.metadata.get(AUTHORING_RECEIPTS)
             self.undo_labels.append(self.redo_labels.pop() if self.redo_labels else 'Edit')
             self.undo_stack.append((self.content, self.adventure, self.art, self.manifest, self.metadata))
             self.content, self.adventure, self.art, self.manifest, self.metadata = self.redo_stack.pop()
+            if receipts is not None: self.metadata = dict(self.metadata, **{AUTHORING_RECEIPTS: receipts})
             self.revision += 1
 
     def files(self) -> dict[str, bytes]:
@@ -199,6 +214,9 @@ class ProjectDocument:
         return files
 
     def unchanged_on_disk(self) -> None:
+        for name in METADATA_FILES:
+            if name not in self.snapshot and child(self.root, name).exists():
+                raise EditorError(f'{name} appeared outside this editor. Reopen before saving; your disk file was preserved.')
         for name, original in self.snapshot.items():
             try:
                 unchanged = child(self.root, name).read_bytes() == original
@@ -263,6 +281,11 @@ class ProjectDocument:
             return run_validator(self.validator, Path(directory))
 
     def save(self) -> str:
+        from project_lock import project_lock
+        with project_lock(self.root):
+            return self._save_locked()
+
+    def _save_locked(self) -> str:
         result = self.validate()
         self.unchanged_on_disk()
         if not self.dirty:
@@ -353,12 +376,15 @@ class ProjectDocument:
 def create_project(template: Path, target: Path, package_id: str, title: str, validator: Path) -> ProjectDocument:
     if target.exists():
         raise EditorError("Choose a new project directory; existing directories are preserved.")
-    source = ProjectDocument(template, validator)
+    source = ProjectDocument(template, validator, recover=False)
     target.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix=".btp-new-", dir=target.parent) as directory:
         staging = Path(directory) / "package"
         staging.mkdir()
         source.stage(staging)
+        # A new package has its own request identity space. Export of the same
+        # package retains receipts, but creation from a template starts fresh.
+        if (staging / AUTHORING_RECEIPTS).exists(): (staging / AUTHORING_RECEIPTS).unlink()
         manifest = copy.deepcopy(source.manifest)
         manifest.update(package_id=package_id, title=title, content_version="1.0.0")
         content = copy.deepcopy(source.content)

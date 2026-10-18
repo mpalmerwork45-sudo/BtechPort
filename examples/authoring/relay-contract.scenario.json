@@ -1,0 +1,149 @@
+{
+  "format": "btp-author-scenario-v1",
+  "max_ticks": 120000,
+  "steps": [
+    {
+      "op": "pages"
+    },
+    {
+      "op": "choose",
+      "label": "Accept contract"
+    },
+    {
+      "op": "pages"
+    },
+    {
+      "op": "assert",
+      "flag": "relay:accepted",
+      "value": 1,
+      "credits": 5000,
+      "party_count": 2
+    },
+    {
+      "op": "checkpoint"
+    },
+    {
+      "op": "capture"
+    },
+    {
+      "op": "walk",
+      "entrance": "relay:workshop"
+    },
+    {
+      "op": "enter"
+    },
+    {
+      "op": "choose",
+      "label": "Repair lance - 100"
+    },
+    {
+      "op": "pages"
+    },
+    {
+      "op": "assert",
+      "credits": 5000
+    },
+    {
+      "op": "input",
+      "action": "cancel"
+    },
+    {
+      "op": "walk",
+      "entrance": "relay:south-road"
+    },
+    {
+      "op": "enter"
+    },
+    {
+      "op": "assert",
+      "map": "relay:field"
+    },
+    {
+      "op": "walk",
+      "entrance": "relay:raider-marker"
+    },
+    {
+      "op": "enter"
+    },
+    {
+      "op": "choose",
+      "label": "Engage"
+    },
+    {
+      "op": "capture"
+    },
+    {
+      "op": "battle",
+      "control": "computer"
+    },
+    {
+      "op": "pages"
+    },
+    {
+      "op": "assert",
+      "flag": "relay:cleared",
+      "value": 1
+    },
+    {
+      "op": "checkpoint"
+    },
+    {
+      "op": "walk",
+      "entrance": "relay:depot-road"
+    },
+    {
+      "op": "enter"
+    },
+    {
+      "op": "walk",
+      "entrance": "relay:office"
+    },
+    {
+      "op": "enter"
+    },
+    {
+      "op": "pages"
+    },
+    {
+      "op": "assert",
+      "credits": 9000,
+      "objective": "relay:contract",
+      "status": "complete"
+    },
+    {
+      "op": "checkpoint"
+    },
+    {
+      "op": "choose",
+      "label": "Keep exploring"
+    },
+    {
+      "op": "walk",
+      "entrance": "relay:office"
+    },
+    {
+      "op": "enter"
+    },
+    {
+      "op": "assert",
+      "credits": 9000
+    },
+    {
+      "op": "choose",
+      "label": "Finish mission"
+    },
+    {
+      "op": "pages"
+    },
+    {
+      "op": "assert",
+      "phase": "complete"
+    },
+    {
+      "op": "checkpoint"
+    },
+    {
+      "op": "capture"
+    }
+  ]
+}
