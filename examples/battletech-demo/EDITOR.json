@@ -1,0 +1,2515 @@
+{
+  "tile_names": {
+    "battletech-beacon:tile-1": "East Base",
+    "battletech-beacon:tile-2": "East Top",
+    "battletech-beacon:tile-3": "East Base / South Base",
+    "battletech-beacon:tile-4": "East Top / South Top",
+    "battletech-beacon:tile-5": "outside / East Base",
+    "battletech-beacon:tile-6": "outside / East Top",
+    "battletech-beacon:tile-7": "South Base / East Base",
+    "battletech-beacon:tile-8": "South Base / outside",
+    "battletech-beacon:tile-9": "South Top / East Top",
+    "battletech-beacon:tile-10": "South Top / outside",
+    "battletech-beacon:tile-11": "Roof centre",
+    "battletech-beacon:tile-12": "Roof centre / inner NE",
+    "battletech-beacon:tile-13": "Roof centre / inner SE",
+    "battletech-beacon:tile-14": "Roof centre / inner SW",
+    "battletech-beacon:tile-15": "Roof centre / inner NW",
+    "battletech-beacon:tile-16": "Roof S W edge",
+    "battletech-beacon:tile-17": "Roof N edge",
+    "battletech-beacon:tile-18": "Roof E edge",
+    "battletech-beacon:tile-19": "Roof N E edge",
+    "battletech-beacon:tile-20": "Roof S edge",
+    "battletech-beacon:tile-21": "Roof E S edge",
+    "battletech-beacon:tile-22": "Roof W edge",
+    "battletech-beacon:tile-23": "Roof N W edge",
+    "battletech-beacon:tile-24": "South Base",
+    "battletech-beacon:tile-25": "South Top",
+    "battletech-beacon:tile-30": "Map tile copy",
+    "battletech-beacon:tile-32": "Map tile copy",
+    "battletech-beacon:tile-42": "Map tile copy",
+    "battletech-beacon:tile-43": "Map tile copy",
+    "battletech-beacon:tile-44": "Map tile copy",
+    "battletech-beacon:tile-45": "Map tile copy",
+    "battletech-beacon:tile-46": "Map tile copy",
+    "battletech-beacon:tile-50": "Map tile copy",
+    "battletech-beacon:tile-52": "East Base",
+    "battletech-beacon:tile-53": "East Top",
+    "battletech-beacon:tile-54": "East Base / South Base",
+    "battletech-beacon:tile-55": "East Top / South Top",
+    "battletech-beacon:tile-56": "outside / East Base",
+    "battletech-beacon:tile-57": "outside / East Top",
+    "battletech-beacon:tile-58": "South Base / East Base",
+    "battletech-beacon:tile-59": "South Base / outside",
+    "battletech-beacon:tile-60": "South Top / East Top",
+    "battletech-beacon:tile-61": "South Top / outside",
+    "battletech-beacon:tile-62": "Roof centre",
+    "battletech-beacon:tile-63": "Roof centre / inner NE",
+    "battletech-beacon:tile-64": "Roof centre / inner SE",
+    "battletech-beacon:tile-65": "Roof centre / inner SW",
+    "battletech-beacon:tile-66": "Roof centre / inner NW",
+    "battletech-beacon:tile-67": "Roof S W edge",
+    "battletech-beacon:tile-68": "Roof N edge",
+    "battletech-beacon:tile-69": "Roof E edge",
+    "battletech-beacon:tile-70": "Roof N E edge",
+    "battletech-beacon:tile-71": "Roof S edge",
+    "battletech-beacon:tile-72": "Roof E S edge",
+    "battletech-beacon:tile-73": "Roof W edge",
+    "battletech-beacon:tile-74": "Roof N W edge",
+    "battletech-beacon:tile-75": "South Base",
+    "battletech-beacon:tile-76": "South Top",
+    "battletech-beacon:tile-77": "Map tile copy",
+    "battletech-beacon:tile-78": "Map tile copy",
+    "battletech-beacon:tile-80": "Map tile copy",
+    "battletech-beacon:tile-81": "Map tile copy",
+    "battletech-beacon:tile-82": "East Single",
+    "battletech-beacon:tile-83": "East Single / South Single",
+    "battletech-beacon:tile-84": "outside / East Single",
+    "battletech-beacon:tile-85": "South Single / outside",
+    "battletech-beacon:tile-86": "South Single",
+    "battletech-beacon:tile-89": "East Base",
+    "battletech-beacon:tile-90": "East Top",
+    "battletech-beacon:tile-91": "East Base / South Base",
+    "battletech-beacon:tile-92": "East Top / South Top",
+    "battletech-beacon:tile-93": "outside / East Base",
+    "battletech-beacon:tile-94": "outside / East Top",
+    "battletech-beacon:tile-95": "South Base / East Base",
+    "battletech-beacon:tile-96": "South Base / outside",
+    "battletech-beacon:tile-97": "South Top / East Top",
+    "battletech-beacon:tile-98": "South Top / outside",
+    "battletech-beacon:tile-99": "Roof centre",
+    "battletech-beacon:tile-100": "Roof centre / inner NE",
+    "battletech-beacon:tile-101": "Roof centre / inner SE",
+    "battletech-beacon:tile-102": "Roof centre / inner SW",
+    "battletech-beacon:tile-103": "Roof centre / inner NW",
+    "battletech-beacon:tile-104": "Roof S W edge",
+    "battletech-beacon:tile-105": "Roof N edge",
+    "battletech-beacon:tile-106": "Roof E edge",
+    "battletech-beacon:tile-107": "Roof N E edge",
+    "battletech-beacon:tile-108": "Roof S edge",
+    "battletech-beacon:tile-109": "Roof E S edge",
+    "battletech-beacon:tile-110": "Roof W edge",
+    "battletech-beacon:tile-111": "Roof N W edge",
+    "battletech-beacon:tile-112": "South Base",
+    "battletech-beacon:tile-113": "South Top",
+    "battletech-beacon:tile-121": "Map tile copy",
+    "battletech-beacon:tile-122": "Map tile copy",
+    "battletech-beacon:tile-126": "East Middle",
+    "battletech-beacon:tile-127": "East Middle / South Middle",
+    "battletech-beacon:tile-128": "outside / East Middle",
+    "battletech-beacon:tile-129": "South Middle / outside",
+    "battletech-beacon:tile-130": "South Middle",
+    "battletech-beacon:tile-136": "East Base",
+    "battletech-beacon:tile-137": "East Top",
+    "battletech-beacon:tile-138": "East Base / South Base",
+    "battletech-beacon:tile-139": "East Top / South Top",
+    "battletech-beacon:tile-140": "outside / East Base",
+    "battletech-beacon:tile-141": "outside / East Top",
+    "battletech-beacon:tile-142": "South Base / outside",
+    "battletech-beacon:tile-143": "South Top / outside",
+    "battletech-beacon:tile-144": "Roof E W edge",
+    "battletech-beacon:tile-145": "Roof N E W edge",
+    "battletech-beacon:tile-146": "Roof S W edge / inner NE",
+    "battletech-beacon:tile-147": "Roof N S edge",
+    "battletech-beacon:tile-148": "Roof N E S edge",
+    "battletech-beacon:tile-149": "South Base",
+    "battletech-beacon:tile-150": "South Top",
+    "battletech-beacon:tile-167": "Map tile copy",
+    "battletech-beacon:tile-168": "Map tile copy"
+  },
+  "construction_sets": [
+    {
+      "id": "battletech-beacon:construction-1",
+      "name": "Comstar",
+      "kind": "Building",
+      "footprint": [
+        [
+          0,
+          0,
+          0,
+          2,
+          2,
+          2,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          2,
+          2,
+          2,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          2,
+          2,
+          2,
+          0,
+          0,
+          0
+        ],
+        [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        [
+          0,
+          0,
+          0,
+          2,
+          2,
+          2,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          2,
+          2,
+          2,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          2,
+          2,
+          2,
+          0,
+          0,
+          0
+        ]
+      ],
+      "parts": {
+        "east_base": "battletech-beacon:tile-29",
+        "east_top": "battletech-beacon:tile-29",
+        "join|east_base|south_base": "battletech-beacon:tile-28",
+        "join|east_top|south_top": "battletech-beacon:tile-28",
+        "join|empty|east_base": "battletech-beacon:tile-31",
+        "join|empty|east_top": "battletech-beacon:tile-31",
+        "join|south_base|east_base": "battletech-beacon:tile-30",
+        "join|south_base|empty": "battletech-beacon:tile-26",
+        "join|south_top|east_top": "battletech-beacon:tile-30",
+        "join|south_top|empty": "battletech-beacon:tile-26",
+        "roof_0_0": "battletech-beacon:tile-32",
+        "roof_0_1": "battletech-beacon:tile-43",
+        "roof_0_2": "battletech-beacon:tile-45",
+        "roof_0_4": "battletech-beacon:tile-44",
+        "roof_0_8": "battletech-beacon:tile-42",
+        "roof_12_0": "battletech-beacon:tile-40",
+        "roof_1_0": "battletech-beacon:tile-34",
+        "roof_2_0": "battletech-beacon:tile-37",
+        "roof_3_0": "battletech-beacon:tile-35",
+        "roof_4_0": "battletech-beacon:tile-39",
+        "roof_6_0": "battletech-beacon:tile-41",
+        "roof_8_0": "battletech-beacon:tile-38",
+        "roof_9_0": "battletech-beacon:tile-33",
+        "south_base": "battletech-beacon:tile-27",
+        "south_top": "battletech-beacon:tile-27"
+      }
+    },
+    {
+      "id": "battletech-beacon:construction-2",
+      "name": "Low Building",
+      "kind": "Building",
+      "footprint": [
+        [
+          0,
+          0,
+          0,
+          2,
+          2,
+          2,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          2,
+          2,
+          2,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          2,
+          2,
+          2,
+          0,
+          0,
+          0
+        ],
+        [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        [
+          0,
+          0,
+          0,
+          2,
+          2,
+          2,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          2,
+          2,
+          2,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          2,
+          2,
+          2,
+          0,
+          0,
+          0
+        ]
+      ],
+      "parts": {
+        "east_base": "battletech-beacon:tile-78",
+        "east_top": "battletech-beacon:tile-78",
+        "join|east_base|south_base": "battletech-beacon:tile-80",
+        "join|east_top|south_top": "battletech-beacon:tile-80",
+        "join|empty|east_base": "battletech-beacon:tile-79",
+        "join|empty|east_top": "battletech-beacon:tile-79",
+        "join|south_base|east_base": "battletech-beacon:tile-81",
+        "join|south_base|empty": "beacon:building-g",
+        "join|south_top|east_top": "battletech-beacon:tile-81",
+        "join|south_top|empty": "beacon:building-g",
+        "roof_0_0": "beacon:building-a",
+        "roof_0_1": "beacon:building-a",
+        "roof_0_2": "beacon:building-a",
+        "roof_0_4": "beacon:building-a",
+        "roof_0_8": "beacon:building-a",
+        "roof_12_0": "beacon:building-a",
+        "roof_1_0": "beacon:building-a",
+        "roof_2_0": "beacon:building-a",
+        "roof_3_0": "beacon:building-a",
+        "roof_4_0": "beacon:building-a",
+        "roof_6_0": "beacon:building-a",
+        "roof_8_0": "beacon:building-a",
+        "roof_9_0": "beacon:building-a",
+        "south_base": "battletech-beacon:tile-77",
+        "south_top": "battletech-beacon:tile-77",
+        "east_single": "battletech-beacon:tile-82",
+        "join|east_single|south_single": "battletech-beacon:tile-83",
+        "join|empty|east_single": "battletech-beacon:tile-84",
+        "join|south_single|empty": "battletech-beacon:tile-85",
+        "south_single": "battletech-beacon:tile-86"
+      }
+    },
+    {
+      "id": "battletech-beacon:construction-3",
+      "name": "Blue Office Building",
+      "kind": "Building",
+      "footprint": [
+        [
+          0,
+          0,
+          0,
+          2,
+          2,
+          2,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          2,
+          2,
+          2,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          2,
+          2,
+          2,
+          0,
+          0,
+          0
+        ],
+        [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        [
+          0,
+          0,
+          0,
+          2,
+          2,
+          2,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          2,
+          2,
+          2,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          2,
+          2,
+          2,
+          0,
+          0,
+          0
+        ]
+      ],
+      "parts": {
+        "east_base": "battletech-beacon:tile-124",
+        "east_top": "battletech-beacon:tile-124",
+        "join|east_base|south_base": "battletech-beacon:tile-123",
+        "join|east_top|south_top": "battletech-beacon:tile-123",
+        "join|empty|east_base": "battletech-beacon:tile-116",
+        "join|empty|east_top": "battletech-beacon:tile-116",
+        "join|south_base|east_base": "battletech-beacon:tile-168",
+        "join|south_base|empty": "battletech-beacon:tile-119",
+        "join|south_top|east_top": "battletech-beacon:tile-168",
+        "join|south_top|empty": "battletech-beacon:tile-119",
+        "roof_0_0": "battletech-beacon:tile-125",
+        "roof_0_1": "battletech-beacon:tile-125",
+        "roof_0_2": "battletech-beacon:tile-125",
+        "roof_0_4": "battletech-beacon:tile-125",
+        "roof_0_8": "battletech-beacon:tile-167",
+        "roof_12_0": "battletech-beacon:tile-118",
+        "roof_1_0": "battletech-beacon:tile-115",
+        "roof_2_0": "battletech-beacon:tile-125",
+        "roof_3_0": "battletech-beacon:tile-115",
+        "roof_4_0": "battletech-beacon:tile-125",
+        "roof_6_0": "battletech-beacon:tile-125",
+        "roof_8_0": "battletech-beacon:tile-118",
+        "roof_9_0": "battletech-beacon:tile-114",
+        "south_base": "battletech-beacon:tile-120",
+        "south_top": "battletech-beacon:tile-120",
+        "east_middle": "battletech-beacon:tile-126",
+        "join|east_middle|south_middle": "battletech-beacon:tile-127",
+        "join|empty|east_middle": "battletech-beacon:tile-128",
+        "join|south_middle|empty": "battletech-beacon:tile-129",
+        "south_middle": "battletech-beacon:tile-130"
+      }
+    },
+    {
+      "id": "battletech-beacon:construction-4",
+      "name": "Wall set",
+      "kind": "Wall",
+      "footprint": [
+        [
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ]
+      ],
+      "parts": {
+        "east_base": "battletech-beacon:tile-136",
+        "east_top": "battletech-beacon:tile-155",
+        "join|east_base|south_base": "battletech-beacon:tile-154",
+        "join|east_top|south_top": "battletech-beacon:tile-139",
+        "join|empty|east_base": "battletech-beacon:tile-140",
+        "join|empty|east_top": "battletech-beacon:tile-141",
+        "join|south_base|empty": "battletech-beacon:tile-153",
+        "join|south_top|empty": "battletech-beacon:tile-143",
+        "roof_10_0": "battletech-beacon:tile-144",
+        "roof_11_0": "battletech-beacon:tile-145",
+        "roof_12_1": "battletech-beacon:tile-146",
+        "roof_5_0": "battletech-beacon:tile-147",
+        "roof_7_0": "battletech-beacon:tile-148",
+        "south_base": "battletech-beacon:tile-152",
+        "south_top": "battletech-beacon:tile-150"
+      }
+    }
+  ],
+  "tile_sources": {
+    "battletech-beacon:image-26": {
+      "sheet": "chi:land",
+      "graphic": 147
+    },
+    "battletech-beacon:image-27": {
+      "sheet": "chi:land",
+      "graphic": 129
+    },
+    "battletech-beacon:image-28": {
+      "sheet": "chi:land",
+      "graphic": 138
+    },
+    "battletech-beacon:image-29": {
+      "sheet": "chi:land",
+      "graphic": 138
+    },
+    "battletech-beacon:image-30": {
+      "sheet": "chi:land",
+      "graphic": 138
+    },
+    "battletech-beacon:image-31": {
+      "sheet": "chi:land",
+      "graphic": 144
+    },
+    "battletech-beacon:image-32": {
+      "sheet": "chi:land",
+      "graphic": 151
+    },
+    "battletech-beacon:image-33": {
+      "sheet": "chi:land",
+      "graphic": 8
+    },
+    "battletech-beacon:image-34": {
+      "sheet": "chi:land",
+      "graphic": 9
+    },
+    "battletech-beacon:image-60": {
+      "sheet": "chi:land",
+      "graphic": 125
+    },
+    "battletech-beacon:image-61": {
+      "sheet": "chi:land",
+      "graphic": 123
+    },
+    "battletech-beacon:image-62": {
+      "sheet": "chi:land",
+      "graphic": 126
+    },
+    "battletech-beacon:image-63": {
+      "sheet": "chi:land",
+      "graphic": 125
+    },
+    "battletech-beacon:image-94": {
+      "sheet": "chi:land",
+      "graphic": 248
+    },
+    "battletech-beacon:image-95": {
+      "sheet": "chi:land",
+      "graphic": 234
+    },
+    "battletech-beacon:image-116": {
+      "sheet": "chi:land",
+      "graphic": 116
+    },
+    "battletech-beacon:image-117": {
+      "sheet": "chi:land",
+      "graphic": 234
+    },
+    "battletech-beacon:image-118": {
+      "sheet": "chi:land",
+      "graphic": 236
+    }
+  },
+  "pixel_layers": {
+    "battletech-beacon:image-26": {
+      "layers": [
+        {
+          "name": "Base",
+          "visible": true,
+          "frames": [
+            [
+              "000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff",
+              "000000ffffff55ffaa0000ffaa0000ffffff55ffaa0000ffaa0000ffffff55ffaa0000ffaa0000ffaa0000ffffff55ffaa0000ffaa0000ffaa0000ffffff55ff",
+              "000000ffaa0000ffffff55ffff5555ffff5555ffffff55ffff5555ffff5555ffffff55ffff5555ffff5555ffff5555ffffff55ffff5555ffff5555ffff5555ff",
+              "000000ffaa0000ffff5555ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff",
+              "000000ffaa0000ffff5555ff000000ffffff55ffaa0000ffaa0000ffffff55ffaa0000ffaa0000ffaa0000ffffff55ffaa0000ffaa0000ffaa0000ffffff55ff",
+              "000000ffffff55ffff5555ff000000ffaa0000ffffff55ffff5555ffff5555ffffff55ffff5555ffff5555ffff5555ffffff55ffff5555ffff5555ffff5555ff",
+              "000000ffaa0000ffffff55ff000000ffaa0000ffff5555ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff",
+              "000000ffaa0000ffff5555ff000000ffaa0000ffff5555ff000000ffffff55ffaa0000ffaa0000ffaa0000ffffff55ffaa0000ffaa0000ffaa0000ffffff55ff",
+              "000000ffaa0000ffff5555ff000000ffffff55ffff5555ff000000ffaa0000ffffff55ffff5555ffff5555ffff5555ffffff55ffff5555ffff5555ffff5555ff",
+              "000000ffffff55ffff5555ff000000ffaa0000ffffff55ff000000ffaa0000ffff5555ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff",
+              "000000ffaa0000ffffff55ff000000ffaa0000ffff5555ff000000ffaa0000ffff5555ff000000ffaa0000ffffff55ffaa0000ffaa0000ffaa0000ffffff55ff",
+              "000000ffaa0000ffff5555ff000000ffaa0000ffff5555ff000000ffffff55ffff5555ff000000ffff5555ffff5555ffffff55ffff5555ffff5555ffff5555ff",
+              "000000ffaa0000ffff5555ff000000ffffff55ffff5555ff000000ffaa0000ffffff55ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff",
+              "000000ffffff55ffff5555ff000000ffaa0000ffffff55ff000000ffaa0000ffff5555ff000000ff0000aaff0000aaff000000ffff5555ffff5555ffff5555ff",
+              "000000ffaa0000ffffff55ff000000ffaa0000ffff5555ff000000ffaa0000ffff5555ff000000ff0000aaff0000aaff000000ffff5555ff000000ff000000ff",
+              "000000ffaa0000ffaa0000ff000000ffaa0000ffff5555ff000000ffffff55ffff5555ff000000ff0000aaff0000aaff000000ffff5555ff000000ffaa0000ff"
+            ]
+          ]
+        }
+      ],
+      "active": 0,
+      "flattened": [
+        [
+          "000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff",
+          "000000ffffff55ffaa0000ffaa0000ffffff55ffaa0000ffaa0000ffffff55ffaa0000ffaa0000ffaa0000ffffff55ffaa0000ffaa0000ffaa0000ffffff55ff",
+          "000000ffaa0000ffffff55ffff5555ffff5555ffffff55ffff5555ffff5555ffffff55ffff5555ffff5555ffff5555ffffff55ffff5555ffff5555ffff5555ff",
+          "000000ffaa0000ffff5555ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff",
+          "000000ffaa0000ffff5555ff000000ffffff55ffaa0000ffaa0000ffffff55ffaa0000ffaa0000ffaa0000ffffff55ffaa0000ffaa0000ffaa0000ffffff55ff",
+          "000000ffffff55ffff5555ff000000ffaa0000ffffff55ffff5555ffff5555ffffff55ffff5555ffff5555ffff5555ffffff55ffff5555ffff5555ffff5555ff",
+          "000000ffaa0000ffffff55ff000000ffaa0000ffff5555ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff",
+          "000000ffaa0000ffff5555ff000000ffaa0000ffff5555ff000000ffffff55ffaa0000ffaa0000ffaa0000ffffff55ffaa0000ffaa0000ffaa0000ffffff55ff",
+          "000000ffaa0000ffff5555ff000000ffffff55ffff5555ff000000ffaa0000ffffff55ffff5555ffff5555ffff5555ffffff55ffff5555ffff5555ffff5555ff",
+          "000000ffffff55ffff5555ff000000ffaa0000ffffff55ff000000ffaa0000ffff5555ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff",
+          "000000ffaa0000ffffff55ff000000ffaa0000ffff5555ff000000ffaa0000ffff5555ff000000ffaa0000ffffff55ffaa0000ffaa0000ffaa0000ffffff55ff",
+          "000000ffaa0000ffff5555ff000000ffaa0000ffff5555ff000000ffffff55ffff5555ff000000ffff5555ffff5555ffffff55ffff5555ffff5555ffff5555ff",
+          "000000ffaa0000ffff5555ff000000ffffff55ffff5555ff000000ffaa0000ffffff55ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff",
+          "000000ffffff55ffff5555ff000000ffaa0000ffffff55ff000000ffaa0000ffff5555ff000000ff0000aaff0000aaff000000ffff5555ffff5555ffff5555ff",
+          "000000ffaa0000ffffff55ff000000ffaa0000ffff5555ff000000ffaa0000ffff5555ff000000ff0000aaff0000aaff000000ffff5555ff000000ff000000ff",
+          "000000ffaa0000ffaa0000ff000000ffaa0000ffff5555ff000000ffffff55ffff5555ff000000ff0000aaff0000aaff000000ffff5555ff000000ffaa0000ff"
+        ]
+      ]
+    },
+    "battletech-beacon:image-27": {
+      "layers": [
+        {
+          "name": "Base",
+          "visible": true,
+          "frames": [
+            [
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff5555ffff5555ffff5555ffff5555ffff5555ffff5555ffff5555ffff5555ffff5555ffff5555ffff5555ffff5555ffff0000aaff0000aaff",
+              "0000aaff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff000000ff0000aaff",
+              "0000aaff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff000000ff0000aaff",
+              "0000aaff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff000000ff0000aaff",
+              "0000aaff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff000000ff0000aaff",
+              "0000aaff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff000000ff0000aaff",
+              "0000aaff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff000000ff0000aaff",
+              "0000aaff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff000000ff0000aaff",
+              "0000aaff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff000000ff0000aaff",
+              "0000aaff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff000000ff0000aaff",
+              "0000aaff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff000000ff0000aaff",
+              "0000aaff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff000000ff0000aaff",
+              "0000aaff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff000000ff0000aaff",
+              "0000aaff0000aaff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff"
+            ]
+          ]
+        }
+      ],
+      "active": 0,
+      "flattened": [
+        [
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff5555ffff5555ffff5555ffff5555ffff5555ffff5555ffff5555ffff5555ffff5555ffff5555ffff5555ffff5555ffff0000aaff0000aaff",
+          "0000aaff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff000000ff0000aaff",
+          "0000aaff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff000000ff0000aaff",
+          "0000aaff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff000000ff0000aaff",
+          "0000aaff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff000000ff0000aaff",
+          "0000aaff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff000000ff0000aaff",
+          "0000aaff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff000000ff0000aaff",
+          "0000aaff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff000000ff0000aaff",
+          "0000aaff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff000000ff0000aaff",
+          "0000aaff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff000000ff0000aaff",
+          "0000aaff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff000000ff0000aaff",
+          "0000aaff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff000000ff0000aaff",
+          "0000aaff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff000000ff0000aaff",
+          "0000aaff0000aaff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff"
+        ]
+      ]
+    },
+    "battletech-beacon:image-28": {
+      "layers": [
+        {
+          "name": "Base",
+          "visible": true,
+          "frames": [
+            [
+              "55ffffff55ffffff000000ff000000ff5555ffff55ffffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "5555ffff5555ffff000000ff000000ff5555ffff55ffffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "000000ff000000ff000000ff000000ff5555ffff55ffffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "000000ff000000ff000000ff000000ff5555ffff55ffffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "55ffffff55ffffff55ffffff55ffffff55ffffff55ffffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "5555ffff5555ffff5555ffff5555ffff5555ffff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff"
+            ]
+          ]
+        }
+      ],
+      "active": 0,
+      "flattened": [
+        [
+          "55ffffff55ffffff000000ff000000ff5555ffff55ffffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "5555ffff5555ffff000000ff000000ff5555ffff55ffffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "000000ff000000ff000000ff000000ff5555ffff55ffffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "000000ff000000ff000000ff000000ff5555ffff55ffffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "55ffffff55ffffff55ffffff55ffffff55ffffff55ffffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "5555ffff5555ffff5555ffff5555ffff5555ffff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff"
+        ]
+      ]
+    },
+    "battletech-beacon:image-29": {
+      "layers": [
+        {
+          "name": "Base",
+          "visible": true,
+          "frames": [
+            [
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff5555ffff55ffffff000000ff000000ff000000ff55ffffff55ffffff55ffffff55ffffff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff5555ffff55ffffff000000ff000000ff000000ff5555ffff5555ffff5555ffff5555ffff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff5555ffff55ffffff000000ff000000ff000000ff000000ff000000ff000000ff000000ff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff5555ffff55ffffff000000ff000000ff000000ff000000ff000000ff000000ff000000ff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff5555ffff55ffffff55ffffff55ffffff55ffffff55ffffff55ffffff55ffffff55ffffff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff5555ffff5555ffff5555ffff5555ffff5555ffff5555ffff5555ffff5555ffff5555ffff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff"
+            ]
+          ]
+        }
+      ],
+      "active": 0,
+      "flattened": [
+        [
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff5555ffff55ffffff000000ff000000ff000000ff55ffffff55ffffff55ffffff55ffffff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff5555ffff55ffffff000000ff000000ff000000ff5555ffff5555ffff5555ffff5555ffff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff5555ffff55ffffff000000ff000000ff000000ff000000ff000000ff000000ff000000ff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff5555ffff55ffffff000000ff000000ff000000ff000000ff000000ff000000ff000000ff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff5555ffff55ffffff55ffffff55ffffff55ffffff55ffffff55ffffff55ffffff55ffffff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff5555ffff5555ffff5555ffff5555ffff5555ffff5555ffff5555ffff5555ffff5555ffff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff"
+        ]
+      ]
+    },
+    "battletech-beacon:image-30": {
+      "layers": [
+        {
+          "name": "Base",
+          "visible": true,
+          "frames": [
+            [
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "5555ffff5555ffff5555ffff5555ffff5555ffff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "55ffffff55ffffff55ffffff55ffffff55ffffff55ffffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "000000ff000000ff000000ff000000ff5555ffff55ffffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "000000ff000000ff000000ff000000ff5555ffff55ffffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "5555ffff5555ffff000000ff000000ff5555ffff55ffffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "55ffffff55ffffff000000ff000000ff5555ffff55ffffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "5555ffff55ffffff000000ff000000ff5555ffff55ffffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "5555ffff55ffffff000000ff000000ff5555ffff55ffffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "5555ffff55ffffff000000ff000000ff5555ffff55ffffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff"
+            ]
+          ]
+        }
+      ],
+      "active": 0,
+      "flattened": [
+        [
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "5555ffff5555ffff5555ffff5555ffff5555ffff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "55ffffff55ffffff55ffffff55ffffff55ffffff55ffffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "000000ff000000ff000000ff000000ff5555ffff55ffffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "000000ff000000ff000000ff000000ff5555ffff55ffffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "5555ffff5555ffff000000ff000000ff5555ffff55ffffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "55ffffff55ffffff000000ff000000ff5555ffff55ffffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "5555ffff55ffffff000000ff000000ff5555ffff55ffffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "5555ffff55ffffff000000ff000000ff5555ffff55ffffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "5555ffff55ffffff000000ff000000ff5555ffff55ffffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff"
+        ]
+      ]
+    },
+    "battletech-beacon:image-31": {
+      "layers": [
+        {
+          "name": "Base",
+          "visible": true,
+          "frames": [
+            [
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff5555ffff5555ffff5555ffff5555ffff5555ffff5555ffff5555ffff5555ffff5555ffff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff5555ffff55ffffff55ffffff55ffffff55ffffff55ffffff55ffffff55ffffff55ffffff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff5555ffff55ffffff000000ff000000ff000000ff000000ff000000ff000000ff000000ff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff5555ffff55ffffff000000ff000000ff000000ff000000ff000000ff000000ff000000ff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff5555ffff55ffffff000000ff000000ff5555ffff5555ffff5555ffff5555ffff5555ffff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff5555ffff55ffffff000000ff000000ff5555ffff55ffffff55ffffff55ffffff55ffffff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff5555ffff55ffffff000000ff000000ff5555ffff55ffffff000000ffffff55ffffff55ff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff5555ffff55ffffff000000ff000000ff5555ffff55ffffff555555ff000000ffffff55ff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff5555ffff55ffffff000000ff000000ff5555ffff55ffffffffff55ff555555ff000000ff"
+            ]
+          ]
+        }
+      ],
+      "active": 0,
+      "flattened": [
+        [
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff5555ffff5555ffff5555ffff5555ffff5555ffff5555ffff5555ffff5555ffff5555ffff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff5555ffff55ffffff55ffffff55ffffff55ffffff55ffffff55ffffff55ffffff55ffffff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff5555ffff55ffffff000000ff000000ff000000ff000000ff000000ff000000ff000000ff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff5555ffff55ffffff000000ff000000ff000000ff000000ff000000ff000000ff000000ff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff5555ffff55ffffff000000ff000000ff5555ffff5555ffff5555ffff5555ffff5555ffff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff5555ffff55ffffff000000ff000000ff5555ffff55ffffff55ffffff55ffffff55ffffff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff5555ffff55ffffff000000ff000000ff5555ffff55ffffff000000ffffff55ffffff55ff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff5555ffff55ffffff000000ff000000ff5555ffff55ffffff555555ff000000ffffff55ff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff5555ffff55ffffff000000ff000000ff5555ffff55ffffffffff55ff555555ff000000ff"
+        ]
+      ]
+    },
+    "battletech-beacon:image-32": {
+      "layers": [
+        {
+          "name": "Base",
+          "visible": true,
+          "frames": [
+            [
+              "000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff",
+              "aa0000ffffff55ffaa0000ffaa0000ffaa0000ffffff55ffaa0000ffaa0000ffaa0000ffffff55ffaa0000ffaa0000ffaa0000ffffff55ffaa0000ffaa0000ff",
+              "ff5555ffff5555ffffff55ffff5555ffff5555ffff5555ffffff55ffff5555ffff5555ffff5555ffffff55ffff5555ffff5555ffff5555ffffff55ffff5555ff",
+              "000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff",
+              "ffff55ffaa0000ffaa0000ffaa0000ffffff55ffaa0000ffaa0000ffaa0000ffffff55ffaa0000ffaa0000ffaa0000ffffff55ffaa0000ffaa0000ffaa0000ff",
+              "ff5555ffffff55ffff5555ffff5555ffff5555ffffff55ffff5555ffff5555ffff5555ffffff55ffff5555ffff5555ffff5555ffffff55ffff5555ffff5555ff",
+              "000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff",
+              "aa0000ffaa0000ffaa0000ffffff55ffaa0000ffaa0000ffaa0000ffffff55ffaa0000ffaa0000ffaa0000ffffff55ffaa0000ffaa0000ffaa0000ffffff55ff",
+              "ffff55ff5555ffff5555ffff5555ffff5555ffff5555ffff5555ffff5555ffffffff55ffff5555ffff5555ffff5555ffffff55ffff5555ffff5555ffff5555ff",
+              "000000ff000000ff5555ffff000000ff000000ff000000ff000000ff000000ff5555ffff000000ff000000ff000000ff000000ff000000ff000000ff000000ff",
+              "aa0000ffaa0000ffffff55ff5555ffff000000ff000000ff000000ff000000ff000000ff5555ffffffff55ffaa0000ffaa0000ffaa0000ffffff55ffaa0000ff",
+              "ff5555ffff5555ffff5555ffffff55ff5555ffff000000ff000000ff000000ff555555ff000000ff5555ffffffff55ffff5555ffff5555ffff5555ffffff55ff",
+              "000000ff000000ff000000ff000000ff000000ff5555ffff000000ff000000ff000000ff555555ff000000ff5555ffff000000ff000000ff000000ff000000ff",
+              "ff5555ffff5555ffff5555ffff5555ffff5555ffff5555ff5555ffff000000ff555555ff000000ff555555ff000000ff5555ffffff5555ffff5555ffff5555ff",
+              "000000ff000000ff000000ff000000ff000000ff000000ff000000ff5555ffff000000ff555555ff000000ff555555ff000000ff5555ffff000000ff000000ff",
+              "aa0000ffaa0000ffaa0000ffaa0000ffaa0000ffaa0000ffaa0000ffaa0000ffaa0000ffaa0000ffaa0000ffaa0000ffaa0000ffaa0000ffaa0000ffaa0000ff"
+            ]
+          ]
+        }
+      ],
+      "active": 0,
+      "flattened": [
+        [
+          "000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff",
+          "aa0000ffffff55ffaa0000ffaa0000ffaa0000ffffff55ffaa0000ffaa0000ffaa0000ffffff55ffaa0000ffaa0000ffaa0000ffffff55ffaa0000ffaa0000ff",
+          "ff5555ffff5555ffffff55ffff5555ffff5555ffff5555ffffff55ffff5555ffff5555ffff5555ffffff55ffff5555ffff5555ffff5555ffffff55ffff5555ff",
+          "000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff",
+          "ffff55ffaa0000ffaa0000ffaa0000ffffff55ffaa0000ffaa0000ffaa0000ffffff55ffaa0000ffaa0000ffaa0000ffffff55ffaa0000ffaa0000ffaa0000ff",
+          "ff5555ffffff55ffff5555ffff5555ffff5555ffffff55ffff5555ffff5555ffff5555ffffff55ffff5555ffff5555ffff5555ffffff55ffff5555ffff5555ff",
+          "000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff",
+          "aa0000ffaa0000ffaa0000ffffff55ffaa0000ffaa0000ffaa0000ffffff55ffaa0000ffaa0000ffaa0000ffffff55ffaa0000ffaa0000ffaa0000ffffff55ff",
+          "ffff55ff5555ffff5555ffff5555ffff5555ffff5555ffff5555ffff5555ffffffff55ffff5555ffff5555ffff5555ffffff55ffff5555ffff5555ffff5555ff",
+          "000000ff000000ff5555ffff000000ff000000ff000000ff000000ff000000ff5555ffff000000ff000000ff000000ff000000ff000000ff000000ff000000ff",
+          "aa0000ffaa0000ffffff55ff5555ffff000000ff000000ff000000ff000000ff000000ff5555ffffffff55ffaa0000ffaa0000ffaa0000ffffff55ffaa0000ff",
+          "ff5555ffff5555ffff5555ffffff55ff5555ffff000000ff000000ff000000ff555555ff000000ff5555ffffffff55ffff5555ffff5555ffff5555ffffff55ff",
+          "000000ff000000ff000000ff000000ff000000ff5555ffff000000ff000000ff000000ff555555ff000000ff5555ffff000000ff000000ff000000ff000000ff",
+          "ff5555ffff5555ffff5555ffff5555ffff5555ffff5555ff5555ffff000000ff555555ff000000ff555555ff000000ff5555ffffff5555ffff5555ffff5555ff",
+          "000000ff000000ff000000ff000000ff000000ff000000ff000000ff5555ffff000000ff555555ff000000ff555555ff000000ff5555ffff000000ff000000ff",
+          "aa0000ffaa0000ffaa0000ffaa0000ffaa0000ffaa0000ffaa0000ffaa0000ffaa0000ffaa0000ffaa0000ffaa0000ffaa0000ffaa0000ffaa0000ffaa0000ff"
+        ]
+      ]
+    },
+    "battletech-beacon:image-33": {
+      "layers": [
+        {
+          "name": "Base",
+          "visible": true,
+          "frames": [
+            [
+              "0000aaff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff",
+              "0000aaff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff",
+              "0000aaffaa5500ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff",
+              "0000aaff0000aaffaa5500ff00aa00ff00aa00ff00aa00ff00aa00ffaa5500ff00aa00ffaa0000ffaa5500ffaa0000ffaa5500ffaa0000ff00aa00ff00aa00ff",
+              "0000aaff0000aaffaa5500ffaa5500ffaa5500ffaa5500ffaa5500ffaa5500ffaa5500ff000000ffaa5500ffaa5500ff000000ffaa5500ffaa0000ff00aa00ff",
+              "0000aaff0000aaffaa0000ffaa5500ffaa5500ffaa5500ff000000ffaa0000ffaa5500ffaa5500ff000000ffaa5500ffaa0000ff000000ffaa5500ff00aa00ff",
+              "0000aaff0000aaffaa0000ffaa0000ffaa0000ffaa0000ffaa5500ff000000ffaa5500ffaa5500ff000000ffaa0000ffaa0000ff000000ffaa0000ff00aa00ff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaffaa0000ffaa0000ff000000ffaa5500ffaa5500ff0000aaff0000aaff0000aaff0000aaff0000aaff00aa00ff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaffaa0000ff0000aaffaa5500ffaa0000ff5555ffff5555ffff0000aaff0000aaff00aa00ff00aa00ff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaffaa0000ff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff00aa00ff00aa00ff00aa00ff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff5555ffff0000aaff0000aaff0000aaff00aa00ff00aa00ff00aa00ff00aa00ff",
+              "0000aaff0000aaff5555ffff0000aaff0000aaff0000aaff0000aaff5555ffff0000aaff0000aaff5555ffff5555ffff0000aaff00aa00ff00aa00ff00aa00ff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff5555ffff0000aaff0000aaff00aa00ff00aa00ff",
+              "0000aaff0000aaff0000aaff5555ffff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff5555ffff0000aaff0000aaff0000aaff00aa00ff00aa00ff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff5555ffff5555ffff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff00aa00ff00aa00ff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff00aa00ff00aa00ff0000aaff00aa00ff00aa00ff"
+            ]
+          ]
+        }
+      ],
+      "active": 0,
+      "flattened": [
+        [
+          "0000aaff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff",
+          "0000aaff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff",
+          "0000aaffaa5500ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff",
+          "0000aaff0000aaffaa5500ff00aa00ff00aa00ff00aa00ff00aa00ffaa5500ff00aa00ffaa0000ffaa5500ffaa0000ffaa5500ffaa0000ff00aa00ff00aa00ff",
+          "0000aaff0000aaffaa5500ffaa5500ffaa5500ffaa5500ffaa5500ffaa5500ffaa5500ff000000ffaa5500ffaa5500ff000000ffaa5500ffaa0000ff00aa00ff",
+          "0000aaff0000aaffaa0000ffaa5500ffaa5500ffaa5500ff000000ffaa0000ffaa5500ffaa5500ff000000ffaa5500ffaa0000ff000000ffaa5500ff00aa00ff",
+          "0000aaff0000aaffaa0000ffaa0000ffaa0000ffaa0000ffaa5500ff000000ffaa5500ffaa5500ff000000ffaa0000ffaa0000ff000000ffaa0000ff00aa00ff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaffaa0000ffaa0000ff000000ffaa5500ffaa5500ff0000aaff0000aaff0000aaff0000aaff0000aaff00aa00ff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaffaa0000ff0000aaffaa5500ffaa0000ff5555ffff5555ffff0000aaff0000aaff00aa00ff00aa00ff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaffaa0000ff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff00aa00ff00aa00ff00aa00ff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff5555ffff0000aaff0000aaff0000aaff00aa00ff00aa00ff00aa00ff00aa00ff",
+          "0000aaff0000aaff5555ffff0000aaff0000aaff0000aaff0000aaff5555ffff0000aaff0000aaff5555ffff5555ffff0000aaff00aa00ff00aa00ff00aa00ff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff5555ffff0000aaff0000aaff00aa00ff00aa00ff",
+          "0000aaff0000aaff0000aaff5555ffff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff5555ffff0000aaff0000aaff0000aaff00aa00ff00aa00ff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff5555ffff5555ffff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff00aa00ff00aa00ff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff00aa00ff00aa00ff0000aaff00aa00ff00aa00ff"
+        ]
+      ]
+    },
+    "battletech-beacon:image-34": {
+      "layers": [
+        {
+          "name": "Base",
+          "visible": true,
+          "frames": [
+            [
+              "0000aaff0000aaff0000aaff5555ffff0000aaff5555ffff0000aaff0000aaff0000aaff0000aaff5555ffff5555ffff5555ffff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff5555ffff0000aaff0000aaffaa0000ff0000aaff0000aaff0000aaff0000aaff00aa00ff00aa00ff",
+              "00aa00ff00aa00ffaa0000ff0000aaff0000aaff0000aaff0000aaff5555ffff0000aaffaa0000ffaa0000ff0000aaff00aa00ff00aa00ff00aa00ff55ff55ff",
+              "00aa00ff00aa00ff00aa00ffaa0000ff00aa00ff00aa00ff0000aaff5555ffff0000aaff0000aaffaa0000ffaa5500ff00aa00ff00aa00ff00aa00ff00aa00ff",
+              "00aa00ff00aa00ff00aa00ff00aa00ffaa0000ff00aa00ff0000aaff0000aaff0000aaff0000aaff00aa00ffaa5500ffaa0000ff00aa00ff00aa00ff00aa00ff",
+              "00aa00ff00aa00ff00aa00ff00aa00ffaa0000ff00aa00ff00aa00ff55ff55ff0000aaff0000aaff00aa00ffaa5500ffaa0000ff00aa00ff00aa00ff00aa00ff",
+              "00aa00ff00aa00ff00aa00ff00aa00ffaa0000ff55ff55ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ffaa5500ff00aa00ff00aa00ff00aa00ff00aa00ff",
+              "00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff",
+              "55ff55ff55ff55ff00aa00ffaa5500ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff",
+              "00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff",
+              "00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff55ff55ff00aa00ff00aa00ff00aa00ff00aa00ff",
+              "00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff",
+              "00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff",
+              "00aa00ff00aa00ff00aa00ff55ff55ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff",
+              "00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff55ff55ff00aa00ff00aa00ff00aa00ff00aa00ff55ff55ff",
+              "5555ffff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff55ff55ff00aa00ff00aa00ff00aa00ff"
+            ]
+          ]
+        }
+      ],
+      "active": 0,
+      "flattened": [
+        [
+          "0000aaff0000aaff0000aaff5555ffff0000aaff5555ffff0000aaff0000aaff0000aaff0000aaff5555ffff5555ffff5555ffff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff5555ffff0000aaff0000aaffaa0000ff0000aaff0000aaff0000aaff0000aaff00aa00ff00aa00ff",
+          "00aa00ff00aa00ffaa0000ff0000aaff0000aaff0000aaff0000aaff5555ffff0000aaffaa0000ffaa0000ff0000aaff00aa00ff00aa00ff00aa00ff55ff55ff",
+          "00aa00ff00aa00ff00aa00ffaa0000ff00aa00ff00aa00ff0000aaff5555ffff0000aaff0000aaffaa0000ffaa5500ff00aa00ff00aa00ff00aa00ff00aa00ff",
+          "00aa00ff00aa00ff00aa00ff00aa00ffaa0000ff00aa00ff0000aaff0000aaff0000aaff0000aaff00aa00ffaa5500ffaa0000ff00aa00ff00aa00ff00aa00ff",
+          "00aa00ff00aa00ff00aa00ff00aa00ffaa0000ff00aa00ff00aa00ff55ff55ff0000aaff0000aaff00aa00ffaa5500ffaa0000ff00aa00ff00aa00ff00aa00ff",
+          "00aa00ff00aa00ff00aa00ff00aa00ffaa0000ff55ff55ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ffaa5500ff00aa00ff00aa00ff00aa00ff00aa00ff",
+          "00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff",
+          "55ff55ff55ff55ff00aa00ffaa5500ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff",
+          "00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff",
+          "00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff55ff55ff00aa00ff00aa00ff00aa00ff00aa00ff",
+          "00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff",
+          "00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff",
+          "00aa00ff00aa00ff00aa00ff55ff55ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff",
+          "00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff55ff55ff00aa00ff00aa00ff00aa00ff00aa00ff55ff55ff",
+          "5555ffff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff00aa00ff55ff55ff00aa00ff00aa00ff00aa00ff"
+        ]
+      ]
+    },
+    "battletech-beacon:image-60": {
+      "layers": [
+        {
+          "name": "Base",
+          "visible": true,
+          "frames": [
+            [
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff",
+              "000000ffaaaaaaffffffffffaaaaaaff000000ffaaaaaaffffffffffaaaaaaff000000ffaaaaaaffffffffffaaaaaaff000000ffaaaaaaffffffffffaaaaaaff",
+              "00aaaaff00aaaaff00aaaaff00aaaaff00aaaaff00aaaaff00aaaaff00aaaaff00aaaaff00aaaaff00aaaaff00aaaaff00aaaaff00aaaaff00aaaaff00aaaaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "aaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaff",
+              "aaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaff",
+              "aaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaff",
+              "aaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaff",
+              "aaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaff",
+              "aaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaff"
+            ]
+          ]
+        }
+      ],
+      "active": 0,
+      "flattened": [
+        [
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff",
+          "000000ffaaaaaaffffffffffaaaaaaff000000ffaaaaaaffffffffffaaaaaaff000000ffaaaaaaffffffffffaaaaaaff000000ffaaaaaaffffffffffaaaaaaff",
+          "00aaaaff00aaaaff00aaaaff00aaaaff00aaaaff00aaaaff00aaaaff00aaaaff00aaaaff00aaaaff00aaaaff00aaaaff00aaaaff00aaaaff00aaaaff00aaaaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "aaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaff",
+          "aaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaff",
+          "aaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaff",
+          "aaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaff",
+          "aaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaff",
+          "aaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaff"
+        ]
+      ]
+    },
+    "battletech-beacon:image-61": {
+      "layers": [
+        {
+          "name": "Base",
+          "visible": true,
+          "frames": [
+            [
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff"
+            ]
+          ]
+        }
+      ],
+      "active": 0,
+      "flattened": [
+        [
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff"
+        ]
+      ]
+    },
+    "battletech-beacon:image-62": {
+      "layers": [
+        {
+          "name": "Base",
+          "visible": true,
+          "frames": [
+            [
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+              "000000ffaaaaaaffffffffffaaaaaaff000000ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+              "00aaaaff00aaaaff00aaaaff00aaaaff00aaaaff00aaaaff00aaaaff00aaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+              "aaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffffffffffffffffffffffffffffffffffffffffffffffffff",
+              "aaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffffffffffffffffffffffffffffffffffffffffff",
+              "aaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffffffffffffffffffffffffffffffffff",
+              "aaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffffffffffffffffffffffffff",
+              "aaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffffffffffffffffff",
+              "aaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffffffffff"
+            ]
+          ]
+        }
+      ],
+      "active": 0,
+      "flattened": [
+        [
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "000000ffaaaaaaffffffffffaaaaaaff000000ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "00aaaaff00aaaaff00aaaaff00aaaaff00aaaaff00aaaaff00aaaaff00aaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "aaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "aaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffffffffffffffffffffffffffffffffffffffffff",
+          "aaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffffffffffffffffffffffffffffffffff",
+          "aaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffffffffffffffffffffffffff",
+          "aaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffffffffffffffffff",
+          "aaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffffffffff"
+        ]
+      ]
+    },
+    "battletech-beacon:image-63": {
+      "layers": [
+        {
+          "name": "Base",
+          "visible": true,
+          "frames": [
+            [
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff000000ffaaaaaaffffffffffaaaaaaff000000ffaaaaaaffffffffffaaaaaaff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff00aaaaff00aaaaff00aaaaff00aaaaff00aaaaff00aaaaff00aaaaff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffaaaaaaffaaaaaaffaaaaaaffaaaaaaff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffaaaaaaffaaaaaaffaaaaaaff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffaaaaaaffaaaaaaff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffaaaaaaff"
+            ]
+          ]
+        }
+      ],
+      "active": 0,
+      "flattened": [
+        [
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff000000ffaaaaaaffffffffffaaaaaaff000000ffaaaaaaffffffffffaaaaaaff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff00aaaaff00aaaaff00aaaaff00aaaaff00aaaaff00aaaaff00aaaaff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffaaaaaaffaaaaaaffaaaaaaffaaaaaaffaaaaaaff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffaaaaaaffaaaaaaffaaaaaaffaaaaaaff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffaaaaaaffaaaaaaffaaaaaaff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffaaaaaaffaaaaaaff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff00aaaaff0000aaffffffffffffffffffffffffffffffffffffffffffaaaaaaff"
+        ]
+      ]
+    },
+    "battletech-beacon:image-95": {
+      "layers": [
+        {
+          "name": "Base",
+          "visible": true,
+          "frames": [
+            [
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "55ffffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "ffffffffffffffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "55ffffff55ffffffffffffff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "55ffffff55ffffffffffffff5555ffff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "55ffffff55ffffffffffffff5555ffff5555ffff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "55ffffff55ffffffffffffff5555ffff5555ffff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "55ffffff55ffffffffffffff5555ffff5555ffff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "55ffffff55ffffffffffffff5555ffff5555ffff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "ffffffffffffffffffffffff5555ffff5555ffff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff5555ffff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "55ffffff55ffffffffffffff5555ffff0000aaff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "55ffffff55ffffffffffffff5555ffff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "55ffffff55ffffffffffffff5555ffff5555ffff5555ffff5555ffff5555ffff5555ffff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "55ffffff55ffffffffffffff5555ffff000000ff000000ff000000ff000000ff000000ff000000ff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff"
+            ]
+          ]
+        }
+      ],
+      "active": 0,
+      "flattened": [
+        [
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "55ffffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "ffffffffffffffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "55ffffff55ffffffffffffff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "55ffffff55ffffffffffffff5555ffff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "55ffffff55ffffffffffffff5555ffff5555ffff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "55ffffff55ffffffffffffff5555ffff5555ffff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "55ffffff55ffffffffffffff5555ffff5555ffff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "55ffffff55ffffffffffffff5555ffff5555ffff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "ffffffffffffffffffffffff5555ffff5555ffff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff5555ffff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "55ffffff55ffffffffffffff5555ffff0000aaff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "55ffffff55ffffffffffffff5555ffff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "55ffffff55ffffffffffffff5555ffff5555ffff5555ffff5555ffff5555ffff5555ffff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "55ffffff55ffffffffffffff5555ffff000000ff000000ff000000ff000000ff000000ff000000ff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff"
+        ]
+      ]
+    },
+    "battletech-beacon:image-117": {
+      "layers": [
+        {
+          "name": "Base",
+          "visible": true,
+          "frames": [
+            [
+              "55ffffff55ffffffffffffff5555ffff5555ffff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "55ffffff55ffffffffffffff5555ffff5555ffff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "ffffffffffffffffffffffff5555ffff5555ffff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "5555ffff5555ffff5555ffff0000aaff5555ffff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "5555ffff5555ffff5555ffff5555ffff0000aaff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "5555ffff5555ffff5555ffff5555ffff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff"
+            ]
+          ]
+        }
+      ],
+      "active": 0,
+      "flattened": [
+        [
+          "55ffffff55ffffffffffffff5555ffff5555ffff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "55ffffff55ffffffffffffff5555ffff5555ffff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "ffffffffffffffffffffffff5555ffff5555ffff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "5555ffff5555ffff5555ffff0000aaff5555ffff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "5555ffff5555ffff5555ffff5555ffff0000aaff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "5555ffff5555ffff5555ffff5555ffff5555ffff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff"
+        ]
+      ]
+    },
+    "battletech-beacon:image-118": {
+      "layers": [
+        {
+          "name": "Base",
+          "visible": true,
+          "frames": [
+            [
+              "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+              "0000aaff0000aaff55ffffff55ffffff55ffffff55ffffffffffffff0000aaff55ffffff55ffffff55ffffff55ffffff55ffffff55ffffffffffffff0000aaff",
+              "0000aaff55ffffff55ffffff55ffffff55ffffff55ffffffffffffff0000aaff55ffffff55ffffff55ffffff55ffffff55ffffff55ffffffffffffff0000aaff",
+              "5555ffff55ffffff55ffffffffffffffffffffffffffffffffffffff0000aaffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0000aaff",
+              "5555ffff55ffffff55ffffffffffffff55ffffff0000aaff5555ffff5555ffff55ffffff0000aaff5555ffff5555ffff55ffffff0000aaff5555ffff5555ffff",
+              "5555ffff55ffffff55ffffffffffffff5555ffff55ffffff0000aaff5555ffff5555ffff55ffffff0000aaff5555ffff5555ffff55ffffff0000aaff5555ffff",
+              "5555ffffffffffffffffffffffffffff5555ffff5555ffff55ffffff0000aaff5555ffff5555ffff55ffffff0000aaff5555ffff5555ffff55ffffff0000aaff",
+              "0000aaff0000aaff0000aaff0000aaff55ffffff0000aaff5555ffff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff",
+              "5555ffff55ffffff55ffffffffffffff5555ffff55ffffff0000aaff000000ff0000aaff000000ff0000aaff0000aaff0000aaff000000ff0000aaff0000aaff",
+              "5555ffff55ffffff55ffffffffffffff5555ffff5555ffff55ffffff000000ff0000aaff0000aaff000000ff0000aaff0000aaff0000aaff000000ff0000aaff",
+              "5555ffff55ffffff55ffffffffffffff0000aaff5555ffff5555ffff000000ff0000aaff0000aaff55ffffff55ffffff55ffffff55ffffff55ffffff55ffffff",
+              "5555ffff55ffffff55ffffffffffffff55ffffff0000aaff5555ffff000000ff0000aaff0000aaff55ffffff55ffffff55ffffff55ffffff55ffffff55ffffff",
+              "5555ffff55ffffff55ffffffffffffff5555ffff55ffffff0000aaff000000ff0000aaff0000aaff55ffffff55ffffffffffffffffffffffffffffffffffffff",
+              "5555ffffffffffffffffffffffffffff5555ffff5555ffff55ffffff000000ff0000aaff0000aaff55ffffff55ffffffffffffff5555ffff5555ffff5555ffff",
+              "0000aaff0000aaff0000aaff0000aaff5555ffff5555ffff5555ffff000000ff0000aaff0000aaff55ffffff55ffffffffffffff5555ffff5555ffff5555ffff",
+              "5555ffff55ffffff55ffffffffffffff0000aaff5555ffff5555ffff000000ff0000aaff0000aaff55ffffff55ffffffffffffff5555ffff5555ffff5555ffff"
+            ]
+          ]
+        }
+      ],
+      "active": 0,
+      "flattened": [
+        [
+          "0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff0000aaff",
+          "0000aaff0000aaff55ffffff55ffffff55ffffff55ffffffffffffff0000aaff55ffffff55ffffff55ffffff55ffffff55ffffff55ffffffffffffff0000aaff",
+          "0000aaff55ffffff55ffffff55ffffff55ffffff55ffffffffffffff0000aaff55ffffff55ffffff55ffffff55ffffff55ffffff55ffffffffffffff0000aaff",
+          "5555ffff55ffffff55ffffffffffffffffffffffffffffffffffffff0000aaffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0000aaff",
+          "5555ffff55ffffff55ffffffffffffff55ffffff0000aaff5555ffff5555ffff55ffffff0000aaff5555ffff5555ffff55ffffff0000aaff5555ffff5555ffff",
+          "5555ffff55ffffff55ffffffffffffff5555ffff55ffffff0000aaff5555ffff5555ffff55ffffff0000aaff5555ffff5555ffff55ffffff0000aaff5555ffff",
+          "5555ffffffffffffffffffffffffffff5555ffff5555ffff55ffffff0000aaff5555ffff5555ffff55ffffff0000aaff5555ffff5555ffff55ffffff0000aaff",
+          "0000aaff0000aaff0000aaff0000aaff55ffffff0000aaff5555ffff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff",
+          "5555ffff55ffffff55ffffffffffffff5555ffff55ffffff0000aaff000000ff0000aaff000000ff0000aaff0000aaff0000aaff000000ff0000aaff0000aaff",
+          "5555ffff55ffffff55ffffffffffffff5555ffff5555ffff55ffffff000000ff0000aaff0000aaff000000ff0000aaff0000aaff0000aaff000000ff0000aaff",
+          "5555ffff55ffffff55ffffffffffffff0000aaff5555ffff5555ffff000000ff0000aaff0000aaff55ffffff55ffffff55ffffff55ffffff55ffffff55ffffff",
+          "5555ffff55ffffff55ffffffffffffff55ffffff0000aaff5555ffff000000ff0000aaff0000aaff55ffffff55ffffff55ffffff55ffffff55ffffff55ffffff",
+          "5555ffff55ffffff55ffffffffffffff5555ffff55ffffff0000aaff000000ff0000aaff0000aaff55ffffff55ffffffffffffffffffffffffffffffffffffff",
+          "5555ffffffffffffffffffffffffffff5555ffff5555ffff55ffffff000000ff0000aaff0000aaff55ffffff55ffffffffffffff5555ffff5555ffff5555ffff",
+          "0000aaff0000aaff0000aaff0000aaff5555ffff5555ffff5555ffff000000ff0000aaff0000aaff55ffffff55ffffffffffffff5555ffff5555ffff5555ffff",
+          "5555ffff55ffffff55ffffffffffffff0000aaff5555ffff5555ffff000000ff0000aaff0000aaff55ffffff55ffffffffffffff5555ffff5555ffff5555ffff"
+        ]
+      ]
+    }
+  },
+  "map_constructions": [
+    {
+      "id": "battletech-beacon:map-construction-1",
+      "name": "Building 1",
+      "map": "beacon:town",
+      "kind": "Building",
+      "style": "battletech-beacon:construction-1",
+      "datum": 2,
+      "cells": [
+        [
+          25,
+          2,
+          2
+        ],
+        [
+          25,
+          3,
+          2
+        ],
+        [
+          25,
+          4,
+          2
+        ],
+        [
+          25,
+          5,
+          2
+        ],
+        [
+          25,
+          6,
+          2
+        ],
+        [
+          25,
+          7,
+          2
+        ],
+        [
+          25,
+          8,
+          2
+        ],
+        [
+          25,
+          9,
+          2
+        ],
+        [
+          26,
+          2,
+          2
+        ],
+        [
+          26,
+          3,
+          2
+        ],
+        [
+          26,
+          4,
+          2
+        ],
+        [
+          26,
+          5,
+          2
+        ],
+        [
+          26,
+          6,
+          2
+        ],
+        [
+          26,
+          7,
+          2
+        ],
+        [
+          26,
+          8,
+          2
+        ],
+        [
+          26,
+          9,
+          2
+        ],
+        [
+          27,
+          2,
+          2
+        ],
+        [
+          27,
+          3,
+          2
+        ],
+        [
+          27,
+          4,
+          2
+        ],
+        [
+          27,
+          5,
+          2
+        ],
+        [
+          27,
+          6,
+          2
+        ],
+        [
+          27,
+          7,
+          2
+        ],
+        [
+          27,
+          8,
+          2
+        ],
+        [
+          27,
+          9,
+          2
+        ],
+        [
+          28,
+          2,
+          2
+        ],
+        [
+          28,
+          3,
+          2
+        ],
+        [
+          28,
+          4,
+          2
+        ],
+        [
+          28,
+          7,
+          2
+        ],
+        [
+          28,
+          8,
+          2
+        ],
+        [
+          28,
+          9,
+          2
+        ],
+        [
+          29,
+          2,
+          2
+        ],
+        [
+          29,
+          3,
+          2
+        ],
+        [
+          29,
+          4,
+          2
+        ],
+        [
+          29,
+          7,
+          2
+        ],
+        [
+          29,
+          8,
+          2
+        ],
+        [
+          29,
+          9,
+          2
+        ],
+        [
+          30,
+          2,
+          2
+        ],
+        [
+          30,
+          3,
+          2
+        ],
+        [
+          30,
+          4,
+          2
+        ],
+        [
+          30,
+          5,
+          2
+        ],
+        [
+          30,
+          6,
+          2
+        ],
+        [
+          30,
+          7,
+          2
+        ],
+        [
+          30,
+          8,
+          2
+        ],
+        [
+          30,
+          9,
+          2
+        ],
+        [
+          31,
+          2,
+          2
+        ],
+        [
+          31,
+          3,
+          2
+        ],
+        [
+          31,
+          4,
+          2
+        ],
+        [
+          31,
+          5,
+          2
+        ],
+        [
+          31,
+          6,
+          2
+        ],
+        [
+          31,
+          7,
+          2
+        ],
+        [
+          31,
+          8,
+          2
+        ],
+        [
+          31,
+          9,
+          2
+        ],
+        [
+          32,
+          2,
+          2
+        ],
+        [
+          32,
+          3,
+          2
+        ],
+        [
+          32,
+          4,
+          2
+        ],
+        [
+          32,
+          5,
+          2
+        ],
+        [
+          32,
+          6,
+          2
+        ],
+        [
+          32,
+          7,
+          2
+        ],
+        [
+          32,
+          8,
+          2
+        ],
+        [
+          32,
+          9,
+          2
+        ]
+      ],
+      "overlay": 5,
+      "rendered": {
+        "at": [
+          25,
+          2
+        ],
+        "rows": [
+          [
+            "battletech-beacon:tile-33",
+            "battletech-beacon:tile-34",
+            "battletech-beacon:tile-34",
+            "battletech-beacon:tile-34",
+            "battletech-beacon:tile-34",
+            "battletech-beacon:tile-34",
+            "battletech-beacon:tile-34",
+            "battletech-beacon:tile-35",
+            "battletech-beacon:tile-31",
+            " "
+          ],
+          [
+            "battletech-beacon:tile-38",
+            "battletech-beacon:tile-164",
+            "battletech-beacon:tile-32",
+            "battletech-beacon:tile-32",
+            "battletech-beacon:tile-32",
+            "battletech-beacon:tile-32",
+            "battletech-beacon:tile-164",
+            "battletech-beacon:tile-37",
+            "battletech-beacon:tile-29",
+            "battletech-beacon:tile-31"
+          ],
+          [
+            "battletech-beacon:tile-38",
+            "battletech-beacon:tile-32",
+            "battletech-beacon:tile-45",
+            "battletech-beacon:tile-39",
+            "battletech-beacon:tile-39",
+            "battletech-beacon:tile-44",
+            "battletech-beacon:tile-32",
+            "battletech-beacon:tile-37",
+            "battletech-beacon:tile-29",
+            "battletech-beacon:tile-29"
+          ],
+          [
+            "battletech-beacon:tile-38",
+            "battletech-beacon:tile-32",
+            "battletech-beacon:tile-37",
+            "battletech-beacon:tile-30",
+            "battletech-beacon:tile-27",
+            "battletech-beacon:tile-38",
+            "battletech-beacon:tile-32",
+            "battletech-beacon:tile-37",
+            "battletech-beacon:tile-29",
+            "battletech-beacon:tile-29"
+          ],
+          [
+            "battletech-beacon:tile-38",
+            "battletech-beacon:tile-32",
+            "battletech-beacon:tile-37",
+            "battletech-beacon:tile-29",
+            "battletech-beacon:tile-30",
+            "battletech-beacon:tile-38",
+            "battletech-beacon:tile-32",
+            "battletech-beacon:tile-37",
+            "battletech-beacon:tile-29",
+            "battletech-beacon:tile-29"
+          ],
+          [
+            "battletech-beacon:tile-38",
+            "battletech-beacon:tile-32",
+            "battletech-beacon:tile-43",
+            "battletech-beacon:tile-34",
+            "battletech-beacon:tile-34",
+            "battletech-beacon:tile-42",
+            "battletech-beacon:tile-32",
+            "battletech-beacon:tile-37",
+            "battletech-beacon:tile-29",
+            "battletech-beacon:tile-29"
+          ],
+          [
+            "battletech-beacon:tile-38",
+            "battletech-beacon:tile-164",
+            "battletech-beacon:tile-32",
+            "battletech-beacon:tile-32",
+            "battletech-beacon:tile-32",
+            "battletech-beacon:tile-32",
+            "battletech-beacon:tile-164",
+            "battletech-beacon:tile-37",
+            "battletech-beacon:tile-29",
+            "battletech-beacon:tile-29"
+          ],
+          [
+            "battletech-beacon:tile-40",
+            "battletech-beacon:tile-39",
+            "battletech-beacon:tile-39",
+            "battletech-beacon:tile-39",
+            "battletech-beacon:tile-39",
+            "battletech-beacon:tile-39",
+            "battletech-beacon:tile-39",
+            "battletech-beacon:tile-41",
+            "battletech-beacon:tile-29",
+            "battletech-beacon:tile-29"
+          ],
+          [
+            "battletech-beacon:tile-26",
+            "battletech-beacon:tile-27",
+            "battletech-beacon:tile-27",
+            "battletech-beacon:tile-27",
+            "battletech-beacon:tile-27",
+            "battletech-beacon:tile-27",
+            "battletech-beacon:tile-27",
+            "battletech-beacon:tile-27",
+            "battletech-beacon:tile-28",
+            "battletech-beacon:tile-29"
+          ],
+          [
+            " ",
+            "battletech-beacon:tile-26",
+            "battletech-beacon:tile-27",
+            "battletech-beacon:tile-27",
+            "battletech-beacon:tile-27",
+            "battletech-beacon:tile-46",
+            "battletech-beacon:tile-27",
+            "battletech-beacon:tile-27",
+            "battletech-beacon:tile-27",
+            "battletech-beacon:tile-28"
+          ]
+        ]
+      },
+      "details": [
+        [
+          26,
+          3,
+          "battletech-beacon:tile-164"
+        ],
+        [
+          26,
+          8,
+          "battletech-beacon:tile-164"
+        ],
+        [
+          30,
+          11,
+          "battletech-beacon:tile-46"
+        ],
+        [
+          31,
+          3,
+          "battletech-beacon:tile-164"
+        ],
+        [
+          31,
+          8,
+          "battletech-beacon:tile-164"
+        ]
+      ]
+    },
+    {
+      "id": "battletech-beacon:map-construction-2",
+      "name": "Building 2",
+      "map": "beacon:town",
+      "kind": "Building",
+      "style": "battletech-beacon:construction-2",
+      "datum": 1,
+      "cells": [
+        [
+          18,
+          7,
+          2
+        ],
+        [
+          18,
+          8,
+          2
+        ],
+        [
+          18,
+          9,
+          2
+        ],
+        [
+          18,
+          10,
+          2
+        ],
+        [
+          19,
+          7,
+          2
+        ],
+        [
+          19,
+          8,
+          2
+        ],
+        [
+          19,
+          9,
+          2
+        ],
+        [
+          19,
+          10,
+          2
+        ],
+        [
+          20,
+          7,
+          2
+        ],
+        [
+          20,
+          8,
+          2
+        ],
+        [
+          20,
+          9,
+          2
+        ],
+        [
+          20,
+          10,
+          2
+        ],
+        [
+          21,
+          7,
+          2
+        ],
+        [
+          21,
+          8,
+          2
+        ],
+        [
+          21,
+          9,
+          2
+        ],
+        [
+          21,
+          10,
+          2
+        ],
+        [
+          22,
+          7,
+          2
+        ],
+        [
+          22,
+          8,
+          2
+        ],
+        [
+          22,
+          9,
+          2
+        ],
+        [
+          22,
+          10,
+          2
+        ]
+      ],
+      "overlay": 6,
+      "rendered": {
+        "at": [
+          17,
+          6
+        ],
+        "rows": [
+          [
+            "beacon:grass",
+            "beacon:grass",
+            "beacon:grass",
+            "beacon:grass",
+            "beacon:grass",
+            "beacon:grass",
+            " "
+          ],
+          [
+            "beacon:grass",
+            "beacon:building-a",
+            "beacon:building-a",
+            "beacon:building-a",
+            "beacon:building-a",
+            "beacon:building-a",
+            "battletech-beacon:tile-79"
+          ],
+          [
+            "beacon:grass",
+            "beacon:building-a",
+            "beacon:building-a",
+            "beacon:building-a",
+            "beacon:building-a",
+            "beacon:building-a",
+            "beacon:building-f"
+          ],
+          [
+            "beacon:grass",
+            "beacon:building-a",
+            "beacon:building-a",
+            "beacon:building-a",
+            "beacon:building-a",
+            "beacon:building-a",
+            "battletech-beacon:tile-78"
+          ],
+          [
+            "beacon:grass",
+            "beacon:building-a",
+            "beacon:building-a",
+            "beacon:building-a",
+            "beacon:building-a",
+            "beacon:building-a",
+            "battletech-beacon:tile-78"
+          ],
+          [
+            " ",
+            "beacon:building-g",
+            "battletech-beacon:tile-87",
+            "battletech-beacon:tile-77",
+            "battletech-beacon:tile-88",
+            "battletech-beacon:tile-77",
+            "beacon:building-i"
+          ]
+        ]
+      },
+      "details": [
+        [
+          17,
+          6,
+          "beacon:grass"
+        ],
+        [
+          17,
+          7,
+          "beacon:grass"
+        ],
+        [
+          17,
+          8,
+          "beacon:grass"
+        ],
+        [
+          17,
+          9,
+          "beacon:grass"
+        ],
+        [
+          17,
+          10,
+          "beacon:grass"
+        ],
+        [
+          18,
+          6,
+          "beacon:grass"
+        ],
+        [
+          18,
+          10,
+          "beacon:building-a"
+        ],
+        [
+          19,
+          6,
+          "beacon:grass"
+        ],
+        [
+          19,
+          10,
+          "beacon:building-a"
+        ],
+        [
+          19,
+          11,
+          "battletech-beacon:tile-87"
+        ],
+        [
+          20,
+          6,
+          "beacon:grass"
+        ],
+        [
+          20,
+          10,
+          "beacon:building-a"
+        ],
+        [
+          21,
+          6,
+          "beacon:grass"
+        ],
+        [
+          21,
+          10,
+          "beacon:building-a"
+        ],
+        [
+          21,
+          11,
+          "battletech-beacon:tile-88"
+        ],
+        [
+          22,
+          6,
+          "beacon:grass"
+        ],
+        [
+          22,
+          7,
+          "beacon:building-a"
+        ],
+        [
+          22,
+          8,
+          "beacon:building-a"
+        ],
+        [
+          22,
+          9,
+          "beacon:building-a"
+        ],
+        [
+          22,
+          10,
+          "beacon:building-a"
+        ],
+        [
+          23,
+          8,
+          "beacon:building-f"
+        ],
+        [
+          23,
+          11,
+          "beacon:building-i"
+        ]
+      ]
+    },
+    {
+      "id": "battletech-beacon:map-construction-3",
+      "name": "Building 3",
+      "map": "beacon:town",
+      "kind": "Building",
+      "style": "battletech-beacon:construction-3",
+      "datum": 4,
+      "cells": [
+        [
+          5,
+          5,
+          4
+        ],
+        [
+          5,
+          6,
+          4
+        ],
+        [
+          6,
+          5,
+          4
+        ],
+        [
+          6,
+          6,
+          4
+        ],
+        [
+          7,
+          5,
+          4
+        ],
+        [
+          7,
+          6,
+          4
+        ],
+        [
+          8,
+          5,
+          4
+        ],
+        [
+          8,
+          6,
+          4
+        ],
+        [
+          9,
+          5,
+          4
+        ],
+        [
+          9,
+          6,
+          4
+        ],
+        [
+          10,
+          5,
+          4
+        ],
+        [
+          10,
+          6,
+          4
+        ]
+      ],
+      "overlay": 7,
+      "rendered": {
+        "at": [
+          5,
+          5
+        ],
+        "rows": [
+          [
+            "battletech-beacon:tile-114",
+            "battletech-beacon:tile-115",
+            "battletech-beacon:tile-115",
+            "battletech-beacon:tile-115",
+            "battletech-beacon:tile-115",
+            "battletech-beacon:tile-115",
+            "battletech-beacon:tile-116",
+            " ",
+            " ",
+            " "
+          ],
+          [
+            "battletech-beacon:tile-118",
+            "battletech-beacon:tile-125",
+            "battletech-beacon:tile-125",
+            "battletech-beacon:tile-125",
+            "battletech-beacon:tile-125",
+            "battletech-beacon:tile-125",
+            "battletech-beacon:tile-124",
+            "battletech-beacon:tile-116",
+            " ",
+            " "
+          ],
+          [
+            "battletech-beacon:tile-119",
+            "battletech-beacon:tile-120",
+            "battletech-beacon:tile-120",
+            "battletech-beacon:tile-120",
+            "battletech-beacon:tile-120",
+            "battletech-beacon:tile-120",
+            "battletech-beacon:tile-123",
+            "battletech-beacon:tile-124",
+            "battletech-beacon:tile-116",
+            " "
+          ],
+          [
+            " ",
+            "battletech-beacon:tile-119",
+            "battletech-beacon:tile-120",
+            "battletech-beacon:tile-120",
+            "battletech-beacon:tile-120",
+            "battletech-beacon:tile-120",
+            "battletech-beacon:tile-120",
+            "battletech-beacon:tile-123",
+            "battletech-beacon:tile-124",
+            "battletech-beacon:tile-116"
+          ],
+          [
+            " ",
+            " ",
+            "battletech-beacon:tile-119",
+            "battletech-beacon:tile-120",
+            "battletech-beacon:tile-120",
+            "battletech-beacon:tile-120",
+            "battletech-beacon:tile-120",
+            "battletech-beacon:tile-120",
+            "battletech-beacon:tile-123",
+            "battletech-beacon:tile-124"
+          ],
+          [
+            " ",
+            " ",
+            " ",
+            "battletech-beacon:tile-119",
+            "battletech-beacon:tile-120",
+            "battletech-beacon:tile-120",
+            "battletech-beacon:tile-131",
+            "battletech-beacon:tile-120",
+            "battletech-beacon:tile-120",
+            "battletech-beacon:tile-123"
+          ]
+        ]
+      },
+      "details": [
+        [
+          6,
+          8,
+          "battletech-beacon:tile-119"
+        ],
+        [
+          7,
+          8,
+          "battletech-beacon:tile-120"
+        ],
+        [
+          7,
+          9,
+          "battletech-beacon:tile-119"
+        ],
+        [
+          8,
+          8,
+          "battletech-beacon:tile-120"
+        ],
+        [
+          8,
+          9,
+          "battletech-beacon:tile-120"
+        ],
+        [
+          9,
+          8,
+          "battletech-beacon:tile-120"
+        ],
+        [
+          9,
+          9,
+          "battletech-beacon:tile-120"
+        ],
+        [
+          10,
+          8,
+          "battletech-beacon:tile-120"
+        ],
+        [
+          10,
+          9,
+          "battletech-beacon:tile-120"
+        ],
+        [
+          11,
+          8,
+          "battletech-beacon:tile-120"
+        ],
+        [
+          11,
+          9,
+          "battletech-beacon:tile-120"
+        ],
+        [
+          11,
+          10,
+          "battletech-beacon:tile-131"
+        ],
+        [
+          12,
+          6,
+          "battletech-beacon:tile-116"
+        ],
+        [
+          12,
+          7,
+          "battletech-beacon:tile-124"
+        ],
+        [
+          12,
+          8,
+          "battletech-beacon:tile-123"
+        ],
+        [
+          12,
+          9,
+          "battletech-beacon:tile-120"
+        ],
+        [
+          13,
+          7,
+          "battletech-beacon:tile-116"
+        ],
+        [
+          13,
+          8,
+          "battletech-beacon:tile-124"
+        ],
+        [
+          13,
+          9,
+          "battletech-beacon:tile-123"
+        ]
+      ]
+    }
+  ]
+}
