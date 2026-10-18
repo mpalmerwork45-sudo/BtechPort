@@ -8,7 +8,7 @@ from editor_session import guard,register
 from editor_recovery import recoverable_forms
 from editor_model import EditorError
 from tile_editing import metadata,create_tile,edit_pixels,tile
-from construction_editing import geometry,part_name,default_pixels,put_profile,new_profile,preset,compile_rows,prepare_road
+from construction_editing import geometry,part_name,default_pixels,put_profile,new_profile,preset,compile_rows
 
 
 def tile_menu(owner,maps,current,assign,event):
@@ -171,12 +171,11 @@ class ConstructionEditor:
         if self.selected_role:tile_menu(self,self.owner,self.profile['parts'].get(self.selected_role),self.assign,event)
     def use(self):
         self.finish()
-        if self.profile:self.owner.use_pattern(compile_rows(self.profile),self.profile['name'],overlay=self.kind!='Road')
+        if self.profile:self.owner.construction_tools.activate(self.profile,connect=False)
     def save_pattern(self):
         self.finish()
         if not self.profile:return
         from map_patterns import save_pattern
         save_pattern(self.document,compile_rows(self.profile),self.profile['name']);self.status.set('Saved in the Pattern Library. It stays with this project and can be exported.')
     def road_brush(self):
-        self.finish();profile=prepare_road(self.document,self.profile);self.owner.road_profile=profile['id'];self.owner.road_width=1;self.owner.tool.set('Road');self.owner.window.lift();self.owner.tabs.select(self.owner.map_tab)
-        self.owner.status.set('Drag to draw roads. Existing roads in this set join automatically; one stroke is one Undo.')
+        self.finish();self.owner.construction_tools.activate(self.profile)

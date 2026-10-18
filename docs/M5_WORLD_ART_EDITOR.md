@@ -72,7 +72,14 @@ reverses automatic v1-to-v2 map conversion.
 
 Open **Construction tools** in the project explorer, **Project > Building/Wall/
 Road designer**, or **Map actions > Construct**. Each designer has named part
-sets saved with the project. Reopening it returns to its existing tab.
+sets saved with the project. Reopening it returns to its existing tab. The map
+editor also has a visible **Construct** row: select Building, Wall or Road and
+a named design. **Place building / Place wall** arms a preview to click onto
+the map; **Draw roads** starts a drag brush that joins road segments. The Tool
+selector provides the same three modes. Escape stops placement/drawing.
+**Edit design...** opens the selected set; **Create design...** starts one when
+that type has none. **Save / Ctrl+S** persists designs, art and placed terrain
+together; closing the designer does not remove its designs.
 
 1. **Footprint...** starts a rectangle, cross, L shape, courtyard, line or empty
    grid, up to 32 × 32 cells. Walls and roads use thin cross/L presets.
@@ -90,12 +97,17 @@ sets saved with the project. Reopening it returns to its existing tab.
    for buildings, walls and roads. All tiles includes every loaded sheet, with
    an optional sheet filter. Choosing an unregistered graphic adds it to the
    project palette automatically; choosing it again reuses its existing tile.
-   Registration and the part assignment share one Undo operation.
+   Registration and the part assignment share one Undo operation. The chooser
+   remembers its last collection, sheet filter, selection and scroll position
+   per project, with separate positions for each collection/sheet. Preferences
+   survive editor restarts and are stored outside the game data.
 5. **Use on map**, then click to place the preview. Each building/wall becomes a
    separate overlay; select that overlay for fine painting or **Move building**.
    The whole result must fit—an edge click never silently crops it. Escape
    cancels placement. Add an **Entrance** marker and event using the usual map
    tools, then save an entrance-aware stamp if that complete building is reusable.
+   Later placements can use the saved design directly from the map's Construct
+   row, without opening its designer again.
 
 Part assignments are shared by matching cells in that set. Editing a tile changes
 every placement using its ID. Clone the tile for an independent variant. **New

@@ -70,7 +70,11 @@ def run(env,work):
                 assert workspace.current_view().key[1]=='pixels';pixel.color.set('ff4466ff');gesture(pixel.canvas,(1,1),(1,1));pump()
                 new_tile=next(t for t in doc.adventure['tiles'] if t['id']==builder.profile['parts'][role])
                 assert next(i for i in doc.art['images'] if i['id']==new_tile['graphic'])['frames'][0][0].startswith('ff4466ff')
-                builder.window.lift();builder.use();pump();maps.zoom.set('16');maps.canvas.xview_moveto(0);maps.canvas.yview_moveto(0);maps.draw();pump()
+                maps.window.lift();maps.refresh();pump();construct=maps.construction_tools
+                construct.kind_choice.set('Building');construct.kind_choice.event_generate('<<ComboboxSelected>>');pump()
+                visible(construct.place_button);visible(construct.edit_button);assert construct.profile()['id']==builder.current
+                construct.place_button.invoke();pump();assert maps.tool.get()=='Building'
+                maps.zoom.set('16');maps.canvas.xview_moveto(0);maps.canvas.yview_moveto(0);maps.draw();pump();snap('map-tools')
                 n=len(maps.scene()['overlays']);gesture(maps.canvas,(2*16+2,2*16+2),(2*16+2,2*16+2))
                 assert len(maps.scene()['overlays'])==n+1;doc.validate()
                 before=copy.deepcopy(doc.adventure)
@@ -84,7 +88,20 @@ def run(env,work):
 
                 wall=maps.construction('Wall');f=wall.reshape();f.values['shape'].set('L shape');f.values['width'].set('6');f.values['height'].set('6');f.values['stories'].set('3');f.apply_button.invoke();pump();snap('wall')
                 assert max(map(max,wall.profile['footprint']))==3
-                road=maps.construction('Road');road.road_brush();pump();maps.layer_choice.current(0);maps.zoom.set('16');maps.draw();pump()
+                maps.window.lift();construct.kind_choice.set('Wall');construct.kind_choice.event_generate('<<ComboboxSelected>>');pump()
+                construct.place_button.invoke();pump();assert maps.tool.get()=='Wall'
+                before=copy.deepcopy(doc.adventure);history=len(doc.undo_stack)
+                gesture(maps.canvas,(20*16+2,3*16+2),(20*16+2,3*16+2))
+                assert len(maps.scene()['overlays'])==len(before['maps'][maps.scene_index]['overlays'])+1
+                assert len(doc.undo_stack)==history+1
+                after=copy.deepcopy(doc.adventure);workspace.edit_history(False);pump();assert doc.adventure==before
+                workspace.edit_history(True);pump();assert doc.adventure==after
+                maps.cancel_gesture();assert maps.tool.get()=='Select'
+                construct.kind_choice.set('Road');construct.kind_choice.event_generate('<<ComboboxSelected>>');pump()
+                assert construct.edit_button.cget('text')=='Create design...'
+                construct.edit_button.invoke();pump();road=workspace.current_view().controller
+                assert road.kind=='Road';maps.window.lift();construct.place_button.invoke();pump()
+                assert maps.tool.get()=='Road';maps.layer_choice.current(0);maps.zoom.set('16');maps.draw();pump()
                 gesture(maps.canvas,(2*16+2,18*16+2),(10*16+2,18*16+2))
                 gesture(maps.canvas,(6*16+2,15*16+2),(6*16+2,21*16+2))
                 profile=next(p for p in metadata(doc)['construction_sets'] if p['id']==road.current)
@@ -158,5 +175,17 @@ def run(env,work):
                 builder=app.map_editor.construction('Building');assert builder.stroke is not None and builder.profile['footprint'][3][3]==4
                 f=next(d.view for d in app._editor_scope.live() if isinstance(getattr(d.view,'values',None),dict) and d.view.values.get('width') and d.view.values['width'].get()=='unfinished width')
                 f.window.destroy();builder.finish();app.save();pump();app.document.validate()
+                maps=app.map_editor;maps.window.lift();maps.refresh();pump();construct=maps.construction_tools
+                for kind in ('Building','Wall','Road'):
+                    construct.kind_choice.set(kind);construct.kind_choice.event_generate('<<ComboboxSelected>>');pump()
+                    assert construct.profile()['kind']==kind and construct.place_button.instate(['!disabled'])
+                    assert construct.profile() in metadata(app.document)['construction_sets']
+                # Selecting the construction tool directly also arms its saved
+                # design; no detour through a designer window is required.
+                maps.tool_choice.set('Building');maps.tool_choice.event_generate('<<ComboboxSelected>>');pump()
+                assert maps.tool.get()=='Building' and maps.clipboard==compile_rows(construct.profile())
+                maps.tool_choice.set('Road');maps.tool_choice.event_generate('<<ComboboxSelected>>');pump()
+                assert maps.road_profile==construct.profile()['id'] and maps.tool.get()=='Road'
                 print('PASS: fresh workspace restores construction tabs, unfinished height painting and invalid footprint fields, then saves corrected work.',flush=True)
+                print('PASS: visible map construction controls place saved buildings/walls with Undo, draw connected roads, and reload all three design types after reopening.',flush=True)
             finally:workspace.closing=True;window.destroy()

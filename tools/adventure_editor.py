@@ -230,6 +230,7 @@ class AdventureEditor:
         self.brush.insert("","end",iid=str(len(self.adventure["tiles"])),text=" Erase overlay",image="")
         self.brush.selection_set(min(brush[0] if brush else 0,self.brush.size()-1))
         self.select_brush()
+        self.construction_tools.refresh()
         self.draw();self.refresh_events();self.refresh_world();self.refresh_markers()
         if self.world_editor and self.world_editor.window.winfo_exists():self.world_editor.refresh()
         if self.art_editor and self.art_editor.window.winfo_exists():self.art_editor.refresh()
@@ -258,7 +259,9 @@ class AdventureEditor:
         self.layer_choice.bind("<<ComboboxSelected>>",lambda _:self.draw())
         self.tool=tk.StringVar(value="Paint")
         ttk.Label(controls,text="Tool").pack(side="left",padx=(12,6))
-        ttk.Combobox(controls,textvariable=self.tool,values=["Paint","Line","Rectangle","Fill","Eyedropper","Select","Paste","Road","Move markers","Entrance","NPC","Encounter","Start","Play here"],state="readonly",width=16).pack(side="left")
+        self.tool_choice=ttk.Combobox(controls,textvariable=self.tool,values=["Paint","Line","Rectangle","Fill","Eyedropper","Select","Paste","Building","Wall","Road","Move markers","Entrance","NPC","Encounter","Start","Play here"],state="readonly",width=16)
+        self.tool_choice.pack(side="left")
+        self.tool_choice.bind('<<ComboboxSelected>>',lambda _:self.guard(self.construction_tools.choose_tool))
         self.zoom=tk.StringVar(value="24")
         ttk.Label(controls,text="Zoom").pack(side="left",padx=(12,6))
         z=ttk.Combobox(controls,textvariable=self.zoom,values=["16","24","32"],state="readonly",width=4);z.pack(side="left");z.bind("<<ComboboxSelected>>",lambda _:self.draw())
@@ -268,6 +271,8 @@ class AdventureEditor:
         om.add_checkbutton(label='Collision',variable=self.terrain,command=self.draw);om.add_checkbutton(label='Starting formation',variable=self.footprints,command=lambda:self.guard(self.toggle_footprints))
         from editor_ui import flow_toolbar
         flow_toolbar(top);flow_toolbar(controls)
+        from construction_tools import MapConstructionTools
+        self.construction_tools=MapConstructionTools(self,self.map_tab)
         self.graphics_note=tk.StringVar()
         self.graphics_label=ttk.Label(self.map_tab,textvariable=self.graphics_note,style="Muted.TLabel",padding=(12,2),wraplength=940)
         if not hasattr(self.window,'workspace'):self.graphics_label.pack(fill='x')
@@ -345,7 +350,7 @@ class AdventureEditor:
         self.canvas.delete('brush-hover')
         if self.hover is None:return
         x,y=self.hover;size=int(self.zoom.get())
-        if self.tool.get()=='Paste' and self.clipboard:
+        if self.tool.get() in ('Paste','Building','Wall') and self.clipboard:
             # Preview the whole block; red bounds make an invalid edge paste
             # visible before the click. Paste never silently crops a building.
             w,h=len(self.clipboard[0]),len(self.clipboard);scene=self.scene()
@@ -480,7 +485,7 @@ class AdventureEditor:
         scene=self.scene()
         half=(int(px*2//size),int(py*2//size));self.cursor=half
         tool=self.tool.get()
-        if first and tool not in ('Select','Paste','Road'):
+        if first and tool not in ('Select','Paste','Building','Wall','Road'):
             ref=self.hit_marker(px,py)
             if ref is not None:
                 marker=next(m for m in scene_markers(self.adventure,self.scene_index) if m["ref"]==ref)
@@ -500,7 +505,7 @@ class AdventureEditor:
             self.draw();self.status.set(f"Marker at half-tile {at[0]},{at[1]} | release to place | Escape cancels")
             return
         if not 0<=y<len(scene["rows"]) or not 0<=x<len(scene["rows"][0]): return
-        if tool in ("Paint","Line","Rectangle","Fill","Paste","Road"):
+        if tool in ("Paint","Line","Rectangle","Fill","Paste","Building","Wall","Road"):
             if first:
                 self.stroke=copy_adventure(self.document);self.paint_start=self.paint_last=(x,y)
             if self.stroke is None: return
@@ -511,7 +516,7 @@ class AdventureEditor:
             target=self.stroke["maps"][self.scene_index]
             if tool=="Fill":
                 if first:fill_tiles(target,layer,x,y,key)
-            elif tool=="Paste":
+            elif tool in ('Paste','Building','Wall'):
                 if first and self.clipboard:
                     from map_patterns import paste
                     try:
@@ -527,7 +532,7 @@ class AdventureEditor:
                 from tile_editing import metadata
                 profile=next((p for p in metadata(self.document).get('construction_sets',[]) if p['id']==self.road_profile),None)
                 if profile is None:
-                    self.stroke=None;raise EditorError('Open Map actions > Construct > Road designer, then choose Draw connecting roads.')
+                    self.stroke=None;raise EditorError('Choose a saved Road design in the Construct row, then click Draw roads.')
                 try:draw_road(self.stroke,self.scene_index,layer,self.paint_last,(x,y),profile,self.road_width)
                 except Exception:self.stroke=None;raise
             else:draw_tiles(target,layer,self.paint_start if tool in ("Line","Rectangle") else self.paint_last,(x,y),key,tool)
@@ -611,7 +616,7 @@ class AdventureEditor:
         if self.stroke is not None:
             self.stroke=None;self.drag=None
             self.draw();self.status.set("Move / paint stroke cancelled.")
-        elif self.tool.get()=='Paste':self.tool.set('Select');self.draw_hover()
+        elif self.tool.get() in ('Paste','Building','Wall','Road'):self.tool.set('Select');self.draw_hover()
 
     def double_marker(self,event):
         self.cancel_gesture()

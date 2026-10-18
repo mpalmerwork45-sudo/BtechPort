@@ -95,6 +95,25 @@ def workspace_journey(directory,validator,env,work):
             app.edit_adventure();maps=app.map_editor;pump()
             assert isinstance(maps.window,EditorPane)
             assert not any(isinstance(w,tk.Toplevel) for w in window.winfo_children())
+            # Right-click an inactive tab, then change the selection before
+            # invoking Close. The captured tab must close, preserving others
+            # and reusing the map view's existing close/draft handling.
+            sprite_pane=next(v for v in workspace.views.values() if v.key[1]=='pixels')
+            sprite_pane.lift();pump();target=workspace.tabs.index(maps.window)
+            hit=None
+            for x in range(workspace.tabs.winfo_width()):
+                try:index=workspace.tabs.index(f'@{x},10')
+                except tk.TclError:continue
+                if index==target:hit=x;break
+            assert hit is not None,'Map tab is not reachable'
+            menus=[]
+            with patch.object(tk.Menu,'tk_popup',lambda menu,*args:menus.append(menu)):
+                workspace.tabs.event_generate('<Button-3>',x=hit,y=10);pump()
+            assert menus[-1].entrycget(0,'label')=='Close'
+            sprite_pane.lift();menus[-1].invoke(0);pump()
+            assert sprite_pane.winfo_exists() and workspace.tabs.tab(maps.window,'state')=='hidden'
+            app.edit_adventure();pump();assert app.map_editor is maps
+            print('PASS: tab context Close targets the clicked pane and preserves other tabs and the shared map controller.',flush=True)
             scenes=app.document.adventure['maps'];workspace.open_map(scenes[0]['id']);workspace.record_navigation();pump()
             workspace.open_map(scenes[1]['id']);workspace.record_navigation();pump();workspace.navigate(-1);pump()
             assert maps.scene()['id']==scenes[0]['id'],'Back did not restore the selected map'

@@ -1,15 +1,25 @@
 """Visual tile management, shared by painting and construction part pickers."""
 import copy
+import hashlib
+import json
 import tkinter as tk
 from tkinter import ttk
-from editor_model import EditorError,encoded
+from editor_model import EditorError,ProjectDocument,encoded
 from editor_session import guard,visible_parent,scope_of,apply_draft
 from tile_editing import create_tile,clone_sheet,ensure_tile,tile,select_tile,edit_pixels,metadata,sheet_graphics
 
 
 class TileBrowser:
     def __init__(self,maps,form=None,choose=None,selected=None):
-        self.owner=maps;self.document=maps.document;self.form=form;self.choose=choose;self.timer=None
+        self.owner=maps;self.document=maps.document;self.form=form;self.choose=choose;self.timer=None;self.position_job=None
+        # Browsing position is an editor preference, not game data or an Undo
+        # operation. Keep it per project, including across editor restarts.
+        key=hashlib.sha256(str(self.document.root.resolve()).encode()).hexdigest()[:20]
+        self.memory_path=maps.parent.state_dir/'tile-browsers'/(key+'.json')
+        try:self.memory=json.loads(self.memory_path.read_text())
+        except (OSError,ValueError):self.memory={}
+        if not isinstance(self.memory,dict):self.memory={}
+        if not isinstance(self.memory.get('views'),dict):self.memory['views']={}
         self.window=tk.Toplevel(visible_parent(form or maps));self.window.title('Choose tile graphic')
         self.window.transient(visible_parent(form or maps));self.window.geometry('760x650');self.window.minsize(560,410)
         self.previous_grab=self.window.grab_current();self.window.grab_set()
@@ -18,8 +28,10 @@ class TileBrowser:
         self.status=tk.StringVar();self.selected=None;self.keys=[];self.columns=12;self.cell=54
         header=ttk.Frame(self.window,padding=10);header.pack(fill='x')
         ttk.Label(header,text='Choose a map tile',style='Heading.TLabel').pack(anchor='w')
-        initial=form.values['sheet'].get() if form else ('Project tiles' if selected else 'All tiles')
+        initial=self.memory.get('collection') or (form.values['sheet'].get() if form else ('Project tiles' if selected else 'All tiles'))
+        if initial not in ('Project tiles','All tiles') and initial not in maps.graphics:initial='All tiles'
         self.sheet=tk.StringVar(value=initial)
+        self.active_sheet=initial
         # Construction parts start on the project's paint palette, but the
         # complete source atlas must be an obvious, separate browsing option.
         source_bar=ttk.Frame(header);source_bar.pack(fill='x',pady=(8,0))
@@ -52,37 +64,85 @@ class TileBrowser:
         for sequence,delta in [('<Button-4>',-3),('<Button-5>',3)]:self.canvas.bind(sequence,lambda _,n=delta:self.canvas.yview_scroll(n,'units'))
         self.canvas.bind('<MouseWheel>',lambda e:self.canvas.yview_scroll(-3 if e.delta>0 else 3,'units'))
         self.window.bind('<Return>',lambda _:guard(self,self.use))
-        self.selected=selected if selected else (form.values['graphic'].get() if form else None)
-        if form and initial!='package:art':
-            try:self.selected=int(self.selected)
-            except ValueError:self.selected=None
-        self.refresh();self.revision=self.document.revision;self.timer=self.window.after(250,self.poll)
+        source=next((t for t in self.document.adventure['tiles'] if t['id']==selected),None)
+        if form:
+            graphic=form.values['graphic'].get();bank=form.values['sheet'].get()
+            if bank!='package:art':
+                try:graphic=int(graphic)
+                except ValueError:graphic=None
+            source=dict(sheet=bank,graphic=graphic)
+        remembered=self.view_memory(initial)
+        self.selected=self.remembered_key(remembered) if remembered else self.key_for(source)
+        self.refresh();self.restore_position(remembered)
+        self.revision=self.document.revision;self.timer=self.window.after(250,self.poll)
 
     def show_error(self,error):self.status.set(str(error));self.window.lift()
     def destroyed(self,event):
         if event.widget is self.window:
             if self.timer:self.window.after_cancel(self.timer);self.timer=None
+            if self.position_job:self.window.after_cancel(self.position_job);self.position_job=None
             if self.previous_grab is not None and self.previous_grab.winfo_exists():self.previous_grab.grab_set()
     def close(self):
-        if self.window.winfo_exists():self.window.destroy()
+        if self.window.winfo_exists():
+            self.remember_view()
+            try:
+                self.memory_path.parent.mkdir(parents=True,exist_ok=True)
+                ProjectDocument.atomic_file(self.memory_path,encoded(self.memory))
+            except OSError as error:self.owner.status.set('Could not remember tile chooser position: '+str(error))
+            self.window.destroy()
     def poll(self):
         self.timer=None
         if self.document.revision!=self.revision:self.revision=self.document.revision;self.refresh()
         self.timer=self.window.after(250,self.poll)
     def show_collection(self,name):
-        previous=self.source() if self.selected is not None else None
-        self.sheet.set(name)
-        if previous:
-            self.selected=(previous['sheet'],previous['graphic']) if name=='All tiles' else next((t['id'] for t in self.document.adventure['tiles'] if t['sheet']==previous['sheet'] and t['graphic']==previous['graphic']),None)
+        if name=='All tiles' and self.active_sheet!='Project tiles':return
+        self.sheet.set(self.memory.get('all_sheet','All tiles') if name=='All tiles' else name)
+        if self.sheet.get() not in ('Project tiles','All tiles') and self.sheet.get() not in self.owner.graphics:self.sheet.set('All tiles')
         self.refresh()
-        row=self.keys.index(self.selected)//self.columns if self.selected is not None else 0
-        self.canvas.yview_moveto(row/max(1,(len(self.keys)+self.columns-1)//self.columns))
+    def view_memory(self,sheet):
+        value=self.memory['views'].get(sheet)
+        return value if isinstance(value,dict) else {}
+    def remembered_key(self,state):
+        value=state.get('selected')
+        return tuple(value) if self.active_sheet=='All tiles' and isinstance(value,list) else value
+    def key_for(self,source):
+        if not source:return None
+        if self.active_sheet=='Project tiles':return source.get('id') or next((t['id'] for t in self.document.adventure['tiles'] if t['sheet']==source['sheet'] and t['graphic']==source['graphic']),None)
+        if self.active_sheet=='All tiles':return source['sheet'],source['graphic']
+        return source['graphic'] if source['sheet']==self.active_sheet else None
+    def remember_view(self):
+        self.memory['collection']=self.active_sheet
+        if self.active_sheet!='Project tiles':self.memory['all_sheet']=self.active_sheet
+        self.memory['views'][self.active_sheet]=dict(selected=self.selected,x=self.canvas.xview()[0],y=self.canvas.yview()[0])
+    def restore_position(self,state):
+        # Wait for the actual viewport size; restoring before Tk lays it out
+        # would clamp the saved offset against a one-pixel canvas.
+        def restore():
+            self.position_job=None
+            if not self.window.winfo_exists():return
+            if state:
+                for axis in ('x','y'):
+                    value=state.get(axis,0)
+                    getattr(self.canvas,axis+'view_moveto')(max(0,min(1,value)) if isinstance(value,(int,float)) else 0)
+            else:
+                row=self.keys.index(self.selected)//self.columns if self.selected is not None else 0
+                self.canvas.yview_moveto(row/max(1,(len(self.keys)+self.columns-1)//self.columns))
+        if self.position_job:self.window.after_cancel(self.position_job)
+        self.position_job=self.window.after_idle(restore)
     def value(self,key):
-        if self.sheet.get()=='Project tiles':return tile(self.document,key)
-        bank,graphic=key if self.sheet.get()=='All tiles' else (self.sheet.get(),key)
+        if self.active_sheet=='Project tiles':return tile(self.document,key)
+        bank,graphic=key if self.active_sheet=='All tiles' else (self.active_sheet,key)
         return dict(sheet=bank,graphic=graphic)
-    def refresh(self):
+    def refresh(self,selected=None):
         self.owner.refresh();self.choices.configure(values=['All tiles',*self.owner.graphics])
+        changed=self.active_sheet!=self.sheet.get();remembered=None
+        if changed:
+            previous=self.source() if self.selected in self.keys else None
+            self.remember_view();self.active_sheet=self.sheet.get()
+            if self.active_sheet!='Project tiles':self.memory['all_sheet']=self.active_sheet
+            remembered=self.view_memory(self.active_sheet)
+            self.selected=self.remembered_key(remembered) if remembered else self.key_for(previous)
+        if selected is not None:self.selected=selected;remembered=None
         self.canvas.delete('all');sheet=self.sheet.get();data=metadata(self.document)
         self.mode.set('Project tiles' if sheet=='Project tiles' else 'All tiles')
         self.choices.configure(state='disabled' if sheet=='Project tiles' else 'readonly')
@@ -102,6 +162,7 @@ class TileBrowser:
             self.canvas.create_text(x+27,y+45,text=label[:8],fill='#31434b',font='TkSmallCaptionFont')
         self.canvas.configure(scrollregion=(0,0,self.columns*self.cell,((len(self.keys)+self.columns-1)//self.columns)*self.cell))
         self.select(self.selected if self.selected in self.keys else (self.keys[0] if self.keys else None))
+        if changed or selected is not None:self.restore_position(remembered)
     def select(self,key):
         self.selected=key;self.canvas.delete('selection')
         if key is None:self.status.set('No tiles here. Add a tile or restore hidden source graphics.');return
@@ -121,13 +182,13 @@ class TileBrowser:
         source=self.source()
         return source['id'] if 'id' in source else ensure_tile(self.document,source['sheet'],source['graphic'])
     def new(self):
-        value=create_tile(self.document,name='New map tile');self.sheet.set('Project tiles');self.selected=value;self.refresh();self.edit()
+        value=create_tile(self.document,name='New map tile');self.sheet.set('Project tiles');self.refresh(selected=value);self.edit()
     def clone(self):
         value=create_tile(self.document,self.owner.graphics,self.source(),'Map tile copy')
-        self.sheet.set('Project tiles');self.selected=value;self.refresh()
+        self.sheet.set('Project tiles');self.refresh(selected=value)
     def clone_all(self):
         values=clone_sheet(self.document,self.owner.graphics,self.sheet.get())
-        self.sheet.set('Project tiles');self.selected=values[0];self.refresh();self.status.set(f'Cloned {len(values)} editable tiles into project tiles. Undo removes this whole batch.')
+        self.sheet.set('Project tiles');self.refresh(selected=values[0]);self.status.set(f'Cloned {len(values)} editable tiles into project tiles. Undo removes this whole batch.')
     def use(self):
         source=self.source()
         if self.form:self.form.values['sheet'].set(source['sheet']);self.form.values['graphic'].set(str(source['graphic']))

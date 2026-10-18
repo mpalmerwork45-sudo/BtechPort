@@ -28,7 +28,9 @@ external-file checks prevent one from silently overwriting the other's changes.
   worlds, local maps, events, artwork or the shared Unit Library.
 - **Editor tabs:** reopening an asset selects its existing tab. **Open tabs**
   finds tabs that no longer fit across the top. **Back/Forward** restores the
-  selected object and its view position.
+  selected object and its view position. Right-click a tab and choose **Close**,
+  or use **Close tab** / Ctrl+W. Both routes preserve the usual unfinished-edit
+  checks; closing a tab does not delete the asset.
 - **Inspector:** properties and actions for the current selection. Sprite
   palettes/layers and event fields appear here. Scroll when more fields are
   available than fit in the panel.
@@ -51,6 +53,10 @@ previews. Select a tile, then paint on the map. **Browse all...** opens the full
 graphic chooser. **Tile actions** or the tile's context menu provides pixel
 editing, properties and cloning. Double-click a tile to edit its pixels.
 The chooser has **Project tiles** and **All tiles** choices, with a sheet filter.
+It remembers the last collection/filter, selection and scroll position for this
+project, including after restarting the editor. Project tiles, All tiles and
+individual sheets retain separate browsing positions. These preferences do not
+dirty the game or add Undo entries.
 Choosing a graphic absent from the project palette adds it automatically;
 existing definitions are reused. The same chooser serves building, wall and
 road preview parts. It also adds/removes tiles and provides **More > Clone ALL
@@ -65,11 +71,26 @@ Ctrl+V on the canvas to copy, cut and paste. Copy captures visible terrain;
 Cut clears the selected layer. A stroke or marker drag is one Undo operation;
 Escape cancels the unfinished gesture.
 
-**Construction tools** in the explorer, or **Project**, opens the Building,
+The map's visible **Construct** row places saved designs directly:
+
+1. Choose **Building**, **Wall** or **Road**, then a named design.
+2. For buildings/walls, click **Place building / Place wall**, move the preview
+   over the map and click to place. Each placement becomes a separate overlay.
+3. For roads, click **Draw roads** and drag across the map. Endpoints, bends and
+   junctions connect automatically in the selected layer.
+
+Escape stops placement/drawing; Ctrl+Z undoes a placement or road stroke. The
+Tool selector also includes Building, Wall and Road. **Edit design...** opens
+the selected designer; when that type has no designs, **Create design...** starts
+one. In a designer, **New set** adds a design and **Use on map** arms placement.
+Designs (names, heights, footprints and part tiles) are saved with the project
+by **Save / Ctrl+S**, and remain available after closing tabs or restarting.
+Changing a saved footprint affects future placements; existing placements keep
+their shape. Editing a shared tile's pixels affects every use of that tile.
+
+**Construction tools** in the explorer, or **Project**, also opens the Building,
 Wall and Road designers and the **Pattern Library**. Paint a footprint with
-heights, customize its generated parts by right-clicking preview tiles, and
-choose **Use on map**. Buildings/walls paste as separate overlays; their parts
-remain normal editable tiles. The road brush connects endpoints and junctions.
+heights and customize its parts by right-clicking preview tiles.
 The Pattern Library stores reusable terrain blocks with the project and imports/
 exports `.pattern.json` files. The [construction guide](M5_WORLD_ART_EDITOR.md#buildings-walls-and-roads)
 explains part sets, storeys, collision, block placement and jigsaw editing.

@@ -117,6 +117,7 @@ class Workspace:
         breadcrumb.pack(side='left',fill='x',expand=True,padx=8)
         self.tabs=ttk.Notebook(self.centre);self.tabs.pack(fill='both',expand=True)
         self.tabs.bind('<<NotebookTabChanged>>',self.tab_changed)
+        self.tabs.bind('<Button-3>',self.tab_context)
         self.inspector=ttk.Frame(self.horizontal,padding=10);self.horizontal.add(self.inspector,weight=1)
         ttk.Label(self.inspector,text='INSPECTOR',style='Section.TLabel').pack(anchor='w')
         from adventure_editor import scroll_frame
@@ -385,9 +386,21 @@ class Workspace:
         from editor_history import history
         history(self,redo)
 
-    def close_tab(self):
-        view=self.current_view()
+    def tab_context(self,event):
+        try:view=self.tabs.nametowidget(self.tabs.tabs()[self.tabs.index(f'@{event.x},{event.y}')])
+        except tk.TclError:return
+        # Capture the clicked pane. A later selection change must never close
+        # another tab, and the existing draft/save protections still apply.
+        self.tabs.select(view)
+        menu=tk.Menu(self.tabs,tearoff=False)
+        menu.add_command(label='Close',command=lambda:guard(view.controller or self.app,lambda:self.close_tab(view)))
+        try:menu.tk_popup(event.x_root,event.y_root)
+        finally:menu.grab_release()
+
+    def close_tab(self,view=None):
+        view=view or self.current_view()
         if not view:return
+        if not view.winfo_exists():return
         if view.controller is self.app:
             self.show_welcome();return
         if view.close_callback:view.close_callback()

@@ -315,8 +315,8 @@ def run(env, work):
                     designer=ed.construction(kind);pump()
                     role=designer.selected_role
                     picker=designer.choose_part();pump()
+                    picker.mode_buttons['Project tiles'].invoke();pump()
                     assert picker.mode.get()=='Project tiles'
-                    assert picker.selected==designer.profile['parts'][role]
                     assert picker.keys==[t['id'] for t in doc.adventure['tiles']]
                     picker.select(doc.adventure['tiles'][0]['id'])
                     count=len(doc.adventure['tiles'])
@@ -326,6 +326,7 @@ def run(env, work):
 
                     picker=designer.choose_part();pump()
                     picker.mode_buttons['All tiles'].invoke();pump()
+                    picker.choices.set('All tiles');picker.choices.event_generate('<<ComboboxSelected>>');pump()
                     assert picker.mode.get()=='All tiles' and picker.sheet.get()=='All tiles'
                     picker.window.geometry('560x410+8+8');pump()
                     for control in [*picker.mode_buttons.values(),picker.choices,button(picker.window,'Use graphic'),button(picker.window,'Cancel')]:
@@ -358,9 +359,10 @@ def run(env, work):
                     assert picker.selected==(bank,index)
                     top=picker.keys.index(picker.selected)//picker.columns*picker.cell
                     assert picker.canvas.canvasy(0)<=top and top+picker.cell<=picker.canvas.canvasy(picker.canvas.winfo_height())
-                    # Returning to Project tiles retains the matching entry.
+                    # Each collection remembers its own selection, rather
+                    # than replacing it with the other collection's choice.
                     picker.mode_buttons['Project tiles'].invoke();pump()
-                    assert picker.selected==value['id']
+                    assert picker.selected==doc.adventure['tiles'][0]['id']
                     picker.mode_buttons['All tiles'].invoke();pump()
                     button(picker.window,'Use graphic').invoke();pump()
                     assert doc.adventure==after and doc.metadata==after_meta
@@ -375,5 +377,44 @@ def run(env, work):
                 profiles={p['id']:p for p in metadata(reopened)['construction_sets']}
                 for profile,role,identity in assigned:assert profiles[profile]['parts'][role]==identity
                 print('PASS: building, wall and road pickers expose project/all tiles, auto-register missing source graphics, reuse existing definitions, cancel cleanly, undo atomically and retain choices after reopening.',flush=True)
+
+                # Save actual scroll offsets, not merely the selected tile's
+                # row. Test independent collection/filter positions and a
+                # fresh editor reading preferences from disk.
+                saved_files=doc.files();history=len(doc.undo_stack)
+                picker=ed.graphic_picker();picker.window.geometry('560x410+8+8');pump()
+                picker.mode_buttons['Project tiles'].invoke();pump()
+                project_key=doc.adventure['tiles'][-1]['id'];picker.select(project_key)
+                picker.canvas.xview_moveto(1);picker.canvas.yview_moveto(1);pump()
+                project_at=(picker.canvas.xview()[0],picker.canvas.yview()[0]);assert project_at[1]>0
+                picker.mode_buttons['All tiles'].invoke();pump()
+                picker.choices.set('All tiles');picker.choices.event_generate('<<ComboboxSelected>>');pump()
+                picker.select(('chi:land',graphic));picker.canvas.xview_moveto(1);picker.canvas.yview_moveto(.65);pump()
+                all_at=(picker.canvas.xview()[0],picker.canvas.yview()[0])
+                picker.choices.set('chi:destroyed');picker.choices.event_generate('<<ComboboxSelected>>');pump()
+                picker.select(200);picker.canvas.yview_moveto(.48);pump()
+                filtered_at=(picker.canvas.xview()[0],picker.canvas.yview()[0])
+                def position_is(browser,expected):
+                    actual=(browser.canvas.xview()[0],browser.canvas.yview()[0])
+                    assert all(abs(a-b)<.002 for a,b in zip(actual,expected)),(actual,expected)
+                picker.mode_buttons['Project tiles'].invoke();pump()
+                assert picker.selected==project_key;position_is(picker,project_at)
+                picker.mode_buttons['All tiles'].invoke();pump()
+                assert picker.sheet.get()=='chi:destroyed' and picker.selected==200;position_is(picker,filtered_at)
+                picker.choices.set('All tiles');picker.choices.event_generate('<<ComboboxSelected>>');pump()
+                assert picker.selected==('chi:land',graphic);position_is(picker,all_at)
+                button(picker.window,'Use graphic').invoke();pump()
+                fresh_window=tk.Toplevel(window)
+                try:
+                    fresh=RosterEditor(fresh_window,tool,tmp/'settings');fresh.settings['data']=data_path
+                    fresh.set_document(ProjectDocument(doc.root,tool));fresh.edit_adventure();pump()
+                    picker=fresh.map_editor.graphic_picker();picker.window.geometry('560x410+8+8');pump()
+                    assert picker.sheet.get()=='All tiles' and picker.selected==('chi:land',graphic)
+                    position_is(picker,all_at)
+                    picker.mode_buttons['Project tiles'].invoke();pump();assert picker.selected==project_key;position_is(picker,project_at)
+                    screenshot('remembered-position',picker.window);picker.close();pump()
+                finally:fresh_window.destroy();pump()
+                assert doc.files()==saved_files and len(doc.undo_stack)==history
+                print('PASS: per-project chooser mode, filtered sheet, independent selections and both scroll offsets survive switching and a fresh editor without dirtying game data.',flush=True)
             finally:
                 window.destroy()
