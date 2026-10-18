@@ -10,7 +10,8 @@ and recovery predictable.
 Use the [workspace guide](EDITOR_WORKSPACE.md) for the implemented interface and
 [TESTING](TESTING.md#editor-workspace-ui5--2026-10-18) for measured results. Stage
 commits are `060941d` (UI1), `2362fa8` (UI2), `e730bc0` (UI3) and `ea4f15a` (UI4);
-the following UI5 commits contain background tasks, polish and delivery checks.
+`283da27` implements UI5 background tasks, polish and the workspace guide. The
+following verification commit records the packaged-runtime checks.
 This document retains the approved requirements below; implementation does not
 imply verification on an unavailable desktop.
 

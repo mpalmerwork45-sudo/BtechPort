@@ -19,6 +19,8 @@ state directories. The user's existing demo edit is preserved.
 | Window-manager interaction | PASS under isolated **KWin/Xvfb/DBus**: invalid-field focus, transient dialog stacking, real file-chooser cancellation/grab restoration, minimize/restore |
 | Scaling | Captures inspected at **100/150/200%**; compact menus, wrapping toolbars and scrollable palettes/forms keep controls reachable |
 | Play/Stop | PASS: real SDL private-snapshot launch, process-specific Stop, cancellation of preparation leaves unrelated jobs running |
+| Linux package | PASS: bundled launcher/workspace, PNG round trip, validator and SDL player run from `/tmp` using the kit's runtime |
+| Windows package | Created successfully with player/SDL DLLs and the workspace modules; requires installed Python/Tk/Pillow. Native Tk execution remains UNKNOWN |
 | References | **1,287/1,287 unchanged**, including content, mode and mtime, against `work/reference-before-editor-usability.json` |
 
 The native engine was not changed by this UI refactor. The full native and
@@ -37,6 +39,21 @@ full multi-journey test. This meets the proposed 100 ms feedback/500 ms progress
 targets on these fixtures. It does not establish those bounds for every author
 project, atlas size or original-resource extraction. Linux memory uses
 `/proc/self/status` VmHWM/VmRSS; inherited pre-exec resource counters are excluded.
+
+UI5 implementation commit: `283da27`. The packages are
+`work/releases/ConstructionKit-ui5-linux` (**2,087 inventoried files**) and
+`work/releases/ConstructionKit-ui5-windows` (**877**). Every recorded size/hash
+matches; private work, reference trees, library working copies and game saves
+are excluded. The Linux kit bundles Python 3.13, Tk 8.6, Pillow and SDL; this
+host's bundle requires glibc 2.42+, X11 and system fonts. Windows output includes
+no Python runtime. These local packages capture the implementation commit;
+this subsequent documentation update records their actual verification.
+
+```sh
+python3 tools/delivery.py --output work/releases/ConstructionKit-ui5-linux
+python3 tools/delivery.py --platform windows --output work/releases/ConstructionKit-ui5-windows
+python3 tools/native_smoke.py --delivery-only work/releases/ConstructionKit-ui5-linux
+```
 
 Reproduce the new checks:
 
