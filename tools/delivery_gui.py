@@ -31,7 +31,7 @@ def report(editor):
         if not result:raise EditorError('Wait for the asset report to finish.')
         path=filedialog.asksaveasfilename(parent=window,title='Save asset report',initialfile='ASSETS.json',defaultextension='.json')
         if path:Path(path).write_text(json.dumps(result,indent=2)+'\n')
-    ttk.Button(window,text='Save report...',command=lambda:guard(view,save)).pack(pady=(0,12))
+    ttk.Button(window,text='Save report...',command=lambda:guard(view,save)).pack(side='bottom',pady=(0,12),before=text)
     return view
 
 def menu(editor,parent):

@@ -53,6 +53,13 @@ background; Play/Stop manages an isolated test game. See the
 and [verification results](docs/TESTING.md#editor-workspace-ui5--2026-10-18).
 Native Windows editor interaction remains unverified.
 
+Map authoring now includes **Building, Wall and Road designers**, a reusable
+**Pattern Library**, terrain cut/copy/paste and tile editing directly from
+construction/jigsaw previews. The tile chooser can clone an entire sheet into
+editable project tiles. New worlds default to the original **1024 × 1024** size.
+Open **Construction tools** in the explorer or use **Project**; see the
+[map construction guide](docs/M5_WORLD_ART_EDITOR.md#buildings-walls-and-roads).
+
 The shared **Unit Library** currently offers **82 blueprints: 66 mechs, ten
 vehicles and six infantry templates**, including [25 additional classic
 mechs](content/catalogues/mechs/README.md). Mechs use Locust or red Stinger

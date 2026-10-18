@@ -292,5 +292,15 @@ def run(env, work):
                     assert control.winfo_rootx()>=window.winfo_rootx()
                     assert control.winfo_rootx()+control.winfo_width()<=window.winfo_rootx()+window.winfo_width()
                 print("PASS: minimum-size roster/map windows keep toolbars, palette and marker controls visible.",flush=True)
+                # Copy an entire real DOS sheet through the visible browser;
+                # pixels and collision defaults must survive the format upgrade.
+                picker=ed.graphic_picker();picker.sheet.set('chi:land');picker.refresh();pump()
+                before=copy.deepcopy(doc.adventure);old_art=copy.deepcopy(doc.art);count=len(doc.adventure['tiles'])
+                picker.clone_all();pump();assert len(doc.adventure['tiles'])==count+250
+                value=doc.adventure['tiles'][count+100];owned=next(i for i in doc.art['images'] if i['id']==value['graphic'])
+                assert owned['frames'][0][0][:8]==ed.graphics['chi:land'][100][0][0][1:]+'ff'
+                assert value['terrain']=='wall';doc.validate();picker.close();ed.undo();pump()
+                assert doc.adventure==before and doc.art==old_art
+                print('PASS: Clone ALL 250 original map tiles produces independent editable pixels, preserves wall collision, validates and undoes as one operation.',flush=True)
             finally:
                 window.destroy()

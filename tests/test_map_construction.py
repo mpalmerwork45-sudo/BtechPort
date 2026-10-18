@@ -76,6 +76,12 @@ class ConstructionTests(unittest.TestCase):
         old=copy.deepcopy(a)
         with self.assertRaises(EditorError):draw_road(a,0,0,(0,0),(64,0),profile)
         self.assertEqual(old,a)
+        draw_road(a,0,0,(20,10),(23,13),profile)
+        diagonal={(x,y) for y in range(10,14) for x in range(20,24) if a['maps'][0]['rows'][y][x] in profile['parts'].values()}
+        self.assertEqual(len(diagonal),7)
+        seen={(20,10)}
+        for _ in range(7):seen|={(x+dx,y+dy) for x,y in list(seen) for dx,dy in ((1,0),(-1,0),(0,1),(0,-1))}&diagonal
+        self.assertEqual(seen,diagonal)
         a['maps'][0]['overlays'].append(dict(at=[0,0],rows=[[' ']*10 for _ in range(10)]))
         draw_road(a,0,len(a['maps'][0]['overlays']),(4,4),(6,4),profile)
         self.assertEqual(a['maps'][0]['overlays'][-1]['rows'][4][5],profile['parts']['road_10']);self.assertEqual(a['maps'][0]['rows'],grid)
@@ -96,5 +102,18 @@ class ConstructionTests(unittest.TestCase):
         self.assertEqual(source_definition(self.doc,existing['sheet'],existing['graphic'])['terrain'],existing['terrain'])
         self.assertEqual(source_definition(self.doc,'chi:land',100)['terrain'],'wall')
         self.assertEqual(source_definition(self.doc,'chi:land',15)['terrain'],'water')
+
+    def test_pattern_export_retains_origin_through_repeated_tile_clones(self):
+        from delivery import asset_report
+        decoded={'chi:land':{100:[['#123456']*16 for _ in range(16)]}}
+        first=create_tile(self.doc,decoded,dict(sheet='chi:land',graphic=100))
+        second=create_tile(self.doc,source=first);save_pattern(self.doc,[[second]],'Copied building part')
+        pattern=metadata(self.doc)['map_patterns'][0];path=self.root/'origin.pattern.json';export_pattern(self.doc,pattern,path)
+        other=create_project(ROOT/'examples/beacon-demo',self.root/'origin-copy','origin','Origin',self.doc.validator)
+        import_pattern(other,path)
+        value=metadata(other)['map_patterns'][0]['rows'][0][0]
+        image=next(t['graphic'] for t in other.adventure['tiles'] if t['id']==value)
+        self.assertEqual(metadata(other)['tile_sources'][image],dict(sheet='chi:land',graphic=100))
+        self.assertIn('original rights',next(i['origin'] for i in asset_report(other)['images'] if i['id']==image))
 
 if __name__=='__main__':unittest.main()

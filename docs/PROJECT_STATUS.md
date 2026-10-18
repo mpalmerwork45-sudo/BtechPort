@@ -1,5 +1,25 @@
 # Project status — original fidelity and editable projects, 2026-10-18
 
+The requested [map construction tools](M5_WORLD_ART_EDITOR.md#buildings-walls-and-roads)
+are implemented: editable building/height and 1–3-storey wall part sets,
+connecting road brushes, right-click preview tile creation/cloning/editing,
+whole-sheet tile cloning, a persistent/exportable Pattern Library, local/world
+terrain cut/copy/paste and expanded jigsaw drawing. New worlds default to the
+original 1024 × 1024 dimensions. Shared forms, asset pickers and several preview
+panes reserve their actions before the scrolling body so confirmation buttons
+remain accessible.
+
+**VERIFIED for this increment:** **151/151 Python**, **72/72 native CTests**,
+new Linux GUI authoring/save/reopen/recovery journeys, existing world/art and
+workspace journeys, Clone ALL of an actual 250-tile CHI sheet, and matching
+SDL/headless state and frame for a constructed game. **1,287 reference entries
+are unchanged**. [Testing](TESTING.md#map-construction-and-tile-workflow--2026-10-18)
+records commands and evidence. Heights generate ordinary map tiles; interior
+storeys remain separate maps/events. New preset artwork is procedural editor
+art, not original CHI artwork. Existing limits include the shared 256-sector
+world/discovery budget. Native Windows Tk remains **UNKNOWN**; the engine was
+not changed or rebuilt for this editor increment.
+
 The approved [editor usability stages UI1–UI5](EDITOR_USABILITY_PLAN.md) are
 implemented. The [workspace guide](EDITOR_WORKSPACE.md) covers the tabbed editor,
 explorer/Inspector, Problems, direct asset navigation, scoped project/library
@@ -7,7 +27,7 @@ saves, labelled Undo/Redo and private draft recovery. UI5 adds bounded backgroun
 tasks, stale-validation protection, isolated Play/Stop and library preview,
 scrollable/reflowing controls, scale settings, tooltips and keyboard help.
 
-**VERIFIED:** 141 Python tests, 72 native CTests and 72 Windows/Wine CTests pass.
+**VERIFIED at UI5:** 141 Python tests, 72 native CTests and 72 Windows/Wine CTests pass.
 Linux GUI journeys cover independent save targets, partial Save All, invalid
 fields/art recovery, missing-source recovery into a copy, edits during durable
 writes, simulated write failure, navigation and real SDL Play/Stop. KWin checks

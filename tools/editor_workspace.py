@@ -305,6 +305,9 @@ class Workspace:
         self.action('Duplicate definition',lambda:self.active_scope().owner.duplicate(),groups['Project'])
         self.action('Delete definition',lambda:self.active_scope().owner.delete(),groups['Project'])
         self.action('Find usages',self.find_usages,groups['Project'])
+        for kind in ('Building','Wall','Road'):
+            self.action(kind+' designer',lambda k=kind:self.map_view().construction(k),groups['Project'])
+        self.action('Pattern Library',lambda:self.map_view().patterns(),groups['Project'])
         from delivery_gui import report as assets
         from save_migration import dialog
         self.action('Assets and dependencies',lambda:assets(self.app),groups['Project'])
@@ -349,6 +352,7 @@ class Workspace:
             return bool(document and ((document.undo_stack if name=='Undo' else document.redo_stack) or any(d.pending() for d in scope.live())))
         if name in ('Export game','Assets and dependencies','Migrate an old save'):return bool(self.app.document)
         if name in ('New definition','Duplicate definition','Delete definition','Ammunition','Find usages'):return bool(document)
+        if name in ('Building designer','Wall designer','Road designer','Pattern Library'):return bool(self.app.document and self.app.document.adventure)
         if name in ('Play from start','Play from here','Checkpoints and trace'):return bool(self.app.document) and not self.play_session.preparing
         if name=='Preview library design':return bool(document and scope.owner.library_context) and not self.play_session.preparing
         if name=='Stop test':return self.play_session.preparing or self.play_session.process is not None
@@ -489,6 +493,9 @@ class Workspace:
                     maps=row('','maps','Local maps',self.open_map)
                     for scene in document.adventure['maps']:
                         if not query or query in (scene['name']+' '+scene['id']).casefold():row(maps,'map:'+scene['id'],scene['name'],lambda i=scene['id']:self.open_map(i))
+                    construct=row('','construction','Construction tools',lambda:self.map_view().construction())
+                    for kind in ('Building','Wall','Road'):row(construct,'construction:'+kind,kind+' designer',lambda k=kind:self.map_view().construction(k))
+                    row(construct,'patterns','Pattern Library',lambda:self.map_view().patterns())
                     events=row('','events','Events / objectives',self.open_event)
                     for event in document.adventure['events']:
                         if not query or query in str(event).casefold():row(events,'event:'+event['id'],event['id'].split(':')[-1]+' ('+event['op']+')',lambda i=event['id']:self.open_event(i))
@@ -533,6 +540,14 @@ class Workspace:
             if owner.collection in ('mechs','people'):
                 for label,callback in [('Edit sprite',owner.edit_unit_sprite),('Choose sprite',owner.choose_sprite)]:ttk.Button(self.inspect_actions,text=label,command=lambda f=callback:guard(owner,f)).pack(fill='x',pady=3)
             if owner.library_context:ttk.Button(self.inspect_actions,text='Preview design',command=lambda:self.invoke('Preview library design')).pack(fill='x',pady=3)
+        elif view and view.key[1]=='construction' and owner.profile:
+            from construction_editing import part_name
+            p=owner.profile;lines.extend([p['name'],f"{len(p['footprint'][0])} × {len(p['footprint'])} footprint",'Paint height: 0 erases a cell. Walls support 1–3 storeys; buildings 1–8.'])
+            if owner.selected_role:
+                lines.extend([part_name(owner.selected_role),'This tile is shared by every matching part in the set. Clone it before making a separate variant.'])
+                for label,callback in [('Choose tile',owner.choose_part),('Edit pixels',owner.edit_part),('Clone tile',owner.clone_part)]:ttk.Button(self.inspect_actions,text=label,command=lambda f=callback:guard(owner,f)).pack(fill='x',pady=3)
+        elif view and view.key[1]=='patterns' and owner.current():
+            p=owner.current();lines.extend([p['name'],f"{len(p['rows'][0])} × {len(p['rows'])} tiles",'Saved with this project. Export includes the tile definitions and owned artwork.'])
         elif hasattr(owner,'scene'):
             scene=owner.scene();lines.extend([scene['name'],scene['id'],f'{len(scene["rows"][0])} x {len(scene["rows"])} tiles'])
             marker=owner.selected_marker

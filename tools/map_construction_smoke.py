@@ -1,6 +1,6 @@
 """Exercise construction, tile management and terrain patterns on private Tk."""
 def run(env,work):
-    import copy,os,tempfile
+    import copy,os,tempfile,subprocess,json
     from pathlib import Path
     from types import SimpleNamespace
     import tkinter as tk
@@ -41,7 +41,9 @@ def run(env,work):
                 app=workspace.app;app.set_document(doc);app.edit_adventure();maps=app.map_editor;pump()
                 maps.edit_landscape();world=maps.world_editor;pump()
                 f=world.new_world();pump();assert f.values['width'].get()==f.values['height'].get()=='128'
-                visible(f.apply_button);snap('create-world');f.apply_button.invoke();pump()
+                for percent in (100,150,200):
+                    workspace.scale(percent);pump();visible(f.apply_button)
+                workspace.scale(100);pump();visible(f.apply_button);snap('create-world');f.apply_button.invoke();pump()
                 assert not f.window.winfo_exists() and world_size(doc.adventure)==(1024,1024);doc.validate()
                 # The same reserved footer must survive a long, enlarged form.
                 from adventure_editor import Form
@@ -119,6 +121,42 @@ def run(env,work):
                 assert metadata(reopened)['map_patterns']==metadata(doc)['map_patterns']
                 workspace.persist_layout();snap('saved')
                 print('PASS: Clone ALL sheet tiles, individual clone/removal, full player validation and project save/reopen.',flush=True)
+                # Render this edited package in the actual player. Both SDL
+                # and headless must compose its new building tiles identically.
+                frame=work/'map-construction-player.ppm';headless=work/'map-construction-headless.ppm'
+                replay=directory/'frame.actions';replay.write_text('idle\n')
+                from scene_tools import formation_data,formation_cells
+                formation=formation_data(doc,app.settings)
+                candidates=[(x,y) for y in range(2,2*len(maps.scene()['rows'])-2) for x in range(2,2*len(maps.scene()['rows'][0])-2)
+                    if not any(blocked for _,_,blocked in formation_cells(doc,maps.scene_index,(x,y),formation))]
+                x,y=min(candidates,key=lambda p:(p[0]-28)**2+(p[1]-25)**2)
+                common=['--project',str(doc.root),'--play-here',maps.scene()['id'],str(x),str(y),'--replay',str(replay)]
+                held=directory/'constructed.btp'
+                native=subprocess.run([str(root/'build/btech-port'),*common,'--smoke-replay','--smoke-fast','--save',str(held),'--frame',str(frame)],env=dict(env,SDL_AUDIODRIVER='dummy'),cwd=directory,capture_output=True,text=True,timeout=20)
+                assert native.returncode==0,native.stderr
+                result=subprocess.run([str(root/'build/btech-headless'),'--project',str(doc.root),'--load',str(held),'--frame',str(headless)],cwd=directory,capture_output=True,text=True,timeout=20,check=True)
+                assert frame.read_bytes()==headless.read_bytes()
+                assert bytes.fromhex('acb9bd') in frame.read_bytes(),'The playtest view missed the constructed building.'
+                assert json.loads(native.stdout)['state_digest']==json.loads(result.stdout)['state_digest']
+                print('PASS: the constructed game renders the same state and pixels in SDL and headless players.',flush=True)
+                builder=maps.construction('Building');builder.height.set('4');pump()
+                builder.paint(SimpleNamespace(x=3*24+12,y=3*24+12),True)
+                f=builder.reshape();f.values['width'].set('unfinished width');pump()
+                workspace.recovery.write(app._editor_scope);record=workspace.recovery.read(workspace.recovery.path(app._editor_scope))
             finally:
                 if workspace:workspace.closing=True
                 window.destroy()
+            # Recreate all Tk objects, restoring an unfinished construction
+            # gesture and invalid form input from the crash record.
+            from editor_recovery import identity as scope_identity
+            window=tk.Tk();workspace=Workspace(window,tool,directory/'settings')
+            window.report_callback_exception=lambda kind,error,tb:errors.append(error)
+            try:
+                app=workspace.app;app.set_document(ProjectDocument(doc.root,tool));workspace.recovery.offered.add(scope_identity(app._editor_scope));pump()
+                workspace.recovery.restore(app._editor_scope,record);pump()
+                assert not getattr(app._editor_scope,'unrestored_recovery',False)
+                builder=app.map_editor.construction('Building');assert builder.stroke is not None and builder.profile['footprint'][3][3]==4
+                f=next(d.view for d in app._editor_scope.live() if isinstance(getattr(d.view,'values',None),dict) and d.view.values.get('width') and d.view.values['width'].get()=='unfinished width')
+                f.window.destroy();builder.finish();app.save();pump();app.document.validate()
+                print('PASS: fresh workspace restores construction tabs, unfinished height painting and invalid footprint fields, then saves corrected work.',flush=True)
+            finally:workspace.closing=True;window.destroy()

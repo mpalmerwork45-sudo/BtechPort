@@ -86,6 +86,8 @@ def export_pattern(document,pattern,path):
     data=dict(format='btp-map-pattern-v1',pattern=pattern,tiles=tiles,
               images=[im for im in document.art['images'] if im['id'] in images],
               source=dict(package=document.manifest['package_id'],title=document.manifest['title']))
+    editor=metadata(document)
+    data['editor']={key:{identity:value for identity,value in editor.get(key,{}).items() if identity in (used if key=='tile_names' else images)} for key in ('tile_names','tile_sources','pixel_layers')}
     # Explicit user-chosen destination, with atomic replacement like other
     # editor exports. No originals or unrelated images enter this pattern.
     from editor_model import ProjectDocument
@@ -113,8 +115,14 @@ def import_pattern(document,path):
         value['id']=identity(prefix,a['tiles'],'tile');a['tiles'].append(value);tiles[old['id']]=value['id']
     rows=[[tiles[t] if t!=' ' else ' ' for t in row] for row in data['pattern']['rows']]
     check_budget(art,a)
+    editor=metadata(document)
+    for key in ('tile_names','tile_sources','pixel_layers'):
+        for old,value in data.get('editor',{}).get(key,{}).items():
+            new=(tiles if key=='tile_names' else images).get(old)
+            if new:editor.setdefault(key,{})[new]=copy.deepcopy(value)
+    meta=dict(document.metadata);meta['EDITOR.json']=encoded(editor)
     with document.command('Import map pattern'):
-        document.replace_art(art,a)
+        document.replace_art(art,a,meta)
         result=save_pattern(document,rows,data['pattern']['name'])
         document.validate()
     return result

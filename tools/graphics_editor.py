@@ -163,10 +163,15 @@ class GraphicsEditor:
         selected=self.map_view().brush.curselection()
         if not selected or selected[0]>=len(self.document.adventure['tiles']):raise EditorError('Choose a map tile in the palette first.')
         art=copy.deepcopy(self.document.art);a=copy.deepcopy(self.document.adventure)
+        source=copy.deepcopy(a['tiles'][selected[0]])
         im=editable_tile(art,a,selected[0],self.document.content['package_id'],self.map_view().graphics)
         self.selected=im['id']
         if art!=self.document.art or a!=self.document.adventure:
-            self.document.replace_art(art,a);self.refresh_views()
+            from tile_editing import metadata,source_origin
+            from editor_model import encoded
+            data=metadata(self.document);data.setdefault('tile_sources',{})[im['id']]=source_origin(data,source)
+            meta=dict(self.document.metadata);meta['EDITOR.json']=encoded(data)
+            self.document.replace_art(art,a,meta);self.refresh_views()
         self.refresh();self.edit()
     def delete(self):
         if not self.current():return

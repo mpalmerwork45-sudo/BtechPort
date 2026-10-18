@@ -153,7 +153,15 @@ def draw_road(adventure,scene_index,layer,start,end,profile,width=1):
     target=scene if layer==0 else scene['overlays'][layer-1];ox,oy=(0,0) if layer==0 else target['at']
     road_ids={v for k,v in profile['parts'].items() if k.startswith('road_')}
     occupied={(x+ox,y+oy) for y,row in enumerate(target['rows']) for x,t in enumerate(row) if ids.get(t) in road_ids}
-    stroke={(x+xx,y+yy) for x,y in line(*start,*end) for xx in range(width) for yy in range(width)}
+    points=[];previous=None
+    for point in line(*start,*end):
+        if previous and point[0]!=previous[0] and point[1]!=previous[1]:
+            # Roads use cardinal connection tiles. Bridge diagonal mouse
+            # samples so a quick slanting drag cannot leave isolated squares.
+            # A canonical bridge also makes a reversed stroke follow itself.
+            points.append(min((point[0],previous[1]),(previous[0],point[1])))
+        points.append(point);previous=point
+    stroke={(x+xx,y+yy) for x,y in points for xx in range(width) for yy in range(width)}
     def inside(p):return ox<=p[0]<ox+len(target['rows'][0]) and oy<=p[1]<oy+len(target['rows'])
     if not all(inside(p) for p in stroke):raise EditorError('The whole road brush must fit in the selected layer.')
     occupied|=stroke;affected=stroke|{(x+dx,y+dy) for x,y in stroke for dx,dy in NEIGHBOURS}

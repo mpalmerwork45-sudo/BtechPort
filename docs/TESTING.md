@@ -1,5 +1,53 @@
 # Build, verification and original oracle — 2026-10-18
 
+## Map construction and tile workflow — 2026-10-18
+
+Implementation milestone: `9bc57ae`, followed by usability/provenance verification
+and the [updated authoring guide](M5_WORLD_ART_EDITOR.md#buildings-walls-and-roads).
+Tests use disposable project and settings directories; the existing user's
+`examples/battletech-demo/adventure.json` edit is preserved. No engine source or
+original resource changed.
+
+| Check | Actual result |
+| --- | --- |
+| Full Python suite | **151/151 PASS**, 15.824 s |
+| Native CTests | **72/72 PASS**, 44.50 s, existing build |
+| Construction model | PASS: concave cross corners, height projection, wall height bounds, road endpoint/cross junctions, layer isolation, whole-block bounds and rollback |
+| Tile management | PASS: actual original 250-tile sheet bulk-cloned to independent RGBA images; collision defaults retained; C validation and one-step Undo restore the source project |
+| References and patterns | PASS: referenced part deletion needs replacement; replacement updates templates/patterns; export/import remaps IDs and retains tile origins through repeated cloning |
+| World creation | PASS: visible Create world action at 100/150/200% scaling, 128×128 jigsaw defaults, local maps placed as cities, player validation; long scrolling form keeps its actions visible |
+| Construction GUI | PASS: stepped cross building, three-storey wall, auto-connected road strokes, preview-cell clone/edit, whole-building overlay placement and invalid edge-paste rejection |
+| Terrain and jigsaws | PASS: local cut/Undo/paste, world selection/cut/paste, jigsaw line drawing, context New tile and saved jigsaw pattern |
+| Persistence and recovery | PASS: artwork/templates/patterns save and reopen; a fresh workspace restores unfinished height painting and invalid footprint form input, then saves corrected work |
+| Actual game output | PASS: constructed building appears in SDL; its saved state digest and full 320×200 frame exactly match the headless renderer |
+| Existing GUI checks | PASS: original decoded tile chooser/marker drags; world/art/sprite/planet workflows; workspace drafts, errors, navigation, recovery, shared history and isolated Play/Stop |
+| References | **1,287/1,287 unchanged**, content/mode/mtime against `work/reference-before-map-construction.json` |
+
+Screenshots confirm that complete previews and their actions remain accessible.
+Construction presets are authored conveniences; these tests
+do not claim that their artwork is pixel-identical to original game buildings.
+
+Run the checks:
+
+```sh
+python3 -m unittest discover -s tests -p 'test_*.py'
+ctest --test-dir build --output-on-failure
+python3 tools/native_smoke.py --map-construction-only
+python3 tools/native_smoke.py --editor-visual-only
+python3 tools/native_smoke.py --world-art-editor-only
+python3 tools/native_smoke.py --editor-usability-only
+python3 tools/reference_guard.py verify --manifest work/reference-before-map-construction.json
+```
+
+Local evidence: `work/map-construction-{create-world,building,wall,roads,patterns,jigsaw,tile-browser,saved}.png`
+and `work/map-construction-{player,headless}.ppm`. A PNG conversion of the player
+frame is `work/map-construction-player.png`. The original-sheet screenshots and
+copied original tiles remain local test artifacts, outside Git.
+
+**UNKNOWN:** native Windows Tk interaction and physical multi-monitor behaviour.
+The existing Wine engine results below are prior verification, not a new run
+of the Python editor. No new Windows package was produced for this increment.
+
 ## Editor workspace UI5 — 2026-10-18
 
 The [workspace guide](EDITOR_WORKSPACE.md) describes the implemented UI1–UI5

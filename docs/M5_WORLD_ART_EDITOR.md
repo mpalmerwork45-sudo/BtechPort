@@ -68,6 +68,124 @@ rollback journal protects updates to the manifest, maps, definitions and new
 graphics file together. External edits are preserved and reported. Undo also
 reverses automatic v1-to-v2 map conversion.
 
+## Buildings, walls and roads
+
+Open **Construction tools** in the project explorer, **Project > Building/Wall/
+Road designer**, or **Map actions > Construct**. Each designer has named part
+sets saved with the project. Reopening it returns to its existing tab.
+
+1. **Footprint...** starts a rectangle, cross, L shape, courtyard, line or empty
+   grid, up to 32 × 32 cells. Walls and roads use thin cross/L presets.
+2. Paint the footprint at the desired height. Left-drag draws; right-drag erases.
+   Height **0** erases, buildings support **1–8 storeys**, walls **1–3**, and roads
+   occupy one level. Painting different heights creates stepped roofs.
+3. The live preview projects walls down and right in the CHI view. It resolves
+   exposed roof edges, inward corners, south/east faces and top/middle/base
+   bands. **Fit** shows the whole result; larger zooms allow detailed inspection.
+4. Right-click a preview cell to **Choose tile**, **New tile for this part**,
+   **Clone tile for this part**, **Edit tile pixels** or open **Tile properties**.
+   New/cloned images and their tile definitions enter the artwork library and
+   map palette automatically. Choose/Edit/Clone are also below the preview and
+   in its Inspector.
+5. **Use on map**, then click to place the preview. Each building/wall becomes a
+   separate overlay; select that overlay for fine painting or **Move building**.
+   The whole result must fit—an edge click never silently crops it. Escape
+   cancels placement. Add an **Entrance** marker and event using the usual map
+   tools, then save an entrance-aware stamp if that complete building is reusable.
+
+Part assignments are shared by matching cells in that set. Editing a tile changes
+every placement using its ID. Clone the tile for an independent variant. **New
+set** creates independent preset art; **Duplicate** initially shares the original
+set's tile references. **Footprint...** replaces the shape; ordinary height
+painting and shape changes are undoable. New part roles receive editable default
+artwork; old assignments remain available in the part selector for reuse.
+
+The included roof, facade, brick and road graphics are small procedural editor
+presets. They are not recovered original CHI building artwork. Assign original
+tiles from your supplied game, your own tiles, or edited copies to customize a
+set. Exterior wedges have a painted green ground background because game map
+layers flatten to one tile per cell; edit those part pixels for another ground
+surface. Heights describe the drawn exterior, not a new elevation/combat system.
+Interior floors remain separate local maps linked by entrance/transfer events.
+
+The Road designer also provides **Draw connecting roads**. Drag on the map:
+straight sections, bends, ends, T junctions and crossroads are selected from
+the set's 16 north/east/south/west connection patterns. Existing roads in that
+set and selected layer reconnect as the stroke crosses them. A complete stroke
+is one Undo operation. Slanting strokes form connected orthogonal steps rather
+than isolated diagonal cells. Road tiles default to clear terrain; building and wall
+parts default to blocking wall terrain. **Tile properties** changes collision
+separately from the artwork.
+
+## Pattern Library and terrain blocks
+
+Use **Select** and drag a local-map rectangle, then **Ctrl+C** to copy visible
+terrain, **Ctrl+X** to cut the selected layer, or **Ctrl+V** and click to paste.
+Cut fills a base-layer selection with the first clear tile and clears an overlay
+to transparent cells. Paste uses stable tile IDs, preserving the clipboard when
+the palette upgrades beyond character keys. Empty pattern cells leave the
+destination alone. The complete block must fit in its destination layer.
+
+**Map actions > Patterns > Save selection** stores the rectangle in the
+**Pattern Library**. Designers can **Save pattern** directly. The library offers
+visual selection, placement, rename, clone, removal, import and export. Removal
+deletes the saved pattern, leaving placed instances and artwork intact. Local
+placements can use a new overlay. Choose a destination map before opening the
+library; opening it through the world/jigsaw **Patterns...** button instead
+targets that editor. Blocks are limited to 64 × 64 tiles.
+
+Patterns are persisted in the project's `EDITOR.json`, alongside construction
+sets, so ordinary project Save/Export retains them. `.pattern.json` exports carry
+used tile definitions, owned artwork, pixel layers, labels and recorded tile
+origins. Import remaps conflicting IDs and is one undoable operation. Original
+sheet references require a CHI project; source-package indexed tiles must be
+cloned to owned pixels before sharing with another package. Copying original
+pixels does not change their origin or rights. **Assets and dependencies**
+identifies recorded original tile copies, including clones of clones.
+
+World terrain supports **Select**, Ctrl+C/Ctrl+X/Ctrl+V and the same library.
+Paste adds tile patches over jigsaws. It rejects overlap with cities, whose
+visible terrain belongs to their local map. Cutting world terrain leaves a
+clear-tile patch. **Erase patch** restores the generated/stamped terrain below.
+
+Jigsaws keep their 8 × 8 format. Their editor provides Paint, Line, Rectangle,
+Fill, Eyedropper and Paste, a visual **Choose tile...** browser and a right-click
+cell menu for New/Clone/Edit/Properties. Changing a preview cell assigns its new
+tile to that cell and selects it as the brush. Save a complete jigsaw through
+**Patterns... > Save selection**, or paste a stored block no larger than 8 × 8.
+
+## Tile management and world creation
+
+**Browse all... / Choose a map tile** now provides Add, Clone, Edit pixels,
+Properties and Remove. **More > Clone ALL tiles in this sheet to project tiles**
+copies the entire selected bank, with independent editable pixels and one Undo
+entry. Existing collision definitions are preserved; unregistered original
+graphics get terrain-band defaults that can be refined in Properties.
+
+Deleting a project tile checks references in maps, jigsaws, patterns, building
+stamps and construction sets, and offers a compatible replacement. Original
+source-sheet graphics are immutable: Remove hides a source cell from this
+project's chooser, and **More > Restore hidden source graphics** restores it.
+Editing an original graphic creates package pixels. No reference file is changed.
+
+**Create world** defaults to **128 × 128 jigsaws = 1024 × 1024 tiles**, matching
+the original engine bounds in `port/core/world.c`. The visible **Create world**
+button stays outside the scrolling form. On the first world, **Place current
+local maps as cities** defaults to Yes; their existing positions must fit and
+not overlap. Existing worlds are not resized automatically.
+
+The current player shares **256 discovery sectors** across worlds and unplaced
+local maps. An original-size world consumes that space; place its local maps as
+cities. For several planets, choose smaller dimensions within the shared budget.
+Each world uses 8–128 jigsaws per side in multiples of eight. Up to 16 planets,
+4096 tiles, 1024 jigsaws and 1,048,576 owned artwork pixels remain the runtime
+bounds. The new tools use the existing validated game formats and shared Save,
+Undo/Redo and crash-recovery paths.
+
+Actual Linux model, GUI, player-render and recovery evidence is recorded in
+[Testing](TESTING.md#map-construction-and-tile-workflow--2026-10-18). Native Windows
+Tk interaction remains unverified.
+
 ## Formats and bounds
 
 `btp-adventure-v2` uses stable tile IDs in row arrays. Existing v1 character maps

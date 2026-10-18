@@ -37,6 +37,12 @@ def check_budget(art,adventure):
         raise EditorError('These copies exceed the game’s 1,048,576 pixel artwork budget. Copy fewer tiles or remove unused artwork.')
 
 
+def source_origin(data,source):
+    # Carry the root source through repeated clones, so exported pattern
+    # artwork does not lose its provenance when its parent image stays behind.
+    return copy.deepcopy(data.get('tile_sources',{}).get(source['graphic'],dict(sheet=source['sheet'],graphic=source['graphic']))) if source['sheet']=='package:art' else dict(sheet=source['sheet'],graphic=source['graphic'])
+
+
 def copy_graphic(art,prefix,decoded,sheet,graphic,name='Tile copy'):
     if sheet=='package:art':
         old=next((i for i in art['images'] if i['id']==graphic),None)
@@ -57,7 +63,7 @@ def create_tile(document,decoded=None,source=None,name='New tile',terrain=None):
         source=tile(document,source) if isinstance(source,str) else {**source_definition(document,source['sheet'],source['graphic']),**source}
         image=copy_graphic(art,prefix,decoded or {},source['sheet'],source['graphic'],name)
         terrain=terrain or source.get('terrain','clear');mini=source.get('mini_color',2)
-        data.setdefault('tile_sources',{})[image['id']]=dict(sheet=source['sheet'],graphic=source['graphic'])
+        data.setdefault('tile_sources',{})[image['id']]=source_origin(data,source)
         layers=data.get('pixel_layers',{}).get(source['graphic']) if source['sheet']=='package:art' else None
         if layers:data['pixel_layers'][image['id']]=copy.deepcopy(layers)
     else:
@@ -83,7 +89,7 @@ def clone_sheet(document,decoded,sheet):
         image=copy_graphic(art,prefix,decoded,source['sheet'],source['graphic'],name)
         value=graphic_tile(a,prefix,'package:art',image['id'],source.get('terrain','clear'),source.get('mini_color',2));result.append(value)
         data.setdefault('tile_names',{})[value]=name
-        data.setdefault('tile_sources',{})[image['id']]=dict(sheet=source['sheet'],graphic=source['graphic'])
+        data.setdefault('tile_sources',{})[image['id']]=source_origin(data,source)
         layers=data.get('pixel_layers',{}).get(source['graphic']) if source['sheet']=='package:art' else None
         if layers:data['pixel_layers'][image['id']]=copy.deepcopy(layers)
     check_budget(art,a);meta=dict(document.metadata);meta['EDITOR.json']=encoded(data)

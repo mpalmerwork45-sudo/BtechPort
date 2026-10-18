@@ -50,13 +50,26 @@ Open a local map from the explorer. The **Tiles** sidebar contains actual graphi
 previews. Select a tile, then paint on the map. **Browse all...** opens the full
 graphic chooser. **Tile actions** or the tile's context menu provides pixel
 editing, properties and cloning. Double-click a tile to edit its pixels.
+The chooser also adds/removes tiles and provides **More > Clone ALL tiles in
+this sheet to project tiles**. These are independent editable copies, grouped
+into one Undo operation.
 
 The Tool selector includes paint, line, rectangle, fill, eyedropper, selection,
 paste and marker tools. **Map actions** contains map/layer properties, building
 stamps, collision and starting-formation overlays, graphics reload and setup.
-Right-click the map to sample its tile. Select a rectangle and use Ctrl+C/Ctrl+V
-on the canvas to copy and paste. A stroke or marker drag is one Undo operation;
+Right-click the map to sample its tile. Select a rectangle and use Ctrl+C/Ctrl+X/
+Ctrl+V on the canvas to copy, cut and paste. Copy captures visible terrain;
+Cut clears the selected layer. A stroke or marker drag is one Undo operation;
 Escape cancels the unfinished gesture.
+
+**Construction tools** in the explorer, or **Project**, opens the Building,
+Wall and Road designers and the **Pattern Library**. Paint a footprint with
+heights, customize its generated parts by right-clicking preview tiles, and
+choose **Use on map**. Buildings/walls paste as separate overlays; their parts
+remain normal editable tiles. The road brush connects endpoints and junctions.
+The Pattern Library stores reusable terrain blocks with the project and imports/
+exports `.pattern.json` files. The [construction guide](M5_WORLD_ART_EDITOR.md#buildings-walls-and-roads)
+explains part sets, storeys, collision, block placement and jigsaw editing.
 
 Use the **Markers** sidebar or click a marker on the canvas to select it. Drag
 to move it, double-click to edit it, or use the Inspector to open an entrance's
@@ -66,7 +79,10 @@ people, stock and the starting party.
 
 Open a planet under **Worlds / planets** to paint its jigsaw sectors and position
 city overlays. A city opens its local map directly. The world view has its own
-brush; jigsaw editing opens another tab. See the [world/art guide](M5_WORLD_ART_EDITOR.md)
+brush; jigsaw editing opens another tab with drawing tools and a cell context
+menu for choosing/creating/cloning/editing tiles. New worlds default to
+**1024 × 1024 tiles**, the original CHI dimensions. The creation form can place
+current local maps as cities. See the [world/art guide](M5_WORLD_ART_EDITOR.md)
 for format limits, generation, multiple planets and graphic import.
 
 ## Units and the shared library

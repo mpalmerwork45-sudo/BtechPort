@@ -151,9 +151,11 @@ class ConstructionEditor:
         if self.selected_role:self.part.current(self.role_ids.index(self.selected_role))
     def select_preview(self,event):
         x,y=int(self.preview.canvasx(event.x)//self.preview_size),int(self.preview.canvasy(event.y)//self.preview_size)
-        if 0<=y<len(self.roles) and 0<=x<len(self.roles[0]) and self.roles[y][x]!=' ':self.selected_role=self.roles[y][x];self.draw();self.status.set(part_name(self.selected_role)+' — right-click to change this part’s tile.')
+        if 0<=y<len(self.roles) and 0<=x<len(self.roles[0]) and self.roles[y][x]!=' ':self.selected_role=self.roles[y][x];self.draw();self.status.set(part_name(self.selected_role)+' — right-click to change this part’s tile.');self.inspect()
     def select_part(self,_=None):
-        if self.part.current()>=0:self.selected_role=self.role_ids[self.part.current()];self.draw()
+        if self.part.current()>=0:self.selected_role=self.role_ids[self.part.current()];self.draw();self.inspect()
+    def inspect(self):
+        if hasattr(self.window,'workspace'):self.window.workspace.update_inspector()
     def assign(self,value):
         if not self.selected_role:return
         profile=copy.deepcopy(self.profile);profile['parts'][self.selected_role]=value;put_profile(self.document,profile,'Assign construction tile');self.refresh()
