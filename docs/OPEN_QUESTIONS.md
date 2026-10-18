@@ -17,6 +17,10 @@ checked numeric specifications from runtime simplifications.
 Editor follow-ups after the [five milestones](EDITOR_COMPLETION_MILESTONES.md):
 Windows Tk needs native verification; Windows dependency bundling requires a
 supplied full Python installation; Linux bundles require compatible glibc/X11.
+Canvas zoom is verified with Linux Tk wheel/button events, editable percentages
+and drawing coordinates. Native Windows/macOS wheel handling and physical
+high-resolution devices still need desktop checks; synthetic Windows-style
+events on Linux do not establish those results.
 Save migration preserves existing rule/topology/ordinal structure and rejects
 arbitrary remaps. Sprite anchors, imported audio, full construction tonnage and
 vehicle turret/arcs/critical rules remain future extensions. Scripted salvage

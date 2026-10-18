@@ -1309,6 +1309,7 @@ def main():
     parser.add_argument('--vehicles-only',action='store_true',help='Check vehicles, planets, map, inspection and depot SDL save/load screens')
     parser.add_argument('--map-editor-only',action='store_true',help='Check map painting, event forms, export and Play here')
     parser.add_argument('--editor-visual-only',action='store_true',help='Check original tile previews, visual picker and marker dragging')
+    parser.add_argument('--editor-canvas-only',action='store_true',help='Check editable zoom, wheel anchoring and visible drawing tools')
     parser.add_argument('--world-art-editor-only',action='store_true',help='Check jigsaw/city and pixel/animation editing')
     parser.add_argument('--map-construction-only',action='store_true',help='Check building/wall/road tools, tile management, patterns and original-size world creation')
     parser.add_argument('--library-editor-only',action='store_true',help='Check shared library editing/import/export and desktop game launch')
@@ -1357,7 +1358,7 @@ def main():
     read_fd, write_fd = os.pipe()
     with (work / "native-xvfb.log").open("w") as log:
         xvfb = subprocess.Popen([str(ROOT / "local-deps/xvfb/usr/bin/Xvfb"),
-            "-displayfd", str(write_fd), "-screen", "0", "1600x1000x24" if args.editor_usability_only or args.editor_focus_only else "1024x768x24", "-nolisten", "tcp"],
+            "-displayfd", str(write_fd), "-screen", "0", "1600x1000x24" if args.editor_usability_only or args.editor_focus_only or args.editor_canvas_only else "1024x768x24", "-nolisten", "tcp"],
             pass_fds=(write_fd,), stdout=log, stderr=subprocess.STDOUT)
         os.close(write_fd)
         try:
@@ -1407,6 +1408,10 @@ def main():
                 return
             if args.editor_visual_only:
                 from editor_visual_smoke import run
+                run(env,work)
+                return
+            if args.editor_canvas_only:
+                from editor_canvas_smoke import run
                 run(env,work)
                 return
             if args.battletech_demo_only:

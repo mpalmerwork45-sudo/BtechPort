@@ -30,6 +30,14 @@ def run(env,work):
         def gesture(start,end,button=1,release=True):
             nonlocal clock
             size=int(maps.zoom.get());canvas=maps.canvas
+            # A small dock keeps the tool buttons visible. Use its zoom box to
+            # fit a long courtyard gesture instead of sending mouse events
+            # outside the actual canvas after toolbar/layout changes.
+            fit=min(size,(canvas.winfo_width()-8)//(abs(start[0]-end[0])+2),
+                         (canvas.winfo_height()-8)//(abs(start[1]-end[1])+2))
+            if fit<size:
+                maps.zoom_control.combo.set(f'{max(4,fit)/16*100:g}%')
+                maps.zoom_control.combo.event_generate('<<ComboboxSelected>>');pump();size=int(maps.zoom.get())
             canvas.xview_moveto(max(0,((start[0]+end[0]+1)*size/2-canvas.winfo_width()/2)/(32*size)))
             canvas.yview_moveto(max(0,((start[1]+end[1]+1)*size/2-canvas.winfo_height()/2)/(24*size)));pump()
             def emit(sequence,cell):

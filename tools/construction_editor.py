@@ -49,17 +49,24 @@ class ConstructionEditor:
         ttk.Label(controls,text='Paint height (0 erases)').pack(side='left')
         self.height=tk.StringVar(value='1' if kind=='Road' else '2')
         ttk.Combobox(controls,textvariable=self.height,values=[str(i) for i in range(2 if kind=='Road' else 4 if kind=='Wall' else 33)],state='readonly',width=3).pack(side='left',padx=8)
+        from editor_canvas import CanvasZoom
+        self.footprint_zoom=tk.StringVar(value='24')
+        self.footprint_zoom_control=CanvasZoom(controls,self.footprint_zoom,self.draw,steps=(8,16,24,32,48,64,96));self.footprint_zoom_control.pack(side='left')
+        flow_toolbar(controls)
         ttk.Label(left,text='Left-drag draws; right-drag erases.\nDifferent heights create stepped roofs.',wraplength=320,padding=(0,8)).pack(anchor='w')
         self.footprint=self.make_canvas(left);self.footprint.bind('<Button-1>',lambda e:guard(self,lambda:self.paint(e,True)))
         self.footprint.bind('<B1-Motion>',lambda e:guard(self,lambda:self.paint(e,False)))
         self.footprint.bind('<Button-3>',lambda e:guard(self,lambda:self.paint(e,True,True)))
         self.footprint.bind('<B3-Motion>',lambda e:guard(self,lambda:self.paint(e,False,True)))
         self.footprint.bind('<ButtonRelease-1>',lambda _:guard(self,self.finish));self.footprint.bind('<ButtonRelease-3>',lambda _:guard(self,self.finish))
+        self.footprint_zoom_control.attach(self.footprint)
         heading=ttk.Frame(right);heading.pack(fill='x')
         ttk.Label(heading,text='Building preview' if kind=='Building' else kind+' preview',style='Section.TLabel').pack(side='left')
-        self.zoom=tk.StringVar(value='Fit');zoom=ttk.Combobox(heading,textvariable=self.zoom,values=['Fit','16','24','32','48'],state='readonly',width=4);zoom.pack(side='right');zoom.bind('<<ComboboxSelected>>',lambda _:self.draw())
+        self.zoom=tk.StringVar(value='Fit');self.zoom_control=CanvasZoom(heading,self.zoom,self.draw,steps=(8,16,24,32,48,64,96),fit=lambda:self.preview_size);self.zoom_control.pack(side='left',padx=6)
+        flow_toolbar(heading)
         self.preview=self.make_canvas(right);self.preview_size=32;self.preview.bind('<Configure>',lambda _:self.draw())
         self.preview.bind('<Button-1>',self.select_preview);self.preview.bind('<Button-3>',self.context)
+        self.zoom_control.attach(self.preview)
         # Reserve the part controls before the flexible preview, as in Form.
         # A narrow workspace must keep Edit/Clone reachable without scrolling
         # the entire application window.
@@ -110,7 +117,7 @@ class ConstructionEditor:
     def paint(self,event,start,erase=False):
         if not self.profile:return
         from world_editing import line
-        x,y=int(self.footprint.canvasx(event.x)//24),int(self.footprint.canvasy(event.y)//24)
+        z=int(self.footprint_zoom.get());x,y=int(self.footprint.canvasx(event.x)//z),int(self.footprint.canvasy(event.y)//z)
         rows=self.profile['footprint']
         if not(0<=y<len(rows) and 0<=x<len(rows[0])):return
         if start:self.stroke=copy.deepcopy(self.profile);self.last=x,y
@@ -128,11 +135,11 @@ class ConstructionEditor:
     def draw(self):
         self.footprint.delete('all');self.preview.delete('all');self.photos=[]
         if not self.profile:return
-        rows=self.profile['footprint'];self.footprint.configure(scrollregion=(0,0,len(rows[0])*24,len(rows)*24))
+        rows=self.profile['footprint'];z=int(self.footprint_zoom.get());self.footprint.configure(scrollregion=(0,0,len(rows[0])*z,len(rows)*z))
         for y,row in enumerate(rows):
             for x,height in enumerate(row):
-                self.footprint.create_rectangle(x*24,y*24,x*24+24,y*24+24,fill=('#466575' if height else '#f0f2f4'),outline='#a9b3b9')
-                if height:self.footprint.create_text(x*24+12,y*24+12,text=str(height),fill='white')
+                self.footprint.create_rectangle(x*z,y*z,(x+1)*z,(y+1)*z,fill=('#466575' if height else '#f0f2f4'),outline='#a9b3b9')
+                if height and z>=16:self.footprint.create_text(x*z+z/2,y*z+z/2,text=str(height),fill='white')
         self.roles=geometry(self.profile)
         size=min(32,max(8,min(max(1,self.preview.winfo_width()-4)//len(self.roles[0]),max(1,self.preview.winfo_height()-4)//len(self.roles)))) if self.zoom.get()=='Fit' else int(self.zoom.get())
         self.preview_size=size;self.preview.configure(scrollregion=(0,0,len(self.roles[0])*size,len(self.roles)*size))

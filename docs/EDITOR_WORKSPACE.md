@@ -46,6 +46,16 @@ On a small display at 150–200%, the explorer initially collapses to leave more
 room for editing; reopen it through View. Menus and scrollable fields keep less
 frequent controls available. Tooltips explain compact controls.
 
+**Ctrl + mouse wheel** zooms around the pointer on local maps, worlds, event
+graphs, jigsaws, pixel/sprite canvases and both construction-designer canvases.
+Each has an editable **Zoom** dropdown: choose a preset or type a percentage
+and press Enter (leaving the field also applies it). Invalid text restores the
+previous value. Map/art zooms use whole pixels so the artwork stays sharp;
+100% means original pixel size, including 16 pixels per map tile. The graph
+uses its normal layout size as 100%. Construction previews also offer **Fit**.
+At a canvas boundary the view stops scrolling, so that edge can limit pointer
+anchoring. Zoom changes are view preferences, outside game data and Undo.
+
 ## Maps, worlds and entrances
 
 Open a local map from the explorer. The **Tiles** sidebar contains actual graphic
@@ -63,18 +73,23 @@ road preview parts. It also adds/removes tiles and provides **More > Clone ALL
 tiles in this view to project tiles**. These are independent editable copies, grouped
 into one Undo operation.
 
-The Tool selector includes paint, line, rectangle, fill, eyedropper, selection,
-paste and marker tools. **Map actions** contains map/layer properties, building
+The always-visible drawing toolbar has labelled buttons for **Paint**, **Line**,
+**Rectangle**, **Fill**, **Pick tile**, **Select**, **Paste**, **Building**, **Wall**,
+**Road** and marker tools. The selected button is highlighted and **Active tool**
+names it beside the zoom box. Buttons wrap when the pane narrows. World and
+jigsaw editors also expose their tools as buttons. **Map actions** contains map/layer properties, building
 stamps, collision and starting-formation overlays, graphics reload and setup.
 Right-click the map to sample its tile. Select a rectangle and use Ctrl+C/Ctrl+X/
 Ctrl+V on the canvas to copy, cut and paste. Copy captures visible terrain;
 Cut clears the selected layer. A stroke or marker drag is one Undo operation;
 Escape cancels the unfinished gesture.
 
-The map's visible **Construct** row draws footprints using a saved tile style:
+Selecting **Building**, **Wall** or **Road** reveals the **Construct** settings
+for that drawing tool; ordinary tile/marker tools leave more room for the map:
 
-1. Choose **Building**, **Wall** or **Road**, then a style. **Create style...**
-   starts one if needed; **Edit style...** opens its corner/face tile designer.
+1. Click **Building**, **Wall** or **Road**, then choose a style. If no style
+   exists, the designer opens to create one; use **Draw on map** to return.
+   **Edit style...** opens the selected style's corner/face tile designer.
 2. For a one-storey box, choose **Rectangle**, **Stories 1**, click **Draw
    building** and drag its bounds on the map. Additional strokes extend the
    same footprint into crosses, L shapes or other irregular outlines.
@@ -256,6 +271,7 @@ migration. See the [delivery guide](CONSTRUCTION_KIT_DELIVERY.md).
 | Ctrl+Tab | Next tab |
 | Ctrl+W | Close active tab |
 | Ctrl+Shift+P | Find a command |
+| Ctrl + mouse wheel over a canvas | Zoom around the pointer |
 | F5 | Play project from start |
 | Escape | Cancel the current drawing/drag gesture |
 | Ctrl+C / Ctrl+V over the map | Copy selected tiles / choose Paste |

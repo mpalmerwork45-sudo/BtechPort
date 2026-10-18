@@ -71,7 +71,7 @@ def run(env,work):
                 new_tile=next(t for t in doc.adventure['tiles'] if t['id']==builder.profile['parts'][role])
                 assert next(i for i in doc.art['images'] if i['id']==new_tile['graphic'])['frames'][0][0].startswith('ff4466ff')
                 maps.window.lift();maps.refresh();pump();construct=maps.construction_tools
-                construct.kind_choice.set('Building');construct.kind_choice.event_generate('<<ComboboxSelected>>');pump()
+                maps.drawing_tools.buttons['Building'].invoke();pump()
                 visible(construct.place_button);visible(construct.edit_button);assert construct.profile()['id']==builder.current
                 # Pattern stamping remains available as a separate workflow;
                 # the construction brush below draws new footprints instead.
@@ -184,9 +184,9 @@ def run(env,work):
                     assert construct.profile() in metadata(app.document)['construction_sets']
                 # Selecting the construction tool directly also arms its saved
                 # design; no detour through a designer window is required.
-                maps.tool_choice.set('Building');maps.tool_choice.event_generate('<<ComboboxSelected>>');pump()
+                maps.drawing_tools.buttons['Building'].invoke();pump()
                 assert maps.tool.get()=='Building' and construct.active_id==construct.profile()['id']
-                maps.tool_choice.set('Road');maps.tool_choice.event_generate('<<ComboboxSelected>>');pump()
+                maps.drawing_tools.buttons['Road'].invoke();pump()
                 assert maps.road_profile==construct.profile()['id'] and maps.tool.get()=='Road'
                 print('PASS: fresh workspace restores construction tabs, unfinished height painting and invalid footprint fields, then saves corrected work.',flush=True)
                 print('PASS: visible map construction controls draw walls with Undo, draw connected roads, and reload all three tile styles after reopening.',flush=True)

@@ -28,6 +28,12 @@ the original world's seed. Limits and actual verification results follow below.
 Run `python3 tools/game_editor.py examples/beacon-demo` (or your own project).
 Use **New project** to make an independent copy. Open **Maps / events**.
 
+Map, world and jigsaw tools are visible buttons above their canvases; the active
+tool is highlighted. Ctrl + mouse wheel zooms around the pointer. Editable Zoom
+dropdowns accept percentages (Enter applies); tile/pixel scales snap to whole
+pixels. Event graphs, sprite editors and construction footprints/previews use
+the same controls. Canvas edges limit scrolling. Zoom does not change game data.
+
 - **Browse all...** selects any original/package tile and creates a tile definition
   when necessary. Tile definitions set collision separately from their appearance.
   Paint, line, rectangle, flood fill, eyedropper, selection/copy/paste and marker
@@ -73,10 +79,12 @@ reverses automatic v1-to-v2 map conversion.
 Open **Construction tools** in the project explorer, **Project > Building/Wall/
 Road designer**, or **Map actions > Construct**. Each designer has named part
 sets saved with the project. Reopening it returns to its existing tab. The map
-editor's **Construct** row selects Building, Wall or Road and a named tile style.
-**Draw building / Draw wall / Draw roads** lets you draw the actual shape on the
-map. The Tool selector provides the same modes. **Edit style...** opens the
-selected part set; **Create style...** starts one when that type has none.
+editor's **Building**, **Wall** and **Road** buttons select a drawing mode and
+reveal its **Construct** settings. Select a named tile style, then draw the
+actual shape on the map. **Edit style...** opens the selected part set. When
+that type has no style, its designer opens first; **Draw on map** returns to
+the brush. The tool buttons remain visible while construction settings are
+hidden for ordinary tile/marker editing.
 
 Choose **Shape** (Brush, Line, Rectangle, Courtyard or Erase), **Stories** and
 **Width**, then drag on the map. Rectangle fills a footprint; Courtyard creates

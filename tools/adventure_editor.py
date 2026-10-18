@@ -260,21 +260,32 @@ class AdventureEditor:
         self.layer_choice=ttk.Combobox(controls,state="readonly",width=12,values=["Base"]);self.layer_choice.current(0);self.layer_choice.pack(side="left")
         self.layer_choice.bind("<<ComboboxSelected>>",lambda _:self.draw())
         self.tool=tk.StringVar(value="Paint")
-        ttk.Label(controls,text="Tool").pack(side="left",padx=(12,6))
-        self.tool_choice=ttk.Combobox(controls,textvariable=self.tool,values=["Paint","Line","Rectangle","Fill","Eyedropper","Select","Paste","Building","Wall","Road","Move markers","Entrance","NPC","Encounter","Start","Play here"],state="readonly",width=16)
-        self.tool_choice.pack(side="left")
-        self.tool_choice.bind('<<ComboboxSelected>>',lambda _:self.guard(self.construction_tools.choose_tool))
+        ttk.Label(controls,text='Active tool:').pack(side='left',padx=(12,4))
+        ttk.Label(controls,textvariable=self.tool,style='Section.TLabel').pack(side='left',padx=(0,8))
+        from editor_canvas import CanvasZoom,DrawingTools
         self.zoom=tk.StringVar(value="24")
-        ttk.Label(controls,text="Zoom").pack(side="left",padx=(12,6))
-        z=ttk.Combobox(controls,textvariable=self.zoom,values=["16","24","32"],state="readonly",width=4);z.pack(side="left");z.bind("<<ComboboxSelected>>",lambda _:self.draw())
+        self.zoom_control=CanvasZoom(controls,self.zoom,self.draw);self.zoom_control.pack(side='left')
         self.terrain=tk.BooleanVar(value=False)
         self.footprints=tk.BooleanVar(value=False)
         om=tk.Menu(menu,tearoff=False);menu.add_cascade(label='Overlays',menu=om)
         om.add_checkbutton(label='Collision',variable=self.terrain,command=self.draw);om.add_checkbutton(label='Starting formation',variable=self.footprints,command=lambda:self.guard(self.toggle_footprints))
         from editor_ui import flow_toolbar
         flow_toolbar(top);flow_toolbar(controls)
+        self.drawing_tools=DrawingTools(self.map_tab,self.tool,[
+            ('Tiles', [('Paint','Paint','Drag to paint the selected tile.'),('Line','Line','Drag a straight line of tiles.'),
+                       ('Rectangle','Rectangle','Drag a filled rectangle of tiles.'),('Fill','Fill','Fill a connected area with the selected tile.'),
+                       ('Eyedropper','Pick tile','Pick a tile from the map.'),('Select','Select','Drag a block to copy, cut or save to the Pattern Library.'),
+                       ('Paste','Paste','Click to paste the copied block or chosen pattern.')]),
+            ('Construct', [('Building','Building','Draw a building footprint using a saved tile style; choose height and shape below.'),
+                           ('Wall','Wall','Draw connected walls; choose height and width below.'),('Road','Road','Draw connected roads; choose width below.')]),
+            ('Markers', [('Move markers','Move markers','Drag an existing entrance, person, encounter or start marker.'),
+                         ('Entrance','Entrance','Click to add a building entrance.'),('NPC','NPC','Click to add a person.'),
+                         ('Encounter','Encounter','Click to add an encounter.'),('Start','Start','Click to set the party starting position.'),
+                         ('Play here','Play here','Click to playtest from this location.')])],lambda _:self.guard(self.choose_drawing_tool))
+        self.drawing_tools.pack(fill='x')
         from construction_tools import MapConstructionTools
-        self.construction_tools=MapConstructionTools(self,self.map_tab)
+        self.tool_options=ttk.Frame(self.map_tab)
+        self.construction_tools=MapConstructionTools(self,self.tool_options)
         self.graphics_note=tk.StringVar()
         self.graphics_label=ttk.Label(self.map_tab,textvariable=self.graphics_note,style="Muted.TLabel",padding=(12,2),wraplength=940)
         if not hasattr(self.window,'workspace'):self.graphics_label.pack(fill='x')
@@ -341,6 +352,19 @@ class AdventureEditor:
         self.canvas.bind('<Leave>',lambda _:self.clear_hover())
         self.hover_timer=self.canvas.after(380,self.blink_hover)
         self.canvas.bind('<Destroy>',self.stop_hover)
+        self.zoom_control.attach(self.canvas)
+        # The selected button follows keyboard shortcuts and pattern/designer
+        # actions as well as clicks. Only construction's options are contextual;
+        # the complete tool strip stays visible above the map at all times.
+        trace=self.tool.trace_add('write',lambda *_:self.show_tool_options())
+        self.drawing_tools.bind('<Destroy>',lambda e:self.tool.trace_remove('write',trace) if e.widget is self.drawing_tools else None,add='+')
+
+    def choose_drawing_tool(self):
+        self.finish_stroke();self.construction_tools.choose_tool();self.canvas.focus_set()
+
+    def show_tool_options(self):
+        if self.tool.get() in self.construction_tools.kinds:self.tool_options.pack(fill='x',before=self.map_body)
+        else:self.tool_options.pack_forget()
 
     def hover_move(self,event):
         size=int(self.zoom.get());point=(int(self.canvas.canvasx(event.x)//size),int(self.canvas.canvasy(event.y)//size))

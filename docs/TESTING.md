@@ -1,5 +1,39 @@
 # Build, verification and original oracle — 2026-10-18
 
+## Canvas zoom and visible tools — 2026-10-18
+
+**VERIFIED:** `python3 tools/native_smoke.py --editor-canvas-only` exercises real
+Tk widgets on a private display and disposable Beacon project:
+
+- Ctrl+Button-4/5 and Ctrl+MouseWheel, accumulated partial wheel deltas, ordinary
+  wheel isolation, pointer anchoring, editable percentages, bounds, invalid and
+  incomplete input, Escape restoration and navigation restoration.
+- All local-map tool buttons, selected-state changes from clicks and shortcuts,
+  contextual construction settings, narrow/wide layouts and 100/150/200% scale.
+- Map selection after zoom, graph node dragging at 75%, Fit synchronization,
+  world redraw after repositioning, jigsaw tile painting, construction footprint
+  painting, and tile/sprite pixel editing with Undo.
+- Zoom leaves project files and revision unchanged. Save/validation and callback
+  teardown pass. Screenshot: `work/editor-canvas-map.png`.
+
+`python3 -m unittest discover -s tests -p 'test_*.py'`: **158/158 PASS**, 16.132 s
+(`work/editor-canvas-python-tests.log`). The initial run exposed Unit Library
+preview generation borrowing the edited demo's map and missing its owned tile
+art. Previews now generate a neutral range, with a regression for schema-2,
+custom-tile and world edits in the template. The user's demo files are untouched.
+
+Existing `--editor-visual-only`, `--world-art-editor-only`,
+`--map-construction-only` and `--editor-usability-only` journeys pass, including
+actual CHI tile decoding, marker movement, artwork/frames, recovery, shared
+saves and isolated Play/Stop. Direct box/cross/courtyard/mixed-height/wall
+drawing and saved footprint reshaping still pass, with matching SDL/headless
+output. Large test gestures use the zoom dropdown to fit a small map dock.
+Reference guard: **1,287/1,287 unchanged** using
+`python3 tools/reference_guard.py verify --manifest work/reference-before-map-construction.json`.
+No engine changes or rebuild. Native Windows/macOS wheel interaction and
+physical high-resolution pointing devices remain **UNKNOWN**; the MouseWheel
+input path is generated under Linux Tk, not verified on Windows hardware.
+
 ## Direct footprint drawing — 2026-10-18
 
 **VERIFIED:** the map construction controls draw new footprints from a tile

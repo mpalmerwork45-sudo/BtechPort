@@ -1,5 +1,21 @@
 # Project status — original fidelity and editable projects, 2026-10-18
 
+**Canvas controls:** Ctrl + mouse wheel zooms around the pointer on maps, worlds,
+event graphs, jigsaws, tile/sprite canvases and construction footprints/previews.
+Editable percentage dropdowns share safe input handling; construction preview
+Fit and graph Fit stay synchronized. Local/world/jigsaw drawing tools are now
+always-visible, wrapping buttons with a selected state. Building/Wall/Road
+settings appear when their tool is active. Zoom stays outside game data/Undo.
+
+**VERIFIED:** 158/158 Python tests, the new Linux canvas interaction journey,
+existing visual-map, construction, world/art and workspace journeys, including 100/150/200%
+interface scaling. Tests exposed a separate Unit Library preview dependency on
+the editable demo; previews now build their own neutral map. Reference entries
+remain **1,287/1,287 unchanged** and user demo edits remain separate. See the
+[canvas verification](TESTING.md#canvas-zoom-and-visible-tools--2026-10-18).
+Native Windows/macOS wheel input remains **UNKNOWN**; Windows MouseWheel and
+Linux Button-4/5 event forms are exercised through Linux Tk.
+
 The requested [map construction tools](M5_WORLD_ART_EDITOR.md#buildings-walls-and-roads)
 are implemented: editable building/height and 1–3-storey wall part sets,
 connecting road brushes, right-click preview tile creation/cloning/editing,

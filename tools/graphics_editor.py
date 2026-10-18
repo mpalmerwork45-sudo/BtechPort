@@ -216,8 +216,9 @@ class PixelEditor:
             self.tool=tk.StringVar(value='Pencil'); ttk.Combobox(bar,textvariable=self.tool,values=['Pencil','Line','Rectangle','Fill','Erase','Eyedropper','Select','Paste selection'],state='readonly',width=15).pack(side='left')
             self.color=tk.StringVar(value='ffffffff'); ttk.Entry(bar,textvariable=self.color,width=10).pack(side='left',padx=5)
             ttk.Button(bar,text='Color...',command=self.choose_color).pack(side='left')
+            from editor_canvas import CanvasZoom
             self.zoom=tk.StringVar(value=str(min(16,max(2,512//max(image['width'],image['height'])))))
-            z=ttk.Combobox(bar,textvariable=self.zoom,values=['1','2','4','8','16','24','32'],width=4,state='readonly'); z.pack(side='left',padx=8);z.bind('<<ComboboxSelected>>',lambda _:self.draw())
+            self.zoom_control=CanvasZoom(bar,self.zoom,self.draw,base=1,steps=(1,2,3,4,6,8,12,16,24,32));self.zoom_control.pack(side='left',padx=8)
             for title,cb in [('Undo',self.undo),('Redo',self.redo),('Apply',self.apply)]:ttk.Button(bar,text=title,command=lambda f=cb:self.guard(f)).pack(side='left',padx=3)
             colors=ttk.Frame(self.window,padding=(8,0)); colors.pack(fill='x')
             swatches=tk.Canvas(colors,width=384,height=24,highlightthickness=0);swatches.pack(side='left')
@@ -249,6 +250,7 @@ class PixelEditor:
             self.canvas=tk.Canvas(view,highlightthickness=0,background='#d6d6d6')
             sx=ttk.Scrollbar(view,orient='horizontal',command=self.canvas.xview);sy=ttk.Scrollbar(view,command=self.canvas.yview)
             self.canvas.configure(xscrollcommand=sx.set,yscrollcommand=sy.set);self.canvas.grid(row=0,column=0,sticky='nsew');sx.grid(row=1,column=0,sticky='ew');sy.grid(row=0,column=1,sticky='ns')
+        self.zoom_control.attach(self.canvas)
         self.canvas.bind('<Button-1>',lambda e:self.guard(lambda:self.stroke(e,True)))
         self.canvas.bind('<B1-Motion>',lambda e:self.guard(lambda:self.stroke(e,False)))
         self.canvas.bind('<ButtonRelease-1>',lambda _:self.finish())

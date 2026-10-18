@@ -45,8 +45,8 @@ def build_pixel(editor):
     editor.tool=tk.StringVar(value='Pencil')
     ttk.Combobox(tools,textvariable=editor.tool,values=('Pencil','Line','Rectangle','Fill','Erase','Eyedropper','Select','Paste selection'),state='readonly',width=15).pack(side='left')
     editor.zoom=tk.StringVar(value=str(min(16,max(2,512//max(editor.image['width'],editor.image['height'])))))
-    ttk.Label(tools,text=' Zoom').pack(side='left')
-    zoom=ttk.Combobox(tools,textvariable=editor.zoom,values=('1','2','4','8','16','24','32'),width=4,state='readonly');zoom.pack(side='left',padx=4);zoom.bind('<<ComboboxSelected>>',lambda _:editor.draw())
+    from editor_canvas import CanvasZoom
+    editor.zoom_control=CanvasZoom(tools,editor.zoom,editor.draw,base=1,steps=(1,2,3,4,6,8,12,16,24,32));editor.zoom_control.pack(side='left',padx=4)
     transforms=ttk.Menubutton(tools,text='Transform');menu=tk.Menu(transforms,tearoff=False)
     for title in ('Flip X','Flip Y','Rotate right','Rotate left','Nudge left','Nudge right','Nudge up','Nudge down','Clear'):
         menu.add_command(label=title,command=lambda op=title:editor.guard(lambda:editor.transform(op)))

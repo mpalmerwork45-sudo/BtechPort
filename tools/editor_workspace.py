@@ -222,7 +222,8 @@ class Workspace:
         elif kind=='world':state.update(world=owner.world_id,city=owner.city)
         elif kind=='events':state.update(event=owner.selected,filter=owner.view_mode.get())
         elif kind=='graphics':state.update(selected=owner.selected)
-        elif kind=='construction':state.update(current=owner.current,role=owner.selected_role)
+        elif kind=='construction':state.update(current=owner.current,role=owner.selected_role,footprint_zoom=owner.footprint_zoom.get(),
+            footprint_scroll=[owner.footprint.xview()[0],owner.footprint.yview()[0]],preview_scroll=[owner.preview.xview()[0],owner.preview.yview()[0]])
         elif kind=='patterns':state.update(selected=owner.selected)
         elif kind=='pixels':
             state.update(frame=owner.frame.current())
@@ -261,9 +262,17 @@ class Workspace:
                 owner.view.set(state.get('view',owner.view.get()));owner.direction=state.get('direction',owner.direction);owner.phase=state.get('phase',0);owner.refresh_frames()
             else:owner.frame.current(state.get('frame',0))
         if 'zoom' in state and hasattr(owner,'zoom'):owner.zoom.set(state['zoom'])
+        if kind=='construction' and 'footprint_zoom' in state:owner.footprint_zoom.set(state['footprint_zoom'])
         if hasattr(owner,'draw'):owner.draw()
         if 'scroll' in state and hasattr(owner,'canvas'):
             owner.canvas.xview_moveto(state['scroll'][0]);owner.canvas.yview_moveto(state['scroll'][1])
+            # Worlds draw only the viewport; restoring its scroll position must
+            # redraw that destination just as wheel zoom and scrollbars do.
+            if kind=='world':owner.schedule()
+        if kind=='construction':
+            for name in ('footprint','preview'):
+                if name+'_scroll' in state:
+                    canvas=getattr(owner,name);x,y=state[name+'_scroll'];canvas.xview_moveto(x);canvas.yview_moveto(y)
 
     def action(self,name,method,menu,shortcut=None):
         self.actions[name]=method
@@ -705,7 +714,9 @@ class Workspace:
     def help(self):
         self.log('Ctrl+S: save active project or library design | Ctrl+Z / Ctrl+Y: undo / redo\n'
             'Ctrl+Shift+Z: redo | Ctrl+Tab: next tab | Ctrl+W: close tab\n'
-            'Ctrl+Shift+P: find command | F5: play from start | Escape: cancel the current gesture\n\n'
+            'Ctrl+Shift+P: find command | F5: play from start | Escape: cancel the current gesture\n'
+            'Ctrl + mouse wheel: zoom at the pointer on map, world, graph and art canvases.\n'
+            'Zoom boxes accept a percentage followed by Enter; map tools stay visible above the canvas.\n\n'
             'Save project gathers every project tab. Library designs save separately; Save all reports each scope.\n'
             'If you edit during save validation, save again when prompted; nothing is written by the outdated validation.\n'
             'Double-click a Problem to find its editor. View > Reset layout restores hidden panels.\n'

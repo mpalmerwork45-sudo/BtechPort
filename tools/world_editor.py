@@ -27,9 +27,16 @@ class WorldEditor:
         self.planet=ttk.Combobox(controls,state='readonly',width=22);self.planet.pack(side='left',padx=(0,8));self.planet.bind('<<ComboboxSelected>>',lambda _:self.change_planet())
         ttk.Button(controls,text='Rename',command=lambda:self.guard(self.rename_world)).pack(side='left',padx=(0,8))
         ttk.Button(controls,text='Generate...',command=lambda:self.guard(self.generate)).pack(side='left',padx=(0,8))
-        self.tool=tk.StringVar(value='Jigsaw');ttk.Combobox(controls,textvariable=self.tool,state='readonly',values=['Jigsaw','Tile','Erase patch','Select','Paste','Move city','Play here'],width=16).pack(side='left')
+        self.tool=tk.StringVar(value='Jigsaw')
         ttk.Button(controls,text='Patterns...',command=lambda:self.guard(self.patterns)).pack(side='left',padx=4)
-        self.zoom=tk.StringVar(value='4');z=ttk.Combobox(controls,textvariable=self.zoom,values=['1','2','4','8','16'],state='readonly',width=4);z.pack(side='left',padx=8);z.bind('<<ComboboxSelected>>',lambda _:self.draw())
+        from editor_canvas import CanvasZoom,DrawingTools
+        self.zoom=tk.StringVar(value='4');self.zoom_control=CanvasZoom(controls,self.zoom,self.draw,steps=(1,2,4,8,12,16,24,32));self.zoom_control.pack(side='left',padx=8)
+        self.drawing_tools=DrawingTools(self.window,self.tool,[('World',[
+            ('Jigsaw','Jigsaw','Paint with the selected 8 by 8 jigsaw.'),('Tile','Tile','Paint individual terrain tiles.'),
+            ('Erase patch','Erase','Remove tile patches to reveal the jigsaw beneath.'),('Select','Select','Select a block to copy or save as a pattern.'),
+            ('Paste','Paste','Place a copied block or pattern.'),('Move city','Move city','Drag a city overlay to a new location.'),
+            ('Play here','Play here','Click to playtest from this location.')])],lambda _:self.guard(self.finish))
+        self.drawing_tools.pack(fill='x')
         body=ttk.Panedwindow(self.window,orient='horizontal');body.pack(fill='both',expand=True,padx=8)
         side=ttk.Frame(body);view=ttk.Frame(body);body.add(side,weight=1);body.add(view,weight=5)
         from editor_pickers import ReferenceBox,pick_reference
@@ -57,6 +64,7 @@ class WorldEditor:
         self.canvas.bind('<Control-c>',lambda _:self.guard(self.copy_selection))
         self.canvas.bind('<Control-x>',lambda _:self.guard(self.cut_selection))
         self.canvas.bind('<Control-v>',lambda _:self.tool.set('Paste'))
+        self.zoom_control.attach(self.canvas,self.schedule)
         self.window.bind('<Escape>',lambda _:self.cancel())
         self.window.protocol('WM_DELETE_WINDOW',lambda:self.guard(self.close))
         self.info=tk.StringVar();ttk.Label(self.window,textvariable=self.info,style='Status.TLabel',padding=8).pack(side='bottom',fill='x',before=body)
@@ -291,8 +299,15 @@ class JigsawEditor:
         controls=ttk.Frame(self.window,padding=8);controls.pack(fill='x')
         self.tile=ttk.Combobox(controls,state='readonly',values=[t['id'] for t in owner.adventure['tiles']],width=28);self.tile.pack(side='left');selected=owner.owner.brush.curselection();self.tile.current(min(selected[0] if selected else 0,len(owner.adventure['tiles'])-1))
         ttk.Button(controls,text='Choose tile...',command=lambda:guard(self,self.choose_tile)).pack(side='left',padx=3)
-        self.tool=tk.StringVar(value='Paint');ttk.Combobox(controls,textvariable=self.tool,values=['Paint','Line','Rectangle','Fill','Eyedropper','Paste'],state='readonly',width=12).pack(side='left',padx=3)
+        self.tool=tk.StringVar(value='Paint')
         ttk.Button(controls,text='Patterns...',command=lambda:guard(self,self.patterns)).pack(side='left',padx=3)
+        from editor_canvas import CanvasZoom,DrawingTools
+        self.zoom=tk.StringVar(value='40');self.zoom_control=CanvasZoom(controls,self.zoom,self.draw,steps=(8,16,24,32,40,48,64,96));self.zoom_control.pack(side='left',padx=6)
+        self.drawing_tools=DrawingTools(self.window,self.tool,[('Jigsaw',[
+            ('Paint','Paint','Drag to paint tiles.'),('Line','Line','Drag a straight line of tiles.'),
+            ('Rectangle','Rectangle','Drag a filled rectangle.'),('Fill','Fill','Fill a connected area.'),
+            ('Eyedropper','Pick tile','Pick the tile under the pointer.'),('Paste','Paste','Place a pattern from the Pattern Library.')])],lambda _:guard(self,self.finish))
+        self.drawing_tools.pack(fill='x')
         from editor_ui import flow_toolbar
         flow_toolbar(bar);flow_toolbar(controls)
         ttk.Label(self.window,text='Drag to draw. Right-click a cell to choose, create, clone or edit its tile.\nJigsaws remain 8 × 8 tiles, matching the game’s world format.',padding=8,wraplength=650).pack(side='bottom',fill='x')
@@ -300,7 +315,8 @@ class JigsawEditor:
         self.canvas=tk.Canvas(shell,width=320,height=320,highlightthickness=0,background='#273b45',scrollregion=(0,0,320,320))
         sx=ttk.Scrollbar(shell,orient='horizontal',command=self.canvas.xview);sy=ttk.Scrollbar(shell,command=self.canvas.yview);sx.pack(side='bottom',fill='x');sy.pack(side='right',fill='y');self.canvas.pack(fill='both',expand=True);self.canvas.configure(xscrollcommand=sx.set,yscrollcommand=sy.set)
         self.canvas.bind('<Button-1>',lambda e:guard(self,lambda:self.paint(e,True)));self.canvas.bind('<B1-Motion>',lambda e:guard(self,lambda:self.paint(e,False)));self.canvas.bind('<ButtonRelease-1>',lambda _:guard(self,self.finish))
-        self.canvas.bind('<Button-3>',lambda e:guard(self,lambda:self.context(e)));self.window.bind('<Escape>',lambda _:self.cancel());self.draw()
+        self.canvas.bind('<Button-3>',lambda e:guard(self,lambda:self.context(e)));self.window.bind('<Escape>',lambda _:self.cancel())
+        self.zoom_control.attach(self.canvas);self.draw()
         self.draft=register(self,pending=lambda:self.jigsaw!=self.original or self.name.get()!=self.original['name'],
             apply=self.apply_pending,capture=self.capture_draft,restore=self.restore_draft,accept=self.accept_draft,priority=50)
         self.window.protocol('WM_DELETE_WINDOW',lambda:guard(self,self.close))
@@ -317,17 +333,18 @@ class JigsawEditor:
         self.window.destroy()
     def draw(self):
         self.canvas.delete('all');tiles={t['id']:t for t in self.owner.adventure['tiles']}
+        z=int(self.zoom.get());self.canvas.configure(scrollregion=(0,0,8*z,8*z))
         self.tile.configure(values=list(tiles))
         if self.tile.get() not in tiles:self.tile.current(0)
         for y,row in enumerate(self.jigsaw['rows']):
             for x,value in enumerate(row):
                 tile=tiles.get(value)
                 if tile is None:continue
-                im=self.owner.owner.tile_image(tile['sheet'],tile['graphic'],40)
-                if im:self.canvas.create_image(x*40,y*40,image=im,anchor='nw')
-                self.canvas.create_rectangle(x*40,y*40,(x+1)*40,(y+1)*40,outline='#999999')
+                im=self.owner.owner.tile_image(tile['sheet'],tile['graphic'],z)
+                if im:self.canvas.create_image(x*z,y*z,image=im,anchor='nw')
+                self.canvas.create_rectangle(x*z,y*z,(x+1)*z,(y+1)*z,outline='#999999')
     def paint(self,e,start):
-        p=int(self.canvas.canvasx(e.x)//40),int(self.canvas.canvasy(e.y)//40)
+        z=int(self.zoom.get());p=int(self.canvas.canvasx(e.x)//z),int(self.canvas.canvasy(e.y)//z)
         if not(0<=p[0]<8 and 0<=p[1]<8):return
         tool=self.tool.get()
         if tool=='Eyedropper':self.tile.set(self.jigsaw['rows'][p[1]][p[0]]);return
@@ -352,7 +369,7 @@ class JigsawEditor:
         else:self.tool.set('Paint')
     def choose_tile(self):return self.owner.owner.graphic_picker(choose=self.tile.set,selected=self.tile.get())
     def context(self,e):
-        x,y=int(self.canvas.canvasx(e.x)//40),int(self.canvas.canvasy(e.y)//40)
+        z=int(self.zoom.get());x,y=int(self.canvas.canvasx(e.x)//z),int(self.canvas.canvasy(e.y)//z)
         if not(0<=x<8 and 0<=y<8):return
         from construction_editor import tile_menu
         def assign(value):

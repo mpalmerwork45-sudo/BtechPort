@@ -133,7 +133,10 @@ class EventGraph:
         controls=ttk.Frame(self.window,padding=(8,0,8,5));controls.pack(fill='x')
         self.view_mode=tk.StringVar(value='Nearby events' if hasattr(self.window,'workspace') else 'All events')
         chooser=ttk.Combobox(controls,textvariable=self.view_mode,values=('Nearby events','All events'),width=16,state='readonly');chooser.pack(side='left');chooser.bind('<<ComboboxSelected>>',lambda _:self.draw())
-        self.zoom=tk.StringVar(value='1');zoom=ttk.Combobox(controls,textvariable=self.zoom,values=('0.35','0.5','0.75','1','1.25','1.5'),width=5,state='readonly');zoom.pack(side='left',padx=8);zoom.bind('<<ComboboxSelected>>',lambda _:self.draw())
+        from editor_canvas import CanvasZoom
+        self.zoom=tk.StringVar(value='1')
+        self.zoom_control=CanvasZoom(controls,self.zoom,self.draw,base=1,steps=(.2,.25,.35,.5,.75,1,1.25,1.5,2,3),integer=False)
+        self.zoom_control.pack(side='left',padx=8)
         ttk.Label(controls,text='Drag a named output to a node to connect it.',wraplength=320).pack(side='left')
         from editor_ui import flow_toolbar
         flow_toolbar(bar);flow_toolbar(controls)
@@ -144,6 +147,7 @@ class EventGraph:
         y.pack(side='right',fill='y');x.pack(side='bottom',fill='x');self.canvas.pack(fill='both',expand=True)
         self.canvas.bind('<Button-1>',lambda e:guard(self,lambda:self.press(e)));self.canvas.bind('<B1-Motion>',self.motion);self.canvas.bind('<ButtonRelease-1>',lambda e:guard(self,lambda:self.release(e)))
         self.canvas.bind('<Double-1>',lambda e:guard(self,self.edit));self.properties=None
+        self.zoom_control.attach(self.canvas)
         if hasattr(self.window,'workspace'):
             workspace=self.window.workspace;panel=ttk.Frame(workspace.inspector)
             workspace.custom_inspectors[self.window.key]=panel;self.properties=EventProperties(self,panel)
