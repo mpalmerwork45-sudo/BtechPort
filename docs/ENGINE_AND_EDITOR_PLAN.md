@@ -1,9 +1,10 @@
 # Plan: reusable runtime, custom games and an editor
 
-The current [BattleTech demo follow-up](BATTLETECH_DEMO.md#recommended-next-five-milestones)
-sets out the next five concrete gates after the first editor: real tile previews
-and stamps; repair/reload/salvage commands; objectives and event debugging; asset
-authoring; packaging and explicit save migration.
+The next planned phase is [AI authoring with the Construction Kit](AI_AUTHORING_PLAN.md):
+shared commands, content discovery, mission testing and human review, while
+retaining the full editor. Its eight milestones are proposed, not implemented.
+The earlier [BattleTech demo follow-up](BATTLETECH_DEMO.md#recommended-next-five-milestones)
+records the progression from the first editor to today's authoring tools.
 
 Recorded **2026-10-16**, against implementation commit `c29ea75`.
 

@@ -1,5 +1,20 @@
 # Project status — original fidelity and editable projects, 2026-10-18
 
+**Next phase — PROPOSED:** [AI authoring milestones AI1–AI8](AI_AUTHORING_PLAN.md)
+keep the Construction Kit editor central while adding a shared authoring
+interface, searchable content, visual feedback, automated mission tests,
+reviewable changes, richer mission mechanics and modular campaigns. No AI
+authoring implementation was added by this planning change.
+
+**User's Last Beacon revision — VERIFIED:** `bed75e9` preserves the revised
+maps and editable artwork together with `EDITOR.json` (construction sets,
+footprints, tile names, source provenance and pixel layers). The package has
+three maps, 197 tile definitions, 128 images and 54 event nodes. Shared C
+validation and the full `battletech-demo-contracts` route pass. People, shops,
+encounters, flags and event definitions remain as in the preceding revision.
+The map files were committed as supplied, without regenerating them. See
+[Testing](TESTING.md#last-beacon-user-revision-and-ai-authoring-plan--2026-10-18).
+
 **Authored terrain animation — VERIFIED:** original animated `chi:land` tiles
 now use their existing three-frame cycle on custom maps, including the four
 animated source tiles currently referenced by the user's demo. The editor

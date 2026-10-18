@@ -1,5 +1,33 @@
 # Build, verification and original oracle — 2026-10-18
 
+## Last Beacon user revision and AI authoring plan — 2026-10-18
+
+The user requested committing their revised Last Beacon and recording a plan
+for AI authoring while preserving the editor. Commit `bed75e9` contains exactly
+the supplied `adventure.json`, `graphics.json` and `EDITOR.json`; no generator
+or content repair was applied. It retains construction sets, footprints, pixel
+layers and tile provenance as well as the playable map graphics.
+
+**VERIFIED in this increment:**
+
+- `build/btp-project validate examples/battletech-demo`: valid, 19 unit
+  definitions, 29 weapons, three maps and 54 event nodes. Content fingerprint:
+  `4c251fa7411d3179b45e853f943e06ffa172a4602ff359f2da4bda71259d23cb`.
+- `ctest --test-dir build -R '^battletech-demo-contracts$' --output-on-failure`:
+  **1/1 PASS**, 0.87 s. This exercises the existing complete contract route and
+  its saved progression on the revised maps.
+- All 40 local links in the new plan resolve, and all eight milestones have
+  completion gates. `git diff --check` passes.
+- Reference guard: **1,287/1,287 entries unchanged** against
+  `work/reference-before-map-construction.json` (content, mode and mtime).
+
+The [AI authoring plan](AI_AUTHORING_PLAN.md) records scope, dependencies,
+acceptance tests and compatibility requirements for eight future milestones.
+It does not implement their API, CLI, new mission hooks or review controls.
+Full native/Python/platform/GUI suites were not rerun for the planning document;
+their preceding results remain recorded below. Validation and the route test
+do not establish a new side-by-side visual or platform verification.
+
 ## Authored terrain animation — 2026-10-18
 
 The original terrain renderer explicitly forced frame zero for every authored

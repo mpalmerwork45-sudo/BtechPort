@@ -24,11 +24,13 @@ substantial reverse-engineering research credited in the
 [README](../README.md#acknowledgements) and [research audit](RESEARCH_AUDIT.md).
 Consulting those sources is not a claim of a formal clean-room process.
 
-The repository **does not include original game assets**. Each runner must
-supply the original DOS files. Derived resource caches, extracted text, RAM
-dumps and captures stay in ignored local directories. The GPL-3.0 license for
-this project's authored code and documentation does not license the original
-game or third-party dependencies.
+Each runner must supply the original DOS installation. Derived runtime caches,
+extracted text, RAM dumps and captures stay in ignored local directories.
+The user-authored Last Beacon revision committed in `bed75e9` includes editable
+tiles copied from the supplied CHI atlas; its `EDITOR.json` records those
+sources and subsequent editing metadata. The GPL-3.0 license for this project's
+authored code and documentation does not license that source artwork, the
+original game or third-party dependencies.
 
 The optional [Updated CHI roster](../content/updated/README.md) adapts numerical
 unit records from MegaMek's mm-data contributors. Its sources, CHI adaptations

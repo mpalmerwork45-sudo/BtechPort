@@ -3,6 +3,10 @@
 The editor now keeps maps, units, library designs, artwork and events in one
 tabbed window. The separate SDL game window is used for playtesting.
 
+The proposed [AI authoring milestones](AI_AUTHORING_PLAN.md) add shared tools
+for automated creation, testing and review while retaining this full manual
+workspace. They are a development plan, not currently available AI controls.
+
 ## Start editing
 
 Run `./BtechPort` on Linux or `BtechPort.cmd` on Windows and choose **Open editor**,

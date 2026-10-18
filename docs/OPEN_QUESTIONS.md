@@ -7,6 +7,13 @@ rather than to every branch of the original game.
 The latest results and remaining bounds are in [project status](PROJECT_STATUS.md)
 and the [latest five-area sweep](M4_PORTABILITY_SWEEP.md).
 
+The [AI authoring plan](AI_AUTHORING_PLAN.md) is the next proposed phase, with
+the full human editor retained. The operation contract, schema/loader gaps,
+live-document revision handling, mission primitives and campaign capacity
+extensions remain implementation work. The first recommended milestones are
+AI1 (discovery/contract) and AI2 (transactional authoring commands). Model/provider
+selection is optional and does not block these foundations.
+
 The Unit Library now includes 25 additional classic chassis and corrected
 original animation defaults. These remain CHI adaptations: rear firing arcs,
 shared ammunition bins, split weapon criticals and full construction legality

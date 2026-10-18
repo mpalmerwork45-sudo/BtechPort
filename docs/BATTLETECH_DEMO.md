@@ -1,5 +1,13 @@
 # BattleTech demo and the next editor work
 
+**2026-10-18 user-authored map revision:** `bed75e9` records the improved Last
+Beacon maps, editable tile artwork and construction/pixel-layer metadata.
+The shared validator and full contract-route test pass; see the
+[revision evidence](TESTING.md#last-beacon-user-revision-and-ai-authoring-plan--2026-10-18).
+The package remains the user's editable reference for future development.
+The next proposed authoring work is the [AI1–AI8 plan](AI_AUTHORING_PLAN.md),
+which retains the manual editor and uses separate copies for generation tests.
+
 The vehicle follow-up is **version 1.1.0**. The western Mech exchange now stocks
 all ten catalogue vehicles as well as the nine mechs. Vehicles include the
 requested Patton, Rommel, Pegasus, Skulker, Drillson and Galleon, plus Scorpion,

@@ -91,6 +91,12 @@ Rebuilding prepares the updated local combat cache from your original files.
 The proposed path to more mechs, custom game packages, BLD/Lua scripting and a
 Windows/Linux editor is recorded in the
 [engine and editor plan](docs/ENGINE_AND_EDITOR_PLAN.md).
+
+The next proposed phase is [AI authoring with the Construction Kit](docs/AI_AUTHORING_PLAN.md):
+eight milestones for shared editing commands, content discovery, mission
+testing, human review and richer campaigns. The full manual editor remains
+central, and generated games will run without an AI service.
+
 The [shared authoring format and project loader](docs/M5_AUTHORING_PROJECTS.md)
 now support editable CHI-dependent projects, up to 256 mech definitions, custom
 weapon statistics, explicit portrait assets and separate package-bound saves.
@@ -389,8 +395,11 @@ contribution under GPL-3.0-only to the extent copyright applies; its AI provenan
 and generation prompts are recorded with the assets.
 
 This license does not cover or grant rights to the original game executable,
-artwork, music, text or other game assets. Those are not distributed here and
-must be supplied by the person running the port.
+artwork, music, text or other game assets. The original DOS installation and
+extracted runtime caches must be supplied by the person running the port.
+The user-authored [Last Beacon revision](examples/battletech-demo/README.md)
+includes some editable tiles copied from the CHI atlas; their source provenance
+is recorded in its `EDITOR.json` and remains separate from the code license.
 
 ## Acknowledgements
 

@@ -5,6 +5,11 @@ CHI presentation and Enhanced combat. This is the main BattleTech play demo.
 The separate [asset-free Last Beacon](../beacon-demo/) remains an independent
 engine/editor template.
 
+The 2026-10-18 user-authored revision improves the map artwork and includes
+the editable construction sets, footprints and pixel layers in `EDITOR.json`.
+Shared validation and the full two-contract route pass on these maps. Open
+this package in the Construction Kit to continue working on those designs.
+
 ## Play
 
 From the repository root, with the normal build and original caches prepared:
@@ -31,8 +36,11 @@ For Windows, or another data location, use explicit paths:
 ```
 
 On Windows substitute your built `btech-port.exe`. See the repository
-[README](../../README.md) for building and cache preparation. The project
-contains no original DOS assets; these four dependencies must be supplied.
+[README](../../README.md) for building and cache preparation. The original DOS
+installation and these four runtime dependencies must be supplied. Some
+editable tile artwork was copied from the user's CHI atlas; `EDITOR.json`
+records those source tiles alongside construction and pixel editing data.
+The source artwork retains its separate rights and provenance.
 Validation alone needs none of them:
 
 ```sh
