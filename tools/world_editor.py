@@ -43,7 +43,8 @@ class WorldEditor:
         self.tile_id=tk.StringVar(value=owner.adventure['tiles'][0]['id'])
         ttk.Label(side,text='Tile brush',style='Section.TLabel').pack(anchor='w',pady=6)
         self.tile_choice=ReferenceBox(side,self,self.tile_id,[t['id'] for t in owner.adventure['tiles']],width=22);self.tile_choice.pack(fill='x')
-        ttk.Button(side,text='Browse tiles...',command=lambda:self.owner.graphic_picker(choose=self.tile_id.set,selected=self.tile_id.get())).pack(fill='x',pady=(4,8))
+        self.tile_choice.bind('<<ComboboxSelected>>',lambda _:self.tool.set('Tile'))
+        ttk.Button(side,text='Browse tiles...',command=lambda:self.owner.graphic_picker(choose=self.choose_tile_brush,selected=self.tile_id.get())).pack(fill='x',pady=(4,8))
         ttk.Label(side,text='JIGSAWS',style='Section.TLabel',padding=6).pack(anchor='w')
         shell=ttk.Frame(side);shell.pack(fill='both',expand=True)
         self.listing=ttk.Treeview(shell,show='tree',selectmode='browse',style='Tiles.Treeview');self.listing.column('#0',width=200)
@@ -74,6 +75,12 @@ class WorldEditor:
         from editor_ui import flow_toolbar
         flow_toolbar(bar);flow_toolbar(controls)
     def guard(self, fn):return guard(self,fn)
+    def choose_tile_brush(self,identity):self.tile_id.set(identity);self.tool.set('Tile')
+    def city_at(self,point):
+        world=self.current_world()
+        return next((city for city in self.adventure['maps'] if city['id'] in world['cities']
+                     and city['origin'][0]<=point[0]<city['origin'][0]+len(city['rows'][0])
+                     and city['origin'][1]<=point[1]<city['origin'][1]+len(city['rows'])),None)
     def patterns(self):
         view=self.owner.patterns();view.target=self;view.info.set('World patterns: select up to 64 × 64 tiles, then Save selection. Paste adds terrain patches.');return view
     def copy_selection(self):
@@ -235,7 +242,7 @@ class WorldEditor:
         if not all_worlds(self.adventure):raise EditorError('Create a world first.')
         z=int(self.zoom.get());p=(int(self.canvas.canvasx(e.x)//z),int(self.canvas.canvasy(e.y)//z));w,h=world_size(self.adventure,self.world_id)
         if not(0<=p[0]<w and 0<=p[1]<h):return
-        if start:self.canvas.focus_set()
+        if start:self.canvas.focus_set();self.city_skipped=False
         if self.tool.get()=='Select':
             if start:self.select_start=p
             if self.select_start:
@@ -247,11 +254,11 @@ class WorldEditor:
                 a=copy.deepcopy(self.document.adventure);world_paste(a,self.world_id,*p,self.clipboard);self.owner.commit(a)
             return
         if start:
-            if self.tool.get() not in ('Move city','Play here') and not (getattr(e,'state',0)&4):
+            if self.tool.get() not in ('Move city','Play here'):
                 for city in self.document.adventure['maps']:
                     ox,oy=city['origin']
                     if city['id'] in self.current_world()['cities'] and ox<=p[0]<ox+len(city['rows'][0]) and oy<=p[1]<oy+len(city['rows']):
-                        self.city=city['id'];self.draw();return
+                        self.city=city['id'];self.draw();self.info.set(city['name']+': double-click to edit its visible tiles in the local map. World brushes paint outside cities.');return
             self.stroke=copy.deepcopy(self.document.adventure);self.last=p
             if self.tool.get()=='Move city':
                 self.drag=None
@@ -261,6 +268,7 @@ class WorldEditor:
             elif self.tool.get()=='Play here':
                 self.cancel();self.owner.save();self.owner.parent.launch_player((f"world:{'planet-'+str(all_worlds(self.adventure).index(self.current_world())+1)+'-' if 'worlds' in self.adventure else ''}sector-{p[0]//64}-{p[1]//64}",(p[0]%64)*2,(p[1]%64)*2));return
         if self.stroke is None:return
+        skipped_city=False
         if self.tool.get()=='Move city':
             if self.drag:
                 m=next(m for m in self.stroke['maps'] if m['id']==self.city);m['origin']=[max(0,min(w-len(m['rows'][0]),p[0]-self.drag[0])),max(0,min(h-len(m['rows']),p[1]-self.drag[1]))]
@@ -274,10 +282,15 @@ class WorldEditor:
             if tile is None:raise EditorError('Choose a tile in this world view first.')
             value=token(tile)
             for x,y in line(*self.last,*p):
+                # A city supplies the visible terrain here. Do not silently
+                # hide a water/tile stroke underneath it when dragging in
+                # from outside; the city map has its own visible-tile brush.
+                if self.city_at((x,y)):skipped_city=True;continue
                 if self.tool.get()=='Erase patch':cells.pop((x,y),None)
                 else:cells[x,y]=value
             set_patch(self.current_world(self.stroke),cells)
         self.last=p;self.draw()
+        if skipped_city:self.city_skipped=True;self.info.set('City tiles were left unchanged. Double-click the city to paint its local map.')
     def finish(self):
         if self.stroke is None:return
         a=self.stroke
@@ -285,6 +298,7 @@ class WorldEditor:
             if self.drag:assign_city(a,self.city,world_id=self.world_id)
         finally:self.stroke=None;self.drag=None
         self.owner.commit(a)
+        if getattr(self,'city_skipped',False):self.info.set('City tiles were left unchanged. Double-click the city to paint its local map.')
     def cancel(self):self.stroke=None;self.drag=None;self.draw()
 
 

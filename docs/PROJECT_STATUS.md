@@ -1,5 +1,20 @@
 # Project status — original fidelity and editable projects, 2026-10-18
 
+**Visible tile painting — VERIFIED:** the default **Paint on: Visible tiles**
+replaces displayed ground/building tiles. The previous Base default hid strokes
+under generated buildings, including a water tile found in the user's saved
+map. Paint/Line/Rectangle/Fill/Paste/Cut and roads share the visible-surface
+target; explicit Base/Overlay editing remains available. Markers only drag in
+**Move markers** mode. Palette clicks select Paint when leaving a construction
+or marker tool. Hand-painted construction details persist through Undo,
+save/reopen and footprint reshaping while their projected cells remain.
+
+The old **preview** marker was the last clicked Play here position. It is now
+**Playtest start**, displayed only for that tool; the game's START is separate.
+World tile selection activates Tile and strokes skip city overlays with a
+local-map explanation. **164/164 Python tests** and the new mouse-driven
+painting journey pass; detailed results are in [Testing](TESTING.md#visible-tile-painting--2026-10-18).
+
 **Canvas controls:** Ctrl + mouse wheel zooms around the pointer on maps, worlds,
 event graphs, jigsaws, tile/sprite canvases and construction footprints/previews.
 Editable percentage dropdowns share safe input handling; construction preview

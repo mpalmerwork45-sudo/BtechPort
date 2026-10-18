@@ -5,8 +5,8 @@ ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT/'tools'))
 from editor_model import create_project,ProjectDocument,EditorError
 from construction_editing import new_profile,prepare_road,draw_road
 from tile_editing import metadata
-from map_construction import new_object,paint_footprint,projection,commit,objects,overlay_index
-from adventure_editing import composite
+from map_construction import new_object,paint_footprint,projection,commit,objects,overlay_index,commit_tiles
+from adventure_editing import composite,paint
 
 
 class DrawnConstructionTests(unittest.TestCase):
@@ -80,6 +80,23 @@ class DrawnConstructionTests(unittest.TestCase):
         paint_footprint(record,(0,0),(31,23),'Rectangle',1,erase=True);self.assertIsNone(commit(self.doc,0,record))
         self.assertEqual(self.doc.adventure['maps'][0]['overlays'],untouched)
         self.assertFalse(objects(self.doc,a['maps'][0]['id']));self.doc.undo();self.assertTrue(self.record(identity))
+
+    def test_painted_water_details_survive_reshape_save_and_atomic_undo(self):
+        record=new_object(self.doc,0,self.style,1);paint_footprint(record,(4,4),(10,10),'Rectangle',1)
+        identity=commit(self.doc,0,record);before=self.doc.files();history=len(self.doc.undo_stack)
+        water=next(t['id'] for t in self.doc.adventure['tiles'] if t['terrain']=='water')
+        a=copy.deepcopy(self.doc.adventure);paint(a['maps'][0],-1,6,6,water);commit_tiles(self.doc,a)
+        self.assertEqual(composite(self.doc.adventure['maps'][0])[6][6],water)
+        self.assertEqual(self.record(identity)['details'],[[6,6,water]])
+        self.assertEqual(len(self.doc.undo_stack),history+1);after=self.doc.files()
+        self.doc.undo();self.assertEqual(self.doc.files(),before);self.doc.redo();self.assertEqual(self.doc.files(),after)
+        record=copy.deepcopy(self.record(identity));paint_footprint(record,(2,4),(3,6),'Rectangle',1);commit(self.doc,0,record)
+        self.assertEqual(composite(self.doc.adventure['maps'][0])[6][6],water)
+        self.doc.save();loaded=ProjectDocument(self.doc.root,self.doc.validator)
+        self.assertEqual(metadata(loaded),metadata(self.doc))
+        record=copy.deepcopy(self.record(identity));paint_footprint(record,(4,4),(9,9),'Rectangle',1,erase=True);commit(self.doc,0,record)
+        self.assertNotEqual(composite(self.doc.adventure['maps'][0])[6][6],water)
+        self.assertFalse(self.record(identity)['details']);self.doc.validate()
 
     def test_walls_and_roads_connect_and_erase_recomputes_junctions(self):
         ident=new_profile(self.doc,'Wall');wall=next(p for p in metadata(self.doc)['construction_sets'] if p['id']==ident)

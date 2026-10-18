@@ -67,6 +67,17 @@ It remembers the last collection/filter, selection and scroll position for this
 project, including after restarting the editor. Project tiles, All tiles and
 individual sheets retain separate browsing positions. These preferences do not
 dirty the game or add Undo entries.
+
+**Paint on: Visible tiles** is the default. Paint, Line, Rectangle, Fill, roads
+and Paste replace the tile you see, whether it belongs to the ground or a
+building overlay. Choose **Base** explicitly to paint underneath overlays, or
+choose an individual overlay for layer-specific work. Clicking outside that
+overlay explains how to return to Visible tiles. **Erase overlay** reveals the
+next layer at that cell; it leaves base ground intact.
+
+Clicking a tile in the sidebar returns from building/marker modes to **Paint**.
+If Line, Rectangle or Fill is active, choosing a different tile keeps that tool.
+Painting is independent of marker labels: use **Move markers** to drag them.
 Choosing a graphic absent from the project palette adds it automatically;
 existing definitions are reused. The same chooser serves building, wall and
 road preview parts. It also adds/removes tiles and provides **More > Clone ALL
@@ -81,7 +92,9 @@ jigsaw editors also expose their tools as buttons. **Map actions** contains map/
 stamps, collision and starting-formation overlays, graphics reload and setup.
 Right-click the map to sample its tile. Select a rectangle and use Ctrl+C/Ctrl+X/
 Ctrl+V on the canvas to copy, cut and paste. Copy captures visible terrain;
-Cut clears the selected layer. A stroke or marker drag is one Undo operation;
+Cut uses the Paint on target: Visible tiles replaces the visible surface with
+the first clear terrain tile; Base clears ground; an explicit overlay clears
+to transparency. A stroke or marker drag is one Undo operation;
 Escape cancels the unfinished gesture.
 
 Selecting **Building**, **Wall** or **Road** reveals the **Construct** settings
@@ -112,6 +125,12 @@ They remain editable after closing tabs or restarting. The designer's **Draw
 on map** selects its tile style; its demonstration shape stays in the designer.
 **Save pattern** and the Pattern Library retain ordinary fixed-shape stamping.
 Editing a shared tile's pixels affects every use of that tile.
+Generated buildings already consist of ordinary map tiles. You can paint roof
+or wall details directly with **Paint on: Visible tiles**. These overrides are
+saved with the footprint and survive reshaping where the affected cells still
+belong to its projected shape; erasing that part removes its details too.
+Tile changes and this bookkeeping share one Undo step. External rearrangement
+or replacement of a generated layer still triggers the stale-layer safeguard.
 
 **Construction tools** in the explorer, or **Project**, also opens the Building,
 Wall and Road designers and the **Pattern Library**. Paint a footprint with
@@ -120,14 +139,21 @@ The Pattern Library stores reusable terrain blocks with the project and imports/
 exports `.pattern.json` files. The [construction guide](M5_WORLD_ART_EDITOR.md#buildings-walls-and-roads)
 explains part sets, storeys, collision, block placement and jigsaw editing.
 
-Use the **Markers** sidebar or click a marker on the canvas to select it. Drag
-to move it, double-click to edit it, or use the Inspector to open an entrance's
+Use the **Markers** sidebar or choose **Move markers** and click a marker on the
+canvas to select it. Drag to move it, double-click to edit it, or use the Inspector to open an entrance's
 event and transfer destination. Marker coordinates snap to the game's half-tile
 positions; painting uses whole tiles. The **People, shops and start** page edits
 people, stock and the starting party.
 
+The former purple **preview** marker meant the last clicked position used by
+**Play here**, not the party's saved starting position or an object in the game.
+It is now labelled **Playtest start** and is shown only with the Play here tool.
+The **Start** tool and START marker control the actual new-game start.
+
 Open a planet under **Worlds / planets** to paint its jigsaw sectors and position
-city overlays. A city opens its local map directly. The world view has its own
+city overlays. Choosing a world tile selects the **Tile** brush. Tile strokes
+skip city overlays and explain that their visible tiles belong to the local
+map; double-click the city to edit it. The world view has its own
 brush; jigsaw editing opens another tab with drawing tools and a cell context
 menu for choosing/creating/cloning/editing tiles. New worlds default to
 **1024 × 1024 tiles**, the original CHI dimensions. The creation form can place

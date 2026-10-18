@@ -28,7 +28,20 @@ def composite(scene):
     return rows
 
 
+def visible_layer(scene,x,y):
+    """Return the layer supplying the displayed tile, including transparent holes."""
+    for index in range(len(scene['overlays'])-1,-1,-1):
+        overlay=scene['overlays'][index];ox,oy=overlay['at'];rows=overlay['rows']
+        if 0<=y-oy<len(rows) and 0<=x-ox<len(rows[0]) and rows[y-oy][x-ox]!=' ':return index+1
+    return 0
+
+
 def paint(scene, layer, x, y, key):
+    # -1 is the editor's visible-surface target. Keep explicit Base/Overlay
+    # targeting for authors working underneath a building or on a new layer.
+    if layer==-1:
+        layer=visible_layer(scene,x,y)
+        if key==' ' and layer==0:return
     target = scene if layer == 0 else scene["overlays"][layer-1]
     ox, oy = (0, 0) if layer == 0 else target["at"]
     x, y = x-ox, y-oy

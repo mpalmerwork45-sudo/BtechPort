@@ -17,7 +17,7 @@ def check_rows(document,rows):
 
 def capture(document,index,rect,layer=None):
     scene=document.adventure['maps'][index];x0,y0,x1,y1=rect
-    if layer is None:grid=composite(scene);ox=oy=0
+    if layer is None or layer==-1:grid=composite(scene);ox=oy=0
     else:
         source=scene if layer==0 else scene['overlays'][layer-1];grid=source['rows'];ox,oy=(0,0) if layer==0 else source['at']
     if min(x0-ox,y0-oy)<0 or x1<x0 or y1<y0 or x1-ox>=len(grid[0]) or y1-oy>=len(grid):raise EditorError('The whole selection must fit inside the selected map layer.')
@@ -27,15 +27,16 @@ def capture(document,index,rect,layer=None):
 
 def cut(document,index,rect,layer=0):
     rows=capture(document,index,rect,layer);a=copy.deepcopy(document.adventure)
-    ground=next((t for t in a['tiles'] if t['terrain']=='clear'),a['tiles'][0]);value=token(ground) if layer==0 else ' '
+    ground=next((t for t in a['tiles'] if t['terrain']=='clear'),a['tiles'][0]);value=token(ground) if layer<=0 else ' '
     for y in range(rect[1],rect[3]+1):
         for x in range(rect[0],rect[2]+1):paint(a['maps'][index],layer,x,y,value)
-    with document.command('Cut map tiles'):document.replace_adventure(a)
+    from map_construction import commit_tiles
+    commit_tiles(document,a,'Cut map tiles')
     return rows
 
 
 def paste(adventure,index,layer,x,y,rows):
-    scene=adventure['maps'][index];target=scene if layer==0 else scene['overlays'][layer-1];ox,oy=(0,0) if layer==0 else target['at']
+    scene=adventure['maps'][index];target=scene if layer<=0 else scene['overlays'][layer-1];ox,oy=(0,0) if layer<=0 else target['at']
     if x<ox or y<oy or x+len(rows[0])>ox+len(target['rows'][0]) or y+len(rows)>oy+len(target['rows']):
         raise EditorError('The complete pattern must fit in the selected layer. Move it inward or choose a larger layer.')
     ids={t['id']:token(t) for t in adventure['tiles']}

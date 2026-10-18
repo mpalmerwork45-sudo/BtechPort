@@ -21,6 +21,10 @@ Canvas zoom is verified with Linux Tk wheel/button events, editable percentages
 and drawing coordinates. Native Windows/macOS wheel handling and physical
 high-resolution devices still need desktop checks; synthetic Windows-style
 events on Linux do not establish those results.
+Map painting now defaults to the visible surface; building detail overrides
+survive rebuilding where the projected shape remains. External layer moves or
+untracked replacements still require resolving the stale-layer warning. The
+world view edits terrain outside city overlays; city tiles are edited locally.
 Save migration preserves existing rule/topology/ordinal structure and rejects
 arbitrary remaps. Sprite anchors, imported audio, full construction tonnage and
 vehicle turret/arcs/critical rules remain future extensions. Scripted salvage

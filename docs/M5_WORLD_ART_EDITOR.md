@@ -42,6 +42,10 @@ the same controls. Canvas edges limit scrolling. Zoom does not change game data.
   opens its artwork; **Clone** creates an independently editable copy. Original
   indexed artwork is copied into the package before editing and its logical
   tile definition is updated, preserving all map placements.
+  **Paint on: Visible tiles** edits the visible surface by default, including
+  building overlays. **Base** and individual overlays remain explicit targets.
+  Palette clicks return from construction/marker tools to Paint; Move markers
+  is required for dragging labels, so they cannot intercept painting.
 - **World / jigsaws → Create world** creates explicitly placed 8×8-tile pieces.
   New/clone/paint jigsaws, stamp them over the world, or paint individual tile
   patches. **Place city** overlays a local map at tile coordinates; **Move city**
@@ -106,9 +110,12 @@ indicate an invalid edge. Invalid drawing cannot silently clip the building.
 
 **Save / Ctrl+S** persists styles, map footprints/heights, art and compiled terrain
 together. The editor stores footprint records in `EDITOR.json`; the game uses
-ordinary overlay tiles, with no new runtime dependency. A manually repainted or
-rearranged generated layer is protected from silent replacement: undo those
-layer edits before rebuilding its footprint. Tile pixel edits remain shared.
+ordinary overlay tiles, with no new runtime dependency. Hand-painted tile
+details made through the drawing/cut/paste tools are retained with the footprint
+in the same Undo step. Rebuilding keeps those details where the cells still
+belong to the projected shape; removing a section removes its details too.
+Untracked external changes or layer rearrangements still trigger the stale-layer
+guard instead of silently replacing them. Tile pixel edits remain shared.
 
 To configure the style's demonstration shape and component tiles in its designer:
 
@@ -167,8 +174,10 @@ separately from the artwork.
 ## Pattern Library and terrain blocks
 
 Use **Select** and drag a local-map rectangle, then **Ctrl+C** to copy visible
-terrain, **Ctrl+X** to cut the selected layer, or **Ctrl+V** and click to paste.
-Cut fills a base-layer selection with the first clear tile and clears an overlay
+terrain, **Ctrl+X** to cut the Paint on target, or **Ctrl+V** and click to paste.
+The default Visible tiles target changes the displayed surface across layers;
+Fill also follows the visible connected region. Cut fills a visible/base-layer
+selection with the first clear tile and clears an explicitly selected overlay
 to transparent cells. Paste uses stable tile IDs, preserving the clipboard when
 the palette upgrades beyond character keys. Empty pattern cells leave the
 destination alone. The complete block must fit in its destination layer.

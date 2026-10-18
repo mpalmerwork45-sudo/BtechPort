@@ -171,10 +171,13 @@ class MapConstructionTools:
         except EditorError:at,roles,valid=(0,0),[],False
         if self.stroke and record['cells']:
             style=self.profile();tiles={t['id']:t for t in self.maps.adventure['tiles']}
+            details={(x,y):tile for x,y,tile in record.get('details',[])}
             for y,row in enumerate(roles):
                 for x,role in enumerate(row):
                     if role==' ':continue
-                    value=tiles.get(style['parts'].get(role));im=self.maps.tile_image(value['sheet'],value['graphic'],size) if value else None
+                    identity=details.get((at[0]+x,at[1]+y),style['parts'].get(role))
+                    if identity==' ':continue
+                    value=tiles.get(identity);im=self.maps.tile_image(value['sheet'],value['graphic'],size) if value else None
                     if im is None:
                         key=(role,record['kind'],size)
                         if key not in self.preview_images:

@@ -67,6 +67,33 @@ def in_bounds(scene,record,at,roles):
     return (all(0<=x<w and 0<=y<h for x,y,_ in record['cells']) and
             min(at)>=0 and at[0]+len(roles[0])<=w and at[1]+len(roles)<=h)
 
+
+def commit_tiles(document,adventure,label='Paint map tiles'):
+    """Keep hand-painted construction details and their tiles in one Undo step.
+
+    Only reconcile ordinary tile edits with unchanged layer bounds/order.
+    External layer moves/deletions still use overlay_index's stale-data guard.
+    Details use map coordinates, so extending a footprint does not shift them.
+    """
+    data=metadata(document);changed=False
+    old_maps={s['id']:s for s in document.adventure['maps']};new_maps={s['id']:s for s in adventure['maps']}
+    for record in data.get('map_constructions',[]):
+        before=old_maps.get(record['map']);after=new_maps.get(record['map'])
+        if before is None or after is None:continue
+        try:index=overlay_index(before,record)
+        except EditorError:continue
+        if index>=len(after['overlays']):continue
+        old=before['overlays'][index];new=after['overlays'][index]
+        if old==new or old['at']!=new['at'] or [len(r) for r in old['rows']]!=[len(r) for r in new['rows']]:continue
+        details={(x,y):tile for x,y,tile in record.get('details',[])};ox,oy=new['at']
+        for y,row in enumerate(new['rows']):
+            for x,tile in enumerate(row):
+                if tile!=old['rows'][y][x]:details[x+ox,y+oy]=tile
+        record.update(overlay=index,rendered=copy.deepcopy(new),details=[[x,y,t] for (x,y),t in sorted(details.items())]);changed=True
+    meta=dict(document.metadata)
+    if changed:meta['EDITOR.json']=encoded(data)
+    with document.command(label):document.replace_all(document.content,adventure,document.art,document.manifest,meta)
+
 def commit(document,scene_index,record):
     a=copy.deepcopy(document.adventure);art=copy.deepcopy(document.art);data=metadata(document)
     scene=a['maps'][scene_index];saved=data.setdefault('map_constructions',[])
@@ -86,9 +113,17 @@ def commit(document,scene_index,record):
     if not style:raise EditorError('Choose an existing construction style.')
     upgrade(a);supply_parts(a,art,data,document.manifest['package_id'],style,roles)
     layer=dict(at=list(at),rows=[[style['parts'][r] if r!=' ' else ' ' for r in row] for row in roles])
+    # Retain custom roof/face tiles while those cells still belong to the
+    # rebuilt shape. Erasing that section also removes its painted detail.
+    details=[]
+    for x,y,tile in record.get('details',[]):
+        xx,yy=x-at[0],y-at[1]
+        if 0<=yy<len(roles) and 0<=xx<len(roles[0]) and roles[yy][xx]!=' ':
+            layer['rows'][yy][xx]=tile;details.append([x,y,tile])
     if old:scene['overlays'][index]=layer
     else:scene['overlays'].append(layer)
     value=copy.deepcopy(record);value.update(overlay=index,rendered=copy.deepcopy(layer))
+    if 'details' in value:value['details']=details
     if old:saved[saved.index(old)]=value
     else:saved.append(value)
     meta=dict(document.metadata);meta['EDITOR.json']=encoded(data)

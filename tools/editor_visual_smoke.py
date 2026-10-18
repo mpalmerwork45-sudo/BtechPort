@@ -185,7 +185,7 @@ def run(env, work):
                     return point
 
                 def drag(ref, delta, label=False, release=True):
-                    ed.tool.set("Paint")  # Markers take priority over painting.
+                    ed.tool.set("Move markers")  # Painting never drags marker labels.
                     x, y = marker_point(ref, label)
                     pointer("<ButtonPress-1>", x, y)
                     assert ed.drag is not None and ed.selected_marker == ref, (ref, ed.selected_marker)

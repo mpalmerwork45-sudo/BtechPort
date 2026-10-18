@@ -1,5 +1,35 @@
 # Build, verification and original oracle — 2026-10-18
 
+## Visible tile painting — 2026-10-18
+
+**VERIFIED:** a read-only inspection of the user's demo found a base water tile
+hidden by an overlay. Generated buildings used ordinary overlay tiles while
+the default brush targeted Base; marker label hit testing also took priority
+over Paint. The updated default edits the contributing visible layer per cell,
+and marker dragging requires Move markers.
+
+- `python3 -m unittest discover -s tests -p 'test_*.py'`: **164/164 PASS**,
+  16.185 s (`work/editor-paint-python-tests.log`). Six added regressions cover
+  both row formats, stacked/transparent layers, visible flood boundaries,
+  erase, explicit underpainting, rectangle/paste and painted construction
+  details through rebuilding, atomic Undo and save/reopen.
+- `python3 tools/native_smoke.py --editor-paint-only`: **PASS**. Real palette
+  clicks leave construction mode; water paints roofs and ground; drafts remain
+  uncommitted until release; Fill, explicit layers, outside-overlay guidance,
+  footprint extension, Cut/Paste, marker-label painting, Move markers,
+  Playtest start visibility and world/city brush boundaries all pass.
+  The result validates with the C loader and reopens with matching metadata.
+- Existing `--editor-visual-only`, `--map-construction-only`,
+  `--world-art-editor-only` and `--editor-canvas-only`: **PASS**,
+  including marker drags using the dedicated tool, CHI graphics, construction
+  patterns, saved footprints, recovery and matching SDL/headless frames.
+
+Evidence: `work/editor-painted-building.png` and the existing construction
+captures. Reference guard verifies **1,287/1,287 entries unchanged** using
+`python3 tools/reference_guard.py verify --manifest work/reference-before-map-construction.json`.
+User demo files are not modified by these checks. No C engine change
+or rebuild is needed; the player already composes these tiles and collisions.
+
 ## Canvas zoom and visible tools — 2026-10-18
 
 **VERIFIED:** `python3 tools/native_smoke.py --editor-canvas-only` exercises real

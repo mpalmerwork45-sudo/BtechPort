@@ -81,6 +81,14 @@ def flood(rows, x, y, value):
 
 
 def fill(scene, layer, x, y, value):
+    if layer==-1:
+        # Find the connected area in what the user sees, then change each
+        # contributing layer. Filling the base alone leaks under buildings.
+        before=composite(scene);rows=copy.deepcopy(before);flood(rows,x,y,value)
+        for yy,row in enumerate(rows):
+            for xx,tile in enumerate(row):
+                if tile!=before[yy][xx]:paint(scene,-1,xx,yy,tile)
+        return
     target = scene if layer == 0 else scene["overlays"][layer-1]
     ox, oy = (0, 0) if layer == 0 else target["at"]
     if value == " " and layer == 0: raise EditorError("Transparent erase applies to overlays.")

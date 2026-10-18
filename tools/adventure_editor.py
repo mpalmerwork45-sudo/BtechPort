@@ -222,8 +222,9 @@ class AdventureEditor:
         self.scene_index = min(self.scene_index, len(self.adventure["maps"])-1)
         scenes = [m["name"] for m in self.adventure["maps"]]
         self.map_choice.configure(values=scenes);self.map_choice.current(self.scene_index)
-        self.layer_choice.configure(values=["Base"] + [f"Overlay {i+1} at {v['at']}" for i,v in enumerate(self.scene()["overlays"])])
-        if self.layer_choice.current() < 0 or self.layer_choice.current() > len(self.scene()["overlays"]): self.layer_choice.current(0)
+        selected_layer=self.layer_choice.current()
+        self.layer_choice.configure(values=["Visible tiles","Base"] + [f"Overlay {i+1} at {v['at']}" for i,v in enumerate(self.scene()["overlays"])])
+        self.layer_choice.current(selected_layer if 0<=selected_layer<len(self.scene()['overlays'])+2 else 0)
         brush = self.brush.curselection()
         self.brush.delete(*self.brush.get_children())
         for i,tile in enumerate(self.adventure["tiles"]):
@@ -256,9 +257,11 @@ class AdventureEditor:
         menu.add_separator();menu.add_command(label='Reload graphics',command=self.reload_graphics);menu.add_command(label='Player setup',command=self.parent.setup)
         ttk.Button(top,text='Pattern Library',command=lambda:self.guard(self.patterns)).pack(side='left',padx=3)
         controls=ttk.Frame(self.map_tab,padding=6);controls.pack(fill="x")
-        ttk.Label(controls,text="Layer").pack(side="left",padx=(4,8))
-        self.layer_choice=ttk.Combobox(controls,state="readonly",width=12,values=["Base"]);self.layer_choice.current(0);self.layer_choice.pack(side="left")
-        self.layer_choice.bind("<<ComboboxSelected>>",lambda _:self.draw())
+        ttk.Label(controls,text="Paint on").pack(side="left",padx=(4,8))
+        self.layer_choice=ttk.Combobox(controls,state="readonly",width=16,values=["Visible tiles","Base"]);self.layer_choice.current(0);self.layer_choice.pack(side="left")
+        self.layer_choice.bind("<<ComboboxSelected>>",lambda _:self.guard(self.change_paint_layer))
+        from editor_ui import tooltip
+        tooltip(self.layer_choice,'Visible tiles paints the surface you see, including buildings. Base paints underneath overlays. Choose an overlay to edit that layer explicitly.')
         self.tool=tk.StringVar(value="Paint")
         ttk.Label(controls,text='Active tool:').pack(side='left',padx=(12,4))
         ttk.Label(controls,textvariable=self.tool,style='Section.TLabel').pack(side='left',padx=(0,8))
@@ -309,6 +312,9 @@ class AdventureEditor:
         brush_scroll=ttk.Scrollbar(palette,command=self.brush.yview);self.brush.configure(yscrollcommand=brush_scroll.set)
         brush_scroll.pack(side="right",fill="y");self.brush.pack(side="left",fill="both",expand=True)
         self.brush.bind("<<TreeviewSelect>>",lambda _:self.select_brush())
+        self.brush.bind('<ButtonRelease-1>',lambda e:self.guard(lambda:self.select_brush(user=True)) if self.brush.identify_row(e.y) else None)
+        for sequence in ('<KeyRelease-Up>','<KeyRelease-Down>','<Return>','<space>'):
+            self.brush.bind(sequence,lambda _:self.guard(lambda:self.select_brush(user=True)))
         self.brush_info=tk.StringVar();brush_info=ttk.Label(side,textvariable=self.brush_info,style="Muted.TLabel",wraplength=235,padding=(0,5))
         if not hasattr(self.window,'workspace'):brush_info.grid(row=2,column=0,sticky="ew")
         else:
@@ -325,7 +331,7 @@ class AdventureEditor:
         self.brush.bind('<Double-1>',lambda _:self.guard(self.edit_tile_pixels))
         side=marker_side;side.columnconfigure(0,weight=1);side.rowconfigure(7,weight=1)
         ttk.Label(side,text="MARKERS",style="Section.TLabel",padding=(0,5)).grid(row=5,column=0,sticky="w")
-        ttk.Label(side,text="Drag on map | double-click to edit",style="Muted.TLabel").grid(row=6,column=0,sticky="w",pady=(0,5))
+        ttk.Label(side,text="Use Move markers to drag on map",style="Muted.TLabel").grid(row=6,column=0,sticky="w",pady=(0,5))
         marker_box=ttk.Frame(side);marker_box.grid(row=7,column=0,sticky="nsew")
         self.markers=tk.Listbox(marker_box,exportselection=False,height=3,relief="flat",borderwidth=0,highlightthickness=1,highlightbackground="#cfd8df",selectbackground="#dcebed",selectforeground="#163d44",font="TkDefaultFont")
         marker_scroll=ttk.Scrollbar(marker_box,command=self.markers.yview);self.markers.configure(yscrollcommand=marker_scroll.set)
@@ -341,7 +347,7 @@ class AdventureEditor:
         self.canvas.bind("<Button-1>",lambda e:self.guard(lambda:self.pointer(e,True)))
         self.canvas.bind("<B1-Motion>",lambda e:self.guard(lambda:self.pointer(e,False)))
         self.canvas.bind("<ButtonRelease-1>",lambda _:self.guard(self.finish_stroke))
-        self.canvas.bind("<Double-Button-1>",lambda e:self.guard(lambda:self.double_marker(e)))
+        self.canvas.bind("<Double-Button-1>",lambda e:self.guard(lambda:self.double_marker(e)) if self.tool.get()=='Move markers' else self.guard(lambda:self.pointer(e,True)))
         self.canvas.bind("<Button-3>",lambda e:self.guard(lambda:self.pointer(e,True,erase=True) if self.tool.get() in ('Building','Wall','Road') else self.sample_tile(e)))
         self.canvas.bind('<B3-Motion>',lambda e:self.guard(lambda:self.pointer(e,False,erase=True)) if self.tool.get() in ('Building','Wall','Road') else None)
         self.canvas.bind('<ButtonRelease-3>',lambda _:self.guard(self.finish_stroke) if self.tool.get() in ('Building','Wall','Road') else None)
@@ -360,11 +366,18 @@ class AdventureEditor:
         self.drawing_tools.bind('<Destroy>',lambda e:self.tool.trace_remove('write',trace) if e.widget is self.drawing_tools else None,add='+')
 
     def choose_drawing_tool(self):
-        self.finish_stroke();self.construction_tools.choose_tool();self.canvas.focus_set()
+        self.finish_stroke();self.construction_tools.choose_tool();self.canvas.focus_set();self.draw()
 
     def show_tool_options(self):
         if self.tool.get() in self.construction_tools.kinds:self.tool_options.pack(fill='x',before=self.map_body)
         else:self.tool_options.pack_forget()
+        if self.tool.get()!='Play here':self.canvas.delete('playtest-cursor')
+
+    def paint_layer(self):return max(-1,self.layer_choice.current()-1)
+
+    def change_paint_layer(self):
+        self.finish_stroke();self.draw()
+        self.status.set('Paint on '+self.layer_choice.get()+('. Edits replace the displayed tile.' if self.paint_layer()==-1 else '. Higher overlays can cover edits to this layer.'))
 
     def hover_move(self,event):
         size=int(self.zoom.get());point=(int(self.canvas.canvasx(event.x)//size),int(self.canvas.canvasy(event.y)//size))
@@ -438,14 +451,18 @@ class AdventureEditor:
             self.images[cache]=im
         return self.images[cache]
 
-    def select_brush(self):
+    def select_brush(self,user=False):
         selected=self.brush.curselection()
         if not selected:return
         index=selected[0]
         if index<len(self.adventure["tiles"]):
             tile=self.adventure["tiles"][index]
             self.brush_info.set(f"{tile['terrain'].title()} | graphic {tile['graphic']} | {tile['sheet']}")
-        else:self.brush_info.set("Transparent erase applies to the selected overlay.")
+        else:self.brush_info.set("Erase the visible overlay tile, or the explicitly selected overlay. Base ground remains.")
+        # Only an actual palette interaction changes tools. Refreshing the
+        # thumbnail selection during a building stroke must not disarm it.
+        if user and self.tool.get() not in ('Paint','Line','Rectangle','Fill'):
+            self.finish_stroke();self.tool.set('Paint');self.draw()
 
     def change_map(self):
         index=self.map_choice.current();self.finish_stroke();self.scene_index=index;self.selected_marker=None;self.selection_rect=None;self.layer_choice.current(0);self.refresh()
@@ -467,8 +484,8 @@ class AdventureEditor:
         if self.selection_rect:
             x0,y0,x1,y1=self.selection_rect
             self.canvas.create_rectangle(x0*size,y0*size,(x1+1)*size,(y1+1)*size,outline="#8ee4e8",width=3)
-        if self.layer_choice.current()>0:
-            layer=scene["overlays"][self.layer_choice.current()-1];ox,oy=layer["at"]
+        if self.paint_layer()>0:
+            layer=scene["overlays"][self.paint_layer()-1];ox,oy=layer["at"]
             self.canvas.create_rectangle(ox*size,oy*size,(ox+len(layer["rows"][0]))*size,(oy+len(layer["rows"]))*size,outline="#edcc75",width=3)
         self.canvas_marker_refs={}
         def marker(at,label,color,tag=None,selected=False):
@@ -494,7 +511,9 @@ class AdventureEditor:
                 label=next((e.get("name",e["id"].split(":")[-1]) for e in catalog if e["id"]==unit["definition"]),unit["definition"].split(":")[-1])
             label=label[:23]+"..." if len(label)>24 else label
             marker(value["at"],label,colors[kind],tag,value["ref"]==self.selected_marker)
-        marker(self.cursor,"preview","#bf91d5")
+        # This is an editor playtest origin, not a game object. Keep it out of
+        # ordinary painting and give it an explicit name in the Play here tool.
+        if self.tool.get()=='Play here':marker(self.cursor,'Playtest start','#bf91d5',tag='playtest-cursor')
         self.draw_hover()
 
     def hit_marker(self,px,py):
@@ -517,7 +536,7 @@ class AdventureEditor:
         if tool in ('Building','Wall'):
             if 0<=y<len(scene['rows']) and 0<=x<len(scene['rows'][0]):self.construction_tools.pointer((x,y),first,erase)
             return
-        if first and tool not in ('Select','Paste','Building','Wall','Road'):
+        if first and tool=='Move markers':
             ref=self.hit_marker(px,py)
             if ref is not None:
                 marker=next(m for m in scene_markers(self.adventure,self.scene_index) if m["ref"]==ref)
@@ -543,7 +562,11 @@ class AdventureEditor:
             if self.stroke is None: return
             index=self.brush.curselection()[0] if self.brush.curselection() else 0
             key=token(self.adventure["tiles"][index]) if index<len(self.adventure["tiles"]) else " "
-            layer=max(0,self.layer_choice.current())
+            layer=self.paint_layer()
+            if first and layer>0 and tool in ('Paint','Line','Rectangle','Fill'):
+                overlay=scene['overlays'][layer-1];ox,oy=overlay['at']
+                if not (ox<=x<ox+len(overlay['rows'][0]) and oy<=y<oy+len(overlay['rows'])):
+                    self.stroke=None;self.status.set('Outside the selected overlay. Choose Paint on: Visible tiles to paint across the map.');return
             if tool in ("Line","Rectangle"):self.stroke=copy_adventure(self.document)
             target=self.stroke["maps"][self.scene_index]
             if tool=="Fill":
@@ -583,7 +606,7 @@ class AdventureEditor:
             elif tool=="Play here": self.play_here()
             elif tool=="Move markers":self.selected_marker=None;self.draw()
             elif tool=="Eyedropper":self.sample_tile(event)
-        self.status.set(f"Tile {x},{y} | half-tile {half[0]},{half[1]} | {tool}")
+        self.status.set(f"Tile {x},{y} | half-tile {half[0]},{half[1]} | {tool} | Paint on {self.layer_choice.get()}")
 
     def sample_tile(self,event):
         size=int(self.zoom.get());x=int(self.canvas.canvasx(event.x)//size);y=int(self.canvas.canvasy(event.y)//size)
@@ -600,9 +623,9 @@ class AdventureEditor:
         self.status.set(f"Copied {x1-x0+1} x {y1-y0+1} tiles. Ctrl+V, then click to paste.")
 
     def cut_selection(self):
-        if not self.selection_rect:raise EditorError('Use Select and drag a rectangle first. Cut affects the selected layer.')
+        if not self.selection_rect:raise EditorError('Use Select and drag a rectangle first. Cut uses the Paint on target.')
         from map_patterns import cut
-        self.finish_stroke();self.clipboard=cut(self.document,self.scene_index,self.selection_rect,max(0,self.layer_choice.current()));self.paste_as_overlay=False
+        self.finish_stroke();self.clipboard=cut(self.document,self.scene_index,self.selection_rect,self.paint_layer());self.paste_as_overlay=False
         self.refresh();self.status.set('Cut selected layer. Ctrl+V and click to paste; Undo restores the cut.')
 
     def use_pattern(self,rows,name='Pattern',overlay=False):
@@ -645,7 +668,10 @@ class AdventureEditor:
             if a==self.adventure:
                 self.draw()
                 if drag:self.status.set("Marker selected | drag to move or double-click to edit.")
-            else:self.commit(a)
+            elif drag:self.commit(a)
+            else:
+                from map_construction import commit_tiles
+                commit_tiles(self.document,a);self.refresh()
 
     def cancel_gesture(self):
         if self.construction_tools.stroke is not None:self.construction_tools.cancel()
@@ -723,8 +749,8 @@ class AdventureEditor:
 
     def new_overlay(self): self.overlay_dialog()
     def layer_properties(self):
-        if self.layer_choice.current()<1: return self.map_properties()
-        self.overlay_dialog(self.layer_choice.current()-1)
+        if self.paint_layer()<1: return self.map_properties()
+        self.overlay_dialog(self.paint_layer()-1)
 
     def capture_building(self):
         from scene_tools import capture_stamp
@@ -741,12 +767,12 @@ class AdventureEditor:
         labels={s['name']+' | '+s['id']:s['id'] for s in stamps};f=Form(self,'Place building stamp')
         f.field('stamp',next(iter(labels)),list(labels));f.field('x',self.cursor[0]//2);f.field('y',self.cursor[1]//2)
         def apply(v):
-            index=place_stamp(self.document,self.scene_index,labels[v['stamp']],int(v['x']),int(v['y']));self.refresh();self.layer_choice.current(index);self.draw()
+            index=place_stamp(self.document,self.scene_index,labels[v['stamp']],int(v['x']),int(v['y']));self.refresh();self.layer_choice.current(index+1);self.draw()
         f.submit(apply)
 
     def move_building(self):
         from scene_tools import move_group
-        index=self.layer_choice.current()-1
+        index=self.paint_layer()-1
         if index<0:raise EditorError('Select a building overlay first.')
         old=self.scene()['overlays'][index];f=Form(self,'Move building and contained markers');f.field('x',old['at'][0]);f.field('y',old['at'][1])
         def apply(v):move_group(self.document,self.scene_index,index,int(v['x']),int(v['y']));self.refresh()
@@ -764,11 +790,11 @@ class AdventureEditor:
             a=copy_adventure(self.document);layers=a["maps"][self.scene_index]["overlays"]
             if index is None:layers.append(layer)
             else:layers[index]=layer
-            self.commit(a);self.layer_choice.current(len(layers) if index is None else index+1);self.draw()
+            self.commit(a);self.layer_choice.current(len(layers)+1 if index is None else index+2);self.draw()
         form.submit(apply)
 
     def delete_layer(self):
-        index=self.layer_choice.current()-1
+        index=self.paint_layer()-1
         if index>=0:
             a=copy_adventure(self.document);a["maps"][self.scene_index]["overlays"].pop(index);self.layer_choice.current(0);self.commit(a)
 

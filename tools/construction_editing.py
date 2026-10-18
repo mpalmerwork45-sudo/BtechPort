@@ -153,11 +153,11 @@ def new_profile(document,kind='Building',name=None):
 
 def draw_road(adventure,scene_index,layer,start,end,profile,width=1,shape='Brush',erase=False):
     """Merge neighbour masks after a stroke, including old endpoints/junctions."""
-    from adventure_editing import paint
+    from adventure_editing import paint,composite,visible_layer
     from world_editing import token
     if not 1<=width<=8:raise EditorError('Road width must be 1..8 tiles.')
     scene=adventure['maps'][scene_index];ids={token(t):t['id'] for t in adventure['tiles']};keys={t['id']:token(t) for t in adventure['tiles']}
-    target=scene if layer==0 else scene['overlays'][layer-1];ox,oy=(0,0) if layer==0 else target['at']
+    target={'rows':composite(scene)} if layer==-1 else scene if layer==0 else scene['overlays'][layer-1];ox,oy=(0,0) if layer<=0 else target['at']
     road_ids={v for k,v in profile['parts'].items() if k.startswith('road_')}
     occupied={(x+ox,y+oy) for y,row in enumerate(target['rows']) for x,t in enumerate(row) if ids.get(t) in road_ids}
     from map_construction import stroke_cells
@@ -165,8 +165,10 @@ def draw_road(adventure,scene_index,layer,start,end,profile,width=1,shape='Brush
     def inside(p):return ox<=p[0]<ox+len(target['rows'][0]) and oy<=p[1]<oy+len(target['rows'])
     if not all(inside(p) for p in stroke):raise EditorError('The whole road brush must fit in the selected layer.')
     if erase:
-        ground=' ' if layer else token(next((t for t in adventure['tiles'] if t['terrain']=='clear'),adventure['tiles'][0]))
-        for x,y in occupied&stroke:paint(scene,layer,x,y,ground)
+        ground=token(next((t for t in adventure['tiles'] if t['terrain']=='clear'),adventure['tiles'][0]))
+        for x,y in occupied&stroke:
+            target_layer=visible_layer(scene,x,y) if layer==-1 else layer
+            paint(scene,target_layer,x,y,' ' if target_layer else ground)
         occupied-=stroke
     else:occupied|=stroke
     affected=stroke|{(x+dx,y+dy) for x,y in stroke for dx,dy in NEIGHBOURS}
