@@ -28,6 +28,25 @@ class UnitLibraryTests(unittest.TestCase):
 
     def vehicle(self,name='patton'):return closure(self.vehicles,'vehicles:'+name,'Vehicles')
 
+    def test_preview_terrain_is_independent_of_edited_demo_map(self):
+        from unittest.mock import patch
+        from unit_library import read_json
+        def edited(path):
+            value=read_json(path)
+            if path.name=='adventure.json':
+                value['schema_version']=2
+                value['tiles']=[dict(id='edited:tile',sheet='package:art',graphic='edited:missing',terrain='clear',mini_color=2)]
+                value['maps'][0]['rows']=[['edited:tile']*32 for _ in range(24)]
+                value['worlds']=[{'id':'edited:world'}]
+            return value
+        bundle=self.vehicle()
+        with patch('unit_library.read_json',side_effect=edited):
+            self.library.validate(bundle)
+            adventure=preview_files(bundle)['adventure.json']
+        self.assertEqual(adventure['schema_version'],1)
+        self.assertEqual(adventure['maps'][0]['rows'],['.'*32 for _ in range(24)])
+        self.assertNotIn('worlds',adventure)
+
     def test_local_edit_revision_and_external_conflict(self):
         saved=self.library.save(self.vehicle());stage_preview(saved,self.root/'edit')
         draft=ProjectDocument(self.root/'edit',TOOL);content=copy.deepcopy(draft.content)

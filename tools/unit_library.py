@@ -98,7 +98,7 @@ def preview_files(bundle):
     template = ROOT / ('examples/battletech-demo' if needs_original(bundle) else 'examples/beacon-demo')
     manifest = read_json(template / 'project.json')
     content = copy.deepcopy(bundle['content'])
-    adventure = read_json(template / 'adventure.json')
+    adventure = read_json(ROOT / 'examples/beacon-demo/adventure.json')
     fallback = read_json(template / 'content.json')
     manifest.update(package_id='unit-library', content_version='1.0.0', title=bundle['name'],
                     scripts=[], assets=[], definitions='content.json', adventure='adventure.json',
@@ -114,10 +114,14 @@ def preview_files(bundle):
     # preview project keeps a neutral lead and exposes the character separately.
     lead = copy.deepcopy(adventure['people'][0])
     lead.update(id='library:preview-pilot', identity='actor:0', name='Preview pilot')
-    adventure.update(people=[lead] + ([person] if bundle['person'] else []), shops=[], encounters=[],
-                     flags=[], events=[dict(id='library:end', op='end')])
-    adventure['maps'] = [adventure['maps'][0]]
-    adventure['maps'][0].update(overlays=[], entrances=[])
+    # A blueprint carries unit art, not the demo's map tiles/world/events.
+    # Build a neutral range so editing or cloning tiles in a playable demo
+    # cannot break library validation or leak unrelated assets into a preview.
+    adventure=dict(format='btp-adventure-v1',schema_version=1,
+        tiles=[dict(id='library:floor',key='.',sheet='chi:land' if needs_original(bundle) else 'package:tiles',
+                    graphic=0,terrain='clear',mini_color=2)],
+        maps=[dict(id='library:range',name='Unit preview range',origin=[0,0],rows=['.'*32 for _ in range(24)],overlays=[],entrances=[])],
+        people=[lead]+([person] if bundle['person'] else []),shops=[],encounters=[],flags=[],events=[dict(id='library:end',op='end')])
     adventure['start'] = dict(map=adventure['maps'][0]['id'], at=[24,38], event='library:end',
                               credits=100000, party=[dict(person=lead['id'], mech='none')])
     if bundle['person']:
