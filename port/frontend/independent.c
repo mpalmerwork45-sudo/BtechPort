@@ -103,7 +103,8 @@ static void map(Canvas *c,const BtpResources *r,const BtpState *s)
         const BtpSceneTile *t=btp_scene_tile(&r->project->adventure,m,x,y);if (!t) continue;
         int px=x*16-cx,py=y*16-cy;
         if (px<=-16 || px>=224 || py<=-16 || py>=150) continue;
-        if (t->sheet==3) (void)btp_art_draw(r,t->graphic,s->tick/8u,px,py,0,12,224,150,c->f);
+        if (t->sheet==3) (void)btp_art_draw(r,t->graphic,
+            btp_art_tile_frame(&r->project->graphics,t->graphic,s->tick),px,py,0,12,224,150,c->f);
         else image(c,c->art->tiles[t->graphic],px,py,16,16,0,224);
     }
     for (unsigned i=0;i<m->entrance_count;++i) {

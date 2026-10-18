@@ -5,6 +5,7 @@
 #include "frontend/pixels.h"
 #include "data/sprites.h"
 #include "data/unit_data.h"
+#include "core/animation.h"
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,6 +19,39 @@
 #include <sys/stat.h>
 #define make_directory(p) mkdir(p,0700)
 #endif
+
+static int terrain_animations(const char *directory)
+{
+    BtpError error={0};BtpResources *r=calloc(1,sizeof *r);
+    uint32_t *atlas=malloc(BTP_TILE_ATLAS_PIXELS*sizeof *atlas);
+    int ok=r && atlas && btp_resources_load(directory,r,&error) && btp_map_tile_atlas(&r->terrain_animation,atlas);
+    if (!ok) {
+        fprintf(stderr,"Cannot preview terrain animation: %s\n",error.text[0] ? error.text : "missing animation sheet or allocation failed");
+        free(atlas);free(r);return 0;
+    }
+    /* Export only on request, to memory: mappings and colors come from the
+       game's decoder/rules, rather than a second editor implementation. */
+    fputs("{\"frame_ticks\":4,\"tiles\":[",stdout);unsigned count=0;
+    for (unsigned tile=0;tile<250;++tile) {
+        if (!btp_terrain_frame(tile,0)) continue;
+        printf("%s{\"graphic\":%u,\"frames\":[",count++ ? "," : "",tile);
+        for (unsigned phase=0;phase<3;++phase) {
+            unsigned frame=btp_terrain_frame(tile,phase);
+            fputs(phase ? ",[" : "[",stdout);
+            for (unsigned y=0;y<16;++y) {
+                fputs(y ? ",\"" : "\"",stdout);
+                for (unsigned x=0;x<16;++x) {
+                    unsigned at=((frame/16)*16+y)*BTP_TILE_ATLAS_SIDE+(frame%16)*16+x;
+                    printf("%06xff",atlas[at]&0xffffffu);
+                }
+                putchar('"');
+            }
+            putchar(']');
+        }
+        fputs("]}",stdout);
+    }
+    puts("]}");free(atlas);free(r);return !ferror(stdout);
+}
 
 static int preview_tiles(const char *directory,const char *name)
 {
@@ -196,11 +230,14 @@ int main(int argc,char **argv)
         }
         return preview_tiles(argv[3],argv[5]) ? 0 : 1;
     }
+    if (argc==4 && !strcmp(argv[1],"terrain-animations") && !strcmp(argv[2],"--data"))
+        return terrain_animations(argv[3]) ? 0 : 1;
     if (argc<3) {
         fputs("Usage:\n  btp-project validate DIRECTORY\n  btp-project validate-content FILE\n"
             "  btp-project export NEW_DIRECTORY --roster FILE --combat-data FILE\n"
             "  btp-project export-original-units NEW_FILE --combat-data FILE\n"
             "  btp-project preview-tiles --data DIRECTORY --sheet chi:land|chi:destroyed\n"
+            "  btp-project terrain-animations --data DIRECTORY\n"
             "Export reads adjacent combat.json and art, writing explicit references.\n",stderr);return 2;
     }
     BtpError error={0};int ok=0;

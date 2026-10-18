@@ -7,6 +7,7 @@ from tkinter import ttk
 from editor_model import EditorError,ProjectDocument,encoded
 from editor_session import guard,visible_parent,scope_of,apply_draft
 from tile_editing import create_tile,clone_sheet,ensure_tile,tile,select_tile,edit_pixels,metadata,sheet_graphics
+from tile_animation import tile_loop,loop_label
 
 
 class TileBrowser:
@@ -32,6 +33,8 @@ class TileBrowser:
         if initial not in ('Project tiles','All tiles') and initial not in maps.graphics:initial='All tiles'
         self.sheet=tk.StringVar(value=initial)
         self.active_sheet=initial
+        self.animated_only=tk.BooleanVar(value=self.memory.get('animated_only') is True)
+        self.active_filter=self.animated_only.get()
         # Construction parts start on the project's paint palette, but the
         # complete source atlas must be an obvious, separate browsing option.
         source_bar=ttk.Frame(header);source_bar.pack(fill='x',pady=(8,0))
@@ -42,6 +45,8 @@ class TileBrowser:
         ttk.Label(source_bar,text='Sheet').pack(side='left',padx=(8,4))
         self.choices=ttk.Combobox(source_bar,textvariable=self.sheet,state='readonly',width=22);self.choices.pack(side='left')
         self.choices.bind('<<ComboboxSelected>>',lambda _:self.refresh())
+        ttk.Checkbutton(source_bar,text='Animated only',variable=self.animated_only,command=self.refresh).pack(side='left',padx=8)
+        ttk.Checkbutton(source_bar,text='Animate tiles',variable=maps.tile_animation.enabled,command=maps.tile_animation.refresh).pack(side='left',padx=8)
         bar=ttk.Frame(self.window,padding=(8,0));bar.pack(fill='x')
         for label,callback in [('Add tile',self.new),('Clone',self.clone),('Edit pixels',self.edit),('Properties',self.properties),('Remove',self.remove)]:
             ttk.Button(bar,text=label,width=0,command=lambda f=callback:guard(self,f)).pack(side='left',padx=3)
@@ -100,7 +105,7 @@ class TileBrowser:
         if self.sheet.get() not in ('Project tiles','All tiles') and self.sheet.get() not in self.owner.graphics:self.sheet.set('All tiles')
         self.refresh()
     def view_memory(self,sheet):
-        value=self.memory['views'].get(sheet)
+        value=self.memory['views'].get(sheet+('|animated' if self.active_filter else ''))
         return value if isinstance(value,dict) else {}
     def remembered_key(self,state):
         value=state.get('selected')
@@ -112,8 +117,9 @@ class TileBrowser:
         return source['graphic'] if source['sheet']==self.active_sheet else None
     def remember_view(self):
         self.memory['collection']=self.active_sheet
+        self.memory['animated_only']=self.active_filter
         if self.active_sheet!='Project tiles':self.memory['all_sheet']=self.active_sheet
-        self.memory['views'][self.active_sheet]=dict(selected=self.selected,x=self.canvas.xview()[0],y=self.canvas.yview()[0])
+        self.memory['views'][self.active_sheet+('|animated' if self.active_filter else '')]=dict(selected=self.selected,x=self.canvas.xview()[0],y=self.canvas.yview()[0])
     def restore_position(self,state):
         # Wait for the actual viewport size; restoring before Tk lays it out
         # would clamp the saved offset against a one-pixel canvas.
@@ -135,10 +141,10 @@ class TileBrowser:
         return dict(sheet=bank,graphic=graphic)
     def refresh(self,selected=None):
         self.owner.refresh();self.choices.configure(values=['All tiles',*self.owner.graphics])
-        changed=self.active_sheet!=self.sheet.get();remembered=None
+        changed=self.active_sheet!=self.sheet.get() or self.active_filter!=self.animated_only.get();remembered=None
         if changed:
             previous=self.source() if self.selected in self.keys else None
-            self.remember_view();self.active_sheet=self.sheet.get()
+            self.remember_view();self.active_sheet=self.sheet.get();self.active_filter=self.animated_only.get()
             if self.active_sheet!='Project tiles':self.memory['all_sheet']=self.active_sheet
             remembered=self.view_memory(self.active_sheet)
             self.selected=self.remembered_key(remembered) if remembered else self.key_for(previous)
@@ -152,12 +158,17 @@ class TileBrowser:
         else:
             source=self.owner.graphics.get(sheet,{})
             self.keys=[k for k in (source if isinstance(source,dict) else range(len(source))) if [sheet,str(k)] not in hidden]
+        if self.active_filter:
+            self.keys=[key for key in self.keys if tile_loop(self.owner.graphics,self.value(key)['sheet'],self.value(key)['graphic'])]
         names=data.get('tile_names',{})
         for index,key in enumerate(self.keys):
             value=self.value(key)
             x,y=index%self.columns*self.cell,index//self.columns*self.cell
             image=self.owner.tile_image(value['sheet'],value['graphic'],32)
             if image:self.canvas.create_image(x+27,y+20,image=image)
+            if tile_loop(self.owner.graphics,value['sheet'],value['graphic']):
+                self.canvas.create_rectangle(x+36,y+1,x+53,y+14,fill='#286c80',outline='')
+                self.canvas.create_text(x+44,y+7,text='A',fill='white',font='TkSmallCaptionFont',tags='animated-badge')
             label=(value['sheet'].split(':')[-1][:4]+' '+str(value['graphic']).split(':')[-1]) if sheet=='All tiles' else names.get(key,key.split(':')[-1] if isinstance(key,str) else str(key))
             self.canvas.create_text(x+27,y+45,text=label[:8],fill='#31434b',font='TkSmallCaptionFont')
         self.canvas.configure(scrollregion=(0,0,self.columns*self.cell,((len(self.keys)+self.columns-1)//self.columns)*self.cell))
@@ -165,13 +176,14 @@ class TileBrowser:
         if changed or selected is not None:self.restore_position(remembered)
     def select(self,key):
         self.selected=key;self.canvas.delete('selection')
-        if key is None:self.status.set('No tiles here. Add a tile or restore hidden source graphics.');return
+        if key is None:
+            self.status.set('No animated tiles here. Choose All tiles or turn off Animated only.' if self.active_filter else 'No tiles here. Add a tile or restore hidden source graphics.');return
         index=self.keys.index(key);x,y=index%self.columns*self.cell,index//self.columns*self.cell
         self.canvas.create_rectangle(x+1,y+1,x+self.cell-1,y+self.cell-1,outline='#286c80',width=3,tags='selection')
         value=self.value(key)
         registered='id' in value or any(t['sheet']==value['sheet'] and t['graphic']==value['graphic'] for t in self.document.adventure['tiles'])
         action='Uses an existing project tile.' if registered else 'Automatically adds this graphic to project tiles when chosen.'
-        self.status.set(f"{value['sheet']} | {value['graphic']} | {action} Double-click to use.")
+        self.status.set(f"{value['sheet']} | {value['graphic']} | {loop_label(self.owner.graphics,value['sheet'],value['graphic'])} | {action} Double-click to use.")
     def click(self,event):
         x,y=self.canvas.canvasx(event.x),self.canvas.canvasy(event.y);index=int(y//self.cell)*self.columns+int(x//self.cell)
         if 0<=x<self.columns*self.cell and 0<=index<len(self.keys):self.select(self.keys[index])
@@ -182,12 +194,12 @@ class TileBrowser:
         source=self.source()
         return source['id'] if 'id' in source else ensure_tile(self.document,source['sheet'],source['graphic'])
     def new(self):
-        value=create_tile(self.document,name='New map tile');self.sheet.set('Project tiles');self.refresh(selected=value);self.edit()
+        value=create_tile(self.document,name='New map tile');self.animated_only.set(False);self.sheet.set('Project tiles');self.refresh(selected=value);self.edit()
     def clone(self):
         value=create_tile(self.document,self.owner.graphics,self.source(),'Map tile copy')
         self.sheet.set('Project tiles');self.refresh(selected=value)
     def clone_all(self):
-        values=clone_sheet(self.document,self.owner.graphics,self.sheet.get())
+        values=clone_sheet(self.document,self.owner.graphics,self.sheet.get(),[self.value(key) for key in self.keys])
         self.sheet.set('Project tiles');self.refresh(selected=values[0]);self.status.set(f'Cloned {len(values)} editable tiles into project tiles. Undo removes this whole batch.')
     def use(self):
         source=self.source()

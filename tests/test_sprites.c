@@ -1,6 +1,8 @@
 #include "frontend/pixels.h"
 #include "data/sprites.h"
 #include "core/animation.h"
+#include "data/project.h"
+#include "core/events.h"
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -88,6 +90,38 @@ int main(void)
         btp_tick(&s,&r->map,BTP_RIGHT);CHECK(s.blocked==BTP_WALL && s.x_half==69 && s.y_half==25);
     }
     CHECK(!btp_terrain_frame(64,0) && !btp_terrain_frame(UINT_MAX,UINT_MAX));
+    /* Authored CHI terrain used to suppress every animation substitution.
+       The source bank, not the presence of a custom map, decides the loop. */
+    r->project=calloc(1,sizeof *r->project);CHECK(r->project);
+    BtpAdventure *a=&r->project->adventure;a->loaded=1;a->map_count=1;a->tile_count=1;
+    BtpScene *scene=&a->maps[0];scene->rules=scene->visual=r->map;
+    a->tiles[0]=(BtpSceneTile){.graphic=105,.sheet=0,.terrain=4};
+    btp_start(&s);s.event.enabled=1;s.map_id=16;
+    for (unsigned tick=0;tick<24;++tick) {
+        s.tick=tick;btp_render(r,&s,0,f);CHECK(f[88*320+208]==btp_palette[10+(tick/4)%3]);
+        CHECK(!btp_scene_stand(scene,70,25,0));
+    }
+    a->tiles[0].sheet=1;memset(r->destroyed_tiles.pixels+105*256,14,256);
+    for (unsigned phase=0;phase<3;++phase) {
+        s.tick=phase*4;btp_render(r,&s,0,f);CHECK(f[88*320+208]==btp_palette[14]);
+    }
+    /* Owned tiles use their saved duration in both game presentations; an
+       omitted duration keeps the existing eight-tick package default. */
+    a->tiles[0].sheet=3;a->tiles[0].graphic=0;
+    BtpArt *art=&r->project->graphics;art->count=1;
+    art->images[0]=(BtpArtImage){.width=16,.height=16,.count=3,.frame_ticks=4,.frames={0,256,512}};
+    for (unsigned i=0;i<768;++i) art->pixels[i]=btp_palette[10+i/256];
+    for (unsigned tick=0;tick<24;++tick) {
+        s.tick=tick;btp_render(r,&s,0,f);CHECK(f[88*320+208]==btp_palette[10+(tick/4)%3]);
+    }
+    art->images[0].frame_ticks=0;
+    CHECK(btp_art_tile_frame(art,0,7)==0 && btp_art_tile_frame(art,0,8)==1 && btp_art_tile_frame(art,0,24)==0);
+    /* Independent games must apply the same timing, even with no CHI assets. */
+    art->images[0].frame_ticks=4;r->project->independent.loaded=1;
+    for (unsigned tick=0;tick<24;++tick) {
+        s.tick=tick;btp_render(r,&s,0,f);CHECK(f[20*320+20]==btp_palette[10+(tick/4)%3]);
+    }
+    free(r->project);
     free(restored_frame);
     free(f); free(r); printf("PASS: %u sprite bounds, compositing, gait and migration assertions.\n",checks);
     return 0;

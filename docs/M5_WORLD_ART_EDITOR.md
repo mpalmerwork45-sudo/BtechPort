@@ -262,9 +262,21 @@ format, not an import/export editor for original MTP files or their terrain-join
 descriptors. CHI's original procedural world generator is unchanged.
 
 The optional project `graphics` file uses `btp-art-v1`: RGBA hex scanlines,
-1–32 frames/image, 16×16 tiles, up to 64×64 sprites/icons and 320×200 screens.
+1–256 frames/image, 16×16 tiles, up to 64×64 sprites/icons and 320×200 screens.
 There are at most 4,096 images and 1,048,576 pixels across all frames. Event
 portraits must fit 88×88. Adventure/art files have a 16 MiB/300,000-node bound.
+Tiles can supply `frame_ticks` (1–255, in 32 ms logical ticks); omission keeps
+the existing eight-tick/256 ms default. The editor exposes this as **Frame time**
+in milliseconds. All frames loop in order in both CHI and independent games.
+Original `chi:land` references use the existing three-frame/four-tick terrain
+substitution; `chi:destroyed` is static. The editor's read-only
+`btp-project terrain-animations --data DIRECTORY` protocol obtains those mappings
+and palette-correct frames from the same C decoder/rules used by the player.
+It keeps them in memory; explicit Clone/Edit copies all frames and timing into
+owned art. **Animated only** filters the tile chooser, including its bulk-copy
+action. **Animate tiles** controls live map/palette/designer/jigsaw previews
+without redrawing geometry or changing the document. See the
+[workspace controls](EDITOR_WORKSPACE.md#maps-worlds-and-entrances).
 Runtime sector handles and tile IDs are 16-bit; authored saves use BTPn/v49.
 Each planet has separate exploration, overhead-map bounds and saved identity.
 Package fingerprints include the graphics file. Edited content requires a fresh

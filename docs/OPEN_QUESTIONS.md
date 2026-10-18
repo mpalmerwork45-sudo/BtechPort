@@ -30,6 +30,12 @@ the saved user project validates, but the exact previously reported interactive
 failure has no captured error/trace. Controlled blocked-entrance, stale-result
 and failed-player retry paths pass. Tile editing shows actual map/construction/
 jigsaw neighbours; empty preview cells do not invent surrounding map terrain.
+Authored original terrain animation and live editor previews now share the
+verified source frames. Timing uses the existing native clock (128 ms/frame
+for original loops), not a new DOS hardware measurement. Existing single-frame
+owned copies remain static until their animated source is copied again; direct
+CHI references need no migration. Native Windows/macOS animation UI still needs
+desktop verification.
 Save migration preserves existing rule/topology/ordinal structure and rejects
 arbitrary remaps. Sprite anchors, imported audio, full construction tonnage and
 vehicle turret/arcs/critical rules remain future extensions. Scripted salvage

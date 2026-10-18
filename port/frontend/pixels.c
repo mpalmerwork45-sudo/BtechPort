@@ -39,8 +39,8 @@ int btp_map_tile_atlas(const BtpGraphic *sheet,uint32_t atlas[BTP_TILE_ATLAS_PIX
 {
     if (!sheet || !atlas || sheet->format!=1) return 0;
     for (unsigned i=0;i<BTP_TILE_ATLAS_PIXELS;++i) atlas[i]=btp_palette[0];
-    /* This is a static editor view of the decoded sheet. Gameplay's terrain
-       animation substitutions are deliberately left to the running game. */
+    /* Palette-correct static atlas. The editor requests the animation sheet
+       and the shared terrain substitutions separately for live previews. */
     for (unsigned tile=0;tile<250;++tile)
         for (unsigned y=0;y<16;++y)
             for (unsigned x=0;x<16;++x) {
@@ -1665,12 +1665,18 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                            battle origin, not the current town's entrance. */
                         tile=btp_world_tile(r,s,ox+tx,oy+ty);
                     }
-                    if (authored && authored->sheet==3) color=btp_art_pixel(r,authored->graphic,s->tick/8u,(unsigned)wx&15u,(unsigned)wy&15u,btp_palette[0]);
+                    if (authored && authored->sheet==3) color=btp_art_pixel(r,authored->graphic,
+                        btp_art_tile_frame(&r->project->graphics,authored->graphic,s->tick),
+                        (unsigned)wx&15u,(unsigned)wy&15u,btp_palette[0]);
                     else if (tile < 250) {
                         /* 320B skips ANIMATE's first blank tile; 240B swaps
                            three pages into these ten map tile slots. The
                            saved fixed clock supplies a deterministic phase. */
-                        unsigned frame=s->cache.active || authored ? 0u : btp_terrain_frame(tile,s->tick/4u);
+                        /* Authored chi:land references use the same electric
+                           fences as the original campaign, with no setup flag.
+                           Other banks retain their own static tile meanings. */
+                        unsigned frame=s->cache.active || (authored && authored->sheet!=0) ||
+                            r->terrain_animation.format!=1 ? 0u : btp_terrain_frame(tile,s->tick/4u);
                         /* A viewport can straddle the Citadel boundary. Pick
                            DESTRUCT for the displayed world tile, even after
                            the player has entered the surrounding countryside. */

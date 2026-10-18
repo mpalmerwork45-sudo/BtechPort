@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 from editor_model import EditorError
 from editor_tiles import (CHI_SHEETS, MAX_PREVIEW, _capture_preview,
-                          decode_atlas, load_original_atlas, load_tiles)
+                          decode_atlas, load_original_atlas, load_original_animations, load_tiles)
 
 TOOL = Path(os.environ.get("BTP_PROJECT_TOOL", ROOT / "build/btp-project"))
 
@@ -90,13 +90,16 @@ class EditorTileTests(unittest.TestCase):
         document = SimpleNamespace(manifest={"requires": "chi-original-dos-1.03"}, validator=Path(sys.executable))
         with tempfile.TemporaryDirectory(prefix="btp-tile paths-") as directory:
             data = Path(directory)
-            with patch("editor_tiles._capture_preview", return_value=atlas_bytes()) as call:
+            animation = json.dumps(dict(frame_ticks=4,tiles=[dict(graphic=105,frames=[['ffffffff'*16]*16]*3)])).encode()
+            with patch("editor_tiles._capture_preview", side_effect=[atlas_bytes(),atlas_bytes(),animation]) as call:
                 result = load_tiles(document, {"data": str(data)})
             self.assertEqual(tuple(result), CHI_SHEETS)
-            self.assertEqual(call.call_count, 2)
+            self.assertEqual(call.call_count, 3)
             for sheet, invocation in zip(CHI_SHEETS, call.call_args_list):
                 self.assertEqual(invocation.args[0], [str(Path(sys.executable).resolve()), "preview-tiles",
                                                      "--data", str(data.resolve()), "--sheet", sheet])
+            self.assertEqual(call.call_args_list[-1].args[0], [str(Path(sys.executable).resolve()), 'terrain-animations', '--data', str(data.resolve())])
+            self.assertEqual(result.animations['chi:land',105].ticks,4)
             self.assertEqual(list(data.iterdir()), [])
 
     def test_transport_limits_and_errors(self):
@@ -119,6 +122,11 @@ class EditorTileTests(unittest.TestCase):
         self.assertEqual(len(destroyed), 250)
         self.assertNotEqual(land, destroyed)
         self.assertGreater(len({color for tile in land for row in tile for color in row}), 8)
+        animations=load_original_animations(TOOL, ROOT / 'Original DOS')
+        self.assertEqual({g for sheet,g in animations},{87,88,89,90,91,105,106,107,111,113})
+        for (sheet,graphic),loop in animations.items():
+            self.assertEqual(sheet,'chi:land');self.assertEqual(loop.ticks,4)
+            self.assertEqual(len(set(loop.frames)),3)
         self.assertEqual(before, {path.name: (path.stat().st_size, path.stat().st_mtime_ns)
                                   for path in (ROOT / "Original DOS").iterdir()})
 

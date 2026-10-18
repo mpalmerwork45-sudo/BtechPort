@@ -77,10 +77,11 @@ def editable_tile(art, adventure, index, prefix, decoded):
     tile = adventure['tiles'][index]
     if tile['sheet'] == 'package:art':
         return next(im for im in art['images'] if im['id'] == tile['graphic'])
-    try: colors = decoded[tile['sheet']][tile['graphic']]
+    from tile_animation import copy_frames
+    try: frames = copy_frames(decoded,tile['sheet'],tile['graphic'])
     except (KeyError, IndexError): raise EditorError('Wait for the map graphics preview to load first.')
     im = new_image(prefix, art['images'], tile['id'].split(':')[-1][:80] + ' pixels')
-    im['frames'] = [[''.join(color.lstrip('#')+'ff' for color in row) for row in colors]]
+    im.update(frames)
     upgrade(adventure)
     tile.update(sheet='package:art', graphic=im['id'])
     art['images'].append(im)

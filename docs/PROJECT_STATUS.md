@@ -1,5 +1,19 @@
 # Project status — original fidelity and editable projects, 2026-10-18
 
+**Authored terrain animation — VERIFIED:** original animated `chi:land` tiles
+now use their existing three-frame cycle on custom maps, including the four
+animated source tiles currently referenced by the user's demo. The editor
+animates map, palette, chooser, construction and jigsaw tile images in place.
+**Animated only**, **A** badges and frame/duration details make loops selectable;
+**Animate tiles** pauses previews without changing the project. Clone/Edit
+preserves original frames and timing; custom tiles expose **Frame time** and
+the existing frame editor. Both runtime presentations support optional
+`frame_ticks`, retaining old packages' default duration. Destroyed tiles keep
+their static bank. Native tests **72/72** and Python tests **174/174** pass;
+the private-display animation and Play/context journeys pass. Original decoder
+and source references remain read-only. Timing follows the existing native
+32 ms clock; this is not a new hardware-timing measurement of DOS.
+
 **Play retries and contextual tile editing — VERIFIED:** Play checks the latest
 draft again when edits change during preparation, clears obsolete validation
 errors, and surfaces player startup failures with their logs. The top-right

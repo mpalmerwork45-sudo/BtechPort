@@ -42,6 +42,13 @@
             "minimum": 1,
             "maximum": 200
           },
+          "frame_ticks": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 255,
+            "default": 8,
+            "description": "Tile animation frame duration in 32 ms logical ticks."
+          },
           "frames": {
             "type": "array",
             "items": {
@@ -54,9 +61,10 @@
               "maxItems": 200
             },
             "minItems": 1,
-            "maxItems": 32
+            "maxItems": 256
           }
         },
+        "allOf": [{"if": {"required": ["frame_ticks"]}, "then": {"properties": {"kind": {"const": "tile"}}}}],
         "required": [
           "id",
           "name",

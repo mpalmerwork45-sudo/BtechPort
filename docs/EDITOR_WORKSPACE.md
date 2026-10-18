@@ -69,6 +69,22 @@ project, including after restarting the editor. Project tiles, All tiles and
 individual sheets retain separate browsing positions. These preferences do not
 dirty the game or add Undo entries.
 
+**Animated terrain:** leave **Animate tiles** enabled to see moving electricity
+and other tile loops on maps, in the palette, chooser, construction previews and
+jigsaw canvases. In **Browse all...**, select **All tiles → Animated only** to
+find them; an **A** badge and the selection details identify animated tiles.
+Paint them like any other tile. Original `chi:land` animations work automatically
+in authored games; the destroyed bank keeps its own static graphics. The chooser
+remembers separate filtered/unfiltered scroll positions.
+
+To create your own animation, edit a tile's pixels, use **Clone frame**, select
+each **Frame** to draw it, and set **Frame time**. **Play / stop** previews the
+loop at the same speed as the game. New custom tiles default to 256 ms/frame;
+copies of original animated terrain retain all three frames at 128 ms/frame.
+Cloning or editing original animated tiles now preserves the whole animation.
+An old single-frame pixel copy remains a still image; clone its animated source
+again to obtain the other frames. Previewing or pausing never changes game data.
+
 **Paint on: Visible tiles** is the default. Paint, Line, Rectangle, Fill, roads
 and Paste replace the tile you see, whether it belongs to the ground or a
 building overlay. Choose **Base** explicitly to paint underneath overlays, or

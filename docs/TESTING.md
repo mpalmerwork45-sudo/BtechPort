@@ -1,5 +1,51 @@
 # Build, verification and original oracle — 2026-10-18
 
+## Authored terrain animation — 2026-10-18
+
+The original terrain renderer explicitly forced frame zero for every authored
+tile. **VERIFIED:** authored `chi:land` now uses the shared original substitution
+for slots 87–91, 105–107, 111 and 113. The user's current demo references 106,
+107, 111 and 113 directly, so these require no project migration. The destroyed
+bank stays static. The existing [original execution evidence](M3C_PROGRESS.md#map-electricity)
+establishes the source frames; no new DOS hardware-timing claim is made.
+
+- Native build passes using `env PATH=/usr/bin:/bin cmake --build build -j2`.
+  The initial shell PATH selected an incompatible Conda linker; using the
+  system tools resolved it without changing dependencies or project settings.
+- `ctest --test-dir build --output-on-failure`: **72/72 PASS**, 44.53 s,
+  `work/tile-animation-native-tests.log`. Sprite/render checks now exercise
+  every logical tick across two authored CHI cycles, unchanged collision,
+  static destroyed tiles, custom tile timing in CHI and independent views,
+  and the existing default duration. Existing saved-clock checks still pass.
+- `python3 -m unittest discover -s tests -p 'test_*.py'`: **174/174 PASS**,
+  17.048 s, `work/tile-animation-python-tests.log`. Added checks cover original
+  decoder mappings, complete animated Clone/Edit, filtered bulk-copy Undo,
+  timing save/reopen, default duration, stale preview cache removal and rejected
+  malformed transport/timing fields. Both C loader and JSON schema describe the
+  optional tile-only `frame_ticks` property.
+- `python3 tools/native_smoke.py --editor-tile-animation-only`: **PASS**.
+  Actual Tk map/chooser images cycle automatically, Pause stays frozen, source
+  banks remain distinct, and previewing creates no dirty/Undo changes.
+  Animated-only selection, badges, filter memory, copied frames, duration/frame
+  editing and save/reopen pass. Building/Wall/Road previews reuse the live image
+  without geometry changes; closing cancels the timer.
+- `--editor-play-tile-only`: **PASS** with animations enabled, including
+  asynchronous correction/retry, startup diagnostics, real player launch/Stop,
+  surrounding-tile editing and all three construction-context workflows.
+- `--editor-usability-only`: **PASS**, including shared Undo/recovery, save
+  correction/retry, actual Play/Stop and 100/150/200% interface scaling. The
+  larger fixture's longest heartbeat was 36.8 ms, peak RSS 89.6 MiB. These are
+  bounded regression measurements, not performance guarantees for every map.
+
+Screenshots: `work/editor-animated-map.png` and
+`work/editor-animated-tile-picker.png`. Checks use disposable projects. Old
+single-frame owned copies cannot recover missing frames automatically; cloning
+their animated source again preserves the new complete loop. Native Windows
+and macOS GUI timing remain **UNKNOWN**.
+Reference guard: **1,287/1,287 entries unchanged** against
+`work/reference-before-map-construction.json`. The user's pre-existing demo
+changes remain unmodified and outside these commits.
+
 ## Play retries and contextual tile editing — 2026-10-18
 
 The user's saved demo validates successfully. A basic corrected-entrance retry

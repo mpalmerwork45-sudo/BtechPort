@@ -49,10 +49,11 @@ def copy_graphic(art,prefix,decoded,sheet,graphic,name='Tile copy'):
         if not old or old['kind']!='tile':raise EditorError('Choose an existing 16×16 tile image.')
         image=clone_image(old,prefix,art['images'])
     else:
-        try:rows=decoded[sheet][graphic]
+        from tile_animation import copy_frames
+        try:frames=copy_frames(decoded,sheet,graphic)
         except (KeyError,IndexError,TypeError):raise EditorError('This graphic is unavailable. Reload graphics or choose a package tile.')
         image=new_image(prefix,art['images'],name)
-        image['frames']=[[''.join(c.lstrip('#')+'ff' for c in row) for row in rows]]
+        image.update(frames)
     image['name']=name[:95];art['images'].append(image);return image
 
 
@@ -81,11 +82,13 @@ def create_tile(document,decoded=None,source=None,name='New tile',terrain=None):
     return value
 
 
-def clone_sheet(document,decoded,sheet):
+def clone_sheet(document,decoded,sheet,sources=None):
     """One undoable transaction; the source sheet is never edited or removed."""
     hidden=metadata(document).get('hidden_tile_graphics',[])
-    sources=([dict(t) for t in document.adventure['tiles']] if sheet=='Project tiles' else
-             [source_definition(document,bank,key) for bank,key in sheet_graphics(decoded,None if sheet=='All tiles' else sheet) if [bank,str(key)] not in hidden])
+    if sources is None:
+        sources=([dict(t) for t in document.adventure['tiles']] if sheet=='Project tiles' else
+                 [source_definition(document,bank,key) for bank,key in sheet_graphics(decoded,None if sheet=='All tiles' else sheet) if [bank,str(key)] not in hidden])
+    else:sources=[{**source_definition(document,s['sheet'],s['graphic']),**s} for s in sources]
     if not sources:raise EditorError('There are no tiles to clone in this sheet.')
     a=copy.deepcopy(document.adventure);art=copy.deepcopy(document.art);data=metadata(document);prefix=document.manifest['package_id'];result=[]
     # Preflight before allocating the copied frames. Budget rejection changes

@@ -13,6 +13,7 @@ import subprocess
 import threading
 
 from editor_model import EditorError
+from tile_animation import TileGraphics, TileLoop
 
 
 TilePixels = tuple[tuple[str, ...], ...]
@@ -149,6 +150,30 @@ def load_original_atlas(validator: Path, data: Path, sheet: str) -> TileSet:
     return decode_atlas(_capture_preview(command))
 
 
+def load_original_animations(validator: Path, data: Path):
+    """The C tool supplies both the verified tile substitution and its pixels."""
+    from art_editing import display_rows
+    raw = _capture_preview([str(Path(validator).resolve()), 'terrain-animations', '--data', str(Path(data).resolve())])
+    try:
+        source = json.loads(raw)
+        ticks = source['frame_ticks']
+        if type(ticks) is not int or not 1 <= ticks <= 255 or not 1 <= len(source['tiles']) <= 250:
+            raise ValueError('Invalid duration/count')
+        result = {}
+        for tile in source['tiles']:
+            graphic, frames = tile['graphic'], tile['frames']
+            if type(graphic) is not int or not 0 <= graphic < 250 or ('chi:land', graphic) in result or len(frames) != 3:
+                raise ValueError('Invalid tile/frames')
+            if any(len(frame) != 16 or any(not isinstance(row, str) or len(row) != 128 or
+                   any(c not in '0123456789abcdef' for c in row) for row in frame) for frame in frames):
+                raise ValueError('Invalid pixels')
+            image = dict(width=16, height=16, frames=frames)
+            result['chi:land', graphic] = TileLoop(tuple(display_rows(image, n) for n in range(3)), ticks)
+        return result
+    except (KeyError, TypeError, ValueError) as exc:
+        raise EditorError('The shared tool returned invalid terrain animation data. Rebuild btp-project.') from exc
+
+
 def _package_tiles(document) -> TileSet:
     try:
         art = json.loads(document.snapshot[document.manifest["presentation"]])
@@ -187,13 +212,15 @@ def load_tiles(document, settings: dict, sheet: str | None = None) -> dict[str, 
     if document.manifest["requires"] == "none":
         if sheet not in (None, "package:tiles"):
             raise EditorError(f"An independent project cannot preview tile sheet {sheet}.")
-        result = {"package:tiles": _package_tiles(document)}
+        result = TileGraphics({"package:tiles": _package_tiles(document)})
         if sheet is None: result.update(art_tiles(document))
         return result
     sheets = CHI_SHEETS if sheet is None else (sheet,)
     if not settings.get("data"):
         raise EditorError("Configure an existing Original data path in Player setup to preview CHI tiles.")
-    result = {name: load_original_atlas(document.validator, Path(settings["data"]), name) for name in sheets}
+    result = TileGraphics({name: load_original_atlas(document.validator, Path(settings["data"]), name) for name in sheets})
+    if 'chi:land' in sheets:
+        result.animations.update(load_original_animations(document.validator, Path(settings['data'])))
     if sheet is None: result.update(art_tiles(document))
     return result
 
@@ -201,4 +228,6 @@ def load_tiles(document, settings: dict, sheet: str | None = None) -> dict[str, 
 def art_tiles(document):
     from art_editing import display_rows
     images = [im for im in getattr(document, "art", {}).get("images", []) if im['kind']=='tile']
-    return {"package:art": {im["id"]: display_rows(im) for im in images}} if images else {}
+    return TileGraphics({"package:art": {im["id"]: display_rows(im) for im in images}},
+        {('package:art', im['id']): TileLoop(tuple(display_rows(im, n) for n in range(len(im['frames']))), im.get('frame_ticks', 8))
+         for im in images if len(im['frames']) > 1}) if images else TileGraphics()

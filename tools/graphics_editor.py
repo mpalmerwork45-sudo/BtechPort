@@ -155,10 +155,11 @@ class GraphicsEditor:
             source=next(i for i in self.document.art['images'] if i['id']==tile['graphic'])
             self.put(clone_image(source,self.document.content['package_id'],self.document.art['images']))
         else:
-            try:colors=self.map_view().graphics[tile['sheet']][tile['graphic']]
+            from tile_animation import copy_frames
+            try:frames=copy_frames(self.map_view().graphics,tile['sheet'],tile['graphic'])
             except (KeyError,IndexError):raise EditorError('Wait for the map graphics preview to load first.')
             im=new_image(self.document.content['package_id'],self.document.art['images'],'Copied map tile')
-            im['frames']=[[''.join(color.lstrip('#')+'ff' for color in row) for row in colors]]
+            im.update(frames)
             self.put(im)
         self.edit()
     def edit_map_tile(self,map_context=None):
@@ -211,7 +212,8 @@ class PixelEditor:
         self.image=begin_layers(image,editor_data(owner.document).get('pixel_layers',{}).get(image['id']))
         self.original_layers=copy.deepcopy(self.image);self.pixel_selection=None;self.pixel_clipboard=None
         self.window=view_window(self,owner,'pixels',image['name'],image['id']); self.window.title('Pixel editor - '+image['name']); self.window.geometry('920x730')
-        self.history=[]; self.future=[]; self.before=None; self.last=None; self.playing=False
+        self.history=[]; self.future=[]; self.before=None; self.last=None; self.playing=False;self.animation_job=None
+        self.window.bind('<Destroy>',self.stop_animation,add='+')
         if hasattr(self.window,'workspace'):
             from editor_art_layout import build_pixel
             build_pixel(self)
@@ -278,8 +280,20 @@ class PixelEditor:
         ttk.Label(frames,text='Frame').pack(side='left');self.frame=ttk.Combobox(frames,state='readonly',width=5);self.frame.pack(side='left',padx=6)
         self.frame.bind('<<ComboboxSelected>>',lambda _:self.draw())
         for title,cb in [('Clone frame',self.add_frame),('Delete frame',self.delete_frame),('Play / stop',self.play)]:ttk.Button(frames,text=title,command=lambda f=cb:self.guard(f)).pack(side='left',padx=4)
+        if self.image['kind']=='tile':
+            ttk.Label(frames,text='Frame time').pack(side='left',padx=(8,4))
+            self.frame_time=tk.StringVar(value=f"{self.image.get('frame_ticks',8)*32} ms")
+            timing=ttk.Combobox(frames,textvariable=self.frame_time,state='readonly',width=9,values=[f'{n*32} ms' for n in range(1,256)])
+            timing.pack(side='left');timing.bind('<<ComboboxSelected>>',lambda _:self.guard(self.change_frame_time))
+        from editor_ui import flow_toolbar
+        flow_toolbar(frames)
     def refresh_frames(self):
         current=max(0,self.frame.current());self.frame.configure(values=list(range(1,len(self.image['frames'])+1)));self.frame.current(min(current,len(self.image['frames'])-1))
+        if hasattr(self,'frame_time'):self.frame_time.set(f"{self.image.get('frame_ticks',8)*32} ms")
+    def change_frame_time(self):
+        self.finish();ticks=int(self.frame_time.get().split()[0])//32
+        if ticks!=self.image.get('frame_ticks',8):
+            self.history.append(copy.deepcopy(self.image));self.future=[];self.image['frame_ticks']=ticks
     def set_map_context(self,context):
         self.finish();self.map_context=copy.deepcopy(context)
         self.owner.map_view();self.window.lift()
@@ -394,11 +408,18 @@ class PixelEditor:
         for layer in self.image['_layers']:layer['frames'].pop(self.frame.current())
         self.image['frames'].pop(self.frame.current());self.refresh_frames();self.draw()
     def play(self):
+        if self.animation_job is not None:self.window.after_cancel(self.animation_job);self.animation_job=None
         self.playing=not self.playing
         if self.playing:self.animate()
     def animate(self):
+        self.animation_job=None
         if not self.window.winfo_exists() or not self.playing:return
-        self.frame.current((self.frame.current()+1)%len(self.image['frames']));self.draw();self.window.after(120,self.animate)
+        self.frame.current((self.frame.current()+1)%len(self.image['frames']));self.draw()
+        duration=self.image.get('frame_ticks',8)*32 if self.image['kind']=='tile' else 120
+        self.animation_job=self.window.after(duration,self.animate)
+    def stop_animation(self,event):
+        if event.widget==self.window and self.animation_job is not None:
+            self.window.after_cancel(self.animation_job);self.animation_job=None
     def apply_pending(self):
         self.finish();self.owner.selected=self.original['id'];clean,layers=export_layers(self.image)
         data=editor_data(self.owner.document);data.setdefault('pixel_layers',{})[clean['id']]=layers

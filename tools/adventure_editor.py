@@ -156,6 +156,8 @@ class AdventureEditor:
         self.cursor = tuple(self.document.adventure["start"]["at"])
         self.images = {}
         self.graphics = {}
+        from tile_animation import TilePreviewClock
+        self.tile_animation = TilePreviewClock(self)
         self.art_cache = None
         self.hover=None;self.hover_light=True
         self.formation_preview=None
@@ -227,9 +229,11 @@ class AdventureEditor:
         self.layer_choice.current(selected_layer if 0<=selected_layer<len(self.scene()['overlays'])+2 else 0)
         brush = self.brush.curselection()
         self.brush.delete(*self.brush.get_children())
+        from tile_animation import tile_loop
         for i,tile in enumerate(self.adventure["tiles"]):
             image=self.tile_image(tile["sheet"],tile["graphic"],32)
-            self.brush.insert("","end",iid=str(i),text=f" {tile.get('key','')}  {tile['id'].split(':')[-1]}",image=image or "")
+            animated=' [A]' if tile_loop(self.graphics,tile['sheet'],tile['graphic']) else ''
+            self.brush.insert("","end",iid=str(i),text=f" {tile.get('key','')}  {tile['id'].split(':')[-1]}{animated}",image=image or "")
         self.brush.insert("","end",iid=str(len(self.adventure["tiles"])),text=" Erase overlay",image="")
         self.brush.selection_set(min(brush[0] if brush else 0,self.brush.size()-1))
         self.select_brush()
@@ -268,6 +272,8 @@ class AdventureEditor:
         from editor_canvas import CanvasZoom,DrawingTools
         self.zoom=tk.StringVar(value="24")
         self.zoom_control=CanvasZoom(controls,self.zoom,self.draw);self.zoom_control.pack(side='left')
+        ttk.Checkbutton(controls,text='Animate tiles',variable=self.tile_animation.enabled,
+            command=self.tile_animation.refresh).pack(side='left',padx=8)
         self.terrain=tk.BooleanVar(value=False)
         self.footprints=tk.BooleanVar(value=False)
         om=tk.Menu(menu,tearoff=False);menu.add_cascade(label='Overlays',menu=om)
@@ -447,8 +453,11 @@ class AdventureEditor:
         elif not isinstance(graphic,int) or not 0<=graphic<len(tiles):return None
         cache=(sheet,graphic,size)
         if cache not in self.images:
-            source=tiles[graphic];im=tk.PhotoImage(master=self.window,width=size,height=size)
-            im.put(" ".join("{"+" ".join(source[y*16//size][x*16//size] for x in range(size))+"}" for y in range(size)))
+            from tile_animation import tile_loop,put_tile
+            loop=tile_loop(self.graphics,sheet,graphic)
+            source=loop.frames[self.tile_animation.frame(loop)] if loop else tiles[graphic]
+            im=tk.PhotoImage(master=self.window,width=size,height=size)
+            put_tile(im,source,size)
             self.images[cache]=im
         return self.images[cache]
 
@@ -458,7 +467,8 @@ class AdventureEditor:
         index=selected[0]
         if index<len(self.adventure["tiles"]):
             tile=self.adventure["tiles"][index]
-            self.brush_info.set(f"{tile['terrain'].title()} | graphic {tile['graphic']} | {tile['sheet']}")
+            from tile_animation import loop_label
+            self.brush_info.set(f"{tile['terrain'].title()} | graphic {tile['graphic']} | {tile['sheet']} | {loop_label(self.graphics,tile['sheet'],tile['graphic'])}")
         else:self.brush_info.set("Erase the visible overlay tile, or the explicitly selected overlay. Base ground remains.")
         # Only an actual palette interaction changes tools. Refreshing the
         # thumbnail selection during a building stroke must not disarm it.

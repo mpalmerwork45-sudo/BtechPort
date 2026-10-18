@@ -11,7 +11,7 @@ typedef struct {
 } BtpArtTrack;
 typedef struct {
     char id[64],name[96];
-    uint16_t width,height,count,kind;
+    uint16_t width,height,count,kind,frame_ticks; /* Tile loop: 32 ms ticks, default 8. */
     uint32_t frames[BTP_ART_FRAMES];
     uint16_t tracks[BTP_ANIM_ACTIONS]; /* One based; zero preserves old layouts. */
 } BtpArtImage;
@@ -29,4 +29,5 @@ int btp_art_load(const char *path,BtpArt *out,char error[256]);
 unsigned btp_art_find(const BtpArt *art,const char *id);
 const BtpArtTrack *btp_art_track(const BtpArt *art,unsigned image,unsigned action);
 unsigned btp_art_frame(const BtpArt *art,unsigned image,unsigned action,unsigned direction,unsigned ticks,unsigned fallback);
+unsigned btp_art_tile_frame(const BtpArt *art,unsigned image,unsigned ticks);
 #endif

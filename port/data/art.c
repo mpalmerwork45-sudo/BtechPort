@@ -10,6 +10,12 @@ unsigned btp_art_find(const BtpArt *a,const char *id)
 }
 static int hex(unsigned char c)
 { return c>='0' && c<='9' ? c-'0' : c>='a' && c<='f' ? c-'a'+10 : -1; }
+unsigned btp_art_tile_frame(const BtpArt *a,unsigned image,unsigned ticks)
+{
+    if (!a || image>=a->count) return 0;
+    const BtpArtImage *im=&a->images[image];
+    return im->count ? (ticks/(im->frame_ticks ? im->frame_ticks : 8u))%im->count : 0;
+}
 const BtpArtTrack *btp_art_track(const BtpArt *a,unsigned image,unsigned action)
 {
     if (!a || image>=a->count || action>=BTP_ANIM_ACTIONS) return NULL;
@@ -83,6 +89,13 @@ int btp_art_load(const char *path,BtpArt *out,char error[256])
             ((kind==1 || kind==2) && (w>64 || h>64))) { btp_json_error(&j,n,"tile is 16x16; sprite/icon at most 64x64; screen at most 320x200");goto done; }
         if (btp_art_find(a,im->id)!=BTP_ART_NONE) { btp_json_error(&j,n,"duplicate image ID");goto done; }
         im->width=(uint16_t)w;im->height=(uint16_t)h;im->kind=(uint16_t)kind;
+        /* Optional timing preserves existing packages while letting copied
+           CHI terrain retain its original four-tick animation cadence. */
+        unsigned duration=btp_json_optional(&j,n,"frame_ticks"),ticks=8;
+        if (duration && (kind!=0 || !btp_json_uint(&j,duration,1,255,&ticks))) {
+            btp_json_error(&j,n,"frame_ticks requires a tile and 1..255 logical ticks");goto done;
+        }
+        im->frame_ticks=(uint16_t)ticks;
         unsigned frames=btp_json_field(&j,n,"frames");if (!btp_json_type(&j,frames,'[')) goto done;
         for (unsigned f=j.nodes[frames].first;f;f=j.nodes[f].next) {
             if (im->count==BTP_ART_FRAMES || a->used+w*h>BTP_ART_PIXELS || !btp_json_type(&j,f,'[')) { btp_json_error(&j,f,"graphics frame/total pixel budget exceeded");goto done; }
