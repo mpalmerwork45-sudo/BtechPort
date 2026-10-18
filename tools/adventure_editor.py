@@ -63,7 +63,10 @@ class Form:
         self.values = {};self.widgets={};self.integers=set();self.tracked=[]
         self.row = 0
         self.error=tk.StringVar()
-        ttk.Label(self.window,textvariable=self.error,foreground='#a03030',wraplength=620,padding=8).pack(side='bottom',fill='x')
+        # Reserve actions before the expanding scroll body. Otherwise a short
+        # form can hide Apply entirely at large fonts or on a small display.
+        self.footer=ttk.Frame(self.window);self.footer.pack(side='bottom',fill='x',before=shell)
+        ttk.Label(self.footer,textvariable=self.error,foreground='#a03030',wraplength=620,padding=8).pack(fill='x')
         self.window.bind("<Escape>", lambda _: self.close())
         self.window.protocol('WM_DELETE_WINDOW',self.close)
         self.previous_grab=self.window.grab_current()
@@ -88,13 +91,15 @@ class Form:
         self.row += 1
         return widget
 
-    def submit(self, callback):
+    def submit(self, callback, label='Apply'):
         self.callback=callback;self.initial=self.capture_draft()
         self.draft=register(self,pending=lambda:self.capture_draft()!=self.initial,
             apply=self.apply_pending,capture=self.capture_draft,restore=self.restore_draft,
             accept=self.accept_draft,priority=100)
         # Keep Apply reachable while scrolling through a long party form.
-        ttk.Button(self.window, text="Apply", command=lambda: guard(self,lambda:apply_draft(self))).pack(side="bottom",anchor="e",pady=8,padx=12)
+        self.apply_button=ttk.Button(self.footer,text=label,command=lambda:guard(self,lambda:apply_draft(self)))
+        self.apply_button.pack(side='right',pady=8,padx=12)
+        ttk.Button(self.footer,text='Cancel',command=self.close).pack(side='right',pady=8)
         from editor_ui import size_form
         self.size_job=self.window.after_idle(lambda:size_form(self))
 
@@ -145,6 +150,7 @@ class AdventureEditor:
         self.drag = None
         self.paint_start = self.paint_last = None
         self.selection_rect = self.clipboard = None
+        self.paste_as_overlay=False;self.paste_name='Pattern';self.road_profile=None;self.road_width=1
         self.world_editor = self.art_editor = None
         self.selected_marker = None
         self.cursor = tuple(self.document.adventure["start"]["at"])
@@ -238,18 +244,21 @@ class AdventureEditor:
         actions=ttk.Menubutton(top,text='Map actions');menu=tk.Menu(actions,tearoff=False);actions.configure(menu=menu);actions.pack(side='left',padx=6)
         for title,items in [('Map',[('New map',self.new_map),('Properties',self.map_properties),('Delete map',self.delete_map)]),
                             ('Layers',[('Add overlay',self.new_overlay),('Properties',self.layer_properties),('Move building',self.move_building),('Delete layer',self.delete_layer)]),
-                            ('Buildings',[('Save selection as stamp',self.capture_building),('Place stamp',self.place_building)])]:
+                            ('Construct',[('Building designer',lambda:self.construction('Building')),('Wall designer',lambda:self.construction('Wall')),('Road designer',lambda:self.construction('Road'))]),
+                            ('Patterns',[('Pattern Library',self.patterns),('Copy selection',self.copy_selection),('Cut selection',self.cut_selection),('Paste',lambda:self.tool.set('Paste')),('Save selection',self.save_pattern)]),
+                            ('Buildings and entrances',[('Save selection as stamp',self.capture_building),('Place stamp',self.place_building)])]:
             submenu=tk.Menu(menu,tearoff=False)
             for label,action in items:submenu.add_command(label=label,command=lambda cb=action:self.guard(cb))
             menu.add_cascade(label=title,menu=submenu)
         menu.add_separator();menu.add_command(label='Reload graphics',command=self.reload_graphics);menu.add_command(label='Player setup',command=self.parent.setup)
+        ttk.Button(top,text='Pattern Library',command=lambda:self.guard(self.patterns)).pack(side='left',padx=3)
         controls=ttk.Frame(self.map_tab,padding=6);controls.pack(fill="x")
         ttk.Label(controls,text="Layer").pack(side="left",padx=(4,8))
         self.layer_choice=ttk.Combobox(controls,state="readonly",width=12,values=["Base"]);self.layer_choice.current(0);self.layer_choice.pack(side="left")
         self.layer_choice.bind("<<ComboboxSelected>>",lambda _:self.draw())
         self.tool=tk.StringVar(value="Paint")
         ttk.Label(controls,text="Tool").pack(side="left",padx=(12,6))
-        ttk.Combobox(controls,textvariable=self.tool,values=["Paint","Line","Rectangle","Fill","Eyedropper","Select","Paste","Move markers","Entrance","NPC","Encounter","Start","Play here"],state="readonly",width=16).pack(side="left")
+        ttk.Combobox(controls,textvariable=self.tool,values=["Paint","Line","Rectangle","Fill","Eyedropper","Select","Paste","Road","Move markers","Entrance","NPC","Encounter","Start","Play here"],state="readonly",width=16).pack(side="left")
         self.zoom=tk.StringVar(value="24")
         ttk.Label(controls,text="Zoom").pack(side="left",padx=(12,6))
         z=ttk.Combobox(controls,textvariable=self.zoom,values=["16","24","32"],state="readonly",width=4);z.pack(side="left");z.bind("<<ComboboxSelected>>",lambda _:self.draw())
@@ -317,6 +326,7 @@ class AdventureEditor:
         self.canvas.bind("<Double-Button-1>",lambda e:self.guard(lambda:self.double_marker(e)))
         self.canvas.bind("<Button-3>",lambda e:self.guard(lambda:self.sample_tile(e)))
         self.canvas.bind("<Control-c>",lambda _:self.guard(self.copy_selection))
+        self.canvas.bind("<Control-x>",lambda _:self.guard(self.cut_selection))
         self.canvas.bind("<Control-v>",lambda _:self.tool.set("Paste"))
         self.canvas.bind('<Motion>',self.hover_move)
         self.canvas.bind('<Leave>',lambda _:self.clear_hover())
@@ -335,6 +345,19 @@ class AdventureEditor:
         self.canvas.delete('brush-hover')
         if self.hover is None:return
         x,y=self.hover;size=int(self.zoom.get())
+        if self.tool.get()=='Paste' and self.clipboard:
+            # Preview the whole block; red bounds make an invalid edge paste
+            # visible before the click. Paste never silently crops a building.
+            w,h=len(self.clipboard[0]),len(self.clipboard);scene=self.scene()
+            valid=x+w<=len(scene['rows'][0]) and y+h<=len(scene['rows'])
+            values={t['id']:t for t in self.adventure['tiles']}
+            for yy,row in enumerate(self.clipboard):
+                for xx,identity in enumerate(row):
+                    value=values.get(identity)
+                    if value and x+xx<len(scene['rows'][0]) and y+yy<len(scene['rows']):
+                        im=self.tile_image(value['sheet'],value['graphic'],size)
+                        if im:self.canvas.create_image((x+xx)*size,(y+yy)*size,image=im,anchor='nw',tags='brush-hover')
+            self.canvas.create_rectangle(x*size,y*size,(x+w)*size,(y+h)*size,outline='#79ecc3' if valid else '#ff6472',width=3,tags='brush-hover')
         self.canvas.create_rectangle(x*size+1,y*size+1,(x+1)*size-1,(y+1)*size-1,
             outline='#ffffff' if self.hover_light else '#243641',width=2,tags='brush-hover')
         if self.footprints.get() and self.formation_preview:
@@ -457,7 +480,7 @@ class AdventureEditor:
         scene=self.scene()
         half=(int(px*2//size),int(py*2//size));self.cursor=half
         tool=self.tool.get()
-        if first:
+        if first and tool not in ('Select','Paste','Road'):
             ref=self.hit_marker(px,py)
             if ref is not None:
                 marker=next(m for m in scene_markers(self.adventure,self.scene_index) if m["ref"]==ref)
@@ -477,7 +500,7 @@ class AdventureEditor:
             self.draw();self.status.set(f"Marker at half-tile {at[0]},{at[1]} | release to place | Escape cancels")
             return
         if not 0<=y<len(scene["rows"]) or not 0<=x<len(scene["rows"][0]): return
-        if tool in ("Paint","Line","Rectangle","Fill","Paste"):
+        if tool in ("Paint","Line","Rectangle","Fill","Paste","Road"):
             if first:
                 self.stroke=copy_adventure(self.document);self.paint_start=self.paint_last=(x,y)
             if self.stroke is None: return
@@ -490,8 +513,23 @@ class AdventureEditor:
                 if first:fill_tiles(target,layer,x,y,key)
             elif tool=="Paste":
                 if first and self.clipboard:
-                    for yy,row in enumerate(self.clipboard):
-                        for xx,value in enumerate(row):paint(target,layer,x+xx,y+yy,value)
+                    from map_patterns import paste
+                    try:
+                        if self.paste_as_overlay:
+                            w,h=len(self.clipboard[0]),len(self.clipboard)
+                            if x+w>len(target['rows'][0]) or y+h>len(target['rows']):raise EditorError('The complete building must fit on the map. Move it inward.')
+                            upgrade(self.stroke)
+                            target['overlays'].append(dict(at=[x,y],rows=[[' ']*w for _ in range(h)]));layer=len(target['overlays'])
+                        paste(self.stroke,self.scene_index,layer,x,y,self.clipboard)
+                    except Exception:self.stroke=None;raise
+            elif tool=='Road':
+                from construction_editing import draw_road
+                from tile_editing import metadata
+                profile=next((p for p in metadata(self.document).get('construction_sets',[]) if p['id']==self.road_profile),None)
+                if profile is None:
+                    self.stroke=None;raise EditorError('Open Map actions > Construct > Road designer, then choose Draw connecting roads.')
+                try:draw_road(self.stroke,self.scene_index,layer,self.paint_last,(x,y),profile,self.road_width)
+                except Exception:self.stroke=None;raise
             else:draw_tiles(target,layer,self.paint_start if tool in ("Line","Rectangle") else self.paint_last,(x,y),key,tool)
             self.paint_last=(x,y);self.draw()
         elif tool=="Select":
@@ -517,9 +555,39 @@ class AdventureEditor:
 
     def copy_selection(self):
         if not self.selection_rect:raise EditorError("Use Select and drag a rectangle first. Ctrl+C copies; Ctrl+V chooses Paste.")
-        x0,y0,x1,y1=self.selection_rect;grid=composite(self.scene())
-        self.clipboard=[row[x0:x1+1] for row in grid[y0:y1+1]]
+        from map_patterns import capture
+        x0,y0,x1,y1=self.selection_rect;self.clipboard=capture(self.document,self.scene_index,self.selection_rect)
+        self.paste_as_overlay=False
         self.status.set(f"Copied {x1-x0+1} x {y1-y0+1} tiles. Ctrl+V, then click to paste.")
+
+    def cut_selection(self):
+        if not self.selection_rect:raise EditorError('Use Select and drag a rectangle first. Cut affects the selected layer.')
+        from map_patterns import cut
+        self.finish_stroke();self.clipboard=cut(self.document,self.scene_index,self.selection_rect,max(0,self.layer_choice.current()));self.paste_as_overlay=False
+        self.refresh();self.status.set('Cut selected layer. Ctrl+V and click to paste; Undo restores the cut.')
+
+    def use_pattern(self,rows,name='Pattern',overlay=False):
+        from map_patterns import check_rows
+        check_rows(self.document,rows);self.clipboard=copy.deepcopy(rows);self.paste_as_overlay=overlay;self.paste_name=name
+        self.tool.set('Paste');self.window.lift();self.tabs.select(self.map_tab);self.canvas.focus_set()
+        self.status.set(name+': click to place; Escape cancels. '+('Each placement becomes a new overlay.' if overlay else 'Paints into the selected layer.'))
+
+    def save_pattern(self):
+        if not self.selection_rect:raise EditorError('Use Select and drag a rectangle first.')
+        from map_patterns import capture,save_pattern
+        rows=capture(self.document,self.scene_index,self.selection_rect)
+        f=Form(self,'Save map pattern');f.field('name','Map pattern')
+        f.submit(lambda v:save_pattern(self.document,rows,v['name']));return f
+
+    def patterns(self):
+        from pattern_library import PatternLibrary
+        from editor_workspace import open_view
+        view=open_view(self,'patterns',lambda:PatternLibrary(self));view.target=self;return view
+
+    def construction(self,kind='Building'):
+        from construction_editor import ConstructionEditor
+        from editor_workspace import open_view
+        return open_view(self,'construction',lambda:ConstructionEditor(self,kind),kind)
 
     def edit_landscape(self):
         self.apply_pending()
@@ -543,6 +611,7 @@ class AdventureEditor:
         if self.stroke is not None:
             self.stroke=None;self.drag=None
             self.draw();self.status.set("Move / paint stroke cancelled.")
+        elif self.tool.get()=='Paste':self.tool.set('Select');self.draw_hover()
 
     def double_marker(self,event):
         self.cancel_gesture()
@@ -667,7 +736,7 @@ class AdventureEditor:
         index=self.brush.curselection()[0];tile=self.adventure["tiles"][index];form=Form(self,"Tile definition")
         form.field("id",tile["id"])
         if "key" in tile:form.field("key",tile["key"])
-        form.field("graphic",tile["graphic"])
+        form.field("graphic",str(tile["graphic"]))
         form.field("sheet",tile["sheet"],(["package:tiles"] if self.document.manifest["requires"]=="none" else ["chi:land","chi:destroyed"])+["package:art"])
         form.field("terrain",tile["terrain"],["clear","rough","water","woods","wall"]);form.field("mini_color",tile["mini_color"])
         preview=ttk.Label(form.body)
@@ -693,56 +762,9 @@ class AdventureEditor:
             v["mini_color"]=int(v["mini_color"]);a["tiles"][index]=v;self.images.clear();self.commit(a)
         form.submit(apply)
 
-    def graphic_picker(self,form=None):
-        if not self.graphics:raise EditorError("Load the original graphics through Player setup before choosing a tile.")
-        parent=form.window if form else self.window
-        window=tk.Toplevel(parent);window.title("Choose tile graphic");window.transient(parent);window.geometry("720x630")
-        header=ttk.Frame(window,padding=12);header.pack(fill="x")
-        ttk.Label(header,text="Choose a map tile",style="Heading.TLabel").pack(side="left")
-        sheet=tk.StringVar(value=form.values["sheet"].get() if form else next(iter(self.graphics)))
-        choices=ttk.Combobox(header,textvariable=sheet,values=list(self.graphics),state="readonly",width=20);choices.pack(side="right")
-        shell=ttk.Frame(window,padding=(12,0,12,0));shell.pack(fill="both",expand=True)
-        canvas=tk.Canvas(shell,background="#edf1f2",highlightthickness=0)
-        scroll=ttk.Scrollbar(shell,command=canvas.yview);canvas.configure(yscrollcommand=scroll.set)
-        scroll.pack(side="right",fill="y");canvas.pack(fill="both",expand=True)
-        note=tk.StringVar();ttk.Label(window,textvariable=note,style="Muted.TLabel",padding=12).pack(fill="x")
-        selected=0
-        if form:
-            try:selected=int(form.values["graphic"].get())
-            except ValueError:pass
-        state={"selected":selected};columns=12;cell=54
-        def select(index):
-            state["selected"]=index;x=(index%columns)*cell;y=(index//columns)*cell
-            canvas.coords("selection",x+1,y+1,x+cell-1,y+cell-1)
-            note.set(f"Graphic {index} | {sheet.get()} | double-click to use")
-        def draw_sheet(_=None):
-            canvas.delete("all");source=self.graphics.get(sheet.get(),());state["keys"]=list(source) if isinstance(source,dict) else list(range(len(source)));count=len(source)
-            canvas.configure(scrollregion=(0,0,columns*cell,((count+columns-1)//columns)*cell));canvas.yview_moveto(0)
-            canvas.create_rectangle(0,0,0,0,fill="#cde5e5",outline="#367b83",width=2,tags="selection")
-            for i in range(count):
-                x=(i%columns)*cell;y=(i//columns)*cell;tag=f"tile-{i}"
-                canvas.create_image(x+cell/2,y+20,image=self.tile_image(sheet.get(),state["keys"][i],32),tags=tag)
-                canvas.create_text(x+cell/2,y+45,text=str(i),fill="#31434b",font="TkSmallCaptionFont",tags=tag)
-            select(max(0,min(state["selected"],count-1)))
-        def click(event):
-            x=canvas.canvasx(event.x);y=canvas.canvasy(event.y);index=int(y//cell)*columns+int(x//cell)
-            if 0<=x<columns*cell and 0<=index<len(self.graphics.get(sheet.get(),())):select(index)
-        def use():
-            if not state["keys"]:raise EditorError("No tiles in this sheet. Create or import a 16x16 tile in Graphics / sprites.")
-            value=state["keys"][state["selected"]]
-            if form:form.values["sheet"].set(sheet.get());form.values["graphic"].set(str(value))
-            else:
-                a=copy_adventure(self.document);key=graphic_tile(a,self.document.manifest["package_id"],sheet.get(),value);self.commit(a)
-                index=next(i for i,t in enumerate(a["tiles"]) if token(t)==key);self.brush.selection_set(str(index));self.brush.see(str(index));self.tool.set("Paint")
-            window.destroy()
-        canvas.bind("<Button-1>",click);canvas.bind("<Double-Button-1>",lambda e:(click(e),use()))
-        canvas.bind("<Button-4>",lambda _:canvas.yview_scroll(-3,"units"));canvas.bind("<Button-5>",lambda _:canvas.yview_scroll(3,"units"))
-        canvas.bind("<MouseWheel>",lambda e:canvas.yview_scroll(-1 if e.delta>0 else 1,"units"))
-        choices.bind("<<ComboboxSelected>>",draw_sheet)
-        footer=ttk.Frame(window,padding=(12,0,12,12));footer.pack(fill="x")
-        ttk.Button(footer,text="Use graphic",style="Accent.TButton",command=lambda:self.guard(use)).pack(side="right")
-        ttk.Button(footer,text="Cancel",command=window.destroy).pack(side="right",padx=8)
-        window.bind("<Escape>",lambda _:window.destroy());draw_sheet()
+    def graphic_picker(self,form=None,choose=None,selected=None):
+        from tile_browser import TileBrowser
+        return TileBrowser(self,form,choose,selected)
 
     def refresh_markers(self):
         self.marker_ids=[];self.markers.delete(0,"end")

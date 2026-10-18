@@ -89,7 +89,12 @@ def fill(scene, layer, x, y, value):
     target["rows"] = ["".join(r) for r in rows] if isinstance(target["rows"][0], str) else rows
 
 
-def create_world(adventure, prefix, width=32, height=32, name="World"):
+# The native generated map is 1024 tiles per side (core/world.c), or 128
+# eight-tile jigsaws. Keep the authoring default in the same units as its form.
+ORIGINAL_WORLD_JIGSAWS = 128
+
+
+def create_world(adventure, prefix, width=ORIGINAL_WORLD_JIGSAWS, height=ORIGINAL_WORLD_JIGSAWS, name="World"):
     if not 8 <= width <= 128 or not 8 <= height <= 128 or width % 8 or height % 8:
         raise EditorError("World dimensions are 8..128 jigsaws, in multiples of eight. Each jigsaw is 8x8 tiles.")
     upgrade(adventure)

@@ -47,9 +47,12 @@ def usages(document,identity):
             for index,item in enumerate(value):walk(item,section,path+(index,),asset)
         elif isinstance(value,str):
             exact=value==identity or (value.startswith('package:') and value[8:]==identity)
-            row=tile_key and 'rows' in path and document.adventure.get('schema_version')==1 and tile_key in value
+            row=section=='adventure' and tile_key and 'rows' in path and document.adventure.get('schema_version')==1 and tile_key in value
             if exact or row:found.append(Usage(section,path,asset or section,value))
     for section in ('content','adventure','art','manifest'):walk(getattr(document,section),section)
+    editor=json.loads(document.metadata.get('EDITOR.json',b'{}'))
+    for collection in ('building_stamps','map_patterns','construction_sets'):
+        if collection in editor:walk(editor[collection],'editor',(collection,))
     name=document.manifest.get('presentation')
     if name:walk(json.loads(document.metadata.get(name,document.snapshot[name])),'presentation')
     return found
@@ -72,13 +75,14 @@ def remove(document,identity,replacement=None):
     if refs and not replacement:raise EditorError(f'{identity} is used in {len(refs)} places. Choose a replacement or update those references first.')
     data={name:copy.deepcopy(getattr(document,name)) for name in ('content','adventure','art','manifest')}
     metadata=dict(document.metadata)
+    data['editor']=json.loads(metadata.get('EDITOR.json',b'{}'))
     name=document.manifest.get('presentation')
     if name:data['presentation']=json.loads(metadata.get(name,document.snapshot[name]))
     for ref in refs:
         target=data[ref.section]
         for part in ref.path[:-1]:target=target[part]
         old=target[ref.path[-1]]
-        if collection=='tiles' and document.adventure['schema_version']==1 and 'rows' in ref.path:
+        if ref.section=='adventure' and collection=='tiles' and document.adventure['schema_version']==1 and 'rows' in ref.path:
             new=old.replace(value['key'],all_items[replacement][3]['key'])
         else:new='package:'+replacement if old=='package:'+identity else replacement
         target[ref.path[-1]]=new
@@ -86,6 +90,9 @@ def remove(document,identity,replacement=None):
     if any(ref.section=='presentation' for ref in refs):
         from editor_model import encoded
         metadata[name]=encoded(data['presentation'])
+    if any(ref.section=='editor' for ref in refs):
+        from editor_model import encoded
+        metadata['EDITOR.json']=encoded(data['editor'])
     with document.command('Delete '+value.get('name',identity)):
         document.replace_all(*(data[k] for k in ('content','adventure','art','manifest')),metadata)
         # Compatibility includes domain constraints, beyond collection/kind.
@@ -135,5 +142,5 @@ def dialog(owner,identity,delete=False):
                 from editor_history import refresh_scope
                 refresh_scope(scope.workspace,scope)
         f.submit(apply)
-    else:ttk.Button(f.window,text='Close',command=f.window.destroy).pack(pady=8)
+    else:ttk.Button(f.footer,text='Close',command=f.window.destroy).pack(pady=8)
     return f

@@ -19,6 +19,7 @@ class WorldEditor:
         self.owner=owner; self.document=owner.document
         self.window=view_window(self,owner,'world','Worlds and planets');self.window.geometry('1000x730');self.window.minsize(840,600)
         self.stroke=None;self.drag=None;self.cache={};self.pending=False;self.last=None;self.city=None;self.world_id=None
+        self.selection_rect=None;self.clipboard=None;self.select_start=None
         bar=ttk.Frame(self.window,padding=8);bar.pack(fill='x')
         for title,cb in [('Create world',self.new_world),('Place city',self.city_form),('Edit city',self.edit_city),('Remove city',self.remove_city),('Undo',owner.undo),('Redo',owner.redo),('Save',owner.save),('Validate',owner.validate)]:
             ttk.Button(bar,text=title,width=0,style='Toolbar.TButton',command=lambda f=cb:self.guard(f)).pack(side='left',padx=3)
@@ -26,7 +27,8 @@ class WorldEditor:
         self.planet=ttk.Combobox(controls,state='readonly',width=22);self.planet.pack(side='left',padx=(0,8));self.planet.bind('<<ComboboxSelected>>',lambda _:self.change_planet())
         ttk.Button(controls,text='Rename',command=lambda:self.guard(self.rename_world)).pack(side='left',padx=(0,8))
         ttk.Button(controls,text='Generate...',command=lambda:self.guard(self.generate)).pack(side='left',padx=(0,8))
-        self.tool=tk.StringVar(value='Jigsaw');ttk.Combobox(controls,textvariable=self.tool,state='readonly',values=['Jigsaw','Tile','Erase patch','Move city','Play here'],width=16).pack(side='left')
+        self.tool=tk.StringVar(value='Jigsaw');ttk.Combobox(controls,textvariable=self.tool,state='readonly',values=['Jigsaw','Tile','Erase patch','Select','Paste','Move city','Play here'],width=16).pack(side='left')
+        ttk.Button(controls,text='Patterns...',command=lambda:self.guard(self.patterns)).pack(side='left',padx=4)
         self.zoom=tk.StringVar(value='4');z=ttk.Combobox(controls,textvariable=self.zoom,values=['1','2','4','8','16'],state='readonly',width=4);z.pack(side='left',padx=8);z.bind('<<ComboboxSelected>>',lambda _:self.draw())
         body=ttk.Panedwindow(self.window,orient='horizontal');body.pack(fill='both',expand=True,padx=8)
         side=ttk.Frame(body);view=ttk.Frame(body);body.add(side,weight=1);body.add(view,weight=5)
@@ -34,13 +36,14 @@ class WorldEditor:
         self.tile_id=tk.StringVar(value=owner.adventure['tiles'][0]['id'])
         ttk.Label(side,text='Tile brush',style='Section.TLabel').pack(anchor='w',pady=6)
         self.tile_choice=ReferenceBox(side,self,self.tile_id,[t['id'] for t in owner.adventure['tiles']],width=22);self.tile_choice.pack(fill='x')
-        ttk.Button(side,text='Browse tiles...',command=lambda:pick_reference(self,self.tile_choice.ids,self.tile_id,'World tile brush')).pack(fill='x',pady=(4,8))
+        ttk.Button(side,text='Browse tiles...',command=lambda:self.owner.graphic_picker(choose=self.tile_id.set,selected=self.tile_id.get())).pack(fill='x',pady=(4,8))
         ttk.Label(side,text='JIGSAWS',style='Section.TLabel',padding=6).pack(anchor='w')
         shell=ttk.Frame(side);shell.pack(fill='both',expand=True)
         self.listing=ttk.Treeview(shell,show='tree',selectmode='browse',style='Tiles.Treeview');self.listing.column('#0',width=200)
         scroll=ttk.Scrollbar(shell,command=self.listing.yview);self.listing.configure(yscrollcommand=scroll.set);scroll.pack(side='right',fill='y');self.listing.pack(fill='both',expand=True)
         self.listing.bind('<Double-1>',lambda _:self.guard(self.edit_jigsaw))
-        for title,cb in [('New jigsaw',self.new_jigsaw),('Clone jigsaw',self.clone_jigsaw),('Paint jigsaw',self.edit_jigsaw)]:ttk.Button(side,text=title,command=lambda f=cb:self.guard(f)).pack(fill='x',pady=3)
+        jigsaw_actions=ttk.Frame(side);jigsaw_actions.pack(side='bottom',fill='x',before=shell)
+        for title,cb in [('New jigsaw',self.new_jigsaw),('Clone jigsaw',self.clone_jigsaw),('Paint jigsaw',self.edit_jigsaw)]:ttk.Button(jigsaw_actions,text=title,command=lambda f=cb:self.guard(f)).pack(fill='x',pady=3)
         view.rowconfigure(0,weight=1);view.columnconfigure(0,weight=1)
         self.canvas=tk.Canvas(view,background='#263842',highlightthickness=0)
         sx=ttk.Scrollbar(view,orient='horizontal',command=lambda *args:self.scroll('x',args));sy=ttk.Scrollbar(view,command=lambda *args:self.scroll('y',args))
@@ -51,13 +54,38 @@ class WorldEditor:
         self.canvas.bind('<B1-Motion>',lambda e:self.guard(lambda:self.pointer(e,False)))
         self.canvas.bind('<ButtonRelease-1>',lambda _:self.guard(self.finish))
         self.canvas.bind('<Double-1>',lambda e:self.guard(lambda:self.open_city(e)))
+        self.canvas.bind('<Control-c>',lambda _:self.guard(self.copy_selection))
+        self.canvas.bind('<Control-x>',lambda _:self.guard(self.cut_selection))
+        self.canvas.bind('<Control-v>',lambda _:self.tool.set('Paste'))
         self.window.bind('<Escape>',lambda _:self.cancel())
         self.window.protocol('WM_DELETE_WINDOW',lambda:self.guard(self.close))
-        self.info=tk.StringVar();ttk.Label(self.window,textvariable=self.info,style='Status.TLabel',padding=8).pack(fill='x')
+        self.info=tk.StringVar();ttk.Label(self.window,textvariable=self.info,style='Status.TLabel',padding=8).pack(side='bottom',fill='x',before=body)
         self.refresh()
         self.draft=register(self,pending=lambda:self.stroke is not None,apply=self.finish,
             capture=lambda:dict(stroke=copy.deepcopy(self.stroke),drag=self.drag),restore=self.restore_draft,priority=30)
+        from editor_ui import flow_toolbar
+        flow_toolbar(bar);flow_toolbar(controls)
     def guard(self, fn):return guard(self,fn)
+    def patterns(self):
+        view=self.owner.patterns();view.target=self;view.info.set('World patterns: select up to 64 × 64 tiles, then Save selection. Paste adds terrain patches.');return view
+    def copy_selection(self):
+        from map_patterns import world_capture
+        if not self.selection_rect:raise EditorError('Choose Select and drag a rectangle first; Ctrl+C copies and Ctrl+V pastes.')
+        self.clipboard=world_capture(self.document,self.world_id,self.selection_rect);self.info.set('Copied world terrain. Ctrl+V, then click to place.')
+    def cut_selection(self):
+        from map_patterns import world_paste
+        self.copy_selection();a=copy.deepcopy(self.adventure)
+        ground=next(t['id'] for t in a['tiles'] if t['terrain']=='clear')
+        world_paste(a,self.world_id,*self.selection_rect[:2],[[ground]*len(self.clipboard[0]) for _ in self.clipboard]);self.owner.commit(a)
+    def use_pattern(self,rows,name='Pattern',overlay=False):
+        from map_patterns import check_rows
+        if not self.current_world():raise EditorError('Create or select a world first.')
+        check_rows(self.document,rows);self.clipboard=copy.deepcopy(rows);self.tool.set('Paste');self.window.lift();self.canvas.focus_set()
+        self.info.set(name+': click to place terrain. City maps must be edited in their local map view.')
+    def save_pattern(self):
+        from map_patterns import world_capture,save_pattern
+        if not self.selection_rect:raise EditorError('Choose Select and drag a rectangle first.')
+        rows=world_capture(self.document,self.world_id,self.selection_rect);f=Form(self,'Save world pattern');f.field('name','World pattern');f.submit(lambda v:save_pattern(self.document,rows,v['name']));return f
     def restore_draft(self,state):self.stroke=state['stroke'];self.drag=state['drag'];self.draw()
     def close(self):
         if hasattr(self.window,'workspace'):
@@ -92,10 +120,18 @@ class WorldEditor:
             if scene['id'] in world['cities'] and ox<=x<ox+len(scene['rows'][0]) and oy<=y<oy+len(scene['rows']):
                 self.cancel();self.owner.map_choice.current(self.adventure['maps'].index(scene));self.owner.change_map();self.owner.tabs.select(self.owner.map_tab);self.owner.window.lift();return
     def new_world(self):
-        f=Form(self,'Create world');f.field('name','World');f.field('width',32,label='Width in 8x8 jigsaws');f.field('height',32,label='Height in 8x8 jigsaws')
+        from world_editing import ORIGINAL_WORLD_JIGSAWS
+        f=Form(self,'Create world');f.field('name','World');f.field('width',ORIGINAL_WORLD_JIGSAWS,label='Width in 8x8 jigsaws');f.field('height',ORIGINAL_WORLD_JIGSAWS,label='Height in 8x8 jigsaws')
+        f.field('cities','Yes' if not all_worlds(self.adventure) else 'No',['Yes','No'],label='Place current local maps as cities')
+        ttk.Label(f.body,text='Original CHI size: 1024 × 1024 tiles. Planets currently share 256 sectors; choose smaller dimensions when dividing that space between planets.',wraplength=480).grid(row=f.row,column=0,columnspan=3,padx=10,pady=8);f.row+=1
         def apply(v):
-            a=copy.deepcopy(self.document.adventure);self.world_id=create_world(a,self.document.content['package_id'],int(v['width']),int(v['height']),v['name']);self.owner.commit(a)
-        f.submit(apply)
+            a=copy.deepcopy(self.document.adventure);world_id=create_world(a,self.document.content['package_id'],int(v['width']),int(v['height']),v['name'])
+            if v['cities']=='Yes':
+                for scene in a['maps']:
+                    if not any(scene['id'] in w['cities'] for w in all_worlds(a)):assign_city(a,scene['id'],world_id=world_id)
+            self.owner.commit(a);self.world_id=world_id;self.refresh()
+        f.submit(apply,'Create world')
+        return f
     def rename_world(self):
         world=self.current_world()
         if not world:raise EditorError('Create a world first.')
@@ -184,11 +220,24 @@ class WorldEditor:
             ox,oy=m['origin'];color='#ffff88' if m['id']==self.city else '#ffffff'
             self.canvas.create_rectangle(ox*z,oy*z,(ox+len(m['rows'][0]))*z,(oy+len(m['rows']))*z,outline=color,width=2)
             self.canvas.create_text(ox*z+3,oy*z+3,text=m['name'],fill=color,anchor='nw')
+        if self.selection_rect:
+            x,y,xx,yy=self.selection_rect;self.canvas.create_rectangle(x*z,y*z,(xx+1)*z,(yy+1)*z,outline='#ffdb6e',width=2)
         self.info.set(f"{self.current_world(a)['name']} | {w} x {h} tiles | {len(a['jigsaws'])} jigsaws | {len(self.current_world(a)['cities'])} cities")
     def pointer(self,e,start):
         if not all_worlds(self.adventure):raise EditorError('Create a world first.')
         z=int(self.zoom.get());p=(int(self.canvas.canvasx(e.x)//z),int(self.canvas.canvasy(e.y)//z));w,h=world_size(self.adventure,self.world_id)
         if not(0<=p[0]<w and 0<=p[1]<h):return
+        if start:self.canvas.focus_set()
+        if self.tool.get()=='Select':
+            if start:self.select_start=p
+            if self.select_start:
+                self.selection_rect=(min(p[0],self.select_start[0]),min(p[1],self.select_start[1]),max(p[0],self.select_start[0]),max(p[1],self.select_start[1]));self.draw()
+            return
+        if self.tool.get()=='Paste':
+            if start and self.clipboard:
+                from map_patterns import world_paste
+                a=copy.deepcopy(self.document.adventure);world_paste(a,self.world_id,*p,self.clipboard);self.owner.commit(a)
+            return
         if start:
             if self.tool.get() not in ('Move city','Play here') and not (getattr(e,'state',0)&4):
                 for city in self.document.adventure['maps']:
@@ -231,16 +280,27 @@ class WorldEditor:
     def cancel(self):self.stroke=None;self.drag=None;self.draw()
 
 
+@recoverable_forms
 class JigsawEditor:
     shared_art = True
     def __init__(self,owner,jigsaw):
-        self.owner=owner;self.original=copy.deepcopy(jigsaw);self.jigsaw=copy.deepcopy(jigsaw);self.history=[];self.future=[];self.before=None;self.last=None
-        self.window=view_window(self,owner,'jigsaw',jigsaw['name'],jigsaw['id']);self.window.geometry('550x480')
+        self.owner=owner;self.document=owner.document;self.original=copy.deepcopy(jigsaw);self.jigsaw=copy.deepcopy(jigsaw);self.history=[];self.future=[];self.before=None;self.last=None;self.clipboard=None;self.start=None
+        self.window=view_window(self,owner,'jigsaw',jigsaw['name'],jigsaw['id']);self.window.geometry('760x620')
         bar=ttk.Frame(self.window,padding=8);bar.pack(fill='x');self.name=tk.StringVar(value=jigsaw['name']);ttk.Entry(bar,textvariable=self.name).pack(side='left',fill='x',expand=True)
         for label,cb in [('Undo',self.undo),('Redo',self.redo),('Apply',self.apply)]:ttk.Button(bar,text=label,command=lambda f=cb:owner.guard(f)).pack(side='left')
-        self.tile=ttk.Combobox(self.window,state='readonly',values=[t['id'] for t in owner.adventure['tiles']],width=55);self.tile.pack(pady=8);selected=owner.owner.brush.curselection();self.tile.current(min(selected[0] if selected else 0,len(owner.adventure['tiles'])-1))
-        self.canvas=tk.Canvas(self.window,width=320,height=320,highlightthickness=0);self.canvas.pack()
-        self.canvas.bind('<Button-1>',lambda e:self.paint(e,True));self.canvas.bind('<B1-Motion>',lambda e:self.paint(e,False));self.canvas.bind('<ButtonRelease-1>',lambda _:self.finish());self.draw()
+        controls=ttk.Frame(self.window,padding=8);controls.pack(fill='x')
+        self.tile=ttk.Combobox(controls,state='readonly',values=[t['id'] for t in owner.adventure['tiles']],width=28);self.tile.pack(side='left');selected=owner.owner.brush.curselection();self.tile.current(min(selected[0] if selected else 0,len(owner.adventure['tiles'])-1))
+        ttk.Button(controls,text='Choose tile...',command=lambda:guard(self,self.choose_tile)).pack(side='left',padx=3)
+        self.tool=tk.StringVar(value='Paint');ttk.Combobox(controls,textvariable=self.tool,values=['Paint','Line','Rectangle','Fill','Eyedropper','Paste'],state='readonly',width=12).pack(side='left',padx=3)
+        ttk.Button(controls,text='Patterns...',command=lambda:guard(self,self.patterns)).pack(side='left',padx=3)
+        from editor_ui import flow_toolbar
+        flow_toolbar(bar);flow_toolbar(controls)
+        ttk.Label(self.window,text='Drag to draw. Right-click a cell to choose, create, clone or edit its tile.\nJigsaws remain 8 × 8 tiles, matching the game’s world format.',padding=8,wraplength=650).pack(side='bottom',fill='x')
+        shell=ttk.Frame(self.window);shell.pack(fill='both',expand=True)
+        self.canvas=tk.Canvas(shell,width=320,height=320,highlightthickness=0,background='#273b45',scrollregion=(0,0,320,320))
+        sx=ttk.Scrollbar(shell,orient='horizontal',command=self.canvas.xview);sy=ttk.Scrollbar(shell,command=self.canvas.yview);sx.pack(side='bottom',fill='x');sy.pack(side='right',fill='y');self.canvas.pack(fill='both',expand=True);self.canvas.configure(xscrollcommand=sx.set,yscrollcommand=sy.set)
+        self.canvas.bind('<Button-1>',lambda e:guard(self,lambda:self.paint(e,True)));self.canvas.bind('<B1-Motion>',lambda e:guard(self,lambda:self.paint(e,False)));self.canvas.bind('<ButtonRelease-1>',lambda _:guard(self,self.finish))
+        self.canvas.bind('<Button-3>',lambda e:guard(self,lambda:self.context(e)));self.window.bind('<Escape>',lambda _:self.cancel());self.draw()
         self.draft=register(self,pending=lambda:self.jigsaw!=self.original or self.name.get()!=self.original['name'],
             apply=self.apply_pending,capture=self.capture_draft,restore=self.restore_draft,accept=self.accept_draft,priority=50)
         self.window.protocol('WM_DELETE_WINDOW',lambda:guard(self,self.close))
@@ -257,18 +317,57 @@ class JigsawEditor:
         self.window.destroy()
     def draw(self):
         self.canvas.delete('all');tiles={t['id']:t for t in self.owner.adventure['tiles']}
+        self.tile.configure(values=list(tiles))
+        if self.tile.get() not in tiles:self.tile.current(0)
         for y,row in enumerate(self.jigsaw['rows']):
             for x,value in enumerate(row):
-                tile=tiles[value];im=self.owner.owner.tile_image(tile['sheet'],tile['graphic'],40)
+                tile=tiles.get(value)
+                if tile is None:continue
+                im=self.owner.owner.tile_image(tile['sheet'],tile['graphic'],40)
                 if im:self.canvas.create_image(x*40,y*40,image=im,anchor='nw')
                 self.canvas.create_rectangle(x*40,y*40,(x+1)*40,(y+1)*40,outline='#999999')
     def paint(self,e,start):
-        p=e.x//40,e.y//40
+        p=int(self.canvas.canvasx(e.x)//40),int(self.canvas.canvasy(e.y)//40)
         if not(0<=p[0]<8 and 0<=p[1]<8):return
-        if start:self.before=copy.deepcopy(self.jigsaw);self.last=p
+        tool=self.tool.get()
+        if tool=='Eyedropper':self.tile.set(self.jigsaw['rows'][p[1]][p[0]]);return
+        if start:self.before=copy.deepcopy(self.jigsaw);self.last=self.start=p
         if self.before is None:return
-        for x,y in line(*self.last,*p):self.jigsaw['rows'][y][x]=self.tile.get()
+        if tool in ('Line','Rectangle'):self.jigsaw=copy.deepcopy(self.before)
+        if tool=='Fill':
+            from world_editing import flood
+            flood(self.jigsaw['rows'],*p,self.tile.get())
+        elif tool=='Paste':
+            if start and self.clipboard:
+                if p[0]+len(self.clipboard[0])>8 or p[1]+len(self.clipboard)>8:self.before=None;raise EditorError('The complete pattern must fit in this 8 × 8 jigsaw.')
+                for y,row in enumerate(self.clipboard):
+                    for x,value in enumerate(row):
+                        if value!=' ':self.jigsaw['rows'][p[1]+y][p[0]+x]=value
+        else:
+            points=((x,y) for y in range(min(self.start[1],p[1]),max(self.start[1],p[1])+1) for x in range(min(self.start[0],p[0]),max(self.start[0],p[0])+1)) if tool=='Rectangle' else line(*(self.start if tool=='Line' else self.last),*p)
+            for x,y in points:self.jigsaw['rows'][y][x]=self.tile.get()
         self.last=p;self.draw()
+    def cancel(self):
+        if self.before is not None:self.jigsaw=self.before;self.before=None;self.draw()
+        else:self.tool.set('Paint')
+    def choose_tile(self):return self.owner.owner.graphic_picker(choose=self.tile.set,selected=self.tile.get())
+    def context(self,e):
+        x,y=int(self.canvas.canvasx(e.x)//40),int(self.canvas.canvasy(e.y)//40)
+        if not(0<=x<8 and 0<=y<8):return
+        from construction_editor import tile_menu
+        def assign(value):
+            self.before=copy.deepcopy(self.jigsaw);self.jigsaw['rows'][y][x]=value;self.tile.set(value);self.finish();self.draw()
+        tile_menu(self,self.owner.owner,self.jigsaw['rows'][y][x],assign,e)
+    def patterns(self):
+        view=self.owner.owner.patterns();view.target=self;view.info.set('Save this jigsaw as a pattern, or use an existing pattern up to 8 × 8.');return view
+    def use_pattern(self,rows,name='Pattern',overlay=False):
+        from map_patterns import check_rows
+        check_rows(self.document,rows)
+        if len(rows)>8 or len(rows[0])>8:raise EditorError('Choose a pattern no larger than 8 × 8 tiles for a jigsaw.')
+        self.clipboard=copy.deepcopy(rows);self.tool.set('Paste');self.window.lift()
+    def save_pattern(self):
+        from map_patterns import save_pattern
+        self.finish();f=Form(self,'Save jigsaw pattern');f.field('name',self.name.get());f.submit(lambda v:save_pattern(self.document,self.jigsaw['rows'],v['name']));return f
     def finish(self):
         if self.before is not None and self.before!=self.jigsaw:self.history.append(self.before);self.future=[]
         self.before=None

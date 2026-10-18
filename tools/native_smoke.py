@@ -1310,6 +1310,7 @@ def main():
     parser.add_argument('--map-editor-only',action='store_true',help='Check map painting, event forms, export and Play here')
     parser.add_argument('--editor-visual-only',action='store_true',help='Check original tile previews, visual picker and marker dragging')
     parser.add_argument('--world-art-editor-only',action='store_true',help='Check jigsaw/city and pixel/animation editing')
+    parser.add_argument('--map-construction-only',action='store_true',help='Check building/wall/road tools, tile management, patterns and original-size world creation')
     parser.add_argument('--library-editor-only',action='store_true',help='Check shared library editing/import/export and desktop game launch')
     parser.add_argument('--delivery-only',type=Path,help='Check an unpacked Linux Construction Kit using its bundled runtime')
     parser.add_argument('--construction-kit-only',action='store_true',help='Check service/quest/event and advanced authoring workflows')
@@ -1398,6 +1399,10 @@ def main():
                 return
             if args.world_art_editor_only:
                 from world_art_smoke import run
+                run(env,work)
+                return
+            if args.map_construction_only:
+                from map_construction_smoke import run
                 run(env,work)
                 return
             if args.editor_visual_only:

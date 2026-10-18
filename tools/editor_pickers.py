@@ -100,7 +100,7 @@ def pick_reference(owner,values,variable,title='Choose an asset'):
         if listing.selection():variable.set(listing.selection()[0]);close()
     search.trace_add('write',refresh);listing.bind('<<TreeviewSelect>>',lambda _:guard(picker,show))
     listing.bind('<Double-1>',accept);listing.bind('<Return>',accept)
-    buttons=ttk.Frame(window,padding=12);buttons.pack(fill='x')
+    buttons=ttk.Frame(window,padding=12);buttons.pack(side='bottom',fill='x',before=body)
     ttk.Button(buttons,text='Cancel',command=close).pack(side='right')
     ttk.Button(buttons,text='Choose',command=accept).pack(side='right',padx=8)
     window.protocol('WM_DELETE_WINDOW',close);window.bind('<Escape>',lambda _:close());refresh();window.grab_set();entry.focus_set()

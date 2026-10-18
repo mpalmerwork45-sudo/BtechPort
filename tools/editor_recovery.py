@@ -21,10 +21,13 @@ from editor_session import guard, scope_of
 FIELDS=('content','adventure','art','manifest','metadata')
 ROUTES={
  'RosterEditor': 'mount_dialog new_definition installed_equipment choose_sprite ammunition',
- 'AdventureEditor': 'new_map map_properties overlay_dialog capture_building place_building move_building edit_tile entrance_dialog encounter_dialog service_template person_dialog shop_dialog flag_dialog start_dialog',
+ 'AdventureEditor': 'new_map map_properties overlay_dialog capture_building place_building move_building edit_tile entrance_dialog encounter_dialog service_template person_dialog shop_dialog flag_dialog start_dialog save_pattern',
  'GraphicsEditor': 'new import_file original binding',
  'PixelEditor': 'rename_layer resize_dialog',
- 'WorldEditor': 'new_world rename_world generate city_form',
+ 'WorldEditor': 'new_world rename_world generate city_form save_pattern',
+ 'JigsawEditor': 'save_pattern',
+ 'ConstructionEditor': 'rename reshape',
+ 'PatternLibrary': 'rename',
  'EventGraph': 'link branch',
  'ObjectiveEditor': 'edit',
  'LibraryBrowser': 'new',
@@ -131,11 +134,13 @@ def open_route(scope,route,cache=None):
         from graphics_editor import open_image_editor
         image=next(i for i in scope.document.art['images'] if i['id']==ident)
         view=open_image_editor(owner.graphics_editor(),image)
-    elif kind in ('maps','world','events','jigsaw','objectives'):
+    elif kind in ('maps','world','events','jigsaw','objectives','construction','patterns'):
         owner.edit_adventure();maps=owner.map_editor
         if kind=='maps':view=maps
         elif kind=='events':view=maps.event_graph()
         elif kind=='objectives':view=maps.event_graph().objectives()
+        elif kind=='construction':view=maps.construction(ident)
+        elif kind=='patterns':view=maps.patterns()
         else:
             maps.edit_landscape();view=maps.world_editor
             if kind=='jigsaw':

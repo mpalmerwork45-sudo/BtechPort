@@ -58,10 +58,13 @@ class GraphicsEditor:
         self.listing.bind('<Double-1>', lambda _: self.guard(self.edit))
         self.preview = tk.Canvas(right, background='#e1e1e1', height=320, highlightthickness=0)
         self.preview.pack(fill='both', expand=True)
-        self.info = tk.StringVar(); ttk.Label(right, textvariable=self.info, wraplength=370).pack(fill='x', pady=12)
-        actions = ttk.Frame(right); actions.pack(fill='x')
+        footer=ttk.Frame(right);footer.pack(side='bottom',fill='x',before=self.preview)
+        self.info = tk.StringVar(); ttk.Label(footer, textvariable=self.info, wraplength=370).pack(fill='x', pady=12)
+        actions = ttk.Frame(footer); actions.pack(fill='x')
         ttk.Button(actions, text='Use as map tile', command=lambda: self.guard(self.use_tile)).pack(side='left')
         ttk.Button(actions, text='Assign sprite role', command=lambda: self.guard(self.binding)).pack(side='left', padx=8)
+        from editor_ui import flow_toolbar
+        flow_toolbar(actions);flow_toolbar(bar)
         ttk.Label(self.window, text='Images belong to this package. Changes share the map editor shared Save, Undo and Redo.',
                   style='Muted.TLabel', padding=10).pack(fill='x')
         self.refresh()

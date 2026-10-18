@@ -221,6 +221,8 @@ class Workspace:
         elif kind=='world':state.update(world=owner.world_id,city=owner.city)
         elif kind=='events':state.update(event=owner.selected,filter=owner.view_mode.get())
         elif kind=='graphics':state.update(selected=owner.selected)
+        elif kind=='construction':state.update(current=owner.current,role=owner.selected_role)
+        elif kind=='patterns':state.update(selected=owner.selected)
         elif kind=='pixels':
             state.update(frame=owner.frame.current())
             if hasattr(owner,'view'):state.update(view=owner.view.get(),direction=owner.direction,phase=owner.phase)
@@ -251,6 +253,8 @@ class Workspace:
         elif kind=='world':owner.world_id=state.get('world');owner.city=state.get('city');owner.refresh()
         elif kind=='events':owner.selected=state.get('event');owner.view_mode.set(state.get('filter','Nearby events'));owner.edit()
         elif kind=='graphics':owner.selected=state.get('selected');owner.refresh()
+        elif kind=='construction':owner.current=state.get('current');owner.selected_role=state.get('role');owner.refresh()
+        elif kind=='patterns':owner.selected=state.get('selected');owner.refresh()
         elif kind=='pixels':
             if hasattr(owner,'view'):
                 owner.view.set(state.get('view',owner.view.get()));owner.direction=state.get('direction',owner.direction);owner.phase=state.get('phase',0);owner.refresh_frames()
@@ -636,6 +640,13 @@ class Workspace:
                     elif kind=='world':self.open_world();view=owner.map_editor.world_editor.window
                     elif kind=='graphics':view=self.open_art().window
                     elif kind=='events':view=self.map_view().event_graph().window
+                    elif kind=='construction':view=self.map_view().construction(identity).window
+                    elif kind=='patterns':view=self.map_view().patterns().window
+                    elif kind=='jigsaw':
+                        from world_editor import JigsawEditor
+                        maps=self.map_view();maps.edit_landscape();world=maps.world_editor
+                        jigsaw=next(j for j in owner.document.adventure.get('jigsaws',[]) if j['id']==identity)
+                        view=open_view(world,'jigsaw',lambda:JigsawEditor(world,jigsaw),identity).window
                     elif kind=='pixels':
                         from graphics_editor import open_image_editor
                         image=next(i for i in owner.document.art['images'] if i['id']==identity)

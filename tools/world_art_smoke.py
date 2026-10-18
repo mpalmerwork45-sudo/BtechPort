@@ -67,7 +67,7 @@ def run(env,work):
                 assert ed.canvas.itemcget(ed.canvas.find_withtag('brush-hover')[0],'outline')!=outline
                 gesture(ed.canvas,(z*2+2,z*12+2),(z*2+2,z*12+2));assert doc.adventure['maps'][0]['rows'][12][2]==doc.adventure['tiles'][-1]['id']
                 ed.undo();pump()
-                a=copy.deepcopy(doc.adventure);create_world(a,'test');assign_city(a,'beacon:town');assign_city(a,'beacon:wild');ed.commit(a)
+                a=copy.deepcopy(doc.adventure);create_world(a,'test',32,32);assign_city(a,'beacon:town');assign_city(a,'beacon:wild');ed.commit(a)
                 ed.edit_landscape();world=ed.world_editor;world.window.geometry('1000x730+0+0');pump()
                 j=JigsawEditor(world,world.selected_jigsaw());j.tile.set(doc.adventure['tiles'][-1]['id']);pump()
                 gesture(j.canvas,(1,1),(281,281));assert j.jigsaw['rows'][7][7]==doc.adventure['tiles'][-1]['id'];j.apply();pump()
@@ -84,7 +84,7 @@ def run(env,work):
                 # sprite editor, including isolated staging and live refresh.
                 app.vehicle_catalogue();pump()
                 dialog=next(w for w in window.winfo_children() if isinstance(w,tk.Toplevel) and w.title()=='Add vehicles')
-                next(w for w in dialog.winfo_children() if w.winfo_class()=='TButton' and w.cget('text')=='Apply').invoke();pump()
+                next(d.view.apply_button for d in app._editor_scope.live() if d.view.window==dialog).invoke();pump()
                 assert app.kind.get()=='Vehicles' and app.current=='vehicles:patton'
                 window.lift();pump()
                 assert len(app.sprite_photos)==32
