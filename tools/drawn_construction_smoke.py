@@ -44,7 +44,7 @@ def run(env,work):
                 nonlocal clock
                 x=round(cell[0]*size+size//2-canvas.canvasx(0));y=round(cell[1]*size+size//2-canvas.canvasy(0))
                 assert 0<=x<canvas.winfo_width() and 0<=y<canvas.winfo_height(),(cell,x,y,canvas.winfo_width(),canvas.winfo_height())
-                clock+=1000;canvas.event_generate(sequence,x=x,y=y,time=clock);pump()
+                clock+=1000;canvas.event_generate(sequence,x=x,y=y,time=clock,**({'state':0x401} if button==3 else {}));pump()
             emit(f'<ButtonPress-{button}>',start);emit(f'<B{button}-Motion>',end)
             if release:emit(f'<ButtonRelease-{button}>',end)
         def snapshot(name):pump();ImageGrab.grab(xdisplay=env['DISPLAY']).save(work/('drawn-construction-'+name+'.png'))
@@ -82,7 +82,7 @@ def run(env,work):
                 # mechanism as tile strokes and designer footprint edits.
                 gesture((8,20),(10,20),release=False)
                 workspace.recovery.write(app._editor_scope);record=workspace.recovery.read(workspace.recovery.path(app._editor_scope))
-                print('PASS: direct map rectangle, cross extension, right-drag courtyard, mixed heights, three-story courtyard and connected wall; preview has no committed side effects and strokes undo atomically.',flush=True)
+                print('PASS: direct map rectangle, cross extension, Shift/right-drag courtyard, mixed heights, three-story courtyard and connected wall; preview has no committed side effects and strokes undo atomically.',flush=True)
             finally:
                 if workspace:workspace.closing=True
                 window.destroy()

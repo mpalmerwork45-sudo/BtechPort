@@ -67,7 +67,9 @@ def run(env,work):
                 menus[-1].invoke(2);pump()
                 assert builder.profile['parts'][role]!=old_tile
                 pixel=workspace.current_view().controller
-                assert workspace.current_view().key[1]=='pixels';pixel.color.set('ff4466ff');gesture(pixel.canvas,(1,1),(1,1));pump()
+                assert workspace.current_view().key[1]=='pixels';pixel.color.set('ff4466ff')
+                point=tuple(v*int(pixel.zoom.get())+1 for v in pixel.pixel_origin)
+                gesture(pixel.canvas,point,point);pump()
                 new_tile=next(t for t in doc.adventure['tiles'] if t['id']==builder.profile['parts'][role])
                 assert next(i for i in doc.art['images'] if i['id']==new_tile['graphic'])['frames'][0][0].startswith('ff4466ff')
                 maps.window.lift();maps.refresh();pump();construct=maps.construction_tools

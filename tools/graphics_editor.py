@@ -22,13 +22,15 @@ def photo(parent, image, frame=0, zoom=1):
     return result.zoom(zoom) if zoom != 1 else result
 
 
-def open_image_editor(owner, image):
+def open_image_editor(owner, image, map_context=None):
     existing=existing_view(owner,'pixels',image['id'])
-    if existing:return existing
-    if image['kind']=='sprite':
+    if existing:editor=existing
+    elif image['kind']=='sprite':
         from sprite_editor import SpriteEditor
-        return SpriteEditor(owner,image)
-    return PixelEditor(owner,image)
+        editor=SpriteEditor(owner,image)
+    else:editor=PixelEditor(owner,image)
+    if map_context is not None:editor.set_map_context(map_context)
+    return editor
 
 
 @recoverable_forms
@@ -159,7 +161,7 @@ class GraphicsEditor:
             im['frames']=[[''.join(color.lstrip('#')+'ff' for color in row) for row in colors]]
             self.put(im)
         self.edit()
-    def edit_map_tile(self):
+    def edit_map_tile(self,map_context=None):
         selected=self.map_view().brush.curselection()
         if not selected or selected[0]>=len(self.document.adventure['tiles']):raise EditorError('Choose a map tile in the palette first.')
         art=copy.deepcopy(self.document.art);a=copy.deepcopy(self.document.adventure)
@@ -172,7 +174,7 @@ class GraphicsEditor:
             data=metadata(self.document);data.setdefault('tile_sources',{})[im['id']]=source_origin(data,source)
             meta=dict(self.document.metadata);meta['EDITOR.json']=encoded(data)
             self.document.replace_art(art,a,meta);self.refresh_views()
-        self.refresh();self.edit()
+        self.refresh();return open_image_editor(self,self.current(),map_context)
     def delete(self):
         if not self.current():return
         if hasattr(self.window,'workspace'):
@@ -204,6 +206,8 @@ class PixelEditor:
     """Stage an image independently; Apply produces one shared undo entry."""
     def __init__(self, owner, image):
         self.owner=owner; self.original=copy.deepcopy(image)
+        self.map_context=None;self.context_images=[];self.pixel_origin=(0,0);self.pixel_dragging=False
+        self.show_neighbours=tk.BooleanVar(master=owner.window,value=True)
         self.image=begin_layers(image,editor_data(owner.document).get('pixel_layers',{}).get(image['id']))
         self.original_layers=copy.deepcopy(self.image);self.pixel_selection=None;self.pixel_clipboard=None
         self.window=view_window(self,owner,'pixels',image['name'],image['id']); self.window.title('Pixel editor - '+image['name']); self.window.geometry('920x730')
@@ -276,27 +280,70 @@ class PixelEditor:
         for title,cb in [('Clone frame',self.add_frame),('Delete frame',self.delete_frame),('Play / stop',self.play)]:ttk.Button(frames,text=title,command=lambda f=cb:self.guard(f)).pack(side='left',padx=4)
     def refresh_frames(self):
         current=max(0,self.frame.current());self.frame.configure(values=list(range(1,len(self.image['frames'])+1)));self.frame.current(min(current,len(self.image['frames'])-1))
+    def set_map_context(self,context):
+        self.finish();self.map_context=copy.deepcopy(context)
+        self.owner.map_view();self.window.lift()
+        if not hasattr(self,'context_bar'):
+            self.context_bar=ttk.Frame(self.window,padding=(8,4));self.context_bar.pack(side='top',fill='x',before=self.window.winfo_children()[0])
+            self.context_note=tk.StringVar()
+            ttk.Checkbutton(self.context_bar,text='Show surrounding tiles',variable=self.show_neighbours,command=self.draw).pack(side='left',padx=(0,12))
+            label=ttk.Label(self.context_bar,textvariable=self.context_note,wraplength=650);label.pack(side='left',fill='x',expand=True)
+            self.context_bar.bind('<Configure>',lambda e:label.configure(wraplength=max(160,e.width-230)))
+        from tile_context import context_grid
+        source=context_grid(self.document,context)
+        if source:
+            name,_,(x,y),_,_=source
+            self.context_note.set(f"{name} ({x}, {y}): edit the centre tile; neighbours are read-only. Changes affect every use of this artwork.")
+        self.show_neighbours.set(True)
+        # Three tiles need more room than the usual single-tile canvas.
+        self.window.update_idletasks()
+        fit=max(1,min(self.canvas.winfo_width(),self.canvas.winfo_height())//48)
+        self.zoom.set(str(min(8,int(self.zoom.get()),fit)));self.canvas.xview_moveto(0);self.canvas.yview_moveto(0);self.draw()
+    def draw_neighbours(self,z):
+        self.pixel_origin=(0,0);self.context_images=[]
+        if not self.map_context or not self.show_neighbours.get() or (self.image['width'],self.image['height'])!=(16,16):return
+        from tile_context import neighbours,context_grid
+        source=context_grid(self.document,self.map_context)
+        if source is None:
+            self.context_note.set('The source preview was removed. Editing the tile on its own.');return
+        maps=self.owner.editor.map_editor
+        tiles=neighbours(self.document,maps.graphics,self.map_context,self.image,max(0,self.frame.current()))
+        self.pixel_origin=(16,16)
+        for y,row in enumerate(tiles):
+            for x,cell in enumerate(row):
+                if (x,y)==(1,1):continue
+                if cell is None:
+                    self.canvas.create_rectangle(x*16*z,y*16*z,(x+1)*16*z,(y+1)*16*z,fill='#353f49',outline='')
+                    self.canvas.create_text((x+.5)*16*z,(y+.5)*16*z,text=source[3],fill='#c2cbd4');continue
+                image=tk.PhotoImage(master=self.window,width=16,height=16)
+                image.put(' '.join('{'+' '.join(row)+'}' for row in cell['rows']));image=image.zoom(z)
+                self.context_images.append(image);self.canvas.create_image(x*16*z,y*16*z,image=image,anchor='nw',tags='tile-neighbour')
     def draw(self):
         if not self.window.winfo_exists():return
         # Layered animation undo can otherwise retain hundreds of megabytes.
         # Bound history by pixels as well as stroke count on modest machines.
         def size(im):return im['width']*im['height']*8*len(im['frames'])*(1+len(im.get('_layers',[])))
         while len(self.history)>1 and sum(size(im) for im in self.history)>32*1024*1024:self.history.pop(0)
-        self.canvas.delete('all');z=int(self.zoom.get());self.preview=self.edit_photo(z)
-        self.canvas.create_image(0,0,image=self.preview,anchor='nw');w,h=self.image['width']*z,self.image['height']*z
-        self.canvas.configure(scrollregion=(0,0,w,h))
+        self.canvas.delete('all');z=int(self.zoom.get());self.draw_neighbours(z);self.preview=self.edit_photo(z)
+        ox,oy=(p*z for p in self.pixel_origin);w,h=self.image['width']*z,self.image['height']*z
+        self.canvas.create_image(ox,oy,image=self.preview,anchor='nw',tags='editable-tile')
+        self.canvas.configure(scrollregion=(0,0,w+2*ox,h+2*oy))
         if z>=8 and self.grid.get():
-            for x in range(0,w+1,z):self.canvas.create_line(x,0,x,h,fill='#888888')
-            for y in range(0,h+1,z):self.canvas.create_line(0,y,w,y,fill='#888888')
+            for x in range(0,w+1,z):self.canvas.create_line(ox+x,oy,ox+x,oy+h,fill='#888888')
+            for y in range(0,h+1,z):self.canvas.create_line(ox,oy+y,ox+w,oy+y,fill='#888888')
+        if ox:self.canvas.create_rectangle(ox,oy,ox+w,oy+h,outline='#20a4ef',width=2,tags='tile-edit-border')
         if self.pixel_selection:
-            x0,y0,x1,y1=self.pixel_selection;self.canvas.create_rectangle(x0*z,y0*z,(x1+1)*z,(y1+1)*z,outline='#20a4ef',width=2)
+            x0,y0,x1,y1=self.pixel_selection;self.canvas.create_rectangle(ox+x0*z,oy+y0*z,ox+(x1+1)*z,oy+(y1+1)*z,outline='#20a4ef',width=2)
     def edit_photo(self, zoom):
         return photo(self.window,self.image,max(0,self.frame.current()),zoom)
     def choose_color(self):
         chosen=colorchooser.askcolor('#'+self.color.get()[:6],parent=self.window)[1]
         if chosen:self.color.set(chosen[1:]+'ff')
     def stroke(self,e,start):
-        self.playing=False;z=int(self.zoom.get());p=(int(self.canvas.canvasx(e.x)//z),int(self.canvas.canvasy(e.y)//z))
+        self.playing=False;z=int(self.zoom.get());ox,oy=self.pixel_origin
+        p=(int(self.canvas.canvasx(e.x)//z)-ox,int(self.canvas.canvasy(e.y)//z)-oy)
+        if start:self.pixel_dragging=0<=p[0]<self.image['width'] and 0<=p[1]<self.image['height']
+        if not self.pixel_dragging:return
         if not (0<=p[0]<self.image['width'] and 0<=p[1]<self.image['height']):return
         if self.tool.get()=='Eyedropper':self.color.set(pixels(self.image,self.frame.current())[p[1]][p[0]]);return
         if self.tool.get()=='Select':
@@ -315,7 +362,7 @@ class PixelEditor:
         self.last=p;self.draw()
     def finish(self):
         if self.before is not None and self.before!=self.image:self.history.append(self.before);self.history=self.history[-40:];self.future=[]
-        self.before=None
+        self.before=None;self.pixel_dragging=False
         from editor_session import publish_art
         publish_art(self)
     def undo(self):

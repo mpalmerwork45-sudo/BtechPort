@@ -11,16 +11,17 @@ from tile_editing import metadata,create_tile,edit_pixels,tile
 from construction_editing import geometry,part_name,default_pixels,put_profile,new_profile,preset,compile_rows
 
 
-def tile_menu(owner,maps,current,assign,event):
+def tile_menu(owner,maps,current,assign,event,context=None):
     """A preview cell can choose, create, clone or edit its actual tile."""
-    menu=tk.Menu(owner.window,tearoff=False)
+    menu=tk.Menu(owner.window,tearoff=False);owner.preview_tile_menu=menu
+    def edit(value):return edit_pixels(maps,value,context() if context else None)
     def create(clone):
         value=create_tile(maps.document,maps.graphics,current if clone else None,'Construction tile',tile(maps.document,current)['terrain'] if current else 'clear')
-        maps.refresh();assign(value);edit_pixels(maps,value)
+        maps.refresh();assign(value);edit(value)
     menu.add_command(label='Choose tile...',command=lambda:guard(owner,lambda:maps.graphic_picker(choose=assign,selected=current)))
     menu.add_command(label='New tile for this part',command=lambda:guard(owner,lambda:create(False)))
     menu.add_command(label='Clone tile for this part',command=lambda:guard(owner,lambda:create(True)),state='normal' if current else 'disabled')
-    menu.add_command(label='Edit tile pixels',command=lambda:guard(owner,lambda:edit_pixels(maps,current)),state='normal' if current else 'disabled')
+    menu.add_command(label='Edit tile pixels',command=lambda:guard(owner,lambda:edit(current)),state='normal' if current else 'disabled')
     def properties():
         from tile_editing import select_tile
         select_tile(maps,current);maps.edit_tile()
@@ -32,7 +33,7 @@ def tile_menu(owner,maps,current,assign,event):
 @recoverable_forms
 class ConstructionEditor:
     def __init__(self,owner,kind='Building'):
-        self.owner=owner;self.document=owner.document;self.kind=kind;self.profile=None;self.stroke=None;self.last=None;self.selected_role=None;self.photos=[]
+        self.owner=owner;self.document=owner.document;self.kind=kind;self.profile=None;self.stroke=None;self.last=None;self.selected_role=None;self.selected_cell=None;self.photos=[]
         self.window=view_window(self,owner,'construction',kind+' designer',kind);self.window.geometry('1080x760')
         bar=ttk.Frame(self.window,padding=8);bar.pack(fill='x')
         self.choice=ttk.Combobox(bar,state='readonly',width=24);self.choice.pack(side='left',padx=4);self.choice.bind('<<ComboboxSelected>>',lambda _:guard(self,self.change))
@@ -158,9 +159,11 @@ class ConstructionEditor:
         if self.selected_role:self.part.current(self.role_ids.index(self.selected_role))
     def select_preview(self,event):
         x,y=int(self.preview.canvasx(event.x)//self.preview_size),int(self.preview.canvasy(event.y)//self.preview_size)
-        if 0<=y<len(self.roles) and 0<=x<len(self.roles[0]) and self.roles[y][x]!=' ':self.selected_role=self.roles[y][x];self.draw();self.status.set(part_name(self.selected_role)+' — right-click to change this part’s tile.');self.inspect()
+        if 0<=y<len(self.roles) and 0<=x<len(self.roles[0]) and self.roles[y][x]!=' ':
+            self.selected_cell=[x,y];self.selected_role=self.roles[y][x];self.draw();self.status.set(part_name(self.selected_role)+' — right-click to change this part’s tile.');self.inspect();return True
+        return False
     def select_part(self,_=None):
-        if self.part.current()>=0:self.selected_role=self.role_ids[self.part.current()];self.draw();self.inspect()
+        if self.part.current()>=0:self.selected_cell=None;self.selected_role=self.role_ids[self.part.current()];self.draw();self.inspect()
     def inspect(self):
         if hasattr(self.window,'workspace'):self.window.workspace.update_inspector()
     def assign(self,value):
@@ -169,13 +172,15 @@ class ConstructionEditor:
     def choose_part(self):
         if self.selected_role:return self.owner.graphic_picker(choose=self.assign,selected=self.profile['parts'].get(self.selected_role))
     def edit_part(self):
-        if self.selected_role:edit_pixels(self.owner,self.profile['parts'][self.selected_role])
+        if self.selected_role:return edit_pixels(self.owner,self.profile['parts'][self.selected_role],self.pixel_context())
+    def pixel_context(self):
+        self.finish()
+        return dict(construction=self.profile['id'],role=self.selected_role,at=self.selected_cell)
     def clone_part(self):
         if self.selected_role:
-            value=create_tile(self.document,self.owner.graphics,self.profile['parts'][self.selected_role],part_name(self.selected_role)+' copy');self.assign(value);edit_pixels(self.owner,value)
+            value=create_tile(self.document,self.owner.graphics,self.profile['parts'][self.selected_role],part_name(self.selected_role)+' copy');self.assign(value);return edit_pixels(self.owner,value,self.pixel_context())
     def context(self,event):
-        self.select_preview(event)
-        if self.selected_role:tile_menu(self,self.owner,self.profile['parts'].get(self.selected_role),self.assign,event)
+        if self.select_preview(event):tile_menu(self,self.owner,self.profile['parts'].get(self.selected_role),self.assign,event,self.pixel_context)
     def use(self):
         self.finish()
         if self.profile:self.owner.construction_tools.activate(self.profile)

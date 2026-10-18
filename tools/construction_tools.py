@@ -29,7 +29,7 @@ class MapConstructionTools:
         from editor_ui import flow_toolbar,tooltip
         flow_toolbar(self.frame)
         tooltip(self.choice,'Saved tile styles. The footprint is drawn on the map; the designer demonstrates its corners and faces.')
-        tooltip(self.place_button,'Draw a footprint on the map. Add strokes to reshape it; right-drag erases a courtyard. New starts another object.')
+        tooltip(self.place_button,'Draw a footprint on the map. Add strokes to reshape it; Shift + right-drag erases a courtyard. New starts another object.')
         self.detail=ttk.Frame(parent,padding=(6,0,6,6));self.detail.pack(fill='x')
         self.shape=tk.StringVar(value='Rectangle');self.stories=tk.StringVar(value='1');self.width=tk.StringVar(value='1')
         for label,variable,values,width in [('Shape',self.shape,('Brush','Line','Rectangle','Courtyard','Erase'),10),('Stories',self.stories,tuple(range(1,33)),3),('Width',self.width,tuple(range(1,9)),3)]:
@@ -104,7 +104,7 @@ class MapConstructionTools:
             profile=prepare_road(maps.document,profile)
             maps.road_profile=profile['id'];maps.road_width=int(self.width.get())
         maps.tool.set(kind);maps.refresh();maps.window.lift();maps.tabs.select(maps.map_tab);maps.canvas.focus_set()
-        maps.status.set(profile['name']+(': drag connected roads; right-drag erases. Choose Shape and Width. Escape cancels.' if kind=='Road' else ': drag to draw; right-drag erases. Choose Shape and Stories; New starts another footprint. Escape cancels.'))
+        maps.status.set(profile['name']+(': drag connected roads; Shift + right-drag erases. Choose Shape and Width. Escape cancels.' if kind=='Road' else ': drag to draw; Shift + right-drag erases. Choose Shape and Stories; New starts another footprint. Escape cancels.'))
         self.refresh();maps.draw()
 
     def current_object(self):
@@ -137,7 +137,7 @@ class MapConstructionTools:
         else:start=self.last
         paint_footprint(self.stroke,start,point,shape,int(self.stories.get()),int(self.width.get()),self.erasing)
         self.last=point;self.maps.draw()
-        self.maps.status.set(f"{self.kind.get()} footprint: {len(self.stroke['cells'])} cells; release to build. Right-drag erases; New starts another.")
+        self.maps.status.set(f"{self.kind.get()} footprint: {len(self.stroke['cells'])} cells; release to build. Shift + right-drag erases; New starts another.")
 
     def finish(self):
         if self.stroke is None:return

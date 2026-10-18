@@ -93,7 +93,7 @@ hidden for ordinary tile/marker editing.
 Choose **Shape** (Brush, Line, Rectangle, Courtyard or Erase), **Stories** and
 **Width**, then drag on the map. Rectangle fills a footprint; Courtyard creates
 a hollow ring with the chosen thickness. Overlapping strokes extend one object
-into arbitrary outlines. Right-drag erases the selected shape; painting a new
+into arbitrary outlines. Shift + right-drag erases the selected shape; painting a new
 height over a section creates stepped roofs. The live preview recalculates
 outside edges, inner corners, roof levels and visible wall faces. A fixed
 projection datum prevents existing floors shifting when another floor is raised.
@@ -129,6 +129,11 @@ To configure the style's demonstration shape and component tiles in its designer
    bands. **Fit** shows the whole result; larger zooms allow detailed inspection.
 4. Right-click a preview cell to **Choose tile**, **New tile for this part**,
    **Clone tile for this part**, **Edit tile pixels** or open **Tile properties**.
+   Editing or cloning opens a 3 × 3 tile canvas using this exact preview cell's
+   surroundings, including faces/corners. The centre is editable; the neighbours
+   remain read-only and repeated placements of the same artwork update live.
+   The buttons below the preview use the last clicked cell, or the first visible
+   placement of a part selected from the list. Unused parts have empty neighbours.
    New/cloned images and their tile definitions enter the artwork library and
    map palette automatically. Choose/Edit/Clone are also below the preview and
    in its Inspector. **Choose tile** offers **Project tiles** and **All tiles**
@@ -164,7 +169,7 @@ straight sections, bends, ends, T junctions and crossroads are selected from
 the set's 16 north/east/south/west connection patterns. Existing roads in that
 set and selected layer reconnect as the stroke crosses them. A complete stroke
 is one Undo operation. Width supports 1–8 tiles; Rectangle and Courtyard draw
-larger areas or connected road rings. Right-drag erases roads from this style,
+larger areas or connected road rings. Shift + right-drag erases roads from this style,
 updating neighbouring junctions. Base-layer road erasure uses the first clear
 terrain tile; overlay erasure reveals the layer below. Slanting strokes form
 connected orthogonal steps. Road tiles default to clear terrain; building and wall

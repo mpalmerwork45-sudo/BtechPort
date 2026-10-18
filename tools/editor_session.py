@@ -42,7 +42,7 @@ def visible_parent(owner):
     return focused.winfo_toplevel() if focused is not None else root._root()
 
 
-def report(owner, error, details=''):
+def report(owner, error, details='', category=None):
     scope = scope_of(owner)
     if scope is not None and scope.failure_owner is not None:
         owner, scope.failure_owner = scope.failure_owner, None
@@ -50,7 +50,7 @@ def report(owner, error, details=''):
         owner.status.set(str(error))
     if scope is not None:
         scope.problems.append(dict(message=str(error), details=details,
-                                   owner=owner, field=getattr(error, 'field', None)))
+                                   owner=owner, field=getattr(error, 'field', None), category=category))
         if scope.on_problem:
             scope.on_problem(scope.problems[-1])
     if hasattr(owner, 'show_error'):
@@ -66,6 +66,20 @@ def report(owner, error, details=''):
             grab.grab_set()
         if focus is not None and focus.winfo_exists():
             focus.focus_set()
+
+
+def clear_problems(scope, category):
+    """Retire successful checks without erasing unrelated errors or output history."""
+    resolved=[p for p in scope.problems if p.get('category')==category]
+    scope.problems[:]=[p for p in scope.problems if p.get('category')!=category]
+    workspace=getattr(scope,'workspace',None)
+    for problem in resolved:
+        problem['resolved']=True
+        owner=problem['owner'];label=getattr(owner,'error_label',None)
+        if label is not None and label.winfo_exists() and label.cget('text')==problem['message']:label.pack_forget()
+    if workspace:
+        for index,problem in enumerate(workspace.problems):
+            if problem.get('resolved') and workspace.problem_list.exists(str(index)):workspace.problem_list.delete(str(index))
 
 
 def guard(owner, operation, publish=True):

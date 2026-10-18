@@ -227,6 +227,7 @@ class Workspace:
         elif kind=='patterns':state.update(selected=owner.selected)
         elif kind=='pixels':
             state.update(frame=owner.frame.current())
+            if owner.map_context:state.update(map_context=owner.map_context,show_neighbours=owner.show_neighbours.get())
             if hasattr(owner,'view'):state.update(view=owner.view.get(),direction=owner.direction,phase=owner.phase)
         if hasattr(owner,'zoom'):state['zoom']=owner.zoom.get()
         if hasattr(owner,'canvas'):state['scroll']=[owner.canvas.xview()[0],owner.canvas.yview()[0]]
@@ -261,6 +262,10 @@ class Workspace:
             if hasattr(owner,'view'):
                 owner.view.set(state.get('view',owner.view.get()));owner.direction=state.get('direction',owner.direction);owner.phase=state.get('phase',0);owner.refresh_frames()
             else:owner.frame.current(state.get('frame',0))
+            if state.get('map_context'):
+                from tile_context import context_grid
+                if context_grid(owner.document,state['map_context']):
+                    owner.set_map_context(state['map_context']);owner.show_neighbours.set(state.get('show_neighbours',True))
         if 'zoom' in state and hasattr(owner,'zoom'):owner.zoom.set(state['zoom'])
         if kind=='construction' and 'footprint_zoom' in state:owner.footprint_zoom.set(state['footprint_zoom'])
         if hasattr(owner,'draw'):owner.draw()
@@ -335,7 +340,10 @@ class Workspace:
             from editor_ui import tooltip
             tooltip(button,lambda a=action:self.command_label(a))
         ttk.Button(self.toolbar,text='Find command...',command=self.command_picker).pack(side='left',padx=14)
-        play=ttk.Menubutton(self.toolbar,text='Play',style='Accent.TButton');play.configure(menu=groups['Play']);play.pack(side='right')
+        options=ttk.Menubutton(self.toolbar,text='Play options');options.configure(menu=groups['Play']);options.pack(side='right')
+        play=ttk.Button(self.toolbar,text='Play',style='Accent.TButton',command=lambda:self.invoke('Play from start'));play.pack(side='right',padx=3)
+        self.action_buttons['Play from start']=play
+        tooltip(play,'Play the current project from its start (F5), including unsaved edits. Play options offers Play from here and Stop test.')
         keys={'<Control-s>':'Save active scope','<Control-z>':'Undo','<Control-y>':'Redo','<Control-Shift-Z>':'Redo','<Control-w>':'Close tab','<Control-Shift-P>':'Find command','<F5>':'Play from start'}
         for key,action in keys.items():self.window.bind(key,lambda event,a=action:self.shortcut(event,a))
         self.window.bind('<Control-Tab>',lambda _:self.next_tab())

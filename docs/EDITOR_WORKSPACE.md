@@ -34,8 +34,9 @@ external-file checks prevent one from silently overwriting the other's changes.
 - **Inspector:** properties and actions for the current selection. Sprite
   palettes/layers and event fields appear here. Scroll when more fields are
   available than fit in the panel.
-- **Problems:** persistent errors, including the scope that failed. Double-click
-  a row to return to its editor; field errors also stay beside their inputs.
+- **Problems:** errors, including the scope that failed. Double-click a row to
+  return to its editor; field errors also stay beside their inputs. A successful
+  check clears obsolete validation errors; Output retains the diagnostic history.
 - **Output:** validation results, background-operation timing and playtest paths.
   Select and copy text here when diagnosing a problem.
 
@@ -90,7 +91,22 @@ The always-visible drawing toolbar has labelled buttons for **Paint**, **Line**,
 names it beside the zoom box. Buttons wrap when the pane narrows. World and
 jigsaw editors also expose their tools as buttons. **Map actions** contains map/layer properties, building
 stamps, collision and starting-formation overlays, graphics reload and setup.
-Right-click the map to sample its tile. Select a rectangle and use Ctrl+C/Ctrl+X/
+Right-click a visible map tile for **Edit tile pixels...**, **Tile properties...**
+or **Use tile for painting**. Pixel editing shows the selected tile in the centre
+of a 3 × 3 neighbourhood. Only the centre is editable; the eight neighbours show
+how edges line up. **Show surrounding tiles** toggles this view. Repeated uses
+of the same artwork update together as you draw. The change applies everywhere
+that tile artwork is used, and shares normal Undo/Redo and Save. Original or
+indexed graphics are copied into project-owned artwork before editing; their
+source sheets remain unchanged.
+
+Building, wall and road preview menus, and their **Edit pixels** / **Clone tile**
+buttons, show the neighbours at the clicked preview cell, including projected
+faces and inward corners. Choosing a part from the list uses its first visible
+placement; unused parts show empty surroundings. Jigsaw context editing also
+shows its neighbouring cells. Map edges and empty footprint cells are labelled.
+
+Select a rectangle and use Ctrl+C/Ctrl+X/
 Ctrl+V on the canvas to copy, cut and paste. Copy captures visible terrain;
 Cut uses the Paint on target: Visible tiles replaces the visible surface with
 the first clear terrain tile; Base clears ground; an explicit overlay clears
@@ -107,7 +123,7 @@ for that drawing tool; ordinary tile/marker tools leave more room for the map:
    building** and drag its bounds on the map. Additional strokes extend the
    same footprint into crosses, L shapes or other irregular outlines.
 3. Click **New building**, choose **Courtyard**, **Stories 3**, and drag another
-   rectangle. **Width** sets the ring thickness. Alternatively, right-drag a
+   rectangle. **Width** sets the ring thickness. Alternatively, Shift + right-drag a
    Rectangle to remove an interior area from an existing building. Paint a
    different Stories value over a section to create stepped roofs.
 4. Walls use **Draw wall**, usually with **Line**, **Brush** or **Courtyard**.
@@ -271,11 +287,19 @@ oversized records. A crash may lose edits since the last completed write.
 
 ## Play and deliver
 
-Use **Play from start** (F5), **Play from here** on the selected map position,
-or **Checkpoints and trace**. The editor validates a separate snapshot and starts
+Click the top-right **Play** button, or press **F5**, to start the current project.
+**Play options** contains **Play from here**, **Checkpoints and trace**, library
+preview and **Stop test**. The editor validates a separate snapshot and starts
 the SDL player from it. Test saves, player output and event traces stay in that
 run's private directory; the path is reported in Output. Pending editor work and
 ordinary gameplay saves stay available.
+
+If you correct an entrance or change another edit during preparation, Play
+checks the current draft again before launching. A successful check removes
+obsolete validation errors. Failed player startup shows its exit status and
+log output in Problems, so a window that immediately closes is not reported
+as a successful playtest. Correct the issue and click Play again; restarting
+the editor or saving first is unnecessary.
 
 **Stop test** cancels that session's preparation or terminates its player process.
 It leaves unrelated tasks and separately launched games running. The workspace

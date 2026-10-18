@@ -1,5 +1,20 @@
 # Project status — original fidelity and editable projects, 2026-10-18
 
+**Play retries and contextual tile editing — VERIFIED:** Play checks the latest
+draft again when edits change during preparation, clears obsolete validation
+errors, and surfaces player startup failures with their logs. The top-right
+Play button launches directly; Play options contains the other launch/stop
+commands. Corrected entrances can launch without saving or restarting.
+
+Map right-click **Edit tile pixels** and building/wall/road/jigsaw preview editing
+show a 3 × 3 neighbourhood with an editable centre. Repeated artwork updates live;
+other tiles remain read-only. The clicked projected cell supplies construction
+context, including corners/faces. Clone, Undo/Redo, zoomed painting and save/reopen
+pass. Local-map footprint erasure now uses **Shift + right-drag**; the designer's
+footprint grid retains ordinary right-drag. **169/169 Python tests**, the new
+Play/tile GUI journey and existing workspace, world/art, construction and canvas
+checks pass. Both reference directories and the user's demo remain separate.
+
 **Visible tile painting — VERIFIED:** the default **Paint on: Visible tiles**
 replaces displayed ground/building tiles. The previous Base default hid strokes
 under generated buildings, including a water tile found in the user's saved

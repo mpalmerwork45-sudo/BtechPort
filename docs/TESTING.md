@@ -1,5 +1,39 @@
 # Build, verification and original oracle — 2026-10-18
 
+## Play retries and contextual tile editing — 2026-10-18
+
+The user's saved demo validates successfully. A basic corrected-entrance retry
+already launched, but Play did not reject stale validation results, old Problems
+persisted after success, and player startup failures were reported only as an
+ended session. The exact earlier interactive failure is **UNKNOWN**; the
+following controlled correction/failure paths are **VERIFIED**:
+
+- `python3 tools/native_smoke.py --editor-play-tile-only`: blocked entrance
+  rejection followed by correction, direct toolbar Play of unsaved data,
+  corrections during validation, stale-success rejection, cleared Problems,
+  real player startup errors/logs, retry and Stop. Snapshot coordinates match
+  the current draft while the original on-disk project stays untouched.
+- The same journey right-clicks a visible map overlay, edits the centre of its
+  3 × 3 surroundings, rejects neighbour writes, exercises zoom/scroll, shared
+  artwork, Undo/Redo and save/reopen. Building/Wall/Road preview editing and
+  cloning preserve the actual clicked context and the original cloned artwork.
+- `python3 -m unittest discover -s tests -p 'test_*.py'`: **169/169 PASS**,
+  16.607 s (`work/editor-play-tile-python-tests.log`). Added model checks cover
+  both map formats, transparent overlays, map/jigsaw edges, shared draft art,
+  every projected construction cell and unused/removed preview parts.
+- Existing `--editor-usability-only`, `--world-art-editor-only`,
+  `--map-construction-only` and `--editor-canvas-only`: **PASS**. This includes
+  recovery, background save failure/retry, real SDL Play/Stop, sprite input,
+  new/edit/clone jigsaw tiles and identical constructed-map SDL/headless frames.
+  Existing pointer tests now target the editable centre tile and use Shift with
+  map right-drag erasure; ordinary right-click opens the context menu.
+
+Evidence: `work/editor-tile-neighbours.png` and
+`work/editor-{building,wall,road}-tile-neighbours.png`. Reference guard confirms
+**1,287 entries unchanged** against `work/reference-before-map-construction.json`.
+These checks use disposable projects, preserve the user's demo files, and do
+not require a C engine rebuild. Native Windows/macOS Tk remains **UNKNOWN**.
+
 ## Visible tile painting — 2026-10-18
 
 **VERIFIED:** a read-only inspection of the user's demo found a base water tile

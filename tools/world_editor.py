@@ -388,7 +388,8 @@ class JigsawEditor:
         from construction_editor import tile_menu
         def assign(value):
             self.before=copy.deepcopy(self.jigsaw);self.jigsaw['rows'][y][x]=value;self.tile.set(value);self.finish();self.draw()
-        tile_menu(self,self.owner.owner,self.jigsaw['rows'][y][x],assign,e)
+        self.finish()
+        tile_menu(self,self.owner.owner,self.jigsaw['rows'][y][x],assign,e,lambda:dict(jigsaw=self.jigsaw['id'],at=[x,y]))
     def patterns(self):
         view=self.owner.owner.patterns();view.target=self;view.info.set('Save this jigsaw as a pattern, or use an existing pattern up to 8 × 8.');return view
     def use_pattern(self,rows,name='Pattern',overlay=False):

@@ -348,9 +348,10 @@ class AdventureEditor:
         self.canvas.bind("<B1-Motion>",lambda e:self.guard(lambda:self.pointer(e,False)))
         self.canvas.bind("<ButtonRelease-1>",lambda _:self.guard(self.finish_stroke))
         self.canvas.bind("<Double-Button-1>",lambda e:self.guard(lambda:self.double_marker(e)) if self.tool.get()=='Move markers' else self.guard(lambda:self.pointer(e,True)))
-        self.canvas.bind("<Button-3>",lambda e:self.guard(lambda:self.pointer(e,True,erase=True) if self.tool.get() in ('Building','Wall','Road') else self.sample_tile(e)))
-        self.canvas.bind('<B3-Motion>',lambda e:self.guard(lambda:self.pointer(e,False,erase=True)) if self.tool.get() in ('Building','Wall','Road') else None)
-        self.canvas.bind('<ButtonRelease-3>',lambda _:self.guard(self.finish_stroke) if self.tool.get() in ('Building','Wall','Road') else None)
+        self.canvas.bind('<Button-3>',lambda e:self.guard(lambda:self.map_tile_menu(e)))
+        self.canvas.bind('<Shift-Button-3>',lambda e:self.guard(lambda:self.pointer(e,True,erase=True)) if self.tool.get() in ('Building','Wall','Road') else self.guard(lambda:self.map_tile_menu(e)))
+        self.canvas.bind('<Shift-B3-Motion>',lambda e:self.guard(lambda:self.pointer(e,False,erase=True)) if self.tool.get() in ('Building','Wall','Road') else None)
+        self.canvas.bind('<ButtonRelease-3>',lambda _:self.guard(self.finish_stroke))
         self.canvas.bind("<Control-c>",lambda _:self.guard(self.copy_selection))
         self.canvas.bind("<Control-x>",lambda _:self.guard(self.cut_selection))
         self.canvas.bind("<Control-v>",lambda _:self.tool.set("Paste"))
@@ -744,8 +745,31 @@ class AdventureEditor:
         try:self.tile_menu.tk_popup(event.x_root,event.y_root)
         finally:self.tile_menu.grab_release()
 
-    def edit_tile_pixels(self):
-        self.edit_graphics();self.art_editor.edit_map_tile()
+    def edit_tile_pixels(self,map_context=None):
+        self.edit_graphics();return self.art_editor.edit_map_tile(map_context)
+
+    def map_tile_menu(self,event):
+        self.finish_stroke();size=int(self.zoom.get())
+        x,y=int(self.canvas.canvasx(event.x)//size),int(self.canvas.canvasy(event.y)//size)
+        grid=composite(self.scene())
+        if not (0<=y<len(grid) and 0<=x<len(grid[y])):return
+        tile=next(t for t in self.adventure['tiles'] if token(t)==grid[y][x]);identity=tile['id']
+        context=dict(map=self.scene()['id'],at=[x,y])
+        def select():
+            from tile_editing import select_tile
+            select_tile(self,identity)
+        def edit():select();self.edit_tile_pixels(context)
+        def properties():select();self.edit_tile()
+        def use():select();self.select_brush(user=True)
+        menu=tk.Menu(self.canvas,tearoff=False);self.map_context_menu=menu
+        menu.add_command(label='Edit tile pixels...',command=lambda:self.guard(edit))
+        menu.add_command(label='Tile properties...',command=lambda:self.guard(properties))
+        menu.add_separator();menu.add_command(label='Use tile for painting',command=lambda:self.guard(use))
+        if self.tool.get() in ('Building','Wall','Road'):
+            def erase():self.pointer(event,True,erase=True);self.finish_stroke()
+            menu.add_separator();menu.add_command(label='Erase footprint here',command=lambda:self.guard(erase))
+        try:menu.tk_popup(event.x_root,event.y_root)
+        finally:menu.grab_release()
 
     def new_overlay(self): self.overlay_dialog()
     def layer_properties(self):

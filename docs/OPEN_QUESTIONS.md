@@ -25,6 +25,11 @@ Map painting now defaults to the visible surface; building detail overrides
 survive rebuilding where the projected shape remains. External layer moves or
 untracked replacements still require resolving the stale-layer warning. The
 world view edits terrain outside city overlays; city tiles are edited locally.
+Play now rechecks edits made during preparation and exposes startup diagnostics;
+the saved user project validates, but the exact previously reported interactive
+failure has no captured error/trace. Controlled blocked-entrance, stale-result
+and failed-player retry paths pass. Tile editing shows actual map/construction/
+jigsaw neighbours; empty preview cells do not invent surrounding map terrain.
 Save migration preserves existing rule/topology/ordinal structure and rejects
 arbitrary remaps. Sprite anchors, imported audio, full construction tonnage and
 vehicle turret/arcs/critical rules remain future extensions. Scripted salvage

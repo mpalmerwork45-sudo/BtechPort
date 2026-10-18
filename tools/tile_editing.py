@@ -116,8 +116,8 @@ def select_tile(maps,identity):
     maps.brush.selection_set(str(index));maps.brush.see(str(index));maps.select_brush();return index
 
 
-def edit_pixels(maps,identity):
-    select_tile(maps,identity);maps.edit_tile_pixels()
+def edit_pixels(maps,identity,context=None):
+    select_tile(maps,identity);return maps.edit_tile_pixels(context)
 
 
 def tile_label(document,value):
