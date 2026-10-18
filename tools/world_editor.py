@@ -7,6 +7,7 @@ from adventure_editor import Form
 from adventure_editing import composite
 from editor_model import EditorError
 from editor_session import guard, register, apply_draft, scope_of
+from editor_workspace import view_window,open_view
 from world_editing import (create_world, add_jigsaw, assign_city, world_size,
                            patch_cells, set_patch, line, token, all_worlds, get_world)
 
@@ -14,7 +15,7 @@ from world_editing import (create_world, add_jigsaw, assign_city, world_size,
 class WorldEditor:
     def __init__(self, owner):
         self.owner=owner; self.document=owner.document
-        self.window=tk.Toplevel(owner.window);self.window.title('World and jigsaws');self.window.geometry('1000x730');self.window.minsize(840,600)
+        self.window=view_window(self,owner,'world','Worlds and planets');self.window.geometry('1000x730');self.window.minsize(840,600)
         self.stroke=None;self.drag=None;self.cache={};self.pending=False;self.last=None;self.city=None;self.world_id=None
         bar=ttk.Frame(self.window,padding=8);bar.pack(fill='x')
         for title,cb in [('Create world',self.new_world),('Place city',self.city_form),('Edit city',self.edit_city),('Remove city',self.remove_city),('Undo',owner.undo),('Redo',owner.redo),('Save',owner.save),('Validate',owner.validate)]:
@@ -105,7 +106,7 @@ class WorldEditor:
             a=copy.deepcopy(self.document.adventure);identity=add_jigsaw(a,self.document.content['package_id'],old['rows'],old['name'][:88]+' copy');self.owner.commit(a);self.listing.selection_set(identity)
     def edit_jigsaw(self):
         j=self.selected_jigsaw()
-        if j:JigsawEditor(self,j)
+        if j:return open_view(self,'jigsaw',lambda:JigsawEditor(self,j),j['id'])
     def city_form(self):
         if not all_worlds(self.adventure):raise EditorError('Create a world first.')
         f=Form(self,'Place city on world');f.field('map',self.city or self.adventure['maps'][0]['id'],[m['id'] for m in self.adventure['maps']]);f.field('x',0);f.field('y',0)
@@ -208,7 +209,7 @@ class WorldEditor:
 class JigsawEditor:
     def __init__(self,owner,jigsaw):
         self.owner=owner;self.original=copy.deepcopy(jigsaw);self.jigsaw=copy.deepcopy(jigsaw);self.history=[];self.future=[];self.before=None;self.last=None
-        self.window=tk.Toplevel(owner.window);self.window.title('Paint jigsaw');self.window.geometry('550x480')
+        self.window=view_window(self,owner,'jigsaw',jigsaw['name'],jigsaw['id']);self.window.geometry('550x480')
         bar=ttk.Frame(self.window,padding=8);bar.pack(fill='x');self.name=tk.StringVar(value=jigsaw['name']);ttk.Entry(bar,textvariable=self.name).pack(side='left',fill='x',expand=True)
         for label,cb in [('Undo',self.undo),('Redo',self.redo),('Apply',self.apply)]:ttk.Button(bar,text=label,command=lambda f=cb:owner.guard(f)).pack(side='left')
         self.tile=ttk.Combobox(self.window,state='readonly',values=[t['id'] for t in owner.adventure['tiles']],width=55);self.tile.pack(pady=8);selected=owner.owner.brush.curselection();self.tile.current(min(selected[0] if selected else 0,len(owner.adventure['tiles'])-1))

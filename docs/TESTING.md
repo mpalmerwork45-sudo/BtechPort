@@ -14,6 +14,12 @@ library write, retaining revision-conflict detection and preserving drafts when
 validation fails. The new reference baseline contains 1,287 entries in
 `work/reference-before-editor-usability.json`.
 
+The UI2 extension of the same regression opens roster, map, graphics, pixel,
+event graph and objective views inside a single Tk window, checks tab reuse,
+Back/Forward, saves unapplied artwork and persists the layout. Screenshot:
+`work/editor-workspace.png`. The existing launcher/library workflow continues
+to pass after the editor entry point switches to the workspace.
+
 ## Construction Kit five-milestone verification — 2026-10-18
 
 - Linux build: two jobs; **72/72 CTests** (44.51 s), **136/136 Python tests**

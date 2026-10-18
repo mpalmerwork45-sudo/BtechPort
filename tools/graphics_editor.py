@@ -12,6 +12,7 @@ from pixel_tools import begin_layers,target,flatten,export_layers,add_layer,sele
 from event_workbench import editor_data
 from editor_model import encoded
 from editor_session import guard, register, apply_draft, scope_of
+from editor_workspace import view_window,existing_view
 
 
 def photo(parent, image, frame=0, zoom=1):
@@ -21,6 +22,8 @@ def photo(parent, image, frame=0, zoom=1):
 
 
 def open_image_editor(owner, image):
+    existing=existing_view(owner,'pixels',image['id'])
+    if existing:return existing
     if image['kind']=='sprite':
         from sprite_editor import SpriteEditor
         return SpriteEditor(owner,image)
@@ -30,7 +33,7 @@ def open_image_editor(owner, image):
 class GraphicsEditor:
     def __init__(self, owner):
         self.owner, self.document = owner, owner.document
-        self.window = tk.Toplevel(owner.window)
+        self.window = view_window(self,owner,'graphics','Artwork')
         self.window.title('Graphics and sprites'); self.window.geometry('880x650')
         self.window.minsize(720, 500)
         self.selected = None; self.preview_image = None
@@ -176,7 +179,7 @@ class PixelEditor:
         self.owner=owner; self.original=copy.deepcopy(image)
         self.image=begin_layers(image,editor_data(owner.document).get('pixel_layers',{}).get(image['id']))
         self.original_layers=copy.deepcopy(self.image);self.pixel_selection=None;self.pixel_clipboard=None
-        self.window=tk.Toplevel(owner.window); self.window.title('Pixel editor - '+image['name']); self.window.geometry('920x730')
+        self.window=view_window(self,owner,'pixels',image['name'],image['id']); self.window.title('Pixel editor - '+image['name']); self.window.geometry('920x730')
         self.history=[]; self.future=[]; self.before=None; self.last=None; self.playing=False
         bar=ttk.Frame(self.window,padding=8); bar.pack(fill='x')
         self.tool=tk.StringVar(value='Pencil'); ttk.Combobox(bar,textvariable=self.tool,values=['Pencil','Line','Rectangle','Fill','Erase','Eyedropper','Select','Paste selection'],state='readonly',width=15).pack(side='left')

@@ -12,6 +12,7 @@ from editor_model import EditorError, ProjectDocument, encoded
 from unit_library import UnitLibrary, KINDS, ROOT, closure, import_units, needs_original, stage_preview
 from library_defaults import apply_sprite_defaults
 from editor_session import guard
+from editor_workspace import view_window,workspace_of
 
 
 def seed_library(library, paths):
@@ -99,7 +100,7 @@ class LibraryBrowser:
         self.owner=owner
         owner.state_dir.mkdir(parents=True,exist_ok=True)
         self.library=UnitLibrary(Path(owner.settings.get('library-root',ROOT/'work/unit-library')),owner.validator)
-        self.window=tk.Toplevel(owner.window);self.window.title('BattleTech Construction Kit - Unit Library')
+        self.window=view_window(self,owner,'library','Unit Library')
         self.window.geometry('1000x730');self.window.minsize(940,650)
         self.timer=None;self.photos=[];self.phase=0;self.documents=[];self.editors=[]
         header=ttk.Frame(self.window,padding=(16,12));header.pack(fill='x')
@@ -276,8 +277,13 @@ class LibraryBrowser:
     def edit(self):
         if not self.selected():return
         from roster_editor import RosterEditor
-        bundle=self.selected()[0];context=EntryContext(self,bundle)
-        window=tk.Toplevel(self.window);editor=RosterEditor(window,self.owner.validator,self.owner.state_dir,context)
+        bundle=self.selected()[0]
+        for editor in self.editors:
+            if editor.window.winfo_exists() and editor.library_context.bundle['entry_id']==bundle['entry_id']:
+                editor.window.lift();return editor
+        context=EntryContext(self,bundle)
+        window=view_window(None,self,'library-unit',bundle['name'],bundle['entry_id']);editor=RosterEditor(window,self.owner.validator,self.owner.state_dir,context)
+        if hasattr(window,'workspace'):window.controller=editor;window.scope=editor._editor_scope
         editor.settings.update(self.owner.settings)
         editor.set_document(ProjectDocument(Path(context.temp.name),self.owner.validator))
         editor.kind.set(bundle['kind']);editor.change_kind();editor.refresh_list(bundle['definition'])

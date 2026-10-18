@@ -75,7 +75,7 @@ def configure_editor_style(window):
     style.map("Treeview", background=[("selected", palette["selection"])],
               foreground=[("selected", palette["text"])])
     style.configure("Status.TLabel", background="#e9edef", foreground=palette["muted"], padding=(14, 9))
-    window.configure(background=palette["background"])
+    if isinstance(window,(tk.Tk,tk.Toplevel)):window.configure(background=palette["background"])
     # Tk listboxes/text controls follow the same palette as native ttk fields.
     for option, value in {"background": palette["surface"], "foreground": palette["text"],
                           "selectBackground": palette["selection"], "selectForeground": palette["text"],
@@ -90,6 +90,7 @@ class RosterEditor:
         self.library_context = library_context
         self.document: ProjectDocument | None = None
         self._editor_scope = EditorScope(self)
+        if hasattr(window,'workspace'):window.workspace.attach_scope(self._editor_scope)
         self.map_editor = None
         self.current = None
         self.collection = "mechs"
@@ -205,6 +206,12 @@ class RosterEditor:
         self.populate()
         self.draft=self._editor_scope.register(self,lambda:self.form_dirty,self.apply_form,
             self.capture_draft,self.restore_draft)
+        if hasattr(window,'workspace'):
+            # The workspace supplies global actions and the project explorer.
+            # Keep the property editor; avoid a second navigation column.
+            header.pack_forget();actions.pack_forget();project.pack_forget()
+            body.forget(left)
+            window.title('Library design' if library_context else 'Units')
 
     @staticmethod
     def defaults() -> dict:
@@ -240,6 +247,8 @@ class RosterEditor:
 
     def set_document(self, document: ProjectDocument, check=True):
         if self.document is not None and check and not self.discard_or_save():return
+        workspace=getattr(self._editor_scope,'workspace',None)
+        if workspace and self.document is not None:workspace.project_replacing(self._editor_scope)
         if self.map_editor:
             self.map_editor.window.destroy()
             self.map_editor = None
@@ -252,6 +261,7 @@ class RosterEditor:
         self.path_label.configure(text=str(document.root), wraplength=880)
         self.profile_label.configure(text="Independent game | package assets" if document.manifest["requires"] == "none" else "BattleTech project | original assets")
         self.status.set("Project opened. Existing saves require this exact content; Play starts a separate campaign.")
+        if workspace and self is getattr(workspace,'app',None):workspace.project_changed()
 
     def open_project(self):
         if not self.discard_or_save():
@@ -261,6 +271,8 @@ class RosterEditor:
             self.set_document(ProjectDocument(Path(path), self.validator),check=False)
 
     def new_project(self):
+        workspace=getattr(self._editor_scope,'workspace',None)
+        if workspace:return workspace.new_project()
         if not self.discard_or_save():
             return
         # A new standalone author can start without exporting or locating any
@@ -871,6 +883,8 @@ class RosterEditor:
             self.status.set(f"Validated project exported to {target}. Saves and caches were excluded.")
 
     def close(self):
+        workspace=getattr(self._editor_scope,'workspace',None)
+        if workspace and self is workspace.app:return workspace.close()
         def finish():
             library=getattr(self,'unit_library_window',None)
             if library and library.window.winfo_exists():
@@ -889,7 +903,8 @@ def main():
     parser.add_argument("--state-dir", type=Path, default=ROOT / "work/roster-editor")
     args = parser.parse_args()
     window = tk.Tk()
-    app = RosterEditor(window, args.validator, args.state_dir.resolve())
+    from editor_workspace import create_editor
+    app = create_editor(window, args.validator, args.state_dir.resolve())
     import traceback
     window.report_callback_exception=lambda kind,error,tb:report(app,error,''.join(traceback.format_exception(kind,error,tb)))
     if args.project:

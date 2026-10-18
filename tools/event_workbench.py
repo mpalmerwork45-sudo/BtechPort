@@ -1,5 +1,6 @@
 """Graph and quest authoring; every edge remains an ordinary event reference."""
 from editor_session import guard
+from editor_workspace import view_window,open_view
 import copy
 import json
 import tkinter as tk
@@ -39,7 +40,7 @@ def dialogue_branch(document,source,label,text):
 class EventGraph:
     def __init__(self,owner):
         self.owner=owner;self.document=owner.document;self.selected=owner.event_id;self.drag=None
-        self.window=tk.Toplevel(owner.window);self.window.title('Event graph');self.window.geometry('1000x700')
+        self.window=view_window(self,owner,'events','Event graph');self.window.geometry('1000x700')
         bar=ttk.Frame(self.window,padding=8);bar.pack(fill='x')
         for label,method in [('Edit node',self.edit),('Connect branch',self.link),('Add dialogue branch',self.branch),('Objectives',self.objectives),('Playtest / checkpoints',self.debug),('Refresh',self.draw)]:
             ttk.Button(bar,text=label,command=lambda f=method:guard(self,f)).pack(side='left',padx=3)
@@ -108,15 +109,15 @@ class EventGraph:
         def apply(v):dialogue_branch(self.document,self.selected,v['label'],v['text']);self.owner.refresh();self.draw()
         f.submit(apply)
 
-    def objectives(self):ObjectiveEditor(self.owner)
+    def objectives(self):return open_view(self.owner,'objectives',lambda:ObjectiveEditor(self.owner))
     def debug(self):
         from playtest_workbench import PlaytestWindow
-        PlaytestWindow(self.owner)
+        return open_view(self.owner,'playtest',lambda:PlaytestWindow(self.owner))
 
 class ObjectiveEditor:
     def __init__(self,owner):
         self.owner=owner;self.document=owner.document
-        self.window=tk.Toplevel(owner.window);self.window.title('Objectives and journal');self.window.geometry('680x440')
+        self.window=view_window(self,owner,'objectives','Objectives and journal');self.window.geometry('680x440')
         ttk.Label(self.window,text='Objectives appear when their Active flag is set; Complete flags retain finished entries.',padding=12,wraplength=640).pack(fill='x')
         self.listing=tk.Listbox(self.window,exportselection=False);self.listing.pack(fill='both',expand=True,padx=12)
         bar=ttk.Frame(self.window,padding=12);bar.pack(fill='x')

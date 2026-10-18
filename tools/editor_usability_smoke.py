@@ -64,3 +64,44 @@ def run(env, work):
                 print('PASS: inline mount/action errors, active dialog ownership, cancel-close protection, save-all artwork, and failed-save draft rollback.')
             finally:
                 window.destroy()
+        workspace_journey(directory,document.validator,env,work)
+
+
+def workspace_journey(directory,validator,env,work):
+    import tkinter as tk
+    from tkinter import messagebox
+    from unittest.mock import patch
+    from PIL import ImageGrab
+    from editor_model import ProjectDocument
+    from editor_workspace import Workspace,EditorPane
+    from graphics_editor import open_image_editor
+    window=tk.Tk();errors=[];workspace=None
+    def pump():
+        window.update()
+        if errors:raise errors.pop(0)
+    def fail(title,message,**kw):raise AssertionError(title+': '+message)
+    with patch.object(messagebox,'showerror',fail):
+        try:
+            workspace=Workspace(window,validator,directory/'workspace')
+            window.report_callback_exception=lambda kind,error,tb:errors.append(error)
+            app=workspace.app;app.set_document(ProjectDocument(directory/'game',validator));pump()
+            workspace.open_unit('Mechs',app.document.content['mechs'][0]['id']);pump()
+            app.edit_adventure();maps=app.map_editor;pump()
+            assert isinstance(maps.window,EditorPane)
+            assert not any(isinstance(w,tk.Toplevel) for w in window.winfo_children())
+            maps.edit_graphics();art=maps.art_editor;image=art.document.art['images'][-1]
+            pixel=open_image_editor(art,image);pump()
+            assert open_image_editor(art,image) is pixel
+            pixel.new_layer();app.save();pump()
+            assert not app._editor_scope.dirty()
+            graph=maps.event_graph();assert maps.event_graph() is graph;pump()
+            graph.objectives();pump()
+            assert all(isinstance(v,EditorPane) for v in workspace.views.values())
+            workspace.navigate(-1);pump();workspace.navigate(1);pump()
+            workspace.reset_layout();pump();workspace.persist_layout()
+            ImageGrab.grab(xdisplay=env['DISPLAY']).save(work/'editor-workspace.png')
+            assert not any(isinstance(w,tk.Toplevel) for w in window.winfo_children())
+            print('PASS: one workspace, embedded map/graphics/sprite/event/objective views, tab reuse, navigation, save/reopen and layout persistence.')
+        finally:
+            if workspace:workspace.closing=True
+            window.destroy()

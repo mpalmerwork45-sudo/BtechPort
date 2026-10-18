@@ -118,7 +118,8 @@ class Launcher:
     def editor(self,project=None):
         tool=binary('btp-project')
         if not tool.exists():raise EditorError('Build the application first using the button below.')
-        window=tk.Toplevel(self.window);app=RosterEditor(window,tool,self.state_dir)
+        from editor_workspace import create_editor
+        window=tk.Toplevel(self.window);app=create_editor(window,tool,self.state_dir)
         if project:app.set_document(ProjectDocument(project,tool))
         self.editors.append(app);return app
 
@@ -128,7 +129,7 @@ class Launcher:
         return self.editor(project)
 
     def library(self):
-        app=self.editor();app.window.withdraw();app.open_library();return app.unit_library_window
+        app=self.editor();app.open_library();return app.unit_library_window
 
     def new_project(self):
         app=self.editor();app.new_project();return app

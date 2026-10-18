@@ -1,5 +1,6 @@
 """Immutable project snapshots and real-player event traces for author testing."""
 from editor_session import guard
+from editor_workspace import view_window
 import json
 from pathlib import Path
 import queue
@@ -49,7 +50,7 @@ class PlaytestWindow:
     def __init__(self,owner):
         self.owner=owner;self.document=owner.document;self.busy=False
         self.root=owner.parent.state_dir/'checkpoints'/self.document.manifest['package_id'];self.root.mkdir(parents=True,exist_ok=True)
-        self.window=tk.Toplevel(owner.window);self.window.title('Playtest checkpoints and event trace');self.window.geometry('960x690')
+        self.window=view_window(self,owner,'playtest','Playtest checkpoints and trace');self.window.geometry('960x690')
         top=ttk.Frame(self.window,padding=10);top.pack(fill='x')
         ttk.Label(top,text='New checkpoint name').pack(side='left');self.name=tk.StringVar(value='test-1');ttk.Entry(top,textvariable=self.name,width=22).pack(side='left',padx=8)
         for text,method in [('Run from start',lambda:self.run(False)),('Run from selected',lambda:self.run(True)),('Play selected',self.play)]:

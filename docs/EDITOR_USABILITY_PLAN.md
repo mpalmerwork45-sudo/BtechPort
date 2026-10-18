@@ -218,6 +218,11 @@ invalid operation leaves a partial import or document edit.
 
 ### UI2 One project workspace
 
+**Implemented foundation, Linux GUI checked:** default editor and launcher routes
+now open one workspace with explorer, tabs, inspector, Problems/output, command
+search, scoped Save, navigation and layout state. Main authoring tools embed in
+the workspace. UI3 completes direct asset navigation and more specialised layouts.
+
 1. Add the workspace shell, common commands, project explorer, tab registry,
    inspector and collapsible panels. Move roster and map views into it first.
 2. Convert tool constructors into embeddable views. Temporary standalone

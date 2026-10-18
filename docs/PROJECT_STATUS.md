@@ -3,9 +3,10 @@
 **Current work:** the approved [editor usability plan](EDITOR_USABILITY_PLAN.md)
 defines five stages for dialog/draft reliability, a unified workspace, connected
 authoring workflows, consistent history/recovery, and presentation/performance.
-UI1 now protects registered drafts during save/close and fixes dialog ownership;
-focused Linux GUI/model checks pass. Workspace integration and later stages are
-in progress.
+UI1 protects registered drafts during save/close and fixes dialog ownership.
+UI2 provides the default tabbed workspace, explorer, inspector, Problems panel,
+command search and embedded authoring views. Focused Linux GUI/model checks pass;
+connected workflows, full recovery and polish are in progress.
 
 **BattleTech Construction Kit** is the editor/launcher name. The authorized
 [five editor milestones](EDITOR_COMPLETION_MILESTONES.md) are implemented with

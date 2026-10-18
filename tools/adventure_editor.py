@@ -8,6 +8,7 @@ from tkinter import ttk, messagebox
 
 from editor_model import EditorError
 from editor_session import guard, register, apply_draft, scope_of, visible_parent, FieldError
+from editor_workspace import view_window,open_view
 from adventure_editing import OPS, composite, paint, event_template, new_id, copy_adventure, scene_markers, move_marker
 from editor_tiles import load_tiles, art_tiles
 from world_editing import token, upgrade, graphic_tile, draw as draw_tiles, fill as fill_tiles
@@ -111,9 +112,9 @@ class AdventureEditor:
         self.document = parent.document
         if self.document.adventure is None:
             raise EditorError("This project uses the CHI campaign. Open examples/beacon-demo or examples/adventure-demo for map/event editing.")
-        self.window = tk.Toplevel(parent.window)
+        self.window = view_window(self,parent,'maps','Maps and events')
         self.window.transient(parent.window)
-        self.window.title("BattleTech Construction Kit - Maps and events")
+        self.window.title("Maps and events" if hasattr(self.window,'workspace') else "BattleTech Construction Kit - Maps and events")
         self.window.geometry("1000x720")
         self.window.minsize(960, 650)
         self.scene_index = 0
@@ -135,6 +136,7 @@ class AdventureEditor:
             ttk.Button(bar, text=label, width=len(label), style='Toolbar.TButton', command=lambda cb=action: self.guard(cb)).pack(side="left", padx=3)
         ttk.Button(bar,text="World / jigsaws",width=15,style='Toolbar.TButton',command=lambda:self.guard(self.edit_landscape)).pack(side="left",padx=3)
         ttk.Button(bar,text="Graphics / sprites",width=18,style='Toolbar.TButton',command=lambda:self.guard(self.edit_graphics)).pack(side="left",padx=3)
+        if hasattr(self.window,'workspace'):bar.pack_forget()
         self.tabs = ttk.Notebook(self.window);self.tabs.pack(fill="both", expand=True)
         self.map_tab = ttk.Frame(self.tabs);self.tabs.add(self.map_tab, text="Maps")
         self.event_tab = ttk.Frame(self.tabs);self.tabs.add(self.event_tab, text="Events")
@@ -797,7 +799,7 @@ class AdventureEditor:
 
     def event_graph(self):
         from event_workbench import EventGraph
-        self.apply_pending();return EventGraph(self)
+        self.apply_pending();return open_view(self,'events',lambda:EventGraph(self))
 
     def service_template(self):
         from building_templates import PRESETS,service_building
