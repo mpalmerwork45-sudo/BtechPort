@@ -35,6 +35,7 @@ def parser():
             s.add_argument('--data',type=Path)
         if name in ('contact-sheet','animation','graph','world-preview'):s.add_argument('--output',type=Path,required=True)
         if name=='contact-sheet':s.add_argument('--columns',type=int,default=3)
+        if name=='graph':s.add_argument('--id');s.add_argument('--depth',type=int,default=2)
         if name=='animation':
             s.add_argument('--id',required=True);s.add_argument('--frame-offset',type=int,default=0);s.add_argument('--frames',type=int,default=32)
             s.add_argument('--direction',type=int,choices=range(8));s.add_argument('--action',choices=['walk','idle','fire','damage','destruction','jump'])
@@ -125,7 +126,7 @@ def dispatch(args):
         return dict(api_version=API_VERSION,status='ok',revision=revision(doc),data=result)
     if args.command=='graph':
         from authoring_visuals import event_graph
-        return event_graph(doc,args.output)
+        return event_graph(doc,args.output,args.id,args.depth)
     if args.command=='world-preview':
         from authoring_visuals import world_svg
         return world_svg(doc,args.world,args.output,{'data':str(args.data)} if args.data else {},args.rect)

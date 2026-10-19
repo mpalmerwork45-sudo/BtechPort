@@ -60,17 +60,29 @@ def check_mission(workspace):
     analyzer=Path(__file__).resolve().parents[1]/'build'/('btp-author-analyze.exe' if os.name=='nt' else 'btp-author-analyze')
     def done(result):
         if signature(scope)!=stamp:raise AuthoringError('revision.conflict','The document changed during mission checks; run Check mission again.')
-        clear_problems(scope)
+        clear_problems(scope,'mission-check')
         for diagnostic in result['diagnostics']:
-            problem=dict(diagnostic,owner=scope.owner,field=None,details=json.dumps(diagnostic,indent=2))
+            problem=dict(diagnostic,owner=scope.owner,field=None,details=json.dumps(diagnostic,indent=2),category='mission-check')
             identity=diagnostic.get('object_id');location=diagnostic.get('location')
             if location and location.get('map'):
                 def navigate(where=location):
-                    workspace.open_map(where['map']);maps=workspace.app.map_editor;maps.cursor=tuple(where['at']);maps.draw()
+                    scope.owner.edit_adventure();maps=scope.owner.map_editor
+                    maps.map_choice.current(next(i for i,m in enumerate(maps.adventure['maps']) if m['id']==where['map']));maps.change_map()
+                    maps.cursor=tuple(where['at'])
+                    from adventure_editing import scene_markers
+                    marker=next((m for m in scene_markers(maps.adventure,maps.scene_index) if m['at']==where['at']),None)
+                    maps.selected_marker=marker['ref'] if marker else None;maps.draw()
+                    size=int(maps.zoom.get());scene=maps.scene()
+                    maps.canvas.xview_moveto(max(0,(where['at'][0]*size/2-maps.canvas.winfo_width()/2)/(len(scene['rows'][0])*size)))
+                    maps.canvas.yview_moveto(max(0,(where['at'][1]*size/2-maps.canvas.winfo_height()/2)/(len(scene['rows'])*size)))
+                    maps.window.lift()
                 problem['navigate']=navigate
             elif identity and any(e['id']==identity for e in (scope.document.adventure or {}).get('events',[])):
-                problem['navigate']=lambda identity=identity:workspace.open_event(identity)
-            workspace.problem(scope,problem)
+                def navigate_event(identity=identity):
+                    scope.owner.edit_adventure();graph=scope.owner.map_editor.event_graph();graph.selected=identity
+                    graph.edit();graph.window.lift();graph.fit()
+                problem['navigate']=navigate_event
+            scope.problems.append(problem);workspace.problem(scope,problem)
         message=f"Mission checks: {sum(p['severity']=='error' for p in result['diagnostics'])} errors, {sum(p['severity']=='warning' for p in result['diagnostics'])} warnings."
         scope.owner.status.set(message);workspace.status.set(message);workspace.log(message+' '+result['coverage'])
     return workspace.tasks.submit('Check mission',scope.owner,lambda cancel:analyze(candidate,analyzer,settings),done)

@@ -89,7 +89,51 @@ def run(env,work):
             from tile_browser import TileBrowser
             picker=TileBrowser(maps,selected='frontier:grass');picker.query.set('tag:human-edited');picker.refresh();pump()
             assert picker.keys==['frontier:grass'];picker.close();pump()
+            workspace.edit_history(False);pump()
+            assert 'human-edited' not in editor_data(doc).get('catalogue',{}).get('frontier:grass',{}).get('tags',[])
+            workspace.edit_history(True);pump();doc.save()
+            assert 'human-edited' in editor_data(ProjectDocument(doc.root,doc.validator))['catalogue']['frontier:grass']['tags']
+            # An owned tile image resolves to its map definition before painting.
+            catalogue.query.set('kind:tile collection:images');catalogue.refresh();pump()
+            item=catalogue.selected();catalogue.use();pump()
+            selected=doc.adventure['tiles'][int(maps.brush.curselection()[0])]
+            assert selected['sheet']=='package:art' and selected['graphic']==item['id']
+            # Persist and recreate the tab, rather than only restoring variables.
+            catalogue.query.set('kind:mech weapon:lrm');catalogue.refresh();catalogue.window.lift();pump()
+            workspace.persist_layout();saved=copy.deepcopy(workspace.layout['projects'][str(doc.root)])
+            catalogue.window.destroy();pump();workspace.restore_tabs(saved);pump()
+            catalogue=existing_view(app,'catalogue');assert catalogue.query.get()=='kind:mech weapon:lrm'
+            ImageGrab.grab(xdisplay=env['DISPLAY']).save(work/'editor-catalogue.png')
+            # Event references still support ordinary name/ID searches even
+            # though events are not artwork catalogue entries.
+            from tkinter import ttk
+            from editor_pickers import pick_reference
+            dialog=pick_reference(app,[e['id'] for e in doc.adventure['events']],tk.StringVar(value='relay:welcome'),'Find an event')
+            def widgets(parent):
+                for child in parent.winfo_children():
+                    yield child;yield from widgets(child)
+            entry=next(w for w in widgets(dialog) if isinstance(w,ttk.Entry));entry.insert(0,'relay:welcome');pump()
+            tree=next(w for w in widgets(dialog) if isinstance(w,ttk.Treeview));assert tree.get_children()==('relay:welcome',)
+            next(w for w in widgets(dialog) if isinstance(w,ttk.Button) and w.cget('text')=='Cancel').invoke();pump()
             print('PASS: shared catalogue numeric/weapon search, original sprite preview, metadata form and tagged tile picker.',flush=True)
+            # Real background mission checks report a bad spawn and open its
+            # owning map. Resolving it retires only this check's diagnostics.
+            a=copy.deepcopy(doc.adventure);encounter=a['encounters'][0]
+            encounter['enemies'][0]['at']=[encounter['party_at'][0],encounter['party_at'][1]-2]
+            bad_at=list(encounter['enemies'][0]['at']);bad_map=encounter['map'];maps.commit(a)
+            workspace.invoke('Check mission');pump(lambda:not workspace.tasks.jobs)
+            finding=next(p for p in workspace.problems if p.get('category')=='mission-check' and p.get('code')=='deployment.overlap')
+            workspace.problem_list.selection_set(str(workspace.problems.index(finding)));workspace.open_problem();pump()
+            assert maps.scene()['id']==bad_map and list(maps.cursor)==bad_at
+            workspace.edit_history(False);pump();workspace.invoke('Check mission');pump(lambda:not workspace.tasks.jobs)
+            assert finding.get('resolved') and not any(p.get('category')=='mission-check' and not p.get('resolved') for p in workspace.problems)
+            assert any('changed since' in p['message'] for p in workspace.problems),'Mission check cleared an unrelated failure'
+            workspace.invoke('Check mission')
+            a=copy.deepcopy(doc.adventure);a['maps'][0]['name']='Edited while mission check runs';maps.commit(a)
+            pump(lambda:not workspace.tasks.jobs)
+            assert any('changed during mission checks' in p['message'] for p in workspace.problems)
+            workspace.edit_history(False);pump()
+            print('PASS: metadata Undo/save/reopen, owned tile use, catalogue tab restoration, event search, mission finding navigation/resolution and stale-check refusal.',flush=True)
             workspace.invoke('Play from start');pump(lambda:not workspace.play_session.preparing)
             process=workspace.play_session.process;assert process is not None
             deadline=time.monotonic()+.3;pump(lambda:time.monotonic()>deadline)

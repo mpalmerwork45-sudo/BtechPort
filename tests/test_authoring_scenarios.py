@@ -103,6 +103,20 @@ class Scenarios(unittest.TestCase):
         self.assertTrue(any(s['state']['phase']=='battle' and s['state']['battle']['round']>=1 for s in win['steps']))
         events=[json.loads(line) for line in (Path(report['runs'][0]['report']).parent/'events.jsonl').read_text().splitlines()]
         self.assertEqual(sum(e['event']=='relay:pay' for e in events),1)
+    @unittest.skipUnless(HAS_CHI,'CHI data/caches are supplied locally')
+    def test_discovery_create_diagnose_repair_workflow(self):
+        from authoring_demo import build
+        template=ProjectDocument(ROOT/'examples/relay-contract',TOOL);before=template.files()
+        result=build(self.root/'lab',TOOL,RUNNER,ROOT/'build/btp-author-analyze',SETTINGS)
+        self.assertEqual(result['status'],'passed');self.assertEqual(result['diagnosed'],'deployment.overlap')
+        broken=json.loads(Path(result['broken_report']).read_bytes());repaired=json.loads(Path(result['repaired_report']).read_bytes())
+        self.assertTrue(all(r['status']=='failed' for r in broken['runs']))
+        self.assertTrue(all(r['status']=='passed' for r in repaired['runs']))
+        lab=ProjectDocument(Path(result['project']),TOOL)
+        self.assertIn(result['selected_unit'],lab.adventure['shops'][0]['stock'])
+        image=next(i for i in lab.art['images'] if i['id']=='author-lab:electric-copy')
+        self.assertEqual(len(image['frames']),3);self.assertEqual(image['frame_ticks'],4)
+        self.assertEqual(template.files(),before)
 
 
 if __name__=='__main__':unittest.main()

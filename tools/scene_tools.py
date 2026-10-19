@@ -12,6 +12,7 @@ def formation_data(document,settings):
     if document.manifest['requires']=='none':
         p=json.loads(document.snapshot[document.manifest['presentation']])
         return {kind:[[x-8,y-8] for x,y in p[key]] for kind,key in [('people','people_formation'),('mechs','mech_formation')]}
+    if not settings.get('combat-data'):raise EditorError('Configure the combat data cache to preview original party formations.')
     result=subprocess.run([str(document.validator),'formation','--combat-data',settings['combat-data']],capture_output=True,text=True,timeout=15)
     if result.returncode:raise EditorError(result.stderr.strip())
     return json.loads(result.stdout)

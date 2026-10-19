@@ -10,6 +10,7 @@ from world_editing import all_worlds, token
 
 
 def capabilities(tool):
+    from asset_catalogue import FIELDS,NUMERIC,KINDS
     try:
         p=subprocess.run([str(Path(tool).resolve()),'capabilities'],capture_output=True,text=True,timeout=10)
         if p.returncode:raise ValueError(p.stderr.strip() or 'Rebuild btp-project with authoring support.')
@@ -19,8 +20,17 @@ def capabilities(tool):
     return dict(api_version=API_VERSION,runtime=runtime,runtime_sha256=hashlib.sha256(Path(tool).read_bytes()).hexdigest(),
         operations=OPERATIONS, features=dict(transactional_batches=True,expected_revision=True,dry_run=True,
         persisted_requests=True,gui_undo=True,live_remote_session=False,protected_regions=False,
-        reinforcement_events=False,escort_events=False,asset_search=True,contact_sheets=True,animation_strips=True,event_graph_preview=True),
-        bounds=dict(operations_per_batch=512,request_bytes=16777216,query_page=100,receipts=512),
+        reinforcement_events=False,escort_events=False,asset_search=True,contact_sheets=True,animation_strips=True,event_graph_preview=True,
+        world_city_previews=True,native_navigation_checks=True,objective_access_warnings=True,scenario_suites=True,
+        scenario_seeds=True,scenario_checkpoints=True,combat_sampling=True,fixture_batches=True,selected_case_reruns=True),
+        discovery=dict(sources=['project','library','atlas','all'],kinds=list(KINDS),fields=sorted(FIELDS),numeric_fields=sorted(NUMERIC),
+            examples=['kind:mech class:light weapon:lrm walk>=5','kind:tile tag:industrial animated:true','kind:construction tag:industrial']),
+        scenarios=dict(format='btp-author-scenario-v1',suite_format='btp-author-suite-v1',battle_policies=['computer','hold','retreat'],
+            seed_encoding='24-bit integer, little-endian RNG bytes; default 11223583',
+            coverage='Declared inputs, explicit graph transitions and initial-party local geometry; arbitrary conditions/Lua and general balance are unproven.'),
+        bounds=dict(operations_per_batch=512,request_bytes=16777216,query_page=100,receipts=512,contact_sheet_items=32,
+            animation_frames_per_strip=32,preview_region_tiles=64,scenario_steps=256,scenario_ticks=120000,scenario_seconds=45,
+            suite_runs=32,suite_cases=16,seeds_per_case=8,suite_seconds=300),
         schemas='schemas/',guide='docs/AI_AUTHORING_GUIDE.md')
 
 

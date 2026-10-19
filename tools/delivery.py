@@ -99,7 +99,7 @@ def package(output,platform='linux',python_runtime=None):
         for name in ('delivery.py','save_migration.py','delivery_gui.py','runtime_probe.py'):
             if (ROOT/'tools'/name).exists():copy_file(ROOT/'tools'/name,stage/'tools'/name,inventory)
         folder=ROOT/('build-windows' if platform=='windows' else 'build');suffix='.exe' if platform=='windows' else ''
-        for name in ('btech-port','btech-headless','btp-project','btp-author-playtest'):copy_file(folder/(name+suffix),stage/'build'/(name+suffix),inventory)
+        for name in ('btech-port','btech-headless','btp-project','btp-author-playtest','btp-author-analyze'):copy_file(folder/(name+suffix),stage/'build'/(name+suffix),inventory)
         if platform=='linux':requirements=linux_runtime(stage,inventory)
         else:
             for dll in folder.glob('*.dll'):copy_file(dll,stage/'build'/dll.name,inventory)

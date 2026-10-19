@@ -18,7 +18,7 @@ ANNOTATION_SCHEMA = obj(dict(name=dict(type='string', maxLength=120),
     edges=obj({side:dict(type='string',maxLength=64) for side in ('north','east','south','west')})))
 KINDS = ('mech','vehicle','infantry','weapon','equipment','ammunition','tile','sprite','icon','screen','construction','pattern','jigsaw')
 NUMERIC = {'mass','price','walk','jump','frames','frame_ticks','damage','range'}
-FIELDS = {'id','key','kind','class','movement','weapon','role','dependency','source','tag','name','terrain','animated',*NUMERIC}
+FIELDS = {'id','key','kind','collection','class','movement','weapon','role','dependency','source','tag','name','terrain','animated',*NUMERIC}
 
 
 def metadata(document):
@@ -97,16 +97,19 @@ def project_records(document):
     for tile in a.get('tiles',[]):
         im=images.get(tile['graphic'],{})
         # Source tags carry over to a registered source tile without copying art.
-        inherited=notes.get(atlas_id(tile['sheet'],tile['graphic']),{})
+        inherited=dict(notes.get(tile['graphic'],{}) if tile['sheet']=='package:art' else {},
+                       **notes.get(atlas_id(tile['sheet'],tile['graphic']),{}))
         tile_notes=dict(notes)
         tile_notes[tile['id']]=dict(inherited,**notes.get(tile['id'],{}))
         if tile['id'] in data.get('tile_names',{}) and not tile_notes[tile['id']].get('name'):
             tile_notes[tile['id']]['name']=data['tile_names'][tile['id']]
-        result.append(record(tile,'tile','project',tile_notes,terrain=tile['terrain'],sheet=tile['sheet'],graphic=tile['graphic'],
+        value=dict(tile,name=im.get('name',tile['id']))
+        result.append(record(value,'tile','project',tile_notes,collection='tiles',terrain=tile['terrain'],sheet=tile['sheet'],graphic=tile['graphic'],
             frames=len(im.get('frames',[0])),frame_ticks=im.get('frame_ticks',8),animated=len(im.get('frames',[0]))>1,
             dependency='chi' if tile['sheet'].startswith('chi:') else 'independent',animation_checked=not tile['sheet'].startswith('chi:')))
     for image in images.values():
-        result.append(record(image,image['kind'],'project',notes,dependency='independent',frames=len(image['frames']),
+        result.append(record(image,image['kind'],'project',notes,collection='images',dependency='independent',frames=len(image['frames']),
+            origin=data.get('tile_sources',{}).get(image['id']),
             frame_ticks=image.get('frame_ticks',8),animated=len(image['frames'])>1,width=image['width'],height=image['height'],
             actions={k:dict(directions=v['directions'],sound=v.get('sound',0)) for k,v in image.get('animations',{}).items()}))
         if image['kind']=='tile':result[-1].update(sheet='package:art',graphic=image['id'],animation_checked=True)
@@ -147,7 +150,7 @@ def catalogue(document, source='project', library=None, decoded=None):
         for sheet,graphic in sheet_graphics(decoded):
             value=source_definition(document,sheet,graphic);value['id']=atlas_id(sheet,graphic)
             loop=tile_loop(decoded,sheet,graphic)
-            result.append(record(value,'tile','atlas',metadata(document),dependency='chi' if sheet.startswith('chi:') else 'independent',
+            result.append(record(value,'tile','atlas',metadata(document),collection='atlas',dependency='chi' if sheet.startswith('chi:') else 'independent',
                 sheet=sheet,graphic=graphic,terrain=value['terrain'],animated=bool(loop),frames=len(loop.frames) if loop else 1,
                 frame_ticks=loop.ticks if loop else 8,animation_checked=True))
     if decoded is not None:

@@ -69,6 +69,35 @@ def graph_checks(document):
         basis='Explicit event edges from start and all entrances; conditions and Lua execution are not proven.')
 
 
+def objective_access(document, findings):
+    """Connect a sealed entrance to objectives available only through it.
+
+    This is a warning over explicit graph edges and initial-party geometry.
+    An opaque Lua writer prevents a definitive access claim.
+    """
+    a=document.adventure or {};events={e['id']:e for e in a.get('events',[])}
+    if any(e['op']=='lua' for e in events.values()):return []
+    blocked={p['object_id']:p for p in findings if p['code']=='entrance.unreachable'}
+    if not blocked:return []
+    roots=[a.get('start',{}).get('event')]+[door['event'] for m in a.get('maps',[]) for door in m['entrances'] if door['id'] not in blocked]
+    def reach(roots):
+        visited=set();queue=deque(r for r in roots if r in events)
+        while queue:
+            current=queue.popleft()
+            if current in visited:continue
+            visited.add(current);queue.extend(t for _,t in edges(events[current]) if t in events)
+        return visited
+    usable=reach(roots);result=[]
+    for objective in a.get('objectives',[]):
+        writers={e['id'] for e in events.values() if e['op']=='flag' and e.get('flag')==objective['complete'] and e.get('value',0)>0}
+        if not writers or writers&usable:continue
+        doors=[door['id'] for m in a.get('maps',[]) for door in m['entrances'] if door['id'] in blocked and reach([door['event']])&writers]
+        if doors:result.append(dict(code='objective.inaccessible',severity='warning',object_id=objective['id'],
+            field_path='adventure.objectives/'+objective['id'],location=blocked[doors[0]]['location'],blocked_entrances=doors,
+            message='Every explicit completion route for this objective is behind an entrance unreachable by the initial formation. Check the doorway/path or provide another route.'))
+    return result
+
+
 def analyze(document,analyzer,settings=None,navigation=True,output=None):
     base=revision(document);static=graph_checks(document);problems=list(static['diagnostics']);native=None
     valid=True
@@ -90,7 +119,7 @@ def analyze(document,analyzer,settings=None,navigation=True,output=None):
                     process=subprocess.run(command,capture_output=True,text=True,timeout=25)
                     if process.returncode:raise ValueError(process.stderr.strip()[:2000] or 'Native probe could not load gameplay dependencies.')
                     if len(process.stdout)>2*1024*1024:raise ValueError('Native probe exceeded its diagnostic budget.')
-                    native=json.loads(process.stdout);problems.extend(native['diagnostics'])
+                    native=json.loads(process.stdout);problems.extend(native['diagnostics']);problems.extend(objective_access(document,native['diagnostics']))
                 except (OSError,ValueError,subprocess.TimeoutExpired) as exc:
                     problems.append(dict(code='navigation.unavailable',severity='warning',message=str(exc),object_id=None,location=None))
     elif not navigation:

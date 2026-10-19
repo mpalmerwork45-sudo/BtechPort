@@ -14,7 +14,7 @@ sys.path.insert(0,str(ROOT/'tools'))
 from asset_catalogue import catalogue,search,annotate,matches,parse_query,bundle_record
 from authoring_contract import AuthoringError
 from authoring_service import apply_batch,revision
-from authoring_visuals import contact_sheet,animation_strip,map_svg,event_graph,VisualSource,png
+from authoring_visuals import contact_sheet,animation_strip,map_svg,world_svg,event_graph,VisualSource,png
 from editor_model import ProjectDocument,create_project
 from editor_tiles import load_tiles
 from event_editing import editor_data
@@ -95,6 +95,46 @@ class Discovery(unittest.TestCase):
         subprocess.run([sys.executable,'-c',code],cwd=ROOT,check=True,timeout=10)
         result=subprocess.run([sys.executable,str(ROOT/'tools/author.py'),'catalogue',str(self.doc.root),'--query','kind:mech'],capture_output=True,text=True,check=True,timeout=10)
         self.assertGreater(json.loads(result.stdout)['data']['total'],0)
+    def test_source_atlas_annotations_and_owned_image_identity(self):
+        annotate(self.doc,'atlas:package-tiles-0',dict(tags=['industrial-floor']))
+        values=catalogue(self.doc,'atlas',decoded=load_tiles(self.doc,{}))
+        found=search(values,'tag:industrial-floor')['items'];self.assertEqual(len(found),1)
+        self.assertEqual(found[0]['graphic'],0)
+        original=next(t for t in self.doc.adventure['tiles'] if t['graphic']!=0);tile_id=create_tile(self.doc,load_tiles(self.doc,{}),original,'Owned tile')
+        tile=next(t for t in self.doc.adventure['tiles'] if t['id']==tile_id)
+        annotate(self.doc,tile['graphic'],dict(tags=['owned-test']))
+        records=search(catalogue(self.doc),'tag:owned-test')['items']
+        self.assertEqual({r['collection'] for r in records},{'images','tiles'})
+        image_record=next(r for r in records if r['collection']=='images')
+        self.assertEqual(VisualSource(self.doc).frames(image_record)[0][0],VisualSource(self.doc).frames(next(r for r in records if r['collection']=='tiles'))[0][0])
+    def test_changed_artwork_invalidates_visual_hash(self):
+        tile_id=create_tile(self.doc,load_tiles(self.doc,{}),self.doc.adventure['tiles'][0],'Hash test')
+        item=next(r for r in catalogue(self.doc) if r['id']==tile_id)
+        before=contact_sheet(self.doc,[item],self.root/'before.svg')['artifact']['items'][0]['pixel_sha256']
+        art=copy.deepcopy(self.doc.art);image=next(i for i in art['images'] if i['id']==item['graphic']);image['frames'][0][0]='ff0000ff'*16
+        self.doc.replace_art(art)
+        after=contact_sheet(self.doc,[item],self.root/'after.svg')['artifact']['items'][0]['pixel_sha256']
+        self.assertNotEqual(before,after)
+    def test_directional_action_frames_and_per_frame_durations(self):
+        from art_editing import new_image
+        from action_tracks import set_track
+        art=copy.deepcopy(self.doc.art);image=new_image('discovery',art['images'],'Directional sprite','sprite')
+        image['frames']=[['%02x0000ff'%n*16]*16 for n in range(32)]
+        set_track(image,'fire',[f'{d*4+1}:2 {d*4+3}:7' for d in range(8)],sound=5)
+        art['images'].append(image);self.doc.replace_art(art)
+        item=next(r for r in catalogue(self.doc) if r['id']==image['id'])
+        result=animation_strip(self.doc,item,self.root/'action.svg',direction=2,action='fire')['artifact']
+        self.assertEqual([(f['image'],f['ticks']) for f in result['frames']],[(8,2),(10,7)])
+        self.assertEqual(result['sound'],5);self.assertIn('Right 1',result['frames'][0]['roles'])
+        self.assertEqual(result['timing_basis'],'authored action durations')
+    def test_world_city_overlay_and_focused_graph(self):
+        from world_editing import create_world,assign_city,world_tile
+        a=copy.deepcopy(self.doc.adventure);world=create_world(a,'discovery',8,8,'Discovery planet')
+        city=a['maps'][0]['id'];assign_city(a,city,[8,8],True,world);self.doc.replace_adventure(a);self.doc.validate()
+        before=revision(self.doc);result=world_svg(self.doc,world,self.root/'world.svg',rect=[6,6,36,28])
+        self.assertEqual(result['artifact']['cities'],[city]);self.assertEqual(before,revision(self.doc))
+        root=a['start']['event'];focused=event_graph(self.doc,self.root/'focused.svg',root,1)
+        self.assertLess(focused['artifact']['events'],len(a['events']));self.assertEqual(focused['artifact']['root'],root)
 
 
 if __name__=='__main__':unittest.main()

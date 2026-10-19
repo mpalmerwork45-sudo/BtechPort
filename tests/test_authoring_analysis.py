@@ -69,6 +69,24 @@ class MissionChecks(unittest.TestCase):
         self.assertIn('event.non_yielding_cycle',codes);self.assertIn('event.unreachable',codes)
         cycle=next(p for p in result['diagnostics'] if p['code']=='event.non_yielding_cycle')
         self.assertEqual(cycle['severity'],'error');self.assertEqual(cycle['events'],['lint-test:cycle-a','lint-test:cycle-b'])
+    def test_objective_reports_its_only_sealed_completion_entrance(self):
+        a=copy.deepcopy(self.doc.adventure);scene=a['maps'][0]
+        # This fixture has only explicit flag writers. The template's optional
+        # Lua node would correctly keep objective access classified unknown.
+        a['events']=[dict(id=e['id'],op='end') if e['op']=='lua' else e for e in a['events']]
+        floor=token(next(t for t in a['tiles'] if t['terrain']=='clear'));wall=token(next(t for t in a['tiles'] if t['terrain']=='wall'))
+        scene['rows']=[floor*32 for _ in range(24)];scene['overlays']=[]
+        for y in range(4,11):
+            for x in range(4,11):
+                if x in (4,10) or y in (4,10):paint(scene,0,x,y,wall)
+        a['flags'].extend(['lint-test:active','lint-test:complete'])
+        end=next(e['id'] for e in a['events'] if e['op']=='end')
+        a['events'].append(dict(id='lint-test:goal',op='flag',flag='lint-test:complete',value=1,next=end))
+        scene['entrances'].append(dict(id='lint-test:sealed-goal',name='Sealed goal',at=[14,14],event='lint-test:goal'))
+        a.setdefault('objectives',[]).append(dict(id='lint-test:objective',title='Sealed objective',text='Reach the sealed room.',active='lint-test:active',complete='lint-test:complete'))
+        self.doc.replace_adventure(a);result=self.check()
+        finding=next(p for p in result['diagnostics'] if p['code']=='objective.inaccessible')
+        self.assertEqual(finding['object_id'],'lint-test:objective');self.assertEqual(finding['blocked_entrances'],['lint-test:sealed-goal'])
     def test_static_only_and_missing_runtime_report_unchecked_navigation(self):
         static=analyze(self.doc,ANALYZER,navigation=False)
         self.assertIsNone(static['navigation']);self.assertIn('navigation.not_run',{p['code'] for p in static['diagnostics']})

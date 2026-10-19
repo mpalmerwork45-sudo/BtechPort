@@ -32,8 +32,10 @@ def image_svg(rows,x,y,width,height):
     return f'<image x="{x}" y="{y}" width="{width}" height="{height}" preserveAspectRatio="xMinYMin meet" style="image-rendering:pixelated" href="data:image/png;base64,{data}"/>'
 
 
-def text(x,y,value,size=12,color='#273b45'):
-    return f'<text x="{x}" y="{y}" font-family="sans-serif" font-size="{size}" fill="{color}">{html.escape(str(value))}</text>'
+def text(x,y,value,size=12,color='#273b45',max_width=None):
+    fit=f' textLength="{max_width}" lengthAdjust="spacingAndGlyphs"' if max_width and len(str(value))*size*.6>max_width else ''
+    halo=' style="paint-order:stroke;stroke:#17232d;stroke-width:2;stroke-linejoin:round"' if color=='#ffffff' else ''
+    return f'<text x="{x}" y="{y}" font-family="sans-serif" font-size="{size}" fill="{color}"{fit}{halo}>{html.escape(str(value))}</text>'
 
 
 def svg(width,height,body):
@@ -82,6 +84,7 @@ class VisualSource:
 
     def frames(self,item):
         from editor_units import unit_sprite,person_sprite
+        self.last_image=None
         doc=self.document;identity=item['id'];kind=item['kind']
         if item['source']=='library':
             from authoring_contract import read_json
@@ -119,14 +122,15 @@ def contact_sheet(document,items,output,settings=None,columns=3):
     for index,item in enumerate(items):
         x=(index%columns)*cellw;y=(index//columns)*cellh
         body.append(f'<rect x="{x+4}" y="{y+4}" width="352" height="152" rx="5" fill="white" stroke="#bccbce"/>')
-        body.extend([text(x+12,y+23,item['name'][:46],13),text(x+12,y+42,item['key'],10)])
+        body.extend([text(x+12,y+23,item['name'],13,max_width=336),text(x+12,y+42,item['key'],10,max_width=336)])
         entry=dict(key=item['key'],id=item['id'],name=item['name'],dependency=item.get('dependency'),cell=[x,y,cellw,cellh])
         try:
             frames,ticks=source.frames(item);rows=frames[0];scale=min(96/len(rows[0]),86/len(rows),4)
             body.append(image_svg(rows,x+12,y+52,len(rows[0])*scale,len(rows)*scale))
-            digest=hashlib.sha256(png(rows)).hexdigest();entry.update(frames=len(frames),frame_ticks=ticks,pixel_sha256=digest)
+            digest=hashlib.sha256(png(rows)).hexdigest();entry.update(frames=len(frames),frame_ticks=ticks,pixel_sha256=digest,
+                timing_basis='movement-step preview' if item['kind'] in ('mech','vehicle','infantry') else 'tile/image duration')
             body.extend([text(x+124,y+75,item['kind']+' | '+str(item.get('dependency','project'))),
-                         text(x+124,y+95,str(len(frames))+' frame(s), '+str(ticks*32)+' ms/frame'),
+                         text(x+124,y+95,str(len(frames))+' stored frames; step-driven' if item['kind'] in ('mech','vehicle','infantry') else str(len(frames))+' frame(s), '+str(ticks*32)+' ms/frame'),
                          text(x+124,y+115,', '.join(item.get('tags',[]))[:30])])
         except (EditorError,KeyError) as exc:
             entry['diagnostic']=dict(code=getattr(exc,'diagnostic',{}).get('code','preview.unavailable'),message=str(exc))
@@ -157,26 +161,34 @@ def animation_strip(document,item,output,settings=None,start=0,limit=32,directio
     original=frames;frames=[original[i] for i in indices]
     if start>=len(frames):raise AuthoringError('query.bounds','Frame offset is outside this animation.')
     selected=frames[start:start+limit];w,h=len(frames[0][0]),len(frames[0]);scale=min(4,160/max(w,h));cell=max(96,int(w*scale)+12)
-    columns=min(8,len(selected));body=[text(10,22,item['key']+' | '+str(ticks*32)+' ms/frame')]
+    timing='authored action durations' if action else 'movement-step preview' if item['kind'] in ('mech','vehicle','infantry') else str(ticks*32)+' ms/frame'
+    columns=min(8,len(selected));canvas_width=max(360,columns*cell);body=[text(10,22,item['key']+' | '+timing,max_width=canvas_width-20)]
     for n,rows in enumerate(selected):
         x=(n%columns)*cell;y=36+(n//columns)*(int(h*scale)+32)
         index=indices[start+n]
         body.append(image_svg(rows,x+6,y,w*scale,h*scale));body.append(text(x+6,y+h*scale+18,'Image '+str(index),11))
-    return artifact(document,output,svg(columns*cell,40+((len(selected)+columns-1)//columns)*(int(h*scale)+32),body),'svg',
+    return artifact(document,output,svg(canvas_width,40+((len(selected)+columns-1)//columns)*(int(h*scale)+32),body),'svg',
         asset=item['key'],frames_total=len(frames),frame_offset=start,frames_shown=len(selected),frame_ticks=ticks,
-        frames=[dict(image=indices[start+n],ticks=durations[start+n],roles=roles.get(indices[start+n],[])) for n in range(len(selected))],sound=sound,
+        frames=[dict(image=indices[start+n],ticks=durations[start+n],roles=roles.get(indices[start+n],[])) for n in range(len(selected))],sound=sound,timing_basis=timing,
         next_offset=start+limit if start+limit<len(frames) else None)
 
 
 def world_svg(document,identity,output,settings=None,rect=None):
-    from world_editing import get_world,world_size,world_tile
+    from world_editing import get_world,world_size,world_tile,patch_cells
     a=document.adventure or {};world=get_world(a,identity)
     if not world or world['id']!=identity:raise AuthoringError('object.missing','Select an existing world.')
     width,height=world_size(a,identity);x,y,w,h=rect or (0,0,min(32,width),min(32,height))
     if min(x,y)<0 or min(w,h)<1 or max(w,h)>64 or x+w>width or y+h>height:
         raise AuthoringError('coordinate.bounds','Choose an in-bounds world rectangle, at most 64 by 64 tiles.')
     ids={token(t):t['id'] for t in a['tiles']}
-    rows=[[ids[world_tile(a,cx,cy,world_id=identity)] for cx in range(x,x+w)] for cy in range(y,y+h)]
+    pieces={p['id']:p for p in a['jigsaws']};patches=patch_cells(world)
+    composed=[(m,composite(m)) for m in a['maps'] if m['id'] in world['cities']]
+    def cell(cx,cy):
+        for city,grid in composed:
+            ox,oy=city['origin']
+            if 0<=cx-ox<len(grid[0]) and 0<=cy-oy<len(grid):return ids[grid[cy-oy][cx-ox]]
+        return ids[world_tile(a,cx,cy,include_cities=False,patches=patches,pieces=pieces,world_id=identity)]
+    rows=[[cell(cx,cy) for cx in range(x,x+w)] for cy in range(y,y+h)]
     pixels=VisualSource(document,settings).grid(rows);body=[image_svg(pixels,12,40,w*16,h*16)];cities=[]
     for map_id in world['cities']:
         city=find(a['maps'],map_id)[1];cx,cy=city['origin'];cw,ch=len(city['rows'][0]),len(city['rows'])
@@ -188,23 +200,30 @@ def world_svg(document,identity,output,settings=None,rect=None):
     return artifact(document,output,svg(w*16+24,h*16+52,body),'svg',world=identity,rect=[x,y,w,h],cities=cities)
 
 
-def event_graph(document,output):
+def event_graph(document,output,identity=None,depth=2):
     events=(document.adventure or {}).get('events',[])
     if not events:raise AuthoringError('preview.unavailable','This project has no authored events.')
+    if not 0<=depth<=4:raise AuthoringError('query.bounds','Event graph depth is 0..4.')
+    if identity:
+        find(events,identity);visible={identity};frontier={identity}
+        for _ in range(depth):
+            following={target for e in events if e['id'] in frontier for _,target in edges(e)}
+            frontier=following-visible;visible.update(following)
+        events=[e for e in events if e['id'] in visible]
     # A bounded grid is predictable for cycles and disconnected components;
     # editor-authored node positions remain untouched.
     positions={e['id']:((n%4)*300+20,(n//4)*130+30) for n,e in enumerate(events)}
-    body=[]
+    body=['<defs><marker id="arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="#7a9aab"/></marker></defs>']
     for e in events:
         x,y=positions[e['id']]
         for branch,target in edges(e):
             if target not in positions:continue
-            tx,ty=positions[target];body.append(f'<path d="M {x+130} {y+70} L {tx+130} {ty}" fill="none" stroke="#7a9aab"/>')
+            tx,ty=positions[target];body.append(f'<path d="M {x+130} {y+70} L {tx+130} {ty}" fill="none" stroke="#7a9aab" marker-end="url(#arrow)"/>')
             body.append(text((x+tx)/2+130,(y+ty)/2+30,branch,9))
     for e in events:
         x,y=positions[e['id']];body.append(f'<rect x="{x}" y="{y}" width="260" height="70" rx="5" fill="white" stroke="#286c80"/>')
         body.extend([text(x+8,y+22,e['id'],11),text(x+8,y+43,e['op'],12),text(x+8,y+61,e.get('text','')[:32],10)])
-    return artifact(document,output,svg(1200,((len(events)+3)//4)*130+25,body),'svg',events=len(events))
+    return artifact(document,output,svg(1200,((len(events)+3)//4)*130+25,body),'svg',events=len(events),root=identity,depth=depth if identity else None)
 
 
 def map_svg(document,identity,output,settings=None,tick=0,rect=None,overlays=()):
@@ -240,5 +259,7 @@ def map_svg(document,identity,output,settings=None,tick=0,rect=None,overlays=())
         for m in anchors:
             for cx,cy,blocked in formation_cells(document,find(a['maps'],identity)[0],m['at'],formation):
                 body.append(f'<rect x="{(cx-x0)*16}" y="{(cy-y0)*16}" width="16" height="16" fill="none" stroke="'+('#ff5050' if blocked else '#70ffff')+'" stroke-width="2"/>')
-    body=[f'<g transform="translate(12,40)">',*body,'</g>',text(12,24,scene['name']+' | '+identity+' | map tiles '+str([x0,y0,w,h]))]
+    body=[f'<defs><clipPath id="map-bounds"><rect width="{w*16}" height="{h*16}"/></clipPath></defs>',
+          '<g transform="translate(12,40)"><g clip-path="url(#map-bounds)">',*body,'</g></g>',
+          text(12,24,scene['name']+' | '+identity+' | map tiles '+str([x0,y0,w,h]),max_width=w*16)]
     return artifact(document,output,svg(w*16+24,h*16+52,body),'svg',map=identity,rect=[x0,y0,w,h],tick=tick,overlays=list(overlays),markers=selected)
