@@ -3,12 +3,31 @@
 The editor now keeps maps, units, library designs, artwork and events in one
 tabbed window. The separate SDL game window is used for playtesting.
 
-The first [AI authoring pass](AI_AUTHORING_GUIDE.md) adds command-file exchange.
+The [AI authoring tools](AI_AUTHORING_GUIDE.md) add shared discovery, mission
+checks and command-file exchange.
 **Project → Export authoring summary** describes the current document and valid
 drafts. **Apply authoring command file** validates a batch in the background,
 checks that the document has not changed, then applies it as one Undo action.
 Save publishes it. This requires no model or network connection. Live remote
 sessions and detailed change review remain [later milestones](AI_AUTHORING_PLAN.md).
+
+**Project → Content catalogue** searches project assets, the Unit Library and
+source tiles using the same filters as the authoring CLI. Try `weapon:lrm`,
+`mass<=35`, `tag:industrial` or `animated:true`. Page with **Previous 100 / Next
+100**. Selection shows art, unit movement, dependency notes and editable
+names/tags/descriptions/connecting edges. **Use on map** selects tiles, patterns
+or construction styles; unit imports retain the existing Unit Library workflow.
+Original tile art is registered in the palette when used and copied only when
+edited. Contact-sheet/animation/graph exports are available from this tab.
+Metadata uses normal Undo and Save; query/source preferences are workspace state.
+
+**Project → Check mission** analyzes the current document plus valid drafts in
+the background, using actual whole-party movement and deployment rules on local
+maps. Explicit event links/objective flags are also checked. Activate a finding
+in Problems to open its map location or event; correct it and run again to clear
+resolved mission findings. Other diagnostics remain. Results are refused if
+you edited during the check. Coverage limits, including Lua and world routes,
+are reported rather than treated as a proof of mission solvability.
 
 ## Start editing
 

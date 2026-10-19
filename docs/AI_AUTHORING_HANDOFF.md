@@ -1,9 +1,11 @@
-# AI authoring discovery/testing — paused checkpoint, 2026-10-18
+# Archived AI authoring discovery/testing checkpoint, 2026-10-18
 
-**Resumed 2026-10-19.** The seeded policies and ten-run route suite now pass;
-combat reporting observes results before cleanup and excludes ammunition FF
-markers. See current [project status](PROJECT_STATUS.md) and [testing](TESTING.md).
-The remainder of this file is the original pause checkpoint, kept for history.
+**Completed 2026-10-19.** The four approved steps were resumed, verified and
+committed in `f519114` and `d88ecd3`. The full Python/native/GUI checks and Windows
+routes under Wine pass; the separate authoring lab demonstrates diagnosis and
+repair. Use current [project status](PROJECT_STATUS.md), [testing](TESTING.md#ai-authoring-discovery-and-mission-testing--2026-10-19)
+and the [author guide](AI_AUTHORING_GUIDE.md). The original checkpoint below is
+kept for history; its pending tasks are superseded, not a new work queue.
 
 The user approved the next pass (steps 1–4), then requested stopping for the
 night. Resume this work without restarting the earlier completed AI1/AI2 pass.

@@ -1,12 +1,37 @@
-# Project status — original fidelity and editable projects, 2026-10-18
+# Project status — original fidelity and editable projects, 2026-10-19
 
-**Current session — RESUMED, 2026-10-19:** the approved AI3 discovery and AI4
-testing pass is in progress. The ten-run branch/seed suite now passes, including
-mid-combat save/reload, real retreat, natural defeat, once-only rewards and an
-explicit low-funds fixture. Nine new scenario tests pass. Visual/GUI coverage,
-the demonstration workflow and full regressions remain underway. The
-[checkpoint handoff](AI_AUTHORING_HANDOFF.md) records the original pause.
-The earlier completed first pass below remains a separate verified milestone.
+**AI discovery and mission testing — VERIFIED, 2026-10-19:** approved steps
+1–4 are complete in `f519114` and `d88ecd3`, following checkpoint `4ad570e`.
+Project/library/atlas search, editable tags, dependency/provenance summaries,
+labelled contact sheets, animation strips and map/world/event previews share
+the editor's assets and operations. **Project → Content catalogue** exposes
+them to human authors. **Project → Check mission** adds explicit event/objective
+lint and actual C whole-party local navigation/deployment checks, with findings
+that open their map/event and clear after repair. Stale results are refused.
+
+The recorded suite passes **10/10 runs** across eight cases, including three
+victory seeds, mid-combat save/reload, real retreat, natural defeat, once-only
+rewards, cancellation paths and an explicit validated low-funds fixture.
+Reports retain exact content, seed, traces, branches and combat reductions.
+A separate playable **Relay Authoring Lab** imports a searched Firefly, creates
+an animated barrier, exports visual evidence, deliberately breaks deployment,
+diagnoses it, repairs through commands and passes the three affected victory
+seeds. Run `python3 tools/authoring_demo.py --output work/my-authoring-lab` to
+reproduce it; the checked local copy is `work/authoring-lab-20261019/game`.
+
+Full Python tests **218/218**, native tests **80/80**, expanded real-editor
+smoke and Windows authoring routes under Wine **8/8** pass. Native and Windows
+analysis/player tools build with two compiler jobs. Reference guard:
+**1,287 entries unchanged**; the three pre-existing Last Beacon working-tree
+files still match the session baseline and remain outside these commits.
+See [verification](TESTING.md#ai-authoring-discovery-and-mission-testing--2026-10-19)
+and the updated [author guide](AI_AUTHORING_GUIDE.md).
+
+Coverage is bounded to declared routes/seeds/policies and initial-party local
+geometry. Arbitrary Lua, world navigation, later party compositions, general
+balance and native Windows Tk remain **UNKNOWN**. AI5 review/protected edits/live
+sessions and richer mechanics are proposed next work, not part of this pass.
+The [pause handoff](AI_AUTHORING_HANDOFF.md) is retained as historical context.
 
 **AI authoring first pass — VERIFIED:** implementation commit `4f1ff6f`;
 [author guide](AI_AUTHORING_GUIDE.md).
@@ -25,9 +50,10 @@ the real GUI paint/batch/Undo/save/Play journey passes. Windows targets build;
 the Windows scenario passes under isolated Wine. Native Windows Tk remains
 **UNKNOWN**. See [verification](TESTING.md#ai-authoring-first-pass--2026-10-18).
 
-Broader catalogues, scenario coverage, protected regions/live sessions and
-richer campaign mechanics remain in [AI3–AI8](AI_AUTHORING_PLAN.md). Authoring
-work used separate projects and disposable test copies. Subsequent Last Beacon
+The subsequent discovery/testing results above extend this first pass.
+Protected regions/live sessions and richer campaign mechanics remain in
+[AI5–AI8](AI_AUTHORING_PLAN.md). Authoring work used separate projects and
+disposable test copies. Subsequent Last Beacon
 artwork/map edits in the working tree were left untouched and outside these
 commits. Both reference directories remain unchanged.
 

@@ -1,9 +1,11 @@
 # Plan: reusable runtime, custom games and an editor
 
 The next phase is [AI authoring with the Construction Kit](AI_AUTHORING_PLAN.md).
-Its [first pass](AI_AUTHORING_GUIDE.md) now provides shared commands, inspection,
-map previews, bounded scenario tests and editor command-file exchange. Broader
-discovery/testing, review and campaign mechanics remain later milestones.
+Its [authoring tools](AI_AUTHORING_GUIDE.md) now provide shared commands,
+inspection/search, labelled visual previews, native mission checks, seeded
+scenario suites and editor command-file exchange. The approved discovery/testing
+pass is complete within its documented bounds. Change review/protected edits,
+live sessions and richer campaign mechanics remain later milestones.
 The earlier [BattleTech demo follow-up](BATTLETECH_DEMO.md#recommended-next-five-milestones)
 records the progression from the first editor to today's authoring tools.
 

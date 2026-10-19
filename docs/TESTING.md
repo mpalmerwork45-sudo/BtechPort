@@ -1,8 +1,80 @@
-# Build, verification and original oracle — 2026-10-18
+# Build, verification and original oracle — 2026-10-19
 
-## Resumed scenario expansion — 2026-10-19
+## AI authoring discovery and mission testing — 2026-10-19
 
-**VERIFIED:** the recorded Relay Contract suite passes **10/10 runs** across
+**VERIFIED:** approved steps 1–4 are complete in implementation commits
+`f519114` and `d88ecd3`, following the paused checkpoint `4ad570e`. Shared
+discovery/visuals and mission checks use the existing document, graphics,
+movement and gameplay implementations. No AI service or network is needed.
+
+- Native build: `env PATH=/usr/bin:/bin cmake --build build -j2` **PASS**.
+- `python3 -m unittest discover -s tests -p 'test_*.py'`: **218/218 PASS**, 19.664 s.
+  Focused coverage includes **12 catalogue**, **8 analysis** and **10 scenario**
+  tests alongside the earlier authoring/library/editor regressions.
+- `ctest --test-dir build --output-on-failure`: **80/80 PASS**, 44.41 s,
+  including the original campaign, Last Beacon, and recorded authoring routes.
+- `python3 tools/native_smoke.py --editor-authoring-only`: **PASS** on private
+  Linux Xvfb. Real GUI paths exercise numeric/armament search, original sprite
+  previews, metadata forms, tagged tile selection, metadata Undo/Save/reopen,
+  owned tile use, catalogue tab restoration and event-reference search.
+  Mission findings open their map/marker; repaired findings clear; edits made
+  during analysis cause stale-result refusal. The earlier paint, command-file
+  import, one-step Undo/Redo, conflict handling and normal SDL Play still pass.
+  Screenshot: `work/editor-catalogue.png`.
+- Windows cross-build: `btp-project`, `btp-author-playtest`,
+  `btp-author-analyze`, `btech-port` **PASS**, two compiler jobs.
+  `python3 tools/windows_check.py --ctest -R '^authoring-'`: **8/8 PASS** under
+  isolated Wine, 0.90 s. The Windows analyzer also checks the independent Beacon
+  project successfully, two maps / 5,398 reached positions / no findings.
+  Native Windows Python/Tk interaction and writer locking remain **UNKNOWN**.
+- Reference guard: **1,287 entries unchanged** against
+  `work/reference-before-map-construction.json` (content, mode and mtime).
+  The user's three pre-existing Last Beacon edits match
+  `work/authoring-discovery-baseline.json`; they were neither changed nor staged.
+
+### Discovery, visuals and analysis
+
+Catalogue tests cover numeric/weapon selection, metadata dry-run/Undo,
+dependency closure and library provenance, atlas notes, exact decoded pixels
+and content hashes, animated copies and cadence, directional/action strips,
+world/city composition and focused event graphs. Previewing is read-only;
+edited artwork changes its hash. Original-resource-dependent artwork is marked
+separately from project-owned art. No decoded original assets are committed.
+
+Native analysis uses actual C terrain, whole-party movement and door contacts
+for the initial party, arriving from the start and explicit transfers. Tests
+exercise blocked starts/arrivals, sealed doors, deployment terrain/separation
+and overlaps, disconnected graph branches, synchronous cycles and objective
+flag/access warnings. Objective-access warnings are conservative when Lua is
+present. Relay Contract lint reports no findings over two maps and 4,248 reached
+compact-formation positions. Reports declare unsupported world routes and
+opaque conditions/Lua; absence of errors does not prove all-game solvability.
+
+The separate playable authoring lab passes at
+`work/authoring-lab-20261019/demo-report.json`. Its recorded workflow searches
+the attributed numeric catalogue, imports a Firefly FFL-4A with dependencies,
+annotates industrial parts/roads and creates/clones a three-frame 128 ms owned
+force field. It exports contact/animation/map/event SVGs, deliberately overlaps
+deployment, diagnoses `deployment.overlap`, observes the three victory routes
+fail, repairs through a revision-scoped batch and passes the three reruns.
+An integration test reproduces this in a disposable directory and verifies
+the template is unchanged. Existing Last Beacon and the shared library are
+read-only inputs. Reproduce with:
+
+```sh
+python3 tools/authoring_demo.py --output work/my-authoring-lab
+```
+
+Exports were visually inspected, including the GUI catalogue and labelled lab
+contact sheet/map. Local review images:
+`work/authoring-lab-20261019/selection-review.png`,
+`work/authoring-lab-20261019/depot-review.png` and
+`work/authoring-discovery-animated-review.png`. Pixel/timing tests establish
+the selected assets, not visual parity of every possible project.
+
+### Ordinary-input branches and combat samples
+
+The recorded Relay Contract suite passes **10/10 runs**, 0.7026 s locally, across
 eight cases: three computer-control victory seeds, contract decline/cancel,
 entry cancellation, encounter decline, real menu retreat, natural hold-policy
 defeat, and an explicitly identified validated low-funds fixture. Victory saves
@@ -16,13 +88,30 @@ and depletes six rounds; retreat depletes none; natural defeat loses one mech.
 Three victory seeds win in 1–2 rounds without losing a mech; this is only a
 declared small sample, not a general balance claim.
 
-`test_authoring_scenarios.py`: **9/9 PASS**, including initial RNG observation,
+`test_authoring_scenarios.py`: **10/10 PASS**, including initial RNG observation,
 default-state equivalence, failed assertion/tick budget evidence, pre-launch
 cancellation/deadline, fixture isolation, partial failure reports, selected-case
-reruns and the real suite. Evidence: `work/authoring-resume-20261019/route-suite-02/`.
-Visual/GUI completion and full native/Python/Windows regressions remain pending.
+reruns, the real suite and the discovery/repair lab. Evidence:
+`work/authoring-resume-20261019/route-suite-02/`. Reports retain exact staged
+content, seed, runtime/scenario hashes, named state, trace, input replay, held
+captures and save files. Ambiguous same-target branch labels are excluded from
+coverage. Fixture reports retain source revision and recipe hash; no test input
+teleports a party or forces a combat result.
 
-## Discovery and mission checks — paused work in progress, 2026-10-18
+Limits remain explicit: 256 steps / 120,000 ticks / 45 seconds per run; at most
+16 cases / 32 runs / eight seeds per case / 300 seconds per suite. Cancellation
+terminates the child player and preserves partial evidence. The pre-cleanup
+battle observer is optional diagnostics and is outside saved game state.
+
+Arbitrary Lua/condition reachability, world navigation, later party variations,
+arbitrary checkpoint-start scenarios and broad balance remain **UNKNOWN**.
+The pass makes no new DOS-fidelity or complete-tabletop-rule claim. AI5
+protected content, richer change review and live sessions remain proposed.
+
+## Discovery and mission checks — archived pause, 2026-10-18
+
+The pending checks below were completed in the 2026-10-19 result above. This
+section records the earlier pause rather than current work remaining.
 
 Focused tests: **29/29 PASS** (14 existing authoring, 8 catalogue, 7 mission
 analysis), plus **18/18 Unit Library PASS**. The private-display authoring GUI
@@ -88,8 +177,9 @@ Command descriptors generate the reference and batch/scenario schemas.
 
 The C loader remains the semantic authority. Schema checks are structural;
 they do not prove route reachability, animation frame references, budgets that
-interact, or arbitrary Lua behavior. Full AI3/AI4 discovery/coverage and AI5 live
-session/protected-review features remain later work. The scenario uses the
+interact, or arbitrary Lua behavior. Broader discovery/testing is recorded in
+the bounded pass above; AI5 live sessions/protected review remain later work.
+This original scenario uses the
 ordinary runtime initial RNG state; it is not a multi-seed balance study.
 No new DOS fidelity or tabletop-rule claim is made by the authored demo.
 

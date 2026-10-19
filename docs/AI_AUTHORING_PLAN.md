@@ -3,14 +3,18 @@
 Recorded 2026-10-18 against `266d21f`, with the user's revised Last Beacon
 preserved in `bed75e9`.
 
-**Status: FIRST PASS IMPLEMENTED, 2026-10-18.** AI1/AI2 now have the versioned
+**Status: DISCOVERY/TESTING PASS IMPLEMENTED, 2026-10-19.** AI1/AI2 have the versioned
 inspection/command contract, transactional CLI, shared editor operations and
 command-file exchange described in the [author guide](AI_AUTHORING_GUIDE.md).
-A minimal AI3 map preview and AI4 ordinary-input scenario runner prove a separate
-Relay Contract mission. Tests and remaining boundaries are recorded in
-[Testing](TESTING.md#ai-authoring-first-pass--2026-10-18). The fuller AI3–AI8
-scope below remains proposed; this is not a live remote authoring session or
-complete protected-content review system. The editor remains the human workspace.
+The approved next four steps add shared asset discovery, labelled visual
+artifacts, native mission analysis and broader seeded ordinary-input tests.
+A separate playable authoring lab demonstrates selection, import, a diagnosed
+failure and repair. Tests and remaining boundaries are recorded in
+[Testing](TESTING.md#ai-authoring-discovery-and-mission-testing--2026-10-19).
+AI4 remains bounded to declared routes, initial-party local geometry and small
+combat samples. AI5–AI8 remain proposed; live remote sessions, protected-content
+review and additional mission mechanics are not implemented by this pass.
+The editor remains the human workspace.
 
 ## 1. Intended result
 
@@ -49,7 +53,7 @@ identified. These observations describe the baseline, not completion of this pla
 | Human workspace | [Tabbed editor](EDITOR_WORKSPACE.md), shared history, drafts, recovery and [background tasks](../tools/editor_tasks.py) | Reviewable change sets, protected content, live authoring-session integration and resumable AI work |
 | Mission logic | Structured events, flags, objectives, win/loss/flee routes and [bounded Lua](../port/core/lua_events.c) | Regions, counters, mission lifecycle hooks and additional supported actions |
 
-Specific gaps to address:
+Specific gaps identified at the recorded baseline:
 
 - The C graphics loader accepts sprite action `animations`; the current art
   schema omits that property. Audit all supported formats rather than treating
@@ -70,7 +74,8 @@ Specific gaps to address:
 Last Beacon is a reference for human-authored work. The user's saved maps,
 artwork, pixel layers and construction sets are now committed. New generation
 tests use disposable copies or a separate example; they must not regenerate
-that source project.
+that source project. Subsequent working-tree edits are also preserved separately
+from implementation commits.
 
 ## 3. Architecture and ownership
 
@@ -133,6 +138,27 @@ and an AI performs a constrained revision while preserving those changes.
 
 AI6 and AI7 build on that workflow. Their internal increments should remain
 small enough to review without leaving an unfinished engine transition.
+
+### Delivered discovery/testing pass, 2026-10-19
+
+| Approved step | Delivered boundary | Verification |
+| --- | --- | --- |
+| 1. Searchable catalogue | Shared project/library/atlas search; numeric and armament filters; editable names/tags/edge notes; dependency and provenance summaries | Catalogue tests; tagged human pickers; library transfer tests |
+| 2. Visual feedback | Labelled contact sheets; direction/action strips; map regions with overlays; world/city previews; focused event graphs | Exact pixel/hash/timing tests, read-only checks and inspected exports |
+| 3. Mission analysis | Explicit graph/objective diagnostics; C whole-party local navigation, arrivals and deployment checks; editor Problems navigation | Deliberately broken and repaired missions; stale-result and resolved-finding GUI checks |
+| 4. Broader gameplay tests | Eight cases/ten new-game runs, three victory seeds, mid-battle save/reload, real retreat, natural defeat, cancellations and a declared low-funds fixture | Native routes, suite reports, Windows routes under Wine and full regressions |
+
+`tools/authoring_demo.py` records a separate end-to-end lab: find/import a
+Firefly, select industrial assets and animated terrain, export visual evidence,
+break deployment, diagnose it, repair with a scoped revision-checked batch and
+rerun only the three affected victory seeds. Existing games and libraries are
+read-only inputs. It uses the normal player after generation.
+
+Not established by these tests: arbitrary Lua/condition reachability, world-wide
+navigation, all later party compositions, arbitrary checkpoint entry setups or
+general combat balance. These remain AI4 extensions rather than implicit
+promises of complete mission proof. Native Windows editor interaction remains
+unverified. AI5 is the next proposed collaborative increment.
 
 ## 5. AI1 — Contract, inspection and author guide
 
@@ -228,6 +254,11 @@ metadata. An unchanged save preserves the existing package identity.
 
 ## 7. AI3 — Content discovery and visual feedback
 
+**Implemented for the approved pass.** The guide documents the catalogue,
+annotation operation and all exported artifact commands. The shared editor
+catalogue and pickers expose the same search semantics. Additional asset kinds
+can extend this interface without replacing it.
+
 ### Scope
 
 - Search units by class, movement, armament, mass, price, role and dependency.
@@ -264,6 +295,12 @@ provenance, and CHI-dependent art is distinguishable from independent art.
 [construction metadata](../tools/construction_editing.py) and player rendering.
 
 ## 8. AI4 — Repeatable mission tests and reports
+
+**Implemented within the delivered boundary above.** Current scenarios start
+new games or explicit validated fixtures; `checkpoint` verifies exact save/load
+inside that run. The suite can rerun selected cases. Whole-game reachability,
+arbitrary checkpoint-start scenarios and broader balance policies remain
+future extensions of the following full scope.
 
 ### Scope
 
@@ -472,7 +509,10 @@ follow this gate without changing the game formats or authoring semantics.
 
 ## 13. Proposed command contract
 
-The following names are illustrative, not available commands today:
+The following dotted names describe conceptual service families. Use the actual
+CLI subcommands and edit-operation names in the [guide](AI_AUTHORING_GUIDE.md)
+and [generated reference](AUTHORING_COMMANDS.md); this table is not a CLI syntax
+reference. Review/apply job sessions remain proposed.
 
 | Family | Example operations |
 | --- | --- |
@@ -547,9 +587,11 @@ name/module layout (AI1–AI2), source-module format and exact capacity targets
 (AI7), and which external assistant transports are useful (AI8). These do not
 block the first authoring contract or require choosing an AI provider now.
 
-**Next work after the first pass: complete AI3 and extend AI4.** Add searchable
-asset catalogues/contact sheets and broader scenario assertions/branch coverage.
-The first pass already proves command-created content, normal mission play,
-save/reload and GUI paint followed by a constrained command-file revision.
-AI5 adds protected regions, richer review and live sessions beyond that explicit
-file exchange. Remaining milestones require their own authorization.
+**Next proposed work: AI5, beginning with change review and preservation.**
+The completed passes prove command-created content, shared discovery, visual
+feedback, a diagnosed/repaired mission, seeded branches and exact save/reload.
+AI5 adds before/after review, protected objects/regions and then live sessions
+beyond the existing command-file exchange. Retain the current CLI and manual
+editor throughout. Extend AI4 coverage alongside new mission mechanics when
+their fixtures and rules exist. AI5 and the remaining milestones require their
+own authorization; they were not started as part of the four-step pass.
