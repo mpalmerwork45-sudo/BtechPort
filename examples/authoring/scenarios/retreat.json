@@ -1,0 +1,72 @@
+{
+  "format": "btp-author-scenario-v1",
+  "max_ticks": 60000,
+  "seed": 11223583,
+  "steps": [
+    {
+      "op": "pages"
+    },
+    {
+      "op": "choose",
+      "label": "Accept contract"
+    },
+    {
+      "op": "pages"
+    },
+    {
+      "op": "walk",
+      "entrance": "relay:south-road"
+    },
+    {
+      "op": "enter"
+    },
+    {
+      "op": "walk",
+      "entrance": "relay:raider-marker"
+    },
+    {
+      "op": "enter"
+    },
+    {
+      "op": "choose",
+      "label": "Engage"
+    },
+    {
+      "op": "battle",
+      "control": "retreat"
+    },
+    {
+      "op": "assert",
+      "battle_outcome": "retreat",
+      "event": "relay:retreated",
+      "round_max": 0,
+      "credits": 5000
+    },
+    {
+      "op": "checkpoint"
+    },
+    {
+      "op": "pages"
+    },
+    {
+      "op": "assert",
+      "map": "relay:field",
+      "flag": "relay:cleared",
+      "value": 0
+    },
+    {
+      "op": "walk",
+      "entrance": "relay:depot-road"
+    },
+    {
+      "op": "enter"
+    },
+    {
+      "op": "assert",
+      "map": "relay:town"
+    },
+    {
+      "op": "checkpoint"
+    }
+  ]
+}

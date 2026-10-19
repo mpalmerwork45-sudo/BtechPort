@@ -1,5 +1,10 @@
 # AI authoring discovery/testing — paused checkpoint, 2026-10-18
 
+**Resumed 2026-10-19.** The seeded policies and ten-run route suite now pass;
+combat reporting observes results before cleanup and excludes ammunition FF
+markers. See current [project status](PROJECT_STATUS.md) and [testing](TESTING.md).
+The remainder of this file is the original pause checkpoint, kept for history.
+
 The user approved the next pass (steps 1–4), then requested stopping for the
 night. Resume this work without restarting the earlier completed AI1/AI2 pass.
 This checkpoint is **work in progress**, not a completed milestone release.

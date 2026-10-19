@@ -1,5 +1,27 @@
 # Build, verification and original oracle — 2026-10-18
 
+## Resumed scenario expansion — 2026-10-19
+
+**VERIFIED:** the recorded Relay Contract suite passes **10/10 runs** across
+eight cases: three computer-control victory seeds, contract decline/cancel,
+entry cancellation, encounter decline, real menu retreat, natural hold-policy
+defeat, and an explicitly identified validated low-funds fixture. Victory saves
+and reloads during round one and checks the once-only 4,000-credit reward.
+Retreat returns through the field; defeat executes its town-return branch.
+
+The pre-cleanup battle observer preserves outcomes/rounds for diagnostics.
+Metrics exclude FF energy/unused ammunition bins and distinguish a destroyed
+mech from its ejected pilot. Default-seed victory loses 20 armour / 3 structure
+and depletes six rounds; retreat depletes none; natural defeat loses one mech.
+Three victory seeds win in 1–2 rounds without losing a mech; this is only a
+declared small sample, not a general balance claim.
+
+`test_authoring_scenarios.py`: **9/9 PASS**, including initial RNG observation,
+default-state equivalence, failed assertion/tick budget evidence, pre-launch
+cancellation/deadline, fixture isolation, partial failure reports, selected-case
+reruns and the real suite. Evidence: `work/authoring-resume-20261019/route-suite-02/`.
+Visual/GUI completion and full native/Python/Windows regressions remain pending.
+
 ## Discovery and mission checks — paused work in progress, 2026-10-18
 
 Focused tests: **29/29 PASS** (14 existing authoring, 8 catalogue, 7 mission

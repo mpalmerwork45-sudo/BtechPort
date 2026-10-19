@@ -1,0 +1,23 @@
+{
+  "format": "btp-author-scenario-v1",
+  "max_ticks": 60000,
+  "seed": 11223583,
+  "steps": [
+    {
+      "op": "pages"
+    },
+    {
+      "op": "input",
+      "action": "cancel"
+    },
+    {
+      "op": "assert",
+      "phase": "exploration",
+      "flag": "relay:accepted",
+      "value": 0
+    },
+    {
+      "op": "checkpoint"
+    }
+  ]
+}

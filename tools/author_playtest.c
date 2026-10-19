@@ -23,40 +23,52 @@
 static unsigned ticks,limit=120000,failed,step_number;
 static FILE *actions,*trace,*combat_log;
 static BtpError error;
-static unsigned battle_open,battle_index,initial_armor,initial_structure,initial_ammo;
+static unsigned battle_open,battle_index,initial_armor,initial_structure,initial_ammo,initial_count;
 static unsigned initial_infantry[BTP_COMBAT_UNITS];
 static const char *battle_policy="unselected";
+static const char *last_outcome="none";
+static unsigned last_round;
 
 static unsigned sum(const uint8_t *bytes,unsigned count)
 { unsigned result=0;for(unsigned i=0;i<count;++i)result+=bytes[i];return result; }
+static unsigned ammunition(const uint8_t record[125])
+{
+    unsigned result=0;
+    /* FF marks energy weapons/unused bins, not 255 rounds of ammunition. */
+    for(unsigned i=39;i<49;++i)if(record[i]!=255)result+=record[i];
+    return result;
+}
 static const char *outcome(const BtpCombatState *c)
 { return c->won ? "win" : c->fled ? "retreat" : c->lost ? "loss" : c->phase ? "pending" : "none"; }
 static void points(const BtpCombatState *c,unsigned *armor,unsigned *structure,unsigned *ammo)
 {
     *armor=*structure=*ammo=0;
-    for(unsigned i=0;i<c->friends;++i) {
+    for(unsigned i=0;i<c->friends && i<initial_count;++i) {
         const BtpCombatUnit *u=&c->unit[i];
         if(u->record[0]==255 || u->infantry!=initial_infantry[i])continue;
         if(u->infantry) {*armor+=u->record[14];*structure+=u->record[15];}
-        else {*armor+=sum(u->record+17,11);*structure+=sum(u->record+28,8);*ammo+=sum(u->record+39,10);}
+        else {*armor+=sum(u->record+17,11);*structure+=sum(u->record+28,8);*ammo+=ammunition(u->record);}
     }
 }
 static void begin_metrics(const BtpState *s)
 {
     battle_open=1;++battle_index;battle_policy="unselected";
+    initial_count=s->combat.friends;
     for(unsigned i=0;i<s->combat.friends;++i)initial_infantry[i]=s->combat.unit[i].infantry;
     points(&s->combat,&initial_armor,&initial_structure,&initial_ammo);
 }
-static void end_metrics(const BtpState *s)
+static void end_metrics(void *context,const BtpState *s,const BtpResources *r,const BtpSceneBattle *encounter)
 {
+    (void)context;(void)r;
     unsigned armor,structure,ammo,actors_lost=0,mechs_lost=0;const BtpCombatState *c=&s->combat;
     points(c,&armor,&structure,&ammo);
     for(unsigned i=0;i<c->friends;++i) {
         if(c->unit[i].record[0]==255)++actors_lost;
-        if(!initial_infantry[i] && (c->unit[i].record[0]==255 || c->unit[i].infantry))++mechs_lost;
+        if(!c->unit[i].infantry && c->unit[i].record[0]==255)++mechs_lost;
     }
-    fprintf(combat_log,"{\"battle\":%u,\"policy\":\"%s\",\"outcome\":\"%s\",\"rounds\":%u,\"friendly_actors_lost\":%u,\"friendly_mechs_lost\":%u,"
-        "\"armor_reduction\":%u,\"structure_reduction\":%u,\"ammunition_reduction\":%u}\n",battle_index,battle_policy,outcome(c),c->round,actors_lost,mechs_lost,
+    last_outcome=outcome(c);last_round=c->round;
+    fprintf(combat_log,"{\"battle\":%u,\"encounter\":\"%s\",\"policy\":\"%s\",\"outcome\":\"%s\",\"rounds\":%u,\"friendly_actors_lost\":%u,\"friendly_mechs_lost\":%u,"
+        "\"armor_reduction\":%u,\"structure_reduction\":%u,\"ammunition_reduction\":%u}\n",battle_index,encounter->id,battle_policy,last_outcome,c->round,actors_lost,mechs_lost,
         initial_armor>armor ? initial_armor-armor : 0,initial_structure>structure ? initial_structure-structure : 0,initial_ammo>ammo ? initial_ammo-ammo : 0);
     battle_open=0;
 }
@@ -80,14 +92,12 @@ static void input(BtpState *s,const BtpResources *r,BtpAction action)
     if (ticks>=limit) { fail("Scenario exceeded its logical tick budget");return; }
     fprintf(actions,"%s\n",btp_action_name(action));++ticks;btp_game_tick(s,r,action);
     if(s->event.phase==BTP_EVENT_FIGHTING && !battle_open)begin_metrics(s);
-    else if(s->event.phase!=BTP_EVENT_FIGHTING && battle_open)end_metrics(s);
     if (s->mode==BTP_SCRIPT_FAULT || s->event.phase==BTP_EVENT_FAULT) fail("Runtime event or script fault");
 }
 static void event_trace(void *context,const BtpState *s,const BtpResources *r,const BtpEventNode *e)
 {
-    if(battle_open && (s->combat.won || s->combat.fled || s->combat.lost))end_metrics(s);
     FILE *f=context;const BtpAdventure *a=btp_adventure(r);
-    fprintf(f,"{\"tick\":%u,\"event\":\"%s\",\"credits\":%u,\"flags\":{",s->tick,e->id,s->credits);
+    fprintf(f,"{\"tick\":%u,\"event\":\"%s\",\"credits\":%u,\"rng\":[%u,%u,%u],\"flags\":{",s->tick,e->id,s->credits,s->npc.rng[0],s->npc.rng[1],s->npc.rng[2]);
     for(unsigned i=0;i<a->flag_count;++i)fprintf(f,"%s\"%s\":%u",i?",":"",a->flags[i],s->event.flags[i]);
     fputs("}}\n",f);
 }
@@ -104,7 +114,9 @@ static void state(const BtpState *s,const BtpResources *r)
     string_json(stdout,s->event.node<a->node_count ? a->nodes[s->event.node].id : "");
     printf(",\"party_count\":%u,\"flags\":{",btp_party_count(&s->party));
     for(unsigned i=0;i<a->flag_count;++i)printf("%s\"%s\":%u",i?",":"",a->flags[i],s->event.flags[i]);
-    printf("},\"battle\":{\"won\":%u,\"fled\":%u,\"lost\":%u,\"outcome\":\"%s\",\"round\":%u},\"objectives\":{",s->combat.won,s->combat.fled,s->combat.lost,outcome(&s->combat),s->combat.round);
+    const char *reported=s->event.phase==BTP_EVENT_FIGHTING ? outcome(&s->combat) : last_outcome;
+    unsigned rounds=s->event.phase==BTP_EVENT_FIGHTING ? s->combat.round : last_round;
+    printf("},\"battle\":{\"won\":%u,\"fled\":%u,\"lost\":%u,\"outcome\":\"%s\",\"round\":%u},\"objectives\":{",!strcmp(reported,"win"),!strcmp(reported,"retreat"),!strcmp(reported,"loss"),reported,rounds);
     for(unsigned i=0;i<a->objective_count;++i) {
         const BtpObjective *o=&a->objectives[i];
         printf("%s\"%s\":\"%s\"",i?",":"",o->id,s->event.flags[o->complete] ? "complete" : s->event.flags[o->active] ? "active" : "inactive");
@@ -118,9 +130,9 @@ static void state(const BtpState *s,const BtpResources *r)
     fputs("],\"units\":[",stdout);comma=0;
     for(unsigned i=0;i<4;++i) {
         const uint8_t *m=i ? s->party.mechs[i-1] : s->campaign.mech;
-        if(m[0]==255)continue;
+        if(!btp_broker_owned(s,i))continue;
         const BtpRosterMech *definition=btp_roster_definition(&r->roster,m);
-        printf("%s{\"id\":\"%s\",\"bay\":%u,\"armor\":%u,\"structure\":%u,\"ammunition\":%u}",comma++?",":"",definition?definition->id:"",i,sum(m+17,11),sum(m+28,8),sum(m+39,10));
+        printf("%s{\"id\":\"%s\",\"bay\":%u,\"available\":%s,\"armor\":%u,\"structure\":%u,\"ammunition\":%u}",comma++?",":"",definition?definition->id:"",i,m[0]!=255?"true":"false",sum(m+17,11),sum(m+28,8),ammunition(m));
     }
     fputs("]}",stdout);
 }
@@ -209,9 +221,11 @@ static int execute(BtpJson *j,unsigned node,BtpState *s,const BtpResources *r)
         if(!number_assert(j,node,"owned_mechs",btp_broker_count(s)))return 0;
         unsigned alive=0;for(unsigned i=0;i<8;++i)if(s->party.people[i][0]!=255)++alive;
         if(!number_assert(j,node,"alive_party",alive))return 0;
-        n=btp_json_optional(j,node,"battle_outcome");if(n && (!btp_json_string(j,n,value,sizeof value) || strcmp(value,outcome(&s->combat))))return fail("Battle outcome assertion failed");
-        n=btp_json_optional(j,node,"round_min");if(n && (!btp_json_uint(j,n,0,65535,&expected) || s->combat.round<expected))return fail("Minimum battle round assertion failed");
-        n=btp_json_optional(j,node,"round_max");if(n && (!btp_json_uint(j,n,0,65535,&expected) || s->combat.round>expected))return fail("Maximum battle round assertion failed");
+        const char *reported=s->event.phase==BTP_EVENT_FIGHTING ? outcome(&s->combat) : last_outcome;
+        unsigned rounds=s->event.phase==BTP_EVENT_FIGHTING ? s->combat.round : last_round;
+        n=btp_json_optional(j,node,"battle_outcome");if(n && (!btp_json_string(j,n,value,sizeof value) || strcmp(value,reported)))return fail("Battle outcome assertion failed");
+        n=btp_json_optional(j,node,"round_min");if(n && (!btp_json_uint(j,n,0,65535,&expected) || rounds<expected))return fail("Minimum battle round assertion failed");
+        n=btp_json_optional(j,node,"round_max");if(n && (!btp_json_uint(j,n,0,65535,&expected) || rounds>expected))return fail("Maximum battle round assertion failed");
         n=btp_json_optional(j,node,"person");if(n) {
             if(!btp_json_string(j,n,value,sizeof value))return 0;
             unsigned slot=0;
@@ -229,7 +243,7 @@ static int execute(BtpJson *j,unsigned node,BtpState *s,const BtpResources *r)
             }
             if(!record)return fail("Requested owned mech is absent");
             static const char *keys[]={"armor_min","armor_max","structure_min","structure_max","ammo_min","ammo_max"};
-            unsigned values[]={sum(record+17,11),sum(record+28,8),sum(record+39,10)};
+            unsigned values[]={sum(record+17,11),sum(record+28,8),ammunition(record)};
             for(unsigned i=0;i<6;++i) {
                 n=btp_json_optional(j,node,keys[i]);if(n && (!btp_json_uint(j,n,0,65535,&expected) || (i%2 ? values[i/2]>expected : values[i/2]<expected)))return fail("Owned mech condition assertion failed");
             }
@@ -278,7 +292,7 @@ int main(int argc,char **argv)
     actions=fopen("replay.actions","wb");trace=fopen("events.jsonl","wb");combat_log=fopen("combat.jsonl","wb");
     if(!s || !actions || !trace || !combat_log || !btp_adventure(r)) {fail("Scenario needs an authored project and writable output directory");goto done;}
     random[0]=(uint8_t)seed;random[1]=(uint8_t)(seed>>8);random[2]=(uint8_t)(seed>>16);
-    btp_events_observe(event_trace,trace);btp_initial_state_seeded(&options,s,r,seed ? random : NULL);
+    btp_events_observe(event_trace,trace);btp_events_observe_battles(end_metrics,NULL);btp_initial_state_seeded(&options,s,r,seed ? random : NULL);
     if(s->event.phase==BTP_EVENT_FIGHTING)begin_metrics(s);
     for(unsigned node=j.nodes[steps].first;node;node=j.nodes[node].next) {
         if(++step_number>256){fail("At most 256 scenario steps");break;}
@@ -291,7 +305,7 @@ int main(int argc,char **argv)
     printf("{\"status\":\"%s\",\"ticks\":%u,\"steps\":%u,\"seed\":%u,\"rng_policy\":\"%s\",\"message\":",failed?"failed":"passed",ticks,step_number,seed ? seed : 11223583u,seed ? "explicit 24-bit state before first event" : "runtime initial state");
     string_json(stdout,error.text);fputs(",\"state\":",stdout);state(s,r);fputs("}\n",stdout);
 done:
-    btp_events_observe(NULL,NULL);if(actions && fclose(actions))failed=1;if(trace && fclose(trace))failed=1;if(combat_log && fclose(combat_log))failed=1;
+    btp_events_observe(NULL,NULL);btp_events_observe_battles(NULL,NULL);if(actions && fclose(actions))failed=1;if(trace && fclose(trace))failed=1;if(combat_log && fclose(combat_log))failed=1;
     if(failed)fprintf(stderr,"%s\n",error.text);
     free(s);btp_content_close(&content);btp_json_close(&j);return failed?1:0;
 }

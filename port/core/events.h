@@ -5,9 +5,13 @@
 enum { BTP_EVENT_INACTIVE, BTP_EVENT_ENTRY, BTP_EVENT_TEXT, BTP_EVENT_SELECT,
     BTP_EVENT_TRADING, BTP_EVENT_FIGHTING, BTP_EVENT_FAULT, BTP_EVENT_COMPLETE };
 typedef void (*BtpEventObserver)(void *context,const BtpState *state,const BtpResources *resources,const BtpEventNode *node);
+typedef void (*BtpBattleObserver)(void *context,const BtpState *state,const BtpResources *resources,const BtpSceneBattle *encounter);
 /* Optional diagnostics receive command-entry snapshots; never change rules,
    RNG or saved state. The single-game frontend owns the observer lifetime. */
 void btp_events_observe(BtpEventObserver observer,void *context);
+/* Final combat state is observed before authored result cleanup discards it.
+   Diagnostic observers must not change simulation or persistence behavior. */
+void btp_events_observe_battles(BtpBattleObserver observer,void *context);
 unsigned btp_journal_count(const BtpState *state,const BtpResources *resources);
 void btp_journal_text(const BtpState *state,const BtpResources *resources,unsigned page,char text[1024]);
 const BtpAdventure *btp_adventure(const BtpResources *resources);

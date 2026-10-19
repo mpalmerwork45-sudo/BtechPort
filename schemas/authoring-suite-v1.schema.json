@@ -25,6 +25,11 @@
             "minLength": 1,
             "maxLength": 1024
           },
+          "fixture": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          },
           "seeds": {
             "type": "array",
             "items": {

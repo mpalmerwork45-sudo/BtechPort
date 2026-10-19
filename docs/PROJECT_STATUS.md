@@ -1,10 +1,11 @@
 # Project status — original fidelity and editable projects, 2026-10-18
 
-**Current session — PAUSED at the user's request:** the approved AI3 discovery
-and AI4 testing pass is in progress. Catalogue/visual tools and mission analysis
-have focused tests and a successful GUI journey. Expanded seeded policies and
-scenario suites are written but still need their new route coverage and full
-regressions. Resume from the [checkpoint handoff](AI_AUTHORING_HANDOFF.md).
+**Current session — RESUMED, 2026-10-19:** the approved AI3 discovery and AI4
+testing pass is in progress. The ten-run branch/seed suite now passes, including
+mid-combat save/reload, real retreat, natural defeat, once-only rewards and an
+explicit low-funds fixture. Nine new scenario tests pass. Visual/GUI coverage,
+the demonstration workflow and full regressions remain underway. The
+[checkpoint handoff](AI_AUTHORING_HANDOFF.md) records the original pause.
 The earlier completed first pass below remains a separate verified milestone.
 
 **AI authoring first pass — VERIFIED:** implementation commit `4f1ff6f`;

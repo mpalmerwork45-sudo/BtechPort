@@ -1,0 +1,95 @@
+{
+  "format": "btp-author-suite-v1",
+  "max_seconds": 120,
+  "cases": [
+    {
+      "id": "victory",
+      "file": "victory.json",
+      "seeds": [
+        11223583,
+        42,
+        1979
+      ],
+      "tags": [
+        "victory",
+        "mid-battle-save",
+        "reward-once",
+        "repeat-visit",
+        "completion"
+      ]
+    },
+    {
+      "id": "decline",
+      "file": "decline.json",
+      "seeds": [
+        11223583
+      ],
+      "tags": [
+        "decline"
+      ]
+    },
+    {
+      "id": "cancel",
+      "file": "cancel.json",
+      "seeds": [
+        11223583
+      ],
+      "tags": [
+        "cancel"
+      ]
+    },
+    {
+      "id": "door-cancel",
+      "file": "door-cancel.json",
+      "seeds": [
+        11223583
+      ],
+      "tags": [
+        "door-cancel"
+      ]
+    },
+    {
+      "id": "encounter-decline",
+      "file": "encounter-decline.json",
+      "seeds": [
+        11223583
+      ],
+      "tags": [
+        "encounter-decline"
+      ]
+    },
+    {
+      "id": "retreat",
+      "file": "retreat.json",
+      "seeds": [
+        11223583
+      ],
+      "tags": [
+        "retreat"
+      ]
+    },
+    {
+      "id": "defeat",
+      "file": "defeat.json",
+      "seeds": [
+        11223583
+      ],
+      "tags": [
+        "defeat"
+      ]
+    },
+    {
+      "id": "unaffordable",
+      "file": "unaffordable.json",
+      "seeds": [
+        11223583
+      ],
+      "tags": [
+        "unaffordable-service",
+        "validated-fixture",
+        "reward"
+      ],
+      "fixture": "low-funds.commands.json"
+    }
+  ]
+}

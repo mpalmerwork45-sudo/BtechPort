@@ -128,6 +128,19 @@ if(BUILD_TESTING)
     --world-data "${PROJECT_SOURCE_DIR}/work/world-data.bin")
   set_tests_properties(authoring-relay-contract PROPERTIES
     WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/authoring-scenario" TIMEOUT 45)
+  foreach(route victory decline cancel door-cancel encounter-decline retreat defeat)
+    set(artifacts "${CMAKE_CURRENT_BINARY_DIR}/authoring-${route}")
+    file(MAKE_DIRECTORY "${artifacts}")
+    add_test(NAME authoring-${route} COMMAND btp-author-playtest
+      --project "${PROJECT_SOURCE_DIR}/examples/relay-contract"
+      --scenario "${PROJECT_SOURCE_DIR}/examples/authoring/scenarios/${route}.json"
+      --artifacts "${artifacts}"
+      --data "${PROJECT_SOURCE_DIR}/Original DOS"
+      --dialogue-data "${PROJECT_SOURCE_DIR}/work/talk-data.bin"
+      --combat-data "${PROJECT_SOURCE_DIR}/work/combat-data.bin"
+      --world-data "${PROJECT_SOURCE_DIR}/work/world-data.bin")
+    set_tests_properties(authoring-${route} PROPERTIES WORKING_DIRECTORY "${artifacts}" TIMEOUT 45)
+  endforeach()
   add_executable(btp-art-actions-tests tests/test_art_actions.c)
   target_link_libraries(btp-art-actions-tests PRIVATE btp_pixels)
   add_test(NAME authored-action-animation COMMAND btp-art-actions-tests "${PROJECT_SOURCE_DIR}/examples/beacon-demo")

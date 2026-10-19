@@ -1,0 +1,100 @@
+{
+  "format": "btp-author-scenario-v1",
+  "max_ticks": 60000,
+  "seed": 11223583,
+  "steps": [
+    {
+      "op": "pages"
+    },
+    {
+      "op": "choose",
+      "label": "Accept contract"
+    },
+    {
+      "op": "pages"
+    },
+    {
+      "op": "walk",
+      "entrance": "relay:south-road"
+    },
+    {
+      "op": "enter"
+    },
+    {
+      "op": "walk",
+      "entrance": "relay:raider-marker"
+    },
+    {
+      "op": "enter"
+    },
+    {
+      "op": "choose",
+      "label": "Engage"
+    },
+    {
+      "op": "battle",
+      "control": "computer"
+    },
+    {
+      "op": "pages"
+    },
+    {
+      "op": "assert",
+      "battle_outcome": "win",
+      "credits": 0
+    },
+    {
+      "op": "walk",
+      "entrance": "relay:depot-road"
+    },
+    {
+      "op": "enter"
+    },
+    {
+      "op": "walk",
+      "entrance": "relay:workshop"
+    },
+    {
+      "op": "enter"
+    },
+    {
+      "op": "choose",
+      "label": "Repair lance - 100"
+    },
+    {
+      "op": "assert",
+      "event": "relay:no-funds",
+      "phase": "text",
+      "credits": 0
+    },
+    {
+      "op": "checkpoint"
+    },
+    {
+      "op": "pages"
+    },
+    {
+      "op": "choose",
+      "label": "Leave"
+    },
+    {
+      "op": "walk",
+      "entrance": "relay:office"
+    },
+    {
+      "op": "enter"
+    },
+    {
+      "op": "pages"
+    },
+    {
+      "op": "assert",
+      "credits": 4000,
+      "objective": "relay:contract",
+      "status": "complete"
+    },
+    {
+      "op": "checkpoint"
+    }
+  ]
+}

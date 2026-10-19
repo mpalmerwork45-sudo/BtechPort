@@ -16,7 +16,11 @@
 
 static BtpEventObserver observer;
 static void *observer_context;
+static BtpBattleObserver battle_observer;
+static void *battle_observer_context;
 void btp_events_observe(BtpEventObserver callback,void *context) { observer=callback;observer_context=context; }
+void btp_events_observe_battles(BtpBattleObserver callback,void *context)
+{ battle_observer=callback;battle_observer_context=context; }
 unsigned btp_journal_count(const BtpState *s,const BtpResources *r)
 {
     const BtpAdventure *a=btp_adventure(r);unsigned count=0;
@@ -194,6 +198,7 @@ static void result(BtpState *s,const BtpResources *r)
 {
     BtpCombatState *c=&s->combat;const BtpEventNode *e=&btp_adventure(r)->nodes[s->event.node];
     unsigned next_node=e->next[c->fled ? 2 : c->lost ? 1 : 0];
+    if(battle_observer)battle_observer(battle_observer_context,s,r,&btp_adventure(r)->battles[e->argument]);
     for (unsigned i=0;i<c->friends;++i) {
         unsigned id=c->ids[i];
         if (id<4) memcpy(btp_party_mech(s,id),c->unit[i].record,125);

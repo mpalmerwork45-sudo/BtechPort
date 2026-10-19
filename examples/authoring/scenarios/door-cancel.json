@@ -1,0 +1,40 @@
+{
+  "format": "btp-author-scenario-v1",
+  "max_ticks": 60000,
+  "seed": 11223583,
+  "steps": [
+    {
+      "op": "pages"
+    },
+    {
+      "op": "choose",
+      "label": "Accept contract"
+    },
+    {
+      "op": "pages"
+    },
+    {
+      "op": "walk",
+      "entrance": "relay:workshop"
+    },
+    {
+      "op": "checkpoint"
+    },
+    {
+      "op": "assert",
+      "phase": "entry"
+    },
+    {
+      "op": "input",
+      "action": "cancel"
+    },
+    {
+      "op": "assert",
+      "phase": "exploration",
+      "credits": 5000
+    },
+    {
+      "op": "checkpoint"
+    }
+  ]
+}

@@ -61,6 +61,7 @@ def parser():
             s.add_argument('--runner',type=Path,default=ROOT/'build'/('btp-author-playtest.exe' if os.name=='nt' else 'btp-author-playtest'))
             for key in ('data','dialogue-data','combat-data','world-data'):s.add_argument('--'+key,type=Path)
             s.add_argument('--cancel-file',type=Path)
+            if name=='suite':s.add_argument('--case',action='append',dest='case_ids',help='Run only this case; repeat for several affected cases.')
     return p
 
 
@@ -151,7 +152,7 @@ def dispatch(args):
         from authoring_scenarios import run,run_suite
         settings={k:str(getattr(args,k.replace('-','_'))) for k in ('data','dialogue-data','combat-data','world-data') if getattr(args,k.replace('-','_'))}
         cancelled=lambda:bool(args.cancel_file and args.cancel_file.exists())
-        if args.command=='suite':return run_suite(doc,read_json(args.file),args.file.parent,args.output,args.runner,settings,cancelled)
+        if args.command=='suite':return run_suite(doc,read_json(args.file),args.file.parent,args.output,args.runner,settings,cancelled,case_ids=args.case_ids)
         return run(doc,read_json(args.file),args.output,args.runner,settings,cancelled)
 
 

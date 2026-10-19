@@ -1,0 +1,18 @@
+{
+  "api_version": 1,
+  "request_id": "relay-low-funds-fixture-v1",
+  "project_id": "relay-contract",
+  "expected_revision": "new",
+  "label": "Controlled fixture: start without credits",
+  "scope": [
+    "adventure.start"
+  ],
+  "operations": [
+    {
+      "op": "start.set",
+      "changes": {
+        "credits": 0
+      }
+    }
+  ]
+}
