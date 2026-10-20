@@ -1,18 +1,19 @@
 # Authoring games with commands
 
-**Verified through 2026-10-19:** shared asset search and visual exports, native
-mission checks, and seeded gameplay suites extend the original transactional
-authoring pass. See [verification and remaining limits](TESTING.md#ai-authoring-discovery-and-mission-testing--2026-10-19).
+**Verified through 2026-10-20:** AI5 adds reviewed changes, protected human
+content and local sessions attached to the open editor. See
+[verification and remaining limits](TESTING.md#ai5-collaborative-authoring--2026-10-20).
 
 The Construction Kit now supports a model-independent, display-independent
 authoring CLI. It edits ordinary projects through the same document,
 construction, import, validation and history operations used by the GUI.
 The editor remains fully available. Games require no AI service.
 
-This implements **AI1/AI2**, the discovery workflow from **AI3**, and bounded
-mission analysis/testing from **AI4**. Live remote editor sessions, protected
-regions, arbitrary mission simulation and new mission mechanics remain later
-milestones. There is no background model or network service to configure.
+This implements **AI1/AI2**, the discovery workflow from **AI3**, bounded
+mission analysis/testing from **AI4**, and the collaborative workflow from
+**AI5**. Arbitrary mission simulation, additional engine mechanics and larger
+campaign capacity remain future work. There is no background model or network
+service to configure.
 
 ## Start here
 
@@ -149,8 +150,8 @@ or arbitrary script-driven combat controller is exposed.
 - Scope entries identify a section, collection or object, for example
   `adventure.maps/relay:town`, `adventure.events`, `art` or `editor.map_patterns`.
   `"*"` permits the entire project. Scope is checked against the **actual diff**,
-  including generated tiles and editor metadata. It is a write-scope guard,
-  not a protected-region/review system.
+  including generated tiles and editor metadata. Protection rules add object,
+  field and map-region checks; review makes the proposed result inspectable.
 - Successful request hashes and outcomes live in `AUTHORING.json`, outside
   gameplay/save identity. Retries return `already_applied`; reusing an ID with
   different JSON or import bytes fails. Undo retains the receipt, so a delayed
@@ -173,6 +174,9 @@ or arbitrary script-driven combat controller is exposed.
 
 ### Working with the editor
 
+For reviewed changes, use **Project → Changes and protection** and the workflow
+below. The original command-file exchange also remains available:
+
 Use **Project → Export authoring summary** to describe the current document,
 including valid pending forms. Prepare the batch against that exported
 revision, then choose **Project → Apply authoring command file**.
@@ -182,9 +186,9 @@ worker runs, the result is refused. Successful application is unsaved until
 Save; one Undo reverses the batch while retaining earlier hand edits.
 
 Closed-project CLI edits must not race an open editor's unsaved work. Use the
-file exchange above for that document, or close/save it before using CLI apply.
-The CLI detects disk revisions; it cannot read another process's unsaved forms.
-No live remote session is implemented in this pass.
+file exchange or local session for that document, or close/save it before
+using CLI apply. Ordinary disk inspection sees saved revisions; a local
+`session snapshot` deliberately includes the open editor's valid forms.
 
 **Project → Content catalogue** searches project assets, the shared Unit Library
 or the tile atlas. It shows artwork, animated unit movement, dependencies and
@@ -201,6 +205,154 @@ own editing scope.
 It rejects results made stale by later edits, places findings in Problems and
 opens the relevant map location or event when a finding is activated. Rerun
 after a repair; resolved mission findings clear without erasing unrelated errors.
+
+## Review changes and preserve human work
+
+Open **Project → Changes and protection**. Its three pages are **Review
+changes**, **Protected content** and **Local session**.
+
+1. In **Protected content**, add a named rule for an object, selected fields,
+   or a rectangle on a local map. These settings use normal Undo and Save.
+2. Export the current summary, or take a live session snapshot. Prepare a
+   command batch against that exact revision.
+3. **Load command file** builds a separate proposal. It leaves the open
+   document and pending forms unchanged. Review object/field changes, paired
+   local maps, event-route lists and dependencies. Complete packages and SVG
+   previews remain in the review folder.
+4. **Check proposed mission** or **Run scenario suite** attaches results for
+   that exact candidate. They do not test a different live revision. Check
+   reports retain their coverage limits and any missing asset diagnostics.
+5. **Apply reviewed changes** revalidates the proposal, collects valid human
+   drafts as their own history step, then applies the generated batch as one
+   additional step. **Undo** reverses that batch; **Save** publishes it.
+
+**Discard** retains artifacts while preventing application. **Request changes**
+records a note for the external author; it does not itself invoke a model.
+Protection conflicts require explicitly selecting the named exception before
+Apply. Exceptions apply to that one application; the rules remain in place.
+Changing groups requires **Recheck selected groups** before Apply. At narrow
+window sizes the proposal list becomes a dropdown; the summary and selection
+controls scroll, and the action buttons remain outside the scrolling area.
+
+Object paths use the same notation as write scopes, for example
+`adventure.events/beacon:welcome`. Entrances also have the synthetic path
+`adventure.entrances/beacon:exchange`. Fields accept names such as `text` or
+JSON pointers such as `/enemies/0/definition`. Regions use **local map-tile**
+rectangles `[x,y,width,height]`. They protect the cell layers and referenced
+tile/art definitions, so changing a shared tile cannot bypass a painted
+region. Manual editing remains possible. Rules constrain supported generated
+batches, including the older immediate Apply command.
+
+Rules live in `EDITOR.json.authoring_protection`; see the
+[protection schema](../schemas/authoring-protection-v1.schema.json).
+Generic generated batches cannot remove or rewrite that policy. Whole world
+objects and their fields can be protected by object path; rectangular region
+protection currently applies to local maps. This is a collaboration contract,
+not an operating-system security boundary against arbitrary file writes.
+
+Closed-project CLI equivalents:
+
+```sh
+python3 tools/author.py protection work/my-relay
+python3 tools/author.py review prepare work/my-relay --request work/revision.json --output work/review-1 --data 'Original DOS'
+python3 tools/author.py review show work/review-1
+python3 tools/author.py review check work/review-1 --data 'Original DOS' --dialogue-data work/talk-data.bin --combat-data work/combat-data.bin --world-data work/world-data.bin
+python3 tools/author.py review apply work/my-relay work/review-1
+```
+
+Use `protection PROJECT --file RULE.json --expected-revision HASH` to add/update
+a rule deliberately, or `--remove RULE_ID` to remove it. CLI application saves
+the project; the GUI application waits for normal Save. `review apply` accepts
+repeatable `--override RULE_ID` for deliberate exceptions. When the project is
+open, use its local session so pending GUI drafts participate.
+
+An optional batch `groups` field partitions every operation exactly once:
+
+```json
+"groups": [
+  {"id": "definitions", "label": "Required unit", "operations": [0]},
+  {"id": "encounter", "label": "New opponent", "operations": [1],
+   "requires": ["definitions"]},
+  {"id": "road", "label": "Road extension", "operations": [2]}
+]
+```
+
+Indices are zero-based. Selecting `encounter` includes `definitions`; the
+combination still passes the shared C validator. Missing references fail even
+if a dependency was omitted from `requires`. Without groups, the batch is one
+group. Recheck with `review recheck PROJECT REVIEW --output NEW_REVIEW --group
+encounter`. Partial applications get their own retry receipt.
+
+Construction footprints, styles, pixel layers, event layout and annotations
+remain authoring data. Compatible roof/face details survive regeneration.
+Displaced details are listed with construction, map, position and tile; a
+protected affected region blocks application unless explicitly overridden.
+
+## Connect an external author to the open editor
+
+Choose **Project → Local authoring session**, enter a brief, constraints and
+allowed write paths, then **Start session**. **Copy connection path** supplies
+the local directory used by the CLI. The default is **Review each proposal**.
+**Apply within declared scope** is an explicit opt-in: valid, conflict-free
+proposals apply automatically, while protected conflicts remain for review.
+Natural-language constraints communicate intent; actual diffs, declared scopes,
+revisions and protection rules are enforced by code.
+
+```sh
+# Replace SESSION_PATH with the copied path; quote it if it contains spaces.
+python3 tools/author.py session status SESSION_PATH
+python3 tools/author.py session snapshot SESSION_PATH --job-id brief-1 --wait 30
+python3 tools/author.py session propose SESSION_PATH --request work/revision.json --job-id revision-1 --wait 30
+python3 tools/author.py session wait SESSION_PATH revision-1 --seconds 30
+python3 tools/author.py session cancel SESSION_PATH revision-1
+```
+
+The snapshot result names an ordinary staged package, revision and summary.
+Inspect/export previews from that snapshot. A proposal's `project_id` is the
+open game's identity and its `expected_revision` is the snapshot revision.
+Import paths are resolved relative to the request file, captured immediately,
+and hashed. Reusing a job ID requires identical request and import bytes.
+Polling never needs terminal input; `--wait` is bounded to 60 seconds.
+
+The transport is a private local JSON-file inbox, with no listening network
+port, provider dependency or embedded model. The editor owns the document;
+workers receive detached data and publication happens on the GUI thread.
+Local sessions also work in an explicitly opened Unit Library editing scope.
+Saving that scope publishes to the library through its normal library Save
+path; importing a design into a game remains a separate operation. Library
+Save replaces its temporary editing package, so start a fresh session for
+further library work after saving.
+
+**Local session** shows queued/running/finished jobs. Double-click one to open
+its review or see its snapshot result. Cancellation does not publish unfinished
+work. Closing the review tab preserves the session and proposals; closing or
+replacing its project/library scope stops the session. Save and Play remain
+ordinary editor actions and do not require a connected author.
+
+If human work changes during a job, the result becomes stale or its application
+is refused. Request a new snapshot and revise the request with knowledge of
+those edits. Invalid GUI fields stay visible and prevent snapshot/application.
+After a crash, reviews and artifacts remain on disk, unsaved human work uses
+the existing recovery flow, and expired sessions report interruption. Start a
+new session explicitly; queued work is not automatically resumed. Journalled
+save recovery and retry receipts handle interrupted publication.
+
+Current bounds: 512 operations per batch, **2 MiB per reviewed request**,
+256 preservation rules, 64 change groups, eight queued/running jobs, 256 jobs
+per session, 16 MiB per import and 64 MiB total captured imports. The Changes
+view remembers up to 512 review paths. It renders the first eight changed
+local maps, with all other changes retained in packages and field comparisons.
+Each review supports 32 linked check reports. Display excerpts share a 4 MiB
+budget; complete values remain in the snapshots. Oversized review records fail
+without application. These bounds are also exposed by `capabilities`.
+
+The automated collaboration demonstration uses a private **copy** of Last
+Beacon. It paints a roof, moves a doorway and edits dialogue through the GUI,
+protects those edits, submits a road/encounter revision from another CLI process,
+reviews it, and checks Undo, Save, Play and recovery. Reproduce with
+`python3 tools/native_smoke.py --editor-collaboration-only` after preparing
+the normal original-resource caches. `work/collaboration-lab/latest.json`
+locates the retained playable copy. Source Last Beacon files are unchanged.
 
 ## Find content without guessing IDs
 
@@ -311,6 +463,16 @@ for CHI projects. They are visual aids, separate from the native movement check.
 jigsaws, terrain patches and local city overlays with labelled city boundaries.
 Use `inspect --query objects --collection worlds` to find world IDs. The focused
 event graph accepts `--depth 0..4`; omitting `--id` shows all explicit nodes.
+
+AI tools can already author the broader world and its towns:
+`world.create` creates a planet, `object.put` defines jigsaws, `world.generate`
+uses a declared seed and piece weights, `world.paint` places pieces,
+`world.patch` draws terrain tiles, and `city.place` overlays a local town map.
+Several worlds are supported within the runtime's compiled/shared capacity.
+Query remaining capacity before expanding a project. The review's map tab
+shows local maps; use `world-preview` for a composed world/city image and the
+field comparison for the underlying world changes. Larger campaign capacity
+belongs to AI7; world-spanning navigation verification is still future work.
 
 All visual output paths must be new and outside the project. Rendering does not
 edit artwork, graph layout, game data or Undo history.

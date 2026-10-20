@@ -1,4 +1,4 @@
-# Open questions after bounded M4 work and authoring increments — 2026-10-19
+# Open questions after bounded M4 work and authoring increments — 2026-10-20
 
 The authorized M4 increments have playable, tested paths. Confidence belongs
 to the individual original comparisons and recorded continuations in
@@ -13,12 +13,21 @@ retaining the full editor. The eight-case suite measures ten ordinary-input
 runs, including a declared validated low-funds fixture. Local navigation uses
 the actual initial party and collision rules; it does not establish all later
 party compositions, world routes, arbitrary conditions/Lua or general combat
-balance. Those remain extensions of AI4. The next proposed increment is AI5:
-a Changes review view, protected objects/regions and live sessions. Richer
-mission mechanics and measured campaign capacity follow separately. CLI work
-cannot inspect another editor process's unsaved forms: use the GUI command-file
-exchange or close/save before CLI publication. Native Windows Tk remains
+balance. Those remain extensions of AI4. AI5 now supplies a Changes view,
+protected objects/fields/local regions and local editor sessions. The next
+proposed increment is AI6a: named mission regions, persistent variables/counters
+and explicit objective states. Reinforcements, escorts and measured campaign
+capacity follow separately. Ordinary closed-project CLI work still cannot
+inspect unsaved forms: use `session snapshot` against an explicitly started
+editor session, or save/close before CLI publication. Native Windows Tk remains
 unverified. Model/provider selection is optional and does not block these tools.
+
+World creation, jigsaw generation/painting, terrain patches and city placement
+are already exposed to AI authors, with composed world/city previews. Larger
+planet/campaign capacity remains AI7 work; world-wide traversal checks are
+still unverified. Current protection rectangles and paired review-map previews
+cover local maps; whole world objects/fields can be protected and world
+changes inspected through field comparisons and `world-preview`.
 
 The Unit Library now includes 25 additional classic chassis and corrected
 original animation defaults. These remain CHI adaptations: rear firing arcs,

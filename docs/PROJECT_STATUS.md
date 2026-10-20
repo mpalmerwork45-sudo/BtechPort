@@ -1,4 +1,34 @@
-# Project status — original fidelity and editable projects, 2026-10-19
+# Project status — original fidelity and editable projects, 2026-10-20
+
+**AI5 collaborative authoring — VERIFIED, 2026-10-20:** **Project → Changes and
+protection** now reviews actual object/field changes, paired local maps, event
+routes, dependencies and candidate checks. Preserve whole objects, selected
+fields and local map regions; accept validated groups or approve named
+exceptions. Compatible human construction detail survives, and displaced
+detail is reported.
+
+**Project → Local authoring session** connects an external author through a
+local file inbox. Snapshot valid GUI drafts, submit revision/scoped proposals,
+inspect/cancel jobs and apply through shared history. Review is the default.
+Opt-in application still enforces protection and scope. Closing the review tab
+retains work; replacing the project stops its session. Unit Library editing
+has a separate scope and Save target.
+
+The Last Beacon completion gate passes on a copy: human GUI dialogue, roof
+paint and door movement survive a CLI encounter/road revision and one Undo.
+The revised copy passes the full native two-contract route. **240 Python tests,
+80 native tests, the new collaboration GUI journey and existing authoring GUI
+regression pass.** Interrupted save, stale work, cancellation, invalid fields,
+recovery and project/library isolation are covered. Both reference directories
+and the user's three pre-existing working-tree edits remain unchanged.
+See [verification](TESTING.md#ai5-collaborative-authoring--2026-10-20) and the
+[author guide](AI_AUTHORING_GUIDE.md#review-changes-and-preserve-human-work).
+Native Windows Tk remains **UNKNOWN**.
+
+**Next proposed milestone: AI6a**, named mission regions, persistent variables/
+counters and explicit objectives. AI tools already expose jigsaw worlds,
+generation/painting, town placement and world previews. Larger campaign
+capacity is AI7; world-spanning navigation verification remains future work.
 
 **AI discovery and mission testing — VERIFIED, 2026-10-19:** approved steps
 1–4 are complete in `f519114` and `d88ecd3`, following checkpoint `4ad570e`.
@@ -29,8 +59,8 @@ and the updated [author guide](AI_AUTHORING_GUIDE.md).
 
 Coverage is bounded to declared routes/seeds/policies and initial-party local
 geometry. Arbitrary Lua, world navigation, later party compositions, general
-balance and native Windows Tk remain **UNKNOWN**. AI5 review/protected edits/live
-sessions and richer mechanics are proposed next work, not part of this pass.
+balance and native Windows Tk remain **UNKNOWN**. AI5 was delivered subsequently
+above; richer mechanics remain future work.
 The [pause handoff](AI_AUTHORING_HANDOFF.md) is retained as historical context.
 
 **AI authoring first pass — VERIFIED:** implementation commit `4f1ff6f`;
@@ -51,8 +81,8 @@ the Windows scenario passes under isolated Wine. Native Windows Tk remains
 **UNKNOWN**. See [verification](TESTING.md#ai-authoring-first-pass--2026-10-18).
 
 The subsequent discovery/testing results above extend this first pass.
-Protected regions/live sessions and richer campaign mechanics remain in
-[AI5–AI8](AI_AUTHORING_PLAN.md). Authoring work used separate projects and
+AI5 adds protected review/local sessions above; richer campaign mechanics remain
+in [AI6–AI8](AI_AUTHORING_PLAN.md). Authoring work used separate projects and
 disposable test copies. Subsequent Last Beacon
 artwork/map edits in the working tree were left untouched and outside these
 commits. Both reference directories remain unchanged.

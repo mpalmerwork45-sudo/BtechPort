@@ -8,8 +8,23 @@ checks and command-file exchange.
 **Project → Export authoring summary** describes the current document and valid
 drafts. **Apply authoring command file** validates a batch in the background,
 checks that the document has not changed, then applies it as one Undo action.
-Save publishes it. This requires no model or network connection. Live remote
-sessions and detailed change review remain [later milestones](AI_AUTHORING_PLAN.md).
+Save publishes it. This requires no model or network connection.
+
+**Project → Changes and protection** adds a review tab with before/after maps,
+object/field changes, event routes, dependencies and checks of the proposed
+game. Protect whole objects, selected fields or local map regions on its
+**Protected content** page. Load a command file, review it, then Apply, Discard
+or request changes. Partial groups must be rechecked; protection exceptions
+are explicit and named. Accepted changes use one Undo step and normal Save.
+
+**Project → Local authoring session** connects an external CLI author to the
+open project or library scope. Start it explicitly, copy its connection path,
+and use `tools/author.py session`. Snapshots include valid pending forms;
+stale work is refused. Review is the default, with opt-in application within
+the declared scope. Jobs, cancellation and retained proposals stay visible.
+Closing a tab preserves work; replacing its editing scope stops the session.
+The [author guide](AI_AUTHORING_GUIDE.md#connect-an-external-author-to-the-open-editor)
+documents commands, recovery and limits. No model runs inside the editor.
 
 **Project → Content catalogue** searches project assets, the Unit Library and
 source tiles using the same filters as the authoring CLI. Try `weapon:lrm`,

@@ -1,4 +1,103 @@
-# Build, verification and original oracle — 2026-10-19
+# Build, verification and original oracle — 2026-10-20
+
+## AI5 collaborative authoring — 2026-10-20
+
+**VERIFIED:** core review/protection/session protocol in `5c8f5ff`; editor
+integration and collaboration journey in `519bc41`. No runtime C code or
+original game resources changed. The authoring CLI and manual editor remain
+usable without a connected model.
+
+- Full Python suite: **240/240 PASS**, 21.243 s,
+  `work/ai5-python-tests.log`. After final review-report bounding changes, the
+  focused authoring suite also passes **58/58**, 4.092 s,
+  `work/ai5-authoring-tests.log`.
+- Native CTests: **80/80 PASS**, 46.13 s, `work/ai5-native-tests.log`, covering
+  original gameplay, authored games, mission analysis and seeded suites.
+- `python3 tools/native_smoke.py --editor-collaboration-only`: **PASS** on a
+  private Linux Xvfb display; `work/ai5-collaboration-smoke.log`.
+- Existing `--editor-authoring-only`: **PASS**; catalogue, original sprite
+  preview, tagged tile picking, metadata Undo/Save, mission finding navigation,
+  repair/stale checks, command-file exchange and normal Play remain usable.
+  Log: `work/ai5-existing-editor-smoke.log`.
+- The retained revised Last Beacon passes `btp-battletech-demo-tests`, including
+  two contracts, recruitment, broker/vehicles, crew, withdrawal, once-only
+  rewards, both endings and saves. Its road/relay battles take **687/2,212**
+  simulation ticks. Log: `work/ai5-revised-game-route.log`.
+- Reference guard: **1,287 entries unchanged** against
+  `work/reference-before-map-construction.json`, including content/mode/mtime.
+  The three pre-existing Last Beacon working-tree files still match
+  `work/authoring-discovery-baseline.json`; they remain outside these commits.
+
+### Collaborative completion gate
+
+The GUI journey starts from a disposable copy of the user's current Last
+Beacon. Normal mouse gestures paint a roof cell and drag the exchange door.
+The event inspector changes the briefing and leaves another sentence as a
+pending draft. Actual protection forms register the dialogue field, roof
+rectangle and doorway position.
+
+Another Python CLI process submits a live snapshot, then a two-group proposal
+to move the road encounter's opponent and extend a road. The review leaves the
+live document untouched; it shows the actual before/after pixels and attaches
+a mission check with the exact candidate revision. Apply preserves town data
+and construction metadata. One Undo returns to the human-edited revision,
+including the previously pending sentence. Redo, Save and reopening agree.
+
+Further GUI cases exercise:
+
+- dependency-group selection requiring recheck before Apply;
+- session write-scope refusal and invalid roster drafts remaining visible;
+- edits made while a real worker is running, producing stale results;
+- cancellation both before launch and during preparation;
+- opt-in automatic application, with protected conflicts still held for review;
+- closing/reopening the review tab, reopening the workspace, and recovering an
+  unfinished protection form through the normal recovery flow;
+- project replacement stopping its session;
+- normal SDL Play/Stop with no session connected;
+- a separately opened Unit Library design, automatic scoped application and
+  library Save, while the game's identically named unit remains unchanged.
+
+Core tests cover object/field/region protection (including shared tile changes),
+explicit named exceptions, group dependency closure, missing dependency
+validation, captured imports, retry receipts, scope/root mismatch, displaced
+construction details, malformed policy, stale publication, bounded IDs,
+candidate-check tampering and an interrupted journalled save followed by
+recovery/retry.
+
+The tests exposed and fixed a stale proposal-selection problem after partial
+recheck and garbage collection of Tk variables on background worker threads.
+The GUI process now collects cycles on its owning thread. The review view also
+switches to a compact proposal selector at narrow widths, scrolls its content
+and keeps action buttons accessible at **960 × 620**.
+
+Screenshots inspected: `work/editor-collaboration-maps.png`,
+`work/editor-collaboration-review.png`, `work/editor-collaboration-small.png`.
+`work/collaboration-lab/latest.json` identifies the retained playable copy and
+its revision, human edits and source-file hashes. Adjacent review copies retain
+the requests, complete before/after packages and visual evidence. They are
+verification artifacts; their original temporary editing scopes have closed.
+
+### Boundaries
+
+Native Windows Python/Tk and its live-session filesystem behavior remain
+**UNKNOWN**; this pass did not repeat the prior Windows C/Wine evidence.
+The local inbox is a collaboration interface, not a security sandbox against
+arbitrary writes by another process. Prose briefs/constraints are advisory;
+scope, protection and revisions are enforced.
+
+Map-region protection and paired review images cover local maps. World objects
+and fields can be protected, and existing authoring commands can create/paint
+jigsaw worlds, place towns and export composed world previews. Larger campaign
+capacity is AI7 work; world-wide path verification is still outside the current
+native local-map analysis. The existing AI4 limits on arbitrary Lua, later
+party compositions and general combat balance remain.
+
+Review records, captured imports, previews and jobs have explicit limits in
+the [guide](AI_AUTHORING_GUIDE.md#connect-an-external-author-to-the-open-editor).
+Old sessions are not automatically resumed after restart; ready artifacts stay
+reviewable and a new session requires an explicit Start. Save in a Unit Library
+scope replaces its temporary package, ending that session. No remote network
+transport, provider adapter, embedded chat or new mission mechanics are included.
 
 ## AI authoring discovery and mission testing — 2026-10-19
 

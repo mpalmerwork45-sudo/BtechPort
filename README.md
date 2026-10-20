@@ -96,13 +96,16 @@ Windows/Linux editor is recorded in the
 assets, apply validated command batches, export labelled visual previews, check
 mission navigation and run seeded gameplay suites through `python3 tools/author.py`.
 The editor's **Project** menu has **Content catalogue**, **Check mission**,
-**Export authoring summary** and **Apply authoring command file**, with shared
-Undo and revision checks. Try **Relay Contract (command-created)** in the launcher.
+**Changes and protection** and **Local authoring session**, alongside command-file
+exchange. Review proposed maps/events, protect human edits, and accept changes
+with shared Undo and revision checks. External authors can take snapshots of
+the open editor and submit scoped proposals; review is the default.
+Try **Relay Contract (command-created)** in the launcher.
 For a separate playable discovery/repair demonstration, run
 `python3 tools/authoring_demo.py --output work/my-authoring-lab` after preparing
 the original resources. It retains previews, exact commands and test reports
 beside the new game. The [eight-milestone plan](docs/AI_AUTHORING_PLAN.md) records
-the completed boundaries and proposed review/campaign work. The full manual
+the completed boundaries and proposed mission/campaign work. The full manual
 editor remains central; generated games run without an AI service.
 
 The [shared authoring format and project loader](docs/M5_AUTHORING_PROJECTS.md)

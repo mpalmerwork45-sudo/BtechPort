@@ -3,7 +3,7 @@
 Recorded 2026-10-18 against `266d21f`, with the user's revised Last Beacon
 preserved in `bed75e9`.
 
-**Status: DISCOVERY/TESTING PASS IMPLEMENTED, 2026-10-19.** AI1/AI2 have the versioned
+**Status: AI5 COLLABORATIVE CHECKPOINT IMPLEMENTED, 2026-10-20.** AI1/AI2 have the versioned
 inspection/command contract, transactional CLI, shared editor operations and
 command-file exchange described in the [author guide](AI_AUTHORING_GUIDE.md).
 The approved next four steps add shared asset discovery, labelled visual
@@ -12,9 +12,12 @@ A separate playable authoring lab demonstrates selection, import, a diagnosed
 failure and repair. Tests and remaining boundaries are recorded in
 [Testing](TESTING.md#ai-authoring-discovery-and-mission-testing--2026-10-19).
 AI4 remains bounded to declared routes, initial-party local geometry and small
-combat samples. AI5–AI8 remain proposed; live remote sessions, protected-content
-review and additional mission mechanics are not implemented by this pass.
-The editor remains the human workspace.
+combat samples. AI5 now adds durable review, protected objects/fields/local
+regions, validated partial groups and a local session attached to the editor.
+Its Last Beacon completion gate preserves human dialogue, roof painting and
+door placement through a generated encounter/road revision and Undo.
+See [AI5 verification](TESTING.md#ai5-collaborative-authoring--2026-10-20).
+AI6–AI8 remain proposed. The editor remains the human workspace.
 
 ## 1. Intended result
 
@@ -119,16 +122,16 @@ semantics retain their existing path.
 Each milestone has its own implementation commits, verification report and
 usable stopping point. Relative size indicates scope, not a calendar estimate.
 
-| Milestone | Deliverable | Depends on | Size | Usable result |
+| Milestone | Deliverable | Depends on | Size | Status |
 | --- | --- | --- | --- | --- |
-| AI1 | Capability contract, inspection and author guide | Existing project loader | Medium | An AI can discover supported content, formats and limits accurately |
-| AI2 | Shared authoring commands and transactional CLI | AI1 | Large | An AI can create/edit a project through supported operations |
-| AI3 | Searchable catalogues and visual feedback | AI1–AI2 | Medium | An AI can select appropriate art/units and inspect its maps |
-| AI4 | Mission scenarios, assertions and playtest reports | AI1–AI2; AI3 for visual reports | Large | An AI can test and repair a small adventure using current mechanics |
-| AI5 | Editor review, protected edits and live sessions | AI2–AI4 | Large | Human and AI can revise the same project without losing work |
-| AI6 | Additional mission primitives and Lua/event support | AI2, AI4–AI5 | Large, split below | Timed objectives, reinforcements, defence and escort become supported mechanics |
-| AI7 | Modular campaigns, reproducible compilation and capacity work | AI2, AI4–AI5; include AI6 formats when available | Large, split below | Larger projects stay manageable and reproducible |
-| AI8 | Complete authoring demonstration and delivery | AI1–AI7 | Medium | A documented, tested human/AI campaign workflow ships |
+| AI1 | Capability contract, inspection and author guide | Existing project loader | Medium | Delivered |
+| AI2 | Shared authoring commands and transactional CLI | AI1 | Large | Delivered |
+| AI3 | Searchable catalogues and visual feedback | AI1–AI2 | Medium | Delivered |
+| AI4 | Mission scenarios, assertions and playtest reports | AI1–AI2; AI3 for visual reports | Large | Delivered within the recorded route/geometry bounds |
+| AI5 | Editor review, protected edits and live sessions | AI2–AI4 | Large | Delivered; local file-inbox transport |
+| AI6 | Additional mission primitives and Lua/event support | AI2, AI4–AI5 | Large, split below | Proposed; AI6a recommended next |
+| AI7 | Modular campaigns, reproducible compilation and capacity work | AI2, AI4–AI5; include AI6 formats when available | Large, split below | Proposed |
+| AI8 | Complete authoring demonstration and delivery | AI1–AI7 | Medium | Proposed |
 
 **First useful AI creation checkpoint: AI1–AI4.** It generates into a separate
 copy, supplies test evidence and opens in the existing editor.
@@ -158,7 +161,7 @@ Not established by these tests: arbitrary Lua/condition reachability, world-wide
 navigation, all later party compositions, arbitrary checkpoint entry setups or
 general combat balance. These remain AI4 extensions rather than implicit
 promises of complete mission proof. Native Windows editor interaction remains
-unverified. AI5 is the next proposed collaborative increment.
+unverified. The subsequent AI5 increment is recorded below.
 
 ## 5. AI1 — Contract, inspection and author guide
 
@@ -354,6 +357,27 @@ use an explicit supported migration; they never silently load stale state.
 
 ## 9. AI5 — Review, preserve manual work and integrate live sessions
 
+**Delivered 2026-10-20.** **Project → Changes and protection** supplies paired
+maps, object/field comparisons, event routes, dependencies and checks on the
+exact candidate. Named object/field/region rules, dependency groups and explicit
+exceptions share the transactional command service. Compatible manual detail
+survives; displaced detail is reported.
+
+**Project → Local authoring session** accepts snapshot/proposal jobs through a
+local JSON-file inbox. It defaults to review, with opt-in application within
+scope. It includes pending valid forms, revisions, visible jobs, cancellation,
+retained artifacts and shared Undo. The editor owns publication; no embedded
+model, provider connection or network server is required.
+
+The completion gate passes on a copy of the user's Last Beacon: actual GUI
+dialogue/roof/door edits, an external CLI road/encounter proposal, protected
+review and one-step Undo, plus a complete native gameplay route on the revised
+copy. Stale jobs, invalid fields, queued/running cancellation, interrupted save,
+review/tab/editor reopening, protection-form recovery, project replacement and
+separate Unit Library publication are exercised. See the
+[guide](AI_AUTHORING_GUIDE.md#review-changes-and-preserve-human-work) and
+[evidence/limits](TESTING.md#ai5-collaborative-authoring--2026-10-20).
+
 ### Scope
 
 - Add a Changes/review view with a description, affected objects, before/after
@@ -512,7 +536,8 @@ follow this gate without changing the game formats or authoring semantics.
 The following dotted names describe conceptual service families. Use the actual
 CLI subcommands and edit-operation names in the [guide](AI_AUTHORING_GUIDE.md)
 and [generated reference](AUTHORING_COMMANDS.md); this table is not a CLI syntax
-reference. Review/apply job sessions remain proposed.
+reference. AI5 implements the review/apply and local job families through
+`author.py review`, `author.py protection` and `author.py session`.
 
 | Family | Example operations |
 | --- | --- |
@@ -587,11 +612,15 @@ name/module layout (AI1–AI2), source-module format and exact capacity targets
 (AI7), and which external assistant transports are useful (AI8). These do not
 block the first authoring contract or require choosing an AI provider now.
 
-**Next proposed work: AI5, beginning with change review and preservation.**
-The completed passes prove command-created content, shared discovery, visual
-feedback, a diagnosed/repaired mission, seeded branches and exact save/reload.
-AI5 adds before/after review, protected objects/regions and then live sessions
-beyond the existing command-file exchange. Retain the current CLI and manual
-editor throughout. Extend AI4 coverage alongside new mission mechanics when
-their fixtures and rules exist. AI5 and the remaining milestones require their
-own authorization; they were not started as part of the four-step pass.
+**Next proposed work: AI6a — regions, persistent mission state and objectives.**
+Add named regions, enter/leave conditions, typed counters and explicit objective
+states, with GUI controls, authoring commands and saved continuations. Deliver
+a small reach/extract and collect/count mission with success/failure/reload
+tests. AI6b reinforcement/lifecycle work and AI6c escort/defence then build on
+that foundation. These engine changes require their own authorization.
+
+World creation, seeded jigsaw generation/painting, terrain patches, town-map
+placement and composed world previews are already exposed to AI tools.
+AI7 covers larger campaign/capacity work; world-wide traversal verification is
+still an AI4 extension. Keep those distinctions visible rather than advertising
+an unbounded planet/campaign generator.
