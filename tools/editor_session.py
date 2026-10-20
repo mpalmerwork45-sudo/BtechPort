@@ -8,6 +8,7 @@ import copy
 from dataclasses import dataclass
 import traceback
 from contextlib import nullcontext
+import tkinter as tk
 from tkinter import messagebox
 from editor_model import EditorError
 
@@ -42,6 +43,49 @@ def visible_parent(owner):
     return focused.winfo_toplevel() if focused is not None else root._root()
 
 
+def modal(window, focus=None):
+    """Grab only after the window manager has mapped this dialog.
+
+    Waiting synchronously here would run callbacks on a half-built form.
+    A Map binding lets construction finish and also handles delayed mapping
+    under desktop window managers. Nested forms restore their visible parent.
+    """
+    previous = window.grab_current()
+    parent_name = window.transient()
+    parent = window.nametowidget(parent_name) if parent_name else None
+    if previous is None and getattr(parent, '_editor_modal', False):
+        previous = parent
+    window._editor_modal = True
+    acquired = False
+
+    def mapped(event=None):
+        nonlocal acquired
+        if event is not None and event.widget is not window:
+            return
+        if not acquired and window.winfo_exists() and window.winfo_viewable():
+            window.grab_set()
+            acquired = True
+            if focus is not None:
+                focus.focus_set()
+
+    def destroyed(event):
+        if event.widget is not window:
+            return
+        # A parent can be destroyed with its child. Never grab an unmapped
+        # ancestor, and never displace another dialog that now owns the grab.
+        try:
+            current = window.grab_current()
+            if (acquired and current in (None, window) and previous is not None
+                    and previous.winfo_exists() and previous.winfo_viewable()):
+                previous.grab_set()
+        except tk.TclError:
+            pass  # The Tcl application may itself be shutting down.
+
+    window.bind('<Map>', mapped, add='+')
+    window.bind('<Destroy>', destroyed, add='+')
+    mapped()
+
+
 def report(owner, error, details='', category=None):
     scope = scope_of(owner)
     if scope is not None and scope.failure_owner is not None:
@@ -62,7 +106,7 @@ def report(owner, error, details='', category=None):
         messagebox.showerror('BattleTech Construction Kit', str(error), parent=window)
     finally:
         # Native dialogs can release an existing local modal grab.
-        if grab is not None and grab.winfo_exists():
+        if grab is not None and grab.winfo_exists() and grab.winfo_viewable():
             grab.grab_set()
         if focus is not None and focus.winfo_exists():
             focus.focus_set()

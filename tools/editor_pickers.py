@@ -1,7 +1,7 @@
 """Searchable named references; stable IDs remain the stored values."""
 import tkinter as tk
 from tkinter import ttk
-from editor_session import scope_of,visible_parent,guard
+from editor_session import scope_of,visible_parent,guard,modal
 
 
 def reference_names(owner):
@@ -43,7 +43,7 @@ class ReferenceBox(ttk.Combobox):
 
 def pick_reference(owner,values,variable,title='Choose an asset'):
     window=tk.Toplevel(owner.window);window.title(title);window.transient(visible_parent(owner));window.geometry('650x470')
-    previous=window.grab_current();names=reference_names(owner)
+    names=reference_names(owner)
     search=tk.StringVar();entry=ttk.Entry(window,textvariable=search);entry.pack(fill='x',padx=12,pady=12)
     body=ttk.Panedwindow(window,orient='horizontal');body.pack(fill='both',expand=True,padx=12)
     left=ttk.Frame(body);right=ttk.Frame(body);body.add(left,weight=3);body.add(right,weight=2)
@@ -97,7 +97,6 @@ def pick_reference(owner,values,variable,title='Choose an asset'):
     def close():
         if timer is not None:window.after_cancel(timer)
         window.destroy()
-        if previous is not None and previous.winfo_exists():previous.grab_set()
     def accept(*_):
         if listing.selection():variable.set(listing.selection()[0]);close()
     search.trace_add('write',refresh);listing.bind('<<TreeviewSelect>>',lambda _:guard(picker,show))
@@ -105,20 +104,19 @@ def pick_reference(owner,values,variable,title='Choose an asset'):
     buttons=ttk.Frame(window,padding=12);buttons.pack(side='bottom',fill='x',before=body)
     ttk.Button(buttons,text='Cancel',command=close).pack(side='right')
     ttk.Button(buttons,text='Choose',command=accept).pack(side='right',padx=8)
-    window.protocol('WM_DELETE_WINDOW',close);window.bind('<Escape>',lambda _:close());refresh();window.grab_set();entry.focus_set()
+    window.protocol('WM_DELETE_WINDOW',close);window.bind('<Escape>',lambda _:close());refresh();modal(window,entry)
     return window
 
 
 def named_choice(owner,title,message,choices):
     """Use action names instead of asking users to decode Yes/No meanings."""
     window=tk.Toplevel(owner.window);window.title(title);window.transient(visible_parent(owner))
-    previous=window.grab_current();result=[]
+    result=[]
     ttk.Label(window,text=message,wraplength=470,padding=18).pack(fill='x')
     actions=ttk.Frame(window,padding=12);actions.pack(fill='x')
     def finish(value=None):
         result.append(value);window.destroy()
-        if previous is not None and previous.winfo_exists():previous.grab_set()
     for label in choices:ttk.Button(actions,text=label,command=lambda choice=label:finish(choice)).pack(side='left',padx=4)
     ttk.Button(actions,text='Cancel',command=finish).pack(side='right',padx=4)
-    window.protocol('WM_DELETE_WINDOW',finish);window.bind('<Escape>',lambda _:finish());window.grab_set();window.wait_window()
+    window.protocol('WM_DELETE_WINDOW',finish);window.bind('<Escape>',lambda _:finish());modal(window);window.wait_window()
     return result[0] if result else None

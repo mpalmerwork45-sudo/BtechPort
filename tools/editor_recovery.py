@@ -234,7 +234,8 @@ class Recovery:
         if not hasattr(self,'awaiting'):self.awaiting=set()
         self.awaiting.add(key)
         record=self.read(path)
-        window=tk.Toplevel(self.workspace.window);window.title('Recover unfinished work');window.transient(self.workspace.window);window.grab_set()
+        from editor_session import modal
+        window=tk.Toplevel(self.workspace.window);window.title('Recover unfinished work');window.transient(self.workspace.window);modal(window)
         stamp=time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(record['timestamp']))
         ttk.Label(window,text=f"Unfinished edits: {record['title']}\nCaptured {stamp}\n{record['identity']}",wraplength=650,padding=12).pack(fill='x')
         conflict=conflicts(record,scope.document)

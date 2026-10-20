@@ -58,7 +58,31 @@ def run(env,work):
             assert root.grab_current() is None
             root.iconify();pump();root.deiconify();pump()
             assert root.state()=='normal'
-            print('PASS: KWin transient stacking, invalid-field focus, real file-chooser cancellation/grab restoration and minimize/restore on an isolated desktop.')
+            # Exercise the reported map toolbar routes, not only roster forms.
+            # KWin maps new transient windows asynchronously.
+            workspace.app.edit_adventure();maps=workspace.app.map_editor;pump()
+            def newest_form():
+                return next(d.view for d in reversed(workspace.app._editor_scope.live())
+                            if hasattr(d.view,'values'))
+            for name in ('Encounter','Entrance','NPC'):
+                maps.drawing_tools.buttons[name].invoke();pump()
+                maps.canvas.event_generate('<Button-1>',x=48,y=48);pump()
+                form=newest_form()
+                assert form.window.winfo_viewable() and root.grab_current() is form.window,name
+                assert form.apply_button.winfo_viewable(),name
+                if name=='Encounter':
+                    form.recovery_children['enemy']();pump()
+                    child=newest_form()
+                    assert child is not form and root.grab_current() is child.window
+                    child.close();pump();assert root.grab_current() is form.window
+                form.close();pump();assert root.grab_current() is None
+                maps.canvas.event_generate('<ButtonRelease-1>',x=48,y=48);pump()
+            # A dialog destroyed before its first Map must not leave a pending
+            # callback or change the current grab when Tk next processes events.
+            from adventure_editor import Form
+            early=Form(maps,'Closed before mapping');early.close();pump()
+            assert root.grab_current() is None
+            print('PASS: KWin modal mapping, Encounter/Entrance/NPC toolbar forms, nested enemy dialog, early close, transient stacking, invalid-field focus, real file-chooser grab restoration and minimize/restore on an isolated desktop.')
         finally:
             if root:root.destroy()
             if manager and manager.poll() is None:

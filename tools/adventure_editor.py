@@ -8,7 +8,7 @@ from tkinter import ttk, messagebox
 
 from editor_recovery import recoverable_forms
 from editor_model import EditorError
-from editor_session import guard, register, apply_draft, scope_of, visible_parent, FieldError
+from editor_session import guard, register, apply_draft, scope_of, visible_parent, FieldError, modal
 from editor_workspace import view_window,open_view
 from adventure_editing import OPS, composite, paint, event_template, new_id, copy_adventure, scene_markers, move_marker
 from editor_tiles import load_tiles, art_tiles
@@ -69,13 +69,11 @@ class Form:
         ttk.Label(self.footer,textvariable=self.error,foreground='#a03030',wraplength=620,padding=8).pack(fill='x')
         self.window.bind("<Escape>", lambda _: self.close())
         self.window.protocol('WM_DELETE_WINDOW',self.close)
-        self.previous_grab=self.window.grab_current()
-        self.window.grab_set()
-        def restore_grab(event):
+        modal(self.window)
+        def cancel_size_job(event):
             if event.widget==self.window:
                 if getattr(self,'size_job',None):self.window.after_cancel(self.size_job)
-                if self.previous_grab is not None and self.previous_grab.winfo_exists():self.previous_grab.grab_set()
-        self.window.bind('<Destroy>',restore_grab,add='+')
+        self.window.bind('<Destroy>',cancel_size_job,add='+')
 
     def field(self, key, value, choices=None, label=None):
         ttk.Label(self.body, text=label or key.replace("_", " ").title()).grid(row=self.row, column=0, sticky="w", padx=10, pady=4)

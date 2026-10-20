@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 import tkinter as tk
 from tkinter import ttk, messagebox
-from editor_session import scope_of, guard, report
+from editor_session import scope_of, guard, report, modal
 
 
 def workspace_of(owner):
@@ -744,7 +744,7 @@ class Workspace:
             if listing.size():listing.selection_set(0)
         def choose(_=None):
             if listing.curselection():name=listing.get(listing.curselection()[0]);dialog.destroy();self.invoke(name)
-        query.trace_add('write',refresh);refresh();entry.focus_set();dialog.grab_set()
+        query.trace_add('write',refresh);refresh();modal(dialog,entry)
         entry.bind('<Return>',choose);listing.bind('<Return>',choose);listing.bind('<Double-1>',choose);dialog.bind('<Escape>',lambda _:dialog.destroy())
 
     def help(self):

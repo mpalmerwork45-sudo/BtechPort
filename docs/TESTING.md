@@ -1,5 +1,20 @@
 # Build, verification and original oracle — 2026-10-20
 
+## Editor modal mapping repair — 2026-10-20
+
+**VERIFIED:** Entrance, Encounter and NPC forms acquire their modal grab only
+after the desktop maps the window. The shared helper also covers reference
+pickers, named choices, command search and recovery prompts; nested dialogs
+restore only a still-visible parent. It does not run a nested event loop during
+form construction.
+
+`python3 tools/native_smoke.py --editor-focus-only`: **PASS** with a private
+Xvfb/KWin desktop (`work/ai6a-dialog-focus.log`). Actual map toolbar clicks
+open all three forms; nested enemy placement returns its grab; early destruction,
+invalid-field focus, file-chooser cancellation and minimize/restore also pass.
+The initial sandboxed attempt could not bind a local display socket; the
+approved private-display run succeeded.
+
 ## AI5 collaborative authoring — 2026-10-20
 
 **VERIFIED:** core review/protection/session protocol in `5c8f5ff`; editor
