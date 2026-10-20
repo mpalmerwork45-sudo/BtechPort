@@ -129,6 +129,7 @@ class ProjectDocument:
         if adventure != self.adventure:
             for key, label in [('maps','Edit map'), ('world','Edit world'), ('worlds','Edit planet'),
                                ('jigsaws','Edit jigsaw'), ('events','Edit event'), ('people','Edit character'),
+                               ('regions','Edit mission region'), ('variables','Edit mission variable'), ('objectives','Edit objective'),
                                ('shops','Edit shop'), ('start','Edit starting party')]:
                 if (adventure or {}).get(key) != (self.adventure or {}).get(key): return label
             return 'Edit adventure'

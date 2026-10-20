@@ -1,0 +1,83 @@
+{
+  "format": "btp-author-scenario-v1",
+  "max_ticks": 120000,
+  "steps": [
+    {
+      "op": "pages"
+    },
+    {
+      "op": "input",
+      "action": "left",
+      "repeat": 1
+    },
+    {
+      "op": "assert",
+      "variable": "recovery:visits",
+      "value": 1
+    },
+    {
+      "op": "checkpoint"
+    },
+    {
+      "op": "pages"
+    },
+    {
+      "op": "input",
+      "action": "right",
+      "repeat": 1
+    },
+    {
+      "op": "assert",
+      "variable": "recovery:departures",
+      "value": 1
+    },
+    {
+      "op": "checkpoint"
+    },
+    {
+      "op": "input",
+      "action": "left",
+      "repeat": 1
+    },
+    {
+      "op": "pages"
+    },
+    {
+      "op": "assert",
+      "variable": "recovery:visits",
+      "value": 2
+    },
+    {
+      "op": "input",
+      "action": "right",
+      "repeat": 9
+    },
+    {
+      "op": "pages"
+    },
+    {
+      "op": "assert",
+      "variable": "recovery:data",
+      "value": 1
+    },
+    {
+      "op": "input",
+      "action": "left",
+      "repeat": 1
+    },
+    {
+      "op": "input",
+      "action": "right",
+      "repeat": 1
+    },
+    {
+      "op": "assert",
+      "variable": "recovery:data",
+      "value": 1,
+      "phase": "exploration"
+    },
+    {
+      "op": "checkpoint"
+    }
+  ]
+}

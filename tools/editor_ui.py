@@ -3,6 +3,25 @@ import tkinter as tk
 from tkinter import ttk
 
 
+def popup_menu(menu, event):
+    """Let Tk own the popup grab until selection, Escape or an outside click.
+
+    tk_popup returns as soon as the menu is posted. Releasing its grab in a
+    finally block leaves a visible menu without reliable dismissal/routing.
+    MenuUnpost also restores any parent dialog's saved focus and grab.
+    """
+    def dismiss(_):
+        menu.tk.call('tk::MenuUnpost',menu._w)
+        return 'break'  # Do not also close the parent form or cancel its draft.
+    menu.bind('<Escape>',dismiss)
+    try:
+        menu.tk_popup(event.x_root,event.y_root)
+    except tk.TclError:
+        if menu.winfo_exists():
+            menu.tk.call('tk::MenuUnpost',menu._w)
+        raise
+
+
 def tooltip(widget,text):
     state={'timer':None,'window':None}
     def hide(_=None):

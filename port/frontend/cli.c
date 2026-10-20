@@ -6,6 +6,7 @@
 #include "core/audio.h"
 #include "core/combat.h"
 #include "core/events.h"
+#include "core/mission_state.h"
 #include "data/save.h"
 #include "data/sprites.h"
 #include <stdio.h>
@@ -314,7 +315,17 @@ void btp_print_state(const BtpState *s, const BtpResources *r)
             s->event.node,s->event.phase,s->event.page,s->event.selected,s->event.map,s->event.planet);
         const BtpAdventure *a=btp_adventure(r);
         for (unsigned i=0;i<a->flag_count;++i) printf("%s%u",i ? "," : "",s->event.flags[i]);
-        fputs("]}",stdout);
+        fputs("]",stdout);
+        if (s->event.mission_state) {
+            fputs(",\"variables\":{",stdout);
+            for (unsigned i=0;i<a->variable_count;++i) printf("%s\"%s\":%u",i ? "," : "",a->variables[i].id,s->event.variables[i]);
+            fputs("},\"objectives\":{",stdout);
+            for (unsigned i=0;i<a->objective_count;++i) printf("%s\"%s\":\"%s\"",i ? "," : "",a->objectives[i].id,btp_objective_name(btp_objective_state(s,a,i)));
+            fputs("},\"regions\":{",stdout);
+            for (unsigned i=0;i<a->region_count;++i) printf("%s\"%s\":%d",i ? "," : "",a->regions[i].id,btp_mission_region(s,a,i));
+            fputs("}",stdout);
+        }
+        fputs("}",stdout);
     }
     printf(",\"combat\":{\"phase\":%u,\"selected\":%u,\"round\":%u,\"step\":%u,\"won\":%u,\"fled\":%u,\"event\":%u,\"fired\":%u,"
         "\"weapon\":%u,\"flash\":%u,\"goal\":[%u,%u,%u,%u],\"orders\":[",c->phase,c->selected,c->round,c->step,c->won,c->fled,c->last_event,c->fired,
@@ -441,6 +452,12 @@ static void event_trace(void *context,const BtpState *s,const BtpResources *r,co
     FILE *f=context;const BtpAdventure *a=btp_adventure(r);
     fprintf(f,"{\"tick\":%u,\"event\":\"%s\",\"op\":%u,\"credits\":%u,\"flags\":{",s->tick,e->id,e->op,s->credits);
     for (unsigned i=0;i<a->flag_count;++i) fprintf(f,"%s\"%s\":%u",i ? "," : "",a->flags[i],s->event.flags[i]);
+    if (s->event.mission_state) {
+        fputs("},\"variables\":{",f);
+        for (unsigned i=0;i<a->variable_count;++i) fprintf(f,"%s\"%s\":%u",i ? "," : "",a->variables[i].id,s->event.variables[i]);
+        fputs("},\"objectives\":{",f);
+        for (unsigned i=0;i<a->objective_count;++i) fprintf(f,"%s\"%s\":\"%s\"",i ? "," : "",a->objectives[i].id,btp_objective_name(btp_objective_state(s,a,i)));
+    }
     fputs("}}\n",f);
 }
 int btp_run_headless(const BtpOptions *o,BtpResources *r)

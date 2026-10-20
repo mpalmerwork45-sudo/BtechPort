@@ -271,10 +271,20 @@
                 "maxLength": 63,
                 "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
               },
+              "variable": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "region": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
               "value": {
                 "type": "integer",
                 "minimum": 0,
-                "maximum": 255
+                "maximum": 1000000
               },
               "objective": {
                 "type": "string",
@@ -285,7 +295,8 @@
                 "enum": [
                   "inactive",
                   "active",
-                  "complete"
+                  "complete",
+                  "failed"
                 ]
               }
             },
@@ -322,6 +333,16 @@
               {
                 "required": [
                   "flag"
+                ]
+              },
+              {
+                "required": [
+                  "variable"
+                ]
+              },
+              {
+                "required": [
+                  "region"
                 ]
               },
               {
@@ -370,6 +391,30 @@
                 "if": {
                   "required": [
                     "flag"
+                  ]
+                },
+                "then": {
+                  "required": [
+                    "value"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "required": [
+                    "variable"
+                  ]
+                },
+                "then": {
+                  "required": [
+                    "value"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "required": [
+                    "region"
                   ]
                 },
                 "then": {

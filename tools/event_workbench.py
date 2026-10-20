@@ -102,7 +102,7 @@ class EventGraph:
         for label,method in [('Edit',self.edit),('Connect',self.link),('Dialogue',self.branch),('Arrange',self.arrange),('Fit',self.fit)]:
             ttk.Button(bar,text=label,width=0,command=lambda f=method:guard(self,f)).pack(side='left',padx=3)
         more=ttk.Menubutton(bar,text='More');menu=tk.Menu(more,tearoff=False)
-        for label,method in [('Objectives',self.objectives),('Playtest / checkpoints',self.debug)]:menu.add_command(label=label,command=lambda f=method:guard(self,f))
+        for label,method in [('Objectives',self.objectives),('Regions / mission state',self.owner.missions),('Playtest / checkpoints',self.debug)]:menu.add_command(label=label,command=lambda f=method:guard(self,f))
         more.configure(menu=menu);more.pack(side='left',padx=3)
         controls=ttk.Frame(self.window,padding=(8,0,8,5));controls.pack(fill='x')
         self.view_mode=tk.StringVar(value='Nearby events' if hasattr(self.window,'workspace') else 'All events')
@@ -243,7 +243,7 @@ class ObjectiveEditor:
     def __init__(self,owner):
         self.owner=owner;self.document=owner.document
         self.window=view_window(self,owner,'objectives','Objectives and journal');self.window.geometry('680x440')
-        ttk.Label(self.window,text='Objectives appear when their Active flag is set; Complete flags retain finished entries.',padding=12,wraplength=640).pack(fill='x')
+        ttk.Label(self.window,text='State objectives can be inactive, active, complete or failed. Existing flag objectives retain their original behavior.',padding=12,wraplength=640).pack(fill='x')
         self.listing=tk.Listbox(self.window,exportselection=False);self.listing.pack(fill='both',expand=True,padx=12)
         bar=ttk.Frame(self.window,padding=12);bar.pack(fill='x')
         for text,method in [('New',lambda:self.edit(True)),('Edit',lambda:self.edit(False)),('Delete',self.delete)]:ttk.Button(bar,text=text,command=lambda f=method:guard(self,f)).pack(side='left',padx=4)
@@ -254,18 +254,23 @@ class ObjectiveEditor:
     def edit(self,new):
         from adventure_editor import Form
         a=self.document.adventure;flags=a['flags']
-        if len(flags)<2:raise EditorError('Add Active and Complete flags under People, shops and start first.')
         if not new and not self.listing.curselection():return
         index=None if new else self.listing.curselection()[0]
-        old=dict(id=identity(self.document.manifest['package_id'],a.get('objectives',[]),'objective'),title='New objective',text='Describe the objective.',active=flags[0],complete=flags[1]) if new else a['objectives'][index]
+        old=dict(id=identity(self.document.manifest['package_id'],a.get('objectives',[]),'objective'),title='New objective',text='Describe the objective.',initial='inactive') if new else a['objectives'][index]
         f=Form(self,'Objective')
-        for k in ('id','title','text','active','complete'):f.field(k,old[k],flags if k in ('active','complete') else None)
+        for k in ('id','title','text'):f.field(k,old[k])
+        if 'initial' in old:f.field('initial',old['initial'],['inactive','active','complete','failed'])
+        else:
+            for k in ('active','complete'):f.field(k,old[k],flags)
         def apply(v):
+            if not new and v['id']!=old['id']:raise EditorError('Existing objective IDs stay stable.')
             a=copy.deepcopy(self.document.adventure);values=a.setdefault('objectives',[])
             if index is None:values.append(v)
             else:values[index]=v
-            self.document.replace_adventure(a);self.owner.refresh();self.refresh()
+            self.document.replace_adventure(a);self.document.validate();self.owner.refresh();self.refresh()
         f.submit(apply)
     def delete(self):
         if self.listing.curselection():
-            a=copy.deepcopy(self.document.adventure);a['objectives'].pop(self.listing.curselection()[0]);self.document.replace_adventure(a);self.refresh()
+            from editor_dependencies import dialog
+            identity=self.document.adventure['objectives'][self.listing.curselection()[0]]['id']
+            return dialog(self,identity,delete=True)

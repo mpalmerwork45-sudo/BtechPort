@@ -1,0 +1,38 @@
+{
+  "format": "btp-author-scenario-v1",
+  "max_ticks": 120000,
+  "steps": [
+    {
+      "op": "pages"
+    },
+    {
+      "op": "input",
+      "action": "down",
+      "repeat": 12
+    },
+    {
+      "op": "input",
+      "action": "left",
+      "repeat": 1
+    },
+    {
+      "op": "checkpoint"
+    },
+    {
+      "op": "assert",
+      "objective": "recovery:extract",
+      "status": "failed",
+      "credits": 5000
+    },
+    {
+      "op": "pages"
+    },
+    {
+      "op": "assert",
+      "phase": "complete"
+    },
+    {
+      "op": "checkpoint"
+    }
+  ]
+}

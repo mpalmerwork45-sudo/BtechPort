@@ -40,9 +40,10 @@ def usages(document,identity):
     def walk(value,section,path=(),asset=None):
         if own and (section,*path)==own:return
         if isinstance(value,dict):
-            asset=value.get('id',asset)
+            condition='kind' in value and 'compare' in value and 'value' in value
+            if not condition:asset=value.get('id',asset)
             for key,item in value.items():
-                if key not in TEXT_KEYS and key!='id':walk(item,section,path+(key,),asset)
+                if key not in TEXT_KEYS and (key!='id' or condition):walk(item,section,path+(key,),asset)
         elif isinstance(value,list):
             for index,item in enumerate(value):walk(item,section,path+(index,),asset)
         elif isinstance(value,str):

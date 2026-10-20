@@ -1,0 +1,21 @@
+{
+  "format": "btp-project-v1",
+  "schema_version": 1,
+  "package_id": "argent-recovery",
+  "content_version": "1.0.0",
+  "title": "BattleTech - Argent Recovery",
+  "requires": "chi-original-dos-1.03",
+  "startup": "authored-adventure-v1",
+  "rules_profile": "chi:updated-lrm-v1",
+  "save_policy": "strict-content-v1",
+  "definitions": "content.json",
+  "assets": [],
+  "adventure": "adventure.json",
+  "graphics": "graphics.json",
+  "scripts": [
+    {
+      "id": "recovery:verify",
+      "file": "verify.lua"
+    }
+  ]
+}

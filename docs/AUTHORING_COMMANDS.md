@@ -15,7 +15,7 @@ Write scope: `selected collection`.
 
 | Field | Structural constraint |
 | --- | --- |
-| `collection` * | `{"enum":["maps","tiles","jigsaws","people","shops","encounters","events","objectives","mechs","weapons","equipment","ammunition","presentations","images"]}` |
+| `collection` * | `{"enum":["maps","tiles","jigsaws","people","shops","encounters","events","objectives","variables","regions","mechs","weapons","equipment","ammunition","presentations","images"]}` |
 | `value` * | `{"type":"object"}` |
 | `mode` | `{"enum":["create","replace"]}` |
 
@@ -39,7 +39,7 @@ Write scope: `selected object`.
 
 | Field | Structural constraint |
 | --- | --- |
-| `collection` * | `{"enum":["maps","tiles","jigsaws","people","shops","encounters","events","objectives","mechs","weapons","equipment","ammunition","presentations","images"]}` |
+| `collection` * | `{"enum":["maps","tiles","jigsaws","people","shops","encounters","events","objectives","variables","regions","mechs","weapons","equipment","ammunition","presentations","images"]}` |
 | `id` * | `{"type":"string","maxLength":63,"pattern":"^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"}` |
 | `changes` * | `{"type":"object"}` |
 
@@ -62,7 +62,7 @@ Write scope: `selected object`.
 
 | Field | Structural constraint |
 | --- | --- |
-| `collection` * | `{"enum":["maps","tiles","jigsaws","people","shops","encounters","events","objectives","mechs","weapons","equipment","ammunition","presentations","images"]}` |
+| `collection` * | `{"enum":["maps","tiles","jigsaws","people","shops","encounters","events","objectives","variables","regions","mechs","weapons","equipment","ammunition","presentations","images"]}` |
 | `id` * | `{"type":"string","maxLength":63,"pattern":"^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"}` |
 
 ```json

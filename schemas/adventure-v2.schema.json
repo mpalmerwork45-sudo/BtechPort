@@ -1385,6 +1385,285 @@
                 ]
               }
             }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "next": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "failure": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "op": {
+                "const": "variable"
+              },
+              "variable": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "action": {
+                "enum": [
+                  "set",
+                  "add",
+                  "subtract"
+                ]
+              },
+              "value": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1000000
+              },
+              "once": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1
+              }
+            },
+            "required": [
+              "id",
+              "next",
+              "failure",
+              "op",
+              "variable",
+              "action",
+              "value",
+              "once"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "next": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "failure": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "op": {
+                "const": "objective"
+              },
+              "objective": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "state": {
+                "enum": [
+                  "inactive",
+                  "active",
+                  "complete",
+                  "failed"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "next",
+              "failure",
+              "op",
+              "objective",
+              "state"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "op": {
+                "const": "check"
+              },
+              "match": {
+                "enum": [
+                  "all",
+                  "any"
+                ]
+              },
+              "conditions": {
+                "type": "array",
+                "items": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "kind": {
+                          "const": "flag"
+                        },
+                        "id": {
+                          "type": "string",
+                          "maxLength": 63,
+                          "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+                        },
+                        "compare": {
+                          "enum": [
+                            "eq",
+                            "ne"
+                          ]
+                        },
+                        "value": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 1
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "id",
+                        "compare",
+                        "value"
+                      ]
+                    },
+                    {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "kind": {
+                          "const": "variable"
+                        },
+                        "id": {
+                          "type": "string",
+                          "maxLength": 63,
+                          "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+                        },
+                        "compare": {
+                          "enum": [
+                            "eq",
+                            "ne",
+                            "lt",
+                            "le",
+                            "gt",
+                            "ge"
+                          ]
+                        },
+                        "value": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 1000000
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "id",
+                        "compare",
+                        "value"
+                      ]
+                    },
+                    {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "kind": {
+                          "const": "objective"
+                        },
+                        "id": {
+                          "type": "string",
+                          "maxLength": 63,
+                          "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+                        },
+                        "compare": {
+                          "enum": [
+                            "eq",
+                            "ne"
+                          ]
+                        },
+                        "value": {
+                          "enum": [
+                            "inactive",
+                            "active",
+                            "complete",
+                            "failed"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "id",
+                        "compare",
+                        "value"
+                      ]
+                    },
+                    {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "kind": {
+                          "const": "region"
+                        },
+                        "id": {
+                          "type": "string",
+                          "maxLength": 63,
+                          "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+                        },
+                        "compare": {
+                          "enum": [
+                            "eq",
+                            "ne"
+                          ]
+                        },
+                        "value": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 1
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "id",
+                        "compare",
+                        "value"
+                      ]
+                    }
+                  ]
+                },
+                "minItems": 1,
+                "maxItems": 8
+              },
+              "then": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "else": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              }
+            },
+            "required": [
+              "id",
+              "op",
+              "match",
+              "conditions",
+              "then",
+              "else"
+            ]
           }
         ]
       },
@@ -1687,45 +1966,223 @@
       "type": "array",
       "maxItems": 32,
       "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "title",
+              "text",
+              "active",
+              "complete"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 48,
+                "pattern": "^[ -~]+$"
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 384,
+                "pattern": "^[ -~]+$"
+              },
+              "active": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "complete": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 48,
+                "pattern": "^[ -~]+$"
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 384,
+                "pattern": "^[ -~]+$"
+              },
+              "initial": {
+                "enum": [
+                  "inactive",
+                  "active",
+                  "complete",
+                  "failed"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "title",
+              "text",
+              "initial"
+            ]
+          }
+        ]
+      }
+    },
+    "variables": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 63,
+                "pattern": "^[ -~]+$"
+              },
+              "type": {
+                "const": "boolean"
+              },
+              "initial": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "type",
+              "initial"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 63,
+                "pattern": "^[ -~]+$"
+              },
+              "type": {
+                "const": "counter"
+              },
+              "initial": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1000000
+              },
+              "maximum": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 1000000
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "type",
+              "initial",
+              "maximum"
+            ]
+          }
+        ]
+      },
+      "minItems": 0,
+      "maxItems": 32
+    },
+    "regions": {
+      "type": "array",
+      "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": [
-          "id",
-          "title",
-          "text",
-          "active",
-          "complete"
-        ],
         "properties": {
           "id": {
             "type": "string",
             "maxLength": 63,
             "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
           },
-          "title": {
+          "name": {
             "type": "string",
             "minLength": 1,
-            "maxLength": 48,
+            "maxLength": 63,
             "pattern": "^[ -~]+$"
           },
-          "text": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 384,
-            "pattern": "^[ -~]+$"
-          },
-          "active": {
+          "map": {
             "type": "string",
             "maxLength": 63,
             "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
           },
-          "complete": {
+          "rect": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 64
+            },
+            "minItems": 4,
+            "maxItems": 4
+          },
+          "repeat": {
+            "enum": [
+              "once",
+              "always"
+            ]
+          },
+          "enter": {
+            "type": "string",
+            "maxLength": 63,
+            "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+          },
+          "leave": {
             "type": "string",
             "maxLength": 63,
             "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
           }
-        }
-      }
+        },
+        "required": [
+          "id",
+          "name",
+          "map",
+          "rect",
+          "repeat"
+        ]
+      },
+      "minItems": 0,
+      "maxItems": 32
     }
   },
   "required": [

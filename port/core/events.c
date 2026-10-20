@@ -10,6 +10,7 @@
 #include "core/world.h"
 #include "core/lua_events.h"
 #include "core/authored_services.h"
+#include "core/mission_state.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -24,7 +25,7 @@ void btp_events_observe_battles(BtpBattleObserver callback,void *context)
 unsigned btp_journal_count(const BtpState *s,const BtpResources *r)
 {
     const BtpAdventure *a=btp_adventure(r);unsigned count=0;
-    if (a) for (unsigned i=0;i<a->objective_count;++i) count+=s->event.flags[a->objectives[i].active] || s->event.flags[a->objectives[i].complete];
+    if (a) for (unsigned i=0;i<a->objective_count;++i) count+=btp_objective_state(s,a,i)!=BTP_OBJECTIVE_INACTIVE;
     return count;
 }
 void btp_journal_text(const BtpState *s,const BtpResources *r,unsigned page,char out[1024])
@@ -34,8 +35,9 @@ void btp_journal_text(const BtpState *s,const BtpResources *r,unsigned page,char
     if (!a || !count) return;
     for (unsigned i=0;i<a->objective_count;++i) {
         const BtpObjective *o=&a->objectives[i];
-        if (!s->event.flags[o->active] && !s->event.flags[o->complete]) continue;
-        if (at++==page%count) { snprintf(out,1024,"%u/%u %s. %s. %s",page%count+1u,count,s->event.flags[o->complete] ? "Complete" : "Active",o->title,o->text);return; }
+        unsigned state=btp_objective_state(s,a,i);
+        if (!state) continue;
+        if (at++==page%count) { snprintf(out,1024,"%u/%u %s. %s. %s",page%count+1u,count,state==BTP_OBJECTIVE_COMPLETE ? "Complete" : state==BTP_OBJECTIVE_FAILED ? "Failed" : "Active",o->title,o->text);return; }
     }
 }
 
@@ -122,6 +124,14 @@ static void run(BtpState *s,const BtpResources *r)
         if (observer) observer(observer_context,s,r,e);
         s->mode=BTP_EVENT;
         switch (e->op) {
+        case BTP_EVENT_CHECK:target=e->next[btp_mission_check(s,a,e) ? 0 : 1];break;
+        case BTP_EVENT_OBJECTIVE:if (!btp_mission_objective(s,a,e)) target=e->next[1];break;
+        case BTP_EVENT_VARIABLE:
+            if (!e->y || !done) {
+                if (!btp_mission_variable(s,a,e)) target=e->next[1];
+                else if (e->y) v->done[n/8u]|=(uint8_t)(1u<<(n%8u));
+            }
+            break;
         case BTP_EVENT_REPAIR:case BTP_EVENT_REARM:case BTP_EVENT_HEAL:case BTP_EVENT_SALVAGE: {
             unsigned outcome=e->op==BTP_EVENT_SALVAGE && done ? 2u : btp_authored_service(s,r,e);
             if (!outcome && e->op==BTP_EVENT_SALVAGE) v->done[n/8u]|=(uint8_t)(1u<<(n%8u));
@@ -133,6 +143,8 @@ static void run(BtpState *s,const BtpResources *r)
             if (!btp_lua_event(r,s,&target,error)) { fprintf(stderr,"%s\n",error);target=e->next[5]; }break;
         }
         case BTP_EVENT_END:
+            target=btp_mission_trigger(s,a);
+            if (target<BTP_EVENT_NODES) break;
             v->phase=BTP_EVENT_INACTIVE;s->mode=(uint8_t)(s->party.people[0][0]==255 ? BTP_GAME_OVER : BTP_EXPLORE);btp_party_recover(s,r,1);return;
         case BTP_EVENT_SAY:case BTP_EVENT_PICTURE:v->phase=BTP_EVENT_TEXT;return;
         case BTP_EVENT_CHOICE:v->phase=BTP_EVENT_SELECT;return;
@@ -163,6 +175,7 @@ static void initialize(BtpState *s,const BtpResources *r,int preview,const uint8
 {
     const BtpAdventure *a=btp_adventure(r);if (!a) return;
     s->event=(BtpEventState){.enabled=1,.node=(uint16_t)a->start_event,.origin_map=(uint16_t)a->start_map,.origin_entry=255};
+    btp_mission_initialize(s,a);
     memset(s->event.people,255,8);s->npc=(BtpNpcState){.rng={31,66,171}};
     if(seed)memcpy(s->npc.rng,seed,3);
     s->story_flags[4]=1;s->credits=a->credits;memset(s->explored,0,sizeof s->explored);
@@ -192,6 +205,7 @@ int btp_events_preview(BtpState *s,const BtpResources *r,const char *map,unsigne
        state or save is loaded, and the full formation must fit here. */
     initialize(s,r,1,NULL);
     if (!place(s,r,i,x,y)) { s->mode=BTP_EVENT;s->event.phase=BTP_EVENT_FAULT;return 0; }
+    btp_mission_preview(s,a);
     s->event.phase=BTP_EVENT_INACTIVE;s->event.origin_map=(uint16_t)i;return 1;
 }
 static void result(BtpState *s,const BtpResources *r)
@@ -250,6 +264,8 @@ void btp_events_tick(BtpState *s,const BtpResources *r,BtpAction action)
             uint16_t ox=s->campaign.world_x,oy=s->campaign.world_y;
             position(s,m,map,(unsigned)x,(unsigned)y);s->blocked=BTP_CLEAR;
             btp_party_follow(s,r,ox,oy);btp_world_reveal(s);
+            unsigned trigger=btp_mission_trigger(s,a);
+            if (trigger<BTP_EVENT_NODES) { advance(s,trigger);run(s,r);break; }
         }
         for (unsigned i=1;i<8;++i) if (s->party.people[i][0]!=255) {
             unsigned dir=btp_player_direction((unsigned)action);
@@ -278,6 +294,8 @@ void btp_events_tick(BtpState *s,const BtpResources *r,BtpAction action)
                 } else position(s,m,s->event.map,(unsigned)x,(unsigned)y);
                 s->blocked=BTP_CLEAR;
                 btp_party_recover(s,r,1);btp_world_reveal(s);
+                unsigned trigger=btp_mission_trigger(s,a);
+                if (trigger<BTP_EVENT_NODES) { advance(s,trigger);run(s,r); }
             } else s->blocked=BTP_WALL;
         }
         else if (action==BTP_ACCEPT) run(s,r);
@@ -346,9 +364,11 @@ int btp_events_valid(const BtpState *s,const BtpResources *r)
         (v->origin_entry!=255 && v->origin_entry>=a->maps[v->origin_map].entrance_count) || !s->party.enabled || s->npc.enabled ||
         s->campaign.invasion || s->cache.active || s->yard.active || s->checkpoint_valid || s->script.status ||
         s->script.pc || s->mission.phase || s->campaign.building || s->entry_slot) return 0;
+    if (!btp_mission_valid(s,a)) return 0;
     for (unsigned i=a->flag_count;i<64;++i) if (v->flags[i]) return 0;
     for (unsigned i=0;i<256;++i) if ((v->done[i/8u]&(1u<<(i%8u))) &&
-        (i>=a->node_count || (a->nodes[i].op!=BTP_EVENT_REWARD && a->nodes[i].op!=BTP_EVENT_RECRUIT && a->nodes[i].op!=BTP_EVENT_SALVAGE))) return 0;
+        (i>=a->node_count || (a->nodes[i].op!=BTP_EVENT_REWARD && a->nodes[i].op!=BTP_EVENT_RECRUIT && a->nodes[i].op!=BTP_EVENT_SALVAGE &&
+         !(a->nodes[i].op==BTP_EVENT_VARIABLE && a->nodes[i].y)))) return 0;
     for (unsigned i=0;i<8;++i) if (s->party.people[i][0]!=255 &&
         (v->people[i]>=a->person_count || a->people[v->people[i]].record[0]!=s->party.people[i][0])) return 0;
     const BtpEventNode *e=&a->nodes[v->node];

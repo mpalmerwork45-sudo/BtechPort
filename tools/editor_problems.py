@@ -1,0 +1,75 @@
+"""Resolve validation paths against current IDs, without retaining temp files."""
+import re
+from editor_dependencies import definitions
+from editor_session import FieldError,scope_of
+
+
+def target(document,problem):
+    from authoring_contract import diagnostic
+    path=problem.get('field_path') or diagnostic(Exception(problem['message']))['field_path']
+    ids=re.findall(r'\[([a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*)\]',path)
+    if problem.get('object_id') and problem['object_id'] not in ids:ids.append(problem['object_id'])
+    a=document.adventure or {}
+    location=problem.get('location')
+    if location and location.get('map'):return dict(collection='location',id=problem.get('object_id'),**location)
+    # The deepest ID is the entrance/enemy owner, not the first map ID.
+    for identity in reversed(ids):
+        for scene in a.get('maps',[]):
+            for entrance in scene['entrances']:
+                if entrance['id']==identity:return dict(collection='entrances',id=identity,map=scene['id'],at=entrance['at'])
+        found=definitions(document).get(identity)
+        if found:
+            section,collection,index,value=found
+            return dict(collection=collection,id=identity,index=index,path=path,value=value)
+    if path.startswith('$.start') and a.get('start'):
+        return dict(collection='start',map=a['start']['map'],at=a['start']['at'])
+    return None
+
+
+def navigate(workspace,problem):
+    scope=problem.get('scope') or scope_of(problem['owner'])
+    if not scope or not scope.document or scope.document is not problem.get('document',scope.document):return False
+    destination=target(scope.document,problem)
+    if not destination:return False
+    owner=scope.owner;collection=destination['collection'];identity=destination.get('id')
+    if collection in ('mechs','weapons','equipment','people'):
+        kind={'mechs':'Vehicles' if destination['value'].get('kind')=='vehicle' else 'Mechs',
+              'weapons':'Weapons','equipment':'Equipment','people':'Infantry'}[collection]
+        workspace.open_unit(kind,identity,owner)
+        suffix=destination.get('path','').rsplit(']',1)[-1].lstrip('.')
+        if suffix:owner.show_error(FieldError(problem['message'],tuple(suffix.split('.'))))
+        return True
+    if collection=='images':
+        art=owner.graphics_editor();art.selected=identity;art.edit();return True
+    owner.edit_adventure();maps=owner.map_editor
+    if collection=='events':
+        graph=maps.event_graph();graph.selected=identity;graph.edit();graph.window.lift();graph.fit()
+        field=destination.get('path','').rsplit(']',1)[-1].lstrip('.')
+        if graph.properties and field:graph.properties.show_error(FieldError(problem['message'],field))
+        return True
+    if collection in ('variables','regions'):
+        editor=maps.missions();editor.listings[collection].selection_set(identity)
+        editor.tabs.select(0 if collection=='regions' else 1)
+        if collection=='regions':editor.show_map()
+        return True
+    if collection=='objectives':
+        editor=maps.event_graph().objectives();editor.listing.selection_clear(0,'end');editor.listing.selection_set(destination['index']);return True
+    if collection=='encounters':
+        encounter=destination['value'];destination.update(map=encounter['map'],at=encounter['party_at'])
+    if collection=='maps':destination.update(map=identity,at=[0,0])
+    if 'map' not in destination:return False
+    from adventure_editing import scene_markers
+    index=next((i for i,m in enumerate(maps.adventure['maps']) if m['id']==destination['map']),None)
+    if index is None:return False
+    maps.map_choice.current(index);maps.change_map();at=destination['at'];maps.cursor=tuple(at)
+    marker=next((m for m in scene_markers(maps.adventure,index) if m['ref'][2]==identity or (identity is None and m['at']==at)),None)
+    maps.selected_marker=marker['ref'] if marker else None
+    maps.refresh_markers();maps.draw();maps.tabs.select(maps.map_tab);maps.window.lift()
+    size=int(maps.zoom.get());scene=maps.scene()
+    maps.canvas.xview_moveto(max(0,(at[0]*size/2-maps.canvas.winfo_width()/2)/(len(scene['rows'][0])*size)))
+    maps.canvas.yview_moveto(max(0,(at[1]*size/2-maps.canvas.winfo_height()/2)/(len(scene['rows'])*size)))
+    if marker:
+        maps.sidebar.select(1)
+        selected=maps.markers.curselection()
+        if selected:maps.markers.see(selected[0])
+    workspace.update_inspector();maps.status.set(problem['message']);return True

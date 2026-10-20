@@ -12,10 +12,14 @@ from editor_model import EditorError,encoded
 from event_editing import edges
 
 
+def region_roots(adventure):
+    return [r[key] for r in adventure.get('regions',[]) for key in ('enter','leave') if key in r]
+
+
 def graph_checks(document):
     a=document.adventure or {};events={e['id']:e for e in a.get('events',[])};diagnostics=[]
     graph={identity:[t for _,t in edges(e) if t in events] for identity,e in events.items()}
-    roots=[a.get('start',{}).get('event')]+[e['event'] for m in a.get('maps',[]) for e in m['entrances']]
+    roots=[a.get('start',{}).get('event')]+[e['event'] for m in a.get('maps',[]) for e in m['entrances']]+region_roots(a)
     reachable=set();queue=deque(r for r in roots if r in events)
     def add(code,message,identity,severity='warning',**fields):
         diagnostics.append(dict(code=code,severity=severity,message=message,object_id=identity,
@@ -25,7 +29,7 @@ def graph_checks(document):
         if current in reachable:continue
         reachable.add(current);queue.extend(graph[current])
     for identity,event in events.items():
-        if identity not in reachable:add('event.unreachable','No route from the starting event or any entrance reaches this event.',identity)
+        if identity not in reachable:add('event.unreachable','No route from the starting event, entrances or region triggers reaches this event.',identity)
         for branch,target in edges(event):
             if target not in events:add('event.branch_missing','Event branch '+branch+' refers to '+target+'.',identity,'error',branch=branch,target=target)
     # Find strongly connected components iteratively: a 256-node chain should
@@ -60,13 +64,21 @@ def graph_checks(document):
     lua=any(e['op']=='lua' for e in events.values())
     writes={e['flag'] for e in events.values() if e['op']=='flag' and e.get('value',0)>0 and e['id'] in reachable}
     for objective in a.get('objectives',[]):
+        if 'initial' in objective:
+            if objective['initial'] not in ('complete','failed') and not any(
+                    e['id'] in reachable and e['op']=='objective' and e['objective']==objective['id'] and e['state']=='complete'
+                    for e in events.values()):
+                diagnostics.append(dict(code='objective.completion_missing',severity='warning',
+                    message='No explicit reachable event completes this objective. Verify its intended failure-only or unfinished route.',
+                    object_id=objective['id'],field_path='adventure.objectives/'+objective['id'],location=None))
+            continue
         for field in ('active','complete'):
             if objective[field] not in writes:
                 diagnostics.append(dict(code='objective.coverage_unknown' if lua else 'objective.flag_unset',severity='warning',
                     message=('No explicit reachable event sets this objective flag; Lua needs a scenario check.' if lua else 'No reachable flag event activates this objective state.'),
                     object_id=objective['id'],field_path='adventure.objectives/'+objective['id']+'/'+field,location=None))
     return dict(diagnostics=diagnostics,events=len(events),reachable_from_declared_roots=len(reachable),cycles=cycles,
-        basis='Explicit event edges from start and all entrances; conditions and Lua execution are not proven.')
+        basis='Explicit event edges from start, entrances and region triggers; region access, conditions and Lua execution are not proven.')
 
 
 def objective_access(document, findings):
@@ -79,7 +91,7 @@ def objective_access(document, findings):
     if any(e['op']=='lua' for e in events.values()):return []
     blocked={p['object_id']:p for p in findings if p['code']=='entrance.unreachable'}
     if not blocked:return []
-    roots=[a.get('start',{}).get('event')]+[door['event'] for m in a.get('maps',[]) for door in m['entrances'] if door['id'] not in blocked]
+    roots=[a.get('start',{}).get('event')]+[door['event'] for m in a.get('maps',[]) for door in m['entrances'] if door['id'] not in blocked]+region_roots(a)
     def reach(roots):
         visited=set();queue=deque(r for r in roots if r in events)
         while queue:
@@ -89,7 +101,9 @@ def objective_access(document, findings):
         return visited
     usable=reach(roots);result=[]
     for objective in a.get('objectives',[]):
-        writers={e['id'] for e in events.values() if e['op']=='flag' and e.get('flag')==objective['complete'] and e.get('value',0)>0}
+        writers={e['id'] for e in events.values() if (
+            e['op']=='objective' and e.get('objective')==objective['id'] and e.get('state')=='complete' if 'initial' in objective else
+            e['op']=='flag' and e.get('flag')==objective['complete'] and e.get('value',0)>0)}
         if not writers or writers&usable:continue
         doors=[door['id'] for m in a.get('maps',[]) for door in m['entrances'] if door['id'] in blocked and reach([door['event']])&writers]
         if doors:result.append(dict(code='objective.inaccessible',severity='warning',object_id=objective['id'],

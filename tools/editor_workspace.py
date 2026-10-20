@@ -430,8 +430,8 @@ class Workspace:
         self.tabs.select(view)
         menu=tk.Menu(self.tabs,tearoff=False)
         menu.add_command(label='Close',command=lambda:guard(view.controller or self.app,lambda:self.close_tab(view)))
-        try:menu.tk_popup(event.x_root,event.y_root)
-        finally:menu.grab_release()
+        from editor_ui import popup_menu
+        popup_menu(menu,event)
 
     def close_tab(self,view=None):
         view=view or self.current_view()
@@ -547,6 +547,8 @@ class Workspace:
                     for kind in ('Building','Wall','Road'):row(construct,'construction:'+kind,kind+' designer',lambda k=kind:self.map_view().construction(k))
                     row(construct,'patterns','Pattern Library',lambda:self.map_view().patterns())
                     events=row('','events','Events / objectives',self.open_event)
+                    row(events,'mission','Regions / mission variables',lambda:self.map_view().missions())
+                    row(events,'objectives','Objectives / journal',lambda:self.map_view().event_graph().objectives())
                     for event in document.adventure['events']:
                         if not query or query in str(event).casefold():row(events,'event:'+event['id'],event['id'].split(':')[-1]+' ('+event['op']+')',lambda i=event['id']:self.open_event(i))
                 row('','art','Artwork',self.open_art)
@@ -568,8 +570,8 @@ class Workspace:
         menu=tk.Menu(self.window,tearoff=False)
         for action in ('New definition','Duplicate definition','Delete definition'):
             menu.add_command(label=action,command=lambda a=action:self.invoke(a))
-        try:menu.tk_popup(event.x_root,event.y_root)
-        finally:menu.grab_release()
+        from editor_ui import popup_menu
+        popup_menu(menu,event)
 
     def update_inspector(self):
         if not hasattr(self,'app'):return
@@ -613,18 +615,25 @@ class Workspace:
         self.inspect_text.set('\n\n'.join(lines))
 
     def problem(self,scope,problem):
+        problem.setdefault('scope',scope);problem.setdefault('document',scope.document)
         self.problems.append(problem);index=str(len(self.problems)-1)
         title=scope.document.manifest['title'] if scope.document else 'Editor'
         self.problem_list.insert('','end',iid=index,values=(title,problem['message']))
         if str(self.bottom) not in self.vertical.panes():self.vertical.add(self.bottom,weight=1)
         self.bottom.select(self.problem_page);self.status.set(problem['message'])
-        self.log(problem.get('details') or problem['message'])
+        self.log(problem.get('details') or problem['message'],problem_index=index)
 
-    def open_problem(self,_=None):
+    def open_problem(self,_=None,index=None):
         selected=self.problem_list.selection()
-        if not selected:return
-        problem=self.problems[int(selected[0])];owner=problem['owner']
-        if problem.get('navigate'):problem['navigate']();return
+        if index is None and not selected:return
+        problem=self.problems[int(index if index is not None else selected[0])];owner=problem['owner']
+        scope=problem.get('scope')
+        if scope and (scope not in self.scopes or scope.document is not problem.get('document',scope.document)):
+            self.status.set('This problem belongs to a previously opened project. Validate the current project again.');return
+        from editor_problems import navigate
+        if guard(owner,lambda:navigate(self,problem)):return
+        if problem.get('navigate'):
+            guard(owner,problem['navigate']);return
         if owner.window.winfo_exists():
             owner.window.lift();owner.window.focus_set()
             if hasattr(owner,'show_error'):
@@ -632,8 +641,15 @@ class Workspace:
                 owner.show_error(FieldError(problem['message'],problem.get('field')))
         else:self.log(problem.get('details') or problem['message']);self.bottom.select(self.output)
 
-    def log(self,text):
-        self.output.configure(state='normal');self.output.insert('end',text+'\n');self.output.see('end');self.output.configure(state='disabled')
+    def log(self,text,problem_index=None):
+        self.output.configure(state='normal')
+        tags=('problem-'+problem_index,) if problem_index is not None else ()
+        self.output.insert('end',text+'\n',tags)
+        if tags:
+            self.output.tag_bind(tags[0],'<Double-Button-1>',lambda _:self.open_problem(index=problem_index))
+            self.output.tag_bind(tags[0],'<Enter>',lambda _:self.output.configure(cursor='hand2'))
+            self.output.tag_bind(tags[0],'<Leave>',lambda _:self.output.configure(cursor='xterm'))
+        self.output.see('end');self.output.configure(state='disabled')
 
     def show_welcome(self):
         previous=self.views.get((id(None),'welcome',None))
@@ -707,6 +723,8 @@ class Workspace:
                     elif kind=='world':self.open_world();view=owner.map_editor.world_editor.window
                     elif kind=='graphics':view=self.open_art().window
                     elif kind=='events':view=self.map_view().event_graph().window
+                    elif kind=='mission':view=self.map_view().missions().window
+                    elif kind=='objectives':view=self.map_view().event_graph().objectives().window
                     elif kind=='construction':view=self.map_view().construction(identity).window
                     elif kind=='patterns':view=self.map_view().patterns().window
                     elif kind=='catalogue':

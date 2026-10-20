@@ -666,8 +666,8 @@ class RosterEditor:
         self.sprite_timer=self.window.after(delay,self.animate_sprite)
 
     def sprite_context(self,event):
-        try:self.sprite_menu.tk_popup(event.x_root,event.y_root)
-        finally:self.sprite_menu.grab_release()
+        from editor_ui import popup_menu
+        popup_menu(self.sprite_menu,event)
 
     def edit_unit_sprite(self):
         self.apply_form()

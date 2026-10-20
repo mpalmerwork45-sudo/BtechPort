@@ -31,9 +31,10 @@ static int capabilities(void)
         "\"people\":%u,\"shops\":%u,\"encounters\":%u,\"objectives\":%u,\"definitions_per_collection\":%u,"
         "\"images\":%u,\"frames_per_image\":%u,\"art_pixels\":%u,\"animation_tracks\":%u,"
         "\"world_sectors_total\":%u,\"discovery_cells\":%u,\"map_min_side\":16,\"map_width\":64,\"map_height\":64,\"entrances_per_map\":%u,"
-        "\"overlays_per_map\":32,\"enemies_per_encounter\":12,\"choice_options\":%u},"
-        "\"event_ops\":[\"end\",\"say\",\"choice\",\"if\",\"flag\",\"reward\",\"recruit\",\"transfer\",\"shop\",\"battle\",\"lua\",\"finish\",\"picture\",\"repair\",\"rearm\",\"heal\",\"salvage\"],"
-        "\"lua_api\":[\"game.flag\",\"game.credits\",\"game.command\"],"
+        "\"overlays_per_map\":32,\"enemies_per_encounter\":12,\"choice_options\":%u,"
+        "\"variables\":%u,\"regions\":%u,\"conditions_per_check\":%u,\"counter_maximum\":%u},"
+        "\"event_ops\":[\"end\",\"say\",\"choice\",\"if\",\"flag\",\"reward\",\"recruit\",\"transfer\",\"shop\",\"battle\",\"lua\",\"finish\",\"picture\",\"repair\",\"rearm\",\"heal\",\"salvage\",\"variable\",\"objective\",\"check\"],"
+        "\"lua_api\":[\"game.flag\",\"game.credits\",\"game.command\",\"game.variable\",\"game.objective\",\"game.in_region\"],"
         "\"coordinate_spaces\":{\"map_tile\":\"16 pixels; local origin; rows and overlays\","
         "\"movement\":\"8 pixels; local origin; entrances, start, enemies and transfers\","
         "\"world_tile\":\"16 pixels; planet origin; city origins and patches\","
@@ -41,7 +42,8 @@ static int capabilities(void)
         BTP_RUNTIME_VERSION,BTP_LOCAL_SCENES,BTP_EVENT_NODES,BTP_EVENT_FLAGS,BTP_SCENE_TILES,BTP_JIGSAWS,BTP_WORLDS,
         BTP_SCENE_PEOPLE,BTP_SCENE_SHOPS,BTP_SCENE_BATTLES,BTP_OBJECTIVES,BTP_DEFINITION_LIMIT,
         BTP_ART_IMAGES,BTP_ART_FRAMES,BTP_ART_PIXELS,BTP_ART_TRACKS,BTP_SCENES-BTP_LOCAL_SCENES,
-        BTP_AUTHORED_DISCOVERY,BTP_SCENE_ENTRANCES,BTP_EVENT_OPTIONS-1);
+        BTP_AUTHORED_DISCOVERY,BTP_SCENE_ENTRANCES,BTP_EVENT_OPTIONS-1,
+        BTP_VARIABLES,BTP_REGIONS,BTP_CONDITIONS,BTP_COUNTER_MAX);
     return ferror(stdout) ? 1 : 0;
 }
 

@@ -1,5 +1,55 @@
 # Build, verification and original oracle — 2026-10-20
 
+## AI6a mission state and editor repairs — 2026-10-20
+
+**VERIFIED:** optional regions, typed variables, explicit objective states,
+compound checks, bounded Lua queries and saved pending triggers.
+The [lifecycle reference](MISSION_STATE.md) defines the implemented scope;
+[Argent Recovery](../examples/argent-recovery/README.md) supplies a reproducible
+command-created mission.
+
+- Native regression: **87/87 PASS**, 45.39 s (`work/ai6a-native.log`).
+  Includes original campaign, authored movement/combat/services and six new
+  extraction routes.
+- Python regression: **250/250 PASS**, 21.551 s (`work/ai6a-python.log`).
+  New cases cover schema/C agreement, invalid bounds/references/types,
+  command transactions, condition dependencies, analysis roots, mixed legacy
+  objectives, error destinations and reproducible generation.
+- After strengthening the core test for transfers, preview initialization,
+  world/city coordinates and combat return anchors, focused native mission
+  tests pass **7/7**, 0.36 s (`work/ai6a-mission-tests.log`).
+- Windows cross-build uses two compiler jobs. The same seven mission tests
+  pass under isolated Wine: **7/7**, 22.16 s
+  (`work/ai6a-windows-tests.log`). The first sandboxed run could not create
+  Wine's runtime socket; the approved run succeeded. Native Windows Tk
+  interaction remains unverified.
+- `python3 tools/native_smoke.py --editor-mission-only`: **PASS**
+  (`work/ai6a-mission-editor.log`). Real rectangle dragging, invalid bounds
+  retained in a modal draft, correction, Undo/Redo, Show on map, counters,
+  booleans, objective creation, compound condition editing, draft recovery,
+  Save/reopen and SDL Play/Stop. Inspected
+  `work/editor-mission-regions.png` and `work/editor-mission-play.png`.
+- `python3 tools/native_smoke.py --editor-focus-only`: **PASS**
+  (`work/ai6a-dialog-focus.log`). KWin verifies actual Encounter/Entrance/NPC
+  forms, nested grabs, early destruction, file chooser cancellation and
+  focus/stacking. A blocked entrance reported from Units resolves to the
+  correct map marker; Output receives a navigation link. Repeated popup
+  Escape, outside clicks, tile chooser dismissal and parent grab restoration
+  pass. Tk retains its menu grab until its normal unpost operation.
+- Reference guard: **1,287 entries unchanged**, including content/mode/mtime,
+  against `work/reference-before-map-construction.json`.
+- User-authored Last Beacon cleanup committed separately as `2982ad9`;
+  its three edited JSON files pass project validation. Verification uses
+  disposable copies; no source map regeneration.
+
+The mission scenarios cover success, abandonment, repeat visits, once-only
+collection/payment, battle victory/defeat/retreat and checkpoint reloads.
+The focused core test covers overlapping hooks saved between dialogues,
+multi-step crossing interruption, arithmetic bounds, terminal objective rules,
+journal state and Lua queries. These establish the declared routes, not
+arbitrary script reachability, full world navigation or general combat balance.
+Combat lifecycle hooks/reinforcements and escort actors remain AI6b/AI6c.
+
 ## Editor modal mapping repair — 2026-10-20
 
 **VERIFIED:** Entrance, Encounter and NPC forms acquire their modal grab only

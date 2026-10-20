@@ -38,6 +38,74 @@ static int reference(BtpJson *j,unsigned field,const void *base,size_t stride,un
 #define REF(j,n,key,base,count,out) reference(j,btp_json_field(j,n,key),base,sizeof *(base),count,out)
 static int next(BtpJson *j,unsigned n,const char *key,const BtpAdventure *a,uint16_t *out)
 { unsigned v;if (!REF(j,n,key,a->nodes,a->node_count,&v)) return 0;*out=(uint16_t)v;return 1; }
+static const char *const objective_states[]={"inactive","active","complete","failed"};
+static int mission_definitions(BtpJson *j,BtpAdventure *a)
+{
+    unsigned records[BTP_VARIABLES],count=0;
+    if (btp_json_optional(j,1,"variables")) {
+        if (!ids(j,"variables",a->variables,sizeof *a->variables,BTP_VARIABLES,&count,records)) return 0;
+        a->variable_count=count;
+        for (unsigned i=0;i<count;++i) {
+            unsigned n=records[i],kind;BtpMissionVariable *v=&a->variables[i];
+            const char *const types[]={"boolean","counter"};
+            if (!string(j,n,"name",v->name,sizeof v->name) || !option(j,n,"type",types,2,&kind)) return 0;
+            v->boolean=kind==0;v->maximum=1;
+            if (!v->boolean && !number(j,n,"maximum",1,BTP_COUNTER_MAX,&v->maximum)) return 0;
+            if (!number(j,n,"initial",0,v->maximum,&v->initial) || !btp_json_done(j,n)) return 0;
+        }
+    }
+    count=0;
+    if (btp_json_optional(j,1,"regions")) {
+        if (!ids(j,"regions",a->regions,sizeof *a->regions,BTP_REGIONS,&count,records)) return 0;
+        a->region_count=count;
+        for (unsigned i=0;i<count;++i) {
+            unsigned n=records[i];BtpMissionRegion *r=&a->regions[i];
+            const char *const repeats[]={"once","always"};
+            if (!string(j,n,"name",r->name,sizeof r->name) ||
+                !REF(j,n,"map",a->maps,a->local_count,&r->map) ||
+                !option(j,n,"repeat",repeats,2,&r->repeat)) return 0;
+            unsigned rectangle=btp_json_field(j,n,"rect"),values[4],index=0;
+            if (!btp_json_type(j,rectangle,'[')) return 0;
+            for (unsigned p=j->nodes[rectangle].first;p;p=j->nodes[p].next) {
+                if (index==4 || !btp_json_uint(j,p,index<2 ? 0u : 1u,64,&values[index])) return 0;
+                ++index;
+            }
+            if (index!=4) return btp_json_error(j,rectangle,"expected [x, y, width, height] in map tiles");
+            r->x=values[0];r->y=values[1];r->width=values[2];r->height=values[3];
+            const BtpScene *m=&a->maps[r->map];
+            if (r->x+r->width>m->visual.width || r->y+r->height>m->visual.height)
+                return btp_json_error(j,rectangle,"region rectangle must fit its local map");
+            r->enter=r->leave=BTP_EVENT_NODES;
+            if (btp_json_optional(j,n,"enter") && !next(j,n,"enter",a,&r->enter)) return 0;
+            if (btp_json_optional(j,n,"leave") && !next(j,n,"leave",a,&r->leave)) return 0;
+            if (!btp_json_done(j,n)) return 0;
+        }
+    }
+    if (a->variable_count || a->region_count) a->mission_state=1;
+    return 1;
+}
+static int mission_condition(BtpJson *j,unsigned n,const BtpAdventure *a,BtpMissionCondition *c)
+{
+    const char *const kinds[]={"flag","variable","objective","region"};
+    const char *const comparisons[]={"eq","ne","lt","le","gt","ge"};
+    if (!option(j,n,"kind",kinds,4,&c->kind) || !option(j,n,"compare",comparisons,6,&c->compare)) return 0;
+    unsigned maximum=1;
+    switch (c->kind) {
+    case BTP_CONDITION_FLAG:if (!REF(j,n,"id",a->flags,a->flag_count,&c->argument)) return 0;break;
+    case BTP_CONDITION_REGION:if (!REF(j,n,"id",a->regions,a->region_count,&c->argument)) return 0;break;
+    case BTP_CONDITION_OBJECTIVE:
+        if (!REF(j,n,"id",a->objectives,a->objective_count,&c->argument) ||
+            !option(j,n,"value",objective_states,4,&c->value)) return 0;
+        break;
+    case BTP_CONDITION_VARIABLE:
+        if (!REF(j,n,"id",a->variables,a->variable_count,&c->argument)) return 0;
+        maximum=a->variables[c->argument].maximum;break;
+    }
+    if (c->compare>1 && (c->kind!=BTP_CONDITION_VARIABLE || a->variables[c->argument].boolean))
+        return btp_json_error(j,n,"ordered comparisons require a counter");
+    if (c->kind!=BTP_CONDITION_OBJECTIVE && !number(j,n,"value",0,maximum,&c->value)) return 0;
+    return btp_json_done(j,n);
+}
 static int pair(BtpJson *j,unsigned node,unsigned max,unsigned *x,unsigned *y)
 {
     if (!btp_json_type(j,node,'[')) return 0;
@@ -239,8 +307,13 @@ int btp_adventure_load(const char *path,const BtpDefinitions *d,BtpAdventure *ou
             if (a->objective_count==BTP_OBJECTIVES) { btp_json_error(&j,n,"at most 32 objectives");goto done; }
             BtpObjective *o=&a->objectives[a->objective_count];
             if (!string(&j,n,"id",o->id,sizeof o->id) || !btp_content_id(o->id,1) ||
-                !string(&j,n,"title",o->title,sizeof o->title) || !string(&j,n,"text",o->text,sizeof o->text) ||
-                !REF(&j,n,"active",a->flags,a->flag_count,&o->active) || !REF(&j,n,"complete",a->flags,a->flag_count,&o->complete) || !btp_json_done(&j,n)) goto done;
+                !string(&j,n,"title",o->title,sizeof o->title) || !string(&j,n,"text",o->text,sizeof o->text)) goto done;
+            if (btp_json_optional(&j,n,"initial")) {
+                if (!option(&j,n,"initial",objective_states,4,&o->initial)) goto done;
+                o->explicit_state=1;a->mission_state=1;
+            } else if (!REF(&j,n,"active",a->flags,a->flag_count,&o->active) ||
+                !REF(&j,n,"complete",a->flags,a->flag_count,&o->complete)) goto done;
+            if (!btp_json_done(&j,n)) goto done;
             for (unsigned i=0;i<a->objective_count;++i) if (!strcmp(a->objectives[i].id,o->id)) { btp_json_error(&j,n,"duplicate objective ID");goto done; }
             char lines[96][28];if (btp_event_lines(o->text,lines)>13) { btp_json_error(&j,n,"objective text exceeds 13 wrapped lines");goto done; }
             ++a->objective_count;
@@ -385,10 +458,11 @@ int btp_adventure_load(const char *path,const BtpDefinitions *d,BtpAdventure *ou
         }
         if (!b->count || !btp_json_done(&j,n)) { btp_json_error(&j,n,"encounter needs enemies");goto done; }
     }
+    if (!mission_definitions(&j,a)) goto done;
     for (unsigned i=0;i<a->node_count;++i) {
         unsigned n=nodes[i];BtpEventNode *e=&a->nodes[i];
-        const char *const ops[]={"end","say","choice","if","flag","reward","recruit","transfer","shop","battle","lua","finish","picture","repair","rearm","heal","salvage"};
-        if (!option(&j,n,"op",ops,17,&e->op)) goto done;
+        const char *const ops[]={"end","say","choice","if","flag","reward","recruit","transfer","shop","battle","lua","finish","picture","repair","rearm","heal","salvage","variable","objective","check"};
+        if (!option(&j,n,"op",ops,20,&e->op)) goto done;
         if (a->version==1 && e->op==BTP_EVENT_PICTURE) { btp_json_error(&j,n,"picture requires adventure v2");goto done; }
         e->picture=65535;unsigned image=btp_json_optional(&j,n,"image");
         if (image && (a->version!=2 || !btp_json_string(&j,image,e->image,sizeof e->image) ||
@@ -408,10 +482,37 @@ int btp_adventure_load(const char *path,const BtpDefinitions *d,BtpAdventure *ou
                 ++e->count;
             }
             if (!e->count || !next(&j,n,"cancel",a,&e->next[5])) goto done;
-        } else if (e->op!=BTP_EVENT_END && e->op!=BTP_EVENT_FINISH && e->op!=BTP_EVENT_LUA && e->op!=BTP_EVENT_IF && e->op!=BTP_EVENT_BATTLE) {
+        } else if (e->op!=BTP_EVENT_END && e->op!=BTP_EVENT_FINISH && e->op!=BTP_EVENT_LUA && e->op!=BTP_EVENT_IF && e->op!=BTP_EVENT_BATTLE && e->op!=BTP_EVENT_CHECK) {
             if (!next(&j,n,"next",a,&e->next[0])) goto done;
         }
         switch (e->op) {
+        case BTP_EVENT_VARIABLE: {
+            const char *const actions[]={"set","add","subtract"};
+            if (!REF(&j,n,"variable",a->variables,a->variable_count,&e->argument) ||
+                !option(&j,n,"action",actions,3,&e->x) ||
+                !number(&j,n,"value",0,a->variables[e->argument].maximum,&e->value) ||
+                !number(&j,n,"once",0,1,&e->y) || !next(&j,n,"failure",a,&e->next[1])) goto done;
+            if (a->variables[e->argument].boolean && e->x) { btp_json_error(&j,n,"boolean variables support set only");goto done; }
+            break;
+        }
+        case BTP_EVENT_OBJECTIVE:
+            if (!REF(&j,n,"objective",a->objectives,a->objective_count,&e->argument) ||
+                !option(&j,n,"state",objective_states,4,&e->value) || !next(&j,n,"failure",a,&e->next[1])) goto done;
+            if (!a->objectives[e->argument].explicit_state) { btp_json_error(&j,n,"objective command requires a state-based objective");goto done; }
+            break;
+        case BTP_EVENT_CHECK: {
+            const char *const modes[]={"all","any"};
+            if (!option(&j,n,"match",modes,2,&e->value) || !next(&j,n,"then",a,&e->next[0]) ||
+                !next(&j,n,"else",a,&e->next[1])) goto done;
+            unsigned conditions=btp_json_field(&j,n,"conditions");
+            if (!btp_json_type(&j,conditions,'[')) goto done;
+            for (unsigned z=j.nodes[conditions].first;z;z=j.nodes[z].next) {
+                if (e->count==BTP_CONDITIONS) { btp_json_error(&j,z,"at most eight conditions");goto done; }
+                if (!mission_condition(&j,z,a,&e->conditions[e->count++])) goto done;
+            }
+            if (!e->count) { btp_json_error(&j,conditions,"at least one condition required");goto done; }
+            break;
+        }
         case BTP_EVENT_REPAIR:case BTP_EVENT_REARM:case BTP_EVENT_HEAL:case BTP_EVENT_SALVAGE: {
             if (!number(&j,n,"cost",0,999999,&e->value) || !next(&j,n,"failure",a,&e->next[1]) ||
                 !next(&j,n,"unchanged",a,&e->next[2])) goto done;

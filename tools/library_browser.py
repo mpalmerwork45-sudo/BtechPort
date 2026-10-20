@@ -353,8 +353,8 @@ class LibraryBrowser:
 
     def sprite_popup(self,event):
         if not self.selected():return
-        try:self.sprite_menu.tk_popup(event.x_root,event.y_root)
-        finally:self.sprite_menu.grab_release()
+        from editor_ui import popup_menu
+        popup_menu(self.sprite_menu,event)
 
     def duplicate(self):
         if self.selected():

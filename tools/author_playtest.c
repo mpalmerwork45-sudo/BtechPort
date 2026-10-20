@@ -4,6 +4,7 @@
 #include "frontend/cli.h"
 #include "frontend/authored_route.h"
 #include "core/events.h"
+#include "core/mission_state.h"
 #include "core/party.h"
 #include "core/combat.h"
 #include "core/roster_game.h"
@@ -99,6 +100,10 @@ static void event_trace(void *context,const BtpState *s,const BtpResources *r,co
     FILE *f=context;const BtpAdventure *a=btp_adventure(r);
     fprintf(f,"{\"tick\":%u,\"event\":\"%s\",\"credits\":%u,\"rng\":[%u,%u,%u],\"flags\":{",s->tick,e->id,s->credits,s->npc.rng[0],s->npc.rng[1],s->npc.rng[2]);
     for(unsigned i=0;i<a->flag_count;++i)fprintf(f,"%s\"%s\":%u",i?",":"",a->flags[i],s->event.flags[i]);
+    fputs("},\"variables\":{",f);
+    for(unsigned i=0;i<a->variable_count;++i)fprintf(f,"%s\"%s\":%u",i?",":"",a->variables[i].id,s->event.variables[i]);
+    fputs("},\"objectives\":{",f);
+    for(unsigned i=0;i<a->objective_count;++i)fprintf(f,"%s\"%s\":\"%s\"",i?",":"",a->objectives[i].id,btp_objective_name(btp_objective_state(s,a,i)));
     fputs("}}\n",f);
 }
 static const char *phase_name(unsigned phase)
@@ -119,8 +124,12 @@ static void state(const BtpState *s,const BtpResources *r)
     printf("},\"battle\":{\"won\":%u,\"fled\":%u,\"lost\":%u,\"outcome\":\"%s\",\"round\":%u},\"objectives\":{",!strcmp(reported,"win"),!strcmp(reported,"retreat"),!strcmp(reported,"loss"),reported,rounds);
     for(unsigned i=0;i<a->objective_count;++i) {
         const BtpObjective *o=&a->objectives[i];
-        printf("%s\"%s\":\"%s\"",i?",":"",o->id,s->event.flags[o->complete] ? "complete" : s->event.flags[o->active] ? "active" : "inactive");
+        printf("%s\"%s\":\"%s\"",i?",":"",o->id,btp_objective_name(btp_objective_state(s,a,i)));
     }
+    fputs("},\"variables\":{",stdout);
+    for(unsigned i=0;i<a->variable_count;++i)printf("%s\"%s\":%u",i?",":"",a->variables[i].id,s->event.variables[i]);
+    fputs("},\"regions\":{",stdout);
+    for(unsigned i=0;i<a->region_count;++i)printf("%s\"%s\":%d",i?",":"",a->regions[i].id,btp_mission_region(s,a,i));
     printf("},\"mode\":\"%s\",\"rng\":[%u,%u,%u],\"owned_mechs\":%u,\"party\":[",btp_mode_name(s->mode),s->npc.rng[0],s->npc.rng[1],s->npc.rng[2],btp_broker_count(s));
     unsigned comma=0;
     for(unsigned i=0;i<8;++i)if(s->event.people[i]<a->person_count) {
@@ -260,8 +269,18 @@ static int execute(BtpJson *j,unsigned node,BtpState *s,const BtpResources *r)
             char status[16];if(!btp_json_string(j,n,value,sizeof value) || !text_field(j,node,"status",status,sizeof status))return 0;
             unsigned i=0;while(i<a->objective_count && strcmp(value,a->objectives[i].id))++i;
             if(i==a->objective_count)return fail("Objective is absent");
-            const BtpObjective *o=&a->objectives[i];const char *actual=s->event.flags[o->complete] ? "complete" : s->event.flags[o->active] ? "active" : "inactive";
+            const char *actual=btp_objective_name(btp_objective_state(s,a,i));
             if(strcmp(actual,status))return fail("Objective state assertion failed");
+        }
+        n=btp_json_optional(j,node,"variable");if(n) {
+            if(!btp_json_string(j,n,value,sizeof value) || !btp_json_uint(j,btp_json_field(j,node,"value"),0,BTP_COUNTER_MAX,&expected))return 0;
+            unsigned i=0;while(i<a->variable_count && strcmp(value,a->variables[i].id))++i;
+            if(i==a->variable_count || s->event.variables[i]!=expected)return fail("Mission variable assertion failed");
+        }
+        n=btp_json_optional(j,node,"region");if(n) {
+            if(!btp_json_string(j,n,value,sizeof value) || !btp_json_uint(j,btp_json_field(j,node,"value"),0,1,&expected))return 0;
+            unsigned i=0;while(i<a->region_count && strcmp(value,a->regions[i].id))++i;
+            if(i==a->region_count || (unsigned)btp_mission_region(s,a,i)!=expected)return fail("Region membership assertion failed");
         }
     } else return fail("Unsupported scenario operation");
     return !failed && btp_json_done(j,node);

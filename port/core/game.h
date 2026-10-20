@@ -130,6 +130,10 @@ typedef struct {
     uint16_t explore_offset;
     uint8_t explore_width,explore_height,planet;
     uint8_t flags[64],done[32],people[8];
+    /* AI6 state has its own versioned save tail; legacy authored saves keep
+       their exact layout when these optional mission features are absent. */
+    uint8_t mission_state,objectives[32];
+    uint32_t variables[32],regions,enter_pending,leave_pending,entered,left;
 } BtpEventState;
 typedef struct {
     uint32_t tick;

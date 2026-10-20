@@ -3,6 +3,7 @@
    the existing stage/age bytes; v40-v43 held stages retain their old meaning.
    Package identity stays in the outer save envelope. */
 #include "core/game.h"
+#include "core/mission_state.h"
 #include "core/talk.h"
 #include "core/npc.h"
 #include "core/bank.h"
@@ -46,7 +47,10 @@ void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
         memcpy(b,"BTPk",4);b[4]=46;b[20005]=s->menu.broker_class;
     }
     if (s->project) { memcpy(b,"BTPl",4);b[4]=47;b[20006]=s->project; }
-    if (s->event.enabled) { memcpy(b,"BTPn",4);b[4]=49;btp_events_encode(s,b+20057); }
+    if (s->event.enabled) {
+        memcpy(b,"BTPn",4);b[4]=49;btp_events_encode(s,b+20057);
+        if (s->event.mission_state) { memcpy(b,"BTPo",4);b[4]=50;btp_mission_encode(s,b+20185); }
+    }
     for (unsigned i = 0; i < 4; ++i) b[8+i] = (uint8_t)(s->tick >> (8 * i));
     b[12] = (uint8_t)s->x_half; b[13] = (uint8_t)(s->x_half >> 8);
     b[14] = (uint8_t)s->y_half; b[15] = (uint8_t)(s->y_half >> 8);
@@ -245,7 +249,8 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         n == BTP_STATE_BYTES && !memcmp(b,"BTPk",4) && b[4]==46 ? 46 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPl",4) && b[4]==47 ? 47 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPm",4) && b[4]==48 ? 48 :
-        n == BTP_STATE_BYTES && !memcmp(b,"BTPn",4) && b[4]==49 ? 49 : 0;
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPn",4) && b[4]==49 ? 49 :
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPo",4) && b[4]==50 ? 50 : 0;
     if (!version) return 0;
     if (version>=18 && version<38 && b[10232]) return 0; /* v38 critical report count. */
     if (version>=18 && version<35 && b[10233]) return 0; /* v35 weapon-window presentation bits. */
@@ -265,7 +270,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
             if (version >= 10) {
                 if (b[425]) return 0;
                 unsigned start=version==10 ? 434u : version==11 ? 441u : version==12 ? 450u : version<15 ? 896u : version>=33 ? 19329u+(unsigned)sizeof(BtpYardState) : version>=31 ? 19308u+(unsigned)sizeof(BtpYardState) : version>=30 ? 19307u+(unsigned)sizeof(BtpYardState) : version>=29 ? 19306u+(unsigned)sizeof(BtpYardState) : version>=28 ? 19292u+(unsigned)sizeof(BtpLateState) : version>=27 ? 18483u+(unsigned)sizeof(BtpCacheState) : version>=26 ? 18483u : version>=25 ? 18433u : version>=24 ? 15702u : version>=22 ? 15693u : version>=21 ? 15414u : version>=20 ? 11388u : version>=19 ? 11326u : version>=18 ? 11314u : version>=17 ? 2684u : version>=16 ? 2399u : 1803u;
-                for (unsigned i=start;i<n;++i) if (b[i] && !(version>=45 && i>=20000 && i<(version>=48 ? 20185u : version>=47 ? 20057u : version>=46 ? 20006u : 20005u))) return 0;
+                for (unsigned i=start;i<n;++i) if (b[i] && !(version>=45 && i>=20000 && i<(version>=50 ? 20185u+BTP_MISSION_BYTES : version>=48 ? 20185u : version>=47 ? 20057u : version>=46 ? 20006u : 20005u))) return 0;
                 if (version>=13) for (unsigned i=version>=15 ? 460u : 452u;i<512;++i) if (b[i]) return 0;
                 if (version==13 && b[878]) return 0; /* v14 firing-effect countdown. */
             }
@@ -273,6 +278,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
     }
     BtpState result = {.credits=35,.allowance_cap=50};
     if (version>=48 && !btp_events_decode(&result,b+20057)) return 0;
+    if (version>=50 && !btp_mission_decode(&result,b+20185)) return 0;
     if (version>=45) {
         result.combat_profile=b[20000];result.combat_fingerprint=get32(b+20001);
         if (result.combat_profile>1 || (!!result.combat_profile != !!result.combat_fingerprint)) return 0;

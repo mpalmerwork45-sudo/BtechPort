@@ -26,8 +26,8 @@ def tile_menu(owner,maps,current,assign,event,context=None):
         from tile_editing import select_tile
         select_tile(maps,current);maps.edit_tile()
     menu.add_command(label='Tile properties',command=lambda:guard(owner,properties),state='normal' if current else 'disabled')
-    try:menu.tk_popup(event.x_root,event.y_root)
-    finally:menu.grab_release()
+    from editor_ui import popup_menu
+    popup_menu(menu,event)
 
 
 @recoverable_forms

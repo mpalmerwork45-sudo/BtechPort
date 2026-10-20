@@ -3,7 +3,7 @@
 Recorded 2026-10-18 against `266d21f`, with the user's revised Last Beacon
 preserved in `bed75e9`.
 
-**Status: AI5 COLLABORATIVE CHECKPOINT IMPLEMENTED, 2026-10-20.** AI1/AI2 have the versioned
+**Status: AI6a MISSION STATE IMPLEMENTED, 2026-10-20.** AI1/AI2 have the versioned
 inspection/command contract, transactional CLI, shared editor operations and
 command-file exchange described in the [author guide](AI_AUTHORING_GUIDE.md).
 The approved next four steps add shared asset discovery, labelled visual
@@ -17,7 +17,11 @@ regions, validated partial groups and a local session attached to the editor.
 Its Last Beacon completion gate preserves human dialogue, roof painting and
 door placement through a generated encounter/road revision and Undo.
 See [AI5 verification](TESTING.md#ai5-collaborative-authoring--2026-10-20).
-AI6–AI8 remain proposed. The editor remains the human workspace.
+AI6a now adds named regions, persistent typed variables, explicit objective
+states and compound conditions, with editor controls and the playable
+[Argent Recovery](../examples/argent-recovery/README.md) example.
+[Lifecycle and limits](MISSION_STATE.md) are explicit. AI6b/AI6c and AI7–AI8
+remain proposed. The editor remains the human workspace.
 
 ## 1. Intended result
 
@@ -129,7 +133,7 @@ usable stopping point. Relative size indicates scope, not a calendar estimate.
 | AI3 | Searchable catalogues and visual feedback | AI1–AI2 | Medium | Delivered |
 | AI4 | Mission scenarios, assertions and playtest reports | AI1–AI2; AI3 for visual reports | Large | Delivered within the recorded route/geometry bounds |
 | AI5 | Editor review, protected edits and live sessions | AI2–AI4 | Large | Delivered; local file-inbox transport |
-| AI6 | Additional mission primitives and Lua/event support | AI2, AI4–AI5 | Large, split below | Proposed; AI6a recommended next |
+| AI6 | Additional mission primitives and Lua/event support | AI2, AI4–AI5 | Large, split below | AI6a delivered; AI6b/AI6c proposed |
 | AI7 | Modular campaigns, reproducible compilation and capacity work | AI2, AI4–AI5; include AI6 formats when available | Large, split below | Proposed |
 | AI8 | Complete authoring demonstration and delivery | AI1–AI7 | Medium | Proposed |
 
@@ -427,10 +431,16 @@ editor controls, commands, runtime behavior, save support and scenario tests.
 
 ### AI6a: regions, mission state and objectives
 
-Add named map regions, enter/leave conditions, typed persistent mission
+**Delivered 2026-10-20:** named map regions, enter/leave conditions, typed persistent mission
 variables/counters and explicit objective states. Document lifecycle, repeat
 behavior and event order. Start with reach/extract, collect/count and
 multi-condition objectives; keep existing flag-based projects working.
+
+The [mission reference](MISSION_STATE.md) records the implemented rules.
+Argent Recovery passes success, abandonment, repeated crossings, combat
+victory/defeat/retreat and saved continuations. The manual editor supports
+region drawing, variable/objective forms, conditions, Undo and draft recovery.
+See [verification](TESTING.md#ai6a-mission-state-and-editor-repairs--2026-10-20).
 
 ### AI6b: combat lifecycle and reinforcements
 
@@ -612,12 +622,15 @@ name/module layout (AI1–AI2), source-module format and exact capacity targets
 (AI7), and which external assistant transports are useful (AI8). These do not
 block the first authoring contract or require choosing an AI provider now.
 
-**Next proposed work: AI6a — regions, persistent mission state and objectives.**
-Add named regions, enter/leave conditions, typed counters and explicit objective
-states, with GUI controls, authoring commands and saved continuations. Deliver
-a small reach/extract and collect/count mission with success/failure/reload
-tests. AI6b reinforcement/lifecycle work and AI6c escort/defence then build on
-that foundation. These engine changes require their own authorization.
+**Next proposed mission work: AI6b — combat lifecycle and reinforcements.**
+AI6a's regions, persistent state and extraction example are delivered.
+Add lifecycle hooks, timers, named groups and bounded spawn requests, then
+demonstrate timed defence. AI6c escort/defence builds on that foundation.
+These further engine changes require their own authorization.
+
+The user has separately authorized a shared Construction Library for building,
+wall and road definitions and stored patterns, including transferable tile/art
+dependencies and access through the editor and authoring interface.
 
 World creation, seeded jigsaw generation/painting, terrain patches, town-map
 placement and composed world previews are already exposed to AI tools.

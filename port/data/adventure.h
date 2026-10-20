@@ -8,7 +8,8 @@
 enum { BTP_LOCAL_SCENES=16, BTP_SCENES=272, BTP_EVENT_NODES=256, BTP_EVENT_FLAGS=64,
     BTP_SCENE_TILES=4096, BTP_JIGSAWS=1024, BTP_WORLDS=16, BTP_SCENE_PEOPLE=16, BTP_SCENE_SHOPS=16,
     BTP_SCENE_BATTLES=16, BTP_EVENT_OPTIONS=6, BTP_AUTHORED_MAP_FIRST=16,
-    BTP_SCENE_ENTRANCES=16, BTP_OBJECTIVES=32, BTP_AUTHORED_DISCOVERY=16384 };
+    BTP_SCENE_ENTRANCES=16, BTP_OBJECTIVES=32, BTP_AUTHORED_DISCOVERY=16384,
+    BTP_VARIABLES=32, BTP_REGIONS=32, BTP_CONDITIONS=8, BTP_COUNTER_MAX=1000000 };
 typedef struct { char id[64],image[64];uint16_t graphic;uint8_t key,sheet,terrain,color; } BtpSceneTile;
 typedef struct { char id[64],name[25],image[64];uint8_t x,y,person;uint16_t event,icon; } BtpSceneEntrance;
 typedef struct {
@@ -20,7 +21,17 @@ typedef struct { char id[64],name[64];unsigned width,height,base,explore_offset;
 typedef struct { char id[64],name[64];uint16_t cells[64]; } BtpJigsaw;
 typedef struct { char id[64],name[32],image[64];uint16_t graphic;uint8_t record[17]; } BtpScenePerson;
 typedef struct { char id[64];unsigned count;uint16_t stock[256]; } BtpSceneShop;
-typedef struct { char id[64],title[49],text[385];unsigned active,complete; } BtpObjective;
+enum { BTP_OBJECTIVE_INACTIVE, BTP_OBJECTIVE_ACTIVE, BTP_OBJECTIVE_COMPLETE, BTP_OBJECTIVE_FAILED };
+typedef struct { char id[64],title[49],text[385];unsigned active,complete,explicit_state,initial; } BtpObjective;
+typedef struct { char id[64],name[64];unsigned boolean,initial,maximum; } BtpMissionVariable;
+/* Rectangle coordinates are local map tiles; triggers use the party leader's
+   half-tile anchor, including when a city is embedded in a world. */
+typedef struct {
+    char id[64],name[64];unsigned map,x,y,width,height,repeat;
+    uint16_t enter,leave; /* BTP_EVENT_NODES means no trigger. */
+} BtpMissionRegion;
+enum { BTP_CONDITION_FLAG, BTP_CONDITION_VARIABLE, BTP_CONDITION_OBJECTIVE, BTP_CONDITION_REGION };
+typedef struct { unsigned kind,argument,compare,value; } BtpMissionCondition;
 typedef struct { uint8_t x,y,infantry;uint16_t definition; } BtpSceneEnemy;
 typedef struct {
     char id[64];unsigned map,x,y,count;BtpSceneEnemy enemies[12];
@@ -28,17 +39,22 @@ typedef struct {
 typedef enum { BTP_EVENT_END, BTP_EVENT_SAY, BTP_EVENT_CHOICE, BTP_EVENT_IF,
     BTP_EVENT_FLAG, BTP_EVENT_REWARD, BTP_EVENT_RECRUIT, BTP_EVENT_TRANSFER,
     BTP_EVENT_SHOP, BTP_EVENT_BATTLE, BTP_EVENT_LUA, BTP_EVENT_FINISH, BTP_EVENT_PICTURE,
-    BTP_EVENT_REPAIR, BTP_EVENT_REARM, BTP_EVENT_HEAL, BTP_EVENT_SALVAGE } BtpEventOp;
+    BTP_EVENT_REPAIR, BTP_EVENT_REARM, BTP_EVENT_HEAL, BTP_EVENT_SALVAGE,
+    BTP_EVENT_VARIABLE, BTP_EVENT_OBJECTIVE, BTP_EVENT_CHECK } BtpEventOp;
 typedef struct {
     char id[64],text[1024],labels[BTP_EVENT_OPTIONS][25];
     char image[64];uint16_t picture;
     uint16_t next[BTP_EVENT_OPTIONS];
     unsigned op,argument,value,x,y,count,portrait;
+    BtpMissionCondition conditions[BTP_CONDITIONS];
 } BtpEventNode;
 typedef struct {
     unsigned loaded,map_count,tile_count,person_count,shop_count,battle_count,node_count,flag_count;
     unsigned version,local_count,jigsaw_count,world_count,explore_cells,objective_count;
     BtpObjective objectives[BTP_OBJECTIVES];
+    unsigned mission_state,variable_count,region_count;
+    BtpMissionVariable variables[BTP_VARIABLES];
+    BtpMissionRegion regions[BTP_REGIONS];
     BtpAuthoredWorld worlds[BTP_WORLDS];
     uint8_t source_digest[32];
     unsigned start_map,start_x,start_y,start_event,credits,party_count;

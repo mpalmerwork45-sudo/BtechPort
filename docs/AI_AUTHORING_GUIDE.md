@@ -1,8 +1,8 @@
 # Authoring games with commands
 
-**Verified through 2026-10-20:** AI5 adds reviewed changes, protected human
-content and local sessions attached to the open editor. See
-[verification and remaining limits](TESTING.md#ai5-collaborative-authoring--2026-10-20).
+**Verified through 2026-10-20:** AI6a adds regions, typed persistent variables,
+explicit objectives and compound conditions, alongside AI5's protected edits
+and local sessions. See [verification and remaining limits](TESTING.md#ai6a-mission-state-and-editor-repairs--2026-10-20).
 
 The Construction Kit now supports a model-independent, display-independent
 authoring CLI. It edits ordinary projects through the same document,
@@ -11,7 +11,7 @@ The editor remains fully available. Games require no AI service.
 
 This implements **AI1/AI2**, the discovery workflow from **AI3**, bounded
 mission analysis/testing from **AI4**, and the collaborative workflow from
-**AI5**. Arbitrary mission simulation, additional engine mechanics and larger
+**AI5**, and **AI6a** mission state. Arbitrary mission simulation, further engine mechanics and larger
 campaign capacity remain future work. There is no background model or network
 service to configure.
 
@@ -81,6 +81,23 @@ To launch the supplied example, open the launcher and select
 
 Run that from the repository root so normal CHI resource defaults resolve.
 The generated example is separate from the user's improved Last Beacon.
+
+For a region-based mission, use
+[Argent Recovery](../examples/argent-recovery/README.md). Reproduce it with
+`python3 tools/mission_demo.py --output work/my-argent-recovery`.
+It records the normal command batch and includes six tested success/failure,
+repeat-visit and battle routes. The editor's **Region** drawing tool and
+**Mission state** tab edit the same `regions`/`variables` collections available
+to `object.put`/`object.patch`; state objectives and `check` events use the
+ordinary objective/event editors.
+
+Read [Mission state](MISSION_STATE.md) before writing these definitions.
+Region rectangles use local tile coordinates; movement uses half-tiles.
+The reference defines event order, once/repeat behavior, counter bounds,
+terminal objectives, bounded Lua queries and saved pending triggers.
+Scenario assertions include `variable`, `region` and objective state
+`inactive`/`active`/`complete`/`failed`. Reinforcements and escort actors are
+not part of AI6a.
 
 ## Edit an existing project
 

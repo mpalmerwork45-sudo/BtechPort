@@ -1,0 +1,53 @@
+{
+  "format": "btp-author-scenario-v1",
+  "max_ticks": 120000,
+  "steps": [
+    {
+      "op": "pages"
+    },
+    {
+      "op": "input",
+      "action": "up",
+      "repeat": 20
+    },
+    {
+      "op": "input",
+      "action": "right",
+      "repeat": 40
+    },
+    {
+      "op": "input",
+      "action": "down",
+      "repeat": 16
+    },
+    {
+      "op": "enter"
+    },
+    {
+      "op": "choose",
+      "label": "Engage"
+    },
+    {
+      "op": "checkpoint"
+    },
+    {
+      "op": "battle",
+      "control": "retreat"
+    },
+    {
+      "op": "checkpoint"
+    },
+    {
+      "op": "pages"
+    },
+    {
+      "op": "assert",
+      "battle_outcome": "retreat",
+      "objective": "recovery:extract",
+      "status": "active"
+    },
+    {
+      "op": "checkpoint"
+    }
+  ]
+}

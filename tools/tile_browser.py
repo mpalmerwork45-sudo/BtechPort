@@ -5,7 +5,7 @@ import json
 import tkinter as tk
 from tkinter import ttk
 from editor_model import EditorError,ProjectDocument,encoded
-from editor_session import guard,visible_parent,scope_of,apply_draft
+from editor_session import guard,visible_parent,scope_of,apply_draft,modal
 from tile_editing import create_tile,clone_sheet,ensure_tile,tile,select_tile,edit_pixels,metadata,sheet_graphics
 from tile_animation import tile_loop,loop_label
 
@@ -23,7 +23,7 @@ class TileBrowser:
         if not isinstance(self.memory.get('views'),dict):self.memory['views']={}
         self.window=tk.Toplevel(visible_parent(form or maps));self.window.title('Choose tile graphic')
         self.window.transient(visible_parent(form or maps));self.window.geometry('760x650');self.window.minsize(560,410)
-        self.previous_grab=self.window.grab_current();self.window.grab_set()
+        modal(self.window)
         self.window.protocol('WM_DELETE_WINDOW',self.close);self.window.bind('<Escape>',lambda _:self.close())
         self.window.bind('<Destroy>',self.destroyed,add='+')
         self.status=tk.StringVar();self.selected=None;self.keys=[];self.columns=12;self.cell=54
@@ -91,7 +91,6 @@ class TileBrowser:
         if event.widget is self.window:
             if self.timer:self.window.after_cancel(self.timer);self.timer=None
             if self.position_job:self.window.after_cancel(self.position_job);self.position_job=None
-            if self.previous_grab is not None and self.previous_grab.winfo_exists():self.previous_grab.grab_set()
     def close(self):
         if self.window.winfo_exists():
             self.remember_view()
@@ -248,6 +247,5 @@ class TileBrowser:
     def context(self,event):
         self.click(event);menu=tk.Menu(self.window,tearoff=False)
         for label,callback in [('Use tile',self.use),('Add new tile',self.new),('Clone tile',self.clone),('Edit pixels',self.edit),('Tile properties',self.properties),('Remove',self.remove)]:menu.add_command(label=label,command=lambda f=callback:guard(self,f))
-        try:menu.tk_popup(event.x_root,event.y_root)
-        finally:
-            if self.window.winfo_exists():menu.grab_release();self.window.grab_set()
+        from editor_ui import popup_menu
+        popup_menu(menu,event)

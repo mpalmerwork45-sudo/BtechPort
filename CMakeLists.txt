@@ -22,6 +22,7 @@ target_sources(btp_core PRIVATE port/data/json.c port/data/definitions.c)
 target_sources(btp_core PRIVATE port/data/digest.c port/data/project.c port/data/file.c)
 target_sources(btp_core PRIVATE port/data/adventure.c port/core/events.c)
 target_sources(btp_core PRIVATE port/core/authored_services.c)
+target_sources(btp_core PRIVATE port/core/mission_state.c)
 target_sources(btp_core PRIVATE port/data/independent.c port/core/lua_events.c)
 target_sources(btp_core PRIVATE port/data/art.c)
 # Vendored Lua core only: libraries exposing files, OS or dynamic modules are
@@ -117,6 +118,22 @@ endif()
 set(DART_TESTING_TIMEOUT 120 CACHE STRING "Bound each headless comparison" FORCE)
 include(CTest)
 if(BUILD_TESTING)
+  add_executable(btp-mission-state-tests tests/test_mission_state.c)
+  target_link_libraries(btp-mission-state-tests PRIVATE btp_core)
+  add_test(NAME authored-mission-state COMMAND btp-mission-state-tests "${PROJECT_SOURCE_DIR}/examples/beacon-demo")
+  foreach(route success abandon repeat retreat combat-win combat-loss)
+    set(artifacts "${CMAKE_CURRENT_BINARY_DIR}/extraction-${route}")
+    file(MAKE_DIRECTORY "${artifacts}")
+    add_test(NAME extraction-${route} COMMAND btp-author-playtest
+      --project "${PROJECT_SOURCE_DIR}/examples/argent-recovery"
+      --scenario "${PROJECT_SOURCE_DIR}/examples/authoring/extraction/${route}.json"
+      --artifacts "${artifacts}"
+      --data "${PROJECT_SOURCE_DIR}/Original DOS"
+      --dialogue-data "${PROJECT_SOURCE_DIR}/work/talk-data.bin"
+      --combat-data "${PROJECT_SOURCE_DIR}/work/combat-data.bin"
+      --world-data "${PROJECT_SOURCE_DIR}/work/world-data.bin")
+    set_tests_properties(extraction-${route} PROPERTIES WORKING_DIRECTORY "${artifacts}" TIMEOUT 45)
+  endforeach()
   file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/authoring-scenario")
   add_test(NAME authoring-relay-contract COMMAND btp-author-playtest
     --project "${PROJECT_SOURCE_DIR}/examples/relay-contract"

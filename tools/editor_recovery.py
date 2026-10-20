@@ -30,6 +30,7 @@ ROUTES={
  'PatternLibrary': 'rename',
  'EventGraph': 'link branch',
  'ObjectiveEditor': 'edit',
+ 'MissionEditor': 'edit',
  'LibraryBrowser': 'new',
  'Changes': 'protection_form',
 }
@@ -138,11 +139,12 @@ def open_route(scope,route,cache=None):
         from graphics_editor import open_image_editor
         image=next(i for i in scope.document.art['images'] if i['id']==ident)
         view=open_image_editor(owner.graphics_editor(),image)
-    elif kind in ('maps','world','events','jigsaw','objectives','construction','patterns'):
+    elif kind in ('maps','world','events','jigsaw','objectives','construction','patterns','mission'):
         owner.edit_adventure();maps=owner.map_editor
         if kind=='maps':view=maps
         elif kind=='events':view=maps.event_graph()
         elif kind=='objectives':view=maps.event_graph().objectives()
+        elif kind=='mission':view=maps.missions()
         elif kind=='construction':view=maps.construction(ident)
         elif kind=='patterns':view=maps.patterns()
         else:

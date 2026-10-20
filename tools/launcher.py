@@ -25,6 +25,7 @@ GAMES={'Original':'Original CHI campaign with the original roster.',
        'My project':'Choose your own game project folder.'}
 PROJECTS={'BattleTech demo':ROOT/'examples/battletech-demo',
           'Relay Contract (command-created)':ROOT/'examples/relay-contract',
+          'Argent Recovery (regions / objectives)':ROOT/'examples/argent-recovery',
           'Vehicle proving ground':ROOT/'examples/vehicle-lab',
           'Independent demo':ROOT/'examples/beacon-demo'}
 

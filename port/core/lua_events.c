@@ -1,5 +1,6 @@
 #include "core/lua_events.h"
 #include "data/project.h"
+#include "core/mission_state.h"
 #include "lua.h"
 #include "lauxlib.h"
 #include <stdlib.h>
@@ -24,6 +25,32 @@ static int flag(lua_State *l)
     return luaL_error(l,"unknown flag: %s",id);
 }
 static int credits(lua_State *l) { lua_pushinteger(l,host(l)->s->credits);return 1; }
+static int variable(lua_State *l)
+{
+    Host *h=host(l);const char *id=luaL_checkstring(l,1);const BtpAdventure *a=&h->r->project->adventure;
+    for (unsigned i=0;i<a->variable_count;++i) if (!strcmp(a->variables[i].id,id)) {
+        if (a->variables[i].boolean) lua_pushboolean(l,h->s->event.variables[i]!=0);
+        else lua_pushinteger(l,h->s->event.variables[i]);
+        return 1;
+    }
+    return luaL_error(l,"unknown variable: %s",id);
+}
+static int objective(lua_State *l)
+{
+    Host *h=host(l);const char *id=luaL_checkstring(l,1);const BtpAdventure *a=&h->r->project->adventure;
+    for (unsigned i=0;i<a->objective_count;++i) if (!strcmp(a->objectives[i].id,id)) {
+        lua_pushstring(l,btp_objective_name(btp_objective_state(h->s,a,i)));return 1;
+    }
+    return luaL_error(l,"unknown objective: %s",id);
+}
+static int in_region(lua_State *l)
+{
+    Host *h=host(l);const char *id=luaL_checkstring(l,1);const BtpAdventure *a=&h->r->project->adventure;
+    for (unsigned i=0;i<a->region_count;++i) if (!strcmp(a->regions[i].id,id)) {
+        lua_pushboolean(l,btp_mission_region(h->s,a,i));return 1;
+    }
+    return luaL_error(l,"unknown region: %s",id);
+}
 static int command(lua_State *l)
 {
     Host *h=host(l);const BtpAdventure *a=&h->r->project->adventure;const BtpEventNode *e=&a->nodes[h->s->event.node];
@@ -37,9 +64,12 @@ static int execute(lua_State *l)
     const BtpLuaScript *source=&p->scripts[e->argument];
     /* No standard libraries are opened: only immutable queries and declared
        command continuations enter the VM. A new bounded VM is used per call. */
-    lua_createtable(l,0,3);
+    lua_createtable(l,0,6);
     lua_pushcfunction(l,flag);lua_setfield(l,-2,"flag");
     lua_pushcfunction(l,credits);lua_setfield(l,-2,"credits");
+    lua_pushcfunction(l,variable);lua_setfield(l,-2,"variable");
+    lua_pushcfunction(l,objective);lua_setfield(l,-2,"objective");
+    lua_pushcfunction(l,in_region);lua_setfield(l,-2,"in_region");
     lua_pushcfunction(l,command);lua_setfield(l,-2,"command");lua_setglobal(l,"game");
     if (luaL_loadbufferx(l,source->source,source->length,source->id,"t")!=LUA_OK) return lua_error(l);
     lua_call(l,0,1);return 1;

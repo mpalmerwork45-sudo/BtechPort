@@ -148,6 +148,7 @@ class AdventureEditor:
         self.drag = None
         self.paint_start = self.paint_last = None
         self.selection_rect = self.clipboard = None
+        self.region_drag=False
         self.paste_as_overlay=False;self.paste_name='Pattern';self.road_profile=None;self.road_width=1
         self.world_editor = self.art_editor = None
         self.selected_marker = None
@@ -258,6 +259,7 @@ class AdventureEditor:
             menu.add_cascade(label=title,menu=submenu)
         menu.add_separator();menu.add_command(label='Reload graphics',command=self.reload_graphics);menu.add_command(label='Player setup',command=self.parent.setup)
         ttk.Button(top,text='Pattern Library',command=lambda:self.guard(self.patterns)).pack(side='left',padx=3)
+        ttk.Button(top,text='Mission state',command=lambda:self.guard(self.missions)).pack(side='left',padx=3)
         controls=ttk.Frame(self.map_tab,padding=6);controls.pack(fill="x")
         ttk.Label(controls,text="Paint on").pack(side="left",padx=(4,8))
         self.layer_choice=ttk.Combobox(controls,state="readonly",width=16,values=["Visible tiles","Base"]);self.layer_choice.current(0);self.layer_choice.pack(side="left")
@@ -288,6 +290,7 @@ class AdventureEditor:
             ('Markers', [('Move markers','Move markers','Drag an existing entrance, person, encounter or start marker.'),
                          ('Entrance','Entrance','Click to add a building entrance.'),('NPC','NPC','Click to add a person.'),
                          ('Encounter','Encounter','Click to add an encounter.'),('Start','Start','Click to set the party starting position.'),
+                         ('Region','Region','Drag a named mission region; choose enter/leave events in its form.'),
                          ('Play here','Play here','Click to playtest from this location.')])],lambda _:self.guard(self.choose_drawing_tool))
         self.drawing_tools.pack(fill='x')
         from construction_tools import MapConstructionTools
@@ -493,6 +496,11 @@ class AdventureEditor:
         if self.selection_rect:
             x0,y0,x1,y1=self.selection_rect
             self.canvas.create_rectangle(x0*size,y0*size,(x1+1)*size,(y1+1)*size,outline="#8ee4e8",width=3)
+        for region in self.adventure.get('regions',[]):
+            if region['map']!=scene['id']:continue
+            x,y,w,h=region['rect']
+            self.canvas.create_rectangle(x*size,y*size,(x+w)*size,(y+h)*size,outline='#ffc177',width=2,dash=(5,3),tags='mission-region')
+            self.canvas.create_text(x*size+4,y*size+4,anchor='nw',text=region['name'],fill='#ffc177',tags='mission-region')
         if self.paint_layer()>0:
             layer=scene["overlays"][self.paint_layer()-1];ox,oy=layer["at"]
             self.canvas.create_rectangle(ox*size,oy*size,(ox+len(layer["rows"][0]))*size,(oy+len(layer["rows"]))*size,outline="#edcc75",width=3)
@@ -603,8 +611,8 @@ class AdventureEditor:
                 except Exception:self.stroke=None;raise
             else:draw_tiles(target,layer,self.paint_start if tool in ("Line","Rectangle") else self.paint_last,(x,y),key,tool)
             self.paint_last=(x,y);self.draw()
-        elif tool=="Select":
-            if first:self.paint_start=(x,y)
+        elif tool in ("Select","Region"):
+            if first:self.paint_start=(x,y);self.region_drag=tool=='Region'
             if self.paint_start:
                 x0,x1=sorted((self.paint_start[0],x));y0,y1=sorted((self.paint_start[1],y));self.selection_rect=(x0,y0,x1,y1);self.draw()
         elif first:
@@ -655,6 +663,10 @@ class AdventureEditor:
         from editor_workspace import open_view
         view=open_view(self,'patterns',lambda:PatternLibrary(self));view.target=self;return view
 
+    def missions(self):
+        from mission_editor import open_missions
+        return open_missions(self)
+
     def construction(self,kind='Building'):
         from construction_editor import ConstructionEditor
         from editor_workspace import open_view
@@ -671,6 +683,12 @@ class AdventureEditor:
         self.art_editor=self.parent.graphics_editor()
 
     def finish_stroke(self):
+        if self.region_drag:
+            self.region_drag=False
+            if self.selection_rect:
+                x,y,x1,y1=self.selection_rect
+                self.missions().edit('regions',new=True,rect=[x,y,x1-x+1,y1-y+1],map_id=self.scene()['id'])
+            return
         if self.construction_tools.stroke is not None:self.construction_tools.finish();return
         if self.stroke is not None:
             a=self.stroke;drag=self.drag;self.stroke=None;self.drag=None
@@ -683,6 +701,8 @@ class AdventureEditor:
                 commit_tiles(self.document,a);self.refresh()
 
     def cancel_gesture(self):
+        if self.region_drag:
+            self.region_drag=False;self.paint_start=None;self.selection_rect=None;self.draw();return
         if self.construction_tools.stroke is not None:self.construction_tools.cancel()
         elif self.stroke is not None:
             self.stroke=None;self.drag=None
@@ -750,8 +770,8 @@ class AdventureEditor:
         item=self.brush.identify_row(event.y)
         if not item:return
         self.brush.selection_set(item);self.select_brush()
-        try:self.tile_menu.tk_popup(event.x_root,event.y_root)
-        finally:self.tile_menu.grab_release()
+        from editor_ui import popup_menu
+        popup_menu(self.tile_menu,event)
 
     def edit_tile_pixels(self,map_context=None):
         self.edit_graphics();return self.art_editor.edit_map_tile(map_context)
@@ -776,8 +796,8 @@ class AdventureEditor:
         if self.tool.get() in ('Building','Wall','Road'):
             def erase():self.pointer(event,True,erase=True);self.finish_stroke()
             menu.add_separator();menu.add_command(label='Erase footprint here',command=lambda:self.guard(erase))
-        try:menu.tk_popup(event.x_root,event.y_root)
-        finally:menu.grab_release()
+        from editor_ui import popup_menu
+        popup_menu(menu,event)
 
     def new_overlay(self): self.overlay_dialog()
     def layer_properties(self):
@@ -1029,8 +1049,28 @@ class AdventureEditor:
             field("image",e.get("image","none"),(["none"] if e["op"]!="picture" else [])+[im["id"] for im in self.document.art["images"] if e["op"]=="picture" or (im["width"]<=88 and im["height"]<=88)])
         for key in ("next","failure","unchanged","then","else","cancel","win","loss","flee"):
             if key in e:field(key,e[key],events)
-        for key,collection in [("flag","flags"),("person","people"),("map","maps"),("shop","shops"),("encounter","encounters")]:
-            if key in e:field(key,e[key],[v if isinstance(v,str) else v["id"] for v in self.adventure[collection]])
+        for key,collection in [("flag","flags"),("person","people"),("map","maps"),("shop","shops"),("encounter","encounters"),("variable","variables"),("objective","objectives")]:
+            if key in e:field(key,e[key],[v if isinstance(v,str) else v["id"] for v in self.adventure.get(collection,[])])
+        if e['op']=='variable':
+            field('action',e['action'],['set','add','subtract']);field('once',e['once'],['0','1'])
+        if e['op']=='objective':field('state',e['state'],['inactive','active','complete','failed'])
+        if e['op']=='check':
+            field('match',e['match'],['all','any'])
+            field('condition_count',len(e['conditions']),[str(i) for i in range(1,9)])
+            for i in range(8):
+                condition=e['conditions'][i] if i<len(e['conditions']) else dict(kind='flag',id='',compare='eq',value=1)
+                prefix=f'condition_{i+1}_'
+                kind=field(prefix+'kind',condition['kind'],['flag','variable','objective','region'])
+                refs={'flag':'flags','variable':'variables','objective':'objectives','region':'regions'}
+                def choices(k):return [v if isinstance(v,str) else v['id'] for v in self.adventure.get(refs[k],[])]
+                ref=field(prefix+'id',condition['id'],choices(condition['kind']))
+                compare=field(prefix+'compare',condition['compare'],['eq','ne','lt','le','gt','ge'])
+                field(prefix+'value',condition['value'])
+                def change_kind(_,p=prefix,control=ref):
+                    k=self.event_vars[p+'kind'].get();values=choices(k);control.configure(values=values)
+                    self.event_vars[p+'id'].set(values[0] if values else '')
+                    self.event_vars[p+'compare'].set('eq');self.event_vars[p+'value'].set('active' if k=='objective' else '1')
+                kind.bind('<<ComboboxSelected>>',change_kind)
         if 'mech' in e:field('mech',e['mech'],[v['id'] for v in self.document.content['mechs']])
         if e['op'] in ('repair','rearm','heal'):
             field('slot',str(e['slot']+1) if 'slot' in e else 'All',['All']+[str(i+1) for i in range(8 if e['op']=='heal' else 4)])
@@ -1052,11 +1092,11 @@ class AdventureEditor:
     def apply_event(self):
         if not self.event_id:return
         e=copy.deepcopy(self.event_draft);values={k:v.get() for k,v in self.event_vars.items()}
-        e.update({k:values[k] for k in e if k not in ("text","options","routes","at") and k in values})
+        e.update({k:values[k] for k in e if k not in ("text","options","routes","at","conditions") and k in values})
         def integer(key):
             try:return int(values[key])
             except ValueError:raise FieldError(key.replace('_',' ').capitalize()+' must be a whole number.',key)
-        for key in ("value","credits","cost"):
+        for key in ("value","credits","cost","once"):
             if key in e:e[key]=integer(key)
         if e['op'] in ('repair','rearm','heal'):
             if values['slot']=='All':e.pop('slot',None)
@@ -1065,6 +1105,12 @@ class AdventureEditor:
         if "at" in e:e["at"]=[integer('x'),integer('y')]
         if e["op"]=="choice":e["options"]=[dict(label=values[f"label_{i+1}"],next=values[f"choice_{i+1}"]) for i in range(int(values["choice_count"]))]
         if e["op"]=="lua":e["routes"]=[values[f"route_{i+1}"] for i in range(int(values["route_count"]))]
+        if e['op']=='check':
+            e['conditions']=[]
+            for i in range(integer('condition_count')):
+                p=f'condition_{i+1}_';c={k:values[p+k] for k in ('kind','id','compare','value')}
+                if c['kind']!='objective':c['value']=integer(p+'value')
+                e['conditions'].append(c)
         a=copy_adventure(self.document);index=next(i for i,v in enumerate(a["events"]) if v["id"]==self.event_id)
         if "image" in values:
             if values["image"]!="none":upgrade(a);e["image"]=values["image"]

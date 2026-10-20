@@ -1,0 +1,1949 @@
+{
+  "api_version": 1,
+  "request_id": "argent-recovery-ai6a",
+  "project_id": "argent-recovery",
+  "expected_revision": "d4f67ddb8db24c351a2dddcf780ddea54be088069f24248b2750172bd1151a99",
+  "label": "Create Argent Recovery mission",
+  "scope": [
+    "adventure"
+  ],
+  "operations": [
+    {
+      "op": "object.remove",
+      "collection": "maps",
+      "id": "relay:town"
+    },
+    {
+      "op": "object.remove",
+      "collection": "maps",
+      "id": "relay:field"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "frontier:grass"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "frontier:road"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "frontier:roof"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "frontier:door"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "frontier:forest"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "frontier:water"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-1"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-2"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-3"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-4"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-5"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-6"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-7"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-8"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-9"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-10"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-11"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-12"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-13"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-14"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-15"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-16"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-17"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-18"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-19"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-20"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-21"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-22"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-23"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-24"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-25"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-26"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-27"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-28"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-29"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-30"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-31"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-32"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-33"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-34"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-35"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-36"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-37"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-38"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-39"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-40"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-41"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-42"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-43"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-44"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-45"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-46"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-47"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-48"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-49"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-50"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-51"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-52"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-53"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-54"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-55"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-56"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-57"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-58"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-59"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-60"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-61"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-62"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-63"
+    },
+    {
+      "op": "object.remove",
+      "collection": "tiles",
+      "id": "relay-contract:tile-64"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "relay:end"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "relay:welcome"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "relay:offer"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "relay:accept"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "relay:briefing"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "relay:office"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "relay:accepted-check"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "relay:receipt"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "relay:pay"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "relay:paid"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "relay:thanks"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "relay:debrief"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "relay:finish"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "relay:to-field"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "relay:to-town"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "relay:challenge"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "relay:challenge-offer"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "relay:battle"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "relay:won"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "relay:clear-text"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "relay:lost"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "relay:retreated"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "relay:unavailable"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "relay:workshop"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "relay:shop"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "relay:repair"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "relay:repaired"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "relay:no-funds"
+    },
+    {
+      "op": "object.remove",
+      "collection": "events",
+      "id": "relay:no-work"
+    },
+    {
+      "op": "object.remove",
+      "collection": "encounters",
+      "id": "relay:raider"
+    },
+    {
+      "op": "object.remove",
+      "collection": "objectives",
+      "id": "relay:contract"
+    },
+    {
+      "op": "object.remove",
+      "collection": "shops",
+      "id": "relay:stock"
+    },
+    {
+      "op": "object.put",
+      "collection": "maps",
+      "value": {
+        "id": "recovery:valley",
+        "name": "Argent Valley",
+        "origin": [
+          0,
+          0
+        ],
+        "rows": [
+          [
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass"
+          ],
+          [
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass"
+          ],
+          [
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass"
+          ],
+          [
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass"
+          ],
+          [
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass"
+          ],
+          [
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass"
+          ],
+          [
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass"
+          ],
+          [
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:pad",
+            "recovery:pad",
+            "recovery:pad",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass"
+          ],
+          [
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:pad",
+            "recovery:pad",
+            "recovery:pad",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass"
+          ],
+          [
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:pad",
+            "recovery:pad",
+            "recovery:pad",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass"
+          ],
+          [
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass"
+          ],
+          [
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:pad",
+            "recovery:pad",
+            "recovery:pad",
+            "recovery:road",
+            "recovery:road",
+            "recovery:road",
+            "recovery:road",
+            "recovery:pad",
+            "recovery:pad",
+            "recovery:pad",
+            "recovery:road",
+            "recovery:road",
+            "recovery:road",
+            "recovery:road",
+            "recovery:road",
+            "recovery:pad",
+            "recovery:pad",
+            "recovery:pad",
+            "recovery:road",
+            "recovery:road",
+            "recovery:road",
+            "recovery:road",
+            "recovery:road",
+            "recovery:road",
+            "recovery:road",
+            "recovery:road",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass"
+          ],
+          [
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:pad",
+            "recovery:pad",
+            "recovery:pad",
+            "recovery:road",
+            "recovery:road",
+            "recovery:road",
+            "recovery:road",
+            "recovery:pad",
+            "recovery:pad",
+            "recovery:pad",
+            "recovery:road",
+            "recovery:road",
+            "recovery:road",
+            "recovery:road",
+            "recovery:road",
+            "recovery:pad",
+            "recovery:pad",
+            "recovery:pad",
+            "recovery:road",
+            "recovery:road",
+            "recovery:road",
+            "recovery:road",
+            "recovery:road",
+            "recovery:road",
+            "recovery:road",
+            "recovery:road",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass"
+          ],
+          [
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:pad",
+            "recovery:pad",
+            "recovery:pad",
+            "recovery:road",
+            "recovery:road",
+            "recovery:road",
+            "recovery:road",
+            "recovery:pad",
+            "recovery:pad",
+            "recovery:pad",
+            "recovery:road",
+            "recovery:road",
+            "recovery:road",
+            "recovery:road",
+            "recovery:road",
+            "recovery:pad",
+            "recovery:pad",
+            "recovery:pad",
+            "recovery:road",
+            "recovery:road",
+            "recovery:road",
+            "recovery:road",
+            "recovery:road",
+            "recovery:road",
+            "recovery:road",
+            "recovery:road",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass"
+          ],
+          [
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass"
+          ],
+          [
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass"
+          ],
+          [
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass"
+          ],
+          [
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass"
+          ],
+          [
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:pad",
+            "recovery:pad",
+            "recovery:pad",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass"
+          ],
+          [
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:pad",
+            "recovery:pad",
+            "recovery:pad",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass"
+          ],
+          [
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:pad",
+            "recovery:pad",
+            "recovery:pad",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass"
+          ],
+          [
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass"
+          ],
+          [
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass"
+          ],
+          [
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass",
+            "recovery:grass"
+          ]
+        ],
+        "overlays": [],
+        "entrances": [
+          {
+            "id": "recovery:raider-marker",
+            "name": "Raider patrol",
+            "at": [
+              52,
+              24
+            ],
+            "event": "recovery:raider-choice"
+          }
+        ]
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "tiles",
+      "value": {
+        "id": "recovery:grass",
+        "sheet": "chi:land",
+        "graphic": 64,
+        "terrain": "clear",
+        "mini_color": 2
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "tiles",
+      "value": {
+        "id": "recovery:road",
+        "sheet": "chi:land",
+        "graphic": 82,
+        "terrain": "clear",
+        "mini_color": 7
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "tiles",
+      "value": {
+        "id": "recovery:pad",
+        "sheet": "chi:land",
+        "graphic": 72,
+        "terrain": "clear",
+        "mini_color": 14
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "recovery:end",
+        "op": "end"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "recovery:briefing",
+        "op": "say",
+        "portrait": "training",
+        "text": "Argent Recovery. Two data caches lie east along the road. Survey the relay north of the road, then return to the western landing pad. Your Phoenix Hawk and Trebuchet can challenge the raider in the east. The southern pad abandons the contract.",
+        "next": "recovery:end"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "recovery:error",
+        "op": "say",
+        "text": "Mission command rejected. No counter or terminal objective was changed.",
+        "next": "recovery:end"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "recovery:collect-west",
+        "op": "variable",
+        "variable": "recovery:data",
+        "action": "add",
+        "value": 1,
+        "once": 1,
+        "next": "recovery:count-data",
+        "failure": "recovery:error"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "recovery:collect-east",
+        "op": "variable",
+        "variable": "recovery:data",
+        "action": "add",
+        "value": 1,
+        "once": 1,
+        "next": "recovery:count-data",
+        "failure": "recovery:error"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "recovery:count-data",
+        "op": "check",
+        "match": "all",
+        "conditions": [
+          {
+            "kind": "variable",
+            "id": "recovery:data",
+            "compare": "eq",
+            "value": 2
+          }
+        ],
+        "then": "recovery:collected",
+        "else": "recovery:one-cache"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "recovery:collected",
+        "op": "objective",
+        "objective": "recovery:collect",
+        "state": "complete",
+        "next": "recovery:two-caches",
+        "failure": "recovery:error"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "recovery:one-cache",
+        "op": "say",
+        "text": "First cache uploaded. One more remains along the road to the east.",
+        "next": "recovery:end"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "recovery:two-caches",
+        "op": "say",
+        "text": "Both caches secured. Survey the northern relay, then bring the data to the western pad.",
+        "next": "recovery:end"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "recovery:survey",
+        "op": "variable",
+        "variable": "recovery:surveyed",
+        "action": "set",
+        "value": 1,
+        "once": 1,
+        "next": "recovery:survey-complete",
+        "failure": "recovery:error"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "recovery:survey-complete",
+        "op": "objective",
+        "objective": "recovery:survey",
+        "state": "complete",
+        "next": "recovery:survey-message",
+        "failure": "recovery:error"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "recovery:survey-message",
+        "op": "say",
+        "text": "Relay survey complete. The landing pad can now authenticate both data caches.",
+        "next": "recovery:end"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "recovery:pad-enter",
+        "op": "variable",
+        "variable": "recovery:visits",
+        "action": "add",
+        "value": 1,
+        "once": 0,
+        "next": "recovery:extract-check",
+        "failure": "recovery:error"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "recovery:pad-leave",
+        "op": "variable",
+        "variable": "recovery:departures",
+        "action": "add",
+        "value": 1,
+        "once": 0,
+        "next": "recovery:end",
+        "failure": "recovery:error"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "recovery:extract-check",
+        "op": "check",
+        "match": "all",
+        "conditions": [
+          {
+            "kind": "variable",
+            "id": "recovery:data",
+            "compare": "eq",
+            "value": 2
+          },
+          {
+            "kind": "variable",
+            "id": "recovery:surveyed",
+            "compare": "eq",
+            "value": 1
+          },
+          {
+            "kind": "objective",
+            "id": "recovery:extract",
+            "compare": "eq",
+            "value": "active"
+          },
+          {
+            "kind": "region",
+            "id": "recovery:landing-pad",
+            "compare": "eq",
+            "value": 1
+          }
+        ],
+        "then": "recovery:lua-check",
+        "else": "recovery:not-ready"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "recovery:not-ready",
+        "op": "say",
+        "text": "Extraction requires both caches and the northern relay survey. Follow the road east; the relay is above its midpoint.",
+        "next": "recovery:end"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "recovery:lua-check",
+        "op": "lua",
+        "script": "recovery:verify",
+        "routes": [
+          "recovery:extract-complete",
+          "recovery:error"
+        ],
+        "failure": "recovery:error"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "recovery:extract-complete",
+        "op": "objective",
+        "objective": "recovery:extract",
+        "state": "complete",
+        "next": "recovery:payment",
+        "failure": "recovery:error"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "recovery:payment",
+        "op": "reward",
+        "credits": 4000,
+        "next": "recovery:success",
+        "failure": "recovery:error"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "recovery:success",
+        "op": "finish",
+        "text": "The DropShip lifts off with both caches. Argent Recovery completed. Your lance receives 4,000 credits. Press Space to finish."
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "recovery:abandon",
+        "op": "objective",
+        "objective": "recovery:extract",
+        "state": "failed",
+        "next": "recovery:abandoned",
+        "failure": "recovery:error"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "recovery:abandoned",
+        "op": "finish",
+        "text": "You withdraw without the data. The extraction contract has failed. Your surviving lance can seek another employer."
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "recovery:raider-choice",
+        "op": "choice",
+        "text": "A raider guards the eastern approach. Engage?",
+        "options": [
+          {
+            "label": "Engage",
+            "next": "recovery:battle"
+          },
+          {
+            "label": "Leave",
+            "next": "recovery:end"
+          }
+        ],
+        "cancel": "recovery:end"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "recovery:battle",
+        "op": "battle",
+        "encounter": "recovery:raider",
+        "win": "recovery:raider-win",
+        "loss": "recovery:abandon",
+        "flee": "recovery:raider-retreat",
+        "failure": "recovery:error"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "recovery:raider-win",
+        "op": "say",
+        "text": "The eastern approach is clear. Recover the data and return to the landing pad.",
+        "next": "recovery:end"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "events",
+      "value": {
+        "id": "recovery:raider-retreat",
+        "op": "say",
+        "text": "Your lance breaks contact. The caches and relay remain available; retreat from this skirmish does not cancel the contract.",
+        "next": "recovery:end"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "encounters",
+      "value": {
+        "id": "recovery:raider",
+        "map": "recovery:valley",
+        "party_at": [
+          12,
+          24
+        ],
+        "enemies": [
+          {
+            "kind": "mech",
+            "definition": "chi-expanded:jenner-jr7-d",
+            "at": [
+              42,
+              22
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "objectives",
+      "value": {
+        "id": "recovery:collect",
+        "title": "Recover two caches",
+        "text": "Cross both marked caches on the east road. Each cache counts once.",
+        "initial": "active"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "objectives",
+      "value": {
+        "id": "recovery:survey",
+        "title": "Survey the relay",
+        "text": "Reach the marked relay north of the road.",
+        "initial": "active"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "objectives",
+      "value": {
+        "id": "recovery:extract",
+        "title": "Extract the data",
+        "text": "With both caches and the survey, return to the western landing pad. The southern pad abandons this contract.",
+        "initial": "active"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "variables",
+      "value": {
+        "id": "recovery:data",
+        "name": "Recovered data caches",
+        "type": "counter",
+        "initial": 0,
+        "maximum": 2
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "variables",
+      "value": {
+        "id": "recovery:visits",
+        "name": "Landing pad visits",
+        "type": "counter",
+        "initial": 0,
+        "maximum": 1000000
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "variables",
+      "value": {
+        "id": "recovery:departures",
+        "name": "Landing pad departures",
+        "type": "counter",
+        "initial": 0,
+        "maximum": 1000000
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "variables",
+      "value": {
+        "id": "recovery:surveyed",
+        "name": "Relay surveyed",
+        "type": "boolean",
+        "initial": 0
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "regions",
+      "value": {
+        "id": "recovery:landing-pad",
+        "name": "Extraction pad",
+        "map": "recovery:valley",
+        "rect": [
+          3,
+          11,
+          3,
+          3
+        ],
+        "repeat": "always",
+        "enter": "recovery:pad-enter",
+        "leave": "recovery:pad-leave"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "regions",
+      "value": {
+        "id": "recovery:west-cache",
+        "name": "West cache",
+        "map": "recovery:valley",
+        "rect": [
+          10,
+          11,
+          3,
+          3
+        ],
+        "repeat": "once",
+        "enter": "recovery:collect-west"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "regions",
+      "value": {
+        "id": "recovery:east-cache",
+        "name": "East cache",
+        "map": "recovery:valley",
+        "rect": [
+          18,
+          11,
+          3,
+          3
+        ],
+        "repeat": "once",
+        "enter": "recovery:collect-east"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "regions",
+      "value": {
+        "id": "recovery:relay",
+        "name": "Survey relay",
+        "map": "recovery:valley",
+        "rect": [
+          14,
+          7,
+          3,
+          3
+        ],
+        "repeat": "once",
+        "enter": "recovery:survey"
+      }
+    },
+    {
+      "op": "object.put",
+      "collection": "regions",
+      "value": {
+        "id": "recovery:withdrawal",
+        "name": "Abandon contract",
+        "map": "recovery:valley",
+        "rect": [
+          3,
+          18,
+          3,
+          3
+        ],
+        "repeat": "once",
+        "enter": "recovery:abandon"
+      }
+    },
+    {
+      "op": "start.set",
+      "changes": {
+        "map": "recovery:valley",
+        "at": [
+          12,
+          24
+        ],
+        "event": "recovery:briefing",
+        "credits": 5000,
+        "party": [
+          {
+            "person": "relay:rowan",
+            "mech": "chi-expanded:phoenix-hawk-pxh-1"
+          },
+          {
+            "person": "relay:mira",
+            "mech": "chi-expanded:trebuchet-tbt-5n"
+          }
+        ]
+      }
+    }
+  ]
+}

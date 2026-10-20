@@ -107,6 +107,7 @@ RECORD = dict(type='object')
 COLLECTIONS = {
     'maps':'adventure','tiles':'adventure','jigsaws':'adventure','people':'adventure',
     'shops':'adventure','encounters':'adventure','events':'adventure','objectives':'adventure',
+    'variables':'adventure','regions':'adventure',
     'mechs':'content','weapons':'content','equipment':'content','ammunition':'content',
     'presentations':'content','images':'art',
 }

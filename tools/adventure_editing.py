@@ -5,12 +5,12 @@ import math
 from numbers import Real
 from editor_model import EditorError
 
-OPS = ("end", "say", "choice", "if", "flag", "reward", "recruit", "transfer", "shop", "battle", "lua", "finish", "picture", "repair", "rearm", "heal", "salvage")
+OPS = ("end", "say", "choice", "if", "flag", "reward", "recruit", "transfer", "shop", "battle", "lua", "finish", "picture", "repair", "rearm", "heal", "salvage", "variable", "objective", "check")
 
 
 def new_id(document, collection, stem):
     prefix = document.manifest["package_id"]
-    existing = {v["id"] if isinstance(v, dict) else v for v in document.adventure[collection]}
+    existing = {v["id"] if isinstance(v, dict) else v for v in document.adventure.get(collection,[])}
     serial = 1
     while f"{prefix}:{stem}-{serial}" in existing:
         serial += 1
@@ -59,9 +59,9 @@ def event_template(document, op, identity=None):
     event = dict(id=identity or new_id(document, "events", "event"), op=op)
     if op in ("say", "choice", "finish"):
         event.update(text="A new chapter begins.", portrait="none")
-    if op not in ("end", "finish", "choice", "if", "battle", "lua"):
+    if op not in ("end", "finish", "choice", "if", "battle", "lua", "check"):
         event["next"] = end
-    if op in ("reward", "recruit", "transfer", "battle", "lua"):
+    if op in ("reward", "recruit", "transfer", "battle", "lua", "variable", "objective"):
         event["failure"] = end
     if op == "choice": event.update(options=[dict(label="Continue", next=end)], cancel=end)
     if op in ("if", "flag"): event.update(flag=a["flags"][0] if a["flags"] else "", value=1)
@@ -76,6 +76,10 @@ def event_template(document, op, identity=None):
     if op in ('repair','rearm','heal','salvage'):
         event.update(cost=100,next=end,failure=end,unchanged=end)
         if op=='salvage':event['mech']=document.content['mechs'][0]['id']
+    if op=='variable':event.update(variable=next((v['id'] for v in a.get('variables',[])),''),action='set',value=1,once=0)
+    if op=='objective':event.update(objective=next((v['id'] for v in a.get('objectives',[]) if 'initial' in v),''),state='active')
+    if op=='check':
+        event.update(match='all',conditions=[dict(kind='flag',id=a['flags'][0] if a['flags'] else '',compare='eq',value=1)],then=end,**{'else':end})
     return event
 
 
