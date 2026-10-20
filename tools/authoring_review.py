@@ -45,7 +45,9 @@ def selected_request(request,selected=None):
 
 
 def write(folder,record):
-    ProjectDocument.atomic_file(Path(folder)/'review.json',encoded(record))
+    payload=encoded(record)
+    if len(payload)>16*1024*1024:raise AuthoringError('review.too_large','Review exceeds 16 MiB. Split this proposal into smaller batches.')
+    ProjectDocument.atomic_file(Path(folder)/'review.json',payload)
 
 
 def read(folder):
@@ -159,7 +161,13 @@ def prepare(document,request,folder,*,base_dir=None,selected=None,settings=None,
     except Exception as error:
         record['status']='cancelled' if diagnostic(error)['code']=='job.cancelled' else 'failed'
         record['diagnostics'].append(diagnostic(error))
-    write(folder,record)
+    try:write(folder,record)
+    except AuthoringError as error:
+        # Retain the snapshots even if their combined display report is too
+        # large. Never publish a proposal whose review cannot be read back.
+        for key in ('result','result_revision','dependency_before','dependency_after','displaced_details'):record.pop(key,None)
+        record.update(status='failed',changes=[],conflicts=[],artifacts=[],diagnostics=[diagnostic(error)])
+        write(folder,record)
     return record
 
 
@@ -198,7 +206,7 @@ def publish(document,folder,prepared,*,save=False):
             document.__dict__.clear();document.__dict__.update(previous)
             record['status']=prior;write(folder,record);raise
         record.update(status='applied',applied=time.time(),applied_revision=result.get('current_revision',result['result_revision']),
-                      approved_overrides=prepared['overrides'],application=result)
+                      approved_overrides=prepared['overrides'],application={k:v for k,v in result.items() if k in ('status','request_id','base_revision','result_revision','current_revision')})
         write(folder,record)
         return result
 
@@ -243,9 +251,15 @@ def check_candidate(folder,validator,*,settings=None,analyzer=None,runner=None,s
         if cancelled():raise AuthoringError('job.cancelled','Mission check cancelled.')
         result=analyze(candidate,analyzer,settings,output=output/'lint.json')
     if cancelled():raise AuthoringError('job.cancelled','Mission check cancelled; any completed artifacts were retained.')
+    report_file=output/'result.json';ProjectDocument.atomic_file(report_file,encoded(result))
     with project_lock(folder):
         latest=read(folder)
         if latest['result_revision']!=record['result_revision']:raise AuthoringError('review.changed','Proposed content changed during checks.')
-        latest.setdefault('checks',[]).append(dict(kind='suite' if suite else 'mission',revision=record['result_revision'],result=result))
+        # Large suite traces stay in their own artifact. Thirty-two linked
+        # reports must not make the main review record unreadable.
+        concise=dict(status=result['status'],report=str(report_file),diagnostics=[
+            {k:(str(v)[:1000] if k=='message' else v) for k,v in d.items() if k in ('code','severity','message')}
+            for d in result.get('diagnostics',[])[:8]])
+        latest.setdefault('checks',[]).append(dict(kind='suite' if suite else 'mission',revision=record['result_revision'],result=concise))
         write(folder,latest)
     return result

@@ -164,7 +164,8 @@ class AuthoringReview(unittest.TestCase):
         record=review.prepare(self.doc,self.request(),self.root/'review')
         report=review.check_candidate(self.root/'review',TOOL,analyzer=ROOT/'build/btp-author-analyze')
         check=review.read(self.root/'review')['checks'][0]
-        self.assertEqual(check['revision'],record['result_revision']);self.assertEqual(check['result'],report)
+        self.assertEqual(check['revision'],record['result_revision'])
+        self.assertEqual(json.loads(Path(check['result']['report']).read_bytes()),report)
         self.assertEqual(before,self.doc.files())
         candidate=ProjectDocument(self.root/'review/after',TOOL);a=copy.deepcopy(candidate.adventure)
         a['maps'][0]['name']='Changed after review';candidate.replace_adventure(a);candidate.save()

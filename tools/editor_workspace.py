@@ -143,6 +143,8 @@ class Workspace:
         self.recovery=Recovery(self)
         from editor_tasks import Tasks,PlaySession
         self.tasks=Tasks(self);self.play_session=PlaySession(self)
+        from editor_authoring_live import Authoring
+        self.authoring=Authoring(self)
         self.install_actions();self.show_welcome();self.restore_layout()
         window.protocol('WM_DELETE_WINDOW',self.close)
         import traceback
@@ -154,7 +156,7 @@ class Workspace:
         if event.widget is self.window:
             self.closing=True
             if self.timer:self.window.after_cancel(self.timer);self.timer=None
-            self.tasks.shutdown();self.play_session.shutdown()
+            self.authoring.stop();self.tasks.shutdown();self.play_session.shutdown()
 
     def update_busy(self):
         active=any(not job.quiet for job in self.tasks.jobs)
@@ -226,6 +228,7 @@ class Workspace:
             footprint_scroll=[owner.footprint.xview()[0],owner.footprint.yview()[0]],preview_scroll=[owner.preview.xview()[0],owner.preview.yview()[0]])
         elif kind=='patterns':state.update(selected=owner.selected)
         elif kind=='catalogue':state.update(query=owner.query.get(),source=owner.source.get())
+        elif kind=='changes':state.update(folder=str(owner.folder) if owner.folder else None,page=owner.pages.index(owner.pages.select()))
         elif kind=='pixels':
             state.update(frame=owner.frame.current())
             if owner.map_context:state.update(map_context=owner.map_context,show_neighbours=owner.show_neighbours.get())
@@ -260,6 +263,9 @@ class Workspace:
         elif kind=='construction':owner.current=state.get('current');owner.selected_role=state.get('role');owner.refresh()
         elif kind=='patterns':owner.selected=state.get('selected');owner.refresh()
         elif kind=='catalogue':owner.source.set(state.get('source','project'));owner.query.set(state.get('query',''));owner.reload()
+        elif kind=='changes':
+            if state.get('folder') and Path(state['folder']).is_dir():owner.open_saved(state['folder'])
+            owner.pages.select(state.get('page',0))
         elif kind=='pixels':
             if hasattr(owner,'view'):
                 owner.view.set(state.get('view',owner.view.get()));owner.direction=state.get('direction',owner.direction);owner.phase=state.get('phase',0);owner.refresh_frames()
@@ -319,6 +325,9 @@ class Workspace:
         self.action('Apply authoring command file',lambda:apply_file(self),groups['Project'])
         self.action('Export authoring summary',lambda:export_summary(self),groups['Project'])
         self.action('Check mission',lambda:check_mission(self),groups['Project'])
+        from editor_changes import open_changes
+        self.action('Changes and protection',lambda:open_changes(self.active_scope().owner),groups['Project'])
+        self.action('Local authoring session',lambda:open_changes(self.active_scope().owner,session=True),groups['Project'])
         from catalogue_browser import open_catalogue
         self.action('Content catalogue',lambda:open_catalogue(self.active_scope().owner),groups['Project'])
         self.action('Unit Library',self.app.open_library,groups['Project'])
@@ -377,7 +386,7 @@ class Workspace:
         if name in ('Undo','Redo'):
             return bool(document and ((document.undo_stack if name=='Undo' else document.redo_stack) or any(d.pending() for d in scope.live())))
         if name in ('Export game','Assets and dependencies','Migrate an old save','Apply authoring command file','Export authoring summary'):return bool(self.app.document)
-        if name=='Content catalogue':return bool(document)
+        if name in ('Content catalogue','Changes and protection','Local authoring session'):return bool(document)
         if name=='Check mission':return bool(document and document.adventure)
         if name in ('New definition','Duplicate definition','Delete definition','Ammunition','Find usages'):return bool(document)
         if name in ('Building designer','Wall designer','Road designer','Pattern Library'):return bool(self.app.document and self.app.document.adventure)
@@ -437,6 +446,7 @@ class Workspace:
         if self.tasks.busy(scope):self.status.set('This scope is finishing a durable save. Close it after the save finishes.');return
         self.tasks.cancel(scope)
         if not scope.confirm_close():return
+        self.authoring.stop(scope)
         self.recovery.clear(scope)
         # Library sprite tabs are notebook siblings, not children of the unit
         # tab. Retire them before its temporary package is cleaned up.
@@ -677,6 +687,7 @@ class Workspace:
         if getattr(scope,'saving',False):
             from editor_model import EditorError
             raise EditorError('A save is in progress. Wait for it to finish before switching projects.')
+        self.authoring.stop(scope)
         # Notebook pages are siblings, so replacing a project must retire all
         # its views explicitly rather than rely on a Toplevel's child teardown.
         self.persist_layout()
@@ -701,6 +712,9 @@ class Workspace:
                     elif kind=='catalogue':
                         from catalogue_browser import open_catalogue
                         view=open_catalogue(owner).window
+                    elif kind=='changes':
+                        from editor_changes import open_changes
+                        view=open_changes(owner).window
                     elif kind=='jigsaw':
                         from world_editor import JigsawEditor
                         maps=self.map_view();maps.edit_landscape();world=maps.world_editor
@@ -801,8 +815,10 @@ class Workspace:
         ProjectDocument.atomic_file(self.layout_file,encoded(self.layout))
 
     def poll(self):
+        self.tasks.collect_gui_cycles()
         if self.closing:return
         self.recovery.tick()
+        self.authoring.poll()
         self.update_commands()
         from editor_history import refresh_scope
         for current in self.scopes:

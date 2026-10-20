@@ -31,6 +31,7 @@ ROUTES={
  'EventGraph': 'link branch',
  'ObjectiveEditor': 'edit',
  'LibraryBrowser': 'new',
+ 'Changes': 'protection_form',
 }
 
 
@@ -130,6 +131,9 @@ def open_route(scope,route,cache=None):
         return next(d.view for d in scope.live() if id(d) not in before and hasattr(d.view,'callback'))
     if kind in ('roster','library-unit'):view=owner
     elif kind=='graphics':view=owner.graphics_editor()
+    elif kind=='changes':
+        from editor_changes import open_changes
+        view=open_changes(owner)
     elif kind=='pixels':
         from graphics_editor import open_image_editor
         image=next(i for i in scope.document.art['images'] if i['id']==ident)

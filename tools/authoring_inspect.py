@@ -34,7 +34,9 @@ def capabilities(tool):
             suite_runs=32,suite_cases=16,seeds_per_case=8,suite_seconds=300),
         collaboration=dict(transport='local-file-inbox',session_format='btp-author-session-v1',review_format='btp-author-review-v1',
             policies=['review','apply_within_scope'],scope='One explicitly opened project or library editing scope; rules and actual diffs are checked.',
-            protection_kinds=['object','fields','map_region'],rules_max=256,session_jobs_max=256,queued_jobs_max=8),
+            protection_kinds=['object','fields','map_region'],rules_max=256,session_jobs_max=256,queued_jobs_max=8,
+            reviewed_request_bytes=2097152,import_file_bytes=16777216,import_total_bytes=67108864,
+            preview_maps_max=8,checks_per_review=32,heartbeat_seconds=15),
         schemas='schemas/',guide='docs/AI_AUTHORING_GUIDE.md')
 
 

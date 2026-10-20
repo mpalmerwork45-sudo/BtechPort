@@ -70,7 +70,10 @@ def submit(folder,kind,*,request=None,base_dir=None,job_id=None):
     folder=Path(folder).resolve();session=info(folder)
     if not session['connected']:raise AuthoringError('session.disconnected','Start or reconnect an authoring session in the open editor.')
     if kind not in ('snapshot','propose'):raise AuthoringError('session.invalid','Supported jobs are snapshot and propose.')
-    if kind=='propose':check_batch(request)
+    if kind=='propose':
+        check_batch(request)
+        if len(encoded(request))>2*1024*1024:
+            raise AuthoringError('request.too_large','Split reviewed command files above 2 MiB into smaller proposals.')
     identity=job_id or uuid.uuid4().hex;target=job_folder(folder,identity)
     command=dict(kind=kind,request=request)
     command_hash=hashlib.sha256(encoded(command)).hexdigest()

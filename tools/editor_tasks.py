@@ -4,6 +4,7 @@ import copy
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 import hashlib
+import gc
 from pathlib import Path
 import shutil
 import subprocess
@@ -31,6 +32,15 @@ class Tasks:
     def __init__(self,workspace):
         self.workspace=workspace;self.pool=ThreadPoolExecutor(max_workers=2,thread_name_prefix='bck-work')
         self.jobs=[];self.timer=None;self.closed=False
+        # Tk variables in closed forms can belong to reference cycles. Python's
+        # automatic collector otherwise finalizes them on whichever worker
+        # happens to allocate next, calling Tcl from the wrong thread. During
+        # this GUI process we collect cycles explicitly on the GUI thread.
+        gc.disable();self.last_collection=0
+
+    def collect_gui_cycles(self):
+        if time.monotonic()-self.last_collection>=2:
+            self.last_collection=time.monotonic();gc.collect()
 
     def submit(self,label,owner,work,done=lambda _:None,failed=None,cancellable=True,quiet=False,dispose=None):
         if self.closed:raise EditorError('The workspace is closing.')
