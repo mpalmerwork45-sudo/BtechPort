@@ -115,7 +115,8 @@
     "battletech-beacon:tile-149": "South Base",
     "battletech-beacon:tile-150": "South Top",
     "battletech-beacon:tile-167": "Map tile copy",
-    "battletech-beacon:tile-168": "Map tile copy"
+    "battletech-beacon:tile-168": "Map tile copy",
+    "battletech-beacon:tile-172": "Map tile copy"
   },
   "construction_sets": [
     {
@@ -723,6 +724,14 @@
     "battletech-beacon:image-118": {
       "sheet": "chi:land",
       "graphic": 236
+    },
+    "battletech-beacon:image-119": {
+      "sheet": "chi:land",
+      "graphic": 121
+    },
+    "battletech-beacon:image-120": {
+      "sheet": "chi:land",
+      "graphic": 93
     }
   },
   "pixel_layers": {
@@ -1509,6 +1518,55 @@
           "5555ffff55ffffff55ffffffffffffff0000aaff5555ffff5555ffff000000ff0000aaff0000aaff55ffffff55ffffffffffffff5555ffff5555ffff5555ffff"
         ]
       ]
+    },
+    "battletech-beacon:image-119": {
+      "layers": [
+        {
+          "name": "Base",
+          "visible": true,
+          "frames": [
+            [
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaff0000aaff0000aaff0000aaff0000aaff0000aaffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ff0000aaff000000ff000000ff000000ff000000ff000000ff0000aaff555555ffaaaaaaffffffffffaaaaaaff",
+              "555555ffaaaaaaffffffffffaaaaaaff0000aaff000000ff000000ff000000ff000000ff000000ff000000ff000000ff5555ffffaaaaaaffffffffffaaaaaaff",
+              "555555ffaaaaaaffffffffff0000aaff000000ff000000ffaa5500ff000000ff000000ff000000ffaa5500ff000000ff000000ff5555ffffffffffffaaaaaaff",
+              "555555ffaaaaaaffffffffff0000aaff000000ff000000ffaa5500ff000000ff000000ff000000ffaa5500ff000000ff000000ff5555ffffffffffffaaaaaaff",
+              "555555ffaaaaaaffffffffff0000aaff000000ff000000ffaa5500ffaa5500ffaa5500ffaa5500ffaa5500ff000000ff000000ff5555ffffffffffffaaaaaaff",
+              "555555ffaaaaaaffffffffff0000aaff000000ff000000ffaa5500ff000000ff000000ff000000ffaa5500ff000000ff000000ff5555ffffffffffffaaaaaaff",
+              "555555ffaaaaaaffffffffff0000aaff000000ff000000ffaa5500ff000000ff000000ff000000ffaa5500ff000000ff000000ff5555ffffffffffffaaaaaaff",
+              "555555ffaaaaaaffffffffff0000aaff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff5555ffffffffffffaaaaaaff",
+              "555555ffaaaaaaffffffffffaaaaaaff0000aaff000000ff000000ff000000ff000000ff000000ff000000ff000000ff5555ffffaaaaaaffffffffffaaaaaaff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ff5555ffff000000ff000000ff000000ff000000ff000000ff5555ffff555555ffaaaaaaffffffffffaaaaaaff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaff5555ffff5555ffff5555ffff5555ffff5555ffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff",
+              "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff"
+            ]
+          ]
+        }
+      ],
+      "active": 0,
+      "flattened": [
+        [
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaff0000aaff0000aaff0000aaff0000aaff0000aaffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ff0000aaff000000ff000000ff000000ff000000ff000000ff0000aaff555555ffaaaaaaffffffffffaaaaaaff",
+          "555555ffaaaaaaffffffffffaaaaaaff0000aaff000000ff000000ff000000ff000000ff000000ff000000ff000000ff5555ffffaaaaaaffffffffffaaaaaaff",
+          "555555ffaaaaaaffffffffff0000aaff000000ff000000ffaa5500ff000000ff000000ff000000ffaa5500ff000000ff000000ff5555ffffffffffffaaaaaaff",
+          "555555ffaaaaaaffffffffff0000aaff000000ff000000ffaa5500ff000000ff000000ff000000ffaa5500ff000000ff000000ff5555ffffffffffffaaaaaaff",
+          "555555ffaaaaaaffffffffff0000aaff000000ff000000ffaa5500ffaa5500ffaa5500ffaa5500ffaa5500ff000000ff000000ff5555ffffffffffffaaaaaaff",
+          "555555ffaaaaaaffffffffff0000aaff000000ff000000ffaa5500ff000000ff000000ff000000ffaa5500ff000000ff000000ff5555ffffffffffffaaaaaaff",
+          "555555ffaaaaaaffffffffff0000aaff000000ff000000ffaa5500ff000000ff000000ff000000ffaa5500ff000000ff000000ff5555ffffffffffffaaaaaaff",
+          "555555ffaaaaaaffffffffff0000aaff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff5555ffffffffffffaaaaaaff",
+          "555555ffaaaaaaffffffffffaaaaaaff0000aaff000000ff000000ff000000ff000000ff000000ff000000ff000000ff5555ffffaaaaaaffffffffffaaaaaaff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ff5555ffff000000ff000000ff000000ff000000ff000000ff5555ffff555555ffaaaaaaffffffffffaaaaaaff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaff5555ffff5555ffff5555ffff5555ffff5555ffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff"
+        ]
+      ]
     }
   },
   "map_constructions": [
@@ -2107,25 +2165,25 @@
             "beacon:grass",
             "beacon:building-a",
             "beacon:building-a",
-            "beacon:building-a",
+            "battletech-beacon:tile-170",
             "beacon:building-a",
             "beacon:building-a",
             "battletech-beacon:tile-79"
           ],
           [
-            "beacon:grass",
+            "beacon:grass-detail",
             "beacon:building-a",
-            "beacon:building-a",
-            "beacon:building-a",
+            "battletech-beacon:tile-172",
+            "beacon:building-f",
             "beacon:building-a",
             "beacon:building-a",
             "beacon:building-f"
           ],
           [
             "beacon:grass",
-            "beacon:building-a",
-            "beacon:building-a",
-            "beacon:building-a",
+            "battletech-beacon:tile-169",
+            "battletech-beacon:tile-77",
+            "beacon:building-i",
             "beacon:building-a",
             "beacon:building-a",
             "battletech-beacon:tile-78"
@@ -2164,7 +2222,7 @@
         [
           17,
           8,
-          "beacon:grass"
+          "beacon:grass-detail"
         ],
         [
           17,
@@ -2183,6 +2241,11 @@
         ],
         [
           18,
+          9,
+          "battletech-beacon:tile-169"
+        ],
+        [
+          18,
           10,
           "beacon:building-a"
         ],
@@ -2190,6 +2253,16 @@
           19,
           6,
           "beacon:grass"
+        ],
+        [
+          19,
+          8,
+          "battletech-beacon:tile-172"
+        ],
+        [
+          19,
+          9,
+          "battletech-beacon:tile-77"
         ],
         [
           19,
@@ -2205,6 +2278,21 @@
           20,
           6,
           "beacon:grass"
+        ],
+        [
+          20,
+          7,
+          "battletech-beacon:tile-170"
+        ],
+        [
+          20,
+          8,
+          "beacon:building-f"
+        ],
+        [
+          20,
+          9,
+          "beacon:building-i"
         ],
         [
           20,
@@ -2508,6 +2596,144 @@
           13,
           9,
           "battletech-beacon:tile-123"
+        ]
+      ]
+    },
+    {
+      "id": "battletech-beacon:map-construction-4",
+      "name": "Building 4",
+      "map": "beacon:road",
+      "kind": "Building",
+      "style": "battletech-beacon:construction-2",
+      "datum": 2,
+      "cells": [
+        [
+          16,
+          9,
+          2
+        ],
+        [
+          16,
+          10,
+          2
+        ],
+        [
+          17,
+          9,
+          2
+        ],
+        [
+          17,
+          10,
+          2
+        ],
+        [
+          18,
+          9,
+          2
+        ],
+        [
+          18,
+          10,
+          2
+        ],
+        [
+          19,
+          9,
+          2
+        ],
+        [
+          19,
+          10,
+          2
+        ]
+      ],
+      "overlay": 3,
+      "rendered": {
+        "at": [
+          16,
+          9
+        ],
+        "rows": [
+          [
+            "beacon:building-a",
+            "beacon:building-a",
+            "beacon:building-a",
+            "beacon:building-a",
+            "battletech-beacon:tile-79",
+            " "
+          ],
+          [
+            "beacon:building-a",
+            "beacon:building-a",
+            "beacon:building-a",
+            "beacon:building-a",
+            "battletech-beacon:tile-78",
+            "beacon:grass"
+          ],
+          [
+            "beacon:building-g",
+            "battletech-beacon:tile-87",
+            "battletech-beacon:tile-77",
+            "battletech-beacon:tile-88",
+            "battletech-beacon:tile-80",
+            "beacon:grass"
+          ],
+          [
+            " ",
+            "beacon:grass",
+            "beacon:grass",
+            "beacon:grass",
+            "beacon:grass",
+            "beacon:grass"
+          ]
+        ]
+      },
+      "details": [
+        [
+          17,
+          11,
+          "battletech-beacon:tile-87"
+        ],
+        [
+          17,
+          12,
+          "beacon:grass"
+        ],
+        [
+          18,
+          12,
+          "beacon:grass"
+        ],
+        [
+          19,
+          11,
+          "battletech-beacon:tile-88"
+        ],
+        [
+          19,
+          12,
+          "beacon:grass"
+        ],
+        [
+          20,
+          12,
+          "beacon:grass"
+        ],
+        [
+          21,
+          10,
+          "beacon:grass"
+        ],
+        [
+          21,
+          11,
+          "beacon:grass"
+        ],
+        [
+          21,
+          12,
+          "beacon:grass"
         ]
       ]
     }

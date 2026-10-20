@@ -14157,6 +14157,60 @@
           "5555ffff55ffffff55ffffffffffffff0000aaff5555ffff5555ffff000000ff0000aaff0000aaff55ffffff55ffffffffffffff5555ffff5555ffff5555ffff"
         ]
       ]
+    },
+    {
+      "id": "battletech-beacon:image-119",
+      "name": "Map tile copy",
+      "kind": "tile",
+      "width": 16,
+      "height": 16,
+      "frames": [
+        [
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaff0000aaff0000aaff0000aaff0000aaff0000aaffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ff0000aaff000000ff000000ff000000ff000000ff000000ff0000aaff555555ffaaaaaaffffffffffaaaaaaff",
+          "555555ffaaaaaaffffffffffaaaaaaff0000aaff000000ff000000ff000000ff000000ff000000ff000000ff000000ff5555ffffaaaaaaffffffffffaaaaaaff",
+          "555555ffaaaaaaffffffffff0000aaff000000ff000000ffaa5500ff000000ff000000ff000000ffaa5500ff000000ff000000ff5555ffffffffffffaaaaaaff",
+          "555555ffaaaaaaffffffffff0000aaff000000ff000000ffaa5500ff000000ff000000ff000000ffaa5500ff000000ff000000ff5555ffffffffffffaaaaaaff",
+          "555555ffaaaaaaffffffffff0000aaff000000ff000000ffaa5500ffaa5500ffaa5500ffaa5500ffaa5500ff000000ff000000ff5555ffffffffffffaaaaaaff",
+          "555555ffaaaaaaffffffffff0000aaff000000ff000000ffaa5500ff000000ff000000ff000000ffaa5500ff000000ff000000ff5555ffffffffffffaaaaaaff",
+          "555555ffaaaaaaffffffffff0000aaff000000ff000000ffaa5500ff000000ff000000ff000000ffaa5500ff000000ff000000ff5555ffffffffffffaaaaaaff",
+          "555555ffaaaaaaffffffffff0000aaff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff5555ffffffffffffaaaaaaff",
+          "555555ffaaaaaaffffffffffaaaaaaff0000aaff000000ff000000ff000000ff000000ff000000ff000000ff000000ff5555ffffaaaaaaffffffffffaaaaaaff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ff5555ffff000000ff000000ff000000ff000000ff000000ff5555ffff555555ffaaaaaaffffffffffaaaaaaff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaff5555ffff5555ffff5555ffff5555ffff5555ffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff",
+          "555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff555555ffaaaaaaffffffffffaaaaaaff"
+        ]
+      ]
+    },
+    {
+      "id": "battletech-beacon:image-120",
+      "name": "tile-163 pixels",
+      "kind": "tile",
+      "width": 16,
+      "height": 16,
+      "frames": [
+        [
+          "aa0000ffaa0000ffaa0000ff555555ff555555ffaa0000ffaa0000ffaa0000ffaa0000ffaa0000ffaa0000ffaa0000ffaa0000ff00aa00ff00aa00ff00aa00ff",
+          "aa5500ffaa5500ffaa5500ffaa0000ffaa0000ff555555ff555555ff555555ff555555ff555555ff555555ff555555ffaa0000ffaa0000ff00aa00ff00aa00ff",
+          "aa5500ffaa5500ffaa5500ffaa0000ffaa0000ff555555ffaa0000ffaa0000ffaa0000ffaa0000ffaa0000ff555555ffaa0000ffaa0000ffaa0000ff00aa00ff",
+          "aa5500ffaa5500ffaa5500ffaa0000ffaa0000ff555555ffaa0000ffaa0000ffaa0000ffaa0000ffaa0000ff555555ffaa0000ffaa0000ffaa0000ffaa0000ff",
+          "aa5500ffaa5500ffaa0000ffaa5500ffaa5500ffaa0000ff555555ffaa0000ffaa0000ffaa0000ffaa0000ff555555ffaa0000ffaa0000ffaa0000ffaa0000ff",
+          "aa5500ffaa5500ffaa0000ffaa5500ffaa5500ffaa5500ffaa0000ff555555ffaa0000ffaa0000ffaa0000ff555555ffaa0000ffaa0000ffaa0000ffaa0000ff",
+          "aa5500ffaa0000ffaa5500ffaa5500ffaa5500ffaa5500ffaa5500ffaa0000ff555555ffaa0000ffaa0000ff555555ffaa0000ffaa0000ffaa0000ffaa0000ff",
+          "aa5500ffaa0000ffaa5500ffaa5500ffaa5500ffaa5500ffaa5500ffaa5500ffaa0000ff555555ffaa0000ff555555ffaa0000ffaa0000ffaa0000ffaa0000ff",
+          "aa0000ffaa5500ffaa5500ffaa5500ffaa5500ffaa5500ffaa5500ffaa5500ffaa5500ffaa0000ffaa0000ff555555ffaa0000ffaa0000ffaa0000ffaa0000ff",
+          "aa0000ffaa5500ffaa5500ffaa5500ffaa5500ffaa5500ffaa5500ffaa5500ffaa5500ffaa5500ffaa0000ff555555ffaa0000ffaa0000ffaa0000ffaa0000ff",
+          "000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff000000ff555555ffaa0000ffaa0000ffaa0000ffaa0000ff",
+          "aa5500ffaa5500ffaa5500ffaa5500ffaa5500ffaa5500ffaa5500ffaa5500ffaa5500ffaa5500ffaa5500ffaa5500ffaa0000ffaa0000ffaa0000ffaa0000ff",
+          "00aa00ffaa5500ff000000ff5555ffff5555ffff0000aaffaa5500ffaa5500ff000000ff5555ffff5555ffff0000aaffaa5500ffaa0000ffaa0000ffaa0000ff",
+          "00aa00ff00aa00ffaa5500ff000000ff5555ffff5555ffff0000aaffaa5500ffaa5500ff000000ff5555ffff5555ffff0000aaffaa5500ffaa0000ffaa0000ff",
+          "00aa00ff00aa00ff00aa00ffaa5500ff000000ff5555ffff5555ffff0000aaffaa5500ffaa5500ff000000ff5555ffff5555ffff0000aaffaa5500ffaa0000ff",
+          "00aa00ff00aa00ff00aa00ff00aa00ffaa5500ff000000ff5555ffff5555ffff0000aaffaa5500ffaa5500ff000000ff5555ffff5555ffff0000aaffaa5500ff"
+        ]
+      ]
     }
   ],
   "bindings": []
