@@ -1,5 +1,46 @@
 # Build, verification and original oracle — 2026-10-20
 
+## Shared Construction Library — 2026-10-20
+
+**VERIFIED:** persistent building/wall/road definitions and fixed patterns
+share their required tile/art closure between projects. This is authoring-only;
+no runtime C or original-resource changes follow AI6a.
+
+- Full Python regression: **260/260 PASS**, 22.012 s,
+  `work/construction-library-python.log`.
+- Ten new focused tests: **10/10 PASS**, 0.850 s,
+  `work/construction-library-tests.log`. All three construction types,
+  fixed patterns/empty cells, palette conversion, animation frames/cadence,
+  pixel layers/credits/tags, same-ID collision remapping, atomic failures,
+  original-asset requirements, revisions/stale updates, read-only
+  search/contact sheets, CLI export and reviewed import→draw batches.
+- `python3 tools/native_smoke.py --construction-library-only`: **PASS**,
+  `work/construction-library-gui.log`. Actual designer/Pattern Library save
+  forms export four kinds, library closing/reopening retains entries, another
+  project imports all four with one-step Undo/Redo, and the imported building
+  rules draw a new three-storey courtyard. Save/reopen agrees. An explicit
+  update increments the shared revision while preserving the source project.
+  Recovery restores an unfinished export without publishing it.
+- Inspected `work/construction-library-browser.png`,
+  `work/construction-library-drawn.png` and the narrow layout; wrapping was
+  improved and the GUI test repeated at 960×620.
+- The four existing Last Beacon construction sets were copied into the local
+  ignored `work/construction-library/`: Comstar, Low Building, Blue Office
+  Building and Wall set. All validate. Source package files are unchanged.
+  Headless catalogue and contact-sheet exports succeed for all four, including
+  their explicit original-art references (`work/construction-library-catalogue.json`,
+  `work/construction-library-last-beacon.svg`).
+- Reference guard again confirms **1,287 entries unchanged**
+  (`work/construction-library-reference.log`); Last Beacon's three files still
+  match the separate user commit. The library model imports without Tk, and
+  its published schema matches the live contract.
+
+The prior AI6a native **87/87** and focused Windows **7/7** results below cover
+the unchanged runtime. Linux editor interaction is verified; native Windows
+Tk interaction remains unverified. New footprints still use the existing
+construction generator and its editable defaults for undefined parts.
+The shared library is user data and is not included in Git or game packages.
+
 ## AI6a mission state and editor repairs — 2026-10-20
 
 **VERIFIED:** optional regions, typed variables, explicit objective states,

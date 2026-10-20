@@ -216,6 +216,9 @@ def apply_operation(doc, op, imports):
     elif name=='unit.import':
         from unit_library import import_units
         return import_units(doc,[read_json(imports[op['file']])],op.get('policy','keep'),op.get('infantry_art',False),validate=False)
+    elif name=='construction.import':
+        from construction_library import import_bundle
+        return import_bundle(doc,read_json(imports[op['file']]),op.get('id'),validate_result=False)
     elif name=='script.import':
         from editor_model import references,child
         manifest=copy.deepcopy(doc.manifest);scripts=manifest.setdefault('scripts',[])
@@ -285,8 +288,9 @@ def apply_batch(document, request, *, base_dir=None, dry_run=False, save=False, 
         if cancelled():raise AuthoringError('job.cancelled','Batch cancelled; no changes applied.')
     checkpoint();document.unchanged_on_disk();base=revision(document)
     imports={};fingerprint=dict(request=request,imports={})
+    from authoring_contract import IMPORT_OPERATIONS
     for op in request['operations']:
-        if op['op'] in ('art.import','unit.import','script.import'):
+        if op['op'] in IMPORT_OPERATIONS:
             path=Path((frozen_imports or {}).get(op['file'],op['file']))
             if not path.is_absolute():path=Path(base_dir or document.root)/path
             if path.is_symlink() or not path.is_file() or path.stat().st_size>16*1024*1024:

@@ -27,6 +27,7 @@ ROUTES={
  'WorldEditor': 'new_world rename_world generate city_form save_pattern',
  'JigsawEditor': 'save_pattern',
  'ConstructionEditor': 'rename reshape',
+ 'ConstructionBrowser': 'export_dialog',
  'PatternLibrary': 'rename',
  'EventGraph': 'link branch',
  'ObjectiveEditor': 'edit',
@@ -139,12 +140,13 @@ def open_route(scope,route,cache=None):
         from graphics_editor import open_image_editor
         image=next(i for i in scope.document.art['images'] if i['id']==ident)
         view=open_image_editor(owner.graphics_editor(),image)
-    elif kind in ('maps','world','events','jigsaw','objectives','construction','patterns','mission'):
+    elif kind in ('maps','world','events','jigsaw','objectives','construction','patterns','mission','construction-library'):
         owner.edit_adventure();maps=owner.map_editor
         if kind=='maps':view=maps
         elif kind=='events':view=maps.event_graph()
         elif kind=='objectives':view=maps.event_graph().objectives()
         elif kind=='mission':view=maps.missions()
+        elif kind=='construction-library':view=maps.construction_library()
         elif kind=='construction':view=maps.construction(ident)
         elif kind=='patterns':view=maps.patterns()
         else:

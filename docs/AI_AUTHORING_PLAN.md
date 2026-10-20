@@ -628,9 +628,10 @@ Add lifecycle hooks, timers, named groups and bounded spawn requests, then
 demonstrate timed defence. AI6c escort/defence builds on that foundation.
 These further engine changes require their own authorization.
 
-The user has separately authorized a shared Construction Library for building,
-wall and road definitions and stored patterns, including transferable tile/art
-dependencies and access through the editor and authoring interface.
+The separately authorized [shared Construction Library](CONSTRUCTION_LIBRARY.md)
+is delivered: building, wall and road definitions and stored patterns transfer
+their tile/art dependencies between projects. The editor, catalogue, labelled
+previews, command imports and reviewed/live authoring sessions share it.
 
 World creation, seeded jigsaw generation/painting, terrain patches, town-map
 placement and composed world previews are already exposed to AI tools.

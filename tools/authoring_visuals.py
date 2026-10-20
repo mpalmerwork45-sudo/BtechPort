@@ -86,6 +86,14 @@ class VisualSource:
         from editor_units import unit_sprite,person_sprite
         self.last_image=None
         doc=self.document;identity=item['id'];kind=item['kind']
+        if item['source']=='construction-library':
+            from construction_library import preview_files,rows
+            from authoring_contract import read_json
+            from types import SimpleNamespace
+            bundle=read_json(Path(item['file']));files=preview_files(bundle)
+            source=SimpleNamespace(manifest=files['project.json'],content=files['content.json'],adventure=files['adventure.json'],
+                art=files['graphics.json'],snapshot={k:encoded(v) for k,v in files.items()},validator=doc.validator)
+            return [VisualSource(source,self.settings).grid(rows(bundle))],8
         if item['source']=='library':
             from authoring_contract import read_json
             from unit_library import preview_files

@@ -37,7 +37,8 @@ class ConstructionEditor:
         self.window=view_window(self,owner,'construction',kind+' designer',kind);self.window.geometry('1080x760')
         bar=ttk.Frame(self.window,padding=8);bar.pack(fill='x')
         self.choice=ttk.Combobox(bar,state='readonly',width=24);self.choice.pack(side='left',padx=4);self.choice.bind('<<ComboboxSelected>>',lambda _:guard(self,self.change))
-        for label,callback in [('New set',self.new),('Duplicate',self.duplicate),('Rename',self.rename),('Footprint...',self.reshape),('Save pattern',self.save_pattern),('Draw on map',self.use)]:
+        for label,callback in [('New set',self.new),('Duplicate',self.duplicate),('Rename',self.rename),('Footprint...',self.reshape),('Save pattern',self.save_pattern),('Draw on map',self.use),
+                               ('Construction Library',self.owner.construction_library),('Save to library',self.save_library)]:
             ttk.Button(bar,text=label,width=0,command=lambda f=callback:guard(self,f)).pack(side='left',padx=3)
         if kind=='Road':ttk.Button(bar,text='Draw connecting roads',command=lambda:guard(self,self.road_brush)).pack(side='left',padx=3)
         from editor_ui import flow_toolbar
@@ -191,3 +192,6 @@ class ConstructionEditor:
         save_pattern(self.document,compile_rows(self.profile),self.profile['name']);self.status.set('Saved in the Pattern Library. It stays with this project and can be exported.')
     def road_brush(self):
         self.finish();self.owner.construction_tools.activate(self.profile)
+    def save_library(self):
+        self.finish()
+        if self.profile:return self.owner.construction_library().export_dialog(self.profile['id'])

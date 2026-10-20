@@ -558,6 +558,25 @@ Write scope: `content`, `art`, `adventure.people`, `editor`, `provenance`.
 }
 ```
 
+## construction.import
+
+Import a Construction Library style or pattern with tile/art dependencies; conflicting resources are preserved. Supply id to use the result later in this batch.
+
+Write scope: `adventure.tiles`, `art.images`, `editor`, `provenance`.
+
+| Field | Structural constraint |
+| --- | --- |
+| `file` * | `{"type":"string","minLength":1,"maxLength":1024}` |
+| `id` | `{"type":"string","maxLength":63,"pattern":"^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"}` |
+
+```json
+{
+  "op": "construction.import",
+  "file": "library/depot.construction.json",
+  "id": "demo:depot-style"
+}
+```
+
 ## art.import
 
 Import an image/sprite sheet through the existing converter; explicit frame dimensions.

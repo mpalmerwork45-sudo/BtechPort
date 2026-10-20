@@ -227,6 +227,7 @@ class Workspace:
         elif kind=='construction':state.update(current=owner.current,role=owner.selected_role,footprint_zoom=owner.footprint_zoom.get(),
             footprint_scroll=[owner.footprint.xview()[0],owner.footprint.yview()[0]],preview_scroll=[owner.preview.xview()[0],owner.preview.yview()[0]])
         elif kind=='patterns':state.update(selected=owner.selected)
+        elif kind=='construction-library':state.update(selected=owner.selected,kind=owner.kind.get(),query=owner.query.get())
         elif kind=='catalogue':state.update(query=owner.query.get(),source=owner.source.get())
         elif kind=='changes':state.update(folder=str(owner.folder) if owner.folder else None,page=owner.pages.index(owner.pages.select()))
         elif kind=='pixels':
@@ -262,6 +263,8 @@ class Workspace:
         elif kind=='graphics':owner.selected=state.get('selected');owner.refresh()
         elif kind=='construction':owner.current=state.get('current');owner.selected_role=state.get('role');owner.refresh()
         elif kind=='patterns':owner.selected=state.get('selected');owner.refresh()
+        elif kind=='construction-library':
+            owner.selected=state.get('selected');owner.kind.set(state.get('kind','All'));owner.query.set(state.get('query',''));owner.refresh()
         elif kind=='catalogue':owner.source.set(state.get('source','project'));owner.query.set(state.get('query',''));owner.reload()
         elif kind=='changes':
             if state.get('folder') and Path(state['folder']).is_dir():owner.open_saved(state['folder'])
@@ -340,6 +343,7 @@ class Workspace:
         for kind in ('Building','Wall','Road'):
             self.action(kind+' designer',lambda k=kind:self.map_view().construction(k),groups['Project'])
         self.action('Pattern Library',lambda:self.map_view().patterns(),groups['Project'])
+        self.action('Construction Library',lambda:self.map_view().construction_library(),groups['Project'])
         from delivery_gui import report as assets
         from save_migration import dialog
         self.action('Assets and dependencies',lambda:assets(self.app),groups['Project'])
@@ -389,7 +393,7 @@ class Workspace:
         if name in ('Content catalogue','Changes and protection','Local authoring session'):return bool(document)
         if name=='Check mission':return bool(document and document.adventure)
         if name in ('New definition','Duplicate definition','Delete definition','Ammunition','Find usages'):return bool(document)
-        if name in ('Building designer','Wall designer','Road designer','Pattern Library'):return bool(self.app.document and self.app.document.adventure)
+        if name in ('Building designer','Wall designer','Road designer','Pattern Library','Construction Library'):return bool(self.app.document and self.app.document.adventure)
         if name in ('Play from start','Play from here','Checkpoints and trace'):return bool(self.app.document) and not self.play_session.preparing
         if name=='Preview library design':return bool(document and scope.owner.library_context) and not self.play_session.preparing
         if name=='Stop test':return self.play_session.preparing or self.play_session.process is not None
@@ -546,6 +550,7 @@ class Workspace:
                     construct=row('','construction','Construction tools',lambda:self.map_view().construction())
                     for kind in ('Building','Wall','Road'):row(construct,'construction:'+kind,kind+' designer',lambda k=kind:self.map_view().construction(k))
                     row(construct,'patterns','Pattern Library',lambda:self.map_view().patterns())
+                    row(construct,'construction-library','Shared Construction Library',lambda:self.map_view().construction_library())
                     events=row('','events','Events / objectives',self.open_event)
                     row(events,'mission','Regions / mission variables',lambda:self.map_view().missions())
                     row(events,'objectives','Objectives / journal',lambda:self.map_view().event_graph().objectives())
@@ -727,6 +732,7 @@ class Workspace:
                     elif kind=='objectives':view=self.map_view().event_graph().objectives().window
                     elif kind=='construction':view=self.map_view().construction(identity).window
                     elif kind=='patterns':view=self.map_view().patterns().window
+                    elif kind=='construction-library':view=self.map_view().construction_library().window
                     elif kind=='catalogue':
                         from catalogue_browser import open_catalogue
                         view=open_catalogue(owner).window

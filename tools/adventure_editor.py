@@ -667,6 +667,10 @@ class AdventureEditor:
         from mission_editor import open_missions
         return open_missions(self)
 
+    def construction_library(self):
+        from construction_library_browser import open_library
+        return open_library(self)
+
     def construction(self,kind='Building'):
         from construction_editor import ConstructionEditor
         from editor_workspace import open_view

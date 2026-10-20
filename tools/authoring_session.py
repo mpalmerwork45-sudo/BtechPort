@@ -78,8 +78,9 @@ def submit(folder,kind,*,request=None,base_dir=None,job_id=None):
     command=dict(kind=kind,request=request)
     command_hash=hashlib.sha256(encoded(command)).hexdigest()
     input_hashes={}
+    from authoring_contract import IMPORT_OPERATIONS
     for op in (request or {}).get('operations',[]):
-        if op['op'] not in ('art.import','unit.import','script.import'):continue
+        if op['op'] not in IMPORT_OPERATIONS:continue
         path=Path(op['file']);path=path if path.is_absolute() else Path(base_dir or Path.cwd())/path
         if path.is_symlink() or not path.is_file() or path.stat().st_size>16*1024*1024:
             raise AuthoringError('import.unavailable','Import needs a regular file up to 16 MiB: '+str(path))

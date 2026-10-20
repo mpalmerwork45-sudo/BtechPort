@@ -18,7 +18,7 @@ from project_lock import project_lock
 def parser():
     p=argparse.ArgumentParser(description=__doc__)
     sub=p.add_subparsers(dest='command',required=True)
-    for name in ('capabilities','schema','inspect','catalogue','contact-sheet','animation','graph','world-preview','lint','validate','create','apply','export','render','scenario','suite'):
+    for name in ('capabilities','schema','inspect','catalogue','contact-sheet','animation','graph','world-preview','lint','validate','create','apply','export','render','scenario','suite','construction-export'):
         s=sub.add_parser(name)
         s.add_argument('--validator',type=Path,default=Path(os.environ.get('BTP_PROJECT_TOOL',ROOT/'build'/('btp-project.exe' if os.name=='nt' else 'btp-project'))))
         if name not in ('capabilities','schema'):s.add_argument('project',type=Path)
@@ -28,8 +28,9 @@ def parser():
             s.add_argument('--collection');s.add_argument('--id');s.add_argument('--offset',type=int,default=0);s.add_argument('--limit',type=int,default=30)
             s.add_argument('--rect',type=int,nargs=4,metavar=('X','Y','WIDTH','HEIGHT'))
         if name in ('catalogue','contact-sheet','animation'):
-            s.add_argument('--source',choices=['project','library','atlas','all'],default='project')
+            s.add_argument('--source',choices=['project','library','construction-library','atlas','all'],default='project')
             s.add_argument('--library',type=Path,default=ROOT/'work/unit-library')
+            s.add_argument('--construction-library',type=Path,default=ROOT/'work/construction-library')
             s.add_argument('--query',default='');s.add_argument('--offset',type=int,default=0)
             s.add_argument('--limit',type=int,default=16 if name=='contact-sheet' else 30)
             s.add_argument('--data',type=Path)
@@ -52,6 +53,12 @@ def parser():
             s.add_argument('--template',type=Path,default=ROOT/'examples/beacon-demo')
             s.add_argument('--id',required=True);s.add_argument('--title',required=True)
         if name=='export':s.add_argument('--output',type=Path,required=True)
+        if name=='construction-export':
+            s.add_argument('--id',required=True,help='Project construction set or pattern ID')
+            s.add_argument('--construction-library',type=Path,default=ROOT/'work/construction-library')
+            s.add_argument('--variant',action='store_true',help='Save a new shared copy if this design already exists')
+            s.add_argument('--entry',help='Existing library entry to update (requires --expected-revision)')
+            s.add_argument('--expected-revision',type=int)
         if name=='render':
             s.add_argument('--map',required=True);s.add_argument('--output',type=Path,required=True)
             s.add_argument('--data',type=Path);s.add_argument('--tick',type=int,default=0);s.add_argument('--collision',action='store_true')
@@ -177,12 +184,24 @@ def dispatch(args):
         with project_lock(args.project):return run()
     # Queries never recover an interrupted save or create files in a package.
     doc=ProjectDocument(args.project,args.validator,recover=False)
+    if args.command=='construction-export':
+        from construction_library import ConstructionLibrary,summary,closure
+        shared=ConstructionLibrary(args.construction_library,args.validator);bundle=closure(doc,args.id);expected=None
+        if args.entry:
+            if args.variant or args.expected_revision is None:raise AuthoringError('request.invalid','Updating a library entry requires --expected-revision, without --variant.')
+            expected=read_json(shared.path(args.entry))
+            if expected['revision']!=args.expected_revision:raise AuthoringError('revision.conflict','Library revision changed; inspect it again.')
+            if expected['kind']!=bundle['kind']:raise AuthoringError('request.invalid','Select a library entry of the same type.')
+            bundle.update(entry_id=expected['entry_id'],revision=expected['revision'])
+        elif args.expected_revision is not None:raise AuthoringError('request.invalid','--expected-revision requires --entry.')
+        doc.unchanged_on_disk();saved=shared.save(bundle,expected,args.variant)
+        return dict(api_version=API_VERSION,status='exported',data=summary(saved,shared.path(saved['entry_id'])))
     if args.command in ('catalogue','contact-sheet','animation'):
         from asset_catalogue import catalogue,search
         from authoring_visuals import VisualSource,contact_sheet,animation_strip
         settings={'data':str(args.data)} if args.data else {}
         decoded=VisualSource(doc,settings).tiles if args.source in ('atlas','all') or args.data else None
-        values=catalogue(doc,args.source,args.library,decoded)
+        values=catalogue(doc,args.source,args.library,decoded,args.construction_library)
         if args.command=='animation':
             selected=[r for r in values if args.id in (r['id'],r['key'])]
             if len(selected)!=1:raise AuthoringError('object.missing','Choose one exact catalogue key for the animation.')

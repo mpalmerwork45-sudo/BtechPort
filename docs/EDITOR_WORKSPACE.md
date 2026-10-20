@@ -209,7 +209,13 @@ or replacement of a generated layer still triggers the stale-layer safeguard.
 Wall and Road designers and the **Pattern Library**. Paint a footprint with
 heights and customize its parts by right-clicking preview tiles.
 The Pattern Library stores reusable terrain blocks with the project and imports/
-exports `.pattern.json` files. The [construction guide](M5_WORLD_ART_EDITOR.md#buildings-walls-and-roads)
+exports `.pattern.json` files. **Project → Construction Library** is the shared
+store across games: building/wall/road definitions and fixed patterns travel
+with their tile definitions, artwork, animation and editing metadata. Choose
+**Save to library** in a designer or the project Pattern Library; use **Import
+and edit** in another project. Updates to shared entries are explicit.
+See the [shared library guide](CONSTRUCTION_LIBRARY.md).
+The [construction guide](M5_WORLD_ART_EDITOR.md#buildings-walls-and-roads)
 explains part sets, storeys, collision, block placement and jigsaw editing.
 
 Use the **Markers** sidebar or choose **Move markers** and click a marker on the

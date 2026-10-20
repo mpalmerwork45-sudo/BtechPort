@@ -17,7 +17,8 @@ class PatternLibrary:
         self.owner=owner;self.document=owner.document;self.selected=None;self.target=owner
         self.window=view_window(self,owner,'patterns','Pattern Library');self.window.geometry('960x700')
         bar=ttk.Frame(self.window,padding=8);bar.pack(fill='x')
-        for label,callback in [('Save selection',self.capture),('Use on map',self.use),('Rename',self.rename),('Clone',self.clone),('Remove',self.remove),('Import...',self.import_file),('Export...',self.export_file)]:
+        for label,callback in [('Save selection',self.capture),('Use on map',self.use),('Rename',self.rename),('Clone',self.clone),('Remove',self.remove),('Import...',self.import_file),('Export...',self.export_file),
+                               ('Construction Library',owner.construction_library),('Save to library',self.save_library)]:
             ttk.Button(bar,text=label,width=0,command=lambda f=callback:guard(self,f)).pack(side='left',padx=3)
         from editor_ui import flow_toolbar
         flow_toolbar(bar)
@@ -99,3 +100,7 @@ class PatternLibrary:
         if not p:raise EditorError('Select a pattern first.')
         path=filedialog.asksaveasfilename(parent=visible_parent(self),title='Export map pattern',defaultextension='.pattern.json',initialfile=p['id'].split(':')[-1]+'.pattern.json',filetypes=[('Map pattern','*.pattern.json')])
         if path:export_pattern(self.document,p,path);self.info.set('Exported '+path)
+    def save_library(self):
+        p=self.current()
+        if not p:raise EditorError('Select a pattern first.')
+        return self.owner.construction_library().export_dialog(p['id'])

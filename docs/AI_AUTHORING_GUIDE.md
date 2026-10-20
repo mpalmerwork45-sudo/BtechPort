@@ -146,6 +146,16 @@ Use `object.put` for an event/objective/definition or jigsaw; `object.patch` for
 its fields. New mission engine features cannot be invented by adding a JSON
 key or Lua function.
 
+The [shared Construction Library](CONSTRUCTION_LIBRARY.md) provides reusable
+building/wall/road styles and patterns with their tile/art dependencies.
+Use `catalogue --source construction-library` (optionally
+`--construction-library DIRECTORY`) to find a design and its exact bundle file.
+`contact-sheet` supports the same source. A `construction.import` operation
+can assign an explicit ID, followed in the same batch by `construction.draw`,
+`road.draw` or `pattern.place`. Reviews and live sessions capture the imported
+bytes. `construction-export PROJECT --id DESIGN` stores a saved project design
+in the shared library; updates require an explicit entry/revision.
+
 For services, create ordinary `repair`, `rearm`, `heal` or `salvage` events with
 explicit `next`, `failure` and `unchanged` branches. An objective references
 declared active/complete flags. Lua exposes only `game.flag`, `game.credits` and

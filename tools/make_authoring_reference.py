@@ -10,7 +10,9 @@ ROOT=Path(__file__).resolve().parents[1]
 
 
 def main():
-    for name,schema in [('authoring-batch-v1',BATCH_SCHEMA),('authoring-scenario-v1',SCHEMA),('authoring-suite-v1',SUITE_SCHEMA),('authoring-protection-v1',RULE_SCHEMA)]:
+    from construction_library import schema as construction_schema
+    for name,schema in [('authoring-batch-v1',BATCH_SCHEMA),('authoring-scenario-v1',SCHEMA),('authoring-suite-v1',SUITE_SCHEMA),('authoring-protection-v1',RULE_SCHEMA),
+                        ('construction-library-v1',construction_schema())]:
         value=dict(schema,**{'$schema':'https://json-schema.org/draft/2020-12/schema'})
         (ROOT/'schemas'/f'{name}.schema.json').write_text(json.dumps(value,indent=2)+'\n')
     lines=['# Authoring command reference','',

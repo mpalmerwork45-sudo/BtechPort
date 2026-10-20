@@ -1,0 +1,705 @@
+{
+  "type": "object",
+  "properties": {
+    "format": {
+      "const": "btp-construction-library-v1"
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "entry_id": {
+      "type": "string",
+      "maxLength": 63,
+      "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 2147483647
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 95
+    },
+    "kind": {
+      "enum": [
+        "Building",
+        "Wall",
+        "Road",
+        "Pattern"
+      ]
+    },
+    "design": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "maxLength": 63,
+              "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+            },
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 95
+            },
+            "kind": {
+              "enum": [
+                "Building",
+                "Wall",
+                "Road"
+              ]
+            },
+            "footprint": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 32
+                },
+                "minItems": 1,
+                "maxItems": 32
+              },
+              "minItems": 1,
+              "maxItems": 32
+            },
+            "parts": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              }
+            }
+          },
+          "required": [
+            "id",
+            "name",
+            "kind",
+            "footprint",
+            "parts"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "maxLength": 63,
+              "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+            },
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 95
+            },
+            "rows": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 63,
+                      "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+                    },
+                    {
+                      "const": " "
+                    }
+                  ]
+                },
+                "minItems": 1,
+                "maxItems": 64
+              },
+              "minItems": 1,
+              "maxItems": 64
+            }
+          },
+          "required": [
+            "id",
+            "name",
+            "rows"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "tiles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 63,
+            "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+          },
+          "graphic": {
+            "oneOf": [
+              {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 249
+              },
+              {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              }
+            ]
+          },
+          "sheet": {
+            "enum": [
+              "chi:land",
+              "chi:destroyed",
+              "package:tiles",
+              "package:art"
+            ]
+          },
+          "terrain": {
+            "enum": [
+              "clear",
+              "rough",
+              "water",
+              "woods",
+              "wall"
+            ]
+          },
+          "mini_color": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 15
+          }
+        },
+        "required": [
+          "id",
+          "graphic",
+          "sheet",
+          "terrain",
+          "mini_color"
+        ]
+      },
+      "minItems": 0,
+      "maxItems": 4096
+    },
+    "images": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 63,
+            "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 95
+          },
+          "kind": {
+            "enum": [
+              "tile",
+              "sprite",
+              "icon",
+              "screen"
+            ]
+          },
+          "width": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 320
+          },
+          "height": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200
+          },
+          "frame_ticks": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 255,
+            "default": 8,
+            "description": "Tile animation frame duration in 32 ms logical ticks."
+          },
+          "frames": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^(?:[0-9a-f]{8})+$"
+              },
+              "minItems": 1,
+              "maxItems": 200
+            },
+            "minItems": 1,
+            "maxItems": 256
+          },
+          "animations": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "idle": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "directions"
+                ],
+                "properties": {
+                  "sound": {
+                    "const": 0
+                  },
+                  "directions": {
+                    "type": "array",
+                    "items": {
+                      "type": "array",
+                      "minItems": 1,
+                      "maxItems": 32,
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "frame",
+                          "ticks"
+                        ],
+                        "properties": {
+                          "frame": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 255
+                          },
+                          "ticks": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 255
+                          }
+                        }
+                      }
+                    },
+                    "oneOf": [
+                      {
+                        "minItems": 1,
+                        "maxItems": 1
+                      },
+                      {
+                        "minItems": 8,
+                        "maxItems": 8
+                      }
+                    ]
+                  }
+                }
+              },
+              "walk": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "directions"
+                ],
+                "properties": {
+                  "sound": {
+                    "const": 0
+                  },
+                  "directions": {
+                    "type": "array",
+                    "items": {
+                      "type": "array",
+                      "minItems": 1,
+                      "maxItems": 32,
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "frame",
+                          "ticks"
+                        ],
+                        "properties": {
+                          "frame": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 255
+                          },
+                          "ticks": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 255
+                          }
+                        }
+                      }
+                    },
+                    "oneOf": [
+                      {
+                        "minItems": 1,
+                        "maxItems": 1
+                      },
+                      {
+                        "minItems": 8,
+                        "maxItems": 8
+                      }
+                    ]
+                  }
+                }
+              },
+              "fire": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "directions"
+                ],
+                "properties": {
+                  "sound": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 18
+                  },
+                  "directions": {
+                    "type": "array",
+                    "items": {
+                      "type": "array",
+                      "minItems": 1,
+                      "maxItems": 32,
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "frame",
+                          "ticks"
+                        ],
+                        "properties": {
+                          "frame": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 255
+                          },
+                          "ticks": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 255
+                          }
+                        }
+                      }
+                    },
+                    "oneOf": [
+                      {
+                        "minItems": 1,
+                        "maxItems": 1
+                      },
+                      {
+                        "minItems": 8,
+                        "maxItems": 8
+                      }
+                    ]
+                  }
+                }
+              },
+              "jump": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "directions"
+                ],
+                "properties": {
+                  "sound": {
+                    "const": 0
+                  },
+                  "directions": {
+                    "type": "array",
+                    "items": {
+                      "type": "array",
+                      "minItems": 1,
+                      "maxItems": 32,
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "frame",
+                          "ticks"
+                        ],
+                        "properties": {
+                          "frame": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 255
+                          },
+                          "ticks": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 255
+                          }
+                        }
+                      }
+                    },
+                    "oneOf": [
+                      {
+                        "minItems": 1,
+                        "maxItems": 1
+                      },
+                      {
+                        "minItems": 8,
+                        "maxItems": 8
+                      }
+                    ]
+                  }
+                }
+              },
+              "damage": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "directions"
+                ],
+                "properties": {
+                  "sound": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 18
+                  },
+                  "directions": {
+                    "type": "array",
+                    "items": {
+                      "type": "array",
+                      "minItems": 1,
+                      "maxItems": 32,
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "frame",
+                          "ticks"
+                        ],
+                        "properties": {
+                          "frame": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 255
+                          },
+                          "ticks": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 255
+                          }
+                        }
+                      }
+                    },
+                    "oneOf": [
+                      {
+                        "minItems": 1,
+                        "maxItems": 1
+                      },
+                      {
+                        "minItems": 8,
+                        "maxItems": 8
+                      }
+                    ]
+                  }
+                }
+              },
+              "destruction": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "directions"
+                ],
+                "properties": {
+                  "sound": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 18
+                  },
+                  "directions": {
+                    "type": "array",
+                    "items": {
+                      "type": "array",
+                      "minItems": 1,
+                      "maxItems": 32,
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "frame",
+                          "ticks"
+                        ],
+                        "properties": {
+                          "frame": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 255
+                          },
+                          "ticks": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 255
+                          }
+                        }
+                      }
+                    },
+                    "oneOf": [
+                      {
+                        "minItems": 1,
+                        "maxItems": 1
+                      },
+                      {
+                        "minItems": 8,
+                        "maxItems": 8
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "required": [
+                "frame_ticks"
+              ]
+            },
+            "then": {
+              "properties": {
+                "kind": {
+                  "const": "tile"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "animations"
+              ]
+            },
+            "then": {
+              "properties": {
+                "kind": {
+                  "const": "sprite"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "kind": {
+                  "const": "tile"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "width": {
+                  "const": 16
+                },
+                "height": {
+                  "const": 16
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "sprite",
+                    "icon"
+                  ]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "width": {
+                  "maximum": 64
+                },
+                "height": {
+                  "maximum": 64
+                }
+              }
+            }
+          }
+        ],
+        "required": [
+          "id",
+          "name",
+          "kind",
+          "width",
+          "height",
+          "frames"
+        ]
+      },
+      "minItems": 0,
+      "maxItems": 4096
+    },
+    "editing": {
+      "type": "object",
+      "properties": {
+        "tile_names": {
+          "type": "object"
+        },
+        "tile_sources": {
+          "type": "object"
+        },
+        "pixel_layers": {
+          "type": "object"
+        },
+        "catalogue": {
+          "type": "object"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "provenance": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 95
+        },
+        "package": {
+          "type": "string",
+          "maxLength": 31
+        },
+        "documents": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "maxLength": 1048576
+          }
+        }
+      },
+      "required": [
+        "project",
+        "package",
+        "documents"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "format",
+    "schema_version",
+    "entry_id",
+    "revision",
+    "name",
+    "kind",
+    "design",
+    "tiles",
+    "images",
+    "editing",
+    "provenance"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

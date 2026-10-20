@@ -18,7 +18,7 @@ ANNOTATION_SCHEMA = obj(dict(name=dict(type='string', maxLength=120),
     edges=obj({side:dict(type='string',maxLength=64) for side in ('north','east','south','west')})))
 KINDS = ('mech','vehicle','infantry','weapon','equipment','ammunition','tile','sprite','icon','screen','construction','pattern','jigsaw')
 NUMERIC = {'mass','price','walk','jump','frames','frame_ticks','damage','range'}
-FIELDS = {'id','key','kind','collection','class','movement','weapon','role','dependency','source','tag','name','terrain','animated',*NUMERIC}
+FIELDS = {'id','key','kind','collection','class','movement','weapon','role','dependency','source','tag','name','terrain','animated','construction_kind',*NUMERIC}
 
 
 def metadata(document):
@@ -131,8 +131,8 @@ def bundle_record(bundle, path=None):
     return r
 
 
-def catalogue(document, source='project', library=None, decoded=None):
-    if source not in ('project','library','atlas','all'):raise AuthoringError('query.invalid','Choose project, library, atlas or all.')
+def catalogue(document, source='project', library=None, decoded=None, construction_library=None):
+    if source not in ('project','library','construction-library','atlas','all'):raise AuthoringError('query.invalid','Choose project, library, construction-library, atlas or all.')
     result=project_records(document) if source in ('project','all') else []
     if source in ('library','all'):
         if library and Path(library).is_dir():
@@ -143,6 +143,10 @@ def catalogue(document, source='project', library=None, decoded=None):
                 bundle=read_json(path);UnitLibrary.check_header(bundle)
                 result.append(bundle_record(bundle,path))
         elif source=='library':raise AuthoringError('dependency.unavailable','Select an existing Unit Library folder.')
+    if source in ('construction-library','all') and (construction_library or source=='construction-library'):
+        from construction_library import ConstructionLibrary,DEFAULT_ROOT,summary
+        shared=ConstructionLibrary(construction_library or DEFAULT_ROOT,document.validator)
+        result.extend(summary(bundle,shared.path(bundle['entry_id'])) for bundle in shared.entries())
     if source in ('atlas','all'):
         from tile_editing import sheet_graphics,source_definition
         from tile_animation import tile_loop

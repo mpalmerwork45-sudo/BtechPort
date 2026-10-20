@@ -59,9 +59,10 @@ def read(folder):
 
 
 def freeze_imports(request,base_dir,folder,retained=None):
+    from authoring_contract import IMPORT_OPERATIONS
     imports={};total=0
     for op in request['operations']:
-        if op['op'] not in ('art.import','unit.import','script.import') or op['file'] in imports:continue
+        if op['op'] not in IMPORT_OPERATIONS or op['file'] in imports:continue
         original=Path((retained or {}).get(op['file'],op['file']));original=original if original.is_absolute() else Path(base_dir)/original
         if original.is_symlink() or not original.is_file() or original.stat().st_size>16*1024*1024:
             raise AuthoringError('import.unavailable','Import needs a regular file up to 16 MiB: '+str(original))

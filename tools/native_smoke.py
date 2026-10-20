@@ -1304,6 +1304,7 @@ def main():
     parser.add_argument('--editor-usability-only',action='store_true',help='Check editor dialogs, drafts and workspace workflows')
     parser.add_argument('--editor-focus-only',action='store_true',help='Check modal focus under KWin on an isolated display/session')
     parser.add_argument('--editor-mission-only',action='store_true',help='Check region drawing, mission forms, recovery and extraction mission Play')
+    parser.add_argument('--construction-library-only',action='store_true',help='Check shared construction/pattern export, import, drawing and revision updates')
     parser.add_argument('--editor-benchmark-only',action='store_true',help='Measure the declared large fixture in a fresh process')
     parser.add_argument('--editor-library-workspace-only',action='store_true',help='Check asynchronous library scope saving and recovery')
     parser.add_argument('--independent-only',action='store_true',help='Check independent quest and saved SDL screens without original files')
@@ -1364,7 +1365,7 @@ def main():
     read_fd, write_fd = os.pipe()
     with (work / "native-xvfb.log").open("w") as log:
         xvfb = subprocess.Popen([str(ROOT / "local-deps/xvfb/usr/bin/Xvfb"),
-            "-displayfd", str(write_fd), "-screen", "0", "1600x1000x24" if args.editor_usability_only or args.editor_focus_only or args.editor_mission_only or args.editor_canvas_only or args.editor_paint_only or args.editor_play_tile_only or args.editor_tile_animation_only or args.editor_authoring_only or args.editor_collaboration_only else "1024x768x24", "-nolisten", "tcp"],
+            "-displayfd", str(write_fd), "-screen", "0", "1600x1000x24" if args.editor_usability_only or args.editor_focus_only or args.editor_mission_only or args.construction_library_only or args.editor_canvas_only or args.editor_paint_only or args.editor_play_tile_only or args.editor_tile_animation_only or args.editor_authoring_only or args.editor_collaboration_only else "1024x768x24", "-nolisten", "tcp"],
             pass_fds=(write_fd,), stdout=log, stderr=subprocess.STDOUT)
         os.close(write_fd)
         try:
@@ -1383,6 +1384,10 @@ def main():
                 return
             if args.editor_mission_only:
                 from editor_mission_smoke import run
+                run(env,work)
+                return
+            if args.construction_library_only:
+                from construction_library_smoke import run
                 run(env,work)
                 return
             if args.editor_benchmark_only:

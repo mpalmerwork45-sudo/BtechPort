@@ -18,7 +18,7 @@ class CatalogueBrowser:
         self.query=tk.StringVar();self.source=tk.StringVar(value='project');self.status=tk.StringVar()
         bar=ttk.Frame(self.window,padding=10);bar.pack(fill='x')
         ttk.Label(bar,text='Content catalogue',style='Heading.TLabel').pack(side='left',padx=(0,16))
-        box=ttk.Combobox(bar,textvariable=self.source,values=['project','library','atlas'],state='readonly',width=12)
+        box=ttk.Combobox(bar,textvariable=self.source,values=['project','library','construction-library','atlas'],state='readonly',width=20)
         box.pack(side='left');box.bind('<<ComboboxSelected>>',lambda _:guard(self,self.reload))
         ttk.Entry(bar,textvariable=self.query).pack(side='left',fill='x',expand=True,padx=10)
         ttk.Button(bar,text='Search',command=lambda:guard(self,self.refresh)).pack(side='left')
@@ -68,7 +68,8 @@ class CatalogueBrowser:
         # Source-atlas discovery needs decoding. Ordinary project searches
         # still work when the original art directory is unavailable.
         self.items=catalogue(self.document,source,self.owner.settings.get('library-root',Path(__file__).resolve().parents[1]/'work/unit-library'),
-                             self.visuals.tiles if source=='atlas' else None)
+                             self.visuals.tiles if source=='atlas' else None,
+                             self.owner.settings.get('construction-library-root',Path(__file__).resolve().parents[1]/'work/construction-library'))
         self.refresh(reset=not preserve);self.revision=self.document.revision
         if preserve:self.listing.yview_moveto(position)
     def page(self,amount):self.offset=max(0,self.offset+amount);self.refresh(reset=False)
@@ -119,6 +120,8 @@ class CatalogueBrowser:
         item=self.selected()
         if item['source']=='library':
             raise EditorError('Use Edit unit in the Unit Library, then Content catalogue in that editing scope to annotate the blueprint.')
+        if item['source']=='construction-library':
+            raise EditorError('Import this design into a project, edit its tags there, then explicitly save the revised design to Construction Library.')
         form=Form(self,'Asset description and tags')
         form.field('name',item['name']);form.field('description',item.get('description',''))
         form.field('tags',', '.join(item.get('tags',[])))
@@ -134,6 +137,11 @@ class CatalogueBrowser:
         item=self.selected()
         if item['kind'] not in ('tile','pattern','construction'):raise EditorError('Import units through the Unit Library. Use tiles, patterns or construction sets on the map.')
         self.owner.edit_adventure();maps=self.owner.map_editor
+        if item['source']=='construction-library':
+            library=maps.construction_library()
+            library.kind.set('All');library.query.set('');library.reload(item['id'])
+            library.status.set('Select Import and edit to copy this design into the project before drawing.')
+            return
         if item['kind']=='tile':
             identity=item['id'] if item.get('collection')=='tiles' else ensure_tile(self.document,item['sheet'],item['graphic'])
             maps.refresh();select_tile(maps,identity);maps.tool.set('Paint');maps.window.lift()

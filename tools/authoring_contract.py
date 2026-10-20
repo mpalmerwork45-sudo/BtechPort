@@ -9,6 +9,7 @@ from editor_model import EditorError
 
 API_VERSION = 1
 MAX_REQUEST_BYTES = 16 * 1024 * 1024
+IMPORT_OPERATIONS = ('art.import','unit.import','script.import','construction.import')
 
 
 class AuthoringError(EditorError):
@@ -164,6 +165,9 @@ operation('pattern.place','Place a stored pattern, preserving manual constructio
           dict(map=ID,id=ID,at=POINT,layer=integer(-1,32)),['map','id','at'],['adventure.maps','editor.map_constructions'],dict(map='demo:town',id='demo:pattern-1',at=[12,4]))
 operation('unit.import','Import a unit bundle and its dependency closure; path relative to the request file.',
           dict(file=TEXT,policy=enum('keep','replace','variant'),infantry_art=dict(type='boolean')),['file'],['content','art','adventure.people','editor','provenance'],dict(file='units/locust.json'))
+operation('construction.import','Import a Construction Library style or pattern with tile/art dependencies; conflicting resources are preserved. Supply id to use the result later in this batch.',
+          dict(file=TEXT,id=ID),['file'],['adventure.tiles','art.images','editor','provenance'],
+          dict(file='library/depot.construction.json',id='demo:depot-style'))
 operation('art.import','Import an image/sprite sheet through the existing converter; explicit frame dimensions.',
           dict(file=TEXT,kind=enum('tile','sprite','icon','screen'),frame_width=integer(1,320),frame_height=integer(1,200),id=ID,name=TEXT),['file','kind'],['art.images'],dict(file='art/relay.png',kind='screen',id='demo:relay'))
 operation('art.clone','Clone one owned image and its animation tracks into an independent editable image.',

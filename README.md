@@ -2,7 +2,7 @@
 
 The editor and desktop launcher are named **BattleTech Construction Kit**. They
 create and edit game packages for the BtechPort player, including maps, events,
-artwork and the shared Unit Library.
+artwork and shared Unit and Construction Libraries.
 
 An independent **C11 / SDL2** recreation of **BattleTech: The Crescent Hawk's
 Inception** (1988), targeting the DOS **1.03** release.
@@ -60,6 +60,13 @@ editable project tiles. New worlds default to the original **1024 × 1024** size
 Open **Construction tools** in the explorer or use **Project**; see the
 [map construction guide](docs/M5_WORLD_ART_EDITOR.md#buildings-walls-and-roads).
 
+**Project → Construction Library** shares building, wall and road definitions
+and saved patterns between games, with their tiles, animation frames, editing
+layers and source credits. Designers and the project Pattern Library provide
+**Save to library**; **Import and edit** opens a shared copy in another game.
+AI authors can search and import the same designs before drawing.
+See the [Construction Library guide](docs/CONSTRUCTION_LIBRARY.md).
+
 The shared **Unit Library** currently offers **82 blueprints: 66 mechs, ten
 vehicles and six infantry templates**, including [25 additional classic
 mechs](content/catalogues/mechs/README.md). Mechs use Locust or red Stinger
@@ -101,6 +108,10 @@ exchange. Review proposed maps/events, protect human edits, and accept changes
 with shared Undo and revision checks. External authors can take snapshots of
 the open editor and submit scoped proposals; review is the default.
 Try **Relay Contract (command-created)** in the launcher.
+**Argent Recovery (regions / objectives)** demonstrates AI6a: named map regions,
+typed counters, explicit objective states and compound extraction conditions,
+with saved event continuations. The [mission reference](docs/MISSION_STATE.md)
+documents the editor controls and lifecycle rules.
 For a separate playable discovery/repair demonstration, run
 `python3 tools/authoring_demo.py --output work/my-authoring-lab` after preparing
 the original resources. It retains previews, exact commands and test reports
