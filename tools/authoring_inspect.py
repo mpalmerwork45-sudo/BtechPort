@@ -19,7 +19,8 @@ def capabilities(tool):
         raise AuthoringError('runtime.unavailable',str(exc)) from exc
     return dict(api_version=API_VERSION,runtime=runtime,runtime_sha256=hashlib.sha256(Path(tool).read_bytes()).hexdigest(),
         operations=OPERATIONS, features=dict(transactional_batches=True,expected_revision=True,dry_run=True,
-        persisted_requests=True,gui_undo=True,live_remote_session=False,protected_regions=False,
+        persisted_requests=True,gui_undo=True,live_remote_session=False,live_local_session=True,protected_regions=True,
+        change_review=True,partial_change_groups=True,named_protection_overrides=True,
         reinforcement_events=False,escort_events=False,asset_search=True,contact_sheets=True,animation_strips=True,event_graph_preview=True,
         world_city_previews=True,native_navigation_checks=True,objective_access_warnings=True,scenario_suites=True,
         scenario_seeds=True,scenario_checkpoints=True,combat_sampling=True,fixture_batches=True,selected_case_reruns=True),
@@ -31,6 +32,9 @@ def capabilities(tool):
         bounds=dict(operations_per_batch=512,request_bytes=16777216,query_page=100,receipts=512,contact_sheet_items=32,
             animation_frames_per_strip=32,preview_region_tiles=64,scenario_steps=256,scenario_ticks=120000,scenario_seconds=45,
             suite_runs=32,suite_cases=16,seeds_per_case=8,suite_seconds=300),
+        collaboration=dict(transport='local-file-inbox',session_format='btp-author-session-v1',review_format='btp-author-review-v1',
+            policies=['review','apply_within_scope'],scope='One explicitly opened project or library editing scope; rules and actual diffs are checked.',
+            protection_kinds=['object','fields','map_region'],rules_max=256,session_jobs_max=256,queued_jobs_max=8),
         schemas='schemas/',guide='docs/AI_AUTHORING_GUIDE.md')
 
 
@@ -66,6 +70,7 @@ def summary(doc, tool):
     return dict(api_version=API_VERSION,project=dict(id=doc.manifest['package_id'],title=doc.manifest['title'],
         content_version=doc.manifest['content_version'],requires=doc.manifest['requires'],rules_profile=doc.manifest['rules_profile']),
         revision=revision(doc),capacity=capacity,start=a.get('start'),coordinate_spaces=caps['coordinate_spaces'],
+        protection=editor_data(doc).get('authoring_protection',[]),
         maps=[dict(id=m['id'],name=m['name'],width=len(m['rows'][0]),height=len(m['rows']),origin=m['origin'],entrances=len(m['entrances']),overlays=len(m['overlays'])) for m in a.get('maps',[])],
         worlds=[dict(id=w['id'],name=w['name'],width_tiles=8*len(w['pieces'][0]),height_tiles=8*len(w['pieces']),cities=w['cities']) for w in worlds],
         objectives=a.get('objectives',[]),flags=a.get('flags',[]),scripts=doc.manifest.get('scripts',[]),

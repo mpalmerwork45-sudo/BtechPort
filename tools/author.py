@@ -63,6 +63,38 @@ def parser():
             for key in ('data','dialogue-data','combat-data','world-data'):s.add_argument('--'+key,type=Path)
             s.add_argument('--cancel-file',type=Path)
             if name=='suite':s.add_argument('--case',action='append',dest='case_ids',help='Run only this case; repeat for several affected cases.')
+    review=sub.add_parser('review',help='Prepare, inspect and accept durable change proposals.')
+    actions=review.add_subparsers(dest='review_action',required=True)
+    for name in ('prepare','show','apply','discard','request-changes','recheck','check'):
+        s=actions.add_parser(name)
+        if name in ('prepare','apply','recheck'):
+            s.add_argument('project',type=Path)
+            s.add_argument('--validator',type=Path,default=ROOT/'build'/('btp-project.exe' if os.name=='nt' else 'btp-project'))
+        if name!='prepare':s.add_argument('folder',type=Path)
+        if name=='prepare':s.add_argument('--request',type=Path,required=True)
+        if name in ('prepare','recheck'):
+            s.add_argument('--output',type=Path,required=True);s.add_argument('--group',action='append',dest='groups')
+            s.add_argument('--data',type=Path);s.add_argument('--cancel-file',type=Path)
+        if name=='apply':s.add_argument('--override',action='append',default=[],help='Explicit exception for this named protection rule.')
+        if name=='request-changes':s.add_argument('--note',required=True)
+        if name=='check':
+            s.add_argument('--validator',type=Path,default=ROOT/'build'/('btp-project.exe' if os.name=='nt' else 'btp-project'))
+            for key,tool in [('analyzer','btp-author-analyze'),('runner','btp-author-playtest')]:s.add_argument('--'+key,type=Path,default=ROOT/'build'/(tool+('.exe' if os.name=='nt' else '')))
+            for key in ('data','dialogue-data','combat-data','world-data'):s.add_argument('--'+key,type=Path)
+            s.add_argument('--suite',type=Path);s.add_argument('--cancel-file',type=Path)
+    protection=sub.add_parser('protection',help='List or deliberately edit preservation rules.')
+    protection.add_argument('project',type=Path)
+    protection.add_argument('--validator',type=Path,default=ROOT/'build'/('btp-project.exe' if os.name=='nt' else 'btp-project'))
+    changes=protection.add_mutually_exclusive_group();changes.add_argument('--file',type=Path);changes.add_argument('--remove')
+    protection.add_argument('--expected-revision')
+    session=sub.add_parser('session',help='Connect to an explicitly started local editor session.')
+    actions=session.add_subparsers(dest='session_action',required=True)
+    for name in ('status','snapshot','propose','cancel','wait'):
+        s=actions.add_parser(name);s.add_argument('folder',type=Path)
+        if name in ('cancel','wait'):s.add_argument('job')
+        if name=='propose':s.add_argument('--request',type=Path,required=True)
+        if name in ('snapshot','propose'):s.add_argument('--job-id');s.add_argument('--wait',type=float,default=0)
+        if name=='wait':s.add_argument('--seconds',type=float,default=30)
     return p
 
 
@@ -94,6 +126,42 @@ def create(args):
 
 
 def dispatch(args):
+    if args.command=='session':
+        import authoring_session as session
+        action=args.session_action
+        if action=='status':return dict(status='ok',session=session.info(args.folder),jobs=session.jobs(args.folder))
+        if action=='cancel':return session.cancel(args.folder,args.job)
+        if action=='wait':return session.wait(args.folder,args.job,args.seconds)
+        request=read_json(args.request) if action=='propose' else None
+        result=session.submit(args.folder,action,request=request,base_dir=args.request.parent if request else None,job_id=args.job_id)
+        return session.wait(args.folder,result['id'],args.wait) if args.wait else result
+    if args.command=='review':
+        import authoring_review as review
+        action=args.review_action
+        if action=='show':return review.read(args.folder)
+        if action=='check':
+            settings={k:str(getattr(args,k.replace('-','_'))) for k in ('data','dialogue-data','combat-data','world-data') if getattr(args,k.replace('-','_'))}
+            return review.check_candidate(args.folder,args.validator,settings=settings,analyzer=args.analyzer,runner=args.runner,suite=args.suite,
+                cancelled=lambda:bool(args.cancel_file and args.cancel_file.exists()))
+        if action in ('discard','request-changes'):return review.decide(args.folder,action.replace('-','_'),getattr(args,'note',''))
+        if action=='apply':
+            with project_lock(args.project):
+                return review.apply(ProjectDocument(args.project,args.validator),args.folder,overrides=args.override,save=True)
+        doc=ProjectDocument(args.project,args.validator,recover=False)
+        settings={'data':str(args.data)} if args.data else {}
+        cancelled=lambda:bool(args.cancel_file and args.cancel_file.exists())
+        if action=='recheck':return review.recheck(doc,args.folder,args.output,args.groups,settings=settings,cancelled=cancelled)
+        return review.prepare(doc,read_json(args.request),args.output,base_dir=args.request.parent,selected=args.groups,settings=settings,cancelled=cancelled)
+    if args.command=='protection':
+        from authoring_protection import rules,edit_rule
+        if not args.file and not args.remove:
+            doc=ProjectDocument(args.project,args.validator,recover=False)
+            return dict(status='ok',revision=revision(doc),rules=rules(doc))
+        with project_lock(args.project):
+            doc=ProjectDocument(args.project,args.validator)
+            if revision(doc)!=args.expected_revision:raise AuthoringError('revision.conflict','Supply the current --expected-revision to edit preservation rules.')
+            edit_rule(doc,read_json(args.file) if args.file else None,remove=args.remove);doc.save()
+            return dict(status='saved',revision=revision(doc),rules=rules(doc))
     if args.command=='capabilities':return capabilities(args.validator)
     if args.command=='schema':
         return dict(**(OPERATIONS[args.operation]['schema'] if args.operation else BATCH_SCHEMA),

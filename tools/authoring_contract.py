@@ -178,9 +178,12 @@ operation('asset.annotate','Describe an asset for both human pickers and automat
               edges=obj({s:dict(type='string',maxLength=64) for s in ('north','east','south','west')})))),
           ['id','changes'],['editor.catalogue'],dict(id='demo:grass',changes={'description':'Open grassland','tags':['grassland','outdoors']}))
 
+GROUP_SCHEMA=obj(dict(id=dict(type='string',minLength=1,maxLength=64,pattern=r'^[a-zA-Z0-9._-]+$'),label=TEXT,
+    operations=array(integer(0,511),1,512),requires=array(TEXT,0,64)),['id','label','operations'])
 BATCH_SCHEMA = obj(dict(api_version={'const':API_VERSION},request_id=dict(type='string',minLength=1,maxLength=96,pattern=r'^[a-zA-Z0-9._-]+$'),
     project_id=dict(type='string',minLength=1,maxLength=31),expected_revision=dict(anyOf=[dict(type='string',pattern='^[0-9a-f]{64}$'),{'const':'new'}]),
     label=dict(type='string',minLength=1,maxLength=160),scope=array(TEXT,1,64),
+    brief=dict(type='string',maxLength=4096),constraints=array(TEXT,0,32),groups=array(GROUP_SCHEMA,1,64),
     operations=array(dict(oneOf=[d['schema'] for d in OPERATIONS.values()]),1,512)),
     ['api_version','request_id','project_id','expected_revision','label','scope','operations'])
 
@@ -193,3 +196,11 @@ def check_batch(request):
         if op.get('op') not in OPERATIONS:
             raise AuthoringError('operation.unsupported','Unsupported operation: '+str(op.get('op')),f'$.operations[{i}].op')
         check(op,OPERATIONS[op['op']]['schema'],f'$.operations[{i}]')
+    groups=request.get('groups',[])
+    if groups:
+        identities={g['id'] for g in groups};indices=[i for g in groups for i in g['operations']]
+        if len(identities)!=len(groups) or sorted(indices)!=list(range(len(request['operations']))):
+            raise AuthoringError('group.invalid','Groups need unique IDs and must assign each operation exactly once.')
+        for group in groups:
+            if set(group.get('requires',[]))-identities or group['id'] in group.get('requires',[]):
+                raise AuthoringError('group.invalid','Group dependencies must name other existing groups.')

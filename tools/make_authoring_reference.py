@@ -4,12 +4,13 @@ import json
 from pathlib import Path
 from authoring_contract import BATCH_SCHEMA,OPERATIONS
 from authoring_scenarios import SCHEMA,SUITE_SCHEMA
+from authoring_protection import RULE_SCHEMA
 
 ROOT=Path(__file__).resolve().parents[1]
 
 
 def main():
-    for name,schema in [('authoring-batch-v1',BATCH_SCHEMA),('authoring-scenario-v1',SCHEMA),('authoring-suite-v1',SUITE_SCHEMA)]:
+    for name,schema in [('authoring-batch-v1',BATCH_SCHEMA),('authoring-scenario-v1',SCHEMA),('authoring-suite-v1',SUITE_SCHEMA),('authoring-protection-v1',RULE_SCHEMA)]:
         value=dict(schema,**{'$schema':'https://json-schema.org/draft/2020-12/schema'})
         (ROOT/'schemas'/f'{name}.schema.json').write_text(json.dumps(value,indent=2)+'\n')
     lines=['# Authoring command reference','',

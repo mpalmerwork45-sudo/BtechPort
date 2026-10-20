@@ -276,7 +276,8 @@ def check_capacity(document):
             raise AuthoringError('capacity.exceeded',f"{key}: {value['used']} entries exceed the installed limit {value['limit']}.",key)
 
 
-def apply_batch(document, request, *, base_dir=None, dry_run=False, save=False, cancelled=lambda:False):
+def apply_batch(document, request, *, base_dir=None, dry_run=False, save=False, cancelled=lambda:False,
+                frozen_imports=None,protection_overrides=(),allowed_scope=None,expected_result=None):
     check_batch(request)
     if request['project_id']!=document.manifest['package_id']:
         raise AuthoringError('project.mismatch','Request names a different project.','$.project_id')
@@ -286,7 +287,7 @@ def apply_batch(document, request, *, base_dir=None, dry_run=False, save=False, 
     imports={};fingerprint=dict(request=request,imports={})
     for op in request['operations']:
         if op['op'] in ('art.import','unit.import','script.import'):
-            path=Path(op['file'])
+            path=Path((frozen_imports or {}).get(op['file'],op['file']))
             if not path.is_absolute():path=Path(base_dir or document.root)/path
             if path.is_symlink() or not path.is_file() or path.stat().st_size>16*1024*1024:
                 raise AuthoringError('import.unavailable','Import needs a regular file up to 16 MiB: '+str(path))
@@ -315,6 +316,12 @@ def apply_batch(document, request, *, base_dir=None, dry_run=False, save=False, 
     for change in changes:
         if not any(scope=='*' or change['path']==scope or change['path'].startswith(scope+'.') or change['path'].startswith(scope+'/') for scope in request['scope']):
             raise AuthoringError('scope.denied','Batch would change an object outside its declared scope: '+change['path'],object_id=change['object_id'])
+        if allowed_scope is not None and not any(scope=='*' or change['path']==scope or change['path'].startswith(scope+'.') or change['path'].startswith(scope+'/') for scope in allowed_scope):
+            raise AuthoringError('scope.denied','Batch exceeds this authoring session scope: '+change['path'],object_id=change['object_id'])
+    from authoring_protection import enforce,displaced_details
+    enforce(document,candidate,protection_overrides)
+    if expected_result is not None and revision(candidate)!=expected_result:
+        raise AuthoringError('review.changed','The proposed result changed since review. Prepare and review it again.')
     check_metadata(candidate);check_capacity(candidate);checkpoint();validation=candidate.validate();checkpoint()
     # Imports can be edited while a batch validates. Never acknowledge a
     # request whose recorded input hash differs from the bytes it imported.
@@ -323,7 +330,8 @@ def apply_batch(document, request, *, base_dir=None, dry_run=False, save=False, 
     document.unchanged_on_disk()
     if revision(document)!=base:raise AuthoringError('revision.conflict','Live document changed while the batch was running.')
     result=dict(api_version=API_VERSION,status='validated' if dry_run else 'applied',request_id=request['request_id'],
-                base_revision=base,result_revision=revision(candidate),changes=changes,operations=outputs,validation=validation,diagnostics=[])
+                base_revision=base,result_revision=revision(candidate),changes=changes,operations=outputs,validation=validation,diagnostics=[],
+                protection_overrides=list(protection_overrides),displaced_details=displaced_details(document,candidate))
     if dry_run:return result
     receipts[request['request_id']]=dict(hash=request_hash,result=copy.deepcopy(result))
     meta=dict(candidate.metadata);meta[AUTHORING_RECEIPTS]=encoded(ledger)
