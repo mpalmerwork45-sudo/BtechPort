@@ -1,0 +1,53 @@
+{
+  "format": "btp-author-scenario-v1",
+  "max_ticks": 120000,
+  "steps": [
+    {
+      "op": "pages"
+    },
+    {
+      "op": "choose",
+      "label": "Defend the relay"
+    },
+    {
+      "op": "battle",
+      "control": "computer"
+    },
+    {
+      "op": "checkpoint"
+    },
+    {
+      "op": "pages"
+    },
+    {
+      "op": "choose",
+      "label": "Begin escort"
+    },
+    {
+      "op": "battle",
+      "control": "computer"
+    },
+    {
+      "op": "assert",
+      "battle_outcome": "win",
+      "objective": "cairn:escort",
+      "status": "complete",
+      "credits": 12000
+    },
+    {
+      "op": "assert",
+      "objective": "cairn:defend",
+      "status": "complete"
+    },
+    {
+      "op": "checkpoint"
+    },
+    {
+      "op": "pages"
+    },
+    {
+      "op": "assert",
+      "phase": "complete"
+    }
+  ]
+}

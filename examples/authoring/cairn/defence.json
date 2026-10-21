@@ -1,0 +1,68 @@
+{
+  "format": "btp-author-scenario-v1",
+  "max_ticks": 120000,
+  "steps": [
+    {
+      "op": "pages"
+    },
+    {
+      "op": "choose",
+      "label": "Defend the relay"
+    },
+    {
+      "op": "input",
+      "action": "idle"
+    },
+    {
+      "op": "assert",
+      "event": "cairn:defence-start"
+    },
+    {
+      "op": "checkpoint"
+    },
+    {
+      "op": "capture"
+    },
+    {
+      "op": "battle",
+      "control": "computer",
+      "until_round": 2
+    },
+    {
+      "op": "checkpoint"
+    },
+    {
+      "op": "battle",
+      "control": "computer",
+      "until_round": 3
+    },
+    {
+      "op": "assert",
+      "group": "cairn:raider-wave",
+      "measure": "deployed",
+      "value": 1
+    },
+    {
+      "op": "checkpoint"
+    },
+    {
+      "op": "battle",
+      "control": "computer"
+    },
+    {
+      "op": "assert",
+      "battle_outcome": "win",
+      "objective": "cairn:defend",
+      "status": "complete",
+      "credits": 8000,
+      "round_min": 5,
+      "round_max": 5
+    },
+    {
+      "op": "checkpoint"
+    },
+    {
+      "op": "capture"
+    }
+  ]
+}

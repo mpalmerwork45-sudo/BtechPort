@@ -1,0 +1,49 @@
+{
+  "api_version": 1,
+  "request_id": "cairn-loss-fixture",
+  "project_id": "cairn-passage",
+  "expected_revision": "new",
+  "label": "Controlled fixture: close assault on the transport",
+  "scope": [
+    "adventure.encounters"
+  ],
+  "operations": [
+    {
+      "op": "object.patch",
+      "collection": "encounters",
+      "id": "cairn:escort",
+      "changes": {
+        "party_at": [
+          10,
+          52
+        ],
+        "enemies": [
+          {
+            "kind": "mech",
+            "definition": "chi-expanded:phoenix-hawk-pxh-1",
+            "at": [
+              26,
+              32
+            ]
+          },
+          {
+            "kind": "mech",
+            "definition": "chi-expanded:phoenix-hawk-pxh-1",
+            "at": [
+              26,
+              36
+            ]
+          },
+          {
+            "kind": "mech",
+            "definition": "chi-expanded:phoenix-hawk-pxh-1",
+            "at": [
+              30,
+              34
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

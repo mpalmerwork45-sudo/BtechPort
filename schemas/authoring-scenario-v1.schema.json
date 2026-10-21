@@ -281,6 +281,19 @@
                 "maxLength": 63,
                 "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
               },
+              "group": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "measure": {
+                "enum": [
+                  "alive",
+                  "destroyed",
+                  "deployed",
+                  "arrived"
+                ]
+              },
               "value": {
                 "type": "integer",
                 "minimum": 0,
@@ -343,6 +356,11 @@
               {
                 "required": [
                   "region"
+                ]
+              },
+              {
+                "required": [
+                  "group"
                 ]
               },
               {
@@ -419,6 +437,19 @@
                 },
                 "then": {
                   "required": [
+                    "value"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "required": [
+                    "group"
+                  ]
+                },
+                "then": {
+                  "required": [
+                    "measure",
                     "value"
                   ]
                 }

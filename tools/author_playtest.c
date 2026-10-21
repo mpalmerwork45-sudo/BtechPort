@@ -5,10 +5,12 @@
 #include "frontend/authored_route.h"
 #include "core/events.h"
 #include "core/mission_state.h"
+#include "core/battle_mission.h"
 #include "core/party.h"
 #include "core/combat.h"
 #include "core/roster_game.h"
 #include "data/json.h"
+#include "data/project.h"
 #include "data/save.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -95,6 +97,17 @@ static void input(BtpState *s,const BtpResources *r,BtpAction action)
     if(s->event.phase==BTP_EVENT_FIGHTING && !battle_open)begin_metrics(s);
     if (s->mode==BTP_SCRIPT_FAULT || s->event.phase==BTP_EVENT_FAULT) fail("Runtime event or script fault");
 }
+static void group_state(FILE *f,const BtpState *s,const BtpAdventure *a)
+{
+    if (!a->combat_missions) return;
+    fprintf(f,",\"combat_round\":%u,\"combat_hook\":%s,\"combat_groups\":{",s->battle_mission.round,s->battle_mission.in_hook ? "true":"false");
+    for (unsigned i=0;i<a->group_count;++i) {
+        fprintf(f,"%s\"%s\":{\"alive\":%u,\"destroyed\":%u,\"deployed\":%u,\"arrived\":%u}",i?",":"",a->groups[i].id,
+            btp_battle_group_value(s,a,i,BTP_CONDITION_GROUP_ALIVE),btp_battle_group_value(s,a,i,BTP_CONDITION_GROUP_DESTROYED),
+            btp_battle_group_value(s,a,i,BTP_CONDITION_GROUP_DEPLOYED),btp_battle_group_value(s,a,i,BTP_CONDITION_GROUP_ARRIVED));
+    }
+    fputc('}',f);
+}
 static void event_trace(void *context,const BtpState *s,const BtpResources *r,const BtpEventNode *e)
 {
     FILE *f=context;const BtpAdventure *a=btp_adventure(r);
@@ -104,7 +117,7 @@ static void event_trace(void *context,const BtpState *s,const BtpResources *r,co
     for(unsigned i=0;i<a->variable_count;++i)fprintf(f,"%s\"%s\":%u",i?",":"",a->variables[i].id,s->event.variables[i]);
     fputs("},\"objectives\":{",f);
     for(unsigned i=0;i<a->objective_count;++i)fprintf(f,"%s\"%s\":\"%s\"",i?",":"",a->objectives[i].id,btp_objective_name(btp_objective_state(s,a,i)));
-    fputs("}}\n",f);
+    fputc('}',f);group_state(f,s,a);fputs("}\n",f);
 }
 static const char *phase_name(unsigned phase)
 {
@@ -119,8 +132,8 @@ static void state(const BtpState *s,const BtpResources *r)
     string_json(stdout,s->event.node<a->node_count ? a->nodes[s->event.node].id : "");
     printf(",\"party_count\":%u,\"flags\":{",btp_party_count(&s->party));
     for(unsigned i=0;i<a->flag_count;++i)printf("%s\"%s\":%u",i?",":"",a->flags[i],s->event.flags[i]);
-    const char *reported=s->event.phase==BTP_EVENT_FIGHTING ? outcome(&s->combat) : last_outcome;
-    unsigned rounds=s->event.phase==BTP_EVENT_FIGHTING ? s->combat.round : last_round;
+    const char *reported=s->event.phase==BTP_EVENT_FIGHTING || s->battle_mission.active ? outcome(&s->combat) : last_outcome;
+    unsigned rounds=s->event.phase==BTP_EVENT_FIGHTING || s->battle_mission.active ? s->combat.round : last_round;
     printf("},\"battle\":{\"won\":%u,\"fled\":%u,\"lost\":%u,\"outcome\":\"%s\",\"round\":%u},\"objectives\":{",!strcmp(reported,"win"),!strcmp(reported,"retreat"),!strcmp(reported,"loss"),reported,rounds);
     for(unsigned i=0;i<a->objective_count;++i) {
         const BtpObjective *o=&a->objectives[i];
@@ -130,7 +143,8 @@ static void state(const BtpState *s,const BtpResources *r)
     for(unsigned i=0;i<a->variable_count;++i)printf("%s\"%s\":%u",i?",":"",a->variables[i].id,s->event.variables[i]);
     fputs("},\"regions\":{",stdout);
     for(unsigned i=0;i<a->region_count;++i)printf("%s\"%s\":%d",i?",":"",a->regions[i].id,btp_mission_region(s,a,i));
-    printf("},\"mode\":\"%s\",\"rng\":[%u,%u,%u],\"owned_mechs\":%u,\"party\":[",btp_mode_name(s->mode),s->npc.rng[0],s->npc.rng[1],s->npc.rng[2],btp_broker_count(s));
+    fputc('}',stdout);group_state(stdout,s,a);
+    printf(",\"mode\":\"%s\",\"rng\":[%u,%u,%u],\"owned_mechs\":%u,\"party\":[",btp_mode_name(s->mode),s->npc.rng[0],s->npc.rng[1],s->npc.rng[2],btp_broker_count(s));
     unsigned comma=0;
     for(unsigned i=0;i<8;++i)if(s->event.people[i]<a->person_count) {
         printf("%s{\"id\":\"%s\",\"slot\":%u,\"alive\":%s,\"health\":%u}",comma++?",":"",a->people[s->event.people[i]].id,i,
@@ -149,13 +163,23 @@ static int text_field(BtpJson *j,unsigned node,const char *key,char *value,size_
 { return btp_json_string(j,btp_json_field(j,node,key),value,size); }
 static int optional_number(BtpJson *j,unsigned node,const char *key,unsigned low,unsigned high,unsigned *value)
 { unsigned n=btp_json_optional(j,node,key);return !n || btp_json_uint(j,n,low,high,value); }
+static void save_path(char path[96],const char *name,const BtpResources *r)
+{
+    int prefix=snprintf(path,96,"%s-",name);
+    for (unsigned i=0;i<32;++i) snprintf(path+prefix+2*i,3,"%02x",r->project->digest[i]);
+    strcpy(path+prefix+64,".btp");
+}
 static int checkpoint(BtpState *s,const BtpResources *r)
 {
     BtpState *loaded=malloc(sizeof *loaded);uint8_t *before=malloc(BTP_STATE_BYTES),*after=malloc(BTP_STATE_BYTES);
-    int ok=loaded && before && after && btp_save_write("checkpoint.btp",s,r,&error) && btp_save_load("checkpoint.btp",loaded,r,&error);
+    /* CTest reuses its artifact directory after authored content changes.
+       Namespace fixtures by content instead of weakening the player's guard
+       against overwriting another project revision's save. */
+    char path[96];save_path(path,"checkpoint",r);
+    int ok=loaded && before && after && btp_save_write(path,s,r,&error) && btp_save_load(path,loaded,r,&error);
     if(ok) { btp_state_encode(s,before);btp_state_encode(loaded,after);ok=!memcmp(before,after,BTP_STATE_BYTES); }
     if(ok)*s=*loaded;
-    free(loaded);free(before);free(after);return ok || fail("Save/reload failed or changed logical state");
+    free(loaded);free(before);free(after);return ok || fail(error.text[0] ? error.text : "Save/reload changed logical state");
 }
 static int capture(const BtpState *s,const BtpResources *r,const char *path)
 {
@@ -204,15 +228,28 @@ static int execute(BtpJson *j,unsigned node,BtpState *s,const BtpResources *r)
         unsigned until=0;
         if(!text_field(j,node,"control",value,sizeof value) || (strcmp(value,"computer") && strcmp(value,"hold") && strcmp(value,"retreat")))return fail("Use computer, hold or retreat combat control");
         if(!optional_number(j,node,"until_round",1,1024,&until))return 0;
-        if(s->event.phase!=BTP_EVENT_FIGHTING)return fail("Battle requires an active encounter");
+        if(s->event.phase!=BTP_EVENT_FIGHTING && !s->battle_mission.active)return fail("Battle requires an active encounter");
         const char *policy=!strcmp(value,"computer") ? "computer" : !strcmp(value,"hold") ? "hold" : "retreat";
-        if(s->combat.phase==BTP_COMBAT_CONTROL) {
-            battle_policy=policy;
-            if(!strcmp(policy,"computer"))input(s,r,BTP_UP);
-            input(s,r,BTP_ACCEPT);input(s,r,BTP_ACCEPT);input(s,r,BTP_ACCEPT);
-        } else if(strcmp(battle_policy,policy))return fail("Resume a held battle with its original tested policy");
-        while(s->event.phase==BTP_EVENT_FIGHTING && !failed) {
-            if(until && s->combat.round>=until)break;
+        if(s->combat.phase==BTP_COMBAT_CONTROL) battle_policy=policy;
+        else if(strcmp(battle_policy,policy))return fail("Resume a held battle with its original tested policy");
+        while((s->event.phase==BTP_EVENT_FIGHTING || s->battle_mission.active) && !failed) {
+            if(until && s->combat.round>=until && !s->battle_mission.in_hook)break;
+            if(s->battle_mission.in_hook) {
+                if(s->event.phase!=BTP_EVENT_TEXT)return fail("Combat hook has a choice; use explicit choose input for this route");
+                input(s,r,BTP_ACCEPT);continue;
+            }
+            /* Drain the saved start hook before selecting combat settings.
+               A helper never changes mission variables or advances simulation
+               directly: every acknowledgment is an ordinary logical key. */
+            if(s->battle_mission.active) {
+                unsigned pending=0;for(unsigned i=0;i<32;++i)pending+=s->battle_mission.pending[i];
+                if(pending) { input(s,r,BTP_IDLE);continue; }
+            }
+            if(s->combat.phase==BTP_COMBAT_CONTROL) {
+                if(!strcmp(policy,"computer"))input(s,r,BTP_UP);
+                input(s,r,BTP_ACCEPT);continue;
+            }
+            if(s->combat.phase==BTP_COMBAT_MESSAGES || s->combat.phase==BTP_COMBAT_GRAPHICS) { input(s,r,BTP_ACCEPT);continue; }
             if(s->combat.phase==BTP_COMBAT_NOTICE || s->combat.phase==BTP_COMBAT_PICK)input(s,r,BTP_ACCEPT);
             else if(s->combat.phase==BTP_COMBAT_MENU && strcmp(policy,"computer")) {
                 if(!command(s,r,!strcmp(policy,"retreat") ? 8u : 9u))return 0;
@@ -230,8 +267,8 @@ static int execute(BtpJson *j,unsigned node,BtpState *s,const BtpResources *r)
         if(!number_assert(j,node,"owned_mechs",btp_broker_count(s)))return 0;
         unsigned alive=0;for(unsigned i=0;i<8;++i)if(s->party.people[i][0]!=255)++alive;
         if(!number_assert(j,node,"alive_party",alive))return 0;
-        const char *reported=s->event.phase==BTP_EVENT_FIGHTING ? outcome(&s->combat) : last_outcome;
-        unsigned rounds=s->event.phase==BTP_EVENT_FIGHTING ? s->combat.round : last_round;
+        const char *reported=s->event.phase==BTP_EVENT_FIGHTING || s->battle_mission.active ? outcome(&s->combat) : last_outcome;
+        unsigned rounds=s->event.phase==BTP_EVENT_FIGHTING || s->battle_mission.active ? s->combat.round : last_round;
         n=btp_json_optional(j,node,"battle_outcome");if(n && (!btp_json_string(j,n,value,sizeof value) || strcmp(value,reported)))return fail("Battle outcome assertion failed");
         n=btp_json_optional(j,node,"round_min");if(n && (!btp_json_uint(j,n,0,65535,&expected) || rounds<expected))return fail("Minimum battle round assertion failed");
         n=btp_json_optional(j,node,"round_max");if(n && (!btp_json_uint(j,n,0,65535,&expected) || rounds>expected))return fail("Maximum battle round assertion failed");
@@ -282,6 +319,14 @@ static int execute(BtpJson *j,unsigned node,BtpState *s,const BtpResources *r)
             unsigned i=0;while(i<a->region_count && strcmp(value,a->regions[i].id))++i;
             if(i==a->region_count || (unsigned)btp_mission_region(s,a,i)!=expected)return fail("Region membership assertion failed");
         }
+        n=btp_json_optional(j,node,"group");if(n) {
+            char measure[24];const char *const names[]={"alive","destroyed","deployed","arrived"};unsigned kind=0;
+            if(!btp_json_string(j,n,value,sizeof value) || !text_field(j,node,"measure",measure,sizeof measure) ||
+               !btp_json_uint(j,btp_json_field(j,node,"value"),0,12,&expected))return 0;
+            while(kind<4 && strcmp(measure,names[kind]))++kind;
+            unsigned i=0;while(i<a->group_count && strcmp(value,a->groups[i].id))++i;
+            if(kind==4 || i==a->group_count || btp_battle_group_value(s,a,i,BTP_CONDITION_GROUP_ALIVE+kind)!=expected)return fail("Combat group assertion failed");
+        }
     } else return fail("Unsupported scenario operation");
     return !failed && btp_json_done(j,node);
 }
@@ -320,9 +365,10 @@ int main(int argc,char **argv)
         if(!ok){failed=1;break;}
     }
     capture(s,r,"final.ppm");
-    if(!failed && !btp_save_write("final.btp",s,r,&error))failed=1;
+    char save[96];save_path(save,"final",r);
+    if(!failed && !btp_save_write(save,s,r,&error))failed=1;
     printf("{\"status\":\"%s\",\"ticks\":%u,\"steps\":%u,\"seed\":%u,\"rng_policy\":\"%s\",\"message\":",failed?"failed":"passed",ticks,step_number,seed ? seed : 11223583u,seed ? "explicit 24-bit state before first event" : "runtime initial state");
-    string_json(stdout,error.text);fputs(",\"state\":",stdout);state(s,r);fputs("}\n",stdout);
+    string_json(stdout,error.text);fputs(",\"save\":",stdout);string_json(stdout,save);fputs(",\"state\":",stdout);state(s,r);fputs("}\n",stdout);
 done:
     btp_events_observe(NULL,NULL);btp_events_observe_battles(NULL,NULL);if(actions && fclose(actions))failed=1;if(trace && fclose(trace))failed=1;if(combat_log && fclose(combat_log))failed=1;
     if(failed)fprintf(stderr,"%s\n",error.text);

@@ -1,6 +1,7 @@
 #include "core/lua_events.h"
 #include "data/project.h"
 #include "core/mission_state.h"
+#include "core/battle_mission.h"
 #include "lua.h"
 #include "lauxlib.h"
 #include <stdlib.h>
@@ -58,18 +59,33 @@ static int command(lua_State *l)
     for (unsigned i=0;i<e->count;++i) if (!strcmp(a->nodes[e->next[i]].id,id)) { lua_pushinteger(l,e->next[i]);return 1; }
     return luaL_error(l,"command must name a declared route: %s",id);
 }
+static int combat_round(lua_State *l) { lua_pushinteger(l,host(l)->s->battle_mission.round);return 1; }
+static int group_count(lua_State *l)
+{
+    Host *h=host(l);const BtpAdventure *a=&h->r->project->adventure;
+    const char *id=luaL_checkstring(l,1),*property=luaL_optstring(l,2,"alive");
+    const char *const properties[]={"alive","destroyed","deployed","arrived"};unsigned kind=0;
+    while (kind<4 && strcmp(property,properties[kind])) ++kind;
+    if (kind==4) return luaL_error(l,"group count requires alive, destroyed, deployed or arrived");
+    for (unsigned i=0;i<a->group_count;++i) if (!strcmp(id,a->groups[i].id)) {
+        lua_pushinteger(l,btp_battle_group_value(h->s,a,i,BTP_CONDITION_GROUP_ALIVE+kind));return 1;
+    }
+    return luaL_error(l,"unknown combat group: %s",id);
+}
 static int execute(lua_State *l)
 {
     Host *h=host(l);const BtpProject *p=h->r->project;const BtpEventNode *e=&p->adventure.nodes[h->s->event.node];
     const BtpLuaScript *source=&p->scripts[e->argument];
     /* No standard libraries are opened: only immutable queries and declared
        command continuations enter the VM. A new bounded VM is used per call. */
-    lua_createtable(l,0,6);
+    lua_createtable(l,0,8);
     lua_pushcfunction(l,flag);lua_setfield(l,-2,"flag");
     lua_pushcfunction(l,credits);lua_setfield(l,-2,"credits");
     lua_pushcfunction(l,variable);lua_setfield(l,-2,"variable");
     lua_pushcfunction(l,objective);lua_setfield(l,-2,"objective");
     lua_pushcfunction(l,in_region);lua_setfield(l,-2,"in_region");
+    lua_pushcfunction(l,combat_round);lua_setfield(l,-2,"combat_round");
+    lua_pushcfunction(l,group_count);lua_setfield(l,-2,"group_count");
     lua_pushcfunction(l,command);lua_setfield(l,-2,"command");lua_setglobal(l,"game");
     if (luaL_loadbufferx(l,source->source,source->length,source->id,"t")!=LUA_OK) return lua_error(l);
     lua_call(l,0,1);return 1;

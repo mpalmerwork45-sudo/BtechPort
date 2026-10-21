@@ -11,6 +11,7 @@
 #include "core/lua_events.h"
 #include "core/authored_services.h"
 #include "core/mission_state.h"
+#include "core/battle_mission.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -109,7 +110,9 @@ static int battle(BtpState *s,const BtpResources *r,const BtpSceneBattle *b)
         c->plan_direction[slot]=255;
     }
     candidate.x_half=c->unit[0].x;candidate.y_half=(uint16_t)(c->unit[0].y+(c->unit[0].infantry ? 0u : 2u));
-    candidate.event.phase=BTP_EVENT_FIGHTING;*s=candidate;return 1;
+    candidate.event.phase=BTP_EVENT_FIGHTING;
+    if (!btp_battle_mission_begin(&candidate,r,(unsigned)(b-btp_adventure(r)->battles))) return 0;
+    *s=candidate;return 1;
 }
 static void advance(BtpState *s,unsigned node)
 { s->event.node=(uint16_t)node;s->event.selected=s->event.page=0;s->event.phase=BTP_EVENT_INACTIVE; }
@@ -124,6 +127,14 @@ static void run(BtpState *s,const BtpResources *r)
         if (observer) observer(observer_context,s,r,e);
         s->mode=BTP_EVENT;
         switch (e->op) {
+        case BTP_EVENT_REINFORCE:
+            if (!btp_battle_reinforce(s,r,e->argument,e->value)) target=e->next[1];
+            break;
+        case BTP_EVENT_BATTLE_END:
+            if (!s->battle_mission.active || !s->battle_mission.in_hook ||
+                (s->battle_mission.outcome && s->battle_mission.outcome!=e->value+1 && e->value!=1)) target=e->next[1];
+            else s->battle_mission.outcome=(uint8_t)(e->value+1);
+            break;
         case BTP_EVENT_CHECK:target=e->next[btp_mission_check(s,a,e) ? 0 : 1];break;
         case BTP_EVENT_OBJECTIVE:if (!btp_mission_objective(s,a,e)) target=e->next[1];break;
         case BTP_EVENT_VARIABLE:
@@ -143,6 +154,12 @@ static void run(BtpState *s,const BtpResources *r)
             if (!btp_lua_event(r,s,&target,error)) { fprintf(stderr,"%s\n",error);target=e->next[5]; }break;
         }
         case BTP_EVENT_END:
+            if (s->battle_mission.in_hook) {
+                /* Resume the saved battle instruction, never a C/Lua stack.
+                   Other queued hooks are dispatched on subsequent ticks. */
+                s->battle_mission.in_hook=0;advance(s,s->battle_mission.node);
+                v->phase=BTP_EVENT_FIGHTING;s->mode=BTP_ENCOUNTER;return;
+            }
             target=btp_mission_trigger(s,a);
             if (target<BTP_EVENT_NODES) break;
             v->phase=BTP_EVENT_INACTIVE;s->mode=(uint8_t)(s->party.people[0][0]==255 ? BTP_GAME_OVER : BTP_EXPLORE);btp_party_recover(s,r,1);return;
@@ -176,6 +193,8 @@ static void initialize(BtpState *s,const BtpResources *r,int preview,const uint8
     const BtpAdventure *a=btp_adventure(r);if (!a) return;
     s->event=(BtpEventState){.enabled=1,.node=(uint16_t)a->start_event,.origin_map=(uint16_t)a->start_map,.origin_entry=255};
     btp_mission_initialize(s,a);
+    s->battle_mission=(BtpBattleMissionState){0};
+    if (a->combat_missions) s->battle_mission=(BtpBattleMissionState){.enabled=1,.encounter=255};
     memset(s->event.people,255,8);s->npc=(BtpNpcState){.rng={31,66,171}};
     if(seed)memcpy(s->npc.rng,seed,3);
     s->story_flags[4]=1;s->credits=a->credits;memset(s->explored,0,sizeof s->explored);
@@ -220,6 +239,7 @@ static void result(BtpState *s,const BtpResources *r)
     }
     unsigned map=s->event.return_map,x=s->campaign.return_x,y=s->campaign.return_y;
     s->campaign.encounter=0;s->combat=(BtpCombatState){0};s->effects=(BtpEffectsState){0};s->aftermath=(BtpAftermathState){0};
+    s->battle_mission.active=s->battle_mission.in_hook=s->battle_mission.stage=0;
     aliases(s);position(s,&btp_adventure(r)->maps[map],map,x,y);
     advance(s,next_node);run(s,r);
 }
@@ -235,6 +255,11 @@ void btp_events_tick(BtpState *s,const BtpResources *r,BtpAction action)
     }
     ++s->tick;
     if (v->phase==BTP_EVENT_FIGHTING) {
+        if (s->battle_mission.active && !s->effects.count && !s->presentation.count && !s->audio.sound_count && !s->cutscene.active) {
+            btp_battle_observe(s,a);
+            unsigned hook=btp_battle_hook(s,a);
+            if (hook<BTP_EVENT_NODES) { s->battle_mission.in_hook=1;advance(s,hook);run(s,r);return; }
+        }
         btp_combat_tick(s,r,action);if (!s->combat.phase) result(s,r);return;
     }
     if (s->mode==BTP_EXPLORE) {
@@ -309,7 +334,15 @@ void btp_events_tick(BtpState *s,const BtpResources *r,BtpAction action)
         if (action==BTP_UP) v->selected=(uint8_t)((v->selected+e->count-1u)%e->count);
         if (action==BTP_DOWN) v->selected=(uint8_t)((v->selected+1u)%e->count);
         if (action==BTP_ACCEPT || action==BTP_CANCEL) { advance(s,e->next[action==BTP_CANCEL ? 5 : v->selected]);run(s,r); }
-    } else if (v->phase==BTP_EVENT_FAULT && action==BTP_CANCEL) { v->phase=BTP_EVENT_INACTIVE;s->mode=BTP_EXPLORE; }
+    } else if (v->phase==BTP_EVENT_FAULT && action==BTP_CANCEL) {
+        if (s->battle_mission.in_hook) {
+            /* A faulty combat hook cannot strand a live encounter in walking
+               mode. Cancel aborts this attempt through its normal loss route. */
+            s->battle_mission.in_hook=0;s->battle_mission.outcome=2;
+            memset(s->battle_mission.pending,0,sizeof s->battle_mission.pending);
+            advance(s,s->battle_mission.node);v->phase=BTP_EVENT_FIGHTING;s->mode=BTP_ENCOUNTER;
+        } else { v->phase=BTP_EVENT_INACTIVE;s->mode=BTP_EXPLORE; }
+    }
 }
 unsigned btp_events_catalogue(const BtpState *s,const BtpResources *r,unsigned weight,unsigned limit,unsigned indices[256])
 {
@@ -364,7 +397,7 @@ int btp_events_valid(const BtpState *s,const BtpResources *r)
         (v->origin_entry!=255 && v->origin_entry>=a->maps[v->origin_map].entrance_count) || !s->party.enabled || s->npc.enabled ||
         s->campaign.invasion || s->cache.active || s->yard.active || s->checkpoint_valid || s->script.status ||
         s->script.pc || s->mission.phase || s->campaign.building || s->entry_slot) return 0;
-    if (!btp_mission_valid(s,a)) return 0;
+    if (!btp_mission_valid(s,a) || !btp_battle_mission_valid(s,a)) return 0;
     for (unsigned i=a->flag_count;i<64;++i) if (v->flags[i]) return 0;
     for (unsigned i=0;i<256;++i) if ((v->done[i/8u]&(1u<<(i%8u))) &&
         (i>=a->node_count || (a->nodes[i].op!=BTP_EVENT_REWARD && a->nodes[i].op!=BTP_EVENT_RECRUIT && a->nodes[i].op!=BTP_EVENT_SALVAGE &&
@@ -377,9 +410,10 @@ int btp_events_valid(const BtpState *s,const BtpResources *r)
     if (v->planet!=scene->world || v->explore_offset!=scene->explore_offset || v->explore_width!=scene->explore_width || v->explore_height!=scene->explore_height) return 0;
     if (s->map_id!=(v->map<239 ? BTP_AUTHORED_MAP_FIRST+v->map : 255)) return 0;
     if (s->x_half>=2*scene->visual.width || s->y_half>=2*scene->visual.height) return 0;
-    if (v->phase==BTP_EVENT_FIGHTING) {
-        if (e->op!=BTP_EVENT_BATTLE || s->mode!=BTP_ENCOUNTER || s->campaign.encounter!=5 ||
-            v->return_map>=a->map_count || v->map!=a->battles[e->argument].map ||
+    if (v->phase==BTP_EVENT_FIGHTING || s->battle_mission.in_hook) {
+        const BtpEventNode *battle_node=s->battle_mission.in_hook ? &a->nodes[s->battle_mission.node] : e;
+        if (battle_node->op!=BTP_EVENT_BATTLE || (s->mode!=BTP_ENCOUNTER && !(s->battle_mission.in_hook && s->mode==BTP_EVENT)) || s->campaign.encounter!=5 ||
+            v->return_map>=a->map_count || v->map!=a->battles[battle_node->argument].map ||
             s->campaign.battle_x!=2*scene->origin_x || s->campaign.battle_y!=2*scene->origin_y) return 0;
         const BtpScene *back=&a->maps[v->return_map];
         if (s->campaign.return_x>=2*back->visual.width || s->campaign.return_y>=2*back->visual.height) return 0;

@@ -23,6 +23,7 @@ target_sources(btp_core PRIVATE port/data/digest.c port/data/project.c port/data
 target_sources(btp_core PRIVATE port/data/adventure.c port/core/events.c)
 target_sources(btp_core PRIVATE port/core/authored_services.c)
 target_sources(btp_core PRIVATE port/core/mission_state.c)
+target_sources(btp_core PRIVATE port/core/battle_mission.c)
 target_sources(btp_core PRIVATE port/data/independent.c port/core/lua_events.c)
 target_sources(btp_core PRIVATE port/data/art.c)
 # Vendored Lua core only: libraries exposing files, OS or dynamic modules are
@@ -121,6 +122,21 @@ if(BUILD_TESTING)
   add_executable(btp-mission-state-tests tests/test_mission_state.c)
   target_link_libraries(btp-mission-state-tests PRIVATE btp_core)
   add_test(NAME authored-mission-state COMMAND btp-mission-state-tests "${PROJECT_SOURCE_DIR}/examples/beacon-demo")
+  add_executable(btp-battle-mission-tests tests/test_battle_mission.c)
+  target_link_libraries(btp-battle-mission-tests PRIVATE btp_core)
+  add_test(NAME authored-combat-mission COMMAND btp-battle-mission-tests "${PROJECT_SOURCE_DIR}/examples/beacon-demo")
+  foreach(route defence escort retreat)
+    set(artifacts "${CMAKE_CURRENT_BINARY_DIR}/cairn-${route}")
+    file(MAKE_DIRECTORY "${artifacts}")
+    add_test(NAME cairn-${route} COMMAND btp-author-playtest
+      --project "${PROJECT_SOURCE_DIR}/examples/cairn-passage"
+      --scenario "${PROJECT_SOURCE_DIR}/examples/authoring/cairn/${route}.json"
+      --artifacts "${artifacts}"
+      --data "${PROJECT_SOURCE_DIR}/Original DOS"
+      --dialogue-data "${PROJECT_SOURCE_DIR}/work/talk-data.bin"
+      --combat-data "${PROJECT_SOURCE_DIR}/work/combat-data.bin"
+      --world-data "${PROJECT_SOURCE_DIR}/work/world-data.bin")
+  endforeach()
   foreach(route success abandon repeat retreat combat-win combat-loss)
     set(artifacts "${CMAKE_CURRENT_BINARY_DIR}/extraction-${route}")
     file(MAKE_DIRECTORY "${artifacts}")

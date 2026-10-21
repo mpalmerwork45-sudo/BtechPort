@@ -31,6 +31,7 @@ static uint16_t get16(const uint8_t *p) { return (uint16_t)(p[0] | (uint16_t)p[1
 static void put32(uint8_t *p,uint32_t n) { for (unsigned i=0;i<4;++i) p[i]=(uint8_t)(n>>(8u*i)); }
 static uint32_t get32(const uint8_t *p) { return (uint32_t)p[0]|(uint32_t)p[1]<<8|(uint32_t)p[2]<<16|(uint32_t)p[3]<<24; }
 
+#include "core/battle_mission.h"
 void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
 {
     memset(b, 0, BTP_STATE_BYTES);
@@ -127,6 +128,9 @@ void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
     b[456]=s->story_flags[24];b[457]=s->story_checkpoint[24];
     b[458]=s->story_flags[32];b[459]=s->story_checkpoint[32];
     btp_combat_encode(&s->combat,b+4096);
+    if (s->battle_mission.enabled) {
+        memcpy(b,"BTPp",4);b[4]=51;btp_battle_mission_encode(s,b+BTP_BATTLE_MISSION_OFFSET);
+    }
     b[2048]=s->terrain_next;
     for (unsigned i=0;i<64;++i) {
         const BtpTerrainMark *mark=&s->terrain_marks[i];unsigned p=2049+4*i;
@@ -250,7 +254,8 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         n == BTP_STATE_BYTES && !memcmp(b,"BTPl",4) && b[4]==47 ? 47 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPm",4) && b[4]==48 ? 48 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPn",4) && b[4]==49 ? 49 :
-        n == BTP_STATE_BYTES && !memcmp(b,"BTPo",4) && b[4]==50 ? 50 : 0;
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPo",4) && b[4]==50 ? 50 :
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPp",4) && b[4]==51 ? 51 : 0;
     if (!version) return 0;
     if (version>=18 && version<38 && b[10232]) return 0; /* v38 critical report count. */
     if (version>=18 && version<35 && b[10233]) return 0; /* v35 weapon-window presentation bits. */
@@ -279,6 +284,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
     BtpState result = {.credits=35,.allowance_cap=50};
     if (version>=48 && !btp_events_decode(&result,b+20057)) return 0;
     if (version>=50 && !btp_mission_decode(&result,b+20185)) return 0;
+    if (version>=51 && !btp_battle_mission_decode(&result,b+BTP_BATTLE_MISSION_OFFSET)) return 0;
     if (version>=45) {
         result.combat_profile=b[20000];result.combat_fingerprint=get32(b+20001);
         if (result.combat_profile>1 || (!!result.combat_profile != !!result.combat_fingerprint)) return 0;
@@ -527,6 +533,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
                         result.story_flags[52]=b[450];result.story_checkpoint[52]=b[451];
                         uint8_t combat[BTP_COMBAT_SAVE_BYTES]={0};
                         memcpy(combat,b+(version>=18 ? 4096 : 512),version>=18 ? BTP_COMBAT_SAVE_BYTES : version>=15 ? BTP_COMBAT_LEGACY_BYTES : 384u);
+                        if (version>=51) memset(combat+5600,0,BTP_BATTLE_MISSION_BYTES);
                         if (!btp_combat_decode(combat,&result.combat)) return 0;
                         if (version<=15) for (unsigned i=0;i<result.combat.count;++i) {
                             BtpCombatUnit *u=&result.combat.unit[i];

@@ -1,3 +1,4 @@
+#include "core/battle_mission.h"
 #include "data/unit_data.h"
 #include "data/definitions.h"
 #include "frontend/pixels.h"
@@ -410,7 +411,7 @@ static void combat_route(const BtpResources *r, const BtpState *s, int cx, int c
     int tx=selecting && !c->goal_active ? c->cursor_x : c->goal_x;
     int ty=selecting && !c->goal_active ? c->cursor_y : c->goal_y;
     if (c->phase==BTP_COMBAT_ROUND) { memcpy(steps,c->path[c->active_unit],sizeof steps);first=c->path_index[c->active_unit]; }
-    else if (c->goal_active) btp_combat_route(&map,s->campaign.encounter==4 ? 139u : s->gate,c,steps);
+    else if (c->goal_active) btp_combat_route_state(&map,s->campaign.encounter==4 ? 139u : s->gate,s,steps);
     else btp_combat_plan(&map,s->campaign.encounter==4 ? 139u : s->gate,&c->unit[c->active_unit],&c->unit[1],tx,ty,
         selecting ? c->selected : c->movement,0,steps);
     /* 103B:18D2..18FB draws these original font glyphs at each planned step.
@@ -1745,7 +1746,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
             }
             unsigned friends=s->combat.friends ? s->combat.friends : 1u;
             unsigned base=death ? death->target_base==254 ? btp_combat_id(&s->combat,i)==4 ? 166u : 270u : death->target_base :
-                u->infantry ? s->combat.friends && i<s->combat.friends ? btp_combat_id(&s->combat,i)==4 ? 166u : 270u : 270u : btp_mech_record_sprite(u->record,i>=friends);
+                u->infantry ? s->combat.friends && i<s->combat.friends ? btp_combat_id(&s->combat,i)==4 ? 166u : 270u : 270u : btp_mech_record_sprite(u->record,s->battle_mission.active ? btp_battle_side(s,NULL,i)==BTP_SIDE_HOSTILE : i>=friends);
             unsigned slot=u->infantry ? i<friends ? btp_combat_id(&s->combat,i)==4 ? 0u : 1u : 2u : base>=146 ? 4u : 3u;
             int ux=(u->infantry ? 208 : 200)+((int)(death ? death->tx : u->x)-cx)*8;
             int uy=(u->infantry ? 96 : 80)+((int)(death ? death->ty : u->y)-cy)*8;

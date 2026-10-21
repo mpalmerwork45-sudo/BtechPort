@@ -1,0 +1,46 @@
+{
+  "format": "btp-author-suite-v1",
+  "max_seconds": 120,
+  "cases": [
+    {
+      "id": "defence",
+      "file": "defence.json",
+      "seeds": [
+        11223583,
+        9,
+        231
+      ]
+    },
+    {
+      "id": "escort",
+      "file": "escort.json",
+      "seeds": [
+        11223583,
+        9,
+        231
+      ]
+    },
+    {
+      "id": "retreat",
+      "file": "retreat.json",
+      "seeds": [
+        11223583
+      ]
+    },
+    {
+      "id": "transport-loss",
+      "file": "transport-loss.json",
+      "seeds": [
+        11223583
+      ],
+      "fixture": "transport-loss.commands.json"
+    },
+    {
+      "id": "full-contract",
+      "file": "full-contract.json",
+      "seeds": [
+        11223583
+      ]
+    }
+  ]
+}

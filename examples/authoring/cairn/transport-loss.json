@@ -1,0 +1,43 @@
+{
+  "format": "btp-author-scenario-v1",
+  "max_ticks": 120000,
+  "steps": [
+    {
+      "op": "pages"
+    },
+    {
+      "op": "choose",
+      "label": "Escort the transport"
+    },
+    {
+      "op": "battle",
+      "control": "hold"
+    },
+    {
+      "op": "assert",
+      "battle_outcome": "loss",
+      "objective": "cairn:escort",
+      "status": "failed",
+      "credits": 5000
+    },
+    {
+      "op": "assert",
+      "group": "cairn:transport",
+      "measure": "destroyed",
+      "value": 1
+    },
+    {
+      "op": "checkpoint"
+    },
+    {
+      "op": "capture"
+    },
+    {
+      "op": "pages"
+    },
+    {
+      "op": "assert",
+      "phase": "complete"
+    }
+  ]
+}

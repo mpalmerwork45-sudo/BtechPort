@@ -12,6 +12,8 @@
 #include "core/yard.h"
 #include "core/spy.h"
 #include "core/events.h"
+#include "core/battle_mission.h"
+#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -111,7 +113,7 @@ unsigned btp_combat_target(const BtpCombatState *c, unsigned id)
 static void plan_points(const BtpMap *m, unsigned gate, const BtpCombatUnit *u,
     const BtpCombatUnit *other, int tx, int ty, unsigned movement, int computer,
     int points, const uint8_t *wx, const uint8_t *wy, unsigned waypoints,
-    const BtpCombatUnit *units, unsigned count, unsigned self, unsigned friends, int8_t steps[12][2])
+    const BtpCombatUnit *units, unsigned count, unsigned self, unsigned friends, const BtpState *state, int8_t steps[12][2])
 {
     memset(steps,2,24);
     int x=u->x, y=u->y, stopped=0;
@@ -144,7 +146,7 @@ static void plan_points(const BtpMap *m, unsigned gate, const BtpCombatUnit *u,
                path before the movement routine can resolve that contact. */
             int blocked=other && !(!u->infantry && other->infantry) && occupied(u,other,nx,ny);
             for (unsigned k=0;k<count;++k)
-                if (k!=self && !(!u->infantry && units[k].infantry && (k<friends)!=(self<friends)) &&
+                if (k!=self && !(!u->infantry && units[k].infantry && (state ? btp_battle_hostile(state,self,k) : (k<friends)!=(self<friends))) &&
                     occupied(u,&units[k],nx,ny)) blocked=1;
             if (blocked) { if (nx==tx && ny==ty) stopped=1; continue; }
             steps[i][0]=dx[d]; steps[i][1]=dy[d]; x=nx; y=ny; heading=d; break;
@@ -157,15 +159,17 @@ static void plan_points(const BtpMap *m, unsigned gate, const BtpCombatUnit *u,
 void btp_combat_plan(const BtpMap *m, unsigned gate, const BtpCombatUnit *u,
     const BtpCombatUnit *other, int tx, int ty, unsigned movement, int computer, int8_t steps[12][2])
 {
-    plan_points(m,gate,u,other,tx,ty,movement,computer,btp_combat_points(u,movement),NULL,NULL,0,NULL,0,0,1,steps);
+    plan_points(m,gate,u,other,tx,ty,movement,computer,btp_combat_points(u,movement),NULL,NULL,0,NULL,0,0,1,NULL,steps);
 }
-void btp_combat_route(const BtpMap *m, unsigned gate, const BtpCombatState *c, int8_t steps[12][2])
+static void route(const BtpMap *m,unsigned gate,const BtpCombatState *c,const BtpState *s,int8_t steps[12][2])
 {
     unsigned actor=c->active_unit,enemy=c->friends ? c->friends : 1u;
     plan_points(m,gate,&c->unit[actor],&c->unit[enemy],c->goal_x,c->goal_y,c->movement,0,
         btp_combat_points(&c->unit[actor],c->movement),c->waypoint_x,c->waypoint_y,c->waypoint_count,
-        c->friends ? c->unit : NULL,c->friends ? c->count : 0,actor,c->friends ? c->friends : 1u,steps);
+        c->friends ? c->unit : NULL,c->friends ? c->count : 0,actor,c->friends ? c->friends : 1u,s,steps);
 }
+void btp_combat_route(const BtpMap *m,unsigned gate,const BtpCombatState *c,int8_t steps[12][2]) { route(m,gate,c,NULL,steps); }
+void btp_combat_route_state(const BtpMap *m,unsigned gate,const BtpState *s,int8_t steps[12][2]) { route(m,gate,&s->combat,s,steps); }
 static unsigned movement_gate(const BtpState *s)
 {
     /* 09B8's mounted arena view sets the original terrain threshold to 139.
@@ -177,7 +181,7 @@ void btp_combat_plan_actor(const BtpMap *map,const BtpState *s,unsigned actor,
 {
     const BtpCombatState *c=&s->combat;const BtpCombatUnit *u=&c->unit[actor];
     plan_points(map,movement_gate(s),u,NULL,x,y,movement,1,btp_combat_points(u,movement),
-        NULL,NULL,0,c->unit,c->count,actor,c->friends ? c->friends : 1u,steps);
+        NULL,NULL,0,c->unit,c->count,actor,c->friends ? c->friends : 1u,s,steps);
 }
 void btp_combat_map(const BtpResources *r,const BtpState *s,BtpMap *m)
 {
@@ -252,10 +256,12 @@ int btp_combat_scan_detail(const BtpCombatState *c)
 {
     return c->scan_unit<c->count && !c->unit[c->scan_unit].infantry;
 }
-static int scan_eligible(const BtpCombatState *c,unsigned i)
+static int scan_eligible(const BtpState *s,unsigned i)
 {
+    const BtpCombatState *c=&s->combat;
     unsigned friends=c->friends ? c->friends : 1u;
-    if (i>=c->count || c->unit[i].record[0]==255 || (i<friends)!=(c->target_selected==0)) return 0;
+    int friendly=s->battle_mission.active ? btp_battle_side(s,NULL,i)!=BTP_SIDE_HOSTILE : i<friends;
+    if (i>=c->count || c->unit[i].record[0]==255 || friendly!=(c->target_selected==0)) return 0;
     /* 103B:2591 and 05AB:1467 restrict on-foot/damaged-sensor enemy
        scanning to humans. Friends remain available regardless of sensors. */
     return !c->target_selected || !(c->unit[c->active_unit].infantry || c->unit[c->active_unit].record[119]==2) || c->unit[i].infantry;
@@ -265,7 +271,7 @@ static void scan_next(BtpState *s,unsigned after)
 {
     BtpCombatState *c=&s->combat;unsigned best=BTP_COMBAT_UNITS,best_id=24;
     for (unsigned pass=0;pass<2 && best==BTP_COMBAT_UNITS;++pass)
-        for (unsigned i=0;i<c->count;++i) if (scan_eligible(c,i)) {
+        for (unsigned i=0;i<c->count;++i) if (scan_eligible(s,i)) {
             unsigned id=btp_combat_id(c,i);
             if ((pass || id>after) && id<best_id) { best=i;best_id=id; }
         }
@@ -400,6 +406,7 @@ static void computer_plan(BtpState *s,const BtpResources *r,const BtpMap *terrai
     int friendly=index<friends;
     if (friendly && !(c->automatic&(UINT32_C(1)<<index))) return;
     if (c->unit[index].record[0]==255) return;
+    if (s->battle_mission.active && btp_battle_actor_plan(s,r,terrain,index)) return;
     /* Updated orders use explicit saved policy. Story eligibility still
        precedes planning: in particular the target shell cannot become mobile. */
     if (!c->unit[index].infantry && (friendly || (enemy_ai && s->mission.assignment!=2))) {
@@ -425,16 +432,17 @@ static void computer_plan(BtpState *s,const BtpResources *r,const BtpMap *terrai
        component value as the table index, even when ammunition is empty. */
     BtpCombatUnit enemy=c->unit[index];enemy.direction=c->plan_direction[index];
     unsigned first= friendly ? friends : 0u,last=friendly ? c->count : friends,prey=first;
+    if (s->battle_mission.active) { first=0;last=c->count; }
     if (friendly || c->friends) {
         /* 0E31:0483..059E searches the actor's own class first. Mechs
            prefer enemy mechs; people prefer people, then fall back. Distance
            ties retain the lower original unit ID, including after ejections. */
         unsigned same=0;prey=BTP_COMBAT_UNITS;
-        for (unsigned i=first;i<last;++i) if (c->unit[i].record[0]!=255 && c->unit[i].infantry==enemy.infantry &&
+        for (unsigned i=first;i<last;++i) if (btp_battle_hostile(s,index,i) && c->unit[i].record[0]!=255 && c->unit[i].infantry==enemy.infantry &&
             !(!friendly && c->unit[i].infantry && btp_spy_unit(s,i)) &&
             !(s->campaign.encounter==4 && s->yard.rental && !s->story_flags[35] && btp_combat_id(c,i)==13)) same=1;
         for (unsigned i=first;i<last;++i) {
-            if (c->unit[i].record[0]==255 || (same && c->unit[i].infantry!=enemy.infantry) ||
+            if (!btp_battle_hostile(s,index,i) || c->unit[i].record[0]==255 || (same && c->unit[i].infantry!=enemy.infantry) ||
                 (!friendly && c->unit[i].infantry && btp_spy_unit(s,i)) ||
                 (s->campaign.encounter==4 && s->yard.rental && !s->story_flags[35] && btp_combat_id(c,i)==13)) continue;
             unsigned distance=btp_combat_distance(enemy.x,enemy.y,c->unit[i].x,c->unit[i].y);
@@ -478,7 +486,7 @@ static void computer_plan(BtpState *s,const BtpResources *r,const BtpMap *terrai
         /* 0E31:046F normalizes robot IDs before 103B:2474. IDs 20/21
            cross its threshold and take six points; IDs 16..19 take three. */
         int points=btp_combat_points(&enemy,*movement);
-        if (!friendly && enemy.infantry) {
+        if (!friendly && enemy.infantry && !s->battle_mission.active) {
             unsigned id=btp_combat_id(c,index);
             if (id>=20) points=6;
             else {
@@ -490,7 +498,7 @@ static void computer_plan(BtpState *s,const BtpResources *r,const BtpMap *terrai
             }
         }
         plan_points(terrain,movement_gate(s),&enemy,&c->unit[prey],tx,ty,*movement,1,points,NULL,NULL,0,
-            s->mission.assignment==5 || c->friends ? c->unit : NULL,s->mission.assignment==5 || c->friends ? c->count : 0,index,friends,c->path[index]);
+            s->mission.assignment==5 || c->friends ? c->unit : NULL,s->mission.assignment==5 || c->friends ? c->count : 0,index,friends,s,c->path[index]);
     }
     uint8_t automatic_orders[12];uint8_t *orders=index ? c->enemy_orders[index-1] : automatic_orders;
     memset(orders,255,12);
@@ -516,6 +524,12 @@ static void computer_plan(BtpState *s,const BtpResources *r,const BtpMap *terrai
 }
 static void begin_round(BtpState *s, const BtpResources *r, int enemy_ai)
 {
+    if (s->battle_mission.active && s->battle_mission.stage!=1) {
+        if (s->combat.round==65535) { s->battle_mission.outcome=2;s->combat.lost=1;finish(s,r);return; }
+        s->battle_mission.stage=1;s->battle_mission.round=++s->combat.round;
+        btp_battle_signal(s,btp_adventure(r),BTP_HOOK_ROUND_START,BTP_COMBAT_GROUPS);return;
+    }
+    s->battle_mission.stage=0;
     BtpMap terrain;btp_combat_map(r,s,&terrain);
     BtpCombatState *c=&s->combat;
     memset(c->path,0,sizeof c->path);
@@ -525,14 +539,14 @@ static void begin_round(BtpState *s, const BtpResources *r, int enemy_ai)
     if (c->friends) {
         for (unsigned i=0;i<friends;++i) {
             btp_combat_select(c,i);
-            if (c->goal_active) btp_combat_route(&terrain,movement_gate(s),c,c->path[i]);
+            if (c->goal_active) btp_combat_route_state(&terrain,movement_gate(s),s,c->path[i]);
             if (i) {
                 memcpy(c->enemy_orders[i-1],c->orders,11);c->enemy_orders[i-1][11]=c->kick_target;
                 if (i==1) c->enemy_movement=c->movement;else c->enemy_modes[i-2]=c->movement;
             }
         }
         btp_combat_select(c,active);
-    } else if (c->goal_active) btp_combat_route(&terrain,movement_gate(s),c,c->path[0]);
+    } else if (c->goal_active) btp_combat_route_state(&terrain,movement_gate(s),s,c->path[0]);
     for (unsigned index=0;index<c->count;++index) computer_plan(s,r,&terrain,index,enemy_ai);
     /* Computer orders replace the selected unit's plan too. Refresh its
        editor before a later selection can write old orders back over it. */
@@ -541,7 +555,7 @@ static void begin_round(BtpState *s, const BtpResources *r, int enemy_ai)
     memset(c->enemy_fired,0,sizeof c->enemy_fired);
     c->fired=0;c->step=0;c->delay=0;c->last_event=0;c->flash=0;c->phase=BTP_COMBAT_ROUND;
     btp_effects_begin_round(s);
-    ++c->round;
+    if (!s->battle_mission.active) ++c->round;
 }
 unsigned btp_combat_walk_frame(unsigned frame,unsigned previous,unsigned direction,int infantry)
 {
@@ -577,11 +591,10 @@ static void advance(BtpState *s, unsigned index)
     }
     if (!mx && !my) return;
     int x=u->x+mx,y=u->y+my;
-    unsigned friends=c->friends ? c->friends : 1u;
     for (unsigned i=0;i<c->count;++i) if (i!=index && occupied(u,&c->unit[i],x,y) &&
-        !(!u->infantry && c->unit[i].infantry && (i<friends)!=(index<friends))) return;
+        !(!u->infantry && c->unit[i].infantry && btp_battle_hostile(s,index,i))) return;
     if (!u->infantry) for (unsigned i=0;i<c->count;++i)
-        if (c->unit[i].infantry && (i<friends)!=(index<friends) && occupied(u,&c->unit[i],x,y)) {
+        if (c->unit[i].infantry && btp_battle_hostile(s,index,i) && occupied(u,&c->unit[i],x,y)) {
             /* Original movement blocks friendly soldiers but crushes enemies
                under a vehicle's two-step footprint, without an RNG draw. */
             btp_effects_crush(s,index,i);c->unit[i].record[15]=0;
@@ -613,8 +626,9 @@ void btp_combat_ignite(BtpState *s, const BtpCombatUnit *target)
 static void end_round(BtpState *s,const BtpResources *r)
 {
     BtpCombatState *c=&s->combat;
-    if (btp_spy_begin(s)) return;
     unsigned remaining=0;
+    if (s->battle_mission.active && s->battle_mission.stage==2) goto resolved_hooks;
+    if (btp_spy_begin(s)) return;
     for (unsigned i=c->friends ? c->friends : 1u;i<c->count;++i) remaining+=c->unit[i].record[0]!=255;
     BtpMap map;btp_combat_map(r,s,&map);
     for (unsigned i=0;i<c->count;++i) if (c->unit[i].record[0]!=255) {
@@ -622,13 +636,19 @@ static void end_round(BtpState *s,const BtpResources *r)
         (void)btp_combat_cover(&map,&c->unit[i],&terrain);
         btp_combat_cool(&c->unit[i],mode==255 ? -1 : (int)mode,c->moved[i],terrain);
     }
+    if (s->battle_mission.active) {
+        s->battle_mission.stage=2;btp_battle_observe(s,btp_adventure(r));
+        btp_battle_signal(s,btp_adventure(r),BTP_HOOK_ROUND_END,BTP_COMBAT_GROUPS);return;
+    }
+resolved_hooks:
+    if (s->battle_mission.active) { s->battle_mission.stage=0;remaining=btp_battle_hostiles(s); }
     /* 12E8 completes heat accounting before 103B checks victory. */
     if (s->campaign.encounter==4 && !s->story_flags[35] && c->unit[0].record[0]==255) {
         /* 103B:0F13..0F31 runs after 12E8's cooling pass, including a
            defeated arena match with a surviving ejected pilot. */
         c->lost=1;finish(s,r);return;
     }
-    if (!remaining) { c->won=1;finish(s,r);return; }
+    if (!remaining && !(s->battle_mission.active && btp_adventure(r)->battles[s->battle_mission.encounter].scripted)) { c->won=1;finish(s,r);return; }
     if (!c->goal_active) c->movement=255;
     c->delay=0;c->flash=0;menu(c);
     if (s->campaign.invasion && s->late.invasion_event<5) invasion_event(s,r);
@@ -674,6 +694,7 @@ static void round_tick(BtpState *s, const BtpResources *r, int enemy_ai)
             if (*order==255 || (*fired&(1u<<i))) continue;
             unsigned target=btp_combat_target(c,*order);
             if (target>=c->count || c->unit[target].record[0]==255) { *order=255;continue; }
+            if (s->battle_mission.active && !btp_battle_hostile(s,actor,target)) { *order=255;continue; }
             BtpCombatUnit *attacker=&c->unit[actor],*enemy=&c->unit[target];
             unsigned w=i==11 ? 32 : btp_combat_weapon(attacker,i);
             if (w>=33 || (i==11 && !btp_combat_can_kick(attacker))) { *order=255;continue; }
@@ -834,6 +855,12 @@ static void combat_tick(BtpState *s, const BtpResources *r, BtpAction a, int ene
         c->fled=(uint8_t)(s->effects.pending==3);
         s->effects.pending=0;finish(s,r);return;
     }
+    if (s->battle_mission.active && s->battle_mission.outcome) {
+        unsigned outcome=s->battle_mission.outcome;
+        c->won=(uint8_t)(outcome==1);c->lost=(uint8_t)(outcome==2);c->fled=(uint8_t)(outcome==3);
+        finish(s,r);return;
+    }
+    if (s->battle_mission.active && s->battle_mission.stage==1) { begin_round(s,r,enemy_ai);return; }
     if (s->campaign.encounter==4 && c->phase==BTP_COMBAT_MENU && !s->story_flags[35]) {
         /* Resume older saves held at the former arena dead end. No attack
            or new round is needed to complete an already-decided match. */
@@ -1145,6 +1172,7 @@ void btp_combat_encode(const BtpCombatState *c, uint8_t b[BTP_COMBAT_SAVE_BYTES]
         b[p++]=c->enemy_modes[i-2];memcpy(b+p,c->enemy_orders[i-1],12);p+=12;
         b[p++]=(uint8_t)c->enemy_fired[i-1];b[p++]=(uint8_t)(c->enemy_fired[i-1]>>8);
     }
+    assert(p<=5600); /* Optional v51 mission state occupies the reserved tail. */
 }
 int btp_combat_decode(const uint8_t b[BTP_COMBAT_SAVE_BYTES], BtpCombatState *c)
 {
@@ -1235,7 +1263,7 @@ int btp_combat_valid(const BtpState *s)
         c->flash>3 || (c->flash && (c->phase!=BTP_COMBAT_ROUND || !c->graphics || c->last_event<1 || c->last_event>2))) return 0;
     if ((!c->phase && !c->fled && !c->won && !c->lost) || (c->phase &&
         (((c->fled || c->won || c->lost) && !(c->phase==BTP_COMBAT_STORY && s->late.invasion_end)) ||
-         s->mode!=(s->campaign.encounter ? BTP_ENCOUNTER : BTP_MISSION)))) return 0;
+         (s->mode!=(s->campaign.encounter ? BTP_ENCOUNTER : BTP_MISSION) && !(s->battle_mission.in_hook && s->mode==BTP_EVENT))))) return 0;
     if ((c->phase==BTP_COMBAT_STORY)!=(s->late.invasion_popup!=0) ||
         (c->phase==BTP_COMBAT_STORY && (!s->campaign.invasion || s->late.invasion_event>5 ||
             (s->late.invasion_popup>1 && s->late.invasion_popup!=s->late.invasion_event+2u)))) return 0;
@@ -1312,6 +1340,11 @@ int btp_combat_valid(const BtpState *s)
     /* A surviving arena pilot is a lost match, not a campaign death. Before
        the end-of-round check, its destruction presentation may still drain. */
     if (s->campaign.encounter==4 && !s->story_flags[35] && c->unit[0].record[0]==255 && c->lost) lost=1;
+    if (s->battle_mission.active) {
+        /* Scripted defence can finish with surviving enemies or continue
+           between waves. Real party deaths still take precedence at runtime. */
+        return (lost || s->battle_mission.outcome==2)==(c->lost!=0 || s->effects.pending==2 || s->battle_mission.outcome==2);
+    }
     return lost==(c->lost!=0 || s->effects.pending==2) &&
         (alive ? !c->won && s->effects.pending!=1 : c->won || s->effects.pending==1 || c->phase==BTP_COMBAT_ROUND || c->phase==BTP_COMBAT_SPY);
 }

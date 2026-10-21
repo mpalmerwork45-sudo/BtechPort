@@ -380,8 +380,14 @@
                 "at"
               ]
             },
-            "minItems": 1,
+            "minItems": 0,
             "maxItems": 12
+          },
+          "completion": {
+            "enum": [
+              "eliminate",
+              "scripted"
+            ]
           }
         },
         "required": [
@@ -1554,6 +1560,175 @@
                         "compare",
                         "value"
                       ]
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "kind": {
+                          "const": "group_alive"
+                        },
+                        "id": {
+                          "type": "string",
+                          "maxLength": 63,
+                          "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+                        },
+                        "compare": {
+                          "enum": [
+                            "eq",
+                            "ne",
+                            "lt",
+                            "le",
+                            "gt",
+                            "ge"
+                          ]
+                        },
+                        "value": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 12
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "id",
+                        "compare",
+                        "value"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "kind": {
+                          "const": "group_destroyed"
+                        },
+                        "id": {
+                          "type": "string",
+                          "maxLength": 63,
+                          "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+                        },
+                        "compare": {
+                          "enum": [
+                            "eq",
+                            "ne",
+                            "lt",
+                            "le",
+                            "gt",
+                            "ge"
+                          ]
+                        },
+                        "value": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 12
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "id",
+                        "compare",
+                        "value"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "kind": {
+                          "const": "group_deployed"
+                        },
+                        "id": {
+                          "type": "string",
+                          "maxLength": 63,
+                          "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+                        },
+                        "compare": {
+                          "enum": [
+                            "eq",
+                            "ne",
+                            "lt",
+                            "le",
+                            "gt",
+                            "ge"
+                          ]
+                        },
+                        "value": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 1
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "id",
+                        "compare",
+                        "value"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "kind": {
+                          "const": "group_arrived"
+                        },
+                        "id": {
+                          "type": "string",
+                          "maxLength": 63,
+                          "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+                        },
+                        "compare": {
+                          "enum": [
+                            "eq",
+                            "ne",
+                            "lt",
+                            "le",
+                            "gt",
+                            "ge"
+                          ]
+                        },
+                        "value": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 12
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "id",
+                        "compare",
+                        "value"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "kind": {
+                          "const": "combat_round"
+                        },
+                        "compare": {
+                          "enum": [
+                            "eq",
+                            "ne",
+                            "lt",
+                            "le",
+                            "gt",
+                            "ge"
+                          ]
+                        },
+                        "value": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 65535
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "compare",
+                        "value"
+                      ],
+                      "additionalProperties": false
                     }
                   ]
                 },
@@ -1579,6 +1754,86 @@
               "then",
               "else"
             ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "op": {
+                "const": "reinforce"
+              },
+              "group": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "radius": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 8
+              },
+              "next": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "failure": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              }
+            },
+            "required": [
+              "id",
+              "op",
+              "group",
+              "radius",
+              "next",
+              "failure"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "op": {
+                "const": "battle_end"
+              },
+              "result": {
+                "enum": [
+                  "win",
+                  "loss",
+                  "flee"
+                ]
+              },
+              "next": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "failure": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              }
+            },
+            "required": [
+              "id",
+              "op",
+              "result",
+              "next",
+              "failure"
+            ],
+            "additionalProperties": false
           }
         ]
       },
@@ -1872,6 +2127,339 @@
           "map",
           "rect",
           "repeat"
+        ]
+      },
+      "minItems": 0,
+      "maxItems": 32
+    },
+    "combat_groups": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 63,
+            "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 63
+          },
+          "encounter": {
+            "type": "string",
+            "maxLength": 63,
+            "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+          },
+          "affiliation": {
+            "enum": [
+              "hostile",
+              "friendly",
+              "neutral"
+            ]
+          },
+          "reserve": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "units": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "mech",
+                    "person"
+                  ]
+                },
+                "definition": {
+                  "type": "string",
+                  "maxLength": 63,
+                  "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+                },
+                "at": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 127
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                },
+                "waypoints": {
+                  "type": "array",
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 127
+                    },
+                    "minItems": 2,
+                    "maxItems": 2
+                  },
+                  "minItems": 0,
+                  "maxItems": 16
+                },
+                "movement": {
+                  "enum": [
+                    "walk",
+                    "run"
+                  ]
+                }
+              },
+              "required": [
+                "kind",
+                "definition",
+                "at"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 1,
+            "maxItems": 12
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "encounter",
+          "affiliation",
+          "reserve",
+          "units"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0,
+      "maxItems": 16
+    },
+    "combat_hooks": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "encounter": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "when": {
+                "const": "start"
+              },
+              "repeat": {
+                "enum": [
+                  "once",
+                  "always"
+                ]
+              },
+              "event": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              }
+            },
+            "required": [
+              "id",
+              "encounter",
+              "when",
+              "repeat",
+              "event"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "encounter": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "when": {
+                "const": "round_start"
+              },
+              "repeat": {
+                "enum": [
+                  "once",
+                  "always"
+                ]
+              },
+              "event": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "round": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 65535
+              },
+              "every": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 65535
+              }
+            },
+            "required": [
+              "id",
+              "encounter",
+              "when",
+              "repeat",
+              "event",
+              "round",
+              "every"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "encounter": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "when": {
+                "const": "round_end"
+              },
+              "repeat": {
+                "enum": [
+                  "once",
+                  "always"
+                ]
+              },
+              "event": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "round": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 65535
+              },
+              "every": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 65535
+              }
+            },
+            "required": [
+              "id",
+              "encounter",
+              "when",
+              "repeat",
+              "event",
+              "round",
+              "every"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "encounter": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "when": {
+                "const": "destroyed"
+              },
+              "repeat": {
+                "enum": [
+                  "once",
+                  "always"
+                ]
+              },
+              "event": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "group": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              }
+            },
+            "required": [
+              "id",
+              "encounter",
+              "when",
+              "repeat",
+              "event"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "encounter": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "when": {
+                "const": "arrival"
+              },
+              "repeat": {
+                "enum": [
+                  "once",
+                  "always"
+                ]
+              },
+              "event": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "group": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              }
+            },
+            "required": [
+              "id",
+              "encounter",
+              "when",
+              "repeat",
+              "event",
+              "group"
+            ],
+            "additionalProperties": false
+          }
         ]
       },
       "minItems": 0,

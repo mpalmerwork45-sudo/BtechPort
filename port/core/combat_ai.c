@@ -1,5 +1,6 @@
 #include "core/combat_ai.h"
 #include "core/combat.h"
+#include "core/battle_mission.h"
 #include "core/spy.h"
 #include "data/unit_data.h"
 #include <limits.h>
@@ -18,7 +19,7 @@ unsigned btp_combat_actor_skill(const BtpState *s,unsigned actor,unsigned weapon
 static int eligible(const BtpState *s,unsigned actor,unsigned target)
 {
     const BtpCombatState *c=&s->combat;unsigned friends=c->friends ? c->friends : 1u;
-    return target<c->count && (actor<friends)!=(target<friends) && c->unit[target].record[0]!=255 &&
+    return target<c->count && btp_battle_hostile(s,actor,target) && c->unit[target].record[0]!=255 &&
         !(actor>=friends && c->unit[target].infantry && btp_spy_unit(s,target)) &&
         !(s->campaign.encounter==4 && s->yard.rental && !s->story_flags[35] && btp_combat_id(c,target)==13);
 }
@@ -151,7 +152,8 @@ static int score_plan(const BtpState *s,const BtpResources *r,const BtpMap *map,
     if (!out->steps) out->score+=35; /* Stay within a useful firing band. */
     /* Avoid reserved allied destinations in addition to actual occupancy. */
     unsigned friends=c->friends ? c->friends : 1u;
-    for (unsigned i=0;i<c->count;++i) if (i!=actor && (i<friends)==(actor<friends) && c->unit[i].record[0]!=255) {
+    for (unsigned i=0;i<c->count;++i) if (i!=actor &&
+        (s->battle_mission.active ? !btp_battle_hostile(s,actor,i) : (i<friends)==(actor<friends)) && c->unit[i].record[0]!=255) {
         int tx=c->unit[i].x,ty=c->unit[i].y;
         for (unsigned j=0;j<12 && c->path[i][j][0]!=2 && c->path[i][j][1]!=2;++j) { tx+=c->path[i][j][0];ty+=c->path[i][j][1]; }
         if (abs((int)a.x-tx)<3 && abs((int)a.y-ty)<2) out->score-=250;

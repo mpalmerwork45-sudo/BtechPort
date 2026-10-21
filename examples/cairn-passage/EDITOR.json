@@ -1,0 +1,1240 @@
+{
+  "tile_names": {
+    "cairn-passage:tile-1": "East Single",
+    "cairn-passage:tile-2": "Empty",
+    "cairn-passage:tile-3": "Roof S W edge",
+    "cairn-passage:tile-4": "Roof N E edge",
+    "cairn-passage:tile-5": "Roof E S edge",
+    "cairn-passage:tile-6": "Roof N W edge",
+    "cairn-passage:tile-7": "South Single",
+    "cairn-passage:tile-8": "East Single / South Single",
+    "cairn-passage:tile-9": "outside / East Single",
+    "cairn-passage:tile-10": "South Single / outside",
+    "cairn-passage:tile-11": "East Base",
+    "cairn-passage:tile-12": "East Middle",
+    "cairn-passage:tile-13": "East Top",
+    "cairn-passage:tile-14": "Roof centre",
+    "cairn-passage:tile-15": "Roof centre / inner NE",
+    "cairn-passage:tile-16": "Roof centre / inner SE NW",
+    "cairn-passage:tile-17": "Roof centre / inner NE SE NW",
+    "cairn-passage:tile-18": "Roof centre / inner SW NW",
+    "cairn-passage:tile-19": "Roof centre / inner NE SW NW",
+    "cairn-passage:tile-20": "Roof centre / inner SE SW NW",
+    "cairn-passage:tile-21": "Roof centre / inner NE SE SW NW",
+    "cairn-passage:tile-22": "Roof centre / inner SE",
+    "cairn-passage:tile-23": "Roof centre / inner NE SE",
+    "cairn-passage:tile-24": "Roof centre / inner SW",
+    "cairn-passage:tile-25": "Roof centre / inner NE SW",
+    "cairn-passage:tile-26": "Roof centre / inner SE SW",
+    "cairn-passage:tile-27": "Roof centre / inner NE SE SW",
+    "cairn-passage:tile-28": "Roof centre / inner NW",
+    "cairn-passage:tile-29": "Roof centre / inner NE NW",
+    "cairn-passage:tile-30": "Roof E W edge",
+    "cairn-passage:tile-31": "Roof N E W edge",
+    "cairn-passage:tile-32": "Roof S W edge / inner NE",
+    "cairn-passage:tile-33": "Roof N S W edge",
+    "cairn-passage:tile-34": "Roof E S W edge",
+    "cairn-passage:tile-35": "Roof N E S W edge",
+    "cairn-passage:tile-36": "Roof N edge",
+    "cairn-passage:tile-37": "Roof N edge / inner SE",
+    "cairn-passage:tile-38": "Roof N edge / inner SW",
+    "cairn-passage:tile-39": "Roof N edge / inner SE SW",
+    "cairn-passage:tile-40": "Roof E edge",
+    "cairn-passage:tile-41": "Roof E edge / inner SW NW",
+    "cairn-passage:tile-42": "Roof E edge / inner SW",
+    "cairn-passage:tile-43": "Roof E edge / inner NW",
+    "cairn-passage:tile-44": "Roof N E edge / inner SW",
+    "cairn-passage:tile-45": "Roof S edge",
+    "cairn-passage:tile-46": "Roof S edge / inner NE",
+    "cairn-passage:tile-47": "Roof S edge / inner NW",
+    "cairn-passage:tile-48": "Roof S edge / inner NE NW",
+    "cairn-passage:tile-49": "Roof N S edge",
+    "cairn-passage:tile-50": "Roof E S edge / inner NW",
+    "cairn-passage:tile-51": "Roof N E S edge",
+    "cairn-passage:tile-52": "Roof W edge",
+    "cairn-passage:tile-53": "Roof W edge / inner NE",
+    "cairn-passage:tile-54": "Roof W edge / inner SE",
+    "cairn-passage:tile-55": "Roof W edge / inner NE SE",
+    "cairn-passage:tile-56": "Roof N W edge / inner SE",
+    "cairn-passage:tile-57": "South Base",
+    "cairn-passage:tile-58": "South Middle",
+    "cairn-passage:tile-59": "South Top",
+    "cairn-passage:tile-60": "Roof N S W edge",
+    "cairn-passage:tile-61": "Roof N S edge",
+    "cairn-passage:tile-62": "Roof N E S edge",
+    "cairn-passage:tile-63": "East Base",
+    "cairn-passage:tile-64": "East Middle",
+    "cairn-passage:tile-65": "East Single",
+    "cairn-passage:tile-66": "East Top",
+    "cairn-passage:tile-67": "Empty",
+    "cairn-passage:tile-68": "Roof centre",
+    "cairn-passage:tile-69": "Roof centre / inner NE",
+    "cairn-passage:tile-70": "Roof centre / inner SE NW",
+    "cairn-passage:tile-71": "Roof centre / inner NE SE NW",
+    "cairn-passage:tile-72": "Roof centre / inner SW NW",
+    "cairn-passage:tile-73": "Roof centre / inner NE SW NW",
+    "cairn-passage:tile-74": "Roof centre / inner SE SW NW",
+    "cairn-passage:tile-75": "Roof centre / inner NE SE SW NW",
+    "cairn-passage:tile-76": "Roof centre / inner SE",
+    "cairn-passage:tile-77": "Roof centre / inner NE SE",
+    "cairn-passage:tile-78": "Roof centre / inner SW",
+    "cairn-passage:tile-79": "Roof centre / inner NE SW",
+    "cairn-passage:tile-80": "Roof centre / inner SE SW",
+    "cairn-passage:tile-81": "Roof centre / inner NE SE SW",
+    "cairn-passage:tile-82": "Roof centre / inner NW",
+    "cairn-passage:tile-83": "Roof centre / inner NE NW",
+    "cairn-passage:tile-84": "Roof E W edge",
+    "cairn-passage:tile-85": "Roof N E W edge",
+    "cairn-passage:tile-86": "Roof S W edge",
+    "cairn-passage:tile-87": "Roof S W edge / inner NE",
+    "cairn-passage:tile-88": "Roof E S W edge",
+    "cairn-passage:tile-89": "Roof N E S W edge",
+    "cairn-passage:tile-90": "Roof N edge",
+    "cairn-passage:tile-91": "Roof N edge / inner SE",
+    "cairn-passage:tile-92": "Roof N edge / inner SW",
+    "cairn-passage:tile-93": "Roof N edge / inner SE SW",
+    "cairn-passage:tile-94": "Roof E edge",
+    "cairn-passage:tile-95": "Roof E edge / inner SW NW",
+    "cairn-passage:tile-96": "Roof E edge / inner SW",
+    "cairn-passage:tile-97": "Roof E edge / inner NW",
+    "cairn-passage:tile-98": "Roof N E edge",
+    "cairn-passage:tile-99": "Roof N E edge / inner SW",
+    "cairn-passage:tile-100": "Roof S edge",
+    "cairn-passage:tile-101": "Roof S edge / inner NE",
+    "cairn-passage:tile-102": "Roof S edge / inner NW",
+    "cairn-passage:tile-103": "Roof S edge / inner NE NW",
+    "cairn-passage:tile-104": "Roof E S edge",
+    "cairn-passage:tile-105": "Roof E S edge / inner NW",
+    "cairn-passage:tile-106": "Roof W edge",
+    "cairn-passage:tile-107": "Roof W edge / inner NE",
+    "cairn-passage:tile-108": "Roof W edge / inner SE",
+    "cairn-passage:tile-109": "Roof W edge / inner NE SE",
+    "cairn-passage:tile-110": "Roof N W edge",
+    "cairn-passage:tile-111": "Roof N W edge / inner SE",
+    "cairn-passage:tile-112": "South Base",
+    "cairn-passage:tile-113": "South Middle",
+    "cairn-passage:tile-114": "South Single",
+    "cairn-passage:tile-115": "South Top",
+    "cairn-passage:tile-116": "Road end north",
+    "cairn-passage:tile-117": "Road T-junction - branch south",
+    "cairn-passage:tile-118": "Road end east",
+    "cairn-passage:tile-119": "Road end west",
+    "cairn-passage:tile-120": "Road isolated",
+    "cairn-passage:tile-121": "Road straight east/west",
+    "cairn-passage:tile-122": "Road T-junction - branch north",
+    "cairn-passage:tile-123": "Road corner south/west",
+    "cairn-passage:tile-124": "Road T-junction - branch west",
+    "cairn-passage:tile-125": "Road crossroads",
+    "cairn-passage:tile-126": "Road corner north/east",
+    "cairn-passage:tile-127": "Road end south",
+    "cairn-passage:tile-128": "Road straight north/south",
+    "cairn-passage:tile-129": "Road corner east/south",
+    "cairn-passage:tile-130": "Road T-junction - branch east",
+    "cairn-passage:tile-131": "Road corner west/north",
+    "cairn-passage:tile-132": "East Base / South Base",
+    "cairn-passage:tile-133": "East Top / South Top",
+    "cairn-passage:tile-134": "outside / East Base",
+    "cairn-passage:tile-135": "outside / East Top",
+    "cairn-passage:tile-136": "South Base / outside",
+    "cairn-passage:tile-137": "South Top / outside",
+    "cairn-passage:tile-138": "South Base / East Base",
+    "cairn-passage:tile-139": "South Top / East Top"
+  },
+  "tile_sources": {
+    "cairn-passage:image-8": {
+      "construction_join": "join|east_single|south_single",
+      "sources": [
+        {
+          "sheet": "package:art",
+          "graphic": "cairn-passage:image-1"
+        },
+        {
+          "sheet": "package:art",
+          "graphic": "cairn-passage:image-7"
+        }
+      ]
+    },
+    "cairn-passage:image-9": {
+      "construction_join": "join|empty|east_single",
+      "sources": [
+        {
+          "sheet": "package:art",
+          "graphic": "cairn-passage:image-2"
+        },
+        {
+          "sheet": "package:art",
+          "graphic": "cairn-passage:image-1"
+        }
+      ]
+    },
+    "cairn-passage:image-10": {
+      "construction_join": "join|south_single|empty",
+      "sources": [
+        {
+          "sheet": "package:art",
+          "graphic": "cairn-passage:image-7"
+        },
+        {
+          "sheet": "package:art",
+          "graphic": "cairn-passage:image-2"
+        }
+      ]
+    },
+    "cairn-passage:image-132": {
+      "construction_join": "join|east_base|south_base",
+      "sources": [
+        {
+          "sheet": "package:art",
+          "graphic": "cairn-passage:image-11"
+        },
+        {
+          "sheet": "package:art",
+          "graphic": "cairn-passage:image-57"
+        }
+      ]
+    },
+    "cairn-passage:image-133": {
+      "construction_join": "join|east_top|south_top",
+      "sources": [
+        {
+          "sheet": "package:art",
+          "graphic": "cairn-passage:image-13"
+        },
+        {
+          "sheet": "package:art",
+          "graphic": "cairn-passage:image-59"
+        }
+      ]
+    },
+    "cairn-passage:image-134": {
+      "construction_join": "join|empty|east_base",
+      "sources": [
+        {
+          "sheet": "package:art",
+          "graphic": "cairn-passage:image-2"
+        },
+        {
+          "sheet": "package:art",
+          "graphic": "cairn-passage:image-11"
+        }
+      ]
+    },
+    "cairn-passage:image-135": {
+      "construction_join": "join|empty|east_top",
+      "sources": [
+        {
+          "sheet": "package:art",
+          "graphic": "cairn-passage:image-2"
+        },
+        {
+          "sheet": "package:art",
+          "graphic": "cairn-passage:image-13"
+        }
+      ]
+    },
+    "cairn-passage:image-136": {
+      "construction_join": "join|south_base|empty",
+      "sources": [
+        {
+          "sheet": "package:art",
+          "graphic": "cairn-passage:image-57"
+        },
+        {
+          "sheet": "package:art",
+          "graphic": "cairn-passage:image-2"
+        }
+      ]
+    },
+    "cairn-passage:image-137": {
+      "construction_join": "join|south_top|empty",
+      "sources": [
+        {
+          "sheet": "package:art",
+          "graphic": "cairn-passage:image-59"
+        },
+        {
+          "sheet": "package:art",
+          "graphic": "cairn-passage:image-2"
+        }
+      ]
+    },
+    "cairn-passage:image-138": {
+      "construction_join": "join|south_base|east_base",
+      "sources": [
+        {
+          "sheet": "package:art",
+          "graphic": "cairn-passage:image-57"
+        },
+        {
+          "sheet": "package:art",
+          "graphic": "cairn-passage:image-11"
+        }
+      ]
+    },
+    "cairn-passage:image-139": {
+      "construction_join": "join|south_top|east_top",
+      "sources": [
+        {
+          "sheet": "package:art",
+          "graphic": "cairn-passage:image-59"
+        },
+        {
+          "sheet": "package:art",
+          "graphic": "cairn-passage:image-13"
+        }
+      ]
+    }
+  },
+  "construction_sets": [
+    {
+      "id": "cairn:depot",
+      "name": "Cairn depot",
+      "kind": "Building",
+      "footprint": [
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      "parts": {
+        "east_single": "cairn-passage:tile-1",
+        "empty": "cairn-passage:tile-2",
+        "roof_12_0": "cairn-passage:tile-3",
+        "roof_3_0": "cairn-passage:tile-4",
+        "roof_6_0": "cairn-passage:tile-5",
+        "roof_9_0": "cairn-passage:tile-6",
+        "south_single": "cairn-passage:tile-7",
+        "join|east_single|south_single": "cairn-passage:tile-8",
+        "join|empty|east_single": "cairn-passage:tile-9",
+        "join|south_single|empty": "cairn-passage:tile-10",
+        "east_base": "cairn-passage:tile-11",
+        "east_middle": "cairn-passage:tile-12",
+        "east_top": "cairn-passage:tile-13",
+        "roof_0_0": "cairn-passage:tile-14",
+        "roof_0_1": "cairn-passage:tile-15",
+        "roof_0_10": "cairn-passage:tile-16",
+        "roof_0_11": "cairn-passage:tile-17",
+        "roof_0_12": "cairn-passage:tile-18",
+        "roof_0_13": "cairn-passage:tile-19",
+        "roof_0_14": "cairn-passage:tile-20",
+        "roof_0_15": "cairn-passage:tile-21",
+        "roof_0_2": "cairn-passage:tile-22",
+        "roof_0_3": "cairn-passage:tile-23",
+        "roof_0_4": "cairn-passage:tile-24",
+        "roof_0_5": "cairn-passage:tile-25",
+        "roof_0_6": "cairn-passage:tile-26",
+        "roof_0_7": "cairn-passage:tile-27",
+        "roof_0_8": "cairn-passage:tile-28",
+        "roof_0_9": "cairn-passage:tile-29",
+        "roof_10_0": "cairn-passage:tile-30",
+        "roof_11_0": "cairn-passage:tile-31",
+        "roof_12_1": "cairn-passage:tile-32",
+        "roof_13_0": "cairn-passage:tile-33",
+        "roof_14_0": "cairn-passage:tile-34",
+        "roof_15_0": "cairn-passage:tile-35",
+        "roof_1_0": "cairn-passage:tile-36",
+        "roof_1_2": "cairn-passage:tile-37",
+        "roof_1_4": "cairn-passage:tile-38",
+        "roof_1_6": "cairn-passage:tile-39",
+        "roof_2_0": "cairn-passage:tile-40",
+        "roof_2_12": "cairn-passage:tile-41",
+        "roof_2_4": "cairn-passage:tile-42",
+        "roof_2_8": "cairn-passage:tile-43",
+        "roof_3_4": "cairn-passage:tile-44",
+        "roof_4_0": "cairn-passage:tile-45",
+        "roof_4_1": "cairn-passage:tile-46",
+        "roof_4_8": "cairn-passage:tile-47",
+        "roof_4_9": "cairn-passage:tile-48",
+        "roof_5_0": "cairn-passage:tile-49",
+        "roof_6_8": "cairn-passage:tile-50",
+        "roof_7_0": "cairn-passage:tile-51",
+        "roof_8_0": "cairn-passage:tile-52",
+        "roof_8_1": "cairn-passage:tile-53",
+        "roof_8_2": "cairn-passage:tile-54",
+        "roof_8_3": "cairn-passage:tile-55",
+        "roof_9_2": "cairn-passage:tile-56",
+        "south_base": "cairn-passage:tile-57",
+        "south_middle": "cairn-passage:tile-58",
+        "south_top": "cairn-passage:tile-59",
+        "join|east_base|south_base": "cairn-passage:tile-132",
+        "join|east_top|south_top": "cairn-passage:tile-133",
+        "join|empty|east_base": "cairn-passage:tile-134",
+        "join|empty|east_top": "cairn-passage:tile-135",
+        "join|south_base|empty": "cairn-passage:tile-136",
+        "join|south_top|empty": "cairn-passage:tile-137",
+        "join|south_base|east_base": "cairn-passage:tile-138",
+        "join|south_top|east_top": "cairn-passage:tile-139"
+      },
+      "generated_joins": {
+        "join|east_single|south_single": "2570d33a5a4af6468481d987db71066067d22113eccb62d7dc56973cdf9210c4",
+        "join|empty|east_single": "d7e92ff024317a5e1ff7de43bac1f5bb56c0cf86309eadca1991d61ebce504d5",
+        "join|south_single|empty": "9161bf60968231a3e284acd5c1cec2f0fec9f1d36b540d288ddb9be733084480",
+        "join|east_base|south_base": "c087f525bced07dac4ce039f90b8e36b41b7970b5a3f40a97b9d51dd8ae04737",
+        "join|east_top|south_top": "0f833740b6e2b445ba29151dc6166f566beede11cf2ca1f927c640b56fc82c88",
+        "join|empty|east_base": "52bf9e7a0104bc27a076c1a7b8c41221c39c5983b31818760ef3e4489e575456",
+        "join|empty|east_top": "84c96081ef42953948b1dc9b77929ecfbe7308db6e73e40d4f9789349e36feea",
+        "join|south_base|empty": "e1fcd6475dc5dde6744db37c50fa55f105c6d670e64bd776534e9a3411876642",
+        "join|south_top|empty": "12a2d337dc3280dc963483a453aa581885545ece4d6fd7a398607e682618e734",
+        "join|south_base|east_base": "b787a1ad300818de70d0c67c8bf8b2738b819acf4394abf3999346a2f05e1970",
+        "join|south_top|east_top": "e5aa243a157a70f5eb204fc3813f10fddae1f2999fd4534f27943308e026a235"
+      }
+    },
+    {
+      "id": "cairn:barrier",
+      "name": "Cairn barrier",
+      "kind": "Wall",
+      "footprint": [
+        [
+          -1,
+          -1,
+          -1
+        ]
+      ],
+      "parts": {
+        "roof_13_0": "cairn-passage:tile-60",
+        "roof_5_0": "cairn-passage:tile-61",
+        "roof_7_0": "cairn-passage:tile-62",
+        "east_base": "cairn-passage:tile-63",
+        "east_middle": "cairn-passage:tile-64",
+        "east_single": "cairn-passage:tile-65",
+        "east_top": "cairn-passage:tile-66",
+        "empty": "cairn-passage:tile-67",
+        "roof_0_0": "cairn-passage:tile-68",
+        "roof_0_1": "cairn-passage:tile-69",
+        "roof_0_10": "cairn-passage:tile-70",
+        "roof_0_11": "cairn-passage:tile-71",
+        "roof_0_12": "cairn-passage:tile-72",
+        "roof_0_13": "cairn-passage:tile-73",
+        "roof_0_14": "cairn-passage:tile-74",
+        "roof_0_15": "cairn-passage:tile-75",
+        "roof_0_2": "cairn-passage:tile-76",
+        "roof_0_3": "cairn-passage:tile-77",
+        "roof_0_4": "cairn-passage:tile-78",
+        "roof_0_5": "cairn-passage:tile-79",
+        "roof_0_6": "cairn-passage:tile-80",
+        "roof_0_7": "cairn-passage:tile-81",
+        "roof_0_8": "cairn-passage:tile-82",
+        "roof_0_9": "cairn-passage:tile-83",
+        "roof_10_0": "cairn-passage:tile-84",
+        "roof_11_0": "cairn-passage:tile-85",
+        "roof_12_0": "cairn-passage:tile-86",
+        "roof_12_1": "cairn-passage:tile-87",
+        "roof_14_0": "cairn-passage:tile-88",
+        "roof_15_0": "cairn-passage:tile-89",
+        "roof_1_0": "cairn-passage:tile-90",
+        "roof_1_2": "cairn-passage:tile-91",
+        "roof_1_4": "cairn-passage:tile-92",
+        "roof_1_6": "cairn-passage:tile-93",
+        "roof_2_0": "cairn-passage:tile-94",
+        "roof_2_12": "cairn-passage:tile-95",
+        "roof_2_4": "cairn-passage:tile-96",
+        "roof_2_8": "cairn-passage:tile-97",
+        "roof_3_0": "cairn-passage:tile-98",
+        "roof_3_4": "cairn-passage:tile-99",
+        "roof_4_0": "cairn-passage:tile-100",
+        "roof_4_1": "cairn-passage:tile-101",
+        "roof_4_8": "cairn-passage:tile-102",
+        "roof_4_9": "cairn-passage:tile-103",
+        "roof_6_0": "cairn-passage:tile-104",
+        "roof_6_8": "cairn-passage:tile-105",
+        "roof_8_0": "cairn-passage:tile-106",
+        "roof_8_1": "cairn-passage:tile-107",
+        "roof_8_2": "cairn-passage:tile-108",
+        "roof_8_3": "cairn-passage:tile-109",
+        "roof_9_0": "cairn-passage:tile-110",
+        "roof_9_2": "cairn-passage:tile-111",
+        "south_base": "cairn-passage:tile-112",
+        "south_middle": "cairn-passage:tile-113",
+        "south_single": "cairn-passage:tile-114",
+        "south_top": "cairn-passage:tile-115"
+      }
+    },
+    {
+      "id": "cairn:roads",
+      "name": "Cairn roads",
+      "kind": "Road",
+      "footprint": [
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          0,
+          1,
+          0
+        ]
+      ],
+      "parts": {
+        "road_1": "cairn-passage:tile-116",
+        "road_14": "cairn-passage:tile-117",
+        "road_2": "cairn-passage:tile-118",
+        "road_8": "cairn-passage:tile-119",
+        "road_0": "cairn-passage:tile-120",
+        "road_10": "cairn-passage:tile-121",
+        "road_11": "cairn-passage:tile-122",
+        "road_12": "cairn-passage:tile-123",
+        "road_13": "cairn-passage:tile-124",
+        "road_15": "cairn-passage:tile-125",
+        "road_3": "cairn-passage:tile-126",
+        "road_4": "cairn-passage:tile-127",
+        "road_5": "cairn-passage:tile-128",
+        "road_6": "cairn-passage:tile-129",
+        "road_7": "cairn-passage:tile-130",
+        "road_9": "cairn-passage:tile-131"
+      }
+    }
+  ],
+  "map_constructions": [
+    {
+      "id": "cairn-passage:map-construction-1",
+      "name": "Wall 1",
+      "map": "cairn:base",
+      "kind": "Wall",
+      "style": "cairn:barrier",
+      "datum": 0,
+      "cells": [
+        [
+          3,
+          23,
+          0
+        ],
+        [
+          4,
+          23,
+          0
+        ],
+        [
+          5,
+          23,
+          0
+        ],
+        [
+          6,
+          23,
+          0
+        ],
+        [
+          7,
+          23,
+          0
+        ],
+        [
+          8,
+          23,
+          0
+        ],
+        [
+          9,
+          23,
+          0
+        ],
+        [
+          10,
+          23,
+          0
+        ],
+        [
+          11,
+          23,
+          0
+        ],
+        [
+          12,
+          23,
+          0
+        ]
+      ],
+      "overlay": 0,
+      "rendered": {
+        "at": [
+          3,
+          23
+        ],
+        "rows": [
+          [
+            "cairn-passage:tile-60",
+            "cairn-passage:tile-61",
+            "cairn-passage:tile-61",
+            "cairn-passage:tile-61",
+            "cairn-passage:tile-61",
+            "cairn-passage:tile-61",
+            "cairn-passage:tile-61",
+            "cairn-passage:tile-61",
+            "cairn-passage:tile-61",
+            "cairn-passage:tile-62"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "cairn-passage:map-construction-2",
+      "name": "Wall 2",
+      "map": "cairn:relay",
+      "kind": "Wall",
+      "style": "cairn:barrier",
+      "datum": 0,
+      "cells": [
+        [
+          3,
+          23,
+          0
+        ],
+        [
+          4,
+          23,
+          0
+        ],
+        [
+          5,
+          23,
+          0
+        ],
+        [
+          6,
+          23,
+          0
+        ],
+        [
+          7,
+          23,
+          0
+        ],
+        [
+          8,
+          23,
+          0
+        ],
+        [
+          9,
+          23,
+          0
+        ],
+        [
+          10,
+          23,
+          0
+        ],
+        [
+          11,
+          23,
+          0
+        ],
+        [
+          12,
+          23,
+          0
+        ]
+      ],
+      "overlay": 0,
+      "rendered": {
+        "at": [
+          3,
+          23
+        ],
+        "rows": [
+          [
+            "cairn-passage:tile-60",
+            "cairn-passage:tile-61",
+            "cairn-passage:tile-61",
+            "cairn-passage:tile-61",
+            "cairn-passage:tile-61",
+            "cairn-passage:tile-61",
+            "cairn-passage:tile-61",
+            "cairn-passage:tile-61",
+            "cairn-passage:tile-61",
+            "cairn-passage:tile-62"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "cairn-passage:map-construction-3",
+      "name": "Wall 3",
+      "map": "cairn:pass",
+      "kind": "Wall",
+      "style": "cairn:barrier",
+      "datum": 0,
+      "cells": [
+        [
+          3,
+          23,
+          0
+        ],
+        [
+          4,
+          23,
+          0
+        ],
+        [
+          5,
+          23,
+          0
+        ],
+        [
+          6,
+          23,
+          0
+        ],
+        [
+          7,
+          23,
+          0
+        ],
+        [
+          8,
+          23,
+          0
+        ],
+        [
+          9,
+          23,
+          0
+        ],
+        [
+          10,
+          23,
+          0
+        ],
+        [
+          11,
+          23,
+          0
+        ],
+        [
+          12,
+          23,
+          0
+        ]
+      ],
+      "overlay": 0,
+      "rendered": {
+        "at": [
+          3,
+          23
+        ],
+        "rows": [
+          [
+            "cairn-passage:tile-60",
+            "cairn-passage:tile-61",
+            "cairn-passage:tile-61",
+            "cairn-passage:tile-61",
+            "cairn-passage:tile-61",
+            "cairn-passage:tile-61",
+            "cairn-passage:tile-61",
+            "cairn-passage:tile-61",
+            "cairn-passage:tile-61",
+            "cairn-passage:tile-62"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "cairn-passage:map-construction-4",
+      "name": "Building 4",
+      "map": "cairn:pass",
+      "kind": "Building",
+      "style": "cairn:depot",
+      "datum": 1,
+      "cells": [
+        [
+          18,
+          10,
+          1
+        ],
+        [
+          18,
+          11,
+          1
+        ],
+        [
+          18,
+          12,
+          1
+        ],
+        [
+          18,
+          13,
+          1
+        ],
+        [
+          19,
+          10,
+          1
+        ],
+        [
+          19,
+          11,
+          1
+        ],
+        [
+          19,
+          12,
+          1
+        ],
+        [
+          19,
+          13,
+          1
+        ],
+        [
+          20,
+          10,
+          1
+        ],
+        [
+          20,
+          11,
+          1
+        ],
+        [
+          20,
+          12,
+          1
+        ],
+        [
+          20,
+          13,
+          1
+        ],
+        [
+          21,
+          10,
+          1
+        ],
+        [
+          21,
+          11,
+          1
+        ],
+        [
+          21,
+          12,
+          1
+        ],
+        [
+          21,
+          13,
+          1
+        ]
+      ],
+      "overlay": 1,
+      "rendered": {
+        "at": [
+          18,
+          10
+        ],
+        "rows": [
+          [
+            "cairn-passage:tile-6",
+            "cairn-passage:tile-36",
+            "cairn-passage:tile-36",
+            "cairn-passage:tile-4",
+            "cairn-passage:tile-9"
+          ],
+          [
+            "cairn-passage:tile-52",
+            "cairn-passage:tile-14",
+            "cairn-passage:tile-14",
+            "cairn-passage:tile-40",
+            "cairn-passage:tile-1"
+          ],
+          [
+            "cairn-passage:tile-52",
+            "cairn-passage:tile-14",
+            "cairn-passage:tile-14",
+            "cairn-passage:tile-40",
+            "cairn-passage:tile-1"
+          ],
+          [
+            "cairn-passage:tile-3",
+            "cairn-passage:tile-45",
+            "cairn-passage:tile-45",
+            "cairn-passage:tile-5",
+            "cairn-passage:tile-1"
+          ],
+          [
+            "cairn-passage:tile-10",
+            "cairn-passage:tile-7",
+            "cairn-passage:tile-7",
+            "cairn-passage:tile-7",
+            "cairn-passage:tile-8"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "cairn-passage:map-construction-5",
+      "name": "Building 5",
+      "map": "cairn:relay",
+      "kind": "Building",
+      "style": "cairn:depot",
+      "datum": 2,
+      "cells": [
+        [
+          3,
+          5,
+          2
+        ],
+        [
+          3,
+          6,
+          2
+        ],
+        [
+          3,
+          7,
+          2
+        ],
+        [
+          3,
+          8,
+          2
+        ],
+        [
+          4,
+          5,
+          2
+        ],
+        [
+          4,
+          6,
+          2
+        ],
+        [
+          4,
+          7,
+          2
+        ],
+        [
+          4,
+          8,
+          2
+        ],
+        [
+          5,
+          5,
+          2
+        ],
+        [
+          5,
+          6,
+          2
+        ],
+        [
+          5,
+          7,
+          2
+        ],
+        [
+          5,
+          8,
+          2
+        ],
+        [
+          6,
+          5,
+          2
+        ],
+        [
+          6,
+          6,
+          2
+        ],
+        [
+          6,
+          7,
+          2
+        ],
+        [
+          6,
+          8,
+          2
+        ],
+        [
+          7,
+          5,
+          2
+        ],
+        [
+          7,
+          6,
+          2
+        ],
+        [
+          7,
+          7,
+          2
+        ],
+        [
+          7,
+          8,
+          2
+        ]
+      ],
+      "overlay": 1,
+      "rendered": {
+        "at": [
+          3,
+          5
+        ],
+        "rows": [
+          [
+            "cairn-passage:tile-6",
+            "cairn-passage:tile-36",
+            "cairn-passage:tile-36",
+            "cairn-passage:tile-36",
+            "cairn-passage:tile-4",
+            "cairn-passage:tile-135",
+            " "
+          ],
+          [
+            "cairn-passage:tile-52",
+            "cairn-passage:tile-14",
+            "cairn-passage:tile-14",
+            "cairn-passage:tile-14",
+            "cairn-passage:tile-40",
+            "cairn-passage:tile-13",
+            "cairn-passage:tile-134"
+          ],
+          [
+            "cairn-passage:tile-52",
+            "cairn-passage:tile-14",
+            "cairn-passage:tile-14",
+            "cairn-passage:tile-14",
+            "cairn-passage:tile-40",
+            "cairn-passage:tile-13",
+            "cairn-passage:tile-11"
+          ],
+          [
+            "cairn-passage:tile-3",
+            "cairn-passage:tile-45",
+            "cairn-passage:tile-45",
+            "cairn-passage:tile-45",
+            "cairn-passage:tile-5",
+            "cairn-passage:tile-13",
+            "cairn-passage:tile-11"
+          ],
+          [
+            "cairn-passage:tile-137",
+            "cairn-passage:tile-59",
+            "cairn-passage:tile-59",
+            "cairn-passage:tile-59",
+            "cairn-passage:tile-59",
+            "cairn-passage:tile-133",
+            "cairn-passage:tile-11"
+          ],
+          [
+            " ",
+            "cairn-passage:tile-136",
+            "cairn-passage:tile-57",
+            "cairn-passage:tile-57",
+            "cairn-passage:tile-57",
+            "cairn-passage:tile-57",
+            "cairn-passage:tile-132"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "cairn-passage:map-construction-6",
+      "name": "Building 6",
+      "map": "cairn:base",
+      "kind": "Building",
+      "style": "cairn:depot",
+      "datum": 2,
+      "cells": [
+        [
+          10,
+          5,
+          2
+        ],
+        [
+          10,
+          6,
+          2
+        ],
+        [
+          10,
+          7,
+          2
+        ],
+        [
+          10,
+          8,
+          2
+        ],
+        [
+          10,
+          9,
+          2
+        ],
+        [
+          11,
+          5,
+          2
+        ],
+        [
+          11,
+          9,
+          2
+        ],
+        [
+          12,
+          5,
+          2
+        ],
+        [
+          12,
+          9,
+          2
+        ],
+        [
+          13,
+          5,
+          2
+        ],
+        [
+          13,
+          9,
+          2
+        ],
+        [
+          14,
+          5,
+          2
+        ],
+        [
+          14,
+          9,
+          2
+        ],
+        [
+          15,
+          5,
+          2
+        ],
+        [
+          15,
+          9,
+          2
+        ],
+        [
+          16,
+          5,
+          2
+        ],
+        [
+          16,
+          6,
+          2
+        ],
+        [
+          16,
+          7,
+          2
+        ],
+        [
+          16,
+          8,
+          2
+        ],
+        [
+          16,
+          9,
+          2
+        ]
+      ],
+      "overlay": 1,
+      "rendered": {
+        "at": [
+          10,
+          5
+        ],
+        "rows": [
+          [
+            "cairn-passage:tile-56",
+            "cairn-passage:tile-49",
+            "cairn-passage:tile-49",
+            "cairn-passage:tile-49",
+            "cairn-passage:tile-49",
+            "cairn-passage:tile-49",
+            "cairn-passage:tile-44",
+            "cairn-passage:tile-135",
+            " "
+          ],
+          [
+            "cairn-passage:tile-30",
+            "cairn-passage:tile-139",
+            "cairn-passage:tile-59",
+            "cairn-passage:tile-59",
+            "cairn-passage:tile-59",
+            "cairn-passage:tile-59",
+            "cairn-passage:tile-30",
+            "cairn-passage:tile-13",
+            "cairn-passage:tile-134"
+          ],
+          [
+            "cairn-passage:tile-30",
+            "cairn-passage:tile-13",
+            "cairn-passage:tile-138",
+            "cairn-passage:tile-57",
+            "cairn-passage:tile-57",
+            "cairn-passage:tile-57",
+            "cairn-passage:tile-30",
+            "cairn-passage:tile-13",
+            "cairn-passage:tile-11"
+          ],
+          [
+            "cairn-passage:tile-30",
+            "cairn-passage:tile-13",
+            "cairn-passage:tile-11",
+            " ",
+            " ",
+            " ",
+            "cairn-passage:tile-30",
+            "cairn-passage:tile-13",
+            "cairn-passage:tile-11"
+          ],
+          [
+            "cairn-passage:tile-32",
+            "cairn-passage:tile-49",
+            "cairn-passage:tile-49",
+            "cairn-passage:tile-49",
+            "cairn-passage:tile-49",
+            "cairn-passage:tile-49",
+            "cairn-passage:tile-50",
+            "cairn-passage:tile-13",
+            "cairn-passage:tile-11"
+          ],
+          [
+            "cairn-passage:tile-137",
+            "cairn-passage:tile-59",
+            "cairn-passage:tile-59",
+            "cairn-passage:tile-59",
+            "cairn-passage:tile-59",
+            "cairn-passage:tile-59",
+            "cairn-passage:tile-59",
+            "cairn-passage:tile-133",
+            "cairn-passage:tile-11"
+          ],
+          [
+            " ",
+            "cairn-passage:tile-136",
+            "cairn-passage:tile-57",
+            "cairn-passage:tile-57",
+            "cairn-passage:tile-57",
+            "cairn-passage:tile-57",
+            "cairn-passage:tile-57",
+            "cairn-passage:tile-57",
+            "cairn-passage:tile-132"
+          ]
+        ]
+      }
+    }
+  ]
+}

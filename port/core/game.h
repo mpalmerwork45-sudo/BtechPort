@@ -135,6 +135,14 @@ typedef struct {
     uint8_t mission_state,objectives[32];
     uint32_t variables[32],regions,enter_pending,leave_pending,entered,left;
 } BtpEventState;
+/* Mission units use stable combat IDs 12..23. Pilot ejection inserts array
+   slots, so never save a group member as a mutable combat array index. */
+typedef struct {
+    uint8_t enabled,active,in_hook,encounter,stage,outcome;
+    uint16_t node,round,deployed;
+    uint32_t fired,seen_dead;
+    uint8_t pending[32],units[12],waypoint[12],sides[12];
+} BtpBattleMissionState;
 typedef struct {
     uint32_t tick;
     uint16_t x_half, y_half;
@@ -189,6 +197,7 @@ typedef struct {
     uint32_t combat_fingerprint;
     uint8_t project; /* Requires the package-bound save envelope, including before owning a custom mech. */
     BtpEventState event;
+    BtpBattleMissionState battle_mission;
 } BtpState;
 enum { BTP_STATE_BYTES = 20480 };
 

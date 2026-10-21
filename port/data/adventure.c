@@ -86,9 +86,9 @@ static int mission_definitions(BtpJson *j,BtpAdventure *a)
 }
 static int mission_condition(BtpJson *j,unsigned n,const BtpAdventure *a,BtpMissionCondition *c)
 {
-    const char *const kinds[]={"flag","variable","objective","region"};
+    const char *const kinds[]={"flag","variable","objective","region","group_alive","group_destroyed","group_deployed","group_arrived","combat_round"};
     const char *const comparisons[]={"eq","ne","lt","le","gt","ge"};
-    if (!option(j,n,"kind",kinds,4,&c->kind) || !option(j,n,"compare",comparisons,6,&c->compare)) return 0;
+    if (!option(j,n,"kind",kinds,9,&c->kind) || !option(j,n,"compare",comparisons,6,&c->compare)) return 0;
     unsigned maximum=1;
     switch (c->kind) {
     case BTP_CONDITION_FLAG:if (!REF(j,n,"id",a->flags,a->flag_count,&c->argument)) return 0;break;
@@ -100,9 +100,13 @@ static int mission_condition(BtpJson *j,unsigned n,const BtpAdventure *a,BtpMiss
     case BTP_CONDITION_VARIABLE:
         if (!REF(j,n,"id",a->variables,a->variable_count,&c->argument)) return 0;
         maximum=a->variables[c->argument].maximum;break;
+    case BTP_CONDITION_COMBAT_ROUND:maximum=65535;break;
+    default:
+        if (!REF(j,n,"id",a->groups,a->group_count,&c->argument)) return 0;
+        maximum=c->kind==BTP_CONDITION_GROUP_DEPLOYED ? 1u : a->groups[c->argument].count;break;
     }
-    if (c->compare>1 && (c->kind!=BTP_CONDITION_VARIABLE || a->variables[c->argument].boolean))
-        return btp_json_error(j,n,"ordered comparisons require a counter");
+    if (c->compare>1 && c->kind<BTP_CONDITION_GROUP_ALIVE && (c->kind!=BTP_CONDITION_VARIABLE || a->variables[c->argument].boolean))
+        return btp_json_error(j,n,"ordered comparisons require a counter or combat count");
     if (c->kind!=BTP_CONDITION_OBJECTIVE && !number(j,n,"value",0,maximum,&c->value)) return 0;
     return btp_json_done(j,n);
 }
@@ -277,6 +281,103 @@ int btp_scene_stand(const BtpScene *m,int x,int y,int mech)
     unsigned tile=btp_map_tile(&m->rules,mech ? x/2 : (x+1)/2,y/2);
     return tile<85 && (!mech || btp_map_tile(&m->rules,x/2+1,y/2)<85);
 }
+static int combat_definitions(BtpJson *j,BtpAdventure *a,const BtpDefinitions *d)
+{
+    unsigned records[BTP_COMBAT_HOOKS];
+    if (btp_json_optional(j,1,"combat_groups")) {
+        if (!ids(j,"combat_groups",a->groups,sizeof *a->groups,BTP_COMBAT_GROUPS,&a->group_count,records)) return 0;
+        for (unsigned i=0;i<a->group_count;++i) {
+            unsigned n=records[i];BtpCombatGroup *g=&a->groups[i];
+            const char *const sides[]={"hostile","friendly","neutral"};
+            if (!string(j,n,"name",g->name,sizeof g->name) || !REF(j,n,"encounter",a->battles,a->battle_count,&g->battle) ||
+                !option(j,n,"affiliation",sides,3,&g->side) || !number(j,n,"reserve",0,1,&g->reserve)) return 0;
+            const BtpScene *map=&a->maps[a->battles[g->battle].map];
+            unsigned units=btp_json_field(j,n,"units");if (!btp_json_type(j,units,'[')) return 0;
+            for (unsigned z=j->nodes[units].first;z;z=j->nodes[z].next) {
+                if (g->count==12) return btp_json_error(j,z,"at most 12 units per combat group");
+                BtpMissionActor *actor=&g->actors[g->count++];BtpSceneEnemy *unit=&actor->unit;
+                unsigned kind,definition,x,y;const char *const kinds[]={"mech","person"};
+                if (!option(j,z,"kind",kinds,2,&kind) || !reference(j,btp_json_field(j,z,"definition"),
+                    kind ? (const void *)a->people : (const void *)d->mechs,
+                    kind ? sizeof *a->people : sizeof *d->mechs,kind ? a->person_count : d->mech_count,&definition) ||
+                    !pair(j,btp_json_field(j,z,"at"),127,&x,&y)) return 0;
+                *unit=(BtpSceneEnemy){.x=(uint8_t)x,.y=(uint8_t)y,.infantry=(uint8_t)kind,.definition=(uint16_t)definition};
+                if (!btp_scene_stand(map,(int)x,(int)y,!kind)) return btp_json_error(j,z,"group deployment anchor must be accessible terrain");
+                if (btp_json_optional(j,z,"movement")) {
+                    const char *const movement[]={"walk","run"};if (!option(j,z,"movement",movement,2,&actor->movement)) return 0;
+                }
+                if (!kind && d->mechs[definition].vehicle &&
+                    (!btp_vehicle_terrain(d->mechs[definition].vehicle,btp_map_tile(&map->rules,(int)x/2,(int)y/2)) ||
+                     !btp_vehicle_terrain(d->mechs[definition].vehicle,btp_map_tile(&map->rules,(int)x/2+1,(int)y/2))))
+                    return btp_json_error(j,z,"group vehicle cannot deploy on this terrain");
+                unsigned waypoints=btp_json_optional(j,z,"waypoints");
+                if (waypoints) {
+                    if (g->side==BTP_SIDE_HOSTILE || !btp_json_type(j,waypoints,'[')) return btp_json_error(j,z,"waypoints require a friendly or neutral actor");
+                    for (unsigned p=j->nodes[waypoints].first;p;p=j->nodes[p].next) {
+                        if (actor->waypoint_count==BTP_ACTOR_WAYPOINTS || !pair(j,p,127,&x,&y)) return btp_json_error(j,p,"at most 16 half-tile waypoints");
+                        if (!btp_scene_stand(map,(int)x,(int)y,!kind)) return btp_json_error(j,p,"waypoint is blocked or outside encounter map");
+                        if (!kind && d->mechs[definition].vehicle &&
+                            (!btp_vehicle_terrain(d->mechs[definition].vehicle,btp_map_tile(&map->rules,(int)x/2,(int)y/2)) ||
+                             !btp_vehicle_terrain(d->mechs[definition].vehicle,btp_map_tile(&map->rules,(int)x/2+1,(int)y/2))))
+                            return btp_json_error(j,p,"vehicle cannot reach waypoint terrain");
+                        actor->waypoints[actor->waypoint_count][0]=(uint8_t)x;actor->waypoints[actor->waypoint_count++][1]=(uint8_t)y;
+                    }
+                }
+                if (!btp_json_done(j,z)) return 0;
+            }
+            if (!g->count || !btp_json_done(j,n)) return btp_json_error(j,n,"combat group needs units");
+        }
+    }
+    if (btp_json_optional(j,1,"combat_hooks")) {
+        if (!ids(j,"combat_hooks",a->hooks,sizeof *a->hooks,BTP_COMBAT_HOOKS,&a->hook_count,records)) return 0;
+        for (unsigned i=0;i<a->hook_count;++i) {
+            unsigned n=records[i];BtpCombatHook *h=&a->hooks[i];
+            const char *const kinds[]={"start","round_start","round_end","destroyed","arrival"},*const repeats[]={"once","always"};
+            h->group=BTP_COMBAT_GROUPS;
+            if (!REF(j,n,"encounter",a->battles,a->battle_count,&h->battle) || !option(j,n,"when",kinds,5,&h->when) ||
+                !option(j,n,"repeat",repeats,2,&h->repeat) || !next(j,n,"event",a,&h->event)) return 0;
+            if (h->when==BTP_HOOK_ROUND_START || h->when==BTP_HOOK_ROUND_END) {
+                if (!number(j,n,"round",1,65535,&h->first) || !number(j,n,"every",0,65535,&h->every)) return 0;
+            }
+            if (h->when==BTP_HOOK_ARRIVAL || (h->when==BTP_HOOK_DESTROYED && btp_json_optional(j,n,"group"))) {
+                if (!REF(j,n,"group",a->groups,a->group_count,&h->group) || a->groups[h->group].battle!=h->battle)
+                    return btp_json_error(j,n,"hook group must belong to the same encounter");
+            }
+            if (!btp_json_done(j,n)) return 0;
+        }
+    }
+    for (unsigned i=0;i<a->battle_count;++i) {
+        unsigned count=a->battles[i].count;
+        for (unsigned k=0;k<a->group_count;++k) if (a->groups[k].battle==i) count+=a->groups[k].count;
+        if (!count || count>12) return btp_json_error(j,1,"each encounter needs 1..12 non-party units including reserves");
+        if (a->battles[i].scripted) a->combat_missions=1;
+    }
+    if (a->group_count || a->hook_count) a->combat_missions=1;
+    if (a->combat_missions) a->mission_state=1;
+    return 1;
+}
+static int combat_hook_routes(BtpJson *j,const BtpAdventure *a,const unsigned *nodes)
+{
+    uint8_t seen[BTP_EVENT_NODES]={0};unsigned queue[BTP_EVENT_NODES],count=0;
+    for (unsigned i=0;i<a->hook_count;++i) {
+        unsigned n=a->hooks[i].event;if (!seen[n]) { seen[n]=1;queue[count++]=n; }
+    }
+    for (unsigned at=0;at<count;++at) {
+        unsigned n=queue[at];const BtpEventNode *e=&a->nodes[n];unsigned edges[6],length=0;
+        switch (e->op) {
+        case BTP_EVENT_END:break;
+        case BTP_EVENT_SAY:case BTP_EVENT_PICTURE:case BTP_EVENT_FLAG:edges[length++]=0;break;
+        case BTP_EVENT_REWARD:case BTP_EVENT_IF:case BTP_EVENT_VARIABLE:case BTP_EVENT_OBJECTIVE:
+        case BTP_EVENT_CHECK:case BTP_EVENT_REINFORCE:case BTP_EVENT_BATTLE_END:edges[length++]=0;edges[length++]=1;break;
+        case BTP_EVENT_CHOICE:case BTP_EVENT_LUA:
+            for (unsigned i=0;i<e->count;++i) edges[length++]=i;
+            edges[length++]=5;break;
+        default:return btp_json_error(j,nodes[n],"combat hook cannot enter a battle, building service, transfer, recruit or finish the game; use end to resume combat");
+        }
+        for (unsigned i=0;i<length;++i) { unsigned target=e->next[edges[i]];if (!seen[target]) { seen[target]=1;queue[count++]=target; } }
+    }
+    return 1;
+}
 int btp_adventure_load(const char *path,const BtpDefinitions *d,BtpAdventure *out,char error[256])
 {
     BtpAdventure *a=calloc(1,sizeof *a);BtpJson j={0};int ok=0;char text[64];unsigned v;
@@ -434,6 +535,9 @@ int btp_adventure_load(const char *path,const BtpDefinitions *d,BtpAdventure *ou
     }
     for (unsigned i=0;i<a->battle_count;++i) {
         unsigned n=battles[i];BtpSceneBattle *b=&a->battles[i];
+        if (btp_json_optional(&j,n,"completion")) {
+            const char *const modes[]={"eliminate","scripted"};if (!option(&j,n,"completion",modes,2,&b->scripted)) goto done;
+        }
         if (!REF(&j,n,"map",a->maps,a->map_count,&b->map) || !pair(&j,btp_json_field(&j,n,"party_at"),127,&b->x,&b->y)) goto done;
         BtpScene *m=&a->maps[b->map];
         if (!btp_scene_stand(m,(int)b->x,(int)b->y,0) || !btp_scene_stand(m,(int)b->x,(int)b->y-2,1)) { btp_json_error(&j,n,"party spawn is blocked");goto done; }
@@ -456,13 +560,13 @@ int btp_adventure_load(const char *path,const BtpDefinitions *d,BtpAdventure *ou
             }
             for (unsigned k=0;k+1<b->count;++k) if (abs((int)x-b->enemies[k].x)<3 && abs((int)y-b->enemies[k].y)<3) { btp_json_error(&j,z,"enemy spawns overlap");goto done; }
         }
-        if (!b->count || !btp_json_done(&j,n)) { btp_json_error(&j,n,"encounter needs enemies");goto done; }
+        if (!btp_json_done(&j,n)) goto done;
     }
-    if (!mission_definitions(&j,a)) goto done;
+    if (!mission_definitions(&j,a) || !combat_definitions(&j,a,d)) goto done;
     for (unsigned i=0;i<a->node_count;++i) {
         unsigned n=nodes[i];BtpEventNode *e=&a->nodes[i];
-        const char *const ops[]={"end","say","choice","if","flag","reward","recruit","transfer","shop","battle","lua","finish","picture","repair","rearm","heal","salvage","variable","objective","check"};
-        if (!option(&j,n,"op",ops,20,&e->op)) goto done;
+        const char *const ops[]={"end","say","choice","if","flag","reward","recruit","transfer","shop","battle","lua","finish","picture","repair","rearm","heal","salvage","variable","objective","check","reinforce","battle_end"};
+        if (!option(&j,n,"op",ops,22,&e->op)) goto done;
         if (a->version==1 && e->op==BTP_EVENT_PICTURE) { btp_json_error(&j,n,"picture requires adventure v2");goto done; }
         e->picture=65535;unsigned image=btp_json_optional(&j,n,"image");
         if (image && (a->version!=2 || !btp_json_string(&j,image,e->image,sizeof e->image) ||
@@ -486,6 +590,15 @@ int btp_adventure_load(const char *path,const BtpDefinitions *d,BtpAdventure *ou
             if (!next(&j,n,"next",a,&e->next[0])) goto done;
         }
         switch (e->op) {
+        case BTP_EVENT_REINFORCE:
+            if (!REF(&j,n,"group",a->groups,a->group_count,&e->argument) || !number(&j,n,"radius",0,8,&e->value) ||
+                !next(&j,n,"failure",a,&e->next[1])) goto done;
+            break;
+        case BTP_EVENT_BATTLE_END: {
+            const char *const outcomes[]={"win","loss","flee"};
+            if (!option(&j,n,"result",outcomes,3,&e->value) || !next(&j,n,"failure",a,&e->next[1])) goto done;
+            break;
+        }
         case BTP_EVENT_VARIABLE: {
             const char *const actions[]={"set","add","subtract"};
             if (!REF(&j,n,"variable",a->variables,a->variable_count,&e->argument) ||
@@ -562,6 +675,7 @@ int btp_adventure_load(const char *path,const BtpDefinitions *d,BtpAdventure *ou
         }
         if (!btp_json_done(&j,n)) goto done;
     }
+    if (!combat_hook_routes(&j,a,nodes)) goto done;
     unsigned start=btp_json_field(&j,1,"start");
     if (!REF(&j,start,"map",a->maps,a->map_count,&a->start_map) || !pair(&j,btp_json_field(&j,start,"at"),127,&a->start_x,&a->start_y) ||
         !REF(&j,start,"event",a->nodes,a->node_count,&a->start_event) || !number(&j,start,"credits",0,999999,&a->credits)) goto done;

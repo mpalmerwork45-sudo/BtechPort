@@ -1,4 +1,5 @@
 #include "core/mission_state.h"
+#include "core/battle_mission.h"
 #include <string.h>
 
 const char *btp_objective_name(unsigned state)
@@ -19,7 +20,7 @@ int btp_mission_region(const BtpState *s,const BtpAdventure *a,unsigned i)
     unsigned map=s->event.map,x=s->x_half,y=s->y_half;
     /* Combat uses a temporary tactical position. Mission geography remains
        the exploration position to which the battle will return. */
-    if (s->event.phase==BTP_EVENT_FIGHTING) {
+    if (s->event.phase==BTP_EVENT_FIGHTING || s->battle_mission.active) {
         map=s->event.return_map;x=s->campaign.return_x;y=s->campaign.return_y;
     }
     const BtpScene *current=&a->maps[map],*base=&a->maps[r->map];
@@ -43,6 +44,8 @@ int btp_mission_check(const BtpState *s,const BtpAdventure *a,const BtpEventNode
         case BTP_CONDITION_VARIABLE:v=s->event.variables[c->argument];break;
         case BTP_CONDITION_OBJECTIVE:v=btp_objective_state(s,a,c->argument);break;
         case BTP_CONDITION_REGION:v=(unsigned)btp_mission_region(s,a,c->argument);break;
+        case BTP_CONDITION_COMBAT_ROUND:v=s->battle_mission.round;break;
+        default:v=btp_battle_group_value(s,a,c->argument,c->kind);break;
         }
         int match=c->compare==0 ? v==c->value : c->compare==1 ? v!=c->value :
             c->compare==2 ? v<c->value : c->compare==3 ? v<=c->value :
