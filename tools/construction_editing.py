@@ -11,6 +11,7 @@ from art_editing import new_image
 from tile_editing import metadata,check_budget
 
 NEIGHBOURS=((0,-1),(1,0),(0,1),(-1,0))
+ROAD_T_JUNCTIONS=(('north','road_11'),('east','road_7'),('south','road_14'),('west','road_13'))
 
 
 def preset(kind,width=9,height=9,stories=2,shape='Cross'):
@@ -71,6 +72,17 @@ def geometry(profile,with_origin=False):
     result=[[' ']*(x1-x0+1) for _ in range(y1-y0+1)]
     for (x,y),parts in cells.items():result[y-y0][x-x0]=parts[0] if parts[0]==parts[1] else 'join|'+parts[0]+'|'+parts[1]
     return ((x0,y0),result) if with_origin else result
+
+
+def road_junction_grid(profile,role):
+    """A fixed 3 x 3 sample keeps every branch centred for selection/editing."""
+    direction=next((direction for direction,value in ROAD_T_JUNCTIONS if value==role),None)
+    if profile['kind']!='Road' or direction is None:raise EditorError('Choose one of the four road T-junctions.')
+    origin,rows=geometry(dict(profile,footprint=preset('Road',3,3,1,'T '+direction)),with_origin=True)
+    result=[[' ']*3 for _ in range(3)]
+    for y,row in enumerate(rows):
+        for x,value in enumerate(row):result[y+origin[1]][x+origin[0]]=value
+    return result
 
 
 def part_name(role):

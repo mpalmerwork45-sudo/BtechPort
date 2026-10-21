@@ -68,7 +68,9 @@ AI authors can search and import the same designs before drawing.
 See the [Construction Library guide](docs/CONSTRUCTION_LIBRARY.md).
 
 Construction designers show complete part coverage, including all four road
-T-junction orientations. Walls default to zero stories (top tiles only).
+T-junction orientations. The Road designer shows **T North / East / South / West**
+previews together; right-click one to choose, clone or edit its tile with the
+surrounding road tiles visible. Walls default to zero stories (top tiles only).
 Event graph boxes show editable descriptions; **Description** changes an author
 note without changing game dialogue. Last Beacon includes descriptions for all
 54 events. Click table headings for ascending, descending, then original order;

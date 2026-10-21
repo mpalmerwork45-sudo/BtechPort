@@ -1,5 +1,32 @@
 # Build, verification and original oracle — 2026-10-21
 
+## Visible road T-junctions — 2026-10-21
+
+**VERIFIED:** the Road designer exposes all four junction previews together,
+including when the saved demonstration footprint contains no T-junctions.
+Each selects its independent part and opens pixel editing with a labelled
+3 × 3 sample of that style's road tiles. The saved footprint is preserved.
+
+- Python regression: **279/279 PASS**, 25.697 s,
+  `work/road-junction-python.log`. Focused construction tests pass **8/8**,
+  including all four branch directions, neighbour context and completion of
+  an older road style without replacing its existing part assignments/artwork.
+- `python3 tools/native_smoke.py --editor-style-only`: **PASS**,
+  retained in `work/road-junction-gui.log`. Actual clicks select each visible
+  junction; right-click menus open and Escape dismisses them. Each pixel editor
+  shows its three adjoining road tiles. Existing footprint selection, pickers,
+  zero-story walls, graph descriptions, sorting and dropdown checks still pass.
+- Inspected `work/road-junction-cards.png`: the four labelled previews are
+  visible above the main road preview, with the selected centre highlighted.
+- The inspected Last Beacon road set already had 16 part assignments and four
+  distinct T-junction images. Its current user edits were retained and are
+  outside this change. Reference guard confirms **1,287 entries unchanged**,
+  `work/road-junction-reference.log`.
+
+This is an editor-only change; native game/save formats are unchanged. Native
+Windows Tk interaction remains **UNKNOWN**. Restart the Construction Kit after
+saving open work to load the updated Python editor.
+
 ## Combat missions, construction coverage and editor controls — 2026-10-21
 
 **VERIFIED within the routes and bounds below:** AI6b lifecycle hooks, reserve

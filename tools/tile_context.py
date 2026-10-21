@@ -10,10 +10,18 @@ def context_grid(document,context):
     at=context.get('at')
     if 'construction' in context:
         from tile_editing import metadata
-        from construction_editing import compile_rows,geometry,part_name
+        from construction_editing import compile_rows,geometry,part_name,road_junction_grid,ROAD_T_JUNCTIONS
         source=next((p for p in metadata(document).get('construction_sets',[]) if p['id']==context['construction']),None)
         if source is None:return None
-        roles=geometry(source);role=context['role'];grid=compile_rows(source)
+        role=context['role']
+        direction=next((direction for direction,value in ROAD_T_JUNCTIONS if value==role),None)
+        if source['kind']=='Road' and direction and context.get('road_sample')==role:
+            # This explicitly labelled sample supplies surrounding road tiles
+            # without changing the project's saved demonstration footprint.
+            roles=road_junction_grid(source,role)
+            grid=[[source['parts'].get(value,' ') for value in row] for row in roles]
+            return source['name']+' — '+part_name(role)+' (junction sample)',grid,(1,1),'Empty',True
+        roles=geometry(source);grid=compile_rows(source)
         if at is None or not (0<=at[1]<len(roles) and 0<=at[0]<len(roles[at[1]]) and roles[at[1]][at[0]]==role):
             at=next(([x,y] for y,row in enumerate(roles) for x,value in enumerate(row) if value==role),None)
         if at is None:

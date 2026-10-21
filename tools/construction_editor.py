@@ -8,7 +8,7 @@ from editor_session import guard,register
 from editor_recovery import recoverable_forms
 from editor_model import EditorError
 from tile_editing import metadata,create_tile,edit_pixels,tile
-from construction_editing import geometry,part_name,default_pixels,put_profile,new_profile,preset,compile_rows
+from construction_editing import geometry,part_name,default_pixels,put_profile,new_profile,preset,compile_rows,ROAD_T_JUNCTIONS,road_junction_grid
 from construction_styles import primitive_roles,coverage,complete_profile
 
 
@@ -35,6 +35,7 @@ def tile_menu(owner,maps,current,assign,event,context=None):
 class ConstructionEditor:
     def __init__(self,owner,kind='Building'):
         self.owner=owner;self.document=owner.document;self.kind=kind;self.profile=None;self.stroke=None;self.last=None;self.selected_role=None;self.selected_cell=None;self.photos=[]
+        self.junction_role=None;self.junction_canvases={}
         self.window=view_window(self,owner,'construction',kind+' designer',kind);self.window.geometry('1080x760')
         bar=ttk.Frame(self.window,padding=8);bar.pack(fill='x')
         self.choice=ttk.Combobox(bar,state='readonly',width=24);self.choice.pack(side='left',padx=4);self.choice.bind('<<ComboboxSelected>>',lambda _:guard(self,self.change))
@@ -72,6 +73,23 @@ class ConstructionEditor:
         ttk.Label(coverage_bar,textvariable=self.coverage_text).pack(side='left',padx=4)
         self.complete_button=ttk.Button(coverage_bar,text='Complete style',command=lambda:guard(self,self.complete));self.complete_button.pack(side='left',padx=4)
         flow_toolbar(coverage_bar)
+        if kind=='Road':
+            # All four T tiles need to be discoverable even when the saved
+            # demonstration footprint contains only a cross or straight road.
+            junctions=ttk.LabelFrame(right,text='T-junction tiles',padding=4);junctions.pack(fill='x',pady=(4,6))
+            ttk.Label(junctions,text='Click to select. Right-click to choose, clone or edit.',wraplength=420).pack(anchor='w')
+            cards=ttk.Frame(junctions);cards.pack(fill='x')
+            for direction,role in ROAD_T_JUNCTIONS:
+                card=ttk.Frame(cards,padding=3);card.pack(side='left')
+                canvas=tk.Canvas(card,width=72,height=72,highlightthickness=2,background='#273b45',highlightbackground='#a9b3b9',takefocus=True)
+                canvas.pack();label=ttk.Label(card,text='T '+direction.title(),anchor='center');label.pack(fill='x')
+                self.junction_canvases[role]=canvas
+                for widget in (canvas,label):
+                    widget.bind('<Button-1>',lambda _,r=role:guard(self,lambda:self.select_junction(r)))
+                    widget.bind('<Button-3>',lambda e,r=role:guard(self,lambda:self.junction_context(e,r)))
+                canvas.bind('<Return>',lambda _,r=role:guard(self,lambda:self.select_junction(r)))
+                canvas.bind('<space>',lambda _,r=role:guard(self,lambda:self.select_junction(r)))
+            flow_toolbar(cards)
         self.preview=self.make_canvas(right);self.preview_size=32;self.preview.bind('<Configure>',lambda _:self.draw())
         self.preview.bind('<Button-1>',self.select_preview);self.preview.bind('<Button-3>',self.context)
         self.zoom_control.attach(self.preview)
@@ -154,14 +172,22 @@ class ConstructionEditor:
         size=min(32,max(8,min(max(1,self.preview.winfo_width()-4)//len(self.roles[0]),max(1,self.preview.winfo_height()-4)//len(self.roles)))) if self.zoom.get()=='Fit' else int(self.zoom.get())
         self.preview_size=size;self.preview.configure(scrollregion=(0,0,len(self.roles[0])*size,len(self.roles)*size))
         values={t['id']:t for t in self.document.adventure['tiles']}
+        for direction,role in ROAD_T_JUNCTIONS:
+            canvas=self.junction_canvases.get(role)
+            if canvas is None:continue
+            canvas.delete('all')
+            sample=road_junction_grid(self.profile,role)
+            for y,row in enumerate(sample):
+                for x,part in enumerate(row):
+                    if part==' ':continue
+                    image=self.part_image(part,24,values)
+                    canvas.create_image(x*24,y*24,image=image,anchor='nw')
+            canvas.configure(highlightbackground='#b78918' if role==self.selected_role else '#a9b3b9')
+            canvas.create_rectangle(24,24,48,48,outline='#ffd95a' if role==self.selected_role else '#a9b3b9')
         for y,row in enumerate(self.roles):
             for x,role in enumerate(row):
                 if role==' ':continue
-                value=values.get(self.profile['parts'].get(role));image=self.owner.tile_image(value['sheet'],value['graphic'],size) if value else None
-                if image:self.preview.create_image(x*size,y*size,image=image,anchor='nw')
-                else:
-                    pixels=default_pixels(role,self.kind);im=tk.PhotoImage(master=self.window,width=size,height=size)
-                    im.put(' '.join('{'+ ' '.join('#'+pixels[yy*16//size][xx*16//size][:6] for xx in range(size))+'}' for yy in range(size)));self.photos.append(im);self.preview.create_image(x*size,y*size,image=im,anchor='nw')
+                self.preview.create_image(x*size,y*size,image=self.part_image(role,size,values),anchor='nw')
                 if role==self.selected_role:self.preview.create_rectangle(x*size,y*size,(x+1)*size,(y+1)*size,outline='#ffd95a',width=2)
         report=coverage(self.profile)
         self.coverage_text.set(f"Parts: {report['assigned']}/{report['required']} assigned; {report['joins']} joins")
@@ -169,13 +195,25 @@ class ConstructionEditor:
         self.part.configure(values=[part_name(p)+(' (unassigned)' if p not in self.profile['parts'] else '') for p in self.role_ids])
         if self.selected_role not in self.role_ids:self.selected_role=self.role_ids[0] if self.role_ids else None
         if self.selected_role:self.part.current(self.role_ids.index(self.selected_role))
+    def part_image(self,role,size,values):
+        value=values.get(self.profile['parts'].get(role));image=self.owner.tile_image(value['sheet'],value['graphic'],size) if value else None
+        if image is None:
+            pixels=default_pixels(role,self.kind);image=tk.PhotoImage(master=self.window,width=size,height=size)
+            image.put(' '.join('{'+ ' '.join('#'+pixels[yy*16//size][xx*16//size][:6] for xx in range(size))+'}' for yy in range(size)))
+        self.photos.append(image);return image
+    def select_junction(self,role):
+        self.finish();self.selected_role=role;self.selected_cell=None;self.junction_role=role
+        self.draw();self.inspect();self.status.set(part_name(role)+' selected. Choose tile, Edit pixels or Clone tile below; right-click its preview for more actions.')
+    def junction_context(self,event,role):
+        self.select_junction(role)
+        tile_menu(self,self.owner,self.profile['parts'].get(role),self.assign,event,self.pixel_context)
     def select_preview(self,event):
         x,y=int(self.preview.canvasx(event.x)//self.preview_size),int(self.preview.canvasy(event.y)//self.preview_size)
         if 0<=y<len(self.roles) and 0<=x<len(self.roles[0]) and self.roles[y][x]!=' ':
-            self.selected_cell=[x,y];self.selected_role=self.roles[y][x];self.draw();self.status.set(part_name(self.selected_role)+' — right-click to change this part’s tile.');self.inspect();return True
+            self.selected_cell=[x,y];self.selected_role=self.roles[y][x];self.junction_role=None;self.draw();self.status.set(part_name(self.selected_role)+' — right-click to change this part’s tile.');self.inspect();return True
         return False
     def select_part(self,_=None):
-        if self.part.current()>=0:self.selected_cell=None;self.selected_role=self.role_ids[self.part.current()];self.draw();self.inspect()
+        if self.part.current()>=0:self.selected_cell=None;self.selected_role=self.role_ids[self.part.current()];self.junction_role=self.selected_role if self.selected_role in self.junction_canvases else None;self.draw();self.inspect()
     def inspect(self):
         if hasattr(self.window,'workspace'):self.window.workspace.update_inspector()
     def assign(self,value):
@@ -198,7 +236,9 @@ class ConstructionEditor:
             self.status.set(f"{result['assigned']}/{result['required']} parts assigned. Missing parts use editable starter art; generated joins use your faces. Hand-edited joins stay. Redraw existing buildings to apply changed faces.")
     def pixel_context(self):
         self.finish()
-        return dict(construction=self.profile['id'],role=self.selected_role,at=self.selected_cell)
+        context=dict(construction=self.profile['id'],role=self.selected_role,at=self.selected_cell)
+        if self.junction_role==self.selected_role and self.junction_role:context['road_sample']=self.junction_role
+        return context
     def clone_part(self):
         if self.selected_role:
             self.ensure_part()

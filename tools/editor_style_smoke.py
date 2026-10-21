@@ -21,6 +21,23 @@ def run(env,work):
         try:
             app=workspace.app;app.set_document(doc);app.edit_adventure();maps=app.map_editor;pump()
             road=maps.construction('Road');pump()
+            original_footprint=copy.deepcopy(road.profile['footprint']);before=doc.files()
+            for direction,mask in [('north',11),('east',7),('south',14),('west',13)]:
+                role=f'road_{mask}';canvas=road.junction_canvases[role]
+                assert canvas.winfo_ismapped(),direction
+                canvas.event_generate('<Button-1>',x=36,y=36);pump()
+                assert road.selected_role==role and 'branch '+direction in road.part.get()
+                assert road.profile['footprint']==original_footprint and doc.files()==before
+                canvas.event_generate('<Button-3>',x=36,y=36);pump()
+                menu=road.preview_tile_menu;assert menu.winfo_ismapped()
+                assert menu.entrycget(0,'label')=='Choose tile...' and menu.entrycget(3,'label')=='Edit tile pixels'
+                menu.event_generate('<Escape>');pump();assert not menu.winfo_ismapped()
+                pixels=road.edit_part();pump()
+                assert pixels.map_context['road_sample']==role and pixels.show_neighbours.get()
+                assert len(pixels.canvas.find_withtag('tile-neighbour'))==3
+                pixels.close();road.window.lift();pump()
+            ImageGrab.grab(xdisplay=env['DISPLAY']).save(work/'road-junction-cards.png')
+            print('PASS: four visible T-junction cards, selection without footprint changes, right-click/Escape and pixel editing with road neighbours.',flush=True)
             for direction,mask in [('north',11),('east',7),('south',14),('west',13)]:
                 f=road.reshape();f.values['shape'].set('T '+direction);f.apply_button.invoke();pump();assert not f.window.winfo_exists()
                 assert f'road_{mask}' in {r for row in geometry(road.profile) for r in row}

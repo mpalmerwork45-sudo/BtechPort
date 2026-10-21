@@ -41,6 +41,15 @@ corners, straights, ends and crossroads. The road brush chooses these masks
 automatically from neighbouring road cells. The Footprint form also has four
 T-shaped examples for editing their appearance.
 
+The Road designer also shows four permanent **T-junction tiles** previews:
+**T North**, **T East**, **T South** and **T West**. Each name describes the
+direction of the branch. Click a preview to select its centre tile, then use
+**Choose tile**, **Edit pixels** or **Clone tile**; right-click provides the
+same actions and **New tile for this part**. Pixel editing shows a 3 × 3 junction
+sample using the style's surrounding road tiles. Selecting a junction does not
+reshape the saved demonstration footprint. For older incomplete road styles,
+**Complete style** adds missing assignments while preserving existing artwork.
+
 Walls default to **0 stories**, rendering only connected roof/top tiles. Heights
 1..3 add side faces. Erase and Shift/right-drag remain separate actions. For
 automation, `construction.draw` accepts `stories:0` for walls. A style's demo
