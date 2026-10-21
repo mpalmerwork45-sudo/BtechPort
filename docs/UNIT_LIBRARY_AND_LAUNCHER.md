@@ -1,4 +1,4 @@
-# Unit Library and desktop launcher — 2026-10-18
+# Unit Library and desktop launcher — 2026-10-21
 
 ## Start the application and play
 
@@ -34,6 +34,19 @@ quicksave** loads the first/F5 slot for that version. The other five slots remai
 available through the game's Space menu. Attribution-only edits do not change
 this namespace or the runtime save fingerprint. New game starts fresh. The
 editor's Play action retains its own isolated test slots.
+
+The default desktop launcher automatically recovers older command-line campaign
+saves from `work/player-save*.btp` into **empty** Original/Updated slots. Slot
+numbers and editions are preserved; existing desktop saves take priority and
+the source files are retained. Original slots are
+`work/roster-editor/games/original/game.btp`, `game-2.btp` through `game-6.btp`;
+Updated uses `work/roster-editor/games/updated/game-updated.btp`,
+`game-updated-2.btp` through `game-updated-6.btp`. Choose **Yes** at the
+played-before question to load a numbered slot, or use **Space → Load game**
+during play. Continue quicksave loads slot 1, not the most recently modified slot.
+Direct command-line play still uses the older `work/player-save` filenames;
+the recovered desktop copies are independent. Project saves and private editor
+test folders are excluded from this recovery.
 
 ## Shared library workflow
 

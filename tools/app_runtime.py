@@ -4,6 +4,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import shutil
 import subprocess
 import sys
 
@@ -47,6 +48,39 @@ def prepare_original(paths):
         if result.returncode:raise EditorError(result.stderr.strip() or 'Cannot prepare original game data.')
 
 
+def restore_legacy_campaign_saves(choice, state_dir, legacy_dir=None):
+    """Copy older command-line slots into vacant launcher slots, keeping originals."""
+    if choice not in ('Original', 'Updated'):
+        return []
+    source_dir=Path(legacy_dir) if legacy_dir is not None else ROOT/'work'
+    target_dir=Path(state_dir)/'games'/choice.lower()
+    edition='-updated' if choice=='Updated' else ''
+    restored=[]
+    for slot in range(1,7):
+        suffix='' if slot==1 else '-'+str(slot)
+        source=source_dir/('player-save'+edition+suffix+'.btp')
+        target=target_dir/('game'+edition+suffix+'.btp')
+        if not source.is_file() or target.exists():
+            continue
+        # The desktop launcher introduced a separate namespace. Preserve each
+        # slot number and edition, and never replace newer desktop progress.
+        data=source.read_bytes()
+        target_dir.mkdir(parents=True,exist_ok=True)
+        try:
+            output=target.open('xb')
+        except FileExistsError:
+            continue
+        try:
+            with output:
+                output.write(data)
+            shutil.copystat(source,target)
+        except BaseException:
+            target.unlink(missing_ok=True)
+            raise
+        restored.append((source,target))
+    return restored
+
+
 def game_command(choice, paths, state_dir, project=None, resume=False):
     player=Path(paths['player'])
     if not player.is_file():raise EditorError('The game player has not been built. Use Build application in the launcher.')
@@ -67,6 +101,10 @@ def game_command(choice, paths, state_dir, project=None, resume=False):
     else:
         command+=['--edition',choice.lower()]
         save=state_dir/'games'/choice.lower()/'game.btp';candidate=save
+        # Import personal saves only into the real desktop state folder. Tests
+        # and temporary library previews must never pick up the user's campaign.
+        if state_dir.resolve()==STATE.resolve():
+            restore_legacy_campaign_saves(choice,state_dir)
     save.parent.mkdir(parents=True,exist_ok=True)
     command+=['--save-file',str(save.resolve())]
     if original:
