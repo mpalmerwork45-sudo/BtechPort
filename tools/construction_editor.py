@@ -8,7 +8,7 @@ from editor_session import guard,register
 from editor_recovery import recoverable_forms
 from editor_model import EditorError
 from tile_editing import metadata,create_tile,edit_pixels,tile
-from construction_editing import geometry,part_name,default_pixels,put_profile,new_profile,preset,compile_rows,ROAD_T_JUNCTIONS,road_junction_grid
+from construction_editing import geometry,part_name,default_pixels,put_profile,new_profile,preset,compile_rows,ROAD_T_JUNCTIONS,ROAD_TURNS,road_junction_grid
 from construction_styles import primitive_roles,coverage,complete_profile
 
 
@@ -58,6 +58,11 @@ class ConstructionEditor:
         self.footprint_zoom_control=CanvasZoom(controls,self.footprint_zoom,self.draw,steps=(8,16,24,32,48,64,96));self.footprint_zoom_control.pack(side='left')
         flow_toolbar(controls)
         ttk.Label(left,text='Left-drag draws; right-drag erases.\nDifferent heights create stepped roofs.',wraplength=320,padding=(0,8)).pack(anchor='w')
+        if kind=='Road':
+            # Share the space across both panes so the tile controls and the
+            # main preview remain reachable when adding the four turn samples.
+            self.road_previews(left,'Right-angle turns',[
+                ('Turn '+'/'.join(p[0].upper() for p in direction.split('/')),role) for direction,role in ROAD_TURNS])
         self.footprint=self.make_canvas(left);self.footprint.bind('<Button-1>',lambda e:guard(self,lambda:self.paint(e,True)))
         self.footprint.bind('<B1-Motion>',lambda e:guard(self,lambda:self.paint(e,False)))
         self.footprint.bind('<Button-3>',lambda e:guard(self,lambda:self.paint(e,True,True)))
@@ -74,22 +79,7 @@ class ConstructionEditor:
         self.complete_button=ttk.Button(coverage_bar,text='Complete style',command=lambda:guard(self,self.complete));self.complete_button.pack(side='left',padx=4)
         flow_toolbar(coverage_bar)
         if kind=='Road':
-            # All four T tiles need to be discoverable even when the saved
-            # demonstration footprint contains only a cross or straight road.
-            junctions=ttk.LabelFrame(right,text='T-junction tiles',padding=4);junctions.pack(fill='x',pady=(4,6))
-            ttk.Label(junctions,text='Click to select. Right-click to choose, clone or edit.',wraplength=420).pack(anchor='w')
-            cards=ttk.Frame(junctions);cards.pack(fill='x')
-            for direction,role in ROAD_T_JUNCTIONS:
-                card=ttk.Frame(cards,padding=3);card.pack(side='left')
-                canvas=tk.Canvas(card,width=72,height=72,highlightthickness=2,background='#273b45',highlightbackground='#a9b3b9',takefocus=True)
-                canvas.pack();label=ttk.Label(card,text='T '+direction.title(),anchor='center');label.pack(fill='x')
-                self.junction_canvases[role]=canvas
-                for widget in (canvas,label):
-                    widget.bind('<Button-1>',lambda _,r=role:guard(self,lambda:self.select_junction(r)))
-                    widget.bind('<Button-3>',lambda e,r=role:guard(self,lambda:self.junction_context(e,r)))
-                canvas.bind('<Return>',lambda _,r=role:guard(self,lambda:self.select_junction(r)))
-                canvas.bind('<space>',lambda _,r=role:guard(self,lambda:self.select_junction(r)))
-            flow_toolbar(cards)
+            self.road_previews(right,'T-junction tiles',[('T '+direction.title(),role) for direction,role in ROAD_T_JUNCTIONS])
         self.preview=self.make_canvas(right);self.preview_size=32;self.preview.bind('<Configure>',lambda _:self.draw())
         self.preview.bind('<Button-1>',self.select_preview);self.preview.bind('<Button-3>',self.context)
         self.zoom_control.attach(self.preview)
@@ -107,6 +97,26 @@ class ConstructionEditor:
         profiles=self.profiles()
         self.current=profiles[0]['id'] if profiles else new_profile(self.document,kind)
         self.refresh()
+    def road_previews(self,parent,title,choices):
+        # Samples stay available even when the saved demo footprint does not
+        # contain that connection. Choosing one leaves the footprint intact.
+        from editor_ui import flow_toolbar
+        group=ttk.LabelFrame(parent,text=title,padding=4);group.pack(fill='x',pady=(4,6))
+        help_text=ttk.Label(group,text='Click to select. Right-click to choose, clone or edit.',wraplength=320)
+        help_text.pack(anchor='w')
+        group.bind('<Configure>',lambda e:help_text.configure(wraplength=max(120,e.width-16)))
+        cards=ttk.Frame(group);cards.pack(fill='x')
+        for title,role in choices:
+            card=ttk.Frame(cards,padding=3);card.pack(side='left')
+            canvas=tk.Canvas(card,width=72,height=72,highlightthickness=2,background='#273b45',highlightbackground='#a9b3b9',takefocus=True)
+            canvas.pack();label=ttk.Label(card,text=title,anchor='center');label.pack(fill='x')
+            self.junction_canvases[role]=canvas
+            for widget in (canvas,label):
+                widget.bind('<Button-1>',lambda _,r=role:guard(self,lambda:self.select_junction(r)))
+                widget.bind('<Button-3>',lambda e,r=role:guard(self,lambda:self.junction_context(e,r)))
+            canvas.bind('<Return>',lambda _,r=role:guard(self,lambda:self.select_junction(r)))
+            canvas.bind('<space>',lambda _,r=role:guard(self,lambda:self.select_junction(r)))
+        flow_toolbar(cards)
     def make_canvas(self,parent):
         shell=ttk.Frame(parent);shell.pack(fill='both',expand=True);canvas=tk.Canvas(shell,background='#273b45',highlightthickness=0,width=300,height=350)
         x=ttk.Scrollbar(shell,orient='horizontal',command=canvas.xview);y=ttk.Scrollbar(shell,command=canvas.yview)
@@ -136,7 +146,8 @@ class ConstructionEditor:
         f.submit(apply);return f
     def reshape(self):
         if not self.profile:return
-        shapes=['Rectangle','Cross','L shape','Courtyard','Line','Empty']+(['T north','T east','T south','T west'] if self.kind=='Road' else [])
+        shapes=['Rectangle','Cross','L shape','Courtyard','Line','Empty']+(
+            ['T '+direction for direction,_ in ROAD_T_JUNCTIONS]+['Turn '+direction for direction,_ in ROAD_TURNS] if self.kind=='Road' else [])
         f=Form(self,'Draw a new footprint');f.field('shape','Rectangle',shapes);f.field('width',len(self.profile['footprint'][0]));f.field('height',len(self.profile['footprint']));f.field('stories',int(self.height.get()) if self.kind=='Wall' else int(self.height.get()) or 1)
         def apply(v):
             value=copy.deepcopy(self.profile);value['footprint']=preset(self.kind,int(v['width']),int(v['height']),int(v['stories']),v['shape']);put_profile(self.document,value,'Reshape '+self.kind.lower());self.refresh()
@@ -172,9 +183,7 @@ class ConstructionEditor:
         size=min(32,max(8,min(max(1,self.preview.winfo_width()-4)//len(self.roles[0]),max(1,self.preview.winfo_height()-4)//len(self.roles)))) if self.zoom.get()=='Fit' else int(self.zoom.get())
         self.preview_size=size;self.preview.configure(scrollregion=(0,0,len(self.roles[0])*size,len(self.roles)*size))
         values={t['id']:t for t in self.document.adventure['tiles']}
-        for direction,role in ROAD_T_JUNCTIONS:
-            canvas=self.junction_canvases.get(role)
-            if canvas is None:continue
+        for role,canvas in self.junction_canvases.items():
             canvas.delete('all')
             sample=road_junction_grid(self.profile,role)
             for y,row in enumerate(sample):

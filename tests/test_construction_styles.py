@@ -79,16 +79,29 @@ class StyleTests(unittest.TestCase):
                 self.assertEqual(preview[2-origin[1]][2-origin[0]],f'road_{mask}')
         self.assertEqual(coverage(p)['assigned'],16)
 
-    def test_t_junction_samples_preserve_footprint_and_show_actual_neighbours(self):
+    def test_all_four_right_angle_turns_selected_by_road_brush(self):
+        identity=new_profile(self.doc,'Road');p=self.profile(identity)
+        for direction,mask,start,end in [('north/east',3,(8,3),(13,8)),('east/south',6,(13,8),(8,13)),
+                                         ('south/west',12,(8,13),(3,8)),('west/north',9,(3,8),(8,3))]:
+            with self.subTest(direction=direction):
+                a=copy.deepcopy(self.doc.adventure)
+                draw_road(a,0,0,start,(8,8),p);draw_road(a,0,0,(8,8),end,p)
+                self.assertEqual(a['maps'][0]['rows'][8][8],p['parts'][f'road_{mask}'])
+                self.assertIn('corner '+direction,part_name(f'road_{mask}'))
+                origin,preview=geometry(dict(p,footprint=preset('Road',5,5,1,'Turn '+direction)),with_origin=True)
+                self.assertEqual(preview[2-origin[1]][2-origin[0]],f'road_{mask}')
+
+    def test_road_samples_preserve_footprint_and_show_actual_neighbours(self):
         from tile_context import context_grid,neighbours
         identity=new_profile(self.doc,'Road');p=self.profile(identity);before=self.doc.files()
-        for role,mask in [('road_11',11),('road_7',7),('road_14',14),('road_13',13)]:
+        for role,mask in [('road_11',11),('road_7',7),('road_14',14),('road_13',13),
+                          ('road_3',3),('road_6',6),('road_12',12),('road_9',9)]:
             with self.subTest(role=role):
                 grid=road_junction_grid(p,role);self.assertEqual(grid[1][1],role)
                 self.assertEqual((len(grid),list(map(len,grid))),(3,[3,3,3]))
                 context=dict(construction=identity,role=role,at=None,road_sample=role)
                 title,tiles,at,_,_=context_grid(self.doc,context)
-                self.assertIn('junction sample',title);self.assertEqual(at,(1,1))
+                self.assertIn('turn sample' if mask in (3,6,12,9) else 'junction sample',title);self.assertEqual(at,(1,1))
                 self.assertEqual(tiles[1][1],p['parts'][role])
                 actual=neighbours(self.doc,{},context)
                 self.assertEqual(actual[1][1]['tile'],p['parts'][role])
@@ -96,16 +109,16 @@ class StyleTests(unittest.TestCase):
                     self.assertEqual(actual[y][x] is not None,bool(mask&(1<<bit)))
         self.assertEqual(self.doc.files(),before)
 
-    def test_older_road_style_can_add_four_t_tiles_without_replacing_existing_art(self):
+    def test_older_road_style_can_add_turns_and_junctions_without_replacing_existing_art(self):
         identity=new_profile(self.doc,'Road');p=copy.deepcopy(self.profile(identity))
-        roles=('road_11','road_7','road_14','road_13')
+        roles=('road_11','road_7','road_14','road_13','road_3','road_6','road_12','road_9')
         for role in roles:del p['parts'][role]
         put_profile(self.doc,p);old_parts=copy.deepcopy(self.profile(identity)['parts']);old_art=copy.deepcopy(self.doc.art)
         prepared=prepare_road(self.doc,self.profile(identity))
         self.assertEqual({r:prepared['parts'][r] for r in old_parts},old_parts)
         self.assertTrue(all(role in prepared['parts'] for role in roles))
         self.assertEqual(self.doc.art['images'][:len(old_art['images'])],old_art['images'])
-        self.assertEqual(len({prepared['parts'][role] for role in roles}),4)
+        self.assertEqual(len({prepared['parts'][role] for role in roles}),8)
         self.doc.validate();self.doc.save()
         reopened=ProjectDocument(self.doc.root,self.doc.validator)
         self.assertEqual(metadata(reopened)['construction_sets'],metadata(self.doc)['construction_sets'])

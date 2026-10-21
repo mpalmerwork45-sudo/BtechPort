@@ -1,5 +1,30 @@
 # Build, verification and original oracle — 2026-10-21
 
+## Right-angle road turns — 2026-10-21
+
+**VERIFIED:** all four independent turn parts (north/east, east/south,
+south/west and west/north) have visible previews above the Road designer's
+footprint. T-junctions remain visible in the other pane. Selection and the
+context menu share tile assignment, creation, cloning and pixel editing.
+The pixel editor centres each turn with its two adjoining road tiles. The
+Footprint form also offers all four turn orientations.
+
+- Construction/style/library/context regression: **41/41 PASS**, 2.243 s,
+  `work/road-turn-regression.log`. The focused style checks pass **9/9**,
+  including actual road-brush selection for every corner, sample orientation,
+  old-style completion preserving existing artwork, and save/reopen.
+- `python3 tools/native_smoke.py --editor-style-only`: **PASS**, retained in
+  `work/road-turn-gui.log`. Clicks and right-click menus exercise all eight
+  turn/T previews and their pixel-editor neighbourhoods; all four turn
+  footprint presets also apply successfully. Existing T-junction, wall,
+  description, sorting and dropdown checks remain covered.
+- Inspected `work/road-turn-cards.png`: all eight labelled previews and the
+  main footprint/road canvases are visible, with the active turn highlighted.
+- Reference guard confirms **1,287 entries unchanged**,
+  `work/road-turn-reference.log`. Last Beacon's user edits are outside this
+  editor change. Runtime formats are unchanged; native Windows Tk remains
+  **UNKNOWN**.
+
 ## Visible road T-junctions — 2026-10-21
 
 **VERIFIED:** the Road designer exposes all four junction previews together,

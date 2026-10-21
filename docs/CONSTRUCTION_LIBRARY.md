@@ -41,11 +41,17 @@ corners, straights, ends and crossroads. The road brush chooses these masks
 automatically from neighbouring road cells. The Footprint form also has four
 T-shaped examples for editing their appearance.
 
-The Road designer also shows four permanent **T-junction tiles** previews:
-**T North**, **T East**, **T South** and **T West**. Each name describes the
-direction of the branch. Click a preview to select its centre tile, then use
+The Road designer shows four **Right-angle turns** previews above the footprint:
+**Turn N/E**, **Turn E/S**, **Turn S/W** and **Turn W/N**. These names identify
+the two directions connected by each corner. Four **T-junction tiles** previews
+sit above the main road preview: **T North**, **T East**, **T South** and **T
+West**, named for the direction of the branch. Both groups remain available
+regardless of the saved demonstration shape. The Footprint form also offers
+all four turn shapes and all four T shapes.
+
+Click a preview to select its centre tile, then use
 **Choose tile**, **Edit pixels** or **Clone tile**; right-click provides the
-same actions and **New tile for this part**. Pixel editing shows a 3 × 3 junction
+same actions and **New tile for this part**. Pixel editing shows a 3 × 3 turn/junction
 sample using the style's surrounding road tiles. Selecting a junction does not
 reshape the saved demonstration footprint. For older incomplete road styles,
 **Complete style** adds missing assignments while preserving existing artwork.

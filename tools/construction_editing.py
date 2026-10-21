@@ -12,6 +12,7 @@ from tile_editing import metadata,check_budget
 
 NEIGHBOURS=((0,-1),(1,0),(0,1),(-1,0))
 ROAD_T_JUNCTIONS=(('north','road_11'),('east','road_7'),('south','road_14'),('west','road_13'))
+ROAD_TURNS=(('north/east','road_3'),('east/south','road_6'),('south/west','road_12'),('west/north','road_9'))
 
 
 def preset(kind,width=9,height=9,stories=2,shape='Cross'):
@@ -29,6 +30,9 @@ def preset(kind,width=9,height=9,stories=2,shape='Cross'):
             elif shape=='T east':inside=x==width//2 or (y==height//2 and x>=width//2)
             elif shape=='T south':inside=y==height//2 or (x==width//2 and y>=height//2)
             elif shape=='T west':inside=x==width//2 or (y==height//2 and x<=width//2)
+            elif kind=='Road' and shape.startswith('Turn '):
+                mask=next((int(role[5:]) for direction,role in ROAD_TURNS if shape=='Turn '+direction),0)
+                inside=(x==width//2 and ((mask&1 and y<=height//2) or (mask&4 and y>=height//2))) or (y==height//2 and ((mask&2 and x>=width//2) or (mask&8 and x<=width//2)))
             else:inside=False
             if inside:rows[y][x]=-1 if kind=='Wall' and stories==0 else stories
     return rows
@@ -75,10 +79,13 @@ def geometry(profile,with_origin=False):
 
 
 def road_junction_grid(profile,role):
-    """A fixed 3 x 3 sample keeps every branch centred for selection/editing."""
-    direction=next((direction for direction,value in ROAD_T_JUNCTIONS if value==role),None)
-    if profile['kind']!='Road' or direction is None:raise EditorError('Choose one of the four road T-junctions.')
-    origin,rows=geometry(dict(profile,footprint=preset('Road',3,3,1,'T '+direction)),with_origin=True)
+    """Keep each turn or junction centred, with its actual connected neighbours."""
+    if profile['kind']!='Road' or role not in {value for _,value in ROAD_T_JUNCTIONS+ROAD_TURNS}:
+        raise EditorError('Choose a road turn or T-junction.')
+    mask=int(role[5:]);footprint=[[0]*3 for _ in range(3)];footprint[1][1]=1
+    for bit,(dx,dy) in enumerate(NEIGHBOURS):
+        if mask&(1<<bit):footprint[1+dy][1+dx]=1
+    origin,rows=geometry(dict(profile,footprint=footprint),with_origin=True)
     result=[[' ']*3 for _ in range(3)]
     for y,row in enumerate(rows):
         for x,value in enumerate(row):result[y+origin[1]][x+origin[0]]=value

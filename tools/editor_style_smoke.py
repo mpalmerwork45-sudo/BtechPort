@@ -22,11 +22,13 @@ def run(env,work):
             app=workspace.app;app.set_document(doc);app.edit_adventure();maps=app.map_editor;pump()
             road=maps.construction('Road');pump()
             original_footprint=copy.deepcopy(road.profile['footprint']);before=doc.files()
-            for direction,mask in [('north',11),('east',7),('south',14),('west',13)]:
+            connections=[('branch north',11,3),('branch east',7,3),('branch south',14,3),('branch west',13,3),
+                         ('corner north/east',3,2),('corner east/south',6,2),('corner south/west',12,2),('corner west/north',9,2)]
+            for description,mask,neighbour_count in connections:
                 role=f'road_{mask}';canvas=road.junction_canvases[role]
-                assert canvas.winfo_ismapped(),direction
+                assert canvas.winfo_ismapped(),description
                 canvas.event_generate('<Button-1>',x=36,y=36);pump()
-                assert road.selected_role==role and 'branch '+direction in road.part.get()
+                assert road.selected_role==role and description in road.part.get()
                 assert road.profile['footprint']==original_footprint and doc.files()==before
                 canvas.event_generate('<Button-3>',x=36,y=36);pump()
                 menu=road.preview_tile_menu;assert menu.winfo_ismapped()
@@ -34,10 +36,13 @@ def run(env,work):
                 menu.event_generate('<Escape>');pump();assert not menu.winfo_ismapped()
                 pixels=road.edit_part();pump()
                 assert pixels.map_context['road_sample']==role and pixels.show_neighbours.get()
-                assert len(pixels.canvas.find_withtag('tile-neighbour'))==3
+                assert len(pixels.canvas.find_withtag('tile-neighbour'))==neighbour_count
                 pixels.close();road.window.lift();pump()
-            ImageGrab.grab(xdisplay=env['DISPLAY']).save(work/'road-junction-cards.png')
-            print('PASS: four visible T-junction cards, selection without footprint changes, right-click/Escape and pixel editing with road neighbours.',flush=True)
+            ImageGrab.grab(xdisplay=env['DISPLAY']).save(work/'road-turn-cards.png')
+            print('PASS: four visible right-angle turns and four T-junctions; selection without footprint changes, right-click/Escape and pixel editing with road neighbours.',flush=True)
+            for direction,mask in [('north/east',3),('east/south',6),('south/west',12),('west/north',9)]:
+                f=road.reshape();f.values['shape'].set('Turn '+direction);f.apply_button.invoke();pump();assert not f.window.winfo_exists()
+                assert f'road_{mask}' in {r for row in geometry(road.profile) for r in row}
             for direction,mask in [('north',11),('east',7),('south',14),('west',13)]:
                 f=road.reshape();f.values['shape'].set('T '+direction);f.apply_button.invoke();pump();assert not f.window.winfo_exists()
                 assert f'road_{mask}' in {r for row in geometry(road.profile) for r in row}
