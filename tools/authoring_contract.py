@@ -108,7 +108,7 @@ RECORD = dict(type='object')
 COLLECTIONS = {
     'maps':'adventure','tiles':'adventure','jigsaws':'adventure','people':'adventure',
     'shops':'adventure','encounters':'adventure','events':'adventure','objectives':'adventure',
-    'variables':'adventure','regions':'adventure',
+    'variables':'adventure','regions':'adventure','combat_groups':'adventure','combat_hooks':'adventure',
     'mechs':'content','weapons':'content','equipment':'content','ammunition':'content',
     'presentations':'content','images':'art',
 }
@@ -155,8 +155,12 @@ operation('city.place','Place/remove a local map over a planet; at is a world-ti
           dict(world=ID,map=ID,at=POINT,enabled=dict(type='boolean')),['world','map'],['adventure.maps','adventure.world','adventure.worlds'],dict(world='demo:world',map='demo:town',at=[64,64]))
 operation('construction.style','Define building/wall/road parts and demo footprint; missing parts receive editable art.',
           dict(value=RECORD),['value'],['editor.construction_sets','editor.tile_names','art.images','adventure.tiles'],dict(value={'id':'demo:building','name':'Depot','kind':'Building','footprint':[[1,1],[1,1]],'parts':{}}))
+operation('construction.complete','Complete all roof/face or road parts; refresh generated joins from owned art while preserving hand edits.',
+          dict(style=ID,refresh=dict(type='boolean')),['style'],['editor.construction_sets','editor.tile_names','editor.tile_sources','art.images','adventure.tiles'],dict(style='demo:building',refresh=True))
+operation('event.describe','Set an author-facing event graph description; empty text restores the automatic summary.',
+          dict(id=ID,text=dict(type='string',maxLength=240)),['id','text'],['editor.event_descriptions'],dict(id='demo:briefing',text='Introduce the convoy and explain the escape route.'))
 operation('construction.draw','Draw or extend a building/wall footprint, retaining hand-painted details.',
-          dict(map=ID,style=ID,id=ID,start=POINT,end=POINT,shape=enum('Brush','Rectangle','Courtyard','Erase'),stories=integer(1,32),width=integer(1,8),erase=dict(type='boolean')),['map','style','start','stories'],['adventure.maps','adventure.tiles','art.images','editor.map_constructions','editor.construction_sets','editor.tile_names'],dict(map='demo:town',style='demo:building',start=[4,4],end=[7,7],shape='Courtyard',stories=2))
+          dict(map=ID,style=ID,id=ID,start=POINT,end=POINT,shape=enum('Brush','Rectangle','Courtyard','Erase'),stories=integer(0,32),width=integer(1,8),erase=dict(type='boolean')),['map','style','start','stories'],['adventure.maps','adventure.tiles','art.images','editor.map_constructions','editor.construction_sets','editor.tile_names','editor.tile_sources'],dict(map='demo:town',style='demo:building',start=[4,4],end=[7,7],shape='Courtyard',stories=2))
 operation('road.draw','Draw connected roads using the editor junction generator.',
           dict(map=ID,style=ID,start=POINT,end=POINT,width=integer(1,8),layer=integer(-1,32),erase=dict(type='boolean')),['map','style','start','end'],['adventure.maps','adventure.tiles','art.images','editor.construction_sets','editor.tile_names','editor.map_constructions'],dict(map='demo:town',style='demo:road',start=[3,10],end=[18,10]))
 operation('pattern.capture','Store a named tile rectangle in the project Pattern Library.',

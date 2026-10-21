@@ -58,7 +58,7 @@
                 "type": "array",
                 "items": {
                   "type": "integer",
-                  "minimum": 0,
+                  "minimum": -1,
                   "maximum": 32
                 },
                 "minItems": 1,
@@ -73,6 +73,13 @@
                 "type": "string",
                 "maxLength": 63,
                 "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              }
+            },
+            "generated_joins": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
               }
             }
           },

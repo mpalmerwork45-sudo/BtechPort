@@ -27,10 +27,31 @@ example does not restrict you to stamping crosses. Patterns instead preserve
 their exact rectangular tile arrangement, including empty cells which leave
 the destination terrain intact.
 
-New shapes use the existing construction generator. A previously undefined
-corner or face receives that generator's editable default tile; the library
-does not invent matching artwork for missing parts. Define those parts in the
-designer to extend a custom visual style before reusing it more broadly.
+The designer shows assigned/required parts. New building and wall styles have
+all **47 roof masks, eight side-face bands and the outside tile**; roads have
+all **16 connection masks**. **Complete style** fills missing primitive parts
+with editable starter artwork and refreshes generated joins from the style's
+actual package-owned faces. It preserves explicit assignments and detects
+hand-edited join pixels, retaining them as overrides. Existing map placements
+keep their tiles until their construction is redrawn; painted details survive.
+
+The part dropdown lists every part, even if the demonstration shape does not
+use it. Roads explicitly offer **T-junction - branch north/east/south/west**,
+corners, straights, ends and crossroads. The road brush chooses these masks
+automatically from neighbouring road cells. The Footprint form also has four
+T-shaped examples for editing their appearance.
+
+Walls default to **0 stories**, rendering only connected roof/top tiles. Heights
+1..3 add side faces. Erase and Shift/right-drag remain separate actions. For
+automation, `construction.draw` accepts `stories:0` for walls. A style's demo
+footprint retains 0 as empty and uses **-1 for a roof-only wall cell**, preserving
+older definitions; actual map construction cells store the displayed height 0.
+
+Joined animation keeps source timing, with at most 256 combined frames. If a
+needed face references original/indexed artwork, explicitly clone it into
+project pixels or assign the join's tile: the generator never silently embeds
+original assets. Complete coverage means all roles are assigned, not that an
+artist has reviewed the appearance of every combination.
 
 Imported copies are independent of the library. Later library revisions do not
 silently alter games. To revise a shared entry, edit a project copy and save it
@@ -71,6 +92,10 @@ check and atomic file replacement.
 
 No model or GUI is required. Search and contact sheets use the existing
 authoring interface:
+
+Project and library construction catalogue records include `coverage`, with
+missing role names/counts. `construction.complete` takes `style` and optional
+`refresh` (default true), using the same atomic completion as the editor.
 
 ```sh
 python3 tools/author.py catalogue examples/battletech-demo \

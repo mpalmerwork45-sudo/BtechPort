@@ -42,7 +42,8 @@ def stroke_cells(start,end,shape,width=1):
 
 def paint_footprint(record,start,end,shape,stories,width=1,erase=False):
     maximum=3 if record['kind']=='Wall' else 32
-    if not 1<=stories<=maximum:raise EditorError(f"Choose 1..{maximum} stories.")
+    minimum=0 if record['kind']=='Wall' else 1
+    if not minimum<=stories<=maximum:raise EditorError(f"Choose {minimum}..{maximum} stories.")
     cells={(x,y):h for x,y,h in record['cells']}
     if shape=='Courtyard' and not erase:
         for point in stroke_cells(start,end,'Rectangle')-stroke_cells(start,end,shape,width):cells.pop(point,None)
@@ -57,7 +58,7 @@ def projection(record):
     x1=max(c[0] for c in record['cells']);y1=max(c[1] for c in record['cells'])
     if x1-x0>=64 or y1-y0>=64:raise EditorError('The footprint must fit inside one map.')
     rows=[[0]*(x1-x0+1) for _ in range(y1-y0+1)]
-    for x,y,h in record['cells']:rows[y-y0][x-x0]=h
+    for x,y,h in record['cells']:rows[y-y0][x-x0]=-1 if record['kind']=='Wall' and h==0 else h
     offset,roles=geometry(dict(kind=record['kind'],footprint=rows,datum=record['datum'],map_drawn=True),with_origin=True)
     # A fixed datum stops existing floors sliding when another floor is raised.
     return (x0+offset[0],y0+offset[1]),roles

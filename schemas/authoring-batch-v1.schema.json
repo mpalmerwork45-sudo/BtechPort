@@ -124,6 +124,8 @@
                   "objectives",
                   "variables",
                   "regions",
+                  "combat_groups",
+                  "combat_hooks",
                   "mechs",
                   "weapons",
                   "equipment",
@@ -167,6 +169,8 @@
                   "objectives",
                   "variables",
                   "regions",
+                  "combat_groups",
+                  "combat_hooks",
                   "mechs",
                   "weapons",
                   "equipment",
@@ -210,6 +214,8 @@
                   "objectives",
                   "variables",
                   "regions",
+                  "combat_groups",
+                  "combat_hooks",
                   "mechs",
                   "weapons",
                   "equipment",
@@ -734,6 +740,50 @@
             "type": "object",
             "properties": {
               "op": {
+                "const": "construction.complete"
+              },
+              "style": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "refresh": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "op",
+              "style"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "event.describe"
+              },
+              "id": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "text": {
+                "type": "string",
+                "maxLength": 240
+              }
+            },
+            "required": [
+              "op",
+              "id",
+              "text"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
                 "const": "construction.draw"
               },
               "map": {
@@ -781,7 +831,7 @@
               },
               "stories": {
                 "type": "integer",
-                "minimum": 1,
+                "minimum": 0,
                 "maximum": 32
               },
               "width": {

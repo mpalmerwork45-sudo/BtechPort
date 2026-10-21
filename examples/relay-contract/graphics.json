@@ -10,9 +10,9 @@
       "height": 16,
       "frames": [
         [
-          "26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff",
-          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
-          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
+          "83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff",
+          "83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff",
+          "83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff",
           "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
           "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
           "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
@@ -23,95 +23,41 @@
           "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
           "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
           "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
-          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
-          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
-          "26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff"
+          "344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff",
+          "344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff",
+          "344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff"
         ]
       ]
     },
     {
       "id": "relay-contract:image-2",
-      "name": "East Single / South Single",
-      "kind": "tile",
-      "width": 16,
-      "height": 16,
-      "frames": [
-        [
-          "26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff",
-          "728692ff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
-          "728692ff728692ff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
-          "728692ff728692ff728692ff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
-          "728692ff728692ff728692ffadd2caff6e96a3ff6e96a3ff43576aff43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
-          "728692ff728692ff728692ffadd2caffadd2caff6e96a3ff43576aff43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
-          "728692ff728692ff728692ffadd2caffadd2caffadd2caff43576aff43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
-          "728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
-          "728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
-          "728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
-          "728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff728692ff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
-          "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff43576aff43576aff43576aff43576aff43576aff",
-          "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff43576aff43576aff43576aff43576aff",
-          "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff43576aff43576aff43576aff",
-          "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff43576aff43576aff",
-          "26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff"
-        ]
-      ]
-    },
-    {
-      "id": "relay-contract:image-3",
-      "name": "outside / East Single",
+      "name": "Empty",
       "kind": "tile",
       "width": 16,
       "height": 16,
       "frames": [
         [
           "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "43576aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "43576aff43576aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "43576aff43576aff43576aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "43576aff43576aff43576aff6e96a3ff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "43576aff43576aff43576aff6e96a3ff6e96a3ff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff43576aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff48644aff48644aff48644aff48644aff48644aff",
-          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff48644aff48644aff48644aff48644aff",
-          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff48644aff48644aff48644aff",
-          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff48644aff48644aff",
-          "26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff48644aff"
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff"
         ]
       ]
     },
     {
-      "id": "relay-contract:image-4",
-      "name": "South Single / outside",
-      "kind": "tile",
-      "width": 16,
-      "height": 16,
-      "frames": [
-        [
-          "26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff",
-          "48644aff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
-          "48644aff48644aff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
-          "48644aff48644aff48644aff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
-          "48644aff48644aff48644aff48644affadd2caffadd2caff728692ff728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
-          "48644aff48644aff48644aff48644aff48644affadd2caff728692ff728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644affadd2caffadd2caffadd2caff728692ff728692ff728692ff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ff728692ff728692ff728692ff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ff728692ff728692ff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ff728692ff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff26394bff"
-        ]
-      ]
-    },
-    {
-      "id": "relay-contract:image-5",
+      "id": "relay-contract:image-3",
       "name": "Roof centre",
       "kind": "tile",
       "width": 16,
@@ -120,6 +66,60 @@
         [
           "99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff",
           "99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
+          "99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
+          "99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
+          "99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
+          "99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
+          "99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
+          "99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
+          "99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff",
+          "99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
+          "99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
+          "99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
+          "99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
+          "99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
+          "99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
+          "99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff"
+        ]
+      ]
+    },
+    {
+      "id": "relay-contract:image-4",
+      "name": "Roof S W edge",
+      "kind": "tile",
+      "width": 16,
+      "height": 16,
+      "frames": [
+        [
+          "d9e4e5ffd9e4e5ff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff",
+          "d9e4e5ffd9e4e5ffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
+          "d9e4e5ffd9e4e5ffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
+          "d9e4e5ffd9e4e5ffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
+          "d9e4e5ffd9e4e5ffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
+          "d9e4e5ffd9e4e5ffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
+          "d9e4e5ffd9e4e5ffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
+          "d9e4e5ffd9e4e5ffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
+          "d9e4e5ffd9e4e5ff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff",
+          "d9e4e5ffd9e4e5ffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
+          "d9e4e5ffd9e4e5ffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
+          "d9e4e5ffd9e4e5ffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
+          "d9e4e5ffd9e4e5ffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
+          "d9e4e5ffd9e4e5ffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
+          "586c79ff586c79ff586c79ff586c79ff586c79ff586c79ff586c79ff586c79ff586c79ff586c79ff586c79ff586c79ff586c79ff586c79ff586c79ff586c79ff",
+          "586c79ff586c79ff586c79ff586c79ff586c79ff586c79ff586c79ff586c79ff586c79ff586c79ff586c79ff586c79ff586c79ff586c79ff586c79ff586c79ff"
+        ]
+      ]
+    },
+    {
+      "id": "relay-contract:image-5",
+      "name": "Roof N edge",
+      "kind": "tile",
+      "width": 16,
+      "height": 16,
+      "frames": [
+        [
+          "d9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ff",
+          "d9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ff",
           "99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
           "99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
           "99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
@@ -139,60 +139,6 @@
     },
     {
       "id": "relay-contract:image-6",
-      "name": "Roof S W edge",
-      "kind": "tile",
-      "width": 16,
-      "height": 16,
-      "frames": [
-        [
-          "d9e4e5ffd9e4e5ff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff",
-          "d9e4e5ffd9e4e5ffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
-          "d9e4e5ffd9e4e5ffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
-          "d9e4e5ffd9e4e5ffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
-          "d9e4e5ffd9e4e5ffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
-          "d9e4e5ffd9e4e5ffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
-          "d9e4e5ffd9e4e5ffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
-          "d9e4e5ffd9e4e5ffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
-          "d9e4e5ffd9e4e5ff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff",
-          "d9e4e5ffd9e4e5ffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
-          "d9e4e5ffd9e4e5ffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
-          "d9e4e5ffd9e4e5ffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
-          "d9e4e5ffd9e4e5ffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
-          "d9e4e5ffd9e4e5ffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
-          "586c79ff586c79ff586c79ff586c79ff586c79ff586c79ff586c79ff586c79ff586c79ff586c79ff586c79ff586c79ff586c79ff586c79ff586c79ff586c79ff",
-          "586c79ff586c79ff586c79ff586c79ff586c79ff586c79ff586c79ff586c79ff586c79ff586c79ff586c79ff586c79ff586c79ff586c79ff586c79ff586c79ff"
-        ]
-      ]
-    },
-    {
-      "id": "relay-contract:image-7",
-      "name": "Roof N edge",
-      "kind": "tile",
-      "width": 16,
-      "height": 16,
-      "frames": [
-        [
-          "d9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ff",
-          "d9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ffd9e4e5ff",
-          "99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
-          "99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
-          "99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
-          "99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
-          "99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
-          "99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
-          "99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff99a7adff",
-          "99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
-          "99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
-          "99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
-          "99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
-          "99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
-          "99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff",
-          "99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff99a7adffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdffacb9bdff"
-        ]
-      ]
-    },
-    {
-      "id": "relay-contract:image-8",
       "name": "Roof E edge",
       "kind": "tile",
       "width": 16,
@@ -219,7 +165,7 @@
       ]
     },
     {
-      "id": "relay-contract:image-9",
+      "id": "relay-contract:image-7",
       "name": "Roof N E edge",
       "kind": "tile",
       "width": 16,
@@ -246,7 +192,7 @@
       ]
     },
     {
-      "id": "relay-contract:image-10",
+      "id": "relay-contract:image-8",
       "name": "Roof S edge",
       "kind": "tile",
       "width": 16,
@@ -273,7 +219,7 @@
       ]
     },
     {
-      "id": "relay-contract:image-11",
+      "id": "relay-contract:image-9",
       "name": "Roof E S edge",
       "kind": "tile",
       "width": 16,
@@ -300,7 +246,7 @@
       ]
     },
     {
-      "id": "relay-contract:image-12",
+      "id": "relay-contract:image-10",
       "name": "Roof W edge",
       "kind": "tile",
       "width": 16,
@@ -327,7 +273,7 @@
       ]
     },
     {
-      "id": "relay-contract:image-13",
+      "id": "relay-contract:image-11",
       "name": "Roof N W edge",
       "kind": "tile",
       "width": 16,
@@ -354,16 +300,16 @@
       ]
     },
     {
-      "id": "relay-contract:image-14",
+      "id": "relay-contract:image-12",
       "name": "South Single",
       "kind": "tile",
       "width": 16,
       "height": 16,
       "frames": [
         [
-          "26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff",
-          "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
-          "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
+          "c1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ff",
+          "c1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ff",
+          "c1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ff",
           "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
           "728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
           "728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
@@ -374,68 +320,41 @@
           "728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
           "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
           "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
-          "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
-          "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
-          "26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff"
+          "344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff",
+          "344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff",
+          "344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff"
         ]
       ]
     },
     {
-      "id": "relay-contract:image-15",
-      "name": "East Single",
-      "kind": "tile",
-      "width": 16,
-      "height": 16,
-      "frames": [
-        [
-          "293e4bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff",
-          "293e4bff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
-          "293e4bff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
-          "293e4bff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
-          "293e4bff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
-          "293e4bff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
-          "293e4bff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
-          "293e4bff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
-          "293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff",
-          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff293e4bff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
-          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff293e4bff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
-          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff293e4bff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
-          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff293e4bff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
-          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff293e4bff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
-          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff293e4bff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
-          "26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff293e4bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff"
-        ]
-      ]
-    },
-    {
-      "id": "relay-contract:image-16",
+      "id": "relay-contract:image-13",
       "name": "East Single / South Single",
       "kind": "tile",
       "width": 16,
       "height": 16,
       "frames": [
         [
-          "293e4bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff",
-          "293e4bff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
-          "293e4bff728692ff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
-          "293e4bff728692ff728692ff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
-          "293e4bff728692ff728692ff728692ff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
-          "293e4bff728692ff728692ff728692ff728692ff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
-          "293e4bff728692ff728692ff728692ff728692ff728692ff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
-          "293e4bff728692ff728692ff728692ff728692ff728692ff728692ff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
-          "293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff",
-          "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff293e4bff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
-          "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff293e4bff728692ff43576aff43576aff43576aff43576aff43576aff43576aff",
-          "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff293e4bff728692ff728692ff43576aff43576aff43576aff43576aff43576aff",
-          "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff293e4bff728692ff728692ff728692ff43576aff43576aff43576aff43576aff",
-          "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff293e4bff728692ff728692ff728692ff728692ff43576aff43576aff43576aff",
-          "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff293e4bff728692ff728692ff728692ff728692ff728692ff43576aff43576aff",
-          "26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff293e4bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff"
+          "83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff",
+          "c1c9c6ff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff",
+          "c1c9c6ffc1c9c6ff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff",
+          "728692ff728692ff728692ff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
+          "728692ff728692ff728692ffadd2caff6e96a3ff6e96a3ff43576aff43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
+          "728692ff728692ff728692ffadd2caffadd2caff6e96a3ff43576aff43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
+          "728692ff728692ff728692ffadd2caffadd2caffadd2caff43576aff43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
+          "728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
+          "728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
+          "728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
+          "728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff728692ff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
+          "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff43576aff43576aff43576aff43576aff43576aff",
+          "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff43576aff43576aff43576aff43576aff",
+          "344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff",
+          "344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff",
+          "344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff"
         ]
       ]
     },
     {
-      "id": "relay-contract:image-17",
+      "id": "relay-contract:image-14",
       "name": "outside / East Single",
       "kind": "tile",
       "width": 16,
@@ -443,53 +362,107 @@
       "frames": [
         [
           "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "293e4bff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "293e4bff43576aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "293e4bff43576aff43576aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "293e4bff43576aff43576aff43576aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "293e4bff43576aff43576aff43576aff43576aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "293e4bff43576aff43576aff43576aff43576aff43576aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "293e4bff43576aff43576aff43576aff43576aff43576aff43576aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff293e4bff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff293e4bff43576aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff293e4bff43576aff43576aff48644aff48644aff48644aff48644aff48644aff",
-          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff293e4bff43576aff43576aff43576aff48644aff48644aff48644aff48644aff",
-          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff293e4bff43576aff43576aff43576aff43576aff48644aff48644aff48644aff",
-          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff293e4bff43576aff43576aff43576aff43576aff43576aff48644aff48644aff",
-          "26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff293e4bff26394bff26394bff26394bff26394bff26394bff26394bff48644aff"
+          "83979dff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "83979dff83979dff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "43576aff43576aff43576aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "43576aff43576aff43576aff6e96a3ff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "43576aff43576aff43576aff6e96a3ff6e96a3ff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff43576aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff48644aff48644aff48644aff48644aff48644aff",
+          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff48644aff48644aff48644aff48644aff",
+          "344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff48644aff48644aff48644aff",
+          "344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff48644aff48644aff",
+          "344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff48644aff"
         ]
       ]
     },
     {
-      "id": "relay-contract:image-18",
+      "id": "relay-contract:image-15",
       "name": "South Single / outside",
       "kind": "tile",
       "width": 16,
       "height": 16,
       "frames": [
         [
-          "293e4bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff",
-          "48644aff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
-          "48644aff48644aff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
+          "c1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ff",
+          "48644affc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ff",
+          "48644aff48644affc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ff",
           "48644aff48644aff48644aff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
-          "48644aff48644aff48644aff48644aff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
-          "48644aff48644aff48644aff48644aff48644aff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ff728692ff728692ff728692ff728692ff",
+          "48644aff48644aff48644aff48644affadd2caffadd2caff728692ff728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
+          "48644aff48644aff48644aff48644aff48644affadd2caff728692ff728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644affadd2caffadd2caffadd2caff728692ff728692ff728692ff",
           "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ff728692ff728692ff728692ff",
           "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ff728692ff728692ff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ff728692ff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff26394bff"
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff344b57ff344b57ff344b57ff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff344b57ff344b57ff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff344b57ff"
         ]
       ]
     },
     {
-      "id": "relay-contract:image-19",
+      "id": "relay-contract:image-16",
+      "name": "East Single",
+      "kind": "tile",
+      "width": 16,
+      "height": 16,
+      "frames": [
+        [
+          "83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff",
+          "83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff",
+          "83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff",
+          "293e4bff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
+          "293e4bff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
+          "293e4bff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
+          "293e4bff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
+          "293e4bff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
+          "293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff",
+          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff293e4bff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
+          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff293e4bff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
+          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff293e4bff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
+          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff293e4bff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
+          "344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff",
+          "344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff",
+          "344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff"
+        ]
+      ]
+    },
+    {
+      "id": "relay-contract:image-17",
+      "name": "Empty",
+      "kind": "tile",
+      "width": 16,
+      "height": 16,
+      "frames": [
+        [
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff"
+        ]
+      ]
+    },
+    {
+      "id": "relay-contract:image-18",
       "name": "Roof centre",
       "kind": "tile",
       "width": 16,
@@ -516,7 +489,7 @@
       ]
     },
     {
-      "id": "relay-contract:image-20",
+      "id": "relay-contract:image-19",
       "name": "Roof S W edge",
       "kind": "tile",
       "width": 16,
@@ -543,7 +516,7 @@
       ]
     },
     {
-      "id": "relay-contract:image-21",
+      "id": "relay-contract:image-20",
       "name": "Roof N edge",
       "kind": "tile",
       "width": 16,
@@ -570,7 +543,7 @@
       ]
     },
     {
-      "id": "relay-contract:image-22",
+      "id": "relay-contract:image-21",
       "name": "Roof E edge",
       "kind": "tile",
       "width": 16,
@@ -597,7 +570,7 @@
       ]
     },
     {
-      "id": "relay-contract:image-23",
+      "id": "relay-contract:image-22",
       "name": "Roof N E edge",
       "kind": "tile",
       "width": 16,
@@ -624,7 +597,7 @@
       ]
     },
     {
-      "id": "relay-contract:image-24",
+      "id": "relay-contract:image-23",
       "name": "Roof S edge",
       "kind": "tile",
       "width": 16,
@@ -651,7 +624,7 @@
       ]
     },
     {
-      "id": "relay-contract:image-25",
+      "id": "relay-contract:image-24",
       "name": "Roof E S edge",
       "kind": "tile",
       "width": 16,
@@ -678,7 +651,7 @@
       ]
     },
     {
-      "id": "relay-contract:image-26",
+      "id": "relay-contract:image-25",
       "name": "Roof W edge",
       "kind": "tile",
       "width": 16,
@@ -705,7 +678,7 @@
       ]
     },
     {
-      "id": "relay-contract:image-27",
+      "id": "relay-contract:image-26",
       "name": "Roof N W edge",
       "kind": "tile",
       "width": 16,
@@ -732,16 +705,16 @@
       ]
     },
     {
-      "id": "relay-contract:image-28",
+      "id": "relay-contract:image-27",
       "name": "South Single",
       "kind": "tile",
       "width": 16,
       "height": 16,
       "frames": [
         [
-          "293e4bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff",
-          "293e4bff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
-          "293e4bff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
+          "c1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ff",
+          "c1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ff",
+          "c1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ff",
           "293e4bff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
           "293e4bff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
           "293e4bff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
@@ -752,15 +725,96 @@
           "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff293e4bff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
           "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff293e4bff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
           "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff293e4bff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
-          "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff293e4bff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
-          "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff293e4bff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
-          "26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff293e4bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff"
+          "344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff",
+          "344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff",
+          "344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff"
+        ]
+      ]
+    },
+    {
+      "id": "relay-contract:image-28",
+      "name": "East Single / South Single",
+      "kind": "tile",
+      "width": 16,
+      "height": 16,
+      "frames": [
+        [
+          "83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff",
+          "c1c9c6ff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff",
+          "c1c9c6ffc1c9c6ff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff",
+          "293e4bff728692ff728692ff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
+          "293e4bff728692ff728692ff728692ff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
+          "293e4bff728692ff728692ff728692ff728692ff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
+          "293e4bff728692ff728692ff728692ff728692ff728692ff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
+          "293e4bff728692ff728692ff728692ff728692ff728692ff728692ff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
+          "293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff",
+          "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff293e4bff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
+          "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff293e4bff728692ff43576aff43576aff43576aff43576aff43576aff43576aff",
+          "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff293e4bff728692ff728692ff43576aff43576aff43576aff43576aff43576aff",
+          "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff293e4bff728692ff728692ff728692ff43576aff43576aff43576aff43576aff",
+          "344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff",
+          "344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff",
+          "344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff"
         ]
       ]
     },
     {
       "id": "relay-contract:image-29",
-      "name": "Road N E W",
+      "name": "outside / East Single",
+      "kind": "tile",
+      "width": 16,
+      "height": 16,
+      "frames": [
+        [
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "83979dff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "83979dff83979dff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "293e4bff43576aff43576aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "293e4bff43576aff43576aff43576aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "293e4bff43576aff43576aff43576aff43576aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "293e4bff43576aff43576aff43576aff43576aff43576aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "293e4bff43576aff43576aff43576aff43576aff43576aff43576aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff293e4bff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff293e4bff43576aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff293e4bff43576aff43576aff48644aff48644aff48644aff48644aff48644aff",
+          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff293e4bff43576aff43576aff43576aff48644aff48644aff48644aff48644aff",
+          "344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff48644aff48644aff48644aff",
+          "344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff48644aff48644aff",
+          "344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff48644aff"
+        ]
+      ]
+    },
+    {
+      "id": "relay-contract:image-30",
+      "name": "South Single / outside",
+      "kind": "tile",
+      "width": 16,
+      "height": 16,
+      "frames": [
+        [
+          "c1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ff",
+          "48644affc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ff",
+          "48644aff48644affc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ff",
+          "48644aff48644aff48644aff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
+          "48644aff48644aff48644aff48644aff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
+          "48644aff48644aff48644aff48644aff48644aff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff293e4bff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ff728692ff728692ff728692ff728692ff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ff728692ff728692ff728692ff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ff728692ff728692ff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff344b57ff344b57ff344b57ff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff344b57ff344b57ff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff344b57ff"
+        ]
+      ]
+    },
+    {
+      "id": "relay-contract:image-31",
+      "name": "Road T-junction - branch north",
       "kind": "tile",
       "width": 16,
       "height": 16,
@@ -786,62 +840,8 @@
       ]
     },
     {
-      "id": "relay-contract:image-30",
-      "name": "Road S W",
-      "kind": "tile",
-      "width": 16,
-      "height": 16,
-      "frames": [
-        [
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff"
-        ]
-      ]
-    },
-    {
-      "id": "relay-contract:image-31",
-      "name": "Road N S W",
-      "kind": "tile",
-      "width": 16,
-      "height": 16,
-      "frames": [
-        [
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff"
-        ]
-      ]
-    },
-    {
       "id": "relay-contract:image-32",
-      "name": "Road E S W",
+      "name": "Road corner south/west",
       "kind": "tile",
       "width": 16,
       "height": 16,
@@ -849,18 +849,18 @@
         [
           "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
           "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
           "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
           "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff"
         ]
@@ -868,7 +868,7 @@
     },
     {
       "id": "relay-contract:image-33",
-      "name": "Road N E S W",
+      "name": "Road T-junction - branch west",
       "kind": "tile",
       "width": 16,
       "height": 16,
@@ -876,18 +876,18 @@
         [
           "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
           "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
           "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
           "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff"
         ]
@@ -895,53 +895,53 @@
     },
     {
       "id": "relay-contract:image-34",
-      "name": "Road N E",
+      "name": "Road T-junction - branch south",
       "kind": "tile",
       "width": 16,
       "height": 16,
       "frames": [
         [
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
           "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff"
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff"
         ]
       ]
     },
     {
       "id": "relay-contract:image-35",
-      "name": "Road E S",
+      "name": "Road crossroads",
       "kind": "tile",
       "width": 16,
       "height": 16,
       "frames": [
         [
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
           "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
           "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff"
         ]
@@ -949,7 +949,61 @@
     },
     {
       "id": "relay-contract:image-36",
-      "name": "Road N E S",
+      "name": "Road corner north/east",
+      "kind": "tile",
+      "width": 16,
+      "height": 16,
+      "frames": [
+        [
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff"
+        ]
+      ]
+    },
+    {
+      "id": "relay-contract:image-37",
+      "name": "Road corner east/south",
+      "kind": "tile",
+      "width": 16,
+      "height": 16,
+      "frames": [
+        [
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff"
+        ]
+      ]
+    },
+    {
+      "id": "relay-contract:image-38",
+      "name": "Road T-junction - branch east",
       "kind": "tile",
       "width": 16,
       "height": 16,
@@ -975,8 +1029,8 @@
       ]
     },
     {
-      "id": "relay-contract:image-37",
-      "name": "Road N W",
+      "id": "relay-contract:image-39",
+      "name": "Road corner west/north",
       "kind": "tile",
       "width": 16,
       "height": 16,
@@ -1002,7 +1056,7 @@
       ]
     },
     {
-      "id": "relay-contract:image-38",
+      "id": "relay-contract:image-40",
       "name": "East Base",
       "kind": "tile",
       "width": 16,
@@ -1022,23 +1076,23 @@
           "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
           "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
           "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
-          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
-          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
-          "26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff"
+          "344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff",
+          "344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff",
+          "344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff"
         ]
       ]
     },
     {
-      "id": "relay-contract:image-39",
+      "id": "relay-contract:image-41",
       "name": "East Top",
       "kind": "tile",
       "width": 16,
       "height": 16,
       "frames": [
         [
-          "26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff",
-          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
-          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
+          "83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff",
+          "83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff",
+          "83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff",
           "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
           "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
           "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
@@ -1051,174 +1105,12 @@
           "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
           "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
           "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
-          "26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff"
-        ]
-      ]
-    },
-    {
-      "id": "relay-contract:image-40",
-      "name": "East Base / South Base",
-      "kind": "tile",
-      "width": 16,
-      "height": 16,
-      "frames": [
-        [
-          "26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff",
-          "728692ff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
-          "728692ff728692ff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
-          "728692ff728692ff728692ff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
-          "728692ff728692ff728692ffadd2caff6e96a3ff6e96a3ff43576aff43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
-          "728692ff728692ff728692ffadd2caffadd2caff6e96a3ff43576aff43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
-          "728692ff728692ff728692ffadd2caffadd2caffadd2caff43576aff43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
-          "728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
-          "728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
-          "728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
-          "728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff728692ff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
-          "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff43576aff43576aff43576aff43576aff43576aff",
-          "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff43576aff43576aff43576aff43576aff",
-          "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff43576aff43576aff43576aff",
-          "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff43576aff43576aff",
-          "26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff"
-        ]
-      ]
-    },
-    {
-      "id": "relay-contract:image-41",
-      "name": "East Top / South Top",
-      "kind": "tile",
-      "width": 16,
-      "height": 16,
-      "frames": [
-        [
-          "26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff",
-          "728692ff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
-          "728692ff728692ff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
-          "728692ff728692ff728692ff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
-          "728692ff728692ff728692ffadd2caff6e96a3ff6e96a3ff43576aff43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
-          "728692ff728692ff728692ffadd2caffadd2caff6e96a3ff43576aff43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
-          "728692ff728692ff728692ffadd2caffadd2caffadd2caff43576aff43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
-          "728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
-          "728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
-          "728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
-          "728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff728692ff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
-          "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff43576aff43576aff43576aff43576aff43576aff",
-          "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff43576aff43576aff43576aff43576aff",
-          "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff43576aff43576aff43576aff",
-          "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff43576aff43576aff",
           "26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff"
         ]
       ]
     },
     {
       "id": "relay-contract:image-42",
-      "name": "outside / East Base",
-      "kind": "tile",
-      "width": 16,
-      "height": 16,
-      "frames": [
-        [
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "43576aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "43576aff43576aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "43576aff43576aff43576aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "43576aff43576aff43576aff6e96a3ff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "43576aff43576aff43576aff6e96a3ff6e96a3ff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff43576aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff48644aff48644aff48644aff48644aff48644aff",
-          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff48644aff48644aff48644aff48644aff",
-          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff48644aff48644aff48644aff",
-          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff48644aff48644aff",
-          "26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff48644aff"
-        ]
-      ]
-    },
-    {
-      "id": "relay-contract:image-43",
-      "name": "outside / East Top",
-      "kind": "tile",
-      "width": 16,
-      "height": 16,
-      "frames": [
-        [
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "43576aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "43576aff43576aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "43576aff43576aff43576aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "43576aff43576aff43576aff6e96a3ff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "43576aff43576aff43576aff6e96a3ff6e96a3ff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff43576aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff48644aff48644aff48644aff48644aff48644aff",
-          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff48644aff48644aff48644aff48644aff",
-          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff48644aff48644aff48644aff",
-          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff48644aff48644aff",
-          "26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff48644aff"
-        ]
-      ]
-    },
-    {
-      "id": "relay-contract:image-44",
-      "name": "South Base / outside",
-      "kind": "tile",
-      "width": 16,
-      "height": 16,
-      "frames": [
-        [
-          "26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff",
-          "48644aff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
-          "48644aff48644aff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
-          "48644aff48644aff48644aff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
-          "48644aff48644aff48644aff48644affadd2caffadd2caff728692ff728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
-          "48644aff48644aff48644aff48644aff48644affadd2caff728692ff728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644affadd2caffadd2caffadd2caff728692ff728692ff728692ff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ff728692ff728692ff728692ff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ff728692ff728692ff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ff728692ff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff26394bff"
-        ]
-      ]
-    },
-    {
-      "id": "relay-contract:image-45",
-      "name": "South Top / outside",
-      "kind": "tile",
-      "width": 16,
-      "height": 16,
-      "frames": [
-        [
-          "26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff",
-          "48644aff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
-          "48644aff48644aff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
-          "48644aff48644aff48644aff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
-          "48644aff48644aff48644aff48644affadd2caffadd2caff728692ff728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
-          "48644aff48644aff48644aff48644aff48644affadd2caff728692ff728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644affadd2caffadd2caffadd2caff728692ff728692ff728692ff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ff728692ff728692ff728692ff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ff728692ff728692ff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ff728692ff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff26394bff"
-        ]
-      ]
-    },
-    {
-      "id": "relay-contract:image-46",
       "name": "South Base",
       "kind": "tile",
       "width": 16,
@@ -1238,23 +1130,23 @@
           "728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
           "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
           "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
-          "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
-          "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
-          "26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff"
+          "344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff",
+          "344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff",
+          "344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff"
         ]
       ]
     },
     {
-      "id": "relay-contract:image-47",
+      "id": "relay-contract:image-43",
       "name": "South Top",
       "kind": "tile",
       "width": 16,
       "height": 16,
       "frames": [
         [
-          "26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff",
-          "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
-          "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
+          "c1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ff",
+          "c1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ff",
+          "c1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ff",
           "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
           "728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
           "728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
@@ -1272,34 +1164,169 @@
       ]
     },
     {
-      "id": "relay-contract:image-48",
-      "name": "South Single / East Single",
+      "id": "relay-contract:image-44",
+      "name": "East Base / South Base",
       "kind": "tile",
       "width": 16,
       "height": 16,
       "frames": [
         [
           "26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff",
-          "43576aff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
-          "43576aff43576aff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
-          "43576aff43576aff43576aff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
-          "43576aff43576aff43576aff6e96a3ffadd2caffadd2caff728692ff728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
-          "43576aff43576aff43576aff6e96a3ff6e96a3ffadd2caff728692ff728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
-          "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff728692ff728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
-          "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
-          "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
-          "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
-          "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff43576affadd2caffadd2caffadd2caff728692ff728692ff728692ff",
-          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff728692ff728692ff728692ff728692ff728692ff",
-          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff728692ff728692ff728692ff728692ff",
-          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff728692ff728692ff728692ff",
-          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff728692ff728692ff",
+          "728692ff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
+          "728692ff728692ff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
+          "728692ff728692ff728692ff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
+          "728692ff728692ff728692ffadd2caff6e96a3ff6e96a3ff43576aff43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
+          "728692ff728692ff728692ffadd2caffadd2caff6e96a3ff43576aff43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
+          "728692ff728692ff728692ffadd2caffadd2caffadd2caff43576aff43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
+          "728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
+          "728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
+          "728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
+          "728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff728692ff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
+          "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff43576aff43576aff43576aff43576aff43576aff",
+          "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff43576aff43576aff43576aff43576aff",
+          "344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff",
+          "344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff",
+          "344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff"
+        ]
+      ]
+    },
+    {
+      "id": "relay-contract:image-45",
+      "name": "East Top / South Top",
+      "kind": "tile",
+      "width": 16,
+      "height": 16,
+      "frames": [
+        [
+          "83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff",
+          "c1c9c6ff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff",
+          "c1c9c6ffc1c9c6ff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff83979dff",
+          "728692ff728692ff728692ff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff",
+          "728692ff728692ff728692ffadd2caff6e96a3ff6e96a3ff43576aff43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
+          "728692ff728692ff728692ffadd2caffadd2caff6e96a3ff43576aff43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
+          "728692ff728692ff728692ffadd2caffadd2caffadd2caff43576aff43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
+          "728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
+          "728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
+          "728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
+          "728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff728692ff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff",
+          "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff43576aff43576aff43576aff43576aff43576aff",
+          "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff43576aff43576aff43576aff43576aff",
+          "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff43576aff43576aff43576aff",
+          "728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff43576aff43576aff",
           "26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff"
         ]
       ]
     },
     {
+      "id": "relay-contract:image-46",
+      "name": "outside / East Base",
+      "kind": "tile",
+      "width": 16,
+      "height": 16,
+      "frames": [
+        [
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "43576aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "43576aff43576aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "43576aff43576aff43576aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "43576aff43576aff43576aff6e96a3ff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "43576aff43576aff43576aff6e96a3ff6e96a3ff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff43576aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff48644aff48644aff48644aff48644aff48644aff",
+          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff48644aff48644aff48644aff48644aff",
+          "344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff48644aff48644aff48644aff",
+          "344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff48644aff48644aff",
+          "344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff48644aff"
+        ]
+      ]
+    },
+    {
+      "id": "relay-contract:image-47",
+      "name": "outside / East Top",
+      "kind": "tile",
+      "width": 16,
+      "height": 16,
+      "frames": [
+        [
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "83979dff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "83979dff83979dff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "43576aff43576aff43576aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "43576aff43576aff43576aff6e96a3ff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "43576aff43576aff43576aff6e96a3ff6e96a3ff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff43576aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff48644aff48644aff48644aff48644aff48644aff",
+          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff48644aff48644aff48644aff48644aff",
+          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff48644aff48644aff48644aff",
+          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff48644aff48644aff",
+          "26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff48644aff"
+        ]
+      ]
+    },
+    {
+      "id": "relay-contract:image-48",
+      "name": "South Base / outside",
+      "kind": "tile",
+      "width": 16,
+      "height": 16,
+      "frames": [
+        [
+          "26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff26394bff",
+          "48644aff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
+          "48644aff48644aff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
+          "48644aff48644aff48644aff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
+          "48644aff48644aff48644aff48644affadd2caffadd2caff728692ff728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
+          "48644aff48644aff48644aff48644aff48644affadd2caff728692ff728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644affadd2caffadd2caffadd2caff728692ff728692ff728692ff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ff728692ff728692ff728692ff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ff728692ff728692ff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff344b57ff344b57ff344b57ff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff344b57ff344b57ff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff344b57ff"
+        ]
+      ]
+    },
+    {
       "id": "relay-contract:image-49",
+      "name": "South Top / outside",
+      "kind": "tile",
+      "width": 16,
+      "height": 16,
+      "frames": [
+        [
+          "c1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ff",
+          "48644affc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ff",
+          "48644aff48644affc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ff",
+          "48644aff48644aff48644aff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
+          "48644aff48644aff48644aff48644affadd2caffadd2caff728692ff728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
+          "48644aff48644aff48644aff48644aff48644affadd2caff728692ff728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644affadd2caffadd2caffadd2caff728692ff728692ff728692ff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ff728692ff728692ff728692ff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ff728692ff728692ff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ff728692ff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff728692ff728692ff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff26394bff"
+        ]
+      ]
+    },
+    {
+      "id": "relay-contract:image-50",
       "name": "Roof E W edge",
       "kind": "tile",
       "width": 16,
@@ -1326,7 +1353,7 @@
       ]
     },
     {
-      "id": "relay-contract:image-50",
+      "id": "relay-contract:image-51",
       "name": "Roof S W edge / inner NE",
       "kind": "tile",
       "width": 16,
@@ -1353,7 +1380,7 @@
       ]
     },
     {
-      "id": "relay-contract:image-51",
+      "id": "relay-contract:image-52",
       "name": "Roof N E edge / inner SW",
       "kind": "tile",
       "width": 16,
@@ -1380,7 +1407,7 @@
       ]
     },
     {
-      "id": "relay-contract:image-52",
+      "id": "relay-contract:image-53",
       "name": "Roof N S edge",
       "kind": "tile",
       "width": 16,
@@ -1407,7 +1434,7 @@
       ]
     },
     {
-      "id": "relay-contract:image-53",
+      "id": "relay-contract:image-54",
       "name": "Roof E S edge / inner NW",
       "kind": "tile",
       "width": 16,
@@ -1434,7 +1461,7 @@
       ]
     },
     {
-      "id": "relay-contract:image-54",
+      "id": "relay-contract:image-55",
       "name": "Roof N W edge / inner SE",
       "kind": "tile",
       "width": 16,
@@ -1461,7 +1488,34 @@
       ]
     },
     {
-      "id": "relay-contract:image-55",
+      "id": "relay-contract:image-56",
+      "name": "South Single / East Single",
+      "kind": "tile",
+      "width": 16,
+      "height": 16,
+      "frames": [
+        [
+          "c1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ff",
+          "83979dffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ff",
+          "83979dff83979dffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ffc1c9c6ff",
+          "43576aff43576aff43576aff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff728692ff",
+          "43576aff43576aff43576aff6e96a3ffadd2caffadd2caff728692ff728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
+          "43576aff43576aff43576aff6e96a3ff6e96a3ffadd2caff728692ff728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
+          "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff728692ff728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
+          "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff728692ff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
+          "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff728692ff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
+          "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff728692ffadd2caffadd2caffadd2caff728692ff728692ff728692ff",
+          "43576aff43576aff43576aff6e96a3ff6e96a3ff6e96a3ff43576aff43576aff43576aff43576affadd2caffadd2caffadd2caff728692ff728692ff728692ff",
+          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff728692ff728692ff728692ff728692ff728692ff",
+          "43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff43576aff728692ff728692ff728692ff728692ff",
+          "344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff",
+          "344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff",
+          "344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff344b57ff"
+        ]
+      ]
+    },
+    {
+      "id": "relay-contract:image-57",
       "name": "Roof E W edge",
       "kind": "tile",
       "width": 16,
@@ -1488,7 +1542,7 @@
       ]
     },
     {
-      "id": "relay-contract:image-56",
+      "id": "relay-contract:image-58",
       "name": "Roof N E W edge",
       "kind": "tile",
       "width": 16,
@@ -1515,7 +1569,7 @@
       ]
     },
     {
-      "id": "relay-contract:image-57",
+      "id": "relay-contract:image-59",
       "name": "Roof E S W edge",
       "kind": "tile",
       "width": 16,
@@ -1542,7 +1596,7 @@
       ]
     },
     {
-      "id": "relay-contract:image-58",
+      "id": "relay-contract:image-60",
       "name": "Road isolated",
       "kind": "tile",
       "width": 16,
@@ -1569,143 +1623,35 @@
       ]
     },
     {
-      "id": "relay-contract:image-59",
-      "name": "Road N",
-      "kind": "tile",
-      "width": 16,
-      "height": 16,
-      "frames": [
-        [
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff"
-        ]
-      ]
-    },
-    {
-      "id": "relay-contract:image-60",
-      "name": "Road E",
-      "kind": "tile",
-      "width": 16,
-      "height": 16,
-      "frames": [
-        [
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff"
-        ]
-      ]
-    },
-    {
       "id": "relay-contract:image-61",
-      "name": "Road S",
+      "name": "Road end north",
       "kind": "tile",
       "width": 16,
       "height": 16,
       "frames": [
         [
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
           "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff"
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff"
         ]
       ]
     },
     {
       "id": "relay-contract:image-62",
-      "name": "Road N S",
-      "kind": "tile",
-      "width": 16,
-      "height": 16,
-      "frames": [
-        [
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ffdfc475ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ffdfc475ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ffdfc475ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ffdfc475ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ffdfc475ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ffdfc475ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ffdfc475ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ffdfc475ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff"
-        ]
-      ]
-    },
-    {
-      "id": "relay-contract:image-63",
-      "name": "Road W",
-      "kind": "tile",
-      "width": 16,
-      "height": 16,
-      "frames": [
-        [
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
-          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff"
-        ]
-      ]
-    },
-    {
-      "id": "relay-contract:image-64",
-      "name": "Road E W",
+      "name": "Road straight east/west",
       "kind": "tile",
       "width": 16,
       "height": 16,
@@ -1725,6 +1671,114 @@
           "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
           "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
           "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff"
+        ]
+      ]
+    },
+    {
+      "id": "relay-contract:image-63",
+      "name": "Road end east",
+      "kind": "tile",
+      "width": 16,
+      "height": 16,
+      "frames": [
+        [
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff"
+        ]
+      ]
+    },
+    {
+      "id": "relay-contract:image-64",
+      "name": "Road end south",
+      "kind": "tile",
+      "width": 16,
+      "height": 16,
+      "frames": [
+        [
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff"
+        ]
+      ]
+    },
+    {
+      "id": "relay-contract:image-65",
+      "name": "Road straight north/south",
+      "kind": "tile",
+      "width": 16,
+      "height": 16,
+      "frames": [
+        [
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ffdfc475ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ffdfc475ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ffdfc475ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ffdfc475ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ffdfc475ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ffdfc475ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ffdfc475ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ffdfc475ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "48644aff48644aff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff"
+        ]
+      ]
+    },
+    {
+      "id": "relay-contract:image-66",
+      "name": "Road end west",
+      "kind": "tile",
+      "width": 16,
+      "height": 16,
+      "frames": [
+        [
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
+          "535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff535965ff48644aff48644aff",
           "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff",
           "48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff48644aff"
         ]

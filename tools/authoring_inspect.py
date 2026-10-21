@@ -22,6 +22,7 @@ def capabilities(tool):
         persisted_requests=True,gui_undo=True,live_remote_session=False,live_local_session=True,protected_regions=True,
         change_review=True,partial_change_groups=True,named_protection_overrides=True,shared_construction_library=True,
         mission_regions=True,typed_mission_variables=True,explicit_objective_states=True,compound_conditions=True,
+        combat_hooks=True,round_timers=True,reinforcements=True,escort_waypoints=True,
         reinforcement_events=False,escort_events=False,asset_search=True,contact_sheets=True,animation_strips=True,event_graph_preview=True,
         world_city_previews=True,native_navigation_checks=True,objective_access_warnings=True,scenario_suites=True,
         scenario_seeds=True,scenario_checkpoints=True,combat_sampling=True,fixture_batches=True,selected_case_reruns=True),
@@ -56,7 +57,7 @@ def inventory(doc):
 
 def summary(doc, tool):
     caps=capabilities(tool)['runtime'];limits=caps['limits'];a=doc.adventure or {}
-    counts={key:len(a.get(key,[])) for key in ('maps','events','flags','tiles','jigsaws','people','shops','encounters','objectives','variables','regions')}
+    counts={key:len(a.get(key,[])) for key in ('maps','events','flags','tiles','jigsaws','people','shops','encounters','objectives','variables','regions','combat_groups','combat_hooks')}
     worlds=all_worlds(a);counts['worlds']=len(worlds)
     counts.update(images=len(doc.art['images']),art_pixels=sum(im['width']*im['height']*len(im['frames']) for im in doc.art['images']),
         animation_tracks=sum(len(im.get('animations',{})) for im in doc.art['images']),

@@ -22,8 +22,12 @@ reference directories remain independent regression targets.
 4. **Playable delivery.** A separate timed-defence/vehicle-escort example,
    recorded authoring commands, editor forms, native scenarios and visual checks.
 
-Each internal delivery receives a local commit; no permission pause is needed
-between them. This document tracks intended scope, not verified completion.
+Implementation is delivered in the native runtime, shared authoring commands,
+editor forms and Cairn Passage example. See [combat semantics](COMBAT_MISSIONS.md),
+[construction coverage](CONSTRUCTION_LIBRARY.md) and [verification](TESTING.md).
+Additional requested editor work includes all four T-junction orientations,
+zero-story walls, event descriptions (including all 54 Last Beacon events),
+consistent Unit Library names, three-state table sorting and dropdown completion.
 
 ## Runtime decisions
 
@@ -38,9 +42,9 @@ between them. This document tracks intended scope, not verified completion.
   pilot ejection cannot scramble group membership.
 - Bounds stay explicit: 16 groups, 32 hooks, at most 12 non-party combat units
   including reserved units, and 24 total combat slots including party/ejections.
-- Saves need a new optional version. Audit the existing reserved combat payload
-  before choosing its exact layout; existing authored/original encodings must
-  remain byte-compatible when the feature is absent.
+- Optional state version 51 stores a 512-byte continuation in the reserved
+  combat payload at absolute offset 9696. Existing encodings remain unchanged
+  when the extension is absent.
 
 ## Evidence required
 

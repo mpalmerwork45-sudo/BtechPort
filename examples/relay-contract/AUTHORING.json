@@ -8,7 +8,7 @@
         "status": "applied",
         "request_id": "relay-contract-001",
         "base_revision": "908ffcc7c709d4712ec5421008a12e7ee9d7fca86025f99fd4b05bb22390e3c3",
-        "result_revision": "13b4625bce8fc83e552df42b2b65dabb7fed6f0456b6389ad87670980b7f4c22",
+        "result_revision": "64a67d212f634c075d1c45ef621df302e7054b58d320030d07719e4ac8373412",
         "changes": [
           {
             "path": "manifest.graphics",
@@ -1859,6 +1859,30 @@
             ]
           },
           {
+            "path": "adventure.tiles/relay-contract:tile-65",
+            "object_id": "relay-contract:tile-65",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/relay-contract:tile-66",
+            "object_id": "relay-contract:tile-66",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
             "path": "adventure.tiles/relay-contract:tile-7",
             "object_id": "relay-contract:tile-7",
             "change": "created",
@@ -2688,6 +2712,32 @@
             ]
           },
           {
+            "path": "art.images/relay-contract:image-65",
+            "object_id": "relay-contract:image-65",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/relay-contract:image-66",
+            "object_id": "relay-contract:image-66",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
             "path": "art.images/relay-contract:image-7",
             "object_id": "relay-contract:image-7",
             "change": "created",
@@ -2732,6 +2782,7 @@
             "change": "created",
             "fields": [
               "footprint",
+              "generated_joins",
               "id",
               "kind",
               "name",
@@ -2756,6 +2807,7 @@
             "change": "created",
             "fields": [
               "footprint",
+              "generated_joins",
               "id",
               "kind",
               "name",
@@ -2822,6 +2874,12 @@
           },
           {
             "path": "editor.tile_names",
+            "object_id": null,
+            "change": "modified",
+            "fields": []
+          },
+          {
+            "path": "editor.tile_sources",
             "object_id": null,
             "change": "modified",
             "fields": []
@@ -3246,8 +3304,10 @@
             "result": null
           }
         ],
-        "validation": "Valid project relay-contract 1.0.0: 5 mechs, 8 weapons; 2 maps, 29 event nodes; SHA-256 88f05893091a84e2ab14eab3792f9655ddce6ad479efe43741e25c3167da6b5c",
-        "diagnostics": []
+        "validation": "Valid project relay-contract 1.0.0: 5 mechs, 8 weapons; 2 maps, 29 event nodes; SHA-256 bbb056c9eb210b4d59c4d464c946e40ef0f7d442c05026d00555fea634a20909",
+        "diagnostics": [],
+        "protection_overrides": [],
+        "displaced_details": []
       }
     }
   }

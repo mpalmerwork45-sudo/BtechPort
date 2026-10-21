@@ -115,7 +115,9 @@ def project_records(document):
         if image['kind']=='tile':result[-1].update(sheet='package:art',graphic=image['id'],animation_checked=True)
     for collection,kind in [('construction_sets','construction'),('map_patterns','pattern')]:
         for value in data.get(collection,[]):
-            result.append(record(value,kind,'project',notes,dependency='project',style=value.get('kind')))
+            from construction_styles import coverage
+            result.append(record(value,kind,'project',notes,dependency='project',style=value.get('kind'),
+                **(dict(coverage=coverage(value)) if kind=='construction' else {})))
     for value in a.get('jigsaws',[]):result.append(record(value,'jigsaw','project',notes,dependency='project'))
     return result
 

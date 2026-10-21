@@ -1,4 +1,71 @@
-# Build, verification and original oracle — 2026-10-20
+# Build, verification and original oracle — 2026-10-21
+
+## Combat missions, construction coverage and editor controls — 2026-10-21
+
+**VERIFIED within the routes and bounds below:** AI6b lifecycle hooks, reserve
+deployment, scripted outcomes and AI6c friendly/neutral escort actors. See
+[combat semantics](COMBAT_MISSIONS.md) and [delivery scope](AI6_COMBAT_DELIVERY.md).
+
+- `ctest --test-dir build --output-on-failure`: **91/91 PASS**, 47.48 s,
+  `work/ai6-final-native.log`. Existing original-campaign regressions remain
+  included. Core tests exercise blocked atomic waves, simultaneous casualties,
+  presentation/audio ordering, repeated hooks, outcomes, waypoint movement and
+  version-51 save/reload. The final test-artifact cleanup passes separately.
+- `python3 -m unittest discover -s tests -p 'test_*.py'`: **277/277 PASS**,
+  25.304 s, `work/ai6-final-python.log`. Tests cover command/schema integration,
+  invalid missions, construction coverage (47 roof masks, face joins and all
+  road connections), custom animated joins, manual overrides, library round
+  trips, zero-story walls and legacy campaign save recovery.
+- Cairn Passage's recorded suite: **9/9 runs PASS**, 1.6549 s,
+  `work/ai6-cairn-suite-2/suite-report.json`. Three defence seeds, three escort
+  seeds, retreat, real transport destruction and the complete two-contract
+  route exercise the actual C player, including checkpoints and payment.
+  Generated artwork is reproducible; original sprites remain external assets.
+- Linux and Windows builds use **two jobs**. `python3 tools/windows_check.py
+  --ctest -R 'authored-|cairn-|authoring-'`: **18/18 PASS** under isolated Wine,
+  57.04 s, `work/ai6-windows-tests.log`. The earlier replay failures were stale
+  artifact saves bound to older fixture content. Checkpoint/final artifact names
+  now include the content digest; ordinary save compatibility checks remain.
+- Private-display editor journeys all pass: `--editor-combat-mission-only`
+  (`work/ai6-combat-editor.log`), `--editor-style-only`
+  (`work/ai6-editor-style.log`), `--construction-library-only`
+  (`work/ai6-construction-library-gui.log`) and `--library-editor-only`
+  (`work/ai6-unit-library-gui.log`). These exercise actual forms, validation,
+  Undo/recovery, Save/reopen, library import/export and SDL Play.
+- The style journey checks all four T-junction pickers, a zero-story wall
+  drawn on a map, all 54 Last Beacon graph descriptions and their bounds at
+  four zoom levels. Real heading clicks cycle numeric/text sorting and restore
+  original order after refresh, preserving selection. Closed readonly, editable
+  and open-list dropdown typing all pass. Screenshots inspected include
+  `work/style-road-junctions.png` and `work/style-zero-wall.png`.
+- Local Unit Library normalization updated 47 existing entries, preserving
+  designation-code spelling, character names, statistics and graphics.
+- Reference guard: **1,287 entries unchanged** (content/mode/mtime),
+  `work/ai6-final-reference.log`. Last Beacon's additional user map/art/style
+  edits are retained; the event-description commit contains only those notes.
+
+Initial sandboxed GUI/Wine runs could not create their required display/socket
+resources; the isolated checks above ran with approval. Native Windows Tk,
+general tactical balance, arbitrary Lua routes and campaign-scale navigation
+remain **UNKNOWN**. Escort waypoints currently use coordinate forms, not a
+drag-to-route map tool. Complete style coverage supplies editable joins/defaults;
+it does not certify the artistic quality of every custom tile combination.
+
+## Original and Updated save recovery — 2026-10-21
+
+**VERIFIED:** the ten older `work/player-save*.btp` campaign files were intact.
+The desktop launcher's newer save folder hid them from its six-slot menu.
+All six Original slots and Updated slots 1, 4, 5 and 6 were backed up, copied
+to their corresponding empty desktop slots and loaded by the current native
+player. Before/after canonical state digests match; source hashes and mtimes
+remain unchanged. Both launcher Continue commands load successfully. The local
+backup and load report are located through `work/save-recovery-latest.txt`.
+
+The default launcher now copies older campaign slots only into missing desktop
+slots. Three regressions verify edition/slot separation, existing-save priority,
+source preservation, repeat recovery, private-state isolation and actual native
+launch/resume. Project saves retain their exact-content namespaces.
+
 
 ## Shared Construction Library — 2026-10-20
 

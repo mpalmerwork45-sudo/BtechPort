@@ -552,7 +552,7 @@ class Workspace:
                     row(construct,'patterns','Pattern Library',lambda:self.map_view().patterns())
                     row(construct,'construction-library','Shared Construction Library',lambda:self.map_view().construction_library())
                     events=row('','events','Events / objectives',self.open_event)
-                    row(events,'mission','Regions / mission variables',lambda:self.map_view().missions())
+                    row(events,'mission','Mission state / groups / timers',lambda:self.map_view().missions())
                     row(events,'objectives','Objectives / journal',lambda:self.map_view().event_graph().objectives())
                     for event in document.adventure['events']:
                         if not query or query in str(event).casefold():row(events,'event:'+event['id'],event['id'].split(':')[-1]+' ('+event['op']+')',lambda i=event['id']:self.open_event(i))
@@ -599,7 +599,10 @@ class Workspace:
             if owner.library_context:ttk.Button(self.inspect_actions,text='Preview design',command=lambda:self.invoke('Preview library design')).pack(fill='x',pady=3)
         elif view and view.key[1]=='construction' and owner.profile:
             from construction_editing import part_name
-            p=owner.profile;lines.extend([p['name'],f"{len(p['footprint'][0])} × {len(p['footprint'])} footprint",'Paint height: 0 erases a cell. Walls support 1–3 storeys; buildings 1–8.'])
+            p=owner.profile;lines.extend([p['name'],f"{len(p['footprint'][0])} × {len(p['footprint'])} footprint",
+                'Walls support 0–3 stories; 0 draws top tiles only. Right-drag erases.' if p['kind']=='Wall' else
+                'Buildings support 1–32 stories; 0 erases a cell.' if p['kind']=='Building' else
+                'Draw connected roads with left-drag; right-drag erases.'])
             if owner.selected_role:
                 lines.extend([part_name(owner.selected_role),'This tile is shared by every matching part in the set. Clone it before making a separate variant.'])
                 for label,callback in [('Choose tile',owner.choose_part),('Edit pixels',owner.edit_part),('Clone tile',owner.clone_part)]:ttk.Button(self.inspect_actions,text=label,command=lambda f=callback:guard(owner,f)).pack(fill='x',pady=3)

@@ -57,9 +57,11 @@ class MapConstructionTools:
         self.edit_button.configure(text='Edit style...' if self.profiles else 'Create style...')
         if self.last_kind!=kind:
             self.shape.set('Rectangle' if kind=='Building' else 'Line' if kind=='Wall' else 'Brush');self.last_kind=kind;self.object_id=None
+            self.stories.set('0' if kind=='Wall' else '1')
         maximum=3 if kind=='Wall' else 1 if kind=='Road' else 32
-        self.height_choice.configure(values=tuple(range(1,maximum+1)),state='disabled' if kind=='Road' else 'readonly')
-        if not 1<=int(self.stories.get())<=maximum:self.stories.set('1')
+        minimum=0 if kind=='Wall' else 1
+        self.height_choice.configure(values=tuple(range(minimum,maximum+1)),state='disabled' if kind=='Road' else 'readonly')
+        if not minimum<=int(self.stories.get())<=maximum:self.stories.set(str(minimum))
         map_id=self.maps.scene()['id']
         if self.map_id!=map_id:self.object_id=None;self.map_id=map_id
         self.drawn=objects(self.maps.document,map_id,kind)

@@ -24,8 +24,12 @@ def preset(kind,width=9,height=9,stories=2,shape='Cross'):
             elif shape=='L shape':inside=x<(1 if kind in ('Wall','Road') else max(1,width//3)) or y>=height-(1 if kind in ('Wall','Road') else max(1,height//3))
             elif shape=='Courtyard':inside=x in (0,width-1) or y in (0,height-1)
             elif shape=='Line':inside=y==height//2
+            elif shape=='T north':inside=y==height//2 or (x==width//2 and y<=height//2)
+            elif shape=='T east':inside=x==width//2 or (y==height//2 and x>=width//2)
+            elif shape=='T south':inside=y==height//2 or (x==width//2 and y>=height//2)
+            elif shape=='T west':inside=x==width//2 or (y==height//2 and x<=width//2)
             else:inside=False
-            if inside:rows[y][x]=stories
+            if inside:rows[y][x]=-1 if kind=='Wall' and stories==0 else stories
     return rows
 
 
@@ -34,15 +38,20 @@ def geometry(profile,with_origin=False):
     rows=profile['footprint'];kind=profile['kind'];maximum=3 if kind=='Wall' else 1 if kind=='Road' else 32
     limit=64 if profile.get('map_drawn') else 32
     if not rows or not rows[0] or len(rows)>limit or len(rows[0])>limit or any(len(r)!=len(rows[0]) for r in rows):raise EditorError(f'Use a rectangular footprint up to {limit}×{limit} cells.')
-    if any(type(v)!=int or not 0<=v<=maximum for r in rows for v in r):raise EditorError(f'{kind} heights must be 0..{maximum}; zero is empty.')
-    width,height=len(rows[0]),len(rows);highest=profile.get('datum',max(map(max,rows)));cells={}
-    def at(x,y):return rows[y][x] if 0<=x<width and 0<=y<height else 0
+    minimum=-1 if kind=='Wall' else 0
+    if any(type(v)!=int or not minimum<=v<=maximum for r in rows for v in r):raise EditorError(f'{kind} footprint values must be {minimum}..{maximum}; 0 is empty, -1 is a roof-only wall.')
+    width,height=len(rows[0]),len(rows);highest=profile.get('datum',max(0,max(map(max,rows))));cells={}
+    def at(x,y):
+        # Retain the existing zero-means-empty file convention. -1 is the new
+        # explicit roof-only wall cell; map brushes expose it as zero stories.
+        v=rows[y][x] if 0<=x<width and 0<=y<height else 0
+        return 0 if v==-1 else v if v else -1
     def half(x,y,index,value):
         cells.setdefault((x,y),['empty','empty'])[index]=value
-    for x,y in sorted(((x,y) for y in range(height) for x in range(width) if at(x,y)),key=lambda p:(p[0]+p[1],p[1])):
+    for x,y in sorted(((x,y) for y in range(height) for x in range(width) if at(x,y)>=0),key=lambda p:(p[0]+p[1],p[1])):
         h=at(x,y)
         if kind=='Road':
-            mask=sum(1<<i for i,(dx,dy) in enumerate(NEIGHBOURS) if at(x+dx,y+dy))
+            mask=sum(1<<i for i,(dx,dy) in enumerate(NEIGHBOURS) if at(x+dx,y+dy)>=0)
             cells[x,y]=['road_'+str(mask)]*2;continue
         # Far columns precede near columns. Faces are projected one tile east
         # and south per story, then their own roof covers the rear face halves.
@@ -72,7 +81,13 @@ def part_name(role):
         corners=' '.join(n for i,n in enumerate(('NE','SE','SW','NW')) if int(inner)&(1<<i))
         return 'Roof '+(edges+' edge' if edges else 'centre')+(' / inner '+corners if corners else '')
     if role.startswith('road_'):
-        return 'Road '+(' '.join(n for i,n in enumerate(('N','E','S','W')) if int(role[5:])&(1<<i)) or 'isolated')
+        mask=int(role[5:])
+        names={0:'isolated',1:'end north',2:'end east',4:'end south',8:'end west',
+            3:'corner north/east',6:'corner east/south',12:'corner south/west',9:'corner west/north',
+            5:'straight north/south',10:'straight east/west',
+            11:'T-junction - branch north',7:'T-junction - branch east',
+            14:'T-junction - branch south',13:'T-junction - branch west',15:'crossroads'}
+        return 'Road '+names[mask]
     return role.replace('_',' ').title()
 
 
@@ -108,6 +123,10 @@ def default_pixels(role,kind='Building'):
                 if y in (0,15):color='26394bff'
                 if kind=='Building' and 4<=y<11 and x in (3,4,5,10,11,12):color='add2caff' if role.startswith('south') else '6e96a3ff'
                 if kind=='Wall' and (y==8 or x==(0 if y<8 else 8)):color='293e4bff'
+                # Distinct top/base bands make single and multi-story presets
+                # readable without changing existing saved artwork.
+                if role.endswith(('_top','_single')) and y<3:color='c1c9c6ff' if role.startswith('south') else '83979dff'
+                if role.endswith(('_base','_single')) and y>=13:color='344b57ff'
             pixels[y][x]=color
     return pixels
 
@@ -119,21 +138,42 @@ def compile_rows(profile):
     return [[profile['parts'][p] if p!=' ' else ' ' for p in row] for row in roles]
 
 
+def add_part(a,art,data,prefix,profile,role,value,sources=()):
+    from construction_styles import fingerprint
+    image=new_image(prefix,art['images'],part_name(role)[:95]);image.update(value);art['images'].append(image)
+    identity=graphic_tile(a,prefix,'package:art',image['id'],'clear' if profile['kind']=='Road' else 'wall',8)
+    profile['parts'][role]=identity;data.setdefault('tile_names',{})[identity]=part_name(role)
+    if sources:
+        # Keep inherited original-asset provenance if the author explicitly
+        # cloned a reference tile earlier. Library exports retain this chain.
+        data.setdefault('tile_sources',{})[image['id']]=dict(construction_join=role,
+            sources=[copy.deepcopy(data.get('tile_sources',{}).get(s,dict(sheet='package:art',graphic=s))) for s in sources])
+        tile=next(t for t in a['tiles'] if t['id']==identity)
+        profile.setdefault('generated_joins',{})[role]=fingerprint(tile,image)
+
+
 def supply_parts(a,art,data,prefix,profile,roles):
     """Extend a style for newly drawn corners without changing its demo shape."""
     valid={t['id'] for t in a['tiles']}
-    for role in sorted({p for row in roles for p in row if p!=' '}):
+    needed={p for row in roles for p in row if p!=' '}
+    # Supply face primitives first, then compose previously unseen joins from
+    # the style's actual art. A custom corner never falls back to grey faces.
+    for role in list(needed):
+        if role.startswith('join|') and role not in profile['parts']:needed.update(role.split('|')[1:])
+    for role in sorted(needed,key=lambda r:(r.startswith('join|'),r)):
         if role in profile['parts']:
             if profile['parts'][role] not in valid:raise EditorError('A construction part uses a deleted tile. Replace it or Undo.')
             continue
-        image=new_image(prefix,art['images'],part_name(role)[:95]);image['frames']=[[''.join(row) for row in default_pixels(role,profile['kind'])]];art['images'].append(image)
-        value=graphic_tile(a,prefix,'package:art',image['id'],'clear' if profile['kind']=='Road' else 'wall',8)
-        profile['parts'][role]=value;data.setdefault('tile_names',{})[value]=part_name(role)
+        if role.startswith('join|'):
+            from construction_styles import joined_art
+            value,sources=joined_art(a,art,profile,role)
+        else:value=dict(frames=[[''.join(row) for row in default_pixels(role,profile['kind'])]]);sources=()
+        add_part(a,art,data,prefix,profile,role,value,sources)
     check_budget(art,a)
 
 
-def put_profile(document,profile,label='Edit construction set'):
-    profile=copy.deepcopy(profile);roles=geometry(profile);a=copy.deepcopy(document.adventure);art=copy.deepcopy(document.art);data=metadata(document);prefix=document.manifest['package_id']
+def put_profile(document,profile,label='Edit construction set',extra_roles=()):
+    profile=copy.deepcopy(profile);roles=geometry(profile)+[list(extra_roles)];a=copy.deepcopy(document.adventure);art=copy.deepcopy(document.art);data=metadata(document);prefix=document.manifest['package_id']
     supply_parts(a,art,data,prefix,profile,roles)
     profiles=data.setdefault('construction_sets',[])
     old=next((p for p in profiles if p['id']==profile['id']),None)
@@ -145,10 +185,11 @@ def put_profile(document,profile,label='Edit construction set'):
 
 
 def new_profile(document,kind='Building',name=None):
+    from construction_styles import primitive_roles
     profiles=metadata(document).get('construction_sets',[])
     value=dict(id=identity(document.manifest['package_id'],profiles,'construction'),name=name or kind+' set',kind=kind,
-               footprint=preset(kind,9,9,2,'Cross' if kind=='Building' else 'L shape' if kind=='Wall' else 'Cross'),parts={})
-    return put_profile(document,value,'New '+kind.lower()+' set')
+               footprint=preset(kind,9,9,0 if kind=='Wall' else 2,'Cross' if kind=='Building' else 'L shape' if kind=='Wall' else 'Cross'),parts={})
+    return put_profile(document,value,'New '+kind.lower()+' set',primitive_roles(kind))
 
 
 def draw_road(adventure,scene_index,layer,start,end,profile,width=1,shape='Brush',erase=False):
@@ -181,12 +222,7 @@ def draw_road(adventure,scene_index,layer,start,end,profile,width=1,shape='Brush
 def prepare_road(document,profile):
     """Generate every junction variant before drawing directly on the map."""
     profile=copy.deepcopy(profile);a=copy.deepcopy(document.adventure);art=copy.deepcopy(document.art);data=metadata(document);prefix=document.manifest['package_id']
-    for mask in range(16):
-        role='road_'+str(mask)
-        if role in profile['parts']:continue
-        image=new_image(prefix,art['images'],part_name(role));image['frames']=[[''.join(r) for r in default_pixels(role,'Road')]];art['images'].append(image)
-        profile['parts'][role]=graphic_tile(a,prefix,'package:art',image['id'],'clear',8)
-    check_budget(art,a)
+    supply_parts(a,art,data,prefix,profile,[[f'road_{mask}' for mask in range(16)]])
     profiles=data['construction_sets'];profiles[next(i for i,p in enumerate(profiles) if p['id']==profile['id'])]=profile
     meta=dict(document.metadata);meta['EDITOR.json']=encoded(data)
     with document.command('Prepare road brush'):document.replace_art(art,a,meta)

@@ -9,12 +9,15 @@ from editor_model import EditorError,ProjectDocument,references
 ROOT=Path(__file__).resolve().parents[1]
 
 def asset_report(doc):
+    def original_source(value):
+        # Generated construction joins retain the provenance of both faces.
+        return isinstance(value,dict) and (value.get('sheet','').startswith('chi:') or any(original_source(v) for v in value.get('sources',[])))
     sources=json.loads(doc.metadata.get('EDITOR.json',b'{}')).get('tile_sources',{})
     files=doc.files()  # Newly authored graphics may not have a disk snapshot yet.
     return dict(package=doc.manifest['package_id'],requires=doc.manifest['requires'],
         files=[dict(path=n,bytes=len(files[n]),sha256=hashlib.sha256(files[n]).hexdigest()) for n in references(doc.manifest)],
         images=[dict(id=i['id'],name=i['name'],kind=i['kind'],frames=len(i['frames']),
-                     origin='Copy of original artwork; original rights still apply' if i['name'].startswith('Original sprite') or sources.get(i['id'],{}).get('sheet','').startswith('chi:') else 'Package pixels; consult source documents',
+                     origin='Copy of original artwork; original rights still apply' if i['name'].startswith('Original sprite') or original_source(sources.get(i['id'])) else 'Package pixels; consult source documents',
                      source=sources.get(i['id'])) for i in doc.art['images']],
         source_documents=[p.name for p in doc.root.iterdir() if p.is_file() and (p.suffix.lower()=='.md' or 'SOURCE' in p.name)],
         note='Dependency/provenance inventory, not a license clearance. Original game assets must be supplied separately.')

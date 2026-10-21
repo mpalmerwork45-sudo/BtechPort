@@ -23,6 +23,39 @@ def edges(event):
     return result
 
 
+def event_description(event,data=None):
+    """Human-authored intent wins; otherwise summarize actual event fields."""
+    note=(data or {}).get('event_descriptions',{}).get(event['id'])
+    if note:return note
+    if event.get('text'):return ' '.join(event['text'].split())
+    op=event['op']
+    if op=='end':return 'Return to exploration, or resume the current combat hook.'
+    if op=='flag':return f"Set {event.get('flag','flag')} to {event.get('value',0)}."
+    if op=='if':return f"Check whether {event.get('flag','flag')} equals {event.get('value',0)}."
+    if op=='battle':return 'Fight '+event.get('encounter','the encounter')+'.'
+    if op=='transfer':return f"Travel to {event.get('map','map')} at {event.get('at',[])}."
+    if op=='reward':return f"Pay {event.get('credits',0):,} credits."
+    if op=='lua':return 'Run script '+event.get('script','')+' and follow its chosen route.'
+    if op=='recruit':return 'Recruit '+event.get('person','a party member')+'.'
+    if op=='shop':return 'Open '+event.get('shop','the shop')+'.'
+    if op=='reinforce':return 'Deploy reserve group '+event.get('group','')+'.'
+    if op=='battle_end':return 'Resolve this battle as '+event.get('result','')+'.'
+    if op=='objective':return f"Mark {event.get('objective','objective')} {event.get('state','')} .".replace(' .','.')
+    if op=='variable':return f"{event.get('action','Set').capitalize()} {event.get('variable','variable')} by {event.get('value',0)}."
+    if op=='check':return f"Test {event.get('match','all')} of {len(event.get('conditions',[]))} mission conditions."
+    return op.replace('_',' ').capitalize()+': '+', '.join(f'{k}={v}' for k,v in event.items() if k not in ('id','op') and not isinstance(v,(dict,list)) and k not in dict(edges(event)))
+
+
+def describe_event(document,identity,text):
+    if not any(e['id']==identity for e in document.adventure['events']):raise EditorError('Choose an existing event.')
+    text=text.strip()
+    if len(text)>240:raise EditorError('Event descriptions use at most 240 characters.')
+    data=editor_data(document);notes=data.setdefault('event_descriptions',{})
+    if text:notes[identity]=text
+    else:notes.pop(identity,None)
+    with document.command('Describe event'):editor_commit(document,data)
+
+
 def connect(document, source, branch, target):
     a = copy.deepcopy(document.adventure)
     events = {e['id']: e for e in a['events']}

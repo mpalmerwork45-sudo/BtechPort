@@ -10,7 +10,10 @@ from editor_model import EditorError,encoded
 from world_editing import identity
 
 # Keep the graphical forms on the same display-independent operations as AI tools.
-from event_editing import editor_data, editor_commit, edges, connect, dialogue_branch
+from event_editing import editor_data, editor_commit, edges, connect, dialogue_branch, event_description,describe_event
+
+
+def node_height(event):return max(150,130+len(edges(event))*18)
 
 
 def graph_arrangement(events):
@@ -31,7 +34,7 @@ def graph_arrangement(events):
             queue.extend((target,level+1) for _,target in edges(by_id[current]) if target in by_id and target not in levels)
     counts={};result={}
     for identity,level in levels.items():
-        row=counts.get(level,0);counts[level]=row+1;result[identity]=[35+level*330,35+row*200]
+        row=counts.get(level,0);counts[level]=row+node_height(by_id[identity])+35;result[identity]=[35+level*330,35+row]
     return result
 
 
@@ -99,7 +102,7 @@ class EventGraph:
         self.owner=owner;self.document=owner.document;self.selected=owner.event_id;self.drag=None;self.connection=None
         self.window=view_window(self,owner,'events','Event graph');self.window.geometry('1000x700')
         bar=ttk.Frame(self.window,padding=8);bar.pack(fill='x')
-        for label,method in [('Edit',self.edit),('Connect',self.link),('Dialogue',self.branch),('Arrange',self.arrange),('Fit',self.fit)]:
+        for label,method in [('Edit',self.edit),('Description',self.describe),('Connect',self.link),('Dialogue',self.branch),('Arrange',self.arrange),('Fit',self.fit)]:
             ttk.Button(bar,text=label,width=0,command=lambda f=method:guard(self,f)).pack(side='left',padx=3)
         more=ttk.Menubutton(bar,text='More');menu=tk.Menu(more,tearoff=False)
         for label,method in [('Objectives',self.objectives),('Regions / mission state',self.owner.missions),('Playtest / checkpoints',self.debug)]:menu.add_command(label=label,command=lambda f=method:guard(self,f))
@@ -129,14 +132,14 @@ class EventGraph:
         self.draw()
 
     def draw(self):
-        self.canvas.delete('all');all_events=self.document.adventure['events'];saved=editor_data(self.document).get('event_layout',{})
+        self.canvas.delete('all');all_events=self.document.adventure['events'];data=editor_data(self.document);saved=data.get('event_layout',{})
         defaults=graph_arrangement(all_events);z=float(self.zoom.get())
         from tkinter import font as tkfont
         if not hasattr(self,'graph_font'):
             self.graph_font=tkfont.Font(family=tkfont.nametofont('TkDefaultFont').actual('family'))
         # Node geometry uses canvas pixels. Scale its labels with the graph,
         # so zooming out cannot leave full-size text overlapping other nodes.
-        self.graph_font.configure(size=-max(6,round(13*z)))
+        self.graph_font.configure(size=-max(2,round(13*z)))
         def label_text(value):
             if self.graph_font.measure(value)<=210*z:return value
             while value and self.graph_font.measure(value+'...')>210*z:value=value[:-1]
@@ -150,17 +153,29 @@ class EventGraph:
             for index,(label,target) in enumerate(edges(e)):
                 if target not in visible:continue
                 tx,ty=self.positions[target];color='#407a95' if label not in ('failure','loss','flee') else '#ac655c'
-                sy=y+65+index*18;mid=x+260 if tx>x+230 else x+275
+                sy=y+125+index*18;mid=x+260 if tx>x+230 else x+275
                 points=(x+230,sy,mid,sy,mid,ty+25,tx,ty+25)
                 self.canvas.create_line(*[v*z for v in points],arrow='last',fill=color,width=2 if e['id']==self.selected else 1)
         for e in events:
             x,y=self.positions[e['id']];tag='node:'+e['id']
-            height=max(85,70+len(edges(e))*18)
+            height=node_height(e)
             self.canvas.create_rectangle(x*z,y*z,(x+230)*z,(y+height)*z,fill='#fff3cd' if e['id']==self.selected else '#ffffff',outline='#346b93',width=2,tags=tag)
             self.canvas.create_text((x+10)*z,(y+12)*z,anchor='nw',text=e['op'].upper(),font=self.graph_font,fill='#306383',tags=tag)
             self.canvas.create_text((x+10)*z,(y+34)*z,anchor='nw',text=label_text(e['id']),font=self.graph_font,fill='#273747',tags=tag)
+            # Keep a bounded three-line summary above the outputs. Measure
+            # with the actual scaled Tk font so descriptions never cover ports.
+            words=event_description(e,data).split();lines=[];line=''
+            for word in words:
+                candidate=(line+' '+word).strip()
+                if self.graph_font.measure(candidate)>210*z and line:lines.append(line);line=word
+                else:line=candidate
+            if line:lines.append(line)
+            line_limit=max(1,min(3,int(54*z/self.graph_font.metrics('linespace'))))
+            if len(lines)>line_limit:lines=lines[:line_limit];lines[-1]=label_text(lines[-1]+'...')
+            lines=[label_text(line) for line in lines]
+            self.canvas.create_text((x+10)*z,(y+58)*z,anchor='nw',text='\n'.join(lines),font=self.graph_font,fill='#4b5965',tags=(tag,'description:'+e['id']))
             for index,(label,_) in enumerate(edges(e)):
-                py=(y+65+index*18)*z;port='port|'+e['id']+'|'+label
+                py=(y+125+index*18)*z;port='port|'+e['id']+'|'+label
                 self.canvas.create_text((x+218)*z,py,anchor='e',text=label,font=self.graph_font,fill='#436477',tags=port)
                 self.canvas.create_oval((x+226)*z,py-4,(x+234)*z,py+4,fill='#39748b',outline='',tags=port)
         bounds=self.canvas.bbox('all') or (0,0,900,600);self.canvas.configure(scrollregion=(0,0,max(bounds[2]+40,900),max(bounds[3]+40,600)))
@@ -180,7 +195,8 @@ class EventGraph:
     def motion(self,event):
         if self.connection:
             self.canvas.delete('connecting');x,y=self.positions[self.connection[0]];z=float(self.zoom.get())
-            self.canvas.create_line((x+230)*z,(y+65)*z,self.canvas.canvasx(event.x),self.canvas.canvasy(event.y),fill='#286c80',dash=(4,2),tags='connecting')
+            index=next(i for i,(label,_) in enumerate(edges(next(e for e in self.document.adventure['events'] if e['id']==self.connection[0]))) if label==self.connection[1])
+            self.canvas.create_line((x+230)*z,(y+125+index*18)*z,self.canvas.canvasx(event.x),self.canvas.canvasy(event.y),fill='#286c80',dash=(4,2),tags='connecting')
         if self.drag:
             z=float(self.zoom.get());key,dx,dy,_=self.drag;self.drag=(key,dx,dy,[max(0,self.canvas.canvasx(event.x)/z-dx),max(0,self.canvas.canvasy(event.y)/z-dy)]);self.draw()
 
@@ -210,7 +226,7 @@ class EventGraph:
         points=[self.positions[i] for i in visible]
         if not points:return
         x0=min(p[0] for p in points);y0=min(p[1] for p in points)
-        width=max(p[0] for p in points)+270;height=max(p[1] for p in points)+180
+        width=max(p[0] for p in points)+270;height=max(self.positions[e['id']][1]+node_height(e) for e in self.document.adventure['events'] if e['id'] in visible)+20
         z=max(.2,min(1.5,self.canvas.winfo_width()/max(1,width-x0),self.canvas.winfo_height()/max(1,height-y0)))
         self.zoom.set(str(round(z,2)));self.draw()
         sx,sy,ex,ey=map(float,self.canvas.cget('scrollregion').split())
@@ -232,6 +248,15 @@ class EventGraph:
         f=Form(self,'New dialogue branch');f.field('label','Ask a question');f.field('text','The conversation continues.')
         def apply(v):dialogue_branch(self.document,self.selected,v['label'],v['text']);self.owner.refresh();self.draw()
         f.submit(apply)
+
+    def describe(self):
+        from adventure_editor import Form
+        if not self.selected:return
+        event=next(e for e in self.document.adventure['events'] if e['id']==self.selected)
+        f=Form(self,'Event description');f.field('description',event_description(event,editor_data(self.document)))
+        ttk.Label(f.body,text='Up to 240 characters. Clear to show an automatic summary. This note is for authors; it does not change game dialogue.',wraplength=440).grid(row=f.row,column=0,columnspan=3,sticky='w');f.row+=1
+        def apply(v):describe_event(self.document,self.selected,v['description']);self.owner.refresh();self.draw()
+        f.submit(apply);return f
 
     def objectives(self):return open_view(self.owner,'objectives',lambda:ObjectiveEditor(self.owner))
     def debug(self):

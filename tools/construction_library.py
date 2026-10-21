@@ -25,7 +25,8 @@ KINDS=('Building','Wall','Road','Pattern')
 DEFAULT_ROOT=ROOT/'work/construction-library'
 NAME=dict(type='string',minLength=1,maxLength=95)
 STYLE=obj(dict(id=ID,name=NAME,kind=enum('Building','Wall','Road'),
-    footprint=array(array(integer(0,32),1,32),1,32),parts=dict(type='object',additionalProperties=ID)),
+    footprint=array(array(integer(-1,32),1,32),1,32),parts=dict(type='object',additionalProperties=ID),
+    generated_joins=dict(type='object',additionalProperties=dict(type='string',pattern='^[0-9a-f]{64}$'))),
     ['id','name','kind','footprint','parts'])
 PATTERN=obj(dict(id=ID,name=NAME,rows=array(array(dict(anyOf=[ID,{'const':' '}]),1,64),1,64)),['id','name','rows'])
 
@@ -55,6 +56,8 @@ def check_bundle(bundle):
     if bundle['kind']!='Pattern':
         if design.get('kind')!=bundle['kind']:raise EditorError('Construction type does not match its drawing definition.')
         geometry(design)  # Height limits and rectangular footprints.
+        if any(not r.startswith('join|') or r not in design['parts'] for r in design.get('generated_joins',{})):
+            raise EditorError('Generated joins must refer to assigned joining parts.')
     elif 'rows' not in design:raise EditorError('A pattern needs its tile rows.')
     grid=rows(bundle)
     if any(len(row)!=len(grid[0]) for row in grid):raise EditorError('Pattern rows must form a rectangle.')
@@ -218,12 +221,14 @@ def import_bundle(document,bundle,design_id=None,validate_result=True):
 def summary(bundle,path=None):
     from asset_catalogue import record
     design=bundle['design'];grid=rows(bundle)
+    from construction_styles import coverage
     return record(dict(id=bundle['entry_id'],name=bundle['name']),
         'pattern' if bundle['kind']=='Pattern' else 'construction','construction-library',
         {bundle['entry_id']:bundle['editing'].get('catalogue',{}).get(design['id'],{})},
         construction_kind=bundle['kind'],revision=bundle['revision'],definition=design['id'],
         width=len(grid[0]),height=len(grid),tiles=len(bundle['tiles']),images=len(bundle['images']),
-        dependency='chi' if needs_original(bundle) else 'independent',file=str(path) if path else None)
+        dependency='chi' if needs_original(bundle) else 'independent',file=str(path) if path else None,
+        **(dict(coverage=coverage(design)) if bundle['kind']!='Pattern' else {}))
 
 
 class ConstructionLibrary:

@@ -67,6 +67,13 @@ layers and source credits. Designers and the project Pattern Library provide
 AI authors can search and import the same designs before drawing.
 See the [Construction Library guide](docs/CONSTRUCTION_LIBRARY.md).
 
+Construction designers show complete part coverage, including all four road
+T-junction orientations. Walls default to zero stories (top tiles only).
+Event graph boxes show editable descriptions; **Description** changes an author
+note without changing game dialogue. Last Beacon includes descriptions for all
+54 events. Click table headings for ascending, descending, then original order;
+type the start of a dropdown item to select or complete it.
+
 The shared **Unit Library** currently offers **82 blueprints: 66 mechs, ten
 vehicles and six infantry templates**, including [25 additional classic
 mechs](content/catalogues/mechs/README.md). Mechs use Locust or red Stinger
@@ -108,6 +115,12 @@ exchange. Review proposed maps/events, protect human edits, and accept changes
 with shared Undo and revision checks. External authors can take snapshots of
 the open editor and submit scoped proposals; review is the default.
 Try **Relay Contract (command-created)** in the launcher.
+**Cairn Passage (defence / escort)** demonstrates timed defence, reinforcements,
+friendly guards and a neutral Skulker convoy, with save/reload and loss routes.
+Select it in `./BtechPort` to play or edit it. See the
+[demo instructions](examples/cairn-passage/README.md) and
+[combat authoring guide](docs/COMBAT_MISSIONS.md).
+
 **Argent Recovery (regions / objectives)** demonstrates AI6a: named map regions,
 typed counters, explicit objective states and compound extraction conditions,
 with saved event continuations. The [mission reference](docs/MISSION_STATE.md)

@@ -10,7 +10,7 @@ from tkinter import ttk, filedialog, messagebox
 
 from editor_recovery import recoverable_forms
 from editor_model import EditorError, ProjectDocument, encoded
-from unit_library import UnitLibrary, KINDS, ROOT, closure, import_units, needs_original, stage_preview
+from unit_library import UnitLibrary, KINDS, ROOT, closure, import_units, needs_original, stage_preview,normalize_names
 from library_defaults import apply_sprite_defaults
 from editor_session import guard
 from editor_workspace import view_window,workspace_of
@@ -20,6 +20,11 @@ from asset_catalogue import bundle_record,matches,parse_query
 def seed_library(library, paths):
     """Add shipped designs and migrate default art once, retaining author edits."""
     existing={entry['entry_id']:entry for entry in library.entries()}
+    # Apply names to custom entries as well as shipped blueprints, using the
+    # same revision check/atomic save as normal library edits.
+    for key,prior in list(existing.items()):
+        normalized=normalize_names(prior)
+        if normalized!=prior:existing[key]=library.save(normalized,expected=prior)
     added=0
     def add(document,kind,values,source=None):
         nonlocal added

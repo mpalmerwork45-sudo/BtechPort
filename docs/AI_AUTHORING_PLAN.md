@@ -3,7 +3,7 @@
 Recorded 2026-10-18 against `266d21f`, with the user's revised Last Beacon
 preserved in `bed75e9`.
 
-**Status: AI6a MISSION STATE IMPLEMENTED, 2026-10-20.** AI1/AI2 have the versioned
+**Status: AI6a/AI6b/AI6c IMPLEMENTED, 2026-10-21.** AI1/AI2 have the versioned
 inspection/command contract, transactional CLI, shared editor operations and
 command-file exchange described in the [author guide](AI_AUTHORING_GUIDE.md).
 The approved next four steps add shared asset discovery, labelled visual
@@ -20,7 +20,7 @@ See [AI5 verification](TESTING.md#ai5-collaborative-authoring--2026-10-20).
 AI6a now adds named regions, persistent typed variables, explicit objective
 states and compound conditions, with editor controls and the playable
 [Argent Recovery](../examples/argent-recovery/README.md) example.
-[Lifecycle and limits](MISSION_STATE.md) are explicit. AI6b/AI6c and AI7–AI8
+[Lifecycle and limits](MISSION_STATE.md) are explicit. AI6b/AI6c now add [combat hooks, reserves and escort actors](COMBAT_MISSIONS.md), exercised in Cairn Passage. AI7–AI8
 remain proposed. The editor remains the human workspace.
 
 ## 1. Intended result
@@ -133,7 +133,7 @@ usable stopping point. Relative size indicates scope, not a calendar estimate.
 | AI3 | Searchable catalogues and visual feedback | AI1–AI2 | Medium | Delivered |
 | AI4 | Mission scenarios, assertions and playtest reports | AI1–AI2; AI3 for visual reports | Large | Delivered within the recorded route/geometry bounds |
 | AI5 | Editor review, protected edits and live sessions | AI2–AI4 | Large | Delivered; local file-inbox transport |
-| AI6 | Additional mission primitives and Lua/event support | AI2, AI4–AI5 | Large, split below | AI6a delivered; AI6b/AI6c proposed |
+| AI6 | Additional mission primitives and Lua/event support | AI2, AI4–AI5 | Large, split below | AI6a/AI6b/AI6c delivered |
 | AI7 | Modular campaigns, reproducible compilation and capacity work | AI2, AI4–AI5; include AI6 formats when available | Large, split below | Proposed |
 | AI8 | Complete authoring demonstration and delivery | AI1–AI7 | Medium | Proposed |
 
@@ -442,21 +442,22 @@ victory/defeat/retreat and saved continuations. The manual editor supports
 region drawing, variable/objective forms, conditions, Undo and draft recovery.
 See [verification](TESTING.md#ai6a-mission-state-and-editor-repairs--2026-10-20).
 
-### AI6b: combat lifecycle and reinforcements
+### AI6b: combat lifecycle and reinforcements — delivered 2026-10-21
 
-Add supported hooks for combat start, round boundaries and completed unit
+Implemented hooks for combat start, round boundaries and completed unit
 destruction, plus named unit groups, survival conditions, timers and bounded
-reinforcement requests. Spawn placement must use real occupancy/terrain rules
-and have a defined failure or retry outcome. Notifications follow completed
+reinforcement requests. Atomic spawn placement uses native occupancy/terrain
+rules and explicit failure/retry routes. Notifications follow completed
 simulation/presentation events, including the existing destruction/audio order.
 
-### AI6c: escort and defence
+### AI6c: escort and defence — delivered 2026-10-21
 
-Define friendly/neutral mission actors, affiliation and targeting rules,
-waypoints, transport survival and extraction conditions. Specify how they
-participate in turns, control, defeat, retreat and persistence. Verify escort
-navigation for the supported vehicle movement types before advertising the
-recipe. This is an engine feature, not only an extra Lua function.
+Implemented friendly/neutral mission actors, affiliation and targeting rules,
+waypoints, transport survival and extraction conditions. The native engine owns
+turns, control, defeat, retreat and saved continuations. Cairn Passage's protected
+vehicle uses the existing movement planner and terrain rules; the declared
+success, transport-loss and retreat scenarios pass. [Combat semantics and
+limits](COMBAT_MISSIONS.md) and [verification](TESTING.md) describe the bounds.
 
 Structured event nodes and bounded Lua use the same named queries/actions.
 Lua requests supported work; the engine owns waiting, scheduling, simulation
@@ -622,11 +623,12 @@ name/module layout (AI1–AI2), source-module format and exact capacity targets
 (AI7), and which external assistant transports are useful (AI8). These do not
 block the first authoring contract or require choosing an AI provider now.
 
-**Next proposed mission work: AI6b — combat lifecycle and reinforcements.**
-AI6a's regions, persistent state and extraction example are delivered.
-Add lifecycle hooks, timers, named groups and bounded spawn requests, then
-demonstrate timed defence. AI6c escort/defence builds on that foundation.
-These further engine changes require their own authorization.
+**Next proposed milestone: AI7a — modular campaign source and deterministic compilation.**
+AI6b/AI6c now supply round hooks, atomic reinforcement groups, scripted outcomes,
+friendly/neutral actors and terrain-aware waypoints. Cairn Passage demonstrates
+defence and escort with declared native success/loss/retreat scenarios. Construction
+coverage and shared-library styles support all roof masks, wall levels and road
+junctions. AI7 and AI8 remain future work; this batch does not raise runtime limits.
 
 The separately authorized [shared Construction Library](CONSTRUCTION_LIBRARY.md)
 is delivered: building, wall and road definitions and stored patterns transfer

@@ -27,6 +27,8 @@ WEAPONS = ["small_laser", "medium_laser", "large_laser", "ppc", "ac2", "ac5", "a
 
 def configure_editor_style(window):
     """Share a quiet, native-font palette with the roster and map windows."""
+    from editor_lists import install
+    install(window)
     style = ttk.Style(window)
     if "clam" in style.theme_names() and os.name != "nt":
         style.theme_use("clam")

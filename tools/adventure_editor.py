@@ -943,6 +943,7 @@ class AdventureEditor:
         old=copy.deepcopy(self.adventure["encounters"][index]) if index is not None else dict(id=new_id(self.document,"encounters","encounter"),map=self.scene()["id"],party_at=list(at),enemies=[])
         form=Form(self,"Encounter and enemy spawns");form.track(old)
         form.field("id",old["id"]);form.field("map",old["map"],[m["id"] for m in self.adventure["maps"]]);form.field("party_x",old["party_at"][0]);form.field("party_y",old["party_at"][1])
+        form.field("completion",old.get("completion","eliminate"),["eliminate","scripted"],label="Victory: eliminate enemies / mission hooks")
         listing=tk.Listbox(form.body,height=6,width=60,exportselection=False);listing.grid(row=form.row,column=0,columnspan=2,padx=10,sticky="ew");form.row+=1
         def refresh():
             listing.delete(0,"end")
@@ -976,6 +977,8 @@ class AdventureEditor:
         listing.bind("<Double-Button-1>",lambda _:self.guard(lambda:enemy_dialog(True)))
         def apply(v):
             old.update(id=v["id"],map=v["map"],party_at=[int(v["party_x"]),int(v["party_y"])])
+            if v["completion"]=="scripted":old["completion"]="scripted"
+            else:old.pop("completion",None)
             a=copy_adventure(self.document)
             if index is None:a["encounters"].append(old)
             else:a["encounters"][index]=old
@@ -1053,21 +1056,22 @@ class AdventureEditor:
             field("image",e.get("image","none"),(["none"] if e["op"]!="picture" else [])+[im["id"] for im in self.document.art["images"] if e["op"]=="picture" or (im["width"]<=88 and im["height"]<=88)])
         for key in ("next","failure","unchanged","then","else","cancel","win","loss","flee"):
             if key in e:field(key,e[key],events)
-        for key,collection in [("flag","flags"),("person","people"),("map","maps"),("shop","shops"),("encounter","encounters"),("variable","variables"),("objective","objectives")]:
+        for key,collection in [("flag","flags"),("person","people"),("map","maps"),("shop","shops"),("encounter","encounters"),("variable","variables"),("objective","objectives"),("group","combat_groups")]:
             if key in e:field(key,e[key],[v if isinstance(v,str) else v["id"] for v in self.adventure.get(collection,[])])
         if e['op']=='variable':
             field('action',e['action'],['set','add','subtract']);field('once',e['once'],['0','1'])
         if e['op']=='objective':field('state',e['state'],['inactive','active','complete','failed'])
+        if e['op']=='battle_end':field('result',e['result'],['win','loss','flee'])
         if e['op']=='check':
             field('match',e['match'],['all','any'])
             field('condition_count',len(e['conditions']),[str(i) for i in range(1,9)])
             for i in range(8):
                 condition=e['conditions'][i] if i<len(e['conditions']) else dict(kind='flag',id='',compare='eq',value=1)
                 prefix=f'condition_{i+1}_'
-                kind=field(prefix+'kind',condition['kind'],['flag','variable','objective','region'])
-                refs={'flag':'flags','variable':'variables','objective':'objectives','region':'regions'}
-                def choices(k):return [v if isinstance(v,str) else v['id'] for v in self.adventure.get(refs[k],[])]
-                ref=field(prefix+'id',condition['id'],choices(condition['kind']))
+                kind=field(prefix+'kind',condition['kind'],['flag','variable','objective','region','group_alive','group_destroyed','group_deployed','group_arrived','combat_round'])
+                refs={'flag':'flags','variable':'variables','objective':'objectives','region':'regions',**{k:'combat_groups' for k in ('group_alive','group_destroyed','group_deployed','group_arrived')}}
+                def choices(k):return [v if isinstance(v,str) else v['id'] for v in self.adventure.get(refs.get(k,''),[])]
+                ref=field(prefix+'id',condition.get('id',''),choices(condition['kind']))
                 compare=field(prefix+'compare',condition['compare'],['eq','ne','lt','le','gt','ge'])
                 field(prefix+'value',condition['value'])
                 def change_kind(_,p=prefix,control=ref):
@@ -1078,7 +1082,7 @@ class AdventureEditor:
         if 'mech' in e:field('mech',e['mech'],[v['id'] for v in self.document.content['mechs']])
         if e['op'] in ('repair','rearm','heal'):
             field('slot',str(e['slot']+1) if 'slot' in e else 'All',['All']+[str(i+1) for i in range(8 if e['op']=='heal' else 4)])
-        for key in ("value","credits","cost"):
+        for key in ("value","credits","cost","radius"):
             if key in e:field(key,e[key])
         if "at" in e:field("x",e["at"][0]);field("y",e["at"][1])
         if e["op"]=="choice":
@@ -1100,7 +1104,7 @@ class AdventureEditor:
         def integer(key):
             try:return int(values[key])
             except ValueError:raise FieldError(key.replace('_',' ').capitalize()+' must be a whole number.',key)
-        for key in ("value","credits","cost","once"):
+        for key in ("value","credits","cost","once","radius"):
             if key in e:e[key]=integer(key)
         if e['op'] in ('repair','rearm','heal'):
             if values['slot']=='All':e.pop('slot',None)
@@ -1114,6 +1118,7 @@ class AdventureEditor:
             for i in range(integer('condition_count')):
                 p=f'condition_{i+1}_';c={k:values[p+k] for k in ('kind','id','compare','value')}
                 if c['kind']!='objective':c['value']=integer(p+'value')
+                if c['kind']=='combat_round':c.pop('id',None)
                 e['conditions'].append(c)
         a=copy_adventure(self.document);index=next(i for i,v in enumerate(a["events"]) if v["id"]==self.event_id)
         if "image" in values:

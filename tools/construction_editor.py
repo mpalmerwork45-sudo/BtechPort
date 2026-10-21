@@ -9,6 +9,7 @@ from editor_recovery import recoverable_forms
 from editor_model import EditorError
 from tile_editing import metadata,create_tile,edit_pixels,tile
 from construction_editing import geometry,part_name,default_pixels,put_profile,new_profile,preset,compile_rows
+from construction_styles import primitive_roles,coverage,complete_profile
 
 
 def tile_menu(owner,maps,current,assign,event,context=None):
@@ -48,8 +49,8 @@ class ConstructionEditor:
         body=ttk.Panedwindow(self.window,orient='horizontal');body.pack(fill='both',expand=True)
         left=ttk.Frame(body,padding=8);right=ttk.Frame(body,padding=8);body.add(left,weight=1);body.add(right,weight=2)
         controls=ttk.Frame(left);controls.pack(fill='x')
-        ttk.Label(controls,text='Paint height (0 erases)').pack(side='left')
-        self.height=tk.StringVar(value='1' if kind=='Road' else '2')
+        ttk.Label(controls,text='Stories (0 = roof only)' if kind=='Wall' else 'Paint height (0 erases)').pack(side='left')
+        self.height=tk.StringVar(value='0' if kind=='Wall' else '1' if kind=='Road' else '2')
         ttk.Combobox(controls,textvariable=self.height,values=[str(i) for i in range(2 if kind=='Road' else 4 if kind=='Wall' else 33)],state='readonly',width=3).pack(side='left',padx=8)
         from editor_canvas import CanvasZoom
         self.footprint_zoom=tk.StringVar(value='24')
@@ -66,6 +67,11 @@ class ConstructionEditor:
         ttk.Label(heading,text='Building preview' if kind=='Building' else kind+' preview',style='Section.TLabel').pack(side='left')
         self.zoom=tk.StringVar(value='Fit');self.zoom_control=CanvasZoom(heading,self.zoom,self.draw,steps=(8,16,24,32,48,64,96),fit=lambda:self.preview_size);self.zoom_control.pack(side='left',padx=6)
         flow_toolbar(heading)
+        coverage_bar=ttk.Frame(right);coverage_bar.pack(fill='x')
+        self.coverage_text=tk.StringVar()
+        ttk.Label(coverage_bar,textvariable=self.coverage_text).pack(side='left',padx=4)
+        self.complete_button=ttk.Button(coverage_bar,text='Complete style',command=lambda:guard(self,self.complete));self.complete_button.pack(side='left',padx=4)
+        flow_toolbar(coverage_bar)
         self.preview=self.make_canvas(right);self.preview_size=32;self.preview.bind('<Configure>',lambda _:self.draw())
         self.preview.bind('<Button-1>',self.select_preview);self.preview.bind('<Button-3>',self.context)
         self.zoom_control.attach(self.preview)
@@ -112,7 +118,8 @@ class ConstructionEditor:
         f.submit(apply);return f
     def reshape(self):
         if not self.profile:return
-        f=Form(self,'Draw a new footprint');f.field('shape','Rectangle',['Rectangle','Cross','L shape','Courtyard','Line','Empty']);f.field('width',len(self.profile['footprint'][0]));f.field('height',len(self.profile['footprint']));f.field('stories',int(self.height.get()) or 1)
+        shapes=['Rectangle','Cross','L shape','Courtyard','Line','Empty']+(['T north','T east','T south','T west'] if self.kind=='Road' else [])
+        f=Form(self,'Draw a new footprint');f.field('shape','Rectangle',shapes);f.field('width',len(self.profile['footprint'][0]));f.field('height',len(self.profile['footprint']));f.field('stories',int(self.height.get()) if self.kind=='Wall' else int(self.height.get()) or 1)
         def apply(v):
             value=copy.deepcopy(self.profile);value['footprint']=preset(self.kind,int(v['width']),int(v['height']),int(v['stories']),v['shape']);put_profile(self.document,value,'Reshape '+self.kind.lower());self.refresh()
         f.submit(apply);return f
@@ -124,7 +131,8 @@ class ConstructionEditor:
         if not(0<=y<len(rows) and 0<=x<len(rows[0])):return
         if start:self.stroke=copy.deepcopy(self.profile);self.last=x,y
         if self.stroke is None:return
-        for xx,yy in line(*self.last,x,y):rows[yy][xx]=0 if erase else int(self.height.get())
+        height=int(self.height.get());height=-1 if self.kind=='Wall' and height==0 else height
+        for xx,yy in line(*self.last,x,y):rows[yy][xx]=0 if erase else height
         self.last=x,y;self.draw()
     def finish(self):
         if self.stroke is None:return
@@ -141,7 +149,7 @@ class ConstructionEditor:
         for y,row in enumerate(rows):
             for x,height in enumerate(row):
                 self.footprint.create_rectangle(x*z,y*z,(x+1)*z,(y+1)*z,fill=('#466575' if height else '#f0f2f4'),outline='#a9b3b9')
-                if height and z>=16:self.footprint.create_text(x*z+z/2,y*z+z/2,text=str(height),fill='white')
+                if height and z>=16:self.footprint.create_text(x*z+z/2,y*z+z/2,text=str(max(0,height)),fill='white')
         self.roles=geometry(self.profile)
         size=min(32,max(8,min(max(1,self.preview.winfo_width()-4)//len(self.roles[0]),max(1,self.preview.winfo_height()-4)//len(self.roles)))) if self.zoom.get()=='Fit' else int(self.zoom.get())
         self.preview_size=size;self.preview.configure(scrollregion=(0,0,len(self.roles[0])*size,len(self.roles)*size))
@@ -155,7 +163,10 @@ class ConstructionEditor:
                     pixels=default_pixels(role,self.kind);im=tk.PhotoImage(master=self.window,width=size,height=size)
                     im.put(' '.join('{'+ ' '.join('#'+pixels[yy*16//size][xx*16//size][:6] for xx in range(size))+'}' for yy in range(size)));self.photos.append(im);self.preview.create_image(x*size,y*size,image=im,anchor='nw')
                 if role==self.selected_role:self.preview.create_rectangle(x*size,y*size,(x+1)*size,(y+1)*size,outline='#ffd95a',width=2)
-        self.role_ids=sorted(set(p for row in self.roles for p in row if p!=' ')|set(self.profile['parts']));self.part.configure(values=[part_name(p) for p in self.role_ids])
+        report=coverage(self.profile)
+        self.coverage_text.set(f"Parts: {report['assigned']}/{report['required']} assigned; {report['joins']} joins")
+        self.role_ids=sorted(set(primitive_roles(self.kind))|set(p for row in self.roles for p in row if p!=' ')|set(self.profile['parts']),key=part_name)
+        self.part.configure(values=[part_name(p)+(' (unassigned)' if p not in self.profile['parts'] else '') for p in self.role_ids])
         if self.selected_role not in self.role_ids:self.selected_role=self.role_ids[0] if self.role_ids else None
         if self.selected_role:self.part.current(self.role_ids.index(self.selected_role))
     def select_preview(self,event):
@@ -169,16 +180,28 @@ class ConstructionEditor:
         if hasattr(self.window,'workspace'):self.window.workspace.update_inspector()
     def assign(self,value):
         if not self.selected_role:return
-        profile=copy.deepcopy(self.profile);profile['parts'][self.selected_role]=value;put_profile(self.document,profile,'Assign construction tile');self.refresh()
+        profile=copy.deepcopy(self.profile);profile['parts'][self.selected_role]=value
+        profile.get('generated_joins',{}).pop(self.selected_role,None)
+        put_profile(self.document,profile,'Assign construction tile');self.refresh()
     def choose_part(self):
         if self.selected_role:return self.owner.graphic_picker(choose=self.assign,selected=self.profile['parts'].get(self.selected_role))
     def edit_part(self):
-        if self.selected_role:return edit_pixels(self.owner,self.profile['parts'][self.selected_role],self.pixel_context())
+        if self.selected_role:
+            self.ensure_part();return edit_pixels(self.owner,self.profile['parts'][self.selected_role],self.pixel_context())
+    def ensure_part(self):
+        if self.selected_role not in self.profile['parts']:
+            put_profile(self.document,self.profile,'Create construction part',[self.selected_role]);self.refresh()
+    def complete(self):
+        self.finish()
+        if self.profile:
+            result=complete_profile(self.document,self.profile['id']);self.owner.refresh();self.refresh()
+            self.status.set(f"{result['assigned']}/{result['required']} parts assigned. Missing parts use editable starter art; generated joins use your faces. Hand-edited joins stay. Redraw existing buildings to apply changed faces.")
     def pixel_context(self):
         self.finish()
         return dict(construction=self.profile['id'],role=self.selected_role,at=self.selected_cell)
     def clone_part(self):
         if self.selected_role:
+            self.ensure_part()
             value=create_tile(self.document,self.owner.graphics,self.profile['parts'][self.selected_role],part_name(self.selected_role)+' copy');self.assign(value);return edit_pixels(self.owner,value,self.pixel_context())
     def context(self,event):
         if self.select_preview(event):tile_menu(self,self.owner,self.profile['parts'].get(self.selected_role),self.assign,event,self.pixel_context)

@@ -153,6 +153,9 @@ def apply_operation(doc, op, imports):
     elif name=='event.connect':
         from event_editing import connect
         connect(doc,op['source'],op['branch'],op['target']);return op['source']
+    elif name=='event.describe':
+        from event_editing import describe_event
+        describe_event(doc,op['id'],op['text']);return op['id']
     elif name=='world.create':
         from world_editing import create_world
         identity=create_world(a,doc.manifest['package_id'],op.get('width',128),op.get('height',128),op['name'])
@@ -177,12 +180,14 @@ def apply_operation(doc, op, imports):
             assign_city(a,op['map'],op.get('at'),op.get('enabled',True),op['world'])
     elif name=='construction.style':
         from construction_editing import put_profile
-        check(op['value'],obj(dict(id=ID,name=TEXT,kind=enum('Building','Wall','Road'),
-             footprint=array(array(integer(0,32),1,32),1,32),parts=dict(type='object',additionalProperties=ID)),
-             ['id','name','kind','footprint','parts']))
+        from construction_library import STYLE
+        check(op['value'],STYLE)
         rows=op['value']['footprint']
         if any(len(row)!=len(rows[0]) for row in rows):raise AuthoringError('request.invalid','Footprint must be rectangular.')
         return put_profile(doc,op['value'])
+    elif name=='construction.complete':
+        from construction_styles import complete_profile
+        return complete_profile(doc,op['style'],op.get('refresh',True))
     elif name=='construction.draw':
         from construction_editing import put_profile
         from map_construction import new_object,paint_footprint,commit,objects

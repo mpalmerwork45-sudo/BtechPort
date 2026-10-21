@@ -79,6 +79,11 @@ independent demo projects retain their own artwork.
 
 - Filter **All / Mechs / Vehicles / Infantry**, search name/ID/drive type, and
   filter weight class. Units have animated previews and source/dependency notes.
+- Mech/vehicle model names use capitals; designation codes and character names
+  retain their spelling. Existing library entries receive this normalization.
+  Table headings cycle ascending, descending and original order, with arrow
+  indicators; numeric columns sort numerically. Type a prefix in dropdowns to
+  select or complete an item, including when the dropdown list is open.
 - **Edit unit**, or double-click, opens the existing property editor on that
   library entry. Edit armour, structure, movement, fitted weapons/equipment,
   prices and graphics there. Infantry has attributes, skills, personal weapon,

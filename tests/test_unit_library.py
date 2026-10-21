@@ -20,6 +20,15 @@ PLAYER=Path(os.environ.get('BTP_HEADLESS',ROOT/'build/btech-headless'))
 
 
 class UnitLibraryTests(unittest.TestCase):
+    def test_consistent_model_names_preserve_designations_and_people(self):
+        from unit_library import normalize_names,library_name
+        self.assertEqual(library_name('Zeus ZEU-6S'),'ZEUS ZEU-6S')
+        self.assertEqual(library_name('Banshee BNC-3Mc'),'BANSHEE BNC-3Mc')
+        saved=self.library.save(self.vehicle());self.assertEqual(saved['name'],'PATTON')
+        self.assertEqual(saved['content']['mechs'][0]['name'],'PATTON')
+        person=closure(self.game,self.game.adventure['people'][0]['id'],'Infantry')
+        self.assertEqual(normalize_names(person),person)
+
     def setUp(self):
         self.temp=tempfile.TemporaryDirectory(prefix='unit-library-');self.addCleanup(self.temp.cleanup)
         self.root=Path(self.temp.name);self.library=UnitLibrary(self.root/'library',TOOL)

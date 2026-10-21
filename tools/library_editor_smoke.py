@@ -97,9 +97,9 @@ def run(env,work):
                 with patch.object(messagebox,'askyesnocancel',return_value=False):pending.close()
                 pump();browser.window.lift();pump()
                 form=browser.new();form.values['name'].set('New GUI hovercraft');form.values['type'].set('Hovercraft')
-                next(w for w in form.window.winfo_children() if w.winfo_class()=='TButton' and w.cget('text')=='Apply').invoke();pump()
+                form.apply_button.invoke();pump()
                 new_editor=browser.editors[-1]
-                assert new_editor.item()['name']=='New GUI hovercraft' and new_editor.item()['movement']['type']=='hover'
+                assert new_editor.item()['name']=='NEW GUI HOVERCRAFT' and new_editor.item()['movement']['type']=='hover'
                 new_editor.close();pump()
                 ImageGrab.grab(xdisplay=env['DISPLAY']).save(work/'unit-library.png')
                 print('PASS: built-ins, library property/sprite editing, revisions, multiple imports, undo/redo, game export, infantry identities/art and project save/export.',flush=True)

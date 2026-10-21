@@ -13,7 +13,8 @@ from event_editing import edges
 
 
 def region_roots(adventure):
-    return [r[key] for r in adventure.get('regions',[]) for key in ('enter','leave') if key in r]
+    return ([r[key] for r in adventure.get('regions',[]) for key in ('enter','leave') if key in r]+
+            [h['event'] for h in adventure.get('combat_hooks',[])])
 
 
 def graph_checks(document):
@@ -78,7 +79,7 @@ def graph_checks(document):
                     message=('No explicit reachable event sets this objective flag; Lua needs a scenario check.' if lua else 'No reachable flag event activates this objective state.'),
                     object_id=objective['id'],field_path='adventure.objectives/'+objective['id']+'/'+field,location=None))
     return dict(diagnostics=diagnostics,events=len(events),reachable_from_declared_roots=len(reachable),cycles=cycles,
-        basis='Explicit event edges from start, entrances and region triggers; region access, conditions and Lua execution are not proven.')
+        basis='Explicit event edges from start, entrances, regions and combat hooks; trigger access, conditions and Lua execution are not proven.')
 
 
 def objective_access(document, findings):

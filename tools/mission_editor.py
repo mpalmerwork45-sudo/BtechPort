@@ -16,18 +16,25 @@ class MissionEditor:
     def __init__(self,owner):
         self.owner=owner;self.document=owner.document
         self.window=view_window(self,owner,'mission','Mission state')
-        ttk.Label(self.window,text='Regions trigger on leader crossings. Variables persist across maps and saves.',
+        ttk.Label(self.window,text='Mission state, combat groups and timed hooks. Every definition shares project Save, Undo and validation.',
                   padding=12,wraplength=700).pack(fill='x')
+        # Reserve actions before expandable lists so short workspaces keep
+        # the journal and the last hook reachable.
+        ttk.Button(self.window,text='Objectives and journal',command=lambda:owner.event_graph().objectives()).pack(side='bottom',anchor='w',padx=12,pady=8)
         self.tabs=ttk.Notebook(self.window);self.tabs.pack(fill='both',expand=True)
         self.listings={}
-        for collection,title in (('regions','Regions'),('variables','Variables / counters')):
+        for collection,title in (('regions','Regions'),('variables','Variables / counters'),('combat_groups','Combat groups / escorts'),('combat_hooks','Combat hooks / timers')):
             page=ttk.Frame(self.tabs,padding=10);self.tabs.add(page,text=title)
-            listing=ttk.Treeview(page,columns=('name','detail'),show='headings',selectmode='browse')
+            table=ttk.Frame(page)
+            listing=ttk.Treeview(table,columns=('name','detail'),show='headings',selectmode='browse')
             listing.heading('name',text='Name');listing.heading('detail',text='Definition')
             listing.column('name',width=190);listing.column('detail',width=430)
+            scroll=ttk.Scrollbar(table,command=listing.yview);scroll.pack(side='right',fill='y')
+            listing.configure(yscrollcommand=scroll.set)
             listing.pack(fill='both',expand=True);self.listings[collection]=listing
             listing.bind('<Double-1>',lambda _,c=collection:guard(self,lambda:self.edit(c)))
-            bar=ttk.Frame(page,padding=(0,10));bar.pack(fill='x')
+            bar=ttk.Frame(page,padding=(0,10));bar.pack(side='bottom',fill='x')
+            table.pack(fill='both',expand=True)
             for label,callback in (
                 ('New',lambda c=collection:self.edit(c,new=True)),
                 ('Edit',lambda c=collection:self.edit(c)),
@@ -36,20 +43,23 @@ class MissionEditor:
             if collection=='regions':
                 ttk.Button(bar,text='Show on map',command=lambda:guard(self,self.show_map)).pack(side='left',padx=3)
                 ttk.Button(bar,text='Draw region',command=lambda:self.draw_region()).pack(side='left',padx=3)
-        ttk.Button(self.window,text='Objectives and journal',command=lambda:owner.event_graph().objectives()).pack(anchor='w',padx=12,pady=8)
         self.refresh()
 
     def refresh(self):
         for collection,listing in self.listings.items():
             selected=listing.selection();listing.delete(*listing.get_children())
             for value in self.document.adventure.get(collection,[]):
-                detail=(f"{value['map']}  {value['rect']}  {value['repeat']}" if collection=='regions' else
+                from combat_mission_editor import description
+                detail=(description(collection,value) if collection.startswith('combat_') else f"{value['map']}  {value['rect']}  {value['repeat']}" if collection=='regions' else
                         f"{value['type']}  initially {value['initial']}"+(f" / max {value['maximum']}" if value['type']=='counter' else ''))
-                listing.insert('','end',iid=value['id'],values=(value['name'],detail))
+                listing.insert('','end',iid=value['id'],values=(value.get('name',value['id']),detail))
             for identity in selected:
                 if listing.exists(identity):listing.selection_set(identity)
 
     def edit(self,collection,new=False,rect=None,map_id=None,identity=None):
+        if collection.startswith('combat_'):
+            from combat_mission_editor import edit
+            return edit(self,collection,new,identity)
         from adventure_editor import Form
         listing=self.listings[collection];a=self.document.adventure
         identity=identity or (listing.selection()[0] if listing.selection() else None)

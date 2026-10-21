@@ -15,7 +15,7 @@ Write scope: `selected collection`.
 
 | Field | Structural constraint |
 | --- | --- |
-| `collection` * | `{"enum":["maps","tiles","jigsaws","people","shops","encounters","events","objectives","variables","regions","mechs","weapons","equipment","ammunition","presentations","images"]}` |
+| `collection` * | `{"enum":["maps","tiles","jigsaws","people","shops","encounters","events","objectives","variables","regions","combat_groups","combat_hooks","mechs","weapons","equipment","ammunition","presentations","images"]}` |
 | `value` * | `{"type":"object"}` |
 | `mode` | `{"enum":["create","replace"]}` |
 
@@ -39,7 +39,7 @@ Write scope: `selected object`.
 
 | Field | Structural constraint |
 | --- | --- |
-| `collection` * | `{"enum":["maps","tiles","jigsaws","people","shops","encounters","events","objectives","variables","regions","mechs","weapons","equipment","ammunition","presentations","images"]}` |
+| `collection` * | `{"enum":["maps","tiles","jigsaws","people","shops","encounters","events","objectives","variables","regions","combat_groups","combat_hooks","mechs","weapons","equipment","ammunition","presentations","images"]}` |
 | `id` * | `{"type":"string","maxLength":63,"pattern":"^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"}` |
 | `changes` * | `{"type":"object"}` |
 
@@ -62,7 +62,7 @@ Write scope: `selected object`.
 
 | Field | Structural constraint |
 | --- | --- |
-| `collection` * | `{"enum":["maps","tiles","jigsaws","people","shops","encounters","events","objectives","variables","regions","mechs","weapons","equipment","ammunition","presentations","images"]}` |
+| `collection` * | `{"enum":["maps","tiles","jigsaws","people","shops","encounters","events","objectives","variables","regions","combat_groups","combat_hooks","mechs","weapons","equipment","ammunition","presentations","images"]}` |
 | `id` * | `{"type":"string","maxLength":63,"pattern":"^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"}` |
 
 ```json
@@ -420,11 +420,49 @@ Write scope: `editor.construction_sets`, `editor.tile_names`, `art.images`, `adv
 }
 ```
 
+## construction.complete
+
+Complete all roof/face or road parts; refresh generated joins from owned art while preserving hand edits.
+
+Write scope: `editor.construction_sets`, `editor.tile_names`, `editor.tile_sources`, `art.images`, `adventure.tiles`.
+
+| Field | Structural constraint |
+| --- | --- |
+| `style` * | `{"type":"string","maxLength":63,"pattern":"^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"}` |
+| `refresh` | `{"type":"boolean"}` |
+
+```json
+{
+  "op": "construction.complete",
+  "style": "demo:building",
+  "refresh": true
+}
+```
+
+## event.describe
+
+Set an author-facing event graph description; empty text restores the automatic summary.
+
+Write scope: `editor.event_descriptions`.
+
+| Field | Structural constraint |
+| --- | --- |
+| `id` * | `{"type":"string","maxLength":63,"pattern":"^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"}` |
+| `text` * | `{"type":"string","maxLength":240}` |
+
+```json
+{
+  "op": "event.describe",
+  "id": "demo:briefing",
+  "text": "Introduce the convoy and explain the escape route."
+}
+```
+
 ## construction.draw
 
 Draw or extend a building/wall footprint, retaining hand-painted details.
 
-Write scope: `adventure.maps`, `adventure.tiles`, `art.images`, `editor.map_constructions`, `editor.construction_sets`, `editor.tile_names`.
+Write scope: `adventure.maps`, `adventure.tiles`, `art.images`, `editor.map_constructions`, `editor.construction_sets`, `editor.tile_names`, `editor.tile_sources`.
 
 | Field | Structural constraint |
 | --- | --- |
@@ -434,7 +472,7 @@ Write scope: `adventure.maps`, `adventure.tiles`, `art.images`, `editor.map_cons
 | `start` * | `{"type":"array","items":{"type":"integer","minimum":0,"maximum":1023},"minItems":2,"maxItems":2}` |
 | `end` | `{"type":"array","items":{"type":"integer","minimum":0,"maximum":1023},"minItems":2,"maxItems":2}` |
 | `shape` | `{"enum":["Brush","Rectangle","Courtyard","Erase"]}` |
-| `stories` * | `{"type":"integer","minimum":1,"maximum":32}` |
+| `stories` * | `{"type":"integer","minimum":0,"maximum":32}` |
 | `width` | `{"type":"integer","minimum":1,"maximum":8}` |
 | `erase` | `{"type":"boolean"}` |
 

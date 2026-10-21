@@ -23,6 +23,23 @@ SOURCE_FILES = ('CREDITS.md', 'LICENSE.md', 'SOURCE-README.md', 'ART-SOURCE-READ
                 'VEHICLE-SOURCE-README.md', 'sources.json', 'ORIGINAL-ADAPTATION.md')
 
 
+def library_name(name):
+    """Uppercase model names; preserve mixed-case model codes containing digits."""
+    return ' '.join(word if any(c.isdigit() for c in word) else word.upper() for word in name.split())
+
+
+def normalize_names(bundle):
+    value=copy.deepcopy(bundle)
+    if value['kind']!='Infantry':
+        value['name']=library_name(value['name'])
+        for unit in value['content']['mechs']:
+            unit['name']=library_name(unit['name'])
+            if 'label' in unit:unit['label']=library_name(unit['label'])
+        note=value.get('editing',{}).get('catalogue',{}).get(value['definition'],{})
+        if note.get('name'):note['name']=library_name(note['name'])
+    return value
+
+
 def read_json(path):
     if path.is_symlink() or path.stat().st_size > 16*1024*1024:
         raise EditorError(f'Invalid or oversized library file: {path.name}')
@@ -201,7 +218,7 @@ class UnitLibrary:
             run_validator(self.validator, Path(tmp))
 
     def save(self, bundle, expected=None, variant=False):
-        value = copy.deepcopy(bundle)
+        value = normalize_names(bundle)
         if variant:
             value['entry_id'] = 'library:variant-' + uuid.uuid4().hex[:16]
             value['definition'] = value['entry_id']

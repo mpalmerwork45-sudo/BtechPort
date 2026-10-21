@@ -47,9 +47,9 @@ def navigate(workspace,problem):
         field=destination.get('path','').rsplit(']',1)[-1].lstrip('.')
         if graph.properties and field:graph.properties.show_error(FieldError(problem['message'],field))
         return True
-    if collection in ('variables','regions'):
+    if collection in ('variables','regions','combat_groups','combat_hooks'):
         editor=maps.missions();editor.listings[collection].selection_set(identity)
-        editor.tabs.select(0 if collection=='regions' else 1)
+        editor.tabs.select(('regions','variables','combat_groups','combat_hooks').index(collection))
         if collection=='regions':editor.show_map()
         return True
     if collection=='objectives':

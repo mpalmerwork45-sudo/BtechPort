@@ -1,4 +1,24 @@
-# Project status — original fidelity and editable projects, 2026-10-20
+# Project status — original fidelity and editable projects, 2026-10-21
+
+**AI6b/AI6c and construction coverage — implemented, 2026-10-21.**
+[Cairn Passage](../examples/cairn-passage/README.md) now combines timed relay
+protection, reserve waves, an allied guard, a protected vehicle route, losses,
+retreat and optional save version 51. Editor forms, command schemas, Lua queries
+and scenario assertions share the native engine. [Semantics and limits](COMBAT_MISSIONS.md)
+and [test evidence](TESTING.md) distinguish bounded verification from general AI balance.
+
+Construction styles expose all roof/face roles and road connections, compose
+joins from owned artwork, preserve hand edits and travel through the library.
+All four T junctions are editable. Walls support 0..3 stories; zero renders only
+top tiles. Event graph descriptions now include all 54 Last Beacon events.
+Tables support ascending/descending/original order and dropdowns support typing.
+Unit Library model names are uppercase while designation codes remain intact.
+
+**Next: AI7a**, modular campaign source and reproducible compilation. Runtime
+capacity expansion, world-spanning verification and AI8 are still future work.
+Native Windows Tk remains **UNKNOWN**; Windows runtime checks use isolated Wine.
+
+## Earlier deliveries
 
 **AI5 collaborative authoring — VERIFIED, 2026-10-20:** **Project → Changes and
 protection** now reviews actual object/field changes, paired local maps, event
@@ -25,7 +45,7 @@ See [verification](TESTING.md#ai5-collaborative-authoring--2026-10-20) and the
 [author guide](AI_AUTHORING_GUIDE.md#review-changes-and-preserve-human-work).
 Native Windows Tk remains **UNKNOWN**.
 
-**Next proposed milestone: AI6a**, named mission regions, persistent variables/
+**Historical next step (now delivered): AI6a**, named mission regions, persistent variables/
 counters and explicit objectives. AI tools already expose jigsaw worlds,
 generation/painting, town placement and world previews. Larger campaign
 capacity is AI7; world-spanning navigation verification remains future work.
