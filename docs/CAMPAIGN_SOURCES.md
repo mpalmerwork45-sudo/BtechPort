@@ -163,8 +163,8 @@ original resource paths and prepared caches. The user's Last Beacon is not
 changed.
 
 This is a source/build and composition demonstration, not a new long campaign
-or proof of all world routes. The installed runtime limits are unchanged.
-**AI7b** remains the next milestone: measure realistic larger campaigns, then
-expand specific capacities with explicit save/version and memory evidence.
+or proof of all world routes. Source conversion preserves the input adventure
+version and its limits. **AI7b is now delivered:** an explicit v3 upgrade enables
+larger campaigns. See [capacities, measured fixtures and save compatibility](CAMPAIGN_CAPACITY.md).
 Native Windows Tk behavior remains unverified; Windows runtime packages are
 checked separately under Wine. See [verification](TESTING.md#ai7a-campaign-source-modules--2026-10-22).

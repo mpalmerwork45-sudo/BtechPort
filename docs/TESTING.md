@@ -1,5 +1,79 @@
 # Build, verification and original oracle — 2026-10-22
 
+## AI7b measured campaign capacity — 2026-10-22
+
+**VERIFIED within the declared fixtures:** optional adventure v3 supports
+64 local maps, 64 encounters, 1,024 events and 128 objectives/variables.
+Original/v1/v2 formats keep their behavior and save codecs. Runtime 0.2.0,
+the schema, GUI upgrade and AI capabilities agree on explicit requirements.
+The [capacity audit](CAMPAIGN_CAPACITY.md) records handles, discovery, codec
+layout, unchanged limits, measurements and upgrade/refusal policy.
+Implementation commit: `134f7c9`.
+
+- Full Python regression: **304/304 PASS**, 30.873 s,
+  `work/ai7b-python.log`; final focused capacity regression **9/9 PASS**,
+  `work/ai7b-capacity-tests.log`. These exercise a complete 20-contract route,
+  reproducible source builds, simultaneous maximum counts, each one-over-bound
+  refusal, old-format limits, actual v49/v50/v51 saved fixtures, byte-identical
+  resave, upgrade Undo/Redo, current-format inspection, high event once bits,
+  variable/objective 127, encounter 63, generated scene 319, page 128 of the
+  journal, optional combat continuation, malformed extensions/downgrades and
+  distinct discovery for local maps at the same coordinates without planets.
+- Native regression **91/91 PASS**, 23.18 s, `work/ai7b-native.log`. Current
+  Linux and Windows targets build with at most two jobs, sequentially:
+  `work/ai7b-linux-build.log`, `work/ai7b-windows-build.log`.
+- The pre-change binaries at `5219a1a` accept the eight-contract campaign
+  (16 maps / 163 events) and reject the 20-contract campaign at map 17.
+  `work/ai7b-before/measurements.json` records diagnostics, time and peak RSS.
+  Pre-change Original, Updated and authored v49/v50/v51 saves load and resave
+  **identical bytes and logical projections**: `work/ai7b-old-saves.json`.
+  Independent old saves are retained in `tests/fixtures/capacity-v*.btp`, with
+  [provenance](../tests/fixtures/capacity-saves.md). An old binary refuses the
+  explicit v52 payload; cross-format migration and strict-content mismatches
+  are refused without overwriting the original save.
+- `python3 tools/campaign_capacity.py --output work/ai7b-frontier --verify`
+  **PASS**, `work/ai7b-fixture.log`. The 573-file / 1,212,945-byte source fixture
+  has 40 local maps, two planets, 20 encounters, 403 events and 40 variables and
+  objectives. Its two builds have fingerprint
+  `9f97fc0010c27f9e157dc8bed290f34b6e7d681aaf4e84859f622f1bfc2b5a7c`.
+  All 20 battles and checkpoints complete through ordinary inputs in
+  1,326 ticks / 142 scenario steps, final credits 4,000. Repeated weak-guardian
+  contracts test infrastructure, not encounter variety or campaign balance.
+- Windows under isolated Wine: the 20-contract route, simultaneous maxima,
+  high encounter with combat hook and held journal page 128 **PASS**. Final
+  save bytes match Linux in all four cases (`work/ai7b-cross-platform.json`);
+  logs `work/ai7b-windows-{scenario,maximum,combat,journal}.log`. The new authored
+  payload remains 20,480 bytes / 20,640 bytes including its project envelope.
+- AddressSanitizer, UndefinedBehaviorSanitizer and LeakSanitizer: the same
+  four declared cases **PASS**, `work/ai7b-sanitize-{frontier,maximum,combat,journal}.log`.
+  Refreshed the existing sanitizer CMake configuration before rebuilding the
+  bounded targets. Leak checks needed execution outside the tracing sandbox;
+  no sanitizer was disabled to obtain these results.
+- `python3 tools/native_smoke.py --editor-capacity-only`: **PASS**,
+  `work/ai7b-gui.log`. Real controls exercise explicit upgrade, Undo/Redo,
+  Save/reopen, mouse painting on map 40, the second planet, a late event's
+  inspector, source-file diagnostic/navigation, repair, Build/export/reopen
+  and SDL Play/Stop. Inspected `work/editor-campaign-capacity.png` and the
+  native `work/ai7b-journal-128.png`; buttons/scrollbars and journal text fit.
+- Capacity tests exposed two old journal-page guards at 32, now keyed to
+  format/version. The checkpoint reporter also no longer erases a loader/save
+  diagnostic by copying its own error buffer onto itself.
+- Memory/timing: `work/ai7b-measurements.json` and
+  `work/editor-campaign-capacity.json`. Fixed adventure/project allocation grows
+  by **3.54 MiB**, live state by **580 bytes**. Twenty-contract native validation
+  took 19.9–20.7 ms / 28.7–28.8 MiB peak RSS; simultaneous maxima with
+  checkpoint/render took 95 ms / 49.7 MiB. The GUI journey peaked at 136.2 MiB,
+  opened its large source/map view in 55 ms and had a maximum heartbeat gap of
+  594 ms across synchronous document/view work. These host measurements do not
+  establish performance at arbitrary combinations of every aggregate limit.
+- Reference guard: **1,287 entries unchanged**, `work/ai7b-reference.log`.
+  The three user-edited Last Beacon files match `work/ai7b-baseline.json` and
+  remain outside the implementation commits. `git diff --check` passes.
+
+Native Windows Tk, broad world traversal and general combat balance remain
+**UNKNOWN**. V1/v2-to-v3 saves require a new campaign; compatible same-format
+revision migration retains its existing narrower policy. AI8 remains next.
+
 ## AI7a campaign source modules — 2026-10-22
 
 **VERIFIED within the following fixtures:** optional `SOURCE.json` projects

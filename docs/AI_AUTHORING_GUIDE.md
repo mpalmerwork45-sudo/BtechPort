@@ -2,8 +2,10 @@
 
 **Verified through 2026-10-22:** AI6 includes regions, persistent mission state,
 combat hooks, reinforcements and escorts. AI7a adds optional modular campaign
-sources, deterministic builds and source diagnostics. See the
-[source/build guide](CAMPAIGN_SOURCES.md) and [verification](TESTING.md).
+sources, deterministic builds and source diagnostics. AI7b adds opt-in larger
+campaign budgets with explicit save compatibility. See the
+[source/build guide](CAMPAIGN_SOURCES.md), [capacity guide](CAMPAIGN_CAPACITY.md)
+and [verification](TESTING.md).
 
 The Construction Kit now supports a model-independent, display-independent
 authoring CLI. It edits ordinary projects through the same document,
@@ -12,8 +14,9 @@ The editor remains fully available. Games require no AI service.
 
 This implements **AI1/AI2**, the discovery workflow from **AI3**, bounded
 mission analysis/testing from **AI4**, and the collaborative workflow from
-**AI5**, **AI6** mission mechanics and **AI7a** source/build support. Arbitrary mission simulation, further engine mechanics and larger
-campaign capacity remain future work. There is no background model or network
+**AI5**, **AI6** mission mechanics and **AI7a/AI7b** source/build and capacity support.
+Arbitrary mission simulation, further engine mechanics and capacity beyond the
+documented v3 budgets remain future work. There is no background model or network
 service to configure.
 
 All project commands accept either an existing `project.json` package or a
@@ -445,9 +448,14 @@ ordinary-input tests use actual engine collision. `map.paint` defaults to the
 visible surface (`layer: -1`), with `0` for base and `1+` for overlays. Building
 detail edits are retained by the same metadata reconciliation as manual paint.
 
-Installed limits include 16 local maps (16..64 tiles per side), 16 encounters,
-16 entrances per map, five choices plus cancel, 256 event nodes, 64 flags and
-32 objectives. Art allows 4096 images / 1,048,576 total pixels / 512 action
+Adventure v1/v2 retain 16 local maps, 16 encounters, 256 events and 32 objectives
+and variables. Runtime 0.2.0's explicit `campaign.upgrade` command enables v3:
+**64 maps, 64 encounters, 1,024 events, 128 objectives and variables**. Upgrade
+changes save identity and requires a new campaign. `inspect` reports limits for
+the current format; `capabilities` includes old-format overrides and requirements.
+See [the capacity guide](CAMPAIGN_CAPACITY.md) for the upgrade and measured fixture.
+Local maps still allow 16..64 tiles per side, 16 entrances per map, five choices
+plus cancel and 64 flags. Art allows 4096 images / 1,048,576 total pixels / 512 action
 tracks. Worlds share sector and discovery budgets, including unplaced local
 maps. A default world uses the original 128 × 128 jigsaws; choose smaller worlds
 when placing multiple planets or retaining separate interiors. The C validator
@@ -507,8 +515,8 @@ uses a declared seed and piece weights, `world.paint` places pieces,
 Several worlds are supported within the runtime's compiled/shared capacity.
 Query remaining capacity before expanding a project. The review's map tab
 shows local maps; use `world-preview` for a composed world/city image and the
-field comparison for the underlying world changes. Larger campaign capacity
-belongs to AI7; world-spanning navigation verification is still future work.
+field comparison for the underlying world changes. AI7b supplies the documented
+larger campaign capacities; world-spanning navigation verification is still future work.
 
 All visual output paths must be new and outside the project. Rendering does not
 edit artwork, graph layout, game data or Undo history.

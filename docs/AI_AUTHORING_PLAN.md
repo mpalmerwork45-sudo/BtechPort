@@ -3,7 +3,7 @@
 Recorded 2026-10-18 against `266d21f`, with the user's revised Last Beacon
 preserved in `bed75e9`.
 
-**Status: AI7a IMPLEMENTED, 2026-10-22.** AI1/AI2 have the versioned
+**Status: AI7a/AI7b IMPLEMENTED, 2026-10-22.** AI1/AI2 have the versioned
 inspection/command contract, transactional CLI, shared editor operations and
 command-file exchange described in the [author guide](AI_AUTHORING_GUIDE.md).
 The approved next four steps add shared asset discovery, labelled visual
@@ -23,7 +23,8 @@ states and compound conditions, with editor controls and the playable
 [Lifecycle and limits](MISSION_STATE.md) are explicit. AI6b/AI6c add
 [combat hooks, reserves and escort actors](COMBAT_MISSIONS.md), exercised in
 Cairn Passage. AI7a adds [modular sources and deterministic builds](CAMPAIGN_SOURCES.md).
-AI7b and AI8 remain proposed. The editor remains the human workspace.
+AI7b adds [measured campaign budgets and save v52](CAMPAIGN_CAPACITY.md).
+AI8 remains proposed. The editor remains the human workspace.
 
 ## 1. Intended result
 
@@ -69,7 +70,7 @@ Specific gaps identified at the recorded baseline:
   the existing schemas as a complete contract.
 - Lua currently exposes `game.flag`, `game.credits` and `game.command` to choose
   a declared continuation. It is not a general combat or mission-control API.
-- Runtime bounds include 16 local maps, 16 encounter definitions, 256 event
+- At planning time, runtime bounds included 16 local maps, 16 encounter definitions, 256 event
   nodes, 64 flags and 32 objectives. Worlds have a shared sector/discovery
   budget. Query actual limits from the installed runtime and show remaining
   capacity; changes to these bounds require an implementation/save audit.
@@ -136,7 +137,7 @@ usable stopping point. Relative size indicates scope, not a calendar estimate.
 | AI4 | Mission scenarios, assertions and playtest reports | AI1–AI2; AI3 for visual reports | Large | Delivered within the recorded route/geometry bounds |
 | AI5 | Editor review, protected edits and live sessions | AI2–AI4 | Large | Delivered; local file-inbox transport |
 | AI6 | Additional mission primitives and Lua/event support | AI2, AI4–AI5 | Large, split below | AI6a/AI6b/AI6c delivered |
-| AI7 | Modular campaigns, reproducible compilation and capacity work | AI2, AI4–AI5; include AI6 formats when available | Large, split below | AI7a delivered; AI7b proposed |
+| AI7 | Modular campaigns, reproducible compilation and capacity work | AI2, AI4–AI5; include AI6 formats when available | Large, split below | AI7a and AI7b delivered |
 | AI8 | Complete authoring demonstration and delivery | AI1–AI7 | Medium | Proposed |
 
 **First useful AI creation checkpoint: AI1–AI4.** It generates into a separate
@@ -504,6 +505,18 @@ content changes still follow explicit package/save compatibility rules.
 
 ### AI7b: measured capacity extensions
 
+**Delivered 2026-10-22.** Adventure v3 explicitly raises local maps/encounters
+to 64, events to 1,024 and objectives/variables to 128. Native schema and AI
+capabilities report format-specific limits and runtime 0.2.0 requirements.
+Save v52 retains the existing file size and old codecs; upgrades require new
+campaigns. A 20-contract two-planet source project completes normal combat and
+checkpoints on Linux/Wine. Simultaneous maxima, one-over-limit refusals, high
+handles, journal page 128, source errors, editor edits/build/Play, memory and
+real old saves are checked. [Audit and bounds](CAMPAIGN_CAPACITY.md),
+[verification](TESTING.md#ai7b-measured-campaign-capacity--2026-10-22).
+
+The following design requirements governed that implementation:
+
 Use generated realistic campaigns to identify actual constraints. Expand local
 maps, encounter/objective/event/variable budgets only after auditing handle
 widths, sentinels, serialization, discovery, UI and runtime memory. Report the
@@ -630,18 +643,18 @@ Decisions established by this plan:
 - Make the first demonstrated mission use existing mechanics; add engine
   capabilities through separately verified increments.
 
-Remaining implementation choices: measured capacity targets and compatibility
-representation (AI7b), and useful external assistant transports (AI8). Source
+Remaining implementation choices include the curated campaign brief, delivery
+packaging and useful external assistant transports (AI8). Source
 modules now use the documented `btp-campaign-source-v1` format. No AI provider
 choice is required for ordinary editing, compilation or gameplay.
 
-**Next proposed milestone: AI7b — measured campaign capacity extensions.**
+**Next proposed milestone: AI8 — demonstration, adapters and delivery.**
 AI6b/AI6c now supply round hooks, atomic reinforcement groups, scripted outcomes,
 friendly/neutral actors and terrain-aware waypoints. Cairn Passage demonstrates
 defence and escort with declared native success/loss/retreat scenarios. Construction
 coverage and shared-library styles support all roof masks, wall levels and road
-junctions. AI7a is delivered; AI7b and AI8 remain future work. Source compilation
-does not raise runtime limits.
+junctions. AI7a and AI7b are delivered; AI8 remains future work. Source compilation
+by itself does not raise runtime limits; the explicit v3 upgrade does.
 
 The separately authorized [shared Construction Library](CONSTRUCTION_LIBRARY.md)
 is delivered: building, wall and road definitions and stored patterns transfer
@@ -650,6 +663,6 @@ previews, command imports and reviewed/live authoring sessions share it.
 
 World creation, seeded jigsaw generation/painting, terrain patches, town-map
 placement and composed world previews are already exposed to AI tools.
-AI7b covers larger campaign/capacity work; world-wide traversal verification is
+AI7b supplies the documented campaign capacities; world-wide traversal verification is
 still an AI4 extension. Keep those distinctions visible rather than advertising
 an unbounded planet/campaign generator.

@@ -1,6 +1,6 @@
 # Regions, variables and objectives — AI6a
 
-These optional authored-game features work in adventure schemas 1 and 2.
+These authored-game features work in adventure schemas 1, 2 and 3.
 Existing flag-based games keep their behavior. The original CHI campaign
 continues through its existing BLD path.
 
@@ -136,12 +136,16 @@ The existing 256 KiB memory, 10,000-instruction and 64-command synchronous
 event-chain bounds remain. Region dispatch shares the event-chain budget;
 cyclic transfers or conditions do not bypass it.
 
-Limits are 32 variables, 32 regions, 32 objectives and eight conditions per
+V1/v2 limits are 32 variables, 32 regions, 32 objectives and eight conditions per
 check, alongside the existing 256 event nodes. The optional mission payload
 uses save version 50 and stores values, objective states, current membership,
 fired hooks and pending overlapping hooks. Games without these features keep
 their existing encoding. Package identity/fingerprint checks still apply:
 this does not migrate saves across changed mission definitions.
+
+Adventure v3 raises variables/objectives to 128 and events to 1,024, using
+explicit save v52. Regions remain at 32. See [campaign capacities](CAMPAIGN_CAPACITY.md)
+for the opt-in upgrade, legacy-save policy and measurements.
 
 ## Demonstration and evidence
 

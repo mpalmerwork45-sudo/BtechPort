@@ -1,5 +1,20 @@
 # Project status — original fidelity and editable projects, 2026-10-22
 
+**AI7b campaign capacity — implemented and verified, 2026-10-22.** Runtime
+0.2.0 adds opt-in adventure v3: **64 local maps, 64 encounters, 1,024 events,
+128 objectives and 128 variables**. Use **Project → Campaign sources and build
+→ Upgrade campaign limits**, or the shared `campaign.upgrade` command. Existing
+projects keep their format. Original/Updated and old authored saves still load;
+v3 uses explicit save v52 and requires a new campaign after a format upgrade.
+See [limits, compatibility and measurements](CAMPAIGN_CAPACITY.md).
+
+The generated independent Frontier Circuit completes 20 contracts and checkpoints
+across two planets, with identical Linux/Wine save bytes. Maximum/beyond-limit,
+high-handle, journal page 128, old-save, corruption and editor journeys pass.
+The user's three Last Beacon edits and both reference directories remain intact.
+**Next: AI8**, a curated campaign demonstration, recipes and delivery. General
+world-route verification and native Windows Tk remain unverified.
+
 **AI7a modular campaign sources — implemented, 2026-10-22.** Optional
 `SOURCE.json` projects share GUI/CLI editing, journalled Save, Undo and recovery.
 Maps, events, definitions, artwork and text compile deterministically to the
@@ -14,8 +29,8 @@ escort route passes on Linux and under Wine, with checkpoints. Source notes
 and formatting preserve save identity; conversion of a legacy package requires
 a new campaign or deliberate save migration. Runtime/save layouts are unchanged.
 
-**Next: AI7b**, measured campaign capacity extensions. AI8 delivery and wider
-world traversal verification remain future work. Native Windows Tk is **UNKNOWN**.
+AI7b followed with the optional capacity extension described above. AI8 delivery
+and wider world traversal verification remain future work. Native Windows Tk is **UNKNOWN**.
 
 **AI6b/AI6c and construction coverage — implemented, 2026-10-21.**
 [Cairn Passage](../examples/cairn-passage/README.md) now combines timed relay
@@ -31,8 +46,8 @@ top tiles. Event graph descriptions now include all 54 Last Beacon events.
 Tables support ascending/descending/original order and dropdowns support typing.
 Unit Library model names are uppercase while designation codes remain intact.
 
-**AI7a is delivered above.** Runtime capacity expansion, world-spanning verification
-and AI8 are still future work.
+**AI7a and AI7b are delivered above.** Further capacity changes, world-spanning
+verification and AI8 remain future work.
 Native Windows Tk remains **UNKNOWN**; Windows runtime checks use isolated Wine.
 
 ## Earlier deliveries

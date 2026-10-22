@@ -143,6 +143,12 @@ provides the same workflow for automated authors. See the
 [source/build guide](docs/CAMPAIGN_SOURCES.md), including save compatibility and
 the reproducible two-planet Cairn example. Existing projects need no conversion.
 
+**Larger campaigns:** the same panel's **Upgrade campaign limits** enables
+64 local maps, 64 encounters, 1,024 events and 128 objectives/variables.
+This optional v3 format requires runtime 0.2.0 and a new campaign; retain the
+old package for its existing saves. AI authors use `campaign.upgrade`.
+See [limits and the reproducible 20-contract fixture](docs/CAMPAIGN_CAPACITY.md).
+
 The [shared authoring format and project loader](docs/M5_AUTHORING_PROJECTS.md)
 now support editable CHI-dependent projects, up to 256 mech definitions, custom
 weapon statistics, explicit portrait assets and separate package-bound saves.

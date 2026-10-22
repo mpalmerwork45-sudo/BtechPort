@@ -1,11 +1,15 @@
 # Open questions after bounded M4 work and authoring increments — 2026-10-22
 
-AI7a's [modular source/build workflow](CAMPAIGN_SOURCES.md) is delivered. AI7b
-still needs measured realistic campaigns and a targeted audit of handle widths,
-serialization, discovery, memory and UI before increasing runtime limits.
+AI7a's [modular source/build workflow](CAMPAIGN_SOURCES.md) and AI7b's
+[measured v3 capacities](CAMPAIGN_CAPACITY.md) are delivered. The supported
+extension is 64 local maps/encounters, 1,024 events and 128 objectives/variables.
+Regions, hooks/groups, discovery, JSON parser and source budgets remain bounded.
+The larger GUI journey still showed a 594 ms maximum heartbeat gap during
+synchronous document/view work; further profiling can target those pauses.
 Source-format budgets (4,096 files / 128 MiB) do not expand gameplay budgets.
 Compilation canonicalizes JSON, so legacy saves remain attached to their old
-package unless explicitly migrated; source reorganization and author notes
+package unless explicitly migrated. Campaign format upgrades themselves refuse
+save migration and require a new campaign. Source reorganization and author notes
 alone preserve already-compiled save identity. Native Windows Tk, general
 world-wide navigation and a larger AI8 campaign remain unverified.
 
@@ -25,7 +29,7 @@ party compositions, world routes, arbitrary conditions/Lua or general combat
 balance. Those remain extensions of AI4. AI5 now supplies a Changes view,
 protected objects/fields/local regions and local editor sessions. Delivered
 increments now include AI6 mission state, reinforcements and escorts, plus AI7a
-modular sources. Measured campaign capacity follows separately.
+modular sources and AI7b's measured campaign capacity. AI8 remains proposed.
 Ordinary closed-project CLI work still cannot
 inspect unsaved forms: use `session snapshot` against an explicitly started
 editor session, or save/close before CLI publication. Native Windows Tk remains
@@ -33,7 +37,7 @@ unverified. Model/provider selection is optional and does not block these tools.
 
 World creation, jigsaw generation/painting, terrain patches and city placement
 are already exposed to AI authors, with composed world/city previews. Larger
-planet/campaign capacity remains AI7 work; world-wide traversal checks are
+planet/campaign capacity beyond the v3 budgets needs another audit; world-wide traversal checks are
 still unverified. Current protection rectangles and paired review-map previews
 cover local maps; whole world objects/fields can be protected and world
 changes inspected through field comparisons and `world-preview`.

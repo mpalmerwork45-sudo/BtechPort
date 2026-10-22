@@ -92,13 +92,18 @@ encounter **including reserves and ordinary enemies**, and 24 combat slots
 including the party and ejected pilots. Event-chain and Lua budgets remain as
 documented in [mission state](MISSION_STATE.md).
 
-Only packages using combat missions write optional state version 51 (`BTPp`).
+V1/v2 packages using combat missions write optional state version 51 (`BTPp`).
 Its 512-byte versioned continuation occupies previously reserved combat bytes
 5600..6111 (absolute offset 9696). State size remains 20,480 bytes; older and
 original-game encodings keep their layouts. Saves preserve pending hooks,
 one-shot bits, deployment, stable unit identities, actor progress and outcomes.
 The project envelope still requires the exact saved content. Revised example
 artwork therefore needs a new campaign/save namespace.
+
+Adventure v3 uses state v52 with an explicit presence flag for this same combat
+continuation. It supports 64 encounters and 1,024 events while retaining the
+group/hook/actor limits above. [Campaign capacity](CAMPAIGN_CAPACITY.md) documents
+the format upgrade, save refusal policy and high-encounter verification.
 
 Verification covers declared routes and seeds, not general tactical balance or
 unbounded campaign scale. Native Windows Tk remains unverified; Windows runtime
