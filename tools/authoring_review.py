@@ -149,7 +149,7 @@ def prepare(document,request,folder,*,base_dir=None,selected=None,settings=None,
         # Both complete snapshots are retained for review/recovery. The live
         # document is still untouched, including its drafts and Undo stack.
         for name,source in [('before',document),('after',candidate)]:
-            root=folder/name;root.mkdir();source.stage(root)
+            root=folder/name;root.mkdir();source.stage_authoring(root)
         record.update(result=result,result_revision=revision(candidate),changes=details(document,candidate,result['changes']),
                       conflicts=conflicts(document,candidate),dependency_before=dependencies(document),dependency_after=dependencies(candidate))
         record['displaced_details']=result['displaced_details']

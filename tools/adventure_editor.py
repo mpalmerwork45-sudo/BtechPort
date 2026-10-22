@@ -202,7 +202,12 @@ class AdventureEditor:
         if state['template']:
             self.render_event_form(state['template'])
             for k,v in state['values'].items():self.event_vars[k].set(v)
-            if self.event_text and state['text'] is not None:self.event_text.delete('1.0','end');self.event_text.insert('1.0',state['text'])
+            if self.event_text and state['text'] is not None:
+                self.event_text.delete('1.0','end');self.event_text.insert('1.0',state['text'])
+                # Restoring a validation snapshot is not a new keystroke.
+                # Otherwise Tk's queued Modified event makes a clean dialogue
+                # draft dirty and falsely invalidates an in-flight Save/Play.
+                self.event_text.edit_modified(False)
         self.event_pending=state['pending']
         if state.get('construction') and hasattr(self,'construction_tools'):self.construction_tools.restore(state['construction'])
 

@@ -96,7 +96,8 @@ def capture(scope):
         drafts.append(dict(view=describe(draft.view,scope.workspace),state=state))
     context=getattr(scope.owner,'library_context',None)
     return dict(version=1,identity=identity(scope),title=document.manifest['title'],root=str(document.root),
-        baseline=document.snapshot,state={k:getattr(document,k) for k in FIELDS},drafts=drafts,
+        baseline=document.snapshot,source_baseline=document.source.disk if document.source is not None else None,
+        state={k:getattr(document,k) for k in FIELDS},drafts=drafts,
         views=[describe(p.controller,scope.workspace) for p in scope.workspace.views.values() if p.scope is scope and p.controller is not None and scope.workspace.tabs.tab(p,'state')!='hidden'],
         library=dict(root=str(context.browser.library.root),bundle=context.bundle) if context else None)
 
@@ -104,7 +105,8 @@ def capture(scope):
 def conflicts(record,document):
     if record.get('library'):
         return False  # The caller checks the library's independent revision.
-    return record['baseline'] != document.snapshot
+    return (record['baseline'] != document.snapshot or
+            record.get('source_baseline') != (document.source.disk if document.source is not None else None))
 
 
 def restore_document(record,document):
@@ -136,6 +138,9 @@ def open_route(scope,route,cache=None):
     elif kind=='changes':
         from editor_changes import open_changes
         view=open_changes(owner)
+    elif kind=='sources':
+        from editor_sources import open_sources
+        view=open_sources(owner)
     elif kind=='pixels':
         from graphics_editor import open_image_editor
         image=next(i for i in scope.document.art['images'] if i['id']==ident)
@@ -315,7 +320,7 @@ class Recovery:
         if not folder:return None
         root=Path(folder)
         if any(root.iterdir()):raise EditorError('Choose an empty directory; existing files will be preserved.')
-        for name,data in record['baseline'].items():
+        for name,data in (record.get('source_baseline') or record['baseline']).items():
             file=child(root,name);file.parent.mkdir(parents=True,exist_ok=True);file.write_bytes(data)
         app.set_document(ProjectDocument(root,self.workspace.validator),check=False)
         target=app._editor_scope;self.restore(target,record,allow_copy=True)

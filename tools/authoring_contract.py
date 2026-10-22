@@ -20,7 +20,7 @@ class AuthoringError(EditorError):
 
 
 def diagnostic(error):
-    if isinstance(error, AuthoringError): return error.diagnostic
+    if hasattr(error, 'diagnostic'): return error.diagnostic
     # C loader messages already carry a JSON path with stable object IDs.
     message = str(error)
     match = re.search(r': (\$[^\n]*?): (.*)', message)

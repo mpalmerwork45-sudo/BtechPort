@@ -135,6 +135,14 @@ beside the new game. The [eight-milestone plan](docs/AI_AUTHORING_PLAN.md) recor
 the completed boundaries and proposed mission/campaign work. The full manual
 editor remains central; generated games run without an AI service.
 
+**Modular campaign sources** are available through **Project → Campaign sources
+and build**. Create a separate source copy, edit it normally, and build a playable
+package; maps, missions, definitions and dialogue live in separate files.
+`python3 tools/author.py source convert PROJECT --output NEW_SOURCE_DIRECTORY`
+provides the same workflow for automated authors. See the
+[source/build guide](docs/CAMPAIGN_SOURCES.md), including save compatibility and
+the reproducible two-planet Cairn example. Existing projects need no conversion.
+
 The [shared authoring format and project loader](docs/M5_AUTHORING_PROJECTS.md)
 now support editable CHI-dependent projects, up to 256 mech definitions, custom
 weapon statistics, explicit portrait assets and separate package-bound saves.

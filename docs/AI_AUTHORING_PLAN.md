@@ -3,7 +3,7 @@
 Recorded 2026-10-18 against `266d21f`, with the user's revised Last Beacon
 preserved in `bed75e9`.
 
-**Status: AI6a/AI6b/AI6c IMPLEMENTED, 2026-10-21.** AI1/AI2 have the versioned
+**Status: AI7a IMPLEMENTED, 2026-10-22.** AI1/AI2 have the versioned
 inspection/command contract, transactional CLI, shared editor operations and
 command-file exchange described in the [author guide](AI_AUTHORING_GUIDE.md).
 The approved next four steps add shared asset discovery, labelled visual
@@ -20,8 +20,10 @@ See [AI5 verification](TESTING.md#ai5-collaborative-authoring--2026-10-20).
 AI6a now adds named regions, persistent typed variables, explicit objective
 states and compound conditions, with editor controls and the playable
 [Argent Recovery](../examples/argent-recovery/README.md) example.
-[Lifecycle and limits](MISSION_STATE.md) are explicit. AI6b/AI6c now add [combat hooks, reserves and escort actors](COMBAT_MISSIONS.md), exercised in Cairn Passage. AI7–AI8
-remain proposed. The editor remains the human workspace.
+[Lifecycle and limits](MISSION_STATE.md) are explicit. AI6b/AI6c add
+[combat hooks, reserves and escort actors](COMBAT_MISSIONS.md), exercised in
+Cairn Passage. AI7a adds [modular sources and deterministic builds](CAMPAIGN_SOURCES.md).
+AI7b and AI8 remain proposed. The editor remains the human workspace.
 
 ## 1. Intended result
 
@@ -134,7 +136,7 @@ usable stopping point. Relative size indicates scope, not a calendar estimate.
 | AI4 | Mission scenarios, assertions and playtest reports | AI1–AI2; AI3 for visual reports | Large | Delivered within the recorded route/geometry bounds |
 | AI5 | Editor review, protected edits and live sessions | AI2–AI4 | Large | Delivered; local file-inbox transport |
 | AI6 | Additional mission primitives and Lua/event support | AI2, AI4–AI5 | Large, split below | AI6a/AI6b/AI6c delivered |
-| AI7 | Modular campaigns, reproducible compilation and capacity work | AI2, AI4–AI5; include AI6 formats when available | Large, split below | Proposed |
+| AI7 | Modular campaigns, reproducible compilation and capacity work | AI2, AI4–AI5; include AI6 formats when available | Large, split below | AI7a delivered; AI7b proposed |
 | AI8 | Complete authoring demonstration and delivery | AI1–AI7 | Medium | Proposed |
 
 **First useful AI creation checkpoint: AI1–AI4.** It generates into a separate
@@ -474,6 +476,16 @@ boundaries. Original campaign/regression scenarios retain their behavior.
 
 ### AI7a: editable modules and deterministic builds
 
+**Delivered 2026-10-22.** Optional `SOURCE.json` projects compile to existing
+native packages. GUI/CLI Save updates source-owned objects and text; Play,
+launcher and Build use validated compiled packages. Source paths accompany
+diagnostics and review snapshots. Stable ordering, source revisions, journal
+recovery, Undo/Redo, provenance and independent source/runtime identity are
+tested. The two-planet Cairn recipe compiles reproducibly and completes both
+missions/checkpoints on Linux and Windows under Wine. Existing package formats
+and runtime limits are unchanged. [Guide](CAMPAIGN_SOURCES.md),
+[verification and bounds](TESTING.md#ai7a-campaign-source-modules--2026-10-22).
+
 Offer an optional authoring source layout with separate mission, map,
 definition and text files, plus references to artwork and editor metadata.
 Compile it into the normal validated game package. Existing package directories
@@ -618,17 +630,18 @@ Decisions established by this plan:
 - Make the first demonstrated mission use existing mechanics; add engine
   capabilities through separately verified increments.
 
-Implementation choices to settle when their milestones begin: the CLI's final
-name/module layout (AI1–AI2), source-module format and exact capacity targets
-(AI7), and which external assistant transports are useful (AI8). These do not
-block the first authoring contract or require choosing an AI provider now.
+Remaining implementation choices: measured capacity targets and compatibility
+representation (AI7b), and useful external assistant transports (AI8). Source
+modules now use the documented `btp-campaign-source-v1` format. No AI provider
+choice is required for ordinary editing, compilation or gameplay.
 
-**Next proposed milestone: AI7a — modular campaign source and deterministic compilation.**
+**Next proposed milestone: AI7b — measured campaign capacity extensions.**
 AI6b/AI6c now supply round hooks, atomic reinforcement groups, scripted outcomes,
 friendly/neutral actors and terrain-aware waypoints. Cairn Passage demonstrates
 defence and escort with declared native success/loss/retreat scenarios. Construction
 coverage and shared-library styles support all roof masks, wall levels and road
-junctions. AI7 and AI8 remain future work; this batch does not raise runtime limits.
+junctions. AI7a is delivered; AI7b and AI8 remain future work. Source compilation
+does not raise runtime limits.
 
 The separately authorized [shared Construction Library](CONSTRUCTION_LIBRARY.md)
 is delivered: building, wall and road definitions and stored patterns transfer
@@ -637,6 +650,6 @@ previews, command imports and reviewed/live authoring sessions share it.
 
 World creation, seeded jigsaw generation/painting, terrain patches, town-map
 placement and composed world previews are already exposed to AI tools.
-AI7 covers larger campaign/capacity work; world-wide traversal verification is
+AI7b covers larger campaign/capacity work; world-wide traversal verification is
 still an AI4 extension. Keep those distinctions visible rather than advertising
 an unbounded planet/campaign generator.

@@ -1305,6 +1305,7 @@ def main():
     parser.add_argument('--editor-focus-only',action='store_true',help='Check modal focus under KWin on an isolated display/session')
     parser.add_argument('--editor-combat-mission-only',action='store_true',help='Check mission combat groups, actor routes, round timers and Play')
     parser.add_argument('--editor-style-only',action='store_true',help='Check construction coverage, road junctions, roof-only walls, event descriptions and list controls')
+    parser.add_argument('--editor-source-only',action='store_true',help='Check modular project conversion, source edits, Save, Build, error navigation and Play')
     parser.add_argument('--editor-mission-only',action='store_true',help='Check region drawing, mission forms, recovery and extraction mission Play')
     parser.add_argument('--construction-library-only',action='store_true',help='Check shared construction/pattern export, import, drawing and revision updates')
     parser.add_argument('--editor-benchmark-only',action='store_true',help='Measure the declared large fixture in a fresh process')
@@ -1367,7 +1368,7 @@ def main():
     read_fd, write_fd = os.pipe()
     with (work / "native-xvfb.log").open("w") as log:
         xvfb = subprocess.Popen([str(ROOT / "local-deps/xvfb/usr/bin/Xvfb"),
-            "-displayfd", str(write_fd), "-screen", "0", "1600x1000x24" if args.editor_usability_only or args.editor_focus_only or args.editor_mission_only or args.editor_combat_mission_only or args.editor_style_only or args.construction_library_only or args.editor_canvas_only or args.editor_paint_only or args.editor_play_tile_only or args.editor_tile_animation_only or args.editor_authoring_only or args.editor_collaboration_only else "1024x768x24", "-nolisten", "tcp"],
+            "-displayfd", str(write_fd), "-screen", "0", "1600x1000x24" if args.editor_usability_only or args.editor_focus_only or args.editor_mission_only or args.editor_combat_mission_only or args.editor_style_only or args.editor_source_only or args.construction_library_only or args.editor_canvas_only or args.editor_paint_only or args.editor_play_tile_only or args.editor_tile_animation_only or args.editor_authoring_only or args.editor_collaboration_only else "1024x768x24", "-nolisten", "tcp"],
             pass_fds=(write_fd,), stdout=log, stderr=subprocess.STDOUT)
         os.close(write_fd)
         try:
@@ -1389,6 +1390,9 @@ def main():
                 run(env,work);return 0
             if args.editor_style_only:
                 from editor_style_smoke import run
+                run(env,work);return 0
+            if args.editor_source_only:
+                from editor_source_smoke import run
                 run(env,work);return 0
             if args.editor_mission_only:
                 from editor_mission_smoke import run

@@ -1,4 +1,65 @@
-# Build, verification and original oracle — 2026-10-21
+# Build, verification and original oracle — 2026-10-22
+
+## AI7a campaign source modules — 2026-10-22
+
+**VERIFIED within the following fixtures:** optional `SOURCE.json` projects
+compile into the unchanged native package format. Normal editor/command edits
+return objects and dialogue to their source owners. Deterministic runtime
+serialization preserves save identity across source formatting, grouping and
+author-note changes; gameplay edits retain strict-content refusal. Deliberate
+conversion creates a separate source directory and does not migrate old saves.
+The [source/build guide](CAMPAIGN_SOURCES.md) describes commands and limits.
+
+- Full Python regression: **295/295 PASS**, 27.597 s,
+  `work/ai7a-python.log`. The 15 source tests cover conversion, dependency and
+  attribution retention, grouped mission files, source budgets, duplicate and
+  unsafe inputs, text references/conflicts, array reordering, addition/removal,
+  artwork Undo/Redo, revisions, idempotent batches, external edits, source-path
+  errors, interrupted multi-file save recovery, retained review/check identity,
+  launcher compilation/resume and actual native save compatibility/refusal.
+- Native regression: **91/91 PASS**, 23.19 s, `work/ai7a-native.log`. Linux
+  player/validator/scenario targets and Windows validator/scenario/headless
+  targets build with two jobs; these are current targets with no C changes.
+  Logs: `work/ai7a-linux-build.log`, `work/ai7a-windows-build.log`.
+- `python3 tools/native_smoke.py --editor-source-only`: **PASS**,
+  `work/ai7a-gui.log`. Actual controls exercise conversion without replacing the
+  open package, source object navigation, event inspector edits, asynchronous
+  Save, Undo/Redo, mouse map painting, recovery/reopen, a deliberately broken
+  event's source error and Problems navigation, Build, SDL Play/Stop and a
+  local-session snapshot with the advertised source revision. Inspected
+  `work/editor-campaign-sources.png`: controls, object/source table and both
+  scrollbars are visible in the workspace.
+- Existing `--editor-authoring-only` regression: **PASS**,
+  `work/ai7a-authoring-gui.log`, covering real package editing, command batches,
+  catalogue, validation findings, stale work and Play. The new workflow also
+  exposed and fixed a queued Tk text Modified event after restoring a validation
+  snapshot; restoration no longer falsely marks dialogue dirty and cancels Save.
+- `python3 tools/source_campaign_demo.py --output work/ai7a-cairn-planets --verify`:
+  **PASS**, `work/ai7a-demo.log`. Cairn Passage's defence and escort missions are
+  placed across two 256 × 256 tile jigsaw planets and three local maps, with
+  35 events. The source contains **387 files / 1,568,548 bytes**. Two builds have
+  identical runtime bytes and fingerprint
+  `d4f7ab40039196dc072c9a468e3998dda8d29ae7ee19b63c9f60d43bb3a28410`.
+  The normal-input route completes both objectives, keeps the transport alive
+  and finishes with 12,000 credits, with two checkpoint round-trips. Report/seed/runtime
+  hash and event/combat traces are in `work/ai7a-cairn-planets/scenario/`.
+- The Windows scenario executable runs that same compiled package/route under
+  isolated Wine: **PASS**, `work/ai7a-windows-scenario.log`, artifacts in
+  `work/ai7a-windows-scenario/`. Final state and final save bytes match Linux
+  exactly. This verifies the exported runtime package, not native Windows Tk.
+- One measured source CLI build of that fixture: **0.31 s / 43,364 KiB peak RSS**,
+  `work/ai7a-build-metrics.txt`; output hashes in `work/ai7a-measured-build.json`.
+  Python 3.13.5, Linux x86-64, kernel 6.17.0-41, glibc 2.42; the full Python regression was also
+  running on this host. This is a bounded small-fixture observation, not a
+  large-campaign capacity or GUI responsiveness benchmark.
+- Reference guard: **1,287 entries unchanged** (content/mode/mtime),
+  `work/ai7a-reference.log`. The user's three Last Beacon files still match
+  `work/ai7a-baseline.json` and remain outside this change.
+
+Source input budgets are 4,096 files / 128 MiB. Runtime/save layouts and limits
+are unchanged. **AI7b** capacity extension, broader world traversal/balance,
+native Windows Tk and a full AI8 campaign/distribution remain **UNKNOWN/future**.
+
 
 ## Right-angle road turns — 2026-10-21
 

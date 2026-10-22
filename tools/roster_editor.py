@@ -272,7 +272,7 @@ class RosterEditor:
     def open_project(self):
         if not self.discard_or_save():
             return
-        path = filedialog.askdirectory(title="Open directory containing project.json", parent=self.window)
+        path = filedialog.askdirectory(title="Open project directory (project.json or SOURCE.json)", parent=self.window)
         if path:
             self.set_document(ProjectDocument(Path(path), self.validator),check=False)
 

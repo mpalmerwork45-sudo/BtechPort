@@ -90,7 +90,6 @@ def game_command(choice, paths, state_dir, project=None, resume=False):
     if project:
         from editor_model import ProjectDocument,references
         doc=ProjectDocument(Path(project),binary('btp-project'))
-        command+=['--project',str(doc.root)]
         original=doc.manifest['requires']!='none'
         identity=doc.manifest['package_id']
         # A changed project gets fresh launch/save slots, preserving earlier
@@ -98,6 +97,18 @@ def game_command(choice, paths, state_dir, project=None, resume=False):
         digest=hashlib.sha256(b''.join(doc.snapshot[name] for name in references(doc.manifest))).hexdigest()[:16]
         save=state_dir/'games'/identity/digest/'game.btp'
         candidate=save.with_name(save.stem+'-project-'+identity+save.suffix)
+        playable=doc.root
+        if doc.source is not None:
+            # Source projects launch a content-specific compiled cache. Notes
+            # and module organization do not create new campaign save slots.
+            playable=save.parent/'package'
+            if not playable.exists():doc.export(playable)
+            else:
+                retained=ProjectDocument(playable,doc.validator)
+                if any(retained.snapshot.get(name)!=doc.snapshot[name] for name in references(doc.manifest)):
+                    raise EditorError('The cached playable package was edited. Preserve it separately, then choose a new launcher state directory.')
+            doc.unchanged_on_disk()
+        command+=['--project',str(playable)]
     else:
         command+=['--edition',choice.lower()]
         save=state_dir/'games'/choice.lower()/'game.btp';candidate=save

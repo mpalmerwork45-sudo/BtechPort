@@ -1,0 +1,118 @@
+{
+  "type": "object",
+  "properties": {
+    "format": {
+      "const": "btp-campaign-source-v1"
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "sections": {
+      "type": "object",
+      "properties": {
+        "manifest": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "content": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "adventure": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "art": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "presentation": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        }
+      },
+      "required": [
+        "manifest",
+        "content"
+      ],
+      "additionalProperties": false
+    },
+    "modules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "section": {
+            "enum": [
+              "content",
+              "adventure",
+              "art",
+              "presentation"
+            ]
+          },
+          "collection": {
+            "type": "string",
+            "pattern": "^[a-z_]+$"
+          },
+          "file": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          }
+        },
+        "required": [
+          "section",
+          "collection",
+          "file"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0,
+      "maxItems": 4095
+    },
+    "texts": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 512
+      },
+      "minItems": 0,
+      "maxItems": 4095
+    },
+    "files": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 512
+      }
+    },
+    "order": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "minItems": 0,
+        "maxItems": 4096
+      }
+    },
+    "notes": {
+      "type": "object"
+    }
+  },
+  "required": [
+    "format",
+    "schema_version",
+    "sections"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

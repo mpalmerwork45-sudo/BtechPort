@@ -92,7 +92,7 @@ class Launcher:
     def describe(self):self.description.set(GAMES[self.choice.get()])
 
     def browse(self):
-        path=filedialog.askdirectory(title='Choose a game project containing project.json',parent=self.window)
+        path=filedialog.askdirectory(title='Choose a game project (project.json or SOURCE.json)',parent=self.window)
         if path:self.project.set(path);self.choice.set('My project');self.describe()
 
     def selected_project(self):

@@ -17,8 +17,12 @@ from world_editing import token, upgrade, all_worlds
 
 def revision(document):
     digest = hashlib.sha256()
-    for name, data in sorted(document.files().items()):
-        if name == AUTHORING_RECEIPTS: continue
+    receipt = document.source.index.get('files',{}).get(AUTHORING_RECEIPTS,'files/'+AUTHORING_RECEIPTS) if document.source is not None else AUTHORING_RECEIPTS
+    for name, data in sorted(document.source_files().items()):
+        if name == receipt: continue
+        if document.source is not None and name=='SOURCE.json':
+            index=json.loads(data);index.get('files',{}).pop(AUTHORING_RECEIPTS,None)
+            data=json.dumps(index,sort_keys=True,separators=(',',':')).encode()
         # Names and lengths make concatenation unambiguous. This includes
         # authoring metadata and scripts, not just the game's save fingerprint.
         digest.update(name.encode()); digest.update(b'\0')

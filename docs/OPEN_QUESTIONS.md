@@ -1,4 +1,13 @@
-# Open questions after bounded M4 work and authoring increments — 2026-10-20
+# Open questions after bounded M4 work and authoring increments — 2026-10-22
+
+AI7a's [modular source/build workflow](CAMPAIGN_SOURCES.md) is delivered. AI7b
+still needs measured realistic campaigns and a targeted audit of handle widths,
+serialization, discovery, memory and UI before increasing runtime limits.
+Source-format budgets (4,096 files / 128 MiB) do not expand gameplay budgets.
+Compilation canonicalizes JSON, so legacy saves remain attached to their old
+package unless explicitly migrated; source reorganization and author notes
+alone preserve already-compiled save identity. Native Windows Tk, general
+world-wide navigation and a larger AI8 campaign remain unverified.
 
 The authorized M4 increments have playable, tested paths. Confidence belongs
 to the individual original comparisons and recorded continuations in
@@ -14,10 +23,10 @@ runs, including a declared validated low-funds fixture. Local navigation uses
 the actual initial party and collision rules; it does not establish all later
 party compositions, world routes, arbitrary conditions/Lua or general combat
 balance. Those remain extensions of AI4. AI5 now supplies a Changes view,
-protected objects/fields/local regions and local editor sessions. The next
-proposed increment is AI6a: named mission regions, persistent variables/counters
-and explicit objective states. Reinforcements, escorts and measured campaign
-capacity follow separately. Ordinary closed-project CLI work still cannot
+protected objects/fields/local regions and local editor sessions. Delivered
+increments now include AI6 mission state, reinforcements and escorts, plus AI7a
+modular sources. Measured campaign capacity follows separately.
+Ordinary closed-project CLI work still cannot
 inspect unsaved forms: use `session snapshot` against an explicitly started
 editor session, or save/close before CLI publication. Native Windows Tk remains
 unverified. Model/provider selection is optional and does not block these tools.

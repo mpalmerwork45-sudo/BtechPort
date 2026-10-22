@@ -23,6 +23,7 @@ def capabilities(tool):
         change_review=True,partial_change_groups=True,named_protection_overrides=True,shared_construction_library=True,
         mission_regions=True,typed_mission_variables=True,explicit_objective_states=True,compound_conditions=True,
         combat_hooks=True,round_timers=True,reinforcements=True,escort_waypoints=True,
+        campaign_source_modules=True,deterministic_source_builds=True,source_diagnostics=True,
         reinforcement_events=False,escort_events=False,asset_search=True,contact_sheets=True,animation_strips=True,event_graph_preview=True,
         world_city_previews=True,native_navigation_checks=True,objective_access_warnings=True,scenario_suites=True,
         scenario_seeds=True,scenario_checkpoints=True,combat_sampling=True,fixture_batches=True,selected_case_reruns=True),
@@ -39,6 +40,8 @@ def capabilities(tool):
             protection_kinds=['object','fields','map_region'],rules_max=256,session_jobs_max=256,queued_jobs_max=8,
             reviewed_request_bytes=2097152,import_file_bytes=16777216,import_total_bytes=67108864,
             preview_maps_max=8,checks_per_review=32,heartbeat_seconds=15),
+        source_projects=dict(format='btp-campaign-source-v1',index='SOURCE.json',files_max=4096,bytes_max=134217728,
+            commands=['source convert','source build','source locations'],runtime_limits='Unchanged; see runtime.limits.'),
         schemas='schemas/',guide='docs/AI_AUTHORING_GUIDE.md')
 
 
@@ -73,7 +76,9 @@ def summary(doc, tool):
         capacity[key]=dict(used=count,limit=maximum,remaining=maximum-count)
     return dict(api_version=API_VERSION,project=dict(id=doc.manifest['package_id'],title=doc.manifest['title'],
         content_version=doc.manifest['content_version'],requires=doc.manifest['requires'],rules_profile=doc.manifest['rules_profile']),
-        revision=revision(doc),capacity=capacity,start=a.get('start'),coordinate_spaces=caps['coordinate_spaces'],
+        revision=revision(doc),authoring=dict(mode='source' if doc.source is not None else 'package',
+            index='SOURCE.json' if doc.source is not None else 'project.json'),
+        capacity=capacity,start=a.get('start'),coordinate_spaces=caps['coordinate_spaces'],
         protection=editor_data(doc).get('authoring_protection',[]),
         maps=[dict(id=m['id'],name=m['name'],width=len(m['rows'][0]),height=len(m['rows']),origin=m['origin'],entrances=len(m['entrances']),overlays=len(m['overlays'])) for m in a.get('maps',[])],
         worlds=[dict(id=w['id'],name=w['name'],width_tiles=8*len(w['pieces'][0]),height_tiles=8*len(w['pieces']),cities=w['cities']) for w in worlds],

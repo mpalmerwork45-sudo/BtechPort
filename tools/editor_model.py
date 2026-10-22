@@ -74,14 +74,28 @@ class ProjectDocument:
                 with project_lock(self.root): self.recover(self.root)
         elif child(self.root, '.btp-editor-transaction.json').exists():
             raise EditorError('Interrupted save needs recovery; open the project in the editor before inspecting it.')
-        run_validator(self.validator, self.root)
-        self.manifest = json.loads((self.root / "project.json").read_bytes())
-        self.snapshot = {name: child(self.root, name).read_bytes() for name in references(self.manifest)}
+        self.source = None
+        if child(self.root, 'SOURCE.json').exists():
+            from campaign_source import CampaignSource, SourceError
+            if child(self.root, 'project.json').exists():
+                raise SourceError('Both SOURCE.json and project.json exist. Keep compiled packages in a separate directory.')
+            self.source = CampaignSource(self.root)
+            self.snapshot = dict(self.source.package)
+            with tempfile.TemporaryDirectory(prefix='btp-source-validate-') as temporary:
+                for name,data in self.snapshot.items():
+                    path=child(Path(temporary),name);path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(data)
+                try:run_validator(self.validator,Path(temporary))
+                except EditorError as error:raise self.source.locate_error(error) from error
+            self.manifest = json.loads(self.snapshot['project.json'])
+        else:
+            run_validator(self.validator, self.root)
+            self.manifest = json.loads((self.root / "project.json").read_bytes())
+            self.snapshot = {name: child(self.root, name).read_bytes() for name in references(self.manifest)}
         # Attribution travels through history/save/export, without becoming
         # a runtime dependency or part of the game's content fingerprint.
         for name in METADATA_FILES:
             metadata=child(self.root,name)
-            if metadata.exists():self.snapshot[name]=metadata.read_bytes()
+            if self.source is None and metadata.exists():self.snapshot[name]=metadata.read_bytes()
         self.metadata = {name: data for name, data in self.snapshot.items() if name in METADATA_FILES}
         self.content = json.loads(self.snapshot[self.manifest["definitions"]])
         self.adventure = json.loads(self.snapshot[self.manifest["adventure"]]) if "adventure" in self.manifest else None
@@ -212,9 +226,31 @@ class ProjectDocument:
         if 'EDITOR.json' in files and 'EDITOR.json' not in self.metadata:
             files['EDITOR.json'] = encoded({})
         files.update(self.metadata)
+        if self.source is not None:
+            from campaign_source import canonical
+            # Whitespace and dictionary insertion order in editable modules
+            # cannot invalidate saves; runtime array order remains significant.
+            for key in ('definitions','adventure','graphics','presentation'):
+                if key in self.manifest:files[self.manifest[key]]=canonical(json.loads(files[self.manifest[key]]))
+            files['project.json']=canonical(self.manifest)
+            declared=set(references(self.manifest))|set(METADATA_FILES)
+            files={name:data for name,data in files.items() if name in declared}
         return files
 
+    def source_files(self):
+        return self.source.updated(self.files()) if self.source is not None else self.files()
+
     def unchanged_on_disk(self) -> None:
+        if self.source is not None:
+            if child(self.root,'project.json').exists():
+                raise EditorError('project.json appeared outside this editor. Keep build outputs separate from sources.')
+            for name,original in self.source.disk.items():
+                try:unchanged=child(self.root,name).read_bytes()==original
+                except OSError:unchanged=False
+                if not unchanged:raise EditorError(f'{name} changed outside this editor. Reopen before saving; your disk files were preserved.')
+            for name in self.source_files().keys()-self.source.disk.keys():
+                if child(self.root,name).exists():raise EditorError(f'{name} appeared outside this editor. Reopen before saving; your disk file was preserved.')
+            return
         for name in METADATA_FILES:
             if name not in self.snapshot and child(self.root, name).exists():
                 raise EditorError(f'{name} appeared outside this editor. Reopen before saving; your disk file was preserved.')
@@ -234,6 +270,12 @@ class ProjectDocument:
             path = child(root, name)
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_bytes(data)
+
+    def stage_authoring(self, root: Path) -> None:
+        # Review/session snapshots retain source ownership and revision. Native
+        # validators and players still use stage(), which produces a package.
+        for name,data in self.source_files().items():
+            path=child(root,name);path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(data)
 
     @staticmethod
     def atomic_file(target: Path, data: bytes):
@@ -255,7 +297,7 @@ class ProjectDocument:
             return
         try:
             entries = json.loads(journal.read_bytes())
-            if not isinstance(entries, list) or not 1 <= len(entries) <= 128:
+            if not isinstance(entries, list) or not 1 <= len(entries) <= 4096:
                 raise ValueError("Invalid transaction")
             prepared = []
             for entry in entries:
@@ -279,7 +321,12 @@ class ProjectDocument:
         self.unchanged_on_disk()
         with tempfile.TemporaryDirectory(prefix="btp-editor-validate-") as directory:
             self.stage(Path(directory))
-            return run_validator(self.validator, Path(directory))
+            try:return run_validator(self.validator, Path(directory))
+            except EditorError as error:
+                if self.source is not None:
+                    from campaign_source import CampaignSource
+                    raise CampaignSource(self.root,self.source_files()).locate_error(error) from error
+                raise
 
     def save(self) -> str:
         from project_lock import project_lock
@@ -291,9 +338,11 @@ class ProjectDocument:
         self.unchanged_on_disk()
         if not self.dirty:
             return result  # Preserve original formatting and package digest.
-        changed = {name: data for name, data in self.files().items() if data != self.snapshot.get(name)}
+        baseline = self.source.disk if self.source is not None else self.snapshot
+        changed = {name: data for name, data in self.source_files().items() if data != baseline.get(name)}
+        if not changed:return result
         journal = child(self.root, ".btp-editor-transaction.json")
-        transaction = [{"file": name, "old": base64.b64encode(self.snapshot[name]).decode("ascii") if name in self.snapshot else None,
+        transaction = [{"file": name, "old": base64.b64encode(baseline[name]).decode("ascii") if name in baseline else None,
                         "new_sha256": hashlib.sha256(data).hexdigest()} for name, data in changed.items()]
         # Validate the entire candidate first. A durable rollback journal
         # protects a save that updates both definitions and adventure files.
@@ -311,7 +360,10 @@ class ProjectDocument:
             self.recover(self.root)
             raise
         journal.unlink()
-        self.snapshot.update(changed)
+        if self.source is not None:
+            from campaign_source import CampaignSource
+            self.source=CampaignSource(self.root);self.snapshot=dict(self.source.package)
+        else:self.snapshot.update(changed)
         self.saved = copy.deepcopy(self.content)
         self.saved_adventure = copy.deepcopy(self.adventure)
         self.saved_art = copy.deepcopy(self.art)
@@ -350,7 +402,11 @@ class ProjectDocument:
         work.mkdir(parents=True, exist_ok=True)
         replay = work / "start.actions"
         replay.write_text("", encoding="ascii")
-        return [str(Path(settings["player"]).resolve()), "--project", str(self.root),
+        project=self.root
+        if self.source is not None:
+            project=work/'game'
+            if not project.exists():self.export(project)
+        return [str(Path(settings["player"]).resolve()), "--project", str(project),
                 *[arg for key in required[1:] for arg in ("--" + key, str(Path(settings[key]).resolve()))],
                 *(["--play-here", *map(str, here)] if here else []),
                 "--replay", str(replay.resolve()), "--save-file", str((work / "game.btp").resolve())]

@@ -148,7 +148,7 @@ class Authoring:
                     from authoring_inspect import summary
                     candidate.validate()
                     if cancel.is_set():raise AuthoringError('job.cancelled','Snapshot cancelled.')
-                    destination=target/'snapshot';destination.mkdir();candidate.stage(destination)
+                    destination=target/'snapshot';destination.mkdir();candidate.stage_authoring(destination)
                     return dict(status='completed',snapshot=str(destination),revision=revision(candidate),summary=summary(candidate,candidate.validator))
                 def done(result):
                     if stamp!=signature(scope):result=dict(result,status='stale',diagnostics=[diagnostic(AuthoringError('revision.conflict','Editor changed while taking the snapshot; request another.'))])

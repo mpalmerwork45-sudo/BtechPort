@@ -1,4 +1,21 @@
-# Project status — original fidelity and editable projects, 2026-10-21
+# Project status — original fidelity and editable projects, 2026-10-22
+
+**AI7a modular campaign sources — implemented, 2026-10-22.** Optional
+`SOURCE.json` projects share GUI/CLI editing, journalled Save, Undo and recovery.
+Maps, events, definitions, artwork and text compile deterministically to the
+existing native package format. Errors retain source files/object paths;
+**Project → Campaign sources and build** supplies conversion, object navigation
+and Build. Existing packages remain unchanged. See the
+[source guide](CAMPAIGN_SOURCES.md) and [test evidence](TESTING.md).
+
+The separate Cairn Planets recipe builds two identical runtime packages from
+387 source files, three local maps and two jigsaw planets. Its full defence and
+escort route passes on Linux and under Wine, with checkpoints. Source notes
+and formatting preserve save identity; conversion of a legacy package requires
+a new campaign or deliberate save migration. Runtime/save layouts are unchanged.
+
+**Next: AI7b**, measured campaign capacity extensions. AI8 delivery and wider
+world traversal verification remain future work. Native Windows Tk is **UNKNOWN**.
 
 **AI6b/AI6c and construction coverage — implemented, 2026-10-21.**
 [Cairn Passage](../examples/cairn-passage/README.md) now combines timed relay
@@ -14,8 +31,8 @@ top tiles. Event graph descriptions now include all 54 Last Beacon events.
 Tables support ascending/descending/original order and dropdowns support typing.
 Unit Library model names are uppercase while designation codes remain intact.
 
-**Next: AI7a**, modular campaign source and reproducible compilation. Runtime
-capacity expansion, world-spanning verification and AI8 are still future work.
+**AI7a is delivered above.** Runtime capacity expansion, world-spanning verification
+and AI8 are still future work.
 Native Windows Tk remains **UNKNOWN**; Windows runtime checks use isolated Wine.
 
 ## Earlier deliveries

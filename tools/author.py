@@ -102,6 +102,14 @@ def parser():
         if name=='propose':s.add_argument('--request',type=Path,required=True)
         if name in ('snapshot','propose'):s.add_argument('--job-id');s.add_argument('--wait',type=float,default=0)
         if name=='wait':s.add_argument('--seconds',type=float,default=30)
+    source=sub.add_parser('source',help='Convert packages to editable modules, build, or locate source objects.')
+    actions=source.add_subparsers(dest='source_action',required=True)
+    for name in ('convert','build','locations'):
+        s=actions.add_parser(name);s.add_argument('project',type=Path)
+        s.add_argument('--validator',type=Path,default=Path(os.environ.get('BTP_PROJECT_TOOL',ROOT/'build'/('btp-project.exe' if os.name=='nt' else 'btp-project'))))
+        if name in ('convert','build'):s.add_argument('--output',type=Path,required=True)
+        if name=='locations':
+            s.add_argument('--id');s.add_argument('--offset',type=int,default=0);s.add_argument('--limit',type=int,default=30)
     return p
 
 
@@ -133,6 +141,18 @@ def create(args):
 
 
 def dispatch(args):
+    if args.command=='source':
+        from campaign_source import convert,build
+        doc=ProjectDocument(args.project,args.validator,recover=False)
+        if args.source_action=='convert':
+            source=convert(doc,args.output)
+            return dict(api_version=API_VERSION,status='converted',output=str(source.root),revision=revision(source),
+                save_compatibility='Compilation canonicalizes JSON. Keep the original package for existing saves; start a new campaign or use the explicit save migration tool.')
+        if args.source_action=='build':return dict(api_version=API_VERSION,**build(doc,args.output))
+        if doc.source is None:raise AuthoringError('source.required','This is a package project. Convert a copy to modules first.')
+        if args.offset<0 or not 1<=args.limit<=100:raise AuthoringError('query.bounds','Use a nonnegative offset and limit 1..100.')
+        items=[v for v in doc.source.locations if args.id is None or v['id']==args.id]
+        return dict(api_version=API_VERSION,status='ok',revision=revision(doc),total=len(items),items=items[args.offset:args.offset+args.limit])
     if args.command=='session':
         import authoring_session as session
         action=args.session_action
@@ -185,7 +205,7 @@ def dispatch(args):
     # Queries never recover an interrupted save or create files in a package.
     doc=ProjectDocument(args.project,args.validator,recover=False)
     if args.command=='construction-export':
-        from construction_library import ConstructionLibrary,summary,closure
+        from construction_library import ConstructionLibrary,summary as construction_summary,closure
         shared=ConstructionLibrary(args.construction_library,args.validator);bundle=closure(doc,args.id);expected=None
         if args.entry:
             if args.variant or args.expected_revision is None:raise AuthoringError('request.invalid','Updating a library entry requires --expected-revision, without --variant.')
@@ -195,7 +215,7 @@ def dispatch(args):
             bundle.update(entry_id=expected['entry_id'],revision=expected['revision'])
         elif args.expected_revision is not None:raise AuthoringError('request.invalid','--expected-revision requires --entry.')
         doc.unchanged_on_disk();saved=shared.save(bundle,expected,args.variant)
-        return dict(api_version=API_VERSION,status='exported',data=summary(saved,shared.path(saved['entry_id'])))
+        return dict(api_version=API_VERSION,status='exported',data=construction_summary(saved,shared.path(saved['entry_id'])))
     if args.command in ('catalogue','contact-sheet','animation'):
         from asset_catalogue import catalogue,search
         from authoring_visuals import VisualSource,contact_sheet,animation_strip

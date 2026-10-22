@@ -327,6 +327,8 @@ class Workspace:
         from editor_authoring import apply_file,export_summary,check_mission
         self.action('Apply authoring command file',lambda:apply_file(self),groups['Project'])
         self.action('Export authoring summary',lambda:export_summary(self),groups['Project'])
+        from editor_sources import open_sources
+        self.action('Campaign sources and build',lambda:open_sources(self.app),groups['Project'])
         self.action('Check mission',lambda:check_mission(self),groups['Project'])
         from editor_changes import open_changes
         self.action('Changes and protection',lambda:open_changes(self.active_scope().owner),groups['Project'])
@@ -389,7 +391,7 @@ class Workspace:
         if name=='Save active scope' or name=='Validate':return bool(document) and not getattr(scope,'saving',False)
         if name in ('Undo','Redo'):
             return bool(document and ((document.undo_stack if name=='Undo' else document.redo_stack) or any(d.pending() for d in scope.live())))
-        if name in ('Export game','Assets and dependencies','Migrate an old save','Apply authoring command file','Export authoring summary'):return bool(self.app.document)
+        if name in ('Export game','Assets and dependencies','Migrate an old save','Apply authoring command file','Export authoring summary','Campaign sources and build'):return bool(self.app.document)
         if name in ('Content catalogue','Changes and protection','Local authoring session'):return bool(document)
         if name=='Check mission':return bool(document and document.adventure)
         if name in ('New definition','Duplicate definition','Delete definition','Ammunition','Find usages'):return bool(document)
@@ -742,6 +744,9 @@ class Workspace:
                     elif kind=='changes':
                         from editor_changes import open_changes
                         view=open_changes(owner).window
+                    elif kind=='sources':
+                        from editor_sources import open_sources
+                        view=open_sources(owner).window
                     elif kind=='jigsaw':
                         from world_editor import JigsawEditor
                         maps=self.map_view();maps.edit_landscape();world=maps.world_editor

@@ -1,8 +1,9 @@
 # Authoring games with commands
 
-**Verified through 2026-10-20:** AI6a adds regions, typed persistent variables,
-explicit objectives and compound conditions, alongside AI5's protected edits
-and local sessions. See [verification and remaining limits](TESTING.md#ai6a-mission-state-and-editor-repairs--2026-10-20).
+**Verified through 2026-10-22:** AI6 includes regions, persistent mission state,
+combat hooks, reinforcements and escorts. AI7a adds optional modular campaign
+sources, deterministic builds and source diagnostics. See the
+[source/build guide](CAMPAIGN_SOURCES.md) and [verification](TESTING.md).
 
 The Construction Kit now supports a model-independent, display-independent
 authoring CLI. It edits ordinary projects through the same document,
@@ -11,9 +12,17 @@ The editor remains fully available. Games require no AI service.
 
 This implements **AI1/AI2**, the discovery workflow from **AI3**, bounded
 mission analysis/testing from **AI4**, and the collaborative workflow from
-**AI5**, and **AI6a** mission state. Arbitrary mission simulation, further engine mechanics and larger
+**AI5**, **AI6** mission mechanics and **AI7a** source/build support. Arbitrary mission simulation, further engine mechanics and larger
 campaign capacity remain future work. There is no background model or network
 service to configure.
+
+All project commands accept either an existing `project.json` package or a
+`SOURCE.json` source project. Use `source convert PROJECT --output NEW_DIRECTORY`
+for deliberate conversion, `source build SOURCE --output NEW_DIRECTORY` for a
+playable package, and `source locations SOURCE --id OBJECT` for source ownership.
+Conversion preserves the existing project; keep it for its old saves because
+canonical compilation changes byte identity. GUI/command Save targets modules,
+while exports and player snapshots remain normal packages.
 
 ## Start here
 

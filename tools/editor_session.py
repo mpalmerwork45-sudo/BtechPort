@@ -93,8 +93,8 @@ def report(owner, error, details='', category=None):
     if hasattr(owner, 'status'):
         owner.status.set(str(error))
     if scope is not None:
-        scope.problems.append(dict(message=str(error), details=details,
-                                   owner=owner, field=getattr(error, 'field', None), category=category))
+        scope.problems.append({**getattr(error,'diagnostic',{}), 'message':str(error), 'details':details,
+                               'owner':owner, 'field':getattr(error,'field',None), 'category':category})
         if scope.on_problem:
             scope.on_problem(scope.problems[-1])
     if hasattr(owner, 'show_error'):

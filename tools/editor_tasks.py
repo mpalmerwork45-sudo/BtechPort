@@ -112,7 +112,7 @@ def snapshot(scope):
 def adopt_saved(live,saved):
     # Only advance the disk baseline. Edits made during the durable write stay
     # in the live document and are still marked unsaved.
-    for name in ('snapshot','saved','saved_adventure','saved_art','saved_manifest','saved_metadata'):
+    for name in ('snapshot','source','saved','saved_adventure','saved_art','saved_manifest','saved_metadata'):
         setattr(live,name,copy.deepcopy(getattr(saved,name)))
 
 
