@@ -132,6 +132,7 @@ operation('project.configure','Change project title, version or rules; keep defi
           dict(changes=obj(dict(title=TEXT,content_version=TEXT,rules_profile=enum('chi:legacy-v1','chi:updated-lrm-v1')))),['changes'],['manifest','content'],dict(changes={'title':'Relay Contract'}))
 operation('start.set','Patch the starting location, party, credits or briefing; movement coordinates.',
           dict(changes=RECORD),['changes'],['adventure.start'],dict(changes={'event':'demo:briefing'}))
+operation('campaign.upgrade','Opt into adventure v3 campaign budgets (runtime 0.2.0+). Changes save identity; retain the old package for its saves.',{},[],['adventure'],{})
 operation('flags.add','Declare persistent mission flags, without duplicating existing IDs.',dict(ids=array(ID,1,64)),['ids'],['adventure.flags'],dict(ids=['demo:complete']))
 operation('map.create','Create a local map filled with a named tile; dimensions and origin in tiles.',
           dict(id=ID,name=TEXT,width=integer(16,64),height=integer(16,64),tile=ID,origin=POINT),['id','name','width','height','tile'],['adventure.maps'],dict(id='demo:town',name='Relay town',width=32,height=24,tile='demo:grass'))

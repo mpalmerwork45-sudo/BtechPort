@@ -293,6 +293,18 @@
             "type": "object",
             "properties": {
               "op": {
+                "const": "campaign.upgrade"
+              }
+            },
+            "required": [
+              "op"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
                 "const": "flags.add"
               },
               "ids": {

@@ -26,13 +26,18 @@ static int capabilities(void)
     /* Query the compiled adapter's constants. Authoring clients must not
        advertise expanded limits merely because a schema accepts them. */
     printf("{\"format\":\"btp-runtime-capabilities-v1\",\"runtime_version\":\"%s\","
-        "\"formats\":[\"btp-project-v1\",\"btp-content-v1\",\"btp-adventure-v1\",\"btp-adventure-v2\",\"btp-art-v1\",\"btp-presentation-v1\"],"
+        "\"formats\":[\"btp-project-v1\",\"btp-content-v1\",\"btp-adventure-v1\",\"btp-adventure-v2\",\"btp-adventure-v3\",\"btp-art-v1\",\"btp-presentation-v1\"],"
         "\"limits\":{\"maps\":%u,\"events\":%u,\"flags\":%u,\"tiles\":%u,\"jigsaws\":%u,\"worlds\":%u,"
         "\"people\":%u,\"shops\":%u,\"encounters\":%u,\"objectives\":%u,\"definitions_per_collection\":%u,"
         "\"images\":%u,\"frames_per_image\":%u,\"art_pixels\":%u,\"animation_tracks\":%u,"
         "\"world_sectors_total\":%u,\"discovery_cells\":%u,\"map_min_side\":16,\"map_width\":64,\"map_height\":64,\"entrances_per_map\":%u,"
         "\"overlays_per_map\":32,\"enemies_per_encounter\":12,\"choice_options\":%u,"
         "\"variables\":%u,\"regions\":%u,\"conditions_per_check\":%u,\"counter_maximum\":%u,\"combat_groups\":%u,\"combat_hooks\":%u,\"actor_waypoints\":%u},"
+        "\"format_limits\":{"
+        "\"btp-adventure-v1\":{\"maps\":16,\"events\":256,\"encounters\":16,\"objectives\":32,\"variables\":32,\"tiles\":64},"
+        "\"btp-adventure-v2\":{\"maps\":16,\"events\":256,\"encounters\":16,\"objectives\":32,\"variables\":32}},"
+        "\"format_requirements\":{\"btp-adventure-v3\":{\"minimum_runtime\":\"0.2.0\",\"save_version\":52,\"upgrade_operation\":\"campaign.upgrade\"}},"
+        "\"memory_bytes\":{\"adventure\":%zu,\"project\":%zu,\"resources\":%zu,\"state\":%zu,\"save_payload\":%u},"
         "\"event_ops\":[\"end\",\"say\",\"choice\",\"if\",\"flag\",\"reward\",\"recruit\",\"transfer\",\"shop\",\"battle\",\"lua\",\"finish\",\"picture\",\"repair\",\"rearm\",\"heal\",\"salvage\",\"variable\",\"objective\",\"check\",\"reinforce\",\"battle_end\"],"
         "\"lua_api\":[\"game.flag\",\"game.credits\",\"game.command\",\"game.variable\",\"game.objective\",\"game.in_region\",\"game.combat_round\",\"game.group_count\"],"
         "\"coordinate_spaces\":{\"map_tile\":\"16 pixels; local origin; rows and overlays\","
@@ -43,7 +48,8 @@ static int capabilities(void)
         BTP_SCENE_PEOPLE,BTP_SCENE_SHOPS,BTP_SCENE_BATTLES,BTP_OBJECTIVES,BTP_DEFINITION_LIMIT,
         BTP_ART_IMAGES,BTP_ART_FRAMES,BTP_ART_PIXELS,BTP_ART_TRACKS,BTP_SCENES-BTP_LOCAL_SCENES,
         BTP_AUTHORED_DISCOVERY,BTP_SCENE_ENTRANCES,BTP_EVENT_OPTIONS-1,
-        BTP_VARIABLES,BTP_REGIONS,BTP_CONDITIONS,BTP_COUNTER_MAX,BTP_COMBAT_GROUPS,BTP_COMBAT_HOOKS,BTP_ACTOR_WAYPOINTS);
+        BTP_VARIABLES,BTP_REGIONS,BTP_CONDITIONS,BTP_COUNTER_MAX,BTP_COMBAT_GROUPS,BTP_COMBAT_HOOKS,BTP_ACTOR_WAYPOINTS,
+        sizeof(BtpAdventure),sizeof(BtpProject),sizeof(BtpResources),sizeof(BtpState),BTP_STATE_BYTES);
     return ferror(stdout) ? 1 : 0;
 }
 

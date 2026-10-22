@@ -131,6 +131,9 @@ void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
     if (s->battle_mission.enabled) {
         memcpy(b,"BTPp",4);b[4]=51;btp_battle_mission_encode(s,b+BTP_BATTLE_MISSION_OFFSET);
     }
+    if (s->event.capacity) {
+        memcpy(b,"BTPq",4);b[4]=52;btp_capacity_encode(s,b+BTP_CAPACITY_OFFSET);
+    }
     b[2048]=s->terrain_next;
     for (unsigned i=0;i<64;++i) {
         const BtpTerrainMark *mark=&s->terrain_marks[i];unsigned p=2049+4*i;
@@ -255,7 +258,8 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         n == BTP_STATE_BYTES && !memcmp(b,"BTPm",4) && b[4]==48 ? 48 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPn",4) && b[4]==49 ? 49 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPo",4) && b[4]==50 ? 50 :
-        n == BTP_STATE_BYTES && !memcmp(b,"BTPp",4) && b[4]==51 ? 51 : 0;
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPp",4) && b[4]==51 ? 51 :
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPq",4) && b[4]==52 ? 52 : 0;
     if (!version) return 0;
     if (version>=18 && version<38 && b[10232]) return 0; /* v38 critical report count. */
     if (version>=18 && version<35 && b[10233]) return 0; /* v35 weapon-window presentation bits. */
@@ -284,7 +288,17 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
     BtpState result = {.credits=35,.allowance_cap=50};
     if (version>=48 && !btp_events_decode(&result,b+20057)) return 0;
     if (version>=50 && !btp_mission_decode(&result,b+20185)) return 0;
-    if (version>=51 && !btp_battle_mission_decode(&result,b+BTP_BATTLE_MISSION_OFFSET)) return 0;
+    if (version==52 && !btp_capacity_decode(&result,b+BTP_CAPACITY_OFFSET)) return 0;
+    if ((version==51 || (version==52 && b[BTP_CAPACITY_OFFSET+1])) &&
+        !btp_battle_mission_decode(&result,b+BTP_BATTLE_MISSION_OFFSET)) return 0;
+    /* Widened handles are legal only in the explicit authored v52 envelope.
+       In particular, old 256-node sentinels must not become usable nodes. */
+    if (version<52 && (result.event.node>=BTP_LEGACY_EVENT_NODES ||
+        result.event.map>=BTP_LEGACY_LOCAL_SCENES+BTP_WORLD_SECTORS ||
+        result.event.return_map>=BTP_LEGACY_LOCAL_SCENES+BTP_WORLD_SECTORS ||
+        result.event.origin_map>=BTP_LEGACY_LOCAL_SCENES+BTP_WORLD_SECTORS ||
+        result.battle_mission.node>=BTP_LEGACY_EVENT_NODES ||
+        (result.battle_mission.encounter!=255 && result.battle_mission.encounter>=BTP_LEGACY_SCENE_BATTLES))) return 0;
     if (version>=45) {
         result.combat_profile=b[20000];result.combat_fingerprint=get32(b+20001);
         if (result.combat_profile>1 || (!!result.combat_profile != !!result.combat_fingerprint)) return 0;
@@ -364,7 +378,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         if (b[11287]) return 0;
         for (unsigned i=11273;i<11280;++i) if (b[i]) return 0;
         for (unsigned i=3836;i<4096;++i) if (b[i]) return 0;
-        for (unsigned i=512;i<2048;++i) if (b[i]) return 0;
+        for (unsigned i=version>=52 ? BTP_CAPACITY_OFFSET+BTP_CAPACITY_BYTES : 512u;i<2048;++i) if (b[i]) return 0;
     }
     if (version>=17) {
         result.campaign.invasion=b[2399];result.campaign.owned=b[2400];
@@ -384,7 +398,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
             result.campaign.world_clock>=BTP_OUTDOOR_PERIOD || result.campaign.encounter>(version>=48 ? 5u : version>=29 ? 4u : 2u) || result.campaign.mounted>result.campaign.owned ||
             result.campaign.mech_walk>15 || result.campaign.mech_direction>7 || result.campaign.ui>(version>=49 ? BTP_MENU_JOURNAL : version>=46 ? BTP_MENU_BROKER_CLASSES : version>=45 ? BTP_MENU_COMBAT_RULES : version>=42 ? BTP_MENU_BROKER_SELL_RESULT : version>=41 ? BTP_MENU_BROKER_RESULT : version>=30 ? BTP_MENU_MECH_PICK : version>=25 ? BTP_MENU_MECH : version>=23 ? BTP_MENU_RECIPIENT : version>=19 ? BTP_MENU_QUIT : 6) ||
             result.campaign.selected>(version>=23 ? 8u : 7u) ||
-            result.campaign.member>(version>=49 && result.campaign.ui==BTP_MENU_JOURNAL ? 31u : version>=43 && result.campaign.ui>=BTP_MENU_BROKER &&
+            result.campaign.member>(version>=49 && result.campaign.ui==BTP_MENU_JOURNAL ? (version>=52 ? BTP_OBJECTIVES-1u : BTP_LEGACY_OBJECTIVES-1u) : version>=43 && result.campaign.ui>=BTP_MENU_BROKER &&
                 result.campaign.ui<=BTP_MENU_BROKER_RESULT ? (version>=47 ? BTP_ROSTER_MAX : BTP_LEGACY_ROSTER_MAX)-1u : 7u) ||
             result.campaign.mech_x>2047 || result.campaign.mech_y>2047) return 0;
     }
@@ -533,7 +547,7 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
                         result.story_flags[52]=b[450];result.story_checkpoint[52]=b[451];
                         uint8_t combat[BTP_COMBAT_SAVE_BYTES]={0};
                         memcpy(combat,b+(version>=18 ? 4096 : 512),version>=18 ? BTP_COMBAT_SAVE_BYTES : version>=15 ? BTP_COMBAT_LEGACY_BYTES : 384u);
-                        if (version>=51) memset(combat+5600,0,BTP_BATTLE_MISSION_BYTES);
+                        if (result.battle_mission.enabled) memset(combat+5600,0,BTP_BATTLE_MISSION_BYTES);
                         if (!btp_combat_decode(combat,&result.combat)) return 0;
                         if (version<=15) for (unsigned i=0;i<result.combat.count;++i) {
                             BtpCombatUnit *u=&result.combat.unit[i];

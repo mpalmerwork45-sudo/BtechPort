@@ -16,7 +16,7 @@ def token(tile):
 
 def upgrade(adventure):
     """Losslessly remove the old character palette limit, in an undoable edit."""
-    if adventure["schema_version"] == 2:
+    if adventure["schema_version"] >= 2:
         return
     keys = {t["key"]: t["id"] for t in adventure["tiles"]}
     for scene in adventure["maps"]:

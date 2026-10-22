@@ -18,7 +18,7 @@ class Sources:
         ttk.Label(self.window,textvariable=self.info,wraplength=850,padding=12).pack(fill='x')
         bar=ttk.Frame(self.window,padding=6);bar.pack(fill='x')
         self.buttons={}
-        for label,action in [('Create source copy...',self.convert),('Build playable package...',self.build),('Open selected object',self.open_object),('Refresh',self.refresh)]:
+        for label,action in [('Create source copy...',self.convert),('Upgrade campaign limits',self.upgrade),('Build playable package...',self.build),('Open selected object',self.open_object),('Refresh',self.refresh)]:
             button=ttk.Button(bar,text=label,command=lambda f=action:guard(self,f,publish=False));button.pack(side='left',padx=4)
             self.buttons[label]=button
         flow_toolbar(bar)
@@ -38,6 +38,8 @@ class Sources:
         self.document=self.scope.document;source=self.document.source
         self.table.delete(*self.table.get_children());self.records={}
         self.buttons['Create source copy...'].configure(state='disabled' if source else 'normal')
+        expanded=(self.document.adventure or {}).get('schema_version',1)>=3
+        self.buttons['Upgrade campaign limits'].configure(state='disabled' if expanded or not self.document.adventure else 'normal')
         if source:
             current=CampaignSource(self.document.root,self.document.source_files())
             self.info.set('Source project: '+str(self.document.root)+'\nSave writes the modules below. Play and Build compile the current draft into a normal game package. Double-click an object to edit it with the usual tools.')
@@ -48,6 +50,14 @@ class Sources:
         else:
             self.info.set('This project uses the existing package format. All editing and Play features remain available. Create source copy makes a separate project with editable map, mission, definition, artwork and dialogue files.')
             self.status.set('Conversion canonicalizes game data. Keep this package for its old saves; the source copy starts a new campaign unless you explicitly migrate a save.')
+        self.info.set(self.info.get()+('\nCampaign v3: 64 maps, 64 encounters, 1,024 events, 128 objectives and variables.' if expanded else
+            '\nUpgrade campaign limits enables v3 (runtime 0.2.0+). It changes save identity: keep a copy of this package for old saves. Upgrade is an undoable draft edit.'))
+
+    def upgrade(self):
+        from campaign_limits import upgrade_campaign
+        self.scope.transact(lambda:upgrade_campaign(self.document))
+        self.refresh()
+        self.status.set('Campaign upgraded in the draft. Save or Build to use it; Undo restores the previous format. Existing saves still belong to their original package.')
 
     def destination(self,action):
         parent=filedialog.askdirectory(parent=self.workspace.window,title=action+' into a NEW subfolder of')

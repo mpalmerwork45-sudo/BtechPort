@@ -111,6 +111,21 @@ Write scope: `adventure.start`.
 }
 ```
 
+## campaign.upgrade
+
+Opt into adventure v3 campaign budgets (runtime 0.2.0+). Changes save identity; retain the old package for its saves.
+
+Write scope: `adventure`.
+
+| Field | Structural constraint |
+| --- | --- |
+
+```json
+{
+  "op": "campaign.upgrade"
+}
+```
+
 ## flags.add
 
 Declare persistent mission flags, without duplicating existing IDs.

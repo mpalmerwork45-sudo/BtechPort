@@ -93,6 +93,7 @@ int btp_save_write(const char *path, const BtpState *s, const BtpResources *r, B
     int updated=r->roster.count!=0;
     int project=r->project!=NULL;
     if (!!s->project!=project) return fail(e,"State and project context disagree");
+    if (!btp_events_valid(s,r)) return fail(e,"Current authored state does not match its project");
     if (s->combat_profile>1 || (!!s->combat_profile != !!s->combat_fingerprint) ||
         (s->combat_profile && !btp_active_combat_profile(s,r)))
         return fail(e,"Current combat rules do not match the loaded Updated profile");
@@ -218,7 +219,7 @@ int btp_save_load(const char *path, BtpState *s, const BtpResources *r, BtpError
         return fail(e,"Save contains an invalid or unsupported game state");
     unsigned rule_offset=project ? 112u : 84u;
     if (!!loaded.project!=project || (!v2 && (loaded.combat_profile || bytes[header+4]>=45)) ||
-        (v2 && ((project ? bytes[header+4]!=47 && bytes[header+4]!=48 && bytes[header+4]!=49 && bytes[header+4]!=50 && bytes[header+4]!=51 : bytes[header+4]!=45 && bytes[header+4]!=46) || get32(bytes+rule_offset)!=loaded.combat_profile || get32(bytes+rule_offset+4)!=loaded.combat_fingerprint)) ||
+        (v2 && ((project ? bytes[header+4]<47 || bytes[header+4]>52 : bytes[header+4]!=45 && bytes[header+4]!=46) || get32(bytes+rule_offset)!=loaded.combat_profile || get32(bytes+rule_offset+4)!=loaded.combat_fingerprint)) ||
         (loaded.combat_profile && !btp_active_combat_profile(&loaded,r)) ||
         (loaded.campaign.ui>=BTP_MENU_UPDATED_SETTINGS && loaded.campaign.ui<=BTP_MENU_COMBAT_RULES &&
             (!updated || !r->combat_profile.fingerprint)))

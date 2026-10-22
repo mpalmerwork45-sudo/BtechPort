@@ -99,6 +99,9 @@ def _bounds(scene, layer, points):
 
 def apply_operation(doc, op, imports):
     name=op['op']; a=copy.deepcopy(doc.adventure)
+    if name=='campaign.upgrade':
+        from campaign_limits import upgrade_campaign
+        upgrade_campaign(doc);return doc.manifest['package_id']
     if name.startswith(('map.','entrance.','marker.','world.','city.','construction.','road.','pattern.','event.','start.','flags.')) and a is None:
         raise AuthoringError('capability.unavailable','This operation requires an authored adventure.')
     scene_index=find(a['maps'],op['map'])[0] if 'map' in op else None

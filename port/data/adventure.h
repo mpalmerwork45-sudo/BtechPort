@@ -2,15 +2,10 @@
 #define BTP_ADVENTURE_H
 #include "data/resources.h"
 #include "data/definitions.h"
+#include "data/adventure_limits.h"
 
 /* Bounded, immutable authored scenes. Visual tiles and rule tiles are
    separate: artwork never determines whether a roof can be walked through. */
-enum { BTP_LOCAL_SCENES=16, BTP_SCENES=272, BTP_EVENT_NODES=256, BTP_EVENT_FLAGS=64,
-    BTP_SCENE_TILES=4096, BTP_JIGSAWS=1024, BTP_WORLDS=16, BTP_SCENE_PEOPLE=16, BTP_SCENE_SHOPS=16,
-    BTP_SCENE_BATTLES=16, BTP_EVENT_OPTIONS=6, BTP_AUTHORED_MAP_FIRST=16,
-    BTP_SCENE_ENTRANCES=16, BTP_OBJECTIVES=32, BTP_AUTHORED_DISCOVERY=16384,
-    BTP_VARIABLES=32, BTP_REGIONS=32, BTP_CONDITIONS=8, BTP_COUNTER_MAX=1000000,
-    BTP_COMBAT_GROUPS=16, BTP_COMBAT_HOOKS=32, BTP_ACTOR_WAYPOINTS=16 };
 typedef struct { char id[64],image[64];uint16_t graphic;uint8_t key,sheet,terrain,color; } BtpSceneTile;
 typedef struct { char id[64],name[25],image[64];uint8_t x,y,person;uint16_t event,icon; } BtpSceneEntrance;
 typedef struct {

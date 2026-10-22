@@ -29,6 +29,8 @@ def service_building(document,preset,name,costs,mech=None,door=None):
         selected=next((d for m in a['maps'] for d in m['entrances'] if d['id']==door),None)
         if not selected:raise EditorError('The selected entrance no longer exists.')
         selected['event']=menu['id']
-    if len(events)>256:raise EditorError('This building exceeds the 256-event limit.')
+    from campaign_limits import limits
+    maximum=limits(a)['events']
+    if len(events)>maximum:raise EditorError(f'This building exceeds the {maximum}-event limit for this campaign format.')
     document.replace_adventure(a)
     return menu['id']

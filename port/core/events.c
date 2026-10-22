@@ -386,7 +386,7 @@ int btp_events_decode(BtpState *s,const uint8_t b[128])
     }
     for (unsigned i=b[127]==2 ? 122u : b[127] ? 117u : 112u;i<127;++i) if (b[i]) return 0;
     for (unsigned i=0;i<64;++i) if (v->flags[i]>1) return 0;
-    return v->enabled==1 && v->phase<=BTP_EVENT_COMPLETE && v->node<256 && v->selected<6 && v->page<5 &&
+    return v->enabled==1 && v->phase<=BTP_EVENT_COMPLETE && v->node<BTP_EVENT_NODES && v->selected<6 && v->page<5 &&
         v->origin_map<BTP_SCENES && v->map<BTP_SCENES && v->return_map<BTP_SCENES;
 }
 int btp_events_valid(const BtpState *s,const BtpResources *r)
@@ -399,7 +399,7 @@ int btp_events_valid(const BtpState *s,const BtpResources *r)
         s->script.pc || s->mission.phase || s->campaign.building || s->entry_slot) return 0;
     if (!btp_mission_valid(s,a) || !btp_battle_mission_valid(s,a)) return 0;
     for (unsigned i=a->flag_count;i<64;++i) if (v->flags[i]) return 0;
-    for (unsigned i=0;i<256;++i) if ((v->done[i/8u]&(1u<<(i%8u))) &&
+    for (unsigned i=0;i<BTP_EVENT_NODES;++i) if ((v->done[i/8u]&(1u<<(i%8u))) &&
         (i>=a->node_count || (a->nodes[i].op!=BTP_EVENT_REWARD && a->nodes[i].op!=BTP_EVENT_RECRUIT && a->nodes[i].op!=BTP_EVENT_SALVAGE &&
          !(a->nodes[i].op==BTP_EVENT_VARIABLE && a->nodes[i].y)))) return 0;
     for (unsigned i=0;i<8;++i) if (s->party.people[i][0]!=255 &&

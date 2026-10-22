@@ -79,6 +79,7 @@ int btp_mission_objective(BtpState *s,const BtpAdventure *a,const BtpEventNode *
 void btp_mission_initialize(BtpState *s,const BtpAdventure *a)
 {
     s->event.mission_state=(uint8_t)a->mission_state;
+    s->event.capacity=(uint8_t)(a->version>=3);
     for (unsigned i=0;i<a->variable_count;++i) s->event.variables[i]=a->variables[i].initial;
     for (unsigned i=0;i<a->objective_count;++i) s->event.objectives[i]=(uint8_t)a->objectives[i].initial;
 }
@@ -111,7 +112,7 @@ unsigned btp_mission_trigger(BtpState *s,const BtpAdventure *a)
 int btp_mission_valid(const BtpState *s,const BtpAdventure *a)
 {
     const BtpEventState *v=&s->event;
-    if (v->mission_state!=a->mission_state) return 0;
+    if (v->mission_state!=a->mission_state || v->capacity!=(a->version>=3)) return 0;
     for (unsigned i=0;i<BTP_VARIABLES;++i)
         if (v->variables[i]>(i<a->variable_count ? a->variables[i].maximum : 0u)) return 0;
     for (unsigned i=0;i<BTP_OBJECTIVES;++i) {
@@ -153,4 +154,29 @@ int btp_mission_decode(BtpState *s,const uint8_t b[BTP_MISSION_BYTES])
     }
     v->regions=get32(b+164);v->enter_pending=get32(b+168);v->leave_pending=get32(b+172);
     v->entered=get32(b+176);v->left=get32(b+180);return 1;
+}
+
+/* These offsets describe the v52 wire format, independently of C padding
+   or future array sizes. The original first 256 done bits / 32 variables /
+   32 objectives remain in their released locations. */
+_Static_assert(BTP_EVENT_NODES==1024 && BTP_VARIABLES==128 && BTP_OBJECTIVES==128,
+    "A capacity change requires an explicit save-format audit");
+void btp_capacity_encode(const BtpState *s,uint8_t b[BTP_CAPACITY_BYTES])
+{
+    memset(b,0,BTP_CAPACITY_BYTES);b[0]=1;b[1]=s->battle_mission.enabled;
+    memcpy(b+4,s->event.done+32,96);
+    for (unsigned i=32;i<128;++i) put32(b+100+(i-32)*4,s->event.variables[i]);
+    memcpy(b+484,s->event.objectives+32,96);
+}
+int btp_capacity_decode(BtpState *s,const uint8_t b[BTP_CAPACITY_BYTES])
+{
+    if (b[0]!=1 || b[1]>1 || b[2] || b[3]) return 0;
+    for (unsigned i=580;i<BTP_CAPACITY_BYTES;++i) if (b[i]) return 0;
+    s->event.capacity=1;memcpy(s->event.done+32,b+4,96);
+    for (unsigned i=32;i<128;++i) {
+        s->event.variables[i]=get32(b+100+(i-32)*4);
+        s->event.objectives[i]=b[484+i-32];
+        if (s->event.variables[i]>BTP_COUNTER_MAX || s->event.objectives[i]>BTP_OBJECTIVE_FAILED) return 0;
+    }
+    return 1;
 }

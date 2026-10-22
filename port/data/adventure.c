@@ -43,7 +43,7 @@ static int mission_definitions(BtpJson *j,BtpAdventure *a)
 {
     unsigned records[BTP_VARIABLES],count=0;
     if (btp_json_optional(j,1,"variables")) {
-        if (!ids(j,"variables",a->variables,sizeof *a->variables,BTP_VARIABLES,&count,records)) return 0;
+        if (!ids(j,"variables",a->variables,sizeof *a->variables,a->version>=3 ? BTP_VARIABLES : BTP_LEGACY_VARIABLES,&count,records)) return 0;
         a->variable_count=count;
         for (unsigned i=0;i<count;++i) {
             unsigned n=records[i],kind;BtpMissionVariable *v=&a->variables[i];
@@ -220,7 +220,7 @@ static int world(BtpJson *j,unsigned n,BtpAdventure *a,int plural)
     if (!width || !height || width%8 || height%8) return btp_json_error(j,grid,"world dimensions must be multiples of eight jigsaws (8..128)");
     w->width=8*width;w->height=8*height;w->base=a->map_count;w->explore_offset=a->explore_cells;
     a->explore_cells+=width*height;
-    if (a->explore_cells>16384 || a->map_count+width*height/64>BTP_SCENES) return btp_json_error(j,n,"worlds share at most 256 sectors (1048576 tiles)");
+    if (a->explore_cells>BTP_AUTHORED_DISCOVERY || a->map_count-a->local_count+width*height/64>BTP_WORLD_SECTORS) return btp_json_error(j,n,"worlds share at most 256 sectors (1048576 tiles)");
     for (unsigned y=0;y<w->height;y+=64) for (unsigned x=0;x<w->width;x+=64) {
         BtpScene *m=&a->maps[a->map_count++];m->origin_x=x;m->origin_y=y;m->world=wi;m->explore_offset=w->explore_offset;m->explore_width=width;m->explore_height=height;m->visual.width=m->visual.height=64;
         if (plural) snprintf(m->id,sizeof m->id,"world:planet-%u-sector-%u-%u",wi,x/64,y/64);
@@ -381,17 +381,22 @@ static int combat_hook_routes(BtpJson *j,const BtpAdventure *a,const unsigned *n
 int btp_adventure_load(const char *path,const BtpDefinitions *d,BtpAdventure *out,char error[256])
 {
     BtpAdventure *a=calloc(1,sizeof *a);BtpJson j={0};int ok=0;char text[64];unsigned v;
-    unsigned tiles[BTP_SCENE_TILES],maps[16],people[16],shops[16],battles[16],nodes[256];
+    unsigned tiles[BTP_SCENE_TILES],maps[BTP_LOCAL_SCENES],people[BTP_SCENE_PEOPLE],shops[BTP_SCENE_SHOPS],battles[BTP_SCENE_BATTLES],nodes[BTP_EVENT_NODES];
     if (!a) return 0;
     if (!btp_json_load_large(&j,path,error)) goto done;
-    if (!string(&j,1,"format",text,sizeof text) || (strcmp(text,"btp-adventure-v1") && strcmp(text,"btp-adventure-v2")) ||
-        !number(&j,1,"schema_version",1,2,&a->version) || (a->version==1 ? strcmp(text,"btp-adventure-v1") : strcmp(text,"btp-adventure-v2"))) { btp_json_error(&j,1,"expected btp-adventure-v1/v2 with matching schema version");goto done; }
+    if (!string(&j,1,"format",text,sizeof text) || !number(&j,1,"schema_version",1,3,&a->version) ||
+        strcmp(text,a->version==1 ? "btp-adventure-v1" : a->version==2 ? "btp-adventure-v2" : "btp-adventure-v3")) {
+        btp_json_error(&j,1,"expected btp-adventure-v1/v2/v3 with matching schema version");goto done;
+    }
+    /* v3 always uses versioned mission persistence, even before its first
+       variable or objective is added. Old packages keep byte-identical saves. */
+    a->mission_state=a->version>=3;
     if (!ids(&j,"tiles",a->tiles,sizeof *a->tiles,a->version==1 ? 64u : BTP_SCENE_TILES,&a->tile_count,tiles) ||
-        !ids(&j,"maps",a->maps,sizeof *a->maps,16,&a->map_count,maps) ||
+        !ids(&j,"maps",a->maps,sizeof *a->maps,a->version>=3 ? BTP_LOCAL_SCENES : BTP_LEGACY_LOCAL_SCENES,&a->map_count,maps) ||
         !ids(&j,"people",a->people,sizeof *a->people,16,&a->person_count,people) ||
         !ids(&j,"shops",a->shops,sizeof *a->shops,16,&a->shop_count,shops) ||
-        !ids(&j,"encounters",a->battles,sizeof *a->battles,16,&a->battle_count,battles) ||
-        !ids(&j,"events",a->nodes,sizeof *a->nodes,256,&a->node_count,nodes)) goto done;
+        !ids(&j,"encounters",a->battles,sizeof *a->battles,a->version>=3 ? BTP_SCENE_BATTLES : BTP_LEGACY_SCENE_BATTLES,&a->battle_count,battles) ||
+        !ids(&j,"events",a->nodes,sizeof *a->nodes,a->version>=3 ? BTP_EVENT_NODES : BTP_LEGACY_EVENT_NODES,&a->node_count,nodes)) goto done;
     if (!a->tile_count || !a->map_count || !a->person_count || !a->node_count) { btp_json_error(&j,1,"tiles, maps, people and events cannot be empty");goto done; }
     unsigned flags=btp_json_field(&j,1,"flags");if (!btp_json_type(&j,flags,'[')) goto done;
     for (unsigned n=j.nodes[flags].first;n;n=j.nodes[n].next) {
@@ -405,7 +410,9 @@ int btp_adventure_load(const char *path,const BtpDefinitions *d,BtpAdventure *ou
     if (objectives) {
         if (!btp_json_type(&j,objectives,'[')) goto done;
         for (unsigned n=j.nodes[objectives].first;n;n=j.nodes[n].next) {
-            if (a->objective_count==BTP_OBJECTIVES) { btp_json_error(&j,n,"at most 32 objectives");goto done; }
+            if (a->objective_count==(a->version>=3 ? BTP_OBJECTIVES : BTP_LEGACY_OBJECTIVES)) {
+                btp_json_error(&j,n,a->version>=3 ? "at most 128 objectives" : "at most 32 objectives (upgrade to adventure v3 for 128)");goto done;
+            }
             BtpObjective *o=&a->objectives[a->objective_count];
             if (!string(&j,n,"id",o->id,sizeof o->id) || !btp_content_id(o->id,1) ||
                 !string(&j,n,"title",o->title,sizeof o->title) || !string(&j,n,"text",o->text,sizeof o->text)) goto done;
@@ -431,7 +438,7 @@ int btp_adventure_load(const char *path,const BtpDefinitions *d,BtpAdventure *ou
         if (!option(&j,n,"sheet",sheets,a->version==1 ? 3u : 4u,&v)) goto done;
         t->sheet=(uint8_t)v;
         if (t->sheet==3) { if (!string(&j,n,"graphic",t->image,sizeof t->image)) goto done;t->graphic=65535; }
-        else { if (!number(&j,n,"graphic",0,t->sheet==2 && a->version==2 ? 4095u : 249u,&v)) goto done;t->graphic=(uint16_t)v; }
+        else { if (!number(&j,n,"graphic",0,t->sheet==2 && a->version>=2 ? 4095u : 249u,&v)) goto done;t->graphic=(uint16_t)v; }
         if (!option(&j,n,"terrain",terrain,5,&v)) goto done;
         t->terrain=(uint8_t)v;
         if (!number(&j,n,"mini_color",0,15,&v) || !btp_json_done(&j,n)) goto done;
@@ -463,7 +470,7 @@ int btp_adventure_load(const char *path,const BtpDefinitions *d,BtpAdventure *ou
             unsigned person=btp_json_optional(&j,door,"person");
             if (person) { if (!reference(&j,person,a->people,sizeof *a->people,a->person_count,&v)) goto done;e->person=(uint8_t)v; }
             unsigned icon=btp_json_optional(&j,door,"icon");
-            if (icon && (a->version!=2 || !btp_json_string(&j,icon,e->image,sizeof e->image))) goto done;
+            if (icon && (a->version<2 || !btp_json_string(&j,icon,e->image,sizeof e->image))) goto done;
             if (!btp_json_done(&j,door)) goto done;
             e->x=(uint8_t)x;e->y=(uint8_t)y;
             if (!btp_scene_stand(m,(int)x,(int)y,0)) { btp_json_error(&j,door,"entrance must be on accessible ground in front of the building");goto done; }
@@ -472,7 +479,7 @@ int btp_adventure_load(const char *path,const BtpDefinitions *d,BtpAdventure *ou
         if (!btp_json_done(&j,n)) goto done;
     }
     a->local_count=a->map_count;
-    if (a->version==2) {
+    if (a->version>=2) {
         if (!jigsaws(&j,a)) goto done;
         unsigned single=btp_json_optional(&j,1,"world"),many=btp_json_optional(&j,1,"worlds");
         if (single && many) { btp_json_error(&j,many,"choose world or worlds, not both");goto done; }
@@ -484,7 +491,7 @@ int btp_adventure_load(const char *path,const BtpDefinitions *d,BtpAdventure *ou
     }
     /* Local interiors not placed on a planet still need their own discovery
        region. They must never reveal terrain on a planet at the same XY. */
-    if (a->world_count) for (unsigned i=0;i<a->local_count;++i) {
+    if (a->world_count || a->version>=3) for (unsigned i=0;i<a->local_count;++i) {
         BtpScene *m=&a->maps[i];if (m->world) continue;
         m->explore_offset=a->explore_cells;
         m->explore_width=(m->origin_x%8+m->visual.width+7)/8;
@@ -569,7 +576,7 @@ int btp_adventure_load(const char *path,const BtpDefinitions *d,BtpAdventure *ou
         if (!option(&j,n,"op",ops,22,&e->op)) goto done;
         if (a->version==1 && e->op==BTP_EVENT_PICTURE) { btp_json_error(&j,n,"picture requires adventure v2");goto done; }
         e->picture=65535;unsigned image=btp_json_optional(&j,n,"image");
-        if (image && (a->version!=2 || !btp_json_string(&j,image,e->image,sizeof e->image) ||
+        if (image && (a->version<2 || !btp_json_string(&j,image,e->image,sizeof e->image) ||
             (e->op!=BTP_EVENT_PICTURE && e->op!=BTP_EVENT_SAY && e->op!=BTP_EVENT_CHOICE && e->op!=BTP_EVENT_FINISH))) goto done;
         if (e->op==BTP_EVENT_PICTURE && !image) { btp_json_error(&j,n,"picture event requires an image");goto done; }
         unsigned portrait=btp_json_optional(&j,n,"portrait");

@@ -386,7 +386,8 @@ int btp_actions_valid(const BtpState *s)
     if (m->from_intro && (s->mode!=BTP_ACTIONS || (s->campaign.ui!=BTP_MENU_LOAD && s->campaign.ui!=BTP_MENU_MESSAGE))) return 0;
     if ((s->mode==BTP_ACTIONS)!=(s->campaign.ui!=0)) return 0;
     if (s->campaign.ui>BTP_MENU_JOURNAL || (s->campaign.ui && s->campaign.selected>=btp_actions_count(s))) return 0;
-    if (s->campaign.ui==BTP_MENU_JOURNAL && (!s->event.enabled || s->campaign.member>=32)) return 0;
+    if (s->campaign.ui==BTP_MENU_JOURNAL && (!s->event.enabled ||
+        s->campaign.member>=(s->event.capacity ? BTP_OBJECTIVES : BTP_LEGACY_OBJECTIVES))) return 0;
     if (m->broker_class>BTP_ROSTER_VEHICLES || (m->broker_class &&
         (s->campaign.ui<BTP_MENU_BROKER || s->campaign.ui>BTP_MENU_BROKER_RESULT))) return 0;
     if (s->campaign.ui==BTP_MENU_MECH && (s->campaign.member>=4 || !s->campaign.owned || btp_party_mech((BtpState *)s,s->campaign.member)[0]==255)) return 0;

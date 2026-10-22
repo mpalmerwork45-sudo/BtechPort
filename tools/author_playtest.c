@@ -88,7 +88,12 @@ static void string_json(FILE *f,const char *s)
     fputc('"',f);
 }
 static int fail(const char *message)
-{ if (!failed) snprintf(error.text,sizeof error.text,"%s",message);failed=1;return 0; }
+{
+    /* Save/loader failures already occupy this buffer; copying it onto
+       itself erased the useful diagnostic in a failed checkpoint report. */
+    if (!failed && message!=error.text) snprintf(error.text,sizeof error.text,"%s",message);
+    failed=1;return 0;
+}
 static void input(BtpState *s,const BtpResources *r,BtpAction action)
 {
     if (failed) return;

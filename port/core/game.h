@@ -1,6 +1,7 @@
 #ifndef BTP_GAME_H
 #define BTP_GAME_H
 #include "data/resources.h"
+#include "data/adventure_limits.h"
 #include "core/script.h"
 typedef enum { BTP_IDLE, BTP_UP, BTP_DOWN, BTP_LEFT, BTP_RIGHT, BTP_ACCEPT, BTP_CANCEL,
     BTP_DIGIT_0, BTP_DIGIT_1, BTP_DIGIT_2, BTP_DIGIT_3, BTP_DIGIT_4,
@@ -129,11 +130,11 @@ typedef struct {
     uint8_t enabled,phase,selected,page,origin_entry;
     uint16_t explore_offset;
     uint8_t explore_width,explore_height,planet;
-    uint8_t flags[64],done[32],people[8];
+    uint8_t flags[64],done[BTP_EVENT_DONE_BYTES],people[8];
     /* AI6 state has its own versioned save tail; legacy authored saves keep
        their exact layout when these optional mission features are absent. */
-    uint8_t mission_state,objectives[32];
-    uint32_t variables[32],regions,enter_pending,leave_pending,entered,left;
+    uint8_t mission_state,objectives[BTP_OBJECTIVES],capacity;
+    uint32_t variables[BTP_VARIABLES],regions,enter_pending,leave_pending,entered,left;
 } BtpEventState;
 /* Mission units use stable combat IDs 12..23. Pilot ejection inserts array
    slots, so never save a group member as a mutable combat array index. */

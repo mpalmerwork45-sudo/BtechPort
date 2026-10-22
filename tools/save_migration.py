@@ -9,6 +9,8 @@ def compatible(old,new):
     for key in ('package_id','requires','startup','rules_profile','save_policy'):
         if old.manifest.get(key)!=new.manifest.get(key):raise EditorError(f'Migration changes {key}.')
     if old.adventure is None or new.adventure is None:raise EditorError('Migration currently supports authored adventures only.')
+    if old.adventure.get('schema_version')!=new.adventure.get('schema_version'):
+        raise EditorError('Campaign format upgrades require a new campaign. Keep the original package for this save; capacity and discovery state cannot be migrated by relabelling its fingerprint.')
     def equal(a,b,label):
         if a!=b:raise EditorError(f'Incompatible {label}; existing IDs, order and gameplay rules must be retained.')
     def strip(value,fields):return {k:v for k,v in value.items() if k not in fields}

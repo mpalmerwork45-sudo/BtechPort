@@ -41,7 +41,7 @@ def capabilities(tool):
             reviewed_request_bytes=2097152,import_file_bytes=16777216,import_total_bytes=67108864,
             preview_maps_max=8,checks_per_review=32,heartbeat_seconds=15),
         source_projects=dict(format='btp-campaign-source-v1',index='SOURCE.json',files_max=4096,bytes_max=134217728,
-            commands=['source convert','source build','source locations'],runtime_limits='Unchanged; see runtime.limits.'),
+            commands=['source convert','source build','source locations'],runtime_limits='See runtime.limits and format_limits; campaign.upgrade opts into v3.'),
         schemas='schemas/',guide='docs/AI_AUTHORING_GUIDE.md')
 
 
@@ -59,7 +59,8 @@ def inventory(doc):
 
 
 def summary(doc, tool):
-    caps=capabilities(tool)['runtime'];limits=caps['limits'];a=doc.adventure or {}
+    caps=capabilities(tool)['runtime'];a=doc.adventure or {}
+    limits=dict(caps['limits'],**caps.get('format_limits',{}).get(a.get('format'),{}))
     counts={key:len(a.get(key,[])) for key in ('maps','events','flags','tiles','jigsaws','people','shops','encounters','objectives','variables','regions','combat_groups','combat_hooks')}
     worlds=all_worlds(a);counts['worlds']=len(worlds)
     counts.update(images=len(doc.art['images']),art_pixels=sum(im['width']*im['height']*len(im['frames']) for im in doc.art['images']),
@@ -67,7 +68,7 @@ def summary(doc, tool):
         world_sectors_total=sum(len(w['pieces'])*len(w['pieces'][0])//64 for w in worlds))
     placed={c for w in worlds for c in w['cities']}
     counts['discovery_cells']=sum(len(w['pieces'])*len(w['pieces'][0]) for w in worlds)
-    if worlds:
+    if worlds or a.get('schema_version',1)>=3:
         counts['discovery_cells']+=sum(((m['origin'][0]%8+len(m['rows'][0])+7)//8)*((m['origin'][1]%8+len(m['rows'])+7)//8)
                                        for m in a.get('maps',[]) if m['id'] not in placed)
     capacity={key:dict(used=count,limit=limits[key],remaining=limits[key]-count) for key,count in counts.items()}
