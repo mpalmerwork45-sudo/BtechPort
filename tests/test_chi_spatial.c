@@ -8,6 +8,10 @@
 #include "core/combat.h"
 #include "core/training.h"
 #include "core/animation.h"
+#include "core/yard.h"
+#include "core/audio.h"
+#include "core/roster_game.h"
+#include "data/art.h"
 #include "frontend/pixels.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -58,7 +62,7 @@ static void seeds(BtpResources *a,BtpResources *b)
                 CHECK(btp_world_deep_crossing(a,s,x,y,-1,-1)==btp_world_deep_crossing(b,s,x,y,-1,-1));
         }
     }
-    free(s);puts("Compared all 1,048,576 world cells and depth boundaries for three seeds, before/after the invasion.");
+    free(s);puts("Compared 1,048,576 world cells and a 16-half-step depth-crossing grid for each of three seeds, before/after invasion.");
 }
 static void proof(const char *kind,const BtpResources *a,const BtpResources *b)
 {
@@ -76,6 +80,16 @@ static void proof(const char *kind,const BtpResources *a,const BtpResources *b)
     } else if (!strcmp(kind,"door")) {
         const BtpMap *m=&b->map;s->x_half=m->entrance_x[3]&127;s->y_half=m->entrance_y[3]&127;
         CHECK(btp_entrance(s,m)==3 && btp_entrance(s,&a->map)!=3);
+    } else if (!strcmp(kind,"routes")) CHECK(b->map.npc_routes[0]==1 && a->map.npc_routes[0]!=1);
+    else if (!strcmp(kind,"starport")) {
+        CHECK(btp_chi_map_offset(b,2,0));btp_yard_begin_arena(s,b);
+        CHECK(s->campaign.battle_x==1216+btp_chi_map_offset(b,2,0));
+        unsigned ox=(b->local[1].entrance_x[0]>>8)*128u,oy=(b->local[1].entrance_y[0]>>12)*128u;
+        CHECK(btp_world_device_direction_resources(b,ox+56u,oy+56u)==0);
+    } else if (!strcmp(kind,"broker")) {
+        const BtpChiSpatial *c=b->project->chi_spatial;CHECK(c->broker_configured && c->broker_enabled);
+        s->map_id=2;s->story_flags[4]=1;s->campaign.mounted=0;
+        CHECK(btp_broker_door(s,b,c->broker_x,c->broker_y));CHECK(!btp_broker_door(s,b,54,50));
     } else if (!strcmp(kind,"jigsaw")) {
         int found=0;
         for (int y=0;y<1024 && !found;++y) for (int x=0;x<1024;++x) if (!btp_world_location(b,s,x,y) &&
@@ -95,12 +109,59 @@ static void proof(const char *kind,const BtpResources *a,const BtpResources *b)
         CHECK(btp_citadel_origin(s,0)!=(a->map.entrance_x[0]>>8)*128u);
         s->mission.assignment=7;s->campaign.invasion=1;btp_combat_begin(s,b);
         CHECK(s->campaign.battle_x==btp_citadel_origin(s,0)-64u);
-    } else if (!strcmp(kind,"audio")) CHECK(b->sound_map[0]==2 && b->sound_speed==125);
+    } else if (!strcmp(kind,"audio")) {
+        CHECK(b->sound_map[0]==2 && b->sound_speed==125);
+        BtpResources *source=malloc(sizeof *source);CHECK(source);*source=*a;source->sound_speed=125;
+        BtpAudioState x={.sound_count=1,.sounds={2}},y={.sound_count=1,.sounds={1}};
+        int16_t left[4096],right[4096];btp_audio_samples(&x,source,4096,left);btp_audio_samples(&y,b,4096,right);
+        CHECK(!memcmp(left,right,sizeof left));free(source);
+    } else if (!strcmp(kind,"portrait")) {
+        CHECK(b->project->chi_portraits[6]);s->mode=BTP_BUILDING;s->map_id=0;s->campaign.building=9;
+        uint32_t *f=malloc(64000u*sizeof *f);CHECK(f);btp_render(b,s,0,f);CHECK(f[8u*320+8]==UINT32_C(0xffff55ff));free(f);
+    } else if (!strcmp(kind,"forcefield")) {
+        const BtpChiSpatial *c=b->project->chi_spatial;unsigned tile=0;
+        while (tile<c->tile_count && strcmp(c->tiles[tile].id,"chi:land-106")) ++tile;
+        CHECK(tile<c->tile_count && c->tiles[tile].sheet==4);
+        unsigned cell=0;while (cell<4096 && c->maps[0].cells[cell]!=tile) ++cell;CHECK(cell<4096);
+        s->x_half=(uint16_t)(2u*(cell%64));s->y_half=(uint16_t)(2u*(cell/64));
+        const BtpArtImage *im=&b->project->graphics.images[c->tiles[tile].graphic];CHECK(im->count==3 && im->frame_ticks==4);
+        unsigned at=0;while (at<256 && (at%16>=8 || b->project->graphics.pixels[im->frames[1]+at]==btp_palette[15])) ++at;CHECK(at<256);
+        unsigned pixel=(96+at/16)*320+200+at%16;uint32_t *f=malloc(64000u*sizeof *f);CHECK(f);
+        s->tick=0;btp_render(b,s,0,f);CHECK(f[pixel]==btp_palette[15]);s->tick=4;btp_render(b,s,0,f);CHECK(f[pixel]!=btp_palette[15]);free(f);
+    }
     else CHECK(0);
     free(s);printf("Verified effective native edit: %s\n",kind);
 }
 int main(int argc,char **argv)
 {
+    if (argc==5 && !strcmp(argv[1],"--moved-route")) {
+        BtpContent a={0},b={0};CHECK(btp_content_load_project(&a,argv[2],NULL,&error));CHECK(btp_content_load_project(&b,argv[3],NULL,&error));
+        BtpState *x=calloc(1,sizeof *x),*y=calloc(1,sizeof *y);CHECK(x && y);
+        btp_start_content(x,a.resources);btp_start_content(y,b.resources);x->project=y->project=1;
+        btp_npc_init(x,&a.resources->map);btp_npc_init(y,&b.resources->map);
+        FILE *f=fopen(argv[4],"r");CHECK(f);char line[128];unsigned ticks=0;
+        while (fgets(line,sizeof line,f)) {
+            line[strcspn(line,"\r\n")]=0;if (!*line || *line=='#') continue;BtpAction action;CHECK(btp_action_parse(line,&action));
+            btp_game_tick(x,a.resources,action);btp_game_tick(y,b.resources,action);++ticks;
+            CHECK(x->x_half==y->x_half && x->y_half==y->y_half && x->map_id==y->map_id && x->mode==y->mode && x->blocked==y->blocked);
+            CHECK(x->credits==y->credits && x->script.pc==y->script.pc && x->script.status==y->script.status);
+            CHECK(!memcmp(x->story_flags,y->story_flags,sizeof x->story_flags) && !memcmp(x->npc.rng,y->npc.rng,3));
+        }
+        CHECK(!fclose(f));printf("Verified %u local gameplay/RNG ticks after moving the Citadel.\n",ticks);
+        free(x);free(y);btp_content_close(&a);btp_content_close(&b);return 0;
+    }
+    if (argc==5 && !strcmp(argv[1],"--held-film")) {
+        BtpContent c={0};CHECK(btp_content_load_project(&c,argv[2],NULL,&error));
+        BtpState *s=calloc(1,sizeof *s),*back=calloc(1,sizeof *back);CHECK(s && back);btp_start_content(s,c.resources);s->project=1;btp_npc_init(s,&c.resources->map);
+        FILE *f=fopen(argv[3],"r");CHECK(f);char line[128];int found=0;
+        while (fgets(line,sizeof line,f)) {
+            line[strcspn(line,"\r\n")]=0;if (!*line || *line=='#') continue;BtpAction action;CHECK(btp_action_parse(line,&action));btp_game_tick(s,c.resources,action);
+            if (s->cutscene.active==2) { found=1;break; }
+        }
+        CHECK(!fclose(f) && found);CHECK(btp_save_write(argv[4],s,c.resources,&error));CHECK(btp_save_load(argv[4],back,c.resources,&error));
+        uint8_t a[BTP_STATE_BYTES],b[BTP_STATE_BYTES];btp_state_encode(s,a);btp_state_encode(back,b);CHECK(!memcmp(a,b,sizeof a));
+        free(s);free(back);btp_content_close(&c);puts("Verified edited startup film held-save/reload through the real training route.");return 0;
+    }
     if (argc==5 && !strcmp(argv[1],"--proof")) {
         BtpContent a={0},b={0};CHECK(btp_content_load_project(&a,argv[2],NULL,&error));CHECK(btp_content_load_project(&b,argv[3],NULL,&error));
         proof(argv[4],a.resources,b.resources);btp_content_close(&a);btp_content_close(&b);return 0;

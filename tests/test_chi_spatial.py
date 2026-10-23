@@ -124,6 +124,11 @@ class ChiSpatialTests(unittest.TestCase):
         doc=ProjectDocument(self.root/'pair/updated',self.tool);image=detach(doc,'portrait','PORTRAITS',6)
         art=copy.deepcopy(doc.art);next(i for i in art['images'] if i['id']==image['id'])['frames'][0][0]='ff55ffff'+image['frames'][0][0][8:];doc.replace_art(art)
         actual=preview(doc,'portrait','PORTRAITS',6);self.assertEqual(actual['frames'][0][0][:8],'ff55ffff')
+    def test_updated_broker_is_an_editable_service_marker(self):
+        doc=ProjectDocument(self.root/'pair/updated',self.tool);value=data(doc);service=value['services']['broker']
+        self.assertEqual(service['half'],[54,50]);self.assertTrue(any(d['id']=='chi:broker' for d in doc.adventure['maps'][1]['entrances']))
+        a=copy.deepcopy(doc.adventure);d=next(d for d in a['maps'][1]['entrances'] if d['id']=='chi:broker');d['name']='Unit Exchange'
+        doc.replace_adventure(a);doc.validate();self.assertEqual(data(doc)['services']['broker']['name'],'Unit Exchange')
     def test_old_import_enable_and_bounded_world_surface(self):
         manifest=json.loads((self.doc.root/'project.json').read_bytes());manifest.pop('chi_spatial');(self.doc.root/'project.json').write_bytes(encoded(manifest))
         old=ProjectDocument(self.doc.root,self.tool);self.assertIsNone(old.adventure);enable(old);old.validate();old.undo();self.assertIsNone(old.adventure);old.redo()
@@ -136,6 +141,23 @@ class ChiSpatialTests(unittest.TestCase):
         from authoring_protection import world_region
         rule=dict(id='native-ground',label='Keep terrain',kind='world_region',world='chi:world',rect=[480,480,32,32])
         self.assertNotEqual(world_region(before,rule),world_region(self.doc,rule))
+
+    def test_native_review_and_protection_include_rules_and_sheet_pixels(self):
+        from world_review import changes,detail,tile_values
+        from authoring_protection import region
+        rule=dict(map='chi:map-01',rect=[34,12,1,1]);before=region(self.doc,rule)
+        identity=data(self.doc)['maps'][0]['rows'][12][34]
+        tile=find(data(self.doc)['tiles'],identity);signature=tile_values(self.doc)[identity]
+        change(self.doc,lambda v:find(v['tiles'],identity).update(rule=1))
+        self.assertNotEqual(before,region(self.doc,rule));self.doc.undo()
+        self.assertEqual(signature,tile_values(self.doc)[identity])
+        detach(self.doc,'tile','BTTLTECH.ICN',tile['graphic'])
+        self.assertNotEqual(before,region(self.doc,rule));self.doc.undo()
+        base=self.doc.worker_copy();change(self.doc,lambda v:move_town(v,'chi:map-03',832,512))
+        result=changes(base,self.doc);self.assertEqual(len(result),1);self.assertGreater(result[0]['changed_tiles'],0)
+        self.assertTrue(any(t['id']=='chi:map-03' and t['change']=='moved' for t in result[0]['towns']))
+        output=self.root/'native-review.svg';rendered=detail(self.doc,result[0],output,[832,512,4,4])
+        self.assertEqual(rendered['status'],'rendered');self.assertTrue(output.is_file())
 
 
 if __name__=='__main__':unittest.main()

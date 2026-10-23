@@ -126,6 +126,7 @@ def apply_operation(doc, op, imports):
                     if section=='world':values=[value['world']]
                     elif section in ('map','tile'):values=value[section+'s']
                     elif section=='jigsaw':values=value['world']['jigsaws']
+                    elif section=='service':values=list(value.get('services',{}).values())
                     else:values=[v for m in value['maps'] for v in m['entrances' if section=='entrance' else 'npcs']]
                     record=native_find(values,op['id'])
                     if 'id' in op['changes'] and op['changes']['id']!=op['id']:raise EditorError('Keep native IDs stable. Clone to make a new identity.')

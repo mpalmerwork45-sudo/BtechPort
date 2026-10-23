@@ -224,6 +224,18 @@ int btp_chi_spatial_load(const char *root,const char *file,BtpChiSpatial *s,BtpR
         }
         s->start_x=(uint8_t)x;s->start_y=(uint8_t)y;
     }
+    unsigned services=btp_json_optional(&j,1,"services");
+    if (services) {
+        unsigned broker=btp_json_field(&j,services,"broker"),x,y,enabled;char id[64],where[64];
+        if (!btp_resources_feature(r,BTP_FEATURE_BROKER) || !text(&j,broker,"id",id,sizeof id) || strcmp(id,"chi:broker") ||
+            !text(&j,broker,"map",where,sizeof where) || strcmp(where,s->maps[1].id) || !text(&j,broker,"name",s->broker_name,sizeof s->broker_name) ||
+            !pair(&j,btp_json_field(&j,broker,"half"),127,&x,&y) || !num(&j,broker,"enabled",0,1,&enabled) ||
+            !btp_json_done(&j,broker) || !btp_json_done(&j,services)) {
+            btp_json_error(&j,services,"broker service requires Updated and a starport movement coordinate");goto done;
+        }
+        if (enabled && btp_map_tile(&r->local[1],(int)(x+1)/2,(int)y/2)>=85) { btp_json_error(&j,broker,"broker entrance must be on accessible ground");goto done; }
+        s->broker_configured=1;s->broker_enabled=(uint8_t)enabled;s->broker_x=(uint8_t)x;s->broker_y=(uint8_t)y;
+    }
     if (!btp_json_done(&j,1)) goto done;
     /* Keep duplicate native lookup slots consistent for old service callers. */
     r->local[10]=r->destroyed;s->loaded=1;ok=1;

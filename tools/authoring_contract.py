@@ -122,7 +122,7 @@ def operation(name, description, properties, required, writes, example):
 
 operation('chi.enable','Expose native maps/world on an older C2 import; one reversible edit.',{},[],['adventure','manifest'],{})
 operation('chi.update','Update a native spatial record or presentation settings; unchanged fields survive. C loader validates the effective project.',
-          dict(section=enum('world','map','tile','entrance','npc','jigsaw','presentation'),id=ID,changes=RECORD),['section','id','changes'],['selected native record'],
+          dict(section=enum('world','map','tile','entrance','npc','jigsaw','service','presentation'),id=ID,changes=RECORD),['section','id','changes'],['selected native record'],
           dict(section='world',id='chi:world',changes={'seed':131844}))
 operation('chi.town.move','Move a native town/island on its 64-tile grid; Citadel alternate states move together.',
           dict(map=ID,at=POINT),['map','at'],['map origin'],dict(map='chi:map-03',at=[832,512]))

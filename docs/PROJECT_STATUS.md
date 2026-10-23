@@ -1,5 +1,28 @@
 # Project status — original fidelity and editable projects, 2026-10-23
 
+**C3: native CHI spatial and presentation authoring — implemented and verified.**
+Imported campaigns now expose all 15 maps, the 1,024-square native world,
+generator/jigsaw inputs, town placements, building entrances, town-walker routes
+and presentation resources. The regular map/construction/pattern/pixel/sprite
+tools, shared Undo/Save, modular sources, headless authoring and world review/
+protection operate on these effective native documents. Edited data reaches
+collision, world composition and playback while retaining native BLD execution.
+
+**400 Python tests and all 91 native tests on Linux and Windows/Wine pass.**
+All map structures/cells and bank edge crops match; whole-world terrain matches
+at three declared seeds in both invasion states for both profiles. Depth crossing
+uses a sampled grid. Fifteen retained edits pass native checks on both platforms;
+edited film held saves match byte-for-byte. Unedited profiles still match the
+108,156-tick baseline, and a moved Citadel matches 44,192 local gameplay/RNG
+ticks. Both Linux GUI import and map/resource authoring journeys pass. Native
+Windows Python/Tk remains UNKNOWN. [Usage and save identity](CHI_IMPORT.md),
+[evidence and limits](TESTING.md#chi-spatial-and-presentation-authoring--2026-10-23).
+
+No original-derived assets are committed. Both reference trees, three pending
+owner files and twenty observed normal saves remain unchanged. Existing C2
+projects can enable map tools as one Undoable change; retain their old revision
+for old imported saves. Native story/mission/service authoring remains C4.
+
 **C1–C2: editable CHI import first pass — implemented and verified.**
 [Import CHI](CHI_IMPORT.md) creates separately owned Original/Updated projects
 from supported DOS 1.03 files, with explicit edition features, local resources,
@@ -61,10 +84,11 @@ The user's three pending Last Beacon files and both reference directories are
 unchanged. Gameplay/save formats remain unchanged. Native Windows Python/Tk
 interaction remains **UNKNOWN**.
 
-**Next proposed:** C3 of the [editable CHI campaign plan](CHI_EDITABLE_CAMPAIGNS_PLAN.md):
-editable original world/jigsaws, city overlays, map placements and presentation
-resources. C1–C2 are delivered above. C4 follows with BLD/story/services;
-C5 adds full campaign and packaged setup acceptance.
+**Next proposed:** C4 of the [editable CHI campaign plan](CHI_EDITABLE_CAMPAIGNS_PLAN.md),
+starting with C4.1: editable BLD source, stable labels, byte-preserving round-trip
+compilation and source diagnostics. C4.2–C4.5 add native services, mission settings,
+saved continuations and campaign checks. C5 follows with complete campaign and
+packaged setup acceptance. C1–C3 are delivered above.
 
 **AI5 world-review extension — implemented and verified, 2026-10-23.**
 [World review and regional protection](WORLD_REVIEW.md) adds paired composed

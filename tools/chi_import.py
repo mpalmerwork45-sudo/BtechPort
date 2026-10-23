@@ -143,20 +143,22 @@ def import_campaigns(source,output,edition='both',validator=None,cancel=None,pro
                 origins.append(dict(file='chi/'+name,sha256=hashlib.sha256(data).hexdigest(),
                     origin='original-derived',source=[name] if name in snapshot else ['BTECH.EXE',*(['MAP1.MTP'] if name=='world-data.bin' else [])]))
             from chi_spatial import extract as spatial,FILE as spatial_file
-            editable=spatial({'chi/'+n:caches[n] if n in caches else snapshot[n] for n in RUNTIME_FILES})
+            editable=spatial({'chi/'+n:caches[n] if n in caches else snapshot[n] for n in RUNTIME_FILES},profile)
             (project/spatial_file).write_bytes(encoded(editable));manifest['chi_spatial']=spatial_file
             (project/'project.json').write_bytes(encoded(manifest))
             provenance=dict(format='btp-chi-import-v1',schema_version=1,extractor='chi-import-v1',edition=profile,
                 inputs=[dict(file=n,sha256=hashlib.sha256(snapshot[n]).hexdigest()) for n in SOURCE_FILES],
-                resources=origins,capabilities=dict(editable=['native-dialogue-overrides',*(['added-unit-definitions'] if profile=='updated' else [])],
-                    compatibility_only=['original-world','maps','BLD','native-services','mission-settings'],
-                    pending_milestones=['C3','C4','C5']),
+                resources=origins,capabilities=dict(editable=['native-dialogue-overrides','native-maps','world-generator','town-placements',
+                    'entrances','NPC-routes','jigsaws','presentation-resources',*(['added-unit-definitions','broker-entrance'] if profile=='updated' else [])],
+                    compatibility_only=['BLD','native-services','mission-settings'],
+                    pending_milestones=['C4','C5']),
                 distribution='Private original-derived content; use an asset-free reconstruction recipe for sharing.')
             (project/'IMPORT.json').write_bytes(encoded(provenance))
             (project/'.gitignore').write_text('# Private original-derived campaign. Share a recipe, not these files.\n*\n')
             (project/'README.md').write_text('Editable CHI - '+profile.title()+'\n\nPrivate local import from DOS 1.03. No original executable or personal saves copied.\n'
                 'Open this folder in the Construction Kit or run the player with --project PATH.\n'
-                'Campaign text: Project > CHI campaign. Original maps/BLD/services still use compatibility execution in C2.\n'
+                'Text: Project > CHI campaign. Maps/world: Project > CHI maps and world. Art/audio: Project > CHI resources.\n'
+                'BLD programs, service rules and missions retain native execution; their authoring remains C4.\n'
                 'Keep this exact project for its saves. Reimport to a NEW folder; never overwrite edited projects.\n'
                 'IMPORT.json records provenance and current editing limits. Original rights still apply to derived content.\n')
             progress('Validating '+profile+' campaign');check_cancel(cancel)

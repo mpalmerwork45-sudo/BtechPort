@@ -1,16 +1,19 @@
 # Import and edit a CHI campaign
 
-The C1–C2 first pass imports separate Original and Updated campaigns from the
+The C1–C3 implementation imports separate Original and Updated campaigns from the
 supported DOS 1.03 files. Each project owns its resources, edition settings and
 six save slots. It can run without the original installation after import.
 Existing launcher Original/Updated games and their saves remain separate.
 
-**Current editing scope:** native dialogue overrides, plus Updated's existing
-external unit/weapon definitions. Original maps, BLD programs, missions and
-services execute through the compatibility runtime. Their complete editable
-representations are C3–C4 work. The Citadel/training slice is verified against
-the built-in editions; importing the full resource set is not evidence that
-every campaign branch has been re-tested. See [progress](CHI_IMPORT_PROGRESS.md).
+**Current editing scope:** all 15 maps, town placements, the native world
+generator and jigsaws, entrances, town-walker routes, tiles, sprites, films,
+screens, fonts, building portraits, supported audio references and native
+dialogue overrides. Updated also has its external unit/weapon definitions and
+an editable broker entrance. BLD programs, mission definitions and service rules
+retain their native execution; their authoring remains C4. The Citadel/training
+slice is verified against the built-in editions; importing the full resource
+set does not establish execution coverage of every campaign branch.
+See [progress](CHI_IMPORT_PROGRESS.md).
 Original's added-unit list starts empty; its campaign mechs still use exact
 compatibility templates rather than normalized library adaptations.
 
@@ -90,6 +93,107 @@ the strict content fingerprint; preserve the old revision for its existing saves
 Imported projects also support the existing **Campaign sources and build**
 conversion, shared validation, Save/reopen and private playable-package export.
 
+## Edit maps and the world
+
+Choose **Project → CHI maps and world**, or open a local map in the project tree.
+The usual Paint, Fill, selection, construction, pattern and contextual pixel
+tools work on native maps. Save, Undo/Redo, Changes and protection, libraries
+and Play use the same document as command-based edits. A native map's tile
+artwork is separate from its movement/collision rule. Painting an ordinary
+custom tile uses its terrain category; exact native rule/water properties are
+available through `chi.update`.
+
+The map toolbar exposes:
+
+- **World, towns and jigsaws:** preview the original 1,024 × 1,024 world; drag towns to
+  64-tile sector origins, edit generator seed/tables and select/edit/clone the
+  8 × 8 terrain pieces. The 17 join bindings select the pieces used by the
+  original generator. This preserves native generation rather than substituting
+  the independent-game random-piece generator. Ctrl + wheel and the zoom box
+  change the view.
+- **Native map properties:** rename a map and set its origin.
+  Moving the Citadel also moves its ruined state. Training returns, native BLD
+  outdoor transfers, starport approaches, arena/prison exits and the device
+  bearing follow the effective town origins.
+- **Door slots:** edit a building name, active state, exact half-step position
+  and its existing BLD building reference. The map's entrance markers also drag
+  normally. In Updated, the broker marker can move, be renamed or disabled.
+- **NPC routes:** name/configure eight town walkers and their native door routes.
+  These are pedestrians, not new recruitable story characters.
+- **Clone into map slot:** copy a town into another existing native map slot, retaining
+  the target's location and stable map/door/NPC identities.
+
+Use the **Start** drawing tool on the Citadel map to move the native starting
+position. Starting party, money and story conditions remain C4.
+
+New imports include `chi-spatial.json`. Opening the map tools on a C2 import
+adds map support as one reversible document change; **Save project** persists
+it. Make a copy first if you need the old imported project's saves: adding the
+spatial document or editing runtime content changes strict save identity. There
+is no automatic save migration. The launcher's existing built-in games and saves
+are separate and are not upgraded by opening these tools.
+
+Native limits are explicit: one 1,024-square world, 15 map slots, 16 entrance
+slots and eight walker-route slots per map, origins aligned to 64 tiles. Maps
+are at most 64 × 64; Citadel, ruined Citadel, starport and cache corridors retain
+64 × 64, and the cache map room retains 32 × 24. The Citadel/starport require
+space for their native adjoining battle sectors. All validation errors leave
+the last valid project intact. Unrestricted new maps, missions, encounters and
+authored event execution are not enabled in imported campaigns yet.
+
+## Edit presentation resources
+
+Choose **Project → CHI resources** or **Art, films, font and audio** on the map toolbar.
+Select a resource to preview its effective unsaved content. **Copy / edit**
+creates project-owned pixels and opens the existing sprite/pixel editor.
+Direction/frame labels use the native sprite layout. You can also assign an
+existing image. Animated terrain copies retain their loops and cadence.
+
+The view includes the four terrain banks, animated terrain sheet, sprite sheet,
+title/logo/borders, mech/statistics art, tinyland, native font, all 22 films and
+available building portraits. Film durations are editable in native retraces;
+native frame counts/dimensions remain fixed. Audio settings select the 18
+verified speaker programs, playback speed (25–400%) and title music on/off.
+This does not introduce a new music/sample scripting language.
+
+Edits use `graphics.json` and optional `chi-presentation.json`. Native
+sheet/sprite replacements are quantized to the chosen 16-colour display palette;
+custom map images and film/portrait images retain RGBA. The standard art budget
+is 1,048,576 pixels across at most 4,096 image definitions. Drawing, cloning and
+library transfers retain origin metadata. Editing original-derived pixels does
+not change their provenance.
+
+Native previews read the project's own resources; Player setup's external DOS
+path is unnecessary. If a local resource is missing or invalid, restore it from
+your private backup or use **File → Import CHI campaign** into a new folder.
+Reimport does not overwrite or repair edited projects in place.
+
+## Headless spatial and resource editing
+
+The [authoring CLI](AI_AUTHORING_GUIDE.md) and [operation reference](AUTHORING_COMMANDS.md)
+use the same validation and history as the GUI:
+
+```sh
+python3 tools/author.py inspect "work/My CHI campaigns/original"
+python3 tools/author.py inspect "work/My CHI campaigns/original" \
+  --query objects --collection maps --limit 15
+python3 tools/author.py inspect "work/My CHI campaigns/original" \
+  --query objects --collection native-entrances --limit 16
+python3 tools/author.py inspect "work/My CHI campaigns/original" \
+  --query objects --collection native-resources --limit 30
+python3 tools/author.py validate "work/My CHI campaigns/original"
+```
+
+Validated command batches support `chi.enable`, `chi.update`, `chi.town.move`,
+`chi.jigsaw.bind` and `chi.art.copy`. `chi.update` addresses named world, map,
+tile, entrance, NPC, service or presentation records; no binary offsets are
+needed. Use the inspected project ID and revision in the ordinary batch envelope.
+Native scopes use `chi.maps/<id>`, `chi.tiles/<id>`, `chi.world`, `chi.services`
+and `chi.presentation`. Source conversion/build includes these documents as
+normal sections. World review and regional protection use the effective native
+generator, tile rules and art patches. Authored mission suites/checkpoints are
+disabled for imports until their native story bridge is implemented in C4.
+
 ## Original-derived art and sharing
 
 Generated CHI campaigns are private local content. Their whole imported resource
@@ -136,4 +240,4 @@ The [contracts](CHI_IMPORT_CONTRACT.md) and [numeric inventory](chi-import-inven
 describe the versioned extension, bounds, profile flags and dependency ownership.
 The [progress ledger](CHI_IMPORT_PROGRESS.md) records exact tests, evidence and
 platform limits. The [five-milestone plan](CHI_EDITABLE_CAMPAIGNS_PLAN.md) defines
-the remaining world/resource, story/service and delivery gates.
+the completed spatial/resource gate and remaining story/service and delivery gates.

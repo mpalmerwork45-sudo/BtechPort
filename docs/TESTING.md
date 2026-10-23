@@ -1,5 +1,80 @@
 # Build, verification and original oracle — 2026-10-23
 
+## CHI spatial and presentation authoring — 2026-10-23
+
+**PASS for C3's declared scope.** See [usage](CHI_IMPORT.md),
+[format contracts](CHI_IMPORT_CONTRACT.md#c3-spatial-and-presentation-extension)
+and [progress](CHI_IMPORT_PROGRESS.md). C4/C5 remain open.
+
+- Linux and Windows builds pass, sequentially with at most two compiler jobs.
+  **400 Python tests pass** (69.886 s), including 17 private-data C3 cases.
+  **91 Linux native tests pass** (50.37 s), and **all 91 Windows native tests
+  pass under isolated Wine** (334.22 s). No native Windows Python/Tk claim.
+- The private `btp-chi-spatial-tests` helper compares every structure, header and
+  rule cell of all 15 maps, all four native art banks at centre/edge checkpoints,
+  invasion graphics switches and generator state/tables. It compares all
+  1,048,576 terrain cells at seeds `0x020304`, `1`, `0xabcdef`, before/after
+  invasion, for both imports on Linux and Wine. Deep-water crossings are
+  separately sampled on a 16-half-step grid; this is not every possible step.
+  These compare to the built-in port path, not new DOS runs at every seed.
+- Both unedited profiles still pass the C2 helper: **108,156 gameplay ticks**,
+  encoded state/RNG/script positions, rendered checkpoints, intro screens,
+  held-script reload and twelve isolated slots. Normal and foreign project saves
+  remain rejected. Linux evidence is `c3-parity-final-linux.log`; Wine output is
+  retained in `c3-windows-evidence.json` under `work/chi-import/`.
+- `tools/chi_spatial_evidence.py` retains 15 separate edits with validated
+  Undo/Redo and Save/reopen: blocked tile, moved door, NPC route, town/Citadel/
+  starport movement, broker entrance, custom jigsaw using >256 tile definitions,
+  sprite, startup film, title, portrait, font, speaker program/speed and animated
+  force field. Native proofs pass on both platforms. Moving the Citadel retains
+  all 44,192 local gameplay/RNG ticks in the training fixture. Edited startup
+  film save/reload passes during that real route; Linux/Windows save bytes match
+  (`726a16253416c6fda28de134542aeadae99ddc1ada8bddbde525f89bcc89a4f1`).
+- Shared model checks include exact projection/schema round trips, bad-edit
+  rollback, bounded native world grids, C2 enable/Undo, modular source/build,
+  scoped edits, stable-slot cloning and library provenance. Native world review
+  renders moved-town detail, and region protection detects indirect generator,
+  numeric movement-rule and tile-sheet patch changes.
+- Real Linux GUI journeys pass native map painting, all maps/four banks,
+  Undo/Redo, moved-town overview, jigsaw drawing, native sprite copy/edit,
+  Save/reopen, Play without external resource paths and Stop. The original import/
+  text/cancellation journey passes again. Captures: `work/chi-world-editor.png`,
+  `work/chi-resource-editor.png`; journey report: `work/chi-spatial-gui.json`.
+- Reference guard passes **1,287 unchanged content/mode/mtime entries**. The
+  three pending owner files retain their baseline SHA-256 values; all twenty
+  observed normal saves retain hashes/mtimes. Generated campaigns, decoded art,
+  caches and saved proofs remain ignored private data.
+
+Reproduce after the normal build/cache preparation, using a **new** output folder:
+
+```sh
+python3 tools/chi_spatial_evidence.py --output work/chi-import/my-c3-evidence
+./build/btp-chi-spatial-tests "Original DOS" work/talk-data.bin \
+  work/combat-data.bin work/world-data.bin \
+  work/chi-import/my-c3-evidence/base/original
+./build/btp-chi-spatial-tests "Original DOS" work/talk-data.bin \
+  work/combat-data.bin work/world-data.bin \
+  work/chi-import/my-c3-evidence/base/updated
+python3 -m unittest discover -s tests -p test_chi_spatial.py
+python3 tools/native_smoke.py --editor-chi-spatial-only
+python3 tools/native_smoke.py --editor-chi-import-only
+python3 tools/windows_check.py --ctest
+```
+
+For Windows spatial/edit proofs, prefix the same helper arguments with
+`python3 tools/windows_check.py build-windows/btp-chi-spatial-tests.exe`.
+`evidence.json` lists each retained base/project/kind for `--proof BASE EDIT KIND`.
+`--held-film PROJECT ACTIONS SAVE` and `--moved-route BASE EDIT ACTIONS` use
+`tests/fixtures/ordinary-training-combat.actions`. Do not run the Linux and
+Windows C2 parity helpers concurrently: their temporary slot filenames coincide.
+
+Native map counts/dimensions, door/route slots and sector alignment remain
+bounded; see the usage guide. Full campaign branch coverage, editable BLD/native
+service/mission definitions and arbitrary authored-event continuations remain
+C4. General edited-campaign reconstruction recipes and complete delivery
+acceptance remain C5. Adding spatial support to a C2 project changes its strict
+content identity: keep that old project/revision for its old imported saves.
+
 ## CHI campaign import first pass — 2026-10-23
 
 **PASS for C1–C2's declared slice and editing scope.** See

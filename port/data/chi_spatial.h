@@ -18,6 +18,8 @@ typedef struct {
     BtpChiTile tiles[BTP_CHI_TILES];BtpChiMap maps[BTP_CHI_MAPS];
     uint16_t land[250];
     uint8_t start_x,start_y;
+    uint8_t broker_configured,broker_enabled,broker_x,broker_y;
+    char broker_name[17];
 } BtpChiSpatial;
 int btp_chi_spatial_load(const char *root,const char *file,BtpChiSpatial *spatial,
     BtpResources *resources,BtpDigest *digest,BtpError *error);

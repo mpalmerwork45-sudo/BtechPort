@@ -60,7 +60,7 @@ def inventory(doc):
     files=[]
     for name,data in sorted(doc.files().items()):
         files.append(dict(file=name,bytes=len(data),sha256=hashlib.sha256(data).hexdigest()))
-    original=doc.manifest['requires']!='none'
+    original=doc.manifest['requires'] not in ('none','chi-local-dos-1.03')
     return dict(files=files,dependency=doc.manifest['requires'],
         play_assets=dict(status='not_checked' if original else 'included',
                          reason='Set --data/--combat-data/--world-data/--dialogue-data for player previews.' if original else None),
@@ -101,13 +101,16 @@ def summary(doc, tool):
         objectives=a.get('objectives',[]),flags=a.get('flags',[]),scripts=doc.manifest.get('scripts',[]),
         animated_tiles=[dict(id=i['id'],frames=len(i['frames']),frame_ticks=i.get('frame_ticks',8)) for i in doc.art['images'] if i['kind']=='tile' and len(i['frames'])>1][:30],
         animated_tile_count=sum(i['kind']=='tile' and len(i['frames'])>1 for i in doc.art['images']),
-        native_chi=(dict(spatial=doc.manifest.get('chi_spatial'),presentation=doc.manifest.get('chi_presentation'),
+        native_chi=(dict(spatial=doc.manifest.get('chi_spatial'),presentation=doc.manifest.get('chi_presentation'),services=native.get('services',{}),
             world=native['world'],map_slots=15,story='native BLD compatibility; C4 authoring pending',
             operations=['chi.update','chi.town.move','chi.jigsaw.bind','chi.art.copy']) if native else None),
         queries=['objects','object','usages','map','routes','inventory'])
 
 
 def records(doc, collection):
+    if collection=='native-services':
+        from chi_spatial import data
+        return list(data(doc).get('services',{}).values())
     if (doc.adventure or {}).get('chi_native') and collection in ('maps','tiles','jigsaws','native-npcs','native-entrances'):
         from chi_spatial import data
         value=data(doc)

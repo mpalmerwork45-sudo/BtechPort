@@ -43,7 +43,7 @@ def decode_map(raw,slot):
         overlays=[],entrances=doors,npcs=actors)
 
 
-def extract(files):
+def extract(files,edition='original'):
     """Convert the checked private byte snapshot, without rereading DOS files."""
     tiles=[dict(id=tile_id(bank,i),name=f'{bank[4:].title()} {i}',sheet=bank,graphic=i,rule=i)
            for bank in BANKS for i in range(250)]
@@ -58,8 +58,10 @@ def extract(files):
     world=dict(id='chi:world',name='CHI world',width=1024,height=1024,seed=struct.unpack_from('<I',raw,12)[0],
         coarse=list(raw[88:424]),flips=list(raw[1512:1608]),mini_colors=list(raw[1608:1864]),
         jigsaws=pieces,joins=[p['id'] for p in pieces])
-    return dict(format=FORMAT,schema_version=1,tiles=tiles,maps=maps,world=world,start=dict(map='chi:map-01',half=[69,25]),
+    result=dict(format=FORMAT,schema_version=1,tiles=tiles,maps=maps,world=world,start=dict(map='chi:map-01',half=[69,25]),
         land=[tile_id('chi:land',i) for i in range(250)])
+    if edition=='updated':result['services']=dict(broker=dict(id='chi:broker',name="'Mech Broker",map='chi:map-02',half=[54,50],enabled=1))
+    return result
 
 
 def data(document):
@@ -91,13 +93,20 @@ def projection(value):
                     event='chi:building-'+str(d['room'] if d['room']<26 else 0)) for d in m['entrances'] if d['active']]
         result['maps'].append(dict(id=m['id'],name=m['name'],origin=list(m['origin']),rows=copy.deepcopy(m['rows']),overlays=copy.deepcopy(m['overlays']),
             entrances=doors,npcs=[],encounters=[]))
+    broker=value.get('services',{}).get('broker')
+    if broker:
+        result['events'].append(dict(id=broker['id'],op='end'))
+        if broker['enabled']:
+            find(result['maps'],broker['map'])['entrances'].append(dict(id=broker['id'],name=broker['name'],at=[n//2 for n in broker['half']],event=broker['id']))
     return result
 
 
 def from_projection(adventure):
     value=copy.deepcopy(adventure['chi_native']);old={t['id']:t for t in value['tiles']};tiles=[]
     expected={'format','schema_version','chi_native','tiles','maps','people','shops','encounters','flags','jigsaws','events','start'}
-    if set(adventure)-expected or any(adventure[k] for k in ('people','shops','encounters','flags')) or adventure['events']!=[dict(id=f'chi:building-{i}',op='end') for i in range(26)]:
+    broker=value.get('services',{}).get('broker');events=[dict(id=f'chi:building-{i}',op='end') for i in range(26)]
+    if broker:events.append(dict(id=broker['id'],op='end'))
+    if set(adventure)-expected or any(adventure[k] for k in ('people','shops','encounters','flags')) or adventure['events']!=events:
         raise EditorError('Native CHI keeps its BLD story interpreter. Authored events, people, encounters and mission state require the C4 bridge; these edits were not published.')
     if adventure['start'].get('party') or adventure['start'].get('credits')!=35 or adventure['start'].get('event')!='chi:building-0':
         raise EditorError('C3 exposes the native starting position. Starting party/economy/story changes belong to C4.')
@@ -124,6 +133,13 @@ def from_projection(adventure):
             width=len(scene['rows'][0]),height=len(scene['rows']))
         if scene.get('npcs') or scene.get('encounters'):raise EditorError('Use CHI NPC routes for town walkers; authored encounters require the C4 story bridge.')
         active={d['id']:d for d in scene['entrances']}
+        if broker and broker['map']==scene['id']:
+            shown=active.pop(broker['id'],None)
+            if shown is None:broker['enabled']=0
+            else:
+                if shown['event']!=broker['id']:raise EditorError('The broker marker keeps its service identity. Use a separate native building entrance for BLD programs.')
+                if shown['at']!=[n//2 for n in broker['half']]:broker['half']=[2*shown['at'][i]+broker['half'][i]%2 for i in range(2)]
+                broker.update(name=shown['name'],enabled=1)
         for d in m['entrances']:
             shown=active.pop(d['id'],None)
             if shown is None:d.update(active=0,packed=[0,0]);continue
@@ -151,7 +167,8 @@ def enable(document):
     """Upgrade an old C2 project in one reversible, validated shared command."""
     if document.manifest.get('chi_spatial'):return
     with document.command('Enable CHI map editing'):
-        value=extract(document.files());manifest=copy.deepcopy(document.manifest);metadata=dict(document.metadata)
+        edition=json.loads(document.metadata['campaign.json'])['edition']
+        value=extract(document.files(),edition);manifest=copy.deepcopy(document.manifest);metadata=dict(document.metadata)
         manifest['chi_spatial']=FILE;metadata[FILE]=encoded(value)
         document.replace_all(document.content,projection(value),document.art,manifest,metadata)
         document.validate()

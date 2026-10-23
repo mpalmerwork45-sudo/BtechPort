@@ -407,7 +407,7 @@ class Workspace:
             return bool(document and ((document.undo_stack if name=='Undo' else document.redo_stack) or any(d.pending() for d in scope.live())))
         if name in ('Export game','Assets and dependencies','Migrate an old save','Apply authoring command file','Export authoring summary','Campaign sources and build'):return bool(self.app.document)
         if name in ('Content catalogue','Changes and protection','Local authoring session'):return bool(document)
-        if name in ('Check mission','Test suites and coverage'):return bool(document and document.adventure)
+        if name in ('Check mission','Test suites and coverage','Checkpoints and trace'):return bool(document and document.adventure and not document.adventure.get('chi_native'))
         if name in ('New definition','Duplicate definition','Delete definition','Ammunition','Find usages'):return bool(document)
         if name in ('Building designer','Wall designer','Road designer','Pattern Library','Construction Library'):return bool(self.app.document and self.app.document.adventure)
         if name in ('Play from start','Play from here','Checkpoints and trace'):return bool(self.app.document) and not self.play_session.preparing
@@ -558,7 +558,12 @@ class Workspace:
                 if document.adventure:
                     worlds=row('','worlds','Worlds / planets',self.open_world)
                     from world_editing import all_worlds
-                    for planet in all_worlds(document.adventure):
+                    native=bool(document.adventure.get('chi_native'))
+                    if native:
+                        from world_review import worlds as project_worlds
+                        planets=project_worlds(document)
+                    else:planets=all_worlds(document.adventure)
+                    for planet in planets:
                         if not query or query in (planet['name']+' '+planet['id']).casefold():row(worlds,'world:'+planet['id'],planet['name'],lambda i=planet['id']:self.open_world(i))
                     maps=row('','maps','Local maps',self.open_map)
                     for scene in document.adventure['maps']:
@@ -567,10 +572,15 @@ class Workspace:
                     for kind in ('Building','Wall','Road'):row(construct,'construction:'+kind,kind+' designer',lambda k=kind:self.map_view().construction(k))
                     row(construct,'patterns','Pattern Library',lambda:self.map_view().patterns())
                     row(construct,'construction-library','Shared Construction Library',lambda:self.map_view().construction_library())
-                    events=row('','events','Events / objectives',self.open_event)
-                    row(events,'mission','Mission state / groups / timers',lambda:self.map_view().missions())
-                    row(events,'objectives','Objectives / journal',lambda:self.map_view().event_graph().objectives())
-                    for event in document.adventure['events']:
+                    if native:
+                        from chi_editor import open_campaign
+                        row('','native-text','Native campaign text',lambda:open_campaign(self.app))
+                        row('','native-art','Native graphics / audio',lambda:self.map_view().resources())
+                    else:
+                        events=row('','events','Events / objectives',self.open_event)
+                        row(events,'mission','Mission state / groups / timers',lambda:self.map_view().missions())
+                        row(events,'objectives','Objectives / journal',lambda:self.map_view().event_graph().objectives())
+                    for event in ([] if native else document.adventure['events']):
                         if not query or query in str(event).casefold():row(events,'event:'+event['id'],event['id'].split(':')[-1]+' ('+event['op']+')',lambda i=event['id']:self.open_event(i))
                 row('','art','Artwork',self.open_art)
             row('','library','Shared Unit Library',self.app.open_library)
@@ -632,7 +642,9 @@ class Workspace:
                 if entrance:
                     lines.extend([entrance['name'],'Position: '+str(entrance['at'])])
                     ttk.Button(self.inspect_actions,text='Edit entrance',command=lambda:guard(owner,owner.edit_marker)).pack(fill='x',pady=3)
-                    ttk.Button(self.inspect_actions,text='Open event',command=lambda:self.open_event(entrance['event'])).pack(fill='x',pady=3)
+                    if owner.adventure.get('chi_native'):
+                        lines.append('Native BLD building: '+entrance['event'].rsplit('-',1)[-1])
+                    else:ttk.Button(self.inspect_actions,text='Open event',command=lambda:self.open_event(entrance['event'])).pack(fill='x',pady=3)
                     event=next((e for e in owner.adventure['events'] if e['id']==entrance['event']),None)
                     if event and event['op']=='transfer':ttk.Button(self.inspect_actions,text='Open destination map',command=lambda:self.open_map(event['map'])).pack(fill='x',pady=3)
         else:lines.append('Select an object to edit its properties. Changes belong to the scope shown above.')

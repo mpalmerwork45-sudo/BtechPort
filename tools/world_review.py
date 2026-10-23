@@ -81,8 +81,22 @@ def tile_values(document):
     name=document.manifest.get('presentation');presentation=json.loads(document.files()[name]) if name else {}
     package={i:[[presentation['palette'][int(c,16)] for c in row] for row in rows]
              for i,rows in enumerate(presentation.get('tiles',[]))}
-    return {token(t):dict(tile=t,image=images.get(t['graphic']) if t['sheet']=='package:art' else package.get(t['graphic']) if t['sheet']=='package:tiles' else None)
+    values={token(t):dict(tile=t,image=images.get(t['graphic']) if t['sheet']=='package:art' else package.get(t['graphic']) if t['sheet']=='package:tiles' else None)
             for t in (document.adventure or {}).get('tiles',[])}
+    if (document.adventure or {}).get('chi_native'):
+        from chi_spatial import data
+        from chi_resources import settings
+        banks={'chi:land':'BTTLTECH.ICN','chi:destroyed':'DESTRUCT.ICN','chi:cache':'STARLEAG.ICN','chi:maproom':'MAP.ICN'}
+        bindings=[b for b in settings(document)['bindings'] if b['kind']=='tile']
+        # The projection's broad terrain categories cannot represent every
+        # native movement rule. Protect the exact definition and effective
+        # sheet patches, including the native force-field/vegetation loops.
+        animated=(87,88,89,90,91,105,106,107,111,113)  # core/animation.c
+        for tile in data(document)['tiles']:
+            matches=[b for b in bindings if (b['resource']==banks.get(tile['sheet']) and b['index']==tile['graphic']) or
+                     (tile['sheet']=='chi:land' and tile['graphic'] in animated and b['resource']=='ANIMATE.ICN')]
+            values[tile['id']].update(native=tile,patches=[dict(binding=b,image=images.get(b['image'])) for b in matches])
+    return values
 
 
 def changes(before,after,cancelled=lambda:False):

@@ -30,7 +30,7 @@ Write scope: `selected native record`.
 
 | Field | Structural constraint |
 | --- | --- |
-| `section` * | `{"enum":["world","map","tile","entrance","npc","jigsaw","presentation"]}` |
+| `section` * | `{"enum":["world","map","tile","entrance","npc","jigsaw","service","presentation"]}` |
 | `id` * | `{"type":"string","maxLength":63,"pattern":"^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"}` |
 | `changes` * | `{"type":"object"}` |
 

@@ -1,4 +1,5 @@
 #include "core/roster_game.h"
+#include "data/project.h"
 #include "data/definitions.h"
 #include "core/party.h"
 #include "core/npc.h"
@@ -13,6 +14,11 @@ int btp_broker_page(unsigned page)
 }
 int btp_broker_door(const BtpState *s,const BtpResources *r,int x,int y)
 {
+    if (r->project && r->project->chi_spatial && r->project->chi_spatial->broker_configured) {
+        const BtpChiSpatial *c=r->project->chi_spatial;
+        return btp_resources_feature(r,BTP_FEATURE_BROKER) && c->broker_enabled && s->map_id==2 && s->story_flags[4] && !s->campaign.mounted &&
+            x==c->broker_x && y==c->broker_y;
+    }
     /* The central three-door building already exists in MAP2's tiles, but
        has no original MTP entrance. Add a trigger, never modify the MTP. */
     return btp_resources_feature(r,BTP_FEATURE_BROKER) && s->story_flags[4] && s->map_id==2 && !s->campaign.mounted &&

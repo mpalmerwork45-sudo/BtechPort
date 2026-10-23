@@ -1832,7 +1832,10 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
             hidden_rows(map,x,y),104,f);
     }
     char place[17]; memcpy(place,map->places[s->entry_slot&15u],16); place[16] = 0;
-    if (btp_building_kind(r,s)==BTP_BROKER_BUILDING) snprintf(place,sizeof place,"'Mech Broker");
+    if (btp_building_kind(r,s)==BTP_BROKER_BUILDING) {
+        const BtpChiSpatial *c=r->project ? r->project->chi_spatial : NULL;
+        snprintf(place,sizeof place,"%s",c && c->broker_configured ? c->broker_name : "'Mech Broker");
+    }
     char line[64];
     if (r->border.format == 1) rectangle(f,0,0,104,200,0);
     static const char *const directions[]={"North","Northeast","East","Southeast","South","Southwest","West","Northwest"};

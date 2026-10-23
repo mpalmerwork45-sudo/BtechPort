@@ -1,6 +1,6 @@
 # Editable CHI import progress
 
-Authorization: C1 and C2 first pass, 2026-10-23. See the
+Authorization: C1/C2 first pass, followed by C3, 2026-10-23. See the
 [milestone plan](CHI_EDITABLE_CAMPAIGNS_PLAN.md) and [contracts](CHI_IMPORT_CONTRACT.md).
 
 ## C1 — Audit and contracts
@@ -97,7 +97,7 @@ compatibility behavior; it does not establish complete DOS parity. No old
 normal-game save migration is provided. Partial extraction resumes by retrying
 into a new destination. No full editable-campaign claim is made.
 
-## C3 — Spatial and presentation authoring (verification in progress)
+## C3 — Spatial and presentation authoring
 
 The native adapter now reads versioned `chi-spatial.json` and optional
 `chi-presentation.json`. It retains the original generator and BLD interpreter.
@@ -108,17 +108,45 @@ model. Map artwork and collision are separate; custom world handles retain
 jigsaw tools through a reversible projection, never an authored-event startup.
 
 Resource copies use the game decoder on the current unsaved project. Sprite,
-screen, font and film overrides reach native playback; film timing and verified
-sound-program references are editable. Clones and library dependencies retain
-original-derived provenance. Modular campaign sources include the new formats.
+screen, font, film and building portrait overrides reach native playback; film
+timing and verified sound-program references are editable. Updated's virtual
+broker entrance can move, be renamed or disabled. Clones and library dependencies
+retain original-derived provenance. Modular sources include the new formats.
 
-Initial Linux evidence: all 15 maps and their graphics-bank edge crops match;
-all 1,048,576 world cells and depth joins match for seeds `0x020304`, `1` and
-`0xabcdef`, before/after invasion. The 108,156-tick C2 parity routes passed
-after initial map integration. The real GUI journey passes native map painting,
-Undo/Redo, moved town preview, jigsaw editing, native sprite editing, Save/reopen
-and Play without an external DOS installation. Final regression, cross-platform
-and edited-path checks are still being completed; this is not the C3 gate yet.
+**VERIFIED:** all 15 native map structures/cells and graphics-bank centre/edge
+crops match the built-in resource path. All 1,048,576 world terrain cells match
+for seeds `0x020304`, `1` and `0xabcdef`, before/after invasion, in both profiles
+on Linux and Wine. Depth crossing is separately sampled every 16 half-steps,
+not exhaustively at every possible step. Generator state/tables match. These
+are differential checks against the built-in port generator, not new DOS runs
+for every seed. The full C2 comparison still passes: 108,156 gameplay ticks,
+RNG/script state/rendered checkpoints, intro screens and twelve isolated slots.
+
+Fifteen retained edits pass native checks on Linux and Wine: blocked ground,
+door movement, NPC routes, a moved town/Citadel/starport, broker placement, a
+custom 16-bit jigsaw, sprite/film/title/portrait/font/audio changes and force-field
+animation. Each example is validated, Undo/Redo checked and saved/reopened.
+An edited startup film survives a real training-route held save, with identical
+Linux/Windows save bytes. A moved Citadel completes all 44,192 local gameplay/RNG
+ticks of that fixture. World review generates a real moved-town crop; protected
+regions detect generator, exact native rule and sheet-pixel changes.
+
+**C3 gate passed.** The real Linux GUI journey passes normal map painting,
+Undo/Redo, all maps/four banks, moved-town preview, jigsaw drawing, native sprite
+editing, Save/reopen and Play with external DOS paths absent. The existing
+import/dialogue/cancel journey still passes. **400 Python tests, 91 Linux native
+tests and all 91 Windows native tests under isolated Wine pass.** Builds are
+sequential with two jobs; native Windows Python/Tk remains UNKNOWN.
+
+Private evidence: `work/chi-import/c3-evidence-final/evidence.json`,
+`c3-windows-evidence.json`, `c3-python-regression.log`, `c3-native-regression.log`,
+`c3-native-windows.log`, `c3-parity-final-linux.log`, the two
+`c3-spatial-final-*-linux.log` files and `work/chi-spatial-gui.json`.
+Generate fresh editable examples using `tools/chi_spatial_evidence.py` into a
+new ignored folder. No decoded maps, text, art, caches or saves are committed.
+Both reference trees retain 1,287 content/mode/mtime entries, the three dirty
+owner files retain their exact hashes and all 20 observed normal saves retain
+their bytes/mtimes. Existing registered C2 projects are not silently upgraded.
 
 Native limits remain explicit: one 1,024-square world, 15 map slots, 16 entrance
 slots, eight route slots and 64-tile town origin alignment. Citadel/starport and
@@ -126,3 +154,9 @@ cache interior dimensions preserve their native service contracts. A town clone
 replaces terrain in a chosen existing slot. New unrestricted story/mission state
 and authored event execution remain C4. Native sheet/sprite replacement pixels
 use their selected 16-colour palette; owned map artwork retains full RGBA.
+
+Enabling C3 map support on an older import changes its strict content fingerprint;
+retain the old project/revision for its old imported saves. Ordinary games/saves
+are separate. C4 is next: BLD source/control flow, native service and mission
+definitions, recruitment and saved continuations. General edited-campaign
+reconstruction recipes and complete campaign acceptance remain C5.

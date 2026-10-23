@@ -1,6 +1,7 @@
 # CHI import contracts and C1 audit
 
-Baseline: `0f1956d`, 2026-10-23. Scope: C1 and the C2 slice in the
+Baseline: `0f1956d`, 2026-10-23. The C1/C2 contracts below are retained; the
+C3 extension is specified in the final section. See the
 [campaign plan](CHI_EDITABLE_CAMPAIGNS_PLAN.md). The original executable/data remain
 the behavioral authority; these contracts preserve the current port baseline.
 
@@ -178,3 +179,61 @@ validation, unknown campaign fields, invalid dialogue controls/indices, exhauste
 budgets, altered resources/save digest, cross-project/profile saves, raw/nested/
 converted/unknown original-derived payloads in distribution. Retain private
 evidence under `work/chi-import/` with finite time/tick budgets.
+
+## C3 spatial and presentation extension
+
+The manifest optionally names `chi_spatial: chi-spatial.json`,
+`chi_presentation: chi-presentation.json` and ordinary `graphics: graphics.json`.
+These fields are accepted only with the imported-CHI dependency/startup contract.
+They participate in the exact runtime fingerprint and source builds. A C2
+project with neither new field keeps its previous resource behavior/identity.
+Enabling or editing runtime content deliberately invalidates saves from its old
+content revision; automatic migration is not part of this extension.
+
+`btp-chi-spatial-v1` retains all 15 map slots and exact native header/padding
+bytes. Display labels are sanitized independently; editing a label replaces its
+slot's bytes. Cells reference stable tile IDs, whose graphic and native numeric
+movement rule are separate. Custom artwork never supplies collision implicitly.
+The renderer, movement, followers, combat placement and water queries use these
+effective maps. Native mission gate/rubble/cache mutations retain priority.
+
+The one world remains 1,024 × 1,024. Seed, coarse/flip tables, 17 join bindings,
+jigsaw cells, land lookup and mini colours override the original generator's
+inputs without changing its algorithm. Custom terrain handles remain 16-bit.
+Town origins use 64-tile alignment. Moving the Citadel also moves its ruined
+slot; native fixed-location callers rebase against immutable source-map origins.
+Cached room coordinates retain their separate internal frame. Derived content
+origins are reconstructed on load, not added to the serialized game state.
+
+Bounds: 4,096 tile definitions; 1,024 jigsaws of 8 × 8; 15 maps, maximum 64 × 64;
+16 door slots and eight NPC routes per map; at most 32 overlays per map. Maps
+1/2/11/14 remain 64-square and map 15 remains 32 × 24. Citadel and starport keep
+the adjoining-sector margins required by native battles. Town door slots 0–7
+remain active for the original NPC protocol. New doors can select existing BLD
+building IDs; recruit templates and authored event execution remain C4.
+Updated's optional `services.broker` edits its existing virtual starport entrance
+without altering the original MTP header. Original rejects that capability.
+
+`btp-chi-presentation-v1` binds owned art to native tile/sprite/screen/font/film/
+portrait resource indices. Native sheet/sprite patches use the specified named
+display palette; map-owned art and full films/portraits retain RGBA. All 22 films
+keep their original frame counts and 88-square dimensions; durations are native
+retraces. Resource-aware save validation permits edited timing while retaining
+native cutscene phase/count checks. Fonts are a 128-square atlas of 256 glyphs.
+Audio references select verified programs 1–18, sound speed 25–400%, and title
+music enabled/disabled. They do not import executable instructions or introduce
+new sound synthesis programs.
+
+The editor's adventure-shaped projection is an editing adapter only. Synthetic
+building references never enable the authored event VM and are not written as
+an adventure. Unsupported authored story/party/encounter edits fail validation.
+GUI, CLI, Undo/Redo, source conversion/build, libraries and review/protection
+operate on the same effective documents. Native rule values and presentation
+tile patches participate in regional protection. Preview jobs use bounded native
+decoder output: a 128-square world overview or a 2 MiB index grid, not a giant
+full-resolution bitmap. Imported/derived artwork keeps origin metadata through
+editing/cloning and dependency transfer; public-export rejection remains in force.
+
+See the [schemas](../schemas/chi-spatial-v1.schema.json),
+[presentation schema](../schemas/chi-presentation-v1.schema.json),
+[usage](CHI_IMPORT.md) and [verification ledger](CHI_IMPORT_PROGRESS.md).
