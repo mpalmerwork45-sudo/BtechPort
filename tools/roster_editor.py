@@ -833,7 +833,8 @@ class RosterEditor:
         dialog.configure(background=self.palette["background"])
         dialog.columnconfigure(1, weight=1)
         values = {key: tk.StringVar(value=value) for key, value in self.settings.items()}
-        keys = ["player"] if self.document and self.document.manifest["requires"] == "none" else ["player", "data", "dialogue-data", "combat-data", "world-data"]
+        from editor_model import needs_original
+        keys = ["player"] if self.document and not needs_original(self.document.manifest) else ["player", "data", "dialogue-data", "combat-data", "world-data"]
         ttk.Label(dialog, text="Playtest setup", style="Title.TLabel").grid(row=0, column=0, columnspan=3, sticky="w", padx=14, pady=(14, 6))
         explanation = "Choose the built game player to test your package." if len(keys) == 1 else "Choose the game player and your original game files. Terrain previews use the original game folder."
         ttk.Label(dialog, text=explanation, style="Muted.TLabel", wraplength=700).grid(row=1, column=0, columnspan=3, sticky="w", padx=14, pady=(0, 10))
@@ -870,7 +871,8 @@ class RosterEditor:
                 return self.window.workspace.play_session.start(self._editor_scope,here=here)
             self.apply_form()
             from app_runtime import prepare_original
-            if self.document.manifest['requires']!='none':prepare_original(self.settings)
+            from editor_model import needs_original
+            if needs_original(self.document.manifest):prepare_original(self.settings)
             command = self.document.play_command(self.settings, self.state_dir, here=here)
             self.state_dir.mkdir(parents=True, exist_ok=True)
             with (self.state_dir / "player.log").open("a", encoding="utf-8") as log:

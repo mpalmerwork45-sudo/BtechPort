@@ -113,7 +113,19 @@ int btp_read_file(const char *path, uint8_t **bytes, size_t *length, BtpError *e
     return 1;
 }
 
-int btp_resources_load(const char *dir, BtpResources *r, BtpError *e)
+static int disk_read(void *context,const char *path,uint8_t **bytes,size_t *length,BtpError *error)
+{ (void)context;return btp_read_file(path,bytes,length,error); }
+int btp_resources_load(const char *dir,BtpResources *r,BtpError *e)
+{ return btp_resources_load_reader(dir,r,disk_read,NULL,e); }
+int btp_resources_feature(const BtpResources *r,unsigned feature)
+{
+    if (r->features&BTP_FEATURE_EXPLICIT) return (r->features&feature)!=0;
+    /* Preserve the released low-level resource API and authored projects.
+       Edition loaders set explicit capabilities before starting gameplay. */
+    return r->roster.count && (feature==BTP_FEATURE_BROKER || r->combat_profile.fingerprint);
+}
+
+int btp_resources_load_reader(const char *dir,BtpResources *r,BtpResourceRead read,void *context,BtpError *e)
 {
     memset(&r->roster,0,sizeof r->roster);
     memset(&r->portraits,0,sizeof r->portraits);
@@ -125,7 +137,7 @@ int btp_resources_load(const char *dir, BtpResources *r, BtpError *e)
     for (unsigned i = 0; i < 20; ++i) {
         int len = snprintf(path, sizeof path, "%s/%s", dir, names[i]);
         if (len < 0 || (size_t)len >= sizeof path) return fail(e, "Resource directory path too long");
-        if (!btp_read_file(path, &data, &n, e)) return 0;
+        if (!read(context,path, &data, &n, e)) return 0;
         int ok = i == 0 ? btp_map_decode(data, n, &r->map, e) :
             i == 1 ? btp_graphic_decode(data, n, &r->tiles, e) :
             i == 6 ? btp_graphic_decode(data, n, &r->sprites, e) :
@@ -146,31 +158,31 @@ int btp_resources_load(const char *dir, BtpResources *r, BtpError *e)
     for (unsigned i = 0; i < BTP_ANM_COUNT; ++i) {
         int len = snprintf(path,sizeof path,"%s/O%u.ANM",dir,i);
         if (len < 0 || (size_t)len >= sizeof path) return fail(e,"Resource directory path too long");
-        if (!btp_read_file(path,&data,&n,e)) return 0;
+        if (!read(context,path,&data,&n,e)) return 0;
         int ok = btp_anm_decode(data,n,&r->animations[i],e); free(data);
         if (!ok) return 0;
     }
     int len=snprintf(path,sizeof path,"%s/MAP11.MTP",dir);
-    if (len<0 || (size_t)len>=sizeof path || !btp_read_file(path,&data,&n,e)) return 0;
+    if (len<0 || (size_t)len>=sizeof path || !read(context,path,&data,&n,e)) return 0;
     int decoded=btp_map_decode(data,n,&r->destroyed,e);free(data);
     if (!decoded) return 0;
     /* 103B:0FC0 loads graphic set 4 alongside MAP11 during the invasion.
        Its tile numbers refer to DESTRUCT.ICN, rather than BTTLTECH.ICN. */
     len=snprintf(path,sizeof path,"%s/DESTRUCT.ICN",dir);
-    if (len<0 || (size_t)len>=sizeof path || !btp_read_file(path,&data,&n,e)) return 0;
+    if (len<0 || (size_t)len>=sizeof path || !read(context,path,&data,&n,e)) return 0;
     decoded=btp_graphic_decode(data,n,&r->destroyed_tiles,e);free(data);
     if (!decoded) return 0;
     len=snprintf(path,sizeof path,"%s/WWOODBT.SIF",dir);
-    if (len<0 || (size_t)len>=sizeof path || !btp_read_file(path,&data,&n,e)) return 0;
+    if (len<0 || (size_t)len>=sizeof path || !read(context,path,&data,&n,e)) return 0;
     if (n!=4352) { free(data);return fail(e,"SIF: unsupported title music length"); }
     memset(r->music,0,sizeof r->music);memcpy(r->music,data,n);r->music_length=(uint16_t)n;free(data);
     for (unsigned id=2;id<=14;++id) {
         len=snprintf(path,sizeof path,"%s/MAP%u.MTP",dir,id);
-        if (len<0 || (size_t)len>=sizeof path || !btp_read_file(path,&data,&n,e)) return 0;
+        if (len<0 || (size_t)len>=sizeof path || !read(context,path,&data,&n,e)) return 0;
         decoded=btp_map_decode(data,n,&r->local[id-1],e);free(data);if (!decoded) return 0;
     }
     len=snprintf(path,sizeof path,"%s/MAP15.MTP",dir);
-    if (len<0 || (size_t)len>=sizeof path || !btp_read_file(path,&data,&n,e)) return 0;
+    if (len<0 || (size_t)len>=sizeof path || !read(context,path,&data,&n,e)) return 0;
     if (n!=768) { free(data);return fail(e,"MAP15: expected original 32x24 raw chunk map"); }
     r->maproom=(BtpMap){.width=32,.height=24};
     for (unsigned y=0;y<24;++y) for (unsigned x=0;x<32;++x)
@@ -182,7 +194,7 @@ int btp_resources_load(const char *dir, BtpResources *r, BtpError *e)
         "THEATER","FROB","VIEWDISK","BARRACK2","ENTRANCE","HUT","ENDMECH","INSTRUCT","FINDIT","WINSCENE"};
     for (unsigned id=0;id<26;++id) {
         len=snprintf(path,sizeof path,"%s/%s.BLD",dir,building_files[id]);
-        if (len<0 || (size_t)len>=sizeof path || !btp_read_file(path,&data,&n,e)) return 0;
+        if (len<0 || (size_t)len>=sizeof path || !read(context,path,&data,&n,e)) return 0;
         decoded=btp_bld_decode(data,n,&r->buildings[id],e);free(data);if (!decoded) return 0;
     }
     if (r->sprites.format != 2) return fail(e,"MECHSHAP requires format-2 320x200 graphics");

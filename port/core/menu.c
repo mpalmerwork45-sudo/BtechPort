@@ -235,7 +235,7 @@ void btp_menu_input(BtpState *s,const BtpResources *r,BtpAction a)
     case BTP_MENU_ROOT:case BTP_MENU_UPDATED_ROOT:
         switch (root_item(s,item)) {
         case 0:btp_menu_close(s);break;
-        case 1:page(s,r->roster.count && r->combat_profile.fingerprint ? BTP_MENU_UPDATED_SETTINGS : BTP_MENU_SETTINGS,0);break;
+        case 1:page(s,btp_resources_feature(r,BTP_FEATURE_ENHANCED) && r->combat_profile.fingerprint ? BTP_MENU_UPDATED_SETTINGS : BTP_MENU_SETTINGS,0);break;
         case 2:
             btp_party_init(s);
             if (btp_world_populated(r,s)) { page(s,BTP_MENU_MESSAGE,0);s->menu.notice=4; }

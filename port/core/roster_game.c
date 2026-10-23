@@ -15,7 +15,7 @@ int btp_broker_door(const BtpState *s,const BtpResources *r,int x,int y)
 {
     /* The central three-door building already exists in MAP2's tiles, but
        has no original MTP entrance. Add a trigger, never modify the MTP. */
-    return r->roster.count && s->story_flags[4] && s->map_id==2 && !s->campaign.mounted &&
+    return btp_resources_feature(r,BTP_FEATURE_BROKER) && s->story_flags[4] && s->map_id==2 && !s->campaign.mounted &&
         x==BTP_BROKER_X && y==BTP_BROKER_Y;
 }
 void btp_broker_open(BtpState *s)
@@ -46,7 +46,7 @@ int btp_broker_available(const BtpState *s,const BtpResources *r)
 {
     if (s->event.enabled) return btp_scene(r,s) && s->event.phase==BTP_EVENT_TRADING &&
         s->mode==BTP_ACTIONS && btp_broker_page(s->campaign.ui);
-    return r->roster.count && s->map_id==2 && s->story_flags[4] && !s->yard.active &&
+    return btp_resources_feature(r,BTP_FEATURE_BROKER) && s->map_id==2 && s->story_flags[4] && !s->yard.active &&
         !s->cache.active && !s->combat.phase && !s->campaign.encounter &&
         s->mode==BTP_ACTIONS && btp_broker_page(s->campaign.ui) &&
         s->campaign.building==BTP_BROKER_BUILDING && s->entry_slot==BTP_BROKER_ENTRY;

@@ -215,6 +215,8 @@ def load_tiles(document, settings: dict, sheet: str | None = None) -> dict[str, 
         result = TileGraphics({"package:tiles": _package_tiles(document)})
         if sheet is None: result.update(art_tiles(document))
         return result
+    from editor_model import resource_settings
+    settings=resource_settings(document,settings)
     sheets = CHI_SHEETS if sheet is None else (sheet,)
     if not settings.get("data"):
         raise EditorError("Configure an existing Original data path in Player setup to preview CHI tiles.")

@@ -26,7 +26,7 @@ static int capabilities(void)
     /* Query the compiled adapter's constants. Authoring clients must not
        advertise expanded limits merely because a schema accepts them. */
     printf("{\"format\":\"btp-runtime-capabilities-v1\",\"runtime_version\":\"%s\","
-        "\"formats\":[\"btp-project-v1\",\"btp-content-v1\",\"btp-adventure-v1\",\"btp-adventure-v2\",\"btp-adventure-v3\",\"btp-art-v1\",\"btp-presentation-v1\"],"
+        "\"formats\":[\"btp-chi-campaign-v1\",\"btp-project-v1\",\"btp-content-v1\",\"btp-adventure-v1\",\"btp-adventure-v2\",\"btp-adventure-v3\",\"btp-art-v1\",\"btp-presentation-v1\"],"
         "\"limits\":{\"maps\":%u,\"events\":%u,\"flags\":%u,\"tiles\":%u,\"jigsaws\":%u,\"worlds\":%u,"
         "\"people\":%u,\"shops\":%u,\"encounters\":%u,\"objectives\":%u,\"definitions_per_collection\":%u,"
         "\"images\":%u,\"frames_per_image\":%u,\"art_pixels\":%u,\"animation_tracks\":%u,"
@@ -284,7 +284,7 @@ int main(int argc,char **argv)
             if (p->adventure.loaded) printf("; %u maps, %u event nodes",p->adventure.map_count,p->adventure.node_count);
             fputs("; SHA-256 ",stdout);
             for (unsigned i=0;i<32;++i) printf("%02x",p->digest[i]);
-            puts("");free(p);ok=1;
+            puts("");btp_project_free(p);ok=1;
         }
     } else if (!strcmp(argv[1],"validate-content") && argc==3) {
         ok=btp_definitions_load(argv[2],d,error.text) && btp_definitions_compile(d,r,error.text);

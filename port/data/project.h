@@ -16,11 +16,14 @@ typedef struct BtpProject {
     BtpArt graphics;
     unsigned script_count;
     BtpLuaScript scripts[BTP_LUA_SCRIPTS];
+    unsigned chi_edition; /* 0: ordinary project, 1: Original, 2: Updated */
+    BtpResources *chi_resources; /* Decoded once while validating; transferred on load. */
 } BtpProject;
 /* A CHI-dependent editable directory. Validation and runtime use the same
    loader, including decoding every explicitly declared portrait. Caller owns
    the returned project; failed loads publish neither definitions nor art. */
 BtpProject *btp_project_load(const char *directory,BtpRoster *roster,BtpPortraits *portraits,BtpError *error);
+void btp_project_free(BtpProject *project);
 int btp_project_path(const char *directory,const char *relative,char path[4096],BtpError *error);
 int btp_project_export_manifest(const char *directory,const char *id,const char *version,
     const BtpCombatProfile *rules,const BtpPortraits *portraits,BtpError *error);

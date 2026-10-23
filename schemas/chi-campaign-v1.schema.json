@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Local CHI campaign compatibility extension v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "schema_version",
+    "edition",
+    "dialogue_overrides"
+  ],
+  "properties": {
+    "format": {
+      "const": "btp-chi-campaign-v1"
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "edition": {
+      "enum": [
+        "original",
+        "updated"
+      ]
+    },
+    "dialogue_overrides": {
+      "type": "array",
+      "maxItems": 373,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "index",
+          "text"
+        ],
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 372
+          },
+          "text": {
+            "type": "string",
+            "maxLength": 512,
+            "pattern": "^[\\u0006\\r\\u000f -~]*$"
+          }
+        }
+      }
+    }
+  }
+}

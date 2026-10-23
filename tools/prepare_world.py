@@ -40,6 +40,27 @@ def generate(seed,data=ROOT/'Original DOS'):
     # generated terrain; native lookup overlays the authentic MTP at that site.
     return area,noise
 
+def extract(executable,map1,seed=0x020304):
+    """Pure bounded extraction shared by CLI and campaign importer."""
+    if not 0<seed<1<<24:raise ValueError('Seed must be a nonzero 24-bit value')
+    from exepack import unpack
+    from prepare_talk import EXE_SHA, IMAGE_SHA
+    source,metadata=unpack(executable)
+    if metadata['input_sha256']!=EXE_SHA or metadata['image_sha256']!=IMAGE_SHA:
+        raise ValueError('World tables require the audited executable')
+    ranges=[(0x1c6c0+0xb0b-17,336),(0x1c6c0+0xc1d,1024),
+            (0x1c6c0+0x209d,64),(0x1c6c0+0x211d,96),(0x1c6c0+0x215d,256)]
+    tables=b''.join(source[at:at+n] for at,n in ranges)
+    exe=hashlib.sha256(executable).digest()
+    local=hashlib.sha256(map1).digest()
+    header=b'BTW3'+struct.pack('<HHHHI',704,704,192,192,seed)+exe+local
+    return header+struct.pack('<Q',fingerprint(tables))+tables, {
+        'format':'BTW3','scope':'Static primary inputs; independent C midpoint and tile generation',
+        'executable_sha256':exe.hex(),'map1_sha256':local.hex(),'seed':seed,
+        'origin':[704,704],'size':[192,192],'ranges':ranges,
+        'tables_sha256':hashlib.sha256(tables).hexdigest(),
+        'no_instruction_patches':True,'native_generator':True}
+
 if __name__=='__main__':
     # DS:4FC0 starts 04 03 02 in the audited executable. Its first 256
     # draws match BUFFER:09FB in the live DOSBox world capture exactly.
@@ -50,24 +71,10 @@ if __name__=='__main__':
     if not 0<a.seed<1<<24:p.error('Seed must be a nonzero 24-bit value')
     # Runtime C generation consumes only original static numeric tables.
     # Full original generation remains available for differential fixtures.
-    from exepack import unpack
-    from prepare_talk import EXE_SHA, IMAGE_SHA
-    source,metadata=unpack((a.data/'BTECH.EXE').read_bytes())
-    if metadata['input_sha256']!=EXE_SHA or metadata['image_sha256']!=IMAGE_SHA:
-        raise ValueError('World tables require the audited executable')
-    ranges=[(0x1c6c0+0xb0b-17,336),(0x1c6c0+0xc1d,1024),
-            (0x1c6c0+0x209d,64),(0x1c6c0+0x211d,96),(0x1c6c0+0x215d,256)]
-    tables=b''.join(source[at:at+n] for at,n in ranges)
-    exe=hashlib.sha256((a.data/'BTECH.EXE').read_bytes()).digest()
-    local=hashlib.sha256((a.data/'MAP1.MTP').read_bytes()).digest()
-    header=b'BTW3'+struct.pack('<HHHHI',704,704,192,192,a.seed)+exe+local
+    cache,metadata=extract((a.data/'BTECH.EXE').read_bytes(),(a.data/'MAP1.MTP').read_bytes(),a.seed)
     a.output.parent.mkdir(parents=True,exist_ok=True)
-    a.output.write_bytes(header+struct.pack('<Q',fingerprint(tables))+tables)
-    a.output.with_suffix('.json').write_text(json.dumps({'format':'BTW3','scope':'Static primary inputs; independent C midpoint and tile generation',
-        'executable_sha256':exe.hex(),'map1_sha256':local.hex(),'seed':a.seed,'origin':[704,704],'size':[192,192],
-        'routines':['0000:50D3..50F3','187F:0BC0','187F:104E','187F:1314'],
-        'ranges':ranges,'tables_sha256':hashlib.sha256(tables).hexdigest(),
-        'no_instruction_patches':True,'native_generator':True},indent=2)+'\n')
+    a.output.write_bytes(cache)
+    a.output.with_suffix('.json').write_text(json.dumps(metadata,indent=2)+'\n')
     if a.fixture:
         area,noise=generate(a.seed,a.data)
         rows=[f'# Original 187F:104E/1314, seed {a.seed}, 256 original RNG noise bytes; nine complete 64x64 sectors.']
@@ -76,4 +83,4 @@ if __name__=='__main__':
                 raw=b''.join(area[(64*y+dy)*192+64*x:(64*y+dy)*192+64*x+64] for dy in range(64))
                 rows.append(f'W {11+x} {11+y} {a.seed} {fingerprint(raw):016x}')
         a.fixture.write_text('\n'.join(rows)+'\n')
-    print(f'Prepared {len(tables)} bytes of original world tables: {a.output}')
+    print(f'Prepared {len(cache)-88} bytes of original world tables: {a.output}')

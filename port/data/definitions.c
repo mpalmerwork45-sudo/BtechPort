@@ -72,7 +72,7 @@ static int rules(BtpJson *j,unsigned n,BtpCombatProfile *p)
     for (unsigned i=0;i<5;++i) h=(h^*out[i])*UINT32_C(16777619);
     p->fingerprint=h ? h : 1;return btp_json_done(j,n);
 }
-static int parse(BtpJson *j,BtpDefinitions *d)
+static int parse(BtpJson *j,BtpDefinitions *d,int allow_empty)
 {
     unsigned version;
     if (!fixed(j,1,"format","btp-content-v1") || !num(j,1,"schema_version",1,1,&version) ||
@@ -221,18 +221,22 @@ static int parse(BtpJson *j,BtpDefinitions *d)
         if (sinks>30 || v->armor[1]+v->armor[8]>2*v->structure[1] || v->armor[4]+v->armor[9]>2*v->structure[4] ||
             v->armor[6]+v->armor[10]>2*v->structure[6]) return btp_json_error(j,n,"heat sink or torso armor capacity exceeded");
     }
-    if (!d->mech_count) return btp_json_error(j,a,"project needs at least one mech");
+    if (!d->mech_count && !allow_empty) return btp_json_error(j,a,"project needs at least one mech");
     return btp_json_done(j,1);
 }
-int btp_definitions_load(const char *path,BtpDefinitions *out,char error[256])
+static int load(const char *path,BtpDefinitions *out,char error[256],int allow_empty)
 {
     BtpJson j={0};BtpDefinitions *d=calloc(1,sizeof *d);int ok=0;
     if (!d) { snprintf(error,256,"Definitions allocation failed");return 0; }
-    if (btp_json_load(&j,path,error)) ok=parse(&j,d);
+    if (btp_json_load(&j,path,error)) ok=parse(&j,d,allow_empty);
     if (!ok && !error[0]) snprintf(error,256,"%.180s: invalid content definition",path);
     if (ok) { memcpy(d->source_digest,j.source_digest,32);*out=*d; }
     btp_json_close(&j);free(d);return ok;
 }
+int btp_definitions_load(const char *path,BtpDefinitions *out,char error[256])
+{ return load(path,out,error,0); }
+int btp_definitions_load_chi(const char *path,BtpDefinitions *out,char error[256])
+{ return load(path,out,error,1); }
 int btp_definitions_compile(BtpDefinitions *d,BtpRoster *r,char error[256])
 {
     /* This is the only new-content -> CHI record boundary. Handles are local

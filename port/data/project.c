@@ -2,6 +2,7 @@
 #define _POSIX_C_SOURCE 200809L
 #endif
 #include "data/project.h"
+#include "data/chi.h"
 #include "data/json.h"
 #include "data/digest.h"
 #include "data/anm.h"
@@ -63,6 +64,8 @@ static int expected(BtpJson *j,unsigned obj,const char *key,const char *want)
     char v[96];unsigned node=btp_json_field(j,obj,key);
     return btp_json_string(j,node,v,sizeof v) && (!strcmp(v,want) || btp_json_error(j,node,"unsupported project option"));
 }
+void btp_project_free(BtpProject *p)
+{ if (p) { free(p->chi_resources);free(p); } }
 BtpProject *btp_project_load(const char *root,BtpRoster *roster,BtpPortraits *portraits,BtpError *error)
 {
     BtpError ignored;if (!error) error=&ignored;
@@ -77,9 +80,10 @@ BtpProject *btp_project_load(const char *root,BtpRoster *roster,BtpPortraits *po
         !text(&j,1,"title",p->title,sizeof p->title) || !text(&j,1,"requires",requires,sizeof requires) ||
         !expected(&j,1,"save_policy","strict-content-v1") ||
         !text(&j,1,"definitions",relative,sizeof relative)) goto done;
-    int independent=!strcmp(requires,"none");
-    if (!independent && strcmp(requires,"chi-original-dos-1.03")) { fail(error,"project.json","unsupported dependency");goto done; }
-    if (!btp_project_path(root,relative,path,error) || !btp_definitions_load(path,&p->definitions,error->text)) goto done;
+    int independent=!strcmp(requires,"none"),imported=!strcmp(requires,"chi-local-dos-1.03");
+    if (!independent && !imported && strcmp(requires,"chi-original-dos-1.03")) { fail(error,"project.json","unsupported dependency");goto done; }
+    if (!btp_project_path(root,relative,path,error) ||
+        !(imported ? btp_definitions_load_chi(path,&p->definitions,error->text) : btp_definitions_load(path,&p->definitions,error->text))) goto done;
     btp_digest_add(&digest,p->definitions.source_digest,32);
     if (strcmp(p->id,p->definitions.id) || strcmp(p->version,p->definitions.version)) { fail(error,"project.json","package ID/version disagrees with definitions");goto done; }
     if (!expected(&j,1,"rules_profile",p->definitions.rules.fingerprint ? "chi:updated-lrm-v1" : "chi:legacy-v1")) goto done;
@@ -90,7 +94,14 @@ BtpProject *btp_project_load(const char *root,BtpRoster *roster,BtpPortraits *po
         if (!btp_json_string(&j,adventure,relative,sizeof relative) || !btp_project_path(root,relative,path,error) ||
             !btp_adventure_load(path,&p->definitions,&p->adventure,error->text)) goto done;
         btp_digest_add(&digest,p->adventure.source_digest,32);
-    } else if (strcmp(startup,"chi-training-v1")) { btp_json_error(&j,1,"unsupported startup or missing adventure");goto done; }
+    } else if (strcmp(startup,imported ? "chi-import-v1" : "chi-training-v1")) { btp_json_error(&j,1,"unsupported startup or missing adventure");goto done; }
+    if (imported) {
+        if (adventure) { fail(error,"project.json","CHI import cannot enable authored events");goto done; }
+        p->chi_resources=btp_chi_project_load(root,&j,&digest,&p->chi_edition,error);
+        if (!p->chi_resources) goto done;
+        if ((p->chi_edition==1 && p->definitions.rules.fingerprint) ||
+            (p->chi_edition==2 && !p->definitions.rules.fingerprint)) { fail(error,"campaign.json","edition and rules disagree");goto done; }
+    }
     unsigned presentation=btp_json_optional(&j,1,"presentation");
     if (independent) {
         if (!adventure || !presentation || !btp_json_string(&j,presentation,relative,sizeof relative) ||
@@ -190,7 +201,7 @@ BtpProject *btp_project_load(const char *root,BtpRoster *roster,BtpPortraits *po
     btp_digest_finish(&digest,p->digest);*roster=*r;*portraits=*art;ok=1;
 done:
     btp_json_close(&j);free(r);free(art);
-    if (!ok) { free(p);return NULL; }
+    if (!ok) { btp_project_free(p);return NULL; }
     return p;
 }
 int btp_project_export_manifest(const char *root,const char *id,const char *version,

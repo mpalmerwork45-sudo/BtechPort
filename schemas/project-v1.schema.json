@@ -30,13 +30,15 @@
     "requires": {
       "enum": [
         "chi-original-dos-1.03",
-        "none"
+        "none",
+        "chi-local-dos-1.03"
       ]
     },
     "startup": {
       "enum": [
         "chi-training-v1",
-        "authored-adventure-v1"
+        "authored-adventure-v1",
+        "chi-import-v1"
       ]
     },
     "rules_profile": {
@@ -136,6 +138,254 @@
       "type": "string",
       "minLength": 1,
       "maxLength": 1023
+    },
+    "campaign": {
+      "const": "campaign.json"
+    },
+    "resources": {
+      "type": "array",
+      "minItems": 79,
+      "maxItems": 79,
+      "prefixItems": [
+        {
+          "const": "chi/MAP1.MTP"
+        },
+        {
+          "const": "chi/MAP2.MTP"
+        },
+        {
+          "const": "chi/MAP3.MTP"
+        },
+        {
+          "const": "chi/MAP4.MTP"
+        },
+        {
+          "const": "chi/MAP5.MTP"
+        },
+        {
+          "const": "chi/MAP6.MTP"
+        },
+        {
+          "const": "chi/MAP7.MTP"
+        },
+        {
+          "const": "chi/MAP8.MTP"
+        },
+        {
+          "const": "chi/MAP9.MTP"
+        },
+        {
+          "const": "chi/MAP10.MTP"
+        },
+        {
+          "const": "chi/MAP11.MTP"
+        },
+        {
+          "const": "chi/MAP12.MTP"
+        },
+        {
+          "const": "chi/MAP13.MTP"
+        },
+        {
+          "const": "chi/MAP14.MTP"
+        },
+        {
+          "const": "chi/MAP15.MTP"
+        },
+        {
+          "const": "chi/BTTLTECH.ICN"
+        },
+        {
+          "const": "chi/MECHSHAP.CMP"
+        },
+        {
+          "const": "chi/BTSTATS.CMP"
+        },
+        {
+          "const": "chi/BTBORDER.CMP"
+        },
+        {
+          "const": "chi/ANIMATE.ICN"
+        },
+        {
+          "const": "chi/BTTITLE.CMP"
+        },
+        {
+          "const": "chi/INFOCOM.CMP"
+        },
+        {
+          "const": "chi/TINYLAND.CMP"
+        },
+        {
+          "const": "chi/STARLEAG.ICN"
+        },
+        {
+          "const": "chi/MAP.ICN"
+        },
+        {
+          "const": "chi/ENDMECH.CMP"
+        },
+        {
+          "const": "chi/DESTRUCT.ICN"
+        },
+        {
+          "const": "chi/TRAINING.BLD"
+        },
+        {
+          "const": "chi/CITADEL.BLD"
+        },
+        {
+          "const": "chi/COMSTAR.BLD"
+        },
+        {
+          "const": "chi/WEAPON.BLD"
+        },
+        {
+          "const": "chi/ARMOR.BLD"
+        },
+        {
+          "const": "chi/REPAIR.BLD"
+        },
+        {
+          "const": "chi/BARRACKS.BLD"
+        },
+        {
+          "const": "chi/LOUNGE.BLD"
+        },
+        {
+          "const": "chi/GARAGE.BLD"
+        },
+        {
+          "const": "chi/HOSPITAL.BLD"
+        },
+        {
+          "const": "chi/ARENA.BLD"
+        },
+        {
+          "const": "chi/PARTY.BLD"
+        },
+        {
+          "const": "chi/CLOTHES.BLD"
+        },
+        {
+          "const": "chi/JAIL.BLD"
+        },
+        {
+          "const": "chi/MAYOR.BLD"
+        },
+        {
+          "const": "chi/WEAPON2.BLD"
+        },
+        {
+          "const": "chi/THEATER.BLD"
+        },
+        {
+          "const": "chi/FROB.BLD"
+        },
+        {
+          "const": "chi/VIEWDISK.BLD"
+        },
+        {
+          "const": "chi/BARRACK2.BLD"
+        },
+        {
+          "const": "chi/ENTRANCE.BLD"
+        },
+        {
+          "const": "chi/HUT.BLD"
+        },
+        {
+          "const": "chi/ENDMECH.BLD"
+        },
+        {
+          "const": "chi/INSTRUCT.BLD"
+        },
+        {
+          "const": "chi/FINDIT.BLD"
+        },
+        {
+          "const": "chi/WINSCENE.BLD"
+        },
+        {
+          "const": "chi/O0.ANM"
+        },
+        {
+          "const": "chi/O1.ANM"
+        },
+        {
+          "const": "chi/O2.ANM"
+        },
+        {
+          "const": "chi/O3.ANM"
+        },
+        {
+          "const": "chi/O4.ANM"
+        },
+        {
+          "const": "chi/O5.ANM"
+        },
+        {
+          "const": "chi/O6.ANM"
+        },
+        {
+          "const": "chi/O7.ANM"
+        },
+        {
+          "const": "chi/O8.ANM"
+        },
+        {
+          "const": "chi/O9.ANM"
+        },
+        {
+          "const": "chi/O10.ANM"
+        },
+        {
+          "const": "chi/O11.ANM"
+        },
+        {
+          "const": "chi/O12.ANM"
+        },
+        {
+          "const": "chi/O13.ANM"
+        },
+        {
+          "const": "chi/O14.ANM"
+        },
+        {
+          "const": "chi/O15.ANM"
+        },
+        {
+          "const": "chi/O16.ANM"
+        },
+        {
+          "const": "chi/O17.ANM"
+        },
+        {
+          "const": "chi/O18.ANM"
+        },
+        {
+          "const": "chi/O19.ANM"
+        },
+        {
+          "const": "chi/O20.ANM"
+        },
+        {
+          "const": "chi/O21.ANM"
+        },
+        {
+          "const": "chi/WWOODBT.SIF"
+        },
+        {
+          "const": "chi/talk-data.bin"
+        },
+        {
+          "const": "chi/combat-data.bin"
+        },
+        {
+          "const": "chi/world-data.bin"
+        }
+      ],
+      "items": false
     }
   },
   "required": [
@@ -200,6 +450,37 @@
           "required": [
             "presentation"
           ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "requires": {
+            "const": "chi-local-dos-1.03"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "campaign",
+          "resources"
+        ],
+        "properties": {
+          "startup": {
+            "const": "chi-import-v1"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "campaign": false,
+          "resources": false,
+          "startup": {
+            "not": {
+              "const": "chi-import-v1"
+            }
+          }
         }
       }
     }

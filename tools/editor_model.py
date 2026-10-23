@@ -53,6 +53,8 @@ def references(manifest: dict) -> list[str]:
         *([manifest["adventure"]] if "adventure" in manifest else []),
         *([manifest["presentation"]] if "presentation" in manifest else []),
         *([manifest["graphics"]] if "graphics" in manifest else []),
+        *([manifest["campaign"]] if "campaign" in manifest else []),
+        *manifest.get("resources", []),
         *[script["file"] for script in manifest.get("scripts", [])],
         *[asset["file"] for asset in manifest["assets"]]]))
 
@@ -62,7 +64,26 @@ def encoded(value: dict) -> bytes:
 
 
 AUTHORING_RECEIPTS = 'AUTHORING.json'
-METADATA_FILES = ('LIBRARY-SOURCES.json', 'EDITOR.json', AUTHORING_RECEIPTS)
+METADATA_FILES = ('LIBRARY-SOURCES.json', 'EDITOR.json', AUTHORING_RECEIPTS,
+                  'campaign.json', 'IMPORT.json', 'CHI-TILES.json')
+
+
+def needs_original(manifest):
+    """Only external CHI dependencies require machine-wide player setup."""
+    return manifest['requires'] not in ('none', 'chi-local-dos-1.03')
+
+
+def resource_settings(document, settings):
+    """Preview the imported project's resources, including modular sources."""
+    value=dict(settings)
+    if document.manifest.get('requires')=='chi-local-dos-1.03':
+        name='chi/MAP1.MTP'
+        if document.source is not None:name=document.source.index['files'][name]
+        folder=child(document.root,name).parent
+        value['data']=str(folder)
+        for key,name in [('dialogue','talk-data.bin'),('combat','combat-data.bin'),('world','world-data.bin')]:
+            value[key+'-data']=str(folder/name)
+    return value
 
 
 class ProjectDocument:
@@ -404,7 +425,7 @@ class ProjectDocument:
 
     def play_command(self, settings: dict, state_dir: Path, here=None) -> list[str]:
         self.save()
-        required = ["player"] if self.manifest["requires"] == "none" else ["player", "data", "dialogue-data", "combat-data", "world-data"]
+        required = ["player", *(["data", "dialogue-data", "combat-data", "world-data"] if needs_original(self.manifest) else [])]
         for key in required:
             if not settings.get(key) or not Path(settings[key]).exists():
                 raise EditorError(f"Configure an existing {key} path in Player setup.")

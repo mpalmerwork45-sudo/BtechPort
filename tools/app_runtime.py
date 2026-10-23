@@ -88,9 +88,9 @@ def game_command(choice, paths, state_dir, project=None, resume=False):
     command=[str(player.resolve())]
     original=choice in ('Original','Updated')
     if project:
-        from editor_model import ProjectDocument,references
+        from editor_model import ProjectDocument,references,needs_original
         doc=ProjectDocument(Path(project),binary('btp-project'))
-        original=doc.manifest['requires']!='none'
+        original=needs_original(doc.manifest)
         identity=doc.manifest['package_id']
         # A changed project gets fresh launch/save slots, preserving earlier
         # revisions. C save loading still verifies the full package fingerprint.

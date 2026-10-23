@@ -37,6 +37,9 @@ typedef struct BtpDefinitions {
 } BtpDefinitions;
 struct BtpCombatData;
 int btp_definitions_load(const char *path,BtpDefinitions *out,char error[256]);
+/* Imported Original has no added units: preserve exact compatibility templates
+   in its combat cache instead of synthesizing library blueprints. */
+int btp_definitions_load_chi(const char *path,BtpDefinitions *out,char error[256]);
 int btp_definitions_compile(BtpDefinitions *definitions,BtpRoster *roster,char error[256]);
 const BtpAuthoredWeapon *btp_authored_weapon(const BtpDefinitions *definitions,const uint8_t record[125],unsigned mount);
 const char *btp_behavior_name(unsigned behavior);

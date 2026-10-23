@@ -47,7 +47,7 @@ extractor identity in the local provenance report.
 | WWOODBT.SIF | `core/audio.c` | Exact music copy | C3 sound reference editing; event/sample ordering checks |
 | All 26 BLDs | `core/script.c`, `core/original_actions.c` | Exact encrypted copies, native compatibility execution | C4 typed labels/compiler; preserve unreachable bytes and source maps |
 | Native dialogue/font | `prepare_talk.py`, `data/resources.c` | Exact BTTA/v24 cache; bounded native dialogue overrides | C3 font/art editing; C4 full dialogue/menu authoring |
-| Combat/loan/arena/cache/sound tables | `prepare_combat.py`, `data/combat_data.c`, `core/combat.c` | Exact BTCC/v12, no unit-library normalization | C4 definitions versus damaged/shell instances and economy settings |
+| Combat/loan/arena/cache/sound tables | `prepare_combat.py`, `data/resources.c`, `core/combat.c` | Exact BTCC/v12, no unit-library normalization | C4 definitions versus damaged/shell instances and economy settings |
 | World generator tables | `prepare_world.py`, `data/world.c`, `core/world.c` | Exact BTW3, canonical seed 0x020304 | C3 generator/jigsaw/town editing; whole-sector hashes and edge joins |
 | Initial player/state/RNG | `core/game.c`, `core/npc.c`, `frontend/cli.c` | Existing initialization, explicit profile | C4 initial-state settings; compare normalized state and RNG |
 | Shop purchases/recipients/prices | `core/shop.c`, `core/service.c` | Existing exact transactions | C4 editable inventories, prices and matching BLD price text |
@@ -60,7 +60,7 @@ extractor identity in the local provenance report.
 | Inventor/cinema/houses/ending | BLDs, `core/story.c`, `core/cache.c`, `core/game.c` | Existing programs/handlers | C4 conditions, rewards and ending continuation |
 | Updated definitions/rules | `content/updated/roster.json`, `data/definitions.c` | Editable external definitions, exact export round trip | Existing export-equivalence tests plus imported profile tests |
 | Updated portraits | `data/portraits.c`, `content/updated` | Project-owned ANMs and source credits | C3 art editing; retain AI provenance and asset licensing |
-| Persistence | `data/save.c`, `data/state_codec.c` | Existing strict project envelope over unchanged state | C2 six isolated slots; C4 bridge continuations require versioned state |
+| Persistence | `data/save.c`, `core/state_codec.c` | Existing strict project envelope over unchanged state | C2 six isolated slots; C4 bridge continuations require versioned state |
 | Editor/sources/automation | `editor_model.py`, `campaign_source.py`, `authoring_service.py` | Shared document validation/Undo/Save/build and native-text editing | C3/C4 richer models, source navigation and coverage |
 
 The inventories identify the consumers; they do not claim every native context

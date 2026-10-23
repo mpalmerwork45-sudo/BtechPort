@@ -14,7 +14,7 @@ static int fail(BtpError *error, const char *message)
 void btp_content_close(BtpContent *content)
 {
     if (!content) return;
-    if (content->resources) free(content->resources->project);
+    if (content->resources) btp_project_free(content->resources->project);
     free(content->resources);
     *content = (BtpContent){0};
 }
@@ -42,7 +42,8 @@ int btp_content_select(BtpContent *content,BtpContentProfile profile,const char 
         content->resources->combat_profile=(BtpCombatProfile){0};
         memset(&content->resources->portraits,0,sizeof content->resources->portraits);
     } else return fail(error,"Unknown game edition");
-    free(content->resources->project);content->resources->project=NULL;
+    content->resources->features=(uint8_t)(BTP_FEATURE_EXPLICIT | (profile==BTP_CONTENT_UPDATED ? BTP_FEATURE_BROKER|BTP_FEATURE_ENHANCED : 0));
+    btp_project_free(content->resources->project);content->resources->project=NULL;
     content->resources->combat.definitions=NULL;
     content->profile=profile;if (error) error->text[0]=0;return 1;
 }
@@ -68,6 +69,7 @@ int btp_content_load_original(BtpContent *content,
     }
     btp_content_close(content);
     content->resources = candidate;
+    candidate->features=BTP_FEATURE_EXPLICIT;
     content->profile = BTP_CONTENT_ORIGINAL_DOS_103;
     return 1;
 }
@@ -84,7 +86,15 @@ int btp_content_load_project(BtpContent *content,const char *directory,
     BtpResources *r=candidate.resources;
     r->project=btp_project_load(directory,&r->roster,&r->portraits,error);
     if (!r->project) { btp_content_close(&candidate);return 0; }
-    if (r->project->independent.loaded) btp_independent_resources(r);
+    if (r->project->chi_resources) {
+        /* The project validator already decoded and hashed one private input
+           snapshot. Transfer ownership instead of reopening editable files. */
+        BtpProject *project=r->project;
+        candidate.resources=project->chi_resources;project->chi_resources=NULL;
+        candidate.resources->project=project;
+        candidate.resources->roster=r->roster;candidate.resources->portraits=r->portraits;
+        r->project=NULL;free(r);r=candidate.resources;
+    } else if (r->project->independent.loaded) btp_independent_resources(r);
     else {
         if (!dependency) { btp_content_close(&candidate);return fail(error,"CHI project requires explicit --data, --dialogue-data, --combat-data, --world-data"); }
         BtpContent original={0};
@@ -95,6 +105,7 @@ int btp_content_load_project(BtpContent *content,const char *directory,
         original.resources->roster=r->roster;original.resources->portraits=r->portraits;
         btp_content_close(&candidate);candidate=original;r=candidate.resources;
     }
+    if (!r->project->chi_edition) r->features=0; /* Preserve released authored-package behavior. */
     r->combat.definitions=&r->project->definitions;
     r->combat_profile=r->project->definitions.rules;
     candidate.profile=BTP_CONTENT_PROJECT;

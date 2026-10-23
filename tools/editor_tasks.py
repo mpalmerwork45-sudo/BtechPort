@@ -12,7 +12,7 @@ import tempfile
 import threading
 import time
 import traceback
-from editor_model import EditorError,ProjectDocument,encoded,references
+from editor_model import EditorError,ProjectDocument,encoded,references,needs_original
 from editor_session import report,scope_of,guard,clear_problems
 
 
@@ -204,7 +204,7 @@ class PlaySession:
             if result:shutil.rmtree(result[1],ignore_errors=True)
         def prepare(cancel):
             from app_runtime import prepare_original
-            if candidate.manifest['requires']!='none':prepare_original(settings)
+            if needs_original(candidate.manifest):prepare_original(settings)
             if cancel.is_set():return None
             root=state_dir/'play-snapshots';root.mkdir(parents=True,exist_ok=True)
             folder=Path(tempfile.mkdtemp(prefix='run-',dir=root))

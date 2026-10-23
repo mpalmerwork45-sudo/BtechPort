@@ -30,7 +30,23 @@ is VERIFIED; re-verifying every original branch is not claimed.
 
 ## C2 — Importer and first slice
 
-In progress. Next: implement the versioned compatibility resource loader and
-explicit profile capabilities, then extraction/generation, editor/import wizard,
-provenance enforcement and differential slice tests. No full editable-campaign
+**Resource/import foundations implemented.** The opt-in project extension owns
+79 runtime files; the validator hashes and decodes the same bounded snapshots.
+Original/Updated features are explicit. Original retains an empty additions
+container and exact cache templates; Updated exports its current definitions/art.
+The shared headless importer checks all 77 fingerprints, stages both projects
+and publishes their new parent without replacement. Completed projects run with
+every external resource path absent. Native text overrides participate in the
+ordinary document history, strict fingerprint, source conversion and build.
+
+**Verified:** the two imports match their built-in editions for 108,156 total
+gameplay ticks across ordinary training/combat and mission pass/fail fixtures,
+including rendered checkpoints and held-script save/reload. Twelve slot
+round-trips pass with cross-profile/normal-save rejection. Four affected native
+regression tests pass. Private evidence: `work/chi-import/parity-linux.log`,
+`native-focused.log`, `first-import.json`; Linux build uses `/usr/bin` tools to
+avoid the development host's older Conda linker.
+
+In progress: GUI import/text views, failure/recovery/isolation tests, provenance
+guards, public baseline cleanup and Windows comparison. No full editable-campaign
 claim until C3–C5 gates pass.

@@ -164,7 +164,7 @@ int btp_cli_load_content(const BtpOptions *o, BtpContent *content, BtpError *err
         /* Validate package identity first, so independent games can run with
            every original input absent. CHI packages retain explicit paths. */
         if (!btp_content_load_project(content,o->project,o->explicit_dependencies==15 ? &paths : NULL,error)) return 0;
-        if (!content->resources->project->independent.loaded && o->explicit_dependencies!=15) {
+        if (!content->resources->project->independent.loaded && !content->resources->project->chi_edition && o->explicit_dependencies!=15) {
             btp_content_close(content);snprintf(error->text,sizeof error->text,"CHI project needs explicit --data, --dialogue-data, --combat-data, --world-data");return 0;
         }
         if (content->resources->project->independent.loaded &&
@@ -212,7 +212,7 @@ void btp_initial_state_seeded(const BtpOptions *o,BtpState *s,const BtpResources
     btp_npc_init(s,&r->map);
     /* Fresh Updated campaigns opt in. Loading a save below replaces this
        state, preserving the saved policy (including old saves' Legacy). */
-    if (r->roster.count && r->combat_profile.fingerprint) (void)btp_set_combat_profile(s,r,1);
+    if (btp_resources_feature(r,BTP_FEATURE_ENHANCED) && r->combat_profile.fingerprint) (void)btp_set_combat_profile(s,r,1);
     if (o->play_map) (void)btp_events_preview(s,r,o->play_map,o->play_x,o->play_y);
     else btp_events_start_seeded(s,r,seed);
     if (o->title_preview) btp_audio_start(s);

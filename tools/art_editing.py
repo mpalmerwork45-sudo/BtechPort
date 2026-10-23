@@ -145,6 +145,8 @@ def import_image(path, prefix, images, kind="screen", frame_width=None, frame_he
 
 
 def original_sprite(document, settings, first=0, frames=16):
+    from editor_model import resource_settings
+    settings=resource_settings(document,settings)
     from editor_tiles import _capture_preview
     if not settings.get("data"): raise EditorError("Configure the Original game folder in Player setup first.")
     command = [str(document.validator), "source-sprite", "--data", str(Path(settings["data"]).resolve()),

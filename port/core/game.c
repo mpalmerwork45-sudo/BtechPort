@@ -25,13 +25,13 @@
 
 const BtpCombatProfile *btp_active_combat_profile(const BtpState *s,const BtpResources *r)
 {
-    return s->combat_profile==1 && r->roster.count && r->combat_profile.fingerprint &&
+    return s->combat_profile==1 && btp_resources_feature(r,BTP_FEATURE_ENHANCED) && r->combat_profile.fingerprint &&
         s->combat_fingerprint==r->combat_profile.fingerprint ? &r->combat_profile : NULL;
 }
 int btp_set_combat_profile(BtpState *s,const BtpResources *r,unsigned enhanced)
 {
     /* Never change the rules underneath a held encounter or scripted fight. */
-    if (enhanced>1 || !r->roster.count || (enhanced && !r->combat_profile.fingerprint) ||
+    if (enhanced>1 || !btp_resources_feature(r,BTP_FEATURE_ENHANCED) || (enhanced && !r->combat_profile.fingerprint) ||
         s->combat.phase!=BTP_COMBAT_NONE || s->campaign.encounter ||
         (s->mode!=BTP_EXPLORE && s->mode!=BTP_ACTIONS && s->mode!=BTP_CACHE)) return 0;
     s->combat_profile=(uint8_t)enhanced;s->combat_fingerprint=enhanced ? r->combat_profile.fingerprint : 0;
@@ -61,7 +61,7 @@ const BtpMap *btp_active_map(const BtpResources *r,const BtpState *s)
 }
 unsigned btp_building_kind(const BtpResources *r,const BtpState *s)
 {
-    if (r->roster.count && s->map_id==2 && s->entry_slot==BTP_BROKER_ENTRY &&
+    if (btp_resources_feature(r,BTP_FEATURE_BROKER) && s->map_id==2 && s->entry_slot==BTP_BROKER_ENTRY &&
         s->campaign.building==BTP_BROKER_BUILDING) return BTP_BROKER_BUILDING;
     if (s->disk_origin) return 18;
     if (s->cache.active || s->yard.active) return s->campaign.building;
@@ -297,7 +297,7 @@ static void game_tick(BtpState *s, const BtpResources *r, BtpAction a)
         if (moved.mode==BTP_EXPLORE && btp_action_moves(a) && (party_entry || !moved.blocked) &&
             (party_entry || moved.x_half != previous.x_half || moved.y_half != previous.y_half) &&
             (moved.map_id==previous.map_id && entrance >= 0 &&
-                ((r->roster.count && moved.map_id==2 && entrance==BTP_BROKER_ENTRY) || map->room_map[entrance]<26))) {
+                ((btp_resources_feature(r,BTP_FEATURE_BROKER) && moved.map_id==2 && entrance==BTP_BROKER_ENTRY) || map->room_map[entrance]<26))) {
             moved.x_half = previous.x_half; moved.y_half = previous.y_half;
             if (party_entry) {
                 moved.campaign.world_x=(uint16_t)((map->entrance_x[0]>>8)*128+previous.x_half);
@@ -306,7 +306,7 @@ static void game_tick(BtpState *s, const BtpResources *r, BtpAction a)
             }
             moved.mode = BTP_ENTRY; moved.entry_slot = (uint8_t)entrance; moved.entry_selected = 0;
             moved.entry_action = moved.facing;
-            moved.campaign.building=(uint8_t)(r->roster.count && moved.map_id==2 && entrance==BTP_BROKER_ENTRY ?
+            moved.campaign.building=(uint8_t)(btp_resources_feature(r,BTP_FEATURE_BROKER) && moved.map_id==2 && entrance==BTP_BROKER_ENTRY ?
                 BTP_BROKER_BUILDING : moved.story_flags[4] ? map->room_map[entrance] : 0);
             uint8_t choices[BTP_MENUS]; memcpy(choices,moved.script.choices,sizeof choices);
             moved.script = (BtpScriptState){.selected=previous.script.selected};

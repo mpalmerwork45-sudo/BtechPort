@@ -71,7 +71,16 @@ typedef struct {
     BtpCombatProfile combat_profile; /* Optional authored Updated rules. */
     /* Cosmetic Updated-pack art, separate from original O*.ANM and save IDs. */
     BtpPortraits portraits;
+    /* Explicit edition capabilities for loaded games. Zero retains the old
+       low-level resource/test API; imported Original never infers its edition
+       from the presence of editable definitions. This is not saved state. */
+    uint8_t features;
 } BtpResources;
+enum { BTP_FEATURE_BROKER=1, BTP_FEATURE_ENHANCED=2, BTP_FEATURE_EXPLICIT=128 };
+int btp_resources_feature(const BtpResources *resources,unsigned feature);
+typedef int (*BtpResourceRead)(void *context,const char *path,uint8_t **bytes,size_t *length,BtpError *error);
+int btp_resources_load_reader(const char *directory,BtpResources *resources,
+    BtpResourceRead reader,void *context,BtpError *error);
 
 int btp_map_decode(const uint8_t *bytes, size_t length, BtpMap *map, BtpError *error);
 int btp_graphic_decode(const uint8_t *bytes, size_t length, BtpGraphic *graphic, BtpError *error);
