@@ -4,6 +4,7 @@
 #include "core/animation.h"
 #include "core/combat.h"
 #include "core/world.h"
+#include "data/chi_scripts.h"
 #include <string.h>
 
 /* Numeric original DS:28C4/28D8/28EC tables, not a reference implementation. */
@@ -87,7 +88,7 @@ void btp_training_native(BtpState *s, const BtpResources *r)
     case 3:
         /* The tired-before-third refusal also exits through this routine. */
         if ((s->mission.phase != BTP_MISSION_RESULT && s->mission.phase != BTP_MISSION_NONE) ||
-            s->script.pc != 0x1c6d) { fault(s); return; }
+            s->script.pc != btp_bld_after(&r->training,0x1c6d)) { fault(s); return; }
         s->mission = (BtpMissionState){0};
         s->combat = (BtpCombatState){0};
         s->script.mech_result = s->script.mech_after = 0;
@@ -97,7 +98,7 @@ void btp_training_native(BtpState *s, const BtpResources *r)
         break;
     case 43:
         if (s->mission.assignment!=4 || s->mission.phase!=BTP_MISSION_RESULT ||
-            !s->combat.won || !s->story_flags[45] || s->script.pc!=0x1674) { fault(s);return; }
+            !s->combat.won || !s->story_flags[45] || s->script.pc!=btp_bld_after(&r->training,0x1674)) { fault(s);return; }
         /* Indoor position is represented by room/counter; actor is outdoor only. */
         s->npc.actor[0]=(BtpNpc){0};s->npc_walk[0]=0;
         s->npc_pairs[0][0]=0x70;s->npc_pairs[0][1]=255;

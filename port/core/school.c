@@ -1,6 +1,7 @@
 #include "core/commands.h"
 #include "core/school.h"
 #include "core/economy.h"
+#include "data/chi_scripts.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -16,9 +17,9 @@ void btp_school_native(BtpState *s, const BtpResources *r)
     if (s->entry_slot != 1 || s->story_flags[4] || !r->dialogue.length) { fault(s); return; }
     for (unsigned i = 0; i < 3; ++i) if (s->skills[i] > 4) { fault(s); return; }
     s->school = (BtpSchoolState){0};
-    if (v->native_action == 4 && v->pc == 0xf05 && v->text_count == 1) {
+    if (v->native_action == 4 && v->pc == btp_bld_after(&r->citadel,0xf05) && v->text_count == 1) {
         s->school.phase = BTP_SCHOOL_PRICES;
-    } else if (v->native_action == 5 && v->pc == 0xf6c && s->story_flags[8] < 3 && !v->text_count) {
+    } else if (v->native_action == 5 && v->pc == btp_bld_after(&r->citadel,0xf6c) && s->story_flags[8] < 3 && !v->text_count) {
         unsigned course = s->story_flags[8], rank = s->skills[course];
         s->school = (BtpSchoolState){BTP_SCHOOL_TRANSCRIPT,(uint8_t)course,(uint8_t)rank,BTP_SCHOOL_TRAINED};
         s->story_flags[9] = 0;
@@ -31,7 +32,7 @@ void btp_school_native(BtpState *s, const BtpResources *r)
     } else { fault(s); return; }
     btp_script_native_return(v,&r->citadel,s->story_flags);
 }
-int btp_school_valid(const BtpState *s)
+int btp_school_valid_bld(const BtpState *s,const BtpBld *script)
 {
     const BtpSchoolState *c = &s->school; const BtpScriptState *v = &s->script;
     for (unsigned i = 0; i < 3; ++i) if (s->skills[i] > 4 || s->checkpoint_skills[i] > 4) return 0;
@@ -40,11 +41,11 @@ int btp_school_valid(const BtpState *s)
         !(v->status == BTP_SCRIPT_MENU && v->menu_id == 9);
     if (s->mode != BTP_BUILDING || s->entry_slot != 1 || s->story_flags[4] || s->bank.phase || s->talk.phase) return 0;
     if (c->phase == BTP_SCHOOL_PRICES) return !c->course && !c->before && !c->outcome &&
-        v->status == BTP_SCRIPT_MENU && v->menu_id == 9 && v->pc == 0xf0f && v->native_action == 4 &&
-        v->text_count == 1 && v->text[0].offset == 0xe72;
+        v->status == BTP_SCRIPT_MENU && v->menu_id == 9 && v->pc == btp_bld_after(script,0xf0f) && v->native_action == 4 &&
+        v->text_count == 1 && v->text[0].offset == btp_bld_offset(script,0xe72);
     if (!s->checkpoint_valid || v->status != BTP_SCRIPT_WAIT || v->native_action != 5 || v->text_count ||
         c->course != s->story_flags[8] || c->before != s->checkpoint_skills[c->course] ||
-        (c->outcome == BTP_SCHOOL_TRAINED ? v->pc != 0xf75 : v->pc != 0x10da)) return 0;
+        (c->outcome == BTP_SCHOOL_TRAINED ? v->pc != btp_bld_after(script,0xf75) : v->pc != btp_bld_after(script,0x10da))) return 0;
     int trained = c->outcome == BTP_SCHOOL_TRAINED;
     if (s->story_flags[9] != trained || s->credits != s->checkpoint_credits-(trained ? btp_school_price(c->before) : 0u)) return 0;
     if (trained && (c->before == 4 || s->checkpoint_credits < btp_school_price(c->before))) return 0;
@@ -54,6 +55,7 @@ int btp_school_valid(const BtpState *s)
         if (s->skills[i] != s->checkpoint_skills[i]+(trained && i == c->course ? 1u : 0u)) return 0;
     return 1;
 }
+int btp_school_valid(const BtpState *s) { return btp_school_valid_bld(s,NULL); }
 static int append(uint8_t *out, size_t cap, size_t *n, const uint8_t *p, size_t length)
 {
     if (*n >= cap || length >= cap-*n) return 0;

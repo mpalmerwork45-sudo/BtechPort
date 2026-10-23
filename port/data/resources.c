@@ -86,6 +86,7 @@ int btp_bld_decode(const uint8_t *b, size_t n, BtpBld *script, BtpError *e)
     if (!b || !script || n < 3 || n > BTP_BLD_MAX + 2 || le16(b) != n - 2)
         return fail(e, "BLD: invalid size word or payload length");
     script->length = (uint16_t)(n - 2);
+    script->origin_map=script->origin_ends=NULL;script->origin_length=0;
     for (size_t i = 2; i < n; ++i)
         script->bytes[i - 2] = (uint8_t)((uint8_t)(b[i] + 41u) ^ 233u);
     return 1;

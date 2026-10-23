@@ -22,6 +22,7 @@ typedef struct {
 } BtpJson;
 int btp_json_load(BtpJson *json,const char *path,char error[256]);
 int btp_json_load_chi_text(BtpJson *json,const char *path,char error[256]);
+int btp_json_load_bld_text(BtpJson *json,const char *path,char error[256]);
 /* Pixel libraries/world documents have an explicit larger bound; ordinary
    manifests and definitions retain their original one-megabyte contract. */
 int btp_json_load_large(BtpJson *json,const char *path,char error[256]);

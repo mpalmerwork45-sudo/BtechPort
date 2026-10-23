@@ -1,4 +1,5 @@
 #include "data/project.h"
+#include "data/chi.h"
 #include "data/content.h"
 #include "data/portraits.h"
 #include "data/file.h"
@@ -27,7 +28,7 @@ static int capabilities(void)
     /* Query the compiled adapter's constants. Authoring clients must not
        advertise expanded limits merely because a schema accepts them. */
     printf("{\"format\":\"btp-runtime-capabilities-v1\",\"runtime_version\":\"%s\","
-        "\"formats\":[\"btp-chi-campaign-v1\",\"btp-chi-spatial-v1\",\"btp-chi-presentation-v1\",\"btp-project-v1\",\"btp-content-v1\",\"btp-adventure-v1\",\"btp-adventure-v2\",\"btp-adventure-v3\",\"btp-art-v1\",\"btp-presentation-v1\"],"
+        "\"formats\":[\"btp-chi-scripts-v1\",\"btp-chi-campaign-v1\",\"btp-chi-spatial-v1\",\"btp-chi-presentation-v1\",\"btp-project-v1\",\"btp-content-v1\",\"btp-adventure-v1\",\"btp-adventure-v2\",\"btp-adventure-v3\",\"btp-art-v1\",\"btp-presentation-v1\"],"
         "\"limits\":{\"maps\":%u,\"events\":%u,\"flags\":%u,\"tiles\":%u,\"jigsaws\":%u,\"worlds\":%u,"
         "\"people\":%u,\"shops\":%u,\"encounters\":%u,\"objectives\":%u,\"definitions_per_collection\":%u,"
         "\"images\":%u,\"frames_per_image\":%u,\"art_pixels\":%u,\"animation_tracks\":%u,"
@@ -240,8 +241,31 @@ static int original_units(const char *output,const char *cache)
     free(combat);free(roster);return ok;
 }
 
+static int chi_program(const char *directory,const char *identity)
+{
+    BtpContent content={0};BtpError error={0};int ok=0;
+    if (!btp_content_load_project(&content,directory,NULL,&error)) goto done;
+    BtpProject *project=(BtpProject *)content.resources->project;
+    if (!project->chi_scripts) { snprintf(error.text,sizeof error.text,"Enable BLD sources with Project > CHI scripts first");goto done; }
+    unsigned slot=0;while (slot<26 && strcmp(project->chi_scripts->programs[slot].id,identity)) ++slot;
+    if (slot==26) { snprintf(error.text,sizeof error.text,"Unknown BLD program ID");goto done; }
+    const BtpChiProgram *p=&project->chi_scripts->programs[slot];const BtpBld *b=&content.resources->buildings[slot];
+    printf("{\"format\":\"btp-chi-compiled-program-v1\",\"id\":\"%s\",\"resource\":\"%s\",\"length\":%u,\"encrypted\":\"%02x%02x",
+        p->id,btp_chi_resource_name(27+slot),b->length,b->length&255u,b->length>>8);
+    for (unsigned i=0;i<b->length;++i) printf("%02x",((b->bytes[i]^233u)-41u)&255u);
+    fputs("\",\"nodes\":[",stdout);
+    for (unsigned i=0;i<p->count;++i) {
+        const BtpChiInstruction *n=&p->nodes[i];
+        printf("%s{\"id\":\"%s\",\"offset\":%u,\"length\":%u,\"original_size\":%u,\"origin\":",i ? "," : "",n->id,n->offset,n->length,n->original_size);
+        if (n->origin==UINT16_MAX) fputs("null",stdout);else printf("%u",n->origin);
+        printf(",\"opcode\":%u,\"field_path\":\"$.programs[%s].nodes[%s]\"}",n->opcode,p->id,n->id);
+    }
+    puts("]}");ok=!ferror(stdout);
+done:if (!ok) fprintf(stderr,"%s\n",error.text);btp_content_close(&content);return ok ? 0 : 1;
+}
 int main(int argc,char **argv)
 {
+    if (argc==4 && !strcmp(argv[1],"chi-program")) return chi_program(argv[2],argv[3]);
     if (argc>=2 && !strcmp(argv[1],"chi-resource")) return btp_tool_chi_resource(argc,argv);
     if (argc>=2 && !strcmp(argv[1],"chi-world")) return btp_tool_chi_world(argc,argv);
     if (argc>=2 && !strcmp(argv[1],"chi-grid")) return btp_tool_chi_grid(argc,argv);

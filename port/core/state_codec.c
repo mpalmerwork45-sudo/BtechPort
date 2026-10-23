@@ -727,8 +727,8 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         }
         if (version<33 && result.service.phase) btp_service_upgrade(&result);
         if (result.disk_origin && ((result.disk_origin!=8 && result.disk_origin!=19) || result.mode!=BTP_BUILDING || !result.checkpoint_valid || result.campaign.building!=result.disk_origin)) return 0;
-        if (!btp_talk_valid(&result,m) || !btp_npc_valid(&result,m) || !btp_bank_valid(&result) ||
-            !btp_school_valid(&result) || !btp_training_valid(&result) || !btp_cutscene_valid(&result) || !btp_combat_valid(&result) || !btp_effects_valid(&result) || !btp_service_valid(&result) ||
+        if (!btp_talk_valid(&result,m) || !btp_npc_valid(&result,m) || !btp_bank_valid_bld(&result,script) ||
+            !btp_school_valid_bld(&result,script) || !btp_training_valid(&result) || !btp_cutscene_valid(&result) || !btp_combat_valid(&result) || !btp_effects_valid(&result) || !btp_service_valid(&result) ||
             (result.presentation.count && result.combat.phase!=BTP_COMBAT_ROUND) || !btp_cache_valid(&result) || !btp_yard_valid(&result)) return 0;
         if (result.technician>4 || result.apprentice>1 || result.checkpoint_technician>4 ||
             result.checkpoint_apprentice>1 || (result.apprentice && !result.technician)) return 0;

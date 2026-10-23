@@ -101,6 +101,10 @@ const BtpMap *btp_active_map(const BtpResources *r,const BtpState *s)
 }
 unsigned btp_building_kind(const BtpResources *r,const BtpState *s)
 {
+    /* The invasion replaces the visible town with its ruined map while
+       TRAINING.BLD is still suspended. Its program owner remains training;
+       the ruined doorway's room ID must not replace that continuation. */
+    if (s->campaign.invasion) return 0;
     if (btp_resources_feature(r,BTP_FEATURE_BROKER) && s->map_id==2 && s->entry_slot==BTP_BROKER_ENTRY &&
         s->campaign.building==BTP_BROKER_BUILDING) return BTP_BROKER_BUILDING;
     if (s->disk_origin) return 18;

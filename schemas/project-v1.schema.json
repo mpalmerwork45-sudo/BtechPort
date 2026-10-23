@@ -144,6 +144,7 @@
     },
     "chi_spatial": {"const": "chi-spatial.json"},
     "chi_presentation": {"const": "chi-presentation.json"},
+    "chi_scripts": {"const": "chi-scripts.json"},
     "resources": {
       "type": "array",
       "minItems": 79,
@@ -479,6 +480,7 @@
           "campaign": false,
           "chi_spatial": false,
           "chi_presentation": false,
+          "chi_scripts": false,
           "resources": false,
           "startup": {
             "not": {

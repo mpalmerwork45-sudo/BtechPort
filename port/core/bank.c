@@ -1,5 +1,6 @@
 #include "core/bank.h"
 #include "core/economy.h"
+#include "data/chi_scripts.h"
 #include <string.h>
 #include <stdio.h>
 #include <inttypes.h>
@@ -86,14 +87,14 @@ void btp_bank_input(BtpState *s, const BtpResources *r, BtpAction a)
         }
     }
 }
-int btp_bank_valid(const BtpState *s)
+int btp_bank_valid_bld(const BtpState *s,const BtpBld *script)
 {
     const BtpBankState *b = &s->bank; const BtpScriptState *v = &s->script;
     if (v->has_accounts > 1 || b->phase > BTP_BANK_MESSAGE || b->company >= 3 ||
         b->outcome > BTP_BANK_ZERO || b->clamped > 1 || !input_valid(b->input)) return 0;
     if (v->has_accounts && ((s->story_flags[4] ? s->campaign.building != 2 : s->entry_slot != 2) || s->mode != BTP_BUILDING ||
         v->status != BTP_SCRIPT_MENU || v->menu_id != 11 || v->native_action != 6 ||
-        v->text_count != 2 || v->text[0].offset != 0x2d1 || v->has_cash)) return 0;
+        v->text_count != 2 || v->text[0].offset != btp_bld_offset(script,0x2d1) || v->has_cash)) return 0;
     if (!b->phase) return !b->company && !b->outcome && !b->clamped && !b->available &&
         !b->amount && !b->input[0] && !(v->status == BTP_SCRIPT_NATIVE && v->native_action != 12 &&
             !(v->native_action == 1 && s->mode == BTP_MISSION) && !(v->native_action==30 && s->mode==BTP_ENCOUNTER) &&
@@ -108,7 +109,7 @@ int btp_bank_valid(const BtpState *s)
     if (b->phase == BTP_BANK_AMOUNT) return b->company == v->choices[7] && b->available &&
         b->available == (buy ? s->credits : s->investments[b->company]) &&
         !b->amount && !b->outcome && !b->clamped;
-    if (v->status != BTP_SCRIPT_WAIT || v->pc != 0x2cf || v->last_opcode != 0xfb) return 0;
+    if (v->status != BTP_SCRIPT_WAIT || v->pc != btp_bld_after(script,0x2cf) || v->last_opcode != 0xfb) return 0;
     if (b->outcome == BTP_BANK_NO_CASH || b->outcome == BTP_BANK_NO_STOCK || b->outcome == BTP_BANK_NOT_OWNED) {
         if (b->available || b->amount || b->clamped || b->input[0]) return 0;
         if (b->outcome == BTP_BANK_NO_CASH) return buy && !s->credits && !b->company;
@@ -131,6 +132,7 @@ int btp_bank_valid(const BtpState *s)
     return 1;
 }
 
+int btp_bank_valid(const BtpState *s) { return btp_bank_valid_bld(s,NULL); }
 static int append(uint8_t *out, size_t capacity, size_t *n, const uint8_t *p, size_t length)
 {
     if (*n >= capacity || length >= capacity-*n) return 0;

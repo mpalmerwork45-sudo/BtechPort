@@ -23,6 +23,9 @@ typedef struct {
 typedef struct {
     uint16_t length;
     uint8_t bytes[BTP_BLD_MAX]; /* decrypted payload; address zero excludes size word */
+    const uint16_t *origin_map; /* Optional project-owned original -> compiled offsets. */
+    const uint16_t *origin_ends; /* Distinguish resumes before an inserted instruction. */
+    uint16_t origin_length;
 } BtpBld;
 typedef struct { char text[256]; } BtpError;
 enum { BTP_ANM_COUNT = 22, BTP_ANM_BYTES = 16128, BTP_ANM_FRAMES = 31, BTP_ANM_PACKED = 3872 };

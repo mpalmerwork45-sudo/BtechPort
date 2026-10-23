@@ -49,6 +49,11 @@
           "type": "string",
           "minLength": 1,
           "maxLength": 512
+        },
+        "chi_scripts": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
         }
       },
       "required": [
@@ -70,7 +75,8 @@
               "presentation",
               "chi_spatial",
               "chi_presentation",
-              "chi_campaign"
+              "chi_campaign",
+              "chi_scripts"
             ]
           },
           "collection": {

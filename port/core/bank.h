@@ -13,6 +13,7 @@ enum { BTP_BANK_STR_NONE = 17, BTP_BANK_STR_NO_STOCK, BTP_BANK_STR_SELL_MENU,
 void btp_bank_native(BtpState *state, const BtpResources *resources);
 void btp_bank_input(BtpState *state, const BtpResources *resources, BtpAction action);
 int btp_bank_valid(const BtpState *state);
+int btp_bank_valid_bld(const BtpState *state,const BtpBld *script);
 int btp_bank_text(const BtpState *state, const BtpResources *resources,
     uint8_t *output, size_t capacity, size_t *length);
 #endif

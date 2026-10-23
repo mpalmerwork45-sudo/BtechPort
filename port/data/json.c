@@ -40,8 +40,9 @@ static char *string(Reader *p,unsigned node)
             if (p->j->native_text && c=='r') { c=13;native_control=1; }
             else if (p->j->native_text && c=='u' && p->end-p->at>=4 &&
                 p->at[0]=='0' && p->at[1]=='0' && p->at[2]=='0' &&
-                (p->at[3]=='6' || p->at[3]=='d' || p->at[3]=='D' || p->at[3]=='f' || p->at[3]=='F')) {
-                c=(unsigned char)(p->at[3]=='6' ? 6 : p->at[3]=='d' || p->at[3]=='D' ? 13 : 15);
+                (p->at[3]=='6' || p->at[3]=='d' || p->at[3]=='D' || p->at[3]=='f' || p->at[3]=='F' ||
+                 (p->j->native_text==2 && (p->at[3]=='e' || p->at[3]=='E')))) {
+                c=(unsigned char)(p->at[3]=='6' ? 6 : p->at[3]=='d' || p->at[3]=='D' ? 13 : p->at[3]=='e' || p->at[3]=='E' ? 14 : 15);
                 p->at+=4;native_control=1;
             } else if (c!='"' && c!='\\' && c!='/') { btp_json_error(p->j,node,"only printable ASCII escapes are supported (CHI text also permits CR and colours 6/15)");return NULL; }
         }
@@ -111,6 +112,10 @@ int btp_json_load(BtpJson *j,const char *path,char error[256])
    the CHI loader still checks which text IDs may use colour markers. */
 int btp_json_load_chi_text(BtpJson *j,const char *path,char error[256])
 { return load(j,path,error,BYTE_LIMIT,NODE_LIMIT,1); }
+/* BLD dialogue also contains colour marker 14. Other JSON formats keep their
+   existing character contract, including the narrower native dialogue cache. */
+int btp_json_load_bld_text(BtpJson *j,const char *path,char error[256])
+{ return load(j,path,error,BYTE_LIMIT,NODE_LIMIT,2); }
 int btp_json_load_large(BtpJson *j,const char *path,char error[256])
 { return load(j,path,error,16u*1024u*1024u,300000,0); }
 int btp_json_type(BtpJson *j,unsigned n,char type)

@@ -6,6 +6,7 @@
 #include "data/independent.h"
 #include "data/art.h"
 #include "data/chi_spatial.h"
+#include "data/chi_scripts.h"
 enum { BTP_LUA_SCRIPTS=16, BTP_LUA_SOURCE=8192 };
 typedef struct { char id[64],source[BTP_LUA_SOURCE+1];size_t length; } BtpLuaScript;
 typedef struct BtpProject {
@@ -20,6 +21,7 @@ typedef struct BtpProject {
     unsigned chi_edition; /* 0: ordinary project, 1: Original, 2: Updated */
     BtpResources *chi_resources; /* Decoded once while validating; transferred on load. */
     BtpChiSpatial *chi_spatial; /* Native maps/world, independent of authored events. */
+    BtpChiScripts *chi_scripts; /* Label/source maps own the BLD relocation arrays. */
     uint16_t chi_animations[BTP_ANM_COUNT]; /* One-based package images, zero native. */
     uint16_t chi_portraits[BTP_PORTRAIT_COUNT];
 } BtpProject;
