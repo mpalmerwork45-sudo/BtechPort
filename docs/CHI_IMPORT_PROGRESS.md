@@ -160,3 +160,61 @@ retain the old project/revision for its old imported saves. Ordinary games/saves
 are separate. C4 is next: BLD source/control flow, native service and mission
 definitions, recruitment and saved continuations. General edited-campaign
 reconstruction recipes and complete campaign acceptance remain C5.
+
+## C4.1 — Labelled BLD sources and compiler
+
+**C4.1 gate passed, 2026-10-24.** All 26 native programs have typed labelled
+source, original/source/compiled locations and a two-pass native compiler.
+Unreachable byte ranges remain explicit immutable data. Both imports reproduce
+all 52 encrypted BLD files exactly. Runtime compilation uses the same validator;
+the original `chi/*.BLD` files remain immutable baselines. Compiler contract,
+source and actual compiled payloads participate in strict save identity.
+
+The Construction Kit's **Project → CHI scripts** view edits dialogue,
+conditions, assignments, branches, native menu destinations and supported
+compatibility actions. It includes readable operation names, original/current
+offsets, source locations, insertion/cloning, draft recovery, compiler problem
+navigation and shared Undo/Save/Play. The CLI exposes the same commands and
+program-level scopes. Modular sources split programs into owned files. Existing
+imports can enable source as one Undoable edit; their old saves require their
+old content revision. Registered C2 projects are deliberately left unchanged.
+
+**VERIFIED:** Linux and Windows/Wine each pass 214,544 edited-program
+gameplay/RNG ticks across both profiles: funded class, bank, training combat,
+ordinary services and alternate services. Comparisons normalize only expected
+text spans and relocated byte addresses; the remaining encoded gameplay state
+must match. Held saves exercise class, bank, menu, checkpoint and mid-invasion
+continuations. All eleven final Linux/Windows save pairs are byte-identical.
+The invasion proof also exposed and fixed script ownership: the active training
+program remains selected when the visible Citadel switches to its ruined map.
+
+A separate real armour-shop entry proves all five required edits: dialogue,
+condition, jump, menu choice and native action. Both platforms reload the
+waiting text/menu continuations and reject that save against the other content
+revision. The unchanged C2 comparison passes again on Linux and Wine: 108,156
+ticks, rendered checkpoints, native state/RNG, intro screens and twelve isolated
+slots. These are comparisons against the built-in port, plus byte identity
+against private original BLD files; they do not establish every DOS branch.
+
+**410 Python tests, 92 Linux native tests and all 92 Windows native tests under
+isolated Wine pass.** The Linux GUI journey passes typed edits, Undo/Redo,
+invalid operand/menu rollback, draft recovery, source-label navigation,
+Save/reopen and native Play without external resource paths. Builds pass with
+two jobs and no warnings. Native Windows Python/Tk remains UNKNOWN.
+
+Private evidence: `work/chi-import/c41-evidence-final/evidence.json`,
+`linux-final.json`, `windows-final.json`, `cross-platform-held-saves.json` and
+`parity-final.json`; regression logs use `work/chi-import/c41-*`. The GUI report
+is `work/chi-bld-gui.json` and capture `work/chi-bld-editor.png`. Regenerate
+examples with `tools/chi_bld_evidence.py` into a new ignored directory. Foundation
+implementation is committed as `d624edd`; the following commit records editor
+and command integration with the completed verification ledger.
+
+Both reference trees retain all 1,287 recorded content/mode/mtime entries. All
+three pending owner files and twenty normal saves retain their recorded values.
+No extracted scripts, dialogue, art, caches, campaigns or saved proofs are
+committed. Native actions/films remain limited to combinations observed in each
+baseline program, with specialized class/training anchors preserved. Original
+records cannot be deleted; redirect around them. Calls/recursion and arbitrary
+authored-event execution remain unsupported. C4.2 service content is next;
+C4.3–C4.5 and C5 remain open. See [authoring usage](BLD_AUTHORING.md).

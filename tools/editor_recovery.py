@@ -35,6 +35,7 @@ ROUTES={
  'LibraryBrowser': 'new',
  'Changes': 'protection_form',
  'Suites': 'suite_form case_form step_form',
+ 'BldView': 'new',
 }
 
 
@@ -145,6 +146,9 @@ def open_route(scope,route,cache=None):
     elif kind=='suites':
         from editor_suites import open_suites
         view=open_suites(owner)
+    elif kind=='chi-bld':
+        from chi_bld_editor import open_scripts
+        view=open_scripts(owner)
     elif kind=='pixels':
         from graphics_editor import open_image_editor
         image=next(i for i in scope.document.art['images'] if i['id']==ident)

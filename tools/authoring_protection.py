@@ -63,7 +63,11 @@ def value_at(document,path):
     if parts[0]=='chi':
         from chi_spatial import data as native_data
         from chi_resources import settings
-        value=native_data(document);value['presentation']=settings(document)
+        value=native_data(document) if document.manifest.get('chi_spatial') else {}
+        value['presentation']=settings(document)
+        if document.manifest.get('chi_scripts'):
+            from chi_bld import data as script_data
+            value['programs']=script_data(document)['programs']
     else:value=data(document) if parts[0]=='editor' else getattr(document,parts[0])
     if head=='adventure.entrances':
         value=[dict(door,map=scene['id']) for scene in (document.adventure or {}).get('maps',[]) for door in scene['entrances']]

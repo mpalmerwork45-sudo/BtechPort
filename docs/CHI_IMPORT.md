@@ -1,6 +1,6 @@
 # Import and edit a CHI campaign
 
-The C1–C3 implementation imports separate Original and Updated campaigns from the
+The C1–C3 and C4.1 implementation imports separate Original and Updated campaigns from the
 supported DOS 1.03 files. Each project owns its resources, edition settings and
 six save slots. It can run without the original installation after import.
 Existing launcher Original/Updated games and their saves remain separate.
@@ -8,9 +8,10 @@ Existing launcher Original/Updated games and their saves remain separate.
 **Current editing scope:** all 15 maps, town placements, the native world
 generator and jigsaws, entrances, town-walker routes, tiles, sprites, films,
 screens, fonts, building portraits, supported audio references and native
-dialogue overrides. Updated also has its external unit/weapon definitions and
-an editable broker entrance. BLD programs, mission definitions and service rules
-retain their native execution; their authoring remains C4. The Citadel/training
+dialogue overrides. **Project → CHI scripts** now edits labelled BLD dialogue,
+conditions, branches, menus and compatible native operations. Updated also has
+its external unit/weapon definitions and an editable broker entrance. Mission
+definitions and service settings remain C4.2–C4.3. The Citadel/training
 slice is verified against the built-in editions; importing the full resource
 set does not establish execution coverage of every campaign branch.
 See [progress](CHI_IMPORT_PROGRESS.md).
@@ -76,7 +77,8 @@ current validated project into its own test snapshot and save namespace.
 Line breaks use the original carriage-return format. Text must fit the native
 character and length limits; errors leave the previous document intact. This
 view edits the 373 native text entries, not text embedded in BLD bytecode. Full
-BLD text/control-flow editing is C4.
+BLD text/control-flow editing is available in **Project → CHI scripts**; see the
+[BLD authoring guide](BLD_AUTHORING.md).
 
 The same operation is available without the GUI:
 

@@ -1,4 +1,79 @@
-# Build, verification and original oracle — 2026-10-23
+# Build, verification and original oracle — 2026-10-24
+
+## Labelled BLD authoring — 2026-10-24
+
+**PASS for C4.1's declared scope.** See [usage](BLD_AUTHORING.md),
+[contract](CHI_IMPORT_CONTRACT.md#c41-labelled-bld-source-extension) and
+[progress](CHI_IMPORT_PROGRESS.md#c41--labelled-bld-sources-and-compiler).
+C4.2–C4.5 and C5 remain open.
+
+- Sequential Linux/Windows builds pass with two jobs and no warnings.
+  **410 Python tests pass** (83.194 s), including ten BLD cases. A final focused
+  ten-case run passes in 8.493 s. **92 Linux native tests pass** (49.36 s);
+  **all 92 Windows native tests pass under isolated Wine** (336.78 s).
+- The independent `chi-script-compiler` CTest uses synthetic programs, without
+  original assets. It checks preserved data, labels/menus, byte arithmetic,
+  colour spans, bounded execution and rejected malformed/context-invalid source.
+  Private imports prove all 26 original programs compile to their exact original
+  encrypted files in both profiles: 52 byte-identical results.
+- Lengthened dialogue and inserted instructions after native class/training
+  calls pass five replay fixtures in each edition: 3,088 funded-class ticks,
+  414 bank ticks, 44,192 training-combat ticks, 58,763 service ticks and 815
+  alternate-service ticks. This totals **214,544 gameplay/RNG ticks per platform**.
+  Only expected text spans and byte addresses are normalized; native choices,
+  remaining encoded script/gameplay state and RNG must match. Held saves cover
+  classes, banking, menus, checkpoints and training after the Citadel is ruined.
+- A real armour-shop entrance runs a private edited preamble whose dialogue,
+  condition, jump, menu choice and native action all affect success. Waiting
+  text/menu saves reload on both platforms; other content revisions reject them.
+  All **eleven** final Linux/Windows held-save pairs match byte-for-byte.
+- The unedited comparison passes again for both source-enabled profiles on
+  Linux and Wine: **108,156 ticks**, rendered checkpoints, encoded state/RNG,
+  original presentation and twelve isolated slots. This uses the built-in port
+  as the gameplay oracle, not a fresh DOS audit of every campaign branch.
+- The real Linux GUI journey passes typed edits, Undo/Redo, invalid-operand and
+  invalid-menu rollback/recovery, source-label problem navigation, Save/reopen
+  and Play without external original-resource paths. Report:
+  `work/chi-bld-gui.json`; capture: `work/chi-bld-editor.png`. Native Windows
+  Python/Tk interaction remains UNKNOWN.
+- Reference guard passes 1,287 unchanged content/mode/mtime entries. Three
+  pending owner files and twenty normal saves retain their recorded values.
+  Extracted source and all retained evidence remain ignored private content.
+
+The retained set is `work/chi-import/c41-evidence-final/`: `evidence.json`,
+`linux-final.json`, `windows-final.json`, `cross-platform-held-saves.json` and
+`parity-final.json`. Regression/build logs use `work/chi-import/c41-*`; the
+Windows native log is copied from CTest's complete `LastTest.log`.
+
+Reproduce after the normal build/cache preparation, choosing a new directory:
+
+```sh
+python3 tools/chi_bld_evidence.py --output work/chi-import/my-c41-evidence
+./build/btp-chi-bld-tests --roundtrip work/chi-import/my-c41-evidence/base/original
+./build/btp-chi-bld-tests --roundtrip work/chi-import/my-c41-evidence/base/updated
+./build/btp-chi-bld-tests --compare \
+  work/chi-import/my-c41-evidence/base/original \
+  work/chi-import/my-c41-evidence/relocated-original \
+  tests/fixtures/ordinary-services.actions work/chi-import/services-held.btp
+./build/btp-chi-bld-tests --story \
+  work/chi-import/my-c41-evidence/story work/chi-import/story-held.btp
+python3 -m unittest discover -s tests -p test_chi_bld.py
+python3 tools/native_smoke.py --editor-chi-bld-only
+ctest --test-dir build --output-on-failure
+python3 tools/windows_check.py --ctest
+```
+
+For the Windows private proofs, replace `./build/btp-chi-bld-tests` with
+`python3 tools/windows_check.py build-windows/btp-chi-bld-tests.exe` and use a
+different held-save filename. Run all five fixtures in each profile, as recorded
+above. The unchanged parity helper/arguments remain those of C2, pointing to
+the new base projects; do not run Linux/Wine parity helpers concurrently.
+
+Source contexts, byte/text/JSON budgets and native service preconditions remain
+bounded. Original instruction ranges are preserved; deletion, general calls,
+recursion, arbitrary authored-event continuations and automatic text reflow are
+unsupported. Full campaign coverage and service/mission authoring remain future
+gates. Enabling sources changes strict imported-save identity.
 
 ## CHI spatial and presentation authoring — 2026-10-23
 

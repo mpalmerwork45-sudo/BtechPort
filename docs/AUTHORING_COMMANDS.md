@@ -22,6 +22,87 @@ Write scope: `adventure`, `manifest`.
 }
 ```
 
+## bld.enable
+
+Enable labelled BLD source editing on an older CHI import; changes save identity.
+
+Write scope: `manifest`, `chi.programs`.
+
+| Field | Structural constraint |
+| --- | --- |
+
+```json
+{
+  "op": "bld.enable"
+}
+```
+
+## bld.update
+
+Edit BLD dialogue, conditions, destinations, menu selectors or compatible native operands. Labels/original ranges stay stable.
+
+Write scope: `chi.programs/<program>`.
+
+| Field | Structural constraint |
+| --- | --- |
+| `program` * | `{"type":"string","maxLength":63,"pattern":"^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"}` |
+| `id` * | `{"type":"string","maxLength":63,"pattern":"^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"}` |
+| `changes` * | `{"type":"object"}` |
+
+```json
+{
+  "op": "bld.update",
+  "program": "chi:bld-training",
+  "id": "chi:training-0005",
+  "changes": {
+    "text": "Welcome to this training ground."
+  }
+}
+```
+
+## bld.insert
+
+Insert a typed instruction with a fresh label after an existing label. It cannot claim original byte ranges.
+
+Write scope: `chi.programs/<program>`.
+
+| Field | Structural constraint |
+| --- | --- |
+| `program` * | `{"type":"string","maxLength":63,"pattern":"^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"}` |
+| `after` * | `{"type":"string","maxLength":63,"pattern":"^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"}` |
+| `value` * | `{"type":"object"}` |
+
+```json
+{
+  "op": "bld.insert",
+  "program": "chi:bld-training",
+  "after": "chi:training-0002",
+  "value": {
+    "id": "custom:training-wait",
+    "op": "wait"
+  }
+}
+```
+
+## bld.remove
+
+Remove a newly inserted instruction. Original records and preserved bytes stay available; redirect around them instead.
+
+Write scope: `chi.programs/<program>`.
+
+| Field | Structural constraint |
+| --- | --- |
+| `program` * | `{"type":"string","maxLength":63,"pattern":"^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"}` |
+| `id` * | `{"type":"string","maxLength":63,"pattern":"^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"}` |
+
+```json
+{
+  "op": "bld.remove",
+  "program": "chi:bld-training",
+  "id": "custom:training-wait"
+}
+```
+
 ## chi.update
 
 Update a native spatial record or presentation settings; unchanged fields survive. C loader validates the effective project.

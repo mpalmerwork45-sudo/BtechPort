@@ -79,7 +79,12 @@ int main(int argc,char **argv)
         }
         /* Text bytes/spans and byte PCs are expected edits. Every other
            encoded gameplay byte, including RNG, economy and party, must match. */
-        *adjusted=*x;adjusted->script=y->script;uint8_t one[BTP_STATE_BYTES],two[BTP_STATE_BYTES];
+        *adjusted=*x;
+        adjusted->script.pc=y->script.pc;adjusted->script.fault_pc=y->script.fault_pc;
+        adjusted->script.menu_table=y->script.menu_table;adjusted->script.confirm_target=y->script.confirm_target;adjusted->script.money_target=y->script.money_target;
+        adjusted->script.text_offset=y->script.text_offset;adjusted->script.text_length=y->script.text_length;
+        memcpy(adjusted->script.text,y->script.text,sizeof y->script.text);
+        uint8_t one[BTP_STATE_BYTES],two[BTP_STATE_BYTES];
         btp_state_encode(adjusted,one);btp_state_encode(y,two);CHECK(!memcmp(one,two,sizeof one));
         unsigned bit=y->school.phase ? 1u<<y->school.phase : y->bank.phase ? 1u<<(4+y->bank.phase) : y->script.status==BTP_SCRIPT_MENU ? 4096u : y->checkpoint_valid ? 8192u : 0u;
         if (y->campaign.invasion && y->late.invasion_event>=3 && y->mode==BTP_MISSION) { CHECK(program==&b.resources->training);bit=16384u; }

@@ -15,6 +15,11 @@ def target(document,problem):
         return dict(collection='location',id=problem.get('object_id'),**location)
     # The deepest ID is the entrance/enemy owner, not the first map ID.
     for identity in reversed(ids):
+        if document.manifest.get('requires')=='chi-local-dos-1.03':
+            from chi_bld import data as bld_data
+            for program in bld_data(document)['programs']:
+                if identity==program['id']:return dict(collection='native_scripts',program=program['id'])
+                if any(n['id']==identity for n in program['nodes']):return dict(collection='native_scripts',program=program['id'],label=identity)
         if a.get('chi_native'):
             from chi_spatial import data
             for m in data(document)['maps']:
@@ -39,6 +44,9 @@ def navigate(workspace,problem):
     destination=target(scope.document,problem)
     if not destination:return False
     owner=scope.owner;collection=destination['collection'];identity=destination.get('id')
+    if collection=='native_scripts':
+        from chi_bld_editor import open_scripts
+        open_scripts(owner).show_location(destination['program'],destination.get('label'));return True
     if collection in ('native_npcs','native_entrances'):
         owner.edit_adventure();maps=owner.map_editor
         maps.scene_index=next(i for i,m in enumerate(maps.adventure['maps']) if m['id']==destination['map']);maps.refresh()

@@ -237,3 +237,57 @@ editing/cloning and dependency transfer; public-export rejection remains in forc
 See the [schemas](../schemas/chi-spatial-v1.schema.json),
 [presentation schema](../schemas/chi-presentation-v1.schema.json),
 [usage](CHI_IMPORT.md) and [verification ledger](CHI_IMPORT_PROGRESS.md).
+
+## C4.1 labelled BLD source extension
+
+The optional manifest field `chi_scripts: chi-scripts.json` is accepted only
+for imported-CHI native campaigns. `btp-chi-scripts-v1`, schema 1, contains
+exactly 26 programs in native building order. Each declares its stable ID,
+canonical resource/building identity, immutable baseline-payload SHA-256, entry
+label and ordered typed records. Original records retain `origin` and
+`original_size`; inserted records omit both. Every original byte range remains
+represented exactly once. Unvisited ranges are preserved data, cannot change,
+and cannot be reached by a branch or fall-through.
+
+The C loader validates and compiles in two passes. Label references replace
+absolute operands, while original arithmetic, dispatch and interpreter behavior
+remain native. Source-enabled unedited files reproduce payload, encryption,
+length word and padding exactly. `chi/*.BLD` files are immutable baselines;
+compiled output is used in memory, never written over them. The source bytes,
+`chi-bld-compiler-v1` contract tag and compiled payload hashes participate in
+strict runtime identity. A project without this field retains its prior path.
+Enabling it or editing runtime source requires new saves or the preserved older
+project revision; no migration is implied.
+
+Instruction starts and original instruction ends have distinct relocation maps.
+Branch destinations resolve to starts; native service return boundaries resolve
+to ends so newly inserted instructions execute after a suspended call returns.
+Class, bank, training guards and save validators use these maps. During invasion
+the training script retains ownership while the visible Citadel changes maps.
+Derived maps are reconstructed from the exact source on load; serialized native
+state and ordinary save formats are unchanged.
+
+Compiler errors include program/instruction JSON paths, mapped through owned
+source modules into the editor. GUI, CLI and authoring commands share validation,
+revision/scoping/protection rules, atomic rollback, Undo, draft recovery and
+Save/Play. Program scopes use `chi.programs/<program-id>`; command receipts
+survive Undo. Original records cannot be deleted; only new records can be
+removed, provided references still resolve. Human notes do not relax validation.
+
+Bounds: 1–9,000 compiled bytes and 1–2,048 records per program; source JSON at
+most 1 MiB/60,000 nodes; text operands at most 4,096 bytes, with eight active
+native spans. Story operands address bytes 0–99. Menu destination counts match
+the verified native selector. Native action/film combinations must occur in that
+program's immutable baseline, and specialized class/training actions preserve
+their semantic anchors. Unknown operations/fields, invalid operands/labels/data
+targets, altered baseline ranges, incompatible contexts and exhausted budgets
+fail visibly. Deterministic cycles without yields are rejected; conditional
+loops retain the 256-instruction runtime budget. General calls/recursion,
+authored-event bridging and automatic dialogue layout are outside C4.1.
+
+Extracted source/data, dialogue and compiled output remain original-derived
+private content under existing provenance/export rules. This does not make
+native service inventories, mission definitions or recruitment templates
+generally editable: those remain C4.2–C4.4. See [usage](BLD_AUTHORING.md),
+[schema](../schemas/chi-scripts-v1.schema.json) and
+[verification](TESTING.md#labelled-bld-authoring--2026-10-24).

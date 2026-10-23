@@ -121,6 +121,15 @@ def operation(name, description, properties, required, writes, example):
 
 
 operation('chi.enable','Expose native maps/world on an older C2 import; one reversible edit.',{},[],['adventure','manifest'],{})
+operation('bld.enable','Enable labelled BLD source editing on an older CHI import; changes save identity.',{},[],['manifest','chi.programs'],{})
+operation('bld.update','Edit BLD dialogue, conditions, destinations, menu selectors or compatible native operands. Labels/original ranges stay stable.',
+          dict(program=ID,id=ID,changes=RECORD),['program','id','changes'],['chi.programs/<program>'],
+          dict(program='chi:bld-training',id='chi:training-0005',changes={'text':'Welcome to this training ground.'}))
+operation('bld.insert','Insert a typed instruction with a fresh label after an existing label. It cannot claim original byte ranges.',
+          dict(program=ID,after=ID,value=RECORD),['program','after','value'],['chi.programs/<program>'],
+          dict(program='chi:bld-training',after='chi:training-0002',value={'id':'custom:training-wait','op':'wait'}))
+operation('bld.remove','Remove a newly inserted instruction. Original records and preserved bytes stay available; redirect around them instead.',
+          dict(program=ID,id=ID),['program','id'],['chi.programs/<program>'],dict(program='chi:bld-training',id='custom:training-wait'))
 operation('chi.update','Update a native spatial record or presentation settings; unchanged fields survive. C loader validates the effective project.',
           dict(section=enum('world','map','tile','entrance','npc','jigsaw','service','presentation'),id=ID,changes=RECORD),['section','id','changes'],['selected native record'],
           dict(section='world',id='chi:world',changes={'seed':131844}))

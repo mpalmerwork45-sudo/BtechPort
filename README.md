@@ -122,8 +122,10 @@ C1–C3 are implemented: choose **Import CHI** in the launcher to create both lo
 projects. **Project → CHI maps and world** edits native maps, town placements,
 generator inputs, entrances and jigsaws; **CHI resources** edits presentation
 art/animation and supported audio settings; **CHI campaign** edits native text.
-See [import instructions and limits](docs/CHI_IMPORT.md). Editable BLD programs,
-mission definitions and service rules are next in C4.
+**Project → CHI scripts** provides C4.1's labelled BLD dialogue/control-flow
+editing and lossless compiler. See [import instructions](docs/CHI_IMPORT.md)
+and [BLD authoring](docs/BLD_AUTHORING.md). Editable service settings, mission
+definitions and new-event continuations remain C4.2–C4.4.
 
 [World-route checks](docs/WORLD_ROUTE_VERIFICATION.md) exercise whole-party
 travel between towns and planets, discovery and save/reload, with navigable

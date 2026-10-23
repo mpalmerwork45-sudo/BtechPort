@@ -88,9 +88,13 @@ def changed_objects(before, after):
         left=data(before) if (before.adventure or {}).get('chi_native') else {}
         right=data(after);left['presentation']=settings(before);right['presentation']=settings(after)
         compare('chi',left,right)
+    bld=bool(after.manifest.get('chi_scripts'))
+    if bld:
+        from chi_bld import data as bld_data
+        compare('chi',{'programs':bld_data(before)['programs']} if before.manifest.get('chi_scripts') else {},{'programs':bld_data(after)['programs']})
     compare('editor',json.loads(before.metadata.get('EDITOR.json',b'{}')),json.loads(after.metadata.get('EDITOR.json',b'{}')))
     for name in sorted(set(before.metadata)|set(after.metadata)):
-        if name not in ('EDITOR.json',AUTHORING_RECEIPTS,*(['chi-spatial.json','chi-presentation.json'] if native else [])) and before.metadata.get(name)!=after.metadata.get(name):
+        if name not in ('EDITOR.json',AUTHORING_RECEIPTS,*(['chi-spatial.json','chi-presentation.json'] if native else []),*(['chi-scripts.json'] if bld else [])) and before.metadata.get(name)!=after.metadata.get(name):
             script=next((s for s in after.manifest.get('scripts',[]) if s['file']==name),None)
             result.append(dict(path=('scripts/'+script['id']) if script else 'provenance/'+name,
                                object_id=script['id'] if script else None,change='modified',fields=[]))
@@ -107,6 +111,13 @@ def _bounds(scene, layer, points):
 
 def apply_operation(doc, op, imports):
     name=op['op']; a=copy.deepcopy(doc.adventure)
+    if name.startswith('bld.'):
+        from chi_bld import enable,update,insert,remove
+        if name=='bld.enable':enable(doc)
+        elif name=='bld.update':update(doc,op['program'],op['id'],op['changes'])
+        elif name=='bld.insert':insert(doc,op['program'],op['after'],op['value'])
+        elif name=='bld.remove':remove(doc,op['program'],op['id'])
+        return op.get('id',op.get('program',doc.manifest['package_id']))
     if name.startswith('chi.'):
         from chi_spatial import enable,change,find as native_find,move_town
         from chi_resources import settings,put_settings,detach

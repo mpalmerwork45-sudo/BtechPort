@@ -21,7 +21,7 @@ def capabilities(tool):
         operations=OPERATIONS, features=dict(transactional_batches=True,expected_revision=True,dry_run=True,
         persisted_requests=True,gui_undo=True,live_remote_session=False,live_local_session=True,protected_regions=True,
         change_review=True,partial_change_groups=True,named_protection_overrides=True,shared_construction_library=True,
-        native_chi_spatial=True,native_chi_presentation=True,
+        native_chi_spatial=True,native_chi_presentation=True,native_chi_bld_sources=True,
         mission_regions=True,typed_mission_variables=True,explicit_objective_states=True,compound_conditions=True,
         combat_hooks=True,round_timers=True,reinforcements=True,escort_waypoints=True,
         campaign_source_modules=True,deterministic_source_builds=True,source_diagnostics=True,recorded_campaign_recipes=True,
@@ -102,12 +102,18 @@ def summary(doc, tool):
         animated_tiles=[dict(id=i['id'],frames=len(i['frames']),frame_ticks=i.get('frame_ticks',8)) for i in doc.art['images'] if i['kind']=='tile' and len(i['frames'])>1][:30],
         animated_tile_count=sum(i['kind']=='tile' and len(i['frames'])>1 for i in doc.art['images']),
         native_chi=(dict(spatial=doc.manifest.get('chi_spatial'),presentation=doc.manifest.get('chi_presentation'),services=native.get('services',{}),
-            world=native['world'],map_slots=15,story='native BLD compatibility; C4 authoring pending',
+            world=native['world'],map_slots=15,story='native BLD execution; labelled source editing, service/mission authoring pending',
             operations=['chi.update','chi.town.move','chi.jigsaw.bind','chi.art.copy']) if native else None),
+        native_bld=dict(source=doc.manifest.get('chi_scripts'),programs=26,instructions_per_program=2048,program_bytes=9000,
+            operations=['bld.enable','bld.update','bld.insert','bld.remove'],service_parameters='C4.2 pending') if doc.manifest.get('chi_edition') or doc.manifest.get('requires')=='chi-local-dos-1.03' else None,
         queries=['objects','object','usages','map','routes','inventory'])
 
 
 def records(doc, collection):
+    if collection in ('native-scripts','native-instructions'):
+        from chi_bld import data
+        programs=data(doc)['programs']
+        return programs if collection=='native-scripts' else [dict(n,program=p['id']) for p in programs for n in p['nodes']]
     if collection=='native-services':
         from chi_spatial import data
         return list(data(doc).get('services',{}).values())
@@ -134,7 +140,7 @@ def records(doc, collection):
 
 def compact(value):
     result=dict(value)
-    for key in ('rows','frames','pieces','overlays','cells','rendered','footprint'):
+    for key in ('rows','frames','pieces','overlays','cells','rendered','footprint','nodes'):
         if key in result:
             data=result.pop(key)
             result[key+'_summary']=dict(count=len(data),width=len(data[0]) if data and isinstance(data[0],(list,str)) else None)

@@ -1328,6 +1328,7 @@ def main():
     parser.add_argument('--editor-suites-only',action='store_true',help='Check suite authoring, recovery, native runs and coverage navigation')
     parser.add_argument('--editor-chi-import-only',action='store_true',help='Check CHI import wizard, native dialogue edits, isolated Play and cancellation')
     parser.add_argument('--editor-chi-spatial-only',action='store_true',help='Check native CHI maps, world/jigsaw, artwork and shared Save/Play')
+    parser.add_argument('--editor-chi-bld-only',action='store_true',help='Check BLD dialogue/control flow, drafts, diagnostics, history and native Play')
     parser.add_argument('--editor-responsiveness-only',action='store_true',help='Measure large source-project snapshots, history and view refresh with cancellation checks')
     parser.add_argument('--editor-checkpoints-only',action='store_true',help='Check saved scenario starts, selection, reports and stale-content errors')
     parser.add_argument('--world-art-editor-only',action='store_true',help='Check jigsaw/city and pixel/animation editing')
@@ -1500,6 +1501,10 @@ def main():
                 return
             if args.editor_chi_spatial_only:
                 from editor_chi_spatial_smoke import run
+                run(env,work)
+                return
+            if args.editor_chi_bld_only:
+                from editor_chi_bld_smoke import run
                 run(env,work)
                 return
             if args.editor_responsiveness_only:

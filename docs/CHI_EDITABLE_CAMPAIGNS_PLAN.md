@@ -2,7 +2,7 @@
 
 Recorded **2026-10-23**, against implementation commit `8075156`.
 
-**Status: C1–C3 implemented; C4–C5 planned.** See the
+**Status: C1–C3 and C4.1 implemented; C4.2–C4.5 and C5 planned.** See the
 [progress ledger](CHI_IMPORT_PROGRESS.md) and [import instructions](CHI_IMPORT.md).
 This document is the
 implementation handoff requested by the owner. It describes five milestones for

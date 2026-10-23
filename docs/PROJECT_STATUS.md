@@ -1,4 +1,27 @@
-# Project status — original fidelity and editable projects, 2026-10-23
+# Project status — original fidelity and editable projects, 2026-10-24
+
+**C4.1: labelled BLD source and compilation — implemented and verified.**
+Imported Original and Updated projects now expose all 26 building programs in
+**Project → CHI scripts**. Dialogue, conditions, branches, native menu choices
+and supported compatibility actions use typed fields and stable labels. The
+GUI and headless commands share validation, Undo/Redo, source modules, recovery,
+problem navigation and Save/Play. Unchanged sources reproduce every original
+BLD byte, including preserved unreachable data. Native service continuations
+resolve relocated instruction starts and return boundaries.
+
+**410 Python tests and all 92 native tests on Linux and Windows/Wine pass.**
+Both editions retain the 108,156-tick unedited comparison. Edited programs pass
+214,544 gameplay/RNG ticks per platform; all eleven paired held saves match
+byte-for-byte. A real building-entry journey proves dialogue, condition, jump,
+menu and native-action edits. The Linux GUI editing/recovery/Play journey passes;
+native Windows Python/Tk remains UNKNOWN. [Usage](BLD_AUTHORING.md),
+[evidence and limits](TESTING.md#labelled-bld-authoring--2026-10-24).
+
+Original-derived sources/evidence remain private. Both reference trees, the
+three pending owner files and twenty observed normal saves are unchanged.
+Enabling source on an older import changes its strict content identity: retain
+the old project revision for its existing imported saves. Existing registered
+projects are not silently upgraded. C4.2–C4.5 and C5 remain open.
 
 **C3: native CHI spatial and presentation authoring — implemented and verified.**
 Imported campaigns now expose all 15 maps, the 1,024-square native world,
@@ -84,11 +107,10 @@ The user's three pending Last Beacon files and both reference directories are
 unchanged. Gameplay/save formats remain unchanged. Native Windows Python/Tk
 interaction remains **UNKNOWN**.
 
-**Next proposed:** C4 of the [editable CHI campaign plan](CHI_EDITABLE_CAMPAIGNS_PLAN.md),
-starting with C4.1: editable BLD source, stable labels, byte-preserving round-trip
-compilation and source diagnostics. C4.2–C4.5 add native services, mission settings,
-saved continuations and campaign checks. C5 follows with complete campaign and
-packaged setup acceptance. C1–C3 are delivered above.
+**Next proposed:** C4.2 of the [editable CHI campaign plan](CHI_EDITABLE_CAMPAIGNS_PLAN.md):
+named native actions and editable service content. C4.3–C4.5 add mission settings,
+the authored-event continuation bridge and campaign checks. C5 follows with
+complete campaign and packaged setup acceptance. C1–C3 and C4.1 are delivered.
 
 **AI5 world-review extension — implemented and verified, 2026-10-23.**
 [World review and regional protection](WORLD_REVIEW.md) adds paired composed

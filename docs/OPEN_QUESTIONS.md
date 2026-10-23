@@ -1,15 +1,20 @@
-# Open questions after bounded M4 work and authoring increments — 2026-10-23
+# Open questions after bounded M4 work and authoring increments — 2026-10-24
 
 The [editable CHI import](CHI_IMPORT_PROGRESS.md) now includes C3 native map,
-world and presentation authoring. C4 still owns BLD source/compiler work,
-service/mission settings, recruited characters and the saved-continuation bridge.
+world and presentation authoring and C4.1 labelled BLD source/compilation.
+All 26 programs round-trip losslessly; relocated native continuations and five
+types of script edits have retained Linux/Wine proofs. C4.2–C4.4 still own
+configurable service/mission settings, recruited characters and the bridge into
+authored events. Native actions remain limited to verified building contexts;
+general calls/recursion and automatic dialogue reflow are unsupported.
 Native campaign test suites/coverage need that bridge; authored-event coverage
 cannot substitute for it. C5 owns complete campaign acceptance, general edited
 campaign reconstruction recipes and packaged setup/recovery. Spatial equivalence
 is checked at three declared seeds against the built-in native generator, not
 against DOS for every seed. Native Windows Python/Tk remains UNKNOWN. Imported
-saves stay pinned to their exact project/content revision, including C2 → C3
-map-support upgrades; the original built-in games and their saves are separate.
+saves stay pinned to their exact project/content revision, including enabling
+C3 map support or C4.1 script source; the built-in games and their saves are
+separate. Preserve the old imported project revision when enabling these tools.
 
 AI8's [Greybank Dispatch recipe and delivery](CAMPAIGN_RECIPES.md) are delivered.
 The recorded five-map campaign covers both opening contracts, services, defence,
