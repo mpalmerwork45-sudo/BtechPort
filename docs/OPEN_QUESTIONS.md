@@ -12,9 +12,15 @@ arbitrary event conditions. [Saved-journey scenarios](SAVED_JOURNEYS.md) now
 resume pinned exact-content saves in the CLI, suites and editor, with identical
 recorded full/continued saves on Linux and Windows/Wine. Earlier events are not
 covered by a continuation; changed playable content still requires a fresh
-checkpoint or a separate explicit supported migration. Next proposed: composed
-world change previews, changed-town navigation and protection of hand-painted
-world rectangles during AI proposals. Embedded chat and provider-specific adapters
+checkpoint or a separate explicit supported migration.
+[World review and regional protection](WORLD_REVIEW.md) now cover composed planet
+changes, town navigation and hand-painted world rectangles, including indirect
+jigsaw/tile/art changes. Previews show first frames, with sampled overviews and
+bounded full-pixel crops; preservation is a collaboration policy, not a filesystem
+security boundary. Next proposed: explain which declared scenario cases a
+proposal affects and run selected checks against its exact candidate. Unknown
+dependencies must not be treated as proof that a case is unaffected; retain an
+explicit full-suite option and ordinary validation. Embedded chat and provider-specific adapters
 remain optional; model configuration belongs to the external authoring client.
 Native Windows Python/Tk interaction and an entirely bundled Windows Python
 installation still need a suitable Windows environment/runtime. Linux installation
@@ -48,7 +54,7 @@ the actual initial party and collision rules; it does not establish all later
 party compositions, arbitrary conditions/Lua or general combat balance.
 Declared world routes now have native scenarios and bounded geometry checks;
 broader coverage remains an extension of AI4. AI5 now supplies a Changes view,
-protected objects/fields/local regions and local editor sessions. Delivered
+protected objects/fields/local and world regions and local editor sessions. Delivered
 increments now include AI6 mission state, reinforcements and escorts, plus AI7a
 modular sources, AI7b's measured campaign capacity and AI8's recorded campaign/delivery.
 Ordinary closed-project CLI work still cannot

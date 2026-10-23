@@ -3,7 +3,7 @@
 Recorded 2026-10-18 against `266d21f`, with the user's revised Last Beacon
 preserved in `bed75e9`.
 
-**Status: AI1–AI8 and bounded world-route verification IMPLEMENTED, 2026-10-23.** AI1/AI2 have the versioned
+**Status: AI1–AI8, bounded world routes, saved journeys and world review IMPLEMENTED, 2026-10-23.** AI1/AI2 have the versioned
 inspection/command contract, transactional CLI, shared editor operations and
 command-file exchange described in the [author guide](AI_AUTHORING_GUIDE.md).
 The approved next four steps add shared asset discovery, labelled visual
@@ -12,7 +12,7 @@ A separate playable authoring lab demonstrates selection, import, a diagnosed
 failure and repair. Tests and remaining boundaries are recorded in
 [Testing](TESTING.md#ai-authoring-discovery-and-mission-testing--2026-10-19).
 AI4 remains bounded to declared routes, initial-party local/world geometry and small
-combat samples. AI5 now adds durable review, protected objects/fields/local
+combat samples. AI5 now adds durable review, protected objects/fields/local and world
 regions, validated partial groups and a local session attached to the editor.
 Its Last Beacon completion gate preserves human dialogue, roof painting and
 door placement through a generated encounter/road revision and Undo.
@@ -389,6 +389,14 @@ separate Unit Library publication are exercised. See the
 [guide](AI_AUTHORING_GUIDE.md#review-changes-and-preserve-human-work) and
 [evidence/limits](TESTING.md#ai5-collaborative-authoring--2026-10-20).
 
+**World extension delivered 2026-10-23 (`a03641d`).** Paired composed planet
+overviews and detail crops show terrain, changed towns and protected rectangles.
+Native validation precedes preservation fingerprints; named regions account for
+ground, intersecting city layers and shared tile/art dependencies. GUI selection,
+navigation, CLI crops, narrowed groups, explicit overrides and one-step Undo use
+the existing review service. The two-planet acceptance gate, maximum-world bounds,
+source projects and Windows/Wine gameplay checks pass; see [world review](WORLD_REVIEW.md).
+
 ### Scope
 
 - Add a Changes/review view with a description, affected objects, before/after
@@ -683,15 +691,31 @@ ordinary-input suffixes, also checked on Windows/Wine. Earlier events are not
 claimed as new coverage. Arbitrary conditions/Lua and general combat balance
 remain outside this completion claim.
 
-**Next proposed milestone: world review and regional protection (AI5 extension).**
-Extend paired review previews to composed planets, showing terrain/jigsaw changes
-and town placements with navigation to changed locations. Add named protection
-for world-tile rectangles so AI proposals preserve hand-painted regions. Use the
-existing review, dependency groups, explicit exceptions and shared Undo; do not
-invent a second publishing path. Verify a two-planet proposal containing a town
-move and terrain changes, protected-region conflicts, a narrowed repair, Undo,
-Save/reopen and unchanged playable routes. Existing whole-world object/field
-protection and local-map rectangle protections remain available.
+**World review and regional protection: delivered as a bounded AI5 extension.**
+[World reviews](WORLD_REVIEW.md) retain paired planet previews, change locations
+and named terrain rules. The verified two-planet proposal moves a town and revises
+terrain while preserving a painted pond; narrowed acceptance, Undo/Redo,
+Save/reopen and playable travel pass. Shared jigsaws, town layers, tile properties,
+palette pixels and owned art are included. A maximum-size planet is scanned and
+previewed within declared row/image budgets. No new publishing path or gameplay
+capacity was introduced.
+
+**Next proposed milestone: review-linked scenario selection (AI4/AI5 extension).**
+Help humans and external authors select relevant regression cases for a proposal:
+
+1. Report dependencies visible in declared scenarios and structured game data,
+   including local maps, world routes, events and unit definitions. Keep opaque
+   script/control dependencies explicitly unknown.
+2. Compare those dependencies with actual reviewed changes and explain each
+   suggested case. Shared changes must expand the affected set; incomplete
+   analysis must offer a full-suite run, without calling unrun cases passed.
+3. Select cases in Changes/Checks and the CLI, using the existing suite runner
+   against the retained candidate. Preserve seeds, coverage, cancellation,
+   artifacts and exact revision checks; application still performs validation.
+4. Verify isolated local edits, shared tile/unit changes and a world-town move,
+   plus stale candidates and unknown dependencies. Demonstrate that the selected
+   cases match their results in a full suite on the declared fixture and record
+   actual time saved. No general solvability or arbitrary Lua claim is implied.
 
 AI6b/AI6c now supply round hooks, atomic reinforcement groups, scripted outcomes,
 friendly/neutral actors and terrain-aware waypoints. Cairn Passage demonstrates

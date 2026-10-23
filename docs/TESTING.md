@@ -1,5 +1,73 @@
 # Build, verification and original oracle — 2026-10-23
 
+## World review and regional protection — 2026-10-23
+
+**VERIFIED within the declared content and review budgets.** Implementation
+`a03641d` adds [composed world review and region protection](WORLD_REVIEW.md).
+Gameplay, save formats, runtime capacities and the original/updated editions
+are unchanged.
+
+- Full Python regression: **344/344 PASS**, 48.994 s,
+  `work/world-review-python.log`. Fourteen new cases exercise jigsaw/patch/town
+  composition, legacy single worlds, added/removed planets, shared image/palette
+  dependencies, world/town protection, source modules, named exceptions,
+  narrowed acceptance, Undo/save, stale inputs, native field errors, cancellation,
+  CLI crops and the 64-crop limit. Early test assertions were corrected to
+  account for durable receipts/source formatting and the native diagnostic;
+  the complete final suite passes.
+- Native regression: **91/91 PASS**, 49.18 s,
+  `work/world-review-native.log`. Linux and Windows builds pass sequentially
+  with the system PATH and at most two compiler jobs, without warnings:
+  `work/world-review-linux-build.log`, `work/world-review-windows-build.log`.
+  This increment changes Python authoring code; no native implementation changed.
+- `python3 tools/world_review_demo.py --output
+  work/world-review-cross-platform-verified --windows`: **PASS**. The independent
+  two-planet fixture rejects replacement of a protected pond, accepts the port
+  and Boreal groups without an override, reviews both planets, then checks
+  one-step Undo/Redo and Save/reopen. The ordinary-input journey completes before
+  editing in **346 ticks** and after moving the port in **342 ticks**, with three
+  mechs, a tracked vehicle and two infantry. It checks source-town entrances,
+  party formation, transfers, discovery and checkpoints. The Windows runner
+  under isolated Wine matches the revised Linux result and **exact save bytes**.
+  Reports, copied inputs and captures remain in that directory; console evidence
+  is `work/world-review-windows-verified.log`. The initial Wine attempt hit the
+  sandbox's read-only runtime lock directory; verification then ran outside
+  that wrapper using the isolated test prefix.
+- `python3 tools/native_smoke.py --editor-world-review-only`: **PASS**,
+  `work/world-review-gui.log`, `work/world-review-gui.json`. The GUI drags a world
+  selection, creates a protection rule, reviews two composed planets, requests
+  paired town/terrain details, changes editable zoom and Ctrl-wheel zoom, opens
+  the correct town/planet, discards an old worker completion, narrows groups,
+  applies, undoes/redoes, saves/reopens and launches/stops ordinary SDL Play.
+  The tested **1024×740** layout switches to a location dropdown so pictures and
+  actions stay visible. Inspected captures: `work/world-review-town.png` and
+  `work/world-review-terrain.png`. Xvfb used a private display outside the
+  filesystem sandbox; the user's desktop/save slots were not used.
+- Existing collaborative editor journey: **PASS**,
+  `work/world-review-collaboration-regression.log`. Its private Last Beacon copy
+  covers human dialogue, roof and doorway changes, local-map protections, live
+  proposals, partial groups, stale/invalid drafts, cancellation, recovery, opt-in
+  application, Undo/save and ordinary Play after the shared-control changes.
+- `python3 tools/world_review_demo.py --large --output
+  work/world-review-large-verified`: **PASS**. A native-valid **1024×1024** world,
+  with every local map placed inside its discovery capacity, has one far-corner
+  tile changed under full-world protection. Both 1024-square overviews render,
+  the conflict is detected, and a full-pixel corner crop is retained. On this
+  host `/usr/bin/time -v` measures **1.13 s / 38,400 KiB maximum RSS**:
+  `work/world-review-large.time`, `work/world-review-large.log` and the retained
+  `work/world-review-large-verified/` input/report. This measures review and
+  preservation, not whole-world gameplay coverage.
+- Reference guard: **1,287 entries unchanged** in content, mode and mtime,
+  `work/world-review-reference.log`. `work/world-review-preservation.json`
+  confirms the three pending Last Beacon files retain their turn-start hashes.
+  They are excluded from the implementation and documentation commits.
+
+World previews show first-frame pixels; overview samples and sector bounding
+rectangles are labelled. Maximum crops/rules/area budgets are discoverable through
+capabilities. Matching pictures alone do not prove mission logic or general
+solvability. Native Windows Python/Tk interaction remains **UNKNOWN**; Windows
+claims here cover cross-builds and native game/validator execution under Wine.
+
 ## Saved-journey scenarios — 2026-10-23
 
 **VERIFIED within the declared journeys and supported save format.**

@@ -1,5 +1,29 @@
 # Project status — original fidelity and editable projects, 2026-10-23
 
+**AI5 world-review extension — implemented and verified, 2026-10-23.**
+[World review and regional protection](WORLD_REVIEW.md) adds paired composed
+planet previews, full-pixel detail crops, changed-town/terrain navigation and
+named world-tile preservation rectangles. Indirect jigsaw, tile, palette and
+owned-art changes are included. The planet editor can protect a dragged
+selection; Changes uses existing groups, explicit exceptions, Undo and Save.
+The CLI exposes the same retained paired crops through `review world`.
+
+Implementation: `a03641d`. **344 Python tests and 91 native tests pass.**
+The new GUI journey and existing Last Beacon collaboration regression pass.
+The two-planet demonstration preserves a pond while moving a port and changing
+terrain, then verifies Undo/Redo, Save/reopen and whole-party travel on both
+planets. The Windows runner under isolated Wine matches Linux state and exact
+save bytes. A 1024×1024 planet review/protection check takes **1.13 s / 38,400 KiB
+maximum RSS** on the declared fixture. [Evidence](TESTING.md#world-review-and-regional-protection--2026-10-23).
+The two reference directories and three pending Last Beacon files are preserved.
+Game/save formats remain unchanged. Native Windows Python/Tk remains **UNKNOWN**.
+
+**Next proposed:** suggest which declared scenario cases to rerun for a
+proposal, explain affected dependencies, and attach selected results to the
+exact review candidate. Unknown dependencies must remain explicit and offer a
+full-suite run. This extends the existing suite/check workflow; it does not
+claim arbitrary Lua analysis or general campaign solvability.
+
 **AI4 saved-journey extension — implemented and verified, 2026-10-23.**
 [Saved journeys](SAVED_JOURNEYS.md) start scenarios from explicitly pinned saves
 with native exact-content/checksum validation and preserved RNG. Named checkpoints,
@@ -18,10 +42,7 @@ Windows/Wine matches Linux for all three. The escort continuation skips
 Both reference directories and the three pending Last Beacon files are preserved.
 Game/save formats are unchanged. Native Windows Python/Tk remains **UNKNOWN**.
 
-**Next proposed:** extend Changes/protection to world regions: paired composed
-planet previews, changed-town/terrain navigation and protection of hand-painted
-world rectangles during AI proposals. Current rectangle protection/review maps
-cover local maps; world objects and fields already have ordinary review.
+The subsequently proposed world-review/protection extension is delivered above.
 
 **AI4 world-route extension — implemented and verified, 2026-10-23.**
 [World-route verification](WORLD_ROUTE_VERIFICATION.md) adds bounded native
