@@ -1,5 +1,32 @@
 # Project status — original fidelity and editable projects, 2026-10-23
 
+**AI4/AI5 review-linked scenario selection — implemented and verified, 2026-10-23.**
+[Scenario selection](SCENARIO_SELECTION.md) inventories explicit dependencies on
+both review revisions, explains suggested cases and runs selected/full suites
+against the retained candidate. Changes → Checks and the CLI share hash-pinned
+suite inputs, exact revision checks, seeds, cancellation and native artifacts.
+Unknown dependencies recommend the full suite; omitted cases are never called
+passed. Ordinary validation, protection, Undo and Save remain in force.
+
+Implementation: `e7b7a2e`. **359 Python tests and 91 native tests pass**, followed
+by 15 focused selection and 10 suite checks after final bounded-input/summary
+adjustments. The new GUI journey and existing collaboration regression pass;
+Linux/Windows builds pass. The independent fixture selects the expected cases
+for a local briefing, shared tile/unit and town move. Selected seed runs match
+the full suite's native state, coverage, exact saves and ordinary-input replay.
+Windows/Wine matches the first selected case. The five-run suite takes 0.1445 s
+versus 0.0539 s for two selected runs on that fixture, excluding dependency/input
+capture; broader speedup is not implied. [Evidence](TESTING.md#review-linked-scenario-selection--2026-10-23).
+
+The user's three pending Last Beacon files and both reference directories are
+unchanged. Gameplay/save formats remain unchanged. Native Windows Python/Tk
+interaction remains **UNKNOWN**.
+
+**Next proposed:** an editor for scenario suites and a coverage inventory that
+separates declared dependencies, observed events, unrun cases and unknown paths.
+Case scaffolds should become evidence only after a successful native run. The
+bounded scope is recorded in the [authoring plan](AI_AUTHORING_PLAN.md).
+
 **AI5 world-review extension — implemented and verified, 2026-10-23.**
 [World review and regional protection](WORLD_REVIEW.md) adds paired composed
 planet previews, full-pixel detail crops, changed-town/terrain navigation and
@@ -18,11 +45,7 @@ maximum RSS** on the declared fixture. [Evidence](TESTING.md#world-review-and-re
 The two reference directories and three pending Last Beacon files are preserved.
 Game/save formats remain unchanged. Native Windows Python/Tk remains **UNKNOWN**.
 
-**Next proposed:** suggest which declared scenario cases to rerun for a
-proposal, explain affected dependencies, and attach selected results to the
-exact review candidate. Unknown dependencies must remain explicit and offer a
-full-suite run. This extends the existing suite/check workflow; it does not
-claim arbitrary Lua analysis or general campaign solvability.
+The subsequently proposed scenario-selection extension is delivered above.
 
 **AI4 saved-journey extension — implemented and verified, 2026-10-23.**
 [Saved journeys](SAVED_JOURNEYS.md) start scenarios from explicitly pinned saves

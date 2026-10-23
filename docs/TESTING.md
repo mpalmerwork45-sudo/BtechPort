@@ -1,5 +1,73 @@
 # Build, verification and original oracle — 2026-10-23
 
+## Review-linked scenario selection — 2026-10-23
+
+**VERIFIED within the declared fixtures and dependency budgets.** Implementation
+`e7b7a2e` adds [explained selections and retained suite inputs](SCENARIO_SELECTION.md)
+to Changes/Checks and the CLI. No native gameplay code, save format or capacity
+changed in this increment.
+
+- Full Python regression: **359/359 PASS**, 49.974 s,
+  `work/review-selection-python-final.log`. After final input-budget and compact
+  case-summary adjustments, focused selection tests **15/15 PASS**, 1.867 s,
+  `work/review-selection-focused-final.log`, and existing suite tests **10/10
+  PASS**, 2.102 s, `work/review-selection-suites-final.log`. Cases cover local and
+  shared changes, both graph revisions, implicit regions/hooks/groups, legacy
+  single worlds/character tiles, package images, opaque Lua/raw/checkpoint/control,
+  graph budget fallback, editor-only versus shared configuration, source modules,
+  preserved import filenames, retained input tampering, stale base/candidate/report,
+  empty selections, cancellation, CLI relative report paths and seed preservation.
+- Native regression: **91/91 PASS**, 48.13 s,
+  `work/review-selection-native.log`. Linux and Windows builds pass sequentially
+  with the system PATH and at most two compiler jobs, without compiler warnings:
+  `work/review-selection-build-linux.log`,
+  `work/review-selection-build-windows.log`. No native changes required a fresh
+  sanitizer investigation.
+- `python3 tools/review_selection_demo.py --output
+  work/review-selection-cross-platform --windows`: **PASS**,
+  `work/review-selection-cross-platform.log` and the retained directory's
+  `report.json`. This independent package has two isolated sites and a two-planet
+  world journey. A yard briefing selects **yard**; shared grass selects **range
+  and world**; a shared Rook definition selects **all three**; a port move selects
+  **world**. The full suite has five runs, including two seeds for each site.
+  The two selected yard runs match their full-suite counterparts in final native
+  state, observed coverage, exact save bytes and ordinary-input replay.
+  Full suite **0.1445 s**, selected **0.0539 s**, saving **0.0906 s** on this host.
+  Those measurements include suite fixture preparation/native snapshots but
+  exclude dependency analysis/input capture; they are not a general speed claim.
+  The first selected case completes in **9 ticks**, with identical Windows/Wine
+  state and save bytes. The initial Wine attempt encountered the sandbox's
+  read-only runtime lock directory; the isolated-prefix check then passed outside
+  that wrapper. Windows Python/Tk interaction is not covered.
+- `python3 tools/native_smoke.py --editor-review-selection-only`: **PASS**,
+  `work/review-selection-gui.log` and `work/review-selection-gui.json`.
+  The GUI loads a proposal/suite, displays explanations, toggles a case with
+  Space, runs selected/full suites, disables an empty selection, resets omitted
+  cases to **Not run** after a later partial run, and recommends all cases for
+  opaque input. It rejects stale worker display updates, preserves the live
+  document, then applies, undoes/redoes, saves and reopens through the existing
+  review workflow. An early layout check caught clipped explanatory text; the
+  final **1024×740** dock exposes Cases, Why this case and Reports pages.
+  Inspected captures: `work/review-selection-cases.png`,
+  `work/review-selection-explanation.png`, `work/review-selection-unknown.png`.
+  Final Xvfb verification used a private display outside the filesystem sandbox
+  after the sandbox blocked display startup.
+- Existing collaborative editor regression: **PASS**,
+  `work/review-selection-gui-regression.log`. Its private Last Beacon copy covers
+  human dialogue/roof/door edits, snapshots, protections, proposals, partial groups,
+  invalid/stale drafts, cancellation, recovery, application, Undo/save, ordinary
+  Play, scope replacement and Unit Library isolation.
+- Reference guard: **1,287 entries unchanged** in content, mode and mtime,
+  `work/review-selection-reference.log`. The three pending Last Beacon files
+  retain their turn-start hashes, recorded in
+  `work/review-selection-preservation.json`, and are excluded from these commits.
+
+The dependency inventory deliberately follows all structured branches and whole
+composed worlds. Lua, saved-state roots, original external content, raw input,
+arbitrary fixture changes and exhausted budgets remain unknown and recommend a
+full suite. An omitted case is not proven independent. Suggestions and reports
+do not bypass application validation or establish general mission solvability.
+
 ## World review and regional protection — 2026-10-23
 
 **VERIFIED within the declared content and review budgets.** Implementation
