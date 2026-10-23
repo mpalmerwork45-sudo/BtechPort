@@ -1,5 +1,87 @@
 # Build, verification and original oracle — 2026-10-24
 
+## Native service authoring — 2026-10-24
+
+**PASS for C4.2's declared scope.** See [usage](CHI_SERVICE_AUTHORING.md),
+[contract](CHI_IMPORT_CONTRACT.md#c42-native-service-content-extension) and
+[progress](CHI_IMPORT_PROGRESS.md#c42--native-service-content-and-context-registry).
+C4.3–C4.5 and C5 remain open.
+
+- **418 Python tests pass** (87.619 s), including eight new service cases.
+  **93 Linux native tests pass** (47.19 s). The full **93 Windows native tests**
+  pass under isolated Wine (338.86 s); ten focused service/compiler/theft/save/
+  market/class/movement cases pass (34.97 s) after the final world-market caller
+  and bounds adjustments. Sequential two-job builds have no warnings. Tests run
+  against finished executables; a prior Python run that overlapped a relink is
+  superseded by the final clean run.
+- The independent `chi-native-service-contract` CTest needs no original assets.
+  It checks strict parameters, defaults, bounded text references, partial repair
+  costs, recruit limits/ranks and rejected malformed/range inputs.
+  Private Python tests compare the 47-entry registry against every decoded F5
+  pair: all 76 match. They verify schemas, exact compiled bytes, linked text/
+  money operands, named actions, scoped command receipts, source conversion/
+  build, protection lookup, invalid-edit rollback, broker IDs and old-project
+  enable/Undo with custom dialogue preserved.
+- All 26 programs in both fresh profiles compile to their original encrypted
+  files: **52 byte-identical BLDs**. Five replay fixtures per edition match the
+  retained C4.1 imports for **214,544 gameplay/RNG ticks per platform**. Expected
+  text spans and byte addresses use the C4.1 normalizer; other encoded state
+  and RNG must match. The built-in comparison passes again for **108,156 ticks**,
+  presentation checkpoints, original intros and twelve isolated slots on each
+  platform. These compare the built-in port, rather than new DOS executions.
+- Actual building-entry fixtures prove an armour price change with recipient
+  selection and reload before assignment; hospital price/cooldown changes with
+  reload before and after acknowledgement; and a configured prison timer,
+  first-attempt theft, changed reward and script return. A timer-85 prison save
+  reloads under its configured 100-tick limit. Controlled fixtures explicitly
+  suppress random encounters through native state; they do not claim a new
+  complete route from the opening. Edited class routes cover **6,176 ticks**.
+  Separate mechanics assertions exercise partial repairs, healing once-only
+  effects, recruitment, broker stock and the later-world market caller.
+  All **18 final Linux/Windows held-save pairs are byte-identical**.
+- The real Linux service GUI journey passes cost/stock editing, action browsing,
+  Undo/Redo, invalid draft rollback/recovery, parameter problem navigation,
+  Save of pending fields, reopen and Play without external DOS paths. The
+  existing BLD GUI journey passes again. Native Windows Python/Tk remains UNKNOWN.
+- Reference guard retains **1,287 unchanged content/mode/mtime entries**. Three
+  pending owner files and twenty normal saves retain their recorded values.
+  Original-derived sources/evidence remain private; staging provenance checks
+  continue to cover the nine tracked project manifests.
+
+Retained evidence is under `work/chi-import/c42-evidence-final5/`:
+`evidence.json`, `windows-evidence.json`, `paired-saves.json` and `parity.json`.
+Build/regression logs use `work/chi-import/c42-*`. Full Windows CTest output is
+copied before the focused follow-up replaces CTest's temporary log. GUI report:
+`work/chi-services-gui.json`; capture: `work/chi-service-editor.png`.
+
+Reproduce using a new destination and an unedited prior C4.1 pair:
+
+```sh
+python3 tools/chi_service_evidence.py \
+  --output work/chi-import/my-c42-evidence \
+  --previous work/chi-import/c41-evidence-final/base
+python3 -m unittest discover -s tests -p test_chi_services.py
+python3 tools/native_smoke.py --editor-chi-services-only
+python3 tools/native_smoke.py --editor-chi-bld-only
+ctest --test-dir build --output-on-failure
+python3 tools/windows_check.py --ctest
+```
+
+The evidence report lists native executables and arguments for all 22 proof
+commands. For Windows use `python3 tools/windows_check.py` with the corresponding
+`build-windows/*.exe` and a different held-save filename. The service helper's
+modes are `--mechanics PROJECT UNUSED_PATH`, `--route PROJECT ACTIONS SAVE`,
+`--purchase PROJECT SAVE`, `--healing PROJECT SAVE`, `--prison PROJECT SAVE`.
+`--mechanics` performs controlled assertions without creating a save. The C2
+parity helper/arguments remain unchanged except for the new base-project paths;
+do not run Linux and Windows parity helpers concurrently.
+
+Verification is bounded to the stated fixtures. New service combinations retain
+their native preconditions, dynamic text still needs layout review, and complete
+campaign/branch acceptance remains C4.5/C5. Mission and new-event authoring are
+not claimed by this gate. Strict save identity requires retaining old project
+revisions when enabling/changing services.
+
 ## Labelled BLD authoring — 2026-10-24
 
 **PASS for C4.1's declared scope.** See [usage](BLD_AUTHORING.md),

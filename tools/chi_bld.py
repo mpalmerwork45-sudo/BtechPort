@@ -77,6 +77,9 @@ def schema():
             properties[key]=(dict(type='string',maxLength=4096) if kind=='text' else
                 dict(type='string',pattern='^(?:[0-9a-f]{2})+$',maxLength=18000) if kind=='bytes' else ID if kind=='target' else
                 array(ID,1,128) if kind=='targets' else integer(*kind) if len(kind)==2 and name not in ('font','scene','menu') else dict(enum=list(kind)))
+
+        if name in ('add_money','spend_money','if_money'):properties['amount']={'oneOf':[integer(0,65535),dict(type='string',pattern=r'^\{service:[a-z0-9.]+\}$')]}
+        if name=='native':properties['action']={'oneOf':[integer(1,47),dict(type='string',pattern=r'^native\.[a-z0-9-]+$')]}
         v=obj(properties,['id','op',*fields]);v['dependentRequired']={'origin':['original_size'],'original_size':['origin']};variants.append(v)
     p=obj(dict(id=ID,name=dict(type='string',maxLength=95),resource=dict(enum=[n+'.BLD' for n in BUILDINGS]),
         building=integer(0,25),baseline_sha256=dict(type='string',pattern='^[0-9a-f]{64}$'),entry=ID,

@@ -277,7 +277,8 @@ void btp_world_clock(BtpState *s,const BtpResources *r,BtpAction action)
         for (unsigned i=20;i<=22;++i) if (s->story_flags[i]) --s->story_flags[i];
         if (s->story_flags[29]) --s->story_flags[29];
         if (s->story_flags[41]) --s->story_flags[41];
-        if (s->story_flags[23]--==0) btp_economy_market(s);
+        /* Use the same pinned market content as the cadet clock. */
+        if (s->story_flags[23]--==0) btp_economy_market_resources(s,r);
         if (!(roll&s->story_flags[36]) && s->story_flags[4] && !s->story_flags[58]) (void)btp_campaign_random(s,r);
         if (s->mode==BTP_EXPLORE) btp_npc_advance(s,local(r,s->map_id));
     }

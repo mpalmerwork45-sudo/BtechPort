@@ -140,7 +140,7 @@
 {"medical.advanced_kit_price","Field surgery kit price","Healing",0u,65535u,375u,BTP_SVC_SOURCE_CONSTANT,0},
 {"garage.fee","Garage fee","Theft and garage",0u,65535u,150u,BTP_SVC_SOURCE_CONSTANT,0},
 {"arena.rental_fee","Arena rental fee","Theft and garage",0u,65535u,250u,BTP_SVC_SOURCE_CONSTANT,0},
-{"arena.prize","Arena prize","Theft and garage",0u,65535u,500u,BTP_SVC_SOURCE_CONSTANT,0},
+{"arena.prize","Arena prize","Theft and garage",0u,32767u,500u,BTP_SVC_SOURCE_CONSTANT,0},
 {"clothes.price","Clothes price","Other buildings",0u,65535u,35u,BTP_SVC_SOURCE_CONSTANT,0},
 {"cinema.funds","Cinema funds requirement","Other buildings",0u,65535u,5u,BTP_SVC_SOURCE_CONSTANT,0},
 {"inventor.first_price","Inventor first device price","Other buildings",0u,65535u,7000u,BTP_SVC_SOURCE_CONSTANT,0},

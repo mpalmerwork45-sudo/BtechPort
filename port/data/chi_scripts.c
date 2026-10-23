@@ -101,7 +101,7 @@ static int encode(BtpJson *j,unsigned node,unsigned building,const Inventory *ba
         unsigned text=btp_json_field(j,node,"text");
         if (!btp_json_type(j,text,'"')) return 0;
         char expanded[4097];
-        if (!btp_chi_service_expand(resources,j->nodes[text].text,expanded,sizeof expanded)) return btp_json_error(j,text,"invalid service text reference or expanded text exceeds 4096 bytes");
+        if (strlen(j->nodes[text].text)>4096 || !btp_chi_service_expand(resources,j->nodes[text].text,expanded,sizeof expanded)) return btp_json_error(j,text,"invalid service text reference or source/expanded text exceeds 4096 bytes");
         const char *value=expanded;size_t length=strlen(value);
         if (length>4096 || length+2>BTP_BLD_MAX-pc) return btp_json_error(j,text,"text/program byte budget exceeded");
         for (size_t i=0;i<length;++i) if ((unsigned char)value[i]<32 && value[i]!=6 && value[i]!=13 && value[i]!=14 && value[i]!=15)

@@ -57,7 +57,7 @@ class CampaignView:
         self.window=view_window(self,owner,'chi-campaign','CHI campaign')
         self.status=tk.StringVar();self.selected=None
         ttk.Label(self.window,text='Imported '+value['edition'].title()+' CHI campaign',style='Title.TLabel',padding=12).pack(anchor='w')
-        information=ttk.Label(self.window,text='Edit native dialogue below. Project > CHI scripts edits building dialogue and control flow. Maps and presentation have their own tools; service and mission settings remain planned.',wraplength=500,padding=(12,0,12,8));information.pack(fill='x')
+        information=ttk.Label(self.window,text='Edit native dialogue below. Project > CHI scripts edits building dialogue and control flow. Project > CHI services edits service content. Maps/presentation have their own tools; mission settings remain planned.',wraplength=500,padding=(12,0,12,8));information.pack(fill='x')
         host=ttk.Panedwindow(self.window,orient='horizontal');host.pack(fill='both',expand=True,padx=12,pady=6)
         left=ttk.Frame(host);right=ttk.Frame(host);host.add(left,weight=1);host.add(right,weight=2)
         self.search=tk.StringVar();ttk.Entry(left,textvariable=self.search).pack(fill='x',pady=(0,6))

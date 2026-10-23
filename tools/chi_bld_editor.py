@@ -88,7 +88,7 @@ class BldView:
             if key=='note':
                 if value:record[key]=value
                 else:record.pop(key,None)
-            elif key=='target':record[key]=value
+            elif key=='target' or (key=='amount' and value.startswith('{service:')) or (key=='action' and value.startswith('native.')):record[key]=value
             else:
                 try:record[key]=int(value)
                 except ValueError as error:raise EditorError(key+' must be an integer.') from error

@@ -37,6 +37,60 @@ Write scope: `manifest`, `chi.programs`.
 }
 ```
 
+## services.enable
+
+Enable native service settings and bind unmodified price text/fee operands; changes save identity.
+
+Write scope: `manifest`, `chi`, `provenance/campaign.json`.
+
+| Field | Structural constraint |
+| --- | --- |
+
+```json
+{
+  "op": "services.enable"
+}
+```
+
+## services.update
+
+Set a native service parameter. The C catalogue supplies IDs, bounds and effective defaults.
+
+Write scope: `chi.service_parameters/<parameter>`.
+
+| Field | Structural constraint |
+| --- | --- |
+| `parameter` * | `{"type":"string","maxLength":95}` |
+| `value` * | `{"type":"integer","minimum":0,"maximum":65535}` |
+
+```json
+{
+  "op": "services.update",
+  "parameter": "repair.armour",
+  "value": 6
+}
+```
+
+## services.stock
+
+Set the Updated broker inventory by stable unit IDs, or restore all roster units.
+
+Write scope: `chi.broker_stock`.
+
+| Field | Structural constraint |
+| --- | --- |
+| `units` | `{"type":"array","items":{"type":"string","maxLength":63,"pattern":"^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"},"minItems":0,"maxItems":256}` |
+| `all` | `{"type":"integer","minimum":0,"maximum":1}` |
+
+```json
+{
+  "op": "services.stock",
+  "units": [
+    "chi:catapult-cplt-c1"
+  ]
+}
+```
+
 ## bld.update
 
 Edit BLD dialogue, conditions, destinations, menu selectors or compatible native operands. Labels/original ranges stay stable.

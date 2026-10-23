@@ -92,9 +92,16 @@ def changed_objects(before, after):
     if bld:
         from chi_bld import data as bld_data
         compare('chi',{'programs':bld_data(before)['programs']} if before.manifest.get('chi_scripts') else {},{'programs':bld_data(after)['programs']})
+    services=bool(after.manifest.get('chi_services'))
+    if services:
+        from chi_services import data as service_data
+        def settings(document):
+            v=service_data(document)
+            return dict(service_parameters=[dict(id=k,value=v) for k,v in v['parameters'].items()],broker_stock=v.get('broker_stock'))
+        compare('chi',settings(before),settings(after))
     compare('editor',json.loads(before.metadata.get('EDITOR.json',b'{}')),json.loads(after.metadata.get('EDITOR.json',b'{}')))
     for name in sorted(set(before.metadata)|set(after.metadata)):
-        if name not in ('EDITOR.json',AUTHORING_RECEIPTS,*(['chi-spatial.json','chi-presentation.json'] if native else []),*(['chi-scripts.json'] if bld else [])) and before.metadata.get(name)!=after.metadata.get(name):
+        if name not in ('EDITOR.json',AUTHORING_RECEIPTS,*(['chi-spatial.json','chi-presentation.json'] if native else []),*(['chi-scripts.json'] if bld else []),*(['chi-services.json'] if services else [])) and before.metadata.get(name)!=after.metadata.get(name):
             script=next((s for s in after.manifest.get('scripts',[]) if s['file']==name),None)
             result.append(dict(path=('scripts/'+script['id']) if script else 'provenance/'+name,
                                object_id=script['id'] if script else None,change='modified',fields=[]))
@@ -111,6 +118,12 @@ def _bounds(scene, layer, points):
 
 def apply_operation(doc, op, imports):
     name=op['op']; a=copy.deepcopy(doc.adventure)
+    if name.startswith('services.'):
+        from chi_services import enable,update,stock
+        if name=='services.enable':enable(doc)
+        elif name=='services.update':update(doc,op['parameter'],op['value'])
+        elif name=='services.stock':stock(doc,None if op.get('all') else op.get('units',[]))
+        return op.get('parameter',doc.manifest['package_id'])
     if name.startswith('bld.'):
         from chi_bld import enable,update,insert,remove
         if name=='bld.enable':enable(doc)

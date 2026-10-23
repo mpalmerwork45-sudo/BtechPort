@@ -291,3 +291,57 @@ native service inventories, mission definitions or recruitment templates
 generally editable: those remain C4.2–C4.4. See [usage](BLD_AUTHORING.md),
 [schema](../schemas/chi-scripts-v1.schema.json) and
 [verification](TESTING.md#labelled-bld-authoring--2026-10-24).
+
+## C4.2 native service content extension
+
+`chi_services: chi-services.json` optionally declares `btp-chi-services-v1`,
+schema 1, for an imported CHI campaign. There are 156 typed numeric parameters;
+unknown keys, duplicate keys, booleans, bad ranges and unsupported spy odds fail
+with parameter paths. Omitted keys use the effective immutable native defaults.
+Optional `broker_stock` is a unique list of existing roster IDs; omission means
+all stock and an empty list means none. It cannot grant an edition capability.
+The file and service contract tag participate in strict content identity.
+
+Cache-backed ammunition/refit/medical settings override the decoded in-memory
+tables. Other parameters are resolved by the native transaction routines and
+renderer through the same catalogue. Neither original cache bytes nor ordinary
+game/save formats change. Built-in games and older imports without this field
+keep their defaults. Native market parameters reach both cadet and later-world
+clock callers; unsigned arithmetic and RNG draw ownership are retained.
+
+BLD text and native dialogue overrides accept `{service:parameter.id}`, with
+optional `:comma` formatting for text. Money operands accept one such reference
+or their existing unsigned word. Expansion occurs before compilation/rendering;
+source and expanded BLD text both retain the 4,096-byte budget. The configurable
+positive arena prize stops at 32,767 because its native add-money operand is
+signed. The compiler accepts stable `native.*` action names as aliases for the
+same existing F5 numeric operation, with all context/anchor checks retained.
+
+Enabling support binds only unchanged original price text and fee operands;
+existing custom dialogue remains authoritative. Native repair fragments stay
+in the existing campaign dialogue overrides. Price binding is explicit source,
+not a renderer search/replace heuristic. Authors must keep remapped equipment
+descriptions and custom literal prices consistent with their settings.
+
+The native action catalogue records all 47 F5 operations and the 76 observed
+building/action pairs, requirements, outputs, mutations, yields and errors.
+E9 recruitment keeps its separate existing building/skill validation. This is
+an inventory of the port's retained native contracts, not fresh DOS execution
+proof of every pair. Services retain the original recipient, partial repair,
+healing, spy replacement, theft and crew state machines. Class and prison save
+validators receive current resources for configured prices/timers/attempts;
+there are no new serialized continuation fields.
+
+GUI, CLI, source builds, scoping, protection, receipts, history and recovery share
+the same effective documents. Parameter scopes use
+`chi.service_parameters/<parameter>` and stock uses `chi.broker_stock`. Enabling
+also changes manifest/script/message bindings and therefore needs that broader
+scope. Existing registered projects are not automatically upgraded. Preserve
+their previous revision for old imported saves. All original-derived content
+continues to follow private-import/provenance/export rules.
+
+Native menu counts, refit recipes, character identities and party/bay capacities
+remain bounded compatibility contracts. Mission opponents/spawns and yard combat
+layouts remain C4.3; general authored-event calls remain C4.4. See
+[service usage](CHI_SERVICE_AUTHORING.md) and
+[schema](../schemas/chi-services-v1.schema.json).

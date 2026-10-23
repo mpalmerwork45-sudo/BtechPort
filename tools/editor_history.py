@@ -32,7 +32,7 @@ def refresh_scope(workspace, scope):
                     view.original=copy.deepcopy(image);view.jigsaw=copy.deepcopy(image);view.name.set(image['name']);view.draw()
             elif kind in ('maps','world','construction','patterns'):
                 if not pending: view.refresh()
-            elif kind=='chi-bld' and not pending:view.refresh()
+            elif kind in ('chi-bld','chi-services') and not pending:view.refresh()
             elif kind=='events':
                 props=getattr(view,'properties',None)
                 if props and not props.event_pending: props.select(view.selected)

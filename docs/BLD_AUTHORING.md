@@ -3,8 +3,9 @@
 C4.1 exposes all 26 original BLD programs as labelled, typed source in imported
 Original and Updated campaigns. The player compiles these sources through the
 same C loader used for validation. Native interpreter behavior is retained.
-Service prices/inventories, mission definitions and the new-event bridge remain
-C4.2–C4.4; this is not the complete C4 campaign-authoring gate.
+[Service content](CHI_SERVICE_AUTHORING.md) is exposed by C4.2, including prices,
+inventory and native-action descriptions. Mission definitions and the new-event
+bridge remain C4.3–C4.4; this is not the complete C4 campaign-authoring gate.
 
 ## Open and edit
 
@@ -88,7 +89,11 @@ are rejected. Conditional loops retain the interpreter's 256-instruction budget.
 Calls/recursion and crossing into authored events are not introduced here.
 Native action/film combinations are restricted to those verified in that
 program's immutable baseline; specialized training/class calls also keep their
-existing anchors. The broader configurable registry belongs to C4.2.
+existing anchors. C4.2's registry names these operations and documents their
+contexts; it does not make arbitrary cross-building calls safe. `action` also
+accepts the stable `native.*` name reported by that registry. Text and money
+operands accept [service references](CHI_SERVICE_AUTHORING.md#linked-prices-and-messages)
+when the project enables service content.
 
 ## Headless authoring
 

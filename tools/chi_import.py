@@ -149,11 +149,19 @@ def import_campaigns(source,output,edition='both',validator=None,cancel=None,pro
             (project/bld_file).write_bytes(encoded(bld_sources({'chi/'+n:snapshot[n] for n in RUNTIME_FILES if n.endswith('.BLD')})))
             manifest['chi_scripts']=bld_file
             (project/'project.json').write_bytes(encoded(manifest))
+            from chi_services import prepare as service_sources,FILE as service_file
+            current={str(path.relative_to(project)):path.read_bytes() for path in project.rglob('*') if path.is_file()}
+            service=service_sources(current,json.loads(run([validator,'chi-services',project],cancel)))
+            (project/service_file).write_bytes(encoded(service['parameters']))
+            (project/bld_file).write_bytes(encoded(service['scripts']))
+            (project/'campaign.json').write_bytes(encoded(service['campaign']))
+            manifest['chi_services']=service_file
+            (project/'project.json').write_bytes(encoded(manifest))
             provenance=dict(format='btp-chi-import-v1',schema_version=1,extractor='chi-import-v1',edition=profile,
                 inputs=[dict(file=n,sha256=hashlib.sha256(snapshot[n]).hexdigest()) for n in SOURCE_FILES],
                 resources=origins,capabilities=dict(editable=['native-dialogue-overrides','native-maps','world-generator','town-placements',
-                    'entrances','NPC-routes','jigsaws','presentation-resources','labelled-BLD-source',*(['added-unit-definitions','broker-entrance'] if profile=='updated' else [])],
-                    compatibility_only=['BLD','native-services','mission-settings'],
+                    'entrances','NPC-routes','jigsaws','presentation-resources','labelled-BLD-source','native-service-content',*(['added-unit-definitions','broker-entrance'] if profile=='updated' else [])],
+                    compatibility_only=['native-service-mechanics','mission-settings'],
                     pending_milestones=['C4','C5']),
                 distribution='Private original-derived content; use an asset-free reconstruction recipe for sharing.')
             (project/'IMPORT.json').write_bytes(encoded(provenance))
@@ -161,7 +169,7 @@ def import_campaigns(source,output,edition='both',validator=None,cancel=None,pro
             (project/'README.md').write_text('Editable CHI - '+profile.title()+'\n\nPrivate local import from DOS 1.03. No original executable or personal saves copied.\n'
                 'Open this folder in the Construction Kit or run the player with --project PATH.\n'
                 'Text: Project > CHI campaign. Maps/world: Project > CHI maps and world. Art/audio: Project > CHI resources.\n'
-                'BLD dialogue/control flow: Project > CHI scripts. Service rules, mission definitions and the new-event bridge remain C4.2 onwards.\n'
+                'BLD dialogue/control flow: Project > CHI scripts. Service content: Project > CHI services. Mission definitions and new-event bridging remain C4.3 onwards.\n'
                 'Keep this exact project for its saves. Reimport to a NEW folder; never overwrite edited projects.\n'
                 'IMPORT.json records provenance and current editing limits. Original rights still apply to derived content.\n')
             progress('Validating '+profile+' campaign');check_cancel(cancel)

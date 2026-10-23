@@ -218,3 +218,68 @@ baseline program, with specialized class/training anchors preserved. Original
 records cannot be deleted; redirect around them. Calls/recursion and arbitrary
 authored-event execution remain unsupported. C4.2 service content is next;
 C4.3–C4.5 and C5 remain open. See [authoring usage](BLD_AUTHORING.md).
+
+## C4.2 — Native service content and context registry
+
+**C4.2 gate passed, 2026-10-24.** The native service catalogue exposes 156 typed
+parameters and 47 named F5 operations, including all 76 observed action/building
+pairs. Entries describe requirements, outputs, mutations, yields, errors and
+implementation owners. Recruitment's separate E9 instruction retains its
+existing context/skill checks. These are retained port contracts, not new DOS
+execution evidence for every possible edited combination.
+
+Service content covers personal equipment prices/stock/weapon IDs, repairs,
+refits and ammunition costs; hospital fees/programs/messages/cooldown; classes,
+apprenticeships, recruitment and spy rules; theft timers/attempts/rewards,
+garage/crew policies; broker stock/resale; Comstar market/allowance parameters;
+and other building costs/gifts/effects. Existing menus, partial repairs, recipient
+swaps, spy replacement and once-only transactions stay in their native routines.
+Market parameters reach both cadet and later-world clock callers.
+
+Unmodified original price text and BLD funds/payment operands gain explicit
+service references when enabling support. Existing custom dialogue is preserved.
+All 52 unedited encrypted BLDs remain byte-identical. Sources, effective compiled
+payloads and service contract participate in strict save identity. Class/prison
+validators use current prices/limits without changing the serialized game state.
+
+**VERIFIED:** five replay fixtures per edition match the prior C4.1 imports for
+214,544 gameplay/RNG ticks on Linux and Windows/Wine. The unchanged built-in
+comparison passes again for 108,156 combined ticks, rendered checkpoints, state,
+RNG, original presentation and twelve isolated save slots on each platform.
+Edited class routes cover 6,176 combined ticks. Separate real-doorway fixtures
+prove a changed armour price with recipient selection, a changed hospital fee/
+cooldown and prison theft with a longer timer, first-attempt success and changed
+reward. A prison save at tick 85 reloads with a configured 100-tick guard timer,
+where the old 80-tick validator rejects it. Healing and purchase acknowledgements
+do not repeat charges/effects. All eighteen Linux/Windows held-save pairs match
+byte-for-byte. Controlled mechanics checks also exercise partial repair costs,
+recruitment limits/ranks, broker filtering and the later-world market caller.
+
+**418 Python tests and all 93 Linux native tests pass.** The full 93-case Windows
+suite passes under isolated Wine; ten focused cases pass after final bounds and
+world-market caller adjustments. Sequential two-job builds have no warnings.
+The Linux service GUI journey passes typed costs and stock, action browsing,
+Undo/Redo, invalid-draft rollback/recovery and navigation, Save of pending fields,
+reopen and native Play without external originals. The existing BLD GUI journey
+passes again. Native Windows Python/Tk remains UNKNOWN.
+
+Private evidence is `work/chi-import/c42-evidence-final5/evidence.json`,
+`windows-evidence.json`, `paired-saves.json` and `parity.json`. Regression/build
+logs use `work/chi-import/c42-*`; the full Windows log is
+`c42-native-windows.log` and final focused log `c42-native-windows-followup.log`.
+GUI report/capture: `work/chi-services-gui.json`, `work/chi-service-editor.png`.
+The evidence generator requires a new ignored destination and a retained prior
+import pair. Foundation commit: `34e8d0e`; the following commit records editor
+and command integration with the completed verification ledger.
+
+Both reference trees retain all 1,287 content/mode/mtime entries, the three
+pending owner files keep their hashes and twenty observed normal saves keep
+their hashes/mtimes. Registered projects are not automatically upgraded. No
+decoded text, source programs, art, caches, campaigns or saved proofs are
+committed. Old imported saves require their previous content revision.
+
+Native menu sizes, refit recipes, identity and party/bay limits remain explicit.
+Mission opponents/spawns, yard combat layouts and broader campaign settings are
+C4.3; general event bridging is C4.4 and complete campaign coverage is C4.5/C5.
+Custom literal prices and remapped equipment descriptions remain the author's
+responsibility. See [service usage](CHI_SERVICE_AUTHORING.md).

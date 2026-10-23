@@ -1,5 +1,29 @@
 # Project status — original fidelity and editable projects, 2026-10-24
 
+**C4.2: native service content and action registry — implemented and verified.**
+**Project → CHI services** exposes 156 typed settings, Updated broker stock and
+47 named native actions covering all 76 observed action/building pairs. Prices,
+repairs, healing, recruitment/spy settings, theft/garage policies, market values
+and other building costs use the existing native state machines. Price text and
+BLD fee operands can share parameter references. GUI/CLI commands, source builds,
+scoping/protection, Undo/Save, draft recovery and problem navigation share the
+same validated documents. [Usage](CHI_SERVICE_AUTHORING.md).
+
+**418 Python tests and 93 Linux native tests pass.** All 93 Windows native tests
+pass under Wine, followed by ten focused checks after the final world-market
+caller/bounds adjustments. Both profiles retain the 108,156-tick built-in
+comparison. Comparing the new defaults to C4.1 imports passes 214,544 ticks per
+platform; all 52 BLD files remain byte-identical. Edited class, purchase, healing
+and prison continuations pass on both platforms, with all 18 paired held saves
+identical. Linux service and existing BLD GUI journeys pass. Native Windows
+Python/Tk remains UNKNOWN. [Verification](TESTING.md#native-service-authoring--2026-10-24).
+
+Both reference trees, three pending owner files and twenty normal saves remain
+unchanged. No proprietary resources or generated campaigns are committed. New
+imports include service support; older imports enable it as one Undoable change
+and retain their old content revision for old saves. Registered projects are
+not silently upgraded. C4.3–C4.5 and C5 remain open.
+
 **C4.1: labelled BLD source and compilation — implemented and verified.**
 Imported Original and Updated projects now expose all 26 building programs in
 **Project → CHI scripts**. Dialogue, conditions, branches, native menu choices
@@ -107,10 +131,11 @@ The user's three pending Last Beacon files and both reference directories are
 unchanged. Gameplay/save formats remain unchanged. Native Windows Python/Tk
 interaction remains **UNKNOWN**.
 
-**Next proposed:** C4.2 of the [editable CHI campaign plan](CHI_EDITABLE_CAMPAIGNS_PLAN.md):
-named native actions and editable service content. C4.3–C4.5 add mission settings,
-the authored-event continuation bridge and campaign checks. C5 follows with
-complete campaign and packaged setup acceptance. C1–C3 and C4.1 are delivered.
+**Next proposed:** C4.3 of the [editable CHI campaign plan](CHI_EDITABLE_CAMPAIGNS_PLAN.md):
+mission and campaign settings, including opponents, allowed controls, outcomes,
+spawn/retreat rules and story effects. C4.4–C4.5 add the authored-event bridge
+and campaign checks. C5 follows with complete campaign and packaged setup
+acceptance. C1–C3 and C4.1–C4.2 are delivered.
 
 **AI5 world-review extension — implemented and verified, 2026-10-23.**
 [World review and regional protection](WORLD_REVIEW.md) adds paired composed

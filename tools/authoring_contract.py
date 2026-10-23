@@ -122,6 +122,9 @@ def operation(name, description, properties, required, writes, example):
 
 operation('chi.enable','Expose native maps/world on an older C2 import; one reversible edit.',{},[],['adventure','manifest'],{})
 operation('bld.enable','Enable labelled BLD source editing on an older CHI import; changes save identity.',{},[],['manifest','chi.programs'],{})
+operation('services.enable','Enable native service settings and bind unmodified price text/fee operands; changes save identity.',{},[],['manifest','chi','provenance/campaign.json'],{})
+operation('services.update','Set a native service parameter. The C catalogue supplies IDs, bounds and effective defaults.',dict(parameter=dict(type='string',maxLength=95),value=integer(0,65535)),['parameter','value'],['chi.service_parameters/<parameter>'],dict(parameter='repair.armour',value=6))
+operation('services.stock','Set the Updated broker inventory by stable unit IDs, or restore all roster units.',dict(units=array(ID,0,256),all=integer(0,1)),[],['chi.broker_stock'],dict(units=['chi:catapult-cplt-c1']))
 operation('bld.update','Edit BLD dialogue, conditions, destinations, menu selectors or compatible native operands. Labels/original ranges stay stable.',
           dict(program=ID,id=ID,changes=RECORD),['program','id','changes'],['chi.programs/<program>'],
           dict(program='chi:bld-training',id='chi:training-0005',changes={'text':'Welcome to this training ground.'}))

@@ -233,6 +233,7 @@ class Workspace:
         elif kind=='suites':state.update(suite=owner.current,case=owner.current_case,page=owner.pages.index(owner.pages.select()),
             step=list(owner.steps.selection()),step_kind=owner.step_kind.get())
         elif kind=='chi-bld':state.update(program=owner.program.get(),selected=owner.selected)
+        elif kind=='chi-services':state.update(selected=owner.selected)
         elif kind=='pixels':
             state.update(frame=owner.frame.current())
             if owner.map_context:state.update(map_context=owner.map_context,show_neighbours=owner.show_neighbours.get())
@@ -253,6 +254,7 @@ class Workspace:
         if owner is None:return
         if kind=='chi-bld':
             owner.show_location(state.get('program',owner.program.get()),state.get('selected'));return
+        if kind=='chi-services':owner.show_location(state.get('selected'));return
         if kind in ('roster','library-unit'):
             self.open_unit(state.get('kind','Mechs'),state.get('current'),owner)
         elif kind=='maps':
@@ -338,6 +340,8 @@ class Workspace:
         self.action('CHI campaign',lambda:open_campaign(self.active_scope().owner),groups['Project'])
         from chi_bld_editor import open_scripts
         self.action('CHI scripts',lambda:open_scripts(self.active_scope().owner),groups['Project'])
+        from chi_services_editor import open_services
+        self.action('CHI services',lambda:open_services(self.active_scope().owner),groups['Project'])
         self.action('CHI maps and world',lambda:self.open_map(),groups['Project'])
         self.action('CHI resources',lambda:self.map_view().resources(),groups['Project'])
         from editor_authoring import apply_file,export_summary,check_mission
@@ -406,7 +410,7 @@ class Workspace:
         scope=self.active_scope();document=scope.document if scope else None
         if name=='Save project':return bool(self.app.document) and not getattr(self.app._editor_scope,'saving',False)
         if name=='Save all':return any(s.document and not getattr(s,'saving',False) and s.dirty() for s in self.scopes)
-        if name in ('CHI campaign','CHI maps and world','CHI resources','CHI scripts'):return bool(document and document.manifest.get('requires')=='chi-local-dos-1.03')
+        if name in ('CHI campaign','CHI maps and world','CHI resources','CHI scripts','CHI services'):return bool(document and document.manifest.get('requires')=='chi-local-dos-1.03')
         if name=='Save active scope' or name=='Validate':return bool(document) and not getattr(scope,'saving',False)
         if name in ('Undo','Redo'):
             return bool(document and ((document.undo_stack if name=='Undo' else document.redo_stack) or any(d.pending() for d in scope.live())))
@@ -582,6 +586,8 @@ class Workspace:
                         row('','native-text','Native campaign text',lambda:open_campaign(self.app))
                         from chi_bld_editor import open_scripts
                         row('','native-scripts','Native building scripts',lambda:open_scripts(self.app))
+                        from chi_services_editor import open_services
+                        row('','native-services','Native service content',lambda:open_services(self.app))
                         row('','native-art','Native graphics / audio',lambda:self.map_view().resources())
                     else:
                         events=row('','events','Events / objectives',self.open_event)

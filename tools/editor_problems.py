@@ -7,6 +7,10 @@ from editor_session import FieldError,scope_of
 def target(document,problem):
     from authoring_contract import diagnostic
     path=problem.get('field_path') or diagnostic(Exception(problem['message']))['field_path']
+    if document.manifest.get('chi_services') and path.startswith('$.parameters.'):
+        return dict(collection='native_services',parameter=path[len('$.parameters.'):])
+    if document.manifest.get('chi_services') and path.startswith('$.broker_stock'):
+        return dict(collection='native_services',parameter=None)
     ids=re.findall(r'\[([a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*)\]',path)
     if problem.get('object_id') and problem['object_id'] not in ids:ids.append(problem['object_id'])
     a=document.adventure or {}
@@ -44,6 +48,9 @@ def navigate(workspace,problem):
     destination=target(scope.document,problem)
     if not destination:return False
     owner=scope.owner;collection=destination['collection'];identity=destination.get('id')
+    if collection=='native_services':
+        from chi_services_editor import open_services
+        open_services(owner).show_location(destination.get('parameter'));return True
     if collection=='native_scripts':
         from chi_bld_editor import open_scripts
         open_scripts(owner).show_location(destination['program'],destination.get('label'));return True

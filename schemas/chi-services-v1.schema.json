@@ -727,7 +727,7 @@
         "arena.prize": {
           "type": "integer",
           "minimum": 0,
-          "maximum": 65535
+          "maximum": 32767
         },
         "clothes.price": {
           "type": "integer",

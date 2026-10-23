@@ -149,6 +149,9 @@ def open_route(scope,route,cache=None):
     elif kind=='chi-bld':
         from chi_bld_editor import open_scripts
         view=open_scripts(owner)
+    elif kind=='chi-services':
+        from chi_services_editor import open_services
+        view=open_services(owner)
     elif kind=='pixels':
         from graphics_editor import open_image_editor
         image=next(i for i in scope.document.art['images'] if i['id']==ident)

@@ -134,6 +134,68 @@
             "type": "object",
             "properties": {
               "op": {
+                "const": "services.enable"
+              }
+            },
+            "required": [
+              "op"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "services.update"
+              },
+              "parameter": {
+                "type": "string",
+                "maxLength": 95
+              },
+              "value": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 65535
+              }
+            },
+            "required": [
+              "op",
+              "parameter",
+              "value"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "services.stock"
+              },
+              "units": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 63,
+                  "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+                },
+                "minItems": 0,
+                "maxItems": 256
+              },
+              "all": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1
+              }
+            },
+            "required": [
+              "op"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
                 "const": "bld.update"
               },
               "program": {
