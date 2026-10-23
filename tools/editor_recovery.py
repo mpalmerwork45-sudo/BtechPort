@@ -34,6 +34,7 @@ ROUTES={
  'MissionEditor': 'edit',
  'LibraryBrowser': 'new',
  'Changes': 'protection_form',
+ 'Suites': 'suite_form case_form step_form',
 }
 
 
@@ -141,6 +142,9 @@ def open_route(scope,route,cache=None):
     elif kind=='sources':
         from editor_sources import open_sources
         view=open_sources(owner)
+    elif kind=='suites':
+        from editor_suites import open_suites
+        view=open_suites(owner)
     elif kind=='pixels':
         from graphics_editor import open_image_editor
         image=next(i for i in scope.document.art['images'] if i['id']==ident)

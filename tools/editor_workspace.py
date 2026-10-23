@@ -230,6 +230,8 @@ class Workspace:
         elif kind=='construction-library':state.update(selected=owner.selected,kind=owner.kind.get(),query=owner.query.get())
         elif kind=='catalogue':state.update(query=owner.query.get(),source=owner.source.get())
         elif kind=='changes':state.update(folder=str(owner.folder) if owner.folder else None,page=owner.pages.index(owner.pages.select()))
+        elif kind=='suites':state.update(suite=owner.current,case=owner.current_case,page=owner.pages.index(owner.pages.select()),
+            step=list(owner.steps.selection()),step_kind=owner.step_kind.get())
         elif kind=='pixels':
             state.update(frame=owner.frame.current())
             if owner.map_context:state.update(map_context=owner.map_context,show_neighbours=owner.show_neighbours.get())
@@ -268,6 +270,10 @@ class Workspace:
         elif kind=='catalogue':owner.source.set(state.get('source','project'));owner.query.set(state.get('query',''));owner.reload()
         elif kind=='changes':
             if state.get('folder') and Path(state['folder']).is_dir():owner.open_saved(state['folder'])
+        elif kind=='suites':
+            owner.current=state.get('suite');owner.current_case=state.get('case');owner.refresh();owner.pages.select(state.get('page',0))
+            owner.step_kind.set(state.get('step_kind','walk entrance'))
+            owner.steps.selection_set([s for s in state.get('step',[]) if owner.steps.exists(s)])
             owner.pages.select(state.get('page',0))
         elif kind=='pixels':
             if hasattr(owner,'view'):
@@ -330,6 +336,8 @@ class Workspace:
         from editor_sources import open_sources
         self.action('Campaign sources and build',lambda:open_sources(self.app),groups['Project'])
         self.action('Check mission',lambda:check_mission(self),groups['Project'])
+        from editor_suites import open_suites
+        self.action('Test suites and coverage',lambda:open_suites(self.active_scope().owner),groups['Play'])
         from editor_changes import open_changes
         self.action('Changes and protection',lambda:open_changes(self.active_scope().owner),groups['Project'])
         self.action('Local authoring session',lambda:open_changes(self.active_scope().owner,session=True),groups['Project'])
@@ -393,7 +401,7 @@ class Workspace:
             return bool(document and ((document.undo_stack if name=='Undo' else document.redo_stack) or any(d.pending() for d in scope.live())))
         if name in ('Export game','Assets and dependencies','Migrate an old save','Apply authoring command file','Export authoring summary','Campaign sources and build'):return bool(self.app.document)
         if name in ('Content catalogue','Changes and protection','Local authoring session'):return bool(document)
-        if name=='Check mission':return bool(document and document.adventure)
+        if name in ('Check mission','Test suites and coverage'):return bool(document and document.adventure)
         if name in ('New definition','Duplicate definition','Delete definition','Ammunition','Find usages'):return bool(document)
         if name in ('Building designer','Wall designer','Road designer','Pattern Library','Construction Library'):return bool(self.app.document and self.app.document.adventure)
         if name in ('Play from start','Play from here','Checkpoints and trace'):return bool(self.app.document) and not self.play_session.preparing

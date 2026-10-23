@@ -264,6 +264,11 @@ def check_metadata(document):
     """Editor-only dependencies need checks too: the runtime never reads them."""
     from event_editing import editor_data
     data=editor_data(document); a=document.adventure or {}
+    from suite_authoring import validate_suite
+    definitions=data.get('test_suites',[])
+    if not isinstance(definitions,list) or len(definitions)>16:raise AuthoringError('suite.invalid','Use at most 16 project suites.')
+    for suite in definitions:validate_suite(suite)
+    if len({s['id'] for s in definitions})!=len(definitions):raise AuthoringError('suite.invalid','Suite IDs must be unique.')
     tiles={t['id'] for t in a.get('tiles',[])};maps={m['id'] for m in a.get('maps',[])}
     styles={s['id'] for s in data.get('construction_sets',[])}
     for style in data.get('construction_sets',[]):

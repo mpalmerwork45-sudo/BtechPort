@@ -36,7 +36,7 @@ def refresh_scope(workspace, scope):
                 props=getattr(view,'properties',None)
                 if props and not props.event_pending: props.select(view.selected)
                 view.draw()
-            elif kind in ('graphics','objectives','mission','sources'):view.refresh()
+            elif kind in ('graphics','objectives','mission','sources','suites'):view.refresh()
         guard(view,refresh)
     workspace.refresh_tree();workspace.update_inspector()
 

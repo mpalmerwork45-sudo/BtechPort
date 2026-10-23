@@ -18,11 +18,16 @@ from project_lock import project_lock
 def parser():
     p=argparse.ArgumentParser(description=__doc__)
     sub=p.add_subparsers(dest='command',required=True)
-    for name in ('capabilities','schema','inspect','catalogue','contact-sheet','animation','graph','world-preview','lint','validate','create','apply','export','render','scenario','suite','construction-export'):
+    for name in ('capabilities','schema','inspect','catalogue','contact-sheet','animation','graph','world-preview','lint','validate','create','apply','export','render','scenario','suite','scenario-scaffold','coverage','construction-export'):
         s=sub.add_parser(name)
         s.add_argument('--validator',type=Path,default=Path(os.environ.get('BTP_PROJECT_TOOL',ROOT/'build'/('btp-project.exe' if os.name=='nt' else 'btp-project'))))
         if name not in ('capabilities','schema'):s.add_argument('project',type=Path)
         if name=='schema':s.add_argument('--operation',choices=list(OPERATIONS))
+        if name=='scenario-scaffold':
+            s.add_argument('--kind',choices=['start','entrance','map','world','objective'],required=True)
+            s.add_argument('--target');s.add_argument('--at',type=int,nargs=2);s.add_argument('--checkpoint',type=Path);s.add_argument('--output',type=Path,required=True)
+        if name=='coverage':
+            s.add_argument('--suite',type=Path,required=True);s.add_argument('--report',type=Path);s.add_argument('--output',type=Path,required=True)
         if name=='inspect':
             s.add_argument('--query',default='summary',choices=['summary','objects','object','usages','map','routes','inventory'])
             s.add_argument('--collection');s.add_argument('--id');s.add_argument('--offset',type=int,default=0);s.add_argument('--limit',type=int,default=30)
@@ -240,6 +245,14 @@ def dispatch(args):
         with project_lock(args.project):return run()
     # Queries never recover an interrupted save or create files in a package.
     doc=ProjectDocument(args.project,args.validator,recover=False)
+    if args.command in ('scenario-scaffold','coverage'):
+        from suite_authoring import scaffold,coverage
+        from editor_model import encoded
+        if args.output.resolve().is_relative_to(doc.root):raise AuthoringError('output.invalid','Write generated test artifacts outside the project.')
+        if args.command=='scenario-scaffold':result=scaffold(doc,args.kind,args.target,args.at,args.checkpoint)
+        else:result=coverage(doc,read_json(args.suite),args.suite.parent,read_json(args.report) if args.report else None)
+        with args.output.open('xb') as stream:stream.write(encoded(result))
+        return dict(status='generated',output=str(args.output),verified=False)
     if args.command=='construction-export':
         from construction_library import ConstructionLibrary,summary as construction_summary,closure
         shared=ConstructionLibrary(args.construction_library,args.validator);bundle=closure(doc,args.id);expected=None

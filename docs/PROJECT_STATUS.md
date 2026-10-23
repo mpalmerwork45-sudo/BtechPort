@@ -1,5 +1,19 @@
 # Project status — original fidelity and editable projects, 2026-10-23
 
+**Batch 1: test authoring and coverage — implemented and verified.**
+[The suite workspace](TEST_SUITE_AUTHORING.md) stores editable test definitions
+with the project, including source-project Save/reopen, draft recovery and Undo.
+It supports portable imports/exports, seed sweeps, fixtures/checkpoints, honest
+entrance/map/world/objective starters and retained native selected/full checks.
+Declared, observed, unvisited, unrun and unknown evidence remain distinct;
+failures navigate to their map/world position or referenced object. Linux and
+Windows builds, native regression, Python regression and the GUI journey pass.
+The independent suite also matches Linux/Windows save bytes under Wine. See
+[verification](TESTING.md#suite-authoring-and-coverage--2026-10-23).
+
+Batch 2 is the authorized follow-up: measure remaining large-project GUI pauses,
+address demonstrated bottlenecks and preserve editing/Undo/cancellation behavior.
+
 **AI4/AI5 review-linked scenario selection — implemented and verified, 2026-10-23.**
 [Scenario selection](SCENARIO_SELECTION.md) inventories explicit dependencies on
 both review revisions, explains suggested cases and runs selected/full suites

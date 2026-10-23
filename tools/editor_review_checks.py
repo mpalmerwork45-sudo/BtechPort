@@ -21,6 +21,8 @@ class ReviewChecksPane:
         self.pages.add(selection,text='Cases');self.pages.add(explanation,text='Why this case');self.pages.add(reports,text='Reports')
         bar=ttk.Frame(reports);bar.pack(fill='x')
         owner.button(bar,'Check mission',owner.check);owner.button(bar,'Open artifacts',owner.open_artifacts);flow_toolbar(bar)
+        from editor_suites import open_suites
+        owner.button(bar,'Author test suites',lambda:open_suites(owner.scope.owner))
         self.reports=text_box(reports)
         self.note=tk.StringVar(value='Choose a scenario suite to see which cases the proposed changes may affect.')
         bar=ttk.Frame(selection);bar.pack(fill='x')

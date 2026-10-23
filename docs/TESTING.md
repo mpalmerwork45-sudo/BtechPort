@@ -1,5 +1,38 @@
 # Build, verification and original oracle — 2026-10-23
 
+## Suite authoring and coverage — 2026-10-23
+
+**PASS within the existing bounded scenario/runtime contracts.**
+See [usage and limits](TEST_SUITE_AUTHORING.md). No native gameplay or save-format
+changes were needed.
+
+- Python regression: **368/368 pass** in 48.656 s,
+  `work/suite-authoring-python.log`; final focused suite tests **10/10 pass**,
+  `work/suite-authoring-tests.log`, including cancellation after the first native
+  seed run, which retains partial coverage without reporting a whole-case pass.
+- Native regression: **91/91 pass**, 46.63 s,
+  `work/suite-authoring-native.log`. Linux then Windows builds pass at `-j2`:
+  `work/suite-authoring-linux-build.log`, `work/suite-authoring-windows-build.log`.
+- Private-display GUI: **PASS**, `work/suite-authoring-gui.log` and
+  `work/suite-authoring-gui.json`. Tests cover actual forms, two-seed runs,
+  source Save/reopen, recoverable step drafts, preview without consuming drafts,
+  Undo/Redo, selected/full native checks, failure navigation, export of a pending
+  draft and cancellation. Screenshots: `work/suite-authoring-cases.png` and
+  `work/suite-authoring-coverage.png` (1024×740).
+- Retained source-project demo: **PASS**,
+  `work/suite-authoring-verified/report.json`. Three cases/five full runs and
+  two selected runs; omitted cases remain Not run. Windows/Wine reproduces the
+  selected nine-tick case with identical native state and save bytes. The first
+  sandboxed Wine attempt could not create its runtime lock; the successful
+  isolated-prefix run used the approved host invocation.
+- Reference guard: **1,287 entries unchanged**, including content, modes and
+  mtimes. Last Beacon's three pre-existing dirty files retain their recorded
+  SHA-256 hashes (`work/suite-performance-baseline.json`).
+
+The native GUI has been tested with Linux Tk; Wine verifies the game runner,
+not the Windows Python/Tk editor. Objective starters require an authored route;
+dependency inventory is not proof of gameplay or arbitrary Lua coverage.
+
 ## Review-linked scenario selection — 2026-10-23
 
 **VERIFIED within the declared fixtures and dependency budgets.** Implementation

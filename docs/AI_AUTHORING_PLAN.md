@@ -724,7 +724,7 @@ fixture verifies local, shared tile/unit and town-placement changes. Selected
 seeds have identical native results, saves and ordinary-input replays to the
 full suite. Opaque control and arbitrary fixtures recommend a full run.
 
-**Next proposed milestone: suite authoring and coverage inventory (AI4 extension).**
+**Delivered: suite authoring and coverage inventory (AI4 extension, batch 1).**
 
 1. Let users create/edit suite cases, seed sets and scenario file references
    inside the editor, with schema checks and clear fixture/checkpoint setup.
@@ -735,7 +735,13 @@ full suite. Opaque control and arbitrary fixtures recommend a full run.
    before it becomes verification evidence; do not invent a route to an objective.
 4. Verify authoring, save/reopen, source packages, failed-case navigation and
    selected/full checks on the independent campaign fixtures. Retain the current
-   runtime limits and full-suite option. This is proposed, not implemented here.
+   runtime limits and full-suite option.
+
+[Test suite authoring](TEST_SUITE_AUTHORING.md) supplies project-owned definitions,
+recoverable forms, portable CLI exports, source-package Save/reopen, honest
+route starters, native selected/full checks and event/branch coverage navigation.
+Batch 2 measures and addresses the remaining large-project GUI pauses; it does
+not increase game capacities or imply exhaustive gameplay coverage.
 
 AI6b/AI6c now supply round hooks, atomic reinforcement groups, scripted outcomes,
 friendly/neutral actors and terrain-aware waypoints. Cairn Passage demonstrates
