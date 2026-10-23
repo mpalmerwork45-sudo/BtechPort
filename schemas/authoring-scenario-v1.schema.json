@@ -14,6 +14,25 @@
       "minimum": 1,
       "maximum": 16777215
     },
+    "checkpoint": {
+      "type": "object",
+      "properties": {
+        "file": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "file",
+        "sha256"
+      ],
+      "additionalProperties": false
+    },
     "expected_revision": {
       "type": "string",
       "pattern": "^[0-9a-f]{64}$"
@@ -73,7 +92,7 @@
             "type": "object",
             "properties": {
               "op": {
-                "const": "checkpoint"
+                "const": "capture"
               }
             },
             "required": [
@@ -85,7 +104,13 @@
             "type": "object",
             "properties": {
               "op": {
-                "const": "capture"
+                "const": "checkpoint"
+              },
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 48,
+                "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]*$"
               }
             },
             "required": [
@@ -707,5 +732,11 @@
     "steps"
   ],
   "additionalProperties": false,
+  "not": {
+    "required": [
+      "seed",
+      "checkpoint"
+    ]
+  },
   "$schema": "https://json-schema.org/draft/2020-12/schema"
 }

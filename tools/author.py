@@ -279,7 +279,7 @@ def dispatch(args):
         settings={k:str(getattr(args,k.replace('-','_'))) for k in ('data','dialogue-data','combat-data','world-data') if getattr(args,k.replace('-','_'))}
         cancelled=lambda:bool(args.cancel_file and args.cancel_file.exists())
         if args.command=='suite':return run_suite(doc,read_json(args.file),args.file.parent,args.output,args.runner,settings,cancelled,case_ids=args.case_ids)
-        return run(doc,read_json(args.file),args.output,args.runner,settings,cancelled)
+        return run(doc,read_json(args.file),args.output,args.runner,settings,cancelled,base_dir=args.file.parent)
 
 
 def main(argv=None):

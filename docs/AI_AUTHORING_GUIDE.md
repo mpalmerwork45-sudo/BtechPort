@@ -579,7 +579,13 @@ and `assert`. Battle policies are `computer` (real combat AI), `hold` (end turns
 without attacking) and `retreat` (normal Flee command). `until_round: 1` stops
 during a fight for a checkpoint, then a later battle step resumes it.
 Checkpoints perform real save/load and compare complete serialized state; they
-do not provide arbitrary cross-project or changed-content resume.
+may have a unique `name` to retain separate files. A top-level `checkpoint`
+with `file` and `sha256` starts from an exact saved input, preserving RNG and
+skipping opening events. It cannot accompany `seed`, and suite checkpoint cases
+reject seed sweeps. Paths are relative to the scenario file. The editor exposes
+the same checks in **Play options → Checkpoints and trace**. See
+[saved journeys](SAVED_JOURNEYS.md) for setup, reproduction and midbattle metric
+boundaries. Cross-project or changed-content resume is refused.
 
 Assertions cover credits, flags, event, map, phase, objectives, owned/available
 units, party survival/health, armour, structure, ammunition and battle outcome/

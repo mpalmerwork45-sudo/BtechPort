@@ -1,4 +1,4 @@
-"""Minimal scenario/replay evidence, backed by the actual C player."""
+"""Bounded scenario/replay evidence, backed by the actual C player."""
 import hashlib
 import json
 from pathlib import Path
@@ -12,10 +12,14 @@ from event_editing import edges
 
 DEFAULT_SEED=11223583  # Little-endian bytes 31, 66, 171 used by normal games.
 MOVEMENT=array(integer(0,2047),2,2)
+CHECKPOINT_NAME=dict(type='string',minLength=1,maxLength=48,pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_-]*$')
+CHECKPOINT=obj(dict(file=dict(type='string',minLength=1,maxLength=1024),sha256=dict(type='string',pattern='^[0-9a-f]{64}$')),['file','sha256'])
+MAX_SAVE_BYTES=160+20480  # Current project-save envelope and serialized state.
 
 STEP_SCHEMAS = [
     obj(dict(op={'const':'input'},action=TEXT,repeat=integer(1,120000)),['op','action']),
-    *[obj(dict(op={'const':name}),['op']) for name in ('pages','enter','checkpoint','capture')],
+    *[obj(dict(op={'const':name}),['op']) for name in ('pages','enter','capture')],
+    obj(dict(op={'const':'checkpoint'},name=CHECKPOINT_NAME),['op']),
     obj(dict(op={'const':'walk'},entrance=ID,max_positions=integer(1,1048576)),['op','entrance']),
     *[obj(dict(op={'const':'walk'},**{kind:ID},at=MOVEMENT,max_positions=integer(1,1048576)),['op',kind,'at']) for kind in ('map','world')],
     obj(dict(op={'const':'choose'},label=TEXT),['op','label']),
@@ -37,11 +41,28 @@ STEP_SCHEMAS = [
                *[dict(**{'if':dict(required=[key])},then=dict(required=['mech'])) for key in ('armor_min','armor_max','structure_min','structure_max','ammo_min','ammo_max')]]),
 ]
 SCHEMA = obj(dict(format={'const':'btp-author-scenario-v1'},max_ticks=integer(1,120000),seed=integer(1,16777215),
+                  checkpoint=CHECKPOINT,
                   expected_revision=dict(type='string',pattern='^[0-9a-f]{64}$'),
                   steps=array(dict(oneOf=STEP_SCHEMAS),1,256)),['format','steps'])
+SCHEMA['not']=dict(required=['seed','checkpoint'])
 
 
-def run(document, scenario, output, runner, settings=None, cancelled=lambda:False, timeout_seconds=45, fixture=None):
+def checkpoint_bytes(path):
+    """Read one bounded input, so hashing and staging use the same bytes."""
+    try:
+        with Path(path).open('rb') as stream:data=stream.read(MAX_SAVE_BYTES+1)
+    except OSError as exc:raise AuthoringError('checkpoint.unreadable',f'Cannot read checkpoint: {exc}','$.checkpoint.file') from exc
+    if not 184<=len(data)<=MAX_SAVE_BYTES:
+        raise AuthoringError('checkpoint.invalid','Checkpoint is truncated or exceeds the supported save size.','$.checkpoint.file')
+    return data
+
+
+def pin_checkpoint(path):
+    path=Path(path).resolve()
+    return dict(file=str(path),sha256=hashlib.sha256(checkpoint_bytes(path)).hexdigest())
+
+
+def run(document, scenario, output, runner, settings=None, cancelled=lambda:False, timeout_seconds=45, fixture=None, *, base_dir=None):
     check(scenario,SCHEMA);base=revision(document)
     if scenario.get('expected_revision',base)!=base:
         raise AuthoringError('revision.conflict','Scenario belongs to another content revision; regenerate its setup.')
@@ -49,11 +70,36 @@ def run(document, scenario, output, runner, settings=None, cancelled=lambda:Fals
     if output.is_relative_to(document.root):raise AuthoringError('output.invalid','Run scenarios in an artifact directory outside the project.')
     if output.exists():raise AuthoringError('output.exists','Scenario output must be a new directory.')
     if not runner.is_file():raise AuthoringError('runtime.unavailable','Build btp-author-playtest before running scenarios.')
+    names=[s['name'] for s in scenario['steps'] if s['op']=='checkpoint' and 'name' in s]
+    if len(set(names))!=len(names):raise AuthoringError('request.invalid','Named checkpoints must be unique within a scenario.','$.steps')
+    initial=None;origin=None
+    if 'checkpoint' in scenario:
+        origin=(Path(base_dir or Path.cwd())/scenario['checkpoint']['file']).resolve()
+        initial=checkpoint_bytes(origin)
+        if hashlib.sha256(initial).hexdigest()!=scenario['checkpoint']['sha256']:
+            raise AuthoringError('checkpoint.hash_mismatch','Checkpoint SHA-256 differs; select the intended save again.','$.checkpoint.sha256')
     document.unchanged_on_disk();output.mkdir(parents=True)
     # A private exact snapshot prevents edits during the run from changing
     # its evidence. It is removed from neither the original nor other jobs.
     game=output/'game';game.mkdir();document.stage(game)
     payload=dict(scenario);payload.pop('expected_revision',None)
+    setup=dict(fixture) if fixture else dict(kind='ordinary_new_game')
+    if initial is not None:
+        # A private pinned input keeps a changed/deleted source save from
+        # altering this run or preventing its subsequent reproduction.
+        (output/'initial.btp').write_bytes(initial)
+        payload['checkpoint']=dict(scenario['checkpoint'],file='initial.btp')
+        setup=dict(kind='saved_checkpoint',source=str(origin),file='initial.btp',sha256=payload['checkpoint']['sha256'])
+        if fixture:setup['fixture']=fixture
+        prior=origin.parent/'report.json'
+        if prior.is_file() and prior.stat().st_size<=4*1024*1024:
+            try:
+                evidence=prior.read_bytes();previous=json.loads(evidence)
+                checkpoints=[s['checkpoint'] for s in previous.get('steps',[]) if 'checkpoint' in s]
+                if any(c.get('file')==origin.name and c.get('sha256')==setup['sha256'] for c in checkpoints) or previous.get('result',{}).get('save')==origin.name:
+                    (output/'initial-report.json').write_bytes(evidence)
+                    setup['source_report']=dict(file='initial-report.json',sha256=hashlib.sha256(evidence).hexdigest())
+            except (OSError,ValueError,TypeError,AttributeError):pass  # Optional historical evidence never replaces save validation.
     source=output/'scenario.json';source.write_bytes(encoded(payload))
     command=[str(runner),'--project',str(game),'--scenario',str(source)]
     for key,path in (settings or {}).items():command.extend(['--'+key,str(Path(path).resolve())])
@@ -106,18 +152,23 @@ def run(document, scenario, output, runner, settings=None, cancelled=lambda:Fals
         where=navigation.get('destination') or where
     failure_code=navigation.get('code')
     if not failure_code or failure_code=='route.passed':failure_code='scenario.failed'
+    if initial is not None and not records:failure_code='checkpoint.invalid'
+    initial_state=next((r['state'] for r in records if r.get('initial')),None)
+    setup.update(initial_state=initial_state,start_tick=final.get('start_tick'),start_rng=final.get('start_rng'))
     report=dict(api_version=API_VERSION,status='passed' if passed else 'cancelled' if was_cancelled else 'failed',project_id=document.manifest['package_id'],
-                setup=fixture or dict(kind='ordinary_new_game'),
+                setup=setup,
                 revision=base,runtime_sha256=hashlib.sha256(runner.read_bytes()).hexdigest(),
                 scenario_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),elapsed_seconds=round(elapsed,4),
-                coverage=dict(basis='Ordinary input from a new game, with the declared/default initial RNG state. Observed transitions do not prove untested conditions.',
+                coverage=dict(basis=('Ordinary input from the pinned checkpoint and its saved RNG. Earlier events and branches are not covered by this run. ' if initial is not None else 'Ordinary input from a new game, with the declared/default initial RNG state. ')+ 'Observed transitions do not prove untested conditions.',
                     events=sorted(visited),branches=branches,unvisited_events=sorted(e['id'] for e in (document.adventure or {}).get('events',[]) if e['id'] not in visited)),
-                seed=scenario.get('seed',DEFAULT_SEED),combat=combat,
+                seed=None if initial is not None else scenario.get('seed',DEFAULT_SEED),combat=combat,
                 result=final,steps=[r for r in records if 'step' in r],
                 artifacts=[dict(path=str(p),bytes=p.stat().st_size) for p in sorted(output.iterdir()) if p.is_file()],
-                reproduction=dict(scenario=str(source),failed_step=next((r['step'] for r in records if r.get('ok') is False),None),replay=str(output/'replay.actions')),
+                reproduction=dict(scenario=str(source),original_command=command,cwd=str(output),requires_new_output_directory=True,
+                    load=str(output/'initial.btp') if initial is not None else None,
+                    failed_step=next((r['step'] for r in records if r.get('ok') is False),None),replay=str(output/'replay.actions')),
                 diagnostics=[] if passed else [dict(code='job.cancelled' if was_cancelled else 'scenario.timeout' if timeout else failure_code,severity='error',
-                    message=message or 'Scenario runner failed; inspect stderr.txt.',field_path='$.steps',
+                    message=message or 'Scenario runner failed; inspect stderr.txt.',field_path='$.checkpoint' if failure_code=='checkpoint.invalid' else '$.steps',
                     object_id=final.get('state',{}).get('event'),location=where)])
     (output/'report.json').write_bytes(encoded(report))
     # Console response stays compact. Full per-step evidence is in the report.
@@ -131,7 +182,7 @@ SUITE_SCHEMA=obj(dict(format={'const':'btp-author-suite-v1'},max_seconds=integer
 
 
 def run_suite(document,suite,base_dir,output,runner,settings=None,cancelled=lambda:False,case_ids=None):
-    """Independent new-game routes and bounded seeds, with one aggregate report."""
+    """Independent new-game or pinned continuation routes, with one report."""
     from authoring_contract import read_json
     check(suite,SUITE_SCHEMA);base=revision(document);output=Path(output).resolve();base_dir=Path(base_dir).resolve()
     if output.is_relative_to(document.root):raise AuthoringError('output.invalid','Write suite evidence outside the game project.')
@@ -144,6 +195,9 @@ def run_suite(document,suite,base_dir,output,runner,settings=None,cancelled=lamb
     jobs=[]
     for case in suite['cases']:
         scenario=read_json(base_dir/case['file']);check(scenario,SCHEMA)
+        if 'checkpoint' in scenario:
+            if 'seeds' in case:raise AuthoringError('request.invalid','Checkpoint cases keep saved RNG; remove the seed sweep.')
+            jobs.append((case,scenario));continue
         seeds=case.get('seeds',[scenario.get('seed',DEFAULT_SEED)])
         if len(set(seeds))!=len(seeds):raise AuthoringError('request.invalid','A case repeats a seed.')
         for seed in seeds:jobs.append((case,dict(scenario,seed=seed)))
@@ -172,15 +226,17 @@ def run_suite(document,suite,base_dir,output,runner,settings=None,cancelled=lamb
                         origin=dict(kind='validated_fixture',source_revision=base,commands_sha256=hashlib.sha256(request_path.read_bytes()).hexdigest())
                         prepared[case['id']]=(candidate,origin)
                     candidate,origin=prepared[case['id']]
-                result=run(candidate,scenario,output/(case['id']+'-seed-'+str(scenario['seed'])),runner,settings,cancelled,min(45,max(.01,deadline-time.monotonic())),origin)
+                suffix='-checkpoint' if 'checkpoint' in scenario else '-seed-'+str(scenario['seed'])
+                result=run(candidate,scenario,output/(case['id']+suffix),runner,settings,cancelled,min(45,max(.01,deadline-time.monotonic())),origin,
+                    base_dir=(base_dir/case['file']).parent)
             except (EditorError,OSError) as exc:
                 # Keep prior evidence if content changes or a later case fails
                 # before launching. A partial suite never reports success.
-                runs.append(dict(case=case['id'],tags=case.get('tags',[]),seed=scenario['seed'],status='failed',report=None,
+                runs.append(dict(case=case['id'],tags=case.get('tags',[]),seed=scenario.get('seed'),status='failed',report=None,
                     ticks=None,coverage=dict(events=[],branches=[]),combat=[],diagnostics=[dict(code='suite.setup_failed',severity='error',message=str(exc))]))
                 stop='setup_failed';break
             full=json.loads(Path(result['report']).read_bytes())
-            runs.append(dict(case=case['id'],tags=case.get('tags',[]),seed=scenario['seed'],status=result['status'],report=result['report'],
+            runs.append(dict(case=case['id'],tags=case.get('tags',[]),seed=scenario.get('seed'),status=result['status'],report=result['report'],
                              setup=full['setup'],ticks=full['result'].get('ticks'),coverage=full['coverage'],combat=full['combat'],diagnostics=full['diagnostics']))
             if result['status']=='cancelled':stop='cancelled';break
     # Seed samples are descriptive. A hold-policy defeat and computer victory
@@ -190,8 +246,10 @@ def run_suite(document,suite,base_dir,output,runner,settings=None,cancelled=lamb
         subset=[b for run_ in runs if run_['case']==case['id'] for b in run_['combat']]
         if not subset:continue
         samples.append(dict(case=case['id'],samples=len(subset),policies=sorted({b['policy'] for b in subset}),
+            metric_bases=sorted({b.get('metric_basis','whole_battle') for b in subset}),
             wins=sum(b['outcome']=='win' for b in subset),losses=sum(b['outcome']=='loss' for b in subset),retreats=sum(b['outcome']=='retreat' for b in subset),
             mean_rounds=sum(b['rounds'] for b in subset)/len(subset),
+            mean_rounds_observed=sum(b['rounds']-b.get('start_round',0) for b in subset)/len(subset),
             mean_armor_reduction=sum(b['armor_reduction'] for b in subset)/len(subset),
             mean_structure_reduction=sum(b['structure_reduction'] for b in subset)/len(subset),
             mean_ammunition_reduction=sum(b['ammunition_reduction'] for b in subset)/len(subset),
@@ -201,7 +259,7 @@ def run_suite(document,suite,base_dir,output,runner,settings=None,cancelled=lamb
         elapsed_seconds=round(time.monotonic()-start,4),stopped=stop,runs=runs,combat_samples=samples,
         coverage=dict(events=sorted({e for r in runs for e in r['coverage']['events']}),
             basis='Only declared routes/seeds/policies are measured; no proof of all Lua paths or general combat balance.'),
-        metric_basis='Armor/structure/ammunition reductions include destroyed units and destroyed ammunition, not only shots fired.')
+        metric_basis='Armor/structure/ammunition reductions include destroyed units and destroyed ammunition, not only shots fired. since_checkpoint samples measure only the remaining portion; rounds is the final battle round, rounds_observed excludes earlier rounds.')
     (output/'suite-report.json').write_bytes(encoded(report))
     return dict(api_version=API_VERSION,status=report['status'],revision=base,report=str(output/'suite-report.json'),
         runs_planned=len(jobs),runs_completed=len(runs),elapsed_seconds=report['elapsed_seconds'],combat_samples=samples)

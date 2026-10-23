@@ -209,12 +209,14 @@ class PlaySession:
             folder=Path(tempfile.mkdtemp(prefix='run-',dir=root))
             try:
                 if checkpoint:
-                    source=ProjectDocument(checkpoint/'game',candidate.validator)
+                    from playtest_workbench import checkpoint_save
+                    save=checkpoint_save(checkpoint)
+                    source=ProjectDocument(save.parent/'game',candidate.validator)
                     source.export(folder/'game')
                 else:candidate.export(folder/'game')
                 document=ProjectDocument(folder/'game',candidate.validator)
                 command=document.play_command(settings,folder,here=here)
-                if checkpoint:command+=['--load',str(checkpoint/'state.btp')]
+                if checkpoint:command+=['--load',str(save)]
                 command+=['--event-trace',str(folder/'events.jsonl')]
                 return command,folder
             except Exception:

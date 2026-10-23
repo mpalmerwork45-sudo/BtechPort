@@ -66,15 +66,23 @@ def journey():
     return dict(format='btp-author-scenario-v1',steps=steps)
 
 
-def windows_check(doc,scenario,folder,reference):
+def windows_check(doc,scenario,folder,reference,settings=None):
     """Optional same-input Windows continuation in the isolated test prefix."""
     import subprocess
     from windows_check import WINE,arguments,environment
     folder=Path(folder).resolve();folder.mkdir()
+    scenario=copy.deepcopy(scenario)
+    if 'checkpoint' in scenario:
+        # The validated Linux run already staged the exact input; a relative
+        # local copy also avoids embedding host paths into Windows JSON.
+        (folder/'initial.btp').write_bytes((Path(reference['report']).parent/'initial.btp').read_bytes())
+        scenario['checkpoint']['file']='initial.btp'
     source=folder/'scenario.json';source.write_bytes(encoded(scenario))
     env=environment();env.pop('DISPLAY',None);env.pop('WAYLAND_DISPLAY',None)
+    options=[]
+    for k,v in (settings or {}).items():options.extend(['--'+k,Path(v)])
     command=[str(WINE),*arguments([ROOT/'build-windows/btp-author-playtest.exe','--project',doc.root,
-        '--scenario',source,'--artifacts',folder])]
+        '--scenario',source,'--artifacts',folder,*options])]
     p=subprocess.run(command,env=env,capture_output=True,text=True,timeout=60)
     (folder/'steps.jsonl').write_text(p.stdout);(folder/'stderr.txt').write_text(p.stderr)
     if p.returncode:raise RuntimeError('Windows route failed: '+p.stderr[-2000:])

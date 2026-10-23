@@ -39,6 +39,8 @@ The Construction Kit now includes service-building templates, a connected event
 graph and quest journal, saved playtest checkpoints, building stamps, layered
 pixel editing, generated jigsaw worlds, named animation actions and individual
 infantry sprites. **Project** provides asset reports and explicit save migration.
+**Play options → Checkpoints and trace** can verify later missions from a saved
+point, with exact-content checks and saved RNG; see [saved journeys](docs/SAVED_JOURNEYS.md).
 See the [five milestones](docs/EDITOR_COMPLETION_MILESTONES.md) and
 [distribution guide](docs/CONSTRUCTION_KIT_DELIVERY.md). A packaged Linux kit
 starts with `ConstructionKit` and includes Python/Tk/Pillow/SDL; a Windows kit

@@ -13,6 +13,7 @@
 #include "data/json.h"
 #include "data/project.h"
 #include "data/save.h"
+#include "data/digest.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -29,6 +30,11 @@ static FILE *actions,*trace,*combat_log;
 static BtpError error;
 static unsigned battle_open,battle_index,initial_armor,initial_structure,initial_ammo,initial_count;
 static unsigned initial_infantry[BTP_COMBAT_UNITS];
+static unsigned initial_alive[BTP_COMBAT_UNITS],metrics_from_checkpoint,metrics_start_round;
+static unsigned resumed,starting_tick;
+static uint8_t starting_rng[3];
+static char checkpoint_file[96],checkpoint_hash[65],checkpoint_names[256][49];
+static unsigned checkpoint_count;
 static const char *battle_policy="unselected";
 static const char *last_outcome="none";
 static unsigned last_round;
@@ -59,8 +65,11 @@ static void points(const BtpCombatState *c,unsigned *armor,unsigned *structure,u
 static void begin_metrics(const BtpState *s)
 {
     battle_open=1;++battle_index;battle_policy="unselected";
+    metrics_from_checkpoint=0;metrics_start_round=s->combat.round;
     initial_count=s->combat.friends;
-    for(unsigned i=0;i<s->combat.friends;++i)initial_infantry[i]=s->combat.unit[i].infantry;
+    for(unsigned i=0;i<s->combat.friends;++i) {
+        initial_infantry[i]=s->combat.unit[i].infantry;initial_alive[i]=s->combat.unit[i].record[0]!=255;
+    }
     points(&s->combat,&initial_armor,&initial_structure,&initial_ammo);
 }
 static void end_metrics(void *context,const BtpState *s,const BtpResources *r,const BtpSceneBattle *encounter)
@@ -69,13 +78,17 @@ static void end_metrics(void *context,const BtpState *s,const BtpResources *r,co
     unsigned armor,structure,ammo,actors_lost=0,mechs_lost=0;const BtpCombatState *c=&s->combat;
     points(c,&armor,&structure,&ammo);
     for(unsigned i=0;i<c->friends;++i) {
-        if(c->unit[i].record[0]==255)++actors_lost;
-        if(!c->unit[i].infantry && c->unit[i].record[0]==255)++mechs_lost;
+        /* Ejected pilots append new friendly slots during the battle. Count
+           their later losses, but never re-count a wreck already in the save. */
+        int newly_lost=(i>=initial_count || initial_alive[i]) && c->unit[i].record[0]==255;
+        if(newly_lost)++actors_lost;
+        if(newly_lost && !c->unit[i].infantry)++mechs_lost;
     }
     last_outcome=outcome(c);last_round=c->round;
     fprintf(combat_log,"{\"battle\":%u,\"encounter\":\"%s\",\"policy\":\"%s\",\"outcome\":\"%s\",\"rounds\":%u,\"friendly_actors_lost\":%u,\"friendly_mechs_lost\":%u,"
-        "\"armor_reduction\":%u,\"structure_reduction\":%u,\"ammunition_reduction\":%u}\n",battle_index,encounter->id,battle_policy,last_outcome,c->round,actors_lost,mechs_lost,
-        initial_armor>armor ? initial_armor-armor : 0,initial_structure>structure ? initial_structure-structure : 0,initial_ammo>ammo ? initial_ammo-ammo : 0);
+        "\"armor_reduction\":%u,\"structure_reduction\":%u,\"ammunition_reduction\":%u,\"metric_basis\":\"%s\",\"start_round\":%u}\n",battle_index,encounter->id,battle_policy,last_outcome,c->round,actors_lost,mechs_lost,
+        initial_armor>armor ? initial_armor-armor : 0,initial_structure>structure ? initial_structure-structure : 0,initial_ammo>ammo ? initial_ammo-ammo : 0,
+        metrics_from_checkpoint?"since_checkpoint":"whole_battle",metrics_start_round);
     battle_open=0;
 }
 
@@ -165,7 +178,7 @@ static void navigation(const BtpResources *r)
 static void state(const BtpState *s,const BtpResources *r)
 {
     const BtpAdventure *a=btp_adventure(r);const BtpScene *scene=btp_scene(r,s);
-    fputs("{\"map\":",stdout);string_json(stdout,scene ? scene->id : "");
+    printf("{\"tick\":%u,\"map\":",s->tick);string_json(stdout,scene ? scene->id : "");
     fputs(",\"location\":",stdout);location(s,r);
     printf(",\"world\":\"%s\",\"world_at\":[%u,%u],\"formation_compact\":%s,\"discovery\":{",
         scene && scene->world ? a->worlds[scene->world-1].id : "",s->campaign.world_x,s->campaign.world_y,
@@ -224,16 +237,41 @@ static void save_path(char path[96],const char *name,const BtpResources *r)
     for (unsigned i=0;i<32;++i) snprintf(path+prefix+2*i,3,"%02x",r->project->digest[i]);
     strcpy(path+prefix+64,".btp");
 }
-static int checkpoint(BtpState *s,const BtpResources *r)
+static int file_hash(const char *path,char out[65])
 {
+    FILE *f=fopen(path,"rb");if(!f)return fail("Cannot read checkpoint save");
+    BtpDigest digest;btp_digest_start(&digest);uint8_t buffer[4096],hash[32];size_t n,total=0;
+    while((n=fread(buffer,1,sizeof buffer,f))) {
+        total+=n;if(total>160+BTP_STATE_BYTES)break;
+        btp_digest_add(&digest,buffer,n);
+    }
+    int ok=!ferror(f) && total<=160+BTP_STATE_BYTES && total>=184;
+    if(fclose(f))ok=0;
+    if(!ok)return fail("Checkpoint save is truncated, oversized or unreadable");
+    btp_digest_finish(&digest,hash);
+    for(unsigned i=0;i<32;++i)snprintf(out+2*i,3,"%02x",hash[i]);
+    return 1;
+}
+static int checkpoint(BtpState *s,const BtpResources *r,const char *name)
+{
+    char path[96];
+    if(name) {
+        size_t len=strlen(name);if(!len || len>48)return fail("Checkpoint name needs 1..48 letters, digits, underscores or dashes");
+        for(size_t i=0;i<len;++i)if(!((name[i]>='a' && name[i]<='z') || (name[i]>='A' && name[i]<='Z') ||
+            (name[i]>='0' && name[i]<='9') || (i && (name[i]=='_' || name[i]=='-'))))return fail("Invalid checkpoint name");
+        for(unsigned i=0;i<checkpoint_count;++i)if(!strcmp(name,checkpoint_names[i]))return fail("Checkpoint names must be unique within a scenario");
+        if(checkpoint_count==256)return fail("Too many named checkpoints");
+        snprintf(path,sizeof path,"checkpoint-%s.btp",name);
+        FILE *existing=fopen(path,"rb");if(existing) {fclose(existing);return fail("Named checkpoint already exists; use a new artifact directory");}
+        strcpy(checkpoint_names[checkpoint_count++],name);
+    } else save_path(path,"checkpoint",r);
     BtpState *loaded=malloc(sizeof *loaded);uint8_t *before=malloc(BTP_STATE_BYTES),*after=malloc(BTP_STATE_BYTES);
     /* CTest reuses its artifact directory after authored content changes.
        Namespace fixtures by content instead of weakening the player's guard
        against overwriting another project revision's save. */
-    char path[96];save_path(path,"checkpoint",r);
     int ok=loaded && before && after && btp_save_write(path,s,r,&error) && btp_save_load(path,loaded,r,&error);
     if(ok) { btp_state_encode(s,before);btp_state_encode(loaded,after);ok=!memcmp(before,after,BTP_STATE_BYTES); }
-    if(ok)*s=*loaded;
+    if(ok) {*s=*loaded;ok=file_hash(path,checkpoint_hash);if(ok)strcpy(checkpoint_file,path);}
     free(loaded);free(before);free(after);return ok || fail(error.text[0] ? error.text : "Save/reload changed logical state");
 }
 static int capture(const BtpState *s,const BtpResources *r,const char *path)
@@ -299,6 +337,15 @@ static int execute(BtpJson *j,unsigned node,BtpState *s,const BtpResources *r)
         if(s->event.phase!=BTP_EVENT_FIGHTING && !s->battle_mission.active)return fail("Battle requires an active encounter");
         const char *policy=!strcmp(value,"computer") ? "computer" : !strcmp(value,"hold") ? "hold" : "retreat";
         if(s->combat.phase==BTP_COMBAT_CONTROL) battle_policy=policy;
+        else if(!strcmp(battle_policy,"saved")) {
+            /* Resume the saved orders, never rewrite auto flags to make a
+               scenario pass. Mixed/manual-paused computer orders need
+               explicit ordinary menu inputs before using this helper. */
+            unsigned mask=(1u<<s->combat.friends)-1u;
+            if(!strcmp(policy,"computer") ? s->combat.automatic!=mask || !s->combat.auto_run : s->combat.automatic!=0)
+                return fail("Battle policy conflicts with saved control; use ordinary menu inputs or a matching policy");
+            battle_policy=policy;
+        }
         else if(strcmp(battle_policy,policy))return fail("Resume a held battle with its original tested policy");
         while((s->event.phase==BTP_EVENT_FIGHTING || s->battle_mission.active) && !failed) {
             if(until && s->combat.round>=until && !s->battle_mission.in_hook)break;
@@ -324,7 +371,9 @@ static int execute(BtpJson *j,unsigned node,BtpState *s,const BtpResources *r)
             } else input(s,r,BTP_IDLE);
         }
     } else if(!strcmp(op,"checkpoint")) {
-        if(!checkpoint(s,r))return 0;
+        unsigned n=btp_json_optional(j,node,"name");char name[49];
+        if(n && !btp_json_string(j,n,name,sizeof name))return 0;
+        if(!checkpoint(s,r,n?name:NULL))return 0;
     } else if(!strcmp(op,"capture")) {
         char path[64];snprintf(path,sizeof path,"step-%03u.ppm",step_number);
         if(!capture(s,r,path))return 0;
@@ -428,30 +477,61 @@ int main(int argc,char **argv)
     if(parsed<=0 || !scenario || !options.project || options.load || options.play_map || options.replay) {
         fputs("Use --project DIRECTORY --scenario FILE, with optional original asset paths. Output goes into the working directory.\n",stderr);return 2;
     }
-    BtpJson j={0};char format[64];unsigned seed=0;uint8_t random[3];
+    BtpJson j={0};char format[64],load_file[1025]={0},load_hash[65]={0};unsigned seed=0;uint8_t random[3];
     if(!btp_json_load(&j,scenario,error.text) || !text_field(&j,1,"format",format,sizeof format) || strcmp(format,"btp-author-scenario-v1") ||
         !optional_number(&j,1,"max_ticks",1,120000,&limit) || !optional_number(&j,1,"seed",1,16777215,&seed)) { fprintf(stderr,"%s\n",error.text);btp_json_close(&j);return 1; }
+    unsigned setup=btp_json_optional(&j,1,"checkpoint");
+    if(setup && (seed || !text_field(&j,setup,"file",load_file,sizeof load_file) ||
+        !text_field(&j,setup,"sha256",load_hash,sizeof load_hash) || !btp_json_done(&j,setup))) {
+        fprintf(stderr,"Checkpoint start needs file and SHA-256 and cannot set a seed. %s\n",error.text);btp_json_close(&j);return 1;
+    }
     unsigned steps=btp_json_field(&j,1,"steps");
     if(!btp_json_type(&j,steps,'[') || !btp_json_done(&j,1)) {fprintf(stderr,"%s\n",error.text);btp_json_close(&j);return 1;}
     BtpContent content={0};
     if(!btp_cli_load_content(&options,&content,&error)) {fprintf(stderr,"%s\n",error.text);btp_json_close(&j);return 1;}
     const BtpResources *r=content.resources;BtpState *s=calloc(1,sizeof *s);
+    if(!s || !btp_adventure(r)) {fail("Scenario needs an authored project and state allocation");goto done;}
+    if(setup) {
+        /* Resolve beside the scenario before entering its output directory.
+           The Python runner copies/pins the input there for portable replay.
+           Do not execute the new-game event before loading this state. */
+        char path[4096],actual[65];const char *slash=strrchr(scenario,'/'),*back=strrchr(scenario,'\\');
+        if(back && (!slash || back>slash))slash=back;
+        int absolute=load_file[0]=='/' || load_file[0]=='\\' || (load_file[0] && load_file[1]==':');
+        int n=snprintf(path,sizeof path,"%.*s%s",absolute || !slash ? 0 : (int)(slash-scenario+1),scenario,load_file);
+        if(n<0 || (size_t)n>=sizeof path) {fail("Checkpoint path is too long");goto done;}
+        if(!file_hash(path,actual))goto done;
+        if(strcmp(actual,load_hash)) {fail("Checkpoint SHA-256 mismatch; select the exact saved input");goto done;}
+        if(!btp_save_load(path,s,r,&error)) {fail(error.text);goto done;}
+        resumed=1;
+    }
     if(artifacts && change_directory(artifacts)) {fail("Cannot enter scenario artifact directory");goto done;}
     actions=fopen("replay.actions","wb");trace=fopen("events.jsonl","wb");combat_log=fopen("combat.jsonl","wb");
     if(!s || !actions || !trace || !combat_log || !btp_adventure(r)) {fail("Scenario needs an authored project and writable output directory");goto done;}
     random[0]=(uint8_t)seed;random[1]=(uint8_t)(seed>>8);random[2]=(uint8_t)(seed>>16);
-    btp_events_observe(event_trace,trace);btp_events_observe_battles(end_metrics,NULL);btp_initial_state_seeded(&options,s,r,seed ? random : NULL);
-    if(s->event.phase==BTP_EVENT_FIGHTING)begin_metrics(s);
+    btp_events_observe(event_trace,trace);btp_events_observe_battles(end_metrics,NULL);
+    if(!resumed)btp_initial_state_seeded(&options,s,r,seed ? random : NULL);
+    starting_tick=s->tick;memcpy(starting_rng,s->npc.rng,3);
+    if(s->event.phase==BTP_EVENT_FIGHTING || s->battle_mission.active) {
+        begin_metrics(s);metrics_from_checkpoint=resumed;
+        if(resumed)battle_policy="saved";
+    }
+    fputs("{\"initial\":true,\"state\":",stdout);state(s,r);fputs("}\n",stdout);
     for(unsigned node=j.nodes[steps].first;node;node=j.nodes[node].next) {
         if(++step_number>256){fail("At most 256 scenario steps");break;}
-        route_present=0;int ok=execute(&j,node,s,r);
-        printf("{\"step\":%u,\"ok\":%s,\"ticks\":%u,\"state\":",step_number,ok?"true":"false",ticks);state(s,r);navigation(r);fputs("}\n",stdout);
+        route_present=0;checkpoint_file[0]=0;int ok=execute(&j,node,s,r);
+        printf("{\"step\":%u,\"ok\":%s,\"ticks\":%u,\"state\":",step_number,ok?"true":"false",ticks);state(s,r);navigation(r);
+        if(checkpoint_file[0])printf(",\"checkpoint\":{\"file\":\"%s\",\"sha256\":\"%s\"}",checkpoint_file,checkpoint_hash);
+        fputs("}\n",stdout);
         if(!ok){failed=1;break;}
     }
     capture(s,r,"final.ppm");
     char save[96];save_path(save,"final",r);
     if(!failed && !btp_save_write(save,s,r,&error))failed=1;
-    printf("{\"status\":\"%s\",\"ticks\":%u,\"steps\":%u,\"seed\":%u,\"rng_policy\":\"%s\",\"message\":",failed?"failed":"passed",ticks,step_number,seed ? seed : 11223583u,seed ? "explicit 24-bit state before first event" : "runtime initial state");
+    printf("{\"status\":\"%s\",\"ticks\":%u,\"steps\":%u,\"start_tick\":%u,\"start_rng\":[%u,%u,%u],\"seed\":",failed?"failed":"passed",ticks,step_number,starting_tick,starting_rng[0],starting_rng[1],starting_rng[2]);
+    if(resumed)fputs("null",stdout);else printf("%u",seed ? seed : 11223583u);
+    fputs(",\"rng_policy\":",stdout);string_json(stdout,resumed?"saved checkpoint state (not reseeded)":seed?"explicit 24-bit state before first event":"runtime initial state");
+    fputs(",\"message\":",stdout);
     string_json(stdout,error.text);fputs(",\"save\":",stdout);string_json(stdout,save);fputs(",\"state\":",stdout);state(s,r);navigation(r);fputs("}\n",stdout);
 done:
     btp_events_observe(NULL,NULL);btp_events_observe_battles(NULL,NULL);if(actions && fclose(actions))failed=1;if(trace && fclose(trace))failed=1;if(combat_log && fclose(combat_log))failed=1;

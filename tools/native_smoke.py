@@ -1323,6 +1323,7 @@ def main():
     parser.add_argument('--editor-collaboration-only',action='store_true',help='Check protected human edits, reviewed changes and a live local authoring session')
     parser.add_argument('--editor-campaign-demo-only',action='store_true',help='Check AI8 campaign GUI edits, scoped follow-up, Undo/save and Play')
     parser.add_argument('--editor-world-routes-only',action='store_true',help='Check world-route diagnostics, town/planet navigation and repair')
+    parser.add_argument('--editor-checkpoints-only',action='store_true',help='Check saved scenario starts, selection, reports and stale-content errors')
     parser.add_argument('--world-art-editor-only',action='store_true',help='Check jigsaw/city and pixel/animation editing')
     parser.add_argument('--map-construction-only',action='store_true',help='Check building/wall/road tools, tile management, patterns and original-size world creation')
     parser.add_argument('--library-editor-only',action='store_true',help='Check shared library editing/import/export and desktop game launch')
@@ -1371,7 +1372,7 @@ def main():
     read_fd, write_fd = os.pipe()
     with (work / "native-xvfb.log").open("w") as log:
         xvfb = subprocess.Popen([str(ROOT / "local-deps/xvfb/usr/bin/Xvfb"),
-            "-displayfd", str(write_fd), "-screen", "0", "1600x1000x24" if args.editor_usability_only or args.editor_focus_only or args.editor_mission_only or args.editor_combat_mission_only or args.editor_style_only or args.editor_source_only or args.editor_capacity_only or args.editor_campaign_demo_only or args.editor_world_routes_only or args.construction_library_only or args.editor_canvas_only or args.editor_paint_only or args.editor_play_tile_only or args.editor_tile_animation_only or args.editor_authoring_only or args.editor_collaboration_only else "1024x768x24", "-nolisten", "tcp"],
+            "-displayfd", str(write_fd), "-screen", "0", "1600x1000x24" if args.editor_usability_only or args.editor_focus_only or args.editor_mission_only or args.editor_combat_mission_only or args.editor_style_only or args.editor_source_only or args.editor_capacity_only or args.editor_campaign_demo_only or args.editor_world_routes_only or args.editor_checkpoints_only or args.construction_library_only or args.editor_canvas_only or args.editor_paint_only or args.editor_tile_animation_only or args.editor_authoring_only or args.editor_collaboration_only else "1024x768x24", "-nolisten", "tcp"],
             pass_fds=(write_fd,), stdout=log, stderr=subprocess.STDOUT)
         os.close(write_fd)
         try:
@@ -1473,6 +1474,10 @@ def main():
                 return
             if args.editor_world_routes_only:
                 from editor_world_routes_smoke import run
+                run(env,work)
+                return
+            if args.editor_checkpoints_only:
+                from editor_checkpoint_smoke import run
                 run(env,work)
                 return
             if args.battletech_demo_only:

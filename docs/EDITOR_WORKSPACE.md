@@ -350,6 +350,14 @@ oversized records. A crash may lose edits since the last completed write.
 
 ## Play and deliver
 
+**Play options → Checkpoints and trace** also runs scenario JSON files against
+the current project. Choose a scenario and a new run name, then **Run scenario
+file**, or select a saved point and **From selected checkpoint**. Named and final
+saves appear in the list; **Show last report** opens setup, coverage and results
+in a workspace tab. Resume preserves saved RNG and rejects changed content.
+**Play selected** and **Continue actions** use the checkpoint's historical
+project snapshot. See [saved journeys](SAVED_JOURNEYS.md).
+
 Click the top-right **Play** button, or press **F5**, to start the current project.
 **Play options** contains **Play from here**, **Checkpoints and trace**, library
 preview and **Stop test**. The editor validates a separate snapshot and starts
