@@ -6,6 +6,7 @@
 #include "core/menu.h"
 #include "core/economy.h"
 #include "core/events.h"
+#include "data/chi_services.h"
 #include <string.h>
 
 int btp_broker_page(unsigned page)
@@ -60,7 +61,7 @@ int btp_broker_available(const BtpState *s,const BtpResources *r)
 unsigned btp_broker_buy(BtpState *s,const BtpResources *r,unsigned definition)
 {
     if (!btp_broker_available(s,r) || definition>=r->roster.count ||
-        (s->event.enabled && !btp_events_stock(s,r,definition))) return BTP_BROKER_UNAVAILABLE;
+        (s->event.enabled ? !btp_events_stock(s,r,definition) : !btp_chi_broker_stock(r,definition))) return BTP_BROKER_UNAVAILABLE;
     const BtpRosterMech *d=&r->roster.mechs[definition];
     unsigned bay=0;while (bay<4 && btp_broker_owned(s,bay)) ++bay;
     if (bay==4) return BTP_BROKER_FULL;
@@ -83,7 +84,7 @@ uint32_t btp_broker_offer(const BtpState *s,const BtpResources *r,unsigned bay)
     /* Authored expansion economy: half catalogue price for an intact added
        mech, or 100 C-bills/ton for an original model. Damage lowers the offer;
        installed equipment is sold with the chassis. No original rule changes. */
-    uint32_t base=d ? d->price/2u : (uint32_t)m[16]*100u;
+    uint32_t base=d ? (uint32_t)((uint64_t)d->price*btp_chi_service(r,BTP_SVC_BROKER_SELL_PERCENT)/100u) : (uint32_t)m[16]*btp_chi_service(r,BTP_SVC_BROKER_ORIGINAL_PER_TON);
     unsigned maximum=70,remaining=0;
     for (unsigned i=17;i<36;++i) { maximum+=m[i+69];remaining+=m[i]<m[i+69] ? m[i] : m[i+69]; }
     for (unsigned i=51;i<86;++i) {

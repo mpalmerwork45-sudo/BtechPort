@@ -1,3 +1,4 @@
+#include "data/chi_services.h"
 #include "core/battle_mission.h"
 #include "data/unit_data.h"
 #include "data/definitions.h"
@@ -396,7 +397,7 @@ static void school_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
         if (i == s->script.selected) rectangle(f,109,y-1,206,9,14);
         text(r,f,110,y,option,color);
         if (i < 3) {
-            char price[8]; snprintf(price,sizeof price,"%u",btp_school_price(s->skills[i]));
+            char price[8]; snprintf(price,sizeof price,"%u",btp_school_price_resources(r,s->skills[i]));
             text(r,f,280,y,price,color);
         }
         at = end+1; y += 9;
@@ -1257,10 +1258,10 @@ static void mechit_panel(const BtpResources *r,const BtpState *s,uint32_t *f)
         }
         if (v->kind==0) {
             service_literal(r,message,&n,227);service_value(message,&n,v->amount,15);service_literal(r,message,&n,228);
-            service_value(message,&n,4u*v->amount,15);service_literal(r,message,&n,229);service_balance(message,&n,v->quote_credits);service_literal(r,message,&n,230);
+            service_value(message,&n,btp_chi_service(r,BTP_SVC_REPAIR_ARMOUR)*v->amount,15);service_literal(r,message,&n,229);service_balance(message,&n,v->quote_credits);service_literal(r,message,&n,230);
         } else if (v->kind==1) {
             service_literal(r,message,&n,232);service_literal(r,message,&n,233);service_literal(r,message,&n,234);
-            service_value(message,&n,9u*v->amount,15);service_literal(r,message,&n,235);service_balance(message,&n,v->quote_credits);service_literal(r,message,&n,236);
+            service_value(message,&n,btp_chi_service(r,BTP_SVC_REPAIR_STRUCTURE)*v->amount,15);service_literal(r,message,&n,235);service_balance(message,&n,v->quote_credits);service_literal(r,message,&n,236);
         } else if (v->kind==2) {
             service_literal(r,message,&n,238);service_value(message,&n,v->amount,15);service_literal(r,message,&n,239);
             if (v->amount>1) service_literal(r,message,&n,240);
@@ -1285,7 +1286,7 @@ static void mechit_panel(const BtpResources *r,const BtpState *s,uint32_t *f)
     service_literal(r,message,&n,255);size_t length=strlen(name);memcpy(message+n,name,length);n+=length;
     if (v->outcome==1) { service_literal(r,message,&n,256);(void)service_wrap(r,f,8,message,n);return; }
     service_literal(r,message,&n,257);service_value(message,&n,v->amount,10);service_literal(r,message,&n,258);
-    unsigned cost=w==24 ? 2u : w>=26 && w<=32 ? r->combat.ammo_prices[w-26] : 0u;
+    unsigned cost=w==24 ? btp_chi_service(r,BTP_SVC_AMMO_MACHINEGUN) : w>=26 && w<=32 ? r->combat.ammo_prices[w-26] : 0u;
     const BtpRosterMech *definition=btp_roster_definition(&r->roster,btp_party_mech((BtpState *)s,v->mech));
     if (definition && v->item<10) cost=definition->ammo_cost[v->item];
     service_value(message,&n,cost,10);service_literal(r,message,&n,259);
@@ -1306,7 +1307,8 @@ static void story_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
         if (v->action==32) {
             /* Assemble the actual 14D3:0EF3 text fragments. Numeric values
                share the original wrapped text, so Yes/No cannot overlap it. */
-            static const unsigned capacity[6]={0,25,40,30,50,50},cost[6]={0,1,2,5,20,20};
+            static const unsigned capacity[6]={0,25,40,30,50,50};
+            unsigned cost=btp_chi_service(r,BTP_SVC_ARMOUR_REPAIR_1+v->kind-1u);
             uint8_t message[768];size_t n=0;unsigned ids[8],count=0;
             if (v->phase==3) {
                 unsigned missing=capacity[v->kind]-s->party.people[v->mech][14];
@@ -1314,7 +1316,7 @@ static void story_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
                 ids[count++]=176;ids[count++]=177;ids[count++]=178;
                 for (unsigned i=0;i<count;++i) {
                     if (i==1 && s->party.people[v->mech][14]) { int k=snprintf(info,sizeof info,"%u",missing);memcpy(message+n,info,(size_t)k);n+=(size_t)k; }
-                    if (i==3 || i==4) { int k=snprintf(info,sizeof info,"%u",i==3 ? missing*cost[v->kind] : s->credits);memcpy(message+n,info,(size_t)k);n+=(size_t)k; }
+                    if (i==3 || i==4) { int k=snprintf(info,sizeof info,"%u",i==3 ? missing*cost : s->credits);memcpy(message+n,info,(size_t)k);n+=(size_t)k; }
                     size_t length;const uint8_t *p=bank_literal(r,ids[i],&length);
                     if (p && length<=sizeof message-n) { memcpy(message+n,p,length);n+=length; }
                 }

@@ -205,7 +205,7 @@ void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
     for (unsigned i=0;i<4;++i) b[19325+sizeof s->yard+i]=(uint8_t)(s->service.quote_credits>>(8u*i));
 }
 
-int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *script, BtpState *s)
+int btp_state_decode_resources(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *script, const BtpResources *resources, BtpState *s)
 {
     if (!b || !m || !s || n < 24) return 0;
     int version = n == 24 && !memcmp(b, "BTP1", 4) && b[4] == 1 ? 1 :
@@ -728,8 +728,8 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
         if (version<33 && result.service.phase) btp_service_upgrade(&result);
         if (result.disk_origin && ((result.disk_origin!=8 && result.disk_origin!=19) || result.mode!=BTP_BUILDING || !result.checkpoint_valid || result.campaign.building!=result.disk_origin)) return 0;
         if (!btp_talk_valid(&result,m) || !btp_npc_valid(&result,m) || !btp_bank_valid_bld(&result,script) ||
-            !btp_school_valid_bld(&result,script) || !btp_training_valid(&result) || !btp_cutscene_valid(&result) || !btp_combat_valid(&result) || !btp_effects_valid(&result) || !btp_service_valid(&result) ||
-            (result.presentation.count && result.combat.phase!=BTP_COMBAT_ROUND) || !btp_cache_valid(&result) || !btp_yard_valid(&result)) return 0;
+            !btp_school_valid_resources(&result,script,resources) || !btp_training_valid(&result) || !btp_cutscene_valid(&result) || !btp_combat_valid(&result) || !btp_effects_valid(&result) || !btp_service_valid(&result) ||
+            (result.presentation.count && result.combat.phase!=BTP_COMBAT_ROUND) || !btp_cache_valid(&result) || !btp_yard_valid_resources(&result,resources)) return 0;
         if (result.technician>4 || result.apprentice>1 || result.checkpoint_technician>4 ||
             result.checkpoint_apprentice>1 || (result.apprentice && !result.technician)) return 0;
     }
@@ -791,3 +791,6 @@ int btp_state_decode(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *
     return 1;
 }
 
+
+int btp_state_decode(const uint8_t *b,size_t n,const BtpMap *m,const BtpBld *script,BtpState *s)
+{ return btp_state_decode_resources(b,n,m,script,NULL,s); }

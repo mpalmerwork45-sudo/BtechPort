@@ -7,6 +7,7 @@ int btp_yard_native(BtpState *state,const BtpResources *resources);
 void btp_yard_input(BtpState *state,const BtpResources *resources,BtpAction action);
 void btp_yard_result(BtpState *state,const BtpResources *resources);
 int btp_yard_valid(const BtpState *state);
+int btp_yard_valid_resources(const BtpState *state,const BtpResources *resources);
 unsigned btp_yard_tile(const BtpState *state,unsigned tile,int x,int y);
 void btp_yard_alarm(BtpState *state,const BtpResources *resources,unsigned target);
 void btp_yard_begin_guards(BtpState *state,const BtpResources *resources);

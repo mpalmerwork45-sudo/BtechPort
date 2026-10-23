@@ -378,7 +378,7 @@ static void game_tick(BtpState *s, const BtpResources *r, BtpAction a)
             }
         }
         *s = moved;btp_world_reveal(s);
-        if (s->mode == BTP_EXPLORE && !s->story_flags[4]) btp_npc_input(s,&r->map,a);
+        if (s->mode == BTP_EXPLORE && !s->story_flags[4]) btp_npc_input_resources(s,&r->map,a,r);
         return;
     }
     ++s->tick;

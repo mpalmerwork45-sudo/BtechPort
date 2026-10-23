@@ -1,3 +1,4 @@
+#include "data/chi_services.h"
 #include "core/events.h"
 #include "data/project.h"
 #include "core/commands.h"
@@ -347,7 +348,9 @@ void btp_events_tick(BtpState *s,const BtpResources *r,BtpAction action)
 unsigned btp_events_catalogue(const BtpState *s,const BtpResources *r,unsigned weight,unsigned limit,unsigned indices[256])
 {
     unsigned count=btp_roster_catalogue(&r->roster,weight,limit,indices);
-    if (!s->event.enabled || s->event.phase!=BTP_EVENT_TRADING) return count;
+    if (!s->event.enabled || s->event.phase!=BTP_EVENT_TRADING) {
+        unsigned out=0;for (unsigned i=0;i<count;++i) if (btp_chi_broker_stock(r,indices[i])) indices[out++]=indices[i];return out;
+    }
     unsigned out=0;for (unsigned i=0;i<count;++i) if (btp_events_stock(s,r,indices[i])) indices[out++]=indices[i];return out;
 }
 int btp_events_stock(const BtpState *s,const BtpResources *r,unsigned definition)

@@ -1,0 +1,814 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "schema_version",
+    "parameters"
+  ],
+  "properties": {
+    "format": {
+      "const": "btp-chi-services-v1"
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "parameters": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "armour.price.1": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "armour.stock.1": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "armour.price.2": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "armour.stock.2": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "armour.price.3": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "armour.stock.3": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "armour.price.4": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "armour.stock.4": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "armour.price.5": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "armour.stock.5": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "weapons.price.1": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "weapons.stock.1": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "weapons.item.1": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 13
+        },
+        "weapons.price.2": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "weapons.stock.2": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "weapons.item.2": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 13
+        },
+        "weapons.price.3": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "weapons.stock.3": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "weapons.item.3": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 13
+        },
+        "weapons.price.4": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "weapons.stock.4": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "weapons.item.4": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 13
+        },
+        "weapons.price.5": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "weapons.stock.5": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "weapons.item.5": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 13
+        },
+        "weapons.price.6": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "weapons.stock.6": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "weapons.item.6": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 13
+        },
+        "weapons.price.7": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "weapons.stock.7": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "weapons.item.7": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 13
+        },
+        "weapons.price.8": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "weapons.stock.8": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "weapons.item.8": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 13
+        },
+        "weapons.price.9": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "weapons.stock.9": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "weapons.item.9": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 13
+        },
+        "weapons.price.10": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "weapons.stock.10": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "weapons.item.10": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 13
+        },
+        "weapons.price.11": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "weapons.stock.11": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "weapons.item.11": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 13
+        },
+        "armour.repair.1": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "armour.repair.2": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "armour.repair.3": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "armour.repair.4": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "armour.repair.5": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "repair.armour": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "repair.structure": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "repair.heatsink": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "repair.weapon": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "repair.jump": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "ammo.machinegun": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 255
+        },
+        "ammo.price.0": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 255
+        },
+        "ammo.price.1": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 255
+        },
+        "ammo.price.2": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 255
+        },
+        "ammo.price.3": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 255
+        },
+        "ammo.price.4": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 255
+        },
+        "ammo.price.5": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 255
+        },
+        "ammo.price.6": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 255
+        },
+        "refit.price.0": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "refit.price.1": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "refit.price.2": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "refit.price.3": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "refit.price.4": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "refit.price.5": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "refit.price.6": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "refit.price.7": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "medical.price.0": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "medical.program.0.0": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "medical.program.0.1": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "medical.program.0.2": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "medical.program.0.3": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "medical.price.1": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "medical.program.1.0": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "medical.program.1.1": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "medical.program.1.2": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "medical.program.1.3": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "medical.price.2": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "medical.program.2.0": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "medical.program.2.1": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "medical.program.2.2": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "medical.program.2.3": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "medical.price.3": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "medical.program.3.0": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "medical.program.3.1": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "medical.program.3.2": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "medical.program.3.3": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "medical.price.4": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "medical.program.4.0": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "medical.program.4.1": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "medical.program.4.2": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "medical.program.4.3": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "medical.price.5": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "medical.program.5.0": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "medical.program.5.1": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "medical.program.5.2": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "medical.program.5.3": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "medical.price.6": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "medical.program.6.0": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "medical.program.6.1": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "medical.program.6.2": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "medical.program.6.3": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "medical.price.7": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "medical.program.7.0": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "medical.program.7.1": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "medical.program.7.2": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "medical.program.7.3": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "medical.cooldown": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 127
+        },
+        "medical.insufficient_credit": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "apprentice.technician": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "apprentice.medical": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "class.price.0": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "class.price.1": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "class.price.2": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "class.price.3": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "class.price.4": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "recruit.limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8
+        },
+        "recruit.seed_factor": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535
+        },
+        "recruit.rank": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4
+        },
+        "recruit.autoseat": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "recruit.spy_chance": {
+          "enum": [
+            0,
+            50,
+            100
+          ]
+        },
+        "recruit.spy_delay": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 127
+        },
+        "prison.start_attempt": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4
+        },
+        "prison.guard_ticks": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 255
+        },
+        "prison.reward": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2
+        },
+        "garage.allocate": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "theft.clear_crew": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "broker.sell_percent": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "broker.original_per_ton": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "laser.primary": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 13
+        },
+        "laser.alternate": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 13
+        },
+        "laser.health_base": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9
+        },
+        "meal.threshold": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 254
+        },
+        "meal.damage": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 254
+        },
+        "medical.facility_fee": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "medical.kit_price": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "medical.advanced_kit_price": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "garage.fee": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "arena.rental_fee": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "arena.prize": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "clothes.price": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "cinema.funds": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "inventor.first_price": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "inventor.second_price": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "market.mask.0": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "market.rate.0": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 255
+        },
+        "market.mask.1": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "market.rate.1": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 255
+        },
+        "market.mask.2": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "market.rate.2": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 255
+        },
+        "market.loss_divisor": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535
+        },
+        "market.split_threshold": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "market.split_shift": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8
+        },
+        "cadet.allowance": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        }
+      }
+    },
+    "broker_stock": {
+      "type": "array",
+      "maxItems": 256,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "maxLength": 63
+      }
+    }
+  }
+}

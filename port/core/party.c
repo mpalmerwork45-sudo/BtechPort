@@ -1,3 +1,4 @@
+#include "data/chi_services.h"
 #include "core/party.h"
 #include "core/roster_game.h"
 #include "core/cache.h"
@@ -157,7 +158,7 @@ unsigned btp_party_heal(BtpState *s,const BtpResources *r,unsigned hospital)
         uint8_t *p=s->party.people[i];unsigned before=p[15];btp_heal_character(p,code,s->npc.rng);
         if (p[15]>before) changed+=p[15]-before;
     }
-    s->story_flags[41]=63;return changed;
+    s->story_flags[41]=(uint8_t)btp_chi_service(r,BTP_SVC_MEDICAL_COOLDOWN);return changed;
 }
 void btp_party_sync(BtpState *s)
 {
@@ -169,25 +170,27 @@ void btp_party_sync(BtpState *s)
     s->party.x[0]=s->campaign.world_x;s->party.y[0]=s->campaign.world_y;
     s->party.walk[0]=s->player_walk;s->party.direction[0]=(uint8_t)btp_player_direction(s->facing);
 }
-int btp_party_recruit(BtpState *s,unsigned skill)
+int btp_party_recruit_resources(BtpState *s,const BtpResources *r,unsigned skill)
 {
     if (skill>6) return 0;
     btp_party_init(s);BtpPartyState *p=&s->party;
+    if (btp_party_count(p)>=btp_chi_service(r,BTP_SVC_RECRUIT_LIMIT)) return 0;
     unsigned slot=0;while (slot<8 && p->people[slot][0]!=255) ++slot;if (slot==8) return 0;
     uint8_t *a=p->people[slot];memset(a,0,17);
-    unsigned seed=p->next_id*391u;for (unsigned i=0;i<3;++i) s->npc.rng[i]=(uint8_t)(seed>>(i*8));
+    unsigned seed=p->next_id*btp_chi_service(r,BTP_SVC_RECRUIT_SEED_FACTOR);for (unsigned i=0;i<3;++i) s->npc.rng[i]=(uint8_t)(seed>>(i*8));
     a[0]=p->next_id++;if (p->next_id>=10) p->next_id=2;
     a[1]=(uint8_t)btp_combat_dice(s->npc.rng);a[2]=(uint8_t)btp_combat_dice(s->npc.rng);a[3]=(uint8_t)btp_combat_dice(s->npc.rng);
     a[15]=(uint8_t)(a[1]*10);a[12]=8;
     for (unsigned i=0;i<7;++i) a[4+i]=(uint8_t)(btp_rng_next(s->npc.rng)&1u);
-    a[8]=0;a[4+skill]=3;if (skill==4) a[15]=(uint8_t)(a[15]-2*a[1]);
-    for (unsigned i=0;i<4;++i) {
+    a[8]=0;a[4+skill]=(uint8_t)btp_chi_service(r,BTP_SVC_RECRUIT_RANK);if (skill==4) a[15]=(uint8_t)(a[15]-2*a[1]);
+    for (unsigned i=0;i<4 && btp_chi_service(r,BTP_SVC_RECRUIT_AUTOSEAT);++i) {
         uint8_t *m=btp_party_mech(s,i);
         if (s->party.mech_types[i]!=255 && m[0]!=255 && m[122]==255) { m[122]=(uint8_t)slot;a[12]=(uint8_t)i;break; }
     }
     p->x[slot]=s->campaign.world_x;p->y[slot]=s->campaign.world_y;
     return (int)slot+1;
 }
+int btp_party_recruit(BtpState *s,unsigned skill) { return btp_party_recruit_resources(s,NULL,skill); }
 int btp_party_walkable(const BtpState *s,const BtpResources *r,int x,int y,int mech)
 {
     const BtpScene *scene=btp_scene(r,s);

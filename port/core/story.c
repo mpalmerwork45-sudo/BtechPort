@@ -3,13 +3,14 @@
 #include "core/service.h"
 #include "core/menu.h"
 #include "core/npc.h"
+#include "data/chi_services.h"
 #include <string.h>
 void btp_laser_finish(BtpState *s,const BtpResources *r)
 {
     /* 14D3:1432 caps each living character at (6 + random bit) times
        constitution after the laser-shop gifts. It never heals wounds. */
     for (unsigned i=0;i<8;++i) if (s->party.people[i][0]!=255) {
-        unsigned health=(6u+(btp_rng_next(s->npc.rng)&1u))*s->party.people[i][1];
+        unsigned health=(btp_chi_service(r,BTP_SVC_LASER_HEALTH_BASE)+(btp_rng_next(s->npc.rng)&1u))*s->party.people[i][1];
         if (s->party.people[i][15]>health) s->party.people[i][15]=(uint8_t)health;
     }
     s->weapon=s->party.people[0][11];s->service=(BtpServiceState){0};
@@ -19,7 +20,7 @@ void btp_laser_next(BtpState *s,const BtpResources *r)
 {
     BtpServiceState *v=&s->service;
     if (++v->mech>=v->kind) { btp_laser_finish(s,r);return; }
-    v->item=(uint8_t)(13u-(btp_rng_next(s->npc.rng)&1u));v->phase=10;v->selected=0;v->outcome=0;
+    v->item=(uint8_t)btp_chi_service(r,(btp_rng_next(s->npc.rng)&1u) ? BTP_SVC_LASER_ALTERNATE : BTP_SVC_LASER_PRIMARY);v->phase=10;v->selected=0;v->outcome=0;
 }
 int btp_later_native(BtpState *s,const BtpResources *r)
 {
@@ -42,7 +43,7 @@ int btp_later_native(BtpState *s,const BtpResources *r)
         else {
             /* 0C67:0002(1) clears both crew seats and all memberships before
                the post-theft allocator. Garage checkout passes 0 instead. */
-            if (action==39) {
+            if (action==39 && btp_chi_service(r,BTP_SVC_THEFT_CLEAR_CREW)) {
                 for (unsigned i=0;i<4;++i) btp_party_mech(s,i)[121]=btp_party_mech(s,i)[122]=255;
                 for (unsigned i=0;i<8;++i) s->party.people[i][12]=8;
                 s->campaign.mounted=0;
@@ -53,14 +54,17 @@ int btp_later_native(BtpState *s,const BtpResources *r)
         /* 14D3:174E is the mayor-house chow aftermath: the meal reduces
            Jason's health by four only while it exceeds five. Preserve this
            original effect even though the menu describes eating a meal. */
-        if (s->party.people[0][15]>5) s->party.people[0][15]-=4;
+        if (s->party.people[0][15]>btp_chi_service(r,BTP_SVC_MEAL_THRESHOLD)) {
+            unsigned damage=btp_chi_service(r,BTP_SVC_MEAL_DAMAGE),health=s->party.people[0][15];
+            s->party.people[0][15]=(uint8_t)(damage<health ? health-damage : 1u);
+        }
     } else if (kind==15 && action==41) {
         if (s->service.phase) return 1;
         /* 14D3:140D, reached by WEAPON2.BLD after payment. With friends
            the original hands out one laser per person through 07DC:15E6's
            recipient/swap menu. Alone it asks before replacing Jason's gun. */
         unsigned n=btp_party_count(&s->party);
-        s->service=(BtpServiceState){.phase=(uint8_t)(n>1 ? 10 : 9),.action=41,.kind=(uint8_t)n,.item=13};
+        s->service=(BtpServiceState){.phase=(uint8_t)(n>1 ? 10 : 9),.action=41,.kind=(uint8_t)n,.item=(uint8_t)btp_chi_service(r,BTP_SVC_LASER_PRIMARY)};
         return 1;
     } else if (kind==16 && action==42) {
         /* 14D3:1515 places the eight outdoor slots at the cinema exit and
@@ -93,7 +97,8 @@ int btp_later_native(BtpState *s,const BtpResources *r)
         if (action==22) s->story_flags[15]=p[16]&2u;
         if (action==21) {
             s->story_flags[14]=0;
-            if (s->credits>=500) { s->credits-=500;++p[10];p[16]|=2u;s->story_flags[14]=1; }
+            unsigned price=btp_chi_service(r,BTP_SVC_APPRENTICE_MEDICAL);
+            if (s->credits>=price) { s->credits-=price;++p[10];p[16]|=2u;s->story_flags[14]=1; }
         }
     } else if (action==23) {
         s->story_flags[25]=0;
@@ -103,7 +108,7 @@ int btp_later_native(BtpState *s,const BtpResources *r)
         unsigned skill=s->story_flags[26];if (skill>7) return 0;
         if (!skill) btp_service_heal(s,r,0,0);
         else if (s->credits>=r->combat.medical_prices[skill]) { s->credits-=r->combat.medical_prices[skill];btp_service_heal(s,r,skill,0); }
-        else s->credits+=25;
+        else s->credits+=btp_chi_service(r,BTP_SVC_MEDICAL_INSUFFICIENT_CREDIT);
         if (s->service.phase) return 1;
     } else if (action==25) s->party.medical_kit=1;
     else if (action==26) s->party.advanced_kit=1;

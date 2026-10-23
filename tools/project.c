@@ -28,7 +28,7 @@ static int capabilities(void)
     /* Query the compiled adapter's constants. Authoring clients must not
        advertise expanded limits merely because a schema accepts them. */
     printf("{\"format\":\"btp-runtime-capabilities-v1\",\"runtime_version\":\"%s\","
-        "\"formats\":[\"btp-chi-scripts-v1\",\"btp-chi-campaign-v1\",\"btp-chi-spatial-v1\",\"btp-chi-presentation-v1\",\"btp-project-v1\",\"btp-content-v1\",\"btp-adventure-v1\",\"btp-adventure-v2\",\"btp-adventure-v3\",\"btp-art-v1\",\"btp-presentation-v1\"],"
+        "\"formats\":[\"btp-chi-services-v1\",\"btp-chi-scripts-v1\",\"btp-chi-campaign-v1\",\"btp-chi-spatial-v1\",\"btp-chi-presentation-v1\",\"btp-project-v1\",\"btp-content-v1\",\"btp-adventure-v1\",\"btp-adventure-v2\",\"btp-adventure-v3\",\"btp-art-v1\",\"btp-presentation-v1\"],"
         "\"limits\":{\"maps\":%u,\"events\":%u,\"flags\":%u,\"tiles\":%u,\"jigsaws\":%u,\"worlds\":%u,"
         "\"people\":%u,\"shops\":%u,\"encounters\":%u,\"objectives\":%u,\"definitions_per_collection\":%u,"
         "\"images\":%u,\"frames_per_image\":%u,\"art_pixels\":%u,\"animation_tracks\":%u,"
@@ -265,6 +265,12 @@ done:if (!ok) fprintf(stderr,"%s\n",error.text);btp_content_close(&content);retu
 }
 int main(int argc,char **argv)
 {
+    if (argc==3 && !strcmp(argv[1],"chi-services")) {
+        BtpContent c={0};BtpError e={0};
+        if (!btp_content_load_project(&c,argv[2],NULL,&e)) { fprintf(stderr,"%s\n",e.text);return 1; }
+        if (!c.resources->project->chi_edition) { fputs("Native services require an imported CHI campaign\n",stderr);btp_content_close(&c);return 1; }
+        btp_chi_services_catalogue(c.resources);btp_content_close(&c);return ferror(stdout) ? 1 : 0;
+    }
     if (argc==4 && !strcmp(argv[1],"chi-program")) return chi_program(argv[2],argv[3]);
     if (argc>=2 && !strcmp(argv[1],"chi-resource")) return btp_tool_chi_resource(argc,argv);
     if (argc>=2 && !strcmp(argv[1],"chi-world")) return btp_tool_chi_world(argc,argv);

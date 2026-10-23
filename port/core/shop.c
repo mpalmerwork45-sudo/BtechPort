@@ -2,6 +2,7 @@
 #include "core/economy.h"
 #include "core/party.h"
 #include "core/menu.h"
+#include "data/chi_services.h"
 
 static void unsupported(BtpState *s)
 {
@@ -32,7 +33,7 @@ void btp_shop_native(BtpState *s, const BtpResources *r)
         }
         if (s->script.native_action==28 && s->party.enabled) for (unsigned i=0;i<8;++i) s->party.people[i][12]=8;
         s->campaign.mounted=(uint8_t)(s->script.native_action==46 && s->campaign.owned && s->campaign.mech[121]==0);
-        if (s->script.native_action==46) { btp_menu_open(s);s->campaign.ui=BTP_MENU_ALLOCATE;s->menu.from_story=1;return; }
+        if (s->script.native_action==46 && btp_chi_service(r,BTP_SVC_GARAGE_ALLOCATE)) { btp_menu_open(s);s->campaign.ui=BTP_MENU_ALLOCATE;s->menu.from_story=1;return; }
         break;
     case 14: /* 14D3:0AF2: other party members; Jason is slot zero. */
         if (kind!=5 && kind!=4) { unsupported(s);return; }
@@ -44,8 +45,9 @@ void btp_shop_native(BtpState *s, const BtpResources *r)
     case 15:
         if (kind!=5 || (s->party.enabled ? s->party.people[s->party.selected][16]&1u : s->apprentice)) { unsupported(s);return; }
         s->story_flags[14]=0;
-        if (s->credits>=500) {
-            s->credits-=500;s->story_flags[14]=1;
+        unsigned tuition=btp_chi_service(r,BTP_SVC_APPRENTICE_TECHNICIAN);
+        if (s->credits>=tuition) {
+            s->credits-=tuition;s->story_flags[14]=1;
             if (s->party.enabled && s->party.selected) { ++s->party.people[s->party.selected][9];s->party.people[s->party.selected][16]|=1; }
             else { ++s->technician;s->apprentice=1; }
             if (s->npc.enabled) s->npc.allowance_pending=(uint8_t)btp_economy_below_cap(s);
@@ -73,8 +75,6 @@ void btp_shop_native(BtpState *s, const BtpResources *r)
            assignments at 07DC:13DE / 15E6. Payment precedes the
            recipient menu; dropping the equipment does not refund it. */
         if (s->service.phase) return;
-        static const uint32_t armor_prices[6] = {0,50,150,200,10000,1000};
-        static const uint32_t weapon_prices[11] = {2,10,100,10,20,35,40,80,250,1500,1500};
         static const uint8_t protection[6] = {0,25,40,30,50,50};
         int armor = s->script.native_action == 9;
         unsigned choice = armor ? s->script.choices[s->story_flags[10] ? 13 : 14] : s->script.choices[16];
@@ -85,9 +85,13 @@ void btp_shop_native(BtpState *s, const BtpResources *r)
             (!armor && s->story_flags[12] != 0 && s->story_flags[12] != 6 && s->story_flags[12] != 9)) {
             unsupported(s); return;
         }
-        uint32_t price = armor ? armor_prices[choice] : weapon_prices[choice-1];
+        /* Catalogue entries are interleaved price/stock[/equipment]. The
+           native menu slot remains distinct from the granted equipment ID. */
+        unsigned key=armor ? BTP_SVC_ARMOUR_PRICE_1+2u*(choice-1u) : BTP_SVC_WEAPONS_PRICE_1+3u*(choice-1u);
+        uint32_t price=btp_chi_service(r,key);
         s->story_flags[11] = 0;
-        if (s->credits >= price) {
+        if (btp_chi_service(r,key+1u) && s->credits >= price) {
+            if (!armor) choice=btp_chi_service(r,key+2u);
             s->credits -= price; s->story_flags[11] = 1;
             if (btp_party_count(&s->party)>1) {
                 s->service=(BtpServiceState){.phase=10,.action=s->script.native_action,

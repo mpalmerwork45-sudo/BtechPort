@@ -21,6 +21,7 @@ const char *btp_content_party_name(const BtpResources *resources,const BtpState 
 /* Return the recruited slot plus one, or zero when the party is full.
    Original name IDs wrap and may duplicate; callers must retain the slot. */
 int btp_party_recruit(BtpState *state,unsigned skill);
+int btp_party_recruit_resources(BtpState *state,const BtpResources *resources,unsigned skill);
 int btp_party_walkable(const BtpState *state,const BtpResources *resources,int x,int y,int mech);
 int btp_party_can_stand(const BtpState *state,const BtpResources *resources,int cursor_x,int cursor_y);
 int btp_party_entrance(const BtpState *state,const BtpResources *resources,const BtpMap *map,int local_x,int local_y);

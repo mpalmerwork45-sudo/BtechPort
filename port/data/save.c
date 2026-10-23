@@ -64,7 +64,7 @@ static int decode(const uint8_t *b, size_t n, BtpState *s, const BtpResources *r
         if (!btp_events_decode(&context,b+20057)) return 0;
         if (b[4]==48) context.event.map=(uint16_t)(context.map_id-16u);
     }
-    if (n<24 || !btp_state_decode(b,n,btp_active_map(r,&context),btp_state_bld(r,&context),s)) return 0;
+    if (n<24 || !btp_state_decode_resources(b,n,btp_active_map(r,&context),btp_state_bld(r,&context),r,s)) return 0;
     btp_content_coordinates(s,r);
     if (s->event.enabled && n>=20185 && b[20057+127]<2) {
         /* The first authored-world saves used the original 128-column

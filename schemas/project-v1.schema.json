@@ -145,6 +145,7 @@
     "chi_spatial": {"const": "chi-spatial.json"},
     "chi_presentation": {"const": "chi-presentation.json"},
     "chi_scripts": {"const": "chi-scripts.json"},
+    "chi_services": {"const": "chi-services.json"},
     "resources": {
       "type": "array",
       "minItems": 79,
@@ -481,6 +482,7 @@
           "chi_spatial": false,
           "chi_presentation": false,
           "chi_scripts": false,
+          "chi_services": false,
           "resources": false,
           "startup": {
             "not": {

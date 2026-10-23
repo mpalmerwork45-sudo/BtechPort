@@ -8,6 +8,8 @@ unsigned btp_school_price(unsigned rank);
 void btp_school_native(BtpState *state, const BtpResources *resources);
 int btp_school_valid(const BtpState *state);
 int btp_school_valid_bld(const BtpState *state,const BtpBld *script);
+int btp_school_valid_resources(const BtpState *state,const BtpBld *script,const BtpResources *resources);
+unsigned btp_school_price_resources(const BtpResources *resources,unsigned rank);
 int btp_school_text(const BtpState *state, const BtpResources *resources,
     uint8_t *out, size_t capacity, size_t *length);
 #endif

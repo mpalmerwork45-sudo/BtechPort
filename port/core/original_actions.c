@@ -52,7 +52,7 @@ void btp_original_services(BtpState *s,const BtpResources *r)
             if ((btp_building_kind(r,s)!=5 && btp_building_kind(r,s)!=9 && btp_building_kind(r,s)!=13) || skill>6) {
                 s->script.status=BTP_SCRIPT_ERROR;s->script.error=BTP_SCRIPT_NATIVE_CONTEXT;break;
             }
-            unsigned recruited=(unsigned)btp_party_recruit(s,skill);
+            unsigned recruited=(unsigned)btp_party_recruit_resources(s,r,skill);
             if (!recruited) {
                 /* The original full-party scan exits without a new agent or
                    a spy coin. It does not fault the building interpreter. */

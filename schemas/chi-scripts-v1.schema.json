@@ -545,9 +545,17 @@
                       "const": "native"
                     },
                     "action": {
-                      "type": "integer",
-                      "minimum": 1,
-                      "maximum": 47
+                      "oneOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 47
+                        },
+                        {
+                          "type": "string",
+                          "pattern": "^native\\.[a-z0-9-]+$"
+                        }
+                      ]
                     }
                   },
                   "required": [
@@ -1116,9 +1124,17 @@
                       "const": "add_money"
                     },
                     "amount": {
-                      "type": "integer",
-                      "minimum": 0,
-                      "maximum": 65535
+                      "oneOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 65535
+                        },
+                        {
+                          "type": "string",
+                          "pattern": "^\\{service:[a-z0-9.]+\\}$"
+                        }
+                      ]
                     }
                   },
                   "required": [
@@ -1162,9 +1178,17 @@
                       "const": "spend_money"
                     },
                     "amount": {
-                      "type": "integer",
-                      "minimum": 0,
-                      "maximum": 65535
+                      "oneOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 65535
+                        },
+                        {
+                          "type": "string",
+                          "pattern": "^\\{service:[a-z0-9.]+\\}$"
+                        }
+                      ]
                     }
                   },
                   "required": [
@@ -1208,9 +1232,17 @@
                       "const": "if_money"
                     },
                     "amount": {
-                      "type": "integer",
-                      "minimum": 0,
-                      "maximum": 65535
+                      "oneOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 65535
+                        },
+                        {
+                          "type": "string",
+                          "pattern": "^\\{service:[a-z0-9.]+\\}$"
+                        }
+                      ]
                     },
                     "target": {
                       "type": "string",

@@ -88,7 +88,7 @@ static int reference(BtpJson *j,unsigned node,const BtpChiProgram *p,unsigned *o
 static int hex_digit(unsigned c)
 { return c>='0' && c<='9' ? (int)c-'0' : c>='a' && c<='f' ? (int)c-'a'+10 : -1; }
 static int encode(BtpJson *j,unsigned node,unsigned building,const Inventory *base,const BtpChiProgram *p,
-    BtpBld *out,unsigned pc,unsigned *size)
+    BtpBld *out,unsigned pc,unsigned *size,const BtpResources *resources)
 {
     unsigned op=p->nodes[j->nodes[node].index].opcode,a=0,b=0,c=0,n=1;
     uint8_t *bytes=out->bytes+pc;
@@ -100,7 +100,9 @@ static int encode(BtpJson *j,unsigned node,unsigned building,const Inventory *ba
     case 0xfc: {
         unsigned text=btp_json_field(j,node,"text");
         if (!btp_json_type(j,text,'"')) return 0;
-        const char *value=j->nodes[text].text;size_t length=strlen(value);
+        char expanded[4097];
+        if (!btp_chi_service_expand(resources,j->nodes[text].text,expanded,sizeof expanded)) return btp_json_error(j,text,"invalid service text reference or expanded text exceeds 4096 bytes");
+        const char *value=expanded;size_t length=strlen(value);
         if (length>4096 || length+2>BTP_BLD_MAX-pc) return btp_json_error(j,text,"text/program byte budget exceeded");
         for (size_t i=0;i<length;++i) if ((unsigned char)value[i]<32 && value[i]!=6 && value[i]!=13 && value[i]!=14 && value[i]!=15)
             return btp_json_error(j,text,"unsupported native text control");
@@ -133,13 +135,19 @@ static int encode(BtpJson *j,unsigned node,unsigned building,const Inventory *ba
         case 0xf0:
             if (!number(j,node,"column",0,26,&a) || !number(j,node,"row",0,24,&b)) return 0;
             bytes[1]=(uint8_t)a;bytes[2]=(uint8_t)b;n=3;break;
-        case 0xf5:
-            if (!number(j,node,"action",1,47,&a)) return 0;
+        case 0xf5: {
+            unsigned action=btp_json_field(j,node,"action");
+            if (j->nodes[action].type=='"') {
+                char name[96];if (!btp_json_string(j,action,name,sizeof name)) return 0;
+                for (unsigned i=0;i<47;++i) if (!strcmp(name,btp_chi_actions[i].id)) a=btp_chi_actions[i].action;
+                if (!a) return btp_json_error(j,action,"unknown named native operation");
+            } else if (!btp_json_uint(j,action,1,47,&a)) return 0;
             if (!(base->actions&(UINT64_C(1)<<a))) return btp_json_error(j,node,"native action is not verified in this program context (C4.2 registry)");
             if ((building==1 && ((a==4 && p->nodes[j->nodes[node].index].origin!=0xf03) || (a==5 && p->nodes[j->nodes[node].index].origin!=0xf6a))) ||
                 (building==0 && ((a==3 && p->nodes[j->nodes[node].index].origin!=0x1c6b) || (a==43 && p->nodes[j->nodes[node].index].origin!=0x1672))))
                 return btp_json_error(j,node,"this native action requires its existing semantic anchor; edit its surrounding source");
             bytes[1]=(uint8_t)a;n=2;break;
+        }
         case 0xe4:case 0xe9:
             if (!number(j,node,op==0xe4 ? "program" : "skill",op==0xe4 ? 1u : 0u,op==0xe4 ? 18u : 6u,&a)) return 0;
             if (op==0xe9 && building!=5 && building!=9 && building!=13) return btp_json_error(j,node,"recruit requires repair, hospital or prison context");
@@ -148,13 +156,24 @@ static int encode(BtpJson *j,unsigned node,unsigned building,const Inventory *ba
             if (!number(j,node,"kind",0,21,&a) || !number(j,node,"flags",0,2,&b)) return 0;
             if (!(base->films&(1u<<a))) return btp_json_error(j,node,"film is not verified in this native program context");
             bytes[1]=(uint8_t)a;bytes[2]=(uint8_t)b;n=3;break;
-        case 0xe5:case 0xee:case 0xef:
-            if (!number(j,node,"amount",0,65535,&a)) return 0;
+        case 0xe5:case 0xee:case 0xef: {
+            unsigned amount=btp_json_field(j,node,"amount");
+            if (j->nodes[amount].type=='"') {
+                char value[32];
+                const char *end=strchr(j->nodes[amount].text+(!strncmp(j->nodes[amount].text,"{service:",9) ? 9 : 0),'}');
+                if (!btp_json_type(j,amount,'"') || !btp_chi_service_expand(resources,j->nodes[amount].text,value,sizeof value) ||
+                    strncmp(j->nodes[amount].text,"{service:",9) || !end || end[1] || !*value) return btp_json_error(j,amount,"money amount requires an integer or one service reference");
+                for (unsigned k=0;value[k];++k) {
+                    if (value[k]<'0' || value[k]>'9' || a>6553u || (a==6553u && value[k]>'5')) return btp_json_error(j,amount,"expanded money amount must be 0..65535");
+                    a=a*10u+(unsigned)(value[k]-'0');
+                }
+            } else if (!btp_json_uint(j,amount,0,65535,&a)) return 0;
             bytes[1]=(uint8_t)a;bytes[2]=(uint8_t)(a>>8);n=3;
             if (op==0xef) {
                 if (!reference(j,btp_json_field(j,node,"target"),p,&b)) return 0;
                 bytes[3]=(uint8_t)b;bytes[4]=(uint8_t)(b>>8);n=5;
             }break;
+        }
         case 0xe6:
             if (!number(j,node,"x",0,65535,&a) || !number(j,node,"y",0,65535,&b)) return 0;
             bytes[1]=(uint8_t)a;bytes[2]=(uint8_t)(a>>8);bytes[3]=(uint8_t)b;bytes[4]=(uint8_t)(b>>8);n=5;break;
@@ -215,7 +234,7 @@ static int flow(BtpJson *j,unsigned list,const unsigned *source,BtpChiProgram *p
     }
     free(seen);return 1;
 }
-static int program(BtpJson *j,unsigned object,unsigned slot,BtpChiProgram *p,BtpBld *b)
+static int program(BtpJson *j,unsigned object,unsigned slot,BtpChiProgram *p,BtpBld *b,const BtpResources *resources)
 {
     Inventory *base=calloc(1,sizeof *base);BtpBld *output=calloc(1,sizeof *output);
     unsigned *source=NULL;uint8_t *used=calloc(b->length,1);int ok=0;unsigned value;char resource[64],hash[65],entry[64];
@@ -263,7 +282,7 @@ static int program(BtpJson *j,unsigned object,unsigned slot,BtpChiProgram *p,Btp
     unsigned pc=0;
     for (unsigned i=0;i<p->count;++i) {
         BtpChiInstruction *v=&p->nodes[i];unsigned size;v->offset=(uint16_t)pc;
-        if (!encode(j,source[i],slot,base,p,output,pc,&size)) goto done;
+        if (!encode(j,source[i],slot,base,p,output,pc,&size,resources)) goto done;
         v->length=(uint16_t)size;pc+=size;
         if (!v->opcode && (size!=v->original_size || memcmp(output->bytes+v->offset,b->bytes+v->origin,size))) {
             btp_json_error(j,source[i],"unreachable original bytes must remain byte-identical");goto done;
@@ -271,7 +290,7 @@ static int program(BtpJson *j,unsigned object,unsigned slot,BtpChiProgram *p,Btp
     }
     for (unsigned i=0;i<p->count;++i) {
         BtpChiInstruction *v=&p->nodes[i];unsigned size;
-        if (!encode(j,source[i],slot,base,p,output,v->offset,&size)) goto done;
+        if (!encode(j,source[i],slot,base,p,output,v->offset,&size,resources)) goto done;
         if (v->origin==UINT16_MAX) continue;
         unsigned shared=v->length<v->original_size ? v->length : v->original_size;
         for (unsigned k=0;k<shared;++k) p->offsets[v->origin+k]=(uint16_t)(v->offset+k);
@@ -303,7 +322,7 @@ int btp_chi_scripts_load(const char *root,const char *file,BtpChiScripts *s,BtpR
     unsigned list=btp_json_field(&j,1,"programs"),count=0;if (!btp_json_type(&j,list,'[')) goto done;
     for (unsigned n=j.nodes[list].first;n;n=j.nodes[n].next) {
         if (count>=BTP_CHI_PROGRAMS) { btp_json_error(&j,n,"exactly 26 native programs in building order");goto done; }
-        if (!program(&j,n,count,&s->programs[count],&r->buildings[count])) goto done;
+        if (!program(&j,n,count,&s->programs[count],&r->buildings[count],r)) goto done;
         BtpDigest payload;uint8_t compiled[32];btp_digest_start(&payload);
         btp_digest_add(&payload,r->buildings[count].bytes,r->buildings[count].length);btp_digest_finish(&payload,compiled);btp_digest_add(digest,compiled,32);
         for (unsigned i=0;i<count;++i) if (!strcmp(s->programs[i].id,s->programs[count].id)) { btp_json_error(&j,n,"duplicate program ID");goto done; }

@@ -6,10 +6,10 @@
 #include "core/npc.h"
 #include "core/story.h"
 #include "core/menu.h"
+#include "data/chi_services.h"
 #include <string.h>
 #include <stdio.h>
 static const uint8_t armour_capacity[6]={0,25,40,30,50,50};
-static const uint8_t armour_point_cost[6]={0,1,2,5,20,20};
 unsigned btp_service_mech_count(const BtpState *s)
 {
     unsigned n=0;for (unsigned i=0;i<4;++i) n+=s->party.mech_types[i]!=255;
@@ -23,37 +23,40 @@ unsigned btp_service_mech_slot(const BtpState *s,unsigned ordinal)
     }
     return 4;
 }
-unsigned btp_armour_repair(BtpState *s,unsigned member)
+unsigned btp_armour_repair_resources(BtpState *s,const BtpResources *r,unsigned member)
 {
     /* 14D3:0FDA repairs personal armour one point at a time. A small
        balance buys a partial repair; this is unrelated to mech action 18. */
     if (member>=8 || s->party.people[member][0]==255) return 0;
     uint8_t *p=s->party.people[member];unsigned kind=p[13],changed=0;
     if (!kind || kind>5) return 0;
-    while (p[14]<armour_capacity[kind] && s->credits>=armour_point_cost[kind]) {
-        s->credits-=armour_point_cost[kind];++p[14];++changed;
+    unsigned cost=btp_chi_service(r,BTP_SVC_ARMOUR_REPAIR_1+kind-1u);
+    while (p[14]<armour_capacity[kind] && s->credits>=cost) {
+        s->credits-=cost;++p[14];++changed;
     }
     if (!member) s->armor_points=p[14];
     return changed;
 }
-unsigned btp_mech_repair(BtpState *s,unsigned slot,unsigned kind,unsigned item)
+unsigned btp_armour_repair(BtpState *s,unsigned member) { return btp_armour_repair_resources(s,NULL,member); }
+unsigned btp_mech_repair_resources(BtpState *s,const BtpResources *r,unsigned slot,unsigned kind,unsigned item)
 {
     uint8_t *m=btp_party_mech(s,slot);if (!m) return 0;unsigned changed=0;
     if (kind<2) {
-        unsigned first=kind ? 28u : 17u,end=kind ? 36u : 28u,cost=kind ? 9u : 4u;
+        unsigned first=kind ? 28u : 17u,end=kind ? 36u : 28u,cost=btp_chi_service(r,kind ? BTP_SVC_REPAIR_STRUCTURE : BTP_SVC_REPAIR_ARMOUR);
         for (unsigned i=first;i<end;++i) while (m[i]<m[i+69] && s->credits>=cost) { ++m[i];s->credits-=cost;++changed; }
     } else if (kind==2 && item>=16 && item<=34) {
-        unsigned cost=item==34 ? 800u : 300u;
+        unsigned cost=btp_chi_service(r,item==34 ? BTP_SVC_REPAIR_HEATSINK : BTP_SVC_REPAIR_WEAPON);
         if (s->credits<cost) return 0;
         for (unsigned i=51;i<86;++i) if (m[i]==(item|128u)) {
             m[i]&=127u;++changed;if (item==34) break;
         }
         if (changed) s->credits-=cost;
-    } else if (kind==3 && (m[36]!=m[105] || m[37]!=m[106] || (btp_vehicle_kind(m) && m[118])) && s->credits>=200) {
-        m[36]=m[105];m[37]=m[106];if (btp_vehicle_kind(m)) m[118]=0;s->credits-=200;changed=1;
+    } else if (kind==3 && (m[36]!=m[105] || m[37]!=m[106] || (btp_vehicle_kind(m) && m[118])) && s->credits>=btp_chi_service(r,BTP_SVC_REPAIR_JUMP)) {
+        m[36]=m[105];m[37]=m[106];if (btp_vehicle_kind(m)) m[118]=0;s->credits-=btp_chi_service(r,BTP_SVC_REPAIR_JUMP);changed=1;
     }
     return changed;
 }
+unsigned btp_mech_repair(BtpState *s,unsigned slot,unsigned kind,unsigned item) { return btp_mech_repair_resources(s,NULL,slot,kind,item); }
 unsigned btp_mech_reload(BtpState *s,const BtpResources *r,unsigned slot,unsigned bin,unsigned amount)
 {
     uint8_t *m=btp_party_mech(s,slot);if (!m || bin>=10 || m[39+bin]==255 || m[39+bin]>m[107+bin]) return 0;
@@ -68,7 +71,7 @@ unsigned btp_mech_reload(BtpState *s,const BtpResources *r,unsigned slot,unsigne
     }
     const BtpRosterMech *definition=btp_roster_definition(&r->roster,m);
     if (definition) cost=definition->ammo_cost[bin];
-    else if (w==24) cost=2;else if (w>=26 && w<=32) cost=r->combat.ammo_prices[w-26];else return 0;
+    else if (w==24) cost=btp_chi_service(r,BTP_SVC_AMMO_MACHINEGUN);else if (w>=26 && w<=32) cost=r->combat.ammo_prices[w-26];else return 0;
     unsigned missing=(unsigned)m[107+bin]-m[39+bin];if (amount>missing) amount=missing;
     unsigned n=0;if (!cost) return 0;
     while (n<amount && s->credits>=cost) { s->credits-=cost;++m[39+bin];++n; }
@@ -128,7 +131,7 @@ static void repair_next(BtpState *s,const BtpResources *r,unsigned kind)
         else n=(unsigned)(m[36]!=m[105] || m[37]!=m[106] || (btp_vehicle_kind(m) && m[118]));
         if (!n) continue;
         v->kind=(uint8_t)kind;v->amount=(uint16_t)n;v->phase=(uint8_t)(kind==3 ? 6 : 3);
-        if (kind==4 && s->credits<200) { v->phase=4;v->outcome=7; }
+        if (kind==4 && s->credits<btp_chi_service(r,BTP_SVC_REPAIR_JUMP)) { v->phase=4;v->outcome=7; }
         return;
     }
     finish(s,r);
@@ -221,7 +224,7 @@ void btp_service_input(BtpState *s,const BtpResources *r,BtpAction a)
             if (a==BTP_RIGHT || a==BTP_DOWN) v->selected=1;
             if (a==BTP_CANCEL || (a==BTP_ACCEPT && v->selected)) { finish(s,r);return; }
             if (a==BTP_ACCEPT) {
-                v->amount=(uint16_t)btp_armour_repair(s,v->mech);
+                v->amount=(uint16_t)btp_armour_repair_resources(s,r,v->mech);
                 v->outcome=(uint8_t)(s->party.people[v->mech][14]==armour_capacity[v->kind] ? 1 : v->amount ? 2 : 0);
                 v->phase=4;v->selected=0;
             }
@@ -234,7 +237,7 @@ void btp_service_input(BtpState *s,const BtpResources *r,BtpAction a)
             if (a==BTP_LEFT || a==BTP_UP) v->selected=0;
             if (a==BTP_RIGHT || a==BTP_DOWN) v->selected=1;
             if (a==BTP_ACCEPT || a==BTP_CANCEL) {
-                if (a==BTP_ACCEPT && !v->selected) s->party.people[0][11]=13;
+                if (a==BTP_ACCEPT && !v->selected) s->party.people[0][11]=v->item;
                 btp_laser_finish(s,r);
             }
         } else if (v->phase==11) {
@@ -265,8 +268,11 @@ void btp_service_input(BtpState *s,const BtpResources *r,BtpAction a)
     }
     if (v->phase==8) {
         if (a!=BTP_ACCEPT && a!=BTP_CANCEL) { (void)btp_rng_next(s->npc.rng);return; }
-        if (!s->story_flags[38] && (btp_rng_next(s->npc.rng)&1u)) {
-            s->story_flags[37]=v->mech;s->story_flags[38]=s->story_flags[39]=1;s->story_flags[36]=31;
+        /* Retain the original single coin draw, including when configured to
+           zero/all spies. Existing spy/replacement state still owns eligibility. */
+        unsigned chance=btp_chi_service(r,BTP_SVC_RECRUIT_SPY_CHANCE);
+        if (!s->story_flags[38] && ((btp_rng_next(s->npc.rng)&1u) ? chance>=50 : chance==100)) {
+            s->story_flags[37]=v->mech;s->story_flags[38]=s->story_flags[39]=1;s->story_flags[36]=(uint8_t)btp_chi_service(r,BTP_SVC_RECRUIT_SPY_DELAY);
         }
         finish(s,r);return;
     }
@@ -278,8 +284,8 @@ void btp_service_input(BtpState *s,const BtpResources *r,BtpAction a)
             if (a!=BTP_ACCEPT) return;
             unsigned changed=0;
             if (v->kind==4) { v->phase=4;v->outcome=6;return; }
-            if (v->kind==2) { unsigned n;do { n=btp_mech_repair(s,v->mech,2,34);changed+=n; } while (n); }
-            else changed=btp_mech_repair(s,v->mech,v->kind,0);
+            if (v->kind==2) { unsigned n;do { n=btp_mech_repair_resources(s,r,v->mech,2,34);changed+=n; } while (n); }
+            else changed=btp_mech_repair_resources(s,r,v->mech,v->kind,0);
             if (changed<v->amount) { v->phase=4;v->outcome=(uint8_t)(3u+v->kind);return; }
             repair_next(s,r,v->kind+1u);return;
         }
@@ -289,11 +295,12 @@ void btp_service_input(BtpState *s,const BtpResources *r,BtpAction a)
             if (a==BTP_DOWN) v->selected=(uint8_t)((v->selected+1u)%n);
             if (a==BTP_CANCEL || (a==BTP_ACCEPT && v->selected==n-1u)) { repair_next(s,r,4);return; }
             if (a!=BTP_ACCEPT) return;
-            if (s->credits<300) { v->phase=4;v->outcome=2;return; }
+            unsigned price=btp_chi_service(r,BTP_SVC_REPAIR_WEAPON);
+            if (s->credits<price) { v->phase=4;v->outcome=2;return; }
             unsigned w=btp_service_weapon_item(v,v->selected);
             /* 09B8:068D charges for the estimate entry even if its first
                purchase has already cleared every matching critical slot. */
-            (void)btp_mech_repair(s,v->mech,2,w);s->credits=v->quote_credits-300u;
+            (void)btp_mech_repair_resources(s,r,v->mech,2,w);s->credits=v->quote_credits-price;
             --v->damaged[w-16];v->item=(uint8_t)w;v->selected=0;
             /* The original completion loop at 09B8:06F9 tests entries 0..15
                although its estimate includes entry 16 (SRM6). Preserve that
@@ -303,7 +310,7 @@ void btp_service_input(BtpState *s,const BtpResources *r,BtpAction a)
             v->quote_credits=s->credits;return;
         }
         if (v->phase==4 && (a==BTP_ACCEPT || a==BTP_CANCEL)) {
-            if (v->outcome==6) (void)btp_mech_repair(s,v->mech,3,0);
+            if (v->outcome==6) (void)btp_mech_repair_resources(s,r,v->mech,3,0);
             if (v->outcome>=6) { finish(s,r);return; }
             repair_next(s,r,v->kind+1u);
         }
@@ -363,7 +370,8 @@ void btp_service_input(BtpState *s,const BtpResources *r,BtpAction a)
                     return;
                 }
             }
-            if (!s->credits) { v->phase=4;v->outcome=10;return; }
+            if (!s->credits && btp_chi_service(r,BTP_SVC_REPAIR_ARMOUR) && btp_chi_service(r,BTP_SVC_REPAIR_STRUCTURE) &&
+                btp_chi_service(r,BTP_SVC_REPAIR_HEATSINK) && btp_chi_service(r,BTP_SVC_REPAIR_WEAPON) && btp_chi_service(r,BTP_SVC_REPAIR_JUMP)) { v->phase=4;v->outcome=10;return; }
             repair_next(s,r,0);
         } else if (v->action==44) ammo_next(s,r,0);
         else v->phase=3;

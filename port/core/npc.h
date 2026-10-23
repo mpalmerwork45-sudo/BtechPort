@@ -12,6 +12,7 @@ void btp_npc_init(BtpState *state, const BtpMap *map);
 void btp_npc_enter(BtpState *state, const BtpMap *map);
 void btp_npc_advance(BtpState *state, const BtpMap *map);
 void btp_npc_frame(BtpState *state, const BtpMap *map);
+void btp_npc_input_resources(BtpState *state,const BtpMap *map,BtpAction action,const BtpResources *resources);
 void btp_npc_tick(BtpState *state, const BtpMap *map);
 void btp_npc_input(BtpState *state, const BtpMap *map, BtpAction action);
 int btp_npc_valid(const BtpState *state, const BtpMap *map);

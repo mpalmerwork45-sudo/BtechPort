@@ -2,10 +2,12 @@
 #include "core/school.h"
 #include "core/economy.h"
 #include "data/chi_scripts.h"
+#include "data/chi_services.h"
 #include <stdio.h>
 #include <string.h>
 
 unsigned btp_school_price(unsigned rank) { return rank*125u+75u; }
+unsigned btp_school_price_resources(const BtpResources *r,unsigned rank) { return rank<5 ? btp_chi_service(r,BTP_SVC_CLASS_PRICE_0+rank) : btp_school_price(rank); }
 static void fault(BtpState *s)
 {
     s->script.status = BTP_SCRIPT_ERROR; s->script.error = BTP_SCRIPT_NATIVE_CONTEXT;
@@ -24,7 +26,7 @@ void btp_school_native(BtpState *s, const BtpResources *r)
         s->school = (BtpSchoolState){BTP_SCHOOL_TRANSCRIPT,(uint8_t)course,(uint8_t)rank,BTP_SCHOOL_TRAINED};
         s->story_flags[9] = 0;
         if (rank == 4) s->school.outcome = BTP_SCHOOL_MASTERED;
-        else if (!btp_try_spend_credits(s,btp_school_price(rank))) s->school.outcome = BTP_SCHOOL_NO_FUNDS;
+        else if (!btp_try_spend_credits(s,btp_school_price_resources(r,rank))) s->school.outcome = BTP_SCHOOL_NO_FUNDS;
         else {
             ++s->skills[course]; s->story_flags[9] = 1;
             if (s->npc.enabled) s->npc.allowance_pending = (uint8_t)btp_economy_below_cap(s);
@@ -32,7 +34,7 @@ void btp_school_native(BtpState *s, const BtpResources *r)
     } else { fault(s); return; }
     btp_script_native_return(v,&r->citadel,s->story_flags);
 }
-int btp_school_valid_bld(const BtpState *s,const BtpBld *script)
+int btp_school_valid_resources(const BtpState *s,const BtpBld *script,const BtpResources *r)
 {
     const BtpSchoolState *c = &s->school; const BtpScriptState *v = &s->script;
     for (unsigned i = 0; i < 3; ++i) if (s->skills[i] > 4 || s->checkpoint_skills[i] > 4) return 0;
@@ -47,14 +49,16 @@ int btp_school_valid_bld(const BtpState *s,const BtpBld *script)
         c->course != s->story_flags[8] || c->before != s->checkpoint_skills[c->course] ||
         (c->outcome == BTP_SCHOOL_TRAINED ? v->pc != btp_bld_after(script,0xf75) : v->pc != btp_bld_after(script,0x10da))) return 0;
     int trained = c->outcome == BTP_SCHOOL_TRAINED;
-    if (s->story_flags[9] != trained || s->credits != s->checkpoint_credits-(trained ? btp_school_price(c->before) : 0u)) return 0;
-    if (trained && (c->before == 4 || s->checkpoint_credits < btp_school_price(c->before))) return 0;
+    unsigned price=btp_school_price_resources(r,c->before);
+    if (s->story_flags[9] != trained || s->credits != s->checkpoint_credits-(trained ? price : 0u)) return 0;
+    if (trained && (c->before == 4 || s->checkpoint_credits < price)) return 0;
     if (c->outcome == BTP_SCHOOL_MASTERED && c->before != 4) return 0;
-    if (c->outcome == BTP_SCHOOL_NO_FUNDS && (c->before == 4 || s->checkpoint_credits >= btp_school_price(c->before))) return 0;
+    if (c->outcome == BTP_SCHOOL_NO_FUNDS && (c->before == 4 || s->checkpoint_credits >= price)) return 0;
     for (unsigned i = 0; i < 3; ++i)
         if (s->skills[i] != s->checkpoint_skills[i]+(trained && i == c->course ? 1u : 0u)) return 0;
     return 1;
 }
+int btp_school_valid_bld(const BtpState *s,const BtpBld *b) { return btp_school_valid_resources(s,b,NULL); }
 int btp_school_valid(const BtpState *s) { return btp_school_valid_bld(s,NULL); }
 static int append(uint8_t *out, size_t cap, size_t *n, const uint8_t *p, size_t length)
 {
@@ -75,7 +79,7 @@ int btp_school_text(const BtpState *s, const BtpResources *r, uint8_t *out, size
         if (!btp_script_text(&s->script,&r->citadel,out,cap)) return 0;
         *n = strlen((char *)out);
         for (unsigned i = 0; i < 3; ++i) {
-            char price[8]; int length = snprintf(price,sizeof price,"%u",btp_school_price(s->skills[i]));
+            char price[8]; int length = snprintf(price,sizeof price,"%u",btp_school_price_resources(r,s->skills[i]));
             if (length <= 0 || !append(out,cap,n,(const uint8_t *)price,(size_t)length)) return 0;
         }
         return 1;

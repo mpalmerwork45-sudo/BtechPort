@@ -228,6 +228,8 @@ unsigned btp_building_kind(const BtpResources *resources,const BtpState *state);
 const BtpBld *btp_state_bld(const BtpResources *resources,const BtpState *state);
 /* state_codec.c preserves the original-profile payload and historic migrations. */
 void btp_state_encode(const BtpState *state, uint8_t output[BTP_STATE_BYTES]);
+/* Content-aware validation retains exact project service prices/yard limits. */
+int btp_state_decode_resources(const uint8_t *bytes,size_t length,const BtpMap *map,const BtpBld *script,const BtpResources *resources,BtpState *state);
 int btp_state_decode(const uint8_t *bytes, size_t length, const BtpMap *map,
     const BtpBld *script, BtpState *state);
 const char *btp_mode_name(unsigned mode);

@@ -6,6 +6,7 @@
 #include "core/npc.h"
 #include "core/combat.h"
 #include "data/chi_spatial.h"
+#include "data/chi_services.h"
 #include <string.h>
 _Static_assert(sizeof(BtpYardState)+1<=BTP_STATE_BYTES-19305,"Yard/reply state exceeds the reserved save payload");
 static void keep_party(BtpState *s,unsigned active)
@@ -63,7 +64,7 @@ void btp_yard_finish_prison(BtpState *s,const BtpResources *r,int success)
        0D00/7014, then copies the Stinger template into the first empty bay. */
     restore_party(s);s->party.people[0][12]=8;s->campaign.mounted=0;
     if (success) for (unsigned i=0;i<4;++i) if (btp_party_mech(s,i)[0]==255) {
-        memcpy(btp_party_mech(s,i),btp_mech_template(&r->combat,BTP_MECH_ENCOUNTER,2),125);
+        memcpy(btp_party_mech(s,i),btp_mech_template(&r->combat,BTP_MECH_ENCOUNTER,btp_chi_service(r,BTP_SVC_PRISON_REWARD)),125);
         s->party.mech_types[i]=btp_party_mech(s,i)[0];s->campaign.owned=1;break;
     }
     if (!success) s->story_flags[40]=1;
@@ -181,9 +182,10 @@ void btp_yard_input(BtpState *s,const BtpResources *r,BtpAction a)
         if (a==BTP_ACCEPT || a==BTP_OPEN_MENU) {
             /* 07DC:0BA6 counts distinct boarding attempts. The third starts;
                previous choices cannot be used to increment the counter again. */
-            ++v->attempts;v->phase=(uint8_t)(v->attempts==3 ? BTP_YARD_FOUND : BTP_YARD_FAIL);
-            if (v->attempts==3) (void)btp_rng_next(s->npc.rng);
-            (void)btp_cutscene_begin(s,r,0,v->attempts==3 ? 5u : 7u);
+            ++v->attempts;int found=v->attempts==btp_chi_service(r,BTP_SVC_PRISON_START_ATTEMPT);
+            v->phase=(uint8_t)(found ? BTP_YARD_FOUND : BTP_YARD_FAIL);
+            if (found) (void)btp_rng_next(s->npc.rng);
+            (void)btp_cutscene_begin(s,r,0,found ? 5u : 7u);
         }
         return;
     }
@@ -205,7 +207,7 @@ void btp_yard_input(BtpState *s,const BtpResources *r,BtpAction a)
         unsigned mech=(s->x_half-20u)/4u;
         if (!(v->checked&(1u<<mech))) { v->checked|=(uint8_t)(1u<<mech);v->slot=(uint8_t)mech;v->phase=BTP_YARD_CLIMB; }
     }
-    if (++v->timer==81) {
+    if (++v->timer==btp_chi_service(r,BTP_SVC_PRISON_GUARD_TICKS)) {
         btp_yard_begin_guards(s,r);
     }
 }
@@ -301,14 +303,14 @@ unsigned btp_yard_tile(const BtpState *s,unsigned tile,int x,int y)
     for (unsigned i=0;i<s->yard.gate_count;++i) if (s->yard.gates[i][0]==x && s->yard.gates[i][1]==y) return s->yard.gates[i][2];
     return tile;
 }
-int btp_yard_valid(const BtpState *s)
+int btp_yard_valid_resources(const BtpState *s,const BtpResources *r)
 {
     const BtpYardState *v=&s->yard;
     if (!v->active) {
         const uint8_t *b=(const uint8_t *)v;for (unsigned i=0;i<sizeof *v;++i) if (b[i]) return 0;
         return s->mode!=BTP_YARD;
     }
-    if (v->active>2 || v->phase>BTP_YARD_FIGHT || v->timer>80 || v->idle>10 || v->checked>15 || v->attempts>3 ||
+    if (v->active>2 || v->phase>BTP_YARD_FIGHT || v->timer>=btp_chi_service(r,BTP_SVC_PRISON_GUARD_TICKS) || v->idle>10 || v->checked>15 || v->attempts>btp_chi_service(r,BTP_SVC_PRISON_START_ATTEMPT) ||
         v->selected>4 || v->slot>3 || v->rental>1 || v->variant>3 || v->alarm>3 || v->gate_count>16 || !s->checkpoint_valid) return 0;
     for (unsigned i=0;i<16;++i) {
         const uint8_t *g=v->gates[i];
@@ -324,3 +326,5 @@ int btp_yard_valid(const BtpState *s)
         ((s->mode==BTP_YARD && (s->script.native_action==34 || s->script.native_action==35)) ||
          (s->mode==BTP_ENCOUNTER && s->campaign.encounter==4 && s->script.native_action==35));
 }
+
+int btp_yard_valid(const BtpState *s) { return btp_yard_valid_resources(s,NULL); }

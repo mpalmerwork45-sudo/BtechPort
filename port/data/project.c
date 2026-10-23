@@ -66,7 +66,7 @@ static int expected(BtpJson *j,unsigned obj,const char *key,const char *want)
     return btp_json_string(j,node,v,sizeof v) && (!strcmp(v,want) || btp_json_error(j,node,"unsupported project option"));
 }
 void btp_project_free(BtpProject *p)
-{ if (p) { free(p->chi_resources);free(p->chi_spatial);btp_chi_scripts_free(p->chi_scripts);free(p); } }
+{ if (p) { free(p->chi_resources);free(p->chi_spatial);free(p->chi_services);btp_chi_scripts_free(p->chi_scripts);free(p); } }
 BtpProject *btp_project_load(const char *root,BtpRoster *roster,BtpPortraits *portraits,BtpError *error)
 {
     BtpError ignored;if (!error) error=&ignored;
@@ -100,6 +100,15 @@ BtpProject *btp_project_load(const char *root,BtpRoster *roster,BtpPortraits *po
         if (adventure) { fail(error,"project.json","CHI import cannot enable authored events");goto done; }
         p->chi_resources=btp_chi_project_load(root,&j,&digest,&p->chi_edition,error);
         if (!p->chi_resources) goto done;
+        unsigned services=btp_json_optional(&j,1,"chi_services");
+        if (services) {
+            p->chi_services=calloc(1,sizeof *p->chi_services);
+            if (!btp_json_string(&j,services,relative,sizeof relative)) goto done;
+            if (strcmp(relative,"chi-services.json")) { btp_json_error(&j,services,"expected chi-services.json");goto done; }
+            if (!p->chi_services || !btp_chi_services_load(root,relative,p->chi_services,p->chi_resources,&digest,error)) goto done;
+        }
+        p->chi_resources->project=p;
+        if (!btp_chi_service_dialogue(p->chi_resources,error)) goto done;
         unsigned programs=btp_json_optional(&j,1,"chi_scripts");
         if (programs) {
             p->chi_scripts=calloc(1,sizeof *p->chi_scripts);
@@ -226,6 +235,7 @@ BtpProject *btp_project_load(const char *root,BtpRoster *roster,BtpPortraits *po
         if (!btp_chi_presentation_load(root,relative,p,art,&digest,error)) goto done;
     }
     if (!btp_json_done(&j,1) || !btp_definitions_compile(&p->definitions,r,error->text)) goto done;
+    if (!btp_chi_services_stock(p->chi_services,r,error)) goto done;
     btp_digest_finish(&digest,p->digest);*roster=*r;*portraits=*art;ok=1;
 done:
     btp_json_close(&j);free(r);free(art);

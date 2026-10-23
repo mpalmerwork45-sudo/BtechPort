@@ -180,14 +180,14 @@ void btp_npc_advance(BtpState *s,const BtpMap *m)
         }
     }
 }
-void btp_npc_frame(BtpState *s,const BtpMap *m)
+static void frame(BtpState *s,const BtpMap *m,const BtpResources *r)
 {
     btp_npc_init(s,m);
     if (!s->npc.enabled || s->npc.fault) return;
     btp_world_animate_marks(s,(int)btp_citadel_origin(s,0)+s->x_half,(int)btp_citadel_origin(s,1)+s->y_half);
     (void)btp_rng_next(s->npc.rng); /* Main-loop encounter check also draws on MAP1. */
     for (unsigned i=20;i<=22;++i) if (s->story_flags[i]) --s->story_flags[i];
-    if (s->npc.loop_timer--==0) btp_economy_wrap(s);
+    if (s->npc.loop_timer--==0) btp_economy_wrap_resources(s,r);
     s->npc.allowance_pending=(uint8_t)btp_economy_below_cap(s);
     btp_npc_advance(s,m);
 }
@@ -200,12 +200,14 @@ int btp_outdoor_due(uint16_t *clock, BtpAction action)
     if (*clock<BTP_OUTDOOR_PERIOD) return 0;
     *clock=(uint16_t)(*clock-BTP_OUTDOOR_PERIOD);return 1;
 }
-void btp_npc_input(BtpState *s, const BtpMap *m, BtpAction action)
+void btp_npc_frame(BtpState *s,const BtpMap *m) { frame(s,m,NULL); }
+void btp_npc_input_resources(BtpState *s,const BtpMap *m,BtpAction action,const BtpResources *r)
 {
     btp_npc_init(s,m);
     if (!s->npc.enabled || s->npc.fault) return;
-    if (btp_outdoor_due(&s->npc.clock,action)) btp_npc_frame(s,m);
+    if (btp_outdoor_due(&s->npc.clock,action)) frame(s,m,r);
 }
+void btp_npc_input(BtpState *s,const BtpMap *m,BtpAction a) { btp_npc_input_resources(s,m,a,NULL); }
 void btp_npc_tick(BtpState *s, const BtpMap *m)
 {
     btp_npc_input(s,m,BTP_IDLE);
