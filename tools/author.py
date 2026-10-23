@@ -72,7 +72,7 @@ def parser():
             if name=='suite':s.add_argument('--case',action='append',dest='case_ids',help='Run only this case; repeat for several affected cases.')
     review=sub.add_parser('review',help='Prepare, inspect and accept durable change proposals.')
     actions=review.add_subparsers(dest='review_action',required=True)
-    for name in ('prepare','show','apply','discard','request-changes','recheck','check'):
+    for name in ('prepare','show','apply','discard','request-changes','recheck','check','world'):
         s=actions.add_parser(name)
         if name in ('prepare','apply','recheck'):
             s.add_argument('project',type=Path)
@@ -84,6 +84,10 @@ def parser():
             s.add_argument('--data',type=Path);s.add_argument('--cancel-file',type=Path)
         if name=='apply':s.add_argument('--override',action='append',default=[],help='Explicit exception for this named protection rule.')
         if name=='request-changes':s.add_argument('--note',required=True)
+        if name=='world':
+            s.add_argument('--validator',type=Path,default=ROOT/'build'/('btp-project.exe' if os.name=='nt' else 'btp-project'))
+            s.add_argument('--world',required=True);s.add_argument('--rect',type=int,nargs=4,required=True)
+            s.add_argument('--data',type=Path);s.add_argument('--cancel-file',type=Path)
         if name=='check':
             s.add_argument('--validator',type=Path,default=ROOT/'build'/('btp-project.exe' if os.name=='nt' else 'btp-project'))
             for key,tool in [('analyzer','btp-author-analyze'),('runner','btp-author-playtest')]:s.add_argument('--'+key,type=Path,default=ROOT/'build'/(tool+('.exe' if os.name=='nt' else '')))
@@ -184,6 +188,9 @@ def dispatch(args):
         import authoring_review as review
         action=args.review_action
         if action=='show':return review.read(args.folder)
+        if action=='world':
+            return dict(api_version=1,status='rendered',artifacts=review.world_crop(args.folder,args.world,args.rect,args.validator,
+                settings={'data':str(args.data)} if args.data else {},cancelled=lambda:bool(args.cancel_file and args.cancel_file.exists())))
         if action=='check':
             settings={k:str(getattr(args,k.replace('-','_'))) for k in ('data','dialogue-data','combat-data','world-data') if getattr(args,k.replace('-','_'))}
             return review.check_candidate(args.folder,args.validator,settings=settings,analyzer=args.analyzer,runner=args.runner,suite=args.suite,

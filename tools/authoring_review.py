@@ -103,7 +103,7 @@ def dependencies(document):
                 provenance=json.loads(document.metadata.get('LIBRARY-SOURCES.json',b'[]')))
 
 
-def visual_artifacts(before,after,changes,folder,settings,cancelled):
+def visual_artifacts(before,after,changes,folder,settings,cancelled,world_changes=()):
     from authoring_visuals import map_svg,event_graph
     artifacts=[];diagnostics=[]
     maps=[c['object_id'] for c in changes if c['path'].startswith('adventure.maps/')]
@@ -115,6 +115,13 @@ def visual_artifacts(before,after,changes,folder,settings,cancelled):
             output=folder/(side+'-map-'+str(n)+'.svg')
             try:artifacts.append(dict(kind='map',side=side,id=identity,**map_svg(document,identity,output,settings,overlays=['entrances','grid'])))
             except (EditorError,OSError,ValueError,KeyError) as error:diagnostics.append(dict(code='preview.unavailable',severity='warning',message=str(error)))
+        from world_review import overview
+        for n,change in enumerate(world_changes):
+            if not change.get(side):continue
+            try:artifacts.append(dict(kind='world',side=side,id=change['id'],**overview(document,change,folder/(side+'-world-'+str(n)+'.svg'),settings,cancelled)))
+            except (EditorError,OSError,ValueError,KeyError) as error:
+                if diagnostic(error)['code']=='job.cancelled':raise
+                diagnostics.append(dict(code='preview.unavailable',severity='warning',object_id=change['id'],message=str(error)))
         if events:
             try:artifacts.append(dict(kind='events',side=side,**event_graph(document,folder/(side+'-events.svg'))))
             except (EditorError,OSError,ValueError) as error:diagnostics.append(dict(code='preview.unavailable',severity='warning',message=str(error)))
@@ -150,11 +157,13 @@ def prepare(document,request,folder,*,base_dir=None,selected=None,settings=None,
         # document is still untouched, including its drafts and Undo stack.
         for name,source in [('before',document),('after',candidate)]:
             root=folder/name;root.mkdir();source.stage_authoring(root)
+        from world_review import changes as changed_worlds
         record.update(result=result,result_revision=revision(candidate),changes=details(document,candidate,result['changes']),
-                      conflicts=conflicts(document,candidate),dependency_before=dependencies(document),dependency_after=dependencies(candidate))
+                      conflicts=conflicts(document,candidate,cancelled),dependency_before=dependencies(document),dependency_after=dependencies(candidate),
+                      world_changes=changed_worlds(document,candidate,cancelled))
         record['displaced_details']=result['displaced_details']
         if visuals:
-            record['artifacts'],warnings=visual_artifacts(document,candidate,result['changes'],folder,settings or {},cancelled)
+            record['artifacts'],warnings=visual_artifacts(document,candidate,result['changes'],folder,settings or {},cancelled,record['world_changes'])
             record['diagnostics'].extend(warnings)
         if cancelled():raise AuthoringError('job.cancelled','Review preparation cancelled.')
         document.unchanged_on_disk()
@@ -167,9 +176,59 @@ def prepare(document,request,folder,*,base_dir=None,selected=None,settings=None,
         # Retain the snapshots even if their combined display report is too
         # large. Never publish a proposal whose review cannot be read back.
         for key in ('result','result_revision','dependency_before','dependency_after','displaced_details'):record.pop(key,None)
-        record.update(status='failed',changes=[],conflicts=[],artifacts=[],diagnostics=[diagnostic(error)])
+        record.update(status='failed',changes=[],conflicts=[],artifacts=[],world_changes=[],diagnostics=[diagnostic(error)])
         write(folder,record)
     return record
+
+
+def world_crop(folder,identity,rect,validator,settings=None,cancelled=lambda:False):
+    """Retain a paired full-pixel crop of exact review snapshots, on demand."""
+    # One writer per crop cache also makes its 64-crop limit meaningful when
+    # the GUI and a local author request detail at the same time.
+    with project_lock(Path(folder)/'world-crops'):
+        return _world_crop(folder,identity,rect,validator,settings,cancelled)
+
+
+def _world_crop(folder,identity,rect,validator,settings,cancelled):
+    from world_review import Surface,overlap,detail
+    folder=Path(folder).resolve();record=read(folder)
+    if identity not in [w['id'] for w in record.get('world_changes',[])]:
+        raise AuthoringError('object.missing','Select a changed world in this review.')
+    if len(rect)!=4 or any(type(n)!=int for n in rect) or min(rect[:2])<0 or min(rect[2:])<1 or max(rect[2:])>64:
+        raise AuthoringError('coordinate.bounds','Review detail crops use world-tile rectangles up to 64 by 64.')
+    # Cache only a bounded set of crops. The original snapshots, revision and
+    # content are checked even when reopening a previously rendered crop.
+    docs={}
+    change=next(w for w in record['world_changes'] if w['id']==identity)
+    for side,key in [('before','base_revision'),('after','result_revision')]:
+        if not change[side]:continue
+        if cancelled():raise AuthoringError('job.cancelled','World detail cancelled.')
+        docs[side]=ProjectDocument(folder/side,validator,recover=False)
+        if revision(docs[side])!=record[key]:raise AuthoringError('review.changed','Retained world snapshot changed; prepare a new proposal.')
+    cache=folder/'world-crops';cache.mkdir(exist_ok=True)
+    digest=hashlib.sha256(encoded(dict(world=identity,rect=rect))).hexdigest();index=cache/(digest+'.json')
+    if index.exists():
+        result=read_json(index)
+        for item in result:
+            path=child(cache,Path(item['artifact']['path']).name)
+            if hashlib.sha256(path.read_bytes()).hexdigest()!=item['artifact']['sha256']:
+                raise AuthoringError('review.changed','A retained world preview changed; prepare a new review.')
+            item['artifact']['path']=str(path)
+        return result
+    if len(list(cache.glob('*.json')))>=64:raise AuthoringError('preview.bounded','This review has 64 detail crops; use an existing crop or prepare another review.')
+    result=[]
+    for side,document in docs.items():
+        if cancelled():raise AuthoringError('job.cancelled','World detail cancelled.')
+        surface=Surface(document,identity);hit=overlap(rect,[0,0,surface.width,surface.height])
+        if not hit:continue
+        # A cancelled/failed render can leave an unindexed SVG. Give each
+        # attempted write its own name so retrying preserves the evidence.
+        target=cache/(uuid.uuid4().hex+'-'+side+'.svg')
+        preview=detail(document,change,target,hit,settings,cancelled)
+        result.append(dict(kind='world',side=side,id=identity,**preview))
+    if not result:raise AuthoringError('coordinate.bounds','The crop must intersect the world in at least one retained snapshot.')
+    if cancelled():raise AuthoringError('job.cancelled','World detail cancelled.')
+    ProjectDocument.atomic_file(index,encoded(result));return result
 
 
 def prepare_apply(document,folder,*,overrides=(),cancelled=lambda:False):

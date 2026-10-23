@@ -58,18 +58,18 @@ class Changes:
     def show_error(self,error):self.status.set(str(error))
 
     def button(self,parent,label,operation):
-        button=ttk.Button(parent,text=label,command=lambda:guard(self,operation,publish=False));button.pack(side='left',padx=3,pady=3)
+        button=ttk.Button(parent,text=label,width=0,command=lambda:guard(self,operation,publish=False));button.pack(side='left',padx=3,pady=3)
         return button
 
     def build_review(self):
         bar=ttk.Frame(self.review_page,padding=4);bar.pack(fill='x')
-        self.button(bar,'Load command file...',self.load_file);self.button(bar,'Open saved review...',self.open_saved)
-        self.button(bar,'Refresh',self.refresh);self.button(bar,'Cancel background tasks',lambda:self.workspace.tasks.cancel(self.scope))
+        self.button(bar,'Load commands...',self.load_file);self.button(bar,'Open review...',self.open_saved)
+        self.button(bar,'Refresh',self.refresh);self.button(bar,'Cancel tasks',lambda:self.workspace.tasks.cancel(self.scope))
         flow_toolbar(bar)
         actions=ttk.Frame(self.review_page,padding=4);actions.pack(side='bottom',fill='x')
-        self.apply_button=self.button(actions,'Apply reviewed changes',self.apply)
+        self.apply_button=self.button(actions,'Apply changes',self.apply)
         self.button(actions,'Discard',lambda:self.decide('discard'));self.button(actions,'Request changes...',lambda:self.decide('request_changes'))
-        self.button(actions,'Recheck selected groups',self.recheck);flow_toolbar(actions)
+        self.button(actions,'Recheck groups',self.recheck);flow_toolbar(actions)
         body=ttk.Panedwindow(self.review_page,orient='horizontal');body.pack(fill='both',expand=True)
         left=ttk.Frame(body);right=ttk.Frame(body);body.add(left,weight=1);body.add(right,weight=4)
         compact=ttk.Frame(self.review_page,padding=4)
@@ -127,12 +127,15 @@ class Changes:
         bar=ttk.Frame(checks);bar.pack(fill='x')
         self.button(bar,'Check proposed mission',self.check);self.button(bar,'Run scenario suite...',lambda:self.check(True))
         self.button(bar,'Open artifact folder',self.open_artifacts);flow_toolbar(bar);self.checks=text_box(checks)
+        from editor_world_review import WorldReviewPane
+        self.worlds_page=ttk.Frame(self.detail);self.detail.add(self.worlds_page,text='Worlds')
+        self.world_review=WorldReviewPane(self,self.worlds_page)
 
     def build_protection(self):
         bar=ttk.Frame(self.protection_page,padding=6);bar.pack(fill='x')
         self.button(bar,'Add protection...',self.protection_form);self.button(bar,'Edit selected...',lambda:self.protection_form(True));self.button(bar,'Remove selected',self.remove_protection)
         flow_toolbar(bar)
-        ttk.Label(self.protection_page,text='Protect whole objects, selected fields or map-tile rectangles from generated batches. Manual editing remains available. Changes use Undo and Save.',wraplength=800,padding=8).pack(fill='x')
+        ttk.Label(self.protection_page,text='Protect whole objects, selected fields, local map rectangles or world regions from generated batches. World regions also protect overlapping town tiles and shared tile artwork. Manual editing remains available. Changes use Undo and Save.',wraplength=800,padding=8).pack(fill='x')
         self.protected=scrolling_tree(self.protection_page,columns=('kind','target'),show='tree headings',selectmode='browse')
         for key,label,width in [('#0','Keep',200),('kind','Rule',90),('target','Object / region',400)]:self.protected.heading(key,text=label);self.protected.column(key,width=width)
         self.protected.pack(fill='both',expand=True,padx=8,pady=8)
@@ -166,7 +169,7 @@ class Changes:
         elif self.proposals.get_children():self.proposals.selection_set(self.proposals.get_children()[0])
         self.protected.delete(*self.protected.get_children())
         for rule in rules(self.document):
-            target=rule.get('path',rule.get('map',''))+(' '+str(rule['rect']) if 'rect' in rule else ' '+', '.join(rule.get('fields',[])))
+            target=rule.get('path',rule.get('world',rule.get('map','')))+(' '+str(rule['rect']) if 'rect' in rule else ' '+', '.join(rule.get('fields',[])))
             self.protected.insert('','end',iid=rule['id'],text=rule['label'],values=(rule['kind'],target))
         self.select();self.refresh_jobs()
 
@@ -208,6 +211,7 @@ class Changes:
         maps=list(dict.fromkeys(a['id'] for a in record['artifacts'] if a['kind']=='map'));self.map_choice.configure(values=maps)
         if self.map_id.get() not in maps:self.map_id.set(maps[0] if maps else '')
         self.show_maps();self.show_routes()
+        self.world_review.load(record,self.folder)
         fill(self.checks,json.dumps(dict(validation=record.get('result',{}).get('validation'),checks=record.get('checks',[]),
             dependencies_before=record.get('dependency_before'),dependencies_after=record.get('dependency_after'),
             artifacts=[a.get('artifact') for a in record['artifacts']],diagnostics=record['diagnostics']),indent=2))
@@ -294,11 +298,12 @@ class Changes:
     def open_artifacts(self):
         self.selected();webbrowser.open(self.folder.as_uri())
 
-    def protection_form(self,edit=False):
+    def protection_form(self,edit=False,initial=None):
         from adventure_editor import Form
         current=next((r for r in rules(self.document) if self.protected.selection() and r['id']==self.protected.selection()[0]),None) if edit else None
         if edit and current is None:raise AuthoringError('object.missing','Select a protection rule.')
         current=current or dict(id='keep-'+str(len(rules(self.document))+1),label='Keep manual work',kind='object')
+        if initial:current.update(initial)
         paths=[]
         for section in ('content','adventure','art'):
             for key,values in (getattr(self.document,section) or {}).items():
@@ -306,14 +311,18 @@ class Changes:
         scenes=(self.document.adventure or {}).get('maps',[])
         paths.extend('adventure.entrances/'+d['id'] for m in scenes for d in m['entrances'])
         form=Form(self,'Protect authored content')
-        form.field('id',current['id']);form.field('label',current['label']);form.field('kind',current['kind'],['object','fields','map_region'])
+        form.field('id',current['id']);form.field('label',current['label']);form.field('kind',current['kind'],['object','fields','map_region','world_region'])
         form.field('path',current.get('path',paths[0] if paths else ''),paths,label='Object (object / fields rules)')
         form.field('fields',', '.join(current.get('fields',['text'])),label='Fields or JSON pointers, comma separated')
-        form.field('map',current.get('map',scenes[0]['id'] if scenes else ''),[m['id'] for m in scenes],label='Map (region rules)')
-        form.field('rect',', '.join(map(str,current.get('rect',[0,0,1,1]))),label='Map-tile rectangle: x, y, width, height')
+        form.field('map',current.get('map',scenes[0]['id'] if scenes else ''),[m['id'] for m in scenes],label='Map (map_region)')
+        from world_editing import all_worlds
+        worlds=all_worlds(self.document.adventure or {})
+        form.field('world',current.get('world',worlds[0]['id'] if worlds else ''),[w['id'] for w in worlds],label='Planet (world_region)')
+        form.field('rect',', '.join(map(str,current.get('rect',[0,0,1,1]))),label='Tile rectangle: x, y, width, height')
         def apply(values):
             rule={k:values[k] for k in ('id','label','kind')}
-            if rule['kind']=='map_region':rule.update(map=values['map'],rect=[int(v.strip()) for v in values['rect'].split(',')])
+            if rule['kind'] in ('map_region','world_region'):
+                field='map' if rule['kind']=='map_region' else 'world';rule.update({field:values[field]},rect=[int(v.strip()) for v in values['rect'].split(',')])
             else:
                 rule['path']=values['path']
                 if rule['kind']=='fields':rule['fields']=[v.strip() for v in values['fields'].split(',') if v.strip()]

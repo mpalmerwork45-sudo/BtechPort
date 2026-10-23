@@ -30,6 +30,7 @@ class WorldEditor:
         ttk.Button(controls,text='Generate...',command=lambda:self.guard(self.generate)).pack(side='left',padx=(0,8))
         self.tool=tk.StringVar(value='Jigsaw')
         ttk.Button(controls,text='Patterns...',command=lambda:self.guard(self.patterns)).pack(side='left',padx=4)
+        ttk.Button(controls,text='Protect selection...',command=lambda:self.guard(self.protect_selection)).pack(side='left',padx=4)
         from editor_canvas import CanvasZoom,DrawingTools
         self.zoom=tk.StringVar(value='4');self.zoom_control=CanvasZoom(controls,self.zoom,self.draw,steps=(1,2,4,8,12,16,24,32));self.zoom_control.pack(side='left',padx=8)
         self.drawing_tools=DrawingTools(self.window,self.tool,[('World',[
@@ -84,6 +85,12 @@ class WorldEditor:
                      and city['origin'][1]<=point[1]<city['origin'][1]+len(city['rows'])),None)
     def patterns(self):
         view=self.owner.patterns();view.target=self;view.info.set('World patterns: select up to 64 × 64 tiles, then Save selection. Paste adds terrain patches.');return view
+    def protect_selection(self):
+        from editor_changes import open_changes
+        if not self.selection_rect:raise EditorError('Choose Select and drag a rectangle to protect first.')
+        x,y,xx,yy=self.selection_rect;view=open_changes(self.owner.parent)
+        view.pages.select(view.protection_page)
+        return view.protection_form(initial=dict(kind='world_region',world=self.world_id,rect=[x,y,xx-x+1,yy-y+1],label='Keep '+self.current_world()['name']+' terrain'))
     def copy_selection(self):
         from map_patterns import world_capture
         if not self.selection_rect:raise EditorError('Choose Select and drag a rectangle first; Ctrl+C copies and Ctrl+V pastes.')
@@ -115,10 +122,11 @@ class WorldEditor:
         if not self.pending:self.pending=True;self.window.after_idle(self.draw)
     def current_world(self,a=None):return get_world(self.adventure if a is None else a,self.world_id)
     def change_planet(self):
-        self.cancel();self.world_id=all_worlds(self.document.adventure)[self.planet.current()]['id'];self.city=None;self.cache={};self.draw()
+        self.cancel();self.selection_rect=None;self.world_id=all_worlds(self.document.adventure)[self.planet.current()]['id'];self.city=None;self.cache={};self.draw()
     def show_location(self,world,at,message,coordinate_space='world_movement'):
         # Diagnostic coordinates are movement half-tiles; the world canvas
         # draws tiles. Keep the marker through redraws, zoom and scrolling.
+        if not any(w['id']==world for w in all_worlds(self.adventure)):raise EditorError('This world is absent from the current project: '+world)
         self.world_id=world;self.refresh();self.window.lift()
         scale=.5 if coordinate_space=='world_movement' else 1
         x,y=(value*scale for value in at);self.problem_location=(world,x,y)
@@ -246,6 +254,11 @@ class WorldEditor:
             ox,oy=m['origin'];color='#ffff88' if m['id']==self.city else '#ffffff'
             self.canvas.create_rectangle(ox*z,oy*z,(ox+len(m['rows'][0]))*z,(oy+len(m['rows']))*z,outline=color,width=2)
             self.canvas.create_text(ox*z+3,oy*z+3,text=m['name'],fill=color,anchor='nw')
+        from authoring_protection import rules
+        for rule in rules(self.document):
+            if rule['kind']=='world_region' and rule['world']==self.world_id:
+                x,y,rw,rh=rule['rect']
+                self.canvas.create_rectangle(x*z,y*z,(x+rw)*z,(y+rh)*z,outline='#32d5ed',dash=(4,3),width=2,tags='protected-region')
         if self.selection_rect:
             x,y,xx,yy=self.selection_rect;self.canvas.create_rectangle(x*z,y*z,(xx+1)*z,(yy+1)*z,outline='#ffdb6e',width=2)
         if self.problem_location and self.problem_location[0]==self.world_id:

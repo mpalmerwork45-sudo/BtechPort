@@ -335,10 +335,13 @@ def apply_batch(document, request, *, base_dir=None, dry_run=False, save=False, 
         if allowed_scope is not None and not any(scope=='*' or change['path']==scope or change['path'].startswith(scope+'.') or change['path'].startswith(scope+'/') for scope in allowed_scope):
             raise AuthoringError('scope.denied','Batch exceeds this authoring session scope: '+change['path'],object_id=change['object_id'])
     from authoring_protection import enforce,displaced_details
-    enforce(document,candidate,protection_overrides)
     if expected_result is not None and revision(candidate)!=expected_result:
         raise AuthoringError('review.changed','The proposed result changed since review. Prepare and review it again.')
     check_metadata(candidate);check_capacity(candidate);checkpoint();validation=candidate.validate();checkpoint()
+    # Preservation composes referenced terrain/art. Validate shape, references
+    # and runtime capacities first, so malformed candidates get native field
+    # diagnostics instead of crashing or expanding an unbounded preview.
+    enforce(document,candidate,protection_overrides,cancelled);checkpoint()
     # Imports can be edited while a batch validates. Never acknowledge a
     # request whose recorded input hash differs from the bytes it imported.
     if any(hashlib.sha256(path.read_bytes()).hexdigest()!=fingerprint['imports'][name] for name,path in imports.items()):

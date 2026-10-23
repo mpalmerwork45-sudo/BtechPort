@@ -200,7 +200,7 @@ or arbitrary script-driven combat controller is exposed.
   `adventure.maps/relay:town`, `adventure.events`, `art` or `editor.map_patterns`.
   `"*"` permits the entire project. Scope is checked against the **actual diff**,
   including generated tiles and editor metadata. Protection rules add object,
-  field and map-region checks; review makes the proposed result inspectable.
+  field, local-map and world-region checks; review makes the proposed result inspectable.
 - Successful request hashes and outcomes live in `AUTHORING.json`, outside
   gameplay/save identity. Retries return `already_applied`; reusing an ID with
   different JSON or import bytes fails. Undo retains the receipt, so a delayed
@@ -261,17 +261,17 @@ Open **Project → Changes and protection**. Its three pages are **Review
 changes**, **Protected content** and **Local session**.
 
 1. In **Protected content**, add a named rule for an object, selected fields,
-   or a rectangle on a local map. These settings use normal Undo and Save.
+   or a rectangle on a local map or planet. These settings use normal Undo and Save.
 2. Export the current summary, or take a live session snapshot. Prepare a
    command batch against that exact revision.
-3. **Load command file** builds a separate proposal. It leaves the open
+3. **Load commands** builds a separate proposal. It leaves the open
    document and pending forms unchanged. Review object/field changes, paired
-   local maps, event-route lists and dependencies. Complete packages and SVG
+   local maps, composed worlds, event-route lists and dependencies. Complete packages and SVG
    previews remain in the review folder.
 4. **Check proposed mission** or **Run scenario suite** attaches results for
    that exact candidate. They do not test a different live revision. Check
    reports retain their coverage limits and any missing asset diagnostics.
-5. **Apply reviewed changes** revalidates the proposal, collects valid human
+5. **Apply changes** revalidates the proposal, collects valid human
    drafts as their own history step, then applies the generated batch as one
    additional step. **Undo** reverses that batch; **Save** publishes it.
 
@@ -279,15 +279,16 @@ changes**, **Protected content** and **Local session**.
 records a note for the external author; it does not itself invoke a model.
 Protection conflicts require explicitly selecting the named exception before
 Apply. Exceptions apply to that one application; the rules remain in place.
-Changing groups requires **Recheck selected groups** before Apply. At narrow
+Changing groups requires **Recheck groups** before Apply. At narrow
 window sizes the proposal list becomes a dropdown; the summary and selection
 controls scroll, and the action buttons remain outside the scrolling area.
 
 Object paths use the same notation as write scopes, for example
 `adventure.events/beacon:welcome`. Entrances also have the synthetic path
 `adventure.entrances/beacon:exchange`. Fields accept names such as `text` or
-JSON pointers such as `/enemies/0/definition`. Regions use **local map-tile**
-rectangles `[x,y,width,height]`. They protect the cell layers and referenced
+JSON pointers such as `/enemies/0/definition`. Map regions use **local map-tile**
+rectangles `[x,y,width,height]`; `world_region` uses **world tiles** and an explicit
+planet ID. They protect the cell layers and referenced
 tile/art definitions, so changing a shared tile cannot bypass a painted
 region. Manual editing remains possible. Rules constrain supported generated
 batches, including the older immediate Apply command.
@@ -295,8 +296,10 @@ batches, including the older immediate Apply command.
 Rules live in `EDITOR.json.authoring_protection`; see the
 [protection schema](../schemas/authoring-protection-v1.schema.json).
 Generic generated batches cannot remove or rewrite that policy. Whole world
-objects and their fields can be protected by object path; rectangular region
-protection currently applies to local maps. This is a collaboration contract,
+objects and their fields can also be protected by object path.
+[World review and protection](WORLD_REVIEW.md) explains the paired planet views,
+town navigation, indirect art/jigsaw changes and the `review world` detail command.
+This is a collaboration contract,
 not an operating-system security boundary against arbitrary file writes.
 
 Closed-project CLI equivalents:
@@ -391,6 +394,9 @@ Current bounds: 512 operations per batch, **2 MiB per reviewed request**,
 per session, 16 MiB per import and 64 MiB total captured imports. The Changes
 view remembers up to 512 review paths. It renders the first eight changed
 local maps, with all other changes retained in packages and field comparisons.
+Changed worlds get paired overviews capped at 1024×1024 pixels per side and up
+to 64 requested detail crops per review. World protection rectangles can total
+4,194,304 tiles, counting overlapping rules.
 Each review supports 32 linked check reports. Display excerpts share a 4 MiB
 budget; complete values remain in the snapshots. Oversized review records fail
 without application. These bounds are also exposed by `capabilities`.

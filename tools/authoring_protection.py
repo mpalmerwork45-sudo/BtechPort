@@ -13,8 +13,9 @@ from editor_model import encoded
 
 RULE_SCHEMA = obj(dict(
     id=dict(type='string',minLength=1,maxLength=80,pattern=r'^[a-zA-Z0-9._-]+$'),
-    label=TEXT,kind=enum('object','fields','map_region'),path=TEXT,
-    fields=array(TEXT,1,32),map=ID,rect=array(integer(0,64),4,4)),['id','label','kind'])
+    label=TEXT,kind=enum('object','fields','map_region','world_region'),path=TEXT,
+    fields=array(TEXT,1,32),map=ID,world=ID,rect=array(integer(0,1024),4,4)),['id','label','kind'])
+WORLD_REGION_CELLS=4*1024*1024
 
 
 def data(document):
@@ -27,17 +28,21 @@ def rules(document):
     if len({v['id'] for v in values})!=len(values):
         raise AuthoringError('protection.invalid','Protection IDs must be unique.')
     for rule in values:check_rule_shape(rule)
+    if sum(r['rect'][2]*r['rect'][3] for r in values if r['kind']=='world_region')>WORLD_REGION_CELLS:
+        raise AuthoringError('protection.bounds','World protection rectangles may total at most 4,194,304 tiles; use object protection for broader policies.')
     return values
 
 
 def check_rule_shape(rule):
     """Validate saved policy even if a manually removed target is now absent."""
-    region=rule['kind']=='map_region'
-    needed={'map','rect'} if region else {'path'}|({'fields'} if rule['kind']=='fields' else set())
+    region=rule['kind'] in ('map_region','world_region')
+    needed={'world' if rule['kind']=='world_region' else 'map','rect'} if region else {'path'}|({'fields'} if rule['kind']=='fields' else set())
     if not needed.issubset(rule) or set(rule)-({'id','label','kind'}|needed):
         raise AuthoringError('protection.invalid','Preservation rule has missing or unrelated fields: '+rule['id'])
     if region and min(rule['rect'][2:])<1:
-        raise AuthoringError('protection.invalid','A protected map rectangle must be nonempty.')
+        raise AuthoringError('protection.invalid','A protected rectangle must be nonempty.')
+    if region and max(rule['rect'])>(64 if rule['kind']=='map_region' else 1024):
+        raise AuthoringError('protection.invalid','Protected rectangle exceeds its coordinate limits.')
 
 
 def value_at(document,path):
@@ -90,19 +95,46 @@ def region(document,rule):
                     tile=layer['rows'][yy][xx]
                     if tile!=' ':stack.append(tile);used.add(tile)
             cells.append(stack)
-    from world_editing import token
-    tiles=[v for v in document.adventure['tiles'] if token(v) in used]
-    images={t['graphic'] for t in tiles if t['sheet']=='package:art'}
+    from world_review import tile_values
+    dependencies=tile_values(document)
     # Protect the visible handwork as well as tile references: changing shared
     # artwork or terrain properties must not bypass a protected map region.
-    return dict(cells=cells,tiles=tiles,images=[im for im in document.art['images'] if im['id'] in images],
+    return dict(cells=cells,tiles={key:dependencies.get(key) for key in sorted(used)},
                 size=[len(scene['rows'][0]),len(scene['rows'])])
+
+
+def world_region(document,rule,cancelled=lambda:False):
+    from world_review import Surface,canonical,city_rect,overlap,tile_values
+    from world_editing import all_worlds
+    import hashlib
+    if not any(w['id']==rule['world'] for w in all_worlds(document.adventure or {})):return None
+    # Stream ground rows, and retain clipped city-layer fingerprints. This
+    # protects painted ground even beneath towns without hashing a million
+    # Python cell objects or falling back to another planet after deletion.
+    surface=Surface(document,rule['world']);x,y,w,h=rule['rect'];used=set();digest=hashlib.sha256()
+    for cy in range(y,y+h):
+        if (cy-y)%16==0 and cancelled():raise AuthoringError('job.cancelled','World preservation check cancelled.')
+        row=surface.row(cy,x,w,cities=False);used.update(row);digest.update(canonical(row));digest.update(b'\n')
+    tiles=tile_values(document)
+    for key in sorted(used,key=lambda k:k or ''):digest.update(canonical(tiles.get(key)));digest.update(b'\n')
+    towns=[]
+    for key,city in sorted(surface.cities.items()):
+        hit=overlap(rule['rect'],city_rect(city))
+        if hit:
+            cx,cy=city['origin'];clipped=dict(map=key,rect=[hit[0]-cx,hit[1]-cy,*hit[2:]])
+            towns.append(dict(id=key,origin=city['origin'],detail=region(document,clipped)))
+    return dict(ground=digest.hexdigest(),towns=towns)
 
 
 def validate_rule(document,rule):
     check(rule,RULE_SCHEMA)
     check_rule_shape(rule)
-    if rule['kind']=='map_region':
+    if rule['kind']=='world_region':
+        from world_review import Surface
+        surface=Surface(document,rule['world']);x,y,w,h=rule['rect']
+        if x+w>surface.width or y+h>surface.height:
+            raise AuthoringError('coordinate.bounds','Protect an existing rectangle in world-tile coordinates.')
+    elif rule['kind']=='map_region':
         if set(rule)-{'id','label','kind','map','rect'} or 'map' not in rule or 'rect' not in rule:
             raise AuthoringError('protection.invalid','A map-region rule needs map and rect only.')
         scene=value_at(document,'adventure.maps/'+rule['map'])
@@ -130,17 +162,21 @@ def edit_rule(document,rule=None,remove=None):
         validate_rule(document,rule)
         values=[r for r in values if r['id']!=rule['id']]+[copy.deepcopy(rule)]
     if len(values)>256:raise AuthoringError('capacity.exceeded','At most 256 preservation rules are supported.')
+    if sum(r['rect'][2]*r['rect'][3] for r in values if r['kind']=='world_region')>WORLD_REGION_CELLS:
+        raise AuthoringError('protection.bounds','World protection rectangles may total at most 4,194,304 tiles.')
     metadata=dict(document.metadata);notes=data(document);notes['authoring_protection']=values;metadata['EDITOR.json']=encoded(notes)
     with document.command('Edit authoring protection'):
         document.replace_all(document.content,document.adventure,document.art,document.manifest,metadata)
 
 
-def conflicts(before,after):
+def conflicts(before,after,cancelled=lambda:False):
     if rules(before)!=rules(after):
         raise AuthoringError('protection.policy_changed','Generated batches cannot change preservation rules. Use the protection editor explicitly.')
     result=[]
     for rule in rules(before):
-        if rule['kind']=='map_region':left,right=region(before,rule),region(after,rule)
+        if cancelled():raise AuthoringError('job.cancelled','Preservation check cancelled.')
+        if rule['kind']=='world_region':left,right=world_region(before,rule,cancelled),world_region(after,rule,cancelled)
+        elif rule['kind']=='map_region':left,right=region(before,rule),region(after,rule)
         else:
             left,right=value_at(before,rule['path']),value_at(after,rule['path'])
             if rule['kind']=='fields':
@@ -148,14 +184,14 @@ def conflicts(before,after):
         if left!=right:
             result.append(dict(code='protection.conflict',severity='error',rule=rule['id'],label=rule['label'],
                 message='This batch changes protected content: '+rule['label'],path=rule.get('path'),
-                map=rule.get('map'),rect=rule.get('rect'),fields=rule.get('fields',[])))
+                map=rule.get('map'),world=rule.get('world'),rect=rule.get('rect'),fields=rule.get('fields',[])))
     return result
 
 
-def enforce(before,after,overrides=()):
+def enforce(before,after,overrides=(),cancelled=lambda:False):
     known={r['id'] for r in rules(before)}
     if set(overrides)-known:raise AuthoringError('protection.invalid','An override names an unknown protection rule.')
-    blocked=[c for c in conflicts(before,after) if c['rule'] not in overrides]
+    blocked=[c for c in conflicts(before,after,cancelled) if c['rule'] not in overrides]
     if blocked:
         error=AuthoringError('protection.conflict','Protected content would change: '+', '.join(c['label'] for c in blocked))
         error.diagnostic['conflicts']=blocked
