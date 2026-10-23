@@ -114,6 +114,12 @@ The proposed path to more mechs, custom game packages, BLD/Lua scripting and a
 Windows/Linux editor is recorded in the
 [engine and editor plan](docs/ENGINE_AND_EDITOR_PLAN.md).
 
+The [editable CHI campaign plan](docs/CHI_EDITABLE_CAMPAIGNS_PLAN.md) specifies
+five proposed milestones for importing separate Original and Updated campaigns
+from a user's original files. It covers editable maps/scripts/services, isolated
+saves and keeping original-derived content out of repository and release assets.
+This campaign importer is planned, not yet implemented.
+
 [World-route checks](docs/WORLD_ROUTE_VERIFICATION.md) exercise whole-party
 travel between towns and planets, discovery and save/reload, with navigable
 editor diagnostics. The independent World Survey fixture needs no original assets.

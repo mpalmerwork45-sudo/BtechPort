@@ -42,10 +42,13 @@ The user's three pending Last Beacon files and both reference directories are
 unchanged. Gameplay/save formats remain unchanged. Native Windows Python/Tk
 interaction remains **UNKNOWN**.
 
-**Next proposed:** an editor for scenario suites and a coverage inventory that
-separates declared dependencies, observed events, unrun cases and unknown paths.
-Case scaffolds should become evidence only after a successful native run. The
-bounded scope is recorded in the [authoring plan](AI_AUTHORING_PLAN.md).
+**Next proposed:** [editable Original and Updated CHI campaigns](CHI_EDITABLE_CAMPAIGNS_PLAN.md).
+The five-milestone plan covers dependency/provenance auditing, a shared local
+importer with isolated projects/saves, editable world/resources, editable
+story/services and campaign/setup verification. The recommended first pass is
+C1–C2: audit and a playable Citadel/training slice in both profiles. This is a
+documentation handoff; implementation has not started. Suite authoring and
+coverage, previously listed here as proposed, are delivered above.
 
 **AI5 world-review extension — implemented and verified, 2026-10-23.**
 [World review and regional protection](WORLD_REVIEW.md) adds paired composed

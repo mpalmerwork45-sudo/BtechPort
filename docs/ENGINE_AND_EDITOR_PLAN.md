@@ -1,11 +1,17 @@
 # Plan: reusable runtime, custom games and an editor
 
-The next phase is [AI authoring with the Construction Kit](AI_AUTHORING_PLAN.md).
-Its [authoring tools](AI_AUTHORING_GUIDE.md) now provide shared commands,
+The [editable CHI campaign plan](CHI_EDITABLE_CAMPAIGNS_PLAN.md) now specifies
+the proposed five-milestone import of complete Original and Updated campaigns
+into separate editable projects. It extends the existing authoring tools with
+original-campaign compatibility, local extraction and provenance enforcement;
+the importer itself is not yet implemented.
+
+The [AI authoring plan](AI_AUTHORING_PLAN.md) records the subsequent Construction
+Kit work. Its [authoring tools](AI_AUTHORING_GUIDE.md) now provide shared commands,
 inspection/search, labelled visual previews, native mission checks, seeded
-scenario suites and editor command-file exchange. The approved discovery/testing
-pass is complete within its documented bounds. Change review/protected edits,
-live sessions and richer campaign mechanics remain later milestones.
+scenario suites, change review/protected edits and live authoring sessions.
+Current completion evidence and remaining limits are in
+[project status](PROJECT_STATUS.md).
 The earlier [BattleTech demo follow-up](BATTLETECH_DEMO.md#recommended-next-five-milestones)
 records the progression from the first editor to today's authoring tools.
 
