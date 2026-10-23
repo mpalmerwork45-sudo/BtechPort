@@ -48,6 +48,15 @@ settings save/reload after removing all added units. They preserve explicit
 edition features independently of roster size. The editor's actions remain
 visible at the tested 1024×740 workspace size.
 
+The final packaged Linux kit also passes import through its bundled Python and
+play through its bundled native runner for both profiles, from a cwd without
+original files/caches. Nine packaged example projects pass the provenance guard.
+The post-run scan observes 2,398 files (including generated Python bytecode),
+with no recognized original resource hashes or BTTA/BTCC/BTW3 payload headers.
+Evidence: `work/chi-import/{bundled-import,packaged-verification}.json`.
+Final native parity reruns are retained as `parity-final-linux.log` and
+`parity-final-windows.log`; the final Wine settings and multiline proofs also pass.
+
 Reproduction, after the normal build/cache preparation:
 
 ```sh

@@ -78,6 +78,17 @@ preservation checking alongside the two reference trees and three user files.
 Implementation commits: C1 `63b9b41`; C2 resource/runtime foundation `7a10e83`;
 GUI and provenance boundary `293cc4d`. Final verification and usage are recorded
 here and in the [instructions](CHI_IMPORT.md).
+Completion/setup commit: `a4d8981`. A freshly packaged Linux kit imports both
+profiles with its bundled Python and plays them with its bundled native runner
+from a directory without original files/caches. Its nine example projects and
+2,398 observed files contain no recognized original payloads or cache headers;
+see `work/chi-import/packaged-verification.json`. Runtime-generated Python
+bytecode is included in that observed count, not the build's original inventory.
+Final Linux/Wine parity reruns pass (`parity-final-linux.log` and
+`parity-final-windows.log`). Windows also passes the empty-added-roster settings
+save and exact multiline/colour-byte proof. All three owner files and twenty
+observed normal saves retain their recorded bytes/mtimes; both reference trees
+retain all 1,287 recorded content/mode/mtime entries.
 
 **Limits:** native Windows Python/Tk remains UNKNOWN. Full campaign branches,
 all-seed world equivalence, complete BLD/service/mission authoring and general
