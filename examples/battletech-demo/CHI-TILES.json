@@ -1,0 +1,182 @@
+{
+  "format": "btp-chi-tile-recipe-v1",
+  "tiles": [
+    {
+      "id": "battletech-beacon:image-26",
+      "sheet": "chi:land",
+      "graphic": 147,
+      "original_sha256": "34f6be336f146e1a803be4c2f032efa75f8c8511aa097dd95f3b47da49c6ecff",
+      "placeholder_sha256": "6e61c3b0862f5b9f0967e556aca8c9851c711b6b35f71d68e00d74225f07d7bf",
+      "reconstruction": "original-base",
+      "private_derivative_sha256": "d15c62541917622fa848f26807e211f2718d2d7d983d7773a759d09d9b621299"
+    },
+    {
+      "id": "battletech-beacon:image-27",
+      "sheet": "chi:land",
+      "graphic": 129,
+      "original_sha256": "af3eb5f02b7fb0cacc1899c32f88542f122d6a4ebcba628e41f7c5da82bd335e",
+      "placeholder_sha256": "6e61c3b0862f5b9f0967e556aca8c9851c711b6b35f71d68e00d74225f07d7bf",
+      "reconstruction": "original-base",
+      "private_derivative_sha256": "3b39de4c60c41874dfd1e066851663bba9b1b51091007c4a423353fd89729ade"
+    },
+    {
+      "id": "battletech-beacon:image-28",
+      "sheet": "chi:land",
+      "graphic": 138,
+      "original_sha256": "625acac5d119a29a5720fabc6a41414dbd3a16d435a437861789f44c647cdfbd",
+      "placeholder_sha256": "6e61c3b0862f5b9f0967e556aca8c9851c711b6b35f71d68e00d74225f07d7bf",
+      "reconstruction": "original-base",
+      "private_derivative_sha256": "6f0216e229c800b59e66325484d9da242daaff33c3f324514f5ca622f961c42e"
+    },
+    {
+      "id": "battletech-beacon:image-29",
+      "sheet": "chi:land",
+      "graphic": 138,
+      "original_sha256": "625acac5d119a29a5720fabc6a41414dbd3a16d435a437861789f44c647cdfbd",
+      "placeholder_sha256": "6e61c3b0862f5b9f0967e556aca8c9851c711b6b35f71d68e00d74225f07d7bf",
+      "reconstruction": "original-base",
+      "private_derivative_sha256": "417704f94df8c14463e028cfdeae83c8d2b31bab703e57d827fcbe5741c122df"
+    },
+    {
+      "id": "battletech-beacon:image-30",
+      "sheet": "chi:land",
+      "graphic": 138,
+      "original_sha256": "625acac5d119a29a5720fabc6a41414dbd3a16d435a437861789f44c647cdfbd",
+      "placeholder_sha256": "6e61c3b0862f5b9f0967e556aca8c9851c711b6b35f71d68e00d74225f07d7bf",
+      "reconstruction": "original-base",
+      "private_derivative_sha256": "326f29d969199ad8ede54e9c8b7a6305787bc45b212d3df0047028088c0d22ed"
+    },
+    {
+      "id": "battletech-beacon:image-31",
+      "sheet": "chi:land",
+      "graphic": 144,
+      "original_sha256": "60dac910866491f8e0bef5d16be1155ff322811622ea9a7dc096088e3104a0e8",
+      "placeholder_sha256": "6e61c3b0862f5b9f0967e556aca8c9851c711b6b35f71d68e00d74225f07d7bf",
+      "reconstruction": "original-base",
+      "private_derivative_sha256": "9d4938ed45b491f13fb11abe4b6adaa1439d0ca1854fbb6743b94ae5bb3afb49"
+    },
+    {
+      "id": "battletech-beacon:image-32",
+      "sheet": "chi:land",
+      "graphic": 151,
+      "original_sha256": "eeb75eb76226dcf28f6456e0b76f25182e0ad6bddfa3c8988dd4222d8d0aa10d",
+      "placeholder_sha256": "6e61c3b0862f5b9f0967e556aca8c9851c711b6b35f71d68e00d74225f07d7bf",
+      "reconstruction": "original-base",
+      "private_derivative_sha256": "e00787bd2a123c3ffd985adc4566f276f17010475ade8c1cd524d4dc049fa7cc"
+    },
+    {
+      "id": "battletech-beacon:image-33",
+      "sheet": "chi:land",
+      "graphic": 8,
+      "original_sha256": "5fa73e56723e1d89d4d2f4029e05ebaf41c5679a7672e79eb56a257c695fc04e",
+      "placeholder_sha256": "6e61c3b0862f5b9f0967e556aca8c9851c711b6b35f71d68e00d74225f07d7bf",
+      "reconstruction": "original-base",
+      "private_derivative_sha256": "54130fa4c88ed5c8bfd2c4e0bc13ca4982778375a3141bed2bae54f9b18644ab"
+    },
+    {
+      "id": "battletech-beacon:image-34",
+      "sheet": "chi:land",
+      "graphic": 9,
+      "original_sha256": "0ce66753f92e615eb2ba0b38871ea6edf1d42d04d46738ac59950d03c6fe1ad0",
+      "placeholder_sha256": "6e61c3b0862f5b9f0967e556aca8c9851c711b6b35f71d68e00d74225f07d7bf",
+      "reconstruction": "original-base",
+      "private_derivative_sha256": "61a6ed732b0d8e82a0de39b8b3789bb79592f93a100ff942e909fc4831d4cfd6"
+    },
+    {
+      "id": "battletech-beacon:image-60",
+      "sheet": "chi:land",
+      "graphic": 125,
+      "original_sha256": "78e320a54eedfd5d79c8a0f35bd253e0c80c265b670b0f290133f28625a27606",
+      "placeholder_sha256": "6e61c3b0862f5b9f0967e556aca8c9851c711b6b35f71d68e00d74225f07d7bf",
+      "reconstruction": "original-base",
+      "private_derivative_sha256": "2ce738294a1062cce0bee48506d6b1a56e3933835abf45fae1badaac515d2735"
+    },
+    {
+      "id": "battletech-beacon:image-61",
+      "sheet": "chi:land",
+      "graphic": 123,
+      "original_sha256": "2ad75077bec62c2eb21974b73b35179e31e71e508a60aa7bdd6781525ed5ab1c",
+      "placeholder_sha256": "6e61c3b0862f5b9f0967e556aca8c9851c711b6b35f71d68e00d74225f07d7bf",
+      "reconstruction": "original-base",
+      "private_derivative_sha256": "416397edabf80d63ea03290947dfcf75b031a779f933f4e4df72e819da322e20"
+    },
+    {
+      "id": "battletech-beacon:image-62",
+      "sheet": "chi:land",
+      "graphic": 126,
+      "original_sha256": "3967b99d75b46f1d2b4b21b028a8de8a571654ee837ab6aae6c3605f1e4a8ba7",
+      "placeholder_sha256": "6e61c3b0862f5b9f0967e556aca8c9851c711b6b35f71d68e00d74225f07d7bf",
+      "reconstruction": "original-base",
+      "private_derivative_sha256": "195c83631442ccdc44ce748287162a1edde77f2e7eb71af60bcc06ac6c5da9f4"
+    },
+    {
+      "id": "battletech-beacon:image-63",
+      "sheet": "chi:land",
+      "graphic": 125,
+      "original_sha256": "78e320a54eedfd5d79c8a0f35bd253e0c80c265b670b0f290133f28625a27606",
+      "placeholder_sha256": "6e61c3b0862f5b9f0967e556aca8c9851c711b6b35f71d68e00d74225f07d7bf",
+      "reconstruction": "original-base",
+      "private_derivative_sha256": "925566b97bbdac1026606b6fec9ab9205811e88522d8aa9b15d09158e4c8452d"
+    },
+    {
+      "id": "battletech-beacon:image-94",
+      "sheet": "chi:land",
+      "graphic": 248,
+      "original_sha256": "ceb89ac898ecbc6e5ab9587b42a76031538164d1c43e88c390e28df09b42cd94",
+      "placeholder_sha256": "6e61c3b0862f5b9f0967e556aca8c9851c711b6b35f71d68e00d74225f07d7bf",
+      "reconstruction": "exact"
+    },
+    {
+      "id": "battletech-beacon:image-95",
+      "sheet": "chi:land",
+      "graphic": 234,
+      "original_sha256": "f481c039a169aca22f682d75d1f0867128c0f880755d83ab76b569abbe1e7c86",
+      "placeholder_sha256": "6e61c3b0862f5b9f0967e556aca8c9851c711b6b35f71d68e00d74225f07d7bf",
+      "reconstruction": "original-base",
+      "private_derivative_sha256": "b14f2d31befcf099d1274002efca4e20c9737d63feadc33440a9230d2f8aeee3"
+    },
+    {
+      "id": "battletech-beacon:image-116",
+      "sheet": "chi:land",
+      "graphic": 116,
+      "original_sha256": "e1e74e79b9589c7cbad512d8fe22257b2085cd7aab8ddef68849c2260b90322d",
+      "placeholder_sha256": "6e61c3b0862f5b9f0967e556aca8c9851c711b6b35f71d68e00d74225f07d7bf",
+      "reconstruction": "exact"
+    },
+    {
+      "id": "battletech-beacon:image-117",
+      "sheet": "chi:land",
+      "graphic": 234,
+      "original_sha256": "f481c039a169aca22f682d75d1f0867128c0f880755d83ab76b569abbe1e7c86",
+      "placeholder_sha256": "6e61c3b0862f5b9f0967e556aca8c9851c711b6b35f71d68e00d74225f07d7bf",
+      "reconstruction": "original-base",
+      "private_derivative_sha256": "f5dbfab6be64811641f7e7613e2c74fbd320aeb93d58b770d57b5937a9334a26"
+    },
+    {
+      "id": "battletech-beacon:image-118",
+      "sheet": "chi:land",
+      "graphic": 236,
+      "original_sha256": "f963be7b2329a10a6879206ee03f2e22beba5824e5dc6932465714ea3f18bc0e",
+      "placeholder_sha256": "6e61c3b0862f5b9f0967e556aca8c9851c711b6b35f71d68e00d74225f07d7bf",
+      "reconstruction": "original-base",
+      "private_derivative_sha256": "3f6cddc050ce69eda3231261c38a6f330c0bf6c87426d9b9129bd0a07f1d77b0"
+    },
+    {
+      "id": "battletech-beacon:image-119",
+      "sheet": "chi:land",
+      "graphic": 121,
+      "original_sha256": "bb9ec81393dddf3c185aa4ebb6af67b7596ca60867d198decf5c7f0c2e1d115d",
+      "placeholder_sha256": "6e61c3b0862f5b9f0967e556aca8c9851c711b6b35f71d68e00d74225f07d7bf",
+      "reconstruction": "original-base",
+      "private_derivative_sha256": "6974146783ff13c728fa9568303f0b3c34207253908cc24e071a46b65b435f31"
+    },
+    {
+      "id": "battletech-beacon:image-120",
+      "sheet": "chi:land",
+      "graphic": 93,
+      "original_sha256": "5bd6e6f102c53c2a4ef3e1b716eac7a22139f15bda6a3c100ceaaa58f501e3b4",
+      "placeholder_sha256": "6e61c3b0862f5b9f0967e556aca8c9851c711b6b35f71d68e00d74225f07d7bf",
+      "reconstruction": "exact"
+    }
+  ]
+}

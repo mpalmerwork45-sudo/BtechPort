@@ -15,6 +15,20 @@ static void equal(const BtpState *a,const BtpState *b)
     *copy=*a;copy->project=b->project;btp_state_encode(copy,x);btp_state_encode(b,y);free(copy);
     CHECK(!memcmp(x,y,sizeof x));
 }
+static void intro(const BtpResources *base,const BtpResources *imported)
+{
+    BtpState *a=calloc(1,sizeof *a),*b=calloc(1,sizeof *b);CHECK(a && b);
+    uint32_t *x=malloc(64000u*sizeof *x),*y=malloc(64000u*sizeof *y);CHECK(x && y);
+    btp_start(a);btp_start(b);b->project=1;btp_npc_init(a,&base->map);btp_npc_init(b,&imported->map);
+    if (btp_resources_feature(base,BTP_FEATURE_ENHANCED)) CHECK(btp_set_combat_profile(a,base,1) && btp_set_combat_profile(b,imported,1));
+    a->mode=b->mode=BTP_LOGO;
+    const BtpAction actions[]={BTP_IDLE,BTP_OPEN_MENU,BTP_IDLE,BTP_OPEN_MENU,BTP_ACCEPT};
+    for (unsigned i=0;i<sizeof actions/sizeof *actions;++i) {
+        btp_render(base,a,0,x);btp_render(imported,b,0,y);CHECK(!memcmp(x,y,64000u*sizeof *x));
+        btp_game_tick(a,base,actions[i]);btp_game_tick(b,imported,actions[i]);equal(a,b);
+    }
+    CHECK(a->mode==BTP_EXPLORE);free(a);free(b);free(x);free(y);
+}
 static void route(const char *file,const BtpResources *base,const BtpResources *imported)
 {
     BtpState *a=calloc(1,sizeof *a),*b=calloc(1,sizeof *b);CHECK(a && b);
@@ -69,6 +83,7 @@ int main(int argc,char **argv)
         }
         CHECK(!memcmp(base.resources->combat.loans,imported.resources->combat.loans,sizeof base.resources->combat.loans));
         CHECK(!memcmp(&base.resources->dialogue,&imported.resources->dialogue,sizeof base.resources->dialogue));
+        intro(base.resources,imported.resources);
         for (int i=8;i<argc;++i) route(argv[i],base.resources,imported.resources);
         BtpState *s=calloc(1,sizeof *s),*copy=calloc(1,sizeof *copy);CHECK(s && copy);
         btp_start(s);s->project=1;btp_npc_init(s,&imported.resources->map);

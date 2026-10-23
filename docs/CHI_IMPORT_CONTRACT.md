@@ -128,12 +128,17 @@ This conservative boundary must survive metadata editing/removal: the runtime
 manifest's imported dependency is itself a provenance signal.
 
 Last Beacon's 20 known derived images need a metadata-only reconstruction recipe
-and synthetic placeholders in redistributable data. Preserve the owner's three
+and synthetic placeholders in redistributable data. **Further C2 inspection found
+17 already contain custom pixel edits:** their public recipes restore the recorded
+original base, while the exact private derivatives stay in the owner's working
+files and an ignored backup. These recipes do not reproduce those custom edits.
+Preserve the owner's three
 dirty working files byte-for-byte; use HEAD as the source when preparing a clean
 tracked baseline. Reconstruction into a new private project applies only the
 recipe's declared images using the native tile atlas, leaving authored images
-and user projects untouched. Exports of later edited/merged derivatives must
-retain origin and fail closed if no lossless recipe exists. No history rewrite.
+and user projects untouched. New edited/merged derivatives without an explicit
+exclusion/base-reconstruction record fail closed. Public output excludes the
+declared private variants rather than claiming to reproduce them. No history rewrite.
 
 Application delivery sanitizes or rejects derived payloads before copying them;
 it must inspect actual tracked file contents and nested JSON, not file suffixes.

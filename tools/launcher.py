@@ -75,6 +75,7 @@ class Launcher:
         ttk.Button(edit,text='Open editor',command=lambda:self.guard(self.edit)).pack(side='left',padx=(0,8))
         ttk.Button(edit,text='Unit Library',command=lambda:self.guard(self.library)).pack(side='left',padx=(0,8))
         ttk.Button(edit,text='New project',command=lambda:self.guard(self.new_project)).pack(side='left')
+        ttk.Button(edit,text='Import CHI',command=lambda:self.guard(self.import_chi)).pack(side='left',padx=8)
         ttk.Label(body,text='The editor has its own Play button. Game saves and library designs stay separate from the supplied examples.',style='Muted.TLabel',wraplength=660).pack(fill='x',pady=16)
         tools=ttk.Frame(body);tools.pack(fill='x')
         ttk.Button(tools,text='Player setup',command=lambda:self.guard(self.setup)).pack(side='left',padx=(0,8))
@@ -139,6 +140,10 @@ class Launcher:
 
     def new_project(self):
         app=self.editor();app.new_project();return app
+
+    def import_chi(self):
+        from chi_editor import open_import
+        app=self.editor();return open_import(app)
 
     def setup(self):self.editor().setup()
 

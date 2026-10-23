@@ -50,9 +50,12 @@ static void profiles(BtpResources *r)
     CHECK(btp_save_write("work/lrm/settings.btp",&s,r,&error));
     btp_menu_input(&s,r,BTP_UP);btp_menu_input(&s,r,BTP_OPEN_MENU);CHECK(s.combat_profile==1);roundtrip(&s,r);
     btp_menu_close(&s);CHECK(btp_set_combat_profile(&s,r,0));
-    BtpRoster roster=r->roster;r->roster=(BtpRoster){0};CHECK(!btp_set_combat_profile(&s,r,1));
+    /* Original is now explicit even with editable definitions present. Merely
+       clearing a roster is no longer an edition switch. Exercise that contract
+       without dropping the definitions needed by the following Updated tests. */
+    uint8_t features=r->features;r->features=BTP_FEATURE_EXPLICIT;CHECK(!btp_set_combat_profile(&s,r,1));
     btp_menu_open(&s);btp_menu_input(&s,r,BTP_DOWN);btp_menu_input(&s,r,BTP_ACCEPT);
-    CHECK(s.campaign.ui==BTP_MENU_SETTINGS && btp_actions_count(&s)==6);r->roster=roster;
+    CHECK(s.campaign.ui==BTP_MENU_SETTINGS && btp_actions_count(&s)==6);r->features=features;
 }
 static void parser(const BtpCombatProfile *expected)
 {

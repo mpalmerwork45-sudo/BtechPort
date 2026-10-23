@@ -90,6 +90,8 @@ def game_command(choice, paths, state_dir, project=None, resume=False):
     if project:
         from editor_model import ProjectDocument,references,needs_original
         doc=ProjectDocument(Path(project),binary('btp-project'))
+        from asset_provenance import local_project
+        doc=local_project(doc,paths,state_dir)
         original=needs_original(doc.manifest)
         identity=doc.manifest['package_id']
         # A changed project gets fresh launch/save slots, preserving earlier

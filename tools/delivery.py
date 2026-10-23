@@ -9,6 +9,9 @@ from editor_model import EditorError,ProjectDocument,references
 ROOT=Path(__file__).resolve().parents[1]
 
 def asset_report(doc):
+    from asset_provenance import digest
+    recipe=json.loads(doc.metadata.get('CHI-TILES.json',b'{}'))
+    placeholders={v['id']:v['placeholder_sha256'] for v in recipe.get('tiles',[])}
     def original_source(value):
         # Generated construction joins retain the provenance of both faces.
         return isinstance(value,dict) and (value.get('sheet','').startswith('chi:') or any(original_source(v) for v in value.get('sources',[])))
@@ -17,7 +20,7 @@ def asset_report(doc):
     return dict(package=doc.manifest['package_id'],requires=doc.manifest['requires'],
         files=[dict(path=n,bytes=len(files[n]),sha256=hashlib.sha256(files[n]).hexdigest()) for n in references(doc.manifest)],
         images=[dict(id=i['id'],name=i['name'],kind=i['kind'],frames=len(i['frames']),
-                     origin='Copy of original artwork; original rights still apply' if i['name'].startswith('Original sprite') or original_source(sources.get(i['id'])) else 'Package pixels; consult source documents',
+                     origin='Independent placeholder; reconstruct the original base locally' if digest(i['frames'])==placeholders.get(i['id']) else 'Copy of original artwork; original rights still apply' if i['name'].startswith('Original sprite') or original_source(sources.get(i['id'])) else 'Package pixels; consult source documents',
                      source=sources.get(i['id'])) for i in doc.art['images']],
         source_documents=[p.name for p in doc.root.iterdir() if p.is_file() and (p.suffix.lower()=='.md' or 'SOURCE' in p.name)],
         note='Dependency/provenance inventory, not a license clearance. Original game assets must be supplied separately.')
@@ -112,11 +115,29 @@ def package(output,platform='linux',python_runtime=None):
         # Only version-controlled authoring resources enter the kit. Never
         # recursively copy the checkout or follow untracked caches/saves.
         tracked=subprocess.run(['git','ls-files','-z'],cwd=ROOT,capture_output=True,check=True).stdout.decode().split('\0')
+        # Package the indexed project snapshot, preserving private/uncommitted
+        # author work in the checkout. Code/tool changes use the normal tracked
+        # working files; project payloads must pass provenance before copying.
+        from asset_provenance import public_files
+        replacements={}
+        for name in tracked:
+            if name.endswith('/project.json'):
+                prefix=Path(name).parent
+                manifest=json.loads(subprocess.check_output(['git','show',':'+name],cwd=ROOT))
+                from editor_model import METADATA_FILES
+                payload={}
+                for leaf in [*references(manifest),*METADATA_FILES]:
+                    full=str(prefix/leaf)
+                    if full in tracked:payload[leaf]=subprocess.check_output(['git','show',':'+full],cwd=ROOT)
+                for leaf,data in public_files(payload).items():replacements[str(prefix/leaf)]=data
         for name in tracked:
             if not name:continue
             p=Path(name)
             if (p.parts[0] in ('tools','docs','content','examples','port','third_party','tests','cmake','schemas') and p.suffix in ('.py','.md','.json','.anm','.txt','.lua','.c','.h','.actions','.cmake')) or name in ('BtechPort.pyw','BtechPort.cmd','LICENSE','README.md','CMakeLists.txt','third_party/lua/COPYRIGHT','third_party/lua/LICENSE'):
-                copy_file(ROOT/p,stage/p,inventory)
+                if name in replacements:
+                    target=stage/p;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(replacements[name])
+                    inventory.append(dict(path=str(target),source='Validated public project; original-derived pixels excluded'))
+                else:copy_file(ROOT/p,stage/p,inventory)
         # Also include new delivery tools before their first incremental commit.
         for name in ('delivery.py','save_migration.py','delivery_gui.py','runtime_probe.py'):
             if (ROOT/'tools'/name).exists():copy_file(ROOT/'tools'/name,stage/'tools'/name,inventory)

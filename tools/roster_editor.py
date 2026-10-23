@@ -265,7 +265,7 @@ class RosterEditor:
         self.refresh_list()
         self.project_label.configure(text=document.manifest["title"])
         self.path_label.configure(text=str(document.root), wraplength=880)
-        self.profile_label.configure(text="Independent game | package assets" if document.manifest["requires"] == "none" else "BattleTech project | original assets")
+        self.profile_label.configure(text="Imported CHI | project resources" if document.manifest['requires']=='chi-local-dos-1.03' else "Independent game | package assets" if document.manifest["requires"] == "none" else "BattleTech project | original assets")
         self.status.set("Project opened. Existing saves require this exact content; Play starts a separate campaign.")
         if workspace and self is getattr(workspace,'app',None):workspace.project_changed()
 
