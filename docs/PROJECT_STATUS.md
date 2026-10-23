@@ -1,5 +1,25 @@
 # Project status — original fidelity and editable projects, 2026-10-23
 
+**AI4 world-route extension — implemented and verified, 2026-10-23.**
+[World-route verification](WORLD_ROUTE_VERIFICATION.md) adds bounded native
+searches through jigsaws, town overlays and sector boundaries. Scenarios walk to
+source entrances or map/world coordinates and assert world position, whole-party
+formation and per-planet discovery. Transfers use ordinary game events, and
+checkpoints compare the complete saved continuation. Editor Problems opens the
+source town/entrance or the correct planet with a persistent location marker.
+
+The independent World Survey journey uses three mechs, a tracked vehicle and
+two infantry across two planets. Tests also cover maximum-size worlds, narrow
+paths, multi-step collision, unexpected region events and unknown coverage when
+a search budget expires. **322 Python tests, 91 native tests, 12 sanitizer tests
+and the GUI journey pass.** The Windows runner under isolated Wine produces
+identical state and save bytes to Linux. [Evidence](TESTING.md#world-route-verification--2026-10-23).
+Implementation: `1a9c51b`. Original/Updated gameplay and save formats are unchanged;
+the user's three Last Beacon files and both reference directories are preserved.
+
+**Next proposed:** saved-journey scenarios that resume validated, exact-content
+checkpoints, with editor controls and reproducible late-campaign continuations.
+
 **AI8 campaign demonstration and delivery — implemented, 2026-10-23.**
 Select **Greybank Dispatch (campaign)** in the launcher. Its depot, alternative
 assault/recovery contracts, timed defence and vehicle escort span five maps
@@ -19,8 +39,7 @@ still requires an installed or explicitly supplied full Python runtime.
 See [verification](TESTING.md#ai8-recorded-campaign-and-delivery--2026-10-23).
 The user's Last Beacon edits and both reference directories remain unchanged.
 
-**Next proposed:** world-route verification across jigsaw sectors, town edges
-and planets, including whole-party movement, discovery and save/reload.
+The subsequently proposed world-route extension is now delivered above.
 
 **AI7b campaign capacity — implemented and verified, 2026-10-22.** Runtime
 0.2.0 adds opt-in adventure v3: **64 local maps, 64 encounters, 1,024 events,
@@ -35,7 +54,7 @@ across two planets, with identical Linux/Wine save bytes. Maximum/beyond-limit,
 high-handle, journal page 128, old-save, corruption and editor journeys pass.
 The user's three Last Beacon edits and both reference directories remain intact.
 AI8 follows above with campaign recipes and delivery. General
-world-route verification and native Windows Tk remain unverified.
+unbounded whole-campaign navigation and native Windows Tk remain unverified.
 
 **AI7a modular campaign sources — implemented, 2026-10-22.** Optional
 `SOURCE.json` projects share GUI/CLI editing, journalled Save, Undo and recovery.
@@ -52,7 +71,8 @@ and formatting preserve save identity; conversion of a legacy package requires
 a new campaign or deliberate save migration. Runtime/save layouts are unchanged.
 
 AI7b followed with the optional capacity extension described above; AI8 is now
-delivered. Wider world traversal verification remains future work. Native Windows Tk is **UNKNOWN**.
+delivered. Declared world travel is now checked as recorded above; exhaustive
+campaign solvability and native Windows Tk remain **UNKNOWN**.
 
 **AI6b/AI6c and construction coverage — implemented, 2026-10-21.**
 [Cairn Passage](../examples/cairn-passage/README.md) now combines timed relay

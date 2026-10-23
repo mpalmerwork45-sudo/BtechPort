@@ -1,5 +1,70 @@
 # Build, verification and original oracle — 2026-10-23
 
+## World-route verification — 2026-10-23
+
+**VERIFIED within the declared routes, initial-party geometry and budgets.**
+Implementation `1a9c51b` adds the [AI4 world-route extension](WORLD_ROUTE_VERIFICATION.md).
+Changes are authoring/frontend verification helpers; gameplay rules, content
+limits, the original campaign and save formats are unchanged.
+
+- `python3 -m unittest discover -s tests -p 'test_*.py'`: **322/322 PASS**,
+  41.913 s, `work/world-routes-python.log`.
+- `ctest --test-dir build --output-on-failure`: **91/91 PASS**, 46.80 s,
+  `work/world-routes-native.log`. Includes existing original/Updated gameplay,
+  saves, authored campaigns and movement fixtures.
+- Linux/Windows incremental builds pass with system PATH, at most two compiler
+  jobs and sequential builds, with no warnings in
+  `work/world-routes-linux-build.log`, `work/world-routes-windows-build.log`.
+- `tests/test_world_routes.py`: **12/12 PASS**, 1.143 s,
+  `work/world-routes-tests.log`. Covers two planets, six party members, all
+  three stride settings, town tiles over water with a tracked vehicle, an
+  entrance in a city spanning a sector boundary, source-project staging,
+  world discovery retained across transfer/checkpoints and exact ordinary-input
+  replay save equality. A one-tile gap admits the leader alone but rejects the
+  full formation. A four-step input stops before an outer mech hits a building,
+  then the planner routes around it. Blocked/missing/out-of-bounds targets,
+  explicit transfer requirements, region interruption and schema rejection
+  produce distinct evidence without silently acknowledging events.
+- The maximum-size fixture fills a **1024 × 1024 tile** planet and walks from
+  movement position **[32,52] to [1936,1940]** in the far town, with compact
+  formation and a checkpoint. A* examines fewer than 10,000 positions in this
+  open-ground fixture. The separate broad flood reaches its 262,144-position
+  budget and reports incomplete/unknown coverage, not unreachable entrances.
+- ASan/UBSan/LSan: **12/12 PASS**, 2.443 s,
+  `work/world-routes-sanitize-verified.log`. Build the two author tools in
+  `build/sanitize`, then set `BTP_ROUTE_RUNNER` and `BTP_ROUTE_ANALYZER` to
+  their absolute paths when running the focused tests. The first sandbox run
+  failed because LeakSanitizer cannot operate under ptrace; rerunning outside
+  that sandbox passed with leak checking enabled.
+- `python3 tools/native_smoke.py --editor-world-routes-only`: **PASS**,
+  `work/world-routes-gui.log`. The real GUI runs Check mission on a sealed town
+  entrance, navigates to its source map/marker, undoes the wall, and clears the
+  finding after rechecking. A native route-budget diagnostic opens Aster at
+  world movement [180,80], marking tile [90,40]. Zoom retains the marker and
+  Save/reopen retains only the authored terrain. Inspected screenshots:
+  `work/world-routes-town.png`, `work/world-routes-planet.png`.
+  Sandbox Xvfb startup was blocked; the successful run used a private display
+  outside the sandbox, not the user's desktop.
+- `python3 tools/world_route_demo.py --output work/world-survey-windows-verified
+  --windows`: **PASS**. The new independent fixture completes both planets and
+  the return shuttle in **346 ordinary input ticks**. Linux and the actual
+  Windows runner under isolated Wine have **identical reported state and final
+  save bytes**, including all checkpoints. Evidence is under that directory,
+  with `windows/report.json` and `journey/report.json`. The earlier sandbox
+  attempt was blocked by Wine's runtime lock directory; the verified run uses
+  the existing isolated test prefix. Native Windows Python/Tk is still untested.
+- `work/world-survey-analysis.json` records the default two-world geometry
+  scan: 59,996 reachable initial-party positions, both floods complete and no
+  diagnostics. `work/world-routes-reference.log` verifies **1,287 immutable
+  reference entries** unchanged in content, mode and mtime. The three pending
+  Last Beacon files match `work/world-routes-baseline.json` and are excluded
+  from the milestone commits.
+
+These results establish the recorded journeys, not arbitrary Lua/condition
+reachability, all later party compositions, shortest-path optimality or general
+campaign solvability. Other entrance prompts require explicit scenario choices.
+The next proposed milestone is exact-content saved-checkpoint scenario starts.
+
 ## AI8 recorded campaign and delivery — 2026-10-23
 
 **VERIFIED within the recorded brief, routes and platform boundaries.**
