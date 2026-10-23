@@ -1,5 +1,28 @@
 # Project status — original fidelity and editable projects, 2026-10-23
 
+**AI4 saved-journey extension — implemented and verified, 2026-10-23.**
+[Saved journeys](SAVED_JOURNEYS.md) start scenarios from explicitly pinned saves
+with native exact-content/checksum validation and preserved RNG. Named checkpoints,
+CLI/suite starts and **Play options → Checkpoints and trace** share the workflow.
+Reports retain initial state and reproduction inputs, separate continuation
+coverage, and label midbattle measurements. Scenario checks test the current
+project; manual actions and interactive Play can use the historical snapshot.
+
+Implementation: `1681942`. **330 Python tests and 91 native tests pass**, with
+eight focused checkpoint tests also passing ASan/UBSan/LSan. The GUI journey
+checks selection, reports, Play, ordinary actions and visible stale-content
+errors. World Survey, the later Cairn escort and a round-2 defence continuation
+all produce **identical final save bytes and input suffixes** to full journeys;
+Windows/Wine matches Linux for all three. The escort continuation skips
+**2,509 of 4,458 logical ticks**. [Evidence](TESTING.md#saved-journey-scenarios--2026-10-23).
+Both reference directories and the three pending Last Beacon files are preserved.
+Game/save formats are unchanged. Native Windows Python/Tk remains **UNKNOWN**.
+
+**Next proposed:** extend Changes/protection to world regions: paired composed
+planet previews, changed-town/terrain navigation and protection of hand-painted
+world rectangles during AI proposals. Current rectangle protection/review maps
+cover local maps; world objects and fields already have ordinary review.
+
 **AI4 world-route extension — implemented and verified, 2026-10-23.**
 [World-route verification](WORLD_ROUTE_VERIFICATION.md) adds bounded native
 searches through jigsaws, town overlays and sector boundaries. Scenarios walk to
@@ -17,8 +40,7 @@ identical state and save bytes to Linux. [Evidence](TESTING.md#world-route-verif
 Implementation: `1a9c51b`. Original/Updated gameplay and save formats are unchanged;
 the user's three Last Beacon files and both reference directories are preserved.
 
-**Next proposed:** saved-journey scenarios that resume validated, exact-content
-checkpoints, with editor controls and reproducible late-campaign continuations.
+The subsequently proposed saved-journey extension is delivered above.
 
 **AI8 campaign demonstration and delivery — implemented, 2026-10-23.**
 Select **Greybank Dispatch (campaign)** in the launcher. Its depot, alternative

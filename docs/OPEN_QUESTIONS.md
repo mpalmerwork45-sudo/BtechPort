@@ -8,8 +8,13 @@ balance proof. Other parameter combinations/layout edits need new checks.
 The [world-route extension](WORLD_ROUTE_VERIFICATION.md) now verifies declared
 journeys across sectors, town overlays and planet changes. Exhausted world scans
 remain unknown; initial-party geometry does not prove all later compositions or
-arbitrary event conditions. Next proposed: exact-content checkpoint starts for
-scenarios, with reproducible late-campaign continuations. Embedded chat and provider-specific adapters
+arbitrary event conditions. [Saved-journey scenarios](SAVED_JOURNEYS.md) now
+resume pinned exact-content saves in the CLI, suites and editor, with identical
+recorded full/continued saves on Linux and Windows/Wine. Earlier events are not
+covered by a continuation; changed playable content still requires a fresh
+checkpoint or a separate explicit supported migration. Next proposed: composed
+world change previews, changed-town navigation and protection of hand-painted
+world rectangles during AI proposals. Embedded chat and provider-specific adapters
 remain optional; model configuration belongs to the external authoring client.
 Native Windows Python/Tk interaction and an entirely bundled Windows Python
 installation still need a suitable Windows environment/runtime. Linux installation

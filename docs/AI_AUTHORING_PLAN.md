@@ -136,7 +136,7 @@ usable stopping point. Relative size indicates scope, not a calendar estimate.
 | AI1 | Capability contract, inspection and author guide | Existing project loader | Medium | Delivered |
 | AI2 | Shared authoring commands and transactional CLI | AI1 | Large | Delivered |
 | AI3 | Searchable catalogues and visual feedback | AI1–AI2 | Medium | Delivered |
-| AI4 | Mission scenarios, assertions and playtest reports | AI1–AI2; AI3 for visual reports | Large | Delivered within the recorded route/geometry bounds |
+| AI4 | Mission scenarios, assertions and playtest reports | AI1–AI2; AI3 for visual reports | Large | Delivered within recorded route/geometry bounds, including pinned saved journeys |
 | AI5 | Editor review, protected edits and live sessions | AI2–AI4 | Large | Delivered; local file-inbox transport |
 | AI6 | Additional mission primitives and Lua/event support | AI2, AI4–AI5 | Large, split below | AI6a/AI6b/AI6c delivered |
 | AI7 | Modular campaigns, reproducible compilation and capacity work | AI2, AI4–AI5; include AI6 formats when available | Large, split below | AI7a and AI7b delivered |
@@ -673,13 +673,25 @@ between jigsaw sectors, town overlays and planets, with source-aware diagnostics
 discovery and checkpoints. Bounded world geometry checks report unknown coverage
 when their budget is exhausted. No capacities or gameplay/save rules changed.
 
-**Next proposed milestone: saved-journey scenarios (AI4 extension).**
-Allow a scenario to start from an explicitly selected checkpoint tied to exact
-content and RNG state. Preserve its setup/reproduction evidence, reject stale
-or mismatched saves, and expose the workflow in the editor. Demonstrate a late
-campaign route without replaying earlier missions and compare its continuation
-with the full ordinary-input journey. Keep arbitrary conditions/Lua coverage
-and general combat balance outside that completion claim.
+**Saved-journey scenarios: delivered as a bounded AI4 extension.**
+[Saved journeys](SAVED_JOURNEYS.md) start from an explicitly selected, hash-pinned
+checkpoint and its saved RNG. The native loader rejects changed content and
+corrupt state before opening events execute. Named outputs, CLI/suite runs and
+editor selection retain setup and reproduction evidence. Full and continued
+world, late-contract and midbattle journeys have identical final save bytes and
+ordinary-input suffixes, also checked on Windows/Wine. Earlier events are not
+claimed as new coverage. Arbitrary conditions/Lua and general combat balance
+remain outside this completion claim.
+
+**Next proposed milestone: world review and regional protection (AI5 extension).**
+Extend paired review previews to composed planets, showing terrain/jigsaw changes
+and town placements with navigation to changed locations. Add named protection
+for world-tile rectangles so AI proposals preserve hand-painted regions. Use the
+existing review, dependency groups, explicit exceptions and shared Undo; do not
+invent a second publishing path. Verify a two-planet proposal containing a town
+move and terrain changes, protected-region conflicts, a narrowed repair, Undo,
+Save/reopen and unchanged playable routes. Existing whole-world object/field
+protection and local-map rectangle protections remain available.
 
 AI6b/AI6c now supply round hooks, atomic reinforcement groups, scripted outcomes,
 friendly/neutral actors and terrain-aware waypoints. Cairn Passage demonstrates

@@ -1,5 +1,71 @@
 # Build, verification and original oracle — 2026-10-23
 
+## Saved-journey scenarios — 2026-10-23
+
+**VERIFIED within the declared journeys and supported save format.**
+Implementation `1681942` adds [named checkpoints and pinned scenario starts](SAVED_JOURNEYS.md)
+to the native authoring runner, CLI/suites and editor. Game rules, saves and
+content capacities are unchanged.
+
+- Full Python regression: **330/330 PASS**, 43.813 s,
+  `work/checkpoint-python.log`. Native regression: **91/91 PASS**, 47.29 s,
+  `work/checkpoint-native.log`.
+- Focused saved-journey tests: **8/8 PASS**, 1.682 s,
+  `work/checkpoint-start-tests.log`. They compare complete saves and ordinary
+  input suffixes across two planets, source projects, a later contract and
+  midbattle continuation. They exercise pinned input copies after deleting the
+  source save, preserved RNG/ticks, ordinary headless replay, relative paths in
+  CLI/suites, missing/corrupt/stale/hash-mismatched inputs, seed-sweep refusal,
+  unique safe names, native no-overwrite/hash guards and cancellation.
+  **10/10 scenario regressions PASS**, 2.090 s,
+  `work/checkpoint-scenario-regression.log`, after the final casualty-report
+  correction. Newly ejected pilots can contribute new losses; wrecks already
+  present in a resumed save are excluded from new-loss counts.
+- ASan/UBSan/LSan: **8/8 PASS**, 4.665 s,
+  `work/checkpoint-sanitize-verified.log`. Build the runner in `build/sanitize`,
+  then set `BTP_CHECKPOINT_RUNNER` to its absolute path for the focused tests.
+  The initial sandbox run failed because LeakSanitizer cannot operate under
+  ptrace; the successful run retained leak checking outside that wrapper.
+- Linux/Windows builds pass sequentially with system PATH and at most two
+  compiler jobs: `work/checkpoint-linux-build.log`,
+  `work/checkpoint-metrics-build.log`, `work/checkpoint-windows-build.log`.
+  No build warnings were emitted. The focused sanitizer build is recorded in
+  `work/checkpoint-sanitize-build.log`.
+- `python3 tools/checkpoint_demo.py --output work/checkpoint-journeys-final
+  --cairn --windows`: **PASS**. World Survey resumes in **224 of 346 ticks**;
+  Cairn's later escort resumes in **1,949 of 4,458**; its round-2 defence resumes
+  in **1,933 of 2,508**. Each matches the full journey's final save and exact
+  ordinary-input suffix. All three Windows continuations also match Linux's
+  reported state and save bytes. Reports, traces, captures and staged inputs
+  are under `work/checkpoint-journeys-final/`; console evidence is
+  `work/checkpoint-windows-final.log`. Wine uses the isolated test prefix; its
+  first sandbox attempt failed at the runtime lock directory. Native Windows
+  Python/Tk remains **UNKNOWN**.
+- The three Linux comparison journeys (six native runs, including project
+  staging) take **1.20 s** with **34,636 KiB maximum RSS** on this host,
+  measured by `/usr/bin/time -v` in `work/checkpoint-timing.log`.
+  `work/checkpoint-journeys-measured/` preserves those inputs and results.
+  This is a declared small-fixture measurement, not a maximum-world benchmark.
+- `python3 tools/native_smoke.py --editor-checkpoints-only`: **PASS**,
+  `work/checkpoint-scenarios-gui.log`. The real GUI chooses a scenario, runs it,
+  selects its named checkpoint, resumes with the saved RNG, inspects state and
+  the report tab, compares final saves, launches/stops the interactive player,
+  continues ordinary actions and rejects changed current content in Problems.
+  Controls remain visible at 1024×768. Inspected screenshots:
+  `work/checkpoint-scenarios-editor.png`, `work/checkpoint-scenarios-stale.png`.
+  Xvfb required a private display outside the sandbox; the user's desktop and
+  saves were not used.
+- `work/checkpoint-reference.log`: **1,287 reference entries unchanged** in
+  content, mode and mtime. `work/checkpoint-preservation.json` confirms the
+  three pending Last Beacon files retain the hashes recorded at turn start.
+  They are excluded from these commits.
+
+Reports explicitly cover the continuation only, retain the copied initial save,
+and distinguish whole-battle reductions from measurements since a checkpoint.
+Exact-content matching is deliberate; no automatic migration or arbitrary game
+state editing is provided. General campaign solvability, opaque Lua paths and
+combat balance are not established by these tests.
+
 ## World-route verification — 2026-10-23
 
 **VERIFIED within the declared routes, initial-party geometry and budgets.**
@@ -63,7 +129,7 @@ limits, the original campaign and save formats are unchanged.
 These results establish the recorded journeys, not arbitrary Lua/condition
 reachability, all later party compositions, shortest-path optimality or general
 campaign solvability. Other entrance prompts require explicit scenario choices.
-The next proposed milestone is exact-content saved-checkpoint scenario starts.
+The subsequent saved-checkpoint scenario milestone is recorded above.
 
 ## AI8 recorded campaign and delivery — 2026-10-23
 
