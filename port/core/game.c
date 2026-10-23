@@ -21,6 +21,8 @@
 #include "core/cache.h"
 #include "core/roster_game.h"
 #include "core/events.h"
+#include "data/chi_spatial.h"
+#include "data/project.h"
 #include <string.h>
 
 const BtpCombatProfile *btp_active_combat_profile(const BtpState *s,const BtpResources *r)
@@ -50,6 +52,44 @@ void btp_start(BtpState *s)
     for (unsigned row=98;row<=103;++row) s->explored[row*16u+12u]=31;
     s->story_flags[51] = 50;btp_world_reveal(s);
 }
+unsigned btp_citadel_origin(const BtpState *s,unsigned axis)
+{
+    unsigned origin=axis ? s->content_origin_y : s->content_origin_x;
+    return origin ? origin-1u : 1536u;
+}
+void btp_content_coordinates(BtpState *s,const BtpResources *r)
+{
+    if (!r->project || !r->project->chi_spatial) { s->content_origin_x=s->content_origin_y=0;return; }
+    s->content_origin_x=(uint16_t)((r->map.entrance_x[0]>>8)*128+1u);
+    s->content_origin_y=(uint16_t)((r->map.entrance_y[0]>>12)*128+1u);
+}
+void btp_start_content(BtpState *s,const BtpResources *r)
+{
+    btp_start(s);btp_content_coordinates(s,r);
+    if (r->project && r->project->chi_spatial) {
+        s->x_half=r->project->chi_spatial->start_x;s->y_half=r->project->chi_spatial->start_y;
+        if (btp_citadel_origin(s,0)!=1536 || btp_citadel_origin(s,1)!=1536) {
+            memset(s->explored,0,sizeof s->explored);
+            unsigned bx=btp_citadel_origin(s,0)/128u,by=btp_citadel_origin(s,1)/16u;
+            for (unsigned row=by+2;row<=by+7 && row<128;++row) s->explored[row*16u+bx]=31;
+        }
+        btp_world_reveal(s);
+    }
+}
+int btp_chi_preview(BtpState *s,const BtpResources *r,const char *id,unsigned x,unsigned y)
+{
+    if (!r->project || !r->project->chi_spatial) return 0;
+    const BtpChiSpatial *c=r->project->chi_spatial;unsigned slot=0;
+    while (slot<13 && strcmp(c->maps[slot].id,id)) ++slot;
+    if (slot==13 || x>=2u*c->maps[slot].width || y>=2u*c->maps[slot].height) return 0;
+    ++slot;const BtpMap *m=slot==1 ? &r->map : slot==11 ? &r->destroyed : &r->local[slot-1];
+    const BtpMap *origin=slot==11 ? &r->map : m;
+    s->story_flags[4]=(uint8_t)(slot!=1);s->map_id=(uint8_t)slot;s->x_half=(uint16_t)x;s->y_half=(uint16_t)y;
+    s->campaign.world_x=(uint16_t)((origin->entrance_x[0]>>8)*128+x);s->campaign.world_y=(uint16_t)((origin->entrance_y[0]>>12)*128+y);
+    if (btp_map_tile(m,(int)(x+1)/2,(int)y/2)>=85) return 0;
+    s->mode=BTP_EXPLORE;btp_content_coordinates(s,r);btp_party_init(s);btp_npc_enter(s,m);
+    btp_party_follow(s,r,s->campaign.world_x,s->campaign.world_y);btp_world_reveal(s);return 1;
+}
 const BtpMap *btp_active_map(const BtpResources *r,const BtpState *s)
 {
     const BtpScene *scene=btp_scene(r,s);if (scene) return &scene->visual;
@@ -65,7 +105,7 @@ unsigned btp_building_kind(const BtpResources *r,const BtpState *s)
         s->campaign.building==BTP_BROKER_BUILDING) return BTP_BROKER_BUILDING;
     if (s->disk_origin) return 18;
     if (s->cache.active || s->yard.active) return s->campaign.building;
-    return !s->map_id ? s->campaign.building : s->map_id==1 ? s->entry_slot :
+    return !s->map_id ? s->campaign.building : s->map_id==1 && !(r->project && r->project->chi_spatial) ? s->entry_slot :
         btp_active_map(r,s)->room_map[s->entry_slot&15u];
 }
 const BtpBld *btp_state_bld(const BtpResources *r,const BtpState *s)
@@ -188,7 +228,8 @@ static void finish_script(BtpState *s, const BtpResources *r, const BtpMap *m)
             s->npc=(BtpNpcState){.rng={s->npc.rng[0],s->npc.rng[1],s->npc.rng[2]}};
             s->campaign.building=0;
             s->script=(BtpScriptState){0};
-            if (s->campaign.world_y<1536 || s->campaign.world_x<1536 || s->campaign.world_y>=1664 || s->campaign.world_x>=1664) {
+            unsigned ox=btp_citadel_origin(s,0),oy=btp_citadel_origin(s,1);
+            if (s->campaign.world_y<oy || s->campaign.world_x<ox || s->campaign.world_y>=oy+128 || s->campaign.world_x>=ox+128) {
                 s->map_id=0;s->x_half=s->campaign.world_x;s->y_half=s->campaign.world_y;
             }
         }
@@ -446,14 +487,16 @@ services:
         }
     }
     if (s->script.has_position) {
-        s->campaign.world_x=(uint16_t)((s->script.position_x>>8)*128+(s->script.position_x&127u));
-        s->campaign.world_y=(uint16_t)((s->script.position_y>>12)*128+(s->script.position_y&127u));
+        unsigned x=(s->script.position_x>>8)*128+(s->script.position_x&127u),y=(s->script.position_y>>12)*128+(s->script.position_y&127u);
+        if (!s->cache.active && !s->yard.active) btp_chi_position(r,&x,&y);
+        s->campaign.world_x=(uint16_t)x;s->campaign.world_y=(uint16_t)y;
         s->x_half=s->script.position_x&127u;s->y_half=s->script.position_y&127u;s->script.has_position=0;
     }
     finish_script(s,r,map);
 }
 void btp_game_tick_audio(BtpState *s,const BtpResources *r,BtpAction a,int16_t *samples)
 {
+    btp_content_coordinates(s,r);
     /* 0000:218F prints the direction for each exploration key. Keep the
        ten visible lines independent of the renderer and movement step size. */
     if (btp_action_moves(a) && !s->combat.phase &&

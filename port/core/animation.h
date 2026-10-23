@@ -13,5 +13,6 @@ unsigned btp_terrain_frame(unsigned tile, unsigned phase); /* 0: static tile */
 int btp_cutscene_begin(BtpState *s, const BtpResources *r, unsigned kind, unsigned active);
 int btp_cutscene_tick(BtpState *s, const BtpResources *r); /* 1 when complete */
 int btp_cutscene_valid(const BtpState *s);
+int btp_cutscene_valid_resources(const BtpState *s,const BtpResources *r);
 int btp_outtake_roll(BtpState *s,unsigned kind,unsigned flags);
 #endif

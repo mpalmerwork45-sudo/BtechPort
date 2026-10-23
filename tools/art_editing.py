@@ -145,6 +145,9 @@ def import_image(path, prefix, images, kind="screen", frame_width=None, frame_he
 
 
 def original_sprite(document, settings, first=0, frames=16):
+    if document.manifest.get('requires')=='chi-local-dos-1.03':
+        from chi_resources import preview
+        return preview(document,'sprite','MECHSHAP.CMP',first,frames)
     from editor_model import resource_settings
     settings=resource_settings(document,settings)
     from editor_tiles import _capture_preview

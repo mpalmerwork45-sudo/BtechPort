@@ -8,6 +8,7 @@
 #include "core/menu.h"
 #include "core/yard.h"
 #include "core/events.h"
+#include "data/chi_spatial.h"
 #include <string.h>
 #include <stdlib.h>
 
@@ -44,8 +45,8 @@ void btp_world_reveal(BtpState *s)
             }
         return;
     }
-    unsigned x=s->story_flags[4] ? s->campaign.world_x : 1536u+s->x_half;
-    unsigned y=s->story_flags[4] ? s->campaign.world_y : 1536u+s->y_half;
+    unsigned x=s->story_flags[4] ? s->campaign.world_x : btp_citadel_origin(s,0)+s->x_half;
+    unsigned y=s->story_flags[4] ? s->campaign.world_y : btp_citadel_origin(s,1)+s->y_half;
     if (x>=2048 || y>=2048 || s->story_flags[58]) return;
     unsigned at=y/16u*16u+x/128u;
     if (s->story_flags[49]) {
@@ -91,19 +92,24 @@ unsigned btp_world_mini(const BtpResources *r,const BtpState *s,unsigned x,unsig
     return btp_world_mini_index(level,mask);
 }
 
-unsigned btp_world_device_direction(unsigned x,unsigned y)
+static unsigned device_direction(unsigned x,unsigned y,unsigned target_x,unsigned target_y)
 {
     /* 0000:4405 passes packed world coordinates to 187F:0971. That
        routine narrows cross-sector deltas instead of taking the bearing
        across the whole island. Preserve its original arrow, including the
        asymmetric X word/Y byte arithmetic. */
     unsigned px=(x/128u)*256u+(x&127u),py=(y/128u)*4096u+(y&127u);
-    int dx=(int16_t)(0x0a38u-px),up=(int8_t)((py&255u)-0x38u);
-    if ((px>>8)<10) dx&=127;
-    else if ((px>>8)>10) dx=(int16_t)((unsigned)dx|128u);
-    if ((py&0xf000u)<0x8000u) up=(int16_t)((unsigned)up|0xff80u);
-    else if ((py&0xf000u)>0x8000u) up&=127;
+    int dx=(int16_t)(target_x-px),up=(int8_t)((py&255u)-(target_y&255u));
+    if ((px>>8)<(target_x>>8)) dx&=127;
+    else if ((px>>8)>(target_x>>8)) dx=(int16_t)((unsigned)dx|128u);
+    if ((py&0xf000u)<(target_y&0xf000u)) up=(int16_t)((unsigned)up|0xff80u);
+    else if ((py&0xf000u)>(target_y&0xf000u)) up&=127;
     return dx || up ? btp_combat_direction(0,0,dx,-up) : 0u;
+}
+unsigned btp_world_device_direction(unsigned x,unsigned y) { return device_direction(x,y,0x0a38u,0x8038u); }
+unsigned btp_world_device_direction_resources(const BtpResources *r,unsigned x,unsigned y)
+{
+    return device_direction(x,y,(r->local[1].entrance_x[0]&0xff00u)|0x38u,(r->local[1].entrance_y[0]&0xf000u)|0x38u);
 }
 
 static const BtpMap *local(const BtpResources *r,unsigned id)
@@ -165,12 +171,16 @@ unsigned btp_world_tile(const BtpResources *r,const BtpState *s,int x,int y)
     }
     if (r->world.native) {
         if (x<0 || y<0 || x>=1024 || y>=1024) return 255;
-        unsigned level=world_level(r,s,x/8,y/8);
-        return btp_generated_joined_tile(&r->world,x,y,world_neighbours(r,s,x/8,y/8,level));
+        return btp_chi_world_rule(r,btp_world_generated(r,s,x,y));
     }
     if (!r->world.loaded || x<BTP_WORLD_ORIGIN || y<BTP_WORLD_ORIGIN ||
         x>=BTP_WORLD_ORIGIN+BTP_WORLD_SIDE || y>=BTP_WORLD_ORIGIN+BTP_WORLD_SIDE) return 255;
     return r->world.tiles[(unsigned)(y-BTP_WORLD_ORIGIN)*BTP_WORLD_SIDE+(unsigned)(x-BTP_WORLD_ORIGIN)];
+}
+unsigned btp_world_generated(const BtpResources *r,const BtpState *s,int x,int y)
+{
+    unsigned level=world_level(r,s,x/8,y/8);
+    return btp_generated_joined_tile(&r->world,x,y,world_neighbours(r,s,x/8,y/8,level));
 }
 unsigned btp_world_descriptor(const BtpResources *r,const BtpState *s,int x,int y)
 {
@@ -200,6 +210,8 @@ int btp_world_deep_crossing(const BtpResources *r,const BtpState *s,unsigned x,u
     if (dy<0 && !(y&15u)) { --by;crossed=1; }
     if (dy>0 && (y&15u)==15u) { ++by;crossed=1; }
     if (!crossed) return 0;
+    const BtpChiTile *authored=btp_chi_generated_cell(r,btp_world_generated(r,s,((int)x+dx+1)/2,((int)y+dy)/2));
+    if (authored && !authored->water) return 0;
     /* Test the same painted descriptors as the original 1314 viewport.
        The generated underlay is deep water at the cache island (MAP13), but
        its stored land block interrupts the all-water mask. The leader,

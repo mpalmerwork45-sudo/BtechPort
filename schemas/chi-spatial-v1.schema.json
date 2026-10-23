@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Editable native CHI maps and generator inputs",
+  "type": "object", "additionalProperties": false,
+  "required": ["format", "schema_version", "maps", "tiles", "world", "land"],
+  "properties": {
+    "format": {"const": "btp-chi-spatial-v1"}, "schema_version": {"const": 1},
+    "start": {"type": "object", "additionalProperties": false, "required": ["map", "half"], "properties": {"map": {"$ref": "#/$defs/id"}, "half": {"$ref": "#/$defs/half"}}},
+    "land": {"type": "array", "minItems": 250, "maxItems": 250, "items": {"$ref": "#/$defs/id"}},
+    "tiles": {"type": "array", "minItems": 1, "maxItems": 4096, "items": {
+      "type": "object", "additionalProperties": false, "required": ["id", "name", "sheet", "graphic", "rule"],
+      "properties": {"id": {"$ref": "#/$defs/id"}, "name": {"type": "string", "minLength": 1, "maxLength": 95},
+        "sheet": {"enum": ["chi:land", "chi:destroyed", "chi:cache", "chi:maproom", "package:art"]},
+        "graphic": {"oneOf": [{"type": "integer", "minimum": 0, "maximum": 249}, {"$ref": "#/$defs/id"}]},
+        "rule": {"type": "integer", "minimum": 0, "maximum": 249}, "water": {"enum": [0, 1, 2]}, "mini_color": {"type": "integer", "minimum": 0, "maximum": 15}}
+    }},
+    "maps": {"type": "array", "minItems": 15, "maxItems": 15, "items": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "slot", "name", "width", "height", "origin", "rows", "overlays", "entrances", "npcs"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"}, "slot": {"type": "integer", "minimum": 1, "maximum": 15},
+        "name": {"type": "string", "minLength": 1, "maxLength": 63},
+        "width": {"type": "integer", "minimum": 8, "maximum": 64, "multipleOf": 8},
+        "height": {"type": "integer", "minimum": 8, "maximum": 64, "multipleOf": 8},
+        "origin": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "integer", "minimum": 0, "maximum": 960, "multipleOf": 64}},
+        "rows": {"$ref": "#/$defs/rows"},
+        "overlays": {"type": "array", "maxItems": 32, "items": {"type": "object", "additionalProperties": false, "required": ["at", "rows"],
+          "properties": {"id": {"$ref": "#/$defs/id"}, "name": {"type": "string", "minLength": 1, "maxLength": 63}, "at": {"$ref": "#/$defs/half"}, "rows": {"$ref": "#/$defs/rows"}}}},
+        "entrances": {"type": "array", "minItems": 16, "maxItems": 16, "items": {
+          "type": "object", "additionalProperties": false, "required": ["id", "slot", "name", "label_bytes", "half", "active", "packed", "room"],
+          "properties": {"id": {"$ref": "#/$defs/id"}, "slot": {"type": "integer", "minimum": 0, "maximum": 15},
+            "name": {"type": "string", "maxLength": 16}, "label_bytes": {"$ref": "#/$defs/label"}, "half": {"$ref": "#/$defs/half"},
+            "active": {"enum": [0, 1]}, "packed": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "integer", "minimum": 0, "maximum": 65535}},
+            "room": {"type": "integer", "minimum": 0, "maximum": 255}}
+        }},
+        "npcs": {"type": "array", "minItems": 8, "maxItems": 8, "items": {
+          "type": "object", "additionalProperties": false, "required": ["id", "slot", "name", "label_bytes", "route"],
+          "properties": {"id": {"$ref": "#/$defs/id"}, "slot": {"type": "integer", "minimum": 0, "maximum": 7}, "name": {"type": "string", "maxLength": 16},
+            "label_bytes": {"$ref": "#/$defs/label"}, "route": {"type": "integer", "minimum": 0, "maximum": 7}}
+        }}
+      }
+    }},
+    "world": {"type": "object", "additionalProperties": false,
+      "required": ["id", "name", "width", "height", "seed", "coarse", "flips", "mini_colors", "jigsaws", "joins"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"}, "name": {"type": "string", "minLength": 1, "maxLength": 63}, "width": {"const": 1024}, "height": {"const": 1024},
+        "seed": {"type": "integer", "minimum": 1, "maximum": 16777215},
+        "coarse": {"type": "array", "minItems": 336, "maxItems": 336, "items": {"type": "integer", "minimum": 0, "maximum": 127}},
+        "flips": {"type": "array", "minItems": 96, "maxItems": 96, "items": {"type": "integer", "minimum": 0, "maximum": 63}},
+        "mini_colors": {"type": "array", "minItems": 256, "maxItems": 256, "items": {"type": "integer", "minimum": 0, "maximum": 15}},
+        "joins": {"type": "array", "minItems": 17, "maxItems": 17, "items": {"$ref": "#/$defs/id"}},
+        "jigsaws": {"type": "array", "minItems": 1, "maxItems": 1024, "items": {"type": "object", "additionalProperties": false, "required": ["id", "name", "rows"],
+          "properties": {"id": {"$ref": "#/$defs/id"}, "name": {"type": "string", "minLength": 1, "maxLength": 95},
+            "rows": {"type": "array", "minItems": 8, "maxItems": 8, "items": {"type": "array", "minItems": 8, "maxItems": 8, "items": {"$ref": "#/$defs/id"}}}}}}
+      }
+    }
+  },
+  "$defs": {
+    "id": {"type": "string", "minLength": 3, "maxLength": 63, "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"},
+    "byte": {"type": "integer", "minimum": 0, "maximum": 255},
+    "half": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "integer", "minimum": 0, "maximum": 127}},
+    "label": {"type": "array", "minItems": 16, "maxItems": 16, "items": {"$ref": "#/$defs/byte"}},
+    "rows": {"type": "array", "minItems": 1, "maxItems": 64, "items": {"type": "array", "minItems": 1, "maxItems": 64, "items": {"oneOf": [{"$ref": "#/$defs/id"}, {"const": " "}]}}}
+  }
+}

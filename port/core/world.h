@@ -4,6 +4,7 @@
 /* Original generated sectors with the authentic local MAP1 overlay.
    Current early-campaign barriers still prevent outer travel. */
 unsigned btp_world_tile(const BtpResources *resources,const BtpState *state,int x,int y);
+unsigned btp_world_generated(const BtpResources *resources,const BtpState *state,int x,int y);
 int btp_world_deep_crossing(const BtpResources *resources,const BtpState *state,unsigned x,unsigned y,int dx,int dy);
 unsigned btp_world_descriptor(const BtpResources *resources,const BtpState *state,int x,int y);
 int btp_world_location(const BtpResources *resources,const BtpState *state,int x,int y);
@@ -20,5 +21,6 @@ void btp_world_animate_marks(BtpState *state,int camera_x,int camera_y);
 int btp_world_seen(const BtpState *state,unsigned x,unsigned y);
 unsigned btp_world_mini(const BtpResources *resources,const BtpState *state,unsigned x,unsigned y);
 unsigned btp_world_device_direction(unsigned x,unsigned y);
+unsigned btp_world_device_direction_resources(const BtpResources *r,unsigned x,unsigned y);
 unsigned btp_world_mini_index(unsigned level,unsigned neighbours);
 #endif

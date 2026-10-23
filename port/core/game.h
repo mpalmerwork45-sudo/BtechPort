@@ -199,10 +199,18 @@ typedef struct {
     uint8_t project; /* Requires the package-bound save envelope, including before owning a custom mech. */
     BtpEventState event;
     BtpBattleMissionState battle_mission;
+    /* Content-derived CHI coordinate frame, reconstructed after loading.
+       Plus one permits an origin at zero. These are not save payload fields;
+       the package fingerprint already binds the corresponding map data. */
+    uint16_t content_origin_x,content_origin_y;
 } BtpState;
 enum { BTP_STATE_BYTES = 20480 };
 
 void btp_start(BtpState *state);
+void btp_start_content(BtpState *state,const BtpResources *resources);
+unsigned btp_citadel_origin(const BtpState *state,unsigned axis);
+void btp_content_coordinates(BtpState *state,const BtpResources *resources);
+int btp_chi_preview(BtpState *state,const BtpResources *resources,const char *map,unsigned x,unsigned y);
 const BtpCombatProfile *btp_active_combat_profile(const BtpState *state,const BtpResources *resources);
 int btp_set_combat_profile(BtpState *state,const BtpResources *resources,unsigned enhanced);
 void btp_game_building(BtpState *state,const BtpResources *resources,unsigned kind);

@@ -193,8 +193,8 @@ void btp_effects_crush(BtpState *s,unsigned actor,unsigned target)
 static void redraw_marks(BtpState *s)
 {
     int x,y;effect_focus(s,&x,&y);
-    int ox=s->campaign.encounter || s->campaign.invasion ? s->campaign.battle_x : 1536;
-    int oy=s->campaign.encounter || s->campaign.invasion ? s->campaign.battle_y : 1536;
+    int ox=s->campaign.encounter || s->campaign.invasion ? s->campaign.battle_x : (int)btp_citadel_origin(s,0);
+    int oy=s->campaign.encounter || s->campaign.invasion ? s->campaign.battle_y : (int)btp_citadel_origin(s,1);
     btp_world_animate_marks(s,ox+x,oy+y);
 }
 static void complete_effect(BtpState *s)

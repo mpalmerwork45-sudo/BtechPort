@@ -28,6 +28,11 @@ def sequence(image, view, direction=0):
 
 def default_view(document, image):
     identity = image['id']
+    from tile_editing import metadata
+    origin=(metadata(document) if hasattr(document,'metadata') else {}).get('tile_sources',{}).get(identity,{})
+    if origin.get('resource')=='MECHSHAP.CMP' and origin.get('kind')=='sprite':
+        if origin.get('graphic') in (0,146):return 'Original mech movement'
+        if origin.get('graphic') in (166,270):return VIEWS[1]
     if any(p.get('image') == identity for p in document.content['presentations']): return VIEWS[0]
     roles = {b['slot'] for b in document.art['bindings'] if b['image'] == identity}
     if roles & {'player', 'npc', 'enemy'}: return VIEWS[1]

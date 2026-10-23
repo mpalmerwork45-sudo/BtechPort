@@ -19,7 +19,8 @@ FORMAT = 'btp-campaign-source-v1'
 MAX_FILES = 4096
 MAX_BYTES = 128 * 1024 * 1024
 SECTIONS = {'manifest': None, 'content': 'definitions', 'adventure': 'adventure',
-            'art': 'graphics', 'presentation': 'presentation'}
+            'art': 'graphics', 'presentation': 'presentation', 'chi_spatial':'chi_spatial',
+            'chi_presentation':'chi_presentation', 'chi_campaign':'campaign'}
 DOCUMENTS = ('README.md','LICENSE.md','SOURCE-README.md','ART-SOURCE-README.md',
              'VEHICLE-SOURCE-README.md','sources.json','CREDITS.md')
 

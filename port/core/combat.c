@@ -4,6 +4,7 @@
 #include "core/combat_ai.h"
 #include "core/npc.h"
 #include "core/animation.h"
+#include "data/chi_spatial.h"
 #include "core/effects.h"
 #include "core/campaign.h"
 #include "core/world.h"
@@ -191,7 +192,7 @@ void btp_combat_map(const BtpResources *r,const BtpState *s,BtpMap *m)
         for (int y=0;y<128;++y) for (int x=0;x<128;++x) {
             /* The Citadel is an overlay on the world. Switch the actual
                collision tiles together with DESTRUCT, while still fighting. */
-            unsigned tile=x>=32 && x<96 && y>=32 && y<96 ? btp_map_tile(btp_active_map(r,s),x-32,y-32) : btp_world_tile(r,s,736+x,736+y);
+            unsigned tile=x>=32 && x<96 && y>=32 && y<96 ? btp_map_tile(btp_active_map(r,s),x-32,y-32) : btp_world_tile(r,s,s->campaign.battle_x/2+x,s->campaign.battle_y/2+y);
             m->tiles[y*128+x]=(uint8_t)tile;
         }
         return;
@@ -360,7 +361,7 @@ void btp_combat_begin(BtpState *s, const BtpResources *r)
     if (s->campaign.invasion) {
         /* A 64-half-tile margin preserves the original packed-world escape
            bounds on all four sides without wrapping signed coordinates. */
-        s->campaign.battle_x=s->campaign.battle_y=1472;
+        s->campaign.battle_x=(uint16_t)(btp_citadel_origin(s,0)-64u);s->campaign.battle_y=(uint16_t)(btp_citadel_origin(s,1)-64u);
         for (unsigned i=0;i<c->count;++i) { c->unit[i].x+=64;c->unit[i].y+=64; }
         s->x_half=c->unit[0].x;s->y_half=(uint16_t)(c->unit[0].y+2u);
     }
@@ -391,8 +392,8 @@ static void finish(BtpState *s,const BtpResources *r)
        after the original return-to-base message. */
     if (!s->campaign.invasion) s->mission.phase=BTP_MISSION_RETURN;
     if (s->campaign.invasion) {
-        s->campaign.world_x=(uint16_t)(1472+s->x_half);
-        s->campaign.world_y=(uint16_t)(1472+s->y_half);
+        s->campaign.world_x=(uint16_t)(s->campaign.battle_x+s->x_half);
+        s->campaign.world_y=(uint16_t)(s->campaign.battle_y+s->y_half);
         s->x_half=(uint16_t)(s->campaign.world_x&127u);
         s->y_half=(uint16_t)(s->campaign.world_y&127u);
     }
@@ -609,8 +610,8 @@ static void advance(BtpState *s, unsigned index)
 }
 static void mark(BtpState *s,unsigned sprite,int x,int y)
 {
-    int ox=s->campaign.invasion || s->campaign.encounter ? s->campaign.battle_x : 1536;
-    int oy=s->campaign.invasion || s->campaign.encounter ? s->campaign.battle_y : 1536;
+    int ox=s->campaign.invasion || s->campaign.encounter ? s->campaign.battle_x : (int)btp_citadel_origin(s,0);
+    int oy=s->campaign.invasion || s->campaign.encounter ? s->campaign.battle_y : (int)btp_citadel_origin(s,1);
     btp_world_mark(s,sprite,ox+x,oy+y);
 }
 void btp_combat_ignite(BtpState *s, const BtpCombatUnit *target)
@@ -677,8 +678,8 @@ static void round_tick(BtpState *s, const BtpResources *r, int enemy_ai)
     for (unsigned i=0;i<c->count;++i) if (moved_before[i]!=c->moved[i] &&
         btp_combat_visible(c->unit[i].x,c->unit[i].y,c->unit[i].infantry,
             c->unit[c->active_unit].x,c->unit[c->active_unit].y)) {
-        int ox=s->campaign.encounter || s->campaign.invasion ? s->campaign.battle_x : 1536;
-        int oy=s->campaign.encounter || s->campaign.invasion ? s->campaign.battle_y : 1536;
+        int ox=s->campaign.encounter || s->campaign.invasion ? s->campaign.battle_x : (int)btp_citadel_origin(s,0);
+        int oy=s->campaign.encounter || s->campaign.invasion ? s->campaign.battle_y : (int)btp_citadel_origin(s,1);
         btp_world_animate_marks(s,ox+c->unit[c->active_unit].x,oy+c->unit[c->active_unit].y);break;
     }
     BtpMap map;btp_combat_map(r,s,&map);
@@ -780,7 +781,7 @@ static void round_tick(BtpState *s, const BtpResources *r, int enemy_ai)
         /* 103B:0CCE accepts the original arena escape band only after the
            special arena target has triggered D32F. */
         (s->campaign.encounter==4 && s->story_flags[35] &&
-         s->campaign.battle_x+c->unit[0].x>1152 && s->campaign.battle_x+c->unit[0].x<1287)) {
+         (int)s->campaign.battle_x+c->unit[0].x>1152+btp_chi_map_offset(r,2,0) && (int)s->campaign.battle_x+c->unit[0].x<1287+btp_chi_map_offset(r,2,0))) {
         if (s->effects.count || s->presentation.count || s->audio.sound_count) s->effects.pending=3;
         else { c->fled=1;finish(s,r); }
         return;

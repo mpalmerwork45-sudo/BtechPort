@@ -253,8 +253,8 @@ void btp_menu_input(BtpState *s,const BtpResources *r,BtpAction a)
         case 6:page(s,BTP_MENU_SAVE,s->menu.slot);break;
         case 8:c->member=0;page(s,BTP_MENU_JOURNAL,0);break;
         case 7:
-            s->menu.map_x=s->story_flags[4] ? c->world_x : (uint16_t)(1536+s->x_half);
-            s->menu.map_y=s->story_flags[4] ? c->world_y : (uint16_t)(1536+s->y_half);
+            s->menu.map_x=s->story_flags[4] ? c->world_x : (uint16_t)(btp_citadel_origin(s,0)+s->x_half);
+            s->menu.map_y=s->story_flags[4] ? c->world_y : (uint16_t)(btp_citadel_origin(s,1)+s->y_half);
             page(s,BTP_MENU_MAP,0);break;
         }
         break;

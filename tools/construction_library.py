@@ -109,6 +109,12 @@ def closure(document,design_id):
     indexed={}
     for tile in tiles:
         tile.pop('key',None)
+        if tile['sheet'] in ('chi:cache','chi:maproom'):
+            from chi_resources import preview
+            im=preview(document,'tile','STARLEAG.ICN' if tile['sheet']=='chi:cache' else 'MAP.ICN',tile['graphic'])
+            im.update(id=identity('library',images,'tile'),name='Original '+tile['sheet']+' '+str(tile['graphic']))
+            images.append(im);editing['tile_sources'][im['id']]=dict(sheet=tile['sheet'],graphic=tile['graphic'])
+            tile.update(sheet='package:art',graphic=im['id']);continue
         if tile['sheet']!='package:tiles':continue
         graphic=tile['graphic']
         if graphic not in indexed:

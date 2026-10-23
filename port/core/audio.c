@@ -14,6 +14,7 @@ void btp_audio_start(BtpState *s)
 }
 void btp_audio_irq(BtpAudioState *v,const BtpResources *r)
 {
+    if (!r->music_length) { v->active=0;return; }
     if (!v->active || --v->countdown) return;
     v->countdown=4;
     if (v->position>r->music_length) { v->active=0;return; }
@@ -30,13 +31,19 @@ void btp_audio_samples(BtpAudioState *v,const BtpResources *r,unsigned count,int
             int sum=0;
             for (unsigned n=0;n<clocks && v->sound_count;++n) {
                 unsigned program=v->sounds[0]-1u;
+                if (program<18 && r->sound_map[program]) program=r->sound_map[program]-1u;
                 if (program>=BTP_SOUND_COUNT || v->event>=r->combat.sound_count[program]) {
                     --v->sound_count;memmove(v->sounds,v->sounds+1,v->sound_count);v->sounds[v->sound_count]=0;
                     v->event=0;v->remaining=0;v->sound_phase=0;
                     if (!v->sound_count) { v->sound_fraction=0;break; }program=v->sounds[0]-1u;
+                    if (program<18 && r->sound_map[program]) program=r->sound_map[program]-1u;
                 }
                 const BtpSpeakerEvent *e=&r->combat.sound[program][v->event];
-                if (!v->remaining) { v->remaining=e->clocks;v->sound_phase=0; }
+                if (!v->remaining) {
+                    v->remaining=r->sound_speed ? (uint32_t)((uint64_t)e->clocks*100u/r->sound_speed) : e->clocks;
+                    if (!v->remaining) v->remaining=1;
+                    v->sound_phase=0;
+                }
                 unsigned divisor=e->divisor ? e->divisor : 65536u;
                 if (e->type==1) { sum+=v->sound_phase<(divisor+1u)/2u ? 1 : -1;v->sound_phase=(uint16_t)((v->sound_phase+1u)%divisor); }
                 if (e->type==2) sum+=e->level ? 1 : -1;

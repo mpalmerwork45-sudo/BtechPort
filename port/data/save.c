@@ -5,6 +5,7 @@
 #include "core/roster_game.h"
 #include "data/project.h"
 #include "core/events.h"
+#include "core/animation.h"
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
@@ -64,6 +65,7 @@ static int decode(const uint8_t *b, size_t n, BtpState *s, const BtpResources *r
         if (b[4]==48) context.event.map=(uint16_t)(context.map_id-16u);
     }
     if (n<24 || !btp_state_decode(b,n,btp_active_map(r,&context),btp_state_bld(r,&context),s)) return 0;
+    btp_content_coordinates(s,r);
     if (s->event.enabled && n>=20185 && b[20057+127]<2) {
         /* The first authored-world saves used the original 128-column
            discovery bitmap. Repack it once into the bounded planet regions;
@@ -85,7 +87,7 @@ static int decode(const uint8_t *b, size_t n, BtpState *s, const BtpResources *r
         s->event.planet=(uint8_t)m->world;s->event.explore_offset=(uint16_t)m->explore_offset;
         s->event.explore_width=(uint8_t)m->explore_width;s->event.explore_height=(uint8_t)m->explore_height;
     }
-    return btp_events_valid(s,r);
+    return btp_events_valid(s,r) && btp_cutscene_valid_resources(s,r);
 }
 int btp_save_write(const char *path, const BtpState *s, const BtpResources *r, BtpError *e)
 {

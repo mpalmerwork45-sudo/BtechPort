@@ -15,6 +15,12 @@ def target(document,problem):
         return dict(collection='location',id=problem.get('object_id'),**location)
     # The deepest ID is the entrance/enemy owner, not the first map ID.
     for identity in reversed(ids):
+        if a.get('chi_native'):
+            from chi_spatial import data
+            for m in data(document)['maps']:
+                for key in ('npcs','entrances'):
+                    v=next((v for v in m[key] if v['id']==identity),None)
+                    if v is not None:return dict(collection='native_'+key,id=identity,map=m['id'],slot=v['slot'])
         for scene in a.get('maps',[]):
             for entrance in scene['entrances']:
                 if entrance['id']==identity:return dict(collection='entrances',id=identity,map=scene['id'],at=entrance['at'])
@@ -33,6 +39,11 @@ def navigate(workspace,problem):
     destination=target(scope.document,problem)
     if not destination:return False
     owner=scope.owner;collection=destination['collection'];identity=destination.get('id')
+    if collection in ('native_npcs','native_entrances'):
+        owner.edit_adventure();maps=owner.map_editor
+        maps.scene_index=next(i for i,m in enumerate(maps.adventure['maps']) if m['id']==destination['map']);maps.refresh()
+        maps.npc_routes(destination['slot']) if collection=='native_npcs' else maps.door_slots(destination['slot'])
+        return True
     if collection in ('mechs','weapons','equipment','people'):
         kind={'mechs':'Vehicles' if destination['value'].get('kind')=='vehicle' else 'Mechs',
               'weapons':'Weapons','equipment':'Equipment','people':'Infantry'}[collection]

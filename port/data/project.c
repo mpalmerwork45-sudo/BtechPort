@@ -2,6 +2,7 @@
 #define _POSIX_C_SOURCE 200809L
 #endif
 #include "data/project.h"
+#include "data/chi_presentation.h"
 #include "data/chi.h"
 #include "data/json.h"
 #include "data/digest.h"
@@ -65,7 +66,7 @@ static int expected(BtpJson *j,unsigned obj,const char *key,const char *want)
     return btp_json_string(j,node,v,sizeof v) && (!strcmp(v,want) || btp_json_error(j,node,"unsupported project option"));
 }
 void btp_project_free(BtpProject *p)
-{ if (p) { free(p->chi_resources);free(p); } }
+{ if (p) { free(p->chi_resources);free(p->chi_spatial);free(p); } }
 BtpProject *btp_project_load(const char *root,BtpRoster *roster,BtpPortraits *portraits,BtpError *error)
 {
     BtpError ignored;if (!error) error=&ignored;
@@ -99,6 +100,14 @@ BtpProject *btp_project_load(const char *root,BtpRoster *roster,BtpPortraits *po
         if (adventure) { fail(error,"project.json","CHI import cannot enable authored events");goto done; }
         p->chi_resources=btp_chi_project_load(root,&j,&digest,&p->chi_edition,error);
         if (!p->chi_resources) goto done;
+        unsigned spatial=btp_json_optional(&j,1,"chi_spatial");
+        if (spatial) {
+            p->chi_spatial=calloc(1,sizeof *p->chi_spatial);
+            if (!btp_json_string(&j,spatial,relative,sizeof relative)) goto done;
+            if (strcmp(relative,"chi-spatial.json")) { btp_json_error(&j,spatial,"expected chi-spatial.json");goto done; }
+            if (!p->chi_spatial ||
+                !btp_chi_spatial_load(root,relative,p->chi_spatial,p->chi_resources,&digest,error)) goto done;
+        }
         if ((p->chi_edition==1 && p->definitions.rules.fingerprint) ||
             (p->chi_edition==2 && !p->definitions.rules.fingerprint)) { fail(error,"campaign.json","edition and rules disagree");goto done; }
     }
@@ -118,10 +127,17 @@ BtpProject *btp_project_load(const char *root,BtpRoster *roster,BtpPortraits *po
     }
     unsigned graphics=btp_json_optional(&j,1,"graphics");
     if (graphics) {
-        if (!adventure || !btp_json_string(&j,graphics,relative,sizeof relative) || !btp_project_path(root,relative,path,error) ||
+        if ((!adventure && !imported) || !btp_json_string(&j,graphics,relative,sizeof relative) || !btp_project_path(root,relative,path,error) ||
             !btp_art_load(path,&p->graphics,error->text)) goto done;
         btp_digest_add(&digest,p->graphics.source_digest,32);
     }
+    if (p->chi_spatial) for (unsigned i=0;i<p->chi_spatial->tile_count;++i) {
+        BtpChiTile *t=&p->chi_spatial->tiles[i];if (t->sheet!=4) continue;
+        unsigned im=btp_art_find(&p->graphics,t->image);
+        if (im==BTP_ART_NONE || p->graphics.images[im].kind!=0) { fail(error,t->id,"CHI tile requires a declared tile image");goto done; }
+        t->graphic=(uint16_t)im;
+    }
+    unsigned chi_art=btp_json_optional(&j,1,"chi_presentation");
     for (unsigned i=0;i<p->adventure.person_count;++i) {
         BtpScenePerson *person=&p->adventure.people[i];if (!*person->image) continue;
         unsigned im=btp_art_find(&p->graphics,person->image);
@@ -197,6 +213,11 @@ BtpProject *btp_project_load(const char *root,BtpRoster *roster,BtpPortraits *po
         if (!decoded) { char detail[256];snprintf(detail,sizeof detail,"%s",error->text);fail(error,relative,detail);goto done; }
     }
     if (independent) for (unsigned i=0;i<p->adventure.node_count;++i) if (p->adventure.nodes[i].portrait>2) { fail(error,p->adventure.nodes[i].id,"independent profile supports none/broker/training portraits");goto done; }
+    if (chi_art) {
+        if (!imported || !btp_json_string(&j,chi_art,relative,sizeof relative)) goto done;
+        if (strcmp(relative,"chi-presentation.json")) { btp_json_error(&j,chi_art,"expected chi-presentation.json");goto done; }
+        if (!btp_chi_presentation_load(root,relative,p,art,&digest,error)) goto done;
+    }
     if (!btp_json_done(&j,1) || !btp_definitions_compile(&p->definitions,r,error->text)) goto done;
     btp_digest_finish(&digest,p->digest);*roster=*r;*portraits=*art;ok=1;
 done:

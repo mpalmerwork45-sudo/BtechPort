@@ -22,11 +22,23 @@ def city_rect(city):return [*city['origin'],len(city['rows'][0]),len(city['rows'
 def canonical(value):return json.dumps(value,sort_keys=True,separators=(',',':'),ensure_ascii=True).encode()
 
 
+def worlds(document):
+    if (document.adventure or {}).get('chi_native'):
+        from chi_spatial import data
+        value=data(document);world=dict(value['world']);world['cities']=[m['id'] for m in value['maps'] if m['slot']<=13 and m['slot']!=11]
+        return [world]
+    return all_worlds(document.adventure or {})
+
+
 class Surface:
     def __init__(self,document,identity):
         self.document=document;a=document.adventure or {}
-        self.world=next((w for w in all_worlds(a) if w['id']==identity),None)
+        self.world=next((w for w in worlds(document) if w['id']==identity),None)
         if self.world is None:raise AuthoringError('object.missing','World is absent: '+identity,object_id=identity)
+        self.native=bool(a.get('chi_native'))
+        if self.native:
+            self.width=self.height=1024;self.grids={};self.identities=[t['id'] for t in a['tiles']]
+            self.cities={m['id']:m for m in a['maps'] if m['id'] in self.world['cities']};return
         self.width=8*len(self.world['pieces'][0]);self.height=8*len(self.world['pieces'])
         self.jigsaws={p['id']:p['rows'] for p in a['jigsaws']}
         self.cities={m['id']:m for m in a['maps'] if m['id'] in self.world['cities']}
@@ -40,6 +52,13 @@ class Surface:
         width=self.width if width is None else width;result=[None]*width
         if not 0<=y<self.height:return result
         left,right=max(0,x),min(self.width,x+width)
+        if self.native:
+            if cities not in self.grids:
+                from chi_resources import grid
+                self.grids[cities]=grid(self.document,underlay=not cities)
+            source=self.grids[cities];ids=self.identities
+            result[left-x:right-x]=[ids[i] if i<len(ids) else None for i in source[y*1024+left:y*1024+right]]
+            return result
         for piece in range(left//8,(right+7)//8):
             start,end=max(left,piece*8),min(right,(piece+1)*8)
             source=self.jigsaws[self.world['pieces'][y//8][piece]][y%8]
@@ -72,15 +91,15 @@ def changes(before,after,cancelled=lambda:False):
     Include ground beneath cities and shared tile/art changes. Region summaries
     are bounding boxes, not assertions that every enclosed tile was changed.
     """
-    worlds=[{w['id']:w for w in all_worlds(d.adventure or {})} for d in (before,after)]
+    world_sets=[{w['id']:w for w in worlds(d)} for d in (before,after)]
     signatures=[{k:hashlib.sha256(canonical(v)).digest() for k,v in tile_values(d).items()} for d in (before,after)]
     result=[]
-    for identity in sorted(set(worlds[0])|set(worlds[1])):
-        if signatures[0]==signatures[1] and worlds[0].get(identity)==worlds[1].get(identity):
-            ids=set(worlds[0][identity]['cities'])
+    for identity in sorted(set(world_sets[0])|set(world_sets[1])):
+        if signatures[0]==signatures[1] and world_sets[0].get(identity)==world_sets[1].get(identity):
+            ids=set(world_sets[0][identity]['cities'])
             towns=[{m['id']:m for m in (d.adventure or {}).get('maps',[]) if m['id'] in ids} for d in (before,after)]
             if towns[0]==towns[1]:continue
-        surfaces=[Surface(d,identity) if identity in w else None for d,w in zip((before,after),worlds)]
+        surfaces=[Surface(d,identity) if identity in w else None for d,w in zip((before,after),world_sets)]
         left,right=surfaces;bounds={};count=0;scanned=0
         for y in range(max(s.height if s else 0 for s in surfaces)):
             if y%16==0 and cancelled():raise AuthoringError('job.cancelled','World review cancelled.')
@@ -99,7 +118,7 @@ def changes(before,after,cancelled=lambda:False):
             if a==b:continue
             towns.append(dict(id=key,name=(b or a)['name'],change='placed' if a is None else 'removed' if b is None else 'moved' if a['origin']!=b['origin'] else 'edited',
                 before=city_rect(a) if a else None,after=city_rect(b) if b else None))
-        if count or towns or worlds[0].get(identity)!=worlds[1].get(identity):
+        if count or towns or world_sets[0].get(identity)!=world_sets[1].get(identity):
             result.append(dict(id=identity,name=(right or left).world['name'],
                 before=[left.width,left.height] if left else None,after=[right.width,right.height] if right else None,
                 changed_tiles=count,scanned_tiles=scanned,areas=[dict(rect=[x,y,xx-x+1,yy-y+1],changed_tiles=n) for x,y,xx,yy,n in bounds.values()],towns=towns))

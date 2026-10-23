@@ -95,6 +95,7 @@ def closure(document, identity, kind='Mechs'):
     unit = person or content['mechs'][0]
     editor=json.loads(document.metadata.get('EDITOR.json',b'{}'))
     editing={'pixel_layers':{key:copy.deepcopy(value) for key,value in editor.get('pixel_layers',{}).items() if key in image_ids}}
+    editing['tile_sources']={key:copy.deepcopy(value) for key,value in editor.get('tile_sources',{}).items() if key in image_ids}
     editing['catalogue']={key:copy.deepcopy(value) for key,value in editor.get('catalogue',{}).items()
                           if key in image_ids or key==identity or any(key==w['id'] for w in content['weapons'])}
     return dict(format=FORMAT, schema_version=1, entry_id=identity, revision=1, kind=kind,
@@ -265,6 +266,7 @@ def import_units(document, bundles, policy='keep', infantry_art=False, validate=
     for original in bundles:
         bundle = copy.deepcopy(original)
         UnitLibrary.check_header(bundle)
+        if 'chi_native' in adventure and bundle['kind']=='Infantry':raise EditorError('Importing new native CHI recruits needs C4 character/story authoring. Native infantry sprites can already be edited in CHI resources.')
         unit = bundle['person'] if bundle['kind'] == 'Infantry' else bundle['content']['mechs'][0]
         target = adventure['people'] if bundle['kind'] == 'Infantry' else content['mechs']
         found = next((v for v in target if v['id'] == unit['id']), None)
@@ -328,6 +330,9 @@ def import_units(document, bundles, policy='keep', infantry_art=False, validate=
         for image_id,layer_data in bundle.get('editing',{}).get('pixel_layers',{}).items():
             resolved=mapping.get(image_id,image_id)
             if any(i['id']==resolved for i in art['images']):editor.setdefault('pixel_layers',{})[resolved]=copy.deepcopy(layer_data)
+        for image_id,origin in bundle.get('editing',{}).get('tile_sources',{}).items():
+            resolved=mapping.get(image_id,image_id)
+            if any(i['id']==resolved for i in art['images']):editor.setdefault('tile_sources',{})[resolved]=copy.deepcopy(origin)
         source_records = [s for s in source_records if s['definition'] != value['id']]
         source_records.append(dict(definition=value['id'], entry_id=bundle['entry_id'],
                                    revision=bundle['revision'], provenance=bundle['provenance']))
@@ -338,18 +343,11 @@ def import_units(document, bundles, policy='keep', infantry_art=False, validate=
         manifest.setdefault('graphics', 'graphics.json')
     # A standalone GUI import validates here. A transactional authoring batch
     # defers validation until all forward references have been supplied.
-    if validate:
-        with tempfile.TemporaryDirectory(prefix='btp-library-import-') as tmp:
-            directory = Path(tmp)
-            document.stage(directory)
-            for name, value in ((manifest['definitions'], content), (manifest['adventure'], adventure),
-                                ('project.json', manifest)):
-                (directory/name).write_bytes(encoded(value))
-            if 'graphics' in manifest: (directory/manifest['graphics']).write_bytes(encoded(art))
-            run_validator(document.validator, directory)
     metadata = copy.deepcopy(document.metadata)
     metadata['LIBRARY-SOURCES.json'] = encoded(source_records)
     if editor:metadata['EDITOR.json']=encoded(editor)
+    if validate:
+        candidate=document.worker_copy();candidate.replace_all(content,adventure,art,manifest,metadata);candidate.validate()
     document.replace_all(content, adventure, art, manifest, metadata)
     return imported
 

@@ -2,6 +2,7 @@
 #include "core/game.h"
 #include "core/audio.h"
 #include "core/npc.h"
+#include "data/project.h"
 int btp_outtake_roll(BtpState *s,unsigned kind,unsigned flags)
 {
     /* 0000:4900..494D, including the special non-forced kind-16 branch. */
@@ -81,7 +82,7 @@ int btp_cutscene_tick(BtpState *s, const BtpResources *r)
     }
     return 0;
 }
-int btp_cutscene_valid(const BtpState *s)
+static int cutscene_valid(const BtpState *s,int edited)
 {
     const BtpCutsceneState *c = &s->cutscene;
     if (!c->active) return !c->kind && !c->step && !c->cycle && !c->hold && !c->remaining && !c->refresh_fraction &&
@@ -98,20 +99,27 @@ int btp_cutscene_valid(const BtpState *s)
         (c->kind==8 ? c->cycle<7 : !c->cycle) && !c->hold && c->remaining<=16384 &&
         s->mode==BTP_BUILDING && s->script.status==BTP_SCRIPT_ANIMATION &&
         s->script.animation_kind==c->kind && (s->script.animation_flags==1 || s->script.animation_flags==2);
-    if (c->active==1 && c->kind==6) return c->step<31 && !c->cycle && !c->hold && c->remaining<=(!c->step ? 54u : 4u) &&
+    if (c->active==1 && c->kind==6) return c->step<31 && !c->cycle && !c->hold && c->remaining<=(edited ? 16384u : !c->step ? 54u : 4u) &&
         s->mode==BTP_BUILDING && (s->campaign.building==5 || s->campaign.building==9 || s->campaign.building==11 || s->campaign.building==13) &&
         s->script.status==BTP_SCRIPT_ANIMATION && s->script.animation_kind==6 && s->script.animation_flags==1;
-    if (c->active==1 && c->kind==9) return c->step<12 && !c->cycle && !c->hold && c->remaining<=(!c->step ? 57u : 7u) &&
+    if (c->active==1 && c->kind==9) return c->step<12 && !c->cycle && !c->hold && c->remaining<=(edited ? 16384u : !c->step ? 57u : 7u) &&
         s->mode==BTP_BUILDING && !s->entry_slot && s->campaign.invasion &&
         s->script.status==BTP_SCRIPT_ANIMATION && s->script.animation_kind==9 && s->script.animation_flags==1;
     if (c->active==1 && c->kind>=10 && c->kind<=14) return c->step<BTP_ANM_FRAMES && !c->cycle && !c->hold && c->remaining<=16384 &&
         s->cache.active && s->campaign.building==25 && s->mode==BTP_BUILDING && s->script.status==BTP_SCRIPT_ANIMATION &&
         s->script.animation_kind==c->kind && s->script.animation_flags==1;
-    if (c->active == 1) return c->kind == 8 && c->step < 3 && c->cycle < 7 && !c->hold && c->remaining <= 7 &&
+    if (c->active == 1) return c->kind == 8 && c->step < 3 && c->cycle < 7 && !c->hold && c->remaining <= (edited ? 16384u : 7u) &&
         s->mode == BTP_BUILDING && s->entry_slot == 6 && s->script.status == BTP_SCRIPT_ANIMATION &&
         s->script.animation_kind == 8 && s->script.animation_flags == 1;
     if (c->active == 2) return !c->kind && c->step < 18 && !c->cycle &&
-        c->remaining <= (c->hold ? 60u : !c->step ? 55u : 5u) && (!c->hold || c->step == 17) &&
+        c->remaining <= (edited && !c->hold ? 16384u : c->hold ? 60u : !c->step ? 55u : 5u) && (!c->hold || c->step == 17) &&
         s->mode == BTP_MISSION && s->script.status == BTP_SCRIPT_NATIVE && s->script.native_action == 1;
     return 0;
+}
+int btp_cutscene_valid(const BtpState *s) { return cutscene_valid(s,s->project!=0); }
+int btp_cutscene_valid_resources(const BtpState *s,const BtpResources *r)
+{
+    int edited=r->project && s->cutscene.kind<22 && r->project->chi_animations[s->cutscene.kind];
+    if (edited && s->cutscene.active && s->cutscene.step>=r->animations[s->cutscene.kind].count) return 0;
+    return cutscene_valid(s,edited);
 }

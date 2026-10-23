@@ -34,6 +34,21 @@
           "type": "string",
           "minLength": 1,
           "maxLength": 512
+        },
+        "chi_spatial": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "chi_presentation": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "chi_campaign": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
         }
       },
       "required": [
@@ -52,7 +67,10 @@
               "content",
               "adventure",
               "art",
-              "presentation"
+              "presentation",
+              "chi_spatial",
+              "chi_presentation",
+              "chi_campaign"
             ]
           },
           "collection": {

@@ -7,6 +7,108 @@ for revisions, batches, coordinates, examples and validation boundaries.
 Fields marked `*` are required. The C validator checks complete candidate
 projects; an operation schema alone does not prove gameplay legality.
 
+## chi.enable
+
+Expose native maps/world on an older C2 import; one reversible edit.
+
+Write scope: `adventure`, `manifest`.
+
+| Field | Structural constraint |
+| --- | --- |
+
+```json
+{
+  "op": "chi.enable"
+}
+```
+
+## chi.update
+
+Update a native spatial record or presentation settings; unchanged fields survive. C loader validates the effective project.
+
+Write scope: `selected native record`.
+
+| Field | Structural constraint |
+| --- | --- |
+| `section` * | `{"enum":["world","map","tile","entrance","npc","jigsaw","presentation"]}` |
+| `id` * | `{"type":"string","maxLength":63,"pattern":"^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"}` |
+| `changes` * | `{"type":"object"}` |
+
+```json
+{
+  "op": "chi.update",
+  "section": "world",
+  "id": "chi:world",
+  "changes": {
+    "seed": 131844
+  }
+}
+```
+
+## chi.town.move
+
+Move a native town/island on its 64-tile grid; Citadel alternate states move together.
+
+Write scope: `map origin`.
+
+| Field | Structural constraint |
+| --- | --- |
+| `map` * | `{"type":"string","maxLength":63,"pattern":"^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"}` |
+| `at` * | `{"type":"array","items":{"type":"integer","minimum":0,"maximum":1023},"minItems":2,"maxItems":2}` |
+
+```json
+{
+  "op": "chi.town.move",
+  "map": "chi:map-03",
+  "at": [
+    832,
+    512
+  ]
+}
+```
+
+## chi.jigsaw.bind
+
+Assign a terrain piece to one of the 17 native join selectors.
+
+Write scope: `world joins`.
+
+| Field | Structural constraint |
+| --- | --- |
+| `index` * | `{"type":"integer","minimum":0,"maximum":16}` |
+| `jigsaw` * | `{"type":"string","maxLength":63,"pattern":"^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"}` |
+
+```json
+{
+  "op": "chi.jigsaw.bind",
+  "index": 15,
+  "jigsaw": "chi:jigsaw-15"
+}
+```
+
+## chi.art.copy
+
+Copy a native resource into project artwork and bind it for native playback; origin travels with the copy.
+
+Write scope: `art`, `presentation`.
+
+| Field | Structural constraint |
+| --- | --- |
+| `kind` * | `{"enum":["tile","sprite","screen","animation","font","portrait"]}` |
+| `resource` * | `{"type":"string","minLength":1,"maxLength":1024}` |
+| `index` * | `{"type":"integer","minimum":0,"maximum":375}` |
+| `count` | `{"type":"integer","minimum":1,"maximum":31}` |
+
+```json
+{
+  "op": "chi.art.copy",
+  "kind": "sprite",
+  "resource": "MECHSHAP.CMP",
+  "index": 0,
+  "count": 16
+}
+```
+
 ## object.put
 
 Create or replace one explicit definition. Supply its complete format-schema record.

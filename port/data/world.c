@@ -32,8 +32,8 @@ int btp_world_data_decode(const uint8_t *b,size_t n,BtpWorldData *w,BtpError *e)
         if (!candidate) return 0;
         unsigned at=88;
         memcpy(candidate->coarse,b+at,336);at+=336;
-        memcpy(candidate->textures,b+at,1024);at+=1024;
-        memcpy(candidate->special,b+at,64);at+=64;
+        for (unsigned i=0;i<1024;++i) candidate->textures[i]=b[at++];
+        for (unsigned i=0;i<64;++i) candidate->special[i]=b[at++];
         memcpy(candidate->flips,b+at,96);at+=96;
         if (newer) memcpy(candidate->mini_colors,b+at,256);
         candidate->native=1;

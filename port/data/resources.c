@@ -128,6 +128,8 @@ int btp_resources_feature(const BtpResources *r,unsigned feature)
 int btp_resources_load_reader(const char *dir,BtpResources *r,BtpResourceRead read,void *context,BtpError *e)
 {
     r->features=0; /* Edition loaders publish explicit capabilities after success. */
+    r->project=NULL;
+    memset(r->sound_map,0,sizeof r->sound_map);r->sound_speed=0;
     memset(&r->roster,0,sizeof r->roster);
     memset(&r->portraits,0,sizeof r->portraits);
     memset(&r->dialogue, 0, sizeof r->dialogue);

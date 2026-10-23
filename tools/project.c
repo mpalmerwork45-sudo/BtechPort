@@ -7,6 +7,7 @@
 #include "data/unit_data.h"
 #include "data/art.h"
 #include "core/animation.h"
+#include "chi_resources.h"
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,7 +27,7 @@ static int capabilities(void)
     /* Query the compiled adapter's constants. Authoring clients must not
        advertise expanded limits merely because a schema accepts them. */
     printf("{\"format\":\"btp-runtime-capabilities-v1\",\"runtime_version\":\"%s\","
-        "\"formats\":[\"btp-chi-campaign-v1\",\"btp-project-v1\",\"btp-content-v1\",\"btp-adventure-v1\",\"btp-adventure-v2\",\"btp-adventure-v3\",\"btp-art-v1\",\"btp-presentation-v1\"],"
+        "\"formats\":[\"btp-chi-campaign-v1\",\"btp-chi-spatial-v1\",\"btp-chi-presentation-v1\",\"btp-project-v1\",\"btp-content-v1\",\"btp-adventure-v1\",\"btp-adventure-v2\",\"btp-adventure-v3\",\"btp-art-v1\",\"btp-presentation-v1\"],"
         "\"limits\":{\"maps\":%u,\"events\":%u,\"flags\":%u,\"tiles\":%u,\"jigsaws\":%u,\"worlds\":%u,"
         "\"people\":%u,\"shops\":%u,\"encounters\":%u,\"objectives\":%u,\"definitions_per_collection\":%u,"
         "\"images\":%u,\"frames_per_image\":%u,\"art_pixels\":%u,\"animation_tracks\":%u,"
@@ -53,14 +54,20 @@ static int capabilities(void)
     return ferror(stdout) ? 1 : 0;
 }
 
-static int terrain_animations(const char *directory)
+static BtpResources *preview_resources(const char *directory,int project,BtpContent *content,BtpError *error)
 {
-    BtpError error={0};BtpResources *r=calloc(1,sizeof *r);
+    if (project) return btp_content_load_project(content,directory,NULL,error) ? content->resources : NULL;
+    content->resources=calloc(1,sizeof *content->resources);
+    return content->resources && btp_resources_load(directory,content->resources,error) ? content->resources : NULL;
+}
+static int terrain_animations(const char *directory,int project)
+{
+    BtpError error={0};BtpContent content={0};BtpResources *r=preview_resources(directory,project,&content,&error);
     uint32_t *atlas=malloc(BTP_TILE_ATLAS_PIXELS*sizeof *atlas);
-    int ok=r && atlas && btp_resources_load(directory,r,&error) && btp_map_tile_atlas(&r->terrain_animation,atlas);
+    int ok=r && atlas && btp_map_tile_atlas(&r->terrain_animation,atlas);
     if (!ok) {
         fprintf(stderr,"Cannot preview terrain animation: %s\n",error.text[0] ? error.text : "missing animation sheet or allocation failed");
-        free(atlas);free(r);return 0;
+        free(atlas);btp_content_close(&content);return 0;
     }
     /* Export only on request, to memory: mappings and colors come from the
        game's decoder/rules, rather than a second editor implementation. */
@@ -83,24 +90,24 @@ static int terrain_animations(const char *directory)
         }
         fputs("]}",stdout);
     }
-    puts("]}");free(atlas);free(r);return !ferror(stdout);
+    puts("]}");free(atlas);btp_content_close(&content);return !ferror(stdout);
 }
 
-static int preview_tiles(const char *directory,const char *name)
+static int preview_tiles(const char *directory,const char *name,int project)
 {
     BtpError error={0};
-    if (strcmp(name,"chi:land") && strcmp(name,"chi:destroyed")) {
-        fprintf(stderr,"Unknown tile sheet: %.180s (use chi:land or chi:destroyed)\n",name);return 0;
+    if (strcmp(name,"chi:land") && strcmp(name,"chi:destroyed") && strcmp(name,"chi:cache") && strcmp(name,"chi:maproom")) {
+        fprintf(stderr,"Unknown tile sheet: %.180s\n",name);return 0;
     }
     /* The original resource set is large enough to exceed Windows' default
        stack. This read-only preview shares the validated game loader. */
-    BtpResources *resources=calloc(1,sizeof *resources);
+    BtpContent content={0};BtpResources *resources=preview_resources(directory,project,&content,&error);
     uint32_t *atlas=malloc(BTP_TILE_ATLAS_PIXELS*sizeof *atlas);
     int ok=resources && atlas;
-    if (!ok) snprintf(error.text,sizeof error.text,"Tile preview allocation failed");
-    if (ok) ok=btp_resources_load(directory,resources,&error);
+    if (!ok && !error.text[0]) snprintf(error.text,sizeof error.text,"Tile preview allocation failed");
     if (ok) {
-        const BtpGraphic *sheet=!strcmp(name,"chi:land") ? &resources->tiles : &resources->destroyed_tiles;
+        const BtpGraphic *sheet=!strcmp(name,"chi:land") ? &resources->tiles : !strcmp(name,"chi:destroyed") ? &resources->destroyed_tiles :
+            !strcmp(name,"chi:cache") ? &resources->cache_tiles : &resources->maproom_tiles;
         ok=btp_map_tile_atlas(sheet,atlas);
         if (!ok) snprintf(error.text,sizeof error.text,"Tile preview requires a format-1 map tile sheet");
     }
@@ -126,7 +133,7 @@ static int preview_tiles(const char *directory,const char *name)
         if (!ok) snprintf(error.text,sizeof error.text,"Cannot write tile preview output");
     }
     if (!ok) fprintf(stderr,"%s\n",error.text);
-    free(atlas);free(resources);return ok;
+    free(atlas);btp_content_close(&content);return ok;
 }
 static int source_sprite(const char *directory,unsigned first,unsigned count)
 {
@@ -235,6 +242,9 @@ static int original_units(const char *output,const char *cache)
 
 int main(int argc,char **argv)
 {
+    if (argc>=2 && !strcmp(argv[1],"chi-resource")) return btp_tool_chi_resource(argc,argv);
+    if (argc>=2 && !strcmp(argv[1],"chi-world")) return btp_tool_chi_world(argc,argv);
+    if (argc>=2 && !strcmp(argv[1],"chi-grid")) return btp_tool_chi_grid(argc,argv);
     if (argc==2 && !strcmp(argv[1],"capabilities")) return capabilities();
     if (argc==4 && !strcmp(argv[1],"formation") && !strcmp(argv[2],"--combat-data")) {
         BtpCombatData *c=calloc(1,sizeof *c);BtpError error={0};int ok=c && btp_combat_data_load(argv[3],c,&error);
@@ -259,13 +269,13 @@ int main(int argc,char **argv)
         return source_sprite(argv[3],(unsigned)first,(unsigned)count) ? 0 : 1;
     }
     if (argc>=2 && !strcmp(argv[1],"preview-tiles")) {
-        if (argc!=6 || strcmp(argv[2],"--data") || strcmp(argv[4],"--sheet")) {
+        if (argc!=6 || (strcmp(argv[2],"--data") && strcmp(argv[2],"--project")) || strcmp(argv[4],"--sheet")) {
             fputs("Usage: btp-project preview-tiles --data DIRECTORY --sheet chi:land|chi:destroyed\n",stderr);return 2;
         }
-        return preview_tiles(argv[3],argv[5]) ? 0 : 1;
+        return preview_tiles(argv[3],argv[5],!strcmp(argv[2],"--project")) ? 0 : 1;
     }
-    if (argc==4 && !strcmp(argv[1],"terrain-animations") && !strcmp(argv[2],"--data"))
-        return terrain_animations(argv[3]) ? 0 : 1;
+    if (argc==4 && !strcmp(argv[1],"terrain-animations") && (!strcmp(argv[2],"--data") || !strcmp(argv[2],"--project")))
+        return terrain_animations(argv[3],!strcmp(argv[2],"--project")) ? 0 : 1;
     if (argc<3) {
         fputs("Usage:\n  btp-project validate DIRECTORY\n  btp-project validate-content FILE\n"
             "  btp-project export NEW_DIRECTORY --roster FILE --combat-data FILE\n"

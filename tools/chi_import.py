@@ -142,6 +142,10 @@ def import_campaigns(source,output,edition='both',validator=None,cancel=None,pro
                 (project/'chi'/name).write_bytes(data)
                 origins.append(dict(file='chi/'+name,sha256=hashlib.sha256(data).hexdigest(),
                     origin='original-derived',source=[name] if name in snapshot else ['BTECH.EXE',*(['MAP1.MTP'] if name=='world-data.bin' else [])]))
+            from chi_spatial import extract as spatial,FILE as spatial_file
+            editable=spatial({'chi/'+n:caches[n] if n in caches else snapshot[n] for n in RUNTIME_FILES})
+            (project/spatial_file).write_bytes(encoded(editable));manifest['chi_spatial']=spatial_file
+            (project/'project.json').write_bytes(encoded(manifest))
             provenance=dict(format='btp-chi-import-v1',schema_version=1,extractor='chi-import-v1',edition=profile,
                 inputs=[dict(file=n,sha256=hashlib.sha256(snapshot[n]).hexdigest()) for n in SOURCE_FILES],
                 resources=origins,capabilities=dict(editable=['native-dialogue-overrides',*(['added-unit-definitions'] if profile=='updated' else [])],

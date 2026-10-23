@@ -120,6 +120,19 @@ def operation(name, description, properties, required, writes, example):
         schema=obj(dict(op={'const':name},**properties), ['op',*required]), example=dict(op=name,**example))
 
 
+operation('chi.enable','Expose native maps/world on an older C2 import; one reversible edit.',{},[],['adventure','manifest'],{})
+operation('chi.update','Update a native spatial record or presentation settings; unchanged fields survive. C loader validates the effective project.',
+          dict(section=enum('world','map','tile','entrance','npc','jigsaw','presentation'),id=ID,changes=RECORD),['section','id','changes'],['selected native record'],
+          dict(section='world',id='chi:world',changes={'seed':131844}))
+operation('chi.town.move','Move a native town/island on its 64-tile grid; Citadel alternate states move together.',
+          dict(map=ID,at=POINT),['map','at'],['map origin'],dict(map='chi:map-03',at=[832,512]))
+operation('chi.jigsaw.bind','Assign a terrain piece to one of the 17 native join selectors.',
+          dict(index=integer(0,16),jigsaw=ID),['index','jigsaw'],['world joins'],dict(index=15,jigsaw='chi:jigsaw-15'))
+operation('chi.art.copy','Copy a native resource into project artwork and bind it for native playback; origin travels with the copy.',
+          dict(kind=enum('tile','sprite','screen','animation','font','portrait'),resource=TEXT,index=integer(0,375),count=integer(1,31)),['kind','resource','index'],['art','presentation'],
+          dict(kind='sprite',resource='MECHSHAP.CMP',index=0,count=16))
+
+
 operation('object.put','Create or replace one explicit definition. Supply its complete format-schema record.',
           dict(collection=enum(*COLLECTIONS),value=RECORD,mode=enum('create','replace')),['collection','value'],['selected collection'],
           dict(collection='events',value={'id':'demo:end','op':'end'},mode='create'))

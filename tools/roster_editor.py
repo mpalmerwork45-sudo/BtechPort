@@ -17,7 +17,7 @@ from tkinter import font as tkfont
 from tkinter import ttk, filedialog, messagebox, simpledialog
 
 from editor_recovery import recoverable_forms
-from editor_model import EditorError, ProjectDocument, create_project
+from editor_model import EditorError, ProjectDocument, create_project, encoded
 from editor_session import EditorScope, FieldError, guard, report
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -691,7 +691,12 @@ class RosterEditor:
             if 'graphics' not in manifest:
                 if 'graphics.json' not in self.document.snapshot and (self.document.root/'graphics.json').exists():raise EditorError('Declare or rename the existing graphics.json before copying a sprite.')
                 manifest['graphics']='graphics.json'
-            self.document.replace_all(content,self.document.adventure,art,manifest)
+            meta=None
+            if view['source'].startswith('chi:'):
+                from tile_editing import metadata
+                value=metadata(self.document);value.setdefault('tile_sources',{})[image['id']]=dict(sheet=view['source'],graphic=0)
+                meta=dict(self.document.metadata);meta['EDITOR.json']=encoded(value)
+            self.document.replace_all(content,self.document.adventure,art,manifest,meta)
         library=self.graphics_editor()
         library.selected=image['id'];library.refresh();open_image_editor(library,image)
         self.refresh_list(unit_id)
@@ -886,8 +891,12 @@ class RosterEditor:
         if self.map_editor and self.map_editor.window.winfo_exists():
             self.map_editor.window.lift()
         else:
-            from adventure_editor import AdventureEditor
-            self.map_editor = AdventureEditor(self)
+            if self.document.manifest.get('requires')=='chi-local-dos-1.03':
+                from chi_map_editor import ChiMapEditor
+                self.map_editor=ChiMapEditor(self)
+            else:
+                from adventure_editor import AdventureEditor
+                self.map_editor = AdventureEditor(self)
 
     def export_project(self):
         if self.document:

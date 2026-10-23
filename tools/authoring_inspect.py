@@ -21,6 +21,7 @@ def capabilities(tool):
         operations=OPERATIONS, features=dict(transactional_batches=True,expected_revision=True,dry_run=True,
         persisted_requests=True,gui_undo=True,live_remote_session=False,live_local_session=True,protected_regions=True,
         change_review=True,partial_change_groups=True,named_protection_overrides=True,shared_construction_library=True,
+        native_chi_spatial=True,native_chi_presentation=True,
         mission_regions=True,typed_mission_variables=True,explicit_objective_states=True,compound_conditions=True,
         combat_hooks=True,round_timers=True,reinforcements=True,escort_waypoints=True,
         campaign_source_modules=True,deterministic_source_builds=True,source_diagnostics=True,recorded_campaign_recipes=True,
@@ -81,6 +82,10 @@ def summary(doc, tool):
     if worlds or a.get('schema_version',1)>=3:
         counts['discovery_cells']+=sum(((m['origin'][0]%8+len(m['rows'][0])+7)//8)*((m['origin'][1]%8+len(m['rows'])+7)//8)
                                        for m in a.get('maps',[]) if m['id'] not in placed)
+    native=a.get('chi_native')
+    if native:
+        counts.update(worlds=1,events=0,world_sectors_total=256,discovery_cells=16384)
+        limits.update(maps=15,worlds=1,events=0,flags=0,people=0,shops=0,encounters=0)
     capacity={key:dict(used=count,limit=limits[key],remaining=limits[key]-count) for key,count in counts.items()}
     for key in ('mechs','weapons','equipment','ammunition','presentations'):
         count=len(doc.content.get(key,[]));maximum=limits['definitions_per_collection']
@@ -96,11 +101,27 @@ def summary(doc, tool):
         objectives=a.get('objectives',[]),flags=a.get('flags',[]),scripts=doc.manifest.get('scripts',[]),
         animated_tiles=[dict(id=i['id'],frames=len(i['frames']),frame_ticks=i.get('frame_ticks',8)) for i in doc.art['images'] if i['kind']=='tile' and len(i['frames'])>1][:30],
         animated_tile_count=sum(i['kind']=='tile' and len(i['frames'])>1 for i in doc.art['images']),
+        native_chi=(dict(spatial=doc.manifest.get('chi_spatial'),presentation=doc.manifest.get('chi_presentation'),
+            world=native['world'],map_slots=15,story='native BLD compatibility; C4 authoring pending',
+            operations=['chi.update','chi.town.move','chi.jigsaw.bind','chi.art.copy']) if native else None),
         queries=['objects','object','usages','map','routes','inventory'])
 
 
 def records(doc, collection):
-    if collection=='worlds':return all_worlds(doc.adventure or {})
+    if (doc.adventure or {}).get('chi_native') and collection in ('maps','tiles','jigsaws','native-npcs','native-entrances'):
+        from chi_spatial import data
+        value=data(doc)
+        if collection in ('maps','tiles'):return value[collection]
+        if collection=='jigsaws':return value['world']['jigsaws']
+        return [dict(v,map=m['id']) for m in value['maps'] for v in m['npcs' if collection=='native-npcs' else 'entrances']]
+    if collection=='worlds':
+        if (doc.adventure or {}).get('chi_native'):
+            from chi_spatial import data
+            return [data(doc)['world']]
+        return all_worlds(doc.adventure or {})
+    if collection=='native-resources':
+        from chi_resources import inventory
+        return inventory(doc)['resources']
     if collection in ('construction_sets','map_patterns','map_constructions'):
         return editor_data(doc).get(collection,[])
     if collection=='entrances':return [dict(e,map=m['id']) for m in (doc.adventure or {}).get('maps',[]) for e in m['entrances']]

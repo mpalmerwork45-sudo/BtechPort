@@ -50,7 +50,12 @@ static void route(const char *file,const BtpResources *base,const BtpResources *
             CHECK(!remove("chi-held-test.btp"));free(restored);held=1;
         }
         if (ticks%64u==0 || b->script.status==BTP_SCRIPT_MENU || b->script.status==BTP_SCRIPT_WAIT) {
-            btp_render(base,a,0,x);btp_render(imported,b,0,y);CHECK(!memcmp(x,y,320u*200u*sizeof *x));
+            btp_render(base,a,0,x);btp_render(imported,b,0,y);
+            if (memcmp(x,y,320u*200u*sizeof *x)) {
+                fprintf(stderr,"Render mismatch at tick %u map %u, local %u,%u, mission %u: %s\n",ticks,b->map_id,b->x_half,b->y_half,b->mission.phase,file);
+                btp_write_ppm("work/chi-import/c3-parity-base.ppm",x);btp_write_ppm("work/chi-import/c3-parity-import.ppm",y);
+            }
+            CHECK(!memcmp(x,y,320u*200u*sizeof *x));
         }
         CHECK(ticks<120000);
     }

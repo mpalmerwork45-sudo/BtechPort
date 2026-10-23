@@ -333,6 +333,8 @@ class Workspace:
         for percent in (100,150,200):self.action(f'Interface scale {percent}%',lambda p=percent:self.scale(p),groups['View'])
         self.action('Validate',lambda:validate(self,self.active_scope()),groups['Project'])
         self.action('CHI campaign',lambda:open_campaign(self.active_scope().owner),groups['Project'])
+        self.action('CHI maps and world',lambda:self.open_map(),groups['Project'])
+        self.action('CHI resources',lambda:self.map_view().resources(),groups['Project'])
         from editor_authoring import apply_file,export_summary,check_mission
         self.action('Apply authoring command file',lambda:apply_file(self),groups['Project'])
         self.action('Export authoring summary',lambda:export_summary(self),groups['Project'])
@@ -399,7 +401,7 @@ class Workspace:
         scope=self.active_scope();document=scope.document if scope else None
         if name=='Save project':return bool(self.app.document) and not getattr(self.app._editor_scope,'saving',False)
         if name=='Save all':return any(s.document and not getattr(s,'saving',False) and s.dirty() for s in self.scopes)
-        if name=='CHI campaign':return bool(document and document.manifest.get('requires')=='chi-local-dos-1.03')
+        if name in ('CHI campaign','CHI maps and world','CHI resources'):return bool(document and document.manifest.get('requires')=='chi-local-dos-1.03')
         if name=='Save active scope' or name=='Validate':return bool(document) and not getattr(scope,'saving',False)
         if name in ('Undo','Redo'):
             return bool(document and ((document.undo_stack if name=='Undo' else document.redo_stack) or any(d.pending() for d in scope.live())))

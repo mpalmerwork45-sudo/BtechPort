@@ -58,9 +58,13 @@ def value_at(document,path):
         return dict(bytes=value.hex()) if value is not None else None
     head,separator,identity=path.partition('/')
     parts=head.split('.')
-    if parts[0] not in ('manifest','content','adventure','art','editor'):
+    if parts[0] not in ('manifest','content','adventure','art','editor','chi'):
         raise AuthoringError('protection.invalid','Choose a declared document section: '+path)
-    value=data(document) if parts[0]=='editor' else getattr(document,parts[0])
+    if parts[0]=='chi':
+        from chi_spatial import data as native_data
+        from chi_resources import settings
+        value=native_data(document);value['presentation']=settings(document)
+    else:value=data(document) if parts[0]=='editor' else getattr(document,parts[0])
     if head=='adventure.entrances':
         value=[dict(door,map=scene['id']) for scene in (document.adventure or {}).get('maps',[]) for door in scene['entrances']]
     else:
@@ -104,10 +108,9 @@ def region(document,rule):
 
 
 def world_region(document,rule,cancelled=lambda:False):
-    from world_review import Surface,canonical,city_rect,overlap,tile_values
-    from world_editing import all_worlds
+    from world_review import Surface,canonical,city_rect,overlap,tile_values,worlds
     import hashlib
-    if not any(w['id']==rule['world'] for w in all_worlds(document.adventure or {})):return None
+    if not any(w['id']==rule['world'] for w in worlds(document)):return None
     # Stream ground rows, and retain clipped city-layer fingerprints. This
     # protects painted ground even beneath towns without hashing a million
     # Python cell objects or falling back to another planet after deletion.

@@ -201,7 +201,8 @@ class WorldReviewPane:
 
     def open_location(self):
         if self.change is None:raise AuthoringError('object.missing','Select a world first.')
-        if not any(w['id']==self.change['id'] for w in all_worlds(self.owner.document.adventure or {})):
+        from world_review import worlds
+        if not any(w['id']==self.change['id'] for w in worlds(self.owner.document)):
             raise AuthoringError('object.missing','This planet exists only in a retained snapshot. Review it here; apply its creation before editing it.')
         if self.point is None:self.select()
         if self.point is None:raise AuthoringError('preview.location','Click a location in the planet preview first.')

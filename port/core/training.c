@@ -91,8 +91,8 @@ void btp_training_native(BtpState *s, const BtpResources *r)
         s->mission = (BtpMissionState){0};
         s->combat = (BtpCombatState){0};
         s->script.mech_result = s->script.mech_after = 0;
-        s->x_half = (uint16_t)(46 + btp_action_dx((BtpAction)s->entry_action));
-        s->y_half = (uint16_t)(118 + btp_action_dy((BtpAction)s->entry_action));
+        s->x_half = (uint16_t)((int)(r->map.entrance_x[0]&127u) + btp_action_dx((BtpAction)s->entry_action));
+        s->y_half = (uint16_t)((int)(r->map.entrance_y[0]&127u) + 4 + btp_action_dy((BtpAction)s->entry_action));
         s->facing = s->entry_action;
         break;
     case 43:
@@ -192,7 +192,7 @@ int btp_mission_tick(BtpState *s, const BtpResources *r, BtpAction a)
     if (a == BTP_IDLE && m->idle) { --m->idle; return 0; }
     m->idle = 10;
     if (btp_action_moves(a)) move(s,&r->map,a);
-    btp_world_animate_marks(s,1536+s->x_half,1536+s->y_half);
+    btp_world_animate_marks(s,(int)btp_citadel_origin(s,0)+s->x_half,(int)btp_citadel_origin(s,1)+s->y_half);
     if (!m->assignment) m->elapsed = (uint16_t)(m->elapsed+1u+(unsigned)(btp_mission_terrain(s,&r->map)>>3));
     if (m->assignment==1 && !m->corner && s->x_half/2u+1u >= btp_rubble_x[m->rubble] &&
         s->x_half/2u <= btp_rubble_x[m->rubble] && s->y_half/2u == (unsigned)btp_rubble_y[m->rubble]+1u) {

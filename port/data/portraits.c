@@ -1,5 +1,6 @@
 #include "data/portraits.h"
 #include "data/anm.h"
+#include "data/project.h"
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -77,9 +78,10 @@ BtpPortraits *btp_portraits_load(const char *roster_path,BtpError *error)
 
 const BtpAnm *btp_portrait_for_building(const BtpResources *resources,unsigned building)
 {
-    if (!resources || !resources->roster.count) return NULL;
+    if (!resources) return NULL;
     for (unsigned i=0;i<BTP_PORTRAIT_COUNT;++i)
-        if (slots[i].building==building && resources->portraits.image[i].count)
+        if (slots[i].building==building && resources->portraits.image[i].count &&
+            (resources->roster.count || (resources->project && resources->project->chi_portraits[i])))
             return &resources->portraits.image[i];
     return NULL;
 }

@@ -96,3 +96,33 @@ asset-free edited-campaign recipes remain C3–C5. Current code preserves inheri
 compatibility behavior; it does not establish complete DOS parity. No old
 normal-game save migration is provided. Partial extraction resumes by retrying
 into a new destination. No full editable-campaign claim is made.
+
+## C3 — Spatial and presentation authoring (verification in progress)
+
+The native adapter now reads versioned `chi-spatial.json` and optional
+`chi-presentation.json`. It retains the original generator and BLD interpreter.
+All 15 maps, their native header bytes, room/door slots, NPC routes, four tile
+banks, terrain join pieces, generator tables and seed have a shared editable
+model. Map artwork and collision are separate; custom world handles retain
+16 bits. Native maps use the regular painting, construction, pattern, pixel and
+jigsaw tools through a reversible projection, never an authored-event startup.
+
+Resource copies use the game decoder on the current unsaved project. Sprite,
+screen, font and film overrides reach native playback; film timing and verified
+sound-program references are editable. Clones and library dependencies retain
+original-derived provenance. Modular campaign sources include the new formats.
+
+Initial Linux evidence: all 15 maps and their graphics-bank edge crops match;
+all 1,048,576 world cells and depth joins match for seeds `0x020304`, `1` and
+`0xabcdef`, before/after invasion. The 108,156-tick C2 parity routes passed
+after initial map integration. The real GUI journey passes native map painting,
+Undo/Redo, moved town preview, jigsaw editing, native sprite editing, Save/reopen
+and Play without an external DOS installation. Final regression, cross-platform
+and edited-path checks are still being completed; this is not the C3 gate yet.
+
+Native limits remain explicit: one 1,024-square world, 15 map slots, 16 entrance
+slots, eight route slots and 64-tile town origin alignment. Citadel/starport and
+cache interior dimensions preserve their native service contracts. A town clone
+replaces terrain in a chosen existing slot. New unrestricted story/mission state
+and authored event execution remain C4. Native sheet/sprite replacement pixels
+use their selected 16-colour palette; owned map artwork retains full RGBA.

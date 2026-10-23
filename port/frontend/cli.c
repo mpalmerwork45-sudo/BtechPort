@@ -172,6 +172,12 @@ int btp_cli_load_content(const BtpOptions *o, BtpContent *content, BtpError *err
             btp_content_close(content);snprintf(error->text,sizeof error->text,"Original-resource diagnostics are unavailable in an independent game");return 0;
         }
         if (o->play_map) {
+            if (content->resources->project->chi_spatial) {
+                BtpState *probe=calloc(1,sizeof *probe);int ok=0;
+                if (probe) { btp_start_content(probe,content->resources);ok=btp_chi_preview(probe,content->resources,o->play_map,o->play_x,o->play_y);free(probe); }
+                if (!ok) { btp_content_close(content);snprintf(error->text,sizeof error->text,"Unknown or blocked CHI Play here destination (cache interiors start through the cave)"); }
+                return ok;
+            }
             const BtpAdventure *a=&content->resources->project->adventure;unsigned at=0;
             while (at<a->map_count && strcmp(a->maps[at].id,o->play_map)) ++at;
             /* World sector edges are continuous terrain. The complete-party
@@ -207,13 +213,14 @@ void btp_initial_state_seeded(const BtpOptions *o,BtpState *s,const BtpResources
 {
     if (o->shop_talk_checkpoint) btp_start_shop_conversation_checkpoint(s,r,(unsigned)o->shop_talk_checkpoint);
     else if (o->conversation_checkpoint) btp_start_conversation_checkpoint(s);
-    else btp_start(s);
+    else btp_start_content(s,r);
     s->project=(uint8_t)(r->project!=NULL);
     btp_npc_init(s,&r->map);
     /* Fresh Updated campaigns opt in. Loading a save below replaces this
        state, preserving the saved policy (including old saves' Legacy). */
     if (btp_resources_feature(r,BTP_FEATURE_ENHANCED) && r->combat_profile.fingerprint) (void)btp_set_combat_profile(s,r,1);
-    if (o->play_map) (void)btp_events_preview(s,r,o->play_map,o->play_x,o->play_y);
+    if (o->play_map && r->project && r->project->chi_spatial) (void)btp_chi_preview(s,r,o->play_map,o->play_x,o->play_y);
+    else if (o->play_map) (void)btp_events_preview(s,r,o->play_map,o->play_x,o->play_y);
     else btp_events_start_seeded(s,r,seed);
     if (o->title_preview) btp_audio_start(s);
     if (o->intro_preview) s->mode=BTP_LOGO;

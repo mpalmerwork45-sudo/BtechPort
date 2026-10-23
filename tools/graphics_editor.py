@@ -125,7 +125,15 @@ class GraphicsEditor:
             self.put(im); self.edit()
         f.submit(apply)
     def clone(self):
-        if self.current(): self.put(clone_image(self.current(),self.document.content['package_id'],self.document.art['images']))
+        if self.current():
+            image=clone_image(self.current(),self.document.content['package_id'],self.document.art['images'])
+            from tile_editing import metadata
+            value=metadata(self.document);origin=value.get('tile_sources',{}).get(self.current()['id'])
+            meta=None
+            if origin:
+                value.setdefault('tile_sources',{})[image['id']]=copy.deepcopy(origin)
+                meta=dict(self.document.metadata);meta['EDITOR.json']=encoded(value)
+            self.put(image,metadata=meta)
     def edit(self):
         if self.current(): return open_image_editor(self,self.current())
     def import_file(self):
@@ -145,7 +153,10 @@ class GraphicsEditor:
         f=Form(self,'Copy original sprite into package'); f.field('first',0,label='First sprite (Locust 0, Stinger 146, player 166, NPC 270)'); f.field('frames',16)
         def apply(v):
             im=original_sprite(self.document,self.editor.settings,int(v['first']),int(v['frames']))
-            self.put(clone_image(im,self.document.content['package_id'],self.document.art['images']))
+            im=clone_image(im,self.document.content['package_id'],self.document.art['images'])
+            from tile_editing import metadata
+            value=metadata(self.document);value.setdefault('tile_sources',{})[im['id']]=dict(sheet='chi:sprite',graphic=int(v['first']))
+            meta=dict(self.document.metadata);meta['EDITOR.json']=encoded(value);self.put(im,metadata=meta)
         f.submit(apply)
     def map_tile(self):
         selected=self.map_view().brush.curselection()
@@ -153,14 +164,16 @@ class GraphicsEditor:
         tile=self.document.adventure['tiles'][selected[0]]
         if tile['sheet']=='package:art':
             source=next(i for i in self.document.art['images'] if i['id']==tile['graphic'])
-            self.put(clone_image(source,self.document.content['package_id'],self.document.art['images']))
+            im=clone_image(source,self.document.content['package_id'],self.document.art['images'])
         else:
             from tile_animation import copy_frames
             try:frames=copy_frames(self.map_view().graphics,tile['sheet'],tile['graphic'])
             except (KeyError,IndexError):raise EditorError('Wait for the map graphics preview to load first.')
             im=new_image(self.document.content['package_id'],self.document.art['images'],'Copied map tile')
             im.update(frames)
-            self.put(im)
+        from tile_editing import metadata,source_origin
+        value=metadata(self.document);value.setdefault('tile_sources',{})[im['id']]=source_origin(value,tile)
+        meta=dict(self.document.metadata);meta['EDITOR.json']=encoded(value);self.put(im,metadata=meta)
         self.edit()
     def edit_map_tile(self,map_context=None):
         selected=self.map_view().brush.curselection()

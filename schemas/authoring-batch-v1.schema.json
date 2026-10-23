@@ -110,6 +110,145 @@
             "type": "object",
             "properties": {
               "op": {
+                "const": "chi.enable"
+              }
+            },
+            "required": [
+              "op"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "chi.update"
+              },
+              "section": {
+                "enum": [
+                  "world",
+                  "map",
+                  "tile",
+                  "entrance",
+                  "npc",
+                  "jigsaw",
+                  "presentation"
+                ]
+              },
+              "id": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "changes": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "op",
+              "section",
+              "id",
+              "changes"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "chi.town.move"
+              },
+              "map": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "at": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1023
+                },
+                "minItems": 2,
+                "maxItems": 2
+              }
+            },
+            "required": [
+              "op",
+              "map",
+              "at"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "chi.jigsaw.bind"
+              },
+              "index": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 16
+              },
+              "jigsaw": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              }
+            },
+            "required": [
+              "op",
+              "index",
+              "jigsaw"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "chi.art.copy"
+              },
+              "kind": {
+                "enum": [
+                  "tile",
+                  "sprite",
+                  "screen",
+                  "animation",
+                  "font",
+                  "portrait"
+                ]
+              },
+              "resource": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+              },
+              "index": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 375
+              },
+              "count": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 31
+              }
+            },
+            "required": [
+              "op",
+              "kind",
+              "resource",
+              "index"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
                 "const": "object.put"
               },
               "collection": {

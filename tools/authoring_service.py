@@ -78,11 +78,19 @@ def changed_objects(before, after):
                 if set(a)==set(b) and list(a)!=list(b):
                     result.append(dict(path=section+'.'+key,object_id=None,change='reordered',fields=[]))
             else:result.append(dict(path=section+'.'+key,object_id=None,change='modified',fields=[]))
+    native=bool((after.adventure or {}).get('chi_native'))
     for section in ('manifest','content','adventure','art'):
+        if section=='adventure' and native:continue
         compare(section,getattr(before,section) or {},getattr(after,section) or {})
+    if native:
+        from chi_spatial import data
+        from chi_resources import settings
+        left=data(before) if (before.adventure or {}).get('chi_native') else {}
+        right=data(after);left['presentation']=settings(before);right['presentation']=settings(after)
+        compare('chi',left,right)
     compare('editor',json.loads(before.metadata.get('EDITOR.json',b'{}')),json.loads(after.metadata.get('EDITOR.json',b'{}')))
     for name in sorted(set(before.metadata)|set(after.metadata)):
-        if name not in ('EDITOR.json',AUTHORING_RECEIPTS) and before.metadata.get(name)!=after.metadata.get(name):
+        if name not in ('EDITOR.json',AUTHORING_RECEIPTS,*(['chi-spatial.json','chi-presentation.json'] if native else [])) and before.metadata.get(name)!=after.metadata.get(name):
             script=next((s for s in after.manifest.get('scripts',[]) if s['file']==name),None)
             result.append(dict(path=('scripts/'+script['id']) if script else 'provenance/'+name,
                                object_id=script['id'] if script else None,change='modified',fields=[]))
@@ -99,6 +107,32 @@ def _bounds(scene, layer, points):
 
 def apply_operation(doc, op, imports):
     name=op['op']; a=copy.deepcopy(doc.adventure)
+    if name.startswith('chi.'):
+        from chi_spatial import enable,change,find as native_find,move_town
+        from chi_resources import settings,put_settings,detach
+        if name=='chi.enable':enable(doc)
+        elif name=='chi.town.move':change(doc,lambda v:move_town(v,op['map'],*op['at']))
+        elif name=='chi.art.copy':return detach(doc,op['kind'],op['resource'],op['index'],op.get('count',1))['id']
+        elif name=='chi.jigsaw.bind':
+            def bind(value):
+                native_find(value['world']['jigsaws'],op['jigsaw']);value['world']['joins'][op['index']]=op['jigsaw']
+            change(doc,bind)
+        elif name=='chi.update':
+            section=op['section']
+            if section=='presentation':
+                value=settings(doc);value.update(copy.deepcopy(op['changes']));put_settings(doc,value)
+            else:
+                def update(value):
+                    if section=='world':values=[value['world']]
+                    elif section in ('map','tile'):values=value[section+'s']
+                    elif section=='jigsaw':values=value['world']['jigsaws']
+                    else:values=[v for m in value['maps'] for v in m['entrances' if section=='entrance' else 'npcs']]
+                    record=native_find(values,op['id'])
+                    if 'id' in op['changes'] and op['changes']['id']!=op['id']:raise EditorError('Keep native IDs stable. Clone to make a new identity.')
+                    if section=='map' and 'origin' in op['changes']:move_town(value,op['id'],*op['changes']['origin'])
+                    record.update(copy.deepcopy(op['changes']))
+                change(doc,update)
+        return op.get('id',op.get('map',doc.manifest['package_id']))
     if name=='campaign.upgrade':
         from campaign_limits import upgrade_campaign
         upgrade_campaign(doc);return doc.manifest['package_id']

@@ -5,7 +5,7 @@ Lua is opaque: references in script source are never guessed or rewritten.
 import copy
 import json
 from dataclasses import dataclass
-from editor_model import EditorError
+from editor_model import EditorError,encoded
 
 TEXT_KEYS={'name','label','text','description','message','title','notes','source_url','author','license'}
 
@@ -50,7 +50,15 @@ def usages(document,identity):
             exact=value==identity or (value.startswith('package:') and value[8:]==identity)
             row=section=='adventure' and tile_key and 'rows' in path and document.adventure.get('schema_version')==1 and tile_key in value
             if exact or row:found.append(Usage(section,path,asset or section,value))
-    for section in ('content','adventure','art','manifest'):walk(getattr(document,section),section)
+    native=bool((document.adventure or {}).get('chi_native'))
+    for section in ('content','adventure','art','manifest'):
+        if section=='adventure' and native:
+            from chi_spatial import data
+            walk(data(document),'chi')
+        else:walk(getattr(document,section),section)
+    if document.manifest.get('chi_presentation'):
+        from chi_resources import settings
+        walk(settings(document),'chi_presentation')
     editor=json.loads(document.metadata.get('EDITOR.json',b'{}'))
     for collection in ('building_stamps','map_patterns','construction_sets','map_constructions'):
         if collection in editor:walk(editor[collection],'editor',(collection,))
@@ -76,6 +84,13 @@ def remove(document,identity,replacement=None):
     if refs and not replacement:raise EditorError(f'{identity} is used in {len(refs)} places. Choose a replacement or update those references first.')
     data={name:copy.deepcopy(getattr(document,name)) for name in ('content','adventure','art','manifest')}
     metadata=dict(document.metadata)
+    native=bool((document.adventure or {}).get('chi_native'))
+    if native:
+        from chi_spatial import data as native_data
+        data['chi']=native_data(document)
+    if document.manifest.get('chi_presentation'):
+        from chi_resources import settings
+        data['chi_presentation']=settings(document)
     data['editor']=json.loads(metadata.get('EDITOR.json',b'{}'))
     name=document.manifest.get('presentation')
     if name:data['presentation']=json.loads(metadata.get(name,document.snapshot[name]))
@@ -88,11 +103,14 @@ def remove(document,identity,replacement=None):
         else:new='package:'+replacement if old=='package:'+identity else replacement
         target[ref.path[-1]]=new
     data[section][collection].pop(index)
+    if native:
+        from chi_spatial import projection
+        if section=='adventure':data['chi'][collection].pop(index)
+        data['adventure']=projection(data['chi'])
+    if 'chi_presentation' in data:metadata['chi-presentation.json']=encoded(data['chi_presentation'])
     if any(ref.section=='presentation' for ref in refs):
-        from editor_model import encoded
         metadata[name]=encoded(data['presentation'])
     if any(ref.section=='editor' for ref in refs):
-        from editor_model import encoded
         metadata['EDITOR.json']=encoded(data['editor'])
     with document.command('Delete '+value.get('name',identity)):
         document.replace_all(*(data[k] for k in ('content','adventure','art','manifest')),metadata)

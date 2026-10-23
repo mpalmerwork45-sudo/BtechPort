@@ -21,7 +21,7 @@ void btp_content_close(BtpContent *content)
 int btp_content_select(BtpContent *content,BtpContentProfile profile,const char *path,BtpError *error)
 {
     if (!content || !content->resources) return fail(error,"Load original resources before selecting an edition");
-    if (content->resources->project && content->resources->project->independent.loaded)
+    if (content->resources->project && (content->resources->project->independent.loaded || content->resources->project->chi_edition))
         return fail(error,"Reload original resources before selecting a CHI edition");
     /* Keep the optional diagnostic buffer alive through the success path. */
     BtpError local_error;

@@ -19,6 +19,7 @@ from tile_animation import TileGraphics, TileLoop
 TilePixels = tuple[tuple[str, ...], ...]
 TileSet = tuple[TilePixels, ...]
 CHI_SHEETS = ("chi:land", "chi:destroyed")
+CHI_IMPORT_SHEETS = (*CHI_SHEETS,"chi:cache","chi:maproom")
 ATLAS_SIZE = 256
 TILE_SIZE = 16
 CHI_TILE_COUNT = 250
@@ -27,7 +28,7 @@ MAX_PREVIEW = ATLAS_SIZE * ATLAS_SIZE * 3 + MAX_HEADER
 MAX_ERROR = 16 * 1024
 
 
-def _capture_preview(command: list[str], timeout: float = 15) -> bytes:
+def _capture_preview(command: list[str], timeout: float = 15, max_preview=MAX_PREVIEW) -> bytes:
     """Capture a small binary atlas with bounded pipes on Windows and Linux.
 
     Separate readers prevent an error stream from blocking the art stream.
@@ -58,7 +59,7 @@ def _capture_preview(command: list[str], timeout: float = 15) -> bytes:
             failures.append(exc)
 
     threads = [threading.Thread(target=read_pipe, args=(index, stream, limit), daemon=True)
-               for index, stream, limit in [(0, process.stdout, MAX_PREVIEW),
+               for index, stream, limit in [(0, process.stdout, max_preview),
                                             (1, process.stderr, MAX_ERROR)]]
     for thread in threads:
         thread.start()
@@ -139,7 +140,7 @@ def decode_atlas(data: bytes) -> TileSet:
 
 def load_original_atlas(validator: Path, data: Path, sheet: str) -> TileSet:
     """Ask the same C decoder/palette used by gameplay for a CHI tile sheet."""
-    if sheet not in CHI_SHEETS:
+    if sheet not in CHI_IMPORT_SHEETS:
         raise EditorError(f"Unsupported original tile sheet: {sheet}")
     validator, data = Path(validator), Path(data)
     if not validator.is_file():
@@ -150,10 +151,10 @@ def load_original_atlas(validator: Path, data: Path, sheet: str) -> TileSet:
     return decode_atlas(_capture_preview(command))
 
 
-def load_original_animations(validator: Path, data: Path):
+def load_original_animations(validator: Path, data: Path, project=False):
     """The C tool supplies both the verified tile substitution and its pixels."""
     from art_editing import display_rows
-    raw = _capture_preview([str(Path(validator).resolve()), 'terrain-animations', '--data', str(Path(data).resolve())])
+    raw = _capture_preview([str(Path(validator).resolve()), 'terrain-animations', '--project' if project else '--data', str(Path(data).resolve())])
     try:
         source = json.loads(raw)
         ticks = source['frame_ticks']
@@ -215,6 +216,9 @@ def load_tiles(document, settings: dict, sheet: str | None = None) -> dict[str, 
         result = TileGraphics({"package:tiles": _package_tiles(document)})
         if sheet is None: result.update(art_tiles(document))
         return result
+    if document.manifest['requires']=='chi-local-dos-1.03':
+        from chi_resources import tile_atlases
+        return tile_atlases(document,sheet)
     from editor_model import resource_settings
     settings=resource_settings(document,settings)
     sheets = CHI_SHEETS if sheet is None else (sheet,)

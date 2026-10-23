@@ -5,6 +5,7 @@
 #include "core/audio.h"
 #include "core/npc.h"
 #include "core/combat.h"
+#include "data/chi_spatial.h"
 #include <string.h>
 _Static_assert(sizeof(BtpYardState)+1<=BTP_STATE_BYTES-19305,"Yard/reply state exceeds the reserved save payload");
 static void keep_party(BtpState *s,unsigned active)
@@ -40,7 +41,7 @@ void btp_yard_begin_guards(BtpState *s,const BtpResources *r)
 {
     /* 07DC:0AA8 invokes 0D49(0,0x88): the original consumes two initial
        coordinate draws, then overrides the spawn with 0D10/7024. */
-    combat_state(s,3);s->campaign.battle_x=1664;s->campaign.battle_y=896;
+    combat_state(s,3);s->campaign.battle_x=(uint16_t)(1664+btp_chi_map_offset(r,3,0));s->campaign.battle_y=(uint16_t)(896+btp_chi_map_offset(r,3,1));
     BtpCombatState *c=&s->combat;c->ids[0]=4;c->unit[0].infantry=1;
     memcpy(c->unit[0].record,s->party.people[0],17);c->unit[0].x=(uint8_t)s->x_half;c->unit[0].y=(uint8_t)s->y_half;
     (void)btp_rng_next(s->npc.rng);(void)btp_rng_next(s->npc.rng);
@@ -66,7 +67,7 @@ void btp_yard_finish_prison(BtpState *s,const BtpResources *r,int success)
         s->party.mech_types[i]=btp_party_mech(s,i)[0];s->campaign.owned=1;break;
     }
     if (!success) s->story_flags[40]=1;
-    s->campaign.world_x=1664;s->campaign.world_y=916;s->x_half=0;s->y_half=20;
+    s->campaign.world_x=(uint16_t)(1664+btp_chi_map_offset(r,3,0));s->campaign.world_y=(uint16_t)(916+btp_chi_map_offset(r,3,1));s->x_half=0;s->y_half=20;
     s->script.position_x=0x0d00;s->script.position_y=0x7014;
     s->yard=(BtpYardState){0};s->campaign.encounter=0;
     s->combat=(BtpCombatState){0};s->effects=(BtpEffectsState){0};s->aftermath=(BtpAftermathState){0};
@@ -111,7 +112,7 @@ void btp_yard_begin_arena(BtpState *s,const BtpResources *r)
 {
     /* A half-sector origin covers both the arena and the pursuing mechs'
        original west-side positions, without changing their world coordinates. */
-    combat_state(s,4);s->campaign.battle_x=1216;s->campaign.battle_y=1024;
+    combat_state(s,4);s->campaign.battle_x=(uint16_t)(1216+btp_chi_map_offset(r,2,0));s->campaign.battle_y=(uint16_t)(1024+btp_chi_map_offset(r,2,1));
     BtpCombatState *c=&s->combat;memcpy(c->unit[0].record,s->campaign.mech,125);
     c->unit[0].x=107;c->unit[0].y=87;c->unit[0].direction=4;c->ids[0]=0;
     unsigned x=80u+(btp_rng_next(s->npc.rng)&3u);
@@ -140,7 +141,7 @@ int btp_yard_native(BtpState *s,const BtpResources *r)
         keep_party(s,1);
         for (unsigned i=0;i<4;++i) btp_party_mech(s,i)[0]=255;
         s->party.people[0][12]=8;s->campaign.mounted=0;
-        s->campaign.world_x=1680;s->campaign.world_y=932;s->x_half=16;s->y_half=36;
+        s->campaign.world_x=(uint16_t)(1680+btp_chi_map_offset(r,3,0));s->campaign.world_y=(uint16_t)(932+btp_chi_map_offset(r,3,1));s->x_half=16;s->y_half=36;
         s->mode=BTP_YARD;return 1;
     }
     if (kind==10 && action==33) {
@@ -152,7 +153,7 @@ int btp_yard_native(BtpState *s,const BtpResources *r)
     }
     if (kind==10 && action==35 && s->yard.active==2) {
         s->mode=BTP_YARD;s->yard.phase=BTP_YARD_BOOT;
-        s->campaign.world_x=1323;s->campaign.world_y=1111;s->x_half=43;s->y_half=87;
+        s->campaign.world_x=(uint16_t)(1323+btp_chi_map_offset(r,2,0));s->campaign.world_y=(uint16_t)(1111+btp_chi_map_offset(r,2,1));s->x_half=43;s->y_half=87;
         (void)btp_rng_next(s->npc.rng);(void)btp_cutscene_begin(s,r,0,6);return 1;
     }
     return 0;
@@ -196,7 +197,7 @@ void btp_yard_input(BtpState *s,const BtpResources *r,BtpAction a)
         s->facing=(uint8_t)a;s->player_walk=btp_walk_next(s->player_walk,before,btp_player_direction((unsigned)a));
         if (x>=0 && y>=0 && x<2*m->width && y<2*m->height && btp_map_tile(m,(x+1)/2,y/2)<85) {
             s->x_half=(uint16_t)x;s->y_half=(uint16_t)y;s->blocked=0;
-            s->campaign.world_x=(uint16_t)(1664+x);s->campaign.world_y=(uint16_t)(896+y);
+            s->campaign.world_x=(uint16_t)(1664+btp_chi_map_offset(r,3,0)+x);s->campaign.world_y=(uint16_t)(896+btp_chi_map_offset(r,3,1)+y);
         } else s->blocked=BTP_WALL;
     }
     /* 07DC:0AE6 triggers a search at 0D14/18/1C/20, row 702D. */
@@ -226,7 +227,8 @@ void btp_yard_result(BtpState *s,const BtpResources *r)
            their own world position. Empty entries keep the original Y byte. */
         for (unsigned i=0;i<64;++i) {
             BtpTerrainMark *mark=&s->terrain_marks[i];
-            if ((mark->sprite&126u)==124 && mark->sector==0x8a) mark->sprite=mark->sector=mark->x=0;
+            unsigned sector=(unsigned)(8+btp_chi_map_offset(r,2,1)/128)*16u+(unsigned)(10+btp_chi_map_offset(r,2,0)/128);
+            if ((mark->sprite&126u)==124 && mark->sector==sector) mark->sprite=mark->sector=mark->x=0;
         }
         restore_party(s);
         if (!rental) {
@@ -260,8 +262,8 @@ void btp_yard_result(BtpState *s,const BtpResources *r)
         for (unsigned i=0;i<8;++i) s->party.people[i][12]=8;
         s->campaign.mounted=0;
         if (!stolen) force_fields(s,1);
-        s->campaign.world_x=(uint16_t)(stolen ? 1264u : 1337u);s->campaign.world_y=(uint16_t)(stolen ? y : 1117u);
-        s->map_id=(uint8_t)(stolen ? 0 : 2);s->x_half=(uint16_t)(stolen ? 1264u : 57u);s->y_half=(uint16_t)(stolen ? y : 93u);
+        s->campaign.world_x=(uint16_t)((stolen ? 1264 : 1337)+btp_chi_map_offset(r,2,0));s->campaign.world_y=(uint16_t)(stolen ? y : (unsigned)(1117+btp_chi_map_offset(r,2,1)));
+        s->map_id=(uint8_t)(stolen ? 0 : 2);s->x_half=(uint16_t)(stolen ? s->campaign.world_x : 57u);s->y_half=(uint16_t)(stolen ? y : 93u);
         /* Escaping the arena crosses out of Starport; its suspended walkers
            must not remain attached to the surrounding wilderness map. */
         if (stolen) btp_npc_enter(s,&r->map);
@@ -275,7 +277,7 @@ void btp_yard_result(BtpState *s,const BtpResources *r)
     memcpy(s->party.people[0],s->combat.unit[0].record,17);
     if (s->combat.lost) { btp_yard_finish_prison(s,r,0);return; }
     s->x_half=s->campaign.return_x;s->y_half=s->campaign.return_y;
-    s->campaign.world_x=(uint16_t)(1664+s->x_half);s->campaign.world_y=(uint16_t)(896+s->y_half);
+    s->campaign.world_x=(uint16_t)(1664+btp_chi_map_offset(r,3,0)+s->x_half);s->campaign.world_y=(uint16_t)(896+btp_chi_map_offset(r,3,1)+s->y_half);
     s->campaign.encounter=0;s->combat=(BtpCombatState){0};s->effects=(BtpEffectsState){0};
     s->aftermath=(BtpAftermathState){0};s->mode=BTP_YARD;
 }

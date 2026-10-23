@@ -7,6 +7,7 @@
 #include "core/yard.h"
 #include "core/service.h"
 #include "core/roster_game.h"
+#include "data/chi_spatial.h"
 #include <string.h>
 void btp_campaign_begin(BtpState *s,const BtpResources *r,unsigned event)
 {
@@ -58,7 +59,7 @@ void btp_campaign_rex(BtpState *s,const BtpResources *r)
         if (!i) s->campaign.owned=1;
         break;
     }
-    s->campaign.world_x=1385;s->campaign.world_y=1118;s->x_half=105;s->y_half=94;
+    s->campaign.world_x=(uint16_t)(1385+btp_chi_map_offset(r,2,0));s->campaign.world_y=(uint16_t)(1118+btp_chi_map_offset(r,2,1));s->x_half=105;s->y_half=94;
     s->script.position_x=0x0a69;s->script.position_y=0x805e;
     s->campaign.mounted=0;for (unsigned i=0;i<8;++i) p->people[i][12]=8;
     btp_campaign_begin(s,r,2);BtpCombatState *c=&s->combat;

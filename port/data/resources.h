@@ -48,7 +48,8 @@ enum { BTP_WORLD_SIDE=192, BTP_WORLD_ORIGIN=704, BTP_CITADEL_ORIGIN=768 };
 typedef struct {
     uint32_t seed;
     uint8_t loaded, native, tiles[BTP_WORLD_SIDE*BTP_WORLD_SIDE];
-    uint8_t coarse[336], textures[1024], special[64], flips[96];
+    uint8_t coarse[336], flips[96];
+    uint16_t textures[1024],special[64]; /* Custom tile handles retain all 16 bits. */
     uint8_t noise[256], heights[144*144];
     uint8_t mini_colors[256];
 } BtpWorldData;
@@ -75,6 +76,8 @@ typedef struct {
        low-level resource/test API; imported Original never infers its edition
        from the presence of editable definitions. This is not saved state. */
     uint8_t features;
+    uint8_t sound_map[18]; /* Zero means the released program at this slot. */
+    uint16_t sound_speed; /* Percent; zero retains the original timing. */
 } BtpResources;
 enum { BTP_FEATURE_BROKER=1, BTP_FEATURE_ENHANCED=2, BTP_FEATURE_EXPLICIT=128 };
 int btp_resources_feature(const BtpResources *resources,unsigned feature);

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Native CHI presentation overrides",
+  "type": "object", "additionalProperties": false,
+  "required": ["format", "schema_version", "bindings", "sounds", "sound_speed", "music"],
+  "properties": {
+    "format": {"const": "btp-chi-presentation-v1"}, "schema_version": {"const": 1},
+    "sounds": {"type": "array", "minItems": 18, "maxItems": 18, "items": {"type": "integer", "minimum": 1, "maximum": 18}},
+    "sound_speed": {"type": "integer", "minimum": 25, "maximum": 400}, "music": {"enum": [0, 1]},
+    "bindings": {"type": "array", "maxItems": 1024, "items": {
+      "type": "object", "additionalProperties": false, "required": ["kind", "resource", "index", "image", "palette"],
+      "properties": {
+        "kind": {"enum": ["tile", "sprite", "screen", "animation", "font", "portrait"]},
+        "resource": {"enum": ["BTTLTECH.ICN", "DESTRUCT.ICN", "ANIMATE.ICN", "MECHSHAP.CMP", "BTSTATS.CMP", "BTBORDER.CMP", "BTTITLE.CMP", "INFOCOM.CMP", "TINYLAND.CMP", "STARLEAG.ICN", "MAP.ICN", "ENDMECH.CMP", "O.ANM", "BTTA.FONT", "PORTRAITS"]},
+        "index": {"type": "integer", "minimum": 0, "maximum": 375},
+        "image": {"type": "string", "minLength": 3, "maxLength": 63, "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"},
+        "palette": {"enum": ["terrain", "sprite", "direct", "phoenix", "title"]},
+        "units": {"type": "array", "minItems": 1, "maxItems": 31, "items": {"type": "integer", "minimum": 0, "maximum": 16300}}
+      }
+    }}
+  }
+}

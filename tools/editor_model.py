@@ -54,6 +54,8 @@ def references(manifest: dict) -> list[str]:
         *([manifest["presentation"]] if "presentation" in manifest else []),
         *([manifest["graphics"]] if "graphics" in manifest else []),
         *([manifest["campaign"]] if "campaign" in manifest else []),
+        *([manifest["chi_spatial"]] if "chi_spatial" in manifest else []),
+        *([manifest["chi_presentation"]] if "chi_presentation" in manifest else []),
         *manifest.get("resources", []),
         *[script["file"] for script in manifest.get("scripts", [])],
         *[asset["file"] for asset in manifest["assets"]]]))
@@ -65,7 +67,7 @@ def encoded(value: dict) -> bytes:
 
 AUTHORING_RECEIPTS = 'AUTHORING.json'
 METADATA_FILES = ('LIBRARY-SOURCES.json', 'EDITOR.json', AUTHORING_RECEIPTS,
-                  'campaign.json', 'IMPORT.json', 'CHI-TILES.json')
+                  'campaign.json', 'IMPORT.json', 'CHI-TILES.json', 'chi-spatial.json', 'chi-presentation.json')
 
 
 def needs_original(manifest):
@@ -120,6 +122,9 @@ class ProjectDocument:
         self.metadata = {name: data for name, data in self.snapshot.items() if name in METADATA_FILES}
         self.content = json.loads(self.snapshot[self.manifest["definitions"]])
         self.adventure = json.loads(self.snapshot[self.manifest["adventure"]]) if "adventure" in self.manifest else None
+        if 'chi_spatial' in self.manifest:
+            from chi_spatial import projection
+            self.adventure=projection(json.loads(self.snapshot[self.manifest['chi_spatial']]))
         self.art = (json.loads(self.snapshot[self.manifest["graphics"]]) if "graphics" in self.manifest
                     else dict(format="btp-art-v1", schema_version=1, images=[], bindings=[]))
         self.saved = copy.deepcopy(self.content)
@@ -249,7 +254,7 @@ class ProjectDocument:
         files = dict(self.snapshot)
         if self.content != self.saved:
             files[self.manifest["definitions"]] = encoded(self.content)
-        if self.adventure != self.saved_adventure:
+        if self.adventure != self.saved_adventure and 'adventure' in self.manifest:
             files[self.manifest["adventure"]] = encoded(self.adventure)
         if "graphics" in self.manifest and (self.art != self.saved_art or self.manifest["graphics"] not in files):
             files[self.manifest["graphics"]] = encoded(self.art)
@@ -260,11 +265,16 @@ class ProjectDocument:
         if 'EDITOR.json' in files and 'EDITOR.json' not in self.metadata:
             files['EDITOR.json'] = encoded({})
         files.update(self.metadata)
+        if 'chi_spatial' in self.manifest and self.adventure:
+            from chi_spatial import from_projection
+            native=from_projection(self.adventure);name=self.manifest['chi_spatial']
+            # Preserve the exact imported/source bytes until a semantic edit.
+            if native!=json.loads(files[name]):files[name]=encoded(native)
         if self.source is not None:
             from campaign_source import canonical
             # Whitespace and dictionary insertion order in editable modules
             # cannot invalidate saves; runtime array order remains significant.
-            for key in ('definitions','adventure','graphics','presentation'):
+            for key in ('definitions','adventure','graphics','presentation','chi_spatial','chi_presentation'):
                 if key in self.manifest:files[self.manifest[key]]=canonical(json.loads(files[self.manifest[key]]))
             files['project.json']=canonical(self.manifest)
             declared=set(references(self.manifest))|set(METADATA_FILES)

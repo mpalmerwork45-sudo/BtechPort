@@ -23,6 +23,7 @@
 #include "core/roster_game.h"
 #include "data/anm.h"
 #include "data/portraits.h"
+#include "data/chi_spatial.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -1666,7 +1667,29 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                            battle origin, not the current town's entrance. */
                         tile=btp_world_tile(r,s,ox+tx,oy+ty);
                     }
-                    if (authored && authored->sheet==3) color=btp_art_pixel(r,authored->graphic,
+                    const BtpChiTile *native=NULL;
+                    if (r->project && r->project->chi_spatial && !authored) {
+                        if (s->cache.active) native=btp_chi_map_cell(r,s->story_flags[66] ? 15u : 14u,tx,ty);
+                        else {
+                            int gx=ox+tx,gy=oy+ty;
+                            unsigned place=(unsigned)btp_world_location(r,s,gx,gy);
+                            if (place==1 && s->campaign.invasion && s->late.invasion_event>=3) place=11;
+                            if (place) {
+                                const BtpMap *town=place==1 || place==11 ? &r->map : &r->local[place-1];
+                                native=btp_chi_map_cell(r,place,gx-(town->entrance_x[0]>>8)*64,gy-(town->entrance_y[0]>>12)*64);
+                            } else native=btp_chi_generated_cell(r,btp_world_generated(r,s,gx,gy));
+                        }
+                        /* Training rubble and scripted gates are transient
+                           rule-map changes. Their native replacement tile
+                           takes priority over the editable underlying cell. */
+                        if (native && native->rule!=tile)
+                            native=s->cache.active ? NULL : btp_chi_generated_cell(r,tile);
+                        if (native) tile=native->graphic;
+                    }
+                    if (native && native->sheet==4) color=btp_art_pixel(r,native->graphic,
+                        btp_art_tile_frame(&r->project->graphics,native->graphic,s->tick),
+                        (unsigned)wx&15u,(unsigned)wy&15u,btp_palette[0]);
+                    else if (authored && authored->sheet==3) color=btp_art_pixel(r,authored->graphic,
                         btp_art_tile_frame(&r->project->graphics,authored->graphic,s->tick),
                         (unsigned)wx&15u,(unsigned)wy&15u,btp_palette[0]);
                     else if (tile < 250) {
@@ -1676,15 +1699,16 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                         /* Authored chi:land references use the same electric
                            fences as the original campaign, with no setup flag.
                            Other banks retain their own static tile meanings. */
-                        unsigned frame=s->cache.active || (authored && authored->sheet!=0) ||
+                        unsigned frame=s->cache.active || (native && native->sheet!=0) || (authored && authored->sheet!=0) ||
                             r->terrain_animation.format!=1 ? 0u : btp_terrain_frame(tile,s->tick/4u);
                         /* A viewport can straddle the Citadel boundary. Pick
                            DESTRUCT for the displayed world tile, even after
                            the player has entered the surrounding countryside. */
-                        int destroyed=authored ? authored->sheet!=0 : !s->cache.active && (s->campaign.invasion ?
+                        int destroyed=native ? native->sheet==1 : authored ? authored->sheet!=0 : !s->cache.active && (s->campaign.invasion ?
                             s->late.invasion_event>=3 && tx>=32 && ty>=32 && tx<96 && ty<96 :
                             btp_world_location(r,s,ox+tx,oy+ty)==11);
-                        const BtpGraphic *sheet=s->cache.active ? s->story_flags[66] ? &r->maproom_tiles : &r->cache_tiles :
+                        const BtpGraphic *sheet=native && native->sheet!=0 ? native->sheet==1 ? &r->destroyed_tiles : native->sheet==2 ? &r->cache_tiles : &r->maproom_tiles :
+                            s->cache.active ? s->story_flags[66] ? &r->maproom_tiles : &r->cache_tiles :
                             destroyed ? &r->destroyed_tiles : frame && r->terrain_animation.format==1 ? &r->terrain_animation : &r->tiles;
                         if (destroyed) frame=0; /* DESTRUCT's indices refer directly to its own tile sheet. */
                         unsigned index = (frame ? frame : tile) * 256 + ((unsigned)wy&15u)*16 + ((unsigned)wx&15u);
@@ -1914,7 +1938,13 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         const BtpAnm *animation=building_art ? building_art : &r->animations[kind];
         unsigned step = s->cutscene.active ? s->cutscene.step : animation->count-1u;
         uint8_t packed[BTP_ANM_PACKED];
-        if (btp_anm_frame(animation,step,packed)) {
+        unsigned custom=r->project && !building_art && kind<22 ? r->project->chi_animations[kind] : 0;
+        if (r->project && building_art) for (unsigned i=0;i<BTP_PORTRAIT_COUNT;++i)
+            if (building_art==&r->portraits.image[i]) custom=r->project->chi_portraits[i];
+        if (custom) {
+            if (s->cutscene.active==2) rectangle(f,104,0,216,200,0);
+            (void)btp_art_draw(r,custom-1,step,8,8,8,8,96,96,f);
+        } else if (btp_anm_frame(animation,step,packed)) {
             if (s->cutscene.active == 2) rectangle(f,104,0,216,200,0);
             for (unsigned i = 0; i < 88u*88u; ++i) {
                 unsigned value = i&1u ? packed[i/2u]&15u : packed[i/2u]>>4;
@@ -1934,7 +1964,9 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
             unsigned mechanic=r->combat.building_portraits[5];uint8_t packed[BTP_ANM_PACKED];
             const BtpAnm *broker_art=btp_portrait_for_building(r,BTP_BROKER_BUILDING);
             if (!broker_art && mechanic<BTP_ANM_COUNT) broker_art=&r->animations[mechanic];
-            if (broker_art && broker_art->count && btp_anm_frame(broker_art,broker_art->count-1u,packed)) {
+            unsigned custom=r->project ? r->project->chi_portraits[BTP_PORTRAIT_BROKER] : 0;
+            if (custom) (void)btp_art_draw(r,custom-1,0,8,8,8,8,96,96,f);
+            else if (broker_art && broker_art->count && btp_anm_frame(broker_art,broker_art->count-1u,packed)) {
                 for (unsigned i=0;i<88u*88u;++i) {
                     unsigned value=i&1u ? packed[i/2u]&15u : packed[i/2u]>>4;
                     f[(8u+i/88u)*320u+8u+i%88u]=btp_palette[sprite_palette[value]];
@@ -2247,8 +2279,8 @@ void btp_world_preview(const BtpResources *r,const BtpState *s,uint32_t f[BTP_PI
         pixel(f,ox+(int)s->x_half/2,oy+(int)s->y_half/2,btp_palette[15]);
         text(r,f,0,192,"Press any key to return to game.",15);return;
     }
-    unsigned wx=s->story_flags[4] ? s->campaign.world_x : 1536u+s->x_half;
-    unsigned wy=s->story_flags[4] ? s->campaign.world_y : 1536u+s->y_half;
+    unsigned wx=s->story_flags[4] ? s->campaign.world_x : (r->map.entrance_x[0]>>8)*128u+s->x_half;
+    unsigned wy=s->story_flags[4] ? s->campaign.world_y : (r->map.entrance_y[0]>>12)*128u+s->y_half;
     unsigned center_x=s->mode==BTP_ACTIONS && s->campaign.ui==BTP_MENU_MAP ? s->menu.map_x : wx;
     unsigned center_y=s->mode==BTP_ACTIONS && s->campaign.ui==BTP_MENU_MAP ? s->menu.map_y : wy;
     int ox=(int)(center_x/128u)-2,oy=(int)(center_y/128u)-1;
@@ -2267,14 +2299,18 @@ void btp_world_preview(const BtpResources *r,const BtpState *s,uint32_t f[BTP_PI
             if (place) {
                 unsigned tile=btp_world_tile(r,s,tx,ty);
                 value=r->world.mini_colors[tile&255u];
+                const BtpMap *town=place==1 || place==11 ? &r->map : &r->local[place-1];
+                const BtpChiTile *native=btp_chi_map_cell(r,place,tx-(town->entrance_x[0]>>8)*64,ty-(town->entrance_y[0]>>12)*64);
+                if (native && native->mini_color<16) value=native->mini_color;
             } else value=id<66 ? r->tinyland.pixels[(id/40u*8u+dy)*320u+(id%40u*8u+dx)] : 0u;
             pixel(f,(int)(8*col+dx),(int)(8*row+dy),btp_palette[sprite_palette[value&15u]]);
         }
     }
-    if (s->story_flags[47] && !s->story_flags[58] && !(wx/128u==10 && wy/128u==8)) {
+    unsigned star_x=r->local[1].entrance_x[0]>>8,star_y=r->local[1].entrance_y[0]>>12;
+    if (s->story_flags[47] && !s->story_flags[58] && !(wx/128u==star_x && wy/128u==star_y)) {
         /* 0000:43D6..4446: the device directs you to packed 0A38/8038,
            and disappears on arrival in the Starport sector. */
-        unsigned direction=btp_world_device_direction(wx,wy);
+        unsigned direction=btp_world_device_direction_resources(r,wx,wy);
         static const uint8_t x[]={20,23,23,23,20,16,16,16},y[]={8,8,12,15,15,15,12,8};
         if (direction<8) {
             char arrow[2]={(char)(direction+1u),0};
