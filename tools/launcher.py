@@ -21,6 +21,7 @@ GAMES={'Original':'Original CHI campaign with the original roster.',
        'Updated':'Original campaign with the expanded roster and Enhanced combat.',
        'BattleTech demo':'Last Beacon: two contracts, nine mechs and ten vehicles. Requires original CHI files.',
        'Cairn Passage (defence / escort)':'Timed relay defence and vehicle escort with reinforcements. Requires original CHI files.',
+       'Greybank Dispatch (campaign)':'Branching contracts, depot services, relay defence and convoy escort. Requires original CHI files.',
        'Vehicle proving ground':'Independent two-planet vehicle test game. No original files needed.',
        'Independent demo':'Small complete quest and editor template. No original files needed.',
        'My project':'Choose your own game project folder.'}
@@ -28,6 +29,7 @@ PROJECTS={'BattleTech demo':ROOT/'examples/battletech-demo',
           'Relay Contract (command-created)':ROOT/'examples/relay-contract',
           'Argent Recovery (regions / objectives)':ROOT/'examples/argent-recovery',
           'Cairn Passage (defence / escort)':ROOT/'examples/cairn-passage',
+          'Greybank Dispatch (campaign)':ROOT/'examples/greybank-dispatch',
           'Vehicle proving ground':ROOT/'examples/vehicle-lab',
           'Independent demo':ROOT/'examples/beacon-demo'}
 

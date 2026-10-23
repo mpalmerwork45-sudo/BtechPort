@@ -110,6 +110,17 @@ def parser():
         if name in ('convert','build'):s.add_argument('--output',type=Path,required=True)
         if name=='locations':
             s.add_argument('--id');s.add_argument('--offset',type=int,default=0);s.add_argument('--limit',type=int,default=30)
+    recipe=sub.add_parser('recipe',help='Discover or reproduce recorded campaign recipes; no model service required.')
+    actions=recipe.add_subparsers(dest='recipe_action',required=True)
+    actions.add_parser('list')
+    s=actions.add_parser('build');s.add_argument('--file',type=Path,required=True);s.add_argument('--output',type=Path,required=True)
+    s.add_argument('--check',action='store_true',help='Diagnose/repair a deliberate defect and run the bounded campaign suite.')
+    s.add_argument('--play',action='store_true',help='Check first, then launch the generated native game.')
+    s.add_argument('--cancel-file',type=Path)
+    for key,name in [('validator','btp-project'),('runner','btp-author-playtest'),('analyzer','btp-author-analyze'),('player','btech-port')]:
+        s.add_argument('--'+key,type=Path,default=ROOT/'build'/(name+('.exe' if os.name=='nt' else '')))
+    for key,path in [('data','Original DOS'),('dialogue-data','work/talk-data.bin'),('combat-data','work/combat-data.bin'),('world-data','work/world-data.bin')]:
+        s.add_argument('--'+key,type=Path,default=ROOT/path)
     return p
 
 
@@ -141,6 +152,13 @@ def create(args):
 
 
 def dispatch(args):
+    if args.command=='recipe':
+        from campaign_recipe import describe
+        if args.recipe_action=='list':return dict(api_version=API_VERSION,status='ok',recipes=[describe()])
+        from campaign_demo import run
+        settings={k:str(getattr(args,k.replace('-','_'))) for k in ('data','dialogue-data','combat-data','world-data')}
+        return run(read_json(args.file),args.output,args.validator,args.runner,args.analyzer,settings,
+                   args.check,args.play,args.player,cancelled=lambda:bool(args.cancel_file and args.cancel_file.exists()))
     if args.command=='source':
         from campaign_source import convert,build
         doc=ProjectDocument(args.project,args.validator,recover=False)

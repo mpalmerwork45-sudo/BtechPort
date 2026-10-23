@@ -1,0 +1,77 @@
+{
+  "type": "object",
+  "properties": {
+    "format": {
+      "const": "btp-greybank-recipe-v1"
+    },
+    "package_id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{0,30}$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80
+    },
+    "starting_credits": {
+      "type": "integer",
+      "minimum": 100,
+      "maximum": 1000000
+    },
+    "repair_cost": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 10000
+    },
+    "assault_reward": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100000
+    },
+    "recovery_reward": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100000
+    },
+    "defence_reward": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100000
+    },
+    "escort_reward": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100000
+    },
+    "defence_rounds": {
+      "type": "integer",
+      "minimum": 3,
+      "maximum": 8
+    },
+    "seeds": {
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 16777215
+      },
+      "minItems": 1,
+      "maxItems": 3
+    }
+  },
+  "required": [
+    "format",
+    "package_id",
+    "title",
+    "starting_credits",
+    "repair_cost",
+    "assault_reward",
+    "recovery_reward",
+    "defence_reward",
+    "escort_reward",
+    "defence_rounds",
+    "seeds"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

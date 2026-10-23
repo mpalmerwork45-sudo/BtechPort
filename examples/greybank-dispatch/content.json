@@ -1,0 +1,667 @@
+{
+  "ammunition": [
+    {
+      "id": "workshop:sky-round",
+      "price_per_shot": 3
+    },
+    {
+      "id": "chi:ammo-machine_gun-1",
+      "price_per_shot": 1
+    },
+    {
+      "id": "chi:ammo-lrm15-10",
+      "price_per_shot": 10
+    },
+    {
+      "id": "chi:ammo-srm4-6",
+      "price_per_shot": 6
+    }
+  ],
+  "content_version": "1.0.0",
+  "equipment": [],
+  "format": "btp-content-v1",
+  "mechs": [
+    {
+      "actuators": {
+        "left_arm": 15,
+        "left_leg": 15,
+        "right_arm": 15,
+        "right_leg": 15
+      },
+      "armor": {
+        "center_rear": 2,
+        "center_torso": 10,
+        "head": 9,
+        "left_arm": 12,
+        "left_leg": 12,
+        "left_rear": 2,
+        "left_torso": 10,
+        "right_arm": 12,
+        "right_leg": 12,
+        "right_rear": 2,
+        "right_torso": 10
+      },
+      "engine_heat_sinks": 8,
+      "external_heat_sinks": {
+        "center_torso": 0,
+        "head": 0,
+        "left_arm": 0,
+        "left_leg": 0,
+        "left_torso": 0,
+        "right_arm": 0,
+        "right_leg": 0,
+        "right_torso": 0
+      },
+      "id": "workshop:rook",
+      "label": "Rook",
+      "loadout": [
+        {
+          "ammunition": 0,
+          "location": "left_arm",
+          "weapon": "workshop:ember-beam"
+        },
+        {
+          "ammunition": 0,
+          "location": "right_arm",
+          "weapon": "workshop:cool-beam"
+        }
+      ],
+      "mass_tons": 45,
+      "movement": {
+        "jump": 3,
+        "walk": 5
+      },
+      "name": "Rook experimental patrol BattleMech",
+      "presentation": "workshop:biped",
+      "price": 1000,
+      "structure": {
+        "center_torso": 6,
+        "head": 3,
+        "left_arm": 6,
+        "left_leg": 6,
+        "left_torso": 6,
+        "right_arm": 6,
+        "right_leg": 6,
+        "right_torso": 6
+      }
+    },
+    {
+      "actuators": {
+        "left_arm": 15,
+        "left_leg": 15,
+        "right_arm": 15,
+        "right_leg": 15
+      },
+      "armor": {
+        "center_rear": 2,
+        "center_torso": 10,
+        "head": 9,
+        "left_arm": 12,
+        "left_leg": 12,
+        "left_rear": 2,
+        "left_torso": 10,
+        "right_arm": 12,
+        "right_leg": 12,
+        "right_rear": 2,
+        "right_torso": 10
+      },
+      "engine_heat_sinks": 8,
+      "external_heat_sinks": {
+        "center_torso": 0,
+        "head": 0,
+        "left_arm": 0,
+        "left_leg": 0,
+        "left_torso": 0,
+        "right_arm": 0,
+        "right_leg": 0,
+        "right_torso": 0
+      },
+      "id": "workshop:kite",
+      "label": "Kite",
+      "loadout": [
+        {
+          "ammunition": 24,
+          "location": "right_torso",
+          "weapon": "workshop:sky-lance"
+        }
+      ],
+      "mass_tons": 30,
+      "movement": {
+        "jump": 0,
+        "walk": 6
+      },
+      "name": "Kite long-range support BattleMech",
+      "presentation": "workshop:reverse-leg",
+      "price": 1000,
+      "structure": {
+        "center_torso": 6,
+        "head": 3,
+        "left_arm": 6,
+        "left_leg": 6,
+        "left_torso": 6,
+        "right_arm": 6,
+        "right_leg": 6,
+        "right_torso": 6
+      }
+    },
+    {
+      "actuators": {
+        "left_arm": 15,
+        "left_leg": 15,
+        "right_arm": 15,
+        "right_leg": 15
+      },
+      "armor": {
+        "center_rear": 5,
+        "center_torso": 23,
+        "head": 6,
+        "left_arm": 10,
+        "left_leg": 15,
+        "left_rear": 4,
+        "left_torso": 18,
+        "right_arm": 10,
+        "right_leg": 15,
+        "right_rear": 4,
+        "right_torso": 18
+      },
+      "engine_heat_sinks": 10,
+      "external_heat_sinks": {
+        "center_torso": 0,
+        "head": 0,
+        "left_arm": 0,
+        "left_leg": 0,
+        "left_torso": 0,
+        "right_arm": 0,
+        "right_leg": 0,
+        "right_torso": 0
+      },
+      "id": "chi-expanded:phoenix-hawk-pxh-1",
+      "label": "PHOENIX HAWK 1",
+      "loadout": [
+        {
+          "ammunition": 0,
+          "location": "left_arm",
+          "weapon": "chi:weapon-medium_laser-0"
+        },
+        {
+          "ammunition": 100,
+          "location": "left_arm",
+          "weapon": "chi:weapon-machine_gun-1"
+        },
+        {
+          "ammunition": 0,
+          "location": "right_arm",
+          "weapon": "chi:weapon-large_laser-0"
+        },
+        {
+          "ammunition": 0,
+          "location": "right_arm",
+          "weapon": "chi:weapon-medium_laser-0"
+        },
+        {
+          "ammunition": 100,
+          "location": "right_arm",
+          "weapon": "chi:weapon-machine_gun-1"
+        }
+      ],
+      "mass_tons": 45,
+      "movement": {
+        "jump": 6,
+        "walk": 6
+      },
+      "name": "Phoenix Hawk PXH-1",
+      "presentation": "chi:red-stinger",
+      "price": 25000,
+      "structure": {
+        "center_torso": 14,
+        "head": 3,
+        "left_arm": 7,
+        "left_leg": 11,
+        "left_torso": 11,
+        "right_arm": 7,
+        "right_leg": 11,
+        "right_torso": 11
+      }
+    },
+    {
+      "actuators": {
+        "left_arm": 15,
+        "left_leg": 15,
+        "right_arm": 14,
+        "right_leg": 15
+      },
+      "armor": {
+        "center_rear": 7,
+        "center_torso": 22,
+        "head": 9,
+        "left_arm": 10,
+        "left_leg": 15,
+        "left_rear": 5,
+        "left_torso": 11,
+        "right_arm": 10,
+        "right_leg": 15,
+        "right_rear": 5,
+        "right_torso": 11
+      },
+      "engine_heat_sinks": 10,
+      "external_heat_sinks": {
+        "center_torso": 0,
+        "head": 0,
+        "left_arm": 0,
+        "left_leg": 0,
+        "left_torso": 0,
+        "right_arm": 0,
+        "right_leg": 0,
+        "right_torso": 0
+      },
+      "id": "chi-expanded:trebuchet-tbt-5n",
+      "label": "TREBUCHET 5N",
+      "loadout": [
+        {
+          "ammunition": 8,
+          "location": "left_arm",
+          "weapon": "chi:weapon-lrm15-10"
+        },
+        {
+          "ammunition": 0,
+          "location": "left_arm",
+          "weapon": "chi:weapon-medium_laser-0"
+        },
+        {
+          "ammunition": 0,
+          "location": "right_arm",
+          "weapon": "chi:weapon-medium_laser-0"
+        },
+        {
+          "ammunition": 0,
+          "location": "right_arm",
+          "weapon": "chi:weapon-medium_laser-0"
+        },
+        {
+          "ammunition": 8,
+          "location": "right_torso",
+          "weapon": "chi:weapon-lrm15-10"
+        }
+      ],
+      "mass_tons": 50,
+      "movement": {
+        "jump": 0,
+        "walk": 5
+      },
+      "name": "Trebuchet TBT-5N",
+      "presentation": "chi:red-stinger",
+      "price": 24000,
+      "structure": {
+        "center_torso": 16,
+        "head": 3,
+        "left_arm": 8,
+        "left_leg": 12,
+        "left_torso": 12,
+        "right_arm": 8,
+        "right_leg": 12,
+        "right_torso": 12
+      }
+    },
+    {
+      "actuators": {
+        "left_arm": 12,
+        "left_leg": 15,
+        "right_arm": 12,
+        "right_leg": 15
+      },
+      "armor": {
+        "center_rear": 3,
+        "center_torso": 10,
+        "head": 7,
+        "left_arm": 4,
+        "left_leg": 6,
+        "left_rear": 4,
+        "left_torso": 8,
+        "right_arm": 4,
+        "right_leg": 6,
+        "right_rear": 4,
+        "right_torso": 8
+      },
+      "engine_heat_sinks": 9,
+      "external_heat_sinks": {
+        "center_torso": 0,
+        "head": 1,
+        "left_arm": 0,
+        "left_leg": 0,
+        "left_torso": 0,
+        "right_arm": 0,
+        "right_leg": 0,
+        "right_torso": 0
+      },
+      "id": "chi-expanded:jenner-jr7-d",
+      "label": "JENNER JR7-D",
+      "loadout": [
+        {
+          "ammunition": 0,
+          "location": "left_arm",
+          "weapon": "chi:weapon-medium_laser-0"
+        },
+        {
+          "ammunition": 0,
+          "location": "left_arm",
+          "weapon": "chi:weapon-medium_laser-0"
+        },
+        {
+          "ammunition": 0,
+          "location": "right_arm",
+          "weapon": "chi:weapon-medium_laser-0"
+        },
+        {
+          "ammunition": 0,
+          "location": "right_arm",
+          "weapon": "chi:weapon-medium_laser-0"
+        },
+        {
+          "ammunition": 25,
+          "location": "center_torso",
+          "weapon": "chi:weapon-srm4-6"
+        }
+      ],
+      "mass_tons": 35,
+      "movement": {
+        "jump": 5,
+        "walk": 7
+      },
+      "name": "Jenner JR7-D",
+      "presentation": "chi:locust",
+      "price": 15000,
+      "structure": {
+        "center_torso": 11,
+        "head": 3,
+        "left_arm": 6,
+        "left_leg": 8,
+        "left_torso": 8,
+        "right_arm": 6,
+        "right_leg": 8,
+        "right_torso": 8
+      }
+    },
+    {
+      "armor": {
+        "front": 30,
+        "left": 14,
+        "rear": 14,
+        "right": 14,
+        "turret": 0
+      },
+      "engine_heat_sinks": 3,
+      "id": "vehicles:skulker",
+      "kind": "vehicle",
+      "label": "Skulker",
+      "loadout": [
+        {
+          "ammunition": 0,
+          "location": "front",
+          "weapon": "vehicles:weapon-7"
+        }
+      ],
+      "mass_tons": 20,
+      "movement": {
+        "jump": 0,
+        "type": "wheeled",
+        "walk": 7
+      },
+      "name": "Skulker",
+      "presentation": "vehicles:skulker-view",
+      "price": 7500,
+      "structure": {
+        "front": 2,
+        "left": 2,
+        "rear": 2,
+        "right": 2,
+        "turret": 0
+      }
+    },
+    {
+      "armor": {
+        "front": 20,
+        "left": 9,
+        "rear": 9,
+        "right": 9,
+        "turret": 9
+      },
+      "engine_heat_sinks": 5,
+      "id": "vehicles:galleon",
+      "kind": "vehicle",
+      "label": "Galleon",
+      "loadout": [
+        {
+          "ammunition": 0,
+          "location": "turret",
+          "weapon": "vehicles:weapon-7"
+        },
+        {
+          "ammunition": 0,
+          "location": "left",
+          "weapon": "vehicles:weapon-4"
+        },
+        {
+          "ammunition": 0,
+          "location": "right",
+          "weapon": "vehicles:weapon-4"
+        }
+      ],
+      "mass_tons": 30,
+      "movement": {
+        "jump": 0,
+        "type": "tracked",
+        "walk": 6
+      },
+      "name": "Galleon",
+      "presentation": "vehicles:galleon-view",
+      "price": 12000,
+      "structure": {
+        "front": 3,
+        "left": 3,
+        "rear": 3,
+        "right": 3,
+        "turret": 3
+      }
+    }
+  ],
+  "package_id": "greybank-dispatch",
+  "presentations": [
+    {
+      "id": "workshop:biped",
+      "source": "chi:red-stinger"
+    },
+    {
+      "id": "workshop:reverse-leg",
+      "source": "chi:locust"
+    },
+    {
+      "id": "chi:red-stinger",
+      "source": "chi:red-stinger"
+    },
+    {
+      "id": "chi:locust",
+      "source": "chi:locust"
+    },
+    {
+      "id": "vehicles:skulker-view",
+      "image": "vehicles:skulker-sprite",
+      "source": "package:art"
+    },
+    {
+      "id": "vehicles:galleon-view",
+      "image": "vehicles:galleon-sprite",
+      "source": "package:art"
+    }
+  ],
+  "rules": {
+    "distance_scale": 3,
+    "id": "chi:updated-lrm-v1",
+    "long_range": 21,
+    "medium_range": 14,
+    "minimum_range": 6,
+    "short_range": 7
+  },
+  "schema_version": 1,
+  "services": {
+    "broker": {
+      "behavior": "chi-broker-v1",
+      "id": "workshop:broker"
+    },
+    "reload": {
+      "behavior": "chi-reload-v1",
+      "id": "workshop:reload"
+    }
+  },
+  "weapons": [
+    {
+      "ammunition": "none",
+      "behavior": "medium_laser",
+      "damage": 7,
+      "heat": 4,
+      "id": "workshop:ember-beam",
+      "label": "Ember Beam",
+      "name": "Ember focused beam projector",
+      "projectiles": 1,
+      "ranges": {
+        "long": 30,
+        "medium": 18,
+        "short": 8
+      }
+    },
+    {
+      "ammunition": "none",
+      "behavior": "medium_laser",
+      "damage": 2,
+      "heat": 0,
+      "id": "workshop:cool-beam",
+      "label": "Cool Beam",
+      "name": "Cool beam projector",
+      "projectiles": 1,
+      "ranges": {
+        "long": 15,
+        "medium": 9,
+        "short": 3
+      }
+    },
+    {
+      "ammunition": "workshop:sky-round",
+      "behavior": "lrm5",
+      "damage": 1,
+      "heat": 2,
+      "id": "workshop:sky-lance",
+      "label": "Sky Lance",
+      "name": "Sky Lance missile launcher",
+      "projectiles": 5,
+      "ranges": {
+        "long": 66,
+        "medium": 45,
+        "short": 21
+      }
+    },
+    {
+      "ammunition": "none",
+      "behavior": "medium_laser",
+      "damage": 5,
+      "heat": 3,
+      "id": "chi:weapon-medium_laser-0",
+      "label": "Med Laser",
+      "name": "Med Laser",
+      "projectiles": 1,
+      "ranges": {
+        "long": 30,
+        "medium": 21,
+        "short": 12
+      }
+    },
+    {
+      "ammunition": "none",
+      "behavior": "large_laser",
+      "damage": 8,
+      "heat": 8,
+      "id": "chi:weapon-large_laser-0",
+      "label": "LargeLaser",
+      "name": "LargeLaser",
+      "projectiles": 1,
+      "ranges": {
+        "long": 48,
+        "medium": 33,
+        "short": 18
+      }
+    },
+    {
+      "ammunition": "chi:ammo-machine_gun-1",
+      "behavior": "machine_gun",
+      "damage": 2,
+      "heat": 0,
+      "id": "chi:weapon-machine_gun-1",
+      "label": "MachineGun",
+      "name": "MachineGun",
+      "projectiles": 1,
+      "ranges": {
+        "long": 12,
+        "medium": 9,
+        "short": 6
+      }
+    },
+    {
+      "ammunition": "chi:ammo-lrm15-10",
+      "behavior": "lrm15",
+      "damage": 1,
+      "heat": 5,
+      "id": "chi:weapon-lrm15-10",
+      "label": "LRMissil15",
+      "name": "LRMissil15",
+      "projectiles": 15,
+      "ranges": {
+        "long": 66,
+        "medium": 45,
+        "short": 21
+      }
+    },
+    {
+      "ammunition": "chi:ammo-srm4-6",
+      "behavior": "srm4",
+      "damage": 2,
+      "heat": 3,
+      "id": "chi:weapon-srm4-6",
+      "label": "SRMissile4",
+      "name": "SRMissile4",
+      "projectiles": 4,
+      "ranges": {
+        "long": 30,
+        "medium": 21,
+        "short": 12
+      }
+    },
+    {
+      "ammunition": "none",
+      "behavior": "medium_laser",
+      "damage": 5,
+      "heat": 3,
+      "id": "vehicles:weapon-7",
+      "label": "Medium Lase",
+      "name": "Medium Laser",
+      "projectiles": 1,
+      "ranges": {
+        "long": 27,
+        "medium": 18,
+        "short": 9
+      }
+    },
+    {
+      "ammunition": "none",
+      "behavior": "small_laser",
+      "damage": 3,
+      "heat": 1,
+      "id": "vehicles:weapon-4",
+      "label": "Small Laser",
+      "name": "Small Laser",
+      "projectiles": 1,
+      "ranges": {
+        "long": 9,
+        "medium": 6,
+        "short": 3
+      }
+    }
+  ]
+}

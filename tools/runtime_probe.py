@@ -30,5 +30,7 @@ def check():
             assert (tmp/'frame.ppm').is_file()
         finally:window.destroy()
     print('PASS: packaged launcher, roster/map editor, PNG round trip, validator and SDL player.')
+    from author_delivery_probe import check as check_authoring
+    check_authoring()
 
 if __name__=='__main__':check()

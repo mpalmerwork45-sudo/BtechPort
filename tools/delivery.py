@@ -32,6 +32,30 @@ def copy_tree(source,target,inventory):
         if p.is_file() and not any(v in ('__pycache__','site-packages','dist-packages','test','tests','idlelib','ensurepip') for v in p.relative_to(source).parts):
             copy_file(p,Path(target)/p.relative_to(source),inventory)
 
+def write_launchers(stage,platform):
+    """Console authoring preserves caller-relative paths, stdout and exit codes.
+
+    Both launchers locate the kit beside themselves. The CLI must not change
+    directory like a desktop shortcut: --file and output paths belong to the
+    invoking person/agent, and JSON errors must reach its caller unchanged.
+    """
+    stage=Path(stage)
+    if platform=='linux':
+        environment='#!/bin/sh\nKIT_ROOT=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)\n'
+        environment+='export PYTHONHOME="$KIT_ROOT/runtime"\nexport PYTHONPATH=\nexport PYTHONNOUSERSITE=1\n'
+        environment+='export TCL_LIBRARY="$KIT_ROOT/runtime/lib/tcl8.6"\nexport TK_LIBRARY="$KIT_ROOT/runtime/lib/tk8.6"\n'
+        environment+='export LD_LIBRARY_PATH="$KIT_ROOT/runtime/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"\nexport BTP_BUNDLED_RUNTIME=1\n'
+        for name,script in [('ConstructionKit','BtechPort.pyw'),('Author','tools/author.py')]:
+            (stage/name).write_text(environment+'exec "$KIT_ROOT/runtime/bin/python3" "$KIT_ROOT/'+script+'" "$@"\n')
+            (stage/name).chmod(0o755)
+    else:
+        (stage/'ConstructionKit.cmd').write_bytes(('@echo off\r\nsetlocal\r\nif exist "%~dp0runtime\\pythonw.exe" (\r\n'
+            ' start "" "%~dp0runtime\\pythonw.exe" -E -s "%~dp0BtechPort.pyw" %*\r\n) else (\r\n'
+            ' py -3 -E -s "%~dp0BtechPort.pyw" %*\r\n)\r\n').encode('ascii'))
+        (stage/'Author.cmd').write_bytes(('@echo off\r\nsetlocal\r\nif exist "%~dp0runtime\\python.exe" (\r\n'
+            ' "%~dp0runtime\\python.exe" -E -s "%~dp0tools\\author.py" %*\r\n) else (\r\n'
+            ' py -3 -E -s "%~dp0tools\\author.py" %*\r\n)\r\nexit /b %errorlevel%\r\n').encode('ascii'))
+
 def linux_runtime(stage,inventory):
     python=Path('/usr/bin/python3').resolve()
     probe=subprocess.run([str(python),'-c','import sys,sysconfig;print(sysconfig.get_path("stdlib"));print("%d.%d"%sys.version_info[:2])'],capture_output=True,text=True,check=True)
@@ -74,12 +98,7 @@ def linux_runtime(stage,inventory):
         notice=Path('/usr/share/doc')/name/'copyright'
         if not notice.exists():notice=ROOT/'local-deps/editor-tk/root/usr/share/doc'/name/'copyright'
         if notice.exists():copy_file(notice,stage/'licenses'/f'{name}.txt',inventory)
-    (stage/'ConstructionKit').write_text('#!/bin/sh\nKIT_ROOT=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)\n'
-        'export PYTHONHOME="$KIT_ROOT/runtime"\nexport PYTHONPATH=\nexport PYTHONNOUSERSITE=1\n'
-        'export TCL_LIBRARY="$KIT_ROOT/runtime/lib/tcl8.6"\nexport TK_LIBRARY="$KIT_ROOT/runtime/lib/tk8.6"\n'
-        'export LD_LIBRARY_PATH="$KIT_ROOT/runtime/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"\n'
-        'export BTP_BUNDLED_RUNTIME=1\nexec "$KIT_ROOT/runtime/bin/python3" "$KIT_ROOT/BtechPort.pyw" "$@"\n')
-    (stage/'ConstructionKit').chmod(0o755)
+    write_launchers(stage,'linux')
     libc=subprocess.run(['getconf','GNU_LIBC_VERSION'],capture_output=True,text=True,check=True).stdout.strip()
     return ['Linux x86_64 with '+libc+' or newer, an X11 display and system fonts.',
             'Python '+version+', Tk 8.6, Pillow, SDL and transitive non-glibc libraries are bundled.']
@@ -113,11 +132,12 @@ def package(output,platform='linux',python_runtime=None):
                 if notice.exists():copy_file(notice,stage/'licenses'/(name+'.txt'),inventory)
             if python_runtime:
                 runtime=Path(python_runtime)
-                if not (runtime/'pythonw.exe').exists() or not (runtime/'Lib/tkinter').is_dir():raise EditorError('Windows Python runtime must include pythonw.exe and Lib/tkinter.')
+                if not all((runtime/name).is_file() for name in ('python.exe','pythonw.exe')) or not all((runtime/name).is_dir() for name in ('Lib/tkinter','Lib/site-packages/PIL')):
+                    raise EditorError('Windows Python runtime must include python.exe, pythonw.exe, Lib/tkinter and Lib/site-packages/PIL.')
                 # The supplied full installation (including Pillow and its
                 # license) is explicit input; embeddable Python has no Tk.
                 shutil.copytree(runtime,stage/'runtime')
-            (stage/'ConstructionKit.cmd').write_text('@echo off\r\ncd /d "%~dp0"\r\nif exist runtime\\pythonw.exe (\r\n start "" runtime\\pythonw.exe BtechPort.pyw\r\n) else (\r\n py -3 BtechPort.pyw\r\n)\r\n')
+            write_launchers(stage,'windows')
             requirements=['Windows 10/11 x64; SDL DLLs are bundled.',
                           'Bundled full Python installation supplied by the packager.' if python_runtime else 'Install Python 3.10+ with Tk; install Pillow for image import/export. No Python runtime was supplied.',
                           'Cross-build/Wine checks do not establish native Windows GUI verification.']
@@ -125,7 +145,11 @@ def package(output,platform='linux',python_runtime=None):
         for manifest in sorted((stage/'examples').glob('*/project.json')):
             doc=ProjectDocument(manifest.parent,ROOT/'build/btp-project');reports.append(asset_report(doc))
         (stage/'ASSETS.json').write_text(json.dumps(reports,indent=2)+'\n')
-        (stage/'START-HERE.txt').write_text('BattleTech Construction Kit\n\nRun '+('ConstructionKit' if platform=='linux' else 'ConstructionKit.cmd')+' to open the launcher.\n\n'+'\n'.join(requirements)+'\n\nOriginal CHI assets are not included. Beacon demo and Vehicle lab run independently.\nSource and build instructions: README.md; licenses: LICENSE and licenses/.\n')
+        cli='Author' if platform=='linux' else 'Author.cmd'
+        (stage/'START-HERE.txt').write_text('BattleTech Construction Kit\n\nRun '+('ConstructionKit' if platform=='linux' else 'ConstructionKit.cmd')+' to open the launcher.\n\n'+'\n'.join(requirements)+'\n\nOriginal CHI assets are not included. Beacon demo and Vehicle lab run independently.\nSource and build instructions: README.md; licenses: LICENSE and licenses/.\n\n'
+            +'Offline authoring CLI: '+cli+' capabilities\n'+cli+' recipe list\n'
+            +'Recipes and one-command generate/check/play: docs/CAMPAIGN_RECIPES.md\n'
+            +'External AI applications use the same JSON CLI or explicitly opened local editor session. No account, model or network is required.\n')
         report=dict(platform=platform,requirements=requirements,files=[])
         origins={str(Path(v['path']).relative_to(stage)):v['source'] for v in inventory}
         for path in sorted(stage.rglob('*')):

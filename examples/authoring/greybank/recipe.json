@@ -1,0 +1,13 @@
+{
+  "format": "btp-greybank-recipe-v1",
+  "package_id": "greybank-dispatch",
+  "title": "BattleTech - Greybank Dispatch",
+  "starting_credits": 5000,
+  "repair_cost": 100,
+  "assault_reward": 4000,
+  "recovery_reward": 4000,
+  "defence_reward": 3000,
+  "escort_reward": 4000,
+  "defence_rounds": 5,
+  "seeds": [11223583, 2213581]
+}

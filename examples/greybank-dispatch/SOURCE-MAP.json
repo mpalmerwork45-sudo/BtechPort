@@ -1,0 +1,4821 @@
+{
+  "format": "btp-source-map-v1",
+  "objects": [
+    {
+      "section": "manifest",
+      "collection": "scripts",
+      "id": "recovery:verify",
+      "file": "source/manifest.json",
+      "field_path": "$.scripts[0]",
+      "runtime_file": "project.json"
+    },
+    {
+      "section": "content",
+      "collection": "ammunition",
+      "id": "workshop:sky-round",
+      "file": "content/ammunition/workshop-sky-round-358964bf3f.json",
+      "field_path": "$[0]",
+      "runtime_file": "content.json"
+    },
+    {
+      "section": "content",
+      "collection": "ammunition",
+      "id": "chi:ammo-machine_gun-1",
+      "file": "content/ammunition/chi-ammo-machine_gun-1-58616f036a.json",
+      "field_path": "$[0]",
+      "runtime_file": "content.json"
+    },
+    {
+      "section": "content",
+      "collection": "ammunition",
+      "id": "chi:ammo-lrm15-10",
+      "file": "content/ammunition/chi-ammo-lrm15-10-da5f621dc6.json",
+      "field_path": "$[0]",
+      "runtime_file": "content.json"
+    },
+    {
+      "section": "content",
+      "collection": "ammunition",
+      "id": "chi:ammo-srm4-6",
+      "file": "content/ammunition/chi-ammo-srm4-6-e54c83f622.json",
+      "field_path": "$[0]",
+      "runtime_file": "content.json"
+    },
+    {
+      "section": "content",
+      "collection": "presentations",
+      "id": "workshop:biped",
+      "file": "content/presentations/workshop-biped-a25863fab3.json",
+      "field_path": "$[0]",
+      "runtime_file": "content.json"
+    },
+    {
+      "section": "content",
+      "collection": "presentations",
+      "id": "workshop:reverse-leg",
+      "file": "content/presentations/workshop-reverse-leg-6810549cd5.json",
+      "field_path": "$[0]",
+      "runtime_file": "content.json"
+    },
+    {
+      "section": "content",
+      "collection": "presentations",
+      "id": "chi:red-stinger",
+      "file": "content/presentations/chi-red-stinger-02c8ee3732.json",
+      "field_path": "$[0]",
+      "runtime_file": "content.json"
+    },
+    {
+      "section": "content",
+      "collection": "presentations",
+      "id": "chi:locust",
+      "file": "content/presentations/chi-locust-46c29479e7.json",
+      "field_path": "$[0]",
+      "runtime_file": "content.json"
+    },
+    {
+      "section": "content",
+      "collection": "presentations",
+      "id": "vehicles:skulker-view",
+      "file": "content/presentations/vehicles-skulker-view-e7a4120c83.json",
+      "field_path": "$[0]",
+      "runtime_file": "content.json"
+    },
+    {
+      "section": "content",
+      "collection": "presentations",
+      "id": "vehicles:galleon-view",
+      "file": "content/presentations/vehicles-galleon-view-f0a3b15f08.json",
+      "field_path": "$[0]",
+      "runtime_file": "content.json"
+    },
+    {
+      "section": "content",
+      "collection": "weapons",
+      "id": "workshop:ember-beam",
+      "file": "content/weapons/workshop-ember-beam-f618d485d2.json",
+      "field_path": "$[0]",
+      "runtime_file": "content.json"
+    },
+    {
+      "section": "content",
+      "collection": "weapons",
+      "id": "workshop:cool-beam",
+      "file": "content/weapons/workshop-cool-beam-4bf3d57a8a.json",
+      "field_path": "$[0]",
+      "runtime_file": "content.json"
+    },
+    {
+      "section": "content",
+      "collection": "weapons",
+      "id": "workshop:sky-lance",
+      "file": "content/weapons/workshop-sky-lance-15c05cb039.json",
+      "field_path": "$[0]",
+      "runtime_file": "content.json"
+    },
+    {
+      "section": "content",
+      "collection": "weapons",
+      "id": "chi:weapon-medium_laser-0",
+      "file": "content/weapons/chi-weapon-medium_laser-0-0668b5a96d.json",
+      "field_path": "$[0]",
+      "runtime_file": "content.json"
+    },
+    {
+      "section": "content",
+      "collection": "weapons",
+      "id": "chi:weapon-large_laser-0",
+      "file": "content/weapons/chi-weapon-large_laser-0-b53bf40357.json",
+      "field_path": "$[0]",
+      "runtime_file": "content.json"
+    },
+    {
+      "section": "content",
+      "collection": "weapons",
+      "id": "chi:weapon-machine_gun-1",
+      "file": "content/weapons/chi-weapon-machine_gun-1-f8d8993b19.json",
+      "field_path": "$[0]",
+      "runtime_file": "content.json"
+    },
+    {
+      "section": "content",
+      "collection": "weapons",
+      "id": "chi:weapon-lrm15-10",
+      "file": "content/weapons/chi-weapon-lrm15-10-74771736c3.json",
+      "field_path": "$[0]",
+      "runtime_file": "content.json"
+    },
+    {
+      "section": "content",
+      "collection": "weapons",
+      "id": "chi:weapon-srm4-6",
+      "file": "content/weapons/chi-weapon-srm4-6-af282a9c0b.json",
+      "field_path": "$[0]",
+      "runtime_file": "content.json"
+    },
+    {
+      "section": "content",
+      "collection": "weapons",
+      "id": "vehicles:weapon-7",
+      "file": "content/weapons/vehicles-weapon-7-fa2b6274e1.json",
+      "field_path": "$[0]",
+      "runtime_file": "content.json"
+    },
+    {
+      "section": "content",
+      "collection": "weapons",
+      "id": "vehicles:weapon-4",
+      "file": "content/weapons/vehicles-weapon-4-87d416acfd.json",
+      "field_path": "$[0]",
+      "runtime_file": "content.json"
+    },
+    {
+      "section": "content",
+      "collection": "mechs",
+      "id": "workshop:rook",
+      "file": "content/mechs/workshop-rook-a566662395.json",
+      "field_path": "$[0]",
+      "runtime_file": "content.json"
+    },
+    {
+      "section": "content",
+      "collection": "mechs",
+      "id": "workshop:kite",
+      "file": "content/mechs/workshop-kite-f39a0da51a.json",
+      "field_path": "$[0]",
+      "runtime_file": "content.json"
+    },
+    {
+      "section": "content",
+      "collection": "mechs",
+      "id": "chi-expanded:phoenix-hawk-pxh-1",
+      "file": "content/mechs/chi-expanded-phoenix-hawk-pxh-1-6f0dd1e90a.json",
+      "field_path": "$[0]",
+      "runtime_file": "content.json"
+    },
+    {
+      "section": "content",
+      "collection": "mechs",
+      "id": "chi-expanded:trebuchet-tbt-5n",
+      "file": "content/mechs/chi-expanded-trebuchet-tbt-5n-303898b45f.json",
+      "field_path": "$[0]",
+      "runtime_file": "content.json"
+    },
+    {
+      "section": "content",
+      "collection": "mechs",
+      "id": "chi-expanded:jenner-jr7-d",
+      "file": "content/mechs/chi-expanded-jenner-jr7-d-f729e3d494.json",
+      "field_path": "$[0]",
+      "runtime_file": "content.json"
+    },
+    {
+      "section": "content",
+      "collection": "mechs",
+      "id": "vehicles:skulker",
+      "file": "content/mechs/vehicles-skulker-a27451a4ac.json",
+      "field_path": "$[0]",
+      "runtime_file": "content.json"
+    },
+    {
+      "section": "content",
+      "collection": "mechs",
+      "id": "vehicles:galleon",
+      "file": "content/mechs/vehicles-galleon-bfe495c13d.json",
+      "field_path": "$[0]",
+      "runtime_file": "content.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "frontier:grass",
+      "file": "adventure/tiles/frontier-grass-a774393957.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "frontier:road",
+      "file": "adventure/tiles/frontier-road-ac71a7c3ff.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "frontier:roof",
+      "file": "adventure/tiles/frontier-roof-7449f4e03f.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "frontier:door",
+      "file": "adventure/tiles/frontier-door-9db682024d.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "frontier:forest",
+      "file": "adventure/tiles/frontier-forest-44378d89e6.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "frontier:water",
+      "file": "adventure/tiles/frontier-water-8fdf9ee8e6.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-1",
+      "file": "adventure/tiles/relay-contract-tile-1-f8a41ad222.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-2",
+      "file": "adventure/tiles/relay-contract-tile-2-c24d10bf23.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-3",
+      "file": "adventure/tiles/relay-contract-tile-3-ae4aa063ba.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-4",
+      "file": "adventure/tiles/relay-contract-tile-4-258172d7dd.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-5",
+      "file": "adventure/tiles/relay-contract-tile-5-cd752f8820.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-6",
+      "file": "adventure/tiles/relay-contract-tile-6-0da1971b46.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-7",
+      "file": "adventure/tiles/relay-contract-tile-7-2ebbffae0b.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-8",
+      "file": "adventure/tiles/relay-contract-tile-8-0b0d3ffa9f.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-9",
+      "file": "adventure/tiles/relay-contract-tile-9-7ab553a971.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-10",
+      "file": "adventure/tiles/relay-contract-tile-10-1114a29b1c.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-11",
+      "file": "adventure/tiles/relay-contract-tile-11-43d5c7fba2.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-12",
+      "file": "adventure/tiles/relay-contract-tile-12-9567628e75.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-13",
+      "file": "adventure/tiles/relay-contract-tile-13-306882bfa2.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-14",
+      "file": "adventure/tiles/relay-contract-tile-14-290482480d.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-15",
+      "file": "adventure/tiles/relay-contract-tile-15-651daca57c.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-16",
+      "file": "adventure/tiles/relay-contract-tile-16-f086d1cdff.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-17",
+      "file": "adventure/tiles/relay-contract-tile-17-2f013be25d.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-18",
+      "file": "adventure/tiles/relay-contract-tile-18-1bbd82ae75.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-19",
+      "file": "adventure/tiles/relay-contract-tile-19-e382fc2dc3.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-20",
+      "file": "adventure/tiles/relay-contract-tile-20-0e50661fbd.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-21",
+      "file": "adventure/tiles/relay-contract-tile-21-b0fafce0a7.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-22",
+      "file": "adventure/tiles/relay-contract-tile-22-5b00247d0e.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-23",
+      "file": "adventure/tiles/relay-contract-tile-23-562068f12a.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-24",
+      "file": "adventure/tiles/relay-contract-tile-24-19233ef775.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-25",
+      "file": "adventure/tiles/relay-contract-tile-25-96309de66b.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-26",
+      "file": "adventure/tiles/relay-contract-tile-26-ee09538c62.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-27",
+      "file": "adventure/tiles/relay-contract-tile-27-5af3dd6789.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-28",
+      "file": "adventure/tiles/relay-contract-tile-28-9e1286fe10.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-29",
+      "file": "adventure/tiles/relay-contract-tile-29-fa51450bb9.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-30",
+      "file": "adventure/tiles/relay-contract-tile-30-8c0acc5f57.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-31",
+      "file": "adventure/tiles/relay-contract-tile-31-574c088853.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-32",
+      "file": "adventure/tiles/relay-contract-tile-32-09c15a3d9a.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-33",
+      "file": "adventure/tiles/relay-contract-tile-33-e391190e16.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-34",
+      "file": "adventure/tiles/relay-contract-tile-34-968f3c1dbc.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-35",
+      "file": "adventure/tiles/relay-contract-tile-35-ad92c1b62d.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-36",
+      "file": "adventure/tiles/relay-contract-tile-36-b955dd3c70.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-37",
+      "file": "adventure/tiles/relay-contract-tile-37-c41171cf87.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-38",
+      "file": "adventure/tiles/relay-contract-tile-38-889393196a.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-39",
+      "file": "adventure/tiles/relay-contract-tile-39-f2fec49a0f.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-40",
+      "file": "adventure/tiles/relay-contract-tile-40-72535c4ede.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-41",
+      "file": "adventure/tiles/relay-contract-tile-41-988daefaef.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-42",
+      "file": "adventure/tiles/relay-contract-tile-42-8c8c1c4000.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-43",
+      "file": "adventure/tiles/relay-contract-tile-43-3e588ef500.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-44",
+      "file": "adventure/tiles/relay-contract-tile-44-ac93e36af8.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-45",
+      "file": "adventure/tiles/relay-contract-tile-45-3946d30a72.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-46",
+      "file": "adventure/tiles/relay-contract-tile-46-a3ee84e496.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-47",
+      "file": "adventure/tiles/relay-contract-tile-47-d296c0ad25.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-48",
+      "file": "adventure/tiles/relay-contract-tile-48-d6e9646839.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-49",
+      "file": "adventure/tiles/relay-contract-tile-49-7a87a74861.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-50",
+      "file": "adventure/tiles/relay-contract-tile-50-44818c20b8.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-51",
+      "file": "adventure/tiles/relay-contract-tile-51-0caaaa6839.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-52",
+      "file": "adventure/tiles/relay-contract-tile-52-0e0840e35b.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-53",
+      "file": "adventure/tiles/relay-contract-tile-53-56d76cfa09.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-54",
+      "file": "adventure/tiles/relay-contract-tile-54-342b0f0035.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-55",
+      "file": "adventure/tiles/relay-contract-tile-55-bf9cf98ffb.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-56",
+      "file": "adventure/tiles/relay-contract-tile-56-91a50667db.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-57",
+      "file": "adventure/tiles/relay-contract-tile-57-6b997167d8.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-58",
+      "file": "adventure/tiles/relay-contract-tile-58-9f1ed4d4d2.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-59",
+      "file": "adventure/tiles/relay-contract-tile-59-4aa6698f54.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-60",
+      "file": "adventure/tiles/relay-contract-tile-60-8f69dde695.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-61",
+      "file": "adventure/tiles/relay-contract-tile-61-54ccb284d6.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-62",
+      "file": "adventure/tiles/relay-contract-tile-62-2dc56431de.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-63",
+      "file": "adventure/tiles/relay-contract-tile-63-dee03339ce.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-64",
+      "file": "adventure/tiles/relay-contract-tile-64-004d1225e8.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-65",
+      "file": "adventure/tiles/relay-contract-tile-65-0dcbe4d6fb.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "relay-contract:tile-66",
+      "file": "adventure/tiles/relay-contract-tile-66-78227c8644.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "recovery:grass",
+      "file": "adventure/tiles/recovery-grass-55f813281d.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "recovery:road",
+      "file": "adventure/tiles/recovery-road-0c17172112.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "recovery:pad",
+      "file": "adventure/tiles/recovery-pad-c3386aa5be.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "cairn:grass",
+      "file": "adventure/tiles/cairn-grass-0e2b65d933.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "cairn:road",
+      "file": "adventure/tiles/cairn-road-0969ce63f5.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "cairn:pad",
+      "file": "adventure/tiles/cairn-pad-761d8c6dfb.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "cairn:wall",
+      "file": "adventure/tiles/cairn-wall-ee8fa6761a.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-1",
+      "file": "adventure/tiles/greybank-dispatch-tile-1-69e73c3445.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-2",
+      "file": "adventure/tiles/greybank-dispatch-tile-2-1661629044.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-3",
+      "file": "adventure/tiles/greybank-dispatch-tile-3-fbc0953679.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-4",
+      "file": "adventure/tiles/greybank-dispatch-tile-4-a84b7c6f2e.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-5",
+      "file": "adventure/tiles/greybank-dispatch-tile-5-4cb2ad4ca6.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-6",
+      "file": "adventure/tiles/greybank-dispatch-tile-6-4316aae930.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-7",
+      "file": "adventure/tiles/greybank-dispatch-tile-7-8c8e9148fc.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-8",
+      "file": "adventure/tiles/greybank-dispatch-tile-8-068a6dd6f4.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-9",
+      "file": "adventure/tiles/greybank-dispatch-tile-9-cdae99763c.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-10",
+      "file": "adventure/tiles/greybank-dispatch-tile-10-fb3289cf45.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-11",
+      "file": "adventure/tiles/greybank-dispatch-tile-11-f59a44e2cd.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-12",
+      "file": "adventure/tiles/greybank-dispatch-tile-12-c6683c67cd.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-13",
+      "file": "adventure/tiles/greybank-dispatch-tile-13-eea68227c4.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-14",
+      "file": "adventure/tiles/greybank-dispatch-tile-14-9a71a4a327.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-15",
+      "file": "adventure/tiles/greybank-dispatch-tile-15-93a0a102dc.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-16",
+      "file": "adventure/tiles/greybank-dispatch-tile-16-037bd32d1c.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-17",
+      "file": "adventure/tiles/greybank-dispatch-tile-17-64d0e2f808.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-18",
+      "file": "adventure/tiles/greybank-dispatch-tile-18-d2bc5fed5c.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-19",
+      "file": "adventure/tiles/greybank-dispatch-tile-19-d7b5b94e33.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-20",
+      "file": "adventure/tiles/greybank-dispatch-tile-20-7aa39d43e9.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-21",
+      "file": "adventure/tiles/greybank-dispatch-tile-21-e7ebf17392.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-22",
+      "file": "adventure/tiles/greybank-dispatch-tile-22-07b68042c9.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-23",
+      "file": "adventure/tiles/greybank-dispatch-tile-23-3ff1d86136.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-24",
+      "file": "adventure/tiles/greybank-dispatch-tile-24-5f1e10291b.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-25",
+      "file": "adventure/tiles/greybank-dispatch-tile-25-a290520745.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-26",
+      "file": "adventure/tiles/greybank-dispatch-tile-26-58ed0bb29d.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-27",
+      "file": "adventure/tiles/greybank-dispatch-tile-27-5f4c914fc2.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-28",
+      "file": "adventure/tiles/greybank-dispatch-tile-28-48c839c3f4.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-29",
+      "file": "adventure/tiles/greybank-dispatch-tile-29-d2d71e7b4f.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-30",
+      "file": "adventure/tiles/greybank-dispatch-tile-30-87c5969267.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-31",
+      "file": "adventure/tiles/greybank-dispatch-tile-31-b2f5f73029.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-32",
+      "file": "adventure/tiles/greybank-dispatch-tile-32-c6bb326dc7.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-33",
+      "file": "adventure/tiles/greybank-dispatch-tile-33-e3f1850c3d.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-34",
+      "file": "adventure/tiles/greybank-dispatch-tile-34-a1095f49e5.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-35",
+      "file": "adventure/tiles/greybank-dispatch-tile-35-b17cc9cd88.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-36",
+      "file": "adventure/tiles/greybank-dispatch-tile-36-1ad10be280.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-37",
+      "file": "adventure/tiles/greybank-dispatch-tile-37-a8bb12e33c.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-38",
+      "file": "adventure/tiles/greybank-dispatch-tile-38-20f2ee97bc.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-39",
+      "file": "adventure/tiles/greybank-dispatch-tile-39-b1ab589e4e.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-40",
+      "file": "adventure/tiles/greybank-dispatch-tile-40-3bf88e0674.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-41",
+      "file": "adventure/tiles/greybank-dispatch-tile-41-99aa2dd35d.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-42",
+      "file": "adventure/tiles/greybank-dispatch-tile-42-0b35456f55.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-43",
+      "file": "adventure/tiles/greybank-dispatch-tile-43-305d2ec98f.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-44",
+      "file": "adventure/tiles/greybank-dispatch-tile-44-ef00cf6d16.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-45",
+      "file": "adventure/tiles/greybank-dispatch-tile-45-9b70311557.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-46",
+      "file": "adventure/tiles/greybank-dispatch-tile-46-3da3ce38f0.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-47",
+      "file": "adventure/tiles/greybank-dispatch-tile-47-d749a90dbe.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-48",
+      "file": "adventure/tiles/greybank-dispatch-tile-48-eda5fb2801.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-49",
+      "file": "adventure/tiles/greybank-dispatch-tile-49-85ccbed8bd.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-50",
+      "file": "adventure/tiles/greybank-dispatch-tile-50-8fce6a5c36.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-51",
+      "file": "adventure/tiles/greybank-dispatch-tile-51-fa1eda4087.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-52",
+      "file": "adventure/tiles/greybank-dispatch-tile-52-e89eadc949.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-53",
+      "file": "adventure/tiles/greybank-dispatch-tile-53-563c77f1d1.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-54",
+      "file": "adventure/tiles/greybank-dispatch-tile-54-08826c41df.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-55",
+      "file": "adventure/tiles/greybank-dispatch-tile-55-93c287c4e6.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-56",
+      "file": "adventure/tiles/greybank-dispatch-tile-56-b44c1a1294.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-57",
+      "file": "adventure/tiles/greybank-dispatch-tile-57-c91090c162.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-58",
+      "file": "adventure/tiles/greybank-dispatch-tile-58-f19608afd1.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-59",
+      "file": "adventure/tiles/greybank-dispatch-tile-59-a63569f7a7.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-60",
+      "file": "adventure/tiles/greybank-dispatch-tile-60-1d63aa56ed.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-61",
+      "file": "adventure/tiles/greybank-dispatch-tile-61-8561659c10.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-62",
+      "file": "adventure/tiles/greybank-dispatch-tile-62-5a92e5bf7a.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-63",
+      "file": "adventure/tiles/greybank-dispatch-tile-63-623cd1cd8b.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-64",
+      "file": "adventure/tiles/greybank-dispatch-tile-64-9965ffb437.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-65",
+      "file": "adventure/tiles/greybank-dispatch-tile-65-f4d1a288d7.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-66",
+      "file": "adventure/tiles/greybank-dispatch-tile-66-42b82ffdbd.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-67",
+      "file": "adventure/tiles/greybank-dispatch-tile-67-703f451aad.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-68",
+      "file": "adventure/tiles/greybank-dispatch-tile-68-e57b4dab6a.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-69",
+      "file": "adventure/tiles/greybank-dispatch-tile-69-2197a4235c.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-70",
+      "file": "adventure/tiles/greybank-dispatch-tile-70-48a19a2b0a.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-71",
+      "file": "adventure/tiles/greybank-dispatch-tile-71-6cb39c20a9.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-72",
+      "file": "adventure/tiles/greybank-dispatch-tile-72-e0d747fbe0.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-73",
+      "file": "adventure/tiles/greybank-dispatch-tile-73-4a0078947d.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-74",
+      "file": "adventure/tiles/greybank-dispatch-tile-74-86c4cc61b9.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-75",
+      "file": "adventure/tiles/greybank-dispatch-tile-75-e44ef6f9d6.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-76",
+      "file": "adventure/tiles/greybank-dispatch-tile-76-9583692bc5.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-77",
+      "file": "adventure/tiles/greybank-dispatch-tile-77-518be0fb28.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-78",
+      "file": "adventure/tiles/greybank-dispatch-tile-78-996f5567d3.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-79",
+      "file": "adventure/tiles/greybank-dispatch-tile-79-c4a824d12a.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-80",
+      "file": "adventure/tiles/greybank-dispatch-tile-80-5c5e4227b4.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-81",
+      "file": "adventure/tiles/greybank-dispatch-tile-81-a588ea49ab.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-82",
+      "file": "adventure/tiles/greybank-dispatch-tile-82-2e0be204b5.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-83",
+      "file": "adventure/tiles/greybank-dispatch-tile-83-ff5d2338a4.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-84",
+      "file": "adventure/tiles/greybank-dispatch-tile-84-97dc1e788c.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-85",
+      "file": "adventure/tiles/greybank-dispatch-tile-85-f2d856ab61.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-86",
+      "file": "adventure/tiles/greybank-dispatch-tile-86-908afb9ee3.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-87",
+      "file": "adventure/tiles/greybank-dispatch-tile-87-906c0b0e1e.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-88",
+      "file": "adventure/tiles/greybank-dispatch-tile-88-08667affe4.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-89",
+      "file": "adventure/tiles/greybank-dispatch-tile-89-b78ca69e8d.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-90",
+      "file": "adventure/tiles/greybank-dispatch-tile-90-7c63687058.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-91",
+      "file": "adventure/tiles/greybank-dispatch-tile-91-fb27fdd589.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-92",
+      "file": "adventure/tiles/greybank-dispatch-tile-92-ea070b2449.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-93",
+      "file": "adventure/tiles/greybank-dispatch-tile-93-340242092c.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-94",
+      "file": "adventure/tiles/greybank-dispatch-tile-94-947eab6454.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-95",
+      "file": "adventure/tiles/greybank-dispatch-tile-95-c5dbe31f91.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-96",
+      "file": "adventure/tiles/greybank-dispatch-tile-96-1e7d37c1a1.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-97",
+      "file": "adventure/tiles/greybank-dispatch-tile-97-8f023c2c80.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-98",
+      "file": "adventure/tiles/greybank-dispatch-tile-98-a430121685.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-99",
+      "file": "adventure/tiles/greybank-dispatch-tile-99-51fbc941d5.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-100",
+      "file": "adventure/tiles/greybank-dispatch-tile-100-1610c80c1a.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-101",
+      "file": "adventure/tiles/greybank-dispatch-tile-101-a670477f92.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-102",
+      "file": "adventure/tiles/greybank-dispatch-tile-102-630e985183.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-103",
+      "file": "adventure/tiles/greybank-dispatch-tile-103-cb3522bac2.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-104",
+      "file": "adventure/tiles/greybank-dispatch-tile-104-6a78f7dc93.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-105",
+      "file": "adventure/tiles/greybank-dispatch-tile-105-9f6c565393.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-106",
+      "file": "adventure/tiles/greybank-dispatch-tile-106-9a4233c9e0.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-107",
+      "file": "adventure/tiles/greybank-dispatch-tile-107-4963b80932.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-108",
+      "file": "adventure/tiles/greybank-dispatch-tile-108-a14738b6ee.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-109",
+      "file": "adventure/tiles/greybank-dispatch-tile-109-c8b4e7e90d.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-110",
+      "file": "adventure/tiles/greybank-dispatch-tile-110-382e8d7f5d.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-111",
+      "file": "adventure/tiles/greybank-dispatch-tile-111-d7f3490576.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-112",
+      "file": "adventure/tiles/greybank-dispatch-tile-112-ec26c3a7e2.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-113",
+      "file": "adventure/tiles/greybank-dispatch-tile-113-5426925374.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-114",
+      "file": "adventure/tiles/greybank-dispatch-tile-114-63e967bbef.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-115",
+      "file": "adventure/tiles/greybank-dispatch-tile-115-b753c36b12.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-116",
+      "file": "adventure/tiles/greybank-dispatch-tile-116-dc4a713027.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-117",
+      "file": "adventure/tiles/greybank-dispatch-tile-117-8157bb22c5.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-118",
+      "file": "adventure/tiles/greybank-dispatch-tile-118-dbfe303d6f.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-119",
+      "file": "adventure/tiles/greybank-dispatch-tile-119-2148c7f4fc.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-120",
+      "file": "adventure/tiles/greybank-dispatch-tile-120-9798a1e559.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-121",
+      "file": "adventure/tiles/greybank-dispatch-tile-121-4679df9838.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-122",
+      "file": "adventure/tiles/greybank-dispatch-tile-122-94db6d1397.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-123",
+      "file": "adventure/tiles/greybank-dispatch-tile-123-0adf4d23cf.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-124",
+      "file": "adventure/tiles/greybank-dispatch-tile-124-4b712e5d34.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-125",
+      "file": "adventure/tiles/greybank-dispatch-tile-125-43fea58779.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-126",
+      "file": "adventure/tiles/greybank-dispatch-tile-126-6deb3ee0a2.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-127",
+      "file": "adventure/tiles/greybank-dispatch-tile-127-22aba32c11.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-128",
+      "file": "adventure/tiles/greybank-dispatch-tile-128-18da368be0.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-129",
+      "file": "adventure/tiles/greybank-dispatch-tile-129-42bc47a397.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-130",
+      "file": "adventure/tiles/greybank-dispatch-tile-130-8230b169b4.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-131",
+      "file": "adventure/tiles/greybank-dispatch-tile-131-a4c0aa1eb8.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-132",
+      "file": "adventure/tiles/greybank-dispatch-tile-132-615c0482ff.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-133",
+      "file": "adventure/tiles/greybank-dispatch-tile-133-645a7fd852.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-134",
+      "file": "adventure/tiles/greybank-dispatch-tile-134-3605098f6d.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-135",
+      "file": "adventure/tiles/greybank-dispatch-tile-135-019fc76e54.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-136",
+      "file": "adventure/tiles/greybank-dispatch-tile-136-559f16308c.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-137",
+      "file": "adventure/tiles/greybank-dispatch-tile-137-a827ab78dd.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-138",
+      "file": "adventure/tiles/greybank-dispatch-tile-138-aa7fd38558.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-139",
+      "file": "adventure/tiles/greybank-dispatch-tile-139-36f6b3d87e.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "tiles",
+      "id": "greybank-dispatch:tile-140",
+      "file": "adventure/tiles/greybank-dispatch-tile-140-069380675d.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "maps",
+      "id": "relay:town",
+      "file": "adventure/maps/relay-town-17339f611c.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "maps",
+      "id": "relay:field",
+      "file": "adventure/maps/relay-field-aa3a14566d.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "maps",
+      "id": "recovery:valley",
+      "file": "adventure/maps/recovery-valley-e1409be844.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "maps",
+      "id": "cairn:relay",
+      "file": "adventure/maps/cairn-relay-5a2afd476f.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "maps",
+      "id": "cairn:pass",
+      "file": "adventure/maps/cairn-pass-96cf8b3e90.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "people",
+      "id": "relay:rowan",
+      "file": "adventure/people/relay-rowan-37dbd95093.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "people",
+      "id": "relay:mira",
+      "file": "adventure/people/relay-mira-b33824ab97.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "shops",
+      "id": "relay:stock",
+      "file": "adventure/shops/relay-stock-da3d42a8f7.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "encounters",
+      "id": "relay:raider",
+      "file": "adventure/encounters/relay-raider-3995711fc2.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "encounters",
+      "id": "recovery:raider",
+      "file": "adventure/encounters/recovery-raider-4d4273c4e1.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "encounters",
+      "id": "cairn:defence",
+      "file": "adventure/encounters/cairn-defence-2d489a7342.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "encounters",
+      "id": "cairn:escort",
+      "file": "adventure/encounters/cairn-escort-39edac0370.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "relay:end",
+      "file": "adventure/events/relay-end-0f41c0749a.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "relay:to-field",
+      "file": "adventure/events/relay-to-field-a4b7994336.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "relay:to-town",
+      "file": "adventure/events/relay-to-town-285db2581a.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "relay:challenge",
+      "file": "adventure/events/relay-challenge-5474bd0166.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "relay:challenge-offer",
+      "file": "adventure/events/relay-challenge-offer-33ce3360e5.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "relay:battle",
+      "file": "adventure/events/relay-battle-d1001db297.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "relay:clear-text",
+      "file": "adventure/events/relay-clear-text-4d029f9ef8.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "relay:retreated",
+      "file": "adventure/events/relay-retreated-16e20d8e0c.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "relay:unavailable",
+      "file": "adventure/events/relay-unavailable-60c9645ea2.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "relay:workshop",
+      "file": "adventure/events/relay-workshop-17c7441f53.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "relay:shop",
+      "file": "adventure/events/relay-shop-4ed9402f27.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "relay:repair",
+      "file": "adventure/events/relay-repair-785938133d.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "relay:repaired",
+      "file": "adventure/events/relay-repaired-8e622231cf.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "relay:no-funds",
+      "file": "adventure/events/relay-no-funds-beb4ba1fc5.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "relay:no-work",
+      "file": "adventure/events/relay-no-work-f4276a57d8.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "recovery:end",
+      "file": "adventure/events/recovery-end-849be1a736.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "recovery:briefing",
+      "file": "adventure/events/recovery-briefing-4d6fc58ce7.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "recovery:error",
+      "file": "adventure/events/recovery-error-36c67ac30a.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "recovery:collect-west",
+      "file": "adventure/events/recovery-collect-west-2ac80203f2.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "recovery:collect-east",
+      "file": "adventure/events/recovery-collect-east-9b128a9d12.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "recovery:count-data",
+      "file": "adventure/events/recovery-count-data-7e8b17138d.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "recovery:collected",
+      "file": "adventure/events/recovery-collected-90069837f8.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "recovery:one-cache",
+      "file": "adventure/events/recovery-one-cache-d1713c427e.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "recovery:two-caches",
+      "file": "adventure/events/recovery-two-caches-cab6636fc5.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "recovery:survey",
+      "file": "adventure/events/recovery-survey-07f328e9e6.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "recovery:survey-complete",
+      "file": "adventure/events/recovery-survey-complete-4783edd52a.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "recovery:survey-message",
+      "file": "adventure/events/recovery-survey-message-29a61ceaea.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "recovery:pad-enter",
+      "file": "adventure/events/recovery-pad-enter-e9adbc1050.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "recovery:pad-leave",
+      "file": "adventure/events/recovery-pad-leave-f859e24d9e.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "recovery:extract-check",
+      "file": "adventure/events/recovery-extract-check-72e1393ef7.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "recovery:not-ready",
+      "file": "adventure/events/recovery-not-ready-fbf9c7f71f.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "recovery:lua-check",
+      "file": "adventure/events/recovery-lua-check-1b33b03326.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "recovery:extract-complete",
+      "file": "adventure/events/recovery-extract-complete-ea8e19506e.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "recovery:payment",
+      "file": "adventure/events/recovery-payment-e892af00d2.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "recovery:success",
+      "file": "adventure/events/recovery-success-6410883746.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "recovery:abandon",
+      "file": "adventure/events/recovery-abandon-0cbe1c0239.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "recovery:abandoned",
+      "file": "adventure/events/recovery-abandoned-690f63527d.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "recovery:raider-choice",
+      "file": "adventure/events/recovery-raider-choice-f71d6fa199.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "recovery:battle",
+      "file": "adventure/events/recovery-battle-7f13fac8a6.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "recovery:raider-win",
+      "file": "adventure/events/recovery-raider-win-eaa1ce6395.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "recovery:raider-retreat",
+      "file": "adventure/events/recovery-raider-retreat-c33d97a4a6.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "cairn:end",
+      "file": "adventure/events/cairn-end-23a5a7c3c0.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "cairn:error",
+      "file": "adventure/events/cairn-error-bcf7aed213.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "cairn:defence-active",
+      "file": "adventure/events/cairn-defence-active-7ee725191d.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "cairn:defence-battle",
+      "file": "adventure/events/cairn-defence-battle-f9a4d81b37.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "cairn:defence-start",
+      "file": "adventure/events/cairn-defence-start-654857bab6.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "cairn:incoming",
+      "file": "adventure/events/cairn-incoming-bdee4ea3d0.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "cairn:reinforce",
+      "file": "adventure/events/cairn-reinforce-dd056d81de.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "cairn:blocked-wave",
+      "file": "adventure/events/cairn-blocked-wave-98afed3997.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "cairn:retry-wave",
+      "file": "adventure/events/cairn-retry-wave-010cb9e7b3.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "cairn:defence-death",
+      "file": "adventure/events/cairn-defence-death-fa13f3deaa.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "cairn:combat-loss",
+      "file": "adventure/events/cairn-combat-loss-1467e130c7.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "cairn:defence-done",
+      "file": "adventure/events/cairn-defence-done-1cd4408df8.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "cairn:defence-complete",
+      "file": "adventure/events/cairn-defence-complete-47ed6e758e.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "cairn:defence-pay",
+      "file": "adventure/events/cairn-defence-pay-c8a9b7c05c.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "cairn:defence-failed",
+      "file": "adventure/events/cairn-defence-failed-2e5cfa55a4.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "cairn:defence-loss",
+      "file": "adventure/events/cairn-defence-loss-0d0f15c782.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "cairn:escort-active",
+      "file": "adventure/events/cairn-escort-active-453a4a5e2b.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "cairn:escort-battle",
+      "file": "adventure/events/cairn-escort-battle-735f92d345.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "cairn:escort-start",
+      "file": "adventure/events/cairn-escort-start-808a4e345c.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "cairn:escort-incoming",
+      "file": "adventure/events/cairn-escort-incoming-d1efa8f8b0.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "cairn:escort-reinforce",
+      "file": "adventure/events/cairn-escort-reinforce-77b24bead8.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "cairn:escort-blocked",
+      "file": "adventure/events/cairn-escort-blocked-f2a08443a7.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "cairn:escort-retry",
+      "file": "adventure/events/cairn-escort-retry-2d60f167d2.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "cairn:transport-death",
+      "file": "adventure/events/cairn-transport-death-873a12183e.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "cairn:transport-arrived",
+      "file": "adventure/events/cairn-transport-arrived-257c241128.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "cairn:escort-done",
+      "file": "adventure/events/cairn-escort-done-645198c434.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "cairn:escort-complete",
+      "file": "adventure/events/cairn-escort-complete-a4ef9c7881.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "cairn:escort-pay",
+      "file": "adventure/events/cairn-escort-pay-91e0cd1204.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "cairn:escort-failed",
+      "file": "adventure/events/cairn-escort-failed-d2ad10c466.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "cairn:escort-loss",
+      "file": "adventure/events/cairn-escort-loss-0ca48b4524.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "dispatch:welcome",
+      "file": "adventure/events/dispatch-welcome-5721018c2b.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "dispatch:error",
+      "file": "adventure/events/dispatch-error-b5f0bc51d4.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "dispatch:see-office",
+      "file": "adventure/events/dispatch-see-office-e0bd79ac83.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "dispatch:office",
+      "file": "adventure/events/dispatch-office-ccd84d7831.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "dispatch:office-one",
+      "file": "adventure/events/dispatch-office-one-6f11d475ed.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "dispatch:office-two",
+      "file": "adventure/events/dispatch-office-two-1e976c3063.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "dispatch:office-three",
+      "file": "adventure/events/dispatch-office-three-e379023e8e.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "dispatch:office-four",
+      "file": "adventure/events/dispatch-office-four-e1f87467c3.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "dispatch:offer",
+      "file": "adventure/events/dispatch-offer-56ee80f34c.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "dispatch:accept-assault",
+      "file": "adventure/events/dispatch-accept-assault-973d69f1a3.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "dispatch:assault-active",
+      "file": "adventure/events/dispatch-assault-active-3a52d8f8a8.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "dispatch:assault-brief",
+      "file": "adventure/events/dispatch-assault-brief-5826b46c5a.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "dispatch:accept-recovery",
+      "file": "adventure/events/dispatch-accept-recovery-5455525605.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "dispatch:collect-active",
+      "file": "adventure/events/dispatch-collect-active-b99536cc39.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "dispatch:survey-active",
+      "file": "adventure/events/dispatch-survey-active-0253ef5f0c.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "dispatch:extract-active",
+      "file": "adventure/events/dispatch-extract-active-fbb2d98914.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "dispatch:recovery-brief",
+      "file": "adventure/events/dispatch-recovery-brief-c61906d821.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "dispatch:road",
+      "file": "adventure/events/dispatch-road-24146ef176.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "dispatch:road-recovery",
+      "file": "adventure/events/dispatch-road-recovery-ab9a571c91.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "dispatch:to-recovery",
+      "file": "adventure/events/dispatch-to-recovery-8ff1d507e2.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "relay:won",
+      "file": "adventure/events/relay-won-21757c71c4.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "dispatch:assault-pay",
+      "file": "adventure/events/dispatch-assault-pay-76eb35c616.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "dispatch:assault-paid",
+      "file": "adventure/events/dispatch-assault-paid-3ee9367075.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "relay:lost",
+      "file": "adventure/events/relay-lost-38f0024b69.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "dispatch:recovery-paid",
+      "file": "adventure/events/dispatch-recovery-paid-81d3c184d4.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "dispatch:defence-offer",
+      "file": "adventure/events/dispatch-defence-offer-fa9dad780f.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "dispatch:defence-paid",
+      "file": "adventure/events/dispatch-defence-paid-3f7437c95f.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "dispatch:defence-report",
+      "file": "adventure/events/dispatch-defence-report-f62d533793.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "dispatch:escort-offer",
+      "file": "adventure/events/dispatch-escort-offer-58238640a6.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "dispatch:escort-paid",
+      "file": "adventure/events/dispatch-escort-paid-0ede299624.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "dispatch:escort-report",
+      "file": "adventure/events/dispatch-escort-report-10cdb86ce0.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "dispatch:debrief",
+      "file": "adventure/events/dispatch-debrief-9fd88800aa.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "events",
+      "id": "dispatch:finish",
+      "file": "adventure/events/dispatch-finish-6c0b254e65.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "objectives",
+      "id": "relay:contract",
+      "file": "adventure/objectives/relay-contract-5c8fbba39a.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "objectives",
+      "id": "recovery:collect",
+      "file": "adventure/objectives/recovery-collect-ef41a4b8f7.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "objectives",
+      "id": "recovery:survey",
+      "file": "adventure/objectives/recovery-survey-07f328e9e6.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "objectives",
+      "id": "recovery:extract",
+      "file": "adventure/objectives/recovery-extract-7378683894.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "objectives",
+      "id": "cairn:defend",
+      "file": "adventure/objectives/cairn-defend-60ff2fec3d.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "objectives",
+      "id": "cairn:escort",
+      "file": "adventure/objectives/cairn-escort-39edac0370.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "regions",
+      "id": "recovery:landing-pad",
+      "file": "adventure/regions/recovery-landing-pad-71c3d90de6.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "regions",
+      "id": "recovery:west-cache",
+      "file": "adventure/regions/recovery-west-cache-d1c754aef4.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "regions",
+      "id": "recovery:east-cache",
+      "file": "adventure/regions/recovery-east-cache-ff4e08be47.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "regions",
+      "id": "recovery:relay",
+      "file": "adventure/regions/recovery-relay-e2dbffef79.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "regions",
+      "id": "recovery:withdrawal",
+      "file": "adventure/regions/recovery-withdrawal-50291e49f6.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "variables",
+      "id": "recovery:data",
+      "file": "adventure/variables/recovery-data-39d022cf35.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "variables",
+      "id": "recovery:visits",
+      "file": "adventure/variables/recovery-visits-3988994e81.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "variables",
+      "id": "recovery:departures",
+      "file": "adventure/variables/recovery-departures-be7f757a50.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "variables",
+      "id": "recovery:surveyed",
+      "file": "adventure/variables/recovery-surveyed-8a066d7613.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "variables",
+      "id": "dispatch:stage",
+      "file": "adventure/variables/dispatch-stage-c5f8c4d6fd.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "combat_groups",
+      "id": "cairn:relay-vehicle",
+      "file": "adventure/combat_groups/cairn-relay-vehicle-a57422b546.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "combat_groups",
+      "id": "cairn:relay-guard",
+      "file": "adventure/combat_groups/cairn-relay-guard-6bdd4c489a.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "combat_groups",
+      "id": "cairn:raider-wave",
+      "file": "adventure/combat_groups/cairn-raider-wave-9d13b9148a.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "combat_groups",
+      "id": "cairn:transport",
+      "file": "adventure/combat_groups/cairn-transport-964c6a8245.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "combat_groups",
+      "id": "cairn:ambush",
+      "file": "adventure/combat_groups/cairn-ambush-781a200045.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "combat_hooks",
+      "id": "cairn:relay-briefing",
+      "file": "adventure/combat_hooks/cairn-relay-briefing-123c7d0f91.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "combat_hooks",
+      "id": "cairn:relay-wave",
+      "file": "adventure/combat_hooks/cairn-relay-wave-fd7b9924a9.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "combat_hooks",
+      "id": "cairn:relay-retry",
+      "file": "adventure/combat_hooks/cairn-relay-retry-817ffa6cd6.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "combat_hooks",
+      "id": "cairn:relay-casualty",
+      "file": "adventure/combat_hooks/cairn-relay-casualty-c1fc9fdf4c.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "combat_hooks",
+      "id": "cairn:relay-timer",
+      "file": "adventure/combat_hooks/cairn-relay-timer-72090d8a8a.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "combat_hooks",
+      "id": "cairn:pass-briefing",
+      "file": "adventure/combat_hooks/cairn-pass-briefing-7ed1e311d2.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "combat_hooks",
+      "id": "cairn:pass-wave",
+      "file": "adventure/combat_hooks/cairn-pass-wave-7a7e8daf53.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "combat_hooks",
+      "id": "cairn:pass-retry",
+      "file": "adventure/combat_hooks/cairn-pass-retry-9f6df19554.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "combat_hooks",
+      "id": "cairn:pass-casualty",
+      "file": "adventure/combat_hooks/cairn-pass-casualty-7e5c055cb2.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "adventure",
+      "collection": "combat_hooks",
+      "id": "cairn:pass-arrival",
+      "file": "adventure/combat_hooks/cairn-pass-arrival-7a631723f3.json",
+      "field_path": "$[0]",
+      "runtime_file": "adventure.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-1",
+      "file": "art/images/relay-contract-image-1-3c8917b092.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-2",
+      "file": "art/images/relay-contract-image-2-b1a48045fe.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-3",
+      "file": "art/images/relay-contract-image-3-b0353763ef.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-4",
+      "file": "art/images/relay-contract-image-4-47b897157e.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-5",
+      "file": "art/images/relay-contract-image-5-2803d2ea52.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-6",
+      "file": "art/images/relay-contract-image-6-33ebee0007.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-7",
+      "file": "art/images/relay-contract-image-7-9b6b3e0eac.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-8",
+      "file": "art/images/relay-contract-image-8-dddbbe1c57.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-9",
+      "file": "art/images/relay-contract-image-9-7d245d500a.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-10",
+      "file": "art/images/relay-contract-image-10-7d2e3c913e.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-11",
+      "file": "art/images/relay-contract-image-11-02ae41e523.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-12",
+      "file": "art/images/relay-contract-image-12-6ebd44ab3b.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-13",
+      "file": "art/images/relay-contract-image-13-664ff9bbcd.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-14",
+      "file": "art/images/relay-contract-image-14-2fe56664f8.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-15",
+      "file": "art/images/relay-contract-image-15-f2a57aed04.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-16",
+      "file": "art/images/relay-contract-image-16-47f846af9b.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-17",
+      "file": "art/images/relay-contract-image-17-940275185b.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-18",
+      "file": "art/images/relay-contract-image-18-34cb9b900d.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-19",
+      "file": "art/images/relay-contract-image-19-6c88a9adff.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-20",
+      "file": "art/images/relay-contract-image-20-71d1fd1b9a.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-21",
+      "file": "art/images/relay-contract-image-21-788974a6ea.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-22",
+      "file": "art/images/relay-contract-image-22-fc7aad65f8.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-23",
+      "file": "art/images/relay-contract-image-23-b41faef244.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-24",
+      "file": "art/images/relay-contract-image-24-eeb4abe0ee.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-25",
+      "file": "art/images/relay-contract-image-25-e2b6170bd8.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-26",
+      "file": "art/images/relay-contract-image-26-9f0f604b16.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-27",
+      "file": "art/images/relay-contract-image-27-2d11a4ebfa.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-28",
+      "file": "art/images/relay-contract-image-28-294180d472.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-29",
+      "file": "art/images/relay-contract-image-29-20fb62b76a.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-30",
+      "file": "art/images/relay-contract-image-30-e7982cb405.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-31",
+      "file": "art/images/relay-contract-image-31-ea20524644.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-32",
+      "file": "art/images/relay-contract-image-32-c1613bc438.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-33",
+      "file": "art/images/relay-contract-image-33-1e8f6f8657.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-34",
+      "file": "art/images/relay-contract-image-34-8e64157547.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-35",
+      "file": "art/images/relay-contract-image-35-abb52268b3.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-36",
+      "file": "art/images/relay-contract-image-36-aaec23d864.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-37",
+      "file": "art/images/relay-contract-image-37-d560033bf5.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-38",
+      "file": "art/images/relay-contract-image-38-4dc2a7ecae.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-39",
+      "file": "art/images/relay-contract-image-39-088d5205d1.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-40",
+      "file": "art/images/relay-contract-image-40-5a04c5f606.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-41",
+      "file": "art/images/relay-contract-image-41-fc27879b5b.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-42",
+      "file": "art/images/relay-contract-image-42-b1ec92bb0a.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-43",
+      "file": "art/images/relay-contract-image-43-299bbed8dc.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-44",
+      "file": "art/images/relay-contract-image-44-6768ce0790.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-45",
+      "file": "art/images/relay-contract-image-45-a75f8aa3d6.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-46",
+      "file": "art/images/relay-contract-image-46-64ddc2f08f.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-47",
+      "file": "art/images/relay-contract-image-47-b951c41d4f.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-48",
+      "file": "art/images/relay-contract-image-48-60eb4865a8.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-49",
+      "file": "art/images/relay-contract-image-49-46abbdba66.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-50",
+      "file": "art/images/relay-contract-image-50-812d55639a.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-51",
+      "file": "art/images/relay-contract-image-51-c01b2c21dd.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-52",
+      "file": "art/images/relay-contract-image-52-eaa5143707.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-53",
+      "file": "art/images/relay-contract-image-53-94183998e9.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-54",
+      "file": "art/images/relay-contract-image-54-7dba1e6a25.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-55",
+      "file": "art/images/relay-contract-image-55-fe7e76d20e.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-56",
+      "file": "art/images/relay-contract-image-56-1b5a19009c.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-57",
+      "file": "art/images/relay-contract-image-57-b601bcb001.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-58",
+      "file": "art/images/relay-contract-image-58-093f73654e.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-59",
+      "file": "art/images/relay-contract-image-59-b725fdfa01.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-60",
+      "file": "art/images/relay-contract-image-60-a91b89bf0b.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-61",
+      "file": "art/images/relay-contract-image-61-e4c53d0059.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-62",
+      "file": "art/images/relay-contract-image-62-3ed6b61a4b.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-63",
+      "file": "art/images/relay-contract-image-63-32cf28f22b.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-64",
+      "file": "art/images/relay-contract-image-64-f03bc27a4f.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-65",
+      "file": "art/images/relay-contract-image-65-bd143bb3b7.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "relay-contract:image-66",
+      "file": "art/images/relay-contract-image-66-7e8f6910a7.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "vehicles:skulker-sprite",
+      "file": "art/images/vehicles-skulker-sprite-221632a4f2.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "vehicles:galleon-sprite",
+      "file": "art/images/vehicles-galleon-sprite-cff459de09.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-1",
+      "file": "art/images/greybank-dispatch-image-1-72fab31733.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-2",
+      "file": "art/images/greybank-dispatch-image-2-a6062081a0.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-3",
+      "file": "art/images/greybank-dispatch-image-3-31a8dc16b2.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-4",
+      "file": "art/images/greybank-dispatch-image-4-8574e8679e.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-5",
+      "file": "art/images/greybank-dispatch-image-5-938d7ab4fe.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-6",
+      "file": "art/images/greybank-dispatch-image-6-f916fcee32.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-7",
+      "file": "art/images/greybank-dispatch-image-7-5d94e9269a.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-8",
+      "file": "art/images/greybank-dispatch-image-8-cdcb99c79d.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-9",
+      "file": "art/images/greybank-dispatch-image-9-a3f25789ed.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-10",
+      "file": "art/images/greybank-dispatch-image-10-f2b555e15d.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-11",
+      "file": "art/images/greybank-dispatch-image-11-349dab85e0.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-12",
+      "file": "art/images/greybank-dispatch-image-12-740bfd8883.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-13",
+      "file": "art/images/greybank-dispatch-image-13-2e0bc1a7f5.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-14",
+      "file": "art/images/greybank-dispatch-image-14-f26a9a91f2.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-15",
+      "file": "art/images/greybank-dispatch-image-15-950db7d2c4.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-16",
+      "file": "art/images/greybank-dispatch-image-16-c2f5162cef.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-17",
+      "file": "art/images/greybank-dispatch-image-17-c78c07b00e.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-18",
+      "file": "art/images/greybank-dispatch-image-18-a97f2f17b2.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-19",
+      "file": "art/images/greybank-dispatch-image-19-f405f8f7c4.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-20",
+      "file": "art/images/greybank-dispatch-image-20-105d707f5e.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-21",
+      "file": "art/images/greybank-dispatch-image-21-69a9af621c.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-22",
+      "file": "art/images/greybank-dispatch-image-22-6e83ca6633.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-23",
+      "file": "art/images/greybank-dispatch-image-23-357aaa7833.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-24",
+      "file": "art/images/greybank-dispatch-image-24-f7327289d4.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-25",
+      "file": "art/images/greybank-dispatch-image-25-7dcc4ff215.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-26",
+      "file": "art/images/greybank-dispatch-image-26-7906e0700c.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-27",
+      "file": "art/images/greybank-dispatch-image-27-6fcc2146f9.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-28",
+      "file": "art/images/greybank-dispatch-image-28-a8b5d39222.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-29",
+      "file": "art/images/greybank-dispatch-image-29-7f95c1d90a.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-30",
+      "file": "art/images/greybank-dispatch-image-30-933185daa4.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-31",
+      "file": "art/images/greybank-dispatch-image-31-6d588a2345.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-32",
+      "file": "art/images/greybank-dispatch-image-32-2a991d9470.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-33",
+      "file": "art/images/greybank-dispatch-image-33-21ba7ba08e.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-34",
+      "file": "art/images/greybank-dispatch-image-34-521e1859a5.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-35",
+      "file": "art/images/greybank-dispatch-image-35-4e0082d4d2.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-36",
+      "file": "art/images/greybank-dispatch-image-36-8741825dd3.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-37",
+      "file": "art/images/greybank-dispatch-image-37-6be36935bd.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-38",
+      "file": "art/images/greybank-dispatch-image-38-d8f1065b18.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-39",
+      "file": "art/images/greybank-dispatch-image-39-071386061b.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-40",
+      "file": "art/images/greybank-dispatch-image-40-f248e69065.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-41",
+      "file": "art/images/greybank-dispatch-image-41-df51c62018.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-42",
+      "file": "art/images/greybank-dispatch-image-42-c1c7949448.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-43",
+      "file": "art/images/greybank-dispatch-image-43-9e681df142.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-44",
+      "file": "art/images/greybank-dispatch-image-44-5928707f47.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-45",
+      "file": "art/images/greybank-dispatch-image-45-13f7692c90.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-46",
+      "file": "art/images/greybank-dispatch-image-46-d6f9d2b115.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-47",
+      "file": "art/images/greybank-dispatch-image-47-1ad5d8729c.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-48",
+      "file": "art/images/greybank-dispatch-image-48-4a06df75f3.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-49",
+      "file": "art/images/greybank-dispatch-image-49-5b3b8e6842.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-50",
+      "file": "art/images/greybank-dispatch-image-50-a8d8a68692.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-51",
+      "file": "art/images/greybank-dispatch-image-51-e2723d0ce6.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-52",
+      "file": "art/images/greybank-dispatch-image-52-92d15962d0.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-53",
+      "file": "art/images/greybank-dispatch-image-53-4461012a9b.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-54",
+      "file": "art/images/greybank-dispatch-image-54-98b8894112.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-55",
+      "file": "art/images/greybank-dispatch-image-55-bd0bb8282c.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-56",
+      "file": "art/images/greybank-dispatch-image-56-32e7c7fd37.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-57",
+      "file": "art/images/greybank-dispatch-image-57-a972f76507.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-58",
+      "file": "art/images/greybank-dispatch-image-58-dc46c1e8f2.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-59",
+      "file": "art/images/greybank-dispatch-image-59-113c54de67.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-60",
+      "file": "art/images/greybank-dispatch-image-60-fc132cd5ee.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-61",
+      "file": "art/images/greybank-dispatch-image-61-930be5504b.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-62",
+      "file": "art/images/greybank-dispatch-image-62-2c53665322.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-63",
+      "file": "art/images/greybank-dispatch-image-63-7606a8651c.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-64",
+      "file": "art/images/greybank-dispatch-image-64-7f724d8265.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-65",
+      "file": "art/images/greybank-dispatch-image-65-b85e86952c.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-66",
+      "file": "art/images/greybank-dispatch-image-66-0e68263716.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-67",
+      "file": "art/images/greybank-dispatch-image-67-f5932d7c16.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-68",
+      "file": "art/images/greybank-dispatch-image-68-f4b84fcdf6.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-69",
+      "file": "art/images/greybank-dispatch-image-69-555fa8e590.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-70",
+      "file": "art/images/greybank-dispatch-image-70-990e76539a.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-71",
+      "file": "art/images/greybank-dispatch-image-71-4ccc414f20.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-72",
+      "file": "art/images/greybank-dispatch-image-72-c6fec97483.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-73",
+      "file": "art/images/greybank-dispatch-image-73-97ab596db7.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-74",
+      "file": "art/images/greybank-dispatch-image-74-6fad1847cf.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-75",
+      "file": "art/images/greybank-dispatch-image-75-0620b7707f.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-76",
+      "file": "art/images/greybank-dispatch-image-76-0855c47c1c.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-77",
+      "file": "art/images/greybank-dispatch-image-77-5b559547ba.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-78",
+      "file": "art/images/greybank-dispatch-image-78-0f85ebfda9.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-79",
+      "file": "art/images/greybank-dispatch-image-79-fe832839fb.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-80",
+      "file": "art/images/greybank-dispatch-image-80-cb77b2d7d0.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-81",
+      "file": "art/images/greybank-dispatch-image-81-15682263f7.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-82",
+      "file": "art/images/greybank-dispatch-image-82-ad6974346c.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-83",
+      "file": "art/images/greybank-dispatch-image-83-8b78a9cbf0.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-84",
+      "file": "art/images/greybank-dispatch-image-84-a159c476fc.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-85",
+      "file": "art/images/greybank-dispatch-image-85-1d4a677657.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-86",
+      "file": "art/images/greybank-dispatch-image-86-fde25c981b.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-87",
+      "file": "art/images/greybank-dispatch-image-87-1a496c5e5a.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-88",
+      "file": "art/images/greybank-dispatch-image-88-4c77751858.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-89",
+      "file": "art/images/greybank-dispatch-image-89-09186f76ef.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-90",
+      "file": "art/images/greybank-dispatch-image-90-b65e31adda.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-91",
+      "file": "art/images/greybank-dispatch-image-91-d6f3aadff8.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-92",
+      "file": "art/images/greybank-dispatch-image-92-2510dbc179.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-93",
+      "file": "art/images/greybank-dispatch-image-93-0346f725ea.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-94",
+      "file": "art/images/greybank-dispatch-image-94-5ee7bb137e.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-95",
+      "file": "art/images/greybank-dispatch-image-95-b689bf0dfd.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-96",
+      "file": "art/images/greybank-dispatch-image-96-47a8deaf17.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-97",
+      "file": "art/images/greybank-dispatch-image-97-c3a5405530.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-98",
+      "file": "art/images/greybank-dispatch-image-98-a6454b15dd.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-99",
+      "file": "art/images/greybank-dispatch-image-99-841e2a6ac6.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-100",
+      "file": "art/images/greybank-dispatch-image-100-c3044ac304.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-101",
+      "file": "art/images/greybank-dispatch-image-101-2f43c50b50.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-102",
+      "file": "art/images/greybank-dispatch-image-102-19e8c9c209.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-103",
+      "file": "art/images/greybank-dispatch-image-103-776ca532cc.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-104",
+      "file": "art/images/greybank-dispatch-image-104-31204feedf.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-105",
+      "file": "art/images/greybank-dispatch-image-105-28767e2b7c.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-106",
+      "file": "art/images/greybank-dispatch-image-106-b936fe6358.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-107",
+      "file": "art/images/greybank-dispatch-image-107-f800bdaf3e.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-108",
+      "file": "art/images/greybank-dispatch-image-108-55e786bfbe.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-109",
+      "file": "art/images/greybank-dispatch-image-109-6359cbd138.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-110",
+      "file": "art/images/greybank-dispatch-image-110-7d92407422.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-111",
+      "file": "art/images/greybank-dispatch-image-111-417863e86b.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-112",
+      "file": "art/images/greybank-dispatch-image-112-ed3e837d99.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-113",
+      "file": "art/images/greybank-dispatch-image-113-1e9f1b4802.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-114",
+      "file": "art/images/greybank-dispatch-image-114-ef3315f848.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-115",
+      "file": "art/images/greybank-dispatch-image-115-c1a7ff56cd.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-116",
+      "file": "art/images/greybank-dispatch-image-116-1ad7e27892.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-117",
+      "file": "art/images/greybank-dispatch-image-117-6a49266f6c.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-118",
+      "file": "art/images/greybank-dispatch-image-118-ff77417f3f.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-119",
+      "file": "art/images/greybank-dispatch-image-119-367cf4830d.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-120",
+      "file": "art/images/greybank-dispatch-image-120-edab0db1ae.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-121",
+      "file": "art/images/greybank-dispatch-image-121-11521aa1da.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-122",
+      "file": "art/images/greybank-dispatch-image-122-2817dc17b7.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-123",
+      "file": "art/images/greybank-dispatch-image-123-debcdc6e57.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-124",
+      "file": "art/images/greybank-dispatch-image-124-89aeb2e02d.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-125",
+      "file": "art/images/greybank-dispatch-image-125-748a8bdfc5.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-126",
+      "file": "art/images/greybank-dispatch-image-126-0b3910c7f9.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-127",
+      "file": "art/images/greybank-dispatch-image-127-343d4a47c9.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-128",
+      "file": "art/images/greybank-dispatch-image-128-eb421255e2.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-129",
+      "file": "art/images/greybank-dispatch-image-129-ddc4f3f62c.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-130",
+      "file": "art/images/greybank-dispatch-image-130-cd3d0ec2e0.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-131",
+      "file": "art/images/greybank-dispatch-image-131-94dc2f0e9f.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-132",
+      "file": "art/images/greybank-dispatch-image-132-349afd1ddb.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-133",
+      "file": "art/images/greybank-dispatch-image-133-16eb9ae0bb.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-134",
+      "file": "art/images/greybank-dispatch-image-134-e458f9d45c.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-135",
+      "file": "art/images/greybank-dispatch-image-135-daa8ff4def.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-136",
+      "file": "art/images/greybank-dispatch-image-136-ec90335db8.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-137",
+      "file": "art/images/greybank-dispatch-image-137-6d90fe5a90.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-138",
+      "file": "art/images/greybank-dispatch-image-138-4e9368154e.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-139",
+      "file": "art/images/greybank-dispatch-image-139-421f632a15.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    },
+    {
+      "section": "art",
+      "collection": "images",
+      "id": "greybank-dispatch:image-140",
+      "file": "art/images/greybank-dispatch-image-140-a8a32a7dde.json",
+      "field_path": "$[0]",
+      "runtime_file": "graphics.json"
+    }
+  ]
+}

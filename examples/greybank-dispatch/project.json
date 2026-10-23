@@ -1,0 +1,21 @@
+{
+  "adventure": "adventure.json",
+  "assets": [],
+  "content_version": "1.0.0",
+  "definitions": "content.json",
+  "format": "btp-project-v1",
+  "graphics": "graphics.json",
+  "package_id": "greybank-dispatch",
+  "requires": "chi-original-dos-1.03",
+  "rules_profile": "chi:updated-lrm-v1",
+  "save_policy": "strict-content-v1",
+  "schema_version": 1,
+  "scripts": [
+    {
+      "file": "verify.lua",
+      "id": "recovery:verify"
+    }
+  ],
+  "startup": "authored-adventure-v1",
+  "title": "BattleTech - Greybank Dispatch"
+}

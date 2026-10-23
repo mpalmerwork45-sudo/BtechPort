@@ -1,0 +1,1879 @@
+{
+  "tile_names": {
+    "relay-contract:tile-1": "East Single",
+    "relay-contract:tile-2": "Empty",
+    "relay-contract:tile-3": "Roof centre",
+    "relay-contract:tile-4": "Roof S W edge",
+    "relay-contract:tile-5": "Roof N edge",
+    "relay-contract:tile-6": "Roof E edge",
+    "relay-contract:tile-7": "Roof N E edge",
+    "relay-contract:tile-8": "Roof S edge",
+    "relay-contract:tile-9": "Roof E S edge",
+    "relay-contract:tile-10": "Roof W edge",
+    "relay-contract:tile-11": "Roof N W edge",
+    "relay-contract:tile-12": "South Single",
+    "relay-contract:tile-13": "East Single / South Single",
+    "relay-contract:tile-14": "outside / East Single",
+    "relay-contract:tile-15": "South Single / outside",
+    "relay-contract:tile-16": "East Single",
+    "relay-contract:tile-17": "Empty",
+    "relay-contract:tile-18": "Roof centre",
+    "relay-contract:tile-19": "Roof S W edge",
+    "relay-contract:tile-20": "Roof N edge",
+    "relay-contract:tile-21": "Roof E edge",
+    "relay-contract:tile-22": "Roof N E edge",
+    "relay-contract:tile-23": "Roof S edge",
+    "relay-contract:tile-24": "Roof E S edge",
+    "relay-contract:tile-25": "Roof W edge",
+    "relay-contract:tile-26": "Roof N W edge",
+    "relay-contract:tile-27": "South Single",
+    "relay-contract:tile-28": "East Single / South Single",
+    "relay-contract:tile-29": "outside / East Single",
+    "relay-contract:tile-30": "South Single / outside",
+    "relay-contract:tile-31": "Road T-junction - branch north",
+    "relay-contract:tile-32": "Road corner south/west",
+    "relay-contract:tile-33": "Road T-junction - branch west",
+    "relay-contract:tile-34": "Road T-junction - branch south",
+    "relay-contract:tile-35": "Road crossroads",
+    "relay-contract:tile-36": "Road corner north/east",
+    "relay-contract:tile-37": "Road corner east/south",
+    "relay-contract:tile-38": "Road T-junction - branch east",
+    "relay-contract:tile-39": "Road corner west/north",
+    "relay-contract:tile-40": "East Base",
+    "relay-contract:tile-41": "East Top",
+    "relay-contract:tile-42": "South Base",
+    "relay-contract:tile-43": "South Top",
+    "relay-contract:tile-44": "East Base / South Base",
+    "relay-contract:tile-45": "East Top / South Top",
+    "relay-contract:tile-46": "outside / East Base",
+    "relay-contract:tile-47": "outside / East Top",
+    "relay-contract:tile-48": "South Base / outside",
+    "relay-contract:tile-49": "South Top / outside",
+    "relay-contract:tile-50": "Roof E W edge",
+    "relay-contract:tile-51": "Roof S W edge / inner NE",
+    "relay-contract:tile-52": "Roof N E edge / inner SW",
+    "relay-contract:tile-53": "Roof N S edge",
+    "relay-contract:tile-54": "Roof E S edge / inner NW",
+    "relay-contract:tile-55": "Roof N W edge / inner SE",
+    "relay-contract:tile-56": "South Single / East Single",
+    "relay-contract:tile-57": "Roof E W edge",
+    "relay-contract:tile-58": "Roof N E W edge",
+    "relay-contract:tile-59": "Roof E S W edge",
+    "relay-contract:tile-60": "Road isolated",
+    "relay-contract:tile-61": "Road end north",
+    "relay-contract:tile-62": "Road straight east/west",
+    "relay-contract:tile-63": "Road end east",
+    "relay-contract:tile-64": "Road end south",
+    "relay-contract:tile-65": "Road straight north/south",
+    "relay-contract:tile-66": "Road end west",
+    "greybank-dispatch:tile-1": "East Single",
+    "greybank-dispatch:tile-2": "Empty",
+    "greybank-dispatch:tile-3": "Roof S W edge",
+    "greybank-dispatch:tile-4": "Roof N E edge",
+    "greybank-dispatch:tile-5": "Roof E S edge",
+    "greybank-dispatch:tile-6": "Roof N W edge",
+    "greybank-dispatch:tile-7": "South Single",
+    "greybank-dispatch:tile-8": "East Single / South Single",
+    "greybank-dispatch:tile-9": "outside / East Single",
+    "greybank-dispatch:tile-10": "South Single / outside",
+    "greybank-dispatch:tile-11": "East Base",
+    "greybank-dispatch:tile-12": "East Middle",
+    "greybank-dispatch:tile-13": "East Top",
+    "greybank-dispatch:tile-14": "Roof centre",
+    "greybank-dispatch:tile-15": "Roof centre / inner NE",
+    "greybank-dispatch:tile-16": "Roof centre / inner SE NW",
+    "greybank-dispatch:tile-17": "Roof centre / inner NE SE NW",
+    "greybank-dispatch:tile-18": "Roof centre / inner SW NW",
+    "greybank-dispatch:tile-19": "Roof centre / inner NE SW NW",
+    "greybank-dispatch:tile-20": "Roof centre / inner SE SW NW",
+    "greybank-dispatch:tile-21": "Roof centre / inner NE SE SW NW",
+    "greybank-dispatch:tile-22": "Roof centre / inner SE",
+    "greybank-dispatch:tile-23": "Roof centre / inner NE SE",
+    "greybank-dispatch:tile-24": "Roof centre / inner SW",
+    "greybank-dispatch:tile-25": "Roof centre / inner NE SW",
+    "greybank-dispatch:tile-26": "Roof centre / inner SE SW",
+    "greybank-dispatch:tile-27": "Roof centre / inner NE SE SW",
+    "greybank-dispatch:tile-28": "Roof centre / inner NW",
+    "greybank-dispatch:tile-29": "Roof centre / inner NE NW",
+    "greybank-dispatch:tile-30": "Roof E W edge",
+    "greybank-dispatch:tile-31": "Roof N E W edge",
+    "greybank-dispatch:tile-32": "Roof S W edge / inner NE",
+    "greybank-dispatch:tile-33": "Roof N S W edge",
+    "greybank-dispatch:tile-34": "Roof E S W edge",
+    "greybank-dispatch:tile-35": "Roof N E S W edge",
+    "greybank-dispatch:tile-36": "Roof N edge",
+    "greybank-dispatch:tile-37": "Roof N edge / inner SE",
+    "greybank-dispatch:tile-38": "Roof N edge / inner SW",
+    "greybank-dispatch:tile-39": "Roof N edge / inner SE SW",
+    "greybank-dispatch:tile-40": "Roof E edge",
+    "greybank-dispatch:tile-41": "Roof E edge / inner SW NW",
+    "greybank-dispatch:tile-42": "Roof E edge / inner SW",
+    "greybank-dispatch:tile-43": "Roof E edge / inner NW",
+    "greybank-dispatch:tile-44": "Roof N E edge / inner SW",
+    "greybank-dispatch:tile-45": "Roof S edge",
+    "greybank-dispatch:tile-46": "Roof S edge / inner NE",
+    "greybank-dispatch:tile-47": "Roof S edge / inner NW",
+    "greybank-dispatch:tile-48": "Roof S edge / inner NE NW",
+    "greybank-dispatch:tile-49": "Roof N S edge",
+    "greybank-dispatch:tile-50": "Roof E S edge / inner NW",
+    "greybank-dispatch:tile-51": "Roof N E S edge",
+    "greybank-dispatch:tile-52": "Roof W edge",
+    "greybank-dispatch:tile-53": "Roof W edge / inner NE",
+    "greybank-dispatch:tile-54": "Roof W edge / inner SE",
+    "greybank-dispatch:tile-55": "Roof W edge / inner NE SE",
+    "greybank-dispatch:tile-56": "Roof N W edge / inner SE",
+    "greybank-dispatch:tile-57": "South Base",
+    "greybank-dispatch:tile-58": "South Middle",
+    "greybank-dispatch:tile-59": "South Top",
+    "greybank-dispatch:tile-60": "East Single",
+    "greybank-dispatch:tile-61": "Empty",
+    "greybank-dispatch:tile-62": "Roof S W edge",
+    "greybank-dispatch:tile-63": "Roof N E edge",
+    "greybank-dispatch:tile-64": "Roof E S edge",
+    "greybank-dispatch:tile-65": "Roof N W edge",
+    "greybank-dispatch:tile-66": "South Single",
+    "greybank-dispatch:tile-67": "East Single / South Single",
+    "greybank-dispatch:tile-68": "outside / East Single",
+    "greybank-dispatch:tile-69": "South Single / outside",
+    "greybank-dispatch:tile-70": "East Base",
+    "greybank-dispatch:tile-71": "East Middle",
+    "greybank-dispatch:tile-72": "East Top",
+    "greybank-dispatch:tile-73": "Roof centre",
+    "greybank-dispatch:tile-74": "Roof centre / inner NE",
+    "greybank-dispatch:tile-75": "Roof centre / inner SE NW",
+    "greybank-dispatch:tile-76": "Roof centre / inner NE SE NW",
+    "greybank-dispatch:tile-77": "Roof centre / inner SW NW",
+    "greybank-dispatch:tile-78": "Roof centre / inner NE SW NW",
+    "greybank-dispatch:tile-79": "Roof centre / inner SE SW NW",
+    "greybank-dispatch:tile-80": "Roof centre / inner NE SE SW NW",
+    "greybank-dispatch:tile-81": "Roof centre / inner SE",
+    "greybank-dispatch:tile-82": "Roof centre / inner NE SE",
+    "greybank-dispatch:tile-83": "Roof centre / inner SW",
+    "greybank-dispatch:tile-84": "Roof centre / inner NE SW",
+    "greybank-dispatch:tile-85": "Roof centre / inner SE SW",
+    "greybank-dispatch:tile-86": "Roof centre / inner NE SE SW",
+    "greybank-dispatch:tile-87": "Roof centre / inner NW",
+    "greybank-dispatch:tile-88": "Roof centre / inner NE NW",
+    "greybank-dispatch:tile-89": "Roof E W edge",
+    "greybank-dispatch:tile-90": "Roof N E W edge",
+    "greybank-dispatch:tile-91": "Roof S W edge / inner NE",
+    "greybank-dispatch:tile-92": "Roof N S W edge",
+    "greybank-dispatch:tile-93": "Roof E S W edge",
+    "greybank-dispatch:tile-94": "Roof N E S W edge",
+    "greybank-dispatch:tile-95": "Roof N edge",
+    "greybank-dispatch:tile-96": "Roof N edge / inner SE",
+    "greybank-dispatch:tile-97": "Roof N edge / inner SW",
+    "greybank-dispatch:tile-98": "Roof N edge / inner SE SW",
+    "greybank-dispatch:tile-99": "Roof E edge",
+    "greybank-dispatch:tile-100": "Roof E edge / inner SW NW",
+    "greybank-dispatch:tile-101": "Roof E edge / inner SW",
+    "greybank-dispatch:tile-102": "Roof E edge / inner NW",
+    "greybank-dispatch:tile-103": "Roof N E edge / inner SW",
+    "greybank-dispatch:tile-104": "Roof S edge",
+    "greybank-dispatch:tile-105": "Roof S edge / inner NE",
+    "greybank-dispatch:tile-106": "Roof S edge / inner NW",
+    "greybank-dispatch:tile-107": "Roof S edge / inner NE NW",
+    "greybank-dispatch:tile-108": "Roof N S edge",
+    "greybank-dispatch:tile-109": "Roof E S edge / inner NW",
+    "greybank-dispatch:tile-110": "Roof N E S edge",
+    "greybank-dispatch:tile-111": "Roof W edge",
+    "greybank-dispatch:tile-112": "Roof W edge / inner NE",
+    "greybank-dispatch:tile-113": "Roof W edge / inner SE",
+    "greybank-dispatch:tile-114": "Roof W edge / inner NE SE",
+    "greybank-dispatch:tile-115": "Roof N W edge / inner SE",
+    "greybank-dispatch:tile-116": "South Base",
+    "greybank-dispatch:tile-117": "South Middle",
+    "greybank-dispatch:tile-118": "South Top",
+    "greybank-dispatch:tile-119": "Road corner south/west",
+    "greybank-dispatch:tile-120": "Road corner north/east",
+    "greybank-dispatch:tile-121": "Road corner east/south",
+    "greybank-dispatch:tile-122": "Road corner west/north",
+    "greybank-dispatch:tile-123": "Road isolated",
+    "greybank-dispatch:tile-124": "Road end north",
+    "greybank-dispatch:tile-125": "Road straight east/west",
+    "greybank-dispatch:tile-126": "Road T-junction - branch north",
+    "greybank-dispatch:tile-127": "Road T-junction - branch west",
+    "greybank-dispatch:tile-128": "Road T-junction - branch south",
+    "greybank-dispatch:tile-129": "Road crossroads",
+    "greybank-dispatch:tile-130": "Road end east",
+    "greybank-dispatch:tile-131": "Road end south",
+    "greybank-dispatch:tile-132": "Road straight north/south",
+    "greybank-dispatch:tile-133": "Road T-junction - branch east",
+    "greybank-dispatch:tile-134": "Road end west",
+    "greybank-dispatch:tile-135": "East Base / South Base",
+    "greybank-dispatch:tile-136": "East Top / South Top",
+    "greybank-dispatch:tile-137": "outside / East Base",
+    "greybank-dispatch:tile-138": "outside / East Top",
+    "greybank-dispatch:tile-139": "South Base / outside",
+    "greybank-dispatch:tile-140": "South Top / outside"
+  },
+  "tile_sources": {
+    "relay-contract:image-13": {
+      "construction_join": "join|east_single|south_single",
+      "sources": [
+        {
+          "sheet": "package:art",
+          "graphic": "relay-contract:image-1"
+        },
+        {
+          "sheet": "package:art",
+          "graphic": "relay-contract:image-12"
+        }
+      ]
+    },
+    "relay-contract:image-14": {
+      "construction_join": "join|empty|east_single",
+      "sources": [
+        {
+          "sheet": "package:art",
+          "graphic": "relay-contract:image-2"
+        },
+        {
+          "sheet": "package:art",
+          "graphic": "relay-contract:image-1"
+        }
+      ]
+    },
+    "relay-contract:image-15": {
+      "construction_join": "join|south_single|empty",
+      "sources": [
+        {
+          "sheet": "package:art",
+          "graphic": "relay-contract:image-12"
+        },
+        {
+          "sheet": "package:art",
+          "graphic": "relay-contract:image-2"
+        }
+      ]
+    },
+    "relay-contract:image-28": {
+      "construction_join": "join|east_single|south_single",
+      "sources": [
+        {
+          "sheet": "package:art",
+          "graphic": "relay-contract:image-16"
+        },
+        {
+          "sheet": "package:art",
+          "graphic": "relay-contract:image-27"
+        }
+      ]
+    },
+    "relay-contract:image-29": {
+      "construction_join": "join|empty|east_single",
+      "sources": [
+        {
+          "sheet": "package:art",
+          "graphic": "relay-contract:image-17"
+        },
+        {
+          "sheet": "package:art",
+          "graphic": "relay-contract:image-16"
+        }
+      ]
+    },
+    "relay-contract:image-30": {
+      "construction_join": "join|south_single|empty",
+      "sources": [
+        {
+          "sheet": "package:art",
+          "graphic": "relay-contract:image-27"
+        },
+        {
+          "sheet": "package:art",
+          "graphic": "relay-contract:image-17"
+        }
+      ]
+    },
+    "relay-contract:image-44": {
+      "construction_join": "join|east_base|south_base",
+      "sources": [
+        {
+          "sheet": "package:art",
+          "graphic": "relay-contract:image-40"
+        },
+        {
+          "sheet": "package:art",
+          "graphic": "relay-contract:image-42"
+        }
+      ]
+    },
+    "relay-contract:image-45": {
+      "construction_join": "join|east_top|south_top",
+      "sources": [
+        {
+          "sheet": "package:art",
+          "graphic": "relay-contract:image-41"
+        },
+        {
+          "sheet": "package:art",
+          "graphic": "relay-contract:image-43"
+        }
+      ]
+    },
+    "relay-contract:image-46": {
+      "construction_join": "join|empty|east_base",
+      "sources": [
+        {
+          "sheet": "package:art",
+          "graphic": "relay-contract:image-2"
+        },
+        {
+          "sheet": "package:art",
+          "graphic": "relay-contract:image-40"
+        }
+      ]
+    },
+    "relay-contract:image-47": {
+      "construction_join": "join|empty|east_top",
+      "sources": [
+        {
+          "sheet": "package:art",
+          "graphic": "relay-contract:image-2"
+        },
+        {
+          "sheet": "package:art",
+          "graphic": "relay-contract:image-41"
+        }
+      ]
+    },
+    "relay-contract:image-48": {
+      "construction_join": "join|south_base|empty",
+      "sources": [
+        {
+          "sheet": "package:art",
+          "graphic": "relay-contract:image-42"
+        },
+        {
+          "sheet": "package:art",
+          "graphic": "relay-contract:image-2"
+        }
+      ]
+    },
+    "relay-contract:image-49": {
+      "construction_join": "join|south_top|empty",
+      "sources": [
+        {
+          "sheet": "package:art",
+          "graphic": "relay-contract:image-43"
+        },
+        {
+          "sheet": "package:art",
+          "graphic": "relay-contract:image-2"
+        }
+      ]
+    },
+    "relay-contract:image-56": {
+      "construction_join": "join|south_single|east_single",
+      "sources": [
+        {
+          "sheet": "package:art",
+          "graphic": "relay-contract:image-12"
+        },
+        {
+          "sheet": "package:art",
+          "graphic": "relay-contract:image-1"
+        }
+      ]
+    },
+    "greybank-dispatch:image-8": {
+      "construction_join": "join|east_single|south_single",
+      "sources": [
+        {
+          "sheet": "package:art",
+          "graphic": "greybank-dispatch:image-1"
+        },
+        {
+          "sheet": "package:art",
+          "graphic": "greybank-dispatch:image-7"
+        }
+      ]
+    },
+    "greybank-dispatch:image-9": {
+      "construction_join": "join|empty|east_single",
+      "sources": [
+        {
+          "sheet": "package:art",
+          "graphic": "greybank-dispatch:image-2"
+        },
+        {
+          "sheet": "package:art",
+          "graphic": "greybank-dispatch:image-1"
+        }
+      ]
+    },
+    "greybank-dispatch:image-10": {
+      "construction_join": "join|south_single|empty",
+      "sources": [
+        {
+          "sheet": "package:art",
+          "graphic": "greybank-dispatch:image-7"
+        },
+        {
+          "sheet": "package:art",
+          "graphic": "greybank-dispatch:image-2"
+        }
+      ]
+    },
+    "greybank-dispatch:image-67": {
+      "construction_join": "join|east_single|south_single",
+      "sources": [
+        {
+          "sheet": "package:art",
+          "graphic": "greybank-dispatch:image-60"
+        },
+        {
+          "sheet": "package:art",
+          "graphic": "greybank-dispatch:image-66"
+        }
+      ]
+    },
+    "greybank-dispatch:image-68": {
+      "construction_join": "join|empty|east_single",
+      "sources": [
+        {
+          "sheet": "package:art",
+          "graphic": "greybank-dispatch:image-61"
+        },
+        {
+          "sheet": "package:art",
+          "graphic": "greybank-dispatch:image-60"
+        }
+      ]
+    },
+    "greybank-dispatch:image-69": {
+      "construction_join": "join|south_single|empty",
+      "sources": [
+        {
+          "sheet": "package:art",
+          "graphic": "greybank-dispatch:image-66"
+        },
+        {
+          "sheet": "package:art",
+          "graphic": "greybank-dispatch:image-61"
+        }
+      ]
+    },
+    "greybank-dispatch:image-135": {
+      "construction_join": "join|east_base|south_base",
+      "sources": [
+        {
+          "sheet": "package:art",
+          "graphic": "greybank-dispatch:image-11"
+        },
+        {
+          "sheet": "package:art",
+          "graphic": "greybank-dispatch:image-57"
+        }
+      ]
+    },
+    "greybank-dispatch:image-136": {
+      "construction_join": "join|east_top|south_top",
+      "sources": [
+        {
+          "sheet": "package:art",
+          "graphic": "greybank-dispatch:image-13"
+        },
+        {
+          "sheet": "package:art",
+          "graphic": "greybank-dispatch:image-59"
+        }
+      ]
+    },
+    "greybank-dispatch:image-137": {
+      "construction_join": "join|empty|east_base",
+      "sources": [
+        {
+          "sheet": "package:art",
+          "graphic": "greybank-dispatch:image-2"
+        },
+        {
+          "sheet": "package:art",
+          "graphic": "greybank-dispatch:image-11"
+        }
+      ]
+    },
+    "greybank-dispatch:image-138": {
+      "construction_join": "join|empty|east_top",
+      "sources": [
+        {
+          "sheet": "package:art",
+          "graphic": "greybank-dispatch:image-2"
+        },
+        {
+          "sheet": "package:art",
+          "graphic": "greybank-dispatch:image-13"
+        }
+      ]
+    },
+    "greybank-dispatch:image-139": {
+      "construction_join": "join|south_base|empty",
+      "sources": [
+        {
+          "sheet": "package:art",
+          "graphic": "greybank-dispatch:image-57"
+        },
+        {
+          "sheet": "package:art",
+          "graphic": "greybank-dispatch:image-2"
+        }
+      ]
+    },
+    "greybank-dispatch:image-140": {
+      "construction_join": "join|south_top|empty",
+      "sources": [
+        {
+          "sheet": "package:art",
+          "graphic": "greybank-dispatch:image-59"
+        },
+        {
+          "sheet": "package:art",
+          "graphic": "greybank-dispatch:image-2"
+        }
+      ]
+    }
+  },
+  "construction_sets": [
+    {
+      "id": "relay:depot",
+      "name": "Relay depot",
+      "kind": "Building",
+      "footprint": [
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          1
+        ]
+      ],
+      "parts": {
+        "east_single": "relay-contract:tile-1",
+        "empty": "relay-contract:tile-2",
+        "roof_0_0": "relay-contract:tile-3",
+        "roof_12_0": "relay-contract:tile-4",
+        "roof_1_0": "relay-contract:tile-5",
+        "roof_2_0": "relay-contract:tile-6",
+        "roof_3_0": "relay-contract:tile-7",
+        "roof_4_0": "relay-contract:tile-8",
+        "roof_6_0": "relay-contract:tile-9",
+        "roof_8_0": "relay-contract:tile-10",
+        "roof_9_0": "relay-contract:tile-11",
+        "south_single": "relay-contract:tile-12",
+        "join|east_single|south_single": "relay-contract:tile-13",
+        "join|empty|east_single": "relay-contract:tile-14",
+        "join|south_single|empty": "relay-contract:tile-15",
+        "east_base": "relay-contract:tile-40",
+        "east_top": "relay-contract:tile-41",
+        "south_base": "relay-contract:tile-42",
+        "south_top": "relay-contract:tile-43",
+        "join|east_base|south_base": "relay-contract:tile-44",
+        "join|east_top|south_top": "relay-contract:tile-45",
+        "join|empty|east_base": "relay-contract:tile-46",
+        "join|empty|east_top": "relay-contract:tile-47",
+        "join|south_base|empty": "relay-contract:tile-48",
+        "join|south_top|empty": "relay-contract:tile-49",
+        "roof_10_0": "relay-contract:tile-50",
+        "roof_12_1": "relay-contract:tile-51",
+        "roof_3_4": "relay-contract:tile-52",
+        "roof_5_0": "relay-contract:tile-53",
+        "roof_6_8": "relay-contract:tile-54",
+        "roof_9_2": "relay-contract:tile-55",
+        "join|south_single|east_single": "relay-contract:tile-56"
+      },
+      "generated_joins": {
+        "join|east_single|south_single": "2570d33a5a4af6468481d987db71066067d22113eccb62d7dc56973cdf9210c4",
+        "join|empty|east_single": "d7e92ff024317a5e1ff7de43bac1f5bb56c0cf86309eadca1991d61ebce504d5",
+        "join|south_single|empty": "9161bf60968231a3e284acd5c1cec2f0fec9f1d36b540d288ddb9be733084480",
+        "join|east_base|south_base": "c087f525bced07dac4ce039f90b8e36b41b7970b5a3f40a97b9d51dd8ae04737",
+        "join|east_top|south_top": "0f833740b6e2b445ba29151dc6166f566beede11cf2ca1f927c640b56fc82c88",
+        "join|empty|east_base": "52bf9e7a0104bc27a076c1a7b8c41221c39c5983b31818760ef3e4489e575456",
+        "join|empty|east_top": "84c96081ef42953948b1dc9b77929ecfbe7308db6e73e40d4f9789349e36feea",
+        "join|south_base|empty": "e1fcd6475dc5dde6744db37c50fa55f105c6d670e64bd776534e9a3411876642",
+        "join|south_top|empty": "12a2d337dc3280dc963483a453aa581885545ece4d6fd7a398607e682618e734",
+        "join|south_single|east_single": "e9d3d8c4df124d4de3f63502216ae93804610f2eeda2c16c15343c0778b60f8d"
+      }
+    },
+    {
+      "id": "relay:wall",
+      "name": "Compound wall",
+      "kind": "Wall",
+      "footprint": [
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          1
+        ]
+      ],
+      "parts": {
+        "east_single": "relay-contract:tile-16",
+        "empty": "relay-contract:tile-17",
+        "roof_0_0": "relay-contract:tile-18",
+        "roof_12_0": "relay-contract:tile-19",
+        "roof_1_0": "relay-contract:tile-20",
+        "roof_2_0": "relay-contract:tile-21",
+        "roof_3_0": "relay-contract:tile-22",
+        "roof_4_0": "relay-contract:tile-23",
+        "roof_6_0": "relay-contract:tile-24",
+        "roof_8_0": "relay-contract:tile-25",
+        "roof_9_0": "relay-contract:tile-26",
+        "south_single": "relay-contract:tile-27",
+        "join|east_single|south_single": "relay-contract:tile-28",
+        "join|empty|east_single": "relay-contract:tile-29",
+        "join|south_single|empty": "relay-contract:tile-30",
+        "roof_10_0": "relay-contract:tile-57",
+        "roof_11_0": "relay-contract:tile-58",
+        "roof_14_0": "relay-contract:tile-59"
+      },
+      "generated_joins": {
+        "join|east_single|south_single": "0babc5199a2735d6d8fa4c8070d1f0daaf88d59db25e4fe52b73189925c5424e",
+        "join|empty|east_single": "5f413a48cbde5126d56f8f423ca108bc835f03c550ec08b014a40b8f8ac45494",
+        "join|south_single|empty": "d90b91bf65038788b4cfe7477dcf181fa84fecab2ff219df78ca87e68b999aeb"
+      }
+    },
+    {
+      "id": "relay:road",
+      "name": "Depot roads",
+      "kind": "Road",
+      "footprint": [
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          1
+        ]
+      ],
+      "parts": {
+        "road_11": "relay-contract:tile-31",
+        "road_12": "relay-contract:tile-32",
+        "road_13": "relay-contract:tile-33",
+        "road_14": "relay-contract:tile-34",
+        "road_15": "relay-contract:tile-35",
+        "road_3": "relay-contract:tile-36",
+        "road_6": "relay-contract:tile-37",
+        "road_7": "relay-contract:tile-38",
+        "road_9": "relay-contract:tile-39",
+        "road_0": "relay-contract:tile-60",
+        "road_1": "relay-contract:tile-61",
+        "road_10": "relay-contract:tile-62",
+        "road_2": "relay-contract:tile-63",
+        "road_4": "relay-contract:tile-64",
+        "road_5": "relay-contract:tile-65",
+        "road_8": "relay-contract:tile-66"
+      }
+    },
+    {
+      "id": "dispatch:depot",
+      "name": "Dispatch depot",
+      "kind": "Building",
+      "footprint": [
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      "parts": {
+        "east_single": "greybank-dispatch:tile-1",
+        "empty": "greybank-dispatch:tile-2",
+        "roof_12_0": "greybank-dispatch:tile-3",
+        "roof_3_0": "greybank-dispatch:tile-4",
+        "roof_6_0": "greybank-dispatch:tile-5",
+        "roof_9_0": "greybank-dispatch:tile-6",
+        "south_single": "greybank-dispatch:tile-7",
+        "join|east_single|south_single": "greybank-dispatch:tile-8",
+        "join|empty|east_single": "greybank-dispatch:tile-9",
+        "join|south_single|empty": "greybank-dispatch:tile-10",
+        "east_base": "greybank-dispatch:tile-11",
+        "east_middle": "greybank-dispatch:tile-12",
+        "east_top": "greybank-dispatch:tile-13",
+        "roof_0_0": "greybank-dispatch:tile-14",
+        "roof_0_1": "greybank-dispatch:tile-15",
+        "roof_0_10": "greybank-dispatch:tile-16",
+        "roof_0_11": "greybank-dispatch:tile-17",
+        "roof_0_12": "greybank-dispatch:tile-18",
+        "roof_0_13": "greybank-dispatch:tile-19",
+        "roof_0_14": "greybank-dispatch:tile-20",
+        "roof_0_15": "greybank-dispatch:tile-21",
+        "roof_0_2": "greybank-dispatch:tile-22",
+        "roof_0_3": "greybank-dispatch:tile-23",
+        "roof_0_4": "greybank-dispatch:tile-24",
+        "roof_0_5": "greybank-dispatch:tile-25",
+        "roof_0_6": "greybank-dispatch:tile-26",
+        "roof_0_7": "greybank-dispatch:tile-27",
+        "roof_0_8": "greybank-dispatch:tile-28",
+        "roof_0_9": "greybank-dispatch:tile-29",
+        "roof_10_0": "greybank-dispatch:tile-30",
+        "roof_11_0": "greybank-dispatch:tile-31",
+        "roof_12_1": "greybank-dispatch:tile-32",
+        "roof_13_0": "greybank-dispatch:tile-33",
+        "roof_14_0": "greybank-dispatch:tile-34",
+        "roof_15_0": "greybank-dispatch:tile-35",
+        "roof_1_0": "greybank-dispatch:tile-36",
+        "roof_1_2": "greybank-dispatch:tile-37",
+        "roof_1_4": "greybank-dispatch:tile-38",
+        "roof_1_6": "greybank-dispatch:tile-39",
+        "roof_2_0": "greybank-dispatch:tile-40",
+        "roof_2_12": "greybank-dispatch:tile-41",
+        "roof_2_4": "greybank-dispatch:tile-42",
+        "roof_2_8": "greybank-dispatch:tile-43",
+        "roof_3_4": "greybank-dispatch:tile-44",
+        "roof_4_0": "greybank-dispatch:tile-45",
+        "roof_4_1": "greybank-dispatch:tile-46",
+        "roof_4_8": "greybank-dispatch:tile-47",
+        "roof_4_9": "greybank-dispatch:tile-48",
+        "roof_5_0": "greybank-dispatch:tile-49",
+        "roof_6_8": "greybank-dispatch:tile-50",
+        "roof_7_0": "greybank-dispatch:tile-51",
+        "roof_8_0": "greybank-dispatch:tile-52",
+        "roof_8_1": "greybank-dispatch:tile-53",
+        "roof_8_2": "greybank-dispatch:tile-54",
+        "roof_8_3": "greybank-dispatch:tile-55",
+        "roof_9_2": "greybank-dispatch:tile-56",
+        "south_base": "greybank-dispatch:tile-57",
+        "south_middle": "greybank-dispatch:tile-58",
+        "south_top": "greybank-dispatch:tile-59",
+        "join|east_base|south_base": "greybank-dispatch:tile-135",
+        "join|east_top|south_top": "greybank-dispatch:tile-136",
+        "join|empty|east_base": "greybank-dispatch:tile-137",
+        "join|empty|east_top": "greybank-dispatch:tile-138",
+        "join|south_base|empty": "greybank-dispatch:tile-139",
+        "join|south_top|empty": "greybank-dispatch:tile-140"
+      },
+      "generated_joins": {
+        "join|east_single|south_single": "2570d33a5a4af6468481d987db71066067d22113eccb62d7dc56973cdf9210c4",
+        "join|empty|east_single": "d7e92ff024317a5e1ff7de43bac1f5bb56c0cf86309eadca1991d61ebce504d5",
+        "join|south_single|empty": "9161bf60968231a3e284acd5c1cec2f0fec9f1d36b540d288ddb9be733084480",
+        "join|east_base|south_base": "c087f525bced07dac4ce039f90b8e36b41b7970b5a3f40a97b9d51dd8ae04737",
+        "join|east_top|south_top": "0f833740b6e2b445ba29151dc6166f566beede11cf2ca1f927c640b56fc82c88",
+        "join|empty|east_base": "52bf9e7a0104bc27a076c1a7b8c41221c39c5983b31818760ef3e4489e575456",
+        "join|empty|east_top": "84c96081ef42953948b1dc9b77929ecfbe7308db6e73e40d4f9789349e36feea",
+        "join|south_base|empty": "e1fcd6475dc5dde6744db37c50fa55f105c6d670e64bd776534e9a3411876642",
+        "join|south_top|empty": "12a2d337dc3280dc963483a453aa581885545ece4d6fd7a398607e682618e734"
+      }
+    },
+    {
+      "id": "dispatch:barrier",
+      "name": "Dispatch barrier",
+      "kind": "Wall",
+      "footprint": [
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      "parts": {
+        "east_single": "greybank-dispatch:tile-60",
+        "empty": "greybank-dispatch:tile-61",
+        "roof_12_0": "greybank-dispatch:tile-62",
+        "roof_3_0": "greybank-dispatch:tile-63",
+        "roof_6_0": "greybank-dispatch:tile-64",
+        "roof_9_0": "greybank-dispatch:tile-65",
+        "south_single": "greybank-dispatch:tile-66",
+        "join|east_single|south_single": "greybank-dispatch:tile-67",
+        "join|empty|east_single": "greybank-dispatch:tile-68",
+        "join|south_single|empty": "greybank-dispatch:tile-69",
+        "east_base": "greybank-dispatch:tile-70",
+        "east_middle": "greybank-dispatch:tile-71",
+        "east_top": "greybank-dispatch:tile-72",
+        "roof_0_0": "greybank-dispatch:tile-73",
+        "roof_0_1": "greybank-dispatch:tile-74",
+        "roof_0_10": "greybank-dispatch:tile-75",
+        "roof_0_11": "greybank-dispatch:tile-76",
+        "roof_0_12": "greybank-dispatch:tile-77",
+        "roof_0_13": "greybank-dispatch:tile-78",
+        "roof_0_14": "greybank-dispatch:tile-79",
+        "roof_0_15": "greybank-dispatch:tile-80",
+        "roof_0_2": "greybank-dispatch:tile-81",
+        "roof_0_3": "greybank-dispatch:tile-82",
+        "roof_0_4": "greybank-dispatch:tile-83",
+        "roof_0_5": "greybank-dispatch:tile-84",
+        "roof_0_6": "greybank-dispatch:tile-85",
+        "roof_0_7": "greybank-dispatch:tile-86",
+        "roof_0_8": "greybank-dispatch:tile-87",
+        "roof_0_9": "greybank-dispatch:tile-88",
+        "roof_10_0": "greybank-dispatch:tile-89",
+        "roof_11_0": "greybank-dispatch:tile-90",
+        "roof_12_1": "greybank-dispatch:tile-91",
+        "roof_13_0": "greybank-dispatch:tile-92",
+        "roof_14_0": "greybank-dispatch:tile-93",
+        "roof_15_0": "greybank-dispatch:tile-94",
+        "roof_1_0": "greybank-dispatch:tile-95",
+        "roof_1_2": "greybank-dispatch:tile-96",
+        "roof_1_4": "greybank-dispatch:tile-97",
+        "roof_1_6": "greybank-dispatch:tile-98",
+        "roof_2_0": "greybank-dispatch:tile-99",
+        "roof_2_12": "greybank-dispatch:tile-100",
+        "roof_2_4": "greybank-dispatch:tile-101",
+        "roof_2_8": "greybank-dispatch:tile-102",
+        "roof_3_4": "greybank-dispatch:tile-103",
+        "roof_4_0": "greybank-dispatch:tile-104",
+        "roof_4_1": "greybank-dispatch:tile-105",
+        "roof_4_8": "greybank-dispatch:tile-106",
+        "roof_4_9": "greybank-dispatch:tile-107",
+        "roof_5_0": "greybank-dispatch:tile-108",
+        "roof_6_8": "greybank-dispatch:tile-109",
+        "roof_7_0": "greybank-dispatch:tile-110",
+        "roof_8_0": "greybank-dispatch:tile-111",
+        "roof_8_1": "greybank-dispatch:tile-112",
+        "roof_8_2": "greybank-dispatch:tile-113",
+        "roof_8_3": "greybank-dispatch:tile-114",
+        "roof_9_2": "greybank-dispatch:tile-115",
+        "south_base": "greybank-dispatch:tile-116",
+        "south_middle": "greybank-dispatch:tile-117",
+        "south_top": "greybank-dispatch:tile-118"
+      },
+      "generated_joins": {
+        "join|east_single|south_single": "0babc5199a2735d6d8fa4c8070d1f0daaf88d59db25e4fe52b73189925c5424e",
+        "join|empty|east_single": "5f413a48cbde5126d56f8f423ca108bc835f03c550ec08b014a40b8f8ac45494",
+        "join|south_single|empty": "d90b91bf65038788b4cfe7477dcf181fa84fecab2ff219df78ca87e68b999aeb"
+      }
+    },
+    {
+      "id": "dispatch:roads",
+      "name": "Dispatch roads",
+      "kind": "Road",
+      "footprint": [
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      "parts": {
+        "road_12": "greybank-dispatch:tile-119",
+        "road_3": "greybank-dispatch:tile-120",
+        "road_6": "greybank-dispatch:tile-121",
+        "road_9": "greybank-dispatch:tile-122",
+        "road_0": "greybank-dispatch:tile-123",
+        "road_1": "greybank-dispatch:tile-124",
+        "road_10": "greybank-dispatch:tile-125",
+        "road_11": "greybank-dispatch:tile-126",
+        "road_13": "greybank-dispatch:tile-127",
+        "road_14": "greybank-dispatch:tile-128",
+        "road_15": "greybank-dispatch:tile-129",
+        "road_2": "greybank-dispatch:tile-130",
+        "road_4": "greybank-dispatch:tile-131",
+        "road_5": "greybank-dispatch:tile-132",
+        "road_7": "greybank-dispatch:tile-133",
+        "road_8": "greybank-dispatch:tile-134"
+      }
+    }
+  ],
+  "map_constructions": [
+    {
+      "id": "relay:office-building",
+      "name": "Building 1",
+      "map": "relay:town",
+      "kind": "Building",
+      "style": "relay:depot",
+      "datum": 2,
+      "cells": [
+        [
+          10,
+          3,
+          2
+        ],
+        [
+          10,
+          4,
+          2
+        ],
+        [
+          10,
+          5,
+          2
+        ],
+        [
+          10,
+          6,
+          2
+        ],
+        [
+          11,
+          3,
+          2
+        ],
+        [
+          11,
+          4,
+          2
+        ],
+        [
+          11,
+          5,
+          2
+        ],
+        [
+          11,
+          6,
+          2
+        ],
+        [
+          12,
+          3,
+          2
+        ],
+        [
+          12,
+          4,
+          2
+        ],
+        [
+          12,
+          5,
+          2
+        ],
+        [
+          12,
+          6,
+          2
+        ],
+        [
+          13,
+          3,
+          2
+        ],
+        [
+          13,
+          4,
+          2
+        ],
+        [
+          13,
+          5,
+          2
+        ],
+        [
+          13,
+          6,
+          2
+        ],
+        [
+          14,
+          3,
+          2
+        ],
+        [
+          14,
+          4,
+          2
+        ],
+        [
+          14,
+          5,
+          2
+        ],
+        [
+          14,
+          6,
+          2
+        ],
+        [
+          15,
+          3,
+          2
+        ],
+        [
+          15,
+          4,
+          2
+        ],
+        [
+          15,
+          5,
+          2
+        ],
+        [
+          15,
+          6,
+          2
+        ]
+      ],
+      "overlay": 0,
+      "rendered": {
+        "at": [
+          10,
+          3
+        ],
+        "rows": [
+          [
+            "relay-contract:tile-11",
+            "relay-contract:tile-5",
+            "relay-contract:tile-5",
+            "relay-contract:tile-5",
+            "relay-contract:tile-5",
+            "relay-contract:tile-7",
+            "relay-contract:tile-47",
+            " "
+          ],
+          [
+            "relay-contract:tile-10",
+            "relay-contract:tile-3",
+            "relay-contract:tile-3",
+            "relay-contract:tile-3",
+            "relay-contract:tile-3",
+            "relay-contract:tile-6",
+            "relay-contract:tile-41",
+            "relay-contract:tile-46"
+          ],
+          [
+            "relay-contract:tile-10",
+            "relay-contract:tile-3",
+            "relay-contract:tile-3",
+            "relay-contract:tile-3",
+            "relay-contract:tile-3",
+            "relay-contract:tile-6",
+            "relay-contract:tile-41",
+            "relay-contract:tile-40"
+          ],
+          [
+            "relay-contract:tile-4",
+            "relay-contract:tile-8",
+            "relay-contract:tile-8",
+            "relay-contract:tile-8",
+            "relay-contract:tile-8",
+            "relay-contract:tile-9",
+            "relay-contract:tile-41",
+            "relay-contract:tile-40"
+          ],
+          [
+            "relay-contract:tile-49",
+            "relay-contract:tile-43",
+            "relay-contract:tile-43",
+            "relay-contract:tile-43",
+            "relay-contract:tile-43",
+            "relay-contract:tile-43",
+            "relay-contract:tile-45",
+            "relay-contract:tile-40"
+          ],
+          [
+            " ",
+            "relay-contract:tile-48",
+            "relay-contract:tile-42",
+            "relay-contract:tile-42",
+            "relay-contract:tile-42",
+            "relay-contract:tile-42",
+            "relay-contract:tile-42",
+            "relay-contract:tile-44"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "relay:workshop-building",
+      "name": "Building 2",
+      "map": "relay:town",
+      "kind": "Building",
+      "style": "relay:depot",
+      "datum": 1,
+      "cells": [
+        [
+          22,
+          3,
+          1
+        ],
+        [
+          22,
+          4,
+          1
+        ],
+        [
+          22,
+          5,
+          1
+        ],
+        [
+          22,
+          6,
+          1
+        ],
+        [
+          23,
+          3,
+          1
+        ],
+        [
+          23,
+          6,
+          1
+        ],
+        [
+          24,
+          3,
+          1
+        ],
+        [
+          24,
+          6,
+          1
+        ],
+        [
+          25,
+          3,
+          1
+        ],
+        [
+          25,
+          6,
+          1
+        ],
+        [
+          26,
+          3,
+          1
+        ],
+        [
+          26,
+          4,
+          1
+        ],
+        [
+          26,
+          5,
+          1
+        ],
+        [
+          26,
+          6,
+          1
+        ]
+      ],
+      "overlay": 1,
+      "rendered": {
+        "at": [
+          22,
+          3
+        ],
+        "rows": [
+          [
+            "relay-contract:tile-55",
+            "relay-contract:tile-53",
+            "relay-contract:tile-53",
+            "relay-contract:tile-53",
+            "relay-contract:tile-52",
+            "relay-contract:tile-14"
+          ],
+          [
+            "relay-contract:tile-50",
+            "relay-contract:tile-56",
+            "relay-contract:tile-12",
+            "relay-contract:tile-12",
+            "relay-contract:tile-50",
+            "relay-contract:tile-1"
+          ],
+          [
+            "relay-contract:tile-50",
+            "relay-contract:tile-1",
+            " ",
+            " ",
+            "relay-contract:tile-50",
+            "relay-contract:tile-1"
+          ],
+          [
+            "relay-contract:tile-51",
+            "relay-contract:tile-53",
+            "relay-contract:tile-53",
+            "relay-contract:tile-53",
+            "relay-contract:tile-54",
+            "relay-contract:tile-1"
+          ],
+          [
+            "relay-contract:tile-15",
+            "relay-contract:tile-12",
+            "relay-contract:tile-12",
+            "relay-contract:tile-12",
+            "relay-contract:tile-12",
+            "relay-contract:tile-13"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "relay:compound",
+      "name": "Wall 3",
+      "map": "relay:town",
+      "kind": "Wall",
+      "style": "relay:wall",
+      "datum": 1,
+      "cells": [
+        [
+          29,
+          3,
+          1
+        ],
+        [
+          29,
+          4,
+          1
+        ],
+        [
+          29,
+          5,
+          1
+        ],
+        [
+          29,
+          6,
+          1
+        ],
+        [
+          29,
+          7,
+          1
+        ],
+        [
+          29,
+          8,
+          1
+        ],
+        [
+          29,
+          9,
+          1
+        ],
+        [
+          29,
+          10,
+          1
+        ],
+        [
+          29,
+          11,
+          1
+        ]
+      ],
+      "overlay": 2,
+      "rendered": {
+        "at": [
+          29,
+          3
+        ],
+        "rows": [
+          [
+            "relay-contract:tile-58",
+            "relay-contract:tile-29"
+          ],
+          [
+            "relay-contract:tile-57",
+            "relay-contract:tile-16"
+          ],
+          [
+            "relay-contract:tile-57",
+            "relay-contract:tile-16"
+          ],
+          [
+            "relay-contract:tile-57",
+            "relay-contract:tile-16"
+          ],
+          [
+            "relay-contract:tile-57",
+            "relay-contract:tile-16"
+          ],
+          [
+            "relay-contract:tile-57",
+            "relay-contract:tile-16"
+          ],
+          [
+            "relay-contract:tile-57",
+            "relay-contract:tile-16"
+          ],
+          [
+            "relay-contract:tile-57",
+            "relay-contract:tile-16"
+          ],
+          [
+            "relay-contract:tile-59",
+            "relay-contract:tile-16"
+          ],
+          [
+            "relay-contract:tile-30",
+            "relay-contract:tile-28"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "greybank-dispatch:map-construction-1",
+      "name": "Wall 4",
+      "map": "cairn:relay",
+      "kind": "Wall",
+      "style": "dispatch:barrier",
+      "datum": 0,
+      "cells": [
+        [
+          3,
+          23,
+          0
+        ],
+        [
+          4,
+          23,
+          0
+        ],
+        [
+          5,
+          23,
+          0
+        ],
+        [
+          6,
+          23,
+          0
+        ],
+        [
+          7,
+          23,
+          0
+        ],
+        [
+          8,
+          23,
+          0
+        ],
+        [
+          9,
+          23,
+          0
+        ],
+        [
+          10,
+          23,
+          0
+        ],
+        [
+          11,
+          23,
+          0
+        ],
+        [
+          12,
+          23,
+          0
+        ]
+      ],
+      "overlay": 0,
+      "rendered": {
+        "at": [
+          3,
+          23
+        ],
+        "rows": [
+          [
+            "greybank-dispatch:tile-92",
+            "greybank-dispatch:tile-108",
+            "greybank-dispatch:tile-108",
+            "greybank-dispatch:tile-108",
+            "greybank-dispatch:tile-108",
+            "greybank-dispatch:tile-108",
+            "greybank-dispatch:tile-108",
+            "greybank-dispatch:tile-108",
+            "greybank-dispatch:tile-108",
+            "greybank-dispatch:tile-110"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "greybank-dispatch:map-construction-2",
+      "name": "Wall 5",
+      "map": "cairn:pass",
+      "kind": "Wall",
+      "style": "dispatch:barrier",
+      "datum": 0,
+      "cells": [
+        [
+          3,
+          23,
+          0
+        ],
+        [
+          4,
+          23,
+          0
+        ],
+        [
+          5,
+          23,
+          0
+        ],
+        [
+          6,
+          23,
+          0
+        ],
+        [
+          7,
+          23,
+          0
+        ],
+        [
+          8,
+          23,
+          0
+        ],
+        [
+          9,
+          23,
+          0
+        ],
+        [
+          10,
+          23,
+          0
+        ],
+        [
+          11,
+          23,
+          0
+        ],
+        [
+          12,
+          23,
+          0
+        ]
+      ],
+      "overlay": 0,
+      "rendered": {
+        "at": [
+          3,
+          23
+        ],
+        "rows": [
+          [
+            "greybank-dispatch:tile-92",
+            "greybank-dispatch:tile-108",
+            "greybank-dispatch:tile-108",
+            "greybank-dispatch:tile-108",
+            "greybank-dispatch:tile-108",
+            "greybank-dispatch:tile-108",
+            "greybank-dispatch:tile-108",
+            "greybank-dispatch:tile-108",
+            "greybank-dispatch:tile-108",
+            "greybank-dispatch:tile-110"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "greybank-dispatch:map-construction-3",
+      "name": "Building 6",
+      "map": "cairn:pass",
+      "kind": "Building",
+      "style": "dispatch:depot",
+      "datum": 1,
+      "cells": [
+        [
+          18,
+          10,
+          1
+        ],
+        [
+          18,
+          11,
+          1
+        ],
+        [
+          18,
+          12,
+          1
+        ],
+        [
+          18,
+          13,
+          1
+        ],
+        [
+          19,
+          10,
+          1
+        ],
+        [
+          19,
+          11,
+          1
+        ],
+        [
+          19,
+          12,
+          1
+        ],
+        [
+          19,
+          13,
+          1
+        ],
+        [
+          20,
+          10,
+          1
+        ],
+        [
+          20,
+          11,
+          1
+        ],
+        [
+          20,
+          12,
+          1
+        ],
+        [
+          20,
+          13,
+          1
+        ],
+        [
+          21,
+          10,
+          1
+        ],
+        [
+          21,
+          11,
+          1
+        ],
+        [
+          21,
+          12,
+          1
+        ],
+        [
+          21,
+          13,
+          1
+        ]
+      ],
+      "overlay": 1,
+      "rendered": {
+        "at": [
+          18,
+          10
+        ],
+        "rows": [
+          [
+            "greybank-dispatch:tile-6",
+            "greybank-dispatch:tile-36",
+            "greybank-dispatch:tile-36",
+            "greybank-dispatch:tile-4",
+            "greybank-dispatch:tile-9"
+          ],
+          [
+            "greybank-dispatch:tile-52",
+            "greybank-dispatch:tile-14",
+            "greybank-dispatch:tile-14",
+            "greybank-dispatch:tile-40",
+            "greybank-dispatch:tile-1"
+          ],
+          [
+            "greybank-dispatch:tile-52",
+            "greybank-dispatch:tile-14",
+            "greybank-dispatch:tile-14",
+            "greybank-dispatch:tile-40",
+            "greybank-dispatch:tile-1"
+          ],
+          [
+            "greybank-dispatch:tile-3",
+            "greybank-dispatch:tile-45",
+            "greybank-dispatch:tile-45",
+            "greybank-dispatch:tile-5",
+            "greybank-dispatch:tile-1"
+          ],
+          [
+            "greybank-dispatch:tile-10",
+            "greybank-dispatch:tile-7",
+            "greybank-dispatch:tile-7",
+            "greybank-dispatch:tile-7",
+            "greybank-dispatch:tile-8"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "greybank-dispatch:map-construction-4",
+      "name": "Building 7",
+      "map": "cairn:relay",
+      "kind": "Building",
+      "style": "dispatch:depot",
+      "datum": 2,
+      "cells": [
+        [
+          3,
+          5,
+          2
+        ],
+        [
+          3,
+          6,
+          2
+        ],
+        [
+          3,
+          7,
+          2
+        ],
+        [
+          3,
+          8,
+          2
+        ],
+        [
+          4,
+          5,
+          2
+        ],
+        [
+          4,
+          6,
+          2
+        ],
+        [
+          4,
+          7,
+          2
+        ],
+        [
+          4,
+          8,
+          2
+        ],
+        [
+          5,
+          5,
+          2
+        ],
+        [
+          5,
+          6,
+          2
+        ],
+        [
+          5,
+          7,
+          2
+        ],
+        [
+          5,
+          8,
+          2
+        ],
+        [
+          6,
+          5,
+          2
+        ],
+        [
+          6,
+          6,
+          2
+        ],
+        [
+          6,
+          7,
+          2
+        ],
+        [
+          6,
+          8,
+          2
+        ],
+        [
+          7,
+          5,
+          2
+        ],
+        [
+          7,
+          6,
+          2
+        ],
+        [
+          7,
+          7,
+          2
+        ],
+        [
+          7,
+          8,
+          2
+        ]
+      ],
+      "overlay": 1,
+      "rendered": {
+        "at": [
+          3,
+          5
+        ],
+        "rows": [
+          [
+            "greybank-dispatch:tile-6",
+            "greybank-dispatch:tile-36",
+            "greybank-dispatch:tile-36",
+            "greybank-dispatch:tile-36",
+            "greybank-dispatch:tile-4",
+            "greybank-dispatch:tile-138",
+            " "
+          ],
+          [
+            "greybank-dispatch:tile-52",
+            "greybank-dispatch:tile-14",
+            "greybank-dispatch:tile-14",
+            "greybank-dispatch:tile-14",
+            "greybank-dispatch:tile-40",
+            "greybank-dispatch:tile-13",
+            "greybank-dispatch:tile-137"
+          ],
+          [
+            "greybank-dispatch:tile-52",
+            "greybank-dispatch:tile-14",
+            "greybank-dispatch:tile-14",
+            "greybank-dispatch:tile-14",
+            "greybank-dispatch:tile-40",
+            "greybank-dispatch:tile-13",
+            "greybank-dispatch:tile-11"
+          ],
+          [
+            "greybank-dispatch:tile-3",
+            "greybank-dispatch:tile-45",
+            "greybank-dispatch:tile-45",
+            "greybank-dispatch:tile-45",
+            "greybank-dispatch:tile-5",
+            "greybank-dispatch:tile-13",
+            "greybank-dispatch:tile-11"
+          ],
+          [
+            "greybank-dispatch:tile-140",
+            "greybank-dispatch:tile-59",
+            "greybank-dispatch:tile-59",
+            "greybank-dispatch:tile-59",
+            "greybank-dispatch:tile-59",
+            "greybank-dispatch:tile-136",
+            "greybank-dispatch:tile-11"
+          ],
+          [
+            " ",
+            "greybank-dispatch:tile-139",
+            "greybank-dispatch:tile-57",
+            "greybank-dispatch:tile-57",
+            "greybank-dispatch:tile-57",
+            "greybank-dispatch:tile-57",
+            "greybank-dispatch:tile-135"
+          ]
+        ]
+      }
+    }
+  ],
+  "map_patterns": [
+    {
+      "id": "relay-contract:pattern-1",
+      "name": "Relay office",
+      "rows": [
+        [
+          "relay-contract:tile-11",
+          "relay-contract:tile-5",
+          "relay-contract:tile-5",
+          "relay-contract:tile-5",
+          "relay-contract:tile-5",
+          "relay-contract:tile-7",
+          "relay-contract:tile-47",
+          "frontier:grass"
+        ],
+        [
+          "relay-contract:tile-10",
+          "relay-contract:tile-3",
+          "relay-contract:tile-3",
+          "relay-contract:tile-3",
+          "relay-contract:tile-3",
+          "relay-contract:tile-6",
+          "relay-contract:tile-41",
+          "relay-contract:tile-46"
+        ],
+        [
+          "relay-contract:tile-10",
+          "relay-contract:tile-3",
+          "relay-contract:tile-3",
+          "relay-contract:tile-3",
+          "relay-contract:tile-3",
+          "relay-contract:tile-6",
+          "relay-contract:tile-41",
+          "relay-contract:tile-40"
+        ],
+        [
+          "relay-contract:tile-4",
+          "relay-contract:tile-8",
+          "relay-contract:tile-8",
+          "relay-contract:tile-8",
+          "relay-contract:tile-8",
+          "relay-contract:tile-9",
+          "relay-contract:tile-41",
+          "relay-contract:tile-40"
+        ],
+        [
+          "relay-contract:tile-49",
+          "relay-contract:tile-43",
+          "relay-contract:tile-43",
+          "relay-contract:tile-43",
+          "relay-contract:tile-43",
+          "relay-contract:tile-43",
+          "relay-contract:tile-45",
+          "relay-contract:tile-40"
+        ],
+        [
+          "frontier:grass",
+          "relay-contract:tile-48",
+          "relay-contract:tile-42",
+          "relay-contract:tile-42",
+          "relay-contract:tile-42",
+          "relay-contract:tile-42",
+          "relay-contract:tile-42",
+          "relay-contract:tile-44"
+        ]
+      ]
+    }
+  ],
+  "event_descriptions": {
+    "dispatch:office": "Route the dispatcher by the persistent campaign stage.",
+    "dispatch:offer": "Choose exactly one opening contract: assault or data recovery.",
+    "recovery:lua-check": "Verify both caches, survey and extraction region through read-only Lua queries.",
+    "cairn:defence-done": "Timed defence succeeds after the configured number of rounds.",
+    "cairn:transport-arrived": "Escort succeeds only when the living carrier reaches its final waypoint."
+  }
+}

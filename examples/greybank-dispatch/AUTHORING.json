@@ -1,0 +1,6815 @@
+{
+  "format": "btp-authoring-receipts-v1",
+  "requests": {
+    "greybank-dispatch-v1": {
+      "hash": "8455eb9442b7044b82c644704a06c52a9928ad41484d415e941538d81a771437",
+      "result": {
+        "api_version": 1,
+        "status": "applied",
+        "request_id": "greybank-dispatch-v1",
+        "base_revision": "9a63d7c1e481135bdbc139a04d3ef198448afdfac05497ea5bc5fd4c69f12bcd",
+        "result_revision": "b36e3f95b4df20ae95c16d3aa1d89d18d9770f6fcd53e491ed6e90eaf851e380",
+        "changes": [
+          {
+            "path": "manifest.scripts/recovery:verify",
+            "object_id": "recovery:verify",
+            "change": "created",
+            "fields": [
+              "file",
+              "id"
+            ]
+          },
+          {
+            "path": "content.mechs/vehicles:galleon",
+            "object_id": "vehicles:galleon",
+            "change": "created",
+            "fields": [
+              "armor",
+              "engine_heat_sinks",
+              "id",
+              "kind",
+              "label",
+              "loadout",
+              "mass_tons",
+              "movement",
+              "name",
+              "presentation",
+              "price",
+              "structure"
+            ]
+          },
+          {
+            "path": "content.mechs/vehicles:skulker",
+            "object_id": "vehicles:skulker",
+            "change": "created",
+            "fields": [
+              "armor",
+              "engine_heat_sinks",
+              "id",
+              "kind",
+              "label",
+              "loadout",
+              "mass_tons",
+              "movement",
+              "name",
+              "presentation",
+              "price",
+              "structure"
+            ]
+          },
+          {
+            "path": "content.presentations/vehicles:galleon-view",
+            "object_id": "vehicles:galleon-view",
+            "change": "created",
+            "fields": [
+              "id",
+              "image",
+              "source"
+            ]
+          },
+          {
+            "path": "content.presentations/vehicles:skulker-view",
+            "object_id": "vehicles:skulker-view",
+            "change": "created",
+            "fields": [
+              "id",
+              "image",
+              "source"
+            ]
+          },
+          {
+            "path": "content.weapons/vehicles:weapon-4",
+            "object_id": "vehicles:weapon-4",
+            "change": "created",
+            "fields": [
+              "ammunition",
+              "behavior",
+              "damage",
+              "heat",
+              "id",
+              "label",
+              "name",
+              "projectiles",
+              "ranges"
+            ]
+          },
+          {
+            "path": "content.weapons/vehicles:weapon-7",
+            "object_id": "vehicles:weapon-7",
+            "change": "created",
+            "fields": [
+              "ammunition",
+              "behavior",
+              "damage",
+              "heat",
+              "id",
+              "label",
+              "name",
+              "projectiles",
+              "ranges"
+            ]
+          },
+          {
+            "path": "adventure.combat_groups/cairn:ambush",
+            "object_id": "cairn:ambush",
+            "change": "created",
+            "fields": [
+              "affiliation",
+              "encounter",
+              "id",
+              "name",
+              "reserve",
+              "units"
+            ]
+          },
+          {
+            "path": "adventure.combat_groups/cairn:raider-wave",
+            "object_id": "cairn:raider-wave",
+            "change": "created",
+            "fields": [
+              "affiliation",
+              "encounter",
+              "id",
+              "name",
+              "reserve",
+              "units"
+            ]
+          },
+          {
+            "path": "adventure.combat_groups/cairn:relay-guard",
+            "object_id": "cairn:relay-guard",
+            "change": "created",
+            "fields": [
+              "affiliation",
+              "encounter",
+              "id",
+              "name",
+              "reserve",
+              "units"
+            ]
+          },
+          {
+            "path": "adventure.combat_groups/cairn:relay-vehicle",
+            "object_id": "cairn:relay-vehicle",
+            "change": "created",
+            "fields": [
+              "affiliation",
+              "encounter",
+              "id",
+              "name",
+              "reserve",
+              "units"
+            ]
+          },
+          {
+            "path": "adventure.combat_groups/cairn:transport",
+            "object_id": "cairn:transport",
+            "change": "created",
+            "fields": [
+              "affiliation",
+              "encounter",
+              "id",
+              "name",
+              "reserve",
+              "units"
+            ]
+          },
+          {
+            "path": "adventure.combat_hooks/cairn:pass-arrival",
+            "object_id": "cairn:pass-arrival",
+            "change": "created",
+            "fields": [
+              "encounter",
+              "event",
+              "group",
+              "id",
+              "repeat",
+              "when"
+            ]
+          },
+          {
+            "path": "adventure.combat_hooks/cairn:pass-briefing",
+            "object_id": "cairn:pass-briefing",
+            "change": "created",
+            "fields": [
+              "encounter",
+              "event",
+              "id",
+              "repeat",
+              "when"
+            ]
+          },
+          {
+            "path": "adventure.combat_hooks/cairn:pass-casualty",
+            "object_id": "cairn:pass-casualty",
+            "change": "created",
+            "fields": [
+              "encounter",
+              "event",
+              "group",
+              "id",
+              "repeat",
+              "when"
+            ]
+          },
+          {
+            "path": "adventure.combat_hooks/cairn:pass-retry",
+            "object_id": "cairn:pass-retry",
+            "change": "created",
+            "fields": [
+              "encounter",
+              "event",
+              "every",
+              "id",
+              "repeat",
+              "round",
+              "when"
+            ]
+          },
+          {
+            "path": "adventure.combat_hooks/cairn:pass-wave",
+            "object_id": "cairn:pass-wave",
+            "change": "created",
+            "fields": [
+              "encounter",
+              "event",
+              "every",
+              "id",
+              "repeat",
+              "round",
+              "when"
+            ]
+          },
+          {
+            "path": "adventure.combat_hooks/cairn:relay-briefing",
+            "object_id": "cairn:relay-briefing",
+            "change": "created",
+            "fields": [
+              "encounter",
+              "event",
+              "id",
+              "repeat",
+              "when"
+            ]
+          },
+          {
+            "path": "adventure.combat_hooks/cairn:relay-casualty",
+            "object_id": "cairn:relay-casualty",
+            "change": "created",
+            "fields": [
+              "encounter",
+              "event",
+              "group",
+              "id",
+              "repeat",
+              "when"
+            ]
+          },
+          {
+            "path": "adventure.combat_hooks/cairn:relay-retry",
+            "object_id": "cairn:relay-retry",
+            "change": "created",
+            "fields": [
+              "encounter",
+              "event",
+              "every",
+              "id",
+              "repeat",
+              "round",
+              "when"
+            ]
+          },
+          {
+            "path": "adventure.combat_hooks/cairn:relay-timer",
+            "object_id": "cairn:relay-timer",
+            "change": "created",
+            "fields": [
+              "encounter",
+              "event",
+              "every",
+              "id",
+              "repeat",
+              "round",
+              "when"
+            ]
+          },
+          {
+            "path": "adventure.combat_hooks/cairn:relay-wave",
+            "object_id": "cairn:relay-wave",
+            "change": "created",
+            "fields": [
+              "encounter",
+              "event",
+              "every",
+              "id",
+              "repeat",
+              "round",
+              "when"
+            ]
+          },
+          {
+            "path": "adventure.encounters/cairn:defence",
+            "object_id": "cairn:defence",
+            "change": "created",
+            "fields": [
+              "completion",
+              "enemies",
+              "id",
+              "map",
+              "party_at"
+            ]
+          },
+          {
+            "path": "adventure.encounters/cairn:escort",
+            "object_id": "cairn:escort",
+            "change": "created",
+            "fields": [
+              "completion",
+              "enemies",
+              "id",
+              "map",
+              "party_at"
+            ]
+          },
+          {
+            "path": "adventure.encounters/recovery:raider",
+            "object_id": "recovery:raider",
+            "change": "created",
+            "fields": [
+              "enemies",
+              "id",
+              "map",
+              "party_at"
+            ]
+          },
+          {
+            "path": "adventure.events/cairn:blocked-wave",
+            "object_id": "cairn:blocked-wave",
+            "change": "created",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/cairn:combat-loss",
+            "object_id": "cairn:combat-loss",
+            "change": "created",
+            "fields": [
+              "failure",
+              "id",
+              "next",
+              "op",
+              "result"
+            ]
+          },
+          {
+            "path": "adventure.events/cairn:defence-active",
+            "object_id": "cairn:defence-active",
+            "change": "created",
+            "fields": [
+              "failure",
+              "id",
+              "next",
+              "objective",
+              "op",
+              "state"
+            ]
+          },
+          {
+            "path": "adventure.events/cairn:defence-battle",
+            "object_id": "cairn:defence-battle",
+            "change": "created",
+            "fields": [
+              "encounter",
+              "failure",
+              "flee",
+              "id",
+              "loss",
+              "op",
+              "win"
+            ]
+          },
+          {
+            "path": "adventure.events/cairn:defence-complete",
+            "object_id": "cairn:defence-complete",
+            "change": "created",
+            "fields": [
+              "failure",
+              "id",
+              "next",
+              "objective",
+              "op",
+              "state"
+            ]
+          },
+          {
+            "path": "adventure.events/cairn:defence-death",
+            "object_id": "cairn:defence-death",
+            "change": "created",
+            "fields": [
+              "conditions",
+              "else",
+              "id",
+              "match",
+              "op",
+              "then"
+            ]
+          },
+          {
+            "path": "adventure.events/cairn:defence-done",
+            "object_id": "cairn:defence-done",
+            "change": "created",
+            "fields": [
+              "failure",
+              "id",
+              "next",
+              "op",
+              "result"
+            ]
+          },
+          {
+            "path": "adventure.events/cairn:defence-failed",
+            "object_id": "cairn:defence-failed",
+            "change": "created",
+            "fields": [
+              "failure",
+              "id",
+              "next",
+              "objective",
+              "op",
+              "state"
+            ]
+          },
+          {
+            "path": "adventure.events/cairn:defence-loss",
+            "object_id": "cairn:defence-loss",
+            "change": "created",
+            "fields": [
+              "id",
+              "op",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/cairn:defence-pay",
+            "object_id": "cairn:defence-pay",
+            "change": "created",
+            "fields": [
+              "credits",
+              "failure",
+              "id",
+              "next",
+              "op"
+            ]
+          },
+          {
+            "path": "adventure.events/cairn:defence-start",
+            "object_id": "cairn:defence-start",
+            "change": "created",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/cairn:end",
+            "object_id": "cairn:end",
+            "change": "created",
+            "fields": [
+              "id",
+              "op"
+            ]
+          },
+          {
+            "path": "adventure.events/cairn:error",
+            "object_id": "cairn:error",
+            "change": "created",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/cairn:escort-active",
+            "object_id": "cairn:escort-active",
+            "change": "created",
+            "fields": [
+              "failure",
+              "id",
+              "next",
+              "objective",
+              "op",
+              "state"
+            ]
+          },
+          {
+            "path": "adventure.events/cairn:escort-battle",
+            "object_id": "cairn:escort-battle",
+            "change": "created",
+            "fields": [
+              "encounter",
+              "failure",
+              "flee",
+              "id",
+              "loss",
+              "op",
+              "win"
+            ]
+          },
+          {
+            "path": "adventure.events/cairn:escort-blocked",
+            "object_id": "cairn:escort-blocked",
+            "change": "created",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/cairn:escort-complete",
+            "object_id": "cairn:escort-complete",
+            "change": "created",
+            "fields": [
+              "failure",
+              "id",
+              "next",
+              "objective",
+              "op",
+              "state"
+            ]
+          },
+          {
+            "path": "adventure.events/cairn:escort-done",
+            "object_id": "cairn:escort-done",
+            "change": "created",
+            "fields": [
+              "failure",
+              "id",
+              "next",
+              "op",
+              "result"
+            ]
+          },
+          {
+            "path": "adventure.events/cairn:escort-failed",
+            "object_id": "cairn:escort-failed",
+            "change": "created",
+            "fields": [
+              "failure",
+              "id",
+              "next",
+              "objective",
+              "op",
+              "state"
+            ]
+          },
+          {
+            "path": "adventure.events/cairn:escort-incoming",
+            "object_id": "cairn:escort-incoming",
+            "change": "created",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/cairn:escort-loss",
+            "object_id": "cairn:escort-loss",
+            "change": "created",
+            "fields": [
+              "id",
+              "op",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/cairn:escort-pay",
+            "object_id": "cairn:escort-pay",
+            "change": "created",
+            "fields": [
+              "credits",
+              "failure",
+              "id",
+              "next",
+              "op"
+            ]
+          },
+          {
+            "path": "adventure.events/cairn:escort-reinforce",
+            "object_id": "cairn:escort-reinforce",
+            "change": "created",
+            "fields": [
+              "failure",
+              "group",
+              "id",
+              "next",
+              "op",
+              "radius"
+            ]
+          },
+          {
+            "path": "adventure.events/cairn:escort-retry",
+            "object_id": "cairn:escort-retry",
+            "change": "created",
+            "fields": [
+              "conditions",
+              "else",
+              "id",
+              "match",
+              "op",
+              "then"
+            ]
+          },
+          {
+            "path": "adventure.events/cairn:escort-start",
+            "object_id": "cairn:escort-start",
+            "change": "created",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/cairn:incoming",
+            "object_id": "cairn:incoming",
+            "change": "created",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/cairn:reinforce",
+            "object_id": "cairn:reinforce",
+            "change": "created",
+            "fields": [
+              "failure",
+              "group",
+              "id",
+              "next",
+              "op",
+              "radius"
+            ]
+          },
+          {
+            "path": "adventure.events/cairn:retry-wave",
+            "object_id": "cairn:retry-wave",
+            "change": "created",
+            "fields": [
+              "conditions",
+              "else",
+              "id",
+              "match",
+              "op",
+              "then"
+            ]
+          },
+          {
+            "path": "adventure.events/cairn:transport-arrived",
+            "object_id": "cairn:transport-arrived",
+            "change": "created",
+            "fields": [
+              "conditions",
+              "else",
+              "id",
+              "match",
+              "op",
+              "then"
+            ]
+          },
+          {
+            "path": "adventure.events/cairn:transport-death",
+            "object_id": "cairn:transport-death",
+            "change": "created",
+            "fields": [
+              "conditions",
+              "else",
+              "id",
+              "match",
+              "op",
+              "then"
+            ]
+          },
+          {
+            "path": "adventure.events/dispatch:accept-assault",
+            "object_id": "dispatch:accept-assault",
+            "change": "created",
+            "fields": [
+              "action",
+              "failure",
+              "id",
+              "next",
+              "once",
+              "op",
+              "value",
+              "variable"
+            ]
+          },
+          {
+            "path": "adventure.events/dispatch:accept-recovery",
+            "object_id": "dispatch:accept-recovery",
+            "change": "created",
+            "fields": [
+              "action",
+              "failure",
+              "id",
+              "next",
+              "once",
+              "op",
+              "value",
+              "variable"
+            ]
+          },
+          {
+            "path": "adventure.events/dispatch:assault-active",
+            "object_id": "dispatch:assault-active",
+            "change": "created",
+            "fields": [
+              "failure",
+              "id",
+              "next",
+              "objective",
+              "op",
+              "state"
+            ]
+          },
+          {
+            "path": "adventure.events/dispatch:assault-brief",
+            "object_id": "dispatch:assault-brief",
+            "change": "created",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/dispatch:assault-paid",
+            "object_id": "dispatch:assault-paid",
+            "change": "created",
+            "fields": [
+              "action",
+              "failure",
+              "id",
+              "next",
+              "once",
+              "op",
+              "value",
+              "variable"
+            ]
+          },
+          {
+            "path": "adventure.events/dispatch:assault-pay",
+            "object_id": "dispatch:assault-pay",
+            "change": "created",
+            "fields": [
+              "credits",
+              "failure",
+              "id",
+              "next",
+              "op"
+            ]
+          },
+          {
+            "path": "adventure.events/dispatch:collect-active",
+            "object_id": "dispatch:collect-active",
+            "change": "created",
+            "fields": [
+              "failure",
+              "id",
+              "next",
+              "objective",
+              "op",
+              "state"
+            ]
+          },
+          {
+            "path": "adventure.events/dispatch:debrief",
+            "object_id": "dispatch:debrief",
+            "change": "created",
+            "fields": [
+              "cancel",
+              "id",
+              "op",
+              "options",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/dispatch:defence-offer",
+            "object_id": "dispatch:defence-offer",
+            "change": "created",
+            "fields": [
+              "cancel",
+              "id",
+              "op",
+              "options",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/dispatch:defence-paid",
+            "object_id": "dispatch:defence-paid",
+            "change": "created",
+            "fields": [
+              "action",
+              "failure",
+              "id",
+              "next",
+              "once",
+              "op",
+              "value",
+              "variable"
+            ]
+          },
+          {
+            "path": "adventure.events/dispatch:defence-report",
+            "object_id": "dispatch:defence-report",
+            "change": "created",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/dispatch:error",
+            "object_id": "dispatch:error",
+            "change": "created",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/dispatch:escort-offer",
+            "object_id": "dispatch:escort-offer",
+            "change": "created",
+            "fields": [
+              "cancel",
+              "id",
+              "op",
+              "options",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/dispatch:escort-paid",
+            "object_id": "dispatch:escort-paid",
+            "change": "created",
+            "fields": [
+              "action",
+              "failure",
+              "id",
+              "next",
+              "once",
+              "op",
+              "value",
+              "variable"
+            ]
+          },
+          {
+            "path": "adventure.events/dispatch:escort-report",
+            "object_id": "dispatch:escort-report",
+            "change": "created",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/dispatch:extract-active",
+            "object_id": "dispatch:extract-active",
+            "change": "created",
+            "fields": [
+              "failure",
+              "id",
+              "next",
+              "objective",
+              "op",
+              "state"
+            ]
+          },
+          {
+            "path": "adventure.events/dispatch:finish",
+            "object_id": "dispatch:finish",
+            "change": "created",
+            "fields": [
+              "id",
+              "op",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/dispatch:offer",
+            "object_id": "dispatch:offer",
+            "change": "created",
+            "fields": [
+              "cancel",
+              "id",
+              "op",
+              "options",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/dispatch:office",
+            "object_id": "dispatch:office",
+            "change": "created",
+            "fields": [
+              "conditions",
+              "else",
+              "id",
+              "match",
+              "op",
+              "then"
+            ]
+          },
+          {
+            "path": "adventure.events/dispatch:office-four",
+            "object_id": "dispatch:office-four",
+            "change": "created",
+            "fields": [
+              "conditions",
+              "else",
+              "id",
+              "match",
+              "op",
+              "then"
+            ]
+          },
+          {
+            "path": "adventure.events/dispatch:office-one",
+            "object_id": "dispatch:office-one",
+            "change": "created",
+            "fields": [
+              "conditions",
+              "else",
+              "id",
+              "match",
+              "op",
+              "then"
+            ]
+          },
+          {
+            "path": "adventure.events/dispatch:office-three",
+            "object_id": "dispatch:office-three",
+            "change": "created",
+            "fields": [
+              "conditions",
+              "else",
+              "id",
+              "match",
+              "op",
+              "then"
+            ]
+          },
+          {
+            "path": "adventure.events/dispatch:office-two",
+            "object_id": "dispatch:office-two",
+            "change": "created",
+            "fields": [
+              "conditions",
+              "else",
+              "id",
+              "match",
+              "op",
+              "then"
+            ]
+          },
+          {
+            "path": "adventure.events/dispatch:recovery-brief",
+            "object_id": "dispatch:recovery-brief",
+            "change": "created",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/dispatch:recovery-paid",
+            "object_id": "dispatch:recovery-paid",
+            "change": "created",
+            "fields": [
+              "action",
+              "failure",
+              "id",
+              "next",
+              "once",
+              "op",
+              "value",
+              "variable"
+            ]
+          },
+          {
+            "path": "adventure.events/dispatch:road",
+            "object_id": "dispatch:road",
+            "change": "created",
+            "fields": [
+              "conditions",
+              "else",
+              "id",
+              "match",
+              "op",
+              "then"
+            ]
+          },
+          {
+            "path": "adventure.events/dispatch:road-recovery",
+            "object_id": "dispatch:road-recovery",
+            "change": "created",
+            "fields": [
+              "conditions",
+              "else",
+              "id",
+              "match",
+              "op",
+              "then"
+            ]
+          },
+          {
+            "path": "adventure.events/dispatch:see-office",
+            "object_id": "dispatch:see-office",
+            "change": "created",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/dispatch:survey-active",
+            "object_id": "dispatch:survey-active",
+            "change": "created",
+            "fields": [
+              "failure",
+              "id",
+              "next",
+              "objective",
+              "op",
+              "state"
+            ]
+          },
+          {
+            "path": "adventure.events/dispatch:to-recovery",
+            "object_id": "dispatch:to-recovery",
+            "change": "created",
+            "fields": [
+              "at",
+              "failure",
+              "id",
+              "map",
+              "next",
+              "op"
+            ]
+          },
+          {
+            "path": "adventure.events/dispatch:welcome",
+            "object_id": "dispatch:welcome",
+            "change": "created",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/recovery:abandon",
+            "object_id": "recovery:abandon",
+            "change": "created",
+            "fields": [
+              "failure",
+              "id",
+              "next",
+              "objective",
+              "op",
+              "state"
+            ]
+          },
+          {
+            "path": "adventure.events/recovery:abandoned",
+            "object_id": "recovery:abandoned",
+            "change": "created",
+            "fields": [
+              "id",
+              "op",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/recovery:battle",
+            "object_id": "recovery:battle",
+            "change": "created",
+            "fields": [
+              "encounter",
+              "failure",
+              "flee",
+              "id",
+              "loss",
+              "op",
+              "win"
+            ]
+          },
+          {
+            "path": "adventure.events/recovery:briefing",
+            "object_id": "recovery:briefing",
+            "change": "created",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "portrait",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/recovery:collect-east",
+            "object_id": "recovery:collect-east",
+            "change": "created",
+            "fields": [
+              "action",
+              "failure",
+              "id",
+              "next",
+              "once",
+              "op",
+              "value",
+              "variable"
+            ]
+          },
+          {
+            "path": "adventure.events/recovery:collect-west",
+            "object_id": "recovery:collect-west",
+            "change": "created",
+            "fields": [
+              "action",
+              "failure",
+              "id",
+              "next",
+              "once",
+              "op",
+              "value",
+              "variable"
+            ]
+          },
+          {
+            "path": "adventure.events/recovery:collected",
+            "object_id": "recovery:collected",
+            "change": "created",
+            "fields": [
+              "failure",
+              "id",
+              "next",
+              "objective",
+              "op",
+              "state"
+            ]
+          },
+          {
+            "path": "adventure.events/recovery:count-data",
+            "object_id": "recovery:count-data",
+            "change": "created",
+            "fields": [
+              "conditions",
+              "else",
+              "id",
+              "match",
+              "op",
+              "then"
+            ]
+          },
+          {
+            "path": "adventure.events/recovery:end",
+            "object_id": "recovery:end",
+            "change": "created",
+            "fields": [
+              "id",
+              "op"
+            ]
+          },
+          {
+            "path": "adventure.events/recovery:error",
+            "object_id": "recovery:error",
+            "change": "created",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/recovery:extract-check",
+            "object_id": "recovery:extract-check",
+            "change": "created",
+            "fields": [
+              "conditions",
+              "else",
+              "id",
+              "match",
+              "op",
+              "then"
+            ]
+          },
+          {
+            "path": "adventure.events/recovery:extract-complete",
+            "object_id": "recovery:extract-complete",
+            "change": "created",
+            "fields": [
+              "failure",
+              "id",
+              "next",
+              "objective",
+              "op",
+              "state"
+            ]
+          },
+          {
+            "path": "adventure.events/recovery:lua-check",
+            "object_id": "recovery:lua-check",
+            "change": "created",
+            "fields": [
+              "failure",
+              "id",
+              "op",
+              "routes",
+              "script"
+            ]
+          },
+          {
+            "path": "adventure.events/recovery:not-ready",
+            "object_id": "recovery:not-ready",
+            "change": "created",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/recovery:one-cache",
+            "object_id": "recovery:one-cache",
+            "change": "created",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/recovery:pad-enter",
+            "object_id": "recovery:pad-enter",
+            "change": "created",
+            "fields": [
+              "action",
+              "failure",
+              "id",
+              "next",
+              "once",
+              "op",
+              "value",
+              "variable"
+            ]
+          },
+          {
+            "path": "adventure.events/recovery:pad-leave",
+            "object_id": "recovery:pad-leave",
+            "change": "created",
+            "fields": [
+              "action",
+              "failure",
+              "id",
+              "next",
+              "once",
+              "op",
+              "value",
+              "variable"
+            ]
+          },
+          {
+            "path": "adventure.events/recovery:payment",
+            "object_id": "recovery:payment",
+            "change": "created",
+            "fields": [
+              "credits",
+              "failure",
+              "id",
+              "next",
+              "op"
+            ]
+          },
+          {
+            "path": "adventure.events/recovery:raider-choice",
+            "object_id": "recovery:raider-choice",
+            "change": "created",
+            "fields": [
+              "cancel",
+              "id",
+              "op",
+              "options",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/recovery:raider-retreat",
+            "object_id": "recovery:raider-retreat",
+            "change": "created",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/recovery:raider-win",
+            "object_id": "recovery:raider-win",
+            "change": "created",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/recovery:success",
+            "object_id": "recovery:success",
+            "change": "created",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/recovery:survey",
+            "object_id": "recovery:survey",
+            "change": "created",
+            "fields": [
+              "action",
+              "failure",
+              "id",
+              "next",
+              "once",
+              "op",
+              "value",
+              "variable"
+            ]
+          },
+          {
+            "path": "adventure.events/recovery:survey-complete",
+            "object_id": "recovery:survey-complete",
+            "change": "created",
+            "fields": [
+              "failure",
+              "id",
+              "next",
+              "objective",
+              "op",
+              "state"
+            ]
+          },
+          {
+            "path": "adventure.events/recovery:survey-message",
+            "object_id": "recovery:survey-message",
+            "change": "created",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/recovery:two-caches",
+            "object_id": "recovery:two-caches",
+            "change": "created",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/relay:accept",
+            "object_id": "relay:accept",
+            "change": "removed",
+            "fields": [
+              "flag",
+              "id",
+              "next",
+              "op",
+              "value"
+            ]
+          },
+          {
+            "path": "adventure.events/relay:accepted-check",
+            "object_id": "relay:accepted-check",
+            "change": "removed",
+            "fields": [
+              "else",
+              "flag",
+              "id",
+              "op",
+              "then",
+              "value"
+            ]
+          },
+          {
+            "path": "adventure.events/relay:briefing",
+            "object_id": "relay:briefing",
+            "change": "removed",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "portrait",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/relay:challenge",
+            "object_id": "relay:challenge",
+            "change": "modified",
+            "fields": [
+              "conditions",
+              "flag",
+              "match",
+              "op",
+              "value"
+            ]
+          },
+          {
+            "path": "adventure.events/relay:debrief",
+            "object_id": "relay:debrief",
+            "change": "removed",
+            "fields": [
+              "cancel",
+              "id",
+              "op",
+              "options",
+              "portrait",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/relay:finish",
+            "object_id": "relay:finish",
+            "change": "removed",
+            "fields": [
+              "id",
+              "op",
+              "portrait",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/relay:lost",
+            "object_id": "relay:lost",
+            "change": "modified",
+            "fields": [
+              "next",
+              "op",
+              "portrait",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/relay:offer",
+            "object_id": "relay:offer",
+            "change": "removed",
+            "fields": [
+              "cancel",
+              "id",
+              "op",
+              "options",
+              "portrait",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/relay:office",
+            "object_id": "relay:office",
+            "change": "removed",
+            "fields": [
+              "else",
+              "flag",
+              "id",
+              "op",
+              "then",
+              "value"
+            ]
+          },
+          {
+            "path": "adventure.events/relay:paid",
+            "object_id": "relay:paid",
+            "change": "removed",
+            "fields": [
+              "flag",
+              "id",
+              "next",
+              "op",
+              "value"
+            ]
+          },
+          {
+            "path": "adventure.events/relay:pay",
+            "object_id": "relay:pay",
+            "change": "removed",
+            "fields": [
+              "credits",
+              "failure",
+              "id",
+              "next",
+              "op"
+            ]
+          },
+          {
+            "path": "adventure.events/relay:receipt",
+            "object_id": "relay:receipt",
+            "change": "removed",
+            "fields": [
+              "else",
+              "flag",
+              "id",
+              "op",
+              "then",
+              "value"
+            ]
+          },
+          {
+            "path": "adventure.events/relay:thanks",
+            "object_id": "relay:thanks",
+            "change": "removed",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "portrait",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/relay:welcome",
+            "object_id": "relay:welcome",
+            "change": "removed",
+            "fields": [
+              "id",
+              "next",
+              "op",
+              "portrait",
+              "text"
+            ]
+          },
+          {
+            "path": "adventure.events/relay:won",
+            "object_id": "relay:won",
+            "change": "modified",
+            "fields": [
+              "failure",
+              "flag",
+              "next",
+              "objective",
+              "op",
+              "state",
+              "value"
+            ]
+          },
+          {
+            "path": "adventure.maps/cairn:pass",
+            "object_id": "cairn:pass",
+            "change": "created",
+            "fields": [
+              "entrances",
+              "id",
+              "name",
+              "origin",
+              "overlays",
+              "rows"
+            ]
+          },
+          {
+            "path": "adventure.maps/cairn:relay",
+            "object_id": "cairn:relay",
+            "change": "created",
+            "fields": [
+              "entrances",
+              "id",
+              "name",
+              "origin",
+              "overlays",
+              "rows"
+            ]
+          },
+          {
+            "path": "adventure.maps/recovery:valley",
+            "object_id": "recovery:valley",
+            "change": "created",
+            "fields": [
+              "entrances",
+              "id",
+              "name",
+              "origin",
+              "overlays",
+              "rows"
+            ]
+          },
+          {
+            "path": "adventure.maps/relay:town",
+            "object_id": "relay:town",
+            "change": "modified",
+            "fields": [
+              "entrances"
+            ]
+          },
+          {
+            "path": "adventure.objectives/cairn:defend",
+            "object_id": "cairn:defend",
+            "change": "created",
+            "fields": [
+              "id",
+              "initial",
+              "text",
+              "title"
+            ]
+          },
+          {
+            "path": "adventure.objectives/cairn:escort",
+            "object_id": "cairn:escort",
+            "change": "created",
+            "fields": [
+              "id",
+              "initial",
+              "text",
+              "title"
+            ]
+          },
+          {
+            "path": "adventure.objectives/recovery:collect",
+            "object_id": "recovery:collect",
+            "change": "created",
+            "fields": [
+              "id",
+              "initial",
+              "text",
+              "title"
+            ]
+          },
+          {
+            "path": "adventure.objectives/recovery:extract",
+            "object_id": "recovery:extract",
+            "change": "created",
+            "fields": [
+              "id",
+              "initial",
+              "text",
+              "title"
+            ]
+          },
+          {
+            "path": "adventure.objectives/recovery:survey",
+            "object_id": "recovery:survey",
+            "change": "created",
+            "fields": [
+              "id",
+              "initial",
+              "text",
+              "title"
+            ]
+          },
+          {
+            "path": "adventure.objectives/relay:contract",
+            "object_id": "relay:contract",
+            "change": "modified",
+            "fields": [
+              "active",
+              "complete",
+              "initial",
+              "text",
+              "title"
+            ]
+          },
+          {
+            "path": "adventure.regions/recovery:east-cache",
+            "object_id": "recovery:east-cache",
+            "change": "created",
+            "fields": [
+              "enter",
+              "id",
+              "map",
+              "name",
+              "rect",
+              "repeat"
+            ]
+          },
+          {
+            "path": "adventure.regions/recovery:landing-pad",
+            "object_id": "recovery:landing-pad",
+            "change": "created",
+            "fields": [
+              "enter",
+              "id",
+              "leave",
+              "map",
+              "name",
+              "rect",
+              "repeat"
+            ]
+          },
+          {
+            "path": "adventure.regions/recovery:relay",
+            "object_id": "recovery:relay",
+            "change": "created",
+            "fields": [
+              "enter",
+              "id",
+              "map",
+              "name",
+              "rect",
+              "repeat"
+            ]
+          },
+          {
+            "path": "adventure.regions/recovery:west-cache",
+            "object_id": "recovery:west-cache",
+            "change": "created",
+            "fields": [
+              "enter",
+              "id",
+              "map",
+              "name",
+              "rect",
+              "repeat"
+            ]
+          },
+          {
+            "path": "adventure.regions/recovery:withdrawal",
+            "object_id": "recovery:withdrawal",
+            "change": "created",
+            "fields": [
+              "enter",
+              "id",
+              "map",
+              "name",
+              "rect",
+              "repeat"
+            ]
+          },
+          {
+            "path": "adventure.shops/relay:stock",
+            "object_id": "relay:stock",
+            "change": "modified",
+            "fields": [
+              "stock"
+            ]
+          },
+          {
+            "path": "adventure.start",
+            "object_id": null,
+            "change": "modified",
+            "fields": []
+          },
+          {
+            "path": "adventure.tiles/cairn:grass",
+            "object_id": "cairn:grass",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/cairn:pad",
+            "object_id": "cairn:pad",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/cairn:road",
+            "object_id": "cairn:road",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/cairn:wall",
+            "object_id": "cairn:wall",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-1",
+            "object_id": "greybank-dispatch:tile-1",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-10",
+            "object_id": "greybank-dispatch:tile-10",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-100",
+            "object_id": "greybank-dispatch:tile-100",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-101",
+            "object_id": "greybank-dispatch:tile-101",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-102",
+            "object_id": "greybank-dispatch:tile-102",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-103",
+            "object_id": "greybank-dispatch:tile-103",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-104",
+            "object_id": "greybank-dispatch:tile-104",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-105",
+            "object_id": "greybank-dispatch:tile-105",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-106",
+            "object_id": "greybank-dispatch:tile-106",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-107",
+            "object_id": "greybank-dispatch:tile-107",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-108",
+            "object_id": "greybank-dispatch:tile-108",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-109",
+            "object_id": "greybank-dispatch:tile-109",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-11",
+            "object_id": "greybank-dispatch:tile-11",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-110",
+            "object_id": "greybank-dispatch:tile-110",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-111",
+            "object_id": "greybank-dispatch:tile-111",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-112",
+            "object_id": "greybank-dispatch:tile-112",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-113",
+            "object_id": "greybank-dispatch:tile-113",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-114",
+            "object_id": "greybank-dispatch:tile-114",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-115",
+            "object_id": "greybank-dispatch:tile-115",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-116",
+            "object_id": "greybank-dispatch:tile-116",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-117",
+            "object_id": "greybank-dispatch:tile-117",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-118",
+            "object_id": "greybank-dispatch:tile-118",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-119",
+            "object_id": "greybank-dispatch:tile-119",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-12",
+            "object_id": "greybank-dispatch:tile-12",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-120",
+            "object_id": "greybank-dispatch:tile-120",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-121",
+            "object_id": "greybank-dispatch:tile-121",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-122",
+            "object_id": "greybank-dispatch:tile-122",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-123",
+            "object_id": "greybank-dispatch:tile-123",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-124",
+            "object_id": "greybank-dispatch:tile-124",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-125",
+            "object_id": "greybank-dispatch:tile-125",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-126",
+            "object_id": "greybank-dispatch:tile-126",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-127",
+            "object_id": "greybank-dispatch:tile-127",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-128",
+            "object_id": "greybank-dispatch:tile-128",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-129",
+            "object_id": "greybank-dispatch:tile-129",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-13",
+            "object_id": "greybank-dispatch:tile-13",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-130",
+            "object_id": "greybank-dispatch:tile-130",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-131",
+            "object_id": "greybank-dispatch:tile-131",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-132",
+            "object_id": "greybank-dispatch:tile-132",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-133",
+            "object_id": "greybank-dispatch:tile-133",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-134",
+            "object_id": "greybank-dispatch:tile-134",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-135",
+            "object_id": "greybank-dispatch:tile-135",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-136",
+            "object_id": "greybank-dispatch:tile-136",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-137",
+            "object_id": "greybank-dispatch:tile-137",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-138",
+            "object_id": "greybank-dispatch:tile-138",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-139",
+            "object_id": "greybank-dispatch:tile-139",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-14",
+            "object_id": "greybank-dispatch:tile-14",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-140",
+            "object_id": "greybank-dispatch:tile-140",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-15",
+            "object_id": "greybank-dispatch:tile-15",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-16",
+            "object_id": "greybank-dispatch:tile-16",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-17",
+            "object_id": "greybank-dispatch:tile-17",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-18",
+            "object_id": "greybank-dispatch:tile-18",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-19",
+            "object_id": "greybank-dispatch:tile-19",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-2",
+            "object_id": "greybank-dispatch:tile-2",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-20",
+            "object_id": "greybank-dispatch:tile-20",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-21",
+            "object_id": "greybank-dispatch:tile-21",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-22",
+            "object_id": "greybank-dispatch:tile-22",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-23",
+            "object_id": "greybank-dispatch:tile-23",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-24",
+            "object_id": "greybank-dispatch:tile-24",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-25",
+            "object_id": "greybank-dispatch:tile-25",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-26",
+            "object_id": "greybank-dispatch:tile-26",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-27",
+            "object_id": "greybank-dispatch:tile-27",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-28",
+            "object_id": "greybank-dispatch:tile-28",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-29",
+            "object_id": "greybank-dispatch:tile-29",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-3",
+            "object_id": "greybank-dispatch:tile-3",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-30",
+            "object_id": "greybank-dispatch:tile-30",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-31",
+            "object_id": "greybank-dispatch:tile-31",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-32",
+            "object_id": "greybank-dispatch:tile-32",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-33",
+            "object_id": "greybank-dispatch:tile-33",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-34",
+            "object_id": "greybank-dispatch:tile-34",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-35",
+            "object_id": "greybank-dispatch:tile-35",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-36",
+            "object_id": "greybank-dispatch:tile-36",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-37",
+            "object_id": "greybank-dispatch:tile-37",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-38",
+            "object_id": "greybank-dispatch:tile-38",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-39",
+            "object_id": "greybank-dispatch:tile-39",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-4",
+            "object_id": "greybank-dispatch:tile-4",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-40",
+            "object_id": "greybank-dispatch:tile-40",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-41",
+            "object_id": "greybank-dispatch:tile-41",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-42",
+            "object_id": "greybank-dispatch:tile-42",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-43",
+            "object_id": "greybank-dispatch:tile-43",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-44",
+            "object_id": "greybank-dispatch:tile-44",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-45",
+            "object_id": "greybank-dispatch:tile-45",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-46",
+            "object_id": "greybank-dispatch:tile-46",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-47",
+            "object_id": "greybank-dispatch:tile-47",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-48",
+            "object_id": "greybank-dispatch:tile-48",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-49",
+            "object_id": "greybank-dispatch:tile-49",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-5",
+            "object_id": "greybank-dispatch:tile-5",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-50",
+            "object_id": "greybank-dispatch:tile-50",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-51",
+            "object_id": "greybank-dispatch:tile-51",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-52",
+            "object_id": "greybank-dispatch:tile-52",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-53",
+            "object_id": "greybank-dispatch:tile-53",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-54",
+            "object_id": "greybank-dispatch:tile-54",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-55",
+            "object_id": "greybank-dispatch:tile-55",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-56",
+            "object_id": "greybank-dispatch:tile-56",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-57",
+            "object_id": "greybank-dispatch:tile-57",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-58",
+            "object_id": "greybank-dispatch:tile-58",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-59",
+            "object_id": "greybank-dispatch:tile-59",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-6",
+            "object_id": "greybank-dispatch:tile-6",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-60",
+            "object_id": "greybank-dispatch:tile-60",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-61",
+            "object_id": "greybank-dispatch:tile-61",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-62",
+            "object_id": "greybank-dispatch:tile-62",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-63",
+            "object_id": "greybank-dispatch:tile-63",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-64",
+            "object_id": "greybank-dispatch:tile-64",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-65",
+            "object_id": "greybank-dispatch:tile-65",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-66",
+            "object_id": "greybank-dispatch:tile-66",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-67",
+            "object_id": "greybank-dispatch:tile-67",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-68",
+            "object_id": "greybank-dispatch:tile-68",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-69",
+            "object_id": "greybank-dispatch:tile-69",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-7",
+            "object_id": "greybank-dispatch:tile-7",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-70",
+            "object_id": "greybank-dispatch:tile-70",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-71",
+            "object_id": "greybank-dispatch:tile-71",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-72",
+            "object_id": "greybank-dispatch:tile-72",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-73",
+            "object_id": "greybank-dispatch:tile-73",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-74",
+            "object_id": "greybank-dispatch:tile-74",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-75",
+            "object_id": "greybank-dispatch:tile-75",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-76",
+            "object_id": "greybank-dispatch:tile-76",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-77",
+            "object_id": "greybank-dispatch:tile-77",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-78",
+            "object_id": "greybank-dispatch:tile-78",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-79",
+            "object_id": "greybank-dispatch:tile-79",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-8",
+            "object_id": "greybank-dispatch:tile-8",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-80",
+            "object_id": "greybank-dispatch:tile-80",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-81",
+            "object_id": "greybank-dispatch:tile-81",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-82",
+            "object_id": "greybank-dispatch:tile-82",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-83",
+            "object_id": "greybank-dispatch:tile-83",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-84",
+            "object_id": "greybank-dispatch:tile-84",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-85",
+            "object_id": "greybank-dispatch:tile-85",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-86",
+            "object_id": "greybank-dispatch:tile-86",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-87",
+            "object_id": "greybank-dispatch:tile-87",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-88",
+            "object_id": "greybank-dispatch:tile-88",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-89",
+            "object_id": "greybank-dispatch:tile-89",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-9",
+            "object_id": "greybank-dispatch:tile-9",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-90",
+            "object_id": "greybank-dispatch:tile-90",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-91",
+            "object_id": "greybank-dispatch:tile-91",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-92",
+            "object_id": "greybank-dispatch:tile-92",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-93",
+            "object_id": "greybank-dispatch:tile-93",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-94",
+            "object_id": "greybank-dispatch:tile-94",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-95",
+            "object_id": "greybank-dispatch:tile-95",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-96",
+            "object_id": "greybank-dispatch:tile-96",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-97",
+            "object_id": "greybank-dispatch:tile-97",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-98",
+            "object_id": "greybank-dispatch:tile-98",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/greybank-dispatch:tile-99",
+            "object_id": "greybank-dispatch:tile-99",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/recovery:grass",
+            "object_id": "recovery:grass",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/recovery:pad",
+            "object_id": "recovery:pad",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.tiles/recovery:road",
+            "object_id": "recovery:road",
+            "change": "created",
+            "fields": [
+              "graphic",
+              "id",
+              "mini_color",
+              "sheet",
+              "terrain"
+            ]
+          },
+          {
+            "path": "adventure.variables/dispatch:stage",
+            "object_id": "dispatch:stage",
+            "change": "created",
+            "fields": [
+              "id",
+              "initial",
+              "maximum",
+              "name",
+              "type"
+            ]
+          },
+          {
+            "path": "adventure.variables/recovery:data",
+            "object_id": "recovery:data",
+            "change": "created",
+            "fields": [
+              "id",
+              "initial",
+              "maximum",
+              "name",
+              "type"
+            ]
+          },
+          {
+            "path": "adventure.variables/recovery:departures",
+            "object_id": "recovery:departures",
+            "change": "created",
+            "fields": [
+              "id",
+              "initial",
+              "maximum",
+              "name",
+              "type"
+            ]
+          },
+          {
+            "path": "adventure.variables/recovery:surveyed",
+            "object_id": "recovery:surveyed",
+            "change": "created",
+            "fields": [
+              "id",
+              "initial",
+              "name",
+              "type"
+            ]
+          },
+          {
+            "path": "adventure.variables/recovery:visits",
+            "object_id": "recovery:visits",
+            "change": "created",
+            "fields": [
+              "id",
+              "initial",
+              "maximum",
+              "name",
+              "type"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-1",
+            "object_id": "greybank-dispatch:image-1",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-10",
+            "object_id": "greybank-dispatch:image-10",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-100",
+            "object_id": "greybank-dispatch:image-100",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-101",
+            "object_id": "greybank-dispatch:image-101",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-102",
+            "object_id": "greybank-dispatch:image-102",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-103",
+            "object_id": "greybank-dispatch:image-103",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-104",
+            "object_id": "greybank-dispatch:image-104",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-105",
+            "object_id": "greybank-dispatch:image-105",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-106",
+            "object_id": "greybank-dispatch:image-106",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-107",
+            "object_id": "greybank-dispatch:image-107",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-108",
+            "object_id": "greybank-dispatch:image-108",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-109",
+            "object_id": "greybank-dispatch:image-109",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-11",
+            "object_id": "greybank-dispatch:image-11",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-110",
+            "object_id": "greybank-dispatch:image-110",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-111",
+            "object_id": "greybank-dispatch:image-111",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-112",
+            "object_id": "greybank-dispatch:image-112",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-113",
+            "object_id": "greybank-dispatch:image-113",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-114",
+            "object_id": "greybank-dispatch:image-114",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-115",
+            "object_id": "greybank-dispatch:image-115",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-116",
+            "object_id": "greybank-dispatch:image-116",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-117",
+            "object_id": "greybank-dispatch:image-117",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-118",
+            "object_id": "greybank-dispatch:image-118",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-119",
+            "object_id": "greybank-dispatch:image-119",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-12",
+            "object_id": "greybank-dispatch:image-12",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-120",
+            "object_id": "greybank-dispatch:image-120",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-121",
+            "object_id": "greybank-dispatch:image-121",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-122",
+            "object_id": "greybank-dispatch:image-122",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-123",
+            "object_id": "greybank-dispatch:image-123",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-124",
+            "object_id": "greybank-dispatch:image-124",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-125",
+            "object_id": "greybank-dispatch:image-125",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-126",
+            "object_id": "greybank-dispatch:image-126",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-127",
+            "object_id": "greybank-dispatch:image-127",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-128",
+            "object_id": "greybank-dispatch:image-128",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-129",
+            "object_id": "greybank-dispatch:image-129",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-13",
+            "object_id": "greybank-dispatch:image-13",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-130",
+            "object_id": "greybank-dispatch:image-130",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-131",
+            "object_id": "greybank-dispatch:image-131",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-132",
+            "object_id": "greybank-dispatch:image-132",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-133",
+            "object_id": "greybank-dispatch:image-133",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-134",
+            "object_id": "greybank-dispatch:image-134",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-135",
+            "object_id": "greybank-dispatch:image-135",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-136",
+            "object_id": "greybank-dispatch:image-136",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-137",
+            "object_id": "greybank-dispatch:image-137",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-138",
+            "object_id": "greybank-dispatch:image-138",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-139",
+            "object_id": "greybank-dispatch:image-139",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-14",
+            "object_id": "greybank-dispatch:image-14",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-140",
+            "object_id": "greybank-dispatch:image-140",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-15",
+            "object_id": "greybank-dispatch:image-15",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-16",
+            "object_id": "greybank-dispatch:image-16",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-17",
+            "object_id": "greybank-dispatch:image-17",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-18",
+            "object_id": "greybank-dispatch:image-18",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-19",
+            "object_id": "greybank-dispatch:image-19",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-2",
+            "object_id": "greybank-dispatch:image-2",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-20",
+            "object_id": "greybank-dispatch:image-20",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-21",
+            "object_id": "greybank-dispatch:image-21",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-22",
+            "object_id": "greybank-dispatch:image-22",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-23",
+            "object_id": "greybank-dispatch:image-23",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-24",
+            "object_id": "greybank-dispatch:image-24",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-25",
+            "object_id": "greybank-dispatch:image-25",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-26",
+            "object_id": "greybank-dispatch:image-26",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-27",
+            "object_id": "greybank-dispatch:image-27",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-28",
+            "object_id": "greybank-dispatch:image-28",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-29",
+            "object_id": "greybank-dispatch:image-29",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-3",
+            "object_id": "greybank-dispatch:image-3",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-30",
+            "object_id": "greybank-dispatch:image-30",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-31",
+            "object_id": "greybank-dispatch:image-31",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-32",
+            "object_id": "greybank-dispatch:image-32",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-33",
+            "object_id": "greybank-dispatch:image-33",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-34",
+            "object_id": "greybank-dispatch:image-34",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-35",
+            "object_id": "greybank-dispatch:image-35",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-36",
+            "object_id": "greybank-dispatch:image-36",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-37",
+            "object_id": "greybank-dispatch:image-37",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-38",
+            "object_id": "greybank-dispatch:image-38",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-39",
+            "object_id": "greybank-dispatch:image-39",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-4",
+            "object_id": "greybank-dispatch:image-4",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-40",
+            "object_id": "greybank-dispatch:image-40",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-41",
+            "object_id": "greybank-dispatch:image-41",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-42",
+            "object_id": "greybank-dispatch:image-42",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-43",
+            "object_id": "greybank-dispatch:image-43",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-44",
+            "object_id": "greybank-dispatch:image-44",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-45",
+            "object_id": "greybank-dispatch:image-45",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-46",
+            "object_id": "greybank-dispatch:image-46",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-47",
+            "object_id": "greybank-dispatch:image-47",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-48",
+            "object_id": "greybank-dispatch:image-48",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-49",
+            "object_id": "greybank-dispatch:image-49",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-5",
+            "object_id": "greybank-dispatch:image-5",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-50",
+            "object_id": "greybank-dispatch:image-50",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-51",
+            "object_id": "greybank-dispatch:image-51",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-52",
+            "object_id": "greybank-dispatch:image-52",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-53",
+            "object_id": "greybank-dispatch:image-53",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-54",
+            "object_id": "greybank-dispatch:image-54",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-55",
+            "object_id": "greybank-dispatch:image-55",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-56",
+            "object_id": "greybank-dispatch:image-56",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-57",
+            "object_id": "greybank-dispatch:image-57",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-58",
+            "object_id": "greybank-dispatch:image-58",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-59",
+            "object_id": "greybank-dispatch:image-59",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-6",
+            "object_id": "greybank-dispatch:image-6",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-60",
+            "object_id": "greybank-dispatch:image-60",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-61",
+            "object_id": "greybank-dispatch:image-61",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-62",
+            "object_id": "greybank-dispatch:image-62",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-63",
+            "object_id": "greybank-dispatch:image-63",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-64",
+            "object_id": "greybank-dispatch:image-64",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-65",
+            "object_id": "greybank-dispatch:image-65",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-66",
+            "object_id": "greybank-dispatch:image-66",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-67",
+            "object_id": "greybank-dispatch:image-67",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-68",
+            "object_id": "greybank-dispatch:image-68",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-69",
+            "object_id": "greybank-dispatch:image-69",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-7",
+            "object_id": "greybank-dispatch:image-7",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-70",
+            "object_id": "greybank-dispatch:image-70",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-71",
+            "object_id": "greybank-dispatch:image-71",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-72",
+            "object_id": "greybank-dispatch:image-72",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-73",
+            "object_id": "greybank-dispatch:image-73",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-74",
+            "object_id": "greybank-dispatch:image-74",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-75",
+            "object_id": "greybank-dispatch:image-75",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-76",
+            "object_id": "greybank-dispatch:image-76",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-77",
+            "object_id": "greybank-dispatch:image-77",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-78",
+            "object_id": "greybank-dispatch:image-78",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-79",
+            "object_id": "greybank-dispatch:image-79",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-8",
+            "object_id": "greybank-dispatch:image-8",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-80",
+            "object_id": "greybank-dispatch:image-80",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-81",
+            "object_id": "greybank-dispatch:image-81",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-82",
+            "object_id": "greybank-dispatch:image-82",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-83",
+            "object_id": "greybank-dispatch:image-83",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-84",
+            "object_id": "greybank-dispatch:image-84",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-85",
+            "object_id": "greybank-dispatch:image-85",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-86",
+            "object_id": "greybank-dispatch:image-86",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-87",
+            "object_id": "greybank-dispatch:image-87",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-88",
+            "object_id": "greybank-dispatch:image-88",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-89",
+            "object_id": "greybank-dispatch:image-89",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-9",
+            "object_id": "greybank-dispatch:image-9",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-90",
+            "object_id": "greybank-dispatch:image-90",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-91",
+            "object_id": "greybank-dispatch:image-91",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-92",
+            "object_id": "greybank-dispatch:image-92",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-93",
+            "object_id": "greybank-dispatch:image-93",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-94",
+            "object_id": "greybank-dispatch:image-94",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-95",
+            "object_id": "greybank-dispatch:image-95",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-96",
+            "object_id": "greybank-dispatch:image-96",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-97",
+            "object_id": "greybank-dispatch:image-97",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-98",
+            "object_id": "greybank-dispatch:image-98",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/greybank-dispatch:image-99",
+            "object_id": "greybank-dispatch:image-99",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/vehicles:galleon-sprite",
+            "object_id": "vehicles:galleon-sprite",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "art.images/vehicles:skulker-sprite",
+            "object_id": "vehicles:skulker-sprite",
+            "change": "created",
+            "fields": [
+              "frames",
+              "height",
+              "id",
+              "kind",
+              "name",
+              "width"
+            ]
+          },
+          {
+            "path": "editor.construction_sets/dispatch:barrier",
+            "object_id": "dispatch:barrier",
+            "change": "created",
+            "fields": [
+              "footprint",
+              "generated_joins",
+              "id",
+              "kind",
+              "name",
+              "parts"
+            ]
+          },
+          {
+            "path": "editor.construction_sets/dispatch:depot",
+            "object_id": "dispatch:depot",
+            "change": "created",
+            "fields": [
+              "footprint",
+              "generated_joins",
+              "id",
+              "kind",
+              "name",
+              "parts"
+            ]
+          },
+          {
+            "path": "editor.construction_sets/dispatch:roads",
+            "object_id": "dispatch:roads",
+            "change": "created",
+            "fields": [
+              "footprint",
+              "id",
+              "kind",
+              "name",
+              "parts"
+            ]
+          },
+          {
+            "path": "editor.event_descriptions",
+            "object_id": null,
+            "change": "modified",
+            "fields": []
+          },
+          {
+            "path": "editor.map_constructions/greybank-dispatch:map-construction-1",
+            "object_id": "greybank-dispatch:map-construction-1",
+            "change": "created",
+            "fields": [
+              "cells",
+              "datum",
+              "id",
+              "kind",
+              "map",
+              "name",
+              "overlay",
+              "rendered",
+              "style"
+            ]
+          },
+          {
+            "path": "editor.map_constructions/greybank-dispatch:map-construction-2",
+            "object_id": "greybank-dispatch:map-construction-2",
+            "change": "created",
+            "fields": [
+              "cells",
+              "datum",
+              "id",
+              "kind",
+              "map",
+              "name",
+              "overlay",
+              "rendered",
+              "style"
+            ]
+          },
+          {
+            "path": "editor.map_constructions/greybank-dispatch:map-construction-3",
+            "object_id": "greybank-dispatch:map-construction-3",
+            "change": "created",
+            "fields": [
+              "cells",
+              "datum",
+              "id",
+              "kind",
+              "map",
+              "name",
+              "overlay",
+              "rendered",
+              "style"
+            ]
+          },
+          {
+            "path": "editor.map_constructions/greybank-dispatch:map-construction-4",
+            "object_id": "greybank-dispatch:map-construction-4",
+            "change": "created",
+            "fields": [
+              "cells",
+              "datum",
+              "id",
+              "kind",
+              "map",
+              "name",
+              "overlay",
+              "rendered",
+              "style"
+            ]
+          },
+          {
+            "path": "editor.tile_names",
+            "object_id": null,
+            "change": "modified",
+            "fields": []
+          },
+          {
+            "path": "editor.tile_sources",
+            "object_id": null,
+            "change": "modified",
+            "fields": []
+          },
+          {
+            "path": "provenance/LIBRARY-SOURCES.json",
+            "object_id": null,
+            "change": "modified",
+            "fields": []
+          },
+          {
+            "path": "scripts/recovery:verify",
+            "object_id": "recovery:verify",
+            "change": "modified",
+            "fields": []
+          }
+        ],
+        "operations": [
+          {
+            "operation": 0,
+            "result": [
+              [
+                "Vehicles",
+                "vehicles:skulker"
+              ]
+            ]
+          },
+          {
+            "operation": 1,
+            "result": [
+              [
+                "Vehicles",
+                "vehicles:galleon"
+              ]
+            ]
+          },
+          {
+            "operation": 2,
+            "result": "recovery:verify"
+          },
+          {
+            "operation": 3,
+            "result": "relay:end"
+          },
+          {
+            "operation": 4,
+            "result": "relay:welcome"
+          },
+          {
+            "operation": 5,
+            "result": "relay:offer"
+          },
+          {
+            "operation": 6,
+            "result": "relay:accept"
+          },
+          {
+            "operation": 7,
+            "result": "relay:briefing"
+          },
+          {
+            "operation": 8,
+            "result": "relay:office"
+          },
+          {
+            "operation": 9,
+            "result": "relay:accepted-check"
+          },
+          {
+            "operation": 10,
+            "result": "relay:receipt"
+          },
+          {
+            "operation": 11,
+            "result": "relay:pay"
+          },
+          {
+            "operation": 12,
+            "result": "relay:paid"
+          },
+          {
+            "operation": 13,
+            "result": "relay:thanks"
+          },
+          {
+            "operation": 14,
+            "result": "relay:debrief"
+          },
+          {
+            "operation": 15,
+            "result": "relay:finish"
+          },
+          {
+            "operation": 16,
+            "result": "relay:to-field"
+          },
+          {
+            "operation": 17,
+            "result": "relay:to-town"
+          },
+          {
+            "operation": 18,
+            "result": "relay:challenge"
+          },
+          {
+            "operation": 19,
+            "result": "relay:challenge-offer"
+          },
+          {
+            "operation": 20,
+            "result": "relay:battle"
+          },
+          {
+            "operation": 21,
+            "result": "relay:won"
+          },
+          {
+            "operation": 22,
+            "result": "relay:clear-text"
+          },
+          {
+            "operation": 23,
+            "result": "relay:lost"
+          },
+          {
+            "operation": 24,
+            "result": "relay:retreated"
+          },
+          {
+            "operation": 25,
+            "result": "relay:unavailable"
+          },
+          {
+            "operation": 26,
+            "result": "relay:workshop"
+          },
+          {
+            "operation": 27,
+            "result": "relay:shop"
+          },
+          {
+            "operation": 28,
+            "result": "relay:repair"
+          },
+          {
+            "operation": 29,
+            "result": "relay:repaired"
+          },
+          {
+            "operation": 30,
+            "result": "relay:no-funds"
+          },
+          {
+            "operation": 31,
+            "result": "relay:no-work"
+          },
+          {
+            "operation": 32,
+            "result": "relay:contract"
+          },
+          {
+            "operation": 33,
+            "result": "relay:stock"
+          },
+          {
+            "operation": 34,
+            "result": "relay:town"
+          },
+          {
+            "operation": 35,
+            "result": "relay:field"
+          },
+          {
+            "operation": 36,
+            "result": "recovery:valley"
+          },
+          {
+            "operation": 37,
+            "result": "cairn:relay"
+          },
+          {
+            "operation": 38,
+            "result": "cairn:pass"
+          },
+          {
+            "operation": 39,
+            "result": "frontier:grass"
+          },
+          {
+            "operation": 40,
+            "result": "frontier:road"
+          },
+          {
+            "operation": 41,
+            "result": "frontier:roof"
+          },
+          {
+            "operation": 42,
+            "result": "frontier:door"
+          },
+          {
+            "operation": 43,
+            "result": "frontier:forest"
+          },
+          {
+            "operation": 44,
+            "result": "frontier:water"
+          },
+          {
+            "operation": 45,
+            "result": "relay-contract:tile-1"
+          },
+          {
+            "operation": 46,
+            "result": "relay-contract:tile-2"
+          },
+          {
+            "operation": 47,
+            "result": "relay-contract:tile-3"
+          },
+          {
+            "operation": 48,
+            "result": "relay-contract:tile-4"
+          },
+          {
+            "operation": 49,
+            "result": "relay-contract:tile-5"
+          },
+          {
+            "operation": 50,
+            "result": "relay-contract:tile-6"
+          },
+          {
+            "operation": 51,
+            "result": "relay-contract:tile-7"
+          },
+          {
+            "operation": 52,
+            "result": "relay-contract:tile-8"
+          },
+          {
+            "operation": 53,
+            "result": "relay-contract:tile-9"
+          },
+          {
+            "operation": 54,
+            "result": "relay-contract:tile-10"
+          },
+          {
+            "operation": 55,
+            "result": "relay-contract:tile-11"
+          },
+          {
+            "operation": 56,
+            "result": "relay-contract:tile-12"
+          },
+          {
+            "operation": 57,
+            "result": "relay-contract:tile-13"
+          },
+          {
+            "operation": 58,
+            "result": "relay-contract:tile-14"
+          },
+          {
+            "operation": 59,
+            "result": "relay-contract:tile-15"
+          },
+          {
+            "operation": 60,
+            "result": "relay-contract:tile-16"
+          },
+          {
+            "operation": 61,
+            "result": "relay-contract:tile-17"
+          },
+          {
+            "operation": 62,
+            "result": "relay-contract:tile-18"
+          },
+          {
+            "operation": 63,
+            "result": "relay-contract:tile-19"
+          },
+          {
+            "operation": 64,
+            "result": "relay-contract:tile-20"
+          },
+          {
+            "operation": 65,
+            "result": "relay-contract:tile-21"
+          },
+          {
+            "operation": 66,
+            "result": "relay-contract:tile-22"
+          },
+          {
+            "operation": 67,
+            "result": "relay-contract:tile-23"
+          },
+          {
+            "operation": 68,
+            "result": "relay-contract:tile-24"
+          },
+          {
+            "operation": 69,
+            "result": "relay-contract:tile-25"
+          },
+          {
+            "operation": 70,
+            "result": "relay-contract:tile-26"
+          },
+          {
+            "operation": 71,
+            "result": "relay-contract:tile-27"
+          },
+          {
+            "operation": 72,
+            "result": "relay-contract:tile-28"
+          },
+          {
+            "operation": 73,
+            "result": "relay-contract:tile-29"
+          },
+          {
+            "operation": 74,
+            "result": "relay-contract:tile-30"
+          },
+          {
+            "operation": 75,
+            "result": "relay-contract:tile-31"
+          },
+          {
+            "operation": 76,
+            "result": "relay-contract:tile-32"
+          },
+          {
+            "operation": 77,
+            "result": "relay-contract:tile-33"
+          },
+          {
+            "operation": 78,
+            "result": "relay-contract:tile-34"
+          },
+          {
+            "operation": 79,
+            "result": "relay-contract:tile-35"
+          },
+          {
+            "operation": 80,
+            "result": "relay-contract:tile-36"
+          },
+          {
+            "operation": 81,
+            "result": "relay-contract:tile-37"
+          },
+          {
+            "operation": 82,
+            "result": "relay-contract:tile-38"
+          },
+          {
+            "operation": 83,
+            "result": "relay-contract:tile-39"
+          },
+          {
+            "operation": 84,
+            "result": "relay-contract:tile-40"
+          },
+          {
+            "operation": 85,
+            "result": "relay-contract:tile-41"
+          },
+          {
+            "operation": 86,
+            "result": "relay-contract:tile-42"
+          },
+          {
+            "operation": 87,
+            "result": "relay-contract:tile-43"
+          },
+          {
+            "operation": 88,
+            "result": "relay-contract:tile-44"
+          },
+          {
+            "operation": 89,
+            "result": "relay-contract:tile-45"
+          },
+          {
+            "operation": 90,
+            "result": "relay-contract:tile-46"
+          },
+          {
+            "operation": 91,
+            "result": "relay-contract:tile-47"
+          },
+          {
+            "operation": 92,
+            "result": "relay-contract:tile-48"
+          },
+          {
+            "operation": 93,
+            "result": "relay-contract:tile-49"
+          },
+          {
+            "operation": 94,
+            "result": "relay-contract:tile-50"
+          },
+          {
+            "operation": 95,
+            "result": "relay-contract:tile-51"
+          },
+          {
+            "operation": 96,
+            "result": "relay-contract:tile-52"
+          },
+          {
+            "operation": 97,
+            "result": "relay-contract:tile-53"
+          },
+          {
+            "operation": 98,
+            "result": "relay-contract:tile-54"
+          },
+          {
+            "operation": 99,
+            "result": "relay-contract:tile-55"
+          },
+          {
+            "operation": 100,
+            "result": "relay-contract:tile-56"
+          },
+          {
+            "operation": 101,
+            "result": "relay-contract:tile-57"
+          },
+          {
+            "operation": 102,
+            "result": "relay-contract:tile-58"
+          },
+          {
+            "operation": 103,
+            "result": "relay-contract:tile-59"
+          },
+          {
+            "operation": 104,
+            "result": "relay-contract:tile-60"
+          },
+          {
+            "operation": 105,
+            "result": "relay-contract:tile-61"
+          },
+          {
+            "operation": 106,
+            "result": "relay-contract:tile-62"
+          },
+          {
+            "operation": 107,
+            "result": "relay-contract:tile-63"
+          },
+          {
+            "operation": 108,
+            "result": "relay-contract:tile-64"
+          },
+          {
+            "operation": 109,
+            "result": "relay-contract:tile-65"
+          },
+          {
+            "operation": 110,
+            "result": "relay-contract:tile-66"
+          },
+          {
+            "operation": 111,
+            "result": "recovery:grass"
+          },
+          {
+            "operation": 112,
+            "result": "recovery:road"
+          },
+          {
+            "operation": 113,
+            "result": "recovery:pad"
+          },
+          {
+            "operation": 114,
+            "result": "cairn:grass"
+          },
+          {
+            "operation": 115,
+            "result": "cairn:road"
+          },
+          {
+            "operation": 116,
+            "result": "cairn:pad"
+          },
+          {
+            "operation": 117,
+            "result": "cairn:wall"
+          },
+          {
+            "operation": 118,
+            "result": "relay:raider"
+          },
+          {
+            "operation": 119,
+            "result": "recovery:raider"
+          },
+          {
+            "operation": 120,
+            "result": "cairn:defence"
+          },
+          {
+            "operation": 121,
+            "result": "cairn:escort"
+          },
+          {
+            "operation": 122,
+            "result": "relay:end"
+          },
+          {
+            "operation": 123,
+            "result": "relay:to-field"
+          },
+          {
+            "operation": 124,
+            "result": "relay:to-town"
+          },
+          {
+            "operation": 125,
+            "result": "relay:challenge"
+          },
+          {
+            "operation": 126,
+            "result": "relay:challenge-offer"
+          },
+          {
+            "operation": 127,
+            "result": "relay:battle"
+          },
+          {
+            "operation": 128,
+            "result": "relay:clear-text"
+          },
+          {
+            "operation": 129,
+            "result": "relay:retreated"
+          },
+          {
+            "operation": 130,
+            "result": "relay:unavailable"
+          },
+          {
+            "operation": 131,
+            "result": "relay:workshop"
+          },
+          {
+            "operation": 132,
+            "result": "relay:shop"
+          },
+          {
+            "operation": 133,
+            "result": "relay:repair"
+          },
+          {
+            "operation": 134,
+            "result": "relay:repaired"
+          },
+          {
+            "operation": 135,
+            "result": "relay:no-funds"
+          },
+          {
+            "operation": 136,
+            "result": "relay:no-work"
+          },
+          {
+            "operation": 137,
+            "result": "recovery:end"
+          },
+          {
+            "operation": 138,
+            "result": "recovery:briefing"
+          },
+          {
+            "operation": 139,
+            "result": "recovery:error"
+          },
+          {
+            "operation": 140,
+            "result": "recovery:collect-west"
+          },
+          {
+            "operation": 141,
+            "result": "recovery:collect-east"
+          },
+          {
+            "operation": 142,
+            "result": "recovery:count-data"
+          },
+          {
+            "operation": 143,
+            "result": "recovery:collected"
+          },
+          {
+            "operation": 144,
+            "result": "recovery:one-cache"
+          },
+          {
+            "operation": 145,
+            "result": "recovery:two-caches"
+          },
+          {
+            "operation": 146,
+            "result": "recovery:survey"
+          },
+          {
+            "operation": 147,
+            "result": "recovery:survey-complete"
+          },
+          {
+            "operation": 148,
+            "result": "recovery:survey-message"
+          },
+          {
+            "operation": 149,
+            "result": "recovery:pad-enter"
+          },
+          {
+            "operation": 150,
+            "result": "recovery:pad-leave"
+          },
+          {
+            "operation": 151,
+            "result": "recovery:extract-check"
+          },
+          {
+            "operation": 152,
+            "result": "recovery:not-ready"
+          },
+          {
+            "operation": 153,
+            "result": "recovery:lua-check"
+          },
+          {
+            "operation": 154,
+            "result": "recovery:extract-complete"
+          },
+          {
+            "operation": 155,
+            "result": "recovery:payment"
+          },
+          {
+            "operation": 156,
+            "result": "recovery:success"
+          },
+          {
+            "operation": 157,
+            "result": "recovery:abandon"
+          },
+          {
+            "operation": 158,
+            "result": "recovery:abandoned"
+          },
+          {
+            "operation": 159,
+            "result": "recovery:raider-choice"
+          },
+          {
+            "operation": 160,
+            "result": "recovery:battle"
+          },
+          {
+            "operation": 161,
+            "result": "recovery:raider-win"
+          },
+          {
+            "operation": 162,
+            "result": "recovery:raider-retreat"
+          },
+          {
+            "operation": 163,
+            "result": "cairn:end"
+          },
+          {
+            "operation": 164,
+            "result": "cairn:error"
+          },
+          {
+            "operation": 165,
+            "result": "cairn:defence-active"
+          },
+          {
+            "operation": 166,
+            "result": "cairn:defence-battle"
+          },
+          {
+            "operation": 167,
+            "result": "cairn:defence-start"
+          },
+          {
+            "operation": 168,
+            "result": "cairn:incoming"
+          },
+          {
+            "operation": 169,
+            "result": "cairn:reinforce"
+          },
+          {
+            "operation": 170,
+            "result": "cairn:blocked-wave"
+          },
+          {
+            "operation": 171,
+            "result": "cairn:retry-wave"
+          },
+          {
+            "operation": 172,
+            "result": "cairn:defence-death"
+          },
+          {
+            "operation": 173,
+            "result": "cairn:combat-loss"
+          },
+          {
+            "operation": 174,
+            "result": "cairn:defence-done"
+          },
+          {
+            "operation": 175,
+            "result": "cairn:defence-complete"
+          },
+          {
+            "operation": 176,
+            "result": "cairn:defence-pay"
+          },
+          {
+            "operation": 177,
+            "result": "cairn:defence-failed"
+          },
+          {
+            "operation": 178,
+            "result": "cairn:defence-loss"
+          },
+          {
+            "operation": 179,
+            "result": "cairn:escort-active"
+          },
+          {
+            "operation": 180,
+            "result": "cairn:escort-battle"
+          },
+          {
+            "operation": 181,
+            "result": "cairn:escort-start"
+          },
+          {
+            "operation": 182,
+            "result": "cairn:escort-incoming"
+          },
+          {
+            "operation": 183,
+            "result": "cairn:escort-reinforce"
+          },
+          {
+            "operation": 184,
+            "result": "cairn:escort-blocked"
+          },
+          {
+            "operation": 185,
+            "result": "cairn:escort-retry"
+          },
+          {
+            "operation": 186,
+            "result": "cairn:transport-death"
+          },
+          {
+            "operation": 187,
+            "result": "cairn:transport-arrived"
+          },
+          {
+            "operation": 188,
+            "result": "cairn:escort-done"
+          },
+          {
+            "operation": 189,
+            "result": "cairn:escort-complete"
+          },
+          {
+            "operation": 190,
+            "result": "cairn:escort-pay"
+          },
+          {
+            "operation": 191,
+            "result": "cairn:escort-failed"
+          },
+          {
+            "operation": 192,
+            "result": "cairn:escort-loss"
+          },
+          {
+            "operation": 193,
+            "result": "dispatch:welcome"
+          },
+          {
+            "operation": 194,
+            "result": "dispatch:error"
+          },
+          {
+            "operation": 195,
+            "result": "dispatch:see-office"
+          },
+          {
+            "operation": 196,
+            "result": "dispatch:office"
+          },
+          {
+            "operation": 197,
+            "result": "dispatch:office-one"
+          },
+          {
+            "operation": 198,
+            "result": "dispatch:office-two"
+          },
+          {
+            "operation": 199,
+            "result": "dispatch:office-three"
+          },
+          {
+            "operation": 200,
+            "result": "dispatch:office-four"
+          },
+          {
+            "operation": 201,
+            "result": "dispatch:offer"
+          },
+          {
+            "operation": 202,
+            "result": "dispatch:accept-assault"
+          },
+          {
+            "operation": 203,
+            "result": "dispatch:assault-active"
+          },
+          {
+            "operation": 204,
+            "result": "dispatch:assault-brief"
+          },
+          {
+            "operation": 205,
+            "result": "dispatch:accept-recovery"
+          },
+          {
+            "operation": 206,
+            "result": "dispatch:collect-active"
+          },
+          {
+            "operation": 207,
+            "result": "dispatch:survey-active"
+          },
+          {
+            "operation": 208,
+            "result": "dispatch:extract-active"
+          },
+          {
+            "operation": 209,
+            "result": "dispatch:recovery-brief"
+          },
+          {
+            "operation": 210,
+            "result": "dispatch:road"
+          },
+          {
+            "operation": 211,
+            "result": "dispatch:road-recovery"
+          },
+          {
+            "operation": 212,
+            "result": "dispatch:to-recovery"
+          },
+          {
+            "operation": 213,
+            "result": "relay:won"
+          },
+          {
+            "operation": 214,
+            "result": "dispatch:assault-pay"
+          },
+          {
+            "operation": 215,
+            "result": "dispatch:assault-paid"
+          },
+          {
+            "operation": 216,
+            "result": "relay:lost"
+          },
+          {
+            "operation": 217,
+            "result": "dispatch:recovery-paid"
+          },
+          {
+            "operation": 218,
+            "result": "dispatch:defence-offer"
+          },
+          {
+            "operation": 219,
+            "result": "dispatch:defence-paid"
+          },
+          {
+            "operation": 220,
+            "result": "dispatch:defence-report"
+          },
+          {
+            "operation": 221,
+            "result": "dispatch:escort-offer"
+          },
+          {
+            "operation": 222,
+            "result": "dispatch:escort-paid"
+          },
+          {
+            "operation": 223,
+            "result": "dispatch:escort-report"
+          },
+          {
+            "operation": 224,
+            "result": "dispatch:debrief"
+          },
+          {
+            "operation": 225,
+            "result": "dispatch:finish"
+          },
+          {
+            "operation": 226,
+            "result": "relay:contract"
+          },
+          {
+            "operation": 227,
+            "result": "recovery:collect"
+          },
+          {
+            "operation": 228,
+            "result": "recovery:survey"
+          },
+          {
+            "operation": 229,
+            "result": "recovery:extract"
+          },
+          {
+            "operation": 230,
+            "result": "cairn:defend"
+          },
+          {
+            "operation": 231,
+            "result": "cairn:escort"
+          },
+          {
+            "operation": 232,
+            "result": "relay:stock"
+          },
+          {
+            "operation": 233,
+            "result": "recovery:landing-pad"
+          },
+          {
+            "operation": 234,
+            "result": "recovery:west-cache"
+          },
+          {
+            "operation": 235,
+            "result": "recovery:east-cache"
+          },
+          {
+            "operation": 236,
+            "result": "recovery:relay"
+          },
+          {
+            "operation": 237,
+            "result": "recovery:withdrawal"
+          },
+          {
+            "operation": 238,
+            "result": "recovery:data"
+          },
+          {
+            "operation": 239,
+            "result": "recovery:visits"
+          },
+          {
+            "operation": 240,
+            "result": "recovery:departures"
+          },
+          {
+            "operation": 241,
+            "result": "recovery:surveyed"
+          },
+          {
+            "operation": 242,
+            "result": "dispatch:stage"
+          },
+          {
+            "operation": 243,
+            "result": "cairn:relay-vehicle"
+          },
+          {
+            "operation": 244,
+            "result": "cairn:relay-guard"
+          },
+          {
+            "operation": 245,
+            "result": "cairn:raider-wave"
+          },
+          {
+            "operation": 246,
+            "result": "cairn:transport"
+          },
+          {
+            "operation": 247,
+            "result": "cairn:ambush"
+          },
+          {
+            "operation": 248,
+            "result": "cairn:relay-briefing"
+          },
+          {
+            "operation": 249,
+            "result": "cairn:relay-wave"
+          },
+          {
+            "operation": 250,
+            "result": "cairn:relay-retry"
+          },
+          {
+            "operation": 251,
+            "result": "cairn:relay-casualty"
+          },
+          {
+            "operation": 252,
+            "result": "cairn:relay-timer"
+          },
+          {
+            "operation": 253,
+            "result": "cairn:pass-briefing"
+          },
+          {
+            "operation": 254,
+            "result": "cairn:pass-wave"
+          },
+          {
+            "operation": 255,
+            "result": "cairn:pass-retry"
+          },
+          {
+            "operation": 256,
+            "result": "cairn:pass-casualty"
+          },
+          {
+            "operation": 257,
+            "result": "cairn:pass-arrival"
+          },
+          {
+            "operation": 258,
+            "result": null
+          },
+          {
+            "operation": 259,
+            "result": "dispatch:depot"
+          },
+          {
+            "operation": 260,
+            "result": {
+              "required": 56,
+              "assigned": 56,
+              "missing": [],
+              "preview_missing": [],
+              "joins": 3,
+              "generated_joins": 3,
+              "complete": true
+            }
+          },
+          {
+            "operation": 261,
+            "result": "dispatch:barrier"
+          },
+          {
+            "operation": 262,
+            "result": {
+              "required": 56,
+              "assigned": 56,
+              "missing": [],
+              "preview_missing": [],
+              "joins": 3,
+              "generated_joins": 3,
+              "complete": true
+            }
+          },
+          {
+            "operation": 263,
+            "result": "dispatch:roads"
+          },
+          {
+            "operation": 264,
+            "result": {
+              "required": 16,
+              "assigned": 16,
+              "missing": [],
+              "preview_missing": [],
+              "joins": 0,
+              "generated_joins": 0,
+              "complete": true
+            }
+          },
+          {
+            "operation": 265,
+            "result": "cairn:relay"
+          },
+          {
+            "operation": 266,
+            "result": "greybank-dispatch:map-construction-1"
+          },
+          {
+            "operation": 267,
+            "result": "cairn:pass"
+          },
+          {
+            "operation": 268,
+            "result": "greybank-dispatch:map-construction-2"
+          },
+          {
+            "operation": 269,
+            "result": "cairn:pass"
+          },
+          {
+            "operation": 270,
+            "result": "greybank-dispatch:map-construction-3"
+          },
+          {
+            "operation": 271,
+            "result": "greybank-dispatch:map-construction-4"
+          },
+          {
+            "operation": 272,
+            "result": "dispatch:office"
+          },
+          {
+            "operation": 273,
+            "result": "dispatch:offer"
+          },
+          {
+            "operation": 274,
+            "result": "recovery:lua-check"
+          },
+          {
+            "operation": 275,
+            "result": "cairn:defence-done"
+          },
+          {
+            "operation": 276,
+            "result": "cairn:transport-arrived"
+          }
+        ],
+        "validation": "Valid project greybank-dispatch 1.0.0: 7 mechs, 10 weapons; 5 maps, 104 event nodes; SHA-256 9fdc3d839499b5c04b86824fba3f53ee290502ad8626a44e3bdca067e78419ca",
+        "diagnostics": [],
+        "protection_overrides": [],
+        "displaced_details": []
+      }
+    },
+    "ai8-break-deployment": {
+      "hash": "f329ab6344730cff51986f6a2cfa4fc291cc0b0e4ab4c8df09d9d0919a883d18",
+      "result": {
+        "api_version": 1,
+        "status": "applied",
+        "request_id": "ai8-break-deployment",
+        "base_revision": "fd5454a10ca105a955144c720a825e0ad66c2a0933b3771e685e6792cfd8549a",
+        "result_revision": "573af95821ec4ddd233d2384e5a57a56e3d4edf98e83324bf9992b8b8e28fadd",
+        "changes": [
+          {
+            "path": "adventure.encounters/relay:raider",
+            "object_id": "relay:raider",
+            "change": "modified",
+            "fields": [
+              "enemies"
+            ]
+          }
+        ],
+        "operations": [
+          {
+            "operation": 0,
+            "result": "relay:raider"
+          }
+        ],
+        "validation": "Valid project greybank-dispatch 1.0.0: 7 mechs, 10 weapons; 5 maps, 104 event nodes; SHA-256 e15c302cbfce7de49578fa6851fe3920ba0b8468c327a0bc913b7d497f8fb125",
+        "diagnostics": [],
+        "protection_overrides": [],
+        "displaced_details": []
+      }
+    },
+    "ai8-repair-deployment": {
+      "hash": "b450424eb7a72c249374914aa36a0a1a75dea8e853c1d08f946d69c326b890b1",
+      "result": {
+        "api_version": 1,
+        "status": "applied",
+        "request_id": "ai8-repair-deployment",
+        "base_revision": "573af95821ec4ddd233d2384e5a57a56e3d4edf98e83324bf9992b8b8e28fadd",
+        "result_revision": "08d6c5b949b65077b55cc51470006d32ccfea4cd6e54ccd7efe6078701374eac",
+        "changes": [
+          {
+            "path": "adventure.encounters/relay:raider",
+            "object_id": "relay:raider",
+            "change": "modified",
+            "fields": [
+              "enemies"
+            ]
+          }
+        ],
+        "operations": [
+          {
+            "operation": 0,
+            "result": "relay:raider"
+          }
+        ],
+        "validation": "Valid project greybank-dispatch 1.0.0: 7 mechs, 10 weapons; 5 maps, 104 event nodes; SHA-256 d55236f72e41fa690bede5fd50acf8a9a0313b2a53eb8aa4c9b4bb6bb51faa3f",
+        "diagnostics": [],
+        "protection_overrides": [],
+        "displaced_details": []
+      }
+    }
+  }
+}

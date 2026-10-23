@@ -44,8 +44,18 @@ requirements. Engine, tools and vendored Lua source are included with licenses.
 Building the included source still requires the compiler/CMake/SDL development
 dependencies described in README; ordinary launching uses the bundled binaries.
 
+**Author** (Linux) and **Author.cmd** (Windows) start the console authoring CLI.
+They preserve relative paths, JSON stdout and failure exit codes; use them from
+any working directory, including installations with spaces in their paths.
+Try `Author capabilities` or `Author recipe list`. Schemas, recipes, source
+tools, catalogues and native analysis/playtest programs ship in the same kit.
+See [recorded campaigns and external authoring](CAMPAIGN_RECIPES.md). There is
+no required provider SDK, model configuration or network service.
+
 Linux validation runs the bundled launcher, roster/map editor, PNG round trip,
-validator and actual SDL player from outside the checkout:
+validator and actual SDL player from outside the checkout. It also exercises
+CLI discovery, generation, source build, gameplay/checkpoints, missing-asset
+diagnostics and an independent exported game with only its native player:
 
 ```sh
 python3 tools/native_smoke.py --delivery-only work/releases/ConstructionKit-linux

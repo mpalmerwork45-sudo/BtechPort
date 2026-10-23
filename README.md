@@ -43,6 +43,9 @@ See the [five milestones](docs/EDITOR_COMPLETION_MILESTONES.md) and
 [distribution guide](docs/CONSTRUCTION_KIT_DELIVERY.md). A packaged Linux kit
 starts with `ConstructionKit` and includes Python/Tk/Pillow/SDL; a Windows kit
 starts with `ConstructionKit.cmd` and can use an installed or supplied Python runtime.
+Both packages include a console authoring launcher: `Author` on Linux and
+`Author.cmd` on Windows. It exposes the same JSON interface used by external
+AI authors, without requiring a model or network connection.
 
 The editor now uses a single tabbed workspace with an explorer, Inspector,
 Problems/output, direct unit-to-sprite and entrance-to-event navigation, shared
@@ -123,6 +126,20 @@ friendly guards and a neutral Skulker convoy, with save/reload and loss routes.
 Select it in `./BtechPort` to play or edit it. See the
 [demo instructions](examples/cairn-passage/README.md) and
 [combat authoring guide](docs/COMBAT_MISSIONS.md).
+
+**Greybank Dispatch (campaign)** combines a depot/service loop, a choice of
+Jenner assault or data recovery, timed defence and a vehicle escort. Play or
+edit it in the launcher. To generate your own copy, check both branches and
+launch it with your configured original resources:
+
+```sh
+python3 tools/author.py recipe build \
+  --file examples/authoring/greybank/recipe.json \
+  --output "work/My Greybank campaign" --check --play
+```
+
+The [recipe guide](docs/CAMPAIGN_RECIPES.md) covers parameters, recorded inputs,
+diagnostics, source editing and delivery. Generation and gameplay work offline.
 
 **Argent Recovery (regions / objectives)** demonstrates AI6a: named map regions,
 typed counters, explicit objective states and compound extraction conditions,

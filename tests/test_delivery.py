@@ -1,11 +1,25 @@
-import copy,json,struct,subprocess,sys,tempfile,unittest
+import copy,json,os,struct,subprocess,sys,tempfile,unittest
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT/'tools'))
 from editor_model import create_project,ProjectDocument,EditorError
 from save_migration import compatible,migrate
-from delivery import asset_report
+from delivery import asset_report,write_launchers
 
 class DeliveryTests(unittest.TestCase):
+    def test_author_console_preserves_spaced_paths_status_and_stdout(self):
+        # A tiny interpreter probe tests shell argument forwarding, environment
+        # and exit status independently of this machine's bundled dependencies.
+        with tempfile.TemporaryDirectory(prefix='CLI launcher ') as tmp:
+            root=Path(tmp);kit=root/'Kit with spaces';kit.mkdir();(kit/'runtime/bin').mkdir(parents=True)
+            probe=kit/'runtime/bin/python3'
+            probe.write_text('#!/bin/sh\nprintf "%s\\n" "$PWD" "$PYTHONHOME" "$@"\nexit 23\n');probe.chmod(0o755)
+            write_launchers(kit,'linux')
+            result=subprocess.run([str(kit/'Author'),'recipe','build','--file','My recipe.json'],cwd=root,capture_output=True,text=True)
+            self.assertEqual(result.returncode,23)
+            self.assertEqual(result.stdout.splitlines(),[str(root),str(kit/'runtime'),str(kit/'tools/author.py'),'recipe','build','--file','My recipe.json'])
+            write_launchers(kit,'windows');cmd=(kit/'Author.cmd').read_text()
+            self.assertIn('%*',cmd);self.assertIn('exit /b %errorlevel%',cmd);self.assertNotIn('start ',cmd)
+
     def test_safe_migration_and_refusals(self):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp);tool=ROOT/'build/btp-project';player=ROOT/'build/btech-headless'
