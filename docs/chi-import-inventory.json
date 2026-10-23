@@ -1,0 +1,1546 @@
+{
+  "format": "btp-chi-audit-v1",
+  "source_version": "chi-original-dos-1.03",
+  "files": [
+    {
+      "file": "BTECH.EXE",
+      "bytes": 152429,
+      "sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a"
+    },
+    {
+      "file": "MAP1.MTP",
+      "bytes": 4637,
+      "sha256": "67af9479e4d54ca0c93d709b7682f80ddea04265f01aadca0c1f1db97f15542c"
+    },
+    {
+      "file": "MAP2.MTP",
+      "bytes": 4637,
+      "sha256": "a4ad5bd88b6b26c3fa65665973d358d669f97f54795c09049373ae7472a5f26d"
+    },
+    {
+      "file": "MAP3.MTP",
+      "bytes": 1565,
+      "sha256": "300c1d3c3f2e526f6240b20a980d9cd9997f2353b91226fb8b992d4cff5aaa60"
+    },
+    {
+      "file": "MAP4.MTP",
+      "bytes": 1565,
+      "sha256": "66b814334f34805f5cde2adc523c58b2507b4318b2765f20ec257f12edbba11c"
+    },
+    {
+      "file": "MAP5.MTP",
+      "bytes": 1565,
+      "sha256": "833d47be7a7a1b2d60cb15fc46cd006748c7a612a121b26c321c985078abb071"
+    },
+    {
+      "file": "MAP6.MTP",
+      "bytes": 1565,
+      "sha256": "bfc5e5620ee2d28759927f782a02cbbf5b79bc4eef13f9a9c9e3c619c9eaab2e"
+    },
+    {
+      "file": "MAP7.MTP",
+      "bytes": 1565,
+      "sha256": "ceee2038a0ac23ba873713f83d6c7b62c5ee678ff3fdfccc8b25fac7ac348ce4"
+    },
+    {
+      "file": "MAP8.MTP",
+      "bytes": 1565,
+      "sha256": "3e2779d7802346adabb41a15f164e459ceeeac69d743cfe85a92c22c5b385962"
+    },
+    {
+      "file": "MAP9.MTP",
+      "bytes": 1565,
+      "sha256": "336051abfeff17db28953b241bf4764b48a5b986950cb9a291664f71cdf491eb"
+    },
+    {
+      "file": "MAP10.MTP",
+      "bytes": 1565,
+      "sha256": "40a46df6a54051c1219beedf7e66a66f814449867ca8ad692f118f1a90e8bf80"
+    },
+    {
+      "file": "MAP11.MTP",
+      "bytes": 4637,
+      "sha256": "52313ba5880d97a694e11712d93009b0d653ad23fe809569f7504c5dfdf90dd6"
+    },
+    {
+      "file": "MAP12.MTP",
+      "bytes": 605,
+      "sha256": "c92e55765743919f5085271576f66fdceb8c23483c3c633d2d55bbf7258d3e46"
+    },
+    {
+      "file": "MAP13.MTP",
+      "bytes": 605,
+      "sha256": "575290fe0d1f4324fa009ac42093aca25aeb1223430f792885cd158a91421099"
+    },
+    {
+      "file": "MAP14.MTP",
+      "bytes": 4637,
+      "sha256": "7c9d76d1d49f1d812805a548e7d8c94c3cb481b08fb490e6a72908e4cd8384e3"
+    },
+    {
+      "file": "MAP15.MTP",
+      "bytes": 768,
+      "sha256": "a03d1fa0cfe8f80d69da841473c1b714363e2f8ca8bdea6cc4149f475c093b78"
+    },
+    {
+      "file": "BTTLTECH.ICN",
+      "bytes": 28861,
+      "sha256": "857ad418de7c834c6bd0a301b6fc51c9424625d1ee332c0b0888bef59e417c0d"
+    },
+    {
+      "file": "MECHSHAP.CMP",
+      "bytes": 16918,
+      "sha256": "861545376ecff306fecf960cfb61f931dda61a640ec1c9f417a4a5108e5edc05"
+    },
+    {
+      "file": "BTSTATS.CMP",
+      "bytes": 12637,
+      "sha256": "ab40500848638f687b423a2dc115bed631f178faa966073efb50fb08fe4a1ddd"
+    },
+    {
+      "file": "BTBORDER.CMP",
+      "bytes": 287,
+      "sha256": "a4095d7ef9fd31deb470a5932057324ef447476ce5a31ae1aa27f74eb65eeea7"
+    },
+    {
+      "file": "ANIMATE.ICN",
+      "bytes": 3613,
+      "sha256": "499269ac20d6e091cfb886280af17c2edd0d0343e80ea293f5ed767c22f78a0b"
+    },
+    {
+      "file": "BTTITLE.CMP",
+      "bytes": 27488,
+      "sha256": "6907a167d963509b3fc6067224c12d420f042e2ed64a06b426cb1572a810764d"
+    },
+    {
+      "file": "INFOCOM.CMP",
+      "bytes": 6983,
+      "sha256": "9158ff357de4b3aa0f1004c8b75fed9393f94b0a367c75dc6b3325a63ea4d30b"
+    },
+    {
+      "file": "TINYLAND.CMP",
+      "bytes": 2032,
+      "sha256": "59bc6d81218f625670898cb73079f0eb6bf19a2600d1f34f67c990c5c676acc0"
+    },
+    {
+      "file": "STARLEAG.ICN",
+      "bytes": 27227,
+      "sha256": "52030943ce60c927f01cf45f0dfe2b8af805b612ed54c4e499a496d35159349e"
+    },
+    {
+      "file": "MAP.ICN",
+      "bytes": 12135,
+      "sha256": "583c1ba616fc15c549e4420cb942111cd2e1f73497a1642c51992d82488c5e3b"
+    },
+    {
+      "file": "ENDMECH.CMP",
+      "bytes": 16215,
+      "sha256": "f0b206ddb059d3ceb8b085da68f182413a02a801d9d73692e01ab67dc58303f4"
+    },
+    {
+      "file": "DESTRUCT.ICN",
+      "bytes": 29706,
+      "sha256": "0d7283b1b3a5791c088a067919d99d78d5236c84f2c5247a08ec00b8491c328e"
+    },
+    {
+      "file": "TRAINING.BLD",
+      "bytes": 7282,
+      "sha256": "a3e8d56ba58319dcdc30be305f2e45dba97fc0d7e3f26f2e4e0a7ec8bb3c0aa9"
+    },
+    {
+      "file": "CITADEL.BLD",
+      "bytes": 4330,
+      "sha256": "dc4e215ba2c2d6be535c837f96e4158189d9e4c033df6648c9c21c264bfb817b"
+    },
+    {
+      "file": "COMSTAR.BLD",
+      "bytes": 2267,
+      "sha256": "d329d8811dae70997ed928d9952aa602a3a9bb841222ee1c544509c0ac3d1223"
+    },
+    {
+      "file": "WEAPON.BLD",
+      "bytes": 5850,
+      "sha256": "4e08d0fb29c18f0dc0e0f7d403eb0a94aa2f308c7ee9c65fbea3c0436ae4a71d"
+    },
+    {
+      "file": "ARMOR.BLD",
+      "bytes": 3388,
+      "sha256": "a57c31a718aa7ac16ea83c02e7ae6e7abaf3c4c1ba7de4697bc5c11abb75423f"
+    },
+    {
+      "file": "REPAIR.BLD",
+      "bytes": 4983,
+      "sha256": "a22f4cab90119911693602fc290e39f4ab6d74cfd6fef765e76739d6ba8efb97"
+    },
+    {
+      "file": "BARRACKS.BLD",
+      "bytes": 2990,
+      "sha256": "878c7b829710adaa9cb91fbf9795e8486478418eaa63cd5f8d277e2a25579eb8"
+    },
+    {
+      "file": "LOUNGE.BLD",
+      "bytes": 1827,
+      "sha256": "3efec6eb3a03b2844c8383462351ae2e4eedb4a9713b6f9c0d3c412097a76ecf"
+    },
+    {
+      "file": "GARAGE.BLD",
+      "bytes": 1686,
+      "sha256": "3aae8a8931f16e63414ab595a069f44a4b436fac1c605f13eb83269d6ce23d37"
+    },
+    {
+      "file": "HOSPITAL.BLD",
+      "bytes": 4581,
+      "sha256": "1ef9e77d0c762a38e7d4e37bb2a666e7ba90f9bca77f37f64a309c3619c5b26a"
+    },
+    {
+      "file": "ARENA.BLD",
+      "bytes": 3957,
+      "sha256": "157f2981bff60b1fc6a8b76a09fe74c85b01cd1bdfdde70ad1acd8c87ba266fa"
+    },
+    {
+      "file": "PARTY.BLD",
+      "bytes": 6207,
+      "sha256": "bb11684bed0787b207fd29a0b76a616da3ee80b2270c0ba981de7665765fe9b4"
+    },
+    {
+      "file": "CLOTHES.BLD",
+      "bytes": 915,
+      "sha256": "cd2b597fcf4a3397c069a3789a5b570b2ccc3e17be1b7f92b05b092d0be94bb6"
+    },
+    {
+      "file": "JAIL.BLD",
+      "bytes": 4297,
+      "sha256": "c73328fb9f9ca51f6e05a4bee53054afed518a1dda51810b3ee967034cbd93b0"
+    },
+    {
+      "file": "MAYOR.BLD",
+      "bytes": 5896,
+      "sha256": "5cfa6d15cf042d5e1b74538732cfe7c8b2577e0f26985877289f101c17273f56"
+    },
+    {
+      "file": "WEAPON2.BLD",
+      "bytes": 1738,
+      "sha256": "4c93942b6fe6909b123701cde0a3b4eb90db3b90b87b0ba9769be3a0908638f0"
+    },
+    {
+      "file": "THEATER.BLD",
+      "bytes": 1132,
+      "sha256": "18aab58a4079eb684af299e12118d3e8256927c7407ea65933b9b1bea096c87b"
+    },
+    {
+      "file": "FROB.BLD",
+      "bytes": 3548,
+      "sha256": "ce2b333d22d270596cbe3321f4d8fdb8157d21be456535ecd8ef501406f5cd0c"
+    },
+    {
+      "file": "VIEWDISK.BLD",
+      "bytes": 3544,
+      "sha256": "01599372b84c3ebd4d0ca2a6b47e369bfde9b8bedb5dd8f1ffc5ee187093e119"
+    },
+    {
+      "file": "BARRACK2.BLD",
+      "bytes": 362,
+      "sha256": "24929e3e4a7e47e29be5b1c13449f21282d32c12070256b26bfe4c6fb4284df7"
+    },
+    {
+      "file": "ENTRANCE.BLD",
+      "bytes": 794,
+      "sha256": "59dc8efd8e22e97da9645f3997ce894fddecd1da08de68659d67312f9dff62cf"
+    },
+    {
+      "file": "HUT.BLD",
+      "bytes": 8501,
+      "sha256": "1e44d727c00214f685498433b4c062d74969a43fba9aa30b79b40fe0b53b5a68"
+    },
+    {
+      "file": "ENDMECH.BLD",
+      "bytes": 1022,
+      "sha256": "f7e93776db8194c6ebe13a6198d6562480741c310d98fa845aeb4eef3866f316"
+    },
+    {
+      "file": "INSTRUCT.BLD",
+      "bytes": 565,
+      "sha256": "a6f11bd55102231f6931a0e74368d49ffff2d281749a02c63a798eb979d731d4"
+    },
+    {
+      "file": "FINDIT.BLD",
+      "bytes": 722,
+      "sha256": "dff5a5fe6bb133b3eacc3f3e644a13a7c4965ab5eac942c28384fe44745a6480"
+    },
+    {
+      "file": "WINSCENE.BLD",
+      "bytes": 2995,
+      "sha256": "d4c54439a1db84867a04430061ae5a448f32c95ac6bcc9cc31eeac9654358a3e"
+    },
+    {
+      "file": "O0.ANM",
+      "bytes": 5120,
+      "sha256": "aafe6dda17dac9f57628781a056b75a9ffbedcb647a7830e47864e435e128953"
+    },
+    {
+      "file": "O1.ANM",
+      "bytes": 5888,
+      "sha256": "c53ba5d57f5d20ec19b71950eae7910ce1fb8ea91e115718f252375cc495d061"
+    },
+    {
+      "file": "O2.ANM",
+      "bytes": 6400,
+      "sha256": "db1b0959cdec9bd41bf212561f8a4af79d0ff02fb685e74a8339668a7fb31a86"
+    },
+    {
+      "file": "O3.ANM",
+      "bytes": 6912,
+      "sha256": "68fe2d57b9821bcb4e32eb9790a95117044df4314d92ad0995f8967a98218366"
+    },
+    {
+      "file": "O4.ANM",
+      "bytes": 4480,
+      "sha256": "24b6b3a67b73a5381e80d45d8fd2038e0fe2ed5241f41374607af918ebd44173"
+    },
+    {
+      "file": "O5.ANM",
+      "bytes": 6784,
+      "sha256": "39d9cfa6c920d686c1a37bea9597a9a70766f6182c359abf055c96ee07000bbf"
+    },
+    {
+      "file": "O6.ANM",
+      "bytes": 3328,
+      "sha256": "269d6d645a0c5d358224e0f929613af0223535d62fecf76a0c624c5f547b0918"
+    },
+    {
+      "file": "O7.ANM",
+      "bytes": 6912,
+      "sha256": "7a1b9168d646ff512817a521b0372e1fafc4f05f5c0c43d9e6e7ff66eb3daae0"
+    },
+    {
+      "file": "O8.ANM",
+      "bytes": 2176,
+      "sha256": "4250e3d86fe547d49ba832a08d292acc51c5e257bfd03ea2ef825d88629c9d52"
+    },
+    {
+      "file": "O9.ANM",
+      "bytes": 16128,
+      "sha256": "64a91ff1d4733d1dd22a8ea68887ffcf2478fb3d7c7b17a5cdb94b6568487242"
+    },
+    {
+      "file": "O10.ANM",
+      "bytes": 6144,
+      "sha256": "9c23ab69b372efdc64d0f94ac0d75fc4985a94f8fbb4f30ac631ee731e0895c3"
+    },
+    {
+      "file": "O11.ANM",
+      "bytes": 3584,
+      "sha256": "bfdb2e262b5e4802206c83277c38860e2a02f1713fc12d67cce857067f1945cb"
+    },
+    {
+      "file": "O12.ANM",
+      "bytes": 7296,
+      "sha256": "a69831177c7774da9649bde125b7dd8a2da5171a4e2ba2815e8be4b6bf2acc6e"
+    },
+    {
+      "file": "O13.ANM",
+      "bytes": 5248,
+      "sha256": "6a7b2cd81ae716b264452e56ddc93a88757338854129d3fcada7958d9e932fdc"
+    },
+    {
+      "file": "O14.ANM",
+      "bytes": 4992,
+      "sha256": "022eea23e2ecce7c1a8a784d2c3bb12f88befec2de64a306ce08046f5f2a6a6b"
+    },
+    {
+      "file": "O15.ANM",
+      "bytes": 12800,
+      "sha256": "d85b711c6597ecbe9c63270330cb72f77d22204915e2fbd3a84f88c5f12b5d1e"
+    },
+    {
+      "file": "O16.ANM",
+      "bytes": 8320,
+      "sha256": "1616ef4381527eda7ee0d6e7b6e1d1258ea12076f08885884a06cbd1427facb6"
+    },
+    {
+      "file": "O17.ANM",
+      "bytes": 3200,
+      "sha256": "31a9a28bbf05e704bd6d37caa1d2112b83ab28de9bd7cd5f1d7cc2a222641a02"
+    },
+    {
+      "file": "O18.ANM",
+      "bytes": 3456,
+      "sha256": "2b8c6293eafc7be7b7e3c84947d1ccbd5128a6188efef48945aec6241df34514"
+    },
+    {
+      "file": "O19.ANM",
+      "bytes": 3840,
+      "sha256": "eb1b8aefbe4e9394eb3e5cb64a35d125a87c2b768b99c9ae5749fc5e089ddf03"
+    },
+    {
+      "file": "O20.ANM",
+      "bytes": 3200,
+      "sha256": "b43c4516af8a9570e751a4dc00a9343e099767c90a542b533e6b375dba07e9d7"
+    },
+    {
+      "file": "O21.ANM",
+      "bytes": 3328,
+      "sha256": "3a2eb3655a77f2a040e471783a376713ac5d23f3651425ea33a9d017142cca5a"
+    },
+    {
+      "file": "WWOODBT.SIF",
+      "bytes": 4352,
+      "sha256": "89f947792eb7c3a9f06e71eb71e19f2bbcb7cedf96a568a94f029b1b7e17fa51"
+    }
+  ],
+  "maps": [
+    {
+      "file": "MAP1.MTP",
+      "width": 64,
+      "height": 64,
+      "kind": "local",
+      "entrances": 8,
+      "building_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "file": "MAP2.MTP",
+      "width": 64,
+      "height": 64,
+      "kind": "local",
+      "entrances": 12,
+      "building_ids": [
+        2,
+        3,
+        4,
+        5,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        17
+      ]
+    },
+    {
+      "file": "MAP3.MTP",
+      "width": 32,
+      "height": 32,
+      "kind": "local",
+      "entrances": 8,
+      "building_ids": [
+        3,
+        4,
+        5,
+        7,
+        9,
+        13
+      ]
+    },
+    {
+      "file": "MAP4.MTP",
+      "width": 32,
+      "height": 32,
+      "kind": "local",
+      "entrances": 8,
+      "building_ids": [
+        3,
+        4,
+        5,
+        7,
+        9,
+        12,
+        14
+      ]
+    },
+    {
+      "file": "MAP5.MTP",
+      "width": 32,
+      "height": 32,
+      "kind": "local",
+      "entrances": 8,
+      "building_ids": [
+        4,
+        5,
+        9,
+        15
+      ]
+    },
+    {
+      "file": "MAP6.MTP",
+      "width": 32,
+      "height": 32,
+      "kind": "local",
+      "entrances": 8,
+      "building_ids": [
+        3,
+        4,
+        5,
+        9,
+        12,
+        16
+      ]
+    },
+    {
+      "file": "MAP7.MTP",
+      "width": 32,
+      "height": 32,
+      "kind": "local",
+      "entrances": 8,
+      "building_ids": [
+        3,
+        4,
+        5,
+        7,
+        9,
+        12,
+        17
+      ]
+    },
+    {
+      "file": "MAP8.MTP",
+      "width": 32,
+      "height": 32,
+      "kind": "local",
+      "entrances": 8,
+      "building_ids": [
+        3,
+        4,
+        5,
+        7,
+        9
+      ]
+    },
+    {
+      "file": "MAP9.MTP",
+      "width": 32,
+      "height": 32,
+      "kind": "local",
+      "entrances": 8,
+      "building_ids": [
+        3,
+        4,
+        5,
+        7,
+        9,
+        12
+      ]
+    },
+    {
+      "file": "MAP10.MTP",
+      "width": 32,
+      "height": 32,
+      "kind": "local",
+      "entrances": 10,
+      "building_ids": [
+        2,
+        3,
+        4,
+        7,
+        9,
+        12,
+        16
+      ]
+    },
+    {
+      "file": "MAP11.MTP",
+      "width": 64,
+      "height": 64,
+      "kind": "local",
+      "entrances": 1,
+      "building_ids": [
+        19
+      ]
+    },
+    {
+      "file": "MAP12.MTP",
+      "width": 8,
+      "height": 8,
+      "kind": "local",
+      "entrances": 1,
+      "building_ids": [
+        21
+      ]
+    },
+    {
+      "file": "MAP13.MTP",
+      "width": 8,
+      "height": 8,
+      "kind": "local",
+      "entrances": 1,
+      "building_ids": [
+        20
+      ]
+    },
+    {
+      "file": "MAP14.MTP",
+      "width": 64,
+      "height": 64,
+      "kind": "local",
+      "entrances": 0,
+      "building_ids": []
+    },
+    {
+      "file": "MAP15.MTP",
+      "width": 32,
+      "height": 24,
+      "kind": "raw map room",
+      "entrances": 0
+    }
+  ],
+  "scripts": [
+    {
+      "file": "TRAINING.BLD",
+      "building": 0,
+      "bytes": 7280,
+      "reachable_instructions": 159,
+      "native_actions": [
+        1,
+        2,
+        3,
+        12,
+        43
+      ],
+      "state_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        13,
+        19,
+        20,
+        36,
+        45,
+        51,
+        52
+      ],
+      "menus": [
+        7
+      ],
+      "confidence": "VERIFIED structural traversal; branch execution not implied"
+    },
+    {
+      "file": "CITADEL.BLD",
+      "building": 1,
+      "bytes": 4328,
+      "reachable_instructions": 104,
+      "native_actions": [
+        4,
+        5,
+        12
+      ],
+      "state_indices": [
+        0,
+        1,
+        6,
+        7,
+        8,
+        9,
+        13,
+        21,
+        22
+      ],
+      "menus": [
+        8,
+        9
+      ],
+      "confidence": "VERIFIED structural traversal; branch execution not implied"
+    },
+    {
+      "file": "COMSTAR.BLD",
+      "building": 2,
+      "bytes": 2265,
+      "reachable_instructions": 38,
+      "native_actions": [
+        6,
+        7,
+        8,
+        12
+      ],
+      "state_indices": [
+        13
+      ],
+      "menus": [
+        7,
+        10,
+        11
+      ],
+      "confidence": "VERIFIED structural traversal; branch execution not implied"
+    },
+    {
+      "file": "WEAPON.BLD",
+      "building": 3,
+      "bytes": 5848,
+      "reachable_instructions": 80,
+      "native_actions": [
+        10,
+        11,
+        12
+      ],
+      "state_indices": [
+        11,
+        12,
+        13,
+        39
+      ],
+      "menus": [
+        15,
+        16,
+        17,
+        18,
+        30
+      ],
+      "confidence": "VERIFIED structural traversal; branch execution not implied"
+    },
+    {
+      "file": "ARMOR.BLD",
+      "building": 4,
+      "bytes": 3386,
+      "reachable_instructions": 73,
+      "native_actions": [
+        9,
+        10,
+        12,
+        13,
+        14,
+        31,
+        32
+      ],
+      "state_indices": [
+        10,
+        11,
+        13,
+        14,
+        31,
+        39
+      ],
+      "menus": [
+        12,
+        13,
+        14
+      ],
+      "confidence": "VERIFIED structural traversal; branch execution not implied"
+    },
+    {
+      "file": "REPAIR.BLD",
+      "building": 5,
+      "bytes": 4981,
+      "reachable_instructions": 116,
+      "native_actions": [
+        10,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        29,
+        44
+      ],
+      "state_indices": [
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        24,
+        32,
+        39
+      ],
+      "menus": [
+        21
+      ],
+      "confidence": "VERIFIED structural traversal; branch execution not implied"
+    },
+    {
+      "file": "BARRACKS.BLD",
+      "building": 6,
+      "bytes": 2988,
+      "reachable_instructions": 56,
+      "native_actions": [
+        12
+      ],
+      "state_indices": [
+        0,
+        1,
+        13,
+        19,
+        20
+      ],
+      "menus": [
+        19
+      ],
+      "confidence": "VERIFIED structural traversal; branch execution not implied"
+    },
+    {
+      "file": "LOUNGE.BLD",
+      "building": 7,
+      "bytes": 1825,
+      "reachable_instructions": 36,
+      "native_actions": [
+        12
+      ],
+      "state_indices": [
+        13,
+        39,
+        45,
+        46,
+        47
+      ],
+      "menus": [
+        24
+      ],
+      "confidence": "VERIFIED structural traversal; branch execution not implied"
+    },
+    {
+      "file": "GARAGE.BLD",
+      "building": 8,
+      "bytes": 1684,
+      "reachable_instructions": 63,
+      "native_actions": [
+        10,
+        17,
+        28,
+        29,
+        46
+      ],
+      "state_indices": [
+        16,
+        24,
+        39,
+        55
+      ],
+      "menus": [],
+      "confidence": "VERIFIED structural traversal; branch execution not implied"
+    },
+    {
+      "file": "HOSPITAL.BLD",
+      "building": 9,
+      "bytes": 4579,
+      "reachable_instructions": 155,
+      "native_actions": [
+        10,
+        12,
+        13,
+        14,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26
+      ],
+      "state_indices": [
+        13,
+        14,
+        15,
+        24,
+        25,
+        26,
+        27,
+        39,
+        41
+      ],
+      "menus": [
+        25,
+        26,
+        27,
+        28
+      ],
+      "confidence": "VERIFIED structural traversal; branch execution not implied"
+    },
+    {
+      "file": "ARENA.BLD",
+      "building": 10,
+      "bytes": 3955,
+      "reachable_instructions": 95,
+      "native_actions": [
+        12,
+        14,
+        17,
+        27,
+        29,
+        33,
+        34,
+        35
+      ],
+      "state_indices": [
+        13,
+        14,
+        16,
+        33,
+        34,
+        35,
+        39,
+        40,
+        55,
+        56,
+        57
+      ],
+      "menus": [],
+      "confidence": "VERIFIED structural traversal; branch execution not implied"
+    },
+    {
+      "file": "PARTY.BLD",
+      "building": 11,
+      "bytes": 6205,
+      "reachable_instructions": 91,
+      "native_actions": [
+        14,
+        30
+      ],
+      "state_indices": [
+        14,
+        28,
+        29,
+        30
+      ],
+      "menus": [],
+      "confidence": "VERIFIED structural traversal; branch execution not implied"
+    },
+    {
+      "file": "CLOTHES.BLD",
+      "building": 12,
+      "bytes": 913,
+      "reachable_instructions": 31,
+      "native_actions": [
+        10
+      ],
+      "state_indices": [
+        30,
+        36,
+        39
+      ],
+      "menus": [
+        29
+      ],
+      "confidence": "VERIFIED structural traversal; branch execution not implied"
+    },
+    {
+      "file": "JAIL.BLD",
+      "building": 13,
+      "bytes": 4295,
+      "reachable_instructions": 123,
+      "native_actions": [
+        14,
+        36,
+        37,
+        38,
+        39,
+        40
+      ],
+      "state_indices": [
+        14,
+        30,
+        39,
+        40,
+        42
+      ],
+      "menus": [
+        31
+      ],
+      "confidence": "VERIFIED structural traversal; branch execution not implied"
+    },
+    {
+      "file": "MAYOR.BLD",
+      "building": 14,
+      "bytes": 5894,
+      "reachable_instructions": 86,
+      "native_actions": [
+        14,
+        47
+      ],
+      "state_indices": [
+        14,
+        43
+      ],
+      "menus": [
+        32
+      ],
+      "confidence": "VERIFIED structural traversal; branch execution not implied"
+    },
+    {
+      "file": "WEAPON2.BLD",
+      "building": 15,
+      "bytes": 1736,
+      "reachable_instructions": 61,
+      "native_actions": [
+        14,
+        41
+      ],
+      "state_indices": [
+        14,
+        44
+      ],
+      "menus": [
+        30
+      ],
+      "confidence": "VERIFIED structural traversal; branch execution not implied"
+    },
+    {
+      "file": "THEATER.BLD",
+      "building": 16,
+      "bytes": 1130,
+      "reachable_instructions": 54,
+      "native_actions": [
+        42
+      ],
+      "state_indices": [],
+      "menus": [],
+      "confidence": "VERIFIED structural traversal; branch execution not implied"
+    },
+    {
+      "file": "FROB.BLD",
+      "building": 17,
+      "bytes": 3546,
+      "reachable_instructions": 72,
+      "native_actions": [
+        14
+      ],
+      "state_indices": [
+        14,
+        48,
+        49,
+        50
+      ],
+      "menus": [
+        35,
+        36
+      ],
+      "confidence": "VERIFIED structural traversal; branch execution not implied"
+    },
+    {
+      "file": "VIEWDISK.BLD",
+      "building": 18,
+      "bytes": 3542,
+      "reachable_instructions": 56,
+      "native_actions": [],
+      "state_indices": [
+        50
+      ],
+      "menus": [],
+      "confidence": "VERIFIED structural traversal; branch execution not implied"
+    },
+    {
+      "file": "BARRACK2.BLD",
+      "building": 19,
+      "bytes": 360,
+      "reachable_instructions": 14,
+      "native_actions": [
+        14
+      ],
+      "state_indices": [
+        14
+      ],
+      "menus": [],
+      "confidence": "VERIFIED structural traversal; branch execution not implied"
+    },
+    {
+      "file": "ENTRANCE.BLD",
+      "building": 20,
+      "bytes": 792,
+      "reachable_instructions": 22,
+      "native_actions": [],
+      "state_indices": [
+        50,
+        54
+      ],
+      "menus": [],
+      "confidence": "VERIFIED structural traversal; branch execution not implied"
+    },
+    {
+      "file": "HUT.BLD",
+      "building": 21,
+      "bytes": 8499,
+      "reachable_instructions": 123,
+      "native_actions": [],
+      "state_indices": [
+        53,
+        54
+      ],
+      "menus": [],
+      "confidence": "VERIFIED structural traversal; branch execution not implied"
+    },
+    {
+      "file": "ENDMECH.BLD",
+      "building": 22,
+      "bytes": 1020,
+      "reachable_instructions": 25,
+      "native_actions": [
+        45
+      ],
+      "state_indices": [
+        63
+      ],
+      "menus": [],
+      "confidence": "VERIFIED structural traversal; branch execution not implied"
+    },
+    {
+      "file": "INSTRUCT.BLD",
+      "building": 23,
+      "bytes": 563,
+      "reachable_instructions": 11,
+      "native_actions": [],
+      "state_indices": [],
+      "menus": [],
+      "confidence": "VERIFIED structural traversal; branch execution not implied"
+    },
+    {
+      "file": "FINDIT.BLD",
+      "building": 24,
+      "bytes": 720,
+      "reachable_instructions": 13,
+      "native_actions": [],
+      "state_indices": [],
+      "menus": [],
+      "confidence": "VERIFIED structural traversal; branch execution not implied"
+    },
+    {
+      "file": "WINSCENE.BLD",
+      "building": 25,
+      "bytes": 2993,
+      "reachable_instructions": 59,
+      "native_actions": [],
+      "state_indices": [
+        63
+      ],
+      "menus": [],
+      "confidence": "VERIFIED structural traversal; branch execution not implied"
+    }
+  ],
+  "native_contexts": [
+    {
+      "action": 1,
+      "scripts": [
+        "TRAINING.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 2,
+      "scripts": [
+        "TRAINING.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 3,
+      "scripts": [
+        "TRAINING.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 4,
+      "scripts": [
+        "CITADEL.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 5,
+      "scripts": [
+        "CITADEL.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 6,
+      "scripts": [
+        "COMSTAR.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 7,
+      "scripts": [
+        "COMSTAR.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 8,
+      "scripts": [
+        "COMSTAR.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 9,
+      "scripts": [
+        "ARMOR.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 10,
+      "scripts": [
+        "WEAPON.BLD",
+        "ARMOR.BLD",
+        "REPAIR.BLD",
+        "GARAGE.BLD",
+        "HOSPITAL.BLD",
+        "CLOTHES.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 11,
+      "scripts": [
+        "WEAPON.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 12,
+      "scripts": [
+        "TRAINING.BLD",
+        "CITADEL.BLD",
+        "COMSTAR.BLD",
+        "WEAPON.BLD",
+        "ARMOR.BLD",
+        "REPAIR.BLD",
+        "BARRACKS.BLD",
+        "LOUNGE.BLD",
+        "HOSPITAL.BLD",
+        "ARENA.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 13,
+      "scripts": [
+        "ARMOR.BLD",
+        "REPAIR.BLD",
+        "HOSPITAL.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 14,
+      "scripts": [
+        "ARMOR.BLD",
+        "REPAIR.BLD",
+        "HOSPITAL.BLD",
+        "ARENA.BLD",
+        "PARTY.BLD",
+        "JAIL.BLD",
+        "MAYOR.BLD",
+        "WEAPON2.BLD",
+        "FROB.BLD",
+        "BARRACK2.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 15,
+      "scripts": [
+        "REPAIR.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 16,
+      "scripts": [
+        "REPAIR.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 17,
+      "scripts": [
+        "REPAIR.BLD",
+        "GARAGE.BLD",
+        "ARENA.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 18,
+      "scripts": [
+        "REPAIR.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 19,
+      "scripts": [
+        "REPAIR.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 20,
+      "scripts": [
+        "REPAIR.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 21,
+      "scripts": [
+        "HOSPITAL.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 22,
+      "scripts": [
+        "HOSPITAL.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 23,
+      "scripts": [
+        "HOSPITAL.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 24,
+      "scripts": [
+        "HOSPITAL.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 25,
+      "scripts": [
+        "HOSPITAL.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 26,
+      "scripts": [
+        "HOSPITAL.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 27,
+      "scripts": [
+        "ARENA.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 28,
+      "scripts": [
+        "GARAGE.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 29,
+      "scripts": [
+        "REPAIR.BLD",
+        "GARAGE.BLD",
+        "ARENA.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 30,
+      "scripts": [
+        "PARTY.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 31,
+      "scripts": [
+        "ARMOR.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 32,
+      "scripts": [
+        "ARMOR.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 33,
+      "scripts": [
+        "ARENA.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 34,
+      "scripts": [
+        "ARENA.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 35,
+      "scripts": [
+        "ARENA.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 36,
+      "scripts": [
+        "JAIL.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 37,
+      "scripts": [
+        "JAIL.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 38,
+      "scripts": [
+        "JAIL.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 39,
+      "scripts": [
+        "JAIL.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 40,
+      "scripts": [
+        "JAIL.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 41,
+      "scripts": [
+        "WEAPON2.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 42,
+      "scripts": [
+        "THEATER.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 43,
+      "scripts": [
+        "TRAINING.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 44,
+      "scripts": [
+        "REPAIR.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 45,
+      "scripts": [
+        "ENDMECH.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 46,
+      "scripts": [
+        "GARAGE.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    },
+    {
+      "action": 47,
+      "scripts": [
+        "MAYOR.BLD"
+      ],
+      "dispatcher": "port/core/original_actions.c",
+      "disposition": "C2 compatibility; C4 context registry and editable parameters"
+    }
+  ],
+  "totals": {
+    "source_files": 77,
+    "resource_files": 76,
+    "scripts": 26,
+    "reachable_instructions": 1816,
+    "max_script_bytes": 8499,
+    "max_entrances": 12
+  },
+  "limits": {
+    "bld_program_bytes": 9000,
+    "legacy_story_bytes": 100,
+    "authored_flags": 64,
+    "authored_events": 1024,
+    "authored_shops": 16,
+    "local_maps": 64,
+    "entrances_per_map": 16
+  },
+  "note": "Contains fingerprints/numeric inventories only. Decoded dialogue, scripts and art stay local."
+}
