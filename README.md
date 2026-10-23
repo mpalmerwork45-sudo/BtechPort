@@ -128,6 +128,9 @@ with shared Undo and revision checks. External authors can take snapshots of
 the open editor and submit scoped proposals; review is the default.
 [World reviews](docs/WORLD_REVIEW.md) add paired planet previews, town navigation
 and protected terrain rectangles, including changes to shared jigsaws and art.
+[Scenario selection](docs/SCENARIO_SELECTION.md) explains which regression cases
+a proposal may affect. In **Changes → Checks**, choose a suite, review the reasons,
+and run selected cases or the full suite against the retained candidate.
 Try **Relay Contract (command-created)** in the launcher.
 **Cairn Passage (defence / escort)** demonstrates timed defence, reinforcements,
 friendly guards and a neutral Skulker convoy, with save/reload and loss routes.

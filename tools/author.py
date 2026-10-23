@@ -72,7 +72,7 @@ def parser():
             if name=='suite':s.add_argument('--case',action='append',dest='case_ids',help='Run only this case; repeat for several affected cases.')
     review=sub.add_parser('review',help='Prepare, inspect and accept durable change proposals.')
     actions=review.add_subparsers(dest='review_action',required=True)
-    for name in ('prepare','show','apply','discard','request-changes','recheck','check','world'):
+    for name in ('prepare','show','apply','discard','request-changes','recheck','check','suggest','world'):
         s=actions.add_parser(name)
         if name in ('prepare','apply','recheck'):
             s.add_argument('project',type=Path)
@@ -88,11 +88,19 @@ def parser():
             s.add_argument('--validator',type=Path,default=ROOT/'build'/('btp-project.exe' if os.name=='nt' else 'btp-project'))
             s.add_argument('--world',required=True);s.add_argument('--rect',type=int,nargs=4,required=True)
             s.add_argument('--data',type=Path);s.add_argument('--cancel-file',type=Path)
+        if name=='suggest':
+            s.add_argument('--validator',type=Path,default=ROOT/'build'/('btp-project.exe' if os.name=='nt' else 'btp-project'))
+            s.add_argument('--suite',type=Path,required=True);s.add_argument('--cancel-file',type=Path)
         if name=='check':
             s.add_argument('--validator',type=Path,default=ROOT/'build'/('btp-project.exe' if os.name=='nt' else 'btp-project'))
             for key,tool in [('analyzer','btp-author-analyze'),('runner','btp-author-playtest')]:s.add_argument('--'+key,type=Path,default=ROOT/'build'/(tool+('.exe' if os.name=='nt' else '')))
             for key in ('data','dialogue-data','combat-data','world-data'):s.add_argument('--'+key,type=Path)
-            s.add_argument('--suite',type=Path);s.add_argument('--cancel-file',type=Path)
+            inputs=s.add_mutually_exclusive_group()
+            inputs.add_argument('--suite',type=Path);inputs.add_argument('--selection',type=Path,help='Reuse a retained report from review suggest.')
+            cases=s.add_mutually_exclusive_group()
+            cases.add_argument('--case',action='append',dest='case_ids',help='Run this case; repeat for several cases.')
+            cases.add_argument('--suggested',action='store_true',help='Run the suggested cases; opaque dependencies recommend the full suite.')
+            s.add_argument('--cancel-file',type=Path)
     protection=sub.add_parser('protection',help='List or deliberately edit preservation rules.')
     protection.add_argument('project',type=Path)
     protection.add_argument('--validator',type=Path,default=ROOT/'build'/('btp-project.exe' if os.name=='nt' else 'btp-project'))
@@ -188,12 +196,15 @@ def dispatch(args):
         import authoring_review as review
         action=args.review_action
         if action=='show':return review.read(args.folder)
+        if action=='suggest':return review.suggest_cases(args.folder,args.validator,args.suite,
+            cancelled=lambda:bool(args.cancel_file and args.cancel_file.exists()))
         if action=='world':
             return dict(api_version=1,status='rendered',artifacts=review.world_crop(args.folder,args.world,args.rect,args.validator,
                 settings={'data':str(args.data)} if args.data else {},cancelled=lambda:bool(args.cancel_file and args.cancel_file.exists())))
         if action=='check':
             settings={k:str(getattr(args,k.replace('-','_'))) for k in ('data','dialogue-data','combat-data','world-data') if getattr(args,k.replace('-','_'))}
             return review.check_candidate(args.folder,args.validator,settings=settings,analyzer=args.analyzer,runner=args.runner,suite=args.suite,
+                selection=args.selection,case_ids=args.case_ids,suggested=args.suggested,
                 cancelled=lambda:bool(args.cancel_file and args.cancel_file.exists()))
         if action in ('discard','request-changes'):return review.decide(args.folder,action.replace('-','_'),getattr(args,'note',''))
         if action=='apply':

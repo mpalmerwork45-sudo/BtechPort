@@ -295,22 +295,79 @@ def recheck(document,folder,output,selected,*,settings=None,cancelled=lambda:Fal
                    cancelled=cancelled,retained_imports=import_paths(folder,record))
 
 
-def check_candidate(folder,validator,*,settings=None,analyzer=None,runner=None,suite=None,cancelled=lambda:False):
+def suggest_cases(folder,validator,suite,*,cancelled=lambda:False):
+    """Retain a suite and its explanations without running or publishing it."""
+    from authoring_impact import capture_suite,analyse,cancelled_check
+    folder=Path(folder).resolve();record=read(folder)
+    if len(record.get('selections',[]))>=32:raise AuthoringError('capacity.exceeded','This review already has 32 scenario selections.')
+    before=ProjectDocument(folder/'before',validator,recover=False);after=ProjectDocument(folder/'after',validator,recover=False)
+    if revision(before)!=record['base_revision'] or revision(after)!=record.get('result_revision'):
+        raise AuthoringError('review.changed','Retained review snapshots changed; prepare the proposal again.')
+    output=folder/('selection-'+uuid.uuid4().hex);output.mkdir()
+    inputs=capture_suite(suite,output/'inputs',cancelled)
+    report=analyse(before,after,read_json(output/inputs['suite']),(output/inputs['suite']).parent,cancelled)
+    report.update(base_revision=record['base_revision'],revision=record['result_revision'],inputs=inputs)
+    before.unchanged_on_disk();after.unchanged_on_disk();cancelled_check(cancelled)
+    path=output/'selection.json';payload=encoded(report);ProjectDocument.atomic_file(path,payload)
+    with project_lock(folder):
+        latest=read(folder)
+        if latest['base_revision']!=record['base_revision'] or latest['result_revision']!=record['result_revision']:
+            raise AuthoringError('review.changed','Proposed content changed during dependency analysis.')
+        if len(latest.get('selections',[]))>=32:raise AuthoringError('capacity.exceeded','This review already has 32 scenario selections.')
+        latest.setdefault('selections',[]).append(dict(report=str(path.relative_to(folder)),sha256=hashlib.sha256(payload).hexdigest(),
+            revision=record['result_revision'],base_revision=record['base_revision']))
+        write(folder,latest)
+    return dict(report=str(path),**report)
+
+
+def read_selection(folder,selection,record=None):
+    """Accept only a linked, unchanged report for these exact review snapshots."""
+    folder=Path(folder).resolve();record=record or read(folder)
+    path=Path(selection)
+    # CLI paths may be relative to the working directory; stored review links
+    # are relative to the proposal. Both still have to match a linked report.
+    path=path.resolve() if path.is_absolute() or path.is_file() else child(folder,str(path))
+    link=next((v for v in record.get('selections',[]) if child(folder,v['report']).resolve()==path.resolve()),None)
+    if not link or link['revision']!=record['result_revision'] or link['base_revision']!=record['base_revision']:
+        raise AuthoringError('selection.stale','Select a scenario report belonging to this exact proposal.')
+    report=read_json(path)
+    if hashlib.sha256(encoded(report)).hexdigest()!=link['sha256']:
+        raise AuthoringError('selection.changed','Retained scenario selection changed; load the suite again.')
+    return dict(report=str(path),**report)
+
+
+def check_candidate(folder,validator,*,settings=None,analyzer=None,runner=None,suite=None,selection=None,case_ids=None,suggested=False,cancelled=lambda:False):
     """Attach checks of this exact proposed package, never of the live draft."""
     from authoring_analysis import analyze
     from authoring_scenarios import run_suite
+    from authoring_impact import verify_inputs
+    if suite is not None and selection is not None:raise AuthoringError('request.invalid','Choose a suite file or a retained selection, not both.')
+    if suggested and case_ids is not None:raise AuthoringError('request.invalid','Choose suggested cases or explicit case IDs, not both.')
+    if (case_ids is not None or suggested) and suite is None and selection is None:
+        raise AuthoringError('request.invalid','Case selection requires a suite or retained selection report.')
     folder=Path(folder).resolve();record=read(folder)
     if len(record.get('checks',[]))>=32:raise AuthoringError('capacity.exceeded','This review already has 32 check reports. Prepare another review.')
     settings={k:v for k,v in (settings or {}).items() if k in ('data','dialogue-data','combat-data','world-data')}
     candidate=ProjectDocument(folder/'after',validator,recover=False)
     if revision(candidate)!=record.get('result_revision'):raise AuthoringError('review.changed','Retained candidate changed; prepare it again.')
     output=folder/('checks-'+uuid.uuid4().hex);output.mkdir()
-    if suite is not None:
-        suite=Path(suite);result=run_suite(candidate,read_json(suite),suite.parent,output/'suite',runner,settings,cancelled)
+    if suite is not None or selection is not None:
+        # Every review suite run pins its inputs. The GUI can reuse a report it
+        # already displayed; CLI --suite captures a fresh report by default.
+        impact=suggest_cases(folder,validator,suite,cancelled=cancelled) if suite is not None else read_selection(folder,selection,record)
+        before=ProjectDocument(folder/'before',validator,recover=False)
+        if revision(before)!=record['base_revision']:raise AuthoringError('review.changed','Retained base changed; prepare it again.')
+        suite_file=verify_inputs(Path(impact['report']).parent,impact['inputs'])
+        if suggested:case_ids=impact['suggested']
+        if case_ids==[]:raise AuthoringError('selection.empty','No cases selected. Choose cases explicitly or run the full suite; no tests have passed.')
+        result=run_suite(candidate,read_json(suite_file),suite_file.parent,output/'suite',runner,settings,cancelled,case_ids=case_ids)
+        verify_inputs(Path(impact['report']).parent,impact['inputs'])
+        result['selection']=impact['report'];result['selection_mode']='suggested' if suggested else 'explicit' if case_ids is not None else 'full'
     else:
         if cancelled():raise AuthoringError('job.cancelled','Mission check cancelled.')
         result=analyze(candidate,analyzer,settings,output=output/'lint.json')
-    if cancelled():raise AuthoringError('job.cancelled','Mission check cancelled; any completed artifacts were retained.')
+    candidate.unchanged_on_disk()
+    if suite is not None or selection is not None:before.unchanged_on_disk()
     report_file=output/'result.json';ProjectDocument.atomic_file(report_file,encoded(result))
     with project_lock(folder):
         latest=read(folder)
@@ -320,6 +377,8 @@ def check_candidate(folder,validator,*,settings=None,analyzer=None,runner=None,s
         concise=dict(status=result['status'],report=str(report_file),diagnostics=[
             {k:(str(v)[:1000] if k=='message' else v) for k,v in d.items() if k in ('code','severity','message')}
             for d in result.get('diagnostics',[])[:8]])
-        latest.setdefault('checks',[]).append(dict(kind='suite' if suite else 'mission',revision=record['result_revision'],result=concise))
+        if len(latest.get('checks',[]))>=32:raise AuthoringError('capacity.exceeded','This review already has 32 check reports.')
+        if 'selection' in result:concise.update(selection=result['selection'],selected_cases=result['selected_cases'],unselected_cases=result['unselected_cases'])
+        latest.setdefault('checks',[]).append(dict(kind='suite' if suite is not None or selection is not None else 'mission',revision=record['result_revision'],result=concise))
         write(folder,latest)
     return result

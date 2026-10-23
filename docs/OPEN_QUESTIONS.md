@@ -17,10 +17,13 @@ checkpoint or a separate explicit supported migration.
 changes, town navigation and hand-painted world rectangles, including indirect
 jigsaw/tile/art changes. Previews show first frames, with sampled overviews and
 bounded full-pixel crops; preservation is a collaboration policy, not a filesystem
-security boundary. Next proposed: explain which declared scenario cases a
-proposal affects and run selected checks against its exact candidate. Unknown
-dependencies must not be treated as proof that a case is unaffected; retain an
-explicit full-suite option and ordinary validation. Embedded chat and provider-specific adapters
+security boundary. [Review-linked scenario selection](SCENARIO_SELECTION.md)
+now explains explicit dependencies and runs selected/full checks against the
+retained candidate. Lua, raw inputs, saved-state roots, external original content,
+arbitrary fixture edits and exhausted graph budgets remain unknown and recommend
+the full suite. Declared dependencies do not prove an omitted case is unaffected;
+ordinary validation remains required. A suite editor and visible coverage gaps
+are the next proposed increment. Embedded chat and provider-specific adapters
 remain optional; model configuration belongs to the external authoring client.
 Native Windows Python/Tk interaction and an entirely bundled Windows Python
 installation still need a suitable Windows environment/runtime. Linux installation

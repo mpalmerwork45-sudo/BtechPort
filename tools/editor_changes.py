@@ -124,9 +124,8 @@ class Changes:
         pair=ttk.Panedwindow(events,orient='horizontal');pair.pack(fill='both',expand=True);self.routes={}
         for side in ('before','after'):
             host=ttk.Frame(pair);pair.add(host,weight=1);ttk.Label(host,text=side.title(),style='Section.TLabel').pack(anchor='w',padx=6,pady=6);self.routes[side]=text_box(host)
-        bar=ttk.Frame(checks);bar.pack(fill='x')
-        self.button(bar,'Check proposed mission',self.check);self.button(bar,'Run scenario suite...',lambda:self.check(True))
-        self.button(bar,'Open artifact folder',self.open_artifacts);flow_toolbar(bar);self.checks=text_box(checks)
+        from editor_review_checks import ReviewChecksPane
+        self.review_checks=ReviewChecksPane(self,checks);self.checks=self.review_checks.reports
         from editor_world_review import WorldReviewPane
         self.worlds_page=ttk.Frame(self.detail);self.detail.add(self.worlds_page,text='Worlds')
         self.world_review=WorldReviewPane(self,self.worlds_page)
@@ -212,6 +211,7 @@ class Changes:
         if self.map_id.get() not in maps:self.map_id.set(maps[0] if maps else '')
         self.show_maps();self.show_routes()
         self.world_review.load(record,self.folder)
+        self.review_checks.load(record,self.folder)
         fill(self.checks,json.dumps(dict(validation=record.get('result',{}).get('validation'),checks=record.get('checks',[]),
             dependencies_before=record.get('dependency_before'),dependencies_after=record.get('dependency_after'),
             artifacts=[a.get('artifact') for a in record['artifacts']],diagnostics=record['diagnostics']),indent=2))
@@ -286,14 +286,12 @@ class Changes:
         job,self.folder=self.manager.prepare(self.scope,record['request'],selected=chosen,allowed_scope=record['allowed_scope'],retained_imports=review.import_paths(self.folder,record),finished=self.prepared);return job
 
     def check(self,suite=False):
-        self.selected();path=None
-        if suite:
-            path=filedialog.askopenfilename(parent=self.window,title='Run a scenario suite on the proposed game',filetypes=[('Scenario suite','*.json')])
-            if not path:return
+        if suite:return self.review_checks.choose()
+        self.selected()
         folder=self.folder;settings=dict(self.owner.settings);suffix='.exe' if os.name=='nt' else '';build=Path(__file__).resolve().parents[1]/'build'
         def done(result):self.manager.notify(self.scope);self.owner.status.set('Proposed game check: '+result['status'])
         return self.workspace.tasks.submit('Check proposed game',self.scope.owner,
-            lambda cancel:review.check_candidate(folder,self.document.validator,settings=settings,analyzer=build/('btp-author-analyze'+suffix),runner=build/('btp-author-playtest'+suffix),suite=path,cancelled=cancel.is_set),done)
+            lambda cancel:review.check_candidate(folder,self.document.validator,settings=settings,analyzer=build/('btp-author-analyze'+suffix),runner=build/('btp-author-playtest'+suffix),cancelled=cancel.is_set),done)
 
     def open_artifacts(self):
         self.selected();webbrowser.open(self.folder.as_uri())

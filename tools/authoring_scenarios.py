@@ -189,7 +189,8 @@ def run_suite(document,suite,base_dir,output,runner,settings=None,cancelled=lamb
     if output.exists():raise AuthoringError('output.exists','Suite output must be a new directory.')
     names=[c['id'] for c in suite['cases']]
     if len(set(names))!=len(names):raise AuthoringError('request.invalid','Suite case IDs must be unique.')
-    if case_ids:
+    if case_ids is not None:
+        if not case_ids:raise AuthoringError('request.invalid','Choose at least one scenario case; an empty selection does not run the full suite.')
         if set(case_ids)-set(names):raise AuthoringError('object.missing','Unknown suite case: '+', '.join(sorted(set(case_ids)-set(names))))
         suite=dict(suite,cases=[c for c in suite['cases'] if c['id'] in set(case_ids)])
     jobs=[]
@@ -254,12 +255,24 @@ def run_suite(document,suite,base_dir,output,runner,settings=None,cancelled=lamb
             mean_structure_reduction=sum(b['structure_reduction'] for b in subset)/len(subset),
             mean_ammunition_reduction=sum(b['ammunition_reduction'] for b in subset)/len(subset),
             friendly_mechs_lost=sum(b['friendly_mechs_lost'] for b in subset)))
+    # Keep table summaries small: the editor must not parse all combat samples
+    # and coverage traces just to display the latest case status.
+    case_results={}
+    for name in names:
+        expected=sum(c['id']==name for c,s in jobs);finished=[r for r in runs if r['case']==name]
+        status=('not_run' if not finished else 'failed' if any(r['status']=='failed' for r in finished) else
+            'cancelled' if any(r['status']=='cancelled' for r in finished) else 'incomplete' if len(finished)<expected else 'passed')
+        case_results[name]=dict(status=status,runs_planned=expected,runs_completed=len(finished))
     report=dict(api_version=API_VERSION,status='cancelled' if stop=='cancelled' else 'passed' if not stop and all(r['status']=='passed' for r in runs) else 'failed',
         revision=base,project_id=document.manifest['package_id'],runs_planned=len(jobs),runs_completed=len(runs),
+        case_results=case_results,
+        selected_cases=[c['id'] for c in suite['cases']],unselected_cases=[name for name in names if name not in {c['id'] for c in suite['cases']}],
+        selection_basis='Only selected cases were requested. Unselected cases were not run and are not passed.',
         elapsed_seconds=round(time.monotonic()-start,4),stopped=stop,runs=runs,combat_samples=samples,
         coverage=dict(events=sorted({e for r in runs for e in r['coverage']['events']}),
             basis='Only declared routes/seeds/policies are measured; no proof of all Lua paths or general combat balance.'),
         metric_basis='Armor/structure/ammunition reductions include destroyed units and destroyed ammunition, not only shots fired. since_checkpoint samples measure only the remaining portion; rounds is the final battle round, rounds_observed excludes earlier rounds.')
     (output/'suite-report.json').write_bytes(encoded(report))
     return dict(api_version=API_VERSION,status=report['status'],revision=base,report=str(output/'suite-report.json'),
-        runs_planned=len(jobs),runs_completed=len(runs),elapsed_seconds=report['elapsed_seconds'],combat_samples=samples)
+        runs_planned=len(jobs),runs_completed=len(runs),elapsed_seconds=report['elapsed_seconds'],combat_samples=samples,
+        selected_cases=report['selected_cases'],unselected_cases=report['unselected_cases'],case_results=case_results)

@@ -1324,6 +1324,7 @@ def main():
     parser.add_argument('--editor-campaign-demo-only',action='store_true',help='Check AI8 campaign GUI edits, scoped follow-up, Undo/save and Play')
     parser.add_argument('--editor-world-routes-only',action='store_true',help='Check world-route diagnostics, town/planet navigation and repair')
     parser.add_argument('--editor-world-review-only',action='store_true',help='Check paired planet reviews, world-region protection, groups and Undo/save')
+    parser.add_argument('--editor-review-selection-only',action='store_true',help='Check explained scenario selection, retained inputs and native selected/full checks')
     parser.add_argument('--editor-checkpoints-only',action='store_true',help='Check saved scenario starts, selection, reports and stale-content errors')
     parser.add_argument('--world-art-editor-only',action='store_true',help='Check jigsaw/city and pixel/animation editing')
     parser.add_argument('--map-construction-only',action='store_true',help='Check building/wall/road tools, tile management, patterns and original-size world creation')
@@ -1479,6 +1480,10 @@ def main():
                 return
             if args.editor_world_review_only:
                 from editor_world_review_smoke import run
+                run(env,work)
+                return
+            if args.editor_review_selection_only:
+                from editor_review_selection_smoke import run
                 run(env,work)
                 return
             if args.editor_checkpoints_only:

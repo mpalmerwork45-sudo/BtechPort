@@ -268,9 +268,10 @@ changes**, **Protected content** and **Local session**.
    document and pending forms unchanged. Review object/field changes, paired
    local maps, composed worlds, event-route lists and dependencies. Complete packages and SVG
    previews remain in the review folder.
-4. **Check proposed mission** or **Run scenario suite** attaches results for
-   that exact candidate. They do not test a different live revision. Check
-   reports retain their coverage limits and any missing asset diagnostics.
+4. **Checks → Cases → Choose suite** explains suggested regression cases and
+   offers selected/full-suite checks. **Checks → Reports → Check mission** runs
+   mission analysis. Results belong to that exact candidate, with coverage limits
+   and missing-asset diagnostics. Omitted cases are never reported as passed.
 5. **Apply changes** revalidates the proposal, collects valid human
    drafts as their own history step, then applies the generated batch as one
    additional step. **Undo** reverses that batch; **Save** publishes it.
@@ -299,6 +300,8 @@ Generic generated batches cannot remove or rewrite that policy. Whole world
 objects and their fields can also be protected by object path.
 [World review and protection](WORLD_REVIEW.md) explains the paired planet views,
 town navigation, indirect art/jigsaw changes and the `review world` detail command.
+[Scenario selection](SCENARIO_SELECTION.md) covers retained suite inputs,
+dependency explanations, `review suggest`, and `review check --suggested/--case`.
 This is a collaboration contract,
 not an operating-system security boundary against arbitrary file writes.
 

@@ -3,7 +3,7 @@
 Recorded 2026-10-18 against `266d21f`, with the user's revised Last Beacon
 preserved in `bed75e9`.
 
-**Status: AI1–AI8, bounded world routes, saved journeys and world review IMPLEMENTED, 2026-10-23.** AI1/AI2 have the versioned
+**Status: AI1–AI8, bounded world routes, saved journeys, world review and scenario selection IMPLEMENTED, 2026-10-23.** AI1/AI2 have the versioned
 inspection/command contract, transactional CLI, shared editor operations and
 command-file exchange described in the [author guide](AI_AUTHORING_GUIDE.md).
 The approved next four steps add shared asset discovery, labelled visual
@@ -700,7 +700,7 @@ palette pixels and owned art are included. A maximum-size planet is scanned and
 previewed within declared row/image budgets. No new publishing path or gameplay
 capacity was introduced.
 
-**Next proposed milestone: review-linked scenario selection (AI4/AI5 extension).**
+**Review-linked scenario selection: delivered as a bounded AI4/AI5 extension.**
 Help humans and external authors select relevant regression cases for a proposal:
 
 1. Report dependencies visible in declared scenarios and structured game data,
@@ -716,6 +716,26 @@ Help humans and external authors select relevant regression cases for a proposal
    plus stale candidates and unknown dependencies. Demonstrate that the selected
    cases match their results in a full suite on the declared fixture and record
    actual time saved. No general solvability or arbitrary Lua claim is implied.
+
+[Scenario selection](SCENARIO_SELECTION.md) now supplies that workflow in
+Changes/Checks and the CLI. Both snapshot revisions and copied suite inputs are
+pinned; partial reports name omitted cases. The independent three-case/five-run
+fixture verifies local, shared tile/unit and town-placement changes. Selected
+seeds have identical native results, saves and ordinary-input replays to the
+full suite. Opaque control and arbitrary fixtures recommend a full run.
+
+**Next proposed milestone: suite authoring and coverage inventory (AI4 extension).**
+
+1. Let users create/edit suite cases, seed sets and scenario file references
+   inside the editor, with schema checks and clear fixture/checkpoint setup.
+2. Show declared dependencies alongside actually observed events/branches from
+   retained runs. Keep unvisited, unrun and unknown categories separate.
+3. Help humans and external authors scaffold ordinary-input cases for a selected
+   entrance, map/world route or objective. A scaffold must be run successfully
+   before it becomes verification evidence; do not invent a route to an objective.
+4. Verify authoring, save/reopen, source packages, failed-case navigation and
+   selected/full checks on the independent campaign fixtures. Retain the current
+   runtime limits and full-suite option. This is proposed, not implemented here.
 
 AI6b/AI6c now supply round hooks, atomic reinforcement groups, scripted outcomes,
 friendly/neutral actors and terrain-aware waypoints. Cairn Passage demonstrates
