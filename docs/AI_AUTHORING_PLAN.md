@@ -3,7 +3,7 @@
 Recorded 2026-10-18 against `266d21f`, with the user's revised Last Beacon
 preserved in `bed75e9`.
 
-**Status: AI1–AI8, bounded world routes, saved journeys, world review and scenario selection IMPLEMENTED, 2026-10-23.** AI1/AI2 have the versioned
+**Status: AI1–AI8, bounded world routes, saved journeys, world review, scenario selection, suite authoring and the measured responsiveness follow-up IMPLEMENTED, 2026-10-23.** AI1/AI2 have the versioned
 inspection/command contract, transactional CLI, shared editor operations and
 command-file exchange described in the [author guide](AI_AUTHORING_GUIDE.md).
 The approved next four steps add shared asset discovery, labelled visual
@@ -740,8 +740,13 @@ full suite. Opaque control and arbitrary fixtures recommend a full run.
 [Test suite authoring](TEST_SUITE_AUTHORING.md) supplies project-owned definitions,
 recoverable forms, portable CLI exports, source-package Save/reopen, honest
 route starters, native selected/full checks and event/branch coverage navigation.
-Batch 2 measures and addresses the remaining large-project GUI pauses; it does
-not increase game capacities or imply exhaustive gameplay coverage.
+**Delivered: large-project responsiveness (batch 2).**
+[Measured snapshots, history and source-table improvements](EDITOR_RESPONSIVENESS.md)
+reduce the dedicated fixture's normal snapshot from 282 to 25 ms and Undo/Redo
+from 1,088 to 18 ms. Pending-field transactions retain full rollback isolation;
+they and first-time view reconstruction can still exceed 100 ms. Native capacities
+and exhaustive-gameplay limits are unchanged. Verification covers source edits,
+sorting, cancellation, concurrent edits, stale validation and Save/reopen.
 
 AI6b/AI6c now supply round hooks, atomic reinforcement groups, scripted outcomes,
 friendly/neutral actors and terrain-aware waypoints. Cairn Passage demonstrates

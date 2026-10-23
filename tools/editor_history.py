@@ -56,7 +56,7 @@ def history(workspace, redo=False):
             (getattr(view,'cancel_gesture',None) or view.cancel)();return
     # Valid field drafts become a single operation before moving the history.
     # Invalid input stays in place and is reported by the normal error boundary.
-    scope.transact(lambda:None)
+    scope.apply_pending()
     labels=scope.document.redo_labels if redo else scope.document.undo_labels
     label=labels[-1] if labels else 'Nothing to '+('redo' if redo else 'undo')
     (scope.document.redo if redo else scope.document.undo)()

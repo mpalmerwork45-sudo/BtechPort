@@ -22,8 +22,11 @@ now explains explicit dependencies and runs selected/full checks against the
 retained candidate. Lua, raw inputs, saved-state roots, external original content,
 arbitrary fixture edits and exhausted graph budgets remain unknown and recommend
 the full suite. Declared dependencies do not prove an omitted case is unaffected;
-ordinary validation remains required. A suite editor and visible coverage gaps
-are the next proposed increment. Embedded chat and provider-specific adapters
+ordinary validation remains required. [Suite authoring and visible coverage gaps](TEST_SUITE_AUTHORING.md)
+are now delivered, including source Save/reopen, seed/fixture/checkpoint setup,
+native selected/full runs and failure navigation. Objective starters still need
+an authored route; retained observations do not prove every branch or arbitrary
+Lua behavior. Embedded chat and provider-specific adapters
 remain optional; model configuration belongs to the external authoring client.
 Native Windows Python/Tk interaction and an entirely bundled Windows Python
 installation still need a suitable Windows environment/runtime. Linux installation
@@ -33,8 +36,11 @@ AI7a's [modular source/build workflow](CAMPAIGN_SOURCES.md) and AI7b's
 [measured v3 capacities](CAMPAIGN_CAPACITY.md) are delivered. The supported
 extension is 64 local maps/encounters, 1,024 events and 128 objectives/variables.
 Regions, hooks/groups, discovery, JSON parser and source budgets remain bounded.
-The larger GUI journey still showed a 594 ms maximum heartbeat gap during
-synchronous document/view work; further profiling can target those pauses.
+The [responsiveness follow-up](EDITOR_RESPONSIVENESS.md) reduces measured normal
+snapshots from 282 to 25 ms and Undo/Redo from 1,088 to 18 ms. The repeated
+large-campaign journey reports a 219 ms maximum heartbeat gap. Pending-field
+transactions and first-time source/view work can still exceed 100 ms; native
+Windows Tk timings and behavior remain unverified.
 Source-format budgets (4,096 files / 128 MiB) do not expand gameplay budgets.
 Compilation canonicalizes JSON, so legacy saves remain attached to their old
 package unless explicitly migrated. Campaign format upgrades themselves refuse

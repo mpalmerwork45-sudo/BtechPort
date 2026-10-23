@@ -1,5 +1,50 @@
 # Build, verification and original oracle — 2026-10-23
 
+## Editor responsiveness follow-up — 2026-10-23
+
+**PASS within the declared large-campaign fixture.** Batch 1 is committed as
+`24ffd98`; this subsequent batch changes Python editor copies, history flushing,
+source-table caching and table sorting bookkeeping. Gameplay code and save
+formats are unchanged.
+
+- Full Python regression: **373/373 pass**, 48.716 s,
+  `work/responsiveness-python.log`. Four new snapshot safety tests cover current
+  and saved/source baseline isolation, history omission from workers, no-op
+  flushes, pending/invalid drafts and full rollback even after direct mutations
+  to historical data during a failed transaction.
+- Measured GUI operations: `work/responsiveness-before.json` and
+  `work/responsiveness-after.json`, with separate `.prof`/`-profile.txt` files.
+  Same 40-map/403-event/two-world source campaign, 20 accumulated Undo states,
+  three samples per operation. Median ordinary snapshot **282.05 → 24.94 ms**;
+  Undo/Redo **1,087.53 → 18.47 ms**; unchanged source-table refresh
+  **372.24 → 0.07 ms**; pending-field snapshot **355.04 → 212.11 ms**.
+  Full rollback transactions remain about **145 ms**. These are local measured
+  operations, not a claimed universal speedup. [Details](EDITOR_RESPONSIVENESS.md).
+- `--editor-responsiveness-only`: **PASS**, including source cache invalidation
+  on new/deleted/undone objects, a 1,000-row three-state sorting table, child rows,
+  detach/reparent, cancellation with edits/Undo, stale validation and source
+  Save/reopen. `work/responsiveness-after.log` records the run.
+- Existing `--editor-capacity-only`: **PASS**, including actual map 40 paint,
+  event 383 edits, source diagnostics, Undo repair, Save/reopen, Build and normal
+  SDL Play/Stop. **56.3 ms** open, **219.3 ms** maximum heartbeat gap, **133,024
+  KiB** peak RSS; `work/responsiveness-capacity.log` and
+  `work/editor-campaign-capacity.json`.
+- Existing `--editor-style-only` and `--editor-collaboration-only`: **PASS**,
+  `work/responsiveness-style.log` and `work/responsiveness-collaboration.log`.
+  Cover heading sorts/selection, dropdown typing, source edits, reviewed/live
+  proposals, recovery, Undo/Save, cancellation and ordinary Play on disposable
+  copies. Final `--editor-suites-only`: **PASS**,
+  `work/responsiveness-suites.log`, covering the new suite workspace after the
+  shared snapshot/history/table changes.
+- The **91 native tests**, sequential Linux/Windows builds and exact
+  Windows/Wine scenario save comparison from batch 1 remain applicable: batch 2
+  changes no C sources or native build inputs. Reference and user-file hash
+  guards are repeated before committing.
+
+Native Windows Python/Tk interaction remains unverified. Initial reconstruction,
+large redraws and transactions with pending fields still need bounded synchronous
+work; this batch does not claim a 100 ms ceiling for all supported content.
+
 ## Suite authoring and coverage — 2026-10-23
 
 **PASS within the existing bounded scenario/runtime contracts.**

@@ -134,9 +134,11 @@ rendering the simultaneous maximum fixture peaked at 49.7 MiB / 95 ms.
 
 The GUI journey opened the 573-file source project and map view in 55 ms;
 process peak RSS was 136.2 MiB. Its largest GUI heartbeat gap across edits,
-source conversion/diagnostics/build preparation was 594 ms. Those occasional
-synchronous document/view operations remain a performance follow-up; this
-measurement does not promise frame-perfect interaction at every maximum.
+source conversion/diagnostics/build preparation was 594 ms. The subsequent
+[responsiveness follow-up](EDITOR_RESPONSIVENESS.md) records the actual copy/table
+bottlenecks, a controlled operation comparison and a 219 ms gap on the repeated
+capacity journey. Pending-field and initial reconstruction work still pause;
+these measurements do not promise frame-perfect interaction at every maximum.
 
 Unchanged bounds include 64×64 tiles per local map, 16 entrances per map,
 64 flags, 32 regions, 16 people, 16 shops, 16 combat groups, 32 combat hooks,
@@ -147,6 +149,7 @@ parser budget. The maximum fixture fits those aggregate budgets; arbitrary
 additional overlays/patches must still fit them. Inspect capacity and validate
 before growing content.
 
-Native Windows Tk, arbitrary world-spanning route verification, general combat
-balance and unlimited campaign generation remain **UNKNOWN**. The next milestone
-is **AI8: a curated campaign demonstration, author recipes and packaged delivery**.
+Native Windows Tk, arbitrary whole-campaign solvability, general combat balance
+and unlimited campaign generation remain **UNKNOWN**. AI8's curated campaign,
+author recipes and delivery are now [implemented](CAMPAIGN_RECIPES.md), along
+with [bounded declared world-route verification](WORLD_ROUTE_VERIFICATION.md).

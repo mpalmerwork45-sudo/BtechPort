@@ -14,7 +14,7 @@ class Sources:
     def __init__(self,owner):
         self.owner=owner;self.scope=scope_of(owner);self.document=owner.document;self.workspace=workspace_of(owner)
         self.window=view_window(self,owner,'sources','Campaign sources')
-        self.status=tk.StringVar();self.info=tk.StringVar();self.records={}
+        self.status=tk.StringVar();self.info=tk.StringVar();self.records={};self.ownership_key=None
         ttk.Label(self.window,textvariable=self.info,wraplength=850,padding=12).pack(fill='x')
         bar=ttk.Frame(self.window,padding=6);bar.pack(fill='x')
         self.buttons={}
@@ -36,18 +36,30 @@ class Sources:
 
     def refresh(self):
         self.document=self.scope.document;source=self.document.source
-        self.table.delete(*self.table.get_children());self.records={}
         self.buttons['Create source copy...'].configure(state='disabled' if source else 'normal')
         expanded=(self.document.adventure or {}).get('schema_version',1)>=3
         self.buttons['Upgrade campaign limits'].configure(state='disabled' if expanded or not self.document.adventure else 'normal')
         if source:
-            current=CampaignSource(self.document.root,self.document.source_files())
+            # Source ownership depends on collection membership/order and the
+            # source index, not tile pixels, dialogue or test metadata. Cache
+            # only this view: Save/Build/Validate still compile the exact draft.
+            shape=tuple((section,key,tuple(v.get('id') if isinstance(v,dict) else None for v in values))
+                for section in ('content','adventure','art') for key,values in (getattr(self.document,section) or {}).items() if isinstance(values,list))
+            ownership_key=(source.root,source.index,shape,tuple((k,self.document.manifest.get(k)) for k in ('definitions','adventure','graphics','presentation')))
+            if ownership_key!=self.ownership_key:
+                current=CampaignSource(self.document.root,self.document.source_files())
+                old=self.records.get(next(iter(self.table.selection()),None));scroll=self.table.yview()
+                self.table.delete(*self.table.get_children());self.records={}
+                for i,record in enumerate(current.locations):
+                    key=str(i);self.records[key]=record
+                    self.table.insert('','end',iid=key,text=record['id'],values=(record['collection'],record['file']))
+                    if old and all(old[k]==record[k] for k in ('section','collection','id')):self.table.selection_set(key)
+                if scroll:self.table.yview_moveto(scroll[0])
+                self.ownership_key=ownership_key;self.file_count=len(current.disk)
             self.info.set('Source project: '+str(self.document.root)+'\nSave writes the modules below. Play and Build compile the current draft into a normal game package. Double-click an object to edit it with the usual tools.')
-            for i,record in enumerate(current.locations):
-                key=str(i);self.records[key]=record
-                self.table.insert('','end',iid=key,text=record['id'],values=(record['collection'],record['file']))
-            self.status.set(f'{len(current.disk)} source files. Text references live in text files; editor notes do not change gameplay saves.')
+            self.status.set(f'{self.file_count} source files at last ownership refresh. Text references live in text files; editor notes do not change gameplay saves.')
         else:
+            self.table.delete(*self.table.get_children());self.records={};self.ownership_key=None
             self.info.set('This project uses the existing package format. All editing and Play features remain available. Create source copy makes a separate project with editable map, mission, definition, artwork and dialogue files.')
             self.status.set('Conversion canonicalizes game data. Keep this package for its old saves; the source copy starts a new campaign unless you explicitly migrate a save.')
         self.info.set(self.info.get()+('\nCampaign v3: 64 maps, 64 encounters, 1,024 events, 128 objectives and variables.' if expanded else

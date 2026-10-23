@@ -11,8 +11,14 @@ Windows builds, native regression, Python regression and the GUI journey pass.
 The independent suite also matches Linux/Windows save bytes under Wine. See
 [verification](TESTING.md#suite-authoring-and-coverage--2026-10-23).
 
-Batch 2 is the authorized follow-up: measure remaining large-project GUI pauses,
-address demonstrated bottlenecks and preserve editing/Undo/cancellation behavior.
+**Batch 2: measured editor responsiveness — implemented.**
+[The comparison](EDITOR_RESPONSIVENESS.md) records normal snapshots falling from
+282 to 25 ms and Undo/Redo from 1,088 to 18 ms on the 40-map/403-event source
+campaign. Worker copies omit unused history, empty draft flushes avoid a full
+transaction, and the source/table views avoid repeated reconstruction. Pending
+fields retain full rollback protection. The source editing/build/Play journey,
+sorting, cancellation, stale results and Save/reopen pass; **373 Python tests
+pass**. First-time and pending-field work can still exceed 100 ms.
 
 **AI4/AI5 review-linked scenario selection — implemented and verified, 2026-10-23.**
 [Scenario selection](SCENARIO_SELECTION.md) inventories explicit dependencies on

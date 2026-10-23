@@ -181,6 +181,15 @@ class EditorScope:
     def dirty(self):
         return bool(self.document and self.document.dirty) or any(d.pending() for d in self.live())
 
+    def apply_pending(self):
+        """A no-op field flush should not copy the entire document and history.
+
+        Transactions with actual drafts still keep the complete rollback copy,
+        including invalid text and history. Undo and validated Save call this
+        before changing state; no validation or error boundary is bypassed.
+        """
+        if any(d.pending() for d in self.live()):return self.transact(lambda:None)
+
     def transact(self, operation, only=None, subset=None, preview=False):
         """A failed save restores document AND widget drafts, including bad text.
 

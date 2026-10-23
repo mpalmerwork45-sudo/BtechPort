@@ -335,6 +335,15 @@ player process. Named fonts, reflowing controls, scrollable forms/palettes,
 tooltips and shortcut help complete the presentation pass. Native Windows Tk and
 physical multi-monitor behaviour remain explicit open verification gates.
 
+The [measured responsiveness follow-up](EDITOR_RESPONSIVENESS.md) removes Undo
+history from worker copies, avoids empty draft transactions, caches unchanged
+source ownership and removes repeated full-table scans during insertion. The
+large source fixture's ordinary snapshot is 25 ms and Undo/Redo 18 ms (medians);
+pending-field snapshots still take about 212 ms with full rollback isolation.
+Structural invalidation, cancellation, edits during jobs and source Save/reopen
+are verified. These measurements refine the targets below; they do not promise
+sub-100 ms work at every supported maximum.
+
 1. Apply consistent system-font sizing, spacing, labels, selection/focus states
    and toolbar styles. Use proper icons with readable labels, not font-dependent
    decorative characters. Keep advanced IDs/settings available without placing

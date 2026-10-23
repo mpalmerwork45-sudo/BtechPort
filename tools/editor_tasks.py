@@ -103,10 +103,11 @@ def signature(scope):
 def snapshot(scope):
     """Validate the combined candidate without consuming forms or invalid text."""
     if not scope.document:raise EditorError('Open a project first.')
-    candidate=scope.transact(lambda:copy.deepcopy(scope.document),preview=True)
-    candidate._command_depth=0;candidate._command_label=None
-    candidate.undo_stack=[];candidate.redo_stack=[];candidate.undo_labels=[];candidate.redo_labels=[]
-    return candidate
+    # With no fields to apply, taking an isolated copy cannot mutate the live
+    # document. Avoid a second full rollback copy in that common path. Dirty
+    # drafts retain the ordinary preview transaction and all rollback checks.
+    if not any(d.pending() for d in scope.live()):return scope.document.worker_copy()
+    return scope.transact(lambda:scope.document.worker_copy(),preview=True)
 
 
 def adopt_saved(live,saved):
@@ -139,9 +140,9 @@ def save(workspace,scope,finished=None):
         clear_problems(scope,'validation')
         # All fields were checked together. Now consume exactly that draft and
         # let the worker finish the journalled write, without blocking the UI.
-        scope.transact(lambda:None)
+        scope.apply_pending()
         phase['commit']=True
-        candidate=copy.deepcopy(scope.document);context=getattr(owner,'library_context',None)
+        candidate=scope.document.worker_copy();context=getattr(owner,'library_context',None)
         def commit(cancel):
             if context:
                 replacement=tempfile.TemporaryDirectory(prefix='unit-edit-',dir=owner.state_dir)

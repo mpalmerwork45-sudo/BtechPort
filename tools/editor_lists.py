@@ -26,13 +26,17 @@ class TableOrder:
         result=self.table.tk.call(self.original,*args)
         mutation=args and (args[0] in ('insert','delete','detach') or args[0]=='item' and len(args)>3 or args[0]=='set' and len(args)>3)
         if mutation and not self.sorting:
-            children=list(self.table.get_children());self.natural=[i for i in self.natural if i in children]
-            if args[0]=='insert' and result in children:
+            if args[0]=='insert' and args[1]=='':
                 # Respect a caller's explicit insertion index in the natural
-                # order; most refreshed tables append rows in document order.
+                # order. Appending a root row needs no scan of all other rows:
+                # rescanning on every insertion made refreshes cubic in size.
                 index=args[2]
                 self.natural.insert(len(self.natural) if index=='end' else min(int(index),len(self.natural)),result)
-            self.natural.extend(i for i in children if i not in self.natural)
+            elif args[0] in ('delete','detach'):
+                children=list(self.table.get_children());present=set(children)
+                self.natural=[i for i in self.natural if i in present];known=set(self.natural)
+                self.natural.extend(i for i in children if i not in known)
+            # Editing a cell or child row does not change root membership.
             if self.direction and self.job is None:self.job=self.table.after_idle(self.apply)
         return result
 
@@ -45,6 +49,9 @@ class TableOrder:
         table=self.table
         if not table.winfo_exists():return
         children=set(table.get_children());self.natural=[i for i in self.natural if i in children]
+        # A caller can detach/reparent existing rows without inserting them.
+        # Reconcile once when sorting, never once per cell during a refresh.
+        known=set(self.natural);self.natural.extend(i for i in table.get_children() if i not in known)
         order=self.natural
         if self.direction:
             order=sorted(order,key=lambda row:sort_key(table.item(row,'text') if self.column=='#0' else table.set(row,self.column)),reverse=self.direction==2)

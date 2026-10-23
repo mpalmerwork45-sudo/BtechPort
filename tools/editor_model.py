@@ -154,6 +154,19 @@ class ProjectDocument:
         return (self.content != self.saved or self.adventure != self.saved_adventure
                 or self.art != self.saved_art or self.manifest != self.saved_manifest or self.metadata != self.saved_metadata)
 
+    def worker_copy(self):
+        """An independent candidate without copying forty discarded Undo states.
+
+        Workers need current content and disk/source baselines, never editor
+        history. Supplying empty histories to deepcopy avoids traversing them
+        in the first place; every other mutable document field stays isolated.
+        This is not used for transaction rollback, which retains full history.
+        """
+        history=('undo_stack','redo_stack','undo_labels','redo_labels')
+        candidate=copy.deepcopy(self,{id(getattr(self,key)):[] for key in history})
+        candidate._command_depth=0;candidate._command_label=None
+        return candidate
+
     def replace(self, content: dict) -> None:
         self.replace_both(content, self.adventure)
 
