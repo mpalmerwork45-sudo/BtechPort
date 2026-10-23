@@ -3,7 +3,7 @@
 Recorded 2026-10-18 against `266d21f`, with the user's revised Last Beacon
 preserved in `bed75e9`.
 
-**Status: AI7a/AI7b IMPLEMENTED, 2026-10-22.** AI1/AI2 have the versioned
+**Status: AI1–AI8 and bounded world-route verification IMPLEMENTED, 2026-10-23.** AI1/AI2 have the versioned
 inspection/command contract, transactional CLI, shared editor operations and
 command-file exchange described in the [author guide](AI_AUTHORING_GUIDE.md).
 The approved next four steps add shared asset discovery, labelled visual
@@ -11,7 +11,7 @@ artifacts, native mission analysis and broader seeded ordinary-input tests.
 A separate playable authoring lab demonstrates selection, import, a diagnosed
 failure and repair. Tests and remaining boundaries are recorded in
 [Testing](TESTING.md#ai-authoring-discovery-and-mission-testing--2026-10-19).
-AI4 remains bounded to declared routes, initial-party local geometry and small
+AI4 remains bounded to declared routes, initial-party local/world geometry and small
 combat samples. AI5 now adds durable review, protected objects/fields/local
 regions, validated partial groups and a local session attached to the editor.
 Its Last Beacon completion gate preserves human dialogue, roof painting and
@@ -24,7 +24,9 @@ states and compound conditions, with editor controls and the playable
 [combat hooks, reserves and escort actors](COMBAT_MISSIONS.md), exercised in
 Cairn Passage. AI7a adds [modular sources and deterministic builds](CAMPAIGN_SOURCES.md).
 AI7b adds [measured campaign budgets and save v52](CAMPAIGN_CAPACITY.md).
-AI8 remains proposed. The editor remains the human workspace.
+AI8 supplies [Greybank recipes and delivery](CAMPAIGN_RECIPES.md). The
+[world-route extension](WORLD_ROUTE_VERIFICATION.md) covers actual travel,
+discovery and checkpoints. The editor remains the human workspace.
 
 ## 1. Intended result
 
@@ -138,7 +140,7 @@ usable stopping point. Relative size indicates scope, not a calendar estimate.
 | AI5 | Editor review, protected edits and live sessions | AI2–AI4 | Large | Delivered; local file-inbox transport |
 | AI6 | Additional mission primitives and Lua/event support | AI2, AI4–AI5 | Large, split below | AI6a/AI6b/AI6c delivered |
 | AI7 | Modular campaigns, reproducible compilation and capacity work | AI2, AI4–AI5; include AI6 formats when available | Large, split below | AI7a and AI7b delivered |
-| AI8 | Complete authoring demonstration and delivery | AI1–AI7 | Medium | Proposed |
+| AI8 | Complete authoring demonstration and delivery | AI1–AI7 | Medium | Delivered; platform limits recorded |
 
 **First useful AI creation checkpoint: AI1–AI4.** It generates into a separate
 copy, supplies test evidence and opens in the existing editor.
@@ -164,9 +166,11 @@ break deployment, diagnose it, repair with a scoped revision-checked batch and
 rerun only the three affected victory seeds. Existing games and libraries are
 read-only inputs. It uses the normal player after generation.
 
-Not established by these tests: arbitrary Lua/condition reachability, world-wide
-navigation, all later party compositions, arbitrary checkpoint entry setups or
-general combat balance. These remain AI4 extensions rather than implicit
+Not established by those original AI3/AI4 tests: arbitrary Lua/condition
+reachability, world-wide navigation, all later party compositions, arbitrary
+checkpoint entry setups or general combat balance. The later world-route
+extension below adds bounded world geometry and declared travel evidence.
+The remaining areas stay AI4 extensions rather than implicit
 promises of complete mission proof. Native Windows editor interaction remains
 unverified. The subsequent AI5 increment is recorded below.
 
@@ -663,11 +667,19 @@ workflow (AI8). Additional external assistant transports remain optional. Source
 modules now use the documented `btp-campaign-source-v1` format. No AI provider
 choice is required for ordinary editing, compilation or gameplay.
 
-**Next proposed milestone: world-route verification (the AI4 extension).**
-Exercise travel between jigsaw sectors, town overlays and planets using actual
-party movement, with map-aware diagnostics, discovery and checkpoint coverage.
-This extends the current local navigation checks; it does not require another
-increase in capacities or an embedded model service.
+**World-route verification: delivered as a bounded AI4 extension.**
+[World Survey](WORLD_ROUTE_VERIFICATION.md) exercises actual party travel
+between jigsaw sectors, town overlays and planets, with source-aware diagnostics,
+discovery and checkpoints. Bounded world geometry checks report unknown coverage
+when their budget is exhausted. No capacities or gameplay/save rules changed.
+
+**Next proposed milestone: saved-journey scenarios (AI4 extension).**
+Allow a scenario to start from an explicitly selected checkpoint tied to exact
+content and RNG state. Preserve its setup/reproduction evidence, reject stale
+or mismatched saves, and expose the workflow in the editor. Demonstrate a late
+campaign route without replaying earlier missions and compare its continuation
+with the full ordinary-input journey. Keep arbitrary conditions/Lua coverage
+and general combat balance outside that completion claim.
 
 AI6b/AI6c now supply round hooks, atomic reinforcement groups, scripted outcomes,
 friendly/neutral actors and terrain-aware waypoints. Cairn Passage demonstrates
@@ -683,6 +695,7 @@ previews, command imports and reviewed/live authoring sessions share it.
 
 World creation, seeded jigsaw generation/painting, terrain patches, town-map
 placement and composed world previews are already exposed to AI tools.
-AI7b supplies the documented campaign capacities; world-wide traversal verification is
-still an AI4 extension. Keep those distinctions visible rather than advertising
+AI7b supplies the documented campaign capacities; declared world traversal
+verification is now delivered within the recorded search/scenario bounds.
+Keep those distinctions visible rather than advertising
 an unbounded planet/campaign generator.

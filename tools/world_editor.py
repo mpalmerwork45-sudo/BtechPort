@@ -20,6 +20,7 @@ class WorldEditor:
         self.window=view_window(self,owner,'world','Worlds and planets');self.window.geometry('1000x730');self.window.minsize(840,600)
         self.stroke=None;self.drag=None;self.cache={};self.pending=False;self.last=None;self.city=None;self.world_id=None
         self.selection_rect=None;self.clipboard=None;self.select_start=None
+        self.problem_location=None
         bar=ttk.Frame(self.window,padding=8);bar.pack(fill='x')
         for title,cb in [('Create world',self.new_world),('Place city',self.city_form),('Edit city',self.edit_city),('Remove city',self.remove_city),('Undo',owner.undo),('Redo',owner.redo),('Save',owner.save),('Validate',owner.validate)]:
             ttk.Button(bar,text=title,width=0,style='Toolbar.TButton',command=lambda f=cb:self.guard(f)).pack(side='left',padx=3)
@@ -115,6 +116,16 @@ class WorldEditor:
     def current_world(self,a=None):return get_world(self.adventure if a is None else a,self.world_id)
     def change_planet(self):
         self.cancel();self.world_id=all_worlds(self.document.adventure)[self.planet.current()]['id'];self.city=None;self.cache={};self.draw()
+    def show_location(self,world,at,message,coordinate_space='world_movement'):
+        # Diagnostic coordinates are movement half-tiles; the world canvas
+        # draws tiles. Keep the marker through redraws, zoom and scrolling.
+        self.world_id=world;self.refresh();self.window.lift()
+        scale=.5 if coordinate_space=='world_movement' else 1
+        x,y=(value*scale for value in at);self.problem_location=(world,x,y)
+        self.window.update_idletasks();z=int(self.zoom.get());w,h=world_size(self.adventure,world)
+        self.canvas.xview_moveto(max(0,(x*z-self.canvas.winfo_width()/2)/(w*z)))
+        self.canvas.yview_moveto(max(0,(y*z-self.canvas.winfo_height()/2)/(h*z)))
+        self.info.set(message);self.draw();self.canvas.focus_set()
     def refresh(self):
         self.tile_choice.configure(values=[t['id'] for t in self.document.adventure['tiles']])
         worlds=all_worlds(self.document.adventure);self.planet.configure(values=[w['name'] for w in worlds])
@@ -237,6 +248,11 @@ class WorldEditor:
             self.canvas.create_text(ox*z+3,oy*z+3,text=m['name'],fill=color,anchor='nw')
         if self.selection_rect:
             x,y,xx,yy=self.selection_rect;self.canvas.create_rectangle(x*z,y*z,(xx+1)*z,(yy+1)*z,outline='#ffdb6e',width=2)
+        if self.problem_location and self.problem_location[0]==self.world_id:
+            _,x,y=self.problem_location;cx,cy=x*z,y*z
+            self.canvas.create_rectangle(cx-6,cy-6,cx+6,cy+6,outline='#ffdb6e',width=2,tags='problem-location')
+            self.canvas.create_line(cx-12,cy,cx+12,cy,fill='#ffdb6e',tags='problem-location')
+            self.canvas.create_line(cx,cy-12,cx,cy+12,fill='#ffdb6e',tags='problem-location')
         self.info.set(f"{self.current_world(a)['name']} | {w} x {h} tiles | {len(a['jigsaws'])} jigsaws | {len(self.current_world(a)['cities'])} cities")
     def pointer(self,e,start):
         if not all_worlds(self.adventure):raise EditorError('Create a world first.')

@@ -103,11 +103,84 @@
                 "type": "string",
                 "maxLength": 63,
                 "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "max_positions": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 1048576
               }
             },
             "required": [
               "op",
               "entrance"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "walk"
+              },
+              "map": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "at": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 2047
+                },
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "max_positions": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 1048576
+              }
+            },
+            "required": [
+              "op",
+              "map",
+              "at"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "walk"
+              },
+              "world": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "at": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 2047
+                },
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "max_positions": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 1048576
+              }
+            },
+            "required": [
+              "op",
+              "world",
+              "at"
             ],
             "additionalProperties": false
           },
@@ -256,6 +329,57 @@
                   "complete"
                 ]
               },
+              "world": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "world_at": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 2047
+                },
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "formation": {
+                "enum": [
+                  "compact"
+                ]
+              },
+              "discovered": {
+                "type": "object",
+                "properties": {
+                  "world": {
+                    "type": "string",
+                    "maxLength": 63,
+                    "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+                  },
+                  "at": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 1023
+                    },
+                    "minItems": 2,
+                    "maxItems": 2
+                  },
+                  "seen": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 1
+                  }
+                },
+                "required": [
+                  "world",
+                  "at",
+                  "seen"
+                ],
+                "additionalProperties": false
+              },
               "map": {
                 "type": "string",
                 "maxLength": 63,
@@ -318,6 +442,26 @@
             ],
             "additionalProperties": false,
             "anyOf": [
+              {
+                "required": [
+                  "world"
+                ]
+              },
+              {
+                "required": [
+                  "world_at"
+                ]
+              },
+              {
+                "required": [
+                  "formation"
+                ]
+              },
+              {
+                "required": [
+                  "discovered"
+                ]
+              },
               {
                 "required": [
                   "credits"

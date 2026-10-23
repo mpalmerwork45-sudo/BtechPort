@@ -112,6 +112,10 @@ The proposed path to more mechs, custom game packages, BLD/Lua scripting and a
 Windows/Linux editor is recorded in the
 [engine and editor plan](docs/ENGINE_AND_EDITOR_PLAN.md).
 
+[World-route checks](docs/WORLD_ROUTE_VERIFICATION.md) exercise whole-party
+travel between towns and planets, discovery and save/reload, with navigable
+editor diagnostics. The independent World Survey fixture needs no original assets.
+
 [AI authoring tools](docs/AI_AUTHORING_GUIDE.md) can inspect projects, search
 assets, apply validated command batches, export labelled visual previews, check
 mission navigation and run seeded gameplay suites through `python3 tools/author.py`.

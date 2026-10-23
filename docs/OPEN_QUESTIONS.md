@@ -5,8 +5,11 @@ The recorded five-map campaign covers both opening contracts, services, defence,
 escort, failures and checkpoints at declared seeds. It is a fixed-layout recipe
 with editable expanded content, not a general-purpose campaign generator or a
 balance proof. Other parameter combinations/layout edits need new checks.
-The next proposed increment is world-route verification across jigsaw sectors,
-town overlays and planet changes. Embedded chat and provider-specific adapters
+The [world-route extension](WORLD_ROUTE_VERIFICATION.md) now verifies declared
+journeys across sectors, town overlays and planet changes. Exhausted world scans
+remain unknown; initial-party geometry does not prove all later compositions or
+arbitrary event conditions. Next proposed: exact-content checkpoint starts for
+scenarios, with reproducible late-campaign continuations. Embedded chat and provider-specific adapters
 remain optional; model configuration belongs to the external authoring client.
 Native Windows Python/Tk interaction and an entirely bundled Windows Python
 installation still need a suitable Windows environment/runtime. Linux installation
@@ -23,7 +26,7 @@ Compilation canonicalizes JSON, so legacy saves remain attached to their old
 package unless explicitly migrated. Campaign format upgrades themselves refuse
 save migration and require a new campaign. Source reorganization and author notes
 alone preserve already-compiled save identity. Native Windows Tk, general
-world-wide navigation remain unverified.
+unbounded whole-campaign navigation remain unverified.
 
 The authorized M4 increments have playable, tested paths. Confidence belongs
 to the individual original comparisons and recorded continuations in
@@ -37,8 +40,9 @@ search/visual feedback and bounded mission analysis/scenario suites while
 retaining the full editor. The eight-case suite measures ten ordinary-input
 runs, including a declared validated low-funds fixture. Local navigation uses
 the actual initial party and collision rules; it does not establish all later
-party compositions, world routes, arbitrary conditions/Lua or general combat
-balance. Those remain extensions of AI4. AI5 now supplies a Changes view,
+party compositions, arbitrary conditions/Lua or general combat balance.
+Declared world routes now have native scenarios and bounded geometry checks;
+broader coverage remains an extension of AI4. AI5 now supplies a Changes view,
 protected objects/fields/local regions and local editor sessions. Delivered
 increments now include AI6 mission state, reinforcements and escorts, plus AI7a
 modular sources, AI7b's measured campaign capacity and AI8's recorded campaign/delivery.
@@ -49,8 +53,9 @@ unverified. Model/provider selection is optional and does not block these tools.
 
 World creation, jigsaw generation/painting, terrain patches and city placement
 are already exposed to AI authors, with composed world/city previews. Larger
-planet/campaign capacity beyond the v3 budgets needs another audit; world-wide traversal checks are
-still unverified. Current protection rectangles and paired review-map previews
+planet/campaign capacity beyond the v3 budgets needs another audit. World scans
+and declared traversal are verified within the documented budgets; exhaustive
+campaign solvability remains unknown. Current protection rectangles and paired review-map previews
 cover local maps; whole world objects/fields can be protected and world
 changes inspected through field comparisons and `world-preview`.
 

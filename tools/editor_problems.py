@@ -11,7 +11,8 @@ def target(document,problem):
     if problem.get('object_id') and problem['object_id'] not in ids:ids.append(problem['object_id'])
     a=document.adventure or {}
     location=problem.get('location')
-    if location and location.get('map'):return dict(collection='location',id=problem.get('object_id'),**location)
+    if isinstance(location,dict) and (location.get('map') or location.get('world')):
+        return dict(collection='location',id=problem.get('object_id'),**location)
     # The deepest ID is the entrance/enemy owner, not the first map ID.
     for identity in reversed(ids):
         for scene in a.get('maps',[]):
@@ -42,6 +43,13 @@ def navigate(workspace,problem):
     if collection=='images':
         art=owner.graphics_editor();art.selected=identity;art.edit();return True
     owner.edit_adventure();maps=owner.map_editor
+    if collection=='location' and destination.get('world') and not destination.get('map'):
+        from world_editing import all_worlds
+        if not any(w['id']==destination['world'] for w in all_worlds(maps.adventure)):return False
+        maps.edit_landscape()
+        maps.world_editor.show_location(destination['world'],destination['at'],problem['message'],
+            destination.get('coordinate_space','world_movement'))
+        return True
     if collection=='events':
         graph=maps.event_graph();graph.selected=identity;graph.edit();graph.window.lift();graph.fit()
         field=destination.get('path','').rsplit(']',1)[-1].lstrip('.')

@@ -143,7 +143,7 @@ def analyze(document,analyzer,settings=None,navigation=True,output=None):
     report=dict(api_version=API_VERSION,status='failed' if any(p['severity']=='error' for p in problems) else 'checked',
         revision=base,project_id=document.manifest['package_id'],diagnostics=problems,graph=static,
         navigation=native,native_sha256=hashlib.sha256(Path(analyzer).read_bytes()).hexdigest() if native else None,
-        coverage='Initial-party local geometry and explicit event graph. Later recruits, world-spanning routes, conditions and Lua require declared gameplay scenarios.')
+        coverage='Initial-party local/world geometry and explicit event graph. World floods are bounded and incomplete searches are unknown. Later recruits, actual travel, conditions and Lua require declared gameplay scenarios.')
     if output:
         output=Path(output).resolve()
         if output.is_relative_to(document.root):raise AuthoringError('output.invalid','Save analysis outside the game project.')

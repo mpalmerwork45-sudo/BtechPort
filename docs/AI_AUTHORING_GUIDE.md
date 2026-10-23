@@ -526,7 +526,8 @@ Several worlds are supported within the runtime's compiled/shared capacity.
 Query remaining capacity before expanding a project. The review's map tab
 shows local maps; use `world-preview` for a composed world/city image and the
 field comparison for the underlying world changes. AI7b supplies the documented
-larger campaign capacities; world-spanning navigation verification is still future work.
+larger campaign capacities; [world-route verification](WORLD_ROUTE_VERIFICATION.md)
+now covers declared travel through composed towns/sectors and between planets.
 
 All visual output paths must be new and outside the project. Rendering does not
 edit artwork, graph layout, game data or Undo history.
@@ -539,13 +540,14 @@ python3 tools/author.py lint work/my-relay --data 'Original DOS' --dialogue-data
 
 `lint` combines explicit event-graph checks with `btp-author-analyze`, which uses
 the actual C movement, terrain and door-contact rules for the initial whole
-party. It checks local arrivals, entrance access, deployment footprints, enemy
+party. It checks local/world arrivals, entrance access, deployment footprints, enemy
 overlap and friendly/enemy separation. Graph checks find missing/disconnected
 links, suspicious synchronous cycles and missing objective flag writers;
 objectives whose explicit completion routes lie behind sealed doors get a
 warning where the graph can establish that connection.
 
-`--static-only` skips native navigation. Missing dependencies, world navigation,
+World floods cap each planet at 262,144 positions and report incomplete scans
+as unknown. `--static-only` skips native navigation. Missing dependencies,
 arbitrary conditions/Lua and later changes to party composition remain labelled
 unknown or limited coverage. The checker does not prove every mission is
 solvable. It validates an exact detached snapshot, has a 25-second native bound
@@ -570,7 +572,8 @@ RNG bytes. Omission preserves the ordinary default, `11223583` = bytes
 `31,66,171`. Reproduce with the saved `scenario.json` and exact staged content;
 the input replay alone does not initialize its seed.
 
-Available scenario actions are `pages`, `walk` to an entrance ID, `enter`,
+Available scenario actions are `pages`, `walk` to an entrance ID or explicit
+map/world movement coordinates, `enter`,
 `choose` by displayed label, ordinary `input`, `battle`, `checkpoint`, `capture`
 and `assert`. Battle policies are `computer` (real combat AI), `hold` (end turns
 without attacking) and `retreat` (normal Flee command). `until_round: 1` stops
@@ -580,7 +583,9 @@ do not provide arbitrary cross-project or changed-content resume.
 
 Assertions cover credits, flags, event, map, phase, objectives, owned/available
 units, party survival/health, armour, structure, ammunition and battle outcome/
-round bounds. Walk uses whole-party movement; combat runs real ticks. No action
+round bounds. World identity/position, compact formation and per-planet
+discovery assertions are documented in [World routes](WORLD_ROUTE_VERIFICATION.md).
+Walk uses whole-party movement; combat runs real ticks. No action
 teleports, grants rewards, sets flags or forces an outcome. Reports retain
 visited events and unambiguously observed branch labels; same-target branches
 and opaque Lua are not claimed as covered. `combat.jsonl` records policy,

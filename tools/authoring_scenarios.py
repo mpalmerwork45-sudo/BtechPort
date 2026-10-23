@@ -11,11 +11,13 @@ from editor_model import encoded,EditorError
 from event_editing import edges
 
 DEFAULT_SEED=11223583  # Little-endian bytes 31, 66, 171 used by normal games.
+MOVEMENT=array(integer(0,2047),2,2)
 
 STEP_SCHEMAS = [
     obj(dict(op={'const':'input'},action=TEXT,repeat=integer(1,120000)),['op','action']),
     *[obj(dict(op={'const':name}),['op']) for name in ('pages','enter','checkpoint','capture')],
-    obj(dict(op={'const':'walk'},entrance=ID),['op','entrance']),
+    obj(dict(op={'const':'walk'},entrance=ID,max_positions=integer(1,1048576)),['op','entrance']),
+    *[obj(dict(op={'const':'walk'},**{kind:ID},at=MOVEMENT,max_positions=integer(1,1048576)),['op',kind,'at']) for kind in ('map','world')],
     obj(dict(op={'const':'choose'},label=TEXT),['op','label']),
     obj(dict(op={'const':'battle'},control=enum('computer','hold','retreat'),until_round=integer(1,1024)),['op','control']),
     dict(**obj(dict(op={'const':'assert'},credits=integer(0,16777215),party_count=integer(0,8),owned_mechs=integer(0,4),alive_party=integer(0,8),
@@ -23,8 +25,10 @@ STEP_SCHEMAS = [
         person=ID,health_min=integer(0,255),mech=ID,armor_min=integer(0,2805),armor_max=integer(0,2805),
         structure_min=integer(0,2040),structure_max=integer(0,2040),ammo_min=integer(0,2550),ammo_max=integer(0,2550),
         phase=enum('exploration','entry','text','choice','shop','battle','fault','complete'),
+        world=ID,world_at=MOVEMENT,formation=enum('compact'),
+        discovered=obj(dict(world=ID,at=array(integer(0,1023),2,2),seen=integer(0,1)),['world','at','seen']),
         map=ID,event=ID,flag=ID,variable=ID,region=ID,group=ID,measure=enum('alive','destroyed','deployed','arrived'),value=integer(0,1000000),objective=ID,status=enum('inactive','active','complete','failed')),['op']),
-        anyOf=[dict(required=[key]) for key in ('credits','party_count','phase','map','event','flag','variable','region','group','objective','owned_mechs','alive_party','battle_outcome','round_min','round_max','person','mech')],
+        anyOf=[dict(required=[key]) for key in ('world','world_at','formation','discovered','credits','party_count','phase','map','event','flag','variable','region','group','objective','owned_mechs','alive_party','battle_outcome','round_min','round_max','person','mech')],
         allOf=[dict(**{'if':dict(required=['flag'])},then=dict(required=['value'])),
                *[dict(**{'if':dict(required=[key])},then=dict(required=['value'])) for key in ('variable','region')],
                dict(**{'if':dict(required=['group'])},then=dict(required=['measure','value'])),
@@ -93,6 +97,15 @@ def run(document, scenario, output, runner, settings=None, cancelled=lambda:Fals
         for branch,target in outputs:
             if (event['id'],target) in pairs and sum(t==target for _,t in outputs)==1:
                 branches.append(dict(event=event['id'],branch=branch,target=target))
+    navigation=final.get('navigation',{})
+    # A planner failure belongs at its destination; an interrupted walk or
+    # assertion belongs at the actual runtime location. Keep source IDs so
+    # compiler sector names never send the editor to an unrelated inspector.
+    where=final.get('state',{}).get('location')
+    if navigation.get('code') not in (None,'route.interrupted','route.passed'):
+        where=navigation.get('destination') or where
+    failure_code=navigation.get('code')
+    if not failure_code or failure_code=='route.passed':failure_code='scenario.failed'
     report=dict(api_version=API_VERSION,status='passed' if passed else 'cancelled' if was_cancelled else 'failed',project_id=document.manifest['package_id'],
                 setup=fixture or dict(kind='ordinary_new_game'),
                 revision=base,runtime_sha256=hashlib.sha256(runner.read_bytes()).hexdigest(),
@@ -103,9 +116,9 @@ def run(document, scenario, output, runner, settings=None, cancelled=lambda:Fals
                 result=final,steps=[r for r in records if 'step' in r],
                 artifacts=[dict(path=str(p),bytes=p.stat().st_size) for p in sorted(output.iterdir()) if p.is_file()],
                 reproduction=dict(scenario=str(source),failed_step=next((r['step'] for r in records if r.get('ok') is False),None),replay=str(output/'replay.actions')),
-                diagnostics=[] if passed else [dict(code='job.cancelled' if was_cancelled else 'scenario.timeout' if timeout else 'scenario.failed',severity='error',
+                diagnostics=[] if passed else [dict(code='job.cancelled' if was_cancelled else 'scenario.timeout' if timeout else failure_code,severity='error',
                     message=message or 'Scenario runner failed; inspect stderr.txt.',field_path='$.steps',
-                    object_id=final.get('state',{}).get('event'),location=final.get('state',{}).get('at'))])
+                    object_id=final.get('state',{}).get('event'),location=where)])
     (output/'report.json').write_bytes(encoded(report))
     # Console response stays compact. Full per-step evidence is in the report.
     return dict(api_version=API_VERSION,status=report['status'],revision=base,report=str(output/'report.json'),

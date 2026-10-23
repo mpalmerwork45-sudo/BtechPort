@@ -3,6 +3,7 @@
    No command grants victory, teleports the party or edits mission flags. */
 #include "frontend/cli.h"
 #include "frontend/authored_route.h"
+#include "frontend/world_route.h"
 #include "core/events.h"
 #include "core/mission_state.h"
 #include "core/battle_mission.h"
@@ -31,6 +32,8 @@ static unsigned initial_infantry[BTP_COMBAT_UNITS];
 static const char *battle_policy="unselected";
 static const char *last_outcome="none";
 static unsigned last_round;
+static BtpRouteReport route;
+static unsigned route_present;
 
 static unsigned sum(const uint8_t *bytes,unsigned count)
 { unsigned result=0;for(unsigned i=0;i<count;++i)result+=bytes[i];return result; }
@@ -129,10 +132,50 @@ static const char *phase_name(unsigned phase)
     static const char *names[]={"exploration","entry","text","choice","shop","battle","fault","complete"};
     return phase<8 ? names[phase] : "unknown";
 }
+static void location(const BtpState *s,const BtpResources *r)
+{
+    const BtpAdventure *a=btp_adventure(r);const BtpScene *m=btp_scene(r,s);
+    if(!m) {fputs("null",stdout);return;}
+    if(m->world) {
+        /* Reports use source city IDs, not compiler-generated sector IDs.
+           Outside a city the editor needs the planet and world coordinates. */
+        for(unsigned i=0;i<a->local_count;++i) {
+            const BtpScene *city=&a->maps[i];unsigned x=s->campaign.world_x,y=s->campaign.world_y;
+            if(city->world==m->world && x>=2*city->origin_x && y>=2*city->origin_y &&
+               x<2*(city->origin_x+city->rules.width) && y<2*(city->origin_y+city->rules.height)) {m=city;break;}
+        }
+        if(m>=a->maps+a->local_count) {
+            printf("{\"world\":\"%s\",\"at\":[%u,%u],\"coordinate_space\":\"world_movement\"}",
+                a->worlds[m->world-1].id,s->campaign.world_x,s->campaign.world_y);return;
+        }
+    }
+    printf("{\"map\":\"%s\",\"at\":[%u,%u],\"coordinate_space\":\"movement\"}",m->id,
+        s->campaign.world_x-2*m->origin_x,s->campaign.world_y-2*m->origin_y);
+}
+static void navigation(const BtpResources *r)
+{
+    if(!route_present)return;
+    const BtpAdventure *a=btp_adventure(r);
+    printf(",\"navigation\":{\"code\":\"%s\",\"examined\":%u,\"inputs\":%u,\"destination\":",route.code,route.examined,route.inputs);
+    if(route.map<a->map_count)printf("{\"map\":\"%s\",\"at\":[%u,%u],\"coordinate_space\":\"movement\"}",a->maps[route.map].id,route.x,route.y);
+    else if(route.world && route.world<=a->world_count)printf("{\"world\":\"%s\",\"at\":[%u,%u],\"coordinate_space\":\"world_movement\"}",a->worlds[route.world-1].id,route.x,route.y);
+    else fputs("null",stdout);
+    fputc('}',stdout);
+}
 static void state(const BtpState *s,const BtpResources *r)
 {
     const BtpAdventure *a=btp_adventure(r);const BtpScene *scene=btp_scene(r,s);
     fputs("{\"map\":",stdout);string_json(stdout,scene ? scene->id : "");
+    fputs(",\"location\":",stdout);location(s,r);
+    printf(",\"world\":\"%s\",\"world_at\":[%u,%u],\"formation_compact\":%s,\"discovery\":{",
+        scene && scene->world ? a->worlds[scene->world-1].id : "",s->campaign.world_x,s->campaign.world_y,
+        btp_authored_formation(s,r)?"true":"false");
+    for(unsigned i=0;i<a->world_count;++i) {
+        const BtpAuthoredWorld *w=&a->worlds[i];unsigned seen=0,total=w->width*w->height/64;
+        for(unsigned k=0;k<total;++k) {unsigned bit=w->explore_offset+k;seen+=(s->explored[bit/8]&(128u>>(bit&7u)))!=0;}
+        printf("%s\"%s\":{\"seen_cells\":%u,\"total_cells\":%u}",i?",":"",w->id,seen,total);
+    }
+    fputc('}',stdout);
     printf(",\"at\":[%u,%u],\"credits\":%u,\"phase\":\"%s\",\"event\":",s->x_half,s->y_half,s->credits,phase_name(s->event.phase));
     string_json(stdout,s->event.node<a->node_count ? a->nodes[s->event.node].id : "");
     printf(",\"party_count\":%u,\"flags\":{",btp_party_count(&s->party));
@@ -152,15 +195,16 @@ static void state(const BtpState *s,const BtpResources *r)
     printf(",\"mode\":\"%s\",\"rng\":[%u,%u,%u],\"owned_mechs\":%u,\"party\":[",btp_mode_name(s->mode),s->npc.rng[0],s->npc.rng[1],s->npc.rng[2],btp_broker_count(s));
     unsigned comma=0;
     for(unsigned i=0;i<8;++i)if(s->event.people[i]<a->person_count) {
-        printf("%s{\"id\":\"%s\",\"slot\":%u,\"alive\":%s,\"health\":%u}",comma++?",":"",a->people[s->event.people[i]].id,i,
-            s->party.people[i][0]!=255 ? "true":"false",s->party.people[i][0]!=255 ? s->party.people[i][15] : 0);
+        printf("%s{\"id\":\"%s\",\"slot\":%u,\"alive\":%s,\"health\":%u,\"on_foot\":%s,\"world_at\":[%u,%u]}",comma++?",":"",a->people[s->event.people[i]].id,i,
+            s->party.people[i][0]!=255 ? "true":"false",s->party.people[i][0]!=255 ? s->party.people[i][15] : 0,
+            s->party.people[i][12]>=8?"true":"false",s->party.x[i],s->party.y[i]);
     }
     fputs("],\"units\":[",stdout);comma=0;
     for(unsigned i=0;i<4;++i) {
         const uint8_t *m=i ? s->party.mechs[i-1] : s->campaign.mech;
         if(!btp_broker_owned(s,i))continue;
         const BtpRosterMech *definition=btp_roster_definition(&r->roster,m);
-        printf("%s{\"id\":\"%s\",\"bay\":%u,\"available\":%s,\"armor\":%u,\"structure\":%u,\"ammunition\":%u}",comma++?",":"",definition?definition->id:"",i,m[0]!=255?"true":"false",sum(m+17,11),sum(m+28,8),ammunition(m));
+        printf("%s{\"id\":\"%s\",\"bay\":%u,\"available\":%s,\"armor\":%u,\"structure\":%u,\"ammunition\":%u,\"world_at\":[%u,%u]}",comma++?",":"",definition?definition->id:"",i,m[0]!=255?"true":"false",sum(m+17,11),sum(m+28,8),ammunition(m),s->party.mech_x[i],s->party.mech_y[i]);
     }
     fputs("]}",stdout);
 }
@@ -168,6 +212,12 @@ static int text_field(BtpJson *j,unsigned node,const char *key,char *value,size_
 { return btp_json_string(j,btp_json_field(j,node,key),value,size); }
 static int optional_number(BtpJson *j,unsigned node,const char *key,unsigned low,unsigned high,unsigned *value)
 { unsigned n=btp_json_optional(j,node,key);return !n || btp_json_uint(j,n,low,high,value); }
+static int pair(BtpJson *j,unsigned node,unsigned high,unsigned *x,unsigned *y)
+{
+    if(!btp_json_type(j,node,'['))return 0;
+    unsigned first=j->nodes[node].first,second=first?j->nodes[first].next:0;
+    return first && second && !j->nodes[second].next && btp_json_uint(j,first,0,high,x) && btp_json_uint(j,second,0,high,y);
+}
 static void save_path(char path[96],const char *name,const BtpResources *r)
 {
     int prefix=snprintf(path,96,"%s-",name);
@@ -215,8 +265,21 @@ static int execute(BtpJson *j,unsigned node,BtpState *s,const BtpResources *r)
         unsigned pages=0;while(s->event.phase==BTP_EVENT_TEXT && !failed && pages++<128)input(s,r,BTP_ACCEPT);
         if(pages>=128)return fail("Dialogue exceeded 128 pages");
     } else if(!strcmp(op,"walk")) {
-        if(!text_field(j,node,"entrance",value,sizeof value))return 0;
-        if(!authored_walk_to(s,r,value,input))return fail("Entrance is absent, unreachable, or walking was interrupted");
+        BtpRouteTarget target={0};char entrance[64],map[64],world[64];unsigned n,count=0;
+        n=btp_json_optional(j,node,"entrance");if(n) {if(!btp_json_string(j,n,entrance,sizeof entrance))return 0;target.entrance=entrance;++count;}
+        n=btp_json_optional(j,node,"map");if(n) {if(!btp_json_string(j,n,map,sizeof map))return 0;target.map=map;++count;}
+        n=btp_json_optional(j,node,"world");if(n) {if(!btp_json_string(j,n,world,sizeof world))return 0;target.world=world;++count;}
+        n=btp_json_optional(j,node,"at");
+        if(count!=1 || (!!n==!!target.entrance) || (n && !pair(j,n,2047,&target.x,&target.y)) ||
+           !optional_number(j,node,"max_positions",1,BTP_ROUTE_MAX,&target.budget))return fail("Walk needs an entrance OR a map/world and movement coordinates.");
+        /* Preserve established local replay choices; worlds and coordinates
+           use the bounded planner, including source-town entrance IDs. */
+        if(target.entrance && !btp_scene(r,s)->world && !target.budget) {
+            if(!authored_walk_to(s,r,target.entrance,input))return fail("Entrance is absent, unreachable, or walking was interrupted");
+        } else {
+            route_present=1;
+            if(!btp_authored_walk(s,r,&target,input,&route))return fail(route.message);
+        }
     } else if(!strcmp(op,"enter")) {
         if(s->event.phase!=BTP_EVENT_ENTRY)return fail("Enter requires an offered building entrance");
         input(s,r,BTP_ACCEPT);
@@ -301,6 +364,22 @@ static int execute(BtpJson *j,unsigned node,BtpState *s,const BtpResources *r)
         }
         n=btp_json_optional(j,node,"phase");if(n && (!btp_json_string(j,n,value,sizeof value) || strcmp(value,phase_name(s->event.phase))))return fail("Event phase assertion failed");
         n=btp_json_optional(j,node,"map");if(n && (!btp_json_string(j,n,value,sizeof value) || !btp_scene(r,s) || strcmp(value,btp_scene(r,s)->id)))return fail("Map assertion failed");
+        n=btp_json_optional(j,node,"world");if(n && (!btp_json_string(j,n,value,sizeof value) || !s->event.planet ||
+            strcmp(value,a->worlds[s->event.planet-1].id)))return fail("World assertion failed");
+        n=btp_json_optional(j,node,"world_at");if(n) {
+            unsigned x,y;if(!pair(j,n,2047,&x,&y) || x!=s->campaign.world_x || y!=s->campaign.world_y)return fail("World position assertion failed");
+        }
+        n=btp_json_optional(j,node,"formation");if(n && (!btp_json_string(j,n,value,sizeof value) || strcmp(value,"compact") ||
+            !btp_authored_formation(s,r)))return fail("Whole-party formation is detached or blocked");
+        n=btp_json_optional(j,node,"discovered");if(n) {
+            unsigned x,y,seen;
+            if(!text_field(j,n,"world",value,sizeof value) || !pair(j,btp_json_field(j,n,"at"),1023,&x,&y) ||
+               !btp_json_uint(j,btp_json_field(j,n,"seen"),0,1,&seen) || !btp_json_done(j,n))return fail("Discovery assertion needs world, tile coordinates and seen (0 or 1)");
+            unsigned wi=0;while(wi<a->world_count && strcmp(value,a->worlds[wi].id))++wi;
+            if(wi==a->world_count || x>=a->worlds[wi].width || y>=a->worlds[wi].height)return fail("Discovery location is outside the requested world");
+            const BtpAuthoredWorld *w=&a->worlds[wi];unsigned bit=w->explore_offset+(y/8)*(w->width/8)+x/8;
+            if((unsigned)!!(s->explored[bit/8]&(128u>>(bit&7u)))!=seen)return fail("World discovery assertion failed");
+        }
         n=btp_json_optional(j,node,"event");if(n && (!btp_json_string(j,n,value,sizeof value) || s->event.node>=a->node_count || strcmp(value,a->nodes[s->event.node].id)))return fail("Event assertion failed");
         n=btp_json_optional(j,node,"flag");if(n) {
             if(!btp_json_string(j,n,value,sizeof value) || !btp_json_uint(j,btp_json_field(j,node,"value"),0,255,&expected))return 0;
@@ -365,15 +444,15 @@ int main(int argc,char **argv)
     if(s->event.phase==BTP_EVENT_FIGHTING)begin_metrics(s);
     for(unsigned node=j.nodes[steps].first;node;node=j.nodes[node].next) {
         if(++step_number>256){fail("At most 256 scenario steps");break;}
-        int ok=execute(&j,node,s,r);
-        printf("{\"step\":%u,\"ok\":%s,\"ticks\":%u,\"state\":",step_number,ok?"true":"false",ticks);state(s,r);fputs("}\n",stdout);
+        route_present=0;int ok=execute(&j,node,s,r);
+        printf("{\"step\":%u,\"ok\":%s,\"ticks\":%u,\"state\":",step_number,ok?"true":"false",ticks);state(s,r);navigation(r);fputs("}\n",stdout);
         if(!ok){failed=1;break;}
     }
     capture(s,r,"final.ppm");
     char save[96];save_path(save,"final",r);
     if(!failed && !btp_save_write(save,s,r,&error))failed=1;
     printf("{\"status\":\"%s\",\"ticks\":%u,\"steps\":%u,\"seed\":%u,\"rng_policy\":\"%s\",\"message\":",failed?"failed":"passed",ticks,step_number,seed ? seed : 11223583u,seed ? "explicit 24-bit state before first event" : "runtime initial state");
-    string_json(stdout,error.text);fputs(",\"save\":",stdout);string_json(stdout,save);fputs(",\"state\":",stdout);state(s,r);fputs("}\n",stdout);
+    string_json(stdout,error.text);fputs(",\"save\":",stdout);string_json(stdout,save);fputs(",\"state\":",stdout);state(s,r);navigation(r);fputs("}\n",stdout);
 done:
     btp_events_observe(NULL,NULL);btp_events_observe_battles(NULL,NULL);if(actions && fclose(actions))failed=1;if(trace && fclose(trace))failed=1;if(combat_log && fclose(combat_log))failed=1;
     if(failed)fprintf(stderr,"%s\n",error.text);
