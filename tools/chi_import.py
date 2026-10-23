@@ -10,6 +10,7 @@ import os
 from pathlib import Path
 import subprocess
 import tempfile
+import time
 import uuid
 
 from chi_audit import ROOT, RESOURCE_FILES, SOURCE_FILES
@@ -55,9 +56,11 @@ def read_source(source, cancel=None, progress=lambda _:None):
 
 def run(command,cancel=None):
     with subprocess.Popen([str(v) for v in command],stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True) as process:
+        deadline=time.monotonic()+30
         while True:
             try:
                 check_cancel(cancel)
+                if time.monotonic()>deadline:raise EditorError('Import tool exceeded its 30-second budget.')
                 stdout,stderr=process.communicate(timeout=.1);break
             except subprocess.TimeoutExpired:continue
             except BaseException:
@@ -95,7 +98,8 @@ def import_campaigns(source,output,edition='both',validator=None,cancel=None,pro
     from prepare_combat import extract as combat
     from prepare_world import extract as world
     source=plain_path(source);target=plain_path(output)
-    validator=Path(validator or ROOT/'build/btp-project').resolve()
+    from app_runtime import binary
+    validator=Path(validator or binary('btp-project')).resolve()
     if edition not in ('original','updated','both'):raise EditorError('Choose original, updated or both.')
     if not validator.is_file():raise EditorError('Build the application before importing CHI.')
     if target.exists():raise EditorError('Choose a new import destination; existing directories are preserved.')

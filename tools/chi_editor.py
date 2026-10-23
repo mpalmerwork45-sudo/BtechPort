@@ -8,6 +8,15 @@ import struct
 from editor_model import EditorError,ProjectDocument,encoded
 
 
+def wrap_labels(window,labels):
+    last=[None]
+    def resize(event):
+        if event.widget is not window or event.width==last[0]:return
+        last[0]=event.width
+        for label in labels:label.configure(wraplength=max(220,event.width-24))
+    window.bind('<Configure>',resize,add='+')
+
+
 def campaign_data(document):
     if document.manifest.get('requires')!='chi-local-dos-1.03':
         raise EditorError('Open an imported CHI project to edit its compatibility settings.')
@@ -48,7 +57,7 @@ class CampaignView:
         self.window=view_window(self,owner,'chi-campaign','CHI campaign')
         self.status=tk.StringVar();self.selected=None
         ttk.Label(self.window,text='Imported '+value['edition'].title()+' CHI campaign',style='Title.TLabel',padding=12).pack(anchor='w')
-        ttk.Label(self.window,text='C2: edit native dialogue below. Original maps, BLD programs, services and missions still use compatibility execution; their editors follow in C3/C4.',wraplength=850,padding=(12,0,12,8)).pack(fill='x')
+        information=ttk.Label(self.window,text='Edit native dialogue below. Original maps, BLD scripts, services and missions currently use compatibility playback; their editing tools are still being developed.',wraplength=500,padding=(12,0,12,8));information.pack(fill='x')
         host=ttk.Panedwindow(self.window,orient='horizontal');host.pack(fill='both',expand=True,padx=12,pady=6)
         left=ttk.Frame(host);right=ttk.Frame(host);host.add(left,weight=1);host.add(right,weight=2)
         self.search=tk.StringVar();ttk.Entry(left,textvariable=self.search).pack(fill='x',pady=(0,6))
@@ -59,13 +68,16 @@ class CampaignView:
         self.table.pack(fill='both',expand=True)
         self.table.bind('<<TreeviewSelect>>',lambda _:guard(self,self.select,publish=False))
         self.search.trace_add('write',lambda *_:self.refresh())
-        ttk.Label(right,text='Text (line breaks use the original carriage-return format)').pack(anchor='w')
-        self.text=tk.Text(right,wrap='word',height=13,undo=True);self.text.pack(fill='both',expand=True,pady=8)
-        buttons=ttk.Frame(right);buttons.pack(fill='x')
+        ttk.Label(right,text='Text').pack(anchor='w')
+        self.text=tk.Text(right,wrap='word',width=28,height=6,undo=True);self.text.pack(fill='both',expand=True,pady=8)
+        buttons=ttk.Frame(right);buttons.pack(fill='x',before=self.text)
         ttk.Button(buttons,text='Apply text',command=lambda:guard(self,self.apply,publish=False)).pack(side='left',padx=(0,8))
         ttk.Button(buttons,text='Restore original text',command=lambda:guard(self,self.reset,publish=False)).pack(side='left')
         ttk.Button(buttons,text='Refresh',command=self.refresh).pack(side='left',padx=8)
-        ttk.Label(self.window,textvariable=self.status,padding=12,wraplength=850).pack(fill='x')
+        from editor_ui import flow_toolbar
+        flow_toolbar(buttons)
+        status=ttk.Label(self.window,textvariable=self.status,padding=12,wraplength=500);status.pack(fill='x',before=host)
+        wrap_labels(self.window,[information,status])
         self.refresh()
 
     def refresh(self):
@@ -79,7 +91,7 @@ class CampaignView:
             self.table.insert('','end',iid=str(i),text=str(i)+('*' if i in values else ''),values=(text.replace('\r',' / ')[:100],))
         if selected is not None and self.table.exists(str(selected)):self.table.selection_set(str(selected))
         if scroll:self.table.yview_moveto(scroll[0])
-        self.status.set(f'{len(values)} overrides. Apply adds an Undo step; Save project persists it. Keep the old project for existing saves.')
+        self.status.set(f'{len(values)} overrides. Apply adds an Undo step. Save project writes changes.')
 
     def select(self):
         selection=self.table.selection()
@@ -122,13 +134,14 @@ class ImportView:
             ttk.Button(form,text='Browse...',command=browse).grid(row=row,column=2,padx=(8,0))
         ttk.Label(form,text='Campaigns').grid(row=2,column=0,sticky='w',pady=8)
         ttk.Combobox(form,textvariable=self.edition,values=('both','original','updated'),state='readonly').grid(row=2,column=1,sticky='w')
-        ttk.Label(self.window,text='Creates new, independent projects and save slots. Existing games and saves stay intact. Native text is editable now; complete map/story editing follows in C3/C4. Imported original-derived files stay private.',wraplength=850,padding=12).pack(fill='x')
+        information=ttk.Label(self.window,text='Creates independent projects and save slots. Native dialogue and Updated unit definitions are editable; map/story editing is still being developed. Imported original-derived files stay private.',wraplength=500,padding=12);information.pack(fill='x')
         bar=ttk.Frame(self.window,padding=12);bar.pack(fill='x')
         self.start_button=ttk.Button(bar,text='Import',style='Accent.TButton',command=lambda:guard(self,self.start,publish=False));self.start_button.pack(side='left')
         self.cancel_button=ttk.Button(bar,text='Cancel import',command=self.cancel,state='disabled');self.cancel_button.pack(side='left',padx=8)
         self.progress=ttk.Progressbar(bar,mode='indeterminate');self.progress.pack(side='left',fill='x',expand=True,padx=8)
         self.completed=ttk.Frame(self.window,padding=12);self.completed.pack(fill='x')
-        ttk.Label(self.window,textvariable=self.status,wraplength=850,padding=12).pack(fill='x')
+        status=ttk.Label(self.window,textvariable=self.status,wraplength=500,padding=12);status.pack(fill='x')
+        wrap_labels(self.window,[information,status])
         self.window.protocol('WM_DELETE_WINDOW',self.close)
 
     def start(self):
@@ -141,6 +154,12 @@ class ImportView:
         def work(_):return import_campaigns(source,target,edition,self.owner.validator,self.cancel_event,self.messages.put)
         def finish(result):
             self.result=result;self.finish();self.status.set('Import complete: '+result['output'])
+            from app_runtime import register_imported_projects
+            try:
+                register_imported_projects(self.owner.state_dir,result['projects'])
+                if getattr(self.owner,'launcher',None):self.owner.launcher.refresh_imported_projects()
+            except (EditorError,OSError) as error:
+                self.status.set('Import complete: '+result['output']+'; launcher registration failed: '+str(error))
             import tkinter.ttk as ttk
             from editor_session import guard
             for project in result['projects']:

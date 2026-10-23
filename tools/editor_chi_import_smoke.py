@@ -24,18 +24,24 @@ def run(env,work):
             view.source.set(str(root/'Original DOS'));view.target.set(str(folder/'campaigns'))
             view.start_button.invoke();pump(lambda:view.cancel_event is None and not workspace.tasks.jobs)
             assert view.result,view.status.get();assert len(view.result['projects'])==2
+            assert len(launcher.user_projects)==2
+            from app_runtime import imported_projects
+            assert len(imported_projects(launcher.state_dir))==2
             window.lower(app.window.winfo_toplevel());app.window.winfo_toplevel().lift();pump()
             ImageGrab.grab(xdisplay=env['DISPLAY']).save(work/'chi-import-wizard.png')
             original=view.result['projects'][0];view.edit(original);pump()
             assert app.document.manifest['requires']=='chi-local-dos-1.03'
-            editor=open_campaign(app);editor.table.selection_set('87');editor.select();pump()
-            editor.text.delete('1.0','end');editor.text.insert('1.0','Computer control for imported game?')
+            editor=open_campaign(app);editor.table.selection_set('87');editor.table.see('87');editor.select();pump()
+            editor.text.delete('1.0','end');editor.text.insert('1.0','Computer control\nfor imported game?')
             editor.apply();pump();assert app.document.dirty
+            actions=next(child for child in editor.text.master.winfo_children() if child.winfo_class()=='TFrame')
+            assert all(child.winfo_rooty()+child.winfo_height()<=editor.window.winfo_rooty()+editor.window.winfo_height() for child in actions.winfo_children())
             workspace.invoke('Undo');pump();assert not app.document.dirty
             workspace.invoke('Redo');pump();assert app.document.dirty
             workspace.invoke('Save project');pump(lambda:not workspace.tasks.jobs)
             reopened=ProjectDocument(Path(original['path']),app.validator)
             assert json.loads(reopened.metadata['campaign.json'])['dialogue_overrides'][0]['index']==87
+            assert json.loads(reopened.metadata['campaign.json'])['dialogue_overrides'][0]['text']=='Computer control\rfor imported game?'
             app.window.winfo_toplevel().lift();pump()
             ImageGrab.grab(xdisplay=env['DISPLAY']).save(work/'chi-import-dialogue.png')
             # No external original setup is needed for the self-contained import.

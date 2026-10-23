@@ -2,6 +2,7 @@
 #include "data/project.h"
 #include "data/save.h"
 #include "core/npc.h"
+#include "core/menu.h"
 #include "core/roster_game.h"
 #include "frontend/pixels.h"
 #include <stdio.h>
@@ -58,9 +59,28 @@ static void route(const char *file,const BtpResources *base,const BtpResources *
 }
 int main(int argc,char **argv)
 {
-    if (argc==5 && !strcmp(argv[1],"--text-proof")) {
+    if (argc==4 && !strcmp(argv[1],"--settings-proof")) {
+        BtpContent content={0};CHECK(btp_content_load_project(&content,argv[2],NULL,&error));
+        BtpState *s=calloc(1,sizeof *s),*copy=calloc(1,sizeof *copy);CHECK(s && copy);
+        btp_start(s);s->project=1;btp_npc_init(s,&content.resources->map);
+        CHECK(btp_set_combat_profile(s,content.resources,1));
+        btp_menu_open(s);btp_menu_input(s,content.resources,BTP_DOWN);btp_menu_input(s,content.resources,BTP_ACCEPT);
+        CHECK(s->campaign.ui==BTP_MENU_UPDATED_SETTINGS);
+        CHECK(btp_save_write(argv[3],s,content.resources,&error));
+        CHECK(btp_save_load(argv[3],copy,content.resources,&error));equal(s,copy);
+        btp_content_close(&content);free(s);free(copy);puts("Explicit Updated settings save independently of added roster size.");return 0;
+    }
+    if ((argc==5 || argc==6) && !strcmp(argv[1],"--text-proof")) {
         BtpContent a={0},b={0};CHECK(btp_content_load_project(&a,argv[2],NULL,&error));
         CHECK(btp_content_load_project(&b,argv[3],NULL,&error));
+        CHECK(!memcmp(a.resources->dialogue.font,b.resources->dialogue.font,sizeof a.resources->dialogue.font));
+        if (argc==6) {
+            const BtpDialogue *d=&b.resources->dialogue;CHECK(strlen(argv[5])==2u*d->size[87]);
+            for (unsigned i=0;i<d->size[87];++i) {
+                char hex[3];snprintf(hex,sizeof hex,"%02x",d->bytes[d->offset[87]+i]);
+                CHECK(!memcmp(hex,argv[5]+2u*i,2));
+            }
+        }
         BtpState *s=calloc(1,sizeof *s);uint32_t *x=malloc(64000u*sizeof *x),*y=malloc(64000u*sizeof *y);CHECK(s && x && y);
         btp_start(s);s->project=1;s->mode=BTP_MISSION;s->combat.phase=BTP_COMBAT_CONTROL;
         btp_render(a.resources,s,0,x);btp_render(b.resources,s,0,y);CHECK(memcmp(x,y,64000u*sizeof *x));

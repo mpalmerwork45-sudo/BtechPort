@@ -127,6 +127,7 @@ int btp_resources_feature(const BtpResources *r,unsigned feature)
 
 int btp_resources_load_reader(const char *dir,BtpResources *r,BtpResourceRead read,void *context,BtpError *e)
 {
+    r->features=0; /* Edition loaders publish explicit capabilities after success. */
     memset(&r->roster,0,sizeof r->roster);
     memset(&r->portraits,0,sizeof r->portraits);
     memset(&r->dialogue, 0, sizeof r->dialogue);

@@ -52,6 +52,7 @@ class Launcher:
         self.window,self.state_dir=window,Path(state_dir)
         self.state_dir.mkdir(parents=True,exist_ok=True)
         self.paths=settings();self.editors=[];self.running=[];self.build_process=None;self.callbacks=set()
+        self.user_projects={}
         configure_editor_style(window)
         window.title('BattleTech Construction Kit');window.geometry('780x610');window.minsize(730,570)
         header=ttk.Frame(window,padding=(24,20,24,12));header.pack(fill='x')
@@ -62,6 +63,7 @@ class Launcher:
         self.choice=tk.StringVar(value='Independent demo' if (os.environ.get('BTP_BUNDLED_RUNTIME') or (ROOT/'DISTRIBUTION.json').is_file()) and not (ROOT/'Original DOS').exists() else 'BattleTech demo')
         self.game=ttk.Combobox(body,textvariable=self.choice,values=tuple(GAMES),state='readonly',font='TkDefaultFont')
         self.game.pack(fill='x',pady=8);self.game.bind('<<ComboboxSelected>>',lambda _:self.describe())
+        self.refresh_imported_projects()
         self.description=tk.StringVar();ttk.Label(body,textvariable=self.description,wraplength=660).pack(fill='x',pady=(0,12))
         custom=ttk.Frame(body);custom.pack(fill='x')
         self.project=tk.StringVar()
@@ -81,7 +83,7 @@ class Launcher:
         ttk.Button(tools,text='Player setup',command=lambda:self.guard(self.setup)).pack(side='left',padx=(0,8))
         ttk.Button(tools,text='Build application',command=lambda:self.guard(self.build)).pack(side='left',padx=(0,8))
         if os.name!='nt':ttk.Button(tools,text='Create launch shortcut',command=lambda:self.guard(self.shortcut)).pack(side='left')
-        self.status=tk.StringVar(value='Ready. New game starts fresh; Continue loads the F5 quicksave for this version.')
+        self.status=tk.StringVar(value=self.registry_error or 'Ready. New game starts fresh; Continue loads the F5 quicksave for this version.')
         ttk.Label(window,textvariable=self.status,style='Status.TLabel',wraplength=710).pack(fill='x',side='bottom')
         window.protocol('WM_DELETE_WINDOW',self.close)
         window.bind('<Destroy>',self.destroyed,add='+')
@@ -92,7 +94,17 @@ class Launcher:
         except (EditorError,OSError,ValueError,KeyError,subprocess.SubprocessError) as exc:
             self.status.set(str(exc));messagebox.showerror('BattleTech Construction Kit',str(exc),parent=self.window)
 
-    def describe(self):self.description.set(GAMES[self.choice.get()])
+    def refresh_imported_projects(self):
+        from app_runtime import imported_projects
+        self.user_projects={};self.registry_error=None
+        try:items=imported_projects(self.state_dir)
+        except EditorError as error:self.registry_error=str(error);items=[]
+        for item in items:
+            label='CHI '+item['edition'].title()+' - '+Path(item['path']).parent.name+' ['+item['package_id'][-6:]+']'
+            self.user_projects[label]=Path(item['path'])
+        self.game.configure(values=(*GAMES,*self.user_projects))
+
+    def describe(self):self.description.set(GAMES.get(self.choice.get(),'Imported CHI project with its own resources and save slots.'))
 
     def browse(self):
         path=filedialog.askdirectory(title='Choose a game project (project.json or SOURCE.json)',parent=self.window)
@@ -102,7 +114,7 @@ class Launcher:
         if self.choice.get()=='My project':
             if not self.project.get():raise EditorError('Choose your game project folder first.')
             return Path(self.project.get())
-        return PROJECTS.get(self.choice.get())
+        return self.user_projects.get(self.choice.get(),PROJECTS.get(self.choice.get()))
 
     def play(self,resume=False):
         self.paths=settings()
@@ -127,6 +139,7 @@ class Launcher:
         if not tool.exists():raise EditorError('Build the application first using the button below.')
         from editor_workspace import create_editor
         window=tk.Toplevel(self.window);app=create_editor(window,tool,self.state_dir)
+        app.launcher=self
         if project:app.set_document(ProjectDocument(project,tool))
         self.editors.append(app);return app
 

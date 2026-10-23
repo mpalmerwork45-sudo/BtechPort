@@ -17,9 +17,10 @@ and hashes of the three pending Last Beacon files. Reference guard verifies
 1,287 entries unchanged in content/mode/mtime against
 `work/reference-before-map-construction.json`.
 
-**Provenance:** 20 original-derived Last Beacon tile images already exist in
-tracked HEAD. Cleanup will retain local dirty files and replace only the public
-baseline payloads with recipe-reconstructible placeholders. No history rewrite.
+**Provenance:** 20 original-derived Last Beacon tile images existed in the C1
+baseline. C2 replaces only their public baseline payloads with placeholders.
+Seventeen had custom pixel edits; recipes restore original bases, and the exact
+derivatives remain private. The three dirty owner files are unchanged. No history rewrite.
 Generated CHI projects remain local; typed assets, caches and native dialogue
 remain original-derived through edits. Detection limits are explicit.
 
@@ -47,6 +48,40 @@ regression tests pass. Private evidence: `work/chi-import/parity-linux.log`,
 `native-focused.log`, `first-import.json`; Linux build uses `/usr/bin` tools to
 avoid the development host's older Conda linker.
 
-In progress: GUI import/text views, failure/recovery/isolation tests, provenance
-guards, public baseline cleanup and Windows comparison. No full editable-campaign
-claim until C3–C5 gates pass.
+**C2 gate passed.** The launcher/editor import view creates both projects with
+progress/cancel and Edit/Play actions. Project → CHI campaign edits native text
+through shared validation/history. The real Linux GUI journey passes import,
+text edit, Undo/Redo, Save/reopen, native Play without external original paths,
+Stop and cancellation. Public export rejects imported resources, caches,
+declared unknown/original-derived text and artwork lacking an exclusion recipe.
+Application packaging uses indexed project snapshots, excluding private
+uncommitted art. All nine packaged examples pass the payload checks.
+Completed GUI imports persist both launcher registrations. Native multiline/CR
+and colour markers 6/15 have a dedicated JSON reader mode, leaving existing
+authoring formats strict; native decoded bytes and popup pixels are checked.
+
+**Final verification:** 383 Python tests and 91 Linux native tests pass. The
+same 108,156-tick comparison and twelve project slots pass under Wine. Five
+affected Windows regression tests pass. For the retained 6,637-action combat
+route, both profiles produce identical Linux/Windows JSON state, save bytes and
+frames (`work/chi-import/cross-platform.json`). Intro logo/title/question pixels
+and state are also compared in the native parity helper.
+
+Negative checks cover occupied destinations, symlinks, bad fingerprints,
+source changes, cancellation after the first profile, publication races,
+reimport identity, malformed text/unknown fields, resource edits invalidating
+saves and removed provenance metadata. Source conversion/build and private
+tile reconstruction/cache-conflict checks pass. Twenty observed normal save
+files predate the C1 baseline; their hashes/mtimes are retained for final
+preservation checking alongside the two reference trees and three user files.
+
+Implementation commits: C1 `63b9b41`; C2 resource/runtime foundation `7a10e83`;
+GUI and provenance boundary `293cc4d`. Final verification and usage are recorded
+here and in the [instructions](CHI_IMPORT.md).
+
+**Limits:** native Windows Python/Tk remains UNKNOWN. Full campaign branches,
+all-seed world equivalence, complete BLD/service/mission authoring and general
+asset-free edited-campaign recipes remain C3–C5. Current code preserves inherited
+compatibility behavior; it does not establish complete DOS parity. No old
+normal-game save migration is provided. Partial extraction resumes by retrying
+into a new destination. No full editable-campaign claim is made.

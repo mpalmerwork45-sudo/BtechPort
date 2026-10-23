@@ -58,6 +58,7 @@ def extract(executable,map1,seed=0x020304):
         'format':'BTW3','scope':'Static primary inputs; independent C midpoint and tile generation',
         'executable_sha256':exe.hex(),'map1_sha256':local.hex(),'seed':seed,
         'origin':[704,704],'size':[192,192],'ranges':ranges,
+        'routines':['0000:50D3..50F3','187F:0BC0','187F:104E','187F:1314'],
         'tables_sha256':hashlib.sha256(tables).hexdigest(),
         'no_instruction_patches':True,'native_generator':True}
 

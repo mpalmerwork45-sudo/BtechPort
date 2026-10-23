@@ -299,7 +299,7 @@ void btp_print_state(const BtpState *s, const BtpResources *r)
         s->mech_skills[0],s->mech_skills[1],s->story_flags[47],s->recruitment,s->script.animation_kind,s->script.animation_flags,
         s->cutscene.active,s->cutscene.kind,s->cutscene.step,s->cutscene.cycle,s->cutscene.hold,s->cutscene.remaining,s->cutscene.refresh_fraction);
     const BtpCombatState *c=&s->combat;
-    if (r->roster.count) printf(",\"combat_rules\":\"%s\",\"combat_fingerprint\":%u",
+    if (r->roster.count || btp_resources_feature(r,BTP_FEATURE_ENHANCED)) printf(",\"combat_rules\":\"%s\",\"combat_fingerprint\":%u",
         s->combat_profile ? "enhanced" : "legacy",s->combat_fingerprint);
     uint32_t fog=UINT32_C(2166136261);for (unsigned i=0;i<sizeof s->explored;++i) fog=(fog^s->explored[i])*UINT32_C(16777619);
     printf(",\"explored_digest\":%u,\"map_center\":[%u,%u],\"intro_load\":%u",fog,s->menu.map_x,s->menu.map_y,s->menu.from_intro);

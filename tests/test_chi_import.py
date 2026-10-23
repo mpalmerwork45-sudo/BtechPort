@@ -48,6 +48,23 @@ class ChiImportTests(unittest.TestCase):
             result=subprocess.run(command,capture_output=True,text=True,timeout=20)
             self.assertEqual(result.returncode,0,result.stderr)
         self.assertNotEqual(self.document().manifest['package_id'],self.document('updated').manifest['package_id'])
+        updated=self.document('updated');content=copy.deepcopy(updated.content);content['mechs']=[]
+        updated.replace(content);empty=self.root/'updated-empty';updated.export(empty)
+        run=subprocess.run([str(ROOT/'build/btp-chi-import-tests'),'--settings-proof',str(empty),str(self.root/'empty-settings.btp')],capture_output=True,text=True,timeout=20)
+        self.assertEqual(run.returncode,0,run.stderr)
+
+    def test_reimport_gets_new_identity_without_changing_existing_project(self):
+        from app_runtime import register_imported_projects,imported_projects
+        before=self.document().files()
+        result=import_campaigns(self.source,self.root/'reimport','original',self.tool)
+        self.assertNotEqual(result['projects'][0]['package_id'],self.document().manifest['package_id'])
+        self.assertEqual(self.document().files(),before)
+        register_imported_projects(self.root/'registrations',self.result['projects'])
+        register_imported_projects(self.root/'registrations',result['projects'])
+        self.assertEqual(len(imported_projects(self.root/'registrations')),3)
+        broken=self.root/'registrations/imported-projects.json';broken.write_text('{')
+        with self.assertRaises(EditorError):register_imported_projects(self.root/'registrations',result['projects'])
+        self.assertEqual(broken.read_text(),'{')
 
     def test_occupied_source_symlink_and_bad_fingerprint(self):
         existing=self.root/'occupied';existing.mkdir();(existing/'keep').write_text('preserved')
@@ -94,16 +111,25 @@ class ChiImportTests(unittest.TestCase):
         reopened=ProjectDocument(source.root,self.tool);reopened.export(self.root/'built')
         self.assertEqual(json.loads(reopened.metadata['campaign.json'])['dialogue_overrides'][0]['text'],'Modular campaign prompt')
         self.assertEqual(self.document().files(),original);self.assertEqual(self.document('updated').files(),other)
+        multiline='First line\rSecond line\x06colour\x0f'
+        set_dialogue(doc,87,multiline);doc.export(self.root/'multiline')
+        self.assertEqual(json.loads(ProjectDocument(self.root/'multiline',self.tool).metadata['campaign.json'])['dialogue_overrides'][0]['text'],multiline)
+        run=subprocess.run([str(ROOT/'build/btp-chi-import-tests'),'--text-proof',str(doc.root),str(self.root/'multiline'),str(self.root/'multiline.ppm'),multiline.encode('ascii').hex()],capture_output=True,text=True,timeout=20)
+        self.assertEqual(run.returncode,0,run.stderr)
 
     def test_invalid_text_and_unknown_fields_fail_without_consuming_edits(self):
         doc=self.document();before=doc.files()
-        for index,text in [(373,'bad'),(0,'\x06bad'),(87,'x'*513),(87,'bad\nline'),(87,'snowman \u2603')]:
+        for index,text in [(373,'bad'),(0,'\x06bad'),(87,'x'*513),(87,'bad\nline'),(87,'snowman \u2603'),(87,'left\0right')]:
             with self.subTest(index=index,text=repr(text[:15])):
                 with self.assertRaises(EditorError):set_dialogue(doc,index,text)
                 self.assertEqual(doc.files(),before)
         candidate=doc.worker_copy();value=json.loads(candidate.metadata['campaign.json']);value['unused']=1
         candidate.metadata['campaign.json']=encoded(value)
         with self.assertRaises(EditorError):candidate.validate()
+        candidate=doc.worker_copy();value=json.loads(candidate.metadata['campaign.json'])
+        value['dialogue_overrides']=[dict(index=i,text='A'*512) for i in range(373)]
+        candidate.metadata['campaign.json']=encoded(value)
+        with self.assertRaisesRegex(EditorError,'budget'):candidate.validate()
 
     def test_resource_change_invalidates_save_even_with_provenance_removed(self):
         doc=self.document();target=self.root/'resource-change';doc.export(target)
@@ -143,6 +169,15 @@ class ChiImportTests(unittest.TestCase):
         restored=self.root/'restored-beacon';reconstruct(ProjectDocument(target,self.tool),restored,self.source)
         rebuilt=ProjectDocument(restored,self.tool)
         self.assertTrue(derived_images(rebuilt.files()))
+        from asset_provenance import local_project
+        public=ProjectDocument(target,self.tool)
+        cached=local_project(public,{'data':str(self.source)},self.root/'cache')
+        again=local_project(public,{'data':str(self.source)},self.root/'cache')
+        self.assertEqual(cached.root,again.root)
+        self.assertTrue(derived_images(cached.files()))
+        changed=copy.deepcopy(cached.art);changed['images'][0]['name']='Locally edited cache'
+        cached.replace_art(changed);cached.save()
+        with self.assertRaises(EditorError):local_project(public,{'data':str(self.source)},self.root/'cache')
         self.assertEqual(doc.files(),before)
         self.assertTrue(all((ROOT/prefix/name).read_bytes()==value for name,value in owner.items()))
 

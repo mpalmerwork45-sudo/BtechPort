@@ -115,10 +115,13 @@ Windows/Linux editor is recorded in the
 [engine and editor plan](docs/ENGINE_AND_EDITOR_PLAN.md).
 
 The [editable CHI campaign plan](docs/CHI_EDITABLE_CAMPAIGNS_PLAN.md) specifies
-five proposed milestones for importing separate Original and Updated campaigns
+five milestones for importing separate Original and Updated campaigns
 from a user's original files. It covers editable maps/scripts/services, isolated
 saves and keeping original-derived content out of repository and release assets.
-This campaign importer is planned, not yet implemented.
+The C1–C2 first pass is implemented: choose **Import CHI** in the launcher to
+create both local projects, then **Project → CHI campaign** to edit native text.
+See [import instructions and current limits](docs/CHI_IMPORT.md). Complete
+world/BLD/mission editing remains C3–C4 work.
 
 [World-route checks](docs/WORLD_ROUTE_VERIFICATION.md) exercise whole-party
 travel between towns and planets, discovery and save/reload, with navigable
@@ -486,9 +489,11 @@ and generation prompts are recorded with the assets.
 This license does not cover or grant rights to the original game executable,
 artwork, music, text or other game assets. The original DOS installation and
 extracted runtime caches must be supplied by the person running the port.
-The user-authored [Last Beacon revision](examples/battletech-demo/README.md)
-includes some editable tiles copied from the CHI atlas; their source provenance
-is recorded in its `EDITOR.json` and remains separate from the code license.
+The public [Last Beacon baseline](examples/battletech-demo/README.md) uses
+placeholders and a local reconstruction recipe for 20 CHI-derived tiles.
+Original-derived working copies remain private; 17 historical edited variants
+cannot be reproduced by the base-tile recipe. See
+[asset handling](docs/CHI_IMPORT.md#original-derived-art-and-sharing).
 
 ## Acknowledgements
 

@@ -38,7 +38,7 @@ static int campaign(const char *root,BtpJson *manifest,BtpDigest *digest,
     if (!setting(manifest,1,"campaign",relative,sizeof relative)) goto done;
     if (strcmp(relative,"campaign.json")) { fail(e,"expected campaign.json");goto done; }
     if (
-        !btp_project_path(root,relative,path,e) || !btp_json_load(&j,path,e->text)) goto done;
+        !btp_project_path(root,relative,path,e) || !btp_json_load_chi_text(&j,path,e->text)) goto done;
     btp_digest_add(digest,j.source_digest,32);
     if (!setting(&j,1,"format",value,sizeof value) || strcmp(value,"btp-chi-campaign-v1") ||
         !btp_json_uint(&j,btp_json_field(&j,1,"schema_version"),1,1,&version) ||

@@ -2,7 +2,9 @@
 
 Recorded **2026-10-23**, against implementation commit `8075156`.
 
-**Status: planned; implementation has not started.** This document is the
+**Status: C1–C2 implemented; C3–C5 planned.** See the
+[progress ledger](CHI_IMPORT_PROGRESS.md) and [import instructions](CHI_IMPORT.md).
+This document is the
 implementation handoff requested by the owner. It describes five milestones for
 creating two separate, editable campaign projects from a user's supplied copy
 of BattleTech: The Crescent Hawk's Inception. The existing Original and Updated
@@ -10,8 +12,8 @@ games must remain playable and retain their saves.
 
 The intended implementation handoff is to **Sol 6.1**, with an independent
 **Astra** audit later. The work and acceptance criteria are model-independent.
-This plan does not authorize implementation by itself; the next implementation
-instruction should name the milestone or range to execute.
+The owner authorized the C1–C2 first pass. Later implementation instructions
+should name the next milestone or range to execute.
 
 ## 1. What the user receives
 

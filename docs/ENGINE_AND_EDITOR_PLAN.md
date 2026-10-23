@@ -4,7 +4,9 @@ The [editable CHI campaign plan](CHI_EDITABLE_CAMPAIGNS_PLAN.md) now specifies
 the proposed five-milestone import of complete Original and Updated campaigns
 into separate editable projects. It extends the existing authoring tools with
 original-campaign compatibility, local extraction and provenance enforcement;
-the importer itself is not yet implemented.
+C1–C2 importing, isolated projects/saves and native-dialogue editing are now
+implemented; see [instructions and limits](CHI_IMPORT.md). Full world and story
+editing remains in C3–C4.
 
 The [AI authoring plan](AI_AUTHORING_PLAN.md) records the subsequent Construction
 Kit work. Its [authoring tools](AI_AUTHORING_GUIDE.md) now provide shared commands,

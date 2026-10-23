@@ -98,7 +98,7 @@ int btp_save_write(const char *path, const BtpState *s, const BtpResources *r, B
         (s->combat_profile && !btp_active_combat_profile(s,r)))
         return fail(e,"Current combat rules do not match the loaded Updated profile");
     if (s->campaign.ui>=BTP_MENU_UPDATED_SETTINGS && s->campaign.ui<=BTP_MENU_COMBAT_RULES &&
-        (!updated || !r->combat_profile.fingerprint))
+        (!btp_resources_feature(r,BTP_FEATURE_ENHANCED) || !r->combat_profile.fingerprint))
         return fail(e,"Updated combat settings require their rule definition");
     size_t header=project ? PROJECT_HEADER_BYTES : updated ? UPDATED_HEADER_BYTES : HEADER_BYTES;
     uint8_t bytes[PROJECT_HEADER_BYTES+BTP_STATE_BYTES] = {'B','T','S','1'};

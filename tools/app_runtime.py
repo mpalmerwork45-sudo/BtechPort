@@ -7,6 +7,7 @@ from pathlib import Path
 import shutil
 import subprocess
 import sys
+import tempfile
 
 from editor_model import EditorError
 
@@ -33,6 +34,29 @@ def settings():
     try: value.update(json.loads((STATE/'settings.json').read_text()))
     except (OSError,ValueError): pass
     return value
+
+
+def imported_projects(state_dir):
+    """Launcher registrations are preferences, never campaign/save identity."""
+    path=Path(state_dir)/'imported-projects.json'
+    if not path.exists():return []
+    try:
+        rows=json.loads(path.read_bytes())
+        if not isinstance(rows,list) or any(not isinstance(v,dict) or
+            not all(isinstance(v.get(k),str) for k in ('package_id','edition','path')) for v in rows):raise ValueError('Invalid project registry')
+        return rows
+    except (OSError,ValueError) as error:raise EditorError('Cannot read imported-project registry: '+str(error)) from error
+
+
+def register_imported_projects(state_dir,projects):
+    folder=Path(state_dir);folder.mkdir(parents=True,exist_ok=True)
+    rows={v['package_id']:v for v in imported_projects(folder)}
+    rows.update({v['package_id']:dict(v) for v in projects})
+    with tempfile.NamedTemporaryFile(prefix='.imported-projects-',dir=folder,delete=False) as file:
+        temporary=Path(file.name)
+        file.write((json.dumps(list(rows.values()),indent=2)+'\n').encode('utf-8'))
+    try:os.replace(temporary,folder/'imported-projects.json')
+    finally:temporary.unlink(missing_ok=True)
 
 
 def prepare_original(paths):

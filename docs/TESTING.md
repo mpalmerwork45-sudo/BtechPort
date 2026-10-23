@@ -1,5 +1,78 @@
 # Build, verification and original oracle — 2026-10-23
 
+## CHI campaign import first pass — 2026-10-23
+
+**PASS for C1–C2's declared slice and editing scope.** See
+[instructions](CHI_IMPORT.md), [contracts](CHI_IMPORT_CONTRACT.md) and
+[progress](CHI_IMPORT_PROGRESS.md). C3–C5 are not claimed complete.
+
+- C1 inventory: 77 source files, 76 raw resource copies, 26 BLDs and 1,816
+  statically reachable instructions; all native actions 1–47 have script contexts.
+- Linux/Windows builds pass, run sequentially with two compilation jobs. Linux
+  uses `/usr/bin` tools because the host's older Conda linker rejects system
+  RELR sections. Neither reference directory is changed to build or extract.
+- **383/383 Python tests pass**, 55.758 s. Ten importer cases cover validation,
+  atomic publication/cancellation/races, edition/save isolation, text editing,
+  source Save/build, actual native popup pixels, public export/reconstruction
+  and edited-cache rejection.
+- **91/91 Linux native tests pass**, 49.04 s. An older Updated test assumed that
+  clearing the roster selects Original; it now checks explicit Original
+  capabilities while definitions remain present. This exercises the intended
+  import contract rather than preserving the obsolete inference.
+- `btp-chi-import-tests` compares each profile with its corresponding built-in
+  across 44,192 + 6,637 + 1,923 + 1,326 actions: **108,156 total ticks** across
+  both profiles. Encoded gameplay state (normalizing only the project marker),
+  RNG, script positions and rendered checkpoints match. Original loan records
+  and native dialogue bytes match exactly. Logo/title/question transitions,
+  held-message reload and twelve slot round-trips pass; foreign project/normal
+  saves are rejected. The same helper passes under Wine.
+- The 6,637-action combat route produces identical final JSON, save bytes and
+  320×200 PPM on Linux/Windows for each imported profile. Five affected Windows
+  regression tests pass under isolated Wine, 17.93 s. Wine's lock requires the
+  ordinary external runtime directory; no personal Wine prefix is used.
+- Real Linux GUI journey passes launcher import, Both profiles, visible progress,
+  Edit, native text Apply/Undo/Redo, Save/reopen, native Play with external paths
+  absent, Stop and cancel-without-publication. Private captures are
+  `work/chi-import-wizard.png` and `work/chi-import-dialogue.png`.
+- Public baseline cleanup stages HEAD graphics independently of the three dirty
+  owner files. Twenty placeholders replace derived pixels; recipes restore base
+  tiles. Seventeen custom variants remain private and are not reproduced by
+  those recipes. The staged-blob guard passes all nine tracked project manifests.
+  A built Linux distribution's nine example projects pass payload checks. Git
+  history is not rewritten; arbitrary art with stripped provenance cannot be
+  identified automatically by this guard.
+
+Final focused checks also cover multiline/CR/colour bytes on Linux and Wine,
+NUL/total-text-budget rejection, persistent launcher registration and Updated
+settings save/reload after removing all added units. They preserve explicit
+edition features independently of roster size. The editor's actions remain
+visible at the tested 1024×740 workspace size.
+
+Reproduction, after the normal build/cache preparation:
+
+```sh
+python3 tools/chi_audit.py
+python3 tools/chi_import.py --data "Original DOS" \
+  --output "work/chi-import/reproduction" --edition both
+./build/btp-chi-import-tests "Original DOS" work/talk-data.bin \
+  work/combat-data.bin work/world-data.bin content/updated/roster.json \
+  work/chi-import/reproduction/original work/chi-import/reproduction/updated \
+  tests/fixtures/ordinary-training-combat.actions \
+  tests/fixtures/ordinary-combat.actions \
+  tests/fixtures/reference-mission-pass.actions \
+  tests/fixtures/reference-mission-fail.actions
+python3 -m unittest discover -s tests -p test_chi_import.py -v
+python3 tools/native_smoke.py --editor-chi-import-only
+python3 tools/asset_provenance.py check-staged
+```
+
+Private logs/hashes: `work/chi-import/{parity-linux,parity-windows,build-linux,
+build-windows,native-regression,python-regression,windows-focused,gui}.log`,
+`cross-platform.json`, `baseline.json` and `normal-saves.json`. Normal save
+preservation observations include their hashes and mtimes predating C1. Full
+campaign/branch execution, physical speaker equivalence and native Windows
+Python/Tk are **not established** by these tests.
+
 ## Editor responsiveness follow-up — 2026-10-23
 
 **PASS within the declared large-campaign fixture.** Batch 1 is committed as

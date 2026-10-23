@@ -34,12 +34,18 @@ static char *string(Reader *p,unsigned node)
     if (p->at==p->end || *p->at++!='"') { btp_json_error(p->j,node,"expected string");return NULL; }
     char *start=p->at,*out=start;
     while (p->at<p->end && *p->at!='"') {
-        unsigned char c=(unsigned char)*p->at++;
+        unsigned char c=(unsigned char)*p->at++;int native_control=0;
         if (c=='\\' && p->at<p->end) {
             c=(unsigned char)*p->at++;
-            if (c!='"' && c!='\\' && c!='/') { btp_json_error(p->j,node,"only printable ASCII escapes are supported");return NULL; }
+            if (p->j->native_text && c=='r') { c=13;native_control=1; }
+            else if (p->j->native_text && c=='u' && p->end-p->at>=4 &&
+                p->at[0]=='0' && p->at[1]=='0' && p->at[2]=='0' &&
+                (p->at[3]=='6' || p->at[3]=='d' || p->at[3]=='D' || p->at[3]=='f' || p->at[3]=='F')) {
+                c=(unsigned char)(p->at[3]=='6' ? 6 : p->at[3]=='d' || p->at[3]=='D' ? 13 : 15);
+                p->at+=4;native_control=1;
+            } else if (c!='"' && c!='\\' && c!='/') { btp_json_error(p->j,node,"only printable ASCII escapes are supported (CHI text also permits CR and colours 6/15)");return NULL; }
         }
-        if (c<32 || c>126) { btp_json_error(p->j,node,"expected printable ASCII");return NULL; }
+        if (!native_control && (c<32 || c>126)) { btp_json_error(p->j,node,"expected printable ASCII");return NULL; }
         *out++=(char)c;
     }
     if (p->at==p->end) { btp_json_error(p->j,node,"unterminated string");return NULL; }
@@ -83,9 +89,9 @@ static unsigned value(Reader *p,unsigned parent,unsigned index,char *key,unsigne
     n->number=number;return id;
 }
 void btp_json_close(BtpJson *j) { free(j->bytes);free(j->nodes);*j=(BtpJson){0}; }
-static int load(BtpJson *j,const char *path,char error[256],size_t limit,unsigned nodes)
+static int load(BtpJson *j,const char *path,char error[256],size_t limit,unsigned nodes,unsigned native_text)
 {
-    *j=(BtpJson){.file=path,.error=error,.limit=nodes};error[0]=0;
+    *j=(BtpJson){.file=path,.error=error,.limit=nodes,.native_text=native_text};error[0]=0;
     FILE *f=fopen(path,"rb");
     if (!f) return btp_json_error(j,0,"cannot open file");
     j->bytes=malloc(limit+1);j->nodes=calloc(nodes+1,sizeof *j->nodes);
@@ -99,9 +105,14 @@ static int load(BtpJson *j,const char *path,char error[256],size_t limit,unsigne
     space(&p);return p.at==p.end || btp_json_error(j,1,"trailing data");
 }
 int btp_json_load(BtpJson *j,const char *path,char error[256])
-{ return load(j,path,error,BYTE_LIMIT,NODE_LIMIT); }
+{ return load(j,path,error,BYTE_LIMIT,NODE_LIMIT,0); }
+/* Original native strings contain CR and two colour markers. Enabling these
+   only for campaign overrides preserves the released ASCII authoring formats;
+   the CHI loader still checks which text IDs may use colour markers. */
+int btp_json_load_chi_text(BtpJson *j,const char *path,char error[256])
+{ return load(j,path,error,BYTE_LIMIT,NODE_LIMIT,1); }
 int btp_json_load_large(BtpJson *j,const char *path,char error[256])
-{ return load(j,path,error,16u*1024u*1024u,300000); }
+{ return load(j,path,error,16u*1024u*1024u,300000,0); }
 int btp_json_type(BtpJson *j,unsigned n,char type)
 {
     return (n && j->nodes[n].type==(unsigned char)type) || btp_json_error(j,n,"missing field or wrong value type");

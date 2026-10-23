@@ -1,5 +1,24 @@
 # Project status — original fidelity and editable projects, 2026-10-23
 
+**C1–C2: editable CHI import first pass — implemented and verified.**
+[Import CHI](CHI_IMPORT.md) creates separately owned Original/Updated projects
+from supported DOS 1.03 files, with explicit edition features, local resources,
+isolated saves and native-dialogue editing. Full world/BLD/mission editing
+remains C3–C4. Both profiles match built-ins for **108,156 combined replay ticks**
+on Linux and under Wine, including rendered checkpoints and held saves. Exact
+Linux/Windows saves, state and final frames also match for the retained combat
+route. **383 Python and 91 native regression tests pass**; the Linux GUI import,
+Undo/Redo, Save/reopen, Play and cancellation journey passes. Five affected
+Windows regression cases pass under Wine. Native Windows Python/Tk remains UNKNOWN.
+
+The public Last Beacon baseline excludes 20 original-derived tile payloads and
+provides original-base reconstruction recipes. Seventeen had private pixel
+edits; their exact local versions and all three pending owner files are preserved.
+Application delivery checks indexed project snapshots before copying; new local
+CHI imports cannot pass redistributable export. Historical Git content was not
+rewritten. [Contracts and remaining limits](CHI_IMPORT_CONTRACT.md),
+[progress](CHI_IMPORT_PROGRESS.md), [verification](TESTING.md#chi-campaign-import-first-pass--2026-10-23).
+
 **Batch 1: test authoring and coverage — implemented and verified.**
 [The suite workspace](TEST_SUITE_AUTHORING.md) stores editable test definitions
 with the project, including source-project Save/reopen, draft recovery and Undo.
@@ -42,13 +61,10 @@ The user's three pending Last Beacon files and both reference directories are
 unchanged. Gameplay/save formats remain unchanged. Native Windows Python/Tk
 interaction remains **UNKNOWN**.
 
-**Next proposed:** [editable Original and Updated CHI campaigns](CHI_EDITABLE_CAMPAIGNS_PLAN.md).
-The five-milestone plan covers dependency/provenance auditing, a shared local
-importer with isolated projects/saves, editable world/resources, editable
-story/services and campaign/setup verification. The recommended first pass is
-C1–C2: audit and a playable Citadel/training slice in both profiles. This is a
-documentation handoff; implementation has not started. Suite authoring and
-coverage, previously listed here as proposed, are delivered above.
+**Next proposed:** C3 of the [editable CHI campaign plan](CHI_EDITABLE_CAMPAIGNS_PLAN.md):
+editable original world/jigsaws, city overlays, map placements and presentation
+resources. C1–C2 are delivered above. C4 follows with BLD/story/services;
+C5 adds full campaign and packaged setup acceptance.
 
 **AI5 world-review extension — implemented and verified, 2026-10-23.**
 [World review and regional protection](WORLD_REVIEW.md) adds paired composed
