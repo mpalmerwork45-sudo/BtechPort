@@ -1,4 +1,16 @@
-# Open questions after bounded M4 work and authoring increments — 2026-10-22
+# Open questions after bounded M4 work and authoring increments — 2026-10-23
+
+AI8's [Greybank Dispatch recipe and delivery](CAMPAIGN_RECIPES.md) are delivered.
+The recorded five-map campaign covers both opening contracts, services, defence,
+escort, failures and checkpoints at declared seeds. It is a fixed-layout recipe
+with editable expanded content, not a general-purpose campaign generator or a
+balance proof. Other parameter combinations/layout edits need new checks.
+The next proposed increment is world-route verification across jigsaw sectors,
+town overlays and planet changes. Embedded chat and provider-specific adapters
+remain optional; model configuration belongs to the external authoring client.
+Native Windows Python/Tk interaction and an entirely bundled Windows Python
+installation still need a suitable Windows environment/runtime. Linux installation
+and Windows game routes under Wine are checked, with those limits recorded.
 
 AI7a's [modular source/build workflow](CAMPAIGN_SOURCES.md) and AI7b's
 [measured v3 capacities](CAMPAIGN_CAPACITY.md) are delivered. The supported
@@ -11,7 +23,7 @@ Compilation canonicalizes JSON, so legacy saves remain attached to their old
 package unless explicitly migrated. Campaign format upgrades themselves refuse
 save migration and require a new campaign. Source reorganization and author notes
 alone preserve already-compiled save identity. Native Windows Tk, general
-world-wide navigation and a larger AI8 campaign remain unverified.
+world-wide navigation remain unverified.
 
 The authorized M4 increments have playable, tested paths. Confidence belongs
 to the individual original comparisons and recorded continuations in
@@ -29,7 +41,7 @@ party compositions, world routes, arbitrary conditions/Lua or general combat
 balance. Those remain extensions of AI4. AI5 now supplies a Changes view,
 protected objects/fields/local regions and local editor sessions. Delivered
 increments now include AI6 mission state, reinforcements and escorts, plus AI7a
-modular sources and AI7b's measured campaign capacity. AI8 remains proposed.
+modular sources, AI7b's measured campaign capacity and AI8's recorded campaign/delivery.
 Ordinary closed-project CLI work still cannot
 inspect unsaved forms: use `session snapshot` against an explicitly started
 editor session, or save/close before CLI publication. Native Windows Tk remains

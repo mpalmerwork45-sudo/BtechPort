@@ -1,4 +1,26 @@
-# Project status — original fidelity and editable projects, 2026-10-22
+# Project status — original fidelity and editable projects, 2026-10-23
+
+**AI8 campaign demonstration and delivery — implemented, 2026-10-23.**
+Select **Greybank Dispatch (campaign)** in the launcher. Its depot, alternative
+assault/recovery contracts, timed defence and vehicle escort span five maps
+and 104 events. [Recorded recipes](CAMPAIGN_RECIPES.md) generate normal editable
+content and modular sources, retain exact inputs/provenance, diagnose/repair a
+deployment error and reproduce the playable fingerprint. Both opening routes,
+services, failure/retreat routes and checkpoints pass in eight scenario runs.
+The scripted GUI journey preserves manual terrain/dialogue through a scoped
+follow-up, Undo/Redo, Save/reopen and Play.
+
+**Author** / **Author.cmd** now ship with Linux/Windows Construction Kit
+distributions. No model/provider or network service is required. The installed
+Linux GUI/CLI and native-only independent game checks pass; the Windows native
+campaign routes pass under isolated Wine. **310 Python and 91 native tests
+pass.** Native Windows Python/Tk remains **UNKNOWN**, and Windows packaging
+still requires an installed or explicitly supplied full Python runtime.
+See [verification](TESTING.md#ai8-recorded-campaign-and-delivery--2026-10-23).
+The user's Last Beacon edits and both reference directories remain unchanged.
+
+**Next proposed:** world-route verification across jigsaw sectors, town edges
+and planets, including whole-party movement, discovery and save/reload.
 
 **AI7b campaign capacity — implemented and verified, 2026-10-22.** Runtime
 0.2.0 adds opt-in adventure v3: **64 local maps, 64 encounters, 1,024 events,
@@ -12,7 +34,7 @@ The generated independent Frontier Circuit completes 20 contracts and checkpoint
 across two planets, with identical Linux/Wine save bytes. Maximum/beyond-limit,
 high-handle, journal page 128, old-save, corruption and editor journeys pass.
 The user's three Last Beacon edits and both reference directories remain intact.
-**Next: AI8**, a curated campaign demonstration, recipes and delivery. General
+AI8 follows above with campaign recipes and delivery. General
 world-route verification and native Windows Tk remain unverified.
 
 **AI7a modular campaign sources — implemented, 2026-10-22.** Optional
@@ -29,8 +51,8 @@ escort route passes on Linux and under Wine, with checkpoints. Source notes
 and formatting preserve save identity; conversion of a legacy package requires
 a new campaign or deliberate save migration. Runtime/save layouts are unchanged.
 
-AI7b followed with the optional capacity extension described above. AI8 delivery
-and wider world traversal verification remain future work. Native Windows Tk is **UNKNOWN**.
+AI7b followed with the optional capacity extension described above; AI8 is now
+delivered. Wider world traversal verification remains future work. Native Windows Tk is **UNKNOWN**.
 
 **AI6b/AI6c and construction coverage — implemented, 2026-10-21.**
 [Cairn Passage](../examples/cairn-passage/README.md) now combines timed relay
@@ -46,8 +68,8 @@ top tiles. Event graph descriptions now include all 54 Last Beacon events.
 Tables support ascending/descending/original order and dropdowns support typing.
 Unit Library model names are uppercase while designation codes remain intact.
 
-**AI7a and AI7b are delivered above.** Further capacity changes, world-spanning
-verification and AI8 remain future work.
+**AI7a, AI7b and AI8 are delivered above.** Further capacity changes and
+world-spanning verification remain future work.
 Native Windows Tk remains **UNKNOWN**; Windows runtime checks use isolated Wine.
 
 ## Earlier deliveries

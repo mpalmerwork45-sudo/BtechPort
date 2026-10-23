@@ -1,11 +1,12 @@
 # Authoring games with commands
 
-**Verified through 2026-10-22:** AI6 includes regions, persistent mission state,
+**Verified through 2026-10-23:** AI6 includes regions, persistent mission state,
 combat hooks, reinforcements and escorts. AI7a adds optional modular campaign
 sources, deterministic builds and source diagnostics. AI7b adds opt-in larger
-campaign budgets with explicit save compatibility. See the
+campaign budgets with explicit save compatibility. AI8 adds recorded campaign
+recipes, Greybank Dispatch and offline CLI delivery. See the
 [source/build guide](CAMPAIGN_SOURCES.md), [capacity guide](CAMPAIGN_CAPACITY.md)
-and [verification](TESTING.md).
+and [recipe/delivery guide](CAMPAIGN_RECIPES.md), plus [verification](TESTING.md).
 
 The Construction Kit now supports a model-independent, display-independent
 authoring CLI. It edits ordinary projects through the same document,
@@ -14,10 +15,19 @@ The editor remains fully available. Games require no AI service.
 
 This implements **AI1/AI2**, the discovery workflow from **AI3**, bounded
 mission analysis/testing from **AI4**, and the collaborative workflow from
-**AI5**, **AI6** mission mechanics and **AI7a/AI7b** source/build and capacity support.
+**AI5**, **AI6** mission mechanics, **AI7a/AI7b** source/build and capacity support,
+and the **AI8** campaign demonstration and CLI delivery.
 Arbitrary mission simulation, further engine mechanics and capacity beyond the
 documented v3 budgets remain future work. There is no background model or network
 service to configure.
+
+For the complete generation/check/play demonstration, run `recipe list`, then
+`recipe build --file examples/authoring/greybank/recipe.json --output NEW_DIRECTORY
+--check --play`. It records inputs, creates modular sources and an ordinary
+playable package, diagnoses/repairs a deliberate deployment error, and runs both
+campaign branches with checkpoints. Original resources are supplied separately;
+omit `--check --play` to generate without them. Packaged kits provide **Author**
+(Linux) and **Author.cmd** (Windows) as console launchers for this same interface.
 
 All project commands accept either an existing `project.json` package or a
 `SOURCE.json` source project. Use `source convert PROJECT --output NEW_DIRECTORY`

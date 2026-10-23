@@ -1,4 +1,86 @@
-# Build, verification and original oracle — 2026-10-22
+# Build, verification and original oracle — 2026-10-23
+
+## AI8 recorded campaign and delivery — 2026-10-23
+
+**VERIFIED within the recorded brief, routes and platform boundaries.**
+Implementation `446d71a` supplies [Greybank Dispatch](CAMPAIGN_RECIPES.md),
+parameter/schema discovery, source and package outputs, retained commands,
+failure/repair evidence and offline CLI delivery. No native engine or save
+format changes were required; the campaign uses existing adventure v2/save v51.
+
+- Full Python regression **310/310 PASS**, 40.568 s,
+  `work/ai8-python.log`. Five recipe tests cover recorded replay, both branches,
+  services/defer/retreat/abandonment/failure, parameter changes, generated
+  scenario schemas, unknown/invalid inputs, refusal to overwrite, cancellation,
+  useful missing-resource reports and display-independent discovery. Delivery
+  tests cover actual console argument/stdout/exit-code preservation from paths
+  with spaces. The focused recipe run is `work/ai8-recipe-tests.log`.
+- Native regression **91/91 PASS**, 23.38 s, `work/ai8-native.log`.
+  Linux and Windows builds pass separately with at most two compiler jobs:
+  `work/ai8-linux-build.log`, `work/ai8-windows-build.log`.
+- The recorded [brief](../examples/authoring/greybank/BRIEF.md) precedes the
+  implementation. `recipe build --file examples/authoring/greybank/recipe.json
+  --output work/ai8-greybank --check` creates five maps, 104 events, three mech
+  definitions and two vehicle definitions, with original resources declared
+  separately. `work/ai8-demo.log` and `work/ai8-greybank/demo-report.json` retain
+  generation, dependency, check and artifact results. The default journey took
+  **10.05 s**, with **66,324 KiB maximum RSS** reported by `/usr/bin/time`
+  (`work/ai8-timing.log`). This is a host measurement, not a maximum-size benchmark.
+- The generated suite completes **8/8 runs**: assault and recovery through
+  defence/escort at seeds **11223583** and **2213581**, plus defer, ordinary
+  retreat, recovery abandonment and defence failure. Full routes use ordinary
+  input, repairs, repeated reward checks and checkpoints during active defence
+  and escort. They finish in 3,692–5,485 ticks. The independent Beacon fixture
+  also passes its checkpoint/render route without original resources.
+- A deliberately overlapping raider produces **`deployment.overlap`** and a
+  failed assault route. A scoped `marker.move` repairs it. Both command files,
+  native/static findings and failure artifacts remain under
+  `work/ai8-greybank/checks/`. Replaying the recorded creation batch against the
+  retained template and rebuilding source yields the same runtime fingerprint
+  as the deliverable and repaired source:
+  `d55236f72e41fa690bede5fd50acf8a9a0313b2a53eb8aa4c9b4bb6bb51faa3f`.
+  This establishes recorded-command reproduction, not deterministic model sampling.
+- `python3 tools/native_smoke.py --editor-campaign-demo-only`: **PASS**,
+  `work/ai8-gui.log`. Scripted real GUI terrain/text edits on a disposable
+  source project survive a protected, scoped briefing proposal, one-step
+  Undo/Redo, Save/reopen and native Play/Stop. Inspected
+  `work/ai8-gui-review.png`, `work/ai8-gui-depot.png` and native exploration/
+  battle frames (`work/ai8-game-step-002.png`, `work/ai8-game-step-034.png`).
+  Maps, event graph and roster SVGs are in `work/ai8-greybank/visuals/`.
+- Linux distribution: **2,289 inventoried files / 145.0 MiB**, including its
+  local Python 3.13/Tk/Pillow/SDL runtime; requires compatible glibc 2.42+ and
+  X11. `work/releases/AI8 Construction Kit Linux` passes the full packaged
+  launcher/editor/player and authoring probe from outside the checkout:
+  `work/ai8-installed-linux.log`. Console discovery, create/source/build,
+  gameplay/checkpoints, JSON error exit codes and missing-asset diagnostics
+  pass from spaced/relative paths. A minimal folder containing only the native
+  executable plays/saves an independent export without Python, tools or a model.
+- The full Greybank assault/defence/escort replay also **passes** in
+  `work/ai8-native-only`: a copied native player, runtime package, attribution
+  documents and recorded ordinary inputs, with no Python/authoring tools/model
+  and `PATH=/nonexistent`. Its final save is byte-identical to the scenario run.
+  Exact command, file inventory and hash: `work/ai8-native-only/report.json`.
+- Windows distribution: **1,079 inventoried files / 48.3 MiB**, with native
+  binaries/DLLs, Author.cmd, schemas and recipes. No full Windows Python runtime
+  was supplied; prerequisites are explicitly recorded. Packaged assault and
+  recovery routes **PASS** under isolated Wine and produce final saves identical
+  to Linux. `tools/windows_campaign_probe.py` also invokes the actual Author.cmd
+  through Wine cmd with a native interpreter stub: spaced arguments, caller
+  directory, stdout and exit status **23** survive. Reports/logs:
+  `work/ai8-windows-verified/report.json`, `work/ai8-windows-probe.log`.
+  The stub establishes forwarding, **not Windows Python execution**.
+- Human-readable source credits, numeric-data licence distinctions and full
+  GPL text accompany the new game; import provenance remains in
+  `LIBRARY-SOURCES.json`. Its 208 owned artwork images have no original-art-copy
+  entries in the asset report. Original graphics/sound remain external references.
+- Reference guard: **1,287 entries unchanged**, `work/ai8-reference.log`.
+  The three pending Last Beacon files still match `work/ai8-baseline.json` and
+  remain outside the milestone commits. `git diff --check` passes.
+
+**UNKNOWN:** native Windows Python/Tk interaction, a bundled full Windows
+Python installation and wider world navigation. Other recipe parameters/layouts
+need their own scenarios; sampled computer-combat outcomes do not prove general
+balance. Next proposed: world-route verification across jigsaws, towns and planets.
 
 ## AI7b measured campaign capacity — 2026-10-22
 
@@ -72,7 +154,7 @@ Implementation commit: `134f7c9`.
 
 Native Windows Tk, broad world traversal and general combat balance remain
 **UNKNOWN**. V1/v2-to-v3 saves require a new campaign; compatible same-format
-revision migration retains its existing narrower policy. AI8 remains next.
+revision migration retains its existing narrower policy. AI8 is recorded above.
 
 ## AI7a campaign source modules — 2026-10-22
 

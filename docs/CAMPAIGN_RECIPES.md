@@ -162,6 +162,12 @@ it runs both GUI and CLI checks through the bundled interpreter/environment.
 On native Windows use the installed/bundled Python to run
 `tools/runtime_probe.py` and `tools/author_delivery_probe.py`.
 
+The Wine-only regression helper is `tools/windows_campaign_probe.py --kit KIT
+--campaign GENERATED_DIRECTORY --output NEW_DIRECTORY`. It compares both
+default-seed full routes with the retained Linux checks and tests Author.cmd
+using a native argument/exit-status stub. A suitable Windows Python/Tk
+installation still needs native desktop verification.
+
 Distribute the compiled `game/` with a compatible native player and the
 declared, separately licensed resources. The player reads only runtime files;
 it needs neither `tools/`, Python, an editor session nor a model. Exported

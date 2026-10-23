@@ -536,6 +536,21 @@ Document migration/refusal behavior with real saved fixtures and memory results.
 
 ## 12. AI8 — Demonstration, adapters and delivery
 
+**Delivered 2026-10-23.** [Greybank Dispatch](CAMPAIGN_RECIPES.md) expands a
+recorded brief and parameter file into five editable maps and 104 events,
+with a depot/service loop, exclusive opening contracts, timed defence and a
+vehicle escort. It reuses the AI6 recipes, records exact command inputs,
+diagnoses/repairs a deliberate deployment overlap, checks both branches,
+exports visual evidence and reproduces its runtime fingerprint. GUI dialogue
+and terrain revisions survive a constrained follow-up, Undo/Redo, Save/reopen
+and Play. `Author`/`Author.cmd`, schemas, recipes and native checkers ship with
+the kit; the model-independent CLI and local-session transport remain the
+external authoring interface. Native Windows Python/Tk interaction remains
+**UNKNOWN**; Linux installation and Windows native game routes under Wine are
+checked. See [evidence and limits](TESTING.md#ai8-recorded-campaign-and-delivery--2026-10-23).
+
+The following scope and completion gate governed this delivery:
+
 ### Scope
 
 - Create a separate BattleTech campaign example using a recorded brief,
@@ -643,17 +658,22 @@ Decisions established by this plan:
 - Make the first demonstrated mission use existing mechanics; add engine
   capabilities through separately verified increments.
 
-Remaining implementation choices include the curated campaign brief, delivery
-packaging and useful external assistant transports (AI8). Source
+Greybank Dispatch now supplies the curated campaign brief and delivery
+workflow (AI8). Additional external assistant transports remain optional. Source
 modules now use the documented `btp-campaign-source-v1` format. No AI provider
 choice is required for ordinary editing, compilation or gameplay.
 
-**Next proposed milestone: AI8 — demonstration, adapters and delivery.**
+**Next proposed milestone: world-route verification (the AI4 extension).**
+Exercise travel between jigsaw sectors, town overlays and planets using actual
+party movement, with map-aware diagnostics, discovery and checkpoint coverage.
+This extends the current local navigation checks; it does not require another
+increase in capacities or an embedded model service.
+
 AI6b/AI6c now supply round hooks, atomic reinforcement groups, scripted outcomes,
 friendly/neutral actors and terrain-aware waypoints. Cairn Passage demonstrates
 defence and escort with declared native success/loss/retreat scenarios. Construction
 coverage and shared-library styles support all roof masks, wall levels and road
-junctions. AI7a and AI7b are delivered; AI8 remains future work. Source compilation
+junctions. AI7a, AI7b and AI8 are delivered. Source compilation
 by itself does not raise runtime limits; the explicit v3 upgrade does.
 
 The separately authorized [shared Construction Library](CONSTRUCTION_LIBRARY.md)
