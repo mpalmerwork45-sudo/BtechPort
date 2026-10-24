@@ -3,6 +3,10 @@
 The visible editor and launcher name is **BattleTech Construction Kit**. Source
 checkout commands `./BtechPort` and `BtechPort.cmd` remain usable.
 
+The [2026-10-24 package refresh](DELIVERY_REFRESH_20261024.md) records current
+archive paths, hashes, requirements and packaged Linux/Wine verification.
+Native Windows Tk remains an external acceptance check.
+
 ## Export a game
 
 **File > Export game** creates a validated new project directory. **Project >

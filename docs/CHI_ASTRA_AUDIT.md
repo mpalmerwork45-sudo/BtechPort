@@ -63,10 +63,11 @@ It does not close native Windows Python/Tk verification: this host provides
 Linux Tk and the Windows player under Wine, with no configured native Windows
 desktop available for the wizard/editor journey.
 
-The previous application archives predate the latest save/death/audit changes.
-Refresh those packages and repeat their packaged setup/import/edit/reconstruction
-checks before claiming delivery of these fixes. No archive was refreshed or
-published by this audit.
+The previous application archives predated the latest save/death/audit changes.
+The subsequent [delivery refresh](DELIVERY_REFRESH_20261024.md) now ships those
+fixes and passes packaged setup/import/edit/reconstruction/save checks on Linux,
+plus the Windows binaries under Wine. That is separate follow-up evidence;
+no archive was published remotely and native Windows Tk remains unverified.
 
 Original DOS fidelity outside the measured comparisons, all possible scripts
 and combat outcomes, general migration across gameplay edits, and arbitrary

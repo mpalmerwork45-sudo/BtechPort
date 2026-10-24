@@ -140,8 +140,10 @@ changes and local-original references. See [sharing/reconstruction](docs/CHI_REC
 and [campaign acceptance and platform limits](docs/CHI_ACCEPTANCE.md). C4.5 and
 C5 implementation are verified for the declared Linux/Wine scope. The
 [independent Astra audit](docs/CHI_ASTRA_AUDIT.md) found and fixed recipe,
-save-discovery and verification issues. Native Windows Tk verification and
-refreshing the application archives with these fixes remain pending.
+save-discovery and verification issues. The
+[refreshed application packages](docs/DELIVERY_REFRESH_20261024.md) contain these
+fixes and pass packaged Linux and Windows/Wine checks. Native Windows Tk
+verification remains pending.
 A separate [Enhanced-only campaign route](docs/CHI_ENHANCED_ACCEPTANCE.md) now
 reaches the ending with default Enhanced rules throughout, matching the built-in
 Updated game on Linux and Windows/Wine, including saved continuations.

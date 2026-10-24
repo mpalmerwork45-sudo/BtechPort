@@ -5,8 +5,11 @@ BLD dialogue/control flow, native service/mission content, bounded mixed quests
 and [asset-free reconstruction](CHI_RECONSTRUCTION.md). The combined
 [campaign acceptance](CHI_ACCEPTANCE.md) passes on Linux/Wine within its declared
 scope. The [independent Astra review](CHI_ASTRA_AUDIT.md) is complete with fixes.
-Native Windows Tk remains an external check; delivery archives need refreshing
-to contain the subsequent save/death/audit fixes.
+Native Windows Tk remains an external check. The
+[refreshed archives](DELIVERY_REFRESH_20261024.md) now contain the subsequent
+save/death/audit fixes and pass packaged Linux desktop/CLI and Windows/Wine
+binary checks. A native Windows acceptance sequence is ready; Windows Python
+is not bundled, and the Linux archive requires glibc 2.42+.
 
 The earlier Updated ending route selects Legacy through Settings. A separate
 [Enhanced-only walkthrough](CHI_ENHANCED_ACCEPTANCE.md) now passes on Linux and

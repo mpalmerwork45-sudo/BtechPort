@@ -1,5 +1,16 @@
 # Editable CHI import progress
 
+## Post-audit delivery refresh — 2026-10-24
+
+Linux/Windows archives now contain the save/death/audit fixes. Four packaged
+Linux desktop/CLI journeys pass, including import/edit/Play, exact reconstruction
+and save recovery after a working project moves. The shipped Windows binaries
+match twelve saves and both editions' tested SDL frames/state under Wine.
+Both directories and archives pass payload/inventory checks. No proprietary
+assets or pending owner edits enter the packages. Native Windows Tk remains
+UNKNOWN; the exact acceptance sequence is prepared. See
+[delivery results and archive locations](DELIVERY_REFRESH_20261024.md).
+
 ## Independent Astra audit — 2026-10-24
 
 The separate review is complete with seven reproduced findings fixed: original
@@ -15,7 +26,7 @@ per platform, with all 174 Linux/Windows artifacts identical. The real Linux
 launcher/editor journey passes with both players, including moved roots and
 invalid drafts. Retained Enhanced/Legacy evidence and coverage were checked
 independently. No production gameplay or save format was changed. Native
-Windows Tk remains UNKNOWN and earlier application archives need refreshing.
+Windows Tk remains UNKNOWN; refreshed packages are recorded above.
 The following entries retain their historical verification scope.
 
 ## Save-management and Enhanced-only follow-ups — 2026-10-24

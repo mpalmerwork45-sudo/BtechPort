@@ -1,5 +1,13 @@
 # Project status — original fidelity and editable projects, 2026-10-24
 
+**Application packages refreshed and checked.** Linux bundled desktop/CLI,
+both imported campaigns, editor editing/Play, reconstruction and Saved games
+checks pass. Actual Windows package binaries pass twelve save round trips,
+foreign-profile rejection and paired SDL checks under Wine. Both archives pass
+inventory/provenance inspection and include the recent save/death/audit fixes.
+Native Windows Tk remains UNKNOWN; a desktop acceptance sequence is ready.
+[Packages, launch, evidence and requirements](DELIVERY_REFRESH_20261024.md).
+
 **Independent Astra audit completed with fixes.** Recipe export now references
 cloned/edited original dialogue spans, and output guards protect both reference
 directories even when importing another DOS copy. Saved games remain accessible
@@ -9,7 +17,7 @@ Verification now rejects missing/stale bridge artifacts, runs subsequent quest
 inputs from decoded saves, respects alternate DOS sources and distinguishes
 observed from declared program coverage. Fresh bridge and GUI checks pass on
 Linux and with Windows/Wine players. [Findings and scope](CHI_ASTRA_AUDIT.md).
-Native Windows Tk verification and refreshed application packages remain next.
+Native Windows Tk verification remains next; the package refresh is recorded above.
 
 **C4.5 campaign gate passed; C5 implementation/delivery verified on Linux and Wine.**
 Both imported campaigns reach their endings on declared routes (Updated selects

@@ -1,5 +1,28 @@
 # Build, verification and original oracle — 2026-10-24
 
+## Post-audit packaged delivery — 2026-10-24
+
+**VERIFIED within the Linux/Wine scope.** [Full results and commands](DELIVERY_REFRESH_20261024.md).
+
+- Six affected Python tests pass. Both platforms' five native delivery targets
+  build sequentially with two jobs; production gameplay/save code is unchanged.
+- Final packages identify source `fa7740e`; packaged modules match reviewed
+  source bytes. Linux/Windows directories and archives pass provenance and all
+  inventoried file hashes (2,444/1,234 files including manifests).
+- Four Linux bundled-runtime checks pass: runtime/independent CLI, fresh CHI
+  import/reconstruction, real editor import/edit/Save/Play, and launcher/editor
+  Saved games with native Continue, recovery, old revisions and moved roots.
+- Actual shipped Windows validators and twelve save state/byte round trips
+  match Linux under Wine; twelve cross-edition loads reject. Edited/reconstructed
+  fingerprints and both five-input SDL intro replays also match.
+- Both references, three owner edits, twenty normal saves and recovered source/
+  progress remain unchanged. Native Windows Tk remains UNKNOWN.
+
+Private evidence: `work/delivery-refresh-20261024/`, especially
+`linux-proof-final/evidence.json`, `windows-proof-final/evidence.json`,
+`packages.json` and `preservation-after.json`. Earlier failed harness/sandbox
+runs remain recorded; the final runs use new evidence directories.
+
 ## Independent Astra audit and fixes — 2026-10-24
 
 **VERIFIED for the bounded review in [CHI_ASTRA_AUDIT.md](CHI_ASTRA_AUDIT.md).**
@@ -49,8 +72,8 @@ python3 tools/chi_bridge_evidence.py --output work/new-audit-bridge --windows
 The bridge command uses the retained private imported pair by default; use
 `--source PATH` for another pair. Fresh reports are under
 `work/audit-astra-20261024/bridge/`; read-only campaign checks are recorded in
-`campaign-evidence-audit.json`. Native Windows Python/Tk remains UNKNOWN, and
-the older distribution archives still require rebuilding and packaged checks.
+`campaign-evidence-audit.json`. Native Windows Python/Tk remains UNKNOWN;
+the subsequent package refresh is recorded above.
 
 ## Save management and Enhanced-only campaign — 2026-10-24
 
