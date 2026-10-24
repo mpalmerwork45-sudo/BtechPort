@@ -61,10 +61,121 @@ diagnostics and an independent exported game with only its native player:
 python3 tools/native_smoke.py --delivery-only work/releases/ConstructionKit-linux
 ```
 
+For the complete CHI import/editor/reconstruction and Saved games journey,
+provide the original files explicitly and a new evidence directory outside the
+kit. Every child uses the kit's bundled interpreter and tools, with no copied
+original installation inside the distribution:
+
+```sh
+python3 tools/native_smoke.py --delivery-only work/releases/ConstructionKit-linux \
+  --delivery-data "Original DOS" --delivery-output work/packaged-linux-proof
+```
+
+This also verifies current endgame dialogue extraction, edited original-text
+references, six save slots and continuation after moving the editable project.
+The evidence records the distribution inventory hash and each child report.
+
 On a real Windows desktop, run `py -3 tools/runtime_probe.py` from the unpacked
 kit, or use its bundled Python executable. Cross-build and Wine engine/SDL
 checks pass; **native Windows Tk interaction remains unverified** until this
 probe and ordinary editing are run on a Windows host.
+
+### Native Windows acceptance sequence
+
+**UNKNOWN until run on a Windows desktop.** Linux Tk with a Windows player
+under Wine, and Windows Python/Tk running under Wine, are separate evidence;
+neither closes this check. The development host has no configured Windows VM
+or remote Windows desktop. The following sequence is prepared for a real
+Windows 10/11 x64 machine or Windows VM with an interactive desktop.
+
+Unpack the Windows kit into a **new writable folder**, such as
+`C:\BCK Acceptance\Kit é 漢字`. Use this disposable kit's own state and new project
+folders; do not point it at existing saves. Check `START-HERE.txt`: when Python
+is not bundled, Python 3.10+ with Tk, Pillow and the `py` launcher must already
+be installed. The embeddable Python ZIP is insufficient. No compiler, checkout,
+Linux installation or extracted CHI cache should be needed for these checks.
+Original DOS files are needed only for the explicit CHI import/reconstruction.
+
+In PowerShell, set the two input paths below, then run the probes **from outside
+the kit directory**. The new proof folder retains environment details, the kit
+inventory fingerprint, both command logs and CHI save/reconstruction evidence.
+Each probe must exit successfully; keep failure output if it does not.
+
+```powershell
+$kit = (Resolve-Path 'C:\BCK Acceptance\Kit é 漢字').Path
+$source = (Resolve-Path 'C:\Games\Original DOS').Path
+$proof = Join-Path (Split-Path $kit -Parent) ('Proof-' + [guid]::NewGuid())
+New-Item -ItemType Directory -Path $proof | Out-Null
+Set-Location $proof
+
+if (Test-Path (Join-Path $kit 'runtime\python.exe')) {
+    $python = Join-Path $kit 'runtime\python.exe'
+    $pythonArgs = @('-E', '-s', '-B')
+} else {
+    $python = 'py'
+    $pythonArgs = @('-3', '-E', '-s', '-B')
+}
+[System.Environment]::OSVersion.VersionString | Out-File environment.txt
+Get-FileHash (Join-Path $kit 'DISTRIBUTION.json') -Algorithm SHA256 |
+    Format-List | Out-File -Append environment.txt
+& $python @pythonArgs -c "import sys,platform,tkinter,PIL; assert sys.version_info >= (3,10); print(sys.executable); print(platform.platform()); print(sys.version); print('Tk', tkinter.TkVersion, 'Pillow', PIL.__version__)" 2>&1 |
+    Tee-Object -FilePath python-runtime.txt
+if ($LASTEXITCODE -ne 0) { throw 'Python/Tk/Pillow prerequisites failed.' }
+
+& $python @pythonArgs (Join-Path $kit 'tools\runtime_probe.py') 2>&1 |
+    Tee-Object -FilePath runtime-probe.txt
+if ($LASTEXITCODE -ne 0) { throw 'Desktop runtime probe failed; keep the log.' }
+
+& $python @pythonArgs (Join-Path $kit 'tools\chi_delivery_probe.py') `
+    --data $source --output (Join-Path $proof 'CHI proof') 2>&1 |
+    Tee-Object -FilePath chi-delivery-probe.txt
+if ($LASTEXITCODE -ne 0) { throw 'CHI delivery probe failed; keep the log.' }
+
+& (Join-Path $kit 'ConstructionKit.cmd')
+```
+
+`runtime_probe.py` exercises the launcher, roster/map editor, PNG decoding and
+encoding, native validation, an actual SDL window and independent authoring
+CLI/gameplay. `chi_delivery_probe.py` imports both editions, moves them through
+Unicode/spaced paths, round-trips twelve saves, rejects cross-edition loads,
+reconstructs an edited quest recipe and restores Last Beacon's twenty original
+tile bases locally. Its `windows_native_Tk: UNKNOWN` field describes that
+**CLI probe's scope**, even when it runs on Windows; record the desktop probe
+and the following manual observations separately.
+
+Complete this small manual acceptance sheet, recording PASS/FAIL/NOT RUN and
+screenshots or logs in the proof folder:
+
+1. **Launch/import:** `ConstructionKit.cmd` opens with no terminal error. Import
+   both CHI editions using **Import CHI**, a new output folder and the original
+   files as read-only input. Check progress, Cancel, a visible error for an
+   invalid source folder, and the two resulting launcher entries. Imported
+   campaigns start without configuring external cache paths.
+2. **Edit/save:** create a disposable independent project; edit a unit/sprite,
+   map and event. Undo/Redo must restore the edited content. Save, close and
+   reopen the project. Changes persist, dialogs stay above their owner, and
+   errors do not discard unfinished fields. Check the imported campaign's map
+   and building dialogue editors too, saving changes only in a disposable copy.
+3. **Play/stop:** use editor Play, F5, F9 and Ctrl+Shift+Esc. Inspect all six
+   in-game save slots; save/load slots 1 and 6, leaving another slot empty for
+   recovery. Check editor Stop and restarting Play. The editor keeps its
+   document; the game resumes the saved progress. Use Space and Enter in menus.
+4. **Saved games/recovery:** open **Saved games...** in the launcher and
+   **Play → Saved games** in the editor. Check six slot labels, dates, revisions,
+   sorting and visible controls. Back up a save; Recover to an empty slot must
+   copy it, and Recover to an occupied slot must refuse without changing either
+   save. Continue selected must open its matching revision. Edit the working
+   project, then move that disposable project folder; the older retained save
+   must remain discoverable and continue with its original content. Confirm
+   backups are visible after refresh.
+5. **Desktop behavior:** test keyboard navigation, Escape/context-menu dismissal,
+   canceled file choosers, unsaved-close cancellation, minimize/restore and
+   100/150/200% editor scales. Test moving between monitors only if available;
+   otherwise record that item NOT RUN. Check all action buttons remain visible.
+
+Retain the evidence and exact Windows/Python/Tk versions before declaring this
+platform verified. A passing automated probe alone does not certify native
+file-dialog focus, display scaling, every manual route or hardware audio.
 
 ## Migrate a saved game deliberately
 

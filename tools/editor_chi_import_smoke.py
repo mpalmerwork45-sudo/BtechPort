@@ -1,5 +1,5 @@
 """Bounded real-GUI import, edit, Save/reopen and native Play journey."""
-def run(env,work):
+def run(env,work,source=None):
     import json,tempfile,time,tkinter as tk,subprocess
     from pathlib import Path
     from PIL import ImageGrab
@@ -7,6 +7,7 @@ def run(env,work):
     from chi_editor import open_campaign,open_import
     from editor_model import ProjectDocument,encoded
     root=Path(__file__).resolve().parents[1]
+    source=Path(source).resolve() if source is not None else root/'Original DOS'
     with tempfile.TemporaryDirectory(prefix='chi-import-gui-',dir=work) as temporary:
         folder=Path(temporary);window=tk.Tk();launcher=Launcher(window,folder/'launcher');errors=[]
         window.report_callback_exception=lambda kind,error,tb:errors.append(error)
@@ -25,7 +26,7 @@ def run(env,work):
             view.start_button.invoke();pump(lambda:view.cancel_event is None and not workspace.tasks.jobs)
             assert not view.result and 'Missing original file' in view.status.get(),view.status.get()
             assert view.start_button.cget('text')=='Retry import'
-            view.source.set(str(root/'Original DOS'))
+            view.source.set(str(source))
             view.start_button.invoke();pump(lambda:view.cancel_event is None and not workspace.tasks.jobs)
             assert view.result,view.status.get();assert len(view.result['projects'])==2
             assert len(launcher.user_projects)==2
@@ -51,7 +52,7 @@ def run(env,work):
             editor.text.delete('1.0','end');editor.text.insert('1.0','Reconstructed control?');editor.apply()
             from chi_recipe_editor import open_recipes
             from chi_recipe import fingerprint,runtime_files
-            recipe=open_recipes(app);recipe.source.set(str(root/'Original DOS'));recipe.recipe.set(str(folder/'changes é 漢字.json'))
+            recipe=open_recipes(app);recipe.source.set(str(source));recipe.recipe.set(str(folder/'changes é 漢字.json'))
             recipe.output.set(str(folder/'Reconstructed é 漢字'));recipe.export();pump(lambda:not workspace.tasks.jobs)
             assert Path(recipe.recipe.get()).is_file(),recipe.status.get()
             assert app.document.dirty and json.loads(ProjectDocument(Path(original['path']),app.validator).metadata['campaign.json'])['dialogue_overrides'][0]['text']=='Computer control\rfor imported game?'
@@ -117,7 +118,7 @@ def run(env,work):
             from chi_bld_editor import open_scripts
             source=open_scripts(app);assert source.program.get()==program and source.selected==node
             coverage.window.lift();pump();ImageGrab.grab(xdisplay=env['DISPLAY']).save(work/'chi-script-coverage.png')
-            cancel=open_import(app);cancel.source.set(str(root/'Original DOS'));cancel.target.set(str(folder/'cancelled'))
+            cancel=open_import(app);cancel.source.set(str(source));cancel.target.set(str(folder/'cancelled'))
             cancel.start_button.invoke();cancel.cancel();pump(lambda:cancel.cancel_event is None and not workspace.tasks.jobs)
             assert not (folder/'cancelled').exists();assert 'cancel' in cancel.status.get().lower(),cancel.status.get()
             (work/'chi-import-gui.json').write_bytes(encoded(dict(status='passed',checks=[

@@ -1,4 +1,6 @@
 import copy,json,os,struct,subprocess,sys,tempfile,unittest
+from unittest.mock import patch
+from types import SimpleNamespace
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT/'tools'))
 from editor_model import create_project,ProjectDocument,EditorError
@@ -6,6 +8,21 @@ from save_migration import compatible,migrate
 from delivery import asset_report,write_launchers
 
 class DeliveryTests(unittest.TestCase):
+    def test_packaged_probe_rejects_missing_reports_and_preserves_old_evidence(self):
+        from packaged_smoke import run
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);kit=root/'kit';kit.mkdir();(kit/'DISTRIBUTION.json').write_text('{}')
+            proof=root/'proof'
+            with patch('packaged_smoke.subprocess.run',return_value=SimpleNamespace(returncode=0)) as execute:
+                with self.assertRaises(FileNotFoundError):run(kit,{},output=proof)
+                self.assertEqual(json.loads((proof/'evidence.json').read_bytes())['status'],'failed')
+                before=(proof/'evidence.json').read_bytes()
+                with self.assertRaisesRegex(EditorError,'earlier proofs'):run(kit,{},output=proof)
+                self.assertEqual((proof/'evidence.json').read_bytes(),before)
+                self.assertEqual(execute.call_count,2)
+            with self.assertRaisesRegex(EditorError,'outside original/reference'):run(kit,{},output=kit/'proof')
+            self.assertFalse((kit/'proof').exists())
+
     def test_author_console_preserves_spaced_paths_status_and_stdout(self):
         # A tiny interpreter probe tests shell argument forwarding, environment
         # and exit status independently of this machine's bundled dependencies.

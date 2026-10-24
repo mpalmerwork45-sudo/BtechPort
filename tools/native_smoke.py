@@ -1338,6 +1338,8 @@ def main():
     parser.add_argument('--map-construction-only',action='store_true',help='Check building/wall/road tools, tile management, patterns and original-size world creation')
     parser.add_argument('--library-editor-only',action='store_true',help='Check shared library editing/import/export and desktop game launch')
     parser.add_argument('--delivery-only',type=Path,help='Check an unpacked Linux Construction Kit using its bundled runtime')
+    parser.add_argument('--delivery-data',type=Path,help='Also check packaged CHI import/edit/reconstruction using this DOS source')
+    parser.add_argument('--delivery-output',type=Path,help='New external directory for packaged verification evidence')
     parser.add_argument('--construction-kit-only',action='store_true',help='Check service/quest/event and advanced authoring workflows')
     parser.add_argument('--updated-combat-only',action='store_true',help='Check Updated rules settings and held LRM combat saves')
     parser.add_argument('--building-art-only',action='store_true',help='Check Updated building portraits and held saves')
@@ -1378,13 +1380,15 @@ def main():
     parser.add_argument('--encounters-only',action='store_true')
     parser.add_argument('--completion-only',action='store_true')
     args = parser.parse_args()
+    if (args.delivery_data or args.delivery_output) and not args.delivery_only:
+        parser.error('--delivery-data and --delivery-output require --delivery-only KIT')
     if args.windows:windows_frontend()
     work = ROOT / "work"
     work.mkdir(exist_ok=True)
     read_fd, write_fd = os.pipe()
     with (work / "native-xvfb.log").open("w") as log:
         xvfb = subprocess.Popen([str(ROOT / "local-deps/xvfb/usr/bin/Xvfb"),
-            "-displayfd", str(write_fd), "-screen", "0", "1600x1000x24" if args.saved_games_only or args.editor_usability_only or args.editor_focus_only or args.editor_mission_only or args.editor_combat_mission_only or args.editor_style_only or args.editor_source_only or args.editor_capacity_only or args.editor_campaign_demo_only or args.editor_world_routes_only or args.editor_checkpoints_only or args.construction_library_only or args.editor_canvas_only or args.editor_paint_only or args.editor_tile_animation_only or args.editor_authoring_only or args.editor_collaboration_only else "1024x768x24", "-nolisten", "tcp"],
+            "-displayfd", str(write_fd), "-screen", "0", "1600x1000x24" if args.delivery_only or args.saved_games_only or args.editor_usability_only or args.editor_focus_only or args.editor_mission_only or args.editor_combat_mission_only or args.editor_style_only or args.editor_source_only or args.editor_capacity_only or args.editor_campaign_demo_only or args.editor_world_routes_only or args.editor_checkpoints_only or args.construction_library_only or args.editor_canvas_only or args.editor_paint_only or args.editor_tile_animation_only or args.editor_authoring_only or args.editor_collaboration_only else "1024x768x24", "-nolisten", "tcp"],
             pass_fds=(write_fd,), stdout=log, stderr=subprocess.STDOUT)
         os.close(write_fd)
         try:
@@ -1436,7 +1440,8 @@ def main():
                 run(env,work)
                 return
             if args.delivery_only:
-                subprocess.run([str(args.delivery_only.resolve()/"ConstructionKit"),"--check-runtime"],env=env,cwd="/tmp",check=True,timeout=40)
+                from packaged_smoke import run
+                run(args.delivery_only,env,args.delivery_data,args.delivery_output)
                 return
             if args.editor_usability_only:
                 from editor_usability_smoke import run

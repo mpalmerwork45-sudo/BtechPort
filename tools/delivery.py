@@ -173,7 +173,10 @@ def package(output,platform='linux',python_runtime=None):
             +'Offline authoring CLI: '+cli+' capabilities\n'+cli+' recipe list\n'
             +'Recipes and one-command generate/check/play: docs/CAMPAIGN_RECIPES.md\n'
             +'External AI applications use the same JSON CLI or explicitly opened local editor session. No account, model or network is required.\n')
-        report=dict(platform=platform,requirements=requirements,files=[])
+        # Tie a rebuilt kit to the reviewed source revision. Individual file
+        # hashes remain authoritative for the delivered bytes and binaries.
+        revision=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
+        report=dict(platform=platform,source_revision=revision,requirements=requirements,files=[])
         origins={str(Path(v['path']).relative_to(stage)):v['source'] for v in inventory}
         for path in sorted(stage.rglob('*')):
             if path.is_file():report['files'].append(dict(path=str(path.relative_to(stage)),bytes=path.stat().st_size,sha256=hashlib.sha256(path.read_bytes()).hexdigest(),source=origins.get(str(path.relative_to(stage)),'Generated or supplied runtime')))
