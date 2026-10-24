@@ -1559,7 +1559,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
 {
     if (btp_art_picture(r,s,f)) return;
     if (r->project && r->project->independent.loaded) { btp_independent_render(r,s,f);return; }
-    if ((s->mode==BTP_EVENT || s->mode==BTP_ENDING) && btp_scene(r,s)) { event_panel(r,s,f);return; }
+    if ((s->mode==BTP_EVENT || s->mode==BTP_ENDING) && s->event.enabled && !s->cutscene.active) { event_panel(r,s,f);return; }
     if (s->mode==BTP_ACTIONS && s->campaign.ui==BTP_MENU_MAP) {
         btp_world_preview(r,s,f);return;
     }

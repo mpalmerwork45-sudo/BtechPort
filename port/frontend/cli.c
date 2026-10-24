@@ -7,6 +7,7 @@
 #include "core/audio.h"
 #include "core/combat.h"
 #include "core/events.h"
+#include "core/chi_bridge.h"
 #include "core/mission_state.h"
 #include "data/save.h"
 #include "data/sprites.h"
@@ -218,6 +219,7 @@ void btp_initial_state_seeded(const BtpOptions *o,BtpState *s,const BtpResources
     else if (o->conversation_checkpoint) btp_start_conversation_checkpoint(s);
     else btp_start_content(s,r);
     s->project=(uint8_t)(r->project!=NULL);
+    btp_bridge_initialize(s,r);
     btp_npc_init(s,&r->map);
     /* Fresh Updated campaigns opt in. Loading a save below replaces this
        state, preserving the saved policy (including old saves' Legacy). */
@@ -319,8 +321,14 @@ void btp_print_state(const BtpState *s, const BtpResources *r)
         s->yard.active,s->yard.phase,s->yard.timer,s->yard.checked,s->yard.attempts,s->yard.selected,s->yard.slot,s->yard.rental,s->yard.variant);
     uint8_t encoded[BTP_STATE_BYTES];btp_state_encode(s,encoded);uint64_t state_hash=UINT64_C(14695981039346656037);
     for (unsigned i=0;i<BTP_STATE_BYTES;++i) state_hash=(state_hash^encoded[i])*UINT64_C(1099511628211);
+    if (s->bridge.enabled) {
+        uint8_t tail[BTP_BRIDGE_BYTES];btp_bridge_encode(s,tail);
+        for (unsigned i=0;i<BTP_BRIDGE_BYTES;++i) state_hash=(state_hash^tail[i])*UINT64_C(1099511628211);
+        printf(",\"chi_bridge\":{\"depth\":%u,\"scene\":%u,\"call\":%u,\"outcome\":%u,\"fault\":%u}",
+            s->bridge.depth,s->bridge.scene,s->bridge.call,s->bridge.outcome,s->bridge.fault);
+    }
     printf(",\"state_digest\":\"%016llx\",\"effect_stage\":%u",(unsigned long long)state_hash,s->effects.stage);
-    if (s->event.enabled) {
+    if (s->event.enabled || s->bridge.enabled) {
         printf(",\"authored_event\":{\"node\":%u,\"phase\":%u,\"page\":%u,\"selected\":%u,\"map\":%u,\"planet\":%u,\"flags\":[",
             s->event.node,s->event.phase,s->event.page,s->event.selected,s->event.map,s->event.planet);
         const BtpAdventure *a=btp_adventure(r);
@@ -468,7 +476,10 @@ static void event_trace(void *context,const BtpState *s,const BtpResources *r,co
         fputs("},\"objectives\":{",f);
         for (unsigned i=0;i<a->objective_count;++i) fprintf(f,"%s\"%s\":\"%s\"",i ? "," : "",a->objectives[i].id,btp_objective_name(btp_objective_state(s,a,i)));
     }
-    fputs("}}\n",f);
+    fputs("}",f);
+    if (s->bridge.enabled) fprintf(f,",\"bridge\":{\"depth\":%u,\"scene\":%u,\"call\":%u,\"native_map\":%u,\"native_entrance\":%u}",
+        s->bridge.depth,s->bridge.scene,s->bridge.call,s->bridge.frames[0].position.native_map,s->bridge.frames[0].position.entry);
+    fputs("}\n",f);
 }
 int btp_run_headless(const BtpOptions *o,BtpResources *r)
 {
@@ -506,7 +517,7 @@ static void bld_trace(void *context,const BtpBld *b,BtpBldObservation kind,unsig
     trace->previous_fault=(unsigned)(kind==BTP_BLD_FAULT);
     if (trace->previous_fault) memcpy(trace->last_fault,fault,sizeof fault);
     const BtpChiProgram *program=r->project && r->project->chi_scripts ? &r->project->chi_scripts->programs[slot] : NULL;
-    static const char *const kinds[]={"instruction","branch","native-enter","native-return","resume","fault"};
+    static const char *const kinds[]={"instruction","branch","native-enter","native-return","resume","fault","event-enter","event-return","bridge-outcome"};
     FILE *f=trace->file;
     fprintf(f,"{\"kind\":\"%s\",\"tick\":%u,\"building\":%u,\"resource\":\"%s\",\"program\":",kinds[kind],trace->state ? trace->state->tick : 0,slot,btp_chi_resource_name(27+slot));
     if (program) fprintf(f,"\"%s\"",program->id);else fputs("null",f);

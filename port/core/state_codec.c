@@ -33,6 +33,7 @@ static void put32(uint8_t *p,uint32_t n) { for (unsigned i=0;i<4;++i) p[i]=(uint
 static uint32_t get32(const uint8_t *p) { return (uint32_t)p[0]|(uint32_t)p[1]<<8|(uint32_t)p[2]<<16|(uint32_t)p[3]<<24; }
 
 #include "core/battle_mission.h"
+#include "core/chi_bridge.h"
 void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
 {
     memset(b, 0, BTP_STATE_BYTES);
@@ -49,7 +50,7 @@ void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
         memcpy(b,"BTPk",4);b[4]=46;b[20005]=s->menu.broker_class;
     }
     if (s->project) { memcpy(b,"BTPl",4);b[4]=47;b[20006]=s->project; }
-    if (s->event.enabled) {
+    if (s->event.enabled || s->bridge.enabled) {
         memcpy(b,"BTPn",4);b[4]=49;btp_events_encode(s,b+20057);
         if (s->event.mission_state) { memcpy(b,"BTPo",4);b[4]=50;btp_mission_encode(s,b+20185); }
     }
@@ -204,6 +205,7 @@ void btp_state_encode(const BtpState *s, uint8_t b[BTP_STATE_BYTES])
     b[19307+sizeof s->yard]=s->spy_discovered;
     memcpy(b+19308+sizeof s->yard,s->service.damaged,sizeof s->service.damaged);
     for (unsigned i=0;i<4;++i) b[19325+sizeof s->yard+i]=(uint8_t)(s->service.quote_credits>>(8u*i));
+    if (s->bridge.enabled) { memcpy(b,"BTPr",4);b[4]=53; }
 }
 
 int btp_state_decode_resources(const uint8_t *b, size_t n, const BtpMap *m, const BtpBld *script, const BtpResources *resources, BtpState *s)
@@ -260,7 +262,8 @@ int btp_state_decode_resources(const uint8_t *b, size_t n, const BtpMap *m, cons
         n == BTP_STATE_BYTES && !memcmp(b,"BTPn",4) && b[4]==49 ? 49 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPo",4) && b[4]==50 ? 50 :
         n == BTP_STATE_BYTES && !memcmp(b,"BTPp",4) && b[4]==51 ? 51 :
-        n == BTP_STATE_BYTES && !memcmp(b,"BTPq",4) && b[4]==52 ? 52 : 0;
+        n == BTP_STATE_BYTES && !memcmp(b,"BTPq",4) && b[4]==52 ? 52 :
+        n == BTP_STATE_BYTES+BTP_BRIDGE_BYTES && !memcmp(b,"BTPr",4) && b[4]==53 ? 53 : 0;
     if (!version) return 0;
     if (version>=18 && version<38 && b[10232]) return 0; /* v38 critical report count. */
     if (version>=18 && version<35 && b[10233]) return 0; /* v35 weapon-window presentation bits. */
@@ -280,17 +283,18 @@ int btp_state_decode_resources(const uint8_t *b, size_t n, const BtpMap *m, cons
             if (version >= 10) {
                 if (b[425]) return 0;
                 unsigned start=version==10 ? 434u : version==11 ? 441u : version==12 ? 450u : version<15 ? 896u : version>=33 ? 19329u+(unsigned)sizeof(BtpYardState) : version>=31 ? 19308u+(unsigned)sizeof(BtpYardState) : version>=30 ? 19307u+(unsigned)sizeof(BtpYardState) : version>=29 ? 19306u+(unsigned)sizeof(BtpYardState) : version>=28 ? 19292u+(unsigned)sizeof(BtpLateState) : version>=27 ? 18483u+(unsigned)sizeof(BtpCacheState) : version>=26 ? 18483u : version>=25 ? 18433u : version>=24 ? 15702u : version>=22 ? 15693u : version>=21 ? 15414u : version>=20 ? 11388u : version>=19 ? 11326u : version>=18 ? 11314u : version>=17 ? 2684u : version>=16 ? 2399u : 1803u;
-                for (unsigned i=start;i<n;++i) if (b[i] && !(version>=45 && i>=20000 && i<(version>=50 ? 20185u+BTP_MISSION_BYTES : version>=48 ? 20185u : version>=47 ? 20057u : version>=46 ? 20006u : 20005u))) return 0;
+                for (unsigned i=start;i<(version==53 ? BTP_STATE_BYTES : n);++i) if (b[i] && !(version>=45 && i>=20000 && i<(version>=50 ? 20185u+BTP_MISSION_BYTES : version>=48 ? 20185u : version>=47 ? 20057u : version>=46 ? 20006u : 20005u))) return 0;
                 if (version>=13) for (unsigned i=version>=15 ? 460u : 452u;i<512;++i) if (b[i]) return 0;
                 if (version==13 && b[878]) return 0; /* v14 firing-effect countdown. */
             }
         }
     }
     BtpState result = {.credits=35,.allowance_cap=50};
+    if (version==53 && !btp_bridge_decode(&result,b+BTP_STATE_BYTES)) return 0;
     if (version>=48 && !btp_events_decode(&result,b+20057)) return 0;
-    if (version>=50 && !btp_mission_decode(&result,b+20185)) return 0;
-    if (version==52 && !btp_capacity_decode(&result,b+BTP_CAPACITY_OFFSET)) return 0;
-    if ((version==51 || (version==52 && b[BTP_CAPACITY_OFFSET+1])) &&
+    if (version>=50 && (version!=53 || b[20185]) && !btp_mission_decode(&result,b+20185)) return 0;
+    if (version>=52 && (version!=53 || b[BTP_CAPACITY_OFFSET]) && !btp_capacity_decode(&result,b+BTP_CAPACITY_OFFSET)) return 0;
+    if ((version==51 || (version>=52 && b[BTP_CAPACITY_OFFSET+1])) &&
         !btp_battle_mission_decode(&result,b+BTP_BATTLE_MISSION_OFFSET)) return 0;
     /* Widened handles are legal only in the explicit authored v52 envelope.
        In particular, old 256-node sentinels must not become usable nodes. */
@@ -448,6 +452,7 @@ int btp_state_decode_resources(const uint8_t *b, size_t n, const BtpMap *m, cons
         result.script = (BtpScriptState){.pc=get16(b+40),.text_offset=get16(b+42),
             .text_length=get16(b+44),.menu_table=get16(b+46),.fault_pc=get16(b+48),.pause_units=get16(b+50),
             .status=b[52],.selected=b[53],.menu_id=b[54],.font=b[55],.scene=b[56],.last_opcode=b[57],.error=b[58]};
+        if (version==53) { result.script.stop_pc=get16(b+BTP_STATE_BYTES+10);result.script.stopping=b[BTP_STATE_BYTES+12]; }
         BtpScriptState *v = &result.script;
         if (version>=24) {
             memcpy(v->choices+31,b+15693,6);v->has_name=b[15699];v->name_after=b[15700];v->name_id=b[15701];

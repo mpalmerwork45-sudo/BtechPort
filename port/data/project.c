@@ -66,7 +66,7 @@ static int expected(BtpJson *j,unsigned obj,const char *key,const char *want)
     return btp_json_string(j,node,v,sizeof v) && (!strcmp(v,want) || btp_json_error(j,node,"unsupported project option"));
 }
 void btp_project_free(BtpProject *p)
-{ if (p) { free(p->chi_resources);free(p->chi_spatial);free(p->chi_services);free(p->chi_missions);btp_chi_scripts_free(p->chi_scripts);free(p); } }
+{ if (p) { free(p->chi_resources);free(p->chi_spatial);free(p->chi_services);free(p->chi_missions);free(p->chi_bridge);btp_chi_scripts_free(p->chi_scripts);free(p); } }
 BtpProject *btp_project_load(const char *root,BtpRoster *roster,BtpPortraits *portraits,BtpError *error)
 {
     BtpError ignored;if (!error) error=&ignored;
@@ -100,6 +100,16 @@ BtpProject *btp_project_load(const char *root,BtpRoster *roster,BtpPortraits *po
         if (adventure) { fail(error,"project.json","CHI import cannot enable authored events");goto done; }
         p->chi_resources=btp_chi_project_load(root,&j,&digest,&p->chi_edition,error);
         if (!p->chi_resources) goto done;
+        unsigned bridge=btp_json_optional(&j,1,"chi_bridge"),events=btp_json_optional(&j,1,"chi_events");
+        if (!!bridge!=!!events) { fail(error,"project.json","chi_bridge and chi_events must be enabled together");goto done; }
+        if (bridge) {
+            p->chi_bridge=calloc(1,sizeof *p->chi_bridge);
+            if (!p->chi_bridge || !btp_json_string(&j,events,relative,sizeof relative) || strcmp(relative,"chi-events.json") ||
+                !btp_project_path(root,relative,path,error) || !btp_adventure_load(path,&p->definitions,&p->adventure,error->text)) goto done;
+            btp_digest_add(&digest,p->adventure.source_digest,32);
+            if (!btp_json_string(&j,bridge,relative,sizeof relative) || strcmp(relative,"chi-bridge.json") ||
+                !btp_chi_bridge_load(root,relative,p,&digest,error)) goto done;
+        }
         unsigned services=btp_json_optional(&j,1,"chi_services");
         if (services) {
             p->chi_services=calloc(1,sizeof *p->chi_services);
@@ -241,7 +251,7 @@ BtpProject *btp_project_load(const char *root,BtpRoster *roster,BtpPortraits *po
         if (strcmp(relative,"chi-presentation.json")) { btp_json_error(&j,chi_art,"expected chi-presentation.json");goto done; }
         if (!btp_chi_presentation_load(root,relative,p,art,&digest,error)) goto done;
     }
-    if (!btp_json_done(&j,1) || !btp_definitions_compile(&p->definitions,r,error->text)) goto done;
+    if (!btp_json_done(&j,1) || !btp_definitions_compile(&p->definitions,r,error->text) || !btp_chi_bridge_resolve(p,error)) goto done;
     if (!btp_chi_services_stock(p->chi_services,r,error)) goto done;
     if (!btp_chi_missions_resolve(p->chi_missions,p->chi_resources,r,error)) goto done;
     btp_digest_finish(&digest,p->digest);*roster=*r;*portraits=*art;ok=1;

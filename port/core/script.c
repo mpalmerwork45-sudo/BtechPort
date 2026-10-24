@@ -10,6 +10,8 @@ void btp_script_observe(BtpBldObserver callback,void *context)
 { observer=callback;observer_context=context; }
 static void observed(const BtpBld *b,BtpBldObservation kind,unsigned from,unsigned to,unsigned detail)
 { if (observer) observer(observer_context,b,kind,from,to,detail); }
+void btp_script_observe_bridge(const BtpBld *b,unsigned entry,unsigned end,unsigned outcome)
+{ observed(b,BTP_BLD_BRIDGE_OUTCOME,entry,end,outcome); }
 void btp_script_observe_fault(const BtpBld *b,const BtpScriptState *s)
 {
     if (s->status==BTP_SCRIPT_ERROR) observed(b,BTP_BLD_FAULT,s->fault_pc,s->pc,s->error);
@@ -79,11 +81,17 @@ static void execute(BtpScriptState *s, const BtpBld *b, uint8_t story[BTP_STORY_
        Addresses are relative to payload start, excluding the size word.
        Bounded Citadel and two-shop paths are verified; unknown actions fault. */
     for (unsigned budget = 0; budget < 256; ++budget) {
+        if (s->stopping && s->pc==s->stop_pc) { s->status=BTP_SCRIPT_RETURN;return; }
         uint16_t op_pc = s->pc;
         if (!available(s, b, 1, op_pc)) return;
         uint8_t op = b->bytes[s->pc++]; s->last_opcode = op;
         observed(b,BTP_BLD_INSTRUCTION,op_pc,op_pc,op);
         switch (op) {
+        case 0xe3:
+            if (!available(s,b,8,op_pc)) return;
+            s->money_amount=word(b->bytes+s->pc);s->pc=(uint16_t)(s->pc+8);
+            observed(b,BTP_BLD_EVENT_ENTER,op_pc,s->pc,s->money_amount);
+            s->status=BTP_SCRIPT_EVENT;return;
         case 0xe4:
             if (!available(s,b,1,op_pc)) return;
             s->money_amount=b->bytes[s->pc++];s->status=BTP_SCRIPT_EFFECT;return;
@@ -243,6 +251,23 @@ static void run(BtpScriptState *s,const BtpBld *b,uint8_t story[BTP_STORY_BYTES]
 void btp_script_start(BtpScriptState *s, const BtpBld *b, uint8_t story[BTP_STORY_BYTES])
 {
     *s = (BtpScriptState){0}; run(s, b, story);
+}
+void btp_script_start_call(BtpScriptState *s,const BtpBld *b,uint8_t story[BTP_STORY_BYTES],unsigned entry,unsigned end)
+{
+    *s=(BtpScriptState){.pc=(uint16_t)entry,.stop_pc=(uint16_t)end,.stopping=1,.font=6};
+    if (!b || entry>=b->length || end>=b->length || entry==end) { fault(s,BTP_SCRIPT_TARGET,(uint16_t)entry);return; }
+    run(s,b,story);
+}
+void btp_script_event_return(BtpScriptState *s,const BtpBld *b,uint8_t story[BTP_STORY_BYTES],unsigned outcome)
+{
+    if (s->status!=BTP_SCRIPT_EVENT) return;
+    unsigned from=s->pc>=9 ? s->pc-9u : 0u;
+    if (outcome>2 || s->pc<9 || !b || s->pc>b->length || b->bytes[from]!=0xe3) { fault(s,BTP_SCRIPT_TARGET,(uint16_t)from);return; }
+    unsigned target=word(b->bytes+from+3+2*outcome);
+    s->money_amount=0;
+    if (!jump(s,b,(uint16_t)target,(uint16_t)from)) return;
+    observed(b,BTP_BLD_EVENT_RETURN,from,target,outcome);
+    observed(b,BTP_BLD_BRANCH,from,target,outcome);s->status=BTP_SCRIPT_RUNNING;run(s,b,story);
 }
 void btp_script_resume(BtpScriptState *s, const BtpBld *b, uint8_t story[BTP_STORY_BYTES])
 {

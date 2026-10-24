@@ -38,9 +38,10 @@ int btp_cutscene_begin(BtpState *s, const BtpResources *r, unsigned kind, unsign
     int cinema=s && active==1 && s->mode==BTP_BUILDING && s->campaign.building==16 && kind<10;
     int invasion=s && active==4 && kind==2 && s->campaign.invasion && s->late.invasion_popup==3;
     int yard=s && kind==0 && s->yard.active && (active==5 || active==6 || active==7);
+    int bridge=s && active==8 && s->bridge.enabled && s->event.enabled;
     if (!s || !r || s->cutscene.active || kind>=BTP_ANM_COUNT ||
         (active==1 && kind>=10 && kind<=14 && (!s->cache.active || s->mode!=BTP_BUILDING || s->campaign.building!=25)) ||
-        (!cinema && !invasion && !yard && active!=3 && ((kind != 0 && kind != 6 && kind != 8 && (kind<9 || kind>14)) || active != (kind ? 1u : 2u))) || !r->animations[kind].count ||
+        (!cinema && !invasion && !yard && !bridge && active!=3 && ((kind != 0 && kind != 6 && kind != 8 && (kind<9 || kind>14)) || active != (kind ? 1u : 2u))) || !r->animations[kind].count ||
         ((kind==0 || kind==8) && r->animations[kind].count != (kind ? 3u : 18u))) return 0;
     s->cutscene = (BtpCutsceneState){.active=(uint8_t)active,.kind=(uint8_t)kind,
         /* 0000:4A3D adds 50 retraces for every film except the repeating
@@ -87,7 +88,9 @@ static int cutscene_valid(const BtpState *s,int edited)
     const BtpCutsceneState *c = &s->cutscene;
     if (!c->active) return !c->kind && !c->step && !c->cycle && !c->hold && !c->remaining && !c->refresh_fraction &&
         s->script.status != BTP_SCRIPT_ANIMATION;
-    if (!c->remaining || c->refresh_fraction >= 1000 || (c->active!=3 && !s->checkpoint_valid) || c->hold > 1) return 0;
+    if (!c->remaining || c->refresh_fraction >= 1000 || (c->active!=3 && c->active!=8 && !s->checkpoint_valid) || c->hold > 1) return 0;
+    if (c->active==8) return s->bridge.enabled && s->event.enabled && s->mode==BTP_EVENT &&
+        c->kind<BTP_ANM_COUNT && c->step<BTP_ANM_FRAMES && (c->kind==8 ? c->cycle<7 : !c->cycle) && c->remaining<=16384;
     if (c->active==4) return c->kind==2 && c->step<31 && !c->cycle && !c->hold && c->remaining<=16384 &&
         s->mode==BTP_MISSION && s->campaign.invasion && s->late.invasion_popup==3 && s->combat.phase==BTP_COMBAT_STORY;
     if (c->active>=5 && c->active<=7) return !c->kind && c->step<(c->active==7 ? 8u : 18u) && !c->cycle && c->remaining<=16384 &&
@@ -120,6 +123,7 @@ int btp_cutscene_valid(const BtpState *s) { return cutscene_valid(s,s->project!=
 int btp_cutscene_valid_resources(const BtpState *s,const BtpResources *r)
 {
     int edited=r->project && s->cutscene.kind<22 && r->project->chi_animations[s->cutscene.kind];
-    if (edited && s->cutscene.active && s->cutscene.step>=r->animations[s->cutscene.kind].count) return 0;
+    if ((edited || s->cutscene.active==8) && s->cutscene.active &&
+        (s->cutscene.kind>=BTP_ANM_COUNT || s->cutscene.step>=r->animations[s->cutscene.kind].count)) return 0;
     return cutscene_valid(s,edited);
 }

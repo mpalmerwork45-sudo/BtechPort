@@ -572,8 +572,9 @@ int btp_adventure_load(const char *path,const BtpDefinitions *d,BtpAdventure *ou
     if (!mission_definitions(&j,a) || !combat_definitions(&j,a,d)) goto done;
     for (unsigned i=0;i<a->node_count;++i) {
         unsigned n=nodes[i];BtpEventNode *e=&a->nodes[i];
-        const char *const ops[]={"end","say","choice","if","flag","reward","recruit","transfer","shop","battle","lua","finish","picture","repair","rearm","heal","salvage","variable","objective","check","reinforce","battle_end"};
-        if (!option(&j,n,"op",ops,22,&e->op)) goto done;
+        const char *const ops[]={"end","say","choice","if","flag","reward","recruit","transfer","shop","battle","lua","finish","picture","repair","rearm","heal","salvage","variable","objective","check","reinforce","battle_end",
+            "call","return","chi_native","chi_if","chi_sound","chi_film"};
+        if (!option(&j,n,"op",ops,28,&e->op)) goto done;
         if (a->version==1 && e->op==BTP_EVENT_PICTURE) { btp_json_error(&j,n,"picture requires adventure v2");goto done; }
         e->picture=65535;unsigned image=btp_json_optional(&j,n,"image");
         if (image && (a->version<2 || !btp_json_string(&j,image,e->image,sizeof e->image) ||
@@ -593,10 +594,31 @@ int btp_adventure_load(const char *path,const BtpDefinitions *d,BtpAdventure *ou
                 ++e->count;
             }
             if (!e->count || !next(&j,n,"cancel",a,&e->next[5])) goto done;
-        } else if (e->op!=BTP_EVENT_END && e->op!=BTP_EVENT_FINISH && e->op!=BTP_EVENT_LUA && e->op!=BTP_EVENT_IF && e->op!=BTP_EVENT_BATTLE && e->op!=BTP_EVENT_CHECK) {
+        } else if (e->op!=BTP_EVENT_END && e->op!=BTP_EVENT_RETURN && e->op!=BTP_EVENT_CHI_IF && e->op!=BTP_EVENT_FINISH && e->op!=BTP_EVENT_LUA && e->op!=BTP_EVENT_IF && e->op!=BTP_EVENT_BATTLE && e->op!=BTP_EVENT_CHECK) {
             if (!next(&j,n,"next",a,&e->next[0])) goto done;
         }
         switch (e->op) {
+        case BTP_EVENT_CALL:
+            if (!REF(&j,n,"event",a->nodes,a->node_count,&e->argument) || !next(&j,n,"cancel",a,&e->next[2]) ||
+                !next(&j,n,"failure",a,&e->next[1])) goto done;
+            break;
+        case BTP_EVENT_RETURN: {
+            const char *const outcomes[]={"success","failure","cancel"};
+            if (!option(&j,n,"result",outcomes,3,&e->value)) goto done;
+            break;
+        }
+        case BTP_EVENT_CHI_NATIVE:
+            if (!string(&j,n,"call",e->text,64) || !btp_content_id(e->text,1) ||
+                !next(&j,n,"failure",a,&e->next[1]) || !next(&j,n,"cancel",a,&e->next[2])) goto done;
+            break;
+        case BTP_EVENT_CHI_IF:
+            if (!number(&j,n,"story_index",0,99,&e->argument) || !number(&j,n,"value",0,255,&e->value) ||
+                !next(&j,n,"then",a,&e->next[0]) || !next(&j,n,"else",a,&e->next[1])) goto done;
+            break;
+        case BTP_EVENT_CHI_SOUND:case BTP_EVENT_CHI_FILM:
+            if (!number(&j,n,e->op==BTP_EVENT_CHI_SOUND ? "program" : "film",e->op==BTP_EVENT_CHI_SOUND ? 1u : 0u,
+                e->op==BTP_EVENT_CHI_SOUND ? 18u : 21u,&e->argument) || !next(&j,n,"failure",a,&e->next[1])) goto done;
+            break;
         case BTP_EVENT_REINFORCE:
             if (!REF(&j,n,"group",a->groups,a->group_count,&e->argument) || !number(&j,n,"radius",0,8,&e->value) ||
                 !next(&j,n,"failure",a,&e->next[1])) goto done;

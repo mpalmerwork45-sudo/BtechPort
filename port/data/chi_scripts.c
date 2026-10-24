@@ -19,7 +19,7 @@ static const Operation operations[]={
     {"delay",0xf2},{"animation",0xea},{"wait",0xfb},{"jump",0xf8},{"menu",0xf9},{"end",0xff},
     {"sound",0xe4},{"recruit",0xe9},{"if_person_absent",0xe8},{"if_skill",0xed},
     {"if_advanced_kit",0xeb},{"if_medical_kit",0xec},{"position",0xe6},
-    {"add_money",0xe5},{"spend_money",0xee},{"if_money",0xef},{"data",0}
+    {"add_money",0xe5},{"spend_money",0xee},{"if_money",0xef},{"event",0xe3},{"data",0}
 };
 static unsigned word(const uint8_t *p) { return p[0]|(unsigned)p[1]<<8; }
 static int number(BtpJson *j,unsigned n,const char *key,unsigned low,unsigned high,unsigned *out)
@@ -120,11 +120,24 @@ static int encode(BtpJson *j,unsigned node,unsigned building,const Inventory *ba
         }break;
     }
     default: {
-        unsigned needed=(op==0xed || op==0xef || op==0xe6) ? 5u : (op==0xf7 || op==0xe8) ? 4u :
+        unsigned needed=op==0xe3 ? 9u : (op==0xed || op==0xef || op==0xe6) ? 5u : (op==0xf7 || op==0xe8) ? 4u :
             (op==0xf1 || op==0xf4 || op==0xf0 || op==0xea || op==0xe5 || op==0xee || op==0xf6 || op==0xf8 || op==0xeb || op==0xec) ? 3u :
             (op==0xfe || op==0xfa || op==0xf5 || op==0xe4 || op==0xe9 || op==0xf3 || op==0xf9) ? 2u : 1u;
         if (BTP_BLD_MAX-pc<needed) return btp_json_error(j,node,"compiled program exceeds 9000 bytes");
         switch (op) {
+        case 0xe3: {
+            const BtpProject *project=resources->project;char event[64];
+            if (!project || !project->chi_bridge || !string(j,node,"event",event,sizeof event)) return btp_json_error(j,node,"event calls require the explicit CHI quest bridge");
+            while (a<project->adventure.node_count && strcmp(event,project->adventure.nodes[a].id)) ++a;
+            if (a==project->adventure.node_count) return btp_json_error(j,node,"unknown quest event");
+            bytes[1]=(uint8_t)a;bytes[2]=(uint8_t)(a>>8);n=9;
+            const char *const routes[]={"next","failure","cancel"};
+            for (unsigned k=0;k<3;++k) {
+                if (!reference(j,btp_json_field(j,node,routes[k]),p,&b)) return 0;
+                bytes[3+2*k]=(uint8_t)b;bytes[4+2*k]=(uint8_t)(b>>8);
+            }
+            break;
+        }
         case 0xfe:case 0xfa:
             if (!number(j,node,"value",0,6,&a)) return 0;
             if (op==0xfe ? a!=3 && a!=4 && a!=6 : a!=0) return btp_json_error(j,node,"unsupported native font/scene value");
@@ -213,7 +226,7 @@ static int flow(BtpJson *j,unsigned list,const unsigned *source,BtpChiProgram *p
        fall-through, even in currently unreachable authored instructions. */
     for (unsigned i=0;i<p->count;++i) {
         BtpChiInstruction *v=&p->nodes[i];unsigned op=v->opcode;
-        if (!op || op==0xff || op==0xf8 || op==0xf3 || op==0xf9) continue;
+        if (!op || op==0xff || op==0xf8 || op==0xf3 || op==0xf9 || op==0xe3) continue;
         if (i+1==p->count || !p->nodes[i+1].opcode) return btp_json_error(j,source[i],"instruction falls into preserved data or beyond the program");
     }
     /* Deterministic cycles cannot make progress. Conditional/state loops stay
@@ -223,7 +236,7 @@ static int flow(BtpJson *j,unsigned list,const unsigned *source,BtpChiProgram *p
         unsigned i=start,stamp=start+1;
         while (i<p->count) {
             BtpChiInstruction *v=&p->nodes[i];unsigned op=v->opcode;
-            if (!op || op==0xff || op==0xfb || op==0xf5 || op==0xea || op==0xe4 || op==0xe9 || op==0xf6 || op==0xf9 ||
+            if (!op || op==0xe3 || op==0xff || op==0xfb || op==0xf5 || op==0xea || op==0xe4 || op==0xe9 || op==0xf6 || op==0xf9 ||
                 op==0xf3 || op==0xf7 || op==0xe8 || op==0xed || op==0xeb || op==0xec || op==0xef) break;
             if (seen[i]==stamp) { free(seen);return btp_json_error(j,source[i],"non-yielding deterministic cycle; add a wait or a terminating condition"); }
             seen[i]=stamp;

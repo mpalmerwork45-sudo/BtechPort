@@ -3,7 +3,7 @@
 #include "core/game.h"
 #include "data/adventure.h"
 enum { BTP_EVENT_INACTIVE, BTP_EVENT_ENTRY, BTP_EVENT_TEXT, BTP_EVENT_SELECT,
-    BTP_EVENT_TRADING, BTP_EVENT_FIGHTING, BTP_EVENT_FAULT, BTP_EVENT_COMPLETE };
+    BTP_EVENT_TRADING, BTP_EVENT_FIGHTING, BTP_EVENT_FAULT, BTP_EVENT_COMPLETE, BTP_EVENT_PRESENTATION };
 typedef void (*BtpEventObserver)(void *context,const BtpState *state,const BtpResources *resources,const BtpEventNode *node);
 typedef void (*BtpBattleObserver)(void *context,const BtpState *state,const BtpResources *resources,const BtpSceneBattle *encounter);
 /* Optional diagnostics receive command-entry snapshots; never change rules,
@@ -22,6 +22,8 @@ void btp_events_start(BtpState *state,const BtpResources *resources);
 void btp_events_start_seeded(BtpState *state,const BtpResources *resources,const uint8_t seed[3]);
 int btp_events_preview(BtpState *state,const BtpResources *resources,const char *map,unsigned x,unsigned y);
 void btp_events_tick(BtpState *state,const BtpResources *resources,BtpAction action);
+void btp_events_continue(BtpState *state,const BtpResources *resources);
+void btp_events_jump(BtpState *state,unsigned node);
 int btp_events_valid(const BtpState *state,const BtpResources *resources);
 void btp_events_encode(const BtpState *state,uint8_t bytes[128]);
 int btp_events_decode(BtpState *state,const uint8_t bytes[128]);

@@ -61,14 +61,13 @@ void btp_npc_init(BtpState *s, const BtpMap *m)
     s->npc_walk[4] = 4;
     s->npc.enabled = 2;
 }
-int btp_npc_valid_resources(const BtpState *s, const BtpMap *m,const BtpResources *r)
+int btp_npc_valid_saved(const BtpState *s, const BtpMap *m,const BtpResources *r,const BtpNpcState *n)
 {
-    const BtpNpcState *n = &s->npc;
     if (n->enabled > 2 || n->phase > 2 || n->clock >= BTP_OUTDOOR_PERIOD ||
         (n->bias != 0 && n->bias != 8) || n->fault > BTP_NPC_BAD_CONTEXT || n->allowance_pending > 1) return 0;
     if (!n->enabled) {
         if (n->phase || n->clock || n->bias || n->search || n->fault || n->loop_timer || n->allowance_pending ||
-            (!s->story_flags[4] && (n->rng[0] || n->rng[1] || n->rng[2]))) return 0;
+            (!s->story_flags[4] && !(s->bridge.enabled && s->bridge.scene) && (n->rng[0] || n->rng[1] || n->rng[2]))) return 0;
     } else if (!n->search || n->search > 100 || s->conversation_checkpoint) return 0;
     for (unsigned i = 0; i < 8; ++i) {
         const BtpNpc *a = &n->actor[i];
@@ -85,6 +84,8 @@ int btp_npc_valid_resources(const BtpState *s, const BtpMap *m,const BtpResource
     }
     return 1;
 }
+int btp_npc_valid_resources(const BtpState *s,const BtpMap *m,const BtpResources *r)
+{ return btp_npc_valid_saved(s,m,r,&s->npc); }
 int btp_npc_valid(const BtpState *s,const BtpMap *m) { return btp_npc_valid_resources(s,m,NULL); }
 static int near_player(const BtpState *s, const BtpNpc *a)
 {

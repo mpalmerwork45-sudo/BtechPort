@@ -17,4 +17,6 @@ void btp_npc_tick(BtpState *state, const BtpMap *map);
 void btp_npc_input(BtpState *state, const BtpMap *map, BtpAction action);
 int btp_npc_valid(const BtpState *state, const BtpMap *map);
 int btp_npc_valid_resources(const BtpState *state,const BtpMap *map,const BtpResources *resources);
+/* Validate suspended town actors without restoring them over a live quest. */
+int btp_npc_valid_saved(const BtpState *state,const BtpMap *map,const BtpResources *resources,const BtpNpcState *npc);
 #endif

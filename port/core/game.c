@@ -21,6 +21,7 @@
 #include "core/cache.h"
 #include "core/roster_game.h"
 #include "core/events.h"
+#include "core/chi_bridge.h"
 #include "data/chi_spatial.h"
 #include "data/project.h"
 #include <string.h>
@@ -118,6 +119,8 @@ const BtpMap *btp_active_map(const BtpResources *r,const BtpState *s)
 }
 unsigned btp_building_kind(const BtpResources *r,const BtpState *s)
 {
+    if (s->bridge.enabled && s->bridge.call!=255 && r->project && r->project->chi_bridge &&
+        s->bridge.call<r->project->chi_bridge->call_count) return r->project->chi_bridge->calls[s->bridge.call].building;
     /* The invasion replaces the visible town with its ruined map while
        TRAINING.BLD is still suspended. Its program owner remains training;
        the ruined doorway's room ID must not replace that continuation. */
@@ -196,6 +199,10 @@ static void finish_script(BtpState *s, const BtpResources *r, const BtpMap *m)
     unsigned invasion=s->campaign.invasion;
     unsigned status=s->script.status;
     story_out(s);
+    /* Bridge return is an interpreter boundary, not a building exit. The
+       bounded pump restores the suspended caller after this tick. */
+    if (s->bridge.enabled && (status==BTP_SCRIPT_EVENT || status==BTP_SCRIPT_RETURN ||
+        (s->bridge.call!=255 && status==BTP_SCRIPT_END))) return;
     if (s->script.status == BTP_SCRIPT_ERROR) {
         /* Native actions can fault outside the bytecode interpreter. Record
            that source boundary before recovery rolls back the failed choice. */
@@ -307,6 +314,8 @@ void btp_game_building(BtpState *s,const BtpResources *r,unsigned kind)
     }
     finish_script(s,r,btp_active_map(r,s));
 }
+void btp_game_script_finish(BtpState *s,const BtpResources *r)
+{ finish_script(s,r,btp_active_map(r,s)); }
 static void game_tick(BtpState *s, const BtpResources *r, BtpAction a)
 {
     if (s->event.enabled) { btp_events_tick(s,r,a);return; }
@@ -455,6 +464,7 @@ static void game_tick(BtpState *s, const BtpResources *r, BtpAction a)
                 s->campaign.building=0;s->entry_slot=0;s->script=(BtpScriptState){0};
             }
         } else if (a == BTP_ACCEPT) {
+            if (btp_bridge_entrance(s,r)) return;
             if (btp_building_kind(r,s)==BTP_BROKER_BUILDING) { btp_broker_open(s);return; }
             s->story_flags[10] = 1;
             /* Entering a shop changes the scene, not the stored crew seats.
@@ -566,7 +576,9 @@ void btp_game_tick_audio(BtpState *s,const BtpResources *r,BtpAction a,int16_t *
         if (a==BTP_OPEN_MENU) { s->combat.paused=1;s->combat.auto_run=0; }
         ++s->tick;btp_cutscene_tick(s,r);
     }
+    else if (btp_bridge_cancel(s,r,a)) ++s->tick;
     else game_tick(s,r,a);
+    btp_bridge_pump(s,r);
     /* Armour repair can initialise Jason's character record before the
        invasion. Keep his legacy training/shop aliases coherent from that
        point, rather than waiting for the destroyed-Citadel campaign flag. */

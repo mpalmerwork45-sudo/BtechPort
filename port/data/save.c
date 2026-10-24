@@ -6,6 +6,7 @@
 #include "data/project.h"
 #include "core/events.h"
 #include "core/animation.h"
+#include "core/chi_bridge.h"
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
@@ -55,6 +56,7 @@ int btp_save_is_updated(const char *path)
 static int decode(const uint8_t *b, size_t n, BtpState *s, const BtpResources *r)
 {
     BtpState context={.map_id=n>=24 ? b[16] : 1,.entry_slot=n>=24 ? b[22] : 0};
+    if (b[4]==53 && (n!=BTP_STATE_BYTES+BTP_BRIDGE_BYTES || !btp_bridge_decode(&context,b+BTP_STATE_BYTES))) return 0;
     if (n>=4096 && b[4]>=17) context.campaign.building=b[2658];
     if (n>=19292 && b[4]>=27) { context.cache.active=b[18483];context.story_flags[66]=b[11426]; }
     if (n>=19305 && b[4]>=28) { context.campaign.invasion=b[2399];context.late.invasion_event=b[19302]; }
@@ -103,7 +105,7 @@ int btp_save_write(const char *path, const BtpState *s, const BtpResources *r, B
         (!btp_resources_feature(r,BTP_FEATURE_ENHANCED) || !r->combat_profile.fingerprint))
         return fail(e,"Updated combat settings require their rule definition");
     size_t header=project ? PROJECT_HEADER_BYTES : updated ? UPDATED_HEADER_BYTES : HEADER_BYTES;
-    uint8_t bytes[PROJECT_HEADER_BYTES+BTP_STATE_BYTES] = {'B','T','S','1'};
+    uint8_t bytes[PROJECT_HEADER_BYTES+BTP_STATE_BYTES+BTP_BRIDGE_BYTES] = {'B','T','S','1'};
     if (updated) {
         memcpy(bytes,"BTU1",4);
         memcpy(bytes+16,r->roster.package,32);memcpy(bytes+48,r->roster.version,32);
@@ -111,6 +113,8 @@ int btp_save_write(const char *path, const BtpState *s, const BtpResources *r, B
     }
     BtpState validated;
     btp_state_encode(s,bytes+header);
+    size_t payload=BTP_STATE_BYTES;
+    if (s->bridge.enabled) { btp_bridge_encode(s,bytes+header+payload);payload+=BTP_BRIDGE_BYTES; }
     if (updated && bytes[header+4]>=45) {
         /* BTU2 binds rules as well as roster. Old BTU1 remains Legacy. */
         memcpy(bytes,"BTU2",4);put32(bytes+84,s->combat_profile);
@@ -126,10 +130,10 @@ int btp_save_write(const char *path, const BtpState *s, const BtpResources *r, B
     }
     /* v44 retains the payload size and edition-specific outer envelopes.
        Older Original and Updated payloads still load through their codecs. */
-    if (!decode(bytes+header,BTP_STATE_BYTES,&validated,r))
+    if (!decode(bytes+header,payload,&validated,r))
         return fail(e,"Current state cannot be saved");
     if (!btp_roster_state_valid(s,r)) return fail(e,"Current state does not match its roster package");
-    size_t length=header+BTP_STATE_BYTES;
+    size_t length=header+payload;
     put32(bytes+4,(uint32_t)(length-HEADER_BYTES));
     put32(bytes+8,checksum(bytes+HEADER_BYTES,length-HEADER_BYTES));
     /* An explicit --save filename can bypass the normal slot namespace.
@@ -179,7 +183,7 @@ int btp_save_load(const char *path, BtpState *s, const BtpResources *r, BtpError
     if (!path || !*path || !s || !r) return fail(e,"Invalid load request");
     FILE *f = fopen(path,"rb");
     if (!f) return io_fail(e,"Cannot open save");
-    uint8_t bytes[PROJECT_HEADER_BYTES+BTP_STATE_BYTES+1];
+    uint8_t bytes[PROJECT_HEADER_BYTES+BTP_STATE_BYTES+BTP_BRIDGE_BYTES+1];
     size_t n = fread(bytes,1,sizeof bytes,f);
     int ok = !ferror(f); if (fclose(f)) ok = 0;
     if (!ok) return fail(e,"Cannot read save");
@@ -198,7 +202,7 @@ int btp_save_load(const char *path, BtpState *s, const BtpResources *r, BtpError
     int updated=v2 || (n>=4 && !memcmp(bytes,"BTU1",4));
     size_t header=project ? PROJECT_HEADER_BYTES : updated ? UPDATED_HEADER_BYTES : HEADER_BYTES;
     if (n < header+24 || (!updated && memcmp(bytes,"BTS1",4)) || get32(bytes+12) ||
-        get32(bytes+4) != n-HEADER_BYTES || n > header+BTP_STATE_BYTES ||
+        get32(bytes+4) != n-HEADER_BYTES || n > header+BTP_STATE_BYTES+(project ? BTP_BRIDGE_BYTES : 0u) ||
         checksum(bytes+HEADER_BYTES,n-HEADER_BYTES) != get32(bytes+8))
         return fail(e,"Save is damaged or uses an unsupported format");
     unsigned saved_count=r->roster.count;
@@ -221,7 +225,7 @@ int btp_save_load(const char *path, BtpState *s, const BtpResources *r, BtpError
         return fail(e,"Save contains an invalid or unsupported game state");
     unsigned rule_offset=project ? 112u : 84u;
     if (!!loaded.project!=project || (!v2 && (loaded.combat_profile || bytes[header+4]>=45)) ||
-        (v2 && ((project ? bytes[header+4]<47 || bytes[header+4]>52 : bytes[header+4]!=45 && bytes[header+4]!=46) || get32(bytes+rule_offset)!=loaded.combat_profile || get32(bytes+rule_offset+4)!=loaded.combat_fingerprint)) ||
+        (v2 && ((project ? bytes[header+4]<47 || bytes[header+4]>53 : bytes[header+4]!=45 && bytes[header+4]!=46) || get32(bytes+rule_offset)!=loaded.combat_profile || get32(bytes+rule_offset+4)!=loaded.combat_fingerprint)) ||
         (loaded.combat_profile && !btp_active_combat_profile(&loaded,r)) ||
         (loaded.campaign.ui>=BTP_MENU_UPDATED_SETTINGS && loaded.campaign.ui<=BTP_MENU_COMBAT_RULES &&
             (!updated || !r->combat_profile.fingerprint)))

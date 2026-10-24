@@ -13,6 +13,8 @@
 #include "core/authored_services.h"
 #include "core/mission_state.h"
 #include "core/battle_mission.h"
+#include "core/chi_bridge.h"
+#include "core/audio.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -49,7 +51,7 @@ const BtpScene *btp_scene(const BtpResources *r,const BtpState *s)
 {
     const BtpAdventure *a=btp_adventure(r);
     unsigned map=s->event.map;
-    return a && s->event.enabled && map<a->map_count ? &a->maps[map] : NULL;
+    return a && s->event.enabled && (!s->bridge.enabled || s->bridge.scene) && map<a->map_count ? &a->maps[map] : NULL;
 }
 static void aliases(BtpState *s)
 {
@@ -77,7 +79,7 @@ static int place(BtpState *s,const BtpResources *r,unsigned map,unsigned x,unsig
         int at=btp_adventure_world_at(a,m->world,(int)(wx/2),(int)(wy/2));if (at<0) return 0;
         map=(unsigned)at;m=&a->maps[map];x=wx-2*m->origin_x;y=wy-2*m->origin_y;
     }
-    position(&candidate,m,map,x,y);
+    btp_bridge_scene(&candidate,1);position(&candidate,m,map,x,y);
     if (!btp_party_can_stand(&candidate,r,candidate.campaign.world_x,candidate.campaign.world_y)) return 0;
     *s=candidate;s->mode=BTP_EXPLORE;btp_party_recover(s,r,1);btp_world_reveal(s);return 1;
 }
@@ -87,7 +89,8 @@ static int battle(BtpState *s,const BtpResources *r,const BtpSceneBattle *b)
     unsigned back=s->event.map;
     /* Battles retain a finite local tactical map even when its city is also
        placed over the world. Return uses the independent 16-bit scene ID. */
-    position(&candidate,&btp_adventure(r)->maps[b->map],b->map,b->x,b->y);
+    if (s->bridge.enabled) btp_bridge_capture(s,&candidate.bridge.battle_return);
+    btp_bridge_scene(&candidate,1);position(&candidate,&btp_adventure(r)->maps[b->map],b->map,b->x,b->y);
     if (!btp_party_can_stand(&candidate,r,candidate.campaign.world_x,candidate.campaign.world_y)) return 0;
     candidate.mode=BTP_EXPLORE;btp_party_recover(&candidate,r,1);
     btp_campaign_begin(&candidate,r,5);
@@ -117,6 +120,7 @@ static int battle(BtpState *s,const BtpResources *r,const BtpSceneBattle *b)
 }
 static void advance(BtpState *s,unsigned node)
 { s->event.node=(uint16_t)node;s->event.selected=s->event.page=0;s->event.phase=BTP_EVENT_INACTIVE; }
+void btp_events_jump(BtpState *s,unsigned node) { advance(s,node); }
 static void run(BtpState *s,const BtpResources *r)
 {
     const BtpAdventure *a=btp_adventure(r);BtpEventState *v=&s->event;
@@ -128,6 +132,15 @@ static void run(BtpState *s,const BtpResources *r)
         if (observer) observer(observer_context,s,r,e);
         s->mode=BTP_EVENT;
         switch (e->op) {
+        case BTP_EVENT_CALL:btp_bridge_call(s,r,0);return;
+        case BTP_EVENT_CHI_NATIVE:btp_bridge_call(s,r,1);return;
+        case BTP_EVENT_RETURN:btp_bridge_return(s,r,e->value);return;
+        case BTP_EVENT_CHI_IF:target=e->next[s->story_flags[e->argument]==e->value ? 0 : 1];break;
+        case BTP_EVENT_CHI_SOUND:
+            btp_audio_effect(s,e->argument);v->phase=BTP_EVENT_PRESENTATION;return;
+        case BTP_EVENT_CHI_FILM:
+            if (!btp_cutscene_begin(s,r,e->argument,8)) { target=e->next[1];break; }
+            v->phase=BTP_EVENT_PRESENTATION;return;
         case BTP_EVENT_REINFORCE:
             if (!btp_battle_reinforce(s,r,e->argument,e->value)) target=e->next[1];
             break;
@@ -161,6 +174,7 @@ static void run(BtpState *s,const BtpResources *r)
                 s->battle_mission.in_hook=0;advance(s,s->battle_mission.node);
                 v->phase=BTP_EVENT_FIGHTING;s->mode=BTP_ENCOUNTER;return;
             }
+            if (s->bridge.enabled) { btp_bridge_return(s,r,0);return; }
             target=btp_mission_trigger(s,a);
             if (target<BTP_EVENT_NODES) break;
             v->phase=BTP_EVENT_INACTIVE;s->mode=(uint8_t)(s->party.people[0][0]==255 ? BTP_GAME_OVER : BTP_EXPLORE);btp_party_recover(s,r,1);return;
@@ -189,9 +203,11 @@ static void run(BtpState *s,const BtpResources *r)
     }
     s->mode=BTP_EVENT;v->phase=BTP_EVENT_FAULT;
 }
+void btp_events_continue(BtpState *s,const BtpResources *r) { run(s,r); }
 static void initialize(BtpState *s,const BtpResources *r,int preview,const uint8_t seed[3])
 {
     const BtpAdventure *a=btp_adventure(r);if (!a) return;
+    if (r->project->chi_bridge) { btp_bridge_initialize(s,r);return; }
     s->event=(BtpEventState){.enabled=1,.node=(uint16_t)a->start_event,.origin_map=(uint16_t)a->start_map,.origin_entry=255};
     btp_mission_initialize(s,a);
     s->battle_mission=(BtpBattleMissionState){0};
@@ -241,7 +257,9 @@ static void result(BtpState *s,const BtpResources *r)
     unsigned map=s->event.return_map,x=s->campaign.return_x,y=s->campaign.return_y;
     s->campaign.encounter=0;s->combat=(BtpCombatState){0};s->effects=(BtpEffectsState){0};s->aftermath=(BtpAftermathState){0};
     s->battle_mission.active=s->battle_mission.in_hook=s->battle_mission.stage=0;
-    aliases(s);position(s,&btp_adventure(r)->maps[map],map,x,y);
+    aliases(s);
+    if (s->bridge.enabled) btp_bridge_restore(s,&s->bridge.battle_return);
+    else position(s,&btp_adventure(r)->maps[map],map,x,y);
     advance(s,next_node);run(s,r);
 }
 void btp_events_tick(BtpState *s,const BtpResources *r,BtpAction action)
@@ -255,6 +273,11 @@ void btp_events_tick(BtpState *s,const BtpResources *r,BtpAction action)
         return;
     }
     ++s->tick;
+    if (v->phase==BTP_EVENT_PRESENTATION) {
+        if (s->cutscene.active) btp_cutscene_tick(s,r);
+        if (!s->cutscene.active && !s->audio.sound_count) { advance(s,a->nodes[v->node].next[0]);run(s,r); }
+        return;
+    }
     if (v->phase==BTP_EVENT_FIGHTING) {
         if (s->battle_mission.active && !s->effects.count && !s->presentation.count && !s->audio.sound_count && !s->cutscene.active) {
             btp_battle_observe(s,a);
@@ -342,7 +365,8 @@ void btp_events_tick(BtpState *s,const BtpResources *r,BtpAction action)
             s->battle_mission.in_hook=0;s->battle_mission.outcome=2;
             memset(s->battle_mission.pending,0,sizeof s->battle_mission.pending);
             advance(s,s->battle_mission.node);v->phase=BTP_EVENT_FIGHTING;s->mode=BTP_ENCOUNTER;
-        } else { v->phase=BTP_EVENT_INACTIVE;s->mode=BTP_EXPLORE; }
+        } else if (s->bridge.enabled) { s->bridge.fault=0;btp_bridge_return(s,r,1); }
+        else { v->phase=BTP_EVENT_INACTIVE;s->mode=BTP_EXPLORE; }
     }
 }
 unsigned btp_events_catalogue(const BtpState *s,const BtpResources *r,unsigned weight,unsigned limit,unsigned indices[256])
@@ -389,11 +413,12 @@ int btp_events_decode(BtpState *s,const uint8_t b[128])
     }
     for (unsigned i=b[127]==2 ? 122u : b[127] ? 117u : 112u;i<127;++i) if (b[i]) return 0;
     for (unsigned i=0;i<64;++i) if (v->flags[i]>1) return 0;
-    return v->enabled==1 && v->phase<=BTP_EVENT_COMPLETE && v->node<BTP_EVENT_NODES && v->selected<6 && v->page<5 &&
+    return (v->enabled==1 || (s->bridge.enabled && !v->enabled)) && v->phase<=(s->bridge.enabled ? BTP_EVENT_PRESENTATION : BTP_EVENT_COMPLETE) && v->node<BTP_EVENT_NODES && v->selected<6 && v->page<5 &&
         v->origin_map<BTP_SCENES && v->map<BTP_SCENES && v->return_map<BTP_SCENES;
 }
 int btp_events_valid(const BtpState *s,const BtpResources *r)
 {
+    if (s->bridge.enabled) return btp_bridge_valid(s,r);
     const BtpAdventure *a=btp_adventure(r);const BtpEventState *v=&s->event;
     if (!v->enabled) return !a;
     if (!a || !s->project || !btp_scene(r,s) || v->node>=a->node_count || v->origin_map>=a->map_count ||

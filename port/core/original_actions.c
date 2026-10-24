@@ -45,7 +45,8 @@ void btp_original_services(BtpState *s,const BtpResources *r)
     /* Preserve the sixteen-call budget and held states exactly. This adapter
        owns legacy PCs/native IDs; the game loop still owns tick advancement,
        animation dispatch, position publication and final script recovery. */
-    for (unsigned service = 0; service < 16 && (s->script.status == BTP_SCRIPT_NATIVE || s->script.status>=BTP_SCRIPT_MONEY); ++service) {
+    for (unsigned service = 0; service < 16 && (s->script.status == BTP_SCRIPT_NATIVE ||
+        (s->script.status>=BTP_SCRIPT_MONEY && s->script.status<=BTP_SCRIPT_EFFECT)); ++service) {
         if (s->script.status==BTP_SCRIPT_RECRUIT) {
             if (s->service.phase==8) break;
             unsigned skill=s->script.money_amount;

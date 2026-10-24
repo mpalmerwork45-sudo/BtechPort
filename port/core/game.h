@@ -144,6 +144,27 @@ typedef struct {
     uint32_t fired,seen_dead;
     uint8_t pending[32],units[12],waypoint[12],sides[12];
 } BtpBattleMissionState;
+enum { BTP_BRIDGE_DEPTH=4, BTP_BRIDGE_BYTES=8192 };
+typedef struct {
+    uint16_t x,y,world_x,world_y,map;
+    uint8_t native_map,scene,entry,action,building,disk;
+} BtpBridgePosition;
+typedef struct {
+    uint8_t kind,call,program;
+    uint16_t node;
+    BtpBridgePosition position;
+    BtpScriptState script;
+} BtpBridgeFrame;
+typedef struct {
+    uint8_t enabled,depth,scene,call,fault,outcome;
+    BtpBridgeFrame frames[BTP_BRIDGE_DEPTH];
+    BtpBridgePosition battle_return;
+    /* Native discovery and NPCs must survive a temporary authored map.
+       Only the inactive discovery plane is copied on a domain change. */
+    uint8_t native_explored[2048],quest_explored[2048];
+    BtpNpcState parked_npc;
+    BtpTerrainMark native_marks[64];uint8_t native_mark_next;
+} BtpBridgeState;
 typedef struct {
     uint32_t tick;
     uint16_t x_half, y_half;
@@ -199,6 +220,7 @@ typedef struct {
     uint8_t project; /* Requires the package-bound save envelope, including before owning a custom mech. */
     BtpEventState event;
     BtpBattleMissionState battle_mission;
+    BtpBridgeState bridge;
     /* Content-derived CHI coordinate frame, reconstructed after loading.
        Plus one permits an origin at zero. These are not save payload fields;
        the package fingerprint already binds the corresponding map data. */
@@ -214,6 +236,7 @@ int btp_chi_preview(BtpState *state,const BtpResources *resources,const char *ma
 const BtpCombatProfile *btp_active_combat_profile(const BtpState *state,const BtpResources *resources);
 int btp_set_combat_profile(BtpState *state,const BtpResources *resources,unsigned enhanced);
 void btp_game_building(BtpState *state,const BtpResources *resources,unsigned kind);
+void btp_game_script_finish(BtpState *state,const BtpResources *resources);
 void btp_tick(BtpState *state, const BtpMap *map, BtpAction action);
 void btp_game_tick(BtpState *state, const BtpResources *resources, BtpAction action);
 void btp_game_tick_audio(BtpState *state, const BtpResources *resources, BtpAction action, int16_t *samples);
