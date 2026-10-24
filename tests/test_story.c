@@ -1,6 +1,7 @@
 #include "core/story.h"
 #include "core/party.h"
 #include "data/save.h"
+#include "frontend/pixels.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -12,6 +13,24 @@ static void input(BtpState *s,const BtpResources *r,BtpAction action)
     btp_state_encode(s,a);CHECK(btp_state_decode(a,sizeof a,btp_active_map(r,s),btp_state_bld(r,s),&copy));
     btp_game_tick(s,r,action);btp_game_tick(&copy,r,action);
     btp_state_encode(s,a);btp_state_encode(&copy,b);CHECK(!memcmp(a,b,sizeof a));
+}
+static void kit_offer(const BtpState *s,const BtpResources *r,unsigned tick)
+{
+    CHECK(s->script.status==BTP_SCRIPT_CONFIRM && s->script.has_cash);
+    CHECK(s->script.cash_after && s->script.text_row[s->script.cash_after-1u]==22);
+    uint32_t *a=malloc(sizeof *a*BTP_PIXELS),*b=malloc(sizeof *b*BTP_PIXELS);CHECK(a && b);
+    BtpState display=*s;display.credits=display.script.cash_value=58669;btp_render(r,&display,0,a);
+    display.credits=display.script.cash_value=1;btp_render(r,&display,0,b);
+    /* Cash length must not shift any offer or Yes/No pixels. The original
+       F0 sequence anchors it separately at the right panel's bottom row. */
+    unsigned different=0,green=0;
+    for (unsigned y=8;y<184;++y) for (unsigned x=112;x<312;++x) CHECK(a[y*320+x]==b[y*320+x]);
+    for (unsigned y=184;y<192;++y) for (unsigned x=112;x<312;++x) {
+        different+=a[y*320+x]!=b[y*320+x];green+=a[y*320+x]==btp_palette[2];
+    }
+    CHECK(different && green);
+    char path[96];snprintf(path,sizeof path,"work/hospital-kit-%u.ppm",tick);CHECK(btp_write_ppm(path,a));
+    free(a);free(b);
 }
 int main(int argc,char **argv)
 {
@@ -44,6 +63,7 @@ int main(int argc,char **argv)
         while (fgets(line,sizeof line,f)) {
             line[strcspn(line,"\r\n")]=0;BtpAction a;CHECK(btp_action_parse(line,&a));
             input(&s,r,a);++ticks;crest+=s.cutscene.active && s.cutscene.kind==6 && (s.campaign.building==9 || s.campaign.building==13);
+            if (!route && (ticks==59327 || ticks==59331)) kit_offer(&s,r,ticks);
         }
         fclose(f);CHECK(ticks>40000 && crest && s.mode==BTP_EXPLORE);
         CHECK(s.party.people[3][10]==3 && s.party.medical_kit && s.party.advanced_kit && s.story_flags[27]);

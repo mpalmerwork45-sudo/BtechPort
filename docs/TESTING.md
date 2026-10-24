@@ -1,5 +1,23 @@
 # Build, verification and original oracle — 2026-10-24
 
+## Hospital purchase cash footer — 2026-10-24
+
+**VERIFIED script positioning and targeted native rendering.** HOSPITAL.BLD's
+surgery offer moves to `(0,22)` for its balance, then `(0,0)` for the offer
+(decoded offsets 4005 and 4021). Medical kits and facility fees use the same
+layout. The renderer now separates that anchored footer from flowing text;
+inline cash insertions remain inline. The original native-action-10 suffix at
+DS:4C18 selects white and prints a period after the green number. Yes/No uses
+the original highlighted selection below the question.
+
+Linux player/headless and affected tests build. `later-story-primary`,
+`space-menu-six-slots-title` and `mechit-original-visit` pass (5.47 s combined).
+The ordinary hospital route compares offer pixels with balances 1 and 58,669:
+only the cash regions change. Both kit-offer captures were visually inspected
+at `work/hospital-kit-{59327,59331}.png`; the existing route still verifies
+purchases and saved continuation at every input. Script state/save encoding
+is unchanged. No new DOS screenshot or Windows run is claimed for this fix.
+
 ## World painting and shared construction workshops — 2026-10-24
 
 **VERIFIED within the measured Linux GUI/native and Windows/Wine scope.**

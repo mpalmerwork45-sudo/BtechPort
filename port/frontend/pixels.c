@@ -1045,6 +1045,34 @@ static void service_yes_no(const BtpResources *r,uint32_t *f,int y,unsigned sele
     rectangle(f,selected ? 144 : 112,y,selected ? 16 : 24,8,14);
     text(r,f,112,y,"Yes",selected ? 15u : 0u);text(r,f,144,y,"No",selected ? 0u : 15u);
 }
+static int script_cash_footer(const BtpResources *r,const BtpState *s,uint32_t *f,
+    uint8_t *body,size_t capacity,size_t *length)
+{
+    const BtpScriptState *v=&s->script;
+    if (s->talk.phase || !v->has_cash || !v->cash_after || v->cash_after>v->text_count) return 0;
+    unsigned at=v->cash_after-1u;
+    if (v->text_row[at]!=22 || v->text_column[at]>=25 || v->text[at].length>=900) return 0;
+    /* HOSPITAL's F0 positions its cash label at row 22, then returns to
+       row 0 for the offer. Keep this footer out of the flowing body, while
+       leaving genuine inline cash insertions (such as seminars) untouched.
+       This is presentation only: retained script/save offsets stay intact. */
+    const BtpBld *b=btp_state_bld(r,s);BtpTextSpan footer=v->text[at];
+    BtpScriptState text_state=*v;text_state.has_cash=text_state.cash_after=0;
+    text_state.text_length=(uint16_t)(text_state.text_length-footer.length);
+    for (unsigned i=at;i+1u<text_state.text_count;++i) {
+        text_state.text[i]=text_state.text[i+1];text_state.text_column[i]=text_state.text_column[i+1];
+        text_state.text_row[i]=text_state.text_row[i+1];
+    }
+    --text_state.text_count;text_state.text_offset=text_state.text_count ? text_state.text[0].offset : 0;
+    if (text_state.has_name && text_state.name_after>at) --text_state.name_after;
+    if (!btp_script_text(&text_state,b,body,capacity)) return 0;
+    *length=strlen((const char *)body);
+    uint8_t message[1024];size_t used=footer.length;
+    memcpy(message,b->bytes+footer.offset,used);service_balance(message,&used,v->cash_value);
+    (void)text_wrap_bounds(r,f,184,message,used,NULL,184,184,
+        112+8*(int)v->text_column[at],25u-v->text_column[at],15);
+    return 1;
+}
 static void medical_panel(const BtpResources *r,const BtpState *s,uint32_t *f)
 {
     const BtpServiceState *v=&s->service;uint8_t message[1024];size_t n=0;
@@ -1464,6 +1492,7 @@ static void story_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
         }
         return;
     }
+    int cash_footer=script_cash_footer(r,s,f,bytes,sizeof bytes,&length);
     if (v->status == BTP_SCRIPT_MENU || s->talk.phase == BTP_TALK_MENU) {
         if (!s->talk.phase && !btp_script_menu_text(v,btp_state_bld(r,s),bytes,sizeof bytes,&length)) {
             text(r,f,110,12,"INVALID MENU TEXT",12); return;
@@ -1490,6 +1519,7 @@ static void story_panel(const BtpResources *r, const BtpState *s, uint32_t *f)
     } else {
         int y = wrapped(r,f, r->dialogue.length ? 8 : 9, bytes, length, 15);
         if (v->status == BTP_SCRIPT_CONFIRM) {
+            if (cash_footer) { service_yes_no(r,f,y>176 ? 176 : y,v->confirm_selected);return; }
             if (y > 177) y = 177;
             text(r,f,110,y,"Yes",v->confirm_selected == 0 ? 14u : 7u);
             text(r,f,140,y,"No",v->confirm_selected == 1 ? 14u : 7u);
