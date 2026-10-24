@@ -134,11 +134,14 @@ class ImportView:
             ttk.Button(form,text='Browse...',command=browse).grid(row=row,column=2,padx=(8,0))
         ttk.Label(form,text='Campaigns').grid(row=2,column=0,sticky='w',pady=8)
         ttk.Combobox(form,textvariable=self.edition,values=('both','original','updated'),state='readonly').grid(row=2,column=1,sticky='w')
-        information=ttk.Label(self.window,text='Creates separate projects and save slots with editable native maps, world, presentation, dialogue and labelled building scripts. Updated also includes unit definitions. Original-derived files stay private.',wraplength=500,padding=12);information.pack(fill='x')
+        information=ttk.Label(self.window,text='Requires all 77 unmodified DOS 1.03 files (including BTECH.EXE). Original retains the native roster/rules; Updated includes the expanded roster, broker and Enhanced combat. Both creates separate projects and save slots. Completed imports play without the original installation. Original-derived files stay private.',wraplength=500,padding=12);information.pack(fill='x')
         bar=ttk.Frame(self.window,padding=12);bar.pack(fill='x')
         self.start_button=ttk.Button(bar,text='Import',style='Accent.TButton',command=lambda:guard(self,self.start,publish=False));self.start_button.pack(side='left')
         self.cancel_button=ttk.Button(bar,text='Cancel import',command=self.cancel,state='disabled');self.cancel_button.pack(side='left',padx=8)
+        ttk.Button(bar,text='Inspect interrupted imports',command=lambda:guard(self,self.interrupted,publish=False)).pack(side='left',padx=8)
         self.progress=ttk.Progressbar(bar,mode='indeterminate');self.progress.pack(side='left',fill='x',expand=True,padx=8)
+        from editor_ui import flow_toolbar
+        flow_toolbar(bar)
         self.completed=ttk.Frame(self.window,padding=12);self.completed.pack(fill='x')
         status=ttk.Label(self.window,textvariable=self.status,wraplength=500,padding=12);status.pack(fill='x')
         wrap_labels(self.window,[information,status])
@@ -168,7 +171,9 @@ class ImportView:
                 ttk.Button(row,text='Edit',command=lambda p=project:guard(self,lambda:self.edit(p),publish=False)).pack(side='left',padx=6)
                 ttk.Button(row,text='Play',command=lambda p=project:guard(self,lambda:self.play(p),publish=False)).pack(side='left')
             self.owner.settings.setdefault('player',str(Path(self.owner.validator).with_name('btech-port')))
-        def failed(error):self.finish();self.status.set(str(error))
+        def failed(error):
+            self.finish();self.start_button.configure(text='Retry import')
+            self.status.set(str(error)+' Fix the folder/files or choose another new output folder, then Retry import.')
         try:self.workspace.tasks.submit('Importing CHI campaigns',self,work,finish,failed,cancellable=False)
         except Exception:self.finish();raise
         self.poll()
@@ -182,6 +187,11 @@ class ImportView:
 
     def cancel(self):
         if self.cancel_event:self.cancel_event.set();self.status.set('Cancelling safely...')
+
+    def interrupted(self):
+        from chi_import import interrupted_imports
+        rows=interrupted_imports(Path(self.target.get()).parent)
+        self.status.set('No marked interrupted imports in this parent folder.' if not rows else '\n'.join(row['staging']+' — '+row['recovery'] for row in rows))
 
     def close(self):
         if self.cancel_event:self.cancel();return

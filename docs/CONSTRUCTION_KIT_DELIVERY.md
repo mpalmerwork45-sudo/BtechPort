@@ -91,3 +91,41 @@ creation is exclusive. The original save is preserved. Ordinary loading remains
 strict and does not silently migrate edited projects. The CLI prints an audit
 report with checks and before/after hashes; configure original resources in
 Player setup when migrating a CHI-dependent game.
+
+## Editable CHI imports and provenance checks
+
+The kit includes the offline [CHI importer](CHI_IMPORT.md) and
+[edited-campaign reconstruction recipes](CHI_RECONSTRUCTION.md). Completed
+imports own their resources and work after the source install is unavailable.
+The launcher keeps imported project saves separate from its normal games.
+
+After packaging, test the unpacked kit with its own bundled Python/tools from
+another working directory. Supply the original files explicitly for extraction;
+choose a new private output parent. This probe also reconstructs Last Beacon's
+20 original tile bases locally:
+
+```sh
+/path/to/kit/runtime/bin/python3 -B /path/to/kit/tools/chi_delivery_probe.py \
+  --data "/path/to/Original DOS" --output "/new/private/CHI delivery proof"
+```
+
+Use the bundled interpreter environment set by `ConstructionKit`/`Author`
+(`PYTHONHOME`, Tcl/Tk and library paths) when invoking the interpreter directly.
+`tools/native_smoke.py --delivery-only KIT` remains the full Linux desktop/CLI
+probe. Native Windows Tk needs a separate Windows desktop check.
+
+The packager scans the final staged bytes and the generated archive. You can
+inspect either again, without extracting an untrusted archive:
+
+```sh
+python3 tools/release_guard.py work/releases/ConstructionKit-linux
+python3 tools/release_guard.py work/releases/ConstructionKit-linux.tar.gz
+python3 tools/asset_provenance.py check-staged
+```
+
+The guard enforces inventory hashes and rejects recognized original raw files,
+converted cache signatures, private campaign documents, known original tile
+pixels and declared original/unknown payloads. This extends the indexed-project
+checks to all actual shipped files. Stripped/altered arbitrary assets still need
+origin review; a passing guard is not license clearance. Personal work, imported
+campaigns, test traces and saves stay outside the distribution.

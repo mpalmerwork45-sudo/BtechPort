@@ -21,7 +21,7 @@ def capabilities(tool):
         operations=OPERATIONS, features=dict(transactional_batches=True,expected_revision=True,dry_run=True,
         persisted_requests=True,gui_undo=True,live_remote_session=False,live_local_session=True,protected_regions=True,
         change_review=True,partial_change_groups=True,named_protection_overrides=True,shared_construction_library=True,
-        native_chi_spatial=True,native_chi_presentation=True,native_chi_bld_sources=True,native_chi_event_bridge=True,
+        native_chi_spatial=True,native_chi_presentation=True,native_chi_bld_sources=True,native_chi_event_bridge=True,native_chi_reconstruction_recipes=True,
         mission_regions=True,typed_mission_variables=True,explicit_objective_states=True,compound_conditions=True,
         combat_hooks=True,round_timers=True,reinforcements=True,escort_waypoints=True,
         campaign_source_modules=True,deterministic_source_builds=True,source_diagnostics=True,recorded_campaign_recipes=True,
@@ -53,6 +53,7 @@ def capabilities(tool):
         source_projects=dict(format='btp-campaign-source-v1',index='SOURCE.json',files_max=4096,bytes_max=134217728,
             commands=['source convert','source build','source locations'],runtime_limits='See runtime.limits and format_limits; campaign.upgrade opts into v3.'),
         recipes=dict(commands=['recipe list','recipe build'],format='btp-greybank-recipe-v1',guide='docs/CAMPAIGN_RECIPES.md'),
+        chi_recipes=dict(commands=['chi-recipe export','chi-recipe build'],format='btp-chi-recipe-v1',schema='schemas/chi-recipe-v1.schema.json',guide='docs/CHI_RECONSTRUCTION.md',dependency='User-supplied unmodified DOS 1.03 files; matching importer revision'),
         schemas='schemas/',guide='docs/AI_AUTHORING_GUIDE.md')
 
 

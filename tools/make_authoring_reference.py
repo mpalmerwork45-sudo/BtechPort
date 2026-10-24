@@ -16,8 +16,9 @@ def main():
     from campaign_recipe import SCHEMA as recipe_schema
     from chi_bld import schema as bld_schema
     from chi_bridge import schema as bridge_schema
+    from chi_recipe import schema as chi_recipe_schema
     for name,schema in [('authoring-batch-v1',BATCH_SCHEMA),('authoring-scenario-v1',SCHEMA),('authoring-suite-v1',SUITE_SCHEMA),('authoring-protection-v1',RULE_SCHEMA),
-                        ('construction-library-v1',construction_schema()),('campaign-source-v1',source_schema()),('adventure-v3',capacity_schema()),('greybank-recipe-v1',recipe_schema),('chi-scripts-v1',bld_schema()),('chi-bridge-v1',bridge_schema())]:
+                        ('construction-library-v1',construction_schema()),('campaign-source-v1',source_schema()),('adventure-v3',capacity_schema()),('greybank-recipe-v1',recipe_schema),('chi-scripts-v1',bld_schema()),('chi-bridge-v1',bridge_schema()),('chi-recipe-v1',chi_recipe_schema())]:
         value=dict(schema,**{'$schema':'https://json-schema.org/draft/2020-12/schema'})
         (ROOT/'schemas'/f'{name}.schema.json').write_text(json.dumps(value,indent=2)+'\n')
     lines=['# Authoring command reference','',

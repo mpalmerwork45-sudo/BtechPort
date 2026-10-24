@@ -138,6 +138,12 @@ def parser():
         s.add_argument('--'+key,type=Path,default=ROOT/'build'/(name+('.exe' if os.name=='nt' else '')))
     for key,path in [('data','Original DOS'),('dialogue-data','work/talk-data.bin'),('combat-data','work/combat-data.bin'),('world-data','work/world-data.bin')]:
         s.add_argument('--'+key,type=Path,default=ROOT/path)
+    chi=sub.add_parser('chi-recipe',help='Export/build asset-free recipes for edited imported CHI campaigns.')
+    actions=chi.add_subparsers(dest='chi_recipe_action',required=True)
+    for action in ('export','build'):
+        s=actions.add_parser(action);s.add_argument('--project' if action=='export' else '--file',type=Path,required=True)
+        s.add_argument('--data',type=Path,required=True);s.add_argument('--output',type=Path,required=True)
+        s.add_argument('--validator',type=Path,default=ROOT/'build'/('btp-project.exe' if os.name=='nt' else 'btp-project'))
     return p
 
 
@@ -169,6 +175,10 @@ def create(args):
 
 
 def dispatch(args):
+    if args.command=='chi-recipe':
+        from chi_recipe import export_recipe,build_recipe
+        if args.chi_recipe_action=='export':return export_recipe(ProjectDocument(args.project,args.validator),args.data,args.output)
+        return build_recipe(read_json(args.file),args.data,args.output,args.validator)
     if args.command=='recipe':
         from campaign_recipe import describe
         if args.recipe_action=='list':return dict(api_version=API_VERSION,status='ok',recipes=[describe()])

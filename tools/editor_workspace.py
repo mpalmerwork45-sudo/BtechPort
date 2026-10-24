@@ -352,6 +352,8 @@ class Workspace:
         self.action('CHI missions and campaign',lambda:open_missions(self.active_scope().owner),groups['Project'])
         from chi_bridge_editor import open_quests
         self.action('CHI quests',lambda:open_quests(self.active_scope().owner),groups['Project'])
+        from chi_recipe_editor import open_recipes
+        self.action('CHI reconstruction recipes',lambda:open_recipes(self.active_scope().owner),groups['Project'])
         self.action('CHI maps and world',lambda:self.open_map(),groups['Project'])
         self.action('CHI resources',lambda:self.map_view().resources(),groups['Project'])
         from editor_authoring import apply_file,export_summary,check_mission

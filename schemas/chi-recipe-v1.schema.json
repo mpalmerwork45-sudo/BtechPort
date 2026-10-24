@@ -1,0 +1,235 @@
+{
+  "type": "object",
+  "properties": {
+    "format": {
+      "const": "btp-chi-recipe-v1"
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "base": {
+      "type": "object",
+      "properties": {
+        "edition": {
+          "enum": [
+            "original",
+            "updated"
+          ]
+        },
+        "package_id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9._-]{0,62}$"
+        },
+        "content_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "spatial": {
+          "type": "boolean"
+        },
+        "bridge": {
+          "type": "boolean"
+        },
+        "art_bases": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "kind": {
+                "enum": [
+                  "tile",
+                  "sprite",
+                  "screen",
+                  "font",
+                  "animation",
+                  "portrait"
+                ]
+              },
+              "resource": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+              },
+              "index": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 375
+              },
+              "count": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 376
+              }
+            },
+            "required": [
+              "id",
+              "kind",
+              "resource",
+              "index",
+              "count"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 0,
+          "maxItems": 256
+        }
+      },
+      "required": [
+        "edition",
+        "package_id",
+        "content_version",
+        "title",
+        "spatial",
+        "bridge",
+        "art_bases"
+      ],
+      "additionalProperties": false
+    },
+    "base_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "result_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "file": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          },
+          "encoding": {
+            "enum": [
+              "pretty",
+              "canonical",
+              "text"
+            ]
+          },
+          "changes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "op": {
+                  "enum": [
+                    "set",
+                    "remove",
+                    "copy",
+                    "order",
+                    "keys",
+                    "splice"
+                  ]
+                },
+                "path": {
+                  "type": "array",
+                  "items": true,
+                  "minItems": 0,
+                  "maxItems": 32
+                },
+                "before": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                },
+                "value": true,
+                "source": {
+                  "type": "array",
+                  "items": true,
+                  "minItems": 0,
+                  "maxItems": 32
+                },
+                "ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "maxLength": 63,
+                    "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+                  },
+                  "minItems": 0,
+                  "maxItems": 4096
+                },
+                "keys": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 1024
+                  },
+                  "minItems": 0,
+                  "maxItems": 4096
+                },
+                "edits": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "at": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 16777216
+                      },
+                      "delete": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 16777216
+                      },
+                      "text": true
+                    },
+                    "required": [
+                      "at",
+                      "delete",
+                      "text"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "minItems": 0,
+                  "maxItems": 65536
+                }
+              },
+              "required": [
+                "op",
+                "path"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 0,
+            "maxItems": 32768
+          }
+        },
+        "required": [
+          "file",
+          "changes",
+          "encoding"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0,
+      "maxItems": 256
+    }
+  },
+  "required": [
+    "format",
+    "schema_version",
+    "base",
+    "base_digest",
+    "result_digest",
+    "files"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

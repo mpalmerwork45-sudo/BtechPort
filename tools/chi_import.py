@@ -93,6 +93,24 @@ def original_definitions(identity):
         ammunition=[],presentations=[],weapons=[],equipment=[],mechs=[])
 
 
+def interrupted_imports(parent):
+    """Read only importer-owned markers; never guess that user files may go.
+    A crash before atomic publication leaves private staging, not a half game.
+    Retrying an absent destination is safe and does not erase that evidence.
+    """
+    parent=plain_path(parent);rows=[]
+    for path in sorted(parent.glob('.chi-import-*')):
+        if path.is_symlink() or not path.is_dir():continue
+        marker=path/'IMPORT-STAGING.json'
+        if marker.is_symlink() or not marker.is_file() or marker.stat().st_size>4096:continue
+        try:value=json.loads(marker.read_bytes())
+        except (ValueError,OSError):continue
+        if isinstance(value,dict) and value.get('format')=='btp-chi-import-staging-v1':
+            rows.append(dict(staging=str(path),output=value.get('output'),started=value.get('started'),
+                recovery='If this destination is absent, retry the import there. Existing staging is preserved; never open its partial campaigns as finished projects.'))
+    return rows
+
+
 def import_campaigns(source,output,edition='both',validator=None,cancel=None,progress=lambda _:None):
     from prepare_talk import extract as talk
     from prepare_combat import extract as combat
@@ -116,6 +134,7 @@ def import_campaigns(source,output,edition='both',validator=None,cancel=None,pro
     profiles=('original','updated') if edition=='both' else (edition,)
     token=uuid.uuid4().hex[:12];records=[]
     with tempfile.TemporaryDirectory(prefix='.chi-import-',dir=target.parent) as temporary:
+        (Path(temporary)/'IMPORT-STAGING.json').write_bytes(encoded(dict(format='btp-chi-import-staging-v1',output=str(target),started=time.time(),pid=os.getpid())))
         stage=Path(temporary)/'campaigns';stage.mkdir()
         extraction=Path(temporary)/'combat-data.bin';extraction.write_bytes(caches['combat-data.bin'])
         for profile in profiles:
@@ -166,7 +185,8 @@ def import_campaigns(source,output,edition='both',validator=None,cancel=None,pro
                 resources=origins,capabilities=dict(editable=['native-dialogue-overrides','native-maps','world-generator','town-placements',
                     'entrances','NPC-routes','jigsaws','presentation-resources','labelled-BLD-source','native-service-content','native-mission-content',*(['added-unit-definitions','broker-entrance'] if profile=='updated' else [])],
                     compatibility_only=['native-service-mechanics','native-campaign-state-machines'],
-                    optional=['native-quest-bridge','authored-quests'],pending_milestones=['C4.5','C5']),
+                    optional=['native-quest-bridge','authored-quests','asset-free-reconstruction-recipes'],
+                    verification_limits=['Native Windows Tk requires a Windows desktop observation.','Independent audit and unobserved DOS branches are not claimed.']),
                 distribution='Private original-derived content; use an asset-free reconstruction recipe for sharing.')
             (project/'IMPORT.json').write_bytes(encoded(provenance))
             (project/'.gitignore').write_text('# Private original-derived campaign. Share a recipe, not these files.\n*\n')
@@ -175,7 +195,8 @@ def import_campaigns(source,output,edition='both',validator=None,cancel=None,pro
                 'Text: Project > CHI campaign. Maps/world: Project > CHI maps and world. Art/audio: Project > CHI resources.\n'
                 'BLD dialogue/control flow: Project > CHI scripts. Service content: Project > CHI services. Missions: Project > CHI missions and campaign.\n'
                 'Optional quests: Project > CHI quests. Add example quest creates a new native doorway contract.\n'
-                'Aggregate campaign acceptance and final delivery checks remain C4.5 and C5.\n'
+                'Share changes: Project > CHI reconstruction recipes. Recipients supply DOS 1.03 files and the matching kit.\n'
+                'Campaign/setup evidence and limits: docs/CHI_ACCEPTANCE.md in the Construction Kit.\n'
                 'Keep this exact project for its saves. Reimport to a NEW folder; never overwrite edited projects.\n'
                 'IMPORT.json records provenance and current editing limits. Original rights still apply to derived content.\n')
             progress('Validating '+profile+' campaign');check_cancel(cancel)
@@ -194,12 +215,17 @@ def import_campaigns(source,output,edition='both',validator=None,cancel=None,pro
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--data',type=Path,required=True)
-    parser.add_argument('--output',type=Path,required=True)
+    parser.add_argument('--data',type=Path)
+    parser.add_argument('--output',type=Path)
+    parser.add_argument('--inspect-staging',type=Path,help='List interrupted private imports in this parent folder without deleting them.')
     parser.add_argument('--edition',choices=('original','updated','both'),default='both')
     parser.add_argument('--validator',type=Path)
     args=parser.parse_args()
-    try:result=import_campaigns(args.data,args.output,args.edition,args.validator)
+    if not args.inspect_staging and (not args.output or not args.data):parser.error('--data and --output are required for an import')
+    try:
+        if args.inspect_staging:
+            print(json.dumps(dict(interrupted=interrupted_imports(args.inspect_staging)),indent=2));return
+        result=import_campaigns(args.data,args.output,args.edition,args.validator)
     except (EditorError,OSError,ValueError) as error:parser.exit(1,str(error)+'\n')
     print(json.dumps(result,indent=2))
 

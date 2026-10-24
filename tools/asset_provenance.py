@@ -196,6 +196,8 @@ def stage_baseline(data,validator):
 
 
 def check_staged():
+    from release_guard import staged
+    staged()
     names=subprocess.check_output(['git','ls-files','-z'],cwd=ROOT).decode().split('\0')
     inventory=json.loads((ROOT/'docs/chi-import-inventory.json').read_bytes())
     raw_hashes={v['sha256'] for v in inventory['files']}

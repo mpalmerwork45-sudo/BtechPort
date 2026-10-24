@@ -107,8 +107,10 @@ def linux_runtime(stage,inventory):
             'Python '+version+', Tk 8.6, Pillow, SDL and transitive non-glibc libraries are bundled.']
 
 def package(output,platform='linux',python_runtime=None):
-    output=Path(output).resolve()
+    from chi_import import plain_path,publish
+    output=plain_path(output)
     if output.exists():raise EditorError('Distribution output must be a new directory.')
+    if any(output.is_relative_to(ROOT/name) for name in ('Original DOS','UnBattletech')):raise EditorError('Distribution must be outside reference directories.')
     output.parent.mkdir(parents=True,exist_ok=True);inventory=[]
     with tempfile.TemporaryDirectory(prefix='kit-package-',dir=output.parent) as tmp:
         stage=Path(tmp)/'kit';stage.mkdir()
@@ -175,7 +177,12 @@ def package(output,platform='linux',python_runtime=None):
         origins={str(Path(v['path']).relative_to(stage)):v['source'] for v in inventory}
         for path in sorted(stage.rglob('*')):
             if path.is_file():report['files'].append(dict(path=str(path.relative_to(stage)),bytes=path.stat().st_size,sha256=hashlib.sha256(path.read_bytes()).hexdigest(),source=origins.get(str(path.relative_to(stage)),'Generated or supplied runtime')))
-        (stage/'DISTRIBUTION.json').write_text(json.dumps(report,indent=2)+'\n');stage.rename(output)
+        (stage/'DISTRIBUTION.json').write_text(json.dumps(report,indent=2)+'\n')
+        from release_guard import directory
+        report['provenance_check']=directory(stage)
+        # The check scanned the final staged bytes, not only manifests or
+        # filenames. Publication must not replace a competing output folder.
+        (stage/'DISTRIBUTION.json').write_text(json.dumps(report,indent=2)+'\n');publish(stage,output)
     return report
 
 def archive(output,platform):
@@ -183,6 +190,14 @@ def archive(output,platform):
     import tarfile,zipfile
     output=Path(output);report=json.loads((output/'DISTRIBUTION.json').read_bytes())
     names=[v['path'] for v in report['files']]+['DISTRIBUTION.json']
+    # Runtime caches/saves created after a kit was tested are intentionally
+    # excluded; verify every inventoried deliverable before archiving it.
+    from release_guard import check_name,check_payload,known
+    signatures=known()
+    for row in report['files']:
+        check_name(row['path']);path=output/row['path']
+        if path.is_symlink() or hashlib.sha256(path.read_bytes()).hexdigest()!=row['sha256']:raise EditorError('Changed inventoried deliverable: '+row['path'])
+        check_payload(row['path'],path.read_bytes(),signatures)
     target=output.with_name(output.name+('.zip' if platform=='windows' else '.tar.gz'))
     if platform=='windows':
         with zipfile.ZipFile(target,'x',compression=zipfile.ZIP_DEFLATED) as bundle:
@@ -190,7 +205,8 @@ def archive(output,platform):
     else:
         with tarfile.open(target,'x:gz') as bundle:
             for name in names:bundle.add(output/name,arcname=str(Path(output.name)/name),recursive=False)
-    return target
+    from release_guard import archive as inspect_archive
+    inspect_archive(target);return target
 
 if __name__=='__main__':
     import argparse
