@@ -47,7 +47,7 @@ extractor identity in the local provenance report.
 | O0–O21 | `data/anm.c`, `core/animation.c` | Exact ANM copies | C3 frame/timing editing, C4 animation yields; save mid-animation |
 | WWOODBT.SIF | `core/audio.c` | Exact music copy | C3 sound reference editing; event/sample ordering checks |
 | All 26 BLDs | `core/script.c`, `core/original_actions.c` | Exact encrypted copies, native compatibility execution | C4 typed labels/compiler; preserve unreachable bytes and source maps |
-| Native dialogue/font | `prepare_talk.py`, `data/resources.c` | Exact BTTA/v24 cache; bounded native dialogue overrides | C3 font/art editing; C4 full dialogue/menu authoring |
+| Native dialogue/font | `prepare_talk.py`, `data/resources.c` | Exact BTTA/v24–v25 cache; bounded native dialogue overrides | C3 font/art editing; C4 full dialogue/menu authoring |
 | Combat/loan/arena/cache/sound tables | `prepare_combat.py`, `data/resources.c`, `core/combat.c` | Exact BTCC/v12, no unit-library normalization | C4 definitions versus damaged/shell instances and economy settings |
 | World generator tables | `prepare_world.py`, `data/world.c`, `core/world.c` | Exact BTW3, canonical seed 0x020304 | C3 generator/jigsaw/town editing; whole-sector hashes and edge joins |
 | Initial player/state/RNG | `core/game.c`, `core/npc.c`, `frontend/cli.c` | Existing initialization, explicit profile | C4 initial-state settings; compare normalized state and RNG |
@@ -87,8 +87,8 @@ It must bind the save fingerprint to the same bytes actually decoded, not a
 second read which could observe a different edit.
 
 `campaign.json` has format `btp-chi-campaign-v1`, schema 1, explicit `edition`
-(`original` or `updated`) and `dialogue_overrides`: zero to 373 objects with
-unique `index` (0–372) and `text` (maximum 512 bytes, original supported character
+(`original` or `updated`) and `dialogue_overrides`: zero to 375 objects with
+unique `index` (0–374, bounded by the cache's actual entry count) and `text` (maximum 512 bytes, original supported character
 set). The final rebuilt dialogue must fit the existing 16,384-byte budget.
 No other fields are accepted. Missing/duplicate/unknown fields fail validation.
 This is the C2 editable slice; full BLD and mission content remains C4.

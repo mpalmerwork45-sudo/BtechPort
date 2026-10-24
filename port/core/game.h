@@ -230,6 +230,7 @@ enum { BTP_STATE_BYTES = 20480 };
 
 void btp_start(BtpState *state);
 void btp_start_content(BtpState *state,const BtpResources *resources);
+void btp_game_over(BtpState *state);
 unsigned btp_citadel_origin(const BtpState *state,unsigned axis);
 void btp_content_coordinates(BtpState *state,const BtpResources *resources);
 int btp_chi_preview(BtpState *state,const BtpResources *resources,const char *map,unsigned x,unsigned y);

@@ -110,7 +110,7 @@ class ChiImportTests(unittest.TestCase):
     def test_text_edits_undo_reopen_build_and_native_pixels(self):
         from campaign_source import convert
         doc=self.document();original=doc.files();other=self.document('updated').files()
-        self.assertEqual(len(native_dialogue(doc)),373)
+        self.assertEqual(len(native_dialogue(doc)),375)
         set_dialogue(doc,87,'Imported control prompt')
         self.assertTrue(doc.dirty);doc.undo();self.assertEqual(doc.files(),original)
         doc.redo();edited=self.root/'edited';doc.export(edited)
@@ -129,7 +129,7 @@ class ChiImportTests(unittest.TestCase):
 
     def test_invalid_text_and_unknown_fields_fail_without_consuming_edits(self):
         doc=self.document();before=doc.files()
-        for index,text in [(373,'bad'),(0,'\x06bad'),(87,'x'*513),(87,'bad\nline'),(87,'snowman \u2603'),(87,'left\0right')]:
+        for index,text in [(375,'bad'),(0,'\x06bad'),(87,'x'*513),(87,'bad\nline'),(87,'snowman \u2603'),(87,'left\0right')]:
             with self.subTest(index=index,text=repr(text[:15])):
                 with self.assertRaises(EditorError):set_dialogue(doc,index,text)
                 self.assertEqual(doc.files(),before)

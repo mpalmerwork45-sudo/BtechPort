@@ -160,7 +160,7 @@ void btp_bridge_return(BtpState *s,const BtpResources *r,unsigned outcome)
             btp_script_event_return(&s->script,btp_state_bld(r,s),s->story_flags,outcome);
             btp_game_script_finish(s,r);
         } else {
-            s->mode=s->party.people[0][0]==255 ? BTP_GAME_OVER : BTP_EXPLORE;
+            s->mode=BTP_EXPLORE;if(s->party.people[0][0]==255)btp_game_over(s);
             s->campaign.building=0;s->entry_slot=0;btp_party_recover(s,r,1);btp_world_reveal(s);
         }
     }

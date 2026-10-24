@@ -276,7 +276,7 @@ int btp_cache_valid_resources(const BtpState *s,const BtpResources *r)
 }
 static int append(const BtpResources *r,unsigned id,uint8_t *out,size_t cap,size_t *n)
 {
-    if (id>=BTP_TALK_STRINGS || r->dialogue.size[id]>cap-*n) return 0;
+    if (id>=r->dialogue.count || r->dialogue.size[id]>cap-*n) return 0;
     memcpy(out+*n,r->dialogue.bytes+r->dialogue.offset[id],r->dialogue.size[id]);*n+=r->dialogue.size[id];return 1;
 }
 int btp_cache_text(const BtpState *s,const BtpResources *r,uint8_t *out,size_t cap,size_t *length)

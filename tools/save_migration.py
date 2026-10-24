@@ -1,13 +1,32 @@
 """Explicit migration of compatible project revisions; never edit an old save."""
 import copy,hashlib,json,os,re,struct,subprocess,tempfile,zlib
 from pathlib import Path
-from editor_model import EditorError,ProjectDocument,references
+from editor_model import EditorError,ProjectDocument,references,needs_original
+
+def native_dialogue_append(old,new):
+    """One explicit native compatibility update, never a gameplay remap.
+    v25 appends two terminal presentation strings. Existing text, font, all
+    other runtime bytes and every serialized ordinal must remain unchanged.
+    """
+    files=references(old.manifest)
+    if files!=references(new.manifest):raise EditorError('Native migration changes resource declarations.')
+    for name in files:
+        if name!='chi/talk-data.bin' and old.snapshot[name]!=new.snapshot[name]:raise EditorError('Native migration changes gameplay/project content: '+name)
+    a,b=old.snapshot['chi/talk-data.bin'],new.snapshot['chi/talk-data.bin']
+    if a[:4]!=b'BTTA' or b[:4]!=b'BTTA' or struct.unpack_from('<H',a,6)[0]!=373 or struct.unpack_from('<H',b,6)[0]!=375:
+        raise EditorError('Native migration supports only the v24-to-v25 endgame text append.')
+    old_base,new_base=72+4*373,72+4*375;old_size,new_size=struct.unpack_from('<H',a,4)[0],struct.unpack_from('<H',b,4)[0]
+    if a[8:old_base]!=b[8:old_base] or a[old_base:old_base+old_size]!=b[new_base:new_base+old_size] or a[-2048:]!=b[-2048:] or new_size<=old_size:
+        raise EditorError('Native dialogue append changes existing text, source tags or font.')
+    return ['Only two endgame presentation strings appended; every earlier native string/font is unchanged.',
+            'All maps, scripts, units, rules and other runtime files are byte-identical.']
 
 def compatible(old,new):
     """Preserve every existing ordinal and rule; permit presentation edits and
     append-only definitions. Reject ambiguous remaps rather than guessing."""
     for key in ('package_id','requires','startup','rules_profile','save_policy'):
         if old.manifest.get(key)!=new.manifest.get(key):raise EditorError(f'Migration changes {key}.')
+    if old.manifest.get('requires')=='chi-local-dos-1.03':return native_dialogue_append(old,new)
     if old.adventure is None or new.adventure is None:raise EditorError('Migration currently supports authored adventures only.')
     if old.adventure.get('schema_version')!=new.adventure.get('schema_version'):
         raise EditorError('Campaign format upgrades require a new campaign. Keep the original package for this save; capacity and discovery state cannot be migrated by relabelling its fingerprint.')
@@ -54,7 +73,7 @@ def project_digest(doc):
 
 def check_save(doc,settings,path):
     command=[str(Path(settings['player']).resolve()),'--headless','--project',str(doc.root),'--load',str(path)]
-    if doc.manifest['requires']!='none':
+    if needs_original(doc.manifest):
         for key in ('data','dialogue-data','combat-data','world-data'):
             if not settings.get(key):raise EditorError('Configure original resources in Player setup for this game.')
             command.extend(['--'+key,str(Path(settings[key]).resolve())])

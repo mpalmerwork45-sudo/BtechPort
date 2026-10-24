@@ -41,11 +41,11 @@ enum { BTP_PORTRAIT_BROKER, BTP_PORTRAIT_TRAINING, BTP_PORTRAIT_LOUNGE,
     BTP_PORTRAIT_VIDEO_HUT, BTP_PORTRAIT_MAYOR, BTP_PORTRAIT_COUNT };
 typedef struct { BtpAnm image[BTP_PORTRAIT_COUNT]; } BtpPortraits;
 /* 43 earlier bank/Talk strings plus 12 class transcript/rank/subject strings. */
-enum { BTP_TALK_STRINGS = 373, BTP_TALK_MAX = 16384 };
+enum { BTP_TALK_LEGACY_STRINGS = 373, BTP_TALK_STRINGS = 375, BTP_TALK_MAX = 16384 };
 typedef struct {
     uint8_t bytes[BTP_TALK_MAX];
     uint8_t font[2048];
-    uint16_t length, offset[BTP_TALK_STRINGS], size[BTP_TALK_STRINGS];
+    uint16_t length, offset[BTP_TALK_STRINGS], size[BTP_TALK_STRINGS], count;
 } BtpDialogue;
 enum { BTP_WORLD_SIDE=192, BTP_WORLD_ORIGIN=704, BTP_CITADEL_ORIGIN=768 };
 typedef struct {

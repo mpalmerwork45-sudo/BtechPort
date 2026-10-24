@@ -209,7 +209,7 @@ void btp_campaign_result(BtpState *s,const BtpResources *r)
         else if (id<12) { memcpy(s->party.people[id-4],c->unit[i].record,17);s->party.x[id-4]=(uint16_t)(s->campaign.battle_x+c->unit[i].x);s->party.y[id-4]=(uint16_t)(s->campaign.battle_y+c->unit[i].y); }
     }
         s->aftermath.applied=2;
-        if (c->lost) { s->mode=BTP_GAME_OVER;return; }
+        if (c->lost) { btp_game_over(s);return; }
         /* 103B:10A3..10DA announces defeated enemies before scavenging.
            Keep this pause explicit so saving cannot apply the rewards twice. */
         for (unsigned i=12;i<24;++i) if (s->aftermath.wrecks[i]) {

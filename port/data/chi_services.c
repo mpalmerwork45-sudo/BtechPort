@@ -116,7 +116,8 @@ int btp_chi_service_dialogue(BtpResources *r,BtpError *e)
 {
     BtpDialogue *rebuilt=calloc(1,sizeof *rebuilt);if (!rebuilt) return 0;
     memcpy(rebuilt->font,r->dialogue.font,sizeof rebuilt->font);
-    for (unsigned i=0;i<BTP_TALK_STRINGS;++i) {
+    rebuilt->count=r->dialogue.count;
+    for (unsigned i=0;i<r->dialogue.count;++i) {
         char text[BTP_TALK_MAX];const char *source=(const char *)r->dialogue.bytes+r->dialogue.offset[i];
         if (!btp_chi_service_expand(r,source,text,sizeof text) || strlen(text)+1>(size_t)BTP_TALK_MAX-rebuilt->length) {
             snprintf(e->text,sizeof e->text,"campaign.json: $.dialogue_overrides[%u]: invalid service reference or native text budget exceeded",i);free(rebuilt);return 0;

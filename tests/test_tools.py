@@ -50,7 +50,7 @@ class ExepackTests(unittest.TestCase):
         image, _ = unpack(source)
         cache, metadata = extract(source)
         self.assertEqual(cache, extract(source)[0])
-        self.assertEqual((cache[:4],len(cache),len(metadata["strings"])),(b"BTTA",15226,373))
+        self.assertEqual((cache[:4],len(cache),len(metadata["strings"])),(b"BTTA",15313,375))
         length,count = struct.unpack_from("<HH",cache,4)
         header = 72+4*count
         self.assertEqual(length+header+2048,len(cache))

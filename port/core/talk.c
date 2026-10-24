@@ -140,7 +140,7 @@ static int append(uint8_t *out, size_t capacity, size_t *length, const uint8_t *
 }
 static int literal(const BtpDialogue *d, unsigned id, uint8_t *out, size_t capacity, size_t *length)
 {
-    if (id >= BTP_TALK_STRINGS || !d->length || d->length > BTP_TALK_MAX ||
+    if (id >= d->count || !d->length || d->length > BTP_TALK_MAX ||
         d->offset[id] >= d->length || d->size[id] >= d->length-d->offset[id] ||
         d->bytes[d->offset[id]+d->size[id]]) return 0;
     return append(out,capacity,length,d->bytes+d->offset[id],d->size[id]);

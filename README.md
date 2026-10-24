@@ -143,6 +143,9 @@ Tk and independent audit sign-off remain pending.
 Editor Play saves persist between launches of the same revision. See
 [saved games and recovery](docs/EDITOR_SAVE_GAMES.md) before editing a campaign
 you want to keep playing with existing saves.
+The [essential-character death popup](docs/GAME_OVER_PRESENTATION.md) now uses
+the original text and wrapping; older imported campaigns have an explicit
+update utility that preserves their progress.
 
 [World-route checks](docs/WORLD_ROUTE_VERIFICATION.md) exercise whole-party
 travel between towns and planets, discovery and save/reload, with navigable

@@ -26,7 +26,7 @@ def campaign_data(document):
 def native_dialogue(document):
     campaign_data(document)
     data=document.snapshot['chi/talk-data.bin'];count=struct.unpack_from('<H',data,6)[0]
-    if data[:4]!=b'BTTA' or count!=373:raise EditorError('Unsupported native dialogue cache.')
+    if data[:4]!=b'BTTA' or count not in (373,375):raise EditorError('Unsupported native dialogue cache.')
     base=72+count*4
     return [data[base+at:base+at+size].decode('ascii')
             for at,size in (struct.unpack_from('<HH',data,72+4*i) for i in range(count))]
@@ -34,7 +34,8 @@ def native_dialogue(document):
 
 def set_dialogue(document,index,text):
     """GUI/CLI share rollback, native validation, Undo and strict content identity."""
-    if type(index) is not int or not 0<=index<373:raise EditorError('Native text index must be 0..372.')
+    count=len(native_dialogue(document))
+    if type(index) is not int or not 0<=index<count:raise EditorError('Native text index must be 0..'+str(count-1)+'.')
     if text is not None and not isinstance(text,str):raise EditorError('Native text must be a string.')
     value=campaign_data(document)
     overrides=[v for v in value['dialogue_overrides'] if v['index']!=index]

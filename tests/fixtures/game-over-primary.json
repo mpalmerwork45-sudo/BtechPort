@@ -1,0 +1,14 @@
+{
+  "executable_sha256": "15a1712682cf1fe50ca9e6a68a4b31d3bef7912401915edf7bb6242be193562a",
+  "image_sha256": "100f0df244e4b0c8693d1b5013fb073f486b35d6f5c538ecd53d03f85ed54bfa",
+  "cases": 2,
+  "routines": [
+    "0000:04A4..04DB",
+    "14D3:17C6/17EA",
+    "1656:03F5",
+    "173D:00D5"
+  ],
+  "prerequisites": "Audited mixed-party RAM snapshot; explicit essential-character casualty byte and main-loop death flag.",
+  "held_boundary": "173D:086A before keyboard/delay; no key input, instruction patches or gameplay reconstruction.",
+  "comparison": "Original text stream and 200x40 RGB interior at x112,y80; native popup window 7. Surrounding battlefield pixels are not established by this crop."
+}

@@ -7,12 +7,25 @@ platform plus service/mission/spatial/quest continuations and multiple units.
 The importer has retry/staging recovery, Unicode Windows I/O, and a GUI/CLI
 asset-free reconstruction workflow. Actual Linux/Windows archives pass payload
 checks; the packaged Linux setup/import/edit/reconstruction/player checks pass.
-456 Python tests and 94 native tests on each platform pass.
+The later save/death fixes pass 462 Python tests plus three focused migration
+checks, and 95 native tests on each platform, followed by five focused checks
+after the final dialogue bounds adjustment.
 
 [Acceptance, corrections and limits](CHI_ACCEPTANCE.md),
 [sharing recipes](CHI_RECONSTRUCTION.md), [progress](CHI_IMPORT_PROGRESS.md).
 Native Windows Tk and independent Astra sign-off remain pending. An Enhanced-only
 ending route is unverified. Imported saves remain pinned to exact content.
+
+**Save recovery and original death popup — implemented and verified.** Editor
+Play now retains its six slots between launches of the same revision and can
+recover vacant slots from matching retained runs. The owner's recent Updated
+save is restored with its exact campaign and preserved progress; later edits
+and original save files are backed up separately. Jason/Rex death text matches
+the original-derived interior pixel hashes, with native popup geometry and a
+working replay/quit prompt. A narrow copy updater adds the new text to an old
+import without changing its gameplay data or save payload. See
+[recovery details](EDITOR_SAVE_GAMES.md),
+[death evidence and limits](GAME_OVER_PRESENTATION.md).
 
 The following entries record earlier increments; their then-open milestone
 statements are superseded by the current acceptance report.

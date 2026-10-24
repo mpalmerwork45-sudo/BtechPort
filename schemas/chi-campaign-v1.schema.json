@@ -24,7 +24,7 @@
     },
     "dialogue_overrides": {
       "type": "array",
-      "maxItems": 373,
+      "maxItems": 375,
       "items": {
         "type": "object",
         "additionalProperties": false,
@@ -36,7 +36,7 @@
           "index": {
             "type": "integer",
             "minimum": 0,
-            "maximum": 372
+            "maximum": 374
           },
           "text": {
             "type": "string",

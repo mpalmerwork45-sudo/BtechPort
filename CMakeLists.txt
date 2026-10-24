@@ -435,6 +435,11 @@ if(BUILD_TESTING)
   add_executable(btp-training-tests tests/test_training.c)
   target_link_libraries(btp-training-tests PRIVATE btp_core)
   add_test(NAME training-timer-bounds COMMAND btp-training-tests)
+  add_executable(btp-game-over-tests tests/test_game_over.c)
+  target_link_libraries(btp-game-over-tests PRIVATE btp_pixels)
+  add_test(NAME game-over-original-popup COMMAND btp-game-over-tests
+    "${PROJECT_SOURCE_DIR}/Original DOS" "${PROJECT_SOURCE_DIR}/work/talk-data.bin"
+    "${PROJECT_SOURCE_DIR}/tests/fixtures/game-over-primary.txt")
 endif()
 
 # Every Windows tool uses the same UTF-8 argv contract as the native player.

@@ -121,6 +121,9 @@ def extract(source):
         addresses.append(segment*16+offset)
     # 0D43 retirement/ejection and 12E8 infantry death reports (370..372).
     addresses.extend(DS+p for p in (0x2b6d,0x2b81,0x41fc))
+    # 0000:04A4..04F2: native essential-character death and replay prompt.
+    # Append to preserve all earlier text IDs and keep the payload private.
+    addresses.extend(DS+p for p in (0xfb,0x12f))
     blob = bytearray(); ranges = []; origins = []
     for address in addresses:
         end = image.index(0,address)
@@ -134,7 +137,7 @@ def extract(source):
     header += bytes.fromhex(EXE_SHA)+bytes.fromhex(IMAGE_SHA)
     header += b"".join(struct.pack("<HH",*r) for r in ranges)
     font = image[FONT:FONT+2048]
-    return header+blob+font, {**metadata,"format":"BTTA/v24","strings":origins,
+    return header+blob+font, {**metadata,"format":"BTTA/v25","strings":origins,
         "font":{"image_offset":FONT,"length":len(font),"sha256":hashlib.sha256(font).hexdigest()}}
 
 

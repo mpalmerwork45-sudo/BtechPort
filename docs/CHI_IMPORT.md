@@ -102,6 +102,12 @@ Reimporting creates new project IDs, even for the same edition. Keep the exact
 old project for its saves. Normal Original/Updated saves cannot be loaded merely
 by selecting an imported project; no automatic save migration is included here.
 
+New imports also include the corrected original essential-character death
+popup and replay prompt. Older imports keep their existing resources. The
+[endgame compatibility updater](GAME_OVER_PRESENTATION.md) can create a separate
+copy and migrate a save only when the two appended presentation strings are
+the sole runtime difference.
+
 ## Edit native dialogue
 
 Open the project and choose **Project → CHI campaign**. Search/select a native
@@ -112,7 +118,8 @@ current validated project into its own test snapshot and save namespace.
 
 Line breaks use the original carriage-return format. Text must fit the native
 character and length limits; errors leave the previous document intact. This
-view edits the 373 native text entries, not text embedded in BLD bytecode. Full
+view edits the native text entries (375 in new imports; 373 in older caches),
+not text embedded in BLD bytecode. Full
 BLD text/control-flow editing is available in **Project → CHI scripts**; see the
 [BLD authoring guide](BLD_AUTHORING.md).
 

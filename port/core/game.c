@@ -64,6 +64,11 @@ void btp_content_coordinates(BtpState *s,const BtpResources *r)
     s->content_origin_x=(uint16_t)((r->map.entrance_x[0]>>8)*128+1u);
     s->content_origin_y=(uint16_t)((r->map.entrance_y[0]>>12)*128+1u);
 }
+void btp_game_over(BtpState *s)
+{
+    s->mode=BTP_GAME_OVER;s->menu.notice=0;s->menu.from_intro=s->menu.from_story=0;
+    s->campaign.ui=0;s->menu.broker_class=0;s->entry_selected=0;
+}
 void btp_start_content(BtpState *s,const BtpResources *r)
 {
     btp_start(s);btp_content_coordinates(s,r);
@@ -275,7 +280,7 @@ static void finish_script(BtpState *s, const BtpResources *r, const BtpMap *m)
                 s->y_half = (uint16_t)((m->entrance_y[s->entry_slot] & 127) + (s->campaign.mounted ? 2u : 0u));
             }
         }
-        s->mode = (uint8_t)(s->party.enabled && s->party.people[0][0]==255 ? BTP_GAME_OVER : BTP_EXPLORE);
+        s->mode=BTP_EXPLORE;if(s->party.enabled && s->party.people[0][0]==255)btp_game_over(s);
         /* Scripted allocation can put Jason in any owned bay or passenger
            seat. Do not overwrite that choice with a slot-zero pilot check. */
         if (!invasion && !s->cache.active && s->story_flags[4]) {
@@ -325,6 +330,23 @@ static void game_tick(BtpState *s, const BtpResources *r, BtpAction a)
         ++s->tick;
         /* Older saves can contain the formerly inert completed screen. */
         if (s->mode==BTP_ENDING && a!=BTP_IDLE) s->menu.quit=1;
+        if(s->mode==BTP_GAME_OVER && r->dialogue.count>=375 && a!=BTP_IDLE) {
+            /* 0000:04DB acknowledges death, then asks to play again in the
+               same popup. A new game keeps this edition's selected settings. */
+            if(s->menu.notice!=1) { s->menu.notice=1;s->entry_selected=0;return; }
+            if(a==BTP_LEFT || a==BTP_UP)s->entry_selected=0;
+            if(a==BTP_RIGHT || a==BTP_DOWN || a==BTP_CANCEL)s->entry_selected=1;
+            if(a==BTP_ACCEPT || a==BTP_OPEN_MENU) {
+                if(s->entry_selected)s->menu.quit=1;
+                else {
+                    BtpMenuState options=s->menu;unsigned project=s->project,profile=s->combat_profile;
+                    btp_start_content(s,r);btp_npc_init(s,&r->map);s->project=(uint8_t)project;
+                    if(btp_resources_feature(r,BTP_FEATURE_ENHANCED))(void)btp_set_combat_profile(s,r,profile);
+                    s->menu.steps=options.steps;s->menu.sound=options.sound;s->menu.speed=options.speed;s->menu.outtakes=options.outtakes;
+                    s->mode=BTP_BEGIN;s->entry_selected=1;
+                }
+            }
+        }
         return;
     }
     if (s->mode==BTP_CACHE) { btp_cache_input(s,r,a);return; }
@@ -457,7 +479,7 @@ static void game_tick(BtpState *s, const BtpResources *r, BtpAction a)
                 s->x_half = map->entrance_x[s->entry_slot] & 127;
                 s->y_half = (uint16_t)((map->entrance_y[s->entry_slot] & 127) + (s->campaign.mounted ? 2u : 0u));
             }
-        s->mode = (uint8_t)(s->party.enabled && s->party.people[0][0]==255 ? BTP_GAME_OVER : BTP_EXPLORE);
+        s->mode=BTP_EXPLORE;if(s->party.enabled && s->party.people[0][0]==255)btp_game_over(s);
             /* Declining the added doorway leaves no native building context
                behind in an otherwise ordinary exploration save. */
             if (s->campaign.building==BTP_BROKER_BUILDING) {

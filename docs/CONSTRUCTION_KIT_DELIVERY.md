@@ -84,6 +84,13 @@ rules, map topology, encounters, formations and script source must match.
 Deleted/reordered definitions or gameplay changes are rejected with a reason.
 This is deliberately narrower than a general content remapper.
 
+Imported native CHI campaigns have one separate, explicit compatibility policy:
+the v24-to-v25 append of two endgame presentation strings. All earlier text,
+font data and every other runtime file must remain byte-identical. The
+[endgame copy updater](GAME_OVER_PRESENTATION.md#cache-compatibility-and-existing-campaigns)
+creates a new project and optional validated save without changing the old
+files. Native terrain, script, rule and roster changes remain outside this policy.
+
 Both saves are checked by the real player against their exact content. The
 payload—including damage, ammunition, position, flags and progress—remains
 byte-for-byte identical; only the validated package envelope changes. Output

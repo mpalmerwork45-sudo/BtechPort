@@ -17,6 +17,12 @@ when enabling/editing native content. Arbitrary new native mechanics, additional
 map slots, new service-context adapters and automatic dialogue reflow need engine
 work. Original/Updated normal campaigns and their saves remain separate.
 
+Editor Play's per-launch save-directory issue is fixed and the owner's retained
+Updated save is recovered. A narrowly checked v24-to-v25 presentation update can
+preserve native save progress; general terrain/script migration remains outside
+that policy. [Recovery](EDITOR_SAVE_GAMES.md),
+[death popup comparison and remaining limits](GAME_OVER_PRESENTATION.md).
+
 AI8's [Greybank Dispatch recipe and delivery](CAMPAIGN_RECIPES.md) are delivered.
 The recorded five-map campaign covers both opening contracts, services, defence,
 escort, failures and checkpoints at declared seeds. It is a fixed-layout recipe

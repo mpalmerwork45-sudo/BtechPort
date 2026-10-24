@@ -1,5 +1,37 @@
 # Build, verification and original oracle — 2026-10-24
 
+## Save retention, recovery and original death popup — 2026-10-24
+
+**VERIFIED for the declared checks.** See [save recovery](EDITOR_SAVE_GAMES.md)
+and [original popup evidence and limits](GAME_OVER_PRESENTATION.md).
+
+- The full Python suite passes 462 tests (132.123 s); all three focused native
+  dialogue migration cases pass after adding the copy-updater case.
+- 95/95 Linux native tests pass (49.62 s) and 95/95 Windows/Wine native tests
+  pass (352.75 s). Five focused native checks pass on each platform after the
+  final text-range bounds adjustment. Builds use two jobs and have no warnings.
+- Jason/Rex death popup interiors match two original-derived RGB hash cases.
+  Native held saves preserve both acknowledgement phases; Yes resets the game,
+  No exits. Actual SDL window checks pass on Linux and Windows/Wine.
+- Fresh v25 imports reach both declared endings; Updated selects Legacy in
+  Settings. Earlier Enhanced-only ending limits still apply.
+- Save-retention checks cover repeated editor Play, project-specific filenames,
+  vacant-slot recovery, invalid checksums, wrong revisions and preserving
+  occupied slots. The actual recovered save keeps its complete progress payload
+  at tick 85,092 and 33,300 C-bills after the presentation-only update.
+
+```sh
+python3 -m unittest discover -s tests -p 'test_play_save_recovery.py' -v
+python3 -m unittest discover -s tests -p 'test_native_dialogue_migration.py' -v
+ctest --test-dir build --output-on-failure -R game-over-original-popup
+python3 tools/native_smoke.py --game-over-only
+python3 tools/native_smoke.py --game-over-only --windows
+```
+
+Private logs: `work/jason-death/`; GUI report: `work/game-over-gui.json`;
+fresh-route evidence: `work/jason-death/fresh-endings/evidence.json`.
+The earlier C5 archives below predate these later fixes.
+
 ## Combined CHI campaign and delivery acceptance — 2026-10-24
 
 **C4.5 passes; C5 implementation is verified for Linux/Wine.** Independent Astra

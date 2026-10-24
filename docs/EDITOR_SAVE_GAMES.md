@@ -30,7 +30,10 @@ Keep the old project or its retained `play-snapshots/run-…/game` folder to
 continue that campaign. Preserve the newer edited project separately. The
 existing **Migrate an old save** tool supports its documented authored-project
 cosmetic/appended-definition policy; it does not silently migrate native CHI
-terrain/script changes. [Migration limits](CONSTRUCTION_KIT_DELIVERY.md).
+terrain/script changes. One explicit native compatibility update can append
+the two newly extracted endgame strings while proving all gameplay content
+unchanged. [Migration limits](CONSTRUCTION_KIT_DELIVERY.md),
+[endgame update utility](GAME_OVER_PRESENTATION.md#cache-compatibility-and-existing-campaigns).
 
 ## Recovery performed on 2026-10-24
 
@@ -45,3 +48,9 @@ the old original import remains untouched.
 From this checkout, `./work/Resume-Recovered-Updated.sh` continues that exact
 save and writes subsequent progress to its recovered campaign slots. Recovery
 artifacts contain original-derived material and stay private.
+
+The resume script now selects `recovered-game-with-endgame-fix`, a further
+validated copy with the corrected original death popup. Its migrated save has
+the identical progress payload. The earlier recovered project/save, latest
+edited revision and pre-update launcher registration remain in the same backup
+folder. New saves use the stable recovered campaign slots.

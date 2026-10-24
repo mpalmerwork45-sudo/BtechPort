@@ -207,7 +207,7 @@ int btp_mission_tick(BtpState *s, const BtpResources *r, BtpAction a)
 }
 static int literal(const BtpDialogue *d, unsigned id, uint8_t *out, size_t capacity, size_t *length)
 {
-    if (id >= BTP_TALK_STRINGS || !d->length || d->length > BTP_TALK_MAX || d->offset[id] >= d->length ||
+    if (id >= d->count || !d->length || d->length > BTP_TALK_MAX || d->offset[id] >= d->length ||
         d->size[id] >= d->length-d->offset[id] || d->bytes[d->offset[id]+d->size[id]] ||
         *length >= capacity || d->size[id] >= capacity-*length) return 0;
     memcpy(out+*length,d->bytes+d->offset[id],d->size[id]); *length += d->size[id]; out[*length] = 0; return 1;

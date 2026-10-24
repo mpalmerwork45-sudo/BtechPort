@@ -141,7 +141,7 @@ static int append(uint8_t *out, size_t capacity, size_t *n, const uint8_t *p, si
 static int literal(const BtpResources *r, unsigned id, uint8_t *out, size_t cap, size_t *n)
 {
     const BtpDialogue *d = &r->dialogue;
-    if (id >= BTP_TALK_STRINGS || !d->length || d->length > BTP_TALK_MAX ||
+    if (id >= d->count || !d->length || d->length > BTP_TALK_MAX ||
         d->offset[id] >= d->length || d->size[id] >= d->length-d->offset[id] ||
         d->bytes[d->offset[id]+d->size[id]]) return 0;
     return append(out,cap,n,d->bytes+d->offset[id],d->size[id]);

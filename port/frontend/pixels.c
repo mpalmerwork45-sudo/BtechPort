@@ -219,7 +219,7 @@ static int wrapped(const BtpResources *r,uint32_t *f,int y,const uint8_t *bytes,
 static const uint8_t *bank_literal(const BtpResources *r, unsigned id, size_t *n)
 {
     const BtpDialogue *d = &r->dialogue;
-    if (id >= BTP_TALK_STRINGS || d->length > BTP_TALK_MAX || d->offset[id] >= d->length ||
+    if (id >= d->count || d->length > BTP_TALK_MAX || d->offset[id] >= d->length ||
         d->size[id] >= d->length-d->offset[id] || d->bytes[d->offset[id]+d->size[id]]) return NULL;
     *n = d->size[id]; return d->bytes+d->offset[id];
 }
@@ -1578,9 +1578,6 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         for (unsigned i=0;i<BTP_PIXELS;++i) f[i]=btp_palette[phoenix_palette[r->phoenix.pixels[i]&15u]];
         return;
     }
-    if (s->mode==BTP_GAME_OVER) {
-        rectangle(f,0,0,320,200,0);text(r,f,112,80,"Jason has been killed.",15);text(r,f,112,104,"Load a saved game to continue.",15);return;
-    }
     if (s->mode==BTP_LOGO || s->mode==BTP_TITLE) {
         /* Original VGA title capture: index 1 is black, as in sprite art. */
         const BtpGraphic *g=s->mode==BTP_LOGO ? &r->logo : &r->title;
@@ -1647,7 +1644,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
     if (s->campaign.encounter || s->campaign.invasion) { btp_combat_map(r,s,&encounter_map);map=&encounter_map; }
     int camera_x = cx * 8 - 96, camera_y = cy * 8 - 96;
     int outdoors=s->mode==BTP_EXPLORE || s->mode==BTP_ENTRY || s->mode==BTP_MISSION ||
-        s->mode==BTP_YARD || s->mode==BTP_ACTIONS || s->mode==BTP_CACHE || s->mode==BTP_ENCOUNTER;
+        s->mode==BTP_YARD || s->mode==BTP_ACTIONS || s->mode==BTP_CACHE || s->mode==BTP_ENCOUNTER || s->mode==BTP_GAME_OVER;
     for (int y = 0; y < 200; ++y)
         for (int x = 0; x < 320; ++x) {
             uint32_t color = btp_palette[0];
@@ -2254,6 +2251,23 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
     else if (s->mode == BTP_ENTRY) border_panel(r,f,104,72,216,56,0);
     else if (s->mode == BTP_MISSION && s->mission.phase != BTP_MISSION_DRIVE && s->mission.phase != BTP_MISSION_RESULT && s->mission.phase!=BTP_MISSION_RETURN)
         border_panel(r,f,104,72,216,64,0);
+    if (s->mode==BTP_GAME_OVER) {
+        /* 0000:04A4 selects native window 7 over the existing game view.
+           Preserve its border, white ink and 25-column wrapping. No invented
+           recovery instruction belongs in the original casualty message. */
+        rectangle(f,104,72,216,56,0);border_panel(r,f,104,72,216,56,0);
+        if(s->menu.notice==1 && r->dialogue.count>=375) {
+            size_t n;const uint8_t *prompt=bank_literal(r,374,&n);
+            int y=prompt ? wrapped(r,f,80,prompt,n,15) : 96;
+            service_yes_no(r,f,y,s->entry_selected);return;
+        }
+        uint8_t message[256];size_t used=0,n;const uint8_t *body=bank_literal(r,373,&n);
+        const char *name=btp_character_name(!s->party.enabled || s->party.people[0][0]==255 ? 0u : 1u);
+        if(body && n+strlen(name)<=sizeof message) {
+            used=strlen(name);memcpy(message,name,used);memcpy(message+used,body,n);used+=n;
+            (void)wrapped(r,f,80,message,used,15);
+        } else text(r,f,112,80,"Load a saved game to continue.",15); /* Pre-v25 private caches remain loadable. */
+    }
 }
 
 void btp_world_preview(const BtpResources *r,const BtpState *s,uint32_t f[BTP_PIXELS])

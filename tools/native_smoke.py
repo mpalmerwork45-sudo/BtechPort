@@ -1357,6 +1357,7 @@ def main():
     parser.add_argument("--menu-only", action="store_true")
     parser.add_argument('--presentation-only',action='store_true')
     parser.add_argument('--original-save-only',action='store_true')
+    parser.add_argument('--game-over-only',action='store_true')
     parser.add_argument('--aftermath-only',action='store_true')
     parser.add_argument('--field-only',action='store_true')
     parser.add_argument('--intro-only',action='store_true')
@@ -1395,6 +1396,9 @@ def main():
             env.pop("SDL_VIDEODRIVER", None)
             os.environ["DISPLAY"] = env["DISPLAY"]
             os.environ["BTECH_REFERENCE_VIRTUAL"] = "1"
+            if args.game_over_only:
+                from game_over_smoke import run
+                run(env,work);return
             if args.editor_focus_only:
                 from editor_focus_smoke import run
                 run(env,work)

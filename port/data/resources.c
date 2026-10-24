@@ -228,7 +228,8 @@ int btp_resources_load_reader(const char *dir,BtpResources *r,BtpResourceRead re
 
 int btp_dialogue_decode(const uint8_t *b, size_t n, BtpDialogue *d, BtpError *e)
 {
-    /* BTTA/v24: source tags, 373 text ranges and original 256x8 font bytes.
+    /* BTTA/v24-v25: 373/375 text ranges and original 256x8 font bytes.
+       Older imported resources remain valid; only new endgame text is absent.
        Conversion validates the audited EXE. Tags identify that source, not a
        cryptographic integrity check of the generated cache. */
     static const uint8_t tags[64] = {
@@ -237,15 +238,16 @@ int btp_dialogue_decode(const uint8_t *b, size_t n, BtpDialogue *d, BtpError *e)
         0x10,0x0f,0x0d,0xf2,0x44,0xe4,0xb0,0xc8,0x69,0x3d,0x1b,0x50,0x13,0xfb,0x07,0x3f,
         0x48,0x6b,0x35,0xd6,0xf5,0xc5,0x38,0xec,0xd5,0x3d,0x03,0xf8,0x5e,0xd5,0x4b,0xfa
     };
-    const unsigned header = 72+4*BTP_TALK_STRINGS;
-    if (!b || !d || n < header || memcmp(b,"BTTA",4) || le16(b+6) != BTP_TALK_STRINGS ||
+    if (!b || !d || n<72) return fail(e,"Native dialogue: truncated header");
+    unsigned count=le16(b+6),header=72+4*count;
+    if (n < header || memcmp(b,"BTTA",4) || (count!=BTP_TALK_STRINGS && count!=BTP_TALK_LEGACY_STRINGS) ||
         memcmp(b+8,tags,sizeof tags) || !le16(b+4) || le16(b+4) > BTP_TALK_MAX ||
         n != header+le16(b+4)+2048u) return fail(e,"Native dialogue: invalid cache/provenance header");
-    BtpDialogue result = {0}; result.length = le16(b+4);
+    BtpDialogue result = {0}; result.length = le16(b+4);result.count=(uint16_t)count;
     memcpy(result.bytes,b+header,result.length);
     memcpy(result.font,b+header+result.length,sizeof result.font);
     unsigned next = 0;
-    for (unsigned i = 0; i < BTP_TALK_STRINGS; ++i) {
+    for (unsigned i = 0; i < count; ++i) {
         unsigned at = le16(b+72+4*i), length = le16(b+74+4*i);
         if (at != next || at >= result.length || length >= result.length-at ||
             result.bytes[at+length]) return fail(e,"Native dialogue: invalid string range");

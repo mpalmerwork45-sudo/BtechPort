@@ -50,7 +50,7 @@ static int campaign(const char *root,BtpJson *manifest,BtpDigest *digest,
     unsigned overrides=btp_json_field(&j,1,"dialogue_overrides"),nodes[BTP_TALK_STRINGS]={0};
     if (!btp_json_type(&j,overrides,'[')) goto done;
     for (unsigned n=j.nodes[overrides].first;n;n=j.nodes[n].next) {
-        unsigned index;if (!btp_json_uint(&j,btp_json_field(&j,n,"index"),0,BTP_TALK_STRINGS-1,&index)) goto done;
+        unsigned index;if (!btp_json_uint(&j,btp_json_field(&j,n,"index"),0,r->dialogue.count-1u,&index)) goto done;
         if (nodes[index]) { btp_json_error(&j,n,"duplicate dialogue index");goto done; }
         nodes[index]=btp_json_field(&j,n,"text");
         if (!btp_json_type(&j,nodes[index],'"') || !btp_json_done(&j,n)) goto done;
@@ -58,7 +58,8 @@ static int campaign(const char *root,BtpJson *manifest,BtpDigest *digest,
     BtpDialogue *rebuilt=calloc(1,sizeof *rebuilt);
     if (!rebuilt) { fail(e,"dialogue allocation failed");goto done; }
     memcpy(rebuilt->font,r->dialogue.font,sizeof rebuilt->font);
-    for (unsigned i=0;i<BTP_TALK_STRINGS;++i) {
+    rebuilt->count=r->dialogue.count;
+    for (unsigned i=0;i<r->dialogue.count;++i) {
         const char *text=nodes[i] ? j.nodes[nodes[i]].text : (const char *)r->dialogue.bytes+r->dialogue.offset[i];
         size_t length=strlen(text);int valid=length<=512;
         for (size_t k=0;k<length;++k) {
