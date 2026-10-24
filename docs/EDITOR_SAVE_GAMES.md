@@ -34,6 +34,13 @@ the location from which the screen was opened. An earlier save stays attached
 to its earlier content, even when the working project has been edited.
 Refresh the screen after making further edits or saving in a running game.
 
+If the working project has moved or contains invalid edits, Saved games can
+still find retained revisions using the registered campaign ID or its recorded
+working path. Invalid pending editor fields also leave older saves accessible.
+The screen explains when the current project is unavailable and shows existing
+saves without inventing empty slots for an unknown current revision. A reused
+path associated with multiple campaign IDs requires an explicit matching choice.
+
 Before launching a project, the application retains one validated private copy
 per runtime digest in `work/roster-editor/save-revisions/ID/DIGEST/game`. This
 keeps project-owned data available after editing or moving the working project.
@@ -41,6 +48,10 @@ Games with external original-file requirements still need their configured
 resources. Retained revisions/backups are never automatically deleted; keep
 them with the saves when backing up the application state directory. Imported
 resources remain private original-derived content.
+
+Retained metadata records each editable source path separately, including when
+editor Play runs a temporary exported project. These paths aid discovery;
+native content validation still decides whether a save can be continued.
 
 Discovery is bounded to 4,096 files and 4,096 earlier editor runs; it reports
 limits rather than claiming an exhaustive filesystem search. A missing,

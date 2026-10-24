@@ -15,7 +15,7 @@ class SavedGamesView:
             from editor_workspace import view_window
             window=view_window(self,owner,'saved-games','Saved games')
         self.window=window;self.status=tk.StringVar(value='Reading saved games…');self.detail=tk.StringVar()
-        self.pool=ThreadPoolExecutor(max_workers=1,thread_name_prefix='bck-saves');self.model=None;self.rows={}
+        self.pool=ThreadPoolExecutor(max_workers=1,thread_name_prefix='bck-saves');self.model=None;self.rows={};self.context_warning=''
         self.heading=ttk.Label(window,text='Saved games',style='Title.TLabel',padding=12);self.heading.pack(anchor='w')
         intro=ttk.Label(window,text='Continue a slot, recover a retained save into an empty slot, or keep a backup. Earlier saves use their matching campaign revision.',wraplength=650,padding=(12,0,12,12));intro.pack(fill='x')
         # Reserve the actions/status before allocating the resizable table.
@@ -69,16 +69,34 @@ class SavedGamesView:
 
     def refresh(self):
         if self.job:return
+        # A failed refresh must not leave old rows attached to a different
+        # campaign model. Retained revisions can be browsed independently of
+        # a missing working directory or an invalid in-progress editor draft.
+        self.model=None;self.rows={};self.table.delete(*self.table.get_children());self.detail.set('');self.context_warning=''
         try:
-            owner=self.owner
+            owner=self.owner;document=None;identity=None
             if self.scope:
                 from editor_tasks import snapshot
-                document=snapshot(self.scope);choice='My project';location='Editor'
+                choice='My project';location='Editor'
+                if self.scope.document:identity=self.scope.document.manifest['package_id']
+                try:document=snapshot(self.scope)
+                except (EditorError,OSError,ValueError) as error:
+                    if not identity:raise
+                    self.context_warning='The current draft cannot be used. Showing retained saves: '+str(error)
             else:
-                from app_runtime import binary
-                path=owner.selected_project();document=ProjectDocument(path,binary('btp-project')) if path else None
+                from app_runtime import binary,imported_projects
+                from save_catalogue import retained_package_id
                 choice=owner.choice.get();location='Launcher'
-            self.model=SaveCatalogue(owner.state_dir,owner.settings if self.scope else owner.paths,choice,document,location)
+                path=owner.selected_project()
+                if path:
+                    try:document=ProjectDocument(path,binary('btp-project'))
+                    except (EditorError,OSError,ValueError) as error:
+                        ids={row['package_id'] for row in imported_projects(owner.state_dir) if Path(row['path']).resolve()==path.resolve()}
+                        if len(ids)==1:identity=ids.pop()
+                        elif not ids:identity=retained_package_id(owner.state_dir,path)
+                        if not identity:raise
+                        self.context_warning='The working project is unavailable. Showing retained saves: '+str(error)
+            self.model=SaveCatalogue(owner.state_dir,owner.settings if self.scope else owner.paths,choice,document,location,package_id=identity)
             self.heading.configure(text='Saved games - '+(document.manifest['title'] if document else choice))
             self.submit('Reading six slots, earlier revisions and backups',self.model.scan,self.populate)
         except (EditorError,OSError,ValueError) as error:self.status.set(str(error))
@@ -93,7 +111,7 @@ class SavedGamesView:
         available=[k for k,r in self.rows.items() if r.path.exists() and not r.error]
         if available:self.table.selection_set(available[0]);self.table.focus(available[0]);self.select()
         else:self.detail.set('No saved games for this revision yet. F5 writes the quicksave; the in-game menu provides all six slots.')
-        self.status.set(' '.join(self.model.warnings) or 'Ready. Recover never replaces an occupied slot. Continue keeps a backup first.')
+        self.status.set(' '.join(filter(None,[self.context_warning,*self.model.warnings])) or 'Ready. Recover never replaces an occupied slot. Continue keeps a backup first.')
 
     def selected(self):
         selection=self.table.selection()
@@ -114,11 +132,14 @@ class SavedGamesView:
     def changed(self,path):
         self.status.set('Saved copy: '+str(path));self.refresh()
 
-    def backup(self):self.operation('Validating and backing up',self.model.backup)
+    def backup(self):
+        if self.model:self.operation('Validating and backing up',self.model.backup)
     def recover(self):
+        if not self.model:return
         slot=int(self.slot.get());self.operation('Validating and recovering a copy',lambda row:self.model.recover(row,slot))
 
     def continue_game(self):
+        if not self.model:return
         if self.scope:
             session=self.window.workspace.play_session
             if session.preparing or session.process is not None:self.status.set('Stop the running editor game before continuing a save.');return
@@ -133,7 +154,7 @@ class SavedGamesView:
         self.status.set('Continued saved game at tick '+str(state['tick'])+'. A backup was kept before launch.')
 
     def locate(self):
-        if not self.model or not self.model.document or self.job:return
+        if not self.model or not self.model.project_mode or self.job:return
         try:signature=self.selected().signature
         except EditorError:signature=None
         path=filedialog.askdirectory(parent=self.window.winfo_toplevel(),title='Locate the exact old campaign project')

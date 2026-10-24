@@ -4,6 +4,7 @@ Envelope inspection is descriptive. The native player must also accept a save
 before Continue or Recover can use it; this module never rewrites identities.
 """
 from dataclasses import dataclass
+from itertools import chain
 from pathlib import Path
 import hashlib,json,os,re,shutil,struct,subprocess,tempfile,uuid,zlib
 from editor_model import EditorError,ProjectDocument,references,needs_original,encoded
@@ -18,17 +19,71 @@ def revision_key(document):
     return hashlib.sha256(b''.join(files[n] for n in references(document.manifest))).hexdigest()
 
 
-def retain_revision(document,state_dir):
+def valid_package_id(value):
+    # Match the native unnamespaced ID grammar before using a recovered
+    # identity from launcher preferences or retained metadata as a directory.
+    return isinstance(value,str) and re.fullmatch(r'[a-z][a-z0-9_.-]{0,30}',value) is not None
+
+
+def retained_package_id(state_dir,source):
+    """Identify a moved/invalid working root from private retention records.
+
+    Source paths are a discovery hint only: Continue still validates the exact
+    native content fingerprint. A reused path cannot choose between games.
+    """
+    source=Path(source).resolve();identities=set();base=Path(state_dir)/'save-revisions'
+    markers=chain(base.glob('*/*/REVISION.json'),base.glob('*/*/sources/*/SOURCE.json'))
+    for index,marker in enumerate(markers):
+        if index>=4096:raise EditorError('Retained revision lookup reached its 4,096-record limit. Locate the matching campaign explicitly.')
+        try:
+            if marker.is_symlink() or not marker.is_file() or marker.stat().st_size>16384:continue
+            record=json.loads(marker.read_bytes());identity=record.get('package_id')
+            revision=marker.parent if marker.name=='REVISION.json' else marker.parents[2]
+            if (record.get('format') in ('btp-save-revision-v1','btp-save-source-v1') and valid_package_id(identity) and
+                identity==revision.parent.name and record.get('digest')==revision.name and
+                isinstance(record.get('source'),str) and Path(record['source']).resolve()==source):
+                identities.add(identity)
+        except (OSError,ValueError,TypeError,AttributeError):continue
+    if len(identities)>1:raise EditorError('That working path was used by multiple campaigns. Choose the matching retained campaign explicitly.')
+    return next(iter(identities),None)
+
+
+def retain_source(parent,document,signature,source):
+    """Remember every editable origin without racing to replace one record.
+
+    Editor Play validates temporary exports, so its actual editable source is
+    explicit. Each source has its own atomically published, immutable record.
+    """
+    source=str(Path(source).resolve())
+    record=dict(format='btp-save-source-v1',digest=signature,package_id=document.manifest['package_id'],source=source)
+    folder=parent/'sources';folder.mkdir(exist_ok=True)
+    target=folder/hashlib.sha256(source.encode('utf-8')).hexdigest()
+    def existing():
+        try:return not target.is_symlink() and not (target/'SOURCE.json').is_symlink() and json.loads((target/'SOURCE.json').read_bytes())==record
+        except (OSError,ValueError):return False
+    if target.exists():
+        if not existing():raise EditorError('A retained campaign source record was changed: '+str(target))
+        return
+    from chi_import import publish
+    with tempfile.TemporaryDirectory(prefix='.source-',dir=folder) as temporary:
+        stage=Path(temporary)/'record';stage.mkdir();(stage/'SOURCE.json').write_bytes(encoded(record))
+        try:publish(stage,target)
+        except (FileExistsError,EditorError):
+            if not existing():raise
+
+
+def retain_revision(document,state_dir,source=None):
     """Keep one validated playable snapshot per content digest, before playing.
     Editing/moving the working project must not orphan its existing save slots.
     Retained snapshots are private original-derived data when the project is.
     """
-    signature=digest(document)
+    signature=digest(document);source=document.root if source is None else source
     parent=Path(state_dir)/'save-revisions'/document.manifest['package_id']/signature
     target=parent/'game'
     if target.exists():
         if target.is_symlink() or digest(ProjectDocument(target,document.validator))!=signature:
             raise EditorError('A retained save revision was changed. Preserve it separately before continuing: '+str(target))
+        retain_source(parent,document,signature,source)
         return target
     parent.mkdir(parents=True,exist_ok=True)
     from chi_import import publish
@@ -42,8 +97,9 @@ def retain_revision(document,state_dir):
     try:
         with (parent/'REVISION.json').open('xb') as record:
             record.write(encoded(dict(format='btp-save-revision-v1',digest=signature,
-                package_id=document.manifest['package_id'],title=document.manifest['title'],source=str(document.root))))
+                package_id=document.manifest['package_id'],title=document.manifest['title'],source=str(Path(source).resolve()))))
     except FileExistsError:pass
+    retain_source(parent,document,signature,source)
     return target
 
 
@@ -81,6 +137,11 @@ def inspect(path,location,slot=None):
         if row.tag=='BTG1':
             if len(data)<184:raise ValueError('Truncated project save')
             row.package=data[16:48].split(b'\0')[0].decode('ascii');row.version=data[48:80].split(b'\0')[0].decode('ascii');row.signature=data[80:112].hex()
+            # A project ID can itself end in "-2" through "-6". Parse the
+            # native base name using the envelope ID, before its slot suffix.
+            if slot is None:
+                native=re.fullmatch(r'game(?:-project-'+re.escape(row.package)+r')?(?:-([2-6]))?\.btp',path.name)
+                if native:row.slot=int(native[1]) if native[1] else 1
         elif row.tag.startswith('BTU'):
             if len(data)<136:raise ValueError('Truncated Updated save')
             row.version=data[48:80].split(b'\0')[0].decode('ascii');row.signature=data[80:84].hex()
@@ -107,16 +168,22 @@ def copy_exclusive(source,target):
 
 
 class SaveCatalogue:
-    def __init__(self,state_dir,paths,choice='My project',document=None,location='Launcher',validator=None):
+    def __init__(self,state_dir,paths,choice='My project',document=None,location='Launcher',validator=None,package_id=None):
         from app_runtime import binary
         self.state_dir=Path(state_dir).resolve();self.paths=dict(paths);self.choice=choice;self.document=document
         self.location=location;self.validator=validator or binary('btp-project');self.warnings=[];self.rows=[];self.projects={}
-        self.identity=document.manifest['package_id'] if document else choice.lower()
-        if document is None and choice not in ('Original','Updated'):raise EditorError('Choose a game or project first.')
+        self.project_mode=document is not None or package_id is not None
+        self.identity=document.manifest['package_id'] if document else package_id if package_id is not None else choice.lower()
+        if self.project_mode:
+            if not valid_package_id(self.identity):raise EditorError('Invalid saved-game campaign ID.')
+            if package_id is not None and self.identity!=package_id:raise EditorError('Saved-game campaign ID disagrees with the project.')
+        elif choice not in ('Original','Updated'):raise EditorError('Choose a game or project first.')
 
     def directory(self,document=None):
         doc=document or self.document
-        if doc is None:return self.state_dir/'games'/self.choice.lower()
+        if doc is None:
+            if self.project_mode:raise EditorError('An exact campaign revision is required for its save slots.')
+            return self.state_dir/'games'/self.choice.lower()
         key=revision_key(doc)
         return self.state_dir/('play' if self.location=='Editor' else 'games')/self.identity/key[:20 if self.location=='Editor' else 16]
 
@@ -128,15 +195,22 @@ class SaveCatalogue:
 
     def scan(self,cancel=None):
         self.rows=[];self.warnings=[];self.projects={}
-        current=digest(self.document) if self.document else ''
+        current=''
+        if self.document:
+            try:current=digest(self.document)
+            except (EditorError,OSError,ValueError) as error:
+                # A broken/relocated editable root must not hide older intact
+                # campaigns. The known package ID remains the discovery key.
+                self.warnings.append('Current project is unavailable; showing retained saves. '+str(error))
+                self.document=None
         if self.document:self.projects[current]=self.document.root
-        primary=self.directory();paths={}
+        primary=self.directory() if self.document or not self.project_mode else None;paths={}
         def add(folder,label):
             if folder.is_dir() and not folder.is_symlink():
                 for path in sorted(folder.glob('*.btp')):
                     if len(paths)>=4096:self.warnings.append('Save scan reached its 4,096-file limit.');return
                     paths.setdefault(path,label)
-        if self.document:
+        if self.project_mode:
             for area,label in (('games','Launcher'),('play','Editor')):
                 for folder in sorted((self.state_dir/area/self.identity).glob('*')):add(folder,label)
             runs=sorted((self.state_dir/'play-snapshots').glob('run-*'),key=lambda p:p.name)
@@ -158,8 +232,8 @@ class SaveCatalogue:
         for path,label in paths.items():
             row=inspect(path,label)
             if not row.error:
-                if self.document and (row.tag!='BTG1' or row.package!=self.identity):row.error='Belongs to another game'
-                elif not self.document and (row.tag=='BTG1' or (row.tag=='BTS1')!=(self.choice=='Original')):row.error='Belongs to another edition'
+                if self.project_mode and (row.tag!='BTG1' or row.package!=self.identity):row.error='Belongs to another game'
+                elif not self.project_mode and (row.tag=='BTG1' or (row.tag=='BTS1')!=(self.choice=='Original')):row.error='Belongs to another edition'
             row.current=bool(self.document and row.signature==current);self.rows.append(row)
         wanted={r.signature for r in self.rows if r.tag=='BTG1' and not r.error}-self.projects.keys()
         roots=[]
@@ -183,7 +257,7 @@ class SaveCatalogue:
         for row in self.rows:
             if row.tag=='BTG1':row.project=self.projects.get(row.signature)
         occupied={row.path for row in self.rows}
-        for slot in range(1,7):
+        for slot in range(1,7) if primary is not None else ():
             path=primary/self.leaf(slot)
             if path not in occupied:self.rows.append(SavedGame(path,slot,self.location,current=True))
         self.rows.sort(key=lambda r:(r.path.parent!=primary,r.slot,-r.mtime,str(r.path)))

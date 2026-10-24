@@ -180,7 +180,7 @@ def game_command(choice, paths, state_dir, project=None, resume=False):
         # Preserve the exact playable revision independently of the editable
         # source root, so its saves remain resumable after subsequent edits.
         from save_catalogue import retain_revision
-        playable=retain_revision(doc,state_dir)
+        playable=retain_revision(doc,state_dir,source=project)
         command+=['--project',str(playable)]
     else:
         command+=['--edition',choice.lower()]

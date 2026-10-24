@@ -60,8 +60,28 @@ def run(env,work,windows=False):
                 assert button.winfo_rootx()+button.winfo_width()<=managed.window.winfo_rootx()+managed.window.winfo_width()
             ImageGrab.grab(xdisplay=env['DISPLAY']).save(work/('saved-games-editor'+('-windows' if windows else '')+'.png'))
             assert selected.read_bytes()==original
+            # Saves must still be reachable when the editable root moves.
+            # The retained revision, not the working path, owns continuation.
+            doc.root.rename(folder/'Moved working game')
+            view.refresh();pump(lambda:view.job is None)
+            assert view.model.document is None and 'unavailable' in view.context_warning
+            pick(view,selected);view.continue_game();pump(lambda:view.job is None and bool(launcher.running))
+            process=launcher.running[-1];pump(lambda:player_window() is not None)
+            keys.key(player_window(),'Ctrl+Shift+Escape');pump(lambda:process.poll() is not None)
+            assert process.returncode==0 and selected.read_bytes()==original
+            # An invalid pending form must not prevent inspecting older saves;
+            # and an unrelated failed refresh must clear actionable old rows.
+            from unittest.mock import patch
+            from editor_model import EditorError
+            with patch('editor_tasks.snapshot',side_effect=EditorError('Invalid pending field')):
+                managed.refresh();pump(lambda:managed.job is None)
+            pick(managed,selected);assert managed.model.document is None
+            launcher.project.set(str(folder/'Never retained'))
+            view.refresh();pump(lambda:view.job is None)
+            assert view.model is None and not view.rows and not view.table.get_children()
+            view.backup();view.recover();view.continue_game();pump()
             window.destroy()
-            (work/('saved-games-gui'+('-windows' if windows else '')+'.json')).write_text(json.dumps(dict(status='passed',desktop='Linux Tk',player='Windows/Wine' if windows else 'Linux',checks=['six slots and dates','native launcher Continue/F5/quit','automatic backups','occupied-slot preservation','vacant-slot recovery','earlier exact revision after edits','editor Continue and normal Stop/log lifecycle','visible controls within window bounds']),indent=2)+'\n')
+            (work/('saved-games-gui'+('-windows' if windows else '')+'.json')).write_text(json.dumps(dict(status='passed',desktop='Linux Tk',player='Windows/Wine' if windows else 'Linux',checks=['six slots and dates','native launcher Continue/F5/quit','automatic backups','occupied-slot preservation','vacant-slot recovery','earlier exact revision after edits','editor Continue and normal Stop/log lifecycle','visible controls within window bounds','moved working project still continues retained saves','invalid editor draft still browses retained saves','failed refresh clears stale rows']),indent=2)+'\n')
             print('PASS: launcher/editor saved games, all slots, exact old revisions, recovery, backups and native Continue.',flush=True)
         finally:
             for process in launcher.running:

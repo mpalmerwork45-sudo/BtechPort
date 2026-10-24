@@ -217,7 +217,7 @@ class PlaySession:
                 else:candidate.export(folder/'game')
                 document=ProjectDocument(folder/'game',candidate.validator)
                 from save_catalogue import retain_revision
-                retain_revision(document,state_dir)
+                retain_revision(document,state_dir,source=source.root if checkpoint else candidate.root)
                 # Ordinary Play retains slots for the same exact revision.
                 # Play here/checkpoint experiments keep private per-run saves.
                 persistent=not checkpoint and here is None

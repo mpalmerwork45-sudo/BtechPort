@@ -3,7 +3,7 @@ import copy,json,shutil,subprocess,sys,tempfile,unittest
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT/'tools'))
 from editor_model import create_project,ProjectDocument,EditorError
-from save_catalogue import SaveCatalogue,retain_revision,inspect,revision_key
+from save_catalogue import SaveCatalogue,retain_revision,inspect,revision_key,retained_package_id
 from app_runtime import project_slot_name,game_command
 
 
@@ -117,6 +117,71 @@ class SaveCatalogueTests(unittest.TestCase):
             jobs=[pool.submit(retain_revision,self.doc.worker_copy(),self.state) for _ in range(2)]
             paths=[job.result() for job in jobs]
         self.assertEqual(paths[0],paths[1]);ProjectDocument(paths[0],self.tool).validate()
+
+    def test_numeric_project_suffix_is_not_the_quicksave_slot(self):
+        self.doc=create_project(ROOT/'examples/beacon-demo',self.root/'Second game','campaign-2','Campaign Two',self.tool)
+        self.model=SaveCatalogue(self.state,self.paths,document=self.doc,validator=self.tool)
+        for slot in range(1,7):self.save(slot)
+        rows=self.model.scan();self.assertEqual([r.slot for r in rows],list(range(1,7)))
+        quick=rows[0];self.assertEqual(quick.path.name,'game-project-campaign-2.btp')
+        backup=self.model.backup(quick)
+        self.assertEqual(backup.name,quick.path.name);self.assertEqual(inspect(backup,'Backup').slot,1)
+
+    def test_moved_working_root_does_not_hide_retained_progress(self):
+        source=self.save();before=source.read_bytes();root=retain_revision(self.doc,self.state)
+        old_path=self.doc.root;old_path.rename(self.root/'Moved campaign')
+        # An open editor still knows the ID; a fresh launcher can recover it
+        # from the retention record even when its registered path is absent.
+        old=next(r for r in self.model.scan() if r.path==source)
+        self.assertEqual(old.project,root);self.assertTrue(self.model.warnings)
+        identity=retained_package_id(self.state,old_path);self.assertEqual(identity,self.doc.manifest['package_id'])
+        model=SaveCatalogue(self.state,self.paths,package_id=identity,validator=self.tool)
+        rows=model.scan();self.assertEqual(len(rows),1);self.assertEqual(rows[0].project,root)
+        recovered=model.recover(rows[0],3);self.assertEqual(recovered.read_bytes(),before)
+        command,state=model.resume(rows[0]);self.assertEqual(json.loads(subprocess.check_output(command,text=True)),state)
+        self.assertEqual(source.read_bytes(),before)
+
+    def test_invalid_working_root_still_allows_exact_old_continuation(self):
+        source=self.save();root=retain_revision(self.doc,self.state)
+        manifest=self.doc.root/'project.json';manifest.write_bytes(b'{invalid edited draft')
+        row=next(r for r in self.model.scan() if r.path==source)
+        self.assertEqual(row.project,root);command,state=self.model.resume(row)
+        self.assertEqual(json.loads(subprocess.check_output(command,text=True)),state)
+        self.assertEqual(manifest.read_bytes(),b'{invalid edited draft')
+
+    def test_untrusted_recovery_ids_cannot_select_paths_outside_campaign(self):
+        for identity in ('../elsewhere','/tmp/elsewhere','a/b','a\\b','a:b','Original','a'*32,''):
+            with self.subTest(identity=identity),self.assertRaises(EditorError):
+                SaveCatalogue(self.state,self.paths,package_id=identity,validator=self.tool)
+        with self.assertRaises(EditorError):
+            SaveCatalogue(self.state,self.paths,document=self.doc,package_id='other-game',validator=self.tool)
+        self.assertFalse(self.state.exists())
+
+    def test_reused_working_path_requires_an_unambiguous_campaign_choice(self):
+        retain_revision(self.doc,self.state);old_path=self.doc.root;old_path.rename(self.root/'Earlier game')
+        second=create_project(ROOT/'examples/beacon-demo',old_path,'second-campaign','Second Campaign',self.tool)
+        retain_revision(second,self.state)
+        with self.assertRaisesRegex(EditorError,'multiple campaigns'):retained_package_id(self.state,old_path)
+
+    def test_exported_play_snapshot_remembers_editable_source_and_later_origins(self):
+        snapshot=self.root/'run/game';self.doc.export(snapshot);exported=ProjectDocument(snapshot,self.tool)
+        retained=retain_revision(exported,self.state,source=self.doc.root)
+        self.assertEqual(retained_package_id(self.state,self.doc.root),self.doc.manifest['package_id'])
+        second=self.root/'Moved working source'
+        # Reusing the already retained runtime must add the new origin, rather
+        # than returning early with only the first temporary/source path.
+        self.assertEqual(retain_revision(exported,self.state,source=second),retained)
+        self.assertEqual(retained_package_id(self.state,second),self.doc.manifest['package_id'])
+        self.assertEqual(retained_package_id(self.state,self.doc.root),self.doc.manifest['package_id'])
+
+    def test_simultaneous_retention_preserves_both_source_associations(self):
+        from concurrent.futures import ThreadPoolExecutor
+        sources=[self.root/'source-a',self.root/'source-b']
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            jobs=[pool.submit(retain_revision,self.doc.worker_copy(),self.state,source) for source in sources]
+            paths=[job.result() for job in jobs]
+        self.assertEqual(paths[0],paths[1])
+        for source in sources:self.assertEqual(retained_package_id(self.state,source),self.doc.manifest['package_id'])
 
 
 if __name__=='__main__':unittest.main()
