@@ -57,6 +57,15 @@ images are regenerated from resource/index references before applying edits.
 Unchanged original programs, dialogue, maps, pixel bases and binaries are not
 bundled. Applying a recipe never executes Python or shell commands.
 
+Cloned and edited dialogue also uses references for matching original spans,
+including native popup text stored in the local dialogue cache. The internal
+`$chi_base` and `$chi_text` values identify local baseline fields and bounded
+text slices. Matching spans of at least 24 characters are referenced; additions
+and shorter unmatched fragments can remain literal. Use a kit
+revision containing the [Astra audit fixes](CHI_ASTRA_AUDIT.md) on both ends,
+and re-export older recipes made from cloned/edited original dialogue before
+sharing them. Those older exports could include original text.
+
 Reconstruction validates the native project and proves the exact runtime-file
 digest before publishing. Runtime bytes, project ID and content version match
 the exported revision; saves for that exact revision retain their strict

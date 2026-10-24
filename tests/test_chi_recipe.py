@@ -1,9 +1,10 @@
 """Round trips preserve edited native content without exporting original bases."""
 import copy,json,shutil,subprocess,sys,tempfile,unittest
+from unittest.mock import patch as mock_patch
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT/'tools'))
 from editor_model import ProjectDocument,EditorError,encoded
-from chi_recipe import diff,patch,export_recipe,build_recipe,runtime_files,fingerprint,check_recipe
+from chi_recipe import diff,patch,export_recipe,build_recipe,runtime_files,fingerprint,check_recipe,base_index,references_only,resolve_references
 
 class RecipePatchTests(unittest.TestCase):
     def test_insert_clone_reorder_and_text_splices(self):
@@ -14,6 +15,27 @@ class RecipePatchTests(unittest.TestCase):
         self.assertNotIn(original['nodes'][0]['text'],json.dumps(changes));self.assertTrue(any(c['op']=='copy' for c in changes))
         bad=copy.deepcopy(changes);bad[0]['before']='0'*64
         with self.assertRaises(EditorError):patch(original,bad)
+
+    def test_modified_copied_text_uses_spans_and_checks_bounds(self):
+        original='Synthetic reference speech with enough characters to exercise copied spans safely.'
+        files={'speech.json':encoded({'text':original})};index=base_index(files)
+        for edited in (original+'!', 'Prefix: '+original, original[:40]+'EDIT'+original[40:], original[7:-3]):
+            protected=references_only(edited,index)
+            self.assertIsInstance(protected,dict)
+            self.assertEqual(resolve_references(protected,files),edited)
+            self.assertNotIn(original,json.dumps(protected))
+        malformed={'$chi_text':[dict(source=dict(file='speech.json',path=['text']),at=0,length=len(original)+1)]}
+        with self.assertRaisesRegex(EditorError,'out of range'):resolve_references(malformed,files)
+
+    def test_original_spans_are_protected_before_positional_string_diff(self):
+        original='A distinct synthetic reference speech used to test insertion ahead of unrelated native overrides.'
+        files={'speech.json':encoded({'text':original})};index=base_index(files)
+        old=[{'index':100,'text':'An unrelated old record with a different message.'}]
+        new=[{'index':55,'text':original+'!'},*old]
+        changes=diff(old,new,text_index=index)
+        protected=references_only(changes,index)
+        self.assertNotIn(original,json.dumps(protected))
+        self.assertEqual(patch(old,resolve_references(protected,files)),new)
 
 @unittest.skipUnless((ROOT/'build/btp-project').exists() and (ROOT/'Original DOS/BTECH.EXE').exists(),'Needs local originals/native validator')
 class ChiRecipeTests(unittest.TestCase):
@@ -50,6 +72,38 @@ class ChiRecipeTests(unittest.TestCase):
             enable(d);detach(d,'sprite','MECHSHAP.CMP',0,2)
             art=copy.deepcopy(d.art);image=art['images'][-1];image['frames'][0][0]='ffffffff'+image['frames'][0][0][8:];d.replace_art(art)
         self.roundtrip('original',edit,'sprite')
+
+    def test_cloned_edited_bld_and_native_dialogue_keep_original_text_local(self):
+        from chi_bld import data,insert
+        from chi_editor import native_dialogue,set_dialogue
+        copied=[]
+        def edit(d):
+            program=next(p for p in data(d)['programs'] if any(n['op']=='text' and len(n['text'])>200 for n in p['nodes']))
+            original=next(n for n in program['nodes'] if n['op']=='text' and len(n['text'])>200)
+            cloned=copy.deepcopy(original);cloned.pop('origin',None);cloned.pop('original_size',None)
+            cloned['id']='test:modified-clone';cloned['text']+='!';copied.append(original['text'])
+            insert(d,program['id'],original['id'],cloned)
+            for i in (55,373):
+                text=native_dialogue(d)[i];copied.append(text);set_dialogue(d,i,text+'!')
+        _,recipe,_=self.roundtrip('original',edit,'modified-original-dialogue')
+        payload=json.dumps(recipe)
+        for text in copied:
+            # Check meaningful retained spans, including text that would have
+            # been fragmented by a diff against an unrelated shifted record.
+            for at in range(0,len(text)-31,16):self.assertNotIn(json.dumps(text[at:at+32])[1:-1],payload)
+        self.assertIn('$chi_text',payload)
+        self.assertIn('chi/talk-data.bin',payload)
+
+    def test_recipe_outputs_preserve_fixed_references_with_another_source(self):
+        doc=ProjectDocument(self.root/'pair/original',self.tool)
+        path=self.root/'path-guard.recipe.json';export_recipe(doc,ROOT/'Original DOS',path)
+        recipe=json.loads(path.read_bytes());fake=self.root/'fake-checkout';fake.mkdir()
+        with mock_patch('chi_import.ROOT',fake):
+            for reference in ('Original DOS','UnBattletech'):
+                protected=fake/reference;protected.mkdir();target=protected/'must-not-exist'
+                with self.assertRaisesRegex(EditorError,'outside original/reference'):build_recipe(recipe,ROOT/'Original DOS',target,self.tool)
+                with self.assertRaisesRegex(EditorError,'outside original/reference'):export_recipe(doc,ROOT/'Original DOS',target)
+                self.assertEqual(list(protected.iterdir()),[])
     def test_rejects_raw_resource_changes_and_preserves_existing_outputs(self):
         doc=ProjectDocument(self.root/'pair/original',self.tool);recipe=self.root/'keep.json';recipe.write_text('preserved')
         with self.assertRaisesRegex(EditorError,'exists'):export_recipe(doc,ROOT/'Original DOS',recipe)

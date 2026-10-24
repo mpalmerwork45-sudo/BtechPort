@@ -6,13 +6,13 @@ strings may differ; the migration policy proves every gameplay file unchanged.
 from pathlib import Path
 import hashlib,json,tempfile
 from editor_model import ProjectDocument,EditorError,encoded
-from chi_import import ROOT,plain_path,publish
+from chi_import import plain_path,output_path,publish
 from prepare_talk import extract
 from save_migration import compatible,migrate
 
 def update(project,source,output,validator,save=None,player=None):
-    project,source,output=map(plain_path,(project,source,output))
-    if output.exists() or output.is_relative_to(source) or output.is_relative_to(ROOT/'UnBattletech') or output.is_relative_to(project):
+    project,source=map(plain_path,(project,source));output=output_path(output,project,source)
+    if output.exists():
         raise EditorError('Choose a new output outside the old project and reference/source folders.')
     if not output.parent.is_dir():raise EditorError('Choose an existing output parent.')
     old=ProjectDocument(project,validator)

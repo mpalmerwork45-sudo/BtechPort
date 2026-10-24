@@ -39,6 +39,19 @@ def plain_path(path):
     return path
 
 
+def output_path(path,*protected):
+    """Keep generated output out of both fixed references and chosen inputs.
+
+    A user can import from another DOS installation. That must not make this
+    checkout's Original DOS directory a permissible generation destination.
+    """
+    path=plain_path(path)
+    if any(path.is_relative_to(plain_path(root)) for root in
+           (ROOT/'Original DOS',ROOT/'UnBattletech',*protected)):
+        raise EditorError('Output must be outside original/reference directories and source projects.')
+    return path
+
+
 def read_source(source, cancel=None, progress=lambda _:None):
     expected={r['file']:r for r in json.loads(INVENTORY.read_bytes())['files']}
     if set(expected)!=set(SOURCE_FILES):raise EditorError('Importer source inventory is incomplete.')
@@ -115,14 +128,12 @@ def import_campaigns(source,output,edition='both',validator=None,cancel=None,pro
     from prepare_talk import extract as talk
     from prepare_combat import extract as combat
     from prepare_world import extract as world
-    source=plain_path(source);target=plain_path(output)
+    source=plain_path(source);target=output_path(output,source)
     from app_runtime import binary
     validator=Path(validator or binary('btp-project')).resolve()
     if edition not in ('original','updated','both'):raise EditorError('Choose original, updated or both.')
     if not validator.is_file():raise EditorError('Build the application before importing CHI.')
     if target.exists():raise EditorError('Choose a new import destination; existing directories are preserved.')
-    if target.is_relative_to(source) or target.is_relative_to(ROOT/'UnBattletech'):
-        raise EditorError('Import destination must be outside the original/reference directories.')
     if not target.parent.is_dir():raise EditorError('Choose an existing parent folder for the new import destination.')
     snapshot=read_source(source,cancel,progress);check_cancel(cancel)
     progress('Extracting native text, combat and world data')

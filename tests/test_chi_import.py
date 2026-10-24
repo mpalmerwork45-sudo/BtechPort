@@ -9,6 +9,7 @@ import sys
 import tempfile
 import threading
 import unittest
+from unittest.mock import patch
 
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'tools'))
@@ -86,6 +87,18 @@ class ChiImportTests(unittest.TestCase):
         source=self.copy_source('wrong-version');(source/'MAP1.MTP').write_bytes(b'broken')
         with self.assertRaisesRegex(EditorError,'MAP1.MTP'):import_campaigns(source,self.root/'bad-output',validator=self.tool)
         self.assertFalse((self.root/'bad-output').exists())
+
+    def test_other_source_does_not_allow_writes_to_fixed_reference_folders(self):
+        from chi_dialogue_update import update
+        fake=self.root/'fixed-reference-guard';fake.mkdir()
+        with patch('chi_import.ROOT',fake):
+            for name in ('Original DOS','UnBattletech'):
+                protected=fake/name;protected.mkdir();target=protected/'must-not-exist'
+                with self.assertRaisesRegex(EditorError,'outside original/reference'):
+                    import_campaigns(self.source,target,'original',self.tool)
+                with self.assertRaisesRegex(EditorError,'outside original/reference'):
+                    update(self.document().root,self.source,target,self.tool)
+                self.assertEqual(list(protected.iterdir()),[])
 
     def test_cancel_after_first_profile_publishes_neither(self):
         cancel=threading.Event();target=self.root/'cancelled'
