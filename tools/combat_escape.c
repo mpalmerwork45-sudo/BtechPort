@@ -2,8 +2,10 @@
    reads the known destroyed map to plan ahead; it never edits the played state. */
 #include "core/combat.h"
 #include "data/save.h"
+#include "data/content.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 static void input(BtpState *s,const BtpResources *r,BtpAction a)
 { puts(btp_action_name(a));btp_game_tick(s,r,a); }
 static void command(BtpState *s,const BtpResources *r,unsigned n)
@@ -14,14 +16,19 @@ static void command(BtpState *s,const BtpResources *r,unsigned n)
 }
 int main(int argc,char **argv)
 {
-    if (argc!=2) return 2;
-    BtpResources *r=calloc(1,sizeof *r);BtpState s;BtpError e;
-    if (!r || !btp_resources_load("Original DOS",r,&e) || !btp_combat_data_load("work/combat-data.bin",&r->combat,&e) ||
-        !btp_world_data_load("work/world-data.bin",&r->world,&e) || !btp_save_load(argv[1],&s,r,&e)) return 1;
-    if (!s.campaign.invasion || s.combat.phase!=BTP_COMBAT_MENU) { free(r);return 2; }
+    const char *project=argc==4 && !strcmp(argv[2],"--project") ? argv[3] : NULL;
+    if (argc!=2 && !project) return 2;
+    BtpContent content={0};BtpState s;BtpError e;
+    BtpOriginalContentPaths paths={"Original DOS","work/talk-data.bin","work/combat-data.bin","work/world-data.bin"};
+    if (!(project ? btp_content_load_project(&content,project,NULL,&e) : btp_content_load_original(&content,&paths,&e))) {
+        fprintf(stderr,"%s\n",e.text);return 1;
+    }
+    const BtpResources *r=content.resources;
+    if (!btp_save_load(argv[1],&s,r,&e)) { fprintf(stderr,"%s\n",e.text);btp_content_close(&content);return 1; }
+    if (!s.campaign.invasion || s.combat.phase!=BTP_COMBAT_MENU) { btp_content_close(&content);return 2; }
     static const int dx[]={0,1,1,1,0,-1,-1,-1},dy[]={-1,-1,0,1,1,1,0,-1};
     int *parents=malloc(65536*sizeof *parents),*queue=malloc(65536*sizeof *queue);
-    if (!parents || !queue) { free(parents);free(queue);free(r);return 1; }
+    if (!parents || !queue) { free(parents);free(queue);btp_content_close(&content);return 1; }
     for (unsigned round=0;round<128 && s.combat.phase;++round) {
         if (s.combat.goal_active) { command(&s,r,0);input(&s,r,BTP_CANCEL); }
         BtpState projected=s;projected.late.invasion_event=3;
@@ -42,7 +49,7 @@ int main(int argc,char **argv)
                 parents[q]=p;queue[end++]=q;
             }
         }
-        if (goal<0) { fprintf(stderr,"No route through actual destroyed terrain\n");free(parents);free(queue);free(r);return 1; }
+        if (goal<0) { fprintf(stderr,"No route through actual destroyed terrain\n");free(parents);free(queue);btp_content_close(&content);return 1; }
         unsigned n=0;for (int p=goal;p!=start;p=parents[p]) queue[n++]=p;
         /* Queue the corners of at most twelve steps. The core accounts for
            terrain cost and remaining points when consuming those orders. */
@@ -62,7 +69,7 @@ int main(int argc,char **argv)
         command(&s,r,9);
         for (unsigned i=0;i<8192 && s.combat.phase && s.combat.phase!=BTP_COMBAT_MENU;++i)
             input(&s,r,s.combat.phase==BTP_COMBAT_STORY && !s.cutscene.active ? BTP_ACCEPT : BTP_IDLE);
-        if (s.combat.lost) { fprintf(stderr,"The ordinary escape attempt lost its mech\n");free(parents);free(queue);free(r);return 1; }
+        if (s.combat.lost) { fprintf(stderr,"The ordinary escape attempt lost its mech\n");free(parents);free(queue);btp_content_close(&content);return 1; }
     }
-    int ok=s.combat.fled;free(parents);free(queue);free(r);return !ok;
+    int ok=s.combat.fled;free(parents);free(queue);btp_content_close(&content);return !ok;
 }

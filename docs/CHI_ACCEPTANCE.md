@@ -4,6 +4,12 @@
 verified on Linux, with Windows native tools/player checked under Wine. Native
 Windows Tk and the independent Astra audit remain pending external checks.**
 
+**Follow-up:** a fresh Enhanced-only Updated route now passes on Linux and
+Windows/Wine for 36,316 inputs, with Enhanced asserted after every input, 44
+decoded contexts and eight complete saved continuations per platform. See
+[Enhanced acceptance](CHI_ENHANCED_ACCEPTANCE.md). The original C4.5 figures
+below describe the earlier gate and its separately retained routes.
+
 This acceptance target is equivalence to BtechPort's corresponding edition.
 It does not certify every original DOS branch, every possible edit, or physical
 8 MHz XT speaker/timing equivalence. The
@@ -26,9 +32,11 @@ used. Their original-derived observations stay in ignored private evidence.
 Updated mode was previously described too broadly as a full campaign. That input
 stream matches the built-in Updated behavior without a fault, but does not
 complete training. Identical inputs do not win both rule sets. The new acceptance
-asserts an actual ending for each dedicated route. A complete Enhanced-only
-campaign walkthrough is **UNKNOWN**; Enhanced defaults, edited missions, combat
-rules and Updated units have separate focused checks. Legacy selection remains
+asserts an actual ending for each dedicated route. At that gate a complete
+Enhanced-only campaign walkthrough was **UNKNOWN**. It is now separately
+verified by the follow-up linked above; the earlier fixtures retain their
+declared rules. Enhanced defaults, edited missions, combat rules and Updated
+units also have focused checks. Legacy selection remains
 a supported feature of Updated; the importer does not change its default.
 
 ## Evidence matrix
@@ -37,6 +45,7 @@ a supported feature of Updated; the importer does not change its default.
 | --- | --- |
 | Baseline equivalence | VERIFIED: six declared route streams, 365,690 gameplay ticks across both editions; state/RNG after every input and rendered held/periodic boundaries. These include default Enhanced parity, not an Enhanced completion claim. |
 | Updated completion/parity | VERIFIED: separate 75,556-input Legacy-selected full route; built-in/imported equivalence and ending assertion. Total baseline plus additional Updated comparisons: 441,246 ticks. |
+| Enhanced-only follow-up | VERIFIED separately: 36,316-input fresh Updated ending on Linux/Wine, Enhanced after every input, 44 decoded contexts and eight exact full continuations per platform. |
 | Native script compilation | VERIFIED: all 26 BLD sources in each edition compile to identical originals (52 round trips). |
 | Observed script execution | VERIFIED on each ending route: 17/26 programs, 872/1,816 instructions, 181/578 branch destinations, zero faults. Unobserved instructions/branches remain UNKNOWN, rather than being counted from static inclusion. |
 | Intro and settings | VERIFIED: matching logo/title/played-before boundaries; separate edition features. Real Linux GUI Play starts both projects at the logo; Updated retains Enhanced. |

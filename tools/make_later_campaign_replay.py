@@ -19,7 +19,7 @@ class Later(Session):
         # weapon, as in DOS, so repeated Accept would never finish that page.
         self.advance(['idle']*8 if self.state['animation']['active'] else
                      ['cancel'] if self.state['aftermath']['phase']==4 else ['accept'])
-def main(s=None):
+def main(s=None,speed_shop=True):
     if s is None:s=Later(ROOT/'tests/fixtures/ordinary-invasion.actions')
     s.world_route(1286,1080);s.advance(['accept']*3)
     if s.state['mode']!='local-exploration' or s.state['map']!=2:raise RuntimeError('Garage transition failed')
@@ -70,12 +70,16 @@ def main(s=None):
         if not s.state['service']['phase']:break
         s.pause()
     else:raise RuntimeError('Original ammunition sequence did not finish')
-    menu(1);s.advance(['accept'])
-    for _ in range(10):
-        if s.state['service']['phase']==3:break
-        s.advance(['accept'])
-    else:raise RuntimeError('Speed Shop offer did not reach confirmation')
-    s.advance(['accept','accept']);s.note('speed-shop-no-funds');menu(5)
+    # A complete route may retain a heavier loan which has no speed upgrade.
+    # Keep the original Locust-specific service regression as the default.
+    if speed_shop:
+        menu(1);s.advance(['accept'])
+        for _ in range(10):
+            if s.state['service']['phase']==3:break
+            s.advance(['accept'])
+        else:raise RuntimeError('Speed Shop offer did not reach confirmation')
+        s.advance(['accept','accept']);s.note('speed-shop-no-funds')
+    menu(5)
     s.save_fixture('services')
     print('Saved ordinary Starport, Rex and technician routes')
     return s

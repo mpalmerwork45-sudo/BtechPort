@@ -13,8 +13,10 @@ after the final dialogue bounds adjustment.
 
 [Acceptance, corrections and limits](CHI_ACCEPTANCE.md),
 [sharing recipes](CHI_RECONSTRUCTION.md), [progress](CHI_IMPORT_PROGRESS.md).
-Native Windows Tk and independent Astra sign-off remain pending. An Enhanced-only
-ending route is unverified. Imported saves remain pinned to exact content.
+Native Windows Tk and independent Astra sign-off remain pending. A separate
+Enhanced-only route now reaches the ending over 36,316 inputs on Linux/Wine,
+matching the built-in edition after every input. Imported saves remain pinned
+to exact content. [Enhanced follow-up](CHI_ENHANCED_ACCEPTANCE.md).
 
 **Save recovery and original death popup — implemented and verified.** Editor
 Play now retains its six slots between launches of the same revision and can
@@ -26,6 +28,28 @@ working replay/quit prompt. A narrow copy updater adds the new text to an old
 import without changing its gameplay data or save payload. See
 [recovery details](EDITOR_SAVE_GAMES.md),
 [death evidence and limits](GAME_OVER_PRESENTATION.md).
+
+**Save-management follow-up — implemented.** Launcher **Saved games...** and
+editor **Play → Saved games** share six-slot discovery, dates, revision/source
+display, native-validated Continue, dated backups, empty-slot recovery and
+matching-project lookup. Launches retain an exact playable revision before
+editing can change it. The Linux desktop journey verifies both entry points,
+real SDL Continue/quicksave/quit, old revisions, backups and occupied/vacant
+recovery. Native Windows Tk remains unverified. [Usage](EDITOR_SAVE_GAMES.md).
+
+**Enhanced-only follow-up — verified.** The route keeps default Enhanced rules
+through driving/recovery, four training victories, Rick's device, physical
+invasion escape, five-person recruitment, apprenticeships and all cache doors.
+It resumes from 44 native decoded contexts and eight complete fresh-process
+continuations per platform. Linux/Windows ending saves, pixels, canonical state,
+script traces and eight paired held saves match exactly. Observed coverage is
+17/26 programs, 826/1,816 instructions and 152/578 branches, zero faults; every
+native branch and arbitrary combat balance remain unclaimed.
+
+This batch passes 473 Python tests plus twelve focused save-manager tests added
+or refined afterward, and seven affected native tests on each platform. The
+Linux Saved games GUI journey also passes with Linux and Windows/Wine players.
+The existing 95-test native baseline remains the preceding full-suite result.
 
 The following entries record earlier increments; their then-open milestone
 statements are superseded by the current acceptance report.

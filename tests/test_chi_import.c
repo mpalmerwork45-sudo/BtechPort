@@ -60,23 +60,32 @@ static void same_route_state(const BtpState *a,const BtpState *b,const BtpResour
         same_record(v->combat.unit[i].record,b->combat.unit[i].record,base,imported);
     equal(v,b);free(v);
 }
-static unsigned route(const char *file,const BtpResources *base,const BtpResources *imported)
+static unsigned route(const char *file,const BtpResources *base,const BtpResources *imported,int enhanced)
 {
     BtpState *a=calloc(1,sizeof *a),*b=calloc(1,sizeof *b);CHECK(a && b);
     btp_start(a);btp_start(b);b->project=1;btp_npc_init(a,&base->map);btp_npc_init(b,&imported->map);
     if (btp_resources_feature(base,BTP_FEATURE_ENHANCED)) CHECK(btp_set_combat_profile(a,base,1) && btp_set_combat_profile(b,imported,1));
     uint32_t *x=malloc(320u*200u*sizeof *x),*y=malloc(320u*200u*sizeof *y);CHECK(x && y);
     FILE *f=fopen(file,"r");CHECK(f);char line[128];unsigned ticks=0,held=0;
+    uint8_t checkpoints[512]={0};unsigned resumed=0;
     equal(a,b);
     while (fgets(line,sizeof line,f)) {
         line[strcspn(line,"\r\n")]=0;if (!*line || *line=='#') continue;
         BtpAction action;CHECK(btp_action_parse(line,&action));
         btp_game_tick(a,base,action);btp_game_tick(b,imported,action);++ticks;
+        if(enhanced)CHECK(a->combat_profile==1 && b->combat_profile==1);
         same_route_state(a,b,base,imported);CHECK(!b->script.error);
-        if (!held && (b->script.status==BTP_SCRIPT_WAIT || b->script.status==BTP_SCRIPT_MENU)) {
+        unsigned checkpoint=b->combat.phase ? b->mission.assignment*32u+b->combat.phase :
+            b->cache.active ? 256u+b->cache.phase : 384u+b->mode;
+        CHECK(checkpoint<512);
+        if ((!held && (b->script.status==BTP_SCRIPT_WAIT || b->script.status==BTP_SCRIPT_MENU)) ||
+            (enhanced && !checkpoints[checkpoint])) {
             BtpState *restored=calloc(1,sizeof *restored);CHECK(restored);
             CHECK(btp_save_write("chi-held-test.btp",b,imported,&error));
             CHECK(btp_save_load("chi-held-test.btp",restored,imported,&error));equal(b,restored);
+            /* Continue the actual route from each decoded Enhanced boundary,
+               rather than only checking a throwaway initial-menu round trip. */
+            if(enhanced) { *b=*restored;checkpoints[checkpoint]=1;++resumed; }
             CHECK(!remove("chi-held-test.btp"));free(restored);held=1;
         }
         if (ticks%64u==0 || b->script.status==BTP_SCRIPT_MENU || b->script.status==BTP_SCRIPT_WAIT) {
@@ -90,16 +99,17 @@ static unsigned route(const char *file,const BtpResources *base,const BtpResourc
         CHECK(ticks<120000);
     }
     CHECK(!fclose(f));CHECK(ticks);printf("Verified %u identical gameplay ticks and presentation checkpoints: %s\n",ticks,file);
+    if(enhanced)printf("Enhanced remained selected after every input; resumed %u distinct held contexts.\n",resumed);
     unsigned mode=b->mode;free(a);free(b);free(x);free(y);return mode;
 }
 int main(int argc,char **argv)
 {
-    if (argc==9 && !strcmp(argv[1],"--updated-route")) {
+    if (argc==9 && (!strcmp(argv[1],"--updated-route") || !strcmp(argv[1],"--enhanced-route"))) {
         BtpContent base={0},project={0};BtpOriginalContentPaths paths={argv[3],argv[4],argv[5],argv[6]};
         CHECK(btp_content_load_original(&base,&paths,&error));
         CHECK(btp_content_select(&base,BTP_CONTENT_UPDATED,argv[7],&error));
         CHECK(btp_content_load_project(&project,argv[2],NULL,&error));
-        CHECK(route(argv[8],base.resources,project.resources)==BTP_ENDING);
+        CHECK(route(argv[8],base.resources,project.resources,!strcmp(argv[1],"--enhanced-route"))==BTP_ENDING);
         btp_content_close(&base);btp_content_close(&project);puts("Updated route reaches its ending with identical built-in/imported state and rendered checkpoints.");return 0;
     }
     if(argc==4 && !strcmp(argv[1],"--party-proof")) {
@@ -174,7 +184,7 @@ int main(int argc,char **argv)
         CHECK(!memcmp(base.resources->combat.loans,imported.resources->combat.loans,sizeof base.resources->combat.loans));
         CHECK(!memcmp(&base.resources->dialogue,&imported.resources->dialogue,sizeof base.resources->dialogue));
         intro(base.resources,imported.resources);
-        for (int i=8;i<argc;++i) route(argv[i],base.resources,imported.resources);
+        for (int i=8;i<argc;++i) route(argv[i],base.resources,imported.resources,0);
         BtpState *s=calloc(1,sizeof *s),*copy=calloc(1,sizeof *copy);CHECK(s && copy);
         btp_start(s);s->project=1;btp_npc_init(s,&imported.resources->map);
         for (unsigned slot=0;slot<6;++slot) {

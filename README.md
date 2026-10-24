@@ -140,7 +140,13 @@ changes and local-original references. See [sharing/reconstruction](docs/CHI_REC
 and [campaign acceptance and platform limits](docs/CHI_ACCEPTANCE.md). C4.5 and
 C5 implementation are verified for the declared Linux/Wine scope; native Windows
 Tk and independent audit sign-off remain pending.
-Editor Play saves persist between launches of the same revision. See
+A separate [Enhanced-only campaign route](docs/CHI_ENHANCED_ACCEPTANCE.md) now
+reaches the ending with default Enhanced rules throughout, matching the built-in
+Updated game on Linux and Windows/Wine, including saved continuations.
+The launcher has **Saved games...** and the editor has **Play → Saved games**:
+six slots, dates, revisions, backups, exact-revision Continue and recovery into
+empty slots. Project revisions are retained before play so later editing does
+not orphan their saves. Editor Play saves persist between launches. See
 [saved games and recovery](docs/EDITOR_SAVE_GAMES.md) before editing a campaign
 you want to keep playing with existing saves.
 The [essential-character death popup](docs/GAME_OVER_PRESENTATION.md) now uses

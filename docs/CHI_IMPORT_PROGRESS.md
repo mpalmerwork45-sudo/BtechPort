@@ -1,5 +1,30 @@
 # Editable CHI import progress
 
+## Save-management and Enhanced-only follow-ups — 2026-10-24
+
+Both approved follow-ups are implemented and verified for their declared scope.
+The launcher/editor Saved games screen shows six slots, timestamps, revisions,
+locations and backups. Continue validates natively and retains/backups before
+launch; recovery copies into empty slots only. Future launches retain one exact
+project revision per digest. The recovered owner's save is visible; no personal
+save, source project or registration was changed in this follow-up.
+
+A fresh 36,316-input Updated route reaches the ending with Enhanced asserted
+after every input. Linux/Windows built-in/imported comparisons pass, with 44
+decoded held contexts and eight full continuations per platform. Ending state,
+save, pixels and BLD trace match exactly across platforms; all eight paired held
+saves match. Coverage observes 17/26 programs, 826/1,816 instructions and 152/578
+branches, zero faults. Earlier Enhanced-only UNKNOWN entries below describe
+the earlier increments; this follow-up closes that specific gap.
+
+473 Python tests pass, followed by twelve focused save-catalogue cases after
+final refinements. Seven affected native checks pass on Linux and Windows/Wine.
+The real Linux GUI journey passes with both native player builds; native
+Windows Tk remains UNKNOWN and the independent Astra audit is still pending.
+No release/package refresh or independent audit is included in these two tasks.
+See [save management](EDITOR_SAVE_GAMES.md),
+[Enhanced route and reproducible evidence](CHI_ENHANCED_ACCEPTANCE.md).
+
 Authorization began with C1/C2 and C3; the latest approved range is C4.5/C5,
 2026-10-24. See the
 [milestone plan](CHI_EDITABLE_CAMPAIGNS_PLAN.md) and [contracts](CHI_IMPORT_CONTRACT.md).

@@ -6,10 +6,11 @@ and [asset-free reconstruction](CHI_RECONSTRUCTION.md). The combined
 [campaign acceptance](CHI_ACCEPTANCE.md) passes on Linux/Wine within its declared
 scope. Native Windows Tk and independent Astra review remain external checks.
 
-The Updated full ending route selects supported Legacy rules through Settings.
-Default Enhanced parity and focused combat checks pass; a full Enhanced-only
-walkthrough is UNKNOWN. Each ending trace executes 17 of 26 programs and
-872/1,816 instructions. Native C-handler internals, unobserved DOS branches and
+The earlier Updated ending route selects Legacy through Settings. A separate
+[Enhanced-only walkthrough](CHI_ENHANCED_ACCEPTANCE.md) now passes on Linux and
+Windows/Wine with default Enhanced retained after every input. Its trace executes
+17/26 programs and 826/1,816 instructions; the earlier Legacy routes observe
+872/1,816. Native C-handler internals, unobserved DOS branches and
 physical XT speaker/timing equivalence are not established by import parity.
 
 Imported saves require the exact project/content revision. Preserve old projects
@@ -22,6 +23,9 @@ Updated save is recovered. A narrowly checked v24-to-v25 presentation update can
 preserve native save progress; general terrain/script migration remains outside
 that policy. [Recovery](EDITOR_SAVE_GAMES.md),
 [death popup comparison and remaining limits](GAME_OVER_PRESENTATION.md).
+The shared Saved games screen now exposes six slots, dates, revisions, backups,
+native-validated Continue and empty-slot recovery. Exact project revisions are
+retained before launch. General migration across gameplay edits remains open.
 
 AI8's [Greybank Dispatch recipe and delivery](CAMPAIGN_RECIPES.md) are delivered.
 The recorded five-map campaign covers both opening contracts, services, defence,

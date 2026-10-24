@@ -1,5 +1,45 @@
 # Build, verification and original oracle — 2026-10-24
 
+## Save management and Enhanced-only campaign — 2026-10-24
+
+**VERIFIED within the declared Linux/Wine scope.**
+[Save-management usage](EDITOR_SAVE_GAMES.md),
+[Enhanced evidence and limits](CHI_ENHANCED_ACCEPTANCE.md).
+
+- Full Python suite: 473 passing tests (140.320 s). Twelve focused saved-game
+  tests pass after the final concurrent-publication and exact-project lookup
+  additions. They cover all six slots, both normal editions, older projects,
+  draft identity, invalid/foreign saves, occupied recovery, failed copies and
+  concurrent revision retention.
+- Real Linux launcher/editor journeys pass with Linux and Windows/Wine players:
+  native Continue/F5/quit, backups, occupied-slot rejection, vacant recovery,
+  old-project Continue and visible controls at the tested window sizes.
+- Seven affected native save/project/training/invasion cases pass on Linux
+  (7.26 s) and Windows/Wine (29.33 s). Both affected native tools build with
+  two jobs and no warnings. Core production combat rules are unchanged.
+- Fresh Enhanced-only ending: 36,316 built-in/imported comparisons, Enhanced
+  asserted after every input and 44 decoded contexts on each platform. Eight
+  fresh-process saved continuations reach the identical final state/save.
+  Linux/Windows ending save, frame, canonical JSON and BLD trace, plus all eight
+  held saves, are byte-identical.
+- Observed BLD coverage: 17/26 programs, 826/1,816 instructions, 152/578 branch
+  destinations, zero faults. This is a declared successful route with normal
+  computer control, bounded ordinary input planning and authorized credits;
+  it does not prove every random battle or DOS branch.
+
+```sh
+python3 -m unittest discover -s tests -p 'test_save_catalogue.py' -v
+python3 tools/native_smoke.py --saved-games-only
+python3 tools/native_smoke.py --saved-games-only --windows
+python3 tools/chi_enhanced_acceptance.py --output work/new-enhanced-proof
+python3 tools/chi_enhanced_acceptance.py --output work/new-enhanced-proof --windows
+```
+
+Private reports: `work/saved-games-gui{,-windows}.json`, screenshots with the
+same prefixes, `work/chi-enhanced-verified-20261024/` and build/regression logs
+in `work/chi-enhanced-route-20261024/`. Native Windows Tk, independent Astra
+review and refreshed delivery archives remain separate next tasks.
+
 ## Save retention, recovery and original death popup — 2026-10-24
 
 **VERIFIED for the declared checks.** See [save recovery](EDITOR_SAVE_GAMES.md)
@@ -14,7 +54,8 @@ and [original popup evidence and limits](GAME_OVER_PRESENTATION.md).
   Native held saves preserve both acknowledgement phases; Yes resets the game,
   No exits. Actual SDL window checks pass on Linux and Windows/Wine.
 - Fresh v25 imports reach both declared endings; Updated selects Legacy in
-  Settings. Earlier Enhanced-only ending limits still apply.
+  Settings. Enhanced-only completion was not yet verified in that increment;
+  the separate follow-up above now supplies that evidence.
 - Save-retention checks cover repeated editor Play, project-specific filenames,
   vacant-slot recovery, invalid checksums, wrong revisions and preserving
   occupied slots. The actual recovered save keeps its complete progress payload
