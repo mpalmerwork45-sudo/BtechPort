@@ -20,7 +20,7 @@ MAX_FILES = 4096
 MAX_BYTES = 128 * 1024 * 1024
 SECTIONS = {'manifest': None, 'content': 'definitions', 'adventure': 'adventure',
             'art': 'graphics', 'presentation': 'presentation', 'chi_spatial':'chi_spatial',
-            'chi_presentation':'chi_presentation', 'chi_campaign':'campaign','chi_scripts':'chi_scripts', 'chi_services':'chi_services', 'chi_missions':'chi_missions'}
+            'chi_presentation':'chi_presentation', 'chi_campaign':'campaign','chi_scripts':'chi_scripts', 'chi_services':'chi_services', 'chi_missions':'chi_missions', 'chi_bridge':'chi_bridge', 'chi_events':'chi_events'}
 DOCUMENTS = ('README.md','LICENSE.md','SOURCE-README.md','ART-SOURCE-README.md',
              'VEHICLE-SOURCE-README.md','sources.json','CREDITS.md')
 

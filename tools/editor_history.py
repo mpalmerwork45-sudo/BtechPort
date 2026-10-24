@@ -30,7 +30,7 @@ def refresh_scope(workspace, scope):
                 image=next((i for i in scope.document.adventure.get('jigsaws',[]) if i['id']==pane.key[2]),None)
                 if image:
                     view.original=copy.deepcopy(image);view.jigsaw=copy.deepcopy(image);view.name.set(image['name']);view.draw()
-            elif kind in ('maps','world','construction','patterns'):
+            elif kind in ('maps','chi-quests','world','construction','patterns'):
                 if not pending: view.refresh()
             elif kind in ('chi-bld','chi-services','chi-missions') and not pending:view.refresh()
             elif kind=='events':

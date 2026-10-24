@@ -21,7 +21,7 @@ OPS={0xfe:'font',0xfd:'clear',0xfa:'scene',0xfc:'text',0xf1:'add',0xf4:'set',
      0xf2:'delay',0xea:'animation',0xfb:'wait',0xf8:'jump',0xf9:'menu',0xff:'end',
      0xe4:'sound',0xe9:'recruit',0xe8:'if_person_absent',0xed:'if_skill',
      0xeb:'if_advanced_kit',0xec:'if_medical_kit',0xe6:'position',
-     0xe5:'add_money',0xee:'spend_money',0xef:'if_money'}
+     0xe5:'add_money',0xee:'spend_money',0xef:'if_money',0xe3:'event'}
 NATIVE_NAMES=dict(enumerate(('', 'Start training mission','Insert mission result','Return from training',
     'Show class prices','Attend class','Show accounts','Buy shares','Sell shares','Buy armour','Insert credits','Buy weapon','Talk',
     'Select service recipient','Count party members','Technician apprenticeship','Check technician apprenticeship','Count active mechs',
@@ -31,6 +31,7 @@ NATIVE_NAMES=dict(enumerate(('', 'Start training mission','Insert mission result
     'Apply prison party loss','Insert next recruit name','Allocate crew after theft','Begin prison yard','Give laser rifles',
     'Place party outside cinema','Return cadet from training','Rearm ammunition','View Phoenix Hawk LAM','Check out mechs and allocate crew','Apply mayor meal')))
 DESCRIPTIONS={
+ 'event':'Suspend this building for an authored quest; return to success, failure or cancellation labels.',
  'font':'Select the native font/presentation mode.', 'clear':'Clear the text panel and its inserted values.',
  'scene':'Select native scene zero.', 'text':'Append dialogue at the current native text cursor.',
  'set':'Write one story byte.', 'add':'Add to a story byte, wrapping modulo 256 (255 means minus one).',
@@ -55,6 +56,7 @@ DESCRIPTIONS={
 # Field types also drive the editor; numeric values retain the original byte
 # representation, including signed ADD/MONEY operands and packed coordinates.
 FIELDS={
+ 'event':{'event':'event','next':'target','failure':'target','cancel':'target'},
  'font':{'value':(3,4,6)},'scene':{'value':(0,)},'text':{'text':'text'},
  'add':{'index':(0,99),'value':(0,255)},'set':{'index':(0,99),'value':(0,255)},
  'dispatch':{'index':(0,99),'targets':'targets'},'if':{'index':(0,99),'target':'target'},
@@ -75,7 +77,7 @@ def schema():
         properties=dict(common,op={'const':name})
         for key,kind in fields.items():
             properties[key]=(dict(type='string',maxLength=4096) if kind=='text' else
-                dict(type='string',pattern='^(?:[0-9a-f]{2})+$',maxLength=18000) if kind=='bytes' else ID if kind=='target' else
+                dict(type='string',pattern='^(?:[0-9a-f]{2})+$',maxLength=18000) if kind=='bytes' else ID if kind in ('target','event') else
                 array(ID,1,128) if kind=='targets' else integer(*kind) if len(kind)==2 and name not in ('font','scene','menu') else dict(enum=list(kind)))
 
         if name in ('add_money','spend_money','if_money'):properties['amount']={'oneOf':[integer(0,65535),dict(type='string',pattern=r'^\{(?:service|mission):[a-z0-9._]+\}$')]}

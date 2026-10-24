@@ -25,8 +25,12 @@ class ChiMapEditor(AdventureEditor):
     def new_map(self):return self.clone_slot()
     def delete_map(self):raise EditorError('Native CHI retains 15 fixed map slots. Rename, move or replace a slot; unrestricted map creation belongs to authored games.')
     def map_properties(self):return self.native_properties()
-    def missions(self):raise EditorError('Native mission/BLD editing is planned for C4. Map changes already affect native gameplay.')
-    def event_graph(self):raise EditorError('This campaign still uses native BLD programs. Full story graph editing is the C4 milestone; map entrances can already reference existing buildings.')
+    def missions(self):
+        from chi_missions_editor import open_missions
+        return open_missions(self.parent)
+    def event_graph(self):
+        from chi_bridge_editor import open_quests
+        return open_quests(self.parent).event_graph()
     def person_dialog(self,index=None):return self.npc_routes()
     def entrance_dialog(self,index=None,at=None,npc=False):
         if npc:return self.npc_routes()

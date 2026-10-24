@@ -92,6 +92,70 @@
                       "maxLength": 240
                     },
                     "op": {
+                      "const": "event"
+                    },
+                    "event": {
+                      "type": "string",
+                      "maxLength": 63,
+                      "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+                    },
+                    "next": {
+                      "type": "string",
+                      "maxLength": 63,
+                      "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+                    },
+                    "failure": {
+                      "type": "string",
+                      "maxLength": 63,
+                      "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+                    },
+                    "cancel": {
+                      "type": "string",
+                      "maxLength": 63,
+                      "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "op",
+                    "event",
+                    "next",
+                    "failure",
+                    "cancel"
+                  ],
+                  "additionalProperties": false,
+                  "dependentRequired": {
+                    "origin": [
+                      "original_size"
+                    ],
+                    "original_size": [
+                      "origin"
+                    ]
+                  }
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "maxLength": 63,
+                      "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+                    },
+                    "origin": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 8999
+                    },
+                    "original_size": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9000
+                    },
+                    "note": {
+                      "type": "string",
+                      "maxLength": 240
+                    },
+                    "op": {
                       "const": "font"
                     },
                     "value": {

@@ -1331,6 +1331,7 @@ def main():
     parser.add_argument('--editor-chi-bld-only',action='store_true',help='Check BLD dialogue/control flow, drafts, diagnostics, history and native Play')
     parser.add_argument('--editor-chi-missions-only',action='store_true',help='Check native mission settings, unit roles, drafts and continuations')
     parser.add_argument('--editor-chi-services-only',action='store_true',help='Check native service content, stock, drafts and recipient transactions')
+    parser.add_argument('--editor-chi-bridge-only',action='store_true',help='Check optional CHI quests, native bindings, recovery and Play')
     parser.add_argument('--editor-responsiveness-only',action='store_true',help='Measure large source-project snapshots, history and view refresh with cancellation checks')
     parser.add_argument('--editor-checkpoints-only',action='store_true',help='Check saved scenario starts, selection, reports and stale-content errors')
     parser.add_argument('--world-art-editor-only',action='store_true',help='Check jigsaw/city and pixel/animation editing')
@@ -1510,6 +1511,9 @@ def main():
                 run(env,work);return
             if args.editor_chi_services_only:
                 from editor_chi_services_smoke import run
+                run(env,work);return
+            if args.editor_chi_bridge_only:
+                from editor_chi_bridge_smoke import run
                 run(env,work);return
             if args.editor_chi_bld_only:
                 from editor_chi_bld_smoke import run

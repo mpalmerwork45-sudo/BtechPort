@@ -58,7 +58,7 @@ def value_at(document,path):
         return dict(bytes=value.hex()) if value is not None else None
     head,separator,identity=path.partition('/')
     parts=head.split('.')
-    if parts[0] not in ('manifest','content','adventure','art','editor','chi'):
+    if parts[0] not in ('manifest','content','adventure','art','editor','chi','bridge','quest'):
         raise AuthoringError('protection.invalid','Choose a declared document section: '+path)
     if parts[0]=='chi':
         from chi_spatial import data as native_data
@@ -74,6 +74,9 @@ def value_at(document,path):
         if document.manifest.get('chi_missions'):
             from chi_missions import data as mission_data
             missions=mission_data(document);value['mission_parameters']=missions['parameters'];value['mission_units']=missions.get('units',{})
+    elif parts[0] in ('bridge','quest'):
+        from chi_bridge import data as bridge_data,events
+        value=(bridge_data(document) if parts[0]=='bridge' else events(document)) if document.manifest.get('chi_bridge') else {}
     else:value=data(document) if parts[0]=='editor' else getattr(document,parts[0])
     if head=='adventure.entrances':
         value=[dict(door,map=scene['id']) for scene in (document.adventure or {}).get('maps',[]) for door in scene['entrances']]

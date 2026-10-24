@@ -88,7 +88,7 @@ class BldView:
             if key=='note':
                 if value:record[key]=value
                 else:record.pop(key,None)
-            elif key=='target' or (key=='amount' and value.startswith(('{service:','{mission:'))) or (key=='action' and value.startswith('native.')):record[key]=value
+            elif key in ('target','event','next','failure','cancel') or (key=='amount' and value.startswith(('{service:','{mission:'))) or (key=='action' and value.startswith('native.')):record[key]=value
             else:
                 try:record[key]=int(value)
                 except ValueError as error:raise EditorError(key+' must be an integer.') from error
@@ -174,7 +174,8 @@ class BldView:
                     ttk.Button(controls,text=title,command=lambda d=delta:guard(self,lambda:self.resize_targets(d))).pack(side='left')
             else:
                 v=tk.StringVar(value=str(node[key]));self.fields[key]=v
-                choices=labels if kind=='target' else list(map(str,kind)) if node['op'] in ('font','scene','menu') else list(map(str,range(kind[0],kind[-1]+1))) if kind[-1]<50 else None
+                from chi_bridge import events as quest_events
+                choices=([e['id'] for e in quest_events(self.document)['events']] if kind=='event' else labels if kind=='target' else list(map(str,kind)) if node['op'] in ('font','scene','menu') else list(map(str,range(kind[0],kind[-1]+1))) if kind[-1]<50 else None)
                 control=ttk.Combobox(self.form,textvariable=v,values=choices,width=28) if choices else ttk.Entry(self.form,textvariable=v,width=28)
                 control.grid(row=row,column=0,sticky='ew');row+=1
         label('Author note');v=tk.StringVar(value=node.get('note',''));self.fields['note']=v;ttk.Entry(self.form,textvariable=v).grid(row=row,column=0,sticky='ew');row+=1
@@ -215,12 +216,13 @@ class BldView:
         if current['op']=='data':raise EditorError('Select an executable label to insert after.')
         index=p['nodes'].index(current);next_label=next((n['id'] for n in p['nodes'][index+1:] if n['op']!='data'),self.selected)
         from adventure_editor import Form
-        form=Form(self,'Insert BLD instruction');form.field('op','text',[k for k in FIELDS if k!='data'])
+        form=Form(self,'Insert BLD instruction');form.field('op','text',[k for k in FIELDS if k!='data' and (k!='event' or self.document.manifest.get('chi_bridge'))])
         form.field('id',self.fresh_id())
         def apply(value):
             op=value['op'];node=dict(id=value['id'],op=op)
             for key,kind in FIELDS[op].items():
-                node[key]='' if kind=='text' else next_label if kind=='target' else [next_label]*(3 if op=='menu' else 1) if kind=='targets' else kind[0]
+                from chi_bridge import events as quest_events
+                node[key]=quest_events(self.document)['events'][0]['id'] if kind=='event' else '' if kind=='text' else next_label if kind=='target' else [next_label]*(3 if op=='menu' else 1) if kind=='targets' else kind[0]
             if op=='menu':node['menu']=7
             if op=='native':node['action']=next((n['action'] for n in p['nodes'] if n['op']=='native'),1)
             if op=='animation':node['kind']=next((n['kind'] for n in p['nodes'] if n['op']=='animation'),0)
@@ -243,7 +245,7 @@ class BldView:
 
     def jump(self):
         self.apply()
-        node=find(data(self.document),self.program.get(),self.selected);target=node.get('target') or next(iter(node.get('targets',[])),None)
+        node=find(data(self.document),self.program.get(),self.selected);target=node.get('target') or node.get('next') or next(iter(node.get('targets',[])),None)
         if target:self.show_location(self.program.get(),target)
 
     def show_location(self,program,label=None):

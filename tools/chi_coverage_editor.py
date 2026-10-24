@@ -23,7 +23,7 @@ class CoverageView:
         status=ttk.Label(self.window,textvariable=self.status,wraplength=650,padding=12);status.pack(side='bottom',fill='x')
         host=ttk.Frame(self.window);host.pack(fill='both',expand=True,padx=12,pady=(0,8))
         self.table=ttk.Treeview(host,columns=('instructions','branches','native'),show='tree headings',selectmode='browse')
-        for key,title,width in [('#0','Building / source label',300),('instructions','Instructions',100),('branches','Branches',100),('native','Native enters / returns',150)]:
+        for key,title,width in [('#0','Building / source label',300),('instructions','Instructions',100),('branches','Branches',100),('native','Native / quest enters / returns',180)]:
             self.table.heading(key,text=title);self.table.column(key,width=width,minwidth=80)
         sy=ttk.Scrollbar(host,command=self.table.yview);sy.pack(side='right',fill='y');self.table.configure(yscrollcommand=sy.set)
         sx=ttk.Scrollbar(host,orient='horizontal',command=self.table.xview);sx.pack(side='bottom',fill='x');self.table.configure(xscrollcommand=sx.set)
@@ -59,11 +59,14 @@ class CoverageView:
             def ratio(counts):return str(counts['observed'])+' / '+str(counts['declared'])
             parent=self.table.insert('','end',text=p['name'],values=(ratio(p['instructions']),ratio(p['branches']),''));self.targets[parent]=(p['id'],None)
             for n in p['nodes']:
-                native=n.get('native');branches=n['branches']
+                native=n.get('native');quest=n.get('quest');branches=n['branches']
                 item=self.table.insert(parent,'end',text=n['id']+' ('+n['op']+')',values=(n['executions'],str(sum(bool(b['executions']) for b in branches))+' / '+str(len(branches)) if branches else '',
-                    f"{native['entered']} / {native['returned']}" if native else ''));self.targets[item]=(p['id'],n['id'])
+                    f"{native['entered']} / {native['returned']}" if native else f"{quest['entered']} / {sum(quest['returns'].values())}" if quest else ''));self.targets[item]=(p['id'],n['id'])
                 for edge in branches:
                     child=self.table.insert(item,'end',text=str(edge['choice'])+' -> '+str(edge['target']),values=('',edge['executions'],''));self.targets[child]=(p['id'],n['id'])
+                outcomes=native.get('bridge_outcomes',{}) if native else quest.get('returns',{}) if quest else {}
+                for outcome,count in outcomes.items():
+                    child=self.table.insert(item,'end',text=('Native adapter' if native else 'Quest return')+' '+outcome,values=('','',count));self.targets[child]=(p['id'],n['id'])
         unknown=sum(result['unresolved_observations'].values())
         self.status.set(f"{result['observations']} observations, {len(result['faults'])} faults, {unknown} unresolved observations. Double-click a row to open its source.")
 

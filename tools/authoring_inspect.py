@@ -21,7 +21,7 @@ def capabilities(tool):
         operations=OPERATIONS, features=dict(transactional_batches=True,expected_revision=True,dry_run=True,
         persisted_requests=True,gui_undo=True,live_remote_session=False,live_local_session=True,protected_regions=True,
         change_review=True,partial_change_groups=True,named_protection_overrides=True,shared_construction_library=True,
-        native_chi_spatial=True,native_chi_presentation=True,native_chi_bld_sources=True,
+        native_chi_spatial=True,native_chi_presentation=True,native_chi_bld_sources=True,native_chi_event_bridge=True,
         mission_regions=True,typed_mission_variables=True,explicit_objective_states=True,compound_conditions=True,
         combat_hooks=True,round_timers=True,reinforcements=True,escort_waypoints=True,
         campaign_source_modules=True,deterministic_source_builds=True,source_diagnostics=True,recorded_campaign_recipes=True,
@@ -106,10 +106,25 @@ def summary(doc, tool):
             operations=['chi.update','chi.town.move','chi.jigsaw.bind','chi.art.copy']) if native else None),
         native_bld=dict(source=doc.manifest.get('chi_scripts'),programs=26,instructions_per_program=2048,program_bytes=9000,
             operations=['bld.enable','bld.update','bld.insert','bld.remove'],service_parameters=doc.manifest.get('chi_services'),mission_settings=doc.manifest.get('chi_missions')) if doc.manifest.get('chi_edition') or doc.manifest.get('requires')=='chi-local-dos-1.03' else None,
+        native_quests=quest_summary(doc),
         queries=['objects','object','usages','map','routes','inventory'])
 
 
+def quest_summary(doc):
+    if not doc.manifest.get('chi_bridge'):return None
+    from chi_bridge import events,data
+    a,b=events(doc),data(doc)
+    return dict(events=len(a['events']),maps=len(a['maps']),entrances=len(b['entrances']),native_calls=len(b['native_calls']),
+        frames=4,services=['ComStar buy shares','ComStar sell shares'],
+        collections=['quest-events','quest-maps','quest-encounters','bridge-entrances','bridge-calls'],
+        startup='Native campaign; quest start/party fields are editor defaults only.',guide='docs/CHI_QUEST_AUTHORING.md')
+
+
 def records(doc, collection):
+    if collection in ('quest-events','quest-maps','quest-encounters','bridge-entrances','bridge-calls'):
+        from chi_bridge import events,data
+        if collection.startswith('quest-'):return events(doc)[collection[6:]]
+        return data(doc)['entrances' if collection=='bridge-entrances' else 'native_calls']
     if collection in ('native-mission-parameters','native-mission-units'):
         from chi_missions import catalogue
         value=catalogue(doc);return value['parameters' if collection=='native-mission-parameters' else 'units']

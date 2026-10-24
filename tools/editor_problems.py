@@ -18,6 +18,11 @@ def target(document,problem):
     ids=re.findall(r'\[([a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*)\]',path)
     if problem.get('object_id') and problem['object_id'] not in ids:ids.append(problem['object_id'])
     a=document.adventure or {}
+    if document.manifest.get('chi_bridge') and ('chi-events.json' in problem.get('message','') or 'chi-bridge.json' in problem.get('message','') or path.startswith(('quest.','bridge.'))):
+        from chi_bridge import events,data
+        known={v['id'] for key in ('events','maps') for v in events(document)[key]}|{v['id'] for key in ('entrances','native_calls') for v in data(document)[key]}
+        for identity in reversed(ids):
+            if identity in known:return dict(collection='chi_quests',id=identity)
     location=problem.get('location')
     if isinstance(location,dict) and (location.get('map') or location.get('world')):
         return dict(collection='location',id=problem.get('object_id'),**location)
@@ -52,6 +57,9 @@ def navigate(workspace,problem):
     destination=target(scope.document,problem)
     if not destination:return False
     owner=scope.owner;collection=destination['collection'];identity=destination.get('id')
+    if collection=='chi_quests':
+        from chi_bridge_editor import open_quests
+        open_quests(owner).show_location(identity);return True
     if collection=='native_missions':
         from chi_missions_editor import open_missions
         open_missions(owner).show_location(destination.get('parameter'));return True

@@ -28,7 +28,7 @@ static int capabilities(void)
     /* Query the compiled adapter's constants. Authoring clients must not
        advertise expanded limits merely because a schema accepts them. */
     printf("{\"format\":\"btp-runtime-capabilities-v1\",\"runtime_version\":\"%s\","
-        "\"formats\":[\"btp-chi-missions-v1\",\"btp-chi-services-v1\",\"btp-chi-scripts-v1\",\"btp-chi-campaign-v1\",\"btp-chi-spatial-v1\",\"btp-chi-presentation-v1\",\"btp-project-v1\",\"btp-content-v1\",\"btp-adventure-v1\",\"btp-adventure-v2\",\"btp-adventure-v3\",\"btp-art-v1\",\"btp-presentation-v1\"],"
+        "\"formats\":[\"btp-chi-bridge-v1\",\"btp-chi-missions-v1\",\"btp-chi-services-v1\",\"btp-chi-scripts-v1\",\"btp-chi-campaign-v1\",\"btp-chi-spatial-v1\",\"btp-chi-presentation-v1\",\"btp-project-v1\",\"btp-content-v1\",\"btp-adventure-v1\",\"btp-adventure-v2\",\"btp-adventure-v3\",\"btp-art-v1\",\"btp-presentation-v1\"],"
         "\"limits\":{\"maps\":%u,\"events\":%u,\"flags\":%u,\"tiles\":%u,\"jigsaws\":%u,\"worlds\":%u,"
         "\"people\":%u,\"shops\":%u,\"encounters\":%u,\"objectives\":%u,\"definitions_per_collection\":%u,"
         "\"images\":%u,\"frames_per_image\":%u,\"art_pixels\":%u,\"animation_tracks\":%u,"

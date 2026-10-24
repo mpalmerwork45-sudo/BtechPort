@@ -59,7 +59,7 @@ def event_template(document, op, identity=None):
     event = dict(id=identity or new_id(document, "events", "event"), op=op)
     if op in ("say", "choice", "finish"):
         event.update(text="A new chapter begins.", portrait="none")
-    if op not in ("end", "finish", "choice", "if", "battle", "lua", "check"):
+    if op not in ("end", "finish", "choice", "if", "battle", "lua", "check", "return", "chi_if"):
         event["next"] = end
     if op in ("reward", "recruit", "transfer", "battle", "lua", "variable", "objective", "reinforce", "battle_end"):
         event["failure"] = end
@@ -80,6 +80,16 @@ def event_template(document, op, identity=None):
     if op=='objective':event.update(objective=next((v['id'] for v in a.get('objectives',[]) if 'initial' in v),''),state='active')
     if op=='reinforce':event.update(group=next((v['id'] for v in a.get('combat_groups',[])),''),radius=2)
     if op=='battle_end':event.update(result='win')
+    if op in ('call','chi_native','chi_sound','chi_film'):event['failure']=end
+    if op in ('call','chi_native'):event['cancel']=end
+    if op=='call':event['event']=end
+    if op=='return':event['result']='success'
+    if op=='chi_if':event.update(story_index=4,value=1,then=end,**{'else':end})
+    if op=='chi_sound':event['program']=1
+    if op=='chi_film':event['film']=1
+    if op=='chi_native':
+        from chi_bridge import data
+        event['call']=next((v['id'] for v in data(document)['native_calls']),'')
     if op=='check':
         event.update(match='all',conditions=[dict(kind='flag',id=a['flags'][0] if a['flags'] else '',compare='eq',value=1)],then=end,**{'else':end})
     return event

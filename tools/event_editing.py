@@ -20,6 +20,7 @@ def edges(event):
               ('next', 'failure', 'unchanged', 'then', 'else', 'cancel', 'win', 'loss', 'flee') if key in event]
     result.extend((f'choice {i+1}', o['next']) for i, o in enumerate(event.get('options', [])))
     result.extend((f'route {i+1}', v) for i, v in enumerate(event.get('routes', [])))
+    if event.get('op')=='call':result.append(('event',event['event']))
     return result
 
 

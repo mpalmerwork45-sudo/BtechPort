@@ -15,6 +15,8 @@ def workspace_of(owner):
 
 
 def existing_view(owner,kind,identity=None):
+    if identity is None and hasattr(getattr(owner,'document',None),'base') and kind in ('events','objectives','mission','world','patterns'):
+        identity='chi-quests'
     workspace=workspace_of(owner)
     if workspace:
         view=workspace.views.get((id(scope_of(owner)),kind,identity))
@@ -27,6 +29,8 @@ def open_view(owner,kind,factory,identity=None):
 
 
 def view_window(controller,owner,kind,title,identity=None):
+    if identity is None and hasattr(getattr(owner,'document',None),'base') and kind in ('events','objectives','mission','world','patterns'):
+        identity='chi-quests'
     workspace=workspace_of(owner)
     if workspace:
         return workspace.add_view(controller,scope_of(owner),kind,title,identity)
@@ -220,7 +224,7 @@ class Workspace:
         owner=view.controller;kind=view.key[1];state={}
         if owner is None:return state
         if kind in ('roster','library-unit'):state.update(kind=owner.kind.get(),current=owner.current)
-        elif kind=='maps':state.update(map=owner.scene()['id'],marker=owner.selected_marker,cursor=owner.cursor,tab=owner.tabs.index(owner.tabs.select()))
+        elif kind in ('maps','chi-quests'):state.update(map=owner.scene()['id'],marker=owner.selected_marker,cursor=owner.cursor,tab=owner.tabs.index(owner.tabs.select()))
         elif kind=='world':state.update(world=owner.world_id,city=owner.city)
         elif kind=='events':state.update(event=owner.selected,filter=owner.view_mode.get())
         elif kind=='graphics':state.update(selected=owner.selected)
@@ -257,7 +261,7 @@ class Workspace:
         if kind in ('chi-services','chi-missions'):owner.show_location(state.get('selected'));return
         if kind in ('roster','library-unit'):
             self.open_unit(state.get('kind','Mechs'),state.get('current'),owner)
-        elif kind=='maps':
+        elif kind in ('maps','chi-quests'):
             owner.map_choice.current(next(i for i,m in enumerate(owner.adventure['maps']) if m['id']==state['map']));owner.change_map()
             owner.selected_marker=tuple(state['marker']) if state.get('marker') else None;owner.cursor=tuple(state.get('cursor',owner.cursor))
             # Old layouts can refer to the Events page, now hidden in favour
@@ -346,6 +350,8 @@ class Workspace:
         self.action('CHI services',lambda:open_services(self.active_scope().owner),groups['Project'])
         from chi_missions_editor import open_missions
         self.action('CHI missions and campaign',lambda:open_missions(self.active_scope().owner),groups['Project'])
+        from chi_bridge_editor import open_quests
+        self.action('CHI quests',lambda:open_quests(self.active_scope().owner),groups['Project'])
         self.action('CHI maps and world',lambda:self.open_map(),groups['Project'])
         self.action('CHI resources',lambda:self.map_view().resources(),groups['Project'])
         from editor_authoring import apply_file,export_summary,check_mission
@@ -615,6 +621,9 @@ class Workspace:
                     row('','native-scripts','Native building scripts',lambda:open_scripts(self.app))
                     row('','native-services','Native service content',lambda:open_services(self.app))
                     row('','native-missions','Native missions and campaign',lambda:open_missions(self.app))
+                if document.manifest.get('requires')=='chi-local-dos-1.03':
+                    from chi_bridge_editor import open_quests
+                    row('','native-quests','Quests / native doorway bindings',lambda:open_quests(self.app))
                 row('','art','Artwork',self.open_art)
             row('','library','Shared Unit Library',self.app.open_library)
             for item in selection:
@@ -898,7 +907,7 @@ class Workspace:
             self.layout[key]=[host.sashpos(i)/max(1,extent) for i in range(len(host.panes())-1)]
         self.layout['hidden']=[name for name,pane,host in [('explorer',self.explorer,self.horizontal),('inspector',self.inspector,self.horizontal),('bottom',self.bottom,self.vertical)] if str(pane) not in host.panes()]
         if self.app.document:
-            tabs=[dict(kind=v.key[1],identity=v.key[2],state=self.view_state(v)) for v in self.views.values() if v.scope is self.app._editor_scope and v.key[1]!='library' and self.tabs.tab(v,'state')!='hidden']
+            tabs=[dict(kind=v.key[1],identity=v.key[2],state=self.view_state(v),quest=hasattr(getattr(v.controller,'document',None),'base')) for v in self.views.values() if v.scope is self.app._editor_scope and v.key[1]!='library' and self.tabs.tab(v,'state')!='hidden']
             active=self.current_view()
             self.layout.setdefault('projects',{})[str(self.app.document.root)]=dict(tabs=tabs,active=[active.key[1],active.key[2]] if active else None)
         self.state_dir.mkdir(parents=True,exist_ok=True)

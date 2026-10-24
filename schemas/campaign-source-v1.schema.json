@@ -64,6 +64,16 @@
           "type": "string",
           "minLength": 1,
           "maxLength": 512
+        },
+        "chi_bridge": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "chi_events": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
         }
       },
       "required": [
@@ -88,7 +98,9 @@
               "chi_campaign",
               "chi_scripts",
               "chi_services",
-              "chi_missions"
+              "chi_missions",
+              "chi_bridge",
+              "chi_events"
             ]
           },
           "collection": {

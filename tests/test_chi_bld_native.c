@@ -6,6 +6,7 @@
 #include "core/npc.h"
 #include "core/original_actions.h"
 #include "core/combat.h"
+#include "core/chi_bridge.h"
 #include "frontend/pixels.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -58,12 +59,16 @@ int main(int argc,char **argv)
         CHECK(s->mode==BTP_EXPLORE && s->story_flags[81]==7 && !s->script.error);
         free(s);btp_content_close(&b);puts("Edited BLD text, condition, jump, menu and native action play through real building entry and held saves.");return 0;
     }
-    CHECK(!strcmp(argv[1],"--compare") && argc==6);
+    int bridge_compare=!strcmp(argv[1],"--compare-bridge");
+    CHECK((!strcmp(argv[1],"--compare") || bridge_compare) && argc==6);
     CHECK(btp_content_load_project(&a,argv[2],NULL,&error) && btp_content_load_project(&b,argv[3],NULL,&error));
     BtpState *x=calloc(1,sizeof *x),*y=calloc(1,sizeof *y),*adjusted=calloc(1,sizeof *adjusted);CHECK(x && y && adjusted);
     btp_start_content(x,a.resources);btp_start_content(y,b.resources);x->project=y->project=1;
     btp_npc_init(x,&a.resources->map);btp_npc_init(y,&b.resources->map);
     if (btp_resources_feature(a.resources,BTP_FEATURE_ENHANCED)) CHECK(btp_set_combat_profile(x,a.resources,1) && btp_set_combat_profile(y,b.resources,1));
+    if(bridge_compare) { btp_bridge_initialize(y,b.resources);CHECK(y->bridge.enabled && !x->bridge.enabled); }
+    BtpBridgeState initial_bridge=y->bridge;BtpEventState initial_events=y->event;
+    uint32_t *pixels=bridge_compare ? malloc(2u*BTP_PIXELS*sizeof *pixels) : NULL;CHECK(!bridge_compare || pixels);
     FILE *f=fopen(argv[4],"r");CHECK(f);char line[128];unsigned ticks=0,held_mask=0;
     while (fgets(line,sizeof line,f)) {
         line[strcspn(line,"\r\n")]=0;if (!*line || *line=='#') continue;BtpAction action;CHECK(btp_action_parse(line,&action));
@@ -84,13 +89,23 @@ int main(int argc,char **argv)
         adjusted->script.menu_table=y->script.menu_table;adjusted->script.confirm_target=y->script.confirm_target;adjusted->script.money_target=y->script.money_target;
         adjusted->script.text_offset=y->script.text_offset;adjusted->script.text_length=y->script.text_length;
         memcpy(adjusted->script.text,y->script.text,sizeof y->script.text);
+        if(bridge_compare) {
+            /* Enabling an unused quest capability changes its save envelope,
+               not native play. Account only for that fixed initial metadata. */
+            CHECK(!memcmp(&y->bridge,&initial_bridge,sizeof initial_bridge) && !memcmp(&y->event,&initial_events,sizeof initial_events));
+            adjusted->bridge=initial_bridge;adjusted->event=initial_events;
+        }
         uint8_t one[BTP_STATE_BYTES],two[BTP_STATE_BYTES];
-        btp_state_encode(adjusted,one);btp_state_encode(y,two);CHECK(!memcmp(one,two,sizeof one));
+        btp_state_encode(adjusted,one);btp_state_encode(y,two);
+        if(memcmp(one,two,sizeof one)) { unsigned at=0;while(at<sizeof one && one[at]==two[at])++at;fprintf(stderr,"Gameplay mismatch tick%u byte%u: %u/%u\n",ticks,at,one[at],two[at]);CHECK(0); }
         unsigned bit=y->school.phase ? 1u<<y->school.phase : y->bank.phase ? 1u<<(4+y->bank.phase) : y->script.status==BTP_SCRIPT_MENU ? 4096u : y->checkpoint_valid ? 8192u : 0u;
         if (y->campaign.invasion && y->late.invasion_event>=3 && y->mode==BTP_MISSION) { CHECK(program==&b.resources->training);bit=16384u; }
-        if (bit && !(held_mask&bit)) { held(y,b.resources,argv[5]);held_mask|=bit; }
+        if (bit && !(held_mask&bit)) {
+            held(y,b.resources,argv[5]);held_mask|=bit;
+            if(pixels) { btp_render(a.resources,x,0,pixels);btp_render(b.resources,y,0,pixels+BTP_PIXELS);CHECK(!memcmp(pixels,pixels+BTP_PIXELS,BTP_PIXELS*sizeof *pixels)); }
+        }
         CHECK(ticks<120000);
     }
     CHECK(!fclose(f));CHECK(ticks && held_mask);printf("Verified %u edited-program gameplay/RNG ticks and held continuations: %s\n",ticks,argv[4]);
-    free(x);free(y);free(adjusted);btp_content_close(&a);btp_content_close(&b);return 0;
+    free(pixels);free(x);free(y);free(adjusted);btp_content_close(&a);btp_content_close(&b);return 0;
 }

@@ -107,8 +107,12 @@ def changed_objects(before, after):
             return {name:[dict(id=k,value=value) for k,value in v.get(key,{}).items()] for name,key in [('mission_parameters','parameters'),('mission_units','units')]}
         compare('chi',mission_settings(before),mission_settings(after))
     compare('editor',json.loads(before.metadata.get('EDITOR.json',b'{}')),json.loads(after.metadata.get('EDITOR.json',b'{}')))
+    if after.manifest.get('chi_bridge'):
+        from chi_bridge import data as bridge_data,events
+        compare('bridge',bridge_data(before) if before.manifest.get('chi_bridge') else {},bridge_data(after))
+        compare('quest',events(before) if before.manifest.get('chi_bridge') else {},events(after))
     for name in sorted(set(before.metadata)|set(after.metadata)):
-        if name not in ('EDITOR.json',AUTHORING_RECEIPTS,*(['chi-spatial.json','chi-presentation.json'] if native else []),*(['chi-scripts.json'] if bld else []),*(['chi-services.json'] if services else []),*(['chi-missions.json'] if missions else [])) and before.metadata.get(name)!=after.metadata.get(name):
+        if name not in ('EDITOR.json',AUTHORING_RECEIPTS,*(['chi-spatial.json','chi-presentation.json'] if native else []),*(['chi-scripts.json'] if bld else []),*(['chi-services.json'] if services else []),*(['chi-missions.json'] if missions else []),*(['chi-bridge.json','chi-events.json'] if after.manifest.get('chi_bridge') else [])) and before.metadata.get(name)!=after.metadata.get(name):
             script=next((s for s in after.manifest.get('scripts',[]) if s['file']==name),None)
             result.append(dict(path=('scripts/'+script['id']) if script else 'provenance/'+name,
                                object_id=script['id'] if script else None,change='modified',fields=[]))
@@ -125,6 +129,17 @@ def _bounds(scene, layer, points):
 
 def apply_operation(doc, op, imports):
     name=op['op']; a=copy.deepcopy(doc.adventure)
+    if name.startswith('bridge.'):
+        from chi_bridge import enable,example,upsert
+        if name=='bridge.enable':enable(doc)
+        elif name=='bridge.example':return example(doc)['event']
+        else:upsert(doc,'entrances' if name=='bridge.binding' else 'native_calls',op['value'])
+        return op.get('value',{}).get('id',doc.manifest['package_id'])
+    if name.startswith('quest.'):
+        from chi_bridge import QuestDocument,enable
+        enable(doc);operation=copy.deepcopy(op)
+        operation['op']='event.connect' if name=='quest.connect' else 'object.'+name.split('.')[1]
+        return apply_operation(QuestDocument(doc),operation,imports)
     if name.startswith('missions.'):
         from chi_missions import enable,update,unit
         if name=='missions.enable':enable(doc)

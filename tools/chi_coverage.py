@@ -19,6 +19,7 @@ def edges(program,node):
     after=nodes[index+1]['id'] if index+1<len(nodes) else None
     if op in ('menu','dispatch'):return [(i,target) for i,target in enumerate(node['targets'])]
     if op=='jump':return [(0,node['target'])]
+    if op=='event':return [(i,node[key]) for i,key in enumerate(('next','failure','cancel'))]
     if op in ('if','confirm','if_money','if_person_absent','if_skill','if_advanced_kit','if_medical_kit'):
         return [(0,after),(1,node['target'])]
     return []
@@ -29,7 +30,11 @@ def coverage(document,traces,cancel=None):
     fingerprint=re.search(r'SHA-256 ([0-9a-f]{64})',document.validate())
     if not fingerprint:raise EditorError('Native validation did not supply a content fingerprint.')
     programs=data(document)['programs'];by_slot={p['building']:p for p in programs}
-    instructions=Counter();branches=Counter();entered=Counter();returned=Counter();faults=[];unknown=Counter();unmapped_branches=[];records=0;headers=[]
+    adapter_keys=set()
+    if document.manifest.get('chi_bridge'):
+        from chi_bridge import data as bridge_data
+        adapter_keys={(call['program'],call['entry']) for call in bridge_data(document)['native_calls']}
+    instructions=Counter();branches=Counter();entered=Counter();returned=Counter();outcomes=Counter();event_enter=Counter();event_return=Counter();faults=[];unknown=Counter();unmapped_branches=[];records=0;headers=[]
     declared_edges={(p['id'],n['id']):set(edges(p,n)) for p in programs for n in p['nodes'] if n['op']!='data'}
     layouts={}
     def layout(slot):
@@ -53,7 +58,7 @@ def coverage(document,traces,cancel=None):
                 if cancel and cancel.is_set():raise EditorError('Coverage cancelled.')
                 try:
                     row=json.loads(line);slot=row['building'];kind=row['kind'];detail=row['detail'];offset=row['from'];destination=row['to']
-                    if type(slot) is not int or slot not in by_slot or kind not in ('instruction','branch','native-enter','native-return','resume','fault'):
+                    if type(slot) is not int or slot not in by_slot or kind not in ('instruction','branch','native-enter','native-return','resume','fault','event-enter','event-return','bridge-outcome'):
                         raise ValueError('invalid observation kind or building')
                     if any(type(v) is not int or not 0<=v<=65535 for v in (detail,offset,destination)):
                         raise ValueError('invalid observation value')
@@ -79,6 +84,9 @@ def coverage(document,traces,cancel=None):
                     else:branches[(*key,detail,target)]+=1
                 elif kind=='native-enter':entered[key]+=1
                 elif kind=='native-return':returned[key]+=1
+                elif kind=='bridge-outcome':outcomes[(*key,detail)]+=1
+                elif kind=='event-enter':event_enter[key]+=1
+                elif kind=='event-return':event_return[(*key,detail)]+=1
                 elif kind=='fault':faults.append(dict(file=str(file),line=line_no,program=p['id'],node=node,offset=offset,error=detail))
     result=[]
     for p in programs:
@@ -89,7 +97,10 @@ def coverage(document,traces,cancel=None):
             node=dict(id=n['id'],op=n['op'],executions=instructions[key],
                 field_path=f"$.programs[{p['id']}].nodes[{n['id']}]",
                 branches=[dict(choice=choice,target=target,executions=branches[(*key,choice,target)]) for choice,target in edges(p,n)])
-            if n['op']=='native':node['native']=dict(entered=entered[key],returned=returned[key],internal_branches='unknown')
+            if n['op']=='native':
+                node['native']=dict(entered=entered[key],returned=returned[key],internal_branches='unknown')
+                if key in adapter_keys:node['native']['bridge_outcomes']={name:outcomes[(*key,i)] for i,name in enumerate(('success','failure','cancel'))}
+            if n['op']=='event':node['quest']=dict(entered=event_enter[key],returns={name:event_return[(*key,i)] for i,name in enumerate(('success','failure','cancel'))})
             nodes.append(node)
         all_edges=[b for n in nodes for b in n['branches']]
         result.append(dict(id=p['id'],name=p['name'],resource=p['resource'],nodes=nodes,

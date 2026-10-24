@@ -138,9 +138,10 @@ class AdventureEditor:
         self.document = parent.document
         if self.document.adventure is None:
             raise EditorError("This project uses the CHI campaign. Open examples/beacon-demo or examples/adventure-demo for map/event editing.")
-        self.window = view_window(self,parent,'maps','Maps and events')
+        self.window = view_window(self,parent,getattr(self,'view_kind','maps'),getattr(self,'view_title','Maps and events'))
         self.window.transient(parent.window)
-        self.window.title("Maps and events" if hasattr(self.window,'workspace') else "BattleTech Construction Kit - Maps and events")
+        title=getattr(self,'view_title','Maps and events')
+        self.window.title(title if hasattr(self.window,'workspace') else 'BattleTech Construction Kit - '+title)
         self.window.geometry("1000x720")
         self.window.minsize(960, 650)
         self.scene_index = 0
@@ -1047,7 +1048,9 @@ class AdventureEditor:
             var.trace_add("write",lambda *_:setattr(self,"event_pending",True))
             control=ttk.Combobox(self.event_form,textvariable=var,values=choices,state="readonly",width=50) if choices is not None else ttk.Entry(self.event_form,textvariable=var,width=52)
             control.grid(row=row,column=1,sticky="ew",pady=4);row+=1;return control
-        field("id",e["id"]);op=field("op",e["op"],list(OPS))
+        from chi_bridge import OPS as BRIDGE_OPS
+        available=list(OPS)+list(BRIDGE_OPS) if self.document.manifest.get('chi_bridge') else list(OPS)
+        field("id",e["id"]);op=field("op",e["op"],available)
         def change(_):self.render_event_form(event_template(self.document,self.event_vars["op"].get(),self.event_id))
         op.bind("<<ComboboxSelected>>",lambda event:self.guard(lambda:change(event)))
         if "text" in e:
@@ -1068,6 +1071,13 @@ class AdventureEditor:
             field('action',e['action'],['set','add','subtract']);field('once',e['once'],['0','1'])
         if e['op']=='objective':field('state',e['state'],['inactive','active','complete','failed'])
         if e['op']=='battle_end':field('result',e['result'],['win','loss','flee'])
+        if e['op']=='return':field('result',e['result'],['success','failure','cancel'])
+        if e['op']=='call':field('event',e['event'],events)
+        if e['op']=='chi_native':
+            from chi_bridge import data
+            field('call',e['call'],[v['id'] for v in data(self.document)['native_calls']])
+        for key in ('story_index','program','film'):
+            if key in e:field(key,e[key])
         if e['op']=='check':
             field('match',e['match'],['all','any'])
             field('condition_count',len(e['conditions']),[str(i) for i in range(1,9)])
@@ -1110,7 +1120,7 @@ class AdventureEditor:
         def integer(key):
             try:return int(values[key])
             except ValueError:raise FieldError(key.replace('_',' ').capitalize()+' must be a whole number.',key)
-        for key in ("value","credits","cost","once","radius"):
+        for key in ("value","credits","cost","once","radius","story_index","program","film"):
             if key in e:e[key]=integer(key)
         if e['op'] in ('repair','rearm','heal'):
             if values['slot']=='All':e.pop('slot',None)

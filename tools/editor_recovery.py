@@ -36,6 +36,7 @@ ROUTES={
  'Changes': 'protection_form',
  'Suites': 'suite_form case_form step_form',
  'BldView': 'new',
+ 'QuestEditor': 'bindings calls',
 }
 
 
@@ -78,7 +79,7 @@ def describe(view,workspace):
     pane=view.window
     if not hasattr(pane,'key'):return dict(kind='unmapped',title=pane.title())
     return dict(kind=pane.key[1],identity=pane.key[2],state=workspace.view_state(pane),
-                inspector=type(view).__name__=='EventProperties')
+                inspector=type(view).__name__=='EventProperties',quest=hasattr(getattr(view,'document',None),'base'))
 
 
 def identity(scope):
@@ -155,12 +156,18 @@ def open_route(scope,route,cache=None):
     elif kind=='chi-services':
         from chi_services_editor import open_services
         view=open_services(owner)
+    elif kind=='chi-quests':
+        from chi_bridge_editor import open_quests
+        view=open_quests(owner)
     elif kind=='pixels':
         from graphics_editor import open_image_editor
         image=next(i for i in scope.document.art['images'] if i['id']==ident)
         view=open_image_editor(owner.graphics_editor(),image)
     elif kind in ('maps','world','events','jigsaw','objectives','construction','patterns','mission','construction-library'):
-        owner.edit_adventure();maps=owner.map_editor
+        if route.get('quest'):
+            from chi_bridge_editor import open_quests
+            maps=open_quests(owner)
+        else:owner.edit_adventure();maps=owner.map_editor
         if kind=='maps':view=maps
         elif kind=='events':view=maps.event_graph()
         elif kind=='objectives':view=maps.event_graph().objectives()

@@ -134,6 +134,202 @@
             "type": "object",
             "properties": {
               "op": {
+                "const": "bridge.enable"
+              }
+            },
+            "required": [
+              "op"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "bridge.example"
+              }
+            },
+            "required": [
+              "op"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "bridge.binding"
+              },
+              "value": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "op",
+              "value"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "bridge.call"
+              },
+              "value": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "op",
+              "value"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "quest.put"
+              },
+              "collection": {
+                "enum": [
+                  "events",
+                  "maps",
+                  "people",
+                  "shops",
+                  "encounters",
+                  "tiles",
+                  "objectives",
+                  "variables",
+                  "regions",
+                  "combat_groups",
+                  "combat_hooks"
+                ]
+              },
+              "value": {
+                "type": "object"
+              },
+              "mode": {
+                "enum": [
+                  "create",
+                  "replace"
+                ]
+              }
+            },
+            "required": [
+              "op",
+              "collection",
+              "value"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "quest.patch"
+              },
+              "collection": {
+                "enum": [
+                  "events",
+                  "maps",
+                  "people",
+                  "shops",
+                  "encounters",
+                  "tiles",
+                  "objectives",
+                  "variables",
+                  "regions",
+                  "combat_groups",
+                  "combat_hooks"
+                ]
+              },
+              "id": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "changes": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "op",
+              "collection",
+              "id",
+              "changes"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "quest.remove"
+              },
+              "collection": {
+                "enum": [
+                  "events",
+                  "maps",
+                  "people",
+                  "shops",
+                  "encounters",
+                  "tiles",
+                  "objectives",
+                  "variables",
+                  "regions",
+                  "combat_groups",
+                  "combat_hooks"
+                ]
+              },
+              "id": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              }
+            },
+            "required": [
+              "op",
+              "collection",
+              "id"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "quest.connect"
+              },
+              "source": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              },
+              "branch": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+              },
+              "target": {
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+              }
+            },
+            "required": [
+              "op",
+              "source",
+              "branch",
+              "target"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
                 "const": "missions.enable"
               }
             },

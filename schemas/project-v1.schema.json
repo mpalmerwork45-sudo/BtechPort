@@ -142,11 +142,21 @@
     "campaign": {
       "const": "campaign.json"
     },
-    "chi_spatial": {"const": "chi-spatial.json"},
-    "chi_presentation": {"const": "chi-presentation.json"},
-    "chi_scripts": {"const": "chi-scripts.json"},
-    "chi_services": {"const": "chi-services.json"},
-    "chi_missions": {"const": "chi-missions.json"},
+    "chi_spatial": {
+      "const": "chi-spatial.json"
+    },
+    "chi_presentation": {
+      "const": "chi-presentation.json"
+    },
+    "chi_scripts": {
+      "const": "chi-scripts.json"
+    },
+    "chi_services": {
+      "const": "chi-services.json"
+    },
+    "chi_missions": {
+      "const": "chi-missions.json"
+    },
     "resources": {
       "type": "array",
       "minItems": 79,
@@ -391,6 +401,12 @@
         }
       ],
       "items": false
+    },
+    "chi_bridge": {
+      "const": "chi-bridge.json"
+    },
+    "chi_events": {
+      "const": "chi-events.json"
     }
   },
   "required": [
@@ -494,5 +510,15 @@
         }
       }
     }
-  ]
+  ],
+  "dependentRequired": {
+    "chi_bridge": [
+      "chi_events",
+      "chi_spatial",
+      "chi_scripts"
+    ],
+    "chi_events": [
+      "chi_bridge"
+    ]
+  }
 }

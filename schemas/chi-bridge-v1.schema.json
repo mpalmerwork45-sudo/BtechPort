@@ -1,0 +1,105 @@
+{
+  "type": "object",
+  "properties": {
+    "format": {
+      "const": "btp-chi-bridge-v1"
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "entrances": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 63,
+            "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+          },
+          "map": {
+            "enum": [
+              "chi:map-01",
+              "chi:map-02",
+              "chi:map-03",
+              "chi:map-04",
+              "chi:map-05",
+              "chi:map-06",
+              "chi:map-07",
+              "chi:map-08",
+              "chi:map-09",
+              "chi:map-10",
+              "chi:map-11",
+              "chi:map-12",
+              "chi:map-13"
+            ]
+          },
+          "entrance": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 11
+          },
+          "event": {
+            "type": "string",
+            "maxLength": 63,
+            "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+          }
+        },
+        "required": [
+          "id",
+          "map",
+          "entrance",
+          "event"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0,
+      "maxItems": 64
+    },
+    "native_calls": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 63,
+            "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+          },
+          "program": {
+            "type": "string",
+            "maxLength": 63,
+            "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+          },
+          "entry": {
+            "type": "string",
+            "maxLength": 63,
+            "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+          },
+          "return": {
+            "type": "string",
+            "maxLength": 63,
+            "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"
+          }
+        },
+        "required": [
+          "id",
+          "program",
+          "entry",
+          "return"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0,
+      "maxItems": 64
+    }
+  },
+  "required": [
+    "format",
+    "schema_version",
+    "entrances",
+    "native_calls"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}
