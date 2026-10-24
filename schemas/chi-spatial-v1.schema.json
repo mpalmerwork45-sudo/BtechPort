@@ -54,9 +54,15 @@
         "coarse": {"type": "array", "minItems": 336, "maxItems": 336, "items": {"type": "integer", "minimum": 0, "maximum": 127}},
         "flips": {"type": "array", "minItems": 96, "maxItems": 96, "items": {"type": "integer", "minimum": 0, "maximum": 63}},
         "mini_colors": {"type": "array", "minItems": 256, "maxItems": 256, "items": {"type": "integer", "minimum": 0, "maximum": 15}},
+        "terrain": {"type": "array", "maxItems": 16384, "items": {"type": "object", "additionalProperties": false, "required": ["at", "level"],
+          "properties": {"at": {"$ref": "#/$defs/worldBlock"}, "level": {"$ref": "#/$defs/worldLevel"}}}},
+        "placements": {"type": "array", "maxItems": 16384, "items": {"type": "object", "additionalProperties": false, "required": ["at", "jigsaw", "level"],
+          "properties": {"at": {"$ref": "#/$defs/worldBlock"}, "jigsaw": {"$ref": "#/$defs/id"}, "level": {"$ref": "#/$defs/worldLevel"}, "flip": {"type": "integer", "minimum": 0, "maximum": 3}}}},
+        "patches": {"type": "array", "maxItems": 32768, "items": {"type": "object", "additionalProperties": false, "required": ["at", "tile"],
+          "properties": {"at": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "integer", "minimum": 0, "maximum": 1023}}, "tile": {"$ref": "#/$defs/id"}}}},
         "joins": {"type": "array", "minItems": 17, "maxItems": 17, "items": {"$ref": "#/$defs/id"}},
         "jigsaws": {"type": "array", "minItems": 1, "maxItems": 1024, "items": {"type": "object", "additionalProperties": false, "required": ["id", "name", "rows"],
-          "properties": {"id": {"$ref": "#/$defs/id"}, "name": {"type": "string", "minLength": 1, "maxLength": 95},
+          "properties": {"id": {"$ref": "#/$defs/id"}, "name": {"type": "string", "minLength": 1, "maxLength": 95}, "mode": {"enum": ["terrain", "absolute"]},
             "rows": {"type": "array", "minItems": 8, "maxItems": 8, "items": {"type": "array", "minItems": 8, "maxItems": 8, "items": {"$ref": "#/$defs/id"}}}}}}
       }
     }
@@ -64,6 +70,8 @@
   "$defs": {
     "id": {"type": "string", "minLength": 3, "maxLength": 63, "pattern": "^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"},
     "byte": {"type": "integer", "minimum": 0, "maximum": 255},
+    "worldBlock": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "integer", "minimum": 0, "maximum": 127}},
+    "worldLevel": {"type": "integer", "minimum": 0, "maximum": 112, "multipleOf": 16},
     "half": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "integer", "minimum": 0, "maximum": 127}},
     "label": {"type": "array", "minItems": 16, "maxItems": 16, "items": {"$ref": "#/$defs/byte"}},
     "rows": {"type": "array", "minItems": 1, "maxItems": 64, "items": {"type": "array", "minItems": 1, "maxItems": 64, "items": {"oneOf": [{"$ref": "#/$defs/id"}, {"const": " "}]}}}

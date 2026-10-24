@@ -20,7 +20,7 @@ class WorldEditor:
         self.window=view_window(self,owner,'world','Worlds and planets');self.window.geometry('1000x730');self.window.minsize(840,600)
         self.stroke=None;self.drag=None;self.cache={};self.pending=False;self.last=None;self.city=None;self.world_id=None
         self.selection_rect=None;self.clipboard=None;self.select_start=None
-        self.problem_location=None
+        self.problem_location=None;self.hover=None;self.overview_key=None;self.overview_image=None;self.overview_photos=[]
         bar=ttk.Frame(self.window,padding=8);bar.pack(fill='x')
         for title,cb in [('Create world',self.new_world),('Place city',self.city_form),('Edit city',self.edit_city),('Remove city',self.remove_city),('Undo',owner.undo),('Redo',owner.redo),('Save',owner.save),('Validate',owner.validate)]:
             ttk.Button(bar,text=title,width=0,style='Toolbar.TButton',command=lambda f=cb:self.guard(f)).pack(side='left',padx=3)
@@ -40,8 +40,12 @@ class WorldEditor:
             ('Play here','Play here','Click to playtest from this location.')])],lambda _:self.guard(self.finish))
         self.drawing_tools.pack(fill='x')
         body=ttk.Panedwindow(self.window,orient='horizontal');body.pack(fill='both',expand=True,padx=8)
-        side=ttk.Frame(body);view=ttk.Frame(body);body.add(side,weight=1);body.add(view,weight=5)
+        from adventure_editor import scroll_frame
+        side_shell,side=scroll_frame(body,width=230,height=480);view=ttk.Frame(body);body.add(side_shell,weight=1);body.add(view,weight=5)
         from editor_pickers import ReferenceBox,pick_reference
+        self.overview=tk.Canvas(side,width=192,height=160,background='#263842',highlightthickness=1)
+        self.overview.pack();self.overview.bind('<Button-1>',self.navigate);self.overview.bind('<B1-Motion>',self.navigate)
+        ttk.Label(side,text='Click overview to navigate',style='Muted.TLabel').pack(anchor='w')
         self.tile_id=tk.StringVar(value=owner.adventure['tiles'][0]['id'])
         ttk.Label(side,text='Tile brush',style='Section.TLabel').pack(anchor='w',pady=6)
         self.tile_choice=ReferenceBox(side,self,self.tile_id,[t['id'] for t in owner.adventure['tiles']],width=22);self.tile_choice.pack(fill='x')
@@ -64,6 +68,9 @@ class WorldEditor:
         self.canvas.bind('<B1-Motion>',lambda e:self.guard(lambda:self.pointer(e,False)))
         self.canvas.bind('<ButtonRelease-1>',lambda _:self.guard(self.finish))
         self.canvas.bind('<Double-1>',lambda e:self.guard(lambda:self.open_city(e)))
+        self.canvas.bind('<Button-3>',lambda e:self.guard(lambda:self.context(e)))
+        self.canvas.bind('<Motion>',self.hover_at);self.canvas.bind('<Leave>',lambda _:self.clear_hover())
+        self.canvas.bind('<Button-2>',lambda e:self.canvas.scan_mark(e.x,e.y));self.canvas.bind('<B2-Motion>',self.pan)
         self.canvas.bind('<Control-c>',lambda _:self.guard(self.copy_selection))
         self.canvas.bind('<Control-x>',lambda _:self.guard(self.cut_selection))
         self.canvas.bind('<Control-v>',lambda _:self.tool.set('Paste'))
@@ -77,6 +84,50 @@ class WorldEditor:
         from editor_ui import flow_toolbar
         flow_toolbar(bar);flow_toolbar(controls)
     def guard(self, fn):return guard(self,fn)
+    def navigate(self,e):
+        if not all_worlds(self.adventure):return
+        w,h=world_size(self.adventure,self.world_id);z=int(self.zoom.get())
+        self.canvas.xview_moveto((e.x/192*w*z-self.canvas.winfo_width()/2)/(w*z))
+        self.canvas.yview_moveto((e.y/160*h*z-self.canvas.winfo_height()/2)/(h*z));self.draw()
+    def pan(self,e):self.canvas.scan_dragto(e.x,e.y,gain=1);self.schedule()
+    def hover_at(self,e):
+        z=int(self.zoom.get());self.hover=(int(self.canvas.canvasx(e.x)//z),int(self.canvas.canvasy(e.y)//z));self.draw_hover()
+    def clear_hover(self):self.hover=None;self.canvas.delete('brush-hover')
+    def draw_hover(self):
+        self.canvas.delete('brush-hover')
+        if not self.hover:return
+        x,y=self.hover;u=8 if self.tool.get()=='Jigsaw' else 1;z=int(self.zoom.get());x=x//u*u;y=y//u*u
+        self.canvas.create_rectangle(x*z,y*z,(x+u)*z,(y+u)*z,outline='#ffff88',width=2,tags='brush-hover')
+    def context(self,e):
+        if not all_worlds(self.adventure):return
+        from world_review import Surface
+        from construction_editor import tile_menu
+        z=int(self.zoom.get());p=(int(self.canvas.canvasx(e.x)//z),int(self.canvas.canvasy(e.y)//z));surface=Surface(self.document,self.world_id)
+        if not(0<=p[0]<surface.width and 0<=p[1]<surface.height):return
+        current=surface.row(p[1],p[0],1)[0];rows=[[v or ' ' for v in surface.row(y,p[0]-1,3)] for y in range(p[1]-1,p[1]+2)]
+        def assign(identity):
+            city=self.city_at(p)
+            if city:raise EditorError('This cell belongs to '+city['name']+'. Double-click the city to edit its visible tiles.')
+            a=copy.deepcopy(self.document.adventure);world=get_world(a,self.world_id);cells=patch_cells(world);cells[p]=identity;set_patch(world,cells);self.owner.commit(a)
+        tile_menu(self,self.owner,current,assign,e,lambda:dict(world_neighbourhood=rows,name=self.current_world()['name']+' at '+str(p),at=[1,1]))
+    def draw_overview(self,x0,y0,x1,y1):
+        from world_review import Surface
+        # A bounded 192x160 sample gives navigation without rasterizing a
+        # million terrain tiles on each pointer move. Rebuild only on edits.
+        key=(self.document.revision,self.world_id)
+        if self.overview_key!=key:
+            surface=Surface(self.document,self.world_id);tiles={token(t):t for t in self.document.adventure['tiles']};rows=[]
+            for py in range(160):
+                source=surface.row(py*surface.height//160);row=[]
+                for px in range(192):
+                    t=tiles[source[px*surface.width//192]]
+                    try:color=self.owner.graphics[t['sheet']][t['graphic']][8][8]
+                    except (KeyError,IndexError,TypeError):color='#558866'
+                    row.append(color)
+                rows.append('{'+ ' '.join(row)+'}')
+            self.overview_image=tk.PhotoImage(master=self.window,width=192,height=160);self.overview_image.put(' '.join(rows));self.overview_key=key
+        w,h=world_size(self.adventure,self.world_id);self.overview.delete('all');self.overview.create_image(0,0,image=self.overview_image,anchor='nw')
+        self.overview.create_rectangle(x0*192/w,y0*160/h,x1*192/w,y1*160/h,outline='#ffff00',width=2)
     def choose_tile_brush(self,identity):self.tile_id.set(identity);self.tool.set('Tile')
     def city_at(self,point):
         world=self.current_world()
@@ -141,7 +192,8 @@ class WorldEditor:
             w=get_world(self.document.adventure,self.world_id);self.world_id=w['id'];self.planet.current(worlds.index(w))
             if self.city not in w['cities']:self.city=None
         selected=self.listing.selection();self.cache={};self.listing.delete(*self.listing.get_children())
-        for j in self.document.adventure.get('jigsaws',[]):self.listing.insert('','end',iid=j['id'],text=j['name'])
+        tiles={token(t):t for t in self.document.adventure['tiles']}
+        for j in self.document.adventure.get('jigsaws',[]):self.listing.insert('','end',iid=j['id'],text=j['name'],image=self.picture(j,4,tiles))
         if selected and self.listing.exists(selected[0]):self.listing.selection_set(selected[0])
         elif self.listing.get_children():self.listing.selection_set(self.listing.get_children()[0])
         self.draw()
@@ -153,6 +205,9 @@ class WorldEditor:
             ox,oy=scene['origin']
             if scene['id'] in world['cities'] and ox<=x<ox+len(scene['rows'][0]) and oy<=y<oy+len(scene['rows']):
                 self.cancel();self.owner.map_choice.current(self.adventure['maps'].index(scene));self.owner.change_map();self.owner.tabs.select(self.owner.map_tab);self.owner.window.lift();return
+        # Tk substitutes Double-1 for the second press. Outside a town that
+        # press is still a paint action, not an event to silently discard.
+        self.pointer(event,True)
     def new_world(self):
         from world_editing import ORIGINAL_WORLD_JIGSAWS
         f=Form(self,'Create world');f.field('name','World');f.field('width',ORIGINAL_WORLD_JIGSAWS,label='Width in 8x8 jigsaws');f.field('height',ORIGINAL_WORLD_JIGSAWS,label='Height in 8x8 jigsaws')
@@ -267,6 +322,7 @@ class WorldEditor:
             self.canvas.create_line(cx-12,cy,cx+12,cy,fill='#ffdb6e',tags='problem-location')
             self.canvas.create_line(cx,cy-12,cx,cy+12,fill='#ffdb6e',tags='problem-location')
         self.info.set(f"{self.current_world(a)['name']} | {w} x {h} tiles | {len(a['jigsaws'])} jigsaws | {len(self.current_world(a)['cities'])} cities")
+        self.draw_hover();self.draw_overview(x0,y0,x1,y1)
     def pointer(self,e,start):
         if not all_worlds(self.adventure):raise EditorError('Create a world first.')
         z=int(self.zoom.get());p=(int(self.canvas.canvasx(e.x)//z),int(self.canvas.canvasy(e.y)//z));w,h=world_size(self.adventure,self.world_id)
@@ -304,7 +360,11 @@ class WorldEditor:
         elif self.tool.get()=='Jigsaw':
             j=self.selected_jigsaw()
             if j:
-                for x,y in line(self.last[0]//8,self.last[1]//8,p[0]//8,p[1]//8):self.current_world(self.stroke)['pieces'][y][x]=j['id']
+                world=self.current_world(self.stroke);stamps=set(line(self.last[0]//8,self.last[1]//8,p[0]//8,p[1]//8))
+                for x,y in stamps:world['pieces'][y][x]=j['id']
+                # A new piece replaces prior fine paint in its footprint;
+                # otherwise water/building patches conceal the new brush.
+                set_patch(world,{(x,y):v for (x,y),v in patch_cells(world).items() if (x//8,y//8) not in stamps})
         else:
             cells=patch_cells(self.current_world(self.stroke))
             tile=next((t for t in self.stroke['tiles'] if t['id']==self.tile_id.get()),None)
@@ -335,7 +395,7 @@ class WorldEditor:
 class JigsawEditor:
     shared_art = True
     def __init__(self,owner,jigsaw):
-        self.owner=owner;self.document=owner.document;self.original=copy.deepcopy(jigsaw);self.jigsaw=copy.deepcopy(jigsaw);self.history=[];self.future=[];self.before=None;self.last=None;self.clipboard=None;self.start=None
+        self.owner=owner;self.document=owner.document;self.original=copy.deepcopy(jigsaw);self.jigsaw=copy.deepcopy(jigsaw);self.history=[];self.future=[];self.before=None;self.before_flip=None;self.paint_base=None;self.last=None;self.clipboard=None;self.start=None
         self.window=view_window(self,owner,'jigsaw',jigsaw['name'],jigsaw['id']);self.window.geometry('760x620')
         bar=ttk.Frame(self.window,padding=8);bar.pack(fill='x');self.name=tk.StringVar(value=jigsaw['name']);ttk.Entry(bar,textvariable=self.name).pack(side='left',fill='x',expand=True)
         for label,cb in [('Undo',self.undo),('Redo',self.redo),('Apply',self.apply)]:ttk.Button(bar,text=label,command=lambda f=cb:owner.guard(f)).pack(side='left')
@@ -351,6 +411,16 @@ class JigsawEditor:
             ('Rectangle','Rectangle','Drag a filled rectangle.'),('Fill','Fill','Fill a connected area.'),
             ('Eyedropper','Pick tile','Pick the tile under the pointer.'),('Paste','Paste','Place a pattern from the Pattern Library.')])],lambda _:guard(self,self.finish))
         self.drawing_tools.pack(fill='x')
+        self.native=bool(self.document.adventure.get('chi_native'))
+        if self.native:
+            native_bar=ttk.Frame(self.window,padding=(8,2));native_bar.pack(fill='x')
+            self.preview_level=tk.StringVar(value=getattr(owner,'level',tk.StringVar(value='32')).get())
+            self.preview_flip=tk.StringVar(value=getattr(owner,'flip',tk.StringVar(value='0')).get())
+            for label,var,values in [('Terrain level',self.preview_level,[str(n) for n in range(0,128,16)]),('Orientation',self.preview_flip,['0','1','2','3'])]:
+                ttk.Label(native_bar,text=label).pack(side='left',padx=4)
+                choice=ttk.Combobox(native_bar,textvariable=var,values=values,state='readonly',width=5);choice.pack(side='left');choice.bind('<<ComboboxSelected>>',lambda _:self.draw())
+            ttk.Button(native_bar,text='Convert to exact tiles',command=lambda:guard(self,self.convert_exact)).pack(side='left',padx=8)
+            self.native_note=tk.StringVar();ttk.Label(self.window,textvariable=self.native_note,wraplength=700,padding=8).pack(fill='x')
         from editor_ui import flow_toolbar
         flow_toolbar(bar);flow_toolbar(controls)
         ttk.Label(self.window,text='Drag to draw. Right-click a cell to choose, create, clone or edit its tile.\nJigsaws remain 8 × 8 tiles, matching the game’s world format.',padding=8,wraplength=650).pack(side='bottom',fill='x')
@@ -358,6 +428,7 @@ class JigsawEditor:
         self.canvas=tk.Canvas(shell,width=320,height=320,highlightthickness=0,background='#273b45',scrollregion=(0,0,320,320))
         sx=ttk.Scrollbar(shell,orient='horizontal',command=self.canvas.xview);sy=ttk.Scrollbar(shell,command=self.canvas.yview);sx.pack(side='bottom',fill='x');sy.pack(side='right',fill='y');self.canvas.pack(fill='both',expand=True);self.canvas.configure(xscrollcommand=sx.set,yscrollcommand=sy.set)
         self.canvas.bind('<Button-1>',lambda e:guard(self,lambda:self.paint(e,True)));self.canvas.bind('<B1-Motion>',lambda e:guard(self,lambda:self.paint(e,False)));self.canvas.bind('<ButtonRelease-1>',lambda _:guard(self,self.finish))
+        self.canvas.bind('<Double-Button-1>',lambda e:guard(self,lambda:self.paint(e,True)))
         self.canvas.bind('<Button-3>',lambda e:guard(self,lambda:self.context(e)));self.window.bind('<Escape>',lambda _:self.cancel())
         self.zoom_control.attach(self.canvas);self.draw()
         self.draft=register(self,pending=lambda:self.jigsaw!=self.original or self.name.get()!=self.original['name'],
@@ -367,6 +438,19 @@ class JigsawEditor:
     def restore_draft(self,state):
         self.jigsaw=state['jigsaw'];self.original=state['original'];self.name.set(state['name']);self.history=state['history'];self.future=state['future'];self.draw()
     def accept_draft(self):self.original=copy.deepcopy(self.jigsaw)
+    def displayed_rows(self):
+        if not self.native:return self.jigsaw['rows']
+        from chi_spatial import data,resolved_jigsaw,find
+        value=data(self.document);pieces=value['world']['jigsaws'];old=find(pieces,self.jigsaw['id']);pieces[pieces.index(old)]=self.jigsaw
+        return resolved_jigsaw(value,self.jigsaw['id'],int(self.preview_level.get()),int(self.preview_flip.get()))
+    def make_exact(self):
+        # Native join cells are selectors relative to the terrain level. A
+        # literal tile brush captures the displayed result first, so painting
+        # the chosen artwork never turns it into a different runtime tile.
+        if self.native and (self.jigsaw.get('mode','terrain')!='absolute' or self.preview_flip.get()!='0'):
+            rows=self.displayed_rows();self.jigsaw['rows']=rows;self.jigsaw['mode']='absolute';self.preview_flip.set('0')
+    def convert_exact(self):
+        self.finish();self.before=copy.deepcopy(self.jigsaw);self.make_exact();self.finish();self.draw()
     def close(self):
         from tkinter import messagebox
         if self.draft and self.draft.pending():
@@ -379,7 +463,8 @@ class JigsawEditor:
         z=int(self.zoom.get());self.canvas.configure(scrollregion=(0,0,8*z,8*z))
         self.tile.configure(values=list(tiles))
         if self.tile.get() not in tiles:self.tile.current(0)
-        for y,row in enumerate(self.jigsaw['rows']):
+        if self.native:self.native_note.set('Exact tiles: painting and stamping use this artwork at every terrain level.' if self.jigsaw.get('mode')=='absolute' else 'Original terrain-relative join: preview uses the chosen terrain level and orientation. Painting converts this piece to exact tiles. Clone first to keep the original join.')
+        for y,row in enumerate(self.displayed_rows()):
             for x,value in enumerate(row):
                 tile=tiles.get(value)
                 if tile is None:continue
@@ -390,16 +475,21 @@ class JigsawEditor:
         z=int(self.zoom.get());p=int(self.canvas.canvasx(e.x)//z),int(self.canvas.canvasy(e.y)//z)
         if not(0<=p[0]<8 and 0<=p[1]<8):return
         tool=self.tool.get()
-        if tool=='Eyedropper':self.tile.set(self.jigsaw['rows'][p[1]][p[0]]);return
-        if start:self.before=copy.deepcopy(self.jigsaw);self.last=self.start=p
+        if tool=='Eyedropper':self.tile.set(self.displayed_rows()[p[1]][p[0]]);return
+        if start:
+            self.before=copy.deepcopy(self.jigsaw);self.before_flip=self.preview_flip.get() if self.native else None
+            self.make_exact();self.last=self.start=p
+            # Retain the converted orientation throughout a drag. Re-resolving
+            # the original selectors after make_exact resets the flip twice.
+            self.paint_base=copy.deepcopy(self.jigsaw)
         if self.before is None:return
-        if tool in ('Line','Rectangle'):self.jigsaw=copy.deepcopy(self.before)
+        if tool in ('Line','Rectangle'):self.jigsaw=copy.deepcopy(self.paint_base)
         if tool=='Fill':
             from world_editing import flood
             flood(self.jigsaw['rows'],*p,self.tile.get())
         elif tool=='Paste':
             if start and self.clipboard:
-                if p[0]+len(self.clipboard[0])>8 or p[1]+len(self.clipboard)>8:self.before=None;raise EditorError('The complete pattern must fit in this 8 × 8 jigsaw.')
+                if p[0]+len(self.clipboard[0])>8 or p[1]+len(self.clipboard)>8:self.cancel();raise EditorError('The complete pattern must fit in this 8 × 8 jigsaw.')
                 for y,row in enumerate(self.clipboard):
                     for x,value in enumerate(row):
                         if value!=' ':self.jigsaw['rows'][p[1]+y][p[0]+x]=value
@@ -408,7 +498,10 @@ class JigsawEditor:
             for x,y in points:self.jigsaw['rows'][y][x]=self.tile.get()
         self.last=p;self.draw()
     def cancel(self):
-        if self.before is not None:self.jigsaw=self.before;self.before=None;self.draw()
+        if self.before is not None:
+            self.jigsaw=self.before;self.before=None;self.paint_base=None
+            if self.native and self.before_flip is not None:self.preview_flip.set(self.before_flip)
+            self.before_flip=None;self.draw()
         else:self.tool.set('Paint')
     def choose_tile(self):return self.owner.owner.graphic_picker(choose=self.tile.set,selected=self.tile.get())
     def context(self,e):
@@ -416,9 +509,12 @@ class JigsawEditor:
         if not(0<=x<8 and 0<=y<8):return
         from construction_editor import tile_menu
         def assign(value):
-            self.before=copy.deepcopy(self.jigsaw);self.jigsaw['rows'][y][x]=value;self.tile.set(value);self.finish();self.draw()
+            self.before=copy.deepcopy(self.jigsaw);self.make_exact();self.jigsaw['rows'][y][x]=value;self.tile.set(value);self.finish();self.draw()
         self.finish()
-        tile_menu(self,self.owner.owner,self.jigsaw['rows'][y][x],assign,e,lambda:dict(jigsaw=self.jigsaw['id'],at=[x,y]))
+        # Supply the resolved and still-unsaved neighbourhood, rather than the
+        # stored offset indices or an older draft, to the seam editor.
+        rows=copy.deepcopy(self.displayed_rows())
+        tile_menu(self,self.owner.owner,rows[y][x],assign,e,lambda:dict(world_neighbourhood=rows,name=self.name.get(),at=[x,y]))
     def patterns(self):
         view=self.owner.owner.patterns();view.target=self;view.info.set('Save this jigsaw as a pattern, or use an existing pattern up to 8 × 8.');return view
     def use_pattern(self,rows,name='Pattern',overlay=False):
@@ -428,10 +524,10 @@ class JigsawEditor:
         self.clipboard=copy.deepcopy(rows);self.tool.set('Paste');self.window.lift()
     def save_pattern(self):
         from map_patterns import save_pattern
-        self.finish();f=Form(self,'Save jigsaw pattern');f.field('name',self.name.get());f.submit(lambda v:save_pattern(self.document,self.jigsaw['rows'],v['name']));return f
+        self.finish();f=Form(self,'Save jigsaw pattern');f.field('name',self.name.get());f.submit(lambda v:save_pattern(self.document,self.displayed_rows(),v['name']));return f
     def finish(self):
         if self.before is not None and self.before!=self.jigsaw:self.history.append(self.before);self.future=[]
-        self.before=None
+        self.before=None;self.before_flip=None;self.paint_base=None
         from editor_session import publish_art
         publish_art(self)
     def undo(self):

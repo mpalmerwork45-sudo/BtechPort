@@ -9,7 +9,7 @@ import tempfile
 import time
 from pathlib import Path
 
-if __name__=='__main__' and any('editor' in argument or 'construction-kit' in argument or 'saved-games' in argument for argument in __import__('sys').argv[1:]):
+if __name__=='__main__' and any('editor' in argument or 'construction-kit' in argument or 'saved-games' in argument or 'world-paint' in argument for argument in __import__('sys').argv[1:]):
     from editor_runtime import prefer_system_tk
     prefer_system_tk()
 
@@ -1328,6 +1328,7 @@ def main():
     parser.add_argument('--editor-suites-only',action='store_true',help='Check suite authoring, recovery, native runs and coverage navigation')
     parser.add_argument('--editor-chi-import-only',action='store_true',help='Check CHI import wizard, native dialogue edits, isolated Play and cancellation')
     parser.add_argument('--editor-chi-spatial-only',action='store_true',help='Check native CHI maps, world/jigsaw, artwork and shared Save/Play')
+    parser.add_argument('--world-paint-only',action='store_true',help='Check native TINYLAND, world brushes, exact jigsaws and neighbour-aware editing')
     parser.add_argument('--editor-chi-bld-only',action='store_true',help='Check BLD dialogue/control flow, drafts, diagnostics, history and native Play')
     parser.add_argument('--editor-chi-missions-only',action='store_true',help='Check native mission settings, unit roles, drafts and continuations')
     parser.add_argument('--editor-chi-services-only',action='store_true',help='Check native service content, stock, drafts and recipient transactions')
@@ -1388,7 +1389,7 @@ def main():
     read_fd, write_fd = os.pipe()
     with (work / "native-xvfb.log").open("w") as log:
         xvfb = subprocess.Popen([str(ROOT / "local-deps/xvfb/usr/bin/Xvfb"),
-            "-displayfd", str(write_fd), "-screen", "0", "1600x1000x24" if args.delivery_only or args.saved_games_only or args.editor_usability_only or args.editor_focus_only or args.editor_mission_only or args.editor_combat_mission_only or args.editor_style_only or args.editor_source_only or args.editor_capacity_only or args.editor_campaign_demo_only or args.editor_world_routes_only or args.editor_checkpoints_only or args.construction_library_only or args.editor_canvas_only or args.editor_paint_only or args.editor_tile_animation_only or args.editor_authoring_only or args.editor_collaboration_only else "1024x768x24", "-nolisten", "tcp"],
+            "-displayfd", str(write_fd), "-screen", "0", "1600x1000x24" if args.world_paint_only or args.delivery_only or args.saved_games_only or args.editor_usability_only or args.editor_focus_only or args.editor_mission_only or args.editor_combat_mission_only or args.editor_style_only or args.editor_source_only or args.editor_capacity_only or args.editor_campaign_demo_only or args.editor_world_routes_only or args.editor_checkpoints_only or args.construction_library_only or args.editor_canvas_only or args.editor_paint_only or args.editor_tile_animation_only or args.editor_authoring_only or args.editor_collaboration_only else "1024x768x24", "-nolisten", "tcp"],
             pass_fds=(write_fd,), stdout=log, stderr=subprocess.STDOUT)
         os.close(write_fd)
         try:
@@ -1519,6 +1520,10 @@ def main():
                 return
             if args.editor_chi_spatial_only:
                 from editor_chi_spatial_smoke import run
+                run(env,work)
+                return
+            if args.world_paint_only:
+                from editor_world_paint_smoke import run
                 run(env,work)
                 return
             if args.editor_chi_missions_only:

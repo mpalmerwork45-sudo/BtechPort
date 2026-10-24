@@ -95,6 +95,23 @@ static void proof(const char *kind,const BtpResources *a,const BtpResources *b)
         for (int y=0;y<1024 && !found;++y) for (int x=0;x<1024;++x) if (!btp_world_location(b,s,x,y) &&
             btp_world_tile(b,s,x,y)==85 && btp_world_tile(a,s,x,y)<85) { found=1;break; }
         CHECK(found);
+    } else if (!strcmp(kind,"world-paint")) {
+        /* These assertions use effective gameplay queries, rather than only
+           comparing the editing JSON or a second preview implementation. */
+        CHECK(!btp_world_location(b,s,8,8) && !btp_world_location(b,s,16,16));
+        CHECK(b->world.heights[9*144+9]==0);
+        CHECK(btp_world_mini(b,s,1,1)==15 && btp_world_descriptor(b,s,8,8)==15);
+        CHECK(btp_world_tile(b,s,8,8)==16); /* literal dry causeway */
+        CHECK(!btp_world_deep_crossing(b,s,15,16,1,0));
+        CHECK(btp_world_deep_crossing(b,s,15,18,1,0));
+        CHECK(btp_world_tile(b,s,16,16)==85); /* absolute wall jigsaw */
+        CHECK(btp_world_tile(b,s,17,16)==47); /* patch wins over stamp */
+        CHECK(btp_world_tile(b,s,23,23)==85);
+        int ox=(b->map.entrance_x[0]>>8)*64,oy=(b->map.entrance_y[0]>>12)*64;
+        CHECK(btp_chi_world_rule(b,btp_world_generated(b,s,ox+34,oy+12))==85);
+        CHECK(btp_world_tile(a,s,ox+34,oy+12)==btp_world_tile(b,s,ox+34,oy+12));
+        CHECK(btp_world_location(b,s,ox+34,oy+12)==1);
+        CHECK(memcmp(a->project->digest,b->project->digest,32));
     } else if (!strcmp(kind,"sprite")) {
         CHECK(b->sprites.pixels[0]==15 && b->sprites.pixels[0]!=a->sprites.pixels[0]);
     } else if (!strcmp(kind,"screen")) {

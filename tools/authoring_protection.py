@@ -131,6 +131,10 @@ def world_region(document,rule,cancelled=lambda:False):
     for cy in range(y,y+h):
         if (cy-y)%16==0 and cancelled():raise AuthoringError('job.cancelled','World preservation check cancelled.')
         row=surface.row(cy,x,w,cities=False);used.update(row);digest.update(canonical(row));digest.update(b'\n')
+        if surface.native:
+            # Depth/join semantics and the actual TINYLAND pixels are separate
+            # from final world tiles; preserve both in native protected areas.
+            digest.update(surface.semantics_row(cy,x,w,cities=False));digest.update(b'\n')
     tiles=tile_values(document)
     for key in sorted(used,key=lambda k:k or ''):digest.update(canonical(tiles.get(key)));digest.update(b'\n')
     towns=[]

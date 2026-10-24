@@ -180,6 +180,9 @@ unsigned btp_world_tile(const BtpResources *r,const BtpState *s,int x,int y)
 }
 unsigned btp_world_generated(const BtpResources *r,const BtpState *s,int x,int y)
 {
+    /* Explicit world edits form the underlay. Callers compose native towns
+       above it, just as they do above the original generated landscape. */
+    unsigned edited=btp_chi_world_override(r,x,y);if (edited) return edited;
     unsigned level=world_level(r,s,x/8,y/8);
     return btp_generated_joined_tile(&r->world,x,y,world_neighbours(r,s,x/8,y/8,level));
 }
@@ -213,6 +216,9 @@ int btp_world_deep_crossing(const BtpResources *r,const BtpState *s,unsigned x,u
     if (!crossed) return 0;
     const BtpChiTile *authored=btp_chi_generated_cell(r,btp_world_generated(r,s,((int)x+dx+1)/2,((int)y+dy)/2));
     if (authored && !authored->water) return 0;
+    /* Literal dry tiles can make a causeway through generated deep water.
+       The older generator-offset definitions still keep native depth rules. */
+    if (btp_chi_world_override(r,((int)x+dx+1)/2,((int)y+dy)/2) && authored && authored->rule>=16) return 0;
     /* Test the same painted descriptors as the original 1314 viewport.
        The generated underlay is deep water at the cache island (MAP13), but
        its stored land block interrupts the all-water mask. The leader,

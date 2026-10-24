@@ -127,6 +127,21 @@ def run(env,work):
                 jigsaw.window.lift();f=jigsaw.save_pattern();f.apply_button.invoke();pump();snap('jigsaw')
                 world.window.lift();world.tool.set('Select');world.zoom.set('16');world.canvas.xview_moveto(0);world.canvas.yview_moveto(0);world.draw();pump()
                 gesture(world.canvas,(1,1),(33,33));world.copy_selection();world.cut_selection();world.use_pattern(world.clipboard);gesture(world.canvas,(80,80),(80,80));doc.validate()
+                # A jigsaw repaint must visibly replace earlier fine terrain
+                # patches, with both layers restored by the same Undo step.
+                from world_editing import patch_cells
+                world.tool.set('Tile');world.tile_id.set(profile['parts']['road_10']);gesture(world.canvas,(200,200),(200,200))
+                before=copy.deepcopy(doc.adventure);assert (12,12) in patch_cells(world.current_world())
+                world.tool.set('Jigsaw');gesture(world.canvas,(200,200),(200,200))
+                assert (12,12) not in patch_cells(world.current_world())
+                workspace.edit_history(False);pump();assert doc.adventure==before
+                assert world.overview_image is not None
+                # Right-click resolves the visible world neighbourhood rather
+                # than treating a tile ID as a position in the map palette.
+                with patch('construction_editor.tile_menu') as context:
+                    world.context(SimpleNamespace(x=200,y=200,x_root=0,y_root=0))
+                    grid=context.call_args.args[-1]()['world_neighbourhood']
+                    assert grid[1][1]==profile['parts']['road_10'] and len(grid)==3
                 print('PASS: jigsaw Line drawing and context New tile, saved jigsaw pattern, world terrain selection/cut/paste.',flush=True)
 
                 maps.window.lift();browser=maps.graphic_picker();browser.sheet.set('package:tiles');browser.refresh();pump()

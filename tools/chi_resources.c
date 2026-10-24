@@ -2,6 +2,7 @@
 #include "data/content.h"
 #include "data/project.h"
 #include "data/chi_presentation.h"
+#include "data/chi_spatial.h"
 #include "data/anm.h"
 #include "data/sprites.h"
 #include "core/world.h"
@@ -34,7 +35,7 @@ int btp_tool_chi_resource(int argc,char **argv)
         for (unsigned i=1;i<count;++i) { BtpSpriteRect next;btp_sprite_rect(first+i,&next);if (next.width!=w || next.height!=h) goto done; }
     } else if (!strcmp(kind,"tile") && g && g->format==1 && first+count<=250) w=h=16;
     else if (!strcmp(kind,"screen") && g && !first && count==1) {
-        w=320;h=200;palette=!strcmp(resource,"ENDMECH.CMP") ? 3u : !strcmp(resource,"BTTITLE.CMP") || !strcmp(resource,"INFOCOM.CMP") ? 4u : !strcmp(resource,"BTBORDER.CMP") ? 2u : 0u;
+        w=320;h=200;palette=!strcmp(resource,"ENDMECH.CMP") ? 3u : !strcmp(resource,"BTTITLE.CMP") || !strcmp(resource,"INFOCOM.CMP") ? 4u : !strcmp(resource,"BTBORDER.CMP") ? 2u : !strcmp(resource,"TINYLAND.CMP") ? 1u : 0u;
     } else if (!strcmp(kind,"animation") && !strcmp(resource,"O.ANM") && first<22) { w=h=88;palette=1;count=r->animations[first].count; }
     else if (!strcmp(kind,"portrait") && !strcmp(resource,"PORTRAITS") && first<BTP_PORTRAIT_COUNT && r->portraits.image[first].count) { w=h=88;palette=1;count=r->portraits.image[first].count; }
     else if (!strcmp(kind,"font") && !strcmp(resource,"BTTA.FONT") && !first && count==1) { w=h=128;palette=2; }
@@ -112,7 +113,10 @@ int btp_tool_chi_grid(int argc,char **argv)
             if (id) {
                 const BtpMap *m=id==1 ? &r->map : &r->local[id-1];
                 tile=btp_chi_map_cell(r,id,x-(m->entrance_x[0]>>8)*64,y-(m->entrance_y[0]>>12)*64);
-            } else tile=btp_chi_generated_cell(r,underlay ? btp_generated_tile(&r->world,x,y) : btp_world_generated(r,s,x,y));
+            } else {
+                unsigned override=btp_chi_world_override(r,x,y);
+                tile=btp_chi_generated_cell(r,underlay ? (override ? override : btp_generated_tile(&r->world,x,y)) : btp_world_generated(r,s,x,y));
+            }
             unsigned handle=tile ? (unsigned)(tile-r->project->chi_spatial->tiles) : 65535u;
             row[2*x]=(uint8_t)handle;row[2*x+1]=(uint8_t)(handle>>8);
         }
@@ -120,4 +124,86 @@ int btp_tool_chi_grid(int argc,char **argv)
     }
     free(s);if (fflush(stdout)) ok=0;
 done:if (!ok) fprintf(stderr,"%s\n",e.text[0] ? e.text : "Cannot export bounded native world grid");btp_content_close(&c);return ok ? 0 : 1;
+}
+
+/* Keep the editor's world overview on the same two scales as gameplay:
+   one TINYLAND 8x8 image represents one eight-tile terrain block, while
+   stored towns and explicit painted cells use their individual mini colours.
+   The binary response stays bounded at 3.2 MiB; JSON hex pixels would be
+   substantially larger and would discard the exact tile handles needed by
+   the detailed viewport. All arrays use fixed, documented dimensions. */
+int btp_tool_chi_world_editor(int argc,char **argv)
+{
+    unsigned ruined,underlay;
+    if (argc!=5 || !number(argv[3],1,&ruined) || !number(argv[4],1,&underlay)) {
+        fputs("Usage: btp-project chi-world-editor PROJECT RUINED UNDERLAY\n",stderr);return 2;
+    }
+    BtpContent c={0};BtpError e={0};int ok=0;
+    BtpState *s=NULL;uint8_t *mini=NULL;
+    if (!btp_content_load_project(&c,argv[2],NULL,&e)) goto done;
+    BtpResources *r=c.resources;
+    if (!r->project->chi_spatial) {
+        snprintf(e.text,sizeof e.text,"Enable CHI map editing before requesting a native world preview");goto done;
+    }
+    s=calloc(1,sizeof *s);mini=malloc(1024u*1024u);
+    if (!s || !mini) goto done;
+    s->story_flags[4]=(uint8_t)ruined;
+#ifdef _WIN32
+    if (_setmode(_fileno(stdout),_O_BINARY)==-1) goto done;
+#endif
+    uint8_t palette[48],levels[16384],joins[16384],towns[16384];
+    for (unsigned i=0;i<16;++i) {
+        uint32_t color=btp_palette[btp_chi_palette(1,i)];
+        palette[3*i]=(uint8_t)(color>>16);palette[3*i+1]=(uint8_t)(color>>8);palette[3*i+2]=(uint8_t)color;
+    }
+    for (unsigned by=0;by<128;++by) for (unsigned bx=0;bx<128;++bx) {
+        unsigned at=by*128+bx,height_at=(by+8)*144+bx+8,level=r->world.heights[height_at],mask;
+        levels[at]=(uint8_t)level;
+        if (underlay) {
+            mask=(r->world.heights[height_at-144]==level ? 1u : 0u)|
+                (r->world.heights[height_at+1]==level ? 2u : 0u)|
+                (r->world.heights[height_at+144]==level ? 4u : 0u)|
+                (r->world.heights[height_at-1]==level ? 8u : 0u);
+            towns[at]=0;
+        } else {
+            mask=btp_world_descriptor(r,s,(int)(8*bx),(int)(8*by))&15u;
+            towns[at]=(uint8_t)btp_world_location(r,s,(int)(8*bx),(int)(8*by));
+        }
+        joins[at]=(uint8_t)mask;
+    }
+    ok=fwrite("BWE1",1,4,stdout)==4 && fwrite(palette,1,sizeof palette,stdout)==sizeof palette &&
+        fwrite(levels,1,sizeof levels,stdout)==sizeof levels && fwrite(joins,1,sizeof joins,stdout)==sizeof joins &&
+        fwrite(towns,1,sizeof towns,stdout)==sizeof towns;
+    for (int y=0;y<1024 && ok;++y) {
+        uint8_t row[2048];
+        for (int x=0;x<1024;++x) {
+            const BtpChiTile *tile=NULL;
+            unsigned id=underlay ? 0u : (unsigned)btp_world_location(r,s,x,y);
+            unsigned override=btp_chi_world_override(r,x,y),color=0;
+            if (id) {
+                const BtpMap *m=id==1 || id==11 ? &r->map : &r->local[id-1];
+                tile=btp_chi_map_cell(r,id,x-(m->entrance_x[0]>>8)*64,y-(m->entrance_y[0]>>12)*64);
+            } else {
+                unsigned generated=underlay ? (override ? override : btp_generated_tile(&r->world,x,y)) : btp_world_generated(r,s,x,y);
+                tile=btp_chi_generated_cell(r,generated);
+            }
+            unsigned handle=tile ? (unsigned)(tile-r->project->chi_spatial->tiles) : 65535u;
+            row[2*x]=(uint8_t)handle;row[2*x+1]=(uint8_t)(handle>>8);
+            if ((id || override) && tile) {
+                color=tile->mini_color<16 ? tile->mini_color : r->world.mini_colors[tile->rule&255u];
+            } else {
+                unsigned block=(unsigned)y/8u*128u+(unsigned)x/8u;
+                unsigned index=underlay ? btp_world_mini_index(levels[block],joins[block]) :
+                    btp_world_mini(r,s,(unsigned)x/8u,(unsigned)y/8u);
+                if (index<66) color=r->tinyland.pixels[(index/40u*8u+((unsigned)y&7u))*320u+index%40u*8u+((unsigned)x&7u)];
+            }
+            mini[(unsigned)y*1024u+(unsigned)x]=(uint8_t)(color&15u);
+        }
+        ok=fwrite(row,1,sizeof row,stdout)==sizeof row;
+    }
+    if (ok) ok=fwrite(mini,1,1024u*1024u,stdout)==1024u*1024u;
+    if (fflush(stdout)) ok=0;
+done:
+    if (!ok) fprintf(stderr,"%s\n",e.text[0] ? e.text : "Cannot export bounded native world preview");
+    free(mini);free(s);btp_content_close(&c);return ok ? 0 : 1;
 }

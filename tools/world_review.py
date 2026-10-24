@@ -37,7 +37,7 @@ class Surface:
         if self.world is None:raise AuthoringError('object.missing','World is absent: '+identity,object_id=identity)
         self.native=bool(a.get('chi_native'))
         if self.native:
-            self.width=self.height=1024;self.grids={};self.identities=[t['id'] for t in a['tiles']]
+            self.width=self.height=1024;self.native_views={};self.identities=[t['id'] for t in a['tiles']]
             self.cities={m['id']:m for m in a['maps'] if m['id'] in self.world['cities']};return
         self.width=8*len(self.world['pieces'][0]);self.height=8*len(self.world['pieces'])
         self.jigsaws={p['id']:p['rows'] for p in a['jigsaws']}
@@ -53,10 +53,7 @@ class Surface:
         if not 0<=y<self.height:return result
         left,right=max(0,x),min(self.width,x+width)
         if self.native:
-            if cities not in self.grids:
-                from chi_resources import grid
-                self.grids[cities]=grid(self.document,underlay=not cities)
-            source=self.grids[cities];ids=self.identities
+            source=self.native_view(cities)['grid'];ids=self.identities
             result[left-x:right-x]=[ids[i] if i<len(ids) else None for i in source[y*1024+left:y*1024+right]]
             return result
         for piece in range(left//8,(right+7)//8):
@@ -71,6 +68,33 @@ class Surface:
                 cx,cy,cw,ch=city_rect(city);start,end=max(left,cx),min(right,cx+cw)
                 if start<end and cy<=y<cy+ch:result[start-x:end-x]=self.city_rows[key][y-cy][start-cx:end-cx]
         return result
+
+    def native_view(self,cities=True):
+        if cities not in self.native_views:
+            from chi_resources import world_editor_preview
+            self.native_views[cities]=world_editor_preview(self.document,underlay=not cities)
+        return self.native_views[cities]
+
+    def semantics_row(self,y,x=0,width=None,cities=True):
+        """Five bytes per native cell protect depth and actual overhead art.
+
+        Literal pieces can keep identical final tiles while a changed height
+        changes deep-water crossings. TINYLAND is a separate picture, not
+        captured by ordinary tile dependencies. Reuse the same bounded native
+        preview as row(), avoiding another subprocess or world-sized object
+        graph. The five-byte tuple is level, joining mask, and RGB miniature.
+        """
+        width=self.width if width is None else width
+        if not self.native:return bytes(5*width)
+        result=bytearray(5*width)
+        if not 0<=y<self.height:return bytes(result)
+        view=self.native_view(cities);mini=view['mini'];palette=mini['palette_bytes']
+        colors=[palette[3*i:3*i+3] for i in range(16)]
+        for cx in range(max(0,x),min(self.width,x+width)):
+            block=y//8*128+cx//8;at=5*(cx-x)
+            result[at]=view['levels'][block];result[at+1]=view['joins'][block]
+            result[at+2:at+5]=colors[mini['pixels'][y*1024+cx]]
+        return bytes(result)
 
 
 def tile_values(document):
@@ -99,6 +123,15 @@ def tile_values(document):
     return values
 
 
+def _mini_source(document):
+    if not (document.adventure or {}).get('chi_native'):return None
+    from chi_resources import settings
+    images={im['id']:im for im in (document.art or {}).get('images',[])}
+    bindings=[b for b in settings(document)['bindings'] if b['resource']=='TINYLAND.CMP']
+    return dict(source=document.files().get('chi/TINYLAND.CMP'),
+        bindings=[dict(binding=b,image=images.get(b['image'])) for b in bindings])
+
+
 def changes(before,after,cancelled=lambda:False):
     """Scan at most the two packages' world tiles, retaining 64-tile bounds.
 
@@ -107,9 +140,10 @@ def changes(before,after,cancelled=lambda:False):
     """
     world_sets=[{w['id']:w for w in worlds(d)} for d in (before,after)]
     signatures=[{k:hashlib.sha256(canonical(v)).digest() for k,v in tile_values(d).items()} for d in (before,after)]
+    same_mini=_mini_source(before)==_mini_source(after)
     result=[]
     for identity in sorted(set(world_sets[0])|set(world_sets[1])):
-        if signatures[0]==signatures[1] and world_sets[0].get(identity)==world_sets[1].get(identity):
+        if same_mini and signatures[0]==signatures[1] and world_sets[0].get(identity)==world_sets[1].get(identity):
             ids=set(world_sets[0][identity]['cities'])
             towns=[{m['id']:m for m in (d.adventure or {}).get('maps',[]) if m['id'] in ids} for d in (before,after)]
             if towns[0]==towns[1]:continue
@@ -120,8 +154,12 @@ def changes(before,after,cancelled=lambda:False):
             width=max(s.width if s and y<s.height else 0 for s in surfaces);scanned+=width
             ground=[s.row(y,width=width,cities=False) if s else [None]*width for s in surfaces]
             visible=[s.row(y,width=width) if s else [None]*width for s in surfaces]
+            native=any(s and s.native for s in surfaces)
+            semantics=[(s.semantics_row(y,width=width,cities=False),s.semantics_row(y,width=width))
+                if s else (bytes(5*width),bytes(5*width)) for s in surfaces] if native else None
             for x in range(width):
-                if (signatures[0].get(ground[0][x]),signatures[0].get(visible[0][x]))==(signatures[1].get(ground[1][x]),signatures[1].get(visible[1][x])):continue
+                same=(signatures[0].get(ground[0][x]),signatures[0].get(visible[0][x]))==(signatures[1].get(ground[1][x]),signatures[1].get(visible[1][x]))
+                if same and (not native or all(a[5*x:5*x+5]==b[5*x:5*x+5] for a,b in zip(*semantics))):continue
                 count+=1;key=(x//64,y//64)
                 if key not in bounds:bounds[key]=[x,y,x,y,1]
                 else:

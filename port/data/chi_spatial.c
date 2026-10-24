@@ -160,6 +160,76 @@ static int maps(BtpJson *j,BtpChiSpatial *s,BtpResources *r)
         (r->destroyed.entrance_y[0]>>12)!=(r->map.entrance_y[0]>>12)) return btp_json_error(j,a,"ruined Citadel must share Citadel origin");
     return 1;
 }
+static int level(BtpJson *j,unsigned n,unsigned *out)
+{
+    return (num(j,n,"level",0,112,out) && !(*out%16)) ||
+        btp_json_error(j,n,"terrain level must be 0, 16, ..., 112");
+}
+static unsigned piece_tile(const BtpWorldData *w,const uint16_t cells[64],unsigned height,unsigned flip,unsigned x,unsigned y)
+{
+    /* Same selector transform as generate.c, without selecting a different
+       join piece: a placed jigsaw explicitly chooses that piece. Absolute
+       pieces were encoded as full handles and bypass selector arithmetic. */
+    if (height==16) return cells[8*y+x];
+    if (flip&2) x=7-x;
+    if (flip&1) y=7-y;
+    unsigned tile=cells[8*y+x],base=height ? height-16 : 0;
+    if (base>48) base=48;
+    if (tile<64) {
+        if (flip&1) tile=w->flips[32+tile];
+        if (flip&2) tile=w->flips[tile];
+        tile=(tile&15u)+base;
+    }
+    return tile;
+}
+static int world_edits(BtpJson *j,unsigned n,BtpChiSpatial *s,BtpWorldData *w,
+    const char (*ids)[64],const uint16_t (*cells)[64],unsigned count)
+{
+    unsigned field=btp_json_optional(j,n,"terrain");
+    uint8_t *seen=calloc(1024u*1024u,1);if (!seen) return btp_json_error(j,n,"allocation failed");
+    int ok=0;
+    if (field) {
+        if (!btp_json_type(j,field,'[')) goto done;
+        for (unsigned p=j->nodes[field].first;p;p=j->nodes[p].next) {
+            unsigned x,y,height;
+            if (!pair(j,btp_json_field(j,p,"at"),127,&x,&y) || !level(j,p,&height) || !btp_json_done(j,p)) goto done;
+            if (seen[y*128+x]++) { btp_json_error(j,p,"duplicate terrain block");goto done; }
+            w->heights[(y+8)*144+x+8]=(uint8_t)height;
+        }
+    }
+    memset(seen,0,128u*128u);field=btp_json_optional(j,n,"placements");
+    if (field) {
+        if (!btp_json_type(j,field,'[')) goto done;
+        for (unsigned p=j->nodes[field].first;p;p=j->nodes[p].next) {
+            unsigned x,y,height,flip=0;char identity[64];
+            if (!pair(j,btp_json_field(j,p,"at"),127,&x,&y) || !level(j,p,&height) ||
+                !text(j,p,"jigsaw",identity,sizeof identity)) goto done;
+            unsigned f=btp_json_optional(j,p,"flip");if ((f && !btp_json_uint(j,f,0,3,&flip)) || !btp_json_done(j,p)) goto done;
+            if (seen[y*128+x]++) { btp_json_error(j,p,"duplicate jigsaw placement");goto done; }
+            unsigned piece=0;while (piece<count && strcmp(ids[piece],identity)) ++piece;
+            if (piece==count) { btp_json_error(j,p,"unresolved placed jigsaw");goto done; }
+            w->heights[(y+8)*144+x+8]=(uint8_t)height;
+            for (unsigned yy=0;yy<8;++yy) for (unsigned xx=0;xx<8;++xx) {
+                unsigned tile=piece_tile(w,cells[piece],height,flip,xx,yy);
+                unsigned index=tile<250 ? s->land[tile] : tile-256;
+                s->world_cells[(y*8+yy)*1024+x*8+xx]=(uint16_t)(index+1);
+            }
+        }
+    }
+    memset(seen,0,1024u*1024u);field=btp_json_optional(j,n,"patches");
+    if (field) {
+        unsigned patches=0;if (!btp_json_type(j,field,'[')) goto done;
+        for (unsigned p=j->nodes[field].first;p;p=j->nodes[p].next) {
+            unsigned x,y,tile;
+            if (++patches>32768) { btp_json_error(j,p,"at most 32768 literal world tile patches");goto done; }
+            if (!pair(j,btp_json_field(j,p,"at"),1023,&x,&y) || !ref(j,btp_json_field(j,p,"tile"),s,&tile) || !btp_json_done(j,p)) goto done;
+            if (seen[y*1024+x]++) { btp_json_error(j,p,"duplicate world tile patch");goto done; }
+            s->world_cells[y*1024+x]=(uint16_t)(tile+1);
+        }
+    }
+    ok=1;
+done:free(seen);return ok;
+}
 static int world(BtpJson *j,BtpChiSpatial *s,BtpResources *r)
 {
     unsigned n=btp_json_field(j,1,"world"),v;char id[64],name[64];BtpWorldData *w=&r->world;
@@ -183,6 +253,9 @@ static int world(BtpJson *j,BtpChiSpatial *s,BtpResources *r)
         char title[96];if (count==BTP_CHI_PIECES || !text(j,p,"id",ids[count],64) || !btp_content_id(ids[count],1) ||
             !text(j,p,"name",title,sizeof title)) goto done;
         for (unsigned k=0;k<count;++k) if (!strcmp(ids[k],ids[count])) { btp_json_error(j,p,"duplicate jigsaw ID");goto done; }
+        unsigned mode=btp_json_optional(j,p,"mode");char mode_name[16]="terrain";
+        if (mode && (!btp_json_string(j,mode,mode_name,sizeof mode_name) ||
+            (strcmp(mode_name,"terrain") && strcmp(mode_name,"absolute")))) { btp_json_error(j,p,"jigsaw mode must be terrain or absolute");goto done; }
         unsigned rows=btp_json_field(j,p,"rows"),y=0;if (!btp_json_type(j,rows,'[')) goto done;
         for (unsigned z=j->nodes[rows].first;z;z=j->nodes[z].next,++y) {
             unsigned x=0;if (y==8 || !btp_json_type(j,z,'[')) goto done;
@@ -191,7 +264,7 @@ static int world(BtpJson *j,BtpChiSpatial *s,BtpResources *r)
                 /* Native low IDs participate in terrain flips/base offsets;
                    custom handles remain whole tile identities. */
                 unsigned native=0;while (native<250 && s->land[native]!=t) ++native;
-                cells[count][y*8+x]=(uint16_t)(native<250 ? native : 256+t);
+                cells[count][y*8+x]=(uint16_t)(!strcmp(mode_name,"terrain") && native<250 ? native : 256+t);
             }
             if (x!=8) { btp_json_error(j,z,"jigsaw must be 8x8");goto done; }
         }
@@ -204,8 +277,11 @@ static int world(BtpJson *j,BtpChiSpatial *s,BtpResources *r)
         if (z==count) { btp_json_error(j,p,"unresolved terrain join jigsaw");goto done; }
         memcpy(k==16 ? w->special : w->textures+64*k,cells[z],128);
     }
-    if (k!=17 || !btp_json_done(j,n)) { btp_json_error(j,n,"17 terrain join bindings required");goto done; }
-    ok=btp_world_generate(w,seed);
+    if (k!=17) { btp_json_error(j,n,"17 terrain join bindings required");goto done; }
+    /* Sparse authored levels are applied after deterministic generation.
+       They therefore survive seed changes, while untouched blocks still use
+       the original generator and town descriptors retain their precedence. */
+    ok=btp_world_generate(w,seed) && world_edits(j,n,s,w,(const char (*)[64])ids,(const uint16_t (*)[64])cells,count) && btp_json_done(j,n);
 done:free(ids);free(cells);return ok;
 }
 int btp_chi_spatial_load(const char *root,const char *file,BtpChiSpatial *s,BtpResources *r,BtpDigest *digest,BtpError *e)
@@ -256,6 +332,12 @@ const BtpChiTile *btp_chi_generated_cell(const BtpResources *r,unsigned tile)
 }
 unsigned btp_chi_world_rule(const BtpResources *r,unsigned tile)
 { const BtpChiTile *t=btp_chi_generated_cell(r,tile);return t ? t->rule : tile; }
+unsigned btp_chi_world_override(const BtpResources *r,int x,int y)
+{
+    if (!r->project || !r->project->chi_spatial || x<0 || y<0 || x>=1024 || y>=1024) return 0;
+    unsigned cell=r->project->chi_spatial->world_cells[(unsigned)y*1024+(unsigned)x];
+    return cell ? 255+cell : 0;
+}
 void btp_chi_position(const BtpResources *r,unsigned *x,unsigned *y)
 {
     if (!r->project || !r->project->chi_spatial) return;

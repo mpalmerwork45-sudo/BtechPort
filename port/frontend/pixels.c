@@ -2322,7 +2322,16 @@ void btp_world_preview(const BtpResources *r,const BtpState *s,uint32_t f[BTP_PI
                 const BtpMap *town=place==1 || place==11 ? &r->map : &r->local[place-1];
                 const BtpChiTile *native=btp_chi_map_cell(r,place,tx-(town->entrance_x[0]>>8)*64,ty-(town->entrance_y[0]>>12)*64);
                 if (native && native->mini_color<16) value=native->mini_color;
-            } else value=id<66 ? r->tinyland.pixels[(id/40u*8u+dy)*320u+(id%40u*8u+dx)] : 0u;
+            } else {
+                /* Edited world stamps and fine tile patches have explicit
+                   miniature colours, just as town cells do. Untouched and
+                   level-painted terrain keeps the original TINYLAND joins. */
+                unsigned override=btp_chi_world_override(r,tx,ty);
+                const BtpChiTile *painted=override ? btp_chi_generated_cell(r,override) : NULL;
+                if (painted)
+                    value=painted->mini_color<16 ? painted->mini_color : r->world.mini_colors[painted->rule];
+                else value=id<66 ? r->tinyland.pixels[(id/40u*8u+dy)*320u+(id%40u*8u+dx)] : 0u;
+            }
             pixel(f,(int)(8*col+dx),(int)(8*row+dy),btp_palette[sprite_palette[value&15u]]);
         }
     }

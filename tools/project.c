@@ -275,6 +275,7 @@ int main(int argc,char **argv)
     if (argc>=2 && !strcmp(argv[1],"chi-resource")) return btp_tool_chi_resource(argc,argv);
     if (argc>=2 && !strcmp(argv[1],"chi-world")) return btp_tool_chi_world(argc,argv);
     if (argc>=2 && !strcmp(argv[1],"chi-grid")) return btp_tool_chi_grid(argc,argv);
+    if (argc>=2 && !strcmp(argv[1],"chi-world-editor")) return btp_tool_chi_world_editor(argc,argv);
     if (argc==2 && !strcmp(argv[1],"capabilities")) return capabilities();
     if (argc==4 && !strcmp(argv[1],"formation") && !strcmp(argv[2],"--combat-data")) {
         BtpCombatData *c=calloc(1,sizeof *c);BtpError error={0};int ok=c && btp_combat_data_load(argv[3],c,&error);

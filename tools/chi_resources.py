@@ -36,6 +36,56 @@ def preview(document,kind,resource,index=0,count=1,cancel=None):
 def world_preview(document,ruined=False,cancel=None):return tool(document,['chi-world',str(int(ruined))],cancel)
 
 
+# BWE1 is deliberately fixed-size. Tile handles index chi_spatial.tiles (not
+# graphic IDs); 65535 denotes a non-renderable cell. Three 128x128 arrays carry
+# terrain levels, joining masks and town slots. The 1024x1024 miniature is an
+# indexed image using the actual game's display palette, not a terrain tint.
+WORLD_SIDE=1024
+WORLD_BLOCKS=128
+WORLD_PREVIEW_BYTES=4+48+3*WORLD_BLOCKS*WORLD_BLOCKS+3*WORLD_SIDE*WORLD_SIDE
+
+
+def decode_world_editor_preview(raw):
+    import array,sys
+    if len(raw)!=WORLD_PREVIEW_BYTES or raw[:4]!=b'BWE1':
+        raise EditorError('Invalid bounded native world preview response.')
+    offset=52;size=WORLD_BLOCKS*WORLD_BLOCKS
+    levels=raw[offset:offset+size];offset+=size
+    joins=raw[offset:offset+size];offset+=size
+    towns=raw[offset:offset+size];offset+=size
+    if any(value>15 for value in joins) or any(value>13 for value in towns):
+        raise EditorError('Invalid native world preview block metadata.')
+    grid=array.array('H');grid.frombytes(raw[offset:offset+2*WORLD_SIDE*WORLD_SIDE]);offset+=2*WORLD_SIDE*WORLD_SIDE
+    if sys.byteorder!='little':grid.byteswap()
+    pixels=raw[offset:]
+    if any(value>15 for value in pixels):raise EditorError('Invalid native world preview palette index.')
+    palette=raw[4:52]
+    return dict(width=WORLD_SIDE,height=WORLD_SIDE,grid=grid,levels=levels,joins=joins,towns=towns,
+        mini=dict(width=WORLD_SIDE,height=WORLD_SIDE,pixels=pixels,palette_bytes=palette,
+                  palette=[palette[3*i:3*i+3].hex() for i in range(16)]))
+
+
+def world_editor_preview(document,ruined=False,underlay=False,cancel=None):
+    """One exact unsaved native render for the overview and detail canvases.
+
+    ``mini`` can be displayed with Pillow Image.frombytes('P', (1024,1024),
+    pixels) and putpalette(palette_bytes), or expanded using its RGB hex list.
+    It includes all 66 original TINYLAND glyphs, their town-aware joins and
+    per-tile town/custom miniature colours. No original pixels are persisted.
+    """
+    from editor_tiles import _capture_preview
+    from chi_import import check_cancel
+    check_cancel(cancel)
+    with tempfile.TemporaryDirectory(prefix='btp-chi-world-editor-') as temporary:
+        root=Path(temporary)
+        for name,content in document.files().items():
+            check_cancel(cancel)
+            path=child(root,name);path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(content)
+        raw=_capture_preview([str(document.validator),'chi-world-editor',str(root),str(int(ruined)),str(int(underlay))],
+            timeout=30,max_preview=WORLD_PREVIEW_BYTES,cancel=cancel)
+    return decode_world_editor_preview(raw)
+
+
 def grid(document,underlay=False):
     """One bounded 2 MiB index array; no million-object tile dictionary."""
     import array,sys
@@ -85,7 +135,7 @@ def detach(document,kind,resource,index=0,count=1,decoded=None):
     # Native resources are assigned explicitly. No implicit role binding can
     # replace every actor merely because somebody inspected one frame.
     value=settings(document);value['bindings']=[b for b in value['bindings'] if (b['kind'],b['resource'],b['index'])!=(kind,resource,index)]
-    palette='sprite' if kind in ('sprite','animation','portrait') else 'direct' if kind=='font' or resource=='BTBORDER.CMP' else 'phoenix' if resource=='ENDMECH.CMP' else 'title' if resource in ('BTTITLE.CMP','INFOCOM.CMP') else 'terrain'
+    palette='sprite' if kind in ('sprite','animation','portrait') or resource=='TINYLAND.CMP' else 'direct' if kind=='font' or resource=='BTBORDER.CMP' else 'phoenix' if resource=='ENDMECH.CMP' else 'title' if resource in ('BTTITLE.CMP','INFOCOM.CMP') else 'terrain'
     binding=dict(kind=kind,resource=resource,index=index,image=image['id'],palette=palette)
     if units is not None:binding['units']=units
     value['bindings'].append(binding)

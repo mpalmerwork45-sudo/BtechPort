@@ -11,6 +11,7 @@ import json
 from pathlib import Path
 import subprocess
 import threading
+import time
 
 from editor_model import EditorError
 from tile_animation import TileGraphics, TileLoop
@@ -28,7 +29,7 @@ MAX_PREVIEW = ATLAS_SIZE * ATLAS_SIZE * 3 + MAX_HEADER
 MAX_ERROR = 16 * 1024
 
 
-def _capture_preview(command: list[str], timeout: float = 15, max_preview=MAX_PREVIEW) -> bytes:
+def _capture_preview(command: list[str], timeout: float = 15, max_preview=MAX_PREVIEW, cancel=None) -> bytes:
     """Capture a small binary atlas with bounded pipes on Windows and Linux.
 
     Separate readers prevent an error stream from blocking the art stream.
@@ -64,12 +65,25 @@ def _capture_preview(command: list[str], timeout: float = 15, max_preview=MAX_PR
     for thread in threads:
         thread.start()
     timed_out = False
+    cancelled = False
+    deadline = time.monotonic() + timeout
     try:
-        process.wait(timeout=timeout)
-    except subprocess.TimeoutExpired:
-        timed_out = True
+        # World previews use this same bounded reader on the task worker.
+        # Cancelling a stale preview must stop its child, not merely hide the
+        # result after a potentially expensive native render has completed.
+        while process.poll() is None:
+            cancelled = cancel is not None and cancel.is_set()
+            timed_out = time.monotonic() >= deadline
+            if cancelled or timed_out:
+                process.kill()
+                process.wait()
+                break
+            try:process.wait(timeout=min(.1, max(.001, deadline-time.monotonic())))
+            except subprocess.TimeoutExpired:pass
+    except BaseException:
         process.kill()
         process.wait()
+        raise
     for thread in threads:
         thread.join(timeout=1)
     # The trusted decoder does not spawn children. Treat an unexpectedly held
@@ -78,6 +92,9 @@ def _capture_preview(command: list[str], timeout: float = 15, max_preview=MAX_PR
     if not readers_stuck:
         process.stdout.close()
         process.stderr.close()
+    if cancelled:
+        from chi_import import ImportCancelled
+        raise ImportCancelled("Native preview cancelled; project changes were preserved.")
     if timed_out:
         raise EditorError("The shared tile preview tool took too long to respond.")
     if overflow.is_set():

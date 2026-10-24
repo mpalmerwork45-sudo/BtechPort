@@ -15,6 +15,8 @@ FORMAT='btp-chi-spatial-v1'
 NAMES=('Citadel','Starport','Map 3','Map 4','Map 5','Map 6','Map 7','Map 8','Map 9','Map 10',
        'Ruined Citadel',"Inventor's island",'Cache island','Cache corridors','Cache map room')
 BANKS=('chi:land','chi:destroyed','chi:cache','chi:maproom')
+WORLD_LEVELS=tuple(range(0,128,16))
+WORLD_PATCH_LIMIT=32768
 
 
 def tile_id(bank,index):return bank+'-'+str(index)
@@ -229,9 +231,93 @@ def clone_map(value,source,target):
             identity=target['id'];target.update(copy.deepcopy(source));target['id']=identity
 
 
+def resolved_jigsaw(value,identity,level=32,flip=0):
+    """Resolve generator offsets into the actual land artwork shown in play.
+
+    Imported joins are not literal tile paintings: low land IDs select a
+    shape, which the native generator mirrors and offsets for water, grass,
+    woods or mountains. New absolute pieces keep their chosen tile identities.
+    Level 16 is the original special texture and bypasses all these transforms.
+    """
+    if level not in WORLD_LEVELS or type(flip) is not int or not 0<=flip<=3:
+        raise EditorError('Terrain level must be 0, 16, ..., 112; flip must be 0..3.')
+    world=value['world'];piece=find(world['jigsaws'],identity);land=value['land'];indices={t:i for i,t in enumerate(land)}
+    result=[]
+    for y in range(8):
+        row=[]
+        for x in range(8):
+            dx=7-x if level!=16 and flip&2 else x;dy=7-y if level!=16 and flip&1 else y
+            tile=piece['rows'][dy][dx];index=indices.get(tile,256)
+            if level!=16 and piece.get('mode','terrain')=='terrain' and index<64:
+                if flip&1:index=world['flips'][32+index]
+                if flip&2:index=world['flips'][index]
+                tile=land[(index&15)+min(max(level-16,0),48)]
+            row.append(tile)
+        result.append(row)
+    return result
+
+
+def _world_points(points,side):
+    result=set()
+    for point in points:
+        if len(point)!=2 or any(type(n) is not int or not 0<=n<side for n in point):
+            raise EditorError(f'World coordinates must fit the {side} by {side} grid.')
+        result.add(tuple(point))
+    return result
+
+
+def _world_table(world,key,values):
+    """Stable ordering makes undo, diffs and save fingerprints predictable."""
+    if values:world[key]=[values[p] for p in sorted(values,key=lambda p:(p[1],p[0]))]
+    else:world.pop(key,None)
+
+
+def _world_replace(world,key,points,make,limit):
+    values={tuple(item['at']):item for item in world.get(key,[])}
+    for point in points:values[point]=make(point)
+    if len(values)>limit:raise EditorError(f'At most {limit} world {key} are supported.')
+    _world_table(world,key,values)
+
+
+def erase_world(value,points,layer='all'):
+    """Erase overrides to reveal generation, never erase superimposed towns.
+
+    Patch coordinates are tiles. Every other layer uses 8x8 world blocks;
+    erasing all resets the selected blocks including their individual patches.
+    """
+    if layer not in ('terrain','placements','patches','all'):raise EditorError('Unknown world layer.')
+    points=_world_points(points,1024 if layer=='patches' else 128);world=value['world']
+    for key in (('terrain','placements','patches') if layer=='all' else (layer,)):
+        remaining={tuple(item['at']):item for item in world.get(key,[]) if
+            (tuple(n//8 for n in item['at']) if key=='patches' and layer=='all' else tuple(item['at'])) not in points}
+        _world_table(world,key,remaining)
+
+
+def paint_world_terrain(value,points,level):
+    """Paint native 8x8 terrain heights; joins and TINYLAND follow in runtime."""
+    if type(level) is not int or level not in WORLD_LEVELS:raise EditorError('Choose one of the eight native terrain levels.')
+    points=_world_points(points,128);erase_world(value,points,'all')
+    _world_replace(value['world'],'terrain',points,lambda p:dict(at=list(p),level=level),16384)
+
+
+def place_world_jigsaw(value,points,identity,level=32,flip=0):
+    """Stamp exact resolved 8x8 pieces above generated terrain, below towns."""
+    resolved_jigsaw(value,identity,level,flip);points=_world_points(points,128);world=value['world']
+    # Painting a piece must replace prior tile touch-ups in its footprint.
+    _world_table(world,'patches',{tuple(item['at']):item for item in world.get('patches',[])
+        if tuple(n//8 for n in item['at']) not in points})
+    _world_replace(world,'placements',points,lambda p:dict(at=list(p),jigsaw=identity,level=level,flip=flip),16384)
+
+
+def paint_world_tiles(value,points,tile):
+    """Place literal tile identities, avoiding generator base/flip conversion."""
+    find(value['tiles'],tile);points=_world_points(points,1024)
+    _world_replace(value['world'],'patches',points,lambda p:dict(at=list(p),tile=tile),WORLD_PATCH_LIMIT)
+
+
 def inspect(document):
     value=data(document)
     return dict(format=FORMAT,world=value['world'],tiles=value['tiles'],maps=value['maps'],
         limits=dict(native_map_slots=15,town_origin_alignment=64,world_size=[1024,1024],tiles=4096,jigsaws=1024,
-                    entrance_slots=16,npc_route_slots=8),
+                    entrance_slots=16,npc_route_slots=8,terrain_blocks=16384,world_tile_patches=WORLD_PATCH_LIMIT),
         note='Coordinates: tiles for maps/town origins; half-tile movement coordinates for entrances. Native BLD execution remains active.')

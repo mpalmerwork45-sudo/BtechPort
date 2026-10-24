@@ -8,6 +8,11 @@ from world_editing import token
 def context_grid(document,context):
     """Keep the clicked placement, including concave corners and projected faces."""
     at=context.get('at')
+    if 'world_neighbourhood' in context:
+        # World canvases and relative jigsaws provide a small resolved grid.
+        # The drawing neighbours must be final tile identities, never native
+        # generator offsets. Pixels still follow live shared-art edits below.
+        return context.get('name','World terrain'),context['world_neighbourhood'],at,'World edge',True
     if 'construction' in context:
         from tile_editing import metadata
         from construction_editing import compile_rows,geometry,part_name,road_junction_grid,ROAD_T_JUNCTIONS,ROAD_TURNS

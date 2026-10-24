@@ -12,7 +12,8 @@ import unittest
 ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT/'tools'))
 from editor_model import EditorError,ProjectDocument,encoded
 from chi_import import import_campaigns
-from chi_spatial import data,change,enable,find,move_town,projection,from_projection
+from chi_spatial import (data,change,enable,find,move_town,projection,from_projection,
+    resolved_jigsaw,paint_world_terrain,place_world_jigsaw,paint_world_tiles,erase_world)
 from chi_resources import preview,detach,settings,put_settings,world_preview,grid
 from authoring_service import apply_batch,revision
 from art_editing import new_image
@@ -68,6 +69,67 @@ class ChiSpatialTests(unittest.TestCase):
         a['jigsaws'].append(dict(id='test:join',name='Test join',rows=[['test:wall']*8 for _ in range(8)]));a['chi_native']['world']['joins']=['test:join']*17
         self.doc.replace_art(art,a);self.check_native('jigsaw')
         self.assertGreater(len(data(self.doc)['tiles']),256)
+    def test_world_paint_reaches_native_queries_and_roundtrip(self):
+        original=self.doc.files()
+        def edit(v):
+            v['world']['jigsaws'].append(dict(id='test:literal',name='Literal wall',mode='absolute',rows=[['chi:land-85']*8 for _ in range(8)]))
+            paint_world_terrain(v,[(1,1),(0,1),(2,1),(1,0),(1,2)],0)
+            place_world_jigsaw(v,[(2,2)],'test:literal',48)
+            ox,oy=v['maps'][0]['origin']
+            paint_world_tiles(v,[(8,8)],'chi:land-16')
+            paint_world_tiles(v,[(17,16)],'chi:land-47')
+            paint_world_tiles(v,[(ox+34,oy+12)],'chi:land-85')
+        change(self.doc,edit);self.check_native('world-paint')
+        reopened=ProjectDocument(self.doc.root,self.tool)
+        self.assertEqual(data(reopened),data(self.doc));self.assertEqual(data(self.doc),from_projection(projection(data(self.doc))))
+        self.doc.undo();self.assertEqual(self.doc.files(),original);self.doc.redo();self.check_native('world-paint')
+    def test_world_native_validation_rejects_ambiguous_or_unbounded_edits(self):
+        before=self.doc.files()
+        bad=[dict(terrain=[dict(at=[128,0],level=32)]),dict(terrain=[dict(at=[1,1],level=17)]),
+            dict(terrain=[dict(at=[1,1],level=0)]*2),dict(placements=[dict(at=[1,1],level=32,jigsaw='test:missing')]),
+            dict(placements=[dict(at=[1,1],level=32,jigsaw='chi:jigsaw-00',flip=4)]),
+            dict(patches=[dict(at=[1024,0],tile='chi:land-0')]),dict(patches=[dict(at=[1,1],tile='test:missing')]),
+            dict(patches=[dict(at=[1,1],tile='chi:land-0')]*2),dict(terrain=[dict(at=[1,1],level=32,ignored=1)])]
+        for fields in bad:
+            with self.subTest(fields=fields),self.assertRaises(EditorError):change(self.doc,lambda v:v['world'].update(fields))
+            self.assertEqual(self.doc.files(),before)
+    def test_world_review_and_protection_include_hidden_levels_and_tinyland(self):
+        from authoring_protection import world_region
+        from world_review import changes,Surface
+        def setup(v):
+            v['world']['jigsaws'].append(dict(id='test:literal',name='Literal ground',mode='absolute',rows=[['chi:land-0']*8 for _ in range(8)]))
+            place_world_jigsaw(v,[(1,1)],'test:literal',0)
+        change(self.doc,setup);before=self.doc.worker_copy()
+        rule=dict(id='native-ground',label='Depth',kind='world_region',world='chi:world',rect=[8,8,8,8])
+        protected=world_region(before,rule)
+        change(self.doc,lambda v:v['world']['placements'][0].update(level=32))
+        self.assertEqual(Surface(before,'chi:world').row(8,8,8),Surface(self.doc,'chi:world').row(8,8,8))
+        self.assertNotEqual(protected,world_region(self.doc,rule))
+        result=changes(before,self.doc);self.assertGreaterEqual(result[0]['changed_tiles'],64);self.assertTrue(result[0]['areas'])
+        # A changed TINYLAND sheet must trigger review even when the world
+        # definition and every ordinary terrain tile are unchanged.
+        self.doc.undo();change(self.doc,lambda v:erase_world(v,[(1,1)]))
+        before=self.doc.worker_copy();protected=world_region(before,rule)
+        image=detach(self.doc,'screen','TINYLAND.CMP');art=copy.deepcopy(self.doc.art)
+        native=next(i for i in art['images'] if i['id']==image['id'])
+        native['frames']=[['ff55ffff'*native['width'] for _ in range(native['height'])]]
+        self.doc.replace_art(art)
+        self.assertNotEqual(protected,world_region(self.doc,rule));result=changes(before,self.doc)
+        self.assertGreater(result[0]['changed_tiles'],0);self.assertTrue(result[0]['areas'])
+    def test_resolved_piece_equals_native_stamp_at_all_materials_and_flips(self):
+        # The C grid is loaded by the native game adapter. This catches preview
+        # arithmetic that looks plausible but paints different tiles in play.
+        def edit(v):
+            for n,level in enumerate(range(0,128,16)):
+                for flip in range(4):place_world_jigsaw(v,[(40+flip,40+n)],'chi:jigsaw-07',level,flip)
+        change(self.doc,edit);actual=grid(self.doc,underlay=True)
+        value=data(self.doc);identities=[t['id'] for t in value['tiles']]
+        for n,level in enumerate(range(0,128,16)):
+            for flip in range(4):
+                expected=resolved_jigsaw(value,'chi:jigsaw-07',level,flip)
+                for y in range(8):
+                    row=[identities[actual[((40+n)*8+y)*1024+(40+flip)*8+x]] for x in range(8)]
+                    self.assertEqual(row,expected[y],(level,flip,y))
     def test_native_sprite_copy_and_origin_survive_cloning(self):
         im=detach(self.doc,'sprite','MECHSHAP.CMP',0,16);art=copy.deepcopy(self.doc.art)
         art['images'][0]['frames'][0][0]='ffffffff'+art['images'][0]['frames'][0][0][8:];self.doc.replace_art(art);self.check_native('sprite')
