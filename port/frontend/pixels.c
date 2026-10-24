@@ -1,3 +1,4 @@
+#include "data/file.h"
 #include "data/chi_services.h"
 #include "core/battle_mission.h"
 #include "data/unit_data.h"
@@ -2356,7 +2357,7 @@ void btp_sprite_preview(const BtpResources *r, unsigned tick, uint32_t f[BTP_PIX
 
 int btp_write_ppm(const char *path, const uint32_t f[BTP_PIXELS])
 {
-    FILE *out = fopen(path, "wb");
+    FILE *out = btp_fopen(path, "wb");
     if (!out) return 0;
     int ok = fprintf(out, "P6\n320 200\n255\n") > 0;
     for (unsigned i = 0; i < BTP_PIXELS && ok; ++i) {

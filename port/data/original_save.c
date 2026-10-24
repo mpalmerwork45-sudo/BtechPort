@@ -1,3 +1,4 @@
+#include "data/file.h"
 #include "data/save.h"
 #include "core/party.h"
 #include "core/world.h"
@@ -104,9 +105,9 @@ int btp_original_write(const char *path,const BtpState *s,BtpError *e)
     uint8_t b[BTP_ORIGINAL_BYTES];if (!path || !btp_original_encode(s,b,e)) return 0;
     char pending[4096];int n=snprintf(pending,sizeof pending,"%s.tmp",path);
     if (n<0 || (size_t)n>=sizeof pending) return fail(e,"path too long");
-    FILE *f=fopen(pending,"wbx");if (!f) return fail(e,"cannot create pending export");
+    FILE *f=btp_fopen(pending,"wbx");if (!f) return fail(e,"cannot create pending export");
     int ok=fwrite(b,1,sizeof b,f)==sizeof b;if (fclose(f)) ok=0;
-    if (!ok || rename(pending,path)) { (void)remove(pending);return fail(e,"cannot write export"); }
+    if (!ok || btp_file_rename(pending,path)) { (void)btp_file_remove(pending);return fail(e,"cannot write export"); }
     if (e) e->text[0]=0;
     return 1;
 }

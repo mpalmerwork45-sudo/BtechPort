@@ -1,3 +1,4 @@
+#include "data/file.h"
 #include "data/combat_profile.h"
 #include <errno.h>
 #include <stdio.h>
@@ -45,7 +46,7 @@ int btp_combat_profile_load(const char *roster_path,BtpCombatProfile *out,char e
     for (const char *s=roster_path;*s;++s) if (*s=='/' || *s=='\\') prefix=(size_t)(s-roster_path)+1u;
     if (prefix+sizeof "combat.json">sizeof path) { snprintf(error,256,"Updated combat path too long");return 0; }
     memcpy(path,roster_path,prefix);memcpy(path+prefix,"combat.json",sizeof "combat.json");
-    FILE *f=fopen(path,"rb");
+    FILE *f=btp_fopen(path,"rb");
     if (!f) {
         if (errno==ENOENT) { *out=(BtpCombatProfile){0};return 1; }
         snprintf(error,256,"Cannot open Updated combat rules");return 0;

@@ -1,3 +1,4 @@
+#include "data/file.h"
 #include "frontend/cli.h"
 #include "data/project.h"
 #include "data/chi.h"
@@ -372,7 +373,7 @@ void btp_print_state(const BtpState *s, const BtpResources *r)
 
 int btp_replay(const char *path, BtpState *s, const BtpResources *r, int trace,const char *save_base)
 {
-    FILE *f = fopen(path, "r");
+    FILE *f = btp_fopen(path, "r");
     if (!f) { fprintf(stderr, "Cannot read replay: %s\n", path); return 0; }
     char line[64]; unsigned number = 0;
     while (fgets(line, sizeof line, f)) {
@@ -424,14 +425,14 @@ static int run_headless(const BtpOptions *o, BtpResources *r,FILE *trace,BtpBldT
         result = 1; /* A requested frame can still show the explicit script fault. */
     }
     if (o->tiles_output) {
-        FILE *f = fopen(o->tiles_output, "wb");
+        FILE *f = btp_fopen(o->tiles_output, "wb");
         if (!f) return 1;
         int ok = fwrite(r->tiles.pixels, 1, BTP_PIXELS, f) == BTP_PIXELS;
         if (fclose(f)) ok = 0;
         if (!ok) return 1;
     }
     if (o->sprites_output) {
-        FILE *out = fopen(o->sprites_output,"wb");
+        FILE *out = btp_fopen(o->sprites_output,"wb");
         if (!out) return 1;
         int ok = fwrite("BTSP",1,4,out) == 4;
         for (unsigned id = 0; id < BTP_SPRITE_COUNT && ok; ++id) {
@@ -487,7 +488,7 @@ int btp_run_headless(const BtpOptions *o,BtpResources *r)
     BtpBldTrace native={0};BtpError error;
     if (!btp_bld_trace_open(&native,o,r,&error)) { fprintf(stderr,"%s\n",error.text);return 1; }
     if (o->event_trace) {
-        trace=fopen(o->event_trace,"wb");if (!trace) { btp_bld_trace_close(&native);fputs("Cannot open event trace\n",stderr);return 1; }
+        trace=btp_fopen(o->event_trace,"wb");if (!trace) { btp_bld_trace_close(&native);fputs("Cannot open event trace\n",stderr);return 1; }
         btp_events_observe(event_trace,trace);
     }
     int result=run_headless(o,r,trace,&native);btp_events_observe(NULL,NULL);
@@ -536,7 +537,7 @@ int btp_bld_trace_open(BtpBldTrace *trace,const BtpOptions *o,const BtpResources
     if (o->event_trace && !strcmp(o->bld_trace,o->event_trace)) {
         snprintf(error->text,sizeof error->text,"BLD and authored event traces require different files");return 0;
     }
-    trace->file=fopen(o->bld_trace,"wb");
+    trace->file=btp_fopen(o->bld_trace,"wb");
     if (!trace->file) { snprintf(error->text,sizeof error->text,"Cannot open BLD trace");return 0; }
     /* Editor Stop terminates its player process. Flush complete records as
        lines so the preceding observations survive that normal test action. */

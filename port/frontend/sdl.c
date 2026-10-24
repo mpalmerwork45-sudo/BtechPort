@@ -1,4 +1,5 @@
 #define SDL_MAIN_HANDLED
+#include "data/file.h"
 #include <SDL.h>
 #include "frontend/cli.h"
 #include "data/project.h"
@@ -165,12 +166,12 @@ int main(int argc, char **argv)
         SDL_AudioSpec spec={.freq=BTP_AUDIO_RATE,.format=AUDIO_S16SYS,.channels=1,.samples=512};
         audio=SDL_OpenAudioDevice(NULL,0,&spec,NULL,0);if (audio) SDL_PauseAudioDevice(audio,0);
     }
-    if (o.record) { record = fopen(o.record, "w"); if (!record) goto sdl_done; }
+    if (o.record) { record = btp_fopen(o.record, "w"); if (!record) goto sdl_done; }
     for (unsigned i=0;play && i<startup_credits;++i) {
         btp_game_tick(&state,r,BTP_CREDIT_10000);
         if (record && fprintf(record,"credit-10000\n")<0) goto sdl_done;
     }
-    if (o.smoke >= 5) { arrival = fopen(o.replay,"r"); if (!arrival) goto sdl_done; }
+    if (o.smoke >= 5) { arrival = btp_fopen(o.replay,"r"); if (!arrival) goto sdl_done; }
     BtpAction queue[256]; unsigned read = 0, write = 0;
     unsigned held = 0, last_arrow_write = 0, cheat_step=0;
     uint64_t last = SDL_GetTicks64(), accumulator = 0;
@@ -402,7 +403,7 @@ int main(int argc, char **argv)
     }
     result = io_failed ? 1 : 0;
     if (o.audio_report) {
-        FILE *report=fopen(o.audio_report,"w");
+        FILE *report=btp_fopen(o.audio_report,"w");
         if (!report) result=1;
         else {
             if (fprintf(report,"{\"opened\":%u,\"rate\":%u,\"samples\":%llu,\"nonzero\":%llu,\"peak_queued_bytes\":%u}\n",audio!=0,BTP_AUDIO_RATE,

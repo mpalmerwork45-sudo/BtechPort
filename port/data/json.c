@@ -1,3 +1,4 @@
+#include "data/file.h"
 #include "data/json.h"
 #include "data/digest.h"
 #include <stdio.h>
@@ -93,7 +94,7 @@ void btp_json_close(BtpJson *j) { free(j->bytes);free(j->nodes);*j=(BtpJson){0};
 static int load(BtpJson *j,const char *path,char error[256],size_t limit,unsigned nodes,unsigned native_text)
 {
     *j=(BtpJson){.file=path,.error=error,.limit=nodes,.native_text=native_text};error[0]=0;
-    FILE *f=fopen(path,"rb");
+    FILE *f=btp_fopen(path,"rb");
     if (!f) return btp_json_error(j,0,"cannot open file");
     j->bytes=malloc(limit+1);j->nodes=calloc(nodes+1,sizeof *j->nodes);
     if (!j->bytes || !j->nodes) { fclose(f);return btp_json_error(j,0,"allocation failed"); }

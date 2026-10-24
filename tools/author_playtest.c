@@ -1,6 +1,7 @@
 /* Bounded authoring scenarios over the real player. Seeds enter before the
    first event; computer, hold and retreat policies send ordinary menu inputs.
    No command grants victory, teleports the party or edits mission flags. */
+#include "data/file.h"
 #include "frontend/cli.h"
 #include "frontend/authored_route.h"
 #include "frontend/world_route.h"
@@ -239,7 +240,7 @@ static void save_path(char path[96],const char *name,const BtpResources *r)
 }
 static int file_hash(const char *path,char out[65])
 {
-    FILE *f=fopen(path,"rb");if(!f)return fail("Cannot read checkpoint save");
+    FILE *f=btp_fopen(path,"rb");if(!f)return fail("Cannot read checkpoint save");
     BtpDigest digest;btp_digest_start(&digest);uint8_t buffer[4096],hash[32];size_t n,total=0;
     while((n=fread(buffer,1,sizeof buffer,f))) {
         total+=n;if(total>160+BTP_STATE_BYTES)break;
@@ -262,7 +263,7 @@ static int checkpoint(BtpState *s,const BtpResources *r,const char *name)
         for(unsigned i=0;i<checkpoint_count;++i)if(!strcmp(name,checkpoint_names[i]))return fail("Checkpoint names must be unique within a scenario");
         if(checkpoint_count==256)return fail("Too many named checkpoints");
         snprintf(path,sizeof path,"checkpoint-%s.btp",name);
-        FILE *existing=fopen(path,"rb");if(existing) {fclose(existing);return fail("Named checkpoint already exists; use a new artifact directory");}
+        FILE *existing=btp_fopen(path,"rb");if(existing) {fclose(existing);return fail("Named checkpoint already exists; use a new artifact directory");}
         strcpy(checkpoint_names[checkpoint_count++],name);
     } else save_path(path,"checkpoint",r);
     BtpState *loaded=malloc(sizeof *loaded);uint8_t *before=malloc(BTP_STATE_BYTES),*after=malloc(BTP_STATE_BYTES);
@@ -506,7 +507,7 @@ int main(int argc,char **argv)
         resumed=1;
     }
     if(artifacts && change_directory(artifacts)) {fail("Cannot enter scenario artifact directory");goto done;}
-    actions=fopen("replay.actions","wb");trace=fopen("events.jsonl","wb");combat_log=fopen("combat.jsonl","wb");
+    actions=btp_fopen("replay.actions","wb");trace=btp_fopen("events.jsonl","wb");combat_log=btp_fopen("combat.jsonl","wb");
     if(!s || !actions || !trace || !combat_log || !btp_adventure(r)) {fail("Scenario needs an authored project and writable output directory");goto done;}
     random[0]=(uint8_t)seed;random[1]=(uint8_t)(seed>>8);random[2]=(uint8_t)(seed>>16);
     btp_events_observe(event_trace,trace);btp_events_observe_battles(end_metrics,NULL);

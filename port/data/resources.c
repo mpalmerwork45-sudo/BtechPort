@@ -1,3 +1,4 @@
+#include "data/file.h"
 #include "data/resources.h"
 #include "data/anm.h"
 #include <stdio.h>
@@ -94,7 +95,7 @@ int btp_bld_decode(const uint8_t *b, size_t n, BtpBld *script, BtpError *e)
 
 int btp_read_file(const char *path, uint8_t **bytes, size_t *length, BtpError *e)
 {
-    FILE *f = fopen(path, "rb");
+    FILE *f = btp_fopen(path, "rb");
     if (!f) {
         if (e) snprintf(e->text, sizeof e->text, "Cannot read %.190s", path);
         return 0;

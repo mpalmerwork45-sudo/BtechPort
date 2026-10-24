@@ -7,6 +7,7 @@
 #include "core/events.h"
 #include "core/animation.h"
 #include "core/chi_bridge.h"
+#include "data/file.h"
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
@@ -49,7 +50,7 @@ static uint32_t checksum(const uint8_t *b, size_t n)
 int btp_save_is_updated(const char *path)
 {
     if (!path) return 0;
-    FILE *f=fopen(path,"rb");if (!f) return 0;
+    FILE *f=btp_fopen(path,"rb");if (!f) return 0;
     char tag[4];int updated=fread(tag,1,4,f)==4 && (!memcmp(tag,"BTU1",4) || !memcmp(tag,"BTU2",4));
     fclose(f);return updated;
 }
@@ -138,7 +139,7 @@ int btp_save_write(const char *path, const BtpState *s, const BtpResources *r, B
     put32(bytes+8,checksum(bytes+HEADER_BYTES,length-HEADER_BYTES));
     /* An explicit --save filename can bypass the normal slot namespace.
        Refuse crossing editions even there, retaining the existing save. */
-    FILE *existing=fopen(path,"rb");
+    FILE *existing=btp_fopen(path,"rb");
     if (existing) {
         char tag[PROJECT_HEADER_BYTES];size_t got=fread(tag,1,sizeof tag,existing);fclose(existing);
         if ((project && (got<PROJECT_HEADER_BYTES || memcmp(tag,"BTG1",4) || memcmp(tag+16,bytes+16,96))) ||
@@ -153,27 +154,21 @@ int btp_save_write(const char *path, const BtpState *s, const BtpResources *r, B
     if (n < 0 || (size_t)n >= sizeof pending) return fail(e,"Save path is too long");
     /* MSVCRT ignores C11's x modifier. Use its exclusive-create descriptor
        API so an existing pending file is preserved on Windows too. */
-#ifdef _WIN32
-    int fd=_open(pending,_O_WRONLY|_O_CREAT|_O_EXCL|_O_BINARY,_S_IREAD|_S_IWRITE);
-    FILE *f=fd<0 ? NULL : _fdopen(fd,"wb");
-    if (fd>=0 && !f) { int saved_errno=errno;(void)_close(fd);(void)remove(pending);errno=saved_errno; }
-#else
-    FILE *f = fopen(pending,"wbx");
-#endif
+    FILE *f=btp_file_create(pending);
     if (!f) return io_fail(e,"Cannot create pending save");
     int ok = fwrite(bytes,1,length,f) == length;
     if (fclose(f)) ok = 0;
-    if (!ok) { io_fail(e,"Cannot write save"); (void)remove(pending); return 0; }
+    if (!ok) { io_fail(e,"Cannot write save"); (void)btp_file_remove(pending); return 0; }
     /* Windows rename cannot replace an existing slot. MoveFileEx performs
        the same-directory replacement without deleting the old save first. */
 #ifdef _WIN32
-    if (!MoveFileExA(pending,path,MOVEFILE_REPLACE_EXISTING|MOVEFILE_WRITE_THROUGH)) {
+    if (btp_file_replace(pending,path)) {
         DWORD code=GetLastError();
         if (e) snprintf(e->text,sizeof e->text,"Cannot replace save: Windows error %lu",(unsigned long)code);
-        (void)remove(pending);return 0;
+        (void)btp_file_remove(pending);return 0;
     }
 #else
-    if (rename(pending,path)) { io_fail(e,"Cannot replace save"); (void)remove(pending); return 0; }
+    if (btp_file_rename(pending,path)) { io_fail(e,"Cannot replace save"); (void)btp_file_remove(pending); return 0; }
 #endif
     if (e) e->text[0] = 0;
     return 1;
@@ -181,7 +176,7 @@ int btp_save_write(const char *path, const BtpState *s, const BtpResources *r, B
 int btp_save_load(const char *path, BtpState *s, const BtpResources *r, BtpError *e)
 {
     if (!path || !*path || !s || !r) return fail(e,"Invalid load request");
-    FILE *f = fopen(path,"rb");
+    FILE *f = btp_fopen(path,"rb");
     if (!f) return io_fail(e,"Cannot open save");
     uint8_t bytes[PROJECT_HEADER_BYTES+BTP_STATE_BYTES+BTP_BRIDGE_BYTES+1];
     size_t n = fread(bytes,1,sizeof bytes,f);

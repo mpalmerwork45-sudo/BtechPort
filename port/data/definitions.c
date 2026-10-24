@@ -299,7 +299,7 @@ int btp_definitions_export(const char *path,const BtpRoster *r,const BtpCombatDa
 {
     /* Export symbolic definitions and effective ranges, never original binary
        assets or mutable party records. The caller creates a new directory. */
-    FILE *f=fopen(path,"rb");if (f) { fclose(f);snprintf(error,256,"Export file already exists: %.180s",path);return 0; }
+    FILE *f=btp_fopen(path,"rb");if (f) { fclose(f);snprintf(error,256,"Export file already exists: %.180s",path);return 0; }
     f=btp_file_create(path);if (!f) { snprintf(error,256,"Cannot create %.200s",path);return 0; }
     unsigned char used[17][255]={{0}};
     for (unsigned i=0;i<r->count;++i) for (unsigned at=51,bin=0;at<86;++at) {

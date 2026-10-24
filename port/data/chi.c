@@ -1,3 +1,4 @@
+#include "data/file.h"
 #include "data/chi.h"
 #include "data/project.h"
 #include <stdio.h>
@@ -88,7 +89,7 @@ BtpResources *btp_chi_project_load(const char *root,BtpJson *manifest,
         snprintf(expected,sizeof expected,"chi/%s",names[i]);
         if (strcmp(relative,expected)) { btp_json_error(manifest,n,"expected canonical chi/ resource path and order");goto done; }
         if (!btp_project_path(root,relative,path,e)) goto done;
-        FILE *f=fopen(path,"rb");if (!f) { fail(e,"cannot read resource");goto done; }
+        FILE *f=btp_fopen(path,"rb");if (!f) { fail(e,"cannot read resource");goto done; }
         /* Bound before allocating and read once. Decoder and content digest
            consume this same snapshot, including duplicated BLD load slots. */
         int bad=fseek(f,0,SEEK_END);long size=bad ? -1 : ftell(f);

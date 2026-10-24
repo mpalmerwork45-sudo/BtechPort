@@ -1,3 +1,4 @@
+#include "data/file.h"
 #include "data/roster.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -282,7 +283,7 @@ static int decode(Reader *p,BtpRoster *r)
 int btp_roster_load(const char *path,BtpRoster *roster,char error[256])
 {
     if (!path || !roster || !error) return 0;
-    error[0]=0;FILE *f=fopen(path,"rb");
+    error[0]=0;FILE *f=btp_fopen(path,"rb");
     if (!f) { snprintf(error,256,"Cannot open updated roster: %.190s",path);return 0; }
     enum { LIMIT=65536 };
     char *bytes=malloc(LIMIT+1);BtpRoster *candidate=calloc(1,sizeof *candidate);

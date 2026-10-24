@@ -17,7 +17,7 @@
 #ifdef _WIN32
 #include <windows.h>
 #include <direct.h>
-#define make_directory(p) _mkdir(p)
+#define make_directory(p) btp_file_mkdir(p)
 #else
 #define make_directory(p) mkdir(p,0700)
 #endif
@@ -43,19 +43,23 @@ int btp_project_path(const char *root,const char *relative,char out[4096],BtpErr
         char *dot=strchr(upper,'.');if (dot) *dot=0;
         if (!strcmp(upper,"CON") || !strcmp(upper,"PRN") || !strcmp(upper,"AUX") || !strcmp(upper,"NUL") ||
             ((!strncmp(upper,"COM",3) || !strncmp(upper,"LPT",3)) && upper[3]>='1' && upper[3]<='9' && !upper[4])) return fail(e,relative,"reserved Windows filename");
+#ifndef _WIN32
         DIR *dir=opendir(out);if (!dir) return fail(e,relative,"cannot open parent directory");
         struct dirent *entry;int found=0;while ((entry=readdir(dir))) if (!strcmp(entry->d_name,leaf)) { found=1;break; }closedir(dir);
         if (!found) return fail(e,relative,"missing reference (filenames are case-sensitive)");
-        size_t len=strlen(out);if (len+n+2>=4096) return fail(e,relative,"path too long");out[len++]='/';memcpy(out+len,leaf,n+1);
-        struct stat info;
-#ifdef _WIN32
-        DWORD attributes=GetFileAttributesA(out);
-        if (attributes==INVALID_FILE_ATTRIBUTES || (attributes&FILE_ATTRIBUTE_REPARSE_POINT) || stat(out,&info)) return fail(e,relative,"invalid/reparse reference");
-#else
-        if (lstat(out,&info) || S_ISLNK(info.st_mode)) return fail(e,relative,"invalid/symlink reference");
 #endif
+        size_t len=strlen(out);if (len+n+2>=4096) return fail(e,relative,"path too long");out[len++]='/';memcpy(out+len,leaf,n+1);
+#ifdef _WIN32
+        int kind=btp_file_entry(out,leaf);
+        if(!kind)return fail(e,relative,"missing, case-mismatched or reparse reference");
+        if(*p) { if(kind!=2 || !*++p)return fail(e,relative,"expected directory followed by file"); }
+        else if(kind!=1)return fail(e,relative,"reference is not a regular file");
+#else
+        struct stat info;
+        if (lstat(out,&info) || S_ISLNK(info.st_mode)) return fail(e,relative,"invalid/symlink reference");
         if (*p) { if (!S_ISDIR(info.st_mode) || !*++p) return fail(e,relative,"expected directory followed by file"); }
         else if (!S_ISREG(info.st_mode)) return fail(e,relative,"reference is not a regular file");
+#endif
     }
     return 1;
 }
@@ -210,7 +214,7 @@ BtpProject *btp_project_load(const char *root,BtpRoster *roster,BtpPortraits *po
             if (!text(&j,n,"id",script->id,sizeof script->id) || !btp_content_id(script->id,1) || !text(&j,n,"file",relative,sizeof relative) || !btp_json_done(&j,n)) goto done;
             for (unsigned k=0;k<p->script_count;++k) if (!strcmp(script->id,p->scripts[k].id)) { btp_json_error(&j,n,"duplicate script ID");goto done; }
             if (!btp_project_path(root,relative,path,error)) goto done;
-            FILE *f=fopen(path,"rb");if (!f) { fail(error,relative,"cannot open Lua source");goto done; }
+            FILE *f=btp_fopen(path,"rb");if (!f) { fail(error,relative,"cannot open Lua source");goto done; }
             script->length=fread(script->source,1,sizeof script->source,f);int bad=ferror(f);if (fclose(f)) bad=1;
             if (bad || !script->length || script->length>BTP_LUA_SOURCE || memchr(script->source,0,script->length)) { fail(error,relative,"Lua source must be 1..8192 bytes of text");goto done; }
             if (!btp_lua_compile(script->source,script->length,error->text)) goto done;
@@ -237,7 +241,7 @@ BtpProject *btp_project_load(const char *root,BtpRoster *roster,BtpPortraits *po
         if (!btp_project_path(root,relative,path,error)) goto done;
         /* Hash the bytes we actually decode. Reopening files for hashing can
            bind a save to a different edit when an editor writes during load. */
-        uint8_t bytes[BTP_ANM_BYTES+1];FILE *file=fopen(path,"rb");
+        uint8_t bytes[BTP_ANM_BYTES+1];FILE *file=btp_fopen(path,"rb");
         if (!file) { fail(error,relative,"cannot open portrait");goto done; }
         size_t length=fread(bytes,1,sizeof bytes,file);int bad=ferror(file);if (fclose(file)) bad=1;
         if (bad) { fail(error,relative,"cannot read portrait");goto done; }

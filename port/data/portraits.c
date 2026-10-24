@@ -1,3 +1,4 @@
+#include "data/file.h"
 #include "data/portraits.h"
 #include "data/anm.h"
 #include "data/project.h"
@@ -24,7 +25,7 @@ static int load_one(const char *directory,const char *name,BtpAnm *portrait,BtpE
         if (error) snprintf(error->text,sizeof error->text,"Updated portrait path too long: %s",name);
         return 0;
     }
-    FILE *file=fopen(path,"rb");
+    FILE *file=btp_fopen(path,"rb");
     if (!file) {
         /* Missing optional art preserves older/custom packs. Permissions or
            a present, malformed file must produce a visible diagnostic. */

@@ -17,7 +17,7 @@
 #include <direct.h>
 #include <fcntl.h>
 #include <io.h>
-#define make_directory(p) _mkdir(p)
+#define make_directory(p) btp_file_mkdir(p)
 #else
 #include <sys/stat.h>
 #define make_directory(p) mkdir(p,0700)
@@ -174,7 +174,7 @@ static int provenance(const char *roster,const char *directory,BtpError *error)
         int a=snprintf(source,sizeof source,"%.*s%s",(int)prefix,roster,source_names[i]);
         int b=snprintf(target,sizeof target,"%s/%s",directory,target_names[i]);
         if (a<0 || b<0 || (size_t)a>=sizeof source || (size_t)b>=sizeof target) return 0;
-        FILE *in=fopen(source,"rb");if (!in && errno==ENOENT) continue;
+        FILE *in=btp_fopen(source,"rb");if (!in && errno==ENOENT) continue;
         FILE *out=in ? btp_file_create(target) : NULL;
         if (!in || !out) { if (in) fclose(in);snprintf(error->text,256,"Cannot copy attribution: %.180s",source);return 0; }
         unsigned char bytes[4096];size_t n;int ok=1;
