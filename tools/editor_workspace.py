@@ -233,7 +233,7 @@ class Workspace:
         elif kind=='suites':state.update(suite=owner.current,case=owner.current_case,page=owner.pages.index(owner.pages.select()),
             step=list(owner.steps.selection()),step_kind=owner.step_kind.get())
         elif kind=='chi-bld':state.update(program=owner.program.get(),selected=owner.selected)
-        elif kind=='chi-services':state.update(selected=owner.selected)
+        elif kind in ('chi-services','chi-missions'):state.update(selected=owner.selected)
         elif kind=='pixels':
             state.update(frame=owner.frame.current())
             if owner.map_context:state.update(map_context=owner.map_context,show_neighbours=owner.show_neighbours.get())
@@ -254,7 +254,7 @@ class Workspace:
         if owner is None:return
         if kind=='chi-bld':
             owner.show_location(state.get('program',owner.program.get()),state.get('selected'));return
-        if kind=='chi-services':owner.show_location(state.get('selected'));return
+        if kind in ('chi-services','chi-missions'):owner.show_location(state.get('selected'));return
         if kind in ('roster','library-unit'):
             self.open_unit(state.get('kind','Mechs'),state.get('current'),owner)
         elif kind=='maps':
@@ -342,6 +342,8 @@ class Workspace:
         self.action('CHI scripts',lambda:open_scripts(self.active_scope().owner),groups['Project'])
         from chi_services_editor import open_services
         self.action('CHI services',lambda:open_services(self.active_scope().owner),groups['Project'])
+        from chi_missions_editor import open_missions
+        self.action('CHI missions and campaign',lambda:open_missions(self.active_scope().owner),groups['Project'])
         self.action('CHI maps and world',lambda:self.open_map(),groups['Project'])
         self.action('CHI resources',lambda:self.map_view().resources(),groups['Project'])
         from editor_authoring import apply_file,export_summary,check_mission
@@ -588,6 +590,8 @@ class Workspace:
                         row('','native-scripts','Native building scripts',lambda:open_scripts(self.app))
                         from chi_services_editor import open_services
                         row('','native-services','Native service content',lambda:open_services(self.app))
+                        from chi_missions_editor import open_missions
+                        row('','native-missions','Native missions and campaign',lambda:open_missions(self.app))
                         row('','native-art','Native graphics / audio',lambda:self.map_view().resources())
                     else:
                         events=row('','events','Events / objectives',self.open_event)

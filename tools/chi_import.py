@@ -157,11 +157,15 @@ def import_campaigns(source,output,edition='both',validator=None,cancel=None,pro
             (project/'campaign.json').write_bytes(encoded(service['campaign']))
             manifest['chi_services']=service_file
             (project/'project.json').write_bytes(encoded(manifest))
+            from chi_missions import prepare as mission_sources,FILE as mission_file
+            missions=mission_sources(json.loads(run([validator,'chi-missions',project],cancel)))
+            (project/mission_file).write_bytes(encoded(missions));manifest['chi_missions']=mission_file
+            (project/'project.json').write_bytes(encoded(manifest))
             provenance=dict(format='btp-chi-import-v1',schema_version=1,extractor='chi-import-v1',edition=profile,
                 inputs=[dict(file=n,sha256=hashlib.sha256(snapshot[n]).hexdigest()) for n in SOURCE_FILES],
                 resources=origins,capabilities=dict(editable=['native-dialogue-overrides','native-maps','world-generator','town-placements',
-                    'entrances','NPC-routes','jigsaws','presentation-resources','labelled-BLD-source','native-service-content',*(['added-unit-definitions','broker-entrance'] if profile=='updated' else [])],
-                    compatibility_only=['native-service-mechanics','mission-settings'],
+                    'entrances','NPC-routes','jigsaws','presentation-resources','labelled-BLD-source','native-service-content','native-mission-content',*(['added-unit-definitions','broker-entrance'] if profile=='updated' else [])],
+                    compatibility_only=['native-service-mechanics','native-campaign-state-machines'],
                     pending_milestones=['C4','C5']),
                 distribution='Private original-derived content; use an asset-free reconstruction recipe for sharing.')
             (project/'IMPORT.json').write_bytes(encoded(provenance))

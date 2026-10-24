@@ -1,0 +1,5378 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Native CHI mission and campaign content",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "schema_version",
+    "parameters"
+  ],
+  "properties": {
+    "format": {
+      "const": "btp-chi-missions-v1"
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "parameters": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "start.credits": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535,
+          "description": "Credits"
+        },
+        "start.allowance_cap": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535,
+          "description": "Allowance cap"
+        },
+        "start.rng.0": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255,
+          "description": "Initial gameplay RNG byte 0"
+        },
+        "start.rng.1": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255,
+          "description": "Initial gameplay RNG byte 1"
+        },
+        "start.rng.2": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255,
+          "description": "Initial gameplay RNG byte 2"
+        },
+        "start.constitution": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 12,
+          "description": "Constitution"
+        },
+        "start.dexterity": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 12,
+          "description": "Dexterity"
+        },
+        "start.charisma": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 12,
+          "description": "Charisma"
+        },
+        "start.skill.0": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4,
+          "description": "Initial player skill 0"
+        },
+        "start.skill.1": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4,
+          "description": "Initial player skill 1"
+        },
+        "start.skill.2": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4,
+          "description": "Initial player skill 2"
+        },
+        "start.skill.3": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4,
+          "description": "Initial player skill 3"
+        },
+        "start.skill.4": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4,
+          "description": "Initial player skill 4"
+        },
+        "start.skill.5": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4,
+          "description": "Initial player skill 5"
+        },
+        "start.skill.6": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4,
+          "description": "Initial player skill 6"
+        },
+        "training.0.start_x": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 124,
+          "description": "Start x"
+        },
+        "training.0.start_y": {
+          "type": "integer",
+          "minimum": 4,
+          "maximum": 126,
+          "description": "Start y"
+        },
+        "training.0.control_prompt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Control prompt"
+        },
+        "training.0.enemy_ai": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Enemy ai"
+        },
+        "training.0.return_x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 124,
+          "description": "Return x"
+        },
+        "training.0.return_y_min": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 126,
+          "description": "Return y min"
+        },
+        "training.0.return_y_max": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 126,
+          "description": "Return y max"
+        },
+        "training.0.skill_award": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Skill award"
+        },
+        "training.0.invasion": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Invasion"
+        },
+        "training.0.return_message": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 372,
+          "description": "Return message"
+        },
+        "training.0.pass_on_win": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Pass on win"
+        },
+        "training.0.pass_on_retreat": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Pass on retreat"
+        },
+        "training.0.pass_on_loss": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Pass on loss"
+        },
+        "training.1.start_x": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 124,
+          "description": "Start x"
+        },
+        "training.1.start_y": {
+          "type": "integer",
+          "minimum": 4,
+          "maximum": 126,
+          "description": "Start y"
+        },
+        "training.1.control_prompt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Control prompt"
+        },
+        "training.1.enemy_ai": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Enemy ai"
+        },
+        "training.1.return_x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 124,
+          "description": "Return x"
+        },
+        "training.1.return_y_min": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 126,
+          "description": "Return y min"
+        },
+        "training.1.return_y_max": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 126,
+          "description": "Return y max"
+        },
+        "training.1.skill_award": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Skill award"
+        },
+        "training.1.invasion": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Invasion"
+        },
+        "training.1.return_message": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 372,
+          "description": "Return message"
+        },
+        "training.1.pass_on_win": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Pass on win"
+        },
+        "training.1.pass_on_retreat": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Pass on retreat"
+        },
+        "training.1.pass_on_loss": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Pass on loss"
+        },
+        "training.2.start_x": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 124,
+          "description": "Start x"
+        },
+        "training.2.start_y": {
+          "type": "integer",
+          "minimum": 4,
+          "maximum": 126,
+          "description": "Start y"
+        },
+        "training.2.control_prompt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Control prompt"
+        },
+        "training.2.enemy_ai": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Enemy ai"
+        },
+        "training.2.return_x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 124,
+          "description": "Return x"
+        },
+        "training.2.return_y_min": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 126,
+          "description": "Return y min"
+        },
+        "training.2.return_y_max": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 126,
+          "description": "Return y max"
+        },
+        "training.2.skill_award": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Skill award"
+        },
+        "training.2.invasion": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Invasion"
+        },
+        "training.2.return_message": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 372,
+          "description": "Return message"
+        },
+        "training.2.pass_on_win": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Pass on win"
+        },
+        "training.2.pass_on_retreat": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Pass on retreat"
+        },
+        "training.2.pass_on_loss": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Pass on loss"
+        },
+        "training.2.enemy_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 6,
+          "description": "Enemy count"
+        },
+        "training.2.count_mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Count mask"
+        },
+        "training.2.spawn_x": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 110,
+          "description": "Spawn x"
+        },
+        "training.2.spawn_y": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 110,
+          "description": "Spawn y"
+        },
+        "training.2.spawn_mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 7,
+          "description": "Spawn mask"
+        },
+        "training.2.shell_x": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 124,
+          "description": "Shell x"
+        },
+        "training.2.shell": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Shell"
+        },
+        "training.2.infantry": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Infantry"
+        },
+        "training.2.infantry_weapons": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 14,
+          "description": "Infantry weapons"
+        },
+        "training.2.infantry_skill_mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Infantry skill mask"
+        },
+        "training.2.enemy.0.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy horizontal formation offset"
+        },
+        "training.2.enemy.0.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy vertical formation offset"
+        },
+        "training.2.enemy.1.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy horizontal formation offset"
+        },
+        "training.2.enemy.1.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy vertical formation offset"
+        },
+        "training.2.enemy.2.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy horizontal formation offset"
+        },
+        "training.2.enemy.2.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy vertical formation offset"
+        },
+        "training.2.enemy.3.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy horizontal formation offset"
+        },
+        "training.2.enemy.3.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy vertical formation offset"
+        },
+        "training.2.enemy.4.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy horizontal formation offset"
+        },
+        "training.2.enemy.4.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy vertical formation offset"
+        },
+        "training.2.enemy.5.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy horizontal formation offset"
+        },
+        "training.2.enemy.5.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy vertical formation offset"
+        },
+        "training.3.start_x": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 124,
+          "description": "Start x"
+        },
+        "training.3.start_y": {
+          "type": "integer",
+          "minimum": 4,
+          "maximum": 126,
+          "description": "Start y"
+        },
+        "training.3.control_prompt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Control prompt"
+        },
+        "training.3.enemy_ai": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Enemy ai"
+        },
+        "training.3.return_x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 124,
+          "description": "Return x"
+        },
+        "training.3.return_y_min": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 126,
+          "description": "Return y min"
+        },
+        "training.3.return_y_max": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 126,
+          "description": "Return y max"
+        },
+        "training.3.skill_award": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Skill award"
+        },
+        "training.3.invasion": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Invasion"
+        },
+        "training.3.return_message": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 372,
+          "description": "Return message"
+        },
+        "training.3.pass_on_win": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Pass on win"
+        },
+        "training.3.pass_on_retreat": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Pass on retreat"
+        },
+        "training.3.pass_on_loss": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Pass on loss"
+        },
+        "training.3.enemy_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 6,
+          "description": "Enemy count"
+        },
+        "training.3.count_mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Count mask"
+        },
+        "training.3.spawn_x": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 110,
+          "description": "Spawn x"
+        },
+        "training.3.spawn_y": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 110,
+          "description": "Spawn y"
+        },
+        "training.3.spawn_mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 7,
+          "description": "Spawn mask"
+        },
+        "training.3.shell_x": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 124,
+          "description": "Shell x"
+        },
+        "training.3.shell": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Shell"
+        },
+        "training.3.infantry": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Infantry"
+        },
+        "training.3.infantry_weapons": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 14,
+          "description": "Infantry weapons"
+        },
+        "training.3.infantry_skill_mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Infantry skill mask"
+        },
+        "training.3.enemy.0.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy horizontal formation offset"
+        },
+        "training.3.enemy.0.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy vertical formation offset"
+        },
+        "training.3.enemy.1.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy horizontal formation offset"
+        },
+        "training.3.enemy.1.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy vertical formation offset"
+        },
+        "training.3.enemy.2.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy horizontal formation offset"
+        },
+        "training.3.enemy.2.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy vertical formation offset"
+        },
+        "training.3.enemy.3.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy horizontal formation offset"
+        },
+        "training.3.enemy.3.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy vertical formation offset"
+        },
+        "training.3.enemy.4.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy horizontal formation offset"
+        },
+        "training.3.enemy.4.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy vertical formation offset"
+        },
+        "training.3.enemy.5.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy horizontal formation offset"
+        },
+        "training.3.enemy.5.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy vertical formation offset"
+        },
+        "training.4.start_x": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 124,
+          "description": "Start x"
+        },
+        "training.4.start_y": {
+          "type": "integer",
+          "minimum": 4,
+          "maximum": 126,
+          "description": "Start y"
+        },
+        "training.4.control_prompt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Control prompt"
+        },
+        "training.4.enemy_ai": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Enemy ai"
+        },
+        "training.4.return_x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 124,
+          "description": "Return x"
+        },
+        "training.4.return_y_min": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 126,
+          "description": "Return y min"
+        },
+        "training.4.return_y_max": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 126,
+          "description": "Return y max"
+        },
+        "training.4.skill_award": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Skill award"
+        },
+        "training.4.invasion": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Invasion"
+        },
+        "training.4.return_message": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 372,
+          "description": "Return message"
+        },
+        "training.4.pass_on_win": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Pass on win"
+        },
+        "training.4.pass_on_retreat": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Pass on retreat"
+        },
+        "training.4.pass_on_loss": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Pass on loss"
+        },
+        "training.4.enemy_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 6,
+          "description": "Enemy count"
+        },
+        "training.4.count_mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Count mask"
+        },
+        "training.4.spawn_x": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 110,
+          "description": "Spawn x"
+        },
+        "training.4.spawn_y": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 110,
+          "description": "Spawn y"
+        },
+        "training.4.spawn_mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 7,
+          "description": "Spawn mask"
+        },
+        "training.4.shell_x": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 124,
+          "description": "Shell x"
+        },
+        "training.4.shell": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Shell"
+        },
+        "training.4.infantry": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Infantry"
+        },
+        "training.4.infantry_weapons": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 14,
+          "description": "Infantry weapons"
+        },
+        "training.4.infantry_skill_mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Infantry skill mask"
+        },
+        "training.4.enemy.0.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy horizontal formation offset"
+        },
+        "training.4.enemy.0.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy vertical formation offset"
+        },
+        "training.4.enemy.1.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy horizontal formation offset"
+        },
+        "training.4.enemy.1.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy vertical formation offset"
+        },
+        "training.4.enemy.2.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy horizontal formation offset"
+        },
+        "training.4.enemy.2.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy vertical formation offset"
+        },
+        "training.4.enemy.3.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy horizontal formation offset"
+        },
+        "training.4.enemy.3.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy vertical formation offset"
+        },
+        "training.4.enemy.4.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy horizontal formation offset"
+        },
+        "training.4.enemy.4.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy vertical formation offset"
+        },
+        "training.4.enemy.5.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy horizontal formation offset"
+        },
+        "training.4.enemy.5.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy vertical formation offset"
+        },
+        "training.5.start_x": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 124,
+          "description": "Start x"
+        },
+        "training.5.start_y": {
+          "type": "integer",
+          "minimum": 4,
+          "maximum": 126,
+          "description": "Start y"
+        },
+        "training.5.control_prompt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Control prompt"
+        },
+        "training.5.enemy_ai": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Enemy ai"
+        },
+        "training.5.return_x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 124,
+          "description": "Return x"
+        },
+        "training.5.return_y_min": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 126,
+          "description": "Return y min"
+        },
+        "training.5.return_y_max": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 126,
+          "description": "Return y max"
+        },
+        "training.5.skill_award": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Skill award"
+        },
+        "training.5.invasion": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Invasion"
+        },
+        "training.5.return_message": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 372,
+          "description": "Return message"
+        },
+        "training.5.pass_on_win": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Pass on win"
+        },
+        "training.5.pass_on_retreat": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Pass on retreat"
+        },
+        "training.5.pass_on_loss": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Pass on loss"
+        },
+        "training.5.enemy_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 6,
+          "description": "Enemy count"
+        },
+        "training.5.count_mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Count mask"
+        },
+        "training.5.spawn_x": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 110,
+          "description": "Spawn x"
+        },
+        "training.5.spawn_y": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 110,
+          "description": "Spawn y"
+        },
+        "training.5.spawn_mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 7,
+          "description": "Spawn mask"
+        },
+        "training.5.shell_x": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 124,
+          "description": "Shell x"
+        },
+        "training.5.shell": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Shell"
+        },
+        "training.5.infantry": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Infantry"
+        },
+        "training.5.infantry_weapons": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 14,
+          "description": "Infantry weapons"
+        },
+        "training.5.infantry_skill_mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Infantry skill mask"
+        },
+        "training.5.enemy.0.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy horizontal formation offset"
+        },
+        "training.5.enemy.0.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy vertical formation offset"
+        },
+        "training.5.enemy.1.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy horizontal formation offset"
+        },
+        "training.5.enemy.1.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy vertical formation offset"
+        },
+        "training.5.enemy.2.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy horizontal formation offset"
+        },
+        "training.5.enemy.2.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy vertical formation offset"
+        },
+        "training.5.enemy.3.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy horizontal formation offset"
+        },
+        "training.5.enemy.3.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy vertical formation offset"
+        },
+        "training.5.enemy.4.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy horizontal formation offset"
+        },
+        "training.5.enemy.4.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy vertical formation offset"
+        },
+        "training.5.enemy.5.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy horizontal formation offset"
+        },
+        "training.5.enemy.5.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy vertical formation offset"
+        },
+        "training.6.start_x": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 124,
+          "description": "Start x"
+        },
+        "training.6.start_y": {
+          "type": "integer",
+          "minimum": 4,
+          "maximum": 126,
+          "description": "Start y"
+        },
+        "training.6.control_prompt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Control prompt"
+        },
+        "training.6.enemy_ai": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Enemy ai"
+        },
+        "training.6.return_x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 124,
+          "description": "Return x"
+        },
+        "training.6.return_y_min": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 126,
+          "description": "Return y min"
+        },
+        "training.6.return_y_max": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 126,
+          "description": "Return y max"
+        },
+        "training.6.skill_award": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Skill award"
+        },
+        "training.6.invasion": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Invasion"
+        },
+        "training.6.return_message": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 372,
+          "description": "Return message"
+        },
+        "training.6.pass_on_win": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Pass on win"
+        },
+        "training.6.pass_on_retreat": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Pass on retreat"
+        },
+        "training.6.pass_on_loss": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Pass on loss"
+        },
+        "training.6.enemy_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 6,
+          "description": "Enemy count"
+        },
+        "training.6.count_mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Count mask"
+        },
+        "training.6.spawn_x": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 110,
+          "description": "Spawn x"
+        },
+        "training.6.spawn_y": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 110,
+          "description": "Spawn y"
+        },
+        "training.6.spawn_mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 7,
+          "description": "Spawn mask"
+        },
+        "training.6.shell_x": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 124,
+          "description": "Shell x"
+        },
+        "training.6.shell": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Shell"
+        },
+        "training.6.infantry": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Infantry"
+        },
+        "training.6.infantry_weapons": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 14,
+          "description": "Infantry weapons"
+        },
+        "training.6.infantry_skill_mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Infantry skill mask"
+        },
+        "training.6.enemy.0.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy horizontal formation offset"
+        },
+        "training.6.enemy.0.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy vertical formation offset"
+        },
+        "training.6.enemy.1.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy horizontal formation offset"
+        },
+        "training.6.enemy.1.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy vertical formation offset"
+        },
+        "training.6.enemy.2.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy horizontal formation offset"
+        },
+        "training.6.enemy.2.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy vertical formation offset"
+        },
+        "training.6.enemy.3.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy horizontal formation offset"
+        },
+        "training.6.enemy.3.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy vertical formation offset"
+        },
+        "training.6.enemy.4.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy horizontal formation offset"
+        },
+        "training.6.enemy.4.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy vertical formation offset"
+        },
+        "training.6.enemy.5.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy horizontal formation offset"
+        },
+        "training.6.enemy.5.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy vertical formation offset"
+        },
+        "training.7.start_x": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 124,
+          "description": "Start x"
+        },
+        "training.7.start_y": {
+          "type": "integer",
+          "minimum": 4,
+          "maximum": 126,
+          "description": "Start y"
+        },
+        "training.7.control_prompt": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Control prompt"
+        },
+        "training.7.enemy_ai": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Enemy ai"
+        },
+        "training.7.return_x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 124,
+          "description": "Return x"
+        },
+        "training.7.return_y_min": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 126,
+          "description": "Return y min"
+        },
+        "training.7.return_y_max": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 126,
+          "description": "Return y max"
+        },
+        "training.7.skill_award": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Skill award"
+        },
+        "training.7.invasion": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Invasion"
+        },
+        "training.7.return_message": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 372,
+          "description": "Return message"
+        },
+        "training.7.pass_on_win": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Pass on win"
+        },
+        "training.7.pass_on_retreat": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Pass on retreat"
+        },
+        "training.7.pass_on_loss": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Pass on loss"
+        },
+        "training.7.enemy_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 6,
+          "description": "Enemy count"
+        },
+        "training.7.count_mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Count mask"
+        },
+        "training.7.spawn_x": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 110,
+          "description": "Spawn x"
+        },
+        "training.7.spawn_y": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 110,
+          "description": "Spawn y"
+        },
+        "training.7.spawn_mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 7,
+          "description": "Spawn mask"
+        },
+        "training.7.shell_x": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 124,
+          "description": "Shell x"
+        },
+        "training.7.shell": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Shell"
+        },
+        "training.7.infantry": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Infantry"
+        },
+        "training.7.infantry_weapons": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 14,
+          "description": "Infantry weapons"
+        },
+        "training.7.infantry_skill_mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Infantry skill mask"
+        },
+        "training.7.enemy.0.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy horizontal formation offset"
+        },
+        "training.7.enemy.0.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy vertical formation offset"
+        },
+        "training.7.enemy.1.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy horizontal formation offset"
+        },
+        "training.7.enemy.1.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy vertical formation offset"
+        },
+        "training.7.enemy.2.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy horizontal formation offset"
+        },
+        "training.7.enemy.2.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy vertical formation offset"
+        },
+        "training.7.enemy.3.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy horizontal formation offset"
+        },
+        "training.7.enemy.3.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy vertical formation offset"
+        },
+        "training.7.enemy.4.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy horizontal formation offset"
+        },
+        "training.7.enemy.4.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy vertical formation offset"
+        },
+        "training.7.enemy.5.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy horizontal formation offset"
+        },
+        "training.7.enemy.5.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Enemy vertical formation offset"
+        },
+        "quiz.rounds": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10,
+          "description": "Rounds"
+        },
+        "quiz.intro_message": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 372,
+          "description": "Intro message"
+        },
+        "quiz.question_message": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 372,
+          "description": "Question message"
+        },
+        "quiz.failed_message": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 372,
+          "description": "Failed message"
+        },
+        "quiz.point.0.x": {
+          "type": "integer",
+          "minimum": 3,
+          "maximum": 316,
+          "description": "X"
+        },
+        "quiz.point.0.y": {
+          "type": "integer",
+          "minimum": 3,
+          "maximum": 196,
+          "description": "Y"
+        },
+        "quiz.point.0.answer": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 19,
+          "description": "Answer"
+        },
+        "quiz.point.1.x": {
+          "type": "integer",
+          "minimum": 3,
+          "maximum": 316,
+          "description": "X"
+        },
+        "quiz.point.1.y": {
+          "type": "integer",
+          "minimum": 3,
+          "maximum": 196,
+          "description": "Y"
+        },
+        "quiz.point.1.answer": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 19,
+          "description": "Answer"
+        },
+        "quiz.point.2.x": {
+          "type": "integer",
+          "minimum": 3,
+          "maximum": 316,
+          "description": "X"
+        },
+        "quiz.point.2.y": {
+          "type": "integer",
+          "minimum": 3,
+          "maximum": 196,
+          "description": "Y"
+        },
+        "quiz.point.2.answer": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 19,
+          "description": "Answer"
+        },
+        "quiz.point.3.x": {
+          "type": "integer",
+          "minimum": 3,
+          "maximum": 316,
+          "description": "X"
+        },
+        "quiz.point.3.y": {
+          "type": "integer",
+          "minimum": 3,
+          "maximum": 196,
+          "description": "Y"
+        },
+        "quiz.point.3.answer": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 19,
+          "description": "Answer"
+        },
+        "quiz.point.4.x": {
+          "type": "integer",
+          "minimum": 3,
+          "maximum": 316,
+          "description": "X"
+        },
+        "quiz.point.4.y": {
+          "type": "integer",
+          "minimum": 3,
+          "maximum": 196,
+          "description": "Y"
+        },
+        "quiz.point.4.answer": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 19,
+          "description": "Answer"
+        },
+        "quiz.point.5.x": {
+          "type": "integer",
+          "minimum": 3,
+          "maximum": 316,
+          "description": "X"
+        },
+        "quiz.point.5.y": {
+          "type": "integer",
+          "minimum": 3,
+          "maximum": 196,
+          "description": "Y"
+        },
+        "quiz.point.5.answer": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 19,
+          "description": "Answer"
+        },
+        "quiz.point.6.x": {
+          "type": "integer",
+          "minimum": 3,
+          "maximum": 316,
+          "description": "X"
+        },
+        "quiz.point.6.y": {
+          "type": "integer",
+          "minimum": 3,
+          "maximum": 196,
+          "description": "Y"
+        },
+        "quiz.point.6.answer": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 19,
+          "description": "Answer"
+        },
+        "quiz.point.7.x": {
+          "type": "integer",
+          "minimum": 3,
+          "maximum": 316,
+          "description": "X"
+        },
+        "quiz.point.7.y": {
+          "type": "integer",
+          "minimum": 3,
+          "maximum": 196,
+          "description": "Y"
+        },
+        "quiz.point.7.answer": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 19,
+          "description": "Answer"
+        },
+        "quiz.point.8.x": {
+          "type": "integer",
+          "minimum": 3,
+          "maximum": 316,
+          "description": "X"
+        },
+        "quiz.point.8.y": {
+          "type": "integer",
+          "minimum": 3,
+          "maximum": 196,
+          "description": "Y"
+        },
+        "quiz.point.8.answer": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 19,
+          "description": "Answer"
+        },
+        "quiz.point.9.x": {
+          "type": "integer",
+          "minimum": 3,
+          "maximum": 316,
+          "description": "X"
+        },
+        "quiz.point.9.y": {
+          "type": "integer",
+          "minimum": 3,
+          "maximum": 196,
+          "description": "Y"
+        },
+        "quiz.point.9.answer": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 19,
+          "description": "Answer"
+        },
+        "driving.time_limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32767,
+          "description": "Time limit"
+        },
+        "driving.first_loan_bonus": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 32767,
+          "description": "First loan bonus"
+        },
+        "driving.corner_x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 124,
+          "description": "Corner x"
+        },
+        "driving.corner_y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 126,
+          "description": "Corner y"
+        },
+        "driving.clear_x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "Clear x"
+        },
+        "driving.clear_y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "Clear y"
+        },
+        "driving.warning_message": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 372,
+          "description": "Warning message"
+        },
+        "driving.corner_message": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 372,
+          "description": "Corner message"
+        },
+        "driving.snicker_message": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 372,
+          "description": "Snicker message"
+        },
+        "driving.pickup_message": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 371,
+          "description": "Pickup message"
+        },
+        "driving.rubble_tile": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Rubble tile"
+        },
+        "driving.recovery_rank_cap": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4,
+          "description": "Recovery rank cap"
+        },
+        "recovery.0.x": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 62,
+          "description": "Recovery site 1 tile X"
+        },
+        "recovery.0.y": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 62,
+          "description": "Recovery site 1 tile Y"
+        },
+        "recovery.1.x": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 62,
+          "description": "Recovery site 2 tile X"
+        },
+        "recovery.1.y": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 62,
+          "description": "Recovery site 2 tile Y"
+        },
+        "recovery.2.x": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 62,
+          "description": "Recovery site 3 tile X"
+        },
+        "recovery.2.y": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 62,
+          "description": "Recovery site 3 tile Y"
+        },
+        "recovery.3.x": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 62,
+          "description": "Recovery site 4 tile X"
+        },
+        "recovery.3.y": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 62,
+          "description": "Recovery site 4 tile Y"
+        },
+        "recovery.4.x": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 62,
+          "description": "Recovery site 5 tile X"
+        },
+        "recovery.4.y": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 62,
+          "description": "Recovery site 5 tile Y"
+        },
+        "recovery.5.x": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 62,
+          "description": "Recovery site 6 tile X"
+        },
+        "recovery.5.y": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 62,
+          "description": "Recovery site 6 tile Y"
+        },
+        "recovery.6.x": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 62,
+          "description": "Recovery site 7 tile X"
+        },
+        "recovery.6.y": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 62,
+          "description": "Recovery site 7 tile Y"
+        },
+        "recovery.7.x": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 62,
+          "description": "Recovery site 8 tile X"
+        },
+        "recovery.7.y": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 62,
+          "description": "Recovery site 8 tile Y"
+        },
+        "invasion.enemy_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 6,
+          "description": "Enemy count"
+        },
+        "invasion.ruin_after": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5,
+          "description": "Ruin after"
+        },
+        "invasion.escape": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Escape"
+        },
+        "invasion.escape_min": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127,
+          "description": "Escape min"
+        },
+        "invasion.escape_max": {
+          "type": "integer",
+          "minimum": 128,
+          "maximum": 255,
+          "description": "Escape max"
+        },
+        "invasion.retain_loan": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Retain loan"
+        },
+        "invasion.skill_award": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Skill award"
+        },
+        "invasion.message.0": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 372,
+          "description": "Invasion message 0 (0 is initial warning)"
+        },
+        "invasion.message.1": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 372,
+          "description": "Invasion message 1 (0 is initial warning)"
+        },
+        "invasion.message.2": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 372,
+          "description": "Invasion message 2 (0 is initial warning)"
+        },
+        "invasion.message.3": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 372,
+          "description": "Invasion message 3 (0 is initial warning)"
+        },
+        "invasion.message.4": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 372,
+          "description": "Invasion message 4 (0 is initial warning)"
+        },
+        "invasion.message.5": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 372,
+          "description": "Invasion message 5 (0 is initial warning)"
+        },
+        "encounter.enabled": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Enabled"
+        },
+        "encounter.offer": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Offer"
+        },
+        "encounter.avoid_mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255,
+          "description": "Avoid mask"
+        },
+        "encounter.infantry_slots": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Infantry slots"
+        },
+        "encounter.mech_slots": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4,
+          "description": "Mech slots"
+        },
+        "encounter.distance": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 24,
+          "description": "Distance"
+        },
+        "encounter.distance_mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 15,
+          "description": "Distance mask"
+        },
+        "encounter.starport_mechs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Starport mechs"
+        },
+        "encounter.updated_roster": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Updated roster"
+        },
+        "encounter.cash_mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255,
+          "description": "Cash mask"
+        },
+        "encounter.cash_base": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255,
+          "description": "Cash base"
+        },
+        "encounter.cash_min": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535,
+          "description": "Cash min"
+        },
+        "encounter.field_salvage": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Field salvage"
+        },
+        "encounter.mech_salvage": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Mech salvage"
+        },
+        "encounter.salvage_in_towns": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Salvage in towns"
+        },
+        "encounter.salvage_expert": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4,
+          "description": "Salvage expert"
+        },
+        "encounter.heal_after": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Heal after"
+        },
+        "encounter.essential_people": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2,
+          "description": "Essential people"
+        },
+        "encounter.weapon.0": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 13,
+          "description": "Infantry weapon roll 0"
+        },
+        "encounter.weapon.1": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 13,
+          "description": "Infantry weapon roll 1"
+        },
+        "encounter.weapon.2": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 13,
+          "description": "Infantry weapon roll 2"
+        },
+        "encounter.weapon.3": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 13,
+          "description": "Infantry weapon roll 3"
+        },
+        "encounter.weapon.4": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 13,
+          "description": "Infantry weapon roll 4"
+        },
+        "encounter.weapon.5": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 13,
+          "description": "Infantry weapon roll 5"
+        },
+        "encounter.weapon.6": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 13,
+          "description": "Infantry weapon roll 6"
+        },
+        "encounter.weapon.7": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 13,
+          "description": "Infantry weapon roll 7"
+        },
+        "encounter.weapon.8": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 13,
+          "description": "Infantry weapon roll 8"
+        },
+        "encounter.weapon.9": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 13,
+          "description": "Infantry weapon roll 9"
+        },
+        "encounter.weapon.10": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 13,
+          "description": "Infantry weapon roll 10"
+        },
+        "encounter.weapon.11": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 13,
+          "description": "Infantry weapon roll 11"
+        },
+        "encounter.weapon.12": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 13,
+          "description": "Infantry weapon roll 12"
+        },
+        "encounter.weapon.13": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 13,
+          "description": "Infantry weapon roll 13"
+        },
+        "encounter.weapon.14": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 13,
+          "description": "Infantry weapon roll 14"
+        },
+        "encounter.weapon.15": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 13,
+          "description": "Infantry weapon roll 15"
+        },
+        "encounter.weapon.16": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 13,
+          "description": "Infantry weapon roll 16"
+        },
+        "encounter.weapon.17": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 13,
+          "description": "Infantry weapon roll 17"
+        },
+        "encounter.weapon.18": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 13,
+          "description": "Infantry weapon roll 18"
+        },
+        "encounter.weapon.19": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 13,
+          "description": "Infantry weapon roll 19"
+        },
+        "encounter.weapon.20": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 13,
+          "description": "Infantry weapon roll 20"
+        },
+        "encounter.weapon.21": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 13,
+          "description": "Infantry weapon roll 21"
+        },
+        "rex.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 125,
+          "description": "X"
+        },
+        "rex.y": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 127,
+          "description": "Y"
+        },
+        "rex.spawn_x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 117,
+          "description": "Spawn x"
+        },
+        "rex.spawn_y": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 117,
+          "description": "Spawn y"
+        },
+        "rex.enemy_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5,
+          "description": "Enemy count"
+        },
+        "rex.count_mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Count mask"
+        },
+        "rex.constitution": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 12,
+          "description": "Constitution"
+        },
+        "rex.dexterity": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 12,
+          "description": "Dexterity"
+        },
+        "rex.charisma": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 12,
+          "description": "Charisma"
+        },
+        "rex.weapon": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 13,
+          "description": "Weapon"
+        },
+        "rex.enemy_weapons": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 14,
+          "description": "Enemy weapons"
+        },
+        "rex.enemy_skill_mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Enemy skill mask"
+        },
+        "rex.skill.0": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4,
+          "description": "Rex skill 0"
+        },
+        "rex.skill.1": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4,
+          "description": "Rex skill 1"
+        },
+        "rex.skill.2": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4,
+          "description": "Rex skill 2"
+        },
+        "rex.skill.3": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4,
+          "description": "Rex skill 3"
+        },
+        "rex.skill.4": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4,
+          "description": "Rex skill 4"
+        },
+        "rex.skill.5": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4,
+          "description": "Rex skill 5"
+        },
+        "rex.skill.6": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4,
+          "description": "Rex skill 6"
+        },
+        "rex.enemy.0.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Ambush member 0 X offset"
+        },
+        "rex.enemy.0.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Ambush member 0 Y offset"
+        },
+        "rex.enemy.1.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Ambush member 1 X offset"
+        },
+        "rex.enemy.1.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Ambush member 1 Y offset"
+        },
+        "rex.enemy.2.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Ambush member 2 X offset"
+        },
+        "rex.enemy.2.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Ambush member 2 Y offset"
+        },
+        "rex.enemy.3.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Ambush member 3 X offset"
+        },
+        "rex.enemy.3.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Ambush member 3 Y offset"
+        },
+        "rex.enemy.4.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Ambush member 4 X offset"
+        },
+        "rex.enemy.4.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Ambush member 4 Y offset"
+        },
+        "rex.enemy.5.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Ambush member 5 X offset"
+        },
+        "rex.enemy.5.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Ambush member 5 Y offset"
+        },
+        "rex.enemy.6.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Ambush member 6 X offset"
+        },
+        "rex.enemy.6.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Ambush member 6 Y offset"
+        },
+        "rex.enemy.7.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Ambush member 7 X offset"
+        },
+        "rex.enemy.7.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Ambush member 7 Y offset"
+        },
+        "prison.start_x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 124,
+          "description": "Start x"
+        },
+        "prison.start_y": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 126,
+          "description": "Start y"
+        },
+        "prison.exit_x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 124,
+          "description": "Exit x"
+        },
+        "prison.exit_y": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 126,
+          "description": "Exit y"
+        },
+        "prison.mechs_x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 110,
+          "description": "Mechs x"
+        },
+        "prison.mechs_y": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 126,
+          "description": "Mechs y"
+        },
+        "prison.guard_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8,
+          "description": "Guard count"
+        },
+        "prison.guard_x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 110,
+          "description": "Guard x"
+        },
+        "prison.guard_y": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 110,
+          "description": "Guard y"
+        },
+        "prison.guard_weapons": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 14,
+          "description": "Guard weapons"
+        },
+        "prison.guard_skill_mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Guard skill mask"
+        },
+        "arena.player_x": {
+          "type": "integer",
+          "minimum": 66,
+          "maximum": 124,
+          "description": "Player x"
+        },
+        "arena.player_y": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 125,
+          "description": "Player y"
+        },
+        "arena.west_x": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 110,
+          "description": "West x"
+        },
+        "arena.east_x": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 110,
+          "description": "East x"
+        },
+        "arena.spawn_y": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 118,
+          "description": "Spawn y"
+        },
+        "arena.spectator_x": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 124,
+          "description": "Spectator x"
+        },
+        "arena.spectator_y": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 126,
+          "description": "Spectator y"
+        },
+        "arena.spectator": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Spectator"
+        },
+        "arena.guard_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Guard count"
+        },
+        "arena.guard_x": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 124,
+          "description": "Guard x"
+        },
+        "arena.guard_y": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 62,
+          "description": "Guard y"
+        },
+        "arena.guard_spacing": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 64,
+          "description": "Guard spacing"
+        },
+        "arena.return_x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 124,
+          "description": "Return x"
+        },
+        "arena.return_y": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 126,
+          "description": "Return y"
+        },
+        "arena.escape_min": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2047,
+          "description": "Escape min"
+        },
+        "arena.escape_max": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2047,
+          "description": "Escape max"
+        },
+        "arena.escape_x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2047,
+          "description": "Escape x"
+        },
+        "arena.rental_roll_base": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Rental roll base"
+        },
+        "arena.rental_roll_mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 7,
+          "description": "Rental roll mask"
+        },
+        "arena.damage_threshold": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 6,
+          "description": "Damage threshold"
+        },
+        "arena.damage_rolls": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 32,
+          "description": "Damage rolls"
+        },
+        "arena.system_threshold": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 6,
+          "description": "System threshold"
+        },
+        "arena.field_variant": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4,
+          "description": "Field variant"
+        },
+        "arena.reduction.0": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255,
+          "description": "Arena difficulty 0 armour reduction"
+        },
+        "arena.reduction.1": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255,
+          "description": "Arena difficulty 1 armour reduction"
+        },
+        "arena.reduction.2": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255,
+          "description": "Arena difficulty 2 armour reduction"
+        },
+        "arena.reduction.3": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255,
+          "description": "Arena difficulty 3 armour reduction"
+        },
+        "arena.reduction.4": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255,
+          "description": "Arena difficulty 4 armour reduction"
+        },
+        "arena.reduction.5": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255,
+          "description": "Arena difficulty 5 armour reduction"
+        },
+        "arena.reduction.6": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255,
+          "description": "Arena difficulty 6 armour reduction"
+        },
+        "guards.offset.0.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Native guard formation 0 X"
+        },
+        "guards.offset.0.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Native guard formation 0 Y"
+        },
+        "guards.offset.1.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Native guard formation 1 X"
+        },
+        "guards.offset.1.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Native guard formation 1 Y"
+        },
+        "guards.offset.2.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Native guard formation 2 X"
+        },
+        "guards.offset.2.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Native guard formation 2 Y"
+        },
+        "guards.offset.3.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Native guard formation 3 X"
+        },
+        "guards.offset.3.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Native guard formation 3 Y"
+        },
+        "guards.offset.4.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Native guard formation 4 X"
+        },
+        "guards.offset.4.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Native guard formation 4 Y"
+        },
+        "guards.offset.5.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Native guard formation 5 X"
+        },
+        "guards.offset.5.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Native guard formation 5 Y"
+        },
+        "guards.offset.6.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Native guard formation 6 X"
+        },
+        "guards.offset.6.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Native guard formation 6 Y"
+        },
+        "guards.offset.7.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Native guard formation 7 X"
+        },
+        "guards.offset.7.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Native guard formation 7 Y"
+        },
+        "guards.offset.8.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Native guard formation 8 X"
+        },
+        "guards.offset.8.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Native guard formation 8 Y"
+        },
+        "guards.offset.9.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Native guard formation 9 X"
+        },
+        "guards.offset.9.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Native guard formation 9 Y"
+        },
+        "guards.offset.10.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Native guard formation 10 X"
+        },
+        "guards.offset.10.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Native guard formation 10 Y"
+        },
+        "guards.offset.11.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Native guard formation 11 X"
+        },
+        "guards.offset.11.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Native guard formation 11 Y"
+        },
+        "guards.offset.12.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Native guard formation 12 X"
+        },
+        "guards.offset.12.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Native guard formation 12 Y"
+        },
+        "guards.offset.13.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Native guard formation 13 X"
+        },
+        "guards.offset.13.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Native guard formation 13 Y"
+        },
+        "guards.offset.14.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Native guard formation 14 X"
+        },
+        "guards.offset.14.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Native guard formation 14 Y"
+        },
+        "guards.offset.15.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Native guard formation 15 X"
+        },
+        "guards.offset.15.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "description": "Native guard formation 15 Y"
+        },
+        "arena.field.1.0.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "X"
+        },
+        "arena.field.1.0.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "Y"
+        },
+        "arena.field.1.0.closed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Closed"
+        },
+        "arena.field.1.0.open": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 246,
+          "description": "Open"
+        },
+        "arena.field.1.0.mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Mask"
+        },
+        "arena.field.1.1.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "X"
+        },
+        "arena.field.1.1.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "Y"
+        },
+        "arena.field.1.1.closed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Closed"
+        },
+        "arena.field.1.1.open": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 246,
+          "description": "Open"
+        },
+        "arena.field.1.1.mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Mask"
+        },
+        "arena.field.1.2.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "X"
+        },
+        "arena.field.1.2.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "Y"
+        },
+        "arena.field.1.2.closed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Closed"
+        },
+        "arena.field.1.2.open": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 246,
+          "description": "Open"
+        },
+        "arena.field.1.2.mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Mask"
+        },
+        "arena.field.1.3.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "X"
+        },
+        "arena.field.1.3.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "Y"
+        },
+        "arena.field.1.3.closed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Closed"
+        },
+        "arena.field.1.3.open": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 246,
+          "description": "Open"
+        },
+        "arena.field.1.3.mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Mask"
+        },
+        "arena.field.1.4.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "X"
+        },
+        "arena.field.1.4.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "Y"
+        },
+        "arena.field.1.4.closed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Closed"
+        },
+        "arena.field.1.4.open": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 246,
+          "description": "Open"
+        },
+        "arena.field.1.4.mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Mask"
+        },
+        "arena.field.1.5.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "X"
+        },
+        "arena.field.1.5.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "Y"
+        },
+        "arena.field.1.5.closed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Closed"
+        },
+        "arena.field.1.5.open": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 246,
+          "description": "Open"
+        },
+        "arena.field.1.5.mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Mask"
+        },
+        "arena.field.1.6.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "X"
+        },
+        "arena.field.1.6.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "Y"
+        },
+        "arena.field.1.6.closed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Closed"
+        },
+        "arena.field.1.6.open": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 246,
+          "description": "Open"
+        },
+        "arena.field.1.6.mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Mask"
+        },
+        "arena.field.2.0.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "X"
+        },
+        "arena.field.2.0.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "Y"
+        },
+        "arena.field.2.0.closed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Closed"
+        },
+        "arena.field.2.0.open": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 246,
+          "description": "Open"
+        },
+        "arena.field.2.0.mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Mask"
+        },
+        "arena.field.2.1.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "X"
+        },
+        "arena.field.2.1.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "Y"
+        },
+        "arena.field.2.1.closed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Closed"
+        },
+        "arena.field.2.1.open": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 246,
+          "description": "Open"
+        },
+        "arena.field.2.1.mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Mask"
+        },
+        "arena.field.2.2.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "X"
+        },
+        "arena.field.2.2.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "Y"
+        },
+        "arena.field.2.2.closed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Closed"
+        },
+        "arena.field.2.2.open": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 246,
+          "description": "Open"
+        },
+        "arena.field.2.2.mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Mask"
+        },
+        "arena.field.2.3.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "X"
+        },
+        "arena.field.2.3.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "Y"
+        },
+        "arena.field.2.3.closed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Closed"
+        },
+        "arena.field.2.3.open": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 246,
+          "description": "Open"
+        },
+        "arena.field.2.3.mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Mask"
+        },
+        "arena.field.2.4.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "X"
+        },
+        "arena.field.2.4.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "Y"
+        },
+        "arena.field.2.4.closed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Closed"
+        },
+        "arena.field.2.4.open": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 246,
+          "description": "Open"
+        },
+        "arena.field.2.4.mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Mask"
+        },
+        "arena.field.2.5.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "X"
+        },
+        "arena.field.2.5.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "Y"
+        },
+        "arena.field.2.5.closed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Closed"
+        },
+        "arena.field.2.5.open": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 246,
+          "description": "Open"
+        },
+        "arena.field.2.5.mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Mask"
+        },
+        "arena.field.2.6.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "X"
+        },
+        "arena.field.2.6.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "Y"
+        },
+        "arena.field.2.6.closed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Closed"
+        },
+        "arena.field.2.6.open": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 246,
+          "description": "Open"
+        },
+        "arena.field.2.6.mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Mask"
+        },
+        "arena.field.2.7.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "X"
+        },
+        "arena.field.2.7.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "Y"
+        },
+        "arena.field.2.7.closed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Closed"
+        },
+        "arena.field.2.7.open": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 246,
+          "description": "Open"
+        },
+        "arena.field.2.7.mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Mask"
+        },
+        "arena.field.2.8.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "X"
+        },
+        "arena.field.2.8.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "Y"
+        },
+        "arena.field.2.8.closed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Closed"
+        },
+        "arena.field.2.8.open": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 246,
+          "description": "Open"
+        },
+        "arena.field.2.8.mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Mask"
+        },
+        "arena.field.2.9.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "X"
+        },
+        "arena.field.2.9.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "Y"
+        },
+        "arena.field.2.9.closed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Closed"
+        },
+        "arena.field.2.9.open": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 246,
+          "description": "Open"
+        },
+        "arena.field.2.9.mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Mask"
+        },
+        "arena.field.2.10.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "X"
+        },
+        "arena.field.2.10.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "Y"
+        },
+        "arena.field.2.10.closed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Closed"
+        },
+        "arena.field.2.10.open": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 246,
+          "description": "Open"
+        },
+        "arena.field.2.10.mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Mask"
+        },
+        "arena.field.2.11.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "X"
+        },
+        "arena.field.2.11.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "Y"
+        },
+        "arena.field.2.11.closed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Closed"
+        },
+        "arena.field.2.11.open": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 246,
+          "description": "Open"
+        },
+        "arena.field.2.11.mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Mask"
+        },
+        "arena.field.3.0.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "X"
+        },
+        "arena.field.3.0.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "Y"
+        },
+        "arena.field.3.0.closed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Closed"
+        },
+        "arena.field.3.0.open": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 246,
+          "description": "Open"
+        },
+        "arena.field.3.0.mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Mask"
+        },
+        "arena.field.3.1.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "X"
+        },
+        "arena.field.3.1.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "Y"
+        },
+        "arena.field.3.1.closed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Closed"
+        },
+        "arena.field.3.1.open": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 246,
+          "description": "Open"
+        },
+        "arena.field.3.1.mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Mask"
+        },
+        "arena.field.3.2.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "X"
+        },
+        "arena.field.3.2.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "Y"
+        },
+        "arena.field.3.2.closed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Closed"
+        },
+        "arena.field.3.2.open": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 246,
+          "description": "Open"
+        },
+        "arena.field.3.2.mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Mask"
+        },
+        "arena.field.3.3.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "X"
+        },
+        "arena.field.3.3.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "Y"
+        },
+        "arena.field.3.3.closed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Closed"
+        },
+        "arena.field.3.3.open": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 246,
+          "description": "Open"
+        },
+        "arena.field.3.3.mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Mask"
+        },
+        "arena.field.3.4.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "X"
+        },
+        "arena.field.3.4.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "Y"
+        },
+        "arena.field.3.4.closed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Closed"
+        },
+        "arena.field.3.4.open": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 246,
+          "description": "Open"
+        },
+        "arena.field.3.4.mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Mask"
+        },
+        "arena.field.3.5.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "X"
+        },
+        "arena.field.3.5.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "Y"
+        },
+        "arena.field.3.5.closed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Closed"
+        },
+        "arena.field.3.5.open": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 246,
+          "description": "Open"
+        },
+        "arena.field.3.5.mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Mask"
+        },
+        "arena.field.3.6.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "X"
+        },
+        "arena.field.3.6.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "Y"
+        },
+        "arena.field.3.6.closed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Closed"
+        },
+        "arena.field.3.6.open": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 246,
+          "description": "Open"
+        },
+        "arena.field.3.6.mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Mask"
+        },
+        "arena.field.3.7.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "X"
+        },
+        "arena.field.3.7.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "Y"
+        },
+        "arena.field.3.7.closed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Closed"
+        },
+        "arena.field.3.7.open": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 246,
+          "description": "Open"
+        },
+        "arena.field.3.7.mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Mask"
+        },
+        "arena.field.3.8.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "X"
+        },
+        "arena.field.3.8.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63,
+          "description": "Y"
+        },
+        "arena.field.3.8.closed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Closed"
+        },
+        "arena.field.3.8.open": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 246,
+          "description": "Open"
+        },
+        "arena.field.3.8.mask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Mask"
+        },
+        "cache.access_flag": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 99,
+          "description": "Access flag"
+        },
+        "cache.start_x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 125,
+          "description": "Start x"
+        },
+        "cache.start_y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127,
+          "description": "Start y"
+        },
+        "cache.room_x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 61,
+          "description": "Room x"
+        },
+        "cache.room_y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 47,
+          "description": "Room y"
+        },
+        "cache.room_return_x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 125,
+          "description": "Room return x"
+        },
+        "cache.room_return_y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127,
+          "description": "Room return y"
+        },
+        "cache.secret_x_min": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 125,
+          "description": "Secret x min"
+        },
+        "cache.secret_x_max": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 125,
+          "description": "Secret x max"
+        },
+        "cache.secret_y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127,
+          "description": "Secret y"
+        },
+        "cache.hall_x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 61,
+          "description": "Hall x"
+        },
+        "cache.hall_y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 58,
+          "description": "Hall y"
+        },
+        "cache.supply_x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 126,
+          "description": "Supply x"
+        },
+        "cache.supply_y_min": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 126,
+          "description": "Supply y min"
+        },
+        "cache.supply_y_max": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 126,
+          "description": "Supply y max"
+        },
+        "cache.find_x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 126,
+          "description": "Find x"
+        },
+        "cache.find_y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 126,
+          "description": "Find y"
+        },
+        "cache.room_door_x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 126,
+          "description": "Room door x"
+        },
+        "cache.room_door_y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 126,
+          "description": "Room door y"
+        },
+        "cache.ending_x1": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 126,
+          "description": "Ending x1"
+        },
+        "cache.ending_y1": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 126,
+          "description": "Ending y1"
+        },
+        "cache.ending_x2": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 126,
+          "description": "Ending x2"
+        },
+        "cache.ending_y2": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 126,
+          "description": "Ending y2"
+        },
+        "cache.require_supply": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Require supply"
+        },
+        "cache.require_password": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Require password"
+        },
+        "cache.require_find": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Require find"
+        },
+        "cache.quit_at_end": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Quit at end"
+        },
+        "cache.terminal.0.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 125,
+          "description": "Terminal 1 x"
+        },
+        "cache.terminal.0.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127,
+          "description": "Terminal 1 y"
+        },
+        "cache.terminal.0.color": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Terminal 1 color"
+        },
+        "cache.terminal.1.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 125,
+          "description": "Terminal 2 x"
+        },
+        "cache.terminal.1.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127,
+          "description": "Terminal 2 y"
+        },
+        "cache.terminal.1.color": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Terminal 2 color"
+        },
+        "cache.terminal.2.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 125,
+          "description": "Terminal 3 x"
+        },
+        "cache.terminal.2.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127,
+          "description": "Terminal 3 y"
+        },
+        "cache.terminal.2.color": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Terminal 3 color"
+        },
+        "cache.terminal.3.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 125,
+          "description": "Terminal 4 x"
+        },
+        "cache.terminal.3.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127,
+          "description": "Terminal 4 y"
+        },
+        "cache.terminal.3.color": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Terminal 4 color"
+        },
+        "cache.terminal.4.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 125,
+          "description": "Terminal 5 x"
+        },
+        "cache.terminal.4.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127,
+          "description": "Terminal 5 y"
+        },
+        "cache.terminal.4.color": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Terminal 5 color"
+        },
+        "cache.terminal.5.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 125,
+          "description": "Terminal 6 x"
+        },
+        "cache.terminal.5.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127,
+          "description": "Terminal 6 y"
+        },
+        "cache.terminal.5.color": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Terminal 6 color"
+        },
+        "cache.terminal.6.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 125,
+          "description": "Terminal 7 x"
+        },
+        "cache.terminal.6.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127,
+          "description": "Terminal 7 y"
+        },
+        "cache.terminal.6.color": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Terminal 7 color"
+        },
+        "cache.terminal.7.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 125,
+          "description": "Terminal 8 x"
+        },
+        "cache.terminal.7.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127,
+          "description": "Terminal 8 y"
+        },
+        "cache.terminal.7.color": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Terminal 8 color"
+        },
+        "cache.terminal.8.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 125,
+          "description": "Terminal 9 x"
+        },
+        "cache.terminal.8.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127,
+          "description": "Terminal 9 y"
+        },
+        "cache.terminal.8.color": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Terminal 9 color"
+        },
+        "cache.terminal.9.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 125,
+          "description": "Terminal 10 x"
+        },
+        "cache.terminal.9.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127,
+          "description": "Terminal 10 y"
+        },
+        "cache.terminal.9.color": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Terminal 10 color"
+        },
+        "cache.terminal.10.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 125,
+          "description": "Terminal 11 x"
+        },
+        "cache.terminal.10.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127,
+          "description": "Terminal 11 y"
+        },
+        "cache.terminal.10.color": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Terminal 11 color"
+        },
+        "cache.terminal.11.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 125,
+          "description": "Terminal 12 x"
+        },
+        "cache.terminal.11.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127,
+          "description": "Terminal 12 y"
+        },
+        "cache.terminal.11.color": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Terminal 12 color"
+        },
+        "cache.terminal.12.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 125,
+          "description": "Terminal 13 x"
+        },
+        "cache.terminal.12.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127,
+          "description": "Terminal 13 y"
+        },
+        "cache.terminal.12.color": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Terminal 13 color"
+        },
+        "cache.terminal.13.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 125,
+          "description": "Terminal 14 x"
+        },
+        "cache.terminal.13.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127,
+          "description": "Terminal 14 y"
+        },
+        "cache.terminal.13.color": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Terminal 14 color"
+        },
+        "cache.terminal.14.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 125,
+          "description": "Terminal 15 x"
+        },
+        "cache.terminal.14.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127,
+          "description": "Terminal 15 y"
+        },
+        "cache.terminal.14.color": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Terminal 15 color"
+        },
+        "cache.terminal.15.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 125,
+          "description": "Terminal 16 x"
+        },
+        "cache.terminal.15.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127,
+          "description": "Terminal 16 y"
+        },
+        "cache.terminal.15.color": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Terminal 16 color"
+        },
+        "cache.terminal.16.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 125,
+          "description": "Terminal 17 x"
+        },
+        "cache.terminal.16.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127,
+          "description": "Terminal 17 y"
+        },
+        "cache.terminal.16.color": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Terminal 17 color"
+        },
+        "cache.terminal.17.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 125,
+          "description": "Terminal 18 x"
+        },
+        "cache.terminal.17.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127,
+          "description": "Terminal 18 y"
+        },
+        "cache.terminal.17.color": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Terminal 18 color"
+        },
+        "cache.terminal.18.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 125,
+          "description": "Terminal 19 x"
+        },
+        "cache.terminal.18.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127,
+          "description": "Terminal 19 y"
+        },
+        "cache.terminal.18.color": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Terminal 19 color"
+        },
+        "cache.terminal.19.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 125,
+          "description": "Terminal 20 x"
+        },
+        "cache.terminal.19.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127,
+          "description": "Terminal 20 y"
+        },
+        "cache.terminal.19.color": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Terminal 20 color"
+        },
+        "cache.terminal.20.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 125,
+          "description": "Terminal 21 x"
+        },
+        "cache.terminal.20.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127,
+          "description": "Terminal 21 y"
+        },
+        "cache.terminal.20.color": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Terminal 21 color"
+        },
+        "cache.terminal.21.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 125,
+          "description": "Terminal 22 x"
+        },
+        "cache.terminal.21.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127,
+          "description": "Terminal 22 y"
+        },
+        "cache.terminal.21.color": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Terminal 22 color"
+        },
+        "cache.terminal.22.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 125,
+          "description": "Terminal 23 x"
+        },
+        "cache.terminal.22.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127,
+          "description": "Terminal 23 y"
+        },
+        "cache.terminal.22.color": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Terminal 23 color"
+        },
+        "cache.terminal.23.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 125,
+          "description": "Terminal 24 x"
+        },
+        "cache.terminal.23.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127,
+          "description": "Terminal 24 y"
+        },
+        "cache.terminal.23.color": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Terminal 24 color"
+        },
+        "cache.terminal.24.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 125,
+          "description": "Terminal 25 x"
+        },
+        "cache.terminal.24.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127,
+          "description": "Terminal 25 y"
+        },
+        "cache.terminal.24.color": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Terminal 25 color"
+        },
+        "cache.terminal.25.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 125,
+          "description": "Terminal 26 x"
+        },
+        "cache.terminal.25.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127,
+          "description": "Terminal 26 y"
+        },
+        "cache.terminal.25.color": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Terminal 26 color"
+        },
+        "cache.terminal.26.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 125,
+          "description": "Terminal 27 x"
+        },
+        "cache.terminal.26.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127,
+          "description": "Terminal 27 y"
+        },
+        "cache.terminal.26.color": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Terminal 27 color"
+        },
+        "cache.terminal.27.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 125,
+          "description": "Terminal 28 x"
+        },
+        "cache.terminal.27.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127,
+          "description": "Terminal 28 y"
+        },
+        "cache.terminal.27.color": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Terminal 28 color"
+        },
+        "cache.terminal.28.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 125,
+          "description": "Terminal 29 x"
+        },
+        "cache.terminal.28.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127,
+          "description": "Terminal 29 y"
+        },
+        "cache.terminal.28.color": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Terminal 29 color"
+        },
+        "cache.terminal.29.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 125,
+          "description": "Terminal 30 x"
+        },
+        "cache.terminal.29.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127,
+          "description": "Terminal 30 y"
+        },
+        "cache.terminal.29.color": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Terminal 30 color"
+        },
+        "cache.terminal.30.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 125,
+          "description": "Terminal 31 x"
+        },
+        "cache.terminal.30.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127,
+          "description": "Terminal 31 y"
+        },
+        "cache.terminal.30.color": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Terminal 31 color"
+        },
+        "cache.terminal.31.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 125,
+          "description": "Terminal 32 x"
+        },
+        "cache.terminal.31.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127,
+          "description": "Terminal 32 y"
+        },
+        "cache.terminal.31.color": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Terminal 32 color"
+        },
+        "cache.terminal.32.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 125,
+          "description": "Terminal 33 x"
+        },
+        "cache.terminal.32.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127,
+          "description": "Terminal 33 y"
+        },
+        "cache.terminal.32.color": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Terminal 33 color"
+        },
+        "cache.door.0.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 120,
+          "description": "Door 1 x"
+        },
+        "cache.door.0.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 126,
+          "description": "Door 1 y"
+        },
+        "cache.door.0.red": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 33,
+          "description": "Door 1 red"
+        },
+        "cache.door.0.blue": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 33,
+          "description": "Door 1 blue"
+        },
+        "cache.door.0.yellow": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 33,
+          "description": "Door 1 yellow"
+        },
+        "cache.door.1.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 120,
+          "description": "Door 2 x"
+        },
+        "cache.door.1.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 126,
+          "description": "Door 2 y"
+        },
+        "cache.door.1.red": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 33,
+          "description": "Door 2 red"
+        },
+        "cache.door.1.blue": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 33,
+          "description": "Door 2 blue"
+        },
+        "cache.door.1.yellow": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 33,
+          "description": "Door 2 yellow"
+        },
+        "cache.door.2.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 120,
+          "description": "Door 3 x"
+        },
+        "cache.door.2.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 126,
+          "description": "Door 3 y"
+        },
+        "cache.door.2.red": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 33,
+          "description": "Door 3 red"
+        },
+        "cache.door.2.blue": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 33,
+          "description": "Door 3 blue"
+        },
+        "cache.door.2.yellow": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 33,
+          "description": "Door 3 yellow"
+        },
+        "cache.door.3.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 120,
+          "description": "Door 4 x"
+        },
+        "cache.door.3.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 126,
+          "description": "Door 4 y"
+        },
+        "cache.door.3.red": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 33,
+          "description": "Door 4 red"
+        },
+        "cache.door.3.blue": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 33,
+          "description": "Door 4 blue"
+        },
+        "cache.door.3.yellow": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 33,
+          "description": "Door 4 yellow"
+        },
+        "cache.door.4.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 120,
+          "description": "Door 5 x"
+        },
+        "cache.door.4.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 126,
+          "description": "Door 5 y"
+        },
+        "cache.door.4.red": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 33,
+          "description": "Door 5 red"
+        },
+        "cache.door.4.blue": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 33,
+          "description": "Door 5 blue"
+        },
+        "cache.door.4.yellow": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 33,
+          "description": "Door 5 yellow"
+        },
+        "cache.door.5.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 120,
+          "description": "Door 6 x"
+        },
+        "cache.door.5.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 126,
+          "description": "Door 6 y"
+        },
+        "cache.door.5.red": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 33,
+          "description": "Door 6 red"
+        },
+        "cache.door.5.blue": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 33,
+          "description": "Door 6 blue"
+        },
+        "cache.door.5.yellow": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 33,
+          "description": "Door 6 yellow"
+        },
+        "cache.door.6.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 120,
+          "description": "Door 7 x"
+        },
+        "cache.door.6.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 126,
+          "description": "Door 7 y"
+        },
+        "cache.door.6.red": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 33,
+          "description": "Door 7 red"
+        },
+        "cache.door.6.blue": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 33,
+          "description": "Door 7 blue"
+        },
+        "cache.door.6.yellow": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 33,
+          "description": "Door 7 yellow"
+        },
+        "cache.door.7.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 120,
+          "description": "Door 8 x"
+        },
+        "cache.door.7.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 126,
+          "description": "Door 8 y"
+        },
+        "cache.door.7.red": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 33,
+          "description": "Door 8 red"
+        },
+        "cache.door.7.blue": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 33,
+          "description": "Door 8 blue"
+        },
+        "cache.door.7.yellow": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 33,
+          "description": "Door 8 yellow"
+        },
+        "cache.door.8.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 120,
+          "description": "Door 9 x"
+        },
+        "cache.door.8.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 126,
+          "description": "Door 9 y"
+        },
+        "cache.door.8.red": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 33,
+          "description": "Door 9 red"
+        },
+        "cache.door.8.blue": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 33,
+          "description": "Door 9 blue"
+        },
+        "cache.door.8.yellow": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 33,
+          "description": "Door 9 yellow"
+        },
+        "cache.door.9.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 120,
+          "description": "Door 10 x"
+        },
+        "cache.door.9.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 126,
+          "description": "Door 10 y"
+        },
+        "cache.door.9.red": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 33,
+          "description": "Door 10 red"
+        },
+        "cache.door.9.blue": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 33,
+          "description": "Door 10 blue"
+        },
+        "cache.door.9.yellow": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 33,
+          "description": "Door 10 yellow"
+        },
+        "cache.door.10.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 120,
+          "description": "Door 11 x"
+        },
+        "cache.door.10.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 126,
+          "description": "Door 11 y"
+        },
+        "cache.door.10.red": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 33,
+          "description": "Door 11 red"
+        },
+        "cache.door.10.blue": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 33,
+          "description": "Door 11 blue"
+        },
+        "cache.door.10.yellow": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 33,
+          "description": "Door 11 yellow"
+        },
+        "cache.door.11.x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 120,
+          "description": "Door 12 x"
+        },
+        "cache.door.11.y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 126,
+          "description": "Door 12 y"
+        },
+        "cache.door.11.red": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 33,
+          "description": "Door 12 red"
+        },
+        "cache.door.11.blue": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 33,
+          "description": "Door 12 blue"
+        },
+        "cache.door.11.yellow": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 33,
+          "description": "Door 12 yellow"
+        },
+        "cache.password.0": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 767,
+          "description": "Password marked cell 1 (native map order)"
+        },
+        "cache.password.1": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 767,
+          "description": "Password marked cell 2 (native map order)"
+        },
+        "cache.password.2": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 767,
+          "description": "Password marked cell 3 (native map order)"
+        },
+        "cache.password.3": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 767,
+          "description": "Password marked cell 4 (native map order)"
+        },
+        "cache.password.4": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 767,
+          "description": "Password marked cell 5 (native map order)"
+        },
+        "cache.password.5": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 767,
+          "description": "Password marked cell 6 (native map order)"
+        },
+        "cache.password.6": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 767,
+          "description": "Password marked cell 7 (native map order)"
+        },
+        "cache.secret.0": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Secret passage tile 0"
+        },
+        "cache.secret.1": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Secret passage tile 1"
+        },
+        "cache.secret.2": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Secret passage tile 2"
+        },
+        "cache.secret.3": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Secret passage tile 3"
+        },
+        "cache.secret.4": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Secret passage tile 4"
+        },
+        "cache.secret.5": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Secret passage tile 5"
+        },
+        "cache.secret.6": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Secret passage tile 6"
+        },
+        "cache.secret.7": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Secret passage tile 7"
+        },
+        "cache.secret.8": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Secret passage tile 8"
+        },
+        "cache.secret.9": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Secret passage tile 9"
+        },
+        "cache.secret.10": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Secret passage tile 10"
+        },
+        "cache.secret.11": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Secret passage tile 11"
+        },
+        "cache.secret.12": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Secret passage tile 12"
+        },
+        "cache.secret.13": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Secret passage tile 13"
+        },
+        "cache.secret.14": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Secret passage tile 14"
+        },
+        "cache.secret.15": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Secret passage tile 15"
+        },
+        "cache.secret.16": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Secret passage tile 16"
+        },
+        "cache.secret.17": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Secret passage tile 17"
+        },
+        "cache.door_tile.0": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Door animation tile 0"
+        },
+        "cache.door_tile.1": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Door animation tile 1"
+        },
+        "cache.door_tile.2": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Door animation tile 2"
+        },
+        "cache.door_tile.3": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Door animation tile 3"
+        },
+        "cache.door_tile.4": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Door animation tile 4"
+        },
+        "cache.door_tile.5": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Door animation tile 5"
+        },
+        "cache.door_tile.6": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Door animation tile 6"
+        },
+        "cache.door_tile.7": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Door animation tile 7"
+        },
+        "cache.door_tile.8": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Door animation tile 8"
+        },
+        "cache.door_tile.9": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Door animation tile 9"
+        },
+        "cache.door_tile.10": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Door animation tile 10"
+        },
+        "cache.door_tile.11": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 249,
+          "description": "Door animation tile 11"
+        }
+      }
+    },
+    "units": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "training.2.enemy.0": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Training 2: shell enemy 1; empty retains the native template"
+        },
+        "training.2.enemy.1": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Training 2: shell enemy 2; empty retains the native template"
+        },
+        "training.2.enemy.2": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Training 2: shell enemy 3; empty retains the native template"
+        },
+        "training.2.enemy.3": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Training 2: shell enemy 4; empty retains the native template"
+        },
+        "training.2.enemy.4": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Training 2: shell enemy 5; empty retains the native template"
+        },
+        "training.2.enemy.5": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Training 2: shell enemy 6; empty retains the native template"
+        },
+        "training.3.enemy.0": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Training 3: infantry enemy 1; empty retains the native template"
+        },
+        "training.3.enemy.1": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Training 3: infantry enemy 2; empty retains the native template"
+        },
+        "training.3.enemy.2": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Training 3: infantry enemy 3; empty retains the native template"
+        },
+        "training.3.enemy.3": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Training 3: infantry enemy 4; empty retains the native template"
+        },
+        "training.3.enemy.4": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Training 3: infantry enemy 5; empty retains the native template"
+        },
+        "training.3.enemy.5": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Training 3: infantry enemy 6; empty retains the native template"
+        },
+        "training.4.enemy.0": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Training 4: duel enemy 1; empty retains the native template"
+        },
+        "training.4.enemy.1": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Training 4: duel enemy 2; empty retains the native template"
+        },
+        "training.4.enemy.2": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Training 4: duel enemy 3; empty retains the native template"
+        },
+        "training.4.enemy.3": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Training 4: duel enemy 4; empty retains the native template"
+        },
+        "training.4.enemy.4": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Training 4: duel enemy 5; empty retains the native template"
+        },
+        "training.4.enemy.5": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Training 4: duel enemy 6; empty retains the native template"
+        },
+        "training.5.enemy.0": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Training 5: pair enemy 1; empty retains the native template"
+        },
+        "training.5.enemy.1": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Training 5: pair enemy 2; empty retains the native template"
+        },
+        "training.5.enemy.2": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Training 5: pair enemy 3; empty retains the native template"
+        },
+        "training.5.enemy.3": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Training 5: pair enemy 4; empty retains the native template"
+        },
+        "training.5.enemy.4": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Training 5: pair enemy 5; empty retains the native template"
+        },
+        "training.5.enemy.5": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Training 5: pair enemy 6; empty retains the native template"
+        },
+        "training.6.enemy.0": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Training 6: patrol enemy 1; empty retains the native template"
+        },
+        "training.6.enemy.1": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Training 6: patrol enemy 2; empty retains the native template"
+        },
+        "training.6.enemy.2": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Training 6: patrol enemy 3; empty retains the native template"
+        },
+        "training.6.enemy.3": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Training 6: patrol enemy 4; empty retains the native template"
+        },
+        "training.6.enemy.4": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Training 6: patrol enemy 5; empty retains the native template"
+        },
+        "training.6.enemy.5": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Training 6: patrol enemy 6; empty retains the native template"
+        },
+        "training.7.enemy.0": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Training 7: invasion enemy 1; empty retains the native template"
+        },
+        "training.7.enemy.1": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Training 7: invasion enemy 2; empty retains the native template"
+        },
+        "training.7.enemy.2": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Training 7: invasion enemy 3; empty retains the native template"
+        },
+        "training.7.enemy.3": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Training 7: invasion enemy 4; empty retains the native template"
+        },
+        "training.7.enemy.4": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Training 7: invasion enemy 5; empty retains the native template"
+        },
+        "training.7.enemy.5": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Training 7: invasion enemy 6; empty retains the native template"
+        },
+        "training.loan.0": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Training loan selection 0; empty retains the native template"
+        },
+        "training.loan.1": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Training loan selection 1; empty retains the native template"
+        },
+        "training.loan.2": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Training loan selection 2; empty retains the native template"
+        },
+        "invasion.enemy.0": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Invasion attacker 1; empty retains the native template"
+        },
+        "invasion.enemy.1": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Invasion attacker 2; empty retains the native template"
+        },
+        "invasion.enemy.2": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Invasion attacker 3; empty retains the native template"
+        },
+        "invasion.enemy.3": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Invasion attacker 4; empty retains the native template"
+        },
+        "invasion.enemy.4": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Invasion attacker 5; empty retains the native template"
+        },
+        "invasion.enemy.5": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Invasion attacker 6; empty retains the native template"
+        },
+        "encounter.mech.0": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Random encounter mech 0; empty retains the native template"
+        },
+        "encounter.mech.1": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Random encounter mech 1; empty retains the native template"
+        },
+        "encounter.mech.2": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Random encounter mech 2; empty retains the native template"
+        },
+        "rex.mech": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Rex stored mech; empty retains the native template"
+        },
+        "prison.reward": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Prison stolen mech (empty uses service reward); empty retains the native template"
+        },
+        "arena.loan": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Arena rental mech; empty retains the native template"
+        },
+        "arena.opponent.0": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Arena opponent roll 0; empty retains the native template"
+        },
+        "arena.opponent.1": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Arena opponent roll 1; empty retains the native template"
+        },
+        "arena.opponent.2": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Arena opponent roll 2; empty retains the native template"
+        },
+        "arena.opponent.3": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Arena opponent roll 3; empty retains the native template"
+        },
+        "arena.opponent.4": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Arena opponent roll 4; empty retains the native template"
+        },
+        "arena.opponent.5": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Arena opponent roll 5; empty retains the native template"
+        },
+        "arena.opponent.6": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Arena opponent roll 6; empty retains the native template"
+        },
+        "arena.opponent.7": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Arena opponent roll 7; empty retains the native template"
+        },
+        "arena.opponent.8": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Arena opponent roll 8; empty retains the native template"
+        },
+        "arena.opponent.9": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Arena opponent roll 9; empty retains the native template"
+        },
+        "arena.opponent.10": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Arena opponent roll 10; empty retains the native template"
+        },
+        "arena.spectator": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Arena spectator; empty retains the native template"
+        },
+        "arena.guard.0": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Arena pursuit guard 1; empty retains the native template"
+        },
+        "arena.guard.1": {
+          "type": "string",
+          "maxLength": 63,
+          "description": "Arena pursuit guard 2; empty retains the native template"
+        }
+      }
+    }
+  }
+}

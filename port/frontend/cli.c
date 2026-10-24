@@ -298,11 +298,11 @@ void btp_print_state(const BtpState *s, const BtpResources *r)
         "\"animation\":{\"active\":%u,\"kind\":%u,\"step\":%u,\"cycle\":%u,\"hold\":%u,\"remaining\":%u,\"fraction\":%u}",
         s->quiz.phase,s->quiz.selected,s->quiz.round,s->quiz.point,s->quiz.failed,s->quiz.used,
         s->mission.phase,s->mission.corner,s->mission.warned,s->mission.elapsed,s->mission.idle,
-        s->mission.phase ? btp_mission_terrain(s,&r->map) : 0u,
+        s->mission.phase ? btp_mission_terrain_resources(s,&r->map,r) : 0u,
         s->mission.assignment,s->mission.rubble,s->mission.assignment && s->mission.corner && s->story_flags[2] != 0,
-        s->mission.assignment ? btp_rubble_x[s->mission.rubble] : 0u,
-        s->mission.assignment ? btp_rubble_y[s->mission.rubble] : 0u,
-        s->mission.assignment ? btp_mission_tile(s,&r->map,btp_rubble_x[s->mission.rubble],btp_rubble_y[s->mission.rubble]) : 0u,
+        s->mission.assignment ? btp_chi_mission(r,BTP_MIS_RECOVERY_0_X+2u*s->mission.rubble) : 0u,
+        s->mission.assignment ? btp_chi_mission(r,BTP_MIS_RECOVERY_0_Y+2u*s->mission.rubble) : 0u,
+        s->mission.assignment ? btp_mission_tile_resources(s,&r->map,r,(int)btp_chi_mission(r,BTP_MIS_RECOVERY_0_X+2u*s->mission.rubble),(int)btp_chi_mission(r,BTP_MIS_RECOVERY_0_Y+2u*s->mission.rubble)) : 0u,
         s->mech_skills[0],s->mech_skills[1],s->story_flags[47],s->recruitment,s->script.animation_kind,s->script.animation_flags,
         s->cutscene.active,s->cutscene.kind,s->cutscene.step,s->cutscene.cycle,s->cutscene.hold,s->cutscene.remaining,s->cutscene.refresh_fraction);
     const BtpCombatState *c=&s->combat;

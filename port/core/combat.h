@@ -36,4 +36,5 @@ void btp_combat_tick_reference(BtpState *state, const BtpResources *resources, B
 int btp_combat_valid(const BtpState *state);
 void btp_combat_encode(const BtpCombatState *combat, uint8_t bytes[BTP_COMBAT_SAVE_BYTES]);
 int btp_combat_decode(const uint8_t bytes[BTP_COMBAT_SAVE_BYTES], BtpCombatState *combat);
+int btp_combat_valid_resources(const BtpState *s,const BtpResources *r);
 #endif

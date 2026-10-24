@@ -16,4 +16,8 @@ void btp_campaign_destroy(BtpState *state,unsigned unit);
 void btp_campaign_eject(BtpState *state);
 void btp_aftermath_input(BtpState *state,const BtpResources *resources,BtpAction action);
 int btp_aftermath_valid(const BtpState *state);
+unsigned btp_aftermath_cash_resources(uint8_t rng[3],unsigned count,const BtpResources *r);
+int btp_salvage_eligible_resources(const uint8_t record[125],unsigned skill,const BtpResources *r);
+void btp_campaign_destroy_resources(BtpState *s,unsigned unit,const BtpResources *r);
+int btp_aftermath_valid_resources(const BtpState *s,const BtpResources *r);
 #endif

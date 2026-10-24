@@ -134,6 +134,63 @@
             "type": "object",
             "properties": {
               "op": {
+                "const": "missions.enable"
+              }
+            },
+            "required": [
+              "op"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "missions.update"
+              },
+              "parameter": {
+                "type": "string",
+                "maxLength": 95
+              },
+              "value": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 65535
+              }
+            },
+            "required": [
+              "op",
+              "parameter",
+              "value"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "missions.unit"
+              },
+              "role": {
+                "type": "string",
+                "maxLength": 95
+              },
+              "definition": {
+                "type": "string",
+                "maxLength": 63
+              }
+            },
+            "required": [
+              "op",
+              "role",
+              "definition"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
                 "const": "services.enable"
               }
             },

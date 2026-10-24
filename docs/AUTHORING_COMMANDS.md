@@ -37,6 +37,59 @@ Write scope: `manifest`, `chi.programs`.
 }
 ```
 
+## missions.enable
+
+Enable native mission and campaign editing; changes strict save identity.
+
+Write scope: `manifest`, `chi`.
+
+| Field | Structural constraint |
+| --- | --- |
+
+```json
+{
+  "op": "missions.enable"
+}
+```
+
+## missions.update
+
+Set a typed native mission parameter. The native catalogue supplies IDs, bounds and defaults.
+
+Write scope: `chi.mission_parameters/<parameter>`.
+
+| Field | Structural constraint |
+| --- | --- |
+| `parameter` * | `{"type":"string","maxLength":95}` |
+| `value` * | `{"type":"integer","minimum":0,"maximum":65535}` |
+
+```json
+{
+  "op": "missions.update",
+  "parameter": "training.4.enemy_count",
+  "value": 2
+}
+```
+
+## missions.unit
+
+Assign a project mech ID or native template to a mission role. Empty restores its native default.
+
+Write scope: `chi.mission_units/<role>`.
+
+| Field | Structural constraint |
+| --- | --- |
+| `role` * | `{"type":"string","maxLength":95}` |
+| `definition` * | `{"type":"string","maxLength":63}` |
+
+```json
+{
+  "op": "missions.unit",
+  "role": "training.4.enemy.0",
+  "definition": "native:jenner.0"
+}
+```
+
 ## services.enable
 
 Enable native service settings and bind unmodified price text/fee operands; changes save identity.

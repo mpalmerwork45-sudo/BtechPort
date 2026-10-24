@@ -7,7 +7,11 @@ from editor_session import FieldError,scope_of
 def target(document,problem):
     from authoring_contract import diagnostic
     path=problem.get('field_path') or diagnostic(Exception(problem['message']))['field_path']
+    if document.manifest.get('chi_missions') and 'chi-missions.json' in problem.get('message',''):
+        if path.startswith('$.parameters.'):return dict(collection='native_missions',parameter=path[len('$.parameters.'):])
+        if path.startswith('$.units.'):return dict(collection='native_missions',parameter='unit:'+path[len('$.units.'):])
     if document.manifest.get('chi_services') and path.startswith('$.parameters.'):
+
         return dict(collection='native_services',parameter=path[len('$.parameters.'):])
     if document.manifest.get('chi_services') and path.startswith('$.broker_stock'):
         return dict(collection='native_services',parameter=None)
@@ -48,6 +52,9 @@ def navigate(workspace,problem):
     destination=target(scope.document,problem)
     if not destination:return False
     owner=scope.owner;collection=destination['collection'];identity=destination.get('id')
+    if collection=='native_missions':
+        from chi_missions_editor import open_missions
+        open_missions(owner).show_location(destination.get('parameter'));return True
     if collection=='native_services':
         from chi_services_editor import open_services
         open_services(owner).show_location(destination.get('parameter'));return True

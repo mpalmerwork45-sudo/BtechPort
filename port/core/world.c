@@ -1,3 +1,4 @@
+#include "data/chi_missions.h"
 #include "core/world.h"
 #include "core/training.h"
 #include "core/animation.h"
@@ -166,7 +167,7 @@ unsigned btp_world_tile(const BtpResources *r,const BtpState *s,int x,int y)
         const BtpMap *m=local(r,(unsigned)id);
         if (id==11) m=&r->map; /* MAP11 retains MAP1's world origin. */
         int ox=(m->entrance_x[0]>>8)*64,oy=(m->entrance_y[0]>>12)*64;
-        unsigned tile=btp_mission_tile(s,local(r,(unsigned)id),x-ox,y-oy);
+        unsigned tile=btp_mission_tile_resources(s,local(r,(unsigned)id),r,x-ox,y-oy);
         return id==2 && s->yard.active==2 ? btp_yard_tile(s,tile,x-ox,y-oy) : tile;
     }
     if (r->world.native) {
@@ -279,7 +280,7 @@ void btp_world_clock(BtpState *s,const BtpResources *r,BtpAction action)
         if (s->story_flags[41]) --s->story_flags[41];
         /* Use the same pinned market content as the cadet clock. */
         if (s->story_flags[23]--==0) btp_economy_market_resources(s,r);
-        if (!(roll&s->story_flags[36]) && s->story_flags[4] && !s->story_flags[58]) (void)btp_campaign_random(s,r);
+        if (btp_chi_mission(r,BTP_MIS_ENCOUNTER_ENABLED) && !(roll&s->story_flags[36]) && s->story_flags[4] && !s->story_flags[58]) (void)btp_campaign_random(s,r);
         if (s->mode==BTP_EXPLORE) btp_npc_advance(s,local(r,s->map_id));
     }
 }

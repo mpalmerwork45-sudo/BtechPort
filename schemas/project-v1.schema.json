@@ -146,6 +146,7 @@
     "chi_presentation": {"const": "chi-presentation.json"},
     "chi_scripts": {"const": "chi-scripts.json"},
     "chi_services": {"const": "chi-services.json"},
+    "chi_missions": {"const": "chi-missions.json"},
     "resources": {
       "type": "array",
       "minItems": 79,
@@ -483,6 +484,7 @@
           "chi_presentation": false,
           "chi_scripts": false,
           "chi_services": false,
+          "chi_missions": false,
           "resources": false,
           "startup": {
             "not": {

@@ -71,6 +71,9 @@ def value_at(document,path):
         if document.manifest.get('chi_services'):
             from chi_services import data as service_data
             services=service_data(document);value['service_parameters']=services['parameters'];value['broker_stock']=services.get('broker_stock')
+        if document.manifest.get('chi_missions'):
+            from chi_missions import data as mission_data
+            missions=mission_data(document);value['mission_parameters']=missions['parameters'];value['mission_units']=missions.get('units',{})
     else:value=data(document) if parts[0]=='editor' else getattr(document,parts[0])
     if head=='adventure.entrances':
         value=[dict(door,map=scene['id']) for scene in (document.adventure or {}).get('maps',[]) for door in scene['entrances']]

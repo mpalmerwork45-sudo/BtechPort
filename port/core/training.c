@@ -5,6 +5,7 @@
 #include "core/combat.h"
 #include "core/world.h"
 #include "data/chi_scripts.h"
+#include "data/chi_missions.h"
 #include <string.h>
 
 /* Numeric original DS:28C4/28D8/28EC tables, not a reference implementation. */
@@ -31,15 +32,15 @@ static void next_question(BtpState *s)
     s->script.status = BTP_SCRIPT_ERROR; s->script.error = BTP_SCRIPT_BUDGET;
     s->mode = BTP_SCRIPT_FAULT;
 }
-int btp_quiz_tick(BtpState *s, BtpAction a)
+int btp_quiz_tick_resources(BtpState *s,const BtpResources *r, BtpAction a)
 {
     BtpQuizState *q = &s->quiz;
     if (q->phase == BTP_QUIZ_QUESTION) {
         if (a == BTP_UP) q->selected = (uint8_t)((q->selected+19u)%20u);
         if (a == BTP_DOWN) q->selected = (uint8_t)((q->selected+1u)%20u);
         if (a == BTP_ACCEPT) {
-            if (q->selected != btp_quiz_answer[q->point]) q->failed = 1;
-            if (++q->round == 3) {
+            if (q->selected != btp_chi_mission(r,BTP_MIS_QUIZ_POINT_0_ANSWER+q->point*3u)) q->failed = 1;
+            if (++q->round == btp_chi_mission(r,BTP_MIS_QUIZ_ROUNDS)) {
                 if (q->failed) { q->phase = BTP_QUIZ_FAILED; s->story_flags[20] = 255; }
                 else { uint8_t selected = q->selected; *q = (BtpQuizState){.selected=selected}; return 1; }
             } else next_question(s);
@@ -67,15 +68,16 @@ void btp_training_native(BtpState *s, const BtpResources *r)
         (void)btp_rng_next(s->npc.rng); /* Original O0 dispatcher, even forced. */
         s->mission = (BtpMissionState){.phase=BTP_MISSION_DRIVE,.walk=6,.direction=2,
             .assignment=s->story_flags[0]};
-        s->campaign.invasion=(uint8_t)(s->mission.assignment==7 ||
-            (s->mission.assignment==6 && (btp_rng_next(s->npc.rng)&1u)));
+        unsigned invasion=btp_chi_training(r,s->mission.assignment,BTP_TRAIN_INVASION);
+        /* The random invasion option retains exactly one native bit draw. */
+        s->campaign.invasion=(uint8_t)(invasion==2 || (invasion==1 && (btp_rng_next(s->npc.rng)&1u)));
         if (s->mission.assignment==1) {
             s->mission.rubble = (uint8_t)(btp_rng_next(s->npc.rng)&7u);
             unsigned rubble = s->mission.rubble;
-            s->mission.rubble_under = btp_map_tile(&r->map,btp_rubble_x[rubble],btp_rubble_y[rubble]);
+            s->mission.rubble_under = btp_map_tile(&r->map,(int)btp_chi_mission(r,BTP_MIS_RECOVERY_0_X+rubble*2u),(int)btp_chi_mission(r,BTP_MIS_RECOVERY_0_Y+rubble*2u));
             if (!s->story_flags[2]) s->mission.phase = BTP_MISSION_SNICKER;
         }
-        s->x_half = 64; s->y_half = 79; s->blocked = 0; s->mode = BTP_MISSION;
+        s->x_half = (uint16_t)btp_chi_training(r,s->mission.assignment,BTP_TRAIN_START_X); s->y_half = (uint16_t)btp_chi_training(r,s->mission.assignment,BTP_TRAIN_START_Y); s->blocked = 0; s->mode = BTP_MISSION;
         if (s->mission.assignment>=2) btp_combat_begin(s,r);
         if (!btp_cutscene_begin(s,r,0,2)) { s->mission = (BtpMissionState){0}; fault(s); }
         return;
@@ -107,28 +109,28 @@ void btp_training_native(BtpState *s, const BtpResources *r)
     }
     btp_script_native_return(&s->script,&r->training,s->story_flags);
 }
-uint8_t btp_mission_tile(const BtpState *s, const BtpMap *m, int x, int y)
+uint8_t btp_mission_tile_resources(const BtpState *s, const BtpMap *m,const BtpResources *r, int x, int y)
 {
     const BtpMissionState *mission = &s->mission;
     if (mission->phase && mission->phase != BTP_MISSION_RESULT) {
-        if (!mission->assignment && x == 61 && y == 61) return 0;
+        if (!mission->assignment && x == (int)btp_chi_mission(r,BTP_MIS_DRIVING_CLEAR_X) && y == (int)btp_chi_mission(r,BTP_MIS_DRIVING_CLEAR_Y)) return 0;
         if (mission->assignment == 1 && mission->rubble < 8 &&
-            x == btp_rubble_x[mission->rubble] && y == btp_rubble_y[mission->rubble])
-            return mission->corner && s->story_flags[2] ? mission->rubble_under : 80;
+            x == (int)btp_chi_mission(r,BTP_MIS_RECOVERY_0_X+mission->rubble*2u) && y == (int)btp_chi_mission(r,BTP_MIS_RECOVERY_0_Y+mission->rubble*2u))
+            return mission->corner && s->story_flags[2] ? mission->rubble_under : (uint8_t)btp_chi_mission(r,BTP_MIS_DRIVING_RUBBLE_TILE);
     }
     return btp_map_tile(m,x,y);
 }
-uint8_t btp_mission_terrain(const BtpState *s, const BtpMap *m)
+uint8_t btp_mission_terrain_resources(const BtpState *s, const BtpMap *m,const BtpResources *r)
 {
     /* Original mech slot 0 samples the feet at (ceil(x/2),floor(y/2)-1).
        DS:2E6 mask 1 becomes 4 on an odd half-row. Byte 32AE is a terrain
        obscuration flag here, not combat heat; the mission adds flag>>3. */
-    unsigned tile = btp_mission_tile(s,m,(int)((s->x_half+1u)/2u),(int)(s->y_half/2u)-1);
+    unsigned tile = btp_mission_tile_resources(s,m,r,(int)((s->x_half+1u)/2u),(int)(s->y_half/2u)-1);
     unsigned mask = (s->y_half & 1u) ? 4u : 1u;
     if (tile >= 48 || !(tile & mask)) return 0;
     return (uint8_t)(((tile & 15u) == 15 && ((tile & 48u) == 0 || (tile & 48u) == 32)) ? 16 : 8);
 }
-static void move(BtpState *s, const BtpMap *m, BtpAction a)
+static void move(BtpState *s, const BtpMap *m,const BtpResources *r, BtpAction a)
 {
     unsigned direction = btp_player_direction((unsigned)a), before = s->mission.direction;
     /* Primary eight mech programs at image 280F0. Cardinal direction starts
@@ -144,7 +146,7 @@ static void move(BtpState *s, const BtpMap *m, BtpAction a)
     int x = s->x_half + btp_action_dx(a), y = s->y_half + btp_action_dy(a);
     if (x < 0 || y < 2 || x >= 2*m->width-2 || y >= 2*m->height) { s->blocked = BTP_EDGE; return; }
     int tx = x/2, ty = (y-2)/2;
-    if (btp_mission_tile(s,m,tx,ty) >= s->gate || btp_mission_tile(s,m,tx+1,ty) >= s->gate) {
+    if (btp_mission_tile_resources(s,m,r,tx,ty) >= s->gate || btp_mission_tile_resources(s,m,r,tx+1,ty) >= s->gate) {
         s->blocked = BTP_WALL; return;
     }
     s->x_half = (uint16_t)x; s->y_half = (uint16_t)y; s->blocked = BTP_CLEAR;
@@ -154,11 +156,11 @@ int btp_mission_tick(BtpState *s, const BtpResources *r, BtpAction a)
     if (s->combat.phase) { btp_combat_tick(s,r,a);return 0; }
     BtpMissionState *m = &s->mission;
     if (s->campaign.invasion && m->corner) {
-        for (unsigned i=0;i<2;++i) if (s->mech_skills[i]<4)
+        for (unsigned i=0;i<2 && btp_chi_mission(r,BTP_MIS_INVASION_SKILL_AWARD);++i) if (s->mech_skills[i]<4)
             s->mech_skills[i]+=(uint8_t)(btp_rng_next(s->npc.rng)&1u);
         s->story_flags[4]=1;s->story_flags[5]=(uint8_t)!s->combat.lost;
-        s->campaign.owned=(uint8_t)!s->combat.lost;
-        s->campaign.mounted=s->campaign.owned;
+        s->campaign.owned=(uint8_t)(!s->combat.lost && btp_chi_mission(r,BTP_MIS_INVASION_RETAIN_LOAN));
+        s->story_flags[5]=s->campaign.owned;s->campaign.mounted=s->campaign.owned;
         s->campaign.mech_walk=s->mission.walk;s->campaign.mech_direction=s->mission.direction;
         s->campaign.mech_x=s->campaign.world_x;s->campaign.mech_y=s->campaign.world_y;
         if (s->campaign.owned) memcpy(s->campaign.mech,s->combat.unit[0].record,125);
@@ -171,20 +173,20 @@ int btp_mission_tick(BtpState *s, const BtpResources *r, BtpAction a)
         if (a == BTP_ACCEPT) m->phase = BTP_MISSION_DRIVE;
         return 0;
     }
-    if (s->x_half <= 60 && s->y_half >= 73 && s->y_half <= 79) {
+    if (s->x_half <= btp_chi_training(r,m->assignment,BTP_TRAIN_RETURN_X) && s->y_half >= btp_chi_training(r,m->assignment,BTP_TRAIN_RETURN_Y_MIN) && s->y_half <= btp_chi_training(r,m->assignment,BTP_TRAIN_RETURN_Y_MAX)) {
         if (m->corner) {
-            if (m->assignment>=2) s->story_flags[1]=(uint8_t)(s->combat.won && !s->combat.fled && !s->combat.lost);
+            if (m->assignment>=2) s->story_flags[1]=(uint8_t)((s->combat.won && btp_chi_training(r,m->assignment,BTP_TRAIN_PASS_ON_WIN)) || (s->combat.fled && btp_chi_training(r,m->assignment,BTP_TRAIN_PASS_ON_RETREAT)) || (s->combat.lost && btp_chi_training(r,m->assignment,BTP_TRAIN_PASS_ON_LOSS)));
             else if (m->assignment==1) {
                 s->story_flags[1] = (uint8_t)(s->story_flags[2] != 0);
-                if (s->mech_skills[1] < 3) ++s->mech_skills[1];
+                if (s->mech_skills[1] < btp_chi_mission(r,BTP_MIS_DRIVING_RECOVERY_RANK_CAP)) ++s->mech_skills[1];
             } else {
-                uint16_t adjusted = (uint16_t)(m->elapsed - (s->story_flags[2] ? 0u : 50u));
+                uint16_t adjusted = (uint16_t)(m->elapsed - (s->story_flags[2] ? 0u : btp_chi_mission(r,BTP_MIS_DRIVING_FIRST_LOAN_BONUS)));
                 int elapsed = adjusted < 32768 ? adjusted : (int)adjusted-65536;
-                s->story_flags[1] = (uint8_t)(elapsed < 215);
+                s->story_flags[1] = (uint8_t)(elapsed < (int)btp_chi_mission(r,BTP_MIS_DRIVING_TIME_LIMIT));
             }
             /* 07DC:0C9E grants independent 0/1 ranks after assignment 5,
                even on withdrawal/failure; mastered ranks consume no draw. */
-            if (m->assignment>=5) for (unsigned i=0;i<2;++i)
+            if (btp_chi_training(r,m->assignment,BTP_TRAIN_SKILL_AWARD)) for (unsigned i=0;i<2;++i)
                 if (s->mech_skills[i]<4) s->mech_skills[i]+=(uint8_t)(btp_rng_next(s->npc.rng)&1u);
             m->phase = BTP_MISSION_RESULT; s->mode = BTP_BUILDING; return 1;
         }
@@ -192,13 +194,13 @@ int btp_mission_tick(BtpState *s, const BtpResources *r, BtpAction a)
     }
     if (a == BTP_IDLE && m->idle) { --m->idle; return 0; }
     m->idle = 10;
-    if (btp_action_moves(a)) move(s,&r->map,a);
+    if (btp_action_moves(a)) move(s,&r->map,r,a);
     btp_world_animate_marks(s,(int)btp_citadel_origin(s,0)+s->x_half,(int)btp_citadel_origin(s,1)+s->y_half);
-    if (!m->assignment) m->elapsed = (uint16_t)(m->elapsed+1u+(unsigned)(btp_mission_terrain(s,&r->map)>>3));
-    if (m->assignment==1 && !m->corner && s->x_half/2u+1u >= btp_rubble_x[m->rubble] &&
-        s->x_half/2u <= btp_rubble_x[m->rubble] && s->y_half/2u == (unsigned)btp_rubble_y[m->rubble]+1u) {
+    if (!m->assignment) m->elapsed = (uint16_t)(m->elapsed+1u+(unsigned)(btp_mission_terrain_resources(s,&r->map,r)>>3));
+    if (m->assignment==1 && !m->corner && s->x_half/2u+1u >= btp_chi_mission(r,BTP_MIS_RECOVERY_0_X+m->rubble*2u) &&
+        s->x_half/2u <= btp_chi_mission(r,BTP_MIS_RECOVERY_0_X+m->rubble*2u) && s->y_half/2u == (unsigned)btp_chi_mission(r,BTP_MIS_RECOVERY_0_Y+m->rubble*2u)+1u) {
         m->corner = 1; m->phase = BTP_MISSION_PICKUP;
-    } else if (!m->assignment && !m->corner && s->x_half >= 120 && s->y_half >= 124) {
+    } else if (!m->assignment && !m->corner && s->x_half >= btp_chi_mission(r,BTP_MIS_DRIVING_CORNER_X) && s->y_half >= btp_chi_mission(r,BTP_MIS_DRIVING_CORNER_Y)) {
         m->corner = 1; m->phase = BTP_MISSION_CORNER;
     }
     return 0;
@@ -213,15 +215,15 @@ static int literal(const BtpDialogue *d, unsigned id, uint8_t *out, size_t capac
 int btp_training_text(const BtpState *s, const BtpResources *r, uint8_t *out, size_t capacity, size_t *length)
 {
     *length = 0; if (!capacity) return 0; out[0] = 0;
-    if (s->mode == BTP_QUIZ) return literal(&r->dialogue,s->quiz.phase == BTP_QUIZ_INTRO ? 55u :
-        s->quiz.phase == BTP_QUIZ_FAILED ? 57u : 56u,out,capacity,length);
+    if (s->mode == BTP_QUIZ) return literal(&r->dialogue,btp_chi_mission(r,s->quiz.phase == BTP_QUIZ_INTRO ? BTP_MIS_QUIZ_INTRO_MESSAGE :
+        s->quiz.phase == BTP_QUIZ_FAILED ? BTP_MIS_QUIZ_FAILED_MESSAGE : BTP_MIS_QUIZ_QUESTION_MESSAGE),out,capacity,length);
     if (s->mode == BTP_MISSION) {
-        if (s->mission.phase == BTP_MISSION_WARNING) return literal(&r->dialogue,78,out,capacity,length);
-        if (s->mission.phase == BTP_MISSION_CORNER) return literal(&r->dialogue,79,out,capacity,length);
-        if (s->mission.phase == BTP_MISSION_SNICKER) return literal(&r->dialogue,84,out,capacity,length);
+        if (s->mission.phase == BTP_MISSION_WARNING) return literal(&r->dialogue,btp_chi_mission(r,BTP_MIS_DRIVING_WARNING_MESSAGE),out,capacity,length);
+        if (s->mission.phase == BTP_MISSION_CORNER) return literal(&r->dialogue,btp_chi_mission(r,BTP_MIS_DRIVING_CORNER_MESSAGE),out,capacity,length);
+        if (s->mission.phase == BTP_MISSION_SNICKER) return literal(&r->dialogue,btp_chi_mission(r,BTP_MIS_DRIVING_SNICKER_MESSAGE),out,capacity,length);
         if (s->mission.phase == BTP_MISSION_PICKUP)
-            return literal(&r->dialogue,s->story_flags[2] ? 86u : 85u,out,capacity,length);
-        if (s->mission.phase == BTP_MISSION_RETURN) return literal(&r->dialogue,90,out,capacity,length);
+            return literal(&r->dialogue,btp_chi_mission(r,BTP_MIS_DRIVING_PICKUP_MESSAGE)+(s->story_flags[2] ? 1u : 0u),out,capacity,length);
+        if (s->mission.phase == BTP_MISSION_RETURN) return literal(&r->dialogue,btp_chi_training(r,s->mission.assignment,BTP_TRAIN_RETURN_MESSAGE),out,capacity,length);
         return 1;
     }
     const BtpScriptState *v = &s->script;
@@ -238,10 +240,10 @@ int btp_training_text(const BtpState *s, const BtpResources *r, uint8_t *out, si
     }
     return 1;
 }
-int btp_training_valid(const BtpState *s)
+int btp_training_valid_resources(const BtpState *s,const BtpResources *r)
 {
     const BtpQuizState *q = &s->quiz; const BtpMissionState *m = &s->mission;
-    if (q->phase > BTP_QUIZ_FAILED || q->selected >= 20 || q->round > 3 || q->point >= 10 ||
+    if (q->phase > BTP_QUIZ_FAILED || q->selected >= 20 || q->round > btp_chi_mission(r,BTP_MIS_QUIZ_ROUNDS) || q->point >= 10 ||
         q->failed > 1 || q->used >= 1024 || m->phase > BTP_MISSION_RETURN || m->corner > 1 ||
         m->warned > 1 || m->idle > 10 || m->walk > 15 || m->direction > 7 ||
         m->assignment > 7 || m->rubble > 7 || s->mech_skills[0] > 4 || s->mech_skills[1] > 4 ||
@@ -254,8 +256,8 @@ int btp_training_valid(const BtpState *s)
         if (s->entry_slot || s->story_flags[4] || s->mission.phase || s->checkpoint_valid ||
             s->script.status != BTP_SCRIPT_RUNNING) return 0;
         if (q->phase == BTP_QUIZ_INTRO && (q->round || q->failed || q->used || q->point)) return 0;
-        if (q->phase == BTP_QUIZ_QUESTION && (q->round >= 3 || used != q->round+1u || !(q->used & (1u<<q->point)))) return 0;
-        if (q->phase == BTP_QUIZ_FAILED && (q->round != 3 || used != 3 || !q->failed || s->story_flags[20] != 255)) return 0;
+        if (q->phase == BTP_QUIZ_QUESTION && (q->round >= btp_chi_mission(r,BTP_MIS_QUIZ_ROUNDS) || used != q->round+1u || !(q->used & (1u<<q->point)))) return 0;
+        if (q->phase == BTP_QUIZ_FAILED && (q->round != btp_chi_mission(r,BTP_MIS_QUIZ_ROUNDS) || used != btp_chi_mission(r,BTP_MIS_QUIZ_ROUNDS) || !q->failed || s->story_flags[20] != 255)) return 0;
     }
     if (!m->phase) return s->mode != BTP_MISSION && !m->corner && !m->warned && !m->idle && !m->walk && !m->direction && !m->elapsed &&
         !m->assignment && !m->rubble && !m->rubble_under;
@@ -270,3 +272,10 @@ int btp_training_valid(const BtpState *s)
     if (m->phase == BTP_MISSION_RETURN && (m->assignment<2 || !m->corner || s->combat.phase || s->campaign.invasion)) return 0;
     return 1;
 }
+
+/* Legacy callers without project resources keep the built-in defaults. */
+uint8_t btp_mission_tile(const BtpState *s,const BtpMap *m,int x,int y) { return btp_mission_tile_resources(s,m,NULL,x,y); }
+uint8_t btp_mission_terrain(const BtpState *s,const BtpMap *m) { return btp_mission_terrain_resources(s,m,NULL); }
+
+int btp_quiz_tick(BtpState *s,BtpAction a) { return btp_quiz_tick_resources(s,NULL,a); }
+int btp_training_valid(const BtpState *s) { return btp_training_valid_resources(s,NULL); }

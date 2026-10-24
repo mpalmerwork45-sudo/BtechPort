@@ -160,9 +160,10 @@ static int encode(BtpJson *j,unsigned node,unsigned building,const Inventory *ba
             unsigned amount=btp_json_field(j,node,"amount");
             if (j->nodes[amount].type=='"') {
                 char value[32];
-                const char *end=strchr(j->nodes[amount].text+(!strncmp(j->nodes[amount].text,"{service:",9) ? 9 : 0),'}');
+                int reference=!strncmp(j->nodes[amount].text,"{service:",9) || !strncmp(j->nodes[amount].text,"{mission:",9);
+                const char *end=strchr(j->nodes[amount].text+(reference ? 9 : 0),'}');
                 if (!btp_json_type(j,amount,'"') || !btp_chi_service_expand(resources,j->nodes[amount].text,value,sizeof value) ||
-                    strncmp(j->nodes[amount].text,"{service:",9) || !end || end[1] || !*value) return btp_json_error(j,amount,"money amount requires an integer or one service reference");
+                    !reference || !end || end[1] || !*value) return btp_json_error(j,amount,"money amount requires an integer or one service or mission reference");
                 for (unsigned k=0;value[k];++k) {
                     if (value[k]<'0' || value[k]>'9' || a>6553u || (a==6553u && value[k]>'5')) return btp_json_error(j,amount,"expanded money amount must be 0..65535");
                     a=a*10u+(unsigned)(value[k]-'0');

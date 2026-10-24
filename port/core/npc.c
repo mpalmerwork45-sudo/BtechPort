@@ -2,6 +2,7 @@
 #include "core/economy.h"
 #include "core/animation.h"
 #include "core/world.h"
+#include "data/chi_missions.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -60,7 +61,7 @@ void btp_npc_init(BtpState *s, const BtpMap *m)
     s->npc_walk[4] = 4;
     s->npc.enabled = 2;
 }
-int btp_npc_valid(const BtpState *s, const BtpMap *m)
+int btp_npc_valid_resources(const BtpState *s, const BtpMap *m,const BtpResources *r)
 {
     const BtpNpcState *n = &s->npc;
     if (n->enabled > 2 || n->phase > 2 || n->clock >= BTP_OUTDOOR_PERIOD ||
@@ -77,12 +78,14 @@ int btp_npc_valid(const BtpState *s, const BtpMap *m)
         } else if ((a->x == 0) != (a->y == 0) || (a->x && !local_word(a->x,a->y,m) &&
             /* MAP11 replaces the map header mid-fight. The suspended cadet
                actors still have MAP1's packed coordinates until the BLD exits. */
-            !(s->campaign.invasion && s->late.invasion_event>=3 && (a->x&~127u)==0xc00u &&
-              (a->y&~127u)==0xc000u))) return 0;
+            !(s->campaign.invasion && s->late.invasion_event>=btp_chi_mission(r,BTP_MIS_INVASION_RUIN_AFTER) &&
+              (a->x&~127u)==(r ? r->map.entrance_x[0]&~127u : 0xc00u) &&
+              (a->y&~127u)==(r ? r->map.entrance_y[0]&~127u : 0xc000u)))) return 0;
         if (n->enabled == 2 && s->npc_pairs[i][1] && a->x) return 0;
     }
     return 1;
 }
+int btp_npc_valid(const BtpState *s,const BtpMap *m) { return btp_npc_valid_resources(s,m,NULL); }
 static int near_player(const BtpState *s, const BtpNpc *a)
 {
     int px = s->x_half, py = s->y_half;

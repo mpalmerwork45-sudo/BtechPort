@@ -149,6 +149,9 @@ def open_route(scope,route,cache=None):
     elif kind=='chi-bld':
         from chi_bld_editor import open_scripts
         view=open_scripts(owner)
+    elif kind=='chi-missions':
+        from chi_missions_editor import open_missions
+        view=open_missions(owner)
     elif kind=='chi-services':
         from chi_services_editor import open_services
         view=open_services(owner)

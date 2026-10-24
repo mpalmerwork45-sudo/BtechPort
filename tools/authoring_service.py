@@ -99,9 +99,16 @@ def changed_objects(before, after):
             v=service_data(document)
             return dict(service_parameters=[dict(id=k,value=v) for k,v in v['parameters'].items()],broker_stock=v.get('broker_stock'))
         compare('chi',settings(before),settings(after))
+    missions=bool(after.manifest.get('chi_missions'))
+    if missions:
+        from chi_missions import data as mission_data
+        def mission_settings(document):
+            v=mission_data(document)
+            return {name:[dict(id=k,value=value) for k,value in v.get(key,{}).items()] for name,key in [('mission_parameters','parameters'),('mission_units','units')]}
+        compare('chi',mission_settings(before),mission_settings(after))
     compare('editor',json.loads(before.metadata.get('EDITOR.json',b'{}')),json.loads(after.metadata.get('EDITOR.json',b'{}')))
     for name in sorted(set(before.metadata)|set(after.metadata)):
-        if name not in ('EDITOR.json',AUTHORING_RECEIPTS,*(['chi-spatial.json','chi-presentation.json'] if native else []),*(['chi-scripts.json'] if bld else []),*(['chi-services.json'] if services else [])) and before.metadata.get(name)!=after.metadata.get(name):
+        if name not in ('EDITOR.json',AUTHORING_RECEIPTS,*(['chi-spatial.json','chi-presentation.json'] if native else []),*(['chi-scripts.json'] if bld else []),*(['chi-services.json'] if services else []),*(['chi-missions.json'] if missions else [])) and before.metadata.get(name)!=after.metadata.get(name):
             script=next((s for s in after.manifest.get('scripts',[]) if s['file']==name),None)
             result.append(dict(path=('scripts/'+script['id']) if script else 'provenance/'+name,
                                object_id=script['id'] if script else None,change='modified',fields=[]))
@@ -118,7 +125,14 @@ def _bounds(scene, layer, points):
 
 def apply_operation(doc, op, imports):
     name=op['op']; a=copy.deepcopy(doc.adventure)
+    if name.startswith('missions.'):
+        from chi_missions import enable,update,unit
+        if name=='missions.enable':enable(doc)
+        elif name=='missions.update':update(doc,op['parameter'],op['value'])
+        elif name=='missions.unit':unit(doc,op['role'],op['definition'])
+        return op.get('parameter',op.get('role',doc.manifest['package_id']))
     if name.startswith('services.'):
+
         from chi_services import enable,update,stock
         if name=='services.enable':enable(doc)
         elif name=='services.update':update(doc,op['parameter'],op['value'])

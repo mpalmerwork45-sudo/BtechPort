@@ -14,4 +14,8 @@ extern const uint8_t btp_rubble_x[8], btp_rubble_y[8];
 int btp_training_valid(const BtpState *s);
 int btp_training_text(const BtpState *s, const BtpResources *r,
     uint8_t *out, size_t capacity, size_t *length);
+uint8_t btp_mission_tile_resources(const BtpState *s,const BtpMap *m,const BtpResources *r,int x,int y);
+uint8_t btp_mission_terrain_resources(const BtpState *s,const BtpMap *m,const BtpResources *r);
+int btp_quiz_tick_resources(BtpState *s,const BtpResources *r,BtpAction a);
+int btp_training_valid_resources(const BtpState *s,const BtpResources *r);
 #endif

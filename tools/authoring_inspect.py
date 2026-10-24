@@ -102,14 +102,17 @@ def summary(doc, tool):
         animated_tiles=[dict(id=i['id'],frames=len(i['frames']),frame_ticks=i.get('frame_ticks',8)) for i in doc.art['images'] if i['kind']=='tile' and len(i['frames'])>1][:30],
         animated_tile_count=sum(i['kind']=='tile' and len(i['frames'])>1 for i in doc.art['images']),
         native_chi=(dict(spatial=doc.manifest.get('chi_spatial'),presentation=doc.manifest.get('chi_presentation'),services=native.get('services',{}),
-            world=native['world'],map_slots=15,story='native BLD execution with labelled source and service content; mission authoring pending',
+            world=native['world'],map_slots=15,story='native BLD execution with labelled source and service content and mission settings',
             operations=['chi.update','chi.town.move','chi.jigsaw.bind','chi.art.copy']) if native else None),
         native_bld=dict(source=doc.manifest.get('chi_scripts'),programs=26,instructions_per_program=2048,program_bytes=9000,
-            operations=['bld.enable','bld.update','bld.insert','bld.remove'],service_parameters=doc.manifest.get('chi_services')) if doc.manifest.get('chi_edition') or doc.manifest.get('requires')=='chi-local-dos-1.03' else None,
+            operations=['bld.enable','bld.update','bld.insert','bld.remove'],service_parameters=doc.manifest.get('chi_services'),mission_settings=doc.manifest.get('chi_missions')) if doc.manifest.get('chi_edition') or doc.manifest.get('requires')=='chi-local-dos-1.03' else None,
         queries=['objects','object','usages','map','routes','inventory'])
 
 
 def records(doc, collection):
+    if collection in ('native-mission-parameters','native-mission-units'):
+        from chi_missions import catalogue
+        value=catalogue(doc);return value['parameters' if collection=='native-mission-parameters' else 'units']
     if collection in ('native-service-parameters','native-actions'):
         from chi_services import catalogue
         value=catalogue(doc);return value['parameters' if collection=='native-service-parameters' else 'actions']

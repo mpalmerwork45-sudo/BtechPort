@@ -1,3 +1,4 @@
+#include "data/chi_missions.h"
 #include "data/unit_data.h"
 #include "data/definitions.h"
 #include "core/combat.h"
@@ -332,30 +333,36 @@ void btp_combat_begin(BtpState *s, const BtpResources *r)
         .count=2,.target_unit=1,.kick_target=255,.last_target=1};
     memset(c->orders,255,sizeof c->orders);
     memset(c->enemy_orders,255,sizeof c->enemy_orders);memset(c->enemy_modes,255,sizeof c->enemy_modes);
-    memcpy(c->unit[0].record,btp_mech_template(&r->combat,BTP_MECH_LOAN,s->story_flags[2]),125);
-    c->unit[0].x=64;c->unit[0].y=77;c->unit[0].direction=2;
+    memcpy(c->unit[0].record,btp_chi_mission_unit(r,BTP_MUNIT_TRAINING_LOAN_0+s->story_flags[2]),125);
     unsigned assignment=s->mission.assignment;
+    c->unit[0].x=(uint8_t)btp_chi_training(r,assignment,BTP_TRAIN_START_X);
+    c->unit[0].y=(uint8_t)(btp_chi_training(r,assignment,BTP_TRAIN_START_Y)-2u);c->unit[0].direction=2;
     /* 07DC:0765..07ED sets the training restriction at STATE:0090 for
        assignments 3..7. The shell assignment 2 still offers global control. */
-    if (assignment>=3) { c->phase=BTP_COMBAT_MESSAGES;c->selected=2; }
-    if (assignment==3) c->count=(uint8_t)(4+(btp_rng_next(s->npc.rng)&3u));
-    if (assignment==5) c->count=3;
-    if (assignment>=6) c->count=(uint8_t)(s->campaign.invasion ? 5 : assignment-2);
-    unsigned x=101+(btp_rng_next(s->npc.rng)&7u),y=89+(btp_rng_next(s->npc.rng)&7u);
-    static const uint8_t ox[6]={1,2,0,1,0,0},oy[6]={2,2,3,3,0,1};
+    if (!btp_chi_training(r,assignment,BTP_TRAIN_CONTROL_PROMPT)) { c->phase=BTP_COMBAT_MESSAGES;c->selected=2; }
+    unsigned count_mask=btp_chi_training(r,assignment,BTP_TRAIN_COUNT_MASK);
+    /* Assignment 3 always drew a count, including when an author fixes its
+       size. Other assignments draw only when explicitly made variable. */
+    unsigned extra=assignment==3 || count_mask ? btp_rng_next(s->npc.rng)&count_mask : 0;
+    c->count=(uint8_t)(1+(s->campaign.invasion ? btp_chi_mission(r,BTP_MIS_INVASION_ENEMY_COUNT) : btp_chi_training(r,assignment,BTP_TRAIN_ENEMY_COUNT)+extra));
+    unsigned mask=btp_chi_training(r,assignment,BTP_TRAIN_SPAWN_MASK);
+    unsigned x=btp_chi_training(r,assignment,BTP_TRAIN_SPAWN_X)+(btp_rng_next(s->npc.rng)&mask);
+    unsigned y=btp_chi_training(r,assignment,BTP_TRAIN_SPAWN_Y)+(btp_rng_next(s->npc.rng)&mask);
+    int foot=!s->campaign.invasion && btp_chi_training(r,assignment,BTP_TRAIN_INFANTRY);
+    int shell=!s->campaign.invasion && btp_chi_training(r,assignment,BTP_TRAIN_SHELL);
     /* Original slot-8 onward offsets at DS:1642/164E. */
     for (unsigned i=1;i<c->count;++i) {
         BtpCombatUnit *u=&c->unit[i];u->direction=6;c->plan_direction[i]=6;c->walk[i]=12;
-        u->x=(uint8_t)(assignment==2 ? 114 : x+(assignment>=4 ? 4*((i-1)%2) : 0));
-        u->y=(uint8_t)(y+(assignment>=6 ? 4*((i-1)/2) : 0));
-        if (assignment==3) {
-            u->infantry=1;u->record[12]=8;u->x=(uint8_t)(x+ox[i-1]);u->y=(uint8_t)(y+oy[i-1]);
-            for (unsigned k=4;k<=9;++k) u->record[k]=(uint8_t)(btp_rng_next(s->npc.rng)&1u);
+        u->x=(uint8_t)((shell ? btp_chi_training(r,assignment,BTP_TRAIN_SHELL_X) : x)+btp_chi_training_enemy(r,assignment,i-1,0));
+        u->y=(uint8_t)(y+btp_chi_training_enemy(r,assignment,i-1,1));
+        if (foot) {
+            u->infantry=1;u->record[12]=8;
+            for (unsigned k=4;k<=9;++k) u->record[k]=(uint8_t)(btp_rng_next(s->npc.rng)&btp_chi_training(r,assignment,BTP_TRAIN_INFANTRY_SKILL_MASK));
             u->record[1]=(uint8_t)btp_combat_dice(s->npc.rng);u->record[15]=(uint8_t)(10*u->record[1]);
-            u->record[11]=(uint8_t)(btp_rng_next(s->npc.rng)%14u);
+            u->record[11]=(uint8_t)(btp_rng_next(s->npc.rng)%btp_chi_training(r,assignment,BTP_TRAIN_INFANTRY_WEAPONS));
         } else {
-            memcpy(u->record,s->campaign.invasion ? btp_mech_template(&r->combat,BTP_MECH_JENNER,0) : btp_mech_template(&r->combat,BTP_MECH_LOAN,0),125);
-            if (assignment==2) { u->record[36]=u->record[37]=0;memset(u->record+39,0,12); }
+            memcpy(u->record,btp_chi_mission_unit(r,s->campaign.invasion ? BTP_MUNIT_INVASION_ENEMY_0+i-1 : btp_chi_training_unit(assignment,i-1)),125);
+            if (shell) { u->record[36]=u->record[37]=0;memset(u->record+39,0,12); }
         }
     }
     if (s->campaign.invasion) {
@@ -397,7 +404,7 @@ static void finish(BtpState *s,const BtpResources *r)
         s->x_half=(uint16_t)(s->campaign.world_x&127u);
         s->y_half=(uint16_t)(s->campaign.world_y&127u);
     }
-    if (c->lost && !s->campaign.invasion) { s->x_half=60;s->y_half=79; }
+    if (c->lost && !s->campaign.invasion) { s->x_half=(uint16_t)btp_chi_training(r,s->mission.assignment,BTP_TRAIN_RETURN_X);s->y_half=(uint16_t)btp_chi_training(r,s->mission.assignment,BTP_TRAIN_RETURN_Y_MAX); }
 }
 /* The original command menu calls the same per-actor planner as a round.
    Assigning computer orders previews that actor without advancing combat. */
@@ -410,7 +417,7 @@ static void computer_plan(BtpState *s,const BtpResources *r,const BtpMap *terrai
     if (s->battle_mission.active && btp_battle_actor_plan(s,r,terrain,index)) return;
     /* Updated orders use explicit saved policy. Story eligibility still
        precedes planning: in particular the target shell cannot become mobile. */
-    if (!c->unit[index].infantry && (friendly || (enemy_ai && s->mission.assignment!=2))) {
+    if (!c->unit[index].infantry && (friendly || (enemy_ai))) {
         BtpAiPlan plan;
         if (btp_combat_ai_plan(s,r,terrain,index,&plan)) {
             memcpy(c->path[index],plan.path,sizeof plan.path);c->plan_direction[index]=plan.direction;
@@ -503,7 +510,7 @@ static void computer_plan(BtpState *s,const BtpResources *r,const BtpMap *terrai
     }
     uint8_t automatic_orders[12];uint8_t *orders=index ? c->enemy_orders[index-1] : automatic_orders;
     memset(orders,255,12);
-    if (friendly || s->mission.assignment>=3 || c->friends) {
+    if (friendly || enemy_ai || c->friends) {
         for (unsigned w=0;w<btp_combat_weapon_count(&enemy) && w<10;++w)
             if (btp_combat_weapon(&enemy,w)<33 && enemy.heat<30) orders[w]=(uint8_t)btp_combat_id(c,prey);
         if (!enemy.infantry && enemy.heat<30) orders[11]=(uint8_t)btp_combat_id(c,prey);
@@ -569,7 +576,7 @@ unsigned btp_combat_walk_frame(unsigned frame,unsigned previous,unsigned directi
     return infantry ? btp_walk_next((uint8_t)frame,(uint8_t)previous,(uint8_t)direction) : frames[direction][next];
 }
 static void mark(BtpState *s,unsigned sprite,int x,int y);
-static void advance(BtpState *s, unsigned index)
+static void advance(BtpState *s,const BtpResources *r, unsigned index)
 {
     BtpCombatState *c=&s->combat;
     BtpCombatUnit *u=&c->unit[index];unsigned p=c->path_index[index];
@@ -600,7 +607,7 @@ static void advance(BtpState *s, unsigned index)
                under a vehicle's two-step footprint, without an RNG draw. */
             btp_effects_crush(s,index,i);c->unit[i].record[15]=0;
             mark(s,126,c->unit[i].x,c->unit[i].y);
-            if (s->campaign.encounter) btp_campaign_destroy(s,i);
+            if (s->campaign.encounter) btp_campaign_destroy_resources(s,i,r);
             else { c->unit[i].record[0]=255;c->unit[i].x=c->unit[i].y=127; }
         }
     unsigned direction=btp_combat_direction(u->x,u->y,x,y);
@@ -669,10 +676,10 @@ static void round_tick(BtpState *s, const BtpResources *r, int enemy_ai)
     /* The original movement loop (12E8:1002..1286) has no speed wait.
        Keep one visible movement microstep per host tick. */
     c->flash=0;
-    advance(s,0);
+    advance(s,r,0);
     /* Ignore old in-progress target paths too: loading an earlier checkpoint
        must not reanimate the training shell. */
-    if (enemy_ai) for (unsigned i=1;i<c->count;++i) advance(s,i);
+    if (enemy_ai) for (unsigned i=1;i<c->count;++i) advance(s,r,i);
     /* The original redraws movement only when a visible unit advances.
        Empty microsteps and offscreen opponents must not accelerate fire. */
     for (unsigned i=0;i<c->count;++i) if (moved_before[i]!=c->moved[i] &&
@@ -688,7 +695,7 @@ static void round_tick(BtpState *s, const BtpResources *r, int enemy_ai)
     for (unsigned ordinal=0;ordinal<(c->friends ? 24u : c->count);++ordinal) {
         unsigned actor=c->friends ? btp_combat_target(c,ordinal) : ordinal;
         if (actor>=c->count) continue;
-        if (c->unit[actor].record[0]==255 || (actor && (!enemy_ai || s->mission.assignment==2))) continue;
+        if (c->unit[actor].record[0]==255 || (actor && (!enemy_ai))) continue;
         for (unsigned i=0;i<12;++i) {
             uint8_t *order=actor ? &c->enemy_orders[actor-1][i] : c->friends ? i==11 ? &c->plans[0].kick : &c->plans[0].orders[i] : i==11 ? &c->kick_target : &c->orders[i];
             uint16_t *fired=actor ? &c->enemy_fired[actor-1] : &c->fired;
@@ -749,7 +756,7 @@ static void round_tick(BtpState *s, const BtpResources *r, int enemy_ai)
                     mark(s,enemy->infantry ? 126u : 128u+(target==0 && s->story_flags[2]!=0),
                     (int)enemy->x-(enemy->infantry ? 0 : 1),
                     (int)enemy->y-(enemy->infantry ? 0 : 1));
-                if (s->campaign.encounter) btp_campaign_destroy(s,target);
+                if (s->campaign.encounter) btp_campaign_destroy_resources(s,target,r);
                 else {
                     enemy->record[0]=255;
                     if (target || !s->campaign.invasion) enemy->x=enemy->y=127;
@@ -777,11 +784,11 @@ static void round_tick(BtpState *s, const BtpResources *r, int enemy_ai)
     } else {
         s->mission.walk=c->walk[0];s->mission.direction=c->unit[0].direction;
     }
-    if ((s->campaign.invasion && btp_invasion_outside(1472u+c->unit[0].x,1472u+c->unit[0].y)) ||
+    if ((s->campaign.invasion && btp_chi_mission(r,BTP_MIS_INVASION_ESCAPE) && (c->unit[0].x<btp_chi_mission(r,BTP_MIS_INVASION_ESCAPE_MIN) || c->unit[0].x>=btp_chi_mission(r,BTP_MIS_INVASION_ESCAPE_MAX) || c->unit[0].y<btp_chi_mission(r,BTP_MIS_INVASION_ESCAPE_MIN) || c->unit[0].y>=btp_chi_mission(r,BTP_MIS_INVASION_ESCAPE_MAX))) ||
         /* 103B:0CCE accepts the original arena escape band only after the
            special arena target has triggered D32F. */
         (s->campaign.encounter==4 && s->story_flags[35] &&
-         (int)s->campaign.battle_x+c->unit[0].x>1152+btp_chi_map_offset(r,2,0) && (int)s->campaign.battle_x+c->unit[0].x<1287+btp_chi_map_offset(r,2,0))) {
+         (int)s->campaign.battle_x+c->unit[0].x>(int)btp_chi_mission(r,BTP_MIS_ARENA_ESCAPE_MIN)+btp_chi_map_offset(r,2,0) && (int)s->campaign.battle_x+c->unit[0].x<(int)btp_chi_mission(r,BTP_MIS_ARENA_ESCAPE_MAX)+btp_chi_map_offset(r,2,0))) {
         if (s->effects.count || s->presentation.count || s->audio.sound_count) s->effects.pending=3;
         else { c->fled=1;finish(s,r); }
         return;
@@ -807,7 +814,7 @@ static void combat_tick(BtpState *s, const BtpResources *r, BtpAction a, int ene
         if (c->phase==BTP_COMBAT_OFFER && (a==BTP_UP || a==BTP_DOWN || a==BTP_LEFT || a==BTP_RIGHT)) c->selected^=1u;
         if (a==BTP_ACCEPT || a==BTP_OPEN_MENU) {
             if (c->phase==BTP_COMBAT_OFFER && c->selected) {
-                if (btp_rng_next(s->npc.rng)&3u) { btp_campaign_avoid(s);return; }
+                if (btp_rng_next(s->npc.rng)&btp_chi_mission(r,BTP_MIS_ENCOUNTER_AVOID_MASK)) { btp_campaign_avoid(s);return; }
                 c->phase=BTP_COMBAT_AVOID;return;
             }
             c->phase=BTP_COMBAT_CONTROL;c->selected=1;
@@ -1111,7 +1118,7 @@ static void combat_tick(BtpState *s, const BtpResources *r, BtpAction a, int ene
 }
 void btp_combat_tick(BtpState *s, const BtpResources *r, BtpAction a)
 {
-    combat_tick(s,r,a,s->campaign.encounter || s->mission.assignment>=3);
+    combat_tick(s,r,a,s->campaign.encounter || btp_chi_training(r,s->mission.assignment,BTP_TRAIN_ENEMY_AI));
 }
 void btp_combat_tick_reference(BtpState *s, const BtpResources *r, BtpAction a)
 {
@@ -1240,7 +1247,7 @@ int btp_combat_decode(const uint8_t b[BTP_COMBAT_SAVE_BYTES], BtpCombatState *c)
     return c->count<=BTP_COMBAT_UNITS;
 }
 #undef COMBAT_FIELDS
-int btp_combat_valid(const BtpState *s)
+int btp_combat_valid_resources(const BtpState *s,const BtpResources *r)
 {
     const BtpCombatState *c=&s->combat;
     if (c->count>BTP_COMBAT_UNITS || c->friends>12 || c->active_unit>=BTP_COMBAT_UNITS || c->scan_unit>=BTP_COMBAT_UNITS) return 0;
@@ -1251,7 +1258,7 @@ int btp_combat_valid(const BtpState *s)
         return 1;
     }
     if ((s->campaign.encounter ? c->count>24 || c->friends<1 || c->friends>12 || c->friends>=c->count || c->active_unit>=c->friends :
-        (s->mission.assignment==3 ? c->count<4 || c->count>7 : c->count!=(s->mission.assignment>=6 ? s->campaign.invasion ? 5 : 4 : s->mission.assignment==5 ? 3 : 2))) ||
+        (s->campaign.invasion ? c->count!=1+btp_chi_mission(r,BTP_MIS_INVASION_ENEMY_COUNT) : c->count<1+btp_chi_training(r,s->mission.assignment,BTP_TRAIN_ENEMY_COUNT) || c->count>1+btp_chi_training(r,s->mission.assignment,BTP_TRAIN_ENEMY_COUNT)+btp_chi_training(r,s->mission.assignment,BTP_TRAIN_COUNT_MASK))) ||
         c->target_unit>=c->count || c->lost>1 || (!s->campaign.encounter && c->unit[0].infantry) ||
         c->last_attacker>=c->count || c->last_target>=c->count ||
         c->phase>BTP_COMBAT_OVERRIDE || c->selected>10 || c->messages>2 || c->graphics>1 ||
@@ -1324,7 +1331,7 @@ int btp_combat_valid(const BtpState *s)
         if ((u->record[0]!=255 && (u->x>(s->campaign.invasion ? 253u : s->campaign.encounter || u->infantry ? 127u : 125u) || u->y>(s->campaign.invasion ? 255u : 127u))) || u->direction>7 || u->heat>30 || u->burning>3 ||
             (u->cover!=0 && u->cover!=(u->infantry ? 2 : 8) && u->cover!=(u->infantry ? 4 : 16)) || c->moved[i]>12 || c->path_index[i]>12 ||
             c->walk[i]>15 || (c->plan_direction[i]>7 && c->plan_direction[i]!=255) || c->fallback[i]>7 || u->infantry>1 ||
-            (i && !s->campaign.encounter && u->infantry!=(s->mission.assignment==3)) || btp_combat_weapon_count(u)>11 || u->record[117]>3 || u->record[118]>2 || u->record[119]>2) return 0;
+            (i && !s->campaign.encounter && u->infantry!=(!s->campaign.invasion && btp_chi_training(r,s->mission.assignment,BTP_TRAIN_INFANTRY))) || btp_combat_weapon_count(u)>11 || u->record[117]>3 || u->record[118]>2 || u->record[119]>2) return 0;
         if (u->infantry && (u->record[1]<2 || u->record[1]>12 || u->record[11]>13 || u->record[15]>120)) return 0;
         if (i) {
             if (i>=(c->friends ? c->friends : 1u)) alive+=u->record[0]!=255;
@@ -1337,7 +1344,7 @@ int btp_combat_valid(const BtpState *s)
     unsigned jason=btp_combat_target(c,4);
     unsigned rex=btp_combat_target(c,5);
     int lost=s->campaign.encounter ? (jason<c->count && c->unit[jason].record[0]==255) ||
-        (rex<c->count && c->unit[rex].record[0]==255) : c->unit[0].record[0]==255;
+        (btp_chi_mission(r,BTP_MIS_ENCOUNTER_ESSENTIAL_PEOPLE)>1 && rex<c->count && c->unit[rex].record[0]==255) : c->unit[0].record[0]==255;
     /* A surviving arena pilot is a lost match, not a campaign death. Before
        the end-of-round check, its destruction presentation may still drain. */
     if (s->campaign.encounter==4 && !s->story_flags[35] && c->unit[0].record[0]==255 && c->lost) lost=1;
@@ -1349,3 +1356,5 @@ int btp_combat_valid(const BtpState *s)
     return lost==(c->lost!=0 || s->effects.pending==2) &&
         (alive ? !c->won && s->effects.pending!=1 : c->won || s->effects.pending==1 || c->phase==BTP_COMBAT_ROUND || c->phase==BTP_COMBAT_SPY);
 }
+
+int btp_combat_valid(const BtpState *s) { return btp_combat_valid_resources(s,NULL); }

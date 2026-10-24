@@ -1617,7 +1617,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
             if (s->quiz.selected == i) rectangle(f,0,y-1,127,8,14);
             text(r,f,3,y,label,s->quiz.selected == i ? 0u : 15u);
         }
-        int x = btp_quiz_x[s->quiz.point]-3, y = btp_quiz_y[s->quiz.point]-3;
+        int x = (int)btp_chi_mission(r,BTP_MIS_QUIZ_POINT_0_X+s->quiz.point*3u)-3, y = (int)btp_chi_mission(r,BTP_MIS_QUIZ_POINT_0_Y+s->quiz.point*3u)-3;
         rectangle(f,x,y,9,1,15); rectangle(f,x,y+8,9,1,15);
         rectangle(f,x,y,1,9,15); rectangle(f,x+8,y,1,9,15);
         /* physical D0A9..D0C6: a white bar extends from the left of the diagram
@@ -1661,7 +1661,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                     if (authored) tile=authored->graphic;
                     else if (scene) tile=255; /* Finite authored maps never leak CHI world tiles. */
                     else if (s->cache.active) tile=btp_cache_tile(r,s,tx,ty);
-                    else if ((s->campaign.encounter || s->campaign.invasion || s->map_id) && tx>=0 && ty>=0 && tx<map->width && ty<map->height) tile=btp_mission_tile(s,map,tx,ty);
+                    else if ((s->campaign.encounter || s->campaign.invasion || s->map_id) && tx>=0 && ty>=0 && tx<map->width && ty<map->height) tile=btp_mission_tile_resources(s,map,r,tx,ty);
                     else {
                         /* Combat uses a finite local rules grid, but the DOS
                            viewport rebuilds surrounding world pieces even at
@@ -1675,7 +1675,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                         else {
                             int gx=ox+tx,gy=oy+ty;
                             unsigned place=(unsigned)btp_world_location(r,s,gx,gy);
-                            if (place==1 && s->campaign.invasion && s->late.invasion_event>=3) place=11;
+                            if (place==1 && s->campaign.invasion && s->late.invasion_event>=btp_chi_mission(r,BTP_MIS_INVASION_RUIN_AFTER)) place=11;
                             if (place) {
                                 const BtpMap *town=place==1 || place==11 ? &r->map : &r->local[place-1];
                                 native=btp_chi_map_cell(r,place,gx-(town->entrance_x[0]>>8)*64,gy-(town->entrance_y[0]>>12)*64);
@@ -1707,7 +1707,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
                            DESTRUCT for the displayed world tile, even after
                            the player has entered the surrounding countryside. */
                         int destroyed=native ? native->sheet==1 : authored ? authored->sheet!=0 : !s->cache.active && (s->campaign.invasion ?
-                            s->late.invasion_event>=3 && tx>=32 && ty>=32 && tx<96 && ty<96 :
+                            s->late.invasion_event>=btp_chi_mission(r,BTP_MIS_INVASION_RUIN_AFTER) && tx>=32 && ty>=32 && tx<96 && ty<96 :
                             btp_world_location(r,s,ox+tx,oy+ty)==11);
                         const BtpGraphic *sheet=native && native->sheet!=0 ? native->sheet==1 ? &r->destroyed_tiles : native->sheet==2 ? &r->cache_tiles : &r->maproom_tiles :
                             s->cache.active ? s->story_flags[66] ? &r->maproom_tiles : &r->cache_tiles :
@@ -1784,7 +1784,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         }
         if (s->combat.phase) { combat_route(r,s,cx,cy,f);combat_flash(r,s,cx,cy,f); }
     } else if (s->mission.phase) (void)btp_draw_sprite(&r->sprites,
-        (s->story_flags[2] ? 146u : 0u)+s->mission.walk,200,64,btp_mission_terrain(s,&r->map),104,f);
+        (s->story_flags[2] ? 146u : 0u)+s->mission.walk,200,64,btp_mission_terrain_resources(s,&r->map,r),104,f);
     else if (s->campaign.mounted && !s->story_flags[4]) (void)btp_draw_sprite(&r->sprites,
         btp_mech_record_sprite(s->party.people[0][12] ? s->party.mechs[s->party.people[0][12]-1] : s->campaign.mech,0)+s->campaign.mech_walk,200,64,0,104,f);
     else if (outdoors && !s->campaign.mounted) {
@@ -1821,8 +1821,8 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         /* 0000:0D7D..0E43 draws four static prison mechs from the current
            startup sprite pointer at packed 0D13+4*i / 702C. They are scenery,
            independent of the party vehicles temporarily hidden by action 40. */
-        for (unsigned i=0;i<4;++i) (void)btp_draw_sprite(&r->sprites,146,
-            208+8*(19+4*(int)i-cx),96+8*(44-cy),0,104,f);
+        for (unsigned i=0;i<4;++i) (void)btp_draw_sprite(&r->sprites,btp_mech_record_sprite(btp_chi_mission_unit(r,BTP_MUNIT_PRISON_REWARD),0),
+            208+8*((int)btp_chi_mission(r,BTP_MIS_PRISON_MECHS_X)-1+4*(int)i-cx),96+8*((int)btp_chi_mission(r,BTP_MIS_PRISON_MECHS_Y)-1-cy),0,104,f);
     }
     /* Original 051B draws the party before the eight outdoor NPC slots. */
     if (!s->combat.phase && (s->mode == BTP_EXPLORE || s->mode == BTP_MISSION) && s->npc.enabled == 2) for (unsigned i = 0; i < 8; ++i) {
@@ -1892,7 +1892,7 @@ void btp_render(const BtpResources *r, const BtpState *s, int debug, uint32_t f[
         int y=p ? wrapped(r,f,64,p,n,15) : 64;
         if (s->yard.phase==BTP_YARD_CLIMB) { p=bank_literal(r,152,&n);if (p) (void)wrapped(r,f,y,p,n,15); }
     } else if (s->combat.phase==BTP_COMBAT_STORY) {
-        unsigned id=s->late.invasion_popup==1 ? 141u : 140u+s->late.invasion_popup;
+        unsigned id=btp_chi_mission(r,BTP_MIS_INVASION_MESSAGE_0+s->late.invasion_popup-1u);
         size_t n;const uint8_t *p=bank_literal(r,id,&n);
         rectangle(f,104,56,216,88,0);border_panel(r,f,104,56,216,88,0);
         if (p) (void)wrapped(r,f,64,p,n,15);

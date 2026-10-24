@@ -17,4 +17,5 @@ void btp_cache_toggle(BtpState *state,unsigned x,unsigned y);
 int btp_cache_password(BtpState *state,const BtpResources *resources);
 int btp_cache_valid(const BtpState *state);
 int btp_cache_text(const BtpState *state,const BtpResources *resources,uint8_t *output,size_t capacity,size_t *length);
+int btp_cache_valid_resources(const BtpState *s,const BtpResources *r);
 #endif

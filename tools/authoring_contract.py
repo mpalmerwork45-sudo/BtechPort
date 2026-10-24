@@ -122,6 +122,9 @@ def operation(name, description, properties, required, writes, example):
 
 operation('chi.enable','Expose native maps/world on an older C2 import; one reversible edit.',{},[],['adventure','manifest'],{})
 operation('bld.enable','Enable labelled BLD source editing on an older CHI import; changes save identity.',{},[],['manifest','chi.programs'],{})
+operation('missions.enable','Enable native mission and campaign editing; changes strict save identity.',{},[],['manifest','chi'],{})
+operation('missions.update','Set a typed native mission parameter. The native catalogue supplies IDs, bounds and defaults.',dict(parameter=dict(type='string',maxLength=95),value=integer(0,65535)),['parameter','value'],['chi.mission_parameters/<parameter>'],dict(parameter='training.4.enemy_count',value=2))
+operation('missions.unit','Assign a project mech ID or native template to a mission role. Empty restores its native default.',dict(role=dict(type='string',maxLength=95),definition=dict(type='string',maxLength=63)),['role','definition'],['chi.mission_units/<role>'],dict(role='training.4.enemy.0',definition='native:jenner.0'))
 operation('services.enable','Enable native service settings and bind unmodified price text/fee operands; changes save identity.',{},[],['manifest','chi','provenance/campaign.json'],{})
 operation('services.update','Set a native service parameter. The C catalogue supplies IDs, bounds and effective defaults.',dict(parameter=dict(type='string',maxLength=95),value=integer(0,65535)),['parameter','value'],['chi.service_parameters/<parameter>'],dict(parameter='repair.armour',value=6))
 operation('services.stock','Set the Updated broker inventory by stable unit IDs, or restore all roster units.',dict(units=array(ID,0,256),all=integer(0,1)),[],['chi.broker_stock'],dict(units=['chi:catapult-cplt-c1']))

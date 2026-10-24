@@ -1,3 +1,4 @@
+#include "data/chi_missions.h"
 #include "data/unit_data.h"
 #include "core/yard.h"
 #include "core/party.h"
@@ -46,15 +47,15 @@ void btp_yard_begin_guards(BtpState *s,const BtpResources *r)
     BtpCombatState *c=&s->combat;c->ids[0]=4;c->unit[0].infantry=1;
     memcpy(c->unit[0].record,s->party.people[0],17);c->unit[0].x=(uint8_t)s->x_half;c->unit[0].y=(uint8_t)s->y_half;
     (void)btp_rng_next(s->npc.rng);(void)btp_rng_next(s->npc.rng);
-    for (unsigned i=0;i<8;++i) {
+    for (unsigned i=0;i<btp_chi_mission(r,BTP_MIS_PRISON_GUARD_COUNT);++i) {
         unsigned at=c->count++;BtpCombatUnit *u=&c->unit[at];u->infantry=1;u->record[12]=8;
         /* The original enemy person indices are 8..15. These deliberately
            index the latter half of the DS:1642/164E formations. */
-        u->x=(uint8_t)(16u+r->combat.special_x[8+i]);u->y=(uint8_t)(36u+r->combat.special_y[8+i]);u->direction=6;
+        u->x=(uint8_t)(btp_chi_mission(r,BTP_MIS_PRISON_GUARD_X)+r->combat.special_x[8+i]);u->y=(uint8_t)(btp_chi_mission(r,BTP_MIS_PRISON_GUARD_Y)+r->combat.special_y[8+i]);u->direction=6;
         c->ids[at]=(uint8_t)(16+i);c->plan_direction[at]=6;c->walk[at]=12;
-        for (unsigned k=4;k<=9;++k) u->record[k]=(uint8_t)(btp_rng_next(s->npc.rng)&1u);
+        for (unsigned k=4;k<=9;++k) u->record[k]=(uint8_t)(btp_rng_next(s->npc.rng)&btp_chi_mission(r,BTP_MIS_PRISON_GUARD_SKILL_MASK));
         u->record[1]=(uint8_t)btp_combat_dice(s->npc.rng);u->record[15]=(uint8_t)(10u*u->record[1]);
-        u->record[11]=(uint8_t)(btp_rng_next(s->npc.rng)%14u);
+        u->record[11]=(uint8_t)(btp_rng_next(s->npc.rng)%btp_chi_mission(r,BTP_MIS_PRISON_GUARD_WEAPONS));
     }
     s->yard.timer=0;s->yard.phase=BTP_YARD_WALK;
 }
@@ -64,47 +65,41 @@ void btp_yard_finish_prison(BtpState *s,const BtpResources *r,int success)
        0D00/7014, then copies the Stinger template into the first empty bay. */
     restore_party(s);s->party.people[0][12]=8;s->campaign.mounted=0;
     if (success) for (unsigned i=0;i<4;++i) if (btp_party_mech(s,i)[0]==255) {
-        memcpy(btp_party_mech(s,i),btp_mech_template(&r->combat,BTP_MECH_ENCOUNTER,btp_chi_service(r,BTP_SVC_PRISON_REWARD)),125);
+        memcpy(btp_party_mech(s,i),btp_chi_mission_unit(r,BTP_MUNIT_PRISON_REWARD),125);
         s->party.mech_types[i]=btp_party_mech(s,i)[0];s->campaign.owned=1;break;
     }
     if (!success) s->story_flags[40]=1;
-    s->campaign.world_x=(uint16_t)(1664+btp_chi_map_offset(r,3,0));s->campaign.world_y=(uint16_t)(916+btp_chi_map_offset(r,3,1));s->x_half=0;s->y_half=20;
-    s->script.position_x=0x0d00;s->script.position_y=0x7014;
+    s->x_half=(uint16_t)btp_chi_mission(r,BTP_MIS_PRISON_EXIT_X);s->y_half=(uint16_t)btp_chi_mission(r,BTP_MIS_PRISON_EXIT_Y);
+    s->campaign.world_x=(uint16_t)(1664+s->x_half+btp_chi_map_offset(r,3,0));s->campaign.world_y=(uint16_t)(896+s->y_half+btp_chi_map_offset(r,3,1));
+    s->script.position_x=(uint16_t)(0x0d00+s->x_half);s->script.position_y=(uint16_t)(0x7000+s->y_half);
     s->yard=(BtpYardState){0};s->campaign.encounter=0;
     s->combat=(BtpCombatState){0};s->effects=(BtpEffectsState){0};s->aftermath=(BtpAftermathState){0};
     s->mode=BTP_BUILDING;btp_script_native_return(&s->script,btp_state_bld(r,s),s->story_flags);
 }
-static void gate(BtpState *s,unsigned raw,unsigned tile)
+static void gate(BtpState *s,unsigned x,unsigned y,unsigned tile)
 {
-    BtpYardState *v=&s->yard;unsigned index=raw-0x101du;
-    unsigned x=(index/64u%8u)*8u+index%8u,y=index/512u*8u+index%64u/8u;
+    BtpYardState *v=&s->yard;
     for (unsigned i=0;i<v->gate_count;++i) if (v->gates[i][0]==x && v->gates[i][1]==y) { v->gates[i][2]=(uint8_t)tile;return; }
     if (v->gate_count<16) { uint8_t *g=v->gates[v->gate_count++];g[0]=(uint8_t)x;g[1]=(uint8_t)y;g[2]=(uint8_t)tile; }
 }
-static void force_fields(BtpState *s,int open)
+static void force_fields(BtpState *s,const BtpResources *r,int open)
 {
-    /* 09B8:137F/1441: the same three original raw-map strips, closed with
-       animated field tiles or opened using the original per-cell RNG draws. */
+    /* Preserve field order and RNG consumption. Native layout zero has no
+       force fields; the other three layouts are editable tile coordinates. */
+    static const unsigned bases[]={0,BTP_MIS_ARENA_FIELD_1_0_X,BTP_MIS_ARENA_FIELD_2_0_X,BTP_MIS_ARENA_FIELD_3_0_X};
+    static const unsigned counts[]={0,7,12,9};
     unsigned v=s->yard.variant;
-    if (v==1) {
-        gate(s,0x1c8f,open ? 67u : 111u);
-        for (unsigned i=0;i<5;++i) gate(s,0x1c90+i,open ? 64u+(btp_rng_next(s->npc.rng)&3u) : 106u);
-        gate(s,0x1ccd,open ? 66u : 112u);
-    } else if (v==2) {
-        gate(s,0x1a78,open ? 65u : 111u);
-        for (unsigned i=0;i<4;++i) gate(s,0x1a79+i,open ? 64u+(btp_rng_next(s->npc.rng)&3u) : 106u);
-        for (unsigned i=0;i<6;++i) gate(s,0x1ab5+i,open ? 64u+(btp_rng_next(s->npc.rng)&3u) : 106u);
-        gate(s,0x1abb,open ? 66u : 112u);
-    } else if (v==3) {
-        gate(s,0x1ad9,open ? 64u : 113u);
-        for (unsigned i=4;i<60;i+=8) gate(s,0x1c9d+i,open ? 64u+(btp_rng_next(s->npc.rng)&3u) : 107u);
-        gate(s,0x1cd9,open ? 65u : 112u);
+    for (unsigned i=0;i<counts[v];++i) {
+        unsigned at=bases[v]+i*5,mask=btp_chi_mission(r,at+4);
+        unsigned tile=btp_chi_mission(r,at+(open ? 3u : 2u));
+        if (open && mask) tile+=btp_rng_next(s->npc.rng)&mask;
+        gate(s,btp_chi_mission(r,at),btp_chi_mission(r,at+1),tile);
     }
 }
 static void arena_party(BtpState *s,const BtpResources *r,unsigned slot,int rental)
 {
     keep_party(s,2);s->yard.slot=(uint8_t)slot;s->yard.rental=(uint8_t)rental;s->yard.phase=BTP_YARD_LOAN;
-    uint8_t record[125];memcpy(record,rental ? btp_mech_template(&r->combat,BTP_MECH_LOAN,0) : btp_party_mech(s,slot),125);
+    uint8_t record[125];memcpy(record,rental ? btp_chi_mission_unit(r,BTP_MUNIT_ARENA_LOAN) : btp_party_mech(s,slot),125);
     if (!rental) record[0]=s->party.mech_types[slot];
     memcpy(s->campaign.mech,record,125);s->campaign.mech[121]=0;s->campaign.mech[122]=255;
     s->campaign.owned=1;s->party.mech_types[0]=record[0];s->party.people[0][12]=0;s->campaign.mounted=1;
@@ -115,25 +110,25 @@ void btp_yard_begin_arena(BtpState *s,const BtpResources *r)
        original west-side positions, without changing their world coordinates. */
     combat_state(s,4);s->campaign.battle_x=(uint16_t)(1216+btp_chi_map_offset(r,2,0));s->campaign.battle_y=(uint16_t)(1024+btp_chi_map_offset(r,2,1));
     BtpCombatState *c=&s->combat;memcpy(c->unit[0].record,s->campaign.mech,125);
-    c->unit[0].x=107;c->unit[0].y=87;c->unit[0].direction=4;c->ids[0]=0;
-    unsigned x=80u+(btp_rng_next(s->npc.rng)&3u);
-    if (btp_rng_next(s->npc.rng)&1u) x=104u+(btp_rng_next(s->npc.rng)&3u);
-    unsigned y=111u+(btp_rng_next(s->npc.rng)&3u),count=1;
-    if (s->yard.rental) for (unsigned i=0;i<4;++i) if (s->yard.types[i]==255) count=2;
+    c->unit[0].x=(uint8_t)btp_chi_mission(r,BTP_MIS_ARENA_PLAYER_X);c->unit[0].y=(uint8_t)btp_chi_mission(r,BTP_MIS_ARENA_PLAYER_Y);c->unit[0].direction=4;c->ids[0]=0;
+    unsigned x=btp_chi_mission(r,BTP_MIS_ARENA_WEST_X)+(btp_rng_next(s->npc.rng)&3u);
+    if (btp_rng_next(s->npc.rng)&1u) x=btp_chi_mission(r,BTP_MIS_ARENA_EAST_X)+(btp_rng_next(s->npc.rng)&3u);
+    unsigned y=btp_chi_mission(r,BTP_MIS_ARENA_SPAWN_Y)+(btp_rng_next(s->npc.rng)&3u),count=1;
+    if (s->yard.rental && btp_chi_mission(r,BTP_MIS_ARENA_SPECTATOR)) for (unsigned i=0;i<4;++i) if (s->yard.types[i]==255) count=2;
     unsigned kind=btp_combat_dice(s->npc.rng)-2u;
-    if (s->yard.rental) kind=3u+(btp_rng_next(s->npc.rng)&3u);
+    if (s->yard.rental) kind=btp_chi_mission(r,BTP_MIS_ARENA_RENTAL_ROLL_BASE)+(btp_rng_next(s->npc.rng)&btp_chi_mission(r,BTP_MIS_ARENA_RENTAL_ROLL_MASK));
     unsigned difficulty=s->story_flags[3]>6 ? 6u : s->story_flags[3];
     for (unsigned i=0;i<count;++i) {
         /* 07DC:0D49 replaces the second rental record from 27E8:05DE,
            then applies the normal difficulty reduction to that record. */
-        unsigned at=c->count++;BtpCombatUnit *u=&c->unit[at];memcpy(u->record,i && s->yard.rental ? btp_mech_template(&r->combat,BTP_MECH_SPECTATOR,0) : btp_mech_template(&r->combat,BTP_MECH_ARENA,kind),125);
+        unsigned at=c->count++;BtpCombatUnit *u=&c->unit[at];memcpy(u->record,i && s->yard.rental ? btp_chi_mission_unit(r,BTP_MUNIT_ARENA_SPECTATOR) : btp_chi_mission_unit(r,BTP_MUNIT_ARENA_OPPONENT_0+kind),125);
         for (unsigned k=17;k<=27;++k) u->record[k]=(uint8_t)(u->record[k]>r->combat.arena_reduction[difficulty] ? (unsigned)u->record[k]-r->combat.arena_reduction[difficulty] : 0u);
-        if (difficulty>4) for (unsigned k=0;k<5;++k) { unsigned part=52u+(btp_rng_next(s->npc.rng)&31u);if (u->record[part]) u->record[part]|=128; }
-        if (difficulty>5) { u->record[117]=btp_rng_next(s->npc.rng)&1u;u->record[119]=btp_rng_next(s->npc.rng)&1u;u->record[118]=btp_rng_next(s->npc.rng)&1u; }
+        if (difficulty>btp_chi_mission(r,BTP_MIS_ARENA_DAMAGE_THRESHOLD)) for (unsigned k=0;k<btp_chi_mission(r,BTP_MIS_ARENA_DAMAGE_ROLLS);++k) { unsigned part=52u+(btp_rng_next(s->npc.rng)&31u);if (u->record[part]) u->record[part]|=128; }
+        if (difficulty>btp_chi_mission(r,BTP_MIS_ARENA_SYSTEM_THRESHOLD)) { u->record[117]=btp_rng_next(s->npc.rng)&1u;u->record[119]=btp_rng_next(s->npc.rng)&1u;u->record[118]=btp_rng_next(s->npc.rng)&1u; }
         u->x=(uint8_t)(x+r->combat.special_x[i]);u->y=(uint8_t)(y+r->combat.special_y[i]);u->direction=6;c->ids[at]=(uint8_t)(12+i);c->walk[at]=12;c->plan_direction[at]=6;
-        if (i && s->yard.rental) { u->x=70;u->y=102;u->direction=2;c->walk[at]=0; }
+        if (i && s->yard.rental) { u->x=(uint8_t)btp_chi_mission(r,BTP_MIS_ARENA_SPECTATOR_X);u->y=(uint8_t)btp_chi_mission(r,BTP_MIS_ARENA_SPECTATOR_Y);u->direction=2;c->walk[at]=0; }
     }
-    s->x_half=107;s->y_half=89;s->yard.phase=BTP_YARD_FIGHT;
+    s->x_half=c->unit[0].x;s->y_half=(uint16_t)(c->unit[0].y+2u);s->yard.phase=BTP_YARD_FIGHT;
 }
 int btp_yard_native(BtpState *s,const BtpResources *r)
 {
@@ -142,7 +137,8 @@ int btp_yard_native(BtpState *s,const BtpResources *r)
         keep_party(s,1);
         for (unsigned i=0;i<4;++i) btp_party_mech(s,i)[0]=255;
         s->party.people[0][12]=8;s->campaign.mounted=0;
-        s->campaign.world_x=(uint16_t)(1680+btp_chi_map_offset(r,3,0));s->campaign.world_y=(uint16_t)(932+btp_chi_map_offset(r,3,1));s->x_half=16;s->y_half=36;
+        s->x_half=(uint16_t)btp_chi_mission(r,BTP_MIS_PRISON_START_X);s->y_half=(uint16_t)btp_chi_mission(r,BTP_MIS_PRISON_START_Y);
+        s->campaign.world_x=(uint16_t)(1664+s->x_half+btp_chi_map_offset(r,3,0));s->campaign.world_y=(uint16_t)(896+s->y_half+btp_chi_map_offset(r,3,1));
         s->mode=BTP_YARD;return 1;
     }
     if (kind==10 && action==33) {
@@ -154,7 +150,8 @@ int btp_yard_native(BtpState *s,const BtpResources *r)
     }
     if (kind==10 && action==35 && s->yard.active==2) {
         s->mode=BTP_YARD;s->yard.phase=BTP_YARD_BOOT;
-        s->campaign.world_x=(uint16_t)(1323+btp_chi_map_offset(r,2,0));s->campaign.world_y=(uint16_t)(1111+btp_chi_map_offset(r,2,1));s->x_half=43;s->y_half=87;
+        s->x_half=(uint16_t)(btp_chi_mission(r,BTP_MIS_ARENA_PLAYER_X)-64u);s->y_half=(uint16_t)btp_chi_mission(r,BTP_MIS_ARENA_PLAYER_Y);
+        s->campaign.world_x=(uint16_t)(1280+s->x_half+btp_chi_map_offset(r,2,0));s->campaign.world_y=(uint16_t)(1024+s->y_half+btp_chi_map_offset(r,2,1));
         (void)btp_rng_next(s->npc.rng);(void)btp_cutscene_begin(s,r,0,6);return 1;
     }
     return 0;
@@ -164,7 +161,12 @@ void btp_yard_input(BtpState *s,const BtpResources *r,BtpAction a)
     BtpYardState *v=&s->yard;
     if (s->cutscene.active) { (void)btp_cutscene_tick(s,r);return; }
     if (s->audio.sound_count) return;
-    if (v->phase==BTP_YARD_BOOT) { v->variant=btp_rng_next(s->npc.rng)&3u;force_fields(s,0);btp_yard_begin_arena(s,r);return; }
+    if (v->phase==BTP_YARD_BOOT) {
+        /* A fixed layout still consumes the native choice draw, so nearby
+           script edits do not accidentally shift unrelated opponent rolls. */
+        unsigned variant=btp_chi_mission(r,BTP_MIS_ARENA_FIELD_VARIANT),roll=btp_rng_next(s->npc.rng)&3u;
+        v->variant=(uint8_t)(variant==4 ? roll : variant);force_fields(s,r,0);btp_yard_begin_arena(s,r);return;
+    }
     if (v->phase==BTP_YARD_OWN) {
         if (a==BTP_DOWN || a==BTP_RIGHT) v->selected=(uint8_t)((v->selected+1u)%4u);
         if (a==BTP_UP || a==BTP_LEFT) v->selected=(uint8_t)((v->selected+3u)%4u);
@@ -203,8 +205,9 @@ void btp_yard_input(BtpState *s,const BtpResources *r,BtpAction a)
         } else s->blocked=BTP_WALL;
     }
     /* 07DC:0AE6 triggers a search at 0D14/18/1C/20, row 702D. */
-    if (s->y_half==45 && s->x_half>=20 && s->x_half<=32 && !((s->x_half-20u)&3u)) {
-        unsigned mech=(s->x_half-20u)/4u;
+    unsigned mech_x=btp_chi_mission(r,BTP_MIS_PRISON_MECHS_X);
+    if (s->y_half==btp_chi_mission(r,BTP_MIS_PRISON_MECHS_Y) && s->x_half>=mech_x && s->x_half<=mech_x+12u && !((s->x_half-mech_x)&3u)) {
+        unsigned mech=(s->x_half-mech_x)/4u;
         if (!(v->checked&(1u<<mech))) { v->checked|=(uint8_t)(1u<<mech);v->slot=(uint8_t)mech;v->phase=BTP_YARD_CLIMB; }
     }
     if (++v->timer==btp_chi_service(r,BTP_SVC_PRISON_GUARD_TICKS)) {
@@ -263,9 +266,9 @@ void btp_yard_result(BtpState *s,const BtpResources *r)
         }
         for (unsigned i=0;i<8;++i) s->party.people[i][12]=8;
         s->campaign.mounted=0;
-        if (!stolen) force_fields(s,1);
-        s->campaign.world_x=(uint16_t)((stolen ? 1264 : 1337)+btp_chi_map_offset(r,2,0));s->campaign.world_y=(uint16_t)(stolen ? y : (unsigned)(1117+btp_chi_map_offset(r,2,1)));
-        s->map_id=(uint8_t)(stolen ? 0 : 2);s->x_half=(uint16_t)(stolen ? s->campaign.world_x : 57u);s->y_half=(uint16_t)(stolen ? y : 93u);
+        if (!stolen) force_fields(s,r,1);
+        s->campaign.world_x=(uint16_t)((stolen ? btp_chi_mission(r,BTP_MIS_ARENA_ESCAPE_X) : 1280+btp_chi_mission(r,BTP_MIS_ARENA_RETURN_X))+(unsigned)btp_chi_map_offset(r,2,0));s->campaign.world_y=(uint16_t)(stolen ? y : (unsigned)(1024+btp_chi_mission(r,BTP_MIS_ARENA_RETURN_Y)+(unsigned)btp_chi_map_offset(r,2,1)));
+        s->map_id=(uint8_t)(stolen ? 0 : 2);s->x_half=(uint16_t)(stolen ? s->campaign.world_x : btp_chi_mission(r,BTP_MIS_ARENA_RETURN_X));s->y_half=(uint16_t)(stolen ? y : btp_chi_mission(r,BTP_MIS_ARENA_RETURN_Y));
         /* Escaping the arena crosses out of Starport; its suspended walkers
            must not remain attached to the surrounding wilderness map. */
         if (stolen) btp_npc_enter(s,&r->map);
@@ -292,9 +295,9 @@ void btp_yard_alarm(BtpState *s,const BtpResources *r,unsigned target)
     s->story_flags[35]=1;s->yard.alarm=1;BtpCombatState *c=&s->combat;
     /* 12E8:1D32 dispatches two original UrbanMechs at 097D/8030 and
        097D/8070. The shifted arena origin retains these exact locations. */
-    for (unsigned i=0;i<2 && c->count<24;++i) {
-        unsigned at=c->count++;BtpCombatUnit *u=&c->unit[at];memcpy(u->record,btp_mech_template(&r->combat,BTP_MECH_URBANMECH,0),125);
-        u->x=61;u->y=(uint8_t)(48u+64u*i);u->direction=4;c->ids[at]=(uint8_t)(14+i);
+    for (unsigned i=0;i<btp_chi_mission(r,BTP_MIS_ARENA_GUARD_COUNT) && c->count<24;++i) {
+        unsigned at=c->count++;BtpCombatUnit *u=&c->unit[at];memcpy(u->record,btp_chi_mission_unit(r,BTP_MUNIT_ARENA_GUARD_0+i),125);
+        u->x=(uint8_t)btp_chi_mission(r,BTP_MIS_ARENA_GUARD_X);u->y=(uint8_t)(btp_chi_mission(r,BTP_MIS_ARENA_GUARD_Y)+btp_chi_mission(r,BTP_MIS_ARENA_GUARD_SPACING)*i);u->direction=4;c->ids[at]=(uint8_t)(14+i);
         c->plan_direction[at]=4;c->walk[at]=8;
     }
 }

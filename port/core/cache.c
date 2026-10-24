@@ -1,3 +1,4 @@
+#include "data/chi_missions.h"
 #include "core/cache.h"
 #include "core/party.h"
 #include "core/animation.h"
@@ -42,7 +43,9 @@ unsigned btp_cache_tile(const BtpResources *r,const BtpState *s,int x,int y)
 {
     if (s->story_flags[66]) return x>=0 && x<32 && y>=0 && y<24 ? s->cache.maproom[(unsigned)y*32u+(unsigned)x] : 255u;
     if (x<0 || x>=64 || y<0 || y>=64) return 255;
-    if (s->cache.hall && x<3 && y>=42 && y<48) return r->combat.cache_secret[(unsigned)(y-42)*3u+(unsigned)x];
+    int hall_x=(int)btp_chi_mission(r,BTP_MIS_CACHE_HALL_X),hall_y=(int)btp_chi_mission(r,BTP_MIS_CACHE_HALL_Y);
+    if (s->cache.hall && x>=hall_x && x<hall_x+3 && y>=hall_y && y<hall_y+6)
+        return r->combat.cache_secret[(unsigned)(y-hall_y)*3u+(unsigned)(x-hall_x)];
     for (unsigned i=0;i<12;++i) {
         int dx=r->combat.cache_dx[i]/2,dy=r->combat.cache_dy[i]/2;
         if ((s->story_flags[67+i] || (s->cache.phase==BTP_CACHE_DOOR && s->cache.door==i)) &&
@@ -111,8 +114,8 @@ void btp_cache_begin(BtpState *s,const BtpResources *r)
 {
     s->cache=(BtpCacheState){.active=1};s->story_flags[58]=1;
     s->story_flags[66]=0;memset(s->story_flags+59,255,3);
-    s->map_id=14;s->gate=33;s->x_half=6;s->y_half=126;
-    s->campaign.world_x=1542;s->campaign.world_y=1662;s->campaign.mounted=0;
+    s->map_id=14;s->gate=33;s->x_half=(uint16_t)btp_chi_mission(r,BTP_MIS_CACHE_START_X);s->y_half=(uint16_t)btp_chi_mission(r,BTP_MIS_CACHE_START_Y);
+    s->campaign.world_x=(uint16_t)(1536+s->x_half);s->campaign.world_y=(uint16_t)(1536+s->y_half);s->campaign.mounted=0;
     btp_party_init(s);
     for (unsigned i=0;i<4;++i) { uint8_t *m=btp_party_mech(s,i);if (m[0]!=255) s->party.mech_types[i]=m[0];m[0]=255; }
     for (unsigned i=0;i<8;++i) s->party.people[i][12]=8;
@@ -125,11 +128,11 @@ void btp_cache_begin(BtpState *s,const BtpResources *r)
 void btp_cache_script_end(BtpState *s,const BtpResources *r)
 {
     unsigned kind=s->campaign.building;
-    if (!s->cache.active) { if (kind==20 && s->story_flags[54]) btp_cache_begin(s,r);return; }
+    if (!s->cache.active) { if (kind==20 && s->story_flags[btp_chi_mission(r,BTP_MIS_CACHE_ACCESS_FLAG)]) btp_cache_begin(s,r);return; }
     if (kind==25) {
         /* 0B5D:0515..0534 sets both exit flags after WINSCENE's final
            key wait returns. The native frontend consumes menu.quit. */
-        s->mode=BTP_ENDING;s->menu.quit=1;return;
+        s->mode=BTP_ENDING;s->menu.quit=(uint8_t)btp_chi_mission(r,BTP_MIS_CACHE_QUIT_AT_END);return;
     }
     s->script=(BtpScriptState){0};s->campaign.building=0;s->entry_slot=0;
     s->mode=BTP_CACHE;
@@ -138,7 +141,7 @@ void btp_cache_script_end(BtpState *s,const BtpResources *r)
 static void room(BtpState *s,const BtpResources *r,int enter)
 {
     s->story_flags[66]=(uint8_t)enter;s->gate=(uint8_t)(enter ? 139 : 33);
-    s->x_half=(uint16_t)(enter ? 4 : 69);s->y_half=(uint16_t)(enter ? 34 : 57);
+    s->x_half=(uint16_t)(enter ? btp_chi_mission(r,BTP_MIS_CACHE_ROOM_X) : btp_chi_mission(r,BTP_MIS_CACHE_ROOM_RETURN_X));s->y_half=(uint16_t)(enter ? btp_chi_mission(r,BTP_MIS_CACHE_ROOM_Y) : btp_chi_mission(r,BTP_MIS_CACHE_ROOM_RETURN_Y));
     if (enter) memcpy(s->cache.maproom,r->maproom.tiles,768);
     s->cache.phase=BTP_CACHE_WALK;s->cache.notice=0;
     position_party(s,r);
@@ -227,26 +230,26 @@ static void move_cache(BtpState *s,const BtpResources *r,BtpAction a)
     }
     if (tile>=126 && tile<=128) { (void)btp_cache_door(s,r,(unsigned)(x-2*(int)(tile-126u)),(unsigned)y,-1);return; }
     if (tile==182 || tile==183) { (void)btp_cache_terminal(s,r,(unsigned)x,(unsigned)y);return; }
-    if (tile==245 && x>=1 && x<=4 && y==84) { c->hall=1;notice(s,119);return; }
+    if (tile==245 && x>=(int)btp_chi_mission(r,BTP_MIS_CACHE_SECRET_X_MIN) && x<=(int)btp_chi_mission(r,BTP_MIS_CACHE_SECRET_X_MAX) && y==(int)btp_chi_mission(r,BTP_MIS_CACHE_SECRET_Y)) { c->hall=1;notice(s,119);return; }
     if (tile>=246) { if (!s->story_flags[63]) btp_game_building(s,r,22);return; }
     if (tile==131 || (tile>=165 && tile<=167)) { notice(s,120);return; }
     unsigned tx=((unsigned)x+1u)&126u,ty=(unsigned)y&126u;
-    if (tile==58 || tile==61) { if (tx==78 && ty>=12 && ty<=16) { s->story_flags[64]=1;notice(s,121); }return; }
+    if (tile==58 || tile==61) { if (tx==btp_chi_mission(r,BTP_MIS_CACHE_SUPPLY_X) && ty>=btp_chi_mission(r,BTP_MIS_CACHE_SUPPLY_Y_MIN) && ty<=btp_chi_mission(r,BTP_MIS_CACHE_SUPPLY_Y_MAX)) { s->story_flags[64]=1;notice(s,121); }return; }
     if (tile==40) {
-        if (tx==124 && ty==4) { btp_game_building(s,r,24);s->story_flags[65]=1; }
-        else if (tx==72 && ty==56) {
+        if (tx==btp_chi_mission(r,BTP_MIS_CACHE_FIND_X) && ty==btp_chi_mission(r,BTP_MIS_CACHE_FIND_Y)) { btp_game_building(s,r,24);s->story_flags[65]=1; }
+        else if (tx==btp_chi_mission(r,BTP_MIS_CACHE_ROOM_DOOR_X) && ty==btp_chi_mission(r,BTP_MIS_CACHE_ROOM_DOOR_Y)) {
             if (s->story_flags[62]==1) notice(s,126);
             else { c->phase=BTP_CACHE_PEER;c->notice=127; }
         }
     }
-    if (tile==77 && ((tx==4 && ty==4) || (tx==2 && ty==14))) {
-        if (!s->story_flags[64]) notice(s,123);
-        else if (s->story_flags[62]!=1) notice(s,124);
-        else if (!s->story_flags[65]) notice(s,125);
+    if (tile==77 && ((tx==btp_chi_mission(r,BTP_MIS_CACHE_ENDING_X1) && ty==btp_chi_mission(r,BTP_MIS_CACHE_ENDING_Y1)) || (tx==btp_chi_mission(r,BTP_MIS_CACHE_ENDING_X2) && ty==btp_chi_mission(r,BTP_MIS_CACHE_ENDING_Y2)))) {
+        if (btp_chi_mission(r,BTP_MIS_CACHE_REQUIRE_SUPPLY) && !s->story_flags[64]) notice(s,123);
+        else if (btp_chi_mission(r,BTP_MIS_CACHE_REQUIRE_PASSWORD) && s->story_flags[62]!=1) notice(s,124);
+        else if (btp_chi_mission(r,BTP_MIS_CACHE_REQUIRE_FIND) && !s->story_flags[65]) notice(s,125);
         else btp_game_building(s,r,25);
     }
 }
-int btp_cache_valid(const BtpState *s)
+int btp_cache_valid_resources(const BtpState *s,const BtpResources *r)
 {
     const BtpCacheState *c=&s->cache;
     if (c->active>1 || c->phase>BTP_CACHE_PHOENIX || c->selected>1 || (c->terminal>=33 && c->terminal!=255) || c->door>11 || c->door_step>2 || c->hall>1) return 0;
@@ -265,7 +268,7 @@ int btp_cache_valid(const BtpState *s)
     if ((c->phase==BTP_CACHE_TERMINAL || c->phase==BTP_CACHE_DOOR || c->phase==BTP_CACHE_PEER || c->phase==BTP_CACHE_CLIMB) && s->story_flags[66]) return 0;
     if (c->phase==BTP_CACHE_EXIT && !s->story_flags[66]) return 0;
     if (c->phase==BTP_CACHE_PHOENIX && (s->mode!=BTP_BUILDING || s->campaign.building!=22 || s->script.status!=BTP_SCRIPT_NATIVE || s->script.native_action!=45)) return 0;
-    if (s->mode==BTP_ENDING && (s->campaign.building!=25 || s->script.status!=BTP_SCRIPT_END || !s->story_flags[62] || !s->story_flags[64] || !s->story_flags[65])) return 0;
+    if (s->mode==BTP_ENDING && (s->campaign.building!=25 || s->script.status!=BTP_SCRIPT_END || (btp_chi_mission(r,BTP_MIS_CACHE_REQUIRE_PASSWORD) && !s->story_flags[62]) || (btp_chi_mission(r,BTP_MIS_CACHE_REQUIRE_SUPPLY) && !s->story_flags[64]) || (btp_chi_mission(r,BTP_MIS_CACHE_REQUIRE_FIND) && !s->story_flags[65]))) return 0;
     if (c->notice && !(c->notice>=119 && c->notice<=137) && !(c->terminal==255 && c->notice<8)) return 0;
     for (unsigned i=59;i<=61;++i) if (s->story_flags[i]>=33 && s->story_flags[i]!=255) return 0;
     for (unsigned i=62;i<=78;++i) if (s->story_flags[i]>1) return 0;
@@ -291,3 +294,5 @@ int btp_cache_text(const BtpState *s,const BtpResources *r,uint8_t *out,size_t c
     }
     return s->cache.notice ? append(r,s->cache.notice,out,cap,length) : 1;
 }
+
+int btp_cache_valid(const BtpState *s) { return btp_cache_valid_resources(s,NULL); }

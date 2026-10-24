@@ -94,12 +94,12 @@ int btp_chi_service_expand(const BtpResources *r,const char *source,char *out,si
 {
     size_t used=0;
     while (*source) {
-        if (!strncmp(source,"{service:",9)) {
+        if (!strncmp(source,"{service:",9) || !strncmp(source,"{mission:",9)) {
             const char *end=strchr(source+9,'}');char key[96],number[32];unsigned value;
             if (!end || (size_t)(end-source-9)>=sizeof key) return 0;
             memcpy(key,source+9,(size_t)(end-source-9));key[end-source-9]=0;
             char *comma=strstr(key,":comma");if (comma && strcmp(comma,":comma")) return 0;if (comma) *comma=0;
-            if (!btp_chi_service_reference(r,key,&value)) return 0;
+            if (!(source[1]=='s' ? btp_chi_service_reference(r,key,&value) : btp_chi_mission_reference(r,key,&value))) return 0;
             snprintf(number,sizeof number,"%u",value);size_t n=strlen(number);
             for (size_t i=0;i<n;++i) {
                 if (comma && i && !((n-i)%3)) { if (used+1>=cap) return 0;out[used++]=','; }

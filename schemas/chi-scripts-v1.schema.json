@@ -1132,7 +1132,7 @@
                         },
                         {
                           "type": "string",
-                          "pattern": "^\\{service:[a-z0-9.]+\\}$"
+                          "pattern": "^\\{(?:service|mission):[a-z0-9._]+\\}$"
                         }
                       ]
                     }
@@ -1186,7 +1186,7 @@
                         },
                         {
                           "type": "string",
-                          "pattern": "^\\{service:[a-z0-9.]+\\}$"
+                          "pattern": "^\\{(?:service|mission):[a-z0-9._]+\\}$"
                         }
                       ]
                     }
@@ -1240,7 +1240,7 @@
                         },
                         {
                           "type": "string",
-                          "pattern": "^\\{service:[a-z0-9.]+\\}$"
+                          "pattern": "^\\{(?:service|mission):[a-z0-9._]+\\}$"
                         }
                       ]
                     },

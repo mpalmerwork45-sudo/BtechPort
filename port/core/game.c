@@ -66,6 +66,23 @@ void btp_content_coordinates(BtpState *s,const BtpResources *r)
 void btp_start_content(BtpState *s,const BtpResources *r)
 {
     btp_start(s);btp_content_coordinates(s,r);
+    s->credits=btp_chi_mission(r,BTP_MIS_START_CREDITS);s->allowance_cap=(uint16_t)btp_chi_mission(r,BTP_MIS_START_ALLOWANCE_CAP);
+    s->story_flags[51]=(uint8_t)s->allowance_cap;s->story_flags[52]=(uint8_t)(s->allowance_cap>>8);
+    s->npc.allowance_pending=(uint8_t)btp_economy_below_cap(s);
+    for (unsigned i=0;i<3;++i) s->npc.rng[i]=(uint8_t)btp_chi_mission(r,BTP_MIS_START_RNG_0+i);
+    for (unsigned i=0;i<3;++i) s->skills[i]=(uint8_t)btp_chi_mission(r,BTP_MIS_START_SKILL_0+i);
+    for (unsigned i=0;i<2;++i) s->mech_skills[i]=(uint8_t)btp_chi_mission(r,BTP_MIS_START_SKILL_3+i);
+    s->technician=(uint8_t)btp_chi_mission(r,BTP_MIS_START_SKILL_5);
+    /* The native party is lazy. Preserve that baseline byte state, but seed
+       explicitly changed character attributes before its first creation. */
+    if (btp_chi_mission(r,BTP_MIS_START_CONSTITUTION)!=8 || btp_chi_mission(r,BTP_MIS_START_DEXTERITY)!=9 ||
+        btp_chi_mission(r,BTP_MIS_START_CHARISMA)!=7 || btp_chi_mission(r,BTP_MIS_START_SKILL_6)) {
+        btp_party_init(s);s->party.people[0][1]=(uint8_t)btp_chi_mission(r,BTP_MIS_START_CONSTITUTION);
+        s->party.people[0][2]=(uint8_t)btp_chi_mission(r,BTP_MIS_START_DEXTERITY);
+        s->party.people[0][3]=(uint8_t)btp_chi_mission(r,BTP_MIS_START_CHARISMA);
+        s->party.people[0][10]=(uint8_t)btp_chi_mission(r,BTP_MIS_START_SKILL_6);
+        s->party.people[0][15]=(uint8_t)(10*s->party.people[0][1]);
+    }
     if (r->project && r->project->chi_spatial) {
         s->x_half=r->project->chi_spatial->start_x;s->y_half=r->project->chi_spatial->start_y;
         if (btp_citadel_origin(s,0)!=1536 || btp_citadel_origin(s,1)!=1536) {
@@ -96,7 +113,7 @@ const BtpMap *btp_active_map(const BtpResources *r,const BtpState *s)
     if (s->cache.active && s->story_flags[66]) return &r->maproom;
     /* Original 103B:0FC0 switches maps after the third invasion message,
        while TRAINING.BLD is still suspended in its combat native call. */
-    if (s->campaign.invasion && s->late.invasion_event>=3) return &r->destroyed;
+    if (s->campaign.invasion && s->late.invasion_event>=btp_chi_mission(r,BTP_MIS_INVASION_RUIN_AFTER)) return &r->destroyed;
     return s->map_id==11 ? &r->destroyed : s->map_id>=2 && s->map_id<=14 ? &r->local[s->map_id-1] : &r->map;
 }
 unsigned btp_building_kind(const BtpResources *r,const BtpState *s)
@@ -400,7 +417,7 @@ static void game_tick(BtpState *s, const BtpResources *r, BtpAction a)
         return;
     }
     if (s->mode == BTP_QUIZ) {
-        int result = btp_quiz_tick(s,a);
+        int result = btp_quiz_tick_resources(s,r,a);
         if (result == 1) { s->mode = BTP_BUILDING; start_building(s,r); finish_script(s,r,map); }
         if (result == 2) {
             s->mode = BTP_EXPLORE; s->x_half = r->map.entrance_x[0]&127; s->y_half = r->map.entrance_y[0]&127;

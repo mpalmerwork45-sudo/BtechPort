@@ -24,6 +24,7 @@
 #include "core/cache.h"
 #include "core/roster_game.h"
 #include "core/events.h"
+#include "data/chi_missions.h"
 #include <string.h>
 
 static void put16(uint8_t *p, uint16_t v) { p[0] = (uint8_t)v; p[1] = (uint8_t)(v >> 8); }
@@ -587,7 +588,10 @@ int btp_state_decode_resources(const uint8_t *b, size_t n, const BtpMap *m, cons
                 }
             }
             static const uint8_t protection[6] = {0,25,40,30,50,50};
-            if ((result.allowance_cap != 50 && !(version >= 10 && result.allowance_cap == 150) && !(version >= 11 && result.allowance_cap == 250) && !(version >= 13 && result.allowance_cap == 500) && !(version>=15 && (result.allowance_cap==1000 || result.allowance_cap==2000)) && !(version>=16 && result.allowance_cap==3000)) || result.weapon > 13 || result.armor > 5 ||
+            /* An imported campaign can choose its initial cap; later native
+               promotions still use the original supported ranks. The save
+               envelope pins these settings to the exact project content. */
+            if ((result.allowance_cap != btp_chi_mission(resources,BTP_MIS_START_ALLOWANCE_CAP) && result.allowance_cap != 50 && !(version >= 10 && result.allowance_cap == 150) && !(version >= 11 && result.allowance_cap == 250) && !(version >= 13 && result.allowance_cap == 500) && !(version>=15 && (result.allowance_cap==1000 || result.allowance_cap==2000)) && !(version>=16 && result.allowance_cap==3000)) || result.weapon > 13 || result.armor > 5 ||
                 result.armor_points > protection[result.armor] || result.checkpoint_weapon > 13 || result.checkpoint_armor > 5 ||
                 result.checkpoint_armor_points > protection[result.checkpoint_armor] ||
                 v->confirm_selected > 1 || v->has_cash > 1 || v->cash_after > v->text_count ||
@@ -628,7 +632,7 @@ int btp_state_decode_resources(const uint8_t *b, size_t n, const BtpMap *m, cons
             if ((result.mode != BTP_BUILDING && result.mode != BTP_MISSION && result.mode!=BTP_ENCOUNTER && result.mode!=BTP_GAME_OVER && result.mode!=BTP_YARD && !(result.mode==BTP_ACTIONS && result.menu.from_story)) || (v->status != BTP_SCRIPT_WAIT && v->status != BTP_SCRIPT_NATIVE &&
                 v->status != BTP_SCRIPT_CONFIRM && v->status != BTP_SCRIPT_ANIMATION && v->status!=BTP_SCRIPT_RECRUIT &&
                 !(version>=28 && v->status==BTP_SCRIPT_EFFECT))) return 0;
-            if (version >= 6 && result.checkpoint_allowance_cap != 50 && result.checkpoint_allowance_cap != 150 && !(version >= 11 && result.checkpoint_allowance_cap == 250) && !(version >= 13 && result.checkpoint_allowance_cap == 500) && !(version>=15 && (result.checkpoint_allowance_cap==1000 || result.checkpoint_allowance_cap==2000)) && !(version>=16 && result.checkpoint_allowance_cap==3000)) return 0;
+            if (version >= 6 && result.checkpoint_allowance_cap != btp_chi_mission(resources,BTP_MIS_START_ALLOWANCE_CAP) && result.checkpoint_allowance_cap != 50 && result.checkpoint_allowance_cap != 150 && !(version >= 11 && result.checkpoint_allowance_cap == 250) && !(version >= 13 && result.checkpoint_allowance_cap == 500) && !(version>=15 && (result.checkpoint_allowance_cap==1000 || result.checkpoint_allowance_cap==2000)) && !(version>=16 && result.checkpoint_allowance_cap==3000)) return 0;
         } else {
             if (result.checkpoint_talk_result || result.checkpoint_credits || result.checkpoint_weapon ||
                 result.checkpoint_armor || result.checkpoint_armor_points || result.checkpoint_allowance_cap) return 0;
@@ -727,9 +731,9 @@ int btp_state_decode_resources(const uint8_t *b, size_t n, const BtpMap *m, cons
         }
         if (version<33 && result.service.phase) btp_service_upgrade(&result);
         if (result.disk_origin && ((result.disk_origin!=8 && result.disk_origin!=19) || result.mode!=BTP_BUILDING || !result.checkpoint_valid || result.campaign.building!=result.disk_origin)) return 0;
-        if (!btp_talk_valid(&result,m) || !btp_npc_valid(&result,m) || !btp_bank_valid_bld(&result,script) ||
-            !btp_school_valid_resources(&result,script,resources) || !btp_training_valid(&result) || !btp_cutscene_valid(&result) || !btp_combat_valid(&result) || !btp_effects_valid(&result) || !btp_service_valid(&result) ||
-            (result.presentation.count && result.combat.phase!=BTP_COMBAT_ROUND) || !btp_cache_valid(&result) || !btp_yard_valid_resources(&result,resources)) return 0;
+        if (!btp_talk_valid(&result,m) || !btp_npc_valid_resources(&result,m,resources) || !btp_bank_valid_bld(&result,script) ||
+            !btp_school_valid_resources(&result,script,resources) || !btp_training_valid_resources(&result,resources) || !btp_cutscene_valid(&result) || !btp_combat_valid_resources(&result,resources) || !btp_effects_valid(&result) || !btp_service_valid(&result) ||
+            (result.presentation.count && result.combat.phase!=BTP_COMBAT_ROUND) || !btp_cache_valid_resources(&result,resources) || !btp_yard_valid_resources(&result,resources)) return 0;
         if (result.technician>4 || result.apprentice>1 || result.checkpoint_technician>4 ||
             result.checkpoint_apprentice>1 || (result.apprentice && !result.technician)) return 0;
     }
@@ -774,7 +778,7 @@ int btp_state_decode_resources(const uint8_t *b, size_t n, const BtpMap *m, cons
         result.campaign.member=0;btp_broker_select(&result,item);
         if (result.campaign.ui!=BTP_MENU_BROKER) result.campaign.selected=(uint8_t)selected;
     }
-    if (!btp_actions_valid(&result) || !btp_audio_valid(&result) || !btp_aftermath_valid(&result)) return 0;
+    if (!btp_actions_valid(&result) || !btp_audio_valid(&result) || !btp_aftermath_valid_resources(&result,resources)) return 0;
     if (version==41) {
         /* Existing Updated games keep their purchases and pending choices.
            Retire the old Space entry; held broker pages become the native
