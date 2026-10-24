@@ -16,10 +16,10 @@ from editor_recovery import recoverable_forms
 @recoverable_forms
 class ConstructionBrowser:
     def __init__(self,maps):
-        self.owner=maps;self.document=maps.document;self.selected=None;self.bundles=[];self.photos=[]
+        self.owner=maps;self.document=maps.document;self.selected=None;self.bundles=[];self.photos=[];self.workshops=[]
         self.library=ConstructionLibrary(maps.parent.settings.get('construction-library-root',DEFAULT_ROOT),self.document.validator)
         self.window=view_window(self,maps,'construction-library','Construction Library')
-        self.status=tk.StringVar(value='Buildings, walls, roads and patterns shared between projects.')
+        self.status=tk.StringVar(value='Tiles, buildings, walls, roads and patterns shared between projects.')
         self.kind=tk.StringVar(value='All');self.query=tk.StringVar();self.generation=0;self.load_generation=0
         self.location=tk.StringVar(value=str(self.library.root))
         heading=ttk.Frame(self.window,padding=10);heading.pack(fill='x')
@@ -27,12 +27,12 @@ class ConstructionBrowser:
         ttk.Button(heading,text='Library folder...',command=lambda:guard(self,self.folder)).pack(side='right')
         location_label=ttk.Label(self.window,textvariable=self.location,style='Muted.TLabel',padding=(10,0))
         location_label.pack(fill='x')
-        help_label=ttk.Label(self.window,text='Import copies into '+self.document.manifest['title']+'. Edit there, then save a revised design back to this library.',
+        help_label=ttk.Label(self.window,text='Edit shared designs directly in a private workshop and test them on its canvas. Import copies into '+self.document.manifest['title']+' when ready.',
                   padding=10,wraplength=800);help_label.pack(fill='x')
         for label in (location_label,help_label):
             label.bind('<Configure>',lambda event,w=label:w.configure(wraplength=max(100,event.width-20)))
         bar=ttk.Frame(self.window,padding=(8,0));bar.pack(fill='x');self.buttons={}
-        for label,callback in [('Import into project',self.import_selected),('Import and edit',lambda:self.import_selected(True)),
+        for label,callback in [('Edit in library',self.edit),('New shared design...',self.new),('Import into project',self.import_selected),('Import and edit',lambda:self.import_selected(True)),
                                ('Save project design...',self.export_dialog),('Load bundle...',self.load_file),
                                ('Export bundle...',self.export_file),('Refresh',self.reload)]:
             button=ttk.Button(bar,text=label,width=0,command=lambda f=callback:guard(self,f));button.pack(side='left',padx=3,pady=3)
@@ -67,7 +67,7 @@ class ConstructionBrowser:
         scroll=ttk.Scrollbar(left,command=self.listing.yview);scroll.pack(side='right',fill='y')
         self.listing.configure(yscrollcommand=scroll.set);self.listing.pack(fill='both',expand=True)
         self.listing.bind('<<TreeviewSelect>>',lambda _:guard(self,self.select))
-        self.listing.bind('<Double-1>',lambda _:guard(self,lambda:self.import_selected(True)))
+        self.listing.bind('<Double-1>',lambda _:guard(self,self.edit))
         self.detail=tk.StringVar();detail_label=ttk.Label(right,textvariable=self.detail,wraplength=470,padding=6);detail_label.pack(fill='x')
         detail_label.bind('<Configure>',lambda event:detail_label.configure(wraplength=max(100,event.width-12)))
         self.canvas=tk.Canvas(right,background='#273b45',highlightthickness=0,width=480,height=320);self.canvas.pack(fill='both',expand=True)
@@ -114,12 +114,20 @@ class ConstructionBrowser:
             +record['description'])
         self.generation+=1;generation=self.generation;self.preview=None;self.draw()
         settings=dict(self.owner.parent.settings);validator=self.document.validator
+        original_graphics=copy.deepcopy(getattr(self.owner,'graphics',{}))
         def work(cancel):
             from authoring_visuals import VisualSource
             files=preview_files(bundle)
             doc=SimpleNamespace(manifest=files['project.json'],content=files['content.json'],adventure=files['adventure.json'],
                 art=files['graphics.json'],snapshot={k:encoded(v) for k,v in files.items()},validator=validator)
-            return VisualSource(doc,settings).grid(rows(bundle))
+            source=VisualSource(doc,settings)
+            # Imported CHI projects can have locally extracted atlases with
+            # no machine-wide DOS path. Browsing reuses those decoded pixels,
+            # while library files retain their explicit original references.
+            if all(t['sheet']=='package:art' or t['sheet'] in original_graphics for t in bundle['tiles']):
+                from editor_tiles import art_tiles
+                source._tiles=original_graphics;source._tiles.update(art_tiles(doc))
+            return source.grid(rows(bundle))
         def done(pixels):
             if generation==self.generation:self.preview=pixels;self.draw()
         def failed(error):
@@ -156,7 +164,10 @@ class ConstructionBrowser:
                 from editor_history import refresh_scope
                 refresh_scope(workspace,scope)
             if edit:
-                if bundle['kind']=='Pattern':
+                if bundle['kind']=='Tile':
+                    from tile_editing import edit_pixels
+                    edit_pixels(self.owner,design_id)
+                elif bundle['kind']=='Pattern':
                     editor=self.owner.patterns();editor.selected=design_id;editor.refresh()
                 else:
                     editor=self.owner.construction(bundle['kind']);editor.current=design_id;editor.refresh()
@@ -174,10 +185,20 @@ class ConstructionBrowser:
         else:show(import_bundle(self.document,bundle))
 
     def export_dialog(self,design_id=None):
-        from adventure_editor import Form
         scope=scope_of(self);candidate=snapshot(scope) if scope and workspace_of(self) else copy.deepcopy(self.document)
+        return self._export_dialog(design_id,candidate)
+
+    def export_tile_dialog(self,source):
+        from tile_editing import ensure_tile
+        scope=scope_of(self);candidate=snapshot(scope) if scope and workspace_of(self) else copy.deepcopy(self.document)
+        identity=source.get('id') or ensure_tile(candidate,source['sheet'],source['graphic'])
+        return self._export_dialog(identity,candidate)
+
+    def _export_dialog(self,design_id,candidate):
+        from adventure_editor import Form
         data=metadata(candidate);designs=[p for key in ('construction_sets','map_patterns') for p in data.get(key,[])]
-        if not designs:raise EditorError('Create a building, wall, road or saved pattern in this project first.')
+        designs.extend(dict(id=t['id'],name=data.get('tile_names',{}).get(t['id'],t['id'].split(':')[-1])) for t in candidate.adventure['tiles'])
+        if not designs:raise EditorError('Create a tile, building, wall, road or saved pattern in this project first.')
         selected=next((d for d in designs if d['id']==design_id),designs[0])
         f=Form(self,'Save design to Construction Library')
         f.field('design',selected['id'],[d['id'] for d in designs],label='Project construction set or pattern')
@@ -195,6 +216,38 @@ class ConstructionBrowser:
                 bundle.update(entry_id=expected['entry_id'],revision=expected['revision'])
             self.save_bundle(bundle,expected,variant=expected is None)
         f.submit(apply,'Save to library');return f
+
+    def edit(self,entry_id=None):
+        if entry_id:self.selected=entry_id
+        bundle=self.current()
+        for editor in self.workshops:
+            if editor.window.winfo_exists() and editor.library_context.bundle['entry_id']==bundle['entry_id']:
+                editor.window.lift();return editor
+        from construction_workshop import open_workshop
+        editor=open_workshop(self,copy.deepcopy(bundle));self.workshops.append(editor);return editor
+
+    def new(self):
+        from adventure_editor import Form
+        f=Form(self,'New shared design');f.field('name','New shared design');f.field('kind','Building',list(KINDS))
+        def apply(values):
+            from construction_editing import new_profile
+            from tile_editing import create_tile
+            from map_patterns import save_pattern
+            # This template is read only; every new definition is built in a
+            # private document and enters the library before opening an editor.
+            from construction_library import ROOT
+            doc=ProjectDocument(ROOT/'examples/beacon-demo',self.document.validator)
+            kind=values['kind']
+            if kind in ('Tile','Pattern'):
+                tile_id=create_tile(doc,name=values['name'])
+                identity=tile_id if kind=='Tile' else save_pattern(doc,[[tile_id]],values['name'])
+            else:identity=new_profile(doc,kind)
+            bundle=closure(doc,identity);bundle['name']=bundle['design']['name']=values['name']
+            bundle['provenance']=dict(project='Created in Construction Library',package='construction-library',documents={})
+            saved=self.library.save(bundle,variant=True)
+            self.bundles=self.library.entries();self.kind.set('All');self.query.set('');self.selected=saved['entry_id'];self.refresh()
+            self.edit(saved['entry_id'])
+        f.submit(apply,'Create shared design');return f
 
     def save_bundle(self,bundle,expected=None,variant=False):
         from construction_library import check_bundle

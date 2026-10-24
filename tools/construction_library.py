@@ -21,7 +21,7 @@ from project_lock import project_lock
 
 ROOT=Path(__file__).resolve().parents[1]
 FORMAT='btp-construction-library-v1'
-KINDS=('Building','Wall','Road','Pattern')
+KINDS=('Building','Wall','Road','Pattern','Tile')
 DEFAULT_ROOT=ROOT/'work/construction-library'
 NAME=dict(type='string',minLength=1,maxLength=95)
 STYLE=obj(dict(id=ID,name=NAME,kind=enum('Building','Wall','Road'),
@@ -45,7 +45,7 @@ def schema():
 
 
 def rows(bundle):
-    return bundle['design']['rows'] if bundle['kind']=='Pattern' else compile_rows(bundle['design'])
+    return bundle['design']['rows'] if bundle['kind'] in ('Pattern','Tile') else compile_rows(bundle['design'])
 
 
 def check_bundle(bundle):
@@ -53,17 +53,19 @@ def check_bundle(bundle):
     if not bundle['name'].strip() or not bundle['design']['name'].strip():raise EditorError('Give the library design a nonempty name.')
     if len(encoded(bundle))>16*1024*1024:raise EditorError('Construction Library entries are limited to 16 MiB.')
     design=bundle['design']
-    if bundle['kind']!='Pattern':
+    if bundle['kind'] not in ('Pattern','Tile'):
         if design.get('kind')!=bundle['kind']:raise EditorError('Construction type does not match its drawing definition.')
         geometry(design)  # Height limits and rectangular footprints.
         if any(not r.startswith('join|') or r not in design['parts'] for r in design.get('generated_joins',{})):
             raise EditorError('Generated joins must refer to assigned joining parts.')
     elif 'rows' not in design:raise EditorError('A pattern needs its tile rows.')
     grid=rows(bundle)
+    if bundle['kind']=='Tile' and (len(grid)!=1 or len(grid[0])!=1 or grid[0][0]!=design['id']):
+        raise EditorError('A shared tile contains exactly its own single tile definition.')
     if any(len(row)!=len(grid[0]) for row in grid):raise EditorError('Pattern rows must form a rectangle.')
     tiles={t['id']:t for t in bundle['tiles']};images={i['id']:i for i in bundle['images']}
     if len(tiles)!=len(bundle['tiles']) or len(images)!=len(bundle['images']):raise EditorError('Duplicate tile/image IDs in library entry.')
-    used=({t for row in grid for t in row if t!=' '} if bundle['kind']=='Pattern' else set(design['parts'].values()))
+    used=({t for row in grid for t in row if t!=' '} if bundle['kind'] in ('Pattern','Tile') else set(design['parts'].values()))
     if used!=set(tiles):raise EditorError('Library entry must contain exactly the tiles used by its definition.')
     owned=set()
     for tile in tiles.values():
@@ -93,9 +95,13 @@ def closure(document,design_id):
     """Read current unsaved data; never copy unrelated tiles, maps or scripts."""
     data=metadata(document)
     design=next((p for key in ('construction_sets','map_patterns') for p in data.get(key,[]) if p['id']==design_id),None)
-    if design is None:raise EditorError('Select an existing construction set or saved pattern.')
-    design=copy.deepcopy(design);kind=design.get('kind','Pattern')
-    used=set(design['parts'].values()) if kind!='Pattern' else {t for row in design['rows'] for t in row if t!=' '}
+    kind=design.get('kind','Pattern') if design else 'Tile'
+    if design is None:
+        value=next((t for t in document.adventure['tiles'] if t['id']==design_id),None)
+        if value is None:raise EditorError('Select an existing construction set, saved pattern or tile.')
+        design=dict(id=design_id,name=data.get('tile_names',{}).get(design_id,design_id.split(':')[-1]),rows=[[design_id]])
+    design=copy.deepcopy(design)
+    used=set(design['parts'].values()) if kind not in ('Pattern','Tile') else {t for row in design['rows'] for t in row if t!=' '}
     values={t['id']:t for t in document.adventure['tiles']}
     if used-set(values):raise EditorError('The design uses a missing tile. Restore or replace that part before sharing.')
     tiles=[copy.deepcopy(values[k]) for k in sorted(used)]
@@ -163,7 +169,9 @@ def preview_files(bundle):
         people=[dict(id='preview:pilot',identity='actor:0',name='Preview',attributes=[8,8,8],skills=[1]*7,weapon=0,armor=0)],
         shops=[],encounters=[],flags=[],events=[dict(id='preview:end',op='end')],
         start=dict(map='preview:map',at=[16,24],event='preview:end',credits=0,party=[dict(person='preview:pilot',mech='none')]))
-    editing=copy.deepcopy(bundle['editing']);editing['map_patterns' if bundle['kind']=='Pattern' else 'construction_sets']=[copy.deepcopy(bundle['design'])]
+    editing=copy.deepcopy(bundle['editing'])
+    if bundle['kind']!='Tile':editing['map_patterns' if bundle['kind']=='Pattern' else 'construction_sets']=[copy.deepcopy(bundle['design'])]
+    editing.setdefault('tile_names',{}).update({bundle['design']['id']:bundle['name']} if bundle['kind']=='Tile' else {})
     files['EDITOR.json']=editing
     return files
 
@@ -184,6 +192,9 @@ def import_bundle(document,bundle,design_id=None,validate_result=True):
         raise EditorError('This design references original CHI tiles. Choose a CHI project or share a version using owned tiles.')
     a=copy.deepcopy(document.adventure);art=copy.deepcopy(document.art);data=metadata(document);upgrade(a)
     prefix=document.manifest['package_id'];image_map={};tile_map={};editing=bundle['editing']
+    if bundle['kind']=='Tile' and design_id:
+        check(design_id,ID)
+        if any(t['id']==design_id for t in a['tiles']):raise EditorError('That tile ID already exists. Use a new ID.')
     # IDs are remapped together with their editing metadata. Different pixels,
     # collisions or layer data never overwrite a same-named project resource.
     for collection,target,note_keys in [('images',art['images'],('pixel_layers','tile_sources','catalogue')),
@@ -191,6 +202,7 @@ def import_bundle(document,bundle,design_id=None,validate_result=True):
         for old in bundle[collection]:
             value=copy.deepcopy(old)
             if collection=='tiles' and value['sheet']=='package:art':value['graphic']=image_map[value['graphic']]
+            if collection=='tiles' and bundle['kind']=='Tile' and design_id:value['id']=design_id
             existing=next((v for v in target if v['id']==value['id']),None)
             equivalent=existing==value and all(data.get(k,{}).get(value['id'])==editing.get(k,{}).get(old['id']) for k in note_keys)
             if existing is not None and not equivalent:value['id']=identity(prefix,target,'image' if collection=='images' else 'tile');existing=None
@@ -198,16 +210,18 @@ def import_bundle(document,bundle,design_id=None,validate_result=True):
             (image_map if collection=='images' else tile_map)[old['id']]=value['id']
     collection='map_patterns' if bundle['kind']=='Pattern' else 'construction_sets'
     target=data.setdefault(collection,[]);design=copy.deepcopy(bundle['design'])
-    if design_id:
+    if bundle['kind']=='Tile':
+        design['id']=tile_map[bundle['design']['id']]
+    elif design_id:
         check(design_id,ID)
         if any(p['id']==design_id for p in target):raise EditorError('That construction/pattern ID already exists. Use a new ID.')
         design['id']=design_id
     elif any(p['id']==design['id'] for p in target):
-        design['id']=identity(prefix,target,'pattern' if bundle['kind']=='Pattern' else 'construction')
+        design['id']=identity(prefix,target,'pattern' if bundle['kind']=='Pattern' else 'tile' if bundle['kind']=='Tile' else 'construction')
         design['name']=(design['name']+' copy')[:95]
-    if bundle['kind']=='Pattern':design['rows']=[[tile_map[t] if t!=' ' else ' ' for t in row] for row in design['rows']]
+    if bundle['kind'] in ('Pattern','Tile'):design['rows']=[[tile_map[t] if t!=' ' else ' ' for t in row] for row in design['rows']]
     else:design['parts']={role:tile_map[t] for role,t in design['parts'].items()}
-    target.append(design)
+    if bundle['kind']!='Tile':target.append(design)
     for key,values in editing.items():
         mapping=(tile_map if key=='tile_names' else {**image_map,**tile_map,bundle['design']['id']:design['id']}
                  if key=='catalogue' else image_map)
@@ -229,12 +243,12 @@ def summary(bundle,path=None):
     design=bundle['design'];grid=rows(bundle)
     from construction_styles import coverage
     return record(dict(id=bundle['entry_id'],name=bundle['name']),
-        'pattern' if bundle['kind']=='Pattern' else 'construction','construction-library',
+        'pattern' if bundle['kind']=='Pattern' else 'tile' if bundle['kind']=='Tile' else 'construction','construction-library',
         {bundle['entry_id']:bundle['editing'].get('catalogue',{}).get(design['id'],{})},
         construction_kind=bundle['kind'],revision=bundle['revision'],definition=design['id'],
         width=len(grid[0]),height=len(grid),tiles=len(bundle['tiles']),images=len(bundle['images']),
         dependency='chi' if needs_original(bundle) else 'independent',file=str(path) if path else None,
-        **(dict(coverage=coverage(design)) if bundle['kind']!='Pattern' else {}))
+        **(dict(coverage=coverage(design)) if bundle['kind'] not in ('Pattern','Tile') else {}))
 
 
 class ConstructionLibrary:
@@ -253,8 +267,13 @@ class ConstructionLibrary:
             if self.path(value['entry_id'])!=path:raise EditorError('Library filename does not match its entry ID.')
             values.append(value)
         return sorted(values,key=lambda v:(v['kind'],v['name'].casefold(),v['entry_id']))
-    def save(self,bundle,expected=None,variant=False):
+    def workshop_path(self,bundle):
+        digest=hashlib.sha256(encoded(bundle)).hexdigest()
+        return self.root/'workshops'/(digest+'.json')
+    def save(self,bundle,expected=None,variant=False,workspace_files=None):
         value=copy.deepcopy(bundle)
+        if value.get('kind')=='Tile':
+            value['editing'].setdefault('tile_names',{})[value['design']['id']]=value['name']
         if variant:value.update(entry_id='library:construction-'+uuid.uuid4().hex[:16],revision=1)
         validate(value,self.validator)
         # The OS lock and optimistic revision cover competing editor windows;
@@ -272,6 +291,16 @@ class ConstructionLibrary:
             elif len(list(self.root.glob('*.construction.json')))>=4096:
                 raise EditorError('This library already contains 4096 entries. Select another library folder.')
             if len(encoded(value))>16*1024*1024:raise EditorError('Construction Library entry exceeds 16 MiB.')
+            if workspace_files is not None:
+                # A private canvas belongs to this exact revision, never to an
+                # imported game. Write it first; a failed entry write leaves
+                # only an unreachable canvas and the previous revision intact.
+                allowed=set(preview_files(value))|{'LIBRARY-SOURCES.json'}
+                if set(workspace_files)-allowed:raise EditorError('The workshop contains unsupported project files.')
+                record=dict(format='btp-construction-workshop-v1',files={name:raw.decode('utf-8') for name,raw in workspace_files.items()})
+                if len(encoded(record))>32*1024*1024:raise EditorError('The test canvas exceeds the 32 MiB workshop limit.')
+                target=self.workshop_path(value);target.parent.mkdir(parents=True,exist_ok=True)
+                ProjectDocument.atomic_file(target,encoded(record))
             ProjectDocument.atomic_file(path,encoded(value))
         return value
     def export_design(self,document,design_id,expected=None,variant=False):

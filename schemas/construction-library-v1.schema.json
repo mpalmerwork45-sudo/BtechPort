@@ -27,7 +27,8 @@
         "Building",
         "Wall",
         "Road",
-        "Pattern"
+        "Pattern",
+        "Tile"
       ]
     },
     "design": {

@@ -58,6 +58,7 @@ class TileBrowser:
         more=ttk.Menubutton(bar,text='More');menu=tk.Menu(more,tearoff=False);more.configure(menu=menu);more.pack(side='left',padx=3)
         menu.add_command(label='Clone ALL tiles in this view to project tiles',command=lambda:guard(self,self.clone_all))
         menu.add_command(label='Restore hidden source graphics',command=lambda:guard(self,self.unhide))
+        menu.add_separator();menu.add_command(label='Save tile to shared library...',command=lambda:guard(self,self.save_library))
         from editor_ui import flow_toolbar
         flow_toolbar(source_bar);flow_toolbar(bar)
         footer=ttk.Frame(self.window,padding=10);footer.pack(side='bottom',fill='x')
@@ -230,6 +231,11 @@ class TileBrowser:
     def edit(self):edit_pixels(self.owner,self.prepare_edit())
     def properties(self):
         value=self.prepare_edit();select_tile(self.owner,value);self.owner.edit_tile()
+    def save_library(self):
+        # Export an atlas tile through a detached copy: sharing a reference
+        # need not add anything to the game's paint palette or Undo history.
+        source=copy.deepcopy(self.source());self.close()
+        return self.owner.construction_library().export_tile_dialog(source)
     def remove(self):
         if self.sheet.get()=='Project tiles':
             from editor_dependencies import dialog
@@ -246,6 +252,6 @@ class TileBrowser:
         data=metadata(self.document);data.pop('hidden_tile_graphics',None);editor_commit(self.document,data);self.refresh()
     def context(self,event):
         self.click(event);menu=tk.Menu(self.window,tearoff=False)
-        for label,callback in [('Use tile',self.use),('Add new tile',self.new),('Clone tile',self.clone),('Edit pixels',self.edit),('Tile properties',self.properties),('Remove',self.remove)]:menu.add_command(label=label,command=lambda f=callback:guard(self,f))
+        for label,callback in [('Use tile',self.use),('Add new tile',self.new),('Clone tile',self.clone),('Edit pixels',self.edit),('Tile properties',self.properties),('Save tile to shared library...',self.save_library),('Remove',self.remove)]:menu.add_command(label=label,command=lambda f=callback:guard(self,f))
         from editor_ui import popup_menu
         popup_menu(menu,event)

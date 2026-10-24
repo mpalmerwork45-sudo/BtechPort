@@ -65,10 +65,19 @@ editable project tiles. New worlds default to the original **1024 × 1024** size
 Open **Construction tools** in the explorer or use **Project**; see the
 [map construction guide](docs/M5_WORLD_ART_EDITOR.md#buildings-walls-and-roads).
 
-**Project → Construction Library** shares building, wall and road definitions
-and saved patterns between games, with their tiles, animation frames, editing
+**Worlds / planets** now supports drawing imported CHI terrain with actual
+**TINYLAND** graphics, placing jigsaws and painting individual tiles. Switch
+to **Detailed tiles** for close editing; right-click to edit artwork against
+its neighbours. Original jigsaw previews resolve their terrain level and
+orientation correctly. See [world painting and jigsaws](docs/WORLD_TERRAIN_EDITING.md).
+
+**Project → Construction Library** shares tiles, building, wall and road definitions
+and saved patterns between games, with their animation frames, editing
 layers and source credits. Designers and the project Pattern Library provide
 **Save to library**; **Import and edit** opens a shared copy in another game.
+**Edit in library** opens an independent workshop: edit the shared definition
+or its pixels, draw on a persistent test canvas and use **Play** to try it.
+Saving there updates the library; importing into a game remains explicit.
 AI authors can search and import the same designs before drawing.
 See the [Construction Library guide](docs/CONSTRUCTION_LIBRARY.md).
 

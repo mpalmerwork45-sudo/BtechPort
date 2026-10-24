@@ -1,5 +1,58 @@
 # Build, verification and original oracle — 2026-10-24
 
+## World painting and shared construction workshops — 2026-10-24
+
+**VERIFIED within the measured Linux GUI/native and Windows/Wine scope.**
+Usage: [world painting](WORLD_TERRAIN_EDITING.md) and
+[shared workshops](CONSTRUCTION_LIBRARY.md#edit-directly-in-the-shared-library).
+
+- The affected Python run passes **155 tests**, zero failures/errors/skips,
+  in 50.83 s. Exact suite patterns/output are retained in
+  `work/world-authoring-20261024/python-focused.{json,log}`. Additional final
+  checks are listed below; this is not a new full-suite regression claim.
+- Native preview tests pass **7/7** and tile transport tests **8/8**. They
+  cover bounded/cancelled transport, native tile-grid agreement, towns and
+  underlays, TINYLAND glyph pixels/palette and actual edited miniature art.
+- Final spatial tests pass **21/21**, 25.43 s, including native depth and
+  miniature-art protection/review checks. Linux and Windows builds pass;
+  both platforms pass the edited-world native proof and the untouched-world
+  comparison: **6,291,456 queries** across three seeds and both invasion
+  states, all fifteen town maps/edge render banks, and deep-water checks.
+  The separate Windows binary-preview byte comparison remains **UNKNOWN**:
+  Wine's sandboxed runtime-lock creation failed and its approval request was
+  interrupted. Its zero-byte output is not passing evidence. Private fixture:
+  `work/world-edit-model-20261024/`.
+- `python3 tools/native_smoke.py --world-paint-only`: **PASS**. Real Linux Tk
+  painting covers terrain Brush/Line/Rectangle, explicit jigsaws, fine tiles,
+  replacement/erasure, Undo/Redo, cancelled draft strokes, town placement,
+  relative-to-exact conversion, flipped-line cancellation, neighbour-aware
+  pixel editing, Save/reopen and reachable tools at 1024 × 740. Evidence:
+  `work/world-paint-gui.json` and `work/world-paint-*.png`.
+- `python3 tools/native_smoke.py --map-construction-only`: **PASS**, including
+  authored-world jigsaw replacement over fine paint, navigation overview and
+  right-click neighbour context, plus the existing construction, draft and
+  SDL/headless save journey. Native CHI and independent worlds retain their
+  separate representations.
+- **24 construction tests pass**. `python3 tools/construction_workshop_smoke.py`
+  passes real drawing of three-story courtyards, zero-story walls and roads,
+  pixel edits, scoped Save/Play, canvas reopening, pattern recapture, variants,
+  cancel/discard/recovery, animated tiles and original-atlas export. The open
+  game remains unchanged. Screenshots: `work/construction-workshop-proof/`.
+- `python3 tools/native_smoke.py --library-editor-only`: **PASS** after fixing
+  a pre-existing missing resource context in Unit Library sprite previews.
+  Covers original silhouettes, infantry, property/sprite edits, imports,
+  Undo/Redo, project export, actual launcher/F5 continuation, both original
+  edition logo flows and launch from another directory.
+- Preservation passes: **1,287 reference entries** retain content/mode/mtime;
+  three owner-modified demo files retain their hashes; twenty normal saves
+  retain bytes/mtimes; four recovered-progress payload copies remain intact.
+  Report: `work/world-authoring-20261024/preservation.json`.
+
+Original-derived imports and screenshots remain local and ignored. Native
+Windows Tk interaction remains **UNKNOWN**. These source changes are available
+through `./BtechPort`; the preceding packaged-delivery record describes older
+packages, which have not been regenerated for this feature pass.
+
 ## Post-audit packaged delivery — 2026-10-24
 
 **VERIFIED within the Linux/Wine scope.** [Full results and commands](DELIVERY_REFRESH_20261024.md).

@@ -209,7 +209,10 @@ class LibraryBrowser:
             from editor_units import indexed_sprite
             from art_editing import original_sprite
             from graphics_editor import photo
-            source=type('SpriteSource',(),dict(validator=self.owner.validator))()
+            # Library blueprints use configured original resources, not the
+            # open game's native import. Supply that explicit resource context
+            # to the decoder just as a standalone dependent project would.
+            source=type('SpriteSource',(),dict(validator=self.owner.validator,manifest={}))()
             if bundle['kind']=='Infantry':
                 binding=next((b for b in bundle['graphics']['bindings'] if b['slot']=='npc'),None)
                 if unit.get('image'):image=next(i for i in bundle['graphics']['images'] if i['id']==unit['image'])

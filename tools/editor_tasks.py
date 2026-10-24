@@ -148,7 +148,8 @@ def save(workspace,scope,finished=None):
                 replacement=tempfile.TemporaryDirectory(prefix='unit-edit-',dir=owner.state_dir)
                 try:
                     candidate.stage(Path(replacement.name));doc=ProjectDocument(Path(replacement.name),candidate.validator)
-                    bundle=context.browser.library.export_unit(doc,context.bundle['definition'],context.bundle['kind'],expected=copy.deepcopy(context.bundle))
+                    bundle=(context.export_document(doc) if hasattr(context,'export_document') else
+                        context.browser.library.export_unit(doc,context.bundle['definition'],context.bundle['kind'],expected=copy.deepcopy(context.bundle)))
                     return doc,bundle,replacement
                 except Exception:replacement.cleanup();raise
             candidate.save();return candidate,None,None
@@ -156,7 +157,9 @@ def save(workspace,scope,finished=None):
             saved,bundle,replacement=result;live=scope.document
             if context:
                 old=context.temp;context.temp=replacement;context.bundle=bundle
-                live.root=saved.root;old.cleanup();context.browser.refresh(bundle['entry_id'])
+                live.root=saved.root;old.cleanup()
+                if hasattr(context,'refresh_browser'):context.refresh_browser(bundle)
+                else:context.browser.refresh(bundle['entry_id'])
             adopt_saved(live,saved);scope.saving=False
             scope.workspace.recovery.write(scope,background=True)
             owner.status.set('Saved. Newer edits remain unsaved.' if scope.dirty() else 'Saved '+live.manifest['title']+'.')
@@ -197,6 +200,7 @@ class PlaySession:
         if self.process:self.poll()
         candidate=snapshot(scope);stamp=signature(scope);settings=dict(scope.owner.settings);revision=candidate.revision
         state_dir=Path(scope.owner.state_dir).resolve();checkpoint=Path(checkpoint).resolve() if checkpoint else None;launching=False
+        library_preview=bool(getattr(scope.owner,'library_context',None))
         self.preparing=True;self.scope=scope;self.stopping=False
         def discard(result):
             # Only our unlaunched temporary snapshot is disposable. Completed
@@ -220,7 +224,9 @@ class PlaySession:
                 retain_revision(document,state_dir,source=source.root if checkpoint else candidate.root)
                 # Ordinary Play retains slots for the same exact revision.
                 # Play here/checkpoint experiments keep private per-run saves.
-                persistent=not checkpoint and here is None
+                # Shared library previews have disposable test progress. They
+                # must never create persistent game slots for the scratch kit.
+                persistent=not checkpoint and here is None and not library_preview
                 command=document.play_command(settings,state_dir if persistent else folder,here=here)
                 from app_runtime import restore_playtest_saves,project_slot_name
                 save_directory=Path(command[command.index('--save-file')+1]).parent

@@ -27,7 +27,8 @@ ROUTES={
  'WorldEditor': 'new_world rename_world generate city_form save_pattern',
  'JigsawEditor': 'save_pattern',
  'ConstructionEditor': 'rename reshape',
- 'ConstructionBrowser': 'export_dialog',
+ 'ConstructionBrowser': 'export_dialog export_tile_dialog new',
+ 'Workshop': 'rename variant',
  'PatternLibrary': 'rename',
  'EventGraph': 'link branch',
  'ObjectiveEditor': 'edit',
@@ -84,7 +85,7 @@ def describe(view,workspace):
 
 def identity(scope):
     context=getattr(scope.owner,'library_context',None)
-    return ('library:'+str(context.browser.library.root)+':'+context.bundle['entry_id']) if context else 'project:'+str(scope.document.root)
+    return ('library:'+str(getattr(context,'library',context.browser.library).root)+':'+context.bundle['entry_id']) if context else 'project:'+str(scope.document.root)
 
 
 def capture(scope):
@@ -102,7 +103,7 @@ def capture(scope):
         baseline=document.snapshot,source_baseline=document.source.disk if document.source is not None else None,
         state={k:getattr(document,k) for k in FIELDS},drafts=drafts,
         views=[describe(p.controller,scope.workspace) for p in scope.workspace.views.values() if p.scope is scope and p.controller is not None and scope.workspace.tabs.tab(p,'state')!='hidden'],
-        library=dict(root=str(context.browser.library.root),bundle=context.bundle) if context else None)
+        library=dict(root=str(getattr(context,'library',context.browser.library).root),bundle=context.bundle) if context else None)
 
 
 def conflicts(record,document):
@@ -362,11 +363,17 @@ class Recovery:
             if not selected:return
             record=records[selected[0]]
             if record.get('library'):
-                self.workspace.app.open_library();browser=self.workspace.app.unit_library_window
+                construction=record['library']['bundle'].get('format')=='btp-construction-library-v1'
+                if construction:
+                    self.workspace.app.edit_adventure();browser=self.workspace.app.map_editor.construction_library()
+                else:self.workspace.app.open_library();browser=self.workspace.app.unit_library_window
                 if str(browser.library.root)!=record['library']['root']:raise EditorError('Open the recorded library folder first: '+record['library']['root'])
                 entry=record['library']['bundle']['entry_id']
-                if not any(b['entry_id']==entry for b in browser.library.entries()):raise EditorError('This library entry is missing. Use Recover into copy to preserve its unfinished design.')
-                browser.refresh(entry);editor=browser.edit();scope=editor._editor_scope
+                entries=browser.library.entries()
+                if not any(b['entry_id']==entry for b in entries):raise EditorError('This library entry is missing. Use Recover into copy to preserve its unfinished design.')
+                if construction:browser.bundles=entries;editor=browser.edit(entry)
+                else:browser.refresh(entry);editor=browser.edit()
+                scope=editor._editor_scope
             else:
                 if not Path(record['root']).is_dir():raise EditorError('The original project is missing. Use Recover into copy to restore it into a new folder.')
                 if not self.workspace.app.discard_or_save():return

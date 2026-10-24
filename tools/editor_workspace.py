@@ -384,7 +384,7 @@ class Workspace:
         from save_migration import dialog
         self.action('Assets and dependencies',lambda:assets(self.app),groups['Project'])
         self.action('Migrate an old save',lambda:dialog(self.app),groups['Project'])
-        self.action('Play from start',lambda:self.play_session.start(self.app._editor_scope),groups['Play'],'F5')
+        self.action('Play from start',lambda:self.play_session.start(self.play_scope()),groups['Play'],'F5')
         from saved_games_view import open_saved_games
         self.action('Saved games',lambda:open_saved_games(self.app),groups['Play'])
         self.action('Preview library design',lambda:self.play_session.start(self.active_scope()),groups['Play'])
@@ -402,7 +402,7 @@ class Workspace:
         options=ttk.Menubutton(self.toolbar,text='Play options');options.configure(menu=groups['Play']);options.pack(side='right')
         play=ttk.Button(self.toolbar,text='Play',style='Accent.TButton',command=lambda:self.invoke('Play from start'));play.pack(side='right',padx=3)
         self.action_buttons['Play from start']=play
-        tooltip(play,'Play the current project from its start (F5), including unsaved edits. Play options offers Play from here and Stop test.')
+        tooltip(play,'Play the active library test canvas or current project from its start (F5), including unsaved edits. Play options offers Play from here and Stop test.')
         keys={'<Control-s>':'Save active scope','<Control-z>':'Undo','<Control-y>':'Redo','<Control-Shift-Z>':'Redo','<Control-w>':'Close tab','<Control-Shift-P>':'Find command','<F5>':'Play from start'}
         for key,action in keys.items():self.window.bind(key,lambda event,a=action:self.shortcut(event,a))
         self.window.bind('<Control-Tab>',lambda _:self.next_tab())
@@ -431,9 +431,11 @@ class Workspace:
         if name in ('Export game','Assets and dependencies','Migrate an old save','Apply authoring command file','Export authoring summary','Campaign sources and build'):return bool(self.app.document)
         if name in ('Content catalogue','Changes and protection','Local authoring session'):return bool(document)
         if name in ('Check mission','Test suites and coverage','Checkpoints and trace'):return bool(document and document.adventure and not document.adventure.get('chi_native'))
-        if name in ('New definition','Duplicate definition','Delete definition','Ammunition','Find usages'):return bool(document)
+        if name in ('New definition','Duplicate definition','Delete definition','Ammunition','Find usages'):
+            return bool(document) and not hasattr(getattr(scope.owner,'library_context',None),'export_document')
         if name in ('Building designer','Wall designer','Road designer','Pattern Library','Construction Library'):return bool(self.app.document and self.app.document.adventure)
-        if name in ('Play from start','Play from here','Checkpoints and trace','Saved games'):return bool(self.app.document) and not self.play_session.preparing
+        if name in ('Play from start','Play from here'):return bool(self.play_scope().document) and not self.play_session.preparing
+        if name in ('Checkpoints and trace','Saved games'):return bool(self.app.document) and not self.play_session.preparing
         if name=='Preview library design':return bool(document and scope.owner.library_context) and not self.play_session.preparing
         if name=='Stop test':return self.play_session.preparing or self.play_session.process is not None
         if name=='Cancel background tasks':return any(j.cancellable and not j.quiet for j in self.tasks.jobs)
@@ -498,8 +500,13 @@ class Workspace:
         scope.owner.window.destroy()
         if scope in self.scopes:self.scopes.remove(scope)
 
+    def play_scope(self):
+        scope=self.active_scope()
+        return scope if scope and getattr(scope.owner,'library_context',None) else self.app._editor_scope
+
     def play_here(self):
-        maps=self.map_view();self.play_session.start(self.app._editor_scope,(maps.scene()['id'],*maps.cursor))
+        scope=self.play_scope();scope.owner.edit_adventure();maps=scope.owner.map_editor
+        self.play_session.start(scope,(maps.scene()['id'],*maps.cursor))
 
     def save_all_async(self,finished=None):
         from editor_tasks import save
@@ -525,7 +532,9 @@ class Workspace:
         self.status.set('Some scopes could not be saved. See Problems.' if failures else 'All open scopes saved.')
         return not failures
 
-    def map_view(self):self.app.edit_adventure();return self.app.map_editor
+    def map_view(self):
+        scope=self.active_scope();owner=scope.owner if scope and hasattr(getattr(scope.owner,'library_context',None),'export_document') else self.app
+        owner.edit_adventure();return owner.map_editor
     def find_usages(self):
         from editor_dependencies import dialog
         owner=self.active_owner();pane=self.current_view();identity=None

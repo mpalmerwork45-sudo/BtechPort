@@ -1,22 +1,68 @@
 # Shared Construction Library
 
-**Project → Construction Library** stores building, wall and road definitions,
-plus saved patterns, independently of any one game. The same library is
+**Project → Construction Library** stores tiles, building, wall and road
+definitions, plus saved map patterns, independently of any one game. The same library is
 available under **Construction tools** in the explorer and from the designers.
+
+## Edit directly in the shared library
+
+Select an entry and choose **Edit in library**, or double-click it. **New shared
+design...** creates a Tile, Building, Wall, Road or Pattern directly in the
+library. Neither operation imports anything into the open game.
+
+Each entry opens a separate **Library workshop** with a 32 × 24 test canvas
+(larger when needed to fit its sample). The canvas starts with clear terrain,
+an accessible player position and the design's demonstration arrangement.
+
+- **Edit definition** opens the normal building/wall/road designer or the tile
+  pixel editor. Preview cells still support choosing, cloning and editing
+  tiles, with surrounding tiles visible for alignment. Animation frames,
+  collision, layers and source notes are retained.
+- **Draw / stamp design** selects the actual drawing tool. Building styles can
+  draw arbitrary footprints and courtyards with different heights; walls use
+  0–3 stories; roads connect and choose their corners and junctions. A pattern
+  stamps its stored block; a tile paints normally. The tools remain visible
+  above the test canvas.
+- For a shared **Pattern** (a saved map block), paint changes on the canvas,
+  choose **Select** and drag its new rectangle, then **Update pattern from
+  selection**. This replaces that pattern in memory and supports Undo.
+- **Save shared design** or **Ctrl+S** saves the selected library entry and its
+  canvas. Saving from its designer or pixel tab targets the same library
+  scope. **Undo/Redo** also stay within that scope. **Workshop actions** offers
+  Rename, **Save variant...**, Clear canvas and Close. A variant creates a new
+  entry and leaves the current workshop editing the original.
+- **Test canvas**, the main **Play** button and F5 play the active library
+  workspace, including unsaved edits. Test saves are isolated from game slots.
+  Use **Start** on the canvas to move the test player's starting position.
+
+The library bundle contains only the shared definition and its required
+tiles/art. Test terrain, extra trial tiles and placed constructions are saved
+separately under the library's `workshops/` directory for that exact revision.
+Reopening the entry restores its canvas; importing it into a game does not
+copy the canvas. Back up the entire library folder to retain both. Exporting
+a `.construction.json` file shares the reusable design only.
+
+Closing with **Cancel** preserves unfinished work; discarding closes without
+changing the saved entry. Recovery drafts also distinguish construction
+workshops from unit-library editors. Concurrent edits use revision checking:
+a stale workshop cannot overwrite a newer saved entry.
 
 ## Save and reuse a design
 
 1. In a Building, Wall or Road designer, select a set and choose **Save to
    library**. In the project's Pattern Library, select a pattern and use the
-   same button.
+   same button. In **Choose a map tile**, use **More → Save tile to shared
+   library...** or the tile's right-click menu. Exporting from All tiles does
+   not add a tile to the open game's palette merely to share it.
 2. Name the shared copy. **New library copy** is the default. To revise an
    existing entry, select it in the shared library and choose **Update selected
    library entry** in the save form. Updates require the same type and the
    revision you loaded.
 3. Open another project and **Project → Construction Library**. Filter by
-   Building, Wall, Road or Pattern; search names, tags or descriptions.
+   Tile, Building, Wall, Road or Pattern; search names, tags or descriptions.
 4. Choose **Import into project**, or **Import and edit** to open its designer.
-   Import is one Undo step. **Save** writes the game normally.
+   Import is one Undo step. **Save** writes the game normally. A shared Tile
+   imports just its definition and artwork; Import and edit opens its pixels.
 5. Use the designer's **Draw on map** to draw new shapes with the imported
    building/wall/road parts. For a fixed pattern, use the project Pattern
    Library's **Use on map**.
@@ -69,8 +115,8 @@ original assets. Complete coverage means all roles are assigned, not that an
 artist has reviewed the appearance of every combination.
 
 Imported copies are independent of the library. Later library revisions do not
-silently alter games. To revise a shared entry, edit a project copy and save it
-back explicitly. Conflicting tile/image IDs are remapped rather than replacing
+silently alter games. Revise an entry directly in its workshop, or edit a
+project copy and save it back explicitly. Conflicting tile/image IDs are remapped rather than replacing
 existing pixels, collision definitions or editing layers. Identical assets
 with identical metadata may be reused within a project.
 
@@ -87,9 +133,14 @@ leaves the project and its history unchanged.
 
 Independent indexed palette tiles are converted to their actual RGBA pixels
 when exported, so a different project's palette cannot change their appearance.
-Original CHI atlas references remain references: original resources are not
-embedded in a library bundle. Such an entry is labelled **chi** and requires
-a CHI-dependent destination. Source attribution does not grant asset rights.
+Original land/destroyed atlas references remain references. Such an entry is
+labelled **chi** and requires a CHI-dependent destination. A workshop can use
+the open imported CHI project's locally decoded atlases to show these tiles
+without a separate DOS-path setting. Explicitly cloning/editing original art
+creates a local pixel copy with source metadata; cache/map-room tiles are also
+materialized locally because external projects cannot address those banks.
+These local original-derived pixels are not redistributable original assets.
+Source attribution does not grant asset rights.
 
 The default local folder is `work/construction-library/`. **Library folder...**
 selects another persistent location. **Export bundle...** and **Load bundle...**
@@ -166,3 +217,12 @@ to 4,096 entries. Source/project budgets are rechecked on import.
 imports, real drawing from imported rules, pattern preservation, animation and
 layer round trips, collision remapping, explicit updates, source preservation,
 Undo/Redo, draft recovery, schema checks and headless authoring.
+
+The direct-workshop pass adds five model tests in
+`tests/test_construction_workshop.py` for tile/animation provenance, isolated
+canvas persistence, stale revision rejection, variants, discarded edits and
+pattern recapture. `python3 tools/construction_workshop_smoke.py` exercises
+real GUI drawing for all three construction types, pixel painting, global
+Save/Play targeting, save/reopen, pattern updates, cancel/discard/recovery,
+animated tiles and creation of shared tiles. Its screenshots are written to
+`work/construction-workshop-proof/`.
