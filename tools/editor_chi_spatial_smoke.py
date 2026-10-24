@@ -65,7 +65,7 @@ def run(env,work):
             try:
                 def player_window():return next((w for w,n in keys.windows() if n==document.manifest['title']),None)
                 pump(lambda:player_window() is not None);keys.key(player_window(),'F5');run=workspace.play_session.folder
-                pump(lambda:bool(list(run.rglob('*.btp'))));save=next(run.rglob('*.btp'))
+                pump(lambda:workspace.play_session.save_slot.exists());save=workspace.play_session.save_slot
                 state=json.loads(subprocess.run([str(root/'build/btech-headless'),'--project',str(run/'game'),'--load',str(save)],check=True,capture_output=True,text=True,timeout=20).stdout)
                 assert (state['mode'],state['x_half'],state['y_half'])==('local-exploration',69,25),(state['mode'],state['x_half'],state['y_half'])
             finally:keys.x.XCloseDisplay(keys.display)

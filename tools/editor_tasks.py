@@ -216,13 +216,22 @@ class PlaySession:
                     source.export(folder/'game')
                 else:candidate.export(folder/'game')
                 document=ProjectDocument(folder/'game',candidate.validator)
-                command=document.play_command(settings,folder,here=here)
+                # Ordinary Play retains slots for the same exact revision.
+                # Play here/checkpoint experiments keep private per-run saves.
+                persistent=not checkpoint and here is None
+                command=document.play_command(settings,state_dir if persistent else folder,here=here)
+                from app_runtime import restore_playtest_saves,project_slot_name
+                save_directory=Path(command[command.index('--save-file')+1]).parent
+                if persistent:restore_playtest_saves(document,state_dir,save_directory)
+                save_slot=save_directory/project_slot_name(document)
+                (folder/'PLAY.json').write_bytes(encoded(dict(format='btp-play-session-v1',
+                    saves='persistent-revision' if persistent else 'isolated-test',save_file=str(save_slot))))
                 if checkpoint:command+=['--load',str(save)]
                 # Native BLD observations have their own source identities;
                 # authored event counts cannot stand in for campaign coverage.
                 native=document.manifest.get('requires')=='chi-local-dos-1.03'
                 command+=['--bld-trace' if native else '--event-trace',str(folder/('bld.jsonl' if native else 'events.jsonl'))]
-                return command,folder
+                return command,folder,save_slot
             except Exception:
                 discard((None,folder));raise
         def ready(result):
@@ -230,12 +239,12 @@ class PlaySession:
             self.preparing=False;self.preparation=None
             if result is None:return
             if not checkpoint and stamp!=signature(scope):discard(result);return retry()
-            command,folder=result
+            command,folder,save_slot=result;self.save_slot=save_slot
             clear_problems(scope,'validation')
             launching=True
             with (folder/'player.log').open('w',encoding='utf-8') as log:self.process=subprocess.Popen(command,cwd=folder,stdout=log,stderr=log)
             clear_problems(scope,'play')
-            self.folder=folder;scope.owner.status.set(f'Playing snapshot revision {revision}. Stop test returns here. Logs: {folder}')
+            self.folder=folder;scope.owner.status.set(f'Playing snapshot revision {revision}. Saved games: {save_slot.parent}. Logs: {folder}')
             self.workspace.log(scope.owner.status.get());self.timer=self.workspace.window.after(150,self.poll)
         def failed(error):
             cancelled=self.preparation and self.preparation.cancelled.is_set()

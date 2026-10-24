@@ -140,6 +140,9 @@ changes and local-original references. See [sharing/reconstruction](docs/CHI_REC
 and [campaign acceptance and platform limits](docs/CHI_ACCEPTANCE.md). C4.5 and
 C5 implementation are verified for the declared Linux/Wine scope; native Windows
 Tk and independent audit sign-off remain pending.
+Editor Play saves persist between launches of the same revision. See
+[saved games and recovery](docs/EDITOR_SAVE_GAMES.md) before editing a campaign
+you want to keep playing with existing saves.
 
 [World-route checks](docs/WORLD_ROUTE_VERIFICATION.md) exercise whole-party
 travel between towns and planets, discovery and save/reload, with navigable

@@ -46,6 +46,9 @@ compatibility templates rather than normalized library adaptations.
 Native **Play from start** shows the Infocom/Westwood logo, title and
 played-before question. **Play here** deliberately starts at the selected map
 position. Editor tests use a private snapshot and its own save namespace.
+Ordinary editor Play retains slots between launches of the same exact content
+revision; Play here/checkpoint tests stay isolated. Older saves remain with their
+matching project snapshot after runtime edits. See [editor saves and recovery](EDITOR_SAVE_GAMES.md).
 
 The importer verifies all 77 required source files by SHA-256. A different,
 incomplete or modified installation produces a specific file/version error.

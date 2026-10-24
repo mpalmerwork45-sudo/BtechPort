@@ -8,6 +8,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import zlib
 
 from editor_model import EditorError
 
@@ -105,6 +106,48 @@ def restore_legacy_campaign_saves(choice, state_dir, legacy_dir=None):
     return restored
 
 
+def project_slot_name(document,slot=1):
+    """Match the native slot naming contract, including empty Original rosters."""
+    name='game'+('-project-'+document.manifest['package_id'] if document.content.get('mechs') else '')
+    return name+('' if slot==1 else '-'+str(slot))+'.btp'
+
+
+def restore_playtest_saves(document,state_dir,target):
+    """Recover exact-revision slots from older per-run Play folders, once.
+
+    No content/save migration: both the runtime digest and native envelope/CRC
+    must match. A fresh run must not hide yesterday's saves. Existing progress
+    always wins, and source saves/snapshots remain available for recovery.
+    """
+    target=Path(target);root=Path(state_dir)/'play-snapshots';restored=[]
+    identity=document.manifest['package_id'];digest=bytes.fromhex(document.validate().rsplit('SHA-256 ',1)[1].strip())
+    candidates=[]
+    for i,run in enumerate(root.glob('run-*')):
+        if i>=4096:break
+        source=run/'play'/identity/target.name
+        if source.is_dir() and not source.is_symlink():candidates.append(source)
+    for slot in range(1,7):
+        leaf=project_slot_name(document,slot);destination=target/leaf
+        if destination.exists():continue
+        sources=[p/leaf for p in candidates if (p/leaf).is_file() and not (p/leaf).is_symlink()]
+        for source in sorted(sources,key=lambda p:p.stat().st_mtime_ns,reverse=True):
+            if source.stat().st_size>65536:continue
+            data=source.read_bytes()
+            if len(data)<184 or data[:4]!=b'BTG1' or data[16:48].split(b'\0')[0].decode('ascii',errors='replace')!=identity or data[80:112]!=digest:
+                continue
+            if int.from_bytes(data[4:8],'little')!=len(data)-16 or zlib.crc32(data[16:])!=int.from_bytes(data[8:12],'little'):continue
+            target.mkdir(parents=True,exist_ok=True)
+            try:output=destination.open('xb')
+            except FileExistsError:break
+            try:
+                with output:output.write(data)
+                shutil.copystat(source,destination)
+            except BaseException:
+                destination.unlink(missing_ok=True);raise
+            restored.append((source,destination));break
+    return restored
+
+
 def game_command(choice, paths, state_dir, project=None, resume=False):
     player=Path(paths['player'])
     if not player.is_file():raise EditorError('The game player has not been built. Use Build application in the launcher.')
@@ -122,7 +165,7 @@ def game_command(choice, paths, state_dir, project=None, resume=False):
         # revisions. C save loading still verifies the full package fingerprint.
         digest=hashlib.sha256(b''.join(doc.snapshot[name] for name in references(doc.manifest))).hexdigest()[:16]
         save=state_dir/'games'/identity/digest/'game.btp'
-        candidate=save.with_name(save.stem+'-project-'+identity+save.suffix)
+        candidate=save.parent/project_slot_name(doc)
         playable=doc.root
         if doc.source is not None:
             # Source projects launch a content-specific compiled cache. Notes

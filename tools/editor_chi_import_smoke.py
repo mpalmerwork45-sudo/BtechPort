@@ -77,8 +77,8 @@ def run(env,work):
                 pump(lambda:player_window() is not None)
                 native=player_window();keys.key(native,'F5')
                 run=workspace.play_session.folder
-                pump(lambda:bool(list(run.rglob('*.btp'))))
-                save=next(run.rglob('*.btp'))
+                pump(lambda:workspace.play_session.save_slot.exists())
+                save=workspace.play_session.save_slot
                 state=json.loads(subprocess.run([str(root/'build/btech-headless'),'--project',str(run/'game'),'--load',str(save)],
                     check=True,capture_output=True,text=True,timeout=20).stdout)
                 assert state['mode']=='logos',state['mode']
@@ -86,6 +86,10 @@ def run(env,work):
             finally:keys.x.XCloseDisplay(keys.display)
             workspace.play_session.stop();pump(lambda:workspace.play_session.process is None)
             assert (run/'bld.jsonl').is_file()
+            original_slot=save;original_bytes=save.read_bytes()
+            workspace.play_session.start(app._editor_scope);pump(lambda:not workspace.play_session.preparing)
+            assert workspace.play_session.save_slot==original_slot and original_slot.read_bytes()==original_bytes
+            workspace.play_session.stop();pump(lambda:workspace.play_session.process is None)
             view.edit(view.result['projects'][1]);pump()
             workspace.play_session.start(app._editor_scope);pump(lambda:not workspace.play_session.preparing)
             assert workspace.play_session.process is not None and workspace.play_session.process.poll() is None
@@ -93,8 +97,8 @@ def run(env,work):
             try:
                 title=app.document.manifest['title'];pump(lambda:player_window() is not None)
                 keys.key(player_window(),'F5');updated_run=workspace.play_session.folder
-                pump(lambda:bool(list(updated_run.rglob('*.btp'))))
-                save=next(updated_run.rglob('*.btp'))
+                pump(lambda:workspace.play_session.save_slot.exists())
+                save=workspace.play_session.save_slot
                 updated=json.loads(subprocess.check_output([str(root/'build/btech-headless'),'--project',str(updated_run/'game'),'--load',str(save)],text=True,timeout=20))
                 assert updated['mode']=='logos' and updated['combat_rules']=='enhanced'
             finally:keys.x.XCloseDisplay(keys.display)
