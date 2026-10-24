@@ -1,5 +1,57 @@
 # Build, verification and original oracle — 2026-10-24
 
+## Independent Astra audit and fixes — 2026-10-24
+
+**VERIFIED for the bounded review in [CHI_ASTRA_AUDIT.md](CHI_ASTRA_AUDIT.md).**
+
+- **78 affected Python tests pass**, zero skips/failures (42.84 s), covering
+  catalogue/recovery/runtime, import/setup/recipe, endgame migration, evidence
+  guards, distribution and bridge integration. Exact suite patterns and output
+  are in `work/audit-astra-20261024/python-focused.{json,log}`. This is an
+  affected-suite run, not a new full Python/native regression claim.
+- Fresh bridge evidence passes four journeys and **58 held saves per platform**.
+  All **174 Linux/Windows save/frame/next-state artifacts** match; remaining
+  journey inputs now use decoded saves. Missing/changed/stale artifacts and
+  faults/unresolved observations have explicit rejection cases.
+- Real Linux launcher/editor saved-game journeys pass with Linux and
+  Windows/Wine players, including moving the working project and continuing
+  its retained save, browsing while the editor draft is invalid, and clearing
+  stale rows after failed discovery. Reports are
+  `work/saved-games-gui{,-windows}.json`; earlier reports are retained under
+  `work/audit-astra-20261024/prior-gui/`.
+- Recipe tests reproduce edited original BLD/native dialogue leakage, prove
+  exclusion through local baseline references, and rebuild identical runtime
+  content. Import/reconstruction/endgame output tests reject both immutable
+  reference roots even when a different DOS source is selected. No actual
+  reference directory is used as a mutation target in these tests.
+- Independent checks of existing Enhanced full-route artifacts verify hashes,
+  eight complete continuations, platform equality and measured coverage. Both
+  older C4.5 ending traces were also remeasured. A real 4,418-input Enhanced
+  prefix verifies alternate-source reads; the full campaign was not regenerated.
+- The affected native bridge test executable was rebuilt sequentially on both
+  platforms with two jobs. Use `env PATH=/usr/bin:/bin cmake --build ...` to
+  avoid this host's incompatible Conda linker. Production game rules, native
+  save encoding and native player binaries were unchanged.
+- Both references retain all **1,287 content/mode/mtime entries**. The three
+  pending demo edits retain their hashes, twenty normal saves retain bytes and
+  mtimes, and the recovered source/progress payloads remain unchanged.
+
+```sh
+python3 -m unittest discover -s tests -p 'test_chi_evidence_guards.py' -v
+python3 -m unittest discover -s tests -p 'test_save_catalogue.py' -v
+python3 -m unittest discover -s tests -p 'test_chi_recipe.py' -v
+python3 tools/native_smoke.py --saved-games-only
+python3 tools/native_smoke.py --saved-games-only --windows
+python3 tools/chi_bridge_evidence.py --output work/new-audit-bridge
+python3 tools/chi_bridge_evidence.py --output work/new-audit-bridge --windows
+```
+
+The bridge command uses the retained private imported pair by default; use
+`--source PATH` for another pair. Fresh reports are under
+`work/audit-astra-20261024/bridge/`; read-only campaign checks are recorded in
+`campaign-evidence-audit.json`. Native Windows Python/Tk remains UNKNOWN, and
+the older distribution archives still require rebuilding and packaged checks.
+
 ## Save management and Enhanced-only campaign — 2026-10-24
 
 **VERIFIED within the declared Linux/Wine scope.**
@@ -37,8 +89,8 @@ python3 tools/chi_enhanced_acceptance.py --output work/new-enhanced-proof --wind
 
 Private reports: `work/saved-games-gui{,-windows}.json`, screenshots with the
 same prefixes, `work/chi-enhanced-verified-20261024/` and build/regression logs
-in `work/chi-enhanced-route-20261024/`. Native Windows Tk, independent Astra
-review and refreshed delivery archives remain separate next tasks.
+in `work/chi-enhanced-route-20261024/`. Native Windows Tk and refreshed delivery
+archives remain separate next tasks; the later Astra audit is recorded above.
 
 ## Save retention, recovery and original death popup — 2026-10-24
 
@@ -75,8 +127,9 @@ The earlier C5 archives below predate these later fixes.
 
 ## Combined CHI campaign and delivery acceptance — 2026-10-24
 
-**C4.5 passes; C5 implementation is verified for Linux/Wine.** Independent Astra
-and native Windows Tk review remain pending. [Full matrix and measured coverage](CHI_ACCEPTANCE.md).
+**C4.5 passes; C5 implementation is verified for Linux/Wine.** Native Windows
+Tk remains unverified; the later Astra audit is recorded above.
+[Full matrix and measured coverage](CHI_ACCEPTANCE.md).
 
 - 456 Python tests pass (133.211 s). The focused six recipe tests also pass after
   final original-reference validation changes (11.240 s).

@@ -2,7 +2,8 @@
 
 **C4.5 passes the declared current-port campaign gate. C5 implementation is
 verified on Linux, with Windows native tools/player checked under Wine. Native
-Windows Tk and the independent Astra audit remain pending external checks.**
+Windows Tk remains unverified. The separate [Astra audit](CHI_ASTRA_AUDIT.md)
+is complete with fixes; existing delivery archives still need refreshing.**
 
 **Follow-up:** a fresh Enhanced-only Updated route now passes on Linux and
 Windows/Wine for 36,316 inputs, with Enhanced asserted after every input, 44
@@ -60,7 +61,7 @@ a supported feature of Updated; the importer does not change its default.
 | Reconstruction | VERIFIED: both profiles, quest/service/map/dialogue edits and detached original sprite edits reconstruct the same runtime bytes and native content fingerprint. Raw binary modifications, bad baselines/paths and occupied outputs reject without replacing work. |
 | Packaged setup | See the delivery evidence recorded below; a developer-checkout run alone is insufficient. |
 | Windows desktop | UNKNOWN: no native Windows Python/Tk desktop available. Wine checks establish native binary behavior on this host, not Windows wizard usability. |
-| Independent review | Pending separate Astra audit. No independent review is implied by this implementation's own checks. |
+| Independent review | Completed [Astra review](CHI_ASTRA_AUDIT.md): seven findings fixed, fresh bridge/GUI checks and independent retained-evidence checks. Scope and remaining delivery/platform limits are explicit. |
 
 The old roster's save codes and editable definitions' ordinals differ. The
 built-in/imported parity helper resolves corresponding unit **stable IDs** and

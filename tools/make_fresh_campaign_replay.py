@@ -32,7 +32,7 @@ class Fresh(Buildings):
             else:raise RuntimeError('Original garage checkout did not open')
         else:
             if self.state['map']:
-                raw=(ROOT/f'Original DOS/MAP{self.state["map"]}.MTP').read_bytes()
+                raw=(getattr(self,'original_data',ROOT/'Original DOS')/f'MAP{self.state["map"]}.MTP').read_bytes()
                 ox=self.state['campaign']['world'][0]//128*128
                 self.world_route(ox+2*raw[3]+16,self.state['campaign']['world'][1])
             self.advance(['menu','down','down','accept'])
@@ -59,7 +59,7 @@ class Fresh(Buildings):
             else:raise RuntimeError('Starport garage did not finish parking')
         elif self.state['campaign']['mounted']:
             if self.state['map']:
-                raw=(ROOT/f'Original DOS/MAP{self.state["map"]}.MTP').read_bytes()
+                raw=(getattr(self,'original_data',ROOT/'Original DOS')/f'MAP{self.state["map"]}.MTP').read_bytes()
                 ox=self.state['campaign']['world'][0]//128*128
                 self.world_route(ox-32,self.state['campaign']['world'][1])
             self.advance(['menu','down','down','accept'])

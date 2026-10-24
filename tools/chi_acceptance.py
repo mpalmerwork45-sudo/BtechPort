@@ -39,7 +39,8 @@ def run(output,source=None,updated_route=None):
         (output/(edition+'-complete-state.json')).write_bytes(encoded(state))
         measured=coverage(ProjectDocument(project,tool),[Path(str(prefix)+'-complete.jsonl')])
         (output/(edition+'-coverage.json')).write_bytes(encoded(measured))
-        report.setdefault('measured_coverage',{})[edition]=dict(programs=len(measured['programs']),instructions=sum(p['instructions']['observed'] for p in measured['programs']),
+        if measured['faults'] or measured['unresolved_observations']:raise EditorError('Ending trace has faults or unresolved observations: '+edition)
+        report.setdefault('measured_coverage',{})[edition]=dict(programs=sum(p['instructions']['observed']>0 for p in measured['programs']),declared_programs=len(measured['programs']),instructions=sum(p['instructions']['observed'] for p in measured['programs']),
             declared_instructions=sum(p['instructions']['declared'] for p in measured['programs']),branches=sum(p['branches']['observed'] for p in measured['programs']),
             declared_branches=sum(p['branches']['declared'] for p in measured['programs']),native_internals='UNKNOWN',faults=len(measured['faults']))
         execute('prepared-multiple-unit-party-'+edition,'btp-chi-import-tests',['--party-proof',project,output/(edition+'-party.btp')])

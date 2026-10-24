@@ -33,6 +33,9 @@ static void held(BtpState *s,const BtpResources *r,const char *label)
     btp_game_tick(s,r,BTP_IDLE);btp_game_tick(copy,r,BTP_IDLE);bytes(s,a);bytes(copy,b);CHECK(!memcmp(a,b,BTP_STATE_BYTES+BTP_BRIDGE_BYTES));
     snprintf(path,sizeof path,"%s-%s-suffix.bin",prefix,label);FILE *suffix=fopen(path,"wb");CHECK(suffix);
     CHECK(fwrite(a,1,BTP_STATE_BYTES+BTP_BRIDGE_BYTES,suffix)==BTP_STATE_BYTES+BTP_BRIDGE_BYTES);CHECK(!fclose(suffix));
+    /* Drive the remaining real journey from the decoded state. Comparing one
+       idle alone would not exercise later choices/returns after loading. */
+    *s=*copy;
     free(frame);free(other);free(a);free(b);free(copy);
 }
 static void input(BtpState *s,const BtpResources *r,BtpAction action)

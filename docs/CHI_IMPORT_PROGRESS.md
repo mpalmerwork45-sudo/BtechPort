@@ -1,5 +1,23 @@
 # Editable CHI import progress
 
+## Independent Astra audit — 2026-10-24
+
+The separate review is complete with seven reproduced findings fixed: original
+dialogue leakage in recipes; an omitted fixed-reference output guard; retained
+saves hidden by a moved/invalid working project; numeric-ending project IDs
+confused with slot numbers; bridge evidence accepting missing/stale artifacts;
+Enhanced planning ignoring the selected DOS source; and declared program counts
+reported as observed. See [the audit](CHI_ASTRA_AUDIT.md) for severity, code,
+reproduction, verification and limits.
+
+Fresh bridge tests use decoded saves for subsequent inputs and pass 58 holds
+per platform, with all 174 Linux/Windows artifacts identical. The real Linux
+launcher/editor journey passes with both players, including moved roots and
+invalid drafts. Retained Enhanced/Legacy evidence and coverage were checked
+independently. No production gameplay or save format was changed. Native
+Windows Tk remains UNKNOWN and earlier application archives need refreshing.
+The following entries retain their historical verification scope.
+
 ## Save-management and Enhanced-only follow-ups — 2026-10-24
 
 Both approved follow-ups are implemented and verified for their declared scope.

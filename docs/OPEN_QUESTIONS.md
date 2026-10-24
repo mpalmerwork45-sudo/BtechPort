@@ -4,7 +4,9 @@ The [editable CHI import](CHI_IMPORT_PROGRESS.md) now includes maps/world/art,
 BLD dialogue/control flow, native service/mission content, bounded mixed quests
 and [asset-free reconstruction](CHI_RECONSTRUCTION.md). The combined
 [campaign acceptance](CHI_ACCEPTANCE.md) passes on Linux/Wine within its declared
-scope. Native Windows Tk and independent Astra review remain external checks.
+scope. The [independent Astra review](CHI_ASTRA_AUDIT.md) is complete with fixes.
+Native Windows Tk remains an external check; delivery archives need refreshing
+to contain the subsequent save/death/audit fixes.
 
 The earlier Updated ending route selects Legacy through Settings. A separate
 [Enhanced-only walkthrough](CHI_ENHANCED_ACCEPTANCE.md) now passes on Linux and

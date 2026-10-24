@@ -6,6 +6,7 @@ import shutil
 import subprocess
 import sys
 import hashlib
+import tempfile
 from editor_model import ProjectDocument,encoded
 from chi_bridge import enable,example,events,put
 from chi_bld import data,find,put as put_bld
@@ -55,33 +56,63 @@ def prepare(source,output,tool):
         d=ProjectDocument(dest,tool);nested(d);d.save()
     return output
 
+HELD_LABELS={
+    '':('dialogue','choice','company','amount','receipt','service-return','outside','no-cash',
+        'sound','film','battle','reward','finished','repeat','retreat','defeat','defeat-return'),
+    '-nested':('bld-choice','bld-company','bld-amount','bld-receipt','bld-menu','four-frames',
+        'nested-return','depth-rejected','cycle-rejected','budget-fault','bld-cancel','fault-after-reward')}
+
+
+def artifacts(suffix):
+    """The declared 58 holds must each produce a save, frame and next state."""
+    return [label+extension for label in HELD_LABELS[suffix] for extension in ('.btp','.ppm','-suffix.bin')]
+
+
 def verify(output,windows=False):
     root=Path(__file__).resolve().parents[1];output=Path(output);platform='windows' if windows else 'linux'
-    report=dict(status='running',platform=platform,journeys=[],comparisons=[])
-    report_file=output/(platform+'-evidence.json')
-    for edition in ('original','updated'):
-        for suffix in ('','-nested'):
-            target=edition+suffix;prefix=output/(platform+'-'+target)
-            executable=root/('build-windows/btp-chi-bridge-tests.exe' if windows else 'build/btp-chi-bridge-tests')
-            command=([sys.executable,str(root/'tools/windows_check.py')] if windows else [])+[str(executable),str(output/target),str(prefix)]
-            if suffix:command.append('nested')
-            result=subprocess.run(command,capture_output=True,text=True,timeout=120)
-            report['journeys'].append(dict(project=target,exit_code=result.returncode,stdout=result.stdout,stderr=result.stderr))
-            if result.returncode:
-                report['status']='failed';report_file.write_bytes(encoded(report));raise RuntimeError(result.stdout+result.stderr)
-            print(platform+': '+target+' passed',flush=True)
-            if windows:
-                # Save envelope, actual rendered pixels, and canonical state
-                # after the next input must all agree, for EVERY held phase.
-                files=sorted(output.glob('linux-'+target+'-*'))
-                if not suffix:files=[f for f in files if not f.name.startswith('linux-'+target+'-nested-')]
-                for original in files:
-                    if original.suffix not in ('.btp','.ppm','.bin'):continue
-                    candidate=output/original.name.replace('linux-','windows-',1)
-                    a,b=original.read_bytes(),candidate.read_bytes()
-                    if a!=b:raise RuntimeError('Platform continuation differs: '+str(original))
-                    report['comparisons'].append(dict(file=original.name,bytes=len(a),sha256=hashlib.sha256(a).hexdigest()))
-            report_file.write_bytes(encoded(report))
+    report=dict(status='running',platform=platform,journeys=[],comparisons=[],artifacts=[])
+    report_file=output/(platform+'-evidence.json');report_file.write_bytes(encoded(report))
+    targets=[(edition+suffix,suffix) for edition in ('original','updated') for suffix in ('','-nested')]
+    try:
+        if windows:
+            baseline=output/'linux-evidence.json'
+            if not baseline.exists():raise RuntimeError('Complete Linux bridge acceptance first.')
+            prior=json.loads(baseline.read_bytes())
+            if prior.get('status')!='passed' or [(r.get('project'),r.get('exit_code')) for r in prior.get('journeys',[])]!=[(target,0) for target,_ in targets]:
+                raise RuntimeError('Complete all Linux bridge journeys first.')
+            # Never accept an empty/partial glob as a cross-platform proof.
+            for target,suffix in targets:
+                for name in artifacts(suffix):
+                    path=output/('linux-'+target+'-'+name)
+                    if not path.is_file():raise RuntimeError('Missing Linux bridge artifact: '+str(path))
+            for record in prior.get('artifacts',[]):
+                path=output/record['file']
+                if hashlib.sha256(path.read_bytes()).hexdigest()!=record['sha256']:
+                    raise RuntimeError('Linux bridge artifact changed: '+str(path))
+        for target,suffix in targets:
+            # A fresh staging directory prevents old output from hiding a
+            # missing artifact in a later successful-but-incomplete test run.
+            with tempfile.TemporaryDirectory(prefix='bridge-'+platform+'-',dir=output) as temporary:
+                prefix=Path(temporary)/'held'
+                executable=root/('build-windows/btp-chi-bridge-tests.exe' if windows else 'build/btp-chi-bridge-tests')
+                command=([sys.executable,str(root/'tools/windows_check.py')] if windows else [])+[str(executable),str(output/target),str(prefix)]
+                if suffix:command.append('nested')
+                result=subprocess.run(command,capture_output=True,text=True,timeout=120)
+                report['journeys'].append(dict(project=target,exit_code=result.returncode,stdout=result.stdout,stderr=result.stderr))
+                if result.returncode:raise RuntimeError(result.stdout+result.stderr)
+                for name in artifacts(suffix):
+                    candidate=Path(str(prefix)+'-'+name)
+                    if not candidate.is_file():raise RuntimeError('Missing generated bridge artifact: '+name)
+                    payload=candidate.read_bytes();digest=hashlib.sha256(payload).hexdigest()
+                    if windows:
+                        original=output/('linux-'+target+'-'+name)
+                        if original.read_bytes()!=payload:raise RuntimeError('Platform continuation differs: '+str(original))
+                        report['comparisons'].append(dict(file=original.name,bytes=len(payload),sha256=digest))
+                    destination=output/(platform+'-'+target+'-'+name);shutil.copy2(candidate,destination)
+                    report['artifacts'].append(dict(file=destination.name,bytes=len(payload),sha256=digest))
+            report_file.write_bytes(encoded(report));print(platform+': '+target+' passed',flush=True)
+    except (OSError,ValueError,RuntimeError,subprocess.SubprocessError) as error:
+        report.update(status='failed',error=str(error));report_file.write_bytes(encoded(report));raise
     report['status']='passed';report_file.write_bytes(encoded(report));return report
 
 def defaults(source,output,windows=False,existing=False):

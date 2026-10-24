@@ -1,5 +1,16 @@
 # Project status — original fidelity and editable projects, 2026-10-24
 
+**Independent Astra audit completed with fixes.** Recipe export now references
+cloned/edited original dialogue spans, and output guards protect both reference
+directories even when importing another DOS copy. Saved games remain accessible
+when the working project moves or becomes invalid, including invalid pending
+editor fields; numeric-ending campaign IDs retain correct slot numbers.
+Verification now rejects missing/stale bridge artifacts, runs subsequent quest
+inputs from decoded saves, respects alternate DOS sources and distinguishes
+observed from declared program coverage. Fresh bridge and GUI checks pass on
+Linux and with Windows/Wine players. [Findings and scope](CHI_ASTRA_AUDIT.md).
+Native Windows Tk verification and refreshed application packages remain next.
+
 **C4.5 campaign gate passed; C5 implementation/delivery verified on Linux and Wine.**
 Both imported campaigns reach their endings on declared routes (Updated selects
 Legacy in Settings). The combined comparison covers 441,246 gameplay ticks per
@@ -13,7 +24,7 @@ after the final dialogue bounds adjustment.
 
 [Acceptance, corrections and limits](CHI_ACCEPTANCE.md),
 [sharing recipes](CHI_RECONSTRUCTION.md), [progress](CHI_IMPORT_PROGRESS.md).
-Native Windows Tk and independent Astra sign-off remain pending. A separate
+Native Windows Tk remains unverified; Astra review is recorded above. A separate
 Enhanced-only route now reaches the ending over 36,316 inputs on Linux/Wine,
 matching the built-in edition after every input. Imported saves remain pinned
 to exact content. [Enhanced follow-up](CHI_ENHANCED_ACCEPTANCE.md).

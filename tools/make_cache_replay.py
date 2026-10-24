@@ -37,7 +37,7 @@ class Route:
         self.advance(result.stdout.splitlines())
 
 def finish(s,name='cache',prerequisite=None,output=None):
-    image,_=unpack((ROOT/'Original DOS/BTECH.EXE').read_bytes());ds=0x36db0
+    image,_=unpack((getattr(s,'original_data',ROOT/'Original DOS')/'BTECH.EXE').read_bytes());ds=0x36db0
     requirements=[image[ds+p:ds+p+12] for p in (0x2492,0x249e,0x24aa)]
     if hasattr(s,'travel_crew'):s.travel_crew()
     # This late original save already has disk/password prerequisites. Its

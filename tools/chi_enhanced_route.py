@@ -13,8 +13,9 @@ from prepare_talk import DS
 
 
 class Enhanced(Updated):
-    def __init__(self,project,output):
+    def __init__(self,project,output,source=None):
         self.project=Path(project).resolve();self.work=Path(output).resolve();self.work.mkdir()
+        self.original_data=Path(source or ROOT/'Original DOS').resolve()
         self.source='Fresh Updated start; default Enhanced rules throughout'
         self.binary=ROOT/'build/btech-headless';self.slot=self.work/'current.btp';self.leg=self.work/'leg.actions'
         self.checkpoints=[];self.notes=self.checkpoints
@@ -23,7 +24,7 @@ class Enhanced(Updated):
         self.state=self.execute('--replay',self.leg,'--save',self.slot)
         if self.state['combat_rules']!='enhanced' or self.state['story_flags'][0]!=2 or self.state['menu_id']!=7:
             raise RuntimeError('Enhanced drive/rubble prerequisites did not complete.')
-        image,_=unpack((ROOT/'Original DOS/BTECH.EXE').read_bytes())
+        image,_=unpack((self.original_data/'BTECH.EXE').read_bytes())
         self.answers=struct.unpack_from('<10H',image,DS+0x28ec)
         self.note('drive-and-rubble-complete')
 
@@ -138,8 +139,8 @@ class Enhanced(Updated):
         self.note('invasion-escaped');self.save_fixture('invasion')
 
 
-def training(project,output):
-    session=Enhanced(project,output)
+def training(project,output,source=None):
+    session=Enhanced(project,output,source)
     for assignment in range(2,6):
         if assignment!=2:session.next_loan()
         session.launch()
@@ -151,12 +152,13 @@ def training(project,output):
     return session
 
 
-def generate(project,output,resume_route=None):
-    if resume_route is None:s=training(project,output)
+def generate(project,output,resume_route=None,source=None):
+    if resume_route is None:s=training(project,output,source)
     else:
         # Reuse a retained input prefix for planner iteration. It is replayed
         # from a fresh game, never loaded as an imported/edited save.
         s=object.__new__(Enhanced);s.project=Path(project).resolve();s.work=Path(output).resolve();s.work.mkdir()
+        s.original_data=Path(source or ROOT/'Original DOS').resolve()
         s.binary=ROOT/'build/btech-headless';s.slot=s.work/'current.btp';s.leg=s.work/'leg.actions'
         s.actions=Path(resume_route).read_text().splitlines();s.notes=[];s.checkpoints=s.notes
         s.leg.write_text('\n'.join(s.actions)+'\n');s.state=s.execute('--replay',s.leg,'--save',s.slot)
@@ -178,6 +180,7 @@ def generate(project,output,resume_route=None):
 if __name__=='__main__':
     import argparse
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--project',type=Path,required=True);parser.add_argument('--output',type=Path,required=True)
+    parser.add_argument('--data',type=Path,default=ROOT/'Original DOS',help='Supported DOS source used to plan quiz/cache answers.')
     parser.add_argument('--training-only',action='store_true');parser.add_argument('--resume-route',type=Path,help='Replan from a retained ordinary-input invasion prefix; it is still replayed from a fresh game.')
     args=parser.parse_args()
-    training(args.project,args.output) if args.training_only else generate(args.project,args.output,args.resume_route)
+    training(args.project,args.output,args.data) if args.training_only else generate(args.project,args.output,args.resume_route,args.data)

@@ -66,5 +66,7 @@ and both parity logs. Planner development attempts are retained separately in
 `work/chi-enhanced-route-20261024/`. Earlier C4.5 Legacy-selected comparisons
 remain separate evidence and retain their original scope.
 
-Native Windows Tk and independent Astra review remain pending. This follow-up
-does not refresh the earlier C5 application archives or publish a release.
+The [independent Astra review](CHI_ASTRA_AUDIT.md) rechecked the retained hashes,
+continuations and coverage, and fixed source selection and evidence guards.
+Native Windows Tk remains unverified. The earlier C5 application archives still
+need refreshing; neither this follow-up nor the audit publishes a release.

@@ -138,8 +138,10 @@ Use **Add example quest** to try it; see [quest authoring](docs/CHI_QUEST_AUTHOR
 **Project → CHI reconstruction recipes** shares supported campaign edits as
 changes and local-original references. See [sharing/reconstruction](docs/CHI_RECONSTRUCTION.md)
 and [campaign acceptance and platform limits](docs/CHI_ACCEPTANCE.md). C4.5 and
-C5 implementation are verified for the declared Linux/Wine scope; native Windows
-Tk and independent audit sign-off remain pending.
+C5 implementation are verified for the declared Linux/Wine scope. The
+[independent Astra audit](docs/CHI_ASTRA_AUDIT.md) found and fixed recipe,
+save-discovery and verification issues. Native Windows Tk verification and
+refreshing the application archives with these fixes remain pending.
 A separate [Enhanced-only campaign route](docs/CHI_ENHANCED_ACCEPTANCE.md) now
 reaches the ending with default Enhanced rules throughout, matching the built-in
 Updated game on Linux and Windows/Wine, including saved continuations.

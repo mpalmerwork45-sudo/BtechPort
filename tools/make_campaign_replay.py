@@ -24,7 +24,7 @@ class Session:
     def note(self,label):
         self.notes.append({'label':label,'tick':len(self.actions)})
     def route(self,slot):
-        raw=(ROOT/f'Original DOS/MAP{self.state["map"]}.MTP').read_bytes();tiles=raw[541:]
+        raw=(getattr(self,'original_data',ROOT/'Original DOS')/f'MAP{self.state["map"]}.MTP').read_bytes();tiles=raw[541:]
         entrances=[(raw[389+2*i]&127,raw[421+2*i]&127) for i in range(8)]
         start=self.state['x_half'],self.state['y_half'];target=entrances[slot]
         parent={start:None};queue=deque([start]);goal=None

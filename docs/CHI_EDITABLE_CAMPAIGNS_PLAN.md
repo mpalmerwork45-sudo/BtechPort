@@ -3,8 +3,9 @@
 Recorded **2026-10-23**, against implementation commit `8075156`.
 
 **Status: C1–C4.5 implemented and verified for the declared port scope. C5
-implementation/delivery checks are complete on Linux and Wine; native Windows
-Tk and independent Astra sign-off remain pending.** See
+implementation/delivery checks are complete on Linux and Wine. The independent
+[Astra audit](CHI_ASTRA_AUDIT.md) is complete with fixes; native Windows Tk
+verification and refreshing packages with the subsequent fixes remain pending.** See
 [acceptance and coverage limits](CHI_ACCEPTANCE.md). See the
 [progress ledger](CHI_IMPORT_PROGRESS.md) and [import instructions](CHI_IMPORT.md).
 This document is the
