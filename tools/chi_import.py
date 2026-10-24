@@ -166,14 +166,15 @@ def import_campaigns(source,output,edition='both',validator=None,cancel=None,pro
                 resources=origins,capabilities=dict(editable=['native-dialogue-overrides','native-maps','world-generator','town-placements',
                     'entrances','NPC-routes','jigsaws','presentation-resources','labelled-BLD-source','native-service-content','native-mission-content',*(['added-unit-definitions','broker-entrance'] if profile=='updated' else [])],
                     compatibility_only=['native-service-mechanics','native-campaign-state-machines'],
-                    pending_milestones=['C4','C5']),
+                    pending_milestones=['C4.4','C4.5','C5']),
                 distribution='Private original-derived content; use an asset-free reconstruction recipe for sharing.')
             (project/'IMPORT.json').write_bytes(encoded(provenance))
             (project/'.gitignore').write_text('# Private original-derived campaign. Share a recipe, not these files.\n*\n')
             (project/'README.md').write_text('Editable CHI - '+profile.title()+'\n\nPrivate local import from DOS 1.03. No original executable or personal saves copied.\n'
                 'Open this folder in the Construction Kit or run the player with --project PATH.\n'
                 'Text: Project > CHI campaign. Maps/world: Project > CHI maps and world. Art/audio: Project > CHI resources.\n'
-                'BLD dialogue/control flow: Project > CHI scripts. Service content: Project > CHI services. Mission definitions and new-event bridging remain C4.3 onwards.\n'
+                'BLD dialogue/control flow: Project > CHI scripts. Service content: Project > CHI services. Missions: Project > CHI missions and campaign.\n'
+                'The authored-event bridge, aggregate campaign gate and final delivery checks remain C4.4, C4.5 and C5.\n'
                 'Keep this exact project for its saves. Reimport to a NEW folder; never overwrite edited projects.\n'
                 'IMPORT.json records provenance and current editing limits. Original rights still apply to derived content.\n')
             progress('Validating '+profile+' campaign');check_cancel(cancel)

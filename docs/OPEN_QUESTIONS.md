@@ -1,21 +1,22 @@
 # Open questions after bounded M4 work and authoring increments — 2026-10-24
 
 The [editable CHI import](CHI_IMPORT_PROGRESS.md) now includes C3 native map,
-world and presentation authoring, C4.1 labelled BLD source/compilation and
-C4.2 native service content. All 26 programs round-trip losslessly. Configurable
+world and presentation authoring, C4.1 labelled BLD source/compilation,
+C4.2 native services and C4.3 [mission/campaign settings](CHI_MISSION_AUTHORING.md).
+All 26 programs round-trip losslessly. Configurable
 prices, stock, repairs/healing, recruitment/spy settings, theft and crew policies
 have a shared editor/CLI surface and retained Linux/Wine continuation proofs.
-C4.3–C4.4 still own mission/encounter settings, broader campaign actor/spawn
-definitions and the bridge into authored events. Native actions remain limited
+C4.4 still owns the bridge into authored events, cross-system saved
+continuations and native branch observations. Native actions remain limited
 to their documented building/state contexts;
 general calls/recursion and automatic dialogue reflow are unsupported.
 Native campaign test suites/coverage need that bridge; authored-event coverage
-cannot substitute for it. C5 owns complete campaign acceptance, general edited
+cannot substitute for it. C4.5 owns aggregate campaign acceptance. C5 owns general edited
 campaign reconstruction recipes and packaged setup/recovery. Spatial equivalence
 is checked at three declared seeds against the built-in native generator, not
 against DOS for every seed. Native Windows Python/Tk remains UNKNOWN. Imported
 saves stay pinned to their exact project/content revision, including enabling
-C3 map support, C4.1 script source or C4.2 service content; built-in games and their saves are
+C3 map support, C4.1 script source, C4.2 services or C4.3 missions; built-in games and their saves are
 separate. Preserve the old imported project revision when enabling these tools.
 
 AI8's [Greybank Dispatch recipe and delivery](CAMPAIGN_RECIPES.md) are delivered.

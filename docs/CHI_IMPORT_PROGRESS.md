@@ -283,3 +283,61 @@ Mission opponents/spawns, yard combat layouts and broader campaign settings are
 C4.3; general event bridging is C4.4 and complete campaign coverage is C4.5/C5.
 Custom literal prices and remapped equipment descriptions remain the author's
 responsibility. See [service usage](CHI_SERVICE_AUTHORING.md).
+
+## C4.3 — Mission and campaign settings
+
+**C4.3 gate passed, 2026-10-24.** `chi-missions.json` adds 837 typed parameters
+and 65 original/project mech roles, with generated schema/catalogue and runtime
+validation. Initial funds/attributes/skills/RNG, training/recognition/driving/
+recovery, invasion, encounters/rewards/salvage, Rex, prison, arena force fields
+and cache/ending content reach their existing native consumers. Scripted story
+effects remain in C4.1 BLD source; service transactions remain C4.2. The
+[coverage ledger](CHI_CAMPAIGN_COVERAGE.md) records every C1 system and its
+content fields, consumers, editing surface and verification.
+
+The Construction Kit's **Project → CHI missions and campaign** view and CLI
+share source builds, scoped/protected batch operations, receipts, inspect,
+Undo/Redo, draft recovery, problem navigation and Save/Play. Layout reserves
+the value controls before expanding the table. Native-template roles preserve
+damaged/shell instances; project mech IDs resolve after definition compilation.
+Missing keys retain native defaults. Invalid numeric/cross-field bounds and
+unresolved roles fail before play. Text/money support `{mission:parameter}`.
+
+**VERIFIED:** all 52 default BLDs remain byte-identical. Comparing both profiles
+to C4.2 passes 365,690 gameplay/RNG ticks per platform, including the existing
+75,573-tick fresh-campaign route through the ending in each edition. The C2
+built-in comparison also passes 108,156 ticks, presentation and twelve isolated
+save slots on Linux and Windows/Wine. Seven edited journeys per edition pass
+1,728 combined ticks and 70 held save/reload/render checkpoints on each platform.
+All 26 final Linux/Windows saves are byte-identical. Focused boundary fixtures
+are explicitly identified separately from input-only full campaign routes.
+
+**427 Python and 94 Linux native tests pass**, followed by nine focused Python
+and 33 focused native checks after final catalogue additions. **All 94 Windows
+native tests pass** under isolated Wine. Both builds are sequential with two
+jobs and no warnings. The new mission GUI and existing BLD/service GUI journeys
+pass, including edited native Play without external original paths. Native
+Windows Python/Tk remains UNKNOWN. Details and commands are in
+[TESTING](TESTING.md#native-mission-authoring--2026-10-24).
+
+Verification caught and fixed starting allowance aliases, permitted initial
+cap values, configured reward bounds across subsequent loot/victory pages and
+suspended NPC validation at an earlier ruin switch. Resource-aware quiz,
+training/combat/cache validators retain the native serialized layout. Default
+state/RNG/continuation comparisons remain unchanged.
+
+Implementation commit: `19a2db9`. Private evidence is
+`work/chi-import/c43-evidence-final/{evidence,windows-evidence}.json` and
+`work/chi-import/c43-*` logs; GUI report/capture are
+`work/chi-missions-gui.json` and `work/chi-mission-editor.png`.
+Both reference trees retain 1,287 content/mode/mtime entries, all three pending
+owner files retain exact hashes and all twenty observed normal saves retain
+bytes/mtimes. No generated campaigns, scripts, caches, art or saved evidence are
+committed. Registered projects remain untouched; old imported saves require
+their previous content revision.
+
+**Next:** C4.4 adds bounded BLD/native ↔ authored-event calls, saved returns,
+native branch observations and an ordinary new-quest example. C4.5 owns the
+aggregate campaign gate; C5 owns final delivery/setup/recovery. Existing native
+slots, record layouts, menu sizes and tile interaction vocabulary remain
+explicit engine contracts, not unrestricted new mechanics.

@@ -1,6 +1,6 @@
 # Import and edit a CHI campaign
 
-The C1–C3 and C4.1–C4.2 implementation imports separate Original and Updated campaigns from the
+The C1–C3 and C4.1–C4.3 implementation imports separate Original and Updated campaigns from the
 supported DOS 1.03 files. Each project owns its resources, edition settings and
 six save slots. It can run without the original installation after import.
 Existing launcher Original/Updated games and their saves remain separate.
@@ -14,8 +14,11 @@ its external unit/weapon definitions and an editable broker entrance.
 **Project → CHI services** edits prices, stock, repairs, healing, recruitment,
 theft/garage settings and other native service content, including linked price
 text and held continuations. See [service authoring](CHI_SERVICE_AUTHORING.md).
-Mission definitions remain C4.3. The Citadel/training
-slice is verified against the built-in editions; importing the full resource
+**Project → CHI missions and campaign** edits initial state, training, enemy
+roles, invasion, encounters, arena and cache/ending settings. See
+[mission authoring](CHI_MISSION_AUTHORING.md) and the
+[coverage ledger](CHI_CAMPAIGN_COVERAGE.md). The declared campaign routes
+are verified against the built-in editions; importing the full resource
 set does not establish execution coverage of every campaign branch.
 See [progress](CHI_IMPORT_PROGRESS.md).
 Original's added-unit list starts empty; its campaign mechs still use exact

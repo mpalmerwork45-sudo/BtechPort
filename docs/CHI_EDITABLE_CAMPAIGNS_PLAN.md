@@ -2,7 +2,7 @@
 
 Recorded **2026-10-23**, against implementation commit `8075156`.
 
-**Status: C1–C3 and C4.1–C4.2 implemented; C4.3–C4.5 and C5 planned.** See the
+**Status: C1–C3 and C4.1–C4.3 implemented; C4.4–C4.5 and C5 planned.** See the
 [progress ledger](CHI_IMPORT_PROGRESS.md) and [import instructions](CHI_IMPORT.md).
 This document is the
 implementation handoff requested by the owner. It describes five milestones for
@@ -548,6 +548,10 @@ service helpers may share mechanics only after equivalent behavior is proven.
 Do not substitute simplified services just to make the inventory appear complete.
 
 ### C4.3 Mission and campaign settings
+
+Implemented through the [mission editor/CLI](CHI_MISSION_AUTHORING.md).
+The [coverage ledger](CHI_CAMPAIGN_COVERAGE.md) records all C1 systems,
+editable fields, runtime consumers and bounded verification.
 
 Externalize training mission definitions, opponents/instances, allowed controls,
 outcomes, return messages, spawn/retreat rules and story effects. Include the

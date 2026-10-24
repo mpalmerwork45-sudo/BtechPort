@@ -345,3 +345,44 @@ remain bounded compatibility contracts. Mission opponents/spawns and yard combat
 layouts remain C4.3; general authored-event calls remain C4.4. See
 [service usage](CHI_SERVICE_AUTHORING.md) and
 [schema](../schemas/chi-services-v1.schema.json).
+
+## C4.3 native mission content extension
+
+`chi_missions: chi-missions.json` optionally declares `btp-chi-missions-v1`,
+schema 1, only for imported CHI projects. Its 837 typed numeric settings and
+65 stable mech roles cover initialization, training/recognition/recovery,
+invasion, encounters/aftermath, Rex, prison, arena and cache/ending content.
+The [coverage ledger](CHI_CAMPAIGN_COVERAGE.md) provides the C1 system mapping.
+
+`parameters` is a flat object keyed by catalogue ID. Missing keys use native
+defaults, including the decoded local cache tables. Optional `units` maps role
+IDs to empty/default, named native templates, or existing project mech IDs.
+The loader rejects unknown/duplicate keys, booleans, bad integer ranges,
+invalid combined counts/positions, duplicate password cells, odd cache door
+coordinates and unresolved/non-mech roles. Default/edited tables are separate;
+only decoded live tables are overridden. Immutable cache files stay unchanged.
+
+Roles resolve after project definitions compile. They copy exact local template
+or roster records; shell/arena damage is then applied to an encounter instance.
+An empty prison role follows C4.2's service reward setting. Numeric parameters
+and role overrides share GUI/CLI/source models, Undo/Save and inspect/protection
+paths `chi.mission_parameters/<id>` and `chi.mission_units/<role>`.
+Text and BLD money references accept `{mission:<id>}`, with optional `:comma`
+for text. The same existing compiler/native text budgets apply.
+
+Mission content and its contract tag participate in the strict project digest.
+There is no state-layout change or implicit save conversion. Resource-aware
+validators accept configured quiz rounds, force sizes, return/ending rules,
+initial allowance and reward amounts across held loot pages. The NPC validator
+uses the configured ruin threshold and Citadel origin for suspended cadet actors.
+Native RNG draw order remains identical for defaults. New parameters such as
+fixed arena layout retain their original choice draw; edits to force generation
+may intentionally change later RNG state.
+
+Native capacities, action contexts, original flag meanings, map slots,
+interaction tile classes, record layouts and generic combat algorithms remain
+engine contracts. The five-round invasion continuation and bounded cache puzzle
+remain native mechanisms with editable content. These are not arbitrary new
+mission/event schemas. C4.4 owns the authored-event bridge and C4.5 the complete
+campaign gate. [Usage and coordinate conventions](CHI_MISSION_AUTHORING.md),
+[schema](../schemas/chi-missions-v1.schema.json).

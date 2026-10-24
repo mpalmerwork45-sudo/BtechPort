@@ -1,5 +1,94 @@
 # Build, verification and original oracle — 2026-10-24
 
+## Native mission authoring — 2026-10-24
+
+**PASS for C4.3's declared scope on Linux and Windows/Wine.**
+See [mission usage](CHI_MISSION_AUTHORING.md),
+[campaign coverage](CHI_CAMPAIGN_COVERAGE.md) and
+[contract](CHI_IMPORT_CONTRACT.md#c43-native-mission-content-extension).
+C4.4–C4.5 and C5 remain open.
+
+- **427 Python tests pass** (104.696 s), including nine new mission contract
+  cases. After final catalogue additions, all nine pass again (10.710 s).
+- **94 Linux native tests pass** (49.53 s); all 33 affected native cases pass
+  again after the final arena/infantry/cache settings (28.96 s). Builds are
+  sequential, use two compile jobs and finish without compiler warnings.
+  All **94 Windows native tests pass** under isolated Wine (356.16 s).
+- The synthetic `chi-native-mission-contract` CTest needs no original assets.
+  It checks settings/control/count/formation/outcome consumption, role resolution,
+  text references, reward amounts and malformed/combined parameter rejection.
+- Default imports preserve all **52 encrypted BLD files byte-for-byte** and
+  pass **365,690 gameplay/RNG comparison ticks per platform** against C4.2
+  projects: in each profile, 3,088 funded-class, 414 bank, 44,192 training-combat,
+  58,763 service, 815 alternate-service and 75,573 fresh-campaign-through-ending
+  ticks. Comparisons use the established source-address/text normalization;
+  arbitrary gameplay/RNG differences are not normalized away.
+- The unchanged C2 built-in comparison passes **108,156 ticks**, intro/presentation
+  checks and twelve isolated project save slots on both platforms.
+- Seven edited scenarios in both editions pass **1,728 ticks and 70 exact held
+  save/reload/render checkpoints per platform**. They test changed initial
+  funds/cap/stats; training force/roster/control/retreat-pass/return text and BLD
+  resume; earlier ruin switch with four Jenners and physical escape; four quiz
+  rounds; arena rental/fixed fields/spectator/one guard/escape; cache entry,
+  terminal, moved secret overlay and final prerequisites/ending; encounter
+  refusal and larger rewards through subsequent weapon/victory pages without
+  duplicate payment. All **26 final Linux/Windows save pairs are byte-identical**.
+- The real Linux mission GUI journey passes typed values/roles, Undo/Redo,
+  invalid-draft rollback/recovery and exact error navigation, filtering,
+  pending-field Save/reopen and native Play with external DOS paths absent.
+  At 1000×730, value controls remain visible with a usable table and horizontal
+  scroll. Existing BLD and service GUI journeys pass too.
+- Both reference trees retain all **1,287 content/mode/mtime entries**. The
+  three pending owner files retain their exact hashes, and all twenty observed
+  normal saves retain their bytes/mtimes. No private assets or generated
+  campaigns are staged; the provenance check passes for nine tracked examples.
+
+The edited scenarios explicitly use **declared checkpoints**: doorway placement
+suppresses unrelated random encounters, the training BLD selects a chosen mission
+through an actual confirmation, arena alarm starts at the spectator-hit boundary,
+encounter rewards start at a victorious outcome boundary, and cache overlay/
+final-door checks set their local prerequisite boundary. Their subsequent native
+flow, saves and script returns are real. These are focused mechanism tests,
+separate from the unchanged 75,573-tick complete fresh-game input route.
+
+Save validation now follows configured quiz rounds, mission forces, ending
+requirements and cash bounds throughout loot pages. New-game allowance aliases
+and pending-payment state are initialized consistently. The suspended NPC check
+uses the configured Citadel origin/ruin threshold. Defaults preserve the existing
+state layout and rules. The tests exposed these cases; unrelated save
+constraints and native continuations retain their existing behavior.
+
+Private evidence: `work/chi-import/c43-evidence-final/evidence.json`,
+`c43-evidence-final/windows-evidence.json`, `c43-python-regression.log`,
+`c43-python-missions-final.log`, `c43-native-regression.log`,
+`c43-native-final-focused.log`, `c43-parity-linux.log`, `c43-preservation.json`,
+`work/chi-missions-gui.json` and `work/chi-mission-editor.png`.
+Full Windows regression/parity results are retained as `c43-native-windows.log` and
+`c43-parity-windows.log`.
+
+```sh
+python3 tools/chi_mission_evidence.py \
+  --output work/chi-import/NEW-MISSION-EVIDENCE \
+  --previous work/chi-import/c42-evidence-final5/base
+python3 tools/chi_mission_evidence.py --windows \
+  --output work/chi-import/NEW-MISSION-EVIDENCE
+python3 -m unittest discover -s tests -p test_chi_missions.py
+python3 tools/native_smoke.py --editor-chi-missions-only
+```
+
+The previous directory must contain retained C4.2 `original`/`updated` projects.
+Use a new output directory; the evidence generator never overwrites one. The
+`--edited-only` option skips repeated baseline routes while debugging changed
+examples. The Windows replay uses an isolated Wine prefix and different output
+save names, then compares every final held save against Linux. Normal game saves
+and the user's Wine prefix are not used.
+
+**Limits:** these are port-to-import comparisons and bounded edited-content
+proofs, not fresh DOS verification of every combination/branch. Native Windows
+Python/Tk remains UNKNOWN. Native menu sizes, slot capacities, map/tile semantics
+and generic combat algorithms remain engine contracts. The complete aggregate
+campaign gate and new-event bridge are still C4.5/C4.4.
+
 ## Native service authoring — 2026-10-24
 
 **PASS for C4.2's declared scope.** See [usage](CHI_SERVICE_AUTHORING.md),
