@@ -197,6 +197,9 @@ static void finish_script(BtpState *s, const BtpResources *r, const BtpMap *m)
     unsigned status=s->script.status;
     story_out(s);
     if (s->script.status == BTP_SCRIPT_ERROR) {
+        /* Native actions can fault outside the bytecode interpreter. Record
+           that source boundary before recovery rolls back the failed choice. */
+        btp_script_observe_fault(btp_state_bld(r,s),&s->script);
         /* Prototype recovery: roll back the entire failed menu choice,
            including writes before a dialogue pause, not an original rule. */
         if (s->checkpoint_valid) {

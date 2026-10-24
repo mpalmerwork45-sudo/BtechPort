@@ -66,6 +66,16 @@ class ChiImportTests(unittest.TestCase):
         with self.assertRaises(EditorError):register_imported_projects(self.root/'registrations',result['projects'])
         self.assertEqual(broken.read_text(),'{')
 
+    def test_editor_start_preserves_native_intro_and_preview_is_explicit(self):
+        for profile in ('original','updated'):
+            doc=self.document(profile)
+            command=doc.play_command({'player':str(ROOT/'build/btech-port')},self.root/'intro-preview'/profile)
+            self.assertNotIn('--replay',command)
+            self.assertNotIn('--play-here',command)
+            here=doc.play_command({'player':str(ROOT/'build/btech-port')},self.root/'intro-preview'/profile,('chi:map-01',69,25))
+            self.assertEqual(here[here.index('--play-here')+1:here.index('--play-here')+4],['chi:map-01','69','25'])
+            self.assertNotIn('--replay',here)
+
     def test_occupied_source_symlink_and_bad_fingerprint(self):
         existing=self.root/'occupied';existing.mkdir();(existing/'keep').write_text('preserved')
         with self.assertRaises(EditorError):import_campaigns(self.source,existing,validator=self.tool)

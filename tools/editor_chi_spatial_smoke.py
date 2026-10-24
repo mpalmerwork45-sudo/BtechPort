@@ -1,6 +1,6 @@
 """Real GUI test of imported maps through the regular authoring tools."""
 def run(env,work):
-    import copy,json,tempfile,time,tkinter as tk
+    import copy,json,tempfile,time,tkinter as tk,subprocess
     from pathlib import Path
     from PIL import ImageGrab
     from chi_import import import_campaigns
@@ -11,7 +11,12 @@ def run(env,work):
     root=Path(__file__).resolve().parents[1];tool=root/'build/btp-project'
     with tempfile.TemporaryDirectory(prefix='chi-spatial-gui-',dir=work) as temporary:
         folder=Path(temporary);result=import_campaigns(root/'Original DOS',folder/'pair',validator=tool)
-        document=ProjectDocument(Path(result['projects'][0]['path']),tool)
+        project=Path(result['projects'][0]['path'])
+        # Reproduce the original registered C2 imports: their map document
+        # is absent, so navigation must offer the reversible enable action.
+        manifest=json.loads((project/'project.json').read_bytes());manifest.pop('chi_spatial')
+        (project/'project.json').write_bytes(encoded(manifest))
+        document=ProjectDocument(project,tool)
         window=tk.Tk();workspace=Workspace(window,tool,folder/'state');app=workspace.app;app.set_document(document)
         app.settings.update(player=str(root/'build/btech-port'))
         errors=[];window.report_callback_exception=lambda kind,error,tb:errors.append(error)
@@ -25,7 +30,10 @@ def run(env,work):
                 if time.monotonic()>deadline:raise AssertionError('Timed out CHI map GUI journey: '+workspace.status.get())
                 time.sleep(.01)
         try:
-            app.edit_adventure();maps=app.map_editor;pump()
+            workspace.refresh_tree();pump()
+            assert workspace.tree.exists('maps') and document.adventure is None
+            workspace.tree.selection_set('maps');workspace.select_tree(force=True);maps=app.map_editor;pump()
+            assert document.dirty and len(document.undo_stack)==1,document.undo_labels
             assert len(maps.adventure['maps'])==15 and len(maps.adventure['tiles'])==1000
             assert set(maps.graphics)>={'chi:land','chi:destroyed','chi:cache','chi:maproom'}
             maps.zoom.set('16');maps.draw();maps.canvas.xview_moveto(0);maps.canvas.yview_moveto(0);pump()
@@ -50,10 +58,19 @@ def run(env,work):
             workspace.invoke('Save project');pump(lambda:not workspace.tasks.jobs)
             assert not document.dirty,workspace.status.get()
             reopened=ProjectDocument(document.root,tool);assert reopened.files()==document.files()
-            app.settings['data']=str(folder/'missing-original');workspace.play_session.start(app._editor_scope);pump(lambda:not workspace.play_session.preparing)
+            app.settings['data']=str(folder/'missing-original');workspace.play_session.start(app._editor_scope,here=('chi:map-01',69,25));pump(lambda:not workspace.play_session.preparing)
             assert workspace.play_session.process and workspace.play_session.process.poll() is None,workspace.status.get()
+            from reference_session import WindowKeys
+            keys=WindowKeys()
+            try:
+                def player_window():return next((w for w,n in keys.windows() if n==document.manifest['title']),None)
+                pump(lambda:player_window() is not None);keys.key(player_window(),'F5');run=workspace.play_session.folder
+                pump(lambda:bool(list(run.rglob('*.btp'))));save=next(run.rglob('*.btp'))
+                state=json.loads(subprocess.run([str(root/'build/btech-headless'),'--project',str(run/'game'),'--load',str(save)],check=True,capture_output=True,text=True,timeout=20).stdout)
+                assert (state['mode'],state['x_half'],state['y_half'])==('local-exploration',69,25),(state['mode'],state['x_half'],state['y_half'])
+            finally:keys.x.XCloseDisplay(keys.display)
             workspace.play_session.stop();pump(lambda:workspace.play_session.process is None)
-            (work/'chi-spatial-gui.json').write_bytes(encoded(dict(status='passed',checks=['normal map painting','all 15 maps and four banks','Undo/Redo','moved town overview','normal jigsaw drawing','native sprite copy/edit','shared Save/reopen','Play without external resources'])))
+            (work/'chi-spatial-gui.json').write_bytes(encoded(dict(status='passed',checks=['old C2 import offers map editing in tree','normal map painting','all 15 maps and four banks','Undo/Redo','moved town overview','normal jigsaw drawing','native sprite copy/edit','shared Save/reopen','Play from here skips intro at the selected location without external resources'])))
             print('PASS: native maps, world, jigsaws, sprite editing, Undo/Save/reopen and native Play.',flush=True)
         finally:
             workspace.play_session.shutdown();workspace.tasks.shutdown();window.destroy()

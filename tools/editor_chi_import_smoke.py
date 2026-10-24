@@ -1,6 +1,6 @@
 """Bounded real-GUI import, edit, Save/reopen and native Play journey."""
 def run(env,work):
-    import json,tempfile,time,tkinter as tk
+    import json,tempfile,time,tkinter as tk,subprocess
     from pathlib import Path
     from PIL import ImageGrab
     from launcher import Launcher
@@ -50,14 +50,44 @@ def run(env,work):
             pump(lambda:not workspace.play_session.preparing)
             assert workspace.play_session.process is not None,'No native player: '+workspace.status.get()
             assert workspace.play_session.process.poll() is None
+            from reference_session import WindowKeys
+            keys=WindowKeys()
+            try:
+                title=app.document.manifest['title']
+                def player_window():return next((w for w,n in keys.windows() if n==title),None)
+                pump(lambda:player_window() is not None)
+                native=player_window();keys.key(native,'F5')
+                run=workspace.play_session.folder
+                pump(lambda:bool(list(run.rglob('*.btp'))))
+                save=next(run.rglob('*.btp'))
+                state=json.loads(subprocess.run([str(root/'build/btech-headless'),'--project',str(run/'game'),'--load',str(save)],
+                    check=True,capture_output=True,text=True,timeout=20).stdout)
+                assert state['mode']=='logos',state['mode']
+                ImageGrab.grab(xdisplay=env['DISPLAY']).save(work/'chi-import-play-logo.png')
+            finally:keys.x.XCloseDisplay(keys.display)
             workspace.play_session.stop();pump(lambda:workspace.play_session.process is None)
+            assert (run/'bld.jsonl').is_file()
+            # Load an actual, fingerprinted bank journey and navigate an
+            # observed instruction back to its BLD editor, within one tab set.
+            trace=folder/'bank.jsonl'
+            subprocess.run([str(root/'build/btech-headless'),'--project',str(app.document.root),
+                '--replay',str(root/'tests/fixtures/reference-bank.actions'),'--bld-trace',str(trace)],
+                check=True,capture_output=True,text=True,timeout=20)
+            from chi_coverage_editor import open_coverage
+            coverage=open_coverage(app);coverage.load([trace]);pump(lambda:not workspace.tasks.jobs)
+            assert coverage.report and len(coverage.table.get_children())==26
+            chosen=next(item for item,(program,node) in coverage.targets.items() if node and program=='chi:bld-comstar')
+            program,node=coverage.targets[chosen];coverage.table.selection_set(chosen);coverage.source();pump()
+            from chi_bld_editor import open_scripts
+            source=open_scripts(app);assert source.program.get()==program and source.selected==node
+            coverage.window.lift();pump();ImageGrab.grab(xdisplay=env['DISPLAY']).save(work/'chi-script-coverage.png')
             cancel=open_import(app);cancel.source.set(str(root/'Original DOS'));cancel.target.set(str(folder/'cancelled'))
             cancel.start_button.invoke();cancel.cancel();pump(lambda:cancel.cancel_event is None and not workspace.tasks.jobs)
             assert not (folder/'cancelled').exists();assert 'cancel' in cancel.status.get().lower(),cancel.status.get()
             (work/'chi-import-gui.json').write_bytes(encoded(dict(status='passed',checks=[
                 'launcher import button','both-profile wizard','visible progress/completion',
                 'open imported campaign','native text edit','Undo/Redo','Save/reopen',
-                'native Play without external originals','Stop test','cancel leaves no published project'])))
+                'native Play without external originals','ordinary Play starts on Infocom/Westwood logo','native coverage/source navigation','Stop test','cancel leaves no published project'])))
             print('PASS: CHI import wizard, text editing, Save/reopen, native Play and cancellation.',flush=True)
         finally:
             for app in launcher.editors:

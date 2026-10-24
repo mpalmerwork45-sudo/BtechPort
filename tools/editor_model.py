@@ -447,8 +447,14 @@ class ProjectDocument:
         digest = hashlib.sha256(b"".join(self.snapshot[name] for name in references(self.manifest))).hexdigest()[:20]
         work = state_dir / "play" / self.manifest["package_id"] / digest
         work.mkdir(parents=True, exist_ok=True)
-        replay = work / "start.actions"
-        replay.write_text("", encoding="ascii")
+        # Native campaigns have the same logos/title/new-or-load flow as the
+        # built-in game. An empty replay used to suppress that flow even for
+        # Play from start. Authored games keep their existing preview startup.
+        replay_args=[]
+        if self.manifest.get('requires')!='chi-local-dos-1.03':
+            replay = work / "start.actions"
+            replay.write_text("", encoding="ascii")
+            replay_args=["--replay",str(replay.resolve())]
         project=self.root
         if self.source is not None:
             project=work/'game'
@@ -456,7 +462,7 @@ class ProjectDocument:
         return [str(Path(settings["player"]).resolve()), "--project", str(project),
                 *[arg for key in required[1:] for arg in ("--" + key, str(Path(settings[key]).resolve()))],
                 *(["--play-here", *map(str, here)] if here else []),
-                "--replay", str(replay.resolve()), "--save-file", str((work / "game.btp").resolve())]
+                *replay_args, "--save-file", str((work / "game.btp").resolve())]
 
     def export(self, target: Path):
         self.validate()

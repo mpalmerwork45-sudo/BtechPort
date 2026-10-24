@@ -340,6 +340,8 @@ class Workspace:
         self.action('CHI campaign',lambda:open_campaign(self.active_scope().owner),groups['Project'])
         from chi_bld_editor import open_scripts
         self.action('CHI scripts',lambda:open_scripts(self.active_scope().owner),groups['Project'])
+        from chi_coverage_editor import open_coverage
+        self.action('CHI script coverage',lambda:open_coverage(self.active_scope().owner),groups['Project'])
         from chi_services_editor import open_services
         self.action('CHI services',lambda:open_services(self.active_scope().owner),groups['Project'])
         from chi_missions_editor import open_missions
@@ -412,7 +414,7 @@ class Workspace:
         scope=self.active_scope();document=scope.document if scope else None
         if name=='Save project':return bool(self.app.document) and not getattr(self.app._editor_scope,'saving',False)
         if name=='Save all':return any(s.document and not getattr(s,'saving',False) and s.dirty() for s in self.scopes)
-        if name in ('CHI campaign','CHI maps and world','CHI resources','CHI scripts','CHI services'):return bool(document and document.manifest.get('requires')=='chi-local-dos-1.03')
+        if name in ('CHI campaign','CHI maps and world','CHI resources','CHI scripts','CHI services','CHI missions and campaign','CHI script coverage'):return bool(document and document.manifest.get('requires')=='chi-local-dos-1.03')
         if name=='Save active scope' or name=='Validate':return bool(document) and not getattr(scope,'saving',False)
         if name in ('Undo','Redo'):
             return bool(document and ((document.undo_stack if name=='Undo' else document.redo_stack) or any(d.pending() for d in scope.live())))
@@ -599,6 +601,20 @@ class Workspace:
                         row(events,'objectives','Objectives / journal',lambda:self.map_view().event_graph().objectives())
                     for event in ([] if native else document.adventure['events']):
                         if not query or query in str(event).casefold():row(events,'event:'+event['id'],event['id'].split(':')[-1]+' ('+event['op']+')',lambda i=event['id']:self.open_event(i))
+                if document.manifest.get('requires')=='chi-local-dos-1.03' and not document.adventure:
+                    # C2 imports do not yet have the map projection. Keep its
+                    # entry point visible; opening it enables editing as one
+                    # Undoable draft, without changing the saved revision.
+                    row('','maps','Local maps (enable editing)',self.open_map)
+                    row('','worlds','World / towns (enable editing)',self.open_world)
+                    from chi_editor import open_campaign
+                    from chi_bld_editor import open_scripts
+                    from chi_services_editor import open_services
+                    from chi_missions_editor import open_missions
+                    row('','native-text','Native campaign text',lambda:open_campaign(self.app))
+                    row('','native-scripts','Native building scripts',lambda:open_scripts(self.app))
+                    row('','native-services','Native service content',lambda:open_services(self.app))
+                    row('','native-missions','Native missions and campaign',lambda:open_missions(self.app))
                 row('','art','Artwork',self.open_art)
             row('','library','Shared Unit Library',self.app.open_library)
             for item in selection:

@@ -4,6 +4,17 @@
 #include <stdio.h>
 #include <inttypes.h>
 
+static BtpBldObserver observer;
+static void *observer_context;
+void btp_script_observe(BtpBldObserver callback,void *context)
+{ observer=callback;observer_context=context; }
+static void observed(const BtpBld *b,BtpBldObservation kind,unsigned from,unsigned to,unsigned detail)
+{ if (observer) observer(observer_context,b,kind,from,to,detail); }
+void btp_script_observe_fault(const BtpBld *b,const BtpScriptState *s)
+{
+    if (s->status==BTP_SCRIPT_ERROR) observed(b,BTP_BLD_FAULT,s->fault_pc,s->pc,s->error);
+}
+
 void btp_script_clear_text(BtpScriptState *s)
 {
     s->text_offset=s->text_length=s->text_count=0;memset(s->text,0,sizeof s->text);
@@ -62,7 +73,7 @@ static int state_index(BtpScriptState *s, uint8_t *story, unsigned index, uint16
     }
     return 1;
 }
-static void run(BtpScriptState *s, const BtpBld *b, uint8_t story[BTP_STORY_BYTES])
+static void execute(BtpScriptState *s, const BtpBld *b, uint8_t story[BTP_STORY_BYTES])
 {
     /* Independently written from decoded original bytes and observed path.
        Addresses are relative to payload start, excluding the size word.
@@ -71,6 +82,7 @@ static void run(BtpScriptState *s, const BtpBld *b, uint8_t story[BTP_STORY_BYTE
         uint16_t op_pc = s->pc;
         if (!available(s, b, 1, op_pc)) return;
         uint8_t op = b->bytes[s->pc++]; s->last_opcode = op;
+        observed(b,BTP_BLD_INSTRUCTION,op_pc,op_pc,op);
         switch (op) {
         case 0xe4:
             if (!available(s,b,1,op_pc)) return;
@@ -145,6 +157,7 @@ static void run(BtpScriptState *s, const BtpBld *b, uint8_t story[BTP_STORY_BYTE
             int at = (int)s->pc + 2 * value; /* Original CBW, then SHL. */
             if (at < 0 || at + 2 > b->length) { fault(s, BTP_SCRIPT_TARGET, op_pc); return; }
             if (!jump(s, b, word(b->bytes + at), op_pc)) return;
+            observed(b,BTP_BLD_BRANCH,op_pc,s->pc,(unsigned)story[index]);
             break;
         }
         case 0xf7: {
@@ -153,6 +166,7 @@ static void run(BtpScriptState *s, const BtpBld *b, uint8_t story[BTP_STORY_BYTE
             uint16_t target = word(b->bytes + s->pc); s->pc = (uint16_t)(s->pc + 2);
             if (!state_index(s, story, index, op_pc)) return;
             if (story[index] && !jump(s, b, target, op_pc)) return;
+            observed(b,BTP_BLD_BRANCH,op_pc,s->pc,story[index]!=0);
             break;
         }
         case 0xf0: /* Verified column zero: shops 14/22, ComStar 15. */
@@ -176,6 +190,7 @@ static void run(BtpScriptState *s, const BtpBld *b, uint8_t story[BTP_STORY_BYTE
                 s->column = s->row = s->has_cash = s->cash_after = s->has_accounts = 0; s->cash_value = 0;
             }
             s->pause_units = 0;
+            observed(b,BTP_BLD_NATIVE_ENTER,op_pc,s->pc,s->native_action);
             s->status = BTP_SCRIPT_NATIVE; return;
         case 0xf2: /* Original software delay(50), then keyboard flush.
                        Model records the request; native pacing is approximate. */
@@ -193,6 +208,7 @@ static void run(BtpScriptState *s, const BtpBld *b, uint8_t story[BTP_STORY_BYTE
         case 0xf8:
             if (!available(s, b, 2, op_pc)) return;
             if (!jump(s, b, word(b->bytes + s->pc), op_pc)) return;
+            observed(b,BTP_BLD_BRANCH,op_pc,s->pc,0);
             break;
         case 0xf9:
             if (!available(s, b, 1, op_pc)) return;
@@ -218,6 +234,12 @@ static void run(BtpScriptState *s, const BtpBld *b, uint8_t story[BTP_STORY_BYTE
     fault(s, BTP_SCRIPT_BUDGET, s->pc);
 }
 
+static void run(BtpScriptState *s,const BtpBld *b,uint8_t story[BTP_STORY_BYTES])
+{
+    execute(s,b,story);
+    btp_script_observe_fault(b,s);
+}
+
 void btp_script_start(BtpScriptState *s, const BtpBld *b, uint8_t story[BTP_STORY_BYTES])
 {
     *s = (BtpScriptState){0}; run(s, b, story);
@@ -225,16 +247,24 @@ void btp_script_start(BtpScriptState *s, const BtpBld *b, uint8_t story[BTP_STOR
 void btp_script_resume(BtpScriptState *s, const BtpBld *b, uint8_t story[BTP_STORY_BYTES])
 {
     if (s->status != BTP_SCRIPT_WAIT) return;
+    observed(b,BTP_BLD_RESUME,s->pc ? s->pc-1u : 0u,s->pc,BTP_SCRIPT_WAIT);
     s->status = BTP_SCRIPT_RUNNING; s->pause_units = 0; run(s, b, story);
 }
 void btp_script_native_return(BtpScriptState *s, const BtpBld *b, uint8_t story[BTP_STORY_BYTES])
 {
     if (s->status != BTP_SCRIPT_NATIVE) return;
+    /* Some native routines deliberately relocate the return PC. The trace
+       reports that actual boundary; clients must not invent a source node
+       if it does not resolve to an instruction in the source map. */
+    unsigned from=s->pc>=2 ? s->pc-2u : 0u;
+    int native=b && from+1u<b->length && b->bytes[from]==0xf5 && b->bytes[from+1u]==s->native_action;
+    observed(b,native ? BTP_BLD_NATIVE_RETURN : BTP_BLD_RESUME,from,s->pc,native ? s->native_action : BTP_SCRIPT_NATIVE);
     s->status = BTP_SCRIPT_RUNNING; s->pause_units = 0; run(s, b, story);
 }
 void btp_script_animation_return(BtpScriptState *s, const BtpBld *b, uint8_t story[BTP_STORY_BYTES])
 {
     if (s->status != BTP_SCRIPT_ANIMATION) return;
+    observed(b,BTP_BLD_RESUME,s->pc>=3 ? s->pc-3u : 0u,s->pc,BTP_SCRIPT_ANIMATION);
     /* Original Barracks wake-up screenshot retains the text preceding EA and
        appends the announcement after it; animation completion is not F2. */
     s->status = BTP_SCRIPT_RUNNING; s->pause_units = 0; run(s,b,story);
@@ -243,7 +273,9 @@ void btp_script_money_return(BtpScriptState *s,const BtpBld *b,uint8_t story[BTP
 {
     if (s->status!=BTP_SCRIPT_MONEY || !credits) return;
     if (s->money_kind==0xef) {
+        unsigned from=s->pc-5u;
         if (*credits>=s->money_amount) s->pc=s->money_target;
+        observed(b,BTP_BLD_BRANCH,from,s->pc,*credits>=s->money_amount);
     } else if (s->money_kind==0xee) *credits=*credits>=s->money_amount ? *credits-s->money_amount : 0;
     else if (s->money_kind==0xe5) { int32_t amount=s->money_amount<32768 ? s->money_amount : (int32_t)s->money_amount-65536;*credits+=(uint32_t)amount; }
     else { fault(s,BTP_SCRIPT_OPCODE,s->pc);return; }
@@ -252,7 +284,9 @@ void btp_script_money_return(BtpScriptState *s,const BtpBld *b,uint8_t story[BTP
 void btp_script_condition_return(BtpScriptState *s,const BtpBld *b,uint8_t story[BTP_STORY_BYTES],int yes)
 {
     if (s->status!=BTP_SCRIPT_CONDITION && s->status!=BTP_SCRIPT_RECRUIT) return;
+    unsigned from=s->pc-(s->status==BTP_SCRIPT_RECRUIT ? 2u : s->money_kind==0xed ? 5u : s->money_kind==0xe8 ? 4u : 3u);
     if (yes && s->status==BTP_SCRIPT_CONDITION) s->pc=s->money_target;
+    observed(b,s->status==BTP_SCRIPT_RECRUIT ? BTP_BLD_RESUME : BTP_BLD_BRANCH,from,s->pc,(unsigned)(yes!=0));
     s->money_kind=0;s->money_amount=s->money_target=0;s->status=BTP_SCRIPT_RUNNING;run(s,b,story);
 }
 int btp_script_choose(BtpScriptState *s, const BtpBld *b, unsigned choice, uint8_t story[BTP_STORY_BYTES])
@@ -265,13 +299,16 @@ int btp_script_choose(BtpScriptState *s, const BtpBld *b, unsigned choice, uint8
         fault(s, BTP_SCRIPT_TRUNCATED, s->menu_table); return 0;
     }
     if (!jump(s, b, word(b->bytes + s->menu_table + 2 * choice), s->menu_table)) return 0;
+    observed(b,BTP_BLD_BRANCH,s->menu_table-2u,s->pc,choice);
     s->status = BTP_SCRIPT_RUNNING; s->pause_units = 0; run(s, b, story);
     return s->status != BTP_SCRIPT_ERROR;
 }
 void btp_script_confirm(BtpScriptState *s, const BtpBld *b, int yes, uint8_t story[BTP_STORY_BYTES])
 {
     if (s->status != BTP_SCRIPT_CONFIRM) return;
+    unsigned from=s->pc-3u;
     if (yes && !jump(s,b,s->confirm_target,(uint16_t)(s->pc-3))) return;
+    observed(b,BTP_BLD_BRANCH,from,s->pc,(unsigned)(yes!=0));
     s->status = BTP_SCRIPT_RUNNING; run(s,b,story);
 }
 int btp_script_text(const BtpScriptState *s, const BtpBld *b, uint8_t *out, size_t capacity)

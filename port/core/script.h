@@ -31,6 +31,15 @@ typedef struct {
     uint8_t has_name,name_after,name_id;
 } BtpScriptState;
 
+/* Diagnostics observe executed instructions and resolved control-flow edges.
+   No observer data is part of a save, and callbacks must not mutate the VM. */
+typedef enum { BTP_BLD_INSTRUCTION, BTP_BLD_BRANCH, BTP_BLD_NATIVE_ENTER,
+    BTP_BLD_NATIVE_RETURN, BTP_BLD_RESUME, BTP_BLD_FAULT } BtpBldObservation;
+typedef void (*BtpBldObserver)(void *context,const BtpBld *program,
+    BtpBldObservation kind,unsigned from,unsigned to,unsigned detail);
+void btp_script_observe(BtpBldObserver observer,void *context);
+void btp_script_observe_fault(const BtpBld *program,const BtpScriptState *state);
+
 void btp_script_start(BtpScriptState *state, const BtpBld *script, uint8_t story[BTP_STORY_BYTES]);
 void btp_script_resume(BtpScriptState *state, const BtpBld *script, uint8_t story[BTP_STORY_BYTES]);
 void btp_script_native_return(BtpScriptState *state, const BtpBld *script, uint8_t story[BTP_STORY_BYTES]);

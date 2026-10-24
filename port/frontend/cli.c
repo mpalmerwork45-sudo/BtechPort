@@ -1,5 +1,6 @@
 #include "frontend/cli.h"
 #include "data/project.h"
+#include "data/chi.h"
 #include "core/npc.h"
 #include "core/training.h"
 #include "core/world.h"
@@ -32,6 +33,7 @@ int btp_options(int argc, char **argv, BtpOptions *o)
                  "  --replay FILE        logical actions: arrows/idle/accept/cancel/0..9/clear\n"
                  "  --trace              print canonical JSON state after each replay action\n"
                  "  --event-trace FILE   headless JSONL command entries, flags and credits\n"
+                 "  --bld-trace FILE     native BLD instructions, branches and service returns\n"
                  "  --frame FILE         write final 320x200 RGB PPM\n"
                  "  --sprite-preview     show original mech/human walking frames (diagnostic only)\n"
                  "  --title-preview      original title screen and PC speaker music\n"
@@ -88,6 +90,7 @@ int btp_options(int argc, char **argv, BtpOptions *o)
         else if (!strcmp(arg, "--debug")) o->debug = 1;
         else if (!strcmp(arg, "--trace")) o->trace = 1;
         else if (!strcmp(arg,"--event-trace")) { if (++i==argc) return 0;o->event_trace=argv[i]; }
+        else if (!strcmp(arg,"--bld-trace")) { if (++i==argc) return 0;o->bld_trace=argv[i]; }
         else if (!strcmp(arg, "--smoke")) o->smoke = 1;
         else if (!strcmp(arg, "--smoke-citadel")) o->smoke = 2;
         else if (!strcmp(arg, "--smoke-katrina")) o->smoke = 3;
@@ -394,12 +397,12 @@ int btp_replay(const char *path, BtpState *s, const BtpResources *r, int trace,c
 }
 
 static void event_trace(void *context,const BtpState *s,const BtpResources *r,const BtpEventNode *e);
-static int run_headless(const BtpOptions *o, BtpResources *r,FILE *trace)
+static int run_headless(const BtpOptions *o, BtpResources *r,FILE *trace,BtpBldTrace *native)
 {
     /* Loading a checkpoint replaces the bootstrap state. Do not report the
        discarded bootstrap commands as if they ran in the resumed session. */
     if (o->load) btp_events_observe(NULL,NULL);
-    BtpState state; btp_initial_state(o,&state,r);
+    BtpState state;btp_bld_trace_bind(native,&state);btp_initial_state(o,&state,r);
     BtpError error;
     if (o->load && !btp_save_load(o->load,&state,r,&error)) {
         fprintf(stderr,"%s\n",error.text); return 1;
@@ -470,11 +473,81 @@ static void event_trace(void *context,const BtpState *s,const BtpResources *r,co
 int btp_run_headless(const BtpOptions *o,BtpResources *r)
 {
     FILE *trace=NULL;
+    BtpBldTrace native={0};BtpError error;
+    if (!btp_bld_trace_open(&native,o,r,&error)) { fprintf(stderr,"%s\n",error.text);return 1; }
     if (o->event_trace) {
-        trace=fopen(o->event_trace,"wb");if (!trace) { fputs("Cannot open event trace\n",stderr);return 1; }
+        trace=fopen(o->event_trace,"wb");if (!trace) { btp_bld_trace_close(&native);fputs("Cannot open event trace\n",stderr);return 1; }
         btp_events_observe(event_trace,trace);
     }
-    int result=run_headless(o,r,trace);btp_events_observe(NULL,NULL);
+    int result=run_headless(o,r,trace,&native);btp_events_observe(NULL,NULL);
+    if (!btp_bld_trace_close(&native)) result=1;
     if (trace) { int bad=ferror(trace);if (fclose(trace) || bad) result=1; }
     return result;
+}
+
+static void bld_location(FILE *f,const BtpChiProgram *program,unsigned offset)
+{
+    const char *id=NULL;
+    if (program) for (unsigned i=0;i<program->count;++i)
+        if (program->nodes[i].opcode && program->nodes[i].offset==offset) { id=program->nodes[i].id;break; }
+    if (id) fprintf(f,"\"%s\"",id);else fputs("null",f);
+}
+static void bld_trace(void *context,const BtpBld *b,BtpBldObservation kind,unsigned from,unsigned to,unsigned detail)
+{
+    BtpBldTrace *trace=context;const BtpResources *r=trace->resources;
+    unsigned slot=0;
+    /* The first eight scripts have historic aliases. Pointer identity avoids
+       attributing equal byte sequences to the wrong building. */
+    const BtpBld *aliases[]={&r->training,&r->citadel,&r->comstar,&r->weapon,&r->armor,&r->repair,&r->barracks,&r->lounge};
+    while (slot<26 && b!=&r->buildings[slot] && (slot>=8 || b!=aliases[slot])) ++slot;
+    if (slot==26) return;
+    unsigned fault[5]={trace->state ? trace->state->tick : 0,slot,from,to,detail};
+    if (kind==BTP_BLD_FAULT && trace->previous_fault && !memcmp(trace->last_fault,fault,sizeof fault)) return;
+    trace->previous_fault=(unsigned)(kind==BTP_BLD_FAULT);
+    if (trace->previous_fault) memcpy(trace->last_fault,fault,sizeof fault);
+    const BtpChiProgram *program=r->project && r->project->chi_scripts ? &r->project->chi_scripts->programs[slot] : NULL;
+    static const char *const kinds[]={"instruction","branch","native-enter","native-return","resume","fault"};
+    FILE *f=trace->file;
+    fprintf(f,"{\"kind\":\"%s\",\"tick\":%u,\"building\":%u,\"resource\":\"%s\",\"program\":",kinds[kind],trace->state ? trace->state->tick : 0,slot,btp_chi_resource_name(27+slot));
+    if (program) fprintf(f,"\"%s\"",program->id);else fputs("null",f);
+    fprintf(f,",\"from\":%u,\"to\":%u,\"detail\":%u,\"node\":",from,to,detail);bld_location(f,program,from);
+    fputs(",\"target\":",f);bld_location(f,program,to);
+    /* This is the native operation boundary, not a claim that every branch
+       inside its C implementation has been measured. */
+    if ((kind==BTP_BLD_NATIVE_ENTER || kind==BTP_BLD_NATIVE_RETURN) && detail>=1 && detail<=47)
+        fprintf(f,",\"action\":\"%s\"",btp_chi_actions[detail-1].id);
+    fputs("}\n",f);
+}
+int btp_bld_trace_open(BtpBldTrace *trace,const BtpOptions *o,const BtpResources *r,BtpError *error)
+{
+    *trace=(BtpBldTrace){.resources=r};
+    if (!o->bld_trace) return 1;
+    if (o->event_trace && !strcmp(o->bld_trace,o->event_trace)) {
+        snprintf(error->text,sizeof error->text,"BLD and authored event traces require different files");return 0;
+    }
+    trace->file=fopen(o->bld_trace,"wb");
+    if (!trace->file) { snprintf(error->text,sizeof error->text,"Cannot open BLD trace");return 0; }
+    /* Editor Stop terminates its player process. Flush complete records as
+       lines so the preceding observations survive that normal test action. */
+    setvbuf(trace->file,NULL,_IOLBF,0);
+    fputs("{\"format\":\"btp-bld-trace-v1\",\"kind\":\"header\",\"content_digest\":",trace->file);
+    if (r->project) {
+        fputc('"',trace->file);for (unsigned i=0;i<32;++i) fprintf(trace->file,"%02x",r->project->digest[i]);fputc('"',trace->file);
+    } else fputs("null",trace->file);
+    fprintf(trace->file,",\"continuation\":%s,\"labelled_sources\":%s}\n",o->load ? "true" : "false",r->project && r->project->chi_scripts ? "true" : "false");
+    return 1;
+}
+void btp_bld_trace_bind(BtpBldTrace *trace,const BtpState *state)
+{
+    trace->state=state;
+    if (trace->file) btp_script_observe(bld_trace,trace);
+}
+int btp_bld_trace_close(BtpBldTrace *trace)
+{
+    if (!trace->file) return 1;
+    btp_script_observe(NULL,NULL);
+    int bad=ferror(trace->file);if (fclose(trace->file)) bad=1;
+    trace->file=NULL;
+    if (bad) fputs("Cannot finish BLD trace\n",stderr);
+    return !bad;
 }

@@ -218,7 +218,10 @@ class PlaySession:
                 document=ProjectDocument(folder/'game',candidate.validator)
                 command=document.play_command(settings,folder,here=here)
                 if checkpoint:command+=['--load',str(save)]
-                command+=['--event-trace',str(folder/'events.jsonl')]
+                # Native BLD observations have their own source identities;
+                # authored event counts cannot stand in for campaign coverage.
+                native=document.manifest.get('requires')=='chi-local-dos-1.03'
+                command+=['--bld-trace' if native else '--event-trace',str(folder/('bld.jsonl' if native else 'events.jsonl'))]
                 return command,folder
             except Exception:
                 discard((None,folder));raise
@@ -258,7 +261,7 @@ class PlaySession:
         if not self.process:return
         code=self.process.poll()
         if code is None:self.timer=self.workspace.window.after(150,self.poll);return
-        self.workspace.log(f'Playtest exited ({code}). Logs and event trace: {self.folder}')
+        self.workspace.log(f'Playtest exited ({code}). Logs and execution trace: {self.folder}')
         self.process=None
         if code and not self.stopping:
             path=self.folder/'player.log'
