@@ -1,7 +1,7 @@
 # Native CHI script coverage
 
-Implemented as the first C4.4 increment. This observes the existing interpreter;
-the cross-interpreter bridge and added-quest demonstration are still pending.
+Implemented in C4.4, including optional [quest calls](CHI_QUEST_AUTHORING.md).
+This observes execution boundaries without changing the game's state.
 
 ## Use it in the editor
 
@@ -40,6 +40,12 @@ Yes/No, conditional outcomes and individual menu/dispatch choices even when
 multiple choices have the same target. Existing C2 imports have no compiled
 source map; the report resolves their original offsets from local BLD data.
 
+Bridged BLD `event` instructions expose success/failure/cancel edges and
+`event-enter`/`event-return` observations. Native adapters emit `bridge-outcome`
+only when the adapter supplies an explicit result; reports include those three
+outcome counts. Authored traces also identify bridge depth and native doorway
+context. None of these counts infer unobserved C-handler branches.
+
 The report includes all 26 programs and keeps declared and observed counts
 separate. Source paths such as `$.programs[chi:bld-comstar].nodes[chi:comstar-…]`
 use the same navigation mechanism as editor Problems.
@@ -63,5 +69,5 @@ use the same navigation mechanism as editor Problems.
 - Original-derived generated reports and traces belong in private `work/`,
   alongside their exact imported project revisions.
 
-See [the remaining bridge work](CHI_EVENT_BRIDGE_DESIGN.md) and
+See [the continuation contract](CHI_EVENT_BRIDGE_DESIGN.md) and
 [verification](TESTING.md#native-import-usability-and-script-observation--2026-10-24).

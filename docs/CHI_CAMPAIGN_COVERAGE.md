@@ -36,7 +36,8 @@ the [command catalogue](AUTHORING_COMMANDS.md) specifies their full envelopes.
 | Inventor/cinema/houses/ending; BLDs, `core/story.c`, `core/cache.c` | C4.1 scripts, C4.2 costs/effects, C3 art/films, C4.3 cache access/contents/conditions/ending | VERIFIED ordinary services/alternate-services and fresh-game route through ending. Edited final prerequisites execute original ending text/films and quit with saves. Tile-trigger vocabulary and special map slots stay native. |
 | Updated roster/rules; `data/definitions.c`, `content/updated` | Existing units/weapons/equipment/rules editors; missions roles reference project mech IDs | VERIFIED imported Updated defaults, enhanced edited mission journeys and C4.2 broker stock. Original edition features are not silently enabled. |
 | Updated portraits; `data/portraits.c`, C3 presentation adapter | Resources/portrait edits | VERIFIED existing C3 override/playback. AI provenance/asset licenses remain attached to imported copies. |
-| Persistence; `data/save.c`, `core/state_codec.c` | Same pinned project content; effective settings participate in identity and resource-aware validators | VERIFIED edited held saves and continued effects without repeated payments, plus isolated normal/imported slots. No new state layout. New BLD/authored bridge state is C4.4. |
+| Persistence; `data/save.c`, `core/state_codec.c` | Same pinned project content; effective settings participate in identity and resource-aware validators | VERIFIED edited held saves and continued effects without repeated payments, plus isolated normal/imported slots. C4.4 adds opt-in v53 mixed continuations; ordinary saves retain their layout. |
+| Added quests; `core/chi_bridge.c`, `core/events.c` | Quest GUI/CLI, native doorway and BLD calls, explicit return labels, verified ComStar adapters | VERIFIED both editions' optional relay contract, live battle outcomes, payment/reward once, four frames, cancellation/depth/cycle/budget paths, 58 Linux/Wine held-save/frame/next-input comparisons. Other native adapters reject explicitly. |
 | Editor/sources/automation; shared Python document/workspace | Mission GUI/CLI, typed batch scopes, inspect/protection, source conversion/build, Undo/Save/recovery/Problems | VERIFIED Python contract tests and Linux GUI edit/invalid-draft/navigation/reopen/native Play journey, including controls in a 1000×730 workspace. Native Windows Python/Tk remains UNKNOWN. |
 
 ## Remaining milestones and boundaries
@@ -47,9 +48,10 @@ scripting engine. The bounded capacities and coordinate/tile conventions are
 listed in [mission authoring](CHI_MISSION_AUTHORING.md#coverage-and-limits).
 No known required native opcode is silently skipped.
 
-**C4.4 remains open:** BLD/native ↔ authored-event calls, bounded nested returns,
-cross-system saved continuations, native branch/coverage observations and an
-ordinary new-quest demonstration. **C4.5 remains open:** the aggregate campaign
+**C4.4 implemented:** BLD/native ↔ authored-event calls, bounded nested returns,
+mixed saved continuations, native boundary observations and an optional new-quest
+recipe. See [quest authoring and limits](CHI_QUEST_AUTHORING.md).
+**C4.5 remains open:** the aggregate campaign
 gate across all inventoried systems and representative additions. Existing
 full-route comparisons are evidence for that gate, not proof of every branch
 or every possible edit. **C5 remains open:** packaged setup/recovery, final

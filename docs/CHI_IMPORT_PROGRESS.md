@@ -1,6 +1,7 @@
 # Editable CHI import progress
 
-Authorization: C1/C2 first pass, followed by C3, 2026-10-23. See the
+Authorization began with C1/C2 and C3; the latest approved range is C4.4b/C4.4c,
+2026-10-24. See the
 [milestone plan](CHI_EDITABLE_CAMPAIGNS_PLAN.md) and [contracts](CHI_IMPORT_CONTRACT.md).
 
 ## C1 — Audit and contracts
@@ -384,9 +385,86 @@ enabling additional editing documents still changes strict save identity.
 Original-derived traces/reports and imported campaigns remain private.
 [Exact verification and evidence](TESTING.md#native-import-usability-and-script-observation--2026-10-24).
 
-**Remaining C4.4:** bounded BLD/authored-event calls, native-service context
-adapters, shared transaction ownership, explicit failure/cancellation outcomes,
-versioned mixed-continuation saves and the editor/CLI added-quest demonstration.
-The [bridge design](CHI_EVENT_BRIDGE_DESIGN.md) splits that work into C4.4b runtime/
-persistence and C4.4c shared authoring/quest acceptance. Coverage alone does not
-complete this gate. C4.5 and C5 follow after those acceptance cases pass.
+At this first increment, runtime continuations and quest authoring remained
+open. They are completed by the following C4.4b/C4.4c increment.
+
+## C4.4b/C4.4c — Mixed continuations and quest authoring
+
+**Implemented, 2026-10-24.** Optional `chi-bridge.json` and `chi-events.json`
+documents add native doorway/BLD → authored event → supported native service →
+authored event → BLD/exploration returns. Native startup keeps its original
+crew, story and logo/title flow. Registered older imports are unchanged.
+
+Four bounded frames suspend control, locations and BLD presentation state;
+money, crew, damage, authored completion bits and RNG remain shared. The bridge
+rejects active call-site cycles and excessive depth, and yields recoverable
+faults for tight call/return loops. Source labels define success/failure/cancel
+returns. A fresh native checkpoint after a quest prevents a later BLD fault
+from undoing its reward while retaining its one-time completion bit.
+
+Mixed saves use explicit v53 persistence: a 20,480-byte base and 8,192-byte
+little-endian continuation tail in the existing strict-content project envelope.
+No pointers or struct padding are persisted in the new tail. Held script PCs,
+event operands, owners, adapter boundaries, parked NPCs and marks are validated
+against the project. Ordinary non-bridge saves keep their encoding.
+
+**Initial native adapter scope:** ComStar buy/sell shares, including the original
+amount entry and receipt. Calls validate their native entry and post-receipt
+return path. Other native owners explicitly reject borrowing; their existing
+native services/missions remain editable and playable through their original
+entry contexts. New authored repair/rearm/heal/salvage events remain available.
+This gate does not claim arbitrary calls into all 47 native handlers.
+
+**Project → CHI quests** edits quest maps/events, doorway bindings and adapters
+beside native map editing. **Add example quest** uses the same transactional
+recipe as the CLI. BLD `event` and authored `call`, `return`, `chi_native`,
+`chi_if`, `chi_sound`, `chi_film` have typed fields, schema/CLI operations,
+scope/protection, source conversion/build, shared Undo/Save, draft recovery
+and problem navigation. Native maps' Event graph button opens the real quest
+graph, never their projection placeholders. Ordinary Play retains native startup.
+
+The optional relay contract reads native campaign state, offers dialogue and
+ComStar service, plays a sequential sound/film, runs an authored patrol and
+pays a one-time reward before returning to native exploration. The original-free
+recipe generates private examples for both editions; no original payload is
+committed. [Usage and exact limits](CHI_QUEST_AUTHORING.md).
+
+**VERIFIED:** 443 Python tests, followed by all 70 focused CHI tests after final
+import metadata/helper updates, 94 Linux native tests and all 94 Windows native
+tests under isolated Wine pass. Both builds have no compiler warnings. The GUI journey
+passes maps/quest separation, recipe creation, typed fields, graph, BLD calls,
+Undo/Redo, pending Save, invalid-input recovery/navigation, reopen and native
+Play without external DOS paths. Windows and Linux match **58 held saves,
+58 rendered frames and 58 canonical states after the next input**. These include
+dialogue, choices, partial payments/receipt, sound, film, live victory/retreat/
+defeat, re-entry, nested calls, depth/cycle/budget failure and a native fault
+after a committed reward. Stale-content saves and malformed continuations reject.
+
+Enabling an unused bridge preserves **206,738 native gameplay/RNG ticks** across
+bank, training/invasion and service routes in both editions on Linux and Wine, including
+rendered held states. Only the explicitly introduced initial event/bridge save
+metadata is accounted for in that comparison; native gameplay state is compared.
+All six final held native-route saves are byte-identical between platforms.
+Native adapter results and event returns now have explicit trace observations;
+the continuation test measures their resolved source edges without inferring
+C-handler branch coverage.
+
+Runtime foundation commit: `b00f0d0`; authoring and evidence commit: `b30b5fe`.
+The final six coverage cases and the GUI journey also pass after outcome-count
+display was restricted to explicitly configured native adapters. Private evidence:
+`work/chi-import/c44-final/{linux,windows}-evidence.json`;
+`work/chi-import/c44-defaults/{linux,windows}-defaults.json`; regression logs `c44-*` in that
+directory's parent; GUI report/capture `work/chi-bridge-gui.json` and
+`work/chi-quest-editor.png`. `work/chi-import/c44-completion.json` records the
+evidence SHA-256 digests and preservation totals. Native Windows Python/Tk remains UNKNOWN.
+
+**Next:** C4.5 assembles the complete campaign acceptance ledger and audits any
+remaining unexposed required content or parity findings. C5 handles final
+setup/distribution/reconstruction delivery. Original DOS screen equivalence,
+including the previously reported unspecified BLD differences, is not newly
+certified by these quest tests.
+
+Preservation gate: both reference trees retain all 1,287 content/mode/mtime
+entries, the three pending Last Beacon owner files retain their exact hashes,
+and all twenty recorded normal saves retain their bytes/mtimes. Generated
+projects, assets, caches, traces and save evidence remain private under `work/`.

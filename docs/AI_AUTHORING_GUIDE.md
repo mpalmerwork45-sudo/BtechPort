@@ -37,6 +37,16 @@ Conversion preserves the existing project; keep it for its old saves because
 canonical compilation changes byte identity. GUI/command Save targets modules,
 while exports and player snapshots remain normal packages.
 
+Imported CHI campaigns now also support optional authored quests. Use
+`bridge.enable` / `bridge.example`, `bridge.binding` / `bridge.call`, and
+`quest.put` / `quest.patch` / `quest.remove` / `quest.connect` in normal batches.
+Inspect `native_quests` in summary and query `quest-events`, `quest-maps`,
+`quest-encounters`, `bridge-entrances` or `bridge-calls`. Quest scopes use
+`quest.events/<id>` and `bridge.entrances/<id>`; they remain separate from native
+`chi.maps`. Native startup and existing BLDs still own the campaign.
+[Quest authoring](CHI_QUEST_AUTHORING.md) documents the bounded native adapters,
+continuations, private example recipe and CLI/GUI verification.
+
 ## Start here
 
 Build using the normal [README instructions](../README.md). Python 3.10+ is

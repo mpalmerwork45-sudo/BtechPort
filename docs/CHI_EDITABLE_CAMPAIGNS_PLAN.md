@@ -2,7 +2,7 @@
 
 Recorded **2026-10-23**, against implementation commit `8075156`.
 
-**Status: C1–C3 and C4.1–C4.3 implemented; C4.4–C4.5 and C5 planned.** See the
+**Status: C1–C3 and C4.1–C4.4 implemented; C4.5 and C5 remain.** See the
 [progress ledger](CHI_IMPORT_PROGRESS.md) and [import instructions](CHI_IMPORT.md).
 This document is the
 implementation handoff requested by the owner. It describes five milestones for
@@ -571,10 +571,13 @@ not a completed import simply because its native function still runs.
 
 The first increment now supplies [native BLD observations and a source-linked
 coverage view](CHI_NATIVE_COVERAGE.md), plus fixes for old-import map discovery
-and editor Play startup. **C4.4 is not complete.** The remaining runtime/save
-adapter and shared-authoring quest are split into C4.4b and C4.4c in the
-[continuation design](CHI_EVENT_BRIDGE_DESIGN.md). Native operation boundaries
-are measured; branches inside their C handlers remain unknown.
+and editor Play startup. **C4.4b/C4.4c are now implemented:** four-frame mixed
+continuations, v53 persistence, verified ComStar service adapters, editor/CLI
+quest authoring and the optional relay-contract recipe. See the
+[continuation contract](CHI_EVENT_BRIDGE_DESIGN.md), [usage](CHI_QUEST_AUTHORING.md)
+and [verification ledger](CHI_IMPORT_PROGRESS.md). Native operation boundaries
+are measured; branches inside their C handlers remain unknown. Other native
+service owners retain their original entry contracts and reject arbitrary calls.
 
 - Implement explicit BLD/native-to-authored and authored-to-compatibility calls
   with bounded nesting, validation and defined return behavior.

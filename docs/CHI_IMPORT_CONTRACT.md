@@ -386,3 +386,37 @@ remain native mechanisms with editable content. These are not arbitrary new
 mission/event schemas. C4.4 owns the authored-event bridge and C4.5 the complete
 campaign gate. [Usage and coordinate conventions](CHI_MISSION_AUTHORING.md),
 [schema](../schemas/chi-missions-v1.schema.json).
+
+## C4.4 implemented continuation contract
+
+Imported manifests may opt into both `chi_bridge: "chi-bridge.json"` and
+`chi_events: "chi-events.json"`, requiring native spatial and labelled BLD
+documents. The ordinary `adventure` startup is still rejected. Events load
+before BLD compilation so an E3 `event` instruction can resolve its stable event
+ID; native adapters resolve their compiled entry/return labels afterward.
+Both documents, resolved source programs and their resources bind strict saves.
+
+E3 is a nine-byte project extension: opcode, event index (u16), success PC (u16),
+failure PC (u16), cancel PC (u16). Original programs contain no E3. Native calls
+run a validated ComStar action-7/8 path through its original receipt wait and
+stop before the selected post-receipt instruction. Unsupported service owners,
+unreachable door slots, early exit, state-writing or cyclic adapter paths reject
+at content load. The four-frame runtime stack stores control and caller
+locations; shared money, party/damage, completion state and RNG are not restored
+from stale snapshots. A successful quest establishes a new native rollback
+checkpoint before continuing the caller's BLD.
+
+Save payload v53 (`BTPr`) appends a fixed 8,192-byte `CB01` tail to the ordinary
+20,480-byte base. Fields use explicit little-endian widths, with zero trailing
+padding, no pointers and no native struct-layout dependency. Frame source PCs,
+operands, service owners/boundaries, parked NPCs/terrain marks and event phases
+are validated before resuming. Ordinary imports and built-in editions retain
+their old payload formats. Existing saves require their pinned content revision.
+
+GUI and command operations share the parent project transaction/history;
+`QuestDocument` exposes `chi_events` without replacing the native spatial
+projection. Modular sources retain separate `chi_bridge` / `chi_events`
+sections. Imported resources and derived content retain their original provenance
+and public-export exclusion. [Authoring/limits](CHI_QUEST_AUTHORING.md),
+[bridge schema](../schemas/chi-bridge-v1.schema.json),
+[verification](TESTING.md#mixed-chi-quest-continuations--2026-10-24).

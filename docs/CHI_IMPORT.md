@@ -1,6 +1,6 @@
 # Import and edit a CHI campaign
 
-The C1–C3 and C4.1–C4.3 implementation imports separate Original and Updated campaigns from the
+The C1–C3 and C4.1–C4.4 implementation imports separate Original and Updated campaigns from the
 supported DOS 1.03 files. Each project owns its resources, edition settings and
 six save slots. It can run without the original installation after import.
 Existing launcher Original/Updated games and their saves remain separate.
@@ -22,6 +22,9 @@ are verified against the built-in editions; importing the full resource
 set does not establish execution coverage of every campaign branch.
 **Project → CHI script coverage** shows instructions, branch destinations and
 native service boundaries recorded during Play; see [native observations](CHI_NATIVE_COVERAGE.md).
+**Project → CHI quests** adds authored quests through a native doorway or BLD
+call, with saved continuations and a one-click example. See
+[quest authoring and adapter limits](CHI_QUEST_AUTHORING.md).
 See [progress](CHI_IMPORT_PROGRESS.md).
 Original's added-unit list starts empty; its campaign mechs still use exact
 compatibility templates rather than normalized library adaptations.
@@ -210,8 +213,10 @@ needed. Use the inspected project ID and revision in the ordinary batch envelope
 Native scopes use `chi.maps/<id>`, `chi.tiles/<id>`, `chi.world`, `chi.services`
 and `chi.presentation`. Source conversion/build includes these documents as
 normal sections. World review and regional protection use the effective native
-generator, tile rules and art patches. Authored mission suites/checkpoints are
-disabled for imports until their native story bridge is implemented in C4.
+generator, tile rules and art patches. Optional quests now have their own event
+document and saved continuations. General authored scenario-suite startup is
+still disabled for imports: native campaign setup must be entered through its
+own doors/BLDs. Use the mixed-continuation acceptance harness for these quests.
 
 ## Original-derived art and sharing
 

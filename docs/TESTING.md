@@ -1,5 +1,62 @@
 # Build, verification and original oracle — 2026-10-24
 
+## Mixed CHI quest continuations — 2026-10-24
+
+**C4.4b/C4.4c implemented.** See [quest authoring](CHI_QUEST_AUTHORING.md) and
+the [continuation contract](CHI_EVENT_BRIDGE_DESIGN.md). The optional bridge
+preserves native startup and only borrows explicitly verified ComStar adapters.
+
+- **443 Python tests pass** (117.466 s), including nine bridge authoring/runtime
+  cases. Tests cover shared GUI/CLI edits, transactional rollback, scopes and
+  protection, schema/source builds, graph edges, stale saves and observations.
+  All 70 focused CHI cases then pass (64.124 s) after importer metadata and
+  native-default helper updates; six coverage cases (2.692 s) and the GUI
+  journey pass after the final adapter-outcome display refinement.
+- **94 Linux native tests pass** (48.06 s); all **94 Windows native tests pass**
+  under isolated Wine (342.37 s). Linux/Windows builds use two jobs;
+  no compiler warnings. New continuations are exercised separately using private
+  imported fixtures, never by committing original payloads as test data.
+- Both editions pass real doorway → dialogue → native purchase → dialogue →
+  sound → film → authored battle → one-time reward → native exploration.
+  Victory, retreat, defeat, cancellation, zero funds and repeat visits pass.
+- Both editions pass native BLD → event → native bank → event → original BLD
+  menu, four held frames, rejected depth/cycles, a recoverable tight-loop fault,
+  explicit failure/cancel labels and a native fault after a committed reward.
+- **58 held checkpoints on each platform** compare loaded/unloaded renders and
+  the next ordinary input. Linux and Wine produce identical bytes for all
+  **58 saves, 58 frames and 58 canonical continuation states**. This includes
+  partially typed bank amounts, receipts, sound, film, battle and return states.
+- An enabled but unused bridge preserves **206,738 native gameplay/RNG ticks**
+  and rendered checkpoints across both editions' bank, training/invasion and
+  service fixtures on Linux and Wine; all six final held route saves are
+  byte-identical across platforms. Only fixed added bridge/event metadata is included
+  in the baseline state before comparing; gameplay differences are not ignored.
+- The real Linux GUI journey passes quest/native map separation, typed events,
+  graph/BLD calls, doorway and adapter forms, pending Save, Undo/Redo, recovery,
+  invalid-input navigation, Save/reopen and Play without external DOS paths.
+  Its screenshot is inspected. Native Windows Python/Tk remains UNKNOWN.
+
+```sh
+python3 -m unittest discover -s tests -p 'test_chi_bridge.py' -v
+python3 tools/chi_bridge_evidence.py --source work/chi-import/first-pair \
+  --output work/new-bridge-evidence
+python3 tools/chi_bridge_evidence.py --output work/new-bridge-evidence --windows
+python3 tools/chi_bridge_evidence.py --source work/chi-import/first-pair \
+  --output work/new-bridge-defaults --defaults
+python3 tools/chi_bridge_evidence.py --source work/chi-import/first-pair \
+  --output work/new-bridge-defaults --defaults --windows
+python3 tools/native_smoke.py --editor-chi-bridge-only
+```
+
+Retained evidence: `work/chi-import/c44-final/{linux,windows}-evidence.json`,
+`work/chi-import/c44-defaults/{linux,windows}-defaults.json`, `work/chi-import/c44-*` logs,
+`work/chi-bridge-gui.json` and `work/chi-quest-editor.png`. These checks do not
+claim every original campaign branch or new DOS screen comparisons. C4.5 still
+owns the aggregate campaign gate; C5 owns final distribution/setup acceptance.
+The completion ledger `work/chi-import/c44-completion.json` records evidence
+hashes. Final preservation verifies 1,287 reference content/mode/mtime entries,
+all three pending owner files and all twenty normal saves (bytes/mtime).
+
 ## Native import usability and script observation — 2026-10-24
 
 **PASS for the first C4.4 increment on Linux and Windows/Wine.** This delivers native BLD

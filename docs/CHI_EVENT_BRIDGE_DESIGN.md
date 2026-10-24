@@ -1,17 +1,19 @@
-# C4.4 continuation design and remaining implementation
+# C4.4 continuation contract
 
-**Status: design, not an implemented bridge.** Native BLD observations and their
-editor view are implemented in [the first increment](CHI_NATIVE_COVERAGE.md).
-The following runtime, save and authoring work remains necessary before C4.4
-can be marked complete. The existing native campaigns remain playable.
+**Status: C4.4b and C4.4c implemented.** The acceptance requirements below are
+retained as the design contract. [Quest authoring](CHI_QUEST_AUTHORING.md)
+documents the shipped API, editor and native adapter limits;
+[progress](CHI_IMPORT_PROGRESS.md) records verification. Native C-handler
+internals remain unknown where only their BLD boundaries are measured.
 
 ## Current boundaries that must be preserved
 
-The project loader currently rejects an authored `adventure` in a CHI import.
+The project loader rejects an ordinary authored `adventure` in a CHI import.
 `btp_state_bld()` returns no program when `event.enabled` is set. The game loop
 routes that flag directly to the authored event interpreter. Authored startup
-also replaces map, party and exploration state. Merely lifting the loader
-restriction would therefore break the original campaign.
+also replaces map, party and exploration state. The opt-in `chi_events` and
+`chi_bridge` documents therefore use explicit continuation ownership rather
+than lifting that restriction or running authored startup.
 
 Native BLD programs suspend in `BtpScriptState`; menus, services, films, effects,
 training, prison, arena and cache have additional serializable owners. The
@@ -27,6 +29,12 @@ recruitment and other native mirrored values must remain coherent.
 Original and Updated saves use stable encoded payloads. Authored v52 already
 uses much of the formerly unused save area for increased capacities. Do not
 reuse those bytes opportunistically or serialize native C struct padding.
+Bridge v53 uses an explicit 8,192-byte tail; ordinary saves retain their bytes.
+
+The initial borrowed native service owners are ComStar buy/sell shares. Other
+native actions require their existing campaign entry contexts and are rejected
+as adapters. This is an explicit capability boundary, not a claim that all 47
+registered native actions can be called from arbitrary quest scenes.
 
 ## C4.4b — Runtime and persistence
 

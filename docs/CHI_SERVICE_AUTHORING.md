@@ -6,7 +6,8 @@ continuations. There are **156 typed parameters** and **47 named native actions*
 covering all **76 action/building pairs** found in the original BLD programs.
 The separate BLD recruitment instruction retains its existing repair/hospital/
 prison contexts. C4.3's [mission editor](CHI_MISSION_AUTHORING.md) complements
-these settings. The authored-event bridge remains C4.4.
+these settings. C4.4's [quest bridge](CHI_QUEST_AUTHORING.md) can borrow verified
+ComStar transactions; other services retain their native entry contexts.
 
 ## Open and edit
 
@@ -52,7 +53,7 @@ broker capability.
 Training selection lives in the labelled `TRAINING.BLD` menu destinations.
 Menus and other building dialogue use the [BLD editor](BLD_AUTHORING.md).
 Mission opponents/spawns, yard combat layouts and initial campaign state are in
-the C4.3 mission editor. New authored-event calls remain C4.4. Native refit recipes, character
+the C4.3 mission editor. New authored-event calls use the C4.4 bridge. Native refit recipes, character
 identity limits and eight-person/four-mech capacities remain engine contracts.
 The shared catalogue reports exact bounds rather than implying unlimited data.
 

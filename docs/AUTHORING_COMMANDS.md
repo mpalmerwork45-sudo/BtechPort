@@ -37,6 +37,167 @@ Write scope: `manifest`, `chi.programs`.
 }
 ```
 
+## bridge.enable
+
+Enable optional quests and bounded BLD/native continuations.
+
+Write scope: `manifest`, `bridge`, `quest`.
+
+| Field | Structural constraint |
+| --- | --- |
+
+```json
+{
+  "op": "bridge.enable"
+}
+```
+
+## bridge.example
+
+Add the asset-free optional relay contract through an unused native door.
+
+Write scope: `chi.maps`, `bridge`, `quest`.
+
+| Field | Structural constraint |
+| --- | --- |
+
+```json
+{
+  "op": "bridge.example"
+}
+```
+
+## bridge.binding
+
+Create or replace a native doorway binding by ID.
+
+Write scope: `bridge.entrances`.
+
+| Field | Structural constraint |
+| --- | --- |
+| `value` * | `{"type":"object"}` |
+
+```json
+{
+  "op": "bridge.binding",
+  "value": {
+    "id": "quest:door",
+    "map": "chi:map-01",
+    "entrance": 8,
+    "event": "quest:welcome"
+  }
+}
+```
+
+## bridge.call
+
+Create or replace a verified native service adapter by ID.
+
+Write scope: `bridge.native_calls`.
+
+| Field | Structural constraint |
+| --- | --- |
+| `value` * | `{"type":"object"}` |
+
+```json
+{
+  "op": "bridge.call",
+  "value": {
+    "id": "quest:bank",
+    "program": "chi:bld-comstar",
+    "entry": "chi:comstar-0380",
+    "return": "chi:comstar-02cf"
+  }
+}
+```
+
+## quest.put
+
+Create or replace a quest event/map/definition, separate from native CHI maps.
+
+Write scope: `quest`.
+
+| Field | Structural constraint |
+| --- | --- |
+| `collection` * | `{"enum":["events","maps","people","shops","encounters","tiles","objectives","variables","regions","combat_groups","combat_hooks"]}` |
+| `value` * | `{"type":"object"}` |
+| `mode` | `{"enum":["create","replace"]}` |
+
+```json
+{
+  "op": "quest.put",
+  "collection": "events",
+  "value": {
+    "id": "quest:done",
+    "op": "return",
+    "result": "success"
+  }
+}
+```
+
+## quest.patch
+
+Update selected fields of a quest object.
+
+Write scope: `quest`.
+
+| Field | Structural constraint |
+| --- | --- |
+| `collection` * | `{"enum":["events","maps","people","shops","encounters","tiles","objectives","variables","regions","combat_groups","combat_hooks"]}` |
+| `id` * | `{"type":"string","maxLength":63,"pattern":"^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"}` |
+| `changes` * | `{"type":"object"}` |
+
+```json
+{
+  "op": "quest.patch",
+  "collection": "events",
+  "id": "quest:welcome",
+  "changes": {
+    "text": "Welcome."
+  }
+}
+```
+
+## quest.remove
+
+Remove a quest object; remaining references must resolve.
+
+Write scope: `quest`.
+
+| Field | Structural constraint |
+| --- | --- |
+| `collection` * | `{"enum":["events","maps","people","shops","encounters","tiles","objectives","variables","regions","combat_groups","combat_hooks"]}` |
+| `id` * | `{"type":"string","maxLength":63,"pattern":"^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"}` |
+
+```json
+{
+  "op": "quest.remove",
+  "collection": "events",
+  "id": "quest:unused"
+}
+```
+
+## quest.connect
+
+Connect a quest event branch.
+
+Write scope: `quest.events`.
+
+| Field | Structural constraint |
+| --- | --- |
+| `source` * | `{"type":"string","maxLength":63,"pattern":"^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"}` |
+| `branch` * | `{"type":"string","minLength":1,"maxLength":1024}` |
+| `target` * | `{"type":"string","maxLength":63,"pattern":"^[a-z][a-z0-9._-]*:[a-z][a-z0-9._-]*$"}` |
+
+```json
+{
+  "op": "quest.connect",
+  "source": "quest:welcome",
+  "branch": "next",
+  "target": "quest:end"
+}
+```
+
 ## missions.enable
 
 Enable native mission and campaign editing; changes strict save identity.
