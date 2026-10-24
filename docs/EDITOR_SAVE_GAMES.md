@@ -9,6 +9,45 @@ The workspace reports the saved-game directory when it starts the player. The
 run's `PLAY.json` records that path. Project saves are separate from the normal
 Original/Updated launcher games, and from saves belonging to other projects.
 
+## Saved games screen
+
+Choose a game in the launcher and press **Saved games...**, or choose **Play →
+Saved games** in the editor. The shared screen shows all six slots, local save
+dates, content revisions and their locations: Launcher, Editor, Earlier editor
+run or Backup. Empty current slots remain visible. Click headings to sort.
+
+- **Continue selected** validates the save with the native player, retains its
+  matching project revision and starts that campaign. It backs up the selected
+  save and any existing destination quicksave before launching. Later in-game
+  saves use stable slots for that revision. The active editor project is unchanged.
+- **Back up selected** creates a separate dated copy. **Open backup folder**
+  opens those copies in the desktop file manager. Backups appear in the table.
+- **Recover copy** copies a validated save to the chosen empty slot for its
+  original revision. An occupied slot produces a clear error and is preserved.
+  Source bytes and timestamps are retained.
+- **Locate matching campaign...** accepts an exact old project or retained
+  snapshot when an earlier save has no matching revision on disk. It checks and
+  retains that project; it never changes the save fingerprint to fit another game.
+
+Launcher and editor slots remain separate and are both visible. Recovery targets
+the location from which the screen was opened. An earlier save stays attached
+to its earlier content, even when the working project has been edited.
+Refresh the screen after making further edits or saving in a running game.
+
+Before launching a project, the application retains one validated private copy
+per runtime digest in `work/roster-editor/save-revisions/ID/DIGEST/game`. This
+keeps project-owned data available after editing or moving the working project.
+Games with external original-file requirements still need their configured
+resources. Retained revisions/backups are never automatically deleted; keep
+them with the saves when backing up the application state directory. Imported
+resources remain private original-derived content.
+
+Discovery is bounded to 4,096 files and 4,096 earlier editor runs; it reports
+limits rather than claiming an exhaustive filesystem search. A missing,
+damaged, foreign or incompatible save cannot be continued/recovered merely
+because its filename looks correct. Header/checksum inspection is descriptive;
+the native decoder is the final authority for each action.
+
 ## Existing saves from older editor versions
 
 Older editor Play launched every session with a new save directory. The files

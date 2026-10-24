@@ -72,6 +72,7 @@ class Launcher:
         play=ttk.Frame(body);play.pack(fill='x',pady=16)
         ttk.Button(play,text='New game',style='Accent.TButton',command=lambda:self.guard(self.play)).pack(side='left',padx=(0,8))
         ttk.Button(play,text='Continue quicksave',command=lambda:self.guard(lambda:self.play(True))).pack(side='left')
+        ttk.Button(play,text='Saved games...',command=lambda:self.guard(self.saved_games)).pack(side='left',padx=8)
         ttk.Separator(body).pack(fill='x',pady=(0,16))
         edit=ttk.Frame(body);edit.pack(fill='x')
         ttk.Button(edit,text='Open editor',command=lambda:self.guard(self.edit)).pack(side='left',padx=(0,8))
@@ -123,6 +124,11 @@ class Launcher:
         self.status.set('Game started. F5 saves; F9 loads. Close the game to return here.')
         self.later(500,lambda:self.monitor(process))
         return process
+
+    def saved_games(self):
+        from saved_games_view import launcher_saved_games
+        self.paths=settings()
+        return launcher_saved_games(self)
 
     def monitor(self,process):
         if not self.window.winfo_exists():return

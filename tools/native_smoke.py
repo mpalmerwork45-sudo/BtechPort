@@ -9,7 +9,7 @@ import tempfile
 import time
 from pathlib import Path
 
-if __name__=='__main__' and any('editor' in argument or 'construction-kit' in argument for argument in __import__('sys').argv[1:]):
+if __name__=='__main__' and any('editor' in argument or 'construction-kit' in argument or 'saved-games' in argument for argument in __import__('sys').argv[1:]):
     from editor_runtime import prefer_system_tk
     prefer_system_tk()
 
@@ -1358,6 +1358,7 @@ def main():
     parser.add_argument('--presentation-only',action='store_true')
     parser.add_argument('--original-save-only',action='store_true')
     parser.add_argument('--game-over-only',action='store_true')
+    parser.add_argument('--saved-games-only',action='store_true')
     parser.add_argument('--aftermath-only',action='store_true')
     parser.add_argument('--field-only',action='store_true')
     parser.add_argument('--intro-only',action='store_true')
@@ -1383,7 +1384,7 @@ def main():
     read_fd, write_fd = os.pipe()
     with (work / "native-xvfb.log").open("w") as log:
         xvfb = subprocess.Popen([str(ROOT / "local-deps/xvfb/usr/bin/Xvfb"),
-            "-displayfd", str(write_fd), "-screen", "0", "1600x1000x24" if args.editor_usability_only or args.editor_focus_only or args.editor_mission_only or args.editor_combat_mission_only or args.editor_style_only or args.editor_source_only or args.editor_capacity_only or args.editor_campaign_demo_only or args.editor_world_routes_only or args.editor_checkpoints_only or args.construction_library_only or args.editor_canvas_only or args.editor_paint_only or args.editor_tile_animation_only or args.editor_authoring_only or args.editor_collaboration_only else "1024x768x24", "-nolisten", "tcp"],
+            "-displayfd", str(write_fd), "-screen", "0", "1600x1000x24" if args.saved_games_only or args.editor_usability_only or args.editor_focus_only or args.editor_mission_only or args.editor_combat_mission_only or args.editor_style_only or args.editor_source_only or args.editor_capacity_only or args.editor_campaign_demo_only or args.editor_world_routes_only or args.editor_checkpoints_only or args.construction_library_only or args.editor_canvas_only or args.editor_paint_only or args.editor_tile_animation_only or args.editor_authoring_only or args.editor_collaboration_only else "1024x768x24", "-nolisten", "tcp"],
             pass_fds=(write_fd,), stdout=log, stderr=subprocess.STDOUT)
         os.close(write_fd)
         try:
@@ -1396,6 +1397,9 @@ def main():
             env.pop("SDL_VIDEODRIVER", None)
             os.environ["DISPLAY"] = env["DISPLAY"]
             os.environ["BTECH_REFERENCE_VIRTUAL"] = "1"
+            if args.saved_games_only:
+                from saved_games_smoke import run
+                run(env,work,windows=args.windows);return
             if args.game_over_only:
                 from game_over_smoke import run
                 run(env,work);return

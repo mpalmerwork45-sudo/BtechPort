@@ -385,6 +385,8 @@ class Workspace:
         self.action('Assets and dependencies',lambda:assets(self.app),groups['Project'])
         self.action('Migrate an old save',lambda:dialog(self.app),groups['Project'])
         self.action('Play from start',lambda:self.play_session.start(self.app._editor_scope),groups['Play'],'F5')
+        from saved_games_view import open_saved_games
+        self.action('Saved games',lambda:open_saved_games(self.app),groups['Play'])
         self.action('Preview library design',lambda:self.play_session.start(self.active_scope()),groups['Play'])
         self.action('Play from here',self.play_here,groups['Play'])
         self.action('Checkpoints and trace',self.open_playtest,groups['Play'])
@@ -431,7 +433,7 @@ class Workspace:
         if name in ('Check mission','Test suites and coverage','Checkpoints and trace'):return bool(document and document.adventure and not document.adventure.get('chi_native'))
         if name in ('New definition','Duplicate definition','Delete definition','Ammunition','Find usages'):return bool(document)
         if name in ('Building designer','Wall designer','Road designer','Pattern Library','Construction Library'):return bool(self.app.document and self.app.document.adventure)
-        if name in ('Play from start','Play from here','Checkpoints and trace'):return bool(self.app.document) and not self.play_session.preparing
+        if name in ('Play from start','Play from here','Checkpoints and trace','Saved games'):return bool(self.app.document) and not self.play_session.preparing
         if name=='Preview library design':return bool(document and scope.owner.library_context) and not self.play_session.preparing
         if name=='Stop test':return self.play_session.preparing or self.play_session.process is not None
         if name=='Cancel background tasks':return any(j.cancellable and not j.quiet for j in self.tasks.jobs)

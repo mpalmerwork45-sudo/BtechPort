@@ -177,6 +177,10 @@ def game_command(choice, paths, state_dir, project=None, resume=False):
                 if any(retained.snapshot.get(name)!=doc.snapshot[name] for name in references(doc.manifest)):
                     raise EditorError('The cached playable package was edited. Preserve it separately, then choose a new launcher state directory.')
             doc.unchanged_on_disk()
+        # Preserve the exact playable revision independently of the editable
+        # source root, so its saves remain resumable after subsequent edits.
+        from save_catalogue import retain_revision
+        playable=retain_revision(doc,state_dir)
         command+=['--project',str(playable)]
     else:
         command+=['--edition',choice.lower()]

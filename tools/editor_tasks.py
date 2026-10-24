@@ -216,6 +216,8 @@ class PlaySession:
                     source.export(folder/'game')
                 else:candidate.export(folder/'game')
                 document=ProjectDocument(folder/'game',candidate.validator)
+                from save_catalogue import retain_revision
+                retain_revision(document,state_dir)
                 # Ordinary Play retains slots for the same exact revision.
                 # Play here/checkpoint experiments keep private per-run saves.
                 persistent=not checkpoint and here is None
@@ -279,6 +281,16 @@ class PlaySession:
             report(self.scope.owner,EditorError(f'Playtest failed (exit {code}).\n{detail or "The player supplied no diagnostic."}\nLog: {path}'),category='play')
         else:self.workspace.status.set('Playtest stopped.' if self.stopping else 'Playtest ended. Your editor work is ready.')
         self.workspace.window.lift()
+    def start_saved(self,scope,command):
+        """Continue a validated retained revision through the usual Stop/log UI."""
+        if self.preparing or self.process is not None:raise EditorError('Stop the running test before continuing a save.')
+        state_dir=Path(scope.owner.state_dir).resolve();root=state_dir/'play-snapshots';root.mkdir(parents=True,exist_ok=True)
+        self.folder=Path(tempfile.mkdtemp(prefix='run-',dir=root));self.scope=scope;self.stopping=False
+        self.save_slot=Path(command[command.index('--load')+1])
+        with (self.folder/'player.log').open('w',encoding='utf-8') as log:
+            self.process=subprocess.Popen(command,cwd=self.folder,stdout=log,stderr=log)
+        self.workspace.log('Continued saved game: '+str(self.save_slot))
+        self.timer=self.workspace.window.after(150,self.poll)
     def stop(self):
         if self.preparing:
             # Other validations/imports may share the pool. Stop belongs only
