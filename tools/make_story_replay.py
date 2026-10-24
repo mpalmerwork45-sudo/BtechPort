@@ -3,8 +3,8 @@
 import json
 from make_later_campaign_replay import Later,ROOT,run
 
-def main():
-    s=Later(ROOT/'tests/fixtures/ordinary-services.actions')
+def main(s=None):
+    if s is None:s=Later(ROOT/'tests/fixtures/ordinary-services.actions')
     # Explicit owner-authorized credit shortcut, through the ordinary core input.
     s.advance(['credit-10000']);s.note('funded-by-owner-shortcut')
     s.world_route(1297,1077)
@@ -40,7 +40,7 @@ def main():
     s.note('hospital-companion-pause')
     for delay in range(16):
         keys=['idle']*delay+['accept'];s.leg.write_text('\n'.join(keys)+'\n')
-        result=json.loads(run(s.binary,'--load',s.slot,'--replay',s.leg))
+        result=s.probe(keys)
         if not result['campaign_flags'][39]:s.advance(keys);break
     else:raise RuntimeError('No peaceful companion delay in bounded inputs')
     for _ in range(16):
@@ -75,7 +75,7 @@ def main():
     s.note('jail-companion-pause')
     for delay in range(16):
         keys=['idle']*delay+['accept'];s.leg.write_text('\n'.join(keys)+'\n')
-        result=json.loads(run(s.binary,'--load',s.slot,'--replay',s.leg))
+        result=s.probe(keys)
         if not result['campaign_flags'][39]:s.advance(keys);break
     else:raise RuntimeError('No peaceful jailbreak delay in bounded inputs')
     for _ in range(64):
@@ -88,4 +88,5 @@ def main():
         s.pause()
     if s.state['mode']!='local-exploration':raise RuntimeError('Declining impound-yard run failed')
     s.note('jail-exit');s.save_fixture('jail-visitor');print('Saved ordinary jailbreak companion / declined impound-yard route:',len(s.actions))
+    return s
 if __name__=='__main__':main()

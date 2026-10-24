@@ -73,10 +73,21 @@ class WindowKeys:
         self.x.XSetInputFocus.argtypes = [c.c_void_p, c.c_ulong, c.c_int, c.c_ulong]
         self.x.XGetInputFocus.argtypes = [c.c_void_p, c.POINTER(c.c_ulong), c.POINTER(c.c_int)]
         self.x.XRaiseWindow.argtypes = [c.c_void_p, c.c_ulong]
+        self.x.XGrabServer.argtypes = [c.c_void_p]
+        self.x.XUngrabServer.argtypes = [c.c_void_p]
+        self.x.XFlush.argtypes = [c.c_void_p]
         self.xt = c.CDLL("libXtst.so.6")
         self.xt.XTestFakeKeyEvent.argtypes = [c.c_void_p, c.c_uint, c.c_int, c.c_ulong]
 
     def windows(self, parent=None, depth=0):
+        # A player can close between XQueryTree and XFetchName. Keep this
+        # short read-only enumeration atomic instead of letting BadWindow
+        # terminate the entire GUI verification process. Always release X11.
+        if depth==0:
+            self.x.XGrabServer(self.display)
+            try:return self.windows(parent,1)
+            finally:
+                self.x.XUngrabServer(self.display);self.x.XFlush(self.display)
         if depth > 5:
             return []
         root, p, children, n = c.c_ulong(), c.c_ulong(), c.POINTER(c.c_ulong)(), c.c_uint()

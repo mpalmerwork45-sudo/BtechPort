@@ -1,5 +1,51 @@
 # Build, verification and original oracle — 2026-10-24
 
+## Combined CHI campaign and delivery acceptance — 2026-10-24
+
+**C4.5 passes; C5 implementation is verified for Linux/Wine.** Independent Astra
+and native Windows Tk review remain pending. [Full matrix and measured coverage](CHI_ACCEPTANCE.md).
+
+- 456 Python tests pass (133.211 s). The focused six recipe tests also pass after
+  final original-reference validation changes (11.240 s).
+- 94/94 Linux native tests pass (48.25 s), then 94/94 Windows/Wine native tests
+  pass (345.31 s). UTF-8 argv and wide file operations fix real Unicode failures.
+- Fresh aggregate acceptance passes on Linux and Wine: 365,690 default parity
+  ticks plus 75,556 Updated complete-route ticks; actual ending assertions for
+  both editions, 52 BLD round trips and twelve isolated native slots.
+- Updated's complete route explicitly chooses Legacy in Settings. The previous
+  Original input stream did not complete default Enhanced training; older broad
+  completion wording is corrected. Enhanced-focused mission/party checks remain.
+- Both ending traces execute 17 programs, 872 instructions and 181 branch
+  destinations out of 26/1,816/578. Native handler internals are UNKNOWN.
+- Fresh service/mission/spatial/bridge cases pass. Same-project complete saves,
+  frames, JSON states and BLD traces match across Linux/Wine. Bridge evidence
+  compares every one of 58 held saves, frames and next-state artifacts.
+- Linux GUI Retry, Unicode import, unsaved recipe export/reconstruct, occupied
+  output preservation, both profile Play defaults, Save/reopen/source navigation
+  and cancellation pass. The window-enumeration race fix is confined to tooling.
+- Actual Linux (2,422 files) and Windows (1,212 files) archives pass the payload
+  and inventory guard. Packaged Linux desktop/CLI, fresh both-profile import,
+  moved Unicode projects, twelve saves, edited quest reconstruction and clean
+  Last Beacon reconstruction all pass outside the checkout.
+
+```sh
+python3 tools/chi_acceptance.py --output work/chi-import/acceptance-new
+python3 tools/chi_acceptance.py --output work/chi-import/acceptance-new --windows
+python3 tools/native_smoke.py --editor-chi-import-only
+python3 tools/native_smoke.py --delivery-only "work/chi-import/c5-work/Construction Kit Linux é 漢字"
+python3 tools/asset_provenance.py check-staged
+```
+
+Evidence: `work/chi-import/c45-verified/`; logs and actual packages:
+`work/chi-import/c5-work/`. `--windows-details` resumes the remaining service/map
+checks from successful baseline/mission/bridge reports. The initial harness
+assumed a mechanism helper retained a save it deliberately deletes; the affected
+service/map checks were rerun with explicit retained-artifact reporting.
+References (1,287 content/mode/mtime entries), three owner files and twenty normal
+saves passed preservation checks. No original-derived observations are committed.
+
+Earlier sections below describe their historical increment, not today's gate.
+
 ## Mixed CHI quest continuations — 2026-10-24
 
 **C4.4b/C4.4c implemented.** See [quest authoring](CHI_QUEST_AUTHORING.md) and

@@ -1,6 +1,6 @@
 # Import and edit a CHI campaign
 
-The C1–C3 and C4.1–C4.4 implementation imports separate Original and Updated campaigns from the
+The importer creates separate editable Original and Updated campaigns from the
 supported DOS 1.03 files. Each project owns its resources, edition settings and
 six save slots. It can run without the original installation after import.
 Existing launcher Original/Updated games and their saves remain separate.
@@ -25,7 +25,8 @@ native service boundaries recorded during Play; see [native observations](CHI_NA
 **Project → CHI quests** adds authored quests through a native doorway or BLD
 call, with saved continuations and a one-click example. See
 [quest authoring and adapter limits](CHI_QUEST_AUTHORING.md).
-See [progress](CHI_IMPORT_PROGRESS.md).
+See [progress](CHI_IMPORT_PROGRESS.md), [campaign acceptance and limits](CHI_ACCEPTANCE.md)
+and [sharing/reconstruction](CHI_RECONSTRUCTION.md).
 Original's added-unit list starts empty; its campaign mechs still use exact
 compatibility templates rather than normalized library adaptations.
 
@@ -51,6 +52,23 @@ incomplete or modified installation produces a specific file/version error.
 It copies neither the DOS executable nor personal GAME saves. A failed import
 publishes neither profile when Both is selected. Retry into a new destination;
 resuming partial extraction is not currently supported.
+
+The wizard explains the two profiles and displays **Retry import** after a
+failure. **Inspect interrupted imports** reports marked private staging left
+by a process/system crash without deleting anything. Retry the intended target
+if it was never published; a complete existing target must be kept or replaced
+by choosing another new folder. CLI inspection needs no original installation:
+
+```sh
+python3 tools/chi_import.py --inspect-staging "work"
+```
+
+Missing/changed files identify the resource; only the recorded DOS 1.03 version
+is supported. Choose a writable existing parent for the new destination. Keep
+backups of edited projects. A moved imported project remains playable without
+external original/cache paths; update its launcher registration with Choose
+project. Missing private resources need the matching backup, or a fresh import
+and deliberate comparison. Existing imports are never silently repaired/reset.
 
 The generated `IMPORT.json` lists input/output provenance and current editing
 limits. It is informational; removing it does not turn the campaign into a
@@ -160,8 +178,9 @@ slots and eight walker-route slots per map, origins aligned to 64 tiles. Maps
 are at most 64 × 64; Citadel, ruined Citadel, starport and cache corridors retain
 64 × 64, and the cache map room retains 32 × 24. The Citadel/starport require
 space for their native adjoining battle sectors. All validation errors leave
-the last valid project intact. Unrestricted new maps, missions, encounters and
-authored event execution are not enabled in imported campaigns yet.
+the last valid project intact. Unrestricted additional native map slots and new
+engine mechanics need engine work. Added quests use the optional native/authored
+bridge described above.
 
 ## Edit presentation resources
 
@@ -255,8 +274,13 @@ origins and original-derived artwork without a supported exclusion/recipe.
 For known private variants with an explicit base recipe, public export replaces
 the pixels with the placeholder and retains the recipe. This does not grant
 rights to other content or detect arbitrary copied art whose provenance was
-stripped. Keep origin metadata when cloning/editing/importing assets. Publishing
-complete edited campaign recipes will be expanded in later milestones.
+stripped. Keep origin metadata when cloning/editing/importing assets.
+
+**Project → CHI reconstruction recipes** now exports and reconstructs supported
+whole-campaign edits without bundling their original bases. See the
+[step-by-step guide and limits](CHI_RECONSTRUCTION.md). Application packaging
+also scans actual output directories/archives and staged payloads using
+`tools/release_guard.py`; detection does not establish redistribution rights.
 
 ## Verification and remaining work
 
@@ -264,4 +288,5 @@ The [contracts](CHI_IMPORT_CONTRACT.md) and [numeric inventory](chi-import-inven
 describe the versioned extension, bounds, profile flags and dependency ownership.
 The [progress ledger](CHI_IMPORT_PROGRESS.md) records exact tests, evidence and
 platform limits. The [five-milestone plan](CHI_EDITABLE_CAMPAIGNS_PLAN.md) defines
-the completed spatial/resource gate and remaining story/service and delivery gates.
+the milestone gates. Native Windows Tk and independent audit limits remain
+explicit in the [acceptance report](CHI_ACCEPTANCE.md).

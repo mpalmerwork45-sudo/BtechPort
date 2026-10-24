@@ -118,7 +118,7 @@ The [editable CHI campaign plan](docs/CHI_EDITABLE_CAMPAIGNS_PLAN.md) specifies
 five milestones for importing separate Original and Updated campaigns
 from a user's original files. It covers editable maps/scripts/services, isolated
 saves and keeping original-derived content out of repository and release assets.
-C1–C3 and C4.1–C4.4 are implemented: choose **Import CHI** in the launcher to create both local
+Choose **Import CHI** in the launcher to create both local
 projects. **Project → CHI maps and world** edits native maps, town placements,
 generator inputs, entrances and jigsaws; **CHI resources** edits presentation
 art/animation and supported audio settings; **CHI campaign** edits native text.
@@ -135,7 +135,11 @@ Older imports expose **Local maps (enable editing)** in the project tree.
 **CHI quests** adds optional dialogue, battles and rewards through native
 doorways or BLD calls, with saved returns and supported native service adapters.
 Use **Add example quest** to try it; see [quest authoring](docs/CHI_QUEST_AUTHORING.md).
-Aggregate campaign acceptance and final delivery remain C4.5/C5.
+**Project → CHI reconstruction recipes** shares supported campaign edits as
+changes and local-original references. See [sharing/reconstruction](docs/CHI_RECONSTRUCTION.md)
+and [campaign acceptance and platform limits](docs/CHI_ACCEPTANCE.md). C4.5 and
+C5 implementation are verified for the declared Linux/Wine scope; native Windows
+Tk and independent audit sign-off remain pending.
 
 [World-route checks](docs/WORLD_ROUTE_VERIFICATION.md) exercise whole-party
 travel between towns and planets, discovery and save/reload, with navigable

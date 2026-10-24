@@ -51,11 +51,14 @@ No known required native opcode is silently skipped.
 **C4.4 implemented:** BLD/native ↔ authored-event calls, bounded nested returns,
 mixed saved continuations, native boundary observations and an optional new-quest
 recipe. See [quest authoring and limits](CHI_QUEST_AUTHORING.md).
-**C4.5 remains open:** the aggregate campaign
-gate across all inventoried systems and representative additions. Existing
-full-route comparisons are evidence for that gate, not proof of every branch
-or every possible edit. **C5 remains open:** packaged setup/recovery, final
-platform/delivery checks and general asset-free edited-campaign recipes.
+**C4.5 passed:** fresh full ending routes, explicit execution counts, multiple
+units and the combined service/mission/spatial/quest checks are recorded in
+[acceptance](CHI_ACCEPTANCE.md). The Updated full route explicitly selects
+Legacy through Settings; replaying Original inputs under default Enhanced does
+not prove Updated completion. Earlier broader wording is corrected there.
+**C5 implemented:** setup/retry/recovery, general reconstruction recipes and
+actual package/archive payload checks. Linux/Wine verification and external
+native Windows Tk/Astra audit limits remain explicit in the acceptance report.
 
 Private retained evidence and reproducible commands are recorded in
 [TESTING.md](TESTING.md#native-mission-authoring--2026-10-24). Read the declared

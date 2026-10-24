@@ -36,14 +36,16 @@ class Route:
         if result.returncode:raise RuntimeError(result.stderr)
         self.advance(result.stdout.splitlines())
 
-def finish(s,name='cache',prerequisite=None):
+def finish(s,name='cache',prerequisite=None,output=None):
     image,_=unpack((ROOT/'Original DOS/BTECH.EXE').read_bytes());ds=0x36db0
     requirements=[image[ds+p:ds+p+12] for p in (0x2492,0x249e,0x24aa)]
     if hasattr(s,'travel_crew'):s.travel_crew()
     # This late original save already has disk/password prerequisites. Its
     # native import uses the existing documented deterministic RNG context.
-    keys=subprocess.check_output([str(ROOT/'build/btp-world-route'),str(s.slot),'776',str(778+2*s.state['campaign']['mounted'])],cwd=ROOT,text=True).splitlines()
-    s.advance(keys)
+    if hasattr(s,'project'):s.world_route(776,778+2*s.state['campaign']['mounted'])
+    else:
+        keys=subprocess.check_output([str(ROOT/'build/btp-world-route'),str(s.slot),'776',str(778+2*s.state['campaign']['mounted'])],cwd=ROOT,text=True).splitlines()
+        s.advance(keys)
     if s.state['mode']!='entry-confirm':raise RuntimeError('Cache entrance unreachable')
     s.note('cache-entrance');s.advance(['accept']);s.settle();s.note('cache-instructions-complete')
     if s.state['mode']!='cache' or not s.state['cache']['active']:raise RuntimeError('Cache did not open')
@@ -81,8 +83,9 @@ def finish(s,name='cache',prerequisite=None):
     s.route('found');s.settle();s.note('cache-found')
     s.route('generator');s.note('ending-start');s.settle();s.note('ending-complete')
     if s.state['mode']!='ending':raise RuntimeError('Original ending did not finish')
-    (ROOT/f'tests/fixtures/ordinary-{name}.actions').write_text('\n'.join(s.actions)+'\n')
-    (ROOT/f'tests/fixtures/ordinary-{name}.json').write_text(json.dumps(dict(
+    target=Path(output) if output else ROOT/f'tests/fixtures/ordinary-{name}'
+    target.with_suffix('.actions').write_text('\n'.join(s.actions)+'\n')
+    target.with_suffix('.json').write_text(json.dumps(dict(
         prerequisite=prerequisite or 'Original DOS/GAME1 imported normally; explicit late-game disk/password and trained-party context',
         route='Ordinary world travel, original entrance/instructions, all eleven security doors, secret passage, Phoenix display, MAP15 rejection/correct code, power, parts and ending',
         doors=opened,checkpoints=s.checkpoints,final=s.state),indent=2)+'\n')

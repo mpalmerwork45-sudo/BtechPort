@@ -1,5 +1,22 @@
 # Project status — original fidelity and editable projects, 2026-10-24
 
+**C4.5 campaign gate passed; C5 implementation/delivery verified on Linux and Wine.**
+Both imported campaigns reach their endings on declared routes (Updated selects
+Legacy in Settings). The combined comparison covers 441,246 gameplay ticks per
+platform plus service/mission/spatial/quest continuations and multiple units.
+The importer has retry/staging recovery, Unicode Windows I/O, and a GUI/CLI
+asset-free reconstruction workflow. Actual Linux/Windows archives pass payload
+checks; the packaged Linux setup/import/edit/reconstruction/player checks pass.
+456 Python tests and 94 native tests on each platform pass.
+
+[Acceptance, corrections and limits](CHI_ACCEPTANCE.md),
+[sharing recipes](CHI_RECONSTRUCTION.md), [progress](CHI_IMPORT_PROGRESS.md).
+Native Windows Tk and independent Astra sign-off remain pending. An Enhanced-only
+ending route is unverified. Imported saves remain pinned to exact content.
+
+The following entries record earlier increments; their then-open milestone
+statements are superseded by the current acceptance report.
+
 **C4.4 first increment: map/startup fixes and native script observations — implemented.**
 Older imported projects now expose **Local maps (enable editing)** and **World /
 towns (enable editing)** directly in the tree. Opening either enables the existing
@@ -184,13 +201,9 @@ The user's three pending Last Beacon files and both reference directories are
 unchanged. Gameplay/save formats remain unchanged. Native Windows Python/Tk
 interaction remains **UNKNOWN**.
 
-**Next proposed:** finish C4.4 of the [editable CHI campaign plan](CHI_EDITABLE_CAMPAIGNS_PLAN.md):
-bridge BLD/native calls into authored events with bounded returns and saved
-continuations, then demonstrate one added quest. BLD branch observations are
-delivered; native C-handler internals remain unknown. The remaining runtime and
-authoring acceptance cases are in the [bridge design](CHI_EVENT_BRIDGE_DESIGN.md).
-C4.5 supplies the aggregate campaign gate; C5 follows with packaged setup and
-delivery acceptance. C1–C3 and C4.1–C4.3 are delivered.
+**Next external checks:** native Windows launcher/Tk and the independent Astra
+review. Preserve the coverage limits in [acceptance](CHI_ACCEPTANCE.md) when
+expanding campaign cases or adding native quest adapters.
 
 **AI5 world-review extension — implemented and verified, 2026-10-23.**
 [World review and regional protection](WORLD_REVIEW.md) adds paired composed

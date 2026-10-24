@@ -1,6 +1,6 @@
 # Editable CHI import progress
 
-Authorization began with C1/C2 and C3; the latest approved range is C4.4b/C4.4c,
+Authorization began with C1/C2 and C3; the latest approved range is C4.5/C5,
 2026-10-24. See the
 [milestone plan](CHI_EDITABLE_CAMPAIGNS_PLAN.md) and [contracts](CHI_IMPORT_CONTRACT.md).
 
@@ -468,3 +468,65 @@ Preservation gate: both reference trees retain all 1,287 content/mode/mtime
 entries, the three pending Last Beacon owner files retain their exact hashes,
 and all twenty recorded normal saves retain their bytes/mtimes. Generated
 projects, assets, caches, traces and save evidence remain private under `work/`.
+
+## C4.5 — Combined campaign gate
+
+**Passed for the declared current-port scope.** The fresh combined harness
+retains 365,690 default comparison ticks and a separate 75,556-input Updated
+ending route, for 441,246 built-in/imported gameplay comparisons per platform.
+Both complete routes reach the ending; Updated explicitly selects Legacy in
+Settings. Reusing Original inputs in default Enhanced mode did not complete
+training, despite identical fault-free port/import behavior. This corrects the
+earlier broader full-Updated-route wording; an Enhanced-only complete route is
+still UNKNOWN. No rules/default changes were made to force a route through.
+
+Each ending trace executes 17/26 programs, 872/1,816 instructions and 181/578
+branch destinations with zero faults. Static inclusion is not execution coverage.
+All 52 compiled BLD files round-trip exactly. The all-system disposition table,
+three-person/two-mech prepared party (Updated added units), 12 service cases,
+16 mission cases, 15 spatial examples and four bridge journeys pass. The 58
+bridge saves, frames and next-state artifacts match Linux/Wine. Native internals
+and unobserved DOS branches remain explicit limits.
+
+Private evidence: `work/chi-import/c45-verified/`. Linux and Windows reports
+include full state/save/frame/trace comparisons. Test-only stable-ID mapping
+normalizes two legacy/project unit identity bytes; all other live fields, RNG
+and rendered checkpoints must match. [Acceptance details](CHI_ACCEPTANCE.md).
+
+## C5 — Setup, reconstruction and distribution
+
+**Implementation delivered; Linux/Wine checks pass.** Import Retry and marked
+interrupted-stage inspection give recovery guidance without erasing partial/user
+work. Read-only original copies, Unicode/spaced paths, moved project roots,
+missing/size/hash/version failures and OS publication denial are checked. The
+Windows native file layer and UTF-8 argument shim now support non-ASCII project
+and save paths. Both complete native regression suites pass (94 Linux, 94 Wine).
+
+General `btp-chi-recipe-v1` export/build uses changed spans, stable-ID copies and
+original-resource references against pinned local imports. It recreates exact
+runtime bytes and native content fingerprints before atomic publication. GUI
+export includes valid unsaved edits without consuming the working draft. Both
+editions' quest/service/map/dialogue and detached sprite edits pass round trips.
+Raw modified binaries, bad paths/baselines, occupied targets and cancellation
+preserve existing content. [Usage and limits](CHI_RECONSTRUCTION.md).
+
+**456 Python tests pass**, followed by the focused recipe suite after final
+reference-validation checks. Linux GUI import/retry/edit/Undo/Save/reopen,
+unsaved recipe export/reconstruction, both native Play profiles, source navigation
+and cancellation pass. The X11 verification helper's transient window-close race
+was fixed; it was a test enumeration fault, not a game crash.
+
+Both actual application archives pass the new payload/inventory guard: Linux
+2,422 files, Windows 1,212 files. The packaged Linux runtime, outside the checkout
+in a Unicode/spaced install, passes desktop/CLI checks, imports both campaigns,
+checks twelve saved states/cross-project rejection, reconstructs an edited quest
+exactly and restores all 20 Last Beacon original base tiles locally. Its Author
+CLI also exports/builds CHI recipes. No original assets are shipped. The Windows
+package's native validator accepts Unicode project paths under Wine; no Windows
+Python runtime was supplied in this build.
+
+Private logs/packages: `work/chi-import/c5-work/`. Both reference trees (1,287
+content/mode/mtime entries), three owner files, twenty normal saves and old
+registered import contents were preserved. Final C5 external sign-off remains
+**pending native Windows Tk and independent Astra audit**. Physical XT speaker
+fidelity, every DOS branch, and a full Enhanced-only playthrough are not claimed.

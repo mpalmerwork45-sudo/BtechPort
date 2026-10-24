@@ -5,6 +5,9 @@ import json,subprocess
 from make_campaign_replay import Session,ROOT
 from verify_m2j import run
 class Later(Session):
+    def probe(self,keys):
+        self.leg.write_text('\n'.join(keys)+'\n')
+        return json.loads(run(self.binary,'--load',self.slot,'--replay',self.leg))
     def world_route(self,x,y):
         self.advance(subprocess.check_output([str(ROOT/'build/btp-world-route'),str(self.slot),str(x),str(y)],cwd=ROOT,text=True).splitlines())
     def wait_outdoors(self,n):self.world_route('idle',n)
@@ -16,8 +19,9 @@ class Later(Session):
         # weapon, as in DOS, so repeated Accept would never finish that page.
         self.advance(['idle']*8 if self.state['animation']['active'] else
                      ['cancel'] if self.state['aftermath']['phase']==4 else ['accept'])
-def main():
-    s=Later(ROOT/'tests/fixtures/ordinary-invasion.actions');s.world_route(1286,1080);s.advance(['accept']*3)
+def main(s=None):
+    if s is None:s=Later(ROOT/'tests/fixtures/ordinary-invasion.actions')
+    s.world_route(1286,1080);s.advance(['accept']*3)
     if s.state['mode']!='local-exploration' or s.state['map']!=2:raise RuntimeError('Garage transition failed')
     s.note('parked-in-starport');s.save_fixture('starport')
     s.world_route(1370,1088);s.advance(['accept']*3);s.note('civilian-clothing')
@@ -44,7 +48,7 @@ def main():
     leg=ROOT/'work/m3d-audit/agent-delay.actions'
     for delay in range(16):
         keys=['idle']*delay+['accept'];leg.write_text('\n'.join(keys)+'\n')
-        result=json.loads(run(s.binary,'--load',s.slot,'--replay',leg))
+        result=s.probe(keys)
         if not result['campaign_flags'][39]:s.advance(keys);break
     else:raise RuntimeError('No non-hostile agent timing in bounded key delays')
     s.note('technician-joined');print('technician',s.state['mode'],s.state['menu_id'],s.state['service'],s.state['campaign_flags'][32:40])
@@ -74,4 +78,5 @@ def main():
     s.advance(['accept','accept']);s.note('speed-shop-no-funds');menu(5)
     s.save_fixture('services')
     print('Saved ordinary Starport, Rex and technician routes')
+    return s
 if __name__=='__main__':main()

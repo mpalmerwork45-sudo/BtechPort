@@ -4,6 +4,9 @@
 #include "core/npc.h"
 #include "core/menu.h"
 #include "core/roster_game.h"
+#include "core/party.h"
+#include "core/campaign.h"
+#include "core/world.h"
 #include "frontend/pixels.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,6 +17,9 @@ static void equal(const BtpState *a,const BtpState *b)
 {
     BtpState *copy=malloc(sizeof *copy);uint8_t x[BTP_STATE_BYTES],y[BTP_STATE_BYTES];CHECK(copy);
     *copy=*a;copy->project=b->project;btp_state_encode(copy,x);btp_state_encode(b,y);free(copy);
+    if(memcmp(x,y,sizeof x))for(unsigned i=0;i<sizeof x;++i)if(x[i]!=y[i]) {
+        fprintf(stderr,"First encoded difference: tick %u, offset %u, built-in %u, imported %u\n",a->tick,i,x[i],y[i]);break;
+    }
     CHECK(!memcmp(x,y,sizeof x));
 }
 static void intro(const BtpResources *base,const BtpResources *imported)
@@ -30,7 +36,31 @@ static void intro(const BtpResources *base,const BtpResources *imported)
     }
     CHECK(a->mode==BTP_EXPLORE);free(a);free(b);free(x);free(y);
 }
-static void route(const char *file,const BtpResources *base,const BtpResources *imported)
+static void same_record(uint8_t a[125],const uint8_t b[125],const BtpResources *base,const BtpResources *imported)
+{
+    if(!btp_roster_custom(a) && !btp_roster_custom(b))return;
+    const BtpRosterMech *x=btp_roster_definition(&base->roster,a),*y=btp_roster_definition(&imported->roster,b);
+    CHECK(x && y && !strcmp(x->id,y->id));
+    /* Built-in roster v1 uses legacy save codes; editable definitions use
+       project ordinals. Only these two identity bytes may differ. Every
+       other live record byte, state field, RNG and rendered pixel is checked. */
+    a[123]=b[123];a[124]=b[124];
+}
+static void same_route_state(const BtpState *a,const BtpState *b,const BtpResources *base,const BtpResources *imported)
+{
+    BtpState *v=malloc(sizeof *v);CHECK(v);*v=*a;
+    same_record(v->campaign.mech,b->campaign.mech,base,imported);
+    same_record(v->campaign.checkpoint_mech,b->campaign.checkpoint_mech,base,imported);
+    for(unsigned i=0;i<3;++i) {
+        same_record(v->party.mechs[i],b->party.mechs[i],base,imported);
+        same_record(v->party_checkpoint.mechs[i],b->party_checkpoint.mechs[i],base,imported);
+    }
+    for(unsigned i=0;i<4;++i)same_record(v->yard.mechs[i],b->yard.mechs[i],base,imported);
+    for(unsigned i=0;i<BTP_COMBAT_UNITS;++i)if(!v->combat.unit[i].infantry && !b->combat.unit[i].infantry)
+        same_record(v->combat.unit[i].record,b->combat.unit[i].record,base,imported);
+    equal(v,b);free(v);
+}
+static unsigned route(const char *file,const BtpResources *base,const BtpResources *imported)
 {
     BtpState *a=calloc(1,sizeof *a),*b=calloc(1,sizeof *b);CHECK(a && b);
     btp_start(a);btp_start(b);b->project=1;btp_npc_init(a,&base->map);btp_npc_init(b,&imported->map);
@@ -42,7 +72,7 @@ static void route(const char *file,const BtpResources *base,const BtpResources *
         line[strcspn(line,"\r\n")]=0;if (!*line || *line=='#') continue;
         BtpAction action;CHECK(btp_action_parse(line,&action));
         btp_game_tick(a,base,action);btp_game_tick(b,imported,action);++ticks;
-        equal(a,b);CHECK(!b->script.error);
+        same_route_state(a,b,base,imported);CHECK(!b->script.error);
         if (!held && (b->script.status==BTP_SCRIPT_WAIT || b->script.status==BTP_SCRIPT_MENU)) {
             BtpState *restored=calloc(1,sizeof *restored);CHECK(restored);
             CHECK(btp_save_write("chi-held-test.btp",b,imported,&error));
@@ -60,10 +90,45 @@ static void route(const char *file,const BtpResources *base,const BtpResources *
         CHECK(ticks<120000);
     }
     CHECK(!fclose(f));CHECK(ticks);printf("Verified %u identical gameplay ticks and presentation checkpoints: %s\n",ticks,file);
-    free(a);free(b);free(x);free(y);
+    unsigned mode=b->mode;free(a);free(b);free(x);free(y);return mode;
 }
 int main(int argc,char **argv)
 {
+    if (argc==9 && !strcmp(argv[1],"--updated-route")) {
+        BtpContent base={0},project={0};BtpOriginalContentPaths paths={argv[3],argv[4],argv[5],argv[6]};
+        CHECK(btp_content_load_original(&base,&paths,&error));
+        CHECK(btp_content_select(&base,BTP_CONTENT_UPDATED,argv[7],&error));
+        CHECK(btp_content_load_project(&project,argv[2],NULL,&error));
+        CHECK(route(argv[8],base.resources,project.resources)==BTP_ENDING);
+        btp_content_close(&base);btp_content_close(&project);puts("Updated route reaches its ending with identical built-in/imported state and rendered checkpoints.");return 0;
+    }
+    if(argc==4 && !strcmp(argv[1],"--party-proof")) {
+        BtpContent content={0};CHECK(btp_content_load_project(&content,argv[2],NULL,&error));const BtpResources *r=content.resources;
+        BtpState *s=calloc(1,sizeof *s),*copy=calloc(1,sizeof *copy);CHECK(s && copy);
+        /* Declared post-training crew checkpoint, independent of the complete
+           input-only route. Exercise a real imported Updated unit as a player. */
+        btp_start_content(s,r);s->project=1;s->story_flags[4]=1;s->story_flags[36]=127;
+        s->map_id=0;s->x_half=s->campaign.world_x=1300;s->y_half=s->campaign.world_y=1000;
+        btp_npc_enter(s,&r->map);btp_party_init(s);
+        CHECK(btp_party_recruit_resources(s,r,5)==2 && btp_party_recruit_resources(s,r,6)==3);
+        for(unsigned i=0;i<2;++i) {
+            uint8_t *m=btp_party_mech(s,i);memcpy(m,r->roster.count ? r->roster.mechs[i].record : r->combat.loans[i],125);
+            s->party.mech_types[i]=m[0];m[121]=m[122]=255;s->party.people[i][8]=1;btp_party_allocate(s,i,i,121);
+        }
+        s->campaign.owned=1;s->story_flags[24]=1;s->skills[0]=s->party.people[0][4];s->mech_skills[1]=1;
+        if(btp_resources_feature(r,BTP_FEATURE_ENHANCED))CHECK(btp_set_combat_profile(s,r,1));
+        btp_party_recover(s,r,1);btp_world_reveal(s);CHECK(btp_party_count(&s->party)==3);
+        for(unsigned i=0;i<8;++i)btp_game_tick(s,r,i&1u ? BTP_RIGHT : BTP_LEFT);
+        CHECK(s->mode==BTP_EXPLORE && s->party.people[0][12]==0 && s->party.people[1][12]==1);
+        CHECK(btp_save_write(argv[3],s,r,&error) && btp_save_load(argv[3],copy,r,&error));equal(s,copy);
+        CHECK(btp_campaign_random(s,r) && s->combat.friends==3 && !s->combat.unit[0].infantry && !s->combat.unit[1].infantry && s->combat.unit[2].infantry);
+        if(r->roster.count)CHECK(btp_roster_custom(s->combat.unit[0].record));
+        CHECK(btp_save_write(argv[3],s,r,&error) && btp_save_load(argv[3],copy,r,&error));equal(s,copy);
+        uint32_t *frame=malloc(BTP_PIXELS*sizeof *frame),*other=malloc(BTP_PIXELS*sizeof *other);CHECK(frame && other);
+        btp_render(r,s,0,frame);btp_render(r,copy,0,other);CHECK(!memcmp(frame,other,BTP_PIXELS*sizeof *frame));
+        free(frame);free(other);free(s);free(copy);btp_content_close(&content);
+        puts("Prepared three-person/two-mech imported crew walks, retains assignments, enters a correctly typed force and reloads matching state/pixels; Updated uses its added player units.");return 0;
+    }
     if (argc==4 && !strcmp(argv[1],"--settings-proof")) {
         BtpContent content={0};CHECK(btp_content_load_project(&content,argv[2],NULL,&error));
         BtpState *s=calloc(1,sizeof *s),*copy=calloc(1,sizeof *copy);CHECK(s && copy);

@@ -21,7 +21,11 @@ def run(env,work):
         try:
             view=launcher.import_chi();app=view.owner;workspace=view.workspace
             app.window.winfo_toplevel().geometry('1024x740+0+0');pump()
-            view.source.set(str(root/'Original DOS'));view.target.set(str(folder/'campaigns'))
+            view.source.set(str(folder/'missing-install'));view.target.set(str(folder/'Campaigns é 漢字'))
+            view.start_button.invoke();pump(lambda:view.cancel_event is None and not workspace.tasks.jobs)
+            assert not view.result and 'Missing original file' in view.status.get(),view.status.get()
+            assert view.start_button.cget('text')=='Retry import'
+            view.source.set(str(root/'Original DOS'))
             view.start_button.invoke();pump(lambda:view.cancel_event is None and not workspace.tasks.jobs)
             assert view.result,view.status.get();assert len(view.result['projects'])==2
             assert len(launcher.user_projects)==2
@@ -42,6 +46,21 @@ def run(env,work):
             reopened=ProjectDocument(Path(original['path']),app.validator)
             assert json.loads(reopened.metadata['campaign.json'])['dialogue_overrides'][0]['index']==87
             assert json.loads(reopened.metadata['campaign.json'])['dialogue_overrides'][0]['text']=='Computer control\rfor imported game?'
+            # Export includes the current valid unsaved revision without
+            # saving/resetting the working campaign. Reconstruction is exact.
+            editor.text.delete('1.0','end');editor.text.insert('1.0','Reconstructed control?');editor.apply()
+            from chi_recipe_editor import open_recipes
+            from chi_recipe import fingerprint,runtime_files
+            recipe=open_recipes(app);recipe.source.set(str(root/'Original DOS'));recipe.recipe.set(str(folder/'changes é 漢字.json'))
+            recipe.output.set(str(folder/'Reconstructed é 漢字'));recipe.export();pump(lambda:not workspace.tasks.jobs)
+            assert Path(recipe.recipe.get()).is_file(),recipe.status.get()
+            assert app.document.dirty and json.loads(ProjectDocument(Path(original['path']),app.validator).metadata['campaign.json'])['dialogue_overrides'][0]['text']=='Computer control\rfor imported game?'
+            recipe.export();pump(lambda:not workspace.tasks.jobs)
+            assert 'preserved' in recipe.status.get(),recipe.status.get()
+            recipe.build();pump(lambda:not workspace.tasks.jobs)
+            assert recipe.result,recipe.status.get()
+            assert fingerprint(runtime_files(app.document))==fingerprint(runtime_files(ProjectDocument(Path(recipe.result['project']),app.validator)))
+            workspace.invoke('Save project');pump(lambda:not workspace.tasks.jobs)
             app.window.winfo_toplevel().lift();pump()
             ImageGrab.grab(xdisplay=env['DISPLAY']).save(work/'chi-import-dialogue.png')
             # No external original setup is needed for the self-contained import.
@@ -67,6 +86,19 @@ def run(env,work):
             finally:keys.x.XCloseDisplay(keys.display)
             workspace.play_session.stop();pump(lambda:workspace.play_session.process is None)
             assert (run/'bld.jsonl').is_file()
+            view.edit(view.result['projects'][1]);pump()
+            workspace.play_session.start(app._editor_scope);pump(lambda:not workspace.play_session.preparing)
+            assert workspace.play_session.process is not None and workspace.play_session.process.poll() is None
+            keys=WindowKeys()
+            try:
+                title=app.document.manifest['title'];pump(lambda:player_window() is not None)
+                keys.key(player_window(),'F5');updated_run=workspace.play_session.folder
+                pump(lambda:bool(list(updated_run.rglob('*.btp'))))
+                save=next(updated_run.rglob('*.btp'))
+                updated=json.loads(subprocess.check_output([str(root/'build/btech-headless'),'--project',str(updated_run/'game'),'--load',str(save)],text=True,timeout=20))
+                assert updated['mode']=='logos' and updated['combat_rules']=='enhanced'
+            finally:keys.x.XCloseDisplay(keys.display)
+            workspace.play_session.stop();pump(lambda:workspace.play_session.process is None)
             # Load an actual, fingerprinted bank journey and navigate an
             # observed instruction back to its BLD editor, within one tab set.
             trace=folder/'bank.jsonl'
@@ -85,9 +117,10 @@ def run(env,work):
             cancel.start_button.invoke();cancel.cancel();pump(lambda:cancel.cancel_event is None and not workspace.tasks.jobs)
             assert not (folder/'cancelled').exists();assert 'cancel' in cancel.status.get().lower(),cancel.status.get()
             (work/'chi-import-gui.json').write_bytes(encoded(dict(status='passed',checks=[
-                'launcher import button','both-profile wizard','visible progress/completion',
+                'launcher import button','missing-source error and Retry','Unicode/spaced import paths','both-profile wizard','visible progress/completion',
                 'open imported campaign','native text edit','Undo/Redo','Save/reopen',
-                'native Play without external originals','ordinary Play starts on Infocom/Westwood logo','native coverage/source navigation','Stop test','cancel leaves no published project'])))
+                'unsaved exact recipe export/reconstruct','occupied recipe retry preserves edits',
+                'both native profiles Play without external originals','Updated Enhanced default','ordinary Play starts on Infocom/Westwood logo','native coverage/source navigation','Stop test','cancel leaves no published project'])))
             print('PASS: CHI import wizard, text editing, Save/reopen, native Play and cancellation.',flush=True)
         finally:
             for app in launcher.editors:

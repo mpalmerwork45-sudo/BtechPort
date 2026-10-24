@@ -3,6 +3,7 @@
 #include "core/world.h"
 #include "core/party.h"
 #include "data/save.h"
+#include "data/content.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -27,26 +28,33 @@ static int encounter(BtpState *s,const BtpResources *r)
 }
 int main(int argc,char **argv)
 {
-    if (argc!=4 && !(argc==5 && !strcmp(argv[4],"--next"))) return 2;
-    BtpResources *r=calloc(1,sizeof *r);BtpError e;BtpState s;
-    if (!r || !btp_resources_load("Original DOS",r,&e) ||
-        !btp_combat_data_load("work/combat-data.bin",&r->combat,&e) ||
-        !btp_world_data_load("work/world-data.bin",&r->world,&e) ||
-        !btp_save_load(argv[1],&s,r,&e)) { fprintf(stderr,"%s\n",e.text);free(r);return 1; }
+    /* Optional projects use their own edition, source tables and strict save
+       identity. The emitted route still consists solely of ordinary inputs. */
+    const char *project=NULL;int next=0;
+    if (argc>=6 && !strcmp(argv[argc-2],"--project")) { project=argv[argc-1];argc-=2; }
+    if (argc==5 && !strcmp(argv[4],"--next")) next=1;
+    if (argc!=4 && !next) return 2;
+    BtpContent content={0};BtpError e;BtpState s;
+    BtpOriginalContentPaths paths={"Original DOS","work/talk-data.bin","work/combat-data.bin","work/world-data.bin"};
+    if (!(project ? btp_content_load_project(&content,project,NULL,&e) : btp_content_load_original(&content,&paths,&e))) {
+        fprintf(stderr,"%s\n",e.text);return 1;
+    }
+    const BtpResources *r=content.resources;
+    if (!btp_save_load(argv[1],&s,r,&e)) { fprintf(stderr,"%s\n",e.text);btp_content_close(&content);return 1; }
     if (!strcmp(argv[2],"idle")) {
-        unsigned n=(unsigned)atoi(argv[3]);if (n>65535) { free(r);return 2; }
-        for (unsigned i=0;i<n;++i) { step(&s,r,BTP_IDLE);if (!encounter(&s,r)) { free(r);return 1; } }
-        free(r);return 0;
+        unsigned n=(unsigned)atoi(argv[3]);if (n>65535) { btp_content_close(&content);return 2; }
+        for (unsigned i=0;i<n;++i) { step(&s,r,BTP_IDLE);if (!encounter(&s,r)) { btp_content_close(&content);return 1; } }
+        btp_content_close(&content);return 0;
     }
     int tx=atoi(argv[2]),ty=atoi(argv[3]),sx=s.x_half,sy=s.y_half;
     if (s.map_id) {
         const BtpMap *m=btp_active_map(r,&s);
         sx+=(m->entrance_x[0]>>8)*128;sy+=(m->entrance_y[0]>>12)*128;
     }
-    if (tx<0 || ty<0 || tx>=2048 || ty>=2048) { free(r);return 2; }
+    if (tx<0 || ty<0 || tx>=2048 || ty>=2048) { btp_content_close(&content);return 2; }
     enum { SIZE=2048*2048 };
     int *parents=malloc(SIZE*sizeof *parents),*queue=malloc(SIZE*sizeof *queue);
-    if (!parents || !queue) { free(parents);free(queue);free(r);return 1; }
+    if (!parents || !queue) { free(parents);free(queue);btp_content_close(&content);return 1; }
     for (unsigned i=0;i<SIZE;++i) parents[i]=-1;
     int start=sy*2048+sx,target=ty*2048+tx;parents[start]=start;queue[0]=start;
     unsigned target_map=(unsigned)btp_world_location(r,&s,tx/2,ty/2);int target_door=-1;
@@ -95,8 +103,8 @@ int main(int argc,char **argv)
             if (!encounter(&s,r)) { fprintf(stderr,"Encounter continuation requires battle orders\n");ok=0;break; }
             /* Adaptive callers can replan after one multi-step key without
                predicting a different encounter/NPC clock or editing saves. */
-            if (argc==5) break;
+            if (next) break;
         }
     } else fprintf(stderr,"No native walking route from %d,%d to %d,%d (%u positions examined)\n",sx,sy,tx,ty,end);
-    free(parents);free(queue);free(r);return !ok;
+    free(parents);free(queue);btp_content_close(&content);return !ok;
 }

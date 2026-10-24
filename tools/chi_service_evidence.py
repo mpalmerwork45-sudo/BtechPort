@@ -21,7 +21,7 @@ def prison(document):
            dict(id='proof:wait',op='wait'),dict(id='proof:passed',op='set',index=81,value=44),dict(id='proof:done',op='jump',target=end)]
     p['nodes'][1:1]=nodes;put(document,value,'Prepare prison continuation proof')
 
-def generate(source,output,previous):
+def generate(source,output,previous,edited_only=False):
     import json,shutil,subprocess
     from pathlib import Path
     from chi_import import ROOT,plain_path,import_campaigns
@@ -50,7 +50,7 @@ def generate(source,output,previous):
         base=target/'base'/profile;doc=ProjectDocument(base,tool)
         for p in data(doc)['programs']:assert bytes.fromhex(compiled(doc,p['id'])['encrypted'])==doc.files()['chi/'+p['resource']]
         run(bld,['--roundtrip',base])
-        for fixture in ('reference-class-funded','reference-bank','ordinary-training-combat','ordinary-services','ordinary-alternate-services'):
+        for fixture in (() if edited_only else ('reference-class-funded','reference-bank','ordinary-training-combat','ordinary-services','ordinary-alternate-services')):
             run(bld,['--compare',previous/profile,base,ROOT/'tests/fixtures'/(fixture+'.actions'),target/(fixture+'-'+profile+'-baseline-linux.btp')])
         def configure(doc):
             for key,value in values.items():update(doc,key,value)
@@ -65,7 +65,7 @@ def generate(source,output,previous):
         run(helper,['--healing',healed.root,target/('healing-'+profile+'-linux.btp')])
         stolen=edit('prison-'+profile,changed.root,prison)
         run(helper,['--prison',stolen.root,target/('prison-'+profile+'-linux.btp')])
-    report=dict(status='passed',byte_identical_programs=52,baseline_replay_ticks=214544,edited_class_ticks=6176,records=records)
+    report=dict(status='passed',byte_identical_programs=52,baseline_replay_ticks=0 if edited_only else 214544,edited_class_ticks=6176,records=records)
     (target/'evidence.json').write_bytes(encoded(report));return report
 
 if __name__=='__main__':

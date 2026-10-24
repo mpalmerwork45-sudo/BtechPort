@@ -1,6 +1,7 @@
 /* Emit only ordinary inputs to a reachable cache interaction in a real save. */
 #include "core/cache.h"
 #include "data/save.h"
+#include "data/content.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -27,11 +28,17 @@ static int goal(const BtpState *s,const BtpResources *r,const char *kind,unsigne
 }
 int main(int argc,char **argv)
 {
+    const char *project=NULL;
+    if (argc==6 && !strcmp(argv[4],"--project")) { project=argv[5];argc-=2; }
     if (argc!=4) return 2;
-    BtpResources *r=calloc(1,sizeof *r);BtpState s;BtpError e;
-    if (!r || !btp_resources_load("Original DOS",r,&e) || !btp_combat_data_load("work/combat-data.bin",&r->combat,&e) ||
-        !btp_dialogue_load("work/talk-data.bin",&r->dialogue,&e) || !btp_save_load(argv[1],&s,r,&e)) { fprintf(stderr,"%s\n",e.text);free(r);return 1; }
-    if (s.mode!=BTP_CACHE || s.cache.phase) { free(r);return 2; }
+    BtpContent content={0};BtpState s;BtpError e;
+    BtpOriginalContentPaths paths={"Original DOS","work/talk-data.bin","work/combat-data.bin","work/world-data.bin"};
+    if (!(project ? btp_content_load_project(&content,project,NULL,&e) : btp_content_load_original(&content,&paths,&e))) {
+        fprintf(stderr,"%s\n",e.text);return 1;
+    }
+    const BtpResources *r=content.resources;
+    if (!btp_save_load(argv[1],&s,r,&e)) { fprintf(stderr,"%s\n",e.text);btp_content_close(&content);return 1; }
+    if (s.mode!=BTP_CACHE || s.cache.phase) { btp_content_close(&content);return 2; }
     unsigned index=(unsigned)strtoul(argv[3],NULL,10);int parents[128*128],queue[128*128],start=s.y_half*128+s.x_half,target=-1;
     for (unsigned i=0;i<128*128;++i) parents[i]=-1;
     parents[start]=start;queue[0]=start;unsigned begin=0,end=1;
@@ -48,7 +55,7 @@ int main(int argc,char **argv)
             if (member<0) { parents[q]=p;queue[end++]=q; }
         }
     }
-    if (target<0) { fprintf(stderr,"No reachable %s %u from %u,%u\n",argv[2],index,s.x_half,s.y_half);free(r);return 1; }
+    if (target<0) { fprintf(stderr,"No reachable %s %u from %u,%u\n",argv[2],index,s.x_half,s.y_half);btp_content_close(&content);return 1; }
     unsigned count=0;
     for (int q=target;q!=start;q=parents[q]) queue[count++]=q;
     for (unsigned i=count;i>0;--i) {
@@ -56,5 +63,5 @@ int main(int argc,char **argv)
         BtpAction a=delta==-128 ? BTP_UP : delta==1 ? BTP_RIGHT : delta==128 ? BTP_DOWN : BTP_LEFT;
         puts(btp_action_name(a));btp_game_tick(&s,r,a);
     }
-    free(r);return 0;
+    btp_content_close(&content);return 0;
 }

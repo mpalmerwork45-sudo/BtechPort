@@ -1,26 +1,21 @@
 # Open questions after bounded M4 work and authoring increments — 2026-10-24
 
-The [editable CHI import](CHI_IMPORT_PROGRESS.md) now includes C3 native map,
-world and presentation authoring, C4.1 labelled BLD source/compilation,
-C4.2 native services and C4.3 [mission/campaign settings](CHI_MISSION_AUTHORING.md).
-All 26 programs round-trip losslessly. Configurable
-prices, stock, repairs/healing, recruitment/spy settings, theft and crew policies
-have a shared editor/CLI surface and retained Linux/Wine continuation proofs.
-C4.4's first increment provides [native BLD observations](CHI_NATIVE_COVERAGE.md)
-and source-linked coverage. Native C-handler branches remain unknown; recorded
-service entries/returns do not establish their internal outcome coverage.
-C4.4 still owns the bridge into authored events and cross-system saved
-continuations, followed by the added-quest demonstration. Native actions remain limited
-to their documented building/state contexts;
-general calls/recursion and automatic dialogue reflow are unsupported.
-Mixed native/authored campaign suites need that bridge; authored-event coverage
-cannot substitute for native observations. C4.5 owns aggregate campaign acceptance. C5 owns general edited
-campaign reconstruction recipes and packaged setup/recovery. Spatial equivalence
-is checked at three declared seeds against the built-in native generator, not
-against DOS for every seed. Native Windows Python/Tk remains UNKNOWN. Imported
-saves stay pinned to their exact project/content revision, including enabling
-C3 map support, C4.1 script source, C4.2 services or C4.3 missions; built-in games and their saves are
-separate. Preserve the old imported project revision when enabling these tools.
+The [editable CHI import](CHI_IMPORT_PROGRESS.md) now includes maps/world/art,
+BLD dialogue/control flow, native service/mission content, bounded mixed quests
+and [asset-free reconstruction](CHI_RECONSTRUCTION.md). The combined
+[campaign acceptance](CHI_ACCEPTANCE.md) passes on Linux/Wine within its declared
+scope. Native Windows Tk and independent Astra review remain external checks.
+
+The Updated full ending route selects supported Legacy rules through Settings.
+Default Enhanced parity and focused combat checks pass; a full Enhanced-only
+walkthrough is UNKNOWN. Each ending trace executes 17 of 26 programs and
+872/1,816 instructions. Native C-handler internals, unobserved DOS branches and
+physical XT speaker/timing equivalence are not established by import parity.
+
+Imported saves require the exact project/content revision. Preserve old projects
+when enabling/editing native content. Arbitrary new native mechanics, additional
+map slots, new service-context adapters and automatic dialogue reflow need engine
+work. Original/Updated normal campaigns and their saves remain separate.
 
 AI8's [Greybank Dispatch recipe and delivery](CAMPAIGN_RECIPES.md) are delivered.
 The recorded five-map campaign covers both opening contracts, services, defence,
