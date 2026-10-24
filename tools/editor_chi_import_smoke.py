@@ -116,7 +116,7 @@ def run(env,work,source=None):
             chosen=next(item for item,(program,node) in coverage.targets.items() if node and program=='chi:bld-comstar')
             program,node=coverage.targets[chosen];coverage.table.selection_set(chosen);coverage.source();pump()
             from chi_bld_editor import open_scripts
-            source=open_scripts(app);assert source.program.get()==program and source.selected==node
+            script_editor=open_scripts(app);assert script_editor.program.get()==program and script_editor.selected==node
             coverage.window.lift();pump();ImageGrab.grab(xdisplay=env['DISPLAY']).save(work/'chi-script-coverage.png')
             cancel=open_import(app);cancel.source.set(str(source));cancel.target.set(str(folder/'cancelled'))
             cancel.start_button.invoke();cancel.cancel();pump(lambda:cancel.cancel_event is None and not workspace.tasks.jobs)
