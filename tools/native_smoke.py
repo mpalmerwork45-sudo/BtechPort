@@ -1397,7 +1397,9 @@ def main():
             number = os.read(read_fd, 32).decode().strip()
             if not number.isdigit():
                 raise RuntimeError("Invalid private display number")
-            env = dict(os.environ, DISPLAY=":" + number)
+            # Child probes also drive windows on this display without a window
+            # manager; propagate direct-focus mode as well as DISPLAY to them.
+            env = dict(os.environ, DISPLAY=":" + number, BTECH_REFERENCE_VIRTUAL="1")
             env.pop("SDL_VIDEODRIVER", None)
             os.environ["DISPLAY"] = env["DISPLAY"]
             os.environ["BTECH_REFERENCE_VIRTUAL"] = "1"
