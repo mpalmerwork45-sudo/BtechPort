@@ -6,12 +6,15 @@ C4.2 native services and C4.3 [mission/campaign settings](CHI_MISSION_AUTHORING.
 All 26 programs round-trip losslessly. Configurable
 prices, stock, repairs/healing, recruitment/spy settings, theft and crew policies
 have a shared editor/CLI surface and retained Linux/Wine continuation proofs.
-C4.4 still owns the bridge into authored events, cross-system saved
-continuations and native branch observations. Native actions remain limited
+C4.4's first increment provides [native BLD observations](CHI_NATIVE_COVERAGE.md)
+and source-linked coverage. Native C-handler branches remain unknown; recorded
+service entries/returns do not establish their internal outcome coverage.
+C4.4 still owns the bridge into authored events and cross-system saved
+continuations, followed by the added-quest demonstration. Native actions remain limited
 to their documented building/state contexts;
 general calls/recursion and automatic dialogue reflow are unsupported.
-Native campaign test suites/coverage need that bridge; authored-event coverage
-cannot substitute for it. C4.5 owns aggregate campaign acceptance. C5 owns general edited
+Mixed native/authored campaign suites need that bridge; authored-event coverage
+cannot substitute for native observations. C4.5 owns aggregate campaign acceptance. C5 owns general edited
 campaign reconstruction recipes and packaged setup/recovery. Spatial equivalence
 is checked at three declared seeds against the built-in native generator, not
 against DOS for every seed. Native Windows Python/Tk remains UNKNOWN. Imported

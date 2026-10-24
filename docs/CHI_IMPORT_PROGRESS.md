@@ -336,8 +336,57 @@ bytes/mtimes. No generated campaigns, scripts, caches, art or saved evidence are
 committed. Registered projects remain untouched; old imported saves require
 their previous content revision.
 
-**Next:** C4.4 adds bounded BLD/native ↔ authored-event calls, saved returns,
+**Next after C4.3:** C4.4 adds bounded BLD/native ↔ authored-event calls, saved returns,
 native branch observations and an ordinary new-quest example. C4.5 owns the
 aggregate campaign gate; C5 owns final delivery/setup/recovery. Existing native
 slots, record layouts, menu sizes and tile interaction vocabulary remain
 explicit engine contracts, not unrestricted new mechanics.
+
+## C4.4 — First increment: native observations and import usability
+
+**Implemented, 2026-10-24; C4.4 remains open.** Optional native diagnostics now
+observe BLD instructions, resolved branch choices, service entries/returns,
+resumed boundaries and faults. Both headless and SDL players support
+`--bld-trace`; native editor Play records it automatically. Traces include the
+exact content fingerprint and distinguish fresh runs from saved continuations.
+Diagnostic data does not change content identity or the saved-state format.
+Implementation commit: `dc51109`.
+
+The read-only **Project → CHI script coverage** view and CLI resolve all 26
+programs, separate declared/observed counts and navigate to BLD labels. Old C2
+traces resolve original offsets without silently enabling source editing.
+Native C internals remain unknown. Invalid revisions/labels are visible errors;
+unvisited paths are never called passing tests. [Usage](CHI_NATIVE_COVERAGE.md).
+
+The reported hidden-map issue came from older imports lacking the C3 projection:
+the tree now exposes **Local maps (enable editing)** and **World / towns (enable
+editing)** before that projection exists. Opening either makes one Undoable draft
+change. Native Play no longer passes an empty replay that skipped the intro;
+Play from start shows logos/title and Play here retains explicit positioning.
+
+**VERIFIED:** 433 Python and 94 native tests on Linux and Windows/Wine pass, followed by six focused
+Python and twelve affected native checks after final fault-boundary handling
+and an additional unresolved-branch case.
+Both GUI journeys pass old-import map access, painting/Undo/Save/reopen, explicit
+Play location, logo startup, coverage and source navigation. Traced/untraced
+Linux replays match state, saves and frames over 269,500 ticks in both profiles.
+All six Windows runs match Linux state, exact save/frame bytes and BLD trace
+bytes over those same 269,500 ticks. Builds have no compiler warnings.
+The held bank amount continuation reproduces the full trace and final save.
+The existing C2 projects match built-ins over 270,302 ticks and rendered
+checkpoints for ordinary/alternate services and a complete fresh-campaign route.
+Those comparisons did not reproduce the reported BLD screen differences;
+unvisited screens and DOS pixel equivalence remain unclaimed.
+
+Both reference trees, the three pending owner files and twenty normal saves
+retain their recorded contents/metadata. Registered imports remain unchanged;
+enabling additional editing documents still changes strict save identity.
+Original-derived traces/reports and imported campaigns remain private.
+[Exact verification and evidence](TESTING.md#native-import-usability-and-script-observation--2026-10-24).
+
+**Remaining C4.4:** bounded BLD/authored-event calls, native-service context
+adapters, shared transaction ownership, explicit failure/cancellation outcomes,
+versioned mixed-continuation saves and the editor/CLI added-quest demonstration.
+The [bridge design](CHI_EVENT_BRIDGE_DESIGN.md) splits that work into C4.4b runtime/
+persistence and C4.4c shared authoring/quest acceptance. Coverage alone does not
+complete this gate. C4.5 and C5 follow after those acceptance cases pass.

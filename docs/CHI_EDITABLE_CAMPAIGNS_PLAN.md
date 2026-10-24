@@ -569,6 +569,13 @@ not a completed import simply because its native function still runs.
 
 ### C4.4 Bridge new events and saved continuations
 
+The first increment now supplies [native BLD observations and a source-linked
+coverage view](CHI_NATIVE_COVERAGE.md), plus fixes for old-import map discovery
+and editor Play startup. **C4.4 is not complete.** The remaining runtime/save
+adapter and shared-authoring quest are split into C4.4b and C4.4c in the
+[continuation design](CHI_EVENT_BRIDGE_DESIGN.md). Native operation boundaries
+are measured; branches inside their C handlers remain unknown.
+
 - Implement explicit BLD/native-to-authored and authored-to-compatibility calls
   with bounded nesting, validation and defined return behavior.
 - Keep waits, choices, combat results and animation/audio sequencing owned by

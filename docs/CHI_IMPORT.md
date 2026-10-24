@@ -20,6 +20,8 @@ roles, invasion, encounters, arena and cache/ending settings. See
 [coverage ledger](CHI_CAMPAIGN_COVERAGE.md). The declared campaign routes
 are verified against the built-in editions; importing the full resource
 set does not establish execution coverage of every campaign branch.
+**Project → CHI script coverage** shows instructions, branch destinations and
+native service boundaries recorded during Play; see [native observations](CHI_NATIVE_COVERAGE.md).
 See [progress](CHI_IMPORT_PROGRESS.md).
 Original's added-unit list starts empty; its campaign mechs still use exact
 compatibility templates rather than normalized library adaptations.
@@ -36,6 +38,10 @@ compatibility templates rather than normalized library adaptations.
 5. Use **Edit** or **Play** beside a completed project. Both are registered in
    the launcher's game list. **My project → Choose project** also opens either
    `original` or `updated` subfolder, including projects created by the CLI.
+
+Native **Play from start** shows the Infocom/Westwood logo, title and
+played-before question. **Play here** deliberately starts at the selected map
+position. Editor tests use a private snapshot and its own save namespace.
 
 The importer verifies all 77 required source files by SHA-256. A different,
 incomplete or modified installation produces a specific file/version error.
@@ -104,6 +110,11 @@ conversion, shared validation, Save/reopen and private playable-package export.
 ## Edit maps and the world
 
 Choose **Project → CHI maps and world**, or open a local map in the project tree.
+Older imports display **Local maps (enable editing)** and **World / towns
+(enable editing)** even before their spatial document exists. Open either to
+enable all 15 maps as one Undoable draft change; Save persists it. This changes
+the imported content fingerprint, so keep the previous project revision for
+its old imported saves. Merely opening the project does not upgrade it.
 The usual Paint, Fill, selection, construction, pattern and contextual pixel
 tools work on native maps. Save, Undo/Redo, Changes and protection, libraries
 and Play use the same document as command-based edits. A native map's tile

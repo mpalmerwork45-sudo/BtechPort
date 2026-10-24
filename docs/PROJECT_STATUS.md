@@ -1,5 +1,34 @@
 # Project status — original fidelity and editable projects, 2026-10-24
 
+**C4.4 first increment: map/startup fixes and native script observations — implemented.**
+Older imported projects now expose **Local maps (enable editing)** and **World /
+towns (enable editing)** directly in the tree. Opening either enables the existing
+map tools as one Undoable draft change. Native **Play from start** shows the
+logo/title sequence; **Play here** still starts at the selected location.
+
+**Project → CHI script coverage** reads automatic Play traces, shows declared
+and observed instructions/branches for all 26 BLD programs and opens source
+labels. Native service entries/returns are measured; their internal C branches
+remain unknown. Traces are pinned to the exact content revision and do not
+change save bytes. [Usage](CHI_NATIVE_COVERAGE.md),
+[verification](TESTING.md#native-import-usability-and-script-observation--2026-10-24).
+
+**433 Python tests and 94 native tests on Linux and Windows/Wine pass**, followed
+by six focused Python checks after final reporting adjustments. Both Linux GUI
+journeys pass. Six replays match Linux/Windows state, saves, frames and trace
+bytes over 269,500 ticks per platform. Both references, three pending owner
+files and twenty normal saves remain unchanged. Native Windows Python/Tk
+remains UNKNOWN.
+
+Implementation commit: `dc51109`. Generated projects, traces and original-derived
+resources remain private; no proprietary payloads are included in this change.
+
+**C4.4 is not complete.** The mixed BLD/authored-event runtime, saved returns and
+added-quest example remain [C4.4b–c](CHI_EVENT_BRIDGE_DESIGN.md). Registered
+imports are not silently upgraded. Reported building-screen differences have
+not been reproduced in the tested port/import routes; those comparisons do not
+establish pixel equivalence to DOS for every screen.
+
 **C4.3: native mission and campaign settings — implemented and verified.**
 **Project → CHI missions and campaign** exposes 837 typed settings and 65 mech
 roles: initial state, training/opponents/outcomes, recognition/driving/recovery,
@@ -155,9 +184,11 @@ The user's three pending Last Beacon files and both reference directories are
 unchanged. Gameplay/save formats remain unchanged. Native Windows Python/Tk
 interaction remains **UNKNOWN**.
 
-**Next proposed:** C4.4 of the [editable CHI campaign plan](CHI_EDITABLE_CAMPAIGNS_PLAN.md):
+**Next proposed:** finish C4.4 of the [editable CHI campaign plan](CHI_EDITABLE_CAMPAIGNS_PLAN.md):
 bridge BLD/native calls into authored events with bounded returns and saved
-continuations, measure native branches, and demonstrate one added quest.
+continuations, then demonstrate one added quest. BLD branch observations are
+delivered; native C-handler internals remain unknown. The remaining runtime and
+authoring acceptance cases are in the [bridge design](CHI_EVENT_BRIDGE_DESIGN.md).
 C4.5 supplies the aggregate campaign gate; C5 follows with packaged setup and
 delivery acceptance. C1–C3 and C4.1–C4.3 are delivered.
 

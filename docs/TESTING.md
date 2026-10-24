@@ -1,5 +1,83 @@
 # Build, verification and original oracle — 2026-10-24
 
+## Native import usability and script observation — 2026-10-24
+
+**PASS for the first C4.4 increment on Linux and Windows/Wine.** This delivers native BLD
+observations and fixes reported map navigation/startup issues. It does not
+complete the mixed-interpreter bridge or added-quest example. See
+[coverage usage](CHI_NATIVE_COVERAGE.md) and [remaining work](CHI_EVENT_BRIDGE_DESIGN.md).
+
+- **433 Python tests pass** (101.089 s), including five native coverage cases
+  and the native-startup command regression. All six coverage cases pass after
+  final fault-boundary handling and the additional unresolved-branch case
+  (2.600 s); the latter was added after the full suite run.
+- **94 Linux native tests pass** (48.31 s). All twelve affected script/content/
+  project/save checks pass after final fault instrumentation (11.20 s). Linux
+  and Windows builds are sequential, use two compile jobs and have no warnings.
+  All **94 Windows native tests pass** under isolated Wine (342.37 s).
+- The bank, ordinary-service and complete fresh-campaign fixtures pass
+  **269,500 traced gameplay ticks** across both editions. Traced and untraced
+  Linux runs have identical canonical state, exact saved bytes and final frames.
+  All six Windows replays match Linux state, save bytes, frames and BLD trace
+  bytes exactly, covering the same 269,500 ticks on each platform.
+  Reports cover all 26 programs, retain unvisited branches and report no faults
+  on those routes. They do not claim every instruction/branch was visited.
+- Saving at the bank's amount-entry prompt and resuming preserves the exact
+  final save. Prefix plus continued trace equals the full execution trace;
+  the resumed header explicitly identifies a continuation. Old imports resolve
+  source locations without mutation. Wrong content revisions, invalid headers
+  and mismatching source labels are rejected. A branch outside declared source
+  destinations remains visible as unresolved evidence, with its original choice
+  and offsets, rather than disappearing from the report.
+- The Linux GUI import journey verifies actual SDL Play starts on the
+  Infocom/Westwood logo using a saved state, records a native trace, displays
+  coverage and opens an observed ComStar instruction in its source tab.
+  Save/reopen, Undo/Redo, Stop and import cancellation also pass.
+- The Linux map GUI journey reproduces an old import without `chi_spatial`,
+  opens maps from the newly visible project-tree entry and verifies one Undoable
+  enable step. Painting, all 15 maps/four banks, moved-town preview, jigsaws,
+  sprite editing and Save/reopen pass. Actual SDL **Play here** saves directly
+  in local exploration at the requested half-tile coordinates `(69, 25)`.
+- The user's existing C2 `first-pair` projects still match the built-in editions
+  over **270,302 gameplay/RNG comparison ticks**, including rendered checkpoints
+  for ordinary services, alternate services and the complete fresh-campaign
+  route, plus twelve isolated slots. These tests did not reproduce the reported
+  BLD appearance differences. They compare port/import behavior, not fresh DOS
+  screenshots of every building screen.
+- Both reference trees retain **1,287 content/mode/mtime entries**. Three pending
+  owner files retain their hashes; twenty normal saves retain bytes and mtimes.
+  Existing registered imports are not upgraded. No generated campaigns, original
+  text/assets, traces or saved evidence are included in the commits.
+
+Private evidence: `work/chi-import/c44-{python-regression,native-linux,
+native-final-focused,native-windows,coverage-final,preflight-visual}.log`,
+`work/chi-import/c44-trace-evidence/evidence.json` and per-profile coverage,
+`work/chi-import/c44-trace-evidence/windows-evidence.json`,
+`work/chi-import/c44-preservation.json`, `work/chi-import/c44-reference-guard.log`,
+`work/chi-import-gui.json`, `work/chi-spatial-gui.json`,
+`work/chi-import-play-logo.png` and `work/chi-script-coverage.png`.
+
+```sh
+python3 -m unittest discover -s tests -p test_chi_coverage.py
+python3 -m unittest discover -s tests -p test_chi_import.py
+python3 tools/native_smoke.py --editor-chi-import-only
+python3 tools/native_smoke.py --editor-chi-spatial-only
+```
+
+For retained headless observations, use `--bld-trace FILE` with each replay and
+the imported project, then run `tools/chi_coverage.py` on that exact project
+revision. Compare a second replay without tracing using `--save` and `--frame`.
+The fixture names used above are `reference-bank.actions`,
+`ordinary-services.actions` and `ordinary-fresh-campaign.actions` under
+`tests/fixtures/`. The appearance comparison also uses
+`ordinary-alternate-services.actions`.
+
+**Limits:** a recorded instruction is execution evidence, not proof of correct
+behavior. Native C-handler branches remain unknown; enter/return records expose
+only the BLD boundary. Relocated return boundaries without an exact source node
+are retained explicitly. Native Windows Python/Tk remains UNKNOWN. C4.4's mixed
+saved continuations and added quest, C4.5's aggregate gate and C5 remain open.
+
 ## Native mission authoring — 2026-10-24
 
 **PASS for C4.3's declared scope on Linux and Windows/Wine.**

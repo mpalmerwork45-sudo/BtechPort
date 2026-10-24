@@ -129,8 +129,11 @@ linked price text and saved continuations. **CHI missions and campaign** exposes
 training opponents/outcomes, invasion, encounters, arena, cache and initial
 state settings. See [import instructions](docs/CHI_IMPORT.md),
 [BLD authoring](docs/BLD_AUTHORING.md), [services](docs/CHI_SERVICE_AUTHORING.md)
-and [missions](docs/CHI_MISSION_AUTHORING.md). The authored-event bridge remains
-C4.4; aggregate campaign acceptance and final delivery remain C4.5/C5.
+and [missions](docs/CHI_MISSION_AUTHORING.md). **CHI script coverage** now shows
+source-linked BLD execution from Play traces; see [native coverage](docs/CHI_NATIVE_COVERAGE.md).
+Older imports expose **Local maps (enable editing)** in the project tree.
+The authored-event bridge and added quest remain C4.4; aggregate campaign
+acceptance and final delivery remain C4.5/C5.
 
 [World-route checks](docs/WORLD_ROUTE_VERIFICATION.md) exercise whole-party
 travel between towns and planets, discovery and save/reload, with navigable
